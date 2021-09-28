@@ -691,6 +691,13 @@
 						<param name="value" value="${work_dir}/consolePassword.properties"/>
 					</antcall>
 
+					<!-- HSM -->
+					<antcall target="set_property">
+					    <param name="file" value="${configFile}"/>
+						<param name="token" value="hsm.config"/>
+						<param name="value" value="${work_dir}/hsm.properties"/>
+					</antcall>
+
 					<!-- LOG (servizi rest) -->
 					<antcall target="set_property">
 					    <param name="file" value="${configFile}"/>

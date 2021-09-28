@@ -23,6 +23,7 @@ package org.openspcoop2.web.ctrlstat.core;
 
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -32,6 +33,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -43,6 +45,8 @@ import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
 import org.openspcoop2.monitor.engine.dynamic.PluginLoader;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.certificate.hsm.HSMManager;
+import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.xml.XMLDiffImplType;
 import org.openspcoop2.utils.xml.XMLDiffOptions;
@@ -344,6 +348,22 @@ public class InitListener implements ServletContextListener {
 				}
 			} catch (Exception e) {
 				String msgErrore = "Errore durante l'inizializzazione del loader dei plugins: " + e.getMessage();
+				InitListener.log.error(
+						//					throw new ServletException(
+						msgErrore,e);
+				throw new RuntimeException(msgErrore,e);
+			}
+			
+			// inizializzo HSM Manager
+			try {
+				String hsmConfig = consoleProperties.getHSMConfigurazione();
+				if(StringUtils.isNotEmpty(hsmConfig)) {
+					File f = new File(hsmConfig);
+					HSMManager.init(f, consoleProperties.isHSMRequired(), log);
+					HSMUtils.HSM_CONFIGURABLE_KEY_PASSWORD = consoleProperties.isHSMKeyPasswordConfigurable();
+				}
+			} catch (Exception e) {
+				String msgErrore = "Errore durante l'inizializzazione del manager HSM: " + e.getMessage();
 				InitListener.log.error(
 						//					throw new ServletException(
 						msgErrore,e);

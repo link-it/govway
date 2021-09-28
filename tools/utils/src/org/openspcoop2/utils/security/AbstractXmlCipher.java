@@ -21,6 +21,7 @@
 
 package org.openspcoop2.utils.security;
 
+import java.security.Provider;
 import java.security.Security;
 
 import javax.crypto.KeyGenerator;
@@ -40,6 +41,7 @@ import org.openspcoop2.utils.certificate.KeyStore;
  */
 public abstract class AbstractXmlCipher {
 
+	protected java.security.Provider provider;
 	private java.security.Key keyWrapped;
 	private java.security.cert.Certificate certificateWrapped;
 	protected SecretKey secretKeyWrapped;
@@ -150,9 +152,17 @@ public abstract class AbstractXmlCipher {
 		return this.secretKeyEncrypt;
 	}
 	public static SecretKey generateSecretKey(String algorithm) throws UtilsException {
+		return generateSecretKey(algorithm, null);
+	}
+	public static SecretKey generateSecretKey(String algorithm, Provider provider) throws UtilsException {
 		KeyGenerator keyGenerator = null;
 		try {
-			keyGenerator = KeyGenerator.getInstance(algorithm);
+			if(provider!=null) {
+				keyGenerator = KeyGenerator.getInstance(algorithm, provider);
+			}
+			else {
+				keyGenerator = KeyGenerator.getInstance(algorithm);
+			}
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -166,6 +176,10 @@ public abstract class AbstractXmlCipher {
 		this.mode = mode;
 		this.keyWrapped = keystore.getPrivateKey(alias, passwordPrivateKey);
 		this.encryptedKeyMode = SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_ASYMMETRIC_KEY;
+		// Non sembra necessario
+//		if(keystore.getKeystoreType().equalsIgnoreCase("pkcs11")) {
+//			this.provider = keystore.getKeystoreProvider();
+//		}
 		this.init(addBouncyCastleProvider);
 	}
 
@@ -229,7 +243,13 @@ public abstract class AbstractXmlCipher {
 
 	protected org.apache.xml.security.encryption.XMLCipher getXMLCipher() throws UtilsException{
 		try{
-			org.apache.xml.security.encryption.XMLCipher xmlCipher = org.apache.xml.security.encryption.XMLCipher.getInstance();
+			org.apache.xml.security.encryption.XMLCipher xmlCipher = null; 
+			if(this.provider!=null) {
+				xmlCipher = org.apache.xml.security.encryption.XMLCipher.getInstance(this.provider.getName());
+			}
+			else {
+				xmlCipher = org.apache.xml.security.encryption.XMLCipher.getInstance();
+			}
 			xmlCipher.init(this.mode, null);
 			return xmlCipher;			
 		}catch(Exception e){
@@ -241,10 +261,20 @@ public abstract class AbstractXmlCipher {
 		try{
 			org.apache.xml.security.encryption.XMLCipher xmlCipher = null;
 			if(canon!=null || digest!=null) {
-				xmlCipher = org.apache.xml.security.encryption.XMLCipher.getInstance(algorithm,canon,digest);
+				if(this.provider!=null) {
+					xmlCipher = org.apache.xml.security.encryption.XMLCipher.getProviderInstance(algorithm, this.provider.getName(), canon, digest);
+				}
+				else {
+					xmlCipher = org.apache.xml.security.encryption.XMLCipher.getInstance(algorithm,canon,digest);
+				}
 			}
 			else {
-				xmlCipher = org.apache.xml.security.encryption.XMLCipher.getInstance(algorithm);
+				if(this.provider!=null) {
+					xmlCipher = org.apache.xml.security.encryption.XMLCipher.getProviderInstance(algorithm, this.provider.getName());
+				}
+				else {
+					xmlCipher = org.apache.xml.security.encryption.XMLCipher.getInstance(algorithm);
+				}
 			}
 			if(this.secretKeyEncrypt==null) {
 				throw new Exception("Key for initialize cipher engine not found");
@@ -263,10 +293,20 @@ public abstract class AbstractXmlCipher {
 		try{
 			org.apache.xml.security.encryption.XMLCipher xmlCipher = null;
 			if(algorithm!=null){
-				xmlCipher = org.apache.xml.security.encryption.XMLCipher.getInstance(algorithm);
+				if(this.provider!=null) {
+					xmlCipher = org.apache.xml.security.encryption.XMLCipher.getProviderInstance(algorithm, this.provider.getName());
+				}
+				else {
+					xmlCipher = org.apache.xml.security.encryption.XMLCipher.getInstance(algorithm);
+				}
 			}
 			else{
-				xmlCipher = org.apache.xml.security.encryption.XMLCipher.getInstance();
+				if(this.provider!=null) {
+					xmlCipher = org.apache.xml.security.encryption.XMLCipher.getProviderInstance(this.provider.getName());
+				}
+				else {
+					xmlCipher = org.apache.xml.security.encryption.XMLCipher.getInstance();
+				}
 			}
 			int wrapMode = -1;
 			if(XMLCipher.ENCRYPT_MODE == this.mode){

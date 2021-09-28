@@ -237,6 +237,13 @@
 			<param name="value" value="${work_dir}/https/erogazioni"/>
 		</antcall>
 
+		<!-- HSM -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.hsm.config"/>
+			<param name="value" value="${work_dir}/hsm.properties"/>
+		</antcall>
+
 		<!-- ApacheXMLDSig, BouncyCastle e SecureRandom -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>

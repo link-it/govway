@@ -82,7 +82,8 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 	        WSS4JOutInterceptor ohandler = new WSS4JOutInterceptor();
 	        PhaseInterceptor<SoapMessage> handler = ohandler.createEndingInterceptor();
 	        SoapMessage msgCtx = new SoapMessage(new MessageImpl());
-	        Exchange ex = new ExchangeImpl();
+	        msgCtx.setVersion(MessageType.SOAP_12.equals(message.getMessageType()) ? org.apache.cxf.binding.soap.Soap12.getInstance() : org.apache.cxf.binding.soap.Soap11.getInstance());
+			Exchange ex = new ExchangeImpl();
 	        ex.setInMessage(msgCtx);
 	        msgCtx.setContent(SOAPMessage.class, message.getSOAPMessage());
 	        List<?> results = new ArrayList<Object>();

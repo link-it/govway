@@ -22,6 +22,9 @@ package org.openspcoop2.web.lib.mvc.properties.beans;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.properties.exception.UserInputValidationException;
+
+import java.util.Map;
+
 import org.openspcoop2.core.mvc.properties.Conditions;
 import org.openspcoop2.core.mvc.properties.Property;
 import org.openspcoop2.core.mvc.properties.Subsection;
@@ -44,7 +47,7 @@ public class SubsectionBean extends BaseItemBean<Subsection>{
 	}
 
 	@Override
-	public DataElement toDataElement() {
+	public DataElement toDataElement(ConfigBean config, Map<String, String> mapNameValue) {
 		DataElement de = new DataElement();
 		de.setName(this.getName());
 		de.setLabel(this.getItem().getLabel()); 

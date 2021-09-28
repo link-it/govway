@@ -1,5 +1,5 @@
 <config id="messageSecurity.jose.receiver.signature" label="JWS Verifier Signature" xmlns="http://www.openspcoop2.org/core/mvc/properties"
-	provider="org.openspcoop2.security.message.jose.SecurityProvider">
+	provider="org.openspcoop2.security.message.jose.TrustStoreSecurityProvider">
 
 	<compatibility not="false" and="false">
         <tags and="true">
@@ -106,12 +106,6 @@
             </conditions>
 
 			<item type="select" name="truststoreType" label="Tipo" default="jks" reloadOnChange="true">
-				<values>
-					<value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/>
-					<value value="jceks" label="JCEKS"/>
-					<value value="jwk" label="JWK Set"/>
-				</values>
 				<property name="rs.security.keystore.type" properties="signaturePropRefId" />
 			</item>
 			<item type="textarea" name="truststoreFile" label="File" required="true">

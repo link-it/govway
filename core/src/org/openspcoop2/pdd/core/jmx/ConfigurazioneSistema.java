@@ -72,6 +72,7 @@ import org.openspcoop2.protocol.manifest.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsMultiException;
+import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.datasource.DataSourceFactory;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
@@ -226,11 +227,11 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		}
 		
 		else if(actionName.equals(INFORMAZIONI_SSL)){
-			return this.getInformazioniSSL(false,false);
+			return this.getInformazioniSSL(false,false,false);
 		}
 		
 		else if(actionName.equals(INFORMAZIONI_COMPLETE_SSL)){
-			return this.getInformazioniSSL(true,true);
+			return this.getInformazioniSSL(true,true,true);
 		}
 		
 		else if(actionName.equals(INFORMAZIONI_CRYPTOGRAPHY_KEY_LENGTH)){
@@ -618,7 +619,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		return null;
 	}
 	
-	public String getInformazioniSSL(boolean cipherSuites, boolean providerInfo){
+	public String getInformazioniSSL(boolean cipherSuites, boolean providerInfo, boolean hsmInfo){
 		try{
 			StringBuilder bf = new StringBuilder();
 			bf.append("SupportedProtocols: "+SSLUtilities.getSSLSupportedProtocols());
@@ -659,6 +660,18 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				for (Provider provider : lProviders) {
 					printSSLProviderInfo(provider, bf);
 				}
+			}
+			
+			if(hsmInfo) {
+				bf.append("\n");
+				HSMManager hsmManager = HSMManager.getInstance();
+				if(hsmManager!=null) {
+					bf.append("HSM Keystore registered: "+hsmManager.getKeystoreTypes());
+				}
+				else {
+					bf.append("HSM disabled"); 
+				}
+				bf.append("\n");
 			}
 			
 			if(bf.length()<=0){

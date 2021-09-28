@@ -21,13 +21,17 @@
 
 package org.openspcoop2.utils.security;
 
+import java.security.PrivateKey;
 import java.util.Iterator;
 import java.util.Properties;
+
+import javax.crypto.SecretKey;
 
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKey;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
 import org.apache.cxf.rs.security.jose.jwk.JwkUtils;
 import org.apache.cxf.rs.security.jose.jws.JwsCompactProducer;
+import org.apache.cxf.rs.security.jose.jws.JwsException;
 import org.apache.cxf.rs.security.jose.jws.JwsHeaders;
 import org.apache.cxf.rs.security.jose.jws.JwsJsonProducer;
 import org.apache.cxf.rs.security.jose.jws.JwsSignatureProvider;
@@ -57,7 +61,20 @@ public class JsonSignature {
 			this.headers = new JwsHeaders(props);
 			this.provider = JsonUtils.getJwsSymmetricProvider(props);
 			if(this.provider==null) {
-				this.provider = JwsUtils.loadSignatureProvider(JsonUtils.newMessage(), props, this.headers);
+				try {
+					this.provider = JwsUtils.loadSignatureProvider(JsonUtils.newMessage(), props, this.headers);
+				}catch(JwsException jwsExc) {
+					if(jwsExc!=null && jwsExc.getMessage()!=null && jwsExc.getMessage().contains("NO_PROVIDER")) {
+						// caso in cui la chiave privata PKCS11 non e' stata mappata in un PrivateKeyJwsSignatureProvider
+						// caso pkcs11 dove la chiave privata non e' ne ECPrivateKey ne RSAPrivateKey gestita dal metodo getPrivateKeySignatureProvider
+						// ad es. può essere sun.security.pkcs11.P11Key$P11PrivateKey
+						this.provider = JsonUtils.getJwsAsymmetricProvider(props);
+						if(this.provider==null) {
+							// rilancio eccezione precedente
+							throw jwsExc;
+						}
+					}
+				}
 			}
 			this.options=options;
 			this.jwtHeaders = jwtHeaders;
@@ -84,13 +101,32 @@ public class JsonSignature {
 			
 			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(signatureAlgorithm);
 			if(secretKey) {
-				this.provider = JwsUtils.getHmacSignatureProvider(keystore.getSecretKey(alias, passwordPrivateKey).getEncoded(), algo);
+				String tipo = "JCEKS";
+				SecretKey secret = keystore.getSecretKey(alias, passwordPrivateKey);
+				if("pkcs11".equalsIgnoreCase(keystore.getKeystoreType())) {
+					tipo = "PKCS11";
+					SecretKeyPkcs11 secretKeyPkcs11 = new SecretKeyPkcs11(keystore.getKeystoreProvider(), secret);
+					this.provider = new HmacJwsSignatureProvider(secretKeyPkcs11, algo);
+				}
+				else {
+					this.provider = JwsUtils.getHmacSignatureProvider(secret.getEncoded(), algo);
+				}
 				if(this.provider==null) {
-					throw new Exception("(JCEKS) JwsSignatureProvider init failed; check signature algorithm ("+signatureAlgorithm+")");
+					throw new Exception("("+tipo+") JwsSignatureProvider init failed; check signature algorithm ("+signatureAlgorithm+")");
 				}
 			}
 			else {
-				this.provider = JwsUtils.getPrivateKeySignatureProvider(keystore.getPrivateKey(alias, passwordPrivateKey), algo);
+				PrivateKey pKey = keystore.getPrivateKey(alias, passwordPrivateKey);
+				this.provider = JwsUtils.getPrivateKeySignatureProvider(pKey, algo);
+				if(this.provider==null) {
+					// caso in cui la chiave privata PKCS11 non e' stata mappata in un PrivateKeyJwsSignatureProvider
+					// caso pkcs11 dove la chiave privata non e' ne ECPrivateKey ne RSAPrivateKey gestita dal metodo getPrivateKeySignatureProvider
+					// ad es. può essere sun.security.pkcs11.P11Key$P11PrivateKey
+					this.provider = JsonUtils.getJwsAsymmetricProvider(pKey, algo);
+					if(this.provider==null) {
+						throw new Exception("("+keystore.getKeystore().getType()+") JwsSignatureProvider init failed; check signature algorithm ("+signatureAlgorithm+")");
+					}
+				}
 			}
 			this.options=options;
 			this.jwtHeaders = jwtHeaders;

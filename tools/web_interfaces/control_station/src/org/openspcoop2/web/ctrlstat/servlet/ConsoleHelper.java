@@ -12853,9 +12853,10 @@ public class ConsoleHelper implements IConsoleHelper {
 			dati.addElement(de);
 		}
 		if(configurazioneBean != null) {
+			Map<String, String> mapNameValue = new HashMap<String, String>();
 			for (BaseItemBean<?> item : configurazioneBean.getListaItem()) {
 				if(item.isVisible())
-					dati.addElement(item.toDataElement());
+					dati.addElement(item.toDataElement(configurazioneBean, mapNameValue));
 			}
 		}
 		

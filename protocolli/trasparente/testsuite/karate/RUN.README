@@ -102,6 +102,21 @@
   o su fedora più recenti:
 	'iptables -I INPUT 1 -p tcp -d 127.0.2.2 --destination-port 7777 -j DROP'
 	
+- HSM per TLS Keystore. I certificati generati con il readme tools/utils/src/org/openspcoop2/utils/certificate/hsm/HSM.example vanno aggiunti al keystore erogatore.jks messo in /etc/govway/keys per poter effettuare il trust di tutti gli utilizzi delle chiavi HSM come certificato client TLS. 
+Per farlo:
+mkdir /tmp/HSM_ADD
+pushd /tmp/HSM_ADD
+keytool -exportcert -rfc -alias client1_hsm -file client1_hsm.pem  -keystore NONE -storetype PKCS11 -storepass 123456 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg $HOME/lib/softhsm/softhsm_java_client1.conf
+keytool -exportcert -rfc -alias client2_hsm -file client2_hsm.pem -keystore NONE -storetype PKCS11 -storepass 123456 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg "--name = softhsm-client2\nlibrary = /usr/lib64/libsofthsm2.so\nslotListIndex = 1"
+keytool -exportcert -rfc -alias server_hsm -file server_hsm.pem -keystore NONE -storetype PKCS11 -storepass 123456 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg $HOME/lib/softhsm/softhsm_java_server.conf
+keytool -exportcert -rfc -alias server2_hsm -file server2_hsm.pem -keystore NONE -storetype PKCS11 -storepass 123456 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg $HOME/lib/softhsm/softhsm_java_server.conf 
+cp /etc/govway/keys/erogatore.jks .
+keytool -importcert -alias client1_hsm -file client1_hsm.pem -keystore erogatore.jks -storepass openspcoop
+keytool -importcert -alias client2_hsm -file client2_hsm.pem -keystore erogatore.jks -storepass openspcoop
+keytool -importcert -alias server_hsm -file server_hsm.pem -keystore erogatore.jks -storepass openspcoop
+keytool -importcert -alias server2_hsm -file server2_hsm.pem -keystore erogatore.jks -storepass openspcoop
+cp erogatore.jks /etc/govway/keys/
+popd
 
 Per eseguire i test:
 	ant run_test
@@ -207,3 +222,8 @@ Di seguito vengono descritti i test del package 'token':
 
 - 'attribute_authority', verifica l'interazione con le AttributeAuthority
    ant run_test -Ddelete=false -Dload=false -Dpackage=token.attribute_authority
+
+Di seguito vengono descritti i test del package 'pkcs11':
+
+- 'x509', verifica l'utilizzo di chiavi private e certificati presenti in HSM
+   ant run_test -Ddelete=false -Dload=false -Dpackage=pkcs11.x509

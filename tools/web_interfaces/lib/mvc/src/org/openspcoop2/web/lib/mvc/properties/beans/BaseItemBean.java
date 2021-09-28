@@ -19,13 +19,15 @@
  */
 package org.openspcoop2.web.lib.mvc.properties.beans;
 
-import org.openspcoop2.web.lib.mvc.DataElement;
-import org.openspcoop2.web.lib.mvc.properties.exception.UserInputValidationException;
+import java.util.Map;
+
 import org.openspcoop2.core.mvc.properties.Conditions;
 import org.openspcoop2.core.mvc.properties.Property;
 import org.openspcoop2.core.mvc.properties.constants.ItemType;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
+import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.properties.exception.UserInputValidationException;
 
 /***
  * 
@@ -51,7 +53,7 @@ public abstract class BaseItemBean<T> {
 		this.provider = provider;
 	}
 
-	public abstract DataElement toDataElement() throws ProviderException;
+	public abstract DataElement toDataElement(ConfigBean config, Map<String, String> mapNameValue) throws ProviderException;
 	
 	public abstract void setValueFromRequest(String parameterValue)  throws ProviderException;
 	

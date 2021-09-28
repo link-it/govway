@@ -391,6 +391,10 @@ public class ConsoleProperties {
 	public boolean isApplicativiCredenzialiBasicCheckUniqueUsePassword() throws UtilsException{
 		return this.readBooleanProperty(true, "applicativi.credenzialiBasic.checkUnique.usePassword");
 	}
+
+	public boolean isConnettoriAllTypesEnabled() throws UtilsException{
+		return this.readBooleanProperty(true, "connettori.allTypes.enabled");
+	}
 	
 	public boolean isConnettoriMultipliEnabled() throws UtilsException{
 		return this.readBooleanProperty(true, "connettoriMultipli.enabled");
@@ -499,6 +503,17 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "cluster_dinamico.enabled");
 	}
 
+	public String getHSMConfigurazione() throws Exception{
+		return this.readProperty(false, "hsm.config");
+	}
+	public boolean isHSMRequired() throws UtilsException{
+		Boolean b = this.readBooleanProperty(false, "hsm.required");
+		return b!=null ? b : false;
+	}
+	public boolean isHSMKeyPasswordConfigurable() throws UtilsException{
+		Boolean b = this.readBooleanProperty(false, "hsm.keyPassword");
+		return b!=null ? b : false;
+	}
 	
 	
 	/* ----- Gestione Password ------- */

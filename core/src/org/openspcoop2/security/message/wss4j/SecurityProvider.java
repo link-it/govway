@@ -87,6 +87,7 @@ public class SecurityProvider extends org.openspcoop2.security.message.xml.Secur
 			throw new ProviderValidationException("Subject Confirmation Method 'Bearer' require Enveloped SAML Signature");
 		}
 		
+		super.validate(mapProperties);
 	}	
 	
 	@Override

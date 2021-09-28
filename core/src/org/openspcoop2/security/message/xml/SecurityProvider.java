@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.security.message.constants.EncryptionAlgorithm;
@@ -38,6 +37,7 @@ import org.openspcoop2.security.message.constants.KeyAlgorithm;
 import org.openspcoop2.security.message.constants.SignatureAlgorithm;
 import org.openspcoop2.security.message.constants.SignatureC14NAlgorithm;
 import org.openspcoop2.security.message.constants.SignatureDigestAlgorithm;
+import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
 
 /**     
  * SecurityProvider
@@ -46,13 +46,13 @@ import org.openspcoop2.security.message.constants.SignatureDigestAlgorithm;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SecurityProvider implements IProvider {
+public class SecurityProvider extends AbstractSecurityProvider {
 
 	@Override
 	public void validate(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
-
+		super.validate(mapProperties);
 	}
-
+	
 	@Override
 	public List<String> getValues(String id) throws ProviderException {
 		if(XMLCostanti.ID_SIGNATURE_ALGORITHM.equals(id)) {
@@ -168,8 +168,9 @@ public class SecurityProvider implements IProvider {
 			}
 			return l;
 		}
-		
-		return null;
+		else {
+			return super.getValues(id);
+		}
 	}
 
 	@Override
@@ -242,8 +243,9 @@ public class SecurityProvider implements IProvider {
 			}
 			return l;
 		}
-
-		return this.getValues(id);
+		else {
+			return super.getLabels(id);
+		}
 	}
 	
 	private String convertEnumName(String name) {
@@ -289,8 +291,9 @@ public class SecurityProvider implements IProvider {
 		else if(XMLCostanti.ID_ENCRYPT_C14N_ALGORITHM.equals(id)) {
 			return EncryptionC14NAlgorithm.INCLUSIVE_C14N_10_WITH_COMMENTS.getUri();
 		}
-		
-		return null;
+		else {
+			return super.getDefault(id);
+		}
 	}
 
 }

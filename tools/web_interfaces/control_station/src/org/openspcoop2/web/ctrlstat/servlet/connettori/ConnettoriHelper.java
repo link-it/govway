@@ -3775,15 +3775,29 @@ public class ConnettoriHelper extends ConsoleHelper {
 					return false;
 				}
 	
-				if (!httpstipo.equals("") &&
-						!Utilities.contains(httpstipo, ConnettoriCostanti.TIPOLOGIE_KEYSTORE)) {
-					this.pd.setMessage("Il campo Tipo per l'Autenticazione Server può assumere uno tra i seguenti valori: "+Utilities.toString(ConnettoriCostanti.TIPOLOGIE_KEYSTORE, ","));
-					return false;
+				if(this.core.isConnettoriAllTypesEnabled()) {
+					if (!httpstipo.equals("") &&
+							!Utilities.contains(httpstipo, ConnettoriCostanti.TIPOLOGIE_KEYSTORE_OLD)) {
+						this.pd.setMessage("Il campo Tipo per l'Autenticazione Server può assumere uno tra i seguenti valori: "+Utilities.toString(ConnettoriCostanti.TIPOLOGIE_KEYSTORE_OLD, ","));
+						return false;
+					}
+					if (!httpstipokey.equals("") &&
+							!Utilities.contains(httpstipokey, ConnettoriCostanti.TIPOLOGIE_KEYSTORE_OLD)) {
+						this.pd.setMessage("Il campo Tipo per l'Autenticazione Client può assumere uno tra i seguenti valori: "+Utilities.toString(ConnettoriCostanti.TIPOLOGIE_KEYSTORE_OLD, ","));
+						return false;
+					}
 				}
-				if (!httpstipokey.equals("") &&
-						!Utilities.contains(httpstipokey, ConnettoriCostanti.TIPOLOGIE_KEYSTORE)) {
-					this.pd.setMessage("Il campo Tipo per l'Autenticazione Client può assumere uno tra i seguenti valori: "+Utilities.toString(ConnettoriCostanti.TIPOLOGIE_KEYSTORE, ","));
-					return false;
+				else {
+					if (!httpstipo.equals("") &&
+							!Utilities.contains(httpstipo, ConnettoriCostanti.getTIPOLOGIE_KEYSTORE(true, false).toArray(new String[1]))) {
+						this.pd.setMessage("Il campo Tipo per l'Autenticazione Server può assumere uno tra i seguenti valori: "+Utilities.toString(ConnettoriCostanti.TIPOLOGIE_KEYSTORE_OLD, ","));
+						return false;
+					}
+					if (!httpstipokey.equals("") &&
+							!Utilities.contains(httpstipokey, ConnettoriCostanti.getTIPOLOGIE_KEYSTORE(false, false).toArray(new String[1]))) {
+						this.pd.setMessage("Il campo Tipo per l'Autenticazione Client può assumere uno tra i seguenti valori: "+Utilities.toString(ConnettoriCostanti.TIPOLOGIE_KEYSTORE_OLD, ","));
+						return false;
+					}
 				}
 	
 				// Controllo campi obbligatori per il tipo di connettore custom

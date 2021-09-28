@@ -50,11 +50,13 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509KeyManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.random.RandomGenerator;
 import org.openspcoop2.utils.resources.Loader;
@@ -304,7 +306,7 @@ public class SSLUtilities {
 		InputStream finKeyStore = null;
 		InputStream finTrustStore = null;
 		try{
-		
+					
 			// Autenticazione CLIENT
 			if(sslConfig.getKeyStore()!=null || sslConfig.getKeyStoreLocation()!=null){
 				bfLog.append("Gestione keystore...\n");
@@ -317,32 +319,68 @@ public class SSLUtilities {
 				try {
 					location = sslConfig.getKeyStoreLocation(); // per debug
 				
-					KeyStore keystore = null;
-					KeyStore keystoreParam = null;
-					if(sslConfig.getKeyStore()!=null) {
-						keystoreParam = sslConfig.getKeyStore();
-					}
-					else {
-						keystoreParam = KeyStore.getInstance(sslConfig.getKeyStoreType()); // JKS,PKCS12,jceks,bks,uber,gkr 
-						File file = new File(location);
-						if(file.exists()) {
-							finKeyStore = new FileInputStream(file);
+					boolean hsmKeystore = false;
+					HSMManager hsmManager = HSMManager.getInstance();
+					if(hsmManager!=null) {
+						if(sslConfig.getKeyStore()!=null) {
+							hsmKeystore = sslConfig.isKeyStoreHsm();
 						}
 						else {
-							finKeyStore = SSLUtilities.class.getResourceAsStream(location);
+							if(sslConfig.getKeyStoreType()!=null && hsmManager.existsKeystoreType(sslConfig.getKeyStoreType())) {
+								hsmKeystore = true;
+							}
 						}
-						if(finKeyStore == null) {
-							throw new Exception("Keystore not found");
+					}
+					bfLog.append("\tKeystore HSM["+hsmManager+"]\n");
+					
+					KeyStore keystore = null;
+					KeyStore keystoreParam = null;
+					@SuppressWarnings("unused")
+					Provider keystoreProvider = null;
+					if(sslConfig.getKeyStore()!=null) {
+						keystoreParam = sslConfig.getKeyStore();
+						if(hsmKeystore) {
+							keystoreProvider = keystoreParam.getProvider();
 						}
-						keystoreParam.load(finKeyStore, sslConfig.getKeyStorePassword().toCharArray());
+					}
+					else {
+						if(hsmKeystore) {
+							org.openspcoop2.utils.certificate.KeyStore ks = hsmManager.getKeystore(sslConfig.getKeyStoreType());
+							if(ks==null) {
+								throw new Exception("Keystore not found");
+							}
+							keystoreParam = ks.getKeystore();
+							keystoreProvider = keystoreParam.getProvider();
+						}
+						else {
+							keystoreParam = KeyStore.getInstance(sslConfig.getKeyStoreType()); // JKS,PKCS12,jceks,bks,uber,gkr
+							File file = new File(location);
+							if(file.exists()) {
+								finKeyStore = new FileInputStream(file);
+							}
+							else {
+								finKeyStore = SSLUtilities.class.getResourceAsStream(location);
+							}
+							if(finKeyStore == null) {
+								throw new Exception("Keystore not found");
+							}
+							keystoreParam.load(finKeyStore, sslConfig.getKeyStorePassword().toCharArray());
+						}
 					}
 					
-					if(sslConfig.getKeyAlias()!=null) {
+					boolean oldMethodKeyAlias = false; // Questo metodo non funzionava con PKCS11
+					if(oldMethodKeyAlias && sslConfig.getKeyAlias()!=null) {
 						Key key = keystoreParam.getKey(sslConfig.getKeyAlias(), sslConfig.getKeyPassword().toCharArray());
 						if(key==null) {
 							throw new Exception("Key with alias '"+sslConfig.getKeyAlias()+"' not found");
 						}
-						keystore = KeyStore.getInstance(sslConfig.getKeyStoreType());
+						if(hsmKeystore) {
+							// uso un JKS come tmp
+							keystore = KeyStore.getInstance("JKS");
+						}
+						else {
+							keystore = KeyStore.getInstance(sslConfig.getKeyStoreType());
+						}
 						keystore.load(null); // inizializza il keystore
 						keystore.setKeyEntry(sslConfig.getKeyAlias(), key, 
 								sslConfig.getKeyPassword().toCharArray(), keystoreParam.getCertificateChain(sslConfig.getKeyAlias()));
@@ -351,9 +389,23 @@ public class SSLUtilities {
 						keystore = keystoreParam;
 					}
 					
-					KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(sslConfig.getKeyManagementAlgorithm());
+					KeyManagerFactory keyManagerFactory = null;
+					// NO: no such algorithm: SunX509 for provider SunPKCS11-xxx
+					//if(keystoreProvider!=null) {
+					//	keyManagerFactory = KeyManagerFactory.getInstance(sslConfig.getKeyManagementAlgorithm(), keystoreProvider);
+					//}
+					//else {
+					keyManagerFactory = KeyManagerFactory.getInstance(sslConfig.getKeyManagementAlgorithm());
+					//}
+					
 					keyManagerFactory.init(keystore, sslConfig.getKeyPassword().toCharArray());
 					km = keyManagerFactory.getKeyManagers();
+					if(!oldMethodKeyAlias && sslConfig.getKeyAlias()!=null) {
+						if(km!=null && km.length>0 && km[0]!=null && km[0] instanceof X509KeyManager) {
+							X509KeyManager wrapperX509KeyManager = new SSLX509ManagerForcedClientAlias(sslConfig.getKeyAlias(), (X509KeyManager)km[0] );
+							km[0] = wrapperX509KeyManager;
+						}
+					}
 					bfLog.append("Gestione keystore effettuata\n");
 				}catch(Throwable e) {
 					if(location!=null) {
@@ -382,26 +434,62 @@ public class SSLUtilities {
 				try {
 					location = sslConfig.getTrustStoreLocation(); // per debug
 					
-					KeyStore truststoreParam = null;
-					if(sslConfig.getTrustStore()!=null) {
-						truststoreParam = sslConfig.getTrustStore();
-					}
-					else {
-						truststoreParam = KeyStore.getInstance(sslConfig.getTrustStoreType()); // JKS,PKCS12,jceks,bks,uber,gkr
-						File file = new File(location);
-						if(file.exists()) {
-							finTrustStore = new FileInputStream(file);
+					boolean hsmTruststore = false;
+					HSMManager hsmManager = HSMManager.getInstance();
+					if(hsmManager!=null) {
+						if(sslConfig.getTrustStore()!=null) {
+							hsmTruststore = sslConfig.isTrustStoreHsm();
 						}
 						else {
-							finTrustStore = SSLUtilities.class.getResourceAsStream(location);
+							if(sslConfig.getTrustStoreType()!=null && hsmManager.existsKeystoreType(sslConfig.getTrustStoreType())) {
+								hsmTruststore = true;
+							}
 						}
-						if(finTrustStore == null) {
-							throw new Exception("Keystore not found");
-						}		
-						truststoreParam.load(finTrustStore, sslConfig.getTrustStorePassword().toCharArray());
+					}
+					bfLog.append("\tTruststore HSM["+hsmTruststore+"]\n");
+					
+					KeyStore truststoreParam = null;
+					@SuppressWarnings("unused")
+					Provider truststoreProvider = null;
+					if(sslConfig.getTrustStore()!=null) {
+						truststoreParam = sslConfig.getTrustStore();
+						if(hsmTruststore) {
+							truststoreProvider = truststoreParam.getProvider();
+						}
+					}
+					else {
+						if(hsmTruststore) {
+							org.openspcoop2.utils.certificate.KeyStore ks = hsmManager.getKeystore(sslConfig.getTrustStoreType());
+							if(ks==null) {
+								throw new Exception("Keystore not found");
+							}
+							truststoreParam = ks.getKeystore();
+							truststoreProvider = truststoreParam.getProvider();
+						}
+						else {
+							truststoreParam = KeyStore.getInstance(sslConfig.getTrustStoreType()); // JKS,PKCS12,jceks,bks,uber,gkr
+							File file = new File(location);
+							if(file.exists()) {
+								finTrustStore = new FileInputStream(file);
+							}
+							else {
+								finTrustStore = SSLUtilities.class.getResourceAsStream(location);
+							}
+							if(finTrustStore == null) {
+								throw new Exception("Keystore not found");
+							}		
+							truststoreParam.load(finTrustStore, sslConfig.getTrustStorePassword().toCharArray());
+						}
 					}
 					
-					TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(sslConfig.getTrustManagementAlgorithm());
+					TrustManagerFactory trustManagerFactory = null;
+					// NO: no such algorithm: PKIX for provider SunPKCS11-xxx
+					//if(truststoreProvider!=null) {
+					//	trustManagerFactory = TrustManagerFactory.getInstance(sslConfig.getTrustManagementAlgorithm(), truststoreProvider);
+					//}
+					//else {
+					trustManagerFactory = TrustManagerFactory.getInstance(sslConfig.getTrustManagementAlgorithm());
+					//}
 					String trustManagementAlgo = sslConfig.getTrustManagementAlgorithm();
 					if(trustManagementAlgo!=null) {
 						trustManagementAlgo = trustManagementAlgo.trim();
@@ -415,7 +503,9 @@ public class SSLUtilities {
 						else if(sslConfig.getTrustStoreCRLsLocation()!=null) {
 							bfLog.append("\tTruststore CRLs["+sslConfig.getTrustStoreCRLsLocation()+"]\n");
 						}
-						CertPathTrustManagerParameters params = buildCertPathTrustManagerParameters(truststoreParam, sslConfig.getTrustStoreCRLs(), sslConfig.getTrustStoreCRLsLocation());
+						
+						Provider sigProvider = null;
+						CertPathTrustManagerParameters params = buildCertPathTrustManagerParameters(truststoreParam, sslConfig.getTrustStoreCRLs(), sslConfig.getTrustStoreCRLsLocation(), sigProvider);
 						trustManagerFactory.init(params);
 						
 					}
@@ -495,7 +585,7 @@ public class SSLUtilities {
 	}
 	
 	public static CertPathTrustManagerParameters buildCertPathTrustManagerParameters(KeyStore truststoreParam,
-			CertStore crlStore, String crlLocation) throws Exception {
+			CertStore crlStore, String crlLocation, Provider provider) throws Exception {
 		
 		 // create the parameters for the validator
 		
@@ -529,6 +619,10 @@ public class SSLUtilities {
 	        }
 	        pkixParams.addCertStore(crlsCertstore);
 	        pkixParams.setRevocationEnabled(true);
+		}
+		
+		if(provider!=null) {
+			pkixParams.setSigProvider(provider.getName());
 		}
 		
 		return new CertPathTrustManagerParameters(pkixParams);

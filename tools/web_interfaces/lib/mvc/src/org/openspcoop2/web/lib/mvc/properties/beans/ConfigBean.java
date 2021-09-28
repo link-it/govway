@@ -113,6 +113,18 @@ public class ConfigBean {
 		return lista;
 	}
 
+	public List<?> getListaItemSDK(){
+		List<BaseItemBean<?>> list = getListaItem();
+		if(list!=null && !list.isEmpty()) {
+			List<Object> l = new ArrayList<Object>();
+			for (BaseItemBean<?> base : list) {
+				l.add(base.getItem());
+			}
+			return l;
+		}
+		return null;
+	}
+	
 	public Map<String, Properties> getPropertiesMap (){
 		Map<String, Properties> map = new HashMap<String, Properties>();
 

@@ -1,0 +1,44 @@
+Ad esempio seguendo le indicazioni dell'issue https://github.com/link-it/govway/issues/87 e utilizzando softhsm, il simulatore pkcs11 di dnssec si potrebbe generare 2 keystore in questa maniera:
+1) installare softhm tramite: yum install opensc softhsm
+2) cd $HOME; mkdir -p $HOME/lib/softhsm/tokens; cd $HOME/lib/softhsm/
+3) echo "directories.tokendir = $PWD/tokens" > softhsm2.conf
+4) export SOFTHSM2_CONF=$HOME/lib/softhsm/softhsm2.conf
+   NOTA: aggiungere l'istruzione in .bashrc per non doverla ridefinire continuamente
+   Per proseguire con le istruzioni, o eseguire l'export o aprire una nuova shell dove l'export è stato effettuato tramite .bashrc
+   
+Keystore 1:
+5) cd $HOME/lib/softhsm/; echo "name = softhsm-client1" > softhsm_java_client1.conf
+6) echo "library = /usr/lib64/libsofthsm2.so" >> softhsm_java_client1.conf
+7) echo "slotListIndex = 0" >> softhsm_java_client1.conf
+8) softhsm2-util --init-token --slot 0 --label "Token-1" --so-pin 1234 --pin 123456
+9) keytool -genkey -keyalg RSA -alias client1_hsm -keystore NONE -storepass 123456 -validity 7300 -keysize 2048 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg $HOME/lib/softhsm/softhsm_java_client1.conf -storetype PKCS11
+   Utilizza le seguenti info: CN=ExampleClient1HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT
+9b) keytool -genseckey -alias 'client_symmetric_hsm' -keyalg 'DESede' -keystore NONE -storetype PKCS11 -storepass 123456 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg $HOME/lib/softhsm/softhsm_java_client1.conf
+10) per verificare la coppia di chiavi generata:
+    keytool -list -keystore NONE -storetype PKCS11 -storepass 123456 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg $HOME/lib/softhsm/softhsm_java_client1.conf
+  
+Keystore 2 (esempio in cui la configurazione viene fornita come stringa invece che come file):
+11b) softhsm2-util --init-token --slot 1 --label "Token-2" --so-pin 1234 --pin 123456
+12b) keytool -genkey -keyalg RSA -alias client2_hsm -keystore NONE -storepass 123456 -validity 7300 -keysize 2048 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg "--name = softhsm-client2\nlibrary = /usr/lib64/libsofthsm2.so\nslotListIndex = 1" -storetype PKCS11
+     Utilizza le seguenti info: CN=ExampleClient2HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT
+13b) per verificare la coppia di chiavi generata:
+     keytool -list -keystore NONE -storetype PKCS11 -storepass 123456 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg "--name = softhsm-client2\nlibrary = /usr/lib64/libsofthsm2.so\nslotListIndex = 1"
+	 
+Keystore 3:
+14) cd $HOME/lib/softhsm/; echo "name = softhsm-server" > softhsm_java_server.conf
+15) echo "library = /usr/lib64/libsofthsm2.so" >> softhsm_java_server.conf
+16) echo "slotListIndex = 2" >> softhsm_java_server.conf
+17) softhsm2-util --init-token --slot 2 --label "Token-3" --so-pin 1234 --pin 123456
+18) keytool -genkey -keyalg RSA -alias server_hsm -keystore NONE -storepass 123456 -validity 7300 -keysize 2048 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg $HOME/lib/softhsm/softhsm_java_server.conf -storetype PKCS11
+    Utilizza le seguenti info: CN=ExampleServerHSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT
+19) Aggiungiamo una ulteriore coppia di chiavi:
+    keytool -genkey -keyalg RSA -alias server2_hsm -keystore NONE -storepass 123456 -validity 7300 -keysize 2048 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg $HOME/lib/softhsm/softhsm_java_server.conf -storetype PKCS11
+    Utilizza le seguenti info: CN=ExampleServer2HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT
+20) per verificare la coppia di chiavi generata:
+    keytool -list -keystore NONE -storetype PKCS11 -storepass 123456 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg $HOME/lib/softhsm/softhsm_java_server.conf
+
+Per realizzare un trustostore che contiene i certificati generati:
+T1) keytool -exportcert -rfc -alias client1_hsm -file client1_hsm.pem  -keystore NONE -storetype PKCS11 -storepass 123456 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg $HOME/lib/softhsm/softhsm_java_client1.conf
+T2) keytool -exportcert -rfc -alias client2_hsm -file client2_hsm.pem -keystore NONE -storetype PKCS11 -storepass 123456 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg "--name = softhsm-client2\nlibrary = /usr/lib64/libsofthsm2.so\nslotListIndex = 1"
+T3) keytool -exportcert -rfc -alias server_hsm -file server_hsm.pem -keystore NONE -storetype PKCS11 -storepass 123456 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg $HOME/lib/softhsm/softhsm_java_server.conf
+T4) keytool -exportcert -rfc -alias server2_hsm -file server2_hsm.pem -keystore NONE -storetype PKCS11 -storepass 123456 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg $HOME/lib/softhsm/softhsm_java_server.conf

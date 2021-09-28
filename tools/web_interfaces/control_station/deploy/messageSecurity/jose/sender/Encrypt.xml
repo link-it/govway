@@ -1,5 +1,5 @@
 <config id="messageSecurity.jose.sender.encrypt" label="JWE Encrypt" xmlns="http://www.openspcoop2.org/core/mvc/properties"
-	provider="org.openspcoop2.security.message.jose.SecurityProvider">
+	provider="org.openspcoop2.security.message.jose.TrustStoreSecurityProvider">
 
 	<compatibility not="false" and="false">
         <tags and="true">
@@ -54,12 +54,6 @@
 		<subsection label="KeyStore">
 
 			<item type="select" name="keystoreType" label="Tipo" default="jks" reloadOnChange="true">
-				<values>
-					<value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/>
-					<value value="jceks" label="JCEKS"/>
-					<value value="jwk" label="JWK Set"/>
-				</values>
 				<property name="rs.security.keystore.type" properties="encryptionPropRefId" />
 			</item>
 			<item type="textarea" name="keystoreFile" label="File" required="true">
@@ -117,9 +111,9 @@
             
             <item type="select" name="includeCertMode" label="X.509 Certificate" default="-" reloadOnChange="true" >
 	            <conditions>
-	                <condition and="false">
-	                        <equals name="keystoreType" value="jks"/>
-	                        <equals name="keystoreType" value="pkcs12"/>
+	                <condition not="true" and="false">
+	                        <equals name="keystoreType" value="jwk"/>
+	                        <equals name="keystoreType" value="jceks"/>
 	                </condition>
 		        </conditions>
 				<values>
@@ -148,9 +142,9 @@
 			
 			<item type="select" name="includeCertShaMode" label="Digest X.509 Certificate" default="-" reloadOnChange="true" >
 	            <conditions>
-	                <condition and="false">
-	                        <equals name="keystoreType" value="jks"/>
-	                        <equals name="keystoreType" value="pkcs12"/>
+	                <condition not="true" and="false">
+	                        <equals name="keystoreType" value="jwk"/>
+	                        <equals name="keystoreType" value="jceks"/>
 	                </condition>
 		        </conditions>
 				<values>

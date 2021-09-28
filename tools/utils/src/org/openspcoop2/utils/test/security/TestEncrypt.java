@@ -34,43 +34,84 @@ import org.testng.annotations.Test;
  */
 public class TestEncrypt {
 
+	/* !!NOTA!!: 
+	 * l'esecuzione dei test P11 richiedono la configurazione descritta in org/openspcoop2/utils/certificate/hsm/HSM.example 
+	 * Deve inoltre essere impostata la variabile di sistema (utilizzando path assoluti!!!):
+	 * export SOFTHSM2_CONF=DIRECTORY_SCELTA_FASE_INSTALLAZIONE/lib/softhsm/softhsm2.conf
+	 */
+	
 	private static final String ID_TEST = "Encrypt";
 	
 	@DataProvider(name="encryptProvider")
 	public Object[][] provider(){
 		return new Object[][]{
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JAVA_ENCRYPT},
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.XML_ENCRYPT},
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JKS},
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS},
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JWK},
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC},
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM},
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS_HEADER_CUSTOM},
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM},
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM},
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM_KID_ONLY},
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY},
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_JKS_KEYSTORE},
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_JKS_KEYSTORE_HEADER_CUSTOM},
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_JKS_KEYSTORE_JCE},
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_JKS_KEYSTORE_JCE_HEADER_CUSTOM},
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_JWK_KEYS},
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_JWK_KEYS_HEADER_CUSTOM},
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_JWK_KEY},
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_JWK_KEY_HEADER_CUSTOM},
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEYS},
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEYS_HEADER_CUSTOM},
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEY},
-				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEY_HEADER_CUSTOM}
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JAVA_ENCRYPT_JKS, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JAVA_ENCRYPT_PKCS12, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JAVA_ENCRYPT_PKCS11, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JAVA_ENCRYPT_PKCS11, true},
+				
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.XML_ENCRYPT_JKS, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.XML_ENCRYPT_PKCS12, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.XML_ENCRYPT_PKCS11, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.XML_ENCRYPT_PKCS11, true},
+				
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JKS, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS12, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11, true},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JWK, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC, false},
+				
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS12_HEADER_CUSTOM, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_HEADER_CUSTOM, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_HEADER_CUSTOM, true},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS_HEADER_CUSTOM, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM, false},
+				
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM_KID_ONLY, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS12_HEADER_CUSTOM_KID_ONLY, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_HEADER_CUSTOM_KID_ONLY, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_HEADER_CUSTOM_KID_ONLY, true},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY, false},
+				
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_JKS_KEYSTORE, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_JKS_KEYSTORE_HEADER_CUSTOM, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PKCS12_KEYSTORE, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PKCS12_KEYSTORE_HEADER_CUSTOM, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PKCS11_KEYSTORE, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PKCS11_KEYSTORE_HEADER_CUSTOM, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PKCS11_KEYSTORE, true},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PKCS11_KEYSTORE_HEADER_CUSTOM, true},
+				
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_JKS_KEYSTORE_JCE, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_JKS_KEYSTORE_JCE_HEADER_CUSTOM, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PKCS12_KEYSTORE_JCE, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PKCS12_KEYSTORE_JCE_HEADER_CUSTOM, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PKCS11_KEYSTORE_JCE, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PKCS11_KEYSTORE_JCE_HEADER_CUSTOM, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PKCS11_KEYSTORE_JCE, true},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_PKCS11_KEYSTORE_JCE_HEADER_CUSTOM, true},
+				
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_JWK_KEYS, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_JWK_KEYS_HEADER_CUSTOM, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_JWK_KEY, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_JWK_KEY_HEADER_CUSTOM, false},
+				
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEYS, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEYS_HEADER_CUSTOM, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEY, false},
+				{org.openspcoop2.utils.security.TestEncrypt.TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEY_HEADER_CUSTOM, false}
 		};
 	}
 	
 	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST},dataProvider="encryptProvider")
-	public void testEncrypt(org.openspcoop2.utils.security.TestEncrypt.TipoTest tipo) throws Exception{
+	public void testEncrypt(org.openspcoop2.utils.security.TestEncrypt.TipoTest tipo, boolean useP11asTrustStore) throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' (tipo: "+tipo+") ...");
-		org.openspcoop2.utils.security.TestEncrypt.main(new String [] { tipo.name() } );
+		org.openspcoop2.utils.security.TestEncrypt.main(new String [] { tipo.name(), useP11asTrustStore+"" } );
 		TestLogger.info("Run test '"+ID_TEST+"' (tipo: "+tipo+") ok");
 		
 	}

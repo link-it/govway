@@ -45,7 +45,8 @@ public class TestVerifyGoogleJWT {
 //		
 		// NOTA: Questo test non funziona se il token qua sotto è troppo vecchio e si usa l'opzione '*'.
 		//       Il motivo risiede nel fatto che con '*' l'alias viene cercato nel token stesso, e se google ha aggiornato i certificati, non vi sarà un match tra i kids
-		String compactSign = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjBiMDFhOTU4YjY4MGI2MzhmMDU2YzE3ZWQ4NzQ4YmY0YzBiNmQzZTIiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDYyMzU2NTc1OTI2NTQzOTc2ODkiLCJhdF9oYXNoIjoiTlprQ1NPNms4eEZrQ3JBcG5QdFJNdyIsImlhdCI6MTU0NDUyMDk3NywiZXhwIjoxNTQ0NTI0NTc3fQ.EjJwbsrgC3bjclhmKVuh9yn1NoffdOadBDCZHTCIVWz4GQGDnRHC0rxPdH4GhXvuwBQLlD089xuQBPt7HuXR0Td09KGu-KrK7BDeFMm0YnZTZiOq8hdXdPTMBhfjVvusXTA5w0gLdKjqPFsNWWZ2SlvBUehfhyLQ3qWNO8SnnyVKDgyVqOiyp4sIY29lubCUs5Lf6AFdBci_iug1-jjnpsn9SMgtgYl6EIh1bs-oqpjwB4gefA3MlawmxUG2bw5Rqqs-l7jNihejR8Hkz2z0fGDE8u0woAklLA4lmJ_cTU7N_EoYTjcp4uCgQhHT6keTBMdvTU_l3afnthQ9wp8isg";
+		//       Ogni tanto aggiornare il token
+		String compactSign = "eyJhbGciOiJSUzI1NiIsImtpZCI6ImMzMTA0YzY4OGMxNWU2YjhlNThlNjdhMzI4NzgwOTUyYjIxNzQwMTciLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDYyMzU2NTc1OTI2NTQzOTc2ODkiLCJhdF9oYXNoIjoiUmpKb3FIemozMzlrWGpEVU5CdzNtdyIsImlhdCI6MTYzMjMwOTE0OCwiZXhwIjoxNjMyMzEyNzQ4fQ.qcy8D6wWbwJsIlcTxz2m4dnFFerf4rg6_OcVGFOhJ1vNZjS3QsW5ybG5XGuNisN2JQqUQMxlAeCs6-MxD_m0uIBkIA7-BNtWfBi0c6WH3gjG1jBa4uHJDvHX4JqH1PeHJxQ0lt6fn36KxT-zog_6ZkGSt3jKCCeNyGBtyVGsB1DyDH115Cz1OHpiz2SW-z_xouJVcVAIAcismRa-dLseQ56NtodrDWQWFM-AL0hJy3fFUFcDxQZpBYV2vkR6KImzB50iPlsYI0w9-baLfbva1oc6qAnb2ZaOtT9TZOBf5oCGGDeX12S4-lPh87xwjmhgGSGxxNgen1Y3z3gqg6D-fg";
 		
 		try {
 			JWTOptions options = new JWTOptions(JOSESerialization.COMPACT);
@@ -54,6 +55,7 @@ public class TestVerifyGoogleJWT {
 		}catch(Exception e) {
 			if(e.getMessage().contains("NO_VERIFIER")) {
 				System.out.println("JsonCompactSignature fallimento atteso: "+e.getMessage());
+				System.out.println("WARNING: aggiornare l'id_token tramite playground selezionando solo lo scope 'oauth2'");
 			}
 			else {
 				throw e;

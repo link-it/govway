@@ -31,6 +31,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.KeyStore;
+import java.security.Provider;
 import java.security.cert.CertStore;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -51,6 +52,7 @@ import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.mime.MimeTypes;
 import org.openspcoop2.utils.random.RandomGenerator;
@@ -1016,14 +1018,33 @@ public class HttpUtilities {
 				
 				KeyManager[] km = null;
 				TrustManager[] tm = null;
-				
+								
 				KeyStore truststore = null;
 				if(request.isTrustAllCerts()) {
 					tm = SSLUtilities.getTrustAllCertsManager();
 				}
 				else {
+					
+					boolean hsmTruststore = false;
+					HSMManager hsmManager = HSMManager.getInstance();
+					if(hsmManager!=null) {
+						if(request.getTrustStore()!=null) {
+							hsmTruststore = request.isTrustStoreHsm();
+						}
+						else {
+							if(request.getTrustStoreType()!=null && hsmManager.existsKeystoreType(request.getTrustStoreType())) {
+								hsmTruststore = true;			
+							}
+						}
+					}
+					
+					@SuppressWarnings("unused")
+					Provider truststoreProvider = null;
 					if(request.getTrustStore()!=null ) {
 						truststore = request.getTrustStore();
+						if(hsmTruststore) {
+							truststoreProvider = truststore.getProvider();
+						}
 					}
 					else {
 						if(request.getTrustStoreType()==null) {
@@ -1032,21 +1053,41 @@ public class HttpUtilities {
 						if(request.getTrustStorePassword()==null) {
 							throw new UtilsException("Ssl TrustStore password required");
 						}
-						File file = new File(request.getTrustStorePath());
-						if(file.exists()) {
-							finTrustStore = new FileInputStream(file);
+						if(hsmTruststore) {
+							org.openspcoop2.utils.certificate.KeyStore ks = hsmManager.getKeystore(request.getTrustStoreType());
+							if(ks==null) {
+								throw new Exception("Keystore not found");
+							}
+							truststore = ks.getKeystore();
+							truststoreProvider = truststore.getProvider();
 						}
 						else {
-							finTrustStore = SSLUtilities.class.getResourceAsStream(request.getTrustStorePath());
+							File file = new File(request.getTrustStorePath());
+							if(file.exists()) {
+								finTrustStore = new FileInputStream(file);
+							}
+							else {
+								finTrustStore = SSLUtilities.class.getResourceAsStream(request.getTrustStorePath());
+							}
+							if(finTrustStore == null) {
+								throw new Exception("Keystore ["+request.getTrustStorePath()+"] not found");
+							}
+							truststore = KeyStore.getInstance(request.getTrustStoreType()); // JKS,PKCS12,jceks,bks,uber,gkr
+							truststore.load(finTrustStore, request.getTrustStorePassword().toCharArray());
 						}
-						if(finTrustStore == null) {
-							throw new Exception("Keystore ["+request.getTrustStorePath()+"] not found");
-						}
-						truststore = KeyStore.getInstance(request.getTrustStoreType()); // JKS,PKCS12,jceks,bks,uber,gkr
-						truststore.load(finTrustStore, request.getTrustStorePassword().toCharArray());
 					}
-					TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("PKIX");
-					CertPathTrustManagerParameters params = SSLUtilities.buildCertPathTrustManagerParameters(truststore, request.getCrlStore(), request.getCrlPath());
+										
+					TrustManagerFactory trustManagerFactory = null;
+					// NO: no such algorithm: PKIX for provider SunPKCS11-xxx
+					//if(truststoreProvider!=null) {
+					//	trustManagerFactory = TrustManagerFactory.getInstance("PKIX", truststoreProvider);
+					//}
+					//else {
+					trustManagerFactory = TrustManagerFactory.getInstance("PKIX");
+					//}
+					
+					Provider sigProvider = null;					
+					CertPathTrustManagerParameters params = SSLUtilities.buildCertPathTrustManagerParameters(truststore, request.getCrlStore(), request.getCrlPath(), sigProvider);
 					trustManagerFactory.init(params);
 					//trustManagerFactory.init(truststore);
 					tm = trustManagerFactory.getTrustManagers();

@@ -27,6 +27,7 @@ import javax.net.ssl.TrustManagerFactory;
 
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
+import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -414,43 +415,80 @@ public class ConnettoreHTTPSUtils {
 		de.setPostBack(true);
 		dati.addElement(de);
 		
+		boolean truststoreHsm = false;
+		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
+		if(httpsTrustVerifyCert) {
+			de.setType(DataElementType.SELECT);
+			if(core.isConnettoriAllTypesEnabled()) {
+				de.setValues(ConnettoriCostanti.TIPOLOGIE_KEYSTORE_OLD);
+			}
+			else {
+				List<String> values = ConnettoriCostanti.getTIPOLOGIE_KEYSTORE(true, false);
+				List<String> labels = ConnettoriCostanti.getTIPOLOGIE_KEYSTORE(true, true);
+				// per retrocompatibilita verifico che esista ancora nelle nuove, altrimenti lo aggiungo
+				if(httpstipo!=null && !"".equals(httpstipo)) {
+					boolean exists = false;
+					for (String v : values) {
+						if(httpstipo.equalsIgnoreCase(v)) {
+							exists = true;
+						}
+					}
+					if(!exists) {
+						values.add(httpstipo);
+					}
+				}
+				de.setValues(values);
+				de.setLabels(labels);
+				if(ConnettoriCostanti.existsTIPOLOGIE_KEYSTORE_HSM(true)) {
+					de.setPostBack(true);
+				}
+			}
+			if(httpstipo!=null) {
+				de.setSelected(httpstipo);
+				truststoreHsm = HSMUtils.isKeystoreHSM(httpstipo);
+			}
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+		}
+		dati.addElement(de);
+
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 		de.setValue(httpspath);
 		if(httpsTrustVerifyCert) {
-			if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
-				de.setType(DataElementType.TEXT_AREA);
-				de.setRequired(true);	
-			}else{
-				de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+			if(truststoreHsm) {
+				de.setValue(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_PATH_HSM_PREFIX+httpstipo);
+				de.setType(DataElementType.HIDDEN);
 			}
-			de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION_SIZE);
-			de.setSize(pageSize);
+			else {
+				if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
+					de.setType(DataElementType.TEXT_AREA);
+					de.setRequired(true);	
+				}else{
+					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+				}
+				de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION_SIZE);
+				de.setSize(pageSize);
+			}
 		}
 		else {
 			de.setType(DataElementType.HIDDEN);
 		}
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 		dati.addElement(de);
-
-		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
-		if(httpsTrustVerifyCert) {
-			de.setType(DataElementType.SELECT);
-			de.setValues(ConnettoriCostanti.TIPOLOGIE_KEYSTORE);
-			de.setSelected(httpstipo);
-		}
-		else {
-			de.setType(DataElementType.HIDDEN);
-		}
-		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
-		dati.addElement(de);
-
+		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
 		de.setValue(httpspwd);
 		if(httpsTrustVerifyCert) {
-			if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
+			if(truststoreHsm) {
+				de.setValue(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_HSM_STORE_PASSWORD_UNDEFINED);
+				de.setType(DataElementType.HIDDEN);
+			}
+			else if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setRequired(true);	
 			}else{
@@ -568,18 +606,66 @@ public class ConnettoreHTTPSUtils {
 		de.setSize(pageSize);
 		dati.addElement(de);
 
+		boolean keystoreHsm = false;
+		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_TYPE);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_TYPE);
+		if (httpsstato &&
+				(httpskeystore != null && httpskeystore.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI))) {
+			de.setType(DataElementType.SELECT);
+			if(core.isConnettoriAllTypesEnabled()) {
+				de.setValues(ConnettoriCostanti.TIPOLOGIE_KEYSTORE_OLD);
+			}
+			else {
+				List<String> values = ConnettoriCostanti.getTIPOLOGIE_KEYSTORE(false, false);
+				List<String> labels = ConnettoriCostanti.getTIPOLOGIE_KEYSTORE(false, true);
+				// per retrocompatibilita verifico che esista ancora nelle nuove, altrimenti lo aggiungo
+				if(httpstipokey!=null && !"".equals(httpstipokey)) {
+					boolean exists = false;
+					for (String v : values) {
+						if(httpstipokey.equalsIgnoreCase(v)) {
+							exists = true;
+							break;
+						}
+					}
+					if(!exists) {
+						values.add(httpstipokey);
+					}
+				}
+				de.setValues(values);
+				de.setLabels(labels);
+				if(ConnettoriCostanti.existsTIPOLOGIE_KEYSTORE_HSM(false)) {
+					de.setPostBack(true);
+				}
+			}
+			if(httpstipokey!=null) {
+				de.setSelected(httpstipokey);
+				keystoreHsm = HSMUtils.isKeystoreHSM(httpstipokey);
+			}
+		} else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue("");
+		}
+		dati.addElement(de);
+		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION);
 		de.setValue(httpspathkey);
 		if (httpsstato &&
 				(httpskeystore != null && httpskeystore.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI))){
-			if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
-				de.setType(DataElementType.TEXT_AREA);
-				de.setRequired(true);	
-			}else{
-				de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+			if(keystoreHsm) {
+				de.setValue(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_PATH_HSM_PREFIX+httpstipokey);
+				de.setType(DataElementType.HIDDEN);
 			}
-			de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION_SIZE);
+			else {
+				if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
+					de.setType(DataElementType.TEXT_AREA);
+					de.setRequired(true);	
+				}else{
+					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+				}
+				de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION_SIZE);
+			}
 		}else
 			de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION);
@@ -587,25 +673,15 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_TYPE);
-		if (httpsstato &&
-				(httpskeystore != null && httpskeystore.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI))) {
-			de.setType(DataElementType.SELECT);
-			de.setValues(ConnettoriCostanti.TIPOLOGIE_KEYSTORE);
-			de.setSelected(httpstipokey);
-		} else {
-			de.setType(DataElementType.HIDDEN);
-			de.setValue("");
-		}
-		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_TYPE);
-		dati.addElement(de);
-
-		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
 		de.setValue(httpspwdkey);
 		if (httpsstato &&
 				(httpskeystore != null && httpskeystore.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI))){
-			if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
+			if(keystoreHsm) {
+				de.setValue(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_HSM_STORE_PASSWORD_UNDEFINED);
+				de.setType(DataElementType.HIDDEN);
+			}
+			else if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setRequired(true);	
 			}else{
@@ -622,7 +698,11 @@ public class ConnettoreHTTPSUtils {
 		de.setValue(httpspwdprivatekey);
 		if (httpsstato &&
 				(httpskeystore != null && httpskeystore.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI))){
-			if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
+			if(keystoreHsm && !ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_HSM_CONFIGURABLE_KEY_PASSWORD) {
+				de.setValue(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_HSM_PRIVATE_KEY_PASSWORD_UNDEFINED);
+				de.setType(DataElementType.HIDDEN);
+			}
+			else if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setRequired(true);	
 			}else{

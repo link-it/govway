@@ -1,5 +1,5 @@
 <config id="messageSecurity.jose.receiver.encrypt" label="JWE Decrypt" xmlns="http://www.openspcoop2.org/core/mvc/properties"
-	provider="org.openspcoop2.security.message.jose.SecurityProvider">
+	provider="org.openspcoop2.security.message.jose.KeyStoreWithSecretKeySecurityProvider">
 
 	<compatibility not="false" and="false">
         <tags and="true">
@@ -71,12 +71,6 @@
             </conditions>
 
 			<item type="select" name="keystoreType" label="Tipo" default="jks" reloadOnChange="true">
-				<values>
-					<value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/>
-					<value value="jceks" label="JCEKS"/>
-					<value value="jwk" label="JWK Set"/>
-				</values>
 				<property name="rs.security.keystore.type" properties="decryptionPropRefId" />
 			</item>
 			<item type="textarea" name="keystoreFile" label="File" required="true">

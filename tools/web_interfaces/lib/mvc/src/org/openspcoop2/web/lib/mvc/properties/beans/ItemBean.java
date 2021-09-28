@@ -21,6 +21,7 @@ package org.openspcoop2.web.lib.mvc.properties.beans;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -103,7 +104,14 @@ public class ItemBean extends BaseItemBean<Item>{
 	}
 
 	@Override
-	public DataElement toDataElement() throws ProviderException {
+	public DataElement toDataElement(ConfigBean config, Map<String, String> mapNameValue) throws ProviderException {
+
+		if(this.provider!=null){
+			this.value = this.provider.dynamicUpdate(config.getListaItemSDK(), mapNameValue, this.getItem(), this.value);
+		}
+		
+		mapNameValue.put(this.name, this.value);
+		
 		DataElement de = new DataElement();
 		de.setName(this.getName());
 		de.setLabel(this.getItem().getLabel()); 
@@ -175,7 +183,7 @@ public class ItemBean extends BaseItemBean<Item>{
 		default:
 			break;
 		}
-
+		
 		return de;
 	}
 

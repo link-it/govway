@@ -20,6 +20,7 @@
 package org.openspcoop2.web.lib.mvc.properties.test;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -76,8 +77,9 @@ public class Test {
 			
 			System.out.println("ConfigurazioneAdd IN Pagina: ");
 			
+			Map<String, String> mapNameValue = new HashMap<String, String>();
 			for (BaseItemBean<?> item : configurazioneAdd.getListaItem()) {
-				DataElement de = item.toDataElement();
+				DataElement de = item.toDataElement(configurazioneAdd, mapNameValue);
 				System.out.println("Item ["+de.getName()+"] Type ["	+de.getType() +"] Label ["+de.getLabel()+"] Value ["+de.getValue()+"]");
 			}
 						
@@ -96,8 +98,9 @@ public class Test {
 			
 			System.out.println("ConfigurazioneAdd IN Pagina: ");
 			
+			mapNameValue = new HashMap<String, String>();
 			for (BaseItemBean<?> item : configurazioneAdd.getListaItem()) {
-				DataElement de = item.toDataElement();
+				DataElement de = item.toDataElement(configurazioneAdd, mapNameValue);
 				if(de.getType().equals(DataElementType.CHECKBOX.toString()) || de.getType().equals(DataElementType.SELECT.toString()) )
 					System.out.println("Item ["+de.getName()+"] Type ["	+de.getType() +"] Label ["+de.getLabel()+"] SelectedValue ["+de.getSelected()+"]");
 				else 
@@ -182,8 +185,9 @@ public class Test {
 			
 			System.out.println("configurazioneChange IN Pagina: ");
 			
+			mapNameValue = new HashMap<String, String>();
 			for (BaseItemBean<?> item : configurazioneChange.getListaItem()) {
-				DataElement de = item.toDataElement();
+				DataElement de = item.toDataElement(configurazioneAdd, mapNameValue);
 				if(de.getType().equals(DataElementType.CHECKBOX.toString()) || de.getType().equals(DataElementType.SELECT.toString()) )
 					System.out.println("Item ["+de.getName()+"] Type ["	+de.getType() +"] Label ["+de.getLabel()+"] SelectedValue ["+de.getSelected()+"]");
 				else 

@@ -198,11 +198,12 @@ public class XmlEncrypt extends AbstractXmlCipher {
 				if(wrappedKeyAlgorithm==null){
 					throw new UtilsException("WrappedKeyAlgorithm undefined");
 				}
+				//System.out.println("PROVIDER ["+this.provider+"]");
 				org.apache.xml.security.encryption.XMLCipher xmlCipherWrappedAlgorithm = super.getXMLCipherWrappedKey(wrappedKeyAlgorithm);
 				if(keyAlgorithm==null){
 					throw new UtilsException("KeyAlgorithm undefined");
 				}
-				super.secretKeyEncrypt = generateSecretKey(keyAlgorithm);
+				super.secretKeyEncrypt = generateSecretKey(keyAlgorithm, this.provider);
 				encryptedKey = xmlCipherWrappedAlgorithm.encryptKey(document, super.secretKeyEncrypt);
 			}
 			

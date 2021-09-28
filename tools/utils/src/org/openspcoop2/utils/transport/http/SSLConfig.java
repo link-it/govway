@@ -45,6 +45,7 @@ public class SSLConfig implements Serializable  {
 	private boolean trustAllCerts = false;
 	// TrustStore
 	private transient KeyStore trustStore;
+	private transient boolean trustStoreHsm;
 	// Path del trustStore che contiene il certificato del server.
 	private String trustStoreLocation;
 	// Password del trustStore che contiene il certificato del server.
@@ -62,6 +63,7 @@ public class SSLConfig implements Serializable  {
 	// AUTENTICAZIONE CLIENT:
 	// KeyStore
 	private transient KeyStore keyStore;
+	private transient boolean keyStoreHsm;
 	// Path del keyStore che contiene il certificato del client e la chiave privata del client.
 	private String keyStoreLocation;
 	// Password del keyStore che contiene il certificato del client
@@ -164,17 +166,31 @@ public class SSLConfig implements Serializable  {
 	public KeyStore getTrustStore() {
 		return this.trustStore;
 	}
+	public boolean isTrustStoreHsm() {
+		return this.trustStoreHsm;
+	}
 
 	public void setTrustStore(KeyStore trustStore) {
+		this.setTrustStore(trustStore, false);
+	}
+	public void setTrustStore(KeyStore trustStore, boolean hsm) {
 		this.trustStore = trustStore;
+		this.trustStoreHsm = hsm;
 	}
 
 	public KeyStore getKeyStore() {
 		return this.keyStore;
 	}
+	public boolean isKeyStoreHsm() {
+		return this.keyStoreHsm;
+	}
 
 	public void setKeyStore(KeyStore keyStore) {
+		this.setKeyStore(keyStore, false);
+	}
+	public void setKeyStore(KeyStore keyStore, boolean hsm) {
 		this.keyStore = keyStore;
+		this.keyStoreHsm = hsm;
 	}
 	
 	public String getTrustStoreLocation() {

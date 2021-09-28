@@ -22,6 +22,7 @@
 package org.openspcoop2.utils.security;
 
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
@@ -36,7 +37,6 @@ import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
@@ -58,15 +58,35 @@ public class PKCS7Signature {
 	private KeyStore keystore;
 	private PrivateKey privateKey;
 	private Certificate certificate;
-	private BouncyCastleProvider bouncyCastleProvider;
+	private Provider provider;
 	
 	public PKCS7Signature(KeyStore keystore, String alias, String passwordPrivateKey) throws UtilsException{
 		this.keystore = keystore;
 		this.privateKey = this.keystore.getPrivateKey(alias, passwordPrivateKey);
 		this.certificate = this.keystore.getCertificate(alias);
 		
-		this.bouncyCastleProvider = new BouncyCastleProvider();
-		Security.addProvider(this.bouncyCastleProvider);
+		this.provider = keystore.getKeystoreProvider();
+	
+		// Prendo il provider dal keystore per PKCS11
+		// Per gli altri keystore, visto che la SUN non supporta l'algoritmo di firma è possibile usare bouncy castle nell'altro costruttore
+		//	this.provider = new BouncyCastleProvider();
+		//	Security.addProvider(this.provider);
+	
+	}
+	public PKCS7Signature(KeyStore keystore, String alias, String passwordPrivateKey, boolean useBouncyCastle, boolean addBouncyCastleProvider) throws UtilsException{
+		this(keystore, alias, passwordPrivateKey);
+		if(useBouncyCastle) {
+			if(addBouncyCastleProvider) {
+				this.provider = Security.getProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
+				if(this.provider==null) {
+					Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+					this.provider = Security.getProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
+				}
+			}
+			else {
+				this.provider = Security.getProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
+			}
+		}
 	}
 	
 	public byte[] sign(String data, String charsetName, String algorithm) throws UtilsException{
@@ -93,11 +113,11 @@ public class PKCS7Signature {
 
 			CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
 			// Initializing the the BC's Signer
-			ContentSigner sha1Signer = new JcaContentSignerBuilder(algorithm).setProvider(this.bouncyCastleProvider)
+			ContentSigner sha1Signer = new JcaContentSignerBuilder(algorithm).setProvider(this.provider)
 					.build(this.privateKey);
 
 			gen.addSignerInfoGenerator(
-					new JcaSignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().setProvider(this.bouncyCastleProvider).build())
+					new JcaSignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().setProvider(this.provider).build())
 							.build(sha1Signer, cert));
 			// adding the certificate
 			gen.addCertificates(certs);

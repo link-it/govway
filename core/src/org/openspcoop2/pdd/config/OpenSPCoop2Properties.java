@@ -859,6 +859,10 @@ public class OpenSPCoop2Properties {
 				}
 			}
 			
+			this.getHSMConfig();
+			this.isHSMConfigRequired();
+			this.isHSMConfig_uniqueProviderInstance();
+			
 			this.getHttpUserAgent();
 			this.getHttpServer();
 			this.getHttpXPdDDetails();
@@ -8984,6 +8988,77 @@ public class OpenSPCoop2Properties {
 			}
 		}
 		return OpenSPCoop2Properties.getGestoreCredenzialiPortaApplicativaHeaderPrincipal;
+	}
+	
+	
+	
+	/* ********  HSM  ******** */
+	
+	private static String getHSMConfig = null;
+	public String getHSMConfig(){
+		if(OpenSPCoop2Properties.getHSMConfig==null){
+			String pName = "org.openspcoop2.pdd.hsm.config";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+				if(value!=null){
+					value = value.trim();
+					if(!"".equals(value)) {
+						OpenSPCoop2Properties.getHSMConfig = value;
+					}
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, non verrà abilitato l'engine HSM errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getHSMConfig = null;
+			}
+		}
+		return OpenSPCoop2Properties.getHSMConfig;
+	}
+	
+	private static Boolean isHSMConfigRequired= null;
+	public boolean isHSMConfigRequired(){
+		if(OpenSPCoop2Properties.isHSMConfigRequired==null){
+			String pName = "org.openspcoop2.pdd.hsm.required";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isHSMConfigRequired = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isHSMConfigRequired = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isHSMConfigRequired = false;
+			}
+		}
+		return OpenSPCoop2Properties.isHSMConfigRequired;
+	}
+	
+	private static Boolean isHSMConfig_uniqueProviderInstance= null;
+	public boolean isHSMConfig_uniqueProviderInstance(){
+		if(OpenSPCoop2Properties.isHSMConfig_uniqueProviderInstance==null){
+			String pName = "org.openspcoop2.pdd.hsm.uniqueProviderInstance";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isHSMConfig_uniqueProviderInstance = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isHSMConfig_uniqueProviderInstance = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isHSMConfig_uniqueProviderInstance = true;
+			}
+		}
+		return OpenSPCoop2Properties.isHSMConfig_uniqueProviderInstance;
 	}
 	
 

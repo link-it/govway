@@ -23,6 +23,8 @@ package org.openspcoop2.utils.security;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
+import java.security.Key;
+import java.security.PrivateKey;
 import java.security.cert.CertStore;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
@@ -37,6 +39,7 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.cxf.rs.security.jose.common.JoseConstants;
+import org.apache.cxf.rs.security.jose.common.KeyManagementUtils;
 import org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm;
 import org.apache.cxf.rs.security.jose.jwe.ContentEncryptionProvider;
 import org.apache.cxf.rs.security.jose.jwe.JweDecryptionProvider;
@@ -46,6 +49,7 @@ import org.apache.cxf.rs.security.jose.jwe.JweException;
 import org.apache.cxf.rs.security.jose.jwe.JweHeaders;
 import org.apache.cxf.rs.security.jose.jwe.JweUtils;
 import org.apache.cxf.rs.security.jose.jwe.KeyEncryptionProvider;
+import org.apache.cxf.rs.security.jose.jwe.WrappedKeyDecryptionAlgorithm;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKey;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
 import org.apache.cxf.rs.security.jose.jwk.JwkUtils;
@@ -54,6 +58,7 @@ import org.apache.cxf.rs.security.jose.jws.JwsException;
 import org.apache.cxf.rs.security.jose.jws.JwsSignatureProvider;
 import org.apache.cxf.rs.security.jose.jws.JwsSignatureVerifier;
 import org.apache.cxf.rs.security.jose.jws.JwsUtils;
+import org.apache.cxf.rs.security.jose.jws.PrivateKeyJwsSignatureProvider;
 import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
@@ -282,9 +287,31 @@ public class JsonUtils {
 		return jsonWebKey;
 	}
 	
+	public static SecretKeyPkcs11 getSecretKeyPKCS11(Properties props) throws Exception {
+		if(props.containsKey(RSSecurityConstants.RSSEC_KEY_STORE_TYPE)) {
+			String type = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
+			
+			if("pkcs11".equalsIgnoreCase(type)) {
+				Object oKeystore = props.get(RSSecurityConstants.RSSEC_KEY_STORE);
+				if(oKeystore!=null && oKeystore instanceof java.security.KeyStore) {
+					java.security.KeyStore keystorePKCS11 = (java.security.KeyStore) oKeystore;
+					String alias = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS);
+					if(alias==null || "".equals(alias)){
+						throw new Exception("(Secret-PKCS11) Alias key undefined");
+					}				
+					Key key = keystorePKCS11.getKey(alias, null);
+					if(key instanceof SecretKey) {
+						return new SecretKeyPkcs11(keystorePKCS11.getProvider(), (SecretKey) key);
+					}
+				}
+			}
+		}
+		return null;
+	}
 	public static SecretKey getSecretKey(Properties props) throws Exception {
 		if(props.containsKey(RSSecurityConstants.RSSEC_KEY_STORE_TYPE)) {
 			String type = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
+			
 			if("jceks".equalsIgnoreCase(type)) {
 				Object oKeystore = props.get(RSSecurityConstants.RSSEC_KEY_STORE);
 				String fileK = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
@@ -407,6 +434,15 @@ public class JsonUtils {
 	}
 	public static JwsSignatureProvider getJwsSymmetricProvider(Properties props, org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algorithm) throws Exception {
 		
+		SecretKeyPkcs11 secretKeyPkcs11 = getSecretKeyPKCS11(props);
+		if(secretKeyPkcs11!=null) {
+			if(algorithm==null || "".equals(algorithm)) {
+				throw new Exception("(SecretKey PKCS11) Signature Algorithm undefined");
+			}
+			JwsSignatureProvider provider = new HmacJwsSignatureProvider(secretKeyPkcs11, algorithm);
+			return provider;
+		}
+		
 		SecretKey secretKey = getSecretKey(props);
 		if(secretKey!=null) {
 			if(algorithm==null || "".equals(algorithm)) {
@@ -435,6 +471,34 @@ public class JsonUtils {
 		}
 		return null;
 	}
+	
+	// ** INIZIO METODI PER OTTENERE UN JwsSignatureProvider CON PKCS11
+	public static JwsSignatureProvider getJwsAsymmetricProvider(Properties props) throws Exception {
+		String algorithm = props.getProperty(RSSecurityConstants.RSSEC_SIGNATURE_ALGORITHM);
+		return getJwsAsymmetricProvider(props, algorithm);
+	}
+	public static JwsSignatureProvider getJwsAsymmetricProvider(Properties props, String algorithm) throws Exception {
+		org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = null;
+		if(algorithm!=null && !"".equals(algorithm)) {
+			algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(algorithm);
+		}
+		return getJwsAsymmetricProvider(props, algo);
+	}
+	public static JwsSignatureProvider getJwsAsymmetricProvider(Properties props, org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algorithm) throws Exception {
+		String type = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
+		if(type==null || "".equals(type)) {
+			type="undefined";
+		}
+		if(algorithm==null || "".equals(algorithm)) {
+			throw new Exception("("+type+") Signature Algorithm undefined");
+		}
+		PrivateKey pKey = KeyManagementUtils.loadPrivateKey(null, props, KeyOperation.SIGN);
+		return getJwsAsymmetricProvider(pKey, algorithm);
+	}
+	public static JwsSignatureProvider getJwsAsymmetricProvider(PrivateKey pKey, org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algorithm) throws Exception {
+		return new PrivateKeyJwsSignatureProvider(pKey, algorithm);
+	}
+	// ** FINE METODI PER OTTENERE UN JwsSignatureProvider CON PKCS11
 	
 	public static JwsSignatureVerifier getJwsSignatureVerifier(Properties props) throws Exception {
 		String algorithm = props.getProperty(RSSecurityConstants.RSSEC_SIGNATURE_ALGORITHM);
@@ -550,6 +614,47 @@ public class JsonUtils {
 		}
 		return null;
 	}
+	
+	// ** INIZIO METODI PER OTTENERE UN JweDecryptionProvider CON PKCS11
+	public static JweDecryptionProvider getJweAsymmetricDecryptionProvider(Properties props) throws Exception {
+		String  contentAlgorithm = props.getProperty(JoseConstants.RSSEC_ENCRYPTION_CONTENT_ALGORITHM);
+		String  keyAlgorithm = props.getProperty(JoseConstants.RSSEC_ENCRYPTION_KEY_ALGORITHM);
+		return getJweAsymmetricDecryptionProvider(props, keyAlgorithm, contentAlgorithm);
+	}
+	public static JweDecryptionProvider getJweAsymmetricDecryptionProvider(Properties props, String keyAlgorithm, String contentAlgorithm) throws Exception {
+		org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm contentAlgo = null;
+		if(contentAlgorithm!=null && !"".equals(contentAlgorithm)) {
+			contentAlgo = org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm.getAlgorithm(contentAlgorithm);
+		}
+		org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm keyAlgo = null;
+		if(keyAlgorithm!=null && !"".equals(keyAlgorithm)) {
+			keyAlgo = org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm.getAlgorithm(keyAlgorithm);
+		}
+		return getJweAsymmetricDecryptionProvider(props, keyAlgo, contentAlgo);
+	}
+	public static JweDecryptionProvider getJweAsymmetricDecryptionProvider(Properties props, 
+			org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm keyAlgorithm,
+			org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm contentAlgorithm) throws Exception {
+		String type = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
+		if(type==null || "".equals(type)) {
+			type="undefined";
+		}
+		if(contentAlgorithm==null || "".equals(contentAlgorithm)) {
+			throw new Exception("("+type+") Content Algorithm undefined");
+		}
+		if(keyAlgorithm==null || "".equals(keyAlgorithm)) {
+			throw new Exception("("+type+") Key Algorithm undefined");
+		}
+		PrivateKey privateKey = KeyManagementUtils.loadPrivateKey(null, props, KeyOperation.DECRYPT);
+		return getJweAsymmetricDecryptionProvider(privateKey, keyAlgorithm, contentAlgorithm);
+	}
+	public static JweDecryptionProvider getJweAsymmetricDecryptionProvider(PrivateKey privateKey,
+			org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm keyAlgorithm,
+			org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm contentAlgorithm) throws Exception {
+		WrappedKeyDecryptionAlgorithm privateKeyDecryptionProvider = new WrappedKeyDecryptionAlgorithm(privateKey, keyAlgorithm, false);
+		return JweUtils.createJweDecryptionProvider(privateKeyDecryptionProvider, contentAlgorithm);
+	}
+	// ** FINE METODI PER OTTENERE UN JweDecryptionProvider CON PKCS11
 	
 	public static JweEncryptionProvider getJweEncryptionProviderFromJWKSymmetric(Properties props, JweHeaders headers) {
 

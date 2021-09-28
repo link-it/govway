@@ -1819,6 +1819,25 @@ public class XMLDataConverter {
 				gestioneDefaultConnettoreHTTP(fruitore.getConnettore());
 			}
 		}
+		if(fruitore.getConfigurazioneAzioneList()!=null && fruitore.sizeConfigurazioneAzioneList()>0) {
+			for (int i = 0; i < fruitore.sizeConfigurazioneAzioneList(); i++) {
+				if(fruitore.getConfigurazioneAzione(i).getConnettore()!=null) {
+					// I nomi vengono autogenerati dal driver
+					fruitore.getConfigurazioneAzione(i).getConnettore().setNome(null);
+					// I tipi diversi da disabilitato,http,jms,null,nullEcho sono custom
+					String tipoConnettore = fruitore.getConfigurazioneAzione(i).getConnettore().getTipo();
+					if ( !TipiConnettore.JMS.getNome().equals(tipoConnettore) && !TipiConnettore.HTTP.getNome().equals(tipoConnettore) &&
+						 !TipiConnettore.DISABILITATO.getNome().equals(tipoConnettore) && !TipiConnettore.NULL.getNome().equals(tipoConnettore) &&
+						 !TipiConnettore.NULLECHO.getNome().equals(tipoConnettore) ){
+						fruitore.getConfigurazioneAzione(i).getConnettore().setCustom(true);
+					}
+					// Gestione default per connettore https
+					if(TipiConnettore.HTTPS.getNome().equals(tipoConnettore)){
+						gestioneDefaultConnettoreHTTP(fruitore.getConfigurazioneAzione(i).getConnettore());
+					}
+				}
+			}
+		}
 	}
 	public static void impostaInformazioniRegistroDB_AccordoServizioParteSpecifica(AccordoServizioParteSpecifica servizio){
 		if(servizio.getConfigurazioneServizio()!=null && servizio.getConfigurazioneServizio().getConnettore()!=null){

@@ -1,5 +1,5 @@
 <config id="messageSecurity.jose.sender.signature" label="JWS Signature" xmlns="http://www.openspcoop2.org/core/mvc/properties"
-	provider="org.openspcoop2.security.message.jose.SecurityProvider">
+	provider="org.openspcoop2.security.message.jose.KeyStoreSecurityProvider">
 
 	 <compatibility not="false" and="false">
          <tags and="true">
@@ -111,18 +111,13 @@
 		<subsection label="KeyStore">
 
 			<conditions>
-                    <condition not="true">
-                            <equals name="signatureAlgorithm" value="NONE"/>
-                    </condition>
-            </conditions>
+				<condition not="true" and="false">
+					<equals name="signatureAlgorithm" value="NONE"/>
+					<startsWith name="signatureAlgorithm" value="HS"/>
+				</condition>
+			</conditions>
 
 			<item type="select" name="keystoreType" label="Tipo" default="jks" reloadOnChange="true">
-				<values>
-					<value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/>
-					<value value="jceks" label="JCEKS"/>
-					<value value="jwk" label="JWK Set"/>
-				</values>
 				<property name="rs.security.keystore.type" properties="signaturePropRefId" />
 			</item>
 			<item type="textarea" name="keystoreFile" label="File" required="true">
@@ -139,7 +134,6 @@
 			<item type="text" name="keystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
 				<conditions>
 					<condition not="true" and="false">
-						<equals name="keystoreType" value="jceks"/>
 						<equals name="keystoreType" value="jwk"/>
 					</condition>
 				</conditions>
@@ -153,33 +147,60 @@
 				</conditions>
 			    <property name="rs.security.keystore.alias" properties="signaturePropRefId" />
 			</item>
-			<item type="text" name="keystoreSecretKeyAlias" label="Alias Chiave Segreta" required="true">
-				<conditions>
-					<condition and="true">
-						<equals name="keystoreType" value="jceks"/>
-					</condition>
-				</conditions>
-			    <property name="rs.security.keystore.alias" properties="signaturePropRefId" />
-			</item>
 			<item type="text" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
 				<conditions>
 					<condition not="true" and="false">
-						<equals name="keystoreType" value="jceks"/>
 						<equals name="keystoreType" value="jwk"/>
-					</condition>
-				</conditions>
-			    <property name="rs.security.key.password" properties="signaturePropRefId" />
-			</item>
-			<item type="text" name="keystoreSecretKeyPassword" label="Password Chiave Segreta" required="true">
-				<conditions>
-					<condition and="true">
-						<equals name="keystoreType" value="jceks"/>
 					</condition>
 				</conditions>
 			    <property name="rs.security.key.password" properties="signaturePropRefId" />
 			</item>
 
 		</subsection>
+
+		<subsection label="KeyStore">
+
+			<conditions>
+				<condition>
+					<startsWith name="signatureAlgorithm" value="HS"/>
+				</condition>
+			</conditions>
+
+			<item type="select" name="secretkeystoreType" label="Tipo" default="jceks" reloadOnChange="true">
+				<property name="rs.security.keystore.type" properties="signaturePropRefId" />
+			</item>
+			<item type="textarea" name="secretkeystoreFile" label="File" required="true">
+			    <property name="rs.security.keystore.file" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="secretkeystorePassword" label="Password" required="true">
+				<conditions>
+					<condition not="true" and="true">
+						<equals name="secretkeystoreType" value="jwk"/>
+					</condition>
+				</conditions>
+			    <property name="rs.security.keystore.password" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="secretkeystoreKidAlias" label="Kid Chiave Privata" required="true">
+				<conditions>
+					<condition and="true">
+						<equals name="secretkeystoreType" value="jwk"/>
+					</condition>
+				</conditions>
+			    <property name="rs.security.keystore.alias" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="secretkeystoreSecretKeyAlias" label="Alias Chiave Segreta" required="true">
+				<conditions>
+					<condition not="true" and="true">
+						<equals name="secretkeystoreType" value="jwk"/>
+					</condition>
+				</conditions>
+			    <property name="rs.security.keystore.alias" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="secretkeystorePrivateKeyPassword" label="Password Chiave Segreta" required="true">
+			    <property name="rs.security.key.password" properties="signaturePropRefId" />
+			</item>
+
+		</subsection>		
 
 		<subsection label="Headers">
 		
@@ -198,9 +219,12 @@
             
             <item type="select" name="includeCertMode" label="X.509 Certificate" default="-" reloadOnChange="true" >
 	            <conditions>
-	                <condition and="false">
-	                        <equals name="keystoreType" value="jks"/>
-	                        <equals name="keystoreType" value="pkcs12"/>
+			<condition not="true" and="false">
+					<equals name="signatureAlgorithm" value="NONE"/>
+					<startsWith name="signatureAlgorithm" value="HS"/>
+			</condition>
+	                <condition not="true" and="false">
+	                        <equals name="keystoreType" value="jwk"/>
 	                </condition>
 		        </conditions>
 				<values>
@@ -229,9 +253,12 @@
 			
 			<item type="select" name="includeCertShaMode" label="Digest X.509 Certificate" default="-" reloadOnChange="true" >
 	            <conditions>
-	                <condition and="false">
-	                        <equals name="keystoreType" value="jks"/>
-	                        <equals name="keystoreType" value="pkcs12"/>
+			<condition not="true" and="false">
+					<equals name="signatureAlgorithm" value="NONE"/>
+					<startsWith name="signatureAlgorithm" value="HS"/>
+			</condition>
+	                <condition not="true" and="false">
+	                        <equals name="keystoreType" value="jwk"/>
 	                </condition>
 		        </conditions>
 				<values>
@@ -261,6 +288,10 @@
 			
 			<item type="select" name="includePublicKeyMode" label="Public Key" default="-" reloadOnChange="true" >
 	            <conditions>
+			<condition not="true" and="false">
+					<equals name="signatureAlgorithm" value="NONE"/>
+					<startsWith name="signatureAlgorithm" value="HS"/>
+			</condition>
 	                <condition>
                             <equals name="keystoreType" value="jwk"/>
                     </condition>

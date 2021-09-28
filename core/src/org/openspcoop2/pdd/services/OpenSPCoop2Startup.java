@@ -50,6 +50,7 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.lang.StringUtils;
 import org.bouncycastle.crypto.CryptoServicesRegistrar;
 import org.jminix.console.tool.StandaloneMiniConsole;
 import org.openspcoop2.core.commons.DBUtils;
@@ -185,6 +186,7 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.openspcoop2.utils.cache.Cache;
+import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
@@ -2331,6 +2333,30 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+			
+			
+			/* ----------- Gestori HSM ------------ */
+			try {
+				String hsmConfig = propertiesReader.getHSMConfig();
+				if(StringUtils.isNotEmpty(hsmConfig)) {
+					File f = new File(hsmConfig);
+					HSMManager.init(f, propertiesReader.isHSMConfigRequired(), log);
+					HSMManager hsmManager = HSMManager.getInstance();
+					hsmManager.providerInit(logCore, propertiesReader.isHSMConfig_uniqueProviderInstance());
+					String msgInit = "Gestore HSM inizializzato; keystore registrati: "+hsmManager.getKeystoreTypes();
+					log.info(msgInit);
+					logCore.info(msgInit);
+				}
+			} catch (Exception e) {
+				logCore.error("Inizializzazione Gestore HSM non riuscita: "+e.getMessage(),e);
+				msgDiag.logStartupError(e,"Inizializzazione Gestore HSM");
+				return;
+			}
+			
+			
+			
+			
+			
 		
 		
 			/* ----------- Inizializzazione Risorse JMX ------------ */
@@ -2528,7 +2554,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						Costanti.TRANSACTION_ERROR_STATUS_ABILITATO, Costanti.TRANSACTION_ERROR_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE,
 						Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS, Costanti.TRANSACTION_ERROR_INSTANCE_ID_ABILITATO, Costanti.TRANSACTION_ERROR_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE,
 						infoConfigSistema.getInformazioniDatabase(), infoConfigSistema.getInformazioniAltriDatabase(),
-						infoConfigSistema.getInformazioniSSL(true,true),
+						infoConfigSistema.getInformazioniSSL(true,true,true),
 						infoConfigSistema.getInformazioniCryptographyKeyLength(),
 						infoConfigSistema.getInformazioniCharset(),
 						infoConfigSistema.getInformazioniInternazionalizzazione(true),

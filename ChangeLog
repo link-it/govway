@@ -1,3 +1,20 @@
+2021-09-28  Andrea Poli <apoli@link.it>
+
+	* [Utils, GovWayCore]
+	Aggiunta funzionalità OP-1257
+	Aggiunto supporto per device pkcs11.
+	Keystore HSM via 'PKCS11' sono adesso utilizzabili con il connettore 'https' e con le funzionalità di sicurezza dei messaggi (WSSecurity, XMLSecurity e JOSE).
+
+2021-09-27  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto bug che non consentiva di processare SOAP Envelope 1.2 con WSSecurity quando la configurazione prevedeva l'utilizzo di un 'role' o l'impostazione del mustUnderstand.
+
+2021-09-26  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	La funzionalità di import non gestiva correttamente l'importazione di fruizioni in cui era stato ridefinito il connettore, per specifiche azioni/risorse, attraverso l'utilizzo della tipologia 'https'.
+
 2021-09-18  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloSPCoop]
