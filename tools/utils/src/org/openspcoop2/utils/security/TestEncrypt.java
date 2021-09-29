@@ -114,6 +114,8 @@ public class TestEncrypt {
 		InputStream jwk_symmetric_isKeystore = null;
 		File jwk_symmetric_fKeystore = null;
 		try{
+			System.out.println("env SOFTHSM2_CONF: "+System.getenv("SOFTHSM2_CONF"));
+			
 			LoggerWrapperFactory.setDefaultConsoleLogConfiguration(Level.ALL);
 			Logger log = LoggerWrapperFactory.getLogger(TestEncrypt.class);
 			

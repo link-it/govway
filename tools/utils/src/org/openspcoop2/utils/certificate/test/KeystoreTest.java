@@ -99,6 +99,8 @@ public class KeystoreTest {
 		
 		System.out.println("========================= PKCS11 ==============================");
 		
+		System.out.println("env SOFTHSM2_CONF: "+System.getenv("SOFTHSM2_CONF"));
+		
 		byte [] b = Utilities.getAsByteArray(KeystoreTest.class.getResourceAsStream(PREFIX+"govway_test_hsm.properties"));
 		
 		File f = File.createTempFile("test", ".properties");
