@@ -1646,6 +1646,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			connettoreMsg.setBusta(bustaRichiesta);
 			connettoreMsg.setMsgDiagnostico(msgDiag);
 			connettoreMsg.setState(openspcoopstate.getStatoRichiesta());
+			if(consegnaMessagePrimaTrasformazione!=null && consegnaMessagePrimaTrasformazione.getTransportRequestContext()!=null) {
+				connettoreMsg.setUrlInvocazionePorta(consegnaMessagePrimaTrasformazione.getTransportRequestContext().getUrlInvocazione_formBased());
+			}
 
 			bustaRichiesta.setID(originalID);
 

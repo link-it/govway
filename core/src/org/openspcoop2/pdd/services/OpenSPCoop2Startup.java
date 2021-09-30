@@ -627,6 +627,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}
 			}
 			
+			// Inizializzo Semaphore
+			org.openspcoop2.utils.Semaphore.TIMEOUT_MS=propertiesReader.getSemaphoreTimeoutMS();
+			org.openspcoop2.utils.Semaphore.DEBUG=propertiesReader.isSemaphoreDebug();
+			OpenSPCoop2Startup.log.info("Impostazione semaphore timeoutMS="+org.openspcoop2.utils.Semaphore.TIMEOUT_MS+" debug="+org.openspcoop2.utils.Semaphore.DEBUG);
 			
 			
 

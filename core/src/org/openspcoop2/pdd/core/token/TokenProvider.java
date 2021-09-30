@@ -26,12 +26,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.openspcoop2.core.mvc.properties.Item;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.pdd.core.token.parser.TipologiaClaims;
+import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.jose.JOSECostanti;
 import org.openspcoop2.security.message.jose.SecurityProvider;
+import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
+import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 
@@ -661,40 +665,101 @@ public class TokenProvider implements IProvider {
 			}
 			return tipologie;
 		}
-		else if(Costanti.ID_JWS_SIGNATURE_ALGORITHM.equals(id) ||
+		else if(JOSECostanti.ID_ENCRYPT_KEY_ALGORITHM.equals(id) ||
+				JOSECostanti.ID_ENCRYPT_CONTENT_ALGORITHM.equals(id) ||
+				Costanti.ID_JWS_SIGNATURE_ALGORITHM.equals(id) ||
 				Costanti.ID_JWS_ENCRYPT_KEY_ALGORITHM.equals(id) ||
 				Costanti.ID_JWS_ENCRYPT_CONTENT_ALGORITHM.equals(id)) {
 			SecurityProvider secProvider = new SecurityProvider();
 			if(Costanti.ID_JWS_SIGNATURE_ALGORITHM.equals(id)) {
 				return secProvider.getValues(JOSECostanti.ID_SIGNATURE_ALGORITHM);
 			}
-			else if(Costanti.ID_JWS_ENCRYPT_KEY_ALGORITHM.equals(id)) {
+			else if(Costanti.ID_JWS_ENCRYPT_KEY_ALGORITHM.equals(id) || JOSECostanti.ID_ENCRYPT_KEY_ALGORITHM.equals(id)) {
 				return secProvider.getValues(JOSECostanti.ID_ENCRYPT_KEY_ALGORITHM);
 			}
-			else if(Costanti.ID_JWS_ENCRYPT_CONTENT_ALGORITHM.equals(id)) {
+			else if(Costanti.ID_JWS_ENCRYPT_CONTENT_ALGORITHM.equals(id) || JOSECostanti.ID_ENCRYPT_CONTENT_ALGORITHM.equals(id)) {
 				return secProvider.getValues(JOSECostanti.ID_ENCRYPT_CONTENT_ALGORITHM);
 			}
+		}
+		else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE.equals(id) || 
+				Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_TYPE.equals(id) ||
+				Costanti.ID_HTTPS_TRUSTSTORE_TYPE.equals(id) ||
+				Costanti.ID_HTTPS_KEYSTORE_TYPE.equals(id)  ||
+				Costanti.ID_TOKEN_FORWARD_JWS_KEYSTORE_TYPE.equals(id)  ||
+				Costanti.ID_TOKEN_FORWARD_JWE_KEYSTORE_TYPE.equals(id)) {
+			return getStoreType(id,true);
 		}
 		return null;
 	}
 
 	@Override
 	public List<String> getLabels(String id) throws ProviderException {
-		if(Costanti.ID_JWS_SIGNATURE_ALGORITHM.equals(id) ||
+		if(JOSECostanti.ID_ENCRYPT_KEY_ALGORITHM.equals(id) ||
+				JOSECostanti.ID_ENCRYPT_CONTENT_ALGORITHM.equals(id) ||
+				Costanti.ID_JWS_SIGNATURE_ALGORITHM.equals(id) ||
 				Costanti.ID_JWS_ENCRYPT_KEY_ALGORITHM.equals(id) ||
 				Costanti.ID_JWS_ENCRYPT_CONTENT_ALGORITHM.equals(id)) {
 			SecurityProvider secProvider = new SecurityProvider();
 			if(Costanti.ID_JWS_SIGNATURE_ALGORITHM.equals(id)) {
 				return secProvider.getLabels(JOSECostanti.ID_SIGNATURE_ALGORITHM);
 			}
-			else if(Costanti.ID_JWS_ENCRYPT_KEY_ALGORITHM.equals(id)) {
+			else if(Costanti.ID_JWS_ENCRYPT_KEY_ALGORITHM.equals(id) || JOSECostanti.ID_ENCRYPT_KEY_ALGORITHM.equals(id)) {
 				return secProvider.getLabels(JOSECostanti.ID_ENCRYPT_KEY_ALGORITHM);
 			}
-			else if(Costanti.ID_JWS_ENCRYPT_CONTENT_ALGORITHM.equals(id)) {
+			else if(Costanti.ID_JWS_ENCRYPT_CONTENT_ALGORITHM.equals(id) || JOSECostanti.ID_ENCRYPT_CONTENT_ALGORITHM.equals(id)) {
 				return secProvider.getLabels(JOSECostanti.ID_ENCRYPT_CONTENT_ALGORITHM);
 			}
 		}
+		else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE.equals(id) || 
+				Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_TYPE.equals(id) ||
+				Costanti.ID_HTTPS_TRUSTSTORE_TYPE.equals(id) ||
+				Costanti.ID_HTTPS_KEYSTORE_TYPE.equals(id) ||
+				Costanti.ID_TOKEN_FORWARD_JWS_KEYSTORE_TYPE.equals(id) ||
+				Costanti.ID_TOKEN_FORWARD_JWE_KEYSTORE_TYPE.equals(id)) {
+			return getStoreType(id,false);
+		}
 		return this.getValues(id); // torno uguale ai valori negli altri casi
+	}
+	
+	private List<String> getStoreType(String id,boolean value){
+		boolean trustStore = true;
+		boolean secret = false;
+		List<String> l = new ArrayList<String>();
+		l.add(value ? SecurityConstants.KEYSTORE_TYPE_JKS_VALUE : SecurityConstants.KEYSTORE_TYPE_JKS_LABEL);
+		l.add(value ? SecurityConstants.KEYSTORE_TYPE_PKCS12_VALUE : SecurityConstants.KEYSTORE_TYPE_PKCS12_LABEL);
+		if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE.equals(id) || 
+				Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_TYPE.equals(id) ||
+				Costanti.ID_TOKEN_FORWARD_JWS_KEYSTORE_TYPE.equals(id) ||
+				Costanti.ID_TOKEN_FORWARD_JWE_KEYSTORE_TYPE.equals(id)) {
+			l.add(value ? SecurityConstants.KEYSTORE_TYPE_JWK_VALUE: SecurityConstants.KEYSTORE_TYPE_JWK_LABEL);
+		}
+		if(Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_TYPE.equals(id) ||
+				Costanti.ID_TOKEN_FORWARD_JWE_KEYSTORE_TYPE.equals(id)) {
+			l.add(value ? SecurityConstants.KEYSTORE_TYPE_JCEKS_VALUE : SecurityConstants.KEYSTORE_TYPE_JCEKS_LABEL);
+			secret = true;
+		}
+		
+		if(Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_TYPE.equals(id) ||
+				Costanti.ID_HTTPS_KEYSTORE_TYPE.equals(id) ||
+				Costanti.ID_TOKEN_FORWARD_JWS_KEYSTORE_TYPE.equals(id) ||
+				Costanti.ID_TOKEN_FORWARD_JWE_KEYSTORE_TYPE.equals(id)) {
+			trustStore = false;
+		}
+		HSMUtils.fillTIPOLOGIE_KEYSTORE(trustStore, false, l);
+		
+		if(secret) {
+			// aggiunto info mancanti come secret
+			List<String> lSecret = new ArrayList<String>();
+			HSMUtils.fillTIPOLOGIE_KEYSTORE(false, true, l);
+			if(lSecret!=null && !lSecret.isEmpty()) {
+				for (String type : lSecret) {
+					if(!l.contains(type)) {
+						l.add(type);
+					}
+				}
+			}
+		}
+		return l;
 	}
 
 	@Override
@@ -706,21 +771,101 @@ public class TokenProvider implements IProvider {
 		else if(Costanti.ID_TIPOLOGIA_HTTPS.equals(id)) {
 			return SSLUtilities.getSafeDefaultProtocol();
 		}
-		else if(Costanti.ID_JWS_SIGNATURE_ALGORITHM.equals(id) ||
+		else if(JOSECostanti.ID_ENCRYPT_KEY_ALGORITHM.equals(id) ||
+				JOSECostanti.ID_ENCRYPT_CONTENT_ALGORITHM.equals(id) ||
+				Costanti.ID_JWS_SIGNATURE_ALGORITHM.equals(id) ||
 				Costanti.ID_JWS_ENCRYPT_KEY_ALGORITHM.equals(id) ||
 				Costanti.ID_JWS_ENCRYPT_CONTENT_ALGORITHM.equals(id)) {
 			SecurityProvider secProvider = new SecurityProvider();
 			if(Costanti.ID_JWS_SIGNATURE_ALGORITHM.equals(id)) {
 				return secProvider.getDefault(JOSECostanti.ID_SIGNATURE_ALGORITHM);
 			}
-			else if(Costanti.ID_JWS_ENCRYPT_KEY_ALGORITHM.equals(id)) {
+			else if(Costanti.ID_JWS_ENCRYPT_KEY_ALGORITHM.equals(id) || JOSECostanti.ID_ENCRYPT_KEY_ALGORITHM.equals(id)) {
 				return secProvider.getDefault(JOSECostanti.ID_ENCRYPT_KEY_ALGORITHM);
 			}
-			else if(Costanti.ID_JWS_ENCRYPT_CONTENT_ALGORITHM.equals(id)) {
+			else if(Costanti.ID_JWS_ENCRYPT_CONTENT_ALGORITHM.equals(id) || JOSECostanti.ID_ENCRYPT_CONTENT_ALGORITHM.equals(id)) {
 				return secProvider.getDefault(JOSECostanti.ID_ENCRYPT_CONTENT_ALGORITHM);
 			}
 		}
 		return null;
 	}
 
+	@Override
+	public String dynamicUpdate(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
+	
+		if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_FILE.equals(item.getName()) ||
+				Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_FILE.equals(item.getName()) ||
+				Costanti.ID_HTTPS_TRUSTSTORE_FILE.equals(item.getName()) ||
+				Costanti.ID_HTTPS_KEYSTORE_FILE.equals(item.getName()) ||
+				Costanti.ID_TOKEN_FORWARD_JWS_KEYSTORE_FILE.equals(item.getName()) ||
+				Costanti.ID_TOKEN_FORWARD_JWE_KEYSTORE_FILE.equals(item.getName())) {
+			
+			String type = Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE;
+			if(Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_FILE.equals(item.getName())) {
+				type = Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_TYPE;
+			}
+			else if(Costanti.ID_HTTPS_TRUSTSTORE_FILE.equals(item.getName())) {
+				type = Costanti.ID_HTTPS_TRUSTSTORE_TYPE;
+			}
+			else if(Costanti.ID_HTTPS_KEYSTORE_FILE.equals(item.getName())) {
+				type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
+			}
+			else if(Costanti.ID_TOKEN_FORWARD_JWS_KEYSTORE_FILE.equals(item.getName())) {
+				type = Costanti.ID_TOKEN_FORWARD_JWS_KEYSTORE_TYPE;
+			}
+			else if(Costanti.ID_TOKEN_FORWARD_JWE_KEYSTORE_FILE.equals(item.getName())) {
+				type = Costanti.ID_TOKEN_FORWARD_JWE_KEYSTORE_TYPE;
+			}
+			
+			return AbstractSecurityProvider.processStoreFile(type, items, mapNameValue, item, actualValue);
+		}
+		else if(Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_PASSWORD.equals(item.getName()) ||
+				Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_PASSWORD.equals(item.getName()) ||
+				Costanti.ID_HTTPS_TRUSTSTORE_PASSWORD.equals(item.getName()) ||
+				Costanti.ID_HTTPS_KEYSTORE_PASSWORD.equals(item.getName()) ||
+				Costanti.ID_TOKEN_FORWARD_JWS_KEYSTORE_PASSWORD.equals(item.getName()) ||
+				Costanti.ID_TOKEN_FORWARD_JWE_KEYSTORE_PASSWORD.equals(item.getName())) {
+			
+			String type = Costanti.ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE;
+			if(Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_PASSWORD.equals(item.getName())) {
+				type = Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_TYPE;
+			}
+			else if(Costanti.ID_HTTPS_TRUSTSTORE_PASSWORD.equals(item.getName())) {
+				type = Costanti.ID_HTTPS_TRUSTSTORE_TYPE;
+			}
+			else if(Costanti.ID_HTTPS_KEYSTORE_PASSWORD.equals(item.getName())) {
+				type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
+			}
+			else if(Costanti.ID_TOKEN_FORWARD_JWS_KEYSTORE_PASSWORD.equals(item.getName())) {
+				type = Costanti.ID_TOKEN_FORWARD_JWS_KEYSTORE_TYPE;
+			}
+			else if(Costanti.ID_TOKEN_FORWARD_JWE_KEYSTORE_PASSWORD.equals(item.getName())) {
+				type = Costanti.ID_TOKEN_FORWARD_JWE_KEYSTORE_TYPE;
+			}
+			
+			return AbstractSecurityProvider.processStorePassword(type, items, mapNameValue, item, actualValue);
+		}
+		else if(Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName()) ||
+				Costanti.ID_HTTPS_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName()) ||
+				Costanti.ID_TOKEN_FORWARD_JWS_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName()) ||
+				Costanti.ID_TOKEN_FORWARD_JWE_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName())) {
+			
+			String type = Costanti.ID_VALIDAZIONE_JWT_KEYSTORE_TYPE;
+			if(Costanti.ID_HTTPS_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName())) {
+				type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
+			}
+			else if(Costanti.ID_TOKEN_FORWARD_JWS_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName())) {
+				type = Costanti.ID_TOKEN_FORWARD_JWS_KEYSTORE_TYPE;
+			}
+			else if(Costanti.ID_TOKEN_FORWARD_JWE_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName())) {
+				type = Costanti.ID_TOKEN_FORWARD_JWE_KEYSTORE_TYPE;
+			}
+			
+			return AbstractSecurityProvider.processStoreKeyPassword(type, items, mapNameValue, item, actualValue);
+		}
+		
+		return actualValue;
+	}
+	
+	
 }

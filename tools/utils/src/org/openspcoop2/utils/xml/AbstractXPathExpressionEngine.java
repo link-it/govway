@@ -273,7 +273,8 @@ public abstract class AbstractXPathExpressionEngine {
 	
 	public abstract Element readXPathElement(Element contenutoAsElement);
 	
-	private static Integer synchronizedObjectForBugFWK005ParseXerces = Integer.valueOf(1); // vedi test TestBugFWK005ParseXerces 
+	//private static Integer synchronizedObjectForBugFWK005ParseXerces = Integer.valueOf(1); // vedi test TestBugFWK005ParseXerces 
+	private static final org.openspcoop2.utils.Semaphore lockObjectForBugFWK005ParseXerces = new org.openspcoop2.utils.Semaphore("BugFWK005ParseXerces");
 	private Object _engine_getMatchPattern(
 			Element contenutoAsElement, String contenutoAsString, 
 			DynamicNamespaceContext dncPrivate,String pattern, XPathReturnType returnType) 
@@ -416,8 +417,12 @@ public abstract class AbstractXPathExpressionEngine {
 						String result = null;
 						try{
 							if(reader!=null) {
-								synchronized (AbstractXPathExpressionEngine.synchronizedObjectForBugFWK005ParseXerces) { // vedi test TestBugFWK005ParseXerces 
+								//synchronized (AbstractXPathExpressionEngine.synchronizedObjectForBugFWK005ParseXerces) { // vedi test TestBugFWK005ParseXerces
+								try {
+									lockObjectForBugFWK005ParseXerces.acquire("concat_openspcoopEvaluate");
 									result = expression.evaluate(new org.xml.sax.InputSource(reader));
+								}finally {
+									lockObjectForBugFWK005ParseXerces.release("concat_openspcoopEvaluate");
 								}
 							}
 							else { 
@@ -512,8 +517,12 @@ public abstract class AbstractXPathExpressionEngine {
 				Object result = null;
 				try{
 					if(reader!=null)
-						synchronized (AbstractXPathExpressionEngine.synchronizedObjectForBugFWK005ParseXerces) { // vedi test TestBugFWK005ParseXerces
+						//synchronized (AbstractXPathExpressionEngine.synchronizedObjectForBugFWK005ParseXerces) { // vedi test TestBugFWK005ParseXerces
+						try {
+							lockObjectForBugFWK005ParseXerces.acquire("standardEvaluate");
 							result = expression.evaluate(new org.xml.sax.InputSource(reader),returnType.getValore());
+						}finally {
+							lockObjectForBugFWK005ParseXerces.release("standardEvaluate");
 						}
 					else{
 						result = expression.evaluate(this.readXPathElement(contenutoAsElement),returnType.getValore());

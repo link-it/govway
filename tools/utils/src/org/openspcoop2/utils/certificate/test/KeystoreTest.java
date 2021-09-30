@@ -49,7 +49,7 @@ public class KeystoreTest {
 	private final static String ALIAS_1 = "govway_test";
 	private final static String DN_1 = "CN=govway_test, OU=govway_test_ou, O=govway_test_o, L=govway_test_l, ST=Italy, C=IT, EMAILADDRESS=info@link.it";
 	
-	private final static String PASSWORD = "123456";
+	public final static String PASSWORD = "123456";
 	public final static String PREFIX = "/org/openspcoop2/utils/certificate/test/";
 	
 	public final static String PKCS11_CLIENT1 = "pkcs11-client1";

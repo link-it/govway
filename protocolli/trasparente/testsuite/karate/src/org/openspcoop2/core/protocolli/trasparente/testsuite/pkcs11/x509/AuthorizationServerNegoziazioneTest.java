@@ -23,37 +23,46 @@ import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 
 /**
-* JoseSecurityTest
+* AuthorizationServerTest
 *
 * @author Francesco Scarlato (scarlato@link.it)
 * @author $Author$
 * @version $Rev$, $Date$
 */
-public class JoseSecurityTest extends ConfigLoader {
+public class AuthorizationServerNegoziazioneTest extends ConfigLoader {
 
-	public final static String api = "TestJoseSecurity";
-	public final static String apiNONE = "TestJoseSecurityNONE";
+	public final static String api_negoziazione = "TestNegoziazioneAuthorizationServer";
+	
 	
 	@Test
-	public void signature() throws Exception {
-		Utils.testJson(logCore, api, "signature", 
-				null, null, 
-				null, "\"signatures\"", null);
-	}
-	@Test
-	public void signatureNone() throws Exception {
-		Utils.testJson(logCore, apiNONE, "signature", 
-				null, "Signature verification failed", 
-				null, "\"signatures\"", null);
-	}
-	
-	@Test
-	public void encrypt() throws Exception {
-		Utils.testJson(logCore, api, "encrypt", 
-				null, null, 
-				null, "\"recipients\"", null);
-	}
+	public void trustAll_noAlias() throws Exception {
 		
+		Utils.resetCacheToken(logCore);
+		
+		Utils.testJson(logCore, api_negoziazione, "TLS-TrustAll-ClientNoAlias", 
+				null, null, 
+				"HSMClient1", null, null);
+	}
+
+	@Test
+	public void trust_alias() throws Exception {
+		
+		Utils.resetCacheToken(logCore);
+		
+		Utils.testJson(logCore, api_negoziazione, "TLS-Trust-ServerAlias", 
+				null, null, 
+				"HSMServer2", null, null);
+	}
+	
+	@Test
+	public void signedJWT() throws Exception {
+		
+		Utils.resetCacheToken(logCore);
+		
+		Utils.testJson(logCore, api_negoziazione, "NegoziazioneSignedJWT", 
+				null, null, 
+				null, null, null);
+	}
 	
 	
 }

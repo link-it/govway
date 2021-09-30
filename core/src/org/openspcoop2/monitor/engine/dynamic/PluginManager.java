@@ -48,11 +48,13 @@ public class PluginManager {
 	
 	private Date expireDate;
 	private int expireSeconds;
-	private Boolean semaphore_expire = true;
+	//private Boolean semaphore_expire = true;
+	private final org.openspcoop2.utils.Semaphore lock_expire = new org.openspcoop2.utils.Semaphore("PluginManager-expire");
 	
 	private PluginsImage plugins_image = new PluginsImage();
 	private PluginsImage plugins_image_switch_old = null;
-	private Boolean semaphore_image = true;
+	//private Boolean semaphore_image = true;
+	private final org.openspcoop2.utils.Semaphore lock_image = new org.openspcoop2.utils.Semaphore("PluginManager-image");
 
 	protected PluginManager(IRegistroPluginsReader registroPluginsReader, int expireSeconds) {
 		this.registroPluginsReader = registroPluginsReader;
@@ -83,13 +85,17 @@ public class PluginManager {
 		
 		boolean update = false;
 		
-		synchronized (this.semaphore_expire) {
+		//synchronized (this.semaphore_expire) {
+		try {
+			this.lock_expire.acquire("update");
 			if(this.expireDate==null || nowDate.after(this.expireDate)) {
 				this.expireDate = new Date(nowDate.getTime()+(this.expireSeconds*1000));
 				update = true;
 				// l'aggiornamento effettivo lo faccio fuori dal synchronized per non bloccare le chiamate a _findClass, intanto che l'immagine viene aggiornata
 				// gli altri thread che entrano in questo metodo trovano la lor nowDate inferiore ad expireDate
 			}
+		}finally {
+			this.lock_expire.release("update");
 		}
 		
 		if(update) {
@@ -105,7 +111,9 @@ public class PluginManager {
 	
 	private void update(Logger log, RegistroPlugins pluginsParam) throws Exception {
 		
-		synchronized (this.semaphore_image) {
+		//synchronized (this.semaphore_image) {
+		try {
+			this.lock_image.acquire("update");
 			
 			RegistroPlugins plugins = null;
 			if(pluginsParam!=null) {
@@ -221,6 +229,8 @@ public class PluginManager {
 			}
 			this.plugins_image_switch_old = null;
 					
+		}finally {
+			this.lock_image.release("update");
 		}
 		
 	}
@@ -228,7 +238,9 @@ public class PluginManager {
 	public void close() {
 		
 		// Chiusura di tutti
-		synchronized (this.semaphore_image) {
+		//synchronized (this.semaphore_image) {
+		try {
+			this.lock_image.acquireThrowRuntime("close");
 			
 			if(this.plugins_image!=null && this.plugins_image.plugins.size()>0) {
 				for (Plugin plugin : this.plugins_image.plugins.values()) {
@@ -248,6 +260,8 @@ public class PluginManager {
 				}
 			}
 			
+		}finally {
+			this.lock_image.release("close");
 		}
 	}
 	

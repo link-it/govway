@@ -186,12 +186,6 @@
 			</conditions>
 
 			<item type="select" name="validazioneJwtTruststoreType" label="Tipo" default="jks" reloadOnChange="true">
-				<values>
-					<value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/>
-					<!--  <value value="jceks" label="JCEKS"/> -->
-					<value value="jwk" label="JWK"/>
-				</values>
 				<property name="rs.security.keystore.type" properties="signatureVerificationPropRefId" />
 			</item>
 			<item type="textarea" name="validazioneJwtTruststoreFile" label="File" required="true">
@@ -249,13 +243,14 @@
 				</condition>
 			</conditions>
 
+			<item type="select" name="encryptionKeyAlgorithm" label="Key Algorithm">
+				<property name="rs.security.encryption.key.algorithm" properties="decryptionPropRefId" />
+			</item>
+			<item type="select" name="encryptionContentAlgorithm" label="Content Algorithm">
+				<property name="rs.security.encryption.content.algorithm" properties="decryptionPropRefId" />
+			</item>
+
 			<item type="select" name="validazioneJwtKeystoreType" label="Tipo" default="jks" reloadOnChange="true">
-				<values>
-					<value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/>
-					<value value="jceks" label="JCEKS"/>
-					<value value="jwk" label="JWK"/>
-				</values>
 				<property name="rs.security.keystore.type" properties="decryptionPropRefId" />
 			</item>
 			<item type="textarea" name="validazioneJwtKeystoreFile" label="File" required="true">
@@ -806,17 +801,12 @@
 				<property name="trustAllCerts" properties="sslConfig" selectedValue="false" unselectedValue="true"/>
 			</item>
 	
-			<item type="select" name="endpointHttpsTruststoreType" label="Tipo" default="jks">
+			<item type="select" name="endpointHttpsTruststoreType" label="Tipo" default="jks" reloadOnChange="true">
 				<conditions>
 					<condition and="false">
 						<selected name="endpointHttpsTrustAllCerts"/>
 					</condition>	
 				</conditions>
-				<values>
-					<value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/>
-					<value value="jceks" label="JCEKS"/>
-				</values>
 				<property name="trustStoreType" properties="sslConfig" />
 			</item>
 			<item type="textarea" name="endpointHttpsTruststoreFile" label="File" required="true">
@@ -870,17 +860,12 @@
 				</values>
 				<property name="policy.endpoint.ssl.mode" />
 			</item>
-			<item type="select" name="endpointHttpsClientKeystoreType" label="Tipo" default="jks">
+			<item type="select" name="endpointHttpsClientKeystoreType" label="Tipo" default="jks" reloadOnChange="true">
 				<conditions>
 					<condition and="true">
 						<equals name="endpointHttpsClientMode" value="ridefinito"/>
 					</condition>
 				</conditions>
-				<values>
-					<value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/>
-					<value value="jceks" label="JCEKS"/>
-				</values>
 				<property name="keyStoreType" properties="sslClientConfig" />
 			</item>
 			<item type="textarea" name="endpointHttpsClientKeystoreFile" label="File" required="true">
@@ -1377,12 +1362,6 @@
 			</conditions>
 
 			<item type="select" name="tokenForwardInfoRaccolteModeJWSKeystoreType" label="Tipo" default="jks" reloadOnChange="true">
-				<values>
-					<value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/>
-					<!--  <value value="jceks" label="JCEKS"/> -->
-					<value value="jwk" label="JWK"/>
-				</values>
 				<property name="rs.security.keystore.type" properties="signaturePropRefId" />
 			</item>
 			<item type="textarea" name="tokenForwardInfoRaccolteModeJWSKeystoreFile" label="File" required="true">
@@ -1414,12 +1393,6 @@
 			</conditions>
 
 			<item type="select" name="tokenForwardInfoRaccolteModeJWEContentKeystoreType" label="Tipo" default="jks" reloadOnChange="true">
-				<values>
-					<value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/>
-					<value value="jceks" label="JCEKS"/>
-					<value value="jwk" label="JWK"/>
-				</values>
 				<property name="rs.security.keystore.type" properties="encryptionPropRefId" />
 			</item>
 			<item type="textarea" name="tokenForwardInfoRaccolteModeJWEContentKeystoreFile" label="File" required="true">

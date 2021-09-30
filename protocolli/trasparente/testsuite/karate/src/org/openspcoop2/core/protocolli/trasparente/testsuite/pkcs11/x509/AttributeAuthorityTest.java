@@ -23,37 +23,51 @@ import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 
 /**
-* JoseSecurityTest
+* AttributeAuthorityTest
 *
 * @author Francesco Scarlato (scarlato@link.it)
 * @author $Author$
 * @version $Rev$, $Date$
 */
-public class JoseSecurityTest extends ConfigLoader {
+public class AttributeAuthorityTest extends ConfigLoader {
 
-	public final static String api = "TestJoseSecurity";
-	public final static String apiNONE = "TestJoseSecurityNONE";
+	public final static String api = "TestAttributeAuthorityPKCS11";
+	
 	
 	@Test
-	public void signature() throws Exception {
-		Utils.testJson(logCore, api, "signature", 
-				null, null, 
-				null, "\"signatures\"", null);
-	}
-	@Test
-	public void signatureNone() throws Exception {
-		Utils.testJson(logCore, apiNONE, "signature", 
-				null, "Signature verification failed", 
-				null, "\"signatures\"", null);
-	}
-	
-	@Test
-	public void encrypt() throws Exception {
-		Utils.testJson(logCore, api, "encrypt", 
-				null, null, 
-				null, "\"recipients\"", null);
-	}
+	public void trustAll_noAlias() throws Exception {
 		
+		Utils.resetCacheToken(logCore);
+		
+		Utils.testJson(logCore, api, "TLS-TrustAll-ClientNoAlias", 
+				null, null, 
+				"HSMClient1", "\"attributes\": [\"role1\",\"attrRole2\"]", null);
+	}
+
+	@Test
+	public void trust_alias() throws Exception {
+		Utils.testJson(logCore, api, "TLS-Trust-ServerAlias", 
+				null, null, 
+				"HSMServer2", "\"attributes\": [\"role1\",\"attrRole2\"]", null);
+	}
 	
+	@Test
+	public void jwsRequest() throws Exception {
+		
+		Utils.resetCacheToken(logCore);
+		
+		Utils.testJson(logCore, api, "JWSRequest", 
+				null, null, 
+				null, null, null);
+	}
 	
+	@Test
+	public void jwsResponse() throws Exception {
+		
+		Utils.resetCacheToken(logCore);
+		
+		Utils.testJson(logCore, api, "JWSResponse", 
+				null, null, 
+				null, null, null);
+	}
 }

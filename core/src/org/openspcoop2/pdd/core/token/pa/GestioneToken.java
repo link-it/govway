@@ -74,7 +74,9 @@ public class GestioneToken {
     public EsitoGestioneTokenPortaApplicativa validazioneJWTToken(AbstractDatiInvocazione datiInvocazione, String token) throws TokenException {   	
     	try {
     	
-    		EsitoGestioneTokenPortaApplicativa esito = (EsitoGestioneTokenPortaApplicativa) GestoreToken.validazioneJWTToken(this.log, datiInvocazione, token, GestoreToken.PORTA_APPLICATIVA);
+    		EsitoGestioneTokenPortaApplicativa esito = (EsitoGestioneTokenPortaApplicativa) GestoreToken.validazioneJWTToken(this.log, datiInvocazione, 
+    				this.pddContext, this.protocolFactory,
+    				token, GestoreToken.PORTA_APPLICATIVA);
     		
         	if(esito.getEccezioneProcessamento()!=null) {
         		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());

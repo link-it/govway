@@ -188,11 +188,14 @@ public class StatoServiziPdD {
 	
 	/* **************** PORTA DELEGATA (MODIFY) ***************** */
 	
-	private static Integer semaphoreActivePDService = 1;
+	//private static Integer semaphoreActivePDService = 1;
+	private static final org.openspcoop2.utils.Semaphore lockActivePDService = new org.openspcoop2.utils.Semaphore("StatoServiziFruizioni");
 	
 	private static Boolean activePDService = null;	
-	public static synchronized void setPDServiceActive(boolean stato) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		synchronized (semaphoreActivePDService) {
+	public static void setPDServiceActive(boolean stato) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		//synchronized (semaphoreActivePDService) {
+		try {
+			StatoServiziPdD.lockActivePDService.acquireThrowRuntime("setPDServiceActive");
 						
 			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
@@ -211,12 +214,16 @@ public class StatoServiziPdD {
 			
 			// aggiorno stato in ram
 			activePDService = stato;
+		}finally {
+			StatoServiziPdD.lockActivePDService.release("setPDServiceActive");
 		}
 	}
 	
 	private static List<TipoFiltroAbilitazioneServizi> listaAbilitazioniPDService = null;
-	public static synchronized void addFiltroAbilitazionePD(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		synchronized (semaphoreActivePDService) {
+	public static void addFiltroAbilitazionePD(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		//synchronized (semaphoreActivePDService) {
+		try {
+			StatoServiziPdD.lockActivePDService.acquireThrowRuntime("addFiltroAbilitazionePD");
 					
 			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
@@ -231,10 +238,14 @@ public class StatoServiziPdD {
 			
 			// aggiorno stato in ram
 			listaAbilitazioniPDService = statoServiziPdd.getPortaDelegata().getFiltroAbilitazioneList();
+		}finally {
+			StatoServiziPdD.lockActivePDService.release("addFiltroAbilitazionePD");
 		}
 	}
-	public static synchronized void removeFiltroAbilitazionePD(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		synchronized (semaphoreActivePDService) {
+	public static void removeFiltroAbilitazionePD(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		//synchronized (semaphoreActivePDService) {
+		try {
+			StatoServiziPdD.lockActivePDService.acquireThrowRuntime("removeFiltroAbilitazionePD");
 			
 			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
@@ -256,12 +267,16 @@ public class StatoServiziPdD {
 			
 			// aggiorno stato in ram
 			listaAbilitazioniPDService = statoServiziPdd.getPortaDelegata().getFiltroAbilitazioneList();
+		}finally{
+			StatoServiziPdD.lockActivePDService.release("removeFiltroAbilitazionePD");
 		}
 	}
 	
 	private static List<TipoFiltroAbilitazioneServizi> listaDisabilitazioniPDService = null;
-	public static synchronized void addFiltroDisabilitazionePD(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		synchronized (semaphoreActivePDService) {
+	public static void addFiltroDisabilitazionePD(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		//synchronized (semaphoreActivePDService) {
+		try {
+			StatoServiziPdD.lockActivePDService.acquireThrowRuntime("addFiltroDisabilitazionePD");
 			
 			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
@@ -276,10 +291,14 @@ public class StatoServiziPdD {
 			
 			// aggiorno stato in ram
 			listaDisabilitazioniPDService = statoServiziPdd.getPortaDelegata().getFiltroDisabilitazioneList();
+		}finally {
+			StatoServiziPdD.lockActivePDService.release("addFiltroDisabilitazionePD");
 		}
 	}
-	public static synchronized void removeFiltroDisabilitazionePD(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		synchronized (semaphoreActivePDService) {
+	public static void removeFiltroDisabilitazionePD(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		//synchronized (semaphoreActivePDService) {
+		try {
+			StatoServiziPdD.lockActivePDService.acquireThrowRuntime("removeFiltroDisabilitazionePD");
 			
 			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
@@ -301,6 +320,8 @@ public class StatoServiziPdD {
 			
 			// aggiorno stato in ram
 			listaDisabilitazioniPDService = statoServiziPdd.getPortaDelegata().getFiltroDisabilitazioneList();
+		}finally {
+			StatoServiziPdD.lockActivePDService.release("removeFiltroDisabilitazionePD");
 		}
 	}
 	
@@ -379,11 +400,14 @@ public class StatoServiziPdD {
 	
 	/* **************** PORTA APPLICATIVA (MODIFY) ***************** */
 	
-	private static Integer semaphoreActivePAService = 1;
+	//private static Integer semaphoreActivePAService = 1;
+	private static final org.openspcoop2.utils.Semaphore lockActivePAService = new org.openspcoop2.utils.Semaphore("StatoServiziErogazioni");
 	
 	private static Boolean activePAService = null;	
-	public static synchronized void setPAServiceActive(boolean stato) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		synchronized (semaphoreActivePAService) {
+	public static void setPAServiceActive(boolean stato) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		//synchronized (semaphoreActivePAService) {
+		try {
+			StatoServiziPdD.lockActivePAService.acquireThrowRuntime("setPAServiceActive");
 						
 			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
@@ -402,12 +426,16 @@ public class StatoServiziPdD {
 			
 			// aggiorno stato in ram
 			activePAService = stato;
+		}finally {
+			StatoServiziPdD.lockActivePAService.release("setPAServiceActive");
 		}
 	}
 	
 	private static List<TipoFiltroAbilitazioneServizi> listaAbilitazioniPAService = null;
-	public static synchronized void addFiltroAbilitazionePA(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		synchronized (semaphoreActivePAService) {
+	public static void addFiltroAbilitazionePA(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		//synchronized (semaphoreActivePAService) {
+		try {
+			StatoServiziPdD.lockActivePAService.acquireThrowRuntime("addFiltroAbilitazionePA");
 					
 			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
@@ -422,10 +450,14 @@ public class StatoServiziPdD {
 			
 			// aggiorno stato in ram
 			listaAbilitazioniPAService = statoServiziPdd.getPortaApplicativa().getFiltroAbilitazioneList();
+		}finally {
+			StatoServiziPdD.lockActivePAService.release("addFiltroAbilitazionePA");
 		}
 	}
-	public static synchronized void removeFiltroAbilitazionePA(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		synchronized (semaphoreActivePAService) {
+	public static void removeFiltroAbilitazionePA(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		//synchronized (semaphoreActivePAService) {
+		try {
+			StatoServiziPdD.lockActivePAService.acquireThrowRuntime("removeFiltroAbilitazionePA");
 			
 			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
@@ -447,12 +479,16 @@ public class StatoServiziPdD {
 			
 			// aggiorno stato in ram
 			listaAbilitazioniPAService = statoServiziPdd.getPortaApplicativa().getFiltroAbilitazioneList();
+		}finally {
+			StatoServiziPdD.lockActivePAService.release("removeFiltroAbilitazionePA");
 		}
 	}
 	
 	private static List<TipoFiltroAbilitazioneServizi> listaDisabilitazioniPAService = null;
-	public static synchronized void addFiltroDisabilitazionePA(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		synchronized (semaphoreActivePAService) {
+	public static void addFiltroDisabilitazionePA(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		//synchronized (semaphoreActivePAService) {
+		try {
+			StatoServiziPdD.lockActivePAService.acquireThrowRuntime("addFiltroDisabilitazionePA");
 			
 			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
@@ -467,10 +503,14 @@ public class StatoServiziPdD {
 			
 			// aggiorno stato in ram
 			listaDisabilitazioniPAService = statoServiziPdd.getPortaApplicativa().getFiltroDisabilitazioneList();
+		}finally {
+			StatoServiziPdD.lockActivePAService.release("addFiltroDisabilitazionePA");
 		}
 	}
-	public static synchronized void removeFiltroDisabilitazionePA(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		synchronized (semaphoreActivePAService) {
+	public static void removeFiltroDisabilitazionePA(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		//synchronized (semaphoreActivePAService) {
+		try {
+			StatoServiziPdD.lockActivePAService.acquireThrowRuntime("removeFiltroDisabilitazionePA");
 			
 			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
@@ -492,6 +532,8 @@ public class StatoServiziPdD {
 			
 			// aggiorno stato in ram
 			listaDisabilitazioniPAService = statoServiziPdd.getPortaApplicativa().getFiltroDisabilitazioneList();
+		}finally {
+			StatoServiziPdD.lockActivePAService.release("removeFiltroDisabilitazionePA");
 		}
 	}
 	
@@ -515,11 +557,14 @@ public class StatoServiziPdD {
 	
 	/* **************** INTEGRATION MANAGER (MODIFY) ***************** */
 	
-	private static Integer semaphoreActiveIMService = 1;
+	//private static Integer semaphoreActiveIMService = 1;
+	private static final org.openspcoop2.utils.Semaphore lockActiveIMService = new org.openspcoop2.utils.Semaphore("StatoServiziIntegrationManager");
 	
 	private static Boolean activeIMService = null;	
-	public static synchronized void setIMServiceActive(boolean stato) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		synchronized (semaphoreActiveIMService) {
+	public static void setIMServiceActive(boolean stato) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		//synchronized (semaphoreActiveIMService) {
+		try {
+			StatoServiziPdD.lockActiveIMService.acquireThrowRuntime("setIMServiceActive");
 						
 			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
@@ -538,6 +583,8 @@ public class StatoServiziPdD {
 			
 			// aggiorno stato in ram
 			activeIMService = stato;
+		}finally {
+			StatoServiziPdD.lockActiveIMService.release("setIMServiceActive");
 		}
 	}
 

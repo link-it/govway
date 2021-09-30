@@ -108,38 +108,8 @@ public abstract class AbstractSecurityProvider implements IProvider {
 			else if(SecurityConstants.TRUSTSTORE_FILE.equals(item.getName())) {
 				type = SecurityConstants.TRUSTSTORE_TYPE;
 			}
-
-			if(items!=null && !items.isEmpty()) {
-				for (Object itemCheck : items) {
-					//System.out.println("CHECK ["+itemCheck.getClass().getName()+"]");
-					if(itemCheck instanceof Item) {
-						Item listItem = (Item) itemCheck;
-						
-						boolean find = false;
-						String value = null;
-						if(type.equals(listItem.getName())) {
-							find = true;
-							value = mapNameValue.get(type);
-						}
-												
-						if(find) {
-							//System.out.println("TROVATO TYPE ["+mapNameValue.get(SecurityConstants.KEYSTORE_TYPE)+"]");
-							if(value!=null && value instanceof String && HSMUtils.isKeystoreHSM((String)value)) {
-								//System.out.println("SET HIDDEN ["+HSMUtils.KEYSTORE_HSM_PREFIX+value+"]");
-								item.setValue(HSMUtils.KEYSTORE_HSM_PREFIX+value);
-								item.setType(ItemType.HIDDEN);
-								return item.getValue();
-							}
-							else {
-								item.setValue(actualValue);
-								item.setType(ItemType.TEXTAREA);
-								return item.getValue();
-							}
-							//break;
-						}
-					}
-				}
-			}
+			
+			return processStoreFile(type, items, mapNameValue, item, actualValue);
 		}
 		else if(SecurityConstants.KEYSTORE_PASSWORD.equals(item.getName()) || 
 				SecurityConstants.SECRETKEYSTORE_PASSWORD.equals(item.getName()) || 
@@ -153,36 +123,7 @@ public abstract class AbstractSecurityProvider implements IProvider {
 				type = SecurityConstants.TRUSTSTORE_TYPE;
 			}
 			
-			if(items!=null && !items.isEmpty()) {
-				for (Object itemCheck : items) {
-					//System.out.println("CHECK ["+itemCheck.getClass().getName()+"]");
-					if(itemCheck instanceof Item) {
-						Item listItem = (Item) itemCheck;
-						boolean find = false;
-						String value = null;
-						if(type.equals(listItem.getName())) {
-							find = true;
-							value = mapNameValue.get(type);
-						}
-												
-						if(find) {
-							//System.out.println("TROVATO TYPE ["+mapNameValue.get(SecurityConstants.KEYSTORE_TYPE)+"]");
-							if(value!=null && value instanceof String && HSMUtils.isKeystoreHSM((String)value)) {
-								//System.out.println("SET HIDDEN ["+HSMUtils.KEYSTORE_HSM_PREFIX+value+"]");
-								item.setValue(HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED);
-								item.setType(ItemType.HIDDEN);
-								return item.getValue();
-							}
-							else {
-								item.setValue(actualValue);
-								item.setType(ItemType.TEXT);
-								return item.getValue();
-							}
-							//break;
-						}
-					}
-				}
-			}
+			return processStorePassword(type, items, mapNameValue, item, actualValue);
 		}
 		else if(SecurityConstants.KEYSTORE_PRIVATE_KEY_PASSWORD.equals(item.getName()) ||
 				SecurityConstants.SECRETKEYSTORE_PRIVATE_KEY_PASSWORD.equals(item.getName())) {
@@ -193,39 +134,111 @@ public abstract class AbstractSecurityProvider implements IProvider {
 					type = SecurityConstants.SECRETKEYSTORE_TYPE;
 				}
 				
-				if(items!=null && !items.isEmpty()) {
-					for (Object itemCheck : items) {
-						//System.out.println("CHECK ["+itemCheck.getClass().getName()+"]");
-						if(itemCheck instanceof Item) {
-							Item listItem = (Item) itemCheck;
-							boolean find = false;
-							String value = null;
-							if(type.equals(listItem.getName())) {
-								find = true;
-								value = mapNameValue.get(type);
-							}
-													
-							if(find) {
-								//System.out.println("TROVATO TYPE ["+mapNameValue.get(SecurityConstants.KEYSTORE_TYPE)+"]");
-								if(value!=null && value instanceof String && HSMUtils.isKeystoreHSM((String)value)) {
-									//System.out.println("SET HIDDEN ["+HSMUtils.KEYSTORE_HSM_PREFIX+value+"]");
-									item.setValue(HSMUtils.KEYSTORE_HSM_PRIVATE_KEY_PASSWORD_UNDEFINED);
-									item.setType(ItemType.HIDDEN);
-									return item.getValue();
-								}
-								else {
-									item.setValue(actualValue);
-									item.setType(ItemType.TEXT);
-									return item.getValue();
-								}
-								//break;
-							}
+				return processStoreKeyPassword(type, items, mapNameValue, item, actualValue);
+			}
+		}
+		
+		return actualValue;
+	}
+	
+	public static String processStoreFile(String type, List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
+		if(items!=null && !items.isEmpty()) {
+			for (Object itemCheck : items) {
+				//System.out.println("CHECK ["+itemCheck.getClass().getName()+"]");
+				if(itemCheck instanceof Item) {
+					Item listItem = (Item) itemCheck;
+					
+					boolean find = false;
+					String value = null;
+					if(type.equals(listItem.getName())) {
+						find = true;
+						value = mapNameValue.get(type);
+					}
+											
+					if(find) {
+						//System.out.println("TROVATO TYPE ["+mapNameValue.get(SecurityConstants.KEYSTORE_TYPE)+"]");
+						if(value!=null && value instanceof String && HSMUtils.isKeystoreHSM((String)value)) {
+							//System.out.println("SET HIDDEN ["+HSMUtils.KEYSTORE_HSM_PREFIX+value+"]");
+							item.setValue(HSMUtils.KEYSTORE_HSM_PREFIX+value);
+							item.setType(ItemType.HIDDEN);
+							return item.getValue();
 						}
+						else {
+							item.setValue(actualValue);
+							item.setType(ItemType.TEXTAREA);
+							return item.getValue();
+						}
+						//break;
 					}
 				}
 			}
 		}
-		
+		return actualValue;
+	}
+	public static String processStorePassword(String type, List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
+		if(items!=null && !items.isEmpty()) {
+			for (Object itemCheck : items) {
+				//System.out.println("CHECK ["+itemCheck.getClass().getName()+"]");
+				if(itemCheck instanceof Item) {
+					Item listItem = (Item) itemCheck;
+					boolean find = false;
+					String value = null;
+					if(type.equals(listItem.getName())) {
+						find = true;
+						value = mapNameValue.get(type);
+					}
+											
+					if(find) {
+						//System.out.println("TROVATO TYPE ["+mapNameValue.get(SecurityConstants.KEYSTORE_TYPE)+"]");
+						if(value!=null && value instanceof String && HSMUtils.isKeystoreHSM((String)value)) {
+							//System.out.println("SET HIDDEN ["+HSMUtils.KEYSTORE_HSM_PREFIX+value+"]");
+							item.setValue(HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED);
+							item.setType(ItemType.HIDDEN);
+							return item.getValue();
+						}
+						else {
+							item.setValue(actualValue);
+							item.setType(ItemType.TEXT);
+							return item.getValue();
+						}
+						//break;
+					}
+				}
+			}
+		}
+		return actualValue;
+	}
+	public static String processStoreKeyPassword(String type, List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
+		if(items!=null && !items.isEmpty()) {
+			for (Object itemCheck : items) {
+				//System.out.println("CHECK ["+itemCheck.getClass().getName()+"]");
+				if(itemCheck instanceof Item) {
+					Item listItem = (Item) itemCheck;
+					boolean find = false;
+					String value = null;
+					if(type.equals(listItem.getName())) {
+						find = true;
+						value = mapNameValue.get(type);
+					}
+											
+					if(find) {
+						//System.out.println("TROVATO TYPE ["+mapNameValue.get(SecurityConstants.KEYSTORE_TYPE)+"]");
+						if(value!=null && value instanceof String && HSMUtils.isKeystoreHSM((String)value)) {
+							//System.out.println("SET HIDDEN ["+HSMUtils.KEYSTORE_HSM_PREFIX+value+"]");
+							item.setValue(HSMUtils.KEYSTORE_HSM_PRIVATE_KEY_PASSWORD_UNDEFINED);
+							item.setType(ItemType.HIDDEN);
+							return item.getValue();
+						}
+						else {
+							item.setValue(actualValue);
+							item.setType(ItemType.TEXT);
+							return item.getValue();
+						}
+						//break;
+					}
+				}
+			}
+		}
 		return actualValue;
 	}
 }

@@ -31,7 +31,8 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 */
 public class TlsTest extends ConfigLoader {
 
-	private final static String api = "TestTLS";
+	public final static String api = "TestTLS";
+	public final static String Trust_NoKeyAlias = "Trust-NoKeyAlias";
 	
 	@Test
 	public void trustAll_keyServerAlias() throws Exception {
@@ -67,12 +68,9 @@ public class TlsTest extends ConfigLoader {
 	}
 	@Test
 	public void trust_noKeyAlias() throws Exception {
-		Utils.testJson(logCore, api, "Trust-NoKeyAlias", 
+		Utils.testJson(logCore, api, Trust_NoKeyAlias, 
 				null, "L'applicativo HSMClient2 (soggetto gw/SoggettoInternoTestFruitore) non è autorizzato ad invocare il servizio gw/TestTLS (versione:1) erogato da gw/SoggettoInternoTest", 
 				"HSMClient2", null, null);
 	}
-	
-	
-	
 	
 }

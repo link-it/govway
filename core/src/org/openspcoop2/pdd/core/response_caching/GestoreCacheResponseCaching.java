@@ -45,6 +45,7 @@ public class GestoreCacheResponseCaching {
 	private static final String RESPONSE_CACHING_CACHE_NAME = "responseCaching";
 	/** Cache */
 	private static Cache cache = null;
+	private static final org.openspcoop2.utils.Semaphore lock_cache = new org.openspcoop2.utils.Semaphore("GestoreCacheResponseCaching");
 	
 
 	/* --------------- Cache --------------------*/
@@ -318,7 +319,9 @@ public class GestoreCacheResponseCaching {
 				return ((ResponseCached)responseCache.getObject()).getUuid(); // already saved concurrent thread
 			}
 			
-			synchronized (cache) {
+			//synchronized (cache) {
+			try {
+				lock_cache.acquire("save");
 			
 				o = cache.get(digestKey);
 				if(o!=null) {
@@ -349,6 +352,8 @@ public class GestoreCacheResponseCaching {
 					}catch(Throwable tIgnore) {}
 				}
 				
+			}finally {
+				lock_cache.release("save");
 			}
 
 		}
@@ -402,8 +407,9 @@ public class GestoreCacheResponseCaching {
 				}
 			}
 			
-			synchronized (cache) {
-
+			//synchronized (cache) {
+			try {
+				lock_cache.acquire("readByUUID");
 				
 				oDigest = cache.get(uuidKey);
 				if(oDigest==null) {
@@ -434,6 +440,8 @@ public class GestoreCacheResponseCaching {
 				
 				return responseCached;
 				
+			}finally {
+				lock_cache.release("readByUUID");
 			}
 
 		}
@@ -464,7 +472,9 @@ public class GestoreCacheResponseCaching {
 				return; // messaggio non precedentemente salvato
 			}
 						
-			synchronized (cache) {
+			//synchronized (cache) {
+			try {
+				lock_cache.acquire("removeByUUID");
 
 				oDigest = cache.get(uuidKey);
 				if(oDigest==null) {
@@ -484,6 +494,8 @@ public class GestoreCacheResponseCaching {
 				cache.remove(uuidKey);
 				cache.remove(digestKey);
 				
+			}finally{
+				lock_cache.release("removeByUUID");
 			}
 
 		}
@@ -525,7 +537,9 @@ public class GestoreCacheResponseCaching {
 				return responseCached;
 			}
 						
-			synchronized (cache) {
+			//synchronized (cache) {
+			try {
+				lock_cache.acquire("readByDigest");
 			
 				response = 
 						(org.openspcoop2.utils.cache.CacheResponse) cache.get(digestKey);
@@ -548,6 +562,8 @@ public class GestoreCacheResponseCaching {
 
 				return responseCached;
 				
+			}finally {
+				lock_cache.release("readByDigest");
 			}
 
 		}

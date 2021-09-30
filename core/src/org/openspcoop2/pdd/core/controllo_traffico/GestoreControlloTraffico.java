@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.core.controllo_traffico;
 
 import java.util.Date;
 
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.controllo_traffico.constants.TipoErrore;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -61,17 +62,22 @@ public class GestoreControlloTraffico {
 	/** 
 	 * Threads attivi complessivi sulla Porta
 	 **/
-	private final Boolean semaphore = true; // Serve perche' senno cambiando i valori usando auto-box un-box, si perde il riferimento.
+	//private final Boolean semaphore = true; // Serve perche' senno cambiando i valori usando auto-box un-box, si perde il riferimento.
+	private final org.openspcoop2.utils.Semaphore lock = new org.openspcoop2.utils.Semaphore("GestoreControlloTraffico");
 	private Long activeThreads = 0l;
 	private Boolean pddCongestionata = false;
 	private boolean erroreGenerico;
 	public StatoTraffico getStatoControlloTraffico(String idTransazione, boolean sync) {
 		if(sync) {
-			synchronized (this.semaphore) {	
+			//synchronized (this.semaphore) {
+			try {
+				this.lock.acquireThrowRuntime("getStatoControlloTraffico", idTransazione);
 				StatoTraffico stato = new StatoTraffico();
 				stato.setActiveThreads(Long.valueOf(this.activeThreads));
 				stato.setPddCongestionata(Boolean.valueOf(this.pddCongestionata));
 				return stato;
+			}finally {
+				this.lock.release("getStatoControlloTraffico", idTransazione);
 			}
 		}
 		else {
@@ -97,7 +103,10 @@ public class GestoreControlloTraffico {
 		Date dataEventoPddCongestionata = null;
 		
 		try{
-			synchronized (this.semaphore) {		
+			//synchronized (this.semaphore) {
+			try {
+				this.lock.acquire("addThread", 
+						(pddContext!=null && pddContext.containsKey(Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(Costanti.ID_TRANSAZIONE, pddContext) : null);
 				
 				//System.out.println("@@@addThread CONTROLLO ["+this.activeThreads+"]<["+maxThreads+"] ("+(!(this.activeThreads<maxThreads))+")");
 				HandlerException he = null;
@@ -174,6 +183,9 @@ public class GestoreControlloTraffico {
 				}
 				
 				//System.out.println("@@@addThread (dopo): "+this.activeThreads);
+			}finally {
+				this.lock.release("addThread", 
+						(pddContext!=null && pddContext.containsKey(Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(Costanti.ID_TRANSAZIONE, pddContext) : null);
 			}
 		}
 		finally{
@@ -210,8 +222,10 @@ public class GestoreControlloTraffico {
 		}
 	}
 		
-	public void removeThread(Long maxThreads, Integer threshold) throws Exception{
-		synchronized (this.semaphore) {			
+	public void removeThread(Long maxThreads, Integer threshold, String idTransazione) throws Exception{
+		//synchronized (this.semaphore) {
+		try {
+			this.lock.acquire("removeThread", idTransazione);
 			this.activeThreads--;
 			
 			if(threshold!=null && this.pddCongestionata){
@@ -224,18 +238,26 @@ public class GestoreControlloTraffico {
 			}
 			
 			//System.out.println("@@@removeThread (dopo): "+this.activeThreads);
+		}finally {
+			this.lock.release("removeThread", idTransazione);
 		}
 	}
 	
 	public long sizeActiveThreads(){
-		synchronized (this.semaphore) {
+		//synchronized (this.semaphore) {
+		try {
+			this.lock.acquireThrowRuntime("sizeActiveThreads");
 			//System.out.println("@@@SIZE: "+this.activeThreads);
 			return this.activeThreads;
+		}finally {
+			this.lock.release("sizeActiveThreads");
 		}
 	}
 	
 	public Boolean isPortaDominioCongestionata(Long maxThreads, Integer threshold) {
-		synchronized (this.semaphore) {
+		//synchronized (this.semaphore) {
+		try {
+			this.lock.acquireThrowRuntime("isPortaDominioCongestionata");
 			if(threshold!=null){
 				this.pddCongestionata = this._isPddCongestionata(maxThreads, threshold); // refresh per evitare che l'ultimo thread abbia lasciato attivo il controllo
 			}
@@ -243,6 +265,8 @@ public class GestoreControlloTraffico {
 				this.pddCongestionata = false; // controllo non attivo
 			}
 			return this.pddCongestionata;
+		}finally {
+			this.lock.release("isPortaDominioCongestionata");
 		}
 	}
 	

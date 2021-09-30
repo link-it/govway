@@ -122,6 +122,8 @@ public class ConnettoreMsg  {
 	
 	private IDAccordo idAccordo;
 	
+	private String urlInvocazionePorta;
+
 
 
 
@@ -285,6 +287,10 @@ public class ConnettoreMsg  {
 	
 	public void setIdAccordo(IDAccordo id) {
 		this.idAccordo = id;
+	}
+	
+	public void setUrlInvocazionePorta(String urlInvocazionePorta) {
+		this.urlInvocazionePorta = urlInvocazionePorta;
 	}
 	
 
@@ -529,5 +535,9 @@ public class ConnettoreMsg  {
 	
 	public IDAccordo getIdAccordo() {
 		return this.idAccordo;
+	}
+	
+	public String getUrlInvocazionePorta() {
+		return this.urlInvocazionePorta;
 	}
 }

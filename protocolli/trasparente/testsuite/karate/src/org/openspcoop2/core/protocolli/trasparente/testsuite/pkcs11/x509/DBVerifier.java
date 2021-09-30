@@ -24,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -193,5 +194,41 @@ public class DBVerifier {
 		}
 		
 	}
+
 	
+	public static String getIdTransazione(Date now, String idApplicativo) throws Exception  {
+		
+		// La scrittura su database avviene dopo aver risposto al client
+		
+		Utilities.sleep(100); 
+		try {
+			return DBVerifier._getIdTransazione(now, idApplicativo);
+		}catch(Throwable t) {
+			Utilities.sleep(500);
+			try {
+				return DBVerifier._getIdTransazione(now, idApplicativo);
+			}catch(Throwable t2) {
+				Utilities.sleep(2000);
+				try {
+					return DBVerifier._getIdTransazione(now, idApplicativo);
+				}catch(Throwable t3) {
+					Utilities.sleep(5000);
+					return DBVerifier._getIdTransazione(now, idApplicativo);
+				}
+			}
+		}
+	}
+	
+	private static String _getIdTransazione(Date now, String idApplicativo) throws Exception  {
+		
+		
+		String query = "select id from transazioni where data_ingresso_richiesta > ? AND id_correlazione_applicativa = ?";
+		log().info(query);
+		
+		String idTransazione = dbUtils().readValue(query, String.class, new java.sql.Timestamp(now.getTime()), idApplicativo);
+		assertNotNull("IdTransazione letto da idApplicativo: "+idApplicativo, idTransazione);
+
+		return idTransazione;
+
+	}
 }

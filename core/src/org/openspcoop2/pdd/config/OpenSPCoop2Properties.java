@@ -1791,6 +1791,10 @@ public class OpenSPCoop2Properties {
 			// FormUrlEncodedFilter
 			this.isFormUrlEncodedFilterEnabled();
 			
+			// semaphore
+			this.getSemaphoreTimeoutMS();
+			this.isSemaphoreDebug();
+			
 			// JminixConsole
 			this.getPortJminixConsole();
 			
@@ -17671,6 +17675,61 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.isFormUrlEncodedFilterEnabled;
+	}
+	
+	
+	
+	
+	/* ------------- SEMAPHORE  ---------------------*/
+	
+	private static Long getSemaphoreTimeoutMS = null;
+	public long getSemaphoreTimeoutMS(){
+
+		String pName = "org.openspcoop2.pdd.semaphore.timeoutMS";
+		if(OpenSPCoop2Properties.getSemaphoreTimeoutMS==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.getSemaphoreTimeoutMS = Long.valueOf(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=-1");
+					OpenSPCoop2Properties.getSemaphoreTimeoutMS = -1l;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=1-, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getSemaphoreTimeoutMS = -1l;
+			}
+		}
+
+		return OpenSPCoop2Properties.getSemaphoreTimeoutMS;
+	}
+	
+	private static Boolean isSemaphoreDebug = null;
+	public boolean isSemaphoreDebug(){
+
+		String pName = "org.openspcoop2.pdd.semaphore.debug";
+		if(OpenSPCoop2Properties.isSemaphoreDebug==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isSemaphoreDebug = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isSemaphoreDebug = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isSemaphoreDebug = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isSemaphoreDebug;
 	}
 	
 	

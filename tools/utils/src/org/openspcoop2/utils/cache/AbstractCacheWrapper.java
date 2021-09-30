@@ -34,6 +34,7 @@ import org.openspcoop2.utils.UtilsException;
  */
 public abstract class AbstractCacheWrapper {
 
+	private final org.openspcoop2.utils.Semaphore lockCache = new org.openspcoop2.utils.Semaphore("AbstractCacheWrapper");
 	private Cache cache = null;
 	private Logger log = null;
 	private String cacheName = null;
@@ -306,7 +307,9 @@ public abstract class AbstractCacheWrapper {
 			throw new UtilsException("Cache disabled");
 		}
 		
-		synchronized(this.cache){
+		//synchronized(this.cache){
+		try {
+			this.lockCache.acquireThrowRuntime("duplicateObjectCache");
 			
 //			if(debug){
 //				this.log.debug("@"+keyCache+"@ Cache info: "+this.cache.toString());
@@ -330,6 +333,8 @@ public abstract class AbstractCacheWrapper {
 					throw new UtilsException("Entry with key ["+oldKey+"] not exists");
 				}
 			}
+		}finally {
+			this.lockCache.release("duplicateObjectCache");
 		}
 		
 	}
@@ -405,7 +410,9 @@ public abstract class AbstractCacheWrapper {
 				}
 			}
 			
-			synchronized(this.cache){
+			//synchronized(this.cache){
+			try {
+				this.lockCache.acquire("getObjectCache");
 			
 				try{
 										
@@ -497,6 +504,8 @@ public abstract class AbstractCacheWrapper {
 					}
 				}
 				
+			}finally {
+				this.lockCache.release("getObjectCache");
 			}
 		}
 		

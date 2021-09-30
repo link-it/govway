@@ -136,11 +136,16 @@ public class GestoreToken {
 	private static final String TOKEN_CACHE_NAME = "token";
 	/** Cache */
 	private static Cache cacheToken = null;
-	private static final Boolean semaphoreJWT = true;
-	private static final Boolean semaphoreIntrospection = true;
-	private static final Boolean semaphoreUserInfo = true;
-	private static final Boolean semaphoreNegoziazione = true;
-	private static final Boolean semaphoreAttributeAuthority = true;
+//	private static final Boolean semaphoreJWT = true;
+//	private static final Boolean semaphoreIntrospection = true;
+//	private static final Boolean semaphoreUserInfo = true;
+//	private static final Boolean semaphoreNegoziazione = true;
+//	private static final Boolean semaphoreAttributeAuthority = true;
+	private static final org.openspcoop2.utils.Semaphore lockJWT = new org.openspcoop2.utils.Semaphore("GestoreTokenValidazioneJWT");
+	private static final org.openspcoop2.utils.Semaphore lockIntrospection = new org.openspcoop2.utils.Semaphore("GestoreTokenIntrospection");
+	private static final org.openspcoop2.utils.Semaphore lockUserInfo = new org.openspcoop2.utils.Semaphore("GestoreTokenUserInfo");
+	private static final org.openspcoop2.utils.Semaphore lockNegoziazione = new org.openspcoop2.utils.Semaphore("GestoreTokenNegoziazione");
+	private static final org.openspcoop2.utils.Semaphore lockAttributeAuthority = new org.openspcoop2.utils.Semaphore("GestoreTokenAttributeAuthority");
 	/** Logger log */
 	private static Logger logger = null;
 	private static Logger logConsole = OpenSPCoop2Logger.getLoggerOpenSPCoopConsole();
@@ -620,7 +625,9 @@ public class GestoreToken {
 	
 	// ********* [VALIDAZIONE-TOKEN] VALIDAZIONE JWT TOKEN ****************** */
 	
-	public static EsitoGestioneToken validazioneJWTToken(Logger log, AbstractDatiInvocazione datiInvocazione, String token, boolean portaDelegata) throws Exception {
+	public static EsitoGestioneToken validazioneJWTToken(Logger log, AbstractDatiInvocazione datiInvocazione, 
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
+			String token, boolean portaDelegata) throws Exception {
 		
 		EsitoGestioneToken esitoGestioneToken = null;
 		
@@ -648,7 +655,10 @@ public class GestoreToken {
 				}
 			}
     		
-			synchronized (GestoreToken.semaphoreJWT) {
+			//synchronized (GestoreToken.semaphoreJWT) {
+			try {
+				GestoreToken.lockJWT.acquire("validazioneJWTToken",
+						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
 
 				response = 
 					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
@@ -690,6 +700,9 @@ public class GestoreToken {
 						throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
 					}
 				}
+			}finally {
+				GestoreToken.lockJWT.release("validazioneJWTToken",
+						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
 			}
     	}
 		
@@ -739,6 +752,7 @@ public class GestoreToken {
     					detailsError = "Token non valido";
     				}
     			}catch(Exception e) {
+    				log.debug("Token non valido: "+e.getMessage(),e);
     				detailsError = "Token non valido: "+e.getMessage();
     				eProcess = e;
     			}
@@ -754,6 +768,7 @@ public class GestoreToken {
     				jsonDecrypt.decrypt(token);
     				informazioniToken = new InformazioniToken(SorgenteInformazioniToken.JWT,jsonDecrypt.getDecodedPayload(),tokenParser);
     			}catch(Exception e) {
+    				log.debug("Token non valido: "+e.getMessage(),e);
     				detailsError = "Token non valido: "+e.getMessage();
     				eProcess = e;
     			}
@@ -836,7 +851,10 @@ public class GestoreToken {
 				}
 			}
     		
-			synchronized (GestoreToken.semaphoreIntrospection) {
+			//synchronized (GestoreToken.semaphoreIntrospection) {
+			try {
+				GestoreToken.lockIntrospection.acquire("introspectionToken",
+						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
 
 				response = 
 					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
@@ -880,6 +898,9 @@ public class GestoreToken {
 						throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
 					}
 				}
+			}finally {
+				GestoreToken.lockIntrospection.release("introspectionToken",
+						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
 			}
     	}
 		
@@ -1014,7 +1035,10 @@ public class GestoreToken {
 				}
 			}
     		
-			synchronized (GestoreToken.semaphoreUserInfo) {
+			//synchronized (GestoreToken.semaphoreUserInfo) {
+			try {
+				GestoreToken.lockUserInfo.acquire("userInfoToken",
+						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
 
 				response = 
 					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
@@ -1058,6 +1082,10 @@ public class GestoreToken {
 						throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
 					}
 				}
+			}finally {
+				GestoreToken.lockUserInfo.release("userInfoToken",
+						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
+
 			}
     	}
 		
@@ -2392,7 +2420,10 @@ public class GestoreToken {
 				}
 			}
     		
-			synchronized (GestoreToken.semaphoreNegoziazione) {
+			//synchronized (GestoreToken.semaphoreNegoziazione) {
+			try {
+				GestoreToken.lockNegoziazione.acquire("endpointToken",
+						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
 
 				response = 
 					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
@@ -2458,7 +2489,11 @@ public class GestoreToken {
 					
 				}
 				
-			} // fine synchronized
+			}finally {
+				// fine synchronized
+				GestoreToken.lockNegoziazione.release("endpointToken",
+						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
+			}
     	}
 		
 		if(riavviaNegoziazione) {
@@ -2982,7 +3017,10 @@ public class GestoreToken {
 				}
 			}
     		
-			synchronized (GestoreToken.semaphoreAttributeAuthority) {
+			//synchronized (GestoreToken.semaphoreAttributeAuthority) {
+			try {
+				GestoreToken.lockAttributeAuthority.acquire("readAttributes",
+						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
 
 				response = 
 					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
@@ -3063,7 +3101,11 @@ public class GestoreToken {
 					
 				}
 				
-			} // fine synchronized
+			} finally{
+				// fine synchronized
+				GestoreToken.lockAttributeAuthority.release("readAttributes",
+						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
+			}
     	}
 		
 		if(riavviaNegoziazione) {
