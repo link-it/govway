@@ -428,10 +428,11 @@ public class SOAPAction extends GestioneViaJmx {
 				
 				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR);
 				String msgErrore = CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' non presente";
-				if(version_jbossas!=null && version_jbossas.startsWith("wildfly")){
-					// una soap action non presente viene tradotta nel nuovo web container in una stringa vuota
-					msgErrore = CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' valorizzato tramite una stringa non quotata (WSI-BP-1.1 R1109)";
-				}
+				String msgErroreNonQuotata = null;
+				//if(version_jbossas!=null && version_jbossas.startsWith("wildfly")){ dipende anche dalla versione di java
+				// una soap action non presente viene tradotta nel nuovo web container in una stringa vuota
+				msgErroreNonQuotata = CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' valorizzato tramite una stringa non quotata (WSI-BP-1.1 R1109)";
+				//}
 				
 				if(genericCode) {
 					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.BAD_REQUEST;
@@ -447,8 +448,9 @@ public class SOAPAction extends GestioneViaJmx {
 				Reporter.log("Controllo fault code ["+codiceErrore+"]");
 				Assert.assertTrue(codiceErrore.equals(error.getFaultCode().getLocalPart()));
 				
-				Reporter.log("Controllo fault string ["+msgErrore+"]");
-				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
+				Reporter.log("Controllo fault string 1 ["+msgErrore+"]");
+				Reporter.log("Controllo fault string 2 ["+msgErrore+"]");
+				Assert.assertTrue(msgErrore.equals(error.getFaultString()) || msgErroreNonQuotata.equals(error.getFaultString()));
 			}finally{
 				dbComponentErogatore.close();
 			}
@@ -470,13 +472,19 @@ public class SOAPAction extends GestioneViaJmx {
 		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
 		err2.setIntervalloInferiore(dataInizioTest);
 		err2.setIntervalloSuperiore(dataFineTest);
-		if(version_jbossas!=null && version_jbossas.startsWith("wildfly")){
-			// una soap action non presente viene tradotta nel nuovo web container in una stringa vuota
-			err2.setMsgErrore("Generale(richiesta): Header http 'SOAPAction' valorizzato tramite una stringa non quotata (WSI-BP-1.1 R1109)");
-		}else{
-			err2.setMsgErrore("Generale(richiesta): Header http 'SOAPAction' non presente");
-		}
+		//if(version_jbossas!=null && version_jbossas.startsWith("wildfly")){ dipende anche dalla versione di java
+		// una soap action non presente viene tradotta nel nuovo web container in una stringa vuota
+		err2.setMsgErrore("Generale(richiesta): Header http 'SOAPAction' valorizzato tramite una stringa non quotata (WSI-BP-1.1 R1109)");
+		//}else{
+		//	err2.setMsgErrore("Generale(richiesta): Header http 'SOAPAction' non presente");
+		//}
 		this.erroriAttesiOpenSPCoopCore.add(err2);
+		
+		ErroreAttesoOpenSPCoopLogCore err3 = new ErroreAttesoOpenSPCoopLogCore();
+		err3.setIntervalloInferiore(dataInizioTest);
+		err3.setIntervalloSuperiore(dataFineTest);
+		err3.setMsgErrore("Generale(richiesta): Header http 'SOAPAction' non presente");
+		this.erroriAttesiOpenSPCoopCore.add(err3);
 	}
 	
 	
@@ -548,12 +556,13 @@ public class SOAPAction extends GestioneViaJmx {
 				
 				String codiceErrore = Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR);
 				String descrErrore = null;
-				if(version_jbossas!=null && version_jbossas.startsWith("wildfly")){
-					// una soap action non presente viene tradotta nel nuovo web container in una stringa vuota
-					descrErrore = CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' valorizzato tramite una stringa non quotata (WSI-BP-1.1 R1109)";
-				}else{
-					descrErrore = CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' non presente";
-				}
+				String descrErroreNonQuotata = null;
+				//if(version_jbossas!=null && version_jbossas.startsWith("wildfly")){ dipende anche dalla versione di java
+				// una soap action non presente viene tradotta nel nuovo web container in una stringa vuota
+				descrErroreNonQuotata = CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' valorizzato tramite una stringa non quotata (WSI-BP-1.1 R1109)";
+				//}else{
+				descrErrore = CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' non presente";
+				//}
 				
 				if(genericCode) {
 					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.BAD_REQUEST;
@@ -561,6 +570,7 @@ public class SOAPAction extends GestioneViaJmx {
 					codiceErrore = erroriProperties.getErrorType_noWrap(integrationFunctionError);
 					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
 						descrErrore = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+						descrErroreNonQuotata = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
 					}
 				}
 				
@@ -579,12 +589,17 @@ public class SOAPAction extends GestioneViaJmx {
 				ecc.setDescrizione(descrErrore);
 				ecc.setCheckDescrizioneTramiteMatchEsatto(true);
 				eccezioni.add(ecc);
+				org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc2 = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
+				ecc2.setCodice(codiceErrore);
+				ecc2.setDescrizione(descrErroreNonQuotata);
+				ecc2.setCheckDescrizioneTramiteMatchEsatto(true);
+				eccezioni.add(ecc2);
 				
 				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
 					
 				OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
 						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBuste", 
-						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>());
+						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>(), false);
 			}finally{
 				dbComponentErogatore.close();
 			}
@@ -606,13 +621,19 @@ public class SOAPAction extends GestioneViaJmx {
 		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
 		err2.setIntervalloInferiore(dataInizioTest);
 		err2.setIntervalloSuperiore(dataFineTest);
-		if(version_jbossas!=null && version_jbossas.startsWith("wildfly")){
-			// una soap action non presente viene tradotta nel nuovo web container in una stringa vuota
-			err2.setMsgErrore("Generale(richiesta): Header http 'SOAPAction' valorizzato tramite una stringa non quotata (WSI-BP-1.1 R1109)");
-		}else{
-			err2.setMsgErrore("Generale(richiesta): Header http 'SOAPAction' non presente");
-		}
+		//if(version_jbossas!=null && version_jbossas.startsWith("wildfly")){ dipende anche dalla versione di java
+		// una soap action non presente viene tradotta nel nuovo web container in una stringa vuota
+		err2.setMsgErrore("Generale(richiesta): Header http 'SOAPAction' valorizzato tramite una stringa non quotata (WSI-BP-1.1 R1109)");
+		//}else{
+		//	err2.setMsgErrore("Generale(richiesta): Header http 'SOAPAction' non presente");
+		//}
 		this.erroriAttesiOpenSPCoopCore.add(err2);
+		
+		ErroreAttesoOpenSPCoopLogCore err3 = new ErroreAttesoOpenSPCoopLogCore();
+		err3.setIntervalloInferiore(dataInizioTest);
+		err3.setIntervalloSuperiore(dataFineTest);
+		err3.setMsgErrore("Generale(richiesta): Header http 'SOAPAction' non presente");
+		this.erroriAttesiOpenSPCoopCore.add(err3);
 	}
 
 
