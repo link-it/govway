@@ -903,7 +903,7 @@ public class RicezioneBuste {
 			try{
 				// provo ad emetter un diagnostico
 				if(this.msgContext.getMsgDiagnostico()!=null){
-					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"InizializzazionePdD");
+					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"InizializzazioneGovWay");
 				}
 			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_NOT_INITIALIZED,
@@ -917,7 +917,7 @@ public class RicezioneBuste {
 			try{
 				// provo ad emetter un diagnostico
 				if(this.msgContext.getMsgDiagnostico()!=null){
-					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"InizializzazioneRisorsePdD");
+					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"InizializzazioneRisorseGovWay");
 				}
 			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
@@ -931,7 +931,7 @@ public class RicezioneBuste {
 			try{
 				// provo ad emetter un diagnostico
 				if(this.msgContext.getMsgDiagnostico()!=null){
-					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"DisponibilitaRisorsePdD");
+					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"DisponibilitaRisorseGovWay");
 				}
 			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
@@ -986,12 +986,12 @@ public class RicezioneBuste {
 		try{
 			configurazionePdDReader.verificaConsistenzaConfigurazione();
 		}catch(Exception e){
-			String msgErrore = "Riscontrato errore durante la verifica della consistenza della configurazione PdD";
+			String msgErrore = "Riscontrato errore durante la verifica della consistenza della configurazione";
 			logCore.error("["+RicezioneBuste.ID_MODULO+"]  "+msgErrore,e);
 			try{
 				// provo ad emetter un diagnostico
 				if(this.msgContext.getMsgDiagnostico()!=null){
-					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"CheckConfigurazionePdD");
+					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"CheckConfigurazioneGovWay");
 				}
 			}catch(Throwable t){logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,

@@ -274,7 +274,7 @@ Scenario: isTest('connettivita-base-idar0302') || isTest('manomissione-header-ht
 
 
 Scenario: isTest('assenza-header-digest-risposta-idar0302') || isTest('riutilizzo-token-idar0302') || 
-		isTest('pkcs11')
+		isTest('pkcs11') || isTest('pkcs11-certificate')
     
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')

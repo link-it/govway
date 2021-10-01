@@ -3606,7 +3606,7 @@ Scenario: isTest('doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authoriza
 
 
 
-Scenario: isTest('pkcs11')
+Scenario: isTest('pkcs11') || isTest('pkcs11-certificate')
 
     # Cambia questo
     * def url_invocazione_erogazione = govway_base_path + '/rest/in/DemoSoggettoErogatore/PKCS11TestREST/v1'

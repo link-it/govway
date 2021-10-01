@@ -816,7 +816,7 @@ Scenario: isTest('riutilizzo-token-idas0302')
     * def responseStatus = 200
     * def responseHeaders = { 'Content-type': "application/soap+xml" }
     
-Scenario: isTest('pkcs11')
+Scenario: isTest('pkcs11') || isTest('pkcs11-certificate')
     
     * xmlstring client_request = bodyPath('/')
     * eval karateCache.add("Client-Request", client_request)

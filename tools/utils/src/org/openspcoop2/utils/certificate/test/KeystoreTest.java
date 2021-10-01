@@ -55,17 +55,24 @@ public class KeystoreTest {
 	public final static String PKCS11_CLIENT1 = "pkcs11-client1";
 	public final static String PKCS11_CLIENT2 = "pkcs11-client2";
 	public final static String PKCS11_SERVER = "pkcs11-server";
+	public final static String PKCS11_MODI_CLIENT = "pkcs11-modi-client";
 	
 	public final static String ALIAS_PKCS11_CLIENT1 = "client1_hsm";
 	public final static String ALIAS_PKCS11_CLIENT_SYMMETRIC = "client_symmetric_hsm";
 	public final static String ALIAS_PKCS11_CLIENT2 = "client2_hsm";
 	public final static String ALIAS_PKCS11_SERVER = "server_hsm";
 	public final static String ALIAS_PKCS11_SERVER2 = "server2_hsm";
+	public final static String ALIAS_PKCS11_MODI_CLIENT1 = "modi_client1_hsm";
+	public final static String ALIAS_PKCS11_MODI_CLIENT2 = "modi_client2_hsm";
+	public final static String ALIAS_PKCS11_MODI_CLIENT3 = "modi_client3_hsm";
 	
 	public final static String DN_PKCS11_CLIENT1 = "CN=ExampleClient1HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT";
 	public final static String DN_PKCS11_CLIENT2 = "CN=ExampleClient2HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT";
 	public final static String DN_PKCS11_SERVER = "CN=ExampleServerHSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT";
 	public final static String DN_PKCS11_SERVER2 = "CN=ExampleServer2HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT";
+	public final static String DN_PKCS11_MODI_CLIENT1 = "CN=ExampleModIClient1HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT";
+	public final static String DN_PKCS11_MODI_CLIENT2 = "CN=ExampleModIClient2HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT";
+	public final static String DN_PKCS11_MODI_CLIENT3 = "CN=ExampleModIClient3HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT";
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -127,6 +134,9 @@ public class KeystoreTest {
 		if(!hsmManager.getKeystoreTypes().contains(PKCS11_SERVER)) {
 			throw new UtilsException("PKCS11 Keystore '"+PKCS11_SERVER+"' not found");
 		}
+		if(!hsmManager.getKeystoreTypes().contains(PKCS11_MODI_CLIENT)) {
+			throw new UtilsException("PKCS11 Keystore '"+PKCS11_MODI_CLIENT+"' not found");
+		}
 		
 		if(!hsmManager.existsKeystoreType(PKCS11_CLIENT1)) {
 			throw new UtilsException("PKCS11 Keystore '"+PKCS11_CLIENT1+"' not found");
@@ -136,6 +146,9 @@ public class KeystoreTest {
 		}
 		if(!hsmManager.existsKeystoreType(PKCS11_SERVER)) {
 			throw new UtilsException("PKCS11 Keystore '"+PKCS11_SERVER+"' not found");
+		}
+		if(!hsmManager.existsKeystoreType(PKCS11_MODI_CLIENT)) {
+			throw new UtilsException("PKCS11 Keystore '"+PKCS11_MODI_CLIENT+"' not found");
 		}
 		
 		if(hsmManager.isUsableAsTrustStore(PKCS11_CLIENT1)) {
@@ -147,6 +160,9 @@ public class KeystoreTest {
 		if(!hsmManager.isUsableAsTrustStore(PKCS11_SERVER)) {
 			throw new UtilsException("PKCS11 Keystore '"+PKCS11_SERVER+"'; expected usable as truststore");
 		}
+		if(!hsmManager.isUsableAsTrustStore(PKCS11_MODI_CLIENT)) {
+			throw new UtilsException("PKCS11 Keystore '"+PKCS11_MODI_CLIENT+"'; expected usable as truststore");
+		}
 		
 		if(!hsmManager.isUsableAsSecretKeyStore(PKCS11_CLIENT1)) {
 			throw new UtilsException("PKCS11 Keystore '"+PKCS11_CLIENT1+"'; expected usable as secret key store");
@@ -156,6 +172,9 @@ public class KeystoreTest {
 		}
 		if(hsmManager.isUsableAsSecretKeyStore(PKCS11_SERVER)) {
 			throw new UtilsException("PKCS11 Keystore '"+PKCS11_SERVER+"'; expected not usable as secret key store");
+		}
+		if(hsmManager.isUsableAsSecretKeyStore(PKCS11_MODI_CLIENT)) {
+			throw new UtilsException("PKCS11 Keystore '"+PKCS11_MODI_CLIENT+"'; expected not usable as secret key store");
 		}
 		
 		KeyStore keystore = hsmManager.getKeystore(PKCS11_SERVER);
@@ -180,6 +199,17 @@ public class KeystoreTest {
 		
 		_test(keystore, ALIAS_PKCS11_CLIENT2, PASSWORD, DN_PKCS11_CLIENT2);
 		_test(keystore, ALIAS_PKCS11_CLIENT2, "", DN_PKCS11_CLIENT2); // la password in pkcs11 non esiste per gli oggetti interni
+		
+		keystore = hsmManager.getKeystore(PKCS11_MODI_CLIENT);
+		
+		_test(keystore, ALIAS_PKCS11_MODI_CLIENT1, PASSWORD, DN_PKCS11_MODI_CLIENT1);
+		_test(keystore, ALIAS_PKCS11_MODI_CLIENT1, "", DN_PKCS11_MODI_CLIENT1); // la password in pkcs11 non esiste per gli oggetti interni
+		
+		_test(keystore, ALIAS_PKCS11_MODI_CLIENT2, PASSWORD, DN_PKCS11_MODI_CLIENT2);
+		_test(keystore, ALIAS_PKCS11_MODI_CLIENT2, "", DN_PKCS11_MODI_CLIENT2); // la password in pkcs11 non esiste per gli oggetti interni
+		
+		_test(keystore, ALIAS_PKCS11_MODI_CLIENT3, PASSWORD, DN_PKCS11_MODI_CLIENT3);
+		_test(keystore, ALIAS_PKCS11_MODI_CLIENT3, "", DN_PKCS11_MODI_CLIENT3); // la password in pkcs11 non esiste per gli oggetti interni
 		
 		f.delete();
 		

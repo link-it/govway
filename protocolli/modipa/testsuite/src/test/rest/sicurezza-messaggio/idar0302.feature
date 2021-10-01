@@ -381,12 +381,62 @@ And match header Agid-JWT-Signature == '#notpresent'
 """
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
-* call check_traccia_self_signed ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+* call check_traccia_self_signed ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleModIClient1HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 * call check_traccia_self_signed ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServerHSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
-* call check_traccia_self_signed ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+* call check_traccia_self_signed ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleModIClient1HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 * call check_traccia_self_signed ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServerHSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+
+
+
+@pkcs11-certificate
+Scenario: Test base PKCS11 dove il client, oltre a essere definito tramite HSM, è stato caricato anche il certificato. 
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/PKCS11TestREST/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'pkcs11-certificate'
+And header Authorization = call basic ({ username: 'PKCS11-Client2HSM', password: '123456' })
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
+* def client_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0], "AGID")
+* def server_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Integrity-Token'][0], "AGID")
+
+* def request_digest = get client_integrity_token $.payload.signed_headers..digest
+* def response_digest = get server_integrity_token $.payload.signed_headers..digest
+
+* def other_checks_richiesta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Digest', value: request_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-digest', value: request_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-content-type', value: 'application/json; charset=UTF-8' }
+])
+"""
+
+* def other_checks_risposta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Digest', value: response_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-digest', value: response_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-content-type', value: 'application/json' }
+])
+"""
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia_self_signed ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleModIClient2HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+* call check_traccia_self_signed ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServerHSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia_self_signed ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleModIClient2HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+* call check_traccia_self_signed ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServerHSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+
 
 
 
@@ -397,7 +447,7 @@ Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogato
 And path 'resources', 1, 'M'
 And request read('request.json')
 And header GovWay-TestSuite-Test-ID = 'pkcs11-trustStore'
-And header Authorization = call basic ({ username: 'PKCS11-ServerHSM', password: '123456' })
+And header Authorization = call basic ({ username: 'PKCS11-Client3HSM', password: '123456' })
 When method post
 Then status 200
 And match response == {"esito":"OK"}
@@ -430,11 +480,11 @@ And match header Agid-JWT-Signature == '#notpresent'
 """
 
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
-* call check_traccia_self_signed ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleServerHSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+* call check_traccia_self_signed ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleModIClient3HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 * call check_traccia_self_signed ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer2HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
 
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
-* call check_traccia_self_signed ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleServerHSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+* call check_traccia_self_signed ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleModIClient3HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 * call check_traccia_self_signed ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer2HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
 
 

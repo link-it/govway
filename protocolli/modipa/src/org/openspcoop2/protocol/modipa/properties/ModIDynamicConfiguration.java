@@ -297,6 +297,14 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 					archiveItemValue.setClearContent(true);
 				}
 				
+				// devo annullare eventuale certificato caricato
+				BinaryProperty certificateItemValue = (BinaryProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_CERTIFICATO_ID);
+				if(certificateItemValue!=null) {
+					certificateItemValue.setValue(null);
+					certificateItemValue.setFileName(null);
+					certificateItemValue.setClearContent(true);
+				}
+				
 				AbstractConsoleItem<?> profiloSicurezzaMessaggioAudienceItem = ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_ID);
 				profiloSicurezzaMessaggioAudienceItem.setType(ConsoleItemType.HIDDEN);
 				
@@ -335,14 +343,39 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		
 		if(isClient) {
 			boolean verifyKeystoreConfig = false;
+			boolean verifyCertificateConfig = false;
+			boolean changeBinary = false;
 			if(ConsoleOperationType.CHANGE.equals(consoleOperationType)) {
 				try {
 					String p = consoleHelper.getParameter(Costanti.CONSOLE_PARAMETRO_PP_CHANGE_BINARY);
 					if(Costanti.CONSOLE_PARAMETRO_PP_CHANGE_BINARY_VALUE_TRUE.equalsIgnoreCase(p)) {
 						verifyKeystoreConfig = true;
-						BinaryProperty archiveItemValue = (BinaryProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_ARCHIVE_ID);
-						if(archiveItemValue==null || archiveItemValue.getValue()==null) {
-							throw new ProtocolException("Archivio non fornito");
+						
+						changeBinary = true;
+						
+						StringProperty selectModeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_ID);
+						if(selectModeItemValue!=null && selectModeItemValue.getValue()!=null && !"".equals(selectModeItemValue.getValue())) {
+							String modalita = selectModeItemValue.getValue();
+							if(ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(modalita)) {
+								verifyKeystoreConfig = true;
+							}
+							else {
+								verifyCertificateConfig = true;
+								verifyKeystoreConfig = false;
+							}
+						}
+						
+						if(verifyKeystoreConfig) {
+							BinaryProperty archiveItemValue = (BinaryProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_ARCHIVE_ID);
+							if(archiveItemValue==null || archiveItemValue.getValue()==null) {
+								throw new ProtocolException("Archivio non fornito");
+							}
+						}
+						else if(verifyCertificateConfig) {
+							BinaryProperty certificateItemValue = (BinaryProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_CERTIFICATO_ID);
+							if(certificateItemValue==null || certificateItemValue.getValue()==null) {
+								throw new ProtocolException("Certificato non fornito");
+							}
 						}
 					}
 					else {
@@ -353,6 +386,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 							if(ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(modalita)) {
 								verifyKeystoreConfig = true;
 							}
+							else {
+								verifyCertificateConfig = true;
+							}
 						}
 					}
 				}catch(Exception e) {
@@ -360,23 +396,58 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				}
 			}
 			else if(ConsoleOperationType.ADD.equals(consoleOperationType)) {
+				
 				StringProperty selectModeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_ID);
 				if(selectModeItemValue!=null && selectModeItemValue.getValue()!=null && !"".equals(selectModeItemValue.getValue())) {
 					String modalita = selectModeItemValue.getValue();
 					if(ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(modalita)) {
 						verifyKeystoreConfig = true;
 					}
+					else {
+						verifyCertificateConfig = true;
+					}
 				}
+
 			}
 	
-			if(!esterno && verifyKeystoreConfig) {
+			if(!esterno) {
 			
-				// NOTA: se si attiva anche la validazione durante il change binary, poi non si riesce a modificarlo poiche' la password o l'alis, o qualche parametro non è compatibile con il nuovo archivio.
+				CertificateInfo cert = null;
 				
-				try {
-					this.readKeystoreConfig(properties);
-				}catch(Throwable e) {
-					throw new ProtocolException("Verificare i parametri indicati per il keystore in "+ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL+": "+e.getMessage(),e);
+				if(verifyKeystoreConfig) {
+					// NOTA: se si attiva anche la validazione durante il change binary, poi non si riesce a modificarlo poiche' la password o l'alis, o qualche parametro non è compatibile con il nuovo archivio.
+					
+					try {
+						cert = this.readKeystoreConfig(properties, false);
+					}catch(Throwable e) {
+						throw new ProtocolException("Verificare i parametri indicati per il keystore in "+ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL+": "+e.getMessage(),e);
+					}
+				}
+				else if(verifyCertificateConfig) {
+					try {
+						cert = this.readKeystoreConfig(properties, true);
+					}catch(Throwable e) {
+						throw new ProtocolException("Verificare il certificato caricato in "+ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL+": "+e.getMessage(),e);
+					}
+				}
+				
+				if(changeBinary) {
+					try {
+						if(cert!=null && cert.getSubject()!=null) {
+							StringProperty subjectItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEY_CN_SUBJECT_ID);
+							subjectItemValue.setValue(cert.getSubject().toString());
+							
+							StringProperty issuerItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEY_CN_ISSUER_ID);
+							if(cert.getIssuer()!=null) {
+								issuerItemValue.setValue(cert.getIssuer().toString());
+							}
+							else {
+								issuerItemValue.setValue(null);
+							}
+						}
+					}catch(Throwable e) {
+						// errore sollevato in validazione
+					}
 				}
 				
 			}
@@ -936,7 +1007,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			
 			if(!fruizioni) {
 				try {
-					this.readKeystoreConfig(properties);
+					this.readKeystoreConfig(properties, false);
 				}catch(Throwable e) {
 					throw new ProtocolException("Verificare i parametri indicati per il keystore in "+ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL+": "+e.getMessage(),e);
 				}
@@ -4079,6 +4150,17 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		keyPasswordItem.setRequired(requiredValue);
 		configuration.addConsoleItem(keyPasswordItem);
 
+		AbstractConsoleItem<?> certificateItem = 
+				ProtocolPropertiesFactory.newConsoleItem(
+						ConsoleItemValueType.BINARY,
+						ConsoleItemType.HIDDEN,
+						ModIConsoleCostanti.MODIPA_KEYSTORE_CERTIFICATO_ID, 
+						ModIConsoleCostanti.MODIPA_KEYSTORE_CERTIFICATO_LABEL);
+		((BinaryConsoleItem)certificateItem).setShowContent(false);
+		((BinaryConsoleItem)certificateItem).setReadOnly(false);
+		((BinaryConsoleItem)certificateItem).setRequired(false);
+		configuration.addConsoleItem(certificateItem);
+		
 		if(addHiddenSubjectIssuer) {
 			
 			AbstractConsoleItem<?> cnSubjectItem = 
@@ -4148,7 +4230,10 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_KEYSTORE_ARCHIVE_ID);
 		AbstractConsoleItem<?> pathItem = 	
 				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_KEYSTORE_PATH_ID);
+		AbstractConsoleItem<?> certificateItem = 	
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_KEYSTORE_CERTIFICATO_ID);
 		
+		boolean permitCertificate = false;
 		boolean hsm = false;
 		String modalita = ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_DEFAULT_VALUE;
 		if(selectModeItemValue!=null && selectModeItemValue.getValue()!=null && !"".equals(selectModeItemValue.getValue())) {
@@ -4156,6 +4241,8 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		}
 		if(ridefinisci) {
 			if(ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_VALUE_HSM.equals(modalita)) {
+				
+				permitCertificate = true;
 				
 				hsm = true;
 				
@@ -4185,6 +4272,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				}
 			}
 			else if(ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(modalita)) {
+				
 				archiveItem.setType(ConsoleItemType.FILE);
 				archiveItem.setRequired(requiredValue);
 				if(addHiddenSubjectIssuer) {
@@ -4201,6 +4289,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				modeItem.setNote(null);
 			}
 			else {
+				
+				permitCertificate = true;
+				
 				archiveItem.setType(ConsoleItemType.HIDDEN);
 				archiveItem.setRequired(false);
 				BinaryProperty archiveItemValue = (BinaryProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_ARCHIVE_ID);
@@ -4224,10 +4315,34 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				}
 			}
 			
+			if(certificateItem!=null) {
+				if(addHiddenSubjectIssuer // ha senso solo per l'applicativo per ovviare al problema di riconoscimento multi-tenant
+						&& permitCertificate) {
+					certificateItem.setType(ConsoleItemType.FILE);
+					certificateItem.setRequired(false);
+					((BinaryConsoleItem)archiveItem).setReadOnly(true);
+					
+					BinaryProperty certificateItemValue = (BinaryProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_CERTIFICATO_ID);
+					if(certificateItemValue!=null && certificateItemValue.getValue()!=null && certificateItemValue.getValue().length>0) {
+						modeItem.setNote(null);
+					}
+				}
+				else {
+					certificateItem.setType(ConsoleItemType.HIDDEN);
+					certificateItem.setRequired(false);
+					BinaryProperty certificateItemValue = (BinaryProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_CERTIFICATO_ID);
+					if(certificateItemValue!=null) {
+						certificateItemValue.setValue(null);
+						certificateItemValue.setFileName(null);
+						certificateItemValue.setClearContent(true);
+					}
+				}
+			}
+			
 			if(addHiddenSubjectIssuer) {
 				
 				try {
-					CertificateInfo cert = this.readKeystoreConfig(properties);
+					CertificateInfo cert = this.readKeystoreConfig(properties, permitCertificate);
 					if(cert!=null && cert.getSubject()!=null) {
 						StringProperty subjectItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEY_CN_SUBJECT_ID);
 						subjectItemValue.setValue(cert.getSubject().toString());
@@ -4251,6 +4366,10 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			pathItem.setRequired(false);
 			archiveItem.setType(ConsoleItemType.HIDDEN);
 			archiveItem.setRequired(false);
+			if(certificateItem!=null) {
+				certificateItem.setType(ConsoleItemType.HIDDEN);
+				certificateItem.setRequired(false);
+			}
 		}
 		
 		AbstractConsoleItem<?> typeItem = 	
@@ -4305,52 +4424,71 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		}
 	}
 	
-	private CertificateInfo readKeystoreConfig(ProtocolProperties properties) throws Exception {
+	private CertificateInfo readKeystoreConfig(ProtocolProperties properties, boolean onlyCert) throws Exception {
 		
 		Certificate cert = null;
-				
+			
 		StringProperty selectModeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_ID);
 		String modalita = ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_DEFAULT_VALUE;
 		if(selectModeItemValue!=null && selectModeItemValue.getValue()!=null && !"".equals(selectModeItemValue.getValue())) {
 			modalita = selectModeItemValue.getValue();
 		}
 		
-		StringProperty keystoreTypeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_ID);
-		StringProperty keystorePasswordItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_PASSWORD_ID);
-		StringProperty keyAliasItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEY_ALIAS_ID);
-		StringProperty keyPasswordItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEY_PASSWORD_ID);
-		if(keystoreTypeItemValue!=null && keystorePasswordItemValue!=null && keyAliasItemValue!=null && keyPasswordItemValue!=null) {
-			String type = keystoreTypeItemValue.getValue();
-			ArchiveType archiveType = null;
-			if(ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS.equals(type)) {
-				archiveType = ArchiveType.JKS;
-			}
-			else {
-				archiveType = ArchiveType.PKCS12;
-			}
+		if(onlyCert) {
 			
-			byte [] archive = null;
-			if(ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(modalita)) {
-				BinaryProperty archiveItemValue = (BinaryProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_ARCHIVE_ID);
-				if(archiveItemValue!=null && archiveItemValue.getValue()!=null && !"".equals(archiveItemValue.getValue())) {
-					archive = archiveItemValue.getValue();
-					cert = ArchiveLoader.load(archiveType, archive, keyAliasItemValue.getValue(), keystorePasswordItemValue.getValue());
+			if(!ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(modalita)) {
+				
+				BinaryProperty certificateItemValue = (BinaryProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_CERTIFICATO_ID);
+				if(certificateItemValue!=null && certificateItemValue.getValue()!=null && !"".equals(certificateItemValue.getValue())) {
+					byte [] certificate = certificateItemValue.getValue();
+					cert = ArchiveLoader.load(certificate);
 				}
+				
 			}
 			else {
-				// Il PATH o HSM indicato non e' disponibile nella macchina dove gira la console.
-//				StringProperty pathItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_PATH_ID);
-//				if(pathItemValue!=null && pathItemValue.getValue()!=null && !"".equals(pathItemValue.getValue())) {
-//					archive = org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(pathItemValue.getValue());
-//					cert = ArchiveLoader.load(archiveType, archive, keyAliasItemValue.getValue(), keystorePasswordItemValue.getValue());
-//				}
+				// deve essere gestito invocando questo metodo con onlyCert
 			}
 			
-			// Verifico chiave privata
-			if(archive!=null) {
-				KeyStore ks = KeyStore.getInstance(archiveType.name());
-				ks.load(new ByteArrayInputStream(archive), keystorePasswordItemValue.getValue().toCharArray());
-				ks.getKey(keyAliasItemValue.getValue(), keyPasswordItemValue.getValue().toCharArray());
+		}
+		else {
+					
+			StringProperty keystoreTypeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_ID);
+			StringProperty keystorePasswordItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_PASSWORD_ID);
+			StringProperty keyAliasItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEY_ALIAS_ID);
+			StringProperty keyPasswordItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEY_PASSWORD_ID);
+			if(keystoreTypeItemValue!=null && keystorePasswordItemValue!=null && keyAliasItemValue!=null && keyPasswordItemValue!=null) {
+				String type = keystoreTypeItemValue.getValue();
+				ArchiveType archiveType = null;
+				if(ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS.equals(type)) {
+					archiveType = ArchiveType.JKS;
+				}
+				else {
+					archiveType = ArchiveType.PKCS12;
+				}
+				
+				byte [] archive = null;
+				if(ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(modalita)) {
+					BinaryProperty archiveItemValue = (BinaryProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_ARCHIVE_ID);
+					if(archiveItemValue!=null && archiveItemValue.getValue()!=null && !"".equals(archiveItemValue.getValue())) {
+						archive = archiveItemValue.getValue();
+						cert = ArchiveLoader.load(archiveType, archive, keyAliasItemValue.getValue(), keystorePasswordItemValue.getValue());
+					}
+				}
+				else {
+					// Il PATH o HSM indicato non e' disponibile nella macchina dove gira la console.
+	//				StringProperty pathItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_PATH_ID);
+	//				if(pathItemValue!=null && pathItemValue.getValue()!=null && !"".equals(pathItemValue.getValue())) {
+	//					archive = org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(pathItemValue.getValue());
+	//					cert = ArchiveLoader.load(archiveType, archive, keyAliasItemValue.getValue(), keystorePasswordItemValue.getValue());
+	//				}
+				}
+				
+				// Verifico chiave privata
+				if(archive!=null) {
+					KeyStore ks = KeyStore.getInstance(archiveType.name());
+					ks.load(new ByteArrayInputStream(archive), keystorePasswordItemValue.getValue().toCharArray());
+					ks.getKey(keyAliasItemValue.getValue(), keyPasswordItemValue.getValue().toCharArray());
+				}
 			}
 		}
 		

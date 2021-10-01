@@ -29,6 +29,7 @@ import org.openspcoop2.core.config.constants.PortaApplicativaSoggettiFruitori;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaProtocolProperty;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
@@ -45,6 +46,7 @@ import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneUtils;
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
+import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.slf4j.Logger;
@@ -113,6 +115,8 @@ public class AbstractModIValidazioneSintatticaCommons {
 					
 					FiltroRicercaServiziApplicativi filtro = new FiltroRicercaServiziApplicativi();
 					
+					filtro.setTipoSoggetto(CostantiLabel.MODIPA_PROTOCOL_NAME);
+					
 					FiltroRicercaProtocolProperty filtroSubject = new FiltroRicercaProtocolProperty();
 					filtroSubject.setName(ModICostanti.MODIPA_KEY_CN_SUBJECT);
 					filtroSubject.setValueAsString(subject);
@@ -133,21 +137,42 @@ public class AbstractModIValidazioneSintatticaCommons {
 							
 							ServizioApplicativo sa = configurazionePdDManager.getServizioApplicativo(idServizioApplicativoSubjectIssuerCheck);
 							if(sa!=null && sa.sizeProtocolPropertyList()>0) {
-								byte [] keystoreBytes = ProtocolPropertiesUtils.getOptionalBinaryValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_ARCHIVE);
-								String keystoreType = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_TYPE);
-								String keystorePassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_PASSWORD);
-								String keyAlias = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEY_ALIAS);
-								if(keystoreBytes!=null && keystoreType!=null && keystorePassword!=null && keyAlias!=null) {
-									ArchiveType archiveType = null;
-									if(ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS.equals(keystoreType)) {
-										archiveType = ArchiveType.JKS;
+								
+								java.security.cert.Certificate certificatoCheck = null;
+								
+								String mode = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_MODE);
+								if(mode!=null && !"".equals(mode) && !ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(mode)) {
+									
+									byte [] certificateBytes = ProtocolPropertiesUtils.getOptionalBinaryValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_CERTIFICATE);
+									if(certificateBytes!=null) {
+										org.openspcoop2.utils.certificate.Certificate c = ArchiveLoader.load(certificateBytes);
+										if(c!=null && c.getCertificate()!=null) {
+											certificatoCheck = c.getCertificate().getCertificate();
+										}
 									}
-									else {
-										archiveType = ArchiveType.PKCS12;
+									
+								}
+								else {
+								
+									byte [] keystoreBytes = ProtocolPropertiesUtils.getOptionalBinaryValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_ARCHIVE);
+									String keystoreType = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_TYPE);
+									String keystorePassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_PASSWORD);
+									String keyAlias = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEY_ALIAS);
+									if(keystoreBytes!=null && keystoreType!=null && keystorePassword!=null && keyAlias!=null) {
+										ArchiveType archiveType = null;
+										if(ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS.equals(keystoreType)) {
+											archiveType = ArchiveType.JKS;
+										}
+										else {
+											archiveType = ArchiveType.PKCS12;
+										}
+										MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keystoreBytes, archiveType.name(), 
+												keystorePassword);
+										certificatoCheck = merlinKs.getCertificate(keyAlias);
 									}
-									MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keystoreBytes, archiveType.name(), 
-											keystorePassword);
-									java.security.cert.Certificate certificatoCheck = merlinKs.getCertificate(keyAlias);
+								}
+
+								if(certificatoCheck!=null) {
 									//if(certificate.equals(certificatoCheck.getCertificate(),true)) {
 									if(certificatoCheck instanceof java.security.cert.X509Certificate) {
 										if(certificate.equals(((java.security.cert.X509Certificate)certificatoCheck),true)) {
@@ -156,7 +181,6 @@ public class AbstractModIValidazioneSintatticaCommons {
 										}
 									}
 								}
-
 							}
 							
 						}

@@ -5,6 +5,8 @@
 	Aggiunto supporto per device pkcs11.
 	Keystore HSM via 'PKCS11' sono adesso utilizzabili con il connettore 'https', con le funzionalità di sicurezza dei messaggi (WSSecurity, XMLSecurity e JOSE), 
         con AttributeAuthority e TokenPolicy di validazione e negoziazione e con la gestione dei token di sicurezza previsti nel Profilo 'ModI'.
+	Nella registrazione degli applicativi client sul profilo ModI, nella sezione relativa alla sicurezza messaggio, è adesso possibile caricare il certificato anche con la modalità 'file-system' e 'hsm'.
+	Il caricamento del certificato consente la corretta identificazione dell'applicativo su un altro dominio gestito sempre nel solito govway.
 
 2021-09-27  Andrea Poli <apoli@link.it>
 

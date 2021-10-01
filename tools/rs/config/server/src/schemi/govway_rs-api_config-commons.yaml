@@ -736,6 +736,9 @@ components:
               maxLength: 255
               example: 'PKIX'
               default: 'PKIX'
+            pcks_tipo:
+              type: string
+              maxLength: 255
     ConnettoreConfigurazioneHttpsClient:
       type: object
       allOf:
@@ -751,6 +754,9 @@ components:
               maxLength: 255
               example: 'SunX509'
               default: 'SunX509'
+            pcks_tipo:
+              type: string
+              maxLength: 255
     ConnettoreConfigurazioneProxy:
       type: object
       required: 
@@ -1944,12 +1950,14 @@ components:
           type: object
           oneOf:
           - $ref: '#/components/schemas/ModIKeyStoreArchive'
-          - $ref: '#/components/schemas/ModIKeyStoreFile'
+          - $ref: '#/components/schemas/ModIKeyStoreFileApplicativo'
+          - $ref: '#/components/schemas/ModIKeyStoreHSMApplicativo'
           discriminator:
             propertyName: tipologia
             mapping:
               'archivio': '#/components/schemas/ModIKeyStoreArchive'
-              'filesystem': '#/components/schemas/ModIKeyStoreFile'
+              'filesystem': '#/components/schemas/ModIKeyStoreFileApplicativo'
+              'hsm': '#/components/schemas/ModIKeyStoreHSMApplicativo'
         reply_audience:
            type: string
            maxLength: 4000
@@ -1986,6 +1994,9 @@ components:
           properties:
             truststore_tipo:
               $ref: '#/components/schemas/ModITruststoreEnum'
+            pcks_tipo:
+              type: string
+              maxLength: 255
 
     ModIKeyStoreDefault:
       type: object
@@ -2007,11 +2018,13 @@ components:
           oneOf:
           - $ref: '#/components/schemas/ModIKeyStoreArchive'
           - $ref: '#/components/schemas/ModIKeyStoreFile'
+          - $ref: '#/components/schemas/ModIKeyStoreHSM'
           discriminator:
             propertyName: tipologia
             mapping:
               'archivio': '#/components/schemas/ModIKeyStoreArchive'
               'filesystem': '#/components/schemas/ModIKeyStoreFile'
+              'hsm': '#/components/schemas/ModIKeyStoreHSM'
     ModIKeyStoreFile:
       type: object      
       allOf:
@@ -2025,6 +2038,15 @@ components:
               $ref: '#/components/schemas/ModIKeystoreTipologiaEnum'
             keystore_tipo:
               $ref: '#/components/schemas/ModIKeystoreEnum'
+    ModIKeyStoreFileApplicativo:
+      type: object      
+      allOf:
+        - $ref: '#/components/schemas/ModIKeyStoreFile'
+        - type: object
+          properties:
+            keystore_certificato:
+              type: string
+              format: byte
     ModIKeyStoreArchive:
       type: object      
       allOf:
@@ -2038,6 +2060,32 @@ components:
               $ref: '#/components/schemas/ModIKeystoreTipologiaEnum'
             keystore_tipo:
               $ref: '#/components/schemas/ModIKeystoreEnum'
+    ModIKeyStoreHSM:
+      type: object      
+      required:
+       - tipologia 
+       - pcks_tipo
+       - key_alias
+      properties:
+        tipologia:
+          $ref: '#/components/schemas/ModIKeystoreTipologiaEnum'
+        pcks_tipo:
+              type: string
+              maxLength: 255
+        key_alias:
+          type: string
+          maxLength: 255
+          description: alias della chiave privata
+          example: 'pwd'
+    ModIKeyStoreHSMApplicativo:
+      type: object      
+      allOf:
+        - $ref: '#/components/schemas/ModIKeyStoreHSM'
+        - type: object
+          properties:
+            keystore_certificato:
+              type: string
+              format: byte
 
     # Base: Gruppi Erogazione/Fruizione
 
@@ -3001,7 +3049,7 @@ components:
       default: 'TLSv1.3'
     KeystoreEnum:
       type: string
-      enum: ['jks', 'pkcs12', 'jceks', 'bks', 'uber', 'gkr']
+      enum: ['jks', 'pkcs12', 'pkcs11']
       example: 'jks' 
     TipoAutenticazioneEnum:
       type: string
@@ -3138,7 +3186,7 @@ components:
       default: api
     ModITruststoreEnum:
       type: string
-      enum: ['jks']
+      enum: ['jks', 'pkcs11']
       example: 'jks'
     ModIKeystoreEnum:
       type: string
@@ -3146,7 +3194,7 @@ components:
       example: 'jks'
     ModIKeystoreTipologiaEnum:
       type: string
-      enum: ['archivio', 'filesystem']
+      enum: ['archivio', 'filesystem', 'hsm']
       example: 'filesystem'
     ModISicurezzaMessaggioSoapAlgoritmoFirma:
       type: string

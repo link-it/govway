@@ -74,12 +74,15 @@ public class ModIConsoleCostanti {
     public static final String MODIPA_KEYSTORE_MODE_VALUE_HSM = ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_HSM;
     public static final String MODIPA_KEYSTORE_MODE_LABEL_HSM = "HSM";
     public static final String MODIPA_KEYSTORE_MODE_DEFAULT_VALUE = MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE;
-    public static final String MODIPA_KEYSTORE_MODE_NOTE_PATH = "<b>!!Attenzione!!</b> La modalità selezionata non consente un'identificazione dell'applicativo su API erogate da altri soggetti di dominio interno";
+    public static final String MODIPA_KEYSTORE_MODE_NOTE_PATH = "<b>!!Attenzione!!</b> La modalità selezionata non consente un'identificazione dell'applicativo su API erogate da altri soggetti di dominio interno.<br/>Per consentire l'identificazione caricare il certificato associato alla chiave privata.";
 	
     public static final String MODIPA_KEYSTORE_ARCHIVE_LABEL = "Archivio";
 	public static final String MODIPA_KEYSTORE_ARCHIVE_ID = ModICostanti.MODIPA_KEYSTORE_ARCHIVE;
 	public static final String MODIPA_KEYSTORE_ARCHIVE_NOTE_UPDATE = "<b>Attenzione:</b> Se i parametri di accesso al nuovo archivio differiscono rispetto a quello precedentemente caricato, <BR/> devono essere aggiornati, ritornando alla pagina precente, prima di procedere con il caricamento del nuovo archivio.";
 	
+	public static final String MODIPA_KEYSTORE_CERTIFICATO_LABEL = "Certificato";
+	public static final String MODIPA_KEYSTORE_CERTIFICATO_ID = ModICostanti.MODIPA_KEYSTORE_CERTIFICATE;
+		
 	public static final String MODIPA_KEYSTORE_PATH_LABEL = "Path";
 	public static final String MODIPA_KEYSTORE_PATH_ID = ModICostanti.MODIPA_KEYSTORE_PATH;
 	

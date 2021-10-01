@@ -116,6 +116,8 @@ public class ModICostanti {
     
     public static final String MODIPA_KEYSTORE_ARCHIVE = "modipaKeystoreArchive";
     
+    public static final String MODIPA_KEYSTORE_CERTIFICATE = "modipaKeystoreCertificate";
+    
     public static final String MODIPA_KEYSTORE_PATH = CostantiDB.MODIPA_KEYSTORE_PATH;
     
     public static final String MODIPA_KEYSTORE_TYPE = "modipaKeystoreType";
