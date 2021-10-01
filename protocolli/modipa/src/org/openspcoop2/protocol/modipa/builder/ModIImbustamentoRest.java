@@ -711,6 +711,14 @@ public class ModIImbustamentoRest {
 							}
 						}
 					}
+					else if(httpHeader.toLowerCase().equals(HttpConstants.CONTENT_TYPE.toLowerCase())) {
+						// l'engine potrebbe modificarlo (negli spazi o nell'ordine dei caratteri)
+						String ct = msg.getContentType();
+						if(ct!=null) {
+							hdrName = httpHeader;
+							hdrValues.add(ct);
+						}
+					}
 					else {
 						List<String> values = getHeaderValues(ruoloMessaggio, msg, mapForceTransportHeaders, httpHeader);
 						if(values!=null && !values.isEmpty()) {
@@ -781,28 +789,9 @@ public class ModIImbustamentoRest {
 			secProperties.put(SecurityConstants.JOSE_X509_URL, securityConfig.getX5url());
 		}
 		
-		// keystore
-//		if(keystoreConfig.getSecurityMessageKeystorePath()!=null) {
-//			Properties pSignature = new Properties();
-//			pSignature.put(org.apache.cxf.rs.security.jose.common.JoseConstants.RSSEC_KEY_STORE_FILE, keystoreConfig.getSecurityMessageKeystorePath());
-//			pSignature.put(org.apache.cxf.rs.security.jose.common.JoseConstants.RSSEC_KEY_STORE_TYPE, keystoreConfig.getSecurityMessageKeystoreType());
-//			pSignature.put(org.apache.cxf.rs.security.jose.common.JoseConstants.RSSEC_KEY_STORE_PSWD, keystoreConfig.getSecurityMessageKeystorePassword());
-//			pSignature.put(org.apache.cxf.rs.security.jose.common.JoseConstants.RSSEC_KEY_STORE_ALIAS, keystoreConfig.getSecurityMessageKeyAlias());
-//			pSignature.put(org.apache.cxf.rs.security.jose.common.JoseConstants.RSSEC_KEY_PSWD, keystoreConfig.getSecurityMessageKeyPassword());
-//			pSignature.put(org.apache.cxf.rs.security.jose.common.JoseConstants.RSSEC_SIGNATURE_ALGORITHM, securityConfig.getAlgorithm());
-//			pSignature.put(org.apache.cxf.rs.security.jose.common.JoseConstants.RSSEC_SIGNATURE_INCLUDE_KEY_ID, SecurityConstants.JOSE_KID_TRUE); // kid
-//			if(securityConfig.isX5c()) {
-//				pSignature.put(org.apache.cxf.rs.security.jose.common.JoseConstants.RSSEC_SIGNATURE_INCLUDE_CERT, SecurityConstants.JOSE_KID_TRUE);
-//			}
-//			if(securityConfig.isX5t()) {
-//				pSignature.put(org.apache.cxf.rs.security.jose.common.JoseConstants.RSSEC_SIGNATURE_INCLUDE_CERT_SHA256, SecurityConstants.JOSE_KID_TRUE);
-//			}
-//			secProperties.put(SecurityConstants.SIGNATURE_PROPERTY_REF_ID, pSignature);
-//		}
-//		else {
 		SignatureBean signatureBean = new SignatureBean();
 		org.openspcoop2.utils.certificate.KeyStore ks = null;
-		if(keystoreConfig.getSecurityMessageKeystorePath()!=null) {
+		if(keystoreConfig.getSecurityMessageKeystorePath()!=null || keystoreConfig.isSecurityMessageKeystoreHSM()) {
 			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keystoreConfig.getSecurityMessageKeystorePath(), keystoreConfig.getSecurityMessageKeystoreType(), 
 					keystoreConfig.getSecurityMessageKeystorePassword());
 			if(merlinKs==null) {
@@ -822,7 +811,6 @@ public class ModIImbustamentoRest {
 		signatureBean.setUser(keystoreConfig.getSecurityMessageKeyAlias());
 		signatureBean.setPassword(keystoreConfig.getSecurityMessageKeyPassword());
 		messageSecurityContext.setSignatureBean(signatureBean);
-		//}
 				
 		// setProperties
 		messageSecurityContext.setOutgoingProperties(secProperties, false);

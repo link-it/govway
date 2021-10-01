@@ -1,10 +1,10 @@
 2021-09-28  Andrea Poli <apoli@link.it>
 
-	* [Utils, GovWayCore]
+	* [Utils, GovWayCore, ProtocolloModIPA]
 	Aggiunta funzionalità OP-1257
 	Aggiunto supporto per device pkcs11.
 	Keystore HSM via 'PKCS11' sono adesso utilizzabili con il connettore 'https', con le funzionalità di sicurezza dei messaggi (WSSecurity, XMLSecurity e JOSE), 
-        con AttributeAuthority e TokenPolicy di validazione e negoziazione.
+        con AttributeAuthority e TokenPolicy di validazione e negoziazione e con la gestione dei token di sicurezza previsti nel Profilo 'ModI'.
 
 2021-09-27  Andrea Poli <apoli@link.it>
 

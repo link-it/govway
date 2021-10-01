@@ -815,6 +815,27 @@ Scenario: isTest('riutilizzo-token-idas0302')
     * def response = server_response
     * def responseStatus = 200
     * def responseHeaders = { 'Content-type': "application/soap+xml" }
+    
+Scenario: isTest('pkcs11')
+    
+    * xmlstring client_request = bodyPath('/')
+    * eval karateCache.add("Client-Request", client_request)
+
+    * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/PKCS11TestSOAP/v1')
+
+    * xmlstring server_response = response
+    * eval karateCache.add("Server-Response", server_response)
+
+Scenario: isTest('pkcs11-trustStore')
+    
+    * xmlstring client_request = bodyPath('/')
+    * eval karateCache.add("Client-Request", client_request)
+
+    * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/PKCS11TestSOAPtrustStore/v1')
+
+    * xmlstring server_response = response
+    * eval karateCache.add("Server-Response", server_response)    
+    
 # catch all
 #
 #

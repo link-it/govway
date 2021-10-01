@@ -188,7 +188,7 @@ public class TestEncrypt {
 			keystoreP11_mapAliasPassword.put(aliasP11, passwordChiavePrivata);
 			
 			boolean uniqueProviderInstance = true;			
-			HSMManager.init(fKeystoreP11, true, log);
+			HSMManager.init(fKeystoreP11, true, log, true);
 			HSMManager hsmManager = HSMManager.getInstance();
 			hsmManager.providerInit(log, uniqueProviderInstance);
 			System.out.println("PKCS11 Keystore registered: "+hsmManager.getKeystoreTypes());

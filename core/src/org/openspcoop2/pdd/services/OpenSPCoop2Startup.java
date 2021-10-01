@@ -2344,7 +2344,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				String hsmConfig = propertiesReader.getHSMConfig();
 				if(StringUtils.isNotEmpty(hsmConfig)) {
 					File f = new File(hsmConfig);
-					HSMManager.init(f, propertiesReader.isHSMConfigRequired(), log);
+					HSMManager.init(f, propertiesReader.isHSMConfigRequired(), log, true);
 					HSMManager hsmManager = HSMManager.getInstance();
 					hsmManager.providerInit(logCore, propertiesReader.isHSMConfig_uniqueProviderInstance());
 					String msgInit = "Gestore HSM inizializzato; keystore registrati: "+hsmManager.getKeystoreTypes();

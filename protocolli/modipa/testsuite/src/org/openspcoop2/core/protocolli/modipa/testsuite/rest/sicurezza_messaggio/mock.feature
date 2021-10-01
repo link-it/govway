@@ -273,7 +273,8 @@ Scenario: isTest('connettivita-base-idar0302') || isTest('manomissione-header-ht
     * def responseHeaders = { IDAR03TestHeader: "TestHeaderResponse" }
 
 
-Scenario: isTest('assenza-header-digest-risposta-idar0302') || isTest('riutilizzo-token-idar0302')
+Scenario: isTest('assenza-header-digest-risposta-idar0302') || isTest('riutilizzo-token-idar0302') || 
+		isTest('pkcs11')
     
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')

@@ -807,6 +807,13 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 								}
 								addAsIdBusta = false;
 							}
+							else {
+								// verifico se ho gia' impostato authorization
+								String idActualAuthorization = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUTHORIZATION_ID);
+								if(idActualAuthorization!=null && idActualAuthorization.equals(id)) {
+									busta.removeProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUTHORIZATION_ID);
+								}
+							}
 						}
 					}
 					if(addAsIdBusta) {
@@ -1046,9 +1053,10 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 					Iterator<String> headers = headerHttpAttesi.keySet().iterator();
 					while (headers.hasNext()) {
 						String hdrName = (String) headers.next();
-						List<String> hrdValues = headerHttpAttesi.get(hdrName);
-						for (String hdrValue : hrdValues) {
+						List<String> hrdAttesiValues = headerHttpAttesi.get(hdrName);
+						for (String hdrAttesoValue : hrdAttesiValues) {
 							boolean valid = false;
+							String valueInHttpHeader = null;
 							if(digestHeader.toLowerCase().equalsIgnoreCase(hdrName)) {
 								findDigestInClaimSignedHeader = true;
 								if(digestValueInHeaderHTTP==null) {
@@ -1057,7 +1065,8 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 									valid = true; // per non far segnalare l'eccezione
 								}
 								else {
-									valid = hdrValue.equals(digestValueInHeaderHTTP); 
+									valueInHttpHeader = digestValueInHeaderHTTP;
+									valid = hdrAttesoValue.equals(digestValueInHeaderHTTP); 
 									//System.out.println("VALID DIGEST: "+valid);
 								}
 							}
@@ -1074,12 +1083,18 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 									erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_VALIDA, 
 											"Header HTTP '"+hdrName+"', dichiarato tra gli header firmati, non trovato"));
 								}
+								else if(hdrFound.size()==1) {
+									valueInHttpHeader = hdrFound.get(0);
+									valid = hdrAttesoValue.equals(valueInHttpHeader);
+								}
 								else {
-									valid = hdrFound.contains(hdrValue); 
+									valueInHttpHeader = hdrFound.toString();
+									valid = hdrFound.contains(hdrAttesoValue); 
 								}
 								//System.out.println("VALID HDR '"+hdrName+"': "+valid);
 							}
 							if(!valid) {
+								this.log.error("Header HTTP '"+hdrName+"' possiede un valore '"+valueInHttpHeader+"' differente rispetto a quello presente negli header firmati '"+hdrAttesoValue+"'");
 								erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_VALIDA, 
 										"Header HTTP '"+hdrName+"' possiede un valore differente rispetto a quello presente negli header firmati"));
 							}

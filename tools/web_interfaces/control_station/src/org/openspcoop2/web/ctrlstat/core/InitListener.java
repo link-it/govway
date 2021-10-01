@@ -359,7 +359,7 @@ public class InitListener implements ServletContextListener {
 				String hsmConfig = consoleProperties.getHSMConfigurazione();
 				if(StringUtils.isNotEmpty(hsmConfig)) {
 					File f = new File(hsmConfig);
-					HSMManager.init(f, consoleProperties.isHSMRequired(), log);
+					HSMManager.init(f, consoleProperties.isHSMRequired(), log, false);
 					HSMUtils.HSM_CONFIGURABLE_KEY_PASSWORD = consoleProperties.isHSMKeyPasswordConfigurable();
 				}
 			} catch (Exception e) {

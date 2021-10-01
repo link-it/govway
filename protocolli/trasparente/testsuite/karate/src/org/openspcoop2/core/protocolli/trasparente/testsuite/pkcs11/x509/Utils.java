@@ -360,7 +360,7 @@ public class Utils {
 					fout.flush();
 				}
 				
-				HSMManager.init(f, true, log);
+				HSMManager.init(f, true, log, true);
 				
 				HSMManager hsmManager = HSMManager.getInstance();
 				boolean uniqueProviderInstance = true;

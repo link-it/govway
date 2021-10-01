@@ -112,6 +112,7 @@ public class ModICostanti {
     public static final String MODIPA_KEYSTORE_MODE = "modipaKeystoreMode";
     public static final String MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE = "archive";
     public static final String MODIPA_KEYSTORE_MODE_VALUE_PATH = "path";
+    public static final String MODIPA_KEYSTORE_MODE_VALUE_HSM = "hsm";
     
     public static final String MODIPA_KEYSTORE_ARCHIVE = "modipaKeystoreArchive";
     

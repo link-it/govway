@@ -30,6 +30,7 @@ import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
@@ -137,25 +138,36 @@ public class ModIProperties {
 			
 			/* **** TRUST STORE **** */
 			
-			if(getSicurezzaMessaggio_certificati_trustStore_path()!=null) {
-				getSicurezzaMessaggio_certificati_trustStore_tipo();
-				getSicurezzaMessaggio_certificati_trustStore_password();
+			String trustStoreType = getSicurezzaMessaggio_certificati_trustStore_tipo();
+			if(trustStoreType!=null) {
+				if(!HSMUtils.isKeystoreHSM(trustStoreType)) {
+					getSicurezzaMessaggio_certificati_trustStore_path();
+					getSicurezzaMessaggio_certificati_trustStore_password();
+				}
 				getSicurezzaMessaggio_certificati_trustStore_crls();
 			}
 			
-			if(getSicurezzaMessaggio_ssl_trustStore_path()!=null) {
-				getSicurezzaMessaggio_ssl_trustStore_tipo();
-				getSicurezzaMessaggio_ssl_trustStore_password();
+			String sslTrustStoreType = getSicurezzaMessaggio_ssl_trustStore_tipo();
+			if(sslTrustStoreType!=null) {
+				if(!HSMUtils.isKeystoreHSM(sslTrustStoreType)) {
+					getSicurezzaMessaggio_ssl_trustStore_path();
+					getSicurezzaMessaggio_ssl_trustStore_password();
+				}
 				getSicurezzaMessaggio_ssl_trustStore_crls();
 			}
 			
 			/* **** KEY STORE **** */
 			
-			if(getSicurezzaMessaggio_certificati_keyStore_path()!=null) {
-				getSicurezzaMessaggio_certificati_keyStore_tipo();
-				getSicurezzaMessaggio_certificati_keyStore_password();
+			String keystoreType = getSicurezzaMessaggio_certificati_keyStore_tipo();
+			if(keystoreType!=null) {
+				if(!HSMUtils.isKeystoreHSM(keystoreType)) {
+					getSicurezzaMessaggio_certificati_keyStore_path();
+					getSicurezzaMessaggio_certificati_keyStore_password();
+				}
 				getSicurezzaMessaggio_certificati_key_alias();
-				getSicurezzaMessaggio_certificati_key_password();
+				if(!HSMUtils.isKeystoreHSM(keystoreType) || HSMUtils.HSM_CONFIGURABLE_KEY_PASSWORD) {
+					getSicurezzaMessaggio_certificati_key_password();
+				}
 			}
 			
 			/* **** CORNICE SICUREZZA **** */
@@ -345,33 +357,11 @@ public class ModIProperties {
 	
 	
 	/* **** TRUST STORE **** */
-	
-	private static String sicurezzaMessaggio_certificati_trustStore_path= null;
-	private static Boolean sicurezzaMessaggio_certificati_trustStore_path_read= null;
-	public String getSicurezzaMessaggio_certificati_trustStore_path(){
-    	if(ModIProperties.sicurezzaMessaggio_certificati_trustStore_path_read==null){
-	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.trustStore.path"); 
-				
-				if (value != null){
-					value = value.trim();
-					ModIProperties.sicurezzaMessaggio_certificati_trustStore_path = value;
-				}
-				
-				ModIProperties.sicurezzaMessaggio_certificati_trustStore_path_read = true;
-				
-			}catch(java.lang.Exception e) {
-				this.log.error("Proprietà 'org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.trustStore.path' non impostata, errore:"+e.getMessage());
-				ModIProperties.sicurezzaMessaggio_certificati_trustStore_path_read = true;
-			}
-    	}
-    	
-    	return ModIProperties.sicurezzaMessaggio_certificati_trustStore_path;
-	}
-	
+		
 	private static String sicurezzaMessaggio_certificati_trustStore_tipo= null;
-	public String getSicurezzaMessaggio_certificati_trustStore_tipo() throws Exception{
-    	if(ModIProperties.sicurezzaMessaggio_certificati_trustStore_tipo==null){
+	private static Boolean sicurezzaMessaggio_certificati_trustStore_tipo_read= null;
+	public String getSicurezzaMessaggio_certificati_trustStore_tipo() {
+    	if(ModIProperties.sicurezzaMessaggio_certificati_trustStore_tipo_read==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.trustStore.tipo"); 
 				
@@ -379,18 +369,40 @@ public class ModIProperties {
 					value = value.trim();
 					ModIProperties.sicurezzaMessaggio_certificati_trustStore_tipo = value;
 				}
-				else {
-					throw new Exception("non definita");
-				}
+				
+				ModIProperties.sicurezzaMessaggio_certificati_trustStore_tipo_read = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprietà 'org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.trustStore.tipo' non impostata, errore:"+e.getMessage());
-				throw e;
+				ModIProperties.sicurezzaMessaggio_certificati_trustStore_tipo_read = true;
 			}
     	}
     	
     	return ModIProperties.sicurezzaMessaggio_certificati_trustStore_tipo;
 	}	
+	
+	private static String sicurezzaMessaggio_certificati_trustStore_path= null;
+	public String getSicurezzaMessaggio_certificati_trustStore_path() throws Exception{
+    	if(ModIProperties.sicurezzaMessaggio_certificati_trustStore_path==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.trustStore.path"); 
+				
+				if (value != null){
+					value = value.trim();
+					ModIProperties.sicurezzaMessaggio_certificati_trustStore_path = value;
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprietà 'org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.trustStore.path' non impostata, errore:"+e.getMessage());
+				throw e;
+			}
+    	}
+    	
+    	return ModIProperties.sicurezzaMessaggio_certificati_trustStore_path;
+	}
 	
 	private static String sicurezzaMessaggio_certificati_trustStore_password= null;
 	public String getSicurezzaMessaggio_certificati_trustStore_password() throws Exception{
@@ -439,33 +451,11 @@ public class ModIProperties {
 	}	
 	
 	
-	
-	private static String sicurezzaMessaggio_ssl_trustStore_path= null;
-	private static Boolean sicurezzaMessaggio_ssl_trustStore_path_read= null;
-	public String getSicurezzaMessaggio_ssl_trustStore_path(){
-    	if(ModIProperties.sicurezzaMessaggio_ssl_trustStore_path_read==null){
-	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.ssl.trustStore.path"); 
-				
-				if (value != null){
-					value = value.trim();
-					ModIProperties.sicurezzaMessaggio_ssl_trustStore_path = value;
-				}
-				
-				ModIProperties.sicurezzaMessaggio_ssl_trustStore_path_read = true;
-				
-			}catch(java.lang.Exception e) {
-				this.log.error("Proprietà 'org.openspcoop2.protocol.modipa.sicurezzaMessaggio.ssl.trustStore.path' non impostata, errore:"+e.getMessage());
-				ModIProperties.sicurezzaMessaggio_ssl_trustStore_path_read = true;
-			}
-    	}
-    	
-    	return ModIProperties.sicurezzaMessaggio_ssl_trustStore_path;
-	}
-	
+		
 	private static String sicurezzaMessaggio_ssl_trustStore_tipo= null;
-	public String getSicurezzaMessaggio_ssl_trustStore_tipo() throws Exception{
-    	if(ModIProperties.sicurezzaMessaggio_ssl_trustStore_tipo==null){
+	private static Boolean sicurezzaMessaggio_ssl_trustStore_tipo_read= null;
+	public String getSicurezzaMessaggio_ssl_trustStore_tipo() {
+    	if(ModIProperties.sicurezzaMessaggio_ssl_trustStore_tipo_read==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.ssl.trustStore.tipo"); 
 				
@@ -473,18 +463,40 @@ public class ModIProperties {
 					value = value.trim();
 					ModIProperties.sicurezzaMessaggio_ssl_trustStore_tipo = value;
 				}
-				else {
-					throw new Exception("non definita");
-				}
+				
+				ModIProperties.sicurezzaMessaggio_ssl_trustStore_tipo_read = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprietà 'org.openspcoop2.protocol.modipa.sicurezzaMessaggio.ssl.trustStore.tipo' non impostata, errore:"+e.getMessage());
-				throw e;
+				ModIProperties.sicurezzaMessaggio_ssl_trustStore_tipo_read = true;
 			}
     	}
     	
     	return ModIProperties.sicurezzaMessaggio_ssl_trustStore_tipo;
 	}	
+	
+	private static String sicurezzaMessaggio_ssl_trustStore_path= null;
+	public String getSicurezzaMessaggio_ssl_trustStore_path() throws Exception{
+    	if(ModIProperties.sicurezzaMessaggio_ssl_trustStore_path==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.ssl.trustStore.path"); 
+				
+				if (value != null){
+					value = value.trim();
+					ModIProperties.sicurezzaMessaggio_ssl_trustStore_path = value;
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprietà 'org.openspcoop2.protocol.modipa.sicurezzaMessaggio.ssl.trustStore.path' non impostata, errore:"+e.getMessage());
+				throw e;
+			}
+    	}
+    	
+    	return ModIProperties.sicurezzaMessaggio_ssl_trustStore_path;
+	}
 	
 	private static String sicurezzaMessaggio_ssl_trustStore_password= null;
 	public String getSicurezzaMessaggio_ssl_trustStore_password() throws Exception{
@@ -539,33 +551,11 @@ public class ModIProperties {
 	
 	
 	/* **** KEY STORE **** */
-	
-	private static String sicurezzaMessaggio_certificati_keyStore_path= null;
-	private static Boolean sicurezzaMessaggio_certificati_keyStore_path_read= null;
-	public String getSicurezzaMessaggio_certificati_keyStore_path(){
-    	if(ModIProperties.sicurezzaMessaggio_certificati_keyStore_path_read==null){
-	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.keyStore.path"); 
-				
-				if (value != null){
-					value = value.trim();
-					ModIProperties.sicurezzaMessaggio_certificati_keyStore_path = value;
-				}
-				
-				ModIProperties.sicurezzaMessaggio_certificati_keyStore_path_read = true;
-				
-			}catch(java.lang.Exception e) {
-				this.log.error("Proprietà 'org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.keyStore.path' non impostata, errore:"+e.getMessage());
-				ModIProperties.sicurezzaMessaggio_certificati_keyStore_path_read = true;
-			}
-    	}
-    	
-    	return ModIProperties.sicurezzaMessaggio_certificati_keyStore_path;
-	}
-	
+		
 	private static String sicurezzaMessaggio_certificati_keyStore_tipo= null;
-	public String getSicurezzaMessaggio_certificati_keyStore_tipo() throws Exception{
-    	if(ModIProperties.sicurezzaMessaggio_certificati_keyStore_tipo==null){
+	private static Boolean sicurezzaMessaggio_certificati_keyStore_tipo_read= null;
+	public String getSicurezzaMessaggio_certificati_keyStore_tipo() {
+    	if(ModIProperties.sicurezzaMessaggio_certificati_keyStore_tipo_read==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.keyStore.tipo"); 
 				
@@ -573,18 +563,40 @@ public class ModIProperties {
 					value = value.trim();
 					ModIProperties.sicurezzaMessaggio_certificati_keyStore_tipo = value;
 				}
-				else {
-					throw new Exception("non definita");
-				}
 				
+				ModIProperties.sicurezzaMessaggio_certificati_keyStore_tipo_read = true;
+								
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprietà 'org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.keyStore.tipo' non impostata, errore:"+e.getMessage());
-				throw e;
+				ModIProperties.sicurezzaMessaggio_certificati_keyStore_tipo_read = true;
 			}
     	}
     	
     	return ModIProperties.sicurezzaMessaggio_certificati_keyStore_tipo;
 	}	
+	
+	private static String sicurezzaMessaggio_certificati_keyStore_path= null;
+	public String getSicurezzaMessaggio_certificati_keyStore_path() throws Exception{
+    	if(ModIProperties.sicurezzaMessaggio_certificati_keyStore_path==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.keyStore.path"); 
+				
+				if (value != null){
+					value = value.trim();
+					ModIProperties.sicurezzaMessaggio_certificati_keyStore_path = value;
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprietà 'org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.keyStore.path' non impostata, errore:"+e.getMessage());
+				throw e;
+			}
+    	}
+    	
+    	return ModIProperties.sicurezzaMessaggio_certificati_keyStore_path;
+	}
 	
 	private static String sicurezzaMessaggio_certificati_keyStore_password= null;
 	public String getSicurezzaMessaggio_certificati_keyStore_password() throws Exception{

@@ -30,6 +30,7 @@ import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 /**
@@ -41,8 +42,9 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  */
 public class ModITruststoreConfig {
 
-	private String securityMessageTruststorePath = null;
 	private String securityMessageTruststoreType = null;
+	private boolean securityMessageTruststoreHSM = false;
+	private String securityMessageTruststorePath = null;
 	private String securityMessageTruststorePassword = null;
 	private String securityMessageTruststoreCRLs = null;
 	
@@ -62,36 +64,59 @@ public class ModITruststoreConfig {
 			
 			if(ridefinisci) {
 				
-				this.securityMessageTruststorePath = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, 
-						ssl ? ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PATH : ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH);
 				this.securityMessageTruststoreType = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, 
 						ssl ? ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE : ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE);
-				this.securityMessageTruststorePassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, 
-						ssl ? ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PASSWORD : ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD);
-
-				this.securityMessageTruststoreCRLs = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, 
-						ssl ? ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_CRLS : ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS);
+				this.securityMessageTruststoreHSM = HSMUtils.isKeystoreHSM(this.securityMessageTruststoreType);
 				
-				try {
-					HttpUtilities.validateUri(this.securityMessageTruststorePath, true);
-				}catch(Exception e) {
-					throw new ProtocolException(prefix+" ["+this.securityMessageTruststorePath+"] "+e.getMessage(),e);
-				}
-			}
-			else {
-				
-				ModIProperties modIproperties = ModIProperties.getInstance();
-				this.securityMessageTruststorePath = ssl ? modIproperties.getSicurezzaMessaggio_ssl_trustStore_path() : modIproperties.getSicurezzaMessaggio_certificati_trustStore_path();
-				if(this.securityMessageTruststorePath!=null) {
+				if(this.securityMessageTruststoreHSM) {
 					
+					this.securityMessageTruststorePath = HSMUtils.KEYSTORE_HSM_PREFIX+this.securityMessageTruststoreType;
+					
+					this.securityMessageTruststorePassword = HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED;
+							
+				}
+				else {
+					this.securityMessageTruststorePath = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, 
+							ssl ? ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PATH : ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH);
 					try {
 						HttpUtilities.validateUri(this.securityMessageTruststorePath, true);
 					}catch(Exception e) {
 						throw new ProtocolException(prefix+" ["+this.securityMessageTruststorePath+"] "+e.getMessage(),e);
 					}
 					
-					this.securityMessageTruststoreType = ssl ? modIproperties.getSicurezzaMessaggio_ssl_trustStore_tipo() : modIproperties.getSicurezzaMessaggio_certificati_trustStore_tipo();
-					this.securityMessageTruststorePassword = ssl ? modIproperties.getSicurezzaMessaggio_ssl_trustStore_password() : modIproperties.getSicurezzaMessaggio_certificati_trustStore_password();
+					this.securityMessageTruststorePassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, 
+							ssl ? ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PASSWORD : ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD);
+				}
+
+				this.securityMessageTruststoreCRLs = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, 
+						ssl ? ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_CRLS : ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS);
+			}
+			else {
+				
+				ModIProperties modIproperties = ModIProperties.getInstance();
+				this.securityMessageTruststoreType = ssl ? modIproperties.getSicurezzaMessaggio_ssl_trustStore_tipo() : modIproperties.getSicurezzaMessaggio_certificati_trustStore_tipo();
+				if(this.securityMessageTruststoreType!=null) {
+					
+					this.securityMessageTruststoreHSM = HSMUtils.isKeystoreHSM(this.securityMessageTruststoreType);
+					
+					if(this.securityMessageTruststoreHSM) {
+						
+						this.securityMessageTruststorePath = HSMUtils.KEYSTORE_HSM_PREFIX+this.securityMessageTruststoreType;
+						
+						this.securityMessageTruststorePassword = HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED;
+						
+					}
+					else {
+						
+						this.securityMessageTruststorePath = ssl ? modIproperties.getSicurezzaMessaggio_ssl_trustStore_path() : modIproperties.getSicurezzaMessaggio_certificati_trustStore_path();
+						try {
+							HttpUtilities.validateUri(this.securityMessageTruststorePath, true);
+						}catch(Exception e) {
+							throw new ProtocolException(prefix+" ["+this.securityMessageTruststorePath+"] "+e.getMessage(),e);
+						}
+						
+						this.securityMessageTruststorePassword = ssl ? modIproperties.getSicurezzaMessaggio_ssl_trustStore_password() : modIproperties.getSicurezzaMessaggio_certificati_trustStore_password();
+					}
 				
 					this.securityMessageTruststoreCRLs = ssl ? modIproperties.getSicurezzaMessaggio_ssl_trustStore_crls() : modIproperties.getSicurezzaMessaggio_certificati_trustStore_crls();
 				}
@@ -117,6 +142,10 @@ public class ModITruststoreConfig {
 
 	public String getSecurityMessageTruststoreType() {
 		return this.securityMessageTruststoreType;
+	}
+	
+	public boolean isSecurityMessageTruststoreHSM() {
+		return this.securityMessageTruststoreHSM;
 	}
 
 	public String getSecurityMessageTruststorePassword() {

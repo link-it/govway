@@ -43,9 +43,9 @@ import org.slf4j.Logger;
 public class HSMManager {
 
 	private static HSMManager staticInstance;
-	public static synchronized void init(File f, boolean throwNotExists, Logger log) throws UtilsException {
+	public static synchronized void init(File f, boolean throwNotExists, Logger log, boolean accessKeystore) throws UtilsException {
 		if(staticInstance==null) {
-			staticInstance = new HSMManager(f, throwNotExists, log);
+			staticInstance = new HSMManager(f, throwNotExists, log, accessKeystore);
 		}
 	}
 	public static HSMManager getInstance() {
@@ -57,41 +57,25 @@ public class HSMManager {
 	 * 
 	 * La configurazione di ogni keystore deve essere definita nel file hsm.properties fornito come argomento dove la sintassi utilizzabile è la seguente
 	 * 
-	 * hsm.<idKeystore>.provider: [required] classe del provider che deve essere stata registrata in JVM/conf/security/java.security o andrà aggiunta dinamicamente tramite opzione successiva
+	 * hsm.<idKeystore>.provider: [required su nodo run] classe del provider che deve essere stata registrata in JVM/conf/security/java.security o andrà aggiunta dinamicamente tramite opzione successiva
 	 * hsm.<idKeystore>.provider.add: [optional, default false] indica se il provider fornito deve essere aggiunto (se non già presente)
 	 * hsm.<idKeystore>.provider.configFile: [optional] se fornito verrà utilizzato per configurare il provider tramite l'istruzione 'configure(configFile)'
 	 * hsm.<idKeystore>.provider.config: [optional] se fornito verrà utilizzato per configurare il provider tramite l'istruzione 'configure(config)'
-	 * hsm.<idKeystore>.keystoreType.label: [required] label associata al keystore e visualizzata nelle console
-	 * hsm.<idKeystore>.keystoreType: [required] tipo associato al keystore ed utilizzato per istanziarlo tramite l'istruzione 'KeyStore.getInstance(keystoreType, provider)'
-	 * hsm.<idKeystore>.usableAsTruststore: [optional, default false] indica se il keystore è utilizzabile anche come truststore di certificati
+	 * hsm.<idKeystore>.pin: [required su nodo run] pin per accedere al keystore
+	 * hsm.<idKeystore>.keystoreType.label: [required su nodo run] label associata al keystore e visualizzata nelle console
+	 * hsm.<idKeystore>.keystoreType: [required su nodo run] tipo associato al keystore ed utilizzato per istanziarlo tramite l'istruzione 'KeyStore.getInstance(keystoreType, provider)'
+	 * hsm.<idKeystore>.usableAsTrustStore: [optional, default false] indica se il keystore è utilizzabile anche come truststore di certificati
+	 * hsm.<idKeystore>.usableAsSecretKeyStore: [optional, default false] indica se il keystore è utilizzabile anche come repository di chiavi segrete
 	 * 
-	 * Ad esempio seguendo quando descritto in HSM.example, la configurazione potrebbe essere:
+	 * Un disponibile in HSM.example
 	 * 
-	 * hsm.keystoreClient1.provider=SunPKCS11
-	 * hsm.keystoreClient1.provider.add=true
-	 * hsm.keystoreClient1.provider.configFile=$HOME/lib/softhsm/softhsm_java_client1.conf
-	 * hsm.keystoreClient1.keystoreType.label=pkcs11-client1
-	 * hsm.keystoreClient1.keystoreType=pkcs11
-	 *
-	 * hsm.keystoreClient2.provider=SunPKCS11
-	 * hsm.keystoreClient2.provider.add=true
-	 * hsm.keystoreClient2.provider.config=--name = softhsm-client2\nlibrary = /usr/lib64/libsofthsm2.so\nslotListIndex = 1
-	 * hsm.keystoreClient2.keystoreType.label=pkcs11-client2
-	 * hsm.keystoreClient2.keystoreType=pkcs11
-	 * 
-	 * hsm.keystoreServer.provider=SunPKCS11
-	 * hsm.keystoreServer.provider.add=true
-	 * hsm.keystoreServer.provider.configFile=$HOME/lib/softhsm/softhsm_java_server.conf
-	 * hsm.keystoreServer.keystoreType.label=pkcs11-server
-	 * hsm.keystoreServer.keystoreType=pkcs11
-	 * hsm.keystoreServer.usableAsTruststore=true
 	 **/
 	
 	private HashMap<String, HSMKeystore> hsmKeystoreMapIDtoConfig = new HashMap<String, HSMKeystore>();
 	
 	private HashMap<String, String> hsmKeystoreMapKeystoreTypeLabelToID = new HashMap<String, String>();
 	
-	private HSMManager(File f, boolean throwNotExists, Logger log) throws UtilsException {
+	private HSMManager(File f, boolean throwNotExists, Logger log, boolean accessKeystore) throws UtilsException {
 		if(!f.exists()) {
 			if(throwNotExists) {
 				throw new UtilsException("File '"+f.getAbsolutePath()+"' not exists");
@@ -109,13 +93,13 @@ public class HSMManager {
 			}catch(Throwable t) {
 				throw new UtilsException("File '"+f.getAbsolutePath()+"'; initialize error: "+t.getMessage(),t);
 			}
-			init(p, log);
+			init(p, log, accessKeystore);
 		}
 	}
-	private HSMManager(Properties p, Logger log) throws UtilsException {
-		init(p, log);
+	private HSMManager(Properties p, Logger log, boolean accessKeystore) throws UtilsException {
+		init(p, log, accessKeystore);
 	}
-	private void init(Properties p, Logger log) throws UtilsException {
+	private void init(Properties p, Logger log, boolean accessKeystore) throws UtilsException {
 		
 		List<String> idKeystore = new ArrayList<String>();
 		
@@ -148,7 +132,7 @@ public class HSMManager {
 			for (String idK : idKeystore) {
 				String prefix = HSMCostanti.PROPERTY_PREFIX + idK + ".";
 				Properties pKeystore = Utilities.readProperties(prefix, p);
-				HSMKeystore hsmKeystore = new HSMKeystore(idK, pKeystore, log);
+				HSMKeystore hsmKeystore = new HSMKeystore(idK, pKeystore, log, accessKeystore);
 				
 				boolean alreadyExists = false;
 				for (String type : this.hsmKeystoreMapKeystoreTypeLabelToID.keySet()) {

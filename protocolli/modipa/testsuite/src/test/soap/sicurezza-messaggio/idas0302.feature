@@ -7,6 +7,7 @@ Background:
     * configure afterFeature = function(){ karate.call('classpath:utils/jmx-disable-error-disclosure.feature'); }
     
     * def check_traccia = read('check-tracce/check-traccia.feature')
+    * def check_traccia_self_signed = read('check-tracce/check-traccia-self-signed.feature')
     * def check_signature = read('classpath:org/openspcoop2/core/protocolli/modipa/testsuite/soap/sicurezza_messaggio/check-signature.feature')
 
     * def x509sub_client1 = 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT'
@@ -185,3 +186,62 @@ When method post
 Then status 500
 And match response == read("error-bodies/identificativo-token-riutilizzato-in-risposta.xml")
 And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
+
+
+@pkcs11
+Scenario: Test base PKCS11
+
+* def soap_url = govway_base_path + '/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/PKCS11TestSOAP/v1'
+
+Given url soap_url
+And path 'test'
+And request read("request.xml")
+And header Content-Type = 'application/soap+xml'
+And header action = soap_url
+And header GovWay-TestSuite-Test-ID = 'pkcs11'
+And header Authorization = call basic ({ username: 'PKCS11-Client1HSM', password: '123456' })
+When method post
+Then status 200
+And match response == read("response.xml")
+
+* def karateCache = Java.type('org.openspcoop2.core.protocolli.modipa.testsuite.KarateCache')
+* xml client_request = karateCache.get("Client-Request")
+* xml server_response = karateCache.get("Server-Response")
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia_self_signed ({ tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAS0302', profilo_interazione: 'crud' })
+* call check_traccia_self_signed ({ tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServerHSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAS0302', profilo_interazione: 'crud' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia_self_signed ({ tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAS0302', profilo_interazione: 'crud' })
+* call check_traccia_self_signed ({ tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServerHSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAS0302', profilo_interazione: 'crud' })
+
+
+
+@pkcs11-trustStore
+Scenario: Test base PKCS11 che viene usato anche come trustStore
+
+* def soap_url = govway_base_path + '/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/PKCS11TestSOAPtrustStore/v1'
+
+Given url soap_url
+And path 'test'
+And request read("request.xml")
+And header Content-Type = 'application/soap+xml'
+And header action = soap_url
+And header GovWay-TestSuite-Test-ID = 'pkcs11-trustStore'
+And header Authorization = call basic ({ username: 'PKCS11-ServerHSM', password: '123456' })
+When method post
+Then status 200
+And match response == read("response.xml")
+
+* def karateCache = Java.type('org.openspcoop2.core.protocolli.modipa.testsuite.KarateCache')
+* xml client_request = karateCache.get("Client-Request")
+* xml server_response = karateCache.get("Server-Response")
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia_self_signed ({ tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleServerHSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAS0302', profilo_interazione: 'crud' })
+* call check_traccia_self_signed ({ tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer2HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAS0302', profilo_interazione: 'crud' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia_self_signed ({ tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleServerHSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAS0302', profilo_interazione: 'crud' })
+* call check_traccia_self_signed ({ tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer2HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAS0302', profilo_interazione: 'crud' })

@@ -163,7 +163,8 @@ Scenario: isTest('manomissione-token-risposta-idas0302')
     * def responseStatus = 200
     * def response = read('classpath:test/soap/sicurezza-messaggio/response.xml')
 
-Scenario: isTest('manomissione-payload-risposta-idas0302')
+Scenario: isTest('manomissione-payload-risposta-idas0302') ||
+	isTest('pkcs11') || isTest('pkcs11-trustStore')
     
     * match bodyPath('/Envelope/Header') == ''
     * def responseStatus = 200

@@ -59,14 +59,14 @@ public class HSMKeystore implements Serializable {
 	private boolean usableAsTrustStore = false;
 	private boolean usableAsSecretKeyStore = false;
 	
-	protected HSMKeystore(String id, Properties p, Logger log) throws UtilsException {
+	protected HSMKeystore(String id, Properties p, Logger log, boolean accessKeystore) throws UtilsException {
 		this.id = id;
 		
 		if(p==null || p.isEmpty()) {
 			throw new UtilsException("Properties '"+HSMCostanti.PROPERTY_PREFIX+id+".*' undefined");
 		}
 		
-		this.provider = getProperty(id, p, HSMCostanti.PROPERTY_SUFFIX_PROVIDER, true);	
+		this.provider = getProperty(id, p, HSMCostanti.PROPERTY_SUFFIX_PROVIDER, accessKeystore);	
 		
 		String tmp = getProperty(id, p, HSMCostanti.PROPERTY_SUFFIX_PROVIDER_ADD, false);
 		if(tmp!=null) {
@@ -80,9 +80,9 @@ public class HSMKeystore implements Serializable {
 		this.configFile = getProperty(id, p, HSMCostanti.PROPERTY_SUFFIX_PROVIDER_CONFIG_FILE, false);
 		this.config = getProperty(id, p, HSMCostanti.PROPERTY_SUFFIX_PROVIDER_CONFIG, false);
 		
-		this.pin = getProperty(id, p, HSMCostanti.PROPERTY_SUFFIX_PIN, true);
+		this.pin = getProperty(id, p, HSMCostanti.PROPERTY_SUFFIX_PIN, accessKeystore);
 		
-		this.keystoreType = getProperty(id, p, HSMCostanti.PROPERTY_SUFFIX_KEYSTORE_TYPE, true);	
+		this.keystoreType = getProperty(id, p, HSMCostanti.PROPERTY_SUFFIX_KEYSTORE_TYPE, accessKeystore);	
 		this.keystoreTypeLabel = getProperty(id, p, HSMCostanti.PROPERTY_SUFFIX_KEYSTORE_TYPE_LABEL, true);
 		
 		tmp = getProperty(id, p, HSMCostanti.PROPERTY_SUFFIX_USABLE_AS_TRUST_STORE, false);

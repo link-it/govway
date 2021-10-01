@@ -3605,6 +3605,44 @@ Scenario: isTest('doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authoriza
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
 
 
+
+Scenario: isTest('pkcs11')
+
+    # Cambia questo
+    * def url_invocazione_erogazione = govway_base_path + '/rest/in/DemoSoggettoErogatore/PKCS11TestREST/v1'
+
+    * karate.proceed (url_invocazione_erogazione)
+    
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Client-Integrity-Token': requestHeaders['Agid-JWT-Signature'][0],
+        'GovWay-TestSuite-GovWay-Server-Integrity-Token': responseHeaders['Agid-JWT-Signature'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+    
+    
+Scenario: isTest('pkcs11-trustStore')
+
+    # Cambia questo
+    * def url_invocazione_erogazione = govway_base_path + '/rest/in/DemoSoggettoErogatore/PKCS11TestRESTtrustStore/v1'
+
+    * karate.proceed (url_invocazione_erogazione)
+    
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Client-Integrity-Token': requestHeaders['Agid-JWT-Signature'][0],
+        'GovWay-TestSuite-GovWay-Server-Integrity-Token': responseHeaders['Agid-JWT-Signature'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
 # catch all
 #
 #

@@ -111,7 +111,7 @@ public class KeystoreTest {
 		
 		LoggerWrapperFactory.setDefaultConsoleLogConfiguration(Level.ALL);
 		Logger log = LoggerWrapperFactory.getLogger(KeystoreTest.class);
-		HSMManager.init(f, true, log);
+		HSMManager.init(f, true, log, true);
 		
 		HSMManager hsmManager = HSMManager.getInstance();
 		boolean uniqueProviderInstance = true;

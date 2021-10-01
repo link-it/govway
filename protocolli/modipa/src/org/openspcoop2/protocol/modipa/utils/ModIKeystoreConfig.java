@@ -32,6 +32,7 @@ import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 /**
@@ -45,8 +46,9 @@ public class ModIKeystoreConfig {
 
 	private String securityMessageKeystoreMode = null;
 	private byte[] securityMessageKeystoreArchive = null;
-	private String securityMessageKeystorePath = null;
 	private String securityMessageKeystoreType = null;
+	private boolean securityMessageKeystoreHSM = false;
+	private String securityMessageKeystorePath = null;
 	private String securityMessageKeystorePassword = null;
 	private String securityMessageKeyAlias = null;
 	private String securityMessageKeyPassword = null;
@@ -61,7 +63,10 @@ public class ModIKeystoreConfig {
 		}
 		
 		this.securityMessageKeystoreMode = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_MODE);
-		if(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(this.securityMessageKeystoreMode)) {
+		if(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_HSM.equals(this.securityMessageKeystoreMode)) {
+			this.securityMessageKeystoreHSM = true;
+		}
+		else if(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(this.securityMessageKeystoreMode)) {
 			this.securityMessageKeystoreArchive = ProtocolPropertiesUtils.getRequiredBinaryValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_ARCHIVE);
 		}
 		else {
@@ -73,10 +78,28 @@ public class ModIKeystoreConfig {
 				throw new ProtocolException("["+this.securityMessageKeystorePath+"] "+e.getMessage(),e);
 			}
 		}
+		
 		this.securityMessageKeystoreType = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_TYPE);
-		this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_PASSWORD);
+	
+		if(this.securityMessageKeystoreHSM) {
+			this.securityMessageKeystorePath = HSMUtils.KEYSTORE_HSM_PREFIX+this.securityMessageKeystoreType;
+		}
+		
+		if(!this.securityMessageKeystoreHSM) {
+			this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_PASSWORD);
+		}
+		else {
+			this.securityMessageKeystorePassword = HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED;
+		}
+		
 		this.securityMessageKeyAlias = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEY_ALIAS);
-		this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEY_PASSWORD);
+		
+		if(!this.securityMessageKeystoreHSM || HSMUtils.HSM_CONFIGURABLE_KEY_PASSWORD) {
+			this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEY_PASSWORD);
+		}
+		else {
+			this.securityMessageKeyPassword = HSMUtils.KEYSTORE_HSM_PRIVATE_KEY_PASSWORD_UNDEFINED;
+		}
 		
 	}
 	
@@ -94,7 +117,10 @@ public class ModIKeystoreConfig {
 			if(ridefinisci) {
 			
 				this.securityMessageKeystoreMode = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_KEYSTORE_MODE);
-				if(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(this.securityMessageKeystoreMode)) {
+				if(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_HSM.equals(this.securityMessageKeystoreMode)) {
+					this.securityMessageKeystoreHSM = true;
+				}
+				else if(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(this.securityMessageKeystoreMode)) {
 					this.securityMessageKeystoreArchive = ProtocolPropertiesUtils.getRequiredBinaryValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_KEYSTORE_ARCHIVE);
 				}
 				else {
@@ -106,28 +132,67 @@ public class ModIKeystoreConfig {
 						throw new ProtocolException("["+this.securityMessageKeystorePath+"] "+e.getMessage(),e);
 					}
 				}
+				
 				this.securityMessageKeystoreType = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_KEYSTORE_TYPE);
-				this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_KEYSTORE_PASSWORD);
+				
+				if(this.securityMessageKeystoreHSM) {
+					this.securityMessageKeystorePath = HSMUtils.KEYSTORE_HSM_PREFIX+this.securityMessageKeystoreType;
+				}
+				
+				if(!this.securityMessageKeystoreHSM) {
+					this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_KEYSTORE_PASSWORD);
+				}
+				else {
+					this.securityMessageKeystorePassword = HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED;
+				}
+				
 				this.securityMessageKeyAlias = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_KEY_ALIAS);
-				this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_KEY_PASSWORD);
+				
+				if(!this.securityMessageKeystoreHSM || HSMUtils.HSM_CONFIGURABLE_KEY_PASSWORD) {
+					this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_KEY_PASSWORD);
+				}
+				else {
+					this.securityMessageKeyPassword = HSMUtils.KEYSTORE_HSM_PRIVATE_KEY_PASSWORD_UNDEFINED;
+				}
 				
 			}
 			else {
 				
 				ModIProperties modIproperties = ModIProperties.getInstance();
-				this.securityMessageKeystorePath = modIproperties.getSicurezzaMessaggio_certificati_keyStore_path();
-				if(this.securityMessageKeystorePath!=null) {
+				this.securityMessageKeystoreType = modIproperties.getSicurezzaMessaggio_certificati_keyStore_tipo();
+				if(this.securityMessageKeystoreType!=null) {
 					
-					try {
-						HttpUtilities.validateUri(this.securityMessageKeystorePath, true);
-					}catch(Exception e) {
-						throw new ProtocolException(prefix+" ["+this.securityMessageKeystorePath+"] "+e.getMessage(),e);
+					this.securityMessageKeystoreHSM = HSMUtils.isKeystoreHSM(this.securityMessageKeystoreType);
+					
+					if(this.securityMessageKeystoreHSM) {
+						this.securityMessageKeystorePath = HSMUtils.KEYSTORE_HSM_PREFIX+this.securityMessageKeystoreType;
+					}
+					else {
+					
+						this.securityMessageKeystorePath = modIproperties.getSicurezzaMessaggio_certificati_keyStore_path();
+						try {
+							HttpUtilities.validateUri(this.securityMessageKeystorePath, true);
+						}catch(Exception e) {
+							throw new ProtocolException(prefix+" ["+this.securityMessageKeystorePath+"] "+e.getMessage(),e);
+						}
+						
 					}
 					
-					this.securityMessageKeystoreType = modIproperties.getSicurezzaMessaggio_certificati_keyStore_tipo();
-					this.securityMessageKeystorePassword = modIproperties.getSicurezzaMessaggio_certificati_keyStore_password();
+					if(!this.securityMessageKeystoreHSM) {
+						this.securityMessageKeystorePassword = modIproperties.getSicurezzaMessaggio_certificati_keyStore_password();
+					}
+					else {
+						this.securityMessageKeystorePassword = HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED;
+					}
+					
 					this.securityMessageKeyAlias = modIproperties.getSicurezzaMessaggio_certificati_key_alias();
-					this.securityMessageKeyPassword = modIproperties.getSicurezzaMessaggio_certificati_key_password();
+					
+					if(!this.securityMessageKeystoreHSM || HSMUtils.HSM_CONFIGURABLE_KEY_PASSWORD) {
+						this.securityMessageKeyPassword = modIproperties.getSicurezzaMessaggio_certificati_key_password();
+					}
+					else {
+						this.securityMessageKeyPassword = HSMUtils.KEYSTORE_HSM_PRIVATE_KEY_PASSWORD_UNDEFINED;
+					}
 				}
 				
 			}
@@ -150,6 +215,10 @@ public class ModIKeystoreConfig {
 		return this.securityMessageKeystoreType;
 	}
 
+	public boolean isSecurityMessageKeystoreHSM() {
+		return this.securityMessageKeystoreHSM;
+	}
+	
 	public String getSecurityMessageKeystoreMode() {
 		return this.securityMessageKeystoreMode;
 	}

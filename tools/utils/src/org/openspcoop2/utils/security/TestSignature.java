@@ -193,7 +193,7 @@ public class TestSignature {
 			String aliasP11 = KeystoreTest.ALIAS_PKCS11_SERVER2;
 			
 			boolean uniqueProviderInstance = true;			
-			HSMManager.init(fKeystoreP11, true, log);
+			HSMManager.init(fKeystoreP11, true, log, true);
 			HSMManager hsmManager = HSMManager.getInstance();
 			hsmManager.providerInit(log, uniqueProviderInstance);
 			System.out.println("PKCS11 Keystore registered: "+hsmManager.getKeystoreTypes());
