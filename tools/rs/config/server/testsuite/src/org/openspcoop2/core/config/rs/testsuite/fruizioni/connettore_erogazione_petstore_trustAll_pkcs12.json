@@ -7,17 +7,18 @@
     },
 
     "autenticazione_https": {
-        "tipologia": "SSLv3",
-        "hostname_verifier": false,
-
-	"trust_all_server_certs": false,
-        "server": {
-            "truststore_path":  "/url",
-            "truststore_password": "gino21",
-            "truststore_tipo": "jks",
-            "algoritmo" : "PKIX"
-        }  
-    },
+            "tipologia": "TLSv1.2",
+            "hostname_verifier": true,
+            "trust_all_server_certs": true,
+	    "client": {
+                "keystore_path":  "/etc/keystore.p12",
+                "keystore_password": "123456",
+                "keystore_tipo": "pkcs12",
+		"key_password": "123key",
+		"key_alias": "test",
+		"algoritmo": "SunX509"
+            }  
+        },
 
     
     "proxy": {

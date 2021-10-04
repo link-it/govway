@@ -152,6 +152,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
@@ -684,14 +685,14 @@ public class ErogazioniApiHelper {
         		BaseHelper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),				// this.httpshostverify,
         		(httpsConf!=null ? !httpsConf.isTrustAllServerCerts() : ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS), // httpsTrustVerifyCert
 				evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
-				evalnull( () -> httpsServer.getTruststoreTipo().toString() ),		// this.httpstipo,
+				evalnull( () -> getTruststoreType(httpsServer) ),		// this.httpstipo,
 				evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
 				evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
 				httpsstato,	//
         		httpskeystore, 	
         		"", //  this.httpspwdprivatekeytrust
         		evalnull( () -> httpsClient.getKeystorePath() ),					// httpspathkey
-        		evalnull( () -> httpsClient.getKeystoreTipo().toString() ),	 		// httpstipokey, coincide con ConnettoriCostanti.TIPOLOGIE_KEYSTORE
+        		evalnull( () -> getKeystoreType(httpsClient) ),	 		// httpstipokey, coincide con ConnettoriCostanti.TIPOLOGIE_KEYSTORE
         		evalnull( () -> httpsClient.getKeystorePassword() ), 	 		// httpspwdkey
         		evalnull( () -> httpsClient.getKeyPassword() ),	 				// httpspwdprivatekey
         		evalnull( () -> httpsClient.getAlgoritmo() ),					// httpsalgoritmokey
@@ -1461,14 +1462,14 @@ public class ErogazioniApiHelper {
         		BaseHelper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),				// this.httpshostverify,
         		(httpsConf!=null ? !httpsConf.isTrustAllServerCerts() : ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS), // httpsTrustVerifyCert
         		evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
-				evalnull( () -> httpsServer.getTruststoreTipo().toString() ),		// this.httpstipo,
+				evalnull( () -> getTruststoreType(httpsServer) ),		// this.httpstipo,
 				evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
 				evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
 				httpsstato,	//
         		httpskeystore, 	
         		"", //  this.httpspwdprivatekeytrust
         		evalnull( () -> httpsClient.getKeystorePath() ),					// httpspathkey
-        		evalnull( () -> httpsClient.getKeystoreTipo().toString() ),	 		// httpstipokey, coincide con ConnettoriCostanti.TIPOLOGIE_KEYSTORE
+        		evalnull( () -> getKeystoreType(httpsClient) ),	 		// httpstipokey, coincide con ConnettoriCostanti.TIPOLOGIE_KEYSTORE
         		evalnull( () -> httpsClient.getKeystorePassword() ), 	 		// httpspwdkey
         		evalnull( () -> httpsClient.getKeyPassword() ),	 				// httpspwdprivatekey
         		evalnull( () -> httpsClient.getAlgoritmo() ),					// httpsalgoritmokey
@@ -1604,14 +1605,14 @@ public class ErogazioniApiHelper {
 				BaseHelper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),	// this.httpshostverify,
 				(httpsConf!=null ? !httpsConf.isTrustAllServerCerts() : ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS), // httpsTrustVerifyCert
 				evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
-				evalnull( () -> httpsServer.getTruststoreTipo().toString() ),	// this.httpstipo,
+				evalnull( () -> getTruststoreType(httpsServer) ),	// this.httpstipo,
 				evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
 				evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
 				httpsstato, 
 				httpskeystore,
 				"",																		// httpspwdprivatekeytrust, 
 				evalnull( () -> httpsClient.getKeystorePath() ),				// pathkey
-				evalnull( () -> httpsClient.getKeystoreTipo().toString() ), 		// this.httpstipokey
+				evalnull( () -> getKeystoreType(httpsClient) ), 		// this.httpstipokey
 				evalnull( () -> httpsClient.getKeystorePassword() ),			// this.httpspwdkey 
 				evalnull( () -> httpsClient.getKeyPassword() ),				// this.httpspwdprivatekey,  
 				evalnull( () -> httpsClient.getAlgoritmo() ),				// this.httpsalgoritmokey, 
@@ -1718,14 +1719,14 @@ public class ErogazioniApiHelper {
 				BaseHelper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),	// this.httpshostverify,
 				(httpsConf!=null ? !httpsConf.isTrustAllServerCerts() : ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS), // httpsTrustVerifyCert
 				evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
-				evalnull( () -> httpsServer.getTruststoreTipo().toString() ),	// this.httpstipo,
+				evalnull( () -> (httpsServer.getTruststoreTipo()!=null && KeystoreEnum.PKCS11.equals( httpsServer.getTruststoreTipo())) ? httpsServer.getPcks11Tipo() :  (httpsServer.getTruststoreTipo()!=null ? httpsServer.getTruststoreTipo().toString() : null) ),	// this.httpstipo,
 				evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
 				evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
 				httpsstato,
 				httpskeystore,			// this.httpskeystore, 
 				"",																	//  this.httpspwdprivatekeytrust
 				evalnull( () -> httpsClient.getKeystorePath() ),				// pathkey
-				evalnull( () -> httpsClient.getKeystoreTipo().toString() ), 		// this.httpstipokey
+				evalnull( () -> getKeystoreType(httpsClient) ), 		// this.httpstipokey
 				evalnull( () -> httpsClient.getKeystorePassword() ),			// this.httpspwdkey 
 				evalnull( () -> httpsClient.getKeyPassword() ),				// this.httpspwdprivatekey,  
 				evalnull( () -> httpsClient.getAlgoritmo() ),				// this.httpsalgoritmokey,
@@ -1769,6 +1770,35 @@ public class ErogazioniApiHelper {
 	 *  @param oldConnType: Nel caso di un connettore da aggiornare, va specificato il tipo del vecchio connettore
 	 */
 	
+	public static String getKeystoreType(ConnettoreConfigurazioneHttpsClient httpsClient) {
+		if(httpsClient.getKeystoreTipo()!=null) {
+			if(KeystoreEnum.PKCS11.equals( httpsClient.getKeystoreTipo())) {
+				if(httpsClient.getPcks11Tipo()==null) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Tipo keystore pks11 non indicato");
+				}
+				return httpsClient.getPcks11Tipo();
+			}
+			else {
+				return httpsClient.getKeystoreTipo().toString();
+			}
+		}
+		return null;
+	}
+	
+	public static String getTruststoreType(ConnettoreConfigurazioneHttpsServer httpsServer) {
+		if(httpsServer.getTruststoreTipo()!=null) {
+			if(KeystoreEnum.PKCS11.equals( httpsServer.getTruststoreTipo())) {
+				if(httpsServer.getPcks11Tipo()==null) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Tipo keystore pks11 non indicato");
+				}
+				return httpsServer.getPcks11Tipo();
+			}
+			else {
+				return httpsServer.getTruststoreTipo().toString();
+			}
+		}
+		return null;
+	}
 	
 	public static final void fillConnettoreConfigurazione(
 			final org.openspcoop2.core.config.Connettore regConnettore,
@@ -1807,8 +1837,7 @@ public class ErogazioniApiHelper {
 			else
 				httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
 		}
-        			    
-	    	     
+
 		env.apsHelper.fillConnettore(
 				regConnettore, 
 				"false",				// this.connettoreDebug,
@@ -1830,14 +1859,14 @@ public class ErogazioniApiHelper {
 				BaseHelper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),	// this.httpshostverify,
 				(httpsConf!=null ? !httpsConf.isTrustAllServerCerts() : ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS), // httpsTrustVerifyCert
 				evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
-				evalnull( () -> httpsServer.getTruststoreTipo().toString() ),	// this.httpstipo,
+				evalnull( () -> getTruststoreType(httpsServer) ),	// this.httpstipo,
 				evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
 				evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
 				httpsstato,
 				httpskeystore,			// this.httpskeystore, 
 				"",																	//  this.httpspwdprivatekeytrust
 				evalnull( () -> httpsClient.getKeystorePath() ),				// pathkey
-				evalnull( () -> httpsClient.getKeystoreTipo().toString() ), 		// this.httpstipokey
+				evalnull( () -> getKeystoreType(httpsClient) ), 		// this.httpstipokey
 				evalnull( () -> httpsClient.getKeystorePassword() ),			// this.httpspwdkey 
 				evalnull( () -> httpsClient.getKeyPassword() ),				// this.httpspwdprivatekey,  
 				evalnull( () -> httpsClient.getAlgoritmo() ),				// this.httpsalgoritmokey,
@@ -3274,30 +3303,39 @@ public class ErogazioniApiHelper {
 				evalnull( () -> Enums.fromValue(SslTipologiaEnum.class, props.get(CostantiDB.CONNETTORE_HTTPS_SSL_TYPE)))
 			);
 		
-		ConnettoreConfigurazioneHttpsServer httpsServer = new ConnettoreConfigurazioneHttpsServer();
-		https.setServer(httpsServer);
-		
-		httpsServer.setAlgoritmo( evalnull( () -> 
-			props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM))
-			);
-		httpsServer.setTruststorePassword(
-				evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD))
-			);
-		httpsServer.setTruststorePath(
-				evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_LOCATION))
-			);
-		httpsServer.setTruststoreTipo(
-				evalnull( () -> Enums.fromValue(KeystoreEnum.class,props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_TYPE)))
-			);
+		https.setTrustAllServerCerts(props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_ALL_CERTS) != null 
+				? Boolean.valueOf(props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_ALL_CERTS))
+				: null);
+		if(https.isTrustAllServerCerts()==null || !https.isTrustAllServerCerts()) {
+			ConnettoreConfigurazioneHttpsServer httpsServer = new ConnettoreConfigurazioneHttpsServer();
+			https.setServer(httpsServer);
+			
+			httpsServer.setAlgoritmo( evalnull( () -> 
+				props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM))
+				);
+			httpsServer.setTruststorePassword(
+					evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD))
+				);
+			httpsServer.setTruststorePath(
+					evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_LOCATION))
+				);
+			
+			String trustStoreType = props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_TYPE);
+			if(trustStoreType!=null) {
+				if(HSMUtils.isKeystoreHSM(trustStoreType)) {
+					httpsServer.setTruststoreTipo(KeystoreEnum.PKCS11);
+					httpsServer.setPcks11Tipo(trustStoreType);
+				}
+				else {
+					httpsServer.setTruststoreTipo(Enums.fromValue(KeystoreEnum.class,trustStoreType));
+				}
+			}
+		}
 		
 		ConnettoreConfigurazioneHttpsClient httpsClient = new ConnettoreConfigurazioneHttpsClient();
-		https.setClient(httpsClient);
 		
 		httpsClient.setAlgoritmo(
 				evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM))
-			);
-		httpsClient.setKeyPassword(
-				evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_KEY_PASSWORD))
 			);
 		httpsClient.setKeystorePassword(
 				evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_PASSWORD))
@@ -3305,9 +3343,28 @@ public class ErogazioniApiHelper {
 		httpsClient.setKeystorePath(
 				evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_LOCATION))
 			);
-		httpsClient.setKeystoreTipo(
-				evalnull( () -> Enums.fromValue(KeystoreEnum.class, props.get(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_TYPE)))
+		
+		String keyStoreType = props.get(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_TYPE);
+		if(keyStoreType!=null) {
+			if(HSMUtils.isKeystoreHSM(keyStoreType)) {
+				httpsClient.setKeystoreTipo(KeystoreEnum.PKCS11);
+				httpsClient.setPcks11Tipo(keyStoreType);
+			}
+			else {
+				httpsClient.setKeystoreTipo(Enums.fromValue(KeystoreEnum.class,keyStoreType));
+			}
+		}
+		
+		httpsClient.setKeyPassword(
+				evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_KEY_PASSWORD))
 			);
+		httpsClient.setKeyAlias(
+				evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_KEY_ALIAS))
+			);
+		
+		if(httpsClient.getKeystorePath()!=null) {
+			https.setClient(httpsClient);
+		}
 		
 		if ( https.getTipologia() != null ) {
 			c.setAutenticazioneHttps(https);

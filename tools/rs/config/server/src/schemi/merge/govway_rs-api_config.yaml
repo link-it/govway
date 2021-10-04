@@ -8538,6 +8538,9 @@ components:
             type: "string"
             example: "PKIX"
             default: "PKIX"
+          pcks11_tipo:
+            maxLength: 255
+            type: "string"
     ConnettoreConfigurazioneHttpsClient:
       type: "object"
       allOf:
@@ -8553,6 +8556,9 @@ components:
             type: "string"
             example: "SunX509"
             default: "SunX509"
+          pcks11_tipo:
+            maxLength: 255
+            type: "string"
     ConnettoreConfigurazioneProxy:
       required:
       - "hostname"
@@ -9727,10 +9733,12 @@ components:
             propertyName: "tipologia"
             mapping:
               archivio: "#/components/schemas/ModIKeyStoreArchive"
-              filesystem: "#/components/schemas/ModIKeyStoreFile"
+              filesystem: "#/components/schemas/ModIKeyStoreFileApplicativo"
+              hsm: "#/components/schemas/ModIKeyStoreHSMApplicativo"
           oneOf:
           - $ref: "#/components/schemas/ModIKeyStoreArchive"
-          - $ref: "#/components/schemas/ModIKeyStoreFile"
+          - $ref: "#/components/schemas/ModIKeyStoreFileApplicativo"
+          - $ref: "#/components/schemas/ModIKeyStoreHSMApplicativo"
         reply_audience:
           maxLength: 4000
           type: "string"
@@ -9764,6 +9772,9 @@ components:
         properties:
           truststore_tipo:
             $ref: "#/components/schemas/ModITruststoreEnum"
+          pcks11_tipo:
+            maxLength: 255
+            type: "string"
     ModIKeyStoreDefault:
       required:
       - "modalita"
@@ -9786,9 +9797,11 @@ components:
             mapping:
               archivio: "#/components/schemas/ModIKeyStoreArchive"
               filesystem: "#/components/schemas/ModIKeyStoreFile"
+              hsm: "#/components/schemas/ModIKeyStoreHSM"
           oneOf:
           - $ref: "#/components/schemas/ModIKeyStoreArchive"
           - $ref: "#/components/schemas/ModIKeyStoreFile"
+          - $ref: "#/components/schemas/ModIKeyStoreHSM"
     ModIKeyStoreFile:
       type: "object"
       allOf:
@@ -9802,6 +9815,15 @@ components:
             $ref: "#/components/schemas/ModIKeystoreTipologiaEnum"
           keystore_tipo:
             $ref: "#/components/schemas/ModIKeystoreEnum"
+    ModIKeyStoreFileApplicativo:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/ModIKeyStoreFile"
+      - type: "object"
+        properties:
+          keystore_certificato:
+            type: "string"
+            format: "byte"
     ModIKeyStoreArchive:
       type: "object"
       allOf:
@@ -9815,6 +9837,32 @@ components:
             $ref: "#/components/schemas/ModIKeystoreTipologiaEnum"
           keystore_tipo:
             $ref: "#/components/schemas/ModIKeystoreEnum"
+    ModIKeyStoreHSM:
+      required:
+      - "key_alias"
+      - "pcks11_tipo"
+      - "tipologia"
+      type: "object"
+      properties:
+        tipologia:
+          $ref: "#/components/schemas/ModIKeystoreTipologiaEnum"
+        pcks11_tipo:
+          maxLength: 255
+          type: "string"
+        key_alias:
+          maxLength: 255
+          type: "string"
+          description: "alias della chiave privata"
+          example: "pwd"
+    ModIKeyStoreHSMApplicativo:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/ModIKeyStoreHSM"
+      - type: "object"
+        properties:
+          keystore_certificato:
+            type: "string"
+            format: "byte"
     GruppoNome:
       required:
       - "nome"
@@ -10812,10 +10860,7 @@ components:
       enum:
       - "jks"
       - "pkcs12"
-      - "jceks"
-      - "bks"
-      - "uber"
-      - "gkr"
+      - "pkcs11"
     TipoAutenticazioneEnum:
       type: "string"
       example: "http-basic"
@@ -11059,6 +11104,7 @@ components:
       example: "jks"
       enum:
       - "jks"
+      - "pkcs11"
     ModIKeystoreEnum:
       type: "string"
       example: "jks"
@@ -11071,6 +11117,7 @@ components:
       enum:
       - "archivio"
       - "filesystem"
+      - "hsm"
     ModISicurezzaMessaggioSoapAlgoritmoFirma:
       type: "string"
       default: "RSA-SHA-256"

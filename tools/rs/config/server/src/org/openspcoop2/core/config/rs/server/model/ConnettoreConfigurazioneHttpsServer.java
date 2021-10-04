@@ -32,6 +32,9 @@ public class ConnettoreConfigurazioneHttpsServer extends BaseTrustStore {
   
   @Schema(example = "PKIX", description = "")
   private String algoritmo = "PKIX";
+  
+  @Schema(description = "")
+  private String pcks11Tipo = null;
  /**
    * Get truststoreTipo
    * @return truststoreTipo
@@ -71,6 +74,25 @@ public class ConnettoreConfigurazioneHttpsServer extends BaseTrustStore {
     return this;
   }
 
+ /**
+   * Get pcks11Tipo
+   * @return pcks11Tipo
+  **/
+  @JsonProperty("pcks11_tipo")
+  @Valid
+ @Size(max=255)  public String getPcks11Tipo() {
+    return this.pcks11Tipo;
+  }
+
+  public void setPcks11Tipo(String pcks11Tipo) {
+    this.pcks11Tipo = pcks11Tipo;
+  }
+
+  public ConnettoreConfigurazioneHttpsServer pcks11Tipo(String pcks11Tipo) {
+    this.pcks11Tipo = pcks11Tipo;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -79,6 +101,7 @@ public class ConnettoreConfigurazioneHttpsServer extends BaseTrustStore {
     sb.append("    ").append(ConnettoreConfigurazioneHttpsServer.toIndentedString(super.toString())).append("\n");
     sb.append("    truststoreTipo: ").append(ConnettoreConfigurazioneHttpsServer.toIndentedString(this.truststoreTipo)).append("\n");
     sb.append("    algoritmo: ").append(ConnettoreConfigurazioneHttpsServer.toIndentedString(this.algoritmo)).append("\n");
+    sb.append("    pcks11Tipo: ").append(ConnettoreConfigurazioneHttpsServer.toIndentedString(this.pcks11Tipo)).append("\n");
     sb.append("}");
     return sb.toString();
   }

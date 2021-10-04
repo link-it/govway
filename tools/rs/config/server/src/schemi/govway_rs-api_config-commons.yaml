@@ -736,7 +736,7 @@ components:
               maxLength: 255
               example: 'PKIX'
               default: 'PKIX'
-            pcks_tipo:
+            pcks11_tipo:
               type: string
               maxLength: 255
     ConnettoreConfigurazioneHttpsClient:
@@ -754,7 +754,7 @@ components:
               maxLength: 255
               example: 'SunX509'
               default: 'SunX509'
-            pcks_tipo:
+            pcks11_tipo:
               type: string
               maxLength: 255
     ConnettoreConfigurazioneProxy:
@@ -1994,7 +1994,7 @@ components:
           properties:
             truststore_tipo:
               $ref: '#/components/schemas/ModITruststoreEnum'
-            pcks_tipo:
+            pcks11_tipo:
               type: string
               maxLength: 255
 
@@ -2064,12 +2064,12 @@ components:
       type: object      
       required:
        - tipologia 
-       - pcks_tipo
+       - pcks11_tipo
        - key_alias
       properties:
         tipologia:
           $ref: '#/components/schemas/ModIKeystoreTipologiaEnum'
-        pcks_tipo:
+        pcks11_tipo:
               type: string
               maxLength: 255
         key_alias:

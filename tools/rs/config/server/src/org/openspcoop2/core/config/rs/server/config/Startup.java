@@ -21,14 +21,17 @@
 
 package org.openspcoop2.core.config.rs.server.config;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.Properties;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.web.ctrlstat.core.Connettori;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -177,6 +180,23 @@ public class Startup implements ServletContextListener {
 				throw new RuntimeException(e.getMessage(),e);
 			}
 			Startup.log.info("Inizializzazione Connettori effettuata con successo");
+			
+			// inizializzo HSM Manager
+			try {
+				ServerProperties serverProperties = ServerProperties.getInstance();
+				
+				String hsmConfig = serverProperties.getHSMConfigurazione();
+				if(StringUtils.isNotEmpty(hsmConfig)) {
+					File f = new File(hsmConfig);
+					HSMManager.init(f, serverProperties.isHSMRequired(), log, false);
+				}
+			} catch (Exception e) {
+				String msgErrore = "Errore durante l'inizializzazione del manager HSM: " + e.getMessage();
+				Startup.log.error(
+						//					throw new ServletException(
+						msgErrore,e);
+				throw new RuntimeException(msgErrore,e);
+			}
 			
 			Startup.initializedResources = true;
 			

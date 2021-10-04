@@ -1,0 +1,10 @@
+{
+        "credenziali": {
+                "modalita_accesso": "https",
+                "certificato": {
+                        "tipo": "certificato",
+                        "archivio": "CER_BASE64",
+                        "tipo_certificato": "CER"
+                }
+        }
+}

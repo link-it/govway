@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ModIKeyStoreFile extends BaseKeyStoreFile implements OneOfModIApplicativoSicurezzaMessaggioKeystore, OneOfModIKeyStoreRidefinitoDatiKeystore {
+public class ModIKeyStoreFile extends BaseKeyStoreFile implements OneOfModIKeyStoreRidefinitoDatiKeystore {
   
   @Schema(required = true, description = "")
   private ModIKeystoreTipologiaEnum tipologia = null;

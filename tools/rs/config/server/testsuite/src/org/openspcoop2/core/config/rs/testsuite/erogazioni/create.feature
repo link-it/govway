@@ -34,6 +34,14 @@ Background:
 * def erogatore = read('soggetto_erogatore.json')
 * eval randomize (erogatore, ["nome", "credenziali.username"])
 
+* def erogazione_petstore_connettore_https_jks = read('erogazione_petstore_connettore_jks.json')
+* eval erogazione_petstore_connettore_https_jks.api_nome = api_petstore.nome
+* eval erogazione_petstore_connettore_https_jks.api_versione = api_petstore.versione
+
+* def erogazione_petstore_connettore_https_pkcs11 = read('erogazione_petstore_connettore_pkcs11.json')
+* eval erogazione_petstore_connettore_https_pkcs11.api_nome = api_petstore.nome
+* eval erogazione_petstore_connettore_https_pkcs11.api_versione = api_petstore.versione
+
 @CreateErogatoreEsterno400
 Scenario: Erogazioni Creazione Fallita Erogatore Esterno
     * call create ({ resourcePath: 'api', body: api_petstore })
@@ -51,6 +59,20 @@ Scenario: Erogazioni Creazione Petstore 204
 
     * call create ({ resourcePath: 'api', body: api_petstore })
     * call create_201 ({ resourcePath: 'erogazioni', body: erogazione_petstore,  key: petstore_key })
+    * call delete ({ resourcePath: api_petstore_path })
+
+@CreatePetstore204_connettore_ClientJKS_ServerJKS
+Scenario: Erogazioni Creazione Petstore 204 (truststore JKS, keystore JKS)
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create_201 ({ resourcePath: 'erogazioni', body: erogazione_petstore_connettore_https_jks,  key: petstore_key })
+    * call delete ({ resourcePath: api_petstore_path })
+    
+@CreatePetstore204_connettore_ClientPKCS11_ServerPKCS11
+Scenario: Erogazioni Creazione Petstore 204 (truststore PKCS11, keystore PKCS11)
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create_201 ({ resourcePath: 'erogazioni', body: erogazione_petstore_connettore_https_pkcs11,  key: petstore_key })
     * call delete ({ resourcePath: api_petstore_path })
 
 @CreatePetstoreAuth204

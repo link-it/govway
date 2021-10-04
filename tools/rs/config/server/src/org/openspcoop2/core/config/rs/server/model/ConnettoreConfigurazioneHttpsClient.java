@@ -32,6 +32,9 @@ public class ConnettoreConfigurazioneHttpsClient extends BaseKeyStoreFile {
   
   @Schema(example = "SunX509", description = "")
   private String algoritmo = "SunX509";
+  
+  @Schema(description = "")
+  private String pcks11Tipo = null;
  /**
    * Get keystoreTipo
    * @return keystoreTipo
@@ -71,6 +74,25 @@ public class ConnettoreConfigurazioneHttpsClient extends BaseKeyStoreFile {
     return this;
   }
 
+ /**
+   * Get pcks11Tipo
+   * @return pcks11Tipo
+  **/
+  @JsonProperty("pcks11_tipo")
+  @Valid
+ @Size(max=255)  public String getPcks11Tipo() {
+    return this.pcks11Tipo;
+  }
+
+  public void setPcks11Tipo(String pcks11Tipo) {
+    this.pcks11Tipo = pcks11Tipo;
+  }
+
+  public ConnettoreConfigurazioneHttpsClient pcks11Tipo(String pcks11Tipo) {
+    this.pcks11Tipo = pcks11Tipo;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -79,6 +101,7 @@ public class ConnettoreConfigurazioneHttpsClient extends BaseKeyStoreFile {
     sb.append("    ").append(ConnettoreConfigurazioneHttpsClient.toIndentedString(super.toString())).append("\n");
     sb.append("    keystoreTipo: ").append(ConnettoreConfigurazioneHttpsClient.toIndentedString(this.keystoreTipo)).append("\n");
     sb.append("    algoritmo: ").append(ConnettoreConfigurazioneHttpsClient.toIndentedString(this.algoritmo)).append("\n");
+    sb.append("    pcks11Tipo: ").append(ConnettoreConfigurazioneHttpsClient.toIndentedString(this.pcks11Tipo)).append("\n");
     sb.append("}");
     return sb.toString();
   }

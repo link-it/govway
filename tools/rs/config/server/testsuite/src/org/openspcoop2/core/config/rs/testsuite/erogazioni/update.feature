@@ -45,6 +45,8 @@ Background:
 * def erogazione_soap_piu_azioni_path = 'erogazioni/' + soap_piu_azioni_key
 
 * def connettore = read('connettore_erogazione_petstore.json')
+* def connettore_pkcs11 = read('connettore_erogazione_petstore_pkcs11.json')
+* def connettore_pkcs12_trustAll = read('connettore_erogazione_petstore_trustAll_pkcs12.json')
 * def info_generali = read('informazioni_generali_petstore.json')
 * eval randomize(info_generali, ["nome"])
 * def erogazione_versione = read('api_versione3.json')
@@ -62,6 +64,61 @@ Scenario: Erogazioni Update Connettore 204
     And params query_params
     When method put
     Then status 204
+      
+   Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+    And match response == connettore
+    
+    * call delete ({ resourcePath: 'erogazioni/' + petstore_key })
+    * call delete ({ resourcePath: api_petstore_path })
+    
+@UpdateConnettore204_PKCS11
+Scenario: Erogazioni Update Connettore 204 (PKCS11)
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_pkcs11
+    And params query_params
+    When method put
+    Then status 204
+      
+   Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+    And match response == connettore_pkcs11
+    
+    * call delete ({ resourcePath: 'erogazioni/' + petstore_key })
+    * call delete ({ resourcePath: api_petstore_path })
+    
+@UpdateConnettore204_PKCS12_trustAll
+Scenario: Erogazioni Update Connettore 204 (PKCS12 per keystore, trustAll)
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_pkcs12_trustAll
+    And params query_params
+    When method put
+    Then status 204
+      
+   Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+    And match response == connettore_pkcs12_trustAll
     
     * call delete ({ resourcePath: 'erogazioni/' + petstore_key })
     * call delete ({ resourcePath: api_petstore_path })

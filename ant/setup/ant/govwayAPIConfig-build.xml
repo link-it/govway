@@ -38,6 +38,13 @@
 			<param name="token" value="soggetti.password"/>
 			<param name="value" value="${work_dir}/consolePassword.properties"/>
 		</antcall>
+	
+		<!-- HSM CONFIG DIR -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="hsm.config"/>
+			<param name="value" value="${work_dir}/hsm.properties"/>
+		</antcall>
 
 
 		<!-- 

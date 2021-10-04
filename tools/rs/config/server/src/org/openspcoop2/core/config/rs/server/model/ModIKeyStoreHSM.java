@@ -25,30 +25,37 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ModITrustStore extends BaseTrustStore {
+public class ModIKeyStoreHSM  implements OneOfModIKeyStoreRidefinitoDatiKeystore {
   
   @Schema(required = true, description = "")
-  private ModITruststoreEnum truststoreTipo = null;
+  private ModIKeystoreTipologiaEnum tipologia = null;
   
-  @Schema(description = "")
+  @Schema(required = true, description = "")
   private String pcks11Tipo = null;
+  
+  @Schema(example = "pwd", required = true, description = "alias della chiave privata")
  /**
-   * Get truststoreTipo
-   * @return truststoreTipo
+   * alias della chiave privata  
   **/
-  @JsonProperty("truststore_tipo")
+  private String keyAlias = null;
+ /**
+   * Get tipologia
+   * @return tipologia
+  **/
+  @Override
+@JsonProperty("tipologia")
   @NotNull
   @Valid
-  public ModITruststoreEnum getTruststoreTipo() {
-    return this.truststoreTipo;
+  public ModIKeystoreTipologiaEnum getTipologia() {
+    return this.tipologia;
   }
 
-  public void setTruststoreTipo(ModITruststoreEnum truststoreTipo) {
-    this.truststoreTipo = truststoreTipo;
+  public void setTipologia(ModIKeystoreTipologiaEnum tipologia) {
+    this.tipologia = tipologia;
   }
 
-  public ModITrustStore truststoreTipo(ModITruststoreEnum truststoreTipo) {
-    this.truststoreTipo = truststoreTipo;
+  public ModIKeyStoreHSM tipologia(ModIKeystoreTipologiaEnum tipologia) {
+    this.tipologia = tipologia;
     return this;
   }
 
@@ -57,6 +64,7 @@ public class ModITrustStore extends BaseTrustStore {
    * @return pcks11Tipo
   **/
   @JsonProperty("pcks11_tipo")
+  @NotNull
   @Valid
  @Size(max=255)  public String getPcks11Tipo() {
     return this.pcks11Tipo;
@@ -66,8 +74,28 @@ public class ModITrustStore extends BaseTrustStore {
     this.pcks11Tipo = pcks11Tipo;
   }
 
-  public ModITrustStore pcks11Tipo(String pcks11Tipo) {
+  public ModIKeyStoreHSM pcks11Tipo(String pcks11Tipo) {
     this.pcks11Tipo = pcks11Tipo;
+    return this;
+  }
+
+ /**
+   * alias della chiave privata
+   * @return keyAlias
+  **/
+  @JsonProperty("key_alias")
+  @NotNull
+  @Valid
+ @Size(max=255)  public String getKeyAlias() {
+    return this.keyAlias;
+  }
+
+  public void setKeyAlias(String keyAlias) {
+    this.keyAlias = keyAlias;
+  }
+
+  public ModIKeyStoreHSM keyAlias(String keyAlias) {
+    this.keyAlias = keyAlias;
     return this;
   }
 
@@ -75,10 +103,11 @@ public class ModITrustStore extends BaseTrustStore {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ModITrustStore {\n");
-    sb.append("    ").append(ModITrustStore.toIndentedString(super.toString())).append("\n");
-    sb.append("    truststoreTipo: ").append(ModITrustStore.toIndentedString(this.truststoreTipo)).append("\n");
-    sb.append("    pcks11Tipo: ").append(ModITrustStore.toIndentedString(this.pcks11Tipo)).append("\n");
+    sb.append("class ModIKeyStoreHSM {\n");
+    
+    sb.append("    tipologia: ").append(ModIKeyStoreHSM.toIndentedString(this.tipologia)).append("\n");
+    sb.append("    pcks11Tipo: ").append(ModIKeyStoreHSM.toIndentedString(this.pcks11Tipo)).append("\n");
+    sb.append("    keyAlias: ").append(ModIKeyStoreHSM.toIndentedString(this.keyAlias)).append("\n");
     sb.append("}");
     return sb.toString();
   }

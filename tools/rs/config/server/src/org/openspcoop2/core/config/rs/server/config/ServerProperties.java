@@ -195,6 +195,14 @@ public class ServerProperties  {
 		return Boolean.parseBoolean(this.readProperty(true, "findall_404"));
 	}
 	
+	
+	public String getHSMConfigurazione() throws UtilsException {
+		return this.readProperty(false, "hsm.config");
+	}
+	public boolean isHSMRequired() throws UtilsException {
+		return Boolean.parseBoolean(this.readProperty(true, "hsm.required"));
+	}
+	
 
 	
 	

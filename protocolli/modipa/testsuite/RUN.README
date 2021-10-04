@@ -97,7 +97,7 @@ Prerequisiti:
 		cp /etc/govway/keys/xca/ExampleClient2.crt wildfly-18.0.0.Final/welcome-content
 		cp /etc/govway/keys/xca/ExampleServer.crt wildfly-18.0.0.Final/welcome-content
 
-+ HSM per TLS Keystore. Seguire le indicazioni descritte in PKCS11.README
++ HSM per TLS Keystore. Seguire le indicazioni descritte in pkcs11/PKCS11.README
 
 + Aggiungere in /etc/hosts la riga
 	127.0.0.1 Erogatore
@@ -107,6 +107,12 @@ Prerequisiti:
 
 + Compilare i test con
 	ant build
+
++ Caricare la configurazione con 
+	ant load_config
+  dopo aver caricato la configurazione
+	cd pkcs11
+	bash updateCertificatiConfigurazione.sh <NOME_SOGGETTO>
 
 + Eseguire i test con
 	ant run_test

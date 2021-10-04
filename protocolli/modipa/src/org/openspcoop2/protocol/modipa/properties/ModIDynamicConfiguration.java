@@ -420,14 +420,14 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 					// NOTA: se si attiva anche la validazione durante il change binary, poi non si riesce a modificarlo poiche' la password o l'alis, o qualche parametro non è compatibile con il nuovo archivio.
 					
 					try {
-						cert = this.readKeystoreConfig(properties, false);
+						cert = ModIDynamicConfiguration.readKeystoreConfig(properties, false);
 					}catch(Throwable e) {
 						throw new ProtocolException("Verificare i parametri indicati per il keystore in "+ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL+": "+e.getMessage(),e);
 					}
 				}
 				else if(verifyCertificateConfig) {
 					try {
-						cert = this.readKeystoreConfig(properties, true);
+						cert = ModIDynamicConfiguration.readKeystoreConfig(properties, true);
 					}catch(Throwable e) {
 						throw new ProtocolException("Verificare il certificato caricato in "+ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL+": "+e.getMessage(),e);
 					}
@@ -1050,7 +1050,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			
 			if(!fruizioni) {
 				try {
-					this.readKeystoreConfig(properties, false);
+					ModIDynamicConfiguration.readKeystoreConfig(properties, false);
 				}catch(Throwable e) {
 					throw new ProtocolException("Verificare i parametri indicati per il keystore in "+ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL+": "+e.getMessage(),e);
 				}
@@ -4385,7 +4385,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			if(addHiddenSubjectIssuer) {
 				
 				try {
-					CertificateInfo cert = this.readKeystoreConfig(properties, permitCertificate);
+					CertificateInfo cert = ModIDynamicConfiguration.readKeystoreConfig(properties, permitCertificate);
 					if(cert!=null && cert.getSubject()!=null) {
 						StringProperty subjectItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEY_CN_SUBJECT_ID);
 						subjectItemValue.setValue(cert.getSubject().toString());
@@ -4467,7 +4467,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		}
 	}
 	
-	private CertificateInfo readKeystoreConfig(ProtocolProperties properties, boolean onlyCert) throws Exception {
+	public static CertificateInfo readKeystoreConfig(ProtocolProperties properties, boolean onlyCert) throws Exception {
 		
 		Certificate cert = null;
 			

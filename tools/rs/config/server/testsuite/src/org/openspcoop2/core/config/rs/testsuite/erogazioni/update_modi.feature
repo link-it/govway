@@ -72,8 +72,10 @@ Examples:
 |erogazione_modi_soap_wsa_ttl.json|
 |erogazione_modi_soap_header_firmare.json|
 |erogazione_modi_soap_truststore_ridefinito.json|
+|erogazione_modi_soap_truststore_ridefinito_hsm.json|
 |erogazione_modi_soap_keystore_ridefinito_file.json|
 |erogazione_modi_soap_keystore_ridefinito_path.json|
+|erogazione_modi_soap_keystore_ridefinito_hsm.json|
 |erogazione_modi_soap_algoritmo_RSA-SHA-512.json|
 |erogazione_modi_soap_algoritmo_DSA-SHA-256.json|
 |erogazione_modi_soap_algoritmo_ECDSA-SHA-384.json|
@@ -128,8 +130,10 @@ Examples:
 |erogazione_modi_rest_header_rif_509_risp.json|
 |erogazione_modi_rest_keystore_ridefinito_file.json|
 |erogazione_modi_rest_keystore_ridefinito_path.json|
+|erogazione_modi_rest_keystore_ridefinito_hsm.json|
 |erogazione_modi_rest_rif_multipli.json|
 |erogazione_modi_rest_truststore_ridefinito.json|
+|erogazione_modi_rest_truststore_ridefinito_hsm.json|
 |erogazione_modi_rest_ttl.json|
 |erogazione_modi_rest_claims.json|
 

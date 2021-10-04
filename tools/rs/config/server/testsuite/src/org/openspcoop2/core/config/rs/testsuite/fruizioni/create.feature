@@ -32,11 +32,40 @@ Background:
 * eval fruizione_spcoop.api_referente = api_spcoop.referente
 * def spcoop_key = fruizione_spcoop.erogatore + '/' + fruizione_spcoop.api_soap_servizio + '/' + fruizione_spcoop.api_versione
 
+* def fruizione_petstore_connettore_https_jks = read('fruizione_petstore_connettore_jks.json')
+* eval fruizione_petstore_connettore_https_jks.api_nome = api_petstore.nome
+* eval fruizione_petstore_connettore_https_jks.api_versione = api_petstore.versione
+* eval fruizione_petstore_connettore_https_jks.erogatore = erogatore.nome
+* eval fruizione_petstore_connettore_https_jks.api_referente = api_petstore.referente
+
+* def fruizione_petstore_connettore_https_pkcs11 = read('fruizione_petstore_connettore_pkcs11.json')
+* eval fruizione_petstore_connettore_https_pkcs11.api_nome = api_petstore.nome
+* eval fruizione_petstore_connettore_https_pkcs11.api_versione = api_petstore.versione
+* eval fruizione_petstore_connettore_https_jks.erogatore = erogatore.nome
+* eval fruizione_petstore_connettore_https_jks.api_referente = api_petstore.referente
 
 #TODO Sistemare i campi predefiniti quando si checka il campo autorizzazione in erogazione.
 
 @CreatePetstore204
 Scenario: Creazione Fruizioni Petstore 204
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'soggetti', body: erogatore })
+    * call create_201 ({ resourcePath: 'fruizioni', body: fruizione_petstore,  key: petstore_key })
+    * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+    * call delete ({ resourcePath: api_petstore_path })
+
+@CreatePetstore204_connettore_ClientJKS_ServerJKS
+Scenario: Creazione Fruizioni Petstore 204 (truststore JKS, keystore JKS)
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'soggetti', body: erogatore })
+    * call create_201 ({ resourcePath: 'fruizioni', body: fruizione_petstore,  key: petstore_key })
+    * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+    * call delete ({ resourcePath: api_petstore_path })
+
+@CreatePetstore204_connettore_ClientPKCS11_ServerPKCS11
+Scenario: Creazione Fruizioni Petstore 204 (truststore PKCS11, keystore PKCS11)
 
     * call create ({ resourcePath: 'api', body: api_petstore })
     * call create ({ resourcePath: 'soggetti', body: erogatore })

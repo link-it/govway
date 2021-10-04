@@ -1,0 +1,19 @@
+
+{
+  "credenziali" : {
+    "modalita_accesso" : "http-basic",
+    "username" : "PKCS11-Client2HSM"
+  },
+  "nome" : "PKCS11-Client2HSM",
+  "modi" : {
+    "dominio" : "interno",
+    "sicurezza_messaggio" : {
+      "keystore" : {
+        "tipologia" : "hsm",
+        "pcks11_tipo" : "pkcs11-modi-client",
+        "key_alias" : "modi_client2_hsm",
+        "keystore_certificato" : "CER_BASE64"
+      }
+    }
+  }
+}

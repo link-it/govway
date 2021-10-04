@@ -1,19 +1,16 @@
 {
     "endpoint": "https://ginovadifretta.it/petstore",
 
-    "autenticazione_http": {
-        "username": "mario",
-        "password": "perbene"
-    },
-
     "autenticazione_https": {
         "tipologia": "SSLv3",
         "hostname_verifier": false,
 
+	"trust_all_server_certs": false,
         "server": {
             "truststore_path":  "/url",
             "truststore_password": "gino21",
-            "truststore_tipo": "jks"
+            "truststore_tipo": "jks",
+      	    "algoritmo" : "PKIX"
         }  
     },
 

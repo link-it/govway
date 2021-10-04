@@ -123,6 +123,9 @@ Examples:
 |applicativo_interno.json|
 |applicativo_interno_keystore_archive.json|
 |applicativo_interno_keystore_file.json|
+|applicativo_interno_keystore_hsm.json|
+|applicativo_interno_keystore_file_certificato.json|
+|applicativo_interno_keystore_hsm_certificato.json|
 |applicativo_interno_audience.json|
 |applicativo_interno_url_x5u.json|
 
