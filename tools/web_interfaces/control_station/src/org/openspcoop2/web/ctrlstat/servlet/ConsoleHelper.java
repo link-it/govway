@@ -10720,6 +10720,29 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
+	public void addFilterCredenziale(String tipoCredenziale, String credenziale) throws Exception{
+		try {
+			String label = null;
+			if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(tipoCredenziale)) {
+				label = ServiziApplicativiCostanti.LABEL_CREDENZIALE_ACCESSO_HTTPS;
+			}
+			else if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC.equals(tipoCredenziale)) {
+				label = ServiziApplicativiCostanti.LABEL_CREDENZIALE_ACCESSO_USERNAME;
+			}
+			else if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL.equals(tipoCredenziale)) {
+				label = ServiziApplicativiCostanti.LABEL_CREDENZIALE_ACCESSO_PRINCIPAL;
+			}
+			
+			if(label!=null) {
+				this.pd.addTextFilter(Filtri.FILTRO_CREDENZIALE, label, credenziale, this.getSize());
+			}
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
 	public void addFilterStato(String stato, boolean addStatiAllarme, boolean postBack) throws Exception{
 		try {
 			String [] statiValues = new String[addStatiAllarme?5:2];
@@ -11201,13 +11224,26 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	public void addFilterModIKeystore(ISearch ricerca, int idLista) throws Exception{
+	public void addFilterModIKeystorePath(ISearch ricerca, int idLista) throws Exception{
 		try {
-			String keystoreValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_KEYSTORE);
 			
-			String filterLabel = CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE_LABEL;
-				
-			this.pd.addTextFilter(Filtri.FILTRO_MODI_KEYSTORE, filterLabel, keystoreValue, this.getSize());
+			String keystorePathValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_KEYSTORE_PATH);
+			String filterPathLabel = CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_PATH_MODE_LABEL;
+			this.pd.addTextFilter(Filtri.FILTRO_MODI_KEYSTORE_PATH, filterPathLabel, keystorePathValue, this.getSize());
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void addFilterModIKeystoreSubject(ISearch ricerca, int idLista) throws Exception{
+		try {
+			
+			String keystoreSubjectValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_KEYSTORE_SUBJECT);
+			String filterSubjectLabel = CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_SUBJECT_MODE_LABEL;
+			this.pd.addTextFilter(Filtri.FILTRO_MODI_KEYSTORE_SUBJECT, filterSubjectLabel, keystoreSubjectValue, this.getSize());
+			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);

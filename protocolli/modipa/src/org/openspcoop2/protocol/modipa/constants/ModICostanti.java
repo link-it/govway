@@ -130,8 +130,8 @@ public class ModICostanti {
     
     public static final String MODIPA_KEY_PASSWORD = "modipaKeyPassword";
     
-    public static final String MODIPA_KEY_CN_SUBJECT = "modipaKeyCNSubject";
-    public static final String MODIPA_KEY_CN_ISSUER = "modipaKeyCNIssuer";
+    public static final String MODIPA_KEY_CN_SUBJECT = CostantiDB.MODIPA_KEY_CN_SUBJECT;
+    public static final String MODIPA_KEY_CN_ISSUER = CostantiDB.MODIPA_KEY_CN_ISSUER;
         
     public static final String MODIPA_PROFILO_DEFAULT = "default";
     public static final String MODIPA_PROFILO_RIDEFINISCI = "ridefinisci";

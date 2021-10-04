@@ -113,20 +113,8 @@ public class AbstractModIValidazioneSintatticaCommons {
 				if(StatoFunzionalita.ABILITATO.equals(configurazionePdDManager.getConfigurazioneMultitenant().getStato()) &&
 						!PortaApplicativaSoggettiFruitori.SOGGETTI_ESTERNI.equals(configurazionePdDManager.getConfigurazioneMultitenant().getErogazioneSceltaSoggettiFruitori())) {
 					
-					FiltroRicercaServiziApplicativi filtro = new FiltroRicercaServiziApplicativi();
-					
-					filtro.setTipoSoggetto(CostantiLabel.MODIPA_PROTOCOL_NAME);
-					
-					FiltroRicercaProtocolProperty filtroSubject = new FiltroRicercaProtocolProperty();
-					filtroSubject.setName(ModICostanti.MODIPA_KEY_CN_SUBJECT);
-					filtroSubject.setValueAsString(subject);
-					filtro.addProtocolProperty(filtroSubject);
-					
-					FiltroRicercaProtocolProperty filtroIssuer = new FiltroRicercaProtocolProperty();
-					filtroIssuer.setName(ModICostanti.MODIPA_KEY_CN_ISSUER);
-					filtroIssuer.setValueAsString(issuer);
-					filtro.addProtocolProperty(filtroIssuer);
-				
+					FiltroRicercaServiziApplicativi filtro = createFilter(subject, issuer);
+									
 					List<IDServizioApplicativo> list = null;
 					try {
 						list = configurazionePdDManager.getAllIdServiziApplicativi(filtro);
@@ -136,49 +124,15 @@ public class AbstractModIValidazioneSintatticaCommons {
 							// Possono esistere piu' sil che hanno un CN con subject e issuer.
 							
 							ServizioApplicativo sa = configurazionePdDManager.getServizioApplicativo(idServizioApplicativoSubjectIssuerCheck);
-							if(sa!=null && sa.sizeProtocolPropertyList()>0) {
 								
-								java.security.cert.Certificate certificatoCheck = null;
-								
-								String mode = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_MODE);
-								if(mode!=null && !"".equals(mode) && !ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(mode)) {
-									
-									byte [] certificateBytes = ProtocolPropertiesUtils.getOptionalBinaryValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_CERTIFICATE);
-									if(certificateBytes!=null) {
-										org.openspcoop2.utils.certificate.Certificate c = ArchiveLoader.load(certificateBytes);
-										if(c!=null && c.getCertificate()!=null) {
-											certificatoCheck = c.getCertificate().getCertificate();
-										}
-									}
-									
-								}
-								else {
-								
-									byte [] keystoreBytes = ProtocolPropertiesUtils.getOptionalBinaryValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_ARCHIVE);
-									String keystoreType = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_TYPE);
-									String keystorePassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_PASSWORD);
-									String keyAlias = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEY_ALIAS);
-									if(keystoreBytes!=null && keystoreType!=null && keystorePassword!=null && keyAlias!=null) {
-										ArchiveType archiveType = null;
-										if(ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS.equals(keystoreType)) {
-											archiveType = ArchiveType.JKS;
-										}
-										else {
-											archiveType = ArchiveType.PKCS12;
-										}
-										MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keystoreBytes, archiveType.name(), 
-												keystorePassword);
-										certificatoCheck = merlinKs.getCertificate(keyAlias);
-									}
-								}
+							java.security.cert.Certificate certificatoCheck = readServizioApplicativoByCertificate(sa);
 
-								if(certificatoCheck!=null) {
-									//if(certificate.equals(certificatoCheck.getCertificate(),true)) {
-									if(certificatoCheck instanceof java.security.cert.X509Certificate) {
-										if(certificate.equals(((java.security.cert.X509Certificate)certificatoCheck),true)) {
-											idServizioApplicativo = idServizioApplicativoSubjectIssuerCheck;
-											break;
-										}
+							if(certificatoCheck!=null) {
+								//if(certificate.equals(certificatoCheck.getCertificate(),true)) {
+								if(certificatoCheck instanceof java.security.cert.X509Certificate) {
+									if(certificate.equals(((java.security.cert.X509Certificate)certificatoCheck),true)) {
+										idServizioApplicativo = idServizioApplicativoSubjectIssuerCheck;
+										break;
 									}
 								}
 							}
@@ -233,4 +187,66 @@ public class AbstractModIValidazioneSintatticaCommons {
 			throw e;
 		}
 	}
+	
+	public static FiltroRicercaServiziApplicativi createFilter(String subject, String issuer) {
+		FiltroRicercaServiziApplicativi filtro = new FiltroRicercaServiziApplicativi();
+		
+		filtro.setTipoSoggetto(CostantiLabel.MODIPA_PROTOCOL_NAME);
+		
+		FiltroRicercaProtocolProperty filtroSubject = new FiltroRicercaProtocolProperty();
+		filtroSubject.setName(ModICostanti.MODIPA_KEY_CN_SUBJECT);
+		filtroSubject.setValueAsString(subject);
+		filtro.addProtocolProperty(filtroSubject);
+		
+		FiltroRicercaProtocolProperty filtroIssuer = new FiltroRicercaProtocolProperty();
+		filtroIssuer.setName(ModICostanti.MODIPA_KEY_CN_ISSUER);
+		filtroIssuer.setValueAsString(issuer);
+		filtro.addProtocolProperty(filtroIssuer);
+		
+		return filtro;
+	}
+	
+	public static java.security.cert.Certificate readServizioApplicativoByCertificate(ServizioApplicativo sa) throws Exception {
+		if(sa!=null && sa.sizeProtocolPropertyList()>0) {
+					
+			java.security.cert.Certificate certificatoCheck = null;
+					
+			String mode = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_MODE);
+			if(mode!=null && !"".equals(mode) && !ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(mode)) {
+						
+				byte [] certificateBytes = ProtocolPropertiesUtils.getOptionalBinaryValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_CERTIFICATE);
+				if(certificateBytes!=null) {
+					org.openspcoop2.utils.certificate.Certificate c = ArchiveLoader.load(certificateBytes);
+					if(c!=null && c.getCertificate()!=null) {
+						certificatoCheck = c.getCertificate().getCertificate();
+					}
+				}
+				
+			}
+			else {
+				
+				byte [] keystoreBytes = ProtocolPropertiesUtils.getOptionalBinaryValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_ARCHIVE);
+				String keystoreType = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_TYPE);
+				String keystorePassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_PASSWORD);
+				String keyAlias = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEY_ALIAS);
+				if(keystoreBytes!=null && keystoreType!=null && keystorePassword!=null && keyAlias!=null) {
+					ArchiveType archiveType = null;
+					if(ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS.equals(keystoreType)) {
+						archiveType = ArchiveType.JKS;
+					}
+					else {
+						archiveType = ArchiveType.PKCS12;
+					}
+					MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keystoreBytes, archiveType.name(), 
+							keystorePassword);
+					certificatoCheck = merlinKs.getCertificate(keyAlias);
+				}
+			}
+
+			return certificatoCheck;
+		}
+			
+		return null;
+	}
+	
 }

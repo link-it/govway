@@ -1565,7 +1565,7 @@ public class DBUtils {
 	
 	public static void setFiltriModIApplicativi(ISQLQueryObject sqlQueryObject, String tipoDB,
 			Boolean filtroModISicurezzaMessaggio,
-			String filtroModIKeystore, String filtroModIAudience) throws Exception {
+			String filtroModIKeystorePath, String filtroModIKeystoreSubject, String filtroModIAudience) throws Exception {
 		
 		ProprietariProtocolProperty proprietario = ProprietariProtocolProperty.SERVIZIO_APPLICATIVO;
 		String tabellaDB = 	CostantiDB.SERVIZI_APPLICATIVI ;
@@ -1578,10 +1578,18 @@ public class DBUtils {
 			
 		}
 		
-		if(filtroModIKeystore!=null) {
+		if(filtroModIKeystorePath!=null) {
 			
 			ISQLQueryObject sql = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
-					tipoDB, CostantiDB.MODIPA_KEYSTORE_PATH, null, filtroModIKeystore, null);
+					tipoDB, CostantiDB.MODIPA_KEYSTORE_PATH, null, filtroModIKeystorePath, null);
+			sqlQueryObject.addWhereExistsCondition(false, sql);
+			
+		}
+		
+		if(filtroModIKeystoreSubject!=null) {
+			
+			ISQLQueryObject sql = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
+					tipoDB, CostantiDB.MODIPA_KEY_CN_SUBJECT, null, filtroModIKeystoreSubject, null);
 			sqlQueryObject.addWhereExistsCondition(false, sql);
 			
 		}

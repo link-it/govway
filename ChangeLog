@@ -1,3 +1,9 @@
+2021-10-04  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole, ProtocolloModIPA]
+	Tra i criteri di ricerca, negli applicativi e nei soggetti, è adesso possibile indicare oltre al tipo di credenziale (https/http-basic/principal) anche il valore stesso della credenziale (es. CN del certificato X.509).
+	Il criterio di ricerca per CN del certificato subject X.509 è stato anche introdotto tra i filtri 'ModI' negli applicativi.
+
 2021-09-28  Andrea Poli <apoli@link.it>
 
 	* [Utils, GovWayCore, ProtocolloModIPA]

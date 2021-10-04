@@ -2168,7 +2168,10 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			}
 			
 			String filterTipoCredenziali = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_TIPO_CREDENZIALI);
-			this.addFilterTipoCredenziali(filterTipoCredenziali,false);
+			this.addFilterTipoCredenziali(filterTipoCredenziali,true);
+			
+			String filterCredenziale = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CREDENZIALE);
+			this.addFilterCredenziale(filterTipoCredenziali, filterCredenziale);
 			
 			String filterRuolo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_RUOLO);
 			addFilterRuolo(filterRuolo, false);
@@ -2262,7 +2265,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 									StatoFunzionalita.ABILITATO.getValue().equals(sicurezzaMessaggio)) {
 							
 								// filtro keystore
-								this.addFilterModIKeystore(ricerca, idLista);
+								this.addFilterModIKeystorePath(ricerca, idLista);
+								this.addFilterModIKeystoreSubject(ricerca, idLista);
 								
 							}
 																

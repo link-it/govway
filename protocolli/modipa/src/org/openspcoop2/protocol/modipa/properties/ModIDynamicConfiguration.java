@@ -63,6 +63,7 @@ import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.utils.SOAPHeader;
+import org.openspcoop2.protocol.modipa.validator.AbstractModIValidazioneSintatticaCommons;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemType;
@@ -88,6 +89,7 @@ import org.openspcoop2.protocol.sdk.properties.SubtitleConsoleItem;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordi;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPortTypeAzioni;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaRisorse;
+import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
@@ -428,6 +430,47 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 						cert = this.readKeystoreConfig(properties, true);
 					}catch(Throwable e) {
 						throw new ProtocolException("Verificare il certificato caricato in "+ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL+": "+e.getMessage(),e);
+					}
+					
+					if(cert!=null && cert.getSubject()!=null) {
+						
+						FiltroRicercaServiziApplicativi filtro = AbstractModIValidazioneSintatticaCommons.createFilter(cert.getSubject().toString(), 
+								cert.getIssuer().toString());
+						
+						List<IDServizioApplicativo> list = null;
+						try {
+							list = configIntegrationReader.findIdServiziApplicativi(filtro);
+						}catch(RegistryNotFound notFound) {}
+						catch(Throwable t) {
+							throw new ProtocolException("Errore non atteso durante la verfica del certificato caricato in "+ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL+": "+t.getMessage(),t);
+						}
+						if(list!=null) {
+							for (IDServizioApplicativo idServizioApplicativoSubjectIssuerCheck : list) {
+								// Possono esistere piu' sil che hanno un CN con subject e issuer.
+								
+								java.security.cert.Certificate certificatoCheck = null;
+								try {
+									ServizioApplicativo sa = configIntegrationReader.getServizioApplicativo(idServizioApplicativoSubjectIssuerCheck);
+									certificatoCheck = AbstractModIValidazioneSintatticaCommons.readServizioApplicativoByCertificate(sa);
+								}catch(Throwable t) {
+									throw new ProtocolException("Errore non atteso durante la verfica del certificato caricato in "+ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL+": "+t.getMessage(),t);
+								}
+								
+								if(certificatoCheck!=null) {
+									//if(certificate.equals(certificatoCheck.getCertificate(),true)) {
+									if(certificatoCheck instanceof java.security.cert.X509Certificate) {
+										if(cert.equals(((java.security.cert.X509Certificate)certificatoCheck),true)) {
+											if(ConsoleOperationType.ADD.equals(consoleOperationType) || !idServizioApplicativoSubjectIssuerCheck.equals(id)) {
+												throw new ProtocolException("Il certificato caricato in "+ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL+" risulta già assegnato all'applicativo '"+idServizioApplicativoSubjectIssuerCheck.getNome()+"'");
+											}
+											
+										}
+									}
+								}
+								
+							}
+						}
+						
 					}
 				}
 				

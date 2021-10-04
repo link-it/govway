@@ -63,6 +63,7 @@ public final class Filtri
 	public final static String FILTRO_TIPO_SOGGETTO = "filtroTipoSoggetto";
 	
 	public final static String FILTRO_TIPO_CREDENZIALI = "filtroTipoCredenziali";
+	public final static String FILTRO_CREDENZIALE = "filtroCredenziale";
 	
 	public final static String FILTRO_RUOLO_TIPOLOGIA = "filtroRuoloTipologia";
 	public final static String FILTRO_RUOLO_CONTESTO = "filtroRuoloContesto";
@@ -138,7 +139,8 @@ public final class Filtri
 	
 	public final static String FILTRO_MODI_SICUREZZA_CANALE = "filtroModiSicCanale";
 	public final static String FILTRO_MODI_SICUREZZA_MESSAGGIO = "filtroModiSicMessaggio";
-	public final static String FILTRO_MODI_KEYSTORE = "filtroModiKeystore";
+	public final static String FILTRO_MODI_KEYSTORE_PATH = "filtroModiKeystorePath";
+	public final static String FILTRO_MODI_KEYSTORE_SUBJECT = "filtroModiKeystoreSubject";	
 	public final static String FILTRO_MODI_AUDIENCE = "filtroModiAudience";
 	public final static String FILTRO_MODI_DIGEST_RICHIESTA = "filtroModiDigestRich";
 	public final static String FILTRO_MODI_INFORMAZIONI_UTENTE = "filtroModiInfoUtente";

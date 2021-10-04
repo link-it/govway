@@ -102,41 +102,7 @@
   o su fedora più recenti:
 	'iptables -I INPUT 1 -p tcp -d 127.0.2.2 --destination-port 7777 -j DROP'
 	
-- HSM per TLS Keystore. I certificati generati con il readme tools/utils/src/org/openspcoop2/utils/certificate/hsm/HSM.example vanno aggiunti al keystore erogatore.jks messo in /etc/govway/keys per poter effettuare il trust di tutti gli utilizzi delle chiavi HSM come certificato client TLS. 
-Per farlo:
-mkdir /tmp/HSM_ADD
-pushd /tmp/HSM_ADD
-keytool -exportcert -rfc -alias client1_hsm -file client1_hsm.pem  -keystore NONE -storetype PKCS11 -storepass 123456 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg $HOME/lib/softhsm/softhsm_java_client1.conf
-keytool -exportcert -rfc -alias client2_hsm -file client2_hsm.pem -keystore NONE -storetype PKCS11 -storepass 123456 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg "--name = softhsm-client2\nlibrary = /usr/lib64/libsofthsm2.so\nslotListIndex = 1"
-keytool -exportcert -rfc -alias server_hsm -file server_hsm.pem -keystore NONE -storetype PKCS11 -storepass 123456 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg $HOME/lib/softhsm/softhsm_java_server.conf
-keytool -exportcert -rfc -alias server2_hsm -file server2_hsm.pem -keystore NONE -storetype PKCS11 -storepass 123456 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg $HOME/lib/softhsm/softhsm_java_server.conf 
-keytool -exportcert -rfc -alias modi_client1_hsm -file modi_client1_hsm.pem -keystore NONE -storetype PKCS11 -storepass 123456 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg "--name = softhsm-modi-client\nlibrary = /usr/lib64/libsofthsm2.so\nslotListIndex = 3" -storetype PKCS11
-keytool -exportcert -rfc -alias modi_client2_hsm -file modi_client2_hsm.pem -keystore NONE -storetype PKCS11 -storepass 123456 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg "--name = softhsm-modi-client\nlibrary = /usr/lib64/libsofthsm2.so\nslotListIndex = 3" -storetype PKCS11
-keytool -exportcert -rfc -alias modi_client3_hsm -file modi_client3_hsm.pem -keystore NONE -storetype PKCS11 -storepass 123456 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg "--name = softhsm-modi-client\nlibrary = /usr/lib64/libsofthsm2.so\nslotListIndex = 3" -storetype PKCS11
-cp /etc/govway/keys/erogatore.jks .
-keytool -delete -alias client1_hsm -keystore erogatore.jks -storepass openspcoop -noprompt
-keytool -delete -alias client2_hsm -keystore erogatore.jks -storepass openspcoop -noprompt
-keytool -delete -alias server_hsm -keystore erogatore.jks -storepass openspcoop -noprompt
-keytool -delete -alias server2_hsm -keystore erogatore.jks -storepass openspcoop -noprompt
-keytool -delete -alias modi_client1_hsm -keystore erogatore.jks -storepass openspcoop -noprompt
-keytool -delete -alias modi_client2_hsm -keystore erogatore.jks -storepass openspcoop -noprompt
-keytool -delete -alias modi_client3_hsm -keystore erogatore.jks -storepass openspcoop -noprompt
-keytool -importcert -alias client1_hsm -file client1_hsm.pem -keystore erogatore.jks -storepass openspcoop -noprompt
-keytool -importcert -alias client2_hsm -file client2_hsm.pem -keystore erogatore.jks -storepass openspcoop -noprompt
-keytool -importcert -alias server_hsm -file server_hsm.pem -keystore erogatore.jks -storepass openspcoop -noprompt
-keytool -importcert -alias server2_hsm -file server2_hsm.pem -keystore erogatore.jks -storepass openspcoop -noprompt
-keytool -importcert -alias modi_client1_hsm -file modi_client1_hsm.pem -keystore erogatore.jks -storepass openspcoop -noprompt
-keytool -importcert -alias modi_client2_hsm -file modi_client2_hsm.pem -keystore erogatore.jks -storepass openspcoop -noprompt
-keytool -importcert -alias modi_client3_hsm -file modi_client3_hsm.pem -keystore erogatore.jks -storepass openspcoop -noprompt
-cp modi_client1_hsm.pem /etc/govway/keys/
-cp modi_client2_hsm.pem /etc/govway/keys/
-cp modi_client3_hsm.pem /etc/govway/keys/
-cp server_hsm.pem /etc/govway/keys/
-cp server2_hsm.pem /etc/govway/keys/
-cp client1_hsm.pem /etc/govway/keys/
-cp client2_hsm.pem /etc/govway/keys/
-cp erogatore.jks /etc/govway/keys/
-popd
+- HSM per TLS Keystore. Seguire le indicazioni descritte in PKCS11.README
 
 Per eseguire i test:
 	ant run_test

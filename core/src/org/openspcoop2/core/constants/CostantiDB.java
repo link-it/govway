@@ -609,6 +609,9 @@ public final class CostantiDB {
 
     public static final String MODIPA_KEYSTORE_PATH = "modipaKeystorePath";
     
+    public static final String MODIPA_KEY_CN_SUBJECT = "modipaKeyCNSubject";
+    public static final String MODIPA_KEY_CN_ISSUER = "modipaKeyCNIssuer";
+    
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH = "modipaTruststorePath";
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS = "modipaTruststoreCRLs";
