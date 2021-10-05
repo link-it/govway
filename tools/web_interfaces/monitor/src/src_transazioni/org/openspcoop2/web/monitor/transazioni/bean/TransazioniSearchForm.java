@@ -130,6 +130,7 @@ Context, Cloneable {
 	private static String default_modalitaRicercaStorico = ModalitaRicercaTransazioni.ANDAMENTO_TEMPORALE.getValue();
 	private String modalitaRicercaStorico = TransazioniSearchForm.default_modalitaRicercaStorico;
 	private int livelloRicerca = ModalitaRicercaTransazioni.getLivello(this.modalitaRicercaStorico);
+	private boolean backRicerca = false;
 	
 	private boolean integrationManagerEnabled = false;
 	
@@ -301,6 +302,8 @@ Context, Cloneable {
 		if(!oldIsLive && TipologiaRicerca.all.equals(this.getDefaultTipologiaRicercaEnum())) {
 			this.setTipologiaRicerca("--"); // in modo da far comparire la lista con il suggerimento di selezione come per gli altri
 		}
+		
+		this.setBackRicerca(false);
 		
 		return null;
 	}
@@ -937,6 +940,8 @@ Context, Cloneable {
 				}
 			}
 
+			this.setBackRicerca(false);
+			
 			if(!this.isLive()){
 				ModalitaRicercaTransazioni ricerca = ModalitaRicercaTransazioni.getFromString(this.getModalitaRicercaStorico());
 				if(ricerca!=null){
@@ -1494,5 +1499,13 @@ Context, Cloneable {
 
 	public void setLivelloRicerca(int livelloRicerca) {
 		this.livelloRicerca = livelloRicerca;
+	}
+	
+	public boolean isBackRicerca() {
+		return this.backRicerca;
+	}
+
+	public void setBackRicerca(boolean backRicerca) {
+		this.backRicerca = backRicerca;
 	}
 }

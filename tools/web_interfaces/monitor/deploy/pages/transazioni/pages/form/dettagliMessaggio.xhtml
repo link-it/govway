@@ -15,7 +15,9 @@
 				</li>
 				<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16" rendered="#{searchFormTransazioni.periodo != 'Live'}"/></li>
 				<li>
-					<a4j:htmlCommandLink action="transazioniList" value="#{searchFormTransazioni.tipoStoricoLabel}" rendered="#{searchFormTransazioni.periodo != 'Live'}"/>
+					<a4j:htmlCommandLink action="transazioniList" value="#{searchFormTransazioni.tipoStoricoLabel}" rendered="#{searchFormTransazioni.periodo != 'Live'}">
+						<f:setPropertyActionListener value="#{true}" target="#{searchFormTransazioni.backRicerca}" />
+					</a4j:htmlCommandLink>
 					<a4j:htmlCommandLink action="transazioniList" value="Visualizza Transazioni (Live)" rendered="#{searchFormTransazioni.periodo eq 'Live'}">
 						<f:setPropertyActionListener value="#{true}" target="#{searchFormTransazioni.sessioneLiveValida}" />
 					</a4j:htmlCommandLink>

@@ -161,4 +161,7 @@ public interface ITransazioniService extends ISearchFormService<TransazioneBean,
 	public List<String> getClusterIdDinamici(String gruppo, int refreshSecondsInterval);
 
 	public boolean isTimeoutEvent() ;
+	public boolean isProfiloDifferenteEvent() ;
+	public boolean isSoggettoDifferenteEvent() ;
+	
 }

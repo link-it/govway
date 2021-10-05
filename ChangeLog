@@ -1,5 +1,12 @@
 2021-10-05  Andrea Poli <apoli@link.it>
 
+	* [GovWayMonitor]
+	Nelle ricerche puntuali per identificativo, se viene individuata una transazione appartenente ad un profilo o soggetto differente da quello selezionato,
+	viene visualizzata una finestra che segnala all'utente l'anomalia riscontrata. 
+	La transazione individuata viene comunque visualizzata all'utente, nonostante differisca dal profilo o soggetto selezionato, solamente se comunque l'utente possiede i diritti per accederci.
+
+2021-10-05  Andrea Poli <apoli@link.it>
+
 	* [Documentazione]
 	Aggiunta funzionalità OP-1257
 	(https://github.com/link-it/govway/issues/87)

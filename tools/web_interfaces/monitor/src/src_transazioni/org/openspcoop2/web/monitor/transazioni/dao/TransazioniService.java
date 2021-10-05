@@ -141,6 +141,8 @@ import org.slf4j.Logger;
 public class TransazioniService implements ITransazioniService {
 	
 	private boolean timeoutEvent = false;
+	private boolean profiloDifferenteEvent = false;
+	private boolean soggettoDifferenteEvent = false;
 	private Integer timeoutRicerche = null;
 	private Integer timeoutRicercheLive = null;
 
@@ -545,6 +547,85 @@ public class TransazioniService implements ITransazioniService {
 
 	}
 
+	private boolean isSearchById() {
+		
+		boolean isLiveSearch = false;
+				
+		ModalitaRicercaTransazioni ricerca = null;
+		if(!isLiveSearch){
+			ricerca = ModalitaRicercaTransazioni.getFromString(this.searchForm.getModalitaRicercaStorico());
+		}
+		if(ricerca==null) {
+			return false;
+		}
+		
+		if(ModalitaRicercaTransazioni.ID_MESSAGGIO.equals(ricerca) ||
+				ModalitaRicercaTransazioni.ID_TRANSAZIONE.equals(ricerca) ||
+				ModalitaRicercaTransazioni.ID_APPLICATIVO_BASE.equals(ricerca) ){
+			return true;
+		}
+		
+		return false;
+	}
+	
+	private boolean isProfiloDifferente(List<Transazione> list) {
+		
+		if(this.searchForm.isBackRicerca()) {
+			return false;
+		}
+		
+		if(!isSearchById()) {
+			return false;
+		}
+		if(list==null || list.isEmpty()) {
+			return false;
+		}
+		
+		if(!this.searchForm.getModalita().equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL)) {
+			String protocollo =	this.searchForm.getModalita();
+			if(protocollo!=null && StringUtils.isNotEmpty(protocollo)) {
+				for (Transazione transazione : list) {
+					if(transazione == null || transazione.getProtocollo()==null || !transazione.getProtocollo().equals(protocollo)) {
+						return true;
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
+	private boolean isSoggettoDifferente(List<Transazione> list) {
+		
+		if(this.searchForm.isBackRicerca()) {
+			return false;
+		}
+		
+		if(!isSearchById()) {
+			return false;
+		}
+		if(list==null || list.isEmpty()) {
+			return false;
+		}
+		
+		if(Utility.isFiltroDominioAbilitato() && this.searchForm.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.searchForm.getSoggettoLocale()) && !"--".equals(this.searchForm.getSoggettoLocale())){
+			String tipoSoggettoLocale = this.searchForm.getTipoSoggettoLocale();
+			String nomeSoggettoLocale = this.searchForm.getSoggettoLocale();
+			String idPorta = null;
+			try {
+				idPorta = Utility.getIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale);
+			}catch(Throwable t) {}
+			if(idPorta!=null) {
+				for (Transazione transazione : list) {
+					if(transazione == null || transazione.getPddCodice()==null || !transazione.getPddCodice().equals(idPorta) ) {
+						return true;
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
+	
 	@Override
 	public List<TransazioneBean> findAll(int start, int limit, SortOrder sortOrder) {
 		return findAll(start, limit, sortOrder, null); 
@@ -576,6 +657,8 @@ public class TransazioniService implements ITransazioniService {
 			TransazioniIndexUtils.enableSoloColonneIndicizzateFullIndexSearch(pagExpr);
 			
 			this.timeoutEvent = false;
+			this.profiloDifferenteEvent = false;
+			this.soggettoDifferenteEvent = false;
 			
 			List<Transazione> list = null;
 			if(this.timeoutRicerche == null) {
@@ -598,7 +681,11 @@ public class TransazioniService implements ITransazioniService {
 					this.log.error(e.getMessage(), e);
 				}
 			}
-			if(list!= null && list.size() > 0)
+			if(list!= null && list.size() > 0) {
+				this.profiloDifferenteEvent = this.isProfiloDifferente(list);
+				if(!this.profiloDifferenteEvent) {
+					this.soggettoDifferenteEvent = this.isSoggettoDifferente(list);
+				}
 				for (Transazione transazione : list) {
 					TransazioneBean bean = new TransazioneBean(transazione, this.searchForm!=null ? this.searchForm.getSoggettoPddMonitor() : null);
 					
@@ -616,6 +703,7 @@ public class TransazioniService implements ITransazioniService {
 					
 					listaBean.add(bean);
 				}
+			}
 		} catch (Exception e) {
 			this.log.error(e.getMessage(), e);
 		}
@@ -653,6 +741,8 @@ public class TransazioniService implements ITransazioniService {
 			TransazioniIndexUtils.enableSoloColonneIndicizzateFullIndexSearch(pagExpr);
 			
 			this.timeoutEvent = false;
+			this.profiloDifferenteEvent = false;
+			this.soggettoDifferenteEvent = false;
 			
 			List<Transazione> list = null;
 			if(this.timeoutRicerche == null) {
@@ -675,7 +765,11 @@ public class TransazioniService implements ITransazioniService {
 					this.log.error(e.getMessage(), e);
 				}
 			}
-			if(list!= null && list.size() > 0)
+			if(list!= null && list.size() > 0) {
+				this.profiloDifferenteEvent = this.isProfiloDifferente(list);
+				if(!this.profiloDifferenteEvent) {
+					this.soggettoDifferenteEvent = this.isSoggettoDifferente(list);
+				}
 				for (Transazione transazione : list) {
 					TransazioneBean bean = new TransazioneBean(transazione, this.searchForm!=null ? this.searchForm.getSoggettoPddMonitor() : null);
 					
@@ -693,6 +787,7 @@ public class TransazioniService implements ITransazioniService {
 					
 					listaBean.add(bean);
 				}
+			}
 		} catch (Exception e) {
 			this.log.error(e.getMessage(), e);
 		}
@@ -790,6 +885,8 @@ public class TransazioniService implements ITransazioniService {
 			TransazioniIndexUtils.enableSoloColonneIndicizzateFullIndexSearch(pagExpr);
 			
 			this.timeoutEvent = false;
+			this.profiloDifferenteEvent = false;
+			this.soggettoDifferenteEvent = false;
 			
 			List<Transazione> list = null;
 			if(this.timeoutRicerche == null) {
@@ -812,7 +909,11 @@ public class TransazioniService implements ITransazioniService {
 					this.log.error(e.getMessage(), e);
 				}
 			}
-			if(list!= null && list.size() > 0)
+			if(list!= null && list.size() > 0) {
+				this.profiloDifferenteEvent = this.isProfiloDifferente(list);
+				if(!this.profiloDifferenteEvent) {
+					this.soggettoDifferenteEvent = this.isSoggettoDifferente(list);
+				}
 				for (Transazione transazione : list) {
 					TransazioneBean bean = new TransazioneBean(transazione, this.searchForm!=null ? this.searchForm.getSoggettoPddMonitor() : null);
 					
@@ -830,6 +931,7 @@ public class TransazioniService implements ITransazioniService {
 					
 					listaBean.add(bean);
 				}
+			}
 		} catch (Exception e) {
 			this.log.error(e.getMessage(), e);
 		}
@@ -884,6 +986,8 @@ public class TransazioniService implements ITransazioniService {
 			TransazioniIndexUtils.enableSoloColonneIndicizzateFullIndexSearch(pagExpr);
 			
 			this.timeoutEvent = false;
+			this.profiloDifferenteEvent = false;
+			this.soggettoDifferenteEvent = false;
 			
 			List<Transazione> list = null;
 			if(this.timeoutRicercheLive == null) {
@@ -3992,5 +4096,13 @@ public class TransazioniService implements ITransazioniService {
 	@Override
 	public boolean isTimeoutEvent() {
 		return this.timeoutEvent;
+	}
+	@Override
+	public boolean isProfiloDifferenteEvent() {
+		return this.profiloDifferenteEvent;
+	}
+	@Override
+	public boolean isSoggettoDifferenteEvent() {
+		return this.soggettoDifferenteEvent;
 	}
 }

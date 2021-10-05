@@ -148,4 +148,10 @@ SortableBaseDataModel<String, TransazioneBean, ITransazioniService, TransazioniS
 	public boolean isTimeoutEvent(){
 		return this.getDataProvider().isTimeoutEvent();
 	}
+	public boolean isProfiloDifferenteEvent(){
+		return this.getDataProvider().isProfiloDifferenteEvent();
+	}
+	public boolean isSoggettoDifferenteEvent(){
+		return this.getDataProvider().isSoggettoDifferenteEvent();
+	}
 }
