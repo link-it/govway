@@ -1110,6 +1110,8 @@ public class TestSignature {
 				if(useP11asTrustStore) {
 					verifySignatureProps.remove("rs.security.keystore.file");
 					verifySignatureProps.put("rs.security.keystore", truststore.getKeystore());
+					
+					verifySignatureProps.remove("rs.security.keystore.type");
 				}
 			}
 		}

@@ -1122,7 +1122,9 @@ public class TestEncrypt {
 			
 			if(TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11.equals(tipo) || 
 					TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_HEADER_CUSTOM.equals(tipo)) {
-				encryptProps.put("rs.security.keystore.type", "pkcs11");
+				if(useP11asTrustStore) {
+					encryptProps.put("rs.security.keystore.type", "pkcs11");
+				}
 				
 				encryptProps.remove("rs.security.keystore.alias");
 				encryptProps.put("rs.security.keystore.alias", alias);
