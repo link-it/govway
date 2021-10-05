@@ -1,3 +1,10 @@
+2021-10-05  Andrea Poli <apoli@link.it>
+
+	* [Documentazione]
+	Aggiunta funzionalità OP-1257
+	(https://github.com/link-it/govway/issues/87)
+	Realizzata documentazione che descrive la configurazione necessaria per poter registrare i device pkcs11.
+	
 2021-10-04  Andrea Poli <apoli@link.it>
 
 	* [ApiRsConfigurazione]

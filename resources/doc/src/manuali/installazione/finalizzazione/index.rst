@@ -64,7 +64,7 @@ tematiche:
    (erogazioni) o esterni (fruizioni) dal dominio di gestione. Per
    effettuare un tuning di tali parametri seguire le indicazioni
    descritte nella sezione :ref:`tempiRisposta`.
-
+  
 #. *Caching della Risposta - Disk Cache*
 
    In GovWay è possibile abilitare il salvataggio delle risposte in una
@@ -83,6 +83,11 @@ tematiche:
    modo da aggiungere una memoria secondaria dove salvare gli elementi
    in eccesso. Per abilitare la memoria secondaria seguire le
    indicazioni descritte nella sezione :ref:`cachingRisposta`.
+
+#. *Device PKCS11*
+
+   Il Cryptographic Token Interface Standard, PKCS#11, definisce interfacce di programmazione native per token crittografici, come acceleratori crittografici hardware e smartcard. 
+   Per consentire a GovWay di accedere ai token PKCS#11 nativi è necessario configurare correttamente il provider PKCS#11 e registrarlo tra i token conosciuti da GovWay seguendo le indicazioni descritte nella sezione :ref:`pkcs11Install`. 
 
 #. *Configurazione e Monitoraggio*
 
@@ -124,6 +129,7 @@ tematiche:
 	rateLimiting/index
 	tempiRisposta
 	cachingRisposta
+	pkcs11
 	apiRest
 	cluster/index
 	ssl/index
