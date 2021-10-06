@@ -1,3 +1,9 @@
+2021-10-06  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, Utils]
+	La presenza dei file di configurazione esterna, generati dall'installer, non è più obbligatoria per il corretto avvio di GovWay.
+	Nell'intervento è stata modificato anche il comportamento attuato dall'autorizzazione per canali, in una installazione con cluster dinamico dove viene utilizzato come id del nodo l'identificativo del gruppo.
+
 2021-10-05  Andrea Poli <apoli@link.it>
 
 	* [GovWayMonitor]

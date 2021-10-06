@@ -342,7 +342,7 @@ public class InitListener implements ServletContextListener {
 				}
 				
 				if(consoleProperties.isConfigurazioneAllarmiEnabled()) {
-					AlarmEngineConfig alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(InitListener.log, consoleProperties.getAllarmiConfigurazione());
+					AlarmEngineConfig alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(InitListener.log, consoleProperties.getAllarmiConfigurazione(), consoleProperties.getConfDirectory());
 					AlarmManager.setAlarmEngineConfig(alarmEngineConfig);
 					CostantiDB.ALLARMI_ENABLED=true;
 				}

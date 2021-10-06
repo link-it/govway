@@ -2871,7 +2871,7 @@ public class ControlStationCore {
 			this.configurazioneHandlersEnabled = consoleProperties.isConfigurazioneHandlersEnabled();
 			this.configurazioneAllarmiEnabled = consoleProperties.isConfigurazioneAllarmiEnabled();
 			if(this.configurazioneAllarmiEnabled) {
-				this.allarmiConfig = AlarmConfigProperties.getAlarmConfiguration(ControlStationCore.getLog(), consoleProperties.getAllarmiConfigurazione());
+				this.allarmiConfig = AlarmConfigProperties.getAlarmConfiguration(ControlStationCore.getLog(), consoleProperties.getAllarmiConfigurazione(), consoleProperties.getConfDirectory());
 				this.showAllarmiIdentificativoRuntime = consoleProperties.isShowAllarmiIdentificativoRuntime();
 				this.showAllarmiFormNomeSuggeritoCreazione = consoleProperties.isShowAllarmiFormNomeSuggeritoCreazione();
 				this.showAllarmiFormStatoAllarme = consoleProperties.isShowAllarmiFormStatoAllarme();

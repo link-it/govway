@@ -181,7 +181,8 @@
 
 		<!-- Ripristino jar openspcoop2 -->
 		<copy todir="${archiveAddUnzipPath}/${archiveLibDir}">
-			<fileset dir="${deploy_sw}/jars">
+			<!-- <fileset dir="${deploy_sw}/jars"> Non sono quelli aggiornati dalle patch -->
+			<fileset dir="${tmp_archivi}/govwayConsole.war/WEB-INF/lib"> <!-- in questa directory ci sono gia' i jar aggioranti dalla patch con il nome corretto -->
 				<include name="openspcoop2_utils*.jar"/>
 				<include name="openspcoop2_generic-project*.jar"/>
 				<include name="openspcoop2_core*.jar"/>
@@ -192,7 +193,7 @@
 				<include name="openspcoop2_schemi-xsd*.jar"/>
 				<include name="openspcoop2_security*.jar"/>
 			</fileset>
-			<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+			<!-- <globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/> -->
 		</copy>
 
 		<!-- ** add jar protocollo ** -->
@@ -206,10 +207,11 @@
 					<istrue value="${antinstaller_protocollo_trasparente}" />
 					<then>
 						<copy todir="${archiveAddUnzipPath}/${archiveLibDir}">
-							<fileset dir="${deploy_sw}">
-								<include name="openspcoop2_trasparente-protocol_*.jar"/>
+							<!-- <fileset dir="${deploy_sw}"> Non sono quelli aggiornati dalle patch -->
+							<fileset dir="${tmp_archivi}/govwayConsole.war/WEB-INF/lib"> <!-- in questa directory ci sono gia' i jar aggioranti dalla patch con il nome corretto -->
+								<include name="openspcoop2_trasparente-protocol*.jar"/>
 							</fileset>
-							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+							<!-- <globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/> -->
 						</copy>
 					</then>
 				</if>
@@ -218,10 +220,11 @@
 					<istrue value="${antinstaller_protocollo_modipa}"/>
 					<then>
 						<copy todir="${archiveAddUnzipPath}/${archiveLibDir}">
-							<fileset dir="${deploy_sw}">
-								<include name="openspcoop2_modipa-protocol_*.jar"/>
+							<!-- <fileset dir="${deploy_sw}"> Non sono quelli aggiornati dalle patch -->
+							<fileset dir="${tmp_archivi}/govwayConsole.war/WEB-INF/lib"> <!-- in questa directory ci sono gia' i jar aggioranti dalla patch con il nome corretto -->
+								<include name="openspcoop2_modipa-protocol*.jar"/>
 							</fileset>
-							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+							<!-- <globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/> -->
 						</copy>
 					</then>
 				</if>
@@ -230,10 +233,11 @@
 					<istrue value="${antinstaller_protocollo_spcoop}"/>
 					<then>
 						<copy todir="${archiveAddUnzipPath}/${archiveLibDir}">
-							<fileset dir="${deploy_sw}">
-								<include name="openspcoop2_spcoop-protocol_*.jar"/>
+							<!-- <fileset dir="${deploy_sw}"> Non sono quelli aggiornati dalle patch -->
+							<fileset dir="${tmp_archivi}/govwayConsole.war/WEB-INF/lib"> <!-- in questa directory ci sono gia' i jar aggioranti dalla patch con il nome corretto -->
+								<include name="openspcoop2_spcoop-protocol*.jar"/>
 							</fileset>
-							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+							<!-- <globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/> -->
 						</copy>
 					</then>
 				</if>
@@ -242,11 +246,12 @@
 					<istrue value="${antinstaller_protocollo_as4}" />
 					<then>
 						<copy todir="${archiveAddUnzipPath}/${archiveLibDir}">
-							<fileset dir="${deploy_sw}">
-								<include name="openspcoop2_as4-protocol_*.jar"/>
+							<!-- <fileset dir="${deploy_sw}"> Non sono quelli aggiornati dalle patch -->
+							<fileset dir="${tmp_archivi}/govwayConsole.war/WEB-INF/lib"> <!-- in questa directory ci sono gia' i jar aggioranti dalla patch con il nome corretto -->
+								<include name="openspcoop2_as4-protocol*.jar"/>
 								<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
 							</fileset>
-							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+							<!-- <globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/> -->
 						</copy>
 					</then>
 				</if>
@@ -255,10 +260,11 @@
 					<istrue value="${antinstaller_protocollo_sdi}"/>
 					<then>
 						<copy todir="${archiveAddUnzipPath}/${archiveLibDir}">
-							<fileset dir="${deploy_sw}">
-								<include name="openspcoop2_sdi-protocol_*.jar"/>
+							<!-- <fileset dir="${deploy_sw}"> Non sono quelli aggiornati dalle patch -->
+							<fileset dir="${tmp_archivi}/govwayConsole.war/WEB-INF/lib"> <!-- in questa directory ci sono gia' i jar aggioranti dalla patch con il nome corretto -->
+								<include name="openspcoop2_sdi-protocol*.jar"/>
 							</fileset>
-							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+							<!-- <globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/> -->
 						</copy>
 					</then>
 				</if>

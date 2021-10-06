@@ -87,6 +87,9 @@ public class CryptConfig implements Serializable {
 	public CryptConfig() {}
 	
 	public CryptConfig(String resource) throws UtilsException{
+		this(resource, true);
+	}
+	public CryptConfig(String resource, boolean useDefaultIfNotFound) throws UtilsException{
 		
 		if(CRYPT_SPECIAL_PATH_PLAIN.equals(resource)) {
 			this.cryptType = CryptType.PLAIN;
@@ -101,6 +104,9 @@ public class CryptConfig implements Serializable {
 			}
 			else{
 				is = PasswordVerifier.class.getResourceAsStream(resource);
+			}
+			if(is==null) {
+				is = PasswordVerifier.class.getResourceAsStream("/org/openspcoop2/utils/crypt/consolePassword.properties");
 			}
 			if(is!=null){
 				Properties p = new Properties();

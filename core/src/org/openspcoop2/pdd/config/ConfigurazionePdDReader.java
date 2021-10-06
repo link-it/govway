@@ -5735,7 +5735,13 @@ public class ConfigurazionePdDReader {
 		ccn.setEnabled(isEnabled);
 		if(isEnabled) {
 			OpenSPCoop2Properties op2Prop = OpenSPCoop2Properties.getInstance();
-			String idNodo = op2Prop.getClusterId(false);
+			String idNodo = null;
+			if(op2Prop.isClusterDinamico()) {
+				idNodo = op2Prop.getGroupId();
+			}
+			else {
+				idNodo = op2Prop.getClusterId(false);
+			}
 			ccn.setIdNodo(idNodo);
 			
 			if(c.sizeCanaleList()<=0) {

@@ -26,7 +26,6 @@ import java.util.Properties;
 
 import org.openspcoop2.monitor.engine.exceptions.EngineException;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.properties.PropertiesReader;
 
 
 /**
@@ -43,22 +42,25 @@ public class AlarmConfigProperties {
 	private static AlarmConfigProperties alarmConfigProperties = null;
 	private static AlarmEngineConfig alarmEngineConfig = null;
 
-	public static AlarmEngineConfig getAlarmConfiguration(org.slf4j.Logger log) throws Exception{
-		return getAlarmConfiguration(log, null);
+//	public static AlarmEngineConfig getAlarmConfiguration(org.slf4j.Logger log, String confDir, boolean useDefaultIfNotFound) throws Exception{
+//		return getAlarmConfiguration(log, null, confDir, useDefaultIfNotFound);
+//	}
+	public static AlarmEngineConfig getAlarmConfiguration(org.slf4j.Logger log,String filePath, String confDir) throws Exception{
+		return getAlarmConfiguration(log, filePath, confDir, true);
 	}
-	public static AlarmEngineConfig getAlarmConfiguration(org.slf4j.Logger log,String filePath) throws Exception{
+	public static AlarmEngineConfig getAlarmConfiguration(org.slf4j.Logger log,String filePath, String confDir, boolean useDefaultIfNotFound) throws Exception{
 
 		if(AlarmConfigProperties.alarmConfigProperties==null){
-			return _getAlarmConfiguration(log, filePath);
+			return _getAlarmConfiguration(log, filePath, confDir, useDefaultIfNotFound);
 		}else{
 			return AlarmConfigProperties.alarmEngineConfig;
 		}
 	}
 	
-	private static synchronized AlarmEngineConfig _getAlarmConfiguration(org.slf4j.Logger log,String filePath) throws Exception{
+	private static synchronized AlarmEngineConfig _getAlarmConfiguration(org.slf4j.Logger log,String filePath, String confDir, boolean useDefaultIfNotFound) throws Exception{
 
 		if(AlarmConfigProperties.alarmConfigProperties==null){
-			AlarmConfigProperties.alarmConfigProperties = new AlarmConfigProperties(log,filePath);
+			AlarmConfigProperties.alarmConfigProperties = new AlarmConfigProperties(log,filePath, confDir, useDefaultIfNotFound);
 			AlarmConfigProperties.alarmEngineConfig = AlarmEngineConfig.readAlarmEngineConfig(log, alarmConfigProperties);
 		}
 
@@ -71,7 +73,7 @@ public class AlarmConfigProperties {
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
 	/** Reader delle proprieta' impostate nel file 'alarmConfig.properties' */
-	private PropertiesReader reader;
+	private AlarmConfigInstanceProperties reader;
 
 
 
@@ -84,7 +86,7 @@ public class AlarmConfigProperties {
 	 *
 	 * 
 	 */
-	public AlarmConfigProperties(org.slf4j.Logger log,String filePat) throws EngineException{
+	public AlarmConfigProperties(org.slf4j.Logger log,String filePat, String confDir, boolean useDefaultIfNotFound) throws EngineException{
 
 		/* ---- Lettura del cammino del file di configurazione ---- */
 
@@ -101,6 +103,9 @@ public class AlarmConfigProperties {
 					properties = AlarmConfigProperties.class.getResourceAsStream("/"+filePat);
 				}
 			}
+			if(properties==null) {
+				properties = AlarmConfigProperties.class.getResourceAsStream("/org/openspcoop2/monitor/engine/alarm/allarmi_configurazione.properties");
+			}
 			if(properties==null){
 				throw new Exception("Properties "+filePat+" not found");
 			}
@@ -116,7 +121,8 @@ public class AlarmConfigProperties {
 		}	
 	
 		try{
-			this.reader = new PropertiesReader(p, true);
+			//this.reader = new PropertiesReader(p, true);
+			this.reader = new AlarmConfigInstanceProperties(p, log, confDir);
 		}catch(Exception e){
 			throw new EngineException(e.getMessage(),e);
 		}

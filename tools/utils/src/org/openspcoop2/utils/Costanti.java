@@ -30,8 +30,9 @@ public class Costanti {
 	public final static String OPENSPCOOP2 = "GovWay";
 	
 	public final static String OPENSPCOOP2_LOCAL_HOME = "GOVWAY_HOME";
+	public final static String OPENSPCOOP2_FORCE_CONFIG_FILE = "GOVWAY_FORCE_CONFIG_FILE";
 	
-	 public final static String OPENSPCOOP2_LOOKUP = "GOVWAY_LOOKUP";
+	public final static String OPENSPCOOP2_LOOKUP = "GOVWAY_LOOKUP";
 	 
     /** Versione beta, es: "b1" */
     public static final String OPENSPCOOP2_BETA = ".4.p2"; //".0.rc1";

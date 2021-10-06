@@ -90,6 +90,9 @@ public class PasswordVerifier {
 		this.history = pv.history;
 	}
 	public PasswordVerifier(String resource) throws UtilsException{
+		this(resource, true);
+	}
+	public PasswordVerifier(String resource, boolean useDefaultIfNotFound) throws UtilsException{
 		InputStream is = null;
 		try{
 			File f = new File(resource);
@@ -98,6 +101,9 @@ public class PasswordVerifier {
 			}
 			else{
 				is = PasswordVerifier.class.getResourceAsStream(resource);
+			}
+			if(is==null) {
+				is = PasswordVerifier.class.getResourceAsStream("/org/openspcoop2/utils/crypt/consolePassword.properties");
 			}
 			if(is!=null){
 				Properties p = new Properties();

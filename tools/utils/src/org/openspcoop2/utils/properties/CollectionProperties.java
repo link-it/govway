@@ -49,6 +49,8 @@ public class CollectionProperties {
 	//		 Mentre il valore indicato per una proprietà dei files locale (Properties definiti in questa classi) viene identificato secondo l'algoritmo 1-6 
 	//	     e non va in append, ma viene utilizzato solamente il primo incontrato.
 	
+	// NOTA: la logica di leggere prima il classpath e poi la directory di configurazione può essere ribaltata impostando la proprietà GOVWAY_FORCE_CONFIG_FILE=true
+	
 	private PropertiesReader systemVariable;
 	private PropertiesReader javaVariable;
 	private PropertiesReader systemOpenSPCoopHome;
@@ -56,6 +58,11 @@ public class CollectionProperties {
 	private PropertiesReader classpath;
 	private PropertiesReader configDir;
 	
+	private boolean forceConfigDir = false;
+	
+	public void setForceConfigDir(boolean forceConfigDir) {
+		this.forceConfigDir = forceConfigDir;
+	}
 	public PropertiesReader getSystemVariable() {
 		return this.systemVariable;
 	}
@@ -143,6 +150,17 @@ public class CollectionProperties {
 			}
 		}
 		
+		if(this.forceConfigDir) {
+			if(this.configDir!=null){
+				java.util.Enumeration<?> enumProp = this.configDir.propertyNames();
+				while(enumProp.hasMoreElements()){
+					String key = (String)enumProp.nextElement();
+					if(keys.contains(key)==false)
+						keys.add(key);		
+				}
+			}
+		}
+		
 		if(this.classpath!=null){
 			java.util.Enumeration<?> enumProp = this.classpath.propertyNames();
 			while(enumProp.hasMoreElements()){
@@ -152,15 +170,16 @@ public class CollectionProperties {
 			}
 		}
 		
-		if(this.configDir!=null){
-			java.util.Enumeration<?> enumProp = this.configDir.propertyNames();
-			while(enumProp.hasMoreElements()){
-				String key = (String)enumProp.nextElement();
-				if(keys.contains(key)==false)
-					keys.add(key);		
+		if(!this.forceConfigDir) {
+			if(this.configDir!=null){
+				java.util.Enumeration<?> enumProp = this.configDir.propertyNames();
+				while(enumProp.hasMoreElements()){
+					String key = (String)enumProp.nextElement();
+					if(keys.contains(key)==false)
+						keys.add(key);		
+				}
 			}
 		}
-		
 		
 		
 		return keys;
@@ -196,6 +215,15 @@ public class CollectionProperties {
 			}
 		}
 		
+		if(this.forceConfigDir) {
+			if(this.configDir!=null){
+				String v = this.configDir.getValue_convertEnvProperties(key);
+				if(v!=null){
+					return v;
+				}
+			}
+		}
+		
 		if(this.classpath!=null){
 			String v = this.classpath.getValue_convertEnvProperties(key);
 			if(v!=null){
@@ -203,10 +231,12 @@ public class CollectionProperties {
 			}
 		}
 		
-		if(this.configDir!=null){
-			String v = this.configDir.getValue_convertEnvProperties(key);
-			if(v!=null){
-				return v;
+		if(!this.forceConfigDir) {
+			if(this.configDir!=null){
+				String v = this.configDir.getValue_convertEnvProperties(key);
+				if(v!=null){
+					return v;
+				}
 			}
 		}
 		
@@ -255,17 +285,28 @@ public class CollectionProperties {
 			}
 		}
 		
+		if(this.forceConfigDir) {
+			if(this.configDir!=null){
+				String v = this.configDir.getValue(key);
+				if(v!=null){
+					return v;
+				}
+			}
+		}
+		
 		if(this.classpath!=null){
 			String v = this.classpath.getValue(key);
 			if(v!=null){
 				return v;
 			}
 		}
-		
-		if(this.configDir!=null){
-			String v = this.configDir.getValue(key);
-			if(v!=null){
-				return v;
+
+		if(!this.forceConfigDir) {
+			if(this.configDir!=null){
+				String v = this.configDir.getValue(key);
+				if(v!=null){
+					return v;
+				}
 			}
 		}
 		
