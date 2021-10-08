@@ -30,7 +30,7 @@ suddivisa nelle seguenti due parti:
 
    -  Applicativi
 
-.. figure:: ../_figure_monitoraggio/FiltroReportConfigurazioni.png
+.. figure:: ../../_figure_monitoraggio/FiltroReportConfigurazioni.png
     :scale: 100%
     :align: center
     :name: mon_reportConfigurazioni_fig
@@ -55,8 +55,11 @@ I dati presenti nel filtro sono i seguenti:
    -  **Soggetto**: permette di filtrare rispetto al soggetto locale,
       tra quelli in gestione;
 
-   -  **API**: permette di filtrare su una specifica API, individuata
-      tramite il pattern 'API\_nome:API\_versione (Soggetto)'.
+   -  **Tag**: consente di individuare le API appartenenti ad uno specifico tag;
+
+   -  **API**: consente di individuare tutte le erogazioni o fruizioni che implementano l'API selezionata;
+
+   -  **Implementazione API**: permette di selezionare puntualmente una erogazione o fruizione.
 
 La sezione nel filtro di un determinato soggetto comporta
 l'aggiornamento del prospetto riepilogativo del numero di configurazioni
@@ -64,7 +67,7 @@ della sezione 'API' aggiornano i contatori relativamente alle API di
 competenza del soggetto selezionato (:numref:`mon_reportConfigurazioniSoggetto_fig`).
 Un'ulteriore tabella mostra l'elenco delle API erogate dal soggetto selezionato.
 
-.. figure:: ../_figure_monitoraggio/ReportConfigurazioniSoggetto.png
+.. figure:: ../../_figure_monitoraggio/ReportConfigurazioniSoggetto.png
     :scale: 100%
     :align: center
     :name: mon_reportConfigurazioniSoggetto_fig
@@ -78,7 +81,7 @@ selezione della API, tra le informazioni riportate vi sono anche il
 numero di azioni/risorse presenti. Un'ulteriore tabella mostra l'elenco dei soggetti erogatori
 per la API selezionata.
 
-.. figure:: ../_figure_monitoraggio/ReportConfigurazioniAPI.png
+.. figure:: ../../_figure_monitoraggio/ReportConfigurazioniAPI.png
     :scale: 100%
     :align: center
     :name: mon_reportConfigurazioniApi_fig
@@ -86,4 +89,9 @@ per la API selezionata.
     Prospetto riepilogativo con API selezionata
 
 Gli elementi di configurazione mostrati in elenco possono essere
-selezionati ed esportati in formato CSV tramite il pulsante "Esporta".
+selezionati ed esportati in formato CSV tramite il pulsante "Esporta". Le informazioni esportate con i dettagli sul formato utilizzato vengono fornite nella sezione :ref:`mon_reportistica_config_csv`.
+
+.. toctree::
+        :maxdepth: 1
+
+        formatoCSV

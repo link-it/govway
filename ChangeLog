@@ -1,3 +1,33 @@
+2021-10-08 Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor, ApiRsMonitoraggio]
+	Aggiunta funzionalità OP-1259
+	Migliorata funzionalità di export CSV tramite la console e l'API di monitoraggio dove sono state aggiunte le informazioni riguardanti:
+	- Tipo API (rest/soap)
+	- Gruppo
+	- CORS
+	- Autenticazione (proprieta)
+	- AttributeAuthority (attributi)
+	- Autorizzazione (proprieta)
+	- Autorizzazione Contenuti (Stato)
+	- Autorizzazione Contenuti (proprieta)
+	- RateLimiting
+	- Caching Risposta
+	- Trasformazioni
+	- Registrazione Messaggi
+	- Proprietà
+	- Metadati
+	- Handlers
+	- Configurazioni Profilo Interoperabilità
+	- Applicativo Server
+	Sono inoltre stati risolti i seguenti problemi:
+	- Nella colonna delle azioni/risorse non venivano riportate le risorse per le API di tipo REST
+	- risolto problema di conflitto di nome tra il nome dell'API e il nome della fruizione/erogazione dove per entrambi la colonna si chiamava con l'header 'API'. 
+          Adesso la colonna della erogazione/fruizione si chiama 'Implementazione API'.
+	- risolto problema di ordine differente tra header e valori nelle fruizioni per quanto concerne i parametri dell'autenticazione dove venivano fornite informazioni errate.
+	- la funzionalità di esportazione tramite la voce 'seleziona tutti' non considerava gli eventuali filtri impostati su API e Tag.
+	- non venivano riportati i dati del connettore se questo veniva ridefinito in un gruppo di una fruizione.
+
 2021-10-06  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, Utils]

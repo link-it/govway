@@ -23,11 +23,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openspcoop2.core.config.Connettore;
-import org.openspcoop2.core.config.Property;
-
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.PortaDelegata;
+import org.openspcoop2.core.config.Connettore;
+import org.openspcoop2.core.config.Property;
+import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 
 /**
  * DettaglioPD
@@ -47,20 +48,24 @@ public class DettaglioPD implements Serializable{
 	private Connettore connettore = null;
 	private PortaDelegata portaDelegata = null; 
 	private org.openspcoop2.core.config.PortaDelegata portaDelegataOp2 = null;
-	
+	private MappingFruizionePortaDelegata mappingFruizionePortaDelegataOp2 = null;
+	private IDPortaDelegata idPortaDelegataDefaultOp2 = null;
+	private org.openspcoop2.core.config.PortaDelegata portaDelegataDefaultOp2 = null;
 	private List<String> azioni = null;
 	private List<String> ruoli = null;
 	private String matchRuoli = "";
+	private DettaglioRateLimiting rateLimiting;
 	private List<String> sa = null;
 	private List<Property> propertyGenerali = null;
 	private List<Property> propertyConnettore = null;
 	private List<Property> propertyAutorizzazione = null;
 	private List<Property> propertyAutenticazione = null;
-	private List<Property> propertyIntegrazione = null;
+	private List<Property> propertyIntegrazione = null; 
 	private IdAccordoServizioParteComune idAccordoServizioParteComune = null;
 	private String portType = null;
 	private String urlInvocazione = null;
-
+	private String configurazioneProfilo = null;
+	
 	public DettaglioPD(){
 		this.azioni = new ArrayList<String>();
 		this.ruoli = new ArrayList<String>();
@@ -84,6 +89,24 @@ public class DettaglioPD implements Serializable{
 	}
 	public void setPortaDelegataOp2(org.openspcoop2.core.config.PortaDelegata portaDelegataOp2) {
 		this.portaDelegataOp2 = portaDelegataOp2;
+	}
+	public MappingFruizionePortaDelegata getMappingFruizionePortaDelegataOp2() {
+		return this.mappingFruizionePortaDelegataOp2;
+	}
+	public void setMappingFruizionePortaDelegataOp2(MappingFruizionePortaDelegata mappingFruizionePortaDelegataOp2) {
+		this.mappingFruizionePortaDelegataOp2 = mappingFruizionePortaDelegataOp2;
+	}
+	public IDPortaDelegata getIdPortaDelegataDefaultOp2() {
+		return this.idPortaDelegataDefaultOp2;
+	}
+	public void setIdPortaDelegataDefaultOp2(IDPortaDelegata idPortaDelegataDefaultOp2) {
+		this.idPortaDelegataDefaultOp2 = idPortaDelegataDefaultOp2;
+	}
+	public org.openspcoop2.core.config.PortaDelegata getPortaDelegataDefaultOp2() {
+		return this.portaDelegataDefaultOp2;
+	}
+	public void setPortaDelegataDefaultOp2(org.openspcoop2.core.config.PortaDelegata portaDelegataDefaultOp2) {
+		this.portaDelegataDefaultOp2 = portaDelegataDefaultOp2;
 	}
 	public List<String> getAzioni() {
 		return this.azioni;
@@ -123,7 +146,7 @@ public class DettaglioPD implements Serializable{
 	public void setPropertyConnettore(List<Property> propertyConnettore) {
 		this.propertyConnettore = propertyConnettore;
 	}
-
+	
 	public List<Property> getPropertyAutorizzazione() {
 		return this.propertyAutorizzazione;
 	}
@@ -181,4 +204,19 @@ public class DettaglioPD implements Serializable{
 		this.urlInvocazione = urlInvocazione;
 	}
 	
+	public DettaglioRateLimiting getRateLimiting() {
+		return this.rateLimiting;
+	}
+
+	public void setRateLimiting(DettaglioRateLimiting rateLimiting) {
+		this.rateLimiting = rateLimiting;
+	}
+
+	public String getConfigurazioneProfilo() {
+		return this.configurazioneProfilo;
+	}
+
+	public void setConfigurazioneProfilo(String configurazioneProfilo) {
+		this.configurazioneProfilo = configurazioneProfilo;
+	}
 }

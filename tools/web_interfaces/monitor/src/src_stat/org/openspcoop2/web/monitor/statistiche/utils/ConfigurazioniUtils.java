@@ -45,6 +45,7 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -73,6 +74,7 @@ import org.openspcoop2.core.commons.search.Operation;
 import org.openspcoop2.core.commons.search.PortType;
 import org.openspcoop2.core.commons.search.PortaApplicativa;
 import org.openspcoop2.core.commons.search.PortaDelegata;
+import org.openspcoop2.core.commons.search.Resource;
 import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPA;
 import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPA.DettaglioSA;
 import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPD;
@@ -97,7 +99,7 @@ public class ConfigurazioniUtils {
 		dettaglioPD.setIdAccordoServizioParteComune(asps.getIdAccordoServizioParteComune());
 		dettaglioPD.setPortType(asps.getPortType());
 
-		fillAzioni(dettaglioPD.getAzioni(), serviceManager, asps);
+		fillAzioni(dettaglioPD.getAzioni(), serviceManager, asps, "rest".equalsIgnoreCase(asps.getIdAccordoServizioParteComune().getServiceBinding()));
 		//			}
 	}
 
@@ -143,43 +145,65 @@ public class ConfigurazioniUtils {
 		dettaglioPA.setIdAccordoServizioParteComune(asps.getIdAccordoServizioParteComune());
 		dettaglioPA.setPortType(asps.getPortType());
 
-		fillAzioni(dettaglioPA.getAzioni(), serviceManager, asps);
+		fillAzioni(dettaglioPA.getAzioni(), serviceManager, asps, "rest".equalsIgnoreCase(asps.getIdAccordoServizioParteComune().getServiceBinding()));
 		//		}
 	}
 
 	private static void fillAzioni(List<String> azioni, org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager,
-			AccordoServizioParteSpecifica asps) throws ServiceException, NotFoundException, MultipleResultException,
+			AccordoServizioParteSpecifica asps, boolean rest) throws ServiceException, NotFoundException, MultipleResultException,
 	NotImplementedException, ExpressionNotImplementedException, ExpressionException {
-		if(asps.getPortType()!=null){
-			IdPortType idPT = new IdPortType();
-			idPT.setIdAccordoServizioParteComune(asps.getIdAccordoServizioParteComune());
-			idPT.setNome(asps.getPortType());
-			PortType pt = serviceManager.getPortTypeServiceSearch().get(idPT);
-			if(pt!=null){
-				IPaginatedExpression expr = serviceManager.getOperationServiceSearch().newPaginatedExpression();
+		
+		if(rest) {
+			
+			IPaginatedExpression expr = serviceManager.getResourceServiceSearch().newPaginatedExpression();
+			expr.and();
+			expr.equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME, asps.getIdAccordoServizioParteComune().getNome());
+			expr.equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE, asps.getIdAccordoServizioParteComune().getVersione());
+			expr.equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO, asps.getIdAccordoServizioParteComune().getIdSoggetto().getTipo());
+			expr.equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, asps.getIdAccordoServizioParteComune().getIdSoggetto().getNome());
+			List<Resource> listAz = serviceManager.getResourceServiceSearch().findAll(expr);
+			for (Resource accordoServizioParteComuneAzione : listAz) {
+				azioni.add(
+//						accordoServizioParteComuneAzione.getNome() + 
+//						" "+
+						accordoServizioParteComuneAzione.getHttpMethod()+" "+accordoServizioParteComuneAzione.getPath());
+			}
+			
+		}
+		else {
+		
+			if(asps.getPortType()!=null){
+				IdPortType idPT = new IdPortType();
+				idPT.setIdAccordoServizioParteComune(asps.getIdAccordoServizioParteComune());
+				idPT.setNome(asps.getPortType());
+				PortType pt = serviceManager.getPortTypeServiceSearch().get(idPT);
+				if(pt!=null){
+					IPaginatedExpression expr = serviceManager.getOperationServiceSearch().newPaginatedExpression();
+					expr.and();
+					expr.equals(Operation.model().ID_PORT_TYPE.NOME, pt.getNome());
+					expr.equals(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME, asps.getIdAccordoServizioParteComune().getNome());
+					expr.equals(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE, asps.getIdAccordoServizioParteComune().getVersione());
+					expr.equals(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO, asps.getIdAccordoServizioParteComune().getIdSoggetto().getTipo());
+					expr.equals(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, asps.getIdAccordoServizioParteComune().getIdSoggetto().getNome());
+					List<Operation> listAz = serviceManager.getOperationServiceSearch().findAll(expr);
+					for (Operation accordoServizioParteComuneAzione : listAz) {
+						azioni.add(accordoServizioParteComuneAzione.getNome());
+					}
+				}
+			}
+			else{
+				IPaginatedExpression expr = serviceManager.getAccordoServizioParteComuneAzioneServiceSearch().newPaginatedExpression();
 				expr.and();
-				expr.equals(Operation.model().ID_PORT_TYPE.NOME, pt.getNome());
-				expr.equals(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME, asps.getIdAccordoServizioParteComune().getNome());
-				expr.equals(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE, asps.getIdAccordoServizioParteComune().getVersione());
-				expr.equals(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO, asps.getIdAccordoServizioParteComune().getIdSoggetto().getTipo());
-				expr.equals(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, asps.getIdAccordoServizioParteComune().getIdSoggetto().getNome());
-				List<Operation> listAz = serviceManager.getOperationServiceSearch().findAll(expr);
-				for (Operation accordoServizioParteComuneAzione : listAz) {
+				expr.equals(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME, asps.getIdAccordoServizioParteComune().getNome());
+				expr.equals(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE, asps.getIdAccordoServizioParteComune().getVersione());
+				expr.equals(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO, asps.getIdAccordoServizioParteComune().getIdSoggetto().getTipo());
+				expr.equals(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, asps.getIdAccordoServizioParteComune().getIdSoggetto().getNome());
+				List<AccordoServizioParteComuneAzione> listAz = serviceManager.getAccordoServizioParteComuneAzioneServiceSearch().findAll(expr);
+				for (AccordoServizioParteComuneAzione accordoServizioParteComuneAzione : listAz) {
 					azioni.add(accordoServizioParteComuneAzione.getNome());
 				}
 			}
-		}
-		else{
-			IPaginatedExpression expr = serviceManager.getAccordoServizioParteComuneAzioneServiceSearch().newPaginatedExpression();
-			expr.and();
-			expr.equals(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME, asps.getIdAccordoServizioParteComune().getNome());
-			expr.equals(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE, asps.getIdAccordoServizioParteComune().getVersione());
-			expr.equals(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO, asps.getIdAccordoServizioParteComune().getIdSoggetto().getTipo());
-			expr.equals(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, asps.getIdAccordoServizioParteComune().getIdSoggetto().getNome());
-			List<AccordoServizioParteComuneAzione> listAz = serviceManager.getAccordoServizioParteComuneAzioneServiceSearch().findAll(expr);
-			for (AccordoServizioParteComuneAzione accordoServizioParteComuneAzione : listAz) {
-				azioni.add(accordoServizioParteComuneAzione.getNome());
-			}
+			
 		}
 	}
 
@@ -202,14 +226,37 @@ public class ConfigurazioniUtils {
 			String tipoFruitore, String nomeFruitore, 
 			String tipoSoggettoErogatore, String nomeSoggettoErogatore, 
 			String tipoServizio, String nomeServizio, Integer versioneServizio,
+			List<String> azioniGruppo,
 			DriverRegistroServiziDB driverRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
 
 		IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipoServizio, nomeServizio, tipoSoggettoErogatore, nomeSoggettoErogatore, versioneServizio);
 		org.openspcoop2.core.registry.AccordoServizioParteSpecifica aspsOp2 = driverRegistro.getAccordoServizioParteSpecifica(idServizio);
 		for (org.openspcoop2.core.registry.Fruitore frOp2 : aspsOp2.getFruitoreList()) {
 			if(frOp2.getTipo().equals(tipoFruitore) && frOp2.getNome().equals(nomeFruitore)){
-				if(frOp2.getConnettore()!=null && !TipiConnettore.DISABILITATO.getNome().equals(frOp2.getConnettore().getTipo())){
-					return frOp2.getConnettore().mappingIntoConnettoreConfigurazione();
+				if(azioniGruppo!=null && !azioniGruppo.isEmpty()) {
+					if(frOp2.sizeConfigurazioneAzioneList()>0) {
+						for (ConfigurazioneServizioAzione az : frOp2.getConfigurazioneAzioneList()) {
+							boolean find = false;
+							if(az.getAzioneList()!=null && !az.getAzioneList().isEmpty()) {
+								for (String azCheck : azioniGruppo) {
+									if(az.getAzioneList().contains(azCheck)) {
+										find = true;
+										break;
+									}
+								}
+							}
+							if(find) {
+								if(az.getConnettore()!=null && !TipiConnettore.DISABILITATO.getNome().equals(az.getConnettore().getTipo())){
+									return az.getConnettore().mappingIntoConnettoreConfigurazione();
+								}
+							}
+						}
+					}
+				}
+				else {
+					if(frOp2.getConnettore()!=null && !TipiConnettore.DISABILITATO.getNome().equals(frOp2.getConnettore().getTipo())){
+						return frOp2.getConnettore().mappingIntoConnettoreConfigurazione();
+					}
 				}
 				break;
 			}
@@ -793,18 +840,20 @@ public class ConfigurazioniUtils {
 		p.setNome(CostantiConfigurazioni.LABEL_STATO); p.setValore(portaApplicativa.getStato());
 		lst.add(p);
 
+		IdAccordoServizioParteComune aspc = dettaglioPA.getIdAccordoServizioParteComune();
+				
+		p = new Property();
+		p.setId(idx++); 
+		p.setNome(CostantiConfigurazioni.LABEL_TIPO_ASPC); p.setValore(aspc.getServiceBinding());
+		lst.add(p);
+		
 		p = new Property();
 		p.setId(idx++); 
 		p.setNome(CostantiConfigurazioni.LABEL_ASPC);
-		IdAccordoServizioParteComune aspc = dettaglioPA.getIdAccordoServizioParteComune();
 		String nomeAspc = aspc.getNome();
-
 		Integer versioneAspc = aspc.getVersione();
-
 		String nomeReferenteAspc = (aspc.getIdSoggetto() != null) ? aspc.getIdSoggetto().getNome() : null;
-
 		String tipoReferenteAspc= (aspc.getIdSoggetto() != null) ? aspc.getIdSoggetto().getTipo() : null;
-
 		p.setValore(IDAccordoFactory.getInstance().getUriFromValues(nomeAspc,tipoReferenteAspc,nomeReferenteAspc,versioneAspc));
 		lst.add(p);
 
@@ -883,18 +932,20 @@ public class ConfigurazioniUtils {
 		p.setNome(CostantiConfigurazioni.LABEL_STATO); p.setValore(portaDelegata.getStato());
 		lst.add(p);
 
+		IdAccordoServizioParteComune aspc = dettaglioPD.getIdAccordoServizioParteComune();
+		
+		p = new Property();
+		p.setId(idx++); 
+		p.setNome(CostantiConfigurazioni.LABEL_TIPO_ASPC); p.setValore(aspc.getServiceBinding());
+		lst.add(p);
+		
 		p = new Property();
 		p.setId(idx++); 
 		p.setNome(CostantiConfigurazioni.LABEL_ASPC);
-		IdAccordoServizioParteComune aspc = dettaglioPD.getIdAccordoServizioParteComune();
 		String nomeAspc = aspc.getNome();
-
 		Integer versioneAspc = aspc.getVersione();
-
 		String nomeReferenteAspc = (aspc.getIdSoggetto() != null) ? aspc.getIdSoggetto().getNome() : null;
-
 		String tipoReferenteAspc= (aspc.getIdSoggetto() != null) ? aspc.getIdSoggetto().getTipo() : null;
-
 		p.setValore(IDAccordoFactory.getInstance().getUriFromValues(nomeAspc,tipoReferenteAspc,nomeReferenteAspc,versioneAspc));
 		lst.add(p);
 

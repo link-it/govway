@@ -109,7 +109,7 @@ public class ModICostanti {
     
     public static final String MODIPA_VALUE_UNDEFINED = Costanti.MODIPA_VALUE_UNDEFINED;
         
-    public static final String MODIPA_KEYSTORE_MODE = "modipaKeystoreMode";
+    public static final String MODIPA_KEYSTORE_MODE = CostantiDB.MODIPA_KEYSTORE_MODE;
     public static final String MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE = "archive";
     public static final String MODIPA_KEYSTORE_MODE_VALUE_PATH = "path";
     public static final String MODIPA_KEYSTORE_MODE_VALUE_HSM = "hsm";
@@ -120,21 +120,21 @@ public class ModICostanti {
     
     public static final String MODIPA_KEYSTORE_PATH = CostantiDB.MODIPA_KEYSTORE_PATH;
     
-    public static final String MODIPA_KEYSTORE_TYPE = "modipaKeystoreType";
+    public static final String MODIPA_KEYSTORE_TYPE = CostantiDB.MODIPA_KEYSTORE_TYPE;
     public static final String MODIPA_KEYSTORE_TYPE_VALUE_JKS = "jks";
     public static final String MODIPA_KEYSTORE_TYPE_VALUE_PKCS12 = "pkcs12";
     
     public static final String MODIPA_KEYSTORE_PASSWORD = "modipaKeystorePassword";
     
-    public static final String MODIPA_KEY_ALIAS = "modipaKeyAlias";
+    public static final String MODIPA_KEY_ALIAS = CostantiDB.MODIPA_KEY_ALIAS;
     
     public static final String MODIPA_KEY_PASSWORD = "modipaKeyPassword";
     
     public static final String MODIPA_KEY_CN_SUBJECT = CostantiDB.MODIPA_KEY_CN_SUBJECT;
     public static final String MODIPA_KEY_CN_ISSUER = CostantiDB.MODIPA_KEY_CN_ISSUER;
         
-    public static final String MODIPA_PROFILO_DEFAULT = "default";
-    public static final String MODIPA_PROFILO_RIDEFINISCI = "ridefinisci";
+    public static final String MODIPA_PROFILO_DEFAULT = CostantiDB.MODIPA_PROFILO_DEFAULT;
+    public static final String MODIPA_PROFILO_RIDEFINISCI = CostantiDB.MODIPA_PROFILO_RIDEFINISCI;
     
     public static final String MODIPA_PROFILO_INTERAZIONE = CostantiDB.MODIPA_PROFILO_INTERAZIONE;
     public static final String MODIPA_PROFILO_INTERAZIONE_VALUE_CRUD = CostantiDB.MODIPA_PROFILO_INTERAZIONE_VALUE_CRUD;
@@ -333,11 +333,11 @@ public class ModICostanti {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE = "modipaSecurityMessageCorniceSicurezzaIPUserMode";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER = "modipaSecurityMessageCorniceSicurezzaIPUser";
     
-    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE = "modipaTruststoreMode";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE;
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH;
     
-    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE = "modipaTruststoreType";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_VALUE_JKS = "jks";
     //public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_VALUE_PKCS12 = "pkcs12";
     
@@ -346,20 +346,20 @@ public class ModICostanti {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS;
     
     
-    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_MODE = "modipaSslTruststoreMode";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_MODE = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_MODE;
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PATH = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PATH;
     
-    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE = "modipaSslTruststoreType";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE_VALUE_JKS = "jks";
     //public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE_VALUE_PKCS12 = "pkcs12";
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PASSWORD = "modipaSslTruststorePassword";
     
-    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_CRLS = "modipaSslTruststoreCRLs";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_CRLS = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_CRLS;
     
     
-    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE = "modipaKeystoreCertMode";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE;
 
     public static final String MODIPA_PROFILO_INTERAZIONE_HTTP_CODE_2XX = "2xx";
     public static final int MODIPA_PROFILO_INTERAZIONE_HTTP_CODE_2XX_INT_VALUE = -2;    

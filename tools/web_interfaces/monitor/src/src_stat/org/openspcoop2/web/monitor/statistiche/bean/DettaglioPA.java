@@ -23,11 +23,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openspcoop2.core.config.Property;
-import org.openspcoop2.core.config.ServizioApplicativo;
-
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.PortaApplicativa;
+import org.openspcoop2.core.config.Property;
+import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 
 /**
  * DettaglioPA
@@ -46,10 +47,14 @@ public class DettaglioPA implements Serializable{
 	
 	private PortaApplicativa portaApplicativa = null;
 	private org.openspcoop2.core.config.PortaApplicativa portaApplicativaOp2 = null;
+	private MappingErogazionePortaApplicativa mappingErogazionePortaApplicativaOp2 = null;
+	private IDPortaApplicativa idPortaApplicativaDefaultOp2 = null;
+	private org.openspcoop2.core.config.PortaApplicativa portaApplicativaDefaultOp2 = null;
 	private boolean supportatoAutenticazione = true;
 	private List<String> fruitori = null;
 	private List<String> ruoli = null;
 	private String matchRuoli = "";
+	private DettaglioRateLimiting rateLimiting;
 	private List<DettaglioSA> listaSA = null;
 	private List<Property> propertyGenerali = null;
 	private List<Property> propertyAutorizzazione = null;
@@ -61,6 +66,7 @@ public class DettaglioPA implements Serializable{
 	private String urlInvocazione = null;
 	private boolean trasparente= false;
 	private List<Property> propertyIntegrazione = null;
+	private String configurazioneProfilo = null;
 	
 	public DettaglioPA(){
 		this.ruoli = new ArrayList<String>();
@@ -85,6 +91,31 @@ public class DettaglioPA implements Serializable{
 		this.portaApplicativaOp2 = portaApplicativaOp2;
 	}
 
+	public MappingErogazionePortaApplicativa getMappingErogazionePortaApplicativaOp2() {
+		return this.mappingErogazionePortaApplicativaOp2;
+	}
+
+	public void setMappingErogazionePortaApplicativaOp2(
+			MappingErogazionePortaApplicativa mappingErogazionePortaApplicativaOp2) {
+		this.mappingErogazionePortaApplicativaOp2 = mappingErogazionePortaApplicativaOp2;
+	}
+
+	public IDPortaApplicativa getIdPortaApplicativaDefaultOp2() {
+		return this.idPortaApplicativaDefaultOp2;
+	}
+
+	public void setIdPortaApplicativaDefaultOp2(IDPortaApplicativa idPortaApplicativaDefaultOp2) {
+		this.idPortaApplicativaDefaultOp2 = idPortaApplicativaDefaultOp2;
+	}
+	
+	public org.openspcoop2.core.config.PortaApplicativa getPortaApplicativaDefaultOp2() {
+		return this.portaApplicativaDefaultOp2;
+	}
+
+	public void setPortaApplicativaDefaultOp2(org.openspcoop2.core.config.PortaApplicativa portaApplicativaDefaultOp2) {
+		this.portaApplicativaDefaultOp2 = portaApplicativaDefaultOp2;
+	}
+	
 	public boolean isSupportatoAutenticazione() {
 		return this.supportatoAutenticazione;
 	}
@@ -157,7 +188,6 @@ public class DettaglioPA implements Serializable{
 		this.propertyConnettore = propertyConnettore;
 	}
 	
-	
 	public IdAccordoServizioParteComune getIdAccordoServizioParteComune() {
 		return this.idAccordoServizioParteComune;
 	}
@@ -208,7 +238,21 @@ public class DettaglioPA implements Serializable{
 		this.propertyIntegrazione = propertyIntegrazione;
 	}
 
+	public DettaglioRateLimiting getRateLimiting() {
+		return this.rateLimiting;
+	}
 
+	public void setRateLimiting(DettaglioRateLimiting rateLimiting) {
+		this.rateLimiting = rateLimiting;
+	}
+
+	public String getConfigurazioneProfilo() {
+		return this.configurazioneProfilo;
+	}
+
+	public void setConfigurazioneProfilo(String configurazioneProfilo) {
+		this.configurazioneProfilo = configurazioneProfilo;
+	}
 
 	public class DettaglioSA implements Serializable{
 

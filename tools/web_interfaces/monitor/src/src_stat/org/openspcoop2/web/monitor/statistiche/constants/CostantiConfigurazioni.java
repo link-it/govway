@@ -86,12 +86,12 @@ public class CostantiConfigurazioni {
 	public static final String LABEL_RUOLI_SOGGETTI_AUTORIZZATI = "Ruoli o Soggetti Autorizzati";
 	public static final String LABEL_RUOLI_ALL = "tutti";
 	public static final String LABEL_RUOLI_ANY = "almeno uno";
-	public static final String LABEL_SERVIZIO = "API";
+	public static final String LABEL_SERVIZIO = "Implementazione API";
 	public static final String LABEL_EROGATORE = "Erogatore";
 	public static final String LABEL_NOME_PORTA_APPLICATIVA = "Nome Porta Applicativa";
 	public static final String LABEL_EXPRESSIONE_REGOLARE = "Expressione Regolare";
 	public static final String LABEL_EXPRESSIONE_X_PATH = "Expressione XPath";
-	public static final String LABEL_IDENTIFICAZIONE_AZIONE = "Modalita' Identificazione Azione";
+	public static final String LABEL_IDENTIFICAZIONE_AZIONE = "Modalità Identificazione Azione";
 	public static final String LABEL_PATTERN = "Pattern";
 	public static final String LABEL_FORCE_INTERFACE_BASED = "Force Interface Based";
 	public static final String LABEL_URL_DI_BASE = "URL di Base";
@@ -134,10 +134,12 @@ public class CostantiConfigurazioni {
 	public static final String LABEL_MODALITA_INOLTRO = "Modalità Inoltro";
 	public static final String SEPARATORE_TIPONOME = "/";
 	public static final String LABEL_AZIONE_STAR = "default"; //"*";
+	public static final String LABEL_TIPO_ASPC = "Tipo API";
 	public static final String LABEL_ASPC = "API";
 	public static final String LABEL_PORT_TYPE = "PortType";
 	public static final String LABEL_TIPO_CODA_JMS = "Tipo JMS";
 	public static final String LABEL_MODALITA = org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO;
+	public static final String LABEL_GRUPPO = "Gruppo";
 	
 	public static final String LABEL_TOKEN_STATO = "Token (Stato)";
 	public static final String LABEL_TOKEN_OPZIONALE = "Token (Opzionale)";
@@ -153,24 +155,31 @@ public class CostantiConfigurazioni {
 	public static final String LABEL_FRUITORE = "Fruitore";
 	public static final String LABEL_PORTA_DELEGATA = "Porta Delegata";
 	public static final String LABEL_PORTA_APPLICATIVA = "Porta Applicativa";
-	public static final String LABEL_PORTA_APPLICATIVA_NOME_CONNETTORE = "Nome Connettore Multiplo";
+	public static final String LABEL_PORTA_APPLICATIVA_NOME_CONNETTORE = "Connettore Multiplo";
+	public static final String LABEL_PORTA_APPLICATIVA_APPLICATIVO_SERVER = "Applicativo Server";
 	public static final String LABEL_ESPRESSIONE = "Espressione";
 	public static final String LABEL_AUTENTICAZIONE_STATO = "Autenticazione (Stato)";
 	public static final String LABEL_AUTENTICAZIONE_OPZIONALE = "Autenticazione (Opzionale)";
+	public static final String LABEL_AUTENTICAZIONE_PROPRIETA = "Autenticazione (proprieta)";
 	public static final String LABEL_AUTENTICAZIONE_TOKEN_ISSUER = "Autenticazione (Token Issuer)";
 	public static final String LABEL_AUTENTICAZIONE_TOKEN_CLIENT_ID = "Autenticazione (Token ClientID)";
 	public static final String LABEL_AUTENTICAZIONE_TOKEN_SUBJECT = "Autenticazione (Token Subject)";
 	public static final String LABEL_AUTENTICAZIONE_TOKEN_USERNAME = "Autenticazione (Token Username)";
 	public static final String LABEL_AUTENTICAZIONE_TOKEN_EMAIL = "Autenticazione (Token eMail)";
+	public static final String LABEL_ATTRIBUTE_AUTHORITY_ATTRIBUTI = "AttributeAuthority (attributi)";
 	public static final String LABEL_AUTORIZZAZIONE_STATO = "Autorizzazione (Stato)";
+	public static final String LABEL_AUTORIZZAZIONE_PROPRIETA = "Autorizzazione (proprieta)";
 	public static final String LABEL_AUTORIZZAZIONE_RUOLI_STATO = "Autorizzazione (Ruoli)";
 	public static final String LABEL_AUTORIZZAZIONE_TOKEN_CLAIMS = "Autorizzazione (Token Claims)";
-	public static final String LABEL_AUTORIZZAZIONE_APPLICATIVI_AUTORIZZATI_STATO = "Autorizzazione (Applicativi Autorizzati)";
-	public static final String LABEL_AUTORIZZAZIONE_SOGGETTI_AUTORIZZATI_STATO = "Autorizzazione (Soggetti Autorizzati)";
+	//public static final String LABEL_AUTORIZZAZIONE_APPLICATIVI_AUTORIZZATI_STATO = "Autorizzazione (Applicativi Autorizzati)";
+	//public static final String LABEL_AUTORIZZAZIONE_SOGGETTI_AUTORIZZATI_STATO = "Autorizzazione (Soggetti Autorizzati)";
+	public static final String LABEL_AUTORIZZAZIONE_RICHIEDENTI_AUTORIZZATI_STATO = "Autorizzazione (Richiedenti Autorizzati)";
 	public static final String LABEL_RUOLI_RICHIESTI = "Ruoli Richiesti";
 	public static final String LABEL_AUTORIZZAZIONE_SCOPE_STATO = "Autorizzazione (Scope)";
 	public static final String LABEL_SCOPE_RICHIESTI = "Scope Richiesti";
 	public static final String LABEL_SCOPE_FORNITI = "Scope";
+	public static final String LABEL_AUTORIZZAZIONE_CONTENUTI_STATO = "Autorizzazione Contenuti (Stato)";
+	public static final String LABEL_AUTORIZZAZIONE_CONTENUTI_PROPRIETA = "Autorizzazione Contenuti (proprieta)";
 	public static final String LABEL_CONNETTORE_TIPO = "Connettore (Tipo)";
 	public static final String LABEL_CONNETTORE_ENDPOINT = "Connettore (Endpoint)";
 	public static final String LABEL_CONNETTORE_DEBUG = "Connettore (Debug)";
@@ -185,9 +194,13 @@ public class CostantiConfigurazioni {
 	public static final String LABEL_CONNETTORE_HOSTNAME_VERIFIER = "Connettore (Hostname Verifier)";
 	public static final String LABEL_CONNETTORE_TRUST_STORE = "Connettore (TrustStore)";
 	public static final String LABEL_CONNETTORE_KEY_STORE = "Connettore (KeyStore)";
+	public static final String LABEL_RATE_LIMITING = "RateLimiting";
 	public static final String LABEL_VALIDAZIONE_STATO = "Validazione (Stato)";
 	public static final String LABEL_VALIDAZIONE_TIPO = "Validazione (Tipo)";
 	public static final String LABEL_VALIDAZIONE_MTOM = "Validazione (Accetta MTOM)";
+	public static final String LABEL_CACHING_RISPOSTA = "Caching Risposta";
+	public static final String LABEL_TRASFORMAZIONI = "Trasformazioni";
+	public static final String LABEL_REGISTRAZIONE_MESSAGGI = "Registrazione Messaggi";
 	
 	public static final String LABEL_SICUREZZA_MESSAGGIO_STATO = "Sicurezza Messaggio (Stato)";
 	public static final String LABEL_SICUREZZA_MESSAGGIO_SCHEMA_RICHIESTA = "Schema Sicurezza (Richiesta)";
@@ -202,8 +215,19 @@ public class CostantiConfigurazioni {
 	public static final String LABEL_CORRELAZIONE_APPLICATIVA_RICHIESTA = "Correlazione Applicativa (Richiesta)";
 	public static final String LABEL_CORRELAZIONE_APPLICATIVA_RISPOSTA = "Correlazione Applicativa (Risposta)";
 	
+	public static final String LABEL_PROPRIETA = "Proprietà";
+	
+	public static final String LABEL_METADATI = "Metadati";
+	public static final String LABEL_HANDLERS = "Handlers";
+	
+	public static final String LABEL_CONFIGURAZIONE_PROFILO = "Configurazioni Profilo Interoperabilità";
+	
+	public static final String LABEL_CORS = "CORS";
+	
 	// Valori Mode delle Porte
 	public static final String VALUE_PORTE_DELEGATED_BY = "delegatedBy";
+	
+	public static final String VALUE_DEFAULT = "default";
 	
 }
 

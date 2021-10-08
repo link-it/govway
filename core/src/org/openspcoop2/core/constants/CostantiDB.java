@@ -607,16 +607,25 @@ public final class CostantiDB {
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST = "modipaSecurityMessageRequestDigest";
 
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE = "modipaKeystoreCertMode";
+    public static final String MODIPA_KEYSTORE_MODE = "modipaKeystoreMode";
+    public static final String MODIPA_KEYSTORE_TYPE = "modipaKeystoreType";
     public static final String MODIPA_KEYSTORE_PATH = "modipaKeystorePath";
+    
+    public static final String MODIPA_KEY_ALIAS = "modipaKeyAlias";
     
     public static final String MODIPA_KEY_CN_SUBJECT = "modipaKeyCNSubject";
     public static final String MODIPA_KEY_CN_ISSUER = "modipaKeyCNIssuer";
     
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE = "modipaTruststoreMode";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE = "modipaTruststoreType";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH = "modipaTruststorePath";
-    
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS = "modipaTruststoreCRLs";
     
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_MODE = "modipaSslTruststoreMode";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE = "modipaSslTruststoreType";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PATH = "modipaSslTruststorePath";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_CRLS = "modipaSslTruststoreCRLs";
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE = "modipaSecurityMessageRequestAud";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE = "modipaSecurityMessageResponseAud";
@@ -654,6 +663,9 @@ public final class CostantiDB {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_DOPPI_HEADER_FILTRO_DUPLICATI = "modipaSecurityMessageResponseDuplicateJti";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_FILTRO_DUPLICATI_VALUE_AUTHORIZATION = "auth";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_FILTRO_DUPLICATI_VALUE_MODI = "modi";
+    
+    public static final String MODIPA_PROFILO_DEFAULT = "default";
+    public static final String MODIPA_PROFILO_RIDEFINISCI = "ridefinisci";
     
     
     /**
