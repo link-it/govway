@@ -1,3 +1,10 @@
+2021-10-09 Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolte le seguenti problematiche:
+	- La console terminava con un errore non atteso in caso di caricamento di certificati, sugli applicativi o sui soggetti, che non possedevano il campo 'CN' nel subject o nell'issuer;
+	- Il dialog informativo, che riporta le credenziali http-basic o api-key, non visualizzava correttamente credenziali che possedevano caratteri particolari come le doppie virgolette.
+
 2021-10-08 Andrea Poli <apoli@link.it>
 
 	* [GovWayMonitor, ApiRsMonitoraggio]

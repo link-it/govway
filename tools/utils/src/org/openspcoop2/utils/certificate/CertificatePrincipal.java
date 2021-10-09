@@ -76,8 +76,20 @@ public class CertificatePrincipal {
 	
 	public String getCN() {
 		X500Name x500name = new JcaX509CertificateHolderSelector(this.principal,null).getIssuer();
-		RDN cn = x500name.getRDNs(BCStyle.CN)[0];
-		return cn.getFirst().getValue().toString();
+		RDN [] cnArray = x500name.getRDNs(BCStyle.CN);
+		if(cnArray!=null && cnArray.length>0 && cnArray[0]!=null) {
+			RDN cn = x500name.getRDNs(BCStyle.CN)[0];
+			if(cn.getFirst()!=null && cn.getFirst().getValue()!=null) {
+				return cn.getFirst().getValue().toString();
+			}
+			else {
+				return CN_EMPTY;
+			}
+		}
+		else {
+			return CN_EMPTY;
+		}
 	}
 	
+	public static final String CN_EMPTY = "__undefined__";
 }

@@ -18295,12 +18295,12 @@ public class ConsoleHelper implements IConsoleHelper {
 		if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC.equals(tipoAuth)) {
 			utente.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 			utente.setType(DataElementType.TEXT_EDIT);
-			utente.setValue(secret_user);
+			utente.setValue(StringEscapeUtils.escapeHtml(secret_user));
 			utente.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME));
 			
 			password.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			password.setType(DataElementType.TEXT_EDIT);
-			password.setValue(secret_password);
+			password.setValue(StringEscapeUtils.escapeHtml(secret_password));
 			password.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD));
 			
 			header1 = ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME+" e " + ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD + " generata" ;
@@ -18309,7 +18309,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(appId) {
 				utente.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
 				utente.setType(DataElementType.TEXT_EDIT);
-				utente.setValue(secret_user);
+				utente.setValue(StringEscapeUtils.escapeHtml(secret_user));
 				utente.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID));
 			} else {
 				utente = null;
@@ -18317,7 +18317,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			password.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY);
 			password.setType(DataElementType.TEXT_AREA);
-			password.setValue(secret_password);
+			password.setValue(StringEscapeUtils.escapeHtml(secret_password));
 			password.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY));
 			password.setCols(44);
 			
