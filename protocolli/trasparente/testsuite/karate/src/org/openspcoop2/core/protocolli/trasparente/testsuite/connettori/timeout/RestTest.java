@@ -26,6 +26,7 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.DBVerifier;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Headers;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
 import org.openspcoop2.protocol.engine.constants.Costanti;
@@ -363,7 +364,7 @@ public class RestTest extends ConfigLoader {
 				response.setResultHTTPOperation(200);
 				response.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 				Utilities.sleep(5000); // aspetto che termina il server
-				response.addHeader("GovWay-Transaction-ID", DBVerifier.getIdTransazione(applicativeId));
+				response.addHeader("GovWay-Transaction-ID", DBVerifier.getIdTransazioneByIdApplicativoRichiesta(applicativeId));
 			}
 			else {
 				throw t;

@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ProblemUtilities;
-import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.timeout.DBVerifier;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.DBVerifier;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Headers;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
 import org.openspcoop2.message.OpenSPCoop2Message;

@@ -18,12 +18,14 @@
  *
  */
 
-package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.timeout;
+package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -130,37 +132,75 @@ public class DBVerifier {
 	}
 	
 	
-
-	public static String getIdTransazione(String idApplicativo) throws Exception  {
+	public static String getIdTransazioneByIdApplicativoRichiesta(String idApplicativo) throws Exception  {
+		return getIdTransazioneByIdApplicativoRichiesta(idApplicativo, null);
+	}
+	public static String getIdTransazioneByIdApplicativoRichiesta(String idApplicativo, Date now) throws Exception  {
 		
 		// La scrittura su database avviene dopo aver risposto al client
 		
 		Utilities.sleep(100); 
 		try {
-			return DBVerifier._getIdTransazione(idApplicativo);
+			return DBVerifier._getIdTransazione(idApplicativo, true, now);
 		}catch(Throwable t) {
 			Utilities.sleep(500);
 			try {
-				return DBVerifier._getIdTransazione(idApplicativo);
+				return DBVerifier._getIdTransazione(idApplicativo, true, now);
 			}catch(Throwable t2) {
 				Utilities.sleep(2000);
 				try {
-					return DBVerifier._getIdTransazione(idApplicativo);
+					return DBVerifier._getIdTransazione(idApplicativo, true, now);
 				}catch(Throwable t3) {
 					Utilities.sleep(5000);
-					return DBVerifier._getIdTransazione(idApplicativo);
+					return DBVerifier._getIdTransazione(idApplicativo, true, now);
+				}
+			}
+		}
+	}
+	public static String getIdTransazioneByIdApplicativoRisposta(String idApplicativo) throws Exception  {
+		return getIdTransazioneByIdApplicativoRisposta(idApplicativo, null);
+	}
+	public static String getIdTransazioneByIdApplicativoRisposta(String idApplicativo, Date now) throws Exception  {
+		
+		// La scrittura su database avviene dopo aver risposto al client
+		
+		Utilities.sleep(100); 
+		try {
+			return DBVerifier._getIdTransazione(idApplicativo, false, now);
+		}catch(Throwable t) {
+			Utilities.sleep(500);
+			try {
+				return DBVerifier._getIdTransazione(idApplicativo, false, now);
+			}catch(Throwable t2) {
+				Utilities.sleep(2000);
+				try {
+					return DBVerifier._getIdTransazione(idApplicativo, false, now);
+				}catch(Throwable t3) {
+					Utilities.sleep(5000);
+					return DBVerifier._getIdTransazione(idApplicativo, false, now);
 				}
 			}
 		}
 	}
 	
-	private static String _getIdTransazione(String idApplicativo) throws Exception  {
+	private static String _getIdTransazione(String idApplicativo, boolean richiesta, Date now) throws Exception  {
 		
-		
-		String query = "select id from transazioni where id_correlazione_applicativa = ?";
+		String colonna = richiesta ? "id_correlazione_applicativa" : "id_correlazione_risposta";
+		String query = "select id from transazioni where "+colonna+" = ?";
+		Timestamp t = null;
+		if(now!=null) {
+			t = new Timestamp(now.getTime());
+			query = query + " and data_ingresso_richiesta>=?";
+		}
 		log().info(query);
 		
-		String idTransazione = dbUtils().readValue(query, String.class, idApplicativo);
+		String idTransazione = null; 
+		if(t!=null) {
+			idTransazione = dbUtils().readValue(query, String.class, idApplicativo, t);
+		}
+		else {
+			idTransazione = dbUtils().readValue(query, String.class, idApplicativo);
+		}
 		assertNotNull("IdTransazione letto da idApplicativo: "+idApplicativo, idTransazione);
 
 		return idTransazione;
