@@ -577,10 +577,14 @@ public class TransazioniService implements ITransazioniService {
 		if(!isSearchById()) {
 			return false;
 		}
+		if(this.searchForm.isCloned()) {
+			// api
+			return false;
+		}
 		if(list==null || list.isEmpty()) {
 			return false;
 		}
-		
+				
 		if(!this.searchForm.getModalita().equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL)) {
 			String protocollo =	this.searchForm.getModalita();
 			if(protocollo!=null && StringUtils.isNotEmpty(protocollo)) {
@@ -601,6 +605,10 @@ public class TransazioniService implements ITransazioniService {
 		}
 		
 		if(!isSearchById()) {
+			return false;
+		}
+		if(this.searchForm.isCloned()) {
+			// api
 			return false;
 		}
 		if(list==null || list.isEmpty()) {
