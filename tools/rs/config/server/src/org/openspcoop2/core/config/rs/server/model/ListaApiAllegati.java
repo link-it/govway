@@ -31,7 +31,7 @@ import javax.validation.Valid;
 public class ListaApiAllegati extends Lista {
   
   @Schema(required = true, description = "")
-  private List<ApiAllegatoItem> items = new ArrayList<ApiAllegatoItem>();
+  private List<ApiAllegatoItem> items = new ArrayList<>();
  /**
    * Get items
    * @return items

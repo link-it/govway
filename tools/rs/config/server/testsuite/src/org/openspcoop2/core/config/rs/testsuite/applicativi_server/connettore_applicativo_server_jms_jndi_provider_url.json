@@ -1,0 +1,13 @@
+{
+	"connettore": {
+		"tipo": "jms",
+		"nome": "nome_coda",
+		"jndi_provider_url": "127.0.0.1",
+		"connection_factory": "connFactory",
+		"tipo_coda": "queue",
+		"send_as": "text"
+	}
+}
+
+
+

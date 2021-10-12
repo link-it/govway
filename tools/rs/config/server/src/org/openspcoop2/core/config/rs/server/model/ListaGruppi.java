@@ -31,7 +31,7 @@ import javax.validation.Valid;
 public class ListaGruppi extends Lista {
   
   @Schema(required = true, description = "")
-  private List<GruppoItem> items = new ArrayList<GruppoItem>();
+  private List<GruppoItem> items = new ArrayList<>();
  /**
    * Get items
    * @return items

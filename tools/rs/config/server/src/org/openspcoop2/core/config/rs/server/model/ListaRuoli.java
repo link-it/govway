@@ -31,7 +31,7 @@ import javax.validation.Valid;
 public class ListaRuoli extends Lista {
   
   @Schema(required = true, description = "")
-  private List<RuoloItem> items = new ArrayList<RuoloItem>();
+  private List<RuoloItem> items = new ArrayList<>();
  /**
    * Get items
    * @return items

@@ -1,0 +1,12 @@
+{
+	"connettore": {
+		"tipo": "file",
+		"richiesta": {
+			"file": "/tmp/abc.txt",
+			"create_parent_dir": true
+		}
+	}
+}
+
+
+

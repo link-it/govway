@@ -1,0 +1,11 @@
+{
+	"connettore": {
+		"tipo": "file",
+		"richiesta": {
+			"file": "/tmp/abc.txt"
+		}
+	}
+}
+
+
+

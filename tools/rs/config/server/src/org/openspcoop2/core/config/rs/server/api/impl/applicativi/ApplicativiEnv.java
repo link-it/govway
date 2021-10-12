@@ -46,7 +46,7 @@ public class ApplicativiEnv extends Environment {
 	public final ServiziApplicativiHelper saHelper;
 	public final PddCore pddCore;
 	
-	ApplicativiEnv(HttpServletRequest req, ProfiloEnum profilo, String soggetto, IContext ctx) throws UtilsException, Exception {
+	public ApplicativiEnv(HttpServletRequest req, ProfiloEnum profilo, String soggetto, IContext ctx) throws UtilsException, Exception {
 		super(req,profilo,soggetto,ctx);
 		 
 		this.saCore = new ServiziApplicativiCore(this.stationCore);

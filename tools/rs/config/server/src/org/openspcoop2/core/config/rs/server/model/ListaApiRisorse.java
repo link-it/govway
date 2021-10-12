@@ -31,7 +31,7 @@ import javax.validation.Valid;
 public class ListaApiRisorse extends Lista {
   
   @Schema(required = true, description = "")
-  private List<ApiRisorsa> items = new ArrayList<ApiRisorsa>();
+  private List<ApiRisorsa> items = new ArrayList<>();
  /**
    * Get items
    * @return items

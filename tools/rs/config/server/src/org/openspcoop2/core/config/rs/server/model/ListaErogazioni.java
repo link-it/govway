@@ -31,7 +31,7 @@ import javax.validation.Valid;
 public class ListaErogazioni extends Lista {
   
   @Schema(required = true, description = "")
-  private List<ErogazioneItem> items = new ArrayList<ErogazioneItem>();
+  private List<ErogazioneItem> items = new ArrayList<>();
  /**
    * Get items
    * @return items

@@ -1,0 +1,12 @@
+{
+	"connettore": {
+		"tipo": "file",
+		"richiesta": {
+			"file": "/tmp/abc.txt",
+			"overwrite_if_exists": true
+		}
+	}
+}
+
+
+

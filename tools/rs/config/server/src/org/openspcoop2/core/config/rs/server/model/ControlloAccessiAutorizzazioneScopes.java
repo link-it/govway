@@ -30,7 +30,7 @@ import javax.validation.Valid;
 public class ControlloAccessiAutorizzazioneScopes  {
   
   @Schema(example = "[\"Scope1\",\"Scope2\",\"Scope3\"]", required = true, description = "")
-  private List<String> scope = new ArrayList<String>();
+  private List<String> scope = new ArrayList<>();
  /**
    * Get scope
    * @return scope

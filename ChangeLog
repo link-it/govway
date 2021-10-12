@@ -1,3 +1,11 @@
+2021-10-12  Giovanni Bussu <bussu@link.it>
+
+	* [ApiRsConfigurazione]
+	Aggiunta funzionalità OP-1201
+	Le API consentono adesso di aggiornare il connettore http registrato durante la creazione delle erogazioni e delle fruizioni con connettori di tipo differente (file, jms, echo ...).
+	È inoltre stato aggiunto il supporto per associare connettori differenti ai gruppi di risorse o azioni.
+	Infine è adesso possibile registrare applicativi di tipo server e associarli ai connettori di una erogazione.
+
 2021-10-09 Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

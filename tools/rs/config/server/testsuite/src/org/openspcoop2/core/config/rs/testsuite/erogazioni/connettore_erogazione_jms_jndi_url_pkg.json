@@ -1,0 +1,13 @@
+{
+	"connettore": {
+		"tipo": "jms",
+		"nome": "nome_coda",
+		"jndi_url_pgk_prefixes": "url_prefix.",
+		"connection_factory": "connFactory",
+		"tipo_coda": "queue",
+		"send_as": "text"
+	}
+}
+
+
+

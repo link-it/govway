@@ -36,7 +36,7 @@ public class FruizioneModIRestRichiestaSicurezzaMessaggio  {
   private List<String> headerHttpFirmare = null;
   
   @Schema(required = true, description = "")
-  private List<ModISicurezzaMessaggioRestRiferimentoX509> riferimentoX509 = new ArrayList<ModISicurezzaMessaggioRestRiferimentoX509>();
+  private List<ModISicurezzaMessaggioRestRiferimentoX509> riferimentoX509 = new ArrayList<>();
   
   @Schema(description = "")
   private Boolean certificateChain = null;

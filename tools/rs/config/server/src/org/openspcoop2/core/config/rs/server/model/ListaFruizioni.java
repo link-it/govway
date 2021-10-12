@@ -31,7 +31,7 @@ import javax.validation.Valid;
 public class ListaFruizioni extends Lista {
   
   @Schema(required = true, description = "")
-  private List<FruizioneItem> items = new ArrayList<FruizioneItem>();
+  private List<FruizioneItem> items = new ArrayList<>();
  /**
    * Get items
    * @return items

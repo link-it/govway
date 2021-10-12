@@ -1,0 +1,12 @@
+{
+	"connettore": {
+		"tipo": "jms",
+		"nome": "nome_coda",
+		"send_as": "bytes",
+		"connection_factory": "connFactory",
+		"tipo_coda": "queue"
+	}
+}
+
+
+

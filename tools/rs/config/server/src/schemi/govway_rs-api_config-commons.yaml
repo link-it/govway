@@ -68,7 +68,15 @@ components:
       schema:
         type: string
         maxLength: 255
-    
+    id_nome_connettore:
+      name: nome_connettore
+      in: path
+      description: Nome del connettore multiplo
+      required: true
+      schema:
+        type: string
+        maxLength: 255
+            
     # Dati Identificativi nella query
     id_soggetto_applicativo:
       name: soggetto_applicativo
@@ -805,9 +813,11 @@ components:
           format: int32
           example: 10000
           description: tempo medio (in millisecondi) atteso per ricevere una risposta
-    Connettore:
+          
+    # HTTP e Backward Compatibility
+    BaseConnettoreHttp:
       type: object
-      required: 
+      required:
         - endpoint
       properties:
         endpoint:
@@ -825,6 +835,233 @@ components:
           $ref: '#/components/schemas/ConnettoreConfigurazioneTimeout'
         token_policy:
           $ref: 'govway_core.yaml#/components/schemas/NCName'
+        debug:
+          type: boolean
+          default: false   
+    ConnettoreHttp:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseConnettoreHttp'
+        - type: object
+          required:
+          - tipo 
+          properties:
+            tipo:
+              $ref: '#/components/schemas/ConnettoreEnum'
+
+    # ConnettoreFile
+    ConnettoreFile:
+      type: object
+      required:
+        - tipo 
+        - richiesta
+      properties:
+        tipo:
+          $ref: '#/components/schemas/ConnettoreEnum'
+        debug:
+          type: boolean
+          default: false
+        richiesta:
+          $ref: '#/components/schemas/ConnettoreFileRichiesta'
+        risposta:
+          $ref: '#/components/schemas/ConnettoreFileRisposta'      
+    ConnettoreFileRichiesta:
+      type: object
+      required:
+        - file
+      properties:
+        file:
+          type: string
+          maxLength: 4000
+        file_headers:
+          type: string
+          maxLength: 4000
+        create_parent_dir:
+          type: boolean
+          default: false
+        overwrite_if_exists:
+          type: boolean
+          default: false
+    ConnettoreFileRisposta:
+      type: object
+      required:
+        - file
+      properties:
+        file:
+          type: string
+          maxLength: 4000
+        file_headers:
+          type: string
+          maxLength: 4000
+        delete_after_read:
+          type: boolean
+          default: false
+        wait_if_not_exists_ms:
+          type: integer
+          format: int32     
+
+    # ConnettoreJms
+    ConnettoreJms:
+      type: object
+      required:
+        - tipo 
+        - nome
+        - tipo_coda
+        - send_as
+        - connection_factory
+      properties:
+        tipo:
+          $ref: '#/components/schemas/ConnettoreEnum'
+        debug:
+          type: boolean
+          default: false
+        nome:
+          type: string
+          maxLength: 255
+        tipo_coda:
+          $ref: '#/components/schemas/ConnettoreJmsTipoEnum'
+        send_as:
+          $ref: '#/components/schemas/ConnettoreJmsSendAsEnum'
+        connection_factory:
+          type: string
+          maxLength: 255
+        utente:
+          type: string
+          maxLength: 255
+        password:
+          type: string
+          maxLength: 255
+        jndi_initial_context:
+          type: string
+          maxLength: 255
+        jndi_url_pgk_prefixes:
+          type: string
+          maxLength: 255          
+        jndi_provider_url:
+          type: string
+          maxLength: 255
+
+    # ConnettoreNull
+    ConnettoreNull:
+      type: object
+      required:
+        - tipo 
+      properties:
+        tipo:
+          $ref: '#/components/schemas/ConnettoreEnum'
+        debug:
+          type: boolean
+          default: false
+
+    # ConnettoreEcho
+    ConnettoreEcho:
+      type: object
+      required:
+        - tipo 
+      properties:
+        tipo:
+          $ref: '#/components/schemas/ConnettoreEnum'
+        debug:
+          type: boolean
+          default: false
+
+    # ConnettorePlugin
+    ConnettorePlugin:
+      type: object
+      required:
+        - tipo 
+        - plugin
+      properties:
+        tipo:
+          $ref: '#/components/schemas/ConnettoreEnum'
+        debug:
+          type: boolean
+          default: false
+        plugin:
+          type: string
+          maxLength: 255
+        proprieta:        
+          type: array
+          items:
+            $ref: '#/components/schemas/Proprieta'          
+
+    # ConnettoreApplicativoServer
+    ConnettoreApplicativoServer:
+      type: object
+      required:
+        - tipo
+        - applicativo 
+      properties:
+        tipo:
+          $ref: '#/components/schemas/ConnettoreEnum'
+        applicativo:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
+ 
+     # ConnettoreMessageBox
+    ConnettoreMessageBox:
+      type: object
+      required:
+        - tipo
+        - autenticazione_http 
+      properties:
+        tipo:
+          $ref: '#/components/schemas/ConnettoreEnum'
+        autenticazione_http:
+          $ref: '#/components/schemas/ConnettoreConfigurazioneHttpBasic'
+
+    ConnettoreErogazione:
+      type: object
+      properties:
+          # obbligatorio fornire o un connettore o un connettore-multiplo
+          connettore:
+             type: object
+             oneOf:
+               - $ref: '#/components/schemas/ConnettoreHttp' 
+               - $ref: '#/components/schemas/ConnettoreFile'
+               - $ref: '#/components/schemas/ConnettoreJms'
+               - $ref: '#/components/schemas/ConnettoreNull'
+               - $ref: '#/components/schemas/ConnettoreEcho'
+               - $ref: '#/components/schemas/ConnettorePlugin'
+               - $ref: '#/components/schemas/ConnettoreApplicativoServer'
+               - $ref: '#/components/schemas/ConnettoreMessageBox'
+             discriminator:
+               propertyName: tipo
+               mapping:
+                 'http': '#/components/schemas/ConnettoreHttp'
+                 'file': '#/components/schemas/ConnettoreFile'
+                 'jms': '#/components/schemas/ConnettoreJms'
+                 'null': '#/components/schemas/ConnettoreNull'
+                 'echo': '#/components/schemas/ConnettoreEcho'
+                 'plugin': '#/components/schemas/ConnettorePlugin'
+                 'applicativo-server': '#/components/schemas/ConnettoreApplicativoServer'
+                 'message-box': '#/components/schemas/ConnettoreMessageBox' 
+      additionalProperties: false
+                 
+    ConnettoreFruizione:
+      type: object
+      required: 
+        - connettore
+      properties:
+          connettore:
+             type: object
+             oneOf:
+               - $ref: '#/components/schemas/ConnettoreHttp' 
+               - $ref: '#/components/schemas/ConnettoreFile'
+               - $ref: '#/components/schemas/ConnettoreJms'
+               - $ref: '#/components/schemas/ConnettoreNull'
+               - $ref: '#/components/schemas/ConnettoreEcho'
+               - $ref: '#/components/schemas/ConnettorePlugin'
+             discriminator:
+               propertyName: tipo
+               mapping:
+                 'http': '#/components/schemas/ConnettoreHttp'
+                 'file': '#/components/schemas/ConnettoreFile'
+                 'jms': '#/components/schemas/ConnettoreJms'
+                 'null': '#/components/schemas/ConnettoreNull'
+                 'echo': '#/components/schemas/ConnettoreEcho'
+                 'plugin': '#/components/schemas/ConnettorePlugin'
+      additionalProperties: false
+
           
     # Base: Erogazione/Fruizione
 
@@ -887,7 +1124,7 @@ components:
                  'abilitato': '#/components/schemas/APIImplAutorizzazioneAbilitataNew'
                  'xacml-Policy': '#/components/schemas/APIImplAutorizzazioneXACML'
             connettore:
-              $ref: '#/components/schemas/Connettore'
+              $ref: '#/components/schemas/BaseConnettoreHttp'
 
     APIImplAutenticazioneDisabilitata:
       type: object
@@ -3144,6 +3381,25 @@ components:
     CanaleEnum:
       type: string
       enum: ['default', 'api', 'implementazione-api']
+    ConnettoreEnum:
+      type: string
+      enum: 
+        - 'http'
+        - 'file'
+        - 'jms'
+        - 'null'
+        - 'echo'
+        - 'plugin'
+        - 'applicativo-server'
+        - 'message-box'
+    ConnettoreJmsTipoEnum:
+      type: string
+      enum: ['queue', 'topic']
+      example: 'ok'
+    ConnettoreJmsSendAsEnum:
+      type: string
+      enum: ['text', 'bytes']
+      example: 'ok'      
     
     # ModI: Enumeration
     ModISicurezzaCanaleEnum:

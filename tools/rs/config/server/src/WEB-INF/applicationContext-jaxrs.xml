@@ -99,6 +99,8 @@
 		class="org.openspcoop2.core.config.rs.server.api.impl.soggetti.SoggettiApiServiceImpl"/>
 	<b:bean id="applicativiApiImpl" 
 		class="org.openspcoop2.core.config.rs.server.api.impl.applicativi.ApplicativiApiServiceImpl"/>
+	<b:bean id="applicativiServerApiImpl" 
+		class="org.openspcoop2.core.config.rs.server.api.impl.applicativi_server.ApplicativiServerApiServiceImpl"/>
 	<b:bean id="ruoliApiImpl" 
 		class="org.openspcoop2.core.config.rs.server.api.impl.ruoli.RuoliApiServiceImpl"/>
 	<b:bean id="scopeApiImpl" 
@@ -141,6 +143,7 @@
 			<ref bean="apiApiImpl" />
 			<ref bean="soggettiApiImpl" />
 			<ref bean="applicativiApiImpl" />
+			<ref bean="applicativiServerApiImpl" />
 			<ref bean="ruoliApiImpl" />
 			<ref bean="scopeApiImpl" />
 			<ref bean="erogazioniApiImpl"/>

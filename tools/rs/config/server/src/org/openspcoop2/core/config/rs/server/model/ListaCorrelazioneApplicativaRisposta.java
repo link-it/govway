@@ -31,7 +31,7 @@ import javax.validation.Valid;
 public class ListaCorrelazioneApplicativaRisposta extends Lista {
   
   @Schema(required = true, description = "")
-  private List<CorrelazioneApplicativaRispostaItem> items = new ArrayList<CorrelazioneApplicativaRispostaItem>();
+  private List<CorrelazioneApplicativaRispostaItem> items = new ArrayList<>();
  /**
    * Get items
    * @return items

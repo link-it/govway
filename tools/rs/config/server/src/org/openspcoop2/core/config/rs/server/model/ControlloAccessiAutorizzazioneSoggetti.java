@@ -30,7 +30,7 @@ import javax.validation.Valid;
 public class ControlloAccessiAutorizzazioneSoggetti  {
   
   @Schema(example = "[\"Ente1\",\"Ente2\",\"Ente3\"]", required = true, description = "")
-  private List<String> soggetti = new ArrayList<String>();
+  private List<String> soggetti = new ArrayList<>();
  /**
    * Get soggetti
    * @return soggetti

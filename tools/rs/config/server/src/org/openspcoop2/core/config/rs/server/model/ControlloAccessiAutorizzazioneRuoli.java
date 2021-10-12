@@ -30,7 +30,7 @@ import javax.validation.Valid;
 public class ControlloAccessiAutorizzazioneRuoli  {
   
   @Schema(example = "[\"Ruolo1\",\"Ruolo2\",\"Ruolo3\"]", required = true, description = "")
-  private List<String> ruoli = new ArrayList<String>();
+  private List<String> ruoli = new ArrayList<>();
  /**
    * Get ruoli
    * @return ruoli
