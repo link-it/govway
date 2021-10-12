@@ -25,13 +25,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ConnettoreApplicativoServer  implements OneOfApplicativoServerConnettore, OneOfBaseConnettoreMultiploConnettore, OneOfConnettoreErogazioneConnettore {
+public class ConnettoreConsegnaCondizionale extends BaseConnettoriMultipliStateless implements OneOfConnettoreErogazioneConnettoreMultiplo {
   
   @Schema(required = true, description = "")
-  private ConnettoreEnum tipo = null;
+  private ConnettoreMultiploEnum tipo = null;
   
   @Schema(required = true, description = "")
-  private String applicativo = null;
+  private ConnettoreMultiploConfigurazioneCondizionalitaSelezioneConnettore configurazione = null;
  /**
    * Get tipo
    * @return tipo
@@ -40,36 +40,36 @@ public class ConnettoreApplicativoServer  implements OneOfApplicativoServerConne
 @JsonProperty("tipo")
   @NotNull
   @Valid
-  public ConnettoreEnum getTipo() {
+  public ConnettoreMultiploEnum getTipo() {
     return this.tipo;
   }
 
-  public void setTipo(ConnettoreEnum tipo) {
+  public void setTipo(ConnettoreMultiploEnum tipo) {
     this.tipo = tipo;
   }
 
-  public ConnettoreApplicativoServer tipo(ConnettoreEnum tipo) {
+  public ConnettoreConsegnaCondizionale tipo(ConnettoreMultiploEnum tipo) {
     this.tipo = tipo;
     return this;
   }
 
  /**
-   * Get applicativo
-   * @return applicativo
+   * Get configurazione
+   * @return configurazione
   **/
-  @JsonProperty("applicativo")
+  @JsonProperty("configurazione")
   @NotNull
   @Valid
- @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getApplicativo() {
-    return this.applicativo;
+  public ConnettoreMultiploConfigurazioneCondizionalitaSelezioneConnettore getConfigurazione() {
+    return this.configurazione;
   }
 
-  public void setApplicativo(String applicativo) {
-    this.applicativo = applicativo;
+  public void setConfigurazione(ConnettoreMultiploConfigurazioneCondizionalitaSelezioneConnettore configurazione) {
+    this.configurazione = configurazione;
   }
 
-  public ConnettoreApplicativoServer applicativo(String applicativo) {
-    this.applicativo = applicativo;
+  public ConnettoreConsegnaCondizionale configurazione(ConnettoreMultiploConfigurazioneCondizionalitaSelezioneConnettore configurazione) {
+    this.configurazione = configurazione;
     return this;
   }
 
@@ -77,10 +77,10 @@ public class ConnettoreApplicativoServer  implements OneOfApplicativoServerConne
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ConnettoreApplicativoServer {\n");
-    
-    sb.append("    tipo: ").append(ConnettoreApplicativoServer.toIndentedString(this.tipo)).append("\n");
-    sb.append("    applicativo: ").append(ConnettoreApplicativoServer.toIndentedString(this.applicativo)).append("\n");
+    sb.append("class ConnettoreConsegnaCondizionale {\n");
+    sb.append("    ").append(ConnettoreConsegnaCondizionale.toIndentedString(super.toString())).append("\n");
+    sb.append("    tipo: ").append(ConnettoreConsegnaCondizionale.toIndentedString(this.tipo)).append("\n");
+    sb.append("    configurazione: ").append(ConnettoreConsegnaCondizionale.toIndentedString(this.configurazione)).append("\n");
     sb.append("}");
     return sb.toString();
   }

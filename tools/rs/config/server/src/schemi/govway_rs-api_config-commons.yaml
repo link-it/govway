@@ -1008,6 +1008,421 @@ components:
           $ref: '#/components/schemas/ConnettoreEnum'
         autenticazione_http:
           $ref: '#/components/schemas/ConnettoreConfigurazioneHttpBasic'
+          
+    # BaseConnettoreMultiplo
+          
+    BaseConnettoreMultiplo:
+      type: object
+      required:
+        - nome
+        - connettore
+      properties:
+        nome:
+          type: string
+          maxLength: 255 
+        descrizione:
+          type: string
+          maxLength: 4000  
+        connettore:
+          type: object
+          oneOf:
+               - $ref: '#/components/schemas/ConnettoreHttp' 
+               - $ref: '#/components/schemas/ConnettoreFile'
+               - $ref: '#/components/schemas/ConnettoreJms'
+               - $ref: '#/components/schemas/ConnettoreNull'
+               - $ref: '#/components/schemas/ConnettoreEcho'
+               - $ref: '#/components/schemas/ConnettorePlugin'
+               - $ref: '#/components/schemas/ConnettoreApplicativoServer'
+               - $ref: '#/components/schemas/ConnettoreMessageBox'
+          discriminator:
+             propertyName: tipo
+             mapping:
+                 'http': '#/components/schemas/ConnettoreHttp'
+                 'file': '#/components/schemas/ConnettoreFile'
+                 'jms': '#/components/schemas/ConnettoreJms'
+                 'null': '#/components/schemas/ConnettoreNull'
+                 'echo': '#/components/schemas/ConnettoreEcho'
+                 'plugin': '#/components/schemas/ConnettorePlugin'
+                 'applicativo-server': '#/components/schemas/ConnettoreApplicativoServer'
+                 'message-box': '#/components/schemas/ConnettoreMessageBox'
+        filtri:
+          type: array
+          items:
+            type: string
+            maxLength: 400 # lista di filtri arriva a 4000
+    ConnettoreMultiploStateless:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseConnettoreMultiplo'
+        - type: object
+          required:
+            - tipologia
+          properties:
+            tipologia:
+              $ref: '#/components/schemas/ConnettoreMultiploTipologiaEnum'
+    ConnettoreMultiploPresaInCarico:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseConnettoreMultiplo'
+        - type: object
+          required:
+            - tipologia
+            - gestione_notifiche
+          properties:
+            tipologia:
+              $ref: '#/components/schemas/ConnettoreMultiploTipologiaEnum'
+            gestione_notifiche:
+              $ref: '#/components/schemas/ConnettoreMultiploPresaInCaricoGestioneNotifiche'
+    ConnettoreMultiploPlugin:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseConnettoreMultiplo'
+        - type: object
+          required:
+            - tipologia
+          properties:
+            tipologia:
+              $ref: '#/components/schemas/ConnettoreMultiploTipologiaEnum'
+            proprieta:        
+              type: array
+              items:
+                $ref: '#/components/schemas/Proprieta'
+    ConnettoreMultiplo:
+      type: object
+      required:
+        - dati_connettore
+      properties: 
+        dati_connettore:
+          type: object
+          oneOf:
+               - $ref: '#/components/schemas/ConnettoreMultiploStateless' 
+               - $ref: '#/components/schemas/ConnettoreMultiploPresaInCarico'
+               - $ref: '#/components/schemas/ConnettoreMultiploPlugin'
+          discriminator:
+             propertyName: tipologia
+             mapping:
+                 'stateless': '#/components/schemas/ConnettoreMultiploStateless'
+                 'presa-in-carico': '#/components/schemas/ConnettoreMultiploPresaInCarico'
+                 'plugin': '#/components/schemas/ConnettoreMultiploPlugin'
+
+    BaseConnettoriMultipliStateless:
+      type: object
+      required:
+        - connettori
+      properties:
+        connettori:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnettoreMultiploStateless'
+    BaseConnettoriMultipliPresaInCarico:
+      type: object
+      required:
+        - connettori
+      properties:
+        connettori:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnettoreMultiploPresaInCarico'
+    BaseConnettoriMultipliPlugin:
+      type: object
+      required:
+        - connettori
+      properties:
+        connettori:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnettoreMultiploPlugin'
+
+    ConnettoreMultiploPresaInCaricoGestioneNotifiche:
+      type: object
+      required:
+        - 2xx
+        - 3xx
+        - 4xx
+        - 5xx
+        - fault
+      properties:
+        priorita:
+          $ref: '#/components/schemas/ConnettoreMultiploGestioneNotifichePrioritaEnum'
+        consegna_immediata:
+          type: boolean
+          default: false
+        2xx:
+          $ref: '#/components/schemas/ConnettoreMultiploPresaInCaricoGestioneNotificheEsiti'
+        3xx:
+          $ref: '#/components/schemas/ConnettoreMultiploPresaInCaricoGestioneNotificheEsiti'
+        4xx:
+          $ref: '#/components/schemas/ConnettoreMultiploPresaInCaricoGestioneNotificheEsiti'
+        5xx:
+          $ref: '#/components/schemas/ConnettoreMultiploPresaInCaricoGestioneNotificheEsiti'
+        fault:
+          $ref: '#/components/schemas/ConnettoreMultiploPresaInCaricoGestioneNotificheFault'
+        cadenza_rispedizione:
+          type: integer
+          format: int32
+          description: minuti dopo i quali verrà riprovata una consegna precedentemente fallita
+    ConnettoreMultiploPresaInCaricoGestioneNotificheEsiti:
+      type: object
+      required:
+        - esito
+      properties:
+        esito:
+          $ref: '#/components/schemas/ConnettoreMultiploGestioneNotificheEsitoConsegnaEnum'
+        codice_min:
+          type: integer
+          format: int32
+        codice_max:
+          type: integer
+          format: int32
+        codici:
+          type: array
+          items:
+            type: integer
+            format: int32
+    ConnettoreMultiploPresaInCaricoGestioneNotificheFault:
+      type: object
+      required:
+        - esito
+      properties:
+        esito:
+          $ref: '#/components/schemas/ConnettoreMultiploGestioneNotificheEsitoConsegnaFaultEnum'
+        code:
+          type: string
+          maxLength: 4000
+          description: permette di identificare puntualmente o tramite una espressione regola un faultCode in Soap o uno status claim in Rest
+        role:
+          type: string
+          maxLength: 4000
+          description: permette di identificare puntualmente o tramite una espressione regola un faultActor in Soap o un type claim in Rest
+        details:
+          type: string
+          maxLength: 4000
+          description: permette di identificare puntualmente o tramite una espressione regola un faultString in Soap o il claim indicato in Rest (nome=valore)
+            
+    ConnettoreMultiploConfigurazioneCondizionalita:
+      type: object
+      required:
+        - condizione
+        - identificazione_condizione_fallita
+        - nessun_connettore_utilizzabile
+      properties:
+        condizione:
+          $ref: '#/components/schemas/ConnettoreMultiploCondizionalitaEnum'
+        nome:
+          type: string
+          description: |-
+            La semantica cambia in funzione del tipo:
+              * header-based: nome dell'header
+              * url-based: espressione regolare da applicare alla url di invocazione
+              * form-based: nome del parametro della url
+              * soap-action-based: in questa modalità questo parametro non viene utilizzato
+              * content-based: xpath o json path da applicare sul contenuto
+              * indirizzo-ip: il campo non deve essere valorizzato, viene utilizzato l'indirizzo ip del socket come condizione
+              * indirizzo-ip-forwarded: il campo non deve essere valorizzato, viene utilizzato l'indirizzo ip inoltrato via header http come condizione
+              * template: template in formato 'govway'
+              * freemarker: template in formato 'freemarker'
+              * velocity: template in formato 'velocity'
+          maxLength: 4000
+        prefisso:
+          type: string
+          maxLength: 255
+        suffisso:
+          type: string
+          maxLength: 255
+        identificazione_condizione_fallita:
+          $ref: '#/components/schemas/ConnettoreMultiploConfigurazioneCondizionalitaFallita'
+        nessun_connettore_utilizzabile:
+          $ref: '#/components/schemas/ConnettoreMultiploConfigurazioneCondizionalitaFallita'
+        regole:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnettoreMultiploConfigurazioneCondizionalitaRegola'
+    ConnettoreMultiploConfigurazioneCondizionalitaFallita:
+      type: object
+      required:
+        - termina_con_errore
+      properties:
+        termina_con_errore:
+          type: boolean
+          default: true
+        diagnostico:
+          $ref: '#/components/schemas/ConnettoreMultiploCondizionalitaLivelloDiagnosticoEnum'       
+    ConnettoreMultiploConfigurazioneCondizionalitaRegola:
+      type: object
+      required:
+        - nome_regola
+        - azione
+        - condizione
+      properties:
+        nome_regola:
+          type: string
+          maxLength: 255
+        azione:
+          type: string
+          description: espressione regolare che individui una o più operazioni
+          maxLength: 4000
+        condizione:
+          $ref: '#/components/schemas/ConnettoreMultiploCondizionalitaRegolaEnum'
+        nome:
+          type: string
+          description: |-
+            La semantica cambia in funzione del tipo:
+              * static: informazione utilizzata come filtro
+              * header-based: nome dell'header
+              * url-based: espressione regolare da applicare alla url di invocazione
+              * form-based: nome del parametro della url
+              * soap-action-based: in questa modalità questo parametro non viene utilizzato
+              * content-based: xpath o json path da applicare sul contenuto
+              * indirizzo-ip: il campo non deve essere valorizzato, viene utilizzato l'indirizzo ip del socket come condizione
+              * indirizzo-ip-forwarded: il campo non deve essere valorizzato, viene utilizzato l'indirizzo ip inoltrato via header http come condizione
+              * template: template in formato 'govway'
+              * freemarker: template in formato 'freemarker'
+              * velocity: template in formato 'velocity'
+          maxLength: 4000
+        prefisso:
+          type: string
+          maxLength: 255
+        suffisso:
+          type: string
+          maxLength: 255             
+    ConnettoreMultiploConfigurazioneCondizionalitaSelezioneConnettore:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ConnettoreMultiploConfigurazioneCondizionalita'
+        - type: object
+          required:
+            - selezione_connettore
+          properties:
+            selezione_connettore:
+              $ref: '#/components/schemas/ConnettoreMultiploConfigurazioneCondizionalitaSelezioneEnum'
+
+    # LoadBalancer
+    ConnettoreLoadBalancer:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseConnettoriMultipliStateless'
+        - type: object
+          required:
+            - tipo
+            - strategia
+          properties:
+            tipo:
+              $ref: '#/components/schemas/ConnettoreMultiploEnum'
+            strategia:
+              $ref: '#/components/schemas/ConnettoreLoadBalancerStrategiaEnum'
+            sticky_session:
+              $ref: '#/components/schemas/ConnettoreLoadBalancerStickySession'
+            passive_health_check:
+              $ref: '#/components/schemas/ConnettoreLoadBalancerPassiveHealthCheck'
+            consegna_condizionale:
+              $ref: '#/components/schemas/ConnettoreMultiploConfigurazioneCondizionalita'
+    ConnettoreLoadBalancerStickySession:
+      type: object
+      required:
+        - identificativo
+      properties:
+        identificativo:
+          $ref: '#/components/schemas/ConnettoreLoadBalancerSessionIdEnum'
+        nome:
+          type: string
+          description: |-
+            La semantica cambia in funzione del tipo:
+              * cookie: nome del cookie
+              * header-based: nome dell'header
+              * url-based: espressione regolare da applicare alla url di invocazione
+              * form-based: nome del parametro della url
+              * content-based: xpath o json path da applicare sul contenuto
+              * indirizzo-ip: il campo non deve essere valorizzato, come identificativo di sessione viene utilizzato l'indirizzo ip del socket
+              * indirizzo-ip-forwarded: il campo non deve essere valorizzato, come identificativo di sessione viene utilizzato l'indirizzo ip inoltrato via header http
+              * template: template in formato 'govway'
+              * freemarker: template in formato 'freemarker'
+              * velocity: template in formato 'velocity'
+          maxLength: 4000
+        max_age:
+          type: integer
+          format: int32
+          description: durata della sessione in secondi
+    ConnettoreLoadBalancerPassiveHealthCheck:
+      type: object
+      required:
+        - intervallo_esclusione
+      properties:
+        intervallo_esclusione:
+          type: integer
+          format: int32
+          description: durata dell'esclusione del connettore dal pool in secondi
+
+    # ConnettoreConsegnaCondizionale
+    ConnettoreConsegnaCondizionale:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseConnettoriMultipliStateless'
+        - type: object
+          required:
+            - tipo
+            - configurazione
+          properties:
+            tipo:
+              $ref: '#/components/schemas/ConnettoreMultiploEnum'
+            configurazione:
+              $ref: '#/components/schemas/ConnettoreMultiploConfigurazioneCondizionalitaSelezioneConnettore'
+
+    # ConnettoreConsegnaConNotifiche
+    ConnettoreConsegnaConNotifiche:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseConnettoriMultipliPresaInCarico'
+        - type: object
+          required:
+            - tipo
+            - connettore_default
+          properties:
+            tipo:
+              $ref: '#/components/schemas/ConnettoreMultiploEnum'
+            connettore_default:
+              type: string
+              maxLength: 255 
+            esiti:
+              type: array
+              description: le notifiche avvengono solamente se la transazione termina con uno degli esiti indicat
+              items:
+                $ref: '#/components/schemas/ConnettoreConsegnaConNotificheEsitiEnum'
+            consegna_condizionale:
+              $ref: '#/components/schemas/ConnettoreMultiploConfigurazioneCondizionalitaSelezioneConnettore'
+
+    # ConnettoreConsegnaDestinatariMultipli
+    ConnettoreConsegnaDestinatariMultipli:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseConnettoriMultipliPresaInCarico'
+        - type: object
+          required:
+            - tipo
+          properties:
+            tipo:
+              $ref: '#/components/schemas/ConnettoreMultiploEnum'
+            consegna_condizionale:
+              $ref: '#/components/schemas/ConnettoreMultiploConfigurazioneCondizionalitaSelezioneConnettore'
+      
+    # ConnettoreConsegnaMultiplaPlugin
+    ConnettoreConsegnaMultiplaPlugin:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseConnettoriMultipliPlugin'
+        - type: object
+          required:
+            - tipo
+            - plugin
+          properties:
+            tipo:
+              $ref: '#/components/schemas/ConnettoreMultiploEnum'
+            plugin:
+              type: string
+              maxLength: 255
+            proprieta:        
+              type: array
+              items:
+                $ref: '#/components/schemas/Proprieta'
 
     ConnettoreErogazione:
       type: object
@@ -1035,6 +1450,22 @@ components:
                  'plugin': '#/components/schemas/ConnettorePlugin'
                  'applicativo-server': '#/components/schemas/ConnettoreApplicativoServer'
                  'message-box': '#/components/schemas/ConnettoreMessageBox' 
+          connettore-multiplo:
+             type: object
+             oneOf:
+               - $ref: '#/components/schemas/ConnettoreLoadBalancer'
+               - $ref: '#/components/schemas/ConnettoreConsegnaCondizionale'
+               - $ref: '#/components/schemas/ConnettoreConsegnaConNotifiche'
+               - $ref: '#/components/schemas/ConnettoreConsegnaDestinatariMultipli'
+               - $ref: '#/components/schemas/ConnettoreConsegnaMultiplaPlugin'
+             discriminator:
+               propertyName: tipo
+               mapping:
+                 'load-balancer': '#/components/schemas/ConnettoreLoadBalancer'
+                 'consegna-condizionale': '#/components/schemas/ConnettoreConsegnaCondizionale'
+                 'consegna-con-notifiche': '#/components/schemas/ConnettoreConsegnaConNotifiche'
+                 'consegna-destinatari-multipli': '#/components/schemas/ConnettoreConsegnaDestinatariMultipli'
+                 'plugin': '#/components/schemas/ConnettoreConsegnaMultiplaPlugin'
       additionalProperties: false
                  
     ConnettoreFruizione:
@@ -3392,6 +3823,65 @@ components:
         - 'plugin'
         - 'applicativo-server'
         - 'message-box'
+    ConnettoreMultiploEnum:
+      type: string
+      enum: 
+        - 'load-balancer'
+        - 'consegna-condizionale'
+        - 'consegna-con-notifiche'
+        - 'consegna-destinatari-multipli'
+        - 'plugin'
+    ConnettoreMultiploTipologiaEnum:
+      type: string
+      enum: 
+        - 'stateless'
+        - 'presa-in-carico'
+        - 'plugin'
+    ConnettoreLoadBalancerStrategiaEnum:
+      type: string
+      enum: 
+        - 'round-robin'
+        - 'weight-round-robin'
+        - 'random'
+        - 'weight-random'
+        - 'source-ip-hash'
+        - 'least-connections'
+    ConnettoreLoadBalancerSessionIdEnum:
+      type: string
+      enum: ['cookie', 'header-based', 'url-based', 'form-based', 'content-based', 'indirizzo-ip', 'indirizzo-ip-forwarded', 'template', 'freemarker', 'velocity']
+      example: 'cookie'
+    ConnettoreMultiploCondizionalitaEnum:
+      type: string
+      enum: ['header-based', 'url-based', 'form-based', 'soap-action-based', 'content-based', 'indirizzo-ip', 'indirizzo-ip-forwarded', 'template', 'freemarker', 'velocity']
+      example: 'header-based'
+    ConnettoreMultiploCondizionalitaRegolaEnum:
+      type: string
+      enum: ['static', 'header-based', 'url-based', 'form-based', 'soap-action-based', 'content-based', 'indirizzo-ip', 'indirizzo-ip-forwarded', 'template', 'freemarker', 'velocity']
+      example: 'static'
+    ConnettoreMultiploCondizionalitaLivelloDiagnosticoEnum:
+      type: string
+      enum: ['error', 'info']
+      example: 'error'
+    ConnettoreMultiploConfigurazioneCondizionalitaSelezioneEnum:
+      type: string
+      enum: ['filtro', 'nome']
+      example: 'filtro' 
+    ConnettoreMultiploGestioneNotifichePrioritaEnum:
+      type: string
+      enum: ['alta', 'media', 'bassa']
+      example: 'alta'
+    ConnettoreMultiploGestioneNotificheEsitoConsegnaEnum:
+      type: string
+      enum: ['completata', 'fallita']
+      example: 'completata'
+    ConnettoreMultiploGestioneNotificheEsitoConsegnaFaultEnum:
+      type: string
+      enum: ['completata', 'fallita', 'custom']
+      example: 'completata' 
+    ConnettoreConsegnaConNotificheEsitiEnum:
+      type: string
+      enum: ['ok', 'fault-applicativi', 'errori-consegna', 'richieste-scartate', 'errori-processamento']
+      example: 'ok' 
     ConnettoreJmsTipoEnum:
       type: string
       enum: ['queue', 'topic']

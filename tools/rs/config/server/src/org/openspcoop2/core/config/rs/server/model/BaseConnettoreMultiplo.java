@@ -19,13 +19,22 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import java.util.List;
+import javax.validation.constraints.*;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ConnettoreErogazione  {
+public class BaseConnettoreMultiplo  {
+  
+  @Schema(required = true, description = "")
+  private String nome = null;
   
   @Schema(description = "")
+  private String descrizione = null;
+  
+  @Schema(required = true, description = "")
   @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "tipo", visible = true )
   @com.fasterxml.jackson.annotation.JsonSubTypes({
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ConnettoreHttp.class, name = "http"),
@@ -36,52 +45,90 @@ public class ConnettoreErogazione  {
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ConnettorePlugin.class, name = "plugin"),
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ConnettoreApplicativoServer.class, name = "applicativo-server"),
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ConnettoreMessageBox.class, name = "message-box")  })
-  private OneOfConnettoreErogazioneConnettore connettore = null;
+  private OneOfBaseConnettoreMultiploConnettore connettore = null;
   
   @Schema(description = "")
-  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "tipo", visible = true )
-  @com.fasterxml.jackson.annotation.JsonSubTypes({
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ConnettoreLoadBalancer.class, name = "load-balancer"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ConnettoreConsegnaCondizionale.class, name = "consegna-condizionale"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ConnettoreConsegnaConNotifiche.class, name = "consegna-con-notifiche"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ConnettoreConsegnaDestinatariMultipli.class, name = "consegna-destinatari-multipli"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ConnettoreConsegnaMultiplaPlugin.class, name = "plugin")  })
-  private OneOfConnettoreErogazioneConnettoreMultiplo connettoreMultiplo = null;
+  private List<String> filtri = null;
+ /**
+   * Get nome
+   * @return nome
+  **/
+  @JsonProperty("nome")
+  @NotNull
+  @Valid
+ @Size(max=255)  public String getNome() {
+    return this.nome;
+  }
+
+  public void setNome(String nome) {
+    this.nome = nome;
+  }
+
+  public BaseConnettoreMultiplo nome(String nome) {
+    this.nome = nome;
+    return this;
+  }
+
+ /**
+   * Get descrizione
+   * @return descrizione
+  **/
+  @JsonProperty("descrizione")
+  @Valid
+ @Size(max=4000)  public String getDescrizione() {
+    return this.descrizione;
+  }
+
+  public void setDescrizione(String descrizione) {
+    this.descrizione = descrizione;
+  }
+
+  public BaseConnettoreMultiplo descrizione(String descrizione) {
+    this.descrizione = descrizione;
+    return this;
+  }
+
  /**
    * Get connettore
    * @return connettore
   **/
   @JsonProperty("connettore")
+  @NotNull
   @Valid
-  public OneOfConnettoreErogazioneConnettore getConnettore() {
+  public OneOfBaseConnettoreMultiploConnettore getConnettore() {
     return this.connettore;
   }
 
-  public void setConnettore(OneOfConnettoreErogazioneConnettore connettore) {
+  public void setConnettore(OneOfBaseConnettoreMultiploConnettore connettore) {
     this.connettore = connettore;
   }
 
-  public ConnettoreErogazione connettore(OneOfConnettoreErogazioneConnettore connettore) {
+  public BaseConnettoreMultiplo connettore(OneOfBaseConnettoreMultiploConnettore connettore) {
     this.connettore = connettore;
     return this;
   }
 
  /**
-   * Get connettoreMultiplo
-   * @return connettoreMultiplo
+   * Get filtri
+   * @return filtri
   **/
-  @JsonProperty("connettore-multiplo")
+  @JsonProperty("filtri")
   @Valid
-  public OneOfConnettoreErogazioneConnettoreMultiplo getConnettoreMultiplo() {
-    return this.connettoreMultiplo;
+  public List<String> getFiltri() {
+    return this.filtri;
   }
 
-  public void setConnettoreMultiplo(OneOfConnettoreErogazioneConnettoreMultiplo connettoreMultiplo) {
-    this.connettoreMultiplo = connettoreMultiplo;
+  public void setFiltri(List<String> filtri) {
+    this.filtri = filtri;
   }
 
-  public ConnettoreErogazione connettoreMultiplo(OneOfConnettoreErogazioneConnettoreMultiplo connettoreMultiplo) {
-    this.connettoreMultiplo = connettoreMultiplo;
+  public BaseConnettoreMultiplo filtri(List<String> filtri) {
+    this.filtri = filtri;
+    return this;
+  }
+
+  public BaseConnettoreMultiplo addFiltriItem(String filtriItem) {
+    this.filtri.add(filtriItem);
     return this;
   }
 
@@ -89,10 +136,12 @@ public class ConnettoreErogazione  {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ConnettoreErogazione {\n");
+    sb.append("class BaseConnettoreMultiplo {\n");
     
-    sb.append("    connettore: ").append(ConnettoreErogazione.toIndentedString(this.connettore)).append("\n");
-    sb.append("    connettoreMultiplo: ").append(ConnettoreErogazione.toIndentedString(this.connettoreMultiplo)).append("\n");
+    sb.append("    nome: ").append(BaseConnettoreMultiplo.toIndentedString(this.nome)).append("\n");
+    sb.append("    descrizione: ").append(BaseConnettoreMultiplo.toIndentedString(this.descrizione)).append("\n");
+    sb.append("    connettore: ").append(BaseConnettoreMultiplo.toIndentedString(this.connettore)).append("\n");
+    sb.append("    filtri: ").append(BaseConnettoreMultiplo.toIndentedString(this.filtri)).append("\n");
     sb.append("}");
     return sb.toString();
   }

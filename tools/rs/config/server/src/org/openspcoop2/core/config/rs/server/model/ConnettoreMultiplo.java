@@ -25,51 +25,32 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ConnettoreApplicativoServer  implements OneOfApplicativoServerConnettore, OneOfBaseConnettoreMultiploConnettore, OneOfConnettoreErogazioneConnettore {
+public class ConnettoreMultiplo  {
   
   @Schema(required = true, description = "")
-  private ConnettoreEnum tipo = null;
-  
-  @Schema(required = true, description = "")
-  private String applicativo = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "tipologia", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ConnettoreMultiploStateless.class, name = "stateless"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ConnettoreMultiploPresaInCarico.class, name = "presa-in-carico"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ConnettoreMultiploPlugin.class, name = "plugin")  })
+  private OneOfConnettoreMultiploDatiConnettore datiConnettore = null;
  /**
-   * Get tipo
-   * @return tipo
+   * Get datiConnettore
+   * @return datiConnettore
   **/
-  @Override
-@JsonProperty("tipo")
+  @JsonProperty("dati_connettore")
   @NotNull
   @Valid
-  public ConnettoreEnum getTipo() {
-    return this.tipo;
+  public OneOfConnettoreMultiploDatiConnettore getDatiConnettore() {
+    return this.datiConnettore;
   }
 
-  public void setTipo(ConnettoreEnum tipo) {
-    this.tipo = tipo;
+  public void setDatiConnettore(OneOfConnettoreMultiploDatiConnettore datiConnettore) {
+    this.datiConnettore = datiConnettore;
   }
 
-  public ConnettoreApplicativoServer tipo(ConnettoreEnum tipo) {
-    this.tipo = tipo;
-    return this;
-  }
-
- /**
-   * Get applicativo
-   * @return applicativo
-  **/
-  @JsonProperty("applicativo")
-  @NotNull
-  @Valid
- @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getApplicativo() {
-    return this.applicativo;
-  }
-
-  public void setApplicativo(String applicativo) {
-    this.applicativo = applicativo;
-  }
-
-  public ConnettoreApplicativoServer applicativo(String applicativo) {
-    this.applicativo = applicativo;
+  public ConnettoreMultiplo datiConnettore(OneOfConnettoreMultiploDatiConnettore datiConnettore) {
+    this.datiConnettore = datiConnettore;
     return this;
   }
 
@@ -77,10 +58,9 @@ public class ConnettoreApplicativoServer  implements OneOfApplicativoServerConne
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ConnettoreApplicativoServer {\n");
+    sb.append("class ConnettoreMultiplo {\n");
     
-    sb.append("    tipo: ").append(ConnettoreApplicativoServer.toIndentedString(this.tipo)).append("\n");
-    sb.append("    applicativo: ").append(ConnettoreApplicativoServer.toIndentedString(this.applicativo)).append("\n");
+    sb.append("    datiConnettore: ").append(ConnettoreMultiplo.toIndentedString(this.datiConnettore)).append("\n");
     sb.append("}");
     return sb.toString();
   }

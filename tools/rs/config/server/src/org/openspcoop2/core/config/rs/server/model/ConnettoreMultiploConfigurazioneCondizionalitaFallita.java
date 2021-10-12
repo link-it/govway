@@ -25,50 +25,49 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ConnettoreNull  implements OneOfApplicativoServerConnettore, OneOfBaseConnettoreMultiploConnettore, OneOfConnettoreErogazioneConnettore, OneOfConnettoreFruizioneConnettore {
+public class ConnettoreMultiploConfigurazioneCondizionalitaFallita  {
   
   @Schema(required = true, description = "")
-  private ConnettoreEnum tipo = null;
+  private Boolean terminaConErrore = true;
   
   @Schema(description = "")
-  private Boolean debug = false;
+  private ConnettoreMultiploCondizionalitaLivelloDiagnosticoEnum diagnostico = null;
  /**
-   * Get tipo
-   * @return tipo
+   * Get terminaConErrore
+   * @return terminaConErrore
   **/
-  @Override
-@JsonProperty("tipo")
+  @JsonProperty("termina_con_errore")
   @NotNull
   @Valid
-  public ConnettoreEnum getTipo() {
-    return this.tipo;
+  public Boolean isTerminaConErrore() {
+    return this.terminaConErrore;
   }
 
-  public void setTipo(ConnettoreEnum tipo) {
-    this.tipo = tipo;
+  public void setTerminaConErrore(Boolean terminaConErrore) {
+    this.terminaConErrore = terminaConErrore;
   }
 
-  public ConnettoreNull tipo(ConnettoreEnum tipo) {
-    this.tipo = tipo;
+  public ConnettoreMultiploConfigurazioneCondizionalitaFallita terminaConErrore(Boolean terminaConErrore) {
+    this.terminaConErrore = terminaConErrore;
     return this;
   }
 
  /**
-   * Get debug
-   * @return debug
+   * Get diagnostico
+   * @return diagnostico
   **/
-  @JsonProperty("debug")
+  @JsonProperty("diagnostico")
   @Valid
-  public Boolean isDebug() {
-    return this.debug;
+  public ConnettoreMultiploCondizionalitaLivelloDiagnosticoEnum getDiagnostico() {
+    return this.diagnostico;
   }
 
-  public void setDebug(Boolean debug) {
-    this.debug = debug;
+  public void setDiagnostico(ConnettoreMultiploCondizionalitaLivelloDiagnosticoEnum diagnostico) {
+    this.diagnostico = diagnostico;
   }
 
-  public ConnettoreNull debug(Boolean debug) {
-    this.debug = debug;
+  public ConnettoreMultiploConfigurazioneCondizionalitaFallita diagnostico(ConnettoreMultiploCondizionalitaLivelloDiagnosticoEnum diagnostico) {
+    this.diagnostico = diagnostico;
     return this;
   }
 
@@ -76,10 +75,10 @@ public class ConnettoreNull  implements OneOfApplicativoServerConnettore, OneOfB
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ConnettoreNull {\n");
+    sb.append("class ConnettoreMultiploConfigurazioneCondizionalitaFallita {\n");
     
-    sb.append("    tipo: ").append(ConnettoreNull.toIndentedString(this.tipo)).append("\n");
-    sb.append("    debug: ").append(ConnettoreNull.toIndentedString(this.debug)).append("\n");
+    sb.append("    terminaConErrore: ").append(ConnettoreMultiploConfigurazioneCondizionalitaFallita.toIndentedString(this.terminaConErrore)).append("\n");
+    sb.append("    diagnostico: ").append(ConnettoreMultiploConfigurazioneCondizionalitaFallita.toIndentedString(this.diagnostico)).append("\n");
     sb.append("}");
     return sb.toString();
   }

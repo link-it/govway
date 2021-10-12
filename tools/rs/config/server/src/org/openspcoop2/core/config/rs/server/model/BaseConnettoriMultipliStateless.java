@@ -19,57 +19,40 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ConnettoreApplicativoServer  implements OneOfApplicativoServerConnettore, OneOfBaseConnettoreMultiploConnettore, OneOfConnettoreErogazioneConnettore {
+public class BaseConnettoriMultipliStateless  {
   
   @Schema(required = true, description = "")
-  private ConnettoreEnum tipo = null;
-  
-  @Schema(required = true, description = "")
-  private String applicativo = null;
+  private List<ConnettoreMultiploStateless> connettori = new ArrayList<>();
  /**
-   * Get tipo
-   * @return tipo
+   * Get connettori
+   * @return connettori
   **/
-  @Override
-@JsonProperty("tipo")
+  @JsonProperty("connettori")
   @NotNull
   @Valid
-  public ConnettoreEnum getTipo() {
-    return this.tipo;
+  public List<ConnettoreMultiploStateless> getConnettori() {
+    return this.connettori;
   }
 
-  public void setTipo(ConnettoreEnum tipo) {
-    this.tipo = tipo;
+  public void setConnettori(List<ConnettoreMultiploStateless> connettori) {
+    this.connettori = connettori;
   }
 
-  public ConnettoreApplicativoServer tipo(ConnettoreEnum tipo) {
-    this.tipo = tipo;
+  public BaseConnettoriMultipliStateless connettori(List<ConnettoreMultiploStateless> connettori) {
+    this.connettori = connettori;
     return this;
   }
 
- /**
-   * Get applicativo
-   * @return applicativo
-  **/
-  @JsonProperty("applicativo")
-  @NotNull
-  @Valid
- @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getApplicativo() {
-    return this.applicativo;
-  }
-
-  public void setApplicativo(String applicativo) {
-    this.applicativo = applicativo;
-  }
-
-  public ConnettoreApplicativoServer applicativo(String applicativo) {
-    this.applicativo = applicativo;
+  public BaseConnettoriMultipliStateless addConnettoriItem(ConnettoreMultiploStateless connettoriItem) {
+    this.connettori.add(connettoriItem);
     return this;
   }
 
@@ -77,10 +60,9 @@ public class ConnettoreApplicativoServer  implements OneOfApplicativoServerConne
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ConnettoreApplicativoServer {\n");
+    sb.append("class BaseConnettoriMultipliStateless {\n");
     
-    sb.append("    tipo: ").append(ConnettoreApplicativoServer.toIndentedString(this.tipo)).append("\n");
-    sb.append("    applicativo: ").append(ConnettoreApplicativoServer.toIndentedString(this.applicativo)).append("\n");
+    sb.append("    connettori: ").append(BaseConnettoriMultipliStateless.toIndentedString(this.connettori)).append("\n");
     sb.append("}");
     return sb.toString();
   }

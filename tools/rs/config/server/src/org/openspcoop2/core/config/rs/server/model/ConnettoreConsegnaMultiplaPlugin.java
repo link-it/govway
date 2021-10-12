@@ -26,13 +26,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ConnettorePlugin  implements OneOfApplicativoServerConnettore, OneOfBaseConnettoreMultiploConnettore, OneOfConnettoreErogazioneConnettore, OneOfConnettoreFruizioneConnettore {
+public class ConnettoreConsegnaMultiplaPlugin extends BaseConnettoriMultipliPlugin implements OneOfConnettoreErogazioneConnettoreMultiplo {
   
   @Schema(required = true, description = "")
-  private ConnettoreEnum tipo = null;
-  
-  @Schema(description = "")
-  private Boolean debug = false;
+  private ConnettoreMultiploEnum tipo = null;
   
   @Schema(required = true, description = "")
   private String plugin = null;
@@ -47,35 +44,16 @@ public class ConnettorePlugin  implements OneOfApplicativoServerConnettore, OneO
 @JsonProperty("tipo")
   @NotNull
   @Valid
-  public ConnettoreEnum getTipo() {
+  public ConnettoreMultiploEnum getTipo() {
     return this.tipo;
   }
 
-  public void setTipo(ConnettoreEnum tipo) {
+  public void setTipo(ConnettoreMultiploEnum tipo) {
     this.tipo = tipo;
   }
 
-  public ConnettorePlugin tipo(ConnettoreEnum tipo) {
+  public ConnettoreConsegnaMultiplaPlugin tipo(ConnettoreMultiploEnum tipo) {
     this.tipo = tipo;
-    return this;
-  }
-
- /**
-   * Get debug
-   * @return debug
-  **/
-  @JsonProperty("debug")
-  @Valid
-  public Boolean isDebug() {
-    return this.debug;
-  }
-
-  public void setDebug(Boolean debug) {
-    this.debug = debug;
-  }
-
-  public ConnettorePlugin debug(Boolean debug) {
-    this.debug = debug;
     return this;
   }
 
@@ -94,7 +72,7 @@ public class ConnettorePlugin  implements OneOfApplicativoServerConnettore, OneO
     this.plugin = plugin;
   }
 
-  public ConnettorePlugin plugin(String plugin) {
+  public ConnettoreConsegnaMultiplaPlugin plugin(String plugin) {
     this.plugin = plugin;
     return this;
   }
@@ -113,12 +91,12 @@ public class ConnettorePlugin  implements OneOfApplicativoServerConnettore, OneO
     this.proprieta = proprieta;
   }
 
-  public ConnettorePlugin proprieta(List<Proprieta> proprieta) {
+  public ConnettoreConsegnaMultiplaPlugin proprieta(List<Proprieta> proprieta) {
     this.proprieta = proprieta;
     return this;
   }
 
-  public ConnettorePlugin addProprietaItem(Proprieta proprietaItem) {
+  public ConnettoreConsegnaMultiplaPlugin addProprietaItem(Proprieta proprietaItem) {
     this.proprieta.add(proprietaItem);
     return this;
   }
@@ -127,12 +105,11 @@ public class ConnettorePlugin  implements OneOfApplicativoServerConnettore, OneO
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ConnettorePlugin {\n");
-    
-    sb.append("    tipo: ").append(ConnettorePlugin.toIndentedString(this.tipo)).append("\n");
-    sb.append("    debug: ").append(ConnettorePlugin.toIndentedString(this.debug)).append("\n");
-    sb.append("    plugin: ").append(ConnettorePlugin.toIndentedString(this.plugin)).append("\n");
-    sb.append("    proprieta: ").append(ConnettorePlugin.toIndentedString(this.proprieta)).append("\n");
+    sb.append("class ConnettoreConsegnaMultiplaPlugin {\n");
+    sb.append("    ").append(ConnettoreConsegnaMultiplaPlugin.toIndentedString(super.toString())).append("\n");
+    sb.append("    tipo: ").append(ConnettoreConsegnaMultiplaPlugin.toIndentedString(this.tipo)).append("\n");
+    sb.append("    plugin: ").append(ConnettoreConsegnaMultiplaPlugin.toIndentedString(this.plugin)).append("\n");
+    sb.append("    proprieta: ").append(ConnettoreConsegnaMultiplaPlugin.toIndentedString(this.proprieta)).append("\n");
     sb.append("}");
     return sb.toString();
   }

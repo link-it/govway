@@ -25,51 +25,28 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ConnettoreApplicativoServer  implements OneOfApplicativoServerConnettore, OneOfBaseConnettoreMultiploConnettore, OneOfConnettoreErogazioneConnettore {
+public class ConnettoreMultiploStateless extends BaseConnettoreMultiplo implements OneOfConnettoreMultiploDatiConnettore {
   
   @Schema(required = true, description = "")
-  private ConnettoreEnum tipo = null;
-  
-  @Schema(required = true, description = "")
-  private String applicativo = null;
+  private ConnettoreMultiploTipologiaEnum tipologia = null;
  /**
-   * Get tipo
-   * @return tipo
+   * Get tipologia
+   * @return tipologia
   **/
   @Override
-@JsonProperty("tipo")
+@JsonProperty("tipologia")
   @NotNull
   @Valid
-  public ConnettoreEnum getTipo() {
-    return this.tipo;
+  public ConnettoreMultiploTipologiaEnum getTipologia() {
+    return this.tipologia;
   }
 
-  public void setTipo(ConnettoreEnum tipo) {
-    this.tipo = tipo;
+  public void setTipologia(ConnettoreMultiploTipologiaEnum tipologia) {
+    this.tipologia = tipologia;
   }
 
-  public ConnettoreApplicativoServer tipo(ConnettoreEnum tipo) {
-    this.tipo = tipo;
-    return this;
-  }
-
- /**
-   * Get applicativo
-   * @return applicativo
-  **/
-  @JsonProperty("applicativo")
-  @NotNull
-  @Valid
- @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getApplicativo() {
-    return this.applicativo;
-  }
-
-  public void setApplicativo(String applicativo) {
-    this.applicativo = applicativo;
-  }
-
-  public ConnettoreApplicativoServer applicativo(String applicativo) {
-    this.applicativo = applicativo;
+  public ConnettoreMultiploStateless tipologia(ConnettoreMultiploTipologiaEnum tipologia) {
+    this.tipologia = tipologia;
     return this;
   }
 
@@ -77,10 +54,9 @@ public class ConnettoreApplicativoServer  implements OneOfApplicativoServerConne
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ConnettoreApplicativoServer {\n");
-    
-    sb.append("    tipo: ").append(ConnettoreApplicativoServer.toIndentedString(this.tipo)).append("\n");
-    sb.append("    applicativo: ").append(ConnettoreApplicativoServer.toIndentedString(this.applicativo)).append("\n");
+    sb.append("class ConnettoreMultiploStateless {\n");
+    sb.append("    ").append(ConnettoreMultiploStateless.toIndentedString(super.toString())).append("\n");
+    sb.append("    tipologia: ").append(ConnettoreMultiploStateless.toIndentedString(this.tipologia)).append("\n");
     sb.append("}");
     return sb.toString();
   }

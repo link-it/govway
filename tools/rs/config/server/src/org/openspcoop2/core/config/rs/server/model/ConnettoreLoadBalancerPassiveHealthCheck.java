@@ -25,51 +25,30 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ConnettoreApplicativoServer  implements OneOfApplicativoServerConnettore, OneOfBaseConnettoreMultiploConnettore, OneOfConnettoreErogazioneConnettore {
+public class ConnettoreLoadBalancerPassiveHealthCheck  {
   
-  @Schema(required = true, description = "")
-  private ConnettoreEnum tipo = null;
-  
-  @Schema(required = true, description = "")
-  private String applicativo = null;
+  @Schema(required = true, description = "durata dell'esclusione del connettore dal pool in secondi")
  /**
-   * Get tipo
-   * @return tipo
+   * durata dell'esclusione del connettore dal pool in secondi  
   **/
-  @Override
-@JsonProperty("tipo")
+  private Integer intervalloEsclusione = null;
+ /**
+   * durata dell'esclusione del connettore dal pool in secondi
+   * @return intervalloEsclusione
+  **/
+  @JsonProperty("intervallo_esclusione")
   @NotNull
   @Valid
-  public ConnettoreEnum getTipo() {
-    return this.tipo;
+  public Integer getIntervalloEsclusione() {
+    return this.intervalloEsclusione;
   }
 
-  public void setTipo(ConnettoreEnum tipo) {
-    this.tipo = tipo;
+  public void setIntervalloEsclusione(Integer intervalloEsclusione) {
+    this.intervalloEsclusione = intervalloEsclusione;
   }
 
-  public ConnettoreApplicativoServer tipo(ConnettoreEnum tipo) {
-    this.tipo = tipo;
-    return this;
-  }
-
- /**
-   * Get applicativo
-   * @return applicativo
-  **/
-  @JsonProperty("applicativo")
-  @NotNull
-  @Valid
- @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getApplicativo() {
-    return this.applicativo;
-  }
-
-  public void setApplicativo(String applicativo) {
-    this.applicativo = applicativo;
-  }
-
-  public ConnettoreApplicativoServer applicativo(String applicativo) {
-    this.applicativo = applicativo;
+  public ConnettoreLoadBalancerPassiveHealthCheck intervalloEsclusione(Integer intervalloEsclusione) {
+    this.intervalloEsclusione = intervalloEsclusione;
     return this;
   }
 
@@ -77,10 +56,9 @@ public class ConnettoreApplicativoServer  implements OneOfApplicativoServerConne
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ConnettoreApplicativoServer {\n");
+    sb.append("class ConnettoreLoadBalancerPassiveHealthCheck {\n");
     
-    sb.append("    tipo: ").append(ConnettoreApplicativoServer.toIndentedString(this.tipo)).append("\n");
-    sb.append("    applicativo: ").append(ConnettoreApplicativoServer.toIndentedString(this.applicativo)).append("\n");
+    sb.append("    intervalloEsclusione: ").append(ConnettoreLoadBalancerPassiveHealthCheck.toIndentedString(this.intervalloEsclusione)).append("\n");
     sb.append("}");
     return sb.toString();
   }

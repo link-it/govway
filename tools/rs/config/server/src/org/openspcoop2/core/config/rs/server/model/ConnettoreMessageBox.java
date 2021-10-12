@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ConnettoreMessageBox  implements OneOfApplicativoServerConnettore, OneOfConnettoreErogazioneConnettore {
+public class ConnettoreMessageBox  implements OneOfApplicativoServerConnettore, OneOfBaseConnettoreMultiploConnettore, OneOfConnettoreErogazioneConnettore {
   
   @Schema(required = true, description = "")
   private ConnettoreEnum tipo = null;

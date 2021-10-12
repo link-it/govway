@@ -25,13 +25,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ConnettoreApplicativoServer  implements OneOfApplicativoServerConnettore, OneOfBaseConnettoreMultiploConnettore, OneOfConnettoreErogazioneConnettore {
+public class ConnettoreConsegnaDestinatariMultipli extends BaseConnettoriMultipliPresaInCarico implements OneOfConnettoreErogazioneConnettoreMultiplo {
   
   @Schema(required = true, description = "")
-  private ConnettoreEnum tipo = null;
+  private ConnettoreMultiploEnum tipo = null;
   
-  @Schema(required = true, description = "")
-  private String applicativo = null;
+  @Schema(description = "")
+  private ConnettoreMultiploConfigurazioneCondizionalitaSelezioneConnettore consegnaCondizionale = null;
  /**
    * Get tipo
    * @return tipo
@@ -40,36 +40,35 @@ public class ConnettoreApplicativoServer  implements OneOfApplicativoServerConne
 @JsonProperty("tipo")
   @NotNull
   @Valid
-  public ConnettoreEnum getTipo() {
+  public ConnettoreMultiploEnum getTipo() {
     return this.tipo;
   }
 
-  public void setTipo(ConnettoreEnum tipo) {
+  public void setTipo(ConnettoreMultiploEnum tipo) {
     this.tipo = tipo;
   }
 
-  public ConnettoreApplicativoServer tipo(ConnettoreEnum tipo) {
+  public ConnettoreConsegnaDestinatariMultipli tipo(ConnettoreMultiploEnum tipo) {
     this.tipo = tipo;
     return this;
   }
 
  /**
-   * Get applicativo
-   * @return applicativo
+   * Get consegnaCondizionale
+   * @return consegnaCondizionale
   **/
-  @JsonProperty("applicativo")
-  @NotNull
+  @JsonProperty("consegna_condizionale")
   @Valid
- @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getApplicativo() {
-    return this.applicativo;
+  public ConnettoreMultiploConfigurazioneCondizionalitaSelezioneConnettore getConsegnaCondizionale() {
+    return this.consegnaCondizionale;
   }
 
-  public void setApplicativo(String applicativo) {
-    this.applicativo = applicativo;
+  public void setConsegnaCondizionale(ConnettoreMultiploConfigurazioneCondizionalitaSelezioneConnettore consegnaCondizionale) {
+    this.consegnaCondizionale = consegnaCondizionale;
   }
 
-  public ConnettoreApplicativoServer applicativo(String applicativo) {
-    this.applicativo = applicativo;
+  public ConnettoreConsegnaDestinatariMultipli consegnaCondizionale(ConnettoreMultiploConfigurazioneCondizionalitaSelezioneConnettore consegnaCondizionale) {
+    this.consegnaCondizionale = consegnaCondizionale;
     return this;
   }
 
@@ -77,10 +76,10 @@ public class ConnettoreApplicativoServer  implements OneOfApplicativoServerConne
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ConnettoreApplicativoServer {\n");
-    
-    sb.append("    tipo: ").append(ConnettoreApplicativoServer.toIndentedString(this.tipo)).append("\n");
-    sb.append("    applicativo: ").append(ConnettoreApplicativoServer.toIndentedString(this.applicativo)).append("\n");
+    sb.append("class ConnettoreConsegnaDestinatariMultipli {\n");
+    sb.append("    ").append(ConnettoreConsegnaDestinatariMultipli.toIndentedString(super.toString())).append("\n");
+    sb.append("    tipo: ").append(ConnettoreConsegnaDestinatariMultipli.toIndentedString(this.tipo)).append("\n");
+    sb.append("    consegnaCondizionale: ").append(ConnettoreConsegnaDestinatariMultipli.toIndentedString(this.consegnaCondizionale)).append("\n");
     sb.append("}");
     return sb.toString();
   }

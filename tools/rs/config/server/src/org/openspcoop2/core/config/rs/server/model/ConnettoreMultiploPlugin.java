@@ -19,57 +19,62 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import java.util.List;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ConnettoreApplicativoServer  implements OneOfApplicativoServerConnettore, OneOfBaseConnettoreMultiploConnettore, OneOfConnettoreErogazioneConnettore {
+public class ConnettoreMultiploPlugin extends BaseConnettoreMultiplo implements OneOfConnettoreMultiploDatiConnettore {
   
   @Schema(required = true, description = "")
-  private ConnettoreEnum tipo = null;
+  private ConnettoreMultiploTipologiaEnum tipologia = null;
   
-  @Schema(required = true, description = "")
-  private String applicativo = null;
+  @Schema(description = "")
+  private List<Proprieta> proprieta = null;
  /**
-   * Get tipo
-   * @return tipo
+   * Get tipologia
+   * @return tipologia
   **/
   @Override
-@JsonProperty("tipo")
+@JsonProperty("tipologia")
   @NotNull
   @Valid
-  public ConnettoreEnum getTipo() {
-    return this.tipo;
+  public ConnettoreMultiploTipologiaEnum getTipologia() {
+    return this.tipologia;
   }
 
-  public void setTipo(ConnettoreEnum tipo) {
-    this.tipo = tipo;
+  public void setTipologia(ConnettoreMultiploTipologiaEnum tipologia) {
+    this.tipologia = tipologia;
   }
 
-  public ConnettoreApplicativoServer tipo(ConnettoreEnum tipo) {
-    this.tipo = tipo;
+  public ConnettoreMultiploPlugin tipologia(ConnettoreMultiploTipologiaEnum tipologia) {
+    this.tipologia = tipologia;
     return this;
   }
 
  /**
-   * Get applicativo
-   * @return applicativo
+   * Get proprieta
+   * @return proprieta
   **/
-  @JsonProperty("applicativo")
-  @NotNull
+  @JsonProperty("proprieta")
   @Valid
- @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getApplicativo() {
-    return this.applicativo;
+  public List<Proprieta> getProprieta() {
+    return this.proprieta;
   }
 
-  public void setApplicativo(String applicativo) {
-    this.applicativo = applicativo;
+  public void setProprieta(List<Proprieta> proprieta) {
+    this.proprieta = proprieta;
   }
 
-  public ConnettoreApplicativoServer applicativo(String applicativo) {
-    this.applicativo = applicativo;
+  public ConnettoreMultiploPlugin proprieta(List<Proprieta> proprieta) {
+    this.proprieta = proprieta;
+    return this;
+  }
+
+  public ConnettoreMultiploPlugin addProprietaItem(Proprieta proprietaItem) {
+    this.proprieta.add(proprietaItem);
     return this;
   }
 
@@ -77,10 +82,10 @@ public class ConnettoreApplicativoServer  implements OneOfApplicativoServerConne
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ConnettoreApplicativoServer {\n");
-    
-    sb.append("    tipo: ").append(ConnettoreApplicativoServer.toIndentedString(this.tipo)).append("\n");
-    sb.append("    applicativo: ").append(ConnettoreApplicativoServer.toIndentedString(this.applicativo)).append("\n");
+    sb.append("class ConnettoreMultiploPlugin {\n");
+    sb.append("    ").append(ConnettoreMultiploPlugin.toIndentedString(super.toString())).append("\n");
+    sb.append("    tipologia: ").append(ConnettoreMultiploPlugin.toIndentedString(this.tipologia)).append("\n");
+    sb.append("    proprieta: ").append(ConnettoreMultiploPlugin.toIndentedString(this.proprieta)).append("\n");
     sb.append("}");
     return sb.toString();
   }

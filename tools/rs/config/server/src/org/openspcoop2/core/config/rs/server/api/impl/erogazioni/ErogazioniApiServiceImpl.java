@@ -61,6 +61,7 @@ import org.openspcoop2.core.config.rs.server.model.ConnettoreEnum;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreErogazione;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreHttp;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreMessageBox;
+import org.openspcoop2.core.config.rs.server.model.ConnettoreMultiplo;
 import org.openspcoop2.core.config.rs.server.model.Erogazione;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModI;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneViewItem;
@@ -258,6 +259,38 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 	}
 
 	/**
+	 * Aggiunta di un connettore multiplo nell'erogazione di API
+	 *
+	 * Questa operazione consente di aggiungere un connettore multiplo all'erogazione di API identificata dal nome e dalla versione
+	 *
+	 */
+	@Override
+	public void createErogazioneConnettoreMultiplo(ConnettoreMultiplo body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio, String gruppo) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+
+			// TODO: Implement...
+
+			context.getLogger().info("Invocazione completata con successo");
+
+			// Bug Fix: altrimenti viene generato 204
+			context.getServletResponse().setStatus(201);
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+	}
+
+	/**
 	 * Elimina un'erogazione di api
 	 *
 	 * Questa operazione consente di eliminare un'erogazione di API identificata dal
@@ -336,6 +369,37 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+	}
+
+	/**
+	 * Elimina un connettore multiplo dall&#x27;erogazione
+	 *
+	 * Questa operazione consente di eliminare un connettore multiplo associato all&#x27;erogazione di API identificata dal nome e dalla versione
+	 *
+	 */
+	@Override
+	public void deleteErogazioneConnettoreMultiplo(String nome, Integer versione, String nomeConnettore, ProfiloEnum profilo, String soggetto, String tipoServizio, String gruppo) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+
+			// TODO: Implement...
+
+			context.getLogger().info("Invocazione completata con successo");
+
+
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
 	}
@@ -647,6 +711,37 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+	}
+
+	/**
+	 * Restituisce il dettaglio di un connettore multiplo
+	 *
+	 * Questa operazione consente di ottenere il dettaglio di un connettore multiplo dell&#x27;erogazione di API identificata dal nome e dalla versione
+	 *
+	 */
+	@Override
+	public ConnettoreMultiplo getErogazioneConnettoreMultiplo(String nome, Integer versione, String nomeConnettore, ProfiloEnum profilo, String soggetto, String tipoServizio, String gruppo) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+
+			// TODO: Implement...
+
+			context.getLogger().info("Invocazione completata con successo");
+			return null;
+
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
 	}
@@ -1209,6 +1304,37 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 		
 		//TODO definire i tipi di cui non so
 		return TipiConnettore.DISABILITATO.getNome();
+	}
+
+	/**
+	 * Modifica i dati di un connettore multiplo dell&#x27;erogazione
+	 *
+	 * Questa operazione consente di aggiornare i dettagli di un connettore multiplo associato all&#x27;erogazione di API identificata dal nome e dalla versione
+	 *
+	 */
+	@Override
+	public void updateErogazioneConnettoreMultiplo(ConnettoreMultiplo body, String nome, Integer versione, String nomeConnettore, ProfiloEnum profilo, String soggetto, String tipoServizio, String gruppo) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+
+			// TODO: Implement...
+
+			context.getLogger().info("Invocazione completata con successo");
+
+
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
 	}
 
 	/**
