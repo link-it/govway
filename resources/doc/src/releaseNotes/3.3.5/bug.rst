@@ -9,20 +9,19 @@ Sono stati risolti i seguenti bug:
 
 - Aggiornate librerie bouncy castle alla versione 1.69 per risolvere la problematica che avveniva casualmente dopo aver aggiornato OpenJDK ad una versione superiore alla 11.0.8; la seguente eccezione occorreva di rado su invocazioni in https: "arraycopy: last source index 32 out of bounds for byte[31] at java.base/sun.security.ssl.Alert.createSSLException"
 
-- È stato risolto un problema presente nella libreria xPath disponibile tra le funzioni built-in nelle trasformazioni. Quando si estraeva frammenti di elementi xml, eventuali entity reference presenti nei valori degli elementi estratti venivano erroneamente risolti. La risoluzione poteva comportare una generazione di un frammento xml sintatticamente non valido. Ad esempio se nella trasformazione si utilizzava il frammento xml '<descrizione>Esempio con &lt;30</descrizione>' per comporre un nuovo xml, si otteneva un errore di parsing poichè l'entity reference presente nella descrizione '&lt;30' veniva risolta con il carattere '<' comportando quindi la generazione di un elemento xml malformato: '<descrizione>Esempio con <30</descrizione>'.
+- È stato risolto un problema presente nella libreria xPath disponibile tra le funzioni built-in nelle trasformazioni. Quando si estraevano frammenti di elementi xml, eventuali entity reference presenti nei valori degli elementi estratti venivano erroneamente risolti. La risoluzione poteva comportare una generazione di un frammento xml sintatticamente non valido. Ad esempio se nella trasformazione si utilizzava il frammento xml '<descrizione>Esempio con &lt;30</descrizione>' per comporre un nuovo xml, si otteneva un errore di parsing poichè l'entity reference presente nella descrizione '&lt;30' veniva risolta con il carattere '<' comportando quindi la generazione di un elemento xml malformato: '<descrizione>Esempio con <30</descrizione>'.
 
-- La risoluzione dinamica dell'endpoint dei connettori http/https e dei path sul connettore file non consentiva di utilizzare i valori di header HTTP e/o parametri della url ricevuti, se questi non venivano serializzati verso il backend. È stata inoltre aggiunta la possibiltà di utilizzare una espressione regolare applicata sull'url di invocazione, nella definizione dell'endpoint di un connettore.
+- La risoluzione dinamica dell'endpoint dei connettori http/https e dei path sul connettore 'file' non consentiva di utilizzare i valori di header HTTP e/o parametri della url ricevuti, se questi non venivano serializzati verso il backend. È stata inoltre aggiunta la possibilità di utilizzare una espressione regolare applicata all'url di invocazione, nella definizione dell'endpoint di un connettore.
 
-- Le richieste ricevute prima del corretto startup di GovWay, provocano una inizializzazione non corretta degli handler. Con la risoluzione della problematica le richieste ricevute prima dello startup rimangono in attesa che il gateway sia completamente inizializzato prima di essere processate.
+- Le richieste ricevute prima del completamento dello startup di GovWay, provocano una inizializzazione non corretta degli handler. Il problema è stato risolto facendo in modo che le richieste ricevute prima dello startup rimangano in attesa che il gateway sia completamente inizializzato prima di essere processate.
 
 - La registrazione della transazione falliva, con l'errore riportato di seguito, se l'erogazione era configurata con diversi connettori multipli in cui la somma dei nomi superava i 2000 caratteri: org.openspcoop2.generic_project.exception.ServiceException: ERRORE: il valore è troppo lungo per il tipo character varying(2000)
 
-- Migliorati log emessi in casi di errore avvenuto durante l'aggiornamento dell'esito della consegna di un connettore multiplo o durante l'aggiornamento della transazione che raggruppa le varie consegne multiple.
+- Migliorati log emessi in casi di errore avvenuti durante l'aggiornamento dell'esito della consegna di un connettore multiplo o durante l'aggiornamento della transazione che raggruppa le varie consegne multiple.
 
 - Su API REST, se in un handler si aggiungeva alle proprietà del trasporto (direttamente e non tramite i metodi 'forceHeader') un header http che non risiedeva in black list si otteneva un errore simile al seguente: "java.util.ConcurrentModificationException: null at java.util.ArrayList$Itr.checkForComodification(ArrayList.java:1042)..."
 
-- In una configurazione, senza connettori multipli, dove era stato abilitato il salvataggio dei messaggi su MessageBox, se avveniva un'eliminazione di un messaggio via Integration Manager o per scadenza naturale si otteneva un errore simile al seguente: ERROR <23-09-2021 16:03:00> [id:4eccbf4e-181a-11ec-b5a0-00505686878f][sa:gw_SOGGETTO/gw_SERVIZIO/v1][null] 'aggiornaInformazioneConsegnaTerminata' non riuscta. Tutti gli intervalli di update non hanno comportato un aggiornamento della transazione
- 
+- In una configurazione senza connettori multipli, dove era stato abilitato il salvataggio dei messaggi su MessageBox, in occasione dell'eliminazione di un messaggio via Integration Manager o per scadenza naturale, si otteneva un errore simile al seguente: ERROR <23-09-2021 16:03:00> [id:4eccbf4e-181a-11ec-b5a0-00505686878f][sa:gw_SOGGETTO/gw_SERVIZIO/v1][null] 'aggiornaInformazioneConsegnaTerminata' non riuscta. Tutti gli intervalli di update non hanno comportato un aggiornamento della transazione.
 
 
 Per quanto concerne il Profilo 'Fatturazione Elettronica' sono stati risolti i seguenti bug:
@@ -33,8 +32,6 @@ Per quanto concerne il Profilo 'Fatturazione Elettronica' sono stati risolti i s
 Per quanto concerne il Profilo 'SPCoop' sono stati risolti i seguenti bug:
 
 - Durante il restyling grafico delle liste accessibili dal menù principale, relativamente agli Applicativi e realizzato con il rilascio della versione 3.3.3, è venuta meno la possibilità di configurare i connettori relativi alla 'Risposta Asincrona' richiesti dai profili asincroni. La problematica è stata risolta.
-
-
 
 
 Per la console di gestione sono stati risolti i seguenti bug:
@@ -50,13 +47,11 @@ Per la console di gestione sono stati risolti i seguenti bug:
 
 - La console non consentiva di aggiungere credenziali (es. un certificato x.509) ad un soggetto creato precedentemente senza.
 
-- Il dialog informativo, che riporta le credenziali http-basic o api-key, non visualizzava correttamente credenziali che possedevano caratteri particolari come le doppie virgolette.
-	
+- Il dialog informativo, che riporta le credenziali http-basic o api-key, non visualizzava correttamente credenziali che possedevano caratteri particolari come i doppi apici.
+
 - La creazione di un nuovo gruppo, in un'erogazione, non andava a buon fine se durante la creazione veniva scelto di ereditare le configurazioni di un gruppo non predefinito, configurato per utilizzare un connettore ridefinito con consegna multipla.
 
 - La funzionalità 'Importa' non gestiva correttamente l'importazione di fruizioni in cui era stato ridefinito il connettore, per specifiche azioni/risorse, attraverso l'utilizzo della tipologia 'https'.
-
-
 
 
 Per la console di monitoraggio sono stati risolti i seguenti bug:
@@ -74,5 +69,4 @@ Per la console di monitoraggio sono stati risolti i seguenti bug:
 	- la funzionalità di esportazione tramite la voce 'seleziona tutti' non considerava gli eventuali filtri impostati su API e Tag;
 
 	- non venivano riportati i dati del connettore se questo veniva ridefinito in un gruppo di una fruizione.
-
 

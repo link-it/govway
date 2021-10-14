@@ -11,7 +11,7 @@ Sono stati apportati i seguenti miglioramenti alla console di gestione:
 
 - tra i criteri di ricerca, negli Applicativi e nei Soggetti, è adesso possibile indicare oltre al tipo di credenziale (https/http-basic/principal) anche il valore stesso della credenziale (es. CN del certificato X.509);
 
-- la maschera di gestione del controllo degli accessi di una Erogazione o Fruizione è stata ottimizzata al fine di espandere solamente le sezioni per cui è stata abilitata una funzionalità;
+- la maschera di gestione del controllo degli accessi di una Erogazione o Fruizione è stata ottimizzata in modo da espandere solamente le sezioni per cui è stata abilitata una funzionalità;
 
 - aggiunto al widget che consente di caricare un file sulla console la possibilità di rimuovere tale scelta;
 

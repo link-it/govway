@@ -13,9 +13,9 @@ Sono stati apportati i seguenti miglioramenti:
 	
 		- possibilità di personalizzare ulteriori claim (compresi 'sub' e 'iss' e 'client_id') anche solo in uno dei due header;
 
-	- aspetti configurabili in fase di validazion del token:
+	- aspetti configurabili in fase di validazione del token:
 
-		- selezione dell'header dove estrarre l'identificativo 'jti' utilizzato per filtrare le richieste duplicate;
+		- selezione dell'header da cui estrarre l'identificativo 'jti' utilizzato per filtrare le richieste duplicate;
 
 		- indicare un audience atteso differente tra i due token.
 
@@ -27,12 +27,11 @@ Sono stati apportati i seguenti miglioramenti:
 
 - *Validazione Audience Risposta*: come audience atteso per un token della risposta è adesso possibile configurare un valore statico sulla fruizione, invece di usare il valore associato ad ogni applicativo fruitore;
 
-- *TTL in Validazione*: sulla singola erogazione (configurazione 'ModI' della richiesta) o sulla fruizione (configurazione 'Modi' della risposta) è adesso possibile configurate un intervallo temporale (in secondi) per cui i token creati precedentemente all'intervallo indicato verranno rifiutati; la nuova opzione consente di sovrascrivere la configurazione di default in cui i token vengono rifiutati se sono stati creati da più di 5 minuti;
+- *TTL in Validazione*: sulla singola erogazione (configurazione 'ModI' della richiesta) o sulla fruizione (configurazione 'Modi' della risposta) è adesso possibile configurare un intervallo temporale (in secondi) per cui i token creati precedentemente all'intervallo indicato verranno rifiutati; la nuova opzione consente di sovrascrivere la configurazione di default in cui i token vengono rifiutati se sono stati creati da più di 5 minuti;
 
-- *Token Sicurezza nelle Tracce*: è stato modificato il comportamento di default di GovWay il quale non salva più i token di sicurezza scambiati;
+- *Token Sicurezza nelle Tracce*: in accordo a quanto richiesto dalle linee guida ModI, è stato modificato il comportamento di default di GovWay il quale non salva più i token di sicurezza scambiati;
 
-- *Multi-Tenant Intra-Dominio con modalità 'FileSystem'*: nella registrazione degli applicativi client sul profilo ModI, nella sezione relativa alla sicurezza messaggio, è adesso possibile caricare il certificato anche con la modalità 'file-system' e 'hsm'. Il caricamento del certificato consente la corretta identificazione dell'applicativo su un altro dominio gestito sempre nel solito govway.
-
+- *Multi-Tenant Intra-Dominio con modalità 'FileSystem'*: nella registrazione degli applicativi client sul profilo ModI, nella sezione relativa alla sicurezza messaggio, è adesso possibile caricare il certificato anche con la modalità 'filesystem' e 'hsm'. Il caricamento del certificato consente la corretta identificazione dell'applicativo su un altro dominio gestito sempre nella stessa installazione govway.
 
 Sono inoltre stati risolti i seguenti problemi:
 
@@ -41,11 +40,11 @@ Sono inoltre stati risolti i seguenti problemi:
 
 Sono stati infine apportati i seguenti miglioramenti alla console di gestione:
 
-- nei criteri di ricerca delle API, delle Erogazioni e delle Fruizioni è stata aggiunta una sezione dedicata al profilo 'ModI' che consente di filtrare per pattern di sicurezza canale, sicurezza messaggio, digest della richiesta, e informazioni utente. Inoltre nelle Erogazioni/Fruizioni è consentito filtrare per keystore e audience;
+- nei criteri di ricerca delle API, delle Erogazioni e delle Fruizioni è stata aggiunta una sezione dedicata al profilo 'ModI' che consente di filtrare per pattern di sicurezza canale, sicurezza messaggio, digest della richiesta e informazioni utente. Inoltre nelle Erogazioni/Fruizioni è consentito filtrare per keystore e audience;
 
-- nei criteri di ricerca degli Applicativi è stata aggiunta una sezione dedicata al profilo 'ModI' che consente di individuare gli applicativi dove è stata abilitata la sicurezza messaggio. La sezione consente anche di filtrare per keystore e identificativo client inserito nel token di sicurezza ModI;
+- nei criteri di ricerca degli Applicativi è stata aggiunta una sezione dedicata al profilo 'ModI' che consente di individuare gli applicativi per i quali è stata abilitata la sicurezza messaggio. La sezione consente anche di filtrare per keystore e identificativo client inserito nel token di sicurezza ModI;
 
-- è stato aggiunto il criterio di espandere o richiudere le sezioni 'Informazioni Utente' e 'Contemporaneità Token Authorization e Agid-JWT-Signature' presenti nella configurazione ModI delle Erogazioni o delle Fruizioni.
+- è stato aggiunta la possibilità di espandere o richiudere le sezioni 'Informazioni Utente' e 'Contemporaneità Token Authorization e Agid-JWT-Signature' presenti nella configurazione ModI delle Erogazioni o delle Fruizioni.
 
 
 
