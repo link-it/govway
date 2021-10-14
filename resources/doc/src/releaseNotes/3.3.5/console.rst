@@ -13,6 +13,8 @@ Sono stati apportati i seguenti miglioramenti alla console di gestione:
 
 - la maschera di gestione del controllo degli accessi di una Erogazione o Fruizione è stata ottimizzata al fine di espandere solamente le sezioni per cui è stata abilitata una funzionalità;
 
+- aggiunto al widget che consente di caricare un file sulla console la possibilità di rimuovere tale scelta;
+
 - tra le informazioni visualizzate per il certificato associato ad un soggetto o ad un applicativo è adesso presente anche il serial number in formato Hex;
 
 - nella maschera di dettaglio di una erogazione o fruizione, in presenza di un connettore di lunghezza superiore ai 150 caratteri viene visualizzata una informazione troncata contenente il suffisso ' ...'; lo stesso accorgimento è stato adottato nelle liste degli header HTTP e dei parametri della URL configurabili nelle trasformazioni.
