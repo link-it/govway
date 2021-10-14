@@ -27,6 +27,8 @@
 		<module>wildfly21</module>
 		<module>wildfly22</module>
 		<module>wildfly23</module>
+		<module>wildfly24</module>
+		<module>wildfly25</module>
 		<module>tomcat9</module>
 	</modules>
 

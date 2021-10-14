@@ -112,10 +112,11 @@
         <comment displayText=""/>
         
         <!-- <comment displayText="Application Server" bold="true"/>  sotto come display c'era tipo -->
-        <large-select defaultValue="wildfly22" property="antinstaller_as" displayText="Application Server">
+        <large-select defaultValue="wildfly25" property="antinstaller_as" displayText="Application Server">
       
 		<!-- Uniformare i valori quando la compilazione e' identica -->
-		<option value="wildfly22" text="WildFly 22-23"/>
+		<option value="wildfly25" text="WildFly 25"/>
+		<option value="wildfly22" text="WildFly 22-24"/>
 		<option value="wildfly18" text="WildFly 18-21"/>
 		<!--
 			Deprecati: 10, 11, 12, 13, 14, 15, 15, 17
@@ -177,10 +178,11 @@
         <comment displayText=""/>
         
         <!-- <comment displayText="Application Server" bold="true"/>  sotto come display c'era tipo -->
-        <large-select defaultValue="wildfly22" property="antinstaller_as" displayText="Application Server">
+        <large-select defaultValue="wildfly25" property="antinstaller_as" displayText="Application Server">
       
 		<!-- Uniformare i valori quando la compilazione e' identica -->
-		<option value="wildfly22" text="WildFly 22-23"/>
+		<option value="wildfly25" text="WildFly 25"/>
+		<option value="wildfly22" text="WildFly 22-24"/>
 		<option value="wildfly18" text="WildFly 18-21"/>
 		<!--
 			Deprecati: 10, 11, 12, 13, 14, 15, 16, 17

@@ -17679,6 +17679,35 @@ public class OpenSPCoop2Properties {
 	
 	
 	
+	/* ------------- FORMURLEncoder  ---------------------*/
+	
+	private static Boolean isWildflyUndertowClientCertificateFilterEnabled = null;
+	public boolean isWildflyUndertowClientCertificateFilterEnabled(){
+
+		String pName = "org.openspcoop2.pdd.wildflyUndertowClientCertificateFilter.enabled";
+		if(OpenSPCoop2Properties.isWildflyUndertowClientCertificateFilterEnabled==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isWildflyUndertowClientCertificateFilterEnabled = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isWildflyUndertowClientCertificateFilterEnabled = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isWildflyUndertowClientCertificateFilterEnabled = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isWildflyUndertowClientCertificateFilterEnabled;
+	}
+	
+	
+	
 	
 	/* ------------- SEMAPHORE  ---------------------*/
 	

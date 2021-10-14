@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.lang.reflect.Method;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.Provider;
@@ -52,6 +53,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509KeyManager;
 import javax.net.ssl.X509TrustManager;
+import javax.servlet.http.HttpServletRequest;
 
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.openspcoop2.utils.Utilities;
@@ -803,5 +805,56 @@ public class SSLUtilities {
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(), e);
 		}
+	}
+	
+	public static java.security.cert.X509Certificate[] readCertificatesFromUndertowServlet(HttpServletRequest req) {
+		return readCertificatesFromUndertowServlet(req, null);
+	}
+	public static java.security.cert.X509Certificate[] readCertificatesFromUndertowServlet(HttpServletRequest req, Logger log) {
+		try {
+			if("io.undertow.servlet.spec.HttpServletRequestImpl".equals(req.getClass().getName())) {
+				
+				// io/undertow/server/HttpServerExchange.java
+				Method mExchange = req.getClass().getMethod("getExchange");
+				if(mExchange!=null) {
+					Object exchange = mExchange.invoke(req);
+					if(exchange!=null) {
+						//System.out.println("Exchange ["+exchange.getClass().getName()+"]");
+						
+						// io/undertow/server/ServerConnection.java
+						Method mConnection = exchange.getClass().getMethod("getConnection");
+						if(mConnection!=null) {
+							Object connection = mConnection.invoke(exchange);
+							if(connection!=null) {
+								//System.out.println("Connection ["+connection.getClass().getName()+"]");
+								
+								// io/undertow/server/SSLSessionInfo.java
+								Method mSSLSessionInfo = connection.getClass().getMethod("getSslSessionInfo");
+								if(mSSLSessionInfo!=null) {
+									Object sslSessionInfo = mSSLSessionInfo.invoke(connection);
+									if(sslSessionInfo!=null) {
+										//System.out.println("sslSessionInfo ["+sslSessionInfo.getClass().getName()+"]");
+										
+										Method mPeerCertificates = sslSessionInfo.getClass().getMethod("getPeerCertificates");
+										if(mPeerCertificates!=null) {
+											Object peerCertificates = mPeerCertificates.invoke(sslSessionInfo);
+											if(peerCertificates instanceof java.security.cert.X509Certificate[]) {
+												//System.out.println("FOUND!");
+												return (java.security.cert.X509Certificate[]) peerCertificates;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}catch(Throwable t) {
+			if(log!=null) {
+				log.error("readCertificatesFromUndertowServlet failed: "+t.getMessage(),t);
+			}
+		}
+		return null;
 	}
 }

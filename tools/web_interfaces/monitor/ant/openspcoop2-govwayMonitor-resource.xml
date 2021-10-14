@@ -292,6 +292,8 @@
 					<or>
 						<matches string="${as}" pattern="wildfly22"/>
 						<matches string="${as}" pattern="wildfly23"/>
+						<matches string="${as}" pattern="wildfly24"/>
+						<matches string="${as}" pattern="wildfly25"/>
 					</or>
 					<then>
 						<concat destfile="${build_govwayMonitor_war}/WEB-INF/jboss-deployment-structure.xml" append="yes">

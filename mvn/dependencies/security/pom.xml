@@ -17,8 +17,9 @@
 
 		<jar.group.name>security</jar.group.name>
 		
-		<bcpkix-jdk15on.version>1.68</bcpkix-jdk15on.version>
-		<bcprov-ext-jdk15on.version>1.68</bcprov-ext-jdk15on.version>
+		<bcpkix-jdk15on.version>1.69</bcpkix-jdk15on.version>
+		<bcprov-ext-jdk15on.version>1.69</bcprov-ext-jdk15on.version>
+		<bcutil-jdk15on.version>1.69</bcutil-jdk15on.version>
 		<cryptacular.version>1.2.4</cryptacular.version>
 		<herasaf-xacml-core.version>1.0.4.RELEASE</herasaf-xacml-core.version>
 		<jasypt.version>1.9.3</jasypt.version>
@@ -47,6 +48,18 @@
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-ext-jdk15on</artifactId>
 			<version>${bcprov-ext-jdk15on.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcutil-jdk15on</artifactId>
+			<version>${bcutil-jdk15on.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

@@ -1,3 +1,11 @@
+2021-10-14 Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto bug OP-1262
+	(Aggiornate librerie bouncy castle alla versione 1.69 per risolvere la problematica)
+	Dopo aver aggiornato OpenJDK ad una versione superiore alla 11.0.8, raramente avveniva la seguente eccezione per invocazioni in https:
+	"arraycopy: last source index 32 out of bounds for byte[31] at java.base/sun.security.ssl.Alert.createSSLException"
+
 2021-10-12  Giovanni Bussu <bussu@link.it>
 
 	* [ApiRsConfigurazione]

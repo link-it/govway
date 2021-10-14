@@ -27,6 +27,8 @@
 					<or>
 						<matches string="${as}" pattern="wildfly22"/>
 						<matches string="${as}" pattern="wildfly23"/>
+						<matches string="${as}" pattern="wildfly24"/>
+						<matches string="${as}" pattern="wildfly25"/>
 					</or>
 					<then>
 						<copy file="${src_govwayConfigApiRS}/WEB-INF/${jboss_deployment_structure}.wildfly2" 
@@ -153,8 +155,9 @@
 
 			<lib dir="${openspcoop2.lib}/security">
 				<include name="herasaf-xacml-core-1.0.4.RELEASE.jar"/>
-				<include name="bcpkix-jdk15on-1.68.jar"/>
-				<include name="bcprov-ext-jdk15on-1.68.jar"/>
+				<include name="bcpkix-jdk15on-1.69.jar"/>
+				<include name="bcprov-ext-jdk15on-1.69.jar"/>
+				<include name="bcutil-jdk15on-1.69.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
 			</lib>
 			

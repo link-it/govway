@@ -21,6 +21,14 @@
 	<filter-class>org.openspcoop2.pdd.services.connector.FormUrlEncodedFilter</filter-class>
 	</filter>
 
+	<!-- 
+		ClientCertificateFilter: recupera il certificato client dalle classi interne di Undertow (wildfly)
+	-->
+	<filter>
+	<filter-name>ClientCertificateFilter</filter-name>
+	<filter-class>org.openspcoop2.pdd.services.connector.ClientCertificateFilter</filter-class>
+	</filter>
+
 	<!-- IntegrationManagerEngine -->
 	<filter>
     	<filter-name>IntegrationManagerEngineFilter</filter-name>
@@ -41,6 +49,14 @@
 	-->
 	<filter-mapping>
 		<filter-name>UrlEncodedFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!-- 
+		ClientCertificateFilter: recupera il certificato client dalle classi interne di Undertow (wildfly)
+	-->
+	<filter-mapping>
+		<filter-name>ClientCertificateFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	

@@ -54,7 +54,61 @@ Esempio di connettore da impostare nel file standalone/configuration/standalone.
 
 
 
-Esempio di connettore da impostare nel file standalone/configuration/standalone.xml (standalone/configuration/standalone-full.xml) di Wildfly:
+Esempio di connettore da impostare nel file standalone/configuration/standalone.xml (standalone/configuration/standalone-full.xml) da Wildfly 25 (Elytron subsystem):
+
+    <subsystem xmlns="urn:wildfly:elytron:xx" ....>
+            <providers>
+		...
+	    </sasl>
+            <tls>
+                <key-stores>
+                    <key-store name="applicationKS">
+			...
+                    </key-store>
+		    <key-store name="openspcoop2KeyStore">
+		        <credential-reference clear-text="openspcoop"/>
+		        <implementation type="JKS"/>
+		        <file path="/etc/govway/keys/erogatore.jks"/>
+		    </key-store>
+                </key-stores>
+                <key-managers>
+                    <key-manager name="applicationKM" ...>
+                        ...
+                    </key-manager>
+		    <key-manager name="openspcoop2KeyManager" key-store="openspcoop2KeyStore" alias-filter="erogatore">
+		        <credential-reference clear-text="openspcoop"/> <!-- password chiave privata -->
+		    </key-manager>
+                </key-managers>
+                <server-ssl-contexts>
+                    <server-ssl-context name="applicationSSC" .../>
+		    <server-ssl-context name="openspcoop2noClientAuthSSC" need-client-auth="false" key-manager="openspcoop2KeyManager" />
+                </server-ssl-contexts>
+            </tls>
+    </subsystem> 
+    ...
+    <profile>
+        ...
+	<subsystem xmlns="urn:jboss:domain:undertow:1.0">
+		<http-listener name="default" socket-binding="http"/>
+                ...
+		<https-listener name="httpsNoClientAuth" socket-binding="httpsNoClientAuth" ssl-context="openspcoop2noClientAuthSSC"/>
+            	...
+		<host ...>
+			...
+		</<host>
+        </subsystem>
+        ...
+    </profile>
+    ....
+    <socket-binding-group name="standard-sockets" default-interface="public" port-offset="${jboss.socket.binding.port-offset:0}">
+        ...
+        <socket-binding name="httpsNoClientAuth" port="${jboss.https.port:8445}"/>
+        ...
+    </socket-binding-group>
+
+
+
+Esempio di connettore da impostare nel file standalone/configuration/standalone.xml (standalone/configuration/standalone-full.xml) di Wildfly (10-24):
 
 
     <management>

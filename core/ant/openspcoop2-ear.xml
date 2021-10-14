@@ -18,8 +18,9 @@
 	<target name="build_manifest" description="Crea il Manifest di OpenSPCoop2">
 		
 		<var name="tmp_prefix" value="lib" />
-		<var name="tmp" value="${tmp_prefix}/bcprov-ext-jdk15on-1.68.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/bcpkix-jdk15on-1.68.jar"/>
+		<var name="tmp" value="${tmp_prefix}/bcprov-ext-jdk15on-1.69.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/bcpkix-jdk15on-1.69.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/bcutil-jdk15on-1.69.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-codec-1.14.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections-3.2.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections4-4.4.jar"/>
@@ -477,7 +478,19 @@
 				    <param name="file" value="${build}/tmp/govway.properties"/>
 					<param name="token" value="org.openspcoop2.pdd.core.soap.tunnelSOAP.mailcap.load"/>
 					<param name="value" value="true"/>
-				</antcall>	
+				</antcall>
+				<if>
+					<or>
+						<matches string="${as}" pattern="wildfly25"/>
+					</or>
+					<then>
+						<antcall target="set_property">
+						    <param name="file" value="${build}/tmp/govway.properties"/>
+							<param name="token" value="org.openspcoop2.pdd.wildflyUndertowClientCertificateFilter.enabled"/>
+							<param name="value" value="true"/>
+						</antcall>
+					</then>
+				</if>
 				<concat destfile="${build}/tmp/govway.properties" append="yes" >
 
 # ----- Personalizzazione Timer EJB Name per JBoss7.x/WildFly -------------
@@ -526,6 +539,8 @@
 				<matches string="${as}" pattern="wildfly21"/>
 				<matches string="${as}" pattern="wildfly22"/>
 				<matches string="${as}" pattern="wildfly23"/>
+				<matches string="${as}" pattern="wildfly24"/>
+				<matches string="${as}" pattern="wildfly25"/>
 			</or>
 			<then>
 				<unzip src="${required_lib}/shared/mailapi-1.6.4.jar" dest="${build}/tmp/mailapi"/>
@@ -657,6 +672,8 @@
 							<or>
 								<matches string="${as}" pattern="wildfly22"/>
 								<matches string="${as}" pattern="wildfly23"/>
+								<matches string="${as}" pattern="wildfly24"/>
+								<matches string="${as}" pattern="wildfly25"/>
 							</or>
 							<then>
 								<copy file="${src}/META-INF/jboss-deployment-structure.xml.wildfly2" tofile="${build}/tmp/jboss-deployment-structure.xml" />
@@ -799,8 +816,9 @@
 				<include name="commons-compress-1.21.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/security">
-				<include name="bcprov-ext-jdk15on-1.68.jar"/>
-				<include name="bcpkix-jdk15on-1.68.jar"/>
+				<include name="bcprov-ext-jdk15on-1.69.jar"/>
+				<include name="bcpkix-jdk15on-1.69.jar"/>
+				<include name="bcutil-jdk15on-1.69.jar"/>
 				<include name="neethi-3.1.1.jar"/>
 				<include name="xmlsec-2.1.4.jar"/>
 				<include name="cryptacular-1.2.4.jar"/>

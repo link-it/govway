@@ -40,7 +40,7 @@ Esempio di connettore da impostare nel file standalone/configuration/standalone.
                 <ssl name="httpsBilanciato" password="openspcoop" certificate-key-file="/etc/govway/keys/erogatore.jks" verify-client="true"/>
             </connector>
 	    ...
-	    <virtual-server ...
+	    <virtual-server ...>
             </virtual-server>
         </subsystem>
 	...
@@ -53,8 +53,78 @@ Esempio di connettore da impostare nel file standalone/configuration/standalone.
     </socket-binding-group>
 
 
+Esempio di connettore da impostare nel file standalone/configuration/standalone.xml (standalone/configuration/standalone-full.xml) da Wildfly 25 (Elytron subsystem):
 
-Esempio di connettore da impostare nel file standalone/configuration/standalone.xml (standalone/configuration/standalone-full.xml) di Wildfly:
+    <subsystem xmlns="urn:wildfly:elytron:xx" ....>
+            <providers>
+		...
+	    </sasl>
+            <tls>
+                <key-stores>
+                    <key-store name="applicationKS">
+			...
+                    </key-store>
+		    <key-store name="openspcoop2KeyStore">
+		        <credential-reference clear-text="openspcoop"/>
+		        <implementation type="JKS"/>
+		        <file path="/etc/govway/keys/erogatore.jks"/>
+		    </key-store>
+		    <key-store name="openspcoop2TrustStore">
+		        <credential-reference clear-text="openspcoop"/>
+		        <implementation type="JKS"/>
+		        <file path="/etc/govway/keys/erogatore.jks"/>
+		    </key-store>
+                </key-stores>
+                <key-managers>
+                    <key-manager name="applicationKM" ...>
+                        ...
+                    </key-manager>
+		    <key-manager name="openspcoop2KeyManager" key-store="openspcoop2KeyStore" alias-filter="erogatore">
+		        <credential-reference clear-text="openspcoop"/> <!-- password chiave privata -->
+		    </key-manager>
+                </key-managers>
+		<trust-managers>
+		    <trust-manager name="openspcoop2TrustManager" key-store="openspcoop2TrustStore"/>
+        	</trust-managers>
+                <server-ssl-contexts>
+                    <server-ssl-context name="applicationSSC" .../>
+		    <server-ssl-context name="openspcoop2withClientAuthSSC" need-client-auth="true" key-manager="openspcoop2KeyManager" trust-manager="openspcoop2TrustManager"/>
+                </server-ssl-contexts>
+            </tls>
+    </subsystem> 
+    ...
+    <profile>
+        ...
+        <subsystem xmlns="urn:jboss:domain:undertow:1.0">
+	   ...
+	   <server name="default-server">
+                <http-listener name="default" socket-binding="http"/>
+                ...
+		<https-listener name="httpsBilanciato" socket-binding="httpsBilanciato" ssl-context="openspcoop2withClientAuthSSC" />
+                ...
+                <host ...>
+                        ...
+                </<host>
+            </server>
+            ....
+            <application-security-domains>
+                <!-- 
+			Commentare il security-domain, altrimenti le invocazioni con un certificato client
+			<application-security-domain name="other" security-domain="ApplicationDomain"/> 
+		-->
+            </application-security-domains>
+        </subsystem>
+        ...
+    </profile>
+    ....
+    <socket-binding-group name="standard-sockets" default-interface="public" port-offset="${jboss.socket.binding.port-offset:0}">
+        ...
+	<socket-binding name="httpsBilanciato" port="${jboss.https.port:8444}"/>
+        ...
+    </socket-binding-group>
+
+
+Esempio di connettore da impostare nel file standalone/configuration/standalone.xml (standalone/configuration/standalone-full.xml) di Wildfly (10-24):
 
 
     <management>

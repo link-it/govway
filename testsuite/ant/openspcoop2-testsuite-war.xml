@@ -74,6 +74,8 @@
 					<or>
 						<matches string="${as}" pattern="wildfly22"/>
 						<matches string="${as}" pattern="wildfly23"/>
+						<matches string="${as}" pattern="wildfly24"/>
+						<matches string="${as}" pattern="wildfly25"/>
 					</or>
 					<then>
 						<copy file="${src_testsuite}/WEB-INF/jboss-deployment-structure.xml.wildfly2" tofile="${build_testsuite}/tmp/jboss-deployment-structure.xml" />
@@ -145,7 +147,9 @@
 				<include name="${commons_logging_jar}"/>
 			</lib>
 			<lib dir="${required_lib}/security">
-				<include name="bcprov-ext-jdk15on-1.68.jar"/>
+				<include name="bcpkix-jdk15on-1.69.jar"/>
+				<include name="bcprov-ext-jdk15on-1.69.jar"/>
+				<include name="bcutil-jdk15on-1.69.jar"/>
 			</lib>
 			<lib dir="${required_lib}/saaj">
 				<include name="*.jar"/>
