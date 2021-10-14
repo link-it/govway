@@ -16,5 +16,7 @@ Miglioramenti alle funzionalità base dell'API Gateway
 
 - in una installazione con cluster dinamico, viene adesso utilizzato come id del nodo l'identificativo del gruppo;
 
-- aggiunto il tipo di errore 'ConnectorNotFound' utilizzato per identificare la casistica in cui non è stato possibile individuare il connettore che implementa l'API, in configurazioni con connettori multipli (es. con consegna condizionale).
+- aggiunto il tipo di errore 'ConnectorNotFound' utilizzato per identificare la casistica in cui non è stato possibile individuare il connettore che implementa l'API, in configurazioni con connettori multipli (es. con consegna condizionale);
+
+- migliorie prestazionali introdotte utilizzando il semaforo java.util.concurrent.Semaphore al posto dei blocchi synchronized.
 

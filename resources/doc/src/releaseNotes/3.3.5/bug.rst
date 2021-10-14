@@ -7,6 +7,8 @@ Sono stati risolti i seguenti bug:
 
 - Risolto bug che non consentiva di processare SOAP Envelope 1.2 con WSSecurity quando la configurazione prevedeva l'utilizzo di un 'role' o l'abilitazione dell'attributo 'mustUnderstand'.
 
+- Aggiornate librerie bouncy castle alla versione 1.69 per risolvere la problematica che avveniva casualmente dopo aver aggiornato OpenJDK ad una versione superiore alla 11.0.8; la seguente eccezione occorreva di rado su invocazioni in https: "arraycopy: last source index 32 out of bounds for byte[31] at java.base/sun.security.ssl.Alert.createSSLException"
+
 - È stato risolto un problema presente nella libreria xPath disponibile tra le funzioni built-in nelle trasformazioni. Quando si estraeva frammenti di elementi xml, eventuali entity reference presenti nei valori degli elementi estratti venivano erroneamente risolti. La risoluzione poteva comportare una generazione di un frammento xml sintatticamente non valido. Ad esempio se nella trasformazione si utilizzava il frammento xml '<descrizione>Esempio con &lt;30</descrizione>' per comporre un nuovo xml, si otteneva un errore di parsing poichè l'entity reference presente nella descrizione '&lt;30' veniva risolta con il carattere '<' comportando quindi la generazione di un elemento xml malformato: '<descrizione>Esempio con <30</descrizione>'.
 
 - La risoluzione dinamica dell'endpoint dei connettori http/https e dei path sul connettore file non consentiva di utilizzare i valori di header HTTP e/o parametri della url ricevuti, se questi non venivano serializzati verso il backend. È stata inoltre aggiunta la possibiltà di utilizzare una espressione regolare applicata sull'url di invocazione, nella definizione dell'endpoint di un connettore.
