@@ -2287,3 +2287,11 @@ div.txtA_div_propDialogInfoUso {
 	width: 99% !important;
 }
 
+.text-action-link {
+	padding: 0px 0px 0px 8px;
+}
+
+.text-action-link span.icon-box {
+	vertical-align: middle;
+}
+

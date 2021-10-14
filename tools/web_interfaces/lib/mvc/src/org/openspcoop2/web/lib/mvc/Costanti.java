@@ -221,6 +221,7 @@ public class Costanti {
 	
 	public static final String PARAMETER_FILENAME_PREFIX = "__fn__";  
 	public static final String PARAMETER_FILEID_PREFIX = "__fd__";
+	public static final String PARAMETER_FILENAME_REMOVE_PLACEHOLDER = "__fr__";  
 	
 	/** PARAMETRI MESSAGE PAGE **/
 	
@@ -262,6 +263,7 @@ public class Costanti {
 	public final static String TOOLTIP_VISUALIZZA_SUBTITLE = "Visualizza Sezione";
 	public final static String TOOLTIP_NASCONDI_SUBTITLE = "Nascondi Sezione";
 	public final static String TOOLTIP_ICONA_COPIA = "Copia {0}";
+	public final static String TOOLTIP_ELIMINA_FILE = "Rimuovi {0}";
 	
 	public final static String TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA = "Visualizza Sezione";
 	public final static String TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA = "Nascondi Sezione";
@@ -272,6 +274,8 @@ public class Costanti {
 	public final static String ICON_NASCONDI__FIELDSET = "expand_less";
 	public final static String ICON_VISUALIZZA_SUBTITLE = "expand_more";
 	public final static String ICON_NASCONDI_SUBTITLE = "expand_less";
+	
+	public final static String ICON_ELIMINA_FILE = "delete";
 	
 	public final static String INFO_BUTTON_ICON = "&#xE88E;";
 	public final static String INFO_BUTTON_ICON_WHITE = "&#xE88F;";

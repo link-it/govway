@@ -34,6 +34,7 @@ public class DataElementImage {
 	private String target;
 	private String onClick;
 	private boolean showAjaxStatus = true;
+	private String styleClass = null;
 	
 	public String getImage() {
 		return DataElement.checkNull(this.image);
@@ -79,6 +80,12 @@ public class DataElementImage {
 	}
 	public void setShowAjaxStatus(boolean showAjaxStatus) {
 		this.showAjaxStatus = showAjaxStatus;
+	}
+	public String getStyleClass() {
+		return DataElement.checkNull(this.styleClass);
+	}
+	public void setStyleClass(String styleClass) {
+		this.styleClass = styleClass;
 	}
 	
 }

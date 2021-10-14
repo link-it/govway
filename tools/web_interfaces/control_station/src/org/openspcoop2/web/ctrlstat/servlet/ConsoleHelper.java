@@ -1072,6 +1072,17 @@ public class ConsoleHelper implements IConsoleHelper {
 		bp.setValue(bpContent);
 		bp.setFilename(filename); 
 		bp.setId(fileId);  
+		
+		// se ho provocato io l'evento di cancellazione via postback allora svuoto il contenuto
+		if(this.isPostBack()) {
+			String postBackElementName = this.getPostBackElementName();
+			if(postBackElementName!=null && postBackElementName.startsWith(parameterName) && postBackElementName.contains(Costanti.PARAMETER_FILENAME_REMOVE_PLACEHOLDER)) {
+				bp.setValue(null);
+				bp.setFilename(null); 
+				bp.setId(null);  
+			}
+		}
+		
 		return bp;
 	}
 	
@@ -1212,6 +1223,22 @@ public class ConsoleHelper implements IConsoleHelper {
 				toRet.add(bp);
 			}
 			
+		}
+		
+		// se ho provocato io l'evento di cancellazione via postback allora svuoto il contenuto
+		if(this.isPostBack()) {
+			String postBackElementName = this.getPostBackElementName();
+			if(postBackElementName!=null && postBackElementName.startsWith(parameterName) && postBackElementName.contains(Costanti.PARAMETER_FILENAME_REMOVE_PLACEHOLDER)) {
+				String[] split = postBackElementName.split(Costanti.PARAMETER_FILENAME_REMOVE_PLACEHOLDER);
+				try {
+					int pos = Integer.parseInt(split[1]);
+					toRet.get(pos).setValue(null); // TODO
+					toRet.get(pos).setFilename(null);
+					toRet.get(pos).setId(null);  
+				}catch(Exception e) {
+					
+				}
+			}
 		}
 		
 		return toRet;

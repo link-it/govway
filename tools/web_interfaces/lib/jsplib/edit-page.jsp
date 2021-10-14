@@ -485,6 +485,38 @@ for (int i = 0; i < dati.size(); i++) {
 	                				<div class="<%=classDivNoEdit %>"> 
 		                				<span class="<%=classSpanNoEdit %>"><%= textValNoEdit %></span>
 		                				<input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>"/>
+		                				
+		                				<% 
+		                					// tasti azione sulla text
+											if(!de.getListaImages().isEmpty()){
+												for(int idxLink =0; idxLink < de.getListaImages().size() ; idxLink ++ ){
+													DataElementImage image = de.getListaImages().get(idxLink);
+													String classLink = image.getStyleClass();
+													String deIconName = image.getImage(); 
+		                					
+													String deTip = !image.getToolTip().equals("") ? " title=\"" + image.getToolTip() + "\"" : "";
+		                							
+		                							String deTarget = " ";
+											  		if (!image.getTarget().equals("")) {
+											  			deTarget = " target=\""+ image.getTarget() +"\"";
+											  		}
+										  			
+											  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+											  		
+											  		String onClick = "";
+											  		if (!image.getOnClick().equals("")) {
+											  			onClick = " onClick=\"" + visualizzaAjaxStatus  + "postVersion_" + image.getOnClick() + "\"";
+													  }
+			                					%>
+			                					<a class="text-action-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" <%=onClick %> >
+			                						<span class="icon-box">
+														<i class="material-icons md-16"><%= deIconName %></i>
+													</span>
+			                					</a>
+			                				<%
+												}// end for-edit-link
+											} // end edit-link
+										%>
 		                			</div>
 	                				<% if(!deNote.equals("")){ %>
 							      		<p class="note <%= labelStyleClass %>"><%=deNote %></p>

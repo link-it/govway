@@ -1,3 +1,8 @@
+2021-10-14  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Aggiunto al widget che consente di caricare un file sulla console la possibilità di rimuovere tale scelta.
+
 2021-10-14 Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
