@@ -1,6 +1,6 @@
-.. _install_ssl_server_wf:
+.. _install_ssl_server_wf_fino24:
 
-Wildfly
+Wildfly (security-realms)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. note::

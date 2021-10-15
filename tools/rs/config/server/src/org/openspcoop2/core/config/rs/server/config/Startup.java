@@ -30,6 +30,10 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
+import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.monitor.engine.alarm.AlarmConfigProperties;
+import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
+import org.openspcoop2.monitor.engine.alarm.AlarmManager;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.resources.Loader;
@@ -181,7 +185,23 @@ public class Startup implements ServletContextListener {
 			}
 			Startup.log.info("Inizializzazione Connettori effettuata con successo");
 			
-			// inizializzo HSM Manager
+			try {
+				if(ServerProperties.getInstance().isConfigurazioneAllarmiEnabled()) {
+					Startup.log.info("Inizializzazione Allarmi in corso...");
+					AlarmEngineConfig alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(log, ServerProperties.getInstance().getAllarmiConfigurazione(), ServerProperties.getInstance().getConfDirectory());
+					AlarmManager.setAlarmEngineConfig(alarmEngineConfig);
+					CostantiDB.ALLARMI_ENABLED=true;
+					Startup.log.info("Inizializzazione Allarmi effettuata con successo");
+				}
+			} catch (Exception e) {
+				String msgErrore = "Errore durante l'inizializzazione degli allarmi: " + e.getMessage();
+				Startup.log.error(
+						//					throw new ServletException(
+						msgErrore,e);
+				throw new RuntimeException(msgErrore,e);
+			}
+			
+			Startup.log.info("Inizializzazione HSM in corso...");
 			try {
 				ServerProperties serverProperties = ServerProperties.getInstance();
 				
@@ -197,6 +217,7 @@ public class Startup implements ServletContextListener {
 						msgErrore,e);
 				throw new RuntimeException(msgErrore,e);
 			}
+			Startup.log.info("Inizializzazione HSM effettuata con successo");
 			
 			Startup.initializedResources = true;
 			

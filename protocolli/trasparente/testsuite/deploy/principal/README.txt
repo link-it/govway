@@ -43,7 +43,7 @@ yes/no? no
 
 
 ==============================================================================
-Wildfly10:
+Wildfly:
 Per la registrazione utilizzare: WILDFLY-DIR/bin/add-user.sh
 
 [poli@ws13 bin]$ ./add-user.sh 

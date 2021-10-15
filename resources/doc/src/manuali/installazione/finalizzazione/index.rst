@@ -120,6 +120,11 @@ tematiche:
    Per poter gestire correttamente richieste con Content-Type 'application/x-www-form-urlencoded' su application server 'WildFly', è richiesto di abilitare l'attributo 'allow-non-standard-wrappers' nella configurazione dell'A.S. 
    Indicazioni sulla configurazione vengono fornite nella sezione :ref:`wfUrlEncoded`.
 
+#. *ApplicationSecurityDomain 'other' su WildFly 25 o superiore*
+
+   A partire dalla versione 25 di wildfly, nella configurazione di default è abilitato un application-security-domain 'other' che rende obbligatoria la presenza di credenziali valide per invocare i contesti di GovWay. 
+   Questa configurazione deve essere disabilitata come indicato nella sezione :ref:`securityDomainOther`.
+
 .. toctree::
         :maxdepth: 2
 
@@ -134,3 +139,4 @@ tematiche:
 	cluster/index
 	ssl/index
 	wildflyUrlEncoded
+	securityDomainOther

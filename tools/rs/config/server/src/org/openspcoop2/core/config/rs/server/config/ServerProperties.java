@@ -195,6 +195,13 @@ public class ServerProperties  {
 		return Boolean.parseBoolean(this.readProperty(true, "findall_404"));
 	}
 	
+	public Boolean isConfigurazioneAllarmiEnabled() throws UtilsException{
+		return Boolean.parseBoolean(this.readProperty(true, "allarmi.enabled"));
+	}
+	public String getAllarmiConfigurazione() throws Exception{
+		return this.readProperty(true, "allarmi.configurazione");
+	}
+	
 	
 	public String getHSMConfigurazione() throws UtilsException {
 		return this.readProperty(false, "hsm.config");

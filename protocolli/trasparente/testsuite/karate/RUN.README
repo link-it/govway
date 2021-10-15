@@ -214,5 +214,10 @@ Di seguito vengono descritti i test del package 'token':
 
 Di seguito vengono descritti i test del package 'pkcs11':
 
+Per questi test dopo aver caricare la configurazione con 
+	ant load_config
+eseguire lo script in pkcs11
+	bash updateCertificatiConfigurazione.sh <NOME_SOGGETTO>
+
 - 'x509', verifica l'utilizzo di chiavi private e certificati presenti in HSM
    ant run_test -Ddelete=false -Dload=false -Dpackage=pkcs11.x509

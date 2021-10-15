@@ -225,6 +225,21 @@ Batterie di test:
 - 'RESTAutenticazionePortaDelegata': verifica i dettagli che non potevano essere verificati tramite servizi SOAP, come il forward degli header 'Authorization' o 'WWW-Authenticate' o il consumo dell'header in caso di autenticazione 'basic'.
 - 'RESTAutenticazionePortaApplicativa': uguale al test precedente per la porta applicativa
 
+NOTA!!! Da wildfly25 compreso in differenziare i test che richiedono l'application-security-domain 'other' da quelli che non lo richiedono con i seguenti comandi.
+(Default) non richiesto:
+- 'AutenticazionePortaDelegataNoPrincipal'
+- 'AutenticazionePortaApplicativaNoPrincipal'
+- 'AutorizzazionePortaDelegataNoPrincipal'
+- 'AutorizzazionePortaApplicativaNoPrincipal'
+- 'RESTAutenticazionePortaDelegataNoPrincipal'
+- 'RESTAutenticazionePortaApplicativaNoPrincipal'
+Security domain richiesto:
+- 'AutenticazionePortaDelegataPrincipal'
+- 'AutenticazionePortaApplicativaPrincipal'
+- 'AutorizzazionePortaDelegataPrincipal'
+- 'AutorizzazionePortaApplicativaPrincipal'
+- 'RESTAutenticazionePortaDelegataPrincipal'
+- 'RESTAutenticazionePortaApplicativaPrincipal'
 
 ** MTOM **
 

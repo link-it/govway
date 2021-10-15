@@ -39,6 +39,13 @@
 			<param name="value" value="${work_dir}/consolePassword.properties"/>
 		</antcall>
 	
+		<!-- ALLARMI CONFIG DIR -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="allarmi.configurazione"/>
+			<param name="value" value="${work_dir}/allarmi_configurazione.properties"/>
+		</antcall>
+
 		<!-- HSM CONFIG DIR -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
