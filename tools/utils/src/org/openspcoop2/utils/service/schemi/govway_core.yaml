@@ -57,7 +57,8 @@ components:
       description: Nome identificativo
       required: true
       schema:
-        $ref: '#/components/schemas/NCName'
+        type: string
+        # rilassato vincolo, un allegato puo' avere qualsiasi nome $ref: '#/components/schemas/NCName'
     id_nome_risorsa:
       name: nome_risorsa
       in: path

@@ -7590,7 +7590,7 @@ components:
       type: "object"
       properties:
         nome:
-          $ref: "#/components/schemas/NCName"
+          type: "string"
         documento:
           type: "string"
           format: "byte"
@@ -7628,7 +7628,7 @@ components:
       type: "object"
       properties:
         nome:
-          $ref: "#/components/schemas/NCName"
+          type: "string"
         ruolo:
           $ref: "#/components/schemas/RuoloAllegatoAPI"
     ApiAllegatoItemSpecificaSemiformale:
@@ -9511,7 +9511,7 @@ components:
       type: "object"
       properties:
         nome:
-          $ref: "#/components/schemas/NCName"
+          type: "string"
         documento:
           type: "string"
           format: "byte"
@@ -9573,7 +9573,7 @@ components:
       type: "object"
       properties:
         nome:
-          $ref: "#/components/schemas/NCName"
+          type: "string"
         ruolo:
           $ref: "#/components/schemas/RuoloAllegatoAPIImpl"
     ApiImplAllegatoItemSpecificaSemiformale:
@@ -11875,7 +11875,7 @@ components:
       description: "Nome identificativo"
       required: true
       schema:
-        $ref: "#/components/schemas/NCName"
+        type: "string"
     id_nome_risorsa:
       name: "nome_risorsa"
       in: "path"

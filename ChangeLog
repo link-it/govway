@@ -1,5 +1,13 @@
 2021-10-15 Andrea Poli <apoli@link.it>
 
+	* [ApiRsConfigurazione]
+	Risolto bug OP-1267
+	Le API non consentivano di recuperare specifiche semiformali precedentemente caricate.
+	Inoltre se tramite console veniva registrata una specifica semiformale in Linguaggio Naturale, la raccolta degli allegati via api terminava con errore.
+	Infine le API non consentivano la gestione di documenti contenenti spazi o caratteri particolari nei nomi.
+
+2021-10-15 Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Aggiunta funzionalità OP-1265
 	Aggiunto supporto per wildfly 24.

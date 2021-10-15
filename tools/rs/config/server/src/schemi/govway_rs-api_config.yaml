@@ -7434,7 +7434,8 @@ components:
         - ruolo
       properties:
         nome:
-          $ref: 'govway_core.yaml#/components/schemas/NCName'
+          type: string
+          # rilassato vincolo, un allegato puo' avere qualsiasi $ref: 'govway_core.yaml#/components/schemas/NCName'
         documento:
           type: string
           format: byte
@@ -7473,7 +7474,8 @@ components:
         - ruolo
       properties:
         nome:
-          $ref: 'govway_core.yaml#/components/schemas/NCName'            
+          type: string
+          # rilassato vincolo, un allegato puo' avere qualsiasi $ref: 'govway_core.yaml#/components/schemas/NCName'           
         ruolo:
           $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/RuoloAllegatoAPI'
     ApiAllegatoItemSpecificaSemiformale:

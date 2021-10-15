@@ -450,7 +450,7 @@ public class ApiApiHelper {
 			allegatoSS.setRuolo(ruoloAllegato);
 			allegatoSS.setDocumento(d.getByteContenuto());
 			allegatoSS.setNome(d.getFile());
-			TipiDocumentoSemiformale tipo = Enum.valueOf(TipiDocumentoSemiformale.class, d.getTipo());
+			TipiDocumentoSemiformale tipo = TipiDocumentoSemiformale.toEnumConstant(d.getTipo());
 			allegatoSS.setTipoSpecifica((Helper.apiEnumToGovway(tipo, TipoSpecificaSemiformaleEnum.class)));
 			ret.setAllegato(allegatoSS);
 			break;
@@ -478,7 +478,7 @@ public class ApiApiHelper {
 			ApiAllegatoItemSpecificaSemiformale allegatoSS = new ApiAllegatoItemSpecificaSemiformale();
 			allegatoSS.setRuolo(ruoloAllegato);
 			allegatoSS.setNome(d.getFile());
-			TipiDocumentoSemiformale tipo = Enum.valueOf(TipiDocumentoSemiformale.class, d.getTipo());
+			TipiDocumentoSemiformale tipo = TipiDocumentoSemiformale.toEnumConstant(d.getTipo());
 			allegatoSS.setTipoSpecifica((Helper.apiEnumToGovway(tipo, TipoSpecificaSemiformaleEnum.class)));
 			ret.setAllegato(allegatoSS);
 			break;

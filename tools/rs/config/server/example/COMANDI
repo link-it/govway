@@ -195,6 +195,7 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 
 	+ UPDATE
 ./update api/PetStore/1/allegati/AllegatoJson1.txt  bodies/allegato_specificasemiformale.json	
+./update api/PetStore/1/allegati/AllegatoJson1.txt  bodies/allegato_specificasemiformale_linguaggioNaturale.json
 
 	+ DELETE
 ./rem api/PetStore/1/allegati/AllegatoJson1.txt

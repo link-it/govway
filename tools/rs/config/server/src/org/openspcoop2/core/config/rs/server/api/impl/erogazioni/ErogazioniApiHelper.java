@@ -2054,7 +2054,7 @@ public class ErogazioniApiHelper {
 			allegatoSS.setRuolo(ruoloAllegato);
 			allegatoSS.setDocumento(doc.getByteContenuto());
 			allegatoSS.setNome(doc.getFile());
-			TipiDocumentoSemiformale tipo = Enum.valueOf(TipiDocumentoSemiformale.class, doc.getTipo());
+			TipiDocumentoSemiformale tipo = TipiDocumentoSemiformale.toEnumConstant(doc.getTipo());
 			allegatoSS.setTipoSpecifica((Helper.apiEnumToGovway(tipo, TipoSpecificaSemiformaleEnum.class)));
 			ret.setAllegato(allegatoSS);
 			break;
@@ -2066,8 +2066,13 @@ public class ErogazioniApiHelper {
 			allegatoSL.setRuolo(ruoloAllegato);
 			allegatoSL.setDocumento(doc.getByteContenuto());
 			allegatoSL.setNome(doc.getFile());
-			TipiDocumentoLivelloServizio tipo = Enum.valueOf(TipiDocumentoLivelloServizio.class, doc.getTipo());
+			TipiDocumentoLivelloServizio tipo = TipiDocumentoLivelloServizio.toEnumConstant(doc.getTipo());
 			allegatoSL.setTipoSpecifica((Helper.apiEnumToGovway(tipo, TipoSpecificaLivelloServizioEnum.class)));
+			if(allegatoSL.getTipoSpecifica()==null) {
+				if(TipiDocumentoLivelloServizio.WSAGREEMENT.equals(tipo)) {
+					allegatoSL.setTipoSpecifica(TipoSpecificaLivelloServizioEnum.WS_AGREEMENT);
+				}
+			}
 			ret.setAllegato(allegatoSL);
 			break;
 		}
@@ -2078,8 +2083,16 @@ public class ErogazioniApiHelper {
 			allegatoSSec.setRuolo(ruoloAllegato);
 			allegatoSSec.setDocumento(doc.getByteContenuto());
 			allegatoSSec.setNome(doc.getFile());
-			TipiDocumentoSicurezza tipo = Enum.valueOf(TipiDocumentoSicurezza.class, doc.getTipo());
+			TipiDocumentoSicurezza tipo = TipiDocumentoSicurezza.toEnumConstant(doc.getTipo());
 			allegatoSSec.setTipoSpecifica((Helper.apiEnumToGovway(tipo, TipoSpecificaSicurezzaEnum.class)));
+			if(allegatoSSec.getTipoSpecifica()==null) {
+				if(TipiDocumentoSicurezza.WSPOLICY.equals(tipo)) {
+					allegatoSSec.setTipoSpecifica(TipoSpecificaSicurezzaEnum.WS_POLICY);
+				}
+				else if(TipiDocumentoSicurezza.XACML_POLICY.equals(tipo)) {
+					allegatoSSec.setTipoSpecifica(TipoSpecificaSicurezzaEnum.XACML_POLICY);
+				}
+			}
 			ret.setAllegato(allegatoSSec);
 			break;
 		}
