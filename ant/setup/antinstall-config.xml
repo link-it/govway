@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE installer PUBLIC "-//tp23 //DTD Ant Installer Config//EN" "http://antinstaller.sf.net/dtd/antinstall-config-0.8.dtd">
-<installer name="GovWay Installer v3.3.4.p2" defaultImageResource="/logoSetup.png"
+<installer name="GovWay Installer v3.3.5" defaultImageResource="/logoSetup.png"
     ui="swing,text"
 	verbose="false"
     windowIcon="/iconaSetup.png" wide="550:275" loadDefaults="true">
@@ -8,7 +8,7 @@
     <!-- Se si caricano i loadDefaults non funzionano piu' i cambi di stato per il db -->
     <!-- loadDefaults="true" > -->
 
-    <page type="input" name="intro" displayText="Installer GovWay v3.3.4.p2">
+    <page type="input" name="intro" displayText="Installer GovWay v3.3.5">
         <comment explanatoryText=""/>
         <comment explanatoryText="Il software GovWay e' distribuito con licenza GPL v3"/>
         <comment explanatoryText=""/>
@@ -16,8 +16,8 @@
         <comment explanatoryText="       https://govway.org" bold="true"/>
         <comment explanatoryText="       https://link.it" bold="true"/>
 
-	<hidden property="antinstaller_versione_attuale_con_p_level" value="3.3.4.p2"/> <!-- se presente indicare il patch o RC level (es. 3.2.1.rc1). Finisce nei jar -->
-	<hidden property="antinstaller_versione_attuale" value="3.3.4"/>
+	<hidden property="antinstaller_versione_attuale_con_p_level" value="3.3.5"/> <!-- se presente indicare il patch o RC level (es. 3.2.1.rc1). Finisce nei jar -->
+	<hidden property="antinstaller_versione_attuale" value="3.3.5"/>
 
         <!-- NOTA: le proprieta seguenti NON devono essere utilizzate al di fuori della ifProperty altrimenti su windows non vengono 
                 considerati i valori iniziali presenti nel file ant.install.properties impostato nei comandi install.* -->
@@ -81,6 +81,7 @@
 	  ifProperty="${antinstaller_modalita_installazione}==aggiornamento">
 
 	<large-select defaultValue="" property="antinstaller_versione_precedente" displayText="Versione Precedente">
+	    <option value="3.3.4" text="3.3.4"/>
 	    <option value="3.3.3" text="3.3.3"/>
 	    <option value="3.3.2" text="3.3.2"/>
 	    <option value="3.3.1" text="3.3.1"/>
@@ -111,10 +112,11 @@
         <comment displayText=""/>
         
         <!-- <comment displayText="Application Server" bold="true"/>  sotto come display c'era tipo -->
-        <large-select defaultValue="wildfly22" property="antinstaller_as" displayText="Application Server">
+        <large-select defaultValue="wildfly25" property="antinstaller_as" displayText="Application Server">
       
 		<!-- Uniformare i valori quando la compilazione e' identica -->
-		<option value="wildfly22" text="WildFly 22-23"/>
+		<option value="wildfly25" text="WildFly 25"/>
+		<option value="wildfly22" text="WildFly 22-24"/>
 		<option value="wildfly18" text="WildFly 18-21"/>
 		<!--
 			Deprecati: 10, 11, 12, 13, 14, 15, 15, 17
@@ -176,10 +178,11 @@
         <comment displayText=""/>
         
         <!-- <comment displayText="Application Server" bold="true"/>  sotto come display c'era tipo -->
-        <large-select defaultValue="wildfly22" property="antinstaller_as" displayText="Application Server">
+        <large-select defaultValue="wildfly25" property="antinstaller_as" displayText="Application Server">
       
 		<!-- Uniformare i valori quando la compilazione e' identica -->
-		<option value="wildfly22" text="WildFly 22-23"/>
+		<option value="wildfly25" text="WildFly 25"/>
+		<option value="wildfly22" text="WildFly 22-24"/>
 		<option value="wildfly18" text="WildFly 18-21"/>
 		<!--
 			Deprecati: 10, 11, 12, 13, 14, 15, 16, 17

@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.xml.soap.AttachmentPart;
@@ -48,6 +49,7 @@ import org.openspcoop2.message.soap.wsaddressing.WSAddressingUtilities;
 import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
@@ -200,7 +202,8 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 	public SOAPEnvelope validateSecurityProfile(OpenSPCoop2Message msg, boolean request, String securityMessageProfile, boolean corniceSicurezza, boolean includiRequestDigest, boolean signAttachments, 
 			Busta busta, List<Eccezione> erroriValidazione,
 			ModITruststoreConfig trustStoreCertificati, ModISecurityConfig securityConfig,
-			boolean buildSecurityTokenInRequest) throws Exception {
+			boolean buildSecurityTokenInRequest,
+			Map<String, Object> dynamicMapParameter, Busta datiRichiesta) throws Exception {
 		
 		MessageSecurityContextParameters messageSecurityContextParameters = new MessageSecurityContextParameters();
 		messageSecurityContextParameters.setFunctionAsClient(false);
@@ -345,9 +348,15 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			
 			
 			//  ** Timestamp **
-			Integer timeToLive = this.modiProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds(); // viene usato per vedere la data di creazione quanto si discosta da adesso
+			Long timeToLive = this.modiProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds(); // viene usato per vedere la data di creazione quanto si discosta da adesso
+			if(securityConfig.getCheckTtlIatMilliseconds()!=null) {
+				timeToLive = securityConfig.getCheckTtlIatMilliseconds();
+			}
 			boolean set_TimeToLive = false;
 			if(timeToLive!=null) {
+				if(msg!=null) {
+					msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_IAT_TTL_CHECK, timeToLive);
+				}
 				// Non imposto il valore qua, ma inseriro un valoro alto (3650 giorni) in modo che la libreria non effettui il controllo, che invece avviene nella validazione semantica
 				// In modo da uniformare l'errore rispetto anche a REST
 				/*
@@ -490,6 +499,23 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			}
 		}
 		
+		
+		// NOTA: Inizializzare da qua il dynamicMap altrimenti non ci finisce l'identificazione del mittente effettuata dal metodo sopra 'identificazioneApplicativoMittente'
+		Map<String, Object> dynamicMap = null;
+		Map<String, Object> dynamicMapRequest = null;
+		if(!request) {
+			dynamicMapRequest = ModIUtilities.removeDynamicMapRequest(this.context);
+		}
+		if(dynamicMapRequest!=null) {
+			dynamicMap = DynamicUtils.buildDynamicMapResponse(msg, this.context, null, this.log, bufferMessage_readOnly, dynamicMapRequest);
+		}
+		else {
+			dynamicMap = DynamicUtils.buildDynamicMap(msg, this.context, datiRichiesta, this.log, bufferMessage_readOnly);
+			ModIUtilities.saveDynamicMapRequest(this.context, dynamicMap);
+		}
+		if(dynamicMapParameter!=null && dynamicMap!=null) {
+			dynamicMapParameter.putAll(dynamicMap);
+		}
 		
 	
 		if(timestamp==null) {

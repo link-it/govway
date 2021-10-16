@@ -1746,6 +1746,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 			this.connettoreMsg.setBusta(this.bustaRichiesta);
 			this.connettoreMsg.setMsgDiagnostico(msgDiag);
 			this.connettoreMsg.setState(this.openspcoopstate.getStatoRichiesta());
+			if(this.consegnaMessagePrimaTrasformazione!=null && this.consegnaMessagePrimaTrasformazione.getTransportRequestContext()!=null) {
+				this.connettoreMsg.setUrlInvocazionePorta(this.consegnaMessagePrimaTrasformazione.getTransportRequestContext().getUrlInvocazione_formBased());
+			}
 
 			this.bustaRichiesta.setID(originalID);
 

@@ -42,6 +42,7 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
+import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -1011,7 +1012,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 			try{
 				// provo ad emetter un diagnostico
 				if(this.msgContext.getMsgDiagnostico()!=null){
-					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"InizializzazionePdD");
+					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"InizializzazioneGovWay");
 				}
 			}catch(Throwable t){this.logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_NOT_INITIALIZED,
@@ -1025,7 +1026,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 			try{
 				// provo ad emetter un diagnostico
 				if(this.msgContext.getMsgDiagnostico()!=null){
-					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"InizializzazioneRisorsePdD");
+					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"InizializzazioneRisorseGovWay");
 				}
 			}catch(Throwable t){this.logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
@@ -1039,7 +1040,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 			try{
 				// provo ad emetter un diagnostico
 				if(this.msgContext.getMsgDiagnostico()!=null){
-					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"DisponibilitaRisorsePdD");
+					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"DisponibilitaRisorseGovWay");
 				}
 			}catch(Throwable t){this.logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
@@ -1094,12 +1095,12 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		try{
 			this.configurazionePdDReader.verificaConsistenzaConfigurazione();
 		}catch(Exception e){
-			String msgErrore = "Riscontrato errore durante la verifica della consistenza della configurazione PdD";
+			String msgErrore = "Riscontrato errore durante la verifica della consistenza della configurazione";
 			this.logCore.error("["+RicezioneBuste.ID_MODULO+"]  "+msgErrore,e);
 			try{
 				// provo ad emetter un diagnostico
 				if(this.msgContext.getMsgDiagnostico()!=null){
-					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"CheckConfigurazionePdD");
+					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"CheckConfigurazioneGovWay");
 				}
 			}catch(Throwable t){this.logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
@@ -3326,6 +3327,15 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 			soggettoFruitoreIdentificatoTramiteProtocollo = true;
 		}
 		this.soggettoFruitore = validatore.getSoggettoMittente();
+		if(this.soggettoFruitore!=null) {
+			try {
+				Soggetto soggettoFruitoreObject = this.registroServiziReader.getSoggetto(this.soggettoFruitore, null);
+				Map<String, String> configProperties = this.registroServiziReader.getProprietaConfigurazione(soggettoFruitoreObject);
+	            if (configProperties != null && !configProperties.isEmpty()) {
+	            	this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE, configProperties);
+				}	
+			}catch(Throwable t) {}	
+		}
 		boolean soggettoAutenticato = false;
 		boolean supportatoAutenticazioneSoggetti = false;
 		if(this.functionAsRouter==false){
@@ -3456,6 +3466,17 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 										this.generatoreErrore.updateInformazioniCooperazione(servizioApplicativoFruitore);
 										this.msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE, servizioApplicativoFruitore);
 										this.msgContext.getIntegrazione().setServizioApplicativoFruitore(servizioApplicativoFruitore);
+										
+										IDServizioApplicativo idSAFruitore = new IDServizioApplicativo();
+										idSAFruitore.setIdSoggettoProprietario(this.soggettoFruitore);
+										idSAFruitore.setNome(servizioApplicativoFruitore);
+										try {
+											ServizioApplicativo sa = this.configurazionePdDReader.getServizioApplicativo(idSAFruitore);
+											Map<String, String> configProperties = this.configurazionePdDReader.getProprietaConfigurazione(sa);
+								            if (configProperties != null && !configProperties.isEmpty()) {
+								            	this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO, configProperties);
+											}	
+										}catch(Throwable t) {}	
 									}
 									this.msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_MITTENTE_MSG, ""); // per evitare di visualizzarle anche nei successivi diagnostici
 									this.msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI, "");
@@ -3849,7 +3870,18 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 
 
 		}
-		
+		try {
+			this.pddContext.removeObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE);
+		}catch(Throwable t) {}	
+		if(this.soggettoFruitore!=null) {
+			try {
+				Soggetto soggettoFruitoreObject = this.registroServiziReader.getSoggetto(this.soggettoFruitore, null);
+				Map<String, String> configProperties = this.registroServiziReader.getProprietaConfigurazione(soggettoFruitoreObject);
+	            if (configProperties != null && !configProperties.isEmpty()) {
+	            	this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE, configProperties);
+				}	
+			}catch(Throwable t) {}	
+		}
 		
 		
 		
@@ -4591,7 +4623,12 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		RichiestaApplicativa richiestaApplicativa = null;
 		if(idPA!=null) {
 			richiestaApplicativa = new RichiestaApplicativa(this.soggettoFruitore,
-					idModuloInAttesa,this.identitaPdD,idPA); 
+					idModuloInAttesa,this.identitaPdD,idPA);
+			if(this.idServizio!=null && this.idServizio.getAzione()!=null && 
+					idPA!=null && idPA.getIdentificativiErogazione()!=null && idPA.getIdentificativiErogazione().getIdServizio()!=null &&
+					idPA.getIdentificativiErogazione().getIdServizio().getAzione()==null) {
+				idPA.getIdentificativiErogazione().getIdServizio().setAzione(this.idServizio.getAzione());
+			}
 		}
 		else {
 			// Scenario Asincrono Simmetrico - Risposta

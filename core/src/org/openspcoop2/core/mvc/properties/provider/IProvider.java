@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.openspcoop2.core.mvc.properties.Item;
+
 /**     
  * IProvider
  *
@@ -45,6 +47,9 @@ public interface IProvider {
 	
 	public default ProviderInfo getProviderInfo(String id) throws ProviderException{
 		return null;
+	}
+	public default String dynamicUpdate(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
+		return actualValue;
 	}
 	
 }

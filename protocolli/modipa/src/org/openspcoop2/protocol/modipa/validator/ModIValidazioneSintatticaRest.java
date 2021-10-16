@@ -34,6 +34,7 @@ import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.pdd.core.token.parser.TokenUtils;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
@@ -368,9 +369,10 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 	public String validateSecurityProfile(OpenSPCoop2Message msg, boolean request, String securityMessageProfile, String headerTokenRest, boolean corniceSicurezza, boolean includiRequestDigest, 
 			Busta busta, List<Eccezione> erroriValidazione,
 			ModITruststoreConfig trustStoreCertificati, ModITruststoreConfig trustStoreSsl, ModISecurityConfig securityConfig,
-			boolean buildSecurityTokenInRequest) throws Exception {
+			boolean buildSecurityTokenInRequest, boolean headerDuplicati, boolean securityHeaderObbligatorio,
+			Map<String, Object> dynamicMapParameter, Busta datiRichiesta) throws Exception {
 		
-		boolean bufferMessage_readOnly = this.modiProperties.isValidazioneBufferEnabled();
+		boolean bufferMessage_readOnly = this.modiProperties.isReadByPathBufferEnabled();
 		String idTransazione = null;
 		if(this.context!=null) {
 			idTransazione = (String)this.context.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
@@ -392,7 +394,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 		}
 		
 		
-		boolean attesoSecurityHeader = true;
+		boolean attesoSecurityHeader = securityHeaderObbligatorio;
 		if(!request) {
 			if(msg.isFault()) {
 				attesoSecurityHeader = false;
@@ -461,6 +463,10 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 		
 		
 
+		String prefix = "";
+		if(headerDuplicati) {
+			prefix = "[Header '"+headerTokenRest+"'] ";
+		}
 		
 		/*
 		 * == signature ==
@@ -472,6 +478,15 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 		X509Certificate x509 = null;
 		try {
 		
+			//  ** Timestamp **
+			Long timeToLive = this.modiProperties.getRestSecurityTokenClaimsIatTimeCheck_milliseconds();
+			if(securityConfig.getCheckTtlIatMilliseconds()!=null) {
+				timeToLive = securityConfig.getCheckTtlIatMilliseconds();
+			}
+			if(timeToLive!=null && msg!=null) {
+				msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_IAT_TTL_CHECK, timeToLive);
+			}
+			
 			MessageSecurityReceiver_jose joseSignature = new MessageSecurityReceiver_jose();
 			MessageSecurityContextParameters messageSecurityContextParameters = new MessageSecurityContextParameters();
 			MessageSecurityContext messageSecurityContext = new MessageSecurityContext_impl(messageSecurityContextParameters);
@@ -509,8 +524,14 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			joseSignature.process(messageSecurityContext, msgToken, busta);
 			joseSignature.detachSecurity(messageSecurityContext, msgToken.castAsRest());
 			
-			ModIRESTSecurity restSecurity = new ModIRESTSecurity(securityTokenHeader, request);
-			msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_SBUSTAMENTO_REST, restSecurity);
+			ModIRESTSecurity restSecurity = (ModIRESTSecurity) msg.getContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_SBUSTAMENTO_REST);
+			if(restSecurity==null) {
+				restSecurity = new ModIRESTSecurity(securityTokenHeader, request);
+				msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_SBUSTAMENTO_REST, restSecurity);
+			}
+			else {
+				restSecurity.getTokenHeaderNames().add(securityTokenHeader);
+			}
 
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			msgToken.writeTo(bout, true);
@@ -526,7 +547,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 		}catch(Exception e) {
 			this.log.error("Errore durante la validazione del token di sicurezza: "+e.getMessage(),e);
 			erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_VALIDA, 
-					e.getMessage(),e));
+					prefix+e.getMessage(),e));
 			return token;
 		}
 		
@@ -535,17 +556,104 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
 					request ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_PRESENTE :
 						CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_PRESENTE, 
-					"Certificato X509 mittente non presente"));
+					prefix+"Certificato X509 mittente non presente"));
 		}
 		else {
-			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_X509_SUBJECT, x509.getSubjectX500Principal().toString());
-			if(x509.getIssuerX500Principal()!=null) {
-				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_X509_ISSUER, x509.getIssuerX500Principal().toString());
+			
+			if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
+				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_X509_SUBJECT, x509.getSubjectX500Principal().toString());
+				if(x509.getIssuerX500Principal()!=null) {
+					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_X509_ISSUER, x509.getIssuerX500Principal().toString());
+				}
+				
+				if(headerDuplicati) {
+					this.context.addObject(ModICostanti.MODIPA_CONTEXT_X509_AUTHORIZATION, x509);
+				}
+			}
+			else {
+				/*
+				String subjectAuthorization = busta.getProperty(busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_X509_SUBJECT));
+				String issuerAuthorization = busta.getProperty(busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_X509_ISSUER));
+				String subjectIntegrity = x509.getSubjectX500Principal().toString();
+				String issuerIntegrity = x509.getIssuerX500Principal().toString();
+				boolean subjectValid = false;
+				if(subjectIntegrity!=null && subjectAuthorization!=null) {
+					subjectValid = CertificateUtils.sslVerify(subjectAuthorization, subjectIntegrity, PrincipalType.subject, this.log);
+				}
+				boolean issuerValid = true;
+				if(issuerAuthorization!=null && !"".equals(issuerAuthorization)) {
+					if(issuerIntegrity==null) {
+						issuerValid = false;
+					}
+					else {
+						issuerValid = CertificateUtils.sslVerify(issuerAuthorization, issuerIntegrity, PrincipalType.issuer, this.log);
+					}
+				}
+				else {
+					issuerValid = (issuerIntegrity == null);
+				}
+				
+				if(!subjectValid || !issuerValid){
+					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+							request ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_VALIDO :
+								CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_VALIDO, 
+							"I token '"+HttpConstants.AUTHORIZATION+"' e '"+headerTokenRest+"' risultano firmati da certificati differenti"));
+				}*/
+				X509Certificate x509Authorization = null;
+				Object oX509Authorization = this.context.removeObject(ModICostanti.MODIPA_CONTEXT_X509_AUTHORIZATION);
+				if(oX509Authorization!=null && oX509Authorization instanceof X509Certificate) {
+					x509Authorization = (X509Certificate) oX509Authorization;
+				}
+				if(x509Authorization!=null) { 
+					if(!x509Authorization.equals(x509)) {
+						StringBuilder sb = new StringBuilder();
+						sb.append(HttpConstants.AUTHORIZATION).append(" ");
+						sb.append("subject=\"").append(x509Authorization.getSubjectX500Principal().toString()).append("\"");
+						if(x509Authorization.getIssuerX500Principal()!=null) {
+							sb.append(" issuer=\"").append(x509Authorization.getIssuerX500Principal().toString()).append("\"");
+						}
+						sb.append("\n");
+						sb.append(headerTokenRest).append(" ");
+						sb.append("subject=\"").append(x509.getSubjectX500Principal().toString()).append("\"");
+						if(x509.getIssuerX500Principal()!=null) {
+							sb.append(" issuer=\"").append(x509.getIssuerX500Principal().toString()).append("\"");
+						}
+						erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+								request ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_VALIDO :
+									CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_VALIDO, 
+								"I token '"+HttpConstants.AUTHORIZATION+"' e '"+headerTokenRest+"' risultano firmati da certificati differenti\n"+sb.toString()));
+					}
+				}
+				else {
+					if(erroriValidazione.isEmpty()) {
+						erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_TOKEN_NON_PRESENTE, 
+								"Certificato x509 nell'header '"+HttpConstants.AUTHORIZATION+"' non presente"));
+					}
+				}
 			}
 			
 			if(request) {
-				identificazioneApplicativoMittente(x509,busta);
+				if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
+					identificazioneApplicativoMittente(x509,busta);
+				}
 			}
+		}
+		
+		// NOTA: Inizializzare da qua il dynamicMap altrimenti non ci finisce l'identificazione del mittente effettuata dal metodo sopra 'identificazioneApplicativoMittente'
+		Map<String, Object> dynamicMap = null;
+		Map<String, Object> dynamicMapRequest = null;
+		if(!request) {
+			dynamicMapRequest = ModIUtilities.removeDynamicMapRequest(this.context);
+		}
+		if(dynamicMapRequest!=null) {
+			dynamicMap = DynamicUtils.buildDynamicMapResponse(msg, this.context, null, this.log, bufferMessage_readOnly, dynamicMapRequest);
+		}
+		else {
+			dynamicMap = DynamicUtils.buildDynamicMap(msg, this.context, datiRichiesta, this.log, bufferMessage_readOnly);
+			ModIUtilities.saveDynamicMapRequest(this.context, dynamicMap);
+		}
+		if(dynamicMapParameter!=null && dynamicMap!=null) {
+			dynamicMapParameter.putAll(dynamicMap);
 		}
 		
 		
@@ -560,40 +668,58 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 				Object iat = objectNode.get(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT);
 				if(iat==null) {
 					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.ORA_REGISTRAZIONE_NON_PRESENTE, 
-							"Token senza claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT+"'"));
+							prefix+"Token senza claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT+"'"));
 				}
 				Date iatDate = null;
 				try {
 					iatDate = toDate(iat);
 				}catch(Exception e) {
 					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.ORA_REGISTRAZIONE_NON_VALIDA, 
-							"Token con claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT+"' non valido: "+e.getMessage(),e));
+							prefix+"Token con claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT+"' non valido: "+e.getMessage(),e));
 				}
-				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_IAT, DateUtils.getSimpleDateFormatMs().format(iatDate));
+				String iatValue = DateUtils.getSimpleDateFormatMs().format(iatDate);
+				if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
+					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_IAT, iatValue);
+				}
+				else {
+					String iatAuthorization = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_IAT);
+					if(!iatValue.equals(iatAuthorization)) {
+						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_IAT, iatValue);
+					}
+				}
 			}
 			else {
 				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.ORA_REGISTRAZIONE_NON_PRESENTE, 
-						"Token senza claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT+"'"));
+						prefix+"Token senza claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT+"'"));
 			}
 			
 			if(objectNode.has(Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED)) {
 				Object exp = objectNode.get(Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED);
 				if(exp==null) {
 					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SCADENZA_NON_PRESENTE, 
-							"Token senza claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED+"'"));
+							prefix+"Token senza claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED+"'"));
 				}
 				Date expDate = null;
 				try {
 					expDate = toDate(exp);
 				}catch(Exception e) {
 					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SCADENZA_NON_VALIDA, 
-							"Token con claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED+"' non valido: "+e.getMessage(),e));
+							prefix+"Token con claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED+"' non valido: "+e.getMessage(),e));
 				}
-				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP, DateUtils.getSimpleDateFormatMs().format(expDate));
+				String expValue = DateUtils.getSimpleDateFormatMs().format(expDate);
+				if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
+					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP, expValue);
+				}
+				else {
+					String expAuthorization = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP);
+					if(!expValue.equals(expAuthorization)) {
+						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_EXP, expValue);
+					}
+				}
 			}
 			else {
 				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SCADENZA_NON_PRESENTE, 
-						"Token senza claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED+"'"));
+						prefix+"Token senza claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED+"'"));
 			}
 			
 			if(objectNode.has(Claims.JSON_WEB_TOKEN_RFC_7519_NOT_TO_BE_USED_BEFORE)) {
@@ -604,9 +730,18 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 						nbfDate = toDate(nbf);
 					}catch(Exception e) {
 						erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SCADENZA_NON_VALIDA, 
-								"Token con claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_NOT_TO_BE_USED_BEFORE+"' non valido: "+e.getMessage(),e));
+								prefix+"Token con claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_NOT_TO_BE_USED_BEFORE+"' non valido: "+e.getMessage(),e));
 					}
-					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_NBF, DateUtils.getSimpleDateFormatMs().format(nbfDate));
+					String nbfValue = DateUtils.getSimpleDateFormatMs().format(nbfDate);
+					if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
+						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_NBF, nbfValue);
+					}
+					else {
+						String nbfAuthorization = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_NBF);
+						if(!nbfValue.equals(nbfAuthorization)) {
+							busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_NBF, nbfValue);
+						}
+					}
 				}
 			}
 			
@@ -616,16 +751,25 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
 							request ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_PRESENTE :
 								CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_PRESENTE, 
-							"Token senza claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE+"'"));
+						prefix+"Token senza claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE+"'"));
 				}
-				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, toString(aud));
+				String audValue = toString(aud);
+				if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
+					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, audValue);
+				}
+				else {
+					String audAuthorization = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE);
+					if(!audValue.equals(audAuthorization)) {
+						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_AUDIENCE, audValue);
+					}
+				}
 			}
 			else {
 				if(request || buildSecurityTokenInRequest) {
 					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
 							request ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_PRESENTE :
 								CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_PRESENTE, 
-							"Token senza claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE+"'"));
+						prefix+"Token senza claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE+"'"));
 				}
 			}
 			
@@ -639,21 +783,51 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 				if(jti==null) {
 					if(jtiRequired) {
 						erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.IDENTIFICATIVO_MESSAGGIO_NON_PRESENTE, 
-								"Token senza claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID+"'"));
+								prefix+"Token senza claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID+"'"));
 					}
 				}
 				else {
 					String id = toString(jti);
-					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID, id);
-					if(id.length()<=255) {
-						busta.setID(id);
+					boolean addAsIdBusta = true;
+					if(headerDuplicati) {
+						if(HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
+							if(!securityConfig.isMultipleHeaderUseJtiAuthorizationAsIdMessaggio()) {
+								String idActual = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID);
+								if(idActual==null || !idActual.equals(id)) {
+									busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUTHORIZATION_ID, id);
+								}
+								addAsIdBusta = false;
+							}
+						}
+						else {
+							if(securityConfig.isMultipleHeaderUseJtiAuthorizationAsIdMessaggio()) {
+								String idActual = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID);
+								if(idActual==null || !idActual.equals(id)) {
+									busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_ID, id);
+								}
+								addAsIdBusta = false;
+							}
+							else {
+								// verifico se ho gia' impostato authorization
+								String idActualAuthorization = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUTHORIZATION_ID);
+								if(idActualAuthorization!=null && idActualAuthorization.equals(id)) {
+									busta.removeProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUTHORIZATION_ID);
+								}
+							}
+						}
+					}
+					if(addAsIdBusta) {
+						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID, id);
+						if(id.length()<=255) {
+							busta.setID(id);
+						}
 					}
 				}
 			}
 			else {
 				if(jtiRequired) {
 					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.IDENTIFICATIVO_MESSAGGIO_NON_PRESENTE, 
-							"Token senza claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID+"'"));
+							prefix+"Token senza claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID+"'"));
 				}
 			}
 
@@ -678,7 +852,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 				}
 				else {
 					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.MITTENTE_NON_PRESENTE, 
-							"Token senza claim '"+claimNameCodiceEnte+"'"));
+							prefix+"Token senza claim '"+claimNameCodiceEnte+"'"));
 				}
 				
 				String claimNameUser = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_rest_user();
@@ -693,7 +867,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 				}
 				else {
 					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.MITTENTE_NON_PRESENTE, 
-							"Token senza claim '"+claimNameUser+"'"));
+							prefix+"Token senza claim '"+claimNameUser+"'"));
 				}
 				
 				String claimNameIpUser = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_rest_ipuser();
@@ -705,7 +879,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 				}
 				else {
 					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.MITTENTE_NON_PRESENTE, 
-							"Token senza claim '"+claimNameIpUser+"'"));
+							prefix+"Token senza claim '"+claimNameIpUser+"'"));
 				}
 			}
 			
@@ -825,7 +999,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 				if(signedHeaders==null) {
 					if(integrita && msg.castAsRest().hasContent()) {
 						erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_INTESTAZIONE_NON_PRESENTE, 
-								"Token senza claim '"+claimSignedHeader+"'"));
+								prefix+"Token senza claim '"+claimSignedHeader+"'"));
 					}
 				}
 				else {
@@ -852,7 +1026,12 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 									String hdrName = (String) fieldNames.next();
 									try {
 										String hdrValue = toString(oNode.get(hdrName));
-										ModIUtilities.addHeaderProperty(busta, hdrName, hdrValue);
+										if(HttpConstants.AUTHORIZATION.equalsIgnoreCase(hdrName) && headerDuplicati) {
+											ModIUtilities.addHeaderProperty(busta, hdrName, HttpConstants.AUTHORIZATION_PREFIX_BEARER +"...TOKEN...");	
+										}
+										else {
+											ModIUtilities.addHeaderProperty(busta, hdrName, hdrValue);
+										}
 										TransportUtils.addHeader(headerHttpAttesi, hdrName, hdrValue);
 									}catch(Exception e) {
 										throw new Exception("array["+i+"] possiede header '"+hdrName+"' con un valore non valido: "+e.getMessage(),e);
@@ -866,7 +1045,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 					}catch(Exception e) {
 						this.log.error("Errore durante il processamento del claim che definisce gli header HTTP firmati '"+claimSignedHeader+"': "+e.getMessage(),e);
 						erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_INTESTAZIONE_NON_VALIDA, 
-								"Claim '"+claimSignedHeader+"' con un formato non valido; "+ e.getMessage()));
+								prefix+"Claim '"+claimSignedHeader+"' con un formato non valido; "+ e.getMessage()));
 					}
 				}
 				
@@ -874,13 +1053,22 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 					Iterator<String> headers = headerHttpAttesi.keySet().iterator();
 					while (headers.hasNext()) {
 						String hdrName = (String) headers.next();
-						List<String> hrdValues = headerHttpAttesi.get(hdrName);
-						for (String hdrValue : hrdValues) {
+						List<String> hrdAttesiValues = headerHttpAttesi.get(hdrName);
+						for (String hdrAttesoValue : hrdAttesiValues) {
 							boolean valid = false;
+							String valueInHttpHeader = null;
 							if(digestHeader.toLowerCase().equalsIgnoreCase(hdrName)) {
-								valid = hdrValue.equals(digestValueInHeaderHTTP); 
-								//System.out.println("VALID DIGEST: "+valid);
 								findDigestInClaimSignedHeader = true;
+								if(digestValueInHeaderHTTP==null) {
+									erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_VALIDA, 
+											"Header HTTP '"+hdrName+"', dichiarato tra gli header firmati, non trovato"));
+									valid = true; // per non far segnalare l'eccezione
+								}
+								else {
+									valueInHttpHeader = digestValueInHeaderHTTP;
+									valid = hdrAttesoValue.equals(digestValueInHeaderHTTP); 
+									//System.out.println("VALID DIGEST: "+valid);
+								}
 							}
 							else {
 								List<String> hdrFound = null;
@@ -895,12 +1083,18 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 									erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_VALIDA, 
 											"Header HTTP '"+hdrName+"', dichiarato tra gli header firmati, non trovato"));
 								}
+								else if(hdrFound.size()==1) {
+									valueInHttpHeader = hdrFound.get(0);
+									valid = hdrAttesoValue.equals(valueInHttpHeader);
+								}
 								else {
-									valid = hdrFound.contains(hdrValue); 
+									valueInHttpHeader = hdrFound.toString();
+									valid = hdrFound.contains(hdrAttesoValue); 
 								}
 								//System.out.println("VALID HDR '"+hdrName+"': "+valid);
 							}
 							if(!valid) {
+								this.log.error("Header HTTP '"+hdrName+"' possiede un valore '"+valueInHttpHeader+"' differente rispetto a quello presente negli header firmati '"+hdrAttesoValue+"'");
 								erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_VALIDA, 
 										"Header HTTP '"+hdrName+"' possiede un valore differente rispetto a quello presente negli header firmati"));
 							}
@@ -918,7 +1112,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			else {
 				if(integrita && msg.castAsRest().hasContent()) {
 					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_INTESTAZIONE_NON_PRESENTE, 
-							"Token senza claim '"+claimSignedHeader+"'"));
+							prefix+"Token senza claim '"+claimSignedHeader+"'"));
 				}
 			}
 			
@@ -926,7 +1120,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 		}catch(Exception e) {
 			this.log.error("Errore durante il processamento del payload del token di sicurezza: "+e.getMessage(),e);
 			erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_TOKEN_NON_VALIDO, 
-					e.getMessage()));
+					prefix+e.getMessage()));
 		}
 		
 		return token;

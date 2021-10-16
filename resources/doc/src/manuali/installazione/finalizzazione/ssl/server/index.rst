@@ -8,6 +8,6 @@ La configurazione varia a seconda se la terminazione ssl è gestita direttamente
 .. toctree::
         :maxdepth: 2
 
-	wildfly
+	wildfly/index
 	tomcat
 	frontend

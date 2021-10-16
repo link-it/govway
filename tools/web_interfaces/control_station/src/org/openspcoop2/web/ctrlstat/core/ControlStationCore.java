@@ -852,6 +852,12 @@ public class ControlStationCore {
 		return this.isApplicativiCredenzialiBasicCheckUniqueUsePassword;
 	}
 	
+	/** Connettori */
+	private boolean isConnettoriAllTypesEnabled;
+	public boolean isConnettoriAllTypesEnabled() {
+		return this.isConnettoriAllTypesEnabled;
+	}
+	
 	/** Connettori Multipli */
 	private boolean isConnettoriMultipliEnabled;
 	public boolean isConnettoriMultipliEnabled() {
@@ -2447,6 +2453,9 @@ public class ControlStationCore {
 		this.isSoggettiCredenzialiBasicCheckUniqueUsePassword = core.isSoggettiCredenzialiBasicCheckUniqueUsePassword;
 		this.isApplicativiCredenzialiBasicCheckUniqueUsePassword = core.isApplicativiCredenzialiBasicCheckUniqueUsePassword;
 
+		/** Connettori */
+		this.isConnettoriAllTypesEnabled = core.isConnettoriAllTypesEnabled;
+		
 		/** Connettori Multipli */
 		this.isConnettoriMultipliEnabled = core.isConnettoriMultipliEnabled;
 		this.isConnettoriMultipliConsegnaMultiplaEnabled = core.isConnettoriMultipliConsegnaMultiplaEnabled;
@@ -2843,6 +2852,7 @@ public class ControlStationCore {
 			this.messageEngines = consoleProperties.getMessageEngines();
 			this.isSoggettiCredenzialiBasicCheckUniqueUsePassword = consoleProperties.isSoggettiCredenzialiBasicCheckUniqueUsePassword();
 			this.isApplicativiCredenzialiBasicCheckUniqueUsePassword = consoleProperties.isApplicativiCredenzialiBasicCheckUniqueUsePassword();
+			this.isConnettoriAllTypesEnabled = consoleProperties.isConnettoriAllTypesEnabled();
 			this.isConnettoriMultipliEnabled = consoleProperties.isConnettoriMultipliEnabled();
 			this.isConnettoriMultipliConsegnaMultiplaEnabled = consoleProperties.isConnettoriMultipliConsegnaMultiplaEnabled();
 			this.isApplicativiServerEnabled = consoleProperties.isApplicativiServerEnabled();
@@ -2861,7 +2871,7 @@ public class ControlStationCore {
 			this.configurazioneHandlersEnabled = consoleProperties.isConfigurazioneHandlersEnabled();
 			this.configurazioneAllarmiEnabled = consoleProperties.isConfigurazioneAllarmiEnabled();
 			if(this.configurazioneAllarmiEnabled) {
-				this.allarmiConfig = AlarmConfigProperties.getAlarmConfiguration(ControlStationCore.getLog(), consoleProperties.getAllarmiConfigurazione());
+				this.allarmiConfig = AlarmConfigProperties.getAlarmConfiguration(ControlStationCore.getLog(), consoleProperties.getAllarmiConfigurazione(), consoleProperties.getConfDirectory());
 				this.showAllarmiIdentificativoRuntime = consoleProperties.isShowAllarmiIdentificativoRuntime();
 				this.showAllarmiFormNomeSuggeritoCreazione = consoleProperties.isShowAllarmiFormNomeSuggeritoCreazione();
 				this.showAllarmiFormStatoAllarme = consoleProperties.isShowAllarmiFormStatoAllarme();

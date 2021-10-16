@@ -2005,6 +2005,9 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 			this.connettoreMsg.initPolicyGestioneToken(this.configurazionePdDManager);
 			this.connettoreMsg.setForwardProxy(forwardProxy);
 			this.connettoreMsg.setIdAccordo(this.idAccordoServizio);
+			if(this.requestMessagePrimaTrasformazione!=null && this.requestMessagePrimaTrasformazione.getTransportRequestContext()!=null) {
+				this.connettoreMsg.setUrlInvocazionePorta(this.requestMessagePrimaTrasformazione.getTransportRequestContext().getUrlInvocazione_formBased());
+			}
 			
 			// mapping per forward token
 			TokenForward tokenForward = null;

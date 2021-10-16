@@ -102,6 +102,7 @@
   o su fedora più recenti:
 	'iptables -I INPUT 1 -p tcp -d 127.0.2.2 --destination-port 7777 -j DROP'
 	
+- HSM per TLS Keystore. Seguire le indicazioni descritte in PKCS11.README
 
 Per eseguire i test:
 	ant run_test
@@ -203,7 +204,20 @@ Di seguito vengono descritti i test del package 'connettori':
 - 'errori', verifica che, su API SOAP, eventuali risposte di errore senza un payload o con un payload html vengano gestite correttamente. 
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.errori
 
+- 'applicativo_server', verifica il funzionamento degli applicativi di tipo server 
+   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.applicativo_server
+
 Di seguito vengono descritti i test del package 'token':
 
 - 'attribute_authority', verifica l'interazione con le AttributeAuthority
    ant run_test -Ddelete=false -Dload=false -Dpackage=token.attribute_authority
+
+Di seguito vengono descritti i test del package 'pkcs11':
+
+Per questi test dopo aver caricare la configurazione con 
+	ant load_config
+eseguire lo script in pkcs11
+	bash updateCertificatiConfigurazione.sh <NOME_SOGGETTO>
+
+- 'x509', verifica l'utilizzo di chiavi private e certificati presenti in HSM
+   ant run_test -Ddelete=false -Dload=false -Dpackage=pkcs11.x509

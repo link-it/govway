@@ -180,11 +180,7 @@
 				</condition>
 			</conditions>
 
-			<item type="select" name="jwtKeystoreType" label="Tipo" default="jks">
-				<values>
-					<value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/>
-				</values>
+			<item type="select" name="jwtKeystoreType" label="Tipo" default="jks" reloadOnChange="true">
 				<property name="policy.retrieveToken.jwt.signature.keystoreType" />
 			</item>
 			<item type="textarea" name="jwtKeystoreFile" label="File" required="true">
@@ -240,17 +236,12 @@
 				<property name="trustAllCerts" properties="sslConfig" selectedValue="false" unselectedValue="true"/>
 			</item>
 	
-			<item type="select" name="endpointHttpsTruststoreType" label="Tipo" default="jks">
+			<item type="select" name="endpointHttpsTruststoreType" label="Tipo" default="jks" reloadOnChange="true">
 				<conditions>
 					<condition and="false">
 						<selected name="endpointHttpsTrustAllCerts"/>
 					</condition>	
 				</conditions>
-				<values>
-					<value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/>
-					<value value="jceks" label="JCEKS"/>
-				</values>
 				<property name="trustStoreType" properties="sslConfig" />
 			</item>
 			<item type="textarea" name="endpointHttpsTruststoreFile" label="File" required="true">
@@ -303,17 +294,12 @@
 				</values>
 				<property name="policy.endpoint.ssl.mode" />
 			</item>
-			<item type="select" name="endpointHttpsClientKeystoreType" label="Tipo" default="jks">
+			<item type="select" name="endpointHttpsClientKeystoreType" label="Tipo" default="jks" reloadOnChange="true">
 				<conditions>
 					<condition and="true">
 						<equals name="endpointHttpsClientMode" value="ridefinito"/>
 					</condition>
 				</conditions>
-				<values>
-					<value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/>
-					<value value="jceks" label="JCEKS"/>
-				</values>
 				<property name="keyStoreType" properties="sslClientConfig" />
 			</item>
 			<item type="textarea" name="endpointHttpsClientKeystoreFile" label="File" required="true">

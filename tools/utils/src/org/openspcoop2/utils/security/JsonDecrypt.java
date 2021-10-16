@@ -38,6 +38,7 @@ import org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm;
 import org.apache.cxf.rs.security.jose.jwe.JweCompactConsumer;
 import org.apache.cxf.rs.security.jose.jwe.JweDecryptionOutput;
 import org.apache.cxf.rs.security.jose.jwe.JweDecryptionProvider;
+import org.apache.cxf.rs.security.jose.jwe.JweException;
 import org.apache.cxf.rs.security.jose.jwe.JweHeaders;
 import org.apache.cxf.rs.security.jose.jwe.JweJsonConsumer;
 import org.apache.cxf.rs.security.jose.jwe.JweUtils;
@@ -125,7 +126,18 @@ public class JsonDecrypt {
 					provider = JsonUtils.getJweDecryptionProviderFromJWKSymmetric(props, null);
 				}
 				else {
-					provider = JweUtils.loadDecryptionProvider(props, JsonUtils.newMessage(), null); // lasciare null come secondo parametro senno non funziona il decrypt senza keyEncoding
+					try {
+						provider = JweUtils.loadDecryptionProvider(props, JsonUtils.newMessage(), null); // lasciare null come secondo parametro senno non funziona il decrypt senza keyEncoding
+					}catch(JweException jweExc) {
+						if(jweExc!=null && jweExc.getMessage()!=null && jweExc.getMessage().contains("NO_ENCRYPTOR")) {
+							// caso in cui la chiave privata PKCS11 non e' stata mappata in un PrivateKeyDecryptionProvider
+							provider = JsonUtils.getJweAsymmetricDecryptionProvider(props);
+							if(provider==null) {
+								// rilancio eccezione precedente
+								throw jweExc;
+							}
+						}
+					}
 				}
 			}
 			if(provider==null) {
@@ -160,7 +172,20 @@ public class JsonDecrypt {
 			if(secretKey) {
 				this.provider = JweUtils.createJweDecryptionProvider( (SecretKey) keystore.getSecretKey(alias, passwordPrivateKey), keyAlgo, contentAlgo);
 			}else {
-				this.provider = JweUtils.createJweDecryptionProvider( (PrivateKey) keystore.getPrivateKey(alias, passwordPrivateKey), keyAlgo, contentAlgo);
+				PrivateKey privateKey = (PrivateKey) keystore.getPrivateKey(alias, passwordPrivateKey);
+				this.provider = JweUtils.createJweDecryptionProvider( privateKey, keyAlgo, contentAlgo);
+				try {
+					this.provider.getKeyAlgorithm();
+				}catch(NullPointerException nullPointer) {
+					// caso in cui la chiave privata PKCS11 non e' stata mappata in un PrivateKeyDecryptionProvider
+					this.provider = null;
+				}
+				if(this.provider==null) {
+					this.provider = JsonUtils.getJweAsymmetricDecryptionProvider(privateKey, keyAlgo, contentAlgo);
+					if(this.provider==null) {
+						throw new Exception("("+keystore.getKeystore().getType()+") JwsDecryptionProvider init failed; keyAlgorithm ("+keyAlgorithm+") contentAlgorithm("+contentAlgorithm+")");
+					}
+				}	
 			}
 		}catch(Throwable t) {
 			throw JsonUtils.convert(options.getSerialization(), JsonUtils.DECRYPT,JsonUtils.RECEIVER,t);
@@ -612,7 +637,21 @@ public class JsonDecrypt {
 		if(privateKey==null) {
 			throw new Exception("Chiave privata associato al certificato (presente in header x5c) non recuperato");
 		}
-		return JweUtils.createJweDecryptionProvider( privateKey, keyAlgo, contentAlgo);
+		JweDecryptionProvider provider = JweUtils.createJweDecryptionProvider( privateKey, keyAlgo, contentAlgo);
+		try {
+			provider.getKeyAlgorithm();
+		}catch(NullPointerException nullPointer) {
+			// caso in cui la chiave privata PKCS11 non e' stata mappata in un PrivateKeyDecryptionProvider
+			provider = null;
+		}
+		if(provider==null) {
+			provider = JsonUtils.getJweAsymmetricDecryptionProvider(privateKey, keyAlgo, contentAlgo);
+			if(provider==null) {
+				throw new Exception("JwsDecryptionProvider init failed; keyAlgorithm ("+keyAlgo+") contentAlgorithm("+contentAlgo+")");
+			}
+		}
+		return provider;
+
 	}
 	
 	private JweDecryptionProvider getProviderJWK(JsonWebKey webKey,

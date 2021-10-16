@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
@@ -299,23 +298,21 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 		}
 	
 		// Provo a creare un context (per l'id di transazione nei diagnostici)
-		RicezioneContenutiApplicativiContext context = null;
-		IProtocolFactory<?> protocolFactory = null;
 		try {
-			context = new RicezioneContenutiApplicativiContext(this.idModuloAsService,dataAccettazioneRichiesta,this.requestInfo);
-			protocolFactory = this.req.getProtocolFactory();
+			this.context = new RicezioneContenutiApplicativiContext(this.idModuloAsService,dataAccettazioneRichiesta,this.requestInfo);
+			this.protocolFactory = this.req.getProtocolFactory();
 			String idTransazione = (String)this.context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 			if(this.openSPCoopProperties.isTransazioniEnabled()) {
 				TransactionContext.createTransaction(idTransazione,"RicezioneContenutiApplicativiHTTPtoSOAP.1");
 			}
 			this.requestInfo.setIdTransazione(idTransazione);
 			
-			this.req.setThresholdContext((context!=null ? this.context.getPddContext(): null), 
+			this.req.setThresholdContext((this.context!=null ? this.context.getPddContext(): null), 
 					this.openSPCoopProperties.getDumpBinario_inMemoryThreshold(), this.openSPCoopProperties.getDumpBinario_repository());
 			
 		}catch(Throwable e) {
-			context = null;
-			protocolFactory = null;
+			this.context = null;
+			this.protocolFactory = null;
 			// non loggo l'errore tanto poi provo a ricreare il context subito dopo e li verra' registrato l'errore
 		}
 		
@@ -323,21 +320,21 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 		String nomePorta = this.requestInfo.getProtocolContext().getInterfaceName();
 		this.msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA,this.idModulo,nomePorta);
 		this.msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI);
-		if(context!=null && protocolFactory!=null) {
-			this.msgDiag.setPddContext(this.context.getPddContext(), protocolFactory);
+		if(this.context!=null && this.protocolFactory!=null) {
+			this.msgDiag.setPddContext(this.context.getPddContext(), this.protocolFactory);
 		}
 		
 		// emitDiagnostic preAccept handler
-		GestoreHandlers.emitDiagnostic(this.msgDiag, preInAcceptRequestContext, context!=null ? this.context.getPddContext() : null, 
+		GestoreHandlers.emitDiagnostic(this.msgDiag, preInAcceptRequestContext, this.context!=null ? this.context.getPddContext() : null, 
 				this.logCore, this.logCore);
 		
 		// Aggiorno RequestInfo
 		ConnectorDispatcherInfo cInfo = RicezioneContenutiApplicativiServiceUtils.updatePortaDelegataRequestInfo(this.requestInfo, this.logCore, this.req, this.res,
 				this.generatoreErrore, serviceIdentificationReader, this.msgDiag, 
-				context!=null ? this.context.getPddContext(): null);
+				this.context!=null ? this.context.getPddContext(): null);
 		if(cInfo!=null){
 			this.res.close(false);
-			RicezioneContenutiApplicativiServiceUtils.emitTransaction(context, this.logCore, this.req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
+			RicezioneContenutiApplicativiServiceUtils.emitTransaction(this.context, this.logCore, this.req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
 			return; // l'errore in response viene impostato direttamente dentro il metodo
 		}
 		this.req.updateRequestInfo(this.requestInfo);	
@@ -355,12 +352,12 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 			// Limited
 			String azione = (this.requestInfo!=null && this.requestInfo.getIdServizio()!=null) ? this.requestInfo.getIdServizio().getAzione() : null;
 			SoglieDimensioneMessaggi limitedInputStream = configPdDManager.getSoglieLimitedInputStream(pd, azione, this.idModulo,
-					(context!=null && this.context.getPddContext()!=null) ? this.context.getPddContext() : null, 
+					(this.context!=null && this.context.getPddContext()!=null) ? this.context.getPddContext() : null, 
 					(this.requestInfo!=null) ? this.requestInfo.getProtocolContext() : null,
-					protocolFactory, this.logCore);
+					this.protocolFactory, this.logCore);
 			if(limitedInputStream!=null) {
 				this.req.setRequestLimitedStream(limitedInputStream.getRichiesta());
-				if(context!=null && this.context.getPddContext()!=null) {
+				if(this.context!=null && this.context.getPddContext()!=null) {
 					this.context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.LIMITED_STREAM, limitedInputStream.getRisposta());
 				}
 			}
@@ -394,12 +391,12 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 					fileTrace);
 			if(this.dumpRaw.isActiveDumpRichiesta()) {
 				this.req = new DumpRawConnectorInMessage(this.logCore, this.req, 
-						(context!=null ? this.context.getPddContext(): null), 
+						(this.context!=null ? this.context.getPddContext(): null), 
 						this.openSPCoopProperties.getDumpBinario_inMemoryThreshold(), this.openSPCoopProperties.getDumpBinario_repository());
 			}
 			if(this.dumpRaw.isActiveDumpRisposta()) {
 				this.res = new DumpRawConnectorOutMessage(this.logCore, this.res, 
-						(context!=null ? this.context.getPddContext(): null), 
+						(this.context!=null ? this.context.getPddContext(): null), 
 						this.openSPCoopProperties.getDumpBinario_inMemoryThreshold(), this.openSPCoopProperties.getDumpBinario_repository());
 			}
 		}catch(Throwable e){
@@ -419,10 +416,10 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 			String msg = "Servizio utilizzabile solamente con API SOAP, riscontrata API REST";
 			this.logCore.error(msg);
 			ConnectorDispatcherErrorInfo cInfoError =  ConnectorDispatcherUtils.doError(this.requestInfo, this.generatoreErrore,
-					ErroriIntegrazione.ERRORE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL.getErrore439_FunzionalitaNotSupportedByProtocol(msg, protocolFactory),
+					ErroriIntegrazione.ERRORE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL.getErrore439_FunzionalitaNotSupportedByProtocol(msg, this.protocolFactory),
 					IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL, null, null, this.res, this.logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
 			this.res.close(false);
-			RicezioneContenutiApplicativiServiceUtils.emitTransaction(context, this.logCore, this.req, pddContextFromServlet, dataAccettazioneRichiesta, cInfoError);
+			RicezioneContenutiApplicativiServiceUtils.emitTransaction(this.context, this.logCore, this.req, pddContextFromServlet, dataAccettazioneRichiesta, cInfoError);
 			return;
 		}
 		
@@ -442,13 +439,13 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 			
 			/* --------------- Creo il context che genera l'id univoco ----------------------- */
 			
-			if(protocolFactory==null) {
-				protocolFactory = this.req.getProtocolFactory();
+			if(this.protocolFactory==null) {
+				this.protocolFactory = this.req.getProtocolFactory();
 			}
 			protocol = this.protocolFactory.getProtocol();
 			
-			if(context==null) {
-				context = new RicezioneContenutiApplicativiContext(this.idModuloAsService,dataAccettazioneRichiesta,this.requestInfo);
+			if(this.context==null) {
+				this.context = new RicezioneContenutiApplicativiContext(this.idModuloAsService,dataAccettazioneRichiesta,this.requestInfo);
 			}
 			if(preInAcceptRequestContext!=null && preInAcceptRequestContext.getPreContext()!=null && !preInAcceptRequestContext.getPreContext().isEmpty()) {
 				this.context.getPddContext().addAll(preInAcceptRequestContext.getPreContext(), false);
@@ -458,11 +455,19 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 			this.context.setIdModulo(this.idModulo);
 			this.context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, this.protocolFactory.getProtocol());
 			this.context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO, this.req.getRequestInfo());
-			Map<String, String> configProperties = RicezioneContenutiApplicativiServiceUtils.readPropertiesConfig(this.req.getRequestInfo(), this.logCore,null);
-            if (configProperties != null && !configProperties.isEmpty()) {
-               this.context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE, configProperties);
-            }
-			this.msgDiag.setPddContext(this.context.getPddContext(),protocolFactory);		
+			RicezionePropertiesConfig rConfig = RicezioneContenutiApplicativiServiceUtils.readPropertiesConfig(this.req.getRequestInfo(), this.logCore,null);
+			if(rConfig!=null) {
+	            if (rConfig.getApiImplementation() != null && !rConfig.getApiImplementation().isEmpty()) {
+	            	this.context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE, rConfig.getApiImplementation());
+	            }
+	            if (rConfig.getSoggettoFruitore() != null && !rConfig.getSoggettoFruitore().isEmpty()) {
+	            	this.context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE, rConfig.getSoggettoFruitore());
+	            }
+	            if (rConfig.getSoggettoErogatore() != null && !rConfig.getSoggettoErogatore().isEmpty()) {
+	            	this.context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_EROGATORE, rConfig.getSoggettoErogatore());
+	            }
+			}
+			this.msgDiag.setPddContext(this.context.getPddContext(),this.protocolFactory);
 			this.pddContext = this.context.getPddContext();
 			
 			try{
@@ -482,7 +487,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 			
 			if(this.dumpRaw!=null && this.dumpRaw.isActiveDump()){
 				this.dumpRaw.setPddContext(this.msgDiag.getPorta(), this.context.getPddContext());
-				this.dumpRaw.serializeContext(context, protocol);
+				this.dumpRaw.serializeContext(this.context, protocol);
 			}
 			
 			DirectVMConnectorInMessage vm = null;
@@ -502,7 +507,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 			
 			
 			/* ------------  PostOutResponseContext ------------- */
-			this.postOutResponseContext = new PostOutResponseContext(this.logCore,protocolFactory);
+			this.postOutResponseContext = new PostOutResponseContext(this.logCore,this.protocolFactory);
 			this.postOutResponseContext.setTipoPorta(TipoPdD.DELEGATA);
 			this.postOutResponseContext.setPddContext(this.pddContext);
 			this.postOutResponseContext.setIdModulo(this.idModulo);
@@ -519,7 +524,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 			}
 			preInRequestContext.setTipoPorta(TipoPdD.DELEGATA);
 			preInRequestContext.setIdModulo(this.idModulo);
-			preInRequestContext.setProtocolFactory(protocolFactory);
+			preInRequestContext.setProtocolFactory(this.protocolFactory);
 			preInRequestContext.setRequestInfo(this.requestInfo);
 			Hashtable<String, Object> transportContext = new Hashtable<String, Object>();
 			transportContext.put(PreInRequestContext.SERVLET_REQUEST, this.req);
@@ -673,23 +678,23 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 			this.msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.completata");
 			
 			// Invocazione...
-			RicezioneContenutiApplicativi gestoreRichiesta = new RicezioneContenutiApplicativi(context, this.generatoreErrore, 
+			RicezioneContenutiApplicativi gestoreRichiesta = new RicezioneContenutiApplicativi(this.context, this.generatoreErrore, 
 					async ? this : null);
 			gestoreRichiesta.process(this.req);
 			completeProcess = true;
 						
 		} catch (Throwable e) {
 			
-			if(context==null){
+			if(this.context==null){
 				// Errore durante la generazione dell'id
-				context = RicezioneContenutiApplicativiContext.newRicezioneContenutiApplicativiContext(this.idModuloAsService,dataAccettazioneRichiesta,this.requestInfo);
+				this.context = RicezioneContenutiApplicativiContext.newRicezioneContenutiApplicativiContext(this.idModuloAsService,dataAccettazioneRichiesta,this.requestInfo);
 				this.context.setDataIngressoRichiesta(this.dataIngressoRichiesta);
 				this.context.setTipoPorta(TipoPdD.DELEGATA);
 				this.context.setForceFaultAsXML(true); // siamo in una richiesta http senza SOAP, un SoapFault non ha senso
 				this.context.setIdModulo(this.idModulo);
 				this.context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, this.protocolFactory.getProtocol());
 				this.pddContext = this.context.getPddContext();
-				this.msgDiag.setPddContext(this.pddContext,protocolFactory);
+				this.msgDiag.setPddContext(this.pddContext,this.protocolFactory);
 				if(this.postOutResponseContext!=null){
 					this.postOutResponseContext.setPddContext(this.pddContext);
 				}

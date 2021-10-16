@@ -12,6 +12,10 @@ Background:
 * eval randomize(api_soap_una_azione, ["nome"])
 * eval api_soap_una_azione.referente = soggettoDefault
 
+* def api_soap_una_azione_oneway = read('api_soap_una_azione_oneway.json')
+* eval randomize(api_soap_una_azione_oneway, ["nome"])
+* eval api_soap_una_azione_oneway.referente = soggettoDefault
+
 * def api_soap_piu_azioni = read('api_soap_piu_azioni.json')
 * eval randomize(api_soap_piu_azioni, ["nome"])
 * eval api_soap_piu_azioni.referente = soggettoDefault
@@ -27,6 +31,11 @@ Background:
 * eval erogazione_soap_una_azione.api_versione = api_soap_una_azione.versione
 * eval erogazione_soap_una_azione.erogazione_nome = api_soap_una_azione.nome
 
+* def erogazione_soap_una_azione_oneway = read('erogazione_soap_una_azione.json')
+* eval erogazione_soap_una_azione_oneway.api_nome = api_soap_una_azione_oneway.nome
+* eval erogazione_soap_una_azione_oneway.api_versione = api_soap_una_azione_oneway.versione
+* eval erogazione_soap_una_azione_oneway.erogazione_nome = api_soap_una_azione_oneway.nome
+
 * def erogazione_soap_piu_azioni = read('erogazione_soap_piu_azioni.json')
 * eval erogazione_soap_piu_azioni.api_nome = api_soap_piu_azioni.nome
 * eval erogazione_soap_piu_azioni.api_versione = api_soap_piu_azioni.versione
@@ -40,20 +49,429 @@ Background:
 * def api_soap_una_azione_path = 'api/' + soap_una_azione_key
 * def erogazione_soap_una_azione_path = 'erogazioni/' + soap_una_azione_key
 
+* def soap_una_azione_oneway_key = erogazione_soap_una_azione_oneway.api_nome + '/' + erogazione_soap_una_azione_oneway.api_versione
+* def api_soap_una_azione_oneway_path = 'api/' + soap_una_azione_oneway_key
+* def erogazione_soap_una_azione_oneway_path = 'erogazioni/' + soap_una_azione_oneway_key
+
 * def soap_piu_azioni_key = erogazione_soap_piu_azioni.api_nome + '/' + erogazione_soap_piu_azioni.api_versione
 * def api_soap_piu_azioni_path = 'api/' + soap_piu_azioni_key
 * def erogazione_soap_piu_azioni_path = 'erogazioni/' + soap_piu_azioni_key
 
-* def connettore = read('connettore_erogazione_petstore.json')
+* def connettore = read('connettore_erogazione_http.json')
+* def connettore_pkcs11 = read('connettore_erogazione_http_pkcs11.json')
+* def connettore_pkcs12_trustAll = read('connettore_erogazione_http_trustAll_pkcs12.json')
+
 * def info_generali = read('informazioni_generali_petstore.json')
 * eval randomize(info_generali, ["nome"])
 * def erogazione_versione = read('api_versione3.json')
 
-@UpdateConnettore204
-Scenario: Erogazioni Update Connettore 204
+* def getExpectedConnettore =
+"""
+function(connettore) {
+
+	var expected = connettore
+	expected.connettore.debug =expected.connettore.debug != null ? expected.connettore.debug : false 
+
+	var tipo = connettore.connettore.tipo
+	if(tipo == 'http') {
+			if(expected.connettore.autenticazione_https != null) {
+				expected.connettore.autenticazione_https.trust_all_server_certs = expected.connettore.autenticazione_https.trust_all_server_certs != null ? expected.connettore.autenticazione_https.trust_all_server_certs : false  
+				expected.connettore.autenticazione_https.server.algoritmo = expected.connettore.autenticazione_https.server.algoritmo != null ? expected.connettore.autenticazione_https.server.algoritmo : 'PKIX'
+			}  
+	} else if (tipo == 'file') {
+		expected.connettore.richiesta.create_parent_dir = expected.connettore.richiesta.create_parent_dir != null ? expected.connettore.richiesta.create_parent_dir : false
+		expected.connettore.richiesta.overwrite_if_exists=expected.connettore.richiesta.overwrite_if_exists != null ? expected.connettore.richiesta.overwrite_if_exists: false
+		if(expected.connettore.risposta != null) {
+		expected.connettore.risposta.delete_after_read = expected.connettore.risposta.delete_after_read != null ? expected.connettore.risposta.delete_after_read: false
+		}
+	} else if (tipo == 'plugin') {
+		expected.connettore.proprieta = expected.connettore.proprieta != null ? expected.connettore.proprieta: new Array()
+	}
+	
+	return expected
+} 
+"""
+
+@UpdateConnettoreMessageBox
+Scenario: Erogazioni Update Connettore MessageBox
+
+		* def connettore_update = read ('connettore_erogazione_message_box.json')
 
     * call create ({ resourcePath: 'api', body: api_petstore })
     * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_update
+    And params query_params
+    When method put
+    Then status 400
+
+    * match response.detail == 'Impossibile associare un connettore di tipo message-box a una erogazione (o gruppo) che non sia composto da tutte e sole Operation SOAP OneWay'
+    
+    * def applicativo = read('applicativo_server.json') 
+    * eval randomize(applicativo, ["nome"]);
+
+    * def applicativo_key = applicativo.nome
+    * def applicativo_update = read('applicativo_server.json')
+    * eval applicativo_update.nome = applicativo.nome
+    * def connettore_app_update = connettore_update.connettore
+    * eval applicativo_update.connettore = connettore_app_update
+    
+    * call create ( { resourcePath: 'applicativi-server', body: applicativo,  key: applicativo_key } )
+    * call put ( { resourcePath: 'applicativi-server/'+applicativo_key, body: applicativo_update } )
+    
+		* def connettore_update_applicativo_server_msg_box = read ('connettore_applicativo_server_erogazione_petstore.json')
+    * eval connettore_update_applicativo_server_msg_box.connettore.applicativo = applicativo.nome
+		
+    
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_update_applicativo_server_msg_box
+    And params query_params
+    When method put
+    Then status 400
+
+    * match response.detail == 'Impossibile associare un connettore di tipo message-box a una erogazione (o gruppo) che non sia composto da tutte e sole Operation SOAP OneWay'
+    
+    * call delete ({ resourcePath: 'applicativi-server/' + applicativo_key } )
+    
+    * call delete ({ resourcePath: 'erogazioni/' + petstore_key })
+    * call delete ({ resourcePath: api_petstore_path })
+
+    * call create ({ resourcePath: 'api', body: api_soap_una_azione_oneway })
+    * call create ({ resourcePath: 'erogazioni', body: erogazione_soap_una_azione_oneway })
+
+    Given url configUrl
+    And path 'erogazioni', soap_una_azione_oneway_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_update
+    And params query_params
+    When method put
+    Then status 204
+    
+    Given url configUrl
+    And path 'erogazioni', soap_una_azione_oneway_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    * match response.connettore.tipo == 'message-box'
+    * match response.connettore.autenticazione_http.username == connettore_update.connettore.autenticazione_http.username
+    
+    
+    Given url configUrl
+    And path 'erogazioni', soap_una_azione_oneway_key
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+
+		* match response.connettore == 'disabilitato [MessageBox]'
+		
+		* def api_soap_una_azione_oneway2 = read('api_soap_una_azione_oneway.json')
+		* eval randomize(api_soap_una_azione_oneway2, ["nome"])
+		* eval api_soap_una_azione_oneway2.referente = soggettoDefault
+
+		
+		* def erogazione_soap_una_azione_oneway2 = read('erogazione_soap_una_azione.json')
+		* eval erogazione_soap_una_azione_oneway2.api_nome = api_soap_una_azione_oneway2.nome
+		* eval erogazione_soap_una_azione_oneway2.api_versione = api_soap_una_azione_oneway2.versione
+		* eval erogazione_soap_una_azione_oneway2.erogazione_nome = api_soap_una_azione_oneway2.nome
+		* eval randomize(erogazione_soap_una_azione_oneway2, ["erogazione_nome"])
+		
+		* def soap_una_azione_oneway_key2 = erogazione_soap_una_azione_oneway2.erogazione_nome + '/' + erogazione_soap_una_azione_oneway2.api_versione
+		* def api_soap_una_azione_oneway_path2 = 'api/' + soap_una_azione_oneway_key2
+		
+    * call create ({ resourcePath: 'api', body: api_soap_una_azione_oneway2 })
+    * call create ({ resourcePath: 'erogazioni', body: erogazione_soap_una_azione_oneway2 })
+
+    Given url configUrl
+    And path 'erogazioni', soap_una_azione_oneway_key2, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_update
+    And params query_params
+    When method put
+    Then status 400
+    
+    * match response.detail contains 'possiede già l\'utente (http-basic) indicato per il servizio \'Servizio IntegrationManager/MessageBox\''
+    
+    * call delete ({ resourcePath: 'erogazioni/' + soap_una_azione_oneway_key2 })
+    * call delete ({ resourcePath: api_soap_una_azione_oneway_path2 })
+    * call delete ({ resourcePath: 'erogazioni/' + soap_una_azione_oneway_key })
+    * call delete ({ resourcePath: api_soap_una_azione_oneway_path })
+
+@UpdateConnettore204
+Scenario Outline: Erogazioni Update Connettore 204
+
+		* def connettore_update = read ('<nome>')
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_update
+    And params query_params
+    When method put
+    Then status 204
+    
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    * match response == getExpectedConnettore(connettore_update)
+    
+    Given url configUrl
+    And path 'erogazioni', petstore_key
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+
+		* match response.connettore == '<connettore>'
+    
+    
+    * call delete ({ resourcePath: 'erogazioni/' + petstore_key })
+    * call delete ({ resourcePath: api_petstore_path })
+
+Examples:
+|nome|connettore|
+|connettore_erogazione_http.json|https://ginovadifretta.it/petstore|
+|connettore_erogazione_echo.json|[echo] govway://echo|
+|connettore_erogazione_null.json|[null] govway://dev/null|
+|connettore_erogazione_plugin.json|[plugin] custom|
+|connettore_erogazione_plugin_con_properties.json|[plugin] custom|
+|connettore_erogazione_jms.json|[jms] nome_coda|
+|connettore_erogazione_jms_jndi_init_ctx.json|[jms] nome_coda|
+|connettore_erogazione_jms_jndi_provider_url.json|[jms] nome_coda|
+|connettore_erogazione_jms_jndi_url_pkg.json|[jms] nome_coda|
+|connettore_erogazione_jms_send_as_bytes.json|[jms] nome_coda|
+|connettore_erogazione_jms_tipo_coda_topic.json|[jms] nome_coda|
+|connettore_erogazione_jms_user_password.json|[jms] nome_coda|
+|connettore_erogazione_file.json|[file] /tmp/abc.txt|
+|connettore_erogazione_file_create_parent.json|[file] /tmp/abc.txt|
+|connettore_erogazione_file_headers.json|[file] /tmp/abc.txt|
+|connettore_erogazione_file_overwrite.json|[file] /tmp/abc.txt|
+|connettore_erogazione_file_response.json|[file] /tmp/abc.txt|
+|connettore_erogazione_file_response_delete.json|[file] /tmp/abc.txt|
+|connettore_erogazione_file_response_headers.json|[file] /tmp/abc.txt|
+|connettore_erogazione_file_response_wait.json|[file] /tmp/abc.txt|
+
+
+@UpdateConnettore400
+Scenario Outline: Erogazioni Update Connettore 400
+
+		* def connettore_update = read ('<nome>')
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_update
+    And params query_params
+    When method put
+    Then status 400
+    
+    * match response.detail == '<error>' 
+    
+    * call delete ({ resourcePath: 'erogazioni/' + petstore_key })
+    * call delete ({ resourcePath: api_petstore_path })
+
+Examples:
+|nome|error|
+|connettore_erogazione_plugin_tipo_non_trovato.json|Tipo plugin [tipo_non_trovato] non trovato|
+
+
+@UpdateConnettoreApplicativoServer204
+Scenario: Erogazioni Update Connettore 204
+
+		* def connettore_update_noserver = read ('connettore_erogazione_http.json')
+		* def app_server = read ('applicativo_server.json')
+		* eval randomize(app_server, ["nome"])
+		* def connettore_update = read ('connettore_applicativo_server_erogazione_petstore.json')
+		* eval connettore_update.connettore.applicativo = app_server.nome
+
+		* def app_server_2 = read ('applicativo_server.json')
+		* eval randomize(app_server_2, ["nome"])
+		* def connettore_update_2 = read ('connettore_applicativo_server_erogazione_petstore.json')
+		* eval connettore_update_2.connettore.applicativo = app_server_2.nome
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
+    * call create ({ resourcePath: 'applicativi-server', body: app_server })
+    * call create ({ resourcePath: 'applicativi-server', body: app_server_2 })
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_update
+    And params query_params
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+
+    * match response == connettore_update
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+
+		* match response.connettore == 'https://ginovadifretta.it/petstore'
+    
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_update_2
+    And params query_params
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+
+    * match response == connettore_update_2
+    
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_update_noserver
+    And params query_params
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+
+    * match response == getExpectedConnettore(connettore_update_noserver)
+    
+    * call delete ({ resourcePath: 'erogazioni/' + petstore_key })
+    * call delete ({ resourcePath: 'applicativi-server/' + app_server.nome })
+    * call delete ({ resourcePath: 'applicativi-server/' + app_server_2.nome })
+    * call delete ({ resourcePath: api_petstore_path })
+
+@UpdateConnettoreGruppoApplicativoServer204	
+Scenario: Erogazioni Update Connettore gruppo ApplicativoServer OK
+
+		* def gruppo_petstore = read ('gruppo_petstore.json')
+		* def query_params = {'gruppo': 'GruppoJson'}
+
+		* def connettore_update_noserver = read ('connettore_erogazione_http.json')
+		* def app_server = read ('applicativo_server.json')
+		* eval randomize(app_server, ["nome"])
+		* def connettore_update = read ('connettore_applicativo_server_erogazione_petstore.json')
+		* eval connettore_update.connettore.applicativo = app_server.nome
+
+		* def app_server_2 = read ('applicativo_server.json')
+		* eval randomize(app_server_2, ["nome"])
+		* def connettore_update_2 = read ('connettore_applicativo_server_erogazione_petstore.json')
+		* eval connettore_update_2.connettore.applicativo = app_server_2.nome
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
+    * call create ({ resourcePath: 'applicativi-server', body: app_server })
+    * call create ({ resourcePath: 'applicativi-server', body: app_server_2 })
+    * call create ( { resourcePath: erogazione_petstore_path + '/gruppi', body: gruppo_petstore, key: gruppo_petstore.nome})
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_update
+    And params query_params
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+
+    * match response == connettore_update
+    
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_update_2
+    And params query_params
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+
+    * match response == connettore_update_2
+    
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_update_noserver
+    And params query_params
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+
+    * match response == getExpectedConnettore(connettore_update_noserver)
+    
+    * call delete ({ resourcePath: 'erogazioni/' + petstore_key })
+    * call delete ({ resourcePath: 'applicativi-server/' + app_server.nome })
+    * call delete ({ resourcePath: 'applicativi-server/' + app_server_2.nome })
+    * call delete ({ resourcePath: api_petstore_path })
+
+@UpdateConnettoreGruppo204	
+Scenario: Erogazioni Update Connettore gruppo OK
+
+		* def gruppo_petstore = read ('gruppo_petstore.json')
+		* def query_params = {'gruppo': 'GruppoJson'}
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
+    * call create ( { resourcePath: erogazione_petstore_path + '/gruppi', body: gruppo_petstore, key: gruppo_petstore.nome})
+
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+		* match response.connettore == 'https://ginovadifretta.it/petstore'
+    
 
     Given url configUrl
     And path 'erogazioni', petstore_key, 'connettore'
@@ -63,8 +481,131 @@ Scenario: Erogazioni Update Connettore 204
     When method put
     Then status 204
     
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+
+    * match response == getExpectedConnettore(connettore)
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore
+    And params query_params
+    When method put
+    Then status 204
+    
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+
+		* match response == getExpectedConnettore(connettore)
+    
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+		# il connettore in creazione e' solo HTTP
+    * def conn = erogazione_petstore.connettore
+    * eval conn.tipo = 'http'
+    
+		* match response == getExpectedConnettore({connettore: conn})
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+		* match response.connettore == 'Connettori ridefiniti nei gruppi'
+    
     * call delete ({ resourcePath: 'erogazioni/' + petstore_key })
     * call delete ({ resourcePath: api_petstore_path })
+
+@UpdateConnettore204_PKCS11
+Scenario: Erogazioni Update Connettore 204 (PKCS11)
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_pkcs11
+    And params query_params
+    When method put
+    Then status 204
+      
+   Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+    And match response == connettore_pkcs11
+    
+    * call delete ({ resourcePath: 'erogazioni/' + petstore_key })
+    * call delete ({ resourcePath: api_petstore_path })
+    
+@UpdateConnettore204_PKCS12_trustAll
+Scenario: Erogazioni Update Connettore 204 (PKCS12 per keystore, trustAll)
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_pkcs12_trustAll
+    And params query_params
+    When method put
+    Then status 204
+      
+   Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+    And match response == connettore_pkcs12_trustAll
+   
+    * call delete ({ resourcePath: 'erogazioni/' + petstore_key })
+    * call delete ({ resourcePath: api_petstore_path })
+    
+
+@UpdateConnettore204_connettoreDebug
+Scenario Outline: Erogazioni Update Connettore 204
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
+
+		* eval connettore.connettore.debug=<debug>
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore
+    And params query_params
+    When method put
+    Then status 204
+    
+        
+		* call get ( { resourcePath: 'erogazioni', key: petstore_key + '/connettore'} )
+    
+		* match response.connettore.debug == <debug>
+    
+    * call delete ({ resourcePath: 'erogazioni/' + petstore_key })
+    * call delete ({ resourcePath: api_petstore_path })
+
+Examples:
+|debug|
+|true|
+|false|
 
 @UpdateInfoGenerali204
 Scenario: Erogazioni Update Info Generali 204

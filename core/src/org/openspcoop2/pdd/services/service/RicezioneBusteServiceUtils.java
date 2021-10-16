@@ -35,6 +35,8 @@ import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.transazioni.utils.PropertiesSerializator;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
@@ -66,6 +68,7 @@ import org.openspcoop2.protocol.basic.registry.ServiceIdentificationReader;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
+import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
@@ -90,16 +93,25 @@ import org.slf4j.Logger;
  */
 public class RicezioneBusteServiceUtils {
 
-	public static Map<String, String> readPropertiesConfig(RequestInfo requestInfo, Logger logCore, IState state) {
+	public static RicezionePropertiesConfig readPropertiesConfig(RequestInfo requestInfo, Logger logCore, IState state) {
 		if (requestInfo != null && requestInfo.getProtocolContext() != null && requestInfo.getProtocolContext().getInterfaceName() != null && !"".equals(requestInfo.getProtocolContext().getInterfaceName())) {
 			try {
 				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
+				RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance(state);
 				IDPortaApplicativa idPA = new IDPortaApplicativa();
 				idPA.setNome(requestInfo.getProtocolContext().getInterfaceName());
 				PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA);
 				if (pa != null) {
-					return configurazionePdDManager.getProprietaConfigurazione(pa);
-				}
+					RicezionePropertiesConfig config = new RicezionePropertiesConfig();
+					
+					config.setApiImplementation(configurazionePdDManager.getProprietaConfigurazione(pa));
+					
+					IDSoggetto idSoggettoProprietario = new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario());
+					Soggetto soggetto = registroServiziManager.getSoggetto(idSoggettoProprietario, null);
+					config.setSoggettoErogatore(registroServiziManager.getProprietaConfigurazione(soggetto));
+					
+					return config;
+				}				
 			} catch (Exception e) {
 				logCore.error("Errore durante la lettura delle proprietà di configurazione della porta applicativa [" + requestInfo.getProtocolContext().getInterfaceName() + "]: " + e.getMessage(), e);
 			}

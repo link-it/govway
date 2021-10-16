@@ -827,6 +827,11 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			Documento doc = as.getAllegatoList().stream().filter(a -> nomeAllegato.equals(a.getFile())).findFirst()
 					.orElse(null);
 
+			if (doc == null) {
+				doc = as.getSpecificaSemiformaleList().stream().filter(a -> nomeAllegato.equals(a.getFile())).findFirst()
+						.orElse(null);
+			}
+			
 			if (doc == null)
 				throw FaultCode.NOT_FOUND
 						.toException("Nessun allegato con nome " + nomeAllegato + " registrato per la Api specificata");
@@ -1276,6 +1281,16 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					return null;
 				}
 			}).findFirst().orElse(null);
+			
+			if(ret==null) {
+				ret = as.getSpecificaSemiformaleList().stream().filter(a -> nomeAllegato.equals(a.getFile())).map(a -> {
+					try {
+						return ApiApiHelper.documentoToApiAllegato(env.archiviCore.getDocumento(a.getId(), true));
+					} catch (DriverRegistroServiziException | DriverRegistroServiziNotFound e) {
+						return null;
+					}
+				}).findFirst().orElse(null);
+			}
 
 			if (ret == null)
 				throw FaultCode.NOT_FOUND

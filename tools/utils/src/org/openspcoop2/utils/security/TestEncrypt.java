@@ -20,6 +20,7 @@
 
 package org.openspcoop2.utils.security;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.security.cert.X509Certificate;
@@ -32,15 +33,20 @@ import javax.crypto.SecretKey;
 
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKey;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
+import org.apache.logging.log4j.Level;
 import org.apache.xml.security.encryption.XMLCipher;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.JWK;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.certificate.KeyStore;
+import org.openspcoop2.utils.certificate.hsm.HSMManager;
+import org.openspcoop2.utils.certificate.test.KeystoreTest;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.xml.PrettyPrintXMLUtils;
 import org.openspcoop2.utils.xml.XMLUtils;
+import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
 /**	
@@ -52,22 +58,45 @@ import org.w3c.dom.Element;
  */
 public class TestEncrypt {
 
+	/* !!NOTA!!: 
+	 * l'esecuzione dei test P11 richiedono la configurazione descritta in org/openspcoop2/utils/certificate/hsm/HSM.example 
+	 * Deve inoltre essere impostata la variabile di sistema (utilizzando path assoluti!!!):
+	 * export SOFTHSM2_CONF=DIRECTORY_SCELTA_FASE_INSTALLAZIONE/lib/softhsm/softhsm2.conf
+	 */
+	
 	public static void main(String[] args) throws Exception {
+		
+		/*
+		TODO
+		*/
+		boolean runPKCS11SecretTest = false;
 		
 		TipoTest tipoTest = null;
 		if(args!=null && args.length>0) {
 			tipoTest = TipoTest.valueOf(args[0]);
 		}
 		
-		InputStream isKeystore = null;
-		File fKeystore = null;
+		boolean useP11asTrustStore = false;
+		if(args!=null && args.length>1) {
+			useP11asTrustStore = Boolean.valueOf(args[1]);
+		}
+		
+		InputStream isKeystoreJKS = null;
+		File fKeystoreJKS = null;
+		InputStream isKeystoreP12 = null;
+		File fKeystoreP12 = null;
 		InputStream isTruststore = null;
 		File fTruststore = null;
+
+		File fKeystoreP11 = null;
+		File fTruststoreP11 = null;
 		
 		InputStream isKeystoreJCEKS = null;
 		File fKeystoreJCEKS = null;
 		
 		File fCertX509 = null;
+		
+		File fCertX509_P11 = null;
 		
 		InputStream jwks_isKeystore = null;
 		File jwks_fKeystore = null;
@@ -85,13 +114,27 @@ public class TestEncrypt {
 		InputStream jwk_symmetric_isKeystore = null;
 		File jwk_symmetric_fKeystore = null;
 		try{
-			isKeystore = TestEncrypt.class.getResourceAsStream("/org/openspcoop2/utils/security/keystore_example.jks");
-			fKeystore = File.createTempFile("keystore", "jks");
-			FileSystemUtilities.writeFile(fKeystore, Utilities.getAsByteArray(isKeystore));
+			System.out.println("env SOFTHSM2_CONF: "+System.getenv("SOFTHSM2_CONF"));
+			
+			LoggerWrapperFactory.setDefaultConsoleLogConfiguration(Level.ALL);
+			Logger log = LoggerWrapperFactory.getLogger(TestEncrypt.class);
+			
+			isKeystoreJKS = TestEncrypt.class.getResourceAsStream("/org/openspcoop2/utils/security/keystore_example.jks");
+			fKeystoreJKS = File.createTempFile("keystore", "jks");
+			FileSystemUtilities.writeFile(fKeystoreJKS, Utilities.getAsByteArray(isKeystoreJKS));
+			
+			isKeystoreP12 = TestEncrypt.class.getResourceAsStream("/org/openspcoop2/utils/security/keystore_example.p12");
+			fKeystoreP12 = File.createTempFile("keystore", "p12");
+			FileSystemUtilities.writeFile(fKeystoreP12, Utilities.getAsByteArray(isKeystoreP12));
 			
 			isTruststore = TestEncrypt.class.getResourceAsStream("/org/openspcoop2/utils/security/truststore_example.jks");
 			fTruststore = File.createTempFile("truststore", "jks");
 			FileSystemUtilities.writeFile(fTruststore, Utilities.getAsByteArray(isTruststore));
+
+			fKeystoreP11 = File.createTempFile("keystore_hsm", ".properties");
+			FileSystemUtilities.writeFile(fKeystoreP11, Utilities.getAsByteArray(TestEncrypt.class.getResourceAsStream(KeystoreTest.PREFIX+"govway_test_hsm.properties")) );
+			
+			fTruststoreP11 = File.createTempFile("truststore_hsm", ".jks");
 			
 			isKeystoreJCEKS = TestEncrypt.class.getResourceAsStream("/org/openspcoop2/utils/security/example.jceks");
 			fKeystoreJCEKS = File.createTempFile("keystore", "jceks");
@@ -127,12 +170,86 @@ public class TestEncrypt {
 			HashMap<String, String> keystore_mapAliasPassword = new HashMap<>();
 			keystore_mapAliasPassword.put(alias, passwordChiavePrivata);
 			
-			KeyStore keystore = new KeyStore(fKeystore.getAbsolutePath(), passwordStore);
+			KeyStore keystoreJKS = new KeyStore(fKeystoreJKS.getAbsolutePath(), "jks", passwordStore);
+			if(!"jks".equalsIgnoreCase(keystoreJKS.getKeystoreType())) {
+				throw new Exception("Atteso tipo JKS, trovato '"+keystoreJKS.getKeystoreType()+"'");
+			}
+			KeyStore keystoreP12 = new KeyStore(fKeystoreP12.getAbsolutePath(), "pkcs12", passwordStore);
+			if(!"pkcs12".equalsIgnoreCase(keystoreP12.getKeystoreType())) {
+				throw new Exception("Atteso tipo PKCS12, trovato '"+keystoreP12.getKeystoreType()+"'");
+			}
 			KeyStore truststore = new KeyStore(fTruststore.getAbsolutePath(), passwordStore);
+			if(!"jks".equalsIgnoreCase(truststore.getKeystoreType())) {
+				throw new Exception("Atteso tipo JKS, trovato '"+truststore.getKeystoreType()+"'");
+			}
+
+			String aliasP11 = KeystoreTest.ALIAS_PKCS11_SERVER2;
+			HashMap<String, String> keystoreP11_mapAliasPassword = new HashMap<>();
+			keystoreP11_mapAliasPassword.put(aliasP11, passwordChiavePrivata);
+			
+			boolean uniqueProviderInstance = true;			
+			HSMManager.init(fKeystoreP11, true, log, true);
+			HSMManager hsmManager = HSMManager.getInstance();
+			hsmManager.providerInit(log, uniqueProviderInstance);
+			System.out.println("PKCS11 Keystore registered: "+hsmManager.getKeystoreTypes());
+			KeyStore keystoreP11 = hsmManager.getKeystore(KeystoreTest.PKCS11_SERVER);
+			if(!"pkcs11".equalsIgnoreCase(keystoreP11.getKeystoreType())) {
+				throw new Exception("Atteso tipo PKCS11, trovato '"+keystoreP12.getKeystoreType()+"'");
+			}
+			KeyStore truststoreP11 = null;
+			if(useP11asTrustStore) {
+				truststoreP11 = hsmManager.getKeystore(KeystoreTest.PKCS11_SERVER);
+				if(!"pkcs11".equalsIgnoreCase(truststoreP11.getKeystoreType())) {
+					throw new Exception("Atteso tipo PKCS11, trovato '"+truststoreP11.getKeystoreType()+"'");
+				}
+			}
+			else {
+				java.security.KeyStore tP11 = java.security.KeyStore.getInstance("JKS");
+				tP11.load(null); // inizializza il keystore
+				tP11.setCertificateEntry(KeystoreTest.ALIAS_PKCS11_CLIENT1, 
+						hsmManager.getKeystore(KeystoreTest.PKCS11_CLIENT1).getCertificate(KeystoreTest.ALIAS_PKCS11_CLIENT1));
+				tP11.setCertificateEntry(KeystoreTest.ALIAS_PKCS11_CLIENT2, 
+						hsmManager.getKeystore(KeystoreTest.PKCS11_CLIENT2).getCertificate(KeystoreTest.ALIAS_PKCS11_CLIENT2));
+				tP11.setCertificateEntry(KeystoreTest.ALIAS_PKCS11_SERVER, 
+						hsmManager.getKeystore(KeystoreTest.PKCS11_SERVER).getCertificate(KeystoreTest.ALIAS_PKCS11_SERVER));
+				tP11.setCertificateEntry(KeystoreTest.ALIAS_PKCS11_SERVER2, 
+						hsmManager.getKeystore(KeystoreTest.PKCS11_SERVER).getCertificate(KeystoreTest.ALIAS_PKCS11_SERVER2));
+				truststoreP11 = new KeyStore(tP11);
+				try(FileOutputStream fout = new FileOutputStream(fTruststoreP11)){
+					tP11.store(fout, passwordStore.toCharArray());
+					fout.flush();
+				}
+				if(!"jks".equalsIgnoreCase(truststoreP11.getKeystoreType())) {
+					throw new Exception("Atteso tipo JKS, trovato '"+truststoreP11.getKeystoreType()+"'");
+				}
+			}
+			
 			KeyStore keystoreJCEKS = new KeyStore(fKeystoreJCEKS.getAbsolutePath(), "JCEKS", passwordStore);
+			if(!"JCEKS".equalsIgnoreCase(keystoreJCEKS.getKeystoreType())) {
+				throw new Exception("Atteso tipo JCEKS, trovato '"+keystoreJCEKS.getKeystoreType()+"'");
+			}
+			
+			KeyStore keystoreSecretP11 = hsmManager.getKeystore(KeystoreTest.PKCS11_CLIENT1);
+			if(!"pkcs11".equalsIgnoreCase(keystoreSecretP11.getKeystoreType())) {
+				throw new Exception("Atteso tipo PKCS11, trovato '"+keystoreSecretP11.getKeystoreType()+"'");
+			}
+			KeyStore truststoreSecretP11 = null;
+			if(useP11asTrustStore) {
+				truststoreSecretP11 = hsmManager.getKeystore(KeystoreTest.PKCS11_CLIENT1);
+				if(!"pkcs11".equalsIgnoreCase(truststoreSecretP11.getKeystoreType())) {
+					throw new Exception("Atteso tipo PKCS11, trovato '"+truststoreSecretP11.getKeystoreType()+"'");
+				}
+			}
+			
+			String aliasSecretP11 = KeystoreTest.ALIAS_PKCS11_CLIENT_SYMMETRIC;
+			HashMap<String, String> keystoreSecretP11_mapAliasPassword = new HashMap<>();
+			keystoreSecretP11_mapAliasPassword.put(aliasSecretP11, passwordChiavePrivata);
 			
 			fCertX509 =  File.createTempFile("cert", ".cer");
 			FileSystemUtilities.writeFile(fCertX509, truststore.getCertificate(alias).getEncoded());
+			
+			fCertX509_P11 =  File.createTempFile("certP11", ".cer");
+			FileSystemUtilities.writeFile(fCertX509_P11, truststoreP11.getCertificate(aliasP11).getEncoded());
 			
 			JsonWebKey jwk_keystore = new JWK(FileSystemUtilities.readFile(jwk_fKeystore)).getJsonWebKey();
 			JsonWebKey jwk_truststore = new JWK(FileSystemUtilities.readFile(jwk_fTruststore)).getJsonWebKey();
@@ -156,83 +273,185 @@ public class TestEncrypt {
 			
 			// Esempio Encrypt Java 
 			
-			if(tipoTest==null || TipoTest.JAVA_ENCRYPT.equals(tipoTest)) {
-				testJava(TipoTest.JAVA_ENCRYPT, keystore, truststore, alias, passwordChiavePrivata);
+			if(tipoTest==null || TipoTest.JAVA_ENCRYPT_JKS.equals(tipoTest)) {
+				testJava(TipoTest.JAVA_ENCRYPT_JKS, useP11asTrustStore, 
+						keystoreJKS, truststore, alias, passwordChiavePrivata);
+			}
+			if(tipoTest==null || TipoTest.JAVA_ENCRYPT_PKCS12.equals(tipoTest)) {
+				testJava(TipoTest.JAVA_ENCRYPT_PKCS12, useP11asTrustStore, 
+						 keystoreP12, truststore, alias, passwordChiavePrivata);
+			}
+			if(tipoTest==null || TipoTest.JAVA_ENCRYPT_PKCS11.equals(tipoTest)) {
+				testJava(TipoTest.JAVA_ENCRYPT_PKCS11, useP11asTrustStore, 
+						 keystoreP11, truststoreP11, aliasP11, passwordChiavePrivata);
 			}
 			
 			
 			
-			// Esempio Signature Xml 
+			// Esempio Encrypt Xml 
 			
-			if(tipoTest==null || TipoTest.XML_ENCRYPT.equals(tipoTest)) {
-				testXmlEncrypt(TipoTest.XML_ENCRYPT, keystore, truststore, keystoreJCEKS, alias, passwordChiavePrivata);
+			if(tipoTest==null || TipoTest.XML_ENCRYPT_JKS.equals(tipoTest)) {
+				testXmlEncrypt(TipoTest.XML_ENCRYPT_JKS, useP11asTrustStore, 
+						 keystoreJKS, alias, truststore, keystoreJCEKS, alias, passwordChiavePrivata);
+			}
+			if(tipoTest==null || TipoTest.XML_ENCRYPT_PKCS12.equals(tipoTest)) {
+				testXmlEncrypt(TipoTest.XML_ENCRYPT_PKCS12, useP11asTrustStore, 
+						 keystoreP12, alias, truststore, keystoreJCEKS, alias, passwordChiavePrivata);
+			}
+			if(tipoTest==null || TipoTest.XML_ENCRYPT_PKCS11.equals(tipoTest)) {
+				testXmlEncrypt(TipoTest.XML_ENCRYPT_PKCS11, useP11asTrustStore, 
+						 keystoreP11, aliasP11, truststoreP11, keystoreJCEKS, alias, passwordChiavePrivata);
 			}
 			
 			
 			
-			// Esempio Signature JSON
+			// Esempio Encrypt JSON
 			
 			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JKS.equals(tipoTest)) {
-				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS, fKeystore, fTruststore, null,
-						truststore, keystore, keystore_mapAliasPassword, null);
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS, useP11asTrustStore, 
+						fKeystoreJKS, null, null, fTruststore, null,
+						truststore, keystoreJKS, keystore_mapAliasPassword, null);
 			}
 			
 			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM.equals(tipoTest)) {
 				jwtHeader.setX509Url(new URI("file://"+fCertX509.getAbsolutePath()));
-				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM, fKeystore, fTruststore, jwtHeader,
-						truststore, keystore, keystore_mapAliasPassword, null);
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM, useP11asTrustStore, 
+						fKeystoreJKS, null, null, fTruststore, jwtHeader,
+						truststore, keystoreJKS, keystore_mapAliasPassword, null);
 				jwtHeader.setX509Url(null);
 			}
 			
 			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM_KID_ONLY.equals(tipoTest)) {
-				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM_KID_ONLY, fKeystore, fTruststore, jwtHeader,
-						truststore, keystore, keystore_mapAliasPassword, null);
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM_KID_ONLY, useP11asTrustStore, 
+						fKeystoreJKS, null, null, fTruststore, jwtHeader,
+						truststore, keystoreJKS, keystore_mapAliasPassword, null);
 			}
 			
 			
 			
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS12.equals(tipoTest)) {
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS12, useP11asTrustStore, 
+						fKeystoreP12, null, null, fTruststore, null,
+						truststore, keystoreP12, keystore_mapAliasPassword, null);
+			}
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS12_HEADER_CUSTOM.equals(tipoTest)) {
+				jwtHeader.setX509Url(new URI("file://"+fCertX509.getAbsolutePath()));
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS12_HEADER_CUSTOM, useP11asTrustStore, 
+						fKeystoreP12, null, null, fTruststore, jwtHeader,
+						truststore, keystoreP12, keystore_mapAliasPassword, null);
+				jwtHeader.setX509Url(null);
+			}
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS12_HEADER_CUSTOM_KID_ONLY.equals(tipoTest)) {
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS12_HEADER_CUSTOM_KID_ONLY, useP11asTrustStore, 
+						fKeystoreP12, null, null, fTruststore, jwtHeader,
+						truststore, keystoreP12, keystore_mapAliasPassword, null);
+			}
+			
+			
+			
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11.equals(tipoTest)) {
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11, useP11asTrustStore, 
+						null, keystoreP11, aliasP11, fTruststoreP11, null,
+						truststoreP11, keystoreP11, keystoreP11_mapAliasPassword, null);
+			}
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_HEADER_CUSTOM.equals(tipoTest)) {
+				jwtHeader.setX509Url(new URI("file://"+fCertX509_P11.getAbsolutePath()));
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_HEADER_CUSTOM, useP11asTrustStore, 
+						null, keystoreP11, aliasP11, fTruststoreP11, jwtHeader,
+						truststoreP11, keystoreP11, keystoreP11_mapAliasPassword, null);
+				jwtHeader.setX509Url(null);
+			}
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_HEADER_CUSTOM_KID_ONLY.equals(tipoTest)) {
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_HEADER_CUSTOM_KID_ONLY, useP11asTrustStore, 
+						null, keystoreP11, aliasP11, fTruststoreP11, jwtHeader,
+						truststoreP11, keystoreP11, keystoreP11_mapAliasPassword, null);
+			}
+			
+			
+
+			
 			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS.equals(tipoTest)) {
-				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS, fKeystoreJCEKS, fKeystoreJCEKS, null,
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS, useP11asTrustStore, 
+						fKeystoreJCEKS, null, null, fKeystoreJCEKS, null,
 						null, null, null, null);
 			}
 			
 			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS_HEADER_CUSTOM.equals(tipoTest)) {
 				jwtHeader.setX509Url(new URI("file://"+fCertX509.getAbsolutePath()));
-				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS_HEADER_CUSTOM, fKeystoreJCEKS, fKeystoreJCEKS, jwtHeader,
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS_HEADER_CUSTOM, useP11asTrustStore, 
+						fKeystoreJCEKS, null, null, fKeystoreJCEKS, jwtHeader,
 						null, null, null, null);
 				jwtHeader.setX509Url(null);
+			}
+			
+			
+			
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_SECRET.equals(tipoTest)) {
+				if(runPKCS11SecretTest) {
+					testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_SECRET, useP11asTrustStore, 
+							null, keystoreSecretP11, aliasSecretP11, fTruststoreP11, null,
+							truststoreSecretP11, keystoreSecretP11, keystoreSecretP11_mapAliasPassword, null);
+				}
+				else {
+					System.out.println("Test ["+TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_SECRET+"] disabilitato");
+				}
+			}
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_SECRET_HEADER_CUSTOM.equals(tipoTest)) {
+				if(runPKCS11SecretTest) {
+					jwtHeader.setX509Url(new URI("file://"+fCertX509.getAbsolutePath()));
+					testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_SECRET_HEADER_CUSTOM, useP11asTrustStore, 
+							null, keystoreSecretP11, aliasSecretP11, fTruststoreP11, jwtHeader,
+							truststoreSecretP11, keystoreSecretP11, keystoreSecretP11_mapAliasPassword, null);
+					jwtHeader.setX509Url(null);
+				}
+				else {
+					System.out.println("Test ["+TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_SECRET_HEADER_CUSTOM+"] disabilitato");
+				}
 			}
 			
 			
 			
 
 			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JWK.equals(tipoTest)) {
-				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK, jwks_fKeystore, jwks_fTruststore, null,
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK, useP11asTrustStore, 
+						jwks_fKeystore, null, null, jwks_fTruststore, null,
 						null,null,null,jwks_keystore);
 			}
 			
 			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM.equals(tipoTest)) {
 				jwtHeader.setJwkUrl(new URI("file://"+jwks_fTruststore.getAbsolutePath()));
-				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM, jwks_fKeystore, jwks_fTruststore, jwtHeader,
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM, useP11asTrustStore, 
+						jwks_fKeystore, null, null, jwks_fTruststore, jwtHeader,
 						null,null,null,jwks_keystore);
 				jwtHeader.setJwkUrl(null);
 			}
 			
 			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipoTest)) {
-				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY, jwks_fKeystore, jwks_fTruststore, jwtHeader,
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY, useP11asTrustStore, 
+						jwks_fKeystore, null, null, jwks_fTruststore, jwtHeader,
 						null,null,null,jwks_keystore);
 			}
 			
 			
 			
 			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC.equals(tipoTest)) {
-				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC, jwks_symmetric_fKeystore, jwks_symmetric_fKeystore, null,
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC, useP11asTrustStore, 
+						jwks_symmetric_fKeystore, null, null,  jwks_symmetric_fKeystore, null,
 						null,null,null,null);
 			}
 			
 			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM.equals(tipoTest)) {
 				jwtHeader.setJwkUrl(new URI("file://"+jwks_symmetric_fKeystore.getAbsolutePath()));
-				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM, jwks_symmetric_fKeystore, jwks_symmetric_fKeystore, jwtHeader,
+				testJsonProperties(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM, useP11asTrustStore, 
+						jwks_symmetric_fKeystore, null, null,  jwks_symmetric_fKeystore, jwtHeader,
 						null,null,null,null);
 				jwtHeader.setJwkUrl(null);
 			}
@@ -248,12 +467,13 @@ public class TestEncrypt {
 			
 			if(tipoTest==null || TipoTest.JSON_ENCRYPT_JKS_KEYSTORE.equals(tipoTest)) {
 				
-				jwtHeader.addX509cert((X509Certificate)keystore.getCertificate(alias));
+				jwtHeader.addX509cert((X509Certificate)keystoreJKS.getCertificate(alias));
 				jwtHeader.setX509IncludeCertSha1(true);
 				jwtHeader.setX509IncludeCertSha256(false);
 				jwtHeader.setKid(alias);
 				
-				testJsonKeystore(TipoTest.JSON_ENCRYPT_JKS_KEYSTORE, keystore, truststore, alias, passwordChiavePrivata, jwtHeader,
+				testJsonKeystore(TipoTest.JSON_ENCRYPT_JKS_KEYSTORE, useP11asTrustStore, 
+						keystoreJKS, truststore, alias, passwordChiavePrivata, jwtHeader,
 						keystore_mapAliasPassword);
 				
 				jwtHeader.getX509c().clear();
@@ -264,13 +484,14 @@ public class TestEncrypt {
 			
 			if(tipoTest==null || TipoTest.JSON_ENCRYPT_JKS_KEYSTORE_HEADER_CUSTOM.equals(tipoTest)) {
 				
-				jwtHeader.addX509cert((X509Certificate)keystore.getCertificate(alias));
+				jwtHeader.addX509cert((X509Certificate)keystoreJKS.getCertificate(alias));
 				jwtHeader.setX509IncludeCertSha1(false);
 				jwtHeader.setX509IncludeCertSha256(true);
 				jwtHeader.setX509Url(new URI("file://"+fCertX509.getAbsolutePath()));
 				jwtHeader.setKid(alias);
 				
-				testJsonKeystore(TipoTest.JSON_ENCRYPT_JKS_KEYSTORE_HEADER_CUSTOM, keystore, truststore, alias, passwordChiavePrivata, jwtHeader,
+				testJsonKeystore(TipoTest.JSON_ENCRYPT_JKS_KEYSTORE_HEADER_CUSTOM, useP11asTrustStore, 
+						keystoreJKS, truststore, alias, passwordChiavePrivata, jwtHeader,
 						keystore_mapAliasPassword);
 				
 				jwtHeader.getX509c().clear();
@@ -283,14 +504,16 @@ public class TestEncrypt {
 			
 			
 			
-			if(tipoTest==null || TipoTest.JSON_ENCRYPT_JKS_KEYSTORE_JCE.equals(tipoTest)) {
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PKCS12_KEYSTORE.equals(tipoTest)) {
 				
-				jwtHeader.addX509cert((X509Certificate)keystore.getCertificate(alias));
+				jwtHeader.addX509cert((X509Certificate)keystoreP12.getCertificate(alias));
 				jwtHeader.setX509IncludeCertSha1(true);
 				jwtHeader.setX509IncludeCertSha256(false);
 				jwtHeader.setKid(alias);
 				
-				testJsonKeystore(TipoTest.JSON_ENCRYPT_JKS_KEYSTORE_JCE, keystoreJCEKS, alias, passwordChiavePrivata, jwtHeader);
+				testJsonKeystore(TipoTest.JSON_ENCRYPT_PKCS12_KEYSTORE, useP11asTrustStore, 
+						keystoreP12, truststore, alias, passwordChiavePrivata, jwtHeader,
+						keystore_mapAliasPassword);
 				
 				jwtHeader.getX509c().clear();
 				jwtHeader.setX509IncludeCertSha1(false);
@@ -298,15 +521,17 @@ public class TestEncrypt {
 				jwtHeader.setKid(null);
 			}
 			
-			if(tipoTest==null || TipoTest.JSON_ENCRYPT_JKS_KEYSTORE_JCE_HEADER_CUSTOM.equals(tipoTest)) {
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PKCS12_KEYSTORE_HEADER_CUSTOM.equals(tipoTest)) {
 				
-				jwtHeader.addX509cert((X509Certificate)keystore.getCertificate(alias));
+				jwtHeader.addX509cert((X509Certificate)keystoreP12.getCertificate(alias));
 				jwtHeader.setX509IncludeCertSha1(false);
 				jwtHeader.setX509IncludeCertSha256(true);
 				jwtHeader.setX509Url(new URI("file://"+fCertX509.getAbsolutePath()));
 				jwtHeader.setKid(alias);
 				
-				testJsonKeystore(TipoTest.JSON_ENCRYPT_JKS_KEYSTORE_JCE_HEADER_CUSTOM, keystoreJCEKS, alias, passwordChiavePrivata, jwtHeader);
+				testJsonKeystore(TipoTest.JSON_ENCRYPT_PKCS12_KEYSTORE_HEADER_CUSTOM, useP11asTrustStore, 
+						keystoreP12, truststore, alias, passwordChiavePrivata, jwtHeader,
+						keystore_mapAliasPassword);
 				
 				jwtHeader.getX509c().clear();
 				jwtHeader.setX509IncludeCertSha1(false);
@@ -316,14 +541,165 @@ public class TestEncrypt {
 			}
 			
 			
+			
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PKCS11_KEYSTORE.equals(tipoTest)) {
+				
+				jwtHeader.addX509cert((X509Certificate)keystoreP11.getCertificate(aliasP11));
+				jwtHeader.setX509IncludeCertSha1(true);
+				jwtHeader.setX509IncludeCertSha256(false);
+				jwtHeader.setKid(aliasP11);
+				
+				testJsonKeystore(TipoTest.JSON_ENCRYPT_PKCS11_KEYSTORE, useP11asTrustStore, 
+						keystoreP11, truststoreP11, aliasP11, passwordChiavePrivata, jwtHeader,
+						keystoreP11_mapAliasPassword);
+				
+				jwtHeader.getX509c().clear();
+				jwtHeader.setX509IncludeCertSha1(false);
+				jwtHeader.setX509IncludeCertSha256(false);
+				jwtHeader.setKid(null);
+			}
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PKCS11_KEYSTORE_HEADER_CUSTOM.equals(tipoTest)) {
+				
+				jwtHeader.addX509cert((X509Certificate)keystoreP11.getCertificate(aliasP11));
+				jwtHeader.setX509IncludeCertSha1(false);
+				jwtHeader.setX509IncludeCertSha256(true);
+				jwtHeader.setX509Url(new URI("file://"+fCertX509_P11.getAbsolutePath()));
+				jwtHeader.setKid(aliasP11);
+				
+				testJsonKeystore(TipoTest.JSON_ENCRYPT_PKCS11_KEYSTORE_HEADER_CUSTOM, useP11asTrustStore, 
+						keystoreP11, truststoreP11, aliasP11, passwordChiavePrivata, jwtHeader,
+						keystoreP11_mapAliasPassword);
+				
+				jwtHeader.getX509c().clear();
+				jwtHeader.setX509IncludeCertSha1(false);
+				jwtHeader.setX509IncludeCertSha256(false);
+				jwtHeader.setX509Url(null);
+				jwtHeader.setKid(null);
+			}
+			
+			
+		
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_JKS_KEYSTORE_JCE.equals(tipoTest)) {
+				
+				jwtHeader.addX509cert((X509Certificate)keystoreJKS.getCertificate(alias));
+				jwtHeader.setX509IncludeCertSha1(true);
+				jwtHeader.setX509IncludeCertSha256(false);
+				jwtHeader.setKid(alias);
+				
+				testJsonKeystore(TipoTest.JSON_ENCRYPT_JKS_KEYSTORE_JCE, useP11asTrustStore, 
+						keystoreJCEKS, alias, passwordChiavePrivata, jwtHeader);
+				
+				jwtHeader.getX509c().clear();
+				jwtHeader.setX509IncludeCertSha1(false);
+				jwtHeader.setX509IncludeCertSha256(false);
+				jwtHeader.setKid(null);
+			}
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_JKS_KEYSTORE_JCE_HEADER_CUSTOM.equals(tipoTest)) {
+				
+				jwtHeader.addX509cert((X509Certificate)keystoreJKS.getCertificate(alias));
+				jwtHeader.setX509IncludeCertSha1(false);
+				jwtHeader.setX509IncludeCertSha256(true);
+				jwtHeader.setX509Url(new URI("file://"+fCertX509.getAbsolutePath()));
+				jwtHeader.setKid(alias);
+				
+				testJsonKeystore(TipoTest.JSON_ENCRYPT_JKS_KEYSTORE_JCE_HEADER_CUSTOM, useP11asTrustStore, 
+						keystoreJCEKS, alias, passwordChiavePrivata, jwtHeader);
+				
+				jwtHeader.getX509c().clear();
+				jwtHeader.setX509IncludeCertSha1(false);
+				jwtHeader.setX509IncludeCertSha256(false);
+				jwtHeader.setX509Url(null);
+				jwtHeader.setKid(null);
+			}
+			
+			
+			
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PKCS12_KEYSTORE_JCE.equals(tipoTest)) {
+				
+				jwtHeader.addX509cert((X509Certificate)keystoreP12.getCertificate(alias));
+				jwtHeader.setX509IncludeCertSha1(true);
+				jwtHeader.setX509IncludeCertSha256(false);
+				jwtHeader.setKid(alias);
+				
+				testJsonKeystore(TipoTest.JSON_ENCRYPT_PKCS12_KEYSTORE_JCE, useP11asTrustStore, 
+						keystoreJCEKS, alias, passwordChiavePrivata, jwtHeader);
+				
+				jwtHeader.getX509c().clear();
+				jwtHeader.setX509IncludeCertSha1(false);
+				jwtHeader.setX509IncludeCertSha256(false);
+				jwtHeader.setKid(null);
+			}
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PKCS12_KEYSTORE_JCE_HEADER_CUSTOM.equals(tipoTest)) {
+				
+				jwtHeader.addX509cert((X509Certificate)keystoreP12.getCertificate(alias));
+				jwtHeader.setX509IncludeCertSha1(false);
+				jwtHeader.setX509IncludeCertSha256(true);
+				jwtHeader.setX509Url(new URI("file://"+fCertX509.getAbsolutePath()));
+				jwtHeader.setKid(alias);
+				
+				testJsonKeystore(TipoTest.JSON_ENCRYPT_PKCS12_KEYSTORE_JCE_HEADER_CUSTOM, useP11asTrustStore, 
+						keystoreJCEKS, alias, passwordChiavePrivata, jwtHeader);
+				
+				jwtHeader.getX509c().clear();
+				jwtHeader.setX509IncludeCertSha1(false);
+				jwtHeader.setX509IncludeCertSha256(false);
+				jwtHeader.setX509Url(null);
+				jwtHeader.setKid(null);
+			}
+			
 
+
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PKCS11_KEYSTORE_JCE.equals(tipoTest)) {
+				
+				jwtHeader.addX509cert((X509Certificate)keystoreP11.getCertificate(aliasP11));
+				jwtHeader.setX509IncludeCertSha1(true);
+				jwtHeader.setX509IncludeCertSha256(false);
+				jwtHeader.setKid(aliasP11);
+				
+				testJsonKeystore(TipoTest.JSON_ENCRYPT_PKCS11_KEYSTORE_JCE, useP11asTrustStore, 
+						keystoreJCEKS, alias, passwordChiavePrivata, jwtHeader);
+				
+				jwtHeader.getX509c().clear();
+				jwtHeader.setX509IncludeCertSha1(false);
+				jwtHeader.setX509IncludeCertSha256(false);
+				jwtHeader.setKid(null);
+			}
+			
+			if(tipoTest==null || TipoTest.JSON_ENCRYPT_PKCS11_KEYSTORE_JCE_HEADER_CUSTOM.equals(tipoTest)) {
+				
+				jwtHeader.addX509cert((X509Certificate)keystoreP11.getCertificate(aliasP11));
+				jwtHeader.setX509IncludeCertSha1(false);
+				jwtHeader.setX509IncludeCertSha256(true);
+				jwtHeader.setX509Url(new URI("file://"+fCertX509_P11.getAbsolutePath()));
+				jwtHeader.setKid(aliasP11);
+				
+				testJsonKeystore(TipoTest.JSON_ENCRYPT_PKCS11_KEYSTORE_JCE_HEADER_CUSTOM, useP11asTrustStore, 
+						keystoreJCEKS, alias, passwordChiavePrivata, jwtHeader);
+				
+				jwtHeader.getX509c().clear();
+				jwtHeader.setX509IncludeCertSha1(false);
+				jwtHeader.setX509IncludeCertSha256(false);
+				jwtHeader.setX509Url(null);
+				jwtHeader.setKid(null);
+			}
+			
+			
+			
 			
 			if(tipoTest==null || TipoTest.JSON_ENCRYPT_JWK_KEYS.equals(tipoTest)) {
 				
 				jwtHeader.setJwKey(jwks_keystore, alias);
 				jwtHeader.setKid(alias);
 				
-				testJsonJwkKeys(TipoTest.JSON_ENCRYPT_JWK_KEYS, jwks_keystore, jwks_truststore, alias, jwtHeader);
+				testJsonJwkKeys(TipoTest.JSON_ENCRYPT_JWK_KEYS, useP11asTrustStore, 
+						 jwks_keystore, jwks_truststore, alias, jwtHeader);
 				
 				jwtHeader.setJwKey(null);
 				jwtHeader.setKid(null);
@@ -333,7 +709,8 @@ public class TestEncrypt {
 				
 				jwtHeader.setJwkUrl(new URI("file://"+jwks_fTruststore.getAbsolutePath()));
 				
-				testJsonJwkKeys(TipoTest.JSON_ENCRYPT_JWK_KEYS_HEADER_CUSTOM, jwks_keystore, jwks_truststore, alias, jwtHeader);
+				testJsonJwkKeys(TipoTest.JSON_ENCRYPT_JWK_KEYS_HEADER_CUSTOM, useP11asTrustStore, 
+						 jwks_keystore, jwks_truststore, alias, jwtHeader);
 				
 				jwtHeader.setJwkUrl(null);
 				jwtHeader.setKid(null);
@@ -349,7 +726,8 @@ public class TestEncrypt {
 				jwtHeader.setJwKey(jwk_keystore);
 				jwtHeader.setKid(alias);
 				
-				testJsonJwkKey(TipoTest.JSON_ENCRYPT_JWK_KEY, jwk_keystore, jwk_truststore, jwtHeader,
+				testJsonJwkKey(TipoTest.JSON_ENCRYPT_JWK_KEY, useP11asTrustStore, 
+						jwk_keystore, jwk_truststore, jwtHeader,
 						jwks_keystore);
 				
 				jwtHeader.setJwKey(null);
@@ -360,7 +738,8 @@ public class TestEncrypt {
 				
 				jwtHeader.setJwkUrl(new URI("file://"+jwks_fTruststore.getAbsolutePath()));
 				
-				testJsonJwkKey(TipoTest.JSON_ENCRYPT_JWK_KEY_HEADER_CUSTOM, jwk_keystore, jwk_truststore, jwtHeader,
+				testJsonJwkKey(TipoTest.JSON_ENCRYPT_JWK_KEY_HEADER_CUSTOM, useP11asTrustStore, 
+						jwk_keystore, jwk_truststore, jwtHeader,
 						jwks_keystore);
 				
 				jwtHeader.setJwkUrl(null);
@@ -375,7 +754,8 @@ public class TestEncrypt {
 				
 				jwtHeader.setKid(alias);
 				
-				testJsonJwkKeys(TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEYS, jwks_symmetric_keystore, jwks_symmetric_keystore, alias, jwtHeader);
+				testJsonJwkKeys(TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEYS, useP11asTrustStore, 
+						jwks_symmetric_keystore, jwks_symmetric_keystore, alias, jwtHeader);
 				
 				jwtHeader.setKid(null);
 			}
@@ -384,7 +764,8 @@ public class TestEncrypt {
 				
 				jwtHeader.setJwkUrl(new URI("file://"+jwks_symmetric_fKeystore.getAbsolutePath()));
 				
-				testJsonJwkKeys(TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEYS_HEADER_CUSTOM, jwks_symmetric_keystore, jwks_symmetric_keystore, alias, jwtHeader);
+				testJsonJwkKeys(TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEYS_HEADER_CUSTOM, useP11asTrustStore, 
+						jwks_symmetric_keystore, jwks_symmetric_keystore, alias, jwtHeader);
 				
 				jwtHeader.setJwkUrl(null);
 
@@ -396,7 +777,8 @@ public class TestEncrypt {
 				
 				jwtHeader.setKid(alias);
 				
-				testJsonJwkKey(TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEY, jwk_symmetric_keystore, jwk_symmetric_keystore, jwtHeader,
+				testJsonJwkKey(TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEY, useP11asTrustStore, 
+						jwk_symmetric_keystore, jwk_symmetric_keystore, jwtHeader,
 						null);
 				
 				jwtHeader.setKid(null);
@@ -406,23 +788,36 @@ public class TestEncrypt {
 				
 				jwtHeader.setJwkUrl(new URI("file://"+jwk_symmetric_fKeystore.getAbsolutePath()));
 				
-				testJsonJwkKey(TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEY_HEADER_CUSTOM, jwk_symmetric_keystore, jwk_symmetric_keystore, jwtHeader,
+				testJsonJwkKey(TipoTest.JSON_ENCRYPT_JWK_SYMMETRIC_KEY_HEADER_CUSTOM, useP11asTrustStore, 
+						jwk_symmetric_keystore, jwk_symmetric_keystore, jwtHeader,
 						null);
 				
 				jwtHeader.setJwkUrl(null);
 			}
 			
 			
+			
+			System.out.println("Testsuite terminata");
 
 		}finally{
 			try{
-				if(isKeystore!=null){
-					isKeystore.close();
+				if(isKeystoreJKS!=null){
+					isKeystoreJKS.close();
 				}
 			}catch(Exception e){}
 			try{
-				if(fKeystore!=null){
-					fKeystore.delete();
+				if(fKeystoreJKS!=null){
+					fKeystoreJKS.delete();
+				}
+			}catch(Exception e){}
+			try{
+				if(isKeystoreP12!=null){
+					isKeystoreP12.close();
+				}
+			}catch(Exception e){}
+			try{
+				if(fKeystoreP12!=null){
+					fKeystoreP12.delete();
 				}
 			}catch(Exception e){}
 			try{
@@ -433,6 +828,17 @@ public class TestEncrypt {
 			try{
 				if(fTruststore!=null){
 					fTruststore.delete();
+				}
+			}catch(Exception e){}
+			
+			try{
+				if(fKeystoreP11!=null){
+					fKeystoreP11.delete();
+				}
+			}catch(Exception e){}
+			try{
+				if(fTruststoreP11!=null){
+					fTruststoreP11.delete();
 				}
 			}catch(Exception e){}
 			
@@ -450,6 +856,11 @@ public class TestEncrypt {
 			try{
 				if(fCertX509!=null){
 					fCertX509.delete();
+				}
+			}catch(Exception e){}
+			try{
+				if(fCertX509_P11!=null){
+					fCertX509_P11.delete();
 				}
 			}catch(Exception e){}
 			
@@ -519,8 +930,16 @@ public class TestEncrypt {
 		}
 	}
 	
-	private static void testJava(TipoTest tipo, KeyStore keystore, KeyStore truststore, String alias, String passwordChiavePrivata) throws Exception {
-		System.out.println("\n\n ============== "+tipo+" ==================");
+	private static String getLabelTest(TipoTest tipo, boolean useP11asTrustStore) {
+		String tipoL = tipo.toString();
+		if( tipoL.toLowerCase().contains("pkcs11") ) {
+			tipoL = tipoL + " - useP11asTrustStore:" + useP11asTrustStore;
+		}
+		return tipoL;
+	}
+	
+	private static void testJava(TipoTest tipo, boolean useP11asTrustStore, KeyStore keystore, KeyStore truststore, String alias, String passwordChiavePrivata) throws Exception {
+		System.out.println("\n\n ============== "+getLabelTest(tipo,useP11asTrustStore)+" ==================");
 		System.out.println("["+tipo+"]. Example JavaEncrypt \n");
 		
 		String contenutoDaCifrare = "MarioRossi:23:05:1980";
@@ -551,8 +970,8 @@ public class TestEncrypt {
 	}
 	
 	
-	private static void testXmlEncrypt(TipoTest tipo, KeyStore keystore, KeyStore truststore, KeyStore keystoreJCEKS, String alias, String passwordChiavePrivata) throws Exception {
-		System.out.println("\n\n ============== "+tipo+" ==================");
+	private static void testXmlEncrypt(TipoTest tipo, boolean useP11asTrustStore, KeyStore keystore, String alias, KeyStore truststore, KeyStore keystoreJCEKS, String aliasSecretKey, String passwordChiavePrivata) throws Exception {
+		System.out.println("\n\n ============== "+getLabelTest(tipo,useP11asTrustStore)+" ==================");
 		System.out.println("["+tipo+"]-. Example XmlEncrypt \n");
 		
 		String xmlInput = "<prova><test>VALORE</test></prova>";
@@ -573,22 +992,23 @@ public class TestEncrypt {
 		String keyAlgorithm = "AES";
 		String canonicalizationAlgorithm = null;
 		String digestAlgorithm = "SHA-256";
-		SecretKey secretKeyGenerata = AbstractXmlCipher.generateSecretKey(keyAlgorithm);
+		SecretKey secretKeyGenerata_symmetric = AbstractXmlCipher.generateSecretKey(keyAlgorithm);
+
 		// Si pup usareanche DESede per TRIPLEDES
 		// keytool -genseckey -alias 'openspcoop' -keyalg 'AES' -keystore example.jceks -storepass '123456' -keypass 'key123456' -storetype "JCEKS" -keysize 256
 		@SuppressWarnings("unused")
-		SecretKey secretKeyLetta = keystoreJCEKS.getSecretKey(alias, passwordChiavePrivata);
+		SecretKey secretKeyLetta = keystoreJCEKS.getSecretKey(aliasSecretKey, passwordChiavePrivata);
 		
 		// *** TEST 1a:  Cifratura con chiave simmetrica non wrapped; chiave simmetrica utilizzata generata precedentemente. 
 					
 		// Crifratura
 		String encryptAlgorithm = XMLCipher.AES_128;
-		XmlEncrypt xmlEncrypt = new XmlEncrypt(SymmetricKeyWrappedMode.SYM_ENC_KEY_NO_WRAPPED, secretKeyGenerata);
+		XmlEncrypt xmlEncrypt = new XmlEncrypt(SymmetricKeyWrappedMode.SYM_ENC_KEY_NO_WRAPPED, secretKeyGenerata_symmetric);
 		xmlEncrypt.encryptSymmetric(node, encryptAlgorithm, canonicalizationAlgorithm, digestAlgorithm);
 		System.out.println("["+tipo+"]- (1a) Xml Encrypt (SymmetricKey-Generata): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
 		
 		// Decifratura
-		XmlDecrypt xmlDecrypt = new XmlDecrypt(SymmetricKeyWrappedMode.SYM_ENC_KEY_NO_WRAPPED, secretKeyGenerata);
+		XmlDecrypt xmlDecrypt = new XmlDecrypt(SymmetricKeyWrappedMode.SYM_ENC_KEY_NO_WRAPPED, secretKeyGenerata_symmetric);
 		xmlDecrypt.decrypt(node);
 		System.out.println("["+tipo+"]- (1a) Xml Decrypt (SymmetricKey-Generata): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
 		
@@ -599,13 +1019,13 @@ public class TestEncrypt {
 		boolean symmetricKey = true;
 		encryptAlgorithm = XMLCipher.AES_128;
 		//xmlEncrypt = new XmlEncrypt(secretKeyLetta);
-		xmlEncrypt = new XmlEncrypt(keystoreJCEKS, symmetricKey, SymmetricKeyWrappedMode.SYM_ENC_KEY_NO_WRAPPED, alias, passwordChiavePrivata);
+		xmlEncrypt = new XmlEncrypt(keystoreJCEKS, symmetricKey, SymmetricKeyWrappedMode.SYM_ENC_KEY_NO_WRAPPED, aliasSecretKey, passwordChiavePrivata);
 		xmlEncrypt.encryptSymmetric(node, encryptAlgorithm);
 		System.out.println("["+tipo+"]- (1b) Xml Encrypt (SymmetricKey-Letta): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
 		
 		// Decifratura
 		//xmlDecrypt = new XmlDecrypt(secretKeyLetta);
-		xmlDecrypt = new XmlDecrypt(keystoreJCEKS, symmetricKey, SymmetricKeyWrappedMode.SYM_ENC_KEY_NO_WRAPPED, alias, passwordChiavePrivata);
+		xmlDecrypt = new XmlDecrypt(keystoreJCEKS, symmetricKey, SymmetricKeyWrappedMode.SYM_ENC_KEY_NO_WRAPPED, aliasSecretKey, passwordChiavePrivata);
 		xmlDecrypt.decrypt(node);
 		System.out.println("["+tipo+"]- (1b) Xml Decrypt (SymmetricKey-Letta): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
 		
@@ -615,18 +1035,29 @@ public class TestEncrypt {
 		// 2b Cifratura con chiave simmetrica wrapped ed utilizzo di chiavi asimmetriche
 		//    Cifratura con chiave privata e decifratura con chiave pubblica. Si tratta anche di un caso di firma implicita
 		
-		// Crifratura
-		keyAlgorithm = "AES";
-		encryptAlgorithm = XMLCipher.AES_128;
 		String wrappedKeyAlgorithm = XMLCipher.RSA_v1dot5;
-		xmlEncrypt = new XmlEncrypt(SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_ASYMMETRIC_KEY, keystore,alias,passwordChiavePrivata);
-		xmlEncrypt.encrypt(node, encryptAlgorithm, canonicalizationAlgorithm, digestAlgorithm, keyAlgorithm, wrappedKeyAlgorithm);
-		System.out.println("["+tipo+"]- (a1). Xml Encrypt (Private Wrapped): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
 		
-		// Decifratura
-		xmlDecrypt = new XmlDecrypt(truststore, alias);
-		xmlDecrypt.decrypt(node);
-		System.out.println("["+tipo+"]- (a1) Xml Decrypt (Public Wrapped): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
+		if(!TipoTest.XML_ENCRYPT_PKCS11.equals(tipo)) {
+		
+			// Con pkcs11 ottengo un errore poiche' non viene supportata questa modalità
+			// Caused by: java.security.InvalidKeyException: Wrap has to be used with public keys
+			// at jdk.crypto.cryptoki/sun.security.pkcs11.P11RSACipher.implInit(P11RSACipher.java:208)
+			// at jdk.crypto.cryptoki/sun.security.pkcs11.P11RSACipher.engineInit(P11RSACipher.java:168)
+			// Il P11RSACipher supporta solo l'utilizzo di chiavi pubbliche per cifrare la wrapped key
+			
+			// Crifratura
+			keyAlgorithm = "AES";
+			encryptAlgorithm = XMLCipher.AES_128;
+			xmlEncrypt = new XmlEncrypt(SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_ASYMMETRIC_KEY, keystore,alias,passwordChiavePrivata);
+			xmlEncrypt.encrypt(node, encryptAlgorithm, canonicalizationAlgorithm, digestAlgorithm, keyAlgorithm, wrappedKeyAlgorithm);
+			System.out.println("["+tipo+"]- (a1). Xml Encrypt (Private Wrapped): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
+			
+			// Decifratura
+			xmlDecrypt = new XmlDecrypt(truststore, alias);
+			xmlDecrypt.decrypt(node);
+			System.out.println("["+tipo+"]- (a1) Xml Decrypt (Public Wrapped): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
+			
+		}
 		
 		
 		// 2b Cifratura con chiave simmetrica wrapped ed utilizzo di chiavi asimmetriche
@@ -651,21 +1082,21 @@ public class TestEncrypt {
 		keyAlgorithm = "AES";
 		encryptAlgorithm = XMLCipher.AES_128;
 		wrappedKeyAlgorithm = XMLCipher.AES_128_KeyWrap;
-		xmlEncrypt = new XmlEncrypt(SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_SYMMETRIC_KEY, keystoreJCEKS,alias,passwordChiavePrivata);
+		xmlEncrypt = new XmlEncrypt(SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_SYMMETRIC_KEY, keystoreJCEKS,aliasSecretKey,passwordChiavePrivata);
 		xmlEncrypt.encrypt(node, encryptAlgorithm, canonicalizationAlgorithm, digestAlgorithm, keyAlgorithm, wrappedKeyAlgorithm);
 		System.out.println("["+tipo+"]- (a1). Xml Encrypt (Symmetric Wrapped): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
 		
 		// Decifratura
-		xmlDecrypt = new XmlDecrypt(keystoreJCEKS, true, SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_SYMMETRIC_KEY, alias, passwordChiavePrivata);
+		xmlDecrypt = new XmlDecrypt(keystoreJCEKS, true, SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_SYMMETRIC_KEY, aliasSecretKey, passwordChiavePrivata);
 		xmlDecrypt.decrypt(node);
 		System.out.println("["+tipo+"]- (a1) Xml Decrypt (Symmetric Wrapped): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
 	}
 	
 	
-	private static void testJsonProperties(TipoTest tipo, File fKeystore, File fTruststore, JwtHeaders headers,
+	private static void testJsonProperties(TipoTest tipo, boolean useP11asTrustStore, File fKeystore, KeyStore keystore, String alias, File fTruststore, JwtHeaders headers,
 			KeyStore truststoreJKS,KeyStore keystoreJKS,HashMap<String, String> keystore_mapAliasPassword, JsonWebKeys jsonWebKeys) throws Exception {
 		
-		System.out.println("\n\n ============= "+tipo+" ===================");
+		System.out.println("\n\n ============= "+getLabelTest(tipo,useP11asTrustStore)+" ===================");
 		System.out.println("["+tipo+"]. Example JsonEncrypt \n");
 		
 		String jsonInput = "\n{\n\t\"name\":\"value1\", \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n}";
@@ -675,10 +1106,47 @@ public class TestEncrypt {
 		InputStream encryptPropsis = TestEncrypt.class.getResourceAsStream("jws.encrypt.properties");
 		encryptProps.load(encryptPropsis);
 		encryptProps.put("rs.security.keystore.file", fTruststore.getPath());
+		if(useP11asTrustStore && truststoreJKS!=null) {
+			encryptProps.remove("rs.security.keystore.file");
+			encryptProps.put("rs.security.keystore", truststoreJKS.getKeystore());
+		}
 		//encryptProps.put("rs.security.keystore.file", fKeystore.getPath());
 		if(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS.equals(tipo) || 
-				TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM.equals(tipo)) {
+				TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM.equals(tipo) ||
+				TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS12.equals(tipo) || 
+				TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS12_HEADER_CUSTOM.equals(tipo) ||
+				TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11.equals(tipo) || 
+				TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_HEADER_CUSTOM.equals(tipo)) {
+			
 			encryptProps.put("rs.security.keystore.type", "jks");
+			
+			if(TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11.equals(tipo) || 
+					TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_HEADER_CUSTOM.equals(tipo)) {
+				if(useP11asTrustStore) {
+					encryptProps.put("rs.security.keystore.type", "pkcs11");
+				}
+				
+				encryptProps.remove("rs.security.keystore.alias");
+				encryptProps.put("rs.security.keystore.alias", alias);
+				
+				encryptProps.remove("rs.security.encryption.key.algorithm");
+				// RSA-OAEP-256 non e' supportato in PKCS11 Provider
+				// NOTA: ho provato anche a far arrivare il provider al Cipher, ma l'errore di Unsupported padding permane
+				/*
+				 * Caused by: java.security.InvalidKeyException: No installed provider supports this key: sun.security.pkcs11.P11Key$P11PrivateKey
+						at java.base/javax.crypto.Cipher.chooseProvider(Cipher.java:930)
+						at java.base/javax.crypto.Cipher.init(Cipher.java:1286)
+						at java.base/javax.crypto.Cipher.init(Cipher.java:1223)
+						at org.apache.cxf.rt.security.crypto.CryptoUtils.initCipher(CryptoUtils.java:593)
+						... 12 more
+					Caused by: javax.crypto.NoSuchPaddingException: Unsupported padding OAEPWithSHA-256AndMGF1Padding
+						at jdk.crypto.cryptoki/sun.security.pkcs11.P11RSACipher.engineSetPadding(P11RSACipher.java:137)
+						at java.base/javax.crypto.Cipher$Transform.setModePadding(Cipher.java:391)
+						at java.base/javax.crypto.Cipher.chooseProvider(Cipher.java:899)
+				 * */
+				encryptProps.put("rs.security.encryption.key.algorithm", "RSA1_5");
+
+			}
 			
 			if(headers!=null) {
 				// inverto
@@ -687,7 +1155,9 @@ public class TestEncrypt {
 			}
 		}
 		else if(TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS.equals(tipo) || 
-				TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS_HEADER_CUSTOM.equals(tipo)) {
+				TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS_HEADER_CUSTOM.equals(tipo) ||
+				TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_SECRET.equals(tipo) || 
+				TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_SECRET_HEADER_CUSTOM.equals(tipo)) {
 			encryptProps.put("rs.security.keystore.type", "jceks");
 			encryptProps.put("rs.security.encryption.content.algorithm","A256GCM");
 			encryptProps.put("rs.security.encryption.key.algorithm","DIRECT");
@@ -697,6 +1167,14 @@ public class TestEncrypt {
 
 			encryptProps.remove("rs.security.encryption.include.cert.sha1");
 			encryptProps.remove("rs.security.encryption.include.cert.sha256");
+			
+			if(TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_SECRET.equals(tipo) || 
+					TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_SECRET_HEADER_CUSTOM.equals(tipo)) {
+				encryptProps.put("rs.security.keystore.type", "pkcs11");
+				
+				encryptProps.remove("rs.security.keystore.alias");
+				encryptProps.put("rs.security.keystore.alias", alias);
+			}
 		}
 		else if(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK.equals(tipo) ||
 				TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM.equals(tipo)  ||
@@ -717,6 +1195,27 @@ public class TestEncrypt {
 			encryptProps.remove("rs.security.encryption.include.cert.sha1");
 			encryptProps.remove("rs.security.encryption.include.cert.sha256");
 		}
+		else if(TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_HEADER_CUSTOM_KID_ONLY.equals(tipo) ) {
+			encryptProps.remove("rs.security.keystore.alias");
+			encryptProps.put("rs.security.keystore.alias", alias);
+			
+			encryptProps.remove("rs.security.encryption.key.algorithm");
+			// RSA-OAEP-256 non e' supportato in PKCS11 Provider
+			// NOTA: ho provato anche a far arrivare il provider al Cipher, ma l'errore di Unsupported padding permane
+			/*
+			 * Caused by: java.security.InvalidKeyException: No installed provider supports this key: sun.security.pkcs11.P11Key$P11PrivateKey
+					at java.base/javax.crypto.Cipher.chooseProvider(Cipher.java:930)
+					at java.base/javax.crypto.Cipher.init(Cipher.java:1286)
+					at java.base/javax.crypto.Cipher.init(Cipher.java:1223)
+					at org.apache.cxf.rt.security.crypto.CryptoUtils.initCipher(CryptoUtils.java:593)
+					... 12 more
+				Caused by: javax.crypto.NoSuchPaddingException: Unsupported padding OAEPWithSHA-256AndMGF1Padding
+					at jdk.crypto.cryptoki/sun.security.pkcs11.P11RSACipher.engineSetPadding(P11RSACipher.java:137)
+					at java.base/javax.crypto.Cipher$Transform.setModePadding(Cipher.java:391)
+					at java.base/javax.crypto.Cipher.chooseProvider(Cipher.java:899)
+			 * */
+			encryptProps.put("rs.security.encryption.key.algorithm", "RSA1_5");
+		}
 			
 		if(headers!=null) {
 			encryptProps.remove("rs.security.encryption.include.cert");
@@ -726,17 +1225,70 @@ public class TestEncrypt {
 		Properties decryptProps = new Properties();
 		InputStream decryptPropsis = TestEncrypt.class.getResourceAsStream("jws.decrypt.properties");
 		decryptProps.load(decryptPropsis);
-		decryptProps.put("rs.security.keystore.file", fKeystore.getPath());
+		
+		if(fKeystore!=null) {
+			decryptProps.put("rs.security.keystore.file", fKeystore.getPath());
+		}
+		else if(keystore!=null){
+			decryptProps.put("rs.security.keystore", keystore.getKeystore());
+		}
+		
 		decryptProps.remove("rs.security.keystore.type");
 		if(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS.equals(tipo) || 
-				TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM.equals(tipo)) {
-			decryptProps.put("rs.security.keystore.type", "jks");
+				TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM.equals(tipo) ||
+				TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS12.equals(tipo) || 
+				TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS12_HEADER_CUSTOM.equals(tipo) ||
+				TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11.equals(tipo) || 
+				TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_HEADER_CUSTOM.equals(tipo)) {
+			
+			if(TipoTest.JSON_ENCRYPT_PROPERTIES_JKS.equals(tipo) || 
+					TipoTest.JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM.equals(tipo)) {
+				decryptProps.put("rs.security.keystore.type", "jks");
+			}
+			else if(TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS12.equals(tipo) || 
+					TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS12_HEADER_CUSTOM.equals(tipo)) {
+				decryptProps.put("rs.security.keystore.type", "pkcs12");
+			}
+			else if(TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11.equals(tipo) || 
+					TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_HEADER_CUSTOM.equals(tipo)) {
+				decryptProps.put("rs.security.keystore.type", "pkcs11");
+				
+				decryptProps.remove("rs.security.keystore.alias");
+				decryptProps.put("rs.security.keystore.alias", alias);
+				
+				decryptProps.remove("rs.security.encryption.key.algorithm");
+				// RSA-OAEP-256 non e' supportato in PKCS11 Provider
+				// NOTA: ho provato anche a far arrivare il provider al Cipher, ma l'errore di Unsupported padding permane
+				/*
+				 * Caused by: java.security.InvalidKeyException: No installed provider supports this key: sun.security.pkcs11.P11Key$P11PrivateKey
+						at java.base/javax.crypto.Cipher.chooseProvider(Cipher.java:930)
+						at java.base/javax.crypto.Cipher.init(Cipher.java:1286)
+						at java.base/javax.crypto.Cipher.init(Cipher.java:1223)
+						at org.apache.cxf.rt.security.crypto.CryptoUtils.initCipher(CryptoUtils.java:593)
+						... 12 more
+					Caused by: javax.crypto.NoSuchPaddingException: Unsupported padding OAEPWithSHA-256AndMGF1Padding
+						at jdk.crypto.cryptoki/sun.security.pkcs11.P11RSACipher.engineSetPadding(P11RSACipher.java:137)
+						at java.base/javax.crypto.Cipher$Transform.setModePadding(Cipher.java:391)
+						at java.base/javax.crypto.Cipher.chooseProvider(Cipher.java:899)
+				 * */
+				decryptProps.put("rs.security.encryption.key.algorithm", "RSA1_5");
+			}
 		}
 		else if(TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS.equals(tipo) || 
-				TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS_HEADER_CUSTOM.equals(tipo)) {
+				TipoTest.JSON_ENCRYPT_PROPERTIES_JCEKS_HEADER_CUSTOM.equals(tipo) ||
+				TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_SECRET.equals(tipo) || 
+				TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_SECRET_HEADER_CUSTOM.equals(tipo)) {
 			decryptProps.put("rs.security.keystore.type", "jceks");
 			decryptProps.put("rs.security.encryption.content.algorithm","A256GCM");
 			decryptProps.put("rs.security.encryption.key.algorithm","DIRECT");
+			
+			if(TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_SECRET.equals(tipo) || 
+					TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_SECRET_HEADER_CUSTOM.equals(tipo)) {
+				decryptProps.put("rs.security.keystore.type", "pkcs11");
+				
+				decryptProps.remove("rs.security.keystore.alias");
+				decryptProps.put("rs.security.keystore.alias", alias);
+			}
 		}
 		else if(TipoTest.JSON_ENCRYPT_PROPERTIES_JWK.equals(tipo) ||
 				TipoTest.JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM.equals(tipo) ||
@@ -750,6 +1302,29 @@ public class TestEncrypt {
 			decryptProps.put("rs.security.encryption.key.algorithm","DIRECT");
 			decryptProps.put("rs.security.encryption.include.key.id","false"); // non e' possibile aggiungerlo
 			decryptProps.put("rs.security.encryption.include.public.key","false"); // non e' possibile aggiungerlo"			
+		}
+		else if(TipoTest.JSON_ENCRYPT_PROPERTIES_PKCS11_HEADER_CUSTOM_KID_ONLY.equals(tipo) ) {
+			decryptProps.put("rs.security.keystore.type", "pkcs11");
+			
+			decryptProps.remove("rs.security.keystore.alias");
+			decryptProps.put("rs.security.keystore.alias", alias);
+			
+			decryptProps.remove("rs.security.encryption.key.algorithm");
+			// RSA-OAEP-256 non e' supportato in PKCS11 Provider
+			// NOTA: ho provato anche a far arrivare il provider al Cipher, ma l'errore di Unsupported padding permane
+			/*
+			 * Caused by: java.security.InvalidKeyException: No installed provider supports this key: sun.security.pkcs11.P11Key$P11PrivateKey
+					at java.base/javax.crypto.Cipher.chooseProvider(Cipher.java:930)
+					at java.base/javax.crypto.Cipher.init(Cipher.java:1286)
+					at java.base/javax.crypto.Cipher.init(Cipher.java:1223)
+					at org.apache.cxf.rt.security.crypto.CryptoUtils.initCipher(CryptoUtils.java:593)
+					... 12 more
+				Caused by: javax.crypto.NoSuchPaddingException: Unsupported padding OAEPWithSHA-256AndMGF1Padding
+					at jdk.crypto.cryptoki/sun.security.pkcs11.P11RSACipher.engineSetPadding(P11RSACipher.java:137)
+					at java.base/javax.crypto.Cipher$Transform.setModePadding(Cipher.java:391)
+					at java.base/javax.crypto.Cipher.chooseProvider(Cipher.java:899)
+			 * */
+			decryptProps.put("rs.security.encryption.key.algorithm", "RSA1_5");
 		}
 		
 		System.out.println("\n\n");
@@ -1025,16 +1600,35 @@ public class TestEncrypt {
 	
 	}
 	
-	private static void testJsonKeystore(TipoTest tipo, KeyStore keystore, KeyStore truststore, String alias, String passwordChiavePrivata, JwtHeaders headers,
+	private static void testJsonKeystore(TipoTest tipo, boolean useP11asTrustStore, KeyStore keystore, KeyStore truststore, String alias, String passwordChiavePrivata, JwtHeaders headers,
 			HashMap<String, String> keystore_mapAliasPassword) throws Exception {
 		
-		System.out.println("\n\n ============= "+tipo+" ===================");
+		System.out.println("\n\n ============= "+getLabelTest(tipo,useP11asTrustStore)+" ===================");
 		System.out.println("["+tipo+"]. Example JsonEncrypt \n");
 		
 		String jsonInput = "\n{\n\t\"name\":\"value1\", \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n}";
 
 		String keyAlgorithm = "RSA-OAEP-256"; 
 		String contentAlgorithm = "A256GCM";
+		
+		if(TipoTest.JSON_ENCRYPT_PKCS11_KEYSTORE.equals(tipo) || TipoTest.JSON_ENCRYPT_PKCS11_KEYSTORE_HEADER_CUSTOM.equals(tipo)) {
+			// RSA-OAEP-256 non e' supportato in PKCS11 Provider
+			// NOTA: ho provato anche a far arrivare il provider al Cipher, ma l'errore di Unsupported padding permane
+			/*
+			 * Caused by: java.security.InvalidKeyException: No installed provider supports this key: sun.security.pkcs11.P11Key$P11PrivateKey
+					at java.base/javax.crypto.Cipher.chooseProvider(Cipher.java:930)
+					at java.base/javax.crypto.Cipher.init(Cipher.java:1286)
+					at java.base/javax.crypto.Cipher.init(Cipher.java:1223)
+					at org.apache.cxf.rt.security.crypto.CryptoUtils.initCipher(CryptoUtils.java:593)
+					... 12 more
+				Caused by: javax.crypto.NoSuchPaddingException: Unsupported padding OAEPWithSHA-256AndMGF1Padding
+					at jdk.crypto.cryptoki/sun.security.pkcs11.P11RSACipher.engineSetPadding(P11RSACipher.java:137)
+					at java.base/javax.crypto.Cipher$Transform.setModePadding(Cipher.java:391)
+					at java.base/javax.crypto.Cipher.chooseProvider(Cipher.java:899)
+			 * */
+			keyAlgorithm = "RSA1_5"; 
+		}
+
 		
 		System.out.println("\n\n");
 		
@@ -1166,8 +1760,8 @@ public class TestEncrypt {
 		
 	}
 		
-	private static void testJsonKeystore(TipoTest tipo, KeyStore keystoreJCEKS, String alias, String passwordChiavePrivata, JwtHeaders headers) throws Exception {
-		System.out.println("\n\n ============= "+tipo+" ===================");
+	private static void testJsonKeystore(TipoTest tipo, boolean useP11asTrustStore, KeyStore keystoreJCEKS, String alias, String passwordChiavePrivata, JwtHeaders headers) throws Exception {
+		System.out.println("\n\n ============= "+getLabelTest(tipo,useP11asTrustStore)+" ===================");
 		System.out.println("["+tipo+"]. Example JsonEncrypt (Symmetric) \n");
 
 		String jsonInput = "\n{\n\t\"name\":\"value1\", \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n}";
@@ -1286,9 +1880,9 @@ public class TestEncrypt {
 	
 	
 	
-	private static void testJsonJwkKeys(TipoTest tipo, JsonWebKeys keystore, JsonWebKeys truststore, String alias, JwtHeaders headers) throws Exception {
+	private static void testJsonJwkKeys(TipoTest tipo, boolean useP11asTrustStore, JsonWebKeys keystore, JsonWebKeys truststore, String alias, JwtHeaders headers) throws Exception {
 		
-		System.out.println("\n\n ============= "+tipo+" ===================");
+		System.out.println("\n\n ============= "+getLabelTest(tipo,useP11asTrustStore)+" ===================");
 		System.out.println("["+tipo+"]. Example JsonEncrypt \n");
 		
 		String jsonInput = "\n{\n\t\"name\":\"value1\", \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n}";
@@ -1453,10 +2047,10 @@ public class TestEncrypt {
 	
 	
 	
-	private static void testJsonJwkKey(TipoTest tipo, JsonWebKey keystore, JsonWebKey truststore, JwtHeaders headers,
+	private static void testJsonJwkKey(TipoTest tipo, boolean useP11asTrustStore, JsonWebKey keystore, JsonWebKey truststore, JwtHeaders headers,
 			JsonWebKeys keystoreVerificaHeaders) throws Exception {
 		
-		System.out.println("\n\n ============= "+tipo+" ===================");
+		System.out.println("\n\n ============= "+getLabelTest(tipo,useP11asTrustStore)+" ===================");
 		System.out.println("["+tipo+"]. Example JsonEncrypt \n");
 		
 		String jsonInput = "\n{\n\t\"name\":\"value1\", \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n}";
@@ -1753,26 +2347,54 @@ public class TestEncrypt {
 	
 	public enum TipoTest {
 		
-		JAVA_ENCRYPT, 
-		XML_ENCRYPT,
+		JAVA_ENCRYPT_JKS,
+		JAVA_ENCRYPT_PKCS12,
+		JAVA_ENCRYPT_PKCS11,
+		
+		XML_ENCRYPT_JKS,
+		XML_ENCRYPT_PKCS12,
+		XML_ENCRYPT_PKCS11,
+		
 		JSON_ENCRYPT_PROPERTIES_JKS,
+		JSON_ENCRYPT_PROPERTIES_PKCS12,
+		JSON_ENCRYPT_PROPERTIES_PKCS11,
 		JSON_ENCRYPT_PROPERTIES_JCEKS,
+		JSON_ENCRYPT_PROPERTIES_PKCS11_SECRET,
 		JSON_ENCRYPT_PROPERTIES_JWK,
 		JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC,
+		
 		JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM,
+		JSON_ENCRYPT_PROPERTIES_PKCS12_HEADER_CUSTOM,
+		JSON_ENCRYPT_PROPERTIES_PKCS11_HEADER_CUSTOM,
 		JSON_ENCRYPT_PROPERTIES_JCEKS_HEADER_CUSTOM,
+		JSON_ENCRYPT_PROPERTIES_PKCS11_SECRET_HEADER_CUSTOM,
 		JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM,
 		JSON_ENCRYPT_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM,
+		
 		JSON_ENCRYPT_PROPERTIES_JKS_HEADER_CUSTOM_KID_ONLY,
+		JSON_ENCRYPT_PROPERTIES_PKCS12_HEADER_CUSTOM_KID_ONLY,
+		JSON_ENCRYPT_PROPERTIES_PKCS11_HEADER_CUSTOM_KID_ONLY,
 		JSON_ENCRYPT_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY,
+		
 		JSON_ENCRYPT_JKS_KEYSTORE,
 		JSON_ENCRYPT_JKS_KEYSTORE_HEADER_CUSTOM,
+		JSON_ENCRYPT_PKCS12_KEYSTORE,
+		JSON_ENCRYPT_PKCS12_KEYSTORE_HEADER_CUSTOM,
+		JSON_ENCRYPT_PKCS11_KEYSTORE,
+		JSON_ENCRYPT_PKCS11_KEYSTORE_HEADER_CUSTOM,
+		
 		JSON_ENCRYPT_JKS_KEYSTORE_JCE,
 		JSON_ENCRYPT_JKS_KEYSTORE_JCE_HEADER_CUSTOM,
+		JSON_ENCRYPT_PKCS12_KEYSTORE_JCE,
+		JSON_ENCRYPT_PKCS12_KEYSTORE_JCE_HEADER_CUSTOM,
+		JSON_ENCRYPT_PKCS11_KEYSTORE_JCE,
+		JSON_ENCRYPT_PKCS11_KEYSTORE_JCE_HEADER_CUSTOM,
+		
 		JSON_ENCRYPT_JWK_KEYS,
 		JSON_ENCRYPT_JWK_KEYS_HEADER_CUSTOM,
 		JSON_ENCRYPT_JWK_KEY,
 		JSON_ENCRYPT_JWK_KEY_HEADER_CUSTOM,
+		
 		JSON_ENCRYPT_JWK_SYMMETRIC_KEYS,
 		JSON_ENCRYPT_JWK_SYMMETRIC_KEYS_HEADER_CUSTOM,
 		JSON_ENCRYPT_JWK_SYMMETRIC_KEY,

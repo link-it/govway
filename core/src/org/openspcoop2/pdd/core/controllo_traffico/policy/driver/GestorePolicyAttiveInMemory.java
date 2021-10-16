@@ -67,6 +67,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	 **/
 	private Hashtable<String, PolicyGroupByActiveThreads> mapActiveThreadsPolicy = 
 			new Hashtable<String, PolicyGroupByActiveThreads>();
+	private final org.openspcoop2.utils.Semaphore lock = new org.openspcoop2.utils.Semaphore("GestorePolicyAttiveInMemory");
 	
 	private static final String IMPL_DESCR = "Implementazione InMemory IGestorePolicyAttive";
 	public static String getImplDescr(){
@@ -84,7 +85,9 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	
 	@Override
 	public IPolicyGroupByActiveThreads getActiveThreadsPolicy(ActivePolicy activePolicy) throws PolicyShutdownException,PolicyException {		
-		synchronized (this.mapActiveThreadsPolicy) {	
+		//synchronized (this.mapActiveThreadsPolicy) {
+		try {
+			this.lock.acquireThrowRuntime("getActiveThreadsPolicy(ActivePolicy)");
 			
 			if(this.isStop){
 				throw new PolicyShutdownException("Policy Manager shutdown");
@@ -103,11 +106,15 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 				//System.out.println("@@@ getActiveThreadsPolicy["+uniqueIdMap+"] CREATE");
 			}
 			return active;
+		}finally {
+			this.lock.release("getActiveThreadsPolicy(ActivePolicy)");
 		}
 	}
 	@Override
 	public IPolicyGroupByActiveThreads getActiveThreadsPolicy(String uniqueIdMap) throws PolicyShutdownException,PolicyException,PolicyNotFoundException { // usata per la remove
-		synchronized (this.mapActiveThreadsPolicy) {	
+		//synchronized (this.mapActiveThreadsPolicy) {
+		try {
+			this.lock.acquireThrowRuntime("getActiveThreadsPolicy(uniqueIdMap)");
 			
 			if(this.isStop){
 				throw new PolicyShutdownException("Policy Manager shutdown");
@@ -123,12 +130,16 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 				throw new PolicyNotFoundException("ActivePolicy ["+uniqueIdMap+"] notFound");
 			}
 			return active;
+		}finally{
+			this.lock.release("getActiveThreadsPolicy(uniqueIdMap)");
 		}
 	}
 	
 	@Override
 	public long sizeActivePolicyThreads(boolean sum) throws PolicyShutdownException,PolicyException{
-		synchronized (this.mapActiveThreadsPolicy) {
+		//synchronized (this.mapActiveThreadsPolicy) {
+		try {
+			this.lock.acquireThrowRuntime("sizeActivePolicyThreads");
 			
 			if(this.isStop){
 				throw new PolicyShutdownException("Policy Manager shutdown");
@@ -146,12 +157,16 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 			}else{
 				return this.mapActiveThreadsPolicy.size();
 			}
+		}finally {
+			this.lock.release("sizeActivePolicyThreads");
 		}
 	}
 	
 	@Override
 	public String printKeysPolicy(String separator) throws PolicyShutdownException, PolicyException{
-		synchronized (this.mapActiveThreadsPolicy) {
+		//synchronized (this.mapActiveThreadsPolicy) {
+		try {
+			this.lock.acquireThrowRuntime("printKeysPolicy");
 			
 			if(this.isStop){
 				throw new PolicyShutdownException("Policy Manager shutdown");
@@ -171,6 +186,8 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 				i++;
 			}
 			return bf.toString();
+		}finally {
+			this.lock.release("printKeysPolicy");
 		}
 	}
 	
@@ -186,7 +203,9 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	
 	@Override
 	public void removeActiveThreadsPolicy(String idActivePolicy) throws PolicyShutdownException, PolicyException{
-		synchronized (this.mapActiveThreadsPolicy) {
+		//synchronized (this.mapActiveThreadsPolicy) {
+		try {
+			this.lock.acquireThrowRuntime("removeActiveThreadsPolicy");
 			
 			if(this.isStop){
 				throw new PolicyShutdownException("Policy Manager shutdown");
@@ -195,24 +214,32 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 			if(this.mapActiveThreadsPolicy.containsKey(idActivePolicy)){
 				this.mapActiveThreadsPolicy.remove(idActivePolicy);
 			}
+		}finally {
+			this.lock.release("removeActiveThreadsPolicy");
 		}
 	}
 	
 	@Override
 	public void removeAllActiveThreadsPolicy() throws PolicyShutdownException, PolicyException{
-		synchronized (this.mapActiveThreadsPolicy) {
+		//synchronized (this.mapActiveThreadsPolicy) {
+		try {
+			this.lock.acquireThrowRuntime("removeAllActiveThreadsPolicy");
 			
 			if(this.isStop){
 				throw new PolicyShutdownException("Policy Manager shutdown");
 			}
 			
 			this.mapActiveThreadsPolicy.clear();
+		}finally {
+			this.lock.release("removeAllActiveThreadsPolicy");
 		}
 	}
 	
 	@Override
 	public void resetCountersActiveThreadsPolicy(String idActivePolicy) throws PolicyShutdownException, PolicyException{
-		synchronized (this.mapActiveThreadsPolicy) {
+		//synchronized (this.mapActiveThreadsPolicy) {
+		try {
+			this.lock.acquireThrowRuntime("resetCountersActiveThreadsPolicy");
 			
 			if(this.isStop){
 				throw new PolicyShutdownException("Policy Manager shutdown");
@@ -221,12 +248,16 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 			if(this.mapActiveThreadsPolicy.containsKey(idActivePolicy)){
 				this.mapActiveThreadsPolicy.get(idActivePolicy).resetCounters();
 			}
+		}finally {
+			this.lock.release("resetCountersActiveThreadsPolicy");
 		}
 	}
 	
 	@Override
 	public void resetCountersAllActiveThreadsPolicy() throws PolicyShutdownException, PolicyException{
-		synchronized (this.mapActiveThreadsPolicy) {
+		//synchronized (this.mapActiveThreadsPolicy) {
+		try {
+			this.lock.acquireThrowRuntime("resetCountersAllActiveThreadsPolicy");
 			
 			if(this.isStop){
 				throw new PolicyShutdownException("Policy Manager shutdown");
@@ -240,6 +271,8 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 					
 				}
 			}
+		}finally {
+			this.lock.release("resetCountersAllActiveThreadsPolicy");
 		}
 	}
 	
@@ -255,7 +288,9 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	
 	@Override
 	public void serialize(OutputStream out) throws PolicyException{
-		synchronized (this.mapActiveThreadsPolicy) {
+		//synchronized (this.mapActiveThreadsPolicy) {
+		try {
+			this.lock.acquireThrowRuntime("serialize");
 			
 			if(this.isStop){
 				throw new PolicyException("Already serialized");
@@ -361,12 +396,16 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 				}catch(Exception eClose){}
 			}
 
+		}finally {
+			this.lock.release("serialize");
 		}
 	}
 	
 	@Override
 	public void initialize(InputStream in,ConfigurazioneControlloTraffico configurazioneControlloTraffico) throws PolicyException{
-		synchronized (this.mapActiveThreadsPolicy) {
+		//synchronized (this.mapActiveThreadsPolicy) {
+		try {
+			this.lock.acquireThrowRuntime("initialize");
 			
 			if(in==null){
 				return;
@@ -535,6 +574,8 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 			
 			
 
+		}finally {
+			this.lock.release("initialize");
 		}
 	}
 	

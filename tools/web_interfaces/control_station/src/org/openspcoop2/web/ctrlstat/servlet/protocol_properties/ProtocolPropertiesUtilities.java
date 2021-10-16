@@ -29,6 +29,7 @@ import org.openspcoop2.core.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
+import org.openspcoop2.protocol.sdk.constants.ConsoleItemType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemValueType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.AbstractConsoleItem;
@@ -38,6 +39,8 @@ import org.openspcoop2.protocol.sdk.properties.BooleanConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.NumberConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.properties.StringConsoleItem;
+import org.openspcoop2.protocol.sdk.properties.SubtitleConsoleItem;
+import org.openspcoop2.protocol.sdk.properties.TitleConsoleItem;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
@@ -45,6 +48,7 @@ import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementInfo;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.Parameter;
+import org.openspcoop2.web.lib.mvc.DataElement.STATO_APERTURA_SEZIONI;
 
 
 /**
@@ -223,6 +227,19 @@ public class ProtocolPropertiesUtilities {
 		de.setSize(size);
 		de.setValue("");
 
+		if(ConsoleItemType.TITLE.equals(item.getType()) && item instanceof TitleConsoleItem) {
+			TitleConsoleItem titleItem = (TitleConsoleItem) item;
+			if(titleItem.isCloseable()) {
+				de.setStatoAperturaSezioni(STATO_APERTURA_SEZIONI.CHIUSO);
+			}
+		}
+		else if(ConsoleItemType.SUBTITLE.equals(item.getType()) && item instanceof SubtitleConsoleItem) {
+			SubtitleConsoleItem subItem = (SubtitleConsoleItem) item;
+			if(subItem.isCloseable()) {
+				de.setStatoAperturaSezioni(STATO_APERTURA_SEZIONI.CHIUSO);
+			}
+		}
+		
 		dati.addElement(de);
 
 		return dati;
@@ -269,6 +286,11 @@ public class ProtocolPropertiesUtilities {
 		default:
 			throw new ProtocolException("Item con consoleItemType ["+consoleItemValueType+"] non puo' essere visualizzato come un "+type);
 		}
+		
+		if(item.getDefaultValueForCloseableSection()!=null && item.getDefaultValueForCloseableSection() instanceof String) {
+			String s = (String) item.getDefaultValueForCloseableSection();
+			de.setValoreDefault(s);
+		}		
 
 		dati.addElement(de);
 
@@ -464,6 +486,11 @@ public class ProtocolPropertiesUtilities {
 		default:
 			throw new ProtocolException("Item con consoleItemType ["+consoleItemValueType+"] non puo' essere visualizzato come una CheckBox");
 		}
+		
+		if(item.getDefaultValueForCloseableSection()!=null && item.getDefaultValueForCloseableSection() instanceof Boolean) {
+			boolean b = (Boolean) item.getDefaultValueForCloseableSection();
+			de.setValoreDefaultCheckbox(b);
+		}
 
 		dati.addElement(de);
 
@@ -581,6 +608,11 @@ public class ProtocolPropertiesUtilities {
 		de.setValues(values);
 		de.setLabels(labels); 
 
+		if(item.getDefaultValueForCloseableSection()!=null && item.getDefaultValueForCloseableSection() instanceof String) {
+			String s = (String) item.getDefaultValueForCloseableSection();
+			de.setValoreDefaultSelect(s);
+		}
+		
 		dati.addElement(de);
 
 		return dati;
@@ -632,7 +664,12 @@ public class ProtocolPropertiesUtilities {
 
 		de.setValues(values);
 		de.setLabels(labels); 
-
+		
+		if(item.getDefaultValueForCloseableSection()!=null && item.getDefaultValueForCloseableSection() instanceof String) {
+			String s = (String) item.getDefaultValueForCloseableSection();
+			de.setValoreDefaultMultiSelect(new String [] {s});
+		}
+		
 		dati.addElement(de);
 
 		return dati;

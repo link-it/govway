@@ -49,7 +49,7 @@ public class ApiImplVersioneApiView extends BaseSoggettoItem {
   private String tipoServizio = null;
   
   @Schema(example = "[1,2,3]", required = true, description = "")
-  private List<Integer> versioni = new ArrayList<Integer>();
+  private List<Integer> versioni = new ArrayList<>();
  /**
    * Get apiNome
    * @return apiNome

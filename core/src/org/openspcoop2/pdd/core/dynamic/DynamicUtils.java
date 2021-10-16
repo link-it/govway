@@ -248,8 +248,7 @@ public class DynamicUtils {
 	    			dynamicMap.put(Costanti.MAP_ATTRIBUTES, informazioniAttributiNormalizzati);
 	    		}
 			}
-
-			if (!dynamicMap.containsKey(Costanti.MAP_CONFIG_PROPERTY)) {
+			if (!dynamicMap.containsKey(Costanti.MAP_API_IMPL_CONFIG_PROPERTY)) {
 				Map<String, String> configProperties = null; // aggiungo sempre, piu' pratico il controllo nei template engine
 				if (dynamicInfo.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE)) {
 					configProperties = (Map<String, String>)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE);
@@ -257,9 +256,41 @@ public class DynamicUtils {
 				if(configProperties==null) {
 					configProperties = new HashMap<String, String>();
 				}
-				dynamicMap.put(Costanti.MAP_CONFIG_PROPERTY, configProperties);
+				dynamicMap.put(Costanti.MAP_API_IMPL_CONFIG_PROPERTY, configProperties);
 			}
-			
+			if (!dynamicMap.containsKey(Costanti.MAP_APPLICATIVO_CONFIG_PROPERTY)) {
+				Map<String, String> configProperties = null; // aggiungo sempre, piu' pratico il controllo nei template engine
+				if (dynamicInfo.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO)) {
+					configProperties = (Map<String, String>)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO);
+				}
+				if(configProperties==null) {
+					configProperties = new HashMap<String, String>();
+				}
+				dynamicMap.put(Costanti.MAP_APPLICATIVO_CONFIG_PROPERTY, configProperties);
+				dynamicMap.put(Costanti.MAP_APPLICATIVO_CONFIG_PROPERTY.toLowerCase(), configProperties);
+			}
+			if (!dynamicMap.containsKey(Costanti.MAP_SOGGETTO_FRUITORE_CONFIG_PROPERTY)) {
+				Map<String, String> configProperties = null; // aggiungo sempre, piu' pratico il controllo nei template engine
+				if (dynamicInfo.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE)) {
+					configProperties = (Map<String, String>)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE);
+				}
+				if(configProperties==null) {
+					configProperties = new HashMap<String, String>();
+				}
+				dynamicMap.put(Costanti.MAP_SOGGETTO_FRUITORE_CONFIG_PROPERTY, configProperties);
+				dynamicMap.put(Costanti.MAP_SOGGETTO_FRUITORE_CONFIG_PROPERTY.toLowerCase(), configProperties);
+			}
+			if (!dynamicMap.containsKey(Costanti.MAP_SOGGETTO_EROGATORE_CONFIG_PROPERTY)) {
+				Map<String, String> configProperties = null; // aggiungo sempre, piu' pratico il controllo nei template engine
+				if (dynamicInfo.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_EROGATORE)) {
+					configProperties = (Map<String, String>)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_EROGATORE);
+				}
+				if(configProperties==null) {
+					configProperties = new HashMap<String, String>();
+				}
+				dynamicMap.put(Costanti.MAP_SOGGETTO_EROGATORE_CONFIG_PROPERTY, configProperties);
+				dynamicMap.put(Costanti.MAP_SOGGETTO_EROGATORE_CONFIG_PROPERTY.toLowerCase(), configProperties);
+			}
 		}
 		
 		if(dynamicMap.containsKey(Costanti.MAP_BUSTA_OBJECT)==false && dynamicInfo!=null && dynamicInfo.getBusta()!=null) {
@@ -337,6 +368,23 @@ public class DynamicUtils {
 			}
 		}
 		
+		try {
+			SystemPropertiesReader systemPropertiesReader = new SystemPropertiesReader(log);
+			dynamicMap.put(Costanti.MAP_SYSTEM_PROPERTY, systemPropertiesReader);
+			dynamicMap.put(Costanti.MAP_SYSTEM_PROPERTY.toLowerCase(), systemPropertiesReader);
+		}
+		catch(Exception e) {
+			log.error("Creazione system properties reader fallita: "+e.getMessage(),e);
+		}
+		
+		EnvironmentPropertiesReader environmentPropertiesReader = new EnvironmentPropertiesReader(log);
+		dynamicMap.put(Costanti.MAP_ENV_PROPERTY, environmentPropertiesReader);
+		dynamicMap.put(Costanti.MAP_ENV_PROPERTY.toLowerCase(), environmentPropertiesReader);
+		
+		JavaPropertiesReader javaPropertiesReader = new JavaPropertiesReader(log);
+		dynamicMap.put(Costanti.MAP_JAVA_PROPERTY, javaPropertiesReader);
+		dynamicMap.put(Costanti.MAP_JAVA_PROPERTY.toLowerCase(), javaPropertiesReader);
+		
 		// questi sottostanti, non sono disponnibili sul connettore
 		if(dynamicInfo!=null && dynamicInfo.getUrl()!=null) {
 			URLRegExpExtractor urle = new URLRegExpExtractor(dynamicInfo.getUrl(), log);
@@ -373,8 +421,8 @@ public class DynamicUtils {
 	
 	
 	// DYNAMIC MAP
-	// Mappa che non contiene 'response' field
 	
+	// Mappa che non contiene 'response' field
 	public static Map<String, Object> buildDynamicMap(OpenSPCoop2Message msg, Context context, Logger log, 
 			boolean bufferMessage_readOnly) throws DynamicException {
 		return buildDynamicMap(msg, context, null, log, 
@@ -382,6 +430,23 @@ public class DynamicUtils {
 	}
 	public static Map<String, Object> buildDynamicMap(OpenSPCoop2Message msg, Context context, Busta busta, Logger log, 
 			boolean bufferMessage_readOnly) throws DynamicException {
+		return _buildDynamicMap(msg, context, busta, log, 
+				bufferMessage_readOnly, 
+				null);
+	}
+	
+	// Mappa che contiene 'response' field
+	public static Map<String, Object> buildDynamicMapResponse(OpenSPCoop2Message msg, Context context, Busta busta, Logger log, 
+			boolean bufferMessage_readOnly,
+			Map<String, Object>  dynamicMapRequest) throws DynamicException {
+		return _buildDynamicMap(msg, context, busta, log, 
+				bufferMessage_readOnly, 
+				dynamicMapRequest);
+	}
+	
+	private static Map<String, Object> _buildDynamicMap(OpenSPCoop2Message msg, Context context, Busta busta, Logger log, 
+			boolean bufferMessage_readOnly, 
+			Map<String, Object>  dynamicMapRequest) throws DynamicException {
 		
 		/* Costruisco dynamic Map */
 		
@@ -394,6 +459,17 @@ public class DynamicUtils {
 		String urlInvocazione = dInfo.getUrl();
 		Map<String, Object> dynamicMap = new Hashtable<String, Object>();
 		ErrorHandler errorHandler = new ErrorHandler();
+		
+		if(dynamicMapRequest!=null) {
+			fillDynamicMapResponse(log, dynamicMap, dynamicMapRequest, context,
+					msg,
+					messageContent,
+					busta, 
+					parametriTrasporto,
+					errorHandler); 
+			return dynamicMap;
+		}
+	
 		DynamicUtils.fillDynamicMapRequest(log, dynamicMap, context, urlInvocazione,
 				msg,
 				messageContent,
@@ -402,8 +478,8 @@ public class DynamicUtils {
 				parametriUrl,
 				parametriForm,
 				errorHandler);
-		
 		return dynamicMap;
+
 	}
 	
 	
@@ -547,31 +623,61 @@ public class DynamicUtils {
 		
 		// conversione url
 		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
-				false, false, true, 
+				TemplateType.url,
 				forceStartWithDollaro, request,
 				onlyValidate);
 		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
-				false, false, true, 
+				TemplateType.url,
 				forceStartWithDollaro, response,
 				onlyValidate);
 		
 		// conversione xpath
 		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
-				true, false, false, 
+				TemplateType.xml,
 				forceStartWithDollaro, request,
 				onlyValidate);
 		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
-				true, false, false, 
+				TemplateType.xml,
 				forceStartWithDollaro, response,
 				onlyValidate);
 		
 		// conversione jsonpath
 		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
-				false, true, false, 
+				TemplateType.json,
 				forceStartWithDollaro, request,
 				onlyValidate);
 		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
-				false, true, false, 
+				TemplateType.json,
+				forceStartWithDollaro, response,
+				onlyValidate);
+		
+		// conversione system properties
+		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
+				TemplateType.system,
+				forceStartWithDollaro, request,
+				onlyValidate);
+		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
+				TemplateType.system,
+				forceStartWithDollaro, response,
+				onlyValidate);
+		
+		// conversione env properties
+		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
+				TemplateType.env,
+				forceStartWithDollaro, request,
+				onlyValidate);
+		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
+				TemplateType.env,
+				forceStartWithDollaro, response,
+				onlyValidate);
+		
+		// conversione java properties
+		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
+				TemplateType.java,
+				forceStartWithDollaro, request,
+				onlyValidate);
+		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
+				TemplateType.java,
 				forceStartWithDollaro, response,
 				onlyValidate);
 		
@@ -579,20 +685,40 @@ public class DynamicUtils {
 	}
 	
 	private static String convertDynamicPropertyContent(String tmp, Map<String,Object> dynamicMap, 
-			boolean xml, boolean json, boolean url, 
+			TemplateType templateType, 
 			boolean forceStartWithDollaro, boolean response,
 			boolean onlyValidate) throws DynamicException {
 		
-		String istruzione = Costanti.MAP_ELEMENT_XML_XPATH;
-		String prefix = Costanti.MAP_ELEMENT_XML_XPATH_PREFIX;
-		if(json) {
+		String istruzione = null;
+		String prefix = null;
+		switch (templateType) {
+		case xml:
+			istruzione = Costanti.MAP_ELEMENT_XML_XPATH;
+			prefix = Costanti.MAP_ELEMENT_XML_XPATH_PREFIX;
+			break;
+		case json:
 			istruzione = Costanti.MAP_ELEMENT_JSON_PATH;
 			prefix = Costanti.MAP_ELEMENT_JSON_PATH_PREFIX;
-		}
-		else if(url) {
+			break;
+		case url:
 			istruzione = Costanti.MAP_ELEMENT_URL_REGEXP;
 			prefix = Costanti.MAP_ELEMENT_URL_REGEXP_PREFIX;
+			break;
+		case system:
+			istruzione = Costanti.MAP_SYSTEM_PROPERTY;
+			prefix = Costanti.MAP_SYSTEM_PROPERTY_PREFIX;
+			break;
+		case env:
+			istruzione = Costanti.MAP_ENV_PROPERTY;
+			prefix = Costanti.MAP_ENV_PROPERTY_PREFIX;
+			break;
+		case java:
+			istruzione = Costanti.MAP_JAVA_PROPERTY;
+			prefix = Costanti.MAP_JAVA_PROPERTY_PREFIX;
+			break;
 		}
+		
+
 		if(forceStartWithDollaro) {
 			prefix = "$"+prefix;
 		}
@@ -645,19 +771,43 @@ public class DynamicUtils {
 					if(o==null) {
 						throw new DynamicException("Trovata istruzione '"+istruzione+"' non utilizzabile in questo contesto");
 					}
-					if(json || xml) {
+					switch (templateType) {
+					case xml:
+					case json:
 						if( !(o instanceof PatternExtractor) ) {
 							throw new DynamicException("Trovata istruzione '"+istruzione+"' non utilizzabile in questo contesto (extractor wrong class: "+o.getClass().getName()+")");
 						}
 						PatternExtractor patternExtractor = (PatternExtractor) o;
 						value = patternExtractor.read(pattern);
-					}
-					else {
+						break;
+					case url:
 						if( !(o instanceof URLRegExpExtractor) ) {
 							throw new DynamicException("Trovata istruzione '"+istruzione+"' non utilizzabile in questo contesto (extractor wrong class: "+o.getClass().getName()+")");
 						}
 						URLRegExpExtractor urlExtractor = (URLRegExpExtractor) o;
 						value = urlExtractor.read(pattern);
+						break;
+					case system:
+						if( !(o instanceof SystemPropertiesReader) ) {
+							throw new DynamicException("Trovata istruzione '"+istruzione+"' non utilizzabile in questo contesto (reader wrong class: "+o.getClass().getName()+")");
+						}
+						SystemPropertiesReader systemPropertiesReader = (SystemPropertiesReader) o;
+						value = systemPropertiesReader.read(pattern);
+						break;
+					case env:
+						if( !(o instanceof EnvironmentPropertiesReader) ) {
+							throw new DynamicException("Trovata istruzione '"+istruzione+"' non utilizzabile in questo contesto (reader wrong class: "+o.getClass().getName()+")");
+						}
+						EnvironmentPropertiesReader environmentPropertiesReader = (EnvironmentPropertiesReader) o;
+						value = environmentPropertiesReader.read(pattern);
+						break;
+					case java:
+						if( !(o instanceof JavaPropertiesReader) ) {
+							throw new DynamicException("Trovata istruzione '"+istruzione+"' non utilizzabile in questo contesto (reader wrong class: "+o.getClass().getName()+")");
+						}
+						JavaPropertiesReader javaPropertiesReader = (JavaPropertiesReader) o;
+						value = javaPropertiesReader.read(pattern);
+						break;
 					}
 				}
 				if(value==null) {
@@ -1076,4 +1226,10 @@ public class DynamicUtils {
 		}
 		
 	}
+}
+
+enum TemplateType {
+	
+	xml, json, url, system, env, java; 
+	
 }

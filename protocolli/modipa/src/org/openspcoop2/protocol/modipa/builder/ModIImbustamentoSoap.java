@@ -43,7 +43,6 @@ import org.openspcoop2.message.soap.wsaddressing.WSAddressingValue;
 import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
-import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.utils.ModIKeystoreConfig;
@@ -254,7 +253,8 @@ public class ModIImbustamentoSoap {
 	
 	public SOAPEnvelope addSecurity(OpenSPCoop2Message msg, Context context, ModIKeystoreConfig keystoreConfig, ModISecurityConfig securityConfig,
 			Busta busta, String securityMessageProfile, boolean corniceSicurezza, RuoloMessaggio ruoloMessaggio, boolean includiRequestDigest,
-			boolean signAttachments) throws Exception {
+			boolean signAttachments,
+			Map<String, Object> dynamicMap) throws Exception {
 	
 		ModIProperties modIProperties = ModIProperties.getInstance();
 	
@@ -293,8 +293,20 @@ public class ModIImbustamentoSoap {
 		}
 		
 		if(securityConfig.getAudience()!=null) {
-			wsAddressingValue.setTo(securityConfig.getAudience());
-			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SOAP_WSA_TO, securityConfig.getAudience());
+			String audience = securityConfig.getAudience();
+			if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)) { // un valore dinamico e' consentito solo sulla richiesta
+				try {
+					audience = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SOAP_WSA_TO, 
+							audience, dynamicMap, context);
+				}catch(Exception e) {
+					this.log.error(e.getMessage(),e);
+					ProtocolException pe = new ProtocolException(e.getMessage());
+					pe.setInteroperabilityError(true);
+					throw pe;
+				}
+			}
+			wsAddressingValue.setTo(audience);
+			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SOAP_WSA_TO, audience);
 		}
 		
 		if(securityConfig.getClientId()!=null) {
@@ -376,7 +388,7 @@ public class ModIImbustamentoSoap {
 			corniceSicurezza = false; // permessa solo per i messaggi di richiesta
 		}
 		if(corniceSicurezza) {
-			addCorniceSicurezza(secProperties, msg, context, busta, securityConfig);
+			addCorniceSicurezza(secProperties, msg, context, busta, securityConfig, dynamicMap);
 		}
 		
 		// action
@@ -464,7 +476,7 @@ public class ModIImbustamentoSoap {
 		pKeystore.put(KeystoreConstants.PROPERTY_PROVIDER, KeystoreConstants.PROVIDER_GOVWAY);
 		pKeystore.put(KeystoreConstants.PROPERTY_KEYSTORE_TYPE, keystoreConfig.getSecurityMessageKeystoreType());
 		pKeystore.put(KeystoreConstants.PROPERTY_KEYSTORE_PASSWORD, keystoreConfig.getSecurityMessageKeystorePassword());
-		if(keystoreConfig.getSecurityMessageKeystorePath()!=null) {
+		if(keystoreConfig.getSecurityMessageKeystorePath()!=null || keystoreConfig.isSecurityMessageKeystoreHSM()) {
 			pKeystore.put(KeystoreConstants.PROPERTY_KEYSTORE_PATH, keystoreConfig.getSecurityMessageKeystorePath());
 		}
 		else {
@@ -591,13 +603,11 @@ public class ModIImbustamentoSoap {
 	
 	private void addCorniceSicurezza(Hashtable<String,Object> secProperties, 
 			OpenSPCoop2Message msg, Context context, Busta busta,
-			ModISecurityConfig securityConfig) throws Exception {
+			ModISecurityConfig securityConfig,
+			Map<String, Object> dynamicMap) throws Exception {
 		
 		String nomeSoggettoMittente = busta.getMittente();
-		
-		boolean bufferMessage_readOnly = this.modiProperties.isReadByPathBufferEnabled();
-		Map<String, Object> dynamicMap = DynamicUtils.buildDynamicMap(msg, context, busta, this.log, bufferMessage_readOnly);
-		
+				
 		String attributeNameCodiceEnte = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_soap_codice_ente();
 		String codiceEnte = null;
 		try {

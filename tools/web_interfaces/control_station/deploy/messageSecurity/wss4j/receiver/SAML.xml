@@ -1,5 +1,5 @@
 <config id="messageSecurity.wss4j.receiver.saml" label="WS-Security SAML Token" sortLabel="Z_SamlToken" xmlns="http://www.openspcoop2.org/core/mvc/properties"
-provider="org.openspcoop2.security.message.wss4j.SecurityProvider">
+provider="org.openspcoop2.security.message.wss4j.TrustStoreSecurityProvider">
 
     <compatibility not="false" and="false">
             <tags and="true">
@@ -74,6 +74,29 @@ provider="org.openspcoop2.security.message.wss4j.SecurityProvider">
 			<property name="validateSamlSubjectConfirmationType" />
 		</item>
 		
+		<item type="checkbox" name="signatureAction" label="External Signature" reloadOnChange="true" defaultSelected="false">
+			<conditions>
+				<condition>
+					<selected name="signatureActionChoice"/>
+				</condition>
+				<condition not="true">
+					<selected name="validateSamlSubjectConfirmation"/>
+				</condition>
+			</conditions>
+			<property name="signatureAction" />
+		</item>
+		<item type="checkbox" name="timestampAction" label="Timestamp" reloadOnChange="true" defaultSelected="false">
+			<conditions>
+				<condition>
+					<selected name="signatureActionChoice"/>
+				</condition>
+				<condition not="true">
+					<selected name="validateSamlSubjectConfirmation"/>
+				</condition>
+			</conditions>
+			<property name="timestampAction" />
+		</item>
+
 		<item type="hidden" name="signatureActionSignedConfirm" value="Signature SAMLTokenSigned">
 			<conditions>
 				<condition>
@@ -92,19 +115,54 @@ provider="org.openspcoop2.security.message.wss4j.SecurityProvider">
 			</conditions>
 			<property name="action" />
 		</item>
-		<item type="hidden" name="signatureActionSigned" value="SAMLTokenSigned">
+		<item type="hidden" name="signatureActionUnsigned" value="SAMLTokenUnsigned">
 			<conditions>
 				<condition>
-					<selected name="signatureActionChoice"/>
+					<selected not="true" name="signatureActionChoice"/>
 					<selected not="true" name="validateSamlSubjectConfirmation"/>
 				</condition>
 			</conditions>
 			<property name="action" />
 		</item>
-		<item type="hidden" name="signatureActionUnsigned" value="SAMLTokenUnsigned">
+		<item type="hidden" name="signatureActionSigned" value="SAMLTokenSigned">
 			<conditions>
 				<condition>
-					<selected not="true" name="signatureActionChoice"/>
+					<selected name="signatureActionChoice"/>
+					<selected not="true" name="signatureAction"/>
+					<selected not="true" name="timestampAction"/>
+					<selected not="true" name="validateSamlSubjectConfirmation"/>
+				</condition>
+			</conditions>
+			<property name="action" />
+		</item>
+		<item type="hidden" name="signatureActionSignedExternalSignature" value="Signature SAMLTokenSigned">
+			<conditions>
+				<condition>
+					<selected name="signatureActionChoice"/>
+					<selected name="signatureAction"/>
+					<selected not="true" name="timestampAction"/>
+					<selected not="true" name="validateSamlSubjectConfirmation"/>
+				</condition>
+			</conditions>
+			<property name="action" />
+		</item>
+		<item type="hidden" name="signatureActionSignedTimestamp" value="Timestamp SAMLTokenSigned">
+			<conditions>
+				<condition>
+					<selected name="signatureActionChoice"/>
+					<selected not="true" name="signatureAction"/>
+					<selected name="timestampAction"/>
+					<selected not="true" name="validateSamlSubjectConfirmation"/>
+				</condition>
+			</conditions>
+			<property name="action" />
+		</item>
+		<item type="hidden" name="signatureActionSignedExternalSignatureTimestamp" value="Signature Timestamp SAMLTokenSigned">
+			<conditions>
+				<condition>
+					<selected name="signatureActionChoice"/>
+					<selected name="signatureAction"/>
+					<selected name="timestampAction"/>
 					<selected not="true" name="validateSamlSubjectConfirmation"/>
 				</condition>
 			</conditions>
@@ -128,12 +186,7 @@ provider="org.openspcoop2.security.message.wss4j.SecurityProvider">
 				<property name="org.apache.ws.security.crypto.provider" force="true" properties="signaturePropRefId"/>
 			</item>
 
-			<item type="select" name="keystoreType" label="Tipo" default="jks">
-				<values>
-					<value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/>
-					<!-- <value value="jceks" label="JCEKS"/> -->
-				</values>
+			<item type="select" name="keystoreType" label="Tipo" default="jks" reloadOnChange="true">
 				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="signaturePropRefId" />
 			</item>
 			<item type="textarea" name="keystoreFile" label="File" required="true">

@@ -34,7 +34,7 @@ Background:
 
 * def api_info_generali = read('api_info_generali.json')
 
-* def connettore = read('connettore_erogazione_petstore.json')
+* def connettore = read('connettore_fruizione_http.json')
 * def info_generali = read('informazioni_generali_petstore.json')
 * def erogazione_versione = read('api_versione3.json')
 

@@ -65,7 +65,7 @@ public class PostOutResponseHandler_GestioneControlloTraffico {
 					}
 				}
 				
-				GestoreControlloTraffico.getInstance().removeThread(maxThreads,threshold);
+				GestoreControlloTraffico.getInstance().removeThread(maxThreads,threshold,idTransazione);
 			} catch (Exception e) {
 				logger.error("["+idTransazione+"] Errore durante la rimozione del thread all'interno della lista dei threads attivi",e);
 			}

@@ -8,7 +8,7 @@ info:
   license:
     name: "GPL v3.0"
     url: "https://www.gnu.org/licenses/gpl-3.0.txt"
-  version: "3.3.4.p2"
+  version: "3.3.5"
   x-api-id: "https://govway.org/apiConfig"
   x-summary: "Servizi per la configurazione di GovWay"
 servers:
@@ -41,7 +41,9 @@ tags:
 - name: "soggetti"
   description: "soggetti esterni o interni al dominio di gestione"
 - name: "applicativi"
-  description: "applicativi interni al dominio di gestione"
+  description: "applicativi client che fruiscono di API"
+- name: "applicativi-server"
+  description: "applicativi server che erogano una API"
 - name: "ruoli"
   description: "ruoli associabili agli applicativi ed ai soggetti"
 - name: "scope"
@@ -1930,7 +1932,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Connettore"
+                $ref: "#/components/schemas/ConnettoreErogazione"
         "400":
           $ref: "#/components/responses/400BadRequest"
         "401":
@@ -1958,7 +1960,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Connettore"
+              $ref: "#/components/schemas/ConnettoreErogazione"
         required: true
       responses:
         "204":
@@ -1983,6 +1985,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/tipo_servizio"
+    - $ref: "#/components/parameters/gruppo"
   /erogazioni/{nome}/{versione}/configurazioni/gestione-cors:
     get:
       tags:
@@ -4604,7 +4607,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Connettore"
+                $ref: "#/components/schemas/ConnettoreFruizione"
         "400":
           $ref: "#/components/responses/400BadRequest"
         "401":
@@ -4633,7 +4636,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Connettore"
+              $ref: "#/components/schemas/ConnettoreFruizione"
         required: true
       responses:
         "204":
@@ -4659,6 +4662,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/tipo_servizio"
+    - $ref: "#/components/parameters/gruppo"
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/gestione-cors:
     get:
       tags:
@@ -6972,6 +6976,162 @@ paths:
     - $ref: "#/components/parameters/profilo"
     - $ref: "#/components/parameters/soggetto"
     - $ref: "#/components/parameters/id_ncname"
+  /applicativi-server:
+    get:
+      tags:
+      - "applicativi-server"
+      summary: "Ricerca applicativi server"
+      description: "Elenca gli applicativi server registrati"
+      operationId: "findAllApplicativiServer"
+      parameters:
+      - $ref: "#/components/parameters/q"
+      - $ref: "#/components/parameters/limit"
+      - $ref: "#/components/parameters/offset"
+      - $ref: "#/components/parameters/profilo_qualsiasi"
+      - $ref: "#/components/parameters/soggetto_qualsiasi"
+      responses:
+        "200":
+          description: "Ricerca eseguita correttamente"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListaApplicativiServer"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    post:
+      tags:
+      - "applicativi-server"
+      summary: "Creazione di un applicativo server"
+      description: "Questa operazione consente di creare un applicativo server associato\
+        \ ad un soggetto interno"
+      operationId: "createApplicativoServer"
+      requestBody:
+        description: "Dati dell'applicativo server che si vuole creare"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicativoServer"
+        required: true
+      responses:
+        "201":
+          $ref: "#/components/responses/201Created"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "409":
+          $ref: "#/components/responses/409Conflict"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+  /applicativi-server/{nome}:
+    get:
+      tags:
+      - "applicativi-server"
+      summary: "Restituisce il dettaglio di un applicativo server"
+      description: "Questa operazione consente di ottenere il dettaglio di un applicativo\
+        \ server identificato dal nome e dal soggetto di riferimento"
+      operationId: "getApplicativoServer"
+      responses:
+        "200":
+          description: "Dati dell'applicativo restituiti con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplicativoServer"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    put:
+      tags:
+      - "applicativi-server"
+      summary: "Modifica i dati di un applicativo server"
+      description: "Questa operazione consente di aggiornare i dati di un applicativo\
+        \ server identificato dal nome e dal soggetto di riferimento"
+      operationId: "updateApplicativoServer"
+      requestBody:
+        description: "Dati dell'applicativo server da aggiornare"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicativoServer"
+        required: true
+      responses:
+        "204":
+          description: "Applicativo Server aggiornato con successo"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    delete:
+      tags:
+      - "applicativi-server"
+      summary: "Elimina un applicativo server"
+      description: "Questa operazione consente di eliminare un applicativo server\
+        \ identificato dal nome e dal soggetto di riferimento"
+      operationId: "deleteApplicativoServer"
+      responses:
+        "204":
+          description: "Applicativo server eliminato con successo"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_ncname"
   /ruoli:
     get:
       tags:
@@ -7430,7 +7590,7 @@ components:
       type: "object"
       properties:
         nome:
-          $ref: "#/components/schemas/NCName"
+          type: "string"
         documento:
           type: "string"
           format: "byte"
@@ -7468,7 +7628,7 @@ components:
       type: "object"
       properties:
         nome:
-          $ref: "#/components/schemas/NCName"
+          type: "string"
         ruolo:
           $ref: "#/components/schemas/RuoloAllegatoAPI"
     ApiAllegatoItemSpecificaSemiformale:
@@ -7814,6 +7974,61 @@ components:
             type: "array"
             items:
               $ref: "#/components/schemas/ApplicativoItem"
+    ApplicativoServer:
+      required:
+      - "nome"
+      type: "object"
+      properties:
+        nome:
+          $ref: "#/components/schemas/NCName"
+        proprieta:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Proprieta4000"
+        connettore:
+          type: "object"
+          discriminator:
+            propertyName: "tipo"
+            mapping:
+              http: "#/components/schemas/ConnettoreHttp"
+              file: "#/components/schemas/ConnettoreFile"
+              jms: "#/components/schemas/ConnettoreJms"
+              null: "#/components/schemas/ConnettoreNull"
+              echo: "#/components/schemas/ConnettoreEcho"
+              plugin: "#/components/schemas/ConnettorePlugin"
+              applicativo-server: "#/components/schemas/ConnettoreApplicativoServer"
+              message-box: "#/components/schemas/ConnettoreMessageBox"
+          oneOf:
+          - $ref: "#/components/schemas/ConnettoreHttp"
+          - $ref: "#/components/schemas/ConnettoreFile"
+          - $ref: "#/components/schemas/ConnettoreJms"
+          - $ref: "#/components/schemas/ConnettoreNull"
+          - $ref: "#/components/schemas/ConnettoreEcho"
+          - $ref: "#/components/schemas/ConnettorePlugin"
+          - $ref: "#/components/schemas/ConnettoreApplicativoServer"
+          - $ref: "#/components/schemas/ConnettoreMessageBox"
+    ApplicativoServerItem:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/BaseSoggettoItem"
+      - required:
+        - "nome"
+        type: "object"
+        properties:
+          nome:
+            $ref: "#/components/schemas/NCName"
+    ListaApplicativiServer:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/Lista"
+      - required:
+        - "items"
+        type: "object"
+        properties:
+          items:
+            type: "array"
+            items:
+              $ref: "#/components/schemas/ApplicativoServerItem"
     Ruolo:
       required:
       - "nome"
@@ -8538,6 +8753,9 @@ components:
             type: "string"
             example: "PKIX"
             default: "PKIX"
+          pcks11_tipo:
+            maxLength: 255
+            type: "string"
     ConnettoreConfigurazioneHttpsClient:
       type: "object"
       allOf:
@@ -8553,6 +8771,9 @@ components:
             type: "string"
             example: "SunX509"
             default: "SunX509"
+          pcks11_tipo:
+            maxLength: 255
+            type: "string"
     ConnettoreConfigurazioneProxy:
       required:
       - "hostname"
@@ -8601,7 +8822,7 @@ components:
           description: "tempo medio (in millisecondi) atteso per ricevere una risposta"
           format: "int32"
           example: 10000
-    Connettore:
+    BaseConnettoreHttp:
       required:
       - "endpoint"
       type: "object"
@@ -8621,6 +8842,215 @@ components:
           $ref: "#/components/schemas/ConnettoreConfigurazioneTimeout"
         token_policy:
           $ref: "#/components/schemas/NCName"
+        debug:
+          type: "boolean"
+          default: false
+    ConnettoreHttp:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/BaseConnettoreHttp"
+      - required:
+        - "tipo"
+        type: "object"
+        properties:
+          tipo:
+            $ref: "#/components/schemas/ConnettoreEnum"
+    ConnettoreFile:
+      required:
+      - "richiesta"
+      - "tipo"
+      type: "object"
+      properties:
+        tipo:
+          $ref: "#/components/schemas/ConnettoreEnum"
+        debug:
+          type: "boolean"
+          default: false
+        richiesta:
+          $ref: "#/components/schemas/ConnettoreFileRichiesta"
+        risposta:
+          $ref: "#/components/schemas/ConnettoreFileRisposta"
+    ConnettoreFileRichiesta:
+      required:
+      - "file"
+      type: "object"
+      properties:
+        file:
+          maxLength: 4000
+          type: "string"
+        file_headers:
+          maxLength: 4000
+          type: "string"
+        create_parent_dir:
+          type: "boolean"
+          default: false
+        overwrite_if_exists:
+          type: "boolean"
+          default: false
+    ConnettoreFileRisposta:
+      required:
+      - "file"
+      type: "object"
+      properties:
+        file:
+          maxLength: 4000
+          type: "string"
+        file_headers:
+          maxLength: 4000
+          type: "string"
+        delete_after_read:
+          type: "boolean"
+          default: false
+        wait_if_not_exists_ms:
+          type: "integer"
+          format: "int32"
+    ConnettoreJms:
+      required:
+      - "connection_factory"
+      - "nome"
+      - "send_as"
+      - "tipo"
+      - "tipo_coda"
+      type: "object"
+      properties:
+        tipo:
+          $ref: "#/components/schemas/ConnettoreEnum"
+        debug:
+          type: "boolean"
+          default: false
+        nome:
+          maxLength: 255
+          type: "string"
+        tipo_coda:
+          $ref: "#/components/schemas/ConnettoreJmsTipoEnum"
+        send_as:
+          $ref: "#/components/schemas/ConnettoreJmsSendAsEnum"
+        connection_factory:
+          maxLength: 255
+          type: "string"
+        utente:
+          maxLength: 255
+          type: "string"
+        password:
+          maxLength: 255
+          type: "string"
+        jndi_initial_context:
+          maxLength: 255
+          type: "string"
+        jndi_url_pgk_prefixes:
+          maxLength: 255
+          type: "string"
+        jndi_provider_url:
+          maxLength: 255
+          type: "string"
+    ConnettoreNull:
+      required:
+      - "tipo"
+      type: "object"
+      properties:
+        tipo:
+          $ref: "#/components/schemas/ConnettoreEnum"
+        debug:
+          type: "boolean"
+          default: false
+    ConnettoreEcho:
+      required:
+      - "tipo"
+      type: "object"
+      properties:
+        tipo:
+          $ref: "#/components/schemas/ConnettoreEnum"
+        debug:
+          type: "boolean"
+          default: false
+    ConnettorePlugin:
+      required:
+      - "plugin"
+      - "tipo"
+      type: "object"
+      properties:
+        tipo:
+          $ref: "#/components/schemas/ConnettoreEnum"
+        debug:
+          type: "boolean"
+          default: false
+        plugin:
+          maxLength: 255
+          type: "string"
+        proprieta:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Proprieta"
+    ConnettoreApplicativoServer:
+      required:
+      - "applicativo"
+      - "tipo"
+      type: "object"
+      properties:
+        tipo:
+          $ref: "#/components/schemas/ConnettoreEnum"
+        applicativo:
+          $ref: "#/components/schemas/NCName"
+    ConnettoreMessageBox:
+      required:
+      - "autenticazione_http"
+      - "tipo"
+      type: "object"
+      properties:
+        tipo:
+          $ref: "#/components/schemas/ConnettoreEnum"
+        autenticazione_http:
+          $ref: "#/components/schemas/ConnettoreConfigurazioneHttpBasic"
+    ConnettoreErogazione:
+      type: "object"
+      properties:
+        connettore:
+          type: "object"
+          discriminator:
+            propertyName: "tipo"
+            mapping:
+              http: "#/components/schemas/ConnettoreHttp"
+              file: "#/components/schemas/ConnettoreFile"
+              jms: "#/components/schemas/ConnettoreJms"
+              null: "#/components/schemas/ConnettoreNull"
+              echo: "#/components/schemas/ConnettoreEcho"
+              plugin: "#/components/schemas/ConnettorePlugin"
+              applicativo-server: "#/components/schemas/ConnettoreApplicativoServer"
+              message-box: "#/components/schemas/ConnettoreMessageBox"
+          oneOf:
+          - $ref: "#/components/schemas/ConnettoreHttp"
+          - $ref: "#/components/schemas/ConnettoreFile"
+          - $ref: "#/components/schemas/ConnettoreJms"
+          - $ref: "#/components/schemas/ConnettoreNull"
+          - $ref: "#/components/schemas/ConnettoreEcho"
+          - $ref: "#/components/schemas/ConnettorePlugin"
+          - $ref: "#/components/schemas/ConnettoreApplicativoServer"
+          - $ref: "#/components/schemas/ConnettoreMessageBox"
+      additionalProperties: false
+    ConnettoreFruizione:
+      required:
+      - "connettore"
+      type: "object"
+      properties:
+        connettore:
+          type: "object"
+          discriminator:
+            propertyName: "tipo"
+            mapping:
+              http: "#/components/schemas/ConnettoreHttp"
+              file: "#/components/schemas/ConnettoreFile"
+              jms: "#/components/schemas/ConnettoreJms"
+              null: "#/components/schemas/ConnettoreNull"
+              echo: "#/components/schemas/ConnettoreEcho"
+              plugin: "#/components/schemas/ConnettorePlugin"
+          oneOf:
+          - $ref: "#/components/schemas/ConnettoreHttp"
+          - $ref: "#/components/schemas/ConnettoreFile"
+          - $ref: "#/components/schemas/ConnettoreJms"
+          - $ref: "#/components/schemas/ConnettoreNull"
+          - $ref: "#/components/schemas/ConnettoreEcho"
+          - $ref: "#/components/schemas/ConnettorePlugin"
+      additionalProperties: false
     APIBaseImpl:
       required:
       - "api_nome"
@@ -8681,7 +9111,7 @@ components:
             - $ref: "#/components/schemas/APIImplAutorizzazioneAbilitataNew"
             - $ref: "#/components/schemas/APIImplAutorizzazioneXACML"
           connettore:
-            $ref: "#/components/schemas/Connettore"
+            $ref: "#/components/schemas/BaseConnettoreHttp"
     APIImplAutenticazioneDisabilitata:
       required:
       - "tipo"
@@ -8887,10 +9317,12 @@ components:
           example: false
           default: false
         token_claims:
-          maxLength: 4000
-          type: "string"
-          description: "Indicare per riga i claims richiesti (nome=valore); è possibile\
-            \ elencare differenti valori ammissibili separandoli con la virgola"
+          type: "array"
+          description: "Indicare i claims richiesti (nome=valore); è possibile elencare\
+            \ differenti valori ammissibili separandoli con la virgola"
+          items:
+            maxLength: 200
+            type: "string"
       additionalProperties: false
     APIImplAutorizzazioneXACMLView:
       required:
@@ -9079,7 +9511,7 @@ components:
       type: "object"
       properties:
         nome:
-          $ref: "#/components/schemas/NCName"
+          type: "string"
         documento:
           type: "string"
           format: "byte"
@@ -9141,7 +9573,7 @@ components:
       type: "object"
       properties:
         nome:
-          $ref: "#/components/schemas/NCName"
+          type: "string"
         ruolo:
           $ref: "#/components/schemas/RuoloAllegatoAPIImpl"
     ApiImplAllegatoItemSpecificaSemiformale:
@@ -9235,6 +9667,9 @@ components:
           oneOf:
           - $ref: "#/components/schemas/ModITrustStoreDefault"
           - $ref: "#/components/schemas/ModITrustStoreRidefinito"
+        time_to_live:
+          type: "integer"
+          format: "int32"
         wsa_to:
           maxLength: 4000
           type: "string"
@@ -9252,6 +9687,11 @@ components:
       properties:
         algoritmo:
           $ref: "#/components/schemas/ModISicurezzaMessaggioSoapAlgoritmoFirma"
+        header_soap_firmare:
+          type: "array"
+          items:
+            maxLength: 200
+            type: "string"
         forma_canonica_xml:
           $ref: "#/components/schemas/ModISicurezzaMessaggioSoapFormaCanonicaXml"
         riferimento_x509:
@@ -9326,7 +9766,25 @@ components:
           oneOf:
           - $ref: "#/components/schemas/ModITrustStoreDefault"
           - $ref: "#/components/schemas/ModITrustStoreRidefinito"
+        time_to_live:
+          type: "integer"
+          format: "int32"
         audience:
+          maxLength: 4000
+          type: "string"
+        contemporaneita:
+          $ref: "#/components/schemas/ErogazioneModIRestRichiestaSicurezzaMessaggioContemporaneita"
+    ErogazioneModIRestRichiestaSicurezzaMessaggioContemporaneita:
+      required:
+      - "audience"
+      - "identificativo"
+      type: "object"
+      properties:
+        identificativo:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioRestTokenChoiseEnum"
+        audience:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioRestSameDifferentEnum"
+        audience_atteso:
           maxLength: 4000
           type: "string"
     ErogazioneModIRestRisposta:
@@ -9375,6 +9833,38 @@ components:
           type: "integer"
           format: "int32"
           default: 300
+        claims:
+          type: "array"
+          description: "Indicare i claims richiesti (nome=valore); è possibile elencare\
+            \ differenti valori ammissibili separandoli con la virgola"
+          items:
+            maxLength: 200
+            type: "string"
+        contemporaneita:
+          $ref: "#/components/schemas/ErogazioneModIRestRispostaSicurezzaMessaggioContemporaneita"
+    ErogazioneModIRestRispostaSicurezzaMessaggioContemporaneita:
+      required:
+      - "identificativo"
+      type: "object"
+      properties:
+        identificativo:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioRestSameDifferentEnum"
+        usa_come_id_messaggio:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioRestTokenChoiseEnum"
+        claims_bearer:
+          type: "array"
+          description: "Indicare i claims richiesti (nome=valore); è possibile elencare\
+            \ differenti valori ammissibili separandoli con la virgola"
+          items:
+            maxLength: 200
+            type: "string"
+        claims_agid:
+          type: "array"
+          description: "Indicare i claims richiesti (nome=valore); è possibile elencare\
+            \ differenti valori ammissibili separandoli con la virgola"
+          items:
+            maxLength: 200
+            type: "string"
     FruizioneModI:
       required:
       - "modi"
@@ -9416,6 +9906,11 @@ components:
           $ref: "#/components/schemas/ModISicurezzaMessaggioSoapAlgoritmoFirma"
         forma_canonica_xml:
           $ref: "#/components/schemas/ModISicurezzaMessaggioSoapFormaCanonicaXml"
+        header_soap_firmare:
+          type: "array"
+          items:
+            maxLength: 200
+            type: "string"
         riferimento_x509:
           $ref: "#/components/schemas/ModISicurezzaMessaggioSoapRiferimentoX509"
         certificate_chain:
@@ -9467,9 +9962,15 @@ components:
           oneOf:
           - $ref: "#/components/schemas/ModITrustStoreDefault"
           - $ref: "#/components/schemas/ModITrustStoreRidefinito"
+        time_to_live:
+          type: "integer"
+          format: "int32"
         verifica_wsa_to:
           type: "boolean"
           default: true
+        audience_atteso:
+          maxLength: 4000
+          type: "string"
     FruizioneModIRest:
       required:
       - "protocollo"
@@ -9523,6 +10024,44 @@ components:
           $ref: "#/components/schemas/FruizioneModISoapRichiestaInformazioneUtente"
         informazioni_utente_indirizzo_ip:
           $ref: "#/components/schemas/FruizioneModISoapRichiestaInformazioneUtente"
+        claims:
+          type: "array"
+          description: "Indicare i claims richiesti (nome=valore); è possibile elencare\
+            \ differenti valori ammissibili separandoli con la virgola"
+          items:
+            maxLength: 200
+            type: "string"
+        contemporaneita:
+          $ref: "#/components/schemas/FruizioneModIRestRichiestaSicurezzaMessaggioContemporaneita"
+    FruizioneModIRestRichiestaSicurezzaMessaggioContemporaneita:
+      required:
+      - "audience"
+      - "identificativo"
+      type: "object"
+      properties:
+        identificativo:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioRestSameDifferentEnum"
+        usa_come_id_messaggio:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioRestTokenChoiseEnum"
+        audience:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioRestSameDifferentEnum"
+        audience_atteso:
+          maxLength: 4000
+          type: "string"
+        claims_bearer:
+          type: "array"
+          description: "Indicare i claims richiesti (nome=valore); è possibile elencare\
+            \ differenti valori ammissibili separandoli con la virgola"
+          items:
+            maxLength: 200
+            type: "string"
+        claims_agid:
+          type: "array"
+          description: "Indicare i claims richiesti (nome=valore); è possibile elencare\
+            \ differenti valori ammissibili separandoli con la virgola"
+          items:
+            maxLength: 200
+            type: "string"
     FruizioneModIRestRisposta:
       required:
       - "sicurezza_messaggio"
@@ -9563,9 +10102,30 @@ components:
           oneOf:
           - $ref: "#/components/schemas/ModITrustStoreDefault"
           - $ref: "#/components/schemas/ModITrustStoreRidefinito"
+        time_to_live:
+          type: "integer"
+          format: "int32"
         verifica_audience:
           type: "boolean"
           default: true
+        audience_atteso:
+          maxLength: 4000
+          type: "string"
+        contemporaneita:
+          $ref: "#/components/schemas/FruizioneModIRestRispostaSicurezzaMessaggioContemporaneita"
+    FruizioneModIRestRispostaSicurezzaMessaggioContemporaneita:
+      required:
+      - "audience"
+      - "identificativo"
+      type: "object"
+      properties:
+        identificativo:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioRestTokenChoiseEnum"
+        audience:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioRestSameDifferentEnum"
+        audience_atteso:
+          maxLength: 4000
+          type: "string"
     ModIApplicativoEsterno:
       required:
       - "dominio"
@@ -9597,10 +10157,12 @@ components:
             propertyName: "tipologia"
             mapping:
               archivio: "#/components/schemas/ModIKeyStoreArchive"
-              filesystem: "#/components/schemas/ModIKeyStoreFile"
+              filesystem: "#/components/schemas/ModIKeyStoreFileApplicativo"
+              hsm: "#/components/schemas/ModIKeyStoreHSMApplicativo"
           oneOf:
           - $ref: "#/components/schemas/ModIKeyStoreArchive"
-          - $ref: "#/components/schemas/ModIKeyStoreFile"
+          - $ref: "#/components/schemas/ModIKeyStoreFileApplicativo"
+          - $ref: "#/components/schemas/ModIKeyStoreHSMApplicativo"
         reply_audience:
           maxLength: 4000
           type: "string"
@@ -9634,6 +10196,9 @@ components:
         properties:
           truststore_tipo:
             $ref: "#/components/schemas/ModITruststoreEnum"
+          pcks11_tipo:
+            maxLength: 255
+            type: "string"
     ModIKeyStoreDefault:
       required:
       - "modalita"
@@ -9656,9 +10221,11 @@ components:
             mapping:
               archivio: "#/components/schemas/ModIKeyStoreArchive"
               filesystem: "#/components/schemas/ModIKeyStoreFile"
+              hsm: "#/components/schemas/ModIKeyStoreHSM"
           oneOf:
           - $ref: "#/components/schemas/ModIKeyStoreArchive"
           - $ref: "#/components/schemas/ModIKeyStoreFile"
+          - $ref: "#/components/schemas/ModIKeyStoreHSM"
     ModIKeyStoreFile:
       type: "object"
       allOf:
@@ -9672,6 +10239,15 @@ components:
             $ref: "#/components/schemas/ModIKeystoreTipologiaEnum"
           keystore_tipo:
             $ref: "#/components/schemas/ModIKeystoreEnum"
+    ModIKeyStoreFileApplicativo:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/ModIKeyStoreFile"
+      - type: "object"
+        properties:
+          keystore_certificato:
+            type: "string"
+            format: "byte"
     ModIKeyStoreArchive:
       type: "object"
       allOf:
@@ -9685,6 +10261,32 @@ components:
             $ref: "#/components/schemas/ModIKeystoreTipologiaEnum"
           keystore_tipo:
             $ref: "#/components/schemas/ModIKeystoreEnum"
+    ModIKeyStoreHSM:
+      required:
+      - "key_alias"
+      - "pcks11_tipo"
+      - "tipologia"
+      type: "object"
+      properties:
+        tipologia:
+          $ref: "#/components/schemas/ModIKeystoreTipologiaEnum"
+        pcks11_tipo:
+          maxLength: 255
+          type: "string"
+        key_alias:
+          maxLength: 255
+          type: "string"
+          description: "alias della chiave privata"
+          example: "pwd"
+    ModIKeyStoreHSMApplicativo:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/ModIKeyStoreHSM"
+      - type: "object"
+        properties:
+          keystore_certificato:
+            type: "string"
+            format: "byte"
     GruppoNome:
       required:
       - "nome"
@@ -10682,10 +11284,7 @@ components:
       enum:
       - "jks"
       - "pkcs12"
-      - "jceks"
-      - "bks"
-      - "uber"
-      - "gkr"
+      - "pkcs11"
     TipoAutenticazioneEnum:
       type: "string"
       example: "http-basic"
@@ -10855,6 +11454,29 @@ components:
       - "default"
       - "api"
       - "implementazione-api"
+    ConnettoreEnum:
+      type: "string"
+      enum:
+      - "http"
+      - "file"
+      - "jms"
+      - "null"
+      - "echo"
+      - "plugin"
+      - "applicativo-server"
+      - "message-box"
+    ConnettoreJmsTipoEnum:
+      type: "string"
+      example: "ok"
+      enum:
+      - "queue"
+      - "topic"
+    ConnettoreJmsSendAsEnum:
+      type: "string"
+      example: "ok"
+      enum:
+      - "text"
+      - "bytes"
     ModISicurezzaCanaleEnum:
       type: "string"
       enum:
@@ -10873,6 +11495,20 @@ components:
       enum:
       - "agid"
       - "bearer"
+      - "agid+bearer-request"
+      - "agid+bearer"
+    ModISicurezzaMessaggioRestTokenChoiseEnum:
+      type: "string"
+      default: "agid"
+      enum:
+      - "agid"
+      - "bearer"
+    ModISicurezzaMessaggioRestSameDifferentEnum:
+      type: "string"
+      default: "same"
+      enum:
+      - "same"
+      - "different"
     ModISicurezzaMessaggioApplicabilitaEnum:
       type: "string"
       default: "qualsiasi"
@@ -10915,6 +11551,7 @@ components:
       example: "jks"
       enum:
       - "jks"
+      - "pkcs11"
     ModIKeystoreEnum:
       type: "string"
       example: "jks"
@@ -10927,6 +11564,7 @@ components:
       enum:
       - "archivio"
       - "filesystem"
+      - "hsm"
     ModISicurezzaMessaggioSoapAlgoritmoFirma:
       type: "string"
       default: "RSA-SHA-256"
@@ -11237,7 +11875,7 @@ components:
       description: "Nome identificativo"
       required: true
       schema:
-        $ref: "#/components/schemas/NCName"
+        type: "string"
     id_nome_risorsa:
       name: "nome_risorsa"
       in: "path"
@@ -11403,6 +12041,14 @@ components:
       name: "proprieta"
       in: "path"
       description: "Nome della proprietà di configurazione"
+      required: true
+      schema:
+        maxLength: 255
+        type: "string"
+    id_nome_connettore:
+      name: "nome_connettore"
+      in: "path"
+      description: "Nome del connettore multiplo"
       required: true
       schema:
         maxLength: 255

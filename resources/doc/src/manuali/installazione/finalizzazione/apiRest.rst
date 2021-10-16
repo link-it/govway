@@ -12,7 +12,7 @@ Per poterli invocare deve prima essere completata la configurazione del Controll
 
 Accendendo alla lista delle Erogazioni si può notare come le API relative alla configurazione ed al monitoraggio riportano uno 'stato rosso' che evidenzia una configurazione incompleta.
 
-   .. figure:: ../_figure_installazione/govwayConsole_erogazioni.png
+.. figure:: ../_figure_installazione/govwayConsole_erogazioni.png
     :scale: 100%
     :align: center
 

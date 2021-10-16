@@ -19,6 +19,12 @@ Le regole di trasformazione possono avvalersi di un contesto di risorse, con val
 -   *aa:FIELD* : consente di accedere agli attributi recuperati tramite Attribute Authority; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi' (es. per ottenere il valore dell'attributo 'attr1' usare ${aa:attributes[attr1]}, se configurata solamente 1 A.A., altrimenti usare ${aa:attributes[nomeAttributeAuthority][attr1]} )
 -   *transportContext:FIELD* : accesso ai dati della richiesta http; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext' (es. per il principal usare ${transportContext:credential.principal})
 -   *config:NAME* : accesso alle proprietà configurate per l'API; il valore 'NAME' indica la proprietà desiderata
+-   *clientApplicationConfig:NAME* : accesso alle proprietà configurate nell'applicativo fruitore; il valore 'NAME' indica la proprietà desiderata
+-   *clientOrganizationConfig:NAME* : accesso alle proprietà configurate nel soggetto fruitore; il valore 'NAME' indica la proprietà desiderata
+-   *providerOrganizationConfig:NAME* : accesso alle proprietà configurate nel soggetto erogatore; il valore 'NAME' indica la proprietà desiderata
+-   *system:NAME* : valore associato alla proprietà di sistema, indicata nella configurazione generale, con nome 'NAME'
+-   *env:NAME* : valore associato alla variabile di sistema con nome 'NAME'
+-   *java:NAME* : valore associato alla variabile java con nome 'NAME'
 
 Per le risposte sono inoltre disponibili anche le seguenti risorse:
 
@@ -45,6 +51,12 @@ La sintassi per accedere le proprietà dinamiche sopraelencate è differente in 
 - ${aa:FIELD}
 - ${transportContext:FIELD}
 - ${config:NAME}
+- ${clientApplicationConfig:NAME}
+- ${clientOrganizationConfig:NAME}
+- ${providerOrganizationConfig:NAME}
+- ${system:NAME}
+- ${env:NAME}
+- ${java:NAME}
 
 Nei casi in cui il testo della trasformazione è interpretato da framework esterni (quali Freemarker o Velocity) le proprietà vengono rese disponibili da Govway inizializzando una mappa contenente i valori come oggetti. In questo caso le chiavi della mappa sono le seguenti (tra parentesi sono indicati i tipi di dato corrispondenti):
 
@@ -62,6 +74,12 @@ Nei casi in cui il testo della trasformazione è interpretato da framework ester
 - aa (org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi)
 - transportContext (org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext)
 - config (java.util.Map<String, String>)
+- clientApplicationConfig (java.util.Map<String, String>)
+- clientOrganizationConfig (java.util.Map<String, String>)
+- providerOrganizationConfig (java.util.Map<String, String>)
+- system (org.openspcoop2.pdd.core.dynamic.PropertiesReader)
+- env (org.openspcoop2.pdd.core.dynamic.PropertiesReader)
+- java (org.openspcoop2.pdd.core.dynamic.PropertiesReader)
 
 Nel caso di utilizzo di template 'Freemarker' o 'Velocity' sono disponibili i seguenti ulteriori oggetti:
  

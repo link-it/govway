@@ -274,6 +274,13 @@ public interface IProtocolConfiguration extends IComponentFactory {
 	public boolean isAbilitataGenerazioneTracce();
 	
 	/**
+	 * Ritorna l'indicazione se il protocollo, aggiunge il salvataggio degli header di protocollo nelle tracce
+	 * 
+	 * @return True se il protocollo, aggiunge il salvataggio degli header di protocollo nelle tracce
+	 */
+	public boolean isAbilitatoSalvataggioHeaderProtocolloTracce();
+	
+	/**
 	 * Ritorna l'indicazione se il protocollo, prevede un identificativo messaggio che contiene una data
 	 * 
 	 * @return True se l'identificativo del protocollo contiene un identificativo messaggio. 

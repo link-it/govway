@@ -149,7 +149,12 @@ public class GestoreAutorizzazioneContenutiBuiltIn {
 				try {
 					expectedValue = DynamicUtils.convertDynamicPropertyValue(risorsa, expectedValue, dynamicMap, pddContext, true);
 				}catch(Exception e) {
-					throw new Exception("Conversione valore per risorsa '"+risorsa+"' non riuscita (valore: "+expectedValue+"): "+e.getMessage(),e);
+					String msgErrore = "Conversione valore per risorsa '"+risorsa+"' non riuscita (valore: "+expectedValue+"): "+e.getMessage();
+					//throw new Exception(msgErrore,e);
+					log.error(msgErrore, e);
+					this.autorizzato = false;
+					this.errorMessage = "Resource '"+risorsa+"' not verifiable; unprocessable dynamic value '"+expectedValue+"': "+e.getMessage();
+					break;
 				}
 				
 				if(expectedValue!=null) {

@@ -537,6 +537,24 @@ public class ProtocolPropertiesUtils {
 		
 	}
 	
+	public static Boolean getOptionalBooleanValuePropertyRegistry(List<ProtocolProperty> list, String propertyName) throws ProtocolException{
+		
+		ProtocolProperty pp = getProtocolPropertyRegistry(list, propertyName, false);
+		if(pp!=null && pp.getBooleanValue()!=null){
+			return pp.getBooleanValue();
+		}
+		return null;
+		
+	}
+	public static Boolean getOptionalBooleanValuePropertyConfig(List<org.openspcoop2.core.config.ProtocolProperty> list, String propertyName) throws ProtocolException{
+		
+		org.openspcoop2.core.config.ProtocolProperty pp = getProtocolPropertyConfig(list, propertyName, false);
+		if(pp!=null && pp.getBooleanValue()!=null){
+			return pp.getBooleanValue();
+		}
+		return null;
+		
+	}
 	public static boolean getBooleanValuePropertyRegistry(List<ProtocolProperty> list, String propertyName, boolean throwNotFoundException) throws ProtocolException{
 		
 		ProtocolProperty pp = getProtocolPropertyRegistry(list, propertyName, throwNotFoundException);

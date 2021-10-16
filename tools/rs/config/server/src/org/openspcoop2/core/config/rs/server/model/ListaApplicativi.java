@@ -31,7 +31,7 @@ import javax.validation.Valid;
 public class ListaApplicativi extends Lista {
   
   @Schema(required = true, description = "")
-  private List<ApplicativoItem> items = new ArrayList<ApplicativoItem>();
+  private List<ApplicativoItem> items = new ArrayList<>();
  /**
    * Get items
    * @return items

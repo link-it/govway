@@ -30,7 +30,7 @@ import javax.validation.Valid;
 public class ApiTags  {
   
   @Schema(example = "[\"PagamentiTelematici\",\"Anagrafica\"]", required = true, description = "")
-  private List<String> tags = new ArrayList<String>();
+  private List<String> tags = new ArrayList<>();
  /**
    * Get tags
    * @return tags

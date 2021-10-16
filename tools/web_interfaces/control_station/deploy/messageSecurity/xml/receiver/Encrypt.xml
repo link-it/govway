@@ -1,5 +1,5 @@
 <config id="messageSecurity.xml.receiver.encrypt" label="XML Decrypt" xmlns="http://www.openspcoop2.org/core/mvc/properties"
-	provider="org.openspcoop2.security.message.xml.SecurityProvider">
+	provider="org.openspcoop2.security.message.xml.KeyStoreSecurityProvider">
 
 	 <compatibility not="false" and="false">
         <tags and="true">
@@ -46,31 +46,40 @@
 		</item>
 
 		<subsection label="KeyStore">
+
+			<conditions>
+			   <condition>
+			           <selected name="decryptionSymmetricKey" />
+			   </condition>
+   			</conditions>
            	
-			<item type="select" name="keystoreTypeSymmetric" label="Tipo" default="jceks">
-				<conditions>
-                   <condition>
-                           <selected name="decryptionSymmetricKey" />
-                   </condition>
-           		</conditions>
-				<values>
-					<!-- <value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/> -->
-					<value value="jceks" label="JCEKS"/>
-				</values>
+			<item type="select" name="secretkeystoreType" label="Tipo" default="jceks" reloadOnChange="true">
 				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="decryptionPropRefId" />
 			</item>
-			<item type="select" name="keystoreTypeAsymmetric" label="Tipo" default="jks" >
-				<conditions>
-                   <condition not="true">
-                           <selected name="decryptionSymmetricKey" />
-                   </condition>
-           		</conditions>
-				<values>
-					<value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/>
-					<!--  <value value="jceks" label="JCEKS"/> -->
-				</values>
+			<item type="textarea" name="secretkeystoreFile" label="File" required="true">
+			    <property name="org.apache.ws.security.crypto.merlin.file" properties="decryptionPropRefId" />
+			</item>
+			<item type="text" name="secretkeystorePassword" label="Password" required="true">
+			    <property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="decryptionPropRefId" />
+			</item>
+			<item type="text" name="secretkeystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
+			    <property name="decryptionUser" /> 
+			</item>
+			<item type="text" name="secretkeystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+			    <property name="decryptionPassword" />
+			</item>
+
+		</subsection>
+
+		<subsection label="KeyStore">
+           	
+			<conditions>
+			   <condition not="true">
+			           <selected name="decryptionSymmetricKey" />
+			   </condition>
+   			</conditions>
+
+			<item type="select" name="keystoreType" label="Tipo" default="jks" reloadOnChange="true" >
 				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="decryptionPropRefId" />
 			</item>
 			<item type="textarea" name="keystoreFile" label="File" required="true">

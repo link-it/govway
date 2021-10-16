@@ -29,6 +29,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.xml.XMLUtils;
 import org.openspcoop2.utils.xml2json.IJson2Xml;
 import org.openspcoop2.utils.xml2json.IXml2Json;
+import org.openspcoop2.utils.xml2json.MappedXml2Json;
 import org.openspcoop2.utils.xml2json.Xml2JsonFactory;
 import org.w3c.dom.Node;
 
@@ -49,6 +50,7 @@ public class Xml2JsonTest {
 		Map<String, String> xmlToJsonNamespaces = new HashMap<String,String>(1);
 		xmlToJsonNamespaces.put("http://www.link.it/", "b");
 		xmlToJsonNamespaces.put("http://www.link.it/employee", "a");
+
 		System.out.println("XML iniziale: "+xmlString);
 		{
 			IXml2Json xml2json = Xml2JsonFactory.getXml2JsonJsonML();
@@ -59,6 +61,12 @@ public class Xml2JsonTest {
 			IXml2Json xml2json = Xml2JsonFactory.getXml2JsonMapped(xmlToJsonNamespaces);
 			IJson2Xml json2xml = Xml2JsonFactory.getJson2XmlMapped(xmlToJsonNamespaces);
 			test(xmlString, "Mapped (String)", xml2json, json2xml);
+		}
+		{
+			IXml2Json xml2json = Xml2JsonFactory.getXml2JsonMapped(new HashMap<String,String>(1));
+			((MappedXml2Json)xml2json).getConfiguration().setIgnoreNamespaces(true);
+			IJson2Xml json2xml = Xml2JsonFactory.getJson2XmlMapped(new HashMap<String,String>(1));			
+			test(xmlString, "Mapped (String) senza prefissi e namespace", xml2json, json2xml);
 		}
 		{
 			IXml2Json xml2json = Xml2JsonFactory.getXml2JsonBadgerFish();
@@ -78,6 +86,12 @@ public class Xml2JsonTest {
 			IXml2Json xml2json = Xml2JsonFactory.getXml2JsonMapped(xmlToJsonNamespaces);
 			IJson2Xml json2xml = Xml2JsonFactory.getJson2XmlMapped(xmlToJsonNamespaces);
 			test(instance, node, "Mapped (Node)", xml2json, json2xml);
+		}
+		{
+			IXml2Json xml2json = Xml2JsonFactory.getXml2JsonMapped(new HashMap<String,String>(1));
+			((MappedXml2Json)xml2json).getConfiguration().setIgnoreNamespaces(true);
+			IJson2Xml json2xml = Xml2JsonFactory.getJson2XmlMapped(new HashMap<String,String>(1));			
+			test(instance, node, "Mapped (Node) senza prefissi e namespace", xml2json, json2xml);
 		}
 		{
 			IXml2Json xml2json = Xml2JsonFactory.getXml2JsonBadgerFish();

@@ -1336,7 +1336,8 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 				String key = (String) keys.next();
 				List<String> values = forwardHeader.getPropertyValues(key);
 				if(values!=null && !values.isEmpty()) {
-					for (String value : values) {
+					List<String> vs = new ArrayList<String>(values); // per evitare che la add sottostante aggiunga alla collezione e si continui a iterare
+					for (String value : vs) {
 						if(this.debug)
 							this.logger.debug("Forward Transport Header ["+key+"]=["+value+"]");
 						TransportUtils.addHeader(this.propertiesTrasporto, key, value);		

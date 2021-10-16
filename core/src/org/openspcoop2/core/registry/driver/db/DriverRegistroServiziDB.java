@@ -50,6 +50,7 @@ import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiConnettori;
@@ -174,6 +175,7 @@ import org.openspcoop2.utils.jdbc.JDBCAdapterException;
 import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.openspcoop2.utils.sql.LikeConfig;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
 import org.slf4j.Logger;
@@ -18338,6 +18340,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 		
 		String filterTipoCredenziali = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_TIPO_CREDENZIALI);
+		String filterCredenziale = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_CREDENZIALE);
 		
 		String filterRuolo = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_RUOLO);
 		
@@ -18415,6 +18418,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		this.log.debug("filterSoggettoDefault : " + filterSoggettoDefault);
 		this.log.debug("filterRuolo : " + filterRuolo);
 		this.log.debug("filterTipoCredenziali : " + filterTipoCredenziali);
+		this.log.debug("filterCredenziale : " + filterCredenziale);
 		this.log.debug("filterTipologiaSoggetto : " + filterTipologia);
 		this.log.debug("filterGruppo : " + filterGruppo);
 		this.log.debug("filterApiContesto : " + filterApiContesto);
@@ -19009,6 +19013,20 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 				if(filterTipoCredenziali!=null && !"".equals(filterTipoCredenziali)) {
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".tipoauth = ?");
+					if(filterCredenziale!=null && !"".equals(filterCredenziale)) {
+						if(CostantiConfigurazione.CREDENZIALE_SSL.toString().equals(filterTipoCredenziali)) {
+							sqlQueryObject.addWhereCondition(false, 
+									sqlQueryObject.getWhereLikeCondition(CostantiDB.SOGGETTI+".cn_subject", filterCredenziale, 
+											LikeConfig.contains(true,true)),
+									sqlQueryObject.getWhereLikeCondition(CostantiDB.SOGGETTI+".subject", filterCredenziale, 
+											LikeConfig.contains(true,true)));
+						}
+						else if(CostantiConfigurazione.CREDENZIALE_BASIC.toString().equals(filterTipoCredenziali) || 
+								CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString().equals(filterTipoCredenziali)) {
+							sqlQueryObject.addWhereLikeCondition(CostantiDB.SOGGETTI+".utente", 
+									filterCredenziale, LikeConfig.contains(true,true));
+						}
+					}
 				}
 				if(!existsConditions.isEmpty()) {
 					sqlQueryObject.addWhereCondition(false, existsConditions.toArray(new String[1]));
@@ -19051,6 +19069,20 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 				if(filterTipoCredenziali!=null && !"".equals(filterTipoCredenziali)) {
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".tipoauth = ?");
+					if(filterCredenziale!=null && !"".equals(filterCredenziale)) {
+						if(CostantiConfigurazione.CREDENZIALE_SSL.toString().equals(filterTipoCredenziali)) {
+							sqlQueryObject.addWhereCondition(false, 
+									sqlQueryObject.getWhereLikeCondition(CostantiDB.SOGGETTI+".cn_subject", filterCredenziale, 
+											LikeConfig.contains(true,true)),
+									sqlQueryObject.getWhereLikeCondition(CostantiDB.SOGGETTI+".subject", filterCredenziale, 
+											LikeConfig.contains(true,true)));
+						}
+						else if(CostantiConfigurazione.CREDENZIALE_BASIC.toString().equals(filterTipoCredenziali) || 
+								CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString().equals(filterTipoCredenziali)) {
+							sqlQueryObject.addWhereLikeCondition(CostantiDB.SOGGETTI+".utente", 
+									filterCredenziale, LikeConfig.contains(true,true));
+						}
+					}
 				}
 				if(!existsConditions.isEmpty()) {
 					sqlQueryObject.addWhereCondition(false, existsConditions.toArray(new String[1]));
@@ -19086,6 +19118,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			if(filterTipoCredenziali!=null && !"".equals(filterTipoCredenziali)) {
 				stmt.setString(index++, filterTipoCredenziali);
+				if(filterCredenziale!=null && !"".equals(filterCredenziale)) {
+					// like
+				}
 			}
 			if(existsParameters!=null && !existsParameters.isEmpty()) {
 				for (Object object : existsParameters) {
@@ -19152,6 +19187,20 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 				if(filterTipoCredenziali!=null && !"".equals(filterTipoCredenziali)) {
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".tipoauth = ?");
+					if(filterCredenziale!=null && !"".equals(filterCredenziale)) {
+						if(CostantiConfigurazione.CREDENZIALE_SSL.toString().equals(filterTipoCredenziali)) {
+							sqlQueryObject.addWhereCondition(false, 
+									sqlQueryObject.getWhereLikeCondition(CostantiDB.SOGGETTI+".cn_subject", filterCredenziale, 
+											LikeConfig.contains(true,true)),
+									sqlQueryObject.getWhereLikeCondition(CostantiDB.SOGGETTI+".subject", filterCredenziale, 
+											LikeConfig.contains(true,true)));
+						}
+						else if(CostantiConfigurazione.CREDENZIALE_BASIC.toString().equals(filterTipoCredenziali) || 
+								CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString().equals(filterTipoCredenziali)) {
+							sqlQueryObject.addWhereLikeCondition(CostantiDB.SOGGETTI+".utente", 
+									filterCredenziale, LikeConfig.contains(true,true));
+						}
+					}
 				}
 				if(!existsConditions.isEmpty()) {
 					sqlQueryObject.addWhereCondition(false, existsConditions.toArray(new String[1]));
@@ -19207,6 +19256,20 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 				if(filterTipoCredenziali!=null && !"".equals(filterTipoCredenziali)) {
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".tipoauth = ?");
+					if(filterCredenziale!=null && !"".equals(filterCredenziale)) {
+						if(CostantiConfigurazione.CREDENZIALE_SSL.toString().equals(filterTipoCredenziali)) {
+							sqlQueryObject.addWhereCondition(false, 
+									sqlQueryObject.getWhereLikeCondition(CostantiDB.SOGGETTI+".cn_subject", filterCredenziale, 
+											LikeConfig.contains(true,true)),
+									sqlQueryObject.getWhereLikeCondition(CostantiDB.SOGGETTI+".subject", filterCredenziale, 
+											LikeConfig.contains(true,true)));
+						}
+						else if(CostantiConfigurazione.CREDENZIALE_BASIC.toString().equals(filterTipoCredenziali) || 
+								CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString().equals(filterTipoCredenziali)) {
+							sqlQueryObject.addWhereLikeCondition(CostantiDB.SOGGETTI+".utente", 
+									filterCredenziale, LikeConfig.contains(true,true));
+						}
+					}
 				}
 				if(!existsConditions.isEmpty()) {
 					sqlQueryObject.addWhereCondition(false, existsConditions.toArray(new String[1]));
@@ -19247,6 +19310,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			if(filterTipoCredenziali!=null && !"".equals(filterTipoCredenziali)) {
 				stmt.setString(index++, filterTipoCredenziali);
+				if(filterCredenziale!=null && !"".equals(filterCredenziale)) {
+					// like
+				}
 			}
 			if(existsParameters!=null && !existsParameters.isEmpty()) {
 				for (Object object : existsParameters) {
@@ -23724,7 +23790,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		 
 		String filtroModISicurezzaCanale = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_CANALE);
 		String filtroModISicurezzaMessaggio = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_MESSAGGIO);
-		String filtroModIKeystore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_KEYSTORE);
+		String filtroModIKeystorePath = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_KEYSTORE_PATH);
 		String filtroModIAudience = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_AUDIENCE);
 		String filtroModIInfoUtente = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_INFORMAZIONI_UTENTE);
 		String filtroModIDigestRichiesta = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_DIGEST_RICHIESTA);
@@ -23748,15 +23814,15 @@ IDriverWS ,IMonitoraggioRisorsa{
 		else if(CostantiDB.STATO_FUNZIONALITA_DISABILITATO.equals(filtroModIInfoUtente)) {
 			filtroModIInfoUtenteEnabled = false;
 		}
-		if((filtroModIKeystore!=null && "".equals(filtroModIKeystore))) {
-			filtroModIKeystore=null;
+		if((filtroModIKeystorePath!=null && "".equals(filtroModIKeystorePath))) {
+			filtroModIKeystorePath=null;
 		}
 		if((filtroModIAudience!=null && "".equals(filtroModIAudience))) {
 			filtroModIAudience=null;
 		}
 		boolean filtroModI = filtroModISicurezzaCanale!=null || filtroModISicurezzaMessaggio!=null ||
 				filtroModIDigestRichiestaEnabled!=null || filtroModIInfoUtenteEnabled!=null ||
-				filtroModIKeystore!=null || filtroModIAudience!=null;
+				filtroModIKeystorePath!=null || filtroModIAudience!=null;
 		
 		String filtroProprietaNome = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_NOME);
 		String filtroProprietaValore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_VALORE);
@@ -23787,7 +23853,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		this.log.debug("filtroConnettoreTipoPlugin : " + filtroConnettoreTipoPlugin);
 		this.log.debug("filtroModISicurezzaCanale : " + filtroModISicurezzaCanale);
 		this.log.debug("filtroModISicurezzaMessaggio : " + filtroModISicurezzaMessaggio);
-		this.log.debug("filtroModIKeystore : " + filtroModIKeystore);
+		this.log.debug("filtroModIKeystorePath : " + filtroModIKeystorePath);
 		this.log.debug("filtroModIAudience : " + filtroModIAudience);
 		this.log.debug("filtroModIInfoUtente : " + filtroModIInfoUtente);
 		this.log.debug("filtroModIDigestRichiesta : " + filtroModIDigestRichiesta);
@@ -23891,7 +23957,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 						DBUtils.setFiltriModIFruizione(sqlQueryObject, this.tipoDB,
 								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
 								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
-								filtroModIKeystore, filtroModIAudience);
+								filtroModIKeystorePath, filtroModIAudience);
 					}
 					if(filtroProprieta) {
 						DBUtils.setFiltriProprietaFruizione(sqlQueryObject, this.tipoDB, 
@@ -23917,7 +23983,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 						DBUtils.setFiltriModIErogazione(sqlQueryObject, this.tipoDB,
 								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
 								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
-								filtroModIKeystore, filtroModIAudience);
+								filtroModIKeystorePath, filtroModIAudience);
 					}
 					if(filtroProprieta) {
 						DBUtils.setFiltriProprietaErogazione(sqlQueryObject, this.tipoDB, 
@@ -24049,7 +24115,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 						DBUtils.setFiltriModIFruizione(sqlQueryObject, this.tipoDB,
 								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
 								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
-								filtroModIKeystore, filtroModIAudience);
+								filtroModIKeystorePath, filtroModIAudience);
 					}
 					if(filtroProprieta) {
 						DBUtils.setFiltriProprietaFruizione(sqlQueryObject, this.tipoDB, 
@@ -24075,7 +24141,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 						DBUtils.setFiltriModIErogazione(sqlQueryObject, this.tipoDB,
 								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
 								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
-								filtroModIKeystore, filtroModIAudience);
+								filtroModIKeystorePath, filtroModIAudience);
 					}
 					if(filtroProprieta) {
 						DBUtils.setFiltriProprietaErogazione(sqlQueryObject, this.tipoDB, 
@@ -24235,7 +24301,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 						DBUtils.setFiltriModIFruizione(sqlQueryObject, this.tipoDB,
 								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
 								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
-								filtroModIKeystore, filtroModIAudience);
+								filtroModIKeystorePath, filtroModIAudience);
 					}
 					if(filtroProprieta) {
 						DBUtils.setFiltriProprietaFruizione(sqlQueryObject, this.tipoDB, 
@@ -24261,7 +24327,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 						DBUtils.setFiltriModIErogazione(sqlQueryObject, this.tipoDB,
 								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
 								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
-								filtroModIKeystore, filtroModIAudience);
+								filtroModIKeystorePath, filtroModIAudience);
 					}
 					if(filtroProprieta) {
 						DBUtils.setFiltriProprietaErogazione(sqlQueryObject, this.tipoDB, 
@@ -24423,7 +24489,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 						DBUtils.setFiltriModIFruizione(sqlQueryObject, this.tipoDB,
 								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
 								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
-								filtroModIKeystore, filtroModIAudience);
+								filtroModIKeystorePath, filtroModIAudience);
 					}
 					if(filtroProprieta) {
 						DBUtils.setFiltriProprietaFruizione(sqlQueryObject, this.tipoDB, 
@@ -24449,7 +24515,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 						DBUtils.setFiltriModIErogazione(sqlQueryObject, this.tipoDB,
 								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
 								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
-								filtroModIKeystore, filtroModIAudience);
+								filtroModIKeystorePath, filtroModIAudience);
 					}
 					if(filtroProprieta) {
 						DBUtils.setFiltriProprietaErogazione(sqlQueryObject, this.tipoDB, 

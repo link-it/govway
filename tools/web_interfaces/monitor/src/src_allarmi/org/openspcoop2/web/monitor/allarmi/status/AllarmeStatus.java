@@ -93,7 +93,8 @@ public class AllarmeStatus extends BaseSondaPdd implements ISondaPdd{
 			this.log.debug("Init Sonda AllarmeStatus in corso...");
 			this.listaStatus = new ArrayList<IStatus>();
 			
-			AlarmEngineConfig alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(this.log, PddMonitorProperties.getInstance(this.log).getAllarmiConfigurazione());
+			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(this.log);
+			AlarmEngineConfig alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(this.log, pddMonitorProperties.getAllarmiConfigurazione(), pddMonitorProperties.getConfDirectory());
 			
 			this.allarmiAssociazioneAcknowledgedStatoAllarme = alarmEngineConfig.isOptionsAcknowledgedStatusAssociation();
 

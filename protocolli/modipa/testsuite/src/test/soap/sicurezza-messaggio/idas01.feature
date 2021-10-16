@@ -446,6 +446,37 @@ And match response == read('error-bodies/ttl-scaduto-in-response.xml')
 And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
 
 
+@low-iat-ttl-fruizione
+Scenario: Il claim iat del token della fruizione (richiesta) è troppo vecchio per l'erogazione la quale si arrabbia
+
+* def soap_url = govway_base_path + '/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SoapBlockingIDAS01LowIAT/v1'
+
+Given url soap_url
+And request read("request.xml")
+And header Content-Type = 'application/soap+xml'
+And header action = soap_url
+And header GovWay-TestSuite-Test-ID = 'low-iat-ttl-fruizione'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 500
+And match response == read('error-bodies/iat-scaduto-in-request.xml')
+
+@low-iat-ttl-erogazione
+Scenario: Il claim iat del token dell'erogazione (risposta) è troppo vecchio per la fruizione la quale si arrabbia
+
+* def soap_url = govway_base_path + '/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SoapBlockingIDAS01LowIAT/v1'
+
+Given url soap_url
+And request read("request.xml")
+And header Content-Type = 'application/soap+xml'
+And header action = soap_url
+And header GovWay-TestSuite-Test-ID = 'low-iat-ttl-erogazione'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 500
+And match response == read('error-bodies/iat-scaduto-in-response.xml')
+
+
 @applicativo-non-autorizzato
 Scenario: Viene utilizzato l'identificativo di un applicativo non autorizzato dalla erogazione
 

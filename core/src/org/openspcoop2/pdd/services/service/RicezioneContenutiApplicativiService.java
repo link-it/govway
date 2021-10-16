@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.soap.SOAPBody;
 
@@ -483,10 +482,18 @@ public class RicezioneContenutiApplicativiService implements IRicezioneService, 
 			this.context.setIdModulo(this.idModulo);
 			this.context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, this.protocolFactory.getProtocol());
 			this.context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO, this.req.getRequestInfo());
-			Map<String, String> configProperties = RicezioneContenutiApplicativiServiceUtils.readPropertiesConfig(this.req.getRequestInfo(), this.logCore,null);
-            if (configProperties != null && !configProperties.isEmpty()) {
-               this.context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE, configProperties);
-            }
+			RicezionePropertiesConfig rConfig = RicezioneContenutiApplicativiServiceUtils.readPropertiesConfig(this.req.getRequestInfo(), this.logCore,null);
+			if(rConfig!=null) {
+	            if (rConfig.getApiImplementation() != null && !rConfig.getApiImplementation().isEmpty()) {
+	            	this.context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE, rConfig.getApiImplementation());
+	            }
+	            if (rConfig.getSoggettoFruitore() != null && !rConfig.getSoggettoFruitore().isEmpty()) {
+	            	this.context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE, rConfig.getSoggettoFruitore());
+	            }
+	            if (rConfig.getSoggettoErogatore() != null && !rConfig.getSoggettoErogatore().isEmpty()) {
+	            	this.context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_EROGATORE, rConfig.getSoggettoErogatore());
+	            }
+			}
 			this.context.setProprietaErroreAppl(this.generatoreErrore.getProprietaErroreAppl());
 			this.msgDiag.setPddContext(this.context.getPddContext(), this.protocolFactory);
 			this.pddContext = this.context.getPddContext();

@@ -31,7 +31,7 @@ import javax.validation.Valid;
 public class ListaSoggetti extends Lista {
   
   @Schema(required = true, description = "")
-  private List<SoggettoItem> items = new ArrayList<SoggettoItem>();
+  private List<SoggettoItem> items = new ArrayList<>();
  /**
    * Get items
    * @return items

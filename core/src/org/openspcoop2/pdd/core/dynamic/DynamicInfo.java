@@ -97,6 +97,10 @@ public class DynamicInfo {
 		}
 		
 		this.pddContext = pddContext;
+		
+		if(connettoreMsg!=null) {
+			this.url = connettoreMsg.getUrlInvocazionePorta();
+		}
 	}
 	
 	public Busta getBusta() {

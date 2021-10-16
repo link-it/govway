@@ -81,8 +81,8 @@ public class ModIPropertiesUtils {
 	public static String readPropertySecurityMessageProfile(AccordoServizioParteComune aspc, String nomePortType, String azione) throws ProtocolException {
 		return _readProperty(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO);
 	}
-	public static String readPropertySecurityMessageHeader(AccordoServizioParteComune aspc, String nomePortType, String azione) throws ProtocolException {
-		return _readProperty(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER);
+	public static String readPropertySecurityMessageHeader(AccordoServizioParteComune aspc, String nomePortType, String azione, boolean request) throws ProtocolException {
+		return _readProperty(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER, request);
 	}
 	public static boolean isPropertySecurityMessageConCorniceSicurezza(AccordoServizioParteComune aspc, String nomePortType, String azione) throws ProtocolException {
 		String tmp = _readProperty(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA);
@@ -112,6 +112,10 @@ public class ModIPropertiesUtils {
 	}
 	private static String _readProperty(AccordoServizioParteComune aspc, String nomePortType, String azione,
 			String propertyName) throws ProtocolException {
+		return _readProperty(aspc, nomePortType, azione, propertyName, null);
+	}
+	private static String _readProperty(AccordoServizioParteComune aspc, String nomePortType, String azione,
+			String propertyName, Boolean request) throws ProtocolException {
 		String interactionProfile = null;
 		String asyncInteractionProfile = null;
 		String asyncInteractionRole = null;
@@ -372,6 +376,17 @@ public class ModIPropertiesUtils {
 			}
 			else if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION.equals(securityMessageProfileHeader)) {
 				return HttpConstants.AUTHORIZATION;
+			}
+			else if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA_AUTH_IN_RESPONSE.equals(securityMessageProfileHeader)) {
+				return HttpConstants.AUTHORIZATION + " " +ModIProperties.getInstance().getRestSecurityTokenHeaderModI();
+			}
+			else if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA.equals(securityMessageProfileHeader)) {
+				if(request!=null && request) {
+					return HttpConstants.AUTHORIZATION + " " +ModIProperties.getInstance().getRestSecurityTokenHeaderModI();
+				}
+				else {
+					return ModIProperties.getInstance().getRestSecurityTokenHeaderModI();
+				}
 			}
 			else {
 				// caso che non dovrebbe capitare

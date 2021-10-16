@@ -574,6 +574,29 @@ public final class ServiziApplicativiAdd extends Action {
 			IDSoggetto idSoggetto = generalInfo.getIdSoggetto();
 			provider = generalInfo.getProvider();
 
+			boolean dominioEsternoProfiloModIPA = false;
+			if(saHelper.isProfiloModIPA(tipoProtocollo)) {
+				dominioEsternoProfiloModIPA = SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE.equals(dominio);
+			}
+			if(dominioEsternoProfiloModIPA) {
+				if(soggettiList==null || soggettiList.length<=0) {
+					pd.setMessage("Non risultano registrati soggetti di dominio esterno", MessageType.ERROR);
+					pd.disableEditMode();
+
+					Vector<DataElement> dati = new Vector<DataElement>();
+
+					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+
+					pd.setDati(dati);
+
+					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+
+					return ServletUtils.getStrutsForwardEditModeCheckError(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, 
+							ForwardParams.ADD());
+				}
+			}
+			
+			
 			String labelApplicativi = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
 			String labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI;
 			if(saHelper.isModalitaCompleta()==false) {
@@ -860,7 +883,7 @@ public final class ServiziApplicativiAdd extends Action {
 				// aggiunta campi custom
 				dati = saHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
 				
-				boolean dominioEsternoProfiloModIPA = false;
+				dominioEsternoProfiloModIPA = false;
 				if(saHelper.isProfiloModIPA(tipoProtocollo)) {
 					dominioEsternoProfiloModIPA = SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE.equals(dominio);
 				}

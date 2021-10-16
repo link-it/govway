@@ -48,6 +48,10 @@ fieldset {
     padding-right: 0px;
 }
 
+.subtitle span > a.navigatorAnchorClosable {
+	font-size: 16px;
+}
+
 span.navigatorAnchorClosable{
 	vertical-align: middle;
 }
@@ -1389,6 +1393,10 @@ div.intervalInnerDiv label {
 	padding: 20px 20px 4px 5px;
 }
 
+.subtitleBox {
+	padding: 4px 0px 0px 0px;
+}
+
 .subtitle span{
 	font-size: 16px;
     font-weight: bold;
@@ -2277,5 +2285,13 @@ div.txtA_div_propDialogInfoUso {
 .txtA_propDialogInfoUsoNoResize{
 	resize: none;
 	width: 99% !important;
+}
+
+.text-action-link {
+	padding: 0px 0px 0px 8px;
+}
+
+.text-action-link span.icon-box {
+	vertical-align: middle;
 }
 

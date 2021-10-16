@@ -20,7 +20,9 @@
 
 package org.openspcoop2.security.message.constants;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 
@@ -28,6 +30,7 @@ import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.apache.wss4j.common.ConfigurationConstants;
 import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.dom.handler.WSHandlerConstants;
+import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.digest.Constants;
 
 /**
@@ -457,5 +460,60 @@ public class SecurityConstants {
     
     public static final String TRUE = "true";
     public static final String FALSE = "false";
+    
+    public static final String KEYSTORE_TYPE_JWK_VALUE = "jwk";
+    public static final String KEYSTORE_TYPE_JWK_LABEL = "JWK Set";
+    
+    public static final String KEYSTORE_TYPE_JKS_VALUE = "jks";
+    public static final String KEYSTORE_TYPE_JKS_LABEL = "JKS";
+    public static final String KEYSTORE_TYPE_PKCS12_VALUE = "pkcs12";
+    public static final String KEYSTORE_TYPE_PKCS12_LABEL = "PKCS12";
+    public static List<String> getTIPOLOGIE_KEYSTORE_values(boolean truststore){
+		// NOTA:far ricreare la lista ogni volta, poiche' poi viene modificata
+		List<String> l = new ArrayList<String>();
+		l.add(KEYSTORE_TYPE_JKS_VALUE);
+		l.add(KEYSTORE_TYPE_PKCS12_VALUE);
+		HSMUtils.fillTIPOLOGIE_KEYSTORE(truststore, false, l);
+		return l;
+    }
+    public static List<String> getTIPOLOGIE_KEYSTORE_labels(boolean truststore){
+		// NOTA:far ricreare la lista ogni volta, poiche' poi viene modificata
+		List<String> l = new ArrayList<String>();
+		l.add(KEYSTORE_TYPE_JKS_LABEL);
+		l.add(KEYSTORE_TYPE_PKCS12_LABEL);
+		HSMUtils.fillTIPOLOGIE_KEYSTORE(truststore, false, l);
+		return l;
+    }
+    
+    public static final String KEYSTORE_TYPE_JCEKS_VALUE = "jceks";
+    public static final String KEYSTORE_TYPE_JCEKS_LABEL = "JCEKS";
+    public static List<String> getTIPOLOGIE_SECRETKEYSTORE_values(){
+		// NOTA:far ricreare la lista ogni volta, poiche' poi viene modificata
+		List<String> l = new ArrayList<String>();
+		l.add(KEYSTORE_TYPE_JCEKS_VALUE);
+		HSMUtils.fillTIPOLOGIE_KEYSTORE(false, true, l);
+		return l;
+    }
+    public static List<String> getTIPOLOGIE_SECRETKEYSTORE_labels(){
+		// NOTA:far ricreare la lista ogni volta, poiche' poi viene modificata
+		List<String> l = new ArrayList<String>();
+		l.add(KEYSTORE_TYPE_JCEKS_LABEL);
+		HSMUtils.fillTIPOLOGIE_KEYSTORE(false, true, l);
+		return l;
+    }
 
+    public static final String SECRETKEYSTORE_TYPE = "secretkeystoreType";
+    public static final String SECRETKEYSTORE_FILE = "secretkeystoreFile";
+    public static final String SECRETKEYSTORE_PASSWORD = "secretkeystorePassword";
+    public static final String SECRETKEYSTORE_PRIVATE_KEY_PASSWORD = "secretkeystorePrivateKeyPassword";
+    
+    public static final String KEYSTORE_TYPE = "keystoreType";
+    public static final String KEYSTORE_FILE = "keystoreFile";
+    public static final String KEYSTORE_PASSWORD = "keystorePassword";
+    public static final String KEYSTORE_PRIVATE_KEY_PASSWORD = "keystorePrivateKeyPassword";
+     
+    public static final String TRUSTSTORE_TYPE = "truststoreType";
+    public static final String TRUSTSTORE_FILE = "truststoreFile";
+    public static final String TRUSTSTORE_PASSWORD = "truststorePassword";
+    
 }

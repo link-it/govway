@@ -55,6 +55,15 @@ public class ErogazioneModIRestRispostaSicurezzaMessaggio  {
   
   @Schema(description = "")
   private Integer timeToLive = 300;
+  
+  @Schema(description = "Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola")
+ /**
+   * Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola  
+  **/
+  private List<String> claims = null;
+  
+  @Schema(description = "")
+  private ErogazioneModIRestRispostaSicurezzaMessaggioContemporaneita contemporaneita = null;
  /**
    * Get algoritmo
    * @return algoritmo
@@ -218,6 +227,49 @@ public class ErogazioneModIRestRispostaSicurezzaMessaggio  {
     return this;
   }
 
+ /**
+   * Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola
+   * @return claims
+  **/
+  @JsonProperty("claims")
+  @Valid
+  public List<String> getClaims() {
+    return this.claims;
+  }
+
+  public void setClaims(List<String> claims) {
+    this.claims = claims;
+  }
+
+  public ErogazioneModIRestRispostaSicurezzaMessaggio claims(List<String> claims) {
+    this.claims = claims;
+    return this;
+  }
+
+  public ErogazioneModIRestRispostaSicurezzaMessaggio addClaimsItem(String claimsItem) {
+    this.claims.add(claimsItem);
+    return this;
+  }
+
+ /**
+   * Get contemporaneita
+   * @return contemporaneita
+  **/
+  @JsonProperty("contemporaneita")
+  @Valid
+  public ErogazioneModIRestRispostaSicurezzaMessaggioContemporaneita getContemporaneita() {
+    return this.contemporaneita;
+  }
+
+  public void setContemporaneita(ErogazioneModIRestRispostaSicurezzaMessaggioContemporaneita contemporaneita) {
+    this.contemporaneita = contemporaneita;
+  }
+
+  public ErogazioneModIRestRispostaSicurezzaMessaggio contemporaneita(ErogazioneModIRestRispostaSicurezzaMessaggioContemporaneita contemporaneita) {
+    this.contemporaneita = contemporaneita;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -232,6 +284,8 @@ public class ErogazioneModIRestRispostaSicurezzaMessaggio  {
     sb.append("    url: ").append(ErogazioneModIRestRispostaSicurezzaMessaggio.toIndentedString(this.url)).append("\n");
     sb.append("    keystore: ").append(ErogazioneModIRestRispostaSicurezzaMessaggio.toIndentedString(this.keystore)).append("\n");
     sb.append("    timeToLive: ").append(ErogazioneModIRestRispostaSicurezzaMessaggio.toIndentedString(this.timeToLive)).append("\n");
+    sb.append("    claims: ").append(ErogazioneModIRestRispostaSicurezzaMessaggio.toIndentedString(this.claims)).append("\n");
+    sb.append("    contemporaneita: ").append(ErogazioneModIRestRispostaSicurezzaMessaggio.toIndentedString(this.contemporaneita)).append("\n");
     sb.append("}");
     return sb.toString();
   }

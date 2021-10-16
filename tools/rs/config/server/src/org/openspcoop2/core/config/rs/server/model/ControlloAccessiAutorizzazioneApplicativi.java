@@ -30,7 +30,7 @@ import javax.validation.Valid;
 public class ControlloAccessiAutorizzazioneApplicativi  {
   
   @Schema(example = "[\"Applicativo1\",\"Applicativo2\",\"Applicativo3\"]", required = true, description = "")
-  private List<String> applicativi = new ArrayList<String>();
+  private List<String> applicativi = new ArrayList<>();
  /**
    * Get applicativi
    * @return applicativi

@@ -21,6 +21,7 @@
 package org.openspcoop2.protocol.basic.registry;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.allarmi.Allarme;
@@ -36,6 +37,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneCRUD;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.utils.ControlloTrafficoDriverUtils;
@@ -300,6 +302,9 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 	
 	@Override
 	public List<Allarme> getAllarmi(IDPortaDelegata idPortaDelegata) throws RegistryNotFound,RegistryException{
+		if(!CostantiDB.ALLARMI_ENABLED) {
+			return new ArrayList<Allarme>();
+		}
 		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
 			
 			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
@@ -419,6 +424,9 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 	
 	@Override
 	public List<Allarme> getAllarmi(IDPortaApplicativa idPortaApplicativa) throws RegistryNotFound,RegistryException{
+		if(!CostantiDB.ALLARMI_ENABLED) {
+			return new ArrayList<Allarme>();
+		}
 		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
 			
 			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
@@ -541,6 +549,9 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 
 	@Override
 	public List<Allarme> getAllarmiGlobali() throws RegistryNotFound,RegistryException{
+		if(!CostantiDB.ALLARMI_ENABLED) {
+			return new ArrayList<Allarme>();
+		}
 		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
 			
 			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
@@ -572,6 +583,9 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 	
 	@Override
 	public String getNextAlarmInstanceSerialId(String tipoPlugin) throws RegistryException{
+		if(!CostantiDB.ALLARMI_ENABLED) {
+			throw new RegistryException("Alarm not supported");
+		}
 		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
 			
 			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;

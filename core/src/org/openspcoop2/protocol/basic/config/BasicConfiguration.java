@@ -267,6 +267,11 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 	}
 	
 	@Override
+	public boolean isAbilitatoSalvataggioHeaderProtocolloTracce() {
+		return true;
+	}
+	
+	@Override
 	public List<String> getTipiSoggetti() throws ProtocolException {
 		List<String> tipi = new ArrayList<String>();
 		List<OrganizationType> l = this.registroManifest.getOrganization().getTypes().getTypeList();

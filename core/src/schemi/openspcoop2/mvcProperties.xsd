@@ -172,6 +172,8 @@
 			<xsd:element name="lessEquals" type="equals" maxOccurs="unbounded" minOccurs="0"/>
 			<xsd:element name="greaterThen" type="equals" maxOccurs="unbounded" minOccurs="0"/>
 			<xsd:element name="greaterEquals" type="equals" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="startsWith" type="equals" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="endsWith" type="equals" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="and" type="xsd:boolean" default="true"/>
 		<xsd:attribute name="not" type="xsd:boolean" default="false"/>

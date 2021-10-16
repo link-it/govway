@@ -23,14 +23,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import org.openspcoop2.utils.certificate.ArchiveType;
-import org.openspcoop2.utils.transport.http.SSLUtilities;
-import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
-import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.TransferLengthModes;
+import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.utils.certificate.ArchiveType;
+import org.openspcoop2.utils.certificate.hsm.HSMUtils;
+import org.openspcoop2.utils.transport.http.SSLUtilities;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 
 
 /**
@@ -445,8 +447,28 @@ public class ConnettoriCostanti {
 	
 	public final static boolean DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS = true;
 	
-	public final static String DEFAULT_CONNETTORE_HTTPS_TIPOLOGIA_KEYSTORE_TYPE = "jks";
-	public final static String[] TIPOLOGIE_KEYSTORE = { "jks", "pkcs12", "jceks", "bks", "uber", "gkr" };
+	public final static String DEFAULT_CONNETTORE_HTTPS_PATH_HSM_PREFIX = HSMUtils.KEYSTORE_HSM_PREFIX;
+	public final static String DEFAULT_CONNETTORE_HTTPS_HSM_STORE_PASSWORD_UNDEFINED = HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED;
+	public final static String DEFAULT_CONNETTORE_HTTPS_HSM_PRIVATE_KEY_PASSWORD_UNDEFINED = HSMUtils.KEYSTORE_HSM_PRIVATE_KEY_PASSWORD_UNDEFINED;
+	public static boolean DEFAULT_CONNETTORE_HTTPS_HSM_CONFIGURABLE_KEY_PASSWORD = HSMUtils.HSM_CONFIGURABLE_KEY_PASSWORD;
+	
+	public final static String DEFAULT_CONNETTORE_HTTPS_TIPOLOGIA_KEYSTORE_TYPE = SecurityConstants.KEYSTORE_TYPE_JKS_VALUE;
+	public final static String[] TIPOLOGIE_KEYSTORE_OLD = { SecurityConstants.KEYSTORE_TYPE_JKS_VALUE, 
+			SecurityConstants.KEYSTORE_TYPE_PKCS12_VALUE, 
+			SecurityConstants.KEYSTORE_TYPE_JCEKS_VALUE, 
+			"bks", "uber", "gkr" };
+	public static List<String> getTIPOLOGIE_KEYSTORE(boolean truststore, boolean label){
+		// NOTA:far ricreare la lista ogni volta, poiche' poi viene modificata
+		List<String> l = new ArrayList<String>();
+		l.add(label ? SecurityConstants.KEYSTORE_TYPE_JKS_LABEL : SecurityConstants.KEYSTORE_TYPE_JKS_VALUE);
+		l.add(label ? SecurityConstants.KEYSTORE_TYPE_PKCS12_LABEL : SecurityConstants.KEYSTORE_TYPE_PKCS12_VALUE);
+		HSMUtils.fillTIPOLOGIE_KEYSTORE(truststore, false, l);
+		return l;
+	}
+	public static boolean existsTIPOLOGIE_KEYSTORE_HSM(boolean truststore){
+		return HSMUtils.existsTIPOLOGIE_KEYSTORE_HSM(truststore, false);
+	}
+	
 	
 	public final static String[] TIPO_SEND_AS = { "TextMessage", "BytesMessage" };
 	

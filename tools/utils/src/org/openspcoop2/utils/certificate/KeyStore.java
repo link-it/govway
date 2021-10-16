@@ -49,6 +49,7 @@ import org.openspcoop2.utils.UtilsException;
 public class KeyStore {
 
 	private java.security.KeyStore keystore;
+	private boolean keystoreHsm;
 	
 	public KeyStore(String keystorePath,String passwordKeystore) throws UtilsException{
 		this(keystorePath,"JKS",passwordKeystore);
@@ -122,7 +123,11 @@ public class KeyStore {
 	}
 	
 	public KeyStore(java.security.KeyStore keystore) {
+		this(keystore, false);
+	}
+	public KeyStore(java.security.KeyStore keystore, boolean keystoreHsm) {
 		this.keystore = keystore;
+		this.keystoreHsm = keystoreHsm;
 	}
 	
 	private Map<String, Key> keys = new HashMap<String, Key>(); // effettuo il cache delle chiavi essendo costoso accederci tutte le volte
@@ -274,5 +279,17 @@ public class KeyStore {
 	
 	public java.security.KeyStore getKeystore() {
 		return this.keystore;
+	}
+	public boolean isKeystoreHsm() {
+		return this.keystoreHsm;
+	}
+	public String getKeystoreType() {
+		if(this.keystore==null) {
+			return null;
+		}
+		return this.keystore.getType();
+	}
+	public java.security.Provider getKeystoreProvider() {
+		return this.keystore.getProvider();
 	}
 }

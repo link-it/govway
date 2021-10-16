@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/502/InteroperabilityInvalidResponse.html",
+    "title": "InteroperabilityInvalidResponse",
+    "status": 502,
+    "detail": "[GOVWAY-813] Token contenente un claim 'aud' non valido\n[GOVWAY-813] [Header 'Agid-JWT-Signature'] Token contenente un claim 'aud' non valido\n",
+    "govway_id": "#uuid"
+}

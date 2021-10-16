@@ -265,19 +265,19 @@ public class DynamicStringReplace {
 				try{
 					index = Integer.parseInt(position);
 				}catch(Exception e){
-					throw new UtilsException("Placeholder [{"+key+"}] resolution failed: object ["+object.getClass().getName()+"] with wrong position position ["+position+"] (not integer?): "+e.getMessage()+" )");
+					throw new UtilsException("Placeholder [{"+key+"}] resolution failed: object ["+object.getClass().getName()+"] with wrong position position ["+position+"] (not integer?): "+e.getMessage());
 				}
 				if(object instanceof List<?>){
 					List<?> list = (List<?>) object;
 					if(list.size()<=index){
-						throw new UtilsException("Placeholder [{"+key+"}] resolution failed: object ["+object.getClass().getName()+"] with wrong position position "+index+" (list size:"+list.size()+") )");
+						throw new UtilsException("Placeholder [{"+key+"}] resolution failed: object ["+object.getClass().getName()+"] with wrong position position "+index+" (list size:"+list.size()+")");
 					}
 					oInternal = list.get(index);
 				}
 				else if(object instanceof Object[]){
 					Object[] arrayObj = (Object[]) object;
 					if(arrayObj.length<=index){
-						throw new UtilsException("Placeholder [{"+key+"}] resolution failed: object ["+object.getClass().getName()+"] with wrong position position "+index+" (array size:"+arrayObj.length+") )");
+						throw new UtilsException("Placeholder [{"+key+"}] resolution failed: object ["+object.getClass().getName()+"] with wrong position position "+index+" (array size:"+arrayObj.length+")");
 					}
 					oInternal = arrayObj[index];
 				}
@@ -286,7 +286,7 @@ public class DynamicStringReplace {
 				Map<?,?> map = (Map<?,?>) object;
 				//if(map.containsKey(position)==false){
 				if(containsKey(map, position)==false) {
-					throw new UtilsException("Placeholder [{"+key+"}] resolution failed: object ["+object.getClass().getName()+"] with wrong position ["+position+"] not exists as key in map )");
+					throw new UtilsException("Placeholder [{"+key+"}] resolution failed: object ["+object.getClass().getName()+"] with wrong position ["+position+"] not exists as key in map");
 				}
 				//oInternal = map.get(position);
 				oInternal = get(map, position);
@@ -469,19 +469,19 @@ public class DynamicStringReplace {
 						try{
 							index = Integer.parseInt(position);
 						}catch(Exception e){
-							throw new UtilsException("Placeholder [{"+key+"}] resolution failed: method ["+o.getClass().getName()+"."+getMethod+"()] return "+ret.getClass().getName()+" object, wrong position value (not integer?): "+e.getMessage()+" )");
+							throw new UtilsException("Placeholder [{"+key+"}] resolution failed: method ["+o.getClass().getName()+"."+getMethod+"()] return "+ret.getClass().getName()+" object, wrong position value (not integer?): "+e.getMessage());
 						}
 						if(ret instanceof List<?>){
 							List<?> list = (List<?>) ret;
 							if(list.size()<=index){
-								throw new UtilsException("Placeholder [{"+key+"}] resolution failed: method ["+o.getClass().getName()+"."+getMethod+"()] return "+ret.getClass().getName()+" object, wrong position value "+index+" (list size:"+list.size()+") )");
+								throw new UtilsException("Placeholder [{"+key+"}] resolution failed: method ["+o.getClass().getName()+"."+getMethod+"()] return "+ret.getClass().getName()+" object, wrong position value "+index+" (list size:"+list.size()+")");
 							}
 							ret = list.get(index);
 						}
 						else if(ret instanceof Object[]){
 							Object[] arrayObj = (Object[]) ret;
 							if(arrayObj.length<=index){
-								throw new UtilsException("Placeholder [{"+key+"}] resolution failed: method ["+o.getClass().getName()+"."+getMethod+"()] return "+ret.getClass().getName()+" object, wrong position value "+index+" (array size:"+arrayObj.length+") )");
+								throw new UtilsException("Placeholder [{"+key+"}] resolution failed: method ["+o.getClass().getName()+"."+getMethod+"()] return "+ret.getClass().getName()+" object, wrong position value "+index+" (array size:"+arrayObj.length+")");
 							}
 							ret = arrayObj[index];
 						}

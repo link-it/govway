@@ -23,6 +23,13 @@ Le espressioni utilizzabili come parti dinamiche, risolte a runtime dal gateway,
 - ${xPath:EXPR}: espressione XPath applicata su un messaggio XML
 - ${jsonPath:EXPR}: espressione JSONPath applicata su un messaggio JSON
 - ${transportContext:FIELD}: permette di accedere ai dati della richiesta http; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext' (es. per il principal usare ${transportContext:credential.principal})
+- ${config:NAME}: valore della proprietà configurata sull'API che possiede il nome 'NAME'
+- ${clientApplicationConfig:NAME}: valore della proprietà configurata nell'applicativo fruitore che possiede il nome 'NAME'
+- ${clientOrganizationConfig:NAME}: valore della proprietà configurata nel soggetto fruitore che possiede il nome 'NAME'
+- ${providerOrganizationConfig:NAME}: valore della proprietà configurata nel soggetto erogatore che possiede il nome 'NAME'
+- ${system:NAME}: valore associato alla proprietà di sistema, indicata nella configurazione generale, con nome 'NAME'
+- ${env:NAME}: valore associato alla variabile di sistema con nome 'NAME'
+- ${java:NAME}: valore associato alla variabile java con nome 'NAME'
 
 Di seguito alcuni esempi:
 

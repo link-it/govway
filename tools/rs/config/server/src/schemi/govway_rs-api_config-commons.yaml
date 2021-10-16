@@ -68,7 +68,15 @@ components:
       schema:
         type: string
         maxLength: 255
-    
+    id_nome_connettore:
+      name: nome_connettore
+      in: path
+      description: Nome del connettore multiplo
+      required: true
+      schema:
+        type: string
+        maxLength: 255
+            
     # Dati Identificativi nella query
     id_soggetto_applicativo:
       name: soggetto_applicativo
@@ -736,6 +744,9 @@ components:
               maxLength: 255
               example: 'PKIX'
               default: 'PKIX'
+            pcks11_tipo:
+              type: string
+              maxLength: 255
     ConnettoreConfigurazioneHttpsClient:
       type: object
       allOf:
@@ -751,6 +762,9 @@ components:
               maxLength: 255
               example: 'SunX509'
               default: 'SunX509'
+            pcks11_tipo:
+              type: string
+              maxLength: 255
     ConnettoreConfigurazioneProxy:
       type: object
       required: 
@@ -799,9 +813,11 @@ components:
           format: int32
           example: 10000
           description: tempo medio (in millisecondi) atteso per ricevere una risposta
-    Connettore:
+          
+    # HTTP e Backward Compatibility
+    BaseConnettoreHttp:
       type: object
-      required: 
+      required:
         - endpoint
       properties:
         endpoint:
@@ -819,6 +835,233 @@ components:
           $ref: '#/components/schemas/ConnettoreConfigurazioneTimeout'
         token_policy:
           $ref: 'govway_core.yaml#/components/schemas/NCName'
+        debug:
+          type: boolean
+          default: false   
+    ConnettoreHttp:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseConnettoreHttp'
+        - type: object
+          required:
+          - tipo 
+          properties:
+            tipo:
+              $ref: '#/components/schemas/ConnettoreEnum'
+
+    # ConnettoreFile
+    ConnettoreFile:
+      type: object
+      required:
+        - tipo 
+        - richiesta
+      properties:
+        tipo:
+          $ref: '#/components/schemas/ConnettoreEnum'
+        debug:
+          type: boolean
+          default: false
+        richiesta:
+          $ref: '#/components/schemas/ConnettoreFileRichiesta'
+        risposta:
+          $ref: '#/components/schemas/ConnettoreFileRisposta'      
+    ConnettoreFileRichiesta:
+      type: object
+      required:
+        - file
+      properties:
+        file:
+          type: string
+          maxLength: 4000
+        file_headers:
+          type: string
+          maxLength: 4000
+        create_parent_dir:
+          type: boolean
+          default: false
+        overwrite_if_exists:
+          type: boolean
+          default: false
+    ConnettoreFileRisposta:
+      type: object
+      required:
+        - file
+      properties:
+        file:
+          type: string
+          maxLength: 4000
+        file_headers:
+          type: string
+          maxLength: 4000
+        delete_after_read:
+          type: boolean
+          default: false
+        wait_if_not_exists_ms:
+          type: integer
+          format: int32     
+
+    # ConnettoreJms
+    ConnettoreJms:
+      type: object
+      required:
+        - tipo 
+        - nome
+        - tipo_coda
+        - send_as
+        - connection_factory
+      properties:
+        tipo:
+          $ref: '#/components/schemas/ConnettoreEnum'
+        debug:
+          type: boolean
+          default: false
+        nome:
+          type: string
+          maxLength: 255
+        tipo_coda:
+          $ref: '#/components/schemas/ConnettoreJmsTipoEnum'
+        send_as:
+          $ref: '#/components/schemas/ConnettoreJmsSendAsEnum'
+        connection_factory:
+          type: string
+          maxLength: 255
+        utente:
+          type: string
+          maxLength: 255
+        password:
+          type: string
+          maxLength: 255
+        jndi_initial_context:
+          type: string
+          maxLength: 255
+        jndi_url_pgk_prefixes:
+          type: string
+          maxLength: 255          
+        jndi_provider_url:
+          type: string
+          maxLength: 255
+
+    # ConnettoreNull
+    ConnettoreNull:
+      type: object
+      required:
+        - tipo 
+      properties:
+        tipo:
+          $ref: '#/components/schemas/ConnettoreEnum'
+        debug:
+          type: boolean
+          default: false
+
+    # ConnettoreEcho
+    ConnettoreEcho:
+      type: object
+      required:
+        - tipo 
+      properties:
+        tipo:
+          $ref: '#/components/schemas/ConnettoreEnum'
+        debug:
+          type: boolean
+          default: false
+
+    # ConnettorePlugin
+    ConnettorePlugin:
+      type: object
+      required:
+        - tipo 
+        - plugin
+      properties:
+        tipo:
+          $ref: '#/components/schemas/ConnettoreEnum'
+        debug:
+          type: boolean
+          default: false
+        plugin:
+          type: string
+          maxLength: 255
+        proprieta:        
+          type: array
+          items:
+            $ref: '#/components/schemas/Proprieta'          
+
+    # ConnettoreApplicativoServer
+    ConnettoreApplicativoServer:
+      type: object
+      required:
+        - tipo
+        - applicativo 
+      properties:
+        tipo:
+          $ref: '#/components/schemas/ConnettoreEnum'
+        applicativo:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
+ 
+     # ConnettoreMessageBox
+    ConnettoreMessageBox:
+      type: object
+      required:
+        - tipo
+        - autenticazione_http 
+      properties:
+        tipo:
+          $ref: '#/components/schemas/ConnettoreEnum'
+        autenticazione_http:
+          $ref: '#/components/schemas/ConnettoreConfigurazioneHttpBasic'
+
+    ConnettoreErogazione:
+      type: object
+      properties:
+          # obbligatorio fornire o un connettore o un connettore-multiplo
+          connettore:
+             type: object
+             oneOf:
+               - $ref: '#/components/schemas/ConnettoreHttp' 
+               - $ref: '#/components/schemas/ConnettoreFile'
+               - $ref: '#/components/schemas/ConnettoreJms'
+               - $ref: '#/components/schemas/ConnettoreNull'
+               - $ref: '#/components/schemas/ConnettoreEcho'
+               - $ref: '#/components/schemas/ConnettorePlugin'
+               - $ref: '#/components/schemas/ConnettoreApplicativoServer'
+               - $ref: '#/components/schemas/ConnettoreMessageBox'
+             discriminator:
+               propertyName: tipo
+               mapping:
+                 'http': '#/components/schemas/ConnettoreHttp'
+                 'file': '#/components/schemas/ConnettoreFile'
+                 'jms': '#/components/schemas/ConnettoreJms'
+                 'null': '#/components/schemas/ConnettoreNull'
+                 'echo': '#/components/schemas/ConnettoreEcho'
+                 'plugin': '#/components/schemas/ConnettorePlugin'
+                 'applicativo-server': '#/components/schemas/ConnettoreApplicativoServer'
+                 'message-box': '#/components/schemas/ConnettoreMessageBox' 
+      additionalProperties: false
+                 
+    ConnettoreFruizione:
+      type: object
+      required: 
+        - connettore
+      properties:
+          connettore:
+             type: object
+             oneOf:
+               - $ref: '#/components/schemas/ConnettoreHttp' 
+               - $ref: '#/components/schemas/ConnettoreFile'
+               - $ref: '#/components/schemas/ConnettoreJms'
+               - $ref: '#/components/schemas/ConnettoreNull'
+               - $ref: '#/components/schemas/ConnettoreEcho'
+               - $ref: '#/components/schemas/ConnettorePlugin'
+             discriminator:
+               propertyName: tipo
+               mapping:
+                 'http': '#/components/schemas/ConnettoreHttp'
+                 'file': '#/components/schemas/ConnettoreFile'
+                 'jms': '#/components/schemas/ConnettoreJms'
+                 'null': '#/components/schemas/ConnettoreNull'
+                 'echo': '#/components/schemas/ConnettoreEcho'
+                 'plugin': '#/components/schemas/ConnettorePlugin'
+      additionalProperties: false
+
           
     # Base: Erogazione/Fruizione
 
@@ -881,7 +1124,7 @@ components:
                  'abilitato': '#/components/schemas/APIImplAutorizzazioneAbilitataNew'
                  'xacml-Policy': '#/components/schemas/APIImplAutorizzazioneXACML'
             connettore:
-              $ref: '#/components/schemas/Connettore'
+              $ref: '#/components/schemas/BaseConnettoreHttp'
 
     APIImplAutenticazioneDisabilitata:
       type: object
@@ -1095,9 +1338,11 @@ components:
           default: false
           example: false
         token_claims:
-          description: Indicare per riga i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola
-          type: string
-          maxLength: 4000
+          description: Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola
+          type: array
+          items:
+            type: string
+            maxLength: 200 # lista di header arriva a 4000
       additionalProperties: false
 
     APIImplAutorizzazioneXACMLView:
@@ -1286,7 +1531,8 @@ components:
         - ruolo
       properties:
         nome:
-          $ref: 'govway_core.yaml#/components/schemas/NCName'
+          type: string
+          # rilassato vincolo, un allegato puo' avere qualsiasi $ref: 'govway_core.yaml#/components/schemas/NCName'
         documento:
           type: string
           format: byte
@@ -1349,7 +1595,8 @@ components:
         - ruolo
       properties:
         nome:
-          $ref: 'govway_core.yaml#/components/schemas/NCName'            
+          type: string
+          # rilassato vincolo, un allegato puo' avere qualsiasi $ref: 'govway_core.yaml#/components/schemas/NCName'            
         ruolo:
           $ref: '#/components/schemas/RuoloAllegatoAPIImpl'
     ApiImplAllegatoItemSpecificaSemiformale:
@@ -1448,6 +1695,9 @@ components:
             mapping:
               'default': '#/components/schemas/ModITrustStoreDefault'
               'ridefinito': '#/components/schemas/ModITrustStoreRidefinito'
+        time_to_live:
+          type: integer
+          format: int32
         wsa_to:
           type: string
           maxLength: 4000
@@ -1465,6 +1715,11 @@ components:
       properties:
         algoritmo:
           $ref: '#/components/schemas/ModISicurezzaMessaggioSoapAlgoritmoFirma'
+        header_soap_firmare:
+          type: array
+          items:
+            type: string
+            maxLength: 200 # lista di header arriva a 4000 
         forma_canonica_xml:
           $ref: '#/components/schemas/ModISicurezzaMessaggioSoapFormaCanonicaXml'
         riferimento_x509:
@@ -1541,9 +1796,27 @@ components:
             mapping:
               'default': '#/components/schemas/ModITrustStoreDefault'
               'ridefinito': '#/components/schemas/ModITrustStoreRidefinito'
+        time_to_live:
+          type: integer
+          format: int32
         audience:
           type: string
           maxLength: 4000
+        contemporaneita:
+           $ref: '#/components/schemas/ErogazioneModIRestRichiestaSicurezzaMessaggioContemporaneita'
+    ErogazioneModIRestRichiestaSicurezzaMessaggioContemporaneita:
+      type: object      
+      required:
+        - identificativo
+        - audience
+      properties:
+        identificativo:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioRestTokenChoiseEnum'
+        audience:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioRestSameDifferentEnum'
+        audience_atteso:
+           type: string
+           maxLength: 4000      
     ErogazioneModIRestRisposta:
       type: object      
       required:
@@ -1590,6 +1863,35 @@ components:
           type: integer
           format: int32
           default: 300
+        claims:
+          description: Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola
+          type: array
+          items:
+            type: string
+            maxLength: 200 # lista di header arriva a 4000
+        contemporaneita:
+           $ref: '#/components/schemas/ErogazioneModIRestRispostaSicurezzaMessaggioContemporaneita'
+    ErogazioneModIRestRispostaSicurezzaMessaggioContemporaneita:
+      type: object      
+      required:
+        - identificativo
+      properties:
+        identificativo:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioRestSameDifferentEnum'
+        usa_come_id_messaggio:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioRestTokenChoiseEnum'
+        claims_bearer:
+           description: Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola
+           type: array
+           items:
+             type: string
+             maxLength: 200 # lista di header arriva a 4000 
+        claims_agid:
+           description: Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola
+           type: array
+           items:
+             type: string
+             maxLength: 200 # lista di header arriva a 4000 
 
     # ModI Fruizione
     FruizioneModI:
@@ -1635,6 +1937,11 @@ components:
           $ref: '#/components/schemas/ModISicurezzaMessaggioSoapAlgoritmoFirma'
         forma_canonica_xml:
           $ref: '#/components/schemas/ModISicurezzaMessaggioSoapFormaCanonicaXml'
+        header_soap_firmare:
+          type: array
+          items:
+            type: string
+            maxLength: 200 # lista di header arriva a 4000 
         riferimento_x509:
           $ref: '#/components/schemas/ModISicurezzaMessaggioSoapRiferimentoX509'
         certificate_chain:
@@ -1686,9 +1993,15 @@ components:
             mapping:
               'default': '#/components/schemas/ModITrustStoreDefault'
               'ridefinito': '#/components/schemas/ModITrustStoreRidefinito'
+        time_to_live:
+          type: integer
+          format: int32
         verifica_wsa_to:
           type: boolean
           default: true
+        audience_atteso:
+           type: string
+           maxLength: 4000
 
     # ModI Fruizione REST
     FruizioneModIRest:
@@ -1744,6 +2057,41 @@ components:
           $ref: '#/components/schemas/FruizioneModISoapRichiestaInformazioneUtente'
         informazioni_utente_indirizzo_ip:
           $ref: '#/components/schemas/FruizioneModISoapRichiestaInformazioneUtente'
+        claims:
+           description: Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola
+           type: array
+           items:
+             type: string
+             maxLength: 200 # lista di header arriva a 4000
+        contemporaneita:
+           $ref: '#/components/schemas/FruizioneModIRestRichiestaSicurezzaMessaggioContemporaneita'
+    FruizioneModIRestRichiestaSicurezzaMessaggioContemporaneita:
+      type: object      
+      required:
+        - identificativo
+        - audience
+      properties:
+        identificativo:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioRestSameDifferentEnum'
+        usa_come_id_messaggio:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioRestTokenChoiseEnum'
+        audience:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioRestSameDifferentEnum'
+        audience_atteso:
+           type: string
+           maxLength: 4000
+        claims_bearer:
+           description: Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola
+           type: array
+           items:
+             type: string
+             maxLength: 200 # lista di header arriva a 4000 
+        claims_agid:
+           description: Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola
+           type: array
+           items:
+             type: string
+             maxLength: 200 # lista di header arriva a 4000
     FruizioneModIRestRisposta:
       type: object      
       required:
@@ -1784,9 +2132,30 @@ components:
             mapping:
               'default': '#/components/schemas/ModITrustStoreDefault'
               'ridefinito': '#/components/schemas/ModITrustStoreRidefinito'
+        time_to_live:
+          type: integer
+          format: int32
         verifica_audience:
           type: boolean
           default: true
+        audience_atteso:
+           type: string
+           maxLength: 4000
+        contemporaneita:
+           $ref: '#/components/schemas/FruizioneModIRestRispostaSicurezzaMessaggioContemporaneita'
+    FruizioneModIRestRispostaSicurezzaMessaggioContemporaneita:
+      type: object      
+      required:
+        - identificativo
+        - audience
+      properties:
+        identificativo:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioRestTokenChoiseEnum'
+        audience:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioRestSameDifferentEnum'
+        audience_atteso:
+           type: string
+           maxLength: 4000 
 
     # ModI Applicativo
 
@@ -1820,12 +2189,14 @@ components:
           type: object
           oneOf:
           - $ref: '#/components/schemas/ModIKeyStoreArchive'
-          - $ref: '#/components/schemas/ModIKeyStoreFile'
+          - $ref: '#/components/schemas/ModIKeyStoreFileApplicativo'
+          - $ref: '#/components/schemas/ModIKeyStoreHSMApplicativo'
           discriminator:
             propertyName: tipologia
             mapping:
               'archivio': '#/components/schemas/ModIKeyStoreArchive'
-              'filesystem': '#/components/schemas/ModIKeyStoreFile'
+              'filesystem': '#/components/schemas/ModIKeyStoreFileApplicativo'
+              'hsm': '#/components/schemas/ModIKeyStoreHSMApplicativo'
         reply_audience:
            type: string
            maxLength: 4000
@@ -1862,6 +2233,9 @@ components:
           properties:
             truststore_tipo:
               $ref: '#/components/schemas/ModITruststoreEnum'
+            pcks11_tipo:
+              type: string
+              maxLength: 255
 
     ModIKeyStoreDefault:
       type: object
@@ -1883,11 +2257,13 @@ components:
           oneOf:
           - $ref: '#/components/schemas/ModIKeyStoreArchive'
           - $ref: '#/components/schemas/ModIKeyStoreFile'
+          - $ref: '#/components/schemas/ModIKeyStoreHSM'
           discriminator:
             propertyName: tipologia
             mapping:
               'archivio': '#/components/schemas/ModIKeyStoreArchive'
               'filesystem': '#/components/schemas/ModIKeyStoreFile'
+              'hsm': '#/components/schemas/ModIKeyStoreHSM'
     ModIKeyStoreFile:
       type: object      
       allOf:
@@ -1901,6 +2277,15 @@ components:
               $ref: '#/components/schemas/ModIKeystoreTipologiaEnum'
             keystore_tipo:
               $ref: '#/components/schemas/ModIKeystoreEnum'
+    ModIKeyStoreFileApplicativo:
+      type: object      
+      allOf:
+        - $ref: '#/components/schemas/ModIKeyStoreFile'
+        - type: object
+          properties:
+            keystore_certificato:
+              type: string
+              format: byte
     ModIKeyStoreArchive:
       type: object      
       allOf:
@@ -1914,6 +2299,32 @@ components:
               $ref: '#/components/schemas/ModIKeystoreTipologiaEnum'
             keystore_tipo:
               $ref: '#/components/schemas/ModIKeystoreEnum'
+    ModIKeyStoreHSM:
+      type: object      
+      required:
+       - tipologia 
+       - pcks11_tipo
+       - key_alias
+      properties:
+        tipologia:
+          $ref: '#/components/schemas/ModIKeystoreTipologiaEnum'
+        pcks11_tipo:
+              type: string
+              maxLength: 255
+        key_alias:
+          type: string
+          maxLength: 255
+          description: alias della chiave privata
+          example: 'pwd'
+    ModIKeyStoreHSMApplicativo:
+      type: object      
+      allOf:
+        - $ref: '#/components/schemas/ModIKeyStoreHSM'
+        - type: object
+          properties:
+            keystore_certificato:
+              type: string
+              format: byte
 
     # Base: Gruppi Erogazione/Fruizione
 
@@ -2877,7 +3288,7 @@ components:
       default: 'TLSv1.3'
     KeystoreEnum:
       type: string
-      enum: ['jks', 'pkcs12', 'jceks', 'bks', 'uber', 'gkr']
+      enum: ['jks', 'pkcs12', 'pkcs11']
       example: 'jks' 
     TipoAutenticazioneEnum:
       type: string
@@ -2972,6 +3383,25 @@ components:
     CanaleEnum:
       type: string
       enum: ['default', 'api', 'implementazione-api']
+    ConnettoreEnum:
+      type: string
+      enum: 
+        - 'http'
+        - 'file'
+        - 'jms'
+        - 'null'
+        - 'echo'
+        - 'plugin'
+        - 'applicativo-server'
+        - 'message-box'
+    ConnettoreJmsTipoEnum:
+      type: string
+      enum: ['queue', 'topic']
+      example: 'ok'
+    ConnettoreJmsSendAsEnum:
+      type: string
+      enum: ['text', 'bytes']
+      example: 'ok'      
     
     # ModI: Enumeration
     ModISicurezzaCanaleEnum:
@@ -2982,7 +3412,15 @@ components:
       enum: ['disabilitato', 'auth01', 'auth02', 'integrity01-auth01', 'integrity01-auth02']
     ModISicurezzaMessaggioRestHeaderEnum:
       type: string
-      enum: ['agid', 'bearer']
+      enum: ['agid', 'bearer', 'agid+bearer-request', 'agid+bearer' ]
+    ModISicurezzaMessaggioRestTokenChoiseEnum:
+      type: string
+      enum: ['agid', 'bearer' ]
+      default: agid
+    ModISicurezzaMessaggioRestSameDifferentEnum:
+      type: string
+      enum: ['same', 'different' ]
+      default: same
     ModISicurezzaMessaggioApplicabilitaEnum:
       type: string
       enum: ['richiesta', 'risposta', 'qualsiasi', 'custom']
@@ -3006,7 +3444,7 @@ components:
       default: api
     ModITruststoreEnum:
       type: string
-      enum: ['jks']
+      enum: ['jks', 'pkcs11']
       example: 'jks'
     ModIKeystoreEnum:
       type: string
@@ -3014,7 +3452,7 @@ components:
       example: 'jks'
     ModIKeystoreTipologiaEnum:
       type: string
-      enum: ['archivio', 'filesystem']
+      enum: ['archivio', 'filesystem', 'hsm']
       example: 'filesystem'
     ModISicurezzaMessaggioSoapAlgoritmoFirma:
       type: string

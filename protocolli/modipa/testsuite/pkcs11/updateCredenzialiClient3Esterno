@@ -1,0 +1,14 @@
+SOGGETTO_DEFAULT=$1
+if [ -z "$SOGGETTO_DEFAULT" ]
+then
+	echo "Indicare soggetto di default"
+	exit
+fi
+
+CER_BASE64=$(cat /etc/govway/keys/modi_client3_hsm.pem | base64 -w 0)
+cp ${PWD}/template_esterno.json /tmp/template.json
+find /tmp/template.json -type f -exec perl -pi -e "s#CER_BASE64#${CER_BASE64}#g" {} \;
+
+curl -v -X PUT "http://127.0.0.1:8080/govway/in/${SOGGETTO_DEFAULT}/api-config/v1/applicativi/PKCS11-Client3HSM-Esterno/credenziali?profilo=ModI&soggetto=DemoSoggettoFruitoreEsterno" \
+-H "Content-Type: application/json" \
+-d @/tmp/template.json

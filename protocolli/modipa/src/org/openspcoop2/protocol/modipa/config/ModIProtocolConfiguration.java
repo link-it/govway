@@ -69,6 +69,11 @@ public class ModIProtocolConfiguration extends BasicConfiguration {
 	}
 	
 	@Override
+	public boolean isAbilitatoSalvataggioHeaderProtocolloTracce() {
+		return this.properties.isGenerazioneTracce_registraToken();
+	}
+	
+	@Override
 	public boolean isSupportato(ServiceBinding serviceBinding, FunzionalitaProtocollo funzionalitaProtocollo)
 			throws ProtocolException {
 		if(funzionalitaProtocollo==null || serviceBinding==null){

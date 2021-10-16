@@ -23,6 +23,7 @@ package org.openspcoop2.protocol.modipa.utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -43,6 +44,8 @@ import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
+import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
+import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
@@ -55,6 +58,7 @@ import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.security.message.constants.SignatureDigestAlgorithm;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**
@@ -77,6 +81,7 @@ public class ModISecurityConfig {
 	private boolean useSingleCertificate = true;
 	private boolean includeSignatureToken = false;
 	private int ttl;
+	private Long checkTtlIatMs;
 	private String audience;
 	private boolean checkAudience;
 	private String clientId;
@@ -85,15 +90,30 @@ public class ModISecurityConfig {
 	private List<String> httpHeaders = new ArrayList<String>();
 	private List<SOAPHeader> soapHeaders = new ArrayList<SOAPHeader>();
 	
+	private boolean multipleHeaderUseSameJti = true;
+	private boolean multipleHeaderUseJtiAuthorizationAsIdMessaggio = true;
+	private Boolean multipleHeaderAuthorizationConfig = null;
+
+	private Properties claims;
+	private Properties multipleHeaderClaims;
+	
 	private List<String> corniceSicurezzaCodiceEnteRule = null;
 	private List<String> corniceSicurezzaUserRule = null;
 	private List<String> corniceSicurezzaIpUserRule = null;
 	
+	private boolean fruizione;
+	private List<ProtocolProperty> _listProtocolProperties = null;
+	
 	public ModISecurityConfig(OpenSPCoop2Message msg, IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica aspsParam, ServizioApplicativo sa, 
 			boolean rest, boolean fruizione,  boolean request, boolean corniceSicurezza,
-			Busta busta, Busta bustaRichiesta) throws ProtocolException {
+			Busta busta, Busta bustaRichiesta,
+			Boolean multipleHeaderAuthorizationConfig) throws ProtocolException {
 		
 		// METODO USATO IN IMBUSTAMENTO
+		
+		this.fruizione = fruizione;
+		
+		this.multipleHeaderAuthorizationConfig = multipleHeaderAuthorizationConfig;
 		
 		ModIProperties modiProperties = ModIProperties.getInstance();
 		
@@ -104,7 +124,6 @@ public class ModISecurityConfig {
 			throw new ProtocolException(e.getMessage(),e);
 		}
 		
-		List<ProtocolProperty> listProtocolProperties = null;
 		Fruitore fruitore = null;
 		if(fruizione) {
 			if(soggettoFruitore==null) {
@@ -114,7 +133,7 @@ public class ModISecurityConfig {
 			for (Fruitore fruitoreCheck : aspsParam.getFruitoreList()) {
 				if(fruitoreCheck.getTipo().equals(soggettoFruitore.getTipo()) && fruitoreCheck.getNome().equals(soggettoFruitore.getNome())) {
 					fruitore = fruitoreCheck;
-					listProtocolProperties = fruitoreCheck.getProtocolPropertyList();
+					this._listProtocolProperties = fruitoreCheck.getProtocolPropertyList();
 					find = true;
 					break;
 				}
@@ -124,40 +143,92 @@ public class ModISecurityConfig {
 			}
 		}
 		else {
-			listProtocolProperties = aspsParam.getProtocolPropertyList();
+			this._listProtocolProperties = aspsParam.getProtocolPropertyList();
 		}
 		
-		if(listProtocolProperties==null || listProtocolProperties.isEmpty()) {
+		if(this._listProtocolProperties==null || this._listProtocolProperties.isEmpty()) {
 			throw new ProtocolException("Configurazione della sicurezza incompleta");
 		}
 		
 		if(rest) {
-			this.initSharedRest(listProtocolProperties,sa,fruizione,request);
 			
-			String httpHeaders = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST);
+			/* Opzioni REST */
+						
+			this.initSharedRest(this._listProtocolProperties,sa,fruizione,request);
+			
+			// HTTP Header da firmare
+			
+			String httpHeaders = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST);
 			if(httpHeaders!=null && httpHeaders.length()>0) {
 				this.httpHeaders = Arrays.asList(httpHeaders.split(","));
 			}
+			
+			// Opzioni 'jti' in header contemporanei
+			
+			String idPropertyMultipleHeaderUseSameJti = (fruizione ? ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_JTI : ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_DOPPI_HEADER_JTI);
+			String multipleHeaderUseSameJti = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this._listProtocolProperties, idPropertyMultipleHeaderUseSameJti);
+			if(multipleHeaderUseSameJti!=null) {
+				this.multipleHeaderUseSameJti = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_JTI_VALUE_SAME.equals(multipleHeaderUseSameJti);
+			}
+			
+			String idPropertyMultipleHeaderUseJtiAuthorizationAsIdMessaggio = (fruizione ? ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_JTI_AS_ID_MESSAGGIO : ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_DOPPI_HEADER_JTI_AS_ID_MESSAGGIO);
+			String multipleHeaderUseJtiAuthorizationAsIdMessaggio = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this._listProtocolProperties, idPropertyMultipleHeaderUseJtiAuthorizationAsIdMessaggio);
+			if(multipleHeaderUseJtiAuthorizationAsIdMessaggio!=null) {
+				this.multipleHeaderUseJtiAuthorizationAsIdMessaggio = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_JTI_AS_ID_MESSAGGIO_VALUE_AUTHORIZATION.equals(multipleHeaderUseJtiAuthorizationAsIdMessaggio);
+			}
+			
+			// Claims custom
+			
+			String idPropertyClaims = (fruizione ? ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_JWT_CLAIMS : ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_JWT_CLAIMS);
+			String claims = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this._listProtocolProperties, idPropertyClaims);
+			if(claims!=null && claims.length()>0) {
+				this.claims = PropertiesUtilities.convertTextToProperties(claims);
+			}
+			
+			// Custom claims per header contemporanei
+			if(this.multipleHeaderAuthorizationConfig!=null) {
+
+				String idPropertyMultipleHeaderClaims = null;
+				if(this.multipleHeaderAuthorizationConfig) {
+					idPropertyMultipleHeaderClaims = (this.fruizione ? ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_JWT_CLAIMS_AUTHORIZATION : ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_DOPPI_HEADER_JWT_CLAIMS_AUTHORIZATION);
+				}
+				else {
+					idPropertyMultipleHeaderClaims = (this.fruizione ? ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_JWT_CLAIMS_MODI : ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_DOPPI_HEADER_JWT_CLAIMS_MODI);
+				}
+				String multipleHeaderClaimsAuthorization = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this._listProtocolProperties, idPropertyMultipleHeaderClaims);
+				if(multipleHeaderClaimsAuthorization!=null && multipleHeaderClaimsAuthorization.length()>0) {
+					this.multipleHeaderClaims = PropertiesUtilities.convertTextToProperties(multipleHeaderClaimsAuthorization);
+				}
+				
+			}
+						
 		}
 		else {
-			this.initSharedSoap(listProtocolProperties,fruizione,request);
 			
-			String soapHeaders = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_HEADERS_SOAP);
+			/* Opzioni SOAP */
+			
+			this.initSharedSoap(this._listProtocolProperties,fruizione,request);
+			
+			// Header SOAP da firmare
+			
+			String soapHeaders = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_HEADERS_SOAP);
 			if(soapHeaders!=null && soapHeaders.length()>0) {
 				this.soapHeaders = SOAPHeader.parse(soapHeaders);
 			}
 		}
 				
+		/* TTL */
+		
 		if(fruizione) {
 			if(request) {
 				boolean greatherThanZero = true;
-				this.ttl = ProtocolPropertiesUtils.getRequiredNumberValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_EXPIRED, greatherThanZero).intValue();
+				this.ttl = ProtocolPropertiesUtils.getRequiredNumberValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_EXPIRED, greatherThanZero).intValue();
 			}
 		}
 		else {
 			if(!request) {
 				boolean greatherThanZero = true;
-				this.ttl = ProtocolPropertiesUtils.getRequiredNumberValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_EXPIRED, greatherThanZero).intValue();
+				this.ttl = ProtocolPropertiesUtils.getRequiredNumberValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_EXPIRED, greatherThanZero).intValue();
 			}
 		}
 		
@@ -165,7 +236,15 @@ public class ModISecurityConfig {
 			
 			/* Audience */
 			
-			this.audience = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE);
+			if(this.multipleHeaderAuthorizationConfig!=null && !this.multipleHeaderAuthorizationConfig) {
+				String modalita = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_AUDIENCE);
+				if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_AUDIENCE_VALUE_DIFFERENT.equals(modalita)) {
+					this.audience = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_AUDIENCE_INTEGRITY);
+				}
+			}
+			if(this.audience==null) {
+				this.audience = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE);
+			}
 			if(this.audience==null) {
 				if(fruitore.getConnettore()!=null && fruitore.getConnettore().sizePropertyList()>0) {
 					for (Property p : fruitore.getConnettore().getPropertyList()) {
@@ -182,13 +261,37 @@ public class ModISecurityConfig {
 			
 			/* ClientId */
 			
-			if(sa!=null) {
-				this.clientId = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE);
+			if(rest) {
+				// 0. Vedo se definito in claims
+				if(this.multipleHeaderAuthorizationConfig!=null &&
+						ModIUtilities.exists(this.multipleHeaderClaims, Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID)) {
+					this.clientId = ModIUtilities.get(this.multipleHeaderClaims, Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID, 
+							ModIUtilities.REMOVE);
+					if(this.clientId!=null && !DynamicHelperCostanti.NOT_GENERATE.equalsIgnoreCase(this.clientId)) {
+						// non utilizzabile nella richiesta. Si imposta dall'applicativo
+						this.clientId = null;
+					}
+				}
 				if(this.clientId==null) {
-					try {
-						this.clientId = NamingUtils.getLabelSoggetto(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()))+"/"+sa.getNome();
-					}catch(Exception e) {
-						throw new ProtocolException(e.getMessage(),e);
+					if(ModIUtilities.exists(this.claims, Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID)) {
+						this.clientId = ModIUtilities.get(this.claims, Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID, 
+								ModIUtilities.REMOVE);
+						if(this.clientId!=null && !DynamicHelperCostanti.NOT_GENERATE.equalsIgnoreCase(this.clientId)) {
+							// non utilizzabile nella richiesta. Si imposta dall'applicativo
+							this.clientId = null;
+						}
+					}
+				}
+			}
+			if(this.clientId==null) {
+				if(sa!=null) {
+					this.clientId = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE);
+					if(this.clientId==null) {
+						try {
+							this.clientId = NamingUtils.getLabelSoggetto(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()))+"/"+sa.getNome();
+						}catch(Exception e) {
+							throw new ProtocolException(e.getMessage(),e);
+						}
 					}
 				}
 			}
@@ -197,7 +300,16 @@ public class ModISecurityConfig {
 			/* Issuer */
 			
 			try {
-				if(modiProperties.isRestSecurityTokenClaimsIssuerEnabled()) {
+				if(this.multipleHeaderAuthorizationConfig!=null && 
+						ModIUtilities.exists(this.multipleHeaderClaims, Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER)) {
+					this.issuer = ModIUtilities.get(this.multipleHeaderClaims, Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER, 
+							!ModIUtilities.REMOVE); // potrebbe servire nella cornice di sicurezza 
+				}
+				else if(ModIUtilities.exists(this.claims, Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER)) {
+					this.issuer = ModIUtilities.get(this.claims, Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER, 
+							!ModIUtilities.REMOVE); // potrebbe servire nella cornice di sicurezza 
+				}
+				else if(modiProperties.isRestSecurityTokenClaimsIssuerEnabled()) {
 					String valore = modiProperties.getRestSecurityTokenClaimsIssuerHeaderValue();
 					if(valore!=null && !"".equals(valore)) {
 						this.issuer = valore;
@@ -214,7 +326,16 @@ public class ModISecurityConfig {
 			/* Subject */
 			
 			try {
-				if(modiProperties.isRestSecurityTokenClaimsSubjectEnabled()) {
+				if(this.multipleHeaderAuthorizationConfig!=null && 
+						ModIUtilities.exists(this.multipleHeaderClaims, Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT)) {
+					this.subject = ModIUtilities.get(this.multipleHeaderClaims, Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT, 
+							!ModIUtilities.REMOVE); // potrebbe servire nella cornice di sicurezza 
+				}
+				else if(ModIUtilities.exists(this.claims, Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT)) {
+					this.subject = ModIUtilities.get(this.claims, Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT, 
+							!ModIUtilities.REMOVE); // potrebbe servire nella cornice di sicurezza 
+				}
+				else if(modiProperties.isRestSecurityTokenClaimsSubjectEnabled()) {
 					String valore = modiProperties.getRestSecurityTokenClaimsSubjectHeaderValue();
 					if(valore!=null && !"".equals(valore)) {
 						this.subject = valore;
@@ -230,41 +351,97 @@ public class ModISecurityConfig {
 			/* Cornice Sicurezza */
 			if(corniceSicurezza) {
 				try {
-					String codiceEnteMode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE);
+					String codiceEnteMode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE);
+					String claimNameCodiceEnte = modiProperties.getSicurezzaMessaggio_corniceSicurezza_rest_codice_ente();
 					if(ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(codiceEnteMode)) {
-						this.corniceSicurezzaCodiceEnteRule = convertToList(ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE));
+						this.corniceSicurezzaCodiceEnteRule = convertToList(ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE));
+						if(this.multipleHeaderAuthorizationConfig!=null) {
+							ModIUtilities.remove(this.multipleHeaderClaims, claimNameCodiceEnte);
+						}
+						ModIUtilities.remove(this.claims, claimNameCodiceEnte);
 					}
 					else {
-						this.corniceSicurezzaCodiceEnteRule = modiProperties.getSicurezzaMessaggio_corniceSicurezza_dynamic_codice_ente();
+						if(this.multipleHeaderAuthorizationConfig!=null && 
+								ModIUtilities.exists(this.multipleHeaderClaims, claimNameCodiceEnte)) {
+							this.corniceSicurezzaCodiceEnteRule = convertToList(ModIUtilities.get(this.multipleHeaderClaims, claimNameCodiceEnte, ModIUtilities.REMOVE));
+						}
+						else if(ModIUtilities.exists(this.claims, claimNameCodiceEnte)) {
+							this.corniceSicurezzaCodiceEnteRule = convertToList(ModIUtilities.get(this.claims, claimNameCodiceEnte, ModIUtilities.REMOVE));
+						}
+						else {
+							this.corniceSicurezzaCodiceEnteRule = modiProperties.getSicurezzaMessaggio_corniceSicurezza_dynamic_codice_ente();
+						}
 					}
 					
-					String userMode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE);
+					String userMode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE);
+					String claimNameUser = modiProperties.getSicurezzaMessaggio_corniceSicurezza_rest_user();
 					if(ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(userMode)) {
-						this.corniceSicurezzaUserRule = convertToList(ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER));
+						this.corniceSicurezzaUserRule = convertToList(ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER));
+						if(this.multipleHeaderAuthorizationConfig!=null) {
+							ModIUtilities.remove(this.multipleHeaderClaims, claimNameUser);
+						}
+						ModIUtilities.remove(this.claims, claimNameUser);
 					}
 					else {
-						this.corniceSicurezzaUserRule = modiProperties.getSicurezzaMessaggio_corniceSicurezza_dynamic_user();
+						if(this.multipleHeaderAuthorizationConfig!=null && 
+								ModIUtilities.exists(this.multipleHeaderClaims, claimNameUser)) {
+							this.corniceSicurezzaUserRule = convertToList(ModIUtilities.get(this.multipleHeaderClaims, claimNameUser, ModIUtilities.REMOVE));
+						}
+						else if(ModIUtilities.exists(this.claims, claimNameUser)) {
+							this.corniceSicurezzaUserRule = convertToList(ModIUtilities.get(this.claims, claimNameUser, ModIUtilities.REMOVE));
+						}
+						else {
+							this.corniceSicurezzaUserRule = modiProperties.getSicurezzaMessaggio_corniceSicurezza_dynamic_user();
+						}
 					}
 					
-					String ipUserMode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE);
+					String ipUserMode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE);
+					String claimNameIpUser = modiProperties.getSicurezzaMessaggio_corniceSicurezza_rest_ipuser();
 					if(ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(ipUserMode)) {
-						this.corniceSicurezzaIpUserRule = convertToList(ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER));
+						this.corniceSicurezzaIpUserRule = convertToList(ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER));
+						if(this.multipleHeaderAuthorizationConfig!=null) {
+							ModIUtilities.remove(this.multipleHeaderClaims, claimNameIpUser);
+						}
+						ModIUtilities.remove(this.claims, claimNameIpUser);
 					}
 					else {
-						this.corniceSicurezzaIpUserRule = modiProperties.getSicurezzaMessaggio_corniceSicurezza_dynamic_ipuser();
+						if(this.multipleHeaderAuthorizationConfig!=null && 
+								ModIUtilities.exists(this.multipleHeaderClaims, claimNameIpUser)) {
+							this.corniceSicurezzaIpUserRule = convertToList(ModIUtilities.get(this.multipleHeaderClaims, claimNameIpUser, ModIUtilities.REMOVE));
+						}
+						else if(ModIUtilities.exists(this.claims, claimNameIpUser)) {
+							this.corniceSicurezzaIpUserRule = convertToList(ModIUtilities.get(this.claims, claimNameIpUser, ModIUtilities.REMOVE));
+						}
+						else {
+							this.corniceSicurezzaIpUserRule = modiProperties.getSicurezzaMessaggio_corniceSicurezza_dynamic_ipuser();
+						}
 					}
 				}catch(Exception e) {
 					throw new ProtocolException(e.getMessage(),e);
 				}
 			}
+			
 		}
 		else if(!fruizione && !request) {
 			
 			/* Audience */
 			
+			// 0. Vedo se definito in claim
+			if(this.multipleHeaderAuthorizationConfig!=null && 
+					ModIUtilities.exists(this.multipleHeaderClaims, Claims.INTROSPECTION_RESPONSE_RFC_7662_AUDIENCE)) {
+				this.audience = ModIUtilities.get(this.multipleHeaderClaims, Claims.INTROSPECTION_RESPONSE_RFC_7662_AUDIENCE, 
+						ModIUtilities.REMOVE);
+			}
+			else if(ModIUtilities.exists(this.claims, Claims.INTROSPECTION_RESPONSE_RFC_7662_AUDIENCE)) {
+				this.audience = ModIUtilities.get(this.claims, Claims.INTROSPECTION_RESPONSE_RFC_7662_AUDIENCE, 
+						ModIUtilities.REMOVE);
+			}
+			
 			// 1. Provo ad utilizzare quello definito nell'applicativo
-			if(sa!=null) {
-				this.audience = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE);
+			if(this.audience==null) {
+				if(sa!=null) {
+					this.audience = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE);
+				}
 			}
 			
 			// 2. Provo ad utilizzare il clientId presente nel token
@@ -313,7 +490,19 @@ public class ModISecurityConfig {
 			
 			/* ClientId */
 			try {
-				this.clientId = NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(idServizio).replace(" ", "/");
+				// 0. Vedo se definito in claims
+				if(this.multipleHeaderAuthorizationConfig!=null && 
+						ModIUtilities.exists(this.multipleHeaderClaims, Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID)) {
+					this.clientId = ModIUtilities.get(this.multipleHeaderClaims, Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID, 
+							ModIUtilities.REMOVE);
+				}
+				else if(ModIUtilities.exists(this.claims, Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID)) {
+					this.clientId = ModIUtilities.get(this.claims, Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID, 
+							ModIUtilities.REMOVE);
+				}
+				else {
+					this.clientId = NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(idServizio).replace(" ", "/");
+				}
 			}catch(Exception e) {
 				throw new ProtocolException(e.getMessage(),e);
 			}
@@ -322,7 +511,14 @@ public class ModISecurityConfig {
 			/* Issuer */
 			
 			try {
-				if(modiProperties.isRestSecurityTokenClaimsIssuerEnabled()) {
+				if(this.multipleHeaderAuthorizationConfig!=null && 
+						ModIUtilities.exists(this.multipleHeaderClaims, Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER)) {
+					this.issuer = ModIUtilities.get(this.multipleHeaderClaims, Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER, ModIUtilities.REMOVE);
+				}
+				else if(ModIUtilities.exists(this.claims, Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER)) {
+					this.issuer = ModIUtilities.get(this.claims, Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER, ModIUtilities.REMOVE);
+				}
+				else if(modiProperties.isRestSecurityTokenClaimsIssuerEnabled()) {
 					String valore = modiProperties.getRestSecurityTokenClaimsIssuerHeaderValue();
 					if(valore!=null && !"".equals(valore)) {
 						this.issuer = valore;
@@ -338,7 +534,14 @@ public class ModISecurityConfig {
 			/* Subject */
 			
 			try {
-				if(modiProperties.isRestSecurityTokenClaimsSubjectEnabled()) {
+				if(this.multipleHeaderAuthorizationConfig!=null && 
+						ModIUtilities.exists(this.multipleHeaderClaims, Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT)) {
+					this.subject = ModIUtilities.get(this.multipleHeaderClaims, Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT, ModIUtilities.REMOVE);
+				}
+				else if(ModIUtilities.exists(this.claims, Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT)) {
+					this.subject = ModIUtilities.get(this.claims, Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT, ModIUtilities.REMOVE);
+				}
+				else if(modiProperties.isRestSecurityTokenClaimsSubjectEnabled()) {
 					String valore = modiProperties.getRestSecurityTokenClaimsSubjectHeaderValue();
 					if(valore!=null && !"".equals(valore)) {
 						this.subject = valore;
@@ -350,6 +553,18 @@ public class ModISecurityConfig {
 			}catch(Exception e) {
 				throw new ProtocolException(e.getMessage(),e);
 			}
+			
+			/* Opzioni REST */
+			
+			if(rest) {
+
+				String idPropertyMultipleHeaderUseJtiAuthorizationAsIdMessaggio = (fruizione ? ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_FILTRO_DUPLICATI : ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_DOPPI_HEADER_FILTRO_DUPLICATI);
+				String multipleHeaderUseJtiAuthorizationAsIdMessaggio = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this._listProtocolProperties, idPropertyMultipleHeaderUseJtiAuthorizationAsIdMessaggio);
+				if(multipleHeaderUseJtiAuthorizationAsIdMessaggio!=null) {
+					this.multipleHeaderUseJtiAuthorizationAsIdMessaggio = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_FILTRO_DUPLICATI_VALUE_AUTHORIZATION.equals(multipleHeaderUseJtiAuthorizationAsIdMessaggio);
+				}
+				
+			}
 		}
 		else {
 			
@@ -357,31 +572,101 @@ public class ModISecurityConfig {
 			
 		}
 		
+		if(rest) {
+			// Rimuovo iss e sub gestiti tramite proprieta specifiche
+			if(this.multipleHeaderAuthorizationConfig!=null) {
+				ModIUtilities.remove(this.multipleHeaderClaims, Claims.INTROSPECTION_RESPONSE_RFC_7662_AUDIENCE);
+				ModIUtilities.remove(this.multipleHeaderClaims, Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID);
+				ModIUtilities.remove(this.multipleHeaderClaims, Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER);
+				ModIUtilities.remove(this.multipleHeaderClaims, Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT);
+			}
+			ModIUtilities.remove(this.claims, Claims.INTROSPECTION_RESPONSE_RFC_7662_AUDIENCE);
+			ModIUtilities.remove(this.claims, Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID);
+			ModIUtilities.remove(this.claims, Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER);
+			ModIUtilities.remove(this.claims, Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT);
+		}
+		
 	}
 	
 	public ModISecurityConfig(OpenSPCoop2Message msg, IProtocolFactory<?> protocolFactory, IState state, IDSoggetto soggettoFruitore, 
-			AccordoServizioParteComune aspc, AccordoServizioParteSpecifica aspsParam, ServizioApplicativo sa, boolean rest, boolean fruizione, boolean request) throws ProtocolException {
+			AccordoServizioParteComune aspc, AccordoServizioParteSpecifica aspsParam, ServizioApplicativo sa, boolean rest, boolean fruizione, boolean request,
+			Boolean multipleHeaderAuthorizationConfig) throws ProtocolException {
 		
 		// METODO USATO IN VALIDAZIONE
 		
-		List<ProtocolProperty> listProtocolProperties = ModIPropertiesUtils.getProtocolProperties(fruizione, soggettoFruitore, aspsParam);
+		this.fruizione = fruizione;
 		
-		if(listProtocolProperties==null || listProtocolProperties.isEmpty()) {
+		this.multipleHeaderAuthorizationConfig = multipleHeaderAuthorizationConfig;
+		
+		this._listProtocolProperties = ModIPropertiesUtils.getProtocolProperties(fruizione, soggettoFruitore, aspsParam);
+		
+		if(this._listProtocolProperties==null || this._listProtocolProperties.isEmpty()) {
 			throw new ProtocolException("Configurazione della sicurezza incompleta");
 		}
 		
 		if(rest) {
-			this.initSharedRest(listProtocolProperties,null, fruizione,request);
+			this.initSharedRest(this._listProtocolProperties,null, fruizione,request);
 		}
 		else {
-			this.initSharedSoap(listProtocolProperties,fruizione,request);
+			this.initSharedSoap(this._listProtocolProperties,fruizione,request);
 		}
 		
 		try {
 		
+			/* TTL */
+			
+			if(fruizione) {
+				if(!request) {
+					boolean greatherThanZero = true;
+					String mode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_IAT);
+					if(ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(mode)) {
+						Long l = ProtocolPropertiesUtils.getRequiredNumberValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_IAT_SECONDS, greatherThanZero);
+						if(l!=null && l.longValue()>0) {
+							this.checkTtlIatMs = l.longValue() * 1000; // trasformo in ms
+						}
+					}
+				}
+			}
+			else {
+				if(request) {
+					boolean greatherThanZero = true;
+					String mode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_IAT);
+					if(ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(mode)) {
+						Long l = ProtocolPropertiesUtils.getRequiredNumberValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_IAT_SECONDS, greatherThanZero);
+						if(l!=null && l.longValue()>0) {
+							this.checkTtlIatMs = l.longValue() * 1000; // trasformo in ms
+						}
+					}
+				}
+			}
+			
+			if(rest) {
+				
+				if(this.multipleHeaderAuthorizationConfig!=null) {
+				
+					// Opzioni 'jti' in header contemporanei
+					
+					String idPropertyMultipleHeaderUseJtiAuthorizationAsIdMessaggio = (fruizione ? ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_DOPPI_HEADER_FILTRO_DUPLICATI : ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_FILTRO_DUPLICATI);
+					String multipleHeaderUseJtiAuthorizationAsIdMessaggio = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this._listProtocolProperties, idPropertyMultipleHeaderUseJtiAuthorizationAsIdMessaggio);
+					if(multipleHeaderUseJtiAuthorizationAsIdMessaggio!=null) {
+						this.multipleHeaderUseJtiAuthorizationAsIdMessaggio = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_FILTRO_DUPLICATI_VALUE_AUTHORIZATION.equals(multipleHeaderUseJtiAuthorizationAsIdMessaggio);
+					}
+					
+				}
+			}
+			
 			if(!fruizione && request) {
 				this.checkAudience = true;
-				this.audience = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE);
+				
+				if(this.multipleHeaderAuthorizationConfig!=null && !this.multipleHeaderAuthorizationConfig) {
+					String modalita = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_AUDIENCE);
+					if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_AUDIENCE_VALUE_DIFFERENT.equals(modalita)) {
+						this.audience = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_AUDIENCE_INTEGRITY);
+					}
+				}
+				if(this.audience==null) {
+					this.audience = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE);
+				}
 				if(this.audience==null) {
 					
 					List<String> tags = new ArrayList<String>();
@@ -427,15 +712,27 @@ public class ModISecurityConfig {
 				}
 			}
 			else if(fruizione && !request) {
-				if(sa!=null) {
-					this.audience = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE);
-					// 	Se non definito sull'applicativo, non viene serializzato.
-					if(this.audience==null) {
-						// provo a vedere se viene utilizzato il valore di default
-						this.audience=NamingUtils.getLabelSoggetto(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()))+"/"+sa.getNome();
+			
+				if(this.multipleHeaderAuthorizationConfig!=null && !this.multipleHeaderAuthorizationConfig) {
+					String modalita = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_DOPPI_HEADER_AUDIENCE);
+					if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_AUDIENCE_VALUE_DIFFERENT.equals(modalita)) {
+						this.audience = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_DOPPI_HEADER_AUDIENCE_INTEGRITY);
 					}
 				}
-				this.checkAudience = ProtocolPropertiesUtils.getBooleanValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE, false);
+				if(this.audience==null) {
+					this.audience = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE_VALORE);
+				}
+				if(this.audience==null) {
+					if(sa!=null) {
+						this.audience = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE);
+						// 	Se non definito sull'applicativo, non viene serializzato.
+						if(this.audience==null) {
+							// provo a vedere se viene utilizzato il valore di default
+							this.audience=NamingUtils.getLabelSoggetto(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()))+"/"+sa.getNome();
+						}
+					}
+				}
+				this.checkAudience = ProtocolPropertiesUtils.getBooleanValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE, false);
 				if(this.checkAudience) {
 					if(this.audience==null) {
 						throw new ProtocolException("Configurazione errata; Audience non definito sull'applicativo e verifica abilitata sulla fruizione");
@@ -684,6 +981,10 @@ public class ModISecurityConfig {
 		return this.ttl;
 	}
 
+	public Long getCheckTtlIatMilliseconds() {
+		return this.checkTtlIatMs;
+	}
+	
 	public String getAudience() {
 		return this.audience;
 	}
@@ -704,6 +1005,14 @@ public class ModISecurityConfig {
 		return this.httpHeaders;
 	}
 	
+	public boolean isMultipleHeaderUseSameJti() {
+		return this.multipleHeaderUseSameJti;
+	}
+
+	public boolean isMultipleHeaderUseJtiAuthorizationAsIdMessaggio() {
+		return this.multipleHeaderUseJtiAuthorizationAsIdMessaggio;
+	}
+	
 	public List<SOAPHeader> getSoapHeaders() {
 		return this.soapHeaders;
 	}
@@ -722,5 +1031,13 @@ public class ModISecurityConfig {
 	
 	public boolean isCheckAudience() {
 		return this.checkAudience;
+	}
+
+	public Properties getClaims() {
+		return this.claims;
+	}
+
+	public Properties getMultipleHeaderClaims() {
+		return this.multipleHeaderClaims;
 	}
 }

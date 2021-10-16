@@ -171,7 +171,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 		try {
 			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(log);
 			
-			this.alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(log, pddMonitorProperties.getAllarmiConfigurazione());
+			this.alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(log, pddMonitorProperties.getAllarmiConfigurazione(), pddMonitorProperties.getConfDirectory());
 			
 			if(AlarmManager.getAlarmEngineConfig() == null) {
 				AlarmManager.setAlarmEngineConfig(this.alarmEngineConfig);

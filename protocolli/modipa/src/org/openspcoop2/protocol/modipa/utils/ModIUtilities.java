@@ -23,6 +23,7 @@ package org.openspcoop2.protocol.modipa.utils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPBody;
@@ -87,6 +88,44 @@ import org.w3c.dom.NodeList;
  */
 public class ModIUtilities {
 
+	public static final boolean REMOVE = true;
+	public static boolean exists(Properties p, String key) {
+		return get(p, key, false) !=null;
+	}
+	public static String get(Properties p, String key, boolean remove) {
+		if(p==null || p.isEmpty()) {
+			return null;
+		}
+		for (Object oKeyP : p.keySet()) {
+			if(oKeyP!=null && oKeyP instanceof String) {
+				String keyP = (String) oKeyP;
+				if(keyP!=null && keyP.equalsIgnoreCase(key)) {
+					String s = p.getProperty(keyP);
+					if(remove) {
+						p.remove(keyP);
+					}
+					return s;
+				}
+			}
+		}
+		return null;
+	}
+	public static void remove(Properties p, String key) {
+		if(p==null || p.isEmpty()) {
+			return;
+		}
+		for (Object oKeyP : p.keySet()) {
+			if(oKeyP!=null && oKeyP instanceof String) {
+				String keyP = (String) oKeyP;
+				if(keyP!=null && keyP.equalsIgnoreCase(key)) {
+					p.remove(keyP);
+					break;
+				}
+			}
+		}
+		return;
+	}
+	
 	public static String extractCorrelationIdFromLocation(String resourcePath, String location, boolean throwException, Logger log) throws Exception {
 		if(resourcePath==null) {
 			throw new Exception("Resource path della risorsa correlata non trovato");
@@ -579,7 +618,20 @@ public class ModIUtilities {
 				exceptions.add(t);
 			}
 		}
-		throw new UtilsMultiException("Non è stato possibile recuperare un valore da associare alla risorsa '"+tipoRisorsa+"'", exceptions.toArray(new Throwable[1]));
+		String errorMsg = "";
+		StringBuilder sb = new StringBuilder();
+		if(!exceptions.isEmpty()) {
+			for (Throwable t : exceptions) {
+				if(exceptions.size()>1) {
+					sb.append("\n");
+				}
+				sb.append(t.getMessage());
+			}
+		}
+		if(sb.length()>0) {
+			errorMsg = ": "+ sb.toString();
+		}
+		throw new UtilsMultiException("Non è stato possibile recuperare un valore da associare alla risorsa '"+tipoRisorsa+"'"+errorMsg, exceptions.toArray(new Throwable[1]));
 	}
 	
 	public static void addHeaderProperty(Busta busta, String hdrName, String hdrValue) {
@@ -598,5 +650,22 @@ public class ModIUtilities {
 		else {
 			busta.addProperty(pName, hdrValue);
 		}
+	}
+	
+	private final static String DYNAMIC_MAP_REQUEST = "MODI_DYNAMIC_MAP_REQUEST";
+	public static void saveDynamicMapRequest(Context context, Map<String, Object> map){
+		if(context!=null && map!=null) {
+			context.addObject(DYNAMIC_MAP_REQUEST, map);
+		}
+	}
+	@SuppressWarnings("unchecked")
+	public static Map<String, Object> removeDynamicMapRequest(Context context){
+		if(context!=null) {
+			Object o = context.removeObject(DYNAMIC_MAP_REQUEST);
+			if(o!=null && o instanceof Map<?, ?>) {
+				return (Map<String, Object>) o;
+			}
+		}
+		return null;
 	}
 }

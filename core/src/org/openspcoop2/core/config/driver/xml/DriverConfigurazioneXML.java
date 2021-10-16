@@ -150,21 +150,23 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	private void parsingXMLConfigurazione() throws DriverConfigurazioneException{
 		
 		/* --- Validazione XSD -- */
-		FileInputStream fXML = null;
-		try{
-			if(this.configuration_path.startsWith("http://") || this.configuration_path.startsWith("file://")){
-				this.validatoreConfigurazione.valida(this.configuration_path);  
-			}else{
-				fXML = new FileInputStream(this.configuration_path);
-				this.validatoreConfigurazione.valida(fXML);
-			}
-		}catch (Exception e) {
-			throw new DriverConfigurazioneException("Riscontrato errore durante la validazione XSD della configurazione XML di OpenSPCoop: "+e.getMessage());
-		}finally{
-			if(fXML!=null){
-				try{
-					fXML.close();
-				}catch(Exception e){}
+		if(buildXsdValidator) {
+			FileInputStream fXML = null;
+			try{
+				if(this.configuration_path.startsWith("http://") || this.configuration_path.startsWith("file://")){
+					this.validatoreConfigurazione.valida(this.configuration_path);  
+				}else{
+					fXML = new FileInputStream(this.configuration_path);
+					this.validatoreConfigurazione.valida(fXML);
+				}
+			}catch (Exception e) {
+				throw new DriverConfigurazioneException("Riscontrato errore durante la validazione XSD della configurazione XML di OpenSPCoop: "+e.getMessage());
+			}finally{
+				if(fXML!=null){
+					try{
+						fXML.close();
+					}catch(Exception e){}
+				}
 			}
 		}
 
@@ -245,6 +247,11 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 
 	/* ********  COSTRUTTORI e METODI DI RELOAD  ******** */
 
+	private static boolean buildXsdValidator = true;
+	public static void disableBuildXsdValidator() {
+		buildXsdValidator = false;
+	}
+	
 	/**
 	 * Costruttore.  Viene effettuato l'unmarshall del file di configurazione.
 	 *
@@ -267,7 +274,9 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 
 		/* --- Costruzione Validatore XSD -- */
 		try{
-			this.validatoreConfigurazione = new ValidatoreXSD(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), this.log,DriverConfigurazioneXML.class.getResourceAsStream("/config.xsd"));
+			if(buildXsdValidator) {
+				this.validatoreConfigurazione = new ValidatoreXSD(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), this.log,DriverConfigurazioneXML.class.getResourceAsStream("/config.xsd"));
+			}
 		}catch (Exception e) {
 			this.log.info("Riscontrato errore durante l'inizializzazione dello schema della configurazione di OpenSPCoop: "+e.getMessage(),e);
 			return;

@@ -39,7 +39,7 @@ public class ApiAllegatoItemGenerico  implements OneOfApiAllegatoItemAllegato {
   @JsonProperty("nome")
   @NotNull
   @Valid
- @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getNome() {
+  public String getNome() {
     return this.nome;
   }
 

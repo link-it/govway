@@ -331,18 +331,51 @@ public class ConnettoriHelper extends ConsoleHelper {
 			int idInt = Integer.parseInt(idsil);
 			ServizioApplicativo sa = this.saCore.getServizioApplicativo(idInt);
 
-			ServletUtils.setPageDataTitle(pd, 
-					// t1
-					new Parameter(ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST), 
-					// t2
-					new Parameter(			 
-						"Connettore del servizio applicativo (RispostaAsincrona) " + nomeservizioApplicativo+" del soggetto "+sa.getTipoSoggettoProprietario()+"/"+sa.getNomeSoggettoProprietario(),
-						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA+
-						"?"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO_APPLICATIVO+"=" + nomeservizioApplicativo + 
-						"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SERVIZIO_APPLICATIVO+"=" + idsil +
-						"&"+ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER+"=" + provider
-					)
-					);
+			if(!this.isModalitaCompleta()) {
+				
+				IDSoggetto idSoggettoProprietario = new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario());
+				Soggetto soggettoProprietario = this.soggettiCore.getSoggettoRegistro(idSoggettoProprietario);
+				String dominio = this.pddCore.isPddEsterna(soggettoProprietario.getPortaDominio()) ? SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE : SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE;
+			
+				List<Parameter> parametersServletSAChange = new ArrayList<Parameter>();
+				Parameter pIdSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId()+"");
+				parametersServletSAChange.add(pIdSA);
+				Parameter pIdSoggettoSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, sa.getIdSoggetto()+"");
+				parametersServletSAChange.add(pIdSoggettoSA);
+				if(dominio != null) {
+					Parameter pDominio = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO, dominio);
+					parametersServletSAChange.add(pDominio);
+				}
+				
+				ServletUtils.setPageDataTitle(pd, 
+						// t1
+						new Parameter(ServiziApplicativiCostanti.LABEL_APPLICATIVI, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST),
+						// t2
+						new Parameter(sa.getNome(), ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE, parametersServletSAChange.toArray(new Parameter[parametersServletSAChange.size()])),
+						// t3
+						new Parameter(			 
+							ServiziApplicativiCostanti.LABEL_RISPOSTA_ASINCRONA,
+							ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA+
+							"?"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO_APPLICATIVO+"=" + nomeservizioApplicativo + 
+							"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SERVIZIO_APPLICATIVO+"=" + idsil +
+							"&"+ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER+"=" + provider
+						)
+						);
+			}
+			else {
+				ServletUtils.setPageDataTitle(pd, 
+						// t1
+						new Parameter(ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST), 
+						// t2
+						new Parameter(			 
+							"Connettore del servizio applicativo (RispostaAsincrona) " + nomeservizioApplicativo+" del soggetto "+sa.getTipoSoggettoProprietario()+"/"+sa.getNomeSoggettoProprietario(),
+							ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA+
+							"?"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO_APPLICATIVO+"=" + nomeservizioApplicativo + 
+							"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SERVIZIO_APPLICATIVO+"=" + idsil +
+							"&"+ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER+"=" + provider
+						)
+						);
+			}
 
 		}
 		
@@ -3742,15 +3775,29 @@ public class ConnettoriHelper extends ConsoleHelper {
 					return false;
 				}
 	
-				if (!httpstipo.equals("") &&
-						!Utilities.contains(httpstipo, ConnettoriCostanti.TIPOLOGIE_KEYSTORE)) {
-					this.pd.setMessage("Il campo Tipo per l'Autenticazione Server può assumere uno tra i seguenti valori: "+Utilities.toString(ConnettoriCostanti.TIPOLOGIE_KEYSTORE, ","));
-					return false;
+				if(this.core.isConnettoriAllTypesEnabled()) {
+					if (!httpstipo.equals("") &&
+							!Utilities.contains(httpstipo, ConnettoriCostanti.TIPOLOGIE_KEYSTORE_OLD)) {
+						this.pd.setMessage("Il campo Tipo per l'Autenticazione Server può assumere uno tra i seguenti valori: "+Utilities.toString(ConnettoriCostanti.TIPOLOGIE_KEYSTORE_OLD, ","));
+						return false;
+					}
+					if (!httpstipokey.equals("") &&
+							!Utilities.contains(httpstipokey, ConnettoriCostanti.TIPOLOGIE_KEYSTORE_OLD)) {
+						this.pd.setMessage("Il campo Tipo per l'Autenticazione Client può assumere uno tra i seguenti valori: "+Utilities.toString(ConnettoriCostanti.TIPOLOGIE_KEYSTORE_OLD, ","));
+						return false;
+					}
 				}
-				if (!httpstipokey.equals("") &&
-						!Utilities.contains(httpstipokey, ConnettoriCostanti.TIPOLOGIE_KEYSTORE)) {
-					this.pd.setMessage("Il campo Tipo per l'Autenticazione Client può assumere uno tra i seguenti valori: "+Utilities.toString(ConnettoriCostanti.TIPOLOGIE_KEYSTORE, ","));
-					return false;
+				else {
+					if (!httpstipo.equals("") &&
+							!Utilities.contains(httpstipo, ConnettoriCostanti.getTIPOLOGIE_KEYSTORE(true, false).toArray(new String[1]))) {
+						this.pd.setMessage("Il campo Tipo per l'Autenticazione Server può assumere uno tra i seguenti valori: "+Utilities.toString(ConnettoriCostanti.TIPOLOGIE_KEYSTORE_OLD, ","));
+						return false;
+					}
+					if (!httpstipokey.equals("") &&
+							!Utilities.contains(httpstipokey, ConnettoriCostanti.getTIPOLOGIE_KEYSTORE(false, false).toArray(new String[1]))) {
+						this.pd.setMessage("Il campo Tipo per l'Autenticazione Client può assumere uno tra i seguenti valori: "+Utilities.toString(ConnettoriCostanti.TIPOLOGIE_KEYSTORE_OLD, ","));
+						return false;
+					}
 				}
 	
 				// Controllo campi obbligatori per il tipo di connettore custom

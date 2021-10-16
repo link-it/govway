@@ -311,9 +311,9 @@ public class AccordiServizioParteSpecificaUtilities {
 			}
 		}
 		else {
-			if(!alreadyExists) {
-				asps.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, consoleOperationType,null));
-			}
+			//if(!alreadyExists) { Devo comunque aggiornalo: caso in cui ho creato prima la fruizione e solo dopo l'erogazione
+			asps.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, consoleOperationType,null));
+			//}
 		}
 
 		if(alreadyExists) {

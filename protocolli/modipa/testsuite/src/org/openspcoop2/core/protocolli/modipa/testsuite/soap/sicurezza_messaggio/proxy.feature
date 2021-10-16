@@ -288,6 +288,23 @@ Scenario: isTest('low-ttl-erogazione')
 
     * java.lang.Thread.sleep(2000)
 
+Scenario: isTest('low-iat-ttl-fruizione')
+
+    # Lo iat accettato nell'erogazione e' fino a 3 secondi
+    * java.lang.Thread.sleep(5000)
+
+    * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01LowIAT/v1')
+    * match responseStatus == 500
+    * match response == read('classpath:test/soap/sicurezza-messaggio/error-bodies/iat-scaduto-in-request.xml')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+    
+Scenario: isTest('low-iat-ttl-erogazione')
+
+    * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01LowIAT/v1')
+    * match responseStatus == 200
+
+    # Lo iat accettato nella fruizione e' fino a 3 secondi
+    * java.lang.Thread.sleep(5000)
 
 Scenario: isTest('applicativo-non-autorizzato')
 
@@ -798,6 +815,27 @@ Scenario: isTest('riutilizzo-token-idas0302')
     * def response = server_response
     * def responseStatus = 200
     * def responseHeaders = { 'Content-type': "application/soap+xml" }
+    
+Scenario: isTest('pkcs11') || isTest('pkcs11-certificate')
+    
+    * xmlstring client_request = bodyPath('/')
+    * eval karateCache.add("Client-Request", client_request)
+
+    * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/PKCS11TestSOAP/v1')
+
+    * xmlstring server_response = response
+    * eval karateCache.add("Server-Response", server_response)
+
+Scenario: isTest('pkcs11-trustStore')
+    
+    * xmlstring client_request = bodyPath('/')
+    * eval karateCache.add("Client-Request", client_request)
+
+    * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/PKCS11TestSOAPtrustStore/v1')
+
+    * xmlstring server_response = response
+    * eval karateCache.add("Server-Response", server_response)    
+    
 # catch all
 #
 #

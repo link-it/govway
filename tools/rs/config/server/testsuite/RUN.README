@@ -6,6 +6,10 @@ Prerequisito:
 Configurare l'ambiente di esecuzione dei test:
 	- Sostituire in ./src/karate-config.js il nome del soggettoDefault con quello scelto per mezzo dell'installer di GovWay.
 
+	- Importare tramite la funzione Importa della govwayConsole il file presente sotto deploy/connettori_custom/GovWayPlugin_CONNETTORE_custom.zip, avendo cura di impostare il flag Plugins
+          In alternativa utilizzare il comando sql:
+	  insert into plugins (tipo_plugin, class_name, tipo, label, stato) VALUES ('CONNETTORE','org.openspcoop2.pdd.core.connettori.IConnettore','custom','custom',1);
+
 	- Riavviare GovWay e procedere con i test
 
 Compilare i test con il comando 'ant clean build'

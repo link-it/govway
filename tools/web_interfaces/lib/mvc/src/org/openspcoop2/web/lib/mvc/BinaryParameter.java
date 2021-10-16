@@ -20,6 +20,7 @@
 
 package org.openspcoop2.web.lib.mvc;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,6 +80,21 @@ public class BinaryParameter {
 			de2.setValue("<I>" + this.filename + "</I>");
 			de2.setLabel("");
 			de2.setType(DataElementType.TEXT);
+			
+			DataElementImage newImage = new DataElementImage();
+			
+			newImage.setImage(Costanti.ICON_ELIMINA_FILE);
+			newImage.setTarget(TargetType.SELF);
+			newImage.setUrl("#");
+			newImage.setToolTip(MessageFormat.format(Costanti.TOOLTIP_ELIMINA_FILE, this.filename));
+			
+			StringBuilder onClickFunction = new StringBuilder();
+			onClickFunction.append(Costanti.POSTBACK_FUNCTION_WITH_PARAMETER_START);
+			onClickFunction.append(this.name  + Costanti.PARAMETER_FILENAME_REMOVE_PLACEHOLDER + 0);
+			onClickFunction.append(Costanti.POSTBACK_FUNCTION_WITH_PARAMETER_END);
+			newImage.setOnClick(onClickFunction.toString());
+			
+			de2.setImage(newImage);
 		}  
 		
 		dati.add(de1);
@@ -121,7 +137,8 @@ public class BinaryParameter {
 		List<String> fileNames = new ArrayList<String>();
 		
 		for (BinaryParameter bp : listaParametri) {
-			fileNames.add(bp.getFilename() != null ? bp.getFilename() : "");
+			if(StringUtils.isNotBlank(bp.getFilename()))
+				fileNames.add(bp.getFilename());
 		}
 		
 		DataElement de1 = new DataElement();
@@ -132,6 +149,7 @@ public class BinaryParameter {
 		
 		dati.add(de1);
 		
+		int i=0;
 		for (String fileName : fileNames) {
 			if(StringUtils.isNotBlank(fileName)){
 				de2 = new DataElement();
@@ -139,7 +157,24 @@ public class BinaryParameter {
 				de2.setValue("<I>" + fileName + "</I>");
 				de2.setLabel("");
 				de2.setType(DataElementType.TEXT);
+				
+				DataElementImage newImage = new DataElementImage();
+				
+				newImage.setImage(Costanti.ICON_ELIMINA_FILE);
+				newImage.setTarget(TargetType.SELF);
+				newImage.setUrl("#");
+				newImage.setToolTip(MessageFormat.format(Costanti.TOOLTIP_ELIMINA_FILE, fileName));
+				
+				StringBuilder onClickFunction = new StringBuilder();
+				onClickFunction.append(Costanti.POSTBACK_FUNCTION_WITH_PARAMETER_START);
+				onClickFunction.append(bp0.getName() + Costanti.PARAMETER_FILENAME_REMOVE_PLACEHOLDER + i);
+				onClickFunction.append(Costanti.POSTBACK_FUNCTION_WITH_PARAMETER_END);
+				newImage.setOnClick(onClickFunction.toString());
+				
+				de2.setImage(newImage);
+				
 				dati.add(de2);
+				i++;
 			} 
 		}
 		
@@ -154,7 +189,8 @@ public class BinaryParameter {
 		List<String> ids = new ArrayList<String>();
 		
 		for (BinaryParameter bp : listaParametri) {
-			ids.add(bp.getId());
+			if(StringUtils.isNotBlank(bp.getId()))
+				ids.add(bp.getId());
 		}
 		
 		de.setType(DataElementType.HIDDEN);

@@ -28,10 +28,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum KeystoreEnum {
 JKS("jks"),
   PKCS12("pkcs12"),
-  JCEKS("jceks"),
-  BKS("bks"),
-  UBER("uber"),
-  GKR("gkr");
+  PKCS11("pkcs11");
 
   private String value;
 

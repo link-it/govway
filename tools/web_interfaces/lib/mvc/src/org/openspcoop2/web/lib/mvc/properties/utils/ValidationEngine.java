@@ -113,7 +113,7 @@ public class ValidationEngine {
 				}
 			}
 		}catch(ValidationException e) {
-			throw new ValidationException("Section ["+section.getLabel()+"] -> "+ e.getMessage());
+			throw new ValidationException("Section ["+section.getLabel()+"] -> "+ e.getMessage(), e);
 		}
 	}
 
@@ -127,7 +127,7 @@ public class ValidationEngine {
 				}
 			}
 		}catch(ValidationException e) {
-			throw new ValidationException("Subsection ["+subSection.getLabel()+"] -> "+ e.getMessage());
+			throw new ValidationException("Subsection ["+subSection.getLabel()+"] -> "+ e.getMessage(), e);
 		}
 	}
 
@@ -164,7 +164,7 @@ public class ValidationEngine {
 				break;
 			}
 		}catch(Exception e) {
-			throw new ValidationException("Item ["+item.getName()+"] non valido: "+ e.getMessage());
+			throw new ValidationException("Item ["+item.getName()+"] non valido: "+ e.getMessage(), e);
 		}
 	}
 
@@ -259,6 +259,8 @@ public class ValidationEngine {
 				&& (condition.getLessThenList() == null || condition.getLessThenList().size() == 0)
 				&& (condition.getGreaterEqualsList() == null || condition.getGreaterEqualsList().size() == 0)
 				&& (condition.getGreaterThenList() == null || condition.getGreaterThenList().size() == 0)
+				&& (condition.getStartsWithList() == null || condition.getStartsWithList().size() == 0)
+				&& (condition.getEndsWithList() == null || condition.getEndsWithList().size() == 0)
 				&& (condition.getSelectedList() == null || condition.getSelectedList().size() == 0))
 			throw new ValidationException("La condition numero ["+indice+"] non e' valida: indicare almeno un elemento tra Defined, Equals o Selected.");
 		
@@ -293,6 +295,12 @@ public class ValidationEngine {
 		}
 		for (int i = 0; i < condition.getGreaterThenList().size(); i++) {
 			checkEqualsTypeCondition(condition.getGreaterThen(i), condition, indice, metadata, i, "greaterThen");
+		}
+		for (int i = 0; i < condition.getStartsWithList().size(); i++) {
+			checkEqualsTypeCondition(condition.getStartsWith(i), condition, indice, metadata, i, "startsWith");
+		}
+		for (int i = 0; i < condition.getEndsWithList().size(); i++) {
+			checkEqualsTypeCondition(condition.getEndsWith(i), condition, indice, metadata, i, "endsWith");
 		}
 		
 		for (int i = 0; i < condition.getSelectedList().size(); i++) {

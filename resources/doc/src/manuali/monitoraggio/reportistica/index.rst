@@ -21,4 +21,4 @@ differenti tipologie di report:
         :maxdepth: 2
 
         analisiStatistica/index
-	reportConfigurazione
+	reportConfigurazione/index

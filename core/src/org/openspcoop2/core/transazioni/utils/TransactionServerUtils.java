@@ -321,6 +321,7 @@ public class TransactionServerUtils {
 			IDAOFactory daoFactory, Logger logFactory, ServiceManagerProperties smpFactory,
 			boolean debug,
 			int esitoConsegnaMultipla, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
+			int esitoIntegrationManagerSingolo, boolean possibileTerminazioneSingleIntegrationManagerMessage,
 			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval) {
 		
 		// aggiorno esito transazione
@@ -330,6 +331,7 @@ public class TransactionServerUtils {
 					daoFactory, logFactory, smpFactory,
 					debug,
 					esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
+					esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage,
 					gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval);
 		}catch(Throwable e){
 			String msg = "Errore durante l'aggiornamento delle transazione relativamente all'informazione del server: " + e.getLocalizedMessage();
@@ -338,6 +340,82 @@ public class TransactionServerUtils {
 	}
 	
 	private static void aggiornaInformazioneConsegnaTerminata(TransazioneApplicativoServer transazioneApplicativoServer, Connection connectionDB,
+			String tipoDatabase, Logger logCore,
+			IDAOFactory daoFactory, Logger logFactory, ServiceManagerProperties smpFactory,
+			boolean debug,
+			int esitoConsegnaMultipla, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
+			int esitoIntegrationManagerSingolo, boolean possibileTerminazioneSingleIntegrationManagerMessage,
+			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval) throws CoreException {
+		
+		if(possibileTerminazioneSingleIntegrationManagerMessage) {
+			// Devo comprendere se l'eliminazione del messaggio, effettuata via I.M o tramite scadenza, riguarda la configurazione su connettori multipli o configurazione standard con unico connettore.
+			// Se e' su configurazione standard con unico connettore non devo aggiornare le informazioni sulla consegna terminata
+			
+			int i = 0;
+			if(transazioneApplicativoServer.getDataRegistrazione()==null) {
+				i=2;
+			}
+//			else {
+//				System.out.println("DATA REGISTRAZIONE '"+org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(transazioneApplicativoServer.getDataRegistrazione())+"'");
+//			}
+			int esitoTransazione = -1;
+			for (; i < 3; i++) {
+				
+				// primo test: finestra di 5 minuti
+				// secondo test: finestra di 1 ora
+				// terzo test: senza finestra temporale
+				
+				//System.out.println("INTERVALLO '"+i+"'");
+				
+				Timestamp leftValue = null;
+				Timestamp rightValue = null;
+				if(i==0) {
+					leftValue = new Timestamp(transazioneApplicativoServer.getDataRegistrazione().getTime() - (1000*60*5));
+					rightValue = new Timestamp(transazioneApplicativoServer.getDataRegistrazione().getTime() + (1000*60*5));
+				}
+				else if(i==1) {
+					leftValue = new Timestamp(transazioneApplicativoServer.getDataRegistrazione().getTime() - (1000*60*60));
+					rightValue = new Timestamp(transazioneApplicativoServer.getDataRegistrazione().getTime() + (1000*60*60));
+				}
+			
+				esitoTransazione = getEsitoTransazione(transazioneApplicativoServer, connectionDB,
+						tipoDatabase, logCore,
+						daoFactory, logFactory, smpFactory,
+						debug,
+						leftValue, rightValue);
+				if(esitoTransazione>=0) {
+					// transazione trovata
+					if(esitoIntegrationManagerSingolo == esitoTransazione) {
+						//System.out.println("TROVATA IM; termino aggiornamento");
+						return; // non devo gestire l'update previsto nei connettori multipli gestito dopo
+					}
+					//else {
+					//	System.out.println("ESCO e procedo con update normale ["+i+"]");
+					//}
+					break;
+				}
+				//else {
+				//	System.out.println("NON TROVATA TRANSAZIONE a QUESTO GIRO ["+i+"]");
+				//}
+				
+			}
+			if(esitoTransazione<0) {
+				// registro ultimo errore avvenuto durante il ciclo in entrambi i log
+				String msgError = "[id:"+transazioneApplicativoServer.getIdTransazione()+"][sa:"+transazioneApplicativoServer.getServizioApplicativoErogatore()+"]["+transazioneApplicativoServer.getConnettoreNome()+"] 'getEsitoTransazione' non riuscta. Tutti gli intervalli non hanno consentito di inviduare la transazione";
+				logFactory.error(msgError);
+				logCore.error(msgError);
+			}
+			
+		}
+		
+		_aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, connectionDB,
+				tipoDatabase, logCore,
+				daoFactory, logFactory, smpFactory,
+				debug,
+				esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
+				gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval);
+	}
+	private static void _aggiornaInformazioneConsegnaTerminata(TransazioneApplicativoServer transazioneApplicativoServer, Connection connectionDB,
 			String tipoDatabase, Logger logCore,
 			IDAOFactory daoFactory, Logger logFactory, ServiceManagerProperties smpFactory,
 			boolean debug,
@@ -637,6 +715,117 @@ public class TransactionServerUtils {
 			
 			throw new CoreException(e.getMessage(),e);
 		}finally{
+			try {
+				if(pstmt!=null) {
+					pstmt.close();
+				}
+			}catch(Throwable t) {}
+		}
+		
+	}
+	
+	private static int getEsitoTransazione(TransazioneApplicativoServer transazioneApplicativoServer, Connection connectionDB,
+			String tipoDatabase, Logger logCore,
+			IDAOFactory daoFactory, Logger logFactory, ServiceManagerProperties smpFactory,
+			boolean debug,
+			Timestamp leftValue, Timestamp rightValue) throws CoreException {
+	
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+		
+			TransazioneFieldConverter transazioneFieldConverter = new TransazioneFieldConverter(tipoDatabase);
+			String dataIngressoRichiestaColumn = transazioneFieldConverter.toColumn(Transazione.model().DATA_INGRESSO_RICHIESTA, false);
+			String idTransazioneColumn = transazioneFieldConverter.toColumn(Transazione.model().ID_TRANSAZIONE, false);
+			String esitoColumn = transazioneFieldConverter.toColumn(Transazione.model().ESITO, false);
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+			
+			sqlQueryObject.addFromTable(CostantiDB.TRANSAZIONI);
+			
+			sqlQueryObject.addSelectField(esitoColumn);
+			
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			if(leftValue!=null && rightValue!=null) {
+				sqlQueryObject.addWhereBetweenCondition(dataIngressoRichiestaColumn, false, "?", "?");
+			}
+			
+			sqlQueryObject.addWhereCondition(idTransazioneColumn+"=?");
+						
+			String select = sqlQueryObject.createSQLQuery();
+			//System.out.println("QUERY '"+select+"'");
+			
+			pstmt = connectionDB.prepareStatement(select);
+			int index = 1;
+			List<Object> params = new ArrayList<Object>();
+			
+			if(leftValue!=null && rightValue!=null) {
+				pstmt.setTimestamp(index++, leftValue);
+				params.add(org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(leftValue));
+				pstmt.setTimestamp(index++, rightValue);
+				params.add(org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(rightValue));
+			}
+			
+			pstmt.setString(index++, transazioneApplicativoServer.getIdTransazione());
+			params.add(transazioneApplicativoServer.getIdTransazione());
+						
+			rs = pstmt.executeQuery();
+			int esitoReturn = -1;
+			while(rs.next()) {
+				
+				int found = rs.getInt(esitoColumn);
+				
+				if(logCore!=null) {
+					String comandoSql = DBUtils.formatSQLString(select, params.toArray());
+					if(esitoReturn<0) {
+						esitoReturn = found;
+					}
+					else {
+						rs.close();
+						pstmt.close();
+						throw new CoreException("Trovata più di una transazione con id '"+transazioneApplicativoServer.getIdTransazione()+"' ?? (query: "+comandoSql+")");
+					}
+				}
+			}
+			
+			//String comandoSql = formatSQLString(updateCommand, params.toArray());
+			//System.out.println("ROW: "+row+" (app:"+transazioneApplicativoServer.getConnettoreNome()+" id:"+transazioneApplicativoServer.getIdTransazione()+") sql:"+comandoSql);
+			
+			rs.close();
+			pstmt.close();
+			pstmt = null;
+						
+			connectionDB.commit(); // anche se si tratta di una read, serve per non far rimanere aperta la transazione
+			
+			return esitoReturn;
+			
+		}catch(Throwable e) {
+			
+			try{
+				if(rs != null) {
+					rs.close();
+					rs = null;
+				}
+			} catch(Exception er) {}
+			try{
+				if(pstmt != null) {
+					pstmt.close();
+					pstmt = null;
+				}
+			} catch(Exception er) {}
+			try{
+				connectionDB.rollback();
+			} catch(Exception er) {}
+			
+			throw new CoreException(e.getMessage(),e);
+		}finally{
+			try{
+				if(rs != null) {
+					rs.close();
+					rs = null;
+				}
+			} catch(Exception er) {}
 			try {
 				if(pstmt!=null) {
 					pstmt.close();

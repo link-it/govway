@@ -52,6 +52,7 @@ import org.apache.wss4j.dom.str.STRParser;
 import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.reference.Reference;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -100,6 +101,7 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 			
 			WSS4JInInterceptor inHandler = new WSS4JInInterceptor();
 			SoapMessage msgCtx = new SoapMessage(new MessageImpl());
+			msgCtx.setVersion(MessageType.SOAP_12.equals(message.getMessageType()) ? org.apache.cxf.binding.soap.Soap12.getInstance() : org.apache.cxf.binding.soap.Soap11.getInstance());
 			Exchange ex = new ExchangeImpl();
 	        ex.setInMessage(msgCtx);
 			msgCtx.setContent(SOAPMessage.class, soapMessage);

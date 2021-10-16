@@ -30,7 +30,7 @@ import javax.validation.Valid;
 public class GruppoAzioni  {
   
   @Schema(example = "[\"az1\",\"az2\",\"az3\"]", required = true, description = "")
-  private List<String> azioni = new ArrayList<String>();
+  private List<String> azioni = new ArrayList<>();
  /**
    * Get azioni
    * @return azioni

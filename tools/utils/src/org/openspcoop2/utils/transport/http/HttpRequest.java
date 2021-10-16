@@ -46,6 +46,7 @@ public class HttpRequest extends AbstractHttp {
 	
 	private boolean trustAllCerts = false;
 	private KeyStore trustStore;
+	private boolean trustStoreHsm;
 	private String trustStorePath;
 	private String trustStorePassword;
 	private String trustStoreType;
@@ -155,9 +156,17 @@ public class HttpRequest extends AbstractHttp {
 	public KeyStore getTrustStore() {
 		return this.trustStore;
 	}
+	
+	public boolean isTrustStoreHsm() {
+		return this.trustStoreHsm;
+	}
 
 	public void setTrustStore(KeyStore trustStore) {
+		setTrustStore(trustStore, false);
+	}
+	public void setTrustStore(KeyStore trustStore, boolean hsm) {
 		this.trustStore = trustStore;
+		this.trustStoreHsm = hsm;
 	}
 	
 	public CertStore getCrlStore() {

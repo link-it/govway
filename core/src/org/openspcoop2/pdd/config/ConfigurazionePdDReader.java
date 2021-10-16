@@ -3457,6 +3457,23 @@ public class ConfigurazionePdDReader {
 	public void resetConnettoriConsegnaNotifichePrioritarie(Connection connectionPdD, String queue) throws DriverConfigurazioneException{
 		this.configurazionePdD.resetConnettoriConsegnaNotifichePrioritarie(connectionPdD, queue);
 	}
+	
+	public Map<String, String> getProprietaConfigurazione(ServizioApplicativo sa) throws DriverConfigurazioneException {
+		if (sa == null) {
+			throw new DriverConfigurazioneException("ServizioApplicativo non fornito");
+		} else if (sa.sizeProprietaList() <= 0) {
+			return null;
+		} else {
+			Map<String, String> properties = new HashMap<String, String>();
+
+			for(int i = 0; i < sa.sizeProprietaList(); ++i) {
+				Proprieta p = sa.getProprieta(i);
+				properties.put(p.getNome(), p.getValore());
+			}
+
+			return properties;
+		}
+	}
 
 
 
@@ -5718,7 +5735,13 @@ public class ConfigurazionePdDReader {
 		ccn.setEnabled(isEnabled);
 		if(isEnabled) {
 			OpenSPCoop2Properties op2Prop = OpenSPCoop2Properties.getInstance();
-			String idNodo = op2Prop.getClusterId(false);
+			String idNodo = null;
+			if(op2Prop.isClusterDinamico()) {
+				idNodo = op2Prop.getGroupId();
+			}
+			else {
+				idNodo = op2Prop.getClusterId(false);
+			}
 			ccn.setIdNodo(idNodo);
 			
 			if(c.sizeCanaleList()<=0) {

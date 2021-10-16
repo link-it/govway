@@ -14,6 +14,7 @@ Funzionalità Avanzate
         multitenant
         header_integrazione/index.rst
         connettori/index.rst
+	pkcs11
 	correlazione
 	opzioniAvanzate
 	fileTrace/index.rst

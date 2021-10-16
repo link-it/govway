@@ -32,9 +32,15 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
+import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.AutorizzazioneScope;
+import org.openspcoop2.core.config.ConfigurazioneHandler;
+import org.openspcoop2.core.config.ConfigurazioneMessageHandlers;
+import org.openspcoop2.core.config.ConfigurazionePortaHandler;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
+import org.openspcoop2.core.config.DumpConfigurazione;
+import org.openspcoop2.core.config.DumpConfigurazioneRegola;
 import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
@@ -49,16 +55,22 @@ import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAzione;
 import org.openspcoop2.core.config.Property;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.Scope;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.TrasformazioneRegola;
+import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
+import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULL;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULLEcho;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
@@ -67,6 +79,7 @@ import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGenerale;
 import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPA;
 import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPA.DettaglioSA;
 import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPD;
+import org.openspcoop2.web.monitor.statistiche.bean.DettaglioRateLimiting;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiConfigurazioni;
 import org.openspcoop2.web.monitor.statistiche.utils.ConfigurazioniUtils;
 import org.slf4j.Logger;
@@ -114,6 +127,8 @@ public class ConfigurazioniCsvExporter {
   		Pattern
   		force interface based
 
+		CORS
+
 		Token (stato)
 		Token (policy)
 		Token (validazione input)
@@ -122,13 +137,17 @@ public class ConfigurazioniCsvExporter {
 		Token (forward) 
 	    Autenticazione (stato)
 	    Autenticazione (opzionale)
+	    Autenticazione (proprieta)
 		Autenticazione Token (issuer)
 		Autenticazione Token (client_id)
 		Autenticazione Token (subject)
 		Autenticazione Token (username)
 		Autenticazione Token (email)
 	    
+	    AttributeAuthority (attributi)
+	    
 	    Autorizzazione (stato)
+	    Autorizzazione (proprieta)
 	    Autorizzazione (Soggetti autorizzati)
 	    Soggetti Autorizzati la colonna contiene l'elenco dei soggetti  separati da '\n').
 	    Autorizzazione (Ruoli)
@@ -139,9 +158,16 @@ public class ConfigurazioniCsvExporter {
 	    Scope (separati da '\n')
 	    Autorizzazione (Token claims)
 	    
+	    AutorizzazioneContenuti (stato)
+	    AutorizzazioneContenuti (proprieta)
+	    
+	    RateLimiting
+	    
 	    Validazione (Stato)
 	    Validazione (Tipo)
 	    Validazione (Accetta MTOM)
+	    
+	    Caching Risposta
 	    
 		Sicurezza Messaggio (Stato)
 		Schema Sicurezza Richiesta
@@ -150,8 +176,19 @@ public class ConfigurazioniCsvExporter {
 	 	MTOM Richiesta
 		MTOM Risposta
 		
+		Trasformazioni
+		
 		Correlazione Applicativa Richiesta
 		Correlazione Applicativa Risposta
+		
+		Registrazione Messaggi
+	  
+	  	Proprieta
+	  	
+	  	Metadati
+	  	Handlers
+	  	
+	  	Profilo Interoperabilità
 	  
 	    Servizio Applicativo
 	    MessageBox
@@ -167,18 +204,22 @@ public class ConfigurazioniCsvExporter {
 			 * */
 
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_MODALITA);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_TIPO_ASPC);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_ASPC);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_PORT_TYPE);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_FRUITORE);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_EROGATORE);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_SERVIZIO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AZIONE_RISORSA);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_GRUPPO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_STATO);
 			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_URL_DI_INVOCAZIONE);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_IDENTIFICAZIONE_AZIONE);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_PATTERN);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_FORCE_INTERFACE_BASED);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_CORS);
 			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_TOKEN_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_TOKEN_OPZIONALE);
@@ -188,16 +229,21 @@ public class ConfigurazioniCsvExporter {
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_TOKEN_USER_INFO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_TOKEN_FORWARD);
 
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_STATO);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_OPZIONALE);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_TOKEN_ISSUER);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_TOKEN_CLIENT_ID);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_TOKEN_SUBJECT);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_TOKEN_USERNAME);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_TOKEN_EMAIL); 
+
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_STATO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_OPZIONALE);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_PROPRIETA);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_ATTRIBUTE_AUTHORITY_ATTRIBUTI); 
 			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_STATO);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_APPLICATIVI_AUTORIZZATI_STATO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_PROPRIETA);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_RICHIEDENTI_AUTORIZZATI_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_APPLICATIVI_AUTORIZZATI);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_RUOLI_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_RUOLI_RICHIESTI);
@@ -207,9 +253,16 @@ public class ConfigurazioniCsvExporter {
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_SCOPE_FORNITI);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TOKEN_CLAIMS);
 			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_CONTENUTI_STATO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_CONTENUTI_PROPRIETA);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_RATE_LIMITING);
+			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_VALIDAZIONE_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_VALIDAZIONE_TIPO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_VALIDAZIONE_MTOM);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_CACHING_RISPOSTA);
 			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_SICUREZZA_MESSAGGIO_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_SICUREZZA_MESSAGGIO_SCHEMA_RICHIESTA);
@@ -218,8 +271,19 @@ public class ConfigurazioniCsvExporter {
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_MTOM_RICHIESTA);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_MTOM_RISPOSTA);
 			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_TRASFORMAZIONI);
+			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CORRELAZIONE_APPLICATIVA_RICHIESTA);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CORRELAZIONE_APPLICATIVA_RISPOSTA);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_REGISTRAZIONE_MESSAGGI);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_PROPRIETA);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_METADATI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_HANDLERS);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONFIGURAZIONE_PROFILO);
 			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_TIPO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_ENDPOINT);
@@ -235,6 +299,7 @@ public class ConfigurazioniCsvExporter {
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_CLIENT_CERTIFICATE);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_ALTRE_CONFIGURAZIONI);
+			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_PORTA_DELEGATA);
 
 		} else {
@@ -246,6 +311,9 @@ public class ConfigurazioniCsvExporter {
 		Identificazione Azione: ....
   		Pattern
   		force interface based
+  		
+  		CORS
+  		
 		Token (stato)
 		Token (policy)
 		Token (validazione input)
@@ -254,13 +322,17 @@ public class ConfigurazioniCsvExporter {
 		Token (forward) 
 	    Autenticazione (stato)
 	    Autenticazione (opzionale)
+		Autenticazione (proprieta)
 		Autenticazione Token (issuer)
 		Autenticazione Token (client_id)
 		Autenticazione Token (subject)
 		Autenticazione Token (username)
 		Autenticazione Token (email)
 	    
+	    AttributeAuthority (attributi)
+	    
 	    Autorizzazione (stato)
+	    Autorizzazione (proprieta)
 	    Autorizzazione (Soggetti autorizzati)
 	    Autorizzazione (Applicativi autorizzati)
 	    Soggetti Autorizzati la colonna contiene l'elenco dei soggetti  separati da '\n').
@@ -272,9 +344,16 @@ public class ConfigurazioniCsvExporter {
 	    Scope (separati da '\n')
 	    Autorizzazione (Token claims)
 	    
+	    AutorizzazioneContenuti (stato)
+	    AutorizzazioneContenuti (proprieta)
+	    
+	    RateLimiting
+	    
 	    Validazione (Stato)
 	    Validazione (Tipo)
 	    Validazione (Accetta MTOM)
+	    
+	    Caching Risposta
 	    
 		Sicurezza Messaggio (Stato)
 		Schema Sicurezza Richiesta
@@ -283,8 +362,19 @@ public class ConfigurazioniCsvExporter {
 	 	MTOM Richiesta
 		MTOM Risposta
 		
+		Trasformazioni
+		
 		Correlazione Applicativa Richiesta
 		Correlazione Applicativa Risposta
+	  
+		Registrazione Messaggi
+		
+	  	Proprieta
+	  	
+	  	Metadati
+	  	Handlers
+	  	
+	  	Profilo Interoperabilità
 	    
 	    MessageBox
 	    Sbustamento SOAP
@@ -296,22 +386,29 @@ public class ConfigurazioniCsvExporter {
 	    Una singola colonna per ogni altri valore possibile per i connettori http e https denominandola come Connettore (Proxy Endpoint) , Connettore (SSLType) ...
 	    Una restante colonna con Connettore (Altre configurazioni) dove si elencano le proprietà rimanenti e le proprietà custom separate da '\n'
 
+		NomeConnettore
+		NomeApplicativoServer
+
 			 * */
 
 
 			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_MODALITA);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_TIPO_ASPC);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_ASPC);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_PORT_TYPE);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_EROGATORE);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_SERVIZIO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AZIONE_RISORSA);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_GRUPPO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_STATO);
 			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_URL_DI_INVOCAZIONE);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_IDENTIFICAZIONE_AZIONE);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_PATTERN);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_FORCE_INTERFACE_BASED);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_CORS);
 			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_TOKEN_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_TOKEN_OPZIONALE);
@@ -321,16 +418,21 @@ public class ConfigurazioniCsvExporter {
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_TOKEN_USER_INFO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_TOKEN_FORWARD);
 
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_STATO);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_OPZIONALE);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_TOKEN_ISSUER);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_TOKEN_CLIENT_ID);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_TOKEN_SUBJECT);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_TOKEN_USERNAME);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_TOKEN_EMAIL);
+
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_STATO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_OPZIONALE);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_PROPRIETA);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_ATTRIBUTE_AUTHORITY_ATTRIBUTI); 
 			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_STATO);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_SOGGETTI_AUTORIZZATI_STATO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_PROPRIETA);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_RICHIEDENTI_AUTORIZZATI_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_SOGGETTI_AUTORIZZATI);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_APPLICATIVI_AUTORIZZATI);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_RUOLI_STATO);
@@ -341,9 +443,16 @@ public class ConfigurazioniCsvExporter {
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_SCOPE_FORNITI);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TOKEN_CLAIMS);
 			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_CONTENUTI_STATO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_CONTENUTI_PROPRIETA);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_RATE_LIMITING);
+			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_VALIDAZIONE_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_VALIDAZIONE_TIPO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_VALIDAZIONE_MTOM);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_CACHING_RISPOSTA);
 			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_SICUREZZA_MESSAGGIO_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_SICUREZZA_MESSAGGIO_SCHEMA_RICHIESTA);
@@ -352,8 +461,19 @@ public class ConfigurazioniCsvExporter {
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_MTOM_RICHIESTA);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_MTOM_RISPOSTA);
 			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_TRASFORMAZIONI);
+			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CORRELAZIONE_APPLICATIVA_RICHIESTA);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CORRELAZIONE_APPLICATIVA_RISPOSTA);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_REGISTRAZIONE_MESSAGGI);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_PROPRIETA);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_METADATI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_HANDLERS);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONFIGURAZIONE_PROFILO);
 
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_MESSAGE_BOX);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_SBUSTAMENTO_SOAP);
@@ -376,6 +496,7 @@ public class ConfigurazioniCsvExporter {
 			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_PORTA_APPLICATIVA);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_PORTA_APPLICATIVA_NOME_CONNETTORE);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_PORTA_APPLICATIVA_APPLICATIVO_SERVER);
 
 		}
 
@@ -462,6 +583,9 @@ public class ConfigurazioniCsvExporter {
 		PortaApplicativa paOp2 = dettaglioPA.getPortaApplicativaOp2(); 
 		org.openspcoop2.core.commons.search.PortaApplicativa portaApplicativa = dettaglioPA.getPortaApplicativa();
 		PortaApplicativaAzione paAzione = paOp2.getAzione();
+		MappingErogazionePortaApplicativa mappingPA = dettaglioPA.getMappingErogazionePortaApplicativaOp2();
+		PortaApplicativa paOp2Default = dettaglioPA.getPortaApplicativaDefaultOp2(); 
+		DettaglioRateLimiting rateLimiting = dettaglioPA.getRateLimiting();
 		
 		// Modalita
 		String protocollo = configurazione.getProtocollo();
@@ -469,6 +593,18 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add(NamingUtils.getLabelProtocollo(protocollo));
 		else 
 			oneLine.add("");
+		
+		// TIPO ASPC
+		if(dettaglioPA.getIdAccordoServizioParteComune() != null) {
+			IdAccordoServizioParteComune aspc = dettaglioPA.getIdAccordoServizioParteComune();
+			if(aspc.getServiceBinding()!=null) {
+				oneLine.add(aspc.getServiceBinding());
+			}else { 
+				oneLine.add("");
+			}
+		} else { 
+			oneLine.add("");
+		}
 		
 		// ASPC
 		if(dettaglioPA.getIdAccordoServizioParteComune() != null) {
@@ -526,6 +662,14 @@ public class ConfigurazioniCsvExporter {
 			}	
 		}
 		
+		// GRUPPO
+		if(mappingPA!=null && mappingPA.getDescrizione()!=null) {
+			oneLine.add(mappingPA.getDescrizione());
+		}
+		else {
+			oneLine.add("");
+		}
+		
 		// STATO
 		if(StringUtils.isNotEmpty(configurazione.getStato()))
 			oneLine.add(configurazione.getStato());
@@ -573,6 +717,24 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add("");
 		}
 		
+		// CORS
+		if(paOp2Default!=null) {
+			if(paOp2Default.getGestioneCors()!=null) {
+				oneLine.add(paOp2Default.getGestioneCors().getStato().getValue());
+			}
+			else {
+				oneLine.add(CostantiConfigurazioni.VALUE_DEFAULT);
+			}
+		}
+		else {
+			if(paOp2.getGestioneCors()!=null) {
+				oneLine.add(paOp2.getGestioneCors().getStato().getValue());
+			}
+			else {
+				oneLine.add(CostantiConfigurazioni.VALUE_DEFAULT);
+			}
+		}
+		
 		// Token (stato)
 		// Token (opzionale)
 		// Token (policy)
@@ -616,29 +778,6 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add("");
 		}
 		
-
-		// Autenticazione (stato)
-		// Autenticazione (opzionale
-		if(dettaglioPA.isSupportatoAutenticazione()){
-			if(CostantiConfigurazione.AUTORIZZAZIONE_NONE.equals(paOp2.getAutenticazione())){
-				oneLine.add(CostantiConfigurazione.DISABILITATO.getValue());
-			}
-			else{
-				oneLine.add(paOp2.getAutenticazione());
-			}
-
-			if(CostantiConfigurazione.ABILITATO.equals(paOp2.getAutenticazioneOpzionale())){
-				oneLine.add(CostantiConfigurazione.ABILITATO.getValue());
-			}
-			else{
-				oneLine.add(CostantiConfigurazione.DISABILITATO.getValue());
-			}
-		} else {
-			// due colonne vuote
-			oneLine.add("");
-			oneLine.add("");
-		}
-		
 		// Autenticazione Token (issuer)
 		// Autenticazione Token (client_id)
 		// Autenticazione Token (subject)
@@ -657,8 +796,40 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
 			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
 		}
+		
+		// Autenticazione (stato)
+		// Autenticazione (opzionale)
+		// Autenticazione (proprieta)
+		if(dettaglioPA.isSupportatoAutenticazione()){
+			
+			if(CostantiConfigurazione.AUTORIZZAZIONE_NONE.equals(paOp2.getAutenticazione())){
+				oneLine.add(CostantiConfigurazione.DISABILITATO.getValue());
+			}
+			else{
+				oneLine.add(paOp2.getAutenticazione());
+			}
 
+			if(CostantiConfigurazione.ABILITATO.equals(paOp2.getAutenticazioneOpzionale())){
+				oneLine.add(CostantiConfigurazione.ABILITATO.getValue());
+			}
+			else{
+				oneLine.add(CostantiConfigurazione.DISABILITATO.getValue());
+			}
+			
+			oneLine.add(this.toStringProprieta(paOp2.getProprietaAutenticazioneList()));
+			
+		} else {
+			// tre colonne vuote
+			oneLine.add("");
+			oneLine.add("");
+			oneLine.add("");
+		}
+		
+		// AttributeAuthority (attributi)
+		oneLine.add(this.toStringAttributeAuthority(paOp2.getAttributeAuthorityList()));
+		
 		// Autorizzazione (Stato)
+		// Autorizzazione (proprieta)
 		// Autorizzazione (Soggetti Autorizzati)
 		// Soggetti Autorizzati
 		// Autorizzazione (Ruoli Autorizzati)
@@ -690,6 +861,9 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add(autorizzazione);
 		}
 
+		// Autorizzazione (proprieta)
+		oneLine.add(this.toStringProprieta(paOp2.getProprietaAutorizzazioneList()));
+		
 		// Autorizzazione (Soggetti Autorizzati)
 		// Se abilitato:
 		// Servizi Applicativi Autorizzati: sa1 (user:xxx)
@@ -779,8 +953,8 @@ public class ConfigurazioniCsvExporter {
 		// Scope Forniti
 		AutorizzazioneScope scope = paOp2.getScope();
 		if(scope != null) {
-			oneLine.add(scope.getStato().getValue());
-			oneLine.add(scope.getMatch().getValue());
+			oneLine.add(scope.getStato()!=null ? scope.getStato().getValue() : "");
+			oneLine.add(scope.getMatch()!=null ? scope.getMatch().getValue() : "");
 			
 			if(scope.getScopeList()!=null){
 				StringBuilder sb = new StringBuilder();
@@ -812,6 +986,28 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add("");
 		}
 		
+		// Autorizzazione Contenuti (Stato)
+		String autorizzazioneContenuti = paOp2.getAutorizzazioneContenuto();
+		if(CostantiConfigurazione.AUTORIZZAZIONE_NONE.equals(autorizzazioneContenuti)){
+			oneLine.add(CostantiConfigurazione.DISABILITATO.getValue());
+		}
+		else if(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN.equals(autorizzazioneContenuti)){
+			oneLine.add(CostantiConfigurazione.ABILITATO.getValue());
+		}
+		else{
+			oneLine.add(autorizzazioneContenuti);
+		}
+
+		// Autorizzazione Contenuti (proprieta)
+		oneLine.add(this.toStringProprieta(paOp2.getProprietaAutorizzazioneContenutoList()));
+		
+		// Rate Limiting
+		if(rateLimiting!=null) {
+			oneLine.add(rateLimiting.getAsCSVRecord());
+		}
+		else {
+			oneLine.add("");
+		}
 		
 	    //Validazione (Stato)
 	    //Validazione (Tipo)
@@ -826,6 +1022,14 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
 			oneLine.add("");
 			oneLine.add("");
+		}
+		
+		// Caching Risposta
+		if(paOp2.getResponseCaching()!=null) {
+			oneLine.add(paOp2.getResponseCaching().getStato().getValue());
+		}
+		else {
+			oneLine.add(CostantiConfigurazioni.VALUE_DEFAULT);
 		}
 		
 		// Sicurezza Messaggio (Stato)
@@ -902,6 +1106,9 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add("");
 		}
 		
+		// Trasformazioni
+		oneLine.add(toStringTrasformazioni(paOp2.getTrasformazioni()));
+		
 		// Correlazione Applicativa Richiesta
 		// Correlazione Applicativa Risposta
 		int numCorrelazioneReq = 0;
@@ -925,7 +1132,32 @@ public class ConfigurazioniCsvExporter {
 		} else {
 			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
 		}
+		
+		// Registrazione Messaggi
+		oneLine.add(toStringDump(paOp2.getDump()));
+		
+		// Proprieta
+		oneLine.add(this.toStringProprieta(paOp2.getProprietaList()));
 
+		// Metadati
+		if(StringUtils.isNotEmpty(paOp2.getIntegrazione())){
+			oneLine.add(paOp2.getIntegrazione());
+		}
+		else {
+			oneLine.add("");
+		}
+		
+		// Handlers
+		oneLine.add(toStringHandlers(paOp2.getConfigurazioneHandler()));
+		
+		// Profilo Interoperabilità
+		if(StringUtils.isNotEmpty(dettaglioPA.getConfigurazioneProfilo())) {
+			oneLine.add(dettaglioPA.getConfigurazioneProfilo());
+		}
+		else {
+			oneLine.add("");
+		}
+		
 		// colonne servizio applicativo e relativo connettore
 		if(dettaglioSA != null) {
 			ServizioApplicativo saOp2 = dettaglioSA.getSaOp2();
@@ -997,6 +1229,18 @@ public class ConfigurazioniCsvExporter {
 		}
 		oneLine.add(nomePAConnettore);
 
+		// APPLICATIVO SERVER
+		String nomeApplicativoServer = "";
+		if(dettaglioSA != null) {
+			ServizioApplicativo saOp2 = dettaglioSA.getSaOp2();
+			if(StringUtils.isNotEmpty(saOp2.getNome()) &&
+					CostantiConfigurazione.SERVER.equals(saOp2.getTipo()) ||
+					CostantiConfigurazione.CLIENT_OR_SERVER.equals(saOp2.getTipo())) {
+				nomeApplicativoServer = saOp2.getNome();
+			}
+		}
+		oneLine.add(nomeApplicativoServer);
+		
 		dataSource.add(oneLine.toArray(new Object[oneLine.size()])); 
 	}
 
@@ -1004,8 +1248,11 @@ public class ConfigurazioniCsvExporter {
 		List<Object> oneLine = new ArrayList<Object>();
 		DettaglioPD dettaglioPD = configurazione.getPd();
 		PortaDelegata pdOp2 = dettaglioPD.getPortaDelegataOp2();
+		PortaDelegata pdOp2Default = dettaglioPD.getPortaDelegataDefaultOp2();
 		org.openspcoop2.core.commons.search.PortaDelegata portaDelegata = dettaglioPD.getPortaDelegata();
 		PortaDelegataAzione pdAzione = pdOp2.getAzione();
+		MappingFruizionePortaDelegata mappingPD = dettaglioPD.getMappingFruizionePortaDelegataOp2();
+		DettaglioRateLimiting rateLimiting = dettaglioPD.getRateLimiting();
 		
 		// Modalita
 		String protocollo = configurazione.getProtocollo();
@@ -1014,6 +1261,18 @@ public class ConfigurazioniCsvExporter {
 		else 
 			oneLine.add("");
 
+		// TIPO ASPC
+		if(dettaglioPD.getIdAccordoServizioParteComune() != null) {
+			IdAccordoServizioParteComune aspc = dettaglioPD.getIdAccordoServizioParteComune();
+			if(aspc.getServiceBinding()!=null) {
+				oneLine.add(aspc.getServiceBinding());
+			}else { 
+				oneLine.add("");
+			}
+		} else { 
+			oneLine.add("");
+		}
+		
 		// ASPC
 		if(dettaglioPD.getIdAccordoServizioParteComune() != null) {
 			IdAccordoServizioParteComune aspc = dettaglioPD.getIdAccordoServizioParteComune();
@@ -1082,6 +1341,14 @@ public class ConfigurazioniCsvExporter {
 			}
 		}
 		
+		// GRUPPO
+		if(mappingPD!=null && mappingPD.getDescrizione()!=null) {
+			oneLine.add(mappingPD.getDescrizione());
+		}
+		else {
+			oneLine.add("");
+		}
+		
 		// STATO
 		if(StringUtils.isNotEmpty(configurazione.getStato()))
 			oneLine.add(configurazione.getStato());
@@ -1130,22 +1397,24 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add("");
 		}
 		
-		// Autenticazione (stato)
-		// Autenticazione (opzionale
-		if(CostantiConfigurazione.AUTORIZZAZIONE_NONE.equals(pdOp2.getAutenticazione())){
-			oneLine.add(CostantiConfigurazione.DISABILITATO.getValue());
+		// CORS
+		if(pdOp2Default!=null) {
+			if(pdOp2Default.getGestioneCors()!=null) {
+				oneLine.add(pdOp2Default.getGestioneCors().getStato().getValue());
+			}
+			else {
+				oneLine.add(CostantiConfigurazioni.VALUE_DEFAULT);
+			}
 		}
-		else{
-			oneLine.add(pdOp2.getAutenticazione());
+		else {
+			if(pdOp2.getGestioneCors()!=null) {
+				oneLine.add(pdOp2.getGestioneCors().getStato().getValue());
+			}
+			else {
+				oneLine.add(CostantiConfigurazioni.VALUE_DEFAULT);
+			}
 		}
-
-		if(CostantiConfigurazione.ABILITATO.equals(pdOp2.getAutenticazioneOpzionale())){
-			oneLine.add(CostantiConfigurazione.ABILITATO.getValue());
-		}
-		else{
-			oneLine.add(CostantiConfigurazione.DISABILITATO.getValue());
-		}
-		
+				
 		// Token (stato)
 		// Token (opzionale)
 		// Token (policy)
@@ -1188,7 +1457,7 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add("");
 			oneLine.add("");
 		}
-		
+				
 		// Autenticazione Token (issuer)
 		// Autenticazione Token (client_id)
 		// Autenticazione Token (subject)
@@ -1207,8 +1476,31 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
 			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
 		}
+
+		// Autenticazione (stato)
+		// Autenticazione (opzionale
+		// Autenticazione (proprieta)
+		if(CostantiConfigurazione.AUTORIZZAZIONE_NONE.equals(pdOp2.getAutenticazione())){
+			oneLine.add(CostantiConfigurazione.DISABILITATO.getValue());
+		}
+		else{
+			oneLine.add(pdOp2.getAutenticazione());
+		}
+
+		if(CostantiConfigurazione.ABILITATO.equals(pdOp2.getAutenticazioneOpzionale())){
+			oneLine.add(CostantiConfigurazione.ABILITATO.getValue());
+		}
+		else{
+			oneLine.add(CostantiConfigurazione.DISABILITATO.getValue());
+		}
+		
+		oneLine.add(this.toStringProprieta(pdOp2.getProprietaAutenticazioneList()));
+		
+		// AttributeAuthority (attributi)
+		oneLine.add(this.toStringAttributeAuthority(pdOp2.getAttributeAuthorityList()));
 		
 		// Autorizzazione (Stato)
+		// Autorizzazione (proprieta)
 		// Autorizzazione (Soggetti Autorizzati)
 		// Soggetti Autorizzati
 		// Autorizzazione (Ruoli Autorizzati)
@@ -1244,6 +1536,9 @@ public class ConfigurazioniCsvExporter {
 		else{
 			oneLine.add(autorizzazione);
 		}
+
+		// Autorizzazione (proprieta)
+		oneLine.add(this.toStringProprieta(pdOp2.getProprietaAutorizzazioneList()));
 
 		// Se abilitato:
 		// Servizi Applicativi Autorizzati: sa1 (user:xxx)
@@ -1329,6 +1624,28 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add("");
 		}
 		
+		// Autorizzazione Contenuti (Stato)
+		String autorizzazioneContenuti = pdOp2.getAutorizzazioneContenuto();
+		if(CostantiConfigurazione.AUTORIZZAZIONE_NONE.equals(autorizzazioneContenuti)){
+			oneLine.add(CostantiConfigurazione.DISABILITATO.getValue());
+		}
+		else if(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN.equals(autorizzazioneContenuti)){
+			oneLine.add(CostantiConfigurazione.ABILITATO.getValue());
+		}
+		else{
+			oneLine.add(autorizzazioneContenuti);
+		}
+
+		// Autorizzazione Contenuti (proprieta)
+		oneLine.add(this.toStringProprieta(pdOp2.getProprietaAutorizzazioneContenutoList()));
+		
+		// Rate Limiting
+		if(rateLimiting!=null) {
+			oneLine.add(rateLimiting.getAsCSVRecord());
+		}
+		else {
+			oneLine.add("");
+		}
 		
 	    //Validazione (Stato)
 	    //Validazione (Tipo)
@@ -1343,6 +1660,14 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
 			oneLine.add("");
 			oneLine.add("");
+		}
+		
+		// Caching Risposta
+		if(pdOp2.getResponseCaching()!=null) {
+			oneLine.add(pdOp2.getResponseCaching().getStato().getValue());
+		}
+		else {
+			oneLine.add(CostantiConfigurazioni.VALUE_DEFAULT);
 		}
 		
 		// Sicurezza Messaggio (Stato)
@@ -1419,6 +1744,9 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add("");
 		}
 		
+		// Trasformazioni
+		oneLine.add(toStringTrasformazioni(pdOp2.getTrasformazioni()));
+		
 		// Correlazione Applicativa Richiesta
 		// Correlazione Applicativa Risposta
 		int numCorrelazioneReq = 0;
@@ -1443,6 +1771,30 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
 		}
 		
+		// Registrazione Messaggi
+		oneLine.add(toStringDump(pdOp2.getDump()));
+		
+		// Proprieta
+		oneLine.add(this.toStringProprieta(pdOp2.getProprietaList()));
+		
+		// Metadati
+		if(StringUtils.isNotEmpty(pdOp2.getIntegrazione())){
+			oneLine.add(pdOp2.getIntegrazione());
+		}
+		else {
+			oneLine.add("");
+		}
+		
+		// Handlers
+		oneLine.add(toStringHandlers(pdOp2.getConfigurazioneHandler()));
+		
+		// Profilo Interoperabilità
+		if(StringUtils.isNotEmpty(dettaglioPD.getConfigurazioneProfilo())) {
+			oneLine.add(dettaglioPD.getConfigurazioneProfilo());
+		}
+		else {
+			oneLine.add("");
+		}
 		
 		// connettore
 		if(dettaglioPD.getConnettore() !=null){
@@ -1536,7 +1888,15 @@ public class ConfigurazioniCsvExporter {
 				if(invioCertificatoClient){ //	9 CONNETTORE_KEY_STORE
 					mapProperties.put(9, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_TYPE, connettore.getPropertyList()));
 				}
-				mapProperties.put(13, invioCertificatoClient +""); // 13 CONNETTORE_CLIENT_CERTIFICATE
+			
+				String invioCertificatoClientLabel = invioCertificatoClient +"";
+				if(invioCertificatoClient) {
+					String certAlias = ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_ALIAS, connettore.getPropertyList());
+					if(certAlias!=null && StringUtils.isNotEmpty(certAlias)){
+						invioCertificatoClientLabel = certAlias;
+					}
+				}
+				mapProperties.put(13, invioCertificatoClientLabel); // 13 CONNETTORE_CLIENT_CERTIFICATE
 			}
 
 			String proxy = ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_TYPE, connettore.getPropertyList());
@@ -1621,5 +1981,215 @@ public class ConfigurazioniCsvExporter {
 		}
 
 		return oneLine;
+	}
+	
+	private String toStringProprieta(List<Proprieta> list) {
+		StringBuilder sb = new StringBuilder();
+		if(list!=null && list.size()>0) {
+			for (Proprieta p : list) {
+				if(sb.length()>0) {
+					sb.append("\n");
+				}
+				sb.append(p.getNome());
+				sb.append("=");
+				sb.append(p.getValore());
+			}
+		}
+		if(sb.length()>0) {
+			return sb.toString();	
+		}
+		else {
+			return "";
+		}
+	}
+	
+	private String toStringAttributeAuthority(List<AttributeAuthority> list) {
+		StringBuilder sb = new StringBuilder();
+		if(list!=null && list.size()>0) {
+			for (AttributeAuthority aa : list) {
+				if(sb.length()>0) {
+					sb.append("\n");
+				}
+				sb.append(aa.getNome());
+				sb.append("=");
+				if(aa.sizeAttributoList()>0) {
+					boolean first = true;
+					for (Object attr : aa.getAttributoList()) {
+						if(!first) {
+							sb.append(",");
+						}
+						sb.append(attr);
+						first = false;
+					}
+				}
+			}
+		}
+		if(sb.length()>0) {
+			return sb.toString();	
+		}
+		else {
+			return "";
+		}
+	}
+	
+	private String toStringTrasformazioni(Trasformazioni trasformazioni) {
+		StringBuilder sb = new StringBuilder();
+		if(trasformazioni!=null && trasformazioni.sizeRegolaList()>0) {
+			for (TrasformazioneRegola regola : trasformazioni.getRegolaList()) {
+				if(sb.length()>0) {
+					sb.append("\n");
+				}
+				sb.append(regola.getNome());
+				sb.append(" ");
+				sb.append(regola.getStato().getValue());
+			}
+		}
+		if(sb.length()>0) {
+			return sb.toString();	
+		}
+		else {
+			return "";
+		}
+	}
+	
+	private String toStringDump(DumpConfigurazione dump) {
+		StringBuilder sb = new StringBuilder();
+		if(dump!=null) {
+			//sb.append(dump.getRealtime().getValue());
+			if(StatoFunzionalita.ABILITATO.equals(dump.getRealtime())) {
+				sb.append("\n");
+				sb.append("richiesta-ingresso ").append(toStringDumpRegola(dump.getRichiestaIngresso()));
+				sb.append("\n");
+				sb.append("richiesta-uscita ").append(toStringDumpRegola(dump.getRichiestaUscita()));
+				sb.append("\n");
+				sb.append("risposta-ingresso ").append(toStringDumpRegola(dump.getRispostaIngresso()));
+				sb.append("\n");
+				sb.append("risposta-uscita ").append(toStringDumpRegola(dump.getRispostaUscita()));
+			}
+			else {
+				sb.append(CostantiConfigurazioni.VALUE_DEFAULT);
+			}
+		}
+		else {
+			sb.append(CostantiConfigurazioni.VALUE_DEFAULT);
+		}
+		if(sb.length()>0) {
+			return sb.toString();	
+		}
+		else {
+			return "";
+		}
+	}
+	private String toStringDumpRegola(DumpConfigurazioneRegola regola) {
+		StringBuilder sb = new StringBuilder();
+		if(regola!=null) {
+			sb.append("header:").append(regola.getHeaders());
+			sb.append(" ");
+			sb.append("payload:").append(regola.getPayload());
+		}
+		else {
+			sb.append(CostantiConfigurazione.DISABILITATO.getValue());
+		}
+		if(sb.length()>0) {
+			return sb.toString();	
+		}
+		else {
+			return "";
+		}
+	}
+	private String toStringHandlers(ConfigurazionePortaHandler config) {
+		StringBuilder sb = new StringBuilder();
+		if(config!=null) {
+			if(config.getRequest()!=null) {
+				sb.append(toStringMessageHandlers(config.getRequest(), "request"));
+			}
+			if(config.getResponse()!=null) {
+				if(sb.length()>0) {
+					sb.append("\n");
+				}
+				sb.append(toStringMessageHandlers(config.getResponse(), "response"));
+			}
+		}
+		if(sb.length()>0) {
+			sb.append(CostantiConfigurazioni.VALUE_DEFAULT);
+			return sb.toString();	
+		}
+		else {
+			return "";
+		}
+	}
+	private String toStringMessageHandlers(ConfigurazioneMessageHandlers hdr, String role) {
+		StringBuilder sb = new StringBuilder("");
+		if(hdr.sizePreInList()>0) {
+			if(sb.length()>0) {
+				sb.append("\n");
+			}
+			sb.append(role).append("-pre-in:");
+			int i = 0;
+			for (ConfigurazioneHandler h : hdr.getPreInList()) {
+				if(i>0) {
+					sb.append(",");
+				}
+				sb.append(h.getTipo());
+				i++;
+			}
+		}
+		if(hdr.sizeInList()>0) {
+			if(sb.length()>0) {
+				sb.append("\n");
+			}
+			sb.append(role).append("-in:");
+			int i = 0;
+			for (ConfigurazioneHandler h : hdr.getInList()) {
+				if(i>0) {
+					sb.append(",");
+				}
+				sb.append(h.getTipo());
+				i++;
+			}
+		}
+		if(hdr.sizeInProtocolInfoList()>0) {
+			if(sb.length()>0) {
+				sb.append("\n");
+			}
+			sb.append(role).append("-in-profile-info:");
+			int i = 0;
+			for (ConfigurazioneHandler h : hdr.getInProtocolInfoList()) {
+				if(i>0) {
+					sb.append(",");
+				}
+				sb.append(h.getTipo());
+				i++;
+			}
+		}
+		if(hdr.sizeOutList()>0) {
+			if(sb.length()>0) {
+				sb.append("\n");
+			}
+			sb.append(role).append("-out:");
+			int i = 0;
+			for (ConfigurazioneHandler h : hdr.getOutList()) {
+				if(i>0) {
+					sb.append(",");
+				}
+				sb.append(h.getTipo());
+				i++;
+			}
+		}
+		if(hdr.sizePostOutList()>0) {
+			if(sb.length()>0) {
+				sb.append("\n");
+			}
+			sb.append(role).append("-post-out:");
+			int i = 0;
+			for (ConfigurazioneHandler h : hdr.getPostOutList()) {
+				if(i>0) {
+					sb.append(",");
+				}
+				sb.append(h.getTipo());
+				i++;
+			}
+		}
+		return sb.toString();
 	}
 }

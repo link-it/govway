@@ -1,5 +1,5 @@
 <config id="messageSecurity.xml.sender.signature" label="XML Signature" xmlns="http://www.openspcoop2.org/core/mvc/properties"
-	provider="org.openspcoop2.security.message.xml.SecurityProvider">
+	provider="org.openspcoop2.security.message.xml.KeyStoreSecurityProvider">
 
 	 <compatibility not="false" and="false">
          <tags and="true">
@@ -64,12 +64,7 @@
 
 		<subsection label="KeyStore">
 
-			<item type="select" name="keystoreType" label="Tipo" default="jks">
-				<values>
-					<value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/>
-					<!--  <value value="jceks" label="JCEKS"/> -->
-				</values>
+			<item type="select" name="keystoreType" label="Tipo" default="jks" reloadOnChange="true">
 				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="signaturePropRefId" />
 			</item>
 			<item type="textarea" name="keystoreFile" label="File" required="true">

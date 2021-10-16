@@ -200,13 +200,13 @@ Scenario: Controllo Accessi Autorizzazione Token Claims
     Then status 204
 
     # Abilito l'autorizzazione per token claim
-    * def options = { richiedente: false, ruoli: false, scope: false, token: true, token_claims:"user=pippo" }
+    * def options = { richiedente: false, ruoli: false, scope: false, token: true, token_claims:["user=pippo","prova2=${header:NAME}Test"] }
     * eval autorizzazione.autorizzazione.tipo = 'abilitato'
     * eval autorizzazione.autorizzazione.richiedente = false
     * eval autorizzazione.autorizzazione.ruoli = false
     * eval autorizzazione.autorizzazione.scope = false
     * eval autorizzazione.autorizzazione.token = true
-    * eval autorizzazione.autorizzazione.token_claims = 'user=pippo'
+    * eval autorizzazione.autorizzazione.token_claims = ['user=pippo','prova2=${header:NAME}Test']
     Given url configUrl
     And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione'
     And header Authorization = govwayConfAuth

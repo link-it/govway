@@ -775,6 +775,66 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		}
 		
 		
+		boolean showLinkInvocazioneServizio = false;
+		boolean showLinkRispostaAsincrona = false;
+		boolean supportAsincroni = false;
+		if (TipoOperazione.CHANGE.equals(tipoOperazione)) {
+			if (this.isModalitaCompleta() && !this.pddCore.isPddEsterna(nomePdd)) {
+				showLinkInvocazioneServizio = true;
+				showLinkRispostaAsincrona = true;
+			}
+			else {
+				if(!this.pddCore.isPddEsterna(nomePdd)){
+					List<ServiceBinding> serviceBindingListProtocollo = this.core.getServiceBindingListProtocollo(nomeProtocollo);
+					for (ServiceBinding serviceBinding : serviceBindingListProtocollo) {
+						supportAsincroni = this.core.isProfiloDiCollaborazioneSupportatoDalProtocollo(nomeProtocollo,serviceBinding, ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO)
+								|| this.core.isProfiloDiCollaborazioneSupportatoDalProtocollo(nomeProtocollo, serviceBinding, ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO);
+						if(supportAsincroni) {
+							break;
+						}
+					}
+				}
+			}
+		}
+		
+		
+		if(supportAsincroni) {
+			RispostaAsincrona rispAsin = sa.getRispostaAsincrona();
+			Connettore connettoreRis = rispAsin != null ? rispAsin.getConnettore() : null;
+			StatoFunzionalita getMSGRisp = rispAsin != null ? rispAsin.getGetMessage() : null;
+
+			boolean attualeConnettoreDisabilitato = (connettoreRis == null || TipiConnettore.DISABILITATO.getNome().equals(connettoreRis.getTipo())) && CostantiConfigurazione.DISABILITATO.equals(getMSGRisp);
+			
+			if(!attualeConnettoreDisabilitato || !this.isModalitaStandard()) {
+			
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setLabel(ServiziApplicativiCostanti.LABEL_RISPOSTA_ASINCRONA);
+				if(this.pddCore.isPddEsterna(nomePdd)){
+					de.setType(DataElementType.TEXT);
+					de.setValue("(non presente)");
+				}
+				else{
+					if (attualeConnettoreDisabilitato) {
+						// de.setValue(CostantiConfigurazione.DISABILITATO);
+						de.setValue(ServiziApplicativiCostanti.LABEL_RISPOSTA_ASINCRONA+" (disabilitato)");
+					} else {
+						// de.setValue("visualizza");
+						de.setValue(ServiziApplicativiCostanti.LABEL_RISPOSTA_ASINCRONA+" (visualizza)");
+					}
+					de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,
+							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,sa.getIdSoggetto()+""),
+							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO,sa.getNome()),
+							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""));
+				}
+	
+				dati.addElement(de);
+				
+			}
+		}
+		
+		
+		
 		boolean showFruitore = false;
 		boolean showErogatore = false;
 		
@@ -1128,8 +1188,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 		// se operazione change visualizzo i link per invocazione servizio,
 		// risposta asincrona
-		// e ruoli
-		if (TipoOperazione.CHANGE.equals(tipoOperazione) && this.isModalitaCompleta() && !this.pddCore.isPddEsterna(nomePdd)) {
+		
+		if (showLinkInvocazioneServizio || showLinkRispostaAsincrona) {
 
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_INFO_INTEGRAZIONE);
@@ -1137,57 +1197,61 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			dati.addElement(de);
 			
 			// invocazione servizio
-			InvocazioneServizio invServ = sa.getInvocazioneServizio();
-			Connettore connettoreInv = invServ != null ? invServ.getConnettore() : null;
-			StatoFunzionalita getMSGInv = invServ != null ? invServ.getGetMessage() : null;
-
-			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_INVOCAZIONE_SERVIZIO);
-			de.setType(DataElementType.LINK);
-			if(this.pddCore.isPddEsterna(nomePdd)){
-				de.setType(DataElementType.TEXT);
-				de.setValue("(non presente)");
-			} else {
-				if ((connettoreInv == null || TipiConnettore.DISABILITATO.getNome().equals(connettoreInv.getTipo())) && CostantiConfigurazione.DISABILITATO.equals(getMSGInv)) {
-					de.setValue(ServiziApplicativiCostanti.LABEL_INVOCAZIONE_SERVIZIO+" (disabilitato)");
+			if(showLinkInvocazioneServizio) {
+				InvocazioneServizio invServ = sa.getInvocazioneServizio();
+				Connettore connettoreInv = invServ != null ? invServ.getConnettore() : null;
+				StatoFunzionalita getMSGInv = invServ != null ? invServ.getGetMessage() : null;
+	
+				de = new DataElement();
+				de.setLabel(ServiziApplicativiCostanti.LABEL_INVOCAZIONE_SERVIZIO);
+				de.setType(DataElementType.LINK);
+				if(this.pddCore.isPddEsterna(nomePdd)){
+					de.setType(DataElementType.TEXT);
+					de.setValue("(non presente)");
 				} else {
-					de.setValue(ServiziApplicativiCostanti.LABEL_INVOCAZIONE_SERVIZIO+" (visualizza)");
+					if ((connettoreInv == null || TipiConnettore.DISABILITATO.getNome().equals(connettoreInv.getTipo())) && CostantiConfigurazione.DISABILITATO.equals(getMSGInv)) {
+						de.setValue(ServiziApplicativiCostanti.LABEL_INVOCAZIONE_SERVIZIO+" (disabilitato)");
+					} else {
+						de.setValue(ServiziApplicativiCostanti.LABEL_INVOCAZIONE_SERVIZIO+" (visualizza)");
+					}
+					de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,
+							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,sa.getIdSoggetto()+""),
+							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO,sa.getNome()),
+							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+"")
+							);
 				}
-				de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,
-						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,sa.getIdSoggetto()+""),
-						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO,sa.getNome()),
-						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+"")
-						);
+				dati.addElement(de);
 			}
-			dati.addElement(de);
 
 			// risposta asincrona
-			RispostaAsincrona rispAsin = sa.getRispostaAsincrona();
-			Connettore connettoreRis = rispAsin != null ? rispAsin.getConnettore() : null;
-			StatoFunzionalita getMSGRisp = rispAsin != null ? rispAsin.getGetMessage() : null;
-
-			de = new DataElement();
-			de.setType(DataElementType.LINK);
-			de.setLabel(ServiziApplicativiCostanti.LABEL_RISPOSTA_ASINCRONA);
-			if(this.pddCore.isPddEsterna(nomePdd)){
-				de.setType(DataElementType.TEXT);
-				de.setValue("(non presente)");
-			}
-			else{
-				if ((connettoreRis == null || TipiConnettore.DISABILITATO.getNome().equals(connettoreRis.getTipo())) && CostantiConfigurazione.DISABILITATO.equals(getMSGRisp)) {
-					// de.setValue(CostantiConfigurazione.DISABILITATO);
-					de.setValue(ServiziApplicativiCostanti.LABEL_RISPOSTA_ASINCRONA+" (disabilitato)");
-				} else {
-					// de.setValue("visualizza");
-					de.setValue(ServiziApplicativiCostanti.LABEL_RISPOSTA_ASINCRONA+" (visualizza)");
+			if(showLinkRispostaAsincrona) {
+				RispostaAsincrona rispAsin = sa.getRispostaAsincrona();
+				Connettore connettoreRis = rispAsin != null ? rispAsin.getConnettore() : null;
+				StatoFunzionalita getMSGRisp = rispAsin != null ? rispAsin.getGetMessage() : null;
+	
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setLabel(ServiziApplicativiCostanti.LABEL_RISPOSTA_ASINCRONA);
+				if(this.pddCore.isPddEsterna(nomePdd)){
+					de.setType(DataElementType.TEXT);
+					de.setValue("(non presente)");
 				}
-				de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,
-						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,sa.getIdSoggetto()+""),
-						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO,sa.getNome()),
-						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""));
+				else{
+					if ((connettoreRis == null || TipiConnettore.DISABILITATO.getNome().equals(connettoreRis.getTipo())) && CostantiConfigurazione.DISABILITATO.equals(getMSGRisp)) {
+						// de.setValue(CostantiConfigurazione.DISABILITATO);
+						de.setValue(ServiziApplicativiCostanti.LABEL_RISPOSTA_ASINCRONA+" (disabilitato)");
+					} else {
+						// de.setValue("visualizza");
+						de.setValue(ServiziApplicativiCostanti.LABEL_RISPOSTA_ASINCRONA+" (visualizza)");
+					}
+					de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,
+							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,sa.getIdSoggetto()+""),
+							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO,sa.getNome()),
+							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""));
+				}
+	
+				dati.addElement(de);
 			}
-
-			dati.addElement(de);
 
 		}
 
@@ -2104,7 +2168,10 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			}
 			
 			String filterTipoCredenziali = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_TIPO_CREDENZIALI);
-			this.addFilterTipoCredenziali(filterTipoCredenziali,false);
+			this.addFilterTipoCredenziali(filterTipoCredenziali,true);
+			
+			String filterCredenziale = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CREDENZIALE);
+			this.addFilterCredenziale(filterTipoCredenziali, filterCredenziale);
 			
 			String filterRuolo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_RUOLO);
 			addFilterRuolo(filterRuolo, false);
@@ -2198,7 +2265,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 									StatoFunzionalita.ABILITATO.getValue().equals(sicurezzaMessaggio)) {
 							
 								// filtro keystore
-								this.addFilterModIKeystore(ricerca, idLista);
+								this.addFilterModIKeystorePath(ricerca, idLista);
+								this.addFilterModIKeystoreSubject(ricerca, idLista);
 								
 							}
 																
@@ -3596,7 +3664,11 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			break;
 		case ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE:
 		default:
-			lstParam.add(new Parameter(ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI,ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST));
+			String labelApplicativi = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
+			if(this.isModalitaCompleta()==false) {
+				labelApplicativi = ServiziApplicativiCostanti.LABEL_APPLICATIVI;
+			}
+			lstParam.add(new Parameter(labelApplicativi,ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST));
 			break;
 		}
 		return lstParam;

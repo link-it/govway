@@ -81,7 +81,7 @@
 								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_WILDFLY_v8_v9" tofile="${dist}/INSTALL.txt" />
 							</then>
 							<else>
-								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_WILDFLY_v10-v23" tofile="${dist}/INSTALL.txt" />
+								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_WILDFLY_v10-v25" tofile="${dist}/INSTALL.txt" />
 							</else>
 						</if>
 						<mkdir dir="${dist}/jms" />
@@ -587,6 +587,8 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 						<exclude name="govway.fileTrace*properties.new"/>
 						<exclude name="consolePassword.properties"/>
 						<exclude name="consolePassword.properties.new"/>
+						<exclude name="hsm.properties"/>
+						<exclude name="hsm.properties.new"/>
 						<exclude name="trasparente*"/>
 						<exclude name="modipa*"/>
 						<exclude name="spcoop*"/>
@@ -608,6 +610,8 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 					<fileset dir="${dist}/cfg">
 						<include name="consolePassword.properties"/>
 						<include name="consolePassword.properties.new"/>
+						<include name="hsm.properties"/>
+						<include name="hsm.properties.new"/>
 						<include name="trasparente*"/>
 						<include name="modipa*"/>
 						<include name="spcoop*"/>
@@ -1239,6 +1243,8 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 							<or>
 								<matches string="${as}" pattern="wildfly22"/>
 								<matches string="${as}" pattern="wildfly23"/>
+								<matches string="${as}" pattern="wildfly24"/>
+								<matches string="${as}" pattern="wildfly25"/>
 							</or>
 							<then>
 								<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
@@ -1289,6 +1295,8 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 							<or>
 								<matches string="${as}" pattern="wildfly22"/>
 								<matches string="${as}" pattern="wildfly23"/>
+								<matches string="${as}" pattern="wildfly24"/>
+								<matches string="${as}" pattern="wildfly25"/>
 							</or>
 							<then>
 								<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
@@ -1342,6 +1350,8 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 							<or>
 								<matches string="${as}" pattern="wildfly22"/>
 								<matches string="${as}" pattern="wildfly23"/>
+								<matches string="${as}" pattern="wildfly24"/>
+								<matches string="${as}" pattern="wildfly25"/>
 							</or>
 							<then>
 								<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
@@ -1533,6 +1543,12 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 			<replacevalue><![CDATA[jaxb-xjc-2.3.4.gw.jar
  ]]></replacevalue>
 		</replace>		
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
+			<replacetoken><![CDATA[jaxb
+ -xjc-2.3.2.jar]]></replacetoken>
+			<replacevalue><![CDATA[jaxb-xjc-2.3.2.gw.jar
+ ]]></replacevalue>
+		</replace>
 
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="xalan-2.7.2.jar" value="xalan-2.7.2.gw.jar"/>
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">

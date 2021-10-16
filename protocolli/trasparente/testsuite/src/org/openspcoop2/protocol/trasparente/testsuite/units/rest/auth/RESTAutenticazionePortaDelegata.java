@@ -23,7 +23,6 @@ package org.openspcoop2.protocol.trasparente.testsuite.units.rest.auth;
 import java.util.Date;
 import java.util.Vector;
 
-import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.protocol.trasparente.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.trasparente.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.trasparente.testsuite.units.rest.RESTCore;
@@ -39,7 +38,6 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
@@ -53,16 +51,17 @@ public class RESTAutenticazionePortaDelegata {
 
 	/** Identificativo del gruppo */
 	public static final String ID_GRUPPO = "RESTAutenticazionePortaDelegata";
+	public static final String ID_GRUPPO_NO_PRINCIPAL = "RESTAutenticazionePortaDelegataNoPrincipal";
 	
 
 	
 	private Date dataAvvioGruppoTest = null;
-	@BeforeGroups (alwaysRun=true , groups=RESTAutenticazionePortaDelegata.ID_GRUPPO)
+	@BeforeGroups (alwaysRun=true , groups= {RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO_NO_PRINCIPAL,RESTAutenticazionePortaDelegata.ID_GRUPPO_NO_PRINCIPAL})
 	public void testOpenspcoopCoreLog_raccoltaTempoAvvioTest() throws Exception{
 		this.dataAvvioGruppoTest = DateManager.getDate();
 	} 	
 	private Vector<ErroreAttesoOpenSPCoopLogCore> erroriAttesiOpenSPCoopCore = new Vector<ErroreAttesoOpenSPCoopLogCore>();
-	@AfterGroups (alwaysRun=true , groups=RESTAutenticazionePortaDelegata.ID_GRUPPO)
+	@AfterGroups (alwaysRun=true , groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO_NO_PRINCIPAL,RESTAutenticazionePortaDelegata.ID_GRUPPO_NO_PRINCIPAL})
 	public void testOpenspcoopCoreLog() throws Exception{
 		if(this.erroriAttesiOpenSPCoopCore.size()>0){
 			FileSystemUtilities.verificaOpenspcoopCore(this.dataAvvioGruppoTest,
@@ -77,7 +76,7 @@ public class RESTAutenticazionePortaDelegata {
 //	1) Invocazione dove il client fornisce le credenziali corrette che non vengono "bruciate" dalla PdD (autenticazione:none) e vengono inoltrate al servizio. 
 //	Si attende 200 ritornato dal servizio finale.
 	
-	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO+".ServiceWithBasicAuth_OK"})
+	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO_NO_PRINCIPAL,RESTAutenticazionePortaDelegata.ID_GRUPPO+".ServiceWithBasicAuth_OK"})
 	public void testServiceWithBasicAuth_ok() throws TestSuiteException, Exception{
 		Repository repository=new Repository();
 		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
@@ -91,7 +90,7 @@ public class RESTAutenticazionePortaDelegata {
 //	2) Invocazione dove il client fornisce le credenziali errate che non vengono "bruciate" dalla PdD (autenticazione:none) e vengono inoltrate al servizio. 
 //	Si attende 401 ritornato dal servizio finale.
 	
-	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO+".ServiceWithBasicAuth_KO_CredenzialiErrate"})
+	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO_NO_PRINCIPAL,RESTAutenticazionePortaDelegata.ID_GRUPPO+".ServiceWithBasicAuth_KO_CredenzialiErrate"})
 	public void testServiceWithBasicAuth_ko_credentialErrate() throws TestSuiteException, Exception{
 		Repository repository=new Repository();
 		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
@@ -104,7 +103,7 @@ public class RESTAutenticazionePortaDelegata {
 //	3) Invocazione dove il client non fornisce le credenziali (autenticazione:none). 
 //	Si attende 401 ritornato dal servizio finale.
 	
-	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO+".ServiceWithBasicAuth_KO_CredenzialiNonFornite"})
+	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO_NO_PRINCIPAL,RESTAutenticazionePortaDelegata.ID_GRUPPO+".ServiceWithBasicAuth_KO_CredenzialiNonFornite"})
 	public void testServiceWithBasicAuth_ko_noCredential() throws TestSuiteException, Exception{
 		Repository repository=new Repository();
 		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
@@ -116,7 +115,7 @@ public class RESTAutenticazionePortaDelegata {
 	
 //	4) Invocazione come 2 o 3 dove però il servizio finale ritorna anche l'header WWW-Authenticate
 	
-	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO+".ServiceWithBasicAuth_KO_CredenzialiErrate_Domain"})
+	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO_NO_PRINCIPAL,RESTAutenticazionePortaDelegata.ID_GRUPPO+".ServiceWithBasicAuth_KO_CredenzialiErrate_Domain"})
 	public void testServiceWithBasicAuth_ko_credentialErrate_domain() throws TestSuiteException, Exception{
 		Repository repository=new Repository();
 		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
@@ -134,7 +133,7 @@ public class RESTAutenticazionePortaDelegata {
 		restCore.postInvoke(repository);
 	}
 	
-	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO+".ServiceWithBasicAuth_KO_CredenzialiNonFornite_Domain"})
+	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO_NO_PRINCIPAL,RESTAutenticazionePortaDelegata.ID_GRUPPO+".ServiceWithBasicAuth_KO_CredenzialiNonFornite_Domain"})
 	public void testServiceWithBasicAuth_ko_noCredential_domain() throws TestSuiteException, Exception{
 		Repository repository=new Repository();
 		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
@@ -157,7 +156,7 @@ public class RESTAutenticazionePortaDelegata {
 //	5) Invocazione dove il client fornisce le credenziali corrette che però devono essere "bruciate" dall'autenticazione 'basic'. Queste non vengono inoltrate quindi al servizio.
 //	Si attende un 401 ritornato dal servizio finale.
 	
-	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO+".AuthBasic_ServiceWithBasicAuth_KO_CredenzialiBruciate"})
+	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO_NO_PRINCIPAL,RESTAutenticazionePortaDelegata.ID_GRUPPO+".AuthBasic_ServiceWithBasicAuth_KO_CredenzialiBruciate"})
 	public void testAuthBasicServiceWithBasicAuth_ko_credentialBruciate() throws TestSuiteException, Exception{
 		Repository repository=new Repository();
 		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
@@ -172,7 +171,7 @@ public class RESTAutenticazionePortaDelegata {
 	// sia vengono forwardate (non sono "bruciate") all'applicativo finale che che può quindi effettuare anche lui a sua volta l'autenticazione.
 //	Si attende un 200 ritornato dal servizio finale.
 	
-	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO+".AuthBasic_ServiceWithBasicAuth_OK_CredenzialiInoltrate"})
+	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO_NO_PRINCIPAL,RESTAutenticazionePortaDelegata.ID_GRUPPO+".AuthBasic_ServiceWithBasicAuth_OK_CredenzialiInoltrate"})
 	public void testAuthBasicServiceWithBasicAuth_ko_credentialForwarded() throws TestSuiteException, Exception{
 		Repository repository=new Repository();
 		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
@@ -185,7 +184,7 @@ public class RESTAutenticazionePortaDelegata {
 //	7) Invocazione dove il client non fornisce le credenziali richieste dall'autenticazione 'basic'. 
 //	Si attende un 401 ritornato da GovWay e un corretto WWW-Authenticate header.
 	
-	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO+".AuthBasic_WWWAuthenticate_credenzialiNonFornite"})
+	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO_NO_PRINCIPAL,RESTAutenticazionePortaDelegata.ID_GRUPPO+".AuthBasic_WWWAuthenticate_credenzialiNonFornite"})
 	public void testAuthBasicWWWAuthenticate_credenzialiNonFornite() throws TestSuiteException, Exception{
 		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
 		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_DELEGATA_REST_BASIC_PDD_SERVICE_WITH_BASIC_AUTH);
@@ -200,7 +199,7 @@ public class RESTAutenticazionePortaDelegata {
 //	8) Invocazione dove il client fornisce credenziali non valide richieste dall'autenticazione 'basic'. 
 //	Si attende un 401 ritornato da GovWay e un corretto WWW-Authenticate header.
 	
-	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO+".AuthBasic_WWWAuthenticate_credenzialiNonValide"})
+	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO_NO_PRINCIPAL,RESTAutenticazionePortaDelegata.ID_GRUPPO+".AuthBasic_WWWAuthenticate_credenzialiNonValide"})
 	public void testAuthBasicWWWAuthenticate_credenzialiNonValide() throws TestSuiteException, Exception{
 		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
 		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_DELEGATA_REST_BASIC_PDD_SERVICE_WITH_BASIC_AUTH);
@@ -220,7 +219,7 @@ public class RESTAutenticazionePortaDelegata {
 //	ApiKey 1) Invocazione dove il client fornisce le credenziali corrette che vengono "bruciate" dalla PdD, al servizio vengono inoltrati solamente i cookies rimasti. 
 //	Si attende 200 ritornato dal servizio finale.
 	
-	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO+".ServiceWithApiKeyAuth"})
+	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO_NO_PRINCIPAL,RESTAutenticazionePortaDelegata.ID_GRUPPO+".ServiceWithApiKeyAuth"})
 	public void testServiceWithApiKeyAuth() throws TestSuiteException, Exception{
 		Repository repository=new Repository();
 		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
@@ -233,7 +232,7 @@ public class RESTAutenticazionePortaDelegata {
 //	ApiKey 2) Invocazione dove il client fornisce le credenziali corrette che non vengono "bruciate" dalla PdD, al servizio vengono inoltrati tutti i cookies, anche quelli contenente l'api key. 
 //	Si attende 200 ritornato dal servizio finale.
 	
-	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO+".ServiceWithApiKeyAuthForward"})
+	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO_NO_PRINCIPAL,RESTAutenticazionePortaDelegata.ID_GRUPPO+".ServiceWithApiKeyAuthForward"})
 	public void testServiceWithApiKeyAuthForward() throws TestSuiteException, Exception{
 		Repository repository=new Repository();
 		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
@@ -246,7 +245,7 @@ public class RESTAutenticazionePortaDelegata {
 //	ApiKey 3) Invocazione dove il client non fornisce le credenziali richieste dall'autenticazione 'api-key'. 
 //	Si attende un 401 ritornato da GovWay e un corretto WWW-Authenticate header.
 	
-	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO+".AuthApiKey_WWWAuthenticate_credenzialiNonFornite"})
+	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO_NO_PRINCIPAL,RESTAutenticazionePortaDelegata.ID_GRUPPO+".AuthApiKey_WWWAuthenticate_credenzialiNonFornite"})
 	public void testAuthApiKeyWWWAuthenticate_credenzialiNonFornite() throws TestSuiteException, Exception{
 		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
 		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_DELEGATA_REST_APIKEY);
@@ -261,7 +260,7 @@ public class RESTAutenticazionePortaDelegata {
 //	ApiKey 4) Invocazione dove il client fornisce credenziali non valide richieste dall'autenticazione 'api-key'. 
 //	Si attende un 401 ritornato da GovWay e un corretto WWW-Authenticate header.
 	
-	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO+".AuthApiKey_WWWAuthenticate_credenzialiNonValide"})
+	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO_NO_PRINCIPAL,RESTAutenticazionePortaDelegata.ID_GRUPPO+".AuthApiKey_WWWAuthenticate_credenzialiNonValide"})
 	public void testAuthApiKeyWWWAuthenticate_credenzialiNonValide() throws TestSuiteException, Exception{
 		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
 		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_DELEGATA_REST_APIKEY);
@@ -282,7 +281,7 @@ public class RESTAutenticazionePortaDelegata {
 //	ApiKey + AppId 1) Invocazione dove il client fornisce le credenziali corrette che vengono "bruciate" dalla PdD, al servizio vengono inoltrati solamente i cookies rimasti. 
 //	Si attende 200 ritornato dal servizio finale.
 	
-	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO+".ServiceWithApiKeyAppIdAuth"})
+	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO_NO_PRINCIPAL,RESTAutenticazionePortaDelegata.ID_GRUPPO+".ServiceWithApiKeyAppIdAuth"})
 	public void testServiceWithApiKeyAppIdAuth() throws TestSuiteException, Exception{
 		Repository repository=new Repository();
 		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
@@ -295,7 +294,7 @@ public class RESTAutenticazionePortaDelegata {
 //	ApiKey + AppId 2) Invocazione dove il client fornisce le credenziali corrette che non vengono "bruciate" dalla PdD, al servizio vengono inoltrati tutti i cookies, anche quelli contenente l'api key. 
 //	Si attende 200 ritornato dal servizio finale.
 	
-	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO+".ServiceWithApiKeyAppIdAuthForward"})
+	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO_NO_PRINCIPAL,RESTAutenticazionePortaDelegata.ID_GRUPPO+".ServiceWithApiKeyAppIdAuthForward"})
 	public void testServiceWithApiKeyAppIdAuthForward() throws TestSuiteException, Exception{
 		Repository repository=new Repository();
 		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
@@ -308,7 +307,7 @@ public class RESTAutenticazionePortaDelegata {
 //	ApiKey + AppId 3) Invocazione dove il client non fornisce le credenziali richieste dall'autenticazione 'api-key + AppId'. 
 //	Si attende un 401 ritornato da GovWay e un corretto WWW-Authenticate header.
 	
-	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO+".AuthApiKeyAppId_WWWAuthenticate_credenzialiNonFornite"})
+	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO_NO_PRINCIPAL,RESTAutenticazionePortaDelegata.ID_GRUPPO+".AuthApiKeyAppId_WWWAuthenticate_credenzialiNonFornite"})
 	public void testAuthApiKeyAppIdWWWAuthenticate_credenzialiNonFornite() throws TestSuiteException, Exception{
 		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
 		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_DELEGATA_REST_APPID);
@@ -323,7 +322,7 @@ public class RESTAutenticazionePortaDelegata {
 //	ApiKey + AppId 4) Invocazione dove il client fornisce credenziali non valide richieste dall'autenticazione 'api-key + AppId'. 
 //	Si attende un 401 ritornato da GovWay e un corretto WWW-Authenticate header.
 	
-	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO+".AuthApiKeyAppId_WWWAuthenticate_credenzialiNonValide"})
+	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO_NO_PRINCIPAL,RESTAutenticazionePortaDelegata.ID_GRUPPO+".AuthApiKeyAppId_WWWAuthenticate_credenzialiNonValide"})
 	public void testAuthApiKeyAppIdWWWAuthenticate_credenzialiNonValide() throws TestSuiteException, Exception{
 		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
 		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_DELEGATA_REST_APPID);
@@ -343,7 +342,7 @@ public class RESTAutenticazionePortaDelegata {
 //	https 1) Invocazione dove il client non fornisce le credenziali richieste dall'autenticazione 'https'. 
 //	Si attende un 401 ritornato da GovWay e un corretto WWW-Authenticate header.
 	
-	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO+".AuthHttps_WWWAuthenticate_credenzialiNonFornite"})
+	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO_NO_PRINCIPAL,RESTAutenticazionePortaDelegata.ID_GRUPPO+".AuthHttps_WWWAuthenticate_credenzialiNonFornite"})
 	public void testAuthHttpsWWWAuthenticate_credenzialiNonFornite() throws TestSuiteException, Exception{
 		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
 		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_DELEGATA_REST_HTTPS);
@@ -356,85 +355,4 @@ public class RESTAutenticazionePortaDelegata {
 	}
 	
 	
-	
-	
-	
-	
-//	principal 1) Invocazione dove il client non fornisce le credenziali richieste dall'autenticazione 'principal'. 
-//	Si attende un 401 ritornato da GovWay e un corretto WWW-Authenticate header.
-	
-	@DataProvider(name="principalWWWAuthenticateProvider")
-	public Object[][] principalWWWAuthenticateProvider(){
-		return new Object[][]{
-				{TipoAutenticazionePrincipal.CONTAINER},
-				{TipoAutenticazionePrincipal.HEADER},
-				{TipoAutenticazionePrincipal.FORM},
-				{TipoAutenticazionePrincipal.URL},
-				// non può fallire {TipoAutenticazionePrincipal.INDIRIZZO_IP},
-				{TipoAutenticazionePrincipal.INDIRIZZO_IP_X_FORWARDED_FOR},
-				{TipoAutenticazionePrincipal.TOKEN}
-		};
-	}
-	
-	@Test(groups={RESTAutenticazionePortaDelegata.ID_GRUPPO,RESTAutenticazionePortaDelegata.ID_GRUPPO+".AuthPrincipal_WWWAuthenticate_credenzialiNonFornite"},dataProvider="principalWWWAuthenticateProvider")
-	public void testAuthPrincipalWWWAuthenticate_credenzialiNonFornite(TipoAutenticazionePrincipal tipo) throws TestSuiteException, Exception{
-		
-		String nomePorta = null;
-		String authType = null;
-		String realm = null;
-		String error_description = null;
-		switch (tipo) {
-		case CONTAINER:
-			nomePorta = CostantiTestSuite.PORTA_DELEGATA_REST_PRINCIPAL_CONTAINER;
-			authType = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_CONTAINER_AUTHTYPE;
-			realm = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_CONTAINER_REALM;
-			error_description = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_CONTAINER_ERROR_DESCRIPTION_NOTFOUND;
-			break;
-		case HEADER:
-			nomePorta = CostantiTestSuite.PORTA_DELEGATA_REST_PRINCIPAL_HEADER;
-			authType = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_HEADER_BASED_AUTHTYPE;
-			realm = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_HEADER_BASED_REALM;
-			error_description = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_HEADER_BASED_ERROR_DESCRIPTION_NOTFOUND;
-			break;
-		case FORM:
-			nomePorta = CostantiTestSuite.PORTA_DELEGATA_REST_PRINCIPAL_QUERY;
-			authType = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_FORM_BASED_AUTHTYPE;
-			realm = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_FORM_BASED_REALM;
-			error_description = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_FORM_BASED_ERROR_DESCRIPTION_NOTFOUND;
-			break;
-		case URL:
-			nomePorta = CostantiTestSuite.PORTA_DELEGATA_REST_PRINCIPAL_URL;
-			authType = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_URL_BASED_AUTHTYPE;
-			realm = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_URL_BASED_REALM;
-			error_description = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_URL_BASED_ERROR_DESCRIPTION_NOTFOUND;
-			break;
-		case INDIRIZZO_IP:
-			nomePorta = CostantiTestSuite.PORTA_DELEGATA_REST_PRINCIPAL_IPADDRESS;
-			authType = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_INDIRIZZO_IP_AUTHTYPE;
-			realm = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_INDIRIZZO_IP_REALM;
-			error_description = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_INDIRIZZO_IP_ERROR_DESCRIPTION_NOTFOUND;
-			break;
-		case INDIRIZZO_IP_X_FORWARDED_FOR:
-			nomePorta = CostantiTestSuite.PORTA_DELEGATA_REST_PRINCIPAL_IPFORWARDED;
-			authType = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_FORWARDED_FOR_AUTHTYPE;
-			realm = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_FORWARDED_FOR_REALM;
-			error_description = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_FORWARDED_FOR_ERROR_DESCRIPTION_NOTFOUND;
-			break;
-		case TOKEN:
-			nomePorta = CostantiTestSuite.PORTA_DELEGATA_REST_PRINCIPAL_TOKEN;
-			authType = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_TOKEN_AUTHTYPE;
-			realm = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_TOKEN_REALM;
-			error_description = CostantiTestSuite.TEST_WWWAUTHENTICATE_PRINCIPAL_TOKEN_ERROR_DESCRIPTION_NOTFOUND;
-			break;
-		}
-		
-		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
-		restCore.setPortaApplicativaDelegata(nomePorta);
-		HttpResponse httpResponse = restCore.invokeAuthenticationError("json", 401, true, true, false, "text/json", null);
-		String wwwAuthenticateGovWay = httpResponse.getHeaderFirstValue(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
-		WWWAuthenticateUtils.verify(wwwAuthenticateGovWay, 
-				authType, 
-				realm, 
-				error_description);
-	}
 }

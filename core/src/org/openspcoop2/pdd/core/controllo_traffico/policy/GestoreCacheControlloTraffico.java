@@ -57,10 +57,14 @@ public class GestoreCacheControlloTraffico {
 	private static final String CONTROLLO_TRAFFICO_CACHE_NAME = "controlloTraffico";
 	/** Cache */
 	private static Cache cache = null;
-	private static final Boolean semaphoreNumeroRichieste = true;
-	private static final Boolean semaphoreOccupazioneBanda = true;
-	private static final Boolean semaphoreLatenza = true;
-	private static final Boolean semaphoreStato = true;
+//	private static final Boolean semaphoreNumeroRichieste = true;
+//	private static final Boolean semaphoreOccupazioneBanda = true;
+//	private static final Boolean semaphoreLatenza = true;
+//	private static final Boolean semaphoreStato = true;
+	private static final org.openspcoop2.utils.Semaphore lockNumeroRichieste = new org.openspcoop2.utils.Semaphore("GestoreCacheControlloTraffico-NumeroRichieste");
+	private static final org.openspcoop2.utils.Semaphore lockOccupazioneBanda = new org.openspcoop2.utils.Semaphore("GestoreCacheControlloTraffico-OccupazioneBanda");
+	private static final org.openspcoop2.utils.Semaphore lockLatenza = new org.openspcoop2.utils.Semaphore("GestoreCacheControlloTraffico-Latenza");
+	private static final org.openspcoop2.utils.Semaphore lockStato = new org.openspcoop2.utils.Semaphore("GestoreCacheControlloTraffico-Stato");
 
 	/* --------------- Cache --------------------*/
 	public static boolean isCacheAbilitata() throws Exception{
@@ -372,7 +376,10 @@ public class GestoreCacheControlloTraffico {
 				}
 			}
 			
-			synchronized (semaphoreNumeroRichieste) {
+			//synchronized (semaphoreNumeroRichieste) {
+    		try {
+    			lockNumeroRichieste.acquire("readNumeroRichiesteInCache",
+    					datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
 				
 				// se e' attiva una cache provo ad utilizzarla
 				if(cache!=null){
@@ -418,6 +425,9 @@ public class GestoreCacheControlloTraffico {
 						this.log.error("Errore durante l'inserimento in cache con chiave ["+keyCache+"] valore["+obj+"]: "+e.getMessage());
 					}
 				}
+			}finally {
+				lockNumeroRichieste.release("readNumeroRichiesteInCache",
+    					datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
 			}
 
 		}
@@ -510,7 +520,10 @@ public class GestoreCacheControlloTraffico {
 				}
 			}
 			
-			synchronized (semaphoreOccupazioneBanda) {
+			//synchronized (semaphoreOccupazioneBanda) {
+			try {
+    			lockOccupazioneBanda.acquire("readOccupazioneBandaInCache",
+    					datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
 				
 				// se e' attiva una cache provo ad utilizzarla
 				if(cache!=null){
@@ -557,6 +570,9 @@ public class GestoreCacheControlloTraffico {
 					}
 				}
 				
+			}finally {
+				lockOccupazioneBanda.release("readOccupazioneBandaInCache",
+    					datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
 			}
 
 		}
@@ -650,7 +666,10 @@ public class GestoreCacheControlloTraffico {
 				}
 			}
 			
-			synchronized (semaphoreLatenza) {
+			//synchronized (semaphoreLatenza) {
+			try {
+				lockLatenza.acquire("readLatenzaInCache",
+						datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
 				
 				// se e' attiva una cache provo ad utilizzarla
 				if(cache!=null){
@@ -697,6 +716,9 @@ public class GestoreCacheControlloTraffico {
 					}
 				}
 				
+			}finally {
+				lockLatenza.release("readLatenzaInCache",
+						datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
 			}
 
 		}
@@ -766,7 +788,10 @@ public class GestoreCacheControlloTraffico {
 				}
 			}
 			
-			synchronized (semaphoreStato) {
+			//synchronized (semaphoreStato) {
+			try {
+				lockStato.acquire("getStatoInCache",
+						datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
 				
 				// se e' attiva una cache provo ad utilizzarla
 				if(cache!=null){
@@ -811,6 +836,9 @@ public class GestoreCacheControlloTraffico {
 					}
 				}
 				
+			}finally {
+				lockStato.release("getStatoInCache",
+						datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
 			}
 
 		}

@@ -335,10 +335,18 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			context.setDataIngressoRichiesta(dataIngressoRichiesta);
 			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolFactory.getProtocol());
 			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO, requestInfo);
-			Map<String, String> configProperties = RicezioneContenutiApplicativiServiceUtils.readPropertiesConfig(requestInfo, logCore,null);
-            if (configProperties != null && !configProperties.isEmpty()) {
-               context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE, configProperties);
-            }
+			RicezionePropertiesConfig rConfig = RicezioneContenutiApplicativiServiceUtils.readPropertiesConfig(requestInfo, logCore,null);
+			if(rConfig!=null) {
+	            if (rConfig.getApiImplementation() != null && !rConfig.getApiImplementation().isEmpty()) {
+	               context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE, rConfig.getApiImplementation());
+	            }
+	            if (rConfig.getSoggettoFruitore() != null && !rConfig.getSoggettoFruitore().isEmpty()) {
+	            	context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE, rConfig.getSoggettoFruitore());
+	            }
+	            if (rConfig.getSoggettoErogatore() != null && !rConfig.getSoggettoErogatore().isEmpty()) {
+	            	context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_EROGATORE, rConfig.getSoggettoErogatore());
+	            }
+			}
 			context.getPddContext().addObject(CostantiPdD.KEY_TIPO_OPERAZIONE_IM, tipoOperazione);
 			context.setTipoPorta(TipoPdD.DELEGATA);
 			msgDiag.setPddContext(context.getPddContext(), protocolFactory);

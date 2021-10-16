@@ -31,6 +31,7 @@ import java.util.Properties;
 
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.certificate.hsm.HSMManager;
 
 /**
  * MerlinKeystore
@@ -53,6 +54,8 @@ public class MerlinKeystore implements Serializable {
 	private String pathStore = null;
 	private String passwordStore = null;
 	private String passwordPrivateKey = null;
+	
+	private boolean hsm;
 	
 	@Override
 	public String toString() {
@@ -171,9 +174,6 @@ public class MerlinKeystore implements Serializable {
 	
 	private void init(String passwordPrivateKey, boolean privatePasswordRequired) throws SecurityException{
 		try{
-			if(this.ksBytes==null && this.pathStore==null){
-				throw new Exception("Path per lo Store non indicato");
-			}
 			if(this.tipoStore==null){
 				throw new Exception("Tipo dello Store non indicato");
 			}
@@ -181,31 +181,44 @@ public class MerlinKeystore implements Serializable {
 				throw new Exception("Password dello Store non indicata");
 			}
 			
-			if(this.ksBytes==null) {
-				InputStream isStore = null;
-				try{
-					File fPathStore = new File(this.pathStore);
-					if(fPathStore.exists()){
-						isStore = new FileInputStream(fPathStore);
-					}else{
-						isStore = MerlinKeystore.class.getResourceAsStream(this.pathStore);
-						if(isStore==null){
-							isStore = MerlinKeystore.class.getResourceAsStream("/"+this.pathStore);
-						}
-						if(isStore==null){
-							throw new Exception("Keystore ["+this.pathStore+"] not found");
-						}
-					}
-					this.ksBytes = Utilities.getAsByteArray(isStore);
-				}finally{
-					try{
-						if(isStore!=null){
-							isStore.close();
-						}
-					}catch(Exception eClose){}
-				}
+			HSMManager hsmManager = HSMManager.getInstance();
+			if(hsmManager!=null) {
+				this.hsm = hsmManager.existsKeystoreType(this.tipoStore);
 			}
+			
+			if(!this.hsm) {
 
+				if(this.ksBytes==null && this.pathStore==null){
+					throw new Exception("Path per lo Store non indicato");
+				}
+	
+				if(this.ksBytes==null) {
+					InputStream isStore = null;
+					try{
+						File fPathStore = new File(this.pathStore);
+						if(fPathStore.exists()){
+							isStore = new FileInputStream(fPathStore);
+						}else{
+							isStore = MerlinKeystore.class.getResourceAsStream(this.pathStore);
+							if(isStore==null){
+								isStore = MerlinKeystore.class.getResourceAsStream("/"+this.pathStore);
+							}
+							if(isStore==null){
+								throw new Exception("Keystore ["+this.pathStore+"] not found");
+							}
+						}
+						this.ksBytes = Utilities.getAsByteArray(isStore);
+					}finally{
+						try{
+							if(isStore!=null){
+								isStore.close();
+							}
+						}catch(Exception eClose){}
+					}
+				}
+	
+			}
+			
 			this.initKS();
 			
 			if(passwordPrivateKey==null && privatePasswordRequired){
@@ -223,6 +236,10 @@ public class MerlinKeystore implements Serializable {
 		}
 	}
 	
+	public boolean isHsm() {
+		return this.hsm;
+	}
+
 	private void checkInit() throws SecurityException{
 		if(this.ks==null) {
 			this.initKS();
@@ -231,8 +248,16 @@ public class MerlinKeystore implements Serializable {
 	private synchronized void initKS() throws SecurityException{
 		if(this.ks==null) {
 			try{
-				this.ks = new org.openspcoop2.utils.certificate.KeyStore(this.ksBytes, this.tipoStore, this.passwordStore);
-				FixTrustAnchorsNotEmpty.addCertificate(this.ks.getKeystore());
+				if(this.hsm) {
+					this.ks = HSMManager.getInstance().getKeystore(this.tipoStore);
+				}
+				else {
+					this.ks = new org.openspcoop2.utils.certificate.KeyStore(this.ksBytes, this.tipoStore, this.passwordStore);
+					
+					// non utilizzabile in hsm, si ottiene errore: java.lang.UnsupportedOperationException: trusted certificates may only be set by token initialization application
+					// at jdk.crypto.cryptoki/sun.security.pkcs11.P11KeyStore.engineSetEntry(P11KeyStore.java:1022)
+					FixTrustAnchorsNotEmpty.addCertificate(this.ks.getKeystore()); 
+				}
 			}
 			catch(Exception e){
 				throw new SecurityException(e.getMessage(),e);

@@ -35,6 +35,9 @@ public class ErogazioneModISoapRichiestaSicurezzaMessaggio  {
   private OneOfErogazioneModISoapRichiestaSicurezzaMessaggioTruststore truststore = null;
   
   @Schema(description = "")
+  private Integer timeToLive = null;
+  
+  @Schema(description = "")
   private String wsaTo = null;
  /**
    * Get truststore
@@ -53,6 +56,25 @@ public class ErogazioneModISoapRichiestaSicurezzaMessaggio  {
 
   public ErogazioneModISoapRichiestaSicurezzaMessaggio truststore(OneOfErogazioneModISoapRichiestaSicurezzaMessaggioTruststore truststore) {
     this.truststore = truststore;
+    return this;
+  }
+
+ /**
+   * Get timeToLive
+   * @return timeToLive
+  **/
+  @JsonProperty("time_to_live")
+  @Valid
+  public Integer getTimeToLive() {
+    return this.timeToLive;
+  }
+
+  public void setTimeToLive(Integer timeToLive) {
+    this.timeToLive = timeToLive;
+  }
+
+  public ErogazioneModISoapRichiestaSicurezzaMessaggio timeToLive(Integer timeToLive) {
+    this.timeToLive = timeToLive;
     return this;
   }
 
@@ -82,6 +104,7 @@ public class ErogazioneModISoapRichiestaSicurezzaMessaggio  {
     sb.append("class ErogazioneModISoapRichiestaSicurezzaMessaggio {\n");
     
     sb.append("    truststore: ").append(ErogazioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.truststore)).append("\n");
+    sb.append("    timeToLive: ").append(ErogazioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.timeToLive)).append("\n");
     sb.append("    wsaTo: ").append(ErogazioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.wsaTo)).append("\n");
     sb.append("}");
     return sb.toString();

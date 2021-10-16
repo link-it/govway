@@ -25,10 +25,12 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
@@ -136,25 +138,36 @@ public class ModIProperties {
 			
 			/* **** TRUST STORE **** */
 			
-			if(getSicurezzaMessaggio_certificati_trustStore_path()!=null) {
-				getSicurezzaMessaggio_certificati_trustStore_tipo();
-				getSicurezzaMessaggio_certificati_trustStore_password();
+			String trustStoreType = getSicurezzaMessaggio_certificati_trustStore_tipo();
+			if(trustStoreType!=null) {
+				if(!HSMUtils.isKeystoreHSM(trustStoreType)) {
+					getSicurezzaMessaggio_certificati_trustStore_path();
+					getSicurezzaMessaggio_certificati_trustStore_password();
+				}
 				getSicurezzaMessaggio_certificati_trustStore_crls();
 			}
 			
-			if(getSicurezzaMessaggio_ssl_trustStore_path()!=null) {
-				getSicurezzaMessaggio_ssl_trustStore_tipo();
-				getSicurezzaMessaggio_ssl_trustStore_password();
+			String sslTrustStoreType = getSicurezzaMessaggio_ssl_trustStore_tipo();
+			if(sslTrustStoreType!=null) {
+				if(!HSMUtils.isKeystoreHSM(sslTrustStoreType)) {
+					getSicurezzaMessaggio_ssl_trustStore_path();
+					getSicurezzaMessaggio_ssl_trustStore_password();
+				}
 				getSicurezzaMessaggio_ssl_trustStore_crls();
 			}
 			
 			/* **** KEY STORE **** */
 			
-			if(getSicurezzaMessaggio_certificati_keyStore_path()!=null) {
-				getSicurezzaMessaggio_certificati_keyStore_tipo();
-				getSicurezzaMessaggio_certificati_keyStore_password();
+			String keystoreType = getSicurezzaMessaggio_certificati_keyStore_tipo();
+			if(keystoreType!=null) {
+				if(!HSMUtils.isKeystoreHSM(keystoreType)) {
+					getSicurezzaMessaggio_certificati_keyStore_path();
+					getSicurezzaMessaggio_certificati_keyStore_password();
+				}
 				getSicurezzaMessaggio_certificati_key_alias();
-				getSicurezzaMessaggio_certificati_key_password();
+				if(!HSMUtils.isKeystoreHSM(keystoreType) || HSMUtils.HSM_CONFIGURABLE_KEY_PASSWORD) {
+					getSicurezzaMessaggio_certificati_key_password();
+				}
 			}
 			
 			/* **** CORNICE SICUREZZA **** */
@@ -344,33 +357,11 @@ public class ModIProperties {
 	
 	
 	/* **** TRUST STORE **** */
-	
-	private static String sicurezzaMessaggio_certificati_trustStore_path= null;
-	private static Boolean sicurezzaMessaggio_certificati_trustStore_path_read= null;
-	public String getSicurezzaMessaggio_certificati_trustStore_path(){
-    	if(ModIProperties.sicurezzaMessaggio_certificati_trustStore_path_read==null){
-	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.trustStore.path"); 
-				
-				if (value != null){
-					value = value.trim();
-					ModIProperties.sicurezzaMessaggio_certificati_trustStore_path = value;
-				}
-				
-				ModIProperties.sicurezzaMessaggio_certificati_trustStore_path_read = true;
-				
-			}catch(java.lang.Exception e) {
-				this.log.error("Proprietà 'org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.trustStore.path' non impostata, errore:"+e.getMessage());
-				ModIProperties.sicurezzaMessaggio_certificati_trustStore_path_read = true;
-			}
-    	}
-    	
-    	return ModIProperties.sicurezzaMessaggio_certificati_trustStore_path;
-	}
-	
+		
 	private static String sicurezzaMessaggio_certificati_trustStore_tipo= null;
-	public String getSicurezzaMessaggio_certificati_trustStore_tipo() throws Exception{
-    	if(ModIProperties.sicurezzaMessaggio_certificati_trustStore_tipo==null){
+	private static Boolean sicurezzaMessaggio_certificati_trustStore_tipo_read= null;
+	public String getSicurezzaMessaggio_certificati_trustStore_tipo() {
+    	if(ModIProperties.sicurezzaMessaggio_certificati_trustStore_tipo_read==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.trustStore.tipo"); 
 				
@@ -378,18 +369,40 @@ public class ModIProperties {
 					value = value.trim();
 					ModIProperties.sicurezzaMessaggio_certificati_trustStore_tipo = value;
 				}
-				else {
-					throw new Exception("non definita");
-				}
+				
+				ModIProperties.sicurezzaMessaggio_certificati_trustStore_tipo_read = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprietà 'org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.trustStore.tipo' non impostata, errore:"+e.getMessage());
-				throw e;
+				ModIProperties.sicurezzaMessaggio_certificati_trustStore_tipo_read = true;
 			}
     	}
     	
     	return ModIProperties.sicurezzaMessaggio_certificati_trustStore_tipo;
 	}	
+	
+	private static String sicurezzaMessaggio_certificati_trustStore_path= null;
+	public String getSicurezzaMessaggio_certificati_trustStore_path() throws Exception{
+    	if(ModIProperties.sicurezzaMessaggio_certificati_trustStore_path==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.trustStore.path"); 
+				
+				if (value != null){
+					value = value.trim();
+					ModIProperties.sicurezzaMessaggio_certificati_trustStore_path = value;
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprietà 'org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.trustStore.path' non impostata, errore:"+e.getMessage());
+				throw e;
+			}
+    	}
+    	
+    	return ModIProperties.sicurezzaMessaggio_certificati_trustStore_path;
+	}
 	
 	private static String sicurezzaMessaggio_certificati_trustStore_password= null;
 	public String getSicurezzaMessaggio_certificati_trustStore_password() throws Exception{
@@ -438,33 +451,11 @@ public class ModIProperties {
 	}	
 	
 	
-	
-	private static String sicurezzaMessaggio_ssl_trustStore_path= null;
-	private static Boolean sicurezzaMessaggio_ssl_trustStore_path_read= null;
-	public String getSicurezzaMessaggio_ssl_trustStore_path(){
-    	if(ModIProperties.sicurezzaMessaggio_ssl_trustStore_path_read==null){
-	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.ssl.trustStore.path"); 
-				
-				if (value != null){
-					value = value.trim();
-					ModIProperties.sicurezzaMessaggio_ssl_trustStore_path = value;
-				}
-				
-				ModIProperties.sicurezzaMessaggio_ssl_trustStore_path_read = true;
-				
-			}catch(java.lang.Exception e) {
-				this.log.error("Proprietà 'org.openspcoop2.protocol.modipa.sicurezzaMessaggio.ssl.trustStore.path' non impostata, errore:"+e.getMessage());
-				ModIProperties.sicurezzaMessaggio_ssl_trustStore_path_read = true;
-			}
-    	}
-    	
-    	return ModIProperties.sicurezzaMessaggio_ssl_trustStore_path;
-	}
-	
+		
 	private static String sicurezzaMessaggio_ssl_trustStore_tipo= null;
-	public String getSicurezzaMessaggio_ssl_trustStore_tipo() throws Exception{
-    	if(ModIProperties.sicurezzaMessaggio_ssl_trustStore_tipo==null){
+	private static Boolean sicurezzaMessaggio_ssl_trustStore_tipo_read= null;
+	public String getSicurezzaMessaggio_ssl_trustStore_tipo() {
+    	if(ModIProperties.sicurezzaMessaggio_ssl_trustStore_tipo_read==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.ssl.trustStore.tipo"); 
 				
@@ -472,18 +463,40 @@ public class ModIProperties {
 					value = value.trim();
 					ModIProperties.sicurezzaMessaggio_ssl_trustStore_tipo = value;
 				}
-				else {
-					throw new Exception("non definita");
-				}
+				
+				ModIProperties.sicurezzaMessaggio_ssl_trustStore_tipo_read = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprietà 'org.openspcoop2.protocol.modipa.sicurezzaMessaggio.ssl.trustStore.tipo' non impostata, errore:"+e.getMessage());
-				throw e;
+				ModIProperties.sicurezzaMessaggio_ssl_trustStore_tipo_read = true;
 			}
     	}
     	
     	return ModIProperties.sicurezzaMessaggio_ssl_trustStore_tipo;
 	}	
+	
+	private static String sicurezzaMessaggio_ssl_trustStore_path= null;
+	public String getSicurezzaMessaggio_ssl_trustStore_path() throws Exception{
+    	if(ModIProperties.sicurezzaMessaggio_ssl_trustStore_path==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.ssl.trustStore.path"); 
+				
+				if (value != null){
+					value = value.trim();
+					ModIProperties.sicurezzaMessaggio_ssl_trustStore_path = value;
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprietà 'org.openspcoop2.protocol.modipa.sicurezzaMessaggio.ssl.trustStore.path' non impostata, errore:"+e.getMessage());
+				throw e;
+			}
+    	}
+    	
+    	return ModIProperties.sicurezzaMessaggio_ssl_trustStore_path;
+	}
 	
 	private static String sicurezzaMessaggio_ssl_trustStore_password= null;
 	public String getSicurezzaMessaggio_ssl_trustStore_password() throws Exception{
@@ -538,33 +551,11 @@ public class ModIProperties {
 	
 	
 	/* **** KEY STORE **** */
-	
-	private static String sicurezzaMessaggio_certificati_keyStore_path= null;
-	private static Boolean sicurezzaMessaggio_certificati_keyStore_path_read= null;
-	public String getSicurezzaMessaggio_certificati_keyStore_path(){
-    	if(ModIProperties.sicurezzaMessaggio_certificati_keyStore_path_read==null){
-	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.keyStore.path"); 
-				
-				if (value != null){
-					value = value.trim();
-					ModIProperties.sicurezzaMessaggio_certificati_keyStore_path = value;
-				}
-				
-				ModIProperties.sicurezzaMessaggio_certificati_keyStore_path_read = true;
-				
-			}catch(java.lang.Exception e) {
-				this.log.error("Proprietà 'org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.keyStore.path' non impostata, errore:"+e.getMessage());
-				ModIProperties.sicurezzaMessaggio_certificati_keyStore_path_read = true;
-			}
-    	}
-    	
-    	return ModIProperties.sicurezzaMessaggio_certificati_keyStore_path;
-	}
-	
+		
 	private static String sicurezzaMessaggio_certificati_keyStore_tipo= null;
-	public String getSicurezzaMessaggio_certificati_keyStore_tipo() throws Exception{
-    	if(ModIProperties.sicurezzaMessaggio_certificati_keyStore_tipo==null){
+	private static Boolean sicurezzaMessaggio_certificati_keyStore_tipo_read= null;
+	public String getSicurezzaMessaggio_certificati_keyStore_tipo() {
+    	if(ModIProperties.sicurezzaMessaggio_certificati_keyStore_tipo_read==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.keyStore.tipo"); 
 				
@@ -572,18 +563,40 @@ public class ModIProperties {
 					value = value.trim();
 					ModIProperties.sicurezzaMessaggio_certificati_keyStore_tipo = value;
 				}
-				else {
-					throw new Exception("non definita");
-				}
 				
+				ModIProperties.sicurezzaMessaggio_certificati_keyStore_tipo_read = true;
+								
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprietà 'org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.keyStore.tipo' non impostata, errore:"+e.getMessage());
-				throw e;
+				ModIProperties.sicurezzaMessaggio_certificati_keyStore_tipo_read = true;
 			}
     	}
     	
     	return ModIProperties.sicurezzaMessaggio_certificati_keyStore_tipo;
 	}	
+	
+	private static String sicurezzaMessaggio_certificati_keyStore_path= null;
+	public String getSicurezzaMessaggio_certificati_keyStore_path() throws Exception{
+    	if(ModIProperties.sicurezzaMessaggio_certificati_keyStore_path==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.keyStore.path"); 
+				
+				if (value != null){
+					value = value.trim();
+					ModIProperties.sicurezzaMessaggio_certificati_keyStore_path = value;
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprietà 'org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.keyStore.path' non impostata, errore:"+e.getMessage());
+				throw e;
+			}
+    	}
+    	
+    	return ModIProperties.sicurezzaMessaggio_certificati_keyStore_path;
+	}
 	
 	private static String sicurezzaMessaggio_certificati_keyStore_password= null;
 	public String getSicurezzaMessaggio_certificati_keyStore_password() throws Exception{
@@ -926,6 +939,33 @@ public class ModIProperties {
 		return ModIProperties.isGenerazioneTracce;
 	}
 	
+    private static Boolean isGenerazioneTracce_registraToken = null;
+	public Boolean isGenerazioneTracce_registraToken(){
+		if(ModIProperties.isGenerazioneTracce_registraToken==null){
+			
+			Boolean defaultValue = false;
+			String propertyName = "org.openspcoop2.protocol.modipa.generazioneTracce.registrazioneToken.enabled";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					ModIProperties.isGenerazioneTracce_registraToken = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprietà '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
+					ModIProperties.isGenerazioneTracce_registraToken = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.debug("Proprietà '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
+				ModIProperties.isGenerazioneTracce_registraToken = defaultValue;
+			}
+		}
+
+		return ModIProperties.isGenerazioneTracce_registraToken;
+	}
+	
 	
 	
 	
@@ -1209,8 +1249,8 @@ public class ModIProperties {
 	}
 	
 	private static Boolean getRestSecurityTokenClaimsIatTimeCheck_milliseconds_read = null;
-	private static Integer getRestSecurityTokenClaimsIatTimeCheck_milliseconds = null;
-	public Integer getRestSecurityTokenClaimsIatTimeCheck_milliseconds() throws Exception{
+	private static Long getRestSecurityTokenClaimsIatTimeCheck_milliseconds = null;
+	public Long getRestSecurityTokenClaimsIatTimeCheck_milliseconds() throws Exception{
 
 		if(ModIProperties.getRestSecurityTokenClaimsIatTimeCheck_milliseconds_read==null){
 			
@@ -1220,8 +1260,19 @@ public class ModIProperties {
 
 				if (value != null){
 					value = value.trim();
-					ModIProperties.getRestSecurityTokenClaimsIatTimeCheck_milliseconds = Integer.valueOf(value); // minuti
-					ModIProperties.getRestSecurityTokenClaimsIatTimeCheck_milliseconds = ModIProperties.getRestSecurityTokenClaimsIatTimeCheck_milliseconds * 60 * 1000;
+					long tmp = Long.valueOf(value); // minuti
+					if(tmp>0) {
+						long maxLongValue = (((Long.MAX_VALUE)/60000l));
+						if(tmp>maxLongValue) {
+							this.log.warn("Valore '"+value+"' indicato nella proprietà '"+name+"' superiore al massimo consentito '"+maxLongValue+"'; il controllo viene disabilitato");
+						}
+						else {
+							ModIProperties.getRestSecurityTokenClaimsIatTimeCheck_milliseconds = tmp * 60 * 1000;
+						}
+					}
+					else {
+						this.log.warn("Verifica gestita tramite la proprietà '"+name+"' disabilitata.");
+					}
 				}
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprietà '"+name+"' non impostata, errore:"+e.getMessage(),e);
@@ -1374,6 +1425,71 @@ public class ModIProperties {
     		return ModIProperties.getRestResponseSecurityTokenAudienceDefault;
     	}
 	}	
+	
+	public List<String> getUsedRestSecurityClaims(boolean request, boolean integrita, boolean corniceSicurezza) throws Exception{
+		List<String> l = new ArrayList<String>();
+		
+		l.add(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT);
+		l.add(Claims.JSON_WEB_TOKEN_RFC_7519_NOT_TO_BE_USED_BEFORE);
+		l.add(Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED);
+		l.add(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID);
+		
+		if(request) {
+			l.add(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE); // si configura sulla fruizione
+			
+			String v = getRestSecurityTokenClaimsClientIdHeader();
+			if(v!=null && StringUtils.isNotEmpty(v)) {
+				l.add(v); // si configura sull'applicativo
+			}
+		}
+		
+		if(!request) {
+			String v = getRestSecurityTokenClaimRequestDigest();
+			if(v!=null && StringUtils.isNotEmpty(v)) {
+				l.add(v);
+			}
+		}
+		
+		/*
+		 * Possono sempre essere definiti, poiche' utilizzati per sovrascrivere i default
+		boolean addIss = true;
+		boolean addSub = true;
+		if(corniceSicurezza) {
+			v = getSicurezzaMessaggio_corniceSicurezza_rest_codice_ente();
+			if(v!=null && StringUtils.isNotEmpty(v)) {
+				if(Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER.equals(v)) {
+					addIss = false;
+				}
+				l.add(v);
+			}
+			v = getSicurezzaMessaggio_corniceSicurezza_rest_user();
+			if(v!=null && StringUtils.isNotEmpty(v)) {
+				if(Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT.equals(v)) {
+					addSub = false;
+				}
+				l.add(v);
+			}
+			v = getSicurezzaMessaggio_corniceSicurezza_rest_ipuser();
+			if(v!=null && StringUtils.isNotEmpty(v)) {
+				l.add(v);
+			}
+		}
+		if(addIss) {
+			l.add(Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER);
+		}
+		if(addSub) {
+			l.add(Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT);
+		}*/
+		
+		if(integrita) {
+			String v = getRestSecurityTokenClaimSignedHeaders();
+			if(v!=null && StringUtils.isNotEmpty(v)) {
+				l.add(v);
+			}
+		}
+		
+		return l;
+	}
 	
 	private static String getRestCorrelationIdHeader= null;
 	public String getRestCorrelationIdHeader() throws Exception{
@@ -2045,8 +2161,8 @@ public class ModIProperties {
 	}
 	
 	private static Boolean getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds_read = null;
-	private static Integer getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds = null;
-	public Integer getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds() throws Exception{
+	private static Long getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds = null;
+	public Long getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds() throws Exception{
 
 		if(ModIProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds_read==null){
 			
@@ -2056,8 +2172,19 @@ public class ModIProperties {
 
 				if (value != null){
 					value = value.trim();
-					ModIProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds = Integer.valueOf(value); // minuti
-					ModIProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds = ModIProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds * 60 * 1000;
+					long tmp = Long.valueOf(value); // minuti
+					if(tmp>0) {
+						long maxLongValue = (((Long.MAX_VALUE)/60000l));
+						if(tmp>maxLongValue) {
+							this.log.warn("Valore '"+value+"' indicato nella proprietà '"+name+"' superiore al massimo consentito '"+maxLongValue+"'; il controllo viene disabilitato");
+						}
+						else {
+							ModIProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds = tmp * 60 * 1000;
+						}
+					}
+					else {
+						this.log.warn("Verifica gestita tramite la proprietà '"+name+"' disabilitata.");
+					}
 				}
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprietà '"+name+"' non impostata, errore:"+e.getMessage(),e);

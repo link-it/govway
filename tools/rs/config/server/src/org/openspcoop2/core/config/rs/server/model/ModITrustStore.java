@@ -29,6 +29,9 @@ public class ModITrustStore extends BaseTrustStore {
   
   @Schema(required = true, description = "")
   private ModITruststoreEnum truststoreTipo = null;
+  
+  @Schema(description = "")
+  private String pcks11Tipo = null;
  /**
    * Get truststoreTipo
    * @return truststoreTipo
@@ -49,6 +52,25 @@ public class ModITrustStore extends BaseTrustStore {
     return this;
   }
 
+ /**
+   * Get pcks11Tipo
+   * @return pcks11Tipo
+  **/
+  @JsonProperty("pcks11_tipo")
+  @Valid
+ @Size(max=255)  public String getPcks11Tipo() {
+    return this.pcks11Tipo;
+  }
+
+  public void setPcks11Tipo(String pcks11Tipo) {
+    this.pcks11Tipo = pcks11Tipo;
+  }
+
+  public ModITrustStore pcks11Tipo(String pcks11Tipo) {
+    this.pcks11Tipo = pcks11Tipo;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -56,6 +78,7 @@ public class ModITrustStore extends BaseTrustStore {
     sb.append("class ModITrustStore {\n");
     sb.append("    ").append(ModITrustStore.toIndentedString(super.toString())).append("\n");
     sb.append("    truststoreTipo: ").append(ModITrustStore.toIndentedString(this.truststoreTipo)).append("\n");
+    sb.append("    pcks11Tipo: ").append(ModITrustStore.toIndentedString(this.pcks11Tipo)).append("\n");
     sb.append("}");
     return sb.toString();
   }

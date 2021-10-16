@@ -29,6 +29,7 @@ import javax.net.ssl.SSLContext;
 
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
+import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.transport.http.SSLConfig;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 
@@ -76,8 +77,9 @@ public class SSLSocketFactory implements Serializable {
 					// provo a leggere i keystore dalla cache
 					if(this.sslConfig.getKeyStoreLocation()!=null) {
 						try {
-							this.sslConfig.setKeyStore(GestoreKeystoreCache.getMerlinKeystore(this.sslConfig.getKeyStoreLocation(), 
-									this.sslConfig.getKeyStoreType(), this.sslConfig.getKeyStorePassword()).getKeyStore().getKeystore());
+							KeyStore keystore = GestoreKeystoreCache.getMerlinKeystore(this.sslConfig.getKeyStoreLocation(), 
+									this.sslConfig.getKeyStoreType(), this.sslConfig.getKeyStorePassword()).getKeyStore();
+							this.sslConfig.setKeyStore(keystore.getKeystore(), keystore.isKeystoreHsm());
 						}catch(Exception e) {
 							String msgError = "Lettura keystore '"+this.sslConfig.getKeyStoreLocation()+"' dalla cache fallita: "+e.getMessage();
 							logError(msgError, e);
@@ -85,8 +87,9 @@ public class SSLSocketFactory implements Serializable {
 					}
 					if(this.sslConfig.getTrustStoreLocation()!=null) {
 						try {
-							this.sslConfig.setTrustStore(GestoreKeystoreCache.getMerlinTruststore(this.sslConfig.getTrustStoreLocation(), 
-									this.sslConfig.getTrustStoreType(), this.sslConfig.getTrustStorePassword()).getTrustStore().getKeystore());
+							KeyStore truststore = GestoreKeystoreCache.getMerlinTruststore(this.sslConfig.getTrustStoreLocation(), 
+									this.sslConfig.getTrustStoreType(), this.sslConfig.getTrustStorePassword()).getTrustStore();
+							this.sslConfig.setTrustStore(truststore.getKeystore(), truststore.isKeystoreHsm());
 						}catch(Exception e) {
 							String msgError = "Lettura truststore '"+this.sslConfig.getTrustStoreLocation()+"' dalla cache fallita: "+e.getMessage();
 							logError(msgError, e);

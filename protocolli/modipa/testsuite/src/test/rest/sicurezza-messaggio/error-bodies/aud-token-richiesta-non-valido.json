@@ -1,0 +1,7 @@
+{
+    "type" : "https://govway.org/handling-errors/400/InteroperabilityInvalidRequest.html",
+    "title" : "InteroperabilityInvalidRequest",
+    "status" : 400,
+    "detail" : "Token contenente un claim 'aud' non valido",
+    "govway_id" : "#uuid"
+}

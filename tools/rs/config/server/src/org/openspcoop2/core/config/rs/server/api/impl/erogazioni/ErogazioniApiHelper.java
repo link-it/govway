@@ -52,6 +52,7 @@ import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.DumpConfigurazioneRegola;
 import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.GestioneTokenAutenticazione;
+import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAzione;
@@ -65,6 +66,7 @@ import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaGestioneIdentificazioneFallita;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaRichiestaIdentificazione;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaRispostaIdentificazione;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.PortaDelegataSoggettiErogatori;
 import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
@@ -109,6 +111,7 @@ import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ConfigurazioneServizio;
+import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.IdSoggetto;
@@ -242,6 +245,24 @@ public class ErogazioniApiHelper {
 				registryReader, configRegistryReader, oldIdAps);
 
 	}
+	
+	public static void updateConsoleConfiguration(ErogazioniEnv env, AccordoServizioParteSpecifica asps,
+			ConsoleConfiguration consoleConf, ProtocolProperties prop) throws Exception {
+    	IDServizio oldIdAps = env.idServizioFactory.getIDServizioFromValues(asps.getTipo(), asps.getNome(), new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()), asps.getVersione()); 
+		oldIdAps.setUriAccordoServizioParteComune(asps.getAccordoServizioParteComune());
+		oldIdAps.setPortType(asps.getPortType());
+
+		IConsoleDynamicConfiguration consoleDynamicConfiguration = env.protocolFactory.createDynamicConfigurationConsole();
+
+		IRegistryReader registryReader = env.soggettiCore.getRegistryReader(env.protocolFactory); 
+		IConfigIntegrationReader configRegistryReader = env.soggettiCore.getConfigIntegrationReader(env.protocolFactory);
+
+		env.requestWrapper.overrideParameter(Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VIA_PARAM, Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE);
+		
+		consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(consoleConf, ConsoleOperationType.CHANGE, env.apsHelper, prop,
+				registryReader, configRegistryReader, oldIdAps);
+
+	}
 
 	public static ConsoleConfiguration getConsoleConfiguration(ErogazioniEnv env, IDFruizione id) throws Exception {
 		IConsoleDynamicConfiguration consoleDynamicConfiguration = env.protocolFactory.createDynamicConfigurationConsole();
@@ -253,6 +274,21 @@ public class ErogazioniApiHelper {
 
 		return consoleDynamicConfiguration.getDynamicConfigFruizioneAccordoServizioParteSpecifica(ConsoleOperationType.ADD, env.apsHelper, registryReader, configRegistryReader, id);
 	}
+	
+	public static void updateConsoleConfiguration(ErogazioniEnv env, IDFruizione id,
+			ConsoleConfiguration consoleConf, ProtocolProperties prop) throws Exception {
+    	
+		IConsoleDynamicConfiguration consoleDynamicConfiguration = env.protocolFactory.createDynamicConfigurationConsole();
+
+		IRegistryReader registryReader = env.soggettiCore.getRegistryReader(env.protocolFactory); 
+		IConfigIntegrationReader configRegistryReader = env.soggettiCore.getConfigIntegrationReader(env.protocolFactory);
+
+		env.requestWrapper.overrideParameter(Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VIA_PARAM, Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE);
+		
+		consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(consoleConf, ConsoleOperationType.CHANGE, env.apsHelper, prop,
+				registryReader, configRegistryReader, id);
+
+	}
 
 
 	public static ProtocolProperties getProtocolProperties(AccordoServizioParteSpecifica asps, ErogazioniEnv env) throws Exception {
@@ -261,6 +297,10 @@ public class ErogazioniApiHelper {
 		ProtocolProperties prop = env.apsHelper.estraiProtocolPropertiesDaRequest(consoleConf, ConsoleOperationType.CHANGE);
 		ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(prop, asps.getProtocolPropertyList(), ConsoleOperationType.CHANGE);
 		
+		// update della configurazione
+		// non sembra servire
+		//updateConsoleConfiguration(env, asps, consoleConf, prop);
+		
 		return prop;
 	}
 	public static ProtocolProperties getProtocolProperties(IDFruizione id, Fruitore f, ErogazioniEnv env) throws Exception {
@@ -268,6 +308,10 @@ public class ErogazioniApiHelper {
 
 		ProtocolProperties prop = env.apsHelper.estraiProtocolPropertiesDaRequest(consoleConf, ConsoleOperationType.CHANGE);
 		ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(prop, f.getProtocolPropertyList(), ConsoleOperationType.CHANGE);
+		
+		// update della configurazione 
+		// non sembra servire
+		//updateConsoleConfiguration(env, id, consoleConf, prop);
 		
 		return prop;
 	}
@@ -479,7 +523,7 @@ public class ErogazioniApiHelper {
 		
 		final boolean accordoPrivato = as.getPrivato()!=null && as.getPrivato();
 
-		final Connettore connRest = ErogazioniApiHelper.buildConnettore(connRegistro.getProperties());
+		final ConnettoreHttp connRest = new ConnettoreHTTPApiHelper().buildConnettore(connRegistro.getProperties(), connRegistro.getTipo());
 		final ConnettoreConfigurazioneHttps httpsConf 	 = connRest.getAutenticazioneHttps();
 
 		final ConnettoreConfigurazioneHttpBasic httpConf	 = connRest.getAutenticazioneHttp();
@@ -643,14 +687,14 @@ public class ErogazioniApiHelper {
         		BaseHelper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),				// this.httpshostverify,
         		(httpsConf!=null ? !httpsConf.isTrustAllServerCerts() : ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS), // httpsTrustVerifyCert
 				evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
-				evalnull( () -> httpsServer.getTruststoreTipo().toString() ),		// this.httpstipo,
+				evalnull( () -> ConnettoreHTTPApiHelper.getTruststoreType(httpsServer) ),		// this.httpstipo,
 				evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
 				evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
 				httpsstato,	//
         		httpskeystore, 	
         		"", //  this.httpspwdprivatekeytrust
         		evalnull( () -> httpsClient.getKeystorePath() ),					// httpspathkey
-        		evalnull( () -> httpsClient.getKeystoreTipo().toString() ),	 		// httpstipokey, coincide con ConnettoriCostanti.TIPOLOGIE_KEYSTORE
+        		evalnull( () -> ConnettoreHTTPApiHelper.getKeystoreType(httpsClient) ),	 		// httpstipokey, coincide con ConnettoriCostanti.TIPOLOGIE_KEYSTORE
         		evalnull( () -> httpsClient.getKeystorePassword() ), 	 		// httpspwdkey
         		evalnull( () -> httpsClient.getKeyPassword() ),	 				// httpspwdprivatekey
         		evalnull( () -> httpsClient.getAlgoritmo() ),					// httpsalgoritmokey
@@ -1108,7 +1152,7 @@ public class ErogazioniApiHelper {
 		
 		 if (impl == null) { 
 			 impl = new APIImpl();
-			 impl.setConnettore(new Connettore());
+			 impl.setConnettore(new BaseConnettoreHttp());
 		 }
 		
 		 boolean accordoPrivato = as.getPrivato()!=null && as.getPrivato();		
@@ -1166,7 +1210,7 @@ public class ErogazioniApiHelper {
         		.map( a -> a.getId().toString() )
         		.toArray(String[]::new);
         
-        final Connettore conn = impl.getConnettore();
+        final BaseConnettoreHttp conn = impl.getConnettore();
         final ConnettoreConfigurazioneHttps httpsConf 	 = conn.getAutenticazioneHttps();
         final ConnettoreConfigurazioneHttpBasic	httpConf	 = conn.getAutenticazioneHttp();
         
@@ -1420,14 +1464,14 @@ public class ErogazioniApiHelper {
         		BaseHelper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),				// this.httpshostverify,
         		(httpsConf!=null ? !httpsConf.isTrustAllServerCerts() : ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS), // httpsTrustVerifyCert
         		evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
-				evalnull( () -> httpsServer.getTruststoreTipo().toString() ),		// this.httpstipo,
+				evalnull( () -> ConnettoreHTTPApiHelper.getTruststoreType(httpsServer) ),		// this.httpstipo,
 				evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
 				evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
 				httpsstato,	//
         		httpskeystore, 	
         		"", //  this.httpspwdprivatekeytrust
         		evalnull( () -> httpsClient.getKeystorePath() ),					// httpspathkey
-        		evalnull( () -> httpsClient.getKeystoreTipo().toString() ),	 		// httpstipokey, coincide con ConnettoriCostanti.TIPOLOGIE_KEYSTORE
+        		evalnull( () -> ConnettoreHTTPApiHelper.getKeystoreType(httpsClient) ),	 		// httpstipokey, coincide con ConnettoriCostanti.TIPOLOGIE_KEYSTORE
         		evalnull( () -> httpsClient.getKeystorePassword() ), 	 		// httpspwdkey
         		evalnull( () -> httpsClient.getKeyPassword() ),	 				// httpspwdprivatekey
         		evalnull( () -> httpsClient.getAlgoritmo() ),					// httpsalgoritmokey
@@ -1503,113 +1547,10 @@ public class ErogazioniApiHelper {
         
 		
 	}
+
+
 	
-	public static final boolean connettoreCheckData(
-			final Connettore conn,
-			final ErogazioniEnv env,
-			boolean erogazione
-			) throws Exception {
-		
-		
-		final boolean http_stato  = conn.getAutenticazioneHttp() != null;
-		final boolean proxy_enabled = conn.getProxy() != null;
-		final boolean tempiRisposta_enabled = conn.getTempiRisposta() != null; 
-		
-	    final ConnettoreConfigurazioneHttps httpsConf 	 = conn.getAutenticazioneHttps();
-	    final ConnettoreConfigurazioneHttpBasic	httpConf	 = conn.getAutenticazioneHttp();
-
-	    final String endpointtype = httpsConf != null ? TipiConnettore.HTTPS.getNome() : TipiConnettore.HTTP.getNome();
-	    
-	    final Properties parametersPOST = null;
-		org.openspcoop2.core.registry.Connettore conTmp = null;
-		List<ExtendedConnettore> listExtendedConnettore = 
-				ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, env.apsHelper, 
-							parametersPOST, false, endpointtype);
-
-	    final ConnettoreConfigurazioneHttpsClient httpsClient = evalnull( () -> httpsConf.getClient() );
-	  	final ConnettoreConfigurazioneHttpsServer httpsServer = evalnull( () -> httpsConf.getServer() );
-	  	final ConnettoreConfigurazioneProxy 	  proxy   	  = conn.getProxy();
-	  	final ConnettoreConfigurazioneTimeout	  timeoutConf = conn.getTempiRisposta();
-	  	final String tokenPolicy = conn.getTokenPolicy(); 
-      	final boolean autenticazioneToken = tokenPolicy!=null;
-	  	
-		final boolean httpsstato = httpsClient != null;	// Questo è per l'autenticazione client.
-	  	 
-		String httpskeystore = null;
-		if ( httpsClient != null ) {
-			if ( httpsClient.getKeystorePath() != null || httpsClient.getKeystoreTipo() != null ) {
-				httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI;  
-			}
-			else
-				httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
-		}
-        			    
-		return env.saHelper.endPointCheckData(
-				env.tipo_protocollo,
-				erogazione,
-				endpointtype,
-				conn.getEndpoint(),
-				null,	// nome
-				null,	// tipo
-				evalnull( () -> httpConf.getUsername() ),
-				evalnull( () -> httpConf.getPassword() ),
-				null,	// this.initcont, 
-				null,	// this.urlpgk,
-				null,	// provurl jms,
-				null, 	// connfact, 
-				null,	// sendas, 
-				conn.getEndpoint(), 													// this.httpsurl, 
-				evalnull( () -> httpsConf.getTipologia().toString() ),				// this.httpstipologia
-				BaseHelper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),	// this.httpshostverify,
-				(httpsConf!=null ? !httpsConf.isTrustAllServerCerts() : ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS), // httpsTrustVerifyCert
-				evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
-				evalnull( () -> httpsServer.getTruststoreTipo().toString() ),	// this.httpstipo,
-				evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
-				evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
-				httpsstato, 
-				httpskeystore,
-				"",																		// httpspwdprivatekeytrust, 
-				evalnull( () -> httpsClient.getKeystorePath() ),				// pathkey
-				evalnull( () -> httpsClient.getKeystoreTipo().toString() ), 		// this.httpstipokey
-				evalnull( () -> httpsClient.getKeystorePassword() ),			// this.httpspwdkey 
-				evalnull( () -> httpsClient.getKeyPassword() ),				// this.httpspwdprivatekey,  
-				evalnull( () -> httpsClient.getAlgoritmo() ),				// this.httpsalgoritmokey, 
-        		evalnull( () -> httpsClient.getKeyAlias() ),					// httpsKeyAlias
-        		evalnull( () -> httpsServer.getTruststoreCrl() ),					// httpsTrustStoreCRLs
-				null,																//	tipoconn (personalizzato)
-				ServletUtils.boolToCheckBoxStatus( http_stato ),										 	//autenticazioneHttp,
-				ServletUtils.boolToCheckBoxStatus( proxy_enabled ),	
-				evalnull( () -> proxy.getHostname() ),
-				evalnull( () -> proxy.getPorta().toString() ),
-				evalnull( () -> proxy.getUsername() ),
-				evalnull( () -> proxy.getPassword() ),
-				ServletUtils.boolToCheckBoxStatus( tempiRisposta_enabled ),	
-				evalnull( () -> timeoutConf.getConnectionTimeout().toString()),	// this.tempiRisposta_connectionTimeout, 
-				evalnull( () -> timeoutConf.getConnectionReadTimeout().toString()), //null,	// this.tempiRisposta_readTimeout, 
-				evalnull( () -> timeoutConf.getTempoMedioRisposta().toString()),	// this.tempiRisposta_tempoMedioRisposta,
-				"no",	// this.opzioniAvanzate, 
-				"", 	// this.transfer_mode, 
-				"", 	// this.transfer_mode_chunk_size, 
-				"", 	// this.redirect_mode, 
-				"", 	// this.redirect_max_hop,
-				null,	// this.requestOutputFileName,
-				null,	// this.requestOutputFileNameHeaders,
-				null,	// this.requestOutputParentDirCreateIfNotExists,
-				null,	// this.requestOutputOverwriteIfExists,
-				null,	// this.responseInputMode, 
-				null,	// this.responseInputFileName, 
-				null,	// this.responseInputFileNameHeaders, 
-				null,	// this.responseInputDeleteAfterRead, 
-				null,	// this.responseInputWaitTime,
-				autenticazioneToken,
-				tokenPolicy,
-				listExtendedConnettore,
-        		false, // erogazioneServizioApplicativoServerEnabled, TODO quando si aggiunge applicativo server
-    			null // rogazioneServizioApplicativoServer
-			);
-	}
-		
-	public static final org.openspcoop2.core.registry.Connettore buildConnettoreRegistro(final ErogazioniEnv env, final Connettore conn) throws Exception {
+	public static final org.openspcoop2.core.registry.Connettore buildConnettoreRegistro(final ErogazioniEnv env, final BaseConnettoreHttp conn) throws Exception {
 		final org.openspcoop2.core.registry.Connettore regConnettore = new org.openspcoop2.core.registry.Connettore();
 		fillConnettoreRegistro(regConnettore, env, conn, "");
 		return regConnettore;
@@ -1619,7 +1560,7 @@ public class ErogazioniApiHelper {
 	public static final void fillConnettoreRegistro(
 			final org.openspcoop2.core.registry.Connettore regConnettore,
 			final ErogazioniEnv env,
-			final Connettore conn,
+			final BaseConnettoreHttp conn,
 			final String oldConnT
 			) throws Exception {
 		
@@ -1658,7 +1599,7 @@ public class ErogazioniApiHelper {
 	     
 		env.apsHelper.fillConnettore(
 				regConnettore, 
-				"false",				// this.connettoreDebug,
+				conn.isDebug() != null && conn.isDebug() ? "true" : "false",				// this.connettoreDebug,
 				endpointtype, 			// endpointtype
 				oldConnT,						// oldConnT
 				"",						// tipoConn Personalizzato
@@ -1677,14 +1618,14 @@ public class ErogazioniApiHelper {
 				BaseHelper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),	// this.httpshostverify,
 				(httpsConf!=null ? !httpsConf.isTrustAllServerCerts() : ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS), // httpsTrustVerifyCert
 				evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
-				evalnull( () -> httpsServer.getTruststoreTipo().toString() ),	// this.httpstipo,
+				evalnull( () -> ConnettoreHTTPApiHelper.getTruststoreType(httpsServer) ),	// this.httpstipo,
 				evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
 				evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
 				httpsstato,
 				httpskeystore,			// this.httpskeystore, 
 				"",																	//  this.httpspwdprivatekeytrust
 				evalnull( () -> httpsClient.getKeystorePath() ),				// pathkey
-				evalnull( () -> httpsClient.getKeystoreTipo().toString() ), 		// this.httpstipokey
+				evalnull( () -> ConnettoreHTTPApiHelper.getKeystoreType(httpsClient) ), 		// this.httpstipokey
 				evalnull( () -> httpsClient.getKeystorePassword() ),			// this.httpspwdkey 
 				evalnull( () -> httpsClient.getKeyPassword() ),				// this.httpspwdprivatekey,  
 				evalnull( () -> httpsClient.getAlgoritmo() ),				// this.httpsalgoritmokey,
@@ -1718,121 +1659,6 @@ public class ErogazioniApiHelper {
 				tokenPolicy,
 				listExtendedConnettore);			
 	}
-	
-	
-	/*
-	 * Metodo utilizzato per costruire un connettore del registro dato un connettore della API.
-	 * Questo metodo è utilizzato sia in caso di costruzione di un nuovo connettore sia in caso di
-	 * modifica di un vecchio connettore.
-	 * 
-	 *  @param oldConnType: Nel caso di un connettore da aggiornare, va specificato il tipo del vecchio connettore
-	 */
-	
-	
-	public static final void fillConnettoreConfigurazione(
-			final org.openspcoop2.core.config.Connettore regConnettore,
-			final ErogazioniEnv env,
-			final Connettore conn,
-			final String oldConnType
-			) throws Exception {
-		
-		final boolean proxy_enabled = conn.getProxy() != null;
-		final boolean tempiRisposta_enabled = conn.getTempiRisposta() != null; 
-		
-	    final ConnettoreConfigurazioneHttps httpsConf 	 = conn.getAutenticazioneHttps();
-	    final ConnettoreConfigurazioneHttpBasic	httpConf	 = conn.getAutenticazioneHttp();
-
-	    final String endpointtype = httpsConf != null ? TipiConnettore.HTTPS.getNome() : TipiConnettore.HTTP.getNome();
-	    
-	    final Properties parametersPOST = null;
-		org.openspcoop2.core.registry.Connettore conTmp = null;
-		List<ExtendedConnettore> listExtendedConnettore = 
-				ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, env.apsHelper, 
-							parametersPOST, false, endpointtype);
-
-	    final ConnettoreConfigurazioneHttpsClient httpsClient = evalnull( () -> httpsConf.getClient() );
-	  	final ConnettoreConfigurazioneHttpsServer httpsServer = evalnull( () -> httpsConf.getServer() );
-	  	final ConnettoreConfigurazioneProxy 	  proxy   	  = conn.getProxy();
-	  	final ConnettoreConfigurazioneTimeout	  timeoutConf = conn.getTempiRisposta();
-	  	final String tokenPolicy = conn.getTokenPolicy(); 
-	  	
-		final boolean httpsstato = httpsClient != null;	// Questo è per l'autenticazione client.
-	  	 
-		String httpskeystore = null;
-		if ( httpsClient != null ) {
-			if ( httpsClient.getKeystorePath() != null || httpsClient.getKeystoreTipo() != null ) {
-				httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI;  
-			}
-			else
-				httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
-		}
-        			    
-	    	     
-		env.apsHelper.fillConnettore(
-				regConnettore, 
-				"false",				// this.connettoreDebug,
-				endpointtype, 			// endpointtype
-				oldConnType,			// oldConnT
-				"",						// tipoConn Personalizzato
-				conn.getEndpoint(),		// this.url,
-				null,	// this.nome,
-				null, 	// this.tipo,
-				evalnull( () -> httpConf.getUsername() ),
-				evalnull( () -> httpConf.getPassword() ),
-				null,	// this.initcont, 
-				null,	// this.urlpgk,
-				conn.getEndpoint(),	// this.url, 
-				null,	// this.connfact,
-				null,	// this.sendas,
-				conn.getEndpoint(), 													// this.httpsurl, 
-				evalnull( () -> httpsConf.getTipologia().toString() ),				// this.httpstipologia
-				BaseHelper.evalorElse( () -> httpsConf.isHostnameVerifier().booleanValue(), false ),	// this.httpshostverify,
-				(httpsConf!=null ? !httpsConf.isTrustAllServerCerts() : ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS), // httpsTrustVerifyCert
-				evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
-				evalnull( () -> httpsServer.getTruststoreTipo().toString() ),	// this.httpstipo,
-				evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
-				evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
-				httpsstato,
-				httpskeystore,			// this.httpskeystore, 
-				"",																	//  this.httpspwdprivatekeytrust
-				evalnull( () -> httpsClient.getKeystorePath() ),				// pathkey
-				evalnull( () -> httpsClient.getKeystoreTipo().toString() ), 		// this.httpstipokey
-				evalnull( () -> httpsClient.getKeystorePassword() ),			// this.httpspwdkey 
-				evalnull( () -> httpsClient.getKeyPassword() ),				// this.httpspwdprivatekey,  
-				evalnull( () -> httpsClient.getAlgoritmo() ),				// this.httpsalgoritmokey,
-        		evalnull( () -> httpsClient.getKeyAlias() ),					// httpsKeyAlias
-        		evalnull( () -> httpsServer.getTruststoreCrl() ),					// httpsTrustStoreCRLs
-			
-				ServletUtils.boolToCheckBoxStatus( proxy_enabled ),	
-				evalnull( () -> proxy.getHostname() ),
-				evalnull( () -> proxy.getPorta().toString() ),
-				evalnull( () -> proxy.getUsername() ),
-				evalnull( () -> proxy.getPassword() ),
-				
-				ServletUtils.boolToCheckBoxStatus( tempiRisposta_enabled ),	
-				evalnull( () -> timeoutConf.getConnectionTimeout().toString()),	// this.tempiRisposta_connectionTimeout, 
-				evalnull( () -> timeoutConf.getConnectionReadTimeout().toString()), //null,	// this.tempiRisposta_readTimeout, 
-				evalnull( () -> timeoutConf.getTempoMedioRisposta().toString()),	// this.tempiRisposta_tempoMedioRisposta,
-				"no",	// this.opzioniAvanzate, 
-				"", 	// this.transfer_mode, 
-				"", 	// this.transfer_mode_chunk_size, 
-				"", 	// this.redirect_mode, 
-				"", 	// this.redirect_max_hop,
-				null,	// this.requestOutputFileName,
-				null,	// this.requestOutputFileNameHeaders,
-				null,	// this.requestOutputParentDirCreateIfNotExists,
-				null,	// this.requestOutputOverwriteIfExists,
-				null,	// this.responseInputMode, 
-				null,	// this.responseInputFileName, 
-				null,	// this.responseInputFileNameHeaders, 
-				null,	// this.responseInputDeleteAfterRead, 
-				null,	// this.responseInputWaitTime,
-				tokenPolicy,
-				listExtendedConnettore);			
-	}
-	
-
-	
 	
 	public static final void createAps(
 			ErogazioniEnv env,
@@ -2228,7 +2054,7 @@ public class ErogazioniApiHelper {
 			allegatoSS.setRuolo(ruoloAllegato);
 			allegatoSS.setDocumento(doc.getByteContenuto());
 			allegatoSS.setNome(doc.getFile());
-			TipiDocumentoSemiformale tipo = Enum.valueOf(TipiDocumentoSemiformale.class, doc.getTipo());
+			TipiDocumentoSemiformale tipo = TipiDocumentoSemiformale.toEnumConstant(doc.getTipo());
 			allegatoSS.setTipoSpecifica((Helper.apiEnumToGovway(tipo, TipoSpecificaSemiformaleEnum.class)));
 			ret.setAllegato(allegatoSS);
 			break;
@@ -2240,8 +2066,13 @@ public class ErogazioniApiHelper {
 			allegatoSL.setRuolo(ruoloAllegato);
 			allegatoSL.setDocumento(doc.getByteContenuto());
 			allegatoSL.setNome(doc.getFile());
-			TipiDocumentoLivelloServizio tipo = Enum.valueOf(TipiDocumentoLivelloServizio.class, doc.getTipo());
+			TipiDocumentoLivelloServizio tipo = TipiDocumentoLivelloServizio.toEnumConstant(doc.getTipo());
 			allegatoSL.setTipoSpecifica((Helper.apiEnumToGovway(tipo, TipoSpecificaLivelloServizioEnum.class)));
+			if(allegatoSL.getTipoSpecifica()==null) {
+				if(TipiDocumentoLivelloServizio.WSAGREEMENT.equals(tipo)) {
+					allegatoSL.setTipoSpecifica(TipoSpecificaLivelloServizioEnum.WS_AGREEMENT);
+				}
+			}
 			ret.setAllegato(allegatoSL);
 			break;
 		}
@@ -2252,8 +2083,16 @@ public class ErogazioniApiHelper {
 			allegatoSSec.setRuolo(ruoloAllegato);
 			allegatoSSec.setDocumento(doc.getByteContenuto());
 			allegatoSSec.setNome(doc.getFile());
-			TipiDocumentoSicurezza tipo = Enum.valueOf(TipiDocumentoSicurezza.class, doc.getTipo());
+			TipiDocumentoSicurezza tipo = TipiDocumentoSicurezza.toEnumConstant(doc.getTipo());
 			allegatoSSec.setTipoSpecifica((Helper.apiEnumToGovway(tipo, TipoSpecificaSicurezzaEnum.class)));
+			if(allegatoSSec.getTipoSpecifica()==null) {
+				if(TipiDocumentoSicurezza.WSPOLICY.equals(tipo)) {
+					allegatoSSec.setTipoSpecifica(TipoSpecificaSicurezzaEnum.WS_POLICY);
+				}
+				else if(TipiDocumentoSicurezza.XACML_POLICY.equals(tipo)) {
+					allegatoSSec.setTipoSpecifica(TipoSpecificaSicurezzaEnum.XACML_POLICY);
+				}
+			}
 			ret.setAllegato(allegatoSSec);
 			break;
 		}
@@ -2472,6 +2311,10 @@ public class ErogazioniApiHelper {
 				listaPorteApplicativeAssociate.add(env.paCore.getPortaApplicativa(mappinErogazione.getIdPortaApplicativa()));
 			}
 			
+			IDPortaApplicativa idPAdefault = new IDPortaApplicativa();
+			idPAdefault.setNome(nomePortaDefault);
+			PortaApplicativa paDefault = env.paCore.getPortaApplicativa(idPAdefault);
+
 			int numeroAbilitate = 0;
 			int numeroConfigurazioni = listaMappingErogazionePortaApplicativa.size();
 			boolean allActionRedefined = false;
@@ -2483,7 +2326,8 @@ public class ErogazioniApiHelper {
 					azioniL.addAll(azioni.keySet());
 				allActionRedefined = env.erogazioniHelper.allActionsRedefinedMappingErogazione(azioniL, listaMappingErogazionePortaApplicativa);
 			}
-			
+
+			boolean isRidefinito = false;
 			for (PortaApplicativa paAssociata : listaPorteApplicativeAssociate) {
 				boolean statoPA = paAssociata.getStato().equals(StatoFunzionalita.ABILITATO);
 				if(statoPA) {
@@ -2491,21 +2335,24 @@ public class ErogazioniApiHelper {
 						numeroAbilitate ++;
 					}
 				}
+
+				if(!paAssociata.getNome().equals(nomePortaDefault) && env.apsHelper.isConnettoreRidefinito(paDefault, paDefault.getServizioApplicativoList().get(0), paAssociata, paAssociata.getServizioApplicativoList().get(0))) {
+					isRidefinito = true;
+				}
+				
 			}
 			
 			StatoDescrizione stato = getStatoDescrizione(numeroAbilitate, allActionRedefined, numeroConfigurazioni );
 			
-			IDPortaApplicativa idPAdefault = new IDPortaApplicativa();
-			idPAdefault.setNome(nomePortaDefault);
-			PortaApplicativa paDefault = env.paCore.getPortaApplicativa(idPAdefault);
 			ApiCanale canale = ErogazioniApiHelper.toApiCanale(env, paDefault, apc, false);
 			
+			String urlConnettore = ConnettoreAPIHelper.getUrlConnettore(getServizioApplicativoErogazione(idServizio, env.saCore, env.paCore), isRidefinito);
 			fillApiImplViewItemWithAsps(
 					env, 
 					asps, 
 					toFill, 
 					getUrlInvocazioneErogazione(asps, env),
-					getConnettoreErogazione(idServizio, env.saCore, env.paCore).getProperties().get(CostantiDB.CONNETTORE_HTTP_LOCATION),
+					urlConnettore,
 					getGestioneCorsFromErogazione(asps, env),
 					idServizio.getSoggettoErogatore().getNome(),
 					stato.stato,
@@ -2557,9 +2404,33 @@ public class ErogazioniApiHelper {
 		List<PortaDelegata> listaPorteDelegateAssociate = new ArrayList<>();
 
 		String nomePortaDefault = null;
+		boolean isRidefinito = false;
+
 		for(MappingFruizionePortaDelegata mappingFruizione : listaMappingFruzionePortaDelegata) {
 			if(mappingFruizione.isDefault()) {
 				nomePortaDefault = mappingFruizione.getIdPortaDelegata().getNome();
+			} else {
+				
+				PortaDelegata pd = env.pdCore.getPortaDelegata(mappingFruizione.getIdPortaDelegata());
+
+				List<String> listaAzioniPDAssociataMappingNonDefault = pd.getAzione().getAzioneDelegataList();
+				String azioneConnettore =  null;
+				if(listaAzioniPDAssociataMappingNonDefault!=null && listaAzioniPDAssociataMappingNonDefault.size()>0) {
+					azioneConnettore = listaAzioniPDAssociataMappingNonDefault.get(0);
+				}
+
+				Optional<Fruitore> fruit = BaseHelper.findFirst(asps.getFruitoreList(),
+						f -> f.getTipo().equals(mappingFruizione.getIdFruitore().getTipo()) && f.getNome().equals(mappingFruizione.getIdFruitore().getNome()));
+
+				if(fruit.isPresent()) {
+					if(azioneConnettore!=null && !"".equals(azioneConnettore)) {
+						for (ConfigurazioneServizioAzione check : fruit.get().getConfigurazioneAzioneList()) {
+							if(check.getAzioneList().contains(azioneConnettore)) {
+								isRidefinito = true;
+							}
+						}
+					}
+				}
 			}
 			listaPorteDelegateAssociate.add(env.pdCore.getPortaDelegata(mappingFruizione.getIdPortaDelegata()));
 		}
@@ -2593,12 +2464,13 @@ public class ErogazioniApiHelper {
 		ApiCanale canale = ErogazioniApiHelper.toApiCanale(env, pdDefault, apc, false);
 		
 		try {
+			String connettore = ConnettoreAPIHelper.getUrlConnettore(evalnull( () -> getConnettoreFruizione(asps, fruitore, env)), isRidefinito);
 			fillApiImplViewItemWithAsps(
 					env, 
 					asps, 
 					toFill, 
 					getUrlInvocazioneFruizione(asps, fruitore.toIDSoggetto(), env),
-					evalnull( () -> getConnettoreFruizione(asps, fruitore, env).getProperties().get(CostantiDB.CONNETTORE_HTTP_LOCATION) ),
+					connettore,
 					getGestioneCorsFromFruizione(asps, fruitore.toIDSoggetto(), env),
 					fruitore.getNome(),
 					stato.stato,
@@ -2766,15 +2638,49 @@ public class ErogazioniApiHelper {
 	}
 	
 	
-	public static final org.openspcoop2.core.config.Connettore getConnettoreErogazione(IDServizio idServizio, ServiziApplicativiCore saCore, PorteApplicativeCore paCore) 
+	public static final InvocazioneServizio getInvocazioneServizioErogazione(IDServizio idServizio, ServiziApplicativiCore saCore, PorteApplicativeCore paCore) 
+			throws DriverConfigurazioneNotFound, DriverConfigurazioneException, CoreException, DriverRegistroServiziException, DriverRegistroServiziNotFound {
+	
+		ServizioApplicativo sa = getServizioApplicativoErogazione(idServizio, saCore, paCore);
+		        		
+		return sa.getInvocazioneServizio();
+	}
+	
+	public static final ServizioApplicativo getServizioApplicativoErogazione(IDServizio idServizio, ServiziApplicativiCore saCore, PorteApplicativeCore paCore) 
 			throws DriverConfigurazioneNotFound, DriverConfigurazioneException, CoreException, DriverRegistroServiziException, DriverRegistroServiziNotFound {
 	
 		final IDPortaApplicativa idPA = paCore.getIDPortaApplicativaAssociataDefault(idServizio);
-		final ServizioApplicativo sa = saCore.getServizioApplicativo(saCore.getIdServizioApplicativo(idServizio.getSoggettoErogatore(), idPA.getNome()));
-		        		
-		return sa.getInvocazioneServizio().getConnettore();
+		return saCore.getServizioApplicativo(saCore.getIdServizioApplicativo(idServizio.getSoggettoErogatore(), idPA.getNome()));
 	}
 	
+	public static final InvocazioneServizio getInvocazioneServizioErogazioneGruppo(IdServizio idAsps, IDServizio idServizio, ErogazioniEnv env, String gruppo) 
+			throws DriverConfigurazioneNotFound, DriverConfigurazioneException, CoreException, DriverRegistroServiziException, DriverRegistroServiziNotFound {
+	
+		final ServizioApplicativo sa = getServizioApplicativo(idAsps, idServizio, env, gruppo);
+		return sa.getInvocazioneServizio();
+
+	}
+	
+	public static final ServizioApplicativo getServizioApplicativo(IdServizio idAsps, IDServizio idServizio, ErogazioniEnv env, String gruppo) 
+			throws DriverConfigurazioneNotFound, DriverConfigurazioneException, CoreException, DriverRegistroServiziException, DriverRegistroServiziNotFound {
+	
+		IDPortaApplicativa idPaDefault = env.paCore.getIDPortaApplicativaAssociataDefault(idServizio);
+		PortaApplicativa paDefault = env.paCore.getPortaApplicativa(idPaDefault);
+
+		final IDPortaApplicativa idPA = (gruppo!=null) ? BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPA(gruppo, idAsps, env.apsCore), "Gruppo per l'erogazione scelta") : idPaDefault;
+		final PortaApplicativa pa = (gruppo!=null) ? env.paCore.getPortaApplicativa(idPA): paDefault;
+		
+		final ServizioApplicativo sa;
+		
+		if(gruppo != null && env.apsHelper.isConnettoreRidefinito(paDefault, paDefault.getServizioApplicativoList().get(0), pa, pa.getServizioApplicativoList().get(0))) {
+			sa = env.saCore.getServizioApplicativo(env.saCore.getIdServizioApplicativo(idServizio.getSoggettoErogatore(), pa.getServizioApplicativoList().get(0).getNome()));
+		} else {
+			sa = env.saCore.getServizioApplicativo(env.saCore.getIdServizioApplicativo(idServizio.getSoggettoErogatore(), paDefault.getServizioApplicativoList().get(0).getNome()));
+		}
+		
+		return sa;
+
+	}
 	
 	public static final org.openspcoop2.core.registry.Connettore getConnettoreFruizione(AccordoServizioParteSpecifica asps, IdSoggetto fruitore, ErogazioniEnv env) {
 		
@@ -3207,112 +3113,6 @@ public class ErogazioniApiHelper {
 		ret.setTipo(item.getTipoServizio());
 		return ret;
 	}
-
-
-
-
-	public static final Connettore buildConnettore(Map<String, String> props) {
-
-		Connettore c = new Connettore();
-		c.setEndpoint(props.get(CostantiDB.CONNETTORE_HTTP_LOCATION));
-		
-		//TODO: Forse questi nel caso delle erogazioni vanno presi dall'invocazione, guarda la updateConnettore.
-		ConnettoreConfigurazioneHttpBasic http = new ConnettoreConfigurazioneHttpBasic();
-		http.setPassword(evalnull( () -> props.get(CostantiDB.CONNETTORE_PWD).trim())); 
-		http.setUsername(evalnull( () -> props.get(CostantiDB.CONNETTORE_USER).trim()));
-		if ( !StringUtils.isAllEmpty(http.getPassword(), http.getUsername()) ) {
-			c.setAutenticazioneHttp(http);
-		}
-	
-		ConnettoreConfigurazioneHttps https = new ConnettoreConfigurazioneHttps();
-		https.setHostnameVerifier( props.get(CostantiDB.CONNETTORE_HTTPS_HOSTNAME_VERIFIER) != null 
-				? Boolean.valueOf(props.get(CostantiDB.CONNETTORE_HTTPS_HOSTNAME_VERIFIER))
-				: null
-			);
-		https.setTipologia(
-				evalnull( () -> Enums.fromValue(SslTipologiaEnum.class, props.get(CostantiDB.CONNETTORE_HTTPS_SSL_TYPE)))
-			);
-		
-		ConnettoreConfigurazioneHttpsServer httpsServer = new ConnettoreConfigurazioneHttpsServer();
-		https.setServer(httpsServer);
-		
-		httpsServer.setAlgoritmo( evalnull( () -> 
-			props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM))
-			);
-		httpsServer.setTruststorePassword(
-				evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD))
-			);
-		httpsServer.setTruststorePath(
-				evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_LOCATION))
-			);
-		httpsServer.setTruststoreTipo(
-				evalnull( () -> Enums.fromValue(KeystoreEnum.class,props.get(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_TYPE)))
-			);
-		
-		ConnettoreConfigurazioneHttpsClient httpsClient = new ConnettoreConfigurazioneHttpsClient();
-		https.setClient(httpsClient);
-		
-		httpsClient.setAlgoritmo(
-				evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM))
-			);
-		httpsClient.setKeyPassword(
-				evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_KEY_PASSWORD))
-			);
-		httpsClient.setKeystorePassword(
-				evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_PASSWORD))
-			);
-		httpsClient.setKeystorePath(
-				evalnull( () -> props.get(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_LOCATION))
-			);
-		httpsClient.setKeystoreTipo(
-				evalnull( () -> Enums.fromValue(KeystoreEnum.class, props.get(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_TYPE)))
-			);
-		
-		if ( https.getTipologia() != null ) {
-			c.setAutenticazioneHttps(https);
-		}
-		
-		String proxy_type = evalnull( () -> props.get(CostantiDB.CONNETTORE_PROXY_TYPE).trim() );
-		if ( !StringUtils.isEmpty(proxy_type)) {
-			ConnettoreConfigurazioneProxy proxy = new ConnettoreConfigurazioneProxy();
-			c.setProxy(proxy);
-			
-			proxy.setHostname(
-					evalnull( () -> props.get(CostantiDB.CONNETTORE_PROXY_HOSTNAME).trim())
-				);
-			proxy.setPassword(
-					evalnull( () -> props.get(CostantiDB.CONNETTORE_PROXY_PASSWORD).trim())
-				);
-			proxy.setPorta(
-					evalnull( () -> Integer.valueOf(props.get(CostantiDB.CONNETTORE_PROXY_PORT)))
-				);
-			proxy.setUsername(
-					evalnull( () -> props.get(CostantiDB.CONNETTORE_PROXY_USERNAME).trim())
-				);
-		}
-		
-		ConnettoreConfigurazioneTimeout tempiRisposta = new ConnettoreConfigurazioneTimeout();		
-		tempiRisposta.setConnectionReadTimeout( 
-				evalnull( () -> Integer.valueOf(props.get(CostantiDB.CONNETTORE_READ_CONNECTION_TIMEOUT))) 
-			);
-		tempiRisposta.setConnectionTimeout(
-				evalnull( () -> Integer.valueOf(props.get(CostantiDB.CONNETTORE_CONNECTION_TIMEOUT)))
-			);
-		tempiRisposta.setTempoMedioRisposta(
-				evalnull( () -> Integer.valueOf(props.get(CostantiDB.CONNETTORE_TEMPO_MEDIO_RISPOSTA)))
-			);
-		
-		if ( tempiRisposta.getConnectionReadTimeout() != null || tempiRisposta.getConnectionTimeout() != null || tempiRisposta.getTempoMedioRisposta() != null) {
-			c.setTempiRisposta(tempiRisposta);
-		}
-		
-		c.setTokenPolicy(
-				evalnull( () -> props.get(CostantiDB.CONNETTORE_TOKEN_POLICY).trim())
-			);
-		
-		return c;
-	}
-
 
 
 	public static final CorsConfigurazione buildCorsConfigurazione(GestioneCors body, final ErogazioniEnv env,
@@ -3868,7 +3668,10 @@ public class ErogazioniApiHelper {
 			final String autorizzazioneAutenticati = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isRichiedente());
 			final String autorizzazioneRuoli = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isRuoli());
 			final String autorizzazioneScope = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isScope());
-			final String autorizzazione_tokenOptions = authzAbilitata.getTokenClaims();
+			String autorizzazione_tokenOptions = null;
+			if(authzAbilitata.getTokenClaims()!=null && !authzAbilitata.getTokenClaims().isEmpty()) {
+				autorizzazione_tokenOptions = String.join("\n", authzAbilitata.getTokenClaims());
+			}
 			final RuoloTipologia tipoRuoloFonte = Enums.ruoloTipologiaFromRest.get(authzAbilitata.getRuoliFonte());
 			final RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant( evalnull( () -> authzAbilitata.getRuoliRichiesti().toString()) );	// Gli enum coincidono
 			final ScopeTipoMatch scopeTipoMatch = ScopeTipoMatch.toEnumConstant( evalnull( () -> authzAbilitata.getScopeRichiesti().toString()) );
@@ -3991,7 +3794,10 @@ public class ErogazioniApiHelper {
 			final String autorizzazioneAutenticati = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isRichiedente());
 			final String autorizzazioneRuoli = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isRuoli());
 			final String autorizzazioneScope = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isScope());
-			final String autorizzazione_tokenOptions = authzAbilitata.getTokenClaims();
+			String autorizzazione_tokenOptions = null;
+			if(authzAbilitata.getTokenClaims()!=null && !authzAbilitata.getTokenClaims().isEmpty()) {
+				autorizzazione_tokenOptions = String.join("\n", authzAbilitata.getTokenClaims());
+			}
 			final RuoloTipologia tipoRuoloFonte = Enums.ruoloTipologiaFromRest.get(authzAbilitata.getRuoliFonte());
 			final RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant( evalnull( () -> authzAbilitata.getRuoliRichiesti().toString()) );	// Gli enum coincidono
 			final ScopeTipoMatch scopeTipoMatch = ScopeTipoMatch.toEnumConstant( evalnull( () -> authzAbilitata.getScopeRichiesti().toString()) );
@@ -4137,7 +3943,18 @@ public class ErogazioniApiHelper {
 			authzAbilitata.setScopeRichiesti( evalnull( () -> AllAnyEnum.fromValue( pa.getScope().getMatch().getValue() )));
 			
 			authzAbilitata.setToken( (pa.getGestioneToken()!=null && pa.getGestioneToken().getOptions() != null) ? true : false);
-			authzAbilitata.setTokenClaims( evalnull( () -> pa.getGestioneToken().getOptions() ));
+			
+			if(pa.getGestioneToken()!=null) {
+				String pString = pa.getGestioneToken().getOptions();
+				if(pString!=null) {
+					List<String> proprieta = new ArrayList<>();
+					String[] psplit = pString.split("\n");
+					for(String pr: psplit) {
+						proprieta.add(pr);
+					}
+					authzAbilitata.setTokenClaims(proprieta);
+				}
+			}
 			
 			break;
 		}
@@ -4203,8 +4020,19 @@ public class ErogazioniApiHelper {
 			authzAbilitata.setScopeRichiesti( evalnull( () -> AllAnyEnum.fromValue( pd.getScope().getMatch().getValue() )));
 			
 			authzAbilitata.setToken( (pd.getGestioneToken()!=null && pd.getGestioneToken().getOptions() != null) ? true : false);
-			authzAbilitata.setTokenClaims( evalnull( () -> pd.getGestioneToken().getOptions() ));
-
+			
+			if(pd.getGestioneToken()!=null) {
+				String pString = pd.getGestioneToken().getOptions();
+				if(pString!=null) {
+					List<String> proprieta = new ArrayList<>();
+					String[] psplit = pString.split("\n");
+					for(String pr: psplit) {
+						proprieta.add(pr);
+					}
+					authzAbilitata.setTokenClaims(proprieta);
+				}
+			}
+				
 			break;
 		}
 		case XACML_POLICY: {
@@ -5444,5 +5272,14 @@ public class ErogazioniApiHelper {
 		}catch(RegExpNotFoundException e) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("La uri fornita '"+uriApiImplementata+"' non rispetta il formato atteso '"+pattern1+"|"+pattern2+"': "+e.getMessage());
 		}
+	}
+	
+	public static boolean isConnettoreApplicativoServer(IdServizio idAsps, IDServizio idServizioFromAccordo, ErogazioniEnv env,
+			String gruppo) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, CoreException, DriverRegistroServiziException, DriverRegistroServiziNotFound {
+		return isConnettoreApplicativoServer(getServizioApplicativo(idAsps, idServizioFromAccordo, env, gruppo));
+	}
+	
+	public static boolean isConnettoreApplicativoServer(ServizioApplicativo sa) {
+		return sa.getTipo() != null && sa.getTipo().equals(CostantiConfigurazione.SERVER);
 	}
 }

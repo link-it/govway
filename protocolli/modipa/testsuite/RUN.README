@@ -7,6 +7,18 @@ Prerequisiti:
     update configurazione set multitenant_stato='abilitato', multitenant_fruizioni='escludiSoggettoFruitore', multitenant_erogazioni='escludiSoggettoErogatore';
   NOTA:!!!una volta impostato riavviare l'application server!!!
 
++ Creare le proprieta di sistema, accedendo alla sezione 'Configurazione -> Generale -> Proprietà di Sistema':
+  - nome: SystemProperty1 valore: SystemValue1
+  - nome: JavaProperty1 valore: JavaValue1
+  Il comando sql per crearle è:
+    INSERT INTO pdd_sys_props (nome,valore) VALUES ('SystemProperty1','SystemValue1');
+    INSERT INTO pdd_sys_props (nome,valore) VALUES ('JavaProperty1','JavaValue1');
+  NOTA:!!!una volta impostato riavviare l'application server!!!
+
++ Aggiungere la variabile di ambiene 'EnvProperty1' con valore 'EnvValue1'
+  Per farlo aggiungere in standalone.conf (wildfly) o setenv.sh (tomcat) l'istruzione:
+	export EnvProperty1=EnvValue1
+
 + Configurare l'ambiente di esecuzione dei test:
 
 	- Configurare il file di properties delle classi junit in <src/testsuite.properties>
@@ -28,6 +40,12 @@ Prerequisiti:
 	   La configurazione del connettore assume che il keystore config_https/jks/erogatore.jks sia stato copiato in /etc/govway/keys
 	c) Configurazione della JVM dell'A.S. in modo che utilizzi il truststore config_https/jks/erogatore.jks
 	   Indicazioni descritte per JBoss in config_https/configurazioneTrustStoreJBOSS.txt
+
++ Su tomcat 9 è necessario aggiungere il parametro maxHttpHeaderSize="65536" sul connector con porta 8080 nel file TOMCAT_DIR/conf/server.xml. Ad esempio:
+
+    <Connector port="8080" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               redirectPort="8443" allowTrace="true" maxHttpHeaderSize="65536" />
 
 + Nel file /etc/govway/govway_local.properties abilitare le seguenti proprietà:
 	org.openspcoop2.pdd.check.readJMXResources.enabled=true
@@ -79,6 +97,8 @@ Prerequisiti:
 		cp /etc/govway/keys/xca/ExampleClient2.crt wildfly-18.0.0.Final/welcome-content
 		cp /etc/govway/keys/xca/ExampleServer.crt wildfly-18.0.0.Final/welcome-content
 
++ HSM per TLS Keystore. Seguire le indicazioni descritte in pkcs11/PKCS11.README
+
 + Aggiungere in /etc/hosts la riga
 	127.0.0.1 Erogatore
 
@@ -87,6 +107,12 @@ Prerequisiti:
 
 + Compilare i test con
 	ant build
+
++ Caricare la configurazione con 
+	ant load_config
+  dopo aver caricato la configurazione
+	cd pkcs11
+	bash updateCertificatiConfigurazione.sh <NOME_SOGGETTO>
 
 + Eseguire i test con
 	ant run_test

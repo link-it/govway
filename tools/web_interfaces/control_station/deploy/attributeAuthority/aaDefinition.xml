@@ -111,17 +111,12 @@
 				<property name="trustAllCerts" properties="sslConfig" selectedValue="false" unselectedValue="true"/>
 			</item>
 	
-			<item type="select" name="endpointHttpsTruststoreType" label="Tipo" default="jks">
+			<item type="select" name="endpointHttpsTruststoreType" label="Tipo" default="jks" reloadOnChange="true">
 				<conditions>
 					<condition and="false">
 						<selected name="endpointHttpsTrustAllCerts"/>
 					</condition>	
 				</conditions>
-				<values>
-					<value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/>
-					<value value="jceks" label="JCEKS"/>
-				</values>
 				<property name="trustStoreType" properties="sslConfig" />
 			</item>
 			<item type="textarea" name="endpointHttpsTruststoreFile" label="File" required="true">
@@ -174,17 +169,12 @@
 				</values>
 				<property name="policy.endpoint.ssl.mode" />
 			</item>
-			<item type="select" name="endpointHttpsClientKeystoreType" label="Tipo" default="jks">
+			<item type="select" name="endpointHttpsClientKeystoreType" label="Tipo" default="jks" reloadOnChange="true">
 				<conditions>
 					<condition and="true">
 						<equals name="endpointHttpsClientMode" value="ridefinito"/>
 					</condition>
 				</conditions>
-				<values>
-					<value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/>
-					<value value="jceks" label="JCEKS"/>
-				</values>
 				<property name="keyStoreType" properties="sslClientConfig" />
 			</item>
 			<item type="textarea" name="endpointHttpsClientKeystoreFile" label="File" required="true">
@@ -359,12 +349,6 @@
 			</conditions>
 
 			<item type="select" name="aaJWSKeystoreType" label="Tipo" default="jks" reloadOnChange="true">
-				<values>
-					<value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/>
-					<!--  <value value="jceks" label="JCEKS"/> -->
-					<!--  <value value="jwk" label="JWK"/> -->
-				</values>
 				<property name="policy.attributeAuthority.request.jws.keystore.type" />
 			</item>
 			<item type="textarea" name="aaJWSKeystoreFile" label="File" required="true">
@@ -406,9 +390,8 @@
 
 			<item type="select" name="aaSignatureIncludeCertMode" label="X.509 Certificate" default="-" reloadOnChange="true" >
 				<conditions>
-					<condition and="false">
-						<equals name="aaJWSKeystoreType" value="jks"/>
-						<equals name="aaJWSKeystoreType" value="pkcs12"/>
+					<condition not="true" and="false">
+						<equals name="aaJWSKeystoreType" value="jwk"/>
 					</condition>
 				</conditions>
 				<values>
@@ -436,9 +419,8 @@
 			</item>
 			<item type="select" name="aaSignatureIncludeCertShaMode" label="Digest X.509 Certificate" default="-" reloadOnChange="true" >
 				<conditions>
-					<condition and="false">
-						<equals name="aaJWSKeystoreType" value="jks"/>
-						<equals name="aaJWSKeystoreType" value="pkcs12"/>
+					<condition not="true" and="false">
+						<equals name="aaJWSKeystoreType" value="jwk"/>
 					</condition>
 				</conditions>
 				<values>
@@ -688,12 +670,6 @@
 			</conditions>
 
 			<item type="select" name="aaJWSTruststoreType" label="Tipo" default="jks" reloadOnChange="true">
-				<values>
-					<value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/>
-					<value value="jceks" label="JCEKS"/>
-					<value value="jwk" label="JWK Set"/>
-				</values>
 				<property name="rs.security.keystore.type" properties="signatureVerifyPropRefId" />
 			</item>
 			<item type="textarea" name="aaJWSTruststoreFile" label="File" required="true">

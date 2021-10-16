@@ -80,6 +80,9 @@ And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', p
 When method post
 Then status 200
 
+# Attendo tracciatura attachments
+* java.lang.Thread.sleep(3000)
+
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia_basic ({tid: tid, tipo: 'Richiesta', profilo_sicurezza: "IDAS0301" })
 * call check_traccia_basic ({tid: tid, tipo: 'Risposta', profilo_sicurezza: "IDAS0301" })

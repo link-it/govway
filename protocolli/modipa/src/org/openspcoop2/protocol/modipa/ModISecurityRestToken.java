@@ -22,6 +22,7 @@ package org.openspcoop2.protocol.modipa;
 
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**
  * ModISecurityRestToken
@@ -32,15 +33,41 @@ import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
  */
 public class ModISecurityRestToken extends AbstractModISecurityToken<String> {
 
-	public ModISecurityRestToken(String token) {
+	private String tokenIntegrityHeaderName;
+	private String tokenIntegrity;
+	private String headerName; 
+	
+	public ModISecurityRestToken(String tokenAuthorization, 
+			String tokenIntegrityHeaderName, String tokenIntegrity) {
+		super(tokenAuthorization);
+		this.tokenIntegrityHeaderName = tokenIntegrityHeaderName;
+		this.tokenIntegrity = tokenIntegrity;
+	}
+	public ModISecurityRestToken(String headerName, String token) {
 		super(token);
+		this.headerName = headerName;
 	}
 
 	@Override
 	public String toString(TipoSerializzazione tipoSerializzazione) throws ProtocolException{
 		switch (tipoSerializzazione) {
 		case DEFAULT:
-			return this.getToken();
+			StringBuilder sb = new StringBuilder();
+			if(this.tokenIntegrity!=null) {
+				// 2 header
+				sb.append(HttpConstants.AUTHORIZATION).append(": ").append(HttpConstants.AUTHORIZATION_PREFIX_BEARER).append(this.getToken());
+				sb.append("\n");
+				sb.append(this.tokenIntegrityHeaderName).append(": ").append(this.tokenIntegrity);
+			}
+			else {
+				if(HttpConstants.AUTHORIZATION.equals(this.headerName)) {
+					sb.append(HttpConstants.AUTHORIZATION).append(": ").append(HttpConstants.AUTHORIZATION_PREFIX_BEARER).append(this.getToken());
+				}
+				else {
+					sb.append(this.headerName).append(": ").append(this.tokenIntegrity);
+				}
+			}
+			return sb.toString();
 		default:
 			throw new ProtocolException("Tipo di serializzazione ["+tipoSerializzazione+"] non supportata");
 		}
@@ -50,7 +77,8 @@ public class ModISecurityRestToken extends AbstractModISecurityToken<String> {
 	public byte[] toByteArray(TipoSerializzazione tipoSerializzazione) throws ProtocolException{
 		switch (tipoSerializzazione) {
 		case DEFAULT:
-			return this.getToken().getBytes();
+			//return this.getToken().getBytes();
+			return this.toString(tipoSerializzazione).getBytes();
 		default:
 			throw new ProtocolException("Tipo di serializzazione ["+tipoSerializzazione+"] non supportata");
 		}

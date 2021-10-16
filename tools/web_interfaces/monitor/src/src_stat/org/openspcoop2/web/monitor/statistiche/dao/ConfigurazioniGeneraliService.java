@@ -49,6 +49,14 @@ import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.CostantiLabel;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
+import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
+import org.openspcoop2.core.controllo_traffico.IdPolicy;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
+import org.openspcoop2.core.controllo_traffico.dao.IAttivazionePolicyServiceSearch;
+import org.openspcoop2.core.controllo_traffico.dao.IConfigurazionePolicyServiceSearch;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -56,6 +64,10 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.id.IdentificativiErogazione;
 import org.openspcoop2.core.id.IdentificativiFruizione;
+import org.openspcoop2.core.mapping.DBMappingUtils;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -81,6 +93,7 @@ import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
+import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsService;
@@ -95,6 +108,7 @@ import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGeneralePK;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioniGeneraliSearchForm;
 import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPA;
 import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPD;
+import org.openspcoop2.web.monitor.statistiche.bean.DettaglioRateLimiting;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiConfigurazioni;
 import org.openspcoop2.web.monitor.statistiche.utils.ConfigurazioniUtils;
 import org.slf4j.Logger;
@@ -117,9 +131,12 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 
 	private transient org.openspcoop2.core.commons.search.dao.IServiceManager utilsServiceManager;
 	private transient org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseServiceManager;
+	private transient org.openspcoop2.core.controllo_traffico.dao.IServiceManager controlloTrafficoServiceManager;
 
 	private IPortaDelegataServiceSearch portaDelegataDAO = null;
 	private IPortaApplicativaServiceSearch portaApplicativaDAO  = null;
+	private IAttivazionePolicyServiceSearch attivazionePolicyDAO = null;
+	private IConfigurazionePolicyServiceSearch configurazionePolicyDAO = null;
 
 	private transient DriverConfigurazioneDB driverConfigDB = null;
 	private transient DriverRegistroServiziDB driverRegistroDB = null;
@@ -137,6 +154,9 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		
 			this.pluginsBaseServiceManager = (org.openspcoop2.core.plugins.dao.IServiceManager) DAOFactory
 					.getInstance( ConfigurazioniGeneraliService.log).getServiceManager(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(),ConfigurazioniGeneraliService.log);
+			
+			this.controlloTrafficoServiceManager = (org.openspcoop2.core.controllo_traffico.dao.IServiceManager) DAOFactory
+					.getInstance( ConfigurazioniGeneraliService.log).getServiceManager(org.openspcoop2.core.controllo_traffico.utils.ProjectInfo.getInstance(), ConfigurazioniGeneraliService.log);
 			
 			this._init(null, null);
 			
@@ -163,6 +183,9 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			this.pluginsBaseServiceManager = (org.openspcoop2.core.plugins.dao.IServiceManager) DAOFactory
 					.getInstance( ConfigurazioniGeneraliService.log).getServiceManager(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(), con,autoCommit,serviceManagerProperties,log);
 			
+			this.controlloTrafficoServiceManager = (org.openspcoop2.core.controllo_traffico.dao.IServiceManager) DAOFactory
+					.getInstance( ConfigurazioniGeneraliService.log).getServiceManager(org.openspcoop2.core.controllo_traffico.utils.ProjectInfo.getInstance(), con,autoCommit,serviceManagerProperties, ConfigurazioniGeneraliService.log);
+			
 			this._init(con, serviceManagerProperties);
 			
 		}catch(Exception e){
@@ -173,6 +196,9 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		try{
 			this.portaApplicativaDAO = this.utilsServiceManager.getPortaApplicativaServiceSearch();
 			this.portaDelegataDAO = this.utilsServiceManager.getPortaDelegataServiceSearch();
+			
+			this.attivazionePolicyDAO = this.controlloTrafficoServiceManager.getAttivazionePolicyServiceSearch();
+			this.configurazionePolicyDAO = this.controlloTrafficoServiceManager.getConfigurazionePolicyServiceSearch();
 
 			String tipoDatabase = null;
 			if(serviceManagerProperties!=null) {
@@ -213,10 +239,35 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		ConfigurazioniGeneraliService.log.debug("Metodo FindAll");
 
 		try {
+			
+			String tipoProtocollo =this.search.getProtocollo();
+			
+			String tipoSoggetto = this.search.getTipoSoggettoLocale();
+			String nomeSoggetto = this.search.getSoggettoLocale();
+			
+			String input = null;
+			
+			String gruppo = this.search.getGruppo();
+			
+			boolean apiImplSelected = StringUtils.isNotBlank(this.search.getNomeServizio());
+			
+			IDAccordo idAccordo = null;
+			IDAccordoFactory idAccordoFactory = null;
+			String api = this.search.getApi();
+			if( !apiImplSelected && (api!=null && !"".equals(api)) ) {
+				idAccordoFactory = IDAccordoFactory.getInstance();
+				idAccordo = idAccordoFactory.getIDAccordoFromUri(api);
+			}
+			
+			List<IDServizio> listIDServizio = getListServizi(apiImplSelected, gruppo, idAccordo,
+					tipoProtocollo, tipoSoggetto, nomeSoggetto,
+					input);
+
 			if(PddRuolo.DELEGATA.equals(this.search.getTipologiaTransazioni())) {
 				IExpression expr = this.createPDExpression(this.portaDelegataDAO, this.search, false);
 				IPaginatedExpression pagExpr = this.portaDelegataDAO.toPaginatedExpression(expr);
 
+				setListServiziPD(apiImplSelected, listIDServizio, pagExpr);
 
 				List<PortaDelegata> findAll = this.portaDelegataDAO.findAll(pagExpr);
 				if(findAll != null && findAll.size() > 0){
@@ -231,6 +282,8 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				IExpression expr = this.createPAExpression(this.portaApplicativaDAO, this.search, false);
 				IPaginatedExpression pagExpr = this.portaApplicativaDAO.toPaginatedExpression(expr);
 
+				setListServiziPA(apiImplSelected, listIDServizio, pagExpr);
+				
 				List<PortaApplicativa> findAll = this.portaApplicativaDAO.findAll(pagExpr);
 				if(findAll != null && findAll.size() > 0){
 					List<ConfigurazioneGenerale> lst = new ArrayList<ConfigurazioneGenerale>();
@@ -252,6 +305,8 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		} catch (CoreException e) {
 			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
 		} catch (UserInvalidException e) {
+			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
+		} catch (Exception e) {
 			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
 		}
 
@@ -643,54 +698,17 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				idAccordo = idAccordoFactory.getIDAccordoFromUri(api);
 			}
 			
-			List<IDServizio> listIDServizio = null;
-			if(!apiImplSelected && ( (gruppo!=null && !"".equals(gruppo)) || idAccordo!=null ) ) {
-				listIDServizio = new ArrayList<IDServizio>();
-				List<SelectItem> list = null;
-				boolean distinct = true;
-				if(PddRuolo.DELEGATA.equals(this.search.getTipologiaTransazioni())) {
-					list = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziFruizione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,null,null,input, false, this.search.getPermessiUtenteOperatore(), distinct);
-				}else {
-					// bisogna filtrare per soggetti operativi
-					list = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziErogazione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,input, true, this.search.getPermessiUtenteOperatore(), distinct);
-				}
-				if(list!=null && list.size()>0) {
-					for (SelectItem selectItem : list) {
-						String servizioString = (String) selectItem.getValue();
-						IDServizio idServizio = ParseUtility.parseServizioSoggetto(servizioString);
-						listIDServizio.add(idServizio);
-					}
-				}
-				else {
-					// creo un servizio non esistente per fornire 0 dati
-					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues("-", "-", "-", "-", -1);
-					listIDServizio.add(idServizio);
-				}
-			}
+			List<IDServizio> listIDServizio = getListServizi(apiImplSelected, gruppo, idAccordo,
+					tipoProtocollo, tipoSoggetto, nomeSoggetto,
+					input);
 			
 			if(PddRuolo.DELEGATA.equals(this.search.getTipologiaTransazioni())) {
 				IExpression expr = this.createPDExpression(this.portaDelegataDAO, this.search, false);
 				IPaginatedExpression pagExpr = this.portaDelegataDAO.toPaginatedExpression(expr);
 				pagExpr.offset(start).limit(limit);
 
-				if(!apiImplSelected && listIDServizio!=null && !listIDServizio.isEmpty()) {
+				setListServiziPD(apiImplSelected, listIDServizio, pagExpr);
 
-					List<IExpression> exprOrList = new ArrayList<IExpression>();
-					for (IDServizio idServizio : listIDServizio) {
-						
-						IExpression exprIdServizio = this.portaDelegataDAO.newExpression();
-						exprIdServizio.equals(PortaDelegata.model().TIPO_SOGGETTO_EROGATORE,idServizio.getSoggettoErogatore().getTipo());
-						exprIdServizio.equals(PortaDelegata.model().NOME_SOGGETTO_EROGATORE,idServizio.getSoggettoErogatore().getNome());
-						exprIdServizio.equals(PortaDelegata.model().TIPO_SERVIZIO,idServizio.getTipo());
-						exprIdServizio.equals(PortaDelegata.model().NOME_SERVIZIO,idServizio.getNome());
-						exprIdServizio.equals(PortaDelegata.model().VERSIONE_SERVIZIO,idServizio.getVersione());
-						exprOrList.add(exprIdServizio);
-						
-					}
-					pagExpr.or(exprOrList.toArray(new IExpression[1]));
-
-				}
-				
 				List<PortaDelegata> findAll = this.portaDelegataDAO.findAll(pagExpr);
 				if(findAll != null && findAll.size() > 0){
 					List<ConfigurazioneGenerale> lst = new ArrayList<ConfigurazioneGenerale>();
@@ -705,29 +723,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				IPaginatedExpression pagExpr = this.portaApplicativaDAO.toPaginatedExpression(expr);
 				pagExpr.offset(start).limit(limit);
 
-				if(!apiImplSelected && listIDServizio!=null && !listIDServizio.isEmpty()) {
-
-					List<IExpression> exprOrList = new ArrayList<IExpression>();
-					for (IDServizio idServizio : listIDServizio) {
-						IExpression exprIdServizio = this.portaApplicativaDAO.newExpression();
-						exprIdServizio.equals(PortaApplicativa.model().TIPO_SERVIZIO,idServizio.getTipo());
-						exprIdServizio.equals(PortaApplicativa.model().NOME_SERVIZIO,idServizio.getNome());
-						exprIdServizio.equals(PortaApplicativa.model().VERSIONE_SERVIZIO,idServizio.getVersione());
-						boolean setSoggettoProprietario = false;
-						if(this.search.getTipoNomeSoggettoLocale()!=null && 
-								!StringUtils.isEmpty(this.search.getTipoNomeSoggettoLocale()) && !"--".equals(this.search.getTipoNomeSoggettoLocale())){
-							setSoggettoProprietario = true; // impostato dentro createPAExpression
-						}
-						if(setSoggettoProprietario==false){
-							exprIdServizio.equals(PortaApplicativa.model().ID_SOGGETTO.TIPO,idServizio.getSoggettoErogatore().getTipo());
-							exprIdServizio.equals(PortaApplicativa.model().ID_SOGGETTO.NOME,idServizio.getSoggettoErogatore().getNome());
-						}
-						exprOrList.add(exprIdServizio);
-						
-					}
-					pagExpr.or(exprOrList.toArray(new IExpression[1]));
-
-				}
+				setListServiziPA(apiImplSelected, listIDServizio, pagExpr);
 				
 				List<PortaApplicativa> findAll = this.portaApplicativaDAO.findAll(pagExpr);
 				if(findAll != null && findAll.size() > 0){
@@ -763,11 +759,35 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		ConfigurazioniGeneraliService.log.debug("Metodo findAllDettagli: start[" + start + "], limit: [" + limit + "]");
 
 		try {
+			String tipoProtocollo =this.search.getProtocollo();
+			
+			String tipoSoggetto = this.search.getTipoSoggettoLocale();
+			String nomeSoggetto = this.search.getSoggettoLocale();
+			
+			String input = null;
+			
+			String gruppo = this.search.getGruppo();
+			
+			boolean apiImplSelected = StringUtils.isNotBlank(this.search.getNomeServizio());
+			
+			IDAccordo idAccordo = null;
+			IDAccordoFactory idAccordoFactory = null;
+			String api = this.search.getApi();
+			if( !apiImplSelected && (api!=null && !"".equals(api)) ) {
+				idAccordoFactory = IDAccordoFactory.getInstance();
+				idAccordo = idAccordoFactory.getIDAccordoFromUri(api);
+			}
+			
+			List<IDServizio> listIDServizio = getListServizi(apiImplSelected, gruppo, idAccordo,
+					tipoProtocollo, tipoSoggetto, nomeSoggetto,
+					input);
+			
 			if(PddRuolo.DELEGATA.equals(this.search.getTipologiaTransazioni())) {
 				IExpression expr = this.createPDExpression(this.portaDelegataDAO, this.search, false);
 				IPaginatedExpression pagExpr = this.portaDelegataDAO.toPaginatedExpression(expr);
 				pagExpr.offset(start).limit(limit);
 
+				setListServiziPD(apiImplSelected, listIDServizio, pagExpr);
 
 				List<PortaDelegata> findAll = this.portaDelegataDAO.findAll(pagExpr);
 				if(findAll != null && findAll.size() > 0){
@@ -787,6 +807,8 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				IExpression expr = this.createPAExpression(this.portaApplicativaDAO, this.search, false);
 				IPaginatedExpression pagExpr = this.portaApplicativaDAO.toPaginatedExpression(expr);
 				pagExpr.offset(start).limit(limit);
+
+				setListServiziPA(apiImplSelected, listIDServizio, pagExpr);
 
 				List<PortaApplicativa> findAll = this.portaApplicativaDAO.findAll(pagExpr);
 				if(findAll != null && findAll.size() > 0){
@@ -829,6 +851,8 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		} catch (ProtocolException e) {
 			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
 		} catch (UserInvalidException e) {
+			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
+		} catch (Exception e) {
 			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
 		}
 
@@ -943,79 +967,20 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				idAccordo = idAccordoFactory.getIDAccordoFromUri(api);
 			}
 			
-			List<IDServizio> listIDServizio = null;
-			if(!apiImplSelected && ( (gruppo!=null && !"".equals(gruppo)) || idAccordo!=null ) ) {
-				listIDServizio = new ArrayList<IDServizio>();
-				List<SelectItem> list = null;
-				boolean distinct = true;
-				if(PddRuolo.DELEGATA.equals(this.search.getTipologiaTransazioni())) {
-					list = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziFruizione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,null,null,input, false, this.search.getPermessiUtenteOperatore(), distinct);
-				}else {
-					// bisogna filtrare per soggetti operativi
-					list = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziErogazione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,input, true, this.search.getPermessiUtenteOperatore(), distinct);
-				}
-				if(list!=null && list.size()>0) {
-					for (SelectItem selectItem : list) {
-						String servizioString = (String) selectItem.getValue();
-						IDServizio idServizio = ParseUtility.parseServizioSoggetto(servizioString);
-						listIDServizio.add(idServizio);
-					}
-				}
-				else {
-					// creo un servizio non esistente per fornire 0 dati
-					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues("-", "-", "-", "-", -1);
-					listIDServizio.add(idServizio);
-				}
-			}
+			List<IDServizio> listIDServizio = getListServizi(apiImplSelected, gruppo, idAccordo,
+					tipoProtocollo, tipoSoggetto, nomeSoggetto,
+					input);
 			
 			if(PddRuolo.DELEGATA.equals(this.search.getTipologiaTransazioni())) {
 				IExpression expr = this.createPDExpression(this.portaDelegataDAO, this.search, true);
 				
-				if(!apiImplSelected && listIDServizio!=null && !listIDServizio.isEmpty()) {
-
-					List<IExpression> exprOrList = new ArrayList<IExpression>();
-					for (IDServizio idServizio : listIDServizio) {
-						
-						IExpression exprIdServizio = this.portaDelegataDAO.newExpression();
-						exprIdServizio.equals(PortaDelegata.model().TIPO_SOGGETTO_EROGATORE,idServizio.getSoggettoErogatore().getTipo());
-						exprIdServizio.equals(PortaDelegata.model().NOME_SOGGETTO_EROGATORE,idServizio.getSoggettoErogatore().getNome());
-						exprIdServizio.equals(PortaDelegata.model().TIPO_SERVIZIO,idServizio.getTipo());
-						exprIdServizio.equals(PortaDelegata.model().NOME_SERVIZIO,idServizio.getNome());
-						exprIdServizio.equals(PortaDelegata.model().VERSIONE_SERVIZIO,idServizio.getVersione());
-						exprOrList.add(exprIdServizio);
-						
-					}
-					expr.or(exprOrList.toArray(new IExpression[1]));
-
-				}
+				setListServiziPD(apiImplSelected, listIDServizio, expr);
 				
 				nnn = this.portaDelegataDAO.count(expr);
 			} else {
 				IExpression expr = this.createPAExpression(this.portaApplicativaDAO, this.search, true);
 				
-				if(!apiImplSelected && listIDServizio!=null && !listIDServizio.isEmpty()) {
-
-					List<IExpression> exprOrList = new ArrayList<IExpression>();
-					for (IDServizio idServizio : listIDServizio) {
-						IExpression exprIdServizio = this.portaApplicativaDAO.newExpression();
-						exprIdServizio.equals(PortaApplicativa.model().TIPO_SERVIZIO,idServizio.getTipo());
-						exprIdServizio.equals(PortaApplicativa.model().NOME_SERVIZIO,idServizio.getNome());
-						exprIdServizio.equals(PortaApplicativa.model().VERSIONE_SERVIZIO,idServizio.getVersione());
-						boolean setSoggettoProprietario = false;
-						if(this.search.getTipoNomeSoggettoLocale()!=null && 
-								!StringUtils.isEmpty(this.search.getTipoNomeSoggettoLocale()) && !"--".equals(this.search.getTipoNomeSoggettoLocale())){
-							setSoggettoProprietario = true; // impostato dentro createPAExpression
-						}
-						if(setSoggettoProprietario==false){
-							exprIdServizio.equals(PortaApplicativa.model().ID_SOGGETTO.TIPO,idServizio.getSoggettoErogatore().getTipo());
-							exprIdServizio.equals(PortaApplicativa.model().ID_SOGGETTO.NOME,idServizio.getSoggettoErogatore().getNome());
-						}
-						exprOrList.add(exprIdServizio);
-						
-					}
-					expr.or(exprOrList.toArray(new IExpression[1]));
-
-				}
+				setListServiziPA(apiImplSelected, listIDServizio, expr);
 				
 				nnn = this.portaApplicativaDAO.count(expr);				
 			}
@@ -1098,6 +1063,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		return configurazione;
 	}
 
+	@SuppressWarnings("deprecation")
 	private ConfigurazioneGenerale fillDettaglioPD(PortaDelegata portaDelegata)
 			throws ServiceException, NotFoundException, MultipleResultException, NotImplementedException,
 			DriverConfigurazioneException, DriverConfigurazioneNotFound, DriverRegistroServiziException,
@@ -1111,11 +1077,40 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		idPD.setNome(dettaglioPD.getPortaDelegata().getNome());
 		IdentificativiFruizione identificativiFruizione = new IdentificativiFruizione();
 		identificativiFruizione.setSoggettoFruitore(new IDSoggetto(dettaglioPD.getPortaDelegata().getIdSoggetto().getTipo(), dettaglioPD.getPortaDelegata().getIdSoggetto().getNome()));
+		IDServizio idServizio = new IDServizio();
+		idServizio.setSoggettoErogatore(new IDSoggetto(dettaglioPD.getPortaDelegata().getTipoSoggettoErogatore(), dettaglioPD.getPortaDelegata().getNomeSoggettoErogatore()));
+		idServizio.setTipo(dettaglioPD.getPortaDelegata().getTipoServizio());
+		idServizio.setNome(dettaglioPD.getPortaDelegata().getNomeServizio());
+		idServizio.setAzione(dettaglioPD.getPortaDelegata().getNomeAzione());
+		idServizio.setVersione(dettaglioPD.getPortaDelegata().getVersioneServizio());
+		identificativiFruizione.setIdServizio(idServizio);
 		idPD.setIdentificativiFruizione(identificativiFruizione );
 		dettaglioPD.setPortaDelegataOp2(this.driverConfigDB.getPortaDelegata(idPD));
+		List<String> azioniGruppo = null;
+		Connection con = null;
+		try {
+			con = this.driverConfigDB.getConnection("fillDettaglioPD_getMappingFruizione");
+			dettaglioPD.setMappingFruizionePortaDelegataOp2(DBMappingUtils.getMappingFruizione(idServizio, identificativiFruizione.getSoggettoFruitore(), idPD, con, this.driverConfigDB.getTipoDB()));
+			if(dettaglioPD.getMappingFruizionePortaDelegataOp2().isDefault()) {
+				dettaglioPD.setIdPortaDelegataDefaultOp2(idPD);
+			}
+			else {
+				dettaglioPD.setIdPortaDelegataDefaultOp2(DBMappingUtils.getIDPortaDelegataAssociataDefault(idServizio, identificativiFruizione.getSoggettoFruitore(), con, this.driverConfigDB.getTipoDB()));
+				dettaglioPD.setPortaDelegataDefaultOp2(this.driverConfigDB.getPortaDelegata(dettaglioPD.getIdPortaDelegataDefaultOp2()));
+				if(dettaglioPD.getPortaDelegataOp2().getAzione()!=null) {
+					azioniGruppo = dettaglioPD.getPortaDelegataOp2().getAzione().getAzioneDelegataList();
+				}
+			}
+		}catch(Exception e) {
+			throw new ServiceException(e.getMessage(),e);
+		}
+		finally {
+			this.driverConfigDB.releaseConnection(con);
+		}
 		dettaglioPD.setConnettore(ConfigurazioniUtils.getConnettore(dettaglioPD.getPortaDelegata().getIdSoggetto().getTipo(), dettaglioPD.getPortaDelegata().getIdSoggetto().getNome(), 
 				dettaglioPD.getPortaDelegata().getTipoSoggettoErogatore(), dettaglioPD.getPortaDelegata().getNomeSoggettoErogatore(), 
 				dettaglioPD.getPortaDelegata().getTipoServizio(), dettaglioPD.getPortaDelegata().getNomeServizio(),dettaglioPD.getPortaDelegata().getVersioneServizio(), 
+				azioniGruppo,
 				this.driverRegistroDB));
 		dettaglioPD.setPropertyConnettore(ConfigurazioniUtils.printConnettore(dettaglioPD.getConnettore(), CostantiConfigurazioni.LABEL_MODALITA_INOLTRO, null));
 
@@ -1149,20 +1144,171 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		dettaglioPD.setPropertyAutenticazione(ConfigurazioniUtils.getPropertiesAutenticazionePD(dettaglioPD));
 		dettaglioPD.setPropertyAutorizzazione(ConfigurazioniUtils.getPropertiesAutorizzazionePD(dettaglioPD, idPD, this.driverConfigDB, this.driverRegistroDB));  
 
+		try {
+			dettaglioPD.setRateLimiting(getDettaglioRateLimiting(idPD.getNome(), RuoloPolicy.DELEGATA));
+		}catch(Exception e) {
+			ConfigurazioniGeneraliService.log.error("Read RateLimiting PD["+idPD.getNome()+"] failed: "+e.getMessage(),e);
+		}
+		
 		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByOrganizationType(idPD.getIdentificativiFruizione().getSoggettoFruitore().getTipo());
 
+		String nomePorta = idPD.getNome();
+		if(dettaglioPD.getMappingFruizionePortaDelegataOp2()!=null && !dettaglioPD.getMappingFruizionePortaDelegataOp2().isDefault()) {
+			if(dettaglioPD.getIdPortaDelegataDefaultOp2()!=null) {
+				nomePorta = dettaglioPD.getIdPortaDelegataDefaultOp2().getNome();
+			}
+		}
 		UrlInvocazioneAPI urlInvocazioneAPI = UrlInvocazioneAPI.getConfigurazioneUrlInvocazione(this.configurazioneUrlInvocazione, protocolFactory, RuoloContesto.PORTA_DELEGATA, 
 				ConfigurazioniUtils.getServiceBindingFromValues(dettaglioPD.getPortaDelegata().getTipoSoggettoErogatore(), dettaglioPD.getPortaDelegata().getNomeSoggettoErogatore(), 
 						dettaglioPD.getPortaDelegata().getTipoServizio(), dettaglioPD.getPortaDelegata().getNomeServizio(),dettaglioPD.getPortaDelegata().getVersioneServizio(), 
 						this.utilsServiceManager), 
-						idPD.getNome(), idPD.getIdentificativiFruizione().getSoggettoFruitore(),
+						nomePorta, idPD.getIdentificativiFruizione().getSoggettoFruitore(),
 						tags, canale);
 		dettaglioPD.setUrlInvocazione(urlInvocazioneAPI.getUrl());
 		
 		dettaglioPD.setPropertyIntegrazione(ConfigurazioniUtils.getPropertiesIntegrazionePD(dettaglioPD));
 
+		if(CostantiLabel.MODIPA_PROTOCOL_NAME.equals(protocolFactory.getProtocol())) {
+			dettaglioPD.setConfigurazioneProfilo(this.readConfigurazioneProfiloFruizione(idServizio, identificativiFruizione.getSoggettoFruitore()));
+		}
+		
 		configurazione.setPd(dettaglioPD);
 		return configurazione;
+	}
+	
+	private String readConfigurazioneProfiloFruizione(IDServizio idServizio, IDSoggetto idFruitore) {
+		try {
+			AccordoServizioParteSpecifica asps = this.driverRegistroDB.getAccordoServizioParteSpecifica(idServizio,false);
+			if(asps.sizeFruitoreList()>0) {
+				for (Fruitore fr : asps.getFruitoreList()) {
+					if(fr.getTipo().equals(idFruitore.getTipo()) && fr.getNome().equals(idFruitore.getNome())) {
+						
+						List<ProtocolProperty> ppList = fr.getProtocolPropertyList();
+						if(ppList!=null && !ppList.isEmpty()) {
+							StringBuilder sb = new StringBuilder();
+							
+							boolean trustStore = false;
+							boolean trustStoreSsl = false;
+							for (ProtocolProperty protocolProperty : ppList) {
+								
+								if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE.equals(protocolProperty.getName()) &&
+										StringUtils.isNotEmpty(protocolProperty.getValue())) {
+									boolean ridefinisci = CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(protocolProperty.getValue());
+									if(ridefinisci) {
+										trustStore = true;
+									}
+								}
+								else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_MODE.equals(protocolProperty.getName()) &&
+										StringUtils.isNotEmpty(protocolProperty.getValue())) {
+									boolean ridefinisci = CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(protocolProperty.getValue());
+									if(ridefinisci) {
+										trustStoreSsl = true;
+									}
+								}
+								
+							}
+							
+							
+							for (ProtocolProperty protocolProperty : ppList) {
+								
+								if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE.equals(protocolProperty.getName()) &&
+										StringUtils.isNotEmpty(protocolProperty.getValue())) {
+									if(sb.length()>0) {
+										sb.append("\n");
+									}
+									sb.append("request-audience:").append(protocolProperty.getValue());
+								}
+								else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_AUDIENCE_INTEGRITY.equals(protocolProperty.getName()) &&
+										StringUtils.isNotEmpty(protocolProperty.getValue())) {
+									if(sb.length()>0) {
+										sb.append("\n");
+									}
+									sb.append("request-integrity-audience:").append(protocolProperty.getValue());
+								}
+								else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE.equals(protocolProperty.getName()) &&
+										StringUtils.isNotEmpty(protocolProperty.getValue())) {
+									if(sb.length()>0) {
+										sb.append("\n");
+									}
+									sb.append("response-audience:").append(protocolProperty.getValue());
+								}
+								else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_DOPPI_HEADER_AUDIENCE_INTEGRITY.equals(protocolProperty.getName()) &&
+										StringUtils.isNotEmpty(protocolProperty.getValue())) {
+									if(sb.length()>0) {
+										sb.append("\n");
+									}
+									sb.append("response-integrity-audience:").append(protocolProperty.getValue());
+								}
+								else {
+									if(trustStoreSsl) {
+										if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE.equals(protocolProperty.getName()) &&
+												StringUtils.isNotEmpty(protocolProperty.getValue())) {
+											if(sb.length()>0) {
+												sb.append("\n");
+											}
+											sb.append("response-truststore-ssl-type:").append(protocolProperty.getValue());
+											continue;
+										}
+										else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PATH.equals(protocolProperty.getName()) &&
+												StringUtils.isNotEmpty(protocolProperty.getValue())) {
+											if(sb.length()>0) {
+												sb.append("\n");
+											}
+											sb.append("response-truststore-ssl-path:").append(protocolProperty.getValue());
+											continue;
+										}
+										else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_CRLS.equals(protocolProperty.getName()) &&
+												StringUtils.isNotEmpty(protocolProperty.getValue())) {
+											if(sb.length()>0) {
+												sb.append("\n");
+											}
+											sb.append("response-truststore-ssl-crls:").append(protocolProperty.getValue());
+											continue;
+										}
+									}
+									if(trustStore) {
+										if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE.equals(protocolProperty.getName()) &&
+												StringUtils.isNotEmpty(protocolProperty.getValue())) {
+											if(sb.length()>0) {
+												sb.append("\n");
+											}
+											sb.append("response-truststore-type:").append(protocolProperty.getValue());
+											continue;
+										}
+										else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH.equals(protocolProperty.getName()) &&
+												StringUtils.isNotEmpty(protocolProperty.getValue())) {
+											if(sb.length()>0) {
+												sb.append("\n");
+											}
+											sb.append("response-truststore-path:").append(protocolProperty.getValue());
+											continue;
+										}
+										else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS.equals(protocolProperty.getName()) &&
+												StringUtils.isNotEmpty(protocolProperty.getValue())) {
+											if(sb.length()>0) {
+												sb.append("\n");
+											}
+											sb.append("response-truststore-crls:").append(protocolProperty.getValue());
+											continue;
+										}
+									}
+								}
+								
+							}
+							
+							if(sb.length()>0) {
+								return sb.toString();
+							}
+						}
+						
+						break;
+					}
+				}
+			}
+		}catch(Exception e) {
+			ConfigurazioniGeneraliService.log.error("Read ProfiloInteroperabilità ModI configuration idServizio["+idServizio+"] idFruitore["+idFruitore+"] failed: "+e.getMessage(),e);
+		}
+		return null;
 	}
 
 	@SuppressWarnings("deprecation")
@@ -1190,7 +1336,24 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		identificativiErogazione.setIdServizio(idServizio);
 		idPA.setIdentificativiErogazione(identificativiErogazione );
 		dettaglioPA.setPortaApplicativaOp2(this.driverConfigDB.getPortaApplicativa(idPA));
-
+		Connection con = null;
+		try {
+			con = this.driverConfigDB.getConnection("fillDettaglioPA_getMappingErogazione");
+			dettaglioPA.setMappingErogazionePortaApplicativaOp2(DBMappingUtils.getMappingErogazione(idServizio, idPA, con, this.driverConfigDB.getTipoDB()));
+			if(dettaglioPA.getMappingErogazionePortaApplicativaOp2().isDefault()) {
+				dettaglioPA.setIdPortaApplicativaDefaultOp2(idPA);
+			}
+			else {
+				dettaglioPA.setIdPortaApplicativaDefaultOp2(DBMappingUtils.getIDPortaApplicativaAssociataDefault(idServizio, con, this.driverConfigDB.getTipoDB()));
+				dettaglioPA.setPortaApplicativaDefaultOp2(this.driverConfigDB.getPortaApplicativa(dettaglioPA.getIdPortaApplicativaDefaultOp2()));
+			}
+		}catch(Exception e) {
+			throw new ServiceException(e.getMessage(),e);
+		}
+		finally {
+			this.driverConfigDB.releaseConnection(con);
+		}
+		
 		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByOrganizationType(idPA.getIdentificativiErogazione().getIdServizio().getSoggettoErogatore().getTipo());
 
 		AccordoServizioParteComune aspc = this.utilsServiceManager.getAccordoServizioParteComuneServiceSearch().get(dettaglioPA.getIdAccordoServizioParteComune());
@@ -1213,11 +1376,23 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		}
 		String canale = CanaliUtils.getCanale(this.driverConfigDB.getCanaliConfigurazione(false), canaleApi, dettaglioPA.getPortaApplicativa().getCanale());
 		
+		try {
+			dettaglioPA.setRateLimiting(getDettaglioRateLimiting(idPA.getNome(), RuoloPolicy.APPLICATIVA));
+		}catch(Exception e) {
+			ConfigurazioniGeneraliService.log.error("Read RateLimiting PA["+idPA.getNome()+"] failed: "+e.getMessage(),e);
+		}
+		
+		String nomePorta = idPA.getNome();
+		if(dettaglioPA.getMappingErogazionePortaApplicativaOp2()!=null && !dettaglioPA.getMappingErogazionePortaApplicativaOp2().isDefault()) {
+			if(dettaglioPA.getIdPortaApplicativaDefaultOp2()!=null) {
+				nomePorta = dettaglioPA.getIdPortaApplicativaDefaultOp2().getNome();
+			}
+		}
 		UrlInvocazioneAPI urlInvocazioneAPI = UrlInvocazioneAPI.getConfigurazioneUrlInvocazione(this.configurazioneUrlInvocazione, protocolFactory, RuoloContesto.PORTA_APPLICATIVA, 
 				ConfigurazioniUtils.getServiceBindingFromValues(idServizio.getSoggettoErogatore().getTipo(), idServizio.getSoggettoErogatore().getNome(), 
 						idServizio.getTipo(), idServizio.getNome(),idServizio.getVersione(), 
 						this.utilsServiceManager), 
-						idPA.getNome(), idServizio.getSoggettoErogatore(),
+						nomePorta, idServizio.getSoggettoErogatore(),
 						tags, canale);
 		dettaglioPA.setUrlInvocazione(urlInvocazioneAPI.getUrl());
 
@@ -1234,9 +1409,184 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 
 		dettaglioPA.setListaSA(ConfigurazioniUtils.getPropertiesServiziApplicativiPA(dettaglioPA, this.driverConfigDB, idPA));
 
+		if(CostantiLabel.MODIPA_PROTOCOL_NAME.equals(protocolFactory.getProtocol())) {
+			dettaglioPA.setConfigurazioneProfilo(this.readConfigurazioneProfiloErogazione(idServizio));
+		}
+		
 		configurazione.setPa(dettaglioPA); 
 		return configurazione;
 	}
+	
+
+	private String readConfigurazioneProfiloErogazione(IDServizio idServizio) {
+		try {
+			AccordoServizioParteSpecifica asps = this.driverRegistroDB.getAccordoServizioParteSpecifica(idServizio,false);
+			List<ProtocolProperty> ppList = asps.getProtocolPropertyList();
+			if(ppList!=null && !ppList.isEmpty()) {
+				StringBuilder sb = new StringBuilder();
+				
+				boolean keyStore = false;
+				boolean trustStore = false;
+				boolean trustStoreSsl = false;
+				for (ProtocolProperty protocolProperty : ppList) {
+					
+					if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE.equals(protocolProperty.getName()) &&
+							StringUtils.isNotEmpty(protocolProperty.getValue())) {
+						boolean ridefinisci = CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(protocolProperty.getValue());
+						if(ridefinisci) {
+							keyStore = true;
+						}
+					}
+					else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE.equals(protocolProperty.getName()) &&
+							StringUtils.isNotEmpty(protocolProperty.getValue())) {
+						boolean ridefinisci = CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(protocolProperty.getValue());
+						if(ridefinisci) {
+							trustStore = true;
+						}
+					}
+					else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_MODE.equals(protocolProperty.getName()) &&
+							StringUtils.isNotEmpty(protocolProperty.getValue())) {
+						boolean ridefinisci = CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(protocolProperty.getValue());
+						if(ridefinisci) {
+							trustStoreSsl = true;
+						}
+					}
+					
+				}
+				
+				
+				for (ProtocolProperty protocolProperty : ppList) {
+					
+					if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE.equals(protocolProperty.getName()) &&
+							StringUtils.isNotEmpty(protocolProperty.getValue())) {
+						if(sb.length()>0) {
+							sb.append("\n");
+						}
+						sb.append("request-audience:").append(protocolProperty.getValue());
+					}
+					else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_AUDIENCE_INTEGRITY.equals(protocolProperty.getName()) &&
+							StringUtils.isNotEmpty(protocolProperty.getValue())) {
+						if(sb.length()>0) {
+							sb.append("\n");
+						}
+						sb.append("request-integrity-audience:").append(protocolProperty.getValue());
+					}
+					else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE.equals(protocolProperty.getName()) &&
+							StringUtils.isNotEmpty(protocolProperty.getValue())) {
+						if(sb.length()>0) {
+							sb.append("\n");
+						}
+						sb.append("response-audience:").append(protocolProperty.getValue());
+					}
+					else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_DOPPI_HEADER_AUDIENCE_INTEGRITY.equals(protocolProperty.getName()) &&
+							StringUtils.isNotEmpty(protocolProperty.getValue())) {
+						if(sb.length()>0) {
+							sb.append("\n");
+						}
+						sb.append("response-integrity-audience:").append(protocolProperty.getValue());
+					}
+					else {
+						if(keyStore) {
+							if(CostantiDB.MODIPA_KEYSTORE_MODE.equals(protocolProperty.getName()) &&
+									StringUtils.isNotEmpty(protocolProperty.getValue())) {
+								if(sb.length()>0) {
+									sb.append("\n");
+								}
+								sb.append("response-keystore-mode:").append(protocolProperty.getValue());
+								continue;
+							}
+							else if(CostantiDB.MODIPA_KEYSTORE_TYPE.equals(protocolProperty.getName()) &&
+									StringUtils.isNotEmpty(protocolProperty.getValue())) {
+								if(sb.length()>0) {
+									sb.append("\n");
+								}
+								sb.append("response-keystore-type:").append(protocolProperty.getValue());
+								continue;
+							}
+							else if(CostantiDB.MODIPA_KEYSTORE_PATH.equals(protocolProperty.getName()) &&
+									StringUtils.isNotEmpty(protocolProperty.getValue())) {
+								if(sb.length()>0) {
+									sb.append("\n");
+								}
+								sb.append("response-keystore-path:").append(protocolProperty.getValue());
+								continue;
+							}
+							else if(CostantiDB.MODIPA_KEY_ALIAS.equals(protocolProperty.getName()) &&
+									StringUtils.isNotEmpty(protocolProperty.getValue())) {
+								if(sb.length()>0) {
+									sb.append("\n");
+								}
+								sb.append("response-key-alias:").append(protocolProperty.getValue());
+								continue;
+							}
+						}
+						if(trustStoreSsl) {
+							if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE.equals(protocolProperty.getName()) &&
+									StringUtils.isNotEmpty(protocolProperty.getValue())) {
+								if(sb.length()>0) {
+									sb.append("\n");
+								}
+								sb.append("request-truststore-ssl-type:").append(protocolProperty.getValue());
+								continue;
+							}
+							else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PATH.equals(protocolProperty.getName()) &&
+									StringUtils.isNotEmpty(protocolProperty.getValue())) {
+								if(sb.length()>0) {
+									sb.append("\n");
+								}
+								sb.append("request-truststore-ssl-path:").append(protocolProperty.getValue());
+								continue;
+							}
+							else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_CRLS.equals(protocolProperty.getName()) &&
+									StringUtils.isNotEmpty(protocolProperty.getValue())) {
+								if(sb.length()>0) {
+									sb.append("\n");
+								}
+								sb.append("request-truststore-ssl-crls:").append(protocolProperty.getValue());
+								continue;
+							}
+						}
+						if(trustStore) {
+							if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE.equals(protocolProperty.getName()) &&
+									StringUtils.isNotEmpty(protocolProperty.getValue())) {
+								if(sb.length()>0) {
+									sb.append("\n");
+								}
+								sb.append("request-truststore-type:").append(protocolProperty.getValue());
+								continue;
+							}
+							else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH.equals(protocolProperty.getName()) &&
+									StringUtils.isNotEmpty(protocolProperty.getValue())) {
+								if(sb.length()>0) {
+									sb.append("\n");
+								}
+								sb.append("request-truststore-path:").append(protocolProperty.getValue());
+								continue;
+							}
+							else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS.equals(protocolProperty.getName()) &&
+									StringUtils.isNotEmpty(protocolProperty.getValue())) {
+								if(sb.length()>0) {
+									sb.append("\n");
+								}
+								sb.append("request-truststore-crls:").append(protocolProperty.getValue());
+								continue;
+							}
+						}
+					}
+					
+				}
+				
+				if(sb.length()>0) {
+					return sb.toString();
+				}
+			}
+		
+		}catch(Exception e) {
+			ConfigurazioniGeneraliService.log.error("Read ProfiloInteroperabilità ModI configuration idServizio["+idServizio+"] failed: "+e.getMessage(),e);
+		}
+		return null;
+	}
+	
 	@Override
 	public ConfigurazioniGeneraliSearchForm getSearch() {
 		return this.search;
@@ -1579,5 +1929,114 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 
 		if(expressionTipoSoggettiDestinatarioCompatibili != null)
 			expr.and(expressionTipoSoggettiDestinatarioCompatibili);
+	}
+	
+	private DettaglioRateLimiting getDettaglioRateLimiting(String nomePorta, org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy ruoloPorta) throws Exception {
+		
+		IPaginatedExpression expr = this.attivazionePolicyDAO.newPaginatedExpression();
+		
+		expr.equals(AttivazionePolicy.model().FILTRO.RUOLO_PORTA, ruoloPorta);
+		expr.equals(AttivazionePolicy.model().FILTRO.NOME_PORTA, nomePorta);
+		
+		int offset = 0;
+		int limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+		expr.offset(offset).limit(limit);
+		
+		expr.sortOrder(SortOrder.ASC);
+		expr.addOrder(AttivazionePolicy.model().ID_POLICY);
+		expr.addOrder(AttivazionePolicy.model().ALIAS);
+		
+		List<AttivazionePolicy> l = this.attivazionePolicyDAO.findAll(expr);
+		if(l!=null && !l.isEmpty()) {
+			
+			DettaglioRateLimiting d = new DettaglioRateLimiting();
+			
+			for (AttivazionePolicy attivazionePolicy : l) {
+				
+				IdPolicy idPolicy = new IdPolicy();
+				idPolicy.setNome(attivazionePolicy.getIdPolicy());
+				ConfigurazionePolicy cp = this.configurazionePolicyDAO.get(idPolicy);
+				
+				d.addDetail(attivazionePolicy, cp);
+			}
+			
+			return d;
+		}
+		
+		return null;
+	}
+	
+	private List<IDServizio> getListServizi(boolean apiImplSelected, String gruppo, IDAccordo idAccordo,
+			String tipoProtocollo, String tipoSoggetto, String nomeSoggetto,
+			String input) throws Exception {
+		List<IDServizio> listIDServizio = null;
+		if(!apiImplSelected && ( (gruppo!=null && !"".equals(gruppo)) || idAccordo!=null ) ) {
+			listIDServizio = new ArrayList<IDServizio>();
+			List<SelectItem> list = null;
+			boolean distinct = true;
+			if(PddRuolo.DELEGATA.equals(this.search.getTipologiaTransazioni())) {
+				list = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziFruizione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,null,null,input, false, this.search.getPermessiUtenteOperatore(), distinct);
+			}else {
+				// bisogna filtrare per soggetti operativi
+				list = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziErogazione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,input, true, this.search.getPermessiUtenteOperatore(), distinct);
+			}
+			if(list!=null && list.size()>0) {
+				for (SelectItem selectItem : list) {
+					String servizioString = (String) selectItem.getValue();
+					IDServizio idServizio = ParseUtility.parseServizioSoggetto(servizioString);
+					listIDServizio.add(idServizio);
+				}
+			}
+			else {
+				// creo un servizio non esistente per fornire 0 dati
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues("-", "-", "-", "-", -1);
+				listIDServizio.add(idServizio);
+			}
+		}
+		return listIDServizio;
+	}
+	private void setListServiziPD(boolean apiImplSelected, List<IDServizio> listIDServizio, IExpression pagExpr) throws Exception {
+		if(!apiImplSelected && listIDServizio!=null && !listIDServizio.isEmpty()) {
+
+			List<IExpression> exprOrList = new ArrayList<IExpression>();
+			for (IDServizio idServizio : listIDServizio) {
+				
+				IExpression exprIdServizio = this.portaDelegataDAO.newExpression();
+				exprIdServizio.equals(PortaDelegata.model().TIPO_SOGGETTO_EROGATORE,idServizio.getSoggettoErogatore().getTipo());
+				exprIdServizio.equals(PortaDelegata.model().NOME_SOGGETTO_EROGATORE,idServizio.getSoggettoErogatore().getNome());
+				exprIdServizio.equals(PortaDelegata.model().TIPO_SERVIZIO,idServizio.getTipo());
+				exprIdServizio.equals(PortaDelegata.model().NOME_SERVIZIO,idServizio.getNome());
+				exprIdServizio.equals(PortaDelegata.model().VERSIONE_SERVIZIO,idServizio.getVersione());
+				exprOrList.add(exprIdServizio);
+				
+			}
+			pagExpr.or(exprOrList.toArray(new IExpression[1]));
+
+		}
+	}
+	private void setListServiziPA(boolean apiImplSelected, List<IDServizio> listIDServizio, IExpression pagExpr) throws Exception {
+		if(!apiImplSelected && listIDServizio!=null && !listIDServizio.isEmpty()) {
+
+			List<IExpression> exprOrList = new ArrayList<IExpression>();
+			for (IDServizio idServizio : listIDServizio) {
+				IExpression exprIdServizio = this.portaApplicativaDAO.newExpression();
+				exprIdServizio.equals(PortaApplicativa.model().TIPO_SERVIZIO,idServizio.getTipo());
+				exprIdServizio.equals(PortaApplicativa.model().NOME_SERVIZIO,idServizio.getNome());
+				exprIdServizio.equals(PortaApplicativa.model().VERSIONE_SERVIZIO,idServizio.getVersione());
+				boolean setSoggettoProprietario = false;
+				if(this.search.getTipoNomeSoggettoLocale()!=null && 
+						!StringUtils.isEmpty(this.search.getTipoNomeSoggettoLocale()) && !"--".equals(this.search.getTipoNomeSoggettoLocale())){
+					setSoggettoProprietario = true; // impostato dentro createPAExpression
+				}
+				if(setSoggettoProprietario==false){
+					exprIdServizio.equals(PortaApplicativa.model().ID_SOGGETTO.TIPO,idServizio.getSoggettoErogatore().getTipo());
+					exprIdServizio.equals(PortaApplicativa.model().ID_SOGGETTO.NOME,idServizio.getSoggettoErogatore().getNome());
+				}
+				exprOrList.add(exprIdServizio);
+				
+			}
+			pagExpr.or(exprOrList.toArray(new IExpression[1]));
+
+		}
 	}
 }

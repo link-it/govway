@@ -125,6 +125,20 @@ public class ConditionsEngine {
 				esito = isAnd ? (esito && resCondition) : (esito || resCondition);
 			}
 
+			for (Equals equals: condition.getStartsWithList()) {
+				boolean resCondition = resolveEquals(EqualsType.STARTS_WITH, equals,configBean);
+
+				// aggiorno l'esito in base all'operazione da aggregare AND o OR
+				esito = isAnd ? (esito && resCondition) : (esito || resCondition);
+			}
+			
+			for (Equals equals: condition.getEndsWithList()) {
+				boolean resCondition = resolveEquals(EqualsType.ENDS_WITH, equals,configBean);
+
+				// aggiorno l'esito in base all'operazione da aggregare AND o OR
+				esito = isAnd ? (esito && resCondition) : (esito || resCondition);
+			}
+			
 			for (Selected selected : condition.getSelectedList()) {
 				boolean resCondition = resolveSelected(selected,configBean);
 
@@ -179,6 +193,12 @@ public class ConditionsEngine {
 					break;
 				case GREATER_EQUALS:
 					opValue = value.equals(item.getValue()) || (item.getValue()!=null && value.compareTo(item.getValue())>0);
+					break;
+				case STARTS_WITH:
+					opValue = item.getValue()!=null && value!=null && item.getValue().startsWith(value);
+					break;
+				case ENDS_WITH:
+					opValue = item.getValue()!=null && value!=null && item.getValue().endsWith(value);
 					break;
 				}
 			}
@@ -304,6 +324,6 @@ public class ConditionsEngine {
 
 enum EqualsType{
 	
-	EQUALS, LESS_EQUALS, LESS_THEN, GREATER_EQUALS, GREATER_THEN
+	EQUALS, LESS_EQUALS, LESS_THEN, GREATER_EQUALS, GREATER_THEN, STARTS_WITH, ENDS_WITH
 	
 }

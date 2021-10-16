@@ -1,3 +1,172 @@
+2021-10-15 Andrea Poli <apoli@link.it>
+
+	* [ApiRsConfigurazione]
+	Risolto bug OP-1267
+	Le API non consentivano di recuperare specifiche semiformali precedentemente caricate.
+	Inoltre se tramite console veniva registrata una specifica semiformale in Linguaggio Naturale, la raccolta degli allegati via api terminava con errore.
+	Infine le API non consentivano la gestione di documenti contenenti spazi o caratteri particolari nei nomi.
+
+2021-10-15 Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1265
+	Aggiunto supporto per wildfly 24.
+
+2021-10-14  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Aggiunto al widget che consente di caricare un file sulla console la possibilità di rimuovere tale scelta.
+
+2021-10-14 Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto bug OP-1262
+	(Aggiornate librerie bouncy castle alla versione 1.69 per risolvere la problematica)
+	Dopo aver aggiornato OpenJDK ad una versione superiore alla 11.0.8, raramente avveniva la seguente eccezione per invocazioni in https:
+	"arraycopy: last source index 32 out of bounds for byte[31] at java.base/sun.security.ssl.Alert.createSSLException"
+
+2021-10-12  Giovanni Bussu <bussu@link.it>
+
+	* [ApiRsConfigurazione]
+	Aggiunta funzionalità OP-1201
+	Le API consentono adesso di aggiornare il connettore http registrato durante la creazione delle erogazioni e delle fruizioni con connettori di tipo differente (file, jms, echo ...).
+	È inoltre stato aggiunto il supporto per associare connettori differenti ai gruppi di risorse o azioni.
+	Infine è adesso possibile registrare applicativi di tipo server e associarli ai connettori di una erogazione.
+
+2021-10-09 Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolte le seguenti problematiche:
+	- La console terminava con un errore non atteso in caso di caricamento di certificati, sugli applicativi o sui soggetti, che non possedevano il campo 'CN' nel subject o nell'issuer;
+	- Il dialog informativo, che riporta le credenziali http-basic o api-key, non visualizzava correttamente credenziali che possedevano caratteri particolari come le doppie virgolette.
+
+2021-10-08 Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor, ApiRsMonitoraggio]
+	Aggiunta funzionalità OP-1259
+	Migliorata funzionalità di export CSV tramite la console e l'API di monitoraggio dove sono state aggiunte le informazioni riguardanti:
+	- Tipo API (rest/soap)
+	- Gruppo
+	- CORS
+	- Autenticazione (proprieta)
+	- AttributeAuthority (attributi)
+	- Autorizzazione (proprieta)
+	- Autorizzazione Contenuti (Stato)
+	- Autorizzazione Contenuti (proprieta)
+	- RateLimiting
+	- Caching Risposta
+	- Trasformazioni
+	- Registrazione Messaggi
+	- Proprietà
+	- Metadati
+	- Handlers
+	- Configurazioni Profilo Interoperabilità
+	- Applicativo Server
+	Sono inoltre stati risolti i seguenti problemi:
+	- Nella colonna delle azioni/risorse non venivano riportate le risorse per le API di tipo REST
+	- risolto problema di conflitto di nome tra il nome dell'API e il nome della fruizione/erogazione dove per entrambi la colonna si chiamava con l'header 'API'. 
+          Adesso la colonna della erogazione/fruizione si chiama 'Implementazione API'.
+	- risolto problema di ordine differente tra header e valori nelle fruizioni per quanto concerne i parametri dell'autenticazione dove venivano fornite informazioni errate.
+	- la funzionalità di esportazione tramite la voce 'seleziona tutti' non considerava gli eventuali filtri impostati su API e Tag.
+	- non venivano riportati i dati del connettore se questo veniva ridefinito in un gruppo di una fruizione.
+
+2021-10-06  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, Utils]
+	La presenza dei file di configurazione esterna, generati dall'installer, non è più obbligatoria per il corretto avvio di GovWay.
+	Nell'intervento è stata modificato anche il comportamento attuato dall'autorizzazione per canali, in una installazione con cluster dinamico dove viene utilizzato come id del nodo l'identificativo del gruppo.
+
+2021-10-05  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor]
+	Nelle ricerche puntuali per identificativo, se viene individuata una transazione appartenente ad un profilo o soggetto differente da quello selezionato,
+	viene visualizzata una finestra che segnala all'utente l'anomalia riscontrata. 
+	La transazione individuata viene comunque visualizzata all'utente, nonostante differisca dal profilo o soggetto selezionato, solamente se comunque l'utente possiede i diritti per accederci.
+
+2021-10-05  Andrea Poli <apoli@link.it>
+
+	* [Documentazione]
+	Aggiunta funzionalità OP-1257
+	(https://github.com/link-it/govway/issues/87)
+	Realizzata documentazione che descrive la configurazione necessaria per poter registrare i device pkcs11.
+	
+2021-10-04  Andrea Poli <apoli@link.it>
+
+	* [ApiRsConfigurazione]
+	Aggiunta funzionalità OP-1257
+	Aggiunto supporto per device pkcs11 sui connettori 'https' e sulle configurazioni con profilo 'ModI'.
+
+2021-10-04  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole, ProtocolloModIPA]
+	Tra i criteri di ricerca, negli applicativi e nei soggetti, è adesso possibile indicare oltre al tipo di credenziale (https/http-basic/principal) anche il valore stesso della credenziale (es. CN del certificato X.509).
+	Il criterio di ricerca per CN del certificato subject X.509 è stato anche introdotto tra i filtri 'ModI' negli applicativi.
+
+2021-09-28  Andrea Poli <apoli@link.it>
+
+	* [Utils, GovWayCore, ProtocolloModIPA]
+	Aggiunta funzionalità OP-1257
+	Aggiunto supporto per device pkcs11.
+	Keystore HSM via 'PKCS11' sono adesso utilizzabili con il connettore 'https', con le funzionalità di sicurezza dei messaggi (WSSecurity, XMLSecurity e JOSE), 
+        con AttributeAuthority e TokenPolicy di validazione e negoziazione e con la gestione dei token di sicurezza previsti nel Profilo 'ModI'.
+	Nella registrazione degli applicativi client sul profilo ModI, nella sezione relativa alla sicurezza messaggio, è adesso possibile caricare il certificato anche con la modalità 'file-system' e 'hsm'.
+	Il caricamento del certificato consente la corretta identificazione dell'applicativo su un altro dominio gestito sempre nel solito govway.
+
+2021-09-27  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto bug che non consentiva di processare SOAP Envelope 1.2 con WSSecurity quando la configurazione prevedeva l'utilizzo di un 'role' o l'impostazione del mustUnderstand.
+
+2021-09-26  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	La funzionalità di import non gestiva correttamente l'importazione di fruizioni in cui era stato ridefinito il connettore, per specifiche azioni/risorse, attraverso l'utilizzo della tipologia 'https'.
+
+2021-09-18  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloSPCoop]
+	Durante il restyling grafico delle liste accessibili dal menù principale relativo agli Applicativi, realizzato con il rilascio della versione 3.3.3, 
+	è venuta meno la possibilità di configurare i connettori relativi alla 'Risposta Asincrona' richiesti dai profili asincroni.
+	La problematica è stata risolta.
+
+2021-09-15  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Per migliorare l'usabilità delle console è stato aggiunto il criterio di espandere o richiudere le sezioni all'interno delle configurazione dei specifici Profili di Interoperabilità.
+	La funzionalità è stata attivata per le subsection 'Informazioni Utente' e 'Contemporaneità Token Authorization e Agid-JWT-Signature' presenti nella configurazione ModI delle erogazioni o delle fruizioni.
+
+2021-09-13  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Risolto bug OP-1255
+	La configurazione delle proprietà 'org.openspcoop2.protocol.modipa.rest.securityToken.claims.iat.minutes' e 'org.openspcoop2.protocol.modipa.soap.securityToken.timestamp.created.minutes'
+	con valori superiori alle 3 settimane venivano ignorati.
+
+2021-08-30  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Aggiunta funzionalità OP-1252
+	Sono state aggiunte le seguenti funzionalità:
+	- Aggiunta la possibiltà di accedere alle proprietà definite negli applicativi e nei soggetti all'interno della risoluzione dei criteri dinamici utilizzabili nell funzionalità quali trasformazioni, autorizzazione etc...
+	  Nelle medesime funzionalità è inoltre adesso possibile accedere alle proprietà indicate nella configurazione generale di GovWay, alle variabili di sistema e alle proprietà della jvm.
+	- Altri claims, oltre a quelli standard, possono essere aggiunti al payload JWT definendoli nel campo 'Claims' tra i criteri di configurazione 'ModI' della richiesta, in una fruizione, o della risposta, in una erogazione. 
+	  Tramite questa funzionalità è possibile sovrascriveranno i valori assegnati dal prodotto ai claims standard quali 'iss', 'sub', 'client_id'. È inoltre possibile disabilitarne la generazione.
+	- Su API REST aggiunta la possibilità di generare contemporaneamente i token negli header 'Authorization' e 'Agid-JWT-Signature' (solamente nella richiesta o in entrambi i flussi). 
+	  La generazione contemporanea dei 2 header nella richiesta e del solo header 'Agid-JWT-Signature' nella risposta diventa il default proposto con un pattern di sicurezza 'Integrity'.
+	  La funzionalità permette di configurare i seguenti aspetti in fase di generazione:
+	  . generazione dei claim 'jti' e 'aud' identici o differenti nei 2 header
+	  . possibilità di personalizzare ulteriori claim (compresi 'sub' e 'iss' e 'client_id') anche solo in uno dei due header
+	  La fase di validazione consente invece:
+	  . configurare da quale header estrarre l'identificativo 'jti' utilizzato per filtrare le richieste duplicate
+	  . indicare un audience atteso differente
+	- Nella validazione dell'audience della risposta è adesso possibile anche configurare un valore statico sulla fruizione, invece di usare il valore associato ad ogni applicativo fruitore.
+	- Sulla singola erogazione (configurazione 'ModI' della richiesta) o sulla fruizione (configurazione 'Modi' della risposta) è adesso possibile configurate un intervallo temporale (in secondi) 
+	  per cui i token creati precedentemente all'intervallo indicato verranno rifiutati. 
+	  La nuova opzione consente di sovrascrivere la configurazione di default in cui i token vengono rifiutati se sono stati creati da più di 5 minuti.
+	- Nelle tracce, per default, adesso il prodotto non salva più i token di sicurezza scambiati. 
+	  È possibile ripristinare il precedente salvataggio abilitando la proprietà 'org.openspcoop2.protocol.modipa.generazioneTracce.registrazioneToken.enabled' 
+	  all'interno del file 'modipa_local.properties' presente nella directory di configurazione.
+
 2021-08-26  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
@@ -33,7 +202,7 @@
 	- Sulla console di monitoraggio, nello storico delle transazioni, dopo aver effettuato una ricerca e aver presentato i risultati viene adesso fornita la possibilità di effettuare una nuova ricerca, 
 	con i medesimi criteri, senza dover riaprire il filtro attraverso un pulsante di refresh posto accanto alla lente che consente di riaprire il filtro di ricerca.
 	- Sulla console di gestione, nei filtri di ricerca, è adesso possibbile espandere o richiudere i criteri di ricerca relative alle sotto-sezioni. 
-	  Il criterio di espandere o richiedere le sezioni è inoltra stata riportata nella maschera di configurazione relativa al Controllo degli Accessi di una erogazione o fruizione di API.
+	  Il criterio di espandere o richiudere le sezioni è inoltra stata riportata nella maschera di configurazione relativa al Controllo degli Accessi di una erogazione o fruizione di API.
 	
 2021-08-02  Andrea Poli <apoli@link.it>
 

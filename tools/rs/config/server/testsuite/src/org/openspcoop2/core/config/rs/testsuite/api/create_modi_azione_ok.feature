@@ -36,8 +36,8 @@ function(x,  nome, api_modi_azione_richiesta){
 }
 """
 
-@CreateRisorsa204_modi
-Scenario Outline: Api Create Risorsa 204 con profilo ModI <nome-test>
+@CreateRisorsa204_modi_patternInternazione
+Scenario Outline: Api Create Risorsa 204 con profilo ModI <nome-test> (verifica pattern interazione)
 	* def api_soap = read('api_modi_soap.json')
 	* eval randomize(api_soap, ["nome"])
 	* def api_modi_azione_richiesta = read('api_modi_soap_azione_non_bloccante_push_richiesta.json')

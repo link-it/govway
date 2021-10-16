@@ -50,4 +50,13 @@ public class NumberConsoleItem extends AbstractConsoleItem<Long> {
 	public void setMax(int max) {
 		this.max = max;
 	}
+	
+	@Override
+	protected Long cloneValue(Long value) throws ProtocolException {
+		try {
+			return Long.valueOf(value.longValue());
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
 }

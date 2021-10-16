@@ -1,4 +1,5 @@
-<config id="messageSecurity.xml.receiver.signature" label="XML Verifier Signature" xmlns="http://www.openspcoop2.org/core/mvc/properties">
+<config id="messageSecurity.xml.receiver.signature" label="XML Verifier Signature" xmlns="http://www.openspcoop2.org/core/mvc/properties"
+	provider="org.openspcoop2.security.message.xml.TrustStoreSecurityProvider">
 
 	<compatibility not="false" and="false">
         <tags and="true">
@@ -33,12 +34,7 @@
 		
 		<subsection label="TrustStore">
 
-			<item type="select" name="truststoreType" label="Tipo" default="jks" >
-				<values>
-					<value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/>
-					<!--  <value value="jceks" label="JCEKS"/> -->
-				</values>
+			<item type="select" name="truststoreType" label="Tipo" default="jks" reloadOnChange="true" >
 				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="signatureTrustStorePropRefId" />
 			</item>
 			<item type="textarea" name="truststoreFile" label="File" required="true">

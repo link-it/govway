@@ -3,6 +3,7 @@ Feature: Testing Sicurezza Messaggio ModiPA IDAR01
 Background:
     * def basic = read('classpath:utils/basic-auth.js')
     * def check_traccia = read('check-tracce/check-traccia.feature')
+    * def check_traccia_sub_iss_client_notpresent = read('check-tracce/check-traccia_sub_iss_clientid_notpresent.feature')
     * def decode_token = read('classpath:utils/decode-token.js')
 
     * def result = callonce read('classpath:utils/jmx-enable-error-disclosure.feature')
@@ -383,6 +384,32 @@ And match response == read('error-bodies/ttl-scaduto-in-response.json')
 And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
 
 
+@low-iat-ttl-fruizione
+Scenario: L'elemento Created del token della fruizione (richiesta) è troppo vecchio per l'erogazione la quale si arrabbia
+
+Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01LowIAT/v1'
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'low-iat-ttl-fruizione'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 400
+
+
+@low-iat-ttl-erogazione
+Scenario: L'elemento Created del token dell'erogazione (risposta) è troppo vecchio per la fruizione la quale si arrabbia
+
+Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01LowIAT/v1'
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'low-iat-ttl-erogazione'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 502
+And match response == read('error-bodies/iat-scaduto-in-response.json')
+And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
+
+
 @applicativo-non-autorizzato
 Scenario: Viene utilizzato l'identificativo di un applicativo non autorizzato dalla erogazione
 
@@ -511,3 +538,56 @@ When method post
 Then status 400
 And match response == read('error-bodies/applicativo-senza-x5u.json')
 And match header GovWay-Transaction-ErrorType == 'BadRequest'
+
+
+@custom-claims
+Scenario: Sicurezza che prevede token in cui sono stati ridefiniti dei claims
+
+* def url_invocazione = govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01CRUDClaimCustom/v1"
+
+Given url url_invocazione
+And path 'resources', 'object', 1
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'custom-claims'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01ExampleClient2', password: 'ApplicativoBlockingIDA01ExampleClient2' })
+When method put
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0])
+* def server_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0])
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient2, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'crud' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient2, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'crud' })
+
+@custom-claims-sub-iss-clientid-empty
+Scenario: Sicurezza che prevede token in cui sono stati ridefiniti dei claims, e non vengono generati i claims sub, iss e client_id
+
+* def url_invocazione = govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01CRUDClaimCustomSubIssNotGenerate/v1"
+
+Given url url_invocazione
+And path 'resources', 'object', 1
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'custom-claims-sub-iss-clientid-empty'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01ExampleClient2', password: 'ApplicativoBlockingIDA01ExampleClient2' })
+When method put
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0])
+* def server_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0])
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia_sub_iss_client_notpresent ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient2, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'crud' })
+* call check_traccia_sub_iss_client_notpresent ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'crud' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia_sub_iss_client_notpresent ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient2, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'crud' })
+* call check_traccia_sub_iss_client_notpresent ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_interazione: 'crud' })

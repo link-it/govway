@@ -27,9 +27,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateUtils;
+import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.transport.Credential;
 import org.slf4j.Logger;
 
@@ -46,6 +46,8 @@ public class HttpServletCredential extends Credential implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	public final static String SERVLET_REQUEST_X509CERTIFICATE = "javax.servlet.request.X509Certificate";
 	
 	// Servlet Request
 	private transient HttpServletRequest httpServletRequest;
@@ -97,8 +99,8 @@ public class HttpServletCredential extends Credential implements Serializable {
 		
 		// SSL (HTTPS)
 		java.security.cert.X509Certificate[] certs =
-			(java.security.cert.X509Certificate[]) req.getAttribute("javax.servlet.request.X509Certificate");
-
+			(java.security.cert.X509Certificate[]) req.getAttribute(SERVLET_REQUEST_X509CERTIFICATE);
+		
 		if(certs!=null) {
 			if(debug && log!=null){
 				try{

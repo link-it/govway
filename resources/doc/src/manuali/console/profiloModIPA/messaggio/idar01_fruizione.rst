@@ -17,7 +17,7 @@ Per la configurazione delle fruizioni con i pattern di sicurezza messaggio è ne
 La registrazione dell'applicativo avviene come già descritto nella sez. :ref:`applicativo`. In questo contesto sarà necessario specificare il dominio "Interno" dell'applicativo e procedere all'inserimento dei dati nel form "ModI" (:numref:`applicativo_interno_fig`).
 
    .. figure:: ../../_figure_console/modipa_applicativo_interno.png
-    :scale: 40%
+    :scale: 60%
     :name: applicativo_interno_fig
 
     Dati ModI relativi ad un applicativo interno
@@ -40,10 +40,10 @@ L'interfaccia per la creazione della fruizione, basata su una API con pattern "I
     + Riferimento X.509: il metodo da utilizzare per l'inserimento del certificato dell'applicativo nel token di sicurezza. I valori possibili sono (differenziati per il caso REST e SOAP) quelli previsti nelle Linee Guida di Interoperabilità:
     + Certificate Chain: se è stata selezionata la modalità 'x5c', è possibile indicare se nel token di sicurezza verrà incluso solo il certificato utilizzato per la firma o l'intera catena.
     + Time to Live: tempo di validità del token prodotto (in secondi)
-    + Audience: identificativo dell'applicativo destinatario da indicare come audience nel token di sicurezza; se non viene indicato alcun valore verrà utilizzato la url del connettore.
+    + Audience: identificativo dell'applicativo destinatario da indicare come audience nel token di sicurezza; se non viene indicato alcun valore verrà utilizzato la url del connettore. Il valore fornito può contenere parti dinamiche risolte a runtime dal Gateway (per maggiori dettagli :ref:`valoriDinamici`).
 
    .. figure:: ../../_figure_console/modipa_fruizione_richiesta.png
-    :scale: 50%
+    :scale: 70%
     :name: fruizione_richiesta_fig
 
     Dati per la configurazione della sicurezza messaggio sulla richiesta di una fruizione
@@ -53,10 +53,10 @@ L'interfaccia per la creazione della fruizione, basata su una API con pattern "I
 
     - Riferimento X.509: il metodo per la localizzazione del certificato del destinatario nel messaggio di risposta. Si può mantenere la medesima impostazione prevista per il messaggio di richiesta o ridefinirla.
     - TrustStore Certificati: Riferimento al truststore che contiene le CA, i certificati e le CRL da utilizzare per poter verificare i token di sicurezza ricevuti nelle risposte. È possibile mantenere l'impostazione di default che è stata fornita al momento dell'installazione del prodotto, oppure definire un diverso riferimento (opzione "Ridefinito") fornendo Path, Tipo, Password del TrustStore e CRL.
-    - Verifica Audience: Se abilitata questa opzione, viene effettuata la verifica che il campo Audience, presente nel token di sicurezza della risposta, corrisponda a quello indicato per l'applicativo mittente.
+    - Verifica Audience: Se l'opzione è abilitata, viene effettuata la verifica che il campo Audience, presente nel token di sicurezza della risposta, corrisponda al valore presente nel campo successivo, se indicato, o altrimenti a quello configurato nell'applicativo mittente nella voce 'Identificativo Client'.
 
    .. figure:: ../../_figure_console/modipa_fruizione_risposta.png
-    :scale: 50%
+    :scale: 70%
     :name: fruizione_risposta_fig
 
     Dati per la configurazione della sicurezza messaggio sulla risposta di una fruizione

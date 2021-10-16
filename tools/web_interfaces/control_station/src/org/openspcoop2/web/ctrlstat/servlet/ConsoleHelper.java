@@ -219,6 +219,8 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesFactory;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.properties.StringConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.StringProperty;
+import org.openspcoop2.protocol.sdk.properties.SubtitleConsoleItem;
+import org.openspcoop2.protocol.sdk.properties.TitleConsoleItem;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
@@ -1070,6 +1072,17 @@ public class ConsoleHelper implements IConsoleHelper {
 		bp.setValue(bpContent);
 		bp.setFilename(filename); 
 		bp.setId(fileId);  
+		
+		// se ho provocato io l'evento di cancellazione via postback allora svuoto il contenuto
+		if(this.isPostBack()) {
+			String postBackElementName = this.getPostBackElementName();
+			if(postBackElementName!=null && postBackElementName.startsWith(parameterName) && postBackElementName.contains(Costanti.PARAMETER_FILENAME_REMOVE_PLACEHOLDER)) {
+				bp.setValue(null);
+				bp.setFilename(null); 
+				bp.setId(null);  
+			}
+		}
+		
 		return bp;
 	}
 	
@@ -1210,6 +1223,22 @@ public class ConsoleHelper implements IConsoleHelper {
 				toRet.add(bp);
 			}
 			
+		}
+		
+		// se ho provocato io l'evento di cancellazione via postback allora svuoto il contenuto
+		if(this.isPostBack()) {
+			String postBackElementName = this.getPostBackElementName();
+			if(postBackElementName!=null && postBackElementName.startsWith(parameterName) && postBackElementName.contains(Costanti.PARAMETER_FILENAME_REMOVE_PLACEHOLDER)) {
+				String[] split = postBackElementName.split(Costanti.PARAMETER_FILENAME_REMOVE_PLACEHOLDER);
+				try {
+					int pos = Integer.parseInt(split[1]);
+					toRet.get(pos).setValue(null); // TODO
+					toRet.get(pos).setFilename(null);
+					toRet.get(pos).setId(null);  
+				}catch(Exception e) {
+					
+				}
+			}
 		}
 		
 		return toRet;
@@ -1423,7 +1452,14 @@ public class ConsoleHelper implements IConsoleHelper {
 					case BOOLEAN:
 						String bvS = this.getParameter(item.getId());
 						Boolean booleanValue = ServletUtils.isCheckBoxEnabled(bvS);
-						BooleanProperty booleanProperty = ProtocolPropertiesFactory.newProperty(item.getId(), booleanValue ? booleanValue : null);
+						Boolean falseValue = null;
+						if(item instanceof BooleanConsoleItem) {
+							BooleanConsoleItem b = (BooleanConsoleItem) item;
+							if(!b.isConvertFalseAsNull()) {
+								falseValue = false;
+							}
+						}
+						BooleanProperty booleanProperty = ProtocolPropertiesFactory.newProperty(item.getId(), booleanValue ? booleanValue : falseValue);
 						if(primoAccessoAdd) {
 							booleanProperty.setValue(((BooleanConsoleItem) item).getDefaultValue());
 						}
@@ -3687,6 +3723,13 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	public Vector<DataElement> addProtocolPropertiesToDatiRegistry(Vector<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
 			ProtocolProperties protocolProperties, List<ProtocolProperty> listaProtocolPropertiesDaDB ,Properties binaryPropertyChangeInfoProprietario) throws Exception{
+		
+		String titleId = null;
+		String endTitleId = null;
+		
+		String subtitleId = null;
+		String endSubtitleId = null;
+		
 		for (BaseConsoleItem item : consoleConfiguration.getConsoleItem()) {
 			AbstractProperty<?> property = ProtocolPropertiesUtils.getAbstractPropertyById(protocolProperties, item.getId());
 			// imposto nel default value il valore attuale.
@@ -3701,6 +3744,29 @@ public class ConsoleHelper implements IConsoleHelper {
 			ProtocolProperty protocolProperty = ProtocolPropertiesUtils.getProtocolPropertyRegistry(item.getId(), listaProtocolPropertiesDaDB); 
 			dati = ProtocolPropertiesUtilities.itemToDataElement(dati,this,item, defaultItemValue,
 					consoleOperationType, binaryPropertyChangeInfoProprietario, protocolProperty, this.getSize());
+			
+			if(ConsoleItemType.TITLE.equals(item.getType()) && item instanceof TitleConsoleItem) {
+				TitleConsoleItem titleItem = (TitleConsoleItem) item;
+				if(titleItem.isCloseable()) {
+					titleId = titleItem.getId();
+					endTitleId = titleItem.getLastItemId();
+				}
+			}
+			else if(ConsoleItemType.SUBTITLE.equals(item.getType()) && item instanceof SubtitleConsoleItem) {
+				SubtitleConsoleItem subItem = (SubtitleConsoleItem) item;
+				if(subItem.isCloseable()) {
+					subtitleId = subItem.getId();
+					endSubtitleId = subItem.getLastItemId();
+				}
+			}
+			else {
+				if(endTitleId!=null && endTitleId.equals(item.getId())) {
+					this.impostaAperturaTitle(dati, titleId);
+				}
+				else if(endSubtitleId!=null && endSubtitleId.equals(item.getId())) {
+					this.impostaAperturaSubTitle(dati, subtitleId);
+				}
+			}
 		}
 
 		// Imposto il flag per indicare che ho caricato la configurazione
@@ -3719,6 +3785,13 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	public Vector<DataElement> addProtocolPropertiesToDatiConfig(Vector<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
 			ProtocolProperties protocolProperties, List<org.openspcoop2.core.config.ProtocolProperty> listaProtocolPropertiesDaDB ,Properties binaryPropertyChangeInfoProprietario) throws Exception{
+	
+		String titleId = null;
+		String endTitleId = null;
+		
+		String subtitleId = null;
+		String endSubtitleId = null;
+		
 		for (BaseConsoleItem item : consoleConfiguration.getConsoleItem()) {
 			AbstractProperty<?> property = ProtocolPropertiesUtils.getAbstractPropertyById(protocolProperties, item.getId());
 			// imposto nel default value il valore attuale.
@@ -3729,10 +3802,33 @@ public class ConsoleHelper implements IConsoleHelper {
 				defaultItemValue = itemConsole.getDefaultValue();
 			}
 			ProtocolPropertiesUtils.setDefaultValue(item, property); 
-
+			
 			org.openspcoop2.core.config.ProtocolProperty protocolProperty = ProtocolPropertiesUtils.getProtocolPropertyConfig(item.getId(), listaProtocolPropertiesDaDB); 
 			dati = ProtocolPropertiesUtilities.itemToDataElement(dati,this,item, defaultItemValue,
 					consoleOperationType, binaryPropertyChangeInfoProprietario, protocolProperty, this.getSize());
+			
+			if(ConsoleItemType.TITLE.equals(item.getType()) && item instanceof TitleConsoleItem) {
+				TitleConsoleItem titleItem = (TitleConsoleItem) item;
+				if(titleItem.isCloseable()) {
+					titleId = titleItem.getId();
+					endTitleId = titleItem.getLastItemId();
+				}
+			}
+			else if(ConsoleItemType.SUBTITLE.equals(item.getType()) && item instanceof SubtitleConsoleItem) {
+				SubtitleConsoleItem subItem = (SubtitleConsoleItem) item;
+				if(subItem.isCloseable()) {
+					subtitleId = subItem.getId();
+					endSubtitleId = subItem.getLastItemId();
+				}
+			}
+			else {
+				if(endTitleId!=null && endTitleId.equals(item.getId())) {
+					this.impostaAperturaTitle(dati, titleId);
+				}
+				else if(endSubtitleId!=null && endSubtitleId.equals(item.getId())) {
+					this.impostaAperturaSubTitle(dati, subtitleId);
+				}
+			}
 		}
 
 		// Imposto il flag per indicare che ho caricato la configurazione
@@ -10651,6 +10747,29 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
+	public void addFilterCredenziale(String tipoCredenziale, String credenziale) throws Exception{
+		try {
+			String label = null;
+			if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(tipoCredenziale)) {
+				label = ServiziApplicativiCostanti.LABEL_CREDENZIALE_ACCESSO_HTTPS;
+			}
+			else if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC.equals(tipoCredenziale)) {
+				label = ServiziApplicativiCostanti.LABEL_CREDENZIALE_ACCESSO_USERNAME;
+			}
+			else if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL.equals(tipoCredenziale)) {
+				label = ServiziApplicativiCostanti.LABEL_CREDENZIALE_ACCESSO_PRINCIPAL;
+			}
+			
+			if(label!=null) {
+				this.pd.addTextFilter(Filtri.FILTRO_CREDENZIALE, label, credenziale, this.getSize());
+			}
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
 	public void addFilterStato(String stato, boolean addStatiAllarme, boolean postBack) throws Exception{
 		try {
 			String [] statiValues = new String[addStatiAllarme?5:2];
@@ -11132,13 +11251,26 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	public void addFilterModIKeystore(ISearch ricerca, int idLista) throws Exception{
+	public void addFilterModIKeystorePath(ISearch ricerca, int idLista) throws Exception{
 		try {
-			String keystoreValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_KEYSTORE);
 			
-			String filterLabel = CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE_LABEL;
-				
-			this.pd.addTextFilter(Filtri.FILTRO_MODI_KEYSTORE, filterLabel, keystoreValue, this.getSize());
+			String keystorePathValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_KEYSTORE_PATH);
+			String filterPathLabel = CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_PATH_MODE_LABEL;
+			this.pd.addTextFilter(Filtri.FILTRO_MODI_KEYSTORE_PATH, filterPathLabel, keystorePathValue, this.getSize());
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void addFilterModIKeystoreSubject(ISearch ricerca, int idLista) throws Exception{
+		try {
+			
+			String keystoreSubjectValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_KEYSTORE_SUBJECT);
+			String filterSubjectLabel = CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_SUBJECT_MODE_LABEL;
+			this.pd.addTextFilter(Filtri.FILTRO_MODI_KEYSTORE_SUBJECT, filterSubjectLabel, keystoreSubjectValue, this.getSize());
+			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
@@ -12784,9 +12916,10 @@ public class ConsoleHelper implements IConsoleHelper {
 			dati.addElement(de);
 		}
 		if(configurazioneBean != null) {
+			Map<String, String> mapNameValue = new HashMap<String, String>();
 			for (BaseItemBean<?> item : configurazioneBean.getListaItem()) {
 				if(item.isVisible())
-					dati.addElement(item.toDataElement());
+					dati.addElement(item.toDataElement(configurazioneBean, mapNameValue));
 			}
 		}
 		
@@ -18189,12 +18322,12 @@ public class ConsoleHelper implements IConsoleHelper {
 		if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC.equals(tipoAuth)) {
 			utente.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 			utente.setType(DataElementType.TEXT_EDIT);
-			utente.setValue(secret_user);
+			utente.setValue(StringEscapeUtils.escapeHtml(secret_user));
 			utente.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME));
 			
 			password.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			password.setType(DataElementType.TEXT_EDIT);
-			password.setValue(secret_password);
+			password.setValue(StringEscapeUtils.escapeHtml(secret_password));
 			password.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD));
 			
 			header1 = ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME+" e " + ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD + " generata" ;
@@ -18203,7 +18336,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(appId) {
 				utente.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
 				utente.setType(DataElementType.TEXT_EDIT);
-				utente.setValue(secret_user);
+				utente.setValue(StringEscapeUtils.escapeHtml(secret_user));
 				utente.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID));
 			} else {
 				utente = null;
@@ -18211,7 +18344,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			password.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY);
 			password.setType(DataElementType.TEXT_AREA);
-			password.setValue(secret_password);
+			password.setValue(StringEscapeUtils.escapeHtml(secret_password));
 			password.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY));
 			password.setCols(44);
 			
@@ -19155,14 +19288,22 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public void impostaAperturaTitle(Vector<DataElement> dati, String titleName) throws Exception{
-		this.impostaAperturaTitle(dati, titleName, null, this.getPostBackElementName());
+		this.impostaAperturaTitle(dati, titleName, DataElementType.TITLE, null, this.getPostBackElementName());
 	}
 	
 	public void impostaAperturaTitle(Vector<DataElement> dati, String titleName, boolean visualizzaSottosezioneAperta) throws Exception{
-		this.impostaAperturaTitle(dati, titleName, visualizzaSottosezioneAperta, this.getPostBackElementName());
+		this.impostaAperturaTitle(dati, titleName, DataElementType.TITLE, visualizzaSottosezioneAperta, this.getPostBackElementName());
 	}
 	
-	public void impostaAperturaTitle(Vector<DataElement> dati, String titleName, Boolean visualizzaSottosezioneAperta, String postbackElementName) {
+	public void impostaAperturaSubTitle(Vector<DataElement> dati, String titleName) throws Exception{
+		this.impostaAperturaTitle(dati, titleName, DataElementType.SUBTITLE, null, this.getPostBackElementName());
+	}
+	
+	public void impostaAperturaSubTitle(Vector<DataElement> dati, String titleName, boolean visualizzaSottosezioneAperta) throws Exception{
+		this.impostaAperturaTitle(dati, titleName, DataElementType.SUBTITLE, visualizzaSottosezioneAperta, this.getPostBackElementName());
+	}
+	
+	private void impostaAperturaTitle(Vector<DataElement> dati, String titleName, DataElementType titleType, Boolean visualizzaSottosezioneAperta, String postbackElementName) {
 		if(dati != null) {
 			int idxSubtitle = -1;
 			for (int i = 0; i < dati.size(); i++) {
@@ -19180,7 +19321,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					
 					for (int i = idxSubtitle + 1; i < dati.size(); i++) {
 						DataElement de = dati.get(i);
-						if(de.getType().equals("title")) {
+						if(de.getType().equals(titleType.toString())) {
 							// ho trovato un'altra sezione mi fermo
 							break;
 						} else {

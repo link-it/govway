@@ -42,7 +42,7 @@ return expected;
 } 
 """
 
-@Create204_modi_applicativi
+@Create204_modi_applicativi_esterni
 Scenario Outline: Applicativi modi esterno Creazione 204 OK
 
 		* def erogatore = read('soggetto_esterno.json')
@@ -68,7 +68,7 @@ Examples:
 |applicativo_esterno.json|
 |applicativo_esterno_audience.json|
 
-@Create204_modi_applicativi
+@Create204_modi_applicativi_interni
 Scenario Outline: Applicativi modi interno Creazione 204 OK
 
 		* def query_param_profilo_modi = {'profilo': 'ModI'}
@@ -88,6 +88,9 @@ Examples:
 |applicativo_interno.json|
 |applicativo_interno_keystore_archive.json|
 |applicativo_interno_keystore_file.json|
+|applicativo_interno_keystore_hsm.json|
+|applicativo_interno_keystore_file_certificato.json|
+|applicativo_interno_keystore_hsm_certificato.json|
 |applicativo_interno_audience.json|
 |applicativo_interno_url_x5u.json|
 

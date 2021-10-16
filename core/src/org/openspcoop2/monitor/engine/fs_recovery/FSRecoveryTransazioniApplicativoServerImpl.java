@@ -83,6 +83,7 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 			int esitoConsegnaMultiplaFallita = -1;
 			int esitoConsegnaMultiplaCompletata = -1;
 			int ok = -1;
+			int esitoIntegrationManagerSingolo = -1;
 			boolean esitiLetti = false;
 			try {
 				EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log, transazioneApplicativoServer.getProtocollo());
@@ -90,6 +91,7 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 				esitoConsegnaMultiplaFallita = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_FALLITA);
 				esitoConsegnaMultiplaCompletata = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_COMPLETATA);
 				ok = esitiProperties.convertoToCode(EsitoTransazioneName.OK);
+				esitoIntegrationManagerSingolo = esitiProperties.convertoToCode(EsitoTransazioneName.MESSAGE_BOX);
 				esitiLetti = true;			
 			}catch(Exception er) {
 				// errore che non dovrebbe succedere
@@ -104,11 +106,14 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 					boolean autoCommit = false;
 					connection.setAutoCommit(autoCommit);
 					
+					boolean possibileTerminazioneSingleIntegrationManagerMessage = false;
+					
 					TransactionServerUtils.safe_aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, connection, 
 							this.daoFactoryServiceManagerProperties.getDatabaseType(), this.log,
 							this.daoFactory,this.daoFactoryLogger,this.daoFactoryServiceManagerProperties,
 							this.debug,
 							esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
+							esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage,
 							this.gestioneSerializableDB_AttesaAttiva,this.gestioneSerializableDB_CheckInterval);
 					
 				}finally{

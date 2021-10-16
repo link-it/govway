@@ -62,6 +62,7 @@ public class GestoreLoadBalancerCaching {
 	private static final String LOAD_BALANCER_CACHE_NAME = "consegnaApplicativi";
 	/** Cache */
 	private static Cache cache = null;
+	private static final org.openspcoop2.utils.Semaphore lock = new org.openspcoop2.utils.Semaphore("GestoreLoadBalancerCaching");
 	
 
 	/* --------------- Cache --------------------*/
@@ -429,8 +430,11 @@ public class GestoreLoadBalancerCaching {
 				}
 			}
     		
-			synchronized (GestoreLoadBalancerCaching.cache) {
-
+			//synchronized (GestoreLoadBalancerCaching.cache) {
+			try {
+				GestoreLoadBalancerCaching.lock.acquireThrowRuntime("getLoadBalancerPool",
+						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
+				
 				response = 
 					(org.openspcoop2.utils.cache.CacheResponse) GestoreLoadBalancerCaching.cache.get(keyCache);
 				if(response != null){
@@ -466,6 +470,9 @@ public class GestoreLoadBalancerCaching {
 				}else{
 					throw new BehaviourException("Metodo (getLoadBalancerPool) non è riuscito a costruire un pool");
 				}
+			}finally {
+				GestoreLoadBalancerCaching.lock.release("getLoadBalancerPool",
+						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
 			}
     	}
     	
@@ -573,8 +580,11 @@ public class GestoreLoadBalancerCaching {
 				}
 			}
     		
-			synchronized (GestoreLoadBalancerCaching.cache) {
-
+			//synchronized (GestoreLoadBalancerCaching.cache) {
+			try {
+				GestoreLoadBalancerCaching.lock.acquireThrowRuntime("getNomeConnettore",
+						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
+				
 				response = 
 					(org.openspcoop2.utils.cache.CacheResponse) GestoreLoadBalancerCaching.cache.get(keyCache);
 				if(response != null){
@@ -661,6 +671,9 @@ public class GestoreLoadBalancerCaching {
 				}
 				return stickyConnector.getConnector();
 
+			}finally {
+				GestoreLoadBalancerCaching.lock.release("getNomeConnettore",
+						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
 			}
     	}
     	

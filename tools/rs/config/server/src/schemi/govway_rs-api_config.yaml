@@ -14,7 +14,7 @@ info:
   x-summary: Servizi per la configurazione di GovWay
   description: Servizi per la configurazione di GovWay
   termsOfService: https://govway.org/documentazione/api/index.html
-  version: "3.3.4.p2"
+  version: "3.3.5"
   contact:
     email: info@link.it
   license:
@@ -39,7 +39,9 @@ tags:
   - name: soggetti
     description: soggetti esterni o interni al dominio di gestione
   - name: applicativi
-    description: applicativi interni al dominio di gestione
+    description: applicativi client che fruiscono di API
+  - name: applicativi-server
+    description: applicativi server che erogano una API
   - name: ruoli
     description: ruoli associabili agli applicativi ed ai soggetti
   - name: scope
@@ -1884,6 +1886,7 @@ paths:
       - $ref: "govway_core.yaml#/components/parameters/id_ncname"
       - $ref: "govway_core.yaml#/components/parameters/id_versione"   
       - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
     get:
       tags:
         - erogazioni
@@ -1896,7 +1899,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/Connettore"
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreErogazione"
         "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         "401":
@@ -1923,7 +1926,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/Connettore'
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreErogazione'
       responses: 
         "204":
           description: Configurazione dell'erogazione aggiornata correttamente
@@ -4495,6 +4498,7 @@ paths:
       - $ref: "govway_core.yaml#/components/parameters/id_ncname"
       - $ref: "govway_core.yaml#/components/parameters/id_versione"    
       - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
     get:
       tags:
         - fruizioni
@@ -4507,7 +4511,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/Connettore"
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreFruizione"
         "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         "401":
@@ -4534,7 +4538,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/Connettore'
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreFruizione'
       responses: 
         "204":
           description: Configurazione della fruizione aggiornata correttamente
@@ -6812,6 +6816,160 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  # ** Applicativi Server **
+  /applicativi-server:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+    get:
+      tags:
+        - applicativi-server
+      parameters:
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
+        - $ref: 'govway_rs-api_config-commons.yaml#/components/parameters/profilo_qualsiasi'
+        - $ref: 'govway_rs-api_config-commons.yaml#/components/parameters/soggetto_qualsiasi'
+      summary: Ricerca applicativi server
+      operationId: findAllApplicativiServer
+      description: Elenca gli applicativi server registrati
+      responses: 
+        "200":
+          description: Ricerca eseguita correttamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListaApplicativiServer"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    post:
+      tags:
+        - applicativi-server
+      summary: Creazione di un applicativo server
+      operationId: createApplicativoServer
+      description: Questa operazione consente di creare un applicativo server associato ad un soggetto interno
+      requestBody:
+        description: Dati dell'applicativo server che si vuole creare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicativoServer'
+      responses:
+        "201":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '409':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/409Conflict'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+  /applicativi-server/{nome}:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+    get:
+      tags:
+        - applicativi-server
+      summary: Restituisce il dettaglio di un applicativo server
+      operationId: getApplicativoServer
+      description: Questa operazione consente di ottenere il dettaglio di un applicativo server identificato dal nome e dal soggetto di riferimento
+      responses:
+        "200":
+          description: Dati dell'applicativo restituiti con successo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplicativoServer"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - applicativi-server
+      summary: Modifica i dati di un applicativo server
+      operationId: updateApplicativoServer
+      description: Questa operazione consente di aggiornare i dati di un applicativo server identificato dal nome e dal soggetto di riferimento
+      requestBody:
+        description: Dati dell'applicativo server da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicativoServer'
+      responses: 
+        "204":
+          description: Applicativo Server aggiornato con successo
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    delete:
+      tags:
+        - applicativi-server
+      summary: Elimina un applicativo server
+      operationId: deleteApplicativoServer
+      description: Questa operazione consente di eliminare un applicativo server identificato dal nome e dal soggetto di riferimento
+      responses: 
+        "204":
+          description: Applicativo server eliminato con successo
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   
   # ** Ruoli **        
   /ruoli:
@@ -7276,7 +7434,8 @@ components:
         - ruolo
       properties:
         nome:
-          $ref: 'govway_core.yaml#/components/schemas/NCName'
+          type: string
+          # rilassato vincolo, un allegato puo' avere qualsiasi $ref: 'govway_core.yaml#/components/schemas/NCName'
         documento:
           type: string
           format: byte
@@ -7315,7 +7474,8 @@ components:
         - ruolo
       properties:
         nome:
-          $ref: 'govway_core.yaml#/components/schemas/NCName'            
+          type: string
+          # rilassato vincolo, un allegato puo' avere qualsiasi $ref: 'govway_core.yaml#/components/schemas/NCName'           
         ruolo:
           $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/RuoloAllegatoAPI'
     ApiAllegatoItemSpecificaSemiformale:
@@ -7668,6 +7828,63 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/ApplicativoItem'
+
+    # ApplicativiServer
+    ApplicativoServer:
+      type: object
+      required:
+        - nome
+      properties:
+        nome:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'            
+        proprieta:
+          type: array
+          items:
+            $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/Proprieta4000'
+        connettore:
+           type: object
+           oneOf:
+             - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreHttp' 
+             - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreFile'
+             - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreJms'
+             - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreNull'
+             - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreEcho'
+             - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettorePlugin'
+             - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreApplicativoServer'
+             - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreMessageBox'
+           discriminator:
+             propertyName: tipo
+             mapping:
+               'http': 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreHttp'
+               'file': 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreFile'
+               'jms': 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreJms'
+               'null': 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreNull'
+               'echo': 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreEcho'
+               'plugin': 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettorePlugin'
+               'applicativo-server': 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreApplicativoServer'
+               'message-box': 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreMessageBox' 
+    ApplicativoServerItem:
+      type: object
+      allOf:
+        - $ref: 'govway_core.yaml#/components/schemas/BaseSoggettoItem'
+        - type: object
+          required: 
+            - nome
+          properties:
+            nome:
+              $ref: 'govway_core.yaml#/components/schemas/NCName'
+    ListaApplicativiServer:
+       type: object
+       allOf:
+          - $ref: 'govway_core.yaml#/components/schemas/Lista'
+          - type: object
+            required:
+              - items
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApplicativoServerItem'
                  
     # Ruoli
     Ruolo:

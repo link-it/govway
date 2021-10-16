@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.Scanner;
 
+import org.openspcoop2.utils.Costanti;
 import org.slf4j.Logger;
 
 
@@ -55,6 +56,18 @@ public class PropertiesUtilities {
 	public static CollectionProperties searchLocalImplementation(String OPENSPCOOP2_LOCAL_HOME, Logger log,String variabile,String path,String confDirectory,boolean readCallsNotSynchronized){	
 		
 		CollectionProperties cp = new CollectionProperties();
+		
+		String envP = System.getenv(Costanti.OPENSPCOOP2_FORCE_CONFIG_FILE);
+		if(envP!=null && "true".equalsIgnoreCase(envP)) {
+			cp.setForceConfigDir(true);
+		}
+		else {
+			String javaP = System.getProperty(Costanti.OPENSPCOOP2_FORCE_CONFIG_FILE);
+			if(javaP!=null && "true".equalsIgnoreCase(javaP)) {
+				cp.setForceConfigDir(true);
+			}
+		}
+		
 		
 		Properties p1 = PropertiesUtilities.examineStep1(log,variabile);
 		if(p1!=null){

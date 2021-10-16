@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.soap.SOAPBody;
 
@@ -491,10 +490,15 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 			}
 			this.context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, this.protocolFactory.getProtocol());
 			this.context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO, this.req.getRequestInfo());
-			Map<String, String> configProperties = RicezioneBusteServiceUtils.readPropertiesConfig(this.req.getRequestInfo(), this.logCore,null);
-            if (configProperties != null && !configProperties.isEmpty()) {
-               this.context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE, configProperties);
-            }	
+			RicezionePropertiesConfig rConfig = RicezioneBusteServiceUtils.readPropertiesConfig(this.req.getRequestInfo(), this.logCore,null);
+			if(rConfig!=null) {
+	            if (rConfig.getApiImplementation() != null && !rConfig.getApiImplementation().isEmpty()) {
+	            	this.context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE, rConfig.getApiImplementation());
+	            }
+	            if (rConfig.getSoggettoErogatore() != null && !rConfig.getSoggettoErogatore().isEmpty()) {
+	            	this.context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_EROGATORE, rConfig.getSoggettoErogatore());
+	            }
+			}
 			this.context.setTipoPorta(TipoPdD.APPLICATIVA);
 			this.context.setIdModulo(this.idModulo);
 			this.msgDiag.setPddContext(this.context.getPddContext(), this.protocolFactory);

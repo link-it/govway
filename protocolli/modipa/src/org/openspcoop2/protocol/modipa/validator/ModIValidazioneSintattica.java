@@ -24,7 +24,9 @@ package org.openspcoop2.protocol.modipa.validator;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.soap.SOAPEnvelope;
 
@@ -295,16 +297,29 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 								ModIPropertiesUtils.convertProfiloSicurezzaToSDKValue(securityMessageProfile, rest));
 						
 						boolean fruizione = !request;
-						ModISecurityConfig securityConfig = new ModISecurityConfig(msg, this.protocolFactory, this.state, idSoggettoMittente, aspc, asps, sa, rest, fruizione, request);
+							
+						String headerTokenRest = null;
+						String headerTokenRestIntegrity = null; // nel caso di Authorization insieme a Agid-JWT-Signature
+						Boolean multipleHeaderAuthorizationConfig = null;
+						if(rest) {
+							headerTokenRest = ModIPropertiesUtils.readPropertySecurityMessageHeader(aspc, nomePortType, azione, request);
+							if(headerTokenRest.contains(" ")) {
+								String [] tmp = headerTokenRest.split(" ");
+								if(tmp!=null && tmp.length==2 && tmp[0]!=null && tmp[1]!=null) {
+									headerTokenRest=tmp[0];
+									headerTokenRestIntegrity=tmp[1];
+									multipleHeaderAuthorizationConfig = true;
+								}
+							}
+						}
+	
+						ModISecurityConfig securityConfig = new ModISecurityConfig(msg, this.protocolFactory, this.state, idSoggettoMittente, 
+								aspc, asps, sa, rest, fruizione, request,
+								multipleHeaderAuthorizationConfig);
 						ModITruststoreConfig trustStoreCertificati = new ModITruststoreConfig(fruizione, idSoggettoMittente, asps, false);
 						ModITruststoreConfig trustStoreSsl = null;
 						if(securityConfig.isX5u()) {
 							trustStoreSsl = new ModITruststoreConfig(fruizione, idSoggettoMittente, asps, true);
-						}
-						
-						String headerTokenRest = null;
-						if(rest) {
-							headerTokenRest = ModIPropertiesUtils.readPropertySecurityMessageHeader(aspc, nomePortType, azione);
 						}
 						
 						boolean corniceSicurezza = ModIPropertiesUtils.isPropertySecurityMessageConCorniceSicurezza(aspc, nomePortType, azione);
@@ -332,22 +347,135 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 								this.context.addObject(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_BUILD_SECURITY_REQUEST_TOKEN, processSecurity);
 							}
 						}
+					
+						// FIX: va inizializzato dentro il metodo 'validateSecurityProfile' dopo aver identificato l'applicativo
+//						boolean bufferMessage_readOnly = this.modiProperties.isReadByPathBufferEnabled();
+//						Map<String, Object> dynamicMap = null;
+//						Map<String, Object> dynamicMapRequest = null;
+//						if(!request) {
+//							dynamicMapRequest = ModIUtilities.removeDynamicMapRequest(this.context);
+//						}
+//						if(dynamicMapRequest!=null) {
+//							dynamicMap = DynamicUtils.buildDynamicMapResponse(msg, this.context, null, this.log, bufferMessage_readOnly, dynamicMapRequest);
+//						}
+//						else {
+//							dynamicMap = DynamicUtils.buildDynamicMap(msg, this.context, datiRichiesta, this.log, bufferMessage_readOnly);
+//							ModIUtilities.saveDynamicMapRequest(this.context, dynamicMap);
+//						}
+						Map<String, Object> dynamicMap = new HashMap<String, Object>();
 						
 						if(rest) {
+							boolean headerDuplicati = true;
+							boolean securityHeaderObbligatorio = true;
 							
-							String token = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfile, headerTokenRest, corniceSicurezza, includiRequestDigest, bustaRitornata, 
-									erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfig,
-									buildSecurityTokenInRequest);
-							
-							if(token!=null) {
+							if(headerTokenRestIntegrity==null) {
 								
-								if(securityConfig.getAudience()!=null) {
-									if(request || (securityConfig.isCheckAudience())) {
-										msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK, securityConfig.getAudience());
+								String token = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfile, headerTokenRest, corniceSicurezza, includiRequestDigest, bustaRitornata, 
+										erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfig,
+										buildSecurityTokenInRequest, !headerDuplicati, securityHeaderObbligatorio,
+										dynamicMap, datiRichiesta);
+								
+								if(token!=null) {
+									
+									if(securityConfig.getAudience()!=null) {
+										if(request || (securityConfig.isCheckAudience())) {
+											String audience = securityConfig.getAudience();
+											if(fruizione && !request) {
+												try {
+													audience = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, 
+															audience, dynamicMap, this.context);
+												}catch(Exception e) {
+													this.log.error(e.getMessage(),e);
+													throw e;
+												}
+											}
+											msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK, audience);
+										}
 									}
+									
+									rawContent = new ModIBustaRawContent(headerTokenRest, token);
+								}
+							}
+							else {
+								
+								// Authorization
+								String securityMessageProfileAuthorization = null;
+								if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile)) {
+									securityMessageProfileAuthorization = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01; 
+								}
+								else {
+									securityMessageProfileAuthorization = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02; 
+								}
+								String tokenAuthorization = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfileAuthorization, headerTokenRest, corniceSicurezza, includiRequestDigest, bustaRitornata, 
+										erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfig,
+										buildSecurityTokenInRequest, headerDuplicati, securityHeaderObbligatorio,
+										dynamicMap, datiRichiesta);
+								
+								String audAuthorization = null;
+								if(tokenAuthorization!=null) {
+									
+									if(securityConfig.getAudience()!=null) {
+										if(request || (securityConfig.isCheckAudience())) {
+											audAuthorization = securityConfig.getAudience();
+											if(fruizione && !request) {
+												try {
+													audAuthorization = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, 
+															audAuthorization, dynamicMap, this.context);
+												}catch(Exception e) {
+													this.log.error(e.getMessage(),e);
+													throw e;
+												}
+											}
+											msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK, audAuthorization);
+										}
+									}
+									
 								}
 								
-								rawContent = new ModIBustaRawContent(token);
+								// Integrity
+								// !! Nel caso di 2 header, quello integrity è obbligatorio solo se c'è un payload, altrimenti se presente viene validato, altrimenti non da errore.
+								boolean securityHeaderIntegrityObbligatorio = msg.castAsRest().hasContent();
+								ModISecurityConfig securityConfigIntegrity = new ModISecurityConfig(msg, this.protocolFactory, this.state, idSoggettoMittente, 
+										aspc, asps, sa, rest, fruizione, request,
+										false);
+								String tokenIntegrity = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfile, headerTokenRestIntegrity, corniceSicurezza, includiRequestDigest, bustaRitornata, 
+										erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfigIntegrity,
+										buildSecurityTokenInRequest, headerDuplicati, securityHeaderIntegrityObbligatorio,
+										null, null); // gia' inizializzato sopra
+								
+								if(tokenIntegrity!=null) {
+									
+									if(securityConfigIntegrity.getAudience()!=null) {
+										if(request || (securityConfigIntegrity.isCheckAudience())) {
+											String audIntegrity = securityConfigIntegrity.getAudience();
+											audIntegrity = securityConfigIntegrity.getAudience();
+											if(fruizione && !request) {
+												try {
+													audIntegrity = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, 
+															audIntegrity, dynamicMap, this.context);
+												}catch(Exception e) {
+													this.log.error(e.getMessage(),e);
+													throw e;
+												}
+											}
+											msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_INTEGRITY_CHECK, audIntegrity);
+										}
+									}
+									
+								}
+								
+								// Finalizzo
+								
+								if(tokenAuthorization!=null && tokenIntegrity!=null) {
+									rawContent = new ModIBustaRawContent(tokenAuthorization, headerTokenRestIntegrity, tokenIntegrity);
+								}
+								else if(tokenAuthorization!=null) {
+									rawContent = new ModIBustaRawContent(headerTokenRest, tokenAuthorization);
+								}
+								else if(tokenIntegrity!=null) {
+									rawContent = new ModIBustaRawContent(headerTokenRestIntegrity, tokenIntegrity);
+								}
+								
 							}
 							
 						}
@@ -355,13 +483,24 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 
 							SOAPEnvelope token = validatoreSintatticoSoap.validateSecurityProfile(msg, request, securityMessageProfile, corniceSicurezza, includiRequestDigest, signAttachments, bustaRitornata, 
 									erroriValidazione, trustStoreCertificati, securityConfig,
-									buildSecurityTokenInRequest );
+									buildSecurityTokenInRequest,
+									dynamicMap, datiRichiesta );
 							
 							if(token!=null) {
 								
 								if(securityConfig.getAudience()!=null) {
 									if(request || (securityConfig.isCheckAudience())) {
-										msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK, securityConfig.getAudience());
+										String audience = securityConfig.getAudience();
+										if(fruizione && !request) {
+											try {
+												audience = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SOAP_WSA_TO, 
+														audience, dynamicMap, this.context);
+											}catch(Exception e) {
+												this.log.error(e.getMessage(),e);
+												throw e;
+											}
+										}
+										msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK, audience);
 									}
 								}
 								

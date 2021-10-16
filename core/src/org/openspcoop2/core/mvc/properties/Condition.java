@@ -44,6 +44,8 @@ import java.util.List;
  * 			&lt;element name="lessEquals" type="{http://www.openspcoop2.org/core/mvc/properties}equals" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="greaterThen" type="{http://www.openspcoop2.org/core/mvc/properties}equals" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="greaterEquals" type="{http://www.openspcoop2.org/core/mvc/properties}equals" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="startsWith" type="{http://www.openspcoop2.org/core/mvc/properties}equals" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="endsWith" type="{http://www.openspcoop2.org/core/mvc/properties}equals" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 		&lt;/sequence&gt;
  * 		&lt;attribute name="and" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/&gt;
  * 		&lt;attribute name="not" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
@@ -65,7 +67,9 @@ import java.util.List;
   	"lessThen",
   	"lessEquals",
   	"greaterThen",
-  	"greaterEquals"
+  	"greaterEquals",
+  	"startsWith",
+  	"endsWith"
   }
 )
 
@@ -241,6 +245,54 @@ public class Condition extends org.openspcoop2.utils.beans.BaseBean implements S
 
   public int sizeGreaterEqualsList() {
     return this.greaterEquals.size();
+  }
+
+  public void addStartsWith(Equals startsWith) {
+    this.startsWith.add(startsWith);
+  }
+
+  public Equals getStartsWith(int index) {
+    return this.startsWith.get( index );
+  }
+
+  public Equals removeStartsWith(int index) {
+    return this.startsWith.remove( index );
+  }
+
+  public List<Equals> getStartsWithList() {
+    return this.startsWith;
+  }
+
+  public void setStartsWithList(List<Equals> startsWith) {
+    this.startsWith=startsWith;
+  }
+
+  public int sizeStartsWithList() {
+    return this.startsWith.size();
+  }
+
+  public void addEndsWith(Equals endsWith) {
+    this.endsWith.add(endsWith);
+  }
+
+  public Equals getEndsWith(int index) {
+    return this.endsWith.get( index );
+  }
+
+  public Equals removeEndsWith(int index) {
+    return this.endsWith.remove( index );
+  }
+
+  public List<Equals> getEndsWithList() {
+    return this.endsWith;
+  }
+
+  public void setEndsWithList(List<Equals> endsWith) {
+    this.endsWith=endsWith;
+  }
+
+  public int sizeEndsWithList() {
+    return this.endsWith.size();
   }
 
   public boolean isAnd() {
@@ -479,6 +531,66 @@ public class Condition extends org.openspcoop2.utils.beans.BaseBean implements S
   @Deprecated
   public int sizeGreaterEquals() {
   	return this.greaterEquals.size();
+  }
+
+  @XmlElement(name="startsWith",required=true,nillable=false)
+  protected List<Equals> startsWith = new ArrayList<Equals>();
+
+  /**
+   * @deprecated Use method getStartsWithList
+   * @return List&lt;Equals&gt;
+  */
+  @Deprecated
+  public List<Equals> getStartsWith() {
+  	return this.startsWith;
+  }
+
+  /**
+   * @deprecated Use method setStartsWithList
+   * @param startsWith List&lt;Equals&gt;
+  */
+  @Deprecated
+  public void setStartsWith(List<Equals> startsWith) {
+  	this.startsWith=startsWith;
+  }
+
+  /**
+   * @deprecated Use method sizeStartsWithList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeStartsWith() {
+  	return this.startsWith.size();
+  }
+
+  @XmlElement(name="endsWith",required=true,nillable=false)
+  protected List<Equals> endsWith = new ArrayList<Equals>();
+
+  /**
+   * @deprecated Use method getEndsWithList
+   * @return List&lt;Equals&gt;
+  */
+  @Deprecated
+  public List<Equals> getEndsWith() {
+  	return this.endsWith;
+  }
+
+  /**
+   * @deprecated Use method setEndsWithList
+   * @param endsWith List&lt;Equals&gt;
+  */
+  @Deprecated
+  public void setEndsWith(List<Equals> endsWith) {
+  	this.endsWith=endsWith;
+  }
+
+  /**
+   * @deprecated Use method sizeEndsWithList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeEndsWith() {
+  	return this.endsWith.size();
   }
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")

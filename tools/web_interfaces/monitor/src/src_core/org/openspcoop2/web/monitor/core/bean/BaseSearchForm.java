@@ -1838,6 +1838,10 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	}
 
 	private boolean isCloned = false;
+	public boolean isCloned() {
+		return this.isCloned;
+	}
+
 	private String protocolCloned = null;
 	private String tipoNomeSoggettoLocaleCloned = null;
 	public void saveProtocollo() {

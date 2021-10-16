@@ -903,7 +903,7 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 			try{
 				// provo ad emetter un diagnostico
 				if(this.msgContext.getMsgDiagnostico()!=null){
-					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"InizializzazionePdD");
+					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"InizializzazioneGovWay");
 				}
 			}catch(Throwable t){this.logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
@@ -919,7 +919,7 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 			try{
 				// provo ad emetter un diagnostico
 				if(this.msgContext.getMsgDiagnostico()!=null){
-					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"InizializzazioneRisorsePdD");
+					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"InizializzazioneRisorseGovWay");
 				}
 			}catch(Throwable t){this.logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
@@ -935,7 +935,7 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 			try{
 				// provo ad emetter un diagnostico
 				if(this.msgContext.getMsgDiagnostico()!=null){
-					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"DisponibilitaRisorsePdD");
+					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"DisponibilitaRisorseGovWay");
 				}
 			}catch(Throwable t){this.logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
@@ -1000,13 +1000,13 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 		try{
 			this.configurazionePdDReader.verificaConsistenzaConfigurazione();	
 		}catch(Exception e){
-			String msgErrore = "Riscontrato errore durante la verifica della consistenza della configurazione PdD";
+			String msgErrore = "Riscontrato errore durante la verifica della consistenza della configurazione";
 			this.logCore.error("["+ RicezioneContenutiApplicativi.ID_MODULO
 					+ "]  "+msgErrore,e);
 			try{
 				// provo ad emetter un diagnostico
 				if(this.msgContext.getMsgDiagnostico()!=null){
-					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"CheckConfigurazionePdD");
+					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"CheckConfigurazioneGovWay");
 				}
 			}catch(Throwable t){this.logCore.error("Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
@@ -2417,6 +2417,17 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 						if(esito.isClientIdentified()) {
 							servizioApplicativo = esito.getIdServizioApplicativo().getNome();
 							this.msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_SA_FRUITORE, ""); // per evitare di visualizzarle anche nei successivi diagnostici
+							
+							IDServizioApplicativo idSAFruitore = new IDServizioApplicativo();
+							idSAFruitore.setIdSoggettoProprietario(soggettoFruitore);
+							idSAFruitore.setNome(servizioApplicativo);
+							try {
+								ServizioApplicativo sa = this.configurazionePdDReader.getServizioApplicativo(idSAFruitore);
+								Map<String, String> configProperties = this.configurazionePdDReader.getProprietaConfigurazione(sa);
+					            if (configProperties != null && !configProperties.isEmpty()) {
+					            	pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO, configProperties);
+								}	
+							}catch(Throwable t) {}
 						}
 						else {
 							// l'errore puo' non esserci se l'autenticazione utilizzata non prevede una identificazione obbligatoria

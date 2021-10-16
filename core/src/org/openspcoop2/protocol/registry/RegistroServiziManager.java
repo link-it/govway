@@ -24,8 +24,10 @@ import java.io.Serializable;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
@@ -297,6 +299,14 @@ public class RegistroServiziManager {
 	
 	public IDSoggetto getIdSoggettoByCredenzialiPrincipal(String principal, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return this.registroServiziReader.getIdSoggettoByCredenzialiPrincipal(this.getConnection(), principal, nomeRegistro);
+	}
+	
+	
+	
+	/* ********  P R O P R I E T A  ******** */
+	
+	public Map<String, String> getProprietaConfigurazione(Soggetto soggetto) throws DriverConfigurazioneException {
+		return this.registroServiziReader.getProprietaConfigurazione(soggetto);
 	}
 	
 	

@@ -36,6 +36,7 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.transazioni.utils.PropertiesSerializator;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.MessageType;
@@ -66,6 +67,7 @@ import org.openspcoop2.protocol.basic.registry.ServiceIdentificationReader;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
+import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
@@ -90,15 +92,28 @@ import org.slf4j.Logger;
  */
 public class RicezioneContenutiApplicativiServiceUtils {
 
-	public static Map<String, String> readPropertiesConfig(RequestInfo requestInfo, Logger logCore, IState state) {
+	public static RicezionePropertiesConfig readPropertiesConfig(RequestInfo requestInfo, Logger logCore, IState state) {
 		if (requestInfo != null && requestInfo.getProtocolContext() != null && requestInfo.getProtocolContext().getInterfaceName() != null && !"".equals(requestInfo.getProtocolContext().getInterfaceName())) {
 			try {
 				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
+				RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance(state);
 				IDPortaDelegata idPD = new IDPortaDelegata();
 				idPD.setNome(requestInfo.getProtocolContext().getInterfaceName());
 				PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD);
 				if (pd != null) {
-					return configurazionePdDManager.getProprietaConfigurazione(pd);
+					RicezionePropertiesConfig config = new RicezionePropertiesConfig();
+					
+					config.setApiImplementation(configurazionePdDManager.getProprietaConfigurazione(pd));
+					
+					IDSoggetto idSoggettoProprietario = new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario());
+					Soggetto soggetto = registroServiziManager.getSoggetto(idSoggettoProprietario, null);
+					config.setSoggettoFruitore(registroServiziManager.getProprietaConfigurazione(soggetto));
+					
+					IDSoggetto idSoggettoErogatore = new IDSoggetto(pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome());
+					Soggetto soggettoErogatore = registroServiziManager.getSoggetto(idSoggettoErogatore, null);
+					config.setSoggettoErogatore(registroServiziManager.getProprietaConfigurazione(soggettoErogatore));
+					
+					return config;
 				}
 			} catch (Exception e) {
 				logCore.error("Errore durante la lettura delle proprietà di configurazione della porta delegata [" + requestInfo.getProtocolContext().getInterfaceName() + "]: " + e.getMessage(), e);

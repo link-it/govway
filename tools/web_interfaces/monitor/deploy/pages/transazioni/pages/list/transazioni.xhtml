@@ -568,6 +568,35 @@ xmlns="http://www.w3.org/1999/xhtml"
 						 //]]>	
 					</script>
 				</a4j:outputPanel>
+								
+				<a4j:outputPanel id="profiloDifferenteCtr" layout="block" styleClass="" rendered="#{transazioniDM.profiloDifferenteEvent}">
+					<script type="text/javascript">
+						//<![CDATA[
+						   jQuery(document).ready(controllaEventoProfiloDifferente);
+				
+						   function controllaEventoProfiloDifferente(){  
+							   if(#{transazioniDM.profiloDifferenteEvent}){
+									Richfaces.showModalPanel('msgDt_profiloDifferenteModal');
+								}
+						   }
+						 //]]>	
+					</script>
+				</a4j:outputPanel>
+								
+				<a4j:outputPanel id="soggettoDifferenteCtr" layout="block" styleClass="" rendered="#{transazioniDM.soggettoDifferenteEvent}">
+					<script type="text/javascript">
+						//<![CDATA[
+						   jQuery(document).ready(controllaEventoSoggettoDifferente);
+				
+						   function controllaEventoSoggettoDifferente(){  
+							   if(#{transazioniDM.soggettoDifferenteEvent}){
+									Richfaces.showModalPanel('msgDt_soggettoDifferenteModal');
+								}
+						   }
+						 //]]>	
+					</script>
+				</a4j:outputPanel>
+				
 			</a4j:outputPanel>
 			
 			<a4j:outputPanel id="listaTransazioniLiveCtr" ajaxRendered="false" layout="block" styleClass="panelLista" rendered="#{searchFormTransazioni.periodo eq 'Live'}">

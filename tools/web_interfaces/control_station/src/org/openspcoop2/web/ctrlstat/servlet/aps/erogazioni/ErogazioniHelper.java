@@ -582,7 +582,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				this.addFilterModIInfoUtente(ricerca, idLista);
 				
 				// filtro keystore
-				this.addFilterModIKeystore(ricerca, idLista);
+				this.addFilterModIKeystorePath(ricerca, idLista);
 				
 				// filtro audience
 				this.addFilterModIAudience(ricerca, idLista, false, filterTipoAccordo, null);

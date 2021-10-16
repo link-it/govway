@@ -31,7 +31,8 @@ public class ModIApplicativoSicurezzaMessaggio  {
   @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "tipologia", visible = true )
   @com.fasterxml.jackson.annotation.JsonSubTypes({
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModIKeyStoreArchive.class, name = "archivio"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModIKeyStoreFile.class, name = "filesystem")  })
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModIKeyStoreFileApplicativo.class, name = "filesystem"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModIKeyStoreHSMApplicativo.class, name = "hsm")  })
   private OneOfModIApplicativoSicurezzaMessaggioKeystore keystore = null;
   
   @Schema(description = "")

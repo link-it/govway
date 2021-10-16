@@ -79,21 +79,6 @@ Se invece è previsto un JWT firmato saranno richiesti i parametri da inserire n
 Se il tipo di negoziazione selezionato è 'Signed JWT with Client Secret', oltre al Client-ID viene richiesto anche il secret, concordato con l'authorization server, da utilizzare per firmare l'asserzione JWT. Nel caso invece sia stato selezionato il tipo 'Signed JWT' vengono richiesti i parametri di accesso al keystore per individuare la chiave privata da utilizzare per firmare l'asserzione.
 
 
-Se invece è previsto un JWT firmato saranno richiesti i parametri da inserire nel JWT (claims) e l'algoritmo di firma da utilizzare:
-
--  *Signature Algorithm*: algoritmo utilizzato per firmare l'asserzione jwt;
-
--  *Client ID*: identificativo del client censito sull'AuthorizationServer che verrà indicato nel claim 'sub' dell'asserzione JWT;
-
--  *Audience*: identifica l'authorization server come destinario dell'asserzione JWT (claim 'aud');
-
--  *Issuer*: identità del firmatario dell'asserzione JWT;
-
--  *Time to Live*: indica la validità temporale, in secondi, a partire dalla data di creazione dell'asserzione.
-
-Se il tipo di negoziazione selezionato è 'Signed JWT with Client Secret', oltre al Client-ID viene richiesto anche il secret, concordato con l'authorization server, da utilizzare per firmare l'asserzione JWT. Nel caso invece sia stato selezionato il tipo 'Signed JWT' vengono richiesti i parametri di accesso al keystore per individuare la chiave privata da utilizzare per firmare l'asserzione.
-
-
 Nella sezione 'Configurazione' potranno invece essere definiti ulteriori criteri che riguardano la richiesta di un token:
 
 -  *Scope*: Elenco di scope utente richiesti.

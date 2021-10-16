@@ -262,4 +262,46 @@ public class Costanti {
 	
 	public final static String ID_JWS_ENCRYPT_CONTENT_ALGORITHM = "tokenForwardInfoRaccolteModeJWEContentAlgorithm";
 	
+	public final static String ID_VALIDAZIONE_JWT_TRUSTSTORE_TYPE = "validazioneJwtTruststoreType";
+	public final static String ID_VALIDAZIONE_JWT_TRUSTSTORE_FILE = "validazioneJwtTruststoreFile";
+	public final static String ID_VALIDAZIONE_JWT_TRUSTSTORE_PASSWORD = "validazioneJwtTruststorePassword";
+	
+	public final static String ID_VALIDAZIONE_JWT_KEYSTORE_TYPE = "validazioneJwtKeystoreType";
+	public final static String ID_VALIDAZIONE_JWT_KEYSTORE_FILE = "validazioneJwtKeystoreFile";
+	public final static String ID_VALIDAZIONE_JWT_KEYSTORE_PASSWORD = "validazioneJwtKeystorePassword";
+	public final static String ID_VALIDAZIONE_JWT_KEYSTORE_PASSWORD_PRIVATE_KEY = "validazioneJwtKeystorePrivateKeyPassword";
+	
+	public final static String ID_HTTPS_TRUSTSTORE_TYPE = "endpointHttpsTruststoreType";
+	public final static String ID_HTTPS_TRUSTSTORE_FILE = "endpointHttpsTruststoreFile";
+	public final static String ID_HTTPS_TRUSTSTORE_PASSWORD = "endpointHttpsTruststorePassword";
+	
+	public final static String ID_HTTPS_KEYSTORE_TYPE = "endpointHttpsClientKeystoreType";
+	public final static String ID_HTTPS_KEYSTORE_FILE = "endpointHttpsClientKeystoreFile";
+	public final static String ID_HTTPS_KEYSTORE_PASSWORD = "endpointHttpsClientKeystorePassword";
+	public final static String ID_HTTPS_KEYSTORE_PASSWORD_PRIVATE_KEY = "endpointHttpsClientPasswordChiavePrivata";
+	
+	public final static String ID_TOKEN_FORWARD_JWS_KEYSTORE_TYPE = "tokenForwardInfoRaccolteModeJWSKeystoreType";
+	public final static String ID_TOKEN_FORWARD_JWS_KEYSTORE_FILE = "tokenForwardInfoRaccolteModeJWSKeystoreFile";
+	public final static String ID_TOKEN_FORWARD_JWS_KEYSTORE_PASSWORD = "tokenForwardInfoRaccolteModeJWSKeystorePassword";
+	public final static String ID_TOKEN_FORWARD_JWS_KEYSTORE_PASSWORD_PRIVATE_KEY = "tokenForwardInfoRaccolteModeJWSKeystorePrivateKeyPassword";
+	
+	public final static String ID_TOKEN_FORWARD_JWE_KEYSTORE_TYPE = "tokenForwardInfoRaccolteModeJWEContentKeystoreType";
+	public final static String ID_TOKEN_FORWARD_JWE_KEYSTORE_FILE = "tokenForwardInfoRaccolteModeJWEContentKeystoreFile";
+	public final static String ID_TOKEN_FORWARD_JWE_KEYSTORE_PASSWORD = "tokenForwardInfoRaccolteModeJWEContentKeystorePassword";
+	public final static String ID_TOKEN_FORWARD_JWE_KEYSTORE_PASSWORD_PRIVATE_KEY = "tokenForwardInfoRaccolteModeJWEContentKeystorePrivateKeyPassword";
+	
+	public final static String ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE = "jwtKeystoreType";
+	public final static String ID_NEGOZIAZIONE_JWT_KEYSTORE_FILE = "jwtKeystoreFile";
+	public final static String ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD = "jwtKeystorePassword";
+	public final static String ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD_PRIVATE_KEY = "jwtPasswordChiavePrivata";
+	
+	public final static String ID_AA_JWS_KEYSTORE_TYPE = "aaJWSKeystoreType";
+	public final static String ID_AA_JWS_KEYSTORE_FILE = "aaJWSKeystoreFile";
+	public final static String ID_AA_JWS_KEYSTORE_PASSWORD = "aaJWSKeystorePassword";
+	public final static String ID_AA_JWS_KEYSTORE_PASSWORD_PRIVATE_KEY = "aaJWSKeystorePrivateKeyPassword";
+	
+	public final static String ID_AA_JWS_TRUSTSTORE_TYPE = "aaJWSTruststoreType";
+	public final static String ID_AA_JWS_TRUSTSTORE_FILE = "aaJWSTruststoreFile";
+	public final static String ID_AA_JWS_TRUSTSTORE_PASSWORD = "aaJWSTruststorePassword";
+
 }

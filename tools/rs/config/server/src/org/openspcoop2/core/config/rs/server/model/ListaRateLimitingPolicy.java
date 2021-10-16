@@ -31,7 +31,7 @@ import javax.validation.Valid;
 public class ListaRateLimitingPolicy extends Lista {
   
   @Schema(required = true, description = "")
-  private List<RateLimitingPolicyItem> items = new ArrayList<RateLimitingPolicyItem>();
+  private List<RateLimitingPolicyItem> items = new ArrayList<>();
  /**
    * Get items
    * @return items

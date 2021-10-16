@@ -191,6 +191,9 @@ public class OpenSPCoop2Properties {
 	 * 
 	 */
 	public OpenSPCoop2Properties(Properties localProperties) throws Exception{
+		this(localProperties, "/govway.properties");
+	}
+	public OpenSPCoop2Properties(Properties localProperties, String path) throws Exception{
 
 		if(OpenSPCoop2Startup.initialize)
 			this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
@@ -200,14 +203,20 @@ public class OpenSPCoop2Properties {
 		/* ---- Lettura del cammino del file di configurazione ---- */
 		Properties propertiesReader = new Properties();
 		java.io.InputStream properties = null;
-		try{  
-			properties = OpenSPCoop2Properties.class.getResourceAsStream("/govway.properties");
+		try{ 
+			properties = OpenSPCoop2Properties.class.getResourceAsStream(path);
 			if(properties==null){
-				throw new Exception("File '/govway.properties' not found");
+				File f = new File(path);
+				if(f.exists()) {
+					properties = new FileInputStream(f);
+				}
+				else {
+					throw new Exception("File '"+path+"' not found");
+				}
 			}
 			propertiesReader.load(properties);
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura del file 'govway.properties': \n\n"+e.getMessage(),e);
+			this.log.error("Riscontrato errore durante la lettura del file '"+path+"': \n\n"+e.getMessage(),e);
 			throw new Exception("OpenSPCoopProperties initialize error: "+e.getMessage(),e);
 		}finally{
 		    try{
@@ -225,9 +234,17 @@ public class OpenSPCoop2Properties {
 	 * 
 	 */
 	public static boolean initialize(Properties localProperties){
-
 		try {
 			OpenSPCoop2Properties.openspcoopProperties = new OpenSPCoop2Properties(localProperties);	
+			return true;
+		}
+		catch(Exception e) {
+			return false;
+		}
+	}
+	public static boolean initialize(Properties localProperties, String path){
+		try {
+			OpenSPCoop2Properties.openspcoopProperties = new OpenSPCoop2Properties(localProperties, path);	
 			return true;
 		}
 		catch(Exception e) {
@@ -841,6 +858,10 @@ public class OpenSPCoop2Properties {
 					break;
 				}
 			}
+			
+			this.getHSMConfig();
+			this.isHSMConfigRequired();
+			this.isHSMConfig_uniqueProviderInstance();
 			
 			this.getHttpUserAgent();
 			this.getHttpServer();
@@ -1789,6 +1810,10 @@ public class OpenSPCoop2Properties {
 			
 			// FormUrlEncodedFilter
 			this.isFormUrlEncodedFilterEnabled();
+			
+			// semaphore
+			this.getSemaphoreTimeoutMS();
+			this.isSemaphoreDebug();
 			
 			// JminixConsole
 			this.getPortJminixConsole();
@@ -8987,6 +9012,77 @@ public class OpenSPCoop2Properties {
 			}
 		}
 		return OpenSPCoop2Properties.getGestoreCredenzialiPortaApplicativaHeaderPrincipal;
+	}
+	
+	
+	
+	/* ********  HSM  ******** */
+	
+	private static String getHSMConfig = null;
+	public String getHSMConfig(){
+		if(OpenSPCoop2Properties.getHSMConfig==null){
+			String pName = "org.openspcoop2.pdd.hsm.config";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+				if(value!=null){
+					value = value.trim();
+					if(!"".equals(value)) {
+						OpenSPCoop2Properties.getHSMConfig = value;
+					}
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, non verrà abilitato l'engine HSM errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getHSMConfig = null;
+			}
+		}
+		return OpenSPCoop2Properties.getHSMConfig;
+	}
+	
+	private static Boolean isHSMConfigRequired= null;
+	public boolean isHSMConfigRequired(){
+		if(OpenSPCoop2Properties.isHSMConfigRequired==null){
+			String pName = "org.openspcoop2.pdd.hsm.required";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isHSMConfigRequired = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isHSMConfigRequired = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isHSMConfigRequired = false;
+			}
+		}
+		return OpenSPCoop2Properties.isHSMConfigRequired;
+	}
+	
+	private static Boolean isHSMConfig_uniqueProviderInstance= null;
+	public boolean isHSMConfig_uniqueProviderInstance(){
+		if(OpenSPCoop2Properties.isHSMConfig_uniqueProviderInstance==null){
+			String pName = "org.openspcoop2.pdd.hsm.uniqueProviderInstance";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isHSMConfig_uniqueProviderInstance = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isHSMConfig_uniqueProviderInstance = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isHSMConfig_uniqueProviderInstance = true;
+			}
+		}
+		return OpenSPCoop2Properties.isHSMConfig_uniqueProviderInstance;
 	}
 	
 
@@ -17938,6 +18034,90 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.isFormUrlEncodedFilterEnabled;
+	}
+	
+	
+	
+	/* ------------- FORMURLEncoder  ---------------------*/
+	
+	private static Boolean isWildflyUndertowClientCertificateFilterEnabled = null;
+	public boolean isWildflyUndertowClientCertificateFilterEnabled(){
+
+		String pName = "org.openspcoop2.pdd.wildflyUndertowClientCertificateFilter.enabled";
+		if(OpenSPCoop2Properties.isWildflyUndertowClientCertificateFilterEnabled==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isWildflyUndertowClientCertificateFilterEnabled = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isWildflyUndertowClientCertificateFilterEnabled = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isWildflyUndertowClientCertificateFilterEnabled = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isWildflyUndertowClientCertificateFilterEnabled;
+	}
+	
+	
+	
+	
+	/* ------------- SEMAPHORE  ---------------------*/
+	
+	private static Long getSemaphoreTimeoutMS = null;
+	public long getSemaphoreTimeoutMS(){
+
+		String pName = "org.openspcoop2.pdd.semaphore.timeoutMS";
+		if(OpenSPCoop2Properties.getSemaphoreTimeoutMS==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.getSemaphoreTimeoutMS = Long.valueOf(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=-1");
+					OpenSPCoop2Properties.getSemaphoreTimeoutMS = -1l;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=1-, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getSemaphoreTimeoutMS = -1l;
+			}
+		}
+
+		return OpenSPCoop2Properties.getSemaphoreTimeoutMS;
+	}
+	
+	private static Boolean isSemaphoreDebug = null;
+	public boolean isSemaphoreDebug(){
+
+		String pName = "org.openspcoop2.pdd.semaphore.debug";
+		if(OpenSPCoop2Properties.isSemaphoreDebug==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isSemaphoreDebug = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isSemaphoreDebug = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isSemaphoreDebug = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isSemaphoreDebug;
 	}
 	
 	

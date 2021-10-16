@@ -198,7 +198,7 @@ public class PorteDelegateCore extends ControlStationCore {
 		if(portaDelegata.getGestioneToken() == null)
 			portaDelegata.setGestioneToken(new GestioneToken());
 		
-		if(gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) {
+		if(gestioneToken!=null && gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) {
 			portaDelegata.getGestioneToken().setPolicy(gestioneTokenPolicy);
 			if(ServletUtils.isCheckBoxEnabled(gestioneTokenOpzionale)) {
 				portaDelegata.getGestioneToken().setTokenOpzionale(StatoFunzionalita.ABILITATO);

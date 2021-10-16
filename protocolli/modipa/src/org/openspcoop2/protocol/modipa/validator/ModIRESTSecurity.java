@@ -20,6 +20,9 @@
 
 package org.openspcoop2.protocol.modipa.validator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
@@ -38,12 +41,13 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
  */
 public class ModIRESTSecurity {
 
-	private String tokenHeaderName;
+	private List<String> tokenHeaderNames;
 	private boolean cleanDigest;
 	private RuoloMessaggio ruoloMessaggio;
 	
 	public ModIRESTSecurity(String tokenHeaderName, boolean request) throws ProtocolException, Exception {
-		this.tokenHeaderName = tokenHeaderName;
+		this.tokenHeaderNames = new ArrayList<String>();
+		this.tokenHeaderNames.add(tokenHeaderName);	
 		this.ruoloMessaggio =  request ? RuoloMessaggio.RICHIESTA : RuoloMessaggio.RISPOSTA;
 		switch (this.ruoloMessaggio) {
 		case RICHIESTA:
@@ -63,12 +67,12 @@ public class ModIRESTSecurity {
 		this.ruoloMessaggio = ruoloMessaggio;
 	}
 
-	public String getTokenHeaderName() {
-		return this.tokenHeaderName;
+	public List<String> getTokenHeaderNames() {
+		return this.tokenHeaderNames;
 	}
 
-	public void setTokenHeaderName(String tokenHeaderName) {
-		this.tokenHeaderName = tokenHeaderName;
+	public void setTokenHeaderNames(List<String> tokenHeaderNames) {
+		this.tokenHeaderNames = tokenHeaderNames;
 	}
 
 	public boolean isCleanDigest() {
@@ -84,7 +88,11 @@ public class ModIRESTSecurity {
 		
 		if(RuoloMessaggio.RICHIESTA.equals(this.ruoloMessaggio)) {
 			if(msg!=null && msg.getTransportRequestContext()!=null) {
-				msg.getTransportRequestContext().removeHeader(this.tokenHeaderName);
+				if(this.tokenHeaderNames!=null && !this.tokenHeaderNames.isEmpty()) {
+					for (String hdr : this.tokenHeaderNames) {
+						msg.getTransportRequestContext().removeHeader(hdr);
+					}
+				}
 				if(this.cleanDigest) {
 					msg.getTransportRequestContext().removeHeader(HttpConstants.DIGEST);
 				}
@@ -92,7 +100,11 @@ public class ModIRESTSecurity {
 		}
 		else {
 			if(msg!=null && msg.getTransportResponseContext()!=null) {
-				msg.getTransportResponseContext().removeHeader(this.tokenHeaderName);
+				if(this.tokenHeaderNames!=null && !this.tokenHeaderNames.isEmpty()) {
+					for (String hdr : this.tokenHeaderNames) {
+						msg.getTransportResponseContext().removeHeader(hdr);
+					}
+				}
 				if(this.cleanDigest) {
 					msg.getTransportResponseContext().removeHeader(HttpConstants.DIGEST);
 				}

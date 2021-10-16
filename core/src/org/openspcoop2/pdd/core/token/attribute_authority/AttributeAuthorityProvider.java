@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.mvc.properties.Item;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderInfo;
@@ -35,6 +36,9 @@ import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.pdd.core.token.Costanti;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
+import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
+import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 
@@ -271,6 +275,12 @@ public class AttributeAuthorityProvider implements IProvider {
 			}
 			return tipologie;
 		}
+		else if(Costanti.ID_AA_JWS_TRUSTSTORE_TYPE.equals(id) || 
+				Costanti.ID_AA_JWS_KEYSTORE_TYPE.equals(id) || 
+				Costanti.ID_HTTPS_TRUSTSTORE_TYPE.equals(id) ||
+				Costanti.ID_HTTPS_KEYSTORE_TYPE.equals(id)) {
+			return getStoreType(id,true);
+		}
 		return null;
 	}
 
@@ -293,9 +303,51 @@ public class AttributeAuthorityProvider implements IProvider {
 			}
 			return labels;
 		}
+		else if(Costanti.ID_AA_JWS_TRUSTSTORE_TYPE.equals(id) || 
+				Costanti.ID_AA_JWS_KEYSTORE_TYPE.equals(id) || 
+				Costanti.ID_HTTPS_TRUSTSTORE_TYPE.equals(id) ||
+				Costanti.ID_HTTPS_KEYSTORE_TYPE.equals(id)) {
+			return getStoreType(id,false);
+		}
 		return this.getValues(id); // torno uguale ai valori negli altri casi
 	}
 
+	private List<String> getStoreType(String id,boolean value){
+		boolean trustStore = true;
+		boolean secret = false;
+		List<String> l = new ArrayList<String>();
+		l.add(value ? SecurityConstants.KEYSTORE_TYPE_JKS_VALUE : SecurityConstants.KEYSTORE_TYPE_JKS_LABEL);
+		l.add(value ? SecurityConstants.KEYSTORE_TYPE_PKCS12_VALUE : SecurityConstants.KEYSTORE_TYPE_PKCS12_LABEL);
+		if(Costanti.ID_AA_JWS_TRUSTSTORE_TYPE.equals(id) || 
+				Costanti.ID_AA_JWS_KEYSTORE_TYPE.equals(id)) {
+			l.add(value ? SecurityConstants.KEYSTORE_TYPE_JWK_VALUE: SecurityConstants.KEYSTORE_TYPE_JWK_LABEL);
+		}
+//		if(Costanti.ID_AA_JWS_TRUSTSTORE_TYPE.equals(id)) {
+//			l.add(value ? SecurityConstants.KEYSTORE_TYPE_JCEKS_VALUE : SecurityConstants.KEYSTORE_TYPE_JCEKS_LABEL);
+//			secret = true;
+//		}
+		
+		if(Costanti.ID_AA_JWS_KEYSTORE_TYPE.equals(id) ||
+				Costanti.ID_HTTPS_KEYSTORE_TYPE.equals(id)) {
+			trustStore = false;
+		}
+		HSMUtils.fillTIPOLOGIE_KEYSTORE(trustStore, false, l);
+		
+		if(secret) {
+			// aggiunto info mancanti come secret
+			List<String> lSecret = new ArrayList<String>();
+			HSMUtils.fillTIPOLOGIE_KEYSTORE(false, true, l);
+			if(lSecret!=null && !lSecret.isEmpty()) {
+				for (String type : lSecret) {
+					if(!l.contains(type)) {
+						l.add(type);
+					}
+				}
+			}
+		}
+		return l;
+	}
+	
 	@Override
 	public String getDefault(String id) throws ProviderException {
 		if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_SIGNATURE_ALGORITHM.equals(id)) {
@@ -354,6 +406,59 @@ public class AttributeAuthorityProvider implements IProvider {
 		
 		
 		return null;
+	}
+	
+	@Override
+	public String dynamicUpdate(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
+	
+		if(Costanti.ID_AA_JWS_TRUSTSTORE_FILE.equals(item.getName()) ||
+				Costanti.ID_AA_JWS_KEYSTORE_FILE.equals(item.getName()) ||
+				Costanti.ID_HTTPS_TRUSTSTORE_FILE.equals(item.getName()) ||
+				Costanti.ID_HTTPS_KEYSTORE_FILE.equals(item.getName())) {
+			
+			String type = Costanti.ID_AA_JWS_TRUSTSTORE_TYPE;
+			if(Costanti.ID_AA_JWS_KEYSTORE_FILE.equals(item.getName())) {
+				type = Costanti.ID_AA_JWS_KEYSTORE_TYPE;
+			}
+			else if(Costanti.ID_HTTPS_TRUSTSTORE_FILE.equals(item.getName())) {
+				type = Costanti.ID_HTTPS_TRUSTSTORE_TYPE;
+			}
+			else if(Costanti.ID_HTTPS_KEYSTORE_FILE.equals(item.getName())) {
+				type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
+			}
+			
+			return AbstractSecurityProvider.processStoreFile(type, items, mapNameValue, item, actualValue);
+		}
+		else if(Costanti.ID_AA_JWS_TRUSTSTORE_PASSWORD.equals(item.getName()) ||
+				Costanti.ID_AA_JWS_KEYSTORE_PASSWORD.equals(item.getName()) ||
+				Costanti.ID_HTTPS_TRUSTSTORE_PASSWORD.equals(item.getName()) ||
+				Costanti.ID_HTTPS_KEYSTORE_PASSWORD.equals(item.getName())) {
+			
+			String type = Costanti.ID_AA_JWS_TRUSTSTORE_TYPE;
+			if(Costanti.ID_AA_JWS_KEYSTORE_PASSWORD.equals(item.getName())) {
+				type = Costanti.ID_AA_JWS_KEYSTORE_TYPE;
+			}
+			else if(Costanti.ID_HTTPS_TRUSTSTORE_PASSWORD.equals(item.getName())) {
+				type = Costanti.ID_HTTPS_TRUSTSTORE_TYPE;
+			}
+			else if(Costanti.ID_HTTPS_KEYSTORE_PASSWORD.equals(item.getName())) {
+				type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
+			}
+			
+			return AbstractSecurityProvider.processStorePassword(type, items, mapNameValue, item, actualValue);
+		}
+		else if(Costanti.ID_AA_JWS_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName()) ||
+				Costanti.ID_HTTPS_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName()) ) {
+			
+			String type = Costanti.ID_AA_JWS_KEYSTORE_TYPE;
+			if(Costanti.ID_HTTPS_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName())) {
+				type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
+			}
+			
+			return AbstractSecurityProvider.processStoreKeyPassword(type, items, mapNameValue, item, actualValue);
+		}
+		
+		return actualValue;
 	}
 
 }

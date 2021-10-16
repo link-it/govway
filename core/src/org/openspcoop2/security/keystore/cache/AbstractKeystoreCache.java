@@ -46,6 +46,7 @@ public abstract class AbstractKeystoreCache<T extends Serializable> {
 	
 	private Hashtable<String, KeystoreCacheEntry<T>> cache_hashtable = new Hashtable<String, KeystoreCacheEntry<T>>();
 	private Cache cache_jcs = null;
+	private final org.openspcoop2.utils.Semaphore lock_cache = new org.openspcoop2.utils.Semaphore(this.getClass().getSimpleName());
 
 	public void setKeystoreCacheParameters(int cacheLifeSecond,int cacheSize){
 		this.cacheLifeSecond = cacheLifeSecond;
@@ -129,14 +130,16 @@ public abstract class AbstractKeystoreCache<T extends Serializable> {
 	
 	private T initKeystore(String keyParam,Object ... params) throws SecurityException{
 		
-		Object sincronizedObject = null;
-		if(this.cache_jcs!=null) {
-			sincronizedObject = this.cache_jcs;
-		}
-		else {
-			sincronizedObject = this.cache_hashtable;
-		}
-		synchronized (sincronizedObject) {
+		//Object sincronizedObject = null;
+		//if(this.cache_jcs!=null) {
+		//	sincronizedObject = this.cache_jcs;
+		//}
+		//else {
+		//	sincronizedObject = this.cache_hashtable;
+		//}
+		//synchronized (sincronizedObject) {
+		try {
+			this.lock_cache.acquireThrowRuntime("initKeystore");
 			String keyCache = this.getPrefixKey() + keyParam;
 			KeystoreCacheEntry<T> o = this.getObjectFromCache(keyCache);
 			if(o==null) {
@@ -161,20 +164,24 @@ public abstract class AbstractKeystoreCache<T extends Serializable> {
 			else {
 				return estraiKeystore(o);
 			}
+		}finally {
+			this.lock_cache.release("initKeystore");
 		}
 		
 	}
 	
 	private void removeKeystore(String key) throws SecurityException{
 		
-		Object sincronizedObject = null;
-		if(this.cache_jcs!=null) {
-			sincronizedObject = this.cache_jcs;
-		}
-		else {
-			sincronizedObject = this.cache_hashtable;
-		}
-		synchronized (sincronizedObject) {
+		//Object sincronizedObject = null;
+		//if(this.cache_jcs!=null) {
+		//	sincronizedObject = this.cache_jcs;
+		//}
+		//else {
+		//	sincronizedObject = this.cache_hashtable;
+		//}
+		//synchronized (sincronizedObject) {
+		try {
+			this.lock_cache.acquireThrowRuntime("removeKeystore");
 			if(this.cache_jcs!=null) {
 				try {
 					this.cache_jcs.remove(key);
@@ -185,6 +192,8 @@ public abstract class AbstractKeystoreCache<T extends Serializable> {
 			else {
 				this.cache_hashtable.remove(key);
 			}
+		}finally {
+			this.lock_cache.release("removeKeystore");
 		}
 		
 	}
@@ -211,8 +220,12 @@ public abstract class AbstractKeystoreCache<T extends Serializable> {
 		return keystore;
 	}
 	private void clearCacheHashtable(){
-		synchronized (this.cache_hashtable) {
+		//synchronized (this.cache_hashtable) {
+		try {
+			this.lock_cache.acquireThrowRuntime("clearCacheHashtable");
 			this.cache_hashtable.clear();
+		}finally {
+			this.lock_cache.release("clearCacheHashtable");
 		}
 	}
 	

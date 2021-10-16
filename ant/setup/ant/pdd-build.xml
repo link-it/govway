@@ -206,6 +206,13 @@
 			</then>
 		</if>
 
+		<!-- Timer disabilitati, poichè riguardano gestione di casi limite che normalmente non dovrebbero succedere. Le query essendo "pesanti" vengono disabilitate per default. -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.enable"/>
+			<param name="value" value="false"/>
+		</antcall>
+
 		<!-- Autenticazione Applicativi/Soggetti -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
@@ -228,6 +235,13 @@
 		    <param name="file" value="${file}"/>
 			<param name="token" value="org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.http.urlHttps.repository"/>
 			<param name="value" value="${work_dir}/https/erogazioni"/>
+		</antcall>
+
+		<!-- HSM -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.hsm.config"/>
+			<param name="value" value="${work_dir}/hsm.properties"/>
 		</antcall>
 
 		<!-- ApacheXMLDSig, BouncyCastle e SecureRandom -->

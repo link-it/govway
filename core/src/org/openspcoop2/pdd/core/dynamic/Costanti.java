@@ -74,9 +74,21 @@ public class Costanti {
     public static final String TYPE_MAP_BUSTA_PROPERTY = "java.util.Map<String, String>";
     public static final String TYPE_MAP_BUSTA_PROPERTY_HTML_ESCAPED = "java.util.Map&amp;lt;String, String&amp;gt;";
     
-    public static final String MAP_CONFIG_PROPERTY = "config";
-    public static final String TYPE_MAP_CONFIG_PROPERTY = "java.util.Map<String, String>";
-    public static final String TYPE_MAP_CONFIG_PROPERTY_HTML_ESCAPED = "java.util.Map&amp;lt;String, String&amp;gt;";
+    public static final String MAP_API_IMPL_CONFIG_PROPERTY = "config";
+    public static final String TYPE_MAP_API_IMPL_CONFIG_PROPERTY = "java.util.Map<String, String>";
+    public static final String TYPE_MAP_API_IMPL_CONFIG_PROPERTY_HTML_ESCAPED = "java.util.Map&amp;lt;String, String&amp;gt;";
+    
+    public static final String MAP_APPLICATIVO_CONFIG_PROPERTY = "clientApplicationConfig";
+    public static final String TYPE_MAP_APPLICATIVO_CONFIG_PROPERTY = "java.util.Map<String, String>";
+    public static final String TYPE_MAP_APPLICATIVO_CONFIG_PROPERTY_HTML_ESCAPED = "java.util.Map&amp;lt;String, String&amp;gt;";
+    
+    public static final String MAP_SOGGETTO_FRUITORE_CONFIG_PROPERTY = "clientOrganizationConfig";
+    public static final String TYPE_MAP_SOGGETTO_FRUITORE_CONFIG_PROPERTY = "java.util.Map<String, String>";
+    public static final String TYPE_MAP_SOGGETTO_FRUITORE_CONFIG_PROPERTY_HTML_ESCAPED = "java.util.Map&amp;lt;String, String&amp;gt;";
+    
+    public static final String MAP_SOGGETTO_EROGATORE_CONFIG_PROPERTY = "providerOrganizationConfig";
+    public static final String TYPE_MAP_SOGGETTO_EROGATORE_CONFIG_PROPERTY = "java.util.Map<String, String>";
+    public static final String TYPE_MAP_SOGGETTO_EROGATORE_CONFIG_PROPERTY_HTML_ESCAPED = "java.util.Map&amp;lt;String, String&amp;gt;";
     
     // Per ora messi solamente nelle trasformazioni, valutare se poi metterli anche nel connettore
     public final static String MAP_ELEMENT_URL_REGEXP = "urlRegExp";
@@ -90,6 +102,27 @@ public class Costanti {
     public final static String MAP_ELEMENT_JSON_PATH = "jsonPath";
     public final static String MAP_ELEMENT_JSON_PATH_PREFIX = "{"+MAP_ELEMENT_JSON_PATH+":";
     public final static String TYPE_MAP_ELEMENT_JSON_PATH = org.openspcoop2.pdd.core.dynamic.PatternExtractor.class.getName();
+    
+    public final static String MAP_SYSTEM_PROPERTY = "system";
+    public final static String MAP_SYSTEM_PROPERTY_PREFIX = "{"+MAP_SYSTEM_PROPERTY+":";
+    public static String TYPE_SYSTEM_PROPERTY = org.openspcoop2.pdd.core.dynamic.SystemPropertiesReader.class.getName();
+    static {
+    	TYPE_SYSTEM_PROPERTY = org.openspcoop2.pdd.core.dynamic.PropertiesReader.class.getName(); // uniformo con lo stesso reader
+    }
+    
+    public final static String MAP_ENV_PROPERTY = "env";
+    public final static String MAP_ENV_PROPERTY_PREFIX = "{"+MAP_ENV_PROPERTY+":";
+    public static String TYPE_ENV_PROPERTY = org.openspcoop2.pdd.core.dynamic.EnvironmentPropertiesReader.class.getName();
+    static {
+    	TYPE_ENV_PROPERTY = org.openspcoop2.pdd.core.dynamic.PropertiesReader.class.getName(); // uniformo con lo stesso reader
+    }
+    
+    public final static String MAP_JAVA_PROPERTY = "java";
+    public final static String MAP_JAVA_PROPERTY_PREFIX = "{"+MAP_JAVA_PROPERTY+":";
+    public static String TYPE_JAVA_PROPERTY = org.openspcoop2.pdd.core.dynamic.JavaPropertiesReader.class.getName();
+    static {
+    	TYPE_JAVA_PROPERTY = org.openspcoop2.pdd.core.dynamic.PropertiesReader.class.getName(); // uniformo con lo stesso reader
+    }
     
     public final static String MAP_REQUEST = "request";
     public final static String MAP_RESPONSE = "response";

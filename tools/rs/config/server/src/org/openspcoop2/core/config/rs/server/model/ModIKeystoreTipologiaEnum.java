@@ -27,7 +27,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum ModIKeystoreTipologiaEnum {
 ARCHIVIO("archivio"),
-  FILESYSTEM("filesystem");
+  FILESYSTEM("filesystem"),
+  HSM("hsm");
 
   private String value;
 

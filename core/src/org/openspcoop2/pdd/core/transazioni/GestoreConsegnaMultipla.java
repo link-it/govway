@@ -361,6 +361,7 @@ public class GestoreConsegnaMultipla {
 		ExceptionSerialzerFileSystem exceptionSerializerFileSystem = new ExceptionSerialzerFileSystem(this.log);
 		Connection con = null;
 		boolean isMessaggioConsegnato = false;
+		boolean possibileTerminazioneSingleIntegrationManagerMessage = false;
 		TransazioneApplicativoServer transazioneApplicativoServer = null;
 		boolean useConnectionRuntime = false;
 		try{
@@ -434,9 +435,11 @@ public class GestoreConsegnaMultipla {
 					}
 					else if(transazioneApplicativoServer.getDataEliminazioneIm()!=null) {
 						isMessaggioConsegnato = true;
+						possibileTerminazioneSingleIntegrationManagerMessage = true;
 					}
 					else if(transazioneApplicativoServer.getDataMessaggioScaduto()!=null) {
 						isMessaggioConsegnato = true;
+						possibileTerminazioneSingleIntegrationManagerMessage = true;
 					}
 	
 					int oldTransactionIsolation = -1;
@@ -602,7 +605,7 @@ public class GestoreConsegnaMultipla {
 					}
 				
 					// aggiorno esito transazione (non viene sollevata alcuna eccezione)
-					_safe_aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, con, esitiProperties);
+					_safe_aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, con, esitiProperties, possibileTerminazioneSingleIntegrationManagerMessage);
 				}finally {	
 					if(times!=null) {
 						long timeEnd =  DateManager.getTimeMillis();
@@ -691,7 +694,8 @@ public class GestoreConsegnaMultipla {
 		
 	}
 
-	private void _safe_aggiornaInformazioneConsegnaTerminata(TransazioneApplicativoServer transazioneApplicativoServer, Connection con, EsitiProperties esitiProperties) {
+	private void _safe_aggiornaInformazioneConsegnaTerminata(TransazioneApplicativoServer transazioneApplicativoServer, Connection con, EsitiProperties esitiProperties,
+			 boolean possibileTerminazioneSingleIntegrationManagerMessage) {
 		
 		boolean debug = this.debug;
 		debug = true; // un eventuale errore deve essere sempre registrato
@@ -704,12 +708,14 @@ public class GestoreConsegnaMultipla {
 		int esitoConsegnaMultiplaFallita = -1;
 		int esitoConsegnaMultiplaCompletata = -1;
 		int ok = -1;
+		int esitoIntegrationManagerSingolo = -1;
 		boolean esitiLetti = false;
 		try {
 			esitoConsegnaMultipla = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA);
 			esitoConsegnaMultiplaFallita = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_FALLITA);
 			esitoConsegnaMultiplaCompletata = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_COMPLETATA);
 			ok = esitiProperties.convertoToCode(EsitoTransazioneName.OK);
+			esitoIntegrationManagerSingolo = esitiProperties.convertoToCode(EsitoTransazioneName.MESSAGE_BOX);
 			esitiLetti = true;			
 		}catch(Exception er) {
 			// errore che non dovrebbe succedere
@@ -723,6 +729,7 @@ public class GestoreConsegnaMultipla {
 					daoF,logFactory,smp,
 					this.debug,
 					esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
+					esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage,
 					openspcoopProperties.getGestioneSerializableDB_AttesaAttiva(),openspcoopProperties.getGestioneSerializableDB_CheckInterval());
 		}
 	}
