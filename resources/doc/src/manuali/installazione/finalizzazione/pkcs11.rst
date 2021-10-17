@@ -3,10 +3,16 @@
 Registrazione Token PKCS11
 -----------------------------------
 
-Il Cryptographic Token Interface Standard, PKCS#11, definisce interfacce di programmazione native per token crittografici, come acceleratori crittografici hardware e smartcard. 
+Il Cryptographic Token Interface Standard, PKCS#11, definisce interfacce di programmazione native per token crittografici, come acceleratori crittografici hardware e smartcard.
 
-Come prerequisito per consentire a GovWay di accedere ai token PKCS#11 nativi è necessario innanzitutto configurare correttamente il provider PKCS#11 predispondendo le corrette librerie di sistema (.so o .dll) necessarie.
-Si può verificare la configurazione accedendo al token utilizzando il 'keytool' di java. Di seguito viene fornito un esempio di accesso ad un token creato con softhsm, il simulatore pkcs11 di dnssec.
+Come prerequisito per consentire a GovWay di accedere ai token PKCS#11
+nativi è necessario innanzitutto configurare correttamente il provider
+PKCS#11 predispondendo le corrette librerie di sistema (.so o .dll)
+necessarie.
+
+Si può verificare la configurazione accedendo al token utilizzando il
+'keytool' di java. Di seguito viene fornito un esempio di accesso ad
+un token creato con softhsm, il simulatore pkcs11 di dnssec.
 
 ::
 
@@ -33,7 +39,7 @@ Di seguito un esempio di registrazione del provider softhsm di esempio mostrato 
     hsm.keystore.keystoreType.label=softhsm-example
     hsm.keystore.keystoreType=pkcs11
 
-Sarà possibile censire più di un token utilizzabile con GovWay. Ogni token registrato viene identificato dal valore fornito nella proprietà *hsm.keystore.keystoreType.label* e sarà utilizzabile all'interno delle configurazioni di GovWay. La figura :numref:`pkcs11Esempio` visualizza un esempio di utilizzo del token registrato nell'esempio sopra riportato.
+Sarà possibile censire più token utilizzabili da GovWay. Ogni token registrato è identificato dal valore fornito nella proprietà *hsm.keystore.keystoreType.label* e sarà utilizzabile all'interno delle configurazioni di GovWay. La figura :numref:`pkcs11Esempio` mostra un esempio di utilizzo del token registrato nell'esempio sopra riportato.
 
 .. figure:: ../_figure_installazione/govwayConsole_pkcs11Esempio.png
     :scale: 100%
