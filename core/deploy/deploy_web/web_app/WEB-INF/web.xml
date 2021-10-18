@@ -26,8 +26,9 @@
 		ClientCertificateFilter: recupera il certificato client dalle classi interne di Undertow (wildfly)
 	-->
 	<filter>
-	<filter-name>ClientCertificateFilter</filter-name>
-	<filter-class>org.openspcoop2.pdd.services.connector.ClientCertificateFilter</filter-class>
+		<filter-name>ClientCertificateFilter</filter-name>
+		<filter-class>org.openspcoop2.pdd.services.connector.ClientCertificateFilter</filter-class>
+		<async-supported>true</async-supported>
 	</filter>
 
 	<!-- IntegrationManagerEngine -->
