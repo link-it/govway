@@ -810,8 +810,13 @@ public class SSLUtilities {
 	public static java.security.cert.X509Certificate[] readCertificatesFromUndertowServlet(HttpServletRequest req) {
 		return readCertificatesFromUndertowServlet(req, null);
 	}
-	public static java.security.cert.X509Certificate[] readCertificatesFromUndertowServlet(HttpServletRequest req, Logger log) {
+	public static java.security.cert.X509Certificate[] readCertificatesFromUndertowServlet(HttpServletRequest reqParam, Logger log) {
 		try {
+			HttpServletRequest req = reqParam;
+			if(reqParam instanceof WrappedHttpServletRequest) {
+				req = ((WrappedHttpServletRequest)reqParam).httpServletRequest;
+			}
+			
 			if("io.undertow.servlet.spec.HttpServletRequestImpl".equals(req.getClass().getName())) {
 				
 				// io/undertow/server/HttpServerExchange.java

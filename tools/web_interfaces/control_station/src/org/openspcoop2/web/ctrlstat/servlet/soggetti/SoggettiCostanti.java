@@ -114,6 +114,7 @@ public class SoggettiCostanti {
 
 	public final static String LABEL_SOGGETTI = "Soggetti";
 	public final static String LABEL_SOGGETTO = "Soggetto";
+	public final static String LABEL_SOGGETTO_EROGATORE = "Soggetto Erogatore";
 	//public final static String LABEL_CLIENT = "Fruizioni";
 	//public final static String LABEL_SERVER = "Erogazioni";
 	public final static String LABEL_CLIENT = "Porte Delegate";

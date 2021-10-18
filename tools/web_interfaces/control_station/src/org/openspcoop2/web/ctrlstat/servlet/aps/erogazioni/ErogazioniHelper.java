@@ -538,6 +538,10 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				}
 			}
 			
+			if(gestioneFruitori) {
+				addFilterSoggettoErogatoreStringaLiberaContains(ricerca, idLista);
+			}
+			
 			
 			// **** filtro connettore ****
 			
@@ -661,8 +665,14 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			} else {
 				lstParm.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_EROGAZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
 			}
-
-			this.pd.setSearchLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_RICERCA_API_SOGGETTO);
+			
+			if(gestioneFruitori) {
+				this.pd.setSearchLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_RICERCA_API_FRUIZIONE);
+			}
+			else {
+				this.pd.setSearchLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_RICERCA_API_EROGAZIONE);
+			}
+			//this.pd.setSearchLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_RICERCA_API_SOGGETTO);
 			if(search.equals("")){
 				this.pd.setSearchDescription("");
 			}else{

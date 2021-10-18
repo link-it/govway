@@ -54,6 +54,8 @@ public final class Filtri
 	
 	public final static String FILTRO_SOGGETTO = "filtroSoggetto";
 	
+	public final static String FILTRO_SOGGETTO_EROGATORE_CONTAINS = "filtroSoggettoErogatoreContains";
+	
 	public final static String FILTRO_RUOLO_SERVIZIO_APPLICATIVO = "filtroRuoloSA";
 	public final static String VALUE_FILTRO_RUOLO_SERVIZIO_APPLICATIVO_EROGATORE = "Erogatore";
 	public final static String VALUE_FILTRO_RUOLO_SERVIZIO_APPLICATIVO_FRUITORE = "Fruitore";

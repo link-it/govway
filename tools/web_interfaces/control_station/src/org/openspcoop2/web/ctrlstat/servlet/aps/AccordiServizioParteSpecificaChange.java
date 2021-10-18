@@ -1237,13 +1237,16 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				if(httpstipologia==null || "".equals(httpstipologia)){
 					httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
 				}
-				if(httpshostverifyS==null || "".equals(httpshostverifyS)){
-					httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
-					httpshostverify = true;
-				}
-				if(httpsTrustVerifyCertS==null || "".equals(httpsTrustVerifyCertS)){
-					httpsTrustVerifyCertS = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS ? Costanti.CHECK_BOX_ENABLED_TRUE : Costanti.CHECK_BOX_DISABLED;
-					httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
+				if(postBackElementName == null || "".equals(postBackElementName) ){
+					// altrimenti sono checkbox
+					if(httpshostverifyS==null || "".equals(httpshostverifyS)){
+						httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
+						httpshostverify = true;
+					}
+					if(httpsTrustVerifyCertS==null || "".equals(httpsTrustVerifyCertS)){
+						httpsTrustVerifyCertS = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS ? Costanti.CHECK_BOX_ENABLED_TRUE : Costanti.CHECK_BOX_DISABLED;
+						httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
+					}
 				}
 
 				portType = (portType != null && !"".equals(portType) ? portType : asps.getPortType());

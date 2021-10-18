@@ -1,3 +1,8 @@
+2021-10-18 Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Il criterio di ricerca, nelle erogazioni e fruizioni, che consente di filtrare per nome erogazione e soggetto erogatore è stato disaccoppiato in modo da poter effettuare una ricerca composta su entrambi i criteri.
+
 2021-10-15 Andrea Poli <apoli@link.it>
 
 	* [ApiRsConfigurazione]

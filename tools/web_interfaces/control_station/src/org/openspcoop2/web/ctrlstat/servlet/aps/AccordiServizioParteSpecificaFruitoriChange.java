@@ -542,6 +542,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO, protocollo);
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO, "");
 			
+			String postBackElementName = apsHelper.getPostBackElementName();
+			
 			AccordoServizioParteComuneSintetico as = apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 			
 			boolean forceHttps = false;
@@ -838,13 +840,16 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				if(httpstipologia==null || "".equals(httpstipologia)){
 					httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
 				}
-				if(httpshostverifyS==null || "".equals(httpshostverifyS)){
-					httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
-					httpshostverify = true;
-				}
-				if(httpsTrustVerifyCertS==null || "".equals(httpsTrustVerifyCertS)){
-					httpsTrustVerifyCertS = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS ? Costanti.CHECK_BOX_ENABLED_TRUE : Costanti.CHECK_BOX_DISABLED;
-					httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
+				if(postBackElementName == null || "".equals(postBackElementName) ){
+					// altrimenti sono checkbox
+					if(httpshostverifyS==null || "".equals(httpshostverifyS)){
+						httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
+						httpshostverify = true;
+					}
+					if(httpsTrustVerifyCertS==null || "".equals(httpsTrustVerifyCertS)){
+						httpsTrustVerifyCertS = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS ? Costanti.CHECK_BOX_ENABLED_TRUE : Costanti.CHECK_BOX_DISABLED;
+						httpsTrustVerifyCert = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS;
+					}
 				}
 				
 				// file
