@@ -53,7 +53,7 @@
 			<filelist dir="${data_content_handler_dir}"
                            files="mailcap"/>
 		</concat>
-		<jar jarfile="${build}/tmp/mailapi-1.6.4.gw.jar" manifest="${build}/tmp/mailapi/META-INF/MANIFEST.MF">
+		<jar jarfile="${build}/tmp/mailapi-1.6.7.gw.jar" manifest="${build}/tmp/mailapi/META-INF/MANIFEST.MF">
 			<zipfileset dir="${build}/tmp/mailapi"/>
 		</jar>
 
@@ -249,7 +249,7 @@
 			</lib>
 			<!-- Mail api esteso con activation data handler openspcoop -->
 			<lib dir="${build}/tmp">
-				<include name="mailapi-1.6.4.gw.jar" />
+				<include name="mailapi-1.6.7.gw.jar" />
 			</lib>
 			<!-- Files di properties richieste dalle applicazioni OpenSPCoop -->
 			<classes dir="${properties_dir}">

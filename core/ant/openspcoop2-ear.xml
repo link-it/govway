@@ -534,10 +534,10 @@
 					<filelist dir="${data_content_handler_dir}"
 				           files="mailcap"/>
 				</concat>
-				<jar jarfile="${build}/tmp/mailapi-1.6.4.gw.jar" manifest="${build}/tmp/mailapi/META-INF/MANIFEST.MF">
+				<jar jarfile="${build}/tmp/mailapi-1.6.7.gw.jar" manifest="${build}/tmp/mailapi/META-INF/MANIFEST.MF">
 					<zipfileset dir="${build}/tmp/mailapi"/>
 				</jar>
-				<var name="mailapi_jar" value="mailapi-1.6.4.gw.jar" />
+				<var name="mailapi_jar" value="mailapi-1.6.7.gw.jar" />
 			</then>
 		</if>
 		
