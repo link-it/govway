@@ -1,9 +1,9 @@
 .. _aaEndpoint:
 
-Endpoint di un Attribute Authority
-----------------------------------
+Endpoint di una Attribute Authority
+-----------------------------------
 
-In questa sezione vengono descritti i parametri configurabili per indicare i criteri di connessione verso l'AA a cui devono essere richiesti gli attributi qualificati.
+In questa sezione vengono descritti i parametri di connessione alla AA.
 
 .. figure:: ../../_figure_console/AA-endpoint.png
     :scale: 100%
@@ -11,7 +11,6 @@ In questa sezione vengono descritti i parametri configurabili per indicare i cri
     :name: aaEndpointFig
 
     Endpoint di un Attribute Authority
-
 
 -  *URL*: endpoint dell'AA a cui è possibile inviare una richiesta di attributi. Il valore può essere definito come costante o contenere parti dinamiche risolte a runtime dal Gateway (per maggiori dettagli :ref:`valoriDinamici`).
 
@@ -25,7 +24,7 @@ In questa sezione vengono descritti i parametri configurabili per indicare i cri
 
 -  *Proxy*: Parametri di configurazione nel caso in cui l'AA richieda l'uso di un proxy per l'accesso.
 
-Successivamente devono essere forniti i dati di configurazione specifici dell'autenticazione client se richiesto dall'AA:
+Successivamente devono essere forniti i dati di configurazione specifici dell'autenticazione client, se richiesto dall'AA:
 
 -  *Autenticazione Http Basic*: flag da attivare nel caso in cui l'AA richieda autenticazione di tipo HTTP-BASIC. In questo caso dovranno essere forniti Username e Passwornd nei campi successivi.
 
