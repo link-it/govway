@@ -103,6 +103,7 @@
 	'iptables -I INPUT 1 -p tcp -d 127.0.2.2 --destination-port 7777 -j DROP'
 	
 - HSM per TLS Keystore. Seguire le indicazioni descritte in PKCS11.README
+  Poi 'cp tools/utils/src/org/openspcoop2/utils/certificate/test/govway_test_hsm.properties  /etc/govway/hsm.properties'
 
 Per eseguire i test:
 	ant run_test
