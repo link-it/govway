@@ -53,6 +53,8 @@ Per la console di gestione sono stati risolti i seguenti bug:
 
 - La funzionalità 'Importa' non gestiva correttamente l'importazione di fruizioni in cui era stato ridefinito il connettore, per specifiche azioni/risorse, attraverso l'utilizzo della tipologia 'https'.
 
+- L'eliminazione di un utente (o la modifica del permesso 'S') comportava una riassegnazione degli oggetti appartenenti all'utente nella quale venivano erroneamente eliminate eventuali proprietà o credenziali presenti nei soggetti aggiornati. La problematica è stata risolta, e l'attività di riassegnamento è stata eliminata se la visibilità degli oggetti risulta globale per tutte le utenze di gestione (comportamento di default).
+
 
 Per la console di monitoraggio sono stati risolti i seguenti bug:
 

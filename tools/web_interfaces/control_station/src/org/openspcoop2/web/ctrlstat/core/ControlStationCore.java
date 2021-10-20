@@ -423,6 +423,9 @@ public class ControlStationCore {
 			return this.utentiConVisioneGlobale.contains(user);
 		}
 	}
+	public boolean isVisioneOggettiGlobaleIndipendenteUtente() {
+		return this.visioneOggettiGlobale;
+	}
 
 	/** Tracciamento */
 	private boolean tracce_showConfigurazioneCustomAppender = false;

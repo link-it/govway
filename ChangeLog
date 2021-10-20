@@ -1,3 +1,11 @@
+2021-10-20 Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1269
+	L'eliminazione di un utente (o la modifica del permesso 'S') comportava una riassegnazione degli oggetti appartenenti all'utente 
+	nella quale venivano erroneamente eliminate eventuali proprietà o credenziali presenti nei soggetti aggiornati. 
+	La problematica è stata risolta, e l'attività di riassegnamento è stata eliminata se la visibilità degli oggetti risulta globale per tutte le utenze di gestione (comportamento di default).
+
 2021-10-19 Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

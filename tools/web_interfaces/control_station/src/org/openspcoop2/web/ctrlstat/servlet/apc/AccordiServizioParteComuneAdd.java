@@ -899,6 +899,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					if(!gruppiCore.existsGruppo(nomeGruppo)) {
 						Gruppo nuovoGruppo = new Gruppo();
 						nuovoGruppo.setNome(nomeGruppo);
+						nuovoGruppo.setSuperUser(userLogin);
 						objectToCreate.add(nuovoGruppo);
 					}
 					
