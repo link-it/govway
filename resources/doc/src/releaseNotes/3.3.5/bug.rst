@@ -23,6 +23,8 @@ Sono stati risolti i seguenti bug:
 
 - In una configurazione senza connettori multipli, dove era stato abilitato il salvataggio dei messaggi su MessageBox, in occasione dell'eliminazione di un messaggio via Integration Manager o per scadenza naturale, si otteneva un errore simile al seguente: ERROR <23-09-2021 16:03:00> [id:4eccbf4e-181a-11ec-b5a0-00505686878f][sa:gw_SOGGETTO/gw_SERVIZIO/v1][null] 'aggiornaInformazioneConsegnaTerminata' non riuscta. Tutti gli intervalli di update non hanno comportato un aggiornamento della transazione.
 
+- Le operazioni 'getAllMessageIds', esposte dal servizio MessageBox via IntegrationManager, che non prevedono tra i parametri un limite massimo di id ritornati utilizzano adesso il limite di default di sistema (1000) per evitare OutOfMemory in presenza di una mole di messaggi considerevole.
+
 
 Per quanto concerne il Profilo 'Fatturazione Elettronica' sono stati risolti i seguenti bug:
 

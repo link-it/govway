@@ -3918,7 +3918,7 @@ public class GestoreMessaggi  {
 	 * 
 	 */
 	private List<IdentificativoIM> getIDMessaggi_ServizioApplicativo_engine(String servizioApplicativo,
-			int counter,int offset,String tipoServizio,String servizio,String azione)throws GestoreMessaggiException{
+			int counterParam,int offset,String tipoServizio,String servizio,String azione)throws GestoreMessaggiException{
 
 		if(this.openspcoopstate instanceof OpenSPCoopStateful) {
 			StatefulMessage stateful = (this.isRichiesta) ? ((StatefulMessage)this.openspcoopstate.getStatoRichiesta()) 
@@ -3928,10 +3928,19 @@ public class GestoreMessaggi  {
 			ResultSet rs = null;
 			List<IdentificativoIM> ids = new ArrayList<IdentificativoIM>();
 			String queryString = null;
-			try{	
+			try{
+				
+				int limit = counterParam;
+				if(limit<=0) {
+					Integer defaultV = this.propertiesReader.getIntegrationManagerIdsLimit();
+					if(defaultV!=null && defaultV.intValue()>0) {
+						limit = defaultV.intValue();
+					}
+				}
+				
 				// Calcolo data minima
 				queryString = getQueryStringGetAllMessagesId(servizioApplicativo,
-						counter, offset, tipoServizio, servizio, azione,
+						limit, offset, tipoServizio, servizio, azione,
 						true);
 				pstmt = connectionDB.prepareStatement(queryString);
 				setPreparedStatementGetAllMessagesId(pstmt,
@@ -3952,7 +3961,7 @@ public class GestoreMessaggi  {
 					// Effettuo ricerca ID DEL SERVIZIO APPLICATIVO
 	
 					queryString = getQueryStringGetAllMessagesId(servizioApplicativo,
-							counter, offset, tipoServizio, servizio, azione,
+							limit, offset, tipoServizio, servizio, azione,
 							false);
 					//System.out.println("QUERY ID MESSAGGI IS: ["+queryString+"]");
 	
@@ -3971,9 +3980,9 @@ public class GestoreMessaggi  {
 						ids.add(idIM);
 						
 						// LIMIT Applicativo
-						if(counter>=0 && Configurazione.getSqlQueryObjectType()==null){
+						if(limit>=0 && Configurazione.getSqlQueryObjectType()==null){
 							countLimit++;
-							if(countLimit==counter)
+							if(countLimit==limit)
 								break;
 						}
 					}

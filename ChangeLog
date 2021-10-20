@@ -1,5 +1,10 @@
 2021-10-20 Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Le operazioni 'getAllMessageIds', esposte dal servizio MessageBox via IntegrationManager, che non prevedono tra i parametri un limite massimo di id ritornati utilizzano adesso il limite di default di sistema (1000).
+
+2021-10-20 Andrea Poli <apoli@link.it>
+
 	* [GovWayConsole]
 	Risolto Bug OP-1269
 	L'eliminazione di un utente (o la modifica del permesso 'S') comportava una riassegnazione degli oggetti appartenenti all'utente 
