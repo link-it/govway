@@ -3205,9 +3205,10 @@ public class RicezioneBuste {
 			soggettoFruitoreIdentificatoTramiteProtocollo = true;
 		}
 		soggettoFruitore = validatore.getSoggettoMittente();
+		Soggetto soggettoFruitoreObject = null;
 		if(soggettoFruitore!=null) {
 			try {
-				Soggetto soggettoFruitoreObject = registroServiziReader.getSoggetto(soggettoFruitore, null);
+				soggettoFruitoreObject = registroServiziReader.getSoggetto(soggettoFruitore, null);
 				Map<String, String> configProperties = registroServiziReader.getProprietaConfigurazione(soggettoFruitoreObject);
 	            if (configProperties != null && !configProperties.isEmpty()) {
 	            	pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE, configProperties);
@@ -3270,6 +3271,7 @@ public class RicezioneBuste {
 						String wwwAuthenticateErrorHeader = null;
 						boolean detailsSet = false;
 						IntegrationFunctionError integrationFunctionError = null;
+						boolean erroreMissmatchSoggettoProtocolloConCredenziali = false;
 						try {						
 							EsitoAutenticazionePortaApplicativa esito = 
 									GestoreAutenticazione.verificaAutenticazionePortaApplicativa(tipoAutenticazione,
@@ -3332,6 +3334,8 @@ public class RicezioneBuste {
 									IDSoggetto idSoggettoFruitoreIdentificato = esito.getIdSoggetto();
 									if(soggettoFruitore!=null &&  soggettoFruitore.getNome()!=null && soggettoFruitore.getTipo()!=null) {
 										if(!soggettoFruitore.equals(idSoggettoFruitoreIdentificato)) {
+											erroreMissmatchSoggettoProtocolloConCredenziali = true;
+											pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, "true");
 											throw new Exception("Identificato un soggetto (tramite profilo di interoperabilità) '"+soggettoFruitore
 													+"' differente da quello identificato tramite il processo di autenticazione '"+idSoggettoFruitoreIdentificato+"'");
 										}
@@ -3371,6 +3375,17 @@ public class RicezioneBuste {
 									// evito comunque di ripresentarle nei successivi diagnostici, l'informazione l'ho gia' visualizzata nei diagnostici dell'autenticazione
 									msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_MITTENTE_MSG, ""); // per evitare di visualizzarle anche nei successivi diagnostici
 									msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI, "");
+									
+									if(soggettoFruitoreIdentificatoTramiteProtocollo &&
+											soggettoFruitore!=null &&  soggettoFruitore.getNome()!=null && soggettoFruitore.getTipo()!=null &&
+											soggettoFruitoreObject!=null) {
+										if(soggettoFruitoreObject.sizeCredenzialiList()>0) {
+											erroreMissmatchSoggettoProtocolloConCredenziali = true;
+											pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, "true");
+											throw new Exception("Identificato un soggetto (tramite profilo di interoperabilità) '"+soggettoFruitore
+													+"' registrato con credenziali differenti da quelle ricevute");
+										}
+									}
 								}
 							}
 							
@@ -3410,7 +3425,7 @@ public class RicezioneBuste {
 								logCore.error("getDescrizione Error:"+e.getMessage(),e);
 							}
 							String errorMsg =  "Riscontrato errore durante il processo di Autenticazione per il messaggio con identificativo di transazione ["+idTransazione+"]: "+descrizioneErrore;
-							if(autenticazioneOpzionale){
+							if(autenticazioneOpzionale && !erroreMissmatchSoggettoProtocolloConCredenziali){
 								msgDiag.logPersonalizzato("autenticazioneFallita.opzionale");
 								if(eAutenticazione!=null){
 									logCore.debug(errorMsg,eAutenticazione);
@@ -3429,7 +3444,7 @@ public class RicezioneBuste {
 								}
 							}
 							
-							if(!autenticazioneOpzionale){
+							if(!autenticazioneOpzionale || erroreMissmatchSoggettoProtocolloConCredenziali){
 							
 								// Tracciamento richiesta: non ancora registrata
 								if(this.msgContext.isTracciamentoAbilitato()){
@@ -3457,7 +3472,16 @@ public class RicezioneBuste {
 										}
 			
 										OpenSPCoop2Message errorOpenSPCoopMsg = null;
-										if(erroreCooperazione!=null){
+										if(erroreMissmatchSoggettoProtocolloConCredenziali) {
+											integrationFunctionError = IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS;
+											parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
+											String msgErroreDetailNonValide = eAutenticazione!=null ? eAutenticazione.getMessage() : 
+												"Identificato un soggetto (tramite profilo di interoperabilità) '"+soggettoFruitore+"' registrato con credenziali differenti da quelle ricevute";
+											parametriGenerazioneBustaErrore.
+												setErroreCooperazione(ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.getErroreCredenzialiForniteNonCorrette(msgErroreDetailNonValide));
+											errorOpenSPCoopMsg = generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
+										}
+										else if(erroreCooperazione!=null){
 											if(CodiceErroreCooperazione.MITTENTE_NON_PRESENTE.equals(erroreCooperazione.getCodiceErrore()) ||
 													CodiceErroreCooperazione.MITTENTE_NON_VALORIZZATO.equals(erroreCooperazione.getCodiceErrore()) ||
 													CodiceErroreCooperazione.MITTENTE.equals(erroreCooperazione.getCodiceErrore())) {
@@ -3753,7 +3777,7 @@ public class RicezioneBuste {
 		}catch(Throwable t) {}	
 		if(soggettoFruitore!=null) {
 			try {
-				Soggetto soggettoFruitoreObject = registroServiziReader.getSoggetto(soggettoFruitore, null);
+				soggettoFruitoreObject = registroServiziReader.getSoggetto(soggettoFruitore, null);
 				Map<String, String> configProperties = registroServiziReader.getProprietaConfigurazione(soggettoFruitoreObject);
 	            if (configProperties != null && !configProperties.isEmpty()) {
 	            	pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE, configProperties);
