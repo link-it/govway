@@ -391,12 +391,12 @@ public class GestoreTrasformazioniUtilities {
 			TransportRequestContext transportRequestContext = null;
 			TransportResponseContext transportResponseContext = null;
 			if(MessageRole.REQUEST.equals(message.getMessageRole())) {
-				transportRequestContext = new TransportRequestContext();
+				transportRequestContext = new TransportRequestContext(log);
 				transportRequestContext.setHeaders(trasporto);
 				transportRequestContext.setParameters(url);
 			}
 			else {
-				transportResponseContext = new TransportResponseContext();
+				transportResponseContext = new TransportResponseContext(log);
 				transportResponseContext.setHeaders(trasporto);
 				if(returnCodeInput!=null) {
 					transportResponseContext.setCodiceTrasporto(returnCodeInput.intValue()+"");
@@ -443,7 +443,7 @@ public class GestoreTrasformazioniUtilities {
 						messageType = requestInfo.getBindingConfig().getRequestMessageType(ServiceBinding.REST, transportRequestContext, contentType);
 					}
 					else {
-						messageType = requestInfo.getBindingConfig().getResponseMessageType(ServiceBinding.REST, new TransportRequestContext(), contentType, status);
+						messageType = requestInfo.getBindingConfig().getResponseMessageType(ServiceBinding.REST, new TransportRequestContext(log), contentType, status);
 					}
 					if(risultato.getTipoTrasformazione().isBinaryMessage()) {
 						messageType = MessageType.BINARY; 
@@ -770,7 +770,7 @@ public class GestoreTrasformazioniUtilities {
 								messageType = requestInfo.getBindingConfig().getRequestMessageType(ServiceBinding.REST, transportRequestContext, contentType);
 							}
 							else {
-								messageType = requestInfo.getBindingConfig().getResponseMessageType(ServiceBinding.REST, new TransportRequestContext(), contentType, status);
+								messageType = requestInfo.getBindingConfig().getResponseMessageType(ServiceBinding.REST, new TransportRequestContext(log), contentType, status);
 							}
 						}
 						if(messageType.equals(message.getMessageType())) {

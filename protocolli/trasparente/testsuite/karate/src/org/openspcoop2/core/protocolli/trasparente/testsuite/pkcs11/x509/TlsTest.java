@@ -73,4 +73,11 @@ public class TlsTest extends ConfigLoader {
 				"HSMClient2", null, null);
 	}
 	
+	@Test
+	public void keyAliasUpperCase() throws Exception {
+		Utils.testJson(logCore, api, "KeyAliasUpperCase", 
+				null, null, 
+				"HSMClient1", null, null);
+	}
+	
 }

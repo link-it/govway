@@ -5660,6 +5660,13 @@ public class ConfigurazionePdDReader {
 
 	}
 
+	protected SystemProperties getSystemPropertiesPdDCached(Connection connectionPdD) throws DriverConfigurazioneException{
+		try{
+			return this.configurazionePdD.getSystemPropertiesPdDCached(connectionPdD);
+		}catch(DriverConfigurazioneNotFound dNot){
+			return null;
+		}
+	}
 
 	protected SystemProperties getSystemPropertiesPdD() throws DriverConfigurazioneException{
 		try{

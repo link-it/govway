@@ -79,7 +79,7 @@ public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 			String activeId = UniqueIdentifierUtilities.getUniqueId(activePolicy.getInstanceConfiguration());
 			Map<String, List<String>> p = new HashMap<String, List<String>>();
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, activeId);
-			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_REGISTER_POLICY);
+			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_REGISTER_POLICY, this.log);
 			
 			this.log.debug("[GestorePolicyAttiveWS.getActiveThreadsPolicy(ActivePolicy)] invoke ("+url+") ...");
 			HttpResponse response = HttpUtilities.getHTTPResponse(url);
@@ -105,7 +105,7 @@ public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 		try{
 			Map<String, List<String>> p = new HashMap<String, List<String>>();
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, activeId);
-			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_GET_POLICY);
+			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_GET_POLICY, this.log);
 			
 			this.log.debug("[GestorePolicyAttiveWS.getActiveThreadsPolicy] invoke ("+url+") ...");
 			HttpResponse response = HttpUtilities.getHTTPResponse(url);
@@ -130,7 +130,7 @@ public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 		try{
 			Map<String, List<String>> p = new HashMap<String, List<String>>();
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_SUM, sum+"");
-			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_SIZE_ACTIVE_THREADS_POLICY);
+			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_SIZE_ACTIVE_THREADS_POLICY, this.log);
 			
 			this.log.debug("[GestorePolicyAttiveWS.sizeActivePolicyThreads] invoke ("+url+") ...");
 			HttpResponse response = HttpUtilities.getHTTPResponse(url);
@@ -153,7 +153,7 @@ public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 		try{
 			Map<String, List<String>> p = new HashMap<String, List<String>>();
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_SEPARATOR, separator);
-			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_PRINT_KEYS_POLICY);
+			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_PRINT_KEYS_POLICY, this.log);
 			
 			this.log.debug("[GestorePolicyAttiveWS.printKeysPolicy] invoke ("+url+") ...");
 			HttpResponse response = HttpUtilities.getHTTPResponse(url);
@@ -178,7 +178,7 @@ public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 			Map<String, List<String>> p = new HashMap<String, List<String>>();
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, id);
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_SEPARATOR, separatorGroups);
-			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_PRINT_INFO_POLICY);
+			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_PRINT_INFO_POLICY, this.log);
 			
 			this.log.debug("[GestorePolicyAttiveWS.printInfoPolicy] invoke ("+url+") ...");
 			HttpResponse response = HttpUtilities.getHTTPResponse(url);
@@ -200,7 +200,7 @@ public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 		try{
 			Map<String, List<String>> p = new HashMap<String, List<String>>();
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, idActivePolicy);
-			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_REMOVE_ACTIVE_THREADS_POLICY);
+			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_REMOVE_ACTIVE_THREADS_POLICY, this.log);
 			
 			this.log.debug("[GestorePolicyAttiveWS.removeActiveThreadsPolicy] invoke ("+url+") ...");
 			HttpResponse response = HttpUtilities.getHTTPResponse(url);
@@ -219,7 +219,7 @@ public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 	public void removeAllActiveThreadsPolicy() throws PolicyShutdownException, PolicyException {
 		try{
 			Map<String, List<String>> p = new HashMap<String, List<String>>();
-			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_REMOVE_ALL_ACTIVE_THREADS_POLICY);
+			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_REMOVE_ALL_ACTIVE_THREADS_POLICY, this.log);
 			
 			this.log.debug("[GestorePolicyAttiveWS.removeAllActiveThreadsPolicy] invoke ("+url+") ...");
 			HttpResponse response = HttpUtilities.getHTTPResponse(url);
@@ -240,7 +240,7 @@ public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 		try{
 			Map<String, List<String>> p = new HashMap<String, List<String>>();
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, idActivePolicy);
-			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_RESET_COUNTERS_ACTIVE_THREADS_POLICY);
+			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_RESET_COUNTERS_ACTIVE_THREADS_POLICY, this.log);
 			
 			this.log.debug("[GestorePolicyAttiveWS.resetCountersActiveThreadsPolicy] invoke ("+url+") ...");
 			HttpResponse response = HttpUtilities.getHTTPResponse(url);
@@ -259,7 +259,7 @@ public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 	public void resetCountersAllActiveThreadsPolicy() throws PolicyShutdownException, PolicyException {
 		try{
 			Map<String, List<String>> p = new HashMap<String, List<String>>();
-			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_RESET_COUNTERS_ALL_ACTIVE_THREADS_POLICY);
+			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_RESET_COUNTERS_ALL_ACTIVE_THREADS_POLICY, this.log);
 			
 			this.log.debug("[GestorePolicyAttiveWS.resetCountersAllActiveThreadsPolicy] invoke ("+url+") ...");
 			HttpResponse response = HttpUtilities.getHTTPResponse(url);

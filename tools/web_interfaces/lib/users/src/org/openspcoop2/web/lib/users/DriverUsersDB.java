@@ -60,6 +60,7 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 import org.openspcoop2.web.lib.users.dao.Stato;
+import org.openspcoop2.web.lib.users.dao.UserObjects;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.lib.users.dao.UserPassword;
 import org.slf4j.Logger;
@@ -2377,6 +2378,239 @@ public class DriverUsersDB {
 			throw new DriverUsersDBException("[DriverUsersDB::savePassword] SqlException: " + se.getMessage(),se);
 		} catch (Exception ex) {
 			throw new DriverUsersDBException("[DriverUsersDB::savePassword] Exception: " + ex.getMessage(),ex);
+		} finally {
+			try {
+				stm.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try{
+				if(this.connection==null)
+					connectionDB.close();
+			}catch(Exception eClose){}
+		}
+	}
+	
+	public UserObjects countUserServizi(String user) throws DriverUsersDBException {
+		return countUser(user, false);
+	}
+	public UserObjects countUserCooperazione(String user) throws DriverUsersDBException {
+		return countUser(user, true);
+	}
+	public UserObjects countUser(String user, boolean cooperazione) throws DriverUsersDBException {
+		if (user==null)
+			throw new DriverUsersDBException("[countUser] Parametri Non Validi");
+
+		Connection connectionDB = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		try {
+			// Get Connection
+			if(this.connection!=null)
+				connectionDB = this.connection;
+			else{
+				connectionDB = this.datasource.getConnection();
+				if(connectionDB==null)
+					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+			}
+			
+			List<String> tables = new ArrayList<String>();
+			if(cooperazione) {
+				tables.add(CostantiDB.ACCORDI_COOPERAZIONE);
+				tables.add(CostantiDB.ACCORDI);
+			}
+			else {
+				tables.add(CostantiDB.PDD);
+				tables.add(CostantiDB.GRUPPI);
+				tables.add(CostantiDB.RUOLI);
+				tables.add(CostantiDB.SCOPE);
+				tables.add(CostantiDB.SOGGETTI);
+				tables.add(CostantiDB.ACCORDI);
+				tables.add(CostantiDB.SERVIZI);
+			}
+		
+			UserObjects results = new UserObjects();
+			
+			for (String table : tables) {
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+				sqlQueryObject.addFromTable(table);
+				sqlQueryObject.addSelectCountField("id", "somma");
+				sqlQueryObject.addWhereCondition("superuser = ?");
+				if(CostantiDB.ACCORDI.equals(table)) {
+					
+					ISQLQueryObject sqlQueryObjectExclude = null;
+					sqlQueryObjectExclude = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+					sqlQueryObjectExclude.addFromTable(CostantiDB.ACCORDI_SERVIZI_COMPOSTO);
+					sqlQueryObjectExclude.addSelectField(CostantiDB.ACCORDI_SERVIZI_COMPOSTO, "id_accordo");
+					sqlQueryObjectExclude.addWhereCondition(CostantiDB.ACCORDI_SERVIZI_COMPOSTO+".id_accordo="+CostantiDB.ACCORDI+".id");
+					if(cooperazione){
+						sqlQueryObject.addWhereExistsCondition(false, sqlQueryObjectExclude);
+					}
+					else{
+						sqlQueryObject.addWhereExistsCondition(true, sqlQueryObjectExclude);
+					}
+					
+				}
+				sqlQueryObject.setANDLogicOperator(true);
+				String sqlQuery = sqlQueryObject.createSQLQuery();
+				stm = connectionDB.prepareStatement(sqlQuery);
+				int index = 1;
+				stm.setString(index++, user);
+				rs = stm.executeQuery();
+				int result = rs.getInt("somma");
+				rs.close();
+				stm.close();
+				
+				if(CostantiDB.PDD.equals(table)) {
+					results.pdd = result;
+				}
+				else if(CostantiDB.GRUPPI.equals(table)) {
+					results.gruppi = result;
+				}
+				else if(CostantiDB.RUOLI.equals(table)) {
+					results.ruoli = result;
+				}
+				else if(CostantiDB.SCOPE.equals(table)) {
+					results.scope = result;
+				}
+				else if(CostantiDB.SOGGETTI.equals(table)) {
+					results.soggetti = result;
+				}
+				else if(CostantiDB.ACCORDI.equals(table)) {
+					results.accordi_parte_comune = result;
+				}
+				else if(CostantiDB.ACCORDI_COOPERAZIONE.equals(table)) {
+					results.accordi_accoperazione = result;
+				}
+				else if(CostantiDB.SERVIZI.equals(table)) {
+					results.accordi_parte_specifica = result;
+				}
+			}
+			
+			return results;
+			
+		} catch (SQLException se) {
+			throw new DriverUsersDBException("[DriverUsersDB::countUser] SqlException: " + se.getMessage(),se);
+		} catch (Exception ex) {
+			throw new DriverUsersDBException("[DriverUsersDB::countUser] Exception: " + ex.getMessage(),ex);
+		} finally {
+			try {
+				rs.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				stm.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try{
+				if(this.connection==null)
+					connectionDB.close();
+			}catch(Exception eClose){}
+		}
+	}
+	
+	public UserObjects updateUserServizi(String oldUser, String newUser) throws DriverUsersDBException {
+		return updateUser(oldUser, newUser, false);
+	}
+	public UserObjects updateUserCooperazione(String oldUser, String newUser) throws DriverUsersDBException {
+		return updateUser(oldUser, newUser, true);
+	}
+	public UserObjects updateUser(String oldUser, String newUser, boolean cooperazione) throws DriverUsersDBException {
+		if (oldUser == null || newUser==null)
+			throw new DriverUsersDBException("[updateUser] Parametri Non Validi");
+
+		Connection connectionDB = null;
+		PreparedStatement stm = null;
+		try {
+			// Get Connection
+			if(this.connection!=null)
+				connectionDB = this.connection;
+			else{
+				connectionDB = this.datasource.getConnection();
+				if(connectionDB==null)
+					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+			}
+			
+			List<String> tables = new ArrayList<String>();
+			if(cooperazione) {
+				tables.add(CostantiDB.ACCORDI_COOPERAZIONE);
+				tables.add(CostantiDB.ACCORDI);
+			}
+			else {
+				tables.add(CostantiDB.PDD);
+				tables.add(CostantiDB.GRUPPI);
+				tables.add(CostantiDB.RUOLI);
+				tables.add(CostantiDB.SCOPE);
+				tables.add(CostantiDB.SOGGETTI);
+				tables.add(CostantiDB.ACCORDI);
+				tables.add(CostantiDB.SERVIZI);
+			}
+		
+			UserObjects results = new UserObjects();
+			
+			for (String table : tables) {
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+				sqlQueryObject.addUpdateTable(table);
+				sqlQueryObject.addUpdateField("superuser", "?");
+				sqlQueryObject.addWhereCondition("superuser = ?");
+				if(CostantiDB.ACCORDI.equals(table)) {
+					
+					ISQLQueryObject sqlQueryObjectExclude = null;
+					sqlQueryObjectExclude = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+					sqlQueryObjectExclude.addFromTable(CostantiDB.ACCORDI_SERVIZI_COMPOSTO);
+					sqlQueryObjectExclude.addSelectField(CostantiDB.ACCORDI_SERVIZI_COMPOSTO, "id_accordo");
+					sqlQueryObjectExclude.addWhereCondition(CostantiDB.ACCORDI_SERVIZI_COMPOSTO+".id_accordo="+CostantiDB.ACCORDI+".id");
+					if(cooperazione){
+						sqlQueryObject.addWhereExistsCondition(false, sqlQueryObjectExclude);
+					}
+					else{
+						sqlQueryObject.addWhereExistsCondition(true, sqlQueryObjectExclude);
+					}
+					
+				}
+				sqlQueryObject.setANDLogicOperator(true);
+				String sqlQuery = sqlQueryObject.createSQLUpdate();
+				stm = connectionDB.prepareStatement(sqlQuery);
+				int index = 1;
+				stm.setString(index++, newUser);
+				stm.setString(index++, oldUser);
+				int result = stm.executeUpdate();
+				stm.close();
+				
+				if(CostantiDB.PDD.equals(table)) {
+					results.pdd = result;
+				}
+				else if(CostantiDB.GRUPPI.equals(table)) {
+					results.gruppi = result;
+				}
+				else if(CostantiDB.RUOLI.equals(table)) {
+					results.ruoli = result;
+				}
+				else if(CostantiDB.SCOPE.equals(table)) {
+					results.scope = result;
+				}
+				else if(CostantiDB.SOGGETTI.equals(table)) {
+					results.soggetti = result;
+				}
+				else if(CostantiDB.ACCORDI.equals(table)) {
+					results.accordi_parte_comune = result;
+				}
+				else if(CostantiDB.ACCORDI_COOPERAZIONE.equals(table)) {
+					results.accordi_accoperazione = result;
+				}
+				else if(CostantiDB.SERVIZI.equals(table)) {
+					results.accordi_parte_specifica = result;
+				}
+			}
+			
+			return results;
+			
+		} catch (SQLException se) {
+			throw new DriverUsersDBException("[DriverUsersDB::updateUser] SqlException: " + se.getMessage(),se);
+		} catch (Exception ex) {
+			throw new DriverUsersDBException("[DriverUsersDB::updateUser] Exception: " + ex.getMessage(),ex);
 		} finally {
 			try {
 				stm.close();

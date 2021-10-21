@@ -11009,6 +11009,20 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
+	public void addFilterSoggettoErogatoreStringaLiberaContains(ISearch ricerca, int idLista) throws Exception{
+		try {
+			String soggettoErogatoreValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SOGGETTO_EROGATORE_CONTAINS);
+				
+			String filterLabel = SoggettiCostanti.LABEL_SOGGETTO_EROGATORE;
+			
+			this.pd.addTextFilter(Filtri.FILTRO_SOGGETTO_EROGATORE_CONTAINS, filterLabel, soggettoErogatoreValue, this.getSize());
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
 	public void addFilterSubtitle(String subtitleName, String subtitleLabel, boolean visualizzaSottosezioneAperta) throws Exception{
 		this.pd.addSubtitleFilter(subtitleName, subtitleLabel, visualizzaSottosezioneAperta);
 	}

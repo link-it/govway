@@ -141,7 +141,7 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 				this.setAttribute(CostantiPdD.OPENSPCOOP2_PDD_CONTEXT_HEADER_HTTP,this.pddContext);
 			}
 						
-			URLProtocolContext urlProtocolContext = new URLProtocolContext();
+			URLProtocolContext urlProtocolContext = new URLProtocolContext(this.log);
 			
 			Map<String, List<String>> pFormBased = new HashMap<String, List<String>>();
 			pFormBased.putAll(this.parameters);

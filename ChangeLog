@@ -1,3 +1,31 @@
+2021-10-22  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 3.3.5
+
+2021-10-20 Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Le operazioni 'getAllMessageIds', esposte dal servizio MessageBox via IntegrationManager, che non prevedono tra i parametri un limite massimo di id ritornati utilizzano adesso il limite di default di sistema (1000).
+
+2021-10-20 Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1269
+	L'eliminazione di un utente (o la modifica del permesso 'S') comportava una riassegnazione degli oggetti appartenenti all'utente 
+	nella quale venivano erroneamente eliminate eventuali proprietà o credenziali presenti nei soggetti aggiornati. 
+	La problematica è stata risolta, e l'attività di riassegnamento è stata eliminata se la visibilità degli oggetti risulta globale per tutte le utenze di gestione (comportamento di default).
+
+2021-10-19 Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1265
+	Aggiunto supporto per wildfly 25.
+
+2021-10-18 Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Il criterio di ricerca, nelle erogazioni e fruizioni, che consente di filtrare per nome erogazione e soggetto erogatore è stato disaccoppiato in modo da poter effettuare una ricerca composta su entrambi i criteri.
+
 2021-10-15 Andrea Poli <apoli@link.it>
 
 	* [ApiRsConfigurazione]

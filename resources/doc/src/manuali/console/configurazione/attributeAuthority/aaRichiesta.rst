@@ -3,7 +3,8 @@
 Richiesta di Attributi
 ----------------------------------
 
-Ogni singola AA definisce nelle proprie specifiche di integrazione quali siano gli elementi obbligatori che devono essere presenti nelle richieste tra cui l'informazione necessaria ad identificare il soggetto per cui si sta richiedendo gli attributi.
+Ogni singola AA definisce nella propria interfaccia quali siano gli elementi obbligatori che devono essere presenti nelle richieste, tra cui l'informazione necessaria ad identificare il soggetto a cui si riferiscono gli attributi richiesti.
+
 La sezione seguente consente di definire come GovWay debba formare la richiesta che verrà inoltrata all'endpoint configurato nella sezione :ref:`aaEndpoint`.
 
 -  *Posizione*: indica dove risiede la richiesta di attributi nella comunicazione HTTP:
@@ -23,7 +24,7 @@ La sezione seguente consente di definire come GovWay debba formare la richiesta 
 
 **Richiesta nel formato JWT**
 
-Nel caso di richiesta di tipo *JWS* si deve fornire le informazioni necessarie a produrre il JWT firmato così suddivise:
+Nel caso di richiesta di tipo *JWS* si devono fornire le informazioni necessarie a produrre il JWT firmato così suddivise:
 
 -  *JWS KeyStore*: dati di accesso al keystore contenente la chiave privata ed il certificato da utilizzare per firmare il JWT.
 
@@ -65,14 +66,14 @@ Nel caso di richiesta di tipo *Json* o *Personalizzata* si deve fornire un templ
 
 **Valori dinamici utilizzabili nei Template**
 
-I costrutti utilizzabili nei template sono i medesimi delle funzionalità di trasformazione descritte nella sezione ':ref:`valoriDinamici`' arricchiti di un'ulteriore istruzione che consente di individuare gli attributi da richiedere configurati sulla specifica fruizione o erogazione di API nella quale è stata riferita l'AA :
+I costrutti utilizzabili nei template sono gli stessi utilizzabili per la funzionalità di trasformazione, come descritti nella sezione ':ref:`valoriDinamici`', arricchiti di un'ulteriore istruzione che consente di individuare gli attributi da richiedere, così come configurati sulla specifica fruizione o erogazione di API nella quale è stata riferita l'AA :
 
 - *requiredAttributes:METHOD* : il valore 'METHOD' fornito deve rappresentare un metodo valido all'interno della classe 'org.openspcoop2.pdd.core.token.attribute_authority.RequiredAttributes'
 
-	- Se la richiesta è definita tramite un template con sintassi proprietaria di GovWay gli attributi saranno direttamente accessibili utilizzando il formato '${requiredAttributes:METHOD}'; ad es. per ottenere la lista degli attributi in un formato utilizzabile all'interno di un array json usare ${requiredAttributes:jsonList()} oppure ${requiredAttributes:formatList(",")}.
-	- Se la richiesta è definita tramite template Freemarker o Velocity l'oggetto contenente gli attributi da richiedere è presente nel contesto con chiave di accesso 'aa'.
+	- Se la richiesta è definita tramite un template con la sintassi specifica di GovWay, gli attributi saranno direttamente accessibili utilizzando il formato '${requiredAttributes:METHOD}'; ad es. per ottenere la lista degli attributi in un formato utilizzabile all'interno di un array json usare ${requiredAttributes:jsonList()} oppure ${requiredAttributes:formatList(",")}.
+	- Se la richiesta è definita tramite template Freemarker o Velocity, l'oggetto contenente gli attributi da richiedere è presente nel contesto con chiave di accesso 'aa'.
 
-Di seguito un esempio di template GovWay che definisce una richiesta JSON in cui l'identità della persona fisica per cui si richiede gli attributi viene prelevata dal token OAuth e gli attributi richiesti sono quelli configurati nell'erogazione di API:
+Di seguito un esempio di template GovWay che definisce una richiesta JSON in cui l'identità della persona fisica per cui si richiedono gli attributi viene prelevata dal token OAuth e gli attributi richiesti sono quelli configurati nell'erogazione di API:
 
    ::
 
