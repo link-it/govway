@@ -1071,7 +1071,7 @@ public class InoltroRisposte extends GenericLib{
 			// Location
 			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connectorSender, connettoreMsg, busta, pddContext, protocolFactory, this.log);
 			if(location!=null){
-				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(responseMessage, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location,
+				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(this.log, responseMessage, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location,
 						protocolFactory, this.idModulo);
 				locationWithUrl = ConnettoreUtils.addProxyInfoToLocationForHTTPConnector(connettoreMsg.getTipoConnettore(), connettoreMsg.getConnectorProperties(), locationWithUrl);
 				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, locationWithUrl));

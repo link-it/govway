@@ -39,7 +39,7 @@ public class SystemPropertiesReader extends PropertiesReader {
 	public SystemPropertiesReader(Logger log) throws DynamicException{
 		super(log);
 		try {
-			this.systemProperties = ConfigurazionePdDManager.getInstance().getSystemPropertiesPdD();
+			this.systemProperties = ConfigurazionePdDManager.getInstance().getSystemPropertiesPdDCached();
 		}catch(Exception e) {
 			throw new DynamicException(e.getMessage(),e);
 		}

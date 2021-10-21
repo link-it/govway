@@ -64,11 +64,14 @@ public class HttpServletTransportRequestContext extends org.openspcoop2.utils.tr
 	public HttpServletTransportRequestContext() throws UtilsException{
 		super();
 	}
+	public HttpServletTransportRequestContext(Logger log) throws UtilsException{
+		super(log);
+	}
 	public HttpServletTransportRequestContext(HttpServletRequest req,Logger logCore) throws UtilsException{
 		this(req,logCore,false);
 	}
 	public HttpServletTransportRequestContext(HttpServletRequest req,Logger logCore, boolean debug) throws UtilsException{
-		super();
+		super(logCore);
 		
 		try {
 			

@@ -36,7 +36,9 @@ import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.slf4j.Logger;
 import org.w3c.dom.Node;
 
 /**     
@@ -56,11 +58,13 @@ public class Test {
 	
 	public static void main(String[] args) throws Exception {
 				
+		Logger log = LoggerWrapperFactory.getLogger(Test.class);
+		
 		RequestInfo requestInfo = new RequestInfo();
 		requestInfo.setIdServizio(IDServizioFactory.getInstance().getIDServizioFromValues("gw", "serv", "gw", "RegioneToscana", 1));
 		requestInfo.getIdServizio().setAzione("az");
 		
-		URLProtocolContext protocolContext = new URLProtocolContext();
+		URLProtocolContext protocolContext = new URLProtocolContext(log);
 		requestInfo.setProtocolContext(protocolContext);
 		protocolContext.setInterfaceName("nomePortaDelegataXXXX");
 		protocolContext.setFunction("PD");

@@ -3732,6 +3732,51 @@ public class ConfigurazionePdD  {
 		}
 	}
 
+	private String _getKey_getSystemPropertiesPdDCached(){
+		String key = "getSystemPropertiesPdD";
+		return key;
+	}
+	public SystemProperties getSystemPropertiesPdDCached(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = this._getKey_getSystemPropertiesPdDCached();
+			org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return ((SystemProperties) response.getObject());
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		SystemProperties sp = null;
+		if(this.cache!=null){
+			try{
+				sp = (SystemProperties) this.getObjectCache(key,"getSystemPropertiesPdD",connectionPdD,ConfigurazionePdDType.config);
+			}catch(DriverConfigurazioneException e){
+				throw e;
+			}
+		}else{
+			sp = (SystemProperties) this.getObject("getSystemPropertiesPdD",connectionPdD,ConfigurazionePdDType.config);
+		}
+
+		if(sp!=null){
+			return sp;
+		}
+		else{
+			throw new DriverConfigurazioneNotFound("[getSystemPropertiesPdD] GestioneErrore non trovato");
+		}
+	} 
+	
+	
 	private String _getKey_getGenericProperties(String tipologia, String nome){
 		String key = "getGenericProperties";
 		key = key + "_"+tipologia;

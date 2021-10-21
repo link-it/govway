@@ -1747,7 +1747,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			// Location
 			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connectorSender, connettoreMsg, bustaRichiesta, pddContext, protocolFactory,  this.log);
 			if(location!=null){
-				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(consegnaMessageTrasformato, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location,
+				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(this.log, consegnaMessageTrasformato, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location,
 						protocolFactory, this.idModulo);
 				locationWithUrl = ConnettoreUtils.addProxyInfoToLocationForHTTPConnector(connettoreMsg.getTipoConnettore(), connettoreMsg.getConnectorProperties(), locationWithUrl);
 				locationWithUrl = ConnettoreUtils.addGovWayProxyInfoToLocationForHTTPConnector(connettoreMsg.getForwardProxy(),connectorSender, locationWithUrl);
@@ -2009,7 +2009,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			// L'handler puo' aggiornare le properties che contengono le proprieta' del connettore.
 			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connectorSender, connettoreMsg, bustaRichiesta, pddContext, protocolFactory, this.log);
 			if(location!=null){
-				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(consegnaMessageTrasformato, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location,
+				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(this.log, consegnaMessageTrasformato, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location,
 						protocolFactory, this.idModulo);
 				locationWithUrl = ConnettoreUtils.addProxyInfoToLocationForHTTPConnector(connettoreMsg.getTipoConnettore(), connettoreMsg.getConnectorProperties(), locationWithUrl);
 				locationWithUrl = ConnettoreUtils.addGovWayProxyInfoToLocationForHTTPConnector(connettoreMsg.getForwardProxy(),connectorSender, locationWithUrl);
@@ -2171,7 +2171,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					restProblem = gestoreErrore.getProblem();
 					faultMessageFactory = connectorSender.getResponse()!=null ? connectorSender.getResponse().getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 					codiceRitornato = connectorSender.getCodiceTrasporto();
-					transportResponseContext = new TransportResponseContext(connectorSender.getCodiceTrasporto()+"", 
+					transportResponseContext = new TransportResponseContext(this.log, connectorSender.getCodiceTrasporto()+"", 
 							connectorSender.getHeaderTrasporto(), 
 							connectorSender.getContentLength(), 
 							motivoErroreConsegna, connectorSender.getEccezioneProcessamento());

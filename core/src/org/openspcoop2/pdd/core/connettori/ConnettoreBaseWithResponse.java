@@ -282,7 +282,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			isParam = this.isResponse; // è stato normalizzato, quindi se non c'è un contenuto è null
 		}
 		
-		TransportResponseContext responseContext = new TransportResponseContext();
+		TransportResponseContext responseContext = new TransportResponseContext(this.logger.getLogger());
 		responseContext.setCodiceTrasporto(this.codice+"");
 		responseContext.setContentLength(this.contentLength);
 		responseContext.setHeaders(this.propertiesTrasportoRisposta);
@@ -430,7 +430,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		
 		if(this.isResponse!=null){
 			
-			TransportResponseContext responseContext = new TransportResponseContext();
+			TransportResponseContext responseContext = new TransportResponseContext(this.logger.getLogger());
 			responseContext.setCodiceTrasporto(this.codice+"");
 			responseContext.setContentLength(this.contentLength);
 			responseContext.setHeaders(this.propertiesTrasportoRisposta);

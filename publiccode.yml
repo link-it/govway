@@ -135,7 +135,7 @@ maintenance:
 name: GovWay
 platforms:
   - web
-releaseDate: '2021-10-21'
+releaseDate: '2021-10-22'
 softwareType: standalone/web
 softwareVersion: 3.3.5
 url: 'https://github.com/link-it/govway'

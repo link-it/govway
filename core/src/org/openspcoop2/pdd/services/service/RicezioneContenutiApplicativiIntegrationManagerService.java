@@ -556,7 +556,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			
 			
 			// Parametri della porta delegata invocata
-			urlProtocolContext = new URLProtocolContext();
+			urlProtocolContext = new URLProtocolContext(logCore);
 			urlProtocolContext.setInterfaceName(portaDelegata);
 			urlProtocolContext.setFunctionParameters(portaDelegata);
 			urlProtocolContext.setRequestURI(portaDelegata);

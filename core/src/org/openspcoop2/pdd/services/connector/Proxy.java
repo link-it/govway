@@ -276,7 +276,7 @@ public class Proxy extends HttpServlet {
 //						}
 //						System.out.println("DEBUG");
 						
-						url = buildUrl(protocol, hostname, port, context, parameters);
+						url = buildUrl(log, protocol, hostname, port, context, parameters);
 						HttpResponse httpResponse = HttpUtilities.getHTTPResponse(url, readTimeout, connectTimeout, usernameCheck, passwordCheck);
 						String sResponse = null;
 						if(httpResponse.getContent()!=null) {
@@ -344,7 +344,7 @@ public class Proxy extends HttpServlet {
 				// Viene invocato un nodo a caso (il primo essendo quello piu' vecchio)
 				String url = null;
 				try {
-					url = buildUrl(protocol, list.get(0), port, context, parameters);
+					url = buildUrl(log, protocol, list.get(0), port, context, parameters);
 					HttpResponse httpResponse = HttpUtilities.getHTTPResponse(url, readTimeout, connectTimeout, usernameCheck, passwordCheck);
 					writeResponse(httpResponse, res);
 				}catch(Throwable e) {
@@ -365,7 +365,7 @@ public class Proxy extends HttpServlet {
 			// Viene invocato un nodo a caso (il primo essendo quello piu' vecchio)
 			String url = null;
 			try {
-				url = buildUrl(protocol, list.get(0), port, context, parameters);
+				url = buildUrl(log, protocol, list.get(0), port, context, parameters);
 				HttpResponse httpResponse = HttpUtilities.getHTTPResponse(url, readTimeout, connectTimeout, usernameCheck, passwordCheck);
 				writeResponse(httpResponse, res);
 			}catch(Throwable e) {
@@ -391,14 +391,14 @@ public class Proxy extends HttpServlet {
 		}
 	}
 	
-	private String buildUrl(String protocol, String hostname, int port, String context, Map<String, List<String>> parameters ) {
+	private String buildUrl(Logger log, String protocol, String hostname, int port, String context, Map<String, List<String>> parameters ) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(protocol);
 		sb.append(hostname);
 		sb.append(":");
 		sb.append(port);
 		sb.append(context);
-		return TransportUtils.buildUrlWithParameters(parameters, sb.toString());
+		return TransportUtils.buildUrlWithParameters(parameters, sb.toString(), log);
 	}
 	
 	private Map<String, List<String>> buildParameters(HttpServletRequest req) {

@@ -25,8 +25,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.slf4j.Logger;
 
 /**
  * RequestContext
@@ -69,8 +71,18 @@ public class TransportRequestContext implements java.io.Serializable {
 	protected String functionParameters = null;
 	protected String interfaceName = null; // Nome PD o PA
 	
+	protected Logger log = null;
+	
 	public TransportRequestContext() throws UtilsException{
-		
+		this(null);
+	}
+	public TransportRequestContext(Logger log) throws UtilsException{
+		if(log==null) {
+			this.log = LoggerWrapperFactory.getLogger(TransportRequestContext.class);
+		}
+		else {
+			this.log = log;
+		}
 	}
 	
 	
@@ -277,7 +289,7 @@ public class TransportRequestContext implements java.io.Serializable {
 		if(this.requestURI==null){
 			return null;
 		}
-		return TransportUtils.buildUrlWithParameters(this.parameters, this.requestURI);
+		return TransportUtils.buildUrlWithParameters(this.parameters, this.requestURI, this.log);
 	}
 	public String getUrlInvocazioneWithParameters() {
 		return this.getUrlInvocazione_formBased();

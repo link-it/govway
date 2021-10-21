@@ -2259,7 +2259,7 @@ public class GestoreToken {
 		
 		byte[] content = null;
 		
-		TransportRequestContext transportRequestContext = new TransportRequestContext();
+		TransportRequestContext transportRequestContext = new TransportRequestContext(log);
 		transportRequestContext.setRequestType(httpMethod.name());
 		transportRequestContext.setHeaders(new HashMap<String, List<String>>());
 		if(bearer) {
@@ -2692,7 +2692,7 @@ public class GestoreToken {
 		
 		byte[] content = null;
 		
-		TransportRequestContext transportRequestContext = new TransportRequestContext();
+		TransportRequestContext transportRequestContext = new TransportRequestContext(log);
 		transportRequestContext.setRequestType(httpMethod.name());
 		transportRequestContext.setHeaders(new HashMap<String, List<String>>());
 		if(bearer) {
@@ -3702,7 +3702,7 @@ public class GestoreToken {
 		
 		byte[] content = null;
 		
-		TransportRequestContext transportRequestContext = new TransportRequestContext();
+		TransportRequestContext transportRequestContext = new TransportRequestContext(log);
 		transportRequestContext.setRequestType(httpMethod.name());
 		transportRequestContext.setHeaders(new HashMap<String, List<String>>());
 		if(bearer) {

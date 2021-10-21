@@ -155,7 +155,7 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 			if(this.debug)
 				this.logger.debug("Check validita URL...");
 			this.location = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);
-			this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, ENDPOINT_TYPE, this.propertiesUrlBased, this.location,
+			this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.logger!=null ? this.logger.getLogger() : null, this.requestMsg, ENDPOINT_TYPE, this.propertiesUrlBased, this.location,
 					this.getProtocolFactory(), this.idModulo);
 			
 			URL urlTest = new URL( this.location );
@@ -437,7 +437,7 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 			}
 			
 			if(this.responseMsg!=null){
-				TransportResponseContext responseContext = new TransportResponseContext();
+				TransportResponseContext responseContext = new TransportResponseContext(this.logger.getLogger());
 				responseContext.setCodiceTrasporto(this.codice+"");
 				responseContext.setContentLength(this.contentLength);
 				responseContext.setHeaders(this.propertiesTrasportoRisposta);

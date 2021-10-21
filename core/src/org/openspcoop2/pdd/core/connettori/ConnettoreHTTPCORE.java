@@ -870,7 +870,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
     		}
     		TransportUtils.setParameter(this.propertiesUrlBased, nv.getName(), nv.getValue());
     	}
-		this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, 
+		this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.logger!=null ? this.logger.getLogger() : null, this.requestMsg, 
 				ConnettoreHTTPCORE.ENDPOINT_TYPE, 
 				this.propertiesUrlBased, this.location,
 				this.getProtocolFactory(), this.idModulo);

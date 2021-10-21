@@ -120,7 +120,7 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 			this.pddContext = new PdDContext();
 			
 						
-			URLProtocolContext urlProtocolContext = new URLProtocolContext();
+			URLProtocolContext urlProtocolContext = new URLProtocolContext(this.log);
 			
 			Map<String, List<String>> pFormBased = new HashMap<String, List<String>>();
 			pFormBased.putAll(this.parameters);

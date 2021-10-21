@@ -90,8 +90,8 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 		}
 	}
 	
-	public URLProtocolContext() throws UtilsException{
-		super();
+	public URLProtocolContext(Logger logCore) throws UtilsException{
+		super(logCore);
 	}
 	public URLProtocolContext(HttpServletRequest req,Logger logCore, boolean debug, FunctionContextsCustom customContexts) throws ProtocolException, UtilsException{
 		this(req, logCore, debug, false, customContexts);
