@@ -36,24 +36,14 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.registry.AccordoCooperazione;
-import org.openspcoop2.core.registry.AccordoServizioParteComune;
-import org.openspcoop2.core.registry.Soggetto;
-import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
-import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
-import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.OggettoDialogEnum;
-import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
-import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.login.LoginSessionUtilities;
-import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -68,6 +58,7 @@ import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.Permessi;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 import org.openspcoop2.web.lib.users.dao.User;
+import org.openspcoop2.web.lib.users.dao.UserObjects;
 
 /**
  * suChange
@@ -100,11 +91,8 @@ public final class UtentiChange extends Action {
 			UtentiHelper utentiHelper = new UtentiHelper(request, pd, session);
 
 			UtentiCore utentiCore = new UtentiCore();
-			PddCore pddCore = new PddCore(utentiCore);
 			SoggettiCore soggettiCore = new SoggettiCore(utentiCore);
-			AccordiCooperazioneCore acCore = new AccordiCooperazioneCore(utentiCore);
-			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(utentiCore);
-
+			
 			String nomesu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
 			String pwsu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_PASSWORD);
 			String confpwsu = null; //utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PASSWORD);
@@ -324,35 +312,37 @@ public final class UtentiChange extends Action {
 			String msgServizi = "";
 			boolean paginaSuServizi = false;
 
-			if (singleSuServizi != null) {
-				if (nomesu.equals(singleSuServizi)) {
-					paginaSuServizi = true;
-					msgServizi = "Scegliere un utente con il permesso 'Servizi' che non sia quello che sto modificando<br>";
-				}
-			} else {
-				if ((isServizi == null || !isServizi.equals("yes")) &&
-						usersWithS.contains(nomesu)) {
-					if(uws==null){
-
-						Vector<DataElement> dati = new Vector<DataElement>();
-
-						dati.addElement(ServletUtils.getDataElementForEditModeFinished());
-
-						pd.disableEditMode();
-
-						pd.setDati(dati);
-
-						// Preparo il menu
-						pd.setMessage("Non è possibile eliminare il permesso 'Servizi', poichè non esistono altri utenti con tale permesso");
-
-						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-
-						return ServletUtils.getStrutsForwardGeneralError(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE());	
-
-					}else{
+			if(!utentiCore.isVisioneOggettiGlobaleIndipendenteUtente()) {
+				if (singleSuServizi != null) {
+					if (nomesu.equals(singleSuServizi)) {
 						paginaSuServizi = true;
-						msgServizi = "Scegliere un utente a cui verranno assegnati tutti gli oggetti appartenenti all'utente '"+nomesu+
-								"'.<br>L'operazione si è resa necessaria in seguito all'eliminazione del permesso di gestione 'Servizi' (S).<br>";
+						msgServizi = "Scegliere un utente con il permesso 'Servizi' che non sia quello che sto modificando<br>";
+					}
+				} else {
+					if ((isServizi == null || !isServizi.equals("yes")) &&
+							usersWithS.contains(nomesu)) {
+						if(uws==null){
+	
+							Vector<DataElement> dati = new Vector<DataElement>();
+	
+							dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+	
+							pd.disableEditMode();
+	
+							pd.setDati(dati);
+	
+							// Preparo il menu
+							pd.setMessage("Non è possibile eliminare il permesso 'Servizi', poichè non esistono altri utenti con tale permesso");
+	
+							ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+	
+							return ServletUtils.getStrutsForwardGeneralError(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE());	
+	
+						}else{
+							paginaSuServizi = true;
+							msgServizi = "Scegliere un utente a cui verranno assegnati tutti gli oggetti appartenenti all'utente '"+nomesu+
+									"'.<br>L'operazione si è resa necessaria in seguito all'eliminazione del permesso di gestione 'Servizi' (S).<br>";
+						}
 					}
 				}
 			}
@@ -360,22 +350,24 @@ public final class UtentiChange extends Action {
 			String msgAccordi = "";
 			boolean paginaSuAccordi = false;
 			boolean checkOggettiAccordi = false;
-			if (singleSuAccordiCooperazione != null) {
-				if (nomesu.equals(singleSuAccordiCooperazione)) {
-					paginaSuAccordi = true;
-					msgAccordi = "Scegliere un utente con il permesso 'Accordi Cooperazione' che non sia quello che sto modificando<br>";
-				}
-			} else {
-				if ((isAccordiCooperazione == null || !isAccordiCooperazione.equals("yes")) &&
-						usersWithP.contains(nomesu)) {
-					if(uwp==null){
-						// controllare che l'utente possieda degli oggetti
-						checkOggettiAccordi = true;
-					}else{
+			if(!utentiCore.isVisioneOggettiGlobaleIndipendenteUtente()) {
+				if (singleSuAccordiCooperazione != null) {
+					if (nomesu.equals(singleSuAccordiCooperazione)) {
 						paginaSuAccordi = true;
-						msgAccordi = (!msgServizi.contains("Scegliere un utente")
-								? ("Scegliere un utente a cui verranno assegnati tutti gli oggetti appartenenti all'utente '"+nomesu+	"'.<br>") : "")
-								+"L'operazione si è resa necessaria in seguito all'eliminazione del permesso di gestione 'Accordi Cooperazione' (P).<br>";
+						msgAccordi = "Scegliere un utente con il permesso 'Accordi Cooperazione' che non sia quello che sto modificando<br>";
+					}
+				} else {
+					if ((isAccordiCooperazione == null || !isAccordiCooperazione.equals("yes")) &&
+							usersWithP.contains(nomesu)) {
+						if(uwp==null){
+							// controllare che l'utente possieda degli oggetti
+							checkOggettiAccordi = true;
+						}else{
+							paginaSuAccordi = true;
+							msgAccordi = (!msgServizi.contains("Scegliere un utente")
+									? ("Scegliere un utente a cui verranno assegnati tutti gli oggetti appartenenti all'utente '"+nomesu+	"'.<br>") : "")
+									+"L'operazione si è resa necessaria in seguito all'eliminazione del permesso di gestione 'Accordi Cooperazione' (P).<br>";
+						}
 					}
 				}
 			}
@@ -544,82 +536,21 @@ public final class UtentiChange extends Action {
 				// dell'utente ed assegnarli a singleSu
 				List<Object> oggetti = new ArrayList<Object>();
 				List<Integer> tipoModifica = new ArrayList<Integer>();
-				if (singleSuServizi != null && !singleSuServizi.equals("")) {
-					if(soggettiCore.isRegistroServiziLocale()){
-						// Recupero le pdd dell'utente
-						List<PdDControlStation> pdsLista = pddCore.pddList(nomesu, new Search(true));
-						Iterator<PdDControlStation> itPds = pdsLista.iterator();
-						while (itPds.hasNext()) {
-							PdDControlStation pds = itPds.next();
-							pds.setSuperUser(singleSuServizi);
-							oggetti.add(pds);
-							tipoModifica.add(org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation.PERFORM_OPERATION_UPDATE);
-						}
-						// Recupero gli accordi servizio dell'utente
-						List<AccordoServizioParteComuneSintetico> asLista = apcCore.accordiServizioParteComuneList(nomesu, new Search(true));
-						Iterator<AccordoServizioParteComuneSintetico> itAs = asLista.iterator();
-						while (itAs.hasNext()) {
-							AccordoServizioParteComuneSintetico asSintetico = itAs.next();
-							AccordoServizioParteComune as = apcCore.getAccordoServizioFull(asSintetico.getId());
-							as.setSuperUser(singleSuServizi);
-							oggetti.add(as);
-							tipoModifica.add(org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation.PERFORM_OPERATION_UPDATE);
-						}
-						// Recupero i soggetti dell'utente
-						List<Soggetto> soggLista = soggettiCore.soggettiRegistroList(nomesu, new Search(true));
-						Iterator<Soggetto> itSs = soggLista.iterator();
-						while (itSs.hasNext()) {					
-							Soggetto sogg = itSs.next();
-							sogg.setSuperUser(singleSuServizi);
-							org.openspcoop2.core.config.Soggetto soggConf = soggettiCore.getSoggetto(new IDSoggetto(sogg.getTipo(),sogg.getNome()));
-							soggConf.setSuperUser(singleSuServizi);
-							SoggettoCtrlStat soggControlStation = new SoggettoCtrlStat(sogg,soggConf);
-							oggetti.add(soggControlStation);
-							tipoModifica.add(org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation.PERFORM_OPERATION_UPDATE);
-						}
-					}
-					else{
-						// Recupero i soggetti dell'utente
-						List<org.openspcoop2.core.config.Soggetto> soggLista = soggettiCore.soggettiList(nomesu, new Search(true));
-						Iterator<org.openspcoop2.core.config.Soggetto> itSs = soggLista.iterator();
-						while (itSs.hasNext()) {					
-							org.openspcoop2.core.config.Soggetto sogg = itSs.next();
-							sogg.setSuperUser(singleSuServizi);
-							oggetti.add(sogg);
-							tipoModifica.add(org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation.PERFORM_OPERATION_UPDATE);
-						}
+				if(soggettiCore.isRegistroServiziLocale()){
+					if (singleSuServizi != null && !singleSuServizi.equals("")) {
+						UserObjects results = utentiCore.updateUserServizi(nomesu, singleSuServizi);
+						ControlStationCore.logInfo("Modificata utenza ["+nomesu+"]->["+singleSuServizi+"] per permesso relativo ai servizi (L'utenza '"+nomesu+"' verrà modificata per non avere più la gestione dei servizi). Risultati modifica: "+results.toString(false));
 					}
 				}
 
 				if(soggettiCore.isRegistroServiziLocale()){
 					if ((singleSuAccordiCooperazione != null && !singleSuAccordiCooperazione.equals("")) || checkOggettiAccordi) {
-						// Recupero gli accordi di cooperazione dell'utente
-						List<AccordoCooperazione> acLista = acCore.accordiCooperazioneList(nomesu, new Search(true));
-						Iterator<AccordoCooperazione> itAc = acLista.iterator();
-						while (itAc.hasNext()) {
-							AccordoCooperazione ac = itAc.next();
-							ac.setSuperUser(singleSuAccordiCooperazione);
-							oggetti.add(ac);
-							tipoModifica.add(org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation.PERFORM_OPERATION_UPDATE);
-						}
-						// Recupero gli accordi servizio composto dell'utente
-						List<AccordoServizioParteComuneSintetico> asLista = apcCore.accordiServizioCompostiList(nomesu, new Search(true));
-						Iterator<AccordoServizioParteComuneSintetico> itAs = asLista.iterator();
-						while (itAs.hasNext()) {
-							AccordoServizioParteComuneSintetico asSintetico = itAs.next();
-							AccordoServizioParteComune as = apcCore.getAccordoServizioFull(asSintetico.getId());
-							as.setSuperUser(singleSuAccordiCooperazione);
-							oggetti.add(as);
-							tipoModifica.add(org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation.PERFORM_OPERATION_UPDATE);
-						}
-	
-	
-						//check oggetti presenti
-	
+						
 						if(checkOggettiAccordi){
-							if(oggetti.size() > 0){
+							UserObjects results = utentiCore.countUserCooperazione(nomesu);
+							if(results.accordi_accoperazione>0 || results.accordi_parte_comune>0) {
 								Vector<DataElement> dati = new Vector<DataElement>();
-	
+								
 								dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 	
 								pd.disableEditMode();
@@ -634,12 +565,11 @@ public final class UtentiChange extends Action {
 								return ServletUtils.getStrutsForwardGeneralError(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE());
 							}
 						}
+						
+						UserObjects results = utentiCore.updateUserCooperazione(nomesu, singleSuAccordiCooperazione);
+						ControlStationCore.logInfo("Modificata utenza ["+nomesu+"]->["+singleSuAccordiCooperazione+"] per permesso relativo agli accordi di cooperazione (L'utenza '"+nomesu+"' verrà modificata per non avere più la gestione degli accordi di cooperazione). Risultati modifica: "+results.toString(true));
 					}
 				}
-
-
-
-
 
 				// Alla fine, modifico l'utente
 				oggetti.add(user);

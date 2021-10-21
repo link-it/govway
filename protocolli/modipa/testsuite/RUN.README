@@ -98,6 +98,7 @@ Prerequisiti:
 		cp /etc/govway/keys/xca/ExampleServer.crt wildfly-18.0.0.Final/welcome-content
 
 + HSM per TLS Keystore. Seguire le indicazioni descritte in pkcs11/PKCS11.README
+  Poi 'cp tools/utils/src/org/openspcoop2/utils/certificate/test/govway_test_hsm.properties  /etc/govway/hsm.properties'
 
 + Aggiungere in /etc/hosts la riga
 	127.0.0.1 Erogatore

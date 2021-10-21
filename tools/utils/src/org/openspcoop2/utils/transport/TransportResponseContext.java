@@ -23,8 +23,10 @@ package org.openspcoop2.utils.transport;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.slf4j.Logger;
 
 /**
  * TransportResponseContext
@@ -51,15 +53,38 @@ public class TransportResponseContext implements java.io.Serializable {
 	protected String errore = null;
 	protected Exception exception = null;
 	
+	protected Logger log = null;
 	
 	public TransportResponseContext() throws UtilsException{
-		
+		this(null);
+	}
+	public TransportResponseContext(Logger log) throws UtilsException{
+		if(log==null) {
+			this.log = LoggerWrapperFactory.getLogger(TransportResponseContext.class);
+		}
+		else {
+			this.log = log;
+		}
 	}
 	@Deprecated
 	public TransportResponseContext(Map<String, String> parametersTrasporto,String codiceTrasporto,long contentLength,String errore,Exception exception) throws UtilsException{
-		this(codiceTrasporto, TransportUtils.convertToMapListValues(parametersTrasporto), contentLength, errore, exception);
+		this(null, codiceTrasporto, TransportUtils.convertToMapListValues(parametersTrasporto), contentLength, errore, exception);
 	}
+	@Deprecated
+	public TransportResponseContext(Logger log, Map<String, String> parametersTrasporto,String codiceTrasporto,long contentLength,String errore,Exception exception) throws UtilsException{
+		this(log, codiceTrasporto, TransportUtils.convertToMapListValues(parametersTrasporto), contentLength, errore, exception);
+	}
+	@Deprecated
 	public TransportResponseContext(String codiceTrasporto,Map<String, List<String>> headers,long contentLength,String errore,Exception exception) throws UtilsException{
+		this(null, codiceTrasporto, headers, contentLength, errore, exception);
+	}
+	public TransportResponseContext(Logger log, String codiceTrasporto,Map<String, List<String>> headers,long contentLength,String errore,Exception exception) throws UtilsException{
+		if(log==null) {
+			this.log = LoggerWrapperFactory.getLogger(TransportResponseContext.class);
+		}
+		else {
+			this.log = log;
+		}
 		this.headers = headers;
 		this.codiceTrasporto = codiceTrasporto;
 		this.contentLength = contentLength;

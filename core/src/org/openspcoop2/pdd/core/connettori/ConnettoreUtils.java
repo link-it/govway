@@ -171,7 +171,7 @@ public class ConnettoreUtils {
 		return location;
 	}
 	
-	public static String buildLocationWithURLBasedParameter(OpenSPCoop2Message msg, String tipoConnettore, Map<String, List<String>> propertiesURLBased, String locationParam,
+	public static String buildLocationWithURLBasedParameter(Logger log, OpenSPCoop2Message msg, String tipoConnettore, Map<String, List<String>> propertiesURLBased, String locationParam,
 			IProtocolFactory<?> protocolFactory, String idModulo) throws ConnettoreException{
 		
 		if(TipiConnettore.HTTP.toString().equals(tipoConnettore) || 
@@ -214,7 +214,7 @@ public class ConnettoreUtils {
 					
 					String normalizedInterfaceName = normalizeInterfaceName(msg, idModulo, protocolFactory);
 					
-					return RestUtilities.buildUrl(location, p, msg.getTransportRequestContext(),
+					return RestUtilities.buildUrl(log, location, p, msg.getTransportRequestContext(),
 							normalizedInterfaceName);
 				}
 				else{

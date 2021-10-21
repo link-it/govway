@@ -23674,7 +23674,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		int idLista = Liste.SERVIZI;
 		int offset;
 		int limit;
-		String search;
+		String searchAPIErogazioneFruizione;
 		String queryString;
 		Connection con = null;
 		PreparedStatement stmt=null;
@@ -23688,7 +23688,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
-		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		searchAPIErogazioneFruizione = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 		ricerca.getSearchString(idLista);
 
 		String filterProtocollo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROTOCOLLO);
@@ -23751,6 +23751,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 			filterSoggettoTipo = filterSoggettoTipoNome.split("/")[0];
 			filterSoggettoNome = filterSoggettoTipoNome.split("/")[1];
 		}
+		
+		String filterSoggettoErogatoreContains = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SOGGETTO_EROGATORE_CONTAINS);
 		
 		String filtroConnettoreTipo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TIPO);
 		String filtroConnettoreTipoPlugin = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TIPO_PLUGIN);
@@ -23834,7 +23836,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 		boolean filtroProprieta = filtroProprietaNome!=null || filtroProprietaValore!=null;
 		
-		this.log.debug("search : " + search);
+		this.log.debug("search : " + searchAPIErogazioneFruizione);
+		this.log.debug("filterSoggettoErogatoreContains : "+filterSoggettoErogatoreContains);
 		this.log.debug("filterProtocollo : " + filterProtocollo);
 		this.log.debug("filterProtocolli : " + filterProtocolli);
 		this.log.debug("filterTipoAPI : " + filterTipoAPI);
@@ -23885,17 +23888,17 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObjectAccordiComposti.addWhereCondition(CostantiDB.ACCORDI_SERVIZI_COMPOSTO+".id_accordo="+CostantiDB.ACCORDI+".id");
 			}
 
-			ISQLQueryObject sqlQueryObjectSoggetti = null;
-			if (!search.equals("")) {
-				sqlQueryObjectSoggetti = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObjectSoggetti.addFromTable(CostantiDB.SOGGETTI);
-				sqlQueryObjectSoggetti.addSelectField(CostantiDB.SOGGETTI, "tipo_soggetto");
-				sqlQueryObjectSoggetti.addSelectField(CostantiDB.SOGGETTI, "nome_soggetto");
-				sqlQueryObjectSoggetti.setANDLogicOperator(true);
-				sqlQueryObjectSoggetti.addWhereCondition(CostantiDB.SERVIZI+".id_soggetto="+CostantiDB.SOGGETTI+".id");
-				sqlQueryObjectSoggetti.addWhereCondition(false,
-						//sqlQueryObjectSoggetti.getWhereLikeCondition("tipo_soggetto", search, true, true),
-						sqlQueryObjectSoggetti.getWhereLikeCondition("nome_soggetto", search, true, true));
+			ISQLQueryObject sqlQueryObjectSoggettiErogatoreContains = null;
+			if (!filterSoggettoErogatoreContains.equals("")) {
+				sqlQueryObjectSoggettiErogatoreContains = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectSoggettiErogatoreContains.addFromTable(CostantiDB.SOGGETTI);
+				sqlQueryObjectSoggettiErogatoreContains.addSelectField(CostantiDB.SOGGETTI, "tipo_soggetto");
+				sqlQueryObjectSoggettiErogatoreContains.addSelectField(CostantiDB.SOGGETTI, "nome_soggetto");
+				sqlQueryObjectSoggettiErogatoreContains.setANDLogicOperator(true);
+				sqlQueryObjectSoggettiErogatoreContains.addWhereCondition(CostantiDB.SERVIZI+".id_soggetto="+CostantiDB.SOGGETTI+".id");
+				sqlQueryObjectSoggettiErogatoreContains.addWhereCondition(false,
+						//sqlQueryObjectSoggettiErogatoreContains.getWhereLikeCondition("tipo_soggetto", search, true, true),
+						sqlQueryObjectSoggettiErogatoreContains.getWhereLikeCondition("nome_soggetto", filterSoggettoErogatoreContains, true, true));
 			}
 
 			ISQLQueryObject sqlQueryObjectPdd = null;
@@ -23913,13 +23916,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObjectPdd.addWhereExistsCondition(false, sqlQueryObjectExistsPdd);
 			}
 						
-			if (!search.equals("")) {
+			if (!searchAPIErogazioneFruizione.equals("")) {
 				//query con search
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
 				if(permessiUtente!=null || filterTipoAPI!=null || filterGruppo!=null || idAccordoApi!=null || searchCanale || filtroModI
-						|| !search.equals("") // aggiunto per cercare anche sul nome dell'API (parte comune)
+						|| !searchAPIErogazioneFruizione.equals("") // aggiunto per cercare anche sul nome dell'API (parte comune)
 					) {
 					sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo="+CostantiDB.ACCORDI+".id");
@@ -24031,18 +24034,18 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if(filterStatoAccordo!=null && !filterStatoAccordo.equals("")) {
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".stato = ?");
 				}
+				if(sqlQueryObjectSoggettiErogatoreContains!=null) {
+					sqlQueryObject.addWhereExistsCondition(false, sqlQueryObjectSoggettiErogatoreContains);
+				}
 				sqlQueryObject.addWhereCondition(false, 
 						
 						// - ricerca su tipo/nome/versione servizio
 						//sqlQueryObject.getWhereLikeCondition("tipo_servizio", search, true, true), 
-						sqlQueryObject.getWhereLikeCondition("nome_servizio", search, true, true),
+						sqlQueryObject.getWhereLikeCondition("nome_servizio", searchAPIErogazioneFruizione, true, true),
 						//sqlQueryObject.getWhereLikeCondition("versione_servizio", search, true, true),
 						
-						// - ricerca su soggetto
-						sqlQueryObject.getWhereExistsCondition(false, sqlQueryObjectSoggetti),
-						
 						// - ricerca su nome dell'API (parte comune)
-						sqlQueryObject.getWhereLikeCondition(CostantiDB.ACCORDI+".nome", search, true, true)
+						sqlQueryObject.getWhereLikeCondition(CostantiDB.ACCORDI+".nome", searchAPIErogazioneFruizione, true, true)
 						
 					);
 
@@ -24189,6 +24192,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if(filterStatoAccordo!=null && !filterStatoAccordo.equals("")) {
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".stato = ?");
 				}
+				if(sqlQueryObjectSoggettiErogatoreContains!=null) {
+					sqlQueryObject.addWhereExistsCondition(false, sqlQueryObjectSoggettiErogatoreContains);
+				}
 
 				if(permessiUtente != null){
 					// solo S
@@ -24258,12 +24264,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 			// ricavo le entries
 			if (limit == 0) // con limit
 				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
-			if (!search.equals("")) { // con search
+			if (!searchAPIErogazioneFruizione.equals("")) { // con search
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
 				if(permessiUtente!=null || filterTipoAPI!=null || filterGruppo!=null || idAccordoApi!=null || searchCanale || filtroModI
-						|| !search.equals("") // aggiunto per cercare anche sul nome dell'API (parte comune)
+						|| !searchAPIErogazioneFruizione.equals("") // aggiunto per cercare anche sul nome dell'API (parte comune)
 					) {
 					sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo="+CostantiDB.ACCORDI+".id");
@@ -24392,18 +24398,18 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if(filterStatoAccordo!=null && !filterStatoAccordo.equals("")) {
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".stato = ?");
 				}
+				if(sqlQueryObjectSoggettiErogatoreContains!=null) {
+					sqlQueryObject.addWhereExistsCondition(false, sqlQueryObjectSoggettiErogatoreContains);
+				}
 				sqlQueryObject.addWhereCondition(false, 
 						
 						// - ricerca su tipo/nome/versione servizio
 						//sqlQueryObject.getWhereLikeCondition("tipo_servizio", search, true, true), 
-						sqlQueryObject.getWhereLikeCondition("nome_servizio", search, true, true),
+						sqlQueryObject.getWhereLikeCondition("nome_servizio", searchAPIErogazioneFruizione, true, true),
 						//sqlQueryObject.getWhereLikeCondition("versione_servizio", search, true, true),
 						
-						// - ricerca su soggetto
-						sqlQueryObject.getWhereExistsCondition(false, sqlQueryObjectSoggetti),
-						
 						// - ricerca su nome dell'API (parte comune)
-						sqlQueryObject.getWhereLikeCondition(CostantiDB.ACCORDI+".nome", search, true, true)
+						sqlQueryObject.getWhereLikeCondition(CostantiDB.ACCORDI+".nome", searchAPIErogazioneFruizione, true, true)
 					);
 				
 				if(permessiUtente != null){
@@ -24580,6 +24586,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 				if(filterStatoAccordo!=null && !filterStatoAccordo.equals("")) {
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".stato = ?");
+				}
+				if(sqlQueryObjectSoggettiErogatoreContains!=null) {
+					sqlQueryObject.addWhereExistsCondition(false, sqlQueryObjectSoggettiErogatoreContains);
 				}
 				
 				if(permessiUtente != null){

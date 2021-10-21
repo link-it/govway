@@ -1452,6 +1452,11 @@ public class OpenSPCoop2Properties {
 			// Warning
 			this.getTipoTempoBusta(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
 
+			// IntegrationManager
+			if(this.isIntegrationManagerEnabled()) {
+				this.isIntegrationManagerIdWithDate();
+				this.getIntegrationManagerIdsLimit();
+			}
 			// IntegrationManager (Warning)
 			this.integrationManager_readInformazioniTrasporto();
 			this.integrationManager_isNomePortaDelegataUrlBased();
@@ -1743,12 +1748,7 @@ public class OpenSPCoop2Properties {
 			
 			// DefaultProtocol
 			this.getDefaultProtocolName();
-			
-			// IntegrationManager
-			if(this.isIntegrationManagerEnabled()) {
-				this.isIntegrationManagerIdWithDate();
-			}
-			
+						
 			// SoggettiVirtuali
 			this.isSoggettiVirtualiEnabled();
 			
@@ -14259,6 +14259,72 @@ public class OpenSPCoop2Properties {
 
 	/* ************** INTEGRATION MANAGER ****************** */
 
+	private static Boolean isIntegrationManagerEnabled = null;
+	public boolean isIntegrationManagerEnabled() {	
+		if(OpenSPCoop2Properties.isIntegrationManagerEnabled==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrationManager.enabled");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.integrationManager.enabled' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isIntegrationManagerEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrationManager.enabled': "+e.getMessage(),e);
+				OpenSPCoop2Properties.isIntegrationManagerEnabled = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isIntegrationManagerEnabled;
+	}
+	
+	private static Boolean isIntegrationManagerIdWithDate = null;
+	public boolean isIntegrationManagerIdWithDate() {	
+		if(OpenSPCoop2Properties.isIntegrationManagerIdWithDate==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrationManager.idWithDate");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.integrationManager.idWithDate' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isIntegrationManagerIdWithDate = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrationManager.idWithDate': "+e.getMessage(),e);
+				OpenSPCoop2Properties.isIntegrationManagerIdWithDate = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isIntegrationManagerIdWithDate;
+	}
+	
+	private static Integer getIntegrationManagerIdsLimit = null;
+	private static Boolean getIntegrationManagerIdsLimit_read = null;
+	public Integer getIntegrationManagerIdsLimit() {	
+		String pName = "org.openspcoop2.pdd.integrationManager.ids.limit";
+		if(OpenSPCoop2Properties.getIntegrationManagerIdsLimit_read==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.getIntegrationManagerIdsLimit = Integer.valueOf(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				OpenSPCoop2Properties.getIntegrationManagerIdsLimit = null;
+			}   
+			OpenSPCoop2Properties.getIntegrationManagerIdsLimit_read = true;
+		}
+
+		return OpenSPCoop2Properties.getIntegrationManagerIdsLimit;
+	}
+	
 	private static Boolean integrationManager_isNomePortaDelegataUrlBasedValue = null;
 	public boolean integrationManager_isNomePortaDelegataUrlBased() {
 		if(OpenSPCoop2Properties.integrationManager_isNomePortaDelegataUrlBasedValue==null){
@@ -17456,51 +17522,7 @@ public class OpenSPCoop2Properties {
 	}
 
 	
-	
-	/* ------------- Integration Manager ---------------------*/
-	
-	private static Boolean isIntegrationManagerEnabled = null;
-	public boolean isIntegrationManagerEnabled() {	
-		if(OpenSPCoop2Properties.isIntegrationManagerEnabled==null){
-			try{ 
-				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrationManager.enabled");
-				if(name==null){
-					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.integrationManager.enabled' non impostata, viene utilizzato il default=false");
-					name="false";
-				}
-				name = name.trim();
-				OpenSPCoop2Properties.isIntegrationManagerEnabled = Boolean.parseBoolean(name);
-			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrationManager.enabled': "+e.getMessage(),e);
-				OpenSPCoop2Properties.isIntegrationManagerEnabled = false;
-			}    
-		}
-
-		return OpenSPCoop2Properties.isIntegrationManagerEnabled;
-	}
-	
-	private static Boolean isIntegrationManagerIdWithDate = null;
-	public boolean isIntegrationManagerIdWithDate() {	
-		if(OpenSPCoop2Properties.isIntegrationManagerIdWithDate==null){
-			try{ 
-				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrationManager.idWithDate");
-				if(name==null){
-					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.integrationManager.idWithDate' non impostata, viene utilizzato il default=false");
-					name="false";
-				}
-				name = name.trim();
-				OpenSPCoop2Properties.isIntegrationManagerIdWithDate = Boolean.parseBoolean(name);
-			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrationManager.idWithDate': "+e.getMessage(),e);
-				OpenSPCoop2Properties.isIntegrationManagerIdWithDate = false;
-			}    
-		}
-
-		return OpenSPCoop2Properties.isIntegrationManagerIdWithDate;
-	}
-	
+		
 	
 	/* ------------- Soggetti Virtuali ---------------------*/
 	

@@ -29,6 +29,7 @@ import java.util.Map;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.slf4j.Logger;
 
 /**
  * RestUtilities
@@ -57,7 +58,7 @@ public class RestUtilities {
 		return resourcePath;
 	}
 	
-	public static String buildUrl(String url,Map<String, List<String>>  p,TransportRequestContext requestContext, String normalizedInterfaceName){
+	public static String buildUrl(Logger log, String url,Map<String, List<String>>  p,TransportRequestContext requestContext, String normalizedInterfaceName){
 		
 		String baseUrl = url;
 		String parameterOriginalUrl = null;
@@ -161,7 +162,7 @@ public class RestUtilities {
 			}
 		}
 		
-		return TransportUtils.buildUrlWithParameters(p, newUrl.toString());
+		return TransportUtils.buildUrlWithParameters(p, newUrl.toString(), log);
 		
 	}
 	

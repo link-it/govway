@@ -10,6 +10,8 @@ Configurare l'ambiente di esecuzione dei test:
           In alternativa utilizzare il comando sql:
 	  insert into plugins (tipo_plugin, class_name, tipo, label, stato) VALUES ('CONNETTORE','org.openspcoop2.pdd.core.connettori.IConnettore','custom','custom',1);
 
+	- cp tools/utils/src/org/openspcoop2/utils/certificate/test/govway_test_hsm.properties  /etc/govway/hsm.properties
+
 	- Riavviare GovWay e procedere con i test
 
 Compilare i test con il comando 'ant clean build'

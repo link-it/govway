@@ -1829,7 +1829,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 			// Location
 			this.location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(this.connectorSender, this.connettoreMsg, this.bustaRichiesta, this.pddContext, this.protocolFactory,  this.log);
 			if(this.location!=null){
-				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(this.consegnaMessageTrasformato, this.tipoConnector, this.connettoreMsg.getPropertiesUrlBased(), this.location,
+				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(this.log, this.consegnaMessageTrasformato, this.tipoConnector, this.connettoreMsg.getPropertiesUrlBased(), this.location,
 						this.protocolFactory, this.idModulo);
 				locationWithUrl = ConnettoreUtils.addProxyInfoToLocationForHTTPConnector(this.tipoConnector, this.connettoreMsg.getConnectorProperties(), locationWithUrl);
 				locationWithUrl = ConnettoreUtils.addGovWayProxyInfoToLocationForHTTPConnector(this.connettoreMsg.getForwardProxy(),this.connectorSender, locationWithUrl);
@@ -2089,7 +2089,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 			// L'handler puo' aggiornare le properties che contengono le proprieta' del connettore.
 			this.location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(this.connectorSender, this.connettoreMsg, this.bustaRichiesta, this.pddContext, this.protocolFactory, this.log);
 			if(this.location!=null){
-				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(this.consegnaMessageTrasformato, this.tipoConnector, this.connettoreMsg.getPropertiesUrlBased(), this.location,
+				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(this.log, this.consegnaMessageTrasformato, this.tipoConnector, this.connettoreMsg.getPropertiesUrlBased(), this.location,
 						this.protocolFactory, this.idModulo);
 				locationWithUrl = ConnettoreUtils.addProxyInfoToLocationForHTTPConnector(this.tipoConnector, this.connettoreMsg.getConnectorProperties(), locationWithUrl);
 				locationWithUrl = ConnettoreUtils.addGovWayProxyInfoToLocationForHTTPConnector(this.connettoreMsg.getForwardProxy(),this.connectorSender, locationWithUrl);
@@ -2280,7 +2280,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 					this.restProblem = gestoreErrore.getProblem();
 					this.faultMessageFactory = this.connectorSender.getResponse()!=null ? this.connectorSender.getResponse().getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 					this.codiceRitornato = this.connectorSender.getCodiceTrasporto();
-					this.transportResponseContext = new TransportResponseContext(this.connectorSender.getCodiceTrasporto()+"", 
+					this.transportResponseContext = new TransportResponseContext(this.log, this.connectorSender.getCodiceTrasporto()+"", 
 							this.connectorSender.getHeaderTrasporto(), 
 							this.connectorSender.getContentLength(), 
 							this.motivoErroreConsegna, this.connectorSender.getEccezioneProcessamento());

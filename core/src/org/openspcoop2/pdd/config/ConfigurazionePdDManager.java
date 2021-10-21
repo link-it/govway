@@ -1256,6 +1256,10 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getGenericProperties(this.getConnection(), tipologia);
 	}
 
+	public SystemProperties getSystemPropertiesPdDCached() throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getSystemPropertiesPdDCached(this.getConnection());
+	}
+	
 	public SystemProperties getSystemPropertiesPdD() throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getSystemPropertiesPdD();
 	}

@@ -61,7 +61,7 @@ public class PolicyGroupByActiveThreadsWS implements IPolicyGroupByActiveThreads
 			Map<String, List<String>> p = new HashMap<String, List<String>>();
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, this.activeId);
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_GROUP_BY_ID, IDUnivocoGroupByPolicy.serialize(datiGroupBy));
-			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_REGISTER_START_REQUEST);
+			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_REGISTER_START_REQUEST, this.log);
 			
 			this.log.debug("[PolicyGroupByActiveThreadsWS.registerStartRequest] invoke ("+url+") ...");
 			HttpResponse response = HttpUtilities.getHTTPResponse(url);
@@ -86,7 +86,7 @@ public class PolicyGroupByActiveThreadsWS implements IPolicyGroupByActiveThreads
 			Map<String, List<String>> p = new HashMap<String, List<String>>();
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, this.activeId);
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_GROUP_BY_ID, IDUnivocoGroupByPolicy.serialize(datiGroupBy));
-			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_UPDATE_START_REQUEST);
+			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_UPDATE_START_REQUEST, this.log);
 			
 			this.log.debug("[PolicyGroupByActiveThreadsWS.updateDatiStartRequestApplicabile] invoke ("+url+") ...");
 			HttpResponse response = HttpUtilities.getHTTPResponse(url);
@@ -114,7 +114,7 @@ public class PolicyGroupByActiveThreadsWS implements IPolicyGroupByActiveThreads
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_MISURAZIONI_TRANSAZIONE, MisurazioniTransazione.serialize(dati));
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_APPLICABILE, isApplicabile+"");
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_VIOLATA, isViolata+"");
-			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_REGISTER_STOP_REQUEST);
+			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_REGISTER_STOP_REQUEST, this.log);
 			
 			this.log.debug("[PolicyGroupByActiveThreadsWS.registerStopRequest] invoke ("+url+") ...");
 			HttpResponse response = HttpUtilities.getHTTPResponse(url);

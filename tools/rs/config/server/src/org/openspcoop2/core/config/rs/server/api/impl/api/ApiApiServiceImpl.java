@@ -228,6 +228,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					if(!gruppiCore.existsGruppo(tag)) {
 						Gruppo nuovoGruppo = new Gruppo();
 						nuovoGruppo.setNome(tag);
+						nuovoGruppo.setSuperUser(as.getSuperUser());
 						objectToCreate.add(nuovoGruppo);
 					}
 				}
@@ -2569,6 +2570,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					if(!gruppiCore.existsGruppo(tag)) {
 						Gruppo nuovoGruppo = new Gruppo();
 						nuovoGruppo.setNome(tag);
+						nuovoGruppo.setSuperUser(as.getSuperUser());
 						objectToCreate.add(nuovoGruppo);
 					}
 				}
