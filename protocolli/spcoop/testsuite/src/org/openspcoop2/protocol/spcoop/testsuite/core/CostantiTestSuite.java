@@ -733,7 +733,17 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_AUTORIZZAZIONE_SPCOOP_SPOOFING_RILEVATO_TRAMITE_FRUIZIONE="AutorizzazioneSPCoopSpoofingRilevatoTramiteFruizione";
 	/** Porte Delegate per il test sull'autorizzazione spcoop:  fruitore non presente nella lista dei fruitori del servizio*/
 	public static final String PORTA_DELEGATA_AUTORIZZAZIONE_SPCOOP_FRUITORE_NON_PRESENTE="AutorizzazioneSPCoopSoggetto1Fallita";
+	
+	public static final String PORTA_DELEGATA_AUTORIZZAZIONE_SPCOOP_AUTENTICAZIONE_HTTPS_PA_SOGGETTO1 = "Soggetto1conCredenzialiSSL_https_PAHTTPSAutenticazione";
+	public static final String PORTA_DELEGATA_AUTORIZZAZIONE_SPCOOP_AUTENTICAZIONE_HTTPS_PA_OPZIONALE_SOGGETTO1 = "Soggetto1conCredenzialiSSL_https_PAHTTPSAutenticazioneOpzionale";
+	public static final String PORTA_DELEGATA_AUTORIZZAZIONE_SPCOOP_AUTENTICAZIONE_HTTPS_PA_SOGGETTO2 = "Soggetto2conCredenzialiSSL_https_PAHTTPSAutenticazione";
+	public static final String PORTA_DELEGATA_AUTORIZZAZIONE_SPCOOP_AUTENTICAZIONE_HTTPS_PA_OPZIONALE_SOGGETTO2 = "Soggetto2conCredenzialiSSL_https_PAHTTPSAutenticazioneOpzionale";
+	public static final String PORTA_DELEGATA_AUTORIZZAZIONE_SPCOOP_AUTENTICAZIONE_HTTPS_PA_SOGGETTO1_SENZA_CREDENZIALI = "Soggetto1SenzaCredenziali_https_PAHTTPSAutenticazione";
+	public static final String PORTA_DELEGATA_AUTORIZZAZIONE_SPCOOP_AUTENTICAZIONE_HTTPS_PA_OPZIONALE_SOGGETTO1_SENZA_CREDENZIALI = "Soggetto1SenzaCredenziali_https_PAHTTPSAutenticazioneOpzionale";
+	public static final String PORTA_DELEGATA_AUTORIZZAZIONE_SPCOOP_AUTENTICAZIONE_HTTPS_PA_SOGGETTO2_SENZA_CREDENZIALI = "Soggetto2SenzaCredenziali_https_PAHTTPSAutenticazione";
+	public static final String PORTA_DELEGATA_AUTORIZZAZIONE_SPCOOP_AUTENTICAZIONE_HTTPS_PA_OPZIONALE_SOGGETTO2_SENZA_CREDENZIALI = "Soggetto2SenzaCredenziali_https_PAHTTPSAutenticazioneOpzionale";
 
+	
 	/** Porte Delegate per il test sull'autorizzazione per contenuto */
 	public static final String PORTA_DELEGATA_AUTORIZZAZIONE_CONTENUTO_SINCRONO_OK="AutorizzazioneContenutoOK";
 	public static final String PORTA_DELEGATA_AUTORIZZAZIONE_CONTENUTO_SINCRONO_KO="AutorizzazioneContenutoKO";
@@ -996,6 +1006,46 @@ public class CostantiTestSuite {
 	/** ENTITA SPCOOP: IDSoggetto */
 	public static final IDSoggetto SPCOOP_SOGGETTO_NON_AUTENTICATO = new IDSoggetto(CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_NON_AUTENTICATO, 
 			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_NON_AUTENTICATO, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_NON_AUTENTICATO);
+	
+	/** ENTITA SPCOOP: Tipo Soggetto 1 */
+	public static final String SPCOOP_TIPO_SOGGETTO_1_CON_CREDENZIALI_SSL="spc";
+	/** ENTITA SPCOOP: Nome Soggetto 1 */
+	public static final String SPCOOP_NOME_SOGGETTO_1_CON_CREDENZIALI_SSL="Soggetto1conCredenzialiSSL";
+	/** ENTITA SPCOOP: IdPorta Soggetto 1 */
+	public static final String SPCOOP_IDPORTA_SOGGETTO_1_CON_CREDENZIALI_SSL="Soggetto1conCredenzialiSSLSPCoopIT";
+	/** ENTITA SPCOOP: IDSoggetto */
+	public static final IDSoggetto SPCOOP_SOGGETTO_1_CON_CREDENZIALI_SSL = new IDSoggetto(CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_1_CON_CREDENZIALI_SSL, CostantiTestSuite.SPCOOP_NOME_SOGGETTO_1_CON_CREDENZIALI_SSL, 
+			CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_1_CON_CREDENZIALI_SSL);
+	
+	/** ENTITA SPCOOP: Tipo Soggetto 2 */
+	public static final String SPCOOP_TIPO_SOGGETTO_2_CON_CREDENZIALI_SSL="spc";
+	/** ENTITA SPCOOP: Nome Soggetto 2 */
+	public static final String SPCOOP_NOME_SOGGETTO_2_CON_CREDENZIALI_SSL="Soggetto2conCredenzialiSSL";
+	/** ENTITA SPCOOP: IdPorta Soggetto 2 */
+	public static final String SPCOOP_IDPORTA_SOGGETTO_2_CON_CREDENZIALI_SSL="Soggetto2conCredenzialiSSLSPCoopIT";
+	/** ENTITA SPCOOP: IDSoggetto */
+	public static final IDSoggetto SPCOOP_SOGGETTO_2_CON_CREDENZIALI_SSL = new IDSoggetto(CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_2_CON_CREDENZIALI_SSL, CostantiTestSuite.SPCOOP_NOME_SOGGETTO_2_CON_CREDENZIALI_SSL, 
+			CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_2_CON_CREDENZIALI_SSL);
+	
+	/** ENTITA SPCOOP: Tipo Soggetto 1 */
+	public static final String SPCOOP_TIPO_SOGGETTO_1_SENZA_CREDENZIALI="spc";
+	/** ENTITA SPCOOP: Nome Soggetto 1 */
+	public static final String SPCOOP_NOME_SOGGETTO_1_SENZA_CREDENZIALI="Soggetto1SenzaCredenziali";
+	/** ENTITA SPCOOP: IdPorta Soggetto 1 */
+	public static final String SPCOOP_IDPORTA_SOGGETTO_1_SENZA_CREDENZIALI="Soggetto1SenzaCredenzialiSPCoopIT";
+	/** ENTITA SPCOOP: IDSoggetto */
+	public static final IDSoggetto SPCOOP_SOGGETTO_1_SENZA_CREDENZIALI = new IDSoggetto(CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_1_SENZA_CREDENZIALI, CostantiTestSuite.SPCOOP_NOME_SOGGETTO_1_SENZA_CREDENZIALI, 
+			CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_1_SENZA_CREDENZIALI);
+	
+	/** ENTITA SPCOOP: Tipo Soggetto 2 */
+	public static final String SPCOOP_TIPO_SOGGETTO_2_SENZA_CREDENZIALI="spc";
+	/** ENTITA SPCOOP: Nome Soggetto 2 */
+	public static final String SPCOOP_NOME_SOGGETTO_2_SENZA_CREDENZIALI="Soggetto2SenzaCredenziali";
+	/** ENTITA SPCOOP: IdPorta Soggetto 2 */
+	public static final String SPCOOP_IDPORTA_SOGGETTO_2_SENZA_CREDENZIALI="Soggetto2SenzaCredenzialiSPCoopIT";
+	/** ENTITA SPCOOP: IDSoggetto */
+	public static final IDSoggetto SPCOOP_SOGGETTO_2_SENZA_CREDENZIALI = new IDSoggetto(CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_2_SENZA_CREDENZIALI, CostantiTestSuite.SPCOOP_NOME_SOGGETTO_2_SENZA_CREDENZIALI, 
+			CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_2_SENZA_CREDENZIALI);
 	
 	/** ENTITA SPCOOP: Tipo Soggetto TestUrlPrefixRewriter1 */
 	public static final String SPCOOP_TIPO_SOGGETTO_TEST_URL_PREFIX_REWRITER_1="spc";
@@ -1417,6 +1467,10 @@ public class CostantiTestSuite {
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_CA_NON_PRESENTE="https_ca_non_presente";
     /** ENTITA SPCOOP: Nome Azione del Servizio Sincrono con https_hostname_verify */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_HOSTNAME_VERIFY="https_hostname_verify";
+    /** ENTITA SPCOOP: Nome Azione del Servizio Sincrono con https_autenticazione_pa */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_AUTENTICAZIONE_PA="https_autenticazione_pa";
+    /** ENTITA SPCOOP: Nome Azione del Servizio Sincrono con https_autenticazione_pa_opzionale */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_AUTENTICAZIONE_PA_OPZIONALE="https_autenticazione_pa_opzionale";
     /** ENTITA SPCOOP: Nome Azione del Servizio Sincrono con https_sil_consegna */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_SIL_CONSEGNA="https_sil_consegna";
 	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per test Filtro Duplicati stateless */

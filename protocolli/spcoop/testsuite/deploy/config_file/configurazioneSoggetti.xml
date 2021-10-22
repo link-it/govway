@@ -3853,9 +3853,6 @@
         
         
         
-        
-        
-        
         <!-- Autorizzazione per Contenuto -->
         <porta-delegata gestione-manifest="abilitato" nome="AutorizzazioneContenutoOK" autenticazione="none" autorizzazione="none" autorizzazione-contenuto="esempioOK" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
@@ -8137,7 +8134,24 @@
         
         
         
-        
+        <!-- Autenticazione HTTPS sulla Porta Applicativa -->
+        <porta-applicativa autenticazione="ssl" autorizzazione="authenticated" gestione-manifest="abilitato" nome="PAHTTPSAutenticazione">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="https_autenticazione_pa" />
+            <servizio-applicativo nome="govwayTestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="Soggetto1conCredenzialiSSL"/>
+	    </soggetti>
+        </porta-applicativa>
+        <porta-applicativa autenticazione="ssl" autenticazione-opzionale="abilitato" autorizzazione="authenticated" gestione-manifest="abilitato" nome="PAHTTPSAutenticazioneOpzionale">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="https_autenticazione_pa_opzionale" />
+            <servizio-applicativo nome="govwayTestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="Soggetto1conCredenzialiSSL"/>
+		<soggetto tipo="spc" nome="Soggetto2SenzaCredenziali"/>
+	    </soggetti>
+        </porta-applicativa>
         
         <!-- HTTPS Sil Consegna -->
         <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PAHTTPSSilConsegna">
@@ -11394,6 +11408,72 @@
         
     </soggetto>
    
+
+    <soggetto tipo="spc" nome="Soggetto1conCredenzialiSSL" > 
+              
+        <!-- Autenticazione HTTPS sulla Porta Applicativa -->
+        <porta-delegata gestione-manifest="abilitato" nome="Soggetto1conCredenzialiSSL_https_PAHTTPSAutenticazione" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="https_autenticazione_pa" />
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="Soggetto1conCredenzialiSSL_https_PAHTTPSAutenticazioneOpzionale" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="https_autenticazione_pa_opzionale" />
+        </porta-delegata>
+        
+    </soggetto>
+
+    <soggetto tipo="spc" nome="Soggetto2conCredenzialiSSL" > 
+              
+        <!-- Autenticazione HTTPS sulla Porta Applicativa -->
+        <porta-delegata gestione-manifest="abilitato" nome="Soggetto2conCredenzialiSSL_https_PAHTTPSAutenticazione" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="https_autenticazione_pa" />
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="Soggetto2conCredenzialiSSL_https_PAHTTPSAutenticazioneOpzionale" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="https_autenticazione_pa_opzionale" />
+        </porta-delegata>
+        
+    </soggetto>
+
+    <soggetto tipo="spc" nome="Soggetto1SenzaCredenziali" > 
+              
+        <!-- Autenticazione HTTPS sulla Porta Applicativa -->
+        <porta-delegata gestione-manifest="abilitato" nome="Soggetto1SenzaCredenziali_https_PAHTTPSAutenticazione" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="https_autenticazione_pa" />
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="Soggetto1SenzaCredenziali_https_PAHTTPSAutenticazioneOpzionale" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="https_autenticazione_pa_opzionale" />
+        </porta-delegata>
+        
+    </soggetto>
+
+    <soggetto tipo="spc" nome="Soggetto2SenzaCredenziali" > 
+              
+        <!-- Autenticazione HTTPS sulla Porta Applicativa -->
+        <porta-delegata gestione-manifest="abilitato" nome="Soggetto2SenzaCredenziali_https_PAHTTPSAutenticazione" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="https_autenticazione_pa" />
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="Soggetto2SenzaCredenziali_https_PAHTTPSAutenticazioneOpzionale" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="https_autenticazione_pa_opzionale" />
+        </porta-delegata>
+        
+    </soggetto>
+
+
     <!-- Start Configurazione valida solo per xml --> 
     <soggetto tipo="spc" nome="SoggettoNonEsistenteRegistro">
     </soggetto>

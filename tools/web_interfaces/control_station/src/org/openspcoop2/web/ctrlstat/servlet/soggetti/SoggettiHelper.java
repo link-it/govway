@@ -34,6 +34,8 @@ import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
@@ -867,10 +869,32 @@ public class SoggettiHelper extends ConnettoriHelper {
 					FiltroRicercaPorteApplicative filtro = new FiltroRicercaPorteApplicative();
 					filtro.setIdSoggettoAutorizzato(ids);
 					List<IDPortaApplicativa> list = this.porteApplicativeCore.getAllIdPorteApplicative(filtro);
-					if(list!=null && list.size()>0) {
-						this.pd.setMessage("Non &egrave; possibile modificare il tipo di credenziali poich&egrave; il soggetto viene utilizzato all'interno del controllo degli accessi di "+
-								list.size()+" configurazioni di erogazione di servizio");
-						return false;
+					
+					String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoprov);
+					if(org.openspcoop2.protocol.engine.constants.Costanti.SPCOOP_PROTOCOL_NAME.equals(protocollo)) {
+						// verifico che non sia utilizzato in porte applicative dove è abilitata l'autenticazione
+						int count = 0;
+						if(list!=null && list.size()>0) {
+							for (IDPortaApplicativa idPortaApplicativa : list) {
+								PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(idPortaApplicativa);
+								if(!CostantiConfigurazione.AUTENTICAZIONE_NONE.toString().equalsIgnoreCase(pa.getAutenticazione()) &&
+										!CostantiConfigurazione.DISABILITATO.toString().equalsIgnoreCase(pa.getAutenticazione())) {
+									count++; // default ssl se non impostata
+								}
+							}
+						}
+						if(count>0) {
+							this.pd.setMessage("Non &egrave; possibile modificare il tipo di credenziali poich&egrave; il soggetto viene utilizzato all'interno del controllo degli accessi di "+
+									list.size()+" configurazioni di erogazione di servizio con autenticazione trasporto abilitata");
+							return false;
+						}
+					}
+					else {
+						if(list!=null && list.size()>0) {
+							this.pd.setMessage("Non &egrave; possibile modificare il tipo di credenziali poich&egrave; il soggetto viene utilizzato all'interno del controllo degli accessi di "+
+									list.size()+" configurazioni di erogazione di servizio");
+							return false;
+						}
 					}
 				}
 				
