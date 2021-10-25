@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import javax.xml.soap.SOAPException;
@@ -3260,8 +3261,18 @@ public class HTTPS extends GestioneViaJmx {
 				
 				String msgErrore = "Autenticazione [ssl] fallita : [RicezioneBuste] processo di autenticazione [ssl] fallito, Identificato un soggetto (tramite profilo di interoperabilità) 'spc/Soggetto1SenzaCredenziali' registrato con credenziali differenti da quelle ricevute"; 
 				Reporter.log("Controllo Messaggio (id:"+id+") msg["+msgErrore+"]");
+				boolean condition = dataMsg.isTracedMessaggio(id, msgErrore);
+				if(!condition) {
+					List<String> l = dataMsg.getMessaggiDiagnostici(id);
+					Reporter.log("Presenti "+l.size()+" diagnostici");
+					if(!l.isEmpty()) {
+						for (String d : l) {
+							Reporter.log("Diagnostico ["+d+"]");
+						}
+					}
+				}
 				Assert.assertTrue( 
-						dataMsg.isTracedMessaggio(id, msgErrore)
+						condition
 						);
 
 			}
@@ -3455,8 +3466,18 @@ public class HTTPS extends GestioneViaJmx {
 				
 				String msgErrore = "Autenticazione [ssl] fallita : [RicezioneBuste] processo di autenticazione [ssl] fallito, Identificato un soggetto (tramite profilo di interoperabilità) 'spc/Soggetto1SenzaCredenziali' registrato con credenziali differenti da quelle ricevute"; 
 				Reporter.log("Controllo Messaggio (id:"+id+") msg["+msgErrore+"]");
+				boolean condition = dataMsg.isTracedMessaggio(id, msgErrore);
+				if(!condition) {
+					List<String> l = dataMsg.getMessaggiDiagnostici(id);
+					Reporter.log("Presenti "+l.size()+" diagnostici");
+					if(!l.isEmpty()) {
+						for (String d : l) {
+							Reporter.log("Diagnostico ["+d+"]");
+						}
+					}
+				}
 				Assert.assertTrue( 
-						dataMsg.isTracedMessaggio(id, msgErrore)
+						condition
 						);
 
 			}
