@@ -21,6 +21,7 @@
 package org.openspcoop2.pdd.core.controllo_traffico;
 
 import java.util.Hashtable;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
@@ -44,7 +45,7 @@ public class GeneratoreMessaggiDiagnostici {
 	
 	public static void cleanPolicyValues(MsgDiagnostico msgDiag) throws Exception{
 		
-		Hashtable<String, String> keywords = msgDiag.getKeywordLogPersonalizzati();
+		Map<String, String> keywords = msgDiag.getKeywordLogPersonalizzati();
 		if(keywords==null || keywords.size()<=0){
 			return;
 		}
@@ -69,7 +70,7 @@ public class GeneratoreMessaggiDiagnostici {
 	
 	public static void emitDiagnostic(MsgDiagnostico msgDiag,String idDiagnostico, Logger log) {
 		
-		Hashtable<String, String> keywords = msgDiag.getKeywordLogPersonalizzati();
+		Map<String, String> keywords = msgDiag.getKeywordLogPersonalizzati();
 		StringBuilder bf = new StringBuilder();
 		try{
 			if(keywords!=null && keywords.size()>0){
@@ -107,7 +108,7 @@ public class GeneratoreMessaggiDiagnostici {
 		}		
 		
 	}
-	private static void addNextValue(Hashtable<String, String> keywords,StringBuilder bf, String keyId) throws Exception{
+	private static void addNextValue(Map<String, String> keywords,StringBuilder bf, String keyId) throws Exception{
 		if(bf.length()>0){
 			bf.append(MsgDiagnosticiProperties.DIAGNOSTIC_WITH_DYNAMIC_INFO_SEPARATOR);
 		}

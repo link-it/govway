@@ -78,7 +78,7 @@ public class DimensioneMessaggiConfigurationUtils {
 				if(mapPolicyAttiveAPI!=null && !mapPolicyAttiveAPI.isEmpty()) {
 					Iterator<TipoRisorsaPolicyAttiva> it = mapPolicyAttiveAPI.keySet().iterator();
 					while (it.hasNext()) {
-						TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva = (TipoRisorsaPolicyAttiva) it.next();
+						TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva = it.next();
 						ElencoIdPolicyAttive elencoPolicyAttiveAPI = mapPolicyAttiveAPI.get(tipoRisorsaPolicyAttiva);
 						if(elencoPolicyAttiveAPI!=null) {
 							ElencoIdPolicyAttive cloned = (ElencoIdPolicyAttive) elencoPolicyAttiveAPI.clone(); // altrimenti dopo aggiungendo quelle globali si modifica l'oggetto in cache

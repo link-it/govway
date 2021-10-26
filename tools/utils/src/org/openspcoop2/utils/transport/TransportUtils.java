@@ -69,7 +69,8 @@ public class TransportUtils {
 		if(p.containsKey(name)) {
 			return true;
 		}
-		if(p.containsKey(name.toLowerCase())) {
+		String lowerName = name.toLowerCase();
+		if(p.containsKey(lowerName)) {
 			return true;
 		}
 		if(p.containsKey(name.toUpperCase())) {
@@ -79,8 +80,7 @@ public class TransportUtils {
 		while (keys.hasNext()) {
 			String key = (String) keys.next();
 			String keyCaseInsensitive = key.toLowerCase();
-			String nameCaseInsensitive = name.toLowerCase();
-			if(keyCaseInsensitive.equals(nameCaseInsensitive)) {
+			if(keyCaseInsensitive.equals( lowerName )) {
 				return true;
 			}
 		}
@@ -109,8 +109,10 @@ public class TransportUtils {
 			return null;
 		}
 		T value = get ? p.get(name) : p.remove(name);
+		String lowerName = null;
 		if(value==null){
-			value = get ? p.get(name.toLowerCase()) : p.remove(name.toLowerCase());
+			lowerName = name.toLowerCase();
+			value = get ? p.get( lowerName ) : p.remove( lowerName );
 		}
 		if(value==null){
 			value = get ? p.get(name.toUpperCase()) : p.remove(name.toUpperCase()); 
@@ -121,7 +123,9 @@ public class TransportUtils {
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
 				String keyCaseInsensitive = key.toLowerCase();
-				String nameCaseInsensitive = name.toLowerCase();
+				if ( lowerName == null )
+					lowerName = name.toLowerCase();
+				String nameCaseInsensitive = lowerName;
 				if(keyCaseInsensitive.equals(nameCaseInsensitive)) {
 					keysFound.add(key);
 				}
@@ -156,7 +160,8 @@ public class TransportUtils {
 		if(map.containsKey(name)) {
 			return true;
 		}
-		if(map.containsKey(name.toLowerCase())) {
+		String lowerName = name.toLowerCase();
+		if(map.containsKey( lowerName )) {
 			return true;
 		}
 		if(map.containsKey(name.toUpperCase())) {
@@ -167,8 +172,7 @@ public class TransportUtils {
 			String key = keys.next();
 			if(key!=null) {
 				String keyCaseInsensitive = key.toLowerCase();
-				String nameCaseInsensitive = name.toLowerCase();
-				if(keyCaseInsensitive.equals(nameCaseInsensitive)) {
+				if(keyCaseInsensitive.equals( lowerName )) {
 					return true;
 				}
 			}
@@ -203,9 +207,11 @@ public class TransportUtils {
 		if(name==null) {
 			return null;
 		}
+		String lowerName = null;
 		Object value = get? map.get(name) : map.remove(name);
 		if(value==null){
-			value = get? map.get(name.toLowerCase()) : map.remove(name.toLowerCase());
+			lowerName = name.toLowerCase();
+			value = get? map.get( lowerName ) : map.remove( lowerName );
 		}
 		if(value==null){
 			value = get? map.get(name.toUpperCase()) : map.remove(name.toUpperCase());
@@ -217,7 +223,9 @@ public class TransportUtils {
 				String key = keys.next();
 				if(key!=null) {
 					String keyCaseInsensitive = key.toLowerCase();
-					String nameCaseInsensitive = name.toLowerCase();
+					if ( lowerName == null )
+						lowerName = name.toLowerCase();
+					String nameCaseInsensitive = lowerName;
 					if(keyCaseInsensitive.equals(nameCaseInsensitive)) {
 						keysFound.add(key);
 					}
@@ -278,13 +286,16 @@ public class TransportUtils {
 		if(name==null) {
 			return null;
 		}
+		String lowerName = null;
 		String exactKeyName = null;
 		Enumeration<String> keys = request.getParameterNames();
 		if(keys!=null) {
 			while (keys.hasMoreElements()) {
 				String key = keys.nextElement();
 				String keyCaseInsensitive = key.toLowerCase();
-				String nameCaseInsensitive = name.toLowerCase();
+				if ( lowerName == null )
+					lowerName = name.toLowerCase();
+				String nameCaseInsensitive = lowerName;
 				if(keyCaseInsensitive.equals(nameCaseInsensitive)) {
 					exactKeyName = key;
 					break;
@@ -334,13 +345,16 @@ public class TransportUtils {
 		if(name==null) {
 			return null;
 		}
+		String lowerName = null;
 		String exactKeyName = null;
 		Enumeration<String> keys = request.getHeaderNames();
 		if(keys!=null) {
 			while (keys.hasMoreElements()) {
 				String key = keys.nextElement();
 				String keyCaseInsensitive = key.toLowerCase();
-				String nameCaseInsensitive = name.toLowerCase();
+				if ( lowerName == null )
+					lowerName = name.toLowerCase();
+				String nameCaseInsensitive = lowerName;
 				if(keyCaseInsensitive.equals(nameCaseInsensitive)) {
 					exactKeyName = key;
 					break;
@@ -393,6 +407,7 @@ public class TransportUtils {
 		if(name==null) {
 			return null;
 		}
+		String lowerName = null;
 		String exactKeyName = null;
 		if(response.getHeaderNames()!=null && !response.getHeaderNames().isEmpty()) {
 			Iterator<String> keys = response.getHeaderNames().iterator();
@@ -400,7 +415,9 @@ public class TransportUtils {
 				while (keys.hasNext()) {
 					String key = keys.next();
 					String keyCaseInsensitive = key.toLowerCase();
-					String nameCaseInsensitive = name.toLowerCase();
+					if ( lowerName == null )
+						lowerName = name.toLowerCase();
+					String nameCaseInsensitive = lowerName;
 					if(keyCaseInsensitive.equals(nameCaseInsensitive)) {
 						exactKeyName = key;
 					}

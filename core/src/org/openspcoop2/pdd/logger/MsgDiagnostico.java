@@ -27,8 +27,10 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -135,14 +137,14 @@ public class MsgDiagnostico {
 	private GeneratoreCasualeDate generatoreDateCasuali = null;
 	
 	/** Properties da aggiungere ai diagnostici (utili nelle implementazioni handler) */
-	private Hashtable<String,String> properties = new Hashtable<String, String>();		
-	public Hashtable<String, String> getProperties() {
+	private Map<String,String> properties = new HashMap<String, String>();		
+	public Map<String, String> getProperties() {
 		return this.properties;
 	}
 
 	/** Keyword per i log personalizzati */
-	private Hashtable<String,String> keywordLogPersonalizzati = new Hashtable<String, String>();	
-	public Hashtable<String, String> getKeywordLogPersonalizzati() {
+	private Map<String,String> keywordLogPersonalizzati = new HashMap<String, String>();	
+	public Map<String, String> getKeywordLogPersonalizzati() {
 		return this.keywordLogPersonalizzati;
 	}
 	
@@ -450,8 +452,6 @@ public class MsgDiagnostico {
 			String tmpValue = value;
 			if(tmpValue == null)
 				tmpValue = "";
-			if(this.keywordLogPersonalizzati.containsKey(key))
-				this.keywordLogPersonalizzati.remove(key);
 			this.keywordLogPersonalizzati.put(key, tmpValue);
 		}
 	}
@@ -2205,11 +2205,7 @@ public class MsgDiagnostico {
 		}
 		
 		if(this.properties!=null){
-			Enumeration<String> keys = this.properties.keys();
-			while (keys.hasMoreElements()) {
-				String key = (String) keys.nextElement();
-				msgDiagnostico.addProperty(key, this.properties.get(key));
-			}
+			this.properties.forEach( (k,v) -> msgDiagnostico.addProperty(k, v) );
 		}
 		
 		return msgDiagnostico;

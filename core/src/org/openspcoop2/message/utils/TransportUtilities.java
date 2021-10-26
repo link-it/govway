@@ -21,7 +21,6 @@
 package org.openspcoop2.message.utils;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -56,29 +55,12 @@ public class TransportUtilities {
 	
 	private static boolean match(String tipoOp, String key, List<String> listParam) {
 		String keyLowerCase = key.toLowerCase();
-		List<String> listHeaderLowerCase = new ArrayList<>();
-		for (String hdr : listParam) {
-			listHeaderLowerCase.add(hdr.toLowerCase()); // controllo in case insensitive mode
-		}
-		if(listHeaderLowerCase.contains(keyLowerCase)) {
-			//System.out.println(tipoOp+" A");
-			return true;
-		}
-		// check eventuali istruzioni con '*'
-		for (String hdr : listHeaderLowerCase) {
-			if(hdr.equals("*")) {
-				// filtro tutti
-				//System.out.println(tipoOp+" B");
-				return true;
-			}else if(hdr.endsWith("*")) {
-				String keyStart = hdr.substring(0, hdr.length()-1);
-				if(keyLowerCase.startsWith(keyStart)) {
-					//System.out.println(tipoOp+" C");
-					return true;
-				}
-			}
-		}
-		return false;
+
+		return listParam.stream()
+						.map( String::toLowerCase )
+						.anyMatch( (p) -> p.equals(keyLowerCase) ||
+										  p.equals( "*" ) ||
+										  ( p.endsWith( "*" ) && keyLowerCase.startsWith( p.substring(0, p.length()-1) ) ) );
 	}
 		
 	private static void initializeHeaders(boolean trasporto, OpenSPCoop2MessageProperties op2MessageProperties, MessageRole messageRole, 
@@ -93,12 +75,10 @@ public class TransportUtilities {
 			//System.out.println(tipo+" =============================== ["+messageRole+"]");
 			
 			if(applicativeInfo!=null && applicativeInfo.size()>0){
-				Iterator<String> keys = applicativeInfo.keySet().iterator();
-				while (keys.hasNext()) {
-					String key = (String) keys.next();
+				applicativeInfo.forEach( (key,values) -> {
 					if(MessageRole.REQUEST.equals(messageRole)==false){
 						if(trasporto && HttpConstants.RETURN_CODE.equalsIgnoreCase(key)){
-							continue;
+							return;
 						}
 					}
 					boolean add = true;
@@ -113,13 +93,12 @@ public class TransportUtilities {
 					}
 					if( add ){
 						//System.out.println("ADD ["+key+"] ["+applicativeInfo.getProperty(key)+"]");
-						List<String> values = applicativeInfo.get(key);
 						op2MessageProperties.setProperty(key, values);
 					}
 //					else {
 //						System.out.println("FILTRO ["+key+"]");
 //					}
-				}
+				});
 			}
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
