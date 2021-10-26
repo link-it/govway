@@ -134,7 +134,7 @@ public class MainValidatorOpenAPI4 {
 			IApiValidator apiValidator = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 			OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 			configO.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
-			configO.getOpenApi4JConfig().setUseOpenApi4J(true);
+			configO.getOpenApi4JConfig().setOpenApiLibrary(OpenAPILibrary.openapi4j);
 			
 			apiValidator.init(LoggerWrapperFactory.getLogger(MainValidatorOpenAPI4.class), api, configO);
 			

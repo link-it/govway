@@ -81,7 +81,7 @@ public class TestOpenApi4j {
 			IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 			OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 			configO.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
-			configO.getOpenApi4JConfig().setUseOpenApi4J(true);
+			configO.getOpenApi4JConfig().setOpenApiLibrary(OpenAPILibrary.openapi4j);
 			configO.getOpenApi4JConfig().setValidateAPISpec(true);
 			apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), apiOpenApi4j, configO);
 					
@@ -185,14 +185,14 @@ public class TestOpenApi4j {
 		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
-		configO.getOpenApi4JConfig().setUseOpenApi4J(true);
+		configO.getOpenApi4JConfig().setOpenApiLibrary(OpenAPILibrary.openapi4j);
 		configO.getOpenApi4JConfig().setValidateAPISpec(true);
 		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), apiOpenApi4j, configO);
 		
 		IApiValidator apiValidatorNoOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 		OpenapiApiValidatorConfig configNo = new OpenapiApiValidatorConfig();
 		configNo.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
-		configNo.getOpenApi4JConfig().setUseOpenApi4J(false);
+		configNo.getOpenApi4JConfig().setOpenApiLibrary(OpenAPILibrary.json_schema);
 		apiValidatorNoOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), apiNoOpenApi4j, configNo);
 		
 		byte [] pdf = Utilities.getAsByteArray(TestOpenApi4j.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test.pdf"));

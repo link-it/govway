@@ -124,6 +124,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 	private Map<String, File> fileSchema;
 	// OpenAPI4j Validation
 	private OpenApi3 openApi4j;
+	// SwaggerRequestValidator
+	private Object swaggerRequestValidator;
+	// Configuration
 	private OpenapiApi4jValidatorConfig openApi4jConfig;
 	
 	boolean onlySchemas = false;
@@ -161,15 +164,15 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			}
 			
 			ApiName jsonValidatorAPI = null;
-			boolean useOpenApi4j = false; // ottimizzazione per OpenAPI
+			OpenAPILibrary openApiLibrary = null; // ottimizzazione per OpenAPI
 			ADDITIONAL policyAdditionalProperties = config.getPolicyAdditionalProperties();
 			if(config instanceof OpenapiApiValidatorConfig) {
 				jsonValidatorAPI = ((OpenapiApiValidatorConfig)config).getJsonValidatorAPI();
 				if(openapiApi!=null) {
 					OpenapiApiValidatorConfig c = (OpenapiApiValidatorConfig) config;
 					if(c.getOpenApi4JConfig()!=null) {
-						useOpenApi4j = c.getOpenApi4JConfig().isUseOpenApi4J();
-						if(useOpenApi4j) {
+						openApiLibrary = c.getOpenApi4JConfig().getOpenApiLibrary();
+						if(OpenAPILibrary.openapi4j.equals(openApiLibrary) || OpenAPILibrary.swagger_request_validator.equals(openApiLibrary)) {
 							this.openApi4jConfig = c.getOpenApi4JConfig();
 						}
 					}
@@ -181,7 +184,8 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			
 			try {
 			
-				if(useOpenApi4j) {
+				if(OpenAPILibrary.openapi4j.equals(openApiLibrary) || 
+						OpenAPILibrary.swagger_request_validator.equals(openApiLibrary)) {
 					
 					// leggo JSON Node degli schemi
 					
@@ -299,26 +303,45 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						}
 					}
 					
-					// Costruisco OpenAPI3					
-					OAI3Context context = new OAI3Context(uriSchemaNodeRoot, schemaNodeRoot, schemaMap);
-					this.openApi4j = TreeUtil.json.convertValue(context.getBaseDocument(), OpenApi3.class);
-					this.openApi4j.setContext(context);
+					if(OpenAPILibrary.openapi4j.equals(openApiLibrary)) {
 					
-					// Explicit validation of the API spec
-					
-					if(this.openApi4jConfig.isValidateAPISpec()) {
-						try {
-							ValidationResults results = OpenApi3Validator.instance().validate(this.openApi4j);
-							if(!results.isValid()) {
-								throw new ProcessingException("OpenAPI3 not valid: "+results.toString());
+						// Costruisco OpenAPI3					
+						OAI3Context context = new OAI3Context(uriSchemaNodeRoot, schemaNodeRoot, schemaMap);
+						this.openApi4j = TreeUtil.json.convertValue(context.getBaseDocument(), OpenApi3.class);
+						this.openApi4j.setContext(context);
+						
+						// Explicit validation of the API spec
+						
+						if(this.openApi4jConfig.isValidateAPISpec()) {
+							try {
+								ValidationResults results = OpenApi3Validator.instance().validate(this.openApi4j);
+								if(!results.isValid()) {
+									throw new ProcessingException("OpenAPI3 not valid: "+results.toString());
+								}
+							}catch(org.openapi4j.core.validation.ValidationException valExc) {
+								if(valExc.results()!=null) {
+									throw new ProcessingException("OpenAPI3 not valid: "+valExc.results().toString());
+								}
+								else {
+									throw new ProcessingException("OpenAPI3 not valid: "+valExc.getMessage());
+								}
 							}
-						}catch(org.openapi4j.core.validation.ValidationException valExc) {
-							if(valExc.results()!=null) {
-								throw new ProcessingException("OpenAPI3 not valid: "+valExc.results().toString());
-							}
-							else {
-								throw new ProcessingException("OpenAPI3 not valid: "+valExc.getMessage());
-							}
+						}
+						
+					}
+					else if(OpenAPILibrary.swagger_request_validator.equals(openApiLibrary)) {
+						
+						// TODO
+						this.swaggerRequestValidator = null;
+						// Bisogna inizializzare l'oggetto da aggiungere come istanza dove adesso c'e' openApi4j
+						// Lo schema è in schemaNodeRoot
+
+						// Explicit validation of the API spec
+						
+						if(this.openApi4jConfig.isValidateAPISpec()) {
+						
+							// TODO Vedere se e' consentito validare lo schema
+							
 						}
 					}
 					
@@ -905,6 +928,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		if(this.openApi4j!=null) {
 			validateWithOpenApi4j(httpEntity, operation);
 		}
+		else if(this.swaggerRequestValidator!=null) {
+			validateWithSwaggerRequestValidator(httpEntity, operation);
+		}
 		
 		
 		// Controllo poi i campi required come controllo aggiuntivo a openApi4j
@@ -922,7 +948,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		}
 		
 		// infine se non e' attivo openApi4j effettuo la validazione alternativa
-		if(this.openApi4j==null) {
+		if(this.openApi4j==null && this.swaggerRequestValidator==null) {
 			if(bodyParameters!=null && !bodyParameters.isEmpty()) {
 			
 				try {
@@ -1259,6 +1285,10 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		}
 	}
 
+	private void validateWithSwaggerRequestValidator(HttpBaseEntity<?> httpEntity, ApiOperation operation) throws ProcessingException, ValidatorException {
+		// TODO
+	}
+	
 
 	@Override
 	public void validatePostConformanceCheck(HttpBaseEntity<?> httpEntity,

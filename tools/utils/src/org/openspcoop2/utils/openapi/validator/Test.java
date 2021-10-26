@@ -74,7 +74,7 @@ public class Test {
 			config.setJsonValidatorAPI(ApiName.NETWORK_NT);
 			if(useOpenApi4j) {
 				config.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
-				config.getOpenApi4JConfig().setUseOpenApi4J(true);
+				config.getOpenApi4JConfig().setOpenApiLibrary(OpenAPILibrary.openapi4j);
 			}
 			apiValidator.init(LoggerWrapperFactory.getLogger(Test.class), api, config);
 			try {

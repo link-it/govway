@@ -29,7 +29,7 @@ package org.openspcoop2.utils.openapi.validator;
  */
 public class OpenapiApi4jValidatorConfig {
 
-	private boolean useOpenApi4J = false;
+	private OpenAPILibrary openApiLibrary = OpenAPILibrary.json_schema;
 	
 	private boolean mergeAPISpec = false;
 	
@@ -43,12 +43,12 @@ public class OpenapiApi4jValidatorConfig {
 	private boolean validateResponseHeaders = true;
 	private boolean validateResponseBody = true;
 	
-	public boolean isUseOpenApi4J() {
-		return this.useOpenApi4J;
+	public OpenAPILibrary getOpenApiLibrary() {
+		return this.openApiLibrary;
 	}
 
-	public void setUseOpenApi4J(boolean useOpenApi4J) {
-		this.useOpenApi4J = useOpenApi4J;
+	public void setOpenApiLibrary(OpenAPILibrary openApiLibrary) {
+		this.openApiLibrary = openApiLibrary;
 	}
 
 	public boolean isMergeAPISpec() {
