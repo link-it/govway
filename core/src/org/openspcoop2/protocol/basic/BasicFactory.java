@@ -42,6 +42,7 @@ import org.openspcoop2.protocol.basic.validator.ValidazioneSemantica;
 import org.openspcoop2.protocol.basic.validator.ValidazioneSintattica;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.registry.CachedRegistryReader;
+import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.InformazioniProtocollo;
@@ -294,6 +295,14 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 		}
 	}
 	@Override
+	public IRegistryReader getCachedRegistryReader(Object registryReader) throws ProtocolException{
+		try{
+			return new CachedRegistryReader(this.log, this, (RegistroServiziManager)registryReader);
+		}catch(Exception e){
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	@Override
 	public IConfigIntegrationReader getConfigIntegrationReader(IDriverConfigurazioneGet driver) throws ProtocolException{
 		try{
 			return new ConfigIntegrationReader(driver, this.log);
@@ -307,6 +316,17 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 			Class<?> c = Class.forName("org.openspcoop2.pdd.config.CachedConfigIntegrationReader");
 			return (IConfigIntegrationReader) c.getConstructor(Logger.class,IProtocolFactory.class,IState.class).
 				newInstance(this.log,this,state);
+		}catch(Exception e){
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public IConfigIntegrationReader getCachedConfigIntegrationReader(Object configReader) throws ProtocolException{
+		try{
+			Class<?> cConfigurazionePdDManager = Class.forName("org.openspcoop2.pdd.config.ConfigurazionePdDManager");
+			Class<?> c = Class.forName("org.openspcoop2.pdd.config.CachedConfigIntegrationReader");
+			return (IConfigIntegrationReader) c.getConstructor(Logger.class,IProtocolFactory.class,cConfigurazionePdDManager).
+				newInstance(this.log,this,configReader);
 		}catch(Exception e){
 			throw new ProtocolException(e.getMessage(),e);
 		}

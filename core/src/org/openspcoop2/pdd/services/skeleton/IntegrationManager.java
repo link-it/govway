@@ -644,7 +644,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			stato = new OpenSPCoopStateful();
 			stato.initResource(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol()),IntegrationManager.ID_MODULO, idTransazione);
 			ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance(stato.getStatoRichiesta(),stato.getStatoRisposta());
-			msgDiag.updateState(stato.getStatoRichiesta(),stato.getStatoRisposta());
+			msgDiag.updateState(configPdDManager);
 			
 			// gestione credenziali
 			this.gestioneCredenziali(logCore, protocolFactory,msgDiag, imRequestContext.getConnettore(),pddContext);
@@ -957,7 +957,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			stato = new OpenSPCoopStateful();
 			stato.initResource(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol()),IntegrationManager.ID_MODULO, idTransazione);
 			ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance(stato.getStatoRichiesta(),stato.getStatoRisposta());
-			msgDiag.updateState(stato.getStatoRichiesta(),stato.getStatoRisposta());
+			msgDiag.updateState(configPdDManager);
 			
 			// gestione credenziali
 			this.gestioneCredenziali(logCore, protocolFactory,msgDiag, imRequestContext.getConnettore(),pddContext);
@@ -1430,7 +1430,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			stato = new OpenSPCoopStateful();
 			stato.initResource(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol()),IntegrationManager.ID_MODULO, idTransazione);
 			ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance(stato.getStatoRichiesta(),stato.getStatoRisposta());
-			msgDiag.updateState(stato.getStatoRichiesta(),stato.getStatoRisposta());	
+			msgDiag.updateState(configPdDManager);	
 			
 			// gestione credenziali
 			this.gestioneCredenziali(logCore, protocolFactory,msgDiag, imRequestContext.getConnettore(),pddContext);
@@ -1748,7 +1748,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			stato = new OpenSPCoopStateful();
 			stato.initResource(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol()),IntegrationManager.ID_MODULO, idTransazione);
 			ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance(stato.getStatoRichiesta(),stato.getStatoRisposta());
-			msgDiag.updateState(stato.getStatoRichiesta(),stato.getStatoRisposta());	
+			msgDiag.updateState(configPdDManager);	
 			
 			// gestione credenziali
 			this.gestioneCredenziali(logCore, protocolFactory,msgDiag, imRequestContext.getConnettore(),pddContext);

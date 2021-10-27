@@ -268,7 +268,9 @@ public class RicezioneContenutiApplicativiServiceUtils {
 				// Lettura Azione
 				try{
 					if(idServizio.getAzione()!=null) {
-						IdentificazionePortaDelegata identificazione = new IdentificazionePortaDelegata(logCore, pf, null, pdDefault);
+						IdentificazionePortaDelegata identificazione = new IdentificazionePortaDelegata(logCore, pf, 
+								serviceIdentificationReader.getRegistryReader(), serviceIdentificationReader.getConfigIntegrationReader(), // questi reader sono gia' 'cached'
+								pdDefault);
 						if(identificazione.find(idServizio.getAzione())) {
 							IDPortaDelegata idPD_action = identificazione.getIDPortaDelegata(idServizio.getAzione());
 							if(idPD_action!=null) {

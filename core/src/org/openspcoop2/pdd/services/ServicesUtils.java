@@ -83,6 +83,7 @@ import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.registry.CachedRegistryReader;
+import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.InformazioniErroriInfrastrutturali;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
@@ -117,9 +118,10 @@ import org.slf4j.Logger;
  */
 public class ServicesUtils {
 	
-	public static ServiceIdentificationReader getServiceIdentificationReader(Logger logCore, RequestInfo requestInfo) throws Exception{
-		IRegistryReader registryReader = new CachedRegistryReader(logCore, requestInfo.getProtocolFactory());
-		IConfigIntegrationReader configIntegrationReader = new CachedConfigIntegrationReader(logCore, requestInfo.getProtocolFactory());
+	public static ServiceIdentificationReader getServiceIdentificationReader(Logger logCore, RequestInfo requestInfo,
+			RegistroServiziManager registroServiziManager, ConfigurazionePdDManager configurazionePdDManager) throws Exception{
+		IRegistryReader registryReader = new CachedRegistryReader(logCore, requestInfo.getProtocolFactory(), registroServiziManager);
+		IConfigIntegrationReader configIntegrationReader = new CachedConfigIntegrationReader(logCore, requestInfo.getProtocolFactory(), configurazionePdDManager);
 		return new ServiceIdentificationReader(registryReader, configIntegrationReader, requestInfo.getProtocolFactory(), logCore);
 	}
 	

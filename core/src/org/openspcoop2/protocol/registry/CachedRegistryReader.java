@@ -77,13 +77,20 @@ public class CachedRegistryReader implements IRegistryReader {
 	private Logger log;
 	private RegistroServiziManager registroServiziManager;
 	private IProtocolFactory<?> protocolFactory;
-	public CachedRegistryReader(Logger log,IProtocolFactory<?> protocolFactory) throws Exception{
-		this(log, protocolFactory, null);
-	}
+	/*public CachedRegistryReader(Logger log,IProtocolFactory<?> protocolFactory) throws Exception{
+		this.log = log;
+		this.protocolFactory = protocolFactory;
+		this.registroServiziManager = RegistroServiziManager.getInstance();
+	}*/
 	public CachedRegistryReader(Logger log,IProtocolFactory<?> protocolFactory, IState state) throws Exception{
 		this.log = log;
 		this.protocolFactory = protocolFactory;
 		this.registroServiziManager = RegistroServiziManager.getInstance(state);
+	}
+	public CachedRegistryReader(Logger log,IProtocolFactory<?> protocolFactory, RegistroServiziManager registroServiziManager) throws Exception{
+		this.log = log;
+		this.protocolFactory = protocolFactory;
+		this.registroServiziManager = registroServiziManager;
 	}
 
 	

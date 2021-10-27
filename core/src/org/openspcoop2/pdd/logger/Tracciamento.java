@@ -111,11 +111,11 @@ public class Tracciamento {
 	private List<String> tipoTracciamentoOpenSPCoopAppender = null; 
 
 	/** Reader della configurazione di OpenSPCoop */
-	private ConfigurazionePdDManager configurazionePdDManager;
+	private ConfigurazionePdDManager _configurazionePdDReader;
 	
 	/** Stati */
-	private IState statoRichiesta;
-	private IState statoRisposta;
+	private StateMessage state = null;
+	private StateMessage responseState = null;
 	
 	/** XMLBuilder */
 	private TracciaBuilder xmlBuilder;
@@ -140,14 +140,20 @@ public class Tracciamento {
 	}
 	
 	
-	/**
-	 * Costruttore. 
-	 *
-	 * @param idSoggettoDominio Soggetto che richiede il logger
-	 * @throws TracciamentoException 
-	 * 
-	 */
-	public Tracciamento(IDSoggetto idSoggettoDominio,String idFunzione,PdDContext pddContext,TipoPdD tipoPdD,String nomePorta, IState statoRichiesta,IState statoRisposta) throws TracciamentoException {
+	public Tracciamento(IDSoggetto idSoggettoDominio,String idFunzione,PdDContext pddContext,TipoPdD tipoPdD,String nomePorta, 
+			ConfigurazionePdDManager configurazionePdDManager) throws TracciamentoException {
+		this(idSoggettoDominio, idFunzione, pddContext, tipoPdD, nomePorta, 
+				configurazionePdDManager, null, null);	
+	}
+	/*
+	public Tracciamento(IDSoggetto idSoggettoDominio,String idFunzione,PdDContext pddContext,TipoPdD tipoPdD,String nomePorta, 
+			IState statoRichiesta,IState statoRisposta) throws TracciamentoException {
+		this(idSoggettoDominio, idFunzione, pddContext, tipoPdD, nomePorta, 
+				null, statoRichiesta, statoRisposta);	
+	}
+	*/
+	private Tracciamento(IDSoggetto idSoggettoDominio,String idFunzione,PdDContext pddContext,TipoPdD tipoPdD,String nomePorta, 
+			ConfigurazionePdDManager configurazionePdDManagerParam, IState stateParam,IState responseStateParam) throws TracciamentoException {
 		this.idSoggettoDominio = idSoggettoDominio;
 		this.pddContext=pddContext;
 		this.tipoPdD = tipoPdD;
@@ -155,10 +161,23 @@ public class Tracciamento {
 		this.loggerTracciamento = OpenSPCoop2Logger.loggerTracciamento;
 		this.loggerTracciamentoOpenSPCoopAppender = OpenSPCoop2Logger.loggerTracciamentoOpenSPCoopAppender;
 		this.tipoTracciamentoOpenSPCoopAppender = OpenSPCoop2Logger.tipoTracciamentoOpenSPCoopAppender;
-		this.statoRichiesta = statoRichiesta;
-		this.statoRisposta = statoRisposta;
-		this.configurazionePdDManager = ConfigurazionePdDManager.getInstance(this.statoRichiesta,this.statoRisposta);
-		this.msgDiagErroreTracciamento = MsgDiagnostico.newInstance(tipoPdD,idSoggettoDominio,idFunzione,nomePorta,this.statoRichiesta,this.statoRisposta);
+		
+		if(configurazionePdDManagerParam!=null) {
+			this._configurazionePdDReader = configurazionePdDManagerParam;
+			this.state = this._configurazionePdDReader.getState();
+			this.responseState = this._configurazionePdDReader.getResponseState();
+		}
+		else {
+			if(stateParam!=null && stateParam instanceof StateMessage){
+				this.state = (StateMessage) stateParam;
+			}
+			if(responseStateParam!=null && responseStateParam instanceof StateMessage){
+				this.responseState = (StateMessage) responseStateParam;
+			}
+			this._configurazionePdDReader = ConfigurazionePdDManager.getInstance(this.state, this.responseState);
+		}
+		
+		this.msgDiagErroreTracciamento = MsgDiagnostico.newInstance(tipoPdD,idSoggettoDominio,idFunzione,nomePorta,this._configurazionePdDReader);
 		this.msgDiagErroreTracciamento.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO);
 		try{
 			this.protocolFactoryManager = ProtocolFactoryManager.getInstance();
@@ -182,11 +201,53 @@ public class Tracciamento {
 			// La transazione potrebbe essere stata eliminata nelle comunicazioni stateful
 		}
 	}
-
-	public void updateState(IState statoRichiesta,IState statoRisposta){
-		this.statoRichiesta = statoRichiesta;
-		this.statoRisposta = statoRisposta;
+	
+	private ConfigurazionePdDManager getConfigurazionePdDManager() {
+		if(this._configurazionePdDReader!=null) {
+			return this._configurazionePdDReader;
+		}
+		if(this.state!=null || this.responseState!=null) {
+			return ConfigurazionePdDManager.getInstance(this.state, this.responseState);
+		}
+		return ConfigurazionePdDManager.getInstance();
 	}
+	
+
+	public void updateState(IState requestStateParam, IState responseStateParam) {
+		StateMessage requestState = null;
+		StateMessage responseState = null;
+		if(requestStateParam!=null && requestStateParam instanceof StateMessage) {
+			requestState = (StateMessage) requestStateParam;
+		}
+		if(responseStateParam!=null && responseStateParam instanceof StateMessage) {
+			responseState = (StateMessage) responseStateParam;
+		}
+		updateState(requestState, responseState);
+	}
+	public void updateState(StateMessage requestState, StateMessage responseState){
+		this.state = requestState;
+		this.responseState = responseState;
+		if(this.state!=null || this.responseState!=null) {
+			if(this._configurazionePdDReader!=null) {
+				this._configurazionePdDReader = this._configurazionePdDReader.refreshState(this.state, this.responseState);
+			}
+			else {
+				this._configurazionePdDReader = ConfigurazionePdDManager.getInstance(this.state, this.responseState);
+			}
+		}
+		else {
+			this._configurazionePdDReader = ConfigurazionePdDManager.getInstance();
+		}
+	}
+	public void updateState(ConfigurazionePdDManager configurazionePdDManager){
+		this._configurazionePdDReader = configurazionePdDManager;
+		if(this._configurazionePdDReader!=null) {
+			this.state = this._configurazionePdDReader.getState();
+			this.responseState = this._configurazionePdDReader.getResponseState();
+		}
+	}
+	
+
 
 	/**
 	 * Il Metodo si occupa di impostare il dominio del Soggetto che utilizza il logger. 
@@ -201,23 +262,15 @@ public class Tracciamento {
 
 	private Connection getConnectionFromState(boolean richiesta){
 		if(richiesta){
-			if(this.statoRichiesta!=null && this.statoRichiesta instanceof StateMessage){
-				boolean validConnection = false;
-				try{
-					validConnection = !((StateMessage)this.statoRichiesta).getConnectionDB().isClosed();
-				}catch(Exception e){}
-				if(validConnection)
-					return ((StateMessage)this.statoRichiesta).getConnectionDB();
+			Connection c = StateMessage.getConnection(this.state);
+			if(c!=null) {
+				return c;
 			}
 		}
 		else{
-			if(this.statoRisposta!=null && this.statoRisposta instanceof StateMessage){
-				boolean validConnection = false;
-				try{
-					validConnection = !((StateMessage)this.statoRisposta).getConnectionDB().isClosed();
-				}catch(Exception e){}
-				if(validConnection)
-					return ((StateMessage)this.statoRisposta).getConnectionDB();
+			Connection c = StateMessage.getConnection(this.responseState);
+			if(c!=null) {
+				return c;
 			}
 		}
 		return null;
@@ -250,7 +303,7 @@ public class Tracciamento {
 			this.transactionNullable.getTempiElaborazione().startTracciamentoRichiesta();
 		}
 		try {
-			if(this.tracciamentoSupportatoProtocollo && this.configurazionePdDManager.tracciamentoBuste()){
+			if(this.tracciamentoSupportatoProtocollo && this.getConfigurazionePdDManager().tracciamentoBuste()){
 				String xml = null;
 				boolean erroreAppender = false;
 				
@@ -347,7 +400,7 @@ public class Tracciamento {
 			this.transactionNullable.getTempiElaborazione().startTracciamentoRichiesta();
 		}
 		try {
-			if(this.tracciamentoSupportatoProtocollo && this.configurazionePdDManager.tracciamentoBuste()){
+			if(this.tracciamentoSupportatoProtocollo && this.getConfigurazionePdDManager().tracciamentoBuste()){
 				String xml = null;
 				boolean erroreAppender = false;
 				
@@ -443,7 +496,7 @@ public class Tracciamento {
 			this.transactionNullable.getTempiElaborazione().startTracciamentoRichiesta();
 		}
 		try {
-			if(this.tracciamentoSupportatoProtocollo && this.configurazionePdDManager.tracciamentoBuste()) {
+			if(this.tracciamentoSupportatoProtocollo && this.getConfigurazionePdDManager().tracciamentoBuste()) {
 				String xml = null;
 				boolean erroreAppender = false;
 				
@@ -552,7 +605,7 @@ public class Tracciamento {
 			this.transactionNullable.getTempiElaborazione().startTracciamentoRisposta();
 		}
 		try {
-			if(this.tracciamentoSupportatoProtocollo && this.configurazionePdDManager.tracciamentoBuste()){
+			if(this.tracciamentoSupportatoProtocollo && this.getConfigurazionePdDManager().tracciamentoBuste()){
 				String xml = null;
 				boolean erroreAppender = false;
 				
@@ -649,7 +702,7 @@ public class Tracciamento {
 			this.transactionNullable.getTempiElaborazione().startTracciamentoRisposta();
 		}
 		try {
-			if(this.tracciamentoSupportatoProtocollo && this.configurazionePdDManager.tracciamentoBuste()){
+			if(this.tracciamentoSupportatoProtocollo && this.getConfigurazionePdDManager().tracciamentoBuste()){
 				String xml = null;
 				boolean erroreAppender = false;
 				
@@ -745,7 +798,7 @@ public class Tracciamento {
 			this.transactionNullable.getTempiElaborazione().startTracciamentoRisposta();
 		}
 		try {
-			if(this.tracciamentoSupportatoProtocollo && this.configurazionePdDManager.tracciamentoBuste()){
+			if(this.tracciamentoSupportatoProtocollo && this.getConfigurazionePdDManager().tracciamentoBuste()){
 				String xml = null;
 				boolean erroreAppender = false;
 				

@@ -198,7 +198,8 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		// Identifico Servizio per comprendere correttamente il messageType
 		ServiceIdentificationReader serviceIdentificationReader = null;
 		try{
-			serviceIdentificationReader = ServicesUtils.getServiceIdentificationReader(logCore, requestInfo);
+			serviceIdentificationReader = ServicesUtils.getServiceIdentificationReader(logCore, requestInfo,
+					configPdDManager.getRegistroServiziManager(), configPdDManager);
 		}catch(Exception e){
 			String msgError = "Inizializzazione RegistryReader fallita: "+Utilities.readFirstErrorValidMessageFromException(e);
 			logCore.error(msgError,e);
@@ -228,7 +229,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		
 		// Logger dei messaggi diagnostici
 		String nomePorta = portaDelegata;
-		MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA,IntegrationManager.ID_MODULO,nomePorta);
+		MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA,IntegrationManager.ID_MODULO,nomePorta,configPdDManager);
 		msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_INTEGRATION_MANAGER);
 		msgDiag.addKeyword(CostantiPdD.KEY_TIPO_OPERAZIONE_IM, tipoOperazione);
 		if(context!=null && protocolFactory!=null) {
@@ -583,7 +584,8 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 				
 				stato = new OpenSPCoopStateful();
 				stato.initResource(openSPCoopProperties.getIdentitaPortaDefault(protocolFactory.getProtocol()),IntegrationManager.ID_MODULO,idTransazione);
-				msgDiag.updateState(stato.getStatoRichiesta(),stato.getStatoRisposta());
+				configPdDManager = configPdDManager.refreshState(stato.getStatoRichiesta(),stato.getStatoRisposta());
+				msgDiag.updateState(configPdDManager);
 				
 				// Leggo Messaggio
 				try{

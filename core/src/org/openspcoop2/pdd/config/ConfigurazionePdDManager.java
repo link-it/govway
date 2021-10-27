@@ -117,6 +117,7 @@ import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.mapping.IdentificazioneDinamicaException;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
+import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
@@ -138,61 +139,144 @@ import org.slf4j.Logger;
  */
 public class ConfigurazionePdDManager {
 
+	private static ConfigurazionePdDManager staticInstanceWithoutState = null;
+	private static synchronized void initStaticInstanceWithoutState(){
+		if(staticInstanceWithoutState == null) {
+			staticInstanceWithoutState = new ConfigurazionePdDManager();
+			staticInstanceWithoutState.singleInstance = true;
+		}
+	}
 
 	public static ConfigurazionePdDManager getInstance(){
-		return new ConfigurazionePdDManager();
+		//return new ConfigurazionePdDManager();
+		if(staticInstanceWithoutState == null) {
+			if(ConfigurazionePdDReader.getInstance()==null || RegistroServiziReader.getInstance()==null) {
+				return new ConfigurazionePdDManager(); // succede all'avvio
+			}
+			initStaticInstanceWithoutState();
+		}
+		return staticInstanceWithoutState;
 	}
-	public static ConfigurazionePdDManager getInstance(IState ... state){
-		return new ConfigurazionePdDManager(state);
+	public static ConfigurazionePdDManager getInstance(IState state){
+		if(state!=null && state instanceof StateMessage) {
+			return getInstance((StateMessage)state);
+		}
+		return getInstance();
+	}
+	public static ConfigurazionePdDManager getInstance(StateMessage state){
+		if(state!=null) {
+			return new ConfigurazionePdDManager(state);
+		}
+		return getInstance();
+	}
+	public static ConfigurazionePdDManager getInstance(IState requestStateParam, IState responseStateParam){
+		StateMessage requestState = null;
+		StateMessage responseState = null;
+		if(requestStateParam!=null && requestStateParam instanceof StateMessage) {
+			requestState = (StateMessage) requestStateParam;
+		}
+		if(responseStateParam!=null && responseStateParam instanceof StateMessage) {
+			responseState = (StateMessage) responseStateParam;
+		}
+		if(requestState!=null || responseState!=null) {
+			return new ConfigurazionePdDManager(requestState,responseState);
+		}
+		return getInstance();
+	}
+	public static ConfigurazionePdDManager getInstance(StateMessage requestState, StateMessage responseState){
+		if(requestState!=null || responseState!=null) {
+			return new ConfigurazionePdDManager(requestState,responseState);
+		}
+		return getInstance();
 	}
 
 
+	private boolean singleInstance = false;
 	private OpenSPCoop2Properties op2Properties = null;
 	private ConfigurazionePdDReader configurazionePdDReader = null;
 	private RegistroServiziManager registroServiziManager = null;
-	private List<StateMessage> stati = new ArrayList<StateMessage>();
+	private StateMessage state = null;
+	private StateMessage responseState = null;
 
+	public RegistroServiziManager getRegistroServiziManager() {
+		return this.registroServiziManager;
+	}
+	public StateMessage getState() {
+		return this.state;
+	}
+	public StateMessage getResponseState() {
+		return this.responseState;
+	}
+	
 	public boolean isInitializedConfigurazionePdDReader(){
 		return this.configurazionePdDReader!=null;
 	}
 
-	public ConfigurazionePdDManager(IState ... state){
+	public ConfigurazionePdDManager(){
 		this.configurazionePdDReader = ConfigurazionePdDReader.getInstance();
-		if(state!=null){
-			for (int i = 0; i < state.length; i++) {
-				if(state[i] instanceof StateMessage){
-					this.stati.add((StateMessage)state[i]);
-				}
-			}
-		}
-		this.registroServiziManager = RegistroServiziManager.getInstance(state);
+		this.registroServiziManager = RegistroServiziManager.getInstance();
 		this.op2Properties = OpenSPCoop2Properties.getInstance();
 	}
-
-	public void updateState(IState ... state){
-		this.stati.clear();
-		if(state!=null){
-			for (int i = 0; i < state.length; i++) {
-				if(state[i] instanceof StateMessage){
-					this.stati.add((StateMessage)state[i]);
-				}
-			}
+	public ConfigurazionePdDManager(StateMessage state){
+		this.configurazionePdDReader = ConfigurazionePdDReader.getInstance();
+		this.state = state;
+		this.registroServiziManager = RegistroServiziManager.getInstance(this.state);
+		this.op2Properties = OpenSPCoop2Properties.getInstance();
+	}
+	public ConfigurazionePdDManager(StateMessage requestState, StateMessage responseState){
+		this.configurazionePdDReader = ConfigurazionePdDReader.getInstance();
+		this.state = requestState;
+		this.responseState = responseState;
+		this.registroServiziManager = RegistroServiziManager.getInstance(this.state, this.responseState);
+		this.op2Properties = OpenSPCoop2Properties.getInstance();
+	}
+	
+	public ConfigurazionePdDManager refreshState(IState requestStateParam, IState responseStateParam) {
+		StateMessage requestState = null;
+		StateMessage responseState = null;
+		if(requestStateParam!=null && requestStateParam instanceof StateMessage) {
+			requestState = (StateMessage) requestStateParam;
 		}
-		this.registroServiziManager.updateState(state);
+		if(responseStateParam!=null && responseStateParam instanceof StateMessage) {
+			responseState = (StateMessage) responseStateParam;
+		}
+		return refreshState(requestState, responseState);
+	}
+	public ConfigurazionePdDManager refreshState(StateMessage requestState, StateMessage responseState) {
+		return _refreshState(requestState, responseState, null);
+	}
+	private ConfigurazionePdDManager _refreshState(StateMessage requestState, StateMessage responseState, RegistroServiziManager registroServiziManagerParam) {
+		if(requestState==null && responseState==null) {
+			return getInstance(); // senza stato
+		}
+		if(this.singleInstance) {
+			return ConfigurazionePdDManager.getInstance(requestState, responseState); // inizialmente era senza stato, ora serve
+		}
+		this.state = requestState;
+		this.responseState = responseState;
+		if(registroServiziManagerParam!=null) {
+			this.registroServiziManager = registroServiziManagerParam;
+		}
+		else {
+			this.registroServiziManager = this.registroServiziManager.refreshState(this.state, this.responseState);
+		}
+		return this;
+	}
+	public ConfigurazionePdDManager refreshState(RegistroServiziManager registroServiziManager) {
+		return this._refreshState(registroServiziManager.getState(), registroServiziManager.getResponseState(), registroServiziManager);
 	}
 
-	private Connection getConnection(){
-
-		if(this.stati.size()>0){
-			for (StateMessage state : this.stati) {
-				if(state!=null && state.getConnectionDB()!=null){
-					boolean validConnection = false;
-					try{
-						validConnection = !state.getConnectionDB().isClosed();
-					}catch(Exception e){}
-					if(validConnection)
-						return state.getConnectionDB();
-				}
+	private Connection getConnection() {
+		if(this.state!=null) {
+			Connection c = StateMessage.getConnection(this.state);
+			if(c!=null) {
+				return c;
+			}
+		}
+		if(this.responseState!=null) {
+			Connection c = StateMessage.getConnection(this.responseState);
+			if(c!=null) {
+				return c;
 			}
 		}
 		return null;

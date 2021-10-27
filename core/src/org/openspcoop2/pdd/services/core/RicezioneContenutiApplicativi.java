@@ -1045,7 +1045,7 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 		else{
 			nomePorta = urlProtocolContext.getFunctionParameters() + "_urlInvocazione("+ urlProtocolContext.getUrlInvocazione_formBased() + ")";
 		}
-		this.msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA,identitaPdD, this.msgContext.getIdModulo(),nomePorta);
+		this.msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA,identitaPdD, this.msgContext.getIdModulo(),nomePorta,this.configurazionePdDReader);
 		this.msgContext.setMsgDiagnostico(this.msgDiag); // aggiorno msg diagnostico
 		this.msgDiag.setPddContext(this.inRequestContext.getPddContext(), this.protocolFactory);
 		this.msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI);
@@ -1122,9 +1122,9 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 		}
 		
 		// Refresh reader
-		this.registroServiziReader.updateState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
-		this.configurazionePdDReader.updateState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
-		this.msgDiag.updateState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
+		this.registroServiziReader = this.registroServiziReader.refreshState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
+		this.configurazionePdDReader = this.configurazionePdDReader.refreshState(this.registroServiziReader);
+		this.msgDiag.updateState(this.configurazionePdDReader);
 		
 		
 		
@@ -1673,7 +1673,9 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 		this.msgDiag.mediumDebug("Lettura azione associato alla PD invocata...");
 		if(richiestaDelegata.getIdServizio().getAzione()!=null && portaDelegata!=null) {
 			// verifico se esiste una porta delegata piu' specifica
-			IdentificazionePortaDelegata identificazione = new IdentificazionePortaDelegata(this.logCore, this.protocolFactory, this.openspcoopstate.getStatoRichiesta(), portaDelegata);
+			IdentificazionePortaDelegata identificazione = new IdentificazionePortaDelegata(this.logCore, this.protocolFactory, 
+					this.registroServiziReader, this.configurazionePdDReader,
+					portaDelegata);
 			String action = richiestaDelegata.getIdServizio().getAzione();
 			if(identificazione.find(action)) {
 				IDPortaDelegata idPD_action = identificazione.getIDPortaDelegata(action);
@@ -3815,7 +3817,7 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 		try {
 			this.msgDiag.mediumDebug("Aggiornamento del messaggio");
 			requestMessage = this.protocolFactory.createProtocolManager().updateOpenSPCoop2MessageRequest(requestMessage, bustaRichiesta,
-					this.protocolFactory.getCachedRegistryReader(this.openspcoopstate.getStatoRichiesta()));
+					this.protocolFactory.getCachedRegistryReader(this.registroServiziReader));
 		} catch (Exception e) {
 			this.msgDiag.addKeywordErroreProcessamento(e,"Aggiornamento messaggio fallito");
 			this.msgDiag.logErroreGenerico(e,"ProtocolManager.updateOpenSPCoop2Message");
@@ -5357,9 +5359,9 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 		}
 			
 		// refresh risorse con nuovi stati
-		this.configurazionePdDReader.updateState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
-		this.registroServiziReader.updateState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
-		this.msgDiag.updateState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
+		this.registroServiziReader = this.registroServiziReader.refreshState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
+		this.configurazionePdDReader = this.configurazionePdDReader.refreshState(this.registroServiziReader);
+		this.msgDiag.updateState(this.configurazionePdDReader);
 		
 		
 		
@@ -5498,7 +5500,7 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 				ConsegnaContenutiApplicativi consegnaContenutiLib = null;
 				try {
 					consegnaContenutiLib = new ConsegnaContenutiApplicativi(logCore);
-					esito = consegnaContenutiLib.onMessage(openspcoopstate);
+					esito = consegnaContenutiLib.onMessage(openspcoopstate, this.registroServiziReader, this.configurazionePdDReader);
 					if(esito.getStatoInvocazione()==EsitoLib.ERRORE_NON_GESTITO){
 						if(esito.getErroreNonGestito()!=null)
 							throw esito.getErroreNonGestito();
@@ -5540,7 +5542,7 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 			try {
 				imbustamentoLib = new org.openspcoop2.pdd.mdb.Imbustamento(logCore);
 				msgDiag.highDebug("Imbustamento stateless (invoco) ...");
-				esito = imbustamentoLib.onMessage(openspcoopstate);
+				esito = imbustamentoLib.onMessage(openspcoopstate, this.registroServiziReader, this.configurazionePdDReader);
 				msgDiag.highDebug("Imbustamento stateless (analizzo esito) ...");
 				if(esito.getStatoInvocazione()==EsitoLib.ERRORE_NON_GESTITO){
 					if(esito.getErroreNonGestito()!=null)
@@ -5605,7 +5607,7 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 			try {
 				inoltroBusteLib = new InoltroBuste(logCore);
 				msgDiag.highDebug("InoltroBuste stateless (invoco) ...");
-				this.esitoStatelessAfterSendRequest = inoltroBusteLib.onMessage(openspcoopstate, 
+				this.esitoStatelessAfterSendRequest = inoltroBusteLib.onMessage(openspcoopstate, this.registroServiziReader, this.configurazionePdDReader, 
 						this.asyncResponseCallback!=null ? this : null);
 				if(this.asyncResponseCallback!=null) {
 					this.asynWait = true;
@@ -5725,12 +5727,12 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 					openspcoopstate.setUseConnection(false);
 					 */
 					// update states
-					registroServiziReader.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
-					configurazionePdDReader.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
-					msgDiag.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
+					registroServiziReader = registroServiziReader.refreshState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
+					configurazionePdDReader = configurazionePdDReader.refreshState(registroServiziReader);
+					msgDiag.updateState(configurazionePdDReader);
 				}
 				msgDiag.highDebug("SbustamentoRisposte stateless (invoco) ...");
-				esito = sbustamentoRisposteLib.onMessage(openspcoopstate);
+				esito = sbustamentoRisposteLib.onMessage(openspcoopstate, registroServiziReader, configurazionePdDReader);
 				msgDiag.highDebug("SbustamentoRisposte stateless (analizzo esito) ...");
 				if(esito.getStatoInvocazione()==EsitoLib.ERRORE_NON_GESTITO){
 					if(esito.getErroreNonGestito()!=null)

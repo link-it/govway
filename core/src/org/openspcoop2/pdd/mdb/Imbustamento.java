@@ -188,9 +188,9 @@ public class Imbustamento extends GenericLib{
 		/* ------------------ Inizializzo stato OpenSPCoop  --------------- */
 		msgDiag.mediumDebug("Inizializzo stato per la gestione della richiesta...");
 		openspcoopstate.initResource(identitaPdD, Imbustamento.ID_MODULO,idTransazione);
-		registroServiziManager.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
-		configurazionePdDManager.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
-		msgDiag.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
+		registroServiziManager = registroServiziManager.refreshState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
+		configurazionePdDManager = configurazionePdDManager.refreshState(registroServiziManager);
+		msgDiag.updateState(configurazionePdDManager);
 
 
 		/* ------------------ Inizializzazione Contesto di gestione  --------------- */
