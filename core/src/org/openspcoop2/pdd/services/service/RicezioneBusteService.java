@@ -276,7 +276,8 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 		// Identifico Servizio per comprendere correttamente il messageType
 		ServiceIdentificationReader serviceIdentificationReader = null;
 		try{
-			serviceIdentificationReader = ServicesUtils.getServiceIdentificationReader(this.logCore, this.requestInfo);
+			serviceIdentificationReader = ServicesUtils.getServiceIdentificationReader(this.logCore, this.requestInfo,
+					configPdDManager.getRegistroServiziManager(), configPdDManager);
 		}catch(Exception e){
 			String msg = "Inizializzazione RegistryReader fallita: "+Utilities.readFirstErrorValidMessageFromException(e);
 			this.logCore.error(msg,e);

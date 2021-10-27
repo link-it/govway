@@ -22,7 +22,6 @@ package org.openspcoop2.protocol.registry;
 
 import java.io.Serializable;
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -81,52 +80,117 @@ import org.slf4j.Logger;
  */
 public class RegistroServiziManager {
 
+	private static RegistroServiziManager staticInstanceWithoutState = null;
+	private static synchronized void initStaticInstanceWithoutState(){
+		if(staticInstanceWithoutState == null) {
+			staticInstanceWithoutState = new RegistroServiziManager();
+			staticInstanceWithoutState.singleInstance = true;
+		}
+	}
 
 	public static RegistroServiziManager getInstance(){
-		return new RegistroServiziManager();
+		//return new RegistroServiziManager();
+		if(staticInstanceWithoutState == null) {
+			if(RegistroServiziReader.getInstance()==null) {
+				return new RegistroServiziManager(); // succede all'avvio
+			}
+			initStaticInstanceWithoutState();
+		}
+		return staticInstanceWithoutState;
 	}
-	public static RegistroServiziManager getInstance(IState ... state){
-		return new RegistroServiziManager(state);
+	public static RegistroServiziManager getInstance(IState state){
+		if(state!=null && state instanceof StateMessage) {
+			return getInstance((StateMessage)state);
+		}
+		return getInstance();
+	}
+	public static RegistroServiziManager getInstance(StateMessage state){
+		if(state!=null) {
+			return new RegistroServiziManager(state);
+		}
+		return getInstance();
+	}
+	public static RegistroServiziManager getInstance(IState requestStateParam, IState responseStateParam){
+		StateMessage requestState = null;
+		StateMessage responseState = null;
+		if(requestStateParam!=null && requestStateParam instanceof StateMessage) {
+			requestState = (StateMessage) requestStateParam;
+		}
+		if(responseStateParam!=null && responseStateParam instanceof StateMessage) {
+			responseState = (StateMessage) responseStateParam;
+		}
+		if(requestState!=null || responseState!=null) {
+			return new RegistroServiziManager(requestState,responseState);
+		}
+		return getInstance();
+	}
+	public static RegistroServiziManager getInstance(StateMessage requestState, StateMessage responseState){
+		if(requestState!=null || responseState!=null) {
+			return new RegistroServiziManager(requestState,responseState);
+		}
+		return getInstance();
 	}
 
-	
+
+	private boolean singleInstance = false;
 	private RegistroServiziReader registroServiziReader = null;
-	private List<StateMessage> stati = new ArrayList<StateMessage>();
-	
-	
-	public RegistroServiziManager(IState ... state){
-		this.registroServiziReader = RegistroServiziReader.getInstance();
-		if(state!=null){
-			for (int i = 0; i < state.length; i++) {
-				if(state[i] instanceof StateMessage){
-					this.stati.add((StateMessage)state[i]);
-				}
-			}
-		}
+	private StateMessage state = null;
+	private StateMessage responseState = null;
+
+	public StateMessage getState() {
+		return this.state;
+	}
+	public StateMessage getResponseState() {
+		return this.responseState;
 	}
 	
-	public void updateState(IState ... state){
-		this.stati.clear();
-		if(state!=null){
-			for (int i = 0; i < state.length; i++) {
-				if(state[i] instanceof StateMessage){
-					this.stati.add((StateMessage)state[i]);
-				}
-			}
+	public RegistroServiziManager(){
+		this.registroServiziReader = RegistroServiziReader.getInstance();	
+	}
+	public RegistroServiziManager(StateMessage state){
+		this();
+		this.state = state;
+	}
+	public RegistroServiziManager(StateMessage requestState, StateMessage responseState){
+		this();
+		this.state = requestState;
+		this.responseState = responseState;
+	}
+	
+	public RegistroServiziManager refreshState(IState requestStateParam, IState responseStateParam) {
+		StateMessage requestState = null;
+		StateMessage responseState = null;
+		if(requestStateParam!=null && requestStateParam instanceof StateMessage) {
+			requestState = (StateMessage) requestStateParam;
 		}
+		if(responseStateParam!=null && responseStateParam instanceof StateMessage) {
+			responseState = (StateMessage) responseStateParam;
+		}
+		return refreshState(requestState, responseState);
+	}
+	public RegistroServiziManager refreshState(StateMessage requestState, StateMessage responseState) {
+		if(requestState==null && responseState==null) {
+			return getInstance(); // senza stato
+		}
+		if(this.singleInstance) {
+			return RegistroServiziManager.getInstance(requestState, responseState); // inizialmente era senza stato, ora serve
+		}
+		this.state = requestState;
+		this.responseState = responseState;
+		return this;
 	}
 	
 	private Connection getConnection() {
-		if(this.stati.size()>0){
-			for (StateMessage state : this.stati) {
-				boolean validConnection = false;
-				if(state.getConnectionDB()!=null) {
-					try{
-						validConnection = !state.getConnectionDB().isClosed();
-					}catch(Exception e){}
-				}
-				if(validConnection)
-					return state.getConnectionDB();
+		if(this.state!=null) {
+			Connection c = StateMessage.getConnection(this.state);
+			if(c!=null) {
+				return c;
+			}
+		}
+		if(this.responseState!=null) {
+			Connection c = StateMessage.getConnection(this.responseState);
+			if(c!=null) {
+				return c;
 			}
 		}
 		return null;

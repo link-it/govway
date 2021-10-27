@@ -303,7 +303,9 @@ public class RicezioneBusteServiceUtils {
 			try{
 				if(idServizio.getAzione()!=null) {
 					
-					IdentificazionePortaApplicativa identificazione = new IdentificazionePortaApplicativa(logCore, pf, null, paDefault);
+					IdentificazionePortaApplicativa identificazione = new IdentificazionePortaApplicativa(logCore, pf, 
+							serviceIdentificationReader.getRegistryReader(), serviceIdentificationReader.getConfigIntegrationReader(), // questi reader sono gia' 'cached'
+							paDefault);
 					if(identificazione.find(idServizio.getAzione())) {
 						IDPortaApplicativa idPA_action = identificazione.getIDPortaApplicativa(idServizio.getAzione());
 						if(idPA_action!=null) {

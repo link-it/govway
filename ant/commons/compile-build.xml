@@ -26,12 +26,7 @@
 			<matches string="${ant.version}" pattern=".*1\.7\..*"/>
 			<matches string="${ant.version}" pattern=".*1\.8\..*"/>
 			<matches string="${ant.version}" pattern=".*1\.9\..*"/>
-			<matches string="${ant.version}" pattern=".*1\.10\.0.*"/>
-			<matches string="${ant.version}" pattern=".*1\.10\.1.*"/>
-			<matches string="${ant.version}" pattern=".*1\.10\.2.*"/>
-			<matches string="${ant.version}" pattern=".*1\.10\.3.*"/>
-			<matches string="${ant.version}" pattern=".*1\.10\.4.*"/>
-			<matches string="${ant.version}" pattern=".*1\.10\.5.*"/>
+			<matches string="${ant.version}" pattern=".*1\.10\.[0-5] .*"/>
 		</or>
 		<then>
 			<echo message="Ant version: ${ant.version}"/>

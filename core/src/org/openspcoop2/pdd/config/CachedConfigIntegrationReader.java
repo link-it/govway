@@ -64,13 +64,20 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	private ConfigurazionePdDManager configurazionePdDMangager;
 	@SuppressWarnings("unused")
 	private IProtocolFactory<?> protocolFactory;
-	public CachedConfigIntegrationReader(Logger log,IProtocolFactory<?> protocolFactory) throws Exception{
-		this(log, protocolFactory, null);
-	}
+	/*public CachedConfigIntegrationReader(Logger log,IProtocolFactory<?> protocolFactory) throws Exception{
+		this.log = log;
+		this.protocolFactory = protocolFactory;
+		this.configurazionePdDMangager = ConfigurazionePdDManager.getInstance();
+	}*/
 	public CachedConfigIntegrationReader(Logger log,IProtocolFactory<?> protocolFactory, IState state) throws Exception{
 		this.log = log;
 		this.protocolFactory = protocolFactory;
 		this.configurazionePdDMangager = ConfigurazionePdDManager.getInstance(state);
+	}
+	public CachedConfigIntegrationReader(Logger log,IProtocolFactory<?> protocolFactory, ConfigurazionePdDManager configurazionePdDManager) throws Exception{
+		this.log = log;
+		this.protocolFactory = protocolFactory;
+		this.configurazionePdDMangager = configurazionePdDManager;
 	}
 
 	

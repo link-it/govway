@@ -22,6 +22,7 @@
 
 package org.openspcoop2.protocol.basic.registry;
 
+import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
@@ -31,7 +32,6 @@ import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
-import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.slf4j.Logger;
@@ -93,12 +93,27 @@ public abstract class AbstractIdentificazionePorta {
 		this.porteNamingUtils = new PorteNamingUtils(this.protocolFactory);
 	}
 	
-	public AbstractIdentificazionePorta(Logger log,
-			IProtocolFactory<?> protocolFactory, IState state) throws ProtocolException {
+	/*public AbstractIdentificazionePorta(Logger log,
+			IProtocolFactory<?> protocolFactory, org.openspcoop2.protocol.sdk.state.IState state) throws ProtocolException {
 		this.protocolFactory = protocolFactory;
 		this.log = log;
 		this.registryReader = this.protocolFactory.getCachedRegistryReader(state);
 		this.configIntegrationReader = this.protocolFactory.getCachedConfigIntegrationReader(state);
+	}*/
+	public AbstractIdentificazionePorta(Logger log,
+			IProtocolFactory<?> protocolFactory, RegistroServiziManager registroServiziManager, Object configurazioneManager) throws ProtocolException {
+		this.protocolFactory = protocolFactory;
+		this.log = log;
+		this.registryReader = this.protocolFactory.getCachedRegistryReader(registroServiziManager);
+		this.configIntegrationReader = this.protocolFactory.getCachedConfigIntegrationReader(configurazioneManager);
+	}
+	public AbstractIdentificazionePorta(Logger log,
+			IProtocolFactory<?> protocolFactory, 
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader) throws ProtocolException {
+		this.protocolFactory = protocolFactory;
+		this.log = log;
+		this.registryReader = registryReader;
+		this.configIntegrationReader = configIntegrationReader;
 	}
 
 

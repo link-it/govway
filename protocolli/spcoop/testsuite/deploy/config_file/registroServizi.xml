@@ -210,6 +210,8 @@
         <azione nome="https_ca_non_presente"/>
         <azione nome="https_hostname_verify"/>
         <azione nome="https_sil_consegna"/>
+	<azione nome="https_autenticazione_pa"/>
+	<azione nome="https_autenticazione_pa_opzionale"/>
         <!-- Filtro duplicati -->
         <azione nome="FiltroDuplicatiStateless" filtro-duplicati="abilitato"/>
         <azione nome="FiltroDuplicatiStateful" filtro-duplicati="abilitato"/>
@@ -797,7 +799,37 @@
         </connettore>
     </soggetto>
 
+    <!-- Soggetti SPCoop in  supporto per l'autorizzazione anti-spoofing tramite meccanismo di autenticazione sulla Porta -->
 
+    <soggetto tipo="spc" nome="Soggetto1conCredenzialiSSL">
+        <connettore tipo="http" nome="Soggetto1conCredenzialiSSL">
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
+        </connettore>
+	<credenziali tipo="ssl" 
+		subject="/CN=Soggetto1/ OU=test/ L=Pisa/ O=openspcoop.org/ ST=Italy/ C=IT/ EMAILADDRESS=apoli@link.it"
+		issuer="/CN=Soggetto1/ OU=test/ L=Pisa/ O=openspcoop.org/ ST=Italy/ C=IT/ EMAILADDRESS=apoli@link.it"/>
+    </soggetto>
+    <soggetto tipo="spc" nome="Soggetto2conCredenzialiSSL">
+        <connettore tipo="http" nome="Soggetto2conCredenzialiSSL">
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
+        </connettore>
+	<credenziali tipo="ssl" 
+		subject="/CN=Soggetto2/ OU=test/ L=Pisa/ O=openspcoop.org/ ST=Italy/ C=IT/ EMAILADDRESS=apoli@link.it"
+		issuer="/CN=Soggetto2/ OU=test/ L=Pisa/ O=openspcoop.org/ ST=Italy/ C=IT/ EMAILADDRESS=apoli@link.it"/>
+    </soggetto>
+    <soggetto tipo="spc" nome="Soggetto1SenzaCredenziali">
+        <connettore tipo="http" nome="Soggetto1SenzaCredenziali">
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
+        </connettore>
+	<credenziali tipo="ssl" 
+		subject="/CN=soggetto1alternativo/ L=Pisa/ C=IT"
+		issuer="/CN=soggetto1alternativo/ L=Pisa/ C=IT"/> <!-- sono credenziali che non sono realmente mai usate e servono a verificare un antispoofing -->
+    </soggetto>
+    <soggetto tipo="spc" nome="Soggetto2SenzaCredenziali">
+        <connettore tipo="http" nome="Soggetto2SenzaCredenziali">
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
+        </connettore>
+    </soggetto>
 
 
     <!-- Soggetto per esempio SoapBox -->
@@ -1121,6 +1153,49 @@
                     <property nome="keyStorePassword" valore="openspcoopjks"/>
                     <property nome="keyPassword" valore="openspcoop"/>
                     <property nome="hostnameVerifier" valore="false"/>
+                </connettore>
+            </fruitore>
+
+	    <fruitore tipo="spc" nome="Soggetto1conCredenzialiSSL">
+                <!-- Viene utilizzato come identita il soggetto1: corretto -->
+                <connettore tipo="https" nome="Soggetto1conCredenzialiSSL">
+                    <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/in"/>
+                    <property nome="trustStoreLocation" valore="/etc/govway/keys/soggetto1.jks"/>
+                    <property nome="trustStorePassword" valore="openspcoopjks"/>
+                    <property nome="keyStoreLocation" valore="/etc/govway/keys/soggetto1.jks"/>
+                    <property nome="keyStorePassword" valore="openspcoopjks"/>
+                    <property nome="keyPassword" valore="openspcoop"/>
+                    <property nome="hostnameVerifier" valore="false"/>
+                </connettore>
+            </fruitore>
+            <fruitore tipo="spc" nome="Soggetto2conCredenzialiSSL">
+                <!-- Viene utilizzato come identita il soggetto1: scorretto -->
+                <connettore tipo="https" nome="Soggetto2conCredenzialiSSL">
+                    <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/in"/>
+                    <property nome="trustStoreLocation" valore="/etc/govway/keys/soggetto1.jks"/>
+                    <property nome="trustStorePassword" valore="openspcoopjks"/>
+                    <property nome="keyStoreLocation" valore="/etc/govway/keys/soggetto1.jks"/>
+                    <property nome="keyStorePassword" valore="openspcoopjks"/>
+                    <property nome="keyPassword" valore="openspcoop"/>
+                    <property nome="hostnameVerifier" valore="false"/>
+                </connettore>
+            </fruitore>
+            <fruitore tipo="spc" nome="Soggetto1SenzaCredenziali">
+                <!-- Viene utilizzata una credenziale non censita su autententicazione https: scorretto -->
+                <connettore tipo="https" nome="Soggetto1SenzaCredenziali">
+                    <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/in"/>
+                    <property nome="trustStoreLocation" valore="/etc/govway/keys/soggetto1_multipleOU.jks"/>
+                    <property nome="trustStorePassword" valore="123456"/>
+                    <property nome="keyStoreLocation" valore="/etc/govway/keys/soggetto1_multipleOU.jks"/>
+                    <property nome="keyStorePassword" valore="123456"/>
+                    <property nome="keyPassword" valore="123456"/>
+                    <property nome="hostnameVerifier" valore="false"/>
+                </connettore>
+            </fruitore>
+            <fruitore tipo="spc" nome="Soggetto2SenzaCredenziali">
+                <!-- Non viene inviata alcuna credenziale: passerà solamente se l'autenticazione https e' opzionale -->
+                <connettore tipo="http" nome="Soggetto2SenzaCredenziali">
+                    <property nome="location" valore="http://127.0.0.1:8080/govway/spcoop/in"/>
                 </connettore>
             </fruitore>
 

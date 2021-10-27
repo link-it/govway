@@ -51,6 +51,7 @@ import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.EJBUtils;
@@ -1249,7 +1250,8 @@ public class PostOutResponseHandler_TransazioneUtilities {
 								repositoryBuste, msgRequest, null, 
 								context.getProtocolFactory(), idDominio, nomePorta, messaggiInConsegna,
 								spedizioneConsegnaContenuti,
-								context.getPddContext());
+								context.getPddContext(),
+								ConfigurazionePdDManager.getInstance());
 						
 					}
 					else {

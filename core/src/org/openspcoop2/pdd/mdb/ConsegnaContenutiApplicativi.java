@@ -484,7 +484,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 					this.log.error(prefix+"Errore durante il salvataggio delle informazioni di load balancer: "+t.getMessage(),t);
 				}
 			}
-			esitoLib = this.engine_onMessage(this.openspcoopstate, this.registroServiziManager, this.configurazionePdDManager, this.msgDiag, this.transazioneApplicativoServer, this.oraRegistrazione);
+			esitoLib = this.engine_onMessage();
 		}finally {
 			if(loadBalancer!=null) {
 				try {
@@ -547,11 +547,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 		return esitoLib;
 	}
 	
-	private EsitoLib engine_onMessage(IOpenSPCoopState openspcoopstate,
-			RegistroServiziManager registroServiziManager,ConfigurazionePdDManager configurazionePdDManager, 
-			MsgDiagnostico msgDiag,
-			TransazioneApplicativoServer transazioneApplicativoServer,
-			Date oraRegistrazione) throws OpenSPCoopStateException {
+	private EsitoLib engine_onMessage() throws OpenSPCoopStateException {
 
 		this.dataConsegna = DateManager.getDate();
 		
@@ -757,7 +753,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 		}else{
 			this.msgDiag.setServizio(this.idServizio);
 		}
-		if(transazioneApplicativoServer!=null) {
+		if(this.transazioneApplicativoServer!=null) {
 			this.msgDiag.setServizioApplicativo(this.servizioApplicativo);
 		}
 
@@ -1002,7 +998,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 				
 				localForwardParameter = new LocalForwardParameter();
 				localForwardParameter.setLog(this.log);
-				localForwardParameter.setConfigurazionePdDReader(configurazionePdDManager);
+				localForwardParameter.setConfigurazionePdDReader(this.configurazionePdDManager);
 				localForwardParameter.setIdCorrelazioneApplicativa(this.idCorrelazioneApplicativa);
 				localForwardParameter.setIdentitaPdD(this.identitaPdD);
 				localForwardParameter.setIdModulo(this.idModulo);
@@ -1011,8 +1007,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 				localForwardParameter.setImplementazionePdDMittente(this.implementazionePdDMittente);
 				localForwardParameter.setIdPdDMittente(this.registroServiziManager.getIdPortaDominio(this.soggettoFruitore, null));
 				localForwardParameter.setIdPdDDestinatario(this.registroServiziManager.getIdPortaDominio(this.idServizio.getSoggettoErogatore(), null));
-				localForwardParameter.setMsgDiag(msgDiag);
-				localForwardParameter.setOpenspcoopstate(openspcoopstate);
+				localForwardParameter.setMsgDiag(this.msgDiag);
+				localForwardParameter.setOpenspcoopstate(this.openspcoopstate);
 				localForwardParameter.setPddContext(this.pddContext);
 				localForwardParameter.setProtocolFactory(this.protocolFactory);
 				localForwardParameter.setRichiestaDelegata(this.richiestaDelegata);
@@ -1037,9 +1033,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 		/* ------------------ Connessione al DB  --------------- */
 		this.msgDiag.mediumDebug("Richiesta connessione al database per la gestione della richiesta...");
 		this.openspcoopstate.initResource(this.identitaPdD, ConsegnaContenutiApplicativi.ID_MODULO,this.idTransazione);
-		this.registroServiziManager.updateState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
-		this.configurazionePdDManager.updateState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
-		this.msgDiag.updateState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
+		this.registroServiziManager = this.registroServiziManager.refreshState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
+		this.configurazionePdDManager = this.configurazionePdDManager.refreshState(this.registroServiziManager);
+		this.msgDiag.updateState(this.configurazionePdDManager);
 		
 
 
@@ -1104,7 +1100,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 				idMessaggioGestoreMessaggiRichiesta = this.bustaRichiesta.getID();
 			}
 			this.ejbUtils = new EJBUtils(this.identitaPdD,this.tipoPdD,ConsegnaContenutiApplicativi.ID_MODULO,this.idMessaggioConsegna,
-					idMessaggioGestoreMessaggiRichiesta,Costanti.INBOX,openspcoopstate,msgDiag,false,
+					idMessaggioGestoreMessaggiRichiesta,Costanti.INBOX,this.openspcoopstate,this.msgDiag,false,
 					this.consegnaContenutiApplicativiMsg.getImplementazionePdDSoggettoMittente(),
 					this.consegnaContenutiApplicativiMsg.getImplementazionePdDSoggettoDestinatario(),
 					this.profiloGestione,this.pddContext
@@ -1125,7 +1121,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 		if(this.idMessaggioPreBehaviour!=null){
 			idMessaggioGestoreMessaggiRichiesta = this.bustaRichiesta.getID();
 		}
-		this.msgRequest = new GestoreMessaggi(openspcoopstate, true, idMessaggioGestoreMessaggiRichiesta,Costanti.INBOX,msgDiag,this.pddContext);
+		this.msgRequest = new GestoreMessaggi(this.openspcoopstate, true, idMessaggioGestoreMessaggiRichiesta,Costanti.INBOX,this.msgDiag,this.pddContext);
 		this.msgRequest.setPortaDiTipoStateless(this.portaDiTipoStateless);
 		
 		// RequestInfo
@@ -1133,8 +1129,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 		if(this.requestInfo==null || this.idTransazione==null) {
 			// devo leggerlo dal messaggio
 			try {
-				this.consegnaMessagePrimaTrasformazione = this.msgRequest.getMessage(oraRegistrazione);
-				correctForwardPathNotifiche(transazioneApplicativoServer, this.consegnaMessagePrimaTrasformazione, this.protocolFactory);
+				this.consegnaMessagePrimaTrasformazione = this.msgRequest.getMessage(this.oraRegistrazione);
+				correctForwardPathNotifiche(this.transazioneApplicativoServer, this.consegnaMessagePrimaTrasformazione, this.protocolFactory);
 				if(this.requestInfo==null) {
 					Object o = this.consegnaMessagePrimaTrasformazione.getContextProperty(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 					if(o==null) {
@@ -1238,7 +1234,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 					this.connettoreMsg.setCheckPresenzaHeaderPrimaSbustamento(true);
 				}
 				if(this.connettoreMsg!=null){
-					this.connettoreMsg.initPolicyGestioneToken(configurazionePdDManager);
+					this.connettoreMsg.initPolicyGestioneToken(this.configurazionePdDManager);
 				}
 				this.msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaConGetMessage) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
 				integrationManager = this.configurazionePdDManager.consegnaRispostaAsincronaConGetMessage(this.sa);
@@ -1264,7 +1260,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 				this.msgDiag.mediumDebug("Inizializzo contesto per la gestione (getConsegnaRispostaAsincrona) [AsincronoAsimmetricoPolling]...");
 				this.connettoreMsg = this.configurazionePdDManager.getConsegnaRispostaAsincrona(this.sa,this.richiestaApplicativa);
 				if(this.connettoreMsg!=null){
-					this.connettoreMsg.initPolicyGestioneToken(configurazionePdDManager);
+					this.connettoreMsg.initPolicyGestioneToken(this.configurazionePdDManager);
 				}
 				this.msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaConGetMessage) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
 				integrationManager = this.configurazionePdDManager.consegnaRispostaAsincronaConGetMessage(this.sa);
@@ -1287,7 +1283,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 				this.msgDiag.mediumDebug("Inizializzo contesto per la gestione (getInvocazioneServizio)...");
 				this.connettoreMsg = this.configurazionePdDManager.getInvocazioneServizio(this.sa,this.richiestaApplicativa);
 				if(this.connettoreMsg!=null){
-					this.connettoreMsg.initPolicyGestioneToken(configurazionePdDManager);
+					this.connettoreMsg.initPolicyGestioneToken(this.configurazionePdDManager);
 				}
 				this.msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaConGetMessage) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
 				integrationManager = this.configurazionePdDManager.invocazioneServizioConGetMessage(this.sa);
@@ -1319,9 +1315,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 		this.connettoreMsg.setGestioneManifest(this.gestioneManifest);
 		this.connettoreMsg.setProprietaManifestAttachments(this.proprietaManifestAttachments);
 		this.connettoreMsg.setLocalForward(this.localForward);
-		if(transazioneApplicativoServer!=null) {
+		if(this.transazioneApplicativoServer!=null) {
 			this.transazioneApplicativoServer.setConsegnaIntegrationManager(integrationManager);
-			this.connettoreMsg.setTransazioneApplicativoServer(transazioneApplicativoServer);
+			this.connettoreMsg.setTransazioneApplicativoServer(this.transazioneApplicativoServer);
 			this.connettoreMsg.setIdPortaApplicativa(this.idPA);
 			this.connettoreMsg.setDataConsegnaTransazioneApplicativoServer(this.dataConsegna);
 		}
@@ -1457,7 +1453,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 
 			/* ---------------- Check per consegna in ordine ----------------*/
 			if(consegnaInOrdine){
-				if(this.oneWayVersione11 || openspcoopstate instanceof OpenSPCoopStateful){
+				if(this.oneWayVersione11 || this.openspcoopstate instanceof OpenSPCoopStateful){
 					this.msgDiag.mediumDebug("Controllo consegna in ordine...");
 					try{
 						this.ordineConsegna = new ConsegnaInOrdine(this.openspcoopstate.getStatoRichiesta(),this.protocolFactory);
@@ -1504,7 +1500,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 				if(this.consegnaMessagePrimaTrasformazione==null) {
 					if(this.consegnaPerRiferimento==false){
 						this.consegnaMessagePrimaTrasformazione = this.msgRequest.getMessage();
-						correctForwardPathNotifiche(transazioneApplicativoServer, this.consegnaMessagePrimaTrasformazione, this.protocolFactory);
+						correctForwardPathNotifiche(this.transazioneApplicativoServer, this.consegnaMessagePrimaTrasformazione, this.protocolFactory);
 					}else{
 						// consegnaMessage deve contenere il messaggio necessario all'invocazione del metodo pubblicaEvento
 						this.consegnaMessagePrimaTrasformazione = 
@@ -1662,7 +1658,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 			this.consegnaMessageTrasformato = this.consegnaMessagePrimaTrasformazione;
 			if(this.trasformazioni!=null) {
 				try {
-					this.gestoreTrasformazioni = new GestoreTrasformazioni(this.log, msgDiag, this.idServizio, this.soggettoFruitore, this.servizioApplicativoFruitore, 
+					this.gestoreTrasformazioni = new GestoreTrasformazioni(this.log, this.msgDiag, this.idServizio, this.soggettoFruitore, this.servizioApplicativoFruitore, 
 							this.trasformazioni, this.transactionNullable, this.pddContext, this.requestInfo, this.tipoPdD,
 							generatoreErrorePA);
 					this.consegnaMessageTrasformato = this.gestoreTrasformazioni.trasformazioneRichiesta(this.consegnaMessagePrimaTrasformazione, this.bustaRichiesta);
@@ -1744,7 +1740,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 			this.connettoreMsg.setPropertiesTrasporto(propertiesTrasporto);
 			this.connettoreMsg.setPropertiesUrlBased(propertiesUrlBased);
 			this.connettoreMsg.setBusta(this.bustaRichiesta);
-			this.connettoreMsg.setMsgDiagnostico(msgDiag);
+			this.connettoreMsg.setMsgDiagnostico(this.msgDiag);
 			this.connettoreMsg.setState(this.openspcoopstate.getStatoRichiesta());
 			if(this.consegnaMessagePrimaTrasformazione!=null && this.consegnaMessagePrimaTrasformazione.getTransportRequestContext()!=null) {
 				this.connettoreMsg.setUrlInvocazionePorta(this.consegnaMessagePrimaTrasformazione.getTransportRequestContext().getUrlInvocazione_formBased());
@@ -1953,7 +1949,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 				this.outRequestContext.setMessaggio(this.consegnaMessageTrasformato);
 				
 				// TransazioneApplicativoServer
-				this.outRequestContext.setTransazioneApplicativoServer(transazioneApplicativoServer);
+				this.outRequestContext.setTransazioneApplicativoServer(this.transazioneApplicativoServer);
 				
 				// Contesto
 				ProtocolContext protocolContext = new ProtocolContext();
@@ -2010,7 +2006,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 				this.outRequestContext.setIdModulo(this.idModulo);
 
 				// Invocazione handler
-				GestoreHandlers.outRequest(this.outRequestContext, msgDiag, this.log);
+				GestoreHandlers.outRequest(this.outRequestContext, this.msgDiag, this.log);
 				
 				// Riporto messaggio
 				this.consegnaMessageTrasformato = this.outRequestContext.getMessaggio();
@@ -2127,8 +2123,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 					this.soggettoFruitore,this.idServizio,TipoPdD.APPLICATIVA,this.msgDiag.getPorta(), this.pddContext,
 					this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta(),
 					this.dumpConfig);
-			if(transazioneApplicativoServer!=null) {
-				dumpApplicativoRichiesta.setTransazioneApplicativoServer(transazioneApplicativoServer, this.idPA, this.dataConsegna);
+			if(this.transazioneApplicativoServer!=null) {
+				dumpApplicativoRichiesta.setTransazioneApplicativoServer(this.transazioneApplicativoServer, this.idPA, this.dataConsegna);
 			}
 			dumpApplicativoRichiesta.dumpRichiestaUscita(this.consegnaMessageTrasformato, this.outRequestContext.getConnettore());
 
@@ -2512,7 +2508,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 					this.responseMessage = this.protocolFactory.createProtocolManager().updateOpenSPCoop2MessageResponse(this.responseMessage, 
 							this.bustaRichiesta, nParams,
 							this.consegnaMessagePrimaTrasformazione.getTransportRequestContext(),this.transportResponseContext,
-							this.protocolFactory.getCachedRegistryReader(this.openspcoopstate.getStatoRichiesta()),
+							this.protocolFactory.getCachedRegistryReader(this.registroServiziManager),
 							true);
 				}
 			} catch (Exception e) {

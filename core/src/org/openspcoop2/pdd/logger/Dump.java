@@ -132,8 +132,8 @@ public class Dump {
 	private String idTransazione = null;
 	
 	/** Stati */
-	private IState statoRichiesta;
-	private IState statoRisposta;
+	private StateMessage statoRichiesta;
+	private StateMessage statoRisposta;
 	
 	/** Transaction */
 	private Transaction transactionNullable = null;
@@ -168,7 +168,7 @@ public class Dump {
 		this(dominio, modulo, null, null, null, tipoPdD, nomePorta, pddContext,statoRichiesta,statoRisposta,dumpConfigurazione);
 	}
 	public Dump(IDSoggetto dominio, String modulo, String idMessaggio, IDSoggetto fruitore, IDServizio servizio, 
-			TipoPdD tipoPdD, String nomePorta, PdDContext pddContext,IState statoRichiesta,IState statoRisposta,
+			TipoPdD tipoPdD, String nomePorta, PdDContext pddContext,IState stateParam,IState responseStateParam,
 			DumpConfigurazione dumpConfigurazione) throws DumpException{
 		this.dominio = dominio;
 		this.idModulo = modulo;
@@ -186,8 +186,12 @@ public class Dump {
 		this.tipoPdD = tipoPdD;
 		this.pddContext = pddContext;
 		this.properties = OpenSPCoop2Properties.getInstance();
-		this.statoRichiesta = statoRichiesta;
-		this.statoRisposta = statoRisposta;
+		if(stateParam!=null && stateParam instanceof StateMessage){
+			this.statoRichiesta = (StateMessage) stateParam;
+		}
+		if(responseStateParam!=null && responseStateParam instanceof StateMessage){
+			this.statoRisposta = (StateMessage) responseStateParam;
+		}
 		this.dumpConfigurazione = dumpConfigurazione;
 		
 		this.msgDiagErroreDump = MsgDiagnostico.newInstance(this.tipoPdD,dominio,modulo,nomePorta,this.statoRichiesta,this.statoRisposta);
@@ -220,23 +224,15 @@ public class Dump {
 
 	private Connection getConnectionFromState(boolean richiesta){
 		if(richiesta){
-			if(this.statoRichiesta!=null && this.statoRichiesta instanceof StateMessage){
-				boolean validConnection = false;
-				try{
-					validConnection = !((StateMessage)this.statoRichiesta).getConnectionDB().isClosed();
-				}catch(Exception e){}
-				if(validConnection)
-					return ((StateMessage)this.statoRichiesta).getConnectionDB();
+			Connection c = StateMessage.getConnection(this.statoRichiesta);
+			if(c!=null) {
+				return c;
 			}
 		}
 		else{
-			if(this.statoRisposta!=null && this.statoRisposta instanceof StateMessage){
-				boolean validConnection = false;
-				try{
-					validConnection = !((StateMessage)this.statoRisposta).getConnectionDB().isClosed();
-				}catch(Exception e){}
-				if(validConnection)
-					return ((StateMessage)this.statoRisposta).getConnectionDB();
+			Connection c = StateMessage.getConnection(this.statoRisposta);
+			if(c!=null) {
+				return c;
 			}
 		}
 		return null;

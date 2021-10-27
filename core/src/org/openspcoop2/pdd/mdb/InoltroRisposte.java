@@ -194,9 +194,9 @@ public class InoltroRisposte extends GenericLib{
 		/* ------------------ Inizializzo stato OpenSPCoop  --------------- */
 		msgDiag.mediumDebug("Inizializzo stato per la gestione della richiesta...");
 		openspcoopstate.initResource(identitaPdD, InoltroRisposte.ID_MODULO,idTransazione);
-		registroServiziManager.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
-		configurazionePdDManager.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
-		msgDiag.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
+		registroServiziManager = registroServiziManager.refreshState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
+		configurazionePdDManager = configurazionePdDManager.refreshState(registroServiziManager);
+		msgDiag.updateState(configurazionePdDManager);
 		
 		/* Protocol Factory */
 		IProtocolFactory<?> protocolFactory = null;
@@ -362,7 +362,7 @@ public class InoltroRisposte extends GenericLib{
 		org.openspcoop2.pdd.logger.Tracciamento tracciamento;
 		try {
 			tracciamento = new org.openspcoop2.pdd.logger.Tracciamento(identitaPdD,InoltroBuste.ID_MODULO,pddContext,tipoPorta,msgDiag.getPorta(),
-					openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
+					configurazionePdDManager);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			msgDiag.logErroreGenerico(e, "ProtocolFactory.instanziazione"); 

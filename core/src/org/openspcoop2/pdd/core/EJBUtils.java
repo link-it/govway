@@ -2246,7 +2246,8 @@ public class EJBUtils {
 					repositoryBuste, gestoreMessaggi, this.nodeSender, 
 					this.protocolFactory, this.identitaPdD, nomePorta, messaggiInConsegna,
 					spedizioneConsegnaContenuti,
-					this.pddContext);
+					this.pddContext,
+					this.configurazionePdDReader);
 		
 			this.gestioneSolamenteConIntegrationManager = esito.isGestioneSolamenteConIntegrationManager();
 			this.gestioneStatelessConIntegrationManager = esito.isGestioneStatelessConIntegrationManager();
@@ -2259,7 +2260,8 @@ public class EJBUtils {
 			IProtocolFactory<?> protocolFactory,IDSoggetto identitaPdD, String idModulo,
 			EJBUtilsMessaggioInConsegna message,
 			boolean spedizioneConsegnaContenuti,
-			PdDContext pddContext) throws Exception {
+			PdDContext pddContext,
+			ConfigurazionePdDManager configurazionePdDManager) throws Exception {
 		
 		EJBUtilsMessaggioInConsegnaEsito esito = new EJBUtilsMessaggioInConsegnaEsito();
 		
@@ -2395,7 +2397,7 @@ public class EJBUtils {
 								
 						if(idBustaPreBehaviourNewMessage!=null){						
 							ConsegnaContenutiApplicativi lib = new ConsegnaContenutiApplicativi(log);
-							EsitoLib result = lib.onMessage(state);
+							EsitoLib result = lib.onMessage(state, configurazionePdDManager);
 							log.debug("Invocato ConsegnaContenutiApplicativi per ["+busta.getID()+"] con esito: "+result.getStatoInvocazione(),result.getErroreNonGestito());
 						}
 					}

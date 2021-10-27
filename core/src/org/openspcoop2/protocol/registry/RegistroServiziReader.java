@@ -279,7 +279,7 @@ public class RegistroServiziReader {
 	 *
 	 * @return Istanza del Reader del Registro
 	 */
-	protected static RegistroServiziReader getInstance(){
+	public static RegistroServiziReader getInstance(){
 		return RegistroServiziReader.registroServiziReader;
 	}
 

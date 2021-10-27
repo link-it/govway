@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import javax.xml.soap.SOAPException;
@@ -124,15 +125,28 @@ public class HTTPS extends GestioneViaJmx {
 	
 	/** Messaggi */
 	private static final String MESSAGGIO_SPCOOP_RICEVUTO = "Ricevuto messaggio di cooperazione con identificativo [@IDEGOV@] inviato dalla parte mittente [@MITTENTE@] ( SSL-Subject 'CN=@CN@, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it' ) ";
-	private static final String AUTORIZZAZIONE_PREFIX = "Verifica autorizzazione [authenticated] messaggio con identificativo [@IDEGOV@] fruitore [@MITTENTE@] -> servizio [@DESTINATARIO@_@SERVIZIO@_@AZIONE@] credenzialiMittente ( SSL-Subject 'CN=@CN@, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it' )";
-	private static final String AUTORIZZAZIONE_IN_CORSO = AUTORIZZAZIONE_PREFIX+" ...";
-	private static final String AUTORIZZAZIONE_EFFETTUATA = AUTORIZZAZIONE_PREFIX+": autorizzato";
+	private static final String AUTORIZZAZIONE_PREFIX_SENZA_AUTENTICAZIONE = "Verifica autorizzazione [authenticated] messaggio con identificativo [@IDEGOV@] fruitore [@MITTENTE@] -> servizio [@DESTINATARIO@:@SERVIZIO@:1:@AZIONE@] credenzialiMittente ( SSL-Subject 'CN=@CN@, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it' )";
+	private static final String AUTORIZZAZIONE_IN_CORSO_SENZA_AUTENTICAZIONE = AUTORIZZAZIONE_PREFIX_SENZA_AUTENTICAZIONE+" in corso ...";
+	private static final String AUTORIZZAZIONE_EFFETTUATA_SENZA_AUTENTICAZIONE = AUTORIZZAZIONE_PREFIX_SENZA_AUTENTICAZIONE+" completata con successo";
+	
+	private static final String MESSAGGIO_SPCOOP_RICEVUTO_AUTENTICAZIONE_HTTPS_IN_CORSO = "Autenticazione [ssl] in corso ( SSL-Subject 'CN=@CN@, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it' ) ...";
+	private static final String MESSAGGIO_SPCOOP_RICEVUTO_AUTENTICAZIONE_HTTPS_SUCCESS_PREFIX = "Autenticazione [ssl] effettuata con successo";
+	private static final String MESSAGGIO_SPCOOP_RICEVUTO_AUTENTICAZIONE_HTTPS = "Ricevuto messaggio di cooperazione con identificativo [@IDEGOV@] inviato dalla parte mittente [@MITTENTE@]";
+	private static final String AUTORIZZAZIONE_PREFIX_AUTENTICAZIONE_HTTPS = "Verifica autorizzazione [authenticated] messaggio con identificativo [@IDEGOV@] fruitore [@MITTENTE@] -> servizio [@DESTINATARIO@:@SERVIZIO@:1:@AZIONE@]";
+	private static final String AUTORIZZAZIONE_IN_CORSO_AUTENTICAZIONE_HTTPS = AUTORIZZAZIONE_PREFIX_AUTENTICAZIONE_HTTPS+" in corso ...";
+	private static final String AUTORIZZAZIONE_EFFETTUATA_AUTENTICAZIONE_HTTPS= AUTORIZZAZIONE_PREFIX_AUTENTICAZIONE_HTTPS+" completata con successo";
+	
 	
 	private static final String AUTORIZZAZIONE_BUSTE_FALLITA = "Verifica autorizzazione [authenticated] messaggio con identificativo [@IDEGOV@] fruitore [@MITTENTE@] -> servizio [@DESTINATARIO@:@SERVIZIO@:1:@AZIONE@]@PDD@ fallita (codice: EGOV_IT_201) Il soggetto @MITTENTE@ non è autorizzato ad invocare il servizio @SERVIZIO@_@AZIONE@ (versione:1) erogato da @DESTINATARIO@";
 	private static final String NON_AUTORIZZATO = "Il soggetto @MITTENTE@ non è autorizzato ad invocare il servizio @SERVIZIO@_@AZIONE@ (versione:1) erogato da @DESTINATARIO@";
 	private static final String _SOAP_FAULT_AUTORIZZAZIONE_SPCOOP_FALLITA = "@DESTINATARIO@ ha rilevato le seguenti eccezioni: "+NON_AUTORIZZATO;
 	private static final String SOAP_FAULT_AUTORIZZAZIONE_SPCOOP_FALLITA_SUBJECT_NON_PRESENTE = _SOAP_FAULT_AUTORIZZAZIONE_SPCOOP_FALLITA;
 			//+" (subject della porta di dominio che ha inviato la busta non presente (https attivo?, client-auth attivo?))";
+	
+	private static final String AUTENTICAZIONE_FALLITA_MITTENTE = "@DESTINATARIO@ ha rilevato le seguenti eccezioni: Mittente/IdentificativoParte";
+	private static final String AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE = "@DESTINATARIO@ ha rilevato le seguenti eccezioni: Autenticazione fallita, credenziali non fornite";
+	
+	private static final String AUTENTICAZIONE_FALLITA_SPOOFING_PREFIX = "Autenticazione [ssl] fallita ( SSL-Subject '@SUBJECT@' ) : [RicezioneBuste] processo di autenticazione [ssl] fallito,";
 	
 	private static final String PDD_NON_DISPONIBILE = "Servizio erogato dal Soggetto @DESTINATARIO@ non disponibile";
 	private static final String BAD_CERTIFICATE = "bad_certificate";
@@ -189,22 +203,22 @@ public class HTTPS extends GestioneViaJmx {
 				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg1+"]");
 				Assert.assertTrue(dataMsg.isTracedMessaggio(id, msg1));
 				
-				String msg2 = AUTORIZZAZIONE_IN_CORSO.replace("@IDEGOV@", id);
+				String msg2 = AUTORIZZAZIONE_IN_CORSO_SENZA_AUTENTICAZIONE.replace("@IDEGOV@", id);
 				msg2 = msg2.replace("@MITTENTE@", this.collaborazioneSPCoopBase.getMittente().getTipo()+"/"+this.collaborazioneSPCoopBase.getMittente().getNome());
 				msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopBase.getDestinatario().getNome());
 				msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO);
 				msg2 = msg2.replace("@AZIONE@", CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_WITH_CLIENT_AUTH);
 				msg2 = msg2.replace("@CN@", "Soggetto1");
-				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg1+"]");
-				Assert.assertTrue(dataMsg.isTracedMessaggio(id, msg1));			
-				msg2 = AUTORIZZAZIONE_EFFETTUATA.replace("@IDEGOV@", id);
+				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg2+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(id, msg2));			
+				msg2 = AUTORIZZAZIONE_EFFETTUATA_SENZA_AUTENTICAZIONE.replace("@IDEGOV@", id);
 				msg2 = msg2.replace("@MITTENTE@", this.collaborazioneSPCoopBase.getMittente().getTipo()+"/"+this.collaborazioneSPCoopBase.getMittente().getNome());
 				msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopBase.getDestinatario().getNome());
 				msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO);
 				msg2 = msg2.replace("@AZIONE@", CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_WITH_CLIENT_AUTH);
 				msg2 = msg2.replace("@CN@", "Soggetto1");
-				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg1+"]");
-				Assert.assertTrue(dataMsg.isTracedMessaggio(id, msg1));
+				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg2+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(id, msg2));
 			}
 			
 		}catch(Exception e){
@@ -261,22 +275,22 @@ public class HTTPS extends GestioneViaJmx {
 				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg1+"]");
 				Assert.assertTrue(dataMsg.isTracedMessaggio(id, msg1));
 				
-				String msg2 = AUTORIZZAZIONE_IN_CORSO.replace("@IDEGOV@", id);
+				String msg2 = AUTORIZZAZIONE_IN_CORSO_SENZA_AUTENTICAZIONE.replace("@IDEGOV@", id);
 				msg2 = msg2.replace("@MITTENTE@", this.collaborazioneSPCoopBase.getMittente().getTipo()+"/"+this.collaborazioneSPCoopBase.getMittente().getNome());
 				msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopBase.getDestinatario().getNome());
 				msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO);
 				msg2 = msg2.replace("@AZIONE@", CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_WITH_CLIENT_AUTH_IDENTITA2);
 				msg2 = msg2.replace("@CN@", "Soggetto2");
-				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg1+"]");
-				Assert.assertTrue(dataMsg.isTracedMessaggio(id, msg1));			
-				msg2 = AUTORIZZAZIONE_EFFETTUATA.replace("@IDEGOV@", id);
+				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg2+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(id, msg2));			
+				msg2 = AUTORIZZAZIONE_EFFETTUATA_SENZA_AUTENTICAZIONE.replace("@IDEGOV@", id);
 				msg2 = msg2.replace("@MITTENTE@", this.collaborazioneSPCoopBase.getMittente().getTipo()+"/"+this.collaborazioneSPCoopBase.getMittente().getNome());
 				msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopBase.getDestinatario().getNome());
 				msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO);
 				msg2 = msg2.replace("@AZIONE@", CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_WITH_CLIENT_AUTH_IDENTITA2);
 				msg2 = msg2.replace("@CN@", "Soggetto2");
-				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg1+"]");
-				Assert.assertTrue(dataMsg.isTracedMessaggio(id, msg1));
+				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg2+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(id, msg2));
 			}
 			
 		}catch(Exception e){
@@ -537,20 +551,22 @@ public class HTTPS extends GestioneViaJmx {
 				msg1 = msg1.replace("@CN@", "Soggetto1");
 				Assert.assertTrue(dataMsg.isTracedMessaggio(id, msg1)==false);
 				
-				String msg2 = AUTORIZZAZIONE_IN_CORSO.replace("@IDEGOV@", id);
+				String msg2 = AUTORIZZAZIONE_IN_CORSO_SENZA_AUTENTICAZIONE.replace("@IDEGOV@", id);
 				msg2 = msg2.replace("@MITTENTE@", this.collaborazioneSPCoopBase.getMittente().getTipo()+"/"+this.collaborazioneSPCoopBase.getMittente());
 				msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopBase.getDestinatario());
 				msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO);
 				msg2 = msg2.replace("@AZIONE@", CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_WITH_CLIENT_AUTH);
 				msg2 = msg2.replace("@CN@", "Soggetto1");
-				Assert.assertTrue(dataMsg.isTracedMessaggio(id, msg1)==false);			
-				msg2 = AUTORIZZAZIONE_EFFETTUATA.replace("@IDEGOV@", id);
+				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg2+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(id, msg2)==false);			
+				msg2 = AUTORIZZAZIONE_EFFETTUATA_SENZA_AUTENTICAZIONE.replace("@IDEGOV@", id);
 				msg2 = msg2.replace("@MITTENTE@", this.collaborazioneSPCoopBase.getMittente().getTipo()+"/"+this.collaborazioneSPCoopBase.getMittente());
 				msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopBase.getDestinatario());
 				msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO);
 				msg2 = msg2.replace("@AZIONE@", CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_WITH_CLIENT_AUTH);
 				msg2 = msg2.replace("@CN@", "Soggetto1");
-				Assert.assertTrue(dataMsg.isTracedMessaggio(id, msg1)==false);
+				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg2+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(id, msg2)==false);
 			}
 			
 		}catch(Exception e){
@@ -1574,22 +1590,22 @@ public class HTTPS extends GestioneViaJmx {
 				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg1+"]");
 				Assert.assertTrue(dataMsg.isTracedMessaggio(id, msg1));
 				
-				String msg2 = AUTORIZZAZIONE_IN_CORSO.replace("@IDEGOV@", id);
+				String msg2 = AUTORIZZAZIONE_IN_CORSO_SENZA_AUTENTICAZIONE.replace("@IDEGOV@", id);
 				msg2 = msg2.replace("@MITTENTE@", this.collaborazioneSPCoopFruitoreSoggetto1.getMittente().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto1.getMittente().getNome());
 				msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopFruitoreSoggetto1.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto1.getDestinatario().getNome());
 				msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO);
-				msg2 = msg2.replace("_@AZIONE@", "");
+				msg2 = msg2.replace(":@AZIONE@", "");
 				msg2 = msg2.replace("@CN@", "Soggetto1");
-				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg1+"]");
-				Assert.assertTrue(dataMsg.isTracedMessaggio(id, msg1));			
-				msg2 = AUTORIZZAZIONE_EFFETTUATA.replace("@IDEGOV@", id);
+				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg2+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(id, msg2));			
+				msg2 = AUTORIZZAZIONE_EFFETTUATA_SENZA_AUTENTICAZIONE.replace("@IDEGOV@", id);
 				msg2 = msg2.replace("@MITTENTE@", this.collaborazioneSPCoopFruitoreSoggetto1.getMittente().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto1.getMittente().getNome());
 				msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopFruitoreSoggetto1.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto1.getDestinatario().getNome());
 				msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO);
-				msg2 = msg2.replace("_@AZIONE@", "");
+				msg2 = msg2.replace(":@AZIONE@", "");
 				msg2 = msg2.replace("@CN@", "Soggetto1");
-				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg1+"]");
-				Assert.assertTrue(dataMsg.isTracedMessaggio(id, msg1));
+				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg2+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(id, msg2));
 			}
 			
 		}catch(Exception e){
@@ -1871,7 +1887,7 @@ public class HTTPS extends GestioneViaJmx {
 	
 	
 	/***
-	 * Test spoofing rilevato
+	 * Test spoofing rilevato (vecchio meccanismo tramite PDD, i test con la nuova autenticazione https sono in fondo alla classe)
 	 */
 	private CooperazioneBaseInformazioni infoFruitoreSoggetto2 = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_2,
 			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
@@ -2371,23 +2387,27 @@ public class HTTPS extends GestioneViaJmx {
 				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg1+"]");
 				Assert.assertTrue(dataMsg.isTracedMessaggio(id, msg1));
 				
-				String msg2 = AUTORIZZAZIONE_IN_CORSO.replace("@IDEGOV@", id);
+				String msg2 = AUTORIZZAZIONE_IN_CORSO_SENZA_AUTENTICAZIONE.replace("@IDEGOV@", id);
 				msg2 = msg2.replace("@MITTENTE@", this.collaborazioneSPCoopFruitoreSoggettoNonAutenticato.getMittente().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggettoNonAutenticato.getMittente().getNome());
 				msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopFruitoreSoggettoNonAutenticato.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggettoNonAutenticato.getDestinatario().getNome());
 				msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO);
-				msg2 = msg2.replace("_@AZIONE@", "");
+				msg2 = msg2.replace(":@AZIONE@", "");
 				msg2 = msg2.replace("@CN@", "Soggetto1");
-				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg1+"]");
-				Assert.assertTrue(dataMsg.isTracedMessaggio(id, msg1));			
-				msg2 = AUTORIZZAZIONE_EFFETTUATA.replace("@IDEGOV@", id);
+				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg2+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(id, msg2));			
+				msg2 = AUTORIZZAZIONE_EFFETTUATA_SENZA_AUTENTICAZIONE.replace("@IDEGOV@", id);
 				msg2 = msg2.replace("@MITTENTE@", this.collaborazioneSPCoopFruitoreSoggettoNonAutenticato.getMittente().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggettoNonAutenticato.getMittente().getNome());
 				msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopFruitoreSoggettoNonAutenticato.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggettoNonAutenticato.getDestinatario().getNome());
 				msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO);
-				msg2 = msg2.replace("_@AZIONE@", "");
+				msg2 = msg2.replace(":@AZIONE@", "");
 				msg2 = msg2.replace("@CN@", "Soggetto1");
-				msg2 = msg2 + " (client-auth disabilitato nella porta di dominio PdDSoggettoNonAutenticato)";
-				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg1+"]");
-				Assert.assertTrue(dataMsg.isTracedMessaggio(id, msg1));
+				String msg2_check1 = msg2 + " (in cache) (client-auth disabilitato nella porta di dominio PdDSoggettoNonAutenticato)";
+				String msg2_check2 = msg2 + " (client-auth disabilitato nella porta di dominio PdDSoggettoNonAutenticato)";
+				boolean esito1 = dataMsg.isTracedMessaggioWithLike(id, msg2_check1);
+				boolean esito2 = dataMsg.isTracedMessaggioWithLike(id, msg2_check2);
+				Reporter.log("Controllo messaggio (id:"+id+") msg1["+msg2_check1+"] esito:"+esito1+"");
+				Reporter.log("Controllo messaggio (id:"+id+") msg1["+msg2_check2+"] esito:"+esito2+"");
+				Assert.assertTrue(esito1 || esito2);
 			}
 			
 		}catch(Exception e){
@@ -2515,6 +2535,1221 @@ public class HTTPS extends GestioneViaJmx {
 			if(dataMsg!=null){
 				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(id, "https"));
 			}
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+			if(dataMsg!=null){
+				dataMsg.close();
+			}
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/***
+	 * Test https con autenticazione https e autorizzazione spcoop ok
+	 */
+	private CooperazioneBaseInformazioni infoFruitoreSoggetto1conCredenziali = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_1_CON_CREDENZIALI_SSL,
+			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopFruitoreSoggetto1conCredenziali = 
+		new CooperazioneBase(false,MessageType.SOAP_11,  this.infoFruitoreSoggetto1conCredenziali, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
+	
+	Repository repositoryHTTPSAutorizzazioneSPCoopOkSoggetto1conCredenziali=new Repository();
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".AUTENTICAZIONE_HTTPS_AUTORIZZAZIONE_SPCOOP"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void httpsAutorizzazioneSPCoopOkSoggetto1conCredenziali() throws TestSuiteException, IOException, SOAPException{
+		this.collaborazioneSPCoopFruitoreSoggetto1conCredenziali.sincrono(this.repositoryHTTPSAutorizzazioneSPCoopOkSoggetto1conCredenziali,
+				CostantiTestSuite.PORTA_DELEGATA_AUTORIZZAZIONE_SPCOOP_AUTENTICAZIONE_HTTPS_PA_SOGGETTO1,addIDUnivoco);
+	}
+	@DataProvider (name="httpsAutorizzazioneSPCoopOkSoggetto1conCredenziali")
+	public Object[][]testHttpsAutorizzazioneSPCoopOkSoggetto1conCredenziali()throws Exception{
+		String id=this.repositoryHTTPSAutorizzazioneSPCoopOkSoggetto1conCredenziali.getNext();
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),null,id,false},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),DatabaseProperties.getDatabaseComponentDiagnosticaErogatore(),id,true}	
+		};
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".AUTENTICAZIONE_HTTPS_AUTORIZZAZIONE_SPCOOP"},dataProvider="httpsAutorizzazioneSPCoopOkSoggetto1conCredenziali",dependsOnMethods={"httpsAutorizzazioneSPCoopOkSoggetto1conCredenziali"})
+	public void testHttpsAutorizzazioneSPCoopOkSoggetto1conCredenziali(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			this.collaborazioneSPCoopFruitoreSoggetto1conCredenziali.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_AUTENTICAZIONE_PA, 
+					checkServizioApplicativo,null);
+			
+			// Check msgDiag
+			if(dataMsg!=null){
+				
+				String msg1 = MESSAGGIO_SPCOOP_RICEVUTO_AUTENTICAZIONE_HTTPS_IN_CORSO.replace("@CN@", "Soggetto1");
+				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg1+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggio(id, msg1));
+				
+				msg1 = MESSAGGIO_SPCOOP_RICEVUTO_AUTENTICAZIONE_HTTPS_SUCCESS_PREFIX;
+				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg1+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(id, msg1));
+				
+				msg1 = MESSAGGIO_SPCOOP_RICEVUTO_AUTENTICAZIONE_HTTPS.replace("@IDEGOV@", id);
+				msg1 = msg1.replace("@MITTENTE@", this.collaborazioneSPCoopFruitoreSoggetto1conCredenziali.getMittente().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto1conCredenziali.getMittente().getNome());
+				msg1 = msg1.replace("@CN@", "Soggetto1");
+				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg1+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(id, msg1));
+				
+				String msg2 = AUTORIZZAZIONE_IN_CORSO_AUTENTICAZIONE_HTTPS.replace("@IDEGOV@", id);
+				msg2 = msg2.replace("@MITTENTE@", this.collaborazioneSPCoopFruitoreSoggetto1conCredenziali.getMittente().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto1conCredenziali.getMittente().getNome());
+				msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopFruitoreSoggetto1conCredenziali.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto1conCredenziali.getDestinatario().getNome());
+				msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO);
+				msg2 = msg2.replace("@AZIONE@", CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_AUTENTICAZIONE_PA);
+				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg2+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(id, msg2));			
+				msg2 = AUTORIZZAZIONE_EFFETTUATA_AUTENTICAZIONE_HTTPS.replace("@IDEGOV@", id);
+				msg2 = msg2.replace("@MITTENTE@", this.collaborazioneSPCoopFruitoreSoggetto1conCredenziali.getMittente().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto1conCredenziali.getMittente().getNome());
+				msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopFruitoreSoggetto1conCredenziali.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto1conCredenziali.getDestinatario().getNome());
+				msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO);
+				msg2 = msg2.replace("@AZIONE@", CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_AUTENTICAZIONE_PA);
+				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg2+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(id, msg2));
+			}
+			
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+			if(dataMsg!=null){
+				dataMsg.close();
+			}
+		}
+	}
+	
+	
+	
+	
+	
+	/***
+	 * Test https con autenticazione https opzionale e autorizzazione spcoop ok
+	 */
+	private CooperazioneBaseInformazioni infoFruitoreSoggetto1conCredenzialiAuthnOpzionale = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_1_CON_CREDENZIALI_SSL,
+			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopFruitoreSoggetto1conCredenzialiAuthnOpzionale = 
+		new CooperazioneBase(false,MessageType.SOAP_11,  this.infoFruitoreSoggetto1conCredenzialiAuthnOpzionale, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
+	
+	Repository repositoryHTTPSAutorizzazioneSPCoopOkSoggetto1conCredenzialiAuthnOpzionale=new Repository();
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".AUTENTICAZIONE_HTTPS_OPZIONALE_AUTORIZZAZIONE_SPCOOP"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void httpsAutorizzazioneSPCoopOkSoggetto1conCredenzialiAuthnOpzionale() throws TestSuiteException, IOException, SOAPException{
+		this.collaborazioneSPCoopFruitoreSoggetto1conCredenzialiAuthnOpzionale.sincrono(this.repositoryHTTPSAutorizzazioneSPCoopOkSoggetto1conCredenzialiAuthnOpzionale,
+				CostantiTestSuite.PORTA_DELEGATA_AUTORIZZAZIONE_SPCOOP_AUTENTICAZIONE_HTTPS_PA_OPZIONALE_SOGGETTO1,addIDUnivoco);
+	}
+	@DataProvider (name="httpsAutorizzazioneSPCoopOkSoggetto1conCredenzialiAuthnOpzionale")
+	public Object[][]testHttpsAutorizzazioneSPCoopOkSoggetto1conCredenzialiAuthnOpzionale()throws Exception{
+		String id=this.repositoryHTTPSAutorizzazioneSPCoopOkSoggetto1conCredenzialiAuthnOpzionale.getNext();
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),null,id,false},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),DatabaseProperties.getDatabaseComponentDiagnosticaErogatore(),id,true}	
+		};
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".AUTENTICAZIONE_HTTPS_OPZIONALE_AUTORIZZAZIONE_SPCOOP"},dataProvider="httpsAutorizzazioneSPCoopOkSoggetto1conCredenzialiAuthnOpzionale",dependsOnMethods={"httpsAutorizzazioneSPCoopOkSoggetto1conCredenzialiAuthnOpzionale"})
+	public void testHttpsAutorizzazioneSPCoopOkSoggetto1conCredenzialiAuthnOpzionale(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			this.collaborazioneSPCoopFruitoreSoggetto1conCredenzialiAuthnOpzionale.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_AUTENTICAZIONE_PA_OPZIONALE, 
+					checkServizioApplicativo,null);
+			
+			// Check msgDiag
+			if(dataMsg!=null){
+				
+				String msg1 = MESSAGGIO_SPCOOP_RICEVUTO_AUTENTICAZIONE_HTTPS_IN_CORSO.replace("@CN@", "Soggetto1");
+				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg1+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggio(id, msg1));
+				
+				msg1 = MESSAGGIO_SPCOOP_RICEVUTO_AUTENTICAZIONE_HTTPS_SUCCESS_PREFIX;
+				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg1+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(id, msg1));
+				
+				msg1 = MESSAGGIO_SPCOOP_RICEVUTO_AUTENTICAZIONE_HTTPS.replace("@IDEGOV@", id);
+				msg1 = msg1.replace("@MITTENTE@", this.collaborazioneSPCoopFruitoreSoggetto1conCredenzialiAuthnOpzionale.getMittente().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto1conCredenzialiAuthnOpzionale.getMittente().getNome());
+				msg1 = msg1.replace("@CN@", "Soggetto1");
+				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg1+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(id, msg1));
+				
+				String msg2 = AUTORIZZAZIONE_IN_CORSO_AUTENTICAZIONE_HTTPS.replace("@IDEGOV@", id);
+				msg2 = msg2.replace("@MITTENTE@", this.collaborazioneSPCoopFruitoreSoggetto1conCredenzialiAuthnOpzionale.getMittente().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto1conCredenzialiAuthnOpzionale.getMittente().getNome());
+				msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopFruitoreSoggetto1conCredenzialiAuthnOpzionale.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto1conCredenzialiAuthnOpzionale.getDestinatario().getNome());
+				msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO);
+				msg2 = msg2.replace("@AZIONE@", CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_AUTENTICAZIONE_PA_OPZIONALE);
+				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg2+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(id, msg2));			
+				msg2 = AUTORIZZAZIONE_EFFETTUATA_AUTENTICAZIONE_HTTPS.replace("@IDEGOV@", id);
+				msg2 = msg2.replace("@MITTENTE@", this.collaborazioneSPCoopFruitoreSoggetto1conCredenzialiAuthnOpzionale.getMittente().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto1conCredenzialiAuthnOpzionale.getMittente().getNome());
+				msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopFruitoreSoggetto1conCredenzialiAuthnOpzionale.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto1conCredenzialiAuthnOpzionale.getDestinatario().getNome());
+				msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO);
+				msg2 = msg2.replace("@AZIONE@", CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_AUTENTICAZIONE_PA_OPZIONALE);
+				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg2+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(id, msg2));
+			}
+			
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+			if(dataMsg!=null){
+				dataMsg.close();
+			}
+		}
+	}
+	
+	
+	
+
+	
+	
+	
+	private CooperazioneBaseInformazioni infoFruitoreSoggetto2conCredenziali = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_2,
+			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopFruitoreSoggetto2conCredenziali = 
+		new CooperazioneBase(false,MessageType.SOAP_11,  this.infoFruitoreSoggetto2conCredenziali, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
+	Repository repositorySpoofingRilevatoAutenticazioneSoggettoIdentificatoAltroSoggetto=new Repository();
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_AUTHN_SSL_IDENTIFICATO_ALTRO_SOGGETTO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void spoofingRilevatoAutenticazioneSoggettoIdentificatoAltroSoggetto_genericCode_wrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_spoofingRilevatoAutenticazioneSoggettoIdentificatoAltroSoggetto(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_AUTHN_SSL_IDENTIFICATO_ALTRO_SOGGETTO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void spoofingRilevatoAutenticazioneSoggettoIdentificatoAltroSoggetto_genericCode_unwrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = true;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_spoofingRilevatoAutenticazioneSoggettoIdentificatoAltroSoggetto(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_AUTHN_SSL_IDENTIFICATO_ALTRO_SOGGETTO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void spoofingRilevatoAutenticazioneSoggettoIdentificatoAltroSoggetto_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_spoofingRilevatoAutenticazioneSoggettoIdentificatoAltroSoggetto(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	private void _spoofingRilevatoAutenticazioneSoggettoIdentificatoAltroSoggetto(boolean genericCode, boolean unwrap) throws TestSuiteException, IOException, Exception{
+		
+		java.io.FileInputStream fin = null;
+		DatabaseComponent dbComponentFruitore = null;
+		try{
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
+
+			Message msg=new Message(fin);
+			msg.getSOAPPartAsBytes();
+			
+			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorySpoofingRilevatoAutenticazioneSoggettoIdentificatoAltroSoggetto);
+			client.setSoapAction("\"TEST\"");
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTORIZZAZIONE_SPCOOP_AUTENTICAZIONE_HTTPS_PA_SOGGETTO2);
+			client.connectToSoapEngine();
+			client.setMessage(msg);
+			client.setRispostaDaGestire(true);
+			// AttesaTerminazioneMessaggi
+			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentFruitore= DatabaseProperties.getDatabaseComponentFruitore();
+
+				client.setAttesaTerminazioneMessaggi(true);
+				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
+			}
+			try {
+				client.run();
+				throw new Exception("Atteso errore");
+			} catch (AxisFault error) {
+				String msg2 = AUTENTICAZIONE_FALLITA_MITTENTE;
+				msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopFruitoreSoggetto2conCredenziali.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto2conCredenziali.getDestinatario().getNome());
+				
+				String codiceErrore = "EGOV_IT_101";
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_502_BAD_RESPONSE;
+					if(unwrap) {
+						integrationFunctionError = IntegrationFunctionError.INTEROPERABILITY_PROFILE_RESPONSE_ERROR;
+					}
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msg2 = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: ["+error.getFaultString()+"]");
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(codiceErrore.equals(error.getFaultCode().getLocalPart()));
+												
+				String test = error.getFaultString();
+				Reporter.log("Controllo fault string ["+msg2+"]["+test+"]");
+				Reporter.log("length ["+msg2.length()+"] ["+test.length()+"]");
+				
+				for(int i=0; i<msg2.length(); i++){
+					if(msg2.charAt(i)!=test.charAt(i)){
+						if(msg2.charAt(i)!=' '){
+							Reporter.log("DIFFF["+msg2.charAt(i)+"]["+test.charAt(i)+"]["+(byte)msg2.charAt(i)+"]("+i+")");
+							Assert.assertTrue(false);
+						}
+					}
+				}
+				Reporter.log("IDEGOV["+client.getIdMessaggio()+"]");
+				this.repositorySpoofingRilevatoAutenticazioneSoggettoIdentificatoAltroSoggetto.add(client.getIdMessaggio());
+			}finally{
+				dbComponentFruitore.close();
+			}
+			
+		}catch(Exception e){
+			throw e;
+		}finally{
+			try{
+				fin.close();
+			}catch(Exception e){}
+			try{
+				dbComponentFruitore.close();
+			}catch(Exception e){}
+		}
+		
+	}
+	@DataProvider (name="SpoofingRilevatoAutenticazioneSoggettoIdentificatoAltroSoggetto")
+	public Object[][]testSpoofingRilevatoAutenticazioneSoggettoIdentificatoAltroSoggetto()throws Exception{
+		String id=this.repositorySpoofingRilevatoAutenticazioneSoggettoIdentificatoAltroSoggetto.getNext();
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),null,id,false},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),DatabaseProperties.getDatabaseComponentDiagnosticaErogatore(),id,true}
+		};
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_AUTHN_SSL_IDENTIFICATO_ALTRO_SOGGETTO"},dataProvider="SpoofingRilevatoAutenticazioneSoggettoIdentificatoAltroSoggetto",dependsOnMethods={"spoofingRilevatoAutenticazioneSoggettoIdentificatoAltroSoggetto_genericCode_wrap"})
+	public void testSpoofingRilevatoAutenticazioneSoggettoIdentificatoAltroSoggetto_genericCode_wrap(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testSpoofingRilevatoAutenticazioneSoggettoIdentificatoAltroSoggetto(data, dataMsg, id, checkServizioApplicativo);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_AUTHN_SSL_IDENTIFICATO_ALTRO_SOGGETTO"},dataProvider="SpoofingRilevatoAutenticazioneSoggettoIdentificatoAltroSoggetto",dependsOnMethods={"spoofingRilevatoAutenticazioneSoggettoIdentificatoAltroSoggetto_genericCode_unwrap"})
+	public void testSpoofingRilevatoAutenticazioneSoggettoIdentificatoAltroSoggetto_genericCode_unwrap(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testSpoofingRilevatoAutenticazioneSoggettoIdentificatoAltroSoggetto(data, dataMsg, id, checkServizioApplicativo);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_AUTHN_SSL_IDENTIFICATO_ALTRO_SOGGETTO"},dataProvider="SpoofingRilevatoAutenticazioneSoggettoIdentificatoAltroSoggetto",dependsOnMethods={"spoofingRilevatoAutenticazioneSoggettoIdentificatoAltroSoggetto_specificCode"})
+	public void testSpoofingRilevatoAutenticazioneSoggettoIdentificatoAltroSoggetto_specificCode(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testSpoofingRilevatoAutenticazioneSoggettoIdentificatoAltroSoggetto(data, dataMsg, id, checkServizioApplicativo);
+	}
+	private void _testSpoofingRilevatoAutenticazioneSoggettoIdentificatoAltroSoggetto(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+					
+			Reporter.log("Controllo tracciamento richiesta con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
+			Reporter.log("Controllo valore Azione Busta con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_AUTENTICAZIONE_PA));
+			
+			Reporter.log("Controllo tracciamento risposta con riferimento id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTraced(id));
+			Reporter.log("Controllo tracciamento risposta valore Azione Busta con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_AUTENTICAZIONE_PA));
+			
+			// Check msgDiag
+			if(dataMsg!=null){
+				
+				String AUTENTICAZIONE_FALLITA_SPOOFING_ALTRO_SOGGETTO_PREFIX =	AUTENTICAZIONE_FALLITA_SPOOFING_PREFIX+
+						" Identificato un soggetto (tramite profilo di interoperabilità) 'spc/Soggetto2conCredenzialiSSL' differente da quello identificato tramite il processo di autenticazione 'spc/Soggetto1conCredenzialiSSL'";
+				AUTENTICAZIONE_FALLITA_SPOOFING_ALTRO_SOGGETTO_PREFIX = AUTENTICAZIONE_FALLITA_SPOOFING_ALTRO_SOGGETTO_PREFIX.replace("@SUBJECT@", 
+						"CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it");
+				Reporter.log("Controllo Messaggio (id:"+id+") msg["+AUTENTICAZIONE_FALLITA_SPOOFING_ALTRO_SOGGETTO_PREFIX+"]");
+				Assert.assertTrue( 
+						dataMsg.isTracedMessaggio(id, AUTENTICAZIONE_FALLITA_SPOOFING_ALTRO_SOGGETTO_PREFIX)
+						);
+				
+			}
+			
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+			if(dataMsg!=null){
+				dataMsg.close();
+			}
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	private CooperazioneBaseInformazioni infoFruitoreSoggetto2conCredenzialiAuthnOpzionale = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_2,
+			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopFruitoreSoggetto2conCredenzialiAuthnOpzionale = 
+		new CooperazioneBase(false,MessageType.SOAP_11,  this.infoFruitoreSoggetto2conCredenzialiAuthnOpzionale, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
+	Repository repositorySpoofingRilevatoAutenticazioneOpzionaleSoggettoIdentificatoAltroSoggetto=new Repository();
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_AUTHN_SSL_OPZIONALE_IDENTIFICATO_ALTRO_SOGGETTO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void spoofingRilevatoAutenticazioneOpzionaleSoggettoIdentificatoAltroSoggetto_genericCode_wrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_spoofingRilevatoAutenticazioneOpzionaleSoggettoIdentificatoAltroSoggetto(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_AUTHN_SSL_OPZIONALE_IDENTIFICATO_ALTRO_SOGGETTO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void spoofingRilevatoAutenticazioneOpzionaleSoggettoIdentificatoAltroSoggetto_genericCode_unwrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = true;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_spoofingRilevatoAutenticazioneOpzionaleSoggettoIdentificatoAltroSoggetto(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_AUTHN_SSL_OPZIONALE_IDENTIFICATO_ALTRO_SOGGETTO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void spoofingRilevatoAutenticazioneOpzionaleSoggettoIdentificatoAltroSoggetto_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_spoofingRilevatoAutenticazioneOpzionaleSoggettoIdentificatoAltroSoggetto(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	private void _spoofingRilevatoAutenticazioneOpzionaleSoggettoIdentificatoAltroSoggetto(boolean genericCode, boolean unwrap) throws TestSuiteException, IOException, Exception{
+		
+		java.io.FileInputStream fin = null;
+		DatabaseComponent dbComponentFruitore = null;
+		try{
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
+
+			Message msg=new Message(fin);
+			msg.getSOAPPartAsBytes();
+			
+			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorySpoofingRilevatoAutenticazioneOpzionaleSoggettoIdentificatoAltroSoggetto);
+			client.setSoapAction("\"TEST\"");
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTORIZZAZIONE_SPCOOP_AUTENTICAZIONE_HTTPS_PA_OPZIONALE_SOGGETTO2);
+			client.connectToSoapEngine();
+			client.setMessage(msg);
+			client.setRispostaDaGestire(true);
+			// AttesaTerminazioneMessaggi
+			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentFruitore= DatabaseProperties.getDatabaseComponentFruitore();
+
+				client.setAttesaTerminazioneMessaggi(true);
+				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
+			}
+			try {
+				client.run();
+				throw new Exception("Atteso errore");
+			} catch (AxisFault error) {
+				String msg2 = AUTENTICAZIONE_FALLITA_MITTENTE;
+				msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopFruitoreSoggetto2conCredenzialiAuthnOpzionale.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto2conCredenzialiAuthnOpzionale.getDestinatario().getNome());
+				
+				String codiceErrore = "EGOV_IT_101";
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_502_BAD_RESPONSE;
+					if(unwrap) {
+						integrationFunctionError = IntegrationFunctionError.INTEROPERABILITY_PROFILE_RESPONSE_ERROR;
+					}
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msg2 = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: ["+error.getFaultString()+"]");
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(codiceErrore.equals(error.getFaultCode().getLocalPart()));
+												
+				String test = error.getFaultString();
+				Reporter.log("Controllo fault string ["+msg2+"]["+test+"]");
+				Reporter.log("length ["+msg2.length()+"] ["+test.length()+"]");
+				
+				for(int i=0; i<msg2.length(); i++){
+					if(msg2.charAt(i)!=test.charAt(i)){
+						if(msg2.charAt(i)!=' '){
+							Reporter.log("DIFFF["+msg2.charAt(i)+"]["+test.charAt(i)+"]["+(byte)msg2.charAt(i)+"]("+i+")");
+							Assert.assertTrue(false);
+						}
+					}
+				}
+				Reporter.log("IDEGOV["+client.getIdMessaggio()+"]");
+				this.repositorySpoofingRilevatoAutenticazioneOpzionaleSoggettoIdentificatoAltroSoggetto.add(client.getIdMessaggio());
+			}finally{
+				dbComponentFruitore.close();
+			}
+			
+		}catch(Exception e){
+			throw e;
+		}finally{
+			try{
+				fin.close();
+			}catch(Exception e){}
+			try{
+				dbComponentFruitore.close();
+			}catch(Exception e){}
+		}
+		
+	}
+	@DataProvider (name="SpoofingRilevatoAutenticazioneOpzionaleSoggettoIdentificatoAltroSoggetto")
+	public Object[][]testSpoofingRilevatoAutenticazioneOpzionaleSoggettoIdentificatoAltroSoggetto()throws Exception{
+		String id=this.repositorySpoofingRilevatoAutenticazioneOpzionaleSoggettoIdentificatoAltroSoggetto.getNext();
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),null,id,false},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),DatabaseProperties.getDatabaseComponentDiagnosticaErogatore(),id,true}
+		};
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_AUTHN_SSL_OPZIONALE_IDENTIFICATO_ALTRO_SOGGETTO"},dataProvider="SpoofingRilevatoAutenticazioneOpzionaleSoggettoIdentificatoAltroSoggetto",dependsOnMethods={"spoofingRilevatoAutenticazioneOpzionaleSoggettoIdentificatoAltroSoggetto_genericCode_wrap"})
+	public void testSpoofingRilevatoAutenticazioneOpzionaleSoggettoIdentificatoAltroSoggetto_genericCode_wrap(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testSpoofingRilevatoAutenticazioneOpzionaleSoggettoIdentificatoAltroSoggetto(data, dataMsg, id, checkServizioApplicativo);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_AUTHN_SSL_OPZIONALE_IDENTIFICATO_ALTRO_SOGGETTO"},dataProvider="SpoofingRilevatoAutenticazioneOpzionaleSoggettoIdentificatoAltroSoggetto",dependsOnMethods={"spoofingRilevatoAutenticazioneOpzionaleSoggettoIdentificatoAltroSoggetto_genericCode_unwrap"})
+	public void testSpoofingRilevatoAutenticazioneOpzionaleSoggettoIdentificatoAltroSoggetto_genericCode_unwrap(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testSpoofingRilevatoAutenticazioneOpzionaleSoggettoIdentificatoAltroSoggetto(data, dataMsg, id, checkServizioApplicativo);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_AUTHN_SSL_OPZIONALE_IDENTIFICATO_ALTRO_SOGGETTO"},dataProvider="SpoofingRilevatoAutenticazioneOpzionaleSoggettoIdentificatoAltroSoggetto",dependsOnMethods={"spoofingRilevatoAutenticazioneOpzionaleSoggettoIdentificatoAltroSoggetto_specificCode"})
+	public void testSpoofingRilevatoAutenticazioneOpzionaleSoggettoIdentificatoAltroSoggetto_specificCode(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testSpoofingRilevatoAutenticazioneOpzionaleSoggettoIdentificatoAltroSoggetto(data, dataMsg, id, checkServizioApplicativo);
+	}
+	private void _testSpoofingRilevatoAutenticazioneOpzionaleSoggettoIdentificatoAltroSoggetto(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+					
+			Reporter.log("Controllo tracciamento richiesta con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
+			Reporter.log("Controllo valore Azione Busta con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_AUTENTICAZIONE_PA_OPZIONALE));
+			
+			Reporter.log("Controllo tracciamento risposta con riferimento id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTraced(id));
+			Reporter.log("Controllo tracciamento risposta valore Azione Busta con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_AUTENTICAZIONE_PA_OPZIONALE));
+			
+			// Check msgDiag
+			if(dataMsg!=null){
+				
+				String AUTENTICAZIONE_FALLITA_SPOOFING_ALTRO_SOGGETTO_PREFIX =	AUTENTICAZIONE_FALLITA_SPOOFING_PREFIX+
+						" Identificato un soggetto (tramite profilo di interoperabilità) 'spc/Soggetto2conCredenzialiSSL' differente da quello identificato tramite il processo di autenticazione 'spc/Soggetto1conCredenzialiSSL'";
+				AUTENTICAZIONE_FALLITA_SPOOFING_ALTRO_SOGGETTO_PREFIX = AUTENTICAZIONE_FALLITA_SPOOFING_ALTRO_SOGGETTO_PREFIX.replace("@SUBJECT@", 
+						"CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it");
+				Reporter.log("Controllo Messaggio (id:"+id+") msg["+AUTENTICAZIONE_FALLITA_SPOOFING_ALTRO_SOGGETTO_PREFIX+"]");
+				Assert.assertTrue( 
+						dataMsg.isTracedMessaggio(id, AUTENTICAZIONE_FALLITA_SPOOFING_ALTRO_SOGGETTO_PREFIX)
+						);
+				
+			}
+			
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+			if(dataMsg!=null){
+				dataMsg.close();
+			}
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	private CooperazioneBaseInformazioni infoFruitoreSoggetto1senzaCredenziali = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_1_SENZA_CREDENZIALI,
+			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopFruitoreSoggetto1senzaCredenziali = 
+		new CooperazioneBase(false,MessageType.SOAP_11,  this.infoFruitoreSoggetto1senzaCredenziali, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
+	Repository repositorySpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificato=new Repository();
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_AUTHN_SSL_IDENTIFICATE_CREDENZIALI_DIFFERENTI"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void spoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificato_genericCode_wrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_spoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificato(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_AUTHN_SSL_IDENTIFICATE_CREDENZIALI_DIFFERENTI"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void spoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificato_genericCode_unwrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = true;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_spoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificato(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_AUTHN_SSL_IDENTIFICATE_CREDENZIALI_DIFFERENTI"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void spoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificato_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_spoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificato(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	private void _spoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificato(boolean genericCode, boolean unwrap) throws TestSuiteException, IOException, Exception{
+		
+		java.io.FileInputStream fin = null;
+		DatabaseComponent dbComponentFruitore = null;
+		try{
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
+
+			Message msg=new Message(fin);
+			msg.getSOAPPartAsBytes();
+			
+			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorySpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificato);
+			client.setSoapAction("\"TEST\"");
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTORIZZAZIONE_SPCOOP_AUTENTICAZIONE_HTTPS_PA_SOGGETTO1_SENZA_CREDENZIALI);
+			client.connectToSoapEngine();
+			client.setMessage(msg);
+			client.setRispostaDaGestire(true);
+			// AttesaTerminazioneMessaggi
+			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentFruitore= DatabaseProperties.getDatabaseComponentFruitore();
+
+				client.setAttesaTerminazioneMessaggi(true);
+				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
+			}
+			try {
+				client.run();
+				throw new Exception("Atteso errore");
+			} catch (AxisFault error) {
+				String msg2 = AUTENTICAZIONE_FALLITA_MITTENTE;
+				msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopFruitoreSoggetto1senzaCredenziali.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto1senzaCredenziali.getDestinatario().getNome());
+				
+				String codiceErrore = "EGOV_IT_101";
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_502_BAD_RESPONSE;
+					if(unwrap) {
+						integrationFunctionError = IntegrationFunctionError.INTEROPERABILITY_PROFILE_RESPONSE_ERROR;
+					}
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msg2 = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: ["+error.getFaultString()+"]");
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(codiceErrore.equals(error.getFaultCode().getLocalPart()));
+												
+				String test = error.getFaultString();
+				Reporter.log("Controllo fault string ["+msg2+"]["+test+"]");
+				Reporter.log("length ["+msg2.length()+"] ["+test.length()+"]");
+				
+				for(int i=0; i<msg2.length(); i++){
+					if(msg2.charAt(i)!=test.charAt(i)){
+						if(msg2.charAt(i)!=' '){
+							Reporter.log("DIFFF["+msg2.charAt(i)+"]["+test.charAt(i)+"]["+(byte)msg2.charAt(i)+"]("+i+")");
+							Assert.assertTrue(false);
+						}
+					}
+				}
+				Reporter.log("IDEGOV["+client.getIdMessaggio()+"]");
+				this.repositorySpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificato.add(client.getIdMessaggio());
+			}finally{
+				dbComponentFruitore.close();
+			}
+			
+		}catch(Exception e){
+			throw e;
+		}finally{
+			try{
+				fin.close();
+			}catch(Exception e){}
+			try{
+				dbComponentFruitore.close();
+			}catch(Exception e){}
+		}
+		
+	}
+	@DataProvider (name="SpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificato")
+	public Object[][]testSpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificato()throws Exception{
+		String id=this.repositorySpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificato.getNext();
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),null,id,false},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),DatabaseProperties.getDatabaseComponentDiagnosticaErogatore(),id,true}
+		};
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_AUTHN_SSL_IDENTIFICATE_CREDENZIALI_DIFFERENTI"},dataProvider="SpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificato",dependsOnMethods={"spoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificato_genericCode_wrap"})
+	public void testSpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificato_genericCode_wrap(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testSpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificato(data, dataMsg, id, checkServizioApplicativo);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_AUTHN_SSL_IDENTIFICATE_CREDENZIALI_DIFFERENTI"},dataProvider="SpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificato",dependsOnMethods={"spoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificato_genericCode_unwrap"})
+	public void testSpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificato_genericCode_unwrap(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testSpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificato(data, dataMsg, id, checkServizioApplicativo);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_AUTHN_SSL_IDENTIFICATE_CREDENZIALI_DIFFERENTI"},dataProvider="SpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificato",dependsOnMethods={"spoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificato_specificCode"})
+	public void testSpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificato_specificCode(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testSpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificato(data, dataMsg, id, checkServizioApplicativo);
+	}
+	private void _testSpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificato(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+					
+			Reporter.log("Controllo tracciamento richiesta con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
+			Reporter.log("Controllo valore Azione Busta con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_AUTENTICAZIONE_PA));
+			
+			Reporter.log("Controllo tracciamento risposta con riferimento id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTraced(id));
+			Reporter.log("Controllo tracciamento risposta valore Azione Busta con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_AUTENTICAZIONE_PA));
+			
+			// Check msgDiag
+			if(dataMsg!=null){
+				
+				String msgErrore = "Autenticazione [ssl] fallita : [RicezioneBuste] processo di autenticazione [ssl] fallito, Identificato un soggetto (tramite profilo di interoperabilità) 'spc/Soggetto1SenzaCredenziali' registrato con credenziali differenti da quelle ricevute"; 
+				Reporter.log("Controllo Messaggio (id:"+id+") msg["+msgErrore+"]");
+				boolean condition = dataMsg.isTracedMessaggio(id, msgErrore);
+				if(!condition) {
+					List<String> l = dataMsg.getMessaggiDiagnostici(id);
+					Reporter.log("Presenti "+l.size()+" diagnostici");
+					if(!l.isEmpty()) {
+						for (String d : l) {
+							Reporter.log("Diagnostico ["+d+"]");
+						}
+					}
+				}
+				Assert.assertTrue( 
+						condition
+						);
+
+			}
+			
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+			if(dataMsg!=null){
+				dataMsg.close();
+			}
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	private CooperazioneBaseInformazioni infoFruitoreSoggetto1senzaCredenzialiAuthnOpzionale = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_1_SENZA_CREDENZIALI,
+			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopFruitoreSoggetto1senzaCredenzialiAuthnOpzionale = 
+		new CooperazioneBase(false,MessageType.SOAP_11,  this.infoFruitoreSoggetto1senzaCredenzialiAuthnOpzionale, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
+	Repository repositorySpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificatoAuhtnOpzionale=new Repository();
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_AUTHN_SSL_OPZIONALE_IDENTIFICATE_CREDENZIALI_DIFFERENTI"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void spoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificatoAuhtnOpzionale_genericCode_wrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_spoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificatoAuhtnOpzionale(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_AUTHN_SSL_OPZIONALE_IDENTIFICATE_CREDENZIALI_DIFFERENTI"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void spoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificatoAuhtnOpzionale_genericCode_unwrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = true;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_spoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificatoAuhtnOpzionale(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_AUTHN_SSL_OPZIONALE_IDENTIFICATE_CREDENZIALI_DIFFERENTI"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void spoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificatoAuhtnOpzionale_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_spoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificatoAuhtnOpzionale(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	private void _spoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificatoAuhtnOpzionale(boolean genericCode, boolean unwrap) throws TestSuiteException, IOException, Exception{
+		
+		java.io.FileInputStream fin = null;
+		DatabaseComponent dbComponentFruitore = null;
+		try{
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
+
+			Message msg=new Message(fin);
+			msg.getSOAPPartAsBytes();
+			
+			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorySpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificatoAuhtnOpzionale);
+			client.setSoapAction("\"TEST\"");
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTORIZZAZIONE_SPCOOP_AUTENTICAZIONE_HTTPS_PA_OPZIONALE_SOGGETTO1_SENZA_CREDENZIALI);
+			client.connectToSoapEngine();
+			client.setMessage(msg);
+			client.setRispostaDaGestire(true);
+			// AttesaTerminazioneMessaggi
+			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentFruitore= DatabaseProperties.getDatabaseComponentFruitore();
+
+				client.setAttesaTerminazioneMessaggi(true);
+				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
+			}
+			try {
+				client.run();
+				throw new Exception("Atteso errore");
+			} catch (AxisFault error) {
+				String msg2 = AUTENTICAZIONE_FALLITA_MITTENTE;
+				msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopFruitoreSoggetto1senzaCredenzialiAuthnOpzionale.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto1senzaCredenzialiAuthnOpzionale.getDestinatario().getNome());
+				
+				String codiceErrore = "EGOV_IT_101";
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_502_BAD_RESPONSE;
+					if(unwrap) {
+						integrationFunctionError = IntegrationFunctionError.INTEROPERABILITY_PROFILE_RESPONSE_ERROR;
+					}
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msg2 = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: ["+error.getFaultString()+"]");
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(codiceErrore.equals(error.getFaultCode().getLocalPart()));
+												
+				String test = error.getFaultString();
+				Reporter.log("Controllo fault string ["+msg2+"]["+test+"]");
+				Reporter.log("length ["+msg2.length()+"] ["+test.length()+"]");
+				
+				for(int i=0; i<msg2.length(); i++){
+					if(msg2.charAt(i)!=test.charAt(i)){
+						if(msg2.charAt(i)!=' '){
+							Reporter.log("DIFFF["+msg2.charAt(i)+"]["+test.charAt(i)+"]["+(byte)msg2.charAt(i)+"]("+i+")");
+							Assert.assertTrue(false);
+						}
+					}
+				}
+				Reporter.log("IDEGOV["+client.getIdMessaggio()+"]");
+				this.repositorySpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificatoAuhtnOpzionale.add(client.getIdMessaggio());
+			}finally{
+				dbComponentFruitore.close();
+			}
+			
+		}catch(Exception e){
+			throw e;
+		}finally{
+			try{
+				fin.close();
+			}catch(Exception e){}
+			try{
+				dbComponentFruitore.close();
+			}catch(Exception e){}
+		}
+		
+		
+	}
+	@DataProvider (name="SpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificatoAuhtnOpzionale")
+	public Object[][]testSpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificatoAuhtnOpzionale()throws Exception{
+		String id=this.repositorySpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificatoAuhtnOpzionale.getNext();
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),null,id,false},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),DatabaseProperties.getDatabaseComponentDiagnosticaErogatore(),id,true}
+		};
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_AUTHN_SSL_OPZIONALE_IDENTIFICATE_CREDENZIALI_DIFFERENTI"},dataProvider="SpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificatoAuhtnOpzionale",dependsOnMethods={"spoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificatoAuhtnOpzionale_genericCode_wrap"})
+	public void testSpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificatoAuhtnOpzionale_genericCode_wrap(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testSpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificatoAuhtnOpzionale(data, dataMsg, id, checkServizioApplicativo);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_AUTHN_SSL_OPZIONALE_IDENTIFICATE_CREDENZIALI_DIFFERENTI"},dataProvider="SpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificatoAuhtnOpzionale",dependsOnMethods={"spoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificatoAuhtnOpzionale_genericCode_unwrap"})
+	public void testSpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificatoAuhtnOpzionale_genericCode_unwrap(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testSpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificatoAuhtnOpzionale(data, dataMsg, id, checkServizioApplicativo);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_AUTHN_SSL_OPZIONALE_IDENTIFICATE_CREDENZIALI_DIFFERENTI"},dataProvider="SpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificatoAuhtnOpzionale",dependsOnMethods={"spoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificatoAuhtnOpzionale_specificCode"})
+	public void testSpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificatoAuhtnOpzionale_specificCode(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testSpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificatoAuhtnOpzionale(data, dataMsg, id, checkServizioApplicativo);
+	}
+	private void _testSpoofingRilevatoAutenticazioneSoggettoNessunSoggettoIdentificatoAuhtnOpzionale(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+					
+			Reporter.log("Controllo tracciamento richiesta con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
+			Reporter.log("Controllo valore Azione Busta con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_AUTENTICAZIONE_PA_OPZIONALE));
+			
+			Reporter.log("Controllo tracciamento risposta con riferimento id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTraced(id));
+			Reporter.log("Controllo tracciamento risposta valore Azione Busta con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_AUTENTICAZIONE_PA_OPZIONALE));
+			
+			// Check msgDiag
+			if(dataMsg!=null){
+				
+				String msgErrore = "Autenticazione [ssl] fallita : [RicezioneBuste] processo di autenticazione [ssl] fallito, Identificato un soggetto (tramite profilo di interoperabilità) 'spc/Soggetto1SenzaCredenziali' registrato con credenziali differenti da quelle ricevute"; 
+				Reporter.log("Controllo Messaggio (id:"+id+") msg["+msgErrore+"]");
+				boolean condition = dataMsg.isTracedMessaggio(id, msgErrore);
+				if(!condition) {
+					List<String> l = dataMsg.getMessaggiDiagnostici(id);
+					Reporter.log("Presenti "+l.size()+" diagnostici");
+					if(!l.isEmpty()) {
+						for (String d : l) {
+							Reporter.log("Diagnostico ["+d+"]");
+						}
+					}
+				}
+				Assert.assertTrue( 
+						condition
+						);
+
+			}
+			
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+			if(dataMsg!=null){
+				dataMsg.close();
+			}
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	private CooperazioneBaseInformazioni infoFruitoreSoggetto2senzaCredenziali = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_2_SENZA_CREDENZIALI,
+			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopFruitoreSoggetto2senzaCredenziali = 
+		new CooperazioneBase(false,MessageType.SOAP_11,  this.infoFruitoreSoggetto2senzaCredenziali, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
+	Repository repositoryAutenticazioneHttpsCredenzialiNonFornite=new Repository();
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".CREDENZIALI_NON_FORNITE"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void autenticazioneHttpsCredenzialiNonFornite_genericCode_wrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_autenticazioneHttpsCredenzialiNonFornite(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".CREDENZIALI_NON_FORNITE"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void autenticazioneHttpsCredenzialiNonFornite_genericCode_unwrap() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = true;
+		boolean unwrap = true;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_autenticazioneHttpsCredenzialiNonFornite(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".CREDENZIALI_NON_FORNITE"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void autenticazioneHttpsCredenzialiNonFornite_specificCode() throws TestSuiteException, IOException, Exception{
+		boolean genericCode = false;
+		boolean unwrap = false;
+		try {
+			super.lockForCode(genericCode, unwrap);
+			
+			_autenticazioneHttpsCredenzialiNonFornite(genericCode, unwrap);
+		}finally {
+			super.unlockForCode(genericCode);
+		}
+	}
+	private void _autenticazioneHttpsCredenzialiNonFornite(boolean genericCode, boolean unwrap) throws TestSuiteException, IOException, Exception{
+		
+		java.io.FileInputStream fin = null;
+		DatabaseComponent dbComponentFruitore = null;
+		try{
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
+
+			Message msg=new Message(fin);
+			msg.getSOAPPartAsBytes();
+			
+			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryAutenticazioneHttpsCredenzialiNonFornite);
+			client.setSoapAction("\"TEST\"");
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTORIZZAZIONE_SPCOOP_AUTENTICAZIONE_HTTPS_PA_SOGGETTO2_SENZA_CREDENZIALI);
+			client.connectToSoapEngine();
+			client.setMessage(msg);
+			client.setRispostaDaGestire(true);
+			// AttesaTerminazioneMessaggi
+			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentFruitore= DatabaseProperties.getDatabaseComponentFruitore();
+
+				client.setAttesaTerminazioneMessaggi(true);
+				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
+			}
+			try {
+				client.run();
+				throw new Exception("Atteso errore");
+			} catch (AxisFault error) {
+				String msg2 = AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE;
+				msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopFruitoreSoggetto2senzaCredenziali.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto2senzaCredenziali.getDestinatario().getNome());
+				
+				String codiceErrore = "EGOV_IT_101";
+				
+				if(genericCode) {
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.WRAP_502_BAD_RESPONSE;
+					if(unwrap) {
+						integrationFunctionError = IntegrationFunctionError.INTEROPERABILITY_PROFILE_RESPONSE_ERROR;
+					}
+					ErroriProperties erroriProperties = ErroriProperties.getInstance(this.log);
+					codiceErrore = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER +
+							org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SEPARATOR+erroriProperties.getErrorType_noWrap(integrationFunctionError);
+					if(erroriProperties.isForceGenericDetails_noWrap(integrationFunctionError)) {
+						msg2 = erroriProperties.getGenericDetails_noWrap(integrationFunctionError);
+					}
+				}
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: ["+error.getFaultString()+"]");
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault code ["+codiceErrore+"]");
+				Assert.assertTrue(codiceErrore.equals(error.getFaultCode().getLocalPart()));
+												
+				String test = error.getFaultString();
+				Reporter.log("Controllo fault string ["+msg2+"]["+test+"]");
+				Reporter.log("length ["+msg2.length()+"] ["+test.length()+"]");
+				
+				for(int i=0; i<msg2.length(); i++){
+					if(msg2.charAt(i)!=test.charAt(i)){
+						if(msg2.charAt(i)!=' '){
+							Reporter.log("DIFFF["+msg2.charAt(i)+"]["+test.charAt(i)+"]["+(byte)msg2.charAt(i)+"]("+i+")");
+							Assert.assertTrue(false);
+						}
+					}
+				}
+				Reporter.log("IDEGOV["+client.getIdMessaggio()+"]");
+				this.repositoryAutenticazioneHttpsCredenzialiNonFornite.add(client.getIdMessaggio());
+			}finally{
+				dbComponentFruitore.close();
+			}
+			
+		}catch(Exception e){
+			throw e;
+		}finally{
+			try{
+				fin.close();
+			}catch(Exception e){}
+			try{
+				dbComponentFruitore.close();
+			}catch(Exception e){}
+		}
+		
+	}
+	@DataProvider (name="AutenticazioneHttpsCredenzialiNonFornite")
+	public Object[][]testAutenticazioneHttpsCredenzialiNonFornite()throws Exception{
+		String id=this.repositoryAutenticazioneHttpsCredenzialiNonFornite.getNext();
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),null,id,false},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),DatabaseProperties.getDatabaseComponentDiagnosticaErogatore(),id,true}
+		};
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".CREDENZIALI_NON_FORNITE"},dataProvider="AutenticazioneHttpsCredenzialiNonFornite",dependsOnMethods={"autenticazioneHttpsCredenzialiNonFornite_genericCode_wrap"})
+	public void testAutenticazioneHttpsCredenzialiNonFornite_genericCode_wrap(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testAutenticazioneHttpsCredenzialiNonFornite(data, dataMsg, id, checkServizioApplicativo);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".CREDENZIALI_NON_FORNITE"},dataProvider="AutenticazioneHttpsCredenzialiNonFornite",dependsOnMethods={"autenticazioneHttpsCredenzialiNonFornite_genericCode_unwrap"})
+	public void testAutenticazioneHttpsCredenzialiNonFornite_genericCode_unwrap(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testAutenticazioneHttpsCredenzialiNonFornite(data, dataMsg, id, checkServizioApplicativo);
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".CREDENZIALI_NON_FORNITE"},dataProvider="AutenticazioneHttpsCredenzialiNonFornite",dependsOnMethods={"autenticazioneHttpsCredenzialiNonFornite_specificCode"})
+	public void testAutenticazioneHttpsCredenzialiNonFornite_specificCode(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		_testAutenticazioneHttpsCredenzialiNonFornite(data, dataMsg, id, checkServizioApplicativo);
+	}
+	private void _testAutenticazioneHttpsCredenzialiNonFornite(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+					
+			Reporter.log("Controllo tracciamento richiesta con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
+			Reporter.log("Controllo valore Azione Busta con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_AUTENTICAZIONE_PA));
+			
+			Reporter.log("Controllo tracciamento risposta con riferimento id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTraced(id));
+			Reporter.log("Controllo tracciamento risposta valore Azione Busta con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_AUTENTICAZIONE_PA));
+			
+			// Check msgDiag
+			if(dataMsg!=null){
+				
+				String msgErrore = "Autenticazione fallita, credenziali non fornite"; 
+				Reporter.log("Controllo Messaggio (id:"+id+") msg["+msgErrore+"]");
+				Assert.assertTrue( 
+						dataMsg.isTracedMessaggioWithLike(id, msgErrore)
+						);
+
+			}
+			
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+			if(dataMsg!=null){
+				dataMsg.close();
+			}
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+
+	private CooperazioneBaseInformazioni infoFruitoreSoggetto2senzaCredenzialiAuthnOpzionale = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_2_SENZA_CREDENZIALI,
+			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
+			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
+	private CooperazioneBase collaborazioneSPCoopFruitoreSoggetto2senzaCredenzialiAuthnOpzionale = 
+		new CooperazioneBase(false,MessageType.SOAP_11,  this.infoFruitoreSoggetto2senzaCredenzialiAuthnOpzionale, 
+				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
+	
+	Repository repositoryHTTPSAutorizzazioneSPCoopOkSoggetto2senzaCredenzialiAuthnOpzionale=new Repository();
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".AUTENTICAZIONE_HTTPS_OPZIONALE_AUTORIZZAZIONE_SPCOOP_FRUITORE_SENZA_CREDENZIALI"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void httpsAutorizzazioneSPCoopOkSoggetto2senzaCredenzialiAuthnOpzionale() throws TestSuiteException, IOException, SOAPException{
+		this.collaborazioneSPCoopFruitoreSoggetto2senzaCredenzialiAuthnOpzionale.sincrono(this.repositoryHTTPSAutorizzazioneSPCoopOkSoggetto2senzaCredenzialiAuthnOpzionale,
+				CostantiTestSuite.PORTA_DELEGATA_AUTORIZZAZIONE_SPCOOP_AUTENTICAZIONE_HTTPS_PA_OPZIONALE_SOGGETTO2_SENZA_CREDENZIALI,addIDUnivoco);
+	}
+	@DataProvider (name="httpsAutorizzazioneSPCoopOkSoggetto2senzaCredenzialiAuthnOpzionale")
+	public Object[][]testHttpsAutorizzazioneSPCoopOkSoggetto2senzaCredenzialiAuthnOpzionale()throws Exception{
+		String id=this.repositoryHTTPSAutorizzazioneSPCoopOkSoggetto2senzaCredenzialiAuthnOpzionale.getNext();
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),null,id,false},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),DatabaseProperties.getDatabaseComponentDiagnosticaErogatore(),id,true}	
+		};
+	}
+	@Test(groups={CostantiConnettori.ID_GRUPPO_CONNETTORI,HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".AUTENTICAZIONE_HTTPS_OPZIONALE_AUTORIZZAZIONE_SPCOOP_FRUITORE_SENZA_CREDENZIALI"},dataProvider="httpsAutorizzazioneSPCoopOkSoggetto2senzaCredenzialiAuthnOpzionale",dependsOnMethods={"httpsAutorizzazioneSPCoopOkSoggetto2senzaCredenzialiAuthnOpzionale"})
+	public void testHttpsAutorizzazioneSPCoopOkSoggetto2senzaCredenzialiAuthnOpzionale(DatabaseComponent data,DatabaseMsgDiagnosticiComponent dataMsg,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			this.collaborazioneSPCoopFruitoreSoggetto2senzaCredenzialiAuthnOpzionale.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_AUTENTICAZIONE_PA_OPZIONALE, 
+					checkServizioApplicativo,null);
+			
+			// Check msgDiag
+			if(dataMsg!=null){
+				
+				String msg1 = "Autenticazione [ssl] in corso ...";
+				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg1+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggio(id, msg1));
+				
+				msg1 = "Autenticazione [ssl] 'opzionale' fallita";
+				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg1+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(id, msg1));
+				
+				msg1 = "Autenticazione fallita, credenziali non fornite";
+				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg1+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(id, msg1));
+				
+				msg1 = MESSAGGIO_SPCOOP_RICEVUTO_AUTENTICAZIONE_HTTPS.replace("@IDEGOV@", id);
+				msg1 = msg1.replace("@MITTENTE@", this.collaborazioneSPCoopFruitoreSoggetto2senzaCredenzialiAuthnOpzionale.getMittente().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto2senzaCredenzialiAuthnOpzionale.getMittente().getNome());
+				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg1+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(id, msg1));
+				
+				String msg2 = AUTORIZZAZIONE_IN_CORSO_AUTENTICAZIONE_HTTPS.replace("@IDEGOV@", id);
+				msg2 = msg2.replace("@MITTENTE@", this.collaborazioneSPCoopFruitoreSoggetto2senzaCredenzialiAuthnOpzionale.getMittente().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto2senzaCredenzialiAuthnOpzionale.getMittente().getNome());
+				msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopFruitoreSoggetto2senzaCredenzialiAuthnOpzionale.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto2senzaCredenzialiAuthnOpzionale.getDestinatario().getNome());
+				msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO);
+				msg2 = msg2.replace("@AZIONE@", CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_AUTENTICAZIONE_PA_OPZIONALE);
+				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg2+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(id, msg2));			
+				msg2 = AUTORIZZAZIONE_EFFETTUATA_AUTENTICAZIONE_HTTPS.replace("@IDEGOV@", id);
+				msg2 = msg2.replace("@MITTENTE@", this.collaborazioneSPCoopFruitoreSoggetto2senzaCredenzialiAuthnOpzionale.getMittente().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto2senzaCredenzialiAuthnOpzionale.getMittente().getNome());
+				msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopFruitoreSoggetto2senzaCredenzialiAuthnOpzionale.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto2senzaCredenzialiAuthnOpzionale.getDestinatario().getNome());
+				msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO);
+				msg2 = msg2.replace("@AZIONE@", CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_AUTENTICAZIONE_PA_OPZIONALE);
+				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg2+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(id, msg2));
+			}
+			
 		}catch(Exception e){
 			throw e;
 		}finally{

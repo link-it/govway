@@ -132,7 +132,9 @@ public interface IProtocolFactory<BustaRawType> extends Serializable {
 	
 	public IRegistryReader getRegistryReader(IDriverRegistroServiziGet driver) throws ProtocolException;
 	public IRegistryReader getCachedRegistryReader(IState state) throws ProtocolException;
+	public IRegistryReader getCachedRegistryReader(Object registryReader) throws ProtocolException;
 	public IConfigIntegrationReader getConfigIntegrationReader(IDriverConfigurazioneGet driver) throws ProtocolException;
 	public IConfigIntegrationReader getCachedConfigIntegrationReader(IState state) throws ProtocolException;
+	public IConfigIntegrationReader getCachedConfigIntegrationReader(Object configReader) throws ProtocolException;
 	
 }

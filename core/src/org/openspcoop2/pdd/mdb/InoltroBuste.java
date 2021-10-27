@@ -512,9 +512,9 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 		/* ------------------ Inizializzo stato OpenSPCoop  --------------- */
 		this.msgDiag.mediumDebug("Inizializzo stato per la gestione della richiesta...");
 		this.openspcoopstate.initResource(this.identitaPdD, InoltroBuste.ID_MODULO, this.idTransazione);
-		this.registroServiziManager.updateState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
-		this.configurazionePdDManager.updateState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
-		this.msgDiag.updateState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
+		this.registroServiziManager = this.registroServiziManager.refreshState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
+		this.configurazionePdDManager = this.configurazionePdDManager.refreshState(this.registroServiziManager);
+		this.msgDiag.updateState(this.configurazionePdDManager);
 
 
 
@@ -911,7 +911,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 		// Tracciamento
 		try {
 			this.tracciamento = new org.openspcoop2.pdd.logger.Tracciamento(this.identitaPdD,InoltroBuste.ID_MODULO,this.pddContext,this.tipoPdD,this.msgDiag.getPorta(),
-					this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
+					this.configurazionePdDManager);
 		} catch (Exception e) {
 			this.msgDiag.logErroreGenerico(e, "ProtocolFactory.instanziazione Imbustamento/Tracciamento"); 
 			this.openspcoopstate.releaseResource();
@@ -1082,7 +1082,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 					if(pm.isStaticRoute()) {
 						org.openspcoop2.core.registry.Connettore connettoreProtocol = 
 								pm.getStaticRoute(this.soggettoFruitore,this.idServizio,
-										this.protocolFactory.getCachedRegistryReader(this.openspcoopstate.getStatoRichiesta()));
+										this.protocolFactory.getCachedRegistryReader(this.registroServiziManager));
 						if(connettoreProtocol!=null) {
 							connettore = connettoreProtocol.mappingIntoConnettoreConfigurazione();
 						}
@@ -2720,7 +2720,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 				this.responseMessage = this.protocolFactory.createProtocolManager().updateOpenSPCoop2MessageResponse(this.responseMessage, 
 						this.bustaRichiesta, nParams,
 						this.requestMessagePrimaTrasformazione.getTransportRequestContext(),this.transportResponseContext,
-						this.protocolFactory.getCachedRegistryReader(this.openspcoopstate.getStatoRichiesta()),
+						this.protocolFactory.getCachedRegistryReader(this.registroServiziManager),
 						false);
 			} catch (Exception e) {
 				

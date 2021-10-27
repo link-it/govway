@@ -141,4 +141,18 @@ public class StateMessage implements IState {
 		JDBCUtilities.addPreparedStatement(pstmt,this.tablePstmt.getPreparedStatement(),this.log);
 	}
 	
+	
+	public static Connection getConnection(StateMessage state) {
+		if(state!=null){
+			boolean validConnection = false;
+			if(state.getConnectionDB()!=null) {
+				try{
+					validConnection = !state.getConnectionDB().isClosed();
+				}catch(Exception e){}
+			}
+			if(validConnection)
+				return state.getConnectionDB();
+		}
+		return null;
+	}
 }

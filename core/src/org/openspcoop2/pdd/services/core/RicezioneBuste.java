@@ -1171,7 +1171,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		else{
 			nomePorta = this.inRequestContext.getConnettore().getUrlProtocolContext().getFunctionParameters() + "_urlInvocazione("+ this.inRequestContext.getConnettore().getUrlProtocolContext().getUrlInvocazione_formBased() + ")";
 		}
-		this.msgDiag = MsgDiagnostico.newInstance(TipoPdD.APPLICATIVA,this.identitaPdD,this.msgContext.getIdModulo(),nomePorta);
+		this.msgDiag = MsgDiagnostico.newInstance(TipoPdD.APPLICATIVA,this.identitaPdD,this.msgContext.getIdModulo(),nomePorta,this.configurazionePdDReader);
 		this.msgContext.setMsgDiagnostico(this.msgDiag); // aggiorno msg diagnostico
 		this.msgDiag.setPddContext(this.inRequestContext.getPddContext(), this.protocolFactory);
 		this.msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE);
@@ -1238,9 +1238,9 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		}
 		
 		// Refresh reader
-		this.registroServiziReader.updateState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
-		this.configurazionePdDReader.updateState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
-		this.msgDiag.updateState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
+		this.registroServiziReader = this.registroServiziReader.refreshState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
+		this.configurazionePdDReader = this.configurazionePdDReader.refreshState(this.registroServiziReader);
+		this.msgDiag.updateState(this.configurazionePdDReader);
 
 		// Dati precedentemente raccolti
 		String servizioApplicativoFruitore = null;
@@ -1370,7 +1370,8 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 					RicezioneBusteServiceUtils.updatePortaApplicativaRequestInfo(requestInfo, this.logCore, 
 							this.requestMessage,
 							this.generatoreErrore, 
-							ServicesUtils.getServiceIdentificationReader(this.logCore, requestInfo), this.msgDiag, 
+							ServicesUtils.getServiceIdentificationReader(this.logCore, requestInfo,
+									this.registroServiziReader, this.configurazionePdDReader), this.msgDiag, 
 							urlProtocolContext, idPA,
 							this.pddContext);
 					//requestInfo.getProtocolContext().setInterfaceName(pa.getNome());
@@ -1863,7 +1864,9 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		this.msgDiag.mediumDebug("Lettura azione associato alla PA invocata...");
 		if(this.idServizio!=null && this.idServizio.getAzione()!=null && this.pa!=null) {
 			// verifico se esiste una porta applicativa piu' specifica
-			IdentificazionePortaApplicativa identificazione = new IdentificazionePortaApplicativa(this.logCore, this.protocolFactory, this.openspcoopstate.getStatoRichiesta(), this.pa);
+			IdentificazionePortaApplicativa identificazione = new IdentificazionePortaApplicativa(this.logCore, this.protocolFactory, 
+					this.registroServiziReader, this.configurazionePdDReader,
+					this.pa);
 			String action = this.idServizio.getAzione();
 			if(identificazione.find(action)) {
 				IDPortaApplicativa idPA_action = identificazione.getIDPortaApplicativa(action);
@@ -2343,7 +2346,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 							this.msgContext.getIdModulo(),
 							this.inRequestContext.getPddContext(),
 							this.msgContext.getTipoPorta(),this.msgDiag.getPorta(),
-							this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
+							this.configurazionePdDReader);
 					
 					erroreIntestazione.setServizioApplicativoFruitore(servizioApplicativoFruitore);
 					String dettaglioErrore = null;
@@ -2395,7 +2398,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 							this.msgContext.getIdModulo(),
 							this.inRequestContext.getPddContext(),
 							this.msgContext.getTipoPorta(),this.msgDiag.getPorta(),
-							this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
+							this.configurazionePdDReader);
 					
 					this.parametriGenerazioneBustaErrore.setTracciamento(tracciamento);
 					this.parametriGenerazioneBustaErrore.setBusta(erroreIntestazione);
@@ -2744,7 +2747,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 				this.msgContext.getIdModulo(),
 				this.inRequestContext.getPddContext(),
 				this.msgContext.getTipoPorta(),this.msgDiag.getPorta(),
-				this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
+				this.configurazionePdDReader);
 		this.parametriGenerazioneBustaErrore.setTracciamento(this.tracciamento);
 		
 		
@@ -3327,9 +3330,10 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 			soggettoFruitoreIdentificatoTramiteProtocollo = true;
 		}
 		this.soggettoFruitore = validatore.getSoggettoMittente();
+		Soggetto soggettoFruitoreObject = null;
 		if(this.soggettoFruitore!=null) {
 			try {
-				Soggetto soggettoFruitoreObject = this.registroServiziReader.getSoggetto(this.soggettoFruitore, null);
+				soggettoFruitoreObject = this.registroServiziReader.getSoggetto(this.soggettoFruitore, null);
 				Map<String, String> configProperties = this.registroServiziReader.getProprietaConfigurazione(soggettoFruitoreObject);
 	            if (configProperties != null && !configProperties.isEmpty()) {
 	            	this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE, configProperties);
@@ -3392,6 +3396,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 						String wwwAuthenticateErrorHeader = null;
 						boolean detailsSet = false;
 						IntegrationFunctionError integrationFunctionError = null;
+						boolean erroreMissmatchSoggettoProtocolloConCredenziali = false;
 						try {						
 							EsitoAutenticazionePortaApplicativa esito = 
 									GestoreAutenticazione.verificaAutenticazionePortaApplicativa(tipoAutenticazione,
@@ -3454,6 +3459,8 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 									IDSoggetto idSoggettoFruitoreIdentificato = esito.getIdSoggetto();
 									if(this.soggettoFruitore!=null &&  this.soggettoFruitore.getNome()!=null && this.soggettoFruitore.getTipo()!=null) {
 										if(!this.soggettoFruitore.equals(idSoggettoFruitoreIdentificato)) {
+											erroreMissmatchSoggettoProtocolloConCredenziali = true;
+											this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, "true");
 											throw new Exception("Identificato un soggetto (tramite profilo di interoperabilità) '"+this.soggettoFruitore
 													+"' differente da quello identificato tramite il processo di autenticazione '"+idSoggettoFruitoreIdentificato+"'");
 										}
@@ -3493,6 +3500,17 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 									// evito comunque di ripresentarle nei successivi diagnostici, l'informazione l'ho gia' visualizzata nei diagnostici dell'autenticazione
 									this.msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_MITTENTE_MSG, ""); // per evitare di visualizzarle anche nei successivi diagnostici
 									this.msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI, "");
+									
+									if(soggettoFruitoreIdentificatoTramiteProtocollo &&
+											this.soggettoFruitore!=null &&  this.soggettoFruitore.getNome()!=null && this.soggettoFruitore.getTipo()!=null &&
+											soggettoFruitoreObject!=null) {
+										if(soggettoFruitoreObject.sizeCredenzialiList()>0) {
+											erroreMissmatchSoggettoProtocolloConCredenziali = true;
+											this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, "true");
+											throw new Exception("Identificato un soggetto (tramite profilo di interoperabilità) '"+this.soggettoFruitore
+													+"' registrato con credenziali differenti da quelle ricevute");
+										}
+									}
 								}
 							}
 							
@@ -3532,7 +3550,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 								this.logCore.error("getDescrizione Error:"+e.getMessage(),e);
 							}
 							String errorMsg =  "Riscontrato errore durante il processo di Autenticazione per il messaggio con identificativo di transazione ["+this.idTransazione+"]: "+descrizioneErrore;
-							if(autenticazioneOpzionale){
+							if(autenticazioneOpzionale && !erroreMissmatchSoggettoProtocolloConCredenziali){
 								this.msgDiag.logPersonalizzato("autenticazioneFallita.opzionale");
 								if(eAutenticazione!=null){
 									this.logCore.debug(errorMsg,eAutenticazione);
@@ -3551,7 +3569,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 								}
 							}
 							
-							if(!autenticazioneOpzionale){
+							if(!autenticazioneOpzionale || erroreMissmatchSoggettoProtocolloConCredenziali){
 							
 								// Tracciamento richiesta: non ancora registrata
 								if(this.msgContext.isTracciamentoAbilitato()){
@@ -3579,7 +3597,16 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 										}
 			
 										OpenSPCoop2Message errorOpenSPCoopMsg = null;
-										if(erroreCooperazione!=null){
+										if(erroreMissmatchSoggettoProtocolloConCredenziali) {
+											integrationFunctionError = IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS;
+											this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
+											String msgErroreDetailNonValide = eAutenticazione!=null ? eAutenticazione.getMessage() : 
+												"Identificato un soggetto (tramite profilo di interoperabilità) '"+this.soggettoFruitore+"' registrato con credenziali differenti da quelle ricevute";
+											this.parametriGenerazioneBustaErrore.
+												setErroreCooperazione(ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.getErroreCredenzialiForniteNonCorrette(msgErroreDetailNonValide));
+											errorOpenSPCoopMsg = generaBustaErroreValidazione(this.parametriGenerazioneBustaErrore);
+										}
+										else if(erroreCooperazione!=null){
 											if(CodiceErroreCooperazione.MITTENTE_NON_PRESENTE.equals(erroreCooperazione.getCodiceErrore()) ||
 													CodiceErroreCooperazione.MITTENTE_NON_VALORIZZATO.equals(erroreCooperazione.getCodiceErrore()) ||
 													CodiceErroreCooperazione.MITTENTE.equals(erroreCooperazione.getCodiceErrore())) {
@@ -3875,7 +3902,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		}catch(Throwable t) {}	
 		if(this.soggettoFruitore!=null) {
 			try {
-				Soggetto soggettoFruitoreObject = this.registroServiziReader.getSoggetto(this.soggettoFruitore, null);
+				soggettoFruitoreObject = this.registroServiziReader.getSoggetto(this.soggettoFruitore, null);
 				Map<String, String> configProperties = this.registroServiziReader.getProprietaConfigurazione(soggettoFruitoreObject);
 	            if (configProperties != null && !configProperties.isEmpty()) {
 	            	this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE, configProperties);
@@ -4237,7 +4264,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		try {
 			this.msgDiag.mediumDebug("Aggiornamento del messaggio");
 			this.requestMessage = this.protocolFactory.createProtocolManager().updateOpenSPCoop2MessageRequest(this.requestMessage, this.bustaRichiesta,
-					this.protocolFactory.getCachedRegistryReader(this.openspcoopstate.getStatoRichiesta()));
+					this.protocolFactory.getCachedRegistryReader(this.registroServiziReader));
 		} catch (Exception e) {
 			// Emetto log, non ancora emesso
 			if(validatore.getBusta()!=null && 
@@ -7251,7 +7278,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 			InoltroBuste lib = null;
 			try{
 				lib = new InoltroBuste(this.logCore);
-				EsitoLib esito = lib.onMessage(this.openspcoopstate);
+				EsitoLib esito = lib.onMessage(this.openspcoopstate,this.registroServiziReader,this.configurazionePdDReader);
 
 				if ( esito.getStatoInvocazione() == EsitoLib.OK ||
 						esito.getStatoInvocazione() == EsitoLib.ERRORE_GESTITO ){
@@ -7356,10 +7383,10 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		PddPluginLoader pluginLoader = PddPluginLoader.getInstance();
 
 		// refresh risorse con nuovi stati
-		this.configurazionePdDReader.updateState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
-		this.registroServiziReader.updateState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
-		this.tracciamento.updateState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
-		this.msgDiag.updateState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
+		this.registroServiziReader = this.registroServiziReader.refreshState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
+		this.configurazionePdDReader = this.configurazionePdDReader.refreshState(this.registroServiziReader);
+		this.tracciamento.updateState(this.configurazionePdDReader);
+		this.msgDiag.updateState(this.configurazionePdDReader);
 
 		
 		
@@ -8406,14 +8433,15 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 							((OpenSPCoopStateless)this.openspcoopstate).setUseConnection(false);
 							*/
 							// update states
-							this.registroServiziReader.updateState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
-							this.configurazionePdDReader.updateState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
-							this.tracciamento.updateState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
-							this.msgDiag.updateState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
+							this.registroServiziReader = this.registroServiziReader.refreshState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
+							this.configurazionePdDReader = this.configurazionePdDReader.refreshState(this.registroServiziReader);
+							this.tracciamento.updateState(this.configurazionePdDReader);
+							this.msgDiag.updateState(this.configurazionePdDReader);
 						}
 					}
 	
-					esito = chiamaLibreria(((OpenSPCoopStateless)this.openspcoopstate), this.logCore);
+					esito = chiamaLibreria(((OpenSPCoopStateless)this.openspcoopstate), this.logCore,
+							this.registroServiziReader, this.configurazionePdDReader);
 					
 					if(gestioneRichiesta && libreriaConsegnaContenutiRichiesta) {
 						return true;
@@ -9772,18 +9800,19 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		}
 	}
 
-	private EsitoLib chiamaLibreria(OpenSPCoopStateless openspcoopstate, Logger log) throws OpenSPCoopStateException, GenericLibException{
+	private EsitoLib chiamaLibreria(OpenSPCoopStateless openspcoopstate, Logger log,
+			RegistroServiziManager registroServiziManager, ConfigurazionePdDManager configurazionePdDManager) throws OpenSPCoopStateException, GenericLibException{
 
 		/* --------------------------- SBUSTAMENTO ------------------------ */
 		if (openspcoopstate.getDestinatarioRequestMsgLib().startsWith(Sbustamento.ID_MODULO)) {
 			Sbustamento lib = new Sbustamento(log);
-			return lib.onMessage(openspcoopstate);	
+			return lib.onMessage(openspcoopstate, registroServiziManager, configurazionePdDManager);	
 		}
 
 		/* ---------------------------ConsegnaContenutiApplicativi----------------------------- */
 		else if (openspcoopstate.getDestinatarioRequestMsgLib().startsWith(ConsegnaContenutiApplicativi.ID_MODULO)) {
 			ConsegnaContenutiApplicativi lib = new ConsegnaContenutiApplicativi(log);
-			EsitoLib result = lib.onMessage(openspcoopstate, 
+			EsitoLib result = lib.onMessage(openspcoopstate, registroServiziManager, configurazionePdDManager, 
 					this.asyncResponseCallback!=null ? this : null);
 			if(this.asyncResponseCallback!=null) {
 				this.asynWait = true;
@@ -9796,13 +9825,13 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		/* ----------------------        -ImbustamentoRisposte         ------------------------------- */
 		else if (openspcoopstate.getDestinatarioResponseMsgLib().startsWith(ImbustamentoRisposte.ID_MODULO)) {
 			ImbustamentoRisposte lib = new ImbustamentoRisposte(log);
-			return lib.onMessage(openspcoopstate);
+			return lib.onMessage(openspcoopstate, registroServiziManager, configurazionePdDManager);
 		}
 
 		/* ---------------------       -InoltroRisposte----------------------------- */
 		else if (openspcoopstate.getDestinatarioResponseMsgLib().startsWith(InoltroRisposte.ID_MODULO)) {
 			InoltroRisposte lib = new InoltroRisposte(log);
-			return lib.onMessage(openspcoopstate);
+			return lib.onMessage(openspcoopstate, registroServiziManager, configurazionePdDManager);
 		}
 
 		else throw new OpenSPCoopStateException(RicezioneBuste.ID_MODULO + ".chiamaLibreria: nome libreria non valido");

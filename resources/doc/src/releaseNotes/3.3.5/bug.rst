@@ -35,6 +35,8 @@ Per quanto concerne il Profilo 'SPCoop' sono stati risolti i seguenti bug:
 
 - Durante il restyling grafico delle liste accessibili dal menù principale, relativamente agli Applicativi e realizzato con il rilascio della versione 3.3.3, è venuta meno la possibilità di configurare i connettori relativi alla 'Risposta Asincrona' richiesti dai profili asincroni. La problematica è stata risolta.
 
+- In caso di ricezione di una busta con un soggetto mittente censito e registrato con delle credenziali differenti da quelle presenti nella richiesta, l'autenticazione non falliva se le credenziali non corrispondevano a nessun altro soggetto censito.
+
 
 Per la console di gestione sono stati risolti i seguenti bug:
 
