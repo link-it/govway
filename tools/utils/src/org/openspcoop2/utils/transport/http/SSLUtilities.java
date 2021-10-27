@@ -857,10 +857,22 @@ public class SSLUtilities {
 										
 										Method mPeerCertificates = sslSessionInfo.getClass().getMethod("getPeerCertificates");
 										if(mPeerCertificates!=null) {
-											Object peerCertificates = mPeerCertificates.invoke(sslSessionInfo);
-											if(peerCertificates instanceof java.security.cert.X509Certificate[]) {
-												//System.out.println("FOUND!");
-												return (java.security.cert.X509Certificate[]) peerCertificates;
+											try {
+												Object peerCertificates = mPeerCertificates.invoke(sslSessionInfo);
+												if(peerCertificates instanceof java.security.cert.X509Certificate[]) {
+													//System.out.println("FOUND!");
+													return (java.security.cert.X509Certificate[]) peerCertificates;
+												}
+											}catch(Throwable t) {
+												// a volte lancia eccezione null .... 
+												if(Utilities.existsInnerException(t, "io.undertow.server.RenegotiationRequiredException")) {
+													return null; // certificati non sono disponibili a causa di una rinegoziazione
+												}
+												else {
+													if(log!=null) {
+														log.error("readCertificatesFromUndertowServlet 'get peer certificates' failed: "+t.getMessage(),t);
+													}
+												}
 											}
 										}
 									}

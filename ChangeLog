@@ -2,6 +2,13 @@
 
 	* Rilasciata versione 3.3.5
 
+2021-10-21 Andrea Poli <apoli@link.it>
+
+	* [ProtocolloSPCoop]
+	Risolto Bug OP-1271
+	In caso di ricezione di una busta con un soggetto mittente censito e registrato con delle credenziali differenti da quelle presenti nella richiesta, 
+	l'autenticazione non falliva se le credenziali non corrispondevano a nessun altro soggetto censito.
+
 2021-10-20 Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

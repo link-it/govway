@@ -722,6 +722,41 @@ public class DatabaseMsgDiagnosticiComponent {
 		}
 	}
 	
+	public Vector<String> getMessaggiDiagnostici(String id)throws TestSuiteException{
+		ResultSet res = null;
+		PreparedStatement prep = null;
+		Vector<String> resultsVector = new Vector<String>();
+		try {
+			StringBuilder sql = new StringBuilder();
+			sql.append("select * from "+CostantiDB.MSG_DIAGNOSTICI+" where "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO+"=?");
+			prep = this.connectionMsgDiagnostici.prepareStatement(sql.toString());
+			prep.setString(1, id);
+			res = prep.executeQuery();
+			while(res.next()){
+				
+				// Verifico che non siano due email o tre email del caso di test
+				String messaggio = res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO);
+				resultsVector.add(messaggio);
+
+			}
+			res.close();
+			prep.close();
+		} catch (Exception e) {
+			throw new TestSuiteException("Errore nel database: "+e.getMessage(),
+			"nella fase DBC.getResult");
+		} finally{
+			try{
+				if(res!=null)
+					res.close();
+			}catch(Exception e){}
+			try{
+				if(prep!=null)
+					prep.close();
+			}catch(Exception e){}
+		}
+		
+		return resultsVector;
+	}
 	
 	public Vector<String> getMessaggiNonTrasformatiCorrettamente()throws TestSuiteException{
 		ResultSet res = null;
