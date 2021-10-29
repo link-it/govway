@@ -112,6 +112,8 @@ public class ApplicationBean implements Serializable {
 	
 	private boolean permessoTransazioni = false;
 	private boolean permessoStatistiche = false;
+	
+	private boolean loginApplication = true;
 
 	private static Map<String, Boolean> funzionalitaStaticInstance = null;
 	private synchronized void initializeFunzionalita(PddMonitorProperties govwayMonitorProperties) throws Exception{
@@ -154,6 +156,7 @@ public class ApplicationBean implements Serializable {
 			
 			// funzionalita visualizzazione dei report in formato PDF 
 			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_REPORT, govwayMonitorProperties.isAttivoModuloReports());
+			
 		}
 	}
 	
@@ -171,6 +174,9 @@ public class ApplicationBean implements Serializable {
 			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(ApplicationBean.log);
 			initializeFunzionalita(govwayMonitorProperties);
 			this.funzionalita.putAll(ApplicationBean.funzionalitaStaticInstance);
+			
+			this.loginApplication = govwayMonitorProperties.isLoginApplication();
+			
 		} catch (Exception e) {
 			ApplicationBean.log.error("Errore durante l'inizializzazione del ApplicationBean.",e);
 		}
@@ -777,6 +783,10 @@ public class ApplicationBean implements Serializable {
 
 	public boolean getShowCambiaPassword() {
 
+		if(!this.loginApplication) {
+			return false;
+		}
+		
 		checkRoles();
 		
 		// gestione password deve essere abilitata a prescindere dall'utenza
