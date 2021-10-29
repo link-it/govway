@@ -3263,6 +3263,11 @@ public class HTTPS extends GestioneViaJmx {
 				Reporter.log("Controllo Messaggio (id:"+id+") msg["+msgErrore+"]");
 				boolean condition = dataMsg.isTracedMessaggio(id, msgErrore);
 				if(!condition) {
+					// jenkins venendo caricate entrambe le configurazioni si ha l'effetto che viene identificato un soggetto del protocollo trasparente:
+					String msgErroreJenkins = "processo di autenticazione [ssl] fallito, Identificato un soggetto (tramite profilo di interoperabilità) 'spc/Soggetto1SenzaCredenziali' differente da quello identificato tramite il processo di autenticazione 'gw/EsempioSoggettoTrasparenteCert1'";
+					condition = dataMsg.isTracedMessaggioWithLike(id, msgErroreJenkins);
+				}
+				if(!condition) {
 					List<String> l = dataMsg.getMessaggiDiagnostici(id);
 					Reporter.log("Presenti "+l.size()+" diagnostici");
 					if(!l.isEmpty()) {
@@ -3467,6 +3472,11 @@ public class HTTPS extends GestioneViaJmx {
 				String msgErrore = "Autenticazione [ssl] fallita : [RicezioneBuste] processo di autenticazione [ssl] fallito, Identificato un soggetto (tramite profilo di interoperabilità) 'spc/Soggetto1SenzaCredenziali' registrato con credenziali differenti da quelle ricevute"; 
 				Reporter.log("Controllo Messaggio (id:"+id+") msg["+msgErrore+"]");
 				boolean condition = dataMsg.isTracedMessaggio(id, msgErrore);
+				if(!condition) {
+					// jenkins venendo caricate entrambe le configurazioni si ha l'effetto che viene identificato un soggetto del protocollo trasparente:
+					String msgErroreJenkins = "processo di autenticazione [ssl] fallito, Identificato un soggetto (tramite profilo di interoperabilità) 'spc/Soggetto1SenzaCredenziali' differente da quello identificato tramite il processo di autenticazione 'gw/EsempioSoggettoTrasparenteCert1'";
+					condition = dataMsg.isTracedMessaggioWithLike(id, msgErroreJenkins);
+				}
 				if(!condition) {
 					List<String> l = dataMsg.getMessaggiDiagnostici(id);
 					Reporter.log("Presenti "+l.size()+" diagnostici");

@@ -34,6 +34,8 @@ public interface IKeyGenerator {
 
 	public boolean isReturnGeneratedKeySupported();
 	
+	public boolean useReturnGeneratedKeyColumnNameInResultSet();
+	
 	public String getColunmKeyName() throws KeyGeneratorException;
 	
 	public long generateKey() throws KeyGeneratorException;

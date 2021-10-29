@@ -87,6 +87,7 @@ public class TimerFSRecoveryThread extends Thread{
 	private ITracciaProducer tracciamentoAppender;
 	private IDiagnosticProducer diagnosticoAppender;
 	private IDumpProducer dumpAppender;
+	private boolean transazioniRegistrazioneDumpHeadersCompactEnabled;
 	
     // VARIABILE PER STOP
 	private boolean stop = false;
@@ -104,13 +105,14 @@ public class TimerFSRecoveryThread extends Thread{
 	public TimerFSRecoveryThread(DataSource ds, 
 			ITracciaProducer tracciamentoAppender,
 			IDiagnosticProducer diagnosticoAppender, 
-			IDumpProducer dumpAppender,
+			IDumpProducer dumpAppender, boolean transazioniRegistrazioneDumpHeadersCompactEnabled,
 			FSRecoveryConfig fsRepositoryConfig) throws EngineException{
 		this(fsRepositoryConfig);
 		this.ds = ds;
 		this.tracciamentoAppender = tracciamentoAppender;
 		this.diagnosticoAppender = diagnosticoAppender;
 		this.dumpAppender = dumpAppender;
+		this.transazioniRegistrazioneDumpHeadersCompactEnabled = transazioniRegistrazioneDumpHeadersCompactEnabled;
 	}
 	public TimerFSRecoveryThread(String ds,Properties dsContext, FSRecoveryConfig fsRepositoryConfig) throws EngineException{
 		this(fsRepositoryConfig);
@@ -127,13 +129,14 @@ public class TimerFSRecoveryThread extends Thread{
 	public TimerFSRecoveryThread(Connection connection, 
 			ITracciaProducer tracciamentoAppender,
 			IDiagnosticProducer diagnosticoAppender,
-			IDumpProducer dumpAppender,
+			IDumpProducer dumpAppender, boolean transazioniRegistrazioneDumpHeadersCompactEnabled,
 			OpenspcoopAppender appenderProperties, FSRecoveryConfig fsRepositoryConfig) throws EngineException{
 		this(fsRepositoryConfig);
 		this.connection = connection;
 		this.tracciamentoAppender = tracciamentoAppender;
 		this.diagnosticoAppender = diagnosticoAppender;
 		this.dumpAppender = dumpAppender;
+		this.transazioniRegistrazioneDumpHeadersCompactEnabled = transazioniRegistrazioneDumpHeadersCompactEnabled;
 	}
 	public TimerFSRecoveryThread(String connectionUrl,String driverJDBC,String username, String password, FSRecoveryConfig fsRepositoryConfig) throws EngineException{
 		this(fsRepositoryConfig);
@@ -187,7 +190,8 @@ public class TimerFSRecoveryThread extends Thread{
 					this.daoFactory, this.fsRepositoryConfig.getLogSql(), this.daoFactoryServiceManagerPropertiesTransazioni,
 					Costanti.GESTIONE_SERIALIZABLE_ATTESA_ATTIVA, Costanti.GESTIONE_SERIALIZABLE_CHECK_INTERVAL,
 					this.transazioniSM, 
-					this.tracciamentoAppender, this.diagnosticoAppender, this.dumpAppender,
+					this.tracciamentoAppender, this.diagnosticoAppender, 
+					this.dumpAppender, this.transazioniRegistrazioneDumpHeadersCompactEnabled,
 					this.pluginsEventiSM);
 							
 			// CheckInterval

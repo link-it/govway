@@ -80,171 +80,177 @@ public class TestReader {
 		String HEADER_SOAP_NON_ATTESO = null;
 		QName ROOT_ELEMENT_NON_ATTESO = null;
 		
+		String contentTypeSoap11 = HttpConstants.CONTENT_TYPE_SOAP_1_1+"; charset=UTF-8";
+		String contentTypeSoap12 = HttpConstants.CONTENT_TYPE_SOAP_1_2+"; charset=UTF-8";
+		String _prefixContentTypeWithAttachments = HttpConstants.CONTENT_TYPE_MULTIPART_RELATED+";   boundary=\"----=_Part_0_6330713.1171639717331\";   type=\"";
+		String contentTypeSoap11WithAttachments = _prefixContentTypeWithAttachments+HttpConstants.CONTENT_TYPE_SOAP_1_1+"\"";
+		String contentTypeSoap12WithAttachments = _prefixContentTypeWithAttachments+HttpConstants.CONTENT_TYPE_SOAP_1_2+"\"";
+		
 		
 		System.out.println("\n\n*** TEST SOAP 11 da 5K (buffer 1k) ***");
-		test("request5K_soap11.xml", 1, expectedFullBuffer, 1024,
+		test("request5K_soap11.xml", contentTypeSoap11, 1, expectedFullBuffer, 1024,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 12 da 5K (buffer 1k) ***");
-		test("request5K_soap12.xml", 1, false, 1024,
+		test("request5K_soap12.xml", contentTypeSoap12, 1, false, 1024,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_NON_ATTESO);
 		
 		
 		System.out.println("\n\n*** TEST SOAP 11 con Header 5K (buffer 1k) ***");
-		test("requestHeader5K_soap11.xml", 1, expectedFullBuffer, 1024,
+		test("requestHeader5K_soap11.xml", contentTypeSoap11, 1, expectedFullBuffer, 1024,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 12 con Header 5K (buffer 1k) ***");
-		test("requestHeader5K_soap12.xml", 1, expectedFullBuffer, 1024,
+		test("requestHeader5K_soap12.xml", contentTypeSoap12, 1, expectedFullBuffer, 1024,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso,
 				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 11 con Header 5K (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestHeader5K_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 5407,
+		test("requestHeader5K_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 5407,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_5K);
 		
 		System.out.println("\n\n*** TEST SOAP 12 con Header 5K (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestHeader5K_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 5405,
+		test("requestHeader5K_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 5405,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_5K);
 
 		
 		System.out.println("\n\n*** TEST SOAP 11 con Header 5K e Body 5K (buffer 1k) ***");
-		test("requestHeader5KBody5K_soap11.xml", 1, expectedFullBuffer, 1024,
+		test("requestHeader5KBody5K_soap11.xml", contentTypeSoap11, 1, expectedFullBuffer, 1024,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 12 con Header 5K e Body 5K (buffer 1k) ***");
-		test("requestHeader5KBody5K_soap12.xml", 1, expectedFullBuffer, 1024,
+		test("requestHeader5KBody5K_soap12.xml", contentTypeSoap12, 1, expectedFullBuffer, 1024,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 11 con Header 5K e Body 5K (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestHeader5KBody5K_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 6144,
+		test("requestHeader5KBody5K_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 6144,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT, HEADER_5K);
 		
 		System.out.println("\n\n*** TEST SOAP 12 con Header 5K e Body 5K (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestHeader5KBody5K_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 6144,
+		test("requestHeader5KBody5K_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 6144,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT, HEADER_5K);
 		
 		
 		System.out.println("\n\n*** TEST SOAP 11 con prefisso SOAP vuoto (buffer 1k) ***");
-		test("requestSoapPrefixEmpty_soap11.xml", 1, expectedFullBuffer, 1024,
+		test("requestSoapPrefixEmpty_soap11.xml", contentTypeSoap11, 1, expectedFullBuffer, 1024,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 12 con prefisso SOAP vuoto (buffer 1k) ***");
-		test("requestSoapPrefixEmpty_soap12.xml", 1, expectedFullBuffer, 1024,
+		test("requestSoapPrefixEmpty_soap12.xml", contentTypeSoap12, 1, expectedFullBuffer, 1024,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 11 con prefisso SOAP vuoto e Header (buffer 1k) ***");
-		test("requestSoapPrefixEmptyWithHeader_soap11.xml", 1, expectedFullBuffer, 1024,
+		test("requestSoapPrefixEmptyWithHeader_soap11.xml", contentTypeSoap11, 1, expectedFullBuffer, 1024,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_WSA.replaceAll("soapenv", "SOAP-ENV"));
 		
 		System.out.println("\n\n*** TEST SOAP 12 con prefisso SOAP vuoto e Header (buffer 1k) ***");
-		test("requestSoapPrefixEmptyWithHeader_soap12.xml", 1, expectedFullBuffer, 1024,
+		test("requestSoapPrefixEmptyWithHeader_soap12.xml", contentTypeSoap12, 1, expectedFullBuffer, 1024,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_WSA.replaceAll("soapenv", "env"));
 		
 		
 		System.out.println("\n\n*** TEST SOAP 11 con prefissi SOAP vari con Header (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestMixedPrefix_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 1024,
+		test("requestMixedPrefix_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 1024,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_WSA_2.replaceAll("soapenv", "hdr"));
 		
 		System.out.println("\n\n*** TEST SOAP 12 con prefissi SOAP vari con Header (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestMixedPrefix_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 1024,
+		test("requestMixedPrefix_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 1024,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_WSA_2.replaceAll("soapenv", "env"));
 		
 		
 		
 		System.out.println("\n\n*** TEST SOAP 11 tutto su una riga con soap body vuoto (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestSuUnaRigaSoapBodyVuoto_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 4115,
+		test("requestSuUnaRigaSoapBodyVuoto_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 4115,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, isBodyEmptyAtteso, !isFaultAtteso,
 				ROOT_ELEMENT_NON_ATTESO, HEADER_5K);
 		
 		System.out.println("\n\n*** TEST SOAP 12 tutto su una riga con soap body vuoto (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestSuUnaRigaSoapBodyVuoto_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 4113,
+		test("requestSuUnaRigaSoapBodyVuoto_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 4113,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, isBodyEmptyAtteso, !isFaultAtteso,
 				ROOT_ELEMENT_NON_ATTESO, HEADER_5K);
 		
 		System.out.println("\n\n*** TEST SOAP 11 soap body vuoto (caso1) (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestEmpty1_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 151,
+		test("requestEmpty1_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 151,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, isBodyEmptyAtteso, !isFaultAtteso,
 				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 12 soap body vuoto (caso1) (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestEmpty1_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 149,
+		test("requestEmpty1_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 149,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, isBodyEmptyAtteso, !isFaultAtteso,
 				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 11 soap body vuoto (caso2) (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestEmpty2_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 125,
+		test("requestEmpty2_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 125,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, isBodyEmptyAtteso, !isFaultAtteso,
 				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 12 soap body vuoto (caso2) (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestEmpty2_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 123,
+		test("requestEmpty2_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 123,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, isBodyEmptyAtteso, !isFaultAtteso,
 				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 11 soap body vuoto (caso3) (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestEmpty3_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 164,
+		test("requestEmpty3_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 164,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, isBodyEmptyAtteso, !isFaultAtteso,
 				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 12 soap body vuoto (caso3) (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestEmpty3_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 162,
+		test("requestEmpty3_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 162,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, isBodyEmptyAtteso, !isFaultAtteso,
 				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
 		
 		
 		System.out.println("\n\n*** TEST SOAP 11 con request short senza header (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestShort_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 301,
+		test("requestShort_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 301,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 12 con request short senza header (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestShort_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 299,
+		test("requestShort_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 299,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 11 con request short con header vuoto (caso1) (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestShortHeaderEmpty1_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 337,
+		test("requestShortHeaderEmpty1_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 337,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 12 con request short con header vuoto (caso1) (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestShortHeaderEmpty1_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 335,
+		test("requestShortHeaderEmpty1_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 335,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 11 con request short con header vuoto (caso2) (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestShortHeaderEmpty2_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 318,
+		test("requestShortHeaderEmpty2_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 318,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 12 con request short con header vuoto (caso2) (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestShortHeaderEmpty2_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 316,
+		test("requestShortHeaderEmpty2_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 316,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 11 con request short con header vuoto (caso3) (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestShortHeaderEmpty3_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 383,
+		test("requestShortHeaderEmpty3_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 383,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 12 con request short con header vuoto (caso3) (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestShortHeaderEmpty3_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 381,
+		test("requestShortHeaderEmpty3_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 381,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_NON_ATTESO);
 		
@@ -252,102 +258,102 @@ public class TestReader {
 		
 		
 		System.out.println("\n\n*** TEST SOAP 11 soapFault (buffer "+buffer_dimensione_default+"k) ***");
-		test("soapFault_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 812,
+		test("soapFault_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 812,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, isFaultAtteso,
 				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 12 soapFault (buffer "+buffer_dimensione_default+"k) ***");
-		test("soapFault_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 1024,
+		test("soapFault_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 1024,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, isFaultAtteso,
 				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 11 soapFault con soap prefix empty (buffer "+buffer_dimensione_default+"k) ***");
-		test("soapFault_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 812,
+		test("soapFault_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 812,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, isFaultAtteso,
 				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 12 soapFault con soap prefix empty (buffer "+buffer_dimensione_default+"k) ***");
-		test("soapFault_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 1024,
+		test("soapFault_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 1024,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, isFaultAtteso,
 				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 11 soapFault con stack trace (buffer "+buffer_dimensione_default+"k) ***");
-		test("soapFaultLong_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 1024,
+		test("soapFaultLong_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 1024,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, isFaultAtteso,
 				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 12 soapFault con stack trace (buffer "+buffer_dimensione_default+"k) ***");
-		test("soapFaultLong_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 1024,
+		test("soapFaultLong_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 1024,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, isFaultAtteso,
 				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 11 struttura soapFault simile (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestSimileSoapFault_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 878,
+		test("requestSimileSoapFault_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 878,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_FAULT,	HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 12 struttura soapFault simile (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestSimileSoapFault_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 1024,
+		test("requestSimileSoapFault_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 1024,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_FAULT,	HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 11 struttura soapFault simile (empty prefix) (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestSimileSoapFault2_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 830,
+		test("requestSimileSoapFault2_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 830,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_FAULT,	HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 12 struttura soapFault simile (empty prefix) (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestSimileSoapFault2_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 1024,
+		test("requestSimileSoapFault2_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 1024,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_FAULT,	HEADER_SOAP_NON_ATTESO);
 		
 		
 		
 		System.out.println("\n\n*** TEST SOAP 11 CDATA (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestAllCDATAHeaderBodyEmpty_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 7633,
+		test("requestAllCDATAHeaderBodyEmpty_soap11.xml", contentTypeSoap11WithAttachments, buffer_dimensione_default, expectedFullBuffer, 7633,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 12 CDATA (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestAllCDATAHeaderBodyEmpty_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 7631,
+		test("requestAllCDATAHeaderBodyEmpty_soap12.xml", contentTypeSoap12WithAttachments, buffer_dimensione_default, expectedFullBuffer, 7631,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 11 con prefissi SOAP vari con Header e CDATA (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestMixedPrefixAndCDATA_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 2048,
+		test("requestMixedPrefixAndCDATA_soap11.xml", contentTypeSoap11WithAttachments, buffer_dimensione_default, expectedFullBuffer, 2048,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_WSA_2.replaceAll("soapenv", "hdr"));
 		
 		System.out.println("\n\n*** TEST SOAP 12 con prefissi SOAP vari con Header e CDATA (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestMixedPrefixAndCDATA_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 2048,
+		test("requestMixedPrefixAndCDATA_soap12.xml", contentTypeSoap12WithAttachments, buffer_dimensione_default, expectedFullBuffer, 2048,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_WSA_2.replaceAll("soapenv", "env"));
 
 		
 		
 		System.out.println("\n\n*** TEST SOAP 11 XmlEntity (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestHeaderBodyXmlEntity_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 3072,
+		test("requestHeaderBodyXmlEntity_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 3072,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT, HEADER_XMLENTITY);
 		
 		System.out.println("\n\n*** TEST SOAP 12 XmlEntity (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestHeaderBodyXmlEntity_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 3072,
+		test("requestHeaderBodyXmlEntity_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 3072,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT, HEADER_XMLENTITY);
 		
 		System.out.println("\n\n*** TEST SOAP 11 XmlEntity OpenOnly (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestHeaderBodyXmlEntityOpenOnly_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 3072,
+		test("requestHeaderBodyXmlEntityOpenOnly_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 3072,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT, HEADER_XMLENTITY);
 		
 		System.out.println("\n\n*** TEST SOAP 12 XmlEntity OpenOnly (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestHeaderBodyXmlEntityOpenOnly_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 3072,
+		test("requestHeaderBodyXmlEntityOpenOnly_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 3072,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT, HEADER_XMLENTITY);
 		
 		System.out.println("\n\n*** TEST SOAP 11 XmlEntity CloseOnly (buffer "+buffer_dimensione_default+"k) ***");
 		try {
-			test("requestHeaderBodyXmlEntityCloseOnly_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 3072,
+			test("requestHeaderBodyXmlEntityCloseOnly_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 3072,
 					Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 					ROOT_ELEMENT_SKCOT, HEADER_XMLENTITY);
 			throw new Exception("Atteso errore");
@@ -361,7 +367,7 @@ public class TestReader {
 		}
 		
 		System.out.println("\n\n*** TEST SOAP 12 XmlEntity CloseOnly (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestHeaderBodyXmlEntityCloseOnly_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 3072,
+		test("requestHeaderBodyXmlEntityCloseOnly_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 3072,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT, HEADER_XMLENTITY);
 		
@@ -369,32 +375,32 @@ public class TestReader {
 		
 		
 		System.out.println("\n\n*** TEST SOAP 11 con attachments (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestSOAPMultipartRelatedMIME_soap11.bin", buffer_dimensione_default, expectedFullBuffer, 1024,
+		test("requestSOAPMultipartRelatedMIME_soap11.bin", contentTypeSoap11WithAttachments, buffer_dimensione_default, expectedFullBuffer, 1024,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_MIME);
 		
 		System.out.println("\n\n*** TEST SOAP 12 con attachments (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestSOAPMultipartRelatedMIME_soap12.bin", buffer_dimensione_default, expectedFullBuffer, 1024,
+		test("requestSOAPMultipartRelatedMIME_soap12.bin", contentTypeSoap12WithAttachments, buffer_dimensione_default, expectedFullBuffer, 1024,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_MIME);
 		
 		System.out.println("\n\n*** TEST SOAP 11 con attachments (pdf) (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestSOAPMultipartRelatedMIMEpdf_soap11.bin", buffer_dimensione_default, expectedFullBuffer, 2048,
+		test("requestSOAPMultipartRelatedMIMEpdf_soap11.bin", contentTypeSoap11WithAttachments, buffer_dimensione_default, expectedFullBuffer, 2048,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_MIME);
 		
 		System.out.println("\n\n*** TEST SOAP 12 con attachments (pdf) (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestSOAPMultipartRelatedMIMEpdf_soap12.bin", buffer_dimensione_default, expectedFullBuffer, 2048,
+		test("requestSOAPMultipartRelatedMIMEpdf_soap12.bin", contentTypeSoap12WithAttachments, buffer_dimensione_default, expectedFullBuffer, 2048,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_MIME);
 		
 		System.out.println("\n\n*** TEST SOAP 11 con attachments (bodyEmpty) (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestSOAPMultipartRelatedMIMEbodyEmpty_soap11.bin", buffer_dimensione_default, expectedFullBuffer, 1024,
+		test("requestSOAPMultipartRelatedMIMEbodyEmpty_soap11.bin", contentTypeSoap11WithAttachments, buffer_dimensione_default, expectedFullBuffer, 1024,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_NON_ATTESO, HEADER_MIME);
 		
 		System.out.println("\n\n*** TEST SOAP 12 con attachments (bodyEmpty) (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestSOAPMultipartRelatedMIMEbodyEmpty_soap12.bin", buffer_dimensione_default, expectedFullBuffer, 1923,
+		test("requestSOAPMultipartRelatedMIMEbodyEmpty_soap12.bin", contentTypeSoap12WithAttachments, buffer_dimensione_default, expectedFullBuffer, 1923,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_NON_ATTESO, HEADER_MIME);
 
@@ -402,98 +408,142 @@ public class TestReader {
 
 		
 		System.out.println("\n\n*** TEST SOAP 11 '\\n' (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestACapo_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 972,
+		test("requestACapo_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 972,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_CARATTERI_ACAPO_TAB);
 		
 		System.out.println("\n\n*** TEST SOAP 12 '\\n' (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestACapo_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 972,
+		test("requestACapo_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 972,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_CARATTERI_ACAPO_TAB);
 
 		System.out.println("\n\n*** TEST SOAP 11 '\\t' (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestTab_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 973,
+		test("requestTab_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 973,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_CARATTERI_ACAPO_TAB);
 		
 		System.out.println("\n\n*** TEST SOAP 12 '\\t' (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestTab_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 954,
+		test("requestTab_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 954,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_CARATTERI_ACAPO_TAB);
 		
 		System.out.println("\n\n*** TEST SOAP 11 rootElement '\\n' (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestRootElementACapo_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 666,
+		test("requestRootElementACapo_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 666,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 12 rootElement '\\n' (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestRootElementACapo_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 664,
+		test("requestRootElementACapo_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 664,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 11 rootElement '\\t' (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestRootElementTab_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 671,
+		test("requestRootElementTab_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 671,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 12 rootElement '\\t' (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestRootElementTab_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 669,
+		test("requestRootElementTab_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 669,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 11 header '\\n' (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestHeaderACapo_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 953,
+		test("requestHeaderACapo_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 953,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_CARATTERI_ACAPO_TAB);
 		
 		System.out.println("\n\n*** TEST SOAP 12 header '\\n' (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestHeaderACapo_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 951,
+		test("requestHeaderACapo_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 951,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_CARATTERI_ACAPO_TAB);
 		
 		System.out.println("\n\n*** TEST SOAP 11 header '\\t' (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestHeaderTab_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 957,
+		test("requestHeaderTab_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 957,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_CARATTERI_ACAPO_TAB);
 		
 		System.out.println("\n\n*** TEST SOAP 12 header '\\t' (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestHeaderTab_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 954,
+		test("requestHeaderTab_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 954,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_CARATTERI_ACAPO_TAB);
 		
 		System.out.println("\n\n*** TEST SOAP 11 fault '\\n' (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestSoapFaultACapo_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 986,
+		test("requestSoapFaultACapo_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 986,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, isFaultAtteso,
 				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 12 fault '\\n' (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestSoapFaultACapo_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 1024,
+		test("requestSoapFaultACapo_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 1024,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, isFaultAtteso,
 				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 11 fault '\\t' (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestSoapFaultTab_soap11.xml", buffer_dimensione_default, expectedFullBuffer, 987,
+		test("requestSoapFaultTab_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 987,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, isFaultAtteso,
 				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 12 fault '\\t' (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestSoapFaultTab_soap12.xml", buffer_dimensione_default, expectedFullBuffer, 1024,
+		test("requestSoapFaultTab_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 1024,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, isFaultAtteso,
 				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
+		
+		
+		// Questo tipo di errore avviene solamente se il carattere > e' iniziale prima di qualsiasi <
+		// I test con attachments servono appunto a non gestire questo aspetto poiche' poiche' il carattere > potrebbe essere nel mime
+		// se cmq si attiva la validazione, verrà individuato l'errore
+		System.out.println("\n\n*** TEST SOAP 11 elemento > senza < (buffer "+buffer_dimensione_default+"k) ***");
+		try {
+			test("requestMalformed_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 316,
+					Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso,
+					ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
+			throw new Exception("Atteso errore");
+		}catch(Throwable e) {
+			if(e.getMessage().contains("Invalid content; found premature '>' character")) {
+				System.out.println("Rilevato errore atteso: "+e.getMessage());
+			}
+			else {
+				throw e;
+			}
+		}
+		System.out.println("\n\n*** TEST SOAP 12 elemento > senza < (buffer "+buffer_dimensione_default+"k) ***");
+		try {
+			test("requestMalformed_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 316,
+					Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso,
+					ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
+			throw new Exception("Atteso errore");
+		}catch(Throwable e) {
+			if(e.getMessage().contains("Invalid content; found premature '>' character")) {
+				System.out.println("Rilevato errore atteso: "+e.getMessage());
+			}
+			else {
+				throw e;
+			}
+		}
+		System.out.println("\n\n*** TEST SOAP 11 con attachments (carattere > prima di <) (buffer "+buffer_dimensione_default+"k) ***");
+		test("contentIdMalformedSOAPMultipartRelatedMIME_soap11.bin", contentTypeSoap11WithAttachments, buffer_dimensione_default, expectedFullBuffer, 1024,
+				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_SKCOT, HEADER_MIME);
+		
+		System.out.println("\n\n*** TEST SOAP 12 con attachments (carattere > prima di <) (buffer "+buffer_dimensione_default+"k) ***");
+		test("contentIdMalformedSOAPMultipartRelatedMIME_soap12.bin", contentTypeSoap12WithAttachments, buffer_dimensione_default, expectedFullBuffer, 1024,
+				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_SKCOT, HEADER_MIME);
+		
 	}
 	
 	
-	private static void test(String fileName, int bufferThresholdKb, boolean expectedFullBuffer, int expectedBufferSize, 
+	private static void test(String fileName, String contentType, int bufferThresholdKb, boolean expectedFullBuffer, int expectedBufferSize, 
 			String namespaceAtteso, boolean isBodyEmptyAtteso, boolean isFaultAtteso, 
 			QName expectedRootElement, String expectedHeader) throws Exception {
 		
 		OpenSPCoop2MessageSoapStreamReader streamReader = new OpenSPCoop2MessageSoapStreamReader(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
-				HttpConstants.CONTENT_TYPE_SOAP_1_1, 
+				contentType, 
 				TestReader.class.getResourceAsStream("/org/openspcoop2/message/soap/reader/"+fileName), 
 				bufferThresholdKb);
 		InputStream is = null;
 		try {
 			streamReader.read();
+			streamReader.checkException();
 		}finally {
 			// anche in caso di eccezione devo cmq aggiornare is
 			is = streamReader.getBufferedInputStream();

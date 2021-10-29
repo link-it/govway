@@ -117,6 +117,13 @@ public class FileSystemSerializer {
 		return new File(this.directory,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_TRANSAZIONE_APPLICATIVO_SERVER);
 	}
 	
+	public void registraTransazioneApplicativoServerConsegnaTerminata(byte[] oggettSerializzato, Date date) throws Exception{
+		this.registra(oggettSerializzato, Costanti.PREFIX_FILE_SYSTEM_REPOSITORY_TRANSAZIONE_APPLICATIVO_SERVER_CONSEGNA_TERMINATA, date,getDirTransazioneApplicativoServerConsegnaTerminata());
+	}
+	public File getDirTransazioneApplicativoServerConsegnaTerminata(){
+		return new File(this.directory,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_TRANSAZIONE_APPLICATIVO_SERVER_CONSEGNA_TERMINATA);
+	}
+	
 	private void registra(byte[] oggettSerializzato, String prefix, Date date, File dir) throws Exception{
 		
 		if(dir.exists()==false){

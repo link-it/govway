@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.security.MessageDigest;
+import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -1762,6 +1763,12 @@ public class OpenSPCoop2Properties {
 			// Datasource Wrapped
 			this.isDSOp2UtilsEnabled();
 			
+			// Datasource getConnection
+			this.isDataSourceGetConnectionCheckAutoCommitDisabled();
+			if(this.isDataSourceGetConnectionCheckTransactionIsolationLevel()) {
+				this.getDataSourceGetConnectionCheckTransactionIsolationLevelExpected();
+			}
+			
 			// NotifierInputStreamEnabled
 			if(this.isNotifierInputStreamEnabled()) {
 				String notifierClass = null;
@@ -2005,6 +2012,7 @@ public class OpenSPCoop2Properties {
 				
 				if(this.isTransazioniRegistrazioneSlowLog()) {
 					this.getTransazioniRegistrazioneSlowLogThresholdMs();
+					this.isTransazioniRegistrazioneSlowLogRateLimitingDetails();
 				}
 
 				if(this.isTransazioniFileTraceEnabled()) {
@@ -17623,6 +17631,76 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isDSOp2UtilsEnabled;
 	}
 	
+	
+	
+	/* ------------- Datasource check in getConnection event  ---------------------*/
+	
+	private static Boolean isDataSourceGetConnectionCheckAutoCommitDisabled = null;
+	public boolean isDataSourceGetConnectionCheckAutoCommitDisabled() {	
+		String pName = "org.openspcoop2.pdd.datasource.getConnection.checkAutoCommitDisabled";
+		if(OpenSPCoop2Properties.isDataSourceGetConnectionCheckAutoCommitDisabled==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isDataSourceGetConnectionCheckAutoCommitDisabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				OpenSPCoop2Properties.isDataSourceGetConnectionCheckAutoCommitDisabled = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isDataSourceGetConnectionCheckAutoCommitDisabled;
+	}
+	
+	private static Boolean isDataSourceGetConnectionCheckTransactionIsolationLevel = null;
+	public boolean isDataSourceGetConnectionCheckTransactionIsolationLevel() {	
+		String pName = "org.openspcoop2.pdd.datasource.getConnection.checkTransactionIsolationLevel";
+		if(OpenSPCoop2Properties.isDataSourceGetConnectionCheckTransactionIsolationLevel==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isDataSourceGetConnectionCheckTransactionIsolationLevel = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				OpenSPCoop2Properties.isDataSourceGetConnectionCheckTransactionIsolationLevel = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isDataSourceGetConnectionCheckTransactionIsolationLevel;
+	}
+	
+	private static Integer getDataSourceGetConnectionCheckTransactionIsolationLevelExpected = null;
+	public int getDataSourceGetConnectionCheckTransactionIsolationLevelExpected() {	
+		String pName = "org.openspcoop2.pdd.datasource.getConnection.checkTransactionIsolationLevel.expected";
+		if(OpenSPCoop2Properties.getDataSourceGetConnectionCheckTransactionIsolationLevelExpected==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+Connection.TRANSACTION_READ_COMMITTED);
+					name=Connection.TRANSACTION_READ_COMMITTED+"";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.getDataSourceGetConnectionCheckTransactionIsolationLevelExpected = Integer.valueOf(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				OpenSPCoop2Properties.getDataSourceGetConnectionCheckTransactionIsolationLevelExpected = Connection.TRANSACTION_READ_COMMITTED;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getDataSourceGetConnectionCheckTransactionIsolationLevelExpected;
+	}
+	
 
 	
 	
@@ -21170,6 +21248,28 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.getTransazioniRegistrazioneSlowLogThresholdMs;
+	}
+	
+	private static Boolean isTransazioniRegistrazioneSlowLogRateLimitingDetails = null;
+	public boolean isTransazioniRegistrazioneSlowLogRateLimitingDetails() {	
+		if(OpenSPCoop2Properties.isTransazioniRegistrazioneSlowLogRateLimitingDetails==null){
+			String pName = "org.openspcoop2.pdd.transazioni.slowLog.rateLimitingDetails.enabled";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniRegistrazioneSlowLogRateLimitingDetails = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isTransazioniRegistrazioneSlowLogRateLimitingDetails = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniRegistrazioneSlowLogRateLimitingDetails;
 	}
 	
 	// FiltroDuplicati

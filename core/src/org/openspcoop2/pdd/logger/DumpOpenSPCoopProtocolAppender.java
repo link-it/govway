@@ -27,7 +27,6 @@ import java.util.Enumeration;
 
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.OpenspcoopAppender;
-import org.openspcoop2.protocol.basic.dump.DumpProducer;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -103,6 +102,8 @@ public class DumpOpenSPCoopProtocolAppender implements IDumpProducer{
 	 * @param messaggio
 	 * @throws DumpException
 	 */
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	@Override
 	public void dump(Connection conOpenSPCoopPdD,Messaggio messaggio) throws DumpException{
 		try{
@@ -113,16 +114,12 @@ public class DumpOpenSPCoopProtocolAppender implements IDumpProducer{
 			throw new DumpException(e.getMessage(),e);
 		}
 	}
+	@Override
 	public void dump(Connection conOpenSPCoopPdD,Messaggio messaggio,boolean headersCompact) throws DumpException{
 		try{
 			if(messaggio.getProtocollo()!=null){
 				IDumpProducer dumpAppender = DumpOpenSPCoopProtocolAppender.getProtocolAppender(messaggio.getProtocollo());
-				if(dumpAppender instanceof DumpProducer) {
-					((DumpProducer)dumpAppender).dump(conOpenSPCoopPdD,messaggio,headersCompact);
-				}
-				else {
-					dumpAppender.dump(conOpenSPCoopPdD,messaggio);
-				}
+				dumpAppender.dump(conOpenSPCoopPdD,messaggio,headersCompact);
 			}
 		}catch(Exception e){
 			throw new DumpException(e.getMessage(),e);

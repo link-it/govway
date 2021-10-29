@@ -1,3 +1,21 @@
+2021-10-29  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1276
+	Sono stati effettuati i seguenti interventi:
+	- La gestione delle operazioni di insert e successivo recupero dell'identificativo di PrimaryKey dell'entry appena creata,
+	  su database di tipo postgresql avvenica ancora senza usare la versione 'getGeneratedKeys' fornita dai driver jdbc.
+	  Poichè dalla versione 9.4 del driver jdbc di postgresql è stata aggiunta tale funzionalità, è stato adeguato GovWay ad utilizzarla.
+	- Se venivano ricevuti messaggi SOAP che iniziavano con il carattere '>' l'anomalia veniva correttamente segnalata al client, 
+	  ma nel log veniva emessa una eccezione relativa ad un caso non gestito (NullPointerException). Adesso viene invece segnalata correttamente l'anomalia rilevata.
+	- In caso l'immagine del controllo del traffico, salvata durante uno shutdown dell'A.S., risultava corrotta il gateway non ripartiva. 
+	  È stata migliorata la gestione facendo in modo che il gateway riparta con uno stato vergine e segnali l'anomalia su file di log.
+	- Aggiunto un log che verifica se le connessioni prelevate dal datasource sono con autocommit disabilitato e con livello di serializzazione atteso (ReadCommitted)
+	- Aggiunto log che evidenzia il dettaglio di dove viene speso il tempo sulla gestione del rate limiting in fase di scrittura della transazione.
+	- L'ottimizzazione della scrittura degli header, se attiva, non viene effettuata per i messaggi salvati relativamente alle consegne asincrone (connettori multipli) e nelle operazioni di recovery da file system.
+	- Durante il salvataggio nelle tracce di una consegna con connettore multiplo, se avveniva un errore durante l'aggiornamento dello stato della transazione, non era presente un meccanismo di recovery tramite file system.
+	- Migliorati i log di eventuali errori emersi durante la gestione degli handler.
+
 2021-10-22  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.5

@@ -49,6 +49,11 @@ public abstract class AbstractNoReturnGeneratedKeyGenerator implements IKeyGener
 	}
 	
 	@Override
+	public boolean useReturnGeneratedKeyColumnNameInResultSet() {
+		return false;
+	}
+	
+	@Override
 	public String getColunmKeyName() throws KeyGeneratorException {
 		switch (this.type.getType()) {
 			case DEFAULT:

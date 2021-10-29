@@ -36,4 +36,9 @@ public class PostgreSQLAutoKeyGenerator extends AbstractReturnGeneratedKeyGenera
 		super(connection,type);
 	}
 	
+	@Override
+	public boolean useReturnGeneratedKeyColumnNameInResultSet() {
+		return true;
+	}
+	
 }

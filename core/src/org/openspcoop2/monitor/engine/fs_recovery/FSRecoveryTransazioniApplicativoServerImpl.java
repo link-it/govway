@@ -106,8 +106,24 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 					boolean autoCommit = false;
 					connection.setAutoCommit(autoCommit);
 					
+					// consegna terminata
+					@SuppressWarnings("unused")
+					boolean isMessaggioConsegnato = false;
 					boolean possibileTerminazioneSingleIntegrationManagerMessage = false;
+					if(transazioneApplicativoServer.isConsegnaTerminata()) {
+						isMessaggioConsegnato = true;
+					}
+					else if(transazioneApplicativoServer.getDataEliminazioneIm()!=null) {
+						isMessaggioConsegnato = true;
+						possibileTerminazioneSingleIntegrationManagerMessage = true;
+					}
+					else if(transazioneApplicativoServer.getDataMessaggioScaduto()!=null) {
+						isMessaggioConsegnato = true;
+						possibileTerminazioneSingleIntegrationManagerMessage = true;
+					}
 					
+					// Grazie all'istruzione sopra 'boolean ripristinato = TransactionServerUtils.recover' entro nell'if solo se la consegna e' quella terminata
+					//if(isMessaggioConsegnato) { 
 					TransactionServerUtils.safe_aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, connection, 
 							this.daoFactoryServiceManagerProperties.getDatabaseType(), this.log,
 							this.daoFactory,this.daoFactoryLogger,this.daoFactoryServiceManagerProperties,
@@ -115,6 +131,7 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 							esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
 							esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage,
 							this.gestioneSerializableDB_AttesaAttiva,this.gestioneSerializableDB_CheckInterval);
+					//}
 					
 				}finally{
 					

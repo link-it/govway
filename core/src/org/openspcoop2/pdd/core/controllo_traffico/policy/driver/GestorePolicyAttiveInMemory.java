@@ -427,7 +427,12 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 				FileSystemUtilities.writeFile(f, bytesIn);
 				
 				// Leggo Struttura ZIP
-				zipFile = new ZipFile(f);
+				try {
+					zipFile = new ZipFile(f);
+				}catch(Throwable t) {
+					this.log.error("Inizializzazione immagine ControlloTraffico precedente allo shutdown non ripristinabile, immagine corrotta: "+t.getMessage(),t);
+					return;
+				}
 				
 				JaxbDeserializer deserializer = new JaxbDeserializer();
 				

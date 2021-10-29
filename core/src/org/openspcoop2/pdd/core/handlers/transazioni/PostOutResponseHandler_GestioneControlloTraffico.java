@@ -19,13 +19,16 @@
  */
 package org.openspcoop2.pdd.core.handlers.transazioni;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
+import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreads;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyShutdownException;
 import org.openspcoop2.core.transazioni.Transazione;
@@ -45,9 +48,16 @@ import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.GestorePolicyAt
 public class PostOutResponseHandler_GestioneControlloTraffico {
 
 	public void process(Boolean controlloTrafficoMaxRequestThreadRegistrato, Logger logger, String idTransazione,
-			Transazione transazioneDTO, PostOutResponseContext context){
+			Transazione transazioneDTO, PostOutResponseContext context,
+			TransazioniProcessTimes times){
+		
+		long timeStart = -1;
+		
 		if(controlloTrafficoMaxRequestThreadRegistrato!=null && controlloTrafficoMaxRequestThreadRegistrato){
 			// significa che sono entrato nel motore di anti-congestionamento
+			if(times!=null) {
+				timeStart = DateManager.getTimeMillis();
+			}
 			try {
 				
 				Long maxThreads = null;
@@ -69,11 +79,20 @@ public class PostOutResponseHandler_GestioneControlloTraffico {
 			} catch (Exception e) {
 				logger.error("["+idTransazione+"] Errore durante la rimozione del thread all'interno della lista dei threads attivi",e);
 			}
+			if(times!=null) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				times.controlloTraffico_removeThread = timeProcess;
+			}
 		}
 		try {
 			Logger logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(OpenSPCoop2Properties.getInstance().isControlloTrafficoDebug());
 			if(transazioneDTO!=null){
 			
+				if(times!=null) {
+					timeStart = DateManager.getTimeMillis();
+				}
+				
 				Object objectId = context.getPddContext().removeObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_UNIQUE_ID_POLICY);
 				if(objectId!=null && (objectId instanceof List<?>) ){
 					@SuppressWarnings("unchecked")
@@ -110,14 +129,51 @@ public class PostOutResponseHandler_GestioneControlloTraffico {
 								misurazioniTransazione.setRispostaIngressoBytes(transazioneDTO.getRispostaIngressoBytes());
 								misurazioniTransazione.setRispostaUscitaBytes(transazioneDTO.getRispostaUscitaBytes());
 								
+								if(times!=null) {
+									long timeEnd =  DateManager.getTimeMillis();
+									long timeProcess = timeEnd-timeStart;
+									times.controlloTraffico_preparePolicy = timeProcess;
+								
+									if(!uniqueIdsPolicies.isEmpty()) {
+										times.controlloTraffico_policyTimes = new ArrayList<String>();
+									}
+								}
+								
 								for (int i = 0; i < uniqueIdsPolicies.size(); i++) {
 									String uniqueIdMap = null;
 									try{
 										uniqueIdMap = uniqueIdsPolicies.get(i);
-										GestorePolicyAttive.getInstance().getActiveThreadsPolicy(uniqueIdMap).
+										
+										StringBuilder sb = null;
+										if(times!=null) {
+											timeStart = DateManager.getTimeMillis();
+										}
+										
+										IPolicyGroupByActiveThreads policyGroupByActiveThreads = GestorePolicyAttive.getInstance().getActiveThreadsPolicy(uniqueIdMap);
+										
+										if(times!=null) {
+											sb = new StringBuilder(uniqueIdMap);
+											sb.append("[");
+											long timeEnd =  DateManager.getTimeMillis();
+											long timeProcess = timeEnd-timeStart;
+											sb.append(timeProcess);
+											timeStart = DateManager.getTimeMillis();
+										}
+										
+										policyGroupByActiveThreads.
 											registerStopRequest(logControlloTraffico, idTransazione, groupByPolicies.get(i), misurazioniTransazione, 
 													incrementCounter_policyApplicabile.get(i),
 													incrementCounter_policyViolata.get(i));
+										
+										if(times!=null) {
+											sb.append(",");
+											long timeEnd =  DateManager.getTimeMillis();
+											long timeProcess = timeEnd-timeStart;
+											sb.append(timeProcess);
+											sb.append("]");
+											times.controlloTraffico_policyTimes.add(sb.toString());
+										}
+										
 									}catch(PolicyNotFoundException notFound){
 										logControlloTraffico.debug("NotFoundException durante la registrazione di terminazione del thread (policy inspection: "+uniqueIdMap+")",notFound);
 									}catch(PolicyShutdownException shutdown){

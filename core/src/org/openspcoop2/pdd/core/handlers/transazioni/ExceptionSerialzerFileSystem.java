@@ -58,7 +58,7 @@ public class ExceptionSerialzerFileSystem {
 	    	bout.flush();
 	    	bout.close();
 			FileSystemSerializer.getInstance().registraTransazione(bout.toByteArray(), transazione.getDataIngressoRichiesta());
-		}catch(Exception eSerializer){
+		}catch(Throwable eSerializer){
 			this.logger.error("Errore durante la registrazione su file system della transazione ["+idTransazione+"]: "+eSerializer.getMessage(),eSerializer);
 		}
 	}
@@ -77,7 +77,7 @@ public class ExceptionSerialzerFileSystem {
 				FileSystemSerializer.getInstance().registraTraccia(bout.toByteArray(), tr.getOraRegistrazione());
 				if(transazioneDTO!=null)
 					transazioneDTO.setTracciaRichiesta(null);
-			}catch(Exception eSerializer){
+			}catch(Throwable eSerializer){
 				this.logger.error("Errore durante la registrazione su file system della traccia di richiesta [idTransazione: "+idTransazione+"]: "+eSerializer.getMessage(),eSerializer);
 			}
 		}
@@ -93,7 +93,7 @@ public class ExceptionSerialzerFileSystem {
 				FileSystemSerializer.getInstance().registraTraccia(bout.toByteArray(), tr.getOraRegistrazione());
 				if(transazioneDTO!=null)
 					transazioneDTO.setTracciaRisposta(null);
-			}catch(Exception eSerializer){
+			}catch(Throwable eSerializer){
 				this.logger.error("Errore durante la registrazione su file system della traccia di risposta [idTransazione: "+idTransazione+"]: "+eSerializer.getMessage(),eSerializer);
 			}
 		}
@@ -109,7 +109,7 @@ public class ExceptionSerialzerFileSystem {
 				    	bout.flush();
 				    	bout.close();
 						FileSystemSerializer.getInstance().registraDiagnostico(bout.toByteArray(), msgDiagOp2.getOraRegistrazione());
-					}catch(Exception eSerializer){
+					}catch(Throwable eSerializer){
 						error = true;
 						this.logger.error("Errore durante la registrazione su file system del messaggio diagnostico [idTransazione: "+idTransazione+"]: "+eSerializer.getMessage(),eSerializer);
 					}
@@ -131,7 +131,7 @@ public class ExceptionSerialzerFileSystem {
 					bout.flush();
 					bout.close();
 					FileSystemSerializer.getInstance().registraDiagnostico(bout.toByteArray(), oraRegistrazione);
-				}catch(Exception eSerializer){
+				}catch(Throwable eSerializer){
 					error = true;
 					this.logger.error("Errore durante la registrazione su file system dei messaggi diagnostici [idTransazione: "+idTransazione+"]: "+eSerializer.getMessage(),eSerializer);
 				}
@@ -140,6 +140,8 @@ public class ExceptionSerialzerFileSystem {
 				transazioneDTO.setDiagnostici(null);
 				transazioneDTO.setDiagnosticiList1(null);
 				transazioneDTO.setDiagnosticiList2(null);
+				transazioneDTO.setDiagnosticiListExt(null);
+				transazioneDTO.setDiagnosticiExt(null);
 			}
 		}
 		if(registrazioneDumpMessaggi && transaction.getMessaggi()!=null && transaction.getMessaggi().size()>0){
@@ -152,7 +154,7 @@ public class ExceptionSerialzerFileSystem {
 			    	bout.flush();
 			    	bout.close();
 					FileSystemSerializer.getInstance().registraDump(bout.toByteArray(), messaggioOp2.getDumpTimestamp());
-				}catch(Exception eSerializer){
+				}catch(Throwable eSerializer){
 					error = true;
 					this.logger.error("Errore durante la registrazione su file system del messaggio [idTransazione: "+idTransazione+"]: "+eSerializer.getMessage(),eSerializer);
 				}
@@ -187,7 +189,7 @@ public class ExceptionSerialzerFileSystem {
 	    	bout.flush();
 	    	bout.close();
 			FileSystemSerializer.getInstance().registraDiagnostico(bout.toByteArray(), msgDiagOp2.getOraRegistrazione());
-		}catch(Exception eSerializer){
+		}catch(Throwable eSerializer){
 			this.logger.error("Errore durante la registrazione su file system del messaggio diagnostico [idTransazione: "+idTransazione+"][server: "+applicativoServer+"]: "+eSerializer.getMessage(),eSerializer);
 		}
 	}
@@ -206,8 +208,8 @@ public class ExceptionSerialzerFileSystem {
 	    	bout.flush();
 	    	bout.close();
 			FileSystemSerializer.getInstance().registraDump(bout.toByteArray(), messaggioOp2.getDumpTimestamp());
-		}catch(Exception eSerializer){
-			this.logger.error("Errore durante la registrazione su file system del messaggio diagnostico [idTransazione: "+idTransazione+"][server: "+applicativoServer+"][data:"+DateUtils.getSimpleDateFormatMs().format(dataConsegna)+"]: "+eSerializer.getMessage(),eSerializer);
+		}catch(Throwable eSerializer){
+			this.logger.error("Errore durante la registrazione su file system del messaggio [idTransazione: "+idTransazione+"][server: "+applicativoServer+"][data:"+DateUtils.getSimpleDateFormatMs().format(dataConsegna)+"]: "+eSerializer.getMessage(),eSerializer);
 		}
 	}
 	
@@ -222,8 +224,24 @@ public class ExceptionSerialzerFileSystem {
 	    	bout.flush();
 	    	bout.close();
 			FileSystemSerializer.getInstance().registraTransazioneApplicativoServer(bout.toByteArray(), transazioneApplicativoServer.getDataAccettazioneRichiesta());
-		}catch(Exception eSerializer){
-			this.logger.error("Errore durante la registrazione su file system del messaggio diagnostico [idTransazione: "+idTransazione+"][server: "+applicativoServer+"]: "+eSerializer.getMessage(),eSerializer);
+		}catch(Throwable eSerializer){
+			this.logger.error("Errore durante la registrazione su file system dell'applicativo server [idTransazione: "+idTransazione+"][server: "+applicativoServer+"]: "+eSerializer.getMessage(),eSerializer);
+		}
+	}
+	
+	public void registrazioneFileSystemTransazioneApplicativoServerConsegnaTerminata(TransazioneApplicativoServer transazioneApplicativoServer, String idTransazione, String applicativoServer){
+		try{
+			// forzo
+			transazioneApplicativoServer.setIdTransazione(idTransazione);
+			transazioneApplicativoServer.setServizioApplicativoErogatore(applicativoServer);
+			
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			transazioneApplicativoServer.writeTo(bout, WriteToSerializerType.XML_JAXB);
+	    	bout.flush();
+	    	bout.close();
+			FileSystemSerializer.getInstance().registraTransazioneApplicativoServerConsegnaTerminata(bout.toByteArray(), transazioneApplicativoServer.getDataAccettazioneRichiesta());
+		}catch(Throwable eSerializer){
+			this.logger.error("Errore durante la registrazione su file system dell'informazione di consegna terminata [idTransazione: "+idTransazione+"][server: "+applicativoServer+"]: "+eSerializer.getMessage(),eSerializer);
 		}
 	}
 }

@@ -316,7 +316,7 @@ public class TransactionServerUtils {
 
 	}
 	
-	public static void safe_aggiornaInformazioneConsegnaTerminata(TransazioneApplicativoServer transazioneApplicativoServer, Connection con, 
+	public static boolean safe_aggiornaInformazioneConsegnaTerminata(TransazioneApplicativoServer transazioneApplicativoServer, Connection con, 
 			String tipoDatabase, Logger logCore,
 			IDAOFactory daoFactory, Logger logFactory, ServiceManagerProperties smpFactory,
 			boolean debug,
@@ -326,7 +326,7 @@ public class TransactionServerUtils {
 		
 		// aggiorno esito transazione
 		try{
-			TransactionServerUtils.aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, con, 
+			return TransactionServerUtils.aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, con, 
 					tipoDatabase, logCore,
 					daoFactory, logFactory, smpFactory,
 					debug,
@@ -336,10 +336,11 @@ public class TransactionServerUtils {
 		}catch(Throwable e){
 			String msg = "Errore durante l'aggiornamento delle transazione relativamente all'informazione del server: " + e.getLocalizedMessage();
 			logCore.error("[id:"+transazioneApplicativoServer.getIdTransazione()+"][sa:"+transazioneApplicativoServer.getServizioApplicativoErogatore()+"]["+transazioneApplicativoServer.getConnettoreNome()+"] "+msg,e);
+			return false;
 		}
 	}
 	
-	private static void aggiornaInformazioneConsegnaTerminata(TransazioneApplicativoServer transazioneApplicativoServer, Connection connectionDB,
+	private static boolean aggiornaInformazioneConsegnaTerminata(TransazioneApplicativoServer transazioneApplicativoServer, Connection connectionDB,
 			String tipoDatabase, Logger logCore,
 			IDAOFactory daoFactory, Logger logFactory, ServiceManagerProperties smpFactory,
 			boolean debug,
@@ -387,7 +388,7 @@ public class TransactionServerUtils {
 					// transazione trovata
 					if(esitoIntegrationManagerSingolo == esitoTransazione) {
 						//System.out.println("TROVATA IM; termino aggiornamento");
-						return; // non devo gestire l'update previsto nei connettori multipli gestito dopo
+						return true; // non devo gestire l'update previsto nei connettori multipli gestito dopo
 					}
 					//else {
 					//	System.out.println("ESCO e procedo con update normale ["+i+"]");
@@ -408,14 +409,14 @@ public class TransactionServerUtils {
 			
 		}
 		
-		_aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, connectionDB,
+		return _aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, connectionDB,
 				tipoDatabase, logCore,
 				daoFactory, logFactory, smpFactory,
 				debug,
 				esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
 				gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval);
 	}
-	private static void _aggiornaInformazioneConsegnaTerminata(TransazioneApplicativoServer transazioneApplicativoServer, Connection connectionDB,
+	private static boolean _aggiornaInformazioneConsegnaTerminata(TransazioneApplicativoServer transazioneApplicativoServer, Connection connectionDB,
 			String tipoDatabase, Logger logCore,
 			IDAOFactory daoFactory, Logger logFactory, ServiceManagerProperties smpFactory,
 			boolean debug,
@@ -430,6 +431,7 @@ public class TransactionServerUtils {
 					debug,
 					esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
 					gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval);
+			return true; // non gestisco l'informazione ritornata essendo il metodo deprecato
 		}
 		else {
 			
@@ -479,6 +481,10 @@ public class TransactionServerUtils {
 				String msgError = "[id:"+transazioneApplicativoServer.getIdTransazione()+"][sa:"+transazioneApplicativoServer.getServizioApplicativoErogatore()+"]["+transazioneApplicativoServer.getConnettoreNome()+"] 'aggiornaInformazioneConsegnaTerminata' non riuscta. Tutti gli intervalli di update non hanno comportato un aggiornamento della transazione";
 				logFactory.error(msgError);
 				logCore.error(msgError);
+				return false;
+			}
+			else {
+				return true;
 			}
 		}
 		
@@ -797,6 +803,87 @@ public class TransactionServerUtils {
 			pstmt = null;
 						
 			connectionDB.commit(); // anche se si tratta di una read, serve per non far rimanere aperta la transazione
+			
+			return esitoReturn;
+			
+		}catch(Throwable e) {
+			
+			try{
+				if(rs != null) {
+					rs.close();
+					rs = null;
+				}
+			} catch(Exception er) {}
+			try{
+				if(pstmt != null) {
+					pstmt.close();
+					pstmt = null;
+				}
+			} catch(Exception er) {}
+			try{
+				connectionDB.rollback();
+			} catch(Exception er) {}
+			
+			throw new CoreException(e.getMessage(),e);
+		}finally{
+			try{
+				if(rs != null) {
+					rs.close();
+					rs = null;
+				}
+			} catch(Exception er) {}
+			try {
+				if(pstmt!=null) {
+					pstmt.close();
+				}
+			}catch(Throwable t) {}
+		}
+		
+	}
+	
+	public static boolean existsTransaction(String idTransaction, Connection connectionDB,
+			String tipoDatabase, Logger logCore, boolean connectionDB_commit) throws CoreException {
+	
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+		
+			TransazioneFieldConverter transazioneFieldConverter = new TransazioneFieldConverter(tipoDatabase);
+			String idTransazioneColumn = transazioneFieldConverter.toColumn(Transazione.model().ID_TRANSAZIONE, false);
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+			
+			sqlQueryObject.addFromTable(CostantiDB.TRANSAZIONI);
+			
+			sqlQueryObject.addSelectField(idTransazioneColumn);
+			
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			sqlQueryObject.addWhereCondition(idTransazioneColumn+"=?");
+						
+			String select = sqlQueryObject.createSQLQuery();
+			//System.out.println("QUERY '"+select+"'");
+			
+			pstmt = connectionDB.prepareStatement(select);
+			int index = 1;
+			List<Object> params = new ArrayList<Object>();
+			
+			pstmt.setString(index++, idTransaction);
+			params.add(idTransaction);
+						
+			rs = pstmt.executeQuery();
+			boolean esitoReturn = rs.next();
+
+			//String comandoSql = formatSQLString(updateCommand, params.toArray());
+			//System.out.println("Esists: "+esitoReturn+" (app:"+transazioneApplicativoServer.getConnettoreNome()+" id:"+transazioneApplicativoServer.getIdTransazione()+") sql:"+comandoSql);
+			
+			rs.close();
+			pstmt.close();
+			pstmt = null;
+						
+			if(connectionDB_commit) {
+				connectionDB.commit(); // anche se si tratta di una read, serve per non far rimanere aperta la transazione
+			}
 			
 			return esitoReturn;
 			

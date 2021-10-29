@@ -49,8 +49,20 @@ public abstract class AbstractReturnGeneratedKeyGenerator implements IKeyGenerat
 	}
 	
 	@Override
+	public boolean useReturnGeneratedKeyColumnNameInResultSet() {
+		return false;
+	}
+	
+	@Override
 	public String getColunmKeyName() throws KeyGeneratorException {
-		throw new KeyGeneratorException("ReturnGeneratedKey supported");
+		switch (this.type.getType()) {
+		case DEFAULT:
+			return "id";
+		case CUSTOM:
+			return ((CustomKeyGeneratorObject)this.type).getColumnNameId();
+		default:
+			throw new KeyGeneratorException("Tipo di KeyGeneratorObjects non gestito: "+this.type);
+		}
 	}
 	
 	@Override
@@ -66,7 +78,12 @@ public abstract class AbstractReturnGeneratedKeyGenerator implements IKeyGenerat
 			if(rs.next()==false){
 				throw new Exception("ID autoincrementale non ottenuto via JDBC3.0");
 			}
-			this.idTraccia = rs.getLong(1);
+			if(this.useReturnGeneratedKeyColumnNameInResultSet()) {
+				this.idTraccia = rs.getLong(this.getColunmKeyName());
+			}
+			else {
+				this.idTraccia = rs.getLong(1);
+			}
 			if(this.idTraccia<=0){
 				throw new Exception("ID autoincrementale non ottenuto: is null?");
 			}

@@ -34,6 +34,7 @@ public class Costanti {
 	public static final String DIRECTORY_FILE_SYSTEM_REPOSITORY_TRACCIA = "tracce";
 	public static final String DIRECTORY_FILE_SYSTEM_REPOSITORY_DUMP = "messaggi";
 	public static final String DIRECTORY_FILE_SYSTEM_REPOSITORY_TRANSAZIONE_APPLICATIVO_SERVER = "transazioni_sa";
+	public static final String DIRECTORY_FILE_SYSTEM_REPOSITORY_TRANSAZIONE_APPLICATIVO_SERVER_CONSEGNA_TERMINATA = "transazioni_sa_update_info";
 	
 	public static final String DIRECTORY_FILE_SYSTEM_REPOSITORY_DLQ = "dlq";
 	
@@ -43,6 +44,7 @@ public class Costanti {
 	public static final String PREFIX_FILE_SYSTEM_REPOSITORY_TRACCIA = "Traccia";
 	public static final String PREFIX_FILE_SYSTEM_REPOSITORY_DUMP = "Messaggio";
 	public static final String PREFIX_FILE_SYSTEM_REPOSITORY_TRANSAZIONE_APPLICATIVO_SERVER = "TransazioneAppServer";
+	public static final String PREFIX_FILE_SYSTEM_REPOSITORY_TRANSAZIONE_APPLICATIVO_SERVER_CONSEGNA_TERMINATA = "TransazioneUpdateInfoConsegna";
 	
 	public static final String EVENTO_FILE_SYSTEM_RECOVERY = "RecoveredFileSystem";
 	

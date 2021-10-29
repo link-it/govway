@@ -148,7 +148,7 @@ public class GestoreConsegnaMultipla {
 
 	private IDiagnosticProducer msgDiagnosticiOpenSPCoopAppender = null;
 	private IDumpProducer dumpOpenSPCoopAppender = null;
-
+	private boolean transazioniRegistrazioneDumpHeadersCompactEnabled = false;
 
 	public GestoreConsegnaMultipla(Logger log,Logger logSql,
 			//String dataSource,
@@ -209,6 +209,9 @@ public class GestoreConsegnaMultipla {
 			dumpOpenSPCoopAppender.setPropertyList(dumpOpenSPCoopAppenderProperties);
 			this.dumpOpenSPCoopAppender.initializeAppender(dumpOpenSPCoopAppender);
 			this.dumpOpenSPCoopAppender.isAlive();
+			
+			// Indicazioni sulle modalita' di salvataggio degli header del dump
+			this.transazioniRegistrazioneDumpHeadersCompactEnabled = openspcoopProperties.isTransazioniRegistrazioneDumpHeadersCompactEnabled();
 
 		}catch(Exception e){
 			throw new TransactionMultiDeliverException("Errore durante l'inizializzazione del DumpAppender: "+e.getMessage(),e);
@@ -537,7 +540,7 @@ public class GestoreConsegnaMultipla {
 						timeStart = DateManager.getTimeMillis();
 					}
 					
-					this.dumpOpenSPCoopAppender.dump(con, (Messaggio)o);
+					this.dumpOpenSPCoopAppender.dump(con, (Messaggio)o, this.transazioniRegistrazioneDumpHeadersCompactEnabled);
 					
 					con.commit();
 				}finally {	
@@ -565,7 +568,7 @@ public class GestoreConsegnaMultipla {
 						serverInfo.setProtocollo(protocol);
 						exceptionSerializerFileSystem.registrazioneFileSystemTransazioneApplicativoServerEmessoPdD(serverInfo, serverInfo.getIdTransazione(), serverInfo.getServizioApplicativoErogatore());
 					}
-				} catch (Exception eClose) {}
+				} catch (Throwable eClose) {}
 				// Effettuo il log anche nel core per evitare che un eventuale filtro a OFF sul core della PdD eviti la scrittura di questi errori
 				String msg = "Errore durante la scrittura dell'informazione del server '"+serverInfo.getServizioApplicativoErogatore()+"' associato alla transazione sul database: " + e.getLocalizedMessage();
 				this.log.error("["+serverInfo.getIdTransazione()+"] "+msg,e);
@@ -576,7 +579,7 @@ public class GestoreConsegnaMultipla {
 					if(msgDiag.getIdTransazione()!=null && msgDiag.getApplicativo()!=null) {
 						exceptionSerializerFileSystem.registrazioneFileSystemDiagnosticoEmessoPdD(msgDiag, msgDiag.getIdTransazione(), msgDiag.getApplicativo());
 					}
-				} catch (Exception eClose) {}
+				} catch (Throwable eClose) {}
 				// Effettuo il log anche nel core per evitare che un eventuale filtro a OFF sul core della PdD eviti la scrittura di questi errori
 				String msg = "Errore durante la scrittura del diagnostico relativo al server '"+msgDiag.getApplicativo()+"' associato alla transazione sul database: " + e.getLocalizedMessage();
 				this.log.error("["+msgDiag.getIdTransazione()+"] "+msg,e);
@@ -588,7 +591,7 @@ public class GestoreConsegnaMultipla {
 						exceptionSerializerFileSystem.registrazioneFileSystemDumpEmessoPdD(messaggio, messaggio.getIdTransazione(), 
 								messaggio.getServizioApplicativoErogatore(), messaggio.getDataConsegna());
 					}
-				} catch (Exception eClose) {}
+				} catch (Throwable eClose) {}
 				// Effettuo il log anche nel core per evitare che un eventuale filtro a OFF sul core della PdD eviti la scrittura di questi errori
 				String msg = "Errore durante la scrittura del messaggio relativo al server '"+messaggio.getServizioApplicativoErogatore()+"' associato alla transazione sul database: " + e.getLocalizedMessage();
 				this.log.error("["+messaggio.getIdTransazione()+"] "+msg,e);
@@ -605,7 +608,40 @@ public class GestoreConsegnaMultipla {
 					}
 				
 					// aggiorno esito transazione (non viene sollevata alcuna eccezione)
-					_safe_aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, con, esitiProperties, possibileTerminazioneSingleIntegrationManagerMessage);
+					boolean transazioneAggiornata = _safe_aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, con, esitiProperties, possibileTerminazioneSingleIntegrationManagerMessage);
+					if(!transazioneAggiornata) {
+						
+						String prefix = "[id:"+transazioneApplicativoServer.getIdTransazione()+"][sa:"+transazioneApplicativoServer.getServizioApplicativoErogatore()+"]["+transazioneApplicativoServer.getConnettoreNome()+"] 'gestisciErroreAggiornamentoInformazioneConsegnaTerminata'";
+						
+						boolean existsTransaction = false;
+						try {
+							existsTransaction = TransactionServerUtils.existsTransaction(transazioneApplicativoServer.getIdTransazione(), con, this.tipoDatabase, this.log, 
+									true); // la sessione viene chiusa dopo
+						}catch(Throwable t) {
+							String msgError = prefix+" compresione esistenza transazione fallita";
+							this.log.error(msgError, t);
+						}
+						
+						boolean serializeTransactionInfo = false;
+						try {
+							serializeTransactionInfo = true;
+							try{
+								if(transazioneApplicativoServer.getIdTransazione()!=null && transazioneApplicativoServer.getServizioApplicativoErogatore()!=null) {
+									// NOTA: volutamente salvo serverInfo per poter reimplementare la logica di cui sopra
+									transazioneApplicativoServer.setProtocollo(protocol);
+									exceptionSerializerFileSystem.registrazioneFileSystemTransazioneApplicativoServerConsegnaTerminata(transazioneApplicativoServer, transazioneApplicativoServer.getIdTransazione(), transazioneApplicativoServer.getServizioApplicativoErogatore());
+								}
+							} catch (Throwable eClose) {}
+							
+						}catch(Throwable t) {
+							String msgError = prefix+" compresione esistenza transazione fallita";
+							this.log.error(msgError,t );
+						}
+						
+						String msgError = prefix+" effettuata gestione dell'errore (existsTransaction="+existsTransaction+" serializeTransactionInfo="+serializeTransactionInfo+")";
+						this.log.error(msgError);
+						
+					}
 				}finally {	
 					if(times!=null) {
 						long timeEnd =  DateManager.getTimeMillis();
@@ -694,7 +730,7 @@ public class GestoreConsegnaMultipla {
 		
 	}
 
-	private void _safe_aggiornaInformazioneConsegnaTerminata(TransazioneApplicativoServer transazioneApplicativoServer, Connection con, EsitiProperties esitiProperties,
+	private boolean _safe_aggiornaInformazioneConsegnaTerminata(TransazioneApplicativoServer transazioneApplicativoServer, Connection con, EsitiProperties esitiProperties,
 			 boolean possibileTerminazioneSingleIntegrationManagerMessage) {
 		
 		boolean debug = this.debug;
@@ -724,7 +760,7 @@ public class GestoreConsegnaMultipla {
 		}
 		
 		if(esitiLetti) {
-			TransactionServerUtils.safe_aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, con, 
+			return TransactionServerUtils.safe_aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, con, 
 					this.tipoDatabase, this.log,
 					daoF,logFactory,smp,
 					this.debug,
@@ -732,6 +768,7 @@ public class GestoreConsegnaMultipla {
 					esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage,
 					openspcoopProperties.getGestioneSerializableDB_AttesaAttiva(),openspcoopProperties.getGestioneSerializableDB_CheckInterval());
 		}
+		return false;
 	}
 
 }
