@@ -406,8 +406,17 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						MessageResolver messages = new MessageResolver(errorLevelResolver.build());
 						//ApiOperationResolver apiOperationResolver = new ApiOperationResolver(api, null);
 				        final SchemaValidator schemaValidator = new SchemaValidator(this.openApiSwagger, messages);
-				        this.swaggerRequestValidator = new RequestValidator(schemaValidator, messages, this.openApiSwagger, null);
-				        this.swaggerResponseValidator = new ResponseValidator(schemaValidator, messages, this.openApiSwagger, null);
+				        this.swaggerRequestValidator = new RequestValidator(
+				        		schemaValidator, 
+				        		messages, 
+				        		this.openApiSwagger, 
+				        		new ArrayList<>());
+				        
+				        this.swaggerResponseValidator = new ResponseValidator(
+				        		schemaValidator, 
+				        		messages, 
+				        		this.openApiSwagger, 
+				        		new ArrayList<>());
 				
 						// .withParseOptions(parseOptions)
 						// vedi https://github.com/swagger-api/swagger-parser#options														
@@ -1424,7 +1433,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		else if(content instanceof InputStream) {
 			builder.withBody( (InputStream) content);
 		}
-		else {
+		else if(content != null){
 			throw new ProcessingException("Type '"+content.getClass().getName()+"' unsupported");
 		}
 		

@@ -251,7 +251,7 @@
 	<archive path="/op2_3.3.dev/lib/swagger/swagger-parser-2.0.28.jar"/>
 	<archive path="/op2_3.3.dev/lib/swagger/swagger-parser-core-2.0.28.jar"/>
 	<archive path="/op2_3.3.dev/lib/swagger/swagger-parser-v3-2.0.28.jar"/>
-	<archive path="/op2_3.3.dev/lib/swagger/swagger-parser-v2-converter-2.0.17.jar"/>
+	<archive path="/op2_3.3.dev/lib/swagger/swagger-parser-v2-converter-2.0.28.jar"/>
 	<archive path="/op2_3.3.dev/lib/swagger/swagger-parser-1.0.49.jar"/>
 	<archive path="/op2_3.3.dev/lib/swagger/swagger-core-1.6.0.jar"/>
 	<archive path="/op2_3.3.dev/lib/swagger/swagger-models-1.6.0.jar"/>

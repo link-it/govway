@@ -48,6 +48,8 @@ import org.openspcoop2.utils.rest.api.ApiSchemaType;
 public class MainValidatorOpenAPI4 {
 
 	public static void main(String[] args) throws Exception {
+		
+		OpenAPILibrary openApiLibrary = OpenAPILibrary.swagger_request_validator; 
 				
 		LoggerWrapperFactory.setDefaultConsoleLogConfiguration(Level.ERROR);
 		
@@ -134,7 +136,7 @@ public class MainValidatorOpenAPI4 {
 			IApiValidator apiValidator = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 			OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 			configO.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
-			configO.getOpenApi4JConfig().setOpenApiLibrary(OpenAPILibrary.openapi4j);
+			configO.getOpenApi4JConfig().setOpenApiLibrary(openApiLibrary);
 			
 			apiValidator.init(LoggerWrapperFactory.getLogger(MainValidatorOpenAPI4.class), api, configO);
 			

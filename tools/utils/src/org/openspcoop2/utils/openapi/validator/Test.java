@@ -59,6 +59,7 @@ public class Test {
 
 	// TODO: Aggiungere parametro per indicare la OpenApiLibrary
 	public static void testValidation(URI uri, String baseUrl, String testName, ApiFormats format, boolean useOpenApi4j, ApiSchema ...apiSchemas) throws Exception {
+		OpenAPILibrary openApiLibrary = OpenAPILibrary.swagger_request_validator;
 		try {
 	
 			boolean testAdditionalProperties = !ApiFormats.SWAGGER_2.equals(format); // il parser dello swagger non legge l'additiona properties
@@ -75,7 +76,8 @@ public class Test {
 			config.setJsonValidatorAPI(ApiName.NETWORK_NT);
 			if(useOpenApi4j) {
 				config.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
-				config.getOpenApi4JConfig().setOpenApiLibrary(OpenAPILibrary.openapi4j); 	// OpenAPILibrary.swagger_request_validator; TODO:
+				//config.getOpenApi4JConfig().setOpenApiLibrary(OpenAPILibrary.openapi4j); 	// OpenAPILibrary.swagger_request_validator; TODO:
+				config.getOpenApi4JConfig().setOpenApiLibrary(openApiLibrary);
 			}
 			apiValidator.init(LoggerWrapperFactory.getLogger(Test.class), api, config);
 			try {

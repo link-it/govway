@@ -65,9 +65,9 @@ public class TestOpenApi4j {
 	public static void main(String[] args) throws Exception {
 				
 		// *** TEST per il Parser e validazione dello schema *** //
-		
-		{
-		
+		OpenAPILibrary openApiLibrary = OpenAPILibrary.swagger_request_validator;
+
+		{			
 			System.out.println("Test Schema#1 (openapi.yaml) [Elementi aggiuntivi come 'allowEmptyValue'] ...");
 			
 			URL url = TestOpenApi4j.class.getResource("/org/openspcoop2/utils/openapi/openapi.yaml");
@@ -81,7 +81,7 @@ public class TestOpenApi4j {
 			IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 			OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 			configO.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
-			configO.getOpenApi4JConfig().setOpenApiLibrary(OpenAPILibrary.openapi4j);
+			configO.getOpenApi4JConfig().setOpenApiLibrary(openApiLibrary);
 			configO.getOpenApi4JConfig().setValidateAPISpec(true);
 			apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), apiOpenApi4j, configO);
 					
@@ -185,7 +185,7 @@ public class TestOpenApi4j {
 		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
-		configO.getOpenApi4JConfig().setOpenApiLibrary(OpenAPILibrary.openapi4j);
+		configO.getOpenApi4JConfig().setOpenApiLibrary(openApiLibrary);
 		configO.getOpenApi4JConfig().setValidateAPISpec(true);
 		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), apiOpenApi4j, configO);
 		

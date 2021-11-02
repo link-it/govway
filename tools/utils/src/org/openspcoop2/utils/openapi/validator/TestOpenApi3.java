@@ -54,6 +54,7 @@ public class TestOpenApi3 {
 			if(args!=null && args.length>1) {
 				useOpenApi4j = Boolean.valueOf(args[1]);
 			}
+			useOpenApi4j = true;
 			
 			String baseUri = "http://petstore.swagger.io/api";
 			
