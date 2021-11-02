@@ -57,6 +57,7 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
  */
 public class Test {
 
+	// TODO: Aggiungere parametro per indicare la OpenApiLibrary
 	public static void testValidation(URI uri, String baseUrl, String testName, ApiFormats format, boolean useOpenApi4j, ApiSchema ...apiSchemas) throws Exception {
 		try {
 	
@@ -74,7 +75,7 @@ public class Test {
 			config.setJsonValidatorAPI(ApiName.NETWORK_NT);
 			if(useOpenApi4j) {
 				config.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
-				config.getOpenApi4JConfig().setOpenApiLibrary(OpenAPILibrary.openapi4j);
+				config.getOpenApi4JConfig().setOpenApiLibrary(OpenAPILibrary.openapi4j); 	// OpenAPILibrary.swagger_request_validator; TODO:
 			}
 			apiValidator.init(LoggerWrapperFactory.getLogger(Test.class), api, config);
 			try {
