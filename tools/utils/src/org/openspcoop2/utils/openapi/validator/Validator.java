@@ -372,22 +372,25 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			            //parseOptions.setResolve(true);
 			            //parseOptions.setResolveFully(true);
 			            parseOptions.setResolveCombinators(false);
+			            parseOptions.setResolve(false);
+			            //parseOptions.set
 			            
 			            
 			            
 			            // TODO: Dovrei usare OpenApiLoader di atlassian, perchè fa un preprocessing
 			            // all'oggetto OpenAPI
+			            // Devo chiamare il v3Parser.resolve (privato) che a sua volta chiama l'OpenApiResolver
+			            // che a sua volta chiama il PathProcessor
 			            
-						//SwaggerParseResult result = new OpenAPIV3Parser().parseJsonNode(null, schemaNodeRoot);
-			            final String resPath = "/org/openspcoop2/utils/openapi/testOpenAPI_3.0.json";
-			    		//String swaggerAsString = new String(Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream(resPath)));
-			            //SwaggerParseResult result = new OpenAPIParser().readContents(swaggerAsString, null, parseOptions);	
-			            
-			            String loc =  "/home/froggo/sorgenti/link_it/GOVWAY/GovWay/bin/org/openspcoop2/utils/openapi/testOpenAPI_3.0.json";
-			            		//TestOpenApi3.class.getResource(resPath).toString();
+			            //OpenAPIV3Parser v3Parser = new OpenAPIV3Parser();
+						//SwaggerParseResult result = v3Parser.parseJsonNode(null, schemaNodeRoot);
+						//v3Parser.res
+
+						final String resPath = "/org/openspcoop2/utils/openapi/testOpenAPI_3.0.json";
+			            String loc =  "/home/froggo/sorgenti/link_it/GOVWAY/GovWay/bin/org/openspcoop2/utils/openapi/testOpenAPI_3.0.json";			            
 						SwaggerParseResult result = new OpenAPIParser().readLocation(loc, null, parseOptions);
 
-						this.openApiSwagger = result.getOpenAPI();
+						//this.openApiSwagger = result.getOpenAPI();
 						
 						// Il LevelResolver serve a gestire il livello di serietà dei messaggi						
 						// Di default il LevelResolver porta segnala ogni errore di validazione come 
