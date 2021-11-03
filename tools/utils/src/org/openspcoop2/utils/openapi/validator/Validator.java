@@ -40,7 +40,6 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.openapi4j.core.model.v3.OAI3Context;
 import org.openapi4j.core.model.v3.OAI3SchemaKeywords;
 import org.openapi4j.core.util.StringUtil;
@@ -57,6 +56,7 @@ import org.openapi4j.parser.model.v3.Operation;
 import org.openapi4j.parser.model.v3.Path;
 import org.openapi4j.parser.validation.v3.OpenApi3Validator;
 import org.openapi4j.schema.validator.ValidationData;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.json.AbstractUtils;
 import org.openspcoop2.utils.json.IJsonSchemaValidator;
@@ -101,12 +101,10 @@ import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.xml.XMLUtils;
 import org.slf4j.Logger;
-import org.springframework.http.HttpRequest;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.atlassian.oai.validator.OpenApiInteractionValidator;
-import com.atlassian.oai.validator.interaction.ApiOperationResolver;
+import com.atlassian.oai.validator.OpenApiInteractionValidator.SpecSource;
 import com.atlassian.oai.validator.interaction.request.RequestValidator;
 import com.atlassian.oai.validator.interaction.response.ResponseValidator;
 import com.atlassian.oai.validator.model.ApiPath;
@@ -118,19 +116,23 @@ import com.atlassian.oai.validator.model.SimpleRequest;
 import com.atlassian.oai.validator.model.SimpleResponse;
 import com.atlassian.oai.validator.report.LevelResolver;
 import com.atlassian.oai.validator.report.MessageResolver;
+import com.atlassian.oai.validator.report.SimpleValidationReportFormat;
 import com.atlassian.oai.validator.report.ValidationReport;
 import com.atlassian.oai.validator.report.ValidationReport.Level;
 import com.atlassian.oai.validator.schema.SchemaValidator;
+import com.atlassian.oai.validator.util.OpenApiLoader;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
+import io.swagger.parser.OpenAPIParser;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.PathItem.HttpMethod;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.parser.OpenAPIV3Parser;
+import io.swagger.v3.parser.core.models.ParseOptions;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
 
 /**
@@ -366,7 +368,25 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						// openAPI.setServers(getServersList(array, String.format("%s.%s", location, "servers"), result, path));
 
 						//OpenAPIV3Parser
-						SwaggerParseResult result = new OpenAPIV3Parser().parseJsonNode(null, schemaNodeRoot);
+						final ParseOptions parseOptions = new ParseOptions();
+			            //parseOptions.setResolve(true);
+			            //parseOptions.setResolveFully(true);
+			            parseOptions.setResolveCombinators(false);
+			            
+			            
+			            
+			            // TODO: Dovrei usare OpenApiLoader di atlassian, perchè fa un preprocessing
+			            // all'oggetto OpenAPI
+			            
+						//SwaggerParseResult result = new OpenAPIV3Parser().parseJsonNode(null, schemaNodeRoot);
+			            final String resPath = "/org/openspcoop2/utils/openapi/testOpenAPI_3.0.json";
+			    		//String swaggerAsString = new String(Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream(resPath)));
+			            //SwaggerParseResult result = new OpenAPIParser().readContents(swaggerAsString, null, parseOptions);	
+			            
+			            String loc =  "/home/froggo/sorgenti/link_it/GOVWAY/GovWay/bin/org/openspcoop2/utils/openapi/testOpenAPI_3.0.json";
+			            		//TestOpenApi3.class.getResource(resPath).toString();
+						SwaggerParseResult result = new OpenAPIParser().readLocation(loc, null, parseOptions);
+
 						this.openApiSwagger = result.getOpenAPI();
 						
 						// Il LevelResolver serve a gestire il livello di serietà dei messaggi						
@@ -376,7 +396,8 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						// sotto src/main/resources/messages.properties
 
 						var errorLevelResolver = LevelResolver.create();
-						
+						errorLevelResolver.withLevel("validation.request.parameter.query.unexpected", Level.IGNORE);							
+
 						if (this.openApi4jConfig.isMergeAPISpec()) {
 							// TODO: Fare qualcosa con le parse Options?
 						}
@@ -1370,75 +1391,6 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		}
 	}
 	
-	private static Method fromHttpMethod(HttpRequestMethod method) {
-		// TODO: Che faccio sollevo eccezione se non c'è?
-		return Method.valueOf(method.toString());
-	}
-	
-	
-	private static com.atlassian.oai.validator.model.Response buildSwaggerResponse(HttpBaseResponseEntity<?> response) throws ProcessingException {
-
-		final SimpleResponse.Builder builder = 
-				new SimpleResponse.Builder(response.getStatus());
-		
-		response.getHeaders().forEach(builder::withHeader);
-
-		// TODO: Forse wrappare tutto sotto un try-catch
-		Object content = response.getContent();
-		if(content instanceof String) {
-			builder.withBody((String) content);
-		}
-		else if(content instanceof byte[]) {
-			builder.withBody((byte[]) content);
-		}
-		else if(content instanceof InputStream) {
-			builder.withBody((InputStream) content);
-		}
-		else if(content instanceof Document) {
-			try {
-				builder.withBody(XMLUtils.getInstance().toByteArray(((Document)content)));
-			} catch (Exception e) {
-				throw new ProcessingException(e.getMessage(),e);
-			}
-		}
-		else if(content instanceof Element) {
-			try {
-				builder.withBody(XMLUtils.getInstance().toByteArray(((Element)content)));
-			} catch (Exception e) {
-				throw new ProcessingException(e.getMessage(),e);
-			}
-		}
-		else {
-			throw new ProcessingException("Type '"+content.getClass().getName()+"' unsupported");
-		}
-		
-		return builder.build();
-	
-	}
-	
-	private static com.atlassian.oai.validator.model.Request buildSwaggerRequest(HttpBaseRequestEntity<?> request) throws ProcessingException {
-		Object content = request.getContent();
-		final SimpleRequest.Builder builder =
-                new SimpleRequest.Builder(fromHttpMethod(request.getMethod()),request.getUrl());
-   
-	    request.getHeaders().forEach(builder::withHeader);
-	    request.getParameters().forEach(builder::withQueryParam);
-	                        
-		if(content instanceof String) {
-			builder.withBody((String) content);
-		}
-		else if(content instanceof byte[]) {
-			builder.withBody((byte[]) content);
-		}
-		else if(content instanceof InputStream) {
-			builder.withBody( (InputStream) content);
-		}
-		else if(content != null){
-			throw new ProcessingException("Type '"+content.getClass().getName()+"' unsupported");
-		}
-		
-		return builder.build();
-	}
 	
 
 	private void validateWithSwaggerRequestValidator(HttpBaseEntity<?> httpEntity, ApiOperation gwOperation) throws ProcessingException, ValidatorException {
@@ -1468,8 +1420,8 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 				item.get().getValue().readOperationsMap().get(method);
 	
 		String denormalizedPath = item.get().getKey();
-		ApiPath apiPath = new ApiPathImpl(denormalizedPath, null);
-		NormalisedPath requestPath = new NormalisedPathImpl(denormalizedPath, null);
+		ApiPath apiPath = new ApiPathImpl(httpEntity.getUrl(), null);
+		NormalisedPath requestPath = new NormalisedPathImpl(httpEntity.getUrl(), null);
 						
 		com.atlassian.oai.validator.model.ApiOperation swaggerValidatorOperation = 
 				new com.atlassian.oai.validator.model.ApiOperation(apiPath, requestPath, method, swaggerOperation); 
@@ -1493,8 +1445,8 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		
 		// TODO: Aggiungi anche gli altri messaggi
 		if (report.hasErrors()) {
-			//String messages = report.getMessages().stream().reduce("", (current, msg) -> "");
-			throw new ValidatorException(report.getMessages().get(0).getMessage());
+			String msgReport = 	SimpleValidationReportFormat.getInstance().apply(report);		
+			throw new ValidatorException(msgReport);
 		}
 		
 	}
@@ -1897,18 +1849,75 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 	
 	
 	// ====== SWAGGER REQUEST VALIDATOR GLUE CODE ==========
-    private static Request fromHttpRequest(final HttpRequest originalRequest, final byte[] body) {
-       /* requireNonNull(originalRequest, "An original request is required");
-        final UriComponents uriComponents = UriComponentsBuilder.fromUri(originalRequest.getURI()).build();
 
-        final SimpleRequest.Builder builder =
-                new SimpleRequest.Builder(fromHttpMethod(originalRequest.getMethod()), uriComponents.getPath())
-                        .withBody(body);
-        originalRequest.getHeaders().forEach(builder::withHeader);
-        uriComponents.getQueryParams().forEach(builder::withQueryParam);
+	private static Method fromHttpMethod(HttpRequestMethod method) {
+		// TODO: Che faccio sollevo eccezione se non c'è?
+		return Method.valueOf(method.toString());
+	}
+	
+	
+	private static com.atlassian.oai.validator.model.Response buildSwaggerResponse(HttpBaseResponseEntity<?> response) throws ProcessingException {
 
-        return builder.build();*/
-    	return null;
-    }
-    
+		final SimpleResponse.Builder builder = 
+				new SimpleResponse.Builder(response.getStatus());
+		
+		response.getHeaders().forEach(builder::withHeader);
+
+		// TODO: Forse wrappare tutto sotto un try-catch
+		Object content = response.getContent();
+		if(content instanceof String) {
+			builder.withBody((String) content);
+		}
+		else if(content instanceof byte[]) {
+			builder.withBody((byte[]) content);
+		}
+		else if(content instanceof InputStream) {
+			builder.withBody((InputStream) content);
+		}
+		else if(content instanceof Document) {
+			try {
+				builder.withBody(XMLUtils.getInstance().toByteArray(((Document)content)));
+			} catch (Exception e) {
+				throw new ProcessingException(e.getMessage(),e);
+			}
+		}
+		else if(content instanceof Element) {
+			try {
+				builder.withBody(XMLUtils.getInstance().toByteArray(((Element)content)));
+			} catch (Exception e) {
+				throw new ProcessingException(e.getMessage(),e);
+			}
+		}
+		else {
+			throw new ProcessingException("Type '"+content.getClass().getName()+"' unsupported");
+		}
+		
+		return builder.build();
+	
+	}
+	
+	private static com.atlassian.oai.validator.model.Request buildSwaggerRequest(HttpBaseRequestEntity<?> request) throws ProcessingException {
+		Object content = request.getContent();
+		final SimpleRequest.Builder builder =
+                new SimpleRequest.Builder(fromHttpMethod(request.getMethod()),request.getUrl());
+   
+	    request.getHeaders().forEach(builder::withHeader);
+	    request.getParameters().forEach(builder::withQueryParam);
+	                        
+		if(content instanceof String) {
+			builder.withBody((String) content);
+		}
+		else if(content instanceof byte[]) {
+			builder.withBody((byte[]) content);
+		}
+		else if(content instanceof InputStream) {
+			builder.withBody( (InputStream) content);
+		}
+		else if(content != null){
+			throw new ProcessingException("Type '"+content.getClass().getName()+"' unsupported");
+		}
+		
+		return builder.build();
+	}
+	
 }

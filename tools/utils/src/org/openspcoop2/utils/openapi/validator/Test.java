@@ -60,6 +60,8 @@ public class Test {
 	// TODO: Aggiungere parametro per indicare la OpenApiLibrary
 	public static void testValidation(URI uri, String baseUrl, String testName, ApiFormats format, boolean useOpenApi4j, ApiSchema ...apiSchemas) throws Exception {
 		OpenAPILibrary openApiLibrary = OpenAPILibrary.swagger_request_validator;
+		boolean useSwaggerValidator = true;
+		
 		try {
 	
 			boolean testAdditionalProperties = !ApiFormats.SWAGGER_2.equals(format); // il parser dello swagger non legge l'additiona properties
@@ -74,9 +76,8 @@ public class Test {
 			IApiValidator apiValidator = ApiFactory.newApiValidator(format);
 			OpenapiApiValidatorConfig config = new OpenapiApiValidatorConfig();
 			config.setJsonValidatorAPI(ApiName.NETWORK_NT);
-			if(useOpenApi4j) {
+			if(useOpenApi4j || useSwaggerValidator) {
 				config.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
-				//config.getOpenApi4JConfig().setOpenApiLibrary(OpenAPILibrary.openapi4j); 	// OpenAPILibrary.swagger_request_validator; TODO:
 				config.getOpenApi4JConfig().setOpenApiLibrary(openApiLibrary);
 			}
 			apiValidator.init(LoggerWrapperFactory.getLogger(Test.class), api, config);
@@ -149,6 +150,8 @@ public class Test {
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"', trovato: "+e.getMessage());
 							}
+						} else if (useSwaggerValidator) {
+							//	String msgErroreAtteso = "Invalid value 'APIGatewayERRATO' in query parameter 'profiloRefInLineByStatus' (expected type 'string'): Uncorrect enum value 'APIGatewayERRATO', expected: 'APIGateway,SPCoop,Fattu"
 						}
 						else {
 							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
