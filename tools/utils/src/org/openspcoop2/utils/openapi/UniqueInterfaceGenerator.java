@@ -391,28 +391,13 @@ public class UniqueInterfaceGenerator {
 		JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
 		List<String> refPath = engine.getStringMatchPattern(jsonNode, "$..$ref");
 		String schemaRebuild = s;
-		if(refPath!=null && !refPath.isEmpty()) {
-			for (String ref : refPath) {
-				if(schemaRebuild.contains(ref)) {
-					if(ref.startsWith("#")==false) {
-						String destra = ref.substring(ref.indexOf("#"));
-						String refForReplace = ref;
-						
-						while(schemaRebuild.contains(refForReplace)) {
-							schemaRebuild = schemaRebuild.replace(refForReplace, destra);
-						}
-						
-						if(refForReplace.startsWith("./") && refForReplace.length()>2) {
-							refForReplace = refForReplace.substring(2);
-							while(schemaRebuild.contains(refForReplace)) {
-								schemaRebuild = schemaRebuild.replace(refForReplace, destra);
-							}
-						}
-						
-					}
-				}
-			}
-		}
+		
+		// Faccio due passate, prima con i caratteri " e ' in modo da risolvere le ref precisamente,
+		// poiche' l'algoritmo e' soggetto a problemi quando ci sono nomi inclusi in altri ref. Es.:
+		// test.yaml#...
+		// http://test/test.yaml#....
+		schemaRebuild = replace(refPath, schemaRebuild, true);
+		schemaRebuild = replace(refPath, schemaRebuild, false);
 			
 		/*
 		Object oDescr = engine.getMatchPattern(jsonNode, "$.info.description", JsonPathReturnType.NODE);
@@ -458,6 +443,76 @@ public class UniqueInterfaceGenerator {
 		
 		return schemaRebuild;
 		
+	}
+
+	private static String replace(List<String> refPath, String schemaRebuild, boolean usePrefixChar) {
+		if(refPath!=null && !refPath.isEmpty()) {
+			for (String ref : refPath) {
+				
+				//System.out.println("...............ANALIZZO REF ["+ref+"]");
+				
+				if(schemaRebuild.contains(ref)) {
+					
+					//System.out.println(" PROCESS ["+ref+"]");
+					
+					if(ref.startsWith("#")==false) {
+						
+						//System.out.println(" PROCESS INTERNAL ["+ref+"]");
+						
+						String destra = ref.substring(ref.indexOf("#"));
+						String refForReplace = ref;
+						
+						//System.out.println("destra ["+destra+"]");
+						//System.out.println("destra ["+refForReplace+"]");
+						
+						if(usePrefixChar) {
+							String rep = "\""+refForReplace+"\"";
+							String destraRep = "\""+destra+"\"";
+							while(schemaRebuild.contains(rep)) {
+								schemaRebuild = schemaRebuild.replace(rep, destraRep);
+							}
+							rep = "'"+refForReplace+"'";
+							destraRep = "'"+destra+"'";
+							while(schemaRebuild.contains(rep)) {
+								schemaRebuild = schemaRebuild.replace(rep, destraRep);
+							}
+						}
+						else {
+							while(schemaRebuild.contains(refForReplace)) {
+								schemaRebuild = schemaRebuild.replace(refForReplace, destra);
+							}
+						}
+						
+						if(refForReplace.startsWith("./") && refForReplace.length()>2) {
+							
+							//System.out.println("CASO SPECIALE!");
+							
+							refForReplace = refForReplace.substring(2);
+							
+							if(usePrefixChar) {
+								String rep = "\""+refForReplace+"\"";
+								String destraRep = "\""+destra+"\"";
+								while(schemaRebuild.contains(rep)) {
+									schemaRebuild = schemaRebuild.replace(rep, destraRep);
+								}
+								rep = "'"+refForReplace+"'";
+								destraRep = "'"+destra+"'";
+								while(schemaRebuild.contains(rep)) {
+									schemaRebuild = schemaRebuild.replace(rep, destraRep);
+								}
+							}
+							else {
+								while(schemaRebuild.contains(refForReplace)) {
+									schemaRebuild = schemaRebuild.replace(refForReplace, destra);
+								}
+							}
+						}
+						
+					}
+				}
+			}
+		}
+		return schemaRebuild;
 	}
 	
 	private static void checkSchema(int profondita, String sorgente, Schema<?> schema) {

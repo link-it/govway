@@ -1,3 +1,4 @@
+  {"openapi": "3.0.3",
   "components": {
     "schemas": {
       "ImportPet": {
@@ -83,4 +84,5 @@
         "additionalProperties": false
       }  
    }
+}
 }

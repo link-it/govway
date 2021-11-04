@@ -50,9 +50,14 @@ public class TestOpenApi3 {
 				tipo = args[0];
 			}
 
-			boolean useOpenApi4j = false;
+			OpenAPILibrary openAPILibrary = OpenAPILibrary.json_schema;
 			if(args!=null && args.length>1) {
-				useOpenApi4j = Boolean.valueOf(args[1]);
+				openAPILibrary = OpenAPILibrary.valueOf(args[1]);
+			}
+			
+			boolean mergeSpec = false;
+			if(args!=null && args.length>2) {
+				mergeSpec = Boolean.valueOf(args[2]);
 			}
 			
 			String baseUri = "http://petstore.swagger.io/api";
@@ -72,7 +77,7 @@ public class TestOpenApi3 {
 				ApiSchema apiSchemaJson2 = new ApiSchema("test_import2.json", 
 						Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import2.json")), ApiSchemaType.JSON);
 				
-				Test.testValidation(jsonUri, baseUri, "json", ApiFormats.OPEN_API_3, useOpenApi4j,
+				Test.testValidation(jsonUri, baseUri, "json", ApiFormats.OPEN_API_3, openAPILibrary, mergeSpec,
 						apiSchemaJson, apiSchemaJson2, apiSchemaYaml, apiSchemaYaml2);
 				
 				System.out.println("\n\n\n==============================================================");
@@ -95,7 +100,7 @@ public class TestOpenApi3 {
 			
 				URI yamlUri = TestOpenApi3.class.getResource("/org/openspcoop2/utils/openapi/testOpenAPI_3.0.yaml").toURI();
 						
-				Test.testValidation(yamlUri, baseUri, "yaml", ApiFormats.OPEN_API_3, useOpenApi4j,
+				Test.testValidation(yamlUri, baseUri, "yaml", ApiFormats.OPEN_API_3, openAPILibrary, mergeSpec,
 						apiSchemaYaml, apiSchemaYaml2);
 				
 				System.out.println("\n\n\n==============================================================");
