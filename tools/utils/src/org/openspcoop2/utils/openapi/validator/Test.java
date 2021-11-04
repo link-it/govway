@@ -57,11 +57,7 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
  */
 public class Test {
 
-	// TODO: Aggiungere parametro per indicare la OpenApiLibrary
-	public static void testValidation(URI uri, String baseUrl, String testName, ApiFormats format, boolean useOpenApi4j, ApiSchema ...apiSchemas) throws Exception {
-		OpenAPILibrary openApiLibrary = OpenAPILibrary.swagger_request_validator;
-		boolean useSwaggerValidator = true;
-		
+	public static void testValidation(URI uri, String baseUrl, String testName, ApiFormats format, OpenAPILibrary openAPILibrary,boolean mergeSpec, ApiSchema ...apiSchemas) throws Exception {
 		try {
 	
 			boolean testAdditionalProperties = !ApiFormats.SWAGGER_2.equals(format); // il parser dello swagger non legge l'additiona properties
@@ -76,9 +72,10 @@ public class Test {
 			IApiValidator apiValidator = ApiFactory.newApiValidator(format);
 			OpenapiApiValidatorConfig config = new OpenapiApiValidatorConfig();
 			config.setJsonValidatorAPI(ApiName.NETWORK_NT);
-			if(useOpenApi4j || useSwaggerValidator) {
+			if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 				config.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
-				config.getOpenApi4JConfig().setOpenApiLibrary(openApiLibrary);
+				config.getOpenApi4JConfig().setOpenApiLibrary(OpenAPILibrary.openapi4j);
+				config.getOpenApi4JConfig().setMergeAPISpec(mergeSpec);
 			}
 			apiValidator.init(LoggerWrapperFactory.getLogger(Test.class), api, config);
 			try {
@@ -145,13 +142,13 @@ public class Test {
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-						if(useOpenApi4j) {
-							String msgErroreAtteso = "profiloRefInLineByStatus: Value 'APIGatewayERRATO' is not defined in the schema. (code: 1006)";
+						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+									"profiloRefInLineByStatus: Value 'APIGatewayERRATO' is not defined in the schema. (code: 1006)" :
+									"TODO";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"', trovato: "+e.getMessage());
 							}
-						} else if (useSwaggerValidator) {
-							//	String msgErroreAtteso = "Invalid value 'APIGatewayERRATO' in query parameter 'profiloRefInLineByStatus' (expected type 'string'): Uncorrect enum value 'APIGatewayERRATO', expected: 'APIGateway,SPCoop,Fattu"
 						}
 						else {
 							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
@@ -174,8 +171,10 @@ public class Test {
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-						if(useOpenApi4j) {
-							String msgErroreAtteso = "soggettoInLineByStatus: 'PROVA_PROVA' does not respect pattern '^[0-9A-Za-z]+$'. (code: 1025)";
+						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+									"soggettoInLineByStatus: 'PROVA_PROVA' does not respect pattern '^[0-9A-Za-z]+$'. (code: 1025)" :
+									"TODO";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"': "+e.getMessage());
 							}
@@ -201,8 +200,10 @@ public class Test {
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-						if(useOpenApi4j) {
-							String msgErroreAtteso = "soggettoInLineByStatus: Min length is '2', found '1'. (code: 1017)";
+						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+									"soggettoInLineByStatus: Min length is '2', found '1'. (code: 1017)" :
+									"TODO";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -229,8 +230,10 @@ public class Test {
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-						if(useOpenApi4j) {
-							String msgErroreAtteso = "soggettoRef: Max length is '255', found '291'. (code: 1012)";
+						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+									"soggettoRef: Max length is '255', found '291'. (code: 1012)" :
+									"TODO";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -256,8 +259,10 @@ public class Test {
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-						if(useOpenApi4j) {
-							String msgErroreAtteso = "Minimum is '100', found '23'. (code: 1015)";
+						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+									"Minimum is '100', found '23'. (code: 1015)" :
+									"TODO";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -283,8 +288,10 @@ public class Test {
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-						if(useOpenApi4j) {
-							String msgErroreAtteso = "esempioNumerico: Excluded maximum is '600', found '600'. (code: 1009)";
+						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+									"esempioNumerico: Excluded maximum is '600', found '600'. (code: 1009)" :
+									"TODO";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -310,8 +317,10 @@ public class Test {
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-						if(useOpenApi4j) {
-							String msgErroreAtteso = "esempioNumerico: Maximum is '600', found '800'. (code: 1010)";
+						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+									"esempioNumerico: Maximum is '600', found '800'. (code: 1010)" :
+									"TODO";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -335,8 +344,10 @@ public class Test {
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-						if(useOpenApi4j) {
-							String msgErroreAtteso = "esempioNumerico: Value '55GG33' does not match format 'int32'. (code: 1007)";
+						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+									"esempioNumerico: Value '55GG33' does not match format 'int32'. (code: 1007)" :
+									"TODO";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -376,8 +387,10 @@ public class Test {
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				}catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(useOpenApi4j) {
-						String msgErroreAtteso = "Body is required but none provided. (code: 200)";
+					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+								"Body is required but none provided. (code: 200)" :
+								"TODO";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -402,8 +415,10 @@ public class Test {
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				}catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(useOpenApi4j) {
-						String msgErroreAtteso = "Content type 'application/ERRORE' is not allowed for body content";
+					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+								"Content type 'application/ERRORE' is not allowed for body content" :
+								"TODO";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -429,8 +444,10 @@ public class Test {
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-						if(useOpenApi4j) {
-							String msgErroreAtteso = "body: Additional property 'a' is not allowed.";
+						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+									"body: Additional property 'a' is not allowed." :
+									"TODO";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -458,8 +475,10 @@ public class Test {
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				} catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(useOpenApi4j) {
-						String msgErroreAtteso = "body: Field 'name' is required.";
+					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+								"body: Field 'name' is required." :
+								"TODO";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -497,8 +516,10 @@ public class Test {
 					apiValidator.validate(httpEntity6_empty);	
 				}catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(useOpenApi4j) {
-						String msgErroreAtteso = "body: Null value is not allowed. (code: 1021)";
+					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+								"body: Null value is not allowed. (code: 1021)" :
+								"TODO";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -523,8 +544,10 @@ public class Test {
 					apiValidator.validate(httpEntity6_contentTypeSconosciuto);
 				}catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(useOpenApi4j) {
-						String msgErroreAtteso = "Content type 'application/ERRORE' is not allowed for body content.";
+					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+								"Content type 'application/ERRORE' is not allowed for body content." :
+								"TODO";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -549,8 +572,10 @@ public class Test {
 					apiValidator.validate(httpEntity6_empty_ok);
 				}catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(useOpenApi4j) {
-						String msgErroreAtteso = "Content type 'application/json' is not allowed for body content. (code: 203)";
+					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+								"Content type 'application/json' is not allowed for body content. (code: 203)" :
+								"TODO";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -590,8 +615,10 @@ public class Test {
 					apiValidator.validate(httpEntity6_error_empty);	
 				}catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(useOpenApi4j) {
-						String msgErroreAtteso = "Content type 'application/json' is not allowed for body content. (code: 203)";
+					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+								"Content type 'application/json' is not allowed for body content. (code: 203)" :
+								"TODO";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -618,8 +645,10 @@ public class Test {
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-						if(useOpenApi4j) {
-							String msgErroreAtteso = "body: Additional property 'a' is not allowed.";
+						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+									"body: Additional property 'a' is not allowed." :
+									"TODO";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -648,8 +677,10 @@ public class Test {
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				} catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(useOpenApi4j) {
-						String msgErroreAtteso = "body: Field 'name' is required.";
+					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+								"body: Field 'name' is required." :
+								"TODO";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -678,8 +709,10 @@ public class Test {
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-						if(useOpenApi4j) {
-							String msgErroreAtteso = "body: Additional property 'a' is not allowed.";
+						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+									"body: Additional property 'a' is not allowed." :
+									"TODO";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -708,8 +741,10 @@ public class Test {
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				} catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(useOpenApi4j) {
-						String msgErroreAtteso = "body: Field 'code' is required.";
+					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+								"body: Field 'code' is required." :
+								"TODO";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -748,8 +783,10 @@ public class Test {
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				} catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(useOpenApi4j) {
-						String msgErroreAtteso = "body: Additional property 'a' is not allowed.";
+					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+								"body: Additional property 'a' is not allowed." :
+								"TODO";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -776,8 +813,10 @@ public class Test {
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				} catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(useOpenApi4j) {
-						String msgErroreAtteso = "body: Field 'name' is required.";
+					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+								"body: Field 'name' is required." :
+								"TODO";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -827,8 +866,10 @@ public class Test {
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				} catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(useOpenApi4j) {
-						String msgErroreAtteso = "body: Additional property 'a' is not allowed.";
+					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+								"body: Additional property 'a' is not allowed." :
+								"TODO";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -856,8 +897,10 @@ public class Test {
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				} catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(useOpenApi4j) {
-						String msgErroreAtteso = "body: Field 'name' is required.";
+					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+								"body: Field 'name' is required." :
+								"TODO";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -885,8 +928,10 @@ public class Test {
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				} catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(useOpenApi4j) {
-						String msgErroreAtteso = "body: Additional property 'a' is not allowed.";
+					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+								"body: Additional property 'a' is not allowed." :
+								"TODO";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -914,8 +959,10 @@ public class Test {
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				} catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(useOpenApi4j) {
-						String msgErroreAtteso = "body: Field 'code' is required.";
+					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+								"body: Field 'code' is required." :
+								"TODO";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -1023,8 +1070,10 @@ public class Test {
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				} catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(useOpenApi4j) {
-						String msgErroreAtteso = "body: Additional property 'a' is not allowed.";
+					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+								"body: Additional property 'a' is not allowed." :
+								"TODO";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -1052,8 +1101,10 @@ public class Test {
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				} catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(useOpenApi4j) {
-						String msgErroreAtteso = "body: Field 'name' is required.";
+					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+								"body: Field 'name' is required." :
+								"TODO";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -1081,8 +1132,10 @@ public class Test {
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				} catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(useOpenApi4j) {
-						String msgErroreAtteso = "body: Additional property 'a' is not allowed.";
+					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+								"body: Additional property 'a' is not allowed." :
+								"TODO";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -1110,8 +1163,10 @@ public class Test {
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				} catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(useOpenApi4j) {
-						String msgErroreAtteso = "body: Field 'code' is required.";
+					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
+								"body: Field 'code' is required." :
+								"TODO";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
