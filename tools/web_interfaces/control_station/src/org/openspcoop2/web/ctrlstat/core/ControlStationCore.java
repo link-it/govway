@@ -287,6 +287,7 @@ public class ControlStationCore {
 	private String logoHeaderImage = null;
 	private String logoHeaderTitolo = null;
 	private String logoHeaderLink = null;
+	private boolean visualizzaLinkHomeHeader = false;
 	private transient AffineTransform affineTransform = null;
 	private transient FontRenderContext fontRenderContext = null;
 	private transient Font defaultFont = null;
@@ -367,6 +368,10 @@ public class ControlStationCore {
 
 	public String getLogoHeaderLink() {
 		return this.logoHeaderLink;
+	}
+	
+	public boolean isVisualizzaLinkHomeHeader() {
+		return this.visualizzaLinkHomeHeader;
 	}
 
 	/** Tipo del Database */
@@ -588,6 +593,55 @@ public class ControlStationCore {
 	public ICrypt getUtenzePasswordManager_backwardCompatibility() {
 		return this.utenzePasswordManager_backwardCompatibility;
 	}
+	
+	/** Login */
+	protected String loginTipo;
+	protected boolean loginApplication;
+	protected Properties loginProperties;
+	protected String loginUtenteNonAutorizzatoRedirectUrl;
+	protected String loginUtenteNonValidoRedirectUrl;
+	protected String loginErroreInternoRedirectUrl;
+	protected String loginSessioneScadutaRedirectUrl;
+	protected boolean logoutMostraButton;
+	protected String logoutUrlDestinazione;
+	
+	
+	public String getLoginTipo() {
+		return this.loginTipo;
+	}
+
+	public boolean isLoginApplication() {
+		return this.loginApplication;
+	}
+
+	public Properties getLoginProperties() {
+		return this.loginProperties;
+	}
+	
+	public String getLoginUtenteNonAutorizzatoRedirectUrl() {
+		return this.loginUtenteNonAutorizzatoRedirectUrl;
+	}
+
+	public String getLoginUtenteNonValidoRedirectUrl() {
+		return this.loginUtenteNonValidoRedirectUrl;
+	}
+	
+	public String getLoginErroreInternoRedirectUrl() {
+		return this.loginErroreInternoRedirectUrl;
+	}
+
+	public String getLoginSessioneScadutaRedirectUrl() {
+		return this.loginSessioneScadutaRedirectUrl;
+	}
+
+	public boolean isMostraButtonLogout() {
+		return this.logoutMostraButton;
+	}
+
+	public String getLogoutUrlDestinazione() {
+		return this.logoutUrlDestinazione;
+	}
+	
 	
 	/** Applicativi */
 	
@@ -2326,6 +2380,7 @@ public class ControlStationCore {
 		this.logoHeaderImage = core.logoHeaderImage;
 		this.logoHeaderLink = core.logoHeaderLink;
 		this.logoHeaderTitolo = core.logoHeaderTitolo;
+		this.visualizzaLinkHomeHeader = core.visualizzaLinkHomeHeader;
 		this.defaultFont = core.defaultFont;
 		this.affineTransform = core.affineTransform;
 		this.fontRenderContext = core.fontRenderContext;
@@ -2398,6 +2453,17 @@ public class ControlStationCore {
 		this.utenzePasswordEncryptEngine = core.utenzePasswordEncryptEngine;
 		this.utenzePasswordManager = core.utenzePasswordManager;
 		this.utenzePasswordManager_backwardCompatibility = core.utenzePasswordManager_backwardCompatibility;
+		
+		/** Login */
+		this.loginApplication = core.loginApplication;
+		this.loginErroreInternoRedirectUrl = core.loginErroreInternoRedirectUrl;
+		this.loginProperties = core.loginProperties;
+		this.loginSessioneScadutaRedirectUrl = core.loginSessioneScadutaRedirectUrl;
+		this.loginTipo = core.loginTipo;
+		this.loginUtenteNonAutorizzatoRedirectUrl = core.loginUtenteNonAutorizzatoRedirectUrl;
+		this.loginUtenteNonValidoRedirectUrl = core.loginUtenteNonValidoRedirectUrl;
+		this.logoutMostraButton = core.logoutMostraButton;
+		this.logoutUrlDestinazione = core.logoutUrlDestinazione;
 		
 		/** Applicativi Console */
 		this.applicativiPasswordConfiguration = core.applicativiPasswordConfiguration;
@@ -2894,9 +2960,21 @@ public class ControlStationCore {
 			this.logoHeaderImage = consoleProperties.getLogoHeaderImage();
 			this.logoHeaderLink = consoleProperties.getLogoHeaderLink();
 			this.logoHeaderTitolo = consoleProperties.getLogoHeaderTitolo();
+			this.visualizzaLinkHomeHeader = consoleProperties.isVisualizzaLinkHomeHeader();
 			String fontName = consoleProperties.getConsoleFontFamilyName();
 			int fontStyle = consoleProperties.getConsoleFontStyle();
 			this.defaultFont = new Font(fontName,fontStyle, 14);
+			
+			/** Login */
+			this.loginApplication = consoleProperties.isLoginApplication();
+			this.loginErroreInternoRedirectUrl = consoleProperties.getLoginErroreInternoRedirectUrl();
+			this.loginProperties = consoleProperties.getLoginProperties();
+			this.loginSessioneScadutaRedirectUrl = consoleProperties.getLoginSessioneScadutaRedirectUrl();
+			this.loginTipo = consoleProperties.getLoginTipo();
+			this.loginUtenteNonAutorizzatoRedirectUrl = consoleProperties.getLoginUtenteNonAutorizzatoRedirectUrl();
+			this.loginUtenteNonValidoRedirectUrl = consoleProperties.getLoginUtenteNonValidoRedirectUrl();
+			this.logoutMostraButton = consoleProperties.isMostraButtonLogout();
+			this.logoutUrlDestinazione = consoleProperties.getLogoutUrlDestinazione();
 			
 			// Opzioni di Visualizzazione
 			this.showJ2eeOptions = consoleProperties.isShowJ2eeOptions();

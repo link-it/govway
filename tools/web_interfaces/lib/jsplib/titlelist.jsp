@@ -138,8 +138,19 @@ Vector<GeneralLink> titlelist = pd.getTitleList();
 						  %>
 				  			<div class="messages-<%=messageType %>-text">
 				  				<span ><%= message %></span>
-				  				<% if(mostraLinkHome){%>
-				  					<br/><span><%= Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE_BACK_HOME_PRE %><a href="<%= request.getContextPath()%>"><%= Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE_BACK_HOME %></a><%= Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE_BACK_HOME_POST %></span>
+				  				<% if(mostraLinkHome){
+				  					String pre = pd.getDefaultLinkHomeLabels().get(0);
+				  					String labelLink = pd.getDefaultLinkHomeLabels().get(1);
+				  					String post = pd.getDefaultLinkHomeLabels().get(2);
+				  					
+				  					if(pd.getLinkHomeLabels() != null && pd.getLinkHomeLabels().size() > 0) {
+				  						pre = pd.getLinkHomeLabels().get(0);
+				  						labelLink = pd.getLinkHomeLabels().get(1);
+				  						post = pd.getLinkHomeLabels().get(2);
+				  					}
+				  				
+				  					%>
+				  					<br/><span><%= pre %><a href="<%= request.getContextPath()%>"><%= labelLink %></a><%= post %></span>
 				  				<% }%>
 				  			</div>
 			  			  <%

@@ -806,62 +806,65 @@ public class UtentiHelper extends ConsoleHelper {
 		}
 		dati.addElement(de);
 		
-		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PASSWORD);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_MODIFICA);
-		de.setType(DataElementType.CHECKBOX);
-		//		de.setOnClick("cambiaPassword(\"changePwd\");");
-		de.setName(UtentiCostanti.PARAMETRO_UTENTI_CHANGE_PASSWORD);
-		de.setPostBack(true);
-		de.setSelected(changepw);
-		de.setSize(this.getSize());
-		dati.addElement(de);
-
-
-		//se e' stato selezionato il link per il cambio password allora mostro i dati
-		if(ServletUtils.isCheckBoxEnabled(changepw)){
-
-			PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
-			
-//			if(ServletUtils.getUserFromSession(this.session).getPermessi().isUtenti()==false){
-			
+		if(this.core.isLoginApplication()) {
+		
 			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_VECCHIA_PASSWORD);
-			de.setType(DataElementType.CRYPT);
-			de.setName(UtentiCostanti.PARAMETRO_UTENTE_VECCHIA_PASSWORD);
-			de.setValue("");
-			de.setSize(this.getSize());
-			de.setRequired(true);
+			de.setLabel(UtentiCostanti.LABEL_PASSWORD);
+			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
+	
+			de = new DataElement();
+			de.setLabel(UtentiCostanti.LABEL_MODIFICA);
+			de.setType(DataElementType.CHECKBOX);
+			//		de.setOnClick("cambiaPassword(\"changePwd\");");
+			de.setName(UtentiCostanti.PARAMETRO_UTENTI_CHANGE_PASSWORD);
+			de.setPostBack(true);
+			de.setSelected(changepw);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+	
+	
+			//se e' stato selezionato il link per il cambio password allora mostro i dati
+			if(ServletUtils.isCheckBoxEnabled(changepw)){
+	
+				PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
 				
-//			}
-
-			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_NUOVA_PASSWORD);
-			de.setType(DataElementType.CRYPT);
-			de.setName(UtentiCostanti.PARAMETRO_UTENTE_NUOVA_PASSWORD);
-			de.setSize(this.getSize());
-			de.setValue("");
-			de.setRequired(true);
-			dati.addElement(de);
-
-			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_CONFERMA_NUOVA_PASSWORD);
-			de.setType(DataElementType.CRYPT);
-			de.setName(UtentiCostanti.PARAMETRO_UTENTE_CONFERMA_NUOVA_PASSWORD);
-			de.setSize(this.getSize());
-			de.setValue("");
-			de.setRequired(true);
-			if(passwordVerifier!=null){
-				de.setNote(passwordVerifier.helpUpdate(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE));
+	//			if(ServletUtils.getUserFromSession(this.session).getPermessi().isUtenti()==false){
+				
+				de = new DataElement();
+				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_VECCHIA_PASSWORD);
+				de.setType(DataElementType.CRYPT);
+				de.setName(UtentiCostanti.PARAMETRO_UTENTE_VECCHIA_PASSWORD);
+				de.setValue("");
+				de.setSize(this.getSize());
+				de.setRequired(true);
+				dati.addElement(de);
+					
+	//			}
+	
+				de = new DataElement();
+				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_NUOVA_PASSWORD);
+				de.setType(DataElementType.CRYPT);
+				de.setName(UtentiCostanti.PARAMETRO_UTENTE_NUOVA_PASSWORD);
+				de.setSize(this.getSize());
+				de.setValue("");
+				de.setRequired(true);
+				dati.addElement(de);
+	
+				de = new DataElement();
+				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_CONFERMA_NUOVA_PASSWORD);
+				de.setType(DataElementType.CRYPT);
+				de.setName(UtentiCostanti.PARAMETRO_UTENTE_CONFERMA_NUOVA_PASSWORD);
+				de.setSize(this.getSize());
+				de.setValue("");
+				de.setRequired(true);
+				if(passwordVerifier!=null){
+					de.setNote(passwordVerifier.helpUpdate(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE));
+				}
+				dati.addElement(de);
 			}
-			dati.addElement(de);
-		}
 
+		}
 		de = new DataElement();
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTE_ESEGUI);

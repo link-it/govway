@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
@@ -134,6 +135,7 @@ public class GeneralHelper {
 		boolean displayLogin = true;
 		boolean displayLogout = true;
 		if ((baseUrl.indexOf("/"+LoginCostanti.SERVLET_NAME_LOGIN) != -1 && userLogin == null) || (baseUrl.indexOf("/"+LoginCostanti.SERVLET_NAME_LOGOUT) != -1)
+				|| (baseUrl.indexOf("/"+LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE) != -1)
 				|| (baseUrl.indexOf("/"+UtentiCostanti.SERVLET_NAME_UTENTE_PASSWORD_CHANGE) != -1 && userLogin == null)) {
 			displayLogin = false;
 			displayLogout = false;
@@ -150,6 +152,7 @@ public class GeneralHelper {
 		gd.setLogoHeaderImage(this.core.getLogoHeaderImage());
 		gd.setLogoHeaderLink(this.core.getLogoHeaderLink());
 		gd.setLogoHeaderTitolo(this.core.getLogoHeaderTitolo()); 
+		gd.setVisualizzaLinkHome(this.core.isVisualizzaLinkHomeHeader());
 		gd.setUrl(baseUrl);
 		gd.setCss(css);
 		if (displayLogin || displayLogout) {
@@ -211,9 +214,11 @@ public class GeneralHelper {
 			}
 
 			// 5. logoutsetModalitaLinks
-			if (displayLogout) {
+			if (displayLogout && this.core.isMostraButtonLogout()) {
 				GeneralLink gl2 = new GeneralLink();
 				gl2.setLabel(LoginCostanti.LABEL_MENU_UTENTE_LOGOUT);
+
+				// se ho definito una url custom viene controllato nella procedura di logout
 				gl2.setUrl(LoginCostanti.SERVLET_NAME_LOGOUT);
 				link.addElement(gl2);
 			}

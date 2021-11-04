@@ -34,6 +34,8 @@ if (iddati != null && !iddati.equals("notdefined"))
 else
   iddati = "notdefined";
 GeneralData gd = (GeneralData) session.getAttribute(gdString);
+
+String styleClassColonnaSX = ""; // "td1PageBodyNoMenu"
 %>
 
 <html>
@@ -55,7 +57,7 @@ GeneralData gd = (GeneralData) session.getAttribute(gdString);
 			<jsp:include page="/jsplib/templateHeader.jsp" flush="true" />
 			<!-- TR3: Body -->
 			<tr class="trPageBody">
-				<td valign=top class="td1PageBodyNoMenu">&nbsp;</td>
+				<td valign=top class="<%= styleClassColonnaSX %>">&nbsp;</td>
 				<jsp:include page="/jsplib/info-page.jsp" flush="true" />
 			</tr>	
 			<jsp:include page="/jsplib/templateFooter.jsp" flush="true" />

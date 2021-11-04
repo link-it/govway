@@ -39,6 +39,7 @@ public class LoginCostanti {
 	public final static String OBJECT_NAME_LOGOUT = "logout";
 	
 	public final static String OBJECT_NAME_MESSAGE_PAGE = "messagePage";
+	public final static String OBJECT_NAME_LOGIN_MESSAGE_PAGE = "loginMessagePage";
 	/* SERVLET NAME */
 	
 	public final static String SERVLET_NAME_LOGIN = OBJECT_NAME_LOGIN+".do";
@@ -59,10 +60,13 @@ public class LoginCostanti {
 		SERVLET_LOGOUT.add(SERVLET_NAME_LOGOUT);
 	}
 	
+	public final static String SERVLET_NAME_LOGIN_MESSAGE_PAGE = OBJECT_NAME_LOGIN_MESSAGE_PAGE+".do";
 	public final static String SERVLET_NAME_MESSAGE_PAGE = OBJECT_NAME_MESSAGE_PAGE+".do";
+	
 	public final static Vector<String> SERVLET_MESSAGE_PAGE = new Vector<String>();
 	static{
 		SERVLET_MESSAGE_PAGE.add(SERVLET_NAME_MESSAGE_PAGE);
+		SERVLET_MESSAGE_PAGE.add(SERVLET_NAME_LOGIN_MESSAGE_PAGE);
 	}
 	
 	
@@ -99,10 +103,10 @@ public class LoginCostanti {
 	
 	public final static String PARAMETRO_LOGIN_LOGIN = "login";
 	public final static String PARAMETRO_LOGIN_PASSWORD = "password";
+	public final static String PARAMETRO_LOGIN_DESTINAZIONE = "dest";
 	
 	/* ATTRIBUTI */
 	public final static String ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA = "changePwdScaduta";
-	
 	
 	/* OTHER */
 	
@@ -114,4 +118,5 @@ public class LoginCostanti {
 
 	public static final String MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE = "L'utente non &egrave; abilitato ad utilizzare la console"; 
 	public static final String MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE_CONFIGURAZIONE_NON_CORRETTO = "L'utente non &egrave; abilitato ad utilizzare la console: configurazione incompleta"; 
+	public static final String MESSAGGIO_INFO_CONTROLLO_CONSISTENZA_DATI_IN_CORSO =	"<b>Attenzione</b>: è in esecuzione un controllo sulla consistenza dei dati; attendere il completamento dell'operazione";
 }

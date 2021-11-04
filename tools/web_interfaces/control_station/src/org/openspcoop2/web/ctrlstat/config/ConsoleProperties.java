@@ -610,6 +610,10 @@ public class ConsoleProperties {
 		return this.readProperty(false,"console.header.logo.link");
 	}
 	
+	public boolean isVisualizzaLinkHomeHeader() throws UtilsException{
+		return this.readBooleanProperty(true, "console.header.home.link.enabled");
+	}
+	
 	/* ----- Opzioni Accesso JMX della PdD ------- */
 	
 	public List<String> getJmxPdD_aliases() throws UtilsException {
@@ -1641,5 +1645,60 @@ public class ConsoleProperties {
 
 	public void setConsoleFontStyle(int consoleFontStyle) {
 		this.consoleFontStyle = consoleFontStyle;
+	}
+	
+	// properties per la gestione del login
+	public String getLoginTipo() throws Exception{
+		return this.readProperty(true,"login.tipo");
+	}
+
+	public boolean isLoginApplication() throws Exception{
+		return this.readBooleanProperty(true, "login.application");
+	}
+
+	public Properties getLoginProperties() throws Exception{
+		return this.reader.readProperties("login.props.");
+	}
+	
+	public String getLoginUtenteNonAutorizzatoRedirectUrl() throws Exception{
+		if(this.isLoginApplication()) {
+			return "";
+		}
+		return this.readProperty(true,"login.utenteNonAutorizzato.redirectUrl");
+	}
+
+	public String getLoginUtenteNonValidoRedirectUrl() throws Exception{
+		if(this.isLoginApplication()) {
+			return "";
+		}
+		return this.readProperty(true,"login.utenteNonValido.redirectUrl");
+	}
+	
+	public String getLoginErroreInternoRedirectUrl() throws Exception{
+		if(this.isLoginApplication()) {
+			return "";
+		}
+		return this.readProperty(true,"login.erroreInterno.redirectUrl");
+	}
+
+	public String getLoginSessioneScadutaRedirectUrl() throws Exception{
+		if(this.isLoginApplication()) {
+			return "";
+		}
+		return this.readProperty(true,"login.sessioneScaduta.redirectUrl");
+	}
+
+	public boolean isMostraButtonLogout() throws Exception{
+		if(this.isLoginApplication()) {
+			return true;
+		}
+		return this.readBooleanProperty(true, "logout.mostraButton.enabled");
+	}
+
+	public String getLogoutUrlDestinazione() throws Exception{
+		if(this.isLoginApplication()) {
+			return "";
+		}
+		return this.readProperty(true,"logout.urlDestinazione");
 	}
 }

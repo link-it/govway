@@ -148,7 +148,17 @@ public class Costanti {
 	/** COOKIES **/
 	
 	public static final String COOKIE_NAME_JSESSIONID = "JSESSIONID";
+
 	
+	/** GESTIONE LOGIN PRINCIPAL **/
+	
+	public static final String PRINCIPAL_ERROR_MSG = "principalErrorMsg";
+	public static final String MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_PRINCIPAL_ASSENTE = "Impossibile leggere le informazioni dell'utenza. Principal assente.";
+	public static final String MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_ERRORE_INTERNO = "Si &egrave; verificato un errore durante il login, impossibile autenticare l''utente {0}.";
+	public static final String MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_UTENTE_NON_TROVATO = "Il sistema non riesce ad autenticare l''utente {0}: Utente non registrato.";
+	public static final String MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_UTENTE_NON_VALIDO = "Il sistema non riesce ad autenticare l''utente {0}: {1}.";
+	public static final String MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_SESSIONE_SCADUTA = "Il sistema non riesce ad autenticare l''utente {0}. La sessione &egrave; scaduta.";
+	public static final String MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_UTENTE_NON_AUTORIZZATO = "Il sistema non riesce ad autenticare l''utente {0}: {1}.";
 	
 	/** DATA ELEMENT **/
 	

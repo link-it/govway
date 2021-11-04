@@ -75,6 +75,7 @@ public class LoaderCore{
 	private String logoHeaderImage = null;
 	private String logoHeaderTitolo = null;
 	private String logoHeaderLink = null;
+	private boolean visualizzaLinkHomeHeader = false;
 	
 	private String getTitleSuffix(HttpSession session) {
 		IVersionInfo versionInfo = null;
@@ -150,6 +151,10 @@ public class LoaderCore{
 
 	public String getLogoHeaderLink() {
 		return this.logoHeaderLink;
+	}
+	
+	public boolean isVisualizzaLinkHomeHeader() {
+		return this.visualizzaLinkHomeHeader;
 	}
 	
 	private String nomePdDOperativaCtrlstatSinglePdD = null;
@@ -235,6 +240,7 @@ public class LoaderCore{
 			this.logoHeaderImage = loaderProperties.getLogoHeaderImage();
 			this.logoHeaderLink = loaderProperties.getLogoHeaderLink();
 			this.logoHeaderTitolo = loaderProperties.getLogoHeaderTitolo();
+			this.visualizzaLinkHomeHeader = loaderProperties.visualizzaLinkHomeHeader;
 			
 		} catch (java.lang.Exception e) {
 			LoaderCore.log.error("[OpenSPCoopLoader::initCore] Impossibile leggere i dati dal file loader.properties:" + e.toString());
@@ -279,6 +285,7 @@ public class LoaderCore{
 		this.logoHeaderImage = core.logoHeaderImage;
 		this.logoHeaderLink = core.logoHeaderLink;
 		this.logoHeaderTitolo =  core.logoHeaderTitolo;
+		this.visualizzaLinkHomeHeader = core.visualizzaLinkHomeHeader;
 		
 		this.xmlUtils = XMLUtils.DEFAULT;
 	}
