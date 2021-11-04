@@ -56,7 +56,6 @@ import org.openapi4j.parser.model.v3.Operation;
 import org.openapi4j.parser.model.v3.Path;
 import org.openapi4j.parser.validation.v3.OpenApi3Validator;
 import org.openapi4j.schema.validator.ValidationData;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.json.AbstractUtils;
 import org.openspcoop2.utils.json.IJsonSchemaValidator;
@@ -104,7 +103,6 @@ import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.atlassian.oai.validator.OpenApiInteractionValidator.SpecSource;
 import com.atlassian.oai.validator.interaction.request.RequestValidator;
 import com.atlassian.oai.validator.interaction.response.ResponseValidator;
 import com.atlassian.oai.validator.model.ApiPath;
@@ -120,18 +118,18 @@ import com.atlassian.oai.validator.report.SimpleValidationReportFormat;
 import com.atlassian.oai.validator.report.ValidationReport;
 import com.atlassian.oai.validator.report.ValidationReport.Level;
 import com.atlassian.oai.validator.schema.SchemaValidator;
-import com.atlassian.oai.validator.util.OpenApiLoader;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
-import io.swagger.parser.OpenAPIParser;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.PathItem.HttpMethod;
 import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.parser.OpenAPIResolver;
 import io.swagger.v3.parser.OpenAPIV3Parser;
+import io.swagger.v3.parser.ResolverCache;
 import io.swagger.v3.parser.core.models.ParseOptions;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
 
@@ -382,15 +380,35 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			            // Devo chiamare il v3Parser.resolve (privato) che a sua volta chiama l'OpenApiResolver
 			            // che a sua volta chiama il PathProcessor
 			            
-			            //OpenAPIV3Parser v3Parser = new OpenAPIV3Parser();
-						//SwaggerParseResult result = v3Parser.parseJsonNode(null, schemaNodeRoot);
-						//v3Parser.res
+			            // Così non va, prova a processare i riferimenti ai path locali e non sa dove caricarli
+			            // perchè ho già il json node, però!
+			            OpenAPIV3Parser v3Parser = new OpenAPIV3Parser();
+						SwaggerParseResult result = v3Parser.parseJsonNode(null, schemaNodeRoot);
+						
+						OpenAPIResolver v3Resolver = new OpenAPIResolver(result.getOpenAPI(), new ArrayList<>(), null);
+						result.setOpenAPI(v3Resolver.resolve());	                            
+						
+						if (result.getOpenAPI() == null) {
+							throw new ProcessingException("Error while parsing the OpenAPI root node: " + String.join("\n", result.getMessages()));
+						}
+						
+						// api.getSchemas().get(0).
+						// Potrei impostargli la externalFileCache al contenuto dei file da importare.
+						// O, nella resolution cache mettere quello che andrea ha messo nella schemaMap, ma con i tipi giusti 
+						// presi dall'oggetto openapi
+						ResolverCache resolverCache = new ResolverCache(result.getOpenAPI(), new ArrayList<>(), null);
+						resolverCache.getResolutionCache().put("ref", "possometterejsonnode?");
+						
+						
+						
+						
+						//result.setOpenAPI(.resolve());
 
-						final String resPath = "/org/openspcoop2/utils/openapi/testOpenAPI_3.0.json";
-			            String loc =  "/home/froggo/sorgenti/link_it/GOVWAY/GovWay/bin/org/openspcoop2/utils/openapi/testOpenAPI_3.0.json";			            
-						SwaggerParseResult result = new OpenAPIParser().readLocation(loc, null, parseOptions);
+						//final String resPath = "/org/openspcoop2/utils/openapi/testOpenAPI_3.0.json";
+			            //String loc =  "/home/froggo/sorgenti/link_it/GOVWAY/GovWay/bin/org/openspcoop2/utils/openapi/testOpenAPI_3.0.json";			            
+						//SwaggerParseResult result = new OpenAPIParser().readLocation(loc, null, parseOptions);
 
-						//this.openApiSwagger = result.getOpenAPI();
+						this.openApiSwagger = result.getOpenAPI();
 						
 						// Il LevelResolver serve a gestire il livello di serietà dei messaggi						
 						// Di default il LevelResolver porta segnala ogni errore di validazione come 
@@ -428,7 +446,6 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						}
 						
 						MessageResolver messages = new MessageResolver(errorLevelResolver.build());
-						//ApiOperationResolver apiOperationResolver = new ApiOperationResolver(api, null);
 				        final SchemaValidator schemaValidator = new SchemaValidator(this.openApiSwagger, messages);
 				        this.swaggerRequestValidator = new RequestValidator(
 				        		schemaValidator, 
