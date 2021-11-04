@@ -60,6 +60,9 @@ public class TestOpenApi3 {
 				mergeSpec = Boolean.valueOf(args[2]);
 			}
 			
+			openAPILibrary = OpenAPILibrary.swagger_request_validator;
+			mergeSpec = true;
+			
 			String baseUri = "http://petstore.swagger.io/api";
 			
 			// yaml inclusi anche da dentro il json

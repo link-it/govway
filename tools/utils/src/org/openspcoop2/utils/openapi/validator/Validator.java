@@ -132,6 +132,7 @@ import io.swagger.v3.parser.OpenAPIV3Parser;
 import io.swagger.v3.parser.ResolverCache;
 import io.swagger.v3.parser.core.models.ParseOptions;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
+import io.swagger.v3.parser.util.ResolverFully;
 
 /**
  * Validator
@@ -386,7 +387,10 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						SwaggerParseResult result = v3Parser.parseJsonNode(null, schemaNodeRoot);
 						
 						OpenAPIResolver v3Resolver = new OpenAPIResolver(result.getOpenAPI(), new ArrayList<>(), null);
-						result.setOpenAPI(v3Resolver.resolve());	                            
+						result.setOpenAPI(v3Resolver.resolve());
+						
+						ResolverFully v3ResolverFully = new ResolverFully(false); //.resolveFully(result.getOpenAPI());
+						v3ResolverFully.resolveFully(result.getOpenAPI());
 						
 						if (result.getOpenAPI() == null) {
 							throw new ProcessingException("Error while parsing the OpenAPI root node: " + String.join("\n", result.getMessages()));
@@ -396,8 +400,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						// Potrei impostargli la externalFileCache al contenuto dei file da importare.
 						// O, nella resolution cache mettere quello che andrea ha messo nella schemaMap, ma con i tipi giusti 
 						// presi dall'oggetto openapi
-						ResolverCache resolverCache = new ResolverCache(result.getOpenAPI(), new ArrayList<>(), null);
-						resolverCache.getResolutionCache().put("ref", "possometterejsonnode?");
+						// O ANCORA FORSE MEGLIO, fare l'override dell'ExternalRefProcessor
+						/*ResolverCache resolverCache = new ResolverCache(result.getOpenAPI(), new ArrayList<>(), null);
+						resolverCache.getResolutionCache().put("ref", "possometterejsonnode?");*/
 						
 						
 						

@@ -74,7 +74,7 @@ public class Test {
 			config.setJsonValidatorAPI(ApiName.NETWORK_NT);
 			if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 				config.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
-				config.getOpenApi4JConfig().setOpenApiLibrary(OpenAPILibrary.openapi4j);
+				config.getOpenApi4JConfig().setOpenApiLibrary(openAPILibrary);
 				config.getOpenApi4JConfig().setMergeAPISpec(mergeSpec);
 			}
 			apiValidator.init(LoggerWrapperFactory.getLogger(Test.class), api, config);
