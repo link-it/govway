@@ -145,7 +145,8 @@ public class Test {
 						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 									"profiloRefInLineByStatus: Value 'APIGatewayERRATO' is not defined in the schema. (code: 1006)" :
-									"TODO";
+									"Validation failed.\n" + 
+									"[ERROR][REQUEST][GET http://petstore.swagger.io/api/pets/findByStatus @query.profiloRefInLineByStatus] Instance value (\"APIGatewayERRATO\") not found in enum (possible values: [\"APIGateway\",\"SPCoop\",\"FatturaPA\",\"eDelivery\"])";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"', trovato: "+e.getMessage());
 							}
@@ -174,7 +175,7 @@ public class Test {
 						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 									"soggettoInLineByStatus: 'PROVA_PROVA' does not respect pattern '^[0-9A-Za-z]+$'. (code: 1025)" :
-									"TODO";
+									"[ERROR][REQUEST][GET http://petstore.swagger.io/api/pets/findByStatus @query.soggettoInLineByStatus] ECMA 262 regex \"^[0-9A-Za-z]+$\" does not match input string \"PROVA_PROVA\"";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"': "+e.getMessage());
 							}
@@ -203,7 +204,7 @@ public class Test {
 						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 									"soggettoInLineByStatus: Min length is '2', found '1'. (code: 1017)" :
-									"TODO";
+									"[ERROR][REQUEST][GET http://petstore.swagger.io/api/pets/findByStatus @query.soggettoInLineByStatus] String \"P\" is too short (length: 1, required minimum: 2)";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -233,7 +234,7 @@ public class Test {
 						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 									"soggettoRef: Max length is '255', found '291'. (code: 1012)" :
-									"TODO";
+									"[ERROR][REQUEST][GET http://petstore.swagger.io/api/pets/findByStatus @query.soggettoRef] String \"P12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890\" is too long (length: 291, maximum allowed: 255)";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -262,7 +263,7 @@ public class Test {
 						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 									"Minimum is '100', found '23'. (code: 1015)" :
-									"TODO";
+									"[ERROR][REQUEST][GET http://petstore.swagger.io/api/pets/findByStatus @query.esempioNumerico] Numeric instance is lower than the required minimum (minimum: 100, found: 23)"; 
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -291,7 +292,7 @@ public class Test {
 						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 									"esempioNumerico: Excluded maximum is '600', found '600'. (code: 1009)" :
-									"TODO";
+									"[ERROR][REQUEST][GET http://petstore.swagger.io/api/pets/findByStatus @query.esempioNumerico] Numeric instance is not strictly lower than the required maximum 600"; 
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -320,7 +321,7 @@ public class Test {
 						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 									"esempioNumerico: Maximum is '600', found '800'. (code: 1010)" :
-									"TODO";
+									"[ERROR][REQUEST][GET http://petstore.swagger.io/api/pets/findByStatus @query.esempioNumerico] Numeric instance is greater than the required maximum (maximum: 600, found: 800)"; 
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -347,7 +348,7 @@ public class Test {
 						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 									"esempioNumerico: Value '55GG33' does not match format 'int32'. (code: 1007)" :
-									"TODO";
+									"[ERROR][REQUEST][GET http://petstore.swagger.io/api/pets/findByStatus @query.esempioNumerico] Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])"; 
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -390,7 +391,7 @@ public class Test {
 					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 								"Body is required but none provided. (code: 200)" :
-								"TODO";
+								"[ERROR][REQUEST][POST /pets @body] A request body is required but none found."; 
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -418,7 +419,7 @@ public class Test {
 					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 								"Content type 'application/ERRORE' is not allowed for body content" :
-								"TODO";
+								"[ERROR][REQUEST][POST /pets] Request Content-Type header '[application/ERRORE]' does not match any allowed types. Must be one of: [application/json]."; 
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -447,7 +448,7 @@ public class Test {
 						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 									"body: Additional property 'a' is not allowed." :
-									"TODO";
+									"[ERROR][REQUEST][POST /pets @body] Object instance has properties which are not allowed by the schema: [\"a\"]"; 
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -478,7 +479,7 @@ public class Test {
 					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 								"body: Field 'name' is required." :
-								"TODO";
+								"[ERROR][REQUEST][POST /pets @body] Object has missing required properties ([\"name\"])"; 
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
