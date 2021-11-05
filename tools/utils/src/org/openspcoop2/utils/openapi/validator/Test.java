@@ -619,7 +619,7 @@ public class Test {
 					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 								"Content type 'application/json' is not allowed for body content. (code: 203)" :
-								"TODO";
+								"[ERROR][RESPONSE][] Response Content-Type header 'application/json' does not match any allowed types. Must be one of: [application/problem+json]."; 
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -649,7 +649,7 @@ public class Test {
 						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 									"body: Additional property 'a' is not allowed." :
-									"TODO";
+									"[ERROR][RESPONSE][] Object instance has properties which are not allowed by the schema: [\"a\"]"; 
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -681,7 +681,7 @@ public class Test {
 					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 								"body: Field 'name' is required." :
-								"TODO";
+								"[ERROR][RESPONSE][] Object has missing required properties ([\"name\"])"; 
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -713,7 +713,7 @@ public class Test {
 						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 									"body: Additional property 'a' is not allowed." :
-									"TODO";
+									"[ERROR][RESPONSE][] Object instance has properties which are not allowed by the schema: [\"a\"]";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -745,7 +745,7 @@ public class Test {
 					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 								"body: Field 'code' is required." :
-								"TODO";
+								"[ERROR][RESPONSE][] Object has missing required properties ([\"code\"])"; 
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -787,7 +787,7 @@ public class Test {
 					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 								"body: Additional property 'a' is not allowed." :
-								"TODO";
+								"[ERROR][REQUEST][PUT /pets @body] Object instance has properties which are not allowed by the schema: [\"a\"]"; 
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -817,7 +817,7 @@ public class Test {
 					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 								"body: Field 'name' is required." :
-								"TODO";
+								"[ERROR][REQUEST][PUT /pets @body] Object has missing required properties ([\"name\"])"; 
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -870,7 +870,7 @@ public class Test {
 					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 								"body: Additional property 'a' is not allowed." :
-								"TODO";
+								"[ERROR][RESPONSE][] Object instance has properties which are not allowed by the schema: [\"a\"]"; 
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -901,7 +901,7 @@ public class Test {
 					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 								"body: Field 'name' is required." :
-								"TODO";
+								"[ERROR][RESPONSE][] Object has missing required properties ([\"name\"])"; 
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -932,7 +932,7 @@ public class Test {
 					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 								"body: Additional property 'a' is not allowed." :
-								"TODO";
+								"[ERROR][RESPONSE][] Object instance has properties which are not allowed by the schema: [\"a\"]";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -963,7 +963,7 @@ public class Test {
 					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 								"body: Field 'code' is required." :
-								"TODO";
+								"[ERROR][RESPONSE][] Object has missing required properties ([\"code\"])"; 
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -1074,7 +1074,7 @@ public class Test {
 					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 								"body: Additional property 'a' is not allowed." :
-								"TODO";
+								"[ERROR][RESPONSE][] Object instance has properties which are not allowed by the schema: [\"a\"]";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -1105,7 +1105,7 @@ public class Test {
 					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 								"body: Field 'name' is required." :
-								"TODO";
+								"[ERROR][RESPONSE][] Object has missing required properties ([\"name\"])";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -1136,7 +1136,7 @@ public class Test {
 					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 								"body: Additional property 'a' is not allowed." :
-								"TODO";
+								"[ERROR][RESPONSE][] Object instance has properties which are not allowed by the schema: [\"a\"]"; 
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -1167,7 +1167,7 @@ public class Test {
 					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 								"body: Field 'code' is required." :
-								"TODO";
+								"[ERROR][RESPONSE][] Object has missing required properties ([\"code\"])"; 
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
