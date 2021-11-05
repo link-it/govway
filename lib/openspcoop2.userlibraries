@@ -224,6 +224,7 @@
 	<archive path="/op2_3.3.dev/lib/shared/reactive-streams-1.0.3.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/reflections-0.9.12.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/javassist-3.12.1.GA.jar"/>
+	<archive path="/op2_3.3.dev/lib/shared/rhino-1.7.13.jar"/>
 	<!-- soapbox -->
         <archive path="/op2_3.3.dev/lib/soapbox/ultraesb-core-1.7.1.jar"/>
         <archive path="/op2_3.3.dev/lib/soapbox/ultraesb-api-1.7.1.jar"/>
