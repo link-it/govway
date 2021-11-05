@@ -141,6 +141,7 @@ import io.swagger.v3.parser.OpenAPIResolver;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import io.swagger.v3.parser.core.models.ParseOptions;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
+import io.swagger.v3.parser.util.OpenAPIDeserializer;
 import io.swagger.v3.parser.util.ResolverFully;
 
 /**
@@ -382,6 +383,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			            OpenAPIV3Parser v3Parser = new OpenAPIV3Parser();
 						SwaggerParseResult result = v3Parser.parseJsonNode(null, schemaNodeRoot);
 						
+						//OpenAPIDeserializer swaggerApiDeserializer = new OpenAPIDeserializer();
+						//swagger
+						
 						OpenAPIResolver v3Resolver = new OpenAPIResolver(result.getOpenAPI(), new ArrayList<>(), null);
 						result.setOpenAPI(v3Resolver.resolve());
 						
@@ -395,6 +399,14 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						
 						if (result.getOpenAPI() == null) {
 							throw new ProcessingException("Error while parsing the OpenAPI root node: " + String.join("\n", result.getMessages()));
+						}
+						
+						if(this.openApi4jConfig.isValidateAPISpec()) {
+							if (result.getMessages().size() != 0) {
+								throw new ProcessingException(
+										"OpenAPI3 not valid: " + String.join("\n", result.getMessages())
+										);
+							}
 						}
 						
 						// api.getSchemas().get(0).
@@ -426,6 +438,8 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 							// TODO: Fare qualcosa con le parse Options?
 						}
 						
+						//errorLevelResolver.withLevel("validation.schema.additionalProperties", Level.IGNORE);
+						
 						// Config Request
 						if (!this.openApi4jConfig.isValidateRequestBody()) {
 							errorLevelResolver.withLevel("validation.request.body", Level.IGNORE);
@@ -449,7 +463,8 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						}
 						
 						MessageResolver messages = new MessageResolver(errorLevelResolver.build());
-				        final SchemaValidator schemaValidator = new SchemaValidator(this.openApiSwagger, messages);
+				        //final SchemaValidator schemaValidator = new SwaggerSchemaValidator(this.openApiSwagger, messages);						
+						final SchemaValidator schemaValidator = new SchemaValidator(this.openApiSwagger, messages);
 				        this.swaggerRequestValidator = new RequestValidator(
 				        		schemaValidator, 
 				        		messages, 
@@ -465,13 +480,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						// .withParseOptions(parseOptions)
 						// vedi https://github.com/swagger-api/swagger-parser#options														
 															
-						if(this.openApi4jConfig.isValidateAPISpec()) {
-							if (result.getMessages().size() != 0) {
-								throw new ProcessingException(
-										"OpenAPI3 not valid: " + String.join("\n", result.getMessages())
-										);
-							}
-						}
+						
 					}
 					
 					// Salvo informazioni ricostruite
@@ -1464,7 +1473,6 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		
 		}
 		
-		// TODO: Aggiungi anche gli altri messaggi
 		if (report.hasErrors()) {
 			String msgReport = 	SimpleValidationReportFormat.getInstance().apply(report);		
 			throw new ValidatorException(msgReport);
