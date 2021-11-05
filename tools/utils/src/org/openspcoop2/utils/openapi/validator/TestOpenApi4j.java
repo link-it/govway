@@ -63,7 +63,14 @@ import org.w3c.dom.Element;
 public class TestOpenApi4j {
 
 	public static void main(String[] args) throws Exception {
-				
+		
+		
+		OpenAPILibrary openAPILibrary = OpenAPILibrary.openapi4j;
+		if(args!=null && args.length>0) {
+			openAPILibrary = OpenAPILibrary.valueOf(args[0]);
+		}
+		
+		
 		// *** TEST per il Parser e validazione dello schema *** //
 		
 		{
@@ -81,7 +88,7 @@ public class TestOpenApi4j {
 			IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 			OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 			configO.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
-			configO.getOpenApi4JConfig().setOpenApiLibrary(OpenAPILibrary.openapi4j);
+			configO.getOpenApi4JConfig().setOpenApiLibrary(openAPILibrary);
 			configO.getOpenApi4JConfig().setValidateAPISpec(true);
 			apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), apiOpenApi4j, configO);
 					
@@ -185,7 +192,7 @@ public class TestOpenApi4j {
 		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
-		configO.getOpenApi4JConfig().setOpenApiLibrary(OpenAPILibrary.openapi4j);
+		configO.getOpenApi4JConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApi4JConfig().setValidateAPISpec(true);
 		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), apiOpenApi4j, configO);
 		
