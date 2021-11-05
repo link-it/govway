@@ -520,7 +520,7 @@ public class Test {
 					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 								"body: Null value is not allowed. (code: 1021)" :
-								"TODO";
+								"[ERROR][RESPONSE][] POST on path '/pets' defines a response schema but no response body found."; 
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -548,7 +548,7 @@ public class Test {
 					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 								"Content type 'application/ERRORE' is not allowed for body content." :
-								"TODO";
+								"[ERROR][RESPONSE][] Response Content-Type header 'application/ERRORE' does not match any allowed types. Must be one of: [application/json]."; 
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}

@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -126,10 +127,18 @@ import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.PathItem.HttpMethod;
+import io.swagger.v3.oas.models.headers.Header;
+import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.ComposedSchema;
+import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.MediaType;
+import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.parameters.Parameter;
+import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.parser.OpenAPIResolver;
 import io.swagger.v3.parser.OpenAPIV3Parser;
-import io.swagger.v3.parser.ResolverCache;
 import io.swagger.v3.parser.core.models.ParseOptions;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
 import io.swagger.v3.parser.util.ResolverFully;
@@ -362,35 +371,27 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 					}
 					else if(OpenAPILibrary.swagger_request_validator.equals(openApiLibrary)) {
 						
-						// TODO: Non so cosa fare col campo path, chiedi a andrea.
-						// Viene usato da OpenApiDesarializer così 
-						// openAPI.setServers(getServersList(array, String.format("%s.%s", location, "servers"), result, path));
-
 						//OpenAPIV3Parser
-						final ParseOptions parseOptions = new ParseOptions();
+						//final ParseOptions parseOptions = new ParseOptions();
 			            //parseOptions.setResolve(true);
 			            //parseOptions.setResolveFully(true);
-			            parseOptions.setResolveCombinators(false);
-			            parseOptions.setResolve(false);
+			            //parseOptions.setResolveCombinators(false);
+			            //parseOptions.setResolve(false);
 			            //parseOptions.set
 			            
-			            
-			            
-			            // TODO: Dovrei usare OpenApiLoader di atlassian, perchè fa un preprocessing
-			            // all'oggetto OpenAPI
-			            // Devo chiamare il v3Parser.resolve (privato) che a sua volta chiama l'OpenApiResolver
-			            // che a sua volta chiama il PathProcessor
-			            
-			            // Così non va, prova a processare i riferimenti ai path locali e non sa dove caricarli
-			            // perchè ho già il json node, però!
 			            OpenAPIV3Parser v3Parser = new OpenAPIV3Parser();
 						SwaggerParseResult result = v3Parser.parseJsonNode(null, schemaNodeRoot);
 						
 						OpenAPIResolver v3Resolver = new OpenAPIResolver(result.getOpenAPI(), new ArrayList<>(), null);
 						result.setOpenAPI(v3Resolver.resolve());
 						
-						ResolverFully v3ResolverFully = new ResolverFully(false); //.resolveFully(result.getOpenAPI());
+						// Passo true per risolvere i combinators e non avere problemi di validazione con allOf, anyOf e oneOf
+						ResolverFully v3ResolverFully = new ResolverFully(true);
 						v3ResolverFully.resolveFully(result.getOpenAPI());
+						
+			            // Pulisco la openApi con le utility dell' OpenApiLoader di atlassian
+						removeRegexPatternOnStringsOfFormatByte(result.getOpenAPI());
+					    removeTypeObjectAssociationWithOneOfAndAnyOfModels(result.getOpenAPI());
 						
 						if (result.getOpenAPI() == null) {
 							throw new ProcessingException("Error while parsing the OpenAPI root node: " + String.join("\n", result.getMessages()));
@@ -403,9 +404,6 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						// O ANCORA FORSE MEGLIO, fare l'override dell'ExternalRefProcessor
 						/*ResolverCache resolverCache = new ResolverCache(result.getOpenAPI(), new ArrayList<>(), null);
 						resolverCache.getResolutionCache().put("ref", "possometterejsonnode?");*/
-						
-						
-						
 						
 						//result.setOpenAPI(.resolve());
 
@@ -1420,7 +1418,6 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 
 	private void validateWithSwaggerRequestValidator(HttpBaseEntity<?> httpEntity, ApiOperation gwOperation) throws ProcessingException, ValidatorException {
 		
-	    // TODO: che fare con i parametri query non esistenti?
 	    // TODO: Mancano i cookies!		  
 		// TODO: Invece di fare la readOperationsMap, meglio uno switch che fa la getGET, getPOST ecc.. giusta.		
 		
@@ -1444,7 +1441,6 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		io.swagger.v3.oas.models.Operation swaggerOperation = 
 				item.get().getValue().readOperationsMap().get(method);
 	
-		String denormalizedPath = item.get().getKey();
 		ApiPath apiPath = new ApiPathImpl(httpEntity.getUrl(), null);
 		NormalisedPath requestPath = new NormalisedPathImpl(httpEntity.getUrl(), null);
 						
@@ -1873,7 +1869,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 	}
 	
 	
-	// ====== SWAGGER REQUEST VALIDATOR GLUE CODE ==========
+	// ================= SWAGGER REQUEST VALIDATOR GLUE CODE =====================
 
 	private static Method fromHttpMethod(HttpRequestMethod method) {
 		// TODO: Che faccio sollevo eccezione se non c'è?
@@ -1913,7 +1909,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 				throw new ProcessingException(e.getMessage(),e);
 			}
 		}
-		else {
+		else if (content == null) {
+			// nop
+		} else {
 			throw new ProcessingException("Type '"+content.getClass().getName()+"' unsupported");
 		}
 		
@@ -1944,5 +1942,98 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		
 		return builder.build();
 	}
+	
+	
+	/** 
+	 * 
+	 * 	Questo codice è copiato dall'OpenApiLoader di atlassian, utilizzato perchè il 
+	 * 	resolverfully fa modifiche alla openApi che vanno a interferire con la validazione
+	 */
+	 // Adding this method to strip off the object type association applied by
+    // io.swagger.v3.parser.util.ResolverFully (ln 410) where the operation sets
+    // type field to "object" if type field is null. This causes issues for anyOf
+    // and oneOf validations.
+	
+    private static void removeTypeObjectAssociationWithOneOfAndAnyOfModels(final OpenAPI openAPI) {
+        if (openAPI.getComponents() != null) {
+            removeTypeObjectFromEachValue(openAPI.getComponents().getSchemas(), schema -> schema);
+        }
+    }
+
+    private static <T> void removeTypeObjectFromEachValue(final Map<String, T> map, final Function<T, Object> function) {
+        if (map != null) {
+            map.values().forEach(it -> removeTypeObjectAssociationWithOneOfAndAnyOfFromSchema(function.apply(it)));
+        }
+    }
+
+    private static void removeTypeObjectAssociationWithOneOfAndAnyOfFromSchema(final Object object) {
+        if (object instanceof ObjectSchema) {
+            removeTypeObjectFromEachValue(((ObjectSchema) object).getProperties(), schema -> schema);
+        } else if (object instanceof ArraySchema) {
+            removeTypeObjectAssociationWithOneOfAndAnyOfFromSchema(((ArraySchema) object).getItems());
+        } else if (object instanceof ComposedSchema) {
+            final ComposedSchema composedSchema = (ComposedSchema) object;
+            composedSchema.setType(null);
+        }
+    }
+
+    /**
+     * Removes the Base64 pattern on the {@link OpenAPI} model.
+     * <p>
+     * If that pattern would stay on the model all fields of type string / byte would be validated twice. Once
+     * with the {@link com.github.fge.jsonschema.keyword.validator.common.PatternValidator} and once with
+     * the {@link com.atlassian.oai.validator.schema.format.Base64Attribute}.
+     * To improve validation performance and memory footprint the pattern on string / byte fields will be
+     * removed - so the PatternValidator will not be triggered for those kind of fields.
+     *
+     * @param openAPI the {@link OpenAPI} to correct
+     */
+    private static void removeRegexPatternOnStringsOfFormatByte(final OpenAPI openAPI) {
+        if (openAPI.getPaths() != null) {
+            openAPI.getPaths().values().forEach(pathItem -> {
+                pathItem.readOperations().forEach(operation -> {
+                    excludeBase64PatternFromEachValue(operation.getResponses(), io.swagger.v3.oas.models.responses.ApiResponse::getContent);
+                    if (operation.getRequestBody() != null) {
+                        excludeBase64PatternFromSchema(operation.getRequestBody().getContent());
+                    }
+                    if (operation.getParameters() != null) {
+                        operation.getParameters().forEach(it -> excludeBase64PatternFromSchema(it.getContent()));
+                        operation.getParameters().forEach(it -> excludeBase64PatternFromSchema(it.getSchema()));
+                    }
+                });
+            });
+        }
+        if (openAPI.getComponents() != null) {
+            excludeBase64PatternFromEachValue(openAPI.getComponents().getResponses(), io.swagger.v3.oas.models.responses.ApiResponse::getContent);
+            excludeBase64PatternFromEachValue(openAPI.getComponents().getRequestBodies(), RequestBody::getContent);
+            excludeBase64PatternFromEachValue(openAPI.getComponents().getHeaders(), Header::getContent);
+            excludeBase64PatternFromEachValue(openAPI.getComponents().getHeaders(), Header::getSchema);
+            excludeBase64PatternFromEachValue(openAPI.getComponents().getParameters(), Parameter::getContent);
+            excludeBase64PatternFromEachValue(openAPI.getComponents().getParameters(), Parameter::getSchema);
+            excludeBase64PatternFromEachValue(openAPI.getComponents().getSchemas(), schema -> schema);
+        }
+    }
+
+    private static <T> void excludeBase64PatternFromEachValue(final Map<String, T> map, final Function<T, Object> function) {
+        if (map != null) {
+            map.values().forEach(it -> excludeBase64PatternFromSchema(function.apply(it)));
+        }
+    }
+
+    private static void excludeBase64PatternFromSchema(final Object object) {
+        if (object instanceof Content) {
+            excludeBase64PatternFromEachValue((Content) object, MediaType::getSchema);
+        } else if (object instanceof ObjectSchema) {
+            excludeBase64PatternFromEachValue(((ObjectSchema) object).getProperties(), schema -> schema);
+        } else if (object instanceof ArraySchema) {
+            excludeBase64PatternFromSchema(((ArraySchema) object).getItems());
+        } else if (object instanceof StringSchema) {
+            final StringSchema stringSchema = (StringSchema) object;
+            // remove the pattern _only_ if it's a String / Byte field
+            if ("byte".equals(stringSchema.getFormat())) {
+                stringSchema.setPattern(null);
+            }
+        }
+    }
 	
 }
