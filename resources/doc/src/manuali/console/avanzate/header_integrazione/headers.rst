@@ -40,20 +40,20 @@ virgola:
       ==================================  =========================================================
       Nome Query URL Parameter            Descrizione
       ==================================  =========================================================
-      govway_message_id                  	Identificativo del messaggio assegnato da GovWay
-      govway_relates_to                  	Identificativo del messaggio riferito
-      govway_conversation_id             	Identificativo della conversazione
-      govway_transaction_id              	Identificativo della transazione assegnato da GovWay
-      govway_sender_type                 	Codice che identifica il tipo del mittente
-      govway_sender                       	Identificativo del mittente
-      govway_provider_type               	Codice che identifica il tipo del destinatario
-      govway_provider                     	Identificativo del destinatario
-      govway_service_type                	Codice che identifica il tipo del servizio
-      govway_service                      	Identificativo del servizio
-      govway_service_version             	Progressivo di versione del servizio
-      govway_action                       	Identificativo dell'azione
-      govway_application_message_id     	Identificativo del messaggio assegnato dall'applicativo
-      govway_application                  	Identificativo dell'applicativo
+      govway_message_id                   Identificativo del messaggio assegnato da GovWay
+      govway_relates_to                   Identificativo del messaggio riferito
+      govway_conversation_id              Identificativo della conversazione
+      govway_transaction_id               Identificativo della transazione assegnato da GovWay
+      govway_sender_type                  Codice che identifica il tipo del mittente
+      govway_sender                       Identificativo del mittente
+      govway_provider_type                Codice che identifica il tipo del destinatario
+      govway_provider                     Identificativo del destinatario
+      govway_service_type                 Codice che identifica il tipo del servizio
+      govway_service                      Identificativo del servizio
+      govway_service_version              Progressivo di versione del servizio
+      govway_action                       Identificativo dell'azione
+      govway_application_message_id       Identificativo del messaggio assegnato dall'applicativo
+      govway_application                  Identificativo dell'applicativo
       ==================================  =========================================================
 
    .. _notaUrlBased:
@@ -114,21 +114,41 @@ virgola:
    namespace *http://www.w3.org/2005/08/addressing*. I valori utilizzati
    per i vari header sono i seguenti:
 
-   -  *To*,
-      http://<providerType>\_<provider>.govway.org/services/<serviceType>\_<service>/<serviceVersion>
+   -  *To*
+      
+       ::
 
-   -  *From*, http://[<application>.]<senderType>\_<sender>.govway.org
+           http://<providerType>_<provider>.govway.org/services/<serviceType>_<service>/<serviceVersion>
 
-   -  *Action*,
-      http://<providerType>\_<provider>.govway.org/services/<serviceType>\_<service>/<serviceVersion>/<action>
+   -  *From*
+      
+       ::
 
-   -  *MessageID*, uuid:<messageId> in caso di Messaggio di Protocollo
-      (restituzione di una risposto lato PD o in caso di consegna
-      tramite PA), uuid:<applicationMessageId> in caso di Messaggio di
-      Integrazione (invocazione lato PD o lettura risposta lato PA, es.
-      per correlazione applicativa)
+           http://[<application>.]<senderType>_<sender>.govway.org
 
-   -  *RelatesTo*, uuid:<relatesTo>
+   -  *Action*
+      
+       ::
+
+           http://<providerType>_<provider>.govway.org/services/<serviceType>_<service>/<serviceVersion>/<action>
+
+   -  *MessageID* di Protocollo, ritornato in una risposta di una fruizione o inserito nella consegna della richiesta di una erogazione
+      
+       ::
+
+           uuid:<messageId>
+      
+   -  *MessageID* di Integrazione, atteso nella richiesta inviata dal client in una fruizione o nella risposta ritornata dal backend in una erogazione. Viene utilizzato ad es. per la funzionalità di correlazione applicativa
+
+       ::
+
+           uuid:<applicationMessageId>
+
+   -  *RelatesTo*
+      
+       ::
+
+           uuid:<relatesTo>
 
    .. note::
       Utilizzabile solamente con API di tipologia SOAP
