@@ -40,6 +40,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.openapi4j.core.model.v3.OAI3Context;
 import org.openapi4j.core.model.v3.OAI3SchemaKeywords;
@@ -119,6 +120,7 @@ import com.atlassian.oai.validator.report.SimpleValidationReportFormat;
 import com.atlassian.oai.validator.report.ValidationReport;
 import com.atlassian.oai.validator.report.ValidationReport.Level;
 import com.atlassian.oai.validator.schema.SchemaValidator;
+import com.atlassian.oai.validator.schema.transform.AdditionalPropertiesInjectionTransformer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -139,9 +141,7 @@ import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.parser.OpenAPIResolver;
 import io.swagger.v3.parser.OpenAPIV3Parser;
-import io.swagger.v3.parser.core.models.ParseOptions;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
-import io.swagger.v3.parser.util.OpenAPIDeserializer;
 import io.swagger.v3.parser.util.ResolverFully;
 
 /**
@@ -168,6 +168,10 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 
 	// Configuration
 	private OpenapiApi4jValidatorConfig openApi4jConfig;
+	
+	// TODO PER ANDREA: CONFIGURAZIONI AGGIUNTIVE SWAGGER VALIDATOR
+	private boolean isValidateUnexpectedQueryParam = false;
+	private boolean isInjectingAdditionalProperties = false; 
 	
 	
 	
@@ -372,25 +376,20 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 					}
 					else if(OpenAPILibrary.swagger_request_validator.equals(openApiLibrary)) {
 						
-						//OpenAPIV3Parser
-						//final ParseOptions parseOptions = new ParseOptions();
-			            //parseOptions.setResolve(true);
-			            //parseOptions.setResolveFully(true);
-			            //parseOptions.setResolveCombinators(false);
-			            //parseOptions.setResolve(false);
-			            //parseOptions.set
 			            
 			            OpenAPIV3Parser v3Parser = new OpenAPIV3Parser();
 						SwaggerParseResult result = v3Parser.parseJsonNode(null, schemaNodeRoot);
 						
-						//OpenAPIDeserializer swaggerApiDeserializer = new OpenAPIDeserializer();
-						//swagger
+						// OpenAPIDeserializer swaggerApiDeserializer = new OpenAPIDeserializer();
+						// swagger Devo usare il deserializer per avere il controllo sui messaggi
+						// di parsing
 						
 						OpenAPIResolver v3Resolver = new OpenAPIResolver(result.getOpenAPI(), new ArrayList<>(), null);
 						result.setOpenAPI(v3Resolver.resolve());
-						
-						// Passo true per risolvere i combinators e non avere problemi di validazione con allOf, anyOf e oneOf
-						ResolverFully v3ResolverFully = new ResolverFully(true);
+
+						// Passo false per non risolvere i combinators, poichè quando vengono risolti non c'è modo
+						// di ricordarsi i singoli attributi degli schemi combinati (oneOf, allOf ecc..)
+						ResolverFully v3ResolverFully = new ResolverFully(false);
 						v3ResolverFully.resolveFully(result.getOpenAPI());
 						
 			            // Pulisco la openApi con le utility dell' OpenApiLoader di atlassian
@@ -409,6 +408,11 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 							}
 						}
 						
+						if (this.openApi4jConfig.isMergeAPISpec()) {
+							// TODO: Fare qualcosa con le parse Options?
+						}
+					
+						
 						// api.getSchemas().get(0).
 						// Potrei impostargli la externalFileCache al contenuto dei file da importare.
 						// O, nella resolution cache mettere quello che andrea ha messo nella schemaMap, ma con i tipi giusti 
@@ -424,21 +428,17 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						//SwaggerParseResult result = new OpenAPIParser().readLocation(loc, null, parseOptions);
 
 						this.openApiSwagger = result.getOpenAPI();
+						var errorLevelResolver = LevelResolver.create();
 						
 						// Il LevelResolver serve a gestire il livello di serietà dei messaggi						
 						// Di default il LevelResolver porta segnala ogni errore di validazione come 
 						// un ERROR, quindi dobbiamo disattivarli selettivamente.
 						// Le chiavi da usare per il LevelResolver sono nel progetto swagger-validator 
 						// sotto src/main/resources/messages.properties
-
-						var errorLevelResolver = LevelResolver.create();
-						errorLevelResolver.withLevel("validation.request.parameter.query.unexpected", Level.IGNORE);							
-
-						if (this.openApi4jConfig.isMergeAPISpec()) {
-							// TODO: Fare qualcosa con le parse Options?
-						}
 						
-						//errorLevelResolver.withLevel("validation.schema.additionalProperties", Level.IGNORE);
+						if (!this.isValidateUnexpectedQueryParam) {
+							errorLevelResolver.withLevel("validation.request.parameter.query.unexpected", Level.IGNORE);
+						}				
 						
 						// Config Request
 						if (!this.openApi4jConfig.isValidateRequestBody()) {
@@ -463,8 +463,15 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						}
 						
 						MessageResolver messages = new MessageResolver(errorLevelResolver.build());
-				        //final SchemaValidator schemaValidator = new SwaggerSchemaValidator(this.openApiSwagger, messages);						
 						final SchemaValidator schemaValidator = new SchemaValidator(this.openApiSwagger, messages);
+						
+						if (!this.isInjectingAdditionalProperties) {
+							var transformers = schemaValidator.transformers;
+							schemaValidator.transformers = transformers.stream()
+									.filter( t -> t != AdditionalPropertiesInjectionTransformer.getInstance())
+									.collect(Collectors.toList());
+						}
+						
 				        this.swaggerRequestValidator = new RequestValidator(
 				        		schemaValidator, 
 				        		messages, 
@@ -476,11 +483,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 				        		messages, 
 				        		this.openApiSwagger, 
 				        		new ArrayList<>());
-				
-						// .withParseOptions(parseOptions)
-						// vedi https://github.com/swagger-api/swagger-parser#options														
-															
-						
+				        
 					}
 					
 					// Salvo informazioni ricostruite
