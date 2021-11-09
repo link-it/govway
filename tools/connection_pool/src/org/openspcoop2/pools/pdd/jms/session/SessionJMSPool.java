@@ -24,7 +24,8 @@ package org.openspcoop2.pools.pdd.jms.session;
 
 import org.slf4j.Logger;
 
-import java.util.Hashtable;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.jms.Session;
 
@@ -65,9 +66,9 @@ public class SessionJMSPool implements java.io.Serializable  {
 
 	
 	/** Hash Pool utilizzato ed indirizzato con il nome JNDI */
-	private static Hashtable<String,GenericObjectPool<org.openspcoop2.pools.pdd.jms.session.Connection>> pool = 
-			new Hashtable<String,GenericObjectPool<org.openspcoop2.pools.pdd.jms.session.Connection>>();
-	private static Hashtable<String,PoolFactory> poolFactory = new Hashtable<String,PoolFactory>();
+	private static Map<String,GenericObjectPool<org.openspcoop2.pools.pdd.jms.session.Connection>> pool = 
+			new ConcurrentHashMap<String,GenericObjectPool<org.openspcoop2.pools.pdd.jms.session.Connection>>();
+	private static Map<String,PoolFactory> poolFactory = new ConcurrentHashMap<String,PoolFactory>();
 	/** NomeJNDI di questo oggetto */
 	private String jndiName;
 

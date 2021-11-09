@@ -27,7 +27,6 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -94,11 +93,11 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 	public ForcedResponseMessage forcedResponse;
 	
 	/* Context */	
-	public Map<String, Object> context = new Hashtable<String, Object>();
+	public Map<String, Object> context = new HashMap<String, Object>();
 	private String transactionId;
 	
 	/* ContentType */
-	public Map<String, String> contentTypeParamaters = new Hashtable<String, String>();
+	public Map<String, String> contentTypeParamaters = new HashMap<String, String>();
 	
 	/* MessageType */
 	public MessageType messageType;

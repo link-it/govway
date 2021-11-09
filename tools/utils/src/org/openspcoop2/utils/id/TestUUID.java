@@ -26,10 +26,11 @@ import java.net.NetworkInterface;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -241,7 +242,7 @@ public class TestUUID {
 		Date inizio = DateManager.getDate();
 		
 		ExecutorService threadsPool = Executors.newFixedThreadPool(threadsNum);
-		Hashtable<String, ClientTestThread> threads = new Hashtable<String, ClientTestThread>();
+		Map<String, ClientTestThread> threads = new HashMap<String, ClientTestThread>();
 		
 		boolean error = false;
 		Exception exception = null;

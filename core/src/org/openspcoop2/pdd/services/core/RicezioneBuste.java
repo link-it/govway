@@ -7449,11 +7449,12 @@ public class RicezioneBuste {
 					// aggiorno pddContext
 					pddContext = ricezioneBusteMSG.getPddContext();
 					if(pddContext!=null){
-						Enumeration<String> enumPddContext = pddContext.keys();
-						while (enumPddContext.hasMoreElements()) {
-							String key = enumPddContext.nextElement();
-							//System.out.println("AGGIORNO KEY BUSTE ["+key+"]");
-							this.msgContext.getPddContext().addObject(key, pddContext.getObject(key));
+						List<String> enumPddContext = pddContext.keys();
+						if(enumPddContext!=null && !enumPddContext.isEmpty()) {
+							for (String key : enumPddContext) {
+								//System.out.println("AGGIORNO KEY BUSTE ["+key+"]");
+								this.msgContext.getPddContext().addObject(key, pddContext.getObject(key));
+							}
 						}
 					}
 				}
@@ -8337,7 +8338,7 @@ public class RicezioneBuste {
 			//IOpenSPCoopState state = parametriGenerazioneBustaErrore.getOpenspcoop();
 			//IDSoggetto identitaPdD = parametriGenerazioneBustaErrore.getIdentitaPdD();
 			
-			java.util.Hashtable<String,Object> securityPropertiesResponse = null;
+			java.util.Map<String,Object> securityPropertiesResponse = null;
 			if(parametriGenerazioneBustaErrore.getFlowPropertiesResponse()!=null && parametriGenerazioneBustaErrore.getFlowPropertiesResponse().messageSecurity!=null)
 				securityPropertiesResponse = parametriGenerazioneBustaErrore.getFlowPropertiesResponse().messageSecurity.getFlowParameters();
 			MessageSecurityContext messageSecurityContext = parametriGenerazioneBustaErrore.getMessageSecurityContext();

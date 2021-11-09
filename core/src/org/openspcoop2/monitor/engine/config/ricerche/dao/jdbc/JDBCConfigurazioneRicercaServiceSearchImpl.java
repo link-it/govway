@@ -616,7 +616,7 @@ public class JDBCConfigurazioneRicercaServiceSearchImpl implements IJDBCServiceS
 	protected Map<String, List<IField>> _getMapTableToPKColumn() throws NotImplementedException, Exception{
 	
 		ConfigurazioneRicercaFieldConverter converter = this.getConfigurazioneRicercaFieldConverter();
-		Map<String, List<IField>> mapTableToPKColumn = new java.util.Hashtable<String, List<IField>>();
+		Map<String, List<IField>> mapTableToPKColumn = new java.util.HashMap<String, List<IField>>();
 		UtilsTemplate<IField> utilities = new UtilsTemplate<IField>();
 
 		// TODO: Define the columns used to identify the primary key

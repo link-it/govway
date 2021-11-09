@@ -30,9 +30,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -2612,7 +2610,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	}
 
 	@Override
-	public Hashtable<IDSoggetto, PortaApplicativa> getPorteApplicative_SoggettiVirtuali(IDServizio idServizio) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+	public Map<IDSoggetto, PortaApplicativa> getPorteApplicative_SoggettiVirtuali(IDServizio idServizio) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 
 		this.log.debug("metodo getPorteApplicative_SoggettiVirtuali in esecuzione...");
 
@@ -2620,7 +2618,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			throw new DriverConfigurazioneException("[getPortaApplicativa_SoggettiVirtuali] Parametro idServizio Non Valido");
 		if (idServizio.getSoggettoErogatore() == null)
 			throw new DriverConfigurazioneException("[getPortaApplicativa_SoggettiVirtuali] Parametro Soggetto Erogatore Non Valido");
-		Hashtable<IDSoggetto, PortaApplicativa> paConSoggetti = new Hashtable<IDSoggetto, PortaApplicativa>();
+		Map<IDSoggetto, PortaApplicativa> paConSoggetti = new HashMap<IDSoggetto, PortaApplicativa>();
 		IDSoggetto soggettoVirtuale = idServizio.getSoggettoErogatore();
 		String servizio = idServizio.getNome();
 		String tipoServizio = idServizio.getTipo();
@@ -7202,10 +7200,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			case TYPE_SSL_SUBJECT_ISSUER:{
 
 				// Autenticazione SSL deve essere LIKE
-				Hashtable<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoHashtable(aSubject, PrincipalType.subject);
-				Hashtable<String, List<String>> hashIssuer = null;
+				Map<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoMap(aSubject, PrincipalType.subject);
+				Map<String, List<String>> hashIssuer = null;
 				if(StringUtils.isNotEmpty(aIssuer)) {
-					hashIssuer = CertificateUtils.getPrincipalIntoHashtable(aIssuer, PrincipalType.issuer);
+					hashIssuer = CertificateUtils.getPrincipalIntoMap(aIssuer, PrincipalType.issuer);
 				}
 
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -7216,10 +7214,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "tipoauth", "saTipoAuth");
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipoauth = ?");
 
-				Enumeration<String> keys = hashSubject.keys();
-				while(keys.hasMoreElements()){
-					String key = keys.nextElement();
-					
+				for (String key : hashSubject.keySet()) {
 					List<String> listValues = hashSubject.get(key);
 					for (String value : listValues) {
 						sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".subject", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, true, false);
@@ -7227,10 +7222,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				}
 				
 				if(hashIssuer!=null) {
-					keys = hashIssuer.keys();
-					while(keys.hasMoreElements()){
-						String key = keys.nextElement();
-						
+					for (String key : hashIssuer.keySet()) {			
 						List<String> listValues = hashIssuer.get(key);
 						for (String value : listValues) {
 							sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".issuer", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, true, false);
@@ -7294,10 +7286,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI+".id_servizio_applicativo="+CostantiDB.SERVIZI_APPLICATIVI+".id");
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipoauth = ?");
 					
-					keys = hashSubject.keys();
-					while(keys.hasMoreElements()){
-						String key = keys.nextElement();
-						
+					for (String key : hashSubject.keySet()) {
 						List<String> listValues = hashSubject.get(key);
 						for (String value : listValues) {
 							sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI+".subject", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, true, false);
@@ -7305,10 +7294,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					}
 					
 					if(hashIssuer!=null) {
-						keys = hashIssuer.keys();
-						while(keys.hasMoreElements()){
-							String key = keys.nextElement();
-							
+						for (String key : hashIssuer.keySet()) {
 							List<String> listValues = hashIssuer.get(key);
 							for (String value : listValues) {
 								sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI+".issuer", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, true, false);
@@ -18751,16 +18737,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				}
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipoauth = ?");
 				
-				Hashtable<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoHashtable(subject, PrincipalType.subject);
-				Hashtable<String, List<String>> hashIssuer = null;
+				Map<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoMap(subject, PrincipalType.subject);
+				Map<String, List<String>> hashIssuer = null;
 				if(StringUtils.isNotEmpty(issuer)) {
-					hashIssuer = CertificateUtils.getPrincipalIntoHashtable(issuer, PrincipalType.issuer);
+					hashIssuer = CertificateUtils.getPrincipalIntoMap(issuer, PrincipalType.issuer);
 				}
 				
-				Enumeration<String> keys = hashSubject.keys();
-				while(keys.hasMoreElements()){
-					String key = keys.nextElement();
-					
+				for (String key : hashSubject.keySet()) {					
 					List<String> listValues = hashSubject.get(key);
 					for (String value : listValues) {
 						sqlQueryObject.addWhereLikeCondition(tabella+".subject", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, true, false);
@@ -18769,10 +18752,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				}
 				
 				if(hashIssuer!=null) {
-					keys = hashIssuer.keys();
-					while(keys.hasMoreElements()){
-						String key = keys.nextElement();
-						
+					for (String key : hashIssuer.keySet()) {
 						List<String> listValues = hashIssuer.get(key);
 						for (String value : listValues) {
 							sqlQueryObject.addWhereLikeCondition(tabella+".issuer", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, true, false);

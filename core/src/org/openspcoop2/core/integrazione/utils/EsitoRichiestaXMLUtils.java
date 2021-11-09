@@ -54,11 +54,16 @@ public class EsitoRichiestaXMLUtils  {
 
 	/** Validatore XSD */
 	static ValidatoreXSD validatoreXSD = null;
-	public static synchronized ValidatoreXSD getValidatoreXSD(Logger log) throws Exception{
+	private static synchronized void initValidatoreXSD(Logger log) throws Exception{
 		if(EsitoRichiestaXMLUtils.validatoreXSD==null){
 			XSDResourceResolver xsdResourceResolver = new XSDResourceResolver();
 			xsdResourceResolver.addResource("soapEnvelope.xsd", EsitoRichiestaXMLUtils.class.getResourceAsStream("/soapEnvelope.xsd"));
 			EsitoRichiestaXMLUtils.validatoreXSD = new ValidatoreXSD(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log,xsdResourceResolver,EsitoRichiestaXMLUtils.class.getResourceAsStream("/openspcoopPresaInCarico.xsd"));
+		}
+	}
+	public static ValidatoreXSD getValidatoreXSD(Logger log) throws Exception{
+		if(EsitoRichiestaXMLUtils.validatoreXSD==null){
+			initValidatoreXSD(log);
 		}
 		return EsitoRichiestaXMLUtils.validatoreXSD;
 	}

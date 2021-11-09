@@ -20,9 +20,7 @@
 package org.openspcoop2.pdd.core.handlers.transazioni;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -238,7 +236,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 					// NOTA: Questo blocco che gestisce la raccolta delle policy soddisfatte e violate per generare gli opportuni header potrebbe essere riscritto utilizzando TipoRisorsaPolicyAttiva
 					// Per adesso non viene modificato.
 					List<RisultatoVerificaPolicy> risultatiVerificaPolicyViolate = new ArrayList<>();
-					Hashtable<TipoRisorsa,List<RisultatoVerificaPolicy>> risultatiVerificaPolicyRispettate = new Hashtable<>();
+					Map<TipoRisorsa,List<RisultatoVerificaPolicy>> risultatiVerificaPolicyRispettate = new HashMap<>();
 					for (TipoRisorsa tipoRisorsa : TipoRisorsa.values()) {
 						risultatiVerificaPolicyRispettate.put(tipoRisorsa, new ArrayList<>());
 					}
@@ -523,7 +521,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 					if(risultatiVerificaPolicyViolate.size()>0) {
 						// calcolo tempo maggiore
 						long ms = -1;
-						Hashtable<TipoRisorsa,List<RisultatoVerificaPolicy>> risultatiVerificaPolicyViolateMap = new Hashtable<>();
+						Map<TipoRisorsa,List<RisultatoVerificaPolicy>> risultatiVerificaPolicyViolateMap = new HashMap<>();
 						for (RisultatoVerificaPolicy risultatoVerificaPolicy : risultatiVerificaPolicyViolate) {
 							
 							List<RisultatoVerificaPolicy> l = null;
@@ -647,11 +645,10 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 
 	}
 	
-	private void gestioneHeaderRateLimit(Hashtable<TipoRisorsa,List<RisultatoVerificaPolicy>> risultatiVerificaPolicy, Properties headerTrasportoRateLimiting,
+	private void gestioneHeaderRateLimit(Map<TipoRisorsa,List<RisultatoVerificaPolicy>> risultatiVerificaPolicy, Properties headerTrasportoRateLimiting,
 			OpenSPCoop2Properties op2Properties) {
-		Enumeration<TipoRisorsa> tipiRisorsaEnum = risultatiVerificaPolicy.keys();
-		while (tipiRisorsaEnum.hasMoreElements()) {
-			TipoRisorsa tipoRisorsa = (TipoRisorsa) tipiRisorsaEnum.nextElement();
+		for (TipoRisorsa tipoRisorsa : risultatiVerificaPolicy.keySet()) {
+
 			List<RisultatoVerificaPolicy> risultato = risultatiVerificaPolicy.get(tipoRisorsa);
 			// in presenza di piu' policy dello stesso tipo considero la policy che termina più lontano nel tempo: NO Sbagliato poiche' se una ha un numero minore non va bene.
 			// Prendo a questo punto quella con il minore limite.

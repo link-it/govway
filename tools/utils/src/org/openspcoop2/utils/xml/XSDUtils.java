@@ -25,9 +25,8 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.w3c.dom.Attr;
@@ -583,7 +582,7 @@ public class XSDUtils {
 	
 	// BUILD SCHEMA COLLECTION
 		
-	public XSDSchemaCollection buildSchemaCollection(Hashtable<String, byte[]> resources,Hashtable<String, String> mappingNamespaceLocations,Logger logger) throws XMLException {
+	public XSDSchemaCollection buildSchemaCollection(Map<String, byte[]> resources,Map<String, String> mappingNamespaceLocations,Logger logger) throws XMLException {
 
 		// ---------  Check esistenza almeno 1 schema --------- 
 		if(resources.size()==0){
@@ -599,10 +598,9 @@ public class XSDUtils {
 			StringBuilder bfContenitori = new StringBuilder();
 			StringBuilder bfImportNormali = new StringBuilder();
 
-			Enumeration<String> targetNamespaces = mappingNamespaceLocations.keys();
 			int indexSystemId = 1;
-			while(targetNamespaces.hasMoreElements()){
-				String targetNamespace = targetNamespaces.nextElement();
+			for (String targetNamespace : mappingNamespaceLocations.keySet()) {
+				
 				String locations = mappingNamespaceLocations.get(targetNamespace);
 				String [] splitLocations = locations.split(" ");
 
@@ -822,7 +820,7 @@ public class XSDUtils {
 	
 	// UTILITIES GENERICHE
 	
-	public void registraMappingNamespaceLocations(byte[] resource,String location,Hashtable<String, String> mappingNamespaceLocations) throws XMLException {
+	public void registraMappingNamespaceLocations(byte[] resource,String location,Map<String, String> mappingNamespaceLocations) throws XMLException {
 		String targetNamespaceXSD = this.getTargetNamespace(resource);
 		if(targetNamespaceXSD!=null){
 			//System.out.println("ADD MAPPING PER ["+targetNamespaceXSD+"]...");

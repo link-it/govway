@@ -80,6 +80,7 @@ public class GestoreErroreConnettore {
 	private static Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 
 
+	private static org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("GestoreErroreConnettore");
 	/** GestoreErrore di default per il componente di integrazione */
 	private static HashMap<String, GestioneErrore> gestioneErroreDefaultComponenteIntegrazioneMap = new HashMap<>();
 	/** GestoreErrore di default per il componente di cooperazione */
@@ -94,7 +95,9 @@ public class GestoreErroreConnettore {
 			return GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazioneMap.get(key);
 		}else{
 
-			synchronized (gestioneErroreDefaultComponenteIntegrazioneMap) {
+			//synchronized (gestioneErroreDefaultComponenteIntegrazioneMap) {
+			semaphore.acquireThrowRuntime("getGestioneErroreDefaultComponenteIntegrazione");
+			try {
 
 				if(GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazioneMap.containsKey(key)){
 					return GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazioneMap.get(key);
@@ -129,6 +132,8 @@ public class GestoreErroreConnettore {
 				GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazioneMap.put(key, gestione);
 				return gestione;
 
+			}finally{
+				semaphore.release("getGestioneErroreDefaultComponenteIntegrazione");
 			}
 		}
 	}
@@ -141,7 +146,9 @@ public class GestoreErroreConnettore {
 			return GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.get(key);
 		}else{
 
-			synchronized (gestioneErroreDefaultComponenteCooperazioneMap) {
+			//synchronized (gestioneErroreDefaultComponenteCooperazioneMap) {
+			semaphore.acquireThrowRuntime("getGestioneErroreDefaultComponenteCooperazione");
+			try {
 
 				if(GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.containsKey(key)){
 					return GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.get(key);
@@ -220,6 +227,8 @@ public class GestoreErroreConnettore {
 				GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.put(key, gestione);
 				return gestione;
 
+			}finally {
+				semaphore.release("getGestioneErroreDefaultComponenteCooperazione");
 			}
 		}
 	}

@@ -572,7 +572,8 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 						this.transazioniRegistrazioneTokenInformazioniNormalizzate,
 						this.transazioniRegistrazioneAttributiInformazioniNormalizzate,
 						this.transazioniRegistrazioneTempiElaborazione);
-				transazioneDTO = transazioneUtilities.fillTransaction(context, transaction, idDominio); // NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
+				transazioneDTO = transazioneUtilities.fillTransaction(context, transaction, idDominio,
+						( (times!=null && this.openspcoopProperties.isTransazioniRegistrazioneSlowLogBuildTransactionDetails()) ? times : null)); // NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
 	
 			}catch (Throwable e) {
 				try{
@@ -1156,6 +1157,7 @@ class TransazioniProcessTimes{
 
 	String idTransazione;
 	long fillTransaction = -1;
+	List<String> fillTransaction_details = null;
 	long controlloTraffico = -1;
 	long controlloTraffico_removeThread = -1;
 	long controlloTraffico_preparePolicy = -1;
@@ -1178,6 +1180,21 @@ class TransazioniProcessTimes{
 				sb.append(" ");
 			}
 			sb.append("buildTransaction:").append(this.fillTransaction);
+		}
+		if(this.fillTransaction_details!=null && !this.fillTransaction_details.isEmpty()) {
+			if(sb.length()>0) {
+				sb.append(" ");
+			}
+			sb.append("buildTransactionDetails:{");
+			boolean first = true;
+			for (String det : this.fillTransaction_details) {
+				if(!first) {
+					sb.append(" ");
+				}
+				sb.append(det);
+				first=false;
+			}
+			sb.append("}");
 		}
 		if(this.controlloTraffico>=0) {
 			if(sb.length()>0) {

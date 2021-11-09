@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -767,7 +766,7 @@ public class ServletTestService extends HttpServlet {
 			// opzione replace
 			// formato: old:new[,old:new,....,old:new]
 			String replace = getParameter_checkWhiteList(req, this.whitePropertiesList, "replace");
-			Map<String, String> replaceMap = new Hashtable<String, String>();
+			Map<String, String> replaceMap = new HashMap<String, String>();
 			if(replace!=null){
 				// volutamente non faccio il trim
 				if(replace.contains(",")){

@@ -23,9 +23,9 @@ package org.openspcoop2.testsuite.axis14;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.xml.namespace.QName;
@@ -80,7 +80,7 @@ public class Axis14WSSReceiver {
 	/** Certificato del client */
 	private String subject;
 
-	public Axis14WSSReceiver(Hashtable<?,?> wssProperties, Axis14WSSBaseUtils baseWSS) {
+	public Axis14WSSReceiver(Map<?,?> wssProperties, Axis14WSSBaseUtils baseWSS) {
 		this.baseUtilsWSS = baseWSS;
 		this.baseUtilsWSS.setMessageContext(wssProperties);
 	}

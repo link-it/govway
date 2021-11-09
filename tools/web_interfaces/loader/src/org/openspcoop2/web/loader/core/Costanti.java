@@ -21,7 +21,8 @@
 
 package org.openspcoop2.web.loader.core;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -78,26 +79,26 @@ public class Costanti {
 	/* SERVLET NAME */
 	
 	public final static String SERVLET_NAME_LOGIN = OBJECT_NAME_LOGIN+".do";
-	public final static Vector<String> SERVLET_LOGIN = new Vector<String>();
+	public final static List<String> SERVLET_LOGIN = new ArrayList<String>();
 	static{
 		SERVLET_LOGIN.add(SERVLET_NAME_LOGIN);
 	}
 	
 	public final static String SERVLET_NAME_LOGOUT = OBJECT_NAME_LOGOUT+".do";
-	public final static Vector<String> SERVLET_LOGOUT = new Vector<String>();
+	public final static List<String> SERVLET_LOGOUT = new ArrayList<String>();
 	static{
 		SERVLET_LOGOUT.add(SERVLET_NAME_LOGOUT);
 	}
 	
 	public final static String SERVLET_NAME_ARCHIVI_IMPORTA_XML = OBJECT_NAME_ARCHIVI_IMPORTA_XML+".do";
 	public final static String SERVLET_NAME_ARCHIVI_ELIMINAZIONE_XML = OBJECT_NAME_ARCHIVI_ELIMINAZIONE_XML+".do";
-	public final static Vector<String> SERVLET_ARCHIVI = new Vector<String>();
+	public final static List<String> SERVLET_ARCHIVI = new ArrayList<String>();
 	static{
 		SERVLET_ARCHIVI.add(SERVLET_NAME_ARCHIVI_IMPORTA_XML);
 	}
 	
 	public final static String SERVLET_NAME_MESSAGE_PAGE = OBJECT_NAME_MESSAGE_PAGE+".do";
-	public final static Vector<String> SERVLET_MESSAGE_PAGE = new Vector<String>();
+	public final static List<String> SERVLET_MESSAGE_PAGE = new ArrayList<String>();
 	static{
 		SERVLET_MESSAGE_PAGE.add(SERVLET_NAME_MESSAGE_PAGE);
 	}

@@ -20,7 +20,8 @@
 
 package org.openspcoop2.utils.jdbc;
 
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openspcoop2.utils.TipiDatabase;
 
@@ -37,8 +38,8 @@ public class CustomKeyGeneratorObject implements IKeyGeneratorObject {
 	private String columnNameId;
 	private String table;
 	private CustomKeyGeneratorOtherTableObjects defaultTableObjects;
-	private Hashtable<TipiDatabase,CustomKeyGeneratorOtherTableObjects> customTableObjects = 
-			new Hashtable<TipiDatabase, CustomKeyGeneratorOtherTableObjects>();
+	private Map<TipiDatabase,CustomKeyGeneratorOtherTableObjects> customTableObjects = 
+			new HashMap<TipiDatabase, CustomKeyGeneratorOtherTableObjects>();
 	
 	
 	public CustomKeyGeneratorObject(String table,String columnNameId,

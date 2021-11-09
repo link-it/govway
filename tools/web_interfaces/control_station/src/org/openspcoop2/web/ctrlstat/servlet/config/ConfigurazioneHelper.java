@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -6187,7 +6186,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		else{
 			boolean addProtocollo = false;
-			Hashtable<String, String> map = new Hashtable<String, String>();
+			Map<String, String> map = new HashMap<String, String>();
 			for (int i = 0; i < infoProtocolli.length; i++) {
 				
 				try{
@@ -6207,10 +6206,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 				
 			}
-			Enumeration<String> protocolli = map.keys();
 			int index = 0;
-			while (protocolli.hasMoreElements()) {
-				String protocollo = (String) protocolli.nextElement();
+			for (String protocollo : map.keySet()) {
 				
 				addProtocollo = true;
 				
@@ -17761,7 +17758,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 			
-			Hashtable<String, String> campiHidden = new Hashtable<String, String>();
+			Map<String, String> campiHidden = new HashMap<String, String>();
 			campiHidden.put(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_NOME, nome);
 			this.pd.setHidden(campiHidden);
 

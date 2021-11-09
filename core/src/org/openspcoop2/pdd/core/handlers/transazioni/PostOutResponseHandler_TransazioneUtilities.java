@@ -144,7 +144,8 @@ public class PostOutResponseHandler_TransazioneUtilities {
 	
 	public Transazione fillTransaction(PostOutResponseContext context,
 			Transaction transaction,
-			IDSoggetto idDominio) throws HandlerException{
+			IDSoggetto idDominio,
+			TransazioniProcessTimes times) throws HandlerException{
 
 		// NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
 		
@@ -174,8 +175,14 @@ public class PostOutResponseHandler_TransazioneUtilities {
 		String idTransazione = null;
 		String nomePorta = null;
 				
+		long timeStart = -1;
 		try {
 
+			if(times!=null) {
+				times.fillTransaction_details = new ArrayList<String>();
+				timeStart = DateManager.getTimeMillis();
+			}
+			
 			IProtocolFactory<?> protocolFactory = context.getProtocolFactory();
 
 			IBustaBuilder<?> protocolBustaBuilder = protocolFactory.createBustaBuilder(context.getStato());
@@ -240,6 +247,14 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			}
 			
 
+			if(times!=null) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				times.fillTransaction_details.add("connettoreMultipli:"+timeProcess);
+				
+				timeStart = DateManager.getTimeMillis();
+			}
+			
 			
 			// ** Identificativo di transazione **
 			if (context.getPddContext().getObject(Costanti.ID_TRANSAZIONE)!=null){
@@ -425,6 +440,15 @@ public class PostOutResponseHandler_TransazioneUtilities {
 				transactionDTO.setPddRuolo(PddRuolo.toEnumConstant(context.getTipoPorta().getTipo()));
 			}
 
+			
+			if(times!=null) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				times.fillTransaction_details.add("baseContext:"+timeProcess);
+				
+				timeStart = DateManager.getTimeMillis();
+			}
+			
 
 			// ** FAULT **
 			transactionDTO.setFaultIntegrazione(transaction.getFaultIntegrazione());
@@ -548,6 +572,14 @@ public class PostOutResponseHandler_TransazioneUtilities {
 				}
 			}
 			
+			
+			if(times!=null) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				times.fillTransaction_details.add("fault:"+timeProcess);
+				
+				timeStart = DateManager.getTimeMillis();
+			}
 
 
 			// ** Soggetto Fruitore **
@@ -671,6 +703,14 @@ public class PostOutResponseHandler_TransazioneUtilities {
 				}
 			}
 			
+			if(times!=null) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				times.fillTransaction_details.add("identificativi:"+timeProcess);
+				
+				timeStart = DateManager.getTimeMillis();
+			}
+			
 			RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance(context.getStato());
 			if(idAccordo==null) {
 				if(transactionDTO.getNomeServizio()!=null && transactionDTO.getTipoServizio()!=null && 
@@ -686,6 +726,15 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					}
 				}
 			}
+			
+			if(times!=null) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				times.fillTransaction_details.add("id-api:"+timeProcess);
+				
+				timeStart = DateManager.getTimeMillis();
+			}
+			
 			if(idAccordo!=null) {
 				try {
 					AccordoServizioParteComune aspc = registroServiziManager.getAccordoServizioParteComune(idAccordo, null, false);
@@ -695,7 +744,16 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					else {
 						transactionDTO.setTipoApi(TipoAPI.SOAP.getValoreAsInt());
 					}
-										
+						
+					if(times!=null) {
+						long timeEnd =  DateManager.getTimeMillis();
+						long timeProcess = timeEnd-timeStart;
+						times.fillTransaction_details.add("api:"+timeProcess);
+						
+						timeStart = DateManager.getTimeMillis();
+					}
+					
+					String conflict = "0";
 					if(aspc.getGruppi()!=null && aspc.getGruppi().sizeGruppoList()>0) {
 						List<String> gruppi = new ArrayList<String>();
 						int count = 0;
@@ -712,30 +770,63 @@ public class PostOutResponseHandler_TransazioneUtilities {
 							}
 						}
 						if(gruppi.size()>0){
+							StringBuilder sbConflict = null;
+							if(times!=null) {
+								sbConflict = new StringBuilder();
+							}
 							CredenzialeMittente credGruppi = GestoreAutenticazione.convertGruppiToCredenzialiMittenti(idDominio, context.getIdModulo(), idTransazione, gruppi, 
-									null, "PostOutResponse.gruppi");
+									null, "PostOutResponse.gruppi",
+									sbConflict);
+							if(sbConflict!=null && sbConflict.length()>0) {
+								conflict = sbConflict.toString();
+							}
 							if(credGruppi!=null) {
 								transactionDTO.setGruppi(credGruppi.getId()+"");
 							}
 						}
 					}
 					
+					if(times!=null) {
+						long timeEnd =  DateManager.getTimeMillis();
+						long timeProcess = timeEnd-timeStart;
+						times.fillTransaction_details.add("tags:"+timeProcess+"/c"+conflict);
+						
+						timeStart = DateManager.getTimeMillis();
+					}
+					
 				}catch(Throwable e) {
 					// NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
 					this.logger.error("Errore durante l'identificazione delle caratteristiche dell'API (Accesso servizio): "+e.getMessage(),e);
 				}
+				String conflict = "0";
 				try {
 					if(transactionDTO.getUriAccordoServizio()==null){
 						transactionDTO.setUriAccordoServizio(IDAccordoFactory.getInstance().getUriFromIDAccordo(idAccordo));
 					}
+					StringBuilder sbConflict = null;
+					if(times!=null) {
+						sbConflict = new StringBuilder();
+					}
 					CredenzialeMittente credAPI = GestoreAutenticazione.convertAPIToCredenzialiMittenti(idDominio, context.getIdModulo(), idTransazione, transactionDTO.getUriAccordoServizio(), 
-							null, "PostOutResponse.api");
+							null, "PostOutResponse.api",
+							sbConflict);
+					if(sbConflict!=null && sbConflict.length()>0) {
+						conflict = sbConflict.toString();
+					}
 					if(credAPI!=null) {
 						transactionDTO.setUriApi(credAPI.getId()+"");
 					}
 				}catch(Throwable e) {
 					// NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
 					this.logger.error("Errore durante l'identificazione dell'identificativo dell'API (Accesso servizio parte comune): "+e.getMessage(),e);
+				}
+				
+				if(times!=null) {
+					long timeEnd =  DateManager.getTimeMillis();
+					long timeProcess = timeEnd-timeStart;
+					times.fillTransaction_details.add("uri-api:"+timeProcess+"/c"+conflict);
+					
+					timeStart = DateManager.getTimeMillis();
 				}
 			}
 
@@ -793,6 +884,14 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					}
 				}
 			}
+			
+			if(times!=null) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				times.fillTransaction_details.add("async:"+timeProcess);
+				
+				timeStart = DateManager.getTimeMillis();
+			}
 
 			// ** info protocollo **
 			if(tracciaRichiesta!=null){
@@ -839,6 +938,13 @@ public class PostOutResponseHandler_TransazioneUtilities {
 						}
 					}
 				}
+				if(times!=null) {
+					long timeEnd =  DateManager.getTimeMillis();
+					long timeProcess = timeEnd-timeStart;
+					times.fillTransaction_details.add("traccia-richiesta:"+timeProcess);
+					
+					timeStart = DateManager.getTimeMillis();
+				}
 			}
 			if(tracciaRisposta!=null){				
 				if(this.transazioniRegistrazioneTracceHeaderRawEnabled){
@@ -883,6 +989,13 @@ public class PostOutResponseHandler_TransazioneUtilities {
 							}
 						}
 					}
+				}
+				if(times!=null) {
+					long timeEnd =  DateManager.getTimeMillis();
+					long timeProcess = timeEnd-timeStart;
+					times.fillTransaction_details.add("traccia-risposta:"+timeProcess);
+					
+					timeStart = DateManager.getTimeMillis();
 				}
 			}
 			
@@ -1007,6 +1120,14 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			// ** cluster-id **
 			transactionDTO.setClusterId(op2Properties.getClusterId(false));
 			
+			if(times!=null) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				times.fillTransaction_details.add("integration:"+timeProcess);
+				
+				timeStart = DateManager.getTimeMillis();
+			}
+			
 			// credenziali
 			if(transaction.getCredenzialiMittente()!=null) {
 				
@@ -1050,6 +1171,14 @@ public class PostOutResponseHandler_TransazioneUtilities {
 				transactionDTO.setTokenInfo(transaction.getInformazioniAttributi().toJson());
 			}
 			
+			if(times!=null) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				times.fillTransaction_details.add("token:"+timeProcess);
+				
+				timeStart = DateManager.getTimeMillis();
+			}
+			
 			// tempi elaborazione
 			if(this.transazioniRegistrazioneTempiElaborazione && transaction.getTempiElaborazione()!=null) {
 				try {
@@ -1058,6 +1187,14 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					// NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
 					this.logger.error("TempiElaborazioneUtils.convertToDBValue failed: "+e.getMessage(),e);
 				}
+			}
+			
+			if(times!=null) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				times.fillTransaction_details.add("times:"+timeProcess);
+				
+				timeStart = DateManager.getTimeMillis();
 			}
 			
 			// ** Indirizzo IP **
@@ -1081,11 +1218,20 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					transactionDTO.setTransportClientAddress(ipAddress.substring(0, 250)+"...");
 				}
 			}
+			String conflict = "0";
 			if(transactionDTO.getSocketClientAddress()!=null || transactionDTO.getTransportClientAddress()!=null) {
 				try {
+					StringBuilder sbConflict = null;
+					if(times!=null) {
+						sbConflict = new StringBuilder();
+					}
 					CredenzialeMittente credClientAddress =GestoreAutenticazione.convertClientCredentialToCredenzialiMittenti(idDominio, context.getIdModulo(), idTransazione, 
 							transactionDTO.getSocketClientAddress(), transactionDTO.getTransportClientAddress(), 
-							null, "PostOutResponse.clientAddress"); 
+							null, "PostOutResponse.clientAddress",
+							sbConflict); 
+					if(sbConflict!=null && sbConflict.length()>0) {
+						conflict = sbConflict.toString();
+					}
 					if(credClientAddress!=null) {
 						transactionDTO.setClientAddress(credClientAddress.getId()+"");
 					}
@@ -1095,6 +1241,13 @@ public class PostOutResponseHandler_TransazioneUtilities {
 				}
 			}
 			
+			if(times!=null) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				times.fillTransaction_details.add("ip-address:"+timeProcess+"/c"+conflict);
+				
+				timeStart = DateManager.getTimeMillis();
+			}
 			
 			// ** eventi di gestione **
 			List<String> eventiGestione = new ArrayList<String>();
@@ -1161,10 +1314,19 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					// tronco gli eventi ai primi trovati. Sono troppi eventi successi sulla transazione.
 				}
 			}
+			conflict = "0";
 			if(eventiGestione.size()>0){
 				try {
+					StringBuilder sbConflict = null;
+					if(times!=null) {
+						sbConflict = new StringBuilder();
+					}
 					CredenzialeMittente credEventi = GestoreAutenticazione.convertEventiToCredenzialiMittenti(idDominio, context.getIdModulo(), idTransazione, eventiGestione, 
-							null, "PostOutResponse.eventi");
+							null, "PostOutResponse.eventi",
+							sbConflict);
+					if(sbConflict!=null && sbConflict.length()>0) {
+						conflict = sbConflict.toString();
+					}
 					if(credEventi!=null) {
 						transactionDTO.setEventiGestione(credEventi.getId()+"");
 					}
@@ -1172,6 +1334,13 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					// NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
 					this.logger.error("Errore durante la definizione dell'indice per la ricerca degli eventi: "+e.getMessage(),e);
 				}
+			}
+			if(times!=null) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				times.fillTransaction_details.add("eventi:"+timeProcess+"/c"+conflict);
+				
+				timeStart = DateManager.getTimeMillis();
 			}
 			
 			// ** filtro duplicati **
@@ -1205,6 +1374,13 @@ public class PostOutResponseHandler_TransazioneUtilities {
 				}
 			}
 			
+			if(times!=null) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				times.fillTransaction_details.add("ext-info:"+timeProcess);
+				
+				timeStart = DateManager.getTimeMillis();
+			}
 			
 			
 			return transactionDTO;
@@ -1230,6 +1406,15 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					
 					openspcoopState = new OpenSPCoopStateful();
 					openspcoopState.initResource(idDominio, context.getIdModulo(), idTransazione);
+					
+					if(times!=null) {
+						long timeEnd =  DateManager.getTimeMillis();
+						long timeProcess = timeEnd-timeStart;
+						times.fillTransaction_details.add("async-send-getConnection:"+timeProcess);
+						
+						timeStart = DateManager.getTimeMillis();
+					}
+					
 					GestoreMessaggi msgRequest = new GestoreMessaggi(openspcoopState,true, messaggiInConsegna.getBusta().getID(),
 							org.openspcoop2.protocol.engine.constants.Costanti.INBOX,msgDiag,context.getPddContext());
 					
@@ -1251,13 +1436,28 @@ public class PostOutResponseHandler_TransazioneUtilities {
 								spedizioneConsegnaContenuti,
 								context.getPddContext());
 						
+						if(times!=null) {
+							long timeEnd =  DateManager.getTimeMillis();
+							long timeProcess = timeEnd-timeStart;
+							times.fillTransaction_details.add("async-send:"+timeProcess);
+							
+							timeStart = DateManager.getTimeMillis();
+						}
+						
 					}
 					else {
 						
 						for (String servizioApplicativo : messaggiInConsegna.getServiziApplicativi()) {
 							msgRequest.eliminaDestinatarioMessaggio(servizioApplicativo, null, messaggiInConsegna.getOraRegistrazioneMessaggio());
 						}
-						
+					
+						if(times!=null) {
+							long timeEnd =  DateManager.getTimeMillis();
+							long timeProcess = timeEnd-timeStart;
+							times.fillTransaction_details.add("async-send-del:"+timeProcess);
+							
+							timeStart = DateManager.getTimeMillis();
+						}
 					}
 					
 				}catch(Exception e) {
@@ -1267,7 +1467,24 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					try{
 						if(openspcoopState!=null && !openspcoopState.resourceReleased()){
 							openspcoopState.commit();
+							
+							if(times!=null) {
+								long timeEnd =  DateManager.getTimeMillis();
+								long timeProcess = timeEnd-timeStart;
+								times.fillTransaction_details.add("async-send-commit:"+timeProcess);
+								
+								timeStart = DateManager.getTimeMillis();
+							}
+							
 							openspcoopState.releaseResource();
+							
+							if(times!=null) {
+								long timeEnd =  DateManager.getTimeMillis();
+								long timeProcess = timeEnd-timeStart;
+								times.fillTransaction_details.add("async-send-finish:"+timeProcess);
+								
+								timeStart = DateManager.getTimeMillis();
+							}
 						}
 					}catch(Exception e){}
 				}

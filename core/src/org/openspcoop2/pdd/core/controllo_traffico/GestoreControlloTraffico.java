@@ -70,8 +70,8 @@ public class GestoreControlloTraffico {
 	public StatoTraffico getStatoControlloTraffico(String idTransazione, boolean sync) {
 		if(sync) {
 			//synchronized (this.semaphore) {
+			this.lock.acquireThrowRuntime("getStatoControlloTraffico", idTransazione);
 			try {
-				this.lock.acquireThrowRuntime("getStatoControlloTraffico", idTransazione);
 				StatoTraffico stato = new StatoTraffico();
 				stato.setActiveThreads(Long.valueOf(this.activeThreads));
 				stato.setPddCongestionata(Boolean.valueOf(this.pddCongestionata));
@@ -104,9 +104,9 @@ public class GestoreControlloTraffico {
 		
 		try{
 			//synchronized (this.semaphore) {
+			this.lock.acquire("addThread", 
+					(pddContext!=null && pddContext.containsKey(Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(Costanti.ID_TRANSAZIONE, pddContext) : null);
 			try {
-				this.lock.acquire("addThread", 
-						(pddContext!=null && pddContext.containsKey(Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(Costanti.ID_TRANSAZIONE, pddContext) : null);
 				
 				//System.out.println("@@@addThread CONTROLLO ["+this.activeThreads+"]<["+maxThreads+"] ("+(!(this.activeThreads<maxThreads))+")");
 				HandlerException he = null;
@@ -224,8 +224,8 @@ public class GestoreControlloTraffico {
 		
 	public void removeThread(Long maxThreads, Integer threshold, String idTransazione) throws Exception{
 		//synchronized (this.semaphore) {
+		this.lock.acquire("removeThread", idTransazione);
 		try {
-			this.lock.acquire("removeThread", idTransazione);
 			this.activeThreads--;
 			
 			if(threshold!=null && this.pddCongestionata){
@@ -245,8 +245,8 @@ public class GestoreControlloTraffico {
 	
 	public long sizeActiveThreads(){
 		//synchronized (this.semaphore) {
+		this.lock.acquireThrowRuntime("sizeActiveThreads");
 		try {
-			this.lock.acquireThrowRuntime("sizeActiveThreads");
 			//System.out.println("@@@SIZE: "+this.activeThreads);
 			return this.activeThreads;
 		}finally {
@@ -256,8 +256,8 @@ public class GestoreControlloTraffico {
 	
 	public Boolean isPortaDominioCongestionata(Long maxThreads, Integer threshold) {
 		//synchronized (this.semaphore) {
+		this.lock.acquireThrowRuntime("isPortaDominioCongestionata");
 		try {
-			this.lock.acquireThrowRuntime("isPortaDominioCongestionata");
 			if(threshold!=null){
 				this.pddCongestionata = this._isPddCongestionata(maxThreads, threshold); // refresh per evitare che l'ultimo thread abbia lasciato attivo il controllo
 			}

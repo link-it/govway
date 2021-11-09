@@ -28,7 +28,8 @@ import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.openspcoop2.generic_project.serializer.AbstractDeserializer;
 import org.openspcoop2.pools.core.ConnectionFactory;
@@ -418,11 +419,11 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 	/**
 	 * Restituisce un vector contenente tutti i DataSource definiti nel file poolConfig.xml
 	 *  
-	 * @return Vector di {@link org.openspcoop2.pools.core.Datasource}
+	 * @return List di {@link org.openspcoop2.pools.core.Datasource}
 	 * 
 	 */
 	@Override
-	public Vector<Datasource> getDataSources() throws DriverRisorseSistemaException{
+	public List<Datasource> getDataSources() throws DriverRisorseSistemaException{
 
 		refreshConfigurazioneXML();
 		
@@ -431,7 +432,7 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 			sizeDataSource = this.openspcoop2Pools.getDatasource().size();
 		}
 		
-		Vector<Datasource> v = new Vector<Datasource>();
+		List<Datasource> v = new ArrayList<Datasource>();
 		for(int i=0; i<sizeDataSource;i++)
 			v.add(getDataSource(i));
 		return v;
@@ -572,11 +573,11 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 	/**
 	 * Restituisce un vector contenente tutti le ConnectionFactory definite nel file poolConfig.xml
 	 *  
-	 * @return Vector di {@link org.openspcoop2.pools.core.ConnectionFactory}
+	 * @return List di {@link org.openspcoop2.pools.core.ConnectionFactory}
 	 * 
 	 */
 	@Override
-	public Vector<ConnectionFactory> getConnectionFactories() throws DriverRisorseSistemaException{
+	public List<ConnectionFactory> getConnectionFactories() throws DriverRisorseSistemaException{
 		
 		refreshConfigurazioneXML();
 		
@@ -585,7 +586,7 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 			sizeCF = this.openspcoop2Pools.getConnectionFactory().size();
 		}
 		
-		Vector<ConnectionFactory> v = new Vector<ConnectionFactory>();
+		List<ConnectionFactory> v = new ArrayList<ConnectionFactory>();
 		for(int i=0; i<sizeCF;i++)
 			v.add(getConnectionFactory(i));
 		return v;

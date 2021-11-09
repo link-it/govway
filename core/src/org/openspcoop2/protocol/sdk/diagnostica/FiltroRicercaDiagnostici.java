@@ -25,7 +25,8 @@ package org.openspcoop2.protocol.sdk.diagnostica;
 import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openspcoop2.core.id.IDSoggetto;
 
@@ -64,7 +65,7 @@ public class FiltroRicercaDiagnostici implements Serializable{
     
     protected String protocollo;
     
-    protected Hashtable<String, String> properties;
+    protected Map<String, String> properties;
 
     protected Boolean checkApplicativoIsNull;
 	protected String applicativo;
@@ -72,7 +73,7 @@ public class FiltroRicercaDiagnostici implements Serializable{
     
  
     public FiltroRicercaDiagnostici() {
-    	this.properties = new Hashtable<String, String>();
+    	this.properties = new HashMap<String, String>();
 	}
 	
 	public Integer getSeverita() {
@@ -147,11 +148,11 @@ public class FiltroRicercaDiagnostici implements Serializable{
     	return this.properties.keySet().toArray(new String[this.properties.size()]);
     }
     
-    public void setProperties(Hashtable<String, String> params) {
+    public void setProperties(Map<String, String> params) {
     	this.properties = params;
     }
     
-    public Hashtable<String, String> getProperties() {
+    public Map<String, String> getProperties() {
     	return this.properties;
     }
 

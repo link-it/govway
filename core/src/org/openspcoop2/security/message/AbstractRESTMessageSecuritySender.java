@@ -22,8 +22,8 @@
 package org.openspcoop2.security.message;
 
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.constants.MessageRole;
@@ -45,7 +45,7 @@ public abstract class AbstractRESTMessageSecuritySender implements IMessageSecur
 	
 	// *** DETACHED UTILS ***
 	
-	protected void setDetachedSignatureInMessage(Hashtable<String,Object> map, OpenSPCoop2RestMessage<?> restMessage, String descriptionEngine, String detachedSignatureParam) throws SecurityException {
+	protected void setDetachedSignatureInMessage(Map<String,Object> map, OpenSPCoop2RestMessage<?> restMessage, String descriptionEngine, String detachedSignatureParam) throws SecurityException {
 		
 		String signatureDetachedHeader = null;
 		String signatureDetachedPropertyUrl = null;

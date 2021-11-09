@@ -24,9 +24,9 @@ package org.openspcoop2.pdd.services.service;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.soap.SOAPBody;
 
@@ -544,7 +544,7 @@ public class RicezioneBusteService  {
 			preInRequestContext.setIdModulo(idModulo);
 			preInRequestContext.setProtocolFactory(protocolFactory);
 			preInRequestContext.setRequestInfo(requestInfo);
-			Hashtable<String, Object> transportContext = new Hashtable<String, Object>();
+			Map<String, Object> transportContext = new HashMap<String, Object>();
 			transportContext.put(PreInRequestContext.SERVLET_REQUEST, req);
 			transportContext.put(PreInRequestContext.SERVLET_RESPONSE, res);
 			preInRequestContext.setTransportContext(transportContext);	

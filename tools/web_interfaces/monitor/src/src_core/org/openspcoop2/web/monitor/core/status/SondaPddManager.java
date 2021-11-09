@@ -23,8 +23,9 @@ import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -64,7 +65,7 @@ public class SondaPddManager {
 
 	public SondaPddManager(Logger log) throws Exception{
 		this.log = log;
-		Hashtable<String, ISondaPdd> tmp_modules = new Hashtable<String, ISondaPdd>();
+		Map<String, ISondaPdd> tmp_modules = new HashMap<String, ISondaPdd>();
 		try{
 			this.log.debug("Inizializzazione Sonda Pdd Manager in corso...");
 			this.listaSonde = new ArrayList<String>();

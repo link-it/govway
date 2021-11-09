@@ -205,6 +205,8 @@ if [ $# -eq 0 ] ; then
 		    [ $check == "JavaDocCheck" ] && PARAM=true
 		    [ $check == "GPLCheck" ] && PARAM=
 		    [ $check == "StringBufferCheck" ] && PARAM=
+		    [ $check == "HashtableCheck" ] && PARAM=
+		    [ $check == "VectorCheck" ] && PARAM=
 		    debugPrintln "Esecuzione check $check con parametri [${WORKING_COPY} , $PARAM]"
 		    OUTPUTCHECK=$(java -cp ${CHECKS_WORKING_COPY} $check ${WORKING_COPY} $PARAM 2>&1)
 		    if [ $? -ne 0 ] 

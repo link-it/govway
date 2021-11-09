@@ -22,7 +22,8 @@
 
 package org.openspcoop2.web.lib.queue;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.openspcoop2.utils.beans.BaseBean;
 import org.openspcoop2.web.lib.queue.costanti.Operazione;
@@ -46,11 +47,11 @@ public class QueueOperation extends BaseBean implements java.io.Serializable , C
 	private TipoOperazione tipoOperazione; 
 	private Operazione operazione; 
 	private String superuser;
-	private Vector<QueueParameter> parameters;
+	private List<QueueParameter> parameters;
 
 	//Costruttore
 	public QueueOperation() {
-		this.parameters = new Vector<QueueParameter>();
+		this.parameters = new ArrayList<QueueParameter>();
 	}
 
 	//Metodi setter e getter per tutte le operazioni
@@ -84,14 +85,14 @@ public class QueueOperation extends BaseBean implements java.io.Serializable , C
 	public int sizeParametri() {
 		return this.parameters.size();
 	}
-	public Vector<QueueParameter> getParametri() {
+	public List<QueueParameter> getParametri() {
 		return this.parameters;
 	}
 	
-	public Vector<QueueParameter> getParameters() {
+	public List<QueueParameter> getParameters() {
 		return this.parameters;
 	}
-	public void setParameters(Vector<QueueParameter> parameters) {
+	public void setParameters(List<QueueParameter> parameters) {
 		this.parameters = parameters;
 	}
 }

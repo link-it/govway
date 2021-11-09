@@ -23,8 +23,8 @@ package org.openspcoop2.web.ctrlstat.gestori;
 
 import java.sql.Connection;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.jms.JMSException;
 import javax.jms.ObjectMessage;
@@ -345,7 +345,7 @@ public class GestoreRegistroThread extends GestoreGeneral {
 
 
 				/* ----- filtro per mantenimento ordine operazioni ----- */
-				Vector<FilterParameter> filtroOrdine = new Vector<FilterParameter>();
+				List<FilterParameter> filtroOrdine = new ArrayList<FilterParameter>();
 
 				FilterParameter idTableFiltro = new FilterParameter();
 				idTableFiltro.addFilterParameter(new Parameter(OperationsParameter.ID_TABLE.getNome(), idTable + ""));

@@ -20,7 +20,7 @@
 package org.openspcoop2.web.monitor.transazioni.mbean;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -201,9 +201,9 @@ public class BustaBean extends Busta {
 	}
 
 //	@Override
-	public Hashtable<String,Map<String, String>> getExtInfoProperties(){
+	public Map<String,Map<String, String>> getExtInfoProperties(){
 	
-		Hashtable<String,Map<String, String>> map = new Hashtable<>();
+		Map<String,Map<String, String>> map = new HashMap<>();
 		try {
 			ITracciaSerializer tracciaSerializer = this.protocolFactory.createTracciaSerializer();
 			if(tracciaSerializer.isSupportedExtInfo()) {
@@ -294,8 +294,8 @@ public class BustaBean extends Busta {
 	}
 	
 	
-	public Hashtable<String, String> getProperties(){
-		Hashtable<String, String> map = new Hashtable<String, String>();
+	public Map<String, String> getProperties(){
+		Map<String, String> map = new HashMap<String, String>();
 		
 		java.util.ArrayList<String> listKeys = new ArrayList<String>();
 		String [] propertiesNames = super.getPropertiesNames();

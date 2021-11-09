@@ -1,3 +1,16 @@
+2021-11-09  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1280
+	Sono stati effettuati i seguenti interventi:
+	- gli oggetti java.util.Hashtable e java.util.Vector sono stati sostituiti con strutture più adeguate a migliorare gli aspetti prestazionali;
+	- migliorati sistemi di sincronizzazione relativamente alla negoziazione di connessioni e al filtro dei duplicati;
+	- aggiunto log che evidenzia il dettaglio di dove viene speso il tempo sulla costruzione delle informazioni da salvare in fase di scrittura della transazione;
+	- gli oggetti delle factory di protocollo che contengono solamente configurazioni, vengono adesso istanziate solamente una volta all'avvio del gateway;
+	- risolto problemi presenti nella funzione di merge degli schemi OpenAPI:
+	    - l'import di file i cui nomi erano uno inclusivo dell'altro causavano una serializzazione di un path scorretto;
+	    - la serializzazione YAML dell'interfaccia generava alcune enumeration (es. in security schema) con i valori maiuscoli invece che minuscoli come atteso dalla specifica OpenAPI.
+
 2021-10-29  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

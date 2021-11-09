@@ -29,9 +29,8 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.id.IDServizio;
@@ -201,7 +200,7 @@ public class RepositoryBuste  {
 		registraBusta(busta,Costanti.OUTBOX,null,scadenza);
 	}
 
-	public void aggiornaProprietaBustaIntoOutBox(Hashtable<String, String> properties, String idBusta)throws ProtocolException{
+	public void aggiornaProprietaBustaIntoOutBox(Map<String, String> properties, String idBusta)throws ProtocolException{
 		this.aggiornaProprietaBusta(properties, idBusta, Costanti.OUTBOX);
 	}
 	
@@ -541,7 +540,7 @@ public class RepositoryBuste  {
 		registraBusta(busta,Costanti.INBOX,null,scadenza);
 	}
 
-	public void aggiornaProprietaBustaIntoInBox(Hashtable<String, String> properties, String idBusta)throws ProtocolException{
+	public void aggiornaProprietaBustaIntoInBox(Map<String, String> properties, String idBusta)throws ProtocolException{
 		this.aggiornaProprietaBusta(properties, idBusta, Costanti.INBOX);
 	}
 	
@@ -1285,7 +1284,7 @@ public class RepositoryBuste  {
 	}
 
 	
-	public void aggiornaProprietaBusta(Hashtable<String, String> properties, String idBusta,String tipoBusta) throws ProtocolException{
+	public void aggiornaProprietaBusta(Map<String, String> properties, String idBusta,String tipoBusta) throws ProtocolException{
 				
 		StateMessage stateMSG = (StateMessage)this.state;
 				
@@ -1315,10 +1314,8 @@ public class RepositoryBuste  {
 			
 			/* Lista ExtProtocolInfo */
 			if(properties.size()>0){
-				Enumeration<String> keys = properties.keys();
 				int index = 0;
-				while (keys.hasMoreElements()) {
-					String name = (String) keys.nextElement();
+				for (String name : properties.keySet()) {
 					String value = properties.get(name);
 						
 					StringBuilder query = new StringBuilder();
@@ -4197,14 +4194,15 @@ public class RepositoryBuste  {
 		if(this.state!=null) {
 			StateMessage stateMSG = (StateMessage)this.state;
 			if(stateMSG.getPreparedStatement()!=null && stateMSG.getPreparedStatement().size()>0) {
-				Enumeration<String> keys = stateMSG.getPreparedStatement().keys();
-				while (keys.hasMoreElements()) {
-					String key = (String) keys.nextElement();
-					if(key!=null && key.startsWith("INSERT")) {
-						return true;
-					}
-					else if(key!=null && key.startsWith("UPDATE")) {
-						return true;
+				List<String> keys = stateMSG.getPreparedStatement().keys();
+				if(keys!=null && !keys.isEmpty()) {
+					for (String key : keys) {
+						if(key!=null && key.startsWith("INSERT")) {
+							return true;
+						}
+						else if(key!=null && key.startsWith("UPDATE")) {
+							return true;
+						}
 					}
 				}
 			}

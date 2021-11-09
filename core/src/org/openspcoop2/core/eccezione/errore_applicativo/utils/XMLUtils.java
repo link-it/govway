@@ -69,9 +69,14 @@ public class XMLUtils  {
 
 	/** Validatore XSD */
 	static ValidatoreXSD validatoreXSD = null;
-	public static synchronized ValidatoreXSD getValidatoreXSD(Logger log) throws Exception{
+	private static synchronized void initValidatoreXSD(Logger log) throws Exception{
 		if(XMLUtils.validatoreXSD==null){
 			XMLUtils.validatoreXSD = new ValidatoreXSD(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log,XMLUtils.class.getResourceAsStream("/openspcoopErroreApplicativo.xsd"));
+		}
+	}
+	public static ValidatoreXSD getValidatoreXSD(Logger log) throws Exception{
+		if(XMLUtils.validatoreXSD==null){
+			initValidatoreXSD(log);
 		}
 		return XMLUtils.validatoreXSD;
 	}

@@ -1129,7 +1129,7 @@ public class WSSecurity extends GestioneViaJmx {
 			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			
 			// Applicazione WSSecurity
-			java.util.Hashtable<String,String> wssPropertiesRequest= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesRequest= new java.util.HashMap<String,String>();
 			wssPropertiesRequest.put("action", "Timestamp Signature");
 			wssPropertiesRequest.put("timeToLive", "600");
 			wssPropertiesRequest.put("user", "testsuiteclient");
@@ -1157,7 +1157,7 @@ public class WSSecurity extends GestioneViaJmx {
 
 			
 			// Ricezione Rispota WSSecurity
-			java.util.Hashtable<String,String> wssPropertiesResponse= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesResponse= new java.util.HashMap<String,String>();
 			wssPropertiesResponse.put("action", "Timestamp Signature");
 			wssPropertiesResponse.put("signatureKeyIdentifier", "DirectReference");
 			wssPropertiesResponse.put("signaturePropFile", "testsuiteClient-crypto.properties");
@@ -1233,7 +1233,7 @@ public class WSSecurity extends GestioneViaJmx {
 			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			
 			// Applicazione WSSecurity
-			java.util.Hashtable<String,String> wssPropertiesRequest= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesRequest= new java.util.HashMap<String,String>();
 			wssPropertiesRequest.put("action", "Timestamp Signature");
 			wssPropertiesRequest.put("timeToLive", "600");
 			wssPropertiesRequest.put("user", "testsuiteclient");
@@ -1261,7 +1261,7 @@ public class WSSecurity extends GestioneViaJmx {
 
 			
 			// Ricezione Rispota WSSecurity
-			java.util.Hashtable<String,String> wssPropertiesResponse= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesResponse= new java.util.HashMap<String,String>();
 			wssPropertiesResponse.put("action", "Timestamp Signature");
 			wssPropertiesResponse.put("signatureKeyIdentifier", "DirectReference");
 			wssPropertiesResponse.put("signaturePropFile", "testsuiteClient-crypto.properties");
@@ -1339,7 +1339,7 @@ public class WSSecurity extends GestioneViaJmx {
 			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			
 			// Applicazione WSSecurity
-			java.util.Hashtable<String,String> wssPropertiesRequest= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesRequest= new java.util.HashMap<String,String>();
 			wssPropertiesRequest.put("action", "Timestamp Signature");
 			wssPropertiesRequest.put("timeToLive", "600");
 			wssPropertiesRequest.put("user", "testsuiteclient");
@@ -1368,7 +1368,7 @@ public class WSSecurity extends GestioneViaJmx {
 
 			
 			// Ricezione Rispota WSSecurity
-			java.util.Hashtable<String,String> wssPropertiesResponse= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesResponse= new java.util.HashMap<String,String>();
 			wssPropertiesResponse.put("action", "Timestamp Signature");
 			wssPropertiesResponse.put("signatureKeyIdentifier", "DirectReference");
 			wssPropertiesResponse.put("signaturePropFile", "testsuiteClient-crypto.properties");
@@ -1444,7 +1444,7 @@ public class WSSecurity extends GestioneViaJmx {
 			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			
 			// Applicazione WSSecurity
-			java.util.Hashtable<String,String> wssPropertiesRequest= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesRequest= new java.util.HashMap<String,String>();
 			wssPropertiesRequest.put("action", "Timestamp Signature");
 			wssPropertiesRequest.put("timeToLive", "600");
 			wssPropertiesRequest.put("user", "testsuiteclient");
@@ -1473,7 +1473,7 @@ public class WSSecurity extends GestioneViaJmx {
 
 			
 			// Ricezione Rispota WSSecurity
-			java.util.Hashtable<String,String> wssPropertiesResponse= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesResponse= new java.util.HashMap<String,String>();
 			wssPropertiesResponse.put("action", "Timestamp Signature");
 			wssPropertiesResponse.put("signatureKeyIdentifier", "DirectReference");
 			wssPropertiesResponse.put("signaturePropFile", "testsuiteClient-crypto.properties");
@@ -1551,7 +1551,7 @@ public class WSSecurity extends GestioneViaJmx {
 			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			
 			// Applicazione WSSecurity
-			java.util.Hashtable<String,String> wssPropertiesRequest= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesRequest= new java.util.HashMap<String,String>();
 			wssPropertiesRequest.put("action", "Timestamp Signature");
 			wssPropertiesRequest.put("timeToLive", "600");
 			wssPropertiesRequest.put("user", "testsuiteclient");
@@ -1580,7 +1580,7 @@ public class WSSecurity extends GestioneViaJmx {
 
 			
 			// Ricezione Rispota WSSecurity
-			java.util.Hashtable<String,String> wssPropertiesResponse= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesResponse= new java.util.HashMap<String,String>();
 			wssPropertiesResponse.put("action", "Timestamp Signature");
 			wssPropertiesResponse.put("signatureKeyIdentifier", "DirectReference");
 			wssPropertiesResponse.put("signaturePropFile", "testsuiteClient-crypto.properties");
@@ -1656,7 +1656,7 @@ public class WSSecurity extends GestioneViaJmx {
 			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			
 			// Applicazione WSSecurity
-			java.util.Hashtable<String,String> wssPropertiesRequest= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesRequest= new java.util.HashMap<String,String>();
 			wssPropertiesRequest.put("action", "Timestamp Signature");
 			wssPropertiesRequest.put("timeToLive", "600");
 			wssPropertiesRequest.put("user", "testsuiteclient");
@@ -1685,7 +1685,7 @@ public class WSSecurity extends GestioneViaJmx {
 
 			
 			// Ricezione Rispota WSSecurity
-			java.util.Hashtable<String,String> wssPropertiesResponse= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesResponse= new java.util.HashMap<String,String>();
 			wssPropertiesResponse.put("action", "Timestamp Signature");
 			wssPropertiesResponse.put("signatureKeyIdentifier", "DirectReference");
 			wssPropertiesResponse.put("signaturePropFile", "testsuiteClient-crypto.properties");
@@ -1767,7 +1767,7 @@ public class WSSecurity extends GestioneViaJmx {
 			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			
 			// Applicazione WSSecurity
-			java.util.Hashtable<String,String> wssPropertiesRequest= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesRequest= new java.util.HashMap<String,String>();
 			wssPropertiesRequest.put("action", "Timestamp Encrypt");
 			wssPropertiesRequest.put("timeToLive", "600");
 			wssPropertiesRequest.put("encryptionUser", "testsuiteserver");
@@ -1793,7 +1793,7 @@ public class WSSecurity extends GestioneViaJmx {
 
 			
 			// Ricezione Rispota WSSecurity
-			java.util.Hashtable<String,String> wssPropertiesResponse= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesResponse= new java.util.HashMap<String,String>();
 			wssPropertiesResponse.put("action", "Timestamp Encrypt");
 			wssPropertiesResponse.put("passwordCallbackClass", "org.openspcoop2.testsuite.wssecurity.PWCallbackSend");
 			wssPropertiesResponse.put("decryptionPropFile", "testsuiteClient-crypto.properties");
@@ -1868,7 +1868,7 @@ public class WSSecurity extends GestioneViaJmx {
 			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			
 			// Applicazione WSSecurity
-			java.util.Hashtable<String,String> wssPropertiesRequest= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesRequest= new java.util.HashMap<String,String>();
 			wssPropertiesRequest.put("action", "Timestamp Encrypt");
 			wssPropertiesRequest.put("timeToLive", "600");
 			wssPropertiesRequest.put("encryptionUser", "testsuiteserver");
@@ -1894,7 +1894,7 @@ public class WSSecurity extends GestioneViaJmx {
 
 			
 			// Ricezione Rispota WSSecurity
-			java.util.Hashtable<String,String> wssPropertiesResponse= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesResponse= new java.util.HashMap<String,String>();
 			wssPropertiesResponse.put("action", "Timestamp Encrypt");
 			wssPropertiesResponse.put("passwordCallbackClass", "org.openspcoop2.testsuite.wssecurity.PWCallbackSend");
 			wssPropertiesResponse.put("decryptionPropFile", "testsuiteClient-crypto.properties");
@@ -1972,7 +1972,7 @@ public class WSSecurity extends GestioneViaJmx {
 			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			
 			// Applicazione WSSecurity
-			java.util.Hashtable<String,String> wssPropertiesRequest= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesRequest= new java.util.HashMap<String,String>();
 			wssPropertiesRequest.put("action", "Timestamp Encrypt");
 			wssPropertiesRequest.put("timeToLive", "600");
 			wssPropertiesRequest.put("encryptionUser", "testsuiteserver");
@@ -1999,7 +1999,7 @@ public class WSSecurity extends GestioneViaJmx {
 
 			
 			// Ricezione Rispota WSSecurity
-			java.util.Hashtable<String,String> wssPropertiesResponse= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesResponse= new java.util.HashMap<String,String>();
 			wssPropertiesResponse.put("action", "Timestamp Encrypt");
 			wssPropertiesResponse.put("passwordCallbackClass", "org.openspcoop2.testsuite.wssecurity.PWCallbackSend");
 			wssPropertiesResponse.put("decryptionPropFile", "testsuiteClient-crypto.properties");
@@ -2075,7 +2075,7 @@ public class WSSecurity extends GestioneViaJmx {
 			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			
 			// Applicazione WSSecurity
-			java.util.Hashtable<String,String> wssPropertiesRequest= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesRequest= new java.util.HashMap<String,String>();
 			wssPropertiesRequest.put("action", "Timestamp Encrypt");
 			wssPropertiesRequest.put("timeToLive", "600");
 			wssPropertiesRequest.put("encryptionUser", "testsuiteserver");
@@ -2102,7 +2102,7 @@ public class WSSecurity extends GestioneViaJmx {
 
 			
 			// Ricezione Rispota WSSecurity
-			java.util.Hashtable<String,String> wssPropertiesResponse= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesResponse= new java.util.HashMap<String,String>();
 			wssPropertiesResponse.put("action", "Timestamp Encrypt");
 			wssPropertiesResponse.put("passwordCallbackClass", "org.openspcoop2.testsuite.wssecurity.PWCallbackSend");
 			wssPropertiesResponse.put("decryptionPropFile", "testsuiteClient-crypto.properties");
@@ -2180,7 +2180,7 @@ public class WSSecurity extends GestioneViaJmx {
 			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			
 			// Applicazione WSSecurity
-			java.util.Hashtable<String,String> wssPropertiesRequest= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesRequest= new java.util.HashMap<String,String>();
 			wssPropertiesRequest.put("action", "Timestamp Encrypt");
 			wssPropertiesRequest.put("timeToLive", "600");
 			wssPropertiesRequest.put("encryptionUser", "testsuiteserver");
@@ -2207,7 +2207,7 @@ public class WSSecurity extends GestioneViaJmx {
 
 			
 			// Ricezione Rispota WSSecurity
-			java.util.Hashtable<String,String> wssPropertiesResponse= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesResponse= new java.util.HashMap<String,String>();
 			wssPropertiesResponse.put("action", "Timestamp Encrypt");
 			wssPropertiesResponse.put("passwordCallbackClass", "org.openspcoop2.testsuite.wssecurity.PWCallbackSend");
 			wssPropertiesResponse.put("decryptionPropFile", "testsuiteClient-crypto.properties");
@@ -2283,7 +2283,7 @@ public class WSSecurity extends GestioneViaJmx {
 			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			
 			// Applicazione WSSecurity
-			java.util.Hashtable<String,String> wssPropertiesRequest= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesRequest= new java.util.HashMap<String,String>();
 			wssPropertiesRequest.put("action", "Timestamp Encrypt");
 			wssPropertiesRequest.put("timeToLive", "600");
 			wssPropertiesRequest.put("encryptionUser", "testsuiteserver");
@@ -2310,7 +2310,7 @@ public class WSSecurity extends GestioneViaJmx {
 
 			
 			// Ricezione Rispota WSSecurity
-			java.util.Hashtable<String,String> wssPropertiesResponse= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesResponse= new java.util.HashMap<String,String>();
 			wssPropertiesResponse.put("action", "Timestamp Encrypt");
 			wssPropertiesResponse.put("passwordCallbackClass", "org.openspcoop2.testsuite.wssecurity.PWCallbackSend");
 			wssPropertiesResponse.put("decryptionPropFile", "testsuiteClient-crypto.properties");
@@ -2390,7 +2390,7 @@ public class WSSecurity extends GestioneViaJmx {
 			client.setMessageFromFile(Utilities.testSuiteProperties.getSoapTestWSSecurityAnnidato(), false);
 			
 			// Applicazione WSSecurity
-			java.util.Hashtable<String,String> wssPropertiesRequest= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesRequest= new java.util.HashMap<String,String>();
 			wssPropertiesRequest.put("action", "Timestamp Signature Encrypt");
 			wssPropertiesRequest.put("timeToLive", "600");
 			wssPropertiesRequest.put("user", "testsuiteclient");
@@ -2420,7 +2420,7 @@ public class WSSecurity extends GestioneViaJmx {
 			client.run();
 			
 			// Ricezione Rispota WSSecurity
-			java.util.Hashtable<String,String> wssPropertiesResponse= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesResponse= new java.util.HashMap<String,String>();
 			wssPropertiesResponse.put("action", "Timestamp Signature Encrypt");
 			wssPropertiesRequest.put("passwordCallbackClass", "org.openspcoop2.testsuite.wssecurity.PWCallbackSend");
 			wssPropertiesResponse.put("signatureKeyIdentifier", "DirectReference");

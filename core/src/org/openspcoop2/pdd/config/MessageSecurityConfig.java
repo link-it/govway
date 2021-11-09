@@ -28,13 +28,13 @@ package org.openspcoop2.pdd.config;
  */
 public class MessageSecurityConfig {
 
-	private java.util.Hashtable<String,Object> flowParameters;
+	private java.util.Map<String,Object> flowParameters;
 	private Boolean applyToMtom = null;
 	
-	public java.util.Hashtable<String, Object> getFlowParameters() {
+	public java.util.Map<String, Object> getFlowParameters() {
 		return this.flowParameters;
 	}
-	public void setFlowParameters(java.util.Hashtable<String, Object> flowParameters) {
+	public void setFlowParameters(java.util.Map<String, Object> flowParameters) {
 		this.flowParameters = flowParameters;
 	}
 	public Boolean getApplyToMtom() {

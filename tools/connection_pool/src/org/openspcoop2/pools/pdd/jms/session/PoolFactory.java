@@ -22,20 +22,21 @@
 
 package org.openspcoop2.pools.pdd.jms.session;
 
-import java.util.Vector;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
-import org.slf4j.Logger;
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.openspcoop2.pools.core.commons.OpenSPCoopFactoryException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.GestoreJNDI;
-
-import javax.jms.Destination;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-import javax.jms.ConnectionFactory;
+import org.slf4j.Logger;
 
 
 
@@ -96,7 +97,7 @@ public class PoolFactory extends BasePooledObjectFactory<org.openspcoop2.pools.p
 	
 	
 	/** Sessioni rilasciate */
-	Vector<Session> sessioni = new Vector<Session>();
+	Set<Session> sessioni = ConcurrentHashMap.newKeySet();
 	
 	/** Informazione sul tipo di sessione */
 	private boolean autoCommit;
@@ -177,10 +178,10 @@ public class PoolFactory extends BasePooledObjectFactory<org.openspcoop2.pools.p
 	
 	
 	public void releaseSessions() {
-		for(int i=0;i<this.sessioni.size();i++){
-				try{
-					this.sessioni.get(i).close();
-				}catch(Exception e){}
+		for (Session sessione : this.sessioni) {
+			try{
+				sessione.close();
+			}catch(Exception e){}
 		}
 		this.sessioni.clear();
 	}

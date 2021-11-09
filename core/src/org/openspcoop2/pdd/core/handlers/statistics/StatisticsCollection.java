@@ -65,7 +65,16 @@ public class StatisticsCollection {
 	
 	
 	/* ***** UPDATE STATO ******* */
-	public static synchronized void update(Statistic stat){
+	private static org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("StatisticsCollection");
+	public static void update(Statistic stat){
+		semaphore.acquireThrowRuntime("update");
+		try {
+			_update(stat);
+		}finally {
+			semaphore.release("update");
+		}
+	}
+	private static void _update(Statistic stat){
 
 		if(!TipoPdD.APPLICATIVA.equals(stat.getTipoPdD()) &&
 				!TipoPdD.DELEGATA.equals(stat.getTipoPdD()) ){

@@ -25,10 +25,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.naming.RefAddr;
 
@@ -48,9 +49,9 @@ import org.openspcoop2.utils.resources.GestoreJNDI;
  */
 public class DataSourceFactory {
 
-	private static Hashtable<String, org.openspcoop2.utils.datasource.DataSource> mapUUIDtoDatasources = new Hashtable<String, org.openspcoop2.utils.datasource.DataSource>();
-	private static Hashtable<String, String> mapApplicativeIDtoUUID = new Hashtable<String, String>();
-	private static Hashtable<String, String> mapJndiNametoUUID = new Hashtable<String, String>();
+	private static Map<String, org.openspcoop2.utils.datasource.DataSource> mapUUIDtoDatasources = new ConcurrentHashMap<String, org.openspcoop2.utils.datasource.DataSource>();
+	private static Map<String, String> mapApplicativeIDtoUUID = new ConcurrentHashMap<String, String>();
+	private static Map<String, String> mapJndiNametoUUID = new ConcurrentHashMap<String, String>();
 	private static org.openspcoop2.utils.jmx.GestoreRisorseJMX gestoreRisorse = null;
 	
 	private static synchronized void initGestoreRisorseJMX() throws RisorseJMXException{
@@ -67,23 +68,19 @@ public class DataSourceFactory {
 			return null;
 		}
 		List<String> l = new ArrayList<>();
-		Enumeration<String> jndiNames = mapJndiNametoUUID.keys();
-		while (jndiNames.hasMoreElements()) {
-			String jndiName = (String) jndiNames.nextElement();
-			l.add(jndiName);
+		if(mapJndiNametoUUID!=null && !mapJndiNametoUUID.isEmpty()) {
+			l.addAll(mapJndiNametoUUID.keySet());
 		}
 		return l;
 	}
 	
 	public static List<String> getApplicativeIdDatasources() {
-		if(mapJndiNametoUUID.isEmpty()) {
+		if(mapApplicativeIDtoUUID.isEmpty()) {
 			return null;
 		}
 		List<String> l = new ArrayList<>();
-		Enumeration<String> jndiNames = mapJndiNametoUUID.keys();
-		while (jndiNames.hasMoreElements()) {
-			String jndiName = (String) jndiNames.nextElement();
-			l.add(jndiName);
+		if(mapApplicativeIDtoUUID!=null && !mapApplicativeIDtoUUID.isEmpty()) {
+			l.addAll(mapApplicativeIDtoUUID.keySet());
 		}
 		return l;
 	}

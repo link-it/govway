@@ -50,7 +50,7 @@ public class XMLSecEnvelopeIdResolver extends ResourceResolverSpi {
 
 	private static final Logger logger = LoggerWrapperFactory.getLogger(XMLSecEnvelopeIdResolver.class);
   
-    public synchronized static ResourceResolverSpi getInstance(OpenSPCoop2SoapMessage message) {
+    public static ResourceResolverSpi getInstance(OpenSPCoop2SoapMessage message) {
         return new XMLSecEnvelopeIdResolver(message);
     }
 

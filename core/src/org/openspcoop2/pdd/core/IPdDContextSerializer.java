@@ -21,8 +21,7 @@
 
 package org.openspcoop2.pdd.core;
 
-import java.util.Hashtable;
-
+import java.util.Map;
 
 /**
  * IPdDContextSerializer
@@ -33,8 +32,8 @@ import java.util.Hashtable;
  */
 public interface IPdDContextSerializer {
 
-	public Hashtable<String, String> getGestoreMessaggiKeywords();
+	public Map<String, String> getGestoreMessaggiKeywords();
 	
-	public Hashtable<String, String> getLoggerKeywords();
+	public Map<String, String> getLoggerKeywords();
 	
 }

@@ -24,7 +24,6 @@ package org.openspcoop2.pdd.timers;
 
 import java.sql.Connection;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
 
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -949,7 +948,7 @@ public class TimerGestoreMessaggiLib  {
 							correlazioniScadute = gestoreCorrelazioneApplicativa.getCorrelazioniScadute(this.limit,this.logQuery,this.orderByQuery);
 						}
 						else {
-							correlazioniScadute = new java.util.Vector<Long>(); // per uscire dal while
+							correlazioniScadute = new java.util.ArrayList<Long>(); // per uscire dal while
 						}
 					}
 				}finally{
@@ -1045,7 +1044,7 @@ public class TimerGestoreMessaggiLib  {
 												this.logQuery,this.orderByQuery,this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione_escludiCorrelazioniConScadenzaImpostata);
 							}
 							else {
-								correlazioniScaduteRispettoOraRegistrazione = new java.util.Vector<Long>(); // per uscire dal while
+								correlazioniScaduteRispettoOraRegistrazione = new java.util.ArrayList<Long>(); // per uscire dal while
 							}
 						}
 					}finally{
@@ -1090,9 +1089,9 @@ public class TimerGestoreMessaggiLib  {
 				this.logTimer.info("Verifico connessioni attive...");
 
 				// Connettori: porta delegata
-				Enumeration<String> identificatoriConnettoriPD = RepositoryConnettori.getIdentificatoriConnettori_pd();
+				List<String> identificatoriConnettoriPD = RepositoryConnettori.getIdentificatoriConnettori_pd();
 				if(this.logQuery){
-					if(identificatoriConnettoriPD==null || identificatoriConnettoriPD.hasMoreElements()==false){
+					if(identificatoriConnettoriPD==null || identificatoriConnettoriPD.isEmpty()){
 						this.logTimer.info("Non sono state trovate connessioni attive sulle PorteDelegate");
 					}
 				}
@@ -1100,14 +1099,13 @@ public class TimerGestoreMessaggiLib  {
 
 					boolean verificaEffettuata = false;
 					if(this.logQuery){
-						if(identificatoriConnettoriPD.hasMoreElements()){
+						if(!identificatoriConnettoriPD.isEmpty()){
 							this.logTimer.info("Sono state trovate connessioni attive sulle PorteDelegate, verifica in corso ...");
 						}
 					}
 
-					while (identificatoriConnettoriPD.hasMoreElements()) {
+					for (String identificatoreConnessione : identificatoriConnettoriPD) {
 						verificaEffettuata = true;
-						String identificatoreConnessione = identificatoriConnettoriPD.nextElement();
 						String tipoConnettore = null;
 						IConnettore connettore = null;
 						try{
@@ -1179,9 +1177,9 @@ public class TimerGestoreMessaggiLib  {
 
 
 				// Connettori: porta applicativa
-				Enumeration<String> identificatoriConnettoriPA = RepositoryConnettori.getIdentificatoriConnettori_pa();
+				List<String> identificatoriConnettoriPA = RepositoryConnettori.getIdentificatoriConnettori_pa();
 				if(this.logQuery){
-					if(identificatoriConnettoriPA==null || identificatoriConnettoriPA.hasMoreElements()==false){
+					if(identificatoriConnettoriPA==null || identificatoriConnettoriPA.isEmpty()==false){
 						this.logTimer.info("Non sono state trovate connessioni attive sulle PorteApplicative");
 					}
 				}
@@ -1189,13 +1187,13 @@ public class TimerGestoreMessaggiLib  {
 
 					boolean verificaEffettuata = false;
 					if(this.logQuery){
-						if(identificatoriConnettoriPD.hasMoreElements()){
+						if(!identificatoriConnettoriPD.isEmpty()){
 							this.logTimer.info("Sono state trovate connessioni attive sulle PorteApplicative, verifica in corso ...");
 						}
 					}
 
-					while (identificatoriConnettoriPA.hasMoreElements()) {
-						String identificatoreConnessione = identificatoriConnettoriPA.nextElement();
+					for (String identificatoreConnessione : identificatoriConnettoriPA) {
+						verificaEffettuata = true;
 						String tipoConnettore = null;
 						IConnettore connettore = null;
 						try{

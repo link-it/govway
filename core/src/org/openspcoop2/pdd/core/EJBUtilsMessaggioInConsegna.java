@@ -22,8 +22,8 @@ package org.openspcoop2.pdd.core;
 
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.RichiestaApplicativa;
@@ -45,13 +45,13 @@ public class EJBUtilsMessaggioInConsegna {
 	private SoggettoVirtuale soggettiRealiMappatiInUnSoggettoVirtuale;
 	private RichiestaApplicativa richiestaApplicativa;
 	
-	private Hashtable<String, Boolean> mapServizioApplicativoConConnettore;
-	private Hashtable<String, Boolean> mapSbustamentoSoap;
-	private Hashtable<String, Boolean> mapSbustamentoInformazioniProtocollo;
-	private Hashtable<String, Boolean> mapGetMessage;
-	private Hashtable<String, String> mapTipoConsegna;
-	private Hashtable<String, Timestamp> mapOraRegistrazione;
-	private Hashtable<String, ConsegnaContenutiApplicativiMessage> mapConsegnaContenutiApplicativiMessage;
+	private Map<String, Boolean> mapServizioApplicativoConConnettore;
+	private Map<String, Boolean> mapSbustamentoSoap;
+	private Map<String, Boolean> mapSbustamentoInformazioniProtocollo;
+	private Map<String, Boolean> mapGetMessage;
+	private Map<String, String> mapTipoConsegna;
+	private Map<String, Timestamp> mapOraRegistrazione;
+	private Map<String, ConsegnaContenutiApplicativiMessage> mapConsegnaContenutiApplicativiMessage;
 	
 	private boolean registrazioneMessaggioPerStatelessEffettuata;
 	private boolean gestioneSolamenteConIntegrationManager;
@@ -92,60 +92,60 @@ public class EJBUtilsMessaggioInConsegna {
 		this.richiestaApplicativa = richiestaApplicativa;
 	}
 
-	public Hashtable<String, Boolean> getMapServizioApplicativoConConnettore() {
+	public Map<String, Boolean> getMapServizioApplicativoConConnettore() {
 		return this.mapServizioApplicativoConConnettore;
 	}
 
-	public void setMapServizioApplicativoConConnettore(Hashtable<String, Boolean> mapServizioApplicativoConConnettore) {
+	public void setMapServizioApplicativoConConnettore(Map<String, Boolean> mapServizioApplicativoConConnettore) {
 		this.mapServizioApplicativoConConnettore = mapServizioApplicativoConConnettore;
 	}
 
-	public Hashtable<String, Boolean> getMapSbustamentoSoap() {
+	public Map<String, Boolean> getMapSbustamentoSoap() {
 		return this.mapSbustamentoSoap;
 	}
 
-	public void setMapSbustamentoSoap(Hashtable<String, Boolean> mapSbustamentoSoap) {
+	public void setMapSbustamentoSoap(Map<String, Boolean> mapSbustamentoSoap) {
 		this.mapSbustamentoSoap = mapSbustamentoSoap;
 	}
 
-	public Hashtable<String, Boolean> getMapSbustamentoInformazioniProtocollo() {
+	public Map<String, Boolean> getMapSbustamentoInformazioniProtocollo() {
 		return this.mapSbustamentoInformazioniProtocollo;
 	}
 
-	public void setMapSbustamentoInformazioniProtocollo(Hashtable<String, Boolean> mapSbustamentoInformazioniProtocollo) {
+	public void setMapSbustamentoInformazioniProtocollo(Map<String, Boolean> mapSbustamentoInformazioniProtocollo) {
 		this.mapSbustamentoInformazioniProtocollo = mapSbustamentoInformazioniProtocollo;
 	}
 
-	public Hashtable<String, Boolean> getMapGetMessage() {
+	public Map<String, Boolean> getMapGetMessage() {
 		return this.mapGetMessage;
 	}
 
-	public void setMapGetMessage(Hashtable<String, Boolean> mapGetMessage) {
+	public void setMapGetMessage(Map<String, Boolean> mapGetMessage) {
 		this.mapGetMessage = mapGetMessage;
 	}
 
-	public Hashtable<String, String> getMapTipoConsegna() {
+	public Map<String, String> getMapTipoConsegna() {
 		return this.mapTipoConsegna;
 	}
 
-	public void setMapTipoConsegna(Hashtable<String, String> mapTipoConsegna) {
+	public void setMapTipoConsegna(Map<String, String> mapTipoConsegna) {
 		this.mapTipoConsegna = mapTipoConsegna;
 	}
 
-	public Hashtable<String, Timestamp> getMapOraRegistrazione() {
+	public Map<String, Timestamp> getMapOraRegistrazione() {
 		return this.mapOraRegistrazione;
 	}
 
-	public void setMapOraRegistrazione(Hashtable<String, Timestamp> mapOraRegistrazione) {
+	public void setMapOraRegistrazione(Map<String, Timestamp> mapOraRegistrazione) {
 		this.mapOraRegistrazione = mapOraRegistrazione;
 	}
 
-	public Hashtable<String, ConsegnaContenutiApplicativiMessage> getMapConsegnaContenutiApplicativiMessage() {
+	public Map<String, ConsegnaContenutiApplicativiMessage> getMapConsegnaContenutiApplicativiMessage() {
 		return this.mapConsegnaContenutiApplicativiMessage;
 	}
 
 	public void setMapConsegnaContenutiApplicativiMessage(
-			Hashtable<String, ConsegnaContenutiApplicativiMessage> mapConsegnaContenutiApplicativiMessage) {
+			Map<String, ConsegnaContenutiApplicativiMessage> mapConsegnaContenutiApplicativiMessage) {
 		this.mapConsegnaContenutiApplicativiMessage = mapConsegnaContenutiApplicativiMessage;
 	}
 

@@ -25,7 +25,7 @@ package org.openspcoop2.pools.pdd;
 
 import org.slf4j.Logger;
 
-import java.util.Vector;
+import java.util.List;
 
 import org.openspcoop2.pools.core.ConnectionFactory;
 import org.openspcoop2.pools.core.Datasource;
@@ -157,10 +157,10 @@ public class RisorseSistema  {
     /**
      * Restituisce un vector contenente tutti i DataSource definiti nel file poolConfig.xml
      *  
-     * @return Vector di {@link org.openspcoop2.pools.core.Datasource}
+     * @return List di {@link org.openspcoop2.pools.core.Datasource}
      * 
      */
-    public Vector<Datasource> getDataSources() throws DriverRisorseSistemaException{
+    public List<Datasource> getDataSources() throws DriverRisorseSistemaException{
     	return this.driverRisorseSistema.getDataSources();
     }
 
@@ -197,10 +197,10 @@ public class RisorseSistema  {
     /**
      * Restituisce un vector contenente tutti le ConnectionFactory definite nel file poolConfig.xml
      *  
-     * @return Vector di {@link org.openspcoop2.pools.core.ConnectionFactory}
+     * @return List di {@link org.openspcoop2.pools.core.ConnectionFactory}
      * 
      */
-    public Vector<ConnectionFactory> getConnectionFactories() throws DriverRisorseSistemaException{
+    public List<ConnectionFactory> getConnectionFactories() throws DriverRisorseSistemaException{
     	return this.driverRisorseSistema.getConnectionFactories();
     }
 	

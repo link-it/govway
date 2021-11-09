@@ -30,9 +30,9 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Operation;
@@ -362,7 +362,7 @@ public class XMLUtils  {
 		}
 	}
 	
-	private static String readNomeSPCoop(String QName,Hashtable<String, String> mapPrefixNamespaces) throws XMLUtilsException{
+	private static String readNomeSPCoop(String QName,Map<String, String> mapPrefixNamespaces) throws XMLUtilsException{
 		if(QName==null){
 			return null; // per correlati
 		}
@@ -396,7 +396,7 @@ public class XMLUtils  {
 			throw new XMLUtilsException("Documento con informazione egov non leggibile: "+e.getMessage(),e);
 		}
 		// Lettura specifica come document
-		Hashtable<String, String> mapPrefixNamespaces = new Hashtable<String, String>();
+		Map<String, String> mapPrefixNamespaces = new HashMap<String, String>();
 		try{
 			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;		
 			Document docXML = xmlUtils.newDocument(doc);
@@ -417,7 +417,7 @@ public class XMLUtils  {
 			throw new XMLUtilsException("Documento XML con informazione egov non leggibile: "+e.getMessage(),e);
 		}
 		
-		Hashtable<String, PortType> servizi = new Hashtable<String, PortType>();
+		Map<String, PortType> servizi = new HashMap<String, PortType>();
 		OperationListType list = egov.getListaCollaborazioni();
 		for(int h=0; h<list.sizeCollaborazioneList(); h++){
 			OperationType operationType =  list.getCollaborazione(h);
@@ -504,10 +504,10 @@ public class XMLUtils  {
 			}
 		}
 		
-		Enumeration<String> keys = servizi.keys();
-		while(keys.hasMoreElements()){
-			String pt = keys.nextElement();
-			as.addPortType(servizi.get(pt));
+		if(servizi!=null && !servizi.isEmpty()) {
+			for (String pt : servizi.keySet()) {
+				as.addPortType(servizi.get(pt));
+			}
 		}
 
 	}

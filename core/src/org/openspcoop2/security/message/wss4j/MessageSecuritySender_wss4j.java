@@ -23,9 +23,8 @@ package org.openspcoop2.security.message.wss4j;
 
 
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.xml.soap.SOAPMessage;
@@ -171,14 +170,13 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
     	boolean mustUnderstand = false;
     	boolean signatureUser = false;
     	boolean user = false;
-    	Hashtable<String,Object> wssOutgoingProperties = wssContext.getOutgoingProperties();
+    	Map<String,Object> wssOutgoingProperties = wssContext.getOutgoingProperties();
 		if (wssOutgoingProperties != null && wssOutgoingProperties.size() > 0) {
 			
 			// preprocess per SAML
 			SAMLUtilities.injectSignaturePropRefIdIntoSamlConfig(wssOutgoingProperties);
 			
-			for (Enumeration<?> e = wssOutgoingProperties.keys(); e.hasMoreElements();) {
-				String key = (String) e.nextElement();
+			for (String key : wssOutgoingProperties.keySet()) {
 				Object oValue = wssOutgoingProperties.get(key);
 				String value = null;
 				if(oValue!=null && oValue instanceof String) {
@@ -221,7 +219,7 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 						msgCtx.put(key, value);
 					}
 					else { 
-						String id = key+"_"+IDUtilities.getUniqueSerialNumber();
+						String id = key+"_"+IDUtilities.getUniqueSerialNumber("wssSecurity.setOutgoingProperties");
 						msgCtx.put(key, id);
 						msgCtx.put(id, oValue);
 					}

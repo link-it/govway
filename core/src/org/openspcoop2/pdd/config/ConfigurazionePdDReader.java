@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -1317,7 +1318,7 @@ public class ConfigurazionePdDReader {
 	protected MessageSecurityConfig getPD_MessageSecurityForSender(PortaDelegata pd) throws DriverConfigurazioneException{
 
 		MessageSecurityConfig securityConfig = new MessageSecurityConfig();
-		java.util.Hashtable<String,Object> table = new java.util.Hashtable<String,Object>();
+		java.util.Map<String,Object> table = new java.util.HashMap<String,Object>();
 		securityConfig.setFlowParameters(table);
 
 		if(pd == null)
@@ -1359,7 +1360,7 @@ public class ConfigurazionePdDReader {
 	protected MessageSecurityConfig getPD_MessageSecurityForReceiver(PortaDelegata pd) throws DriverConfigurazioneException{
 
 		MessageSecurityConfig securityConfig = new MessageSecurityConfig();
-		java.util.Hashtable<String,Object> table = new java.util.Hashtable<String,Object>();
+		java.util.Map<String,Object> table = new java.util.HashMap<String,Object>();
 		securityConfig.setFlowParameters(table);
 
 		if(pd == null)
@@ -2324,7 +2325,7 @@ public class ConfigurazionePdDReader {
 	protected MessageSecurityConfig getPA_MessageSecurityForSender(PortaApplicativa pa)throws DriverConfigurazioneException{
 
 		MessageSecurityConfig securityConfig = new MessageSecurityConfig();
-		java.util.Hashtable<String,Object> table = new java.util.Hashtable<String,Object>();
+		java.util.Map<String,Object> table = new java.util.HashMap<String,Object>();
 		securityConfig.setFlowParameters(table);
 
 		if(pa == null)
@@ -2366,7 +2367,7 @@ public class ConfigurazionePdDReader {
 	protected MessageSecurityConfig getPA_MessageSecurityForReceiver(PortaApplicativa pa)throws DriverConfigurazioneException{
 
 		MessageSecurityConfig securityConfig = new MessageSecurityConfig();
-		java.util.Hashtable<String,Object> table = new java.util.Hashtable<String,Object>();
+		java.util.Map<String,Object> table = new java.util.HashMap<String,Object>();
 		securityConfig.setFlowParameters(table);
 
 		if(pa == null)
@@ -3554,7 +3555,7 @@ public class ConfigurazionePdDReader {
 
 		// CONNETTORE
 		Connettore connettore = serv.getConnettore();
-		java.util.Hashtable<String,String> properties = null;
+		java.util.Map<String,String> properties = null;
 		if(connettore != null && CostantiConfigurazione.DISABILITATO.equals(connettore.getTipo())==false){
 			String nome = connettore.getNome();
 			if(connettore.getTipo() == null){
@@ -3571,7 +3572,7 @@ public class ConfigurazionePdDReader {
 			setPAUrlPrefixRewriter(connectionPdD,connettore, aSoggetto);
 
 			// Properties connettore
-			properties = new java.util.Hashtable<String,String>();
+			properties = new java.util.HashMap<String,String>();
 			for(int i=0;i<connettore.sizePropertyList();i++){
 				properties.put(connettore.getProperty(i).getNome(),connettore.getProperty(i).getValore());
 			}
@@ -3738,7 +3739,7 @@ public class ConfigurazionePdDReader {
 
 		// CONNETTORE
 		Connettore connettore = serv.getConnettore();
-		java.util.Hashtable<String,String> properties = null;
+		java.util.Map<String,String> properties = null;
 		if(connettore != null && CostantiConfigurazione.DISABILITATO.equals(connettore.getTipo())==false){
 			String nome = connettore.getNome();
 			if(connettore.getTipo() == null){
@@ -3755,7 +3756,7 @@ public class ConfigurazionePdDReader {
 			setPAUrlPrefixRewriter(connectionPdD,connettore, aSoggetto);
 
 			// set properties
-			properties = new java.util.Hashtable<String,String>();
+			properties = new java.util.HashMap<String,String>();
 			for(int i=0;i<connettore.sizePropertyList();i++){
 				properties.put(connettore.getProperty(i).getNome(),connettore.getProperty(i).getValore());
 			}
@@ -3818,7 +3819,7 @@ public class ConfigurazionePdDReader {
 
 		// CONNETTORE
 		Connettore connettore = serv.getConnettore();
-		java.util.Hashtable<String,String> properties = null;
+		java.util.Map<String,String> properties = null;
 		if(connettore != null && CostantiConfigurazione.DISABILITATO.equals(connettore.getTipo())==false){
 			String nome = connettore.getNome();
 			if(connettore.getTipo() == null){
@@ -3835,7 +3836,7 @@ public class ConfigurazionePdDReader {
 			setPAUrlPrefixRewriter(connectionPdD,connettore, aSoggetto);
 
 			// Properties connettore
-			properties = new java.util.Hashtable<String,String>();
+			properties = new java.util.HashMap<String,String>();
 			for(int i=0;i<connettore.sizePropertyList();i++){
 				properties.put(connettore.getProperty(i).getNome(),connettore.getProperty(i).getValore());
 			}
@@ -5063,6 +5064,7 @@ public class ConfigurazionePdDReader {
 	 * 
 	 */
 	private static HashMap<String, GestioneErrore> gestioneErroreConnettoreComponenteCooperazioneMap = new HashMap<>();
+	private static org.openspcoop2.utils.Semaphore semaphore_erroreConnettoreCooperazione = new org.openspcoop2.utils.Semaphore("ConfigurazionePdDReader_erroreConnettoreCooperazione");
 	protected GestioneErrore getGestioneErroreConnettoreComponenteCooperazione(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding, Connection connectionPdD){
 
 		String key = protocolFactory.getProtocol()+"_"+serviceBinding;
@@ -5110,10 +5112,14 @@ public class ConfigurazionePdDReader {
 				return gestione;
 			}
 			else {
-				synchronized (ConfigurazionePdDReader.gestioneErroreConnettoreComponenteCooperazioneMap) {
+				//synchronized (ConfigurazionePdDReader.gestioneErroreConnettoreComponenteCooperazioneMap) {
+				semaphore_erroreConnettoreCooperazione.acquireThrowRuntime("getGestioneErroreConnettoreComponenteCooperazione");
+				try {				
 					if(!ConfigurazionePdDReader.gestioneErroreConnettoreComponenteCooperazioneMap.containsKey(key)) {
 						ConfigurazionePdDReader.gestioneErroreConnettoreComponenteCooperazioneMap.put(key, gestione);
 					}
+				}finally {
+					semaphore_erroreConnettoreCooperazione.release("getGestioneErroreConnettoreComponenteCooperazione");
 				}
 			}
 			
@@ -5130,6 +5136,7 @@ public class ConfigurazionePdDReader {
 	 * 
 	 */
 	private static HashMap<String, GestioneErrore> gestioneErroreConnettoreComponenteIntegrazioneMap = new HashMap<>();
+	private static org.openspcoop2.utils.Semaphore semaphore_erroreConnettoreIntegrazione = new org.openspcoop2.utils.Semaphore("ConfigurazionePdDReader_erroreConnettoreIntegrazione");
 	protected GestioneErrore getGestioneErroreConnettoreComponenteIntegrazione(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding, Connection connectionPdD){
 
 		String key = protocolFactory.getProtocol()+"_"+serviceBinding;
@@ -5177,10 +5184,14 @@ public class ConfigurazionePdDReader {
 				return gestione;
 			}
 			else {
-				synchronized (ConfigurazionePdDReader.gestioneErroreConnettoreComponenteIntegrazioneMap) {
+				//synchronized (ConfigurazionePdDReader.gestioneErroreConnettoreComponenteIntegrazioneMap) {
+				semaphore_erroreConnettoreIntegrazione.acquireThrowRuntime("getGestioneErroreConnettoreComponenteIntegrazione");
+				try {
 					if(!ConfigurazionePdDReader.gestioneErroreConnettoreComponenteIntegrazioneMap.containsKey(key)) {
 						ConfigurazionePdDReader.gestioneErroreConnettoreComponenteIntegrazioneMap.put(key, gestione);
 					}
+				}finally {
+					semaphore_erroreConnettoreIntegrazione.release("getGestioneErroreConnettoreComponenteIntegrazione");
 				}
 			}
 		}
@@ -6001,7 +6012,7 @@ public class ConfigurazionePdDReader {
 
 	}
 
-	private static Map<String, Object> getSingleExtendedInfoConfigurazione = new java.util.Hashtable<String, Object>(); 
+	private static Map<String, Object> getSingleExtendedInfoConfigurazione = new ConcurrentHashMap<String, Object>(); 
 	protected Object getSingleExtendedInfoConfigurazione(String id, Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 
 		if( this.configurazioneDinamica || ConfigurazionePdDReader.getSingleExtendedInfoConfigurazione.containsKey(id)==false){

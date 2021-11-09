@@ -9,7 +9,7 @@ del registro pronto all'utilizzo in numerose situazioni.
 
 Cliccando sulla voce *Erogazioni* o *Fruizioni* nell'intestazione dell'elenco è possibile consultarne i dettagli selezionando l'API attivata di interesse. 
 
-La pagina di dettaglio consente di accedere ai principali elementi di configurazione (:numref:`DettaglioErogazione`):
+La pagina di dettaglio consente di accedere ai principali elementi di configurazione (:numref:`paginaDettaglioErogazione`):
 
 - *Nome*: in assenza di configurazioni specifiche per risorsa/azione (sezione :ref:`configSpecificaRisorsa`), accanto al nome dell'erogazione o della fruizione è presente un'icona che permette di disattivare/riattivare l'API come descritto nella sezione :ref:`gwSospensioneApi`.
 - *URL Invocazione*: se la console viene utilizzata in modalità avanzata (sezione :ref:`modalitaAvanzata`), accedendo alla modifica della URL di Invocazione è possibile configurare la modalità di identificazione dell'azione come descritto nella sezione :ref:`identificazioneAzione`.

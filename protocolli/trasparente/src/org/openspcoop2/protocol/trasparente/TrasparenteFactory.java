@@ -21,7 +21,11 @@
 package org.openspcoop2.protocol.trasparente;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.openspcoop2.protocol.basic.BasicEmptyRawContentFactory;
+import org.openspcoop2.protocol.basic.BasicStaticInstanceConfig;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -53,7 +57,7 @@ public class TrasparenteFactory extends BasicEmptyRawContentFactory {
 	 * 
 	 */
 	private static final long serialVersionUID = -4246311511752079753L;
-
+	
 	/* ** INIT ** */
 	
 	@Override
@@ -62,6 +66,16 @@ public class TrasparenteFactory extends BasicEmptyRawContentFactory {
 		TrasparenteProperties.initialize(configPdD.getConfigurationDir(),log);
 		TrasparenteProperties properties = TrasparenteProperties.getInstance();
 		properties.validaConfigurazione(configPdD.getLoader());
+		
+		BasicStaticInstanceConfig staticInstanceConfig = properties.getStaticInstanceConfig();
+		super.initStaticInstance(staticInstanceConfig);
+		if(staticInstanceConfig!=null) {
+			if(staticInstanceConfig.isStaticConfig()) {
+				staticInstanceProtocolManager = new TrasparenteProtocolManager(this);
+				staticInstanceProtocolVersionManager = new HashMap<String, IProtocolVersionManager>();
+				staticInstanceProtocolConfiguration = new TrasparenteProtocolConfiguration(this);
+			}
+		}
 	}
 	
 	
@@ -85,22 +99,38 @@ public class TrasparenteFactory extends BasicEmptyRawContentFactory {
 	
 	/* ** CONFIG ** */
 	
+	private static IProtocolManager staticInstanceProtocolManager = null;
 	@Override
 	public IProtocolManager createProtocolManager()
 			throws ProtocolException {
-		return new TrasparenteProtocolManager(this);
+		return staticInstanceProtocolManager!=null ? staticInstanceProtocolManager : new TrasparenteProtocolManager(this);
 	}
 	
+	private static Map<String, IProtocolVersionManager> staticInstanceProtocolVersionManager = null;
 	@Override
 	public IProtocolVersionManager createProtocolVersionManager(String version)
 			throws ProtocolException {
-		return new TrasparenteProtocolVersionManager(this,version);
+		if(staticInstanceProtocolVersionManager!=null) {
+			if(!staticInstanceProtocolVersionManager.containsKey(version)) {
+				initProtocolVersionManager(version);
+			}
+			return staticInstanceProtocolVersionManager.get(version);
+		}
+		else {
+			return new TrasparenteProtocolVersionManager(this,version);
+		}
+	}
+	private synchronized void initProtocolVersionManager(String version) throws ProtocolException {
+		if(!staticInstanceProtocolVersionManager.containsKey(version)) {
+			staticInstanceProtocolVersionManager.put(version, new TrasparenteProtocolVersionManager(this,version));
+		}
 	}
 
+	private static IProtocolConfiguration staticInstanceProtocolConfiguration = null;
 	@Override
 	public IProtocolConfiguration createProtocolConfiguration()
 			throws ProtocolException {
-		return new TrasparenteProtocolConfiguration(this);
+		return staticInstanceProtocolConfiguration!=null ? staticInstanceProtocolConfiguration : new TrasparenteProtocolConfiguration(this);
 	}
 
 	

@@ -20,7 +20,6 @@
 package org.openspcoop2.protocol.as4.services.message;
 
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -75,7 +74,7 @@ public class AS4ConnectorOutMessage implements ConnectorOutMessage {
 	}
 	
 	
-	private Map<String, List<String>> headers = new Hashtable<String, List<String>>();
+	private Map<String, List<String>> headers = new HashMap<String, List<String>>();
 	public String getHeaderFirstValue(String key) throws ConnectorException{
 		return TransportUtils.getFirstValue(this.headers, key);
 	}

@@ -22,7 +22,7 @@ package org.openspcoop2.utils;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Hashtable;
+import java.util.Map;
 
 /**
  * TimeoutInputStrem
@@ -41,10 +41,10 @@ public class TimeoutInputStream extends FilterInputStream {
 	public TimeoutInputStream(InputStream is, int timeoutMs) throws IOException {
 		this(is, timeoutMs, null, null);
 	}
-	public TimeoutInputStream(InputStream is, int timeoutMs, Hashtable<String, Object> ctx) throws IOException {
+	public TimeoutInputStream(InputStream is, int timeoutMs, Map<String, Object> ctx) throws IOException {
 		this(is, timeoutMs, null, ctx);
 	}
-	public TimeoutInputStream(InputStream is, int timeoutMs, String prefixError, Hashtable<String, Object> ctx) throws IOException {
+	public TimeoutInputStream(InputStream is, int timeoutMs, String prefixError, Map<String, Object> ctx) throws IOException {
 		super(new TimeoutInputStreamEngine(is, timeoutMs, prefixError, ctx));
 	}
 	
@@ -68,7 +68,7 @@ public class TimeoutInputStream extends FilterInputStream {
 			((TimeoutInputStreamEngine)is).updateThreshold(timeoutMs);
 		}
 	}
-	public void updateContext(Hashtable<String, Object> ctx) {
+	public void updateContext(Map<String, Object> ctx) {
 		InputStream is = super.in;
 		if(is instanceof TimeoutInputStreamEngine) {
 			((TimeoutInputStreamEngine)is).updateContext(ctx);

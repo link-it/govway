@@ -20,10 +20,15 @@
 
 package org.openspcoop2.utils.json;
 
+import java.util.TimeZone;
+
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 /**	
  * YAMLUtils
@@ -67,27 +72,74 @@ public class YAMLUtils extends AbstractUtils {
 	}
 	
 
-	private static YAMLMapper mapper;
+	private static org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("JSONUtils");
+	private static YAMLMapper _mapper;
 	private synchronized static void initMapper()  {
-		if(mapper==null){
-			mapper = new YAMLMapper();
-			mapper.setSerializationInclusion(Include.NON_NULL);
+		semaphore.acquireThrowRuntime("initMapper");
+		try {
+			if(_mapper==null){
+				_mapper = new YAMLMapper();
+				_mapper.setTimeZone(TimeZone.getDefault());
+				_mapper.setSerializationInclusion(Include.NON_NULL);
+				_mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+				_mapper.configure(com.fasterxml.jackson.databind.SerializationFeature.
+					    WRITE_DATES_AS_TIMESTAMPS , false);
+			}
+		}finally {
+			semaphore.release("initMapper");
 		}
 	}
-	public static YAMLMapper getObjectMapper() {
-		if(mapper==null){
+	public static void setMapperTimeZone(TimeZone timeZone) {
+		if(_mapper==null){
 			initMapper();
 		}
-		return mapper;
+		//synchronized(mapperSynchronized){
+		semaphore.acquireThrowRuntime("setMapperTimeZone");
+		try {
+			_mapper.setTimeZone(timeZone);
+		}finally {
+			semaphore.release("setMapperTimeZone");
+		}
+	}
+	public static void registerJodaModule() {
+		if(_mapper==null){
+			initMapper();
+		}
+		//synchronized(mapperSynchronized){
+		semaphore.acquireThrowRuntime("registerJodaModule");
+		try {
+			_mapper.registerModule(new JodaModule());
+		}finally {
+			semaphore.release("registerJodaModule");
+		}
+	}
+	public static void registerJavaTimeModule() {
+		if(_mapper==null){
+			initMapper();
+		}
+		//synchronized(mapperSynchronized){
+		semaphore.acquireThrowRuntime("registerJavaTimeModule");
+		try {
+			_mapper.registerModule(new JavaTimeModule());
+		}finally {
+			semaphore.release("registerJavaTimeModule");
+		}
+	}
+	
+	public static YAMLMapper getObjectMapper() {
+		if(_mapper==null){
+			initMapper();
+		}
+		return _mapper;
 	}
 	
 	private static ObjectWriter writer;
 	private synchronized static void initWriter()  {
-		if(mapper==null){
+		if(_mapper==null){
 			initMapper();
 		}
 		if(writer==null){
-			writer = mapper.writer();
+			writer = _mapper.writer();
 		}
 	}
 	public static ObjectWriter getObjectWriter() {
@@ -99,11 +151,11 @@ public class YAMLUtils extends AbstractUtils {
 	
 	private static ObjectWriter writerPrettyPrint;
 	private synchronized static void initWriterPrettyPrint()  {
-		if(mapper==null){
+		if(_mapper==null){
 			initMapper();
 		}
 		if(writerPrettyPrint==null){
-			writerPrettyPrint = mapper.writer().withDefaultPrettyPrinter();
+			writerPrettyPrint = _mapper.writer().withDefaultPrettyPrinter();
 		}
 	}
 	public static ObjectWriter getObjectWriterPrettyPrint() {

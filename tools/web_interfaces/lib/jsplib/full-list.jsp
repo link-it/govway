@@ -46,10 +46,9 @@ PageData pd = (PageData) session.getAttribute(pdString);
 <form name='form' method='post' onSubmit='return false;' id="form">
 
 <%
-Hashtable<String,String> hidden = pd.getHidden();
-if (hidden!=null) {
-    for (Enumeration<String> e = hidden.keys() ; e.hasMoreElements() ;) {
-	String key = e.nextElement();
+Map<String,String> hidden = pd.getHidden();
+if (hidden!=null && !hidden.isEmpty()) {
+	for (String key : hidden.keySet()) {
 	String value = (String) hidden.get(key);
 	%><input type="hidden" name=<%= key %> value=<%= value %>><%
     }

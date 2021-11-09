@@ -447,7 +447,7 @@ public class JDBCTransazioneInfoServiceSearchImpl implements IJDBCServiceSearchW
 	
 	protected Map<String, List<IField>> _getMapTableToPKColumn() throws NotImplementedException, Exception{
 	
-		Map<String, List<IField>> mapTableToPKColumn = new java.util.Hashtable<String, List<IField>>();
+		Map<String, List<IField>> mapTableToPKColumn = new java.util.HashMap<String, List<IField>>();
 		return mapTableToPKColumn;
 		
 	}

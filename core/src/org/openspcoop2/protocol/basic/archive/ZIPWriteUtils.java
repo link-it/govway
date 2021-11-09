@@ -27,9 +27,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -477,12 +477,9 @@ public class ZIPWriteUtils {
 			}
 			
 			// soggetti
-			Hashtable<String, Archive> archiveMapIntoSoggetti = archiveMapIntoSoggetti(archive);
-			Enumeration<String> keys = archiveMapIntoSoggetti.keys();
+			Map<String, Archive> archiveMapIntoSoggetti = archiveMapIntoSoggetti(archive);
 			List<String> listaSoggetti = new ArrayList<String>();
-			while (keys.hasMoreElements()) {
-				listaSoggetti.add(keys.nextElement());
-			}
+			listaSoggetti.addAll(archiveMapIntoSoggetti.keySet());
 			java.util.Collections.sort(listaSoggetti);
 			for (String idSoggettoAsString : listaSoggetti) {
 				
@@ -504,7 +501,7 @@ public class ZIPWriteUtils {
 					if(archiveSoggetto.getSoggettoRegistro()!=null){
 						
 						// protocolProperties
-						Hashtable<String, byte[]> protocolPropertiesList = new Hashtable<String, byte[]>();
+						Map<String, byte[]> protocolPropertiesList = new HashMap<String, byte[]>();
 						for (ProtocolProperty pp : archiveSoggetto.getSoggettoRegistro().getProtocolPropertyList()) {
 							if(pp.getByteFile()==null) {
 								continue;
@@ -528,9 +525,7 @@ public class ZIPWriteUtils {
 						// protocolProperties
 						if(protocolPropertiesList.size()>0){
 							int indexPP = 1;
-							Enumeration<String> enumPP = protocolPropertiesList.keys();
-							while (enumPP.hasMoreElements()) {
-								String id = (String) enumPP.nextElement();
+							for (String id : protocolPropertiesList.keySet()) {
 								
 								nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES+File.separatorChar+
 										Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_PREFIX+indexPP+
@@ -563,7 +558,7 @@ public class ZIPWriteUtils {
 						ArchiveServizioApplicativo archiveServizioApplicativo = archiveListaOggettiSoggetto.getServiziApplicativi().get(i);
 						
 						// protocolProperties
-						Hashtable<String, byte[]> protocolPropertiesList = new Hashtable<String, byte[]>();
+						Map<String, byte[]> protocolPropertiesList = new HashMap<String, byte[]>();
 						for (org.openspcoop2.core.config.ProtocolProperty pp : archiveServizioApplicativo.getServizioApplicativo().getProtocolPropertyList()) {
 							if(pp.getByteFile()==null) {
 								continue;
@@ -588,9 +583,7 @@ public class ZIPWriteUtils {
 						// protocolProperties
 						if(protocolPropertiesList.size()>0){
 							int indexPP = 1;
-							Enumeration<String> enumPP = protocolPropertiesList.keys();
-							while (enumPP.hasMoreElements()) {
-								String id = (String) enumPP.nextElement();
+							for (String id : protocolPropertiesList.keySet()) {
 								
 								String nomeFilePP = nomeFileSA+File.separatorChar+
 										Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES+File.separatorChar+
@@ -693,7 +686,7 @@ public class ZIPWriteUtils {
 				}
 				
 				// accordiServizioParteSpecifica
-				Hashtable<String, String> map_IdApsScritti_nomeFileSystem = new Hashtable<>();
+				Map<String, String> map_IdApsScritti_nomeFileSystem = new HashMap<>();
 				if(archiveListaOggettiSoggetto.getAccordiServizioParteSpecifica()!=null && archiveListaOggettiSoggetto.getAccordiServizioParteSpecifica().size()>0){
 					for (int i = 0; i < archiveListaOggettiSoggetto.getAccordiServizioParteSpecifica().size(); i++) {
 						ArchiveAccordoServizioParteSpecifica archiveAccordo = archiveListaOggettiSoggetto.getAccordiServizioParteSpecifica().get(i);
@@ -753,7 +746,7 @@ public class ZIPWriteUtils {
 						Fruitore fruitore = archiveFruitore.getFruitore();			
 						
 						// protocolProperties (devo rimuovere campo bytes)
-						Hashtable<String, byte[]> protocolPropertiesList = new Hashtable<String, byte[]>();
+						Map<String, byte[]> protocolPropertiesList = new HashMap<String, byte[]>();
 						if(fruitore.sizeProtocolPropertyList()>0) {
 							for (ProtocolProperty pp : fruitore.getProtocolPropertyList()) {
 								if(pp.getByteFile()==null) {
@@ -784,9 +777,7 @@ public class ZIPWriteUtils {
 						// protocolProperties
 						if(protocolPropertiesList.size()>0){
 							int indexPP = 1;
-							Enumeration<String> enumPP = protocolPropertiesList.keys();
-							while (enumPP.hasMoreElements()) {
-								String id = (String) enumPP.nextElement();
+							for (String id : protocolPropertiesList.keySet()) {
 								
 								nomeFile = nomeFruitore+File.separatorChar+
 										Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES+File.separatorChar+
@@ -839,9 +830,9 @@ public class ZIPWriteUtils {
 		}
 	}
 	
-	private Hashtable<String, Archive> archiveMapIntoSoggetti(Archive archive) throws ProtocolException{
+	private Map<String, Archive> archiveMapIntoSoggetti(Archive archive) throws ProtocolException{
 		
-		Hashtable<String, Archive> archiveMapIntoSoggetti = new Hashtable<String, Archive>();
+		Map<String, Archive> archiveMapIntoSoggetti = new HashMap<String, Archive>();
 		
 		// raccolgo soggetti
 		if(archive.getSoggetti()!=null && archive.getSoggetti().size()>0){
@@ -1032,7 +1023,7 @@ public class ZIPWriteUtils {
 			byte[]specificaConversazioneLogicaFruitore = accordo.getByteSpecificaConversazioneFruitore();
 			accordo.setSpecificaConversazioneFruitore(null);
 			
-			Hashtable<String, byte[]> allegatiList = new Hashtable<String, byte[]>();
+			Map<String, byte[]> allegatiList = new HashMap<String, byte[]>();
 			for (Documento documento : accordo.getAllegatoList()) {
 				if(documento.getFile()==null){
 					throw new Exception("Allegato senza nome file");
@@ -1048,7 +1039,7 @@ public class ZIPWriteUtils {
 				documento.setByteContenuto(null);
 			}
 			
-			Hashtable<String, byte[]> specificaSemiformaleList = new Hashtable<String, byte[]>();
+			Map<String, byte[]> specificaSemiformaleList = new HashMap<String, byte[]>();
 			for (Documento documento : accordo.getSpecificaSemiformaleList()) {
 				if(documento.getFile()==null){
 					throw new Exception("SpecificaSemiformale senza nome file");
@@ -1064,7 +1055,7 @@ public class ZIPWriteUtils {
 				documento.setByteContenuto(null);
 			}
 			
-			Hashtable<String, byte[]> specificaCoordinamentoList = new Hashtable<String, byte[]>();
+			Map<String, byte[]> specificaCoordinamentoList = new HashMap<String, byte[]>();
 			if(servizioComposto){
 				for (Documento documento : accordo.getServizioComposto().getSpecificaCoordinamentoList()) {
 					if(documento.getFile()==null){
@@ -1082,7 +1073,7 @@ public class ZIPWriteUtils {
 				}
 			}
 			
-			Hashtable<String, byte[]> protocolPropertiesList = new Hashtable<String, byte[]>();
+			Map<String, byte[]> protocolPropertiesList = new HashMap<String, byte[]>();
 			for (ProtocolProperty pp : accordo.getProtocolPropertyList()) {
 				if(pp.getByteFile()==null) {
 					continue;
@@ -1234,9 +1225,7 @@ public class ZIPWriteUtils {
 			// allegati
 			if(allegatiList.size()>0){
 				int index = 1;
-				Enumeration<String> enumAllegati = allegatiList.keys();
-				while (enumAllegati.hasMoreElements()) {
-					String id = (String) enumAllegati.nextElement();
+				for (String id : allegatiList.keySet()) {
 					
 					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_ALLEGATI+File.separatorChar+
 							Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_PREFIX+index+
@@ -1257,9 +1246,7 @@ public class ZIPWriteUtils {
 			// specificaSemiformale
 			if(specificaSemiformaleList.size()>0){
 				int index = 1;
-				Enumeration<String> enumSpecifiche = specificaSemiformaleList.keys();
-				while (enumSpecifiche.hasMoreElements()) {
-					String id = (String) enumSpecifiche.nextElement();
+				for (String id : specificaSemiformaleList.keySet()) {
 					
 					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SEMIFORMALI+File.separatorChar+
 							Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_PREFIX+index+
@@ -1281,9 +1268,7 @@ public class ZIPWriteUtils {
 			if(servizioComposto){
 				if(specificaCoordinamentoList.size()>0){
 					int index = 1;
-					Enumeration<String> enumSpecifiche = specificaCoordinamentoList.keys();
-					while (enumSpecifiche.hasMoreElements()) {
-						String id = (String) enumSpecifiche.nextElement();
+					for (String id : specificaCoordinamentoList.keySet()) {
 						
 						nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_COORDINAMENTO+File.separatorChar+
 								Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_PREFIX+index+
@@ -1305,9 +1290,7 @@ public class ZIPWriteUtils {
 			// protocolProperties
 			if(protocolPropertiesList.size()>0){
 				int indexPP = 1;
-				Enumeration<String> enumPP = protocolPropertiesList.keys();
-				while (enumPP.hasMoreElements()) {
-					String id = (String) enumPP.nextElement();
+				for (String id : protocolPropertiesList.keySet()) {
 					
 					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES+File.separatorChar+
 							Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_PREFIX+indexPP+
@@ -1339,7 +1322,7 @@ public class ZIPWriteUtils {
 	
 	private void saveAccordo(AccordoServizioParteSpecifica accordo, IDServizio idServizio, List<MappingErogazionePortaApplicativa> mappingPorteApplicativeAssociate,
 			String parentDir, ZipOutputStream zipOut,
-			Hashtable<String, String> map_IdApsScritti_nomeFileSystem) throws IOException, SerializerException, ProtocolException{
+			Map<String, String> map_IdApsScritti_nomeFileSystem) throws IOException, SerializerException, ProtocolException{
 		
 		try{
 			String aspsDir = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_SPECIFICA_DIR+File.separatorChar+
@@ -1358,7 +1341,7 @@ public class ZIPWriteUtils {
 			byte[]wsdlInterfacciaImplementativaFruitore = accordo.getByteWsdlImplementativoFruitore();
 			accordo.setByteWsdlImplementativoFruitore(null);
 			
-			Hashtable<String, byte[]> allegatiList = new Hashtable<String, byte[]>();
+			Map<String, byte[]> allegatiList = new HashMap<String, byte[]>();
 			for (Documento documento : accordo.getAllegatoList()) {
 				if(documento.getFile()==null){
 					throw new Exception("Allegato senza nome file");
@@ -1374,7 +1357,7 @@ public class ZIPWriteUtils {
 				documento.setByteContenuto(null);
 			}
 			
-			Hashtable<String, byte[]> specificaSemiformaleList = new Hashtable<String, byte[]>();
+			Map<String, byte[]> specificaSemiformaleList = new HashMap<String, byte[]>();
 			for (Documento documento : accordo.getSpecificaSemiformaleList()) {
 				if(documento.getFile()==null){
 					throw new Exception("SpecificaSemiformale senza nome file");
@@ -1390,7 +1373,7 @@ public class ZIPWriteUtils {
 				documento.setByteContenuto(null);
 			}
 			
-			Hashtable<String, byte[]> specificaLivelloServizioList = new Hashtable<String, byte[]>();
+			Map<String, byte[]> specificaLivelloServizioList = new HashMap<String, byte[]>();
 			for (Documento documento : accordo.getSpecificaLivelloServizioList()) {
 				if(documento.getFile()==null){
 					throw new Exception("SpecificaLivelloServizio senza nome file");
@@ -1406,7 +1389,7 @@ public class ZIPWriteUtils {
 				documento.setByteContenuto(null);
 			}
 			
-			Hashtable<String, byte[]> specificaSicurezzaList = new Hashtable<String, byte[]>();
+			Map<String, byte[]> specificaSicurezzaList = new HashMap<String, byte[]>();
 			for (Documento documento : accordo.getSpecificaSicurezzaList()) {
 				if(documento.getFile()==null){
 					throw new Exception("SpecificaSicurezza senza nome file");
@@ -1422,7 +1405,7 @@ public class ZIPWriteUtils {
 				documento.setByteContenuto(null);
 			}
 			
-			Hashtable<String, byte[]> protocolPropertiesList = new Hashtable<String, byte[]>();
+			Map<String, byte[]> protocolPropertiesList = new HashMap<String, byte[]>();
 			for (ProtocolProperty pp : accordo.getProtocolPropertyList()) {
 				if(pp.getByteFile()==null) {
 					continue;
@@ -1475,9 +1458,7 @@ public class ZIPWriteUtils {
 			// allegati
 			if(allegatiList.size()>0){
 				int index = 1;
-				Enumeration<String> enumAllegati = allegatiList.keys();
-				while (enumAllegati.hasMoreElements()) {
-					String id = (String) enumAllegati.nextElement();
+				for (String id : allegatiList.keySet()) {
 					
 					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_ALLEGATI+File.separatorChar+
 							Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_PREFIX+index+
@@ -1498,9 +1479,7 @@ public class ZIPWriteUtils {
 			// specificaSemiformale
 			if(specificaSemiformaleList.size()>0){
 				int index = 1;
-				Enumeration<String> enumSpecifiche = specificaSemiformaleList.keys();
-				while (enumSpecifiche.hasMoreElements()) {
-					String id = (String) enumSpecifiche.nextElement();
+				for (String id : specificaSemiformaleList.keySet()) {
 					
 					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SEMIFORMALI+File.separatorChar+
 							Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_PREFIX+index+
@@ -1521,9 +1500,7 @@ public class ZIPWriteUtils {
 			// specificaLivelloServizio
 			if(specificaLivelloServizioList.size()>0){
 				int index = 1;
-				Enumeration<String> enumSpecifiche = specificaLivelloServizioList.keys();
-				while (enumSpecifiche.hasMoreElements()) {
-					String id = (String) enumSpecifiche.nextElement();
+				for (String id : specificaLivelloServizioList.keySet()) {
 					
 					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_LIVELLI_SERVIZIO+File.separatorChar+
 							Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_PREFIX+index+
@@ -1544,9 +1521,7 @@ public class ZIPWriteUtils {
 			// specificaSicurezza
 			if(specificaSicurezzaList.size()>0){
 				int index = 1;
-				Enumeration<String> enumSpecifiche = specificaSicurezzaList.keys();
-				while (enumSpecifiche.hasMoreElements()) {
-					String id = (String) enumSpecifiche.nextElement();
+				for (String id : specificaSicurezzaList.keySet()) {
 					
 					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SICUREZZA+File.separatorChar+
 							Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_PREFIX+index+
@@ -1567,9 +1542,7 @@ public class ZIPWriteUtils {
 			// protocolProperties
 			if(protocolPropertiesList.size()>0){
 				int indexPP = 1;
-				Enumeration<String> enumPP = protocolPropertiesList.keys();
-				while (enumPP.hasMoreElements()) {
-					String id = (String) enumPP.nextElement();
+				for (String id : protocolPropertiesList.keySet()) {
 					
 					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES+File.separatorChar+
 							Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_PREFIX+indexPP+
@@ -1640,7 +1613,7 @@ public class ZIPWriteUtils {
 			
 			// raccolta elementi
 			
-			Hashtable<String, byte[]> allegatiList = new Hashtable<String, byte[]>();
+			Map<String, byte[]> allegatiList = new HashMap<String, byte[]>();
 			for (Documento documento : accordo.getAllegatoList()) {
 				if(documento.getFile()==null){
 					throw new Exception("Allegato senza nome file");
@@ -1656,7 +1629,7 @@ public class ZIPWriteUtils {
 				documento.setByteContenuto(null);
 			}
 			
-			Hashtable<String, byte[]> specificaSemiformaleList = new Hashtable<String, byte[]>();
+			Map<String, byte[]> specificaSemiformaleList = new HashMap<String, byte[]>();
 			for (Documento documento : accordo.getSpecificaSemiformaleList()) {
 				if(documento.getFile()==null){
 					throw new Exception("SpecificaSemiformale senza nome file");
@@ -1672,7 +1645,7 @@ public class ZIPWriteUtils {
 				documento.setByteContenuto(null);
 			}
 			
-			Hashtable<String, byte[]> protocolPropertiesList = new Hashtable<String, byte[]>();
+			Map<String, byte[]> protocolPropertiesList = new HashMap<String, byte[]>();
 			for (ProtocolProperty pp : accordo.getProtocolPropertyList()) {
 				if(pp.getByteFile()==null) {
 					continue;
@@ -1706,9 +1679,7 @@ public class ZIPWriteUtils {
 			// allegati
 			if(allegatiList.size()>0){
 				int index = 1;
-				Enumeration<String> enumAllegati = allegatiList.keys();
-				while (enumAllegati.hasMoreElements()) {
-					String id = (String) enumAllegati.nextElement();
+				for (String id : allegatiList.keySet()) {
 					
 					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_ALLEGATI+File.separatorChar+
 							Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_PREFIX+index+
@@ -1729,9 +1700,7 @@ public class ZIPWriteUtils {
 			// specificaSemiformale
 			if(specificaSemiformaleList.size()>0){
 				int index = 1;
-				Enumeration<String> enumSpecifiche = specificaSemiformaleList.keys();
-				while (enumSpecifiche.hasMoreElements()) {
-					String id = (String) enumSpecifiche.nextElement();
+				for (String id : specificaSemiformaleList.keySet()) {
 					
 					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SEMIFORMALI+File.separatorChar+
 							Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_PREFIX+index+
@@ -1752,9 +1721,7 @@ public class ZIPWriteUtils {
 			// protocolProperties
 			if(protocolPropertiesList.size()>0){
 				int indexPP = 1;
-				Enumeration<String> enumPP = protocolPropertiesList.keys();
-				while (enumPP.hasMoreElements()) {
-					String id = (String) enumPP.nextElement();
+				for (String id : protocolPropertiesList.keySet()) {
 					
 					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES+File.separatorChar+
 							Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_PREFIX+indexPP+

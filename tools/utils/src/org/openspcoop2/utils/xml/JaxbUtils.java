@@ -27,7 +27,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Hashtable;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -45,7 +46,7 @@ import javax.xml.bind.Unmarshaller;
 */
 public class JaxbUtils {
 
-	private static Hashtable<String, JAXBContext> mapJAXBContext = new Hashtable<String, JAXBContext>();
+	private static Map<String, JAXBContext> mapJAXBContext = new ConcurrentHashMap<String, JAXBContext>();
 	private static synchronized void initJAXBContext(String packageName) throws JAXBException{
 		if(JaxbUtils.mapJAXBContext.containsKey(packageName)==false){
 			JaxbUtils.mapJAXBContext.put(packageName, JAXBContext.newInstance(packageName) );

@@ -20,8 +20,10 @@
 package org.openspcoop2.protocol.sdk.state;
 
 import java.sql.PreparedStatement;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 
@@ -35,24 +37,24 @@ import org.slf4j.Logger;
 public class StateMap {
 
 	/** Tabella Hash contenente le PreparedStatement da eseguire */
-	private Hashtable<String,PreparedStatement> tablePstmt;
+	private Map<String,PreparedStatement> tablePstmt;
 	
 	/** Logger */
 	private Logger log = null;
 	
 	public StateMap(Logger log) {
-		this.tablePstmt = new Hashtable<String,PreparedStatement>();
+		this.tablePstmt = new HashMap<String,PreparedStatement>();
 		this.log = log;
 	}
-	public StateMap(Hashtable<String, PreparedStatement> preparedStatement, Logger log){
+	public StateMap(HashMap<String, PreparedStatement> preparedStatement, Logger log){
 		this.tablePstmt = preparedStatement;
 		this.log = log;
 	}
 	
-	public Hashtable<String,PreparedStatement> getPreparedStatement(){
+	public Map<String,PreparedStatement> getPreparedStatement(){
 		return this.tablePstmt;
 	}
-	public void setPreparedStatement(Hashtable<String,PreparedStatement> pstm){
+	public void setPreparedStatement(Map<String,PreparedStatement> pstm){
 		this.tablePstmt = pstm;
 	}
 	
@@ -72,8 +74,15 @@ public class StateMap {
 		return this.tablePstmt.size();
 	}
 	
-	public Enumeration<String> keys(){
-		return this.tablePstmt.keys();
+	public List<String> keys(){
+		List<String> keys = null;
+		if(!this.tablePstmt.isEmpty()) {
+			keys = new ArrayList<String>();
+			for (String key : this.tablePstmt.keySet()) {
+				keys.add(key);
+			}
+		}
+		return keys;
 	}
 	
 	public boolean containsKey(String key){

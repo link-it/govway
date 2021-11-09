@@ -24,8 +24,9 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.utils.UtilsException;
 
@@ -38,11 +39,11 @@ import org.openspcoop2.utils.UtilsException;
  */
 public class HttpHeaderTypes {
 
-	private Hashtable<String, String> request_standard = new Hashtable<String, String>();
-	private Hashtable<String, String> request_nonStandard = new Hashtable<String, String>();
+	private Map<String, String> request_standard = new HashMap<String, String>();
+	private Map<String, String> request_nonStandard = new HashMap<String, String>();
 	
-	private Hashtable<String, String> response_standard = new Hashtable<String, String>();
-	private Hashtable<String, String> response_nonStandard = new Hashtable<String, String>();
+	private Map<String, String> response_standard = new HashMap<String, String>();
+	private Map<String, String> response_nonStandard = new HashMap<String, String>();
 	
 	HttpHeaderTypes() throws UtilsException{
 		

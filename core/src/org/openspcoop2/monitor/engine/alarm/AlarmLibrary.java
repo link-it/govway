@@ -22,8 +22,9 @@ package org.openspcoop2.monitor.engine.alarm;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.openspcoop2.core.allarmi.Allarme;
@@ -56,7 +57,7 @@ public class AlarmLibrary {
 	private AlarmEngineConfig alarmEngineConfig;
 	private DAOFactory daoFactory;
 	
-	private Hashtable<String, AlarmThread> activeThreads = null;
+	private Map<String, AlarmThread> activeThreads = null;
 	
 	public AlarmLibrary(DAOFactory daoFactory,Logger log,AlarmEngineConfig alarmEngineConfig) throws AlarmException{
 		try{
@@ -280,7 +281,7 @@ public class AlarmLibrary {
 	
 	/* Utiltiies interne */
 	
-	private Hashtable<String, AlarmThread> getActiveAlarmThreads(IAllarmeServiceSearch allarmeSearchDAO, Logger log) throws Exception{
+	private Map<String, AlarmThread> getActiveAlarmThreads(IAllarmeServiceSearch allarmeSearchDAO, Logger log) throws Exception{
 		
 		IExpression expr = allarmeSearchDAO.newExpression();
 		expr.and();
@@ -294,7 +295,7 @@ public class AlarmLibrary {
 				.toPaginatedExpression(expr);
 		
 		List<Allarme> list = allarmeSearchDAO.findAll(pagExpr);
-		Hashtable<String, AlarmThread> listAlarmThread = new Hashtable<String, AlarmThread>();
+		Map<String, AlarmThread> listAlarmThread = new ConcurrentHashMap<String, AlarmThread>();
 		
 		for (Allarme confAllarme : list) {
 			try {

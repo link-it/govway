@@ -132,13 +132,18 @@ public class FileSystemSerializer {
 		
 		SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter(formatNew);
 		
-		String nomeFile = prefix+"_"+dateformat.format(date)+"_"+IDUtilities.getUniqueSerialNumber()+".xml";
+		String nomeFile = prefix+"_"+dateformat.format(date)+"_"+IDUtilities.getUniqueSerialNumber("FileSystemSerializer")+".xml";
 		File f = new File(dir, nomeFile);
 		FileSystemUtilities.writeFile(f, oggettSerializzato);
 		
 	}
 	
-	private synchronized void mkdir(File dir) throws Exception{
+	private void mkdir(File dir) throws Exception{
+		if(dir.exists()==false){
+			_mkdir(dir);
+		}
+	}
+	private synchronized void _mkdir(File dir) throws Exception{
 		if(dir.exists()==false){
 			if(dir.mkdir()==false){
 				throw new Exception("Directory ["+this.directory.getAbsolutePath()+"] non esistente e creazione non riuscita");

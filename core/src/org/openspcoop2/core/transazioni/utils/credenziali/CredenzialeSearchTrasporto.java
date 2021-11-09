@@ -21,9 +21,8 @@
 package org.openspcoop2.core.transazioni.utils.credenziali;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
@@ -77,11 +76,8 @@ public class CredenzialeSearchTrasporto extends AbstractSearchCredenziale {
 			pagEpression.equals(CredenzialeMittente.model().TIPO, CredenzialeTrasporto.getTipoTrasporto(this.tipo, this.tipoAutenticazione));
 			
 			if(CredenzialeTrasporto.isSsl(this.tipoAutenticazione) && ricercaEsatta) {
-				Hashtable<String,  List<String>> hashSubject = CertificateUtils.getPrincipalIntoHashtable(credential, PrincipalType.subject);			
-				Enumeration<String> keys = hashSubject.keys();			
-				while(keys.hasMoreElements()){				
-					String key = keys.nextElement();
-					
+				Map<String,  List<String>> hashSubject = CertificateUtils.getPrincipalIntoMap(credential, PrincipalType.subject);
+				for (String key : hashSubject.keySet()) {
 					List<String> listValues = hashSubject.get(key);
 					for (String value : listValues) {
 						if(caseSensitive) {

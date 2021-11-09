@@ -23,8 +23,9 @@
 package org.openspcoop2.web.lib.queue.dao;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.Vector;
+import java.util.List;
 
 import org.openspcoop2.web.lib.queue.costanti.OperationStatus;
 
@@ -52,7 +53,7 @@ public class Operation {
 	private Date timeReq;
 	private Date timeExecute;
 	private boolean deleted;
-	private Vector<Operation> operazioniPrecedentiAncoraDaGestire = new Vector<Operation>();
+	private List<Operation> operazioniPrecedentiAncoraDaGestire = new ArrayList<Operation>();
 	
 	
 	
@@ -68,13 +69,13 @@ public class Operation {
 		return this.operazioniPrecedentiAncoraDaGestire.get(index);
 	}
 	
-	private Vector<Parameter> parameters = new Vector<Parameter>();
-	private java.util.Hashtable<String,String> parametersHash = new java.util.Hashtable<String,String>();
+	private List<Parameter> parameters = new ArrayList<Parameter>();
+	private java.util.Map<String,String> parametersHash = new java.util.HashMap<String,String>();
 	
 	public void addParameter(Parameter p){
 		this.parameters.add(p);
 		if(p.getValue()!=null){
-			if(this.parametersHash.contains(p.getName())){
+			if(this.parametersHash.containsKey(p.getName())){
 				String oldValue = this.parametersHash.get(p.getName());
 				this.parametersHash.put(p.getName(),oldValue+" "+p.getValue());
 			}else{

@@ -68,15 +68,26 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
 	private XacmlRequest xacmlRequest = null;
 	private String xacmlRequestAsString = null;
 	private String policyKey = null;
-	private synchronized XacmlRequest getXacmlRequest(DatiInvocazionePortaDelegata datiInvocazione, Logger log) throws AutorizzazioneException{
+	private org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("AbstractAutorizzazioneXacmlPolicyPD");
+	private XacmlRequest getXacmlRequest(DatiInvocazionePortaDelegata datiInvocazione, Logger log) throws AutorizzazioneException{
 		if(this.xacmlRequest==null){
-	    	this.policyKey = "http://govway.org/out/"+datiInvocazione.getIdPD().getNome();
-			this.xacmlRequest = XACMLPolicyUtilities.newXacmlRequest(this.getProtocolFactory(), datiInvocazione, 
-	    			this.checkRuoloRegistro, this.checkRuoloEsterno, this.policyKey);
-			this.xacmlRequestAsString = new String(MarshallUtilities.marshallRequest(this.xacmlRequest));
-			this.log.debug("XACML-Request (idPolicy:"+this.policyKey+"): "+this.xacmlRequestAsString);
+			initXacmlRequest(datiInvocazione, log);
 		}
 		return this.xacmlRequest;
+	}
+	private void initXacmlRequest(DatiInvocazionePortaDelegata datiInvocazione, Logger log) throws AutorizzazioneException{
+		this.semaphore.acquireThrowRuntime("initXacmlRequest");
+		try {
+			if(this.xacmlRequest==null){
+		    	this.policyKey = "http://govway.org/out/"+datiInvocazione.getIdPD().getNome();
+				this.xacmlRequest = XACMLPolicyUtilities.newXacmlRequest(this.getProtocolFactory(), datiInvocazione, 
+		    			this.checkRuoloRegistro, this.checkRuoloEsterno, this.policyKey);
+				this.xacmlRequestAsString = new String(MarshallUtilities.marshallRequest(this.xacmlRequest));
+				this.log.debug("XACML-Request (idPolicy:"+this.policyKey+"): "+this.xacmlRequestAsString);
+			}
+		}finally {
+			this.semaphore.release("initXacmlRequest");
+		}
 	}
 	
 	@Override

@@ -25,7 +25,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -1162,9 +1161,9 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     }
     
     protected Map<String, Object> dynamicMap = null;
-    protected synchronized Map<String, Object> buildDynamicMap(ConnettoreMsg connettoreMsg){
+    protected Map<String, Object> buildDynamicMap(ConnettoreMsg connettoreMsg){
     	if(this.dynamicMap==null) {
-    		this.dynamicMap = new Hashtable<String, Object>();
+    		this.dynamicMap = new HashMap<String, Object>();
     	}
     	DynamicInfo dInfo = new DynamicInfo(connettoreMsg, this.getPddContext());
     	Logger log = null;

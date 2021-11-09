@@ -24,7 +24,8 @@ package org.openspcoop2.protocol.sdk.tracciamento;
 
 import java.io.Serializable;
 import java.text.MessageFormat;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
@@ -53,10 +54,10 @@ public class InformazioniProtocollo implements Serializable{
 	protected String profiloCollaborazioneProtocollo;
 	protected ProfiloDiCollaborazione profiloCollaborazioneEngine;
 	
-	protected Hashtable<String, String> proprietaProtocollo;
+	protected Map<String, String> proprietaProtocollo;
     
 	public InformazioniProtocollo() {
-		this.proprietaProtocollo = new Hashtable<String, String>();
+		this.proprietaProtocollo = new HashMap<String, String>();
 	}
     
 
@@ -112,7 +113,7 @@ public class InformazioniProtocollo implements Serializable{
 	}
 	
 	
-	public Hashtable<String, String> getProprietaProtocollo() {
+	public Map<String, String> getProprietaProtocollo() {
 		return this.proprietaProtocollo;
 	}
 	public void addProprietaProtocollo(String key,String value){
@@ -133,7 +134,7 @@ public class InformazioniProtocollo implements Serializable{
 	public String[] getProprietaProtocolloNames() {
 		return this.proprietaProtocollo.keySet().toArray(new String[this.proprietaProtocollo.size()]);
 	}
-	public void setProprietaProtocollo(Hashtable<String, String> params) {
+	public void setProprietaProtocollo(Map<String, String> params) {
 		this.proprietaProtocollo = params;
 	}
 	

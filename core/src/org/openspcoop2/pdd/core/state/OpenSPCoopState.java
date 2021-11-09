@@ -21,9 +21,8 @@
 package org.openspcoop2.pdd.core.state;
 
 import java.sql.Connection;
-import java.util.Enumeration;
+import java.util.List;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.Resource;
@@ -33,6 +32,7 @@ import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.sdk.state.StatelessMessage;
 import org.openspcoop2.utils.UtilsException;
+import org.slf4j.Logger;
 
 /**
  * Oggetto che rappresenta lo stato di una richiesta/risposta all'interno della PdD
@@ -197,10 +197,11 @@ public abstract class OpenSPCoopState implements IOpenSPCoopState {
 			try{
 				if(this.richiestaStato!=null && this.richiestaStato.getPreparedStatement()!=null){
 					if(this.richiestaStato.getPreparedStatement().size()>0){
-						Enumeration<String> en = this.richiestaStato.getPreparedStatement().keys();
-						while(en.hasMoreElements()){
-							String key = en.nextElement();
-							this.logger.error("PREPARED STATEMENT NON CHIUSA (RICHIESTA): "+key);
+						List<String> l = this.richiestaStato.getPreparedStatement().keys();
+						if(l!=null && !l.isEmpty()) {
+							for (String key : l) {
+								this.logger.error("PREPARED STATEMENT NON CHIUSA (RICHIESTA): "+key);
+							}
 						}
 						this.richiestaStato.closePreparedStatement();
 					}
@@ -211,10 +212,11 @@ public abstract class OpenSPCoopState implements IOpenSPCoopState {
 			try{
 				if(this.rispostaStato!=null && this.rispostaStato.getPreparedStatement()!=null){
 					if(this.rispostaStato.getPreparedStatement().size()>0){
-						Enumeration<String> en = this.rispostaStato.getPreparedStatement().keys();
-						while(en.hasMoreElements()){
-							String key = en.nextElement();
-							this.logger.error("PREPARED STATEMENT NON CHIUSA (RISPOSTA): "+key);
+						List<String> l = this.rispostaStato.getPreparedStatement().keys();
+						if(l!=null && !l.isEmpty()) {
+							for (String key : l) {
+								this.logger.error("PREPARED STATEMENT NON CHIUSA (RISPOSTA): "+key);
+							}
 						}
 						this.rispostaStato.closePreparedStatement();
 					}

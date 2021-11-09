@@ -32,8 +32,8 @@ public class XSDCheck {
 	public static javax.xml.validation.Schema schemaConfigurazione;
 	public static javax.xml.validation.Schema schemaRegistro;
 
-	public static java.util.Vector<String> fileNonValidi = new java.util.Vector<String>();
-	public static java.util.Vector<String> dichiarazioneAssente = new java.util.Vector<String>();
+	public static java.util.List<String> fileNonValidi = new java.util.ArrayList<String>();
+	public static java.util.List<String> dichiarazioneAssente = new java.util.ArrayList<String>();
 
 	// codice di uscita:
 	// -1 invocazione non valida

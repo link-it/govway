@@ -24,9 +24,10 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.generic_project.beans.Function;
 import org.openspcoop2.generic_project.beans.FunctionField;
@@ -1920,7 +1921,7 @@ public class ClientTest {
 		expr = expr.equals(Author.model().NAME, "Frederick");
 		System.out.println("- test 3: "+ClientTest.toString(expr));
 		
-		Hashtable<IField, Object> objects = new Hashtable<IField, Object>();
+		Map<IField, Object> objects = new HashMap<IField, Object>();
 		objects.put(Author.model().AGE, author.getAge());
 		objects.put(Author.model().WEIGHT, author.getWeight());
 		objects.put(Author.model().BANK_ACCOUNT,author.getBankAccount());
@@ -1959,7 +1960,7 @@ public class ClientTest {
 		expr = expr.notEquals(Author.model().NAME, "Frederick");
 		System.out.println("- test 3: "+ClientTest.toString(expr));
 		
-		Hashtable<IField, Object> objects = new Hashtable<IField, Object>();
+		Map<IField, Object> objects = new HashMap<IField, Object>();
 		objects.put(Author.model().AGE, author.getAge());
 		objects.put(Author.model().WEIGHT, author.getWeight());
 		objects.put(Author.model().BANK_ACCOUNT,author.getBankAccount());

@@ -20,13 +20,11 @@
 package org.openspcoop2.pdd.core.controllo_traffico.policy.driver;
 
 import java.io.Serializable;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
-import org.slf4j.Logger;
-import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupBy;
@@ -36,6 +34,8 @@ import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThread
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.UtilsException;
+import org.slf4j.Logger;
 
 /**     
  * PolicyGroupByActiveThreads
@@ -51,7 +51,7 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private Hashtable<IDUnivocoGroupByPolicy, DatiCollezionati> mapActiveThreads = new Hashtable<IDUnivocoGroupByPolicy, DatiCollezionati>();
+	private Map<IDUnivocoGroupByPolicy, DatiCollezionati> mapActiveThreads = new HashMap<IDUnivocoGroupByPolicy, DatiCollezionati>();
 	
 	//private final Boolean semaphore = Boolean.valueOf(false);
 	private final org.openspcoop2.utils.Semaphore lock = new org.openspcoop2.utils.Semaphore("PolicyGroupByActiveThreads");
@@ -66,14 +66,14 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 	public ActivePolicy getActivePolicy() {
 		return this.activePolicy;
 	}
-	public Hashtable<IDUnivocoGroupByPolicy, DatiCollezionati> getMapActiveThreads(){
+	public Map<IDUnivocoGroupByPolicy, DatiCollezionati> getMapActiveThreads(){
 		return this.mapActiveThreads;
 	}
 	
 	public void resetCounters(){
 		//synchronized (this.semaphore) {
+		this.lock.acquireThrowRuntime("resetCounters");
 		try {
-			this.lock.acquireThrowRuntime("resetCounters");
 			if(this.mapActiveThreads.size()>0){
 				Iterator<DatiCollezionati> datiCollezionati = this.mapActiveThreads.values().iterator();
 				while (datiCollezionati.hasNext()) {
@@ -92,8 +92,8 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 		DatiCollezionati datiCollezionatiReaded = null;
 		//System.out.println("<"+idTransazione+">registerStartRequest ...");
 		//synchronized (this.semaphore) {
+		this.lock.acquireThrowRuntime("registerStartRequest", idTransazione);
 		try {
-			this.lock.acquireThrowRuntime("registerStartRequest", idTransazione);
 			//System.out.println("<"+idTransazione+">registerStartRequest entrato");
 			
 			DatiCollezionati datiCollezionati = null;
@@ -136,8 +136,8 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 		DatiCollezionati datiCollezionatiReaded = null;
 		//System.out.println("<"+idTransazione+">updateDatiStartRequestApplicabile ...");
 		//synchronized (this.semaphore) {
+		this.lock.acquireThrowRuntime("updateDatiStartRequestApplicabile", idTransazione);
 		try {
-			this.lock.acquireThrowRuntime("updateDatiStartRequestApplicabile", idTransazione);
 			//System.out.println("<"+idTransazione+">updateDatiStartRequestApplicabile entrato");
 			
 			DatiCollezionati datiCollezionati = null;
@@ -176,8 +176,8 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 	public void registerStopRequest(Logger log, String idTransazione,IDUnivocoGroupByPolicy datiGroupBy, MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata) throws PolicyException,PolicyNotFoundException{
 		//System.out.println("<"+idTransazione+">registerStopRequest ...");
 		//synchronized (this.semaphore) {
+		this.lock.acquireThrowRuntime("registerStopRequest", idTransazione);
 		try {
-			this.lock.acquireThrowRuntime("registerStopRequest", idTransazione);
 			//System.out.println("<"+idTransazione+">registerStopRequest entro");
 			
 			if(this.mapActiveThreads.containsKey(datiGroupBy)==false){
@@ -221,24 +221,23 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 	public Long getActiveThreads(IDUnivocoGroupByPolicy filtro){
 		
 		//synchronized (this.semaphore) {
+		this.lock.acquireThrowRuntime("getActiveThreads");
 		try {
-			this.lock.acquireThrowRuntime("getActiveThreads");
-		
+			
 			Long counter = 0l;
 			
-			Enumeration<IDUnivocoGroupByPolicy> ids =this.mapActiveThreads.keys();
-			while (ids.hasMoreElements()) {
-				IDUnivocoGroupByPolicy datiGroupBy = 
-						(IDUnivocoGroupByPolicy) ids.nextElement();
-				
-				if(filtro!=null){
-					IDUnivocoGroupBy<IDUnivocoGroupByPolicy> idAstype = (IDUnivocoGroupBy<IDUnivocoGroupByPolicy>) datiGroupBy;
-					if(!idAstype.match(filtro)){
-						continue;
+			if(this.mapActiveThreads!=null && !this.mapActiveThreads.isEmpty()) {
+				for (IDUnivocoGroupByPolicy datiGroupBy : this.mapActiveThreads.keySet()) {
+					
+					if(filtro!=null){
+						IDUnivocoGroupBy<IDUnivocoGroupByPolicy> idAstype = (IDUnivocoGroupBy<IDUnivocoGroupByPolicy>) datiGroupBy;
+						if(!idAstype.match(filtro)){
+							continue;
+						}
 					}
+					
+					counter = counter + this.mapActiveThreads.get(datiGroupBy).getActiveRequestCounter();
 				}
-				
-				counter = counter + this.mapActiveThreads.get(datiGroupBy).getActiveRequestCounter();
 			}
 			
 			return counter;
@@ -249,21 +248,20 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 	
 	public String printInfos(Logger log, String separatorGroups) throws UtilsException{
 		//synchronized (this.semaphore) {
+		this.lock.acquireThrowRuntime("printInfos");
 		try {
-			this.lock.acquireThrowRuntime("printInfos");
 			StringBuilder bf = new StringBuilder();
-			Enumeration<IDUnivocoGroupByPolicy> ids =this.mapActiveThreads.keys();
-			while (ids.hasMoreElements()) {
-				IDUnivocoGroupByPolicy datiGroupBy = 
-						(IDUnivocoGroupByPolicy) ids.nextElement();
-				bf.append(separatorGroups);
-				bf.append("\n");
-				bf.append("Criterio di Collezionamento dei Dati\n");
-				bf.append(datiGroupBy.toString(true));
-				bf.append("\n");
-				this.mapActiveThreads.get(datiGroupBy).checkDate(log, this.activePolicy); // imposta correttamente gli intervalli
-				bf.append(this.mapActiveThreads.get(datiGroupBy).toString());
-				bf.append("\n");
+			if(this.mapActiveThreads!=null && !this.mapActiveThreads.isEmpty()) {
+				for (IDUnivocoGroupByPolicy datiGroupBy : this.mapActiveThreads.keySet()) {
+					bf.append(separatorGroups);
+					bf.append("\n");
+					bf.append("Criterio di Collezionamento dei Dati\n");
+					bf.append(datiGroupBy.toString(true));
+					bf.append("\n");
+					this.mapActiveThreads.get(datiGroupBy).checkDate(log, this.activePolicy); // imposta correttamente gli intervalli
+					bf.append(this.mapActiveThreads.get(datiGroupBy).toString());
+					bf.append("\n");
+				}
 			}
 			if(bf.length()<=0){
 				bf.append("Nessuna informazione disponibile");

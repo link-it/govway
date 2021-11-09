@@ -20,8 +20,9 @@
 package org.openspcoop2.utils.io.notifier;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.openspcoop2.utils.UtilsException;
@@ -40,7 +41,7 @@ import org.openspcoop2.utils.io.notifier.unblocked.PipedInputOutputStreamHandler
 public class NotifierInputStreamParams {
 
 	private boolean bufferEnabled = false;
-	private Hashtable<String,StreamingHandler> streamingHandlers = new Hashtable<String, StreamingHandler>();
+	private Map<String,StreamingHandler> streamingHandlers = new HashMap<String, StreamingHandler>();
 	private List<String> streamingHandlersIds = new ArrayList<String>(); // Per preservare l'ordine di inserimento
 	private boolean throwStreamingHandlerException = true;
 	private Logger log = null;
@@ -111,11 +112,11 @@ public class NotifierInputStreamParams {
 	public int sizeStreamingHandlers(){
 		return this.streamingHandlers.size();
 	}
-	public Hashtable<String, StreamingHandler> getStreamingHandlers() {
+	public Map<String, StreamingHandler> getStreamingHandlers() {
 		return this.streamingHandlers;
 	}
 	public void setStreamingHandlers(
-			Hashtable<String, StreamingHandler> streamingHandlers) {
+			Map<String, StreamingHandler> streamingHandlers) {
 		this.streamingHandlers = streamingHandlers;
 	}
 	

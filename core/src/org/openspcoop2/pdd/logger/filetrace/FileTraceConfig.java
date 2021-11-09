@@ -49,30 +49,45 @@ import org.openspcoop2.utils.properties.PropertiesReader;
 public class FileTraceConfig {
 	
 	private static HashMap<String, FileTraceConfig> staticInstanceMap = new HashMap<String, FileTraceConfig>();
+	private static final org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("FileTraceConfig");
 
 	protected static void init(InputStream is, String fileNamePath, boolean globale) throws CoreException {
-		synchronized(staticInstanceMap) {
+		//synchronized(staticInstanceMap) {
+		semaphore.acquireThrowRuntime("init_InputStream");
+		try {
 			if(!staticInstanceMap.containsKey(fileNamePath)){
 				FileTraceConfig instance = new FileTraceConfig(is, globale);
 				staticInstanceMap.put(fileNamePath, instance);
 			}
+		}finally {
+			semaphore.release("init_InputStream");
 		}
 	}
 	public static void init(File file, boolean globale) throws CoreException {
-		synchronized(staticInstanceMap) {
+		//synchronized(staticInstanceMap) {
+		semaphore.acquireThrowRuntime("init_File");
+		try {
 			if(!staticInstanceMap.containsKey(file.getAbsolutePath())){
 				FileTraceConfig instance = new FileTraceConfig(file, globale);
 				staticInstanceMap.put(file.getAbsolutePath(), instance);
 			}
+		}finally {
+			semaphore.release("init_File");
 		}
 	}
 	public static void update(File file, boolean globale) throws CoreException {
-		synchronized(staticInstanceMap) {
+		//synchronized(staticInstanceMap) {
+		semaphore.acquireThrowRuntime("update");
+		try {
 			_updateWithoutSynchronized(file, globale);
+		}finally {
+			semaphore.release("update_File");
 		}
 	}
 	public static void resetFileTraceAssociatePorte() throws CoreException {
-		synchronized(staticInstanceMap) {		
+		//synchronized(staticInstanceMap) {
+		semaphore.acquireThrowRuntime("resetFileTraceAssociatePorte");
+		try {
 			if(!staticInstanceMap.isEmpty()) {
 				List<String> removeEntries = new ArrayList<String>();
 				for (String path : staticInstanceMap.keySet()) {
@@ -88,6 +103,8 @@ public class FileTraceConfig {
 					staticInstanceMap.remove(path);
 				}
 			}
+		}finally {
+			semaphore.release("resetFileTraceAssociatePorte");
 		}
 	}
 	private static void _updateWithoutSynchronized(File file, boolean globale) throws CoreException {

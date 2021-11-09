@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.openspcoop2.protocol.basic.BasicStaticInstanceConfig;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.Loader;
@@ -196,6 +197,11 @@ public class SDIProperties {
 			
 			this.isPortaApplicativaBustaErrore_personalizzaElementiFault();
 			this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo();
+			
+			this.useConfigStaticInstance();
+			this.useErroreApplicativoStaticInstance();
+			this.useEsitoStaticInstance();
+			this.getStaticInstanceConfig();
 			
 		}catch(java.lang.Exception e) {
 			String msg = "Riscontrato errore durante la validazione della proprieta' del protocollo sdi, "+e.getMessage();
@@ -1759,4 +1765,104 @@ public class SDIProperties {
     	
     	return SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD;
 	}
+    
+    
+	private static Boolean useConfigStaticInstance = null;
+	private Boolean useConfigStaticInstance(){
+		if(SDIProperties.useConfigStaticInstance==null){
+			
+			Boolean defaultValue = true;
+			String propertyName = "org.openspcoop2.protocol.sdi.factory.config.staticInstance";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					SDIProperties.useConfigStaticInstance = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
+					SDIProperties.useConfigStaticInstance = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
+				SDIProperties.useConfigStaticInstance = defaultValue;
+			}
+		}
+
+		return SDIProperties.useConfigStaticInstance;
+	}
+	
+	private static Boolean useErroreApplicativoStaticInstance = null;
+	private Boolean useErroreApplicativoStaticInstance(){
+		if(SDIProperties.useErroreApplicativoStaticInstance==null){
+			
+			Boolean defaultValue = true;
+			String propertyName = "org.openspcoop2.protocol.sdi.factory.erroreApplicativo.staticInstance";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					SDIProperties.useErroreApplicativoStaticInstance = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
+					SDIProperties.useErroreApplicativoStaticInstance = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
+				SDIProperties.useErroreApplicativoStaticInstance = defaultValue;
+			}
+		}
+
+		return SDIProperties.useErroreApplicativoStaticInstance;
+	}
+	
+	private static Boolean useEsitoStaticInstance = null;
+	private Boolean useEsitoStaticInstance(){
+		if(SDIProperties.useEsitoStaticInstance==null){
+			
+			Boolean defaultValue = true;
+			String propertyName = "org.openspcoop2.protocol.sdi.factory.esito.staticInstance";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					SDIProperties.useEsitoStaticInstance = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
+					SDIProperties.useEsitoStaticInstance = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
+				SDIProperties.useEsitoStaticInstance = defaultValue;
+			}
+		}
+
+		return SDIProperties.useEsitoStaticInstance;
+	}
+	
+	private static BasicStaticInstanceConfig staticInstanceConfig = null;
+	public BasicStaticInstanceConfig getStaticInstanceConfig(){
+		if(SDIProperties.staticInstanceConfig==null){
+			staticInstanceConfig = new BasicStaticInstanceConfig();
+			if(useConfigStaticInstance()!=null) {
+				staticInstanceConfig.setStaticConfig(useConfigStaticInstance());
+			}
+			if(useErroreApplicativoStaticInstance()!=null) {
+				staticInstanceConfig.setStaticErrorBuilder(useErroreApplicativoStaticInstance());
+			}
+			if(useEsitoStaticInstance()!=null) {
+				staticInstanceConfig.setStaticEsitoBuilder(useEsitoStaticInstance());
+			}
+		}
+		return staticInstanceConfig;
+	}
+    
 }

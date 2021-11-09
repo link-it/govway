@@ -27,7 +27,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -457,7 +456,7 @@ public class DynamicUtils {
 		Map<String, List<String>> parametriUrl = dInfo.getParameters();
 		Map<String, List<String>> parametriForm = dInfo.getFormParameters();
 		String urlInvocazione = dInfo.getUrl();
-		Map<String, Object> dynamicMap = new Hashtable<String, Object>();
+		Map<String, Object> dynamicMap = new HashMap<String, Object>();
 		ErrorHandler errorHandler = new ErrorHandler();
 		
 		if(dynamicMapRequest!=null) {

@@ -5737,11 +5737,12 @@ public class RicezioneContenutiApplicativi {
 					// aggiorno pddContext
 					pddContext = ricezioneContenutiApplicativiMSG.getPddContext();
 					if(pddContext!=null){
-						Enumeration<String> enumPddContext = pddContext.keys();
-						while (enumPddContext.hasMoreElements()) {
-							String key = enumPddContext.nextElement();
-							//System.out.println("AGGIORNO KEY CONTENTUI ["+key+"]");
-							this.msgContext.getPddContext().addObject(key, pddContext.getObject(key));
+						List<String> enumPddContext = pddContext.keys();
+						if(enumPddContext!=null && !enumPddContext.isEmpty()) {
+							for (String key : enumPddContext) {
+								//System.out.println("AGGIORNO KEY CONTENTUI ["+key+"]");
+								this.msgContext.getPddContext().addObject(key, pddContext.getObject(key));
+							}
 						}
 					}
 					

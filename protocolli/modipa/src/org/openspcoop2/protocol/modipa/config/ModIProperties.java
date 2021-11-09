@@ -26,6 +26,7 @@ import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.pdd.core.token.parser.Claims;
+import org.openspcoop2.protocol.basic.BasicStaticInstanceConfig;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -308,6 +309,14 @@ public class ModIProperties {
 			
 			this.isPortaApplicativaBustaErrore_personalizzaElementiFault();
 			this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo();
+			
+			/* **** Static instance config **** */
+			
+			this.useConfigStaticInstance();
+			this.useErroreApplicativoStaticInstance();
+			this.useEsitoStaticInstance();
+			this.getStaticInstanceConfig();
+
 			
 		}catch(java.lang.Exception e) {
 			String msg = "Riscontrato errore durante la validazione della proprieta' del protocollo modipa, "+e.getMessage();
@@ -3424,5 +3433,103 @@ public class ModIProperties {
 	}
 
     
+    /* **** Static instance config **** */
     
+	private static Boolean useConfigStaticInstance = null;
+	private Boolean useConfigStaticInstance(){
+		if(ModIProperties.useConfigStaticInstance==null){
+			
+			Boolean defaultValue = true;
+			String propertyName = "org.openspcoop2.protocol.modipa.factory.config.staticInstance";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					ModIProperties.useConfigStaticInstance = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
+					ModIProperties.useConfigStaticInstance = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
+				ModIProperties.useConfigStaticInstance = defaultValue;
+			}
+		}
+
+		return ModIProperties.useConfigStaticInstance;
+	}
+	
+	private static Boolean useErroreApplicativoStaticInstance = null;
+	private Boolean useErroreApplicativoStaticInstance(){
+		if(ModIProperties.useErroreApplicativoStaticInstance==null){
+			
+			Boolean defaultValue = true;
+			String propertyName = "org.openspcoop2.protocol.modipa.factory.erroreApplicativo.staticInstance";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					ModIProperties.useErroreApplicativoStaticInstance = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
+					ModIProperties.useErroreApplicativoStaticInstance = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
+				ModIProperties.useErroreApplicativoStaticInstance = defaultValue;
+			}
+		}
+
+		return ModIProperties.useErroreApplicativoStaticInstance;
+	}
+	
+	private static Boolean useEsitoStaticInstance = null;
+	private Boolean useEsitoStaticInstance(){
+		if(ModIProperties.useEsitoStaticInstance==null){
+			
+			Boolean defaultValue = true;
+			String propertyName = "org.openspcoop2.protocol.modipa.factory.esito.staticInstance";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					ModIProperties.useEsitoStaticInstance = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
+					ModIProperties.useEsitoStaticInstance = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
+				ModIProperties.useEsitoStaticInstance = defaultValue;
+			}
+		}
+
+		return ModIProperties.useEsitoStaticInstance;
+	}
+	
+	private static BasicStaticInstanceConfig staticInstanceConfig = null;
+	public BasicStaticInstanceConfig getStaticInstanceConfig(){
+		if(ModIProperties.staticInstanceConfig==null){
+			staticInstanceConfig = new BasicStaticInstanceConfig();
+			if(useConfigStaticInstance()!=null) {
+				staticInstanceConfig.setStaticConfig(useConfigStaticInstance());
+			}
+			if(useErroreApplicativoStaticInstance()!=null) {
+				staticInstanceConfig.setStaticErrorBuilder(useErroreApplicativoStaticInstance());
+			}
+			if(useEsitoStaticInstance()!=null) {
+				staticInstanceConfig.setStaticEsitoBuilder(useEsitoStaticInstance());
+			}
+		}
+		return staticInstanceConfig;
+	}
 }

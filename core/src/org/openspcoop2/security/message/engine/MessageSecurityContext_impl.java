@@ -22,7 +22,7 @@
 
 package org.openspcoop2.security.message.engine;
 
-import java.util.Hashtable;
+import java.util.Map;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageRole;
@@ -48,7 +48,7 @@ public class MessageSecurityContext_impl extends MessageSecurityContext{
 	
 	/** MessageSecurity Process */
 	@Override
-	public boolean processIncoming(OpenSPCoop2Message message, Busta busta, Hashtable<String, Object> ctx){
+	public boolean processIncoming(OpenSPCoop2Message message, Busta busta, Map<String, Object> ctx){
 		
 		this.receiver = new MessageSecurityReceiver_impl(this);
 		
@@ -72,7 +72,7 @@ public class MessageSecurityContext_impl extends MessageSecurityContext{
 	}
 	
 	@Override
-	public boolean processOutgoing(OpenSPCoop2Message message, Hashtable<String, Object> ctx){
+	public boolean processOutgoing(OpenSPCoop2Message message, Map<String, Object> ctx){
 		
 		this.sender = new MessageSecuritySender_impl(this);
 		

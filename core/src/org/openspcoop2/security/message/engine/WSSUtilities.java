@@ -20,8 +20,8 @@
 
 package org.openspcoop2.security.message.engine;
 
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.Costanti;
@@ -107,7 +107,7 @@ public class WSSUtilities {
 	}
 	
 	public static boolean isNormalizeToSaajImpl(MessageSecurityContext wssContext){
-		Hashtable<?,?> wssProperties = null;
+		Map<String,Object> wssProperties = null;
 		if(wssContext.isFunctionAsClient())
 			wssProperties = wssContext.getOutgoingProperties();
 		else

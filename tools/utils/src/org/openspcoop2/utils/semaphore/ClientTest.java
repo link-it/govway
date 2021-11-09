@@ -28,8 +28,9 @@ import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -566,7 +567,7 @@ public class ClientTest {
 
 		
 		ExecutorService threadsPool = Executors.newFixedThreadPool(conThreads.size());
-		Hashtable<String, ClientTestThread> threads = new Hashtable<String, ClientTestThread>();
+		Map<String, ClientTestThread> threads = new HashMap<String, ClientTestThread>();
 		
 		boolean error = false;
 		try {

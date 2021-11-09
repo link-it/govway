@@ -20,8 +20,7 @@
 
 package org.openspcoop2.security.message.saml;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.Map;
 import java.util.Properties;
 
 import org.joda.time.DateTime;
@@ -54,13 +53,12 @@ public class SAMLUtilities {
 		return dateTimeRes;
 	}
 
-	public static void injectSignaturePropRefIdIntoSamlConfig(Hashtable<String,Object> wssProperties) throws Exception {
+	public static void injectSignaturePropRefIdIntoSamlConfig(Map<String,Object> wssProperties) throws Exception {
 		
 		if (wssProperties != null && wssProperties.size() > 0) {
 			
 			// preprocess per saml
-			for (Enumeration<?> e = wssProperties.keys(); e.hasMoreElements();) {
-				String key = (String) e.nextElement();
+			for (String key : wssProperties.keySet()) {
 				Object oValue = wssProperties.get(key);
 				String value = null;
 				if(oValue!=null && oValue instanceof String) {

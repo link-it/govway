@@ -21,8 +21,10 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 
@@ -36,8 +38,8 @@ import java.util.Hashtable;
  */
 public class RepositoryConnettori {
 
-	private static Hashtable<String, IConnettore> connettori_pd = new Hashtable<String, IConnettore>();
-	private static Hashtable<String, IConnettore> connettori_pa = new Hashtable<String, IConnettore>();
+	private static Map<String, IConnettore> connettori_pd = new ConcurrentHashMap<String, IConnettore>();
+	private static Map<String, IConnettore> connettori_pa = new ConcurrentHashMap<String, IConnettore>();
 	
 	
 	public static void salvaConnettorePD(String id,IConnettore connettore){
@@ -61,17 +63,25 @@ public class RepositoryConnettori {
 		return RepositoryConnettori.connettori_pa.remove(id);
 	}
 	
-	public static Hashtable<String, IConnettore> getConnettori_pd() {
+	public static Map<String, IConnettore> getConnettori_pd() {
 		return RepositoryConnettori.connettori_pd;
 	}
-	public static Hashtable<String, IConnettore> getConnettori_pa() {
+	public static Map<String, IConnettore> getConnettori_pa() {
 		return RepositoryConnettori.connettori_pa;
 	}
 	
-	public static Enumeration<String> getIdentificatoriConnettori_pd() {
-		return RepositoryConnettori.connettori_pd.keys();
+	public static List<String> getIdentificatoriConnettori_pd() {
+		List<String> l = new ArrayList<String>();
+		if(RepositoryConnettori.connettori_pd!=null && !RepositoryConnettori.connettori_pd.isEmpty()) {
+			l.addAll(RepositoryConnettori.connettori_pd.keySet());
+		}
+		return l;
 	}
-	public static Enumeration<String> getIdentificatoriConnettori_pa() {
-		return RepositoryConnettori.connettori_pa.keys();
+	public static List<String> getIdentificatoriConnettori_pa() {
+		List<String> l = new ArrayList<String>();
+		if(RepositoryConnettori.connettori_pa!=null && !RepositoryConnettori.connettori_pa.isEmpty()) {
+			l.addAll(RepositoryConnettori.connettori_pa.keySet());
+		}
+		return l;
 	}
 }

@@ -373,10 +373,10 @@ public class GestoreCacheControlloTraffico {
 			}
 			
 			//synchronized (semaphoreNumeroRichieste) {
-    		try {
-    			lockNumeroRichieste.acquire("readNumeroRichiesteInCache",
-    					datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
-				
+    		lockNumeroRichieste.acquire("readNumeroRichiesteInCache",
+					datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
+			try {
+    			
 				// se e' attiva una cache provo ad utilizzarla
 				if(cache!=null){
 					org.openspcoop2.utils.cache.CacheResponse response = 
@@ -517,10 +517,10 @@ public class GestoreCacheControlloTraffico {
 			}
 			
 			//synchronized (semaphoreOccupazioneBanda) {
+			lockOccupazioneBanda.acquire("readOccupazioneBandaInCache",
+					datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
 			try {
-    			lockOccupazioneBanda.acquire("readOccupazioneBandaInCache",
-    					datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
-				
+    			
 				// se e' attiva una cache provo ad utilizzarla
 				if(cache!=null){
 					org.openspcoop2.utils.cache.CacheResponse response = 
@@ -663,9 +663,9 @@ public class GestoreCacheControlloTraffico {
 			}
 			
 			//synchronized (semaphoreLatenza) {
+			lockLatenza.acquire("readLatenzaInCache",
+					datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
 			try {
-				lockLatenza.acquire("readLatenzaInCache",
-						datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
 				
 				// se e' attiva una cache provo ad utilizzarla
 				if(cache!=null){
@@ -785,9 +785,9 @@ public class GestoreCacheControlloTraffico {
 			}
 			
 			//synchronized (semaphoreStato) {
+			lockStato.acquire("getStatoInCache",
+					datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
 			try {
-				lockStato.acquire("getStatoInCache",
-						datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
 				
 				// se e' attiva una cache provo ad utilizzarla
 				if(cache!=null){

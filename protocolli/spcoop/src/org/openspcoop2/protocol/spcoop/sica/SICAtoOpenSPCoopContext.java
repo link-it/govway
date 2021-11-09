@@ -21,8 +21,8 @@
 
 package org.openspcoop2.protocol.spcoop.sica;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -218,16 +218,16 @@ public class SICAtoOpenSPCoopContext {
 	private boolean SICAClientCompatibility = false;
 	
 	/** Lista di proprieta' sopra definite, separate da virgola, che si vogliono utilizzare come abilitate per creare package compatibili per il ClientSICA */
-	private Hashtable<String, Boolean> SICAClientEnabledOptions = new Hashtable<String, Boolean>();
+	private Map<String, Boolean> SICAClientEnabledOptions = new HashMap<String, Boolean>();
 	
 	/** Lista di proprieta' sopra definite, separate da virgola, che si vogliono utilizzare come disabilitate per creare package compatibili per il ClientSICA */
-	private Hashtable<String, Boolean> SICAClientDisabledOptions = new Hashtable<String, Boolean>();
+	private Map<String, Boolean> SICAClientDisabledOptions = new HashMap<String, Boolean>();
 	
 	
 	
 	
 	// --------- Array list contenente il mapping fra Soggetti e CodiciIPA
-	private Hashtable<String, String> mappingSoggettoSPCoopToCodiceIPA = new Hashtable<String, String>();
+	private Map<String, String> mappingSoggettoSPCoopToCodiceIPA = new HashMap<String, String>();
 	
 	public void addMappingSoggettoSPCoopToCodiceIPA(IDSoggetto idSoggettoSPCoop,String codiceIPA){
 		if(codiceIPA==null || idSoggettoSPCoop==null || idSoggettoSPCoop.toString() ==null)
@@ -245,10 +245,8 @@ public class SICAtoOpenSPCoopContext {
 	}
 	
 	public IDSoggetto getIDSoggetto(String codiceIPA){
-		if(this.mappingSoggettoSPCoopToCodiceIPA.contains(codiceIPA)){
-			Enumeration<String> keys = this.mappingSoggettoSPCoopToCodiceIPA.keys();
-			while(keys.hasMoreElements()){
-				String key = keys.nextElement();
+		if(this.mappingSoggettoSPCoopToCodiceIPA.containsValue(codiceIPA)){
+			for (String key : this.mappingSoggettoSPCoopToCodiceIPA.keySet()) {
 				String value = this.mappingSoggettoSPCoopToCodiceIPA.get(key);
 				if(value.equals(codiceIPA)){
 					String [] split = key.split("/");
@@ -263,7 +261,7 @@ public class SICAtoOpenSPCoopContext {
 	
 	
 	// --------- Array list contenente il mapping fra uri AccordiServizioParteSpecifica e IDServizio OpenSPCoop
-	private Hashtable<String,String> mappingServizioSPCoopToUriAPS = new Hashtable<String,String>();
+	private Map<String,String> mappingServizioSPCoopToUriAPS = new HashMap<String,String>();
 	
 	public void addMappingServizioToUriAPS(IRegistryReader registryReader,IDServizio idServizioSPCoop) throws SICAToOpenSPCoopUtilitiesException{
 		if(idServizioSPCoop==null || 
@@ -290,10 +288,8 @@ public class SICAtoOpenSPCoopContext {
 	}
 	
 	public IDServizio getIDServizio(String uriAPS){
-		if(this.mappingServizioSPCoopToUriAPS.contains(uriAPS)){
-			Enumeration<String> keys = this.mappingServizioSPCoopToUriAPS.keys();
-			while(keys.hasMoreElements()){
-				String key = keys.nextElement();
+		if(this.mappingServizioSPCoopToUriAPS.containsValue(uriAPS)){
+			for (String key : this.mappingServizioSPCoopToUriAPS.keySet()) {
 				String value = this.mappingServizioSPCoopToUriAPS.get(key);
 				if(value.equals(uriAPS)){
 					try{

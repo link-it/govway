@@ -21,9 +21,9 @@
 package org.openspcoop2.utils.id.serial;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * IDSerialGeneratorBuffer
@@ -34,7 +34,8 @@ import java.util.List;
  */
 public class IDSerialGeneratorBuffer {
 
-	private static Hashtable<String, List<String>> buffer = new Hashtable<String, List<String>>();
+	private static org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("IDSerialGeneratorBuffer");
+	private static Map<String, List<String>> buffer = new HashMap<String, List<String>>();
 	
 	private static String getPrefix(Class<?> cIdSerialGenerator){
 		if(IDSerialGenerator_alphanumeric.class.getName().equals(cIdSerialGenerator.getName())){
@@ -62,7 +63,9 @@ public class IDSerialGeneratorBuffer {
 	
 	protected static String nextValue(Class<?> cIdSerialGenerator,String relativeInfo){
 		String key = getKey(cIdSerialGenerator, relativeInfo);
-		synchronized(buffer){
+		//synchronized(buffer){
+		semaphore.acquireThrowRuntime("nextValue");
+		try {
 			if(buffer.size()<=0 || !buffer.containsKey(key)){
 				return null;
 			}
@@ -80,12 +83,16 @@ public class IDSerialGeneratorBuffer {
 					return v;
 				}
 			}
+		}finally {
+			semaphore.release("nextValue");
 		}
 	}
 	
 	protected static void putAll(List<String> valuesGenerated,Class<?> cIdSerialGenerator,String relativeInfo){
 		String key = getKey(cIdSerialGenerator, relativeInfo);
-		synchronized(buffer){
+		//synchronized(buffer){
+		semaphore.acquireThrowRuntime("putAll");
+		try {
 			List<String> l = null;
 			if(buffer.containsKey(key)){
 				l = buffer.get(key);
@@ -97,29 +104,41 @@ public class IDSerialGeneratorBuffer {
 				//System.out.println("CREATE BUFFER ["+valuesGenerated.size()+"] from Buffer key["+key+"]");
 			}
 			l.addAll(valuesGenerated);	
+		}finally {
+			semaphore.release("putAll");
 		}
 	}
 	
 	protected static void clearBuffer(){
-		synchronized(buffer){
+		//synchronized(buffer){
+		semaphore.acquireThrowRuntime("clearBuffer");
+		try {
 			if(buffer!=null && buffer.size()>0){
 				buffer.clear();
 			}
+		}finally {
+			semaphore.release("clearBuffer");
 		}
 	}
 	
 	protected static void clearBuffer(Class<?> cIdSerialGenerator){
 		String prefix = getPrefix(cIdSerialGenerator);
-		synchronized(buffer){
+		//synchronized(buffer){
+		semaphore.acquireThrowRuntime("clearBuffer_class");
+		try {
 			if(buffer!=null && buffer.size()>0){
-				Enumeration<String> keys = buffer.keys();
-				while (keys.hasMoreElements()) {
-					String key = (String) keys.nextElement();
+				List<String> remove = new ArrayList<String>();
+				for (String key : buffer.keySet()) {
 					if(key.startsWith(prefix)){
-						buffer.remove(key);
+						remove.add(key);
 					}
 				}
+				while(!remove.isEmpty()) {
+					buffer.remove(remove.remove(0));	
+				}
 			}
+		}finally {
+			semaphore.release("clearBuffer_class");
 		}
 	}
 

@@ -21,17 +21,32 @@ package org.openspcoop2.monitor.engine.config;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
+import java.util.Map;
 
 import javax.xml.soap.SOAPEnvelope;
 
-import org.slf4j.Logger;
+import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.transazioni.DumpContenuto;
+import org.openspcoop2.core.transazioni.DumpMessaggio;
+import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
+import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazione;
+import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazionePlugin;
+import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
+import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneStato;
+import org.openspcoop2.monitor.engine.config.transazioni.constants.PosizioneMascheramento;
+import org.openspcoop2.monitor.engine.config.transazioni.constants.TipoControllo;
+import org.openspcoop2.monitor.engine.config.transazioni.constants.TipoMascheramento;
+import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
+import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
+import org.openspcoop2.monitor.engine.transaction.TransactionContentUtils;
+import org.openspcoop2.monitor.engine.transaction.TransactionManager;
+import org.openspcoop2.monitor.sdk.plugins.ITransactionProcessing;
+import org.openspcoop2.monitor.sdk.transaction.Transaction;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.protocol.sdk.tracciamento.TracciamentoException;
@@ -42,25 +57,8 @@ import org.openspcoop2.utils.xml.XPathException;
 import org.openspcoop2.utils.xml.XPathNotFoundException;
 import org.openspcoop2.utils.xml.XPathNotValidException;
 import org.openspcoop2.utils.xml.XPathReturnType;
+import org.slf4j.Logger;
 import org.w3c.dom.NodeList;
-
-import org.openspcoop2.core.commons.dao.DAOFactory;
-import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazione;
-import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazionePlugin;
-import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
-import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneStato;
-import org.openspcoop2.monitor.engine.config.transazioni.constants.PosizioneMascheramento;
-import org.openspcoop2.monitor.engine.config.transazioni.constants.TipoControllo;
-import org.openspcoop2.monitor.engine.config.transazioni.constants.TipoMascheramento;
-import org.openspcoop2.core.transazioni.DumpContenuto;
-import org.openspcoop2.core.transazioni.DumpMessaggio;
-import org.openspcoop2.core.transazioni.Transazione;
-import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
-import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
-import org.openspcoop2.monitor.engine.transaction.TransactionContentUtils;
-import org.openspcoop2.monitor.engine.transaction.TransactionManager;
-import org.openspcoop2.monitor.sdk.plugins.ITransactionProcessing;
-import org.openspcoop2.monitor.sdk.transaction.Transaction;
 
 /**
  * TransactionServiceLibrary
@@ -193,8 +191,8 @@ public class TransactionServiceLibrary implements Serializable {
 			List<ConfigurazioneTransazioneRisorsaContenuto> risorse = this.mergeServiceActionTransactionLibrary_resources();
 	
 			// XPATH
-			Hashtable<String, String> notFoundRules = new Hashtable<String, String>();
-			Hashtable<String, String> dirtyRules = new Hashtable<String, String>();
+			Map<String, String> notFoundRules = new HashMap<String, String>();
+			Map<String, String> dirtyRules = new HashMap<String, String>();
 			if(risorse.size()>0){
 	
 				if(soapEnvelope==null){
@@ -213,7 +211,7 @@ public class TransactionServiceLibrary implements Serializable {
 				//	return; // non devo analizzare i soap fault.
 				//}
 	
-				Vector<TransactionResource> contenuti = this.recuperaContenuti(isRichiesta, transactionInfo.getStato(), soapEnvelope, dnc, risorse, notFoundRules, dirtyRules,
+				List<TransactionResource> contenuti = this.recuperaContenuti(isRichiesta, transactionInfo.getStato(), soapEnvelope, dnc, risorse, notFoundRules, dirtyRules,
 						xpathEngine, debug, log);
 				if(contenuti!=null){
 					for (int i = 0; i < contenuti.size(); i++) {
@@ -229,9 +227,7 @@ public class TransactionServiceLibrary implements Serializable {
 				StringBuilder sbNotFound = new StringBuilder();
 				if(notFoundRules.size()>0){
 					sbNotFound.append("Regole non trovate:");
-					Enumeration<String> nfk = notFoundRules.keys();
-					while (nfk.hasMoreElements()) {
-						String k = (String) nfk.nextElement();
+					for (String k : notFoundRules.keySet()) {
 						sbNotFound.append("\n["+(k)+"]");
 					}
 				}
@@ -241,9 +237,7 @@ public class TransactionServiceLibrary implements Serializable {
 			StringBuilder sb = new StringBuilder();
 			if(dirtyRules.size()>0){
 				sb.append("\nRegole non valide:");
-				Enumeration<String> drk = dirtyRules.keys();
-				while (drk.hasMoreElements()) {
-					String k = (String) drk.nextElement();
+				for (String k : dirtyRules.keySet()) {
 					String val = "\n["+k+"-"+(dirtyRules.get(k))+"]";
 					sb.append(val);
 	
@@ -327,11 +321,11 @@ public class TransactionServiceLibrary implements Serializable {
 		}
 	}
 	
-	private Vector<TransactionResource> recuperaContenuti(boolean richiesta,String stato,SOAPEnvelope soapEnvelope,DynamicNamespaceContext dnc,
-			List<ConfigurazioneTransazioneRisorsaContenuto> risorse, Hashtable<String, String> rulesNotFuond, Hashtable<String, String> dirtyRules,
+	private List<TransactionResource> recuperaContenuti(boolean richiesta,String stato,SOAPEnvelope soapEnvelope,DynamicNamespaceContext dnc,
+			List<ConfigurazioneTransazioneRisorsaContenuto> risorse, Map<String, String> rulesNotFuond, Map<String, String> dirtyRules,
 			AbstractXPathExpressionEngine xpathEngine, boolean debug, Logger log) throws Exception {
 		
-		Vector<TransactionResource> res = new Vector<TransactionResource>();
+		List<TransactionResource> res = new ArrayList<TransactionResource>();
 		
 		if(dnc.isSoapBodyEmpty()){
 			return res;

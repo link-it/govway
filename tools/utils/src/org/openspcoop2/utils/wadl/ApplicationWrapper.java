@@ -20,9 +20,11 @@
 
 package org.openspcoop2.utils.wadl;
 
-import java.util.Hashtable;
-
 import org.slf4j.Logger;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jvnet.ws.wadl.ast.ApplicationNode;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.XMLException;
@@ -40,13 +42,13 @@ import org.openspcoop2.utils.xml.XSDUtils;
 public class ApplicationWrapper {
 
 	private ApplicationNode applicationNode;
-	private Hashtable<String, byte[]> resources = new Hashtable<String, byte[]>();
-	private Hashtable<String, String> mappingNamespaceLocations = new Hashtable<String, String>();
+	private Map<String, byte[]> resources = new HashMap<String, byte[]>();
+	private Map<String, String> mappingNamespaceLocations = new HashMap<String, String>();
 	private AbstractXMLUtils xmlUtils = null;
 	private XSDUtils xsdUtils = null;
 	
 	public ApplicationWrapper(ApplicationNode applicationNode,
-			Hashtable<String, byte[]> resources, Hashtable<String, String> mappingNamespaceLocations,
+			Map<String, byte[]> resources, Map<String, String> mappingNamespaceLocations,
 			AbstractXMLUtils xmlUtils){
 		this.applicationNode = applicationNode;
 		this.resources = resources;
@@ -59,11 +61,11 @@ public class ApplicationWrapper {
 		return this.applicationNode;
 	}
 
-	public Hashtable<String, byte[]> getResources() {
+	public Map<String, byte[]> getResources() {
 		return this.resources;
 	}
 
-	public Hashtable<String, String> getMappingNamespaceLocations() {
+	public Map<String, String> getMappingNamespaceLocations() {
 		return this.mappingNamespaceLocations;
 	}
 	

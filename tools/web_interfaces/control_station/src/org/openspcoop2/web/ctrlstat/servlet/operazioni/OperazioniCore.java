@@ -114,7 +114,7 @@ public class OperazioniCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}	
-	public Vector<String> hostnameList() throws ClassQueueException {
+	public List<String> hostnameList() throws ClassQueueException {
 		Connection con = null;
 		String nomeMetodo = "hostnameList";
 		ClassQueue driver = null;

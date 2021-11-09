@@ -21,7 +21,6 @@
 
 package org.openspcoop2.security.message;
 
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -83,7 +82,7 @@ public abstract class AbstractRESTMessageSecurityReceiver implements IMessageSec
 	private String signatureDetachedHeader = null;
 	private String signatureDetachedPropertyUrl = null;
 	
-	protected String readDetachedSignatureFromMessage(Hashtable<String,Object> map, OpenSPCoop2RestMessage<?> restMessage, String descriptionEngine) throws SecurityException {
+	protected String readDetachedSignatureFromMessage(Map<String,Object> map, OpenSPCoop2RestMessage<?> restMessage, String descriptionEngine) throws SecurityException {
 		String detachedSignature = null;
 		String mode = (String) map.get(SecurityConstants.SIGNATURE_MODE);
 		this.signatureDetachedHeader = (String) map.get(SecurityConstants.SIGNATURE_DETACHED_HEADER);

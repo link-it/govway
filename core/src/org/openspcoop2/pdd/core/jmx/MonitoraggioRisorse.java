@@ -22,10 +22,9 @@
 package org.openspcoop2.pdd.core.jmx;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -42,7 +41,6 @@ import javax.management.MBeanParameterInfo;
 import javax.management.NotificationBroadcasterSupport;
 import javax.management.ReflectionException;
 
-import org.slf4j.Logger;
 import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.DBStatisticheManager;
 import org.openspcoop2.pdd.config.DBTransazioniManager;
@@ -65,6 +63,7 @@ import org.openspcoop2.pdd.timers.TimerThresholdThread;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 
 
 
@@ -874,19 +873,17 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 	}
 	
 	public String getActivePDConnections(){	
-		Hashtable<String, IConnettore> connettori_pd = RepositoryConnettori.getConnettori_pd();		
+		Map<String, IConnettore> connettori_pd = RepositoryConnettori.getConnettori_pd();		
 		return getActiveConnections(connettori_pd);
 	}
 	public String getActivePAConnections(){	
-		Hashtable<String, IConnettore> connettori_pa = RepositoryConnettori.getConnettori_pa();		
+		Map<String, IConnettore> connettori_pa = RepositoryConnettori.getConnettori_pa();		
 		return getActiveConnections(connettori_pa);
 	}
-	private String getActiveConnections(Hashtable<String, IConnettore> connettoriParam){
+	private String getActiveConnections(Map<String, IConnettore> connettoriParam){
 		
 		List<String> cConnettori = new ArrayList<String>();
-		Enumeration<String> cs = connettoriParam.keys();
-		while(cs.hasMoreElements()){
-			String id = cs.nextElement();
+		for (String id : connettoriParam.keySet()) {
 			IConnettore c = connettoriParam.get(id);
 			String location = null;
 			try{

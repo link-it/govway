@@ -23,8 +23,9 @@ package org.openspcoop2.pdd.core.handlers;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -1055,10 +1056,10 @@ public class GestoreHandlers  {
 		if(handlers!=null && handlers.length>0){
 			
 			List<String> handlerPositionHeadId = new ArrayList<String>();
-			Hashtable<String,T> handlerPositionHeadMap = new Hashtable<String,T>();
+			Map<String,T> handlerPositionHeadMap = new HashMap<String,T>();
 			
 			List<String> handlerPositionTailId = new ArrayList<String>();
-			Hashtable<String,T> handlerPositionTailMap = new Hashtable<String,T>();
+			Map<String,T> handlerPositionTailMap = new HashMap<String,T>();
 			
 			List<T> handlerPositionMiddle = new ArrayList<T>();
 			

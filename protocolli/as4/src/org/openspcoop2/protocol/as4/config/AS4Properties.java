@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.openspcoop2.protocol.as4.properties.SecurityPolicyXSDValidator;
+import org.openspcoop2.protocol.basic.BasicStaticInstanceConfig;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -220,6 +221,11 @@ public class AS4Properties {
 				this.getAckDomibusDatasource_jndiContext();
 				this.getAckDomibusTipoDatabase();
 			}
+			
+			this.useConfigStaticInstance();
+			this.useErroreApplicativoStaticInstance();
+			this.useEsitoStaticInstance();
+			this.getStaticInstanceConfig();
 
 		}catch(java.lang.Exception e) {
 			String msg = "Riscontrato errore durante la validazione della proprieta' del protocollo as4, "+e.getMessage();
@@ -1265,5 +1271,105 @@ public class AS4Properties {
 			}
     	}
 		return AS4Properties.ackDomibusDatasource_jndiContext;
+	}
+	
+	
+	
+	private static Boolean useConfigStaticInstance = null;
+	private Boolean useConfigStaticInstance(){
+		if(AS4Properties.useConfigStaticInstance==null){
+			
+			Boolean defaultValue = true;
+			String propertyName = "org.openspcoop2.protocol.as4.factory.config.staticInstance";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					AS4Properties.useConfigStaticInstance = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
+					AS4Properties.useConfigStaticInstance = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
+				AS4Properties.useConfigStaticInstance = defaultValue;
+			}
+		}
+
+		return AS4Properties.useConfigStaticInstance;
+	}
+	
+	private static Boolean useErroreApplicativoStaticInstance = null;
+	private Boolean useErroreApplicativoStaticInstance(){
+		if(AS4Properties.useErroreApplicativoStaticInstance==null){
+			
+			Boolean defaultValue = true;
+			String propertyName = "org.openspcoop2.protocol.as4.factory.erroreApplicativo.staticInstance";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					AS4Properties.useErroreApplicativoStaticInstance = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
+					AS4Properties.useErroreApplicativoStaticInstance = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
+				AS4Properties.useErroreApplicativoStaticInstance = defaultValue;
+			}
+		}
+
+		return AS4Properties.useErroreApplicativoStaticInstance;
+	}
+	
+	private static Boolean useEsitoStaticInstance = null;
+	private Boolean useEsitoStaticInstance(){
+		if(AS4Properties.useEsitoStaticInstance==null){
+			
+			Boolean defaultValue = true;
+			String propertyName = "org.openspcoop2.protocol.as4.factory.esito.staticInstance";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					AS4Properties.useEsitoStaticInstance = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
+					AS4Properties.useEsitoStaticInstance = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
+				AS4Properties.useEsitoStaticInstance = defaultValue;
+			}
+		}
+
+		return AS4Properties.useEsitoStaticInstance;
+	}
+	
+	private static BasicStaticInstanceConfig staticInstanceConfig = null;
+	public BasicStaticInstanceConfig getStaticInstanceConfig(){
+		if(AS4Properties.staticInstanceConfig==null){
+			staticInstanceConfig = new BasicStaticInstanceConfig();
+			if(useConfigStaticInstance()!=null) {
+				staticInstanceConfig.setStaticConfig(useConfigStaticInstance());
+			}
+			if(useErroreApplicativoStaticInstance()!=null) {
+				staticInstanceConfig.setStaticErrorBuilder(useErroreApplicativoStaticInstance());
+			}
+			if(useEsitoStaticInstance()!=null) {
+				staticInstanceConfig.setStaticEsitoBuilder(useEsitoStaticInstance());
+			}
+		}
+		return staticInstanceConfig;
 	}
 }

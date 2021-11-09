@@ -21,7 +21,7 @@
 package org.openspcoop2.protocol.as4.builder;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -222,7 +222,7 @@ public class AS4Imbustamento {
 			
 			// **** Prepare *****
 			
-			Map<String,String> mapIdPartInfoToIdAttach = new Hashtable<>();
+			Map<String,String> mapIdPartInfoToIdAttach = new HashMap<>();
 			
 			Messaging ebmsV3_0Messagging = this.buildEbmsV3_0Messagging(ruoloMessaggio,busta,
 					soggettoMittente, soggettoDestinatario, aspc, actionProperty,

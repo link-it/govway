@@ -71,10 +71,13 @@ public class JSONUtils extends AbstractUtils {
 	}
 	
 
-	private static Boolean mapperSynchronized = true;
+	//private static Boolean mapperSynchronized = true;
+	private static org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("JSONUtils");
 	private static ObjectMapper _mapper;
 	private static void initMapper()  {
-		synchronized(mapperSynchronized){
+		//synchronized(mapperSynchronized){
+		semaphore.acquireThrowRuntime("initMapper");
+		try {
 			if(_mapper==null){
 				_mapper = new ObjectMapper();
 				_mapper.setTimeZone(TimeZone.getDefault());
@@ -83,30 +86,44 @@ public class JSONUtils extends AbstractUtils {
 				_mapper.configure(com.fasterxml.jackson.databind.SerializationFeature.
 					    WRITE_DATES_AS_TIMESTAMPS , false);
 			}
+		}finally {
+			semaphore.release("initMapper");
 		}
 	}
 	public static void setMapperTimeZone(TimeZone timeZone) {
 		if(_mapper==null){
 			initMapper();
 		}
-		synchronized(mapperSynchronized){
+		//synchronized(mapperSynchronized){
+		semaphore.acquireThrowRuntime("setMapperTimeZone");
+		try {
 			_mapper.setTimeZone(timeZone);
+		}finally {
+			semaphore.release("setMapperTimeZone");
 		}
 	}
 	public static void registerJodaModule() {
 		if(_mapper==null){
 			initMapper();
 		}
-		synchronized(mapperSynchronized){
+		//synchronized(mapperSynchronized){
+		semaphore.acquireThrowRuntime("registerJodaModule");
+		try {
 			_mapper.registerModule(new JodaModule());
+		}finally {
+			semaphore.release("registerJodaModule");
 		}
 	}
 	public static void registerJavaTimeModule() {
 		if(_mapper==null){
 			initMapper();
 		}
-		synchronized(mapperSynchronized){
+		//synchronized(mapperSynchronized){
+		semaphore.acquireThrowRuntime("registerJavaTimeModule");
+		try {
 			_mapper.registerModule(new JavaTimeModule());
+		}finally {
+			semaphore.release("registerJavaTimeModule");
 		}
 	}
 	

@@ -20,7 +20,8 @@
 
 package org.openspcoop2.web.lib.audit.web;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 
@@ -50,7 +51,7 @@ public class AuditCostanti {
 	/* Servlet */
 
 	public final static String SERVLET_NAME_AUDIT  = OBJECT_NAME_CONFIGURAZIONE_AUDITING +".do";
-	public final static Vector<String> SERVLET_AUDIT  = new Vector<String>();
+	public final static List<String> SERVLET_AUDIT  = new ArrayList<String>();
 	static{
 		SERVLET_AUDIT .add(SERVLET_NAME_AUDIT );
 	}
@@ -59,7 +60,7 @@ public class AuditCostanti {
 	public final static String SERVLET_NAME_AUDIT_FILTRI_CHANGE = OBJECT_NAME_CONFIGURAZIONE_AUDITING_FILTRI+"Change.do";
 	public final static String SERVLET_NAME_AUDIT_FILTRI_DELETE = OBJECT_NAME_CONFIGURAZIONE_AUDITING_FILTRI+"Del.do";
 	public final static String SERVLET_NAME_AUDIT_FILTRI_LIST = OBJECT_NAME_CONFIGURAZIONE_AUDITING_FILTRI+"List.do";
-	public final static Vector<String> SERVLET_AUDIT_FILTRI = new Vector<String>();
+	public final static List<String> SERVLET_AUDIT_FILTRI = new ArrayList<String>();
 	static{
 		SERVLET_AUDIT_FILTRI.add(SERVLET_NAME_AUDIT_FILTRI_ADD);
 		SERVLET_AUDIT_FILTRI.add(SERVLET_NAME_AUDIT_FILTRI_CHANGE);
@@ -70,7 +71,7 @@ public class AuditCostanti {
 	public final static String SERVLET_NAME_AUDITING  = OBJECT_NAME_AUDITING +".do";
 	public final static String SERVLET_NAME_AUDITING_DEL  = OBJECT_NAME_AUDITING +"Del.do";
 	public final static String SERVLET_NAME_AUDITING_LIST  = OBJECT_NAME_AUDITING +"List.do";
-	public final static Vector<String> SERVLET_AUDITING  = new Vector<String>();
+	public final static List<String> SERVLET_AUDITING  = new ArrayList<String>();
 	static{
 		SERVLET_AUDITING .add(SERVLET_NAME_AUDITING );
 		SERVLET_AUDITING .add(SERVLET_NAME_AUDITING_LIST );
@@ -80,7 +81,7 @@ public class AuditCostanti {
 	public final static String SERVLET_NAME_AUDITING_DETTAGLIO  = OBJECT_NAME_AUDITING_DETTAGLIO +".do";
 	public final static String SERVLET_NAME_AUDITING_DETTAGLIO_INFO  = OBJECT_NAME_AUDITING_DETTAGLIO +"Info.do";
 	public final static String SERVLET_NAME_AUDITING_DETTAGLIO_DOCUMENTI_BINARI  = OBJECT_NAME_AUDITING_DETTAGLIO +"DocumentiBinari.do";
-	public final static Vector<String> SERVLET_AUDITING_DETTAGLIO  = new Vector<String>();
+	public final static List<String> SERVLET_AUDITING_DETTAGLIO  = new ArrayList<String>();
 	static{
 		SERVLET_AUDITING_DETTAGLIO .add(SERVLET_NAME_AUDITING_DETTAGLIO );
 		SERVLET_AUDITING_DETTAGLIO .add(SERVLET_NAME_AUDITING_DETTAGLIO_INFO );

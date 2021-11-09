@@ -28,9 +28,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -661,7 +660,7 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 	 * @throws DriverMsgDiagnosticiException
 	 */
 	@Override
-	public Traccia getTraccia(RuoloMessaggio tipoTraccia,Hashtable<String, String> propertiesRicerca) throws DriverTracciamentoException, DriverTracciamentoNotFoundException{
+	public Traccia getTraccia(RuoloMessaggio tipoTraccia,Map<String, String> propertiesRicerca) throws DriverTracciamentoException, DriverTracciamentoNotFoundException{
 		
 		Connection connectionDB = null;
 		PreparedStatement pstmt = null;
@@ -683,9 +682,7 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 			sqlQueryObject.addFromTable(CostantiDB.TRACCE);
 			sqlQueryObject.addSelectField(CostantiDB.TRACCE_COLUMN_ID);
 			if(propertiesRicerca!=null && propertiesRicerca.size()>0){
-				Enumeration<String> keys = propertiesRicerca.keys();
-				while(keys.hasMoreElements()){
-					String key = keys.nextElement();
+				for (String key : propertiesRicerca.keySet()) {
 					if(TracciaDriver.IDTRACCIA.equals(key)){
 						// Caso particolare dell'id long della traccia
 						sqlQueryObject.addWhereCondition(CostantiDB.TRACCE_COLUMN_ID+"=?");
@@ -701,9 +698,7 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 			
 			pstmt = connectionDB.prepareStatement(sqlQueryObject.toString());
 			int index = 1;
-			Enumeration<String> keys = propertiesRicerca.keys();
-			while(keys.hasMoreElements()){
-				String key = keys.nextElement();
+			for (String key : propertiesRicerca.keySet()) {
 				String value = propertiesRicerca.get(key);
 				if(TracciaDriver.IDTRACCIA.equals(key)){
 					// Caso particolare dell'id long della traccia

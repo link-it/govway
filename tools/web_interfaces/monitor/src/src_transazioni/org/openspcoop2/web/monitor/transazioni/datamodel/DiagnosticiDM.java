@@ -21,8 +21,9 @@ package org.openspcoop2.web.monitor.transazioni.datamodel;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.context.FacesContext;
 
@@ -89,7 +90,7 @@ public class DiagnosticiDM extends
 
 				// devo solo settare l'idtransazione
 				// filter.setIdEgov(this.diagnosticiBean.getIdEgov());
-				Hashtable<String, String> properties = new Hashtable<String, String>();
+				Map<String, String> properties = new HashMap<String, String>();
 				properties.put("id_transazione",
 						this.diagnosticiBean.getIdTransazione());
 				filter.setProperties(properties);
@@ -149,7 +150,7 @@ public class DiagnosticiDM extends
 
 				// devo impostare solo l'idtransazione
 				// filter.setIdEgov(this.diagnosticiBean.getIdEgov());
-				Hashtable<String, String> properties = new Hashtable<String, String>();
+				Map<String, String> properties = new HashMap<String, String>();
 				properties.put("id_transazione",
 						this.diagnosticiBean.getIdTransazione());
 				filter.setProperties(properties);

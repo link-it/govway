@@ -22,8 +22,10 @@
 package org.openspcoop2.protocol.sdk;
 
 import java.io.Serializable;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Context
@@ -40,9 +42,9 @@ public class Context implements Serializable {
 	 */
 	private static final long serialVersionUID = -2577197242840238762L;
 	
-	private Hashtable<String, Object> ctx = new Hashtable<String, Object>();
+	protected Map<String, Object> ctx = new HashMap<String, Object>();
 	
-	public Hashtable<String, Object> getContext() {
+	public Map<String, Object> getContext() {
 		return this.ctx;
 	}
 
@@ -69,8 +71,15 @@ public class Context implements Serializable {
 			return null;
 	}
 	
-	public Enumeration<String> keys(){
-		return this.ctx.keys();
+	public List<String> keys(){
+		List<String> keys = null;
+		if(!this.ctx.isEmpty()) {
+			keys = new ArrayList<String>();
+			for (String key : this.ctx.keySet()) {
+				keys.add(key);
+			}
+		}
+		return keys;
 	}
 	
 	public boolean containsKey(String key){
@@ -78,17 +87,18 @@ public class Context implements Serializable {
 	}
 	
 	public void addAll(Context pddContext,boolean overwriteIfExists){
-		Enumeration<String> keys = pddContext.keys();
-		while (keys.hasMoreElements()) {
-			String key = (String) keys.nextElement();
-			if(this.containsKey(key)){
-				if(overwriteIfExists){
-					this.removeObject(key);
+		List<String> keys = pddContext.keys();
+		if(keys!=null) {
+			for (String key : keys) {
+				if(this.containsKey(key)){
+					if(overwriteIfExists){
+						this.removeObject(key);
+						this.addObject(key, pddContext.getObject(key));
+					}
+				}
+				else{
 					this.addObject(key, pddContext.getObject(key));
 				}
-			}
-			else{
-				this.addObject(key, pddContext.getObject(key));
 			}
 		}
 	}

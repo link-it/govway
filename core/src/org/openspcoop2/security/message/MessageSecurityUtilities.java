@@ -20,7 +20,7 @@
 
 package org.openspcoop2.security.message;
 
-import java.util.Hashtable;
+import java.util.Map;
 
 import org.openspcoop2.security.message.constants.SecurityConstants;
 
@@ -33,7 +33,7 @@ import org.openspcoop2.security.message.constants.SecurityConstants;
  */
 public class MessageSecurityUtilities {
 
-	public static boolean processSOAPFault(Hashtable<String,Object> messageSecurityProperties){
+	public static boolean processSOAPFault(Map<String,Object> messageSecurityProperties){
 		// Default disabilitati
 		boolean processEncryptSOAPFault = false;
 		boolean processSignatureSOAPFault = false;
@@ -53,7 +53,7 @@ public class MessageSecurityUtilities {
 		}
 		return _processFault(messageSecurityProperties, processEncryptSOAPFault, processSignatureSOAPFault);
 	}
-	public static boolean processProblemDetails(Hashtable<String,Object> messageSecurityProperties){
+	public static boolean processProblemDetails(Map<String,Object> messageSecurityProperties){
 		// Default disabilitati
 		boolean processEncryptProblemDetails = false;
 		boolean processSignatureProblemDetails = false;
@@ -73,7 +73,7 @@ public class MessageSecurityUtilities {
 		}
 		return _processFault(messageSecurityProperties, processEncryptProblemDetails, processSignatureProblemDetails);
 	}
-	private static boolean _processFault(Hashtable<String,Object> messageSecurityProperties,
+	private static boolean _processFault(Map<String,Object> messageSecurityProperties,
 			boolean processEncryptFault, boolean processSignatureFault ){
 				
 		String action = (String) messageSecurityProperties.remove(SecurityConstants.ACTION);

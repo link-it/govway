@@ -24,7 +24,6 @@ package org.openspcoop2.security.message.soapbox;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -510,7 +509,7 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 
 
 	
-	private void updateSecurityContextForSignature(MessageSecurityContext msgSecCtx, Hashtable<String, Object> outProps, String aliasSignatureUser) throws Exception {
+	private void updateSecurityContextForSignature(MessageSecurityContext msgSecCtx, Map<String, Object> outProps, String aliasSignatureUser) throws Exception {
 		
 		Object c14nAlgoURI = outProps.get(SecurityConstants.SIGNATURE_C14N_ALGORITHM);
 		Object digestAlgoURI = outProps.get(SecurityConstants.SIGNATURE_DIGEST_ALGORITHM);
@@ -564,7 +563,7 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 		msgSecCtx.getSignatureRequest().setCertAlias(aliasSignatureUser);
 	}
 	
-	private void updateSecurityContextForEncryption(MessageSecurityContext msgSecCtx, Hashtable<String, Object> outProps, String aliasEncryptUser) throws Exception {
+	private void updateSecurityContextForEncryption(MessageSecurityContext msgSecCtx, Map<String, Object> outProps, String aliasEncryptUser) throws Exception {
 		
 		Object encryptionKeySizeObject = outProps.get(SecurityConstants.ENCRYPTION_KEY_SIZE);
 		int encryptionKeySize = -1;

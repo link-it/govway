@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -405,7 +404,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			preInRequestContext.setIdModulo(idModulo);
 			preInRequestContext.setProtocolFactory(protocolFactory);
 			preInRequestContext.setRequestInfo(requestInfo);
-			Hashtable<String, Object> transportContext = new Hashtable<String, Object>();
+			Map<String, Object> transportContext = new HashMap<String, Object>();
 			HttpServletConnectorInMessage httpIn = null;
 			try{
 				httpIn = new HttpServletConnectorInMessage(requestInfo, req, IntegrationManager.ID_SERVICE, IntegrationManager.ID_MODULO);

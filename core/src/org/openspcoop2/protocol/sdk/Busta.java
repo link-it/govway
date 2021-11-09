@@ -1207,7 +1207,7 @@ public class Busta implements java.io.Serializable {
 
 	// Non devono essere usati.
 	// Altrimenti poi se viene effettuato una add o remove sulla lista o hashtable ritornata, la modifica non ha effetto
-//	public void setProperties(Hashtable<String, String> params) {
+//	public void setProperties(Map<String, String> params) {
 //		Enumeration<String> keys = params.keys();
 //		while (keys.hasMoreElements()) {
 //			String key = (String) keys.nextElement();
@@ -1215,8 +1215,8 @@ public class Busta implements java.io.Serializable {
 //		}
 //	}
 //
-//	public Hashtable<String, String> getProperties() {
-//		Hashtable<String, String> map = new Hashtable<String, String>();
+//	public Map<String, String> getProperties() {
+//		Map<String, String> map = new HashMap<String, String>();
 //		if(this.busta.getProtocollo()!=null){
 //			for (int i = 0; i < this.busta.getProtocollo().sizeProprietaList(); i++) {
 //				Proprieta proprieta = this.busta.getProtocollo().getProprieta(i);

@@ -558,7 +558,7 @@ public class ClientCore {
 	
 	
 	/** WSSecurity */
-	public void processWSSRequest(java.util.Hashtable<String,String> wssProperties,Axis14WSSBaseUtils baseWSS) throws Exception{
+	public void processWSSRequest(java.util.Map<String,String> wssProperties,Axis14WSSBaseUtils baseWSS) throws Exception{
 		this.log.info("Costruzione messaggio di richiesta con wss ...");
 		
 		if(this.sentMessage==null)
@@ -572,7 +572,7 @@ public class ClientCore {
 	}
 	
 	/** WSSecurity */
-	public void processWSSResponse(java.util.Hashtable<String,String> wssProperties,Axis14WSSBaseUtils baseWSS) throws Exception{
+	public void processWSSResponse(java.util.Map<String,String> wssProperties,Axis14WSSBaseUtils baseWSS) throws Exception{
 		this.log.info("Costruzione messaggio di risposta con wss ...");
 		
 		if(this.receivedMessage==null)

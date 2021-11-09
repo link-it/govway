@@ -32,7 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -308,7 +308,7 @@ public class SingleFileExporter implements IExporter{
 			if(this.exportTracce){
 				//devo impostare solo l'idtransazione
 				//filter.setIdEgov(this.diagnosticiBean.getIdEgov());	
-				Hashtable<String, String> properties = new Hashtable<String, String>();
+				Map<String, String> properties = new HashMap<String, String>();
 				properties.put("id_transazione", t.getIdTransazione());
 
 				Traccia tracciaRichiesta = null;
@@ -509,7 +509,7 @@ public class SingleFileExporter implements IExporter{
 			
 			//devo impostare solo l'idtransazione
 			//filter.setIdEgov(this.diagnosticiBean.getIdEgov());	
-			Hashtable<String, String> properties = new Hashtable<String, String>();
+			Map<String, String> properties = new HashMap<String, String>();
 			properties.put("id_transazione", t.getIdTransazione());
 			filter.setProperties(properties);
 			

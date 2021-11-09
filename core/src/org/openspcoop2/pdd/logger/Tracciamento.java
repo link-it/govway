@@ -26,9 +26,8 @@ package org.openspcoop2.pdd.logger;
 import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import javax.mail.BodyPart;
 import javax.xml.soap.AttachmentPart;
@@ -949,11 +948,11 @@ public class Tracciamento {
 		
 		if(securityInfo!=null){
 			busta.setDigest(securityInfo.getDigestHeader());
-			Hashtable<String, String> properties = securityInfo.getProperties();
-			Enumeration<String> keys = properties.keys();
-			while (keys.hasMoreElements()) {
-				String key = keys.nextElement();
-				busta.addProperty(key, properties.get(key)); // aggiungo le proprieta' di sicurezza riscontrate
+			Map<String, String> properties = securityInfo.getProperties();
+			if(properties!=null && !properties.isEmpty()) {
+				for (String key : properties.keySet()) {
+					busta.addProperty(key, properties.get(key)); // aggiungo le proprieta' di sicurezza riscontrate
+				}
 			}
 		}
 		traccia.setBusta(busta);
