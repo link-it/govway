@@ -82,6 +82,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.3_lib_karate"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.3_lib_stub"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.3_lib_stub_axis14"/>
-	<classpathentry kind="lib" path="/home/froggo/.m2/repository/com/atlassian/oai/swagger-request-validator-core/2.21.2-SNAPSHOT/swagger-request-validator-core-2.21.2-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="/home/froggo/.m2/repository/com/atlassian/oai/swagger-request-validator-core/2.21.2-SNAPSHOT/swagger-request-validator-core-2.21.2-SNAPSHOT.jar" sourcepath="/swagger-request-validator"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

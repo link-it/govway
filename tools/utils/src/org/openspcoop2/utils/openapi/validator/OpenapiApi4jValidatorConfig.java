@@ -43,6 +43,13 @@ public class OpenapiApi4jValidatorConfig {
 	private boolean validateResponseHeaders = true;
 	private boolean validateResponseBody = true;
 	
+	// TODO PER ANDREA: CONFIGURAZIONI AGGIUNTIVE SWAGGER VALIDATOR
+	private boolean isValidateUnexpectedQueryParam = false;
+		
+	// Dice se lasciare il transformer che aggiunge additionalProperties=false negli schemi (true)
+	// o di disattivarlo (false)
+	private boolean isInjectingAdditionalProperties = false; 
+	
 	public OpenAPILibrary getOpenApiLibrary() {
 		return this.openApiLibrary;
 	}
@@ -113,6 +120,22 @@ public class OpenapiApi4jValidatorConfig {
 
 	public void setValidateResponseBody(boolean validateResponseBody) {
 		this.validateResponseBody = validateResponseBody;
+	}
+
+	public boolean isValidateUnexpectedQueryParam() {
+		return isValidateUnexpectedQueryParam;
+	}
+
+	public void setValidateUnexpectedQueryParam(boolean isValidateUnexpectedQueryParam) {
+		this.isValidateUnexpectedQueryParam = isValidateUnexpectedQueryParam;
+	}
+
+	public boolean isInjectingAdditionalProperties() {
+		return isInjectingAdditionalProperties;
+	}
+
+	public void setInjectingAdditionalProperties(boolean isInjectingAdditionalProperties) {
+		this.isInjectingAdditionalProperties = isInjectingAdditionalProperties;
 	}
 	
 }

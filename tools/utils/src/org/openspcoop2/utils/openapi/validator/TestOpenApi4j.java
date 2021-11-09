@@ -69,11 +69,14 @@ public class TestOpenApi4j {
 		if(args!=null && args.length>0) {
 			openAPILibrary = OpenAPILibrary.valueOf(args[0]);
 		}
+		openAPILibrary = OpenAPILibrary.swagger_request_validator;
 		
+		// TODO: Renderlo parametrico anche su mergeSpec, che di default è a false.
+		boolean mergeSpec = true;
 		
 		// *** TEST per il Parser e validazione dello schema *** //
 		
-		{
+		/*{
 		
 			System.out.println("Test Schema#1 (openapi.yaml) [Elementi aggiuntivi come 'allowEmptyValue'] ...");
 			
@@ -90,6 +93,7 @@ public class TestOpenApi4j {
 			configO.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
 			configO.getOpenApi4JConfig().setOpenApiLibrary(openAPILibrary);
 			configO.getOpenApi4JConfig().setValidateAPISpec(true);
+			configO.getOpenApi4JConfig().setMergeAPISpec(mergeSpec);
 			apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), apiOpenApi4j, configO);
 					
 			System.out.println("Test Schema#1 (openapi.yaml) [Elementi aggiuntivi come 'allowEmptyValue'] ok");
@@ -164,7 +168,7 @@ public class TestOpenApi4j {
 			
 			System.out.println("Test Schema#2 (allegati.yaml) [Discriminator non presente o non required Step 1/2] ok");
 			
-		}
+		}*/
 		
 		
 		
@@ -194,6 +198,7 @@ public class TestOpenApi4j {
 		configO.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
 		configO.getOpenApi4JConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApi4JConfig().setValidateAPISpec(true);
+		configO.getOpenApi4JConfig().setMergeAPISpec(mergeSpec);
 		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), apiOpenApi4j, configO);
 		
 		IApiValidator apiValidatorNoOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
@@ -259,7 +264,10 @@ public class TestOpenApi4j {
 			throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 		} catch(ValidatorException e) {
 			System.out.println("Test #2 Errore trovato: " + e.getMessage());
-			String msgErroreAtteso = "body.allegati.0.documento: Field 'uri' is required.";		
+			String msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ?
+					"body.allegati.0.documento: Field 'uri' is required." :
+					"- [ERROR][] [Path '/allegati/0/documento'] Object has missing required properties ([\"uri\"])";
+			
 			if(!e.getMessage().contains(msgErroreAtteso)) {
 				throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 			}
@@ -287,7 +295,9 @@ public class TestOpenApi4j {
 			throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 		} catch(ValidatorException e) {
 			System.out.println("Test #3 Errore trovato: " + e.getMessage());
-			String msgErroreAtteso = "body.allegati.0.documento: Schema selection can't be made for discriminator 'tipoDocumento' with value 'riferimento-uriERRATA'.";
+			String msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ?
+					"body.allegati.0.documento: Schema selection can't be made for discriminator 'tipoDocumento' with value 'riferimento-uriERRATA'."
+					: "[ERROR][] [Path '/allegati/0/documento/tipoDocumento'] Instance value (\"riferimento-uriERRATA\") not found in enum (possible values: [\"inline\",\"riferimento-uri\"])";
 			if(!e.getMessage().contains(msgErroreAtteso)) {
 				throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 			}
@@ -316,17 +326,27 @@ public class TestOpenApi4j {
 			throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 		} catch(ValidatorException e) {
 			System.out.println("Test #4 Errore trovato: " + e.getMessage());
-			String msgErroreAtteso = "body.allegati.1.documento: Property name in content 'tipoDocumento' is not set.";
+			String msgErroreAtteso =  openAPILibrary == OpenAPILibrary.openapi4j ? 
+					"body.allegati.1.documento: Property name in content 'tipoDocumento' is not set." :
+					"[ERROR][] [Path '/allegati/1/documento'] Object has missing required properties ([\"tipoDocumento\"])";			
 			if(!e.getMessage().contains(msgErroreAtteso)) {
 				throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 			}
-			msgErroreAtteso = "From: body.<allOf>.allegati.1.<items>.<#/components/schemas/AllegatoRiferimentoMixed>.<allOf>.documento.<discriminator>";
+			msgErroreAtteso =  openAPILibrary == OpenAPILibrary.openapi4j ? 
+					"From: body.<allOf>.allegati.1.<items>.<#/components/schemas/AllegatoRiferimentoMixed>.<allOf>.documento.<discriminator>" :
+					"* /allOf/1/properties/allegati/items/allOf/1: Discriminator field 'tipoDocumento' is required";
 			if(!e.getMessage().contains(msgErroreAtteso)) {
 				throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 			}
 			System.out.println("Test #4 completato\n\n");
 		}
 		
+		// Non supera la validazione perchè lo swagger-validator quando incontra il content type json, prima
+		// prova a parsare il body in json e poi cerca di verificare lo schema, che non centra più nulla con un
+		// type: string, format: binary
+		// se infatti metto un octet_stream, la validazione passa.
+		// Dovrei dire al validatore di non convertire i json a tutti costi quando si trova content_type_json
+		// Anzi meglio, può convertirlo e verificare sia un json, ma non deve validarlo per forza
 		
 		System.out.println("Test #5 (Richiesta POST con parametro dinamico /documenti/XYZ)");
 		String testUrl5 = baseUri+"/documenti/test/"+UUID.randomUUID().toString();
@@ -336,8 +356,10 @@ public class TestOpenApi4j {
 		httpEntityDynamicPath.setUrl(testUrl5);	
 		Map<String, List<String>> parametersTrasportoDynamicPath = new HashMap<>();
 		TransportUtils.addHeader(parametersTrasportoDynamicPath,"api_key", "aaa");
+		//TransportUtils.addHeader(parametersTrasportoDynamicPath,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
 		TransportUtils.addHeader(parametersTrasportoDynamicPath,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
 		httpEntityDynamicPath.setHeaders(parametersTrasportoDynamicPath);
+		//httpEntityDynamicPath.setContentType(HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
 		httpEntityDynamicPath.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 		httpEntityDynamicPath.setContent(json); // volutamente metto un json che comunque dovrebbe trattare come binario!
 		apiValidatorOpenApi4j.validate(httpEntityDynamicPath);
@@ -434,6 +456,12 @@ public class TestOpenApi4j {
 				else {
 					apiValidator = apiValidatorNoOpenApi4j;
 					tipoTest = tipoTest+"[json]";
+				}
+				
+				if(ct.contains("xml") && openAPILibrary == OpenAPILibrary.swagger_request_validator) {
+					System.out.println("\t "+tipoTest+" validate response ...");
+					System.out.println("\t Content-Type " + ct + ": funzionalità non supportata dalla libreria swagger-request-validator");
+					continue;
 				}
 						
 				try {
@@ -568,12 +596,16 @@ public class TestOpenApi4j {
 					System.out.println("\t (Valore:"+valore+") rilevato errore di validazione non atteso: "+e.getMessage());
 					throw new Exception("(Valore:"+valore+") rilevato errore di validazione non atteso: "+e.getMessage(),e);
 				}
-				String msgErroreAtteso = "body.allegati.0.codiceOpzionaleNumerico: '"+valore+"' does not respect pattern '^\\d{6}$'.";
+				String msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ?
+						"body.allegati.0.codiceOpzionaleNumerico: '"+valore+"' does not respect pattern '^\\d{6}$'." :
+						"- [ERROR][] [Path '/allegati/0/codiceOpzionaleNumerico'] ECMA 262 regex \"^\\d{6}$\" does not match input string \""+valore+"\"";				
 				if(!e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t (Valore:"+valore+") ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
-				msgErroreAtteso = "From: body.<allOf>.allegati.0.<items>.<#/components/schemas/AllegatoRiferimentoMixed>.<allOf>.<#/components/schemas/Allegato>.codiceOpzionaleNumerico.<pattern>";
+				msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ? 
+						"From: body.<allOf>.allegati.0.<items>.<#/components/schemas/AllegatoRiferimentoMixed>.<allOf>.<#/components/schemas/Allegato>.codiceOpzionaleNumerico.<pattern>" :
+						"* /allOf/1/properties/allegati/items/allOf/0";
 				if(!e.getMessage().contains(msgErroreAtteso)) {
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}

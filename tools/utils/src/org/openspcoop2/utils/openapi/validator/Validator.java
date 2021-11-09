@@ -105,8 +105,6 @@ import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.atlassian.oai.validator.interaction.request.RequestValidator;
-import com.atlassian.oai.validator.interaction.response.ResponseValidator;
 import com.atlassian.oai.validator.model.ApiPath;
 import com.atlassian.oai.validator.model.ApiPathImpl;
 import com.atlassian.oai.validator.model.NormalisedPath;
@@ -162,18 +160,14 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 	private OpenApi3 openApi4j;
 	
 	// SwaggerRequestValidator
-	private RequestValidator swaggerRequestValidator;
-	private ResponseValidator swaggerResponseValidator;
+	private SwaggerRequestValidator swaggerRequestValidator;
+	//private RequestValidator swaggerRequestValidator;
+	private SwaggerResponseValidator swaggerResponseValidator;
 	private OpenAPI openApiSwagger;
 
 	// Configuration
 	private OpenapiApi4jValidatorConfig openApi4jConfig;
-	
-	// TODO PER ANDREA: CONFIGURAZIONI AGGIUNTIVE SWAGGER VALIDATOR
-	private boolean isValidateUnexpectedQueryParam = false;
-	private boolean isInjectingAdditionalProperties = false; 
-	
-	
+		
 	
 	boolean onlySchemas = false;
 	
@@ -379,11 +373,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			            
 			            OpenAPIV3Parser v3Parser = new OpenAPIV3Parser();
 						SwaggerParseResult result = v3Parser.parseJsonNode(null, schemaNodeRoot);
-						
-						// OpenAPIDeserializer swaggerApiDeserializer = new OpenAPIDeserializer();
-						// swagger Devo usare il deserializer per avere il controllo sui messaggi
-						// di parsing
-						
+					
 						OpenAPIResolver v3Resolver = new OpenAPIResolver(result.getOpenAPI(), new ArrayList<>(), null);
 						result.setOpenAPI(v3Resolver.resolve());
 
@@ -393,14 +383,35 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						v3ResolverFully.resolveFully(result.getOpenAPI());
 						
 			            // Pulisco la openApi con le utility dell' OpenApiLoader di atlassian
-						removeRegexPatternOnStringsOfFormatByte(result.getOpenAPI());
+						//removeRegexPatternOnStringsOfFormatByte(result.getOpenAPI());
 					    removeTypeObjectAssociationWithOneOfAndAnyOfModels(result.getOpenAPI());
 						
 						if (result.getOpenAPI() == null) {
 							throw new ProcessingException("Error while parsing the OpenAPI root node: " + String.join("\n", result.getMessages()));
 						}
-						
+											
 						if(this.openApi4jConfig.isValidateAPISpec()) {
+							/*JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
+						    JsonSchema schema = factory.getJsonSchema(schemaNodeRoot);
+						    
+						    ProcessingReport report = schema.validate(schemaNodeRoot);
+						    ListProcessingReport lp = new ListProcessingReport();
+					        lp.mergeWith(report);
+					        
+					        java.util.Iterator<ProcessingMessage> it = lp.iterator();
+					        String outputMsg = "";
+					        while (it.hasNext()) {
+					            ProcessingMessage pm = it.next();
+					            outputMsg += pm.getMessage();					           
+					        }
+//					        
+					        if (outputMsg != "") {
+					        	throw new ProcessingException(
+										"OpenAPI3 not valid: " + outputMsg
+										);
+					        }*/
+							
+							// TODO: E questi? Anche lo swagger validator controlla qualche errore?							
 							if (result.getMessages().size() != 0) {
 								throw new ProcessingException(
 										"OpenAPI3 not valid: " + String.join("\n", result.getMessages())
@@ -435,8 +446,8 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						// un ERROR, quindi dobbiamo disattivarli selettivamente.
 						// Le chiavi da usare per il LevelResolver sono nel progetto swagger-validator 
 						// sotto src/main/resources/messages.properties
-						
-						if (!this.isValidateUnexpectedQueryParam) {
+											
+						if (!this.openApi4jConfig.isValidateUnexpectedQueryParam()) {
 							errorLevelResolver.withLevel("validation.request.parameter.query.unexpected", Level.IGNORE);
 						}				
 						
@@ -465,24 +476,21 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						MessageResolver messages = new MessageResolver(errorLevelResolver.build());
 						final SchemaValidator schemaValidator = new SchemaValidator(this.openApiSwagger, messages);
 						
-						if (!this.isInjectingAdditionalProperties) {
+						if (!this.openApi4jConfig.isInjectingAdditionalProperties()) {
 							var transformers = schemaValidator.transformers;
 							schemaValidator.transformers = transformers.stream()
 									.filter( t -> t != AdditionalPropertiesInjectionTransformer.getInstance())
 									.collect(Collectors.toList());
 						}
 						
-				        this.swaggerRequestValidator = new RequestValidator(
+				        this.swaggerRequestValidator = new SwaggerRequestValidator(
 				        		schemaValidator, 
 				        		messages, 
 				        		this.openApiSwagger, 
 				        		new ArrayList<>());
 				        
-				        this.swaggerResponseValidator = new ResponseValidator(
-				        		schemaValidator, 
-				        		messages, 
-				        		this.openApiSwagger, 
-				        		new ArrayList<>());
+				        this.swaggerResponseValidator = new SwaggerResponseValidator(this.openApiSwagger, this.openApi4jConfig);
+				        		
 				        
 					}
 					
@@ -1461,11 +1469,13 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		
 		ValidationReport report;
 		
+		
+		
 		if(httpEntity instanceof HttpBaseRequestEntity) {			
+		
 			HttpBaseRequestEntity<?> request = (HttpBaseRequestEntity<?>) httpEntity;
 			var swaggerRequest = buildSwaggerRequest(request);		    
-		    report = this.swaggerRequestValidator.validateRequest(swaggerRequest, swaggerValidatorOperation);
-		    
+		    report = this.swaggerRequestValidator.validateRequest(swaggerRequest, swaggerValidatorOperation);		    
 		}
 		else if(httpEntity instanceof HttpBaseResponseEntity<?>) {				
 			HttpBaseResponseEntity<?> response = (HttpBaseResponseEntity<?>) httpEntity;
@@ -1898,7 +1908,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		// TODO: Forse wrappare tutto sotto un try-catch
 		Object content = response.getContent();
 		if(content instanceof String) {
-			builder.withBody((String) content);
+			builder.withBody( (String) content);
 		}
 		else if(content instanceof byte[]) {
 			builder.withBody((byte[]) content);
@@ -1939,7 +1949,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 	    request.getParameters().forEach(builder::withQueryParam);
 	                        
 		if(content instanceof String) {
-			builder.withBody((String) content);
+			builder.withBody(((String) content));	// TODO: Rimetti poi solo string
 		}
 		else if(content instanceof byte[]) {
 			builder.withBody((byte[]) content);
