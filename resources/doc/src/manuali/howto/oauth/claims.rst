@@ -72,14 +72,14 @@ all'interno del token:
       Playground per il claim 'azp':
 
    .. note:: **Per conoscere l’identificativo dell’applicazione Playground**
-	 |br|
-          È possibile vedere una precedente transazione terminata con
-          successo per conoscere l'esatto valore associato
-          all'applicazione *Playground* (es. :numref:`quick_oauthStoricoTransazioniOKTokenInfo_fig`).
+       |br|
+       È possibile vedere una precedente transazione terminata con
+       successo per conoscere l'esatto valore associato
+       all'applicazione *Playground* (es. :numref:`quick_oauthStoricoTransazioniOKTokenInfo_fig`).
 
-      -  aud=407408718192.apps.googleusercontent.com
+       -  aud=407408718192.apps.googleusercontent.com
 
-      -  azp=client1, client2
+       -  azp=client1, client2
 
    Effettuata la configurazione salvarla cliccando sul pulsante 'Salva'.
 

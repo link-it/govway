@@ -34,10 +34,10 @@ Compilare il form (:numref:`erogazioneNewFig`) inserendo i seguenti dati:
    erogare.
 
 -  *Controllo degli Accessi:* In questa sezione è possibile stabilire l'eventuale controllo degli accessi all'erogazione:
-    - *Pubblico*: non sono richieste credenziali per l'accesso.
-    - *Autenticato*:  l'accesso è ammesso solo previa verifica dei criteri di autenticazione e autorizzazione previsti in configurazione.
+   - *Pubblico*: non sono richieste credenziali per l'accesso.
+   - *Autenticato*:  l'accesso è ammesso solo previa verifica dei criteri di autenticazione e autorizzazione previsti in configurazione.
 
-    Selezionando l'opzione *Autenticato*, dopo la creazione dell'erogazione, sarà necessario completare la configurazione del controllo degli accessi come descritto nella sezione :ref:`apiGwAutenticazione`.
+   Selezionando l'opzione *Autenticato*, dopo la creazione dell'erogazione, sarà necessario completare la configurazione del controllo degli accessi come descritto nella sezione :ref:`apiGwAutenticazione`.
 
 -  *Connettore:* In questa sezione devono essere specificati i
    riferimenti al servizio, al fine di rendere possibile il corretto
