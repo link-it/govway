@@ -10,7 +10,7 @@ Al fine di rendere più efficaci le attività di monitoraggio dei flussi di comu
 La seguente tabella indica, per ciascun servizio configurato, quali sono gli identificativi di correlazione estratti:
 
 .. table:: Identificativi PagoPA estratti
-   :widths: 35 65
+   :widths: 35 35 65
    :class: longtable
    :name: IdentificativoPagoPA
 
