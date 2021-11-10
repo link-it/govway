@@ -55,4 +55,9 @@ Accanto a ciascuna delle voci in elenco è presente un'icona che in base al colo
     - **Giallo**: funzionalità attivata in modalità opzionale o "non bloccante" e quindi in sola notifica
     - **Verde**: funzionalità attiva
 
+Le funzionalità specifiche possono essere configurate in maniera differenziata per gruppi di risorse/azioni relative alla API erogata/fruita. Una nuova configurazione specifica può essere creata tramite il pulsante *Crea Nuova*. Il passaggio tra una configurazione e l'altra sarà possibile tramite i tab che risulteranno visibili nell'interfaccia. Questa funzionalità è descritta in dettaglio nella sezione :ref:`configSpecificaRisorsa`.
 
+Le sezioni successive descrivono in dettaglio le configurazioni sopraelencate e i relativi contesti di utilizzo.
+Tranne dove esplicitamente dichiarato, gli schemi di configurazione
+descritti in seguito possono essere attuati sia sulle erogazioni che
+sulle fruizioni.
