@@ -2116,11 +2116,26 @@ public class HTTPS extends GestioneViaJmx {
 				String XML_inCache = XML.replace(" fallita", " fallita (in cache)");
 				String DB_inCache = DB.replace(" fallita", " fallita (in cache)");
 				Reporter.log("Controllo Messaggio (id:"+id+") msgXML["+XML+"] msgDB["+DB+"]");
-				Assert.assertTrue( 
-						dataMsg.isTracedMessaggio(id, XML) || 
+				boolean esito = dataMsg.isTracedMessaggio(id, XML) || 
 						dataMsg.isTracedMessaggio(id, DB)  ||
 						dataMsg.isTracedMessaggio(id, XML_inCache) || 
-						dataMsg.isTracedMessaggio(id, DB_inCache)  
+						dataMsg.isTracedMessaggio(id, DB_inCache)  ;
+				if(!esito) {
+					Reporter.log("Controllo fallito, recupero diagnostici... ");
+					Vector<String> diag = dataMsg.getMessaggiDiagnostici(id);
+					if(diag!=null) {
+						Reporter.log("Controllo fallito recuperati diagnostici ["+diag.size()+"] ");
+						if(!diag.isEmpty()) {
+							int i = 0;
+							for (String d : diag) {
+								Reporter.log("Diagnostico-"+i+" ["+d+"]");
+								i++;
+							}
+						}
+					}
+				}
+				Assert.assertTrue( 
+						esito
 						);
 			}
 			

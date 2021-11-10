@@ -20,6 +20,8 @@
 
 package org.openspcoop2.security.message.saml;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -58,7 +60,9 @@ public class SAMLUtilities {
 		if (wssProperties != null && wssProperties.size() > 0) {
 			
 			// preprocess per saml
-			for (String key : wssProperties.keySet()) {
+			List<String> keys = new ArrayList<String>();
+			keys.addAll(wssProperties.keySet());
+			for (String key : keys) {
 				Object oValue = wssProperties.get(key);
 				String value = null;
 				if(oValue!=null && oValue instanceof String) {

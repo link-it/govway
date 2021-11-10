@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.protocol.basic;
 
+import java.io.Serializable;
+
 /**
  * BasicStaticObjectConfig
  * 
@@ -26,8 +28,13 @@ package org.openspcoop2.protocol.basic;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class BasicStaticInstanceConfig {
+public class BasicStaticInstanceConfig implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private boolean staticConfig;
 	private boolean staticErrorBuilder;	
 	private boolean staticEsitoBuilder;
