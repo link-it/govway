@@ -9,12 +9,12 @@ del registro pronto all'utilizzo in numerose situazioni.
 
 Cliccando sulla voce *Erogazioni* o *Fruizioni* nell'intestazione dell'elenco è possibile consultarne i dettagli selezionando l'API attivata di interesse. 
 
-La pagina di dettaglio consente di accedere ai principali elementi di configurazione (:numref:`paginaDettaglioErogazione`):
+La pagina di dettaglio consente di accedere ai principali elementi di configurazione :
 
-- *Nome*: in assenza di configurazioni specifiche per risorsa/azione (sezione :ref:`configSpecificaRisorsa`), accanto al nome dell'erogazione o della fruizione è presente un'icona che permette di disattivare/riattivare l'API come descritto nella sezione :ref:`gwSospensioneApi`.
-- *URL Invocazione*: se la console viene utilizzata in modalità avanzata (sezione :ref:`modalitaAvanzata`), accedendo alla modifica della URL di Invocazione è possibile configurare la modalità di identificazione dell'azione come descritto nella sezione :ref:`identificazioneAzione`.
-- *Connettore*: endpoint del servizio acceduto dal gateway, cui verranno consegnate le richieste pervenute. In questa è presente sia l'icona a matita per aggiornare il valore del connettore che un'icona che consente di testare la raggiungibilità del servizio tramite il connettore fornito. Maggiori dettagli vengono forniti nella sezione :ref:`configSpecificaConnettore`.
-- *Gestione CORS*: stato abilitazione della funzione CORS. L'icona a matita consente di modificare l'impostazione corrente come descritto nella sezione :ref:`configSpecificaCORS`.
+- *Nome*: in assenza di configurazioni specifiche per risorsa/azione, accanto al nome dell'erogazione o della fruizione è presente un'icona che permette di disattivare/riattivare l'API come descritto nella sezione.
+- *URL Invocazione*: se la console viene utilizzata in modalità avanzata, accedendo alla modifica della URL di Invocazione è possibile configurare la modalità di identificazione dell'azione come descritto.
+- *Connettore*: endpoint del servizio acceduto dal gateway, cui verranno consegnate le richieste pervenute. In questa è presente sia l'icona a matita per aggiornare il valore del connettore che un'icona che consente di testare la raggiungibilità del servizio tramite il connettore fornito. Maggiori dettagli vengono forniti.
+- *Gestione CORS*: stato abilitazione della funzione CORS. L'icona a matita consente di modificare l'impostazione corrente come descritto nella sezione.
 
 .. figure:: ../_figure_console/paginaDettaglioErogazione.png
     :scale: 70%
@@ -25,7 +25,7 @@ La pagina di dettaglio consente di accedere ai principali elementi di configuraz
 
 Tramite il pulsante *Configura* è inoltre possibile aggiungere ulteriori elementi di
 configurazione attraverso le ulteriori funzionalità messe a
-disposizione da GovWay (:numref:`configurazioneSpecifica`).
+disposizione da GovWay.
 
 .. figure:: ../_figure_console/ConfigurazioneSpecifica.png
     :scale: 70%
@@ -34,19 +34,6 @@ disposizione da GovWay (:numref:`configurazioneSpecifica`).
 
     Configurazione di una erogazione
 
-Le voci di configurazione che possono essere accedute sono:
-
-- :ref:`apiGwControlloAccessi`
-- :ref:`rateLimiting`
-- :ref:`configSpecificaValidazione`
-- :ref:`configSpecificaCachingRisposta`
-- :ref:`sicurezzaLivelloMessaggio`
-- :ref:`console_mtom`
-- :ref:`trasformazioni`
-- :ref:`tracciamentoErogazione`
-- :ref:`configSpecificaRegistrazioneMessaggi`
-- :ref:`configProprieta`
-- :ref:`configOpzioniAvanzate`
 
 Accanto a ciascuna delle voci in elenco è presente un'icona che in base al colore assume i seguenti significati:
     - **Grigio**: funzionalità non attiva
@@ -54,7 +41,7 @@ Accanto a ciascuna delle voci in elenco è presente un'icona che in base al colo
     - **Giallo**: funzionalità attivata in modalità opzionale o "non bloccante" e quindi in sola notifica
     - **Verde**: funzionalità attiva
 
-Le funzionalità specifiche possono essere configurate in maniera differenziata per gruppi di risorse/azioni relative alla API erogata/fruita. Una nuova configurazione specifica può essere creata tramite il pulsante *Crea Nuova*. Il passaggio tra una configurazione e l'altra sarà possibile tramite i tab che risulteranno visibili nell'interfaccia. Questa funzionalità è descritta in dettaglio nella sezione :ref:`configSpecificaRisorsa`.
+Le funzionalità specifiche possono essere configurate in maniera differenziata per gruppi di risorse/azioni relative alla API erogata/fruita. Una nuova configurazione specifica può essere creata tramite il pulsante *Crea Nuova*. Il passaggio tra una configurazione e l'altra sarà possibile tramite i tab che risulteranno visibili nell'interfaccia. Questa funzionalità è descritta in dettaglio.
 
 Le sezioni successive descrivono in dettaglio le configurazioni sopraelencate e i relativi contesti di utilizzo.
 Tranne dove esplicitamente dichiarato, gli schemi di configurazione
