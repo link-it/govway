@@ -109,7 +109,7 @@ public class SwaggerResponseValidator {
 				// TODO: Valida base64
 				return this.fileValidator.validateResponse(response, apiOperation);
 			}						
-		}
+		} //else if (mostSpecificMatch)
 
 		return this.normalValidator.validateResponse(response, apiOperation);
 	}
