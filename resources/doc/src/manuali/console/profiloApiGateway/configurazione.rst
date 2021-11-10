@@ -22,3 +22,16 @@ La pagina di dettaglio consente di accedere ai principali elementi di configuraz
     :name: paginaDettaglioErogazione
 
     Dettaglio di una erogazione
+
+Tramite il pulsante *Configura* è inoltre possibile aggiungere ulteriori elementi di
+configurazione attraverso le ulteriori funzionalità messe a
+disposizione da GovWay (:numref:`configurazioneSpecifica`).
+
+.. figure:: ../_figure_console/ConfigurazioneSpecifica.png
+    :scale: 70%
+    :align: center
+    :name: configurazioneSpecifica
+
+    Configurazione di una erogazione
+
+Le voci di configurazione che possono essere accedute sono:
