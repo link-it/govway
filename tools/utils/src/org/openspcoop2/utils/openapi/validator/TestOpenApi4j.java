@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -1307,7 +1308,10 @@ public class TestOpenApi4j {
 						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
 					}
 					if(openapi4j) {
-						String msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date'. (code: 1007)";
+						String msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ?
+								"body.data: Value '"+valore+"' does not match format 'date'. (code: 1007)" :
+								"[ERROR][REQUEST][POST http://petstore.swagger.io/api/documenti/datetest/2020-07-21 @body] [Path '/data'] String \""+valore+"\" is invalid against requested date format(s) yyyy-MM-dd";
+						
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							System.out.println("\t "+tipoTest+" ERRORE!");
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
@@ -1371,7 +1375,10 @@ public class TestOpenApi4j {
 						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
 					}
 					if(openapi4j) {
-						String msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date'. (code: 1007)";
+						String msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ?
+								"body.data: Value '"+valore+"' does not match format 'date'. (code: 1007)" :
+								"[ERROR][RESPONSE][] [Path '/data'] String \""+valore+"\" is invalid against requested date format(s) yyyy-MM-dd";
+						
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							System.out.println("\t "+tipoTest+" ERRORE!");
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
@@ -1445,7 +1452,9 @@ public class TestOpenApi4j {
 						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
 					}
 					if(openapi4j) {
-						String msgErroreAtteso = "data_documento_header: Value '"+valore+"' does not match format 'date'. (code: 1007)";
+						String msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ?
+								"data_documento_header: Value '"+valore+"' does not match format 'date'. (code: 1007)" :
+								"[ERROR][REQUEST][POST http://petstore.swagger.io/api/documenti/datetest/2020-07-21 @header.data_documento_header] String \""+valore+"\" is invalid against requested date format(s)";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							System.out.println("\t "+tipoTest+" ERRORE!");
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
@@ -1509,7 +1518,9 @@ public class TestOpenApi4j {
 						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
 					}
 					if(openapi4j) {
-						String msgErroreAtteso = "data_documento_risposta_header: Value '"+valore+"' does not match format 'date'. (code: 1007)";
+						String msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ?
+								"data_documento_risposta_header: Value '"+valore+"' does not match format 'date'. (code: 1007)" : 
+								"[ERROR][RESPONSE][] String \""+valore+"\" is invalid against requested date format(s) yyyy-MM-dd"; 
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							System.out.println("\t "+tipoTest+" ERRORE!");
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
@@ -1583,7 +1594,9 @@ public class TestOpenApi4j {
 						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
 					}
 					if(openapi4j) {
-						String msgErroreAtteso = "data_documento_query: Value '"+valore+"' does not match format 'date'. (code: 1007)";						
+						String msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j?
+								"data_documento_query: Value '"+valore+"' does not match format 'date'. (code: 1007)" :
+								"[ERROR][REQUEST][POST http://petstore.swagger.io/api/documenti/datetest/2020-07-21 @query.data_documento_query] String \""+valore+"\" is invalid against requested date format(s) "; 
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							System.out.println("\t "+tipoTest+" ERRORE!");
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
@@ -1711,6 +1724,8 @@ public class TestOpenApi4j {
 		valori_test14.add("2017-07-21T173228");esiti_test14.add(false); // ko
 		valori_test14.add("2017-07-21T17:32:28 01:00");esiti_test14.add(false); // ko
 		valori_test14.add("2017-07-21T17:32:28+01");esiti_test14.add(false); // ko
+		
+		Set<String> swagger_validator_fallimenti = Set.of( "2017-07-21T17:32:28+0100", "2017-07-21T17:32:28+01" );
 
 		// ** Test sul body **
 		for (int i = 0; i < valori_test14.size(); i++) {
@@ -1755,6 +1770,9 @@ public class TestOpenApi4j {
 						if(i<3 && !openapi4j) {
 							System.out.println("\t "+tipoTest+" validate, la validazione JSON non rileva l'accezione!!!!");
 							continue;
+						} else if( openAPILibrary == OpenAPILibrary.swagger_request_validator && swagger_validator_fallimenti.contains(valore)) {
+							System.out.println("\t "+tipoTest+" validate, lo swagger-request-validator non rileva l'accezione!!!!");
+							continue;
 						}
 						
 						System.out.println("\t "+tipoTest+" ERRORE!");
@@ -1773,7 +1791,10 @@ public class TestOpenApi4j {
 						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
 					}
 					if(openapi4j) {
-						String msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
+						String msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ? 
+								"body.data: Value '"+valore+"' does not match format 'date-time'. (code: 1007)" :
+								"[ERROR][REQUEST][POST http://petstore.swagger.io/api/documenti/datetimetest/2020-07-21T17:32:28Z @body] [Path '/data'] String \""+valore+"\" is invalid against requested "; 
+						
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							System.out.println("\t "+tipoTest+" ERRORE!");
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
@@ -1824,6 +1845,9 @@ public class TestOpenApi4j {
 						if(i<3 && !openapi4j) {
 							System.out.println("\t "+tipoTest+" validate, la validazione JSON non rileva l'accezione!!!!");
 							continue;
+						} else if(openAPILibrary == OpenAPILibrary.swagger_request_validator && swagger_validator_fallimenti.contains(valore)) {
+							System.out.println("\t "+tipoTest+" validate, lo swagger-request-validator non rileva l'accezione!!!!");
+							continue;
 						}
 						
 						System.out.println("\t "+tipoTest+" ERRORE!");
@@ -1842,7 +1866,9 @@ public class TestOpenApi4j {
 						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
 					}
 					if(openapi4j) {
-						String msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
+						String msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ?
+								"body.data: Value '"+valore+"' does not match format 'date-time'. (code: 1007)" :
+								"[ERROR][RESPONSE][] [Path '/data'] String \""+valore+"\" is invalid against requested date format(s) [yyyy-MM-dd'T'HH:mm:ssZ, yyyy-MM-dd'T'HH:mm:ss.[0-9]{1,12}Z]"; 
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							System.out.println("\t "+tipoTest+" ERRORE!");
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
@@ -1863,6 +1889,7 @@ public class TestOpenApi4j {
 		
 		for (int i = 0; i < valori_test14.size(); i++) {
 			String valore = valori_test14.get(i);
+						
 			boolean esito = esiti_test14.get(i);
 			
 			TextHttpRequestEntity httpEntity14 = new TextHttpRequestEntity();
@@ -1916,7 +1943,13 @@ public class TestOpenApi4j {
 						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
 					}
 					if(openapi4j) {
-						String msgErroreAtteso = "datetime_documento_header: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
+						if (openAPILibrary == OpenAPILibrary.swagger_request_validator && swagger_validator_fallimenti.contains(valore)) {
+							System.out.println("\t "+tipoTest+" validate, lo swagger-request-validator non rileva l'accezione!!!!");
+							continue;
+						}
+						String msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ? 
+								"datetime_documento_header: Value '"+valore+"' does not match format 'date-time'. (code: 1007)" :
+								"[ERROR][REQUEST][POST http://petstore.swagger.io/api/documenti/datetimetest/2020-07-21T17:32:28Z @header.datetime_documento_header] String \""+valore+"\" is invalid against requested date format(s) [yyyy-MM-dd'T'HH:mm:ssZ, yyyy-MM-dd'T'HH:mm:ss.[0-9]{1,12}Z]";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							System.out.println("\t "+tipoTest+" ERRORE!");
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
@@ -1986,7 +2019,13 @@ public class TestOpenApi4j {
 						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
 					}
 					if(openapi4j) {
-						String msgErroreAtteso = "datetime_documento_risposta_header: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
+						if (openAPILibrary == OpenAPILibrary.swagger_request_validator && swagger_validator_fallimenti.contains(valore)) {
+							System.out.println("\t "+tipoTest+" validate, lo swagger-request-validator non rileva l'accezione!!!!");
+							continue;
+						}
+						String msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ?
+								"datetime_documento_risposta_header: Value '"+valore+"' does not match format 'date-time'. (code: 1007)" :
+								"[ERROR][RESPONSE][] String \""+valore+"\" is invalid against requested date format(s) [yyyy-MM-dd'T'HH:mm:ssZ, yyyy-MM-dd'T'HH:mm:ss.[0-9]{1,12}Z]";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							System.out.println("\t "+tipoTest+" ERRORE!");
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
@@ -2066,7 +2105,13 @@ public class TestOpenApi4j {
 						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
 					}
 					if(openapi4j) {
-						String msgErroreAtteso = "datetime_documento_query: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
+						if (openAPILibrary == OpenAPILibrary.swagger_request_validator && swagger_validator_fallimenti.contains(valore)) {
+							System.out.println("\t "+tipoTest+" validate, lo swagger-request-validator non rileva l'accezione!!!!");
+							continue;
+						}
+						String msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ?
+								"datetime_documento_query: Value '"+valore+"' does not match format 'date-time'. (code: 1007)" :
+								"[ERROR][REQUEST][POST http://petstore.swagger.io/api/documenti/datetimetest/2020-07-21T17:32:28Z @query.datetime_documento_query] String \""+valore+"\" is invalid against r";								
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							System.out.println("\t "+tipoTest+" ERRORE!");
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
