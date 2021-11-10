@@ -15,6 +15,4 @@ autenticazione richiesto per l'accesso al servizio.
 
 Come mostrato in :numref:`autenticazione` la configurazione dell'autenticazione deve essere effettuata attraverso la selezione di un tipo di autenticazione tra quelli disponibili:
 
-   -  *disabilitato*
-	nessuna autenticazione
 
