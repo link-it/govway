@@ -1,19 +1,12 @@
 package org.openspcoop2.utils.openapi.validator;
 
 import static com.atlassian.oai.validator.util.ContentTypeUtils.findMostSpecificMatch;
-import static java.util.Collections.emptyList;
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.openspcoop2.utils.transport.http.HttpConstants;
-
-import com.atlassian.oai.validator.interaction.response.CustomResponseValidator;
 import com.atlassian.oai.validator.interaction.response.ResponseValidator;
 import com.atlassian.oai.validator.model.ApiOperation;
 import com.atlassian.oai.validator.model.Response;
@@ -24,11 +17,9 @@ import com.atlassian.oai.validator.report.ValidationReport.Level;
 import com.atlassian.oai.validator.schema.SchemaValidator;
 import com.atlassian.oai.validator.schema.transform.AdditionalPropertiesInjectionTransformer;
 import com.atlassian.oai.validator.util.ContentTypeUtils;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.BinarySchema;
-import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 
@@ -71,7 +62,11 @@ public class SwaggerResponseValidator {
 		// Tutta la validazione sulla risposta, eccome se va fatta.
 		//repo.getMessages().
 
-		final ApiResponse apiResponse = getApiResponse(response, apiOperation); 
+		final ApiResponse apiResponse = getApiResponse(response, apiOperation);
+		if (apiResponse.getContent() == null) {
+			return this.normalValidator.validateResponse(response, apiOperation);
+		}
+		
 		final Optional<String> mostSpecificMatch = findMostSpecificMatch(response, apiResponse.getContent().keySet());
 		
 		if (!mostSpecificMatch.isPresent()) {
@@ -87,7 +82,6 @@ public class SwaggerResponseValidator {
 		
 		// Se il content type è json, voglio comunque validarlo e verificare che sia un json corretto
 		if (type.getSchema() instanceof BinarySchema) {
-			// TODO: Solleva error required
 			BinarySchema schema = (BinarySchema) type.getSchema();
 
 			if ("string".equals(schema.getType()) && "binary".equals(schema.getFormat())) {
@@ -120,7 +114,7 @@ public class SwaggerResponseValidator {
 		return this.normalValidator.validateResponse(response, apiOperation);
 	}
 	
-	private LevelResolver.Builder getLevelResolverBuilder(OpenapiApi4jValidatorConfig config) {
+	public static LevelResolver.Builder getLevelResolverBuilder(OpenapiApi4jValidatorConfig config) {
 		var errorLevelResolver = LevelResolver.create();
 		
 		// Il LevelResolver serve a gestire il livello di serietà dei messaggi						

@@ -123,7 +123,7 @@ public class OpenapiApi4jValidatorConfig {
 	}
 
 	public boolean isValidateUnexpectedQueryParam() {
-		return isValidateUnexpectedQueryParam;
+		return this.isValidateUnexpectedQueryParam;
 	}
 
 	public void setValidateUnexpectedQueryParam(boolean isValidateUnexpectedQueryParam) {
@@ -131,7 +131,7 @@ public class OpenapiApi4jValidatorConfig {
 	}
 
 	public boolean isInjectingAdditionalProperties() {
-		return isInjectingAdditionalProperties;
+		return this.isInjectingAdditionalProperties;
 	}
 
 	public void setInjectingAdditionalProperties(boolean isInjectingAdditionalProperties) {

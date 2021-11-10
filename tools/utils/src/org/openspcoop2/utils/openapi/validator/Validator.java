@@ -40,7 +40,6 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.openapi4j.core.model.v3.OAI3Context;
 import org.openapi4j.core.model.v3.OAI3SchemaKeywords;
@@ -112,13 +111,8 @@ import com.atlassian.oai.validator.model.NormalisedPathImpl;
 import com.atlassian.oai.validator.model.Request.Method;
 import com.atlassian.oai.validator.model.SimpleRequest;
 import com.atlassian.oai.validator.model.SimpleResponse;
-import com.atlassian.oai.validator.report.LevelResolver;
-import com.atlassian.oai.validator.report.MessageResolver;
 import com.atlassian.oai.validator.report.SimpleValidationReportFormat;
 import com.atlassian.oai.validator.report.ValidationReport;
-import com.atlassian.oai.validator.report.ValidationReport.Level;
-import com.atlassian.oai.validator.schema.SchemaValidator;
-import com.atlassian.oai.validator.schema.transform.AdditionalPropertiesInjectionTransformer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -439,59 +433,10 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						//SwaggerParseResult result = new OpenAPIParser().readLocation(loc, null, parseOptions);
 
 						this.openApiSwagger = result.getOpenAPI();
-						var errorLevelResolver = LevelResolver.create();
 						
-						// Il LevelResolver serve a gestire il livello di serietà dei messaggi						
-						// Di default il LevelResolver porta segnala ogni errore di validazione come 
-						// un ERROR, quindi dobbiamo disattivarli selettivamente.
-						// Le chiavi da usare per il LevelResolver sono nel progetto swagger-validator 
-						// sotto src/main/resources/messages.properties
-											
-						if (!this.openApi4jConfig.isValidateUnexpectedQueryParam()) {
-							errorLevelResolver.withLevel("validation.request.parameter.query.unexpected", Level.IGNORE);
-						}				
-						
-						// Config Request
-						if (!this.openApi4jConfig.isValidateRequestBody()) {
-							errorLevelResolver.withLevel("validation.request.body", Level.IGNORE);
-						}
-						if (!this.openApi4jConfig.isValidateRequestHeaders()) {
-							errorLevelResolver.withLevel("validation.request.parameter.header", Level.IGNORE);
-						}
-						if (!this.openApi4jConfig.isValidateRequestQuery()) {
-							errorLevelResolver.withLevel("validation.request.parameter.query", Level.IGNORE);							
-						}
-						if (!this.openApi4jConfig.isValidateRequestCookie()) {
-							// TODO e qua?
-						}
-						
-						// Config Response 
-						if(!this.openApi4jConfig.isValidateResponseHeaders()) {
-							errorLevelResolver.withLevel("validation.response.parameter.header", Level.IGNORE);
-						}
-						if(!this.openApi4jConfig.isValidateResponseBody()) {
-							errorLevelResolver.withLevel("validation.response.body", Level.IGNORE);
-						}
-						
-						MessageResolver messages = new MessageResolver(errorLevelResolver.build());
-						final SchemaValidator schemaValidator = new SchemaValidator(this.openApiSwagger, messages);
-						
-						if (!this.openApi4jConfig.isInjectingAdditionalProperties()) {
-							var transformers = schemaValidator.transformers;
-							schemaValidator.transformers = transformers.stream()
-									.filter( t -> t != AdditionalPropertiesInjectionTransformer.getInstance())
-									.collect(Collectors.toList());
-						}
-						
-				        this.swaggerRequestValidator = new SwaggerRequestValidator(
-				        		schemaValidator, 
-				        		messages, 
-				        		this.openApiSwagger, 
-				        		new ArrayList<>());
-				        
-				        this.swaggerResponseValidator = new SwaggerResponseValidator(this.openApiSwagger, this.openApi4jConfig);
+				        this.swaggerRequestValidator = new SwaggerRequestValidator(this.openApiSwagger, this.openApi4jConfig);
 				        		
-				        
+				        this.swaggerResponseValidator = new SwaggerResponseValidator(this.openApiSwagger, this.openApi4jConfig);
 					}
 					
 					// Salvo informazioni ricostruite
