@@ -2356,12 +2356,25 @@ public class TestOpenApi4j {
 					if(openapi4j) {
 						String msgErroreAtteso = "Content type '"+ct+"' is not allowed for body content. (code: 203)";
 						String msgErroreAtteso2 = "body: Field 'esito' is required. (code: 1026)";
+						String msgErroreAttesoSwagger = "[ERROR][RESPONSE][] Response Content-Type header '"+ct+"' does not match any allowed types. Must be one of: [application/";
+						String msgErroreAttesoSwagger2 = "[ERROR][RESPONSE][] Object has missing required properties ([\"esito\"])"; 
+						
+						if (ct==null) {
+							// TODO Validazione Content-Type Assente. Mi affido al validatore interno
+							msgErroreAttesoSwagger="Required body undefined";
+						}
+
 						if(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807.equals(ct) && code.intValue() != 200) {
 							msgErroreAtteso2 = "body: Field 'type' is required. (code: 1026)";
-						}
-						if(!e.getMessage().contains(msgErroreAtteso) && !e.getMessage().contains(msgErroreAtteso2)) {
+							msgErroreAttesoSwagger2 = "[ERROR][RESPONSE][] Object has missing required properties ([\"type\"])"; 
+						}					
+						
+						if(!e.getMessage().contains(msgErroreAtteso) && 
+								!e.getMessage().contains(msgErroreAtteso2) && 
+								!e.getMessage().contains(msgErroreAttesoSwagger) && 
+								!e.getMessage().contains(msgErroreAttesoSwagger2)) {
 							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"' o '"+msgErroreAtteso2+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"' o '"+msgErroreAtteso2+"' o " + "'"+msgErroreAttesoSwagger+"'" );
 						}
 					}
 					else {
@@ -2623,9 +2636,18 @@ public class TestOpenApi4j {
 						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
 					}
 					if(openapi4j) {
-						String msgErroreAtteso = "body: Field 'type' is required. (code: 1026)";
-						String msgErroreAtteso2 = "body: Field 'title' is required. (code: 1026)";
-						String msgErroreAtteso3 = "body: Field 'status' is required. (code: 1026)";
+						String msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ? 
+								"body: Field 'type' is required. (code: 1026)" :
+								"* /allOf/0/anyOf/0: Object has missing required properties ([\"type\"])";
+						
+						String msgErroreAtteso2 = openAPILibrary == OpenAPILibrary.openapi4j ? 
+								"body: Field 'title' is required. (code: 1026)" :
+								"* /allOf/0/anyOf/1: Object has missing required properties ([\"title\"])";
+						
+						String msgErroreAtteso3 = openAPILibrary == OpenAPILibrary.openapi4j ? 
+								"body: Field 'status' is required. (code: 1026)" :
+								"* /allOf/0/anyOf/2: Object has missing required properties ([\"status\"])";
+						
 						if(!e.getMessage().contains(msgErroreAtteso) || !e.getMessage().contains(msgErroreAtteso2) || !e.getMessage().contains(msgErroreAtteso3)) {
 							System.out.println("\t "+tipoTest+" ERRORE!");
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"' o '"+msgErroreAtteso2+"'");
@@ -2749,6 +2771,9 @@ public class TestOpenApi4j {
 						apiValidator.validate(httpEntityResponse_test18);	
 						System.out.println("\t "+tipoTest+" validate response ok");
 						
+						// TODO: Validazione swagger-validator qui da errore perchè nella risposta ho 
+						// '*/*' come content type e schema: type: object, ma il validatore swagger non 
+						// parte se il content-type non è json, che fare?
 						if(openapi4j && (ct.contains("Uncorrect") || !ct.contains("json"))) {
 							throw new Exception("Attesa eccezione");
 						}
