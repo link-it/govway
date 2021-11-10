@@ -35,3 +35,15 @@ disposizione da GovWay (:numref:`configurazioneSpecifica`).
     Configurazione di una erogazione
 
 Le voci di configurazione che possono essere accedute sono:
+
+- :ref:`apiGwControlloAccessi`
+- :ref:`rateLimiting`
+- :ref:`configSpecificaValidazione`
+- :ref:`configSpecificaCachingRisposta`
+- :ref:`sicurezzaLivelloMessaggio`
+- :ref:`console_mtom`
+- :ref:`trasformazioni`
+- :ref:`tracciamentoErogazione`
+- :ref:`configSpecificaRegistrazioneMessaggi`
+- :ref:`configProprieta`
+- :ref:`configOpzioniAvanzate`
