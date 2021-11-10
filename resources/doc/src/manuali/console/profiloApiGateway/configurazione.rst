@@ -50,4 +50,9 @@ Le voci di configurazione che possono essere accedute sono:
 
 Accanto a ciascuna delle voci in elenco è presente un'icona che in base al colore assume i seguenti significati:
 
+    - **Grigio**: funzionalità non attiva
+    - **Rosso**: funzionalità attivata ma configurata in maniera incompleta o errata, quindi non funzionante
+    - **Giallo**: funzionalità attivata in modalità opzionale o "non bloccante" e quindi in sola notifica
+    - **Verde**: funzionalità attiva
+
 
