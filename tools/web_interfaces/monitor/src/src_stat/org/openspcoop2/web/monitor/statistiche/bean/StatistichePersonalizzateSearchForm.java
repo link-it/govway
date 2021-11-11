@@ -21,7 +21,7 @@ package org.openspcoop2.web.monitor.statistiche.bean;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -88,7 +88,7 @@ implements StatisticsContext{
 
 	private IStatisticaPersonalizzataService service;
 
-	private Hashtable<String, Statistiche> tabellaStatistichePersonalizzate = new Hashtable<String, Statistiche>();
+	private Map<String, Statistiche> tabellaStatistichePersonalizzate = new HashMap<String, Statistiche>();
 
 	private List<Parameter<?>> statisticaSelezionataParameters = new ArrayList<Parameter<?>>();
 
@@ -120,7 +120,7 @@ implements StatisticsContext{
 
 	public void initSearchForm() {
 		this.setTipoReport(TipoReport.BAR_CHART);
-		this.tabellaStatistichePersonalizzate = new Hashtable<String, Statistiche>();
+		this.tabellaStatistichePersonalizzate = new HashMap<String, Statistiche>();
 		this.statisticaSelezionataParameters = new ArrayList<Parameter<?>>();
 		this.setStatistichePersonalizzate(null);
 		this.setStatisticaSelezionata(null);
@@ -133,14 +133,14 @@ implements StatisticsContext{
 		this.setTipoReport(TipoReport.BAR_CHART);
 	}
 
-	private Hashtable<String, Statistiche> leggiStatistiche(IDAccordo idAccordo,String nomeServizioKey) {
+	private Map<String, Statistiche> leggiStatistiche(IDAccordo idAccordo,String nomeServizioKey) {
 		try {
 			if (this.tabellaStatistichePersonalizzate != null
 					&& this.tabellaStatistichePersonalizzate.size() > 0)
 				return this.tabellaStatistichePersonalizzate;
 
 			if (this.tabellaStatistichePersonalizzate == null)
-				this.tabellaStatistichePersonalizzate = new Hashtable<String, Statistiche>();
+				this.tabellaStatistichePersonalizzate = new HashMap<String, Statistiche>();
 
 			List<ConfigurazioneStatistica> stats = this.service.getStatisticheByValues(idAccordo, nomeServizioKey, this.getNomeAzione());
 

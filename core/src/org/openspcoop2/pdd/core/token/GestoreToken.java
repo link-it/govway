@@ -660,10 +660,10 @@ public class GestoreToken {
 			}
     		
 			//synchronized (GestoreToken.semaphoreJWT) {
+			GestoreToken.lockJWT.acquire("validazioneJWTToken",
+					(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
 			try {
-				GestoreToken.lockJWT.acquire("validazioneJWTToken",
-						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
-
+				
 				response = 
 					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
 				if(response != null){
@@ -856,10 +856,10 @@ public class GestoreToken {
 			}
     		
 			//synchronized (GestoreToken.semaphoreIntrospection) {
+			GestoreToken.lockIntrospection.acquire("introspectionToken",
+					(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
 			try {
-				GestoreToken.lockIntrospection.acquire("introspectionToken",
-						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
-
+				
 				response = 
 					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
 				if(response != null){
@@ -1040,10 +1040,10 @@ public class GestoreToken {
 			}
     		
 			//synchronized (GestoreToken.semaphoreUserInfo) {
+			GestoreToken.lockUserInfo.acquire("userInfoToken",
+					(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
 			try {
-				GestoreToken.lockUserInfo.acquire("userInfoToken",
-						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
-
+				
 				response = 
 					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
 				if(response != null){
@@ -2239,7 +2239,7 @@ public class GestoreToken {
 			connettoreMsg.setCredenziali(credenziali);
 		}
 		
-		connettoreMsg.setConnectorProperties(new java.util.Hashtable<String,String>());
+		connettoreMsg.setConnectorProperties(new java.util.HashMap<String,String>());
 		connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_LOCATION, endpoint);
 		boolean debug = false;
 		OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
@@ -2425,10 +2425,10 @@ public class GestoreToken {
 			}
     		
 			//synchronized (GestoreToken.semaphoreNegoziazione) {
+			GestoreToken.lockNegoziazione.acquire("endpointToken",
+					(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
 			try {
-				GestoreToken.lockNegoziazione.acquire("endpointToken",
-						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
-
+				
 				response = 
 					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
 				if(response != null){
@@ -2680,7 +2680,7 @@ public class GestoreToken {
 			connettoreMsg.setCredenziali(credenziali);
 		}
 		
-		connettoreMsg.setConnectorProperties(new java.util.Hashtable<String,String>());
+		connettoreMsg.setConnectorProperties(new java.util.HashMap<String,String>());
 		connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_LOCATION, endpoint);
 		if(debug) {
 			connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_DEBUG, true+"");
@@ -3022,10 +3022,10 @@ public class GestoreToken {
 			}
     		
 			//synchronized (GestoreToken.semaphoreAttributeAuthority) {
+			GestoreToken.lockAttributeAuthority.acquire("readAttributes",
+					(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
 			try {
-				GestoreToken.lockAttributeAuthority.acquire("readAttributes",
-						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
-
+				
 				response = 
 					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
 				if(response != null){
@@ -3688,7 +3688,7 @@ public class GestoreToken {
 			connettoreMsg.setCredenziali(credenziali);
 		}
 		
-		connettoreMsg.setConnectorProperties(new java.util.Hashtable<String,String>());
+		connettoreMsg.setConnectorProperties(new java.util.HashMap<String,String>());
 		connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_LOCATION, endpoint);
 		OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
 		boolean debug = properties.isGestioneAttributeAuthority_debug();	

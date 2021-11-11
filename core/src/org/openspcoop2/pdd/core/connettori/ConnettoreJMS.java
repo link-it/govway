@@ -24,9 +24,10 @@
 package org.openspcoop2.pdd.core.connettori;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.jms.BytesMessage;
 import javax.jms.Connection;
@@ -62,7 +63,7 @@ public class ConnettoreJMS extends ConnettoreBase {
 
 
 	/** Cache per le locations */
-	private static Hashtable<String,Destination> locations = new Hashtable<String,Destination>();
+	private static Map<String,Destination> locations = new ConcurrentHashMap<String,Destination>();
 
 	/** acknowledgeModeSessione */
 	private int acknowledgeModeSessione = javax.jms.Session.AUTO_ACKNOWLEDGE;
@@ -289,12 +290,10 @@ public class ConnettoreJMS extends ConnettoreBase {
 				this.logger.debug("Creazione jndi context ed eventuale pool-local-context, Overwrite da file properties...");
 			ConnettoreJMSProperties overwriteProperties = ConnettoreJMSProperties.getInstance();
 			if (overwriteProperties!=null){
-				Hashtable<String,IDServizio> idServizi = overwriteProperties.getIDServizi_Pubblicazione();
+				Map<String,IDServizio> idServizi = overwriteProperties.getIDServizi_Pubblicazione();
 				String indiceServizio = null;
-				java.util.Enumeration<String> e = idServizi.keys();
-				while(e.hasMoreElements()){
-					if(this.busta !=null){
-						String keyElement = e.nextElement();
+				if(this.busta !=null){
+					for (String keyElement : idServizi.keySet()) {
 						IDServizio match = idServizi.get(keyElement);
 						if(match !=null && match.getNome()!=null && match.getTipo()!=null && match.getVersione()!=null && 
 								match.getSoggettoErogatore()!=null && match.getSoggettoErogatore().getNome()!=null && match.getSoggettoErogatore().getTipo()!=null)
@@ -309,7 +308,7 @@ public class ConnettoreJMS extends ConnettoreBase {
 								break;
 							}
 						}
-					}	
+					}
 				}
 				if(indiceServizio!=null){
 					// overwrite
@@ -612,12 +611,16 @@ public class ConnettoreJMS extends ConnettoreBase {
 	 * @param destination Destinazione da inserire in cache
 	 * 
 	 */
-	public synchronized void putDestination(String key,Destination destination){
+	private static org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("ConnettoreJMS");
+	public void putDestination(String key,Destination destination){
+		semaphore.acquireThrowRuntime("putDestination");
 		try{
 			ConnettoreJMS.locations.put(key,destination);
 		}catch(Exception e){
 			this.logger.error("ERROR INSERT CODA IN CACHE: "+e.getMessage(),e);
 			//possibile inserimento della stessa coda....
+		}finally {
+			semaphore.release("putDestination");
 		}
 	}
 

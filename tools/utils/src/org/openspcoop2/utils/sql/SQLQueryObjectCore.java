@@ -23,9 +23,10 @@
 package org.openspcoop2.utils.sql;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.utils.TipiDatabase;
 
@@ -45,9 +46,9 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	/** List di NomiField esistenti: i nomi dei fields impostati (se e' stato utilizzato un alias ritorna il valore dell'alias) */
 	List<String> fieldNames = new ArrayList<String>();
 	/** Mapping tra alias e indicazione se e' una function: i nomi dei fields impostati (se e' stato utilizzato un alias ritorna il valore dell'alias) */
-	Hashtable<String, Boolean> fieldNameIsFunction = new Hashtable<String, Boolean>();
+	Map<String, Boolean> fieldNameIsFunction = new HashMap<String, Boolean>();
 	/** Mapping tra alias (key) e field names (value) (sono presenti i mapping solo per le colonne per cui e' stato definito un alias) */
-	Hashtable<String, String> alias = new Hashtable<String, String>();
+	Map<String, String> alias = new HashMap<String, String>();
 	
 	/** List di Tabelle esistenti */
 	List<String> tables = new ArrayList<String>();
@@ -74,7 +75,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	
 	/** OrderBy di Field esistenti */
 	List<String> orderBy = new ArrayList<String>();
-	Hashtable<String, Boolean> orderBySortType = new Hashtable<String, Boolean>();
+	Map<String, Boolean> orderBySortType = new HashMap<String, Boolean>();
 	
 	/** Tipo di ordinamento */
 	boolean sortTypeAsc = true;

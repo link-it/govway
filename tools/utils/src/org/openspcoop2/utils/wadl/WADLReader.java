@@ -22,7 +22,6 @@ package org.openspcoop2.utils.wadl;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Hashtable;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -116,11 +115,11 @@ public class WADLReader {
 		return this.wadlBuilder.getInterfaceMap();
 	}
 	
-	public Hashtable<String, byte[]> getResources() {
+	public Map<String, byte[]> getResources() {
 		return this.schemaCallback.getResources();
 	}
 
-	public Hashtable<String, String> getMappingNamespaceLocations() {
+	public Map<String, String> getMappingNamespaceLocations() {
 		return this.schemaCallback.getMappingNamespaceLocations();
 	}
 }

@@ -29,7 +29,6 @@ import java.io.Writer;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -614,8 +613,8 @@ public class DefinitionWrapper implements javax.wsdl.Definition{
 		}
 	}
 	
-	public Hashtable<QName,QName> getMapPortTypesImplementedBinding(){
-		Hashtable<QName,QName> list = new Hashtable<QName,QName>(); 
+	public Map<QName,QName> getMapPortTypesImplementedBinding(){
+		Map<QName,QName> list = new HashMap<QName,QName>(); 
 		java.util.Map<?,?> bindings = this.getAllBindings();
 		if(bindings==null || bindings.size()==0){
 			return list;

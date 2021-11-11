@@ -34,6 +34,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * @author $Author$
  * @version $Rev$, $Date$
  */
+@Deprecated
 public class Properties2Hashtable extends XmlAdapter<Properties, Hashtable<String, String>>
 {
 	@Override

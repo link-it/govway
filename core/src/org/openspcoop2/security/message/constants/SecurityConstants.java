@@ -21,8 +21,8 @@
 package org.openspcoop2.security.message.constants;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -46,7 +46,7 @@ public class SecurityConstants {
 		
 	public static final String TIPO_SECURITY_ENGINE_SEPARATOR = " ";
 	public static final String TIPO_SECURITY_ACTION_SEPARATOR = ",";
-	public static String convertActionToString(Hashtable<String, Object> flow){
+	public static String convertActionToString(Map<String, Object> flow){
 		if(flow!=null){
 			if(flow.containsKey(ACTION)){
 				

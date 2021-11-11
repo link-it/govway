@@ -21,7 +21,8 @@
 
 package org.openspcoop2.testsuite.axis14;
 
-import java.util.Hashtable;
+import java.util.Map;
+
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.ws.axis.security.WSDoAllSender;
@@ -45,7 +46,7 @@ public class Axis14WSSSender {
     /** Contiene il message Context */
     private Axis14WSSBaseUtils baseUtilsWSS;
 
-    public Axis14WSSSender(Hashtable<?,?> wssProperties,Axis14WSSBaseUtils baseWSS) {
+    public Axis14WSSSender(Map<?,?> wssProperties,Axis14WSSBaseUtils baseWSS) {
 	this.baseUtilsWSS = baseWSS;
         this.baseUtilsWSS.setMessageContext(wssProperties);	
     }

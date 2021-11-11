@@ -550,7 +550,7 @@ public class JDBCConfigurazionePolicyServiceSearchImpl implements IJDBCServiceSe
 	protected Map<String, List<IField>> _getMapTableToPKColumn() throws NotImplementedException, Exception{
 	
 		ConfigurazionePolicyFieldConverter converter = this.getConfigurazionePolicyFieldConverter();
-		Map<String, List<IField>> mapTableToPKColumn = new java.util.Hashtable<String, List<IField>>();
+		Map<String, List<IField>> mapTableToPKColumn = new java.util.HashMap<String, List<IField>>();
 		UtilsTemplate<IField> utilities = new UtilsTemplate<IField>();
 
 		// ConfigurazionePolicy.model()

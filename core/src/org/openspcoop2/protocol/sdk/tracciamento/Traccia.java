@@ -24,9 +24,9 @@ package org.openspcoop2.protocol.sdk.tracciamento;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.TipoPdD;
@@ -66,7 +66,7 @@ public class Traccia implements java.io.Serializable {
     private BustaRawContent<?> bustaRawContent;
 
     // properties
-    protected Hashtable<String, String> properties = new Hashtable<String, String>();
+    protected Map<String, String> properties = new HashMap<String, String>();
     
     // protocollo
     private String protocollo;
@@ -418,10 +418,10 @@ public class Traccia implements java.io.Serializable {
     public String[] getPropertiesNames() {
     	return this.properties.keySet().toArray(new String[this.properties.size()]);
     }
-    public void setProperties(Hashtable<String, String> params) {
+    public void setProperties(Map<String, String> params) {
     	this.properties = params;
     }
-    public Hashtable<String, String> getProperties() {
+    public Map<String, String> getProperties() {
     	return this.properties;
     }
     
@@ -564,9 +564,7 @@ public class Traccia implements java.io.Serializable {
 		
 		// properties
 		if(this.properties!=null && this.properties.size()>0){
-			Enumeration<String> keys = this.properties.keys();
-			while (keys.hasMoreElements()) {
-				String key = keys.nextElement();
+			for (String key : this.properties.keySet()) {
 				String value = this.properties.get(key);
 				if(key!=null && value!=null){
 					clone.addProperty(new String(key), new String(value));

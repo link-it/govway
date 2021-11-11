@@ -23,8 +23,8 @@
 package org.openspcoop2.pdd.logger;
 
 import java.sql.Connection;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -225,7 +225,7 @@ public class DriverTracciamento implements ITracciaDriver {
 	 * @throws DriverMsgDiagnosticiException
 	 */
 	@Override
-	public Traccia getTraccia(RuoloMessaggio tipoTraccia,Hashtable<String, String> propertiesRicerca) throws DriverTracciamentoException, DriverTracciamentoNotFoundException{
+	public Traccia getTraccia(RuoloMessaggio tipoTraccia,Map<String, String> propertiesRicerca) throws DriverTracciamentoException, DriverTracciamentoNotFoundException{
 		return this.driverBase.getTraccia(tipoTraccia, propertiesRicerca);
 	} 
 	

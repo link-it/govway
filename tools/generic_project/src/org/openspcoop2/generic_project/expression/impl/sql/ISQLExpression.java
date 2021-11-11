@@ -19,8 +19,8 @@
  */
 package org.openspcoop2.generic_project.expression.impl.sql;
 
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
@@ -39,12 +39,12 @@ public interface ISQLExpression {
 	
 	public String toSqlPreparedStatement(List<Object> oggetti)throws ExpressionException;
 	
-	public String toSqlJPA(Hashtable<String, Object> oggetti)throws ExpressionException;
+	public String toSqlJPA(Map<String, Object> oggetti)throws ExpressionException;
 	
 	public void toSql(ISQLQueryObject sqlQueryObject)throws ExpressionException;
 	
 	public void toSqlPreparedStatement(ISQLQueryObject sqlQueryObject,List<Object> oggetti)throws ExpressionException;
 	
-	public void toSqlJPA(ISQLQueryObject sqlQueryObject,Hashtable<String, Object> oggetti)throws ExpressionException;
+	public void toSqlJPA(ISQLQueryObject sqlQueryObject,Map<String, Object> oggetti)throws ExpressionException;
 	
 }

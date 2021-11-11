@@ -27,7 +27,8 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Hashtable;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.net.ntp.NTPUDPClient;
 import org.apache.commons.net.ntp.TimeInfo;
@@ -45,9 +46,11 @@ public class NTPDate implements IDate {
 	private static InetAddress server = null;
 	private static NTPUDPClient udpClient = null;
 	private static int defaultTimeout = -1;
-	private static Hashtable<String,Date> time = null;
+	private static Map<String,Date> time = null;
 	private static boolean cacheEnabled = true;
 	private static int cacheRefresh = 100;
+	
+	private static org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("NTPDate");
 	
 	private static Date getDateCached() throws Exception{
 		
@@ -61,7 +64,9 @@ public class NTPDate implements IDate {
 				//System.out.println("NOW ["+key+"] from cache");
 				return NTPDate.time.get(key);
 			}else{
-				synchronized(NTPDate.time){
+				//synchronized(NTPDate.time){
+				semaphore.acquire("getDateCached");
+				try {
 					if(NTPDate.time.containsKey(key)){
 						//System.out.println("NOW ["+key+"] from cache sync");
 						return NTPDate.time.get(key);
@@ -73,6 +78,8 @@ public class NTPDate implements IDate {
 						NTPDate.time.put(key, d);
 						return d;
 					}
+				}finally {
+					semaphore.release("getDateCached");
 				}
 			}
 		}
@@ -135,7 +142,7 @@ public class NTPDate implements IDate {
 			
 			NTPDate.udpClient.open();
 			
-			NTPDate.time = new Hashtable<String,Date>(); 
+			NTPDate.time = new ConcurrentHashMap<String,Date>(); 
 			
 		}catch(Exception e){
 			NTPDate.udpClient=null;

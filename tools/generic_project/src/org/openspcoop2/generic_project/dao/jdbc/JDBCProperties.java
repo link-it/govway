@@ -19,7 +19,8 @@
  */
 package org.openspcoop2.generic_project.dao.jdbc;
 
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openspcoop2.generic_project.beans.IProjectInfo;
 import org.openspcoop2.generic_project.exception.ServiceException;
@@ -43,7 +44,7 @@ public class JDBCProperties extends LoaderProperties {
 		super(packageName.getName().replaceAll("\\.", "/")+"/"+Utilities.normalizedProjectName(project.getProjectName())+".dao.jdbc.properties");
 	}
 
-	private static Hashtable<String, JDBCProperties> mapJDBCProperties = new Hashtable<String, JDBCProperties>();
+	private static Map<String, JDBCProperties> mapJDBCProperties = new HashMap<String, JDBCProperties>();
 	private static synchronized void initJDBCProperties(Package packageName, IProjectInfo project) throws ServiceException{
 		String key = project.getProjectName();
 		if(mapJDBCProperties.containsKey(key)==false){

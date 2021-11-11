@@ -20,10 +20,9 @@
 package org.openspcoop2.pdd.core.transazioni;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -48,7 +47,7 @@ public class TransactionContext {
 	private static Map<String, Transaction> transactionContext = null;
 	public static synchronized void initResources() throws Exception{
 		if(OpenSPCoop2Properties.getInstance().isConfigurazioneCache_transactionContext_accessiSynchronized()) {
-			transactionContext = new Hashtable<>();
+			transactionContext = new java.util.Hashtable<>();
 		}
 		else {
 			transactionContext = new ConcurrentHashMap<String, Transaction>();
@@ -105,7 +104,8 @@ public class TransactionContext {
 	}
 	
 	
-	private static Vector<String> idBustaFiltroDuplicati = new Vector<String>();
+	//private static List<String> idBustaFiltroDuplicati = new ArrayList<String>();
+	private static Set<String> idBustaFiltroDuplicati = ConcurrentHashMap.newKeySet();
 	
 	public static List<String> getIdBustaKeys() {
 		// Lo clono per non incorrere in errori di modifica durante il runtime
@@ -114,11 +114,17 @@ public class TransactionContext {
 		return keys;
 	}
 	
-	public static synchronized void registraIdentificativoProtocollo(String idBusta) throws Exception{
-		if(idBustaFiltroDuplicati.contains(idBusta)){
-			throw new Exception("DUPLICATA");
+	private static org.openspcoop2.utils.Semaphore semaphoreIdentificativoProtocollo = new org.openspcoop2.utils.Semaphore("TransactionContext.idProtocollo");
+	public static void registraIdentificativoProtocollo(String idBusta, String idTransazione) throws Exception{
+		semaphoreIdentificativoProtocollo.acquire("registraIdentificativoProtocollo_"+idBusta, idTransazione);
+		try {
+			if(idBustaFiltroDuplicati.contains(idBusta)){
+				throw new Exception("DUPLICATA");
+			}
+			idBustaFiltroDuplicati.add(idBusta);
+		}finally{
+			semaphoreIdentificativoProtocollo.release("registraIdentificativoProtocollo_"+idBusta, idTransazione);
 		}
-		idBustaFiltroDuplicati.add(idBusta);
 	}
 	public static boolean containsIdentificativoProtocollo(String idBusta){
 		return idBustaFiltroDuplicati.contains(idBusta);

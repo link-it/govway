@@ -43,8 +43,8 @@ public class GPLCheck {
 	"along with this program.  If not, see <http://www.gnu.org/licenses/>."};
 
 
-	public static java.util.Vector<String> fileNonValidi = new java.util.Vector<String>();
-	public static java.util.Vector<String> dichiarazioneAssente = new java.util.Vector<String>();
+	public static java.util.List<String> fileNonValidi = new java.util.ArrayList<String>();
+	public static java.util.List<String> dichiarazioneAssente = new java.util.ArrayList<String>();
 
 	// codice di uscita:
 	// -1 invocazione non valida

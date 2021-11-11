@@ -21,8 +21,10 @@
 package org.openspcoop2.protocol.engine.archive;
 
 import java.io.Serializable;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.protocol.sdk.ProtocolException;
 
@@ -40,14 +42,14 @@ public class ImportInformationMissingCollection implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private Hashtable<String,ImportInformationMissing> importInformationMissing = new Hashtable<String, ImportInformationMissing>();
+	private Map<String,ImportInformationMissing> importInformationMissing = new HashMap<String, ImportInformationMissing>();
 
 
-	public Hashtable<String, ImportInformationMissing> getImportInformationMissing() {
+	public Map<String, ImportInformationMissing> getImportInformationMissing() {
 		return this.importInformationMissing;
 	}
 	public void setImportInformationMissing(
-			Hashtable<String, ImportInformationMissing> importInformationMissing) {
+			Map<String, ImportInformationMissing> importInformationMissing) {
 		this.importInformationMissing = importInformationMissing;
 	}
 	
@@ -69,7 +71,12 @@ public class ImportInformationMissingCollection implements Serializable {
 	public int size(){
 		return this.importInformationMissing.size();
 	}
-	public Enumeration<String> keys(){
-		return this.importInformationMissing.keys();
+	public List<String> keys(){
+		List<String> keys = null;
+		if(this.importInformationMissing!=null && !this.importInformationMissing.isEmpty()) {
+			keys = new ArrayList<String>();
+			keys.addAll(this.importInformationMissing.keySet());
+		}
+		return keys;
 	}
 }

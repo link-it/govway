@@ -122,24 +122,30 @@ public class PatternExtractor {
 			_init();
 		}
 	}
-	private synchronized void _init() throws DynamicException {
-		if(!this.messageContent_initialized) {
-			if(this.messageContent!=null) {
-				try {
-					//this.messageFactory = this.messageContent.getMessageFactory();
-					if(this.messageContent.isJson()) {
-						this.elementJson = this.messageContent.getElementJson();
+	private org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("PatternExtractor");
+	private void _init() throws DynamicException {
+		this.semaphore.acquireThrowRuntime("init");
+		try {
+			if(!this.messageContent_initialized) {
+				if(this.messageContent!=null) {
+					try {
+						//this.messageFactory = this.messageContent.getMessageFactory();
+						if(this.messageContent.isJson()) {
+							this.elementJson = this.messageContent.getElementJson();
+						}
+						else {
+							this.element = this.messageContent.getElement();
+							this.dnc = new DynamicNamespaceContext();
+							this.dnc.findPrefixNamespace(this.element);
+						}
+					}catch(Exception e) {
+						throw new DynamicException(e.getMessage(),e);
 					}
-					else {
-						this.element = this.messageContent.getElement();
-						this.dnc = new DynamicNamespaceContext();
-						this.dnc.findPrefixNamespace(this.element);
-					}
-				}catch(Exception e) {
-					throw new DynamicException(e.getMessage(),e);
 				}
+				this.messageContent_initialized = true;
 			}
-			this.messageContent_initialized = true;
+		}finally {
+			this.semaphore.release("init");
 		}
 	}
 	
@@ -149,7 +155,8 @@ public class PatternExtractor {
 			this._refreshContent();
 		}
 	}
-	private synchronized void _refreshContent() {
+	private void _refreshContent() {
+		this.semaphore.acquireThrowRuntime("refreshContent");
 		// effettuo il refresh, altrimenti le regole xpath applicate sulla richiesta, nel flusso di risposta (es. header http della risposta) non funzionano.
 		try {
 			this.refresh = true;
@@ -159,6 +166,8 @@ public class PatternExtractor {
 			}
 		}catch(Exception e){
 			this.log.error("Refresh fallito: "+e.getMessage(),e);
+		}finally {
+			this.semaphore.release("refreshContent");
 		}
 	}
 	

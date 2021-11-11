@@ -23,9 +23,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -2162,7 +2160,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 	}
 	
 
-	public void estraiSchemiFromWSDLTypesAsAllegati(AccordoServizioParteComune as, byte[] wsdl, String tipoWSDL, Hashtable<String, byte[]> schemiAggiuntiInQuestaOperazione) throws Exception{
+	public void estraiSchemiFromWSDLTypesAsAllegati(AccordoServizioParteComune as, byte[] wsdl, String tipoWSDL, Map<String, byte[]> schemiAggiuntiInQuestaOperazione) throws Exception{
 				
 		String nomeMetodo = "addSchemiFromWSDLTypesAsAllegati";
 		try {
@@ -2181,7 +2179,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 				
 				Document dConAllegati = xmlUtils.newDocument(wsdl);
 				
-				Hashtable<String, String> declarationNamespacesWSDL = xmlUtils.getNamespaceDeclaration(dConAllegati.getDocumentElement());
+				Map<String, String> declarationNamespacesWSDL = xmlUtils.getNamespaceDeclaration(dConAllegati.getDocumentElement());
 				
 				List<Node> schemi = wsdlUtilities.getSchemiXSD(dConAllegati);
 				//System.out.println("SCHEMI ["+schemi.size()+"]");
@@ -2216,9 +2214,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 							
 							String nomeSchema = null;
 							if(schemiAggiuntiInQuestaOperazione!=null && schemiAggiuntiInQuestaOperazione.size()>0){
-								Enumeration<String> enKeys = schemiAggiuntiInQuestaOperazione.keys();
-								while (enKeys.hasMoreElements()) {
-									String nomeFile = (String) enKeys.nextElement();
+								for (String nomeFile : schemiAggiuntiInQuestaOperazione.keySet()) {
 									byte[] content = schemiAggiuntiInQuestaOperazione.get(nomeFile);
 									// check se si tratta di questo documento
 									try{

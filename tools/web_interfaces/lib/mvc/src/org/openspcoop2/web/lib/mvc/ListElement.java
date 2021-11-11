@@ -20,8 +20,9 @@
 
 package org.openspcoop2.web.lib.mvc;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -34,7 +35,7 @@ import java.util.Set;
 public class ListElement {
 
 	private String oggetto; 
-	private Hashtable<String,Object> parameters = new Hashtable<String,Object>();
+	private Map<String,Object> parameters = new HashMap<String,Object>();
 
 	public String getOggetto() {
 		return this.oggetto;

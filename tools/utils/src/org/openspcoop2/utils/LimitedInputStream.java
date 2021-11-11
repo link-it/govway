@@ -22,7 +22,7 @@ package org.openspcoop2.utils;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Hashtable;
+import java.util.Map;
 
 /**
  * TimeoutInputStrem
@@ -41,13 +41,13 @@ public class LimitedInputStream extends FilterInputStream {
 	public LimitedInputStream(InputStream is, long limitBytes) throws IOException {
 		this(is, limitBytes, null, null, null);
 	}
-	public LimitedInputStream(InputStream is, long limitBytes, Hashtable<String, Object> ctx) throws IOException {
+	public LimitedInputStream(InputStream is, long limitBytes, Map<String, Object> ctx) throws IOException {
 		this(is, limitBytes, null, ctx, null);
 	}
-	public LimitedInputStream(InputStream is, long limitBytes, Hashtable<String, Object> ctx, ILimitExceededNotifier notifier) throws IOException {
+	public LimitedInputStream(InputStream is, long limitBytes, Map<String, Object> ctx, ILimitExceededNotifier notifier) throws IOException {
 		this(is, limitBytes, null, ctx, notifier);
 	}
-	public LimitedInputStream(InputStream is, long limitBytes, String prefixError, Hashtable<String, Object> ctx, ILimitExceededNotifier notifier) throws IOException {
+	public LimitedInputStream(InputStream is, long limitBytes, String prefixError, Map<String, Object> ctx, ILimitExceededNotifier notifier) throws IOException {
 		super(new LimitedInputStreamEngine(is, limitBytes, prefixError, ctx, notifier));
 	}
 	
@@ -71,7 +71,7 @@ public class LimitedInputStream extends FilterInputStream {
 			((LimitedInputStreamEngine)is).updateThreshold(limitBytes);
 		}
 	}
-	public void updateContext(Hashtable<String, Object> ctx) {
+	public void updateContext(Map<String, Object> ctx) {
 		InputStream is = super.in;
 		if(is instanceof LimitedInputStreamEngine) {
 			((LimitedInputStreamEngine)is).updateContext(ctx);

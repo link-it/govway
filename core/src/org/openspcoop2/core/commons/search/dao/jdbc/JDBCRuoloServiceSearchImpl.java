@@ -527,7 +527,7 @@ public class JDBCRuoloServiceSearchImpl implements IJDBCServiceSearchWithId<Ruol
 	protected Map<String, List<IField>> _getMapTableToPKColumn() throws NotImplementedException, Exception{
 	
 		RuoloFieldConverter converter = this.getRuoloFieldConverter();
-		Map<String, List<IField>> mapTableToPKColumn = new java.util.Hashtable<String, List<IField>>();
+		Map<String, List<IField>> mapTableToPKColumn = new java.util.HashMap<String, List<IField>>();
 		UtilsTemplate<IField> utilities = new UtilsTemplate<IField>();
 
 		// Ruolo.model()

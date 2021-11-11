@@ -27,8 +27,6 @@ import java.security.Principal;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -277,10 +275,9 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 
 	
 	private void setIncomingProperties(MessageSecurityContext wssContext,WSS4JInInterceptor interceptor, SoapMessage msgCtx) {
-		Hashtable<?,?> wssIncomingProperties =  wssContext.getIncomingProperties();
+		Map<String,Object> wssIncomingProperties =  wssContext.getIncomingProperties();
 		if (wssIncomingProperties != null && wssIncomingProperties.size() > 0) {
-			for (Enumeration<?> e = wssIncomingProperties.keys(); e.hasMoreElements();) {
-				String key = (String) e.nextElement();
+			for (String key : wssIncomingProperties.keySet()) {
 				Object oValue = wssIncomingProperties.get(key);
 				String value = null;
 				if(oValue!=null && oValue instanceof String) {
@@ -298,7 +295,7 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 						msgCtx.put(key, value);
 					}
 					else { 
-						String id = key+"_"+IDUtilities.getUniqueSerialNumber();
+						String id = key+"_"+IDUtilities.getUniqueSerialNumber("wssSecurity.setIncomingProperties");
 						msgCtx.put(key, id);
 						msgCtx.put(id, oValue);
 					}

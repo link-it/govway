@@ -36,7 +36,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -8159,8 +8158,8 @@ public class ConsoleHelper implements IConsoleHelper {
 	public void setStatoRateLimiting(DataElement de, List<AttivazionePolicy> listaPolicy) throws DriverControlStationException, DriverControlStationNotFound {
 		de.setType(DataElementType.CHECKBOX);
 		if(listaPolicy!=null && listaPolicy.size()>0) {
-			Hashtable<String, Integer> mapActive = new Hashtable<>();
-			Hashtable<String, Integer> mapWarningOnly = new Hashtable<>();
+			Map<String, Integer> mapActive = new HashMap<>();
+			Map<String, Integer> mapWarningOnly = new HashMap<>();
 			for (AttivazionePolicy attivazionePolicy : listaPolicy) {
 				if(attivazionePolicy.getEnabled()==false) {
 					continue;
@@ -8206,9 +8205,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				if(mapActive.size()>0) {
 					StringBuilder bf = new StringBuilder();
-					Enumeration<String> enKeys = mapActive.keys();
-					while (enKeys.hasMoreElements()) {
-						String risorsa = (String) enKeys.nextElement();
+					for (String risorsa : mapActive.keySet()) {
 						Integer count = mapActive.get(risorsa);
 						if(bf.length()>0) {
 							bf.append(", ");
@@ -8230,9 +8227,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				if(mapWarningOnly.size()>0) {
 					StringBuilder bf = new StringBuilder();
-					Enumeration<String> enKeys = mapWarningOnly.keys();
-					while (enKeys.hasMoreElements()) {
-						String risorsa = (String) enKeys.nextElement();
+					for (String risorsa : mapWarningOnly.keySet()) {
 						Integer count = mapWarningOnly.get(risorsa);
 						if(bf.length()>0) {
 							bf.append(", ");
@@ -8492,7 +8487,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	public void setStatoAllarmi_showTipi(DataElement de, List<ConfigurazioneAllarmeBean> listaAllarmi) throws DriverControlStationException, DriverControlStationNotFound {
 		de.setType(DataElementType.CHECKBOX);
 		if(listaAllarmi!=null && listaAllarmi.size()>0) {
-			Hashtable<String, Integer> mapActive = new Hashtable<>();
+			Map<String, Integer> mapActive = new HashMap<>();
 			for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
 				if(allarme.getEnabled().intValue()==0) {
 					continue;
@@ -8515,9 +8510,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				if(mapActive.size()>0) {
 					StringBuilder bf = new StringBuilder();
-					Enumeration<String> enKeys = mapActive.keys();
-					while (enKeys.hasMoreElements()) {
-						String risorsa = (String) enKeys.nextElement();
+					for (String risorsa : mapActive.keySet()) {
 						Integer count = mapActive.get(risorsa);
 						if(bf.length()>0) {
 							bf.append(", ");

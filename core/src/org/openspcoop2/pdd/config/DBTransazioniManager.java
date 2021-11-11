@@ -140,7 +140,7 @@ public class DBTransazioniManager implements IMonitoraggioRisorsa {
 				if(bf.length()<=0) {
 					bf.append("DBTransazioniManager");
 				}
-				Resource risorsa = DBManager.buildResource(this.getConnectionFromDatasource(bf.toString(), idTransazione),
+				Resource risorsa = DBManager.buildResource("DBTransactionManager", this.getConnectionFromDatasource(bf.toString(), idTransazione),
 						idPDD, modulo, idTransazione);	
 				
 				DBTransazioniManager.risorseInGestione.put(risorsa.getId(), risorsa);

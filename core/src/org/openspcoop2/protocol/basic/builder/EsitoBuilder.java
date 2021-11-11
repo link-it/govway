@@ -20,8 +20,8 @@
 
 package org.openspcoop2.protocol.basic.builder;
 
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPFault;
@@ -196,7 +196,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 	public EsitoTransazione getEsito(TransportRequestContext transportRequestContext, 
 			int returnCode, ServiceBinding serviceBinding,	
 			OpenSPCoop2Message message,
-			InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali, Hashtable<String, Object> context) throws ProtocolException {
+			InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali, Map<String, Object> context) throws ProtocolException {
 		return getEsito(transportRequestContext,returnCode,serviceBinding,message,null,informazioniErroriInfrastrutturali,context);
 	}
 
@@ -205,7 +205,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			int returnCode, ServiceBinding serviceBinding,	
 			OpenSPCoop2Message message,
 			ProprietaErroreApplicativo erroreApplicativo,
-			InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali, Hashtable<String, Object> context)
+			InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali, Map<String, Object> context)
 			throws ProtocolException {
 		try{
 			

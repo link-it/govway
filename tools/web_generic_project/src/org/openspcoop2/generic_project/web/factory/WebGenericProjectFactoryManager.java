@@ -23,7 +23,8 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -80,8 +81,8 @@ public class WebGenericProjectFactoryManager {
 		try{
 			this.log.info("Inizializzazione Web GenericProject Factory in corso...");
 
-			Hashtable<String, WebGenericProjectFactory> tmp_factories = new Hashtable<String, WebGenericProjectFactory>();
-			Hashtable<String, URL> tmp_propertiesURLs = new Hashtable<String, URL>();
+			Map<String, WebGenericProjectFactory> tmp_factories = new HashMap<String, WebGenericProjectFactory>();
+			Map<String, URL> tmp_propertiesURLs = new HashMap<String, URL>();
 			// 1. Cerco nel classloader (funziona per jboss5.x)
 			Enumeration<URL> en = WebGenericProjectFactoryManager.class.getClassLoader().getResources("/"+Costanti.WEB_GENERIC_PROJECT_FACTORY_IMPL_PROPERTIES);
 			while(en.hasMoreElements()){
@@ -113,8 +114,8 @@ public class WebGenericProjectFactoryManager {
 	}
 
 	private void loadProperties(URL propertiesUrl, boolean filtraSenzaErroreFactoryGiaCaricato, 
-			Hashtable<String, WebGenericProjectFactory> tmp_factories,
-			Hashtable<String, URL> tmp_propertiesURLs) throws Exception{
+			Map<String, WebGenericProjectFactory> tmp_factories,
+			Map<String, URL> tmp_propertiesURLs) throws Exception{
 
 		this.log.debug("Analyze Properties ["+propertiesUrl.toString()+"] ...");
 

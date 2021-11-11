@@ -22,10 +22,9 @@
 package org.openspcoop2.web.ctrlstat.gestori;
 
 import java.sql.Connection;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.jms.JMSException;
 import javax.jms.ObjectMessage;
@@ -311,21 +310,20 @@ public class SmistatoreThread extends Thread {
 					queueOperation.addParametro(new QueueParameter("Oggetto", tipoOggettoDaSmistare.name()));
 					queueOperation.addParametro(new QueueParameter("IDTable", "" + idTable));
 
-					Hashtable<OperationsParameter, Vector<String>> params = operazione.getParameters();
-					Enumeration<OperationsParameter> keys = params.keys();
-
-					// Per ogni parametro presente nell'operazione da smistare
-					// creo un nuovo PetraParameter con nome key.getNome() e
-					// valore il valore associato nella tabella
-					while (keys.hasMoreElements()) {
-						OperationsParameter key = keys.nextElement();
-
-						Vector<String> values = params.get(key);
-						for (String value : values) {
-							queueOperation.addParametro(new QueueParameter(key.getNome(), value));
-							filter += "[" + value + "]";
+					Map<OperationsParameter, List<String>> params = operazione.getParameters();
+					if(params!=null && !params.isEmpty()) {
+						for (OperationsParameter key : params.keySet()) {
+							// Per ogni parametro presente nell'operazione da smistare
+							// creo un nuovo PetraParameter con nome key.getNome() e
+							// valore il valore associato nella tabella
+	
+							List<String> values = params.get(key);
+							for (String value : values) {
+								queueOperation.addParametro(new QueueParameter(key.getNome(), value));
+								filter += "[" + value + "]";
+							}
+	
 						}
-
 					}
 
 					// Smisto l'operazione

@@ -24,8 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 
@@ -83,7 +84,7 @@ public class NotifierInputStream extends InputStream {
 	/**
 	 * StreamingHandler
 	 */
-	private Hashtable<String,StreamingHandler> streamingHandlers = new Hashtable<String, StreamingHandler>();
+	private Map<String,StreamingHandler> streamingHandlers = new HashMap<String, StreamingHandler>();
 	private List<String> streamingHandlersIds = new ArrayList<String>(); // Per preservare l'ordine di inserimento
 
 	

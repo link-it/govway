@@ -71,23 +71,34 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
 	private XacmlRequest xacmlRequest = null;
 	private String xacmlRequestAsString = null;
 	private String policyKey = null;
-	private synchronized XacmlRequest getXacmlRequest(DatiInvocazionePortaApplicativa datiInvocazione, Logger log) throws AutorizzazioneException{
+	private org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("AbstractAutorizzazioneXacmlPolicyPA");
+	private XacmlRequest getXacmlRequest(DatiInvocazionePortaApplicativa datiInvocazione, Logger log) throws AutorizzazioneException{
 		if(this.xacmlRequest==null){
-			if(datiInvocazione.getIdPA()!=null){
-				this.policyKey =  "http://govway.org/in/"+datiInvocazione.getIdPA().getNome();
-			}
-			else if(datiInvocazione.getIdPD()!=null){
-				this.policyKey =  "http://govway.org/out/"+datiInvocazione.getIdPD().getNome();
-			} 
-			else{
-				throw new AutorizzazioneException("Identificativo Porta non presente");
-			}
-			this.xacmlRequest = XACMLPolicyUtilities.newXacmlRequest(this.getProtocolFactory(), datiInvocazione,
-	    			this.checkRuoloRegistro, this.checkRuoloEsterno, this.policyKey);
-			this.xacmlRequestAsString = new String(MarshallUtilities.marshallRequest(this.xacmlRequest));
-			this.log.debug("XACML-Request (idPolicy:"+this.policyKey+"): "+this.xacmlRequestAsString);
+			initXacmlRequest(datiInvocazione, log);
 		}
 		return this.xacmlRequest;
+	}
+	private void initXacmlRequest(DatiInvocazionePortaApplicativa datiInvocazione, Logger log) throws AutorizzazioneException{
+		this.semaphore.acquireThrowRuntime("initXacmlRequest");
+		try {
+			if(this.xacmlRequest==null){
+				if(datiInvocazione.getIdPA()!=null){
+					this.policyKey =  "http://govway.org/in/"+datiInvocazione.getIdPA().getNome();
+				}
+				else if(datiInvocazione.getIdPD()!=null){
+					this.policyKey =  "http://govway.org/out/"+datiInvocazione.getIdPD().getNome();
+				} 
+				else{
+					throw new AutorizzazioneException("Identificativo Porta non presente");
+				}
+				this.xacmlRequest = XACMLPolicyUtilities.newXacmlRequest(this.getProtocolFactory(), datiInvocazione,
+		    			this.checkRuoloRegistro, this.checkRuoloEsterno, this.policyKey);
+				this.xacmlRequestAsString = new String(MarshallUtilities.marshallRequest(this.xacmlRequest));
+				this.log.debug("XACML-Request (idPolicy:"+this.policyKey+"): "+this.xacmlRequestAsString);
+			}
+		}finally {
+			this.semaphore.release("initXacmlRequest");
+		}
 	}
 	
 	@Override

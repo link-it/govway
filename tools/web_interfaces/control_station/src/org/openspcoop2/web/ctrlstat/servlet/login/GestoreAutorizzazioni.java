@@ -21,7 +21,8 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.login;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCostanti;
@@ -83,31 +84,31 @@ public class GestoreAutorizzazioni {
 	}
 	
 	// Raccolta servlet in funzionalita
-	Vector<String> servletPdD = null;
-	Vector<String> servletPdDSinglePdD = null;
-	Vector<String> servletSoggetti = null;
-	Vector<String> servletAccordiServizio = null;
-	Vector<String> servletAccordiCooperazione = null;
-	Vector<String> servletServizi = null;
-	Vector<String> servletRuoli = null;
-	Vector<String> servletScope = null;
-	Vector<String> servletPorteDelegate = null;
-	Vector<String> servletPorteApplicative = null;
-	Vector<String> servletServiziApplicativi = null;
-	Vector<String> servletConnettoriCustom = null;
-	Vector<String> servletPackage = null;
-	Vector<String> servletAuditing = null;
-	Vector<String> servletConfigurazione = null;
-	Vector<String> servletGestioneUtenti = null;
-	Vector<String> servletTracciamento = null;
-	Vector<String> servletDiagnostica = null;
-	Vector<String> servletMonitoraggioApplicativo = null;
-	Vector<String> servletLibraryVersion = null;
-	Vector<String> servletChangePWD_Modalita = null;
-	Vector<String> servletOperazioni = null;
-	Vector<String> servletProtocolProperties = null;
-	Vector<String> servletGruppi = null;
-	Vector<String> servletRegistro = null;
+	List<String> servletPdD = null;
+	List<String> servletPdDSinglePdD = null;
+	List<String> servletSoggetti = null;
+	List<String> servletAccordiServizio = null;
+	List<String> servletAccordiCooperazione = null;
+	List<String> servletServizi = null;
+	List<String> servletRuoli = null;
+	List<String> servletScope = null;
+	List<String> servletPorteDelegate = null;
+	List<String> servletPorteApplicative = null;
+	List<String> servletServiziApplicativi = null;
+	List<String> servletConnettoriCustom = null;
+	List<String> servletPackage = null;
+	List<String> servletAuditing = null;
+	List<String> servletConfigurazione = null;
+	List<String> servletGestioneUtenti = null;
+	List<String> servletTracciamento = null;
+	List<String> servletDiagnostica = null;
+	List<String> servletMonitoraggioApplicativo = null;
+	List<String> servletLibraryVersion = null;
+	List<String> servletChangePWD_Modalita = null;
+	List<String> servletOperazioni = null;
+	List<String> servletProtocolProperties = null;
+	List<String> servletGruppi = null;
+	List<String> servletRegistro = null;
 	
 	// Associazione diritti alle funzionalita'
 	PermessiUtente permessiPdD = null;
@@ -143,7 +144,7 @@ public class GestoreAutorizzazioni {
 		this.singlePdD = singlePdD;
 	
 		/** Gruppo di servlet che gestiscono le porte di dominio */
-		this.servletPdD = new Vector<String>();
+		this.servletPdD = new ArrayList<String>();
 		if(this.singlePdD==false){
 			this.servletPdD.addAll(PddCostanti.SERVLET_PDD);
 			this.servletPdD.addAll(PddCostanti.SERVLET_PDD_SOGGETTI);
@@ -153,7 +154,7 @@ public class GestoreAutorizzazioni {
 		this.permessiPdD.setServizi(true);
 		
 		/** Gruppo di servlet che gestiscono le porte di dominio */
-		this.servletPdDSinglePdD = new Vector<String>();
+		this.servletPdDSinglePdD = new ArrayList<String>();
 		if(this.singlePdD){
 			this.servletPdDSinglePdD.addAll(PddCostanti.SERVLET_PDD_SINGLEPDD);
 			this.servletPdDSinglePdD.addAll(PddCostanti.SERVLET_PDD_SOGGETTI);
@@ -163,7 +164,7 @@ public class GestoreAutorizzazioni {
 		this.permessiPdDSinglePdD.setServizi(true);
 		
 		/** Gruppo di servlet che gestiscono i soggetti */
-		this.servletSoggetti = new Vector<String>();
+		this.servletSoggetti = new ArrayList<String>();
 		this.servletSoggetti.addAll(SoggettiCostanti.SERVLET_SOGGETTI);
 		this.servletSoggetti.addAll(SoggettiCostanti.SERVLET_SOGGETTI_RUOLI);
 		this.servletSoggetti.addAll(SoggettiCostanti.SERVLET_SOGGETTI_CREDENZIALI);
@@ -173,7 +174,7 @@ public class GestoreAutorizzazioni {
 		this.permessiSoggetti.setServizi(true);
 		
 		/** Gruppo di servlet che gestiscono gli Accordi di Servizio */
-		this.servletAccordiServizio = new Vector<String>();
+		this.servletAccordiServizio = new ArrayList<String>();
 		this.servletAccordiServizio.addAll(AccordiServizioParteComuneCostanti.SERVLET_APC);
 		this.servletAccordiServizio.addAll(AccordiServizioParteComuneCostanti.SERVLET_APC_AZIONI);
 		this.servletAccordiServizio.addAll(AccordiServizioParteComuneCostanti.SERVLET_APC_PORT_TYPES);
@@ -194,7 +195,7 @@ public class GestoreAutorizzazioni {
 		this.permessiAccordiServizio.setAccordiCooperazione(true);
 				
 		/** Gruppo di servlet che gestiscono gli Accordi di Cooperazione */
-		this.servletAccordiCooperazione = new Vector<String>();
+		this.servletAccordiCooperazione = new ArrayList<String>();
 		this.servletAccordiCooperazione.addAll(AccordiCooperazioneCostanti.SERVLET_ACCORDI_COOPERAZIONE);
 		this.servletAccordiCooperazione.addAll(AccordiCooperazioneCostanti.SERVLET_AC_ALLEGATI);
 		this.servletAccordiCooperazione.addAll(AccordiCooperazioneCostanti.SERVLET_AC_PARTECIPANTI);
@@ -203,7 +204,7 @@ public class GestoreAutorizzazioni {
 		this.permessiAccordiCooperazione.setAccordiCooperazione(true);
 
 		/** Gruppo di servlet che gestiscono i servizi */
-		this.servletServizi = new Vector<String>();
+		this.servletServizi = new ArrayList<String>();
 		this.servletServizi.addAll(AccordiServizioParteSpecificaCostanti.SERVLET_APS);
 		this.servletServizi.addAll(AccordiServizioParteSpecificaCostanti.SERVLET_APS_ALLEGATI);
 		this.servletServizi.addAll(AccordiServizioParteSpecificaCostanti.SERVLET_APS_FRUITORI);
@@ -216,21 +217,21 @@ public class GestoreAutorizzazioni {
 		this.permessiServizi.setServizi(true);
 		
 		/** Gruppo di servlet che gestiscono i ruoli */
-		this.servletRuoli = new Vector<String>();
+		this.servletRuoli = new ArrayList<String>();
 		this.servletRuoli.addAll(RuoliCostanti.SERVLET_RUOLI);
 		/** Permessi associati alla gestione dei ruoli */
 		this.permessiRuoli = new PermessiUtente();
 		this.permessiRuoli.setServizi(true);
 		
 		/** Gruppo di servlet che gestiscono gli scope */
-		this.servletScope = new Vector<String>();
+		this.servletScope = new ArrayList<String>();
 		this.servletScope.addAll(ScopeCostanti.SERVLET_SCOPE);
 		/** Permessi associati alla gestione degli scope */
 		this.permessiScope = new PermessiUtente();
 		this.permessiScope.setServizi(true);
 		
 		/** Gruppo di servlet che gestiscono le porte delegate */
-		this.servletPorteDelegate = new Vector<String>();
+		this.servletPorteDelegate = new ArrayList<String>();
 		this.servletPorteDelegate.addAll(PorteDelegateCostanti.SERVLET_PORTE_DELEGATE);
 		this.servletPorteDelegate.add(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MESSAGE_SECURITY);
 		this.servletPorteDelegate.addAll(PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST);
@@ -270,7 +271,7 @@ public class GestoreAutorizzazioni {
 		this.permessiPorteDelegate.setServizi(true);
 		
 		/** Gruppo di servlet che gestiscono le porte applicative */
-		this.servletPorteApplicative = new Vector<String>();
+		this.servletPorteApplicative = new ArrayList<String>();
 		this.servletPorteApplicative.addAll(PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE);
 		this.servletPorteApplicative.addAll(PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE);
 		this.servletPorteApplicative.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY);
@@ -316,7 +317,7 @@ public class GestoreAutorizzazioni {
 		this.permessiPorteApplicative.setServizi(true);
 		
 		/** Gruppo di servlet che gestiscono i servizi applicativi */
-		this.servletServiziApplicativi = new Vector<String>();
+		this.servletServiziApplicativi = new ArrayList<String>();
 		this.servletServiziApplicativi.addAll(ServiziApplicativiCostanti.SERVLET_SERVIZI_APPLICATIVI);
 		this.servletServiziApplicativi.addAll(ServiziApplicativiCostanti.SERVLET_SERVIZI_APPLICATIVI_RUOLI);
 		this.servletServiziApplicativi.addAll(ServiziApplicativiCostanti.SERVLET_SERVIZI_APPLICATIVI_CREDENZIALI);
@@ -326,14 +327,14 @@ public class GestoreAutorizzazioni {
 		this.permessiServiziApplicativi.setServizi(true);
 		
 		/** Gruppo di servlet che gestiscono i connettori custom (condivisi tra soggetti e servizi) */
-		this.servletConnettoriCustom = new Vector<String>();
+		this.servletConnettoriCustom = new ArrayList<String>();
 		this.servletConnettoriCustom.addAll(ConnettoriCostanti.SERVLET_CONNETTORI_CUSTOM_PROPERTIES);
 		/** Permessi associati alla gestione dei connettori custom (condivisi tra soggetti e servizi) */
 		this.permessiConnettoriCustom = new PermessiUtente();
 		this.permessiConnettoriCustom.setServizi(true);
 		
 		/** Gruppo di servlet che gestiscono l'importazioni/esportazione delle configurazioni in package */
-		this.servletPackage = new Vector<String>();
+		this.servletPackage = new ArrayList<String>();
 		this.servletPackage.addAll(ArchiviCostanti.SERVLET_ARCHIVI_EXPORT);
 		this.servletPackage.addAll(ArchiviCostanti.SERVLET_ARCHIVI_IMPORT);
 		/** Permessi associati alla gestione import/export dei package */
@@ -341,7 +342,7 @@ public class GestoreAutorizzazioni {
 		this.permessiPackage.setServizi(true);
 		
 		/** Gruppo di servlet che gestiscono la visualizzazione dei risultati di auditing */
-		this.servletAuditing = new Vector<String>();
+		this.servletAuditing = new ArrayList<String>();
 		this.servletAuditing.addAll(AuditCostanti.SERVLET_AUDITING);
 		this.servletAuditing.addAll(AuditCostanti.SERVLET_AUDITING_DETTAGLIO);
 		/** Permessi associati alla visualizzazione dell'auditing */
@@ -349,7 +350,7 @@ public class GestoreAutorizzazioni {
 		this.permessiAuditing.setAuditing(true);
 		
 		/** Gruppo di servlet che gestiscono la configurazione */
-		this.servletConfigurazione = new Vector<String>();
+		this.servletConfigurazione = new ArrayList<String>();
 		this.servletConfigurazione.addAll(AuditCostanti.SERVLET_AUDIT);
 		this.servletConfigurazione.addAll(AuditCostanti.SERVLET_AUDIT_FILTRI);
 		if(this.singlePdD){
@@ -394,7 +395,7 @@ public class GestoreAutorizzazioni {
 		this.permessiConfigurazione.setSistema(true);
 		
 		/** Gruppo di servlet che visualizzano la gestione degli utenti */
-		this.servletGestioneUtenti = new Vector<String>();
+		this.servletGestioneUtenti = new ArrayList<String>();
 		this.servletGestioneUtenti.addAll(LoginCostanti.SERVLET_LOGIN_AS_SU);
 		this.servletGestioneUtenti.addAll(UtentiCostanti.SERVLET_UTENTI);
 		this.servletGestioneUtenti.addAll(UtentiCostanti.SERVLET_UTENTI_SERVIZI);
@@ -404,7 +405,7 @@ public class GestoreAutorizzazioni {
 		this.permessiGestioneUtenti.setUtenti(true);
 		
 		/** Gruppo di servlet che gestiscono la tracciatura */
-		this.servletTracciamento = new Vector<String>();
+		this.servletTracciamento = new ArrayList<String>();
 		this.servletTracciamento.addAll(ArchiviCostanti.SERVLET_ARCHIVI_TRACCIAMENTO);
 		this.servletTracciamento.add(ArchiviCostanti.SERVLET_NAME_TRACCE_EXPORT);
 		/** Permessi associati alla gestione la tracciatura */
@@ -412,7 +413,7 @@ public class GestoreAutorizzazioni {
 		this.permessiTracciamento.setDiagnostica(true);
 		
 		/** Gruppo di servlet che gestiscono la diagnostica */
-		this.servletDiagnostica = new Vector<String>();
+		this.servletDiagnostica = new ArrayList<String>();
 		this.servletTracciamento.addAll(ArchiviCostanti.SERVLET_ARCHIVI_DIAGNOSTICA);
 		this.servletDiagnostica.add(ArchiviCostanti.SERVLET_NAME_MESSAGGI_DIAGNOSTICI_EXPORT);
 		/** Permessi associati alla gestione la diagnostica */
@@ -420,21 +421,21 @@ public class GestoreAutorizzazioni {
 		this.permessiDiagnostica.setDiagnostica(true);
 		
 		/** Gruppo di servlet che gestiscono il monitoraggio applicativo */
-		this.servletMonitoraggioApplicativo = new Vector<String>();
+		this.servletMonitoraggioApplicativo = new ArrayList<String>();
 		this.servletMonitoraggioApplicativo.addAll(MonitorCostanti.SERVLET_MONITOR);
 		/** Permessi associati alla gestione il monitoraggio applicativo */
 		this.permessiMonitoraggioApplicativo = new PermessiUtente();
 		this.permessiMonitoraggioApplicativo.setCodeMessaggi(true);
 		
 		/** Gruppo di servlet che visualizzano la versione delle librerie installate */
-		this.servletLibraryVersion = new Vector<String>();
+		this.servletLibraryVersion = new ArrayList<String>();
 		this.servletLibraryVersion.add("libInfo.do");
 		/** Permessi associati alla visualizzazione delle info sulle librerie installate */
 		this.permessiLibraryVersion = new PermessiUtente();
 		this.permessiLibraryVersion.setSistema(true);
 		
 		/** Gruppo di servlet che gestiscono l'utente (password e modalita' di interfaccia) */
-		this.servletChangePWD_Modalita = new Vector<String>();
+		this.servletChangePWD_Modalita = new ArrayList<String>();
 		this.servletChangePWD_Modalita.addAll(UtentiCostanti.SERVLET_UTENTE);
 		/** Permessi associati alla gestione della configurazione */
 		this.permessiChangePWD_Modalita = new PermessiUtente();
@@ -448,28 +449,28 @@ public class GestoreAutorizzazioni {
 		this.permessiChangePWD_Modalita.setUtenti(true);
 		
 		/** Gruppo di servlet che gestiscono la ricerca delle operazioni */
-		this.servletOperazioni = new Vector<String>();
+		this.servletOperazioni = new ArrayList<String>();
 		this.servletOperazioni.addAll(OperazioniCostanti.SERVLET_OPERAZIONI);
 		/** Permessi associati alla ricerca delle operazioni */
 		this.permessiOperazioni = new PermessiUtente();
 		this.permessiOperazioni.setSistema(true);
 		
 		/** Gruppo di servlet che gestiscono le protocolproperties */
-		this.servletProtocolProperties = new Vector<String>();
+		this.servletProtocolProperties = new ArrayList<String>();
 		this.servletProtocolProperties.addAll(ProtocolPropertiesCostanti.SERVLET_PP);
 		/** Permessi Associati alla gestione delle protocol properties */
 		this.permessiProtocolProperties = new PermessiUtente();
 		this.permessiProtocolProperties.setServizi(true);
 		
 		/** Gruppo di servlet che gestiscono i gruppi */
-		this.servletGruppi = new Vector<String>();
+		this.servletGruppi = new ArrayList<String>();
 		this.servletGruppi.addAll(GruppiCostanti.SERVLET_GRUPPI);
 		/** Permessi associati alla gestione dei gruppi */
 		this.permessiGruppi = new PermessiUtente();
 		this.permessiGruppi.setSistema(true);
 		
 		/** Gruppo di servlet che gestiscono il supporto delle funzionalita' di registro */
-		this.servletRegistro = new Vector<String>();
+		this.servletRegistro = new ArrayList<String>();
 		this.servletRegistro.add(UtilsCostanti.SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO);
 		/** Permessi Associati al supporto delle funzionalita' di registro */
 		this.permessiRegistro = new PermessiUtente();

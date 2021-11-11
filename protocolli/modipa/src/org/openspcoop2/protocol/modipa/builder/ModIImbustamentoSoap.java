@@ -23,7 +23,7 @@ package org.openspcoop2.protocol.modipa.builder;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -374,7 +374,7 @@ public class ModIImbustamentoSoap {
 		messageSecurityContextParameters.setFunctionAsClient(true);
 		messageSecurityContextParameters.setPrefixWsuId(OpenSPCoop2Properties.getInstance().getPrefixWsuId()); // NOTA: deve essere lo stesso di govway usato in altri profili
 		MessageSecurityContext messageSecurityContext = new MessageSecurityContext_impl(messageSecurityContextParameters);
-		Hashtable<String,Object> secProperties = new Hashtable<>();
+		Map<String,Object> secProperties = new HashMap<>();
 		secProperties.put(SecurityConstants.SECURITY_ENGINE, SecurityConstants.SECURITY_ENGINE_WSS4J);
 		if(modIProperties.getSoapSecurityTokenActor()!=null && !"".equals(modIProperties.getSoapSecurityTokenActor())) {
 			secProperties.put(SecurityConstants.ACTOR, modIProperties.getSoapSecurityTokenActor());
@@ -601,7 +601,7 @@ public class ModIImbustamentoSoap {
 		busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_SOAP_PREFIX+localName, namespace);
 	}
 	
-	private void addCorniceSicurezza(Hashtable<String,Object> secProperties, 
+	private void addCorniceSicurezza(Map<String,Object> secProperties, 
 			OpenSPCoop2Message msg, Context context, Busta busta,
 			ModISecurityConfig securityConfig,
 			Map<String, Object> dynamicMap) throws Exception {

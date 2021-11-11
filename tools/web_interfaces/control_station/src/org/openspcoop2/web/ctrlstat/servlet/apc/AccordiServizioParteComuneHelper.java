@@ -23,9 +23,10 @@ import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
@@ -755,7 +756,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_PORT_TYPE_OPERATIONS,
 					pIdAccordo,pNomeAccordo,pTipoAccordo, pNomePortTypes);
 
-			Hashtable<String, String> campiHidden = new Hashtable<String, String>();
+			Map<String, String> campiHidden = new HashMap<String, String>();
 			campiHidden.put("nomept", nomept);
 			this.pd.setHidden(campiHidden);
 

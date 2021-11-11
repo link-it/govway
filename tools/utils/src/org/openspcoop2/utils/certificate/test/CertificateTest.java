@@ -21,8 +21,8 @@
 package org.openspcoop2.utils.certificate.test;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
@@ -319,7 +319,7 @@ public class CertificateTest {
 				}
 				System.out.println("Compare con equals not strict ha dato risultato atteso true");
 				
-				Hashtable<String, List<String>> c1_valori = CertificateUtils.getPrincipalIntoHashtable(c1.getCertificate().getSubject().getName(), PrincipalType.subject);
+				Map<String, List<String>> c1_valori = CertificateUtils.getPrincipalIntoMap(c1.getCertificate().getSubject().getName(), PrincipalType.subject);
 				if(!c1_valori.containsKey("ou")) {
 					throw new Exception("OU non trovato");
 				}

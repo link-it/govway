@@ -20,9 +20,9 @@
 package org.openspcoop2.protocol.sdk.archive;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
@@ -36,8 +36,8 @@ import org.openspcoop2.protocol.sdk.constants.ArchiveType;
  */
 public class MappingModeTypesExtensions {
 
-	private Hashtable<String, List<ArchiveModeType>> mappingExtensionsTypes = new Hashtable<String, List<ArchiveModeType>>();
-	private Hashtable<String, ArchiveType> mappingExtensionsArchiveType = new Hashtable<String, ArchiveType>();
+	private Map<String, List<ArchiveModeType>> mappingExtensionsTypes = new HashMap<String, List<ArchiveModeType>>();
+	private Map<String, ArchiveType> mappingExtensionsArchiveType = new HashMap<String, ArchiveType>();
 	private List<String> exts = new ArrayList<String>(); // per garantire l'ordine di inserimento
 	private String preferExtSingleObject = null;
 	
@@ -198,9 +198,7 @@ public class MappingModeTypesExtensions {
 	
 	public String mappingArchiveTypeToExt(ArchiveType type){
 		
-		Enumeration<String> exts = this.mappingExtensionsArchiveType.keys();
-		while (exts.hasMoreElements()) {
-			String ext = (String) exts.nextElement();
+		for (String ext : this.mappingExtensionsArchiveType.keySet()) {
 			ArchiveType check = this.mappingExtensionsArchiveType.get(ext);
 			if(check.equals(type)){
 				return ext;

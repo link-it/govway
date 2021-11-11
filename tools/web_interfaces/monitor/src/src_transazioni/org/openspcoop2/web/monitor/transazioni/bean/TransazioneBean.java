@@ -20,7 +20,7 @@
 package org.openspcoop2.web.monitor.transazioni.bean;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -1136,7 +1136,7 @@ public class TransazioneBean extends Transazione{
 				
 				FiltroRicercaDiagnosticiConPaginazione filter = new FiltroRicercaDiagnosticiConPaginazione();
 				
-				Hashtable<String, String> properties = new Hashtable<String, String>();
+				Map<String, String> properties = new HashMap<String, String>();
 				properties.put("id_transazione",
 						this.getIdTransazione());
 				filter.setProperties(properties);

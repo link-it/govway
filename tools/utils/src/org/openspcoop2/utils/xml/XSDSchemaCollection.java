@@ -26,8 +26,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -48,8 +47,8 @@ import org.slf4j.Logger;
 public class XSDSchemaCollection {
 
 	private byte[] schemaRoot;
-	private Hashtable<String, byte[]> resources;
-	private Hashtable<String, String> mappingNamespaceLocations;
+	private Map<String, byte[]> resources;
+	private Map<String, String> mappingNamespaceLocations;
 	
 	private boolean serializeXSDSchemi_buildSchemaSuccess = false;
 	private boolean serializeXSDSchemi_buildSchemaError = true;
@@ -73,16 +72,16 @@ public class XSDSchemaCollection {
 	public void setSchemaRoot(byte[] schemaRoot) {
 		this.schemaRoot = schemaRoot;
 	}
-	public Hashtable<String, byte[]> getResources() {
+	public Map<String, byte[]> getResources() {
 		return this.resources;
 	}
-	public void setResources(Hashtable<String, byte[]> resources) {
+	public void setResources(Map<String, byte[]> resources) {
 		this.resources = resources;
 	}
-	public Hashtable<String, String> getMappingNamespaceLocations() {
+	public Map<String, String> getMappingNamespaceLocations() {
 		return this.mappingNamespaceLocations;
 	}
-	public void setMappingNamespaceLocations(Hashtable<String, String> mappingNamespaceLocations) {
+	public void setMappingNamespaceLocations(Map<String, String> mappingNamespaceLocations) {
 		this.mappingNamespaceLocations = mappingNamespaceLocations;
 	}
 	
@@ -164,19 +163,15 @@ public class XSDSchemaCollection {
 			zipOut.write(this.schemaRoot);
 			
 			if(this.resources!=null && this.resources.size()>0){
-				Enumeration<String> kesy = this.resources.keys();
-				while (kesy.hasMoreElements()) {
-					String name = kesy.nextElement();
+				for (String name : this.resources.keySet()) {
 					
 					nomeFile = name;
 					zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
 					zipOut.write(this.resources.get(name));
 					
-					Enumeration<String> namespaces = this.mappingNamespaceLocations.keys();
 					String namespaceFound = null;
 					String locationFound = null;
-					while (namespaces.hasMoreElements()) {
-						String namespace = namespaces.nextElement();
+					for (String namespace : this.mappingNamespaceLocations.keySet()) {
 						String location = this.mappingNamespaceLocations.get(namespace);
 						String [] split = location.split(" ");
 						if(split!=null){
@@ -296,9 +291,7 @@ public class XSDSchemaCollection {
 			if(resourceResolver!=null){
 				if(resourceResolver instanceof XSDResourceResolver){
 					XSDResourceResolver xsdResolver = resourceResolver;
-					Enumeration<String> keys = xsdResolver.getResources().keys();
-					while (keys.hasMoreElements()) {
-						String systemId = keys.nextElement();
+					for (String systemId : xsdResolver.getResources().keySet()) {
 						byte[] contenuto = xsdResolver.getResources().get(systemId);
 						File schemaTmpLog = null;
 						if(dirCreate)

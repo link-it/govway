@@ -22,8 +22,9 @@
 package org.openspcoop2.web.ctrlstat.servlet.archivi;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -167,9 +168,9 @@ public class ExporterUtils {
 		return exportModes;
 	}
 	
-	public Hashtable<ExportMode,String> getExportModesWithProtocol(List<String> protocolli,ArchiveType archiveType) throws ProtocolException{
+	public Map<ExportMode,String> getExportModesWithProtocol(List<String> protocolli,ArchiveType archiveType) throws ProtocolException{
 
-		Hashtable<ExportMode,String> exportModes = new Hashtable<ExportMode,String>();
+		Map<ExportMode,String> exportModes = new HashMap<ExportMode,String>();
 		for (int i = 0; i < protocolli.size(); i++) {
 			String protocolName = protocolli.get(i);
 			if(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO_UNDEFINDED.equals(protocolName)==false){

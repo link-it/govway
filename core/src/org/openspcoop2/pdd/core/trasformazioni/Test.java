@@ -23,7 +23,6 @@ package org.openspcoop2.pdd.core.trasformazioni;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -896,7 +895,7 @@ public class Test {
 		
 		RicezioneContenutiApplicativiInternalErrorGenerator generator = null;
 		
-		Map<String, Object> dynamicMapXmlRequest = new Hashtable<String, Object>();
+		Map<String, Object> dynamicMapXmlRequest = new HashMap<String, Object>();
 		ErrorHandler errorHandlerXmlRequest = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_REQUEST_FAILED, pddContext);
 		DynamicUtils.fillDynamicMapRequest(log, dynamicMapXmlRequest, pddContext, urlInvocazione,
 				xmlMessageRequest,
@@ -907,7 +906,7 @@ public class Test {
 				parametriForm,
 				errorHandlerXmlRequest);
 		
-		Map<String, Object> dynamicMapXmlResponse = new Hashtable<String, Object>();
+		Map<String, Object> dynamicMapXmlResponse = new HashMap<String, Object>();
 		ErrorHandler errorHandlerXmlResponse = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_RESPONSE_FAILED, pddContext);
 		DynamicUtils.fillDynamicMapResponse(log, dynamicMapXmlResponse, dynamicMapXmlRequest, pddContext, 
 				xmlMessageResponse,
@@ -915,7 +914,7 @@ public class Test {
 				busta, parametriTrasportoRisposta,
 				errorHandlerXmlResponse);
 		
-		Map<String, Object> dynamicMapJsonRequest = new Hashtable<String, Object>();
+		Map<String, Object> dynamicMapJsonRequest = new HashMap<String, Object>();
 		ErrorHandler errorHandlerJsonRequest = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_REQUEST_FAILED, pddContext);
 		DynamicUtils.fillDynamicMapRequest(log, dynamicMapJsonRequest, pddContext, urlInvocazione,
 				jsonMessageRequest,
@@ -926,7 +925,7 @@ public class Test {
 				parametriForm,
 				errorHandlerJsonRequest);
 		
-		Map<String, Object> dynamicMapJsonResponse = new Hashtable<String, Object>();
+		Map<String, Object> dynamicMapJsonResponse = new HashMap<String, Object>();
 		ErrorHandler errorHandlerJsonResponse = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_RESPONSE_FAILED, pddContext);
 		DynamicUtils.fillDynamicMapResponse(log, dynamicMapJsonResponse, dynamicMapJsonRequest, pddContext, 
 				jsonMessageResponse,
@@ -934,7 +933,7 @@ public class Test {
 				busta, parametriTrasportoRisposta,
 				errorHandlerJsonResponse);
 		
-		Map<String, Object> dynamicMapJsonTestAlterazioni = new Hashtable<String, Object>();
+		Map<String, Object> dynamicMapJsonTestAlterazioni = new HashMap<String, Object>();
 		ErrorHandler errorHandlerJsonTestAlterazioni = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_REQUEST_FAILED, pddContext);
 		DynamicUtils.fillDynamicMapRequest(log, dynamicMapJsonTestAlterazioni, pddContext, urlInvocazione,
 				jsonMessageTestAlterazioni,

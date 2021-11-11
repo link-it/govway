@@ -22,9 +22,9 @@ package org.openspcoop2.generic_project.expression.impl.sql;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.generic_project.beans.AliasField;
 import org.openspcoop2.generic_project.beans.ComplexField;
@@ -1027,7 +1027,7 @@ public class ExpressionSQL extends ExpressionImpl {
 		return bf.toString();
 	}
 
-	protected String toSqlJPA(Hashtable<String, Object> oggetti) throws ExpressionException {
+	protected String toSqlJPA(Map<String, Object> oggetti) throws ExpressionException {
 		if(this.expressionEngine==null){
 			if(this.throwExpressionNotInitialized){
 				throw new ExpressionException("Expression is not initialized");
@@ -1124,7 +1124,7 @@ public class ExpressionSQL extends ExpressionImpl {
 				this.getOrderedFields(),this.getGroupByFields());
 	}
 	
-	protected void toSqlJPA(ISQLQueryObject sqlQueryObject,Hashtable<String, Object> oggetti)throws ExpressionException{
+	protected void toSqlJPA(ISQLQueryObject sqlQueryObject,Map<String, Object> oggetti)throws ExpressionException{
 		if(this.expressionEngine==null){
 			if(this.throwExpressionNotInitialized){
 				throw new ExpressionException("Expression is not initialized");
@@ -1152,7 +1152,7 @@ public class ExpressionSQL extends ExpressionImpl {
 		toSqlForceIndex(sqlQueryObject);
 	}
 	
-	protected void toSqlJPAWithFromCondition(ISQLQueryObject sqlQueryObject,Hashtable<String, Object> oggetti,String tableNamePrincipale) throws ExpressionException, ExpressionNotImplementedException{
+	protected void toSqlJPAWithFromCondition(ISQLQueryObject sqlQueryObject,Map<String, Object> oggetti,String tableNamePrincipale) throws ExpressionException, ExpressionNotImplementedException{
 		
 		// preparo condizione di where
 		this.toSqlJPA(sqlQueryObject, oggetti);

@@ -401,10 +401,10 @@ public class GestoreAutorizzazione {
 				}
     		
 				//synchronized (GestoreAutorizzazione.semaphoreAutorizzazionePD) {
+				GestoreAutorizzazione.lockAutorizzazionePD.acquire("verificaAutorizzazionePortaDelegata", 
+						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
 				try {
-					GestoreAutorizzazione.lockAutorizzazionePD.acquire("verificaAutorizzazionePortaDelegata", 
-							(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
-		
+					
 					response = 
 						(org.openspcoop2.utils.cache.CacheResponse) GestoreAutorizzazione.cacheAutorizzazione.get(keyCache);
 					if(response != null){
@@ -542,10 +542,10 @@ public class GestoreAutorizzazione {
 				}
 	    		
 	    		//synchronized (GestoreAutorizzazione.semaphoreAutorizzazionePA) {
+				GestoreAutorizzazione.lockAutorizzazionePA.acquire("verificaAutorizzazionePortaApplicativa", 
+						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
 				try {
-					GestoreAutorizzazione.lockAutorizzazionePA.acquire("verificaAutorizzazionePortaApplicativa", 
-							(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
-			
+					
 					response = 
 						(org.openspcoop2.utils.cache.CacheResponse) GestoreAutorizzazione.cacheAutorizzazione.get(keyCache);
 					if(response != null){
@@ -1149,10 +1149,10 @@ public class GestoreAutorizzazione {
 				}
 	    			    		
 				//synchronized (GestoreAutorizzazione.semaphoreAutorizzazioneContenutiPD) {
+				GestoreAutorizzazione.lockAutorizzazioneContenutiPD.acquire("verificaAutorizzazioneContenutoPortaDelegata", 
+						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
 				try {
-					GestoreAutorizzazione.lockAutorizzazioneContenutiPD.acquire("verificaAutorizzazioneContenutoPortaDelegata", 
-							(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
-				
+					
 					response = 
 						(org.openspcoop2.utils.cache.CacheResponse) GestoreAutorizzazione.cacheAutorizzazione.get(keyCache);
 					if(response != null){
@@ -1247,9 +1247,9 @@ public class GestoreAutorizzazione {
 				}
 	    		
 				//synchronized (GestoreAutorizzazione.semaphoreAutorizzazioneContenutiPA) {
+				GestoreAutorizzazione.lockAutorizzazioneContenutiPA.acquire("verificaAutorizzazioneContenutoPortaApplicativa", 
+						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
 				try {
-					GestoreAutorizzazione.lockAutorizzazioneContenutiPA.acquire("verificaAutorizzazioneContenutoPortaApplicativa", 
-							(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
 					
 					response = 
 						(org.openspcoop2.utils.cache.CacheResponse) GestoreAutorizzazione.cacheAutorizzazione.get(keyCache);

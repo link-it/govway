@@ -24,7 +24,7 @@ import java.io.File;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.axis.AxisFault;
@@ -350,10 +350,10 @@ public class AuthUtilities {
 			msg.getSOAPPartAsBytes();
 			
 			// Contesto SSL
-			java.util.Hashtable<String, String> sslContext = null;
+			java.util.Map<String, String> sslContext = null;
 			if(credenzialiInvocazione!=null && credenzialiInvocazione.isCreateSSLContext()){
 				Reporter.log("Creo contesto SSL");
-				sslContext = new Hashtable<String, String>();
+				sslContext = new HashMap<String, String>();
 				if(credenzialiInvocazione.getPathKeystore()!=null){
 					sslContext.put("trustStoreLocation", credenzialiInvocazione.getPathKeystore());
 					sslContext.put("keyStoreLocation", credenzialiInvocazione.getPathKeystore());

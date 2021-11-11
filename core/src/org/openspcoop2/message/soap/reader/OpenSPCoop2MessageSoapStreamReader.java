@@ -40,6 +40,7 @@ import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.soap.OpenSPCoop2Message_saaj_11_impl;
 import org.openspcoop2.message.soap.OpenSPCoop2Message_saaj_12_impl;
 import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.xml.XMLUtils;
 import org.w3c.dom.Node;
@@ -105,6 +106,10 @@ public class OpenSPCoop2MessageSoapStreamReader {
 		if(this.contentType==null || StringUtils.isEmpty(this.contentType) || this.is == null) {
 			return;
 		}
+		boolean multipart = false;
+		try {
+			multipart = ContentTypeUtilities.isMultipartType(this.contentType);
+		}catch(Throwable t) {}
 				
 		try {
 			ByteArrayOutputStream bufferReaded = new ByteArrayOutputStream();
@@ -169,6 +174,17 @@ public class OpenSPCoop2MessageSoapStreamReader {
 						sbActual.append(c);
 					}
 					if(c == '>' || (sbActual!=null && sbActual.toString().endsWith("&gt;"))) {
+						
+						if(sbActual==null) {
+							//NO: gli attachments potrebbero rientrare in questo caso
+							if(multipart) {
+								continue;
+							}
+							else {
+								throw new Exception("Invalid content; found premature '>' character ("+bufferReaded.toString()+")");
+							}
+						}
+						
 						String s = sbActual.toString();
 						
 						//System.out.println("S ["+s+"]");

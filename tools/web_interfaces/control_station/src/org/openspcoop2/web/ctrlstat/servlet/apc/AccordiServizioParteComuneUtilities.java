@@ -21,7 +21,6 @@ package org.openspcoop2.web.ctrlstat.servlet.apc;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -93,7 +92,7 @@ public class AccordiServizioParteComuneUtilities {
 			
 			String oldURI = idAccordoFactory.getUriFromIDAccordo(idAccordoOLD);
 			
-			Map<String, AccordoServizioParteComune> map = new Hashtable<String, AccordoServizioParteComune>();
+			Map<String, AccordoServizioParteComune> map = new HashMap<String, AccordoServizioParteComune>();
 			
 			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(as.getServiceBinding())) {
 				FiltroRicercaResources filtroRicerca = new FiltroRicercaResources();
@@ -729,13 +728,13 @@ public class AccordiServizioParteComuneUtilities {
 			return null;
 	}
 
-	public static Hashtable<String, List<Operation>> selectPortTypeOperationsListAsincrone(AccordoServizioParteComune as,String profcollop,String nomept){
+	public static Map<String, List<Operation>> selectPortTypeOperationsListAsincrone(AccordoServizioParteComune as,String profcollop,String nomept){
 		//List<PortType> getServCorrList = core.accordiPorttypeList(idInt, null, new Search(true));
 		List<PortType> getServCorrList = new ArrayList<PortType>();
 		for(int k=0;k<as.sizePortTypeList();k++){
 			getServCorrList.add(as.getPortType(k));
 		}
-		Hashtable<String, List<Operation>> operationsListSelezionate = new Hashtable<String, List<Operation>>();
+		Map<String, List<Operation>> operationsListSelezionate = new HashMap<String, List<Operation>>();
 
 		if (getServCorrList.size() > 0) {
 			for (Iterator<PortType> iterator = getServCorrList.iterator(); iterator.hasNext();) {
@@ -788,7 +787,7 @@ public class AccordiServizioParteComuneUtilities {
 	}
 
 	public static ArrayList<String> selectOperationAsincrone(AccordoServizioParteComune as,String servcorr,String profProtocollo,
-			String profcollop,PortType pt,String nomeop,AccordiServizioParteComuneCore core, Hashtable<String, List<Operation>> operationsListSelezionate)throws DriverRegistroServiziException{
+			String profcollop,PortType pt,String nomeop,AccordiServizioParteComuneCore core, Map<String, List<Operation>> operationsListSelezionate)throws DriverRegistroServiziException{
 		// Se è stato selezionato un servizio,
 		// recupero le azioni del servizio
 		// che non sono già state correlate
@@ -869,7 +868,7 @@ public class AccordiServizioParteComuneUtilities {
 		if(as.getByteWsdlConcettuale() != null || as.getByteWsdlLogicoErogatore() != null || as.getByteWsdlLogicoFruitore() != null) {
 			apcCore.mappingAutomatico(tipoProtocollo, as, validazioneDocumenti);
 			if(enableAutoMapping_estraiXsdSchemiFromWsdlTypes && InterfaceType.WSDL_11.equals(interfaceType)){
-				Hashtable<String, byte[]> schemiAggiuntiInQuestaOperazione = new Hashtable<String, byte[]>();
+				Map<String, byte[]> schemiAggiuntiInQuestaOperazione = new HashMap<String, byte[]>();
 				if(as.getByteWsdlConcettuale() != null){ 
 					apcCore.estraiSchemiFromWSDLTypesAsAllegati(as, as.getByteWsdlConcettuale(),AccordiServizioParteComuneCostanti.TIPO_WSDL_CONCETTUALE, schemiAggiuntiInQuestaOperazione);
 				}
@@ -1069,7 +1068,7 @@ public class AccordiServizioParteComuneUtilities {
 					
 					// popolo gli allegati
 					if(fillXsd && enableAutoMapping_estraiXsdSchemiFromWsdlTypes && FormatoSpecifica.WSDL_11.equals(as.getFormatoSpecifica())){
-						apcCore.estraiSchemiFromWSDLTypesAsAllegati(as, wsdlBytes, tipo, new Hashtable<String, byte[]> ());
+						apcCore.estraiSchemiFromWSDLTypesAsAllegati(as, wsdlBytes, tipo, new HashMap<String, byte[]> ());
 						if(facilityUnicoWSDL_interfacciaStandard){
 							// è stato utilizzato il concettuale. Lo riporto nel logico
 							as.setByteWsdlLogicoErogatore(as.getByteWsdlConcettuale());

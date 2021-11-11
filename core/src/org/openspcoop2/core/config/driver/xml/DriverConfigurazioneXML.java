@@ -28,8 +28,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -1148,7 +1148,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 
 		refreshConfigurazioneXML();
 
-		Hashtable<IDSoggetto,PortaApplicativa> paConSoggetti = new Hashtable<IDSoggetto,PortaApplicativa>();
+		Map<IDSoggetto,PortaApplicativa> paConSoggetti = new HashMap<IDSoggetto,PortaApplicativa>();
 		IDSoggetto soggettoVirtuale = idServizio.getSoggettoErogatore();	
 		String servizio = idServizio.getNome();
 		String tipoServizio = idServizio.getTipo();

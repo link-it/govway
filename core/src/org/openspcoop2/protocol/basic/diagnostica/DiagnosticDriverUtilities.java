@@ -27,7 +27,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
 
 import org.openspcoop2.core.constants.CostantiDB;
@@ -172,9 +171,7 @@ public class DiagnosticDriverUtilities {
 		}
 		
 		if(filter.getProperties()!=null){
-			Enumeration<String> keys =filter.getProperties().keys();
-			while(keys.hasMoreElements()){
-				String key = keys.nextElement();
+			for (String key : filter.getProperties().keySet()) {
 				switch (tipoRicerca) {
 				case MSGDIAGNOSTICI:
 				case COUNT_MSGDIAGNOSTICI:
@@ -360,9 +357,7 @@ public class DiagnosticDriverUtilities {
 		}
 		
 		if(filter.getProperties()!=null){
-			Enumeration<String> keys =filter.getProperties().keys();
-			while(keys.hasMoreElements()){
-				String key = keys.nextElement();
+			for (String key : filter.getProperties().keySet()) {
 				String value = filter.getProperties().get(key);
 				if(DiagnosticDriver.IDDIAGNOSTICI.equals(key)){
 					// Caso particolare dell'id long della traccia

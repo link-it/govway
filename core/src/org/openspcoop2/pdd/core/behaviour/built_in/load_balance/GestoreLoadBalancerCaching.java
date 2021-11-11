@@ -431,9 +431,9 @@ public class GestoreLoadBalancerCaching {
 			}
     		
 			//synchronized (GestoreLoadBalancerCaching.cache) {
+			GestoreLoadBalancerCaching.lock.acquireThrowRuntime("getLoadBalancerPool",
+					(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
 			try {
-				GestoreLoadBalancerCaching.lock.acquireThrowRuntime("getLoadBalancerPool",
-						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
 				
 				response = 
 					(org.openspcoop2.utils.cache.CacheResponse) GestoreLoadBalancerCaching.cache.get(keyCache);
@@ -581,9 +581,9 @@ public class GestoreLoadBalancerCaching {
 			}
     		
 			//synchronized (GestoreLoadBalancerCaching.cache) {
+			GestoreLoadBalancerCaching.lock.acquireThrowRuntime("getNomeConnettore",
+					(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
 			try {
-				GestoreLoadBalancerCaching.lock.acquireThrowRuntime("getNomeConnettore",
-						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
 				
 				response = 
 					(org.openspcoop2.utils.cache.CacheResponse) GestoreLoadBalancerCaching.cache.get(keyCache);

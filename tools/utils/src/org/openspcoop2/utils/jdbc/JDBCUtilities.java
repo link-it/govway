@@ -26,12 +26,12 @@ import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.Map;
 
-import org.slf4j.Logger;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
+import org.slf4j.Logger;
 
 /**
  * JDBC Utilities
@@ -50,9 +50,12 @@ public class JDBCUtilities {
 	 * @param tablePstmt Tabella Hash contenente PreparedStatement da chiudere.
 	 * 
 	 */
-	public static void closePreparedStatement(Hashtable<String,PreparedStatement> tablePstmt,Logger log){
-		if(tablePstmt!=null && tablePstmt.keys().hasMoreElements()){
-			java.util.ArrayList<String> listKeys = java.util.Collections.list(tablePstmt.keys());
+	public static void closePreparedStatement(Map<String,PreparedStatement> tablePstmt,Logger log){
+		if(tablePstmt!=null && !tablePstmt.isEmpty()){
+			java.util.ArrayList<String> listKeys = new ArrayList<String>();
+			for (String key : tablePstmt.keySet()) {
+				listKeys.add(key);
+			}
 			java.util.Collections.sort(listKeys);
 			for(int i=0; i<listKeys.size(); i++ ) {
 				String key = listKeys.get(i);
@@ -74,9 +77,12 @@ public class JDBCUtilities {
 	 * @param tablePstmt Tabella Hash contenente PreparedStatement da eseguire e chiudere.
 	 * 
 	 */
-	public static void executePreparedStatement(Hashtable<String,PreparedStatement> tablePstmt) throws UtilsException{
-		if(tablePstmt!=null && tablePstmt.keys().hasMoreElements()){
-			java.util.ArrayList<String> listKeys = java.util.Collections.list(tablePstmt.keys());
+	public static void executePreparedStatement(Map<String,PreparedStatement> tablePstmt) throws UtilsException{
+		if(tablePstmt!=null && !tablePstmt.isEmpty()){
+			java.util.ArrayList<String> listKeys = new ArrayList<String>();
+			for (String key : tablePstmt.keySet()) {
+				listKeys.add(key);
+			}
 			java.util.Collections.sort(listKeys);
 
 //			System.out.println("---------- ("+listKeys.size()+") ------------");
@@ -113,20 +119,20 @@ public class JDBCUtilities {
 	 * @param pstmtDestinazione
 	 * @param log
 	 */
-	public static void addPreparedStatement(Hashtable<String,PreparedStatement> pstmtSorgente, 
-			Hashtable<String,PreparedStatement> pstmtDestinazione,Logger log) throws UtilsException{ 
-		Enumeration<String> keys = pstmtSorgente.keys();
-		while(keys.hasMoreElements()){
-			String key = keys.nextElement();
-			if(pstmtDestinazione.containsKey(key)==false){
-				pstmtDestinazione.put(key,pstmtSorgente.get(key));
-			}else{
-				//log.debug("Prepared Statement ["+key+"] gia' presente");
-				try{
-					PreparedStatement pstmt = pstmtSorgente.get(key);
-					pstmt.close();
-				}catch(Exception e){
-					throw new UtilsException("Utilities.closePreparedStatementGiaPresente error: Riscontrato errore durante la chiusura della PreparedStatement ["+key+"]: "+e,e);
+	public static void addPreparedStatement(Map<String,PreparedStatement> pstmtSorgente, 
+			Map<String,PreparedStatement> pstmtDestinazione,Logger log) throws UtilsException{ 
+		if(pstmtSorgente!=null && !pstmtSorgente.isEmpty()){
+			for (String key : pstmtSorgente.keySet()) {
+				if(pstmtDestinazione.containsKey(key)==false){
+					pstmtDestinazione.put(key,pstmtSorgente.get(key));
+				}else{
+					//log.debug("Prepared Statement ["+key+"] gia' presente");
+					try{
+						PreparedStatement pstmt = pstmtSorgente.get(key);
+						pstmt.close();
+					}catch(Exception e){
+						throw new UtilsException("Utilities.closePreparedStatementGiaPresente error: Riscontrato errore durante la chiusura della PreparedStatement ["+key+"]: "+e,e);
+					}
 				}
 			}
 		}

@@ -31,8 +31,8 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.openspcoop2.core.config.MessaggiDiagnostici;
@@ -1022,11 +1022,9 @@ public class OpenSPCoop2Logger {
 		}
 		
 		if(OpenSPCoop2Logger.pddContextSerializer!=null){
-			Hashtable<String, String> contextSerializerParameters = OpenSPCoop2Logger.pddContextSerializer.getLoggerKeywords();
+			Map<String, String> contextSerializerParameters = OpenSPCoop2Logger.pddContextSerializer.getLoggerKeywords();
 			if(contextSerializerParameters!=null && contextSerializerParameters.size()>0){
-				Enumeration<String> keywordContext = contextSerializerParameters.keys();
-				while(keywordContext.hasMoreElements()){
-					String keyword =  keywordContext.nextElement();
+				for (String keyword : contextSerializerParameters.keySet()) {
 					if(msgDiag.getPropertiesNames()!=null){
 						String [] propertyNames = msgDiag.getPropertiesNames();
 						for (int i = 0; i < propertyNames.length; i++) {

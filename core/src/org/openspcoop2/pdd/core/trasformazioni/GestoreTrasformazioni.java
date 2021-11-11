@@ -23,7 +23,6 @@
 package org.openspcoop2.pdd.core.trasformazioni;
 
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -429,7 +428,7 @@ public class GestoreTrasformazioni {
 		// *** Costruzione Dynamic Map ****
 		
 		this.log.debug("Costruzione dynamic map ...");
-		Map<String, Object> dynamicMap = new Hashtable<String, Object>();
+		Map<String, Object> dynamicMap = new HashMap<String, Object>();
 		ErrorHandler errorHandler = new ErrorHandler(this.errorGenerator, IntegrationFunctionError.TRANSFORMATION_RULE_REQUEST_FAILED, this.pddContext);
 		DynamicUtils.fillDynamicMapRequest(this.log, dynamicMap, this.pddContext, urlInvocazione,
 				message,
@@ -773,7 +772,7 @@ public class GestoreTrasformazioni {
 		// *** Costruzione Dynamic Map ****
 		
 		this.log.debug("Costruzione dynamic map ...");
-		Map<String, Object> dynamicMap = new Hashtable<String, Object>();
+		Map<String, Object> dynamicMap = new HashMap<String, Object>();
 		ErrorHandler errorHandler = new ErrorHandler(this.errorGenerator, IntegrationFunctionError.TRANSFORMATION_RULE_RESPONSE_FAILED, this.pddContext);
 		DynamicUtils.fillDynamicMapResponse(this.log, dynamicMap, this.dynamicMapRequest, this.pddContext, 
 				message,

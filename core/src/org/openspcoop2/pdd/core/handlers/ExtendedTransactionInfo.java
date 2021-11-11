@@ -22,8 +22,9 @@ package org.openspcoop2.pdd.core.handlers;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * ExtendedTransactionInfo
@@ -40,7 +41,7 @@ public class ExtendedTransactionInfo implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private List<String> keys = new ArrayList<>();
-	private Hashtable<String, String> mapKeyToValue = new Hashtable<>();
+	private Map<String, String> mapKeyToValue = new HashMap<>();
 	
 	public void addCustomKey(String key,String value){
 		this.keys.add(key);

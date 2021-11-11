@@ -134,7 +134,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 					throw new SecurityException(JOSECostanti.JOSE_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION+", '"+SecurityConstants.SIGNATURE_MODE+"' property error: "+e.getMessage(),e);
 				}
 				JWTOptions options = new JWTOptions(this.joseSerialization);
-				boolean useHeaders = JOSEUtils.useJwtHeaders(messageSecurityContext.getIncomingProperties(), options);
+				boolean useHeaders = JOSEUtils.useJwtHeaders_map(messageSecurityContext.getIncomingProperties(), options);
 				
 				SignatureBean bean = null;
 				NotFoundException notFound = null;
@@ -274,7 +274,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 					throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+", '"+SecurityConstants.DECRYPTION_MODE+"' property error: "+e.getMessage(),e);
 				}
 				JWTOptions options = new JWTOptions(this.joseSerialization);
-				boolean useHeaders = JOSEUtils.useJwtHeaders(messageSecurityContext.getIncomingProperties(), options);
+				boolean useHeaders = JOSEUtils.useJwtHeaders_map(messageSecurityContext.getIncomingProperties(), options);
 				
 				EncryptionBean bean = null;
 				NotFoundException notFound = null;

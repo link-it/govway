@@ -21,8 +21,8 @@ package org.openspcoop2.utils.logger;
 
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -72,8 +72,15 @@ public class DiagnosticManager {
 		return dmNew;
 	}
 	
-	public Enumeration<String> getFunctions(){
-		return this.diagnosticProperties.getMappingFunctionToCode().keys();
+	public List<String> getFunctions(){
+		List<String> keys = null;
+		if(!this.diagnosticProperties.getMappingFunctionToCode().isEmpty()) {
+			keys = new ArrayList<String>();
+			for (String key : this.diagnosticProperties.getMappingFunctionToCode().keySet()) {
+				keys.add(key);
+			}
+		}
+		return keys;
 	}
 	
 	public String getDefaultFunction() {

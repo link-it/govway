@@ -22,7 +22,6 @@ package org.openspcoop2.web.ctrlstat.servlet.sa;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -82,7 +81,7 @@ public class ServiziApplicativiUtilities {
 		idServizioApplicativo.setIdSoggettoProprietario(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
 		
 		// Controllo che il sil non sia in uso
-		Map<ErrorsHandlerCostant, List<String>> whereIsInUso = new Hashtable<ErrorsHandlerCostant, List<String>>();
+		Map<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
 		boolean normalizeObjectIds = !saHelper.isModalitaCompleta();
 		boolean verificaRuoli = false;
 		boolean saInUso  = saCore.isServizioApplicativoInUso(idServizioApplicativo, whereIsInUso, saCore.isRegistroServiziLocale(), normalizeObjectIds, verificaRuoli);

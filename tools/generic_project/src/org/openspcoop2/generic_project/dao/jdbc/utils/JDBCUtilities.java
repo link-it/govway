@@ -26,12 +26,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
 import org.openspcoop2.generic_project.beans.AliasField;
 import org.openspcoop2.generic_project.beans.ComplexField;
 import org.openspcoop2.generic_project.beans.Field;
@@ -67,6 +65,7 @@ import org.openspcoop2.utils.jdbc.JDBCAdapterException;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLQueryObjectCore;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
+import org.slf4j.Logger;
 
 /**
  * JDBCUtilities
@@ -666,7 +665,7 @@ public class JDBCUtilities {
 				if(lista.size()!=returnField.size()){
 					throw new ServiceException("Result["+i+"] has wrong length (expected:"+returnField.size()+" founded:"+lista.size()+")");
 				}
-				Hashtable<String,Object> resultList = new Hashtable<String, Object>();
+				Map<String,Object> resultList = new HashMap<String, Object>();
 				for (int j = 0; j < lista.size(); j++) {
 					Object object = lista.get(j);
 					for (String key : returnClassAliases.get(j)) {
@@ -1065,7 +1064,7 @@ public class JDBCUtilities {
 				if(lista.size()!=returnClassAliases.size()){
 					throw new ServiceException("Result["+i+"] has wrong length (alias) (expected:"+returnClassAliases.size()+" founded:"+lista.size()+")");
 				}
-				Hashtable<String,Object> resultList = new Hashtable<String, Object>();
+				Map<String,Object> resultList = new HashMap<String, Object>();
 				int j = 0;
 				for (String alias : returnClassAliases) {
 					Object object = lista.get(j);
@@ -1336,7 +1335,7 @@ public class JDBCUtilities {
 		
 		// *** Suddivisione per tabella ***
 		
-		Hashtable<String, List<UpdateField>> updateMap = new Hashtable<String, List<UpdateField>>();
+		Map<String, List<UpdateField>> updateMap = new HashMap<String, List<UpdateField>>();
 		for (int i = 0; i < updateFields.length; i++) {
 			String tableName = sqlConverter.toTable(updateFields[i].getField());
 			if(tableName==null){
@@ -1350,9 +1349,7 @@ public class JDBCUtilities {
 			updateMap.put(tableName, list);
 		}
 		
-		Enumeration<String> tables = updateMap.keys();
-		while (tables.hasMoreElements()) {
-			String table = (String) tables.nextElement();
+		for (String table : updateMap.keySet()) {
 			
 			_engineUpdateFields(jdbcProperties, log, connection, sqlQueryObject, sqlConverter, serviceSingleObject, 
 					serviceWithId, serviceWithoutId, rootTable, mapTableToPKColumn, rootTableIdValues, table, condition, updateMap.get(table));

@@ -838,26 +838,44 @@ public class PddMonitorProperties {
 	}
 
 	public String getLoginUtenteNonAutorizzatoRedirectUrl() throws Exception{
+		if(this.isLoginApplication()) {
+			return "";
+		}
 		return this.appProperties.getProperty("login.utenteNonAutorizzato.redirectUrl", true, true);
 	}
 
 	public String getLoginUtenteNonValidoRedirectUrl() throws Exception{
+		if(this.isLoginApplication()) {
+			return "";
+		}
 		return this.appProperties.getProperty("login.utenteNonValido.redirectUrl", true, true);
 	}
 	
 	public String getLoginErroreInternoRedirectUrl() throws Exception{
+		if(this.isLoginApplication()) {
+			return "";
+		}
 		return this.appProperties.getProperty("login.erroreInterno.redirectUrl", true, true);
 	}
 
 	public String getLoginSessioneScadutaRedirectUrl() throws Exception{
+		if(this.isLoginApplication()) {
+			return "";
+		}
 		return this.appProperties.getProperty("login.sessioneScaduta.redirectUrl", true, true);
 	}
 
 	public boolean isMostraButtonLogout() throws Exception{
+		if(this.isLoginApplication()) {
+			return true;
+		}
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("logout.mostraButton.enabled", true, true));
 	}
 
 	public String getLogoutUrlDestinazione() throws Exception{
+		if(this.isLoginApplication()) {
+			return "";
+		}
 		return this.appProperties.getProperty("logout.urlDestinazione", true, true);
 	}
 	

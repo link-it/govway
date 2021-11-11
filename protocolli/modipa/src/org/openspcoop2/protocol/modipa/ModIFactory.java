@@ -21,7 +21,11 @@
 package org.openspcoop2.protocol.modipa;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.openspcoop2.protocol.basic.BasicFactory;
+import org.openspcoop2.protocol.basic.BasicStaticInstanceConfig;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.modipa.builder.ModIBustaBuilder;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
@@ -66,6 +70,16 @@ public class ModIFactory extends BasicFactory<AbstractModISecurityToken<?>> {
 		ModIProperties.initialize(configPdD.getConfigurationDir(),log);
 		ModIProperties properties = ModIProperties.getInstance();
 		properties.validaConfigurazione(configPdD.getLoader());
+		
+		BasicStaticInstanceConfig staticInstanceConfig = properties.getStaticInstanceConfig();
+		super.initStaticInstance(staticInstanceConfig);
+		if(staticInstanceConfig!=null) {
+			if(staticInstanceConfig.isStaticConfig()) {
+				staticInstanceProtocolManager = new ModIProtocolManager(this);
+				staticInstanceProtocolVersionManager = new HashMap<String, IProtocolVersionManager>();
+				staticInstanceProtocolConfiguration = new ModIProtocolConfiguration(this);
+			}
+		}
 	}
 	
 	
@@ -101,22 +115,38 @@ public class ModIFactory extends BasicFactory<AbstractModISecurityToken<?>> {
 	
 	/* ** CONFIG ** */
 	
+	private static IProtocolManager staticInstanceProtocolManager = null;
 	@Override
 	public IProtocolManager createProtocolManager()
 			throws ProtocolException {
-		return new ModIProtocolManager(this);
+		return staticInstanceProtocolManager!=null ? staticInstanceProtocolManager : new ModIProtocolManager(this);
 	}
 	
+	private static Map<String, IProtocolVersionManager> staticInstanceProtocolVersionManager = null;
 	@Override
 	public IProtocolVersionManager createProtocolVersionManager(String version)
 			throws ProtocolException {
-		return new ModIProtocolVersionManager(this,version);
+		if(staticInstanceProtocolVersionManager!=null) {
+			if(!staticInstanceProtocolVersionManager.containsKey(version)) {
+				initProtocolVersionManager(version);
+			}
+			return staticInstanceProtocolVersionManager.get(version);
+		}
+		else {
+			return new ModIProtocolVersionManager(this,version);
+		}
+	}
+	private synchronized void initProtocolVersionManager(String version) throws ProtocolException {
+		if(!staticInstanceProtocolVersionManager.containsKey(version)) {
+			staticInstanceProtocolVersionManager.put(version, new ModIProtocolVersionManager(this,version));
+		}
 	}
 
+	private static IProtocolConfiguration staticInstanceProtocolConfiguration = null;
 	@Override
 	public IProtocolConfiguration createProtocolConfiguration()
 			throws ProtocolException {
-		return new ModIProtocolConfiguration(this);
+		return staticInstanceProtocolConfiguration!=null ? staticInstanceProtocolConfiguration : new ModIProtocolConfiguration(this);
 	}
 
 	

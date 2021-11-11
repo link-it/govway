@@ -22,9 +22,10 @@ package org.openspcoop2.web.monitor.transazioni.core;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.text.MessageFormat;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -1069,7 +1070,7 @@ public class UtilityTransazioni {
 		}
 		String [] split = info.split(UtilityTransazioni.DIAGNOSTIC_WITH_DYNAMIC_INFO_DIAG_SEPARATOR);
 		if(split!=null && split.length>0){
-			Hashtable<String, Integer> counters = new Hashtable<String, Integer>();
+			Map<String, Integer> counters = new HashMap<String, Integer>();
 			for (int i = 0; i < split.length; i++) {
 				if(split[i]!=null && !"".equals(split[i].trim())){
 					String [] tmp = split[i].trim().split(UtilityTransazioni.DIAGNOSTIC_WITH_DYNAMIC_INFO_TYPE_SEPARATOR);

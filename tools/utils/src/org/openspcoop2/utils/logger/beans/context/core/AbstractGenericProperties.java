@@ -41,7 +41,7 @@ public abstract class AbstractGenericProperties implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private List<String> _genericProperties_position = new ArrayList<String>();
-	private Map<String,Property> genericProperties = new java.util.Hashtable<String,Property>();
+	private Map<String,Property> genericProperties = new java.util.HashMap<String,Property>();
 
 	
 

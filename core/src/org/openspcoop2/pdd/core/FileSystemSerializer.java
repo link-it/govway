@@ -117,6 +117,13 @@ public class FileSystemSerializer {
 		return new File(this.directory,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_TRANSAZIONE_APPLICATIVO_SERVER);
 	}
 	
+	public void registraTransazioneApplicativoServerConsegnaTerminata(byte[] oggettSerializzato, Date date) throws Exception{
+		this.registra(oggettSerializzato, Costanti.PREFIX_FILE_SYSTEM_REPOSITORY_TRANSAZIONE_APPLICATIVO_SERVER_CONSEGNA_TERMINATA, date,getDirTransazioneApplicativoServerConsegnaTerminata());
+	}
+	public File getDirTransazioneApplicativoServerConsegnaTerminata(){
+		return new File(this.directory,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_TRANSAZIONE_APPLICATIVO_SERVER_CONSEGNA_TERMINATA);
+	}
+	
 	private void registra(byte[] oggettSerializzato, String prefix, Date date, File dir) throws Exception{
 		
 		if(dir.exists()==false){
@@ -125,13 +132,18 @@ public class FileSystemSerializer {
 		
 		SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter(formatNew);
 		
-		String nomeFile = prefix+"_"+dateformat.format(date)+"_"+IDUtilities.getUniqueSerialNumber()+".xml";
+		String nomeFile = prefix+"_"+dateformat.format(date)+"_"+IDUtilities.getUniqueSerialNumber("FileSystemSerializer")+".xml";
 		File f = new File(dir, nomeFile);
 		FileSystemUtilities.writeFile(f, oggettSerializzato);
 		
 	}
 	
-	private synchronized void mkdir(File dir) throws Exception{
+	private void mkdir(File dir) throws Exception{
+		if(dir.exists()==false){
+			_mkdir(dir);
+		}
+	}
+	private synchronized void _mkdir(File dir) throws Exception{
 		if(dir.exists()==false){
 			if(dir.mkdir()==false){
 				throw new Exception("Directory ["+this.directory.getAbsolutePath()+"] non esistente e creazione non riuscita");

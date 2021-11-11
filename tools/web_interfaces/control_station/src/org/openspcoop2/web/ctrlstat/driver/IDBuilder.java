@@ -21,7 +21,8 @@
 
 package org.openspcoop2.web.ctrlstat.driver;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.AllarmeHistory;
@@ -902,7 +903,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 	 */
 	@Override
 	public String[] getManagedObjects(boolean simpleName) throws IOException{
-		Vector<String> oggetti = new Vector<String>();
+		List<String> oggetti = new ArrayList<String>();
 		
 		
 		if(simpleName){

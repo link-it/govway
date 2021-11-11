@@ -22,9 +22,9 @@ package org.openspcoop2.protocol.basic.archive;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
@@ -97,8 +97,8 @@ public class EsitoUtils {
 			return this._toString(archive,importOperation);
 		}
 		
-		Hashtable<String, ArchiveEsitoImport> map = new Hashtable<String, ArchiveEsitoImport>();
-		Hashtable<String, ArchiveIdCorrelazione> mapIdCorrelazione = new Hashtable<String, ArchiveIdCorrelazione>();
+		Map<String, ArchiveEsitoImport> map = new HashMap<String, ArchiveEsitoImport>();
+		Map<String, ArchiveIdCorrelazione> mapIdCorrelazione = new HashMap<String, ArchiveIdCorrelazione>();
 		this.readIdCorrelazione(map, mapIdCorrelazione, archive);
 		
 		if(map.size()<1){
@@ -107,9 +107,10 @@ public class EsitoUtils {
 		
 		if(map.size()==1){
 			// in caso di una unica correlazione non riporto comunque il raggruppamento se è quella di default
-			String idCorrelazione = map.keys().nextElement();
-			if(ZIPUtils.ID_CORRELAZIONE_DEFAULT.equals(idCorrelazione)){
-				return this._toString(archive,importOperation);
+			for (String idCorrelazione : map.keySet()) {
+				if(ZIPUtils.ID_CORRELAZIONE_DEFAULT.equals(idCorrelazione)){
+					return this._toString(archive,importOperation);
+				}
 			}
 		}
 		
@@ -118,10 +119,8 @@ public class EsitoUtils {
 		ArchiveEsitoImport defaultArchiveEsitoImport = null;
 		ArchiveIdCorrelazione defaultArchiveIdCorrelazione = null;
 		
-		Enumeration<String> correlazioni = map.keys();
 		List<String> idCorrelazioneOrdinato = new ArrayList<String>();
-		while (correlazioni.hasMoreElements()) {
-			String idCorrelazione = (String) correlazioni.nextElement();
+		for (String idCorrelazione : map.keySet()) {
 			idCorrelazioneOrdinato.add(idCorrelazione);
 		}
 		Collections.sort(idCorrelazioneOrdinato);
@@ -904,8 +903,8 @@ public class EsitoUtils {
 	
 	
 	private ArchiveEsitoImport getArchiveEsitoImport(ArchiveIdCorrelazione idCorrelazioneParam,
-			Hashtable<String, ArchiveEsitoImport> map,
-			Hashtable<String, ArchiveIdCorrelazione> mapIdCorrelazione){
+			Map<String, ArchiveEsitoImport> map,
+			Map<String, ArchiveIdCorrelazione> mapIdCorrelazione){
 		String idCorrelazione = idCorrelazioneParam.getId();
 		if(idCorrelazione==null){
 			idCorrelazione = ZIPUtils.ID_CORRELAZIONE_DEFAULT;	
@@ -922,8 +921,8 @@ public class EsitoUtils {
 		return tmp;
 	}
 	
-	public void readIdCorrelazione(Hashtable<String, ArchiveEsitoImport> map, 
-			Hashtable<String, ArchiveIdCorrelazione> mapIdCorrelazione,
+	public void readIdCorrelazione(Map<String, ArchiveEsitoImport> map, 
+			Map<String, ArchiveIdCorrelazione> mapIdCorrelazione,
 			ArchiveEsitoImport archive) throws ProtocolException{
 		
 		// Pdd

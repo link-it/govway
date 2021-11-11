@@ -25,8 +25,9 @@ package org.openspcoop2.web.lib.mvc;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import org.openspcoop2.web.lib.mvc.DataElement.STATO_APERTURA_SEZIONI;
@@ -57,7 +58,7 @@ public class PageData {
 	Vector<?> dati;
 	Vector<?> menu;
 	Vector<?> areaBottoni;
-	Hashtable<String,String> hidden;
+	Map<String,String> hidden;
 	String page;
 	String op;
 	String [] labels;
@@ -102,7 +103,7 @@ public class PageData {
 		this.dati = new Vector<Object>();
 		this.menu = new Vector<Object>();
 		this.areaBottoni = new Vector<Object>();
-		this.hidden = new Hashtable<String,String>();
+		this.hidden = new HashMap<String,String>();
 		this.inserisciBottoni = true;
 		this.addButton = true;
 		this.removeButton = true;
@@ -284,10 +285,10 @@ public class PageData {
 	}
 
 	/* hidden */
-	public void setHidden(Hashtable<String,String> v) {
+	public void setHidden(Map<String,String> v) {
 		this.hidden = v;
 	}
-	public Hashtable<String,String> getHidden() {
+	public Map<String,String> getHidden() {
 		return this.hidden;
 	}
 	public void addHidden(String name, String value) {

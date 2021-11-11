@@ -22,12 +22,13 @@
 
 package org.openspcoop2.pdd.core;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.jms.JMSException;
 import javax.jms.ObjectMessage;
 import javax.jms.MessageConsumer;
 import javax.jms.Queue;
-
-import java.util.Hashtable;
 
 import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -57,7 +58,7 @@ public class JMSReceiver {
 	/** Object Ricevuto */
 	private Object received;
 	/** Proprieta' Ricevute */
-	private Hashtable<String,java.io.Serializable> propertiesReceived;
+	private Map<String,java.io.Serializable> propertiesReceived;
 	/** motivo di un eventuale errore */
 	private String errore;
 	/** ID JMS presente nell'header del messaggio ricevuto */
@@ -260,7 +261,7 @@ public class JMSReceiver {
 			this.idHeaderJMS = receivedMsg.getJMSMessageID();
 
 			// Lettura Proprieta'
-			this.propertiesReceived = new Hashtable<String,java.io.Serializable>();
+			this.propertiesReceived = new HashMap<String,java.io.Serializable>();
 			try{
 				// IDMessaggio
 				String idMessaggio = receivedMsg.getStringProperty("ID");
@@ -326,7 +327,7 @@ public class JMSReceiver {
 	 * @return Proprieta' ricevute.
 	 * 
 	 */
-	public Hashtable<String,java.io.Serializable> getPropertiesReceived(){
+	public Map<String,java.io.Serializable> getPropertiesReceived(){
 		return this.propertiesReceived;
 	}
 

@@ -22,7 +22,8 @@
 package org.openspcoop2.pdd.core.handlers;
 
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 
@@ -67,7 +68,7 @@ public class GeneratoreCasualeDate {
 		log.info("Generatore di date causauli dei log attivato con intervallo ["+this.intervalloInizio+"] - ["+this.intervalloFine+"]");
 	}
 	
-	private Hashtable<String, Date>  dateGenerate = new Hashtable<String, Date>();
+	private Map<String, Date>  dateGenerate = new HashMap<String, Date>();
 	
 	private Date getNextDate(String idCluster){
 		Date nextDate = null;

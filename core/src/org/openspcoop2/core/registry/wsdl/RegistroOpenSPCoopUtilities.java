@@ -797,7 +797,7 @@ public class RegistroOpenSPCoopUtilities {
 			
 			//System.out.println("Risoluzione dei prefissi .....");
 			// Risoluzione prefix da inserire nel wsdl ed eliminazione attributi negli schemi
-			String uniquePrefix = "_p"+profondita+"_n"+IDUtilities.getUniqueSerialNumber()+"_";
+			String uniquePrefix = "_p"+profondita+"_n"+IDUtilities.getUniqueSerialNumber("risoluzioneImportIncludeInXSD")+"_";
 			targetNamespace = this.wsdlUtilities.normalizzazioneSchemaPerInserimentoInWsdl(docElement, wsdlElement, prefixForWSDL, uniquePrefix, docImportato, targetNamespaceParent);
 			
 

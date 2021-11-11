@@ -21,9 +21,13 @@
 package org.openspcoop2.protocol.sdi;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.xml.soap.SOAPElement;
 
 import org.openspcoop2.protocol.basic.BasicFactory;
+import org.openspcoop2.protocol.basic.BasicStaticInstanceConfig;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.sdi.builder.SDIBustaBuilder;
 import org.openspcoop2.protocol.sdi.config.SDIProperties;
@@ -68,6 +72,17 @@ public class SDIFactory extends BasicFactory<SOAPElement> {
 		SDIProperties.initialize(configPdD.getConfigurationDir(),log);
 		SDIProperties properties = SDIProperties.getInstance(log);
 		properties.validaConfigurazione(configPdD.getLoader());
+		
+		BasicStaticInstanceConfig staticInstanceConfig = properties.getStaticInstanceConfig();
+		super.initStaticInstance(staticInstanceConfig);
+		if(staticInstanceConfig!=null) {
+			if(staticInstanceConfig.isStaticConfig()) {
+				staticInstanceProtocolManager = new SDIProtocolManager(this);
+				staticInstanceProtocolVersionManager = new HashMap<String, IProtocolVersionManager>();
+				staticInstanceTraduttore = new SDITraduttore(this);
+				staticInstanceProtocolConfiguration = new SDIProtocolConfiguration(this);
+			}
+		}
 	}
 	
 
@@ -103,27 +118,44 @@ public class SDIFactory extends BasicFactory<SOAPElement> {
 	
 	/* ** CONFIG ** */
 	
+	private static IProtocolManager staticInstanceProtocolManager = null;
 	@Override
 	public IProtocolManager createProtocolManager()
 			throws ProtocolException {
-		return new SDIProtocolManager(this);
+		return staticInstanceProtocolManager!=null ? staticInstanceProtocolManager : new SDIProtocolManager(this);
 	}
 	
+	private static Map<String, IProtocolVersionManager> staticInstanceProtocolVersionManager = null;
 	@Override
 	public IProtocolVersionManager createProtocolVersionManager(String version)
 			throws ProtocolException {
-		return new SDIProtocolVersionManager(this,version);
+		if(staticInstanceProtocolVersionManager!=null) {
+			if(!staticInstanceProtocolVersionManager.containsKey(version)) {
+				initProtocolVersionManager(version);
+			}
+			return staticInstanceProtocolVersionManager.get(version);
+		}
+		else {
+			return new SDIProtocolVersionManager(this,version);
+		}
+	}
+	private synchronized void initProtocolVersionManager(String version) throws ProtocolException {
+		if(!staticInstanceProtocolVersionManager.containsKey(version)) {
+			staticInstanceProtocolVersionManager.put(version, new SDIProtocolVersionManager(this,version));
+		}
 	}
 
+	private static ITraduttore staticInstanceTraduttore = null;
 	@Override
 	public ITraduttore createTraduttore() throws ProtocolException {
-		return new SDITraduttore(this);
+		return staticInstanceTraduttore!=null ? staticInstanceTraduttore : new SDITraduttore(this);
 	}
 	
+	private static IProtocolConfiguration staticInstanceProtocolConfiguration = null;
 	@Override
 	public IProtocolConfiguration createProtocolConfiguration()
 			throws ProtocolException {
-		return new SDIProtocolConfiguration(this);
+		return staticInstanceProtocolConfiguration!=null ? staticInstanceProtocolConfiguration : new SDIProtocolConfiguration(this);
 	}
 
 	

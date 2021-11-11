@@ -312,8 +312,8 @@ public abstract class AbstractCacheWrapper {
 		}
 		
 		//synchronized(this.cache){
+		this.lockCache.acquireThrowRuntime("duplicateObjectCache");
 		try {
-			this.lockCache.acquireThrowRuntime("duplicateObjectCache");
 			
 //			if(debug){
 //				this.log.debug("@"+keyCache+"@ Cache info: "+this.cache.toString());
@@ -415,9 +415,9 @@ public abstract class AbstractCacheWrapper {
 			}
 			
 			//synchronized(this.cache){
+			this.lockCache.acquire("getObjectCache");
 			try {
-				this.lockCache.acquire("getObjectCache");
-			
+				
 				try{
 										
 //					if(debug){

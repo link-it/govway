@@ -22,8 +22,8 @@
 
 package org.openspcoop2.protocol.sdk.tracciamento;
 
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.sdk.IComponentFactory;
@@ -113,7 +113,7 @@ public interface ITracciaDriver extends IComponentFactory {
 	 * @return Traccia
 	 * @throws DriverMsgDiagnosticiException
 	 */
-	public Traccia getTraccia(RuoloMessaggio tipoTraccia,Hashtable<String, String> propertiesRicerca) throws DriverTracciamentoException, DriverTracciamentoNotFoundException; 
+	public Traccia getTraccia(RuoloMessaggio tipoTraccia,Map<String, String> propertiesRicerca) throws DriverTracciamentoException, DriverTracciamentoNotFoundException; 
 	
 	
 	

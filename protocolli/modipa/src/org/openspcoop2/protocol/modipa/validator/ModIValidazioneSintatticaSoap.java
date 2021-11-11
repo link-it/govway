@@ -23,7 +23,7 @@ package org.openspcoop2.protocol.modipa.validator;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -276,7 +276,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		try {
 		
 			wss4jSignature = new MessageSecurityReceiver_wss4j();
-			Hashtable<String,Object> secProperties = new Hashtable<>();
+			Map<String,Object> secProperties = new HashMap<>();
 			secProperties.put(SecurityConstants.SECURITY_ENGINE, SecurityConstants.SECURITY_ENGINE_WSS4J);
 			if(this.modiProperties.getSoapSecurityTokenActor()!=null && !"".equals(this.modiProperties.getSoapSecurityTokenActor())) {
 				secProperties.put(SecurityConstants.ACTOR, this.modiProperties.getSoapSecurityTokenActor());
@@ -845,7 +845,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		return contentId;
 	}
 	
-	private void addValidationCorniceSicurezza(Hashtable<String,Object> secProperties) {
+	private void addValidationCorniceSicurezza(Map<String,Object> secProperties) {
 
 		secProperties.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_VERSION, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_VERSION_20);
 		secProperties.put(SecurityConstants.SAML_ENVELOPED_SAML_SIGNATURE_XMLCONFIG_PREFIX_ID, SecurityConstants.TRUE);

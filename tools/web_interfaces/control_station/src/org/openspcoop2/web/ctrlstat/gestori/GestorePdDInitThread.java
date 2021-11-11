@@ -22,11 +22,10 @@
 package org.openspcoop2.web.ctrlstat.gestori;
 
 import java.sql.Connection;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
 import org.openspcoop2.utils.Utilities;
@@ -36,6 +35,7 @@ import org.openspcoop2.web.ctrlstat.core.DBManager;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
+import org.slf4j.Logger;
 
 /**
  * GestorePdDInitThread
@@ -55,7 +55,7 @@ public class GestorePdDInitThread extends Thread {
 	private static Logger log = null;
 	/** run */
 	// public static boolean stop = false;
-	private static Hashtable<String, IGestore> gestoriPdd = new Hashtable<String, IGestore>();
+	private static Map<String, IGestore> gestoriPdd = new HashMap<String, IGestore>();
 
 	private boolean singlePdD = false;
 	private boolean enginePDD = false;
@@ -151,10 +151,10 @@ public class GestorePdDInitThread extends Thread {
 
 	public void stopGestore() {
 		// Stoppo tutti i thread gestori delle pdd
-		Enumeration<String> pdds = gestoriPdd.keys();
-		while (pdds.hasMoreElements()) {
-			String pdd = (String) pdds.nextElement();
-			deleteGestore(pdd);
+		if(gestoriPdd!=null && !gestoriPdd.isEmpty()) {
+			for (String pdd : gestoriPdd.keySet()) {
+				deleteGestore(pdd);
+			}
 		}
 
 	}

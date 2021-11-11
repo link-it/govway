@@ -31,7 +31,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -146,7 +145,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			
 			
 			// Costruisco Mappa per dynamic name
-			Map<String, Object> dynamicMap = new Hashtable<String, Object>();
+			Map<String, Object> dynamicMap = new HashMap<String, Object>();
 			DynamicInfo dInfo = new DynamicInfo(request, this.getPddContext());
 			DynamicUtils.fillDynamicMap(this.logger.getLogger(),dynamicMap, dInfo);
 			

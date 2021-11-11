@@ -27,7 +27,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.config.constants.RegistroTipo;
 import java.io.Serializable;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /** <p>Java class for accesso-registro-registro complex type.
@@ -86,11 +87,11 @@ public class AccessoRegistroRegistro extends org.openspcoop2.utils.beans.BaseBea
     return this.genericProperties.remove( key );
   }
 
-  public Hashtable<java.lang.String,String> getGenericPropertiesMap() {
+  public Map<java.lang.String,String> getGenericPropertiesMap() {
     return this.genericProperties;
   }
 
-  public void setGenericPropertiesMap(Hashtable<java.lang.String,String> genericProperties) {
+  public void setGenericPropertiesMap(Map<java.lang.String,String> genericProperties) {
     this.genericProperties=genericProperties;
   }
 
@@ -165,23 +166,23 @@ public class AccessoRegistroRegistro extends org.openspcoop2.utils.beans.BaseBea
 
 
 
-  protected Hashtable<java.lang.String,String> genericProperties = new Hashtable<java.lang.String,String>();
+  protected Map<java.lang.String,String> genericProperties = new HashMap<java.lang.String,String>();
 
   /**
    * @deprecated Use method getGenericPropertiesMap
-   * @return Hashtable&lt;java.lang.String,String&gt;
+   * @return Map&lt;java.lang.String,String&gt;
   */
   @Deprecated
-  public Hashtable<java.lang.String,String> getGenericProperties() {
+  public Map<java.lang.String,String> getGenericProperties() {
   	return this.genericProperties;
   }
 
   /**
    * @deprecated Use method setGenericPropertiesMap
-   * @param genericProperties Hashtable&lt;java.lang.String,String&gt;
+   * @param genericProperties Map&lt;java.lang.String,String&gt;
   */
   @Deprecated
-  public void setGenericProperties(Hashtable<java.lang.String,String> genericProperties) {
+  public void setGenericProperties(Map<java.lang.String,String> genericProperties) {
   	this.genericProperties=genericProperties;
   }
 

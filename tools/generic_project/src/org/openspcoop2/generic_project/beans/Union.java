@@ -21,8 +21,9 @@ package org.openspcoop2.generic_project.beans;
 
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.expression.SortOrder;
@@ -39,8 +40,8 @@ public class Union {
 	private boolean unionAll;
 	
 	private List<String> fields = new ArrayList<String>();
-	private Hashtable<String, Function> mapFieldsToFunction = new Hashtable<String, Function>();
-	private Hashtable<String, String> mapFieldsToAliasFunction = new Hashtable<String, String>();
+	private Map<String, Function> mapFieldsToFunction = new HashMap<String, Function>();
+	private Map<String, String> mapFieldsToAliasFunction = new HashMap<String, String>();
 	
 	private SortOrder sortOrder = null;
 	private List<UnionOrderedColumn> orderByList = new ArrayList<UnionOrderedColumn>();

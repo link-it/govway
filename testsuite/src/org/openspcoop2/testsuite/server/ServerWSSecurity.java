@@ -139,7 +139,7 @@ public class ServerWSSecurity extends ServerCore{
 			// Costruzione messaggio richiesta
 			this.log.info("Analisi messaggio di richiesta (Funzionalita' WSS richieste: "+functionsRichieste.toString()+" )...");
 			Message msgRequest = Axis14SoapUtils.build(bout.toByteArray(), false);
-			java.util.Hashtable<String,String> wssPropertiesRequest= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesRequest= new java.util.HashMap<String,String>();
 			wssPropertiesRequest.put("action", "Timestamp"+functionsRichieste.toString());
 			wssPropertiesRequest.put("passwordCallbackClass", "org.openspcoop2.testsuite.wssecurity.PWCallbackSend");
 			if(signature){
@@ -171,7 +171,7 @@ public class ServerWSSecurity extends ServerCore{
 			// Costruzione messaggio risposta
 			this.log.info("Costruzione messaggio di risposta...");
 			Message msgResponse = Axis14SoapUtils.build(bosRequest.toByteArray(), false);
-			java.util.Hashtable<String,String> wssPropertiesResponse= new java.util.Hashtable<String,String>();
+			java.util.Map<String,String> wssPropertiesResponse= new java.util.HashMap<String,String>();
 			wssPropertiesResponse.put("action", "Timestamp"+functionsRichieste.toString());
 			wssPropertiesResponse.put("timeToLive", "600");
 			wssPropertiesResponse.put("passwordCallbackClass", "org.openspcoop2.testsuite.wssecurity.PWCallbackSend");

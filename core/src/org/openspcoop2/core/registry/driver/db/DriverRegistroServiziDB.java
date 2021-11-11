@@ -32,8 +32,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -10482,16 +10480,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addSelectAliasField(tabella, "issuer", "soggettoIssuer");				
 					
 					// Autenticazione SSL deve essere LIKE
-					Hashtable<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoHashtable(aSubject, PrincipalType.subject);
-					Hashtable<String, List<String>> hashIssuer = null;
+					Map<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoMap(aSubject, PrincipalType.subject);
+					Map<String, List<String>> hashIssuer = null;
 					if(StringUtils.isNotEmpty(aIssuer)) {
-						hashIssuer = CertificateUtils.getPrincipalIntoHashtable(aIssuer, PrincipalType.issuer);
+						hashIssuer = CertificateUtils.getPrincipalIntoMap(aIssuer, PrincipalType.issuer);
 					}
 					
-					Enumeration<String> keys = hashSubject.keys();
-					while(keys.hasMoreElements()){
-						String key = keys.nextElement();
-						
+					for (String key : hashSubject.keySet()) {
 						List<String> listValues = hashSubject.get(key);
 						for (String value : listValues) {
 							sqlQueryObject.addWhereLikeCondition(tabella+".subject", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, true, false);
@@ -10499,10 +10494,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 					}
 					
 					if(hashIssuer!=null) {
-						keys = hashIssuer.keys();
-						while(keys.hasMoreElements()){
-							String key = keys.nextElement();
-							
+						for (String key : hashIssuer.keySet()) {
 							List<String> listValues = hashIssuer.get(key);
 							for (String value : listValues) {
 								sqlQueryObject.addWhereLikeCondition(tabella+".issuer", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, true, false);
@@ -11082,16 +11074,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 					if(filtroRicerca.getCredenzialiSoggetto().getSubject()!=null){
 						
 						// Autenticazione SSL deve essere LIKE
-						Hashtable<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoHashtable(filtroRicerca.getCredenzialiSoggetto().getSubject(), PrincipalType.subject);
-						Hashtable<String, List<String>> hashIssuer = null;
+						Map<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoMap(filtroRicerca.getCredenzialiSoggetto().getSubject(), PrincipalType.subject);
+						Map<String, List<String>> hashIssuer = null;
 						if(filtroRicerca.getCredenzialiSoggetto().getIssuer()!=null) {
-							hashIssuer = CertificateUtils.getPrincipalIntoHashtable(filtroRicerca.getCredenzialiSoggetto().getIssuer(), PrincipalType.issuer);
+							hashIssuer = CertificateUtils.getPrincipalIntoMap(filtroRicerca.getCredenzialiSoggetto().getIssuer(), PrincipalType.issuer);
 						}
 						
-						Enumeration<String> keys = hashSubject.keys();
-						while(keys.hasMoreElements()){
-							String key = keys.nextElement();
-							
+						for (String key : hashSubject.keySet()) {
 							List<String> listValues = hashSubject.get(key);
 							for (String value : listValues) {
 								sqlQueryObject.addWhereLikeCondition(CostantiDB.SOGGETTI+".subject", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, true, false);
@@ -11101,10 +11090,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 						}
 						
 						if(hashIssuer!=null) {
-							keys = hashIssuer.keys();
-							while(keys.hasMoreElements()){
-								String key = keys.nextElement();
-								
+							for (String key : hashIssuer.keySet()) {
 								List<String> listValues = hashIssuer.get(key);
 								for (String value : listValues) {
 									sqlQueryObject.addWhereLikeCondition(CostantiDB.SOGGETTI+".issuer", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, true, false);
@@ -27105,16 +27091,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		try {
 
-			Hashtable<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoHashtable(subject, PrincipalType.subject);
+			Map<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoMap(subject, PrincipalType.subject);
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PDD);
 			sqlQueryObject.addSelectField("nome");
 			sqlQueryObject.addSelectField("subject");
-			Enumeration<String> keys = hashSubject.keys();
-			while(keys.hasMoreElements()){
-				String key = keys.nextElement();
-				
+			for (String key : hashSubject.keySet()) {				
 				List<String> listValues = hashSubject.get(key);
 				for (String value : listValues) {
 					sqlQueryObject.addWhereLikeCondition("subject", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, false);

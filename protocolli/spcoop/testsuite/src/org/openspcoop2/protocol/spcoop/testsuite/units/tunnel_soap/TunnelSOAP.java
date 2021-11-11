@@ -26,8 +26,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
@@ -613,7 +614,7 @@ public class TunnelSOAP {
  	 * con mimeType application/openspcoop2 (codificato in BASE64 il contenuto)
 	 */
 	Repository repositorySincronoAttachmentsOpenSPCoopDoc=new Repository();
-	Hashtable<String, Message> repositorySincronoAttachmentsOpenSPCoopDoc_message = new Hashtable<String, Message>();
+	Map<String, Message> repositorySincronoAttachmentsOpenSPCoopDoc_message = new ConcurrentHashMap<String, Message>();
 	@Test(groups={CostantiTunnel.ID_GRUPPO_TUNNEL, TunnelSOAP.ID_GRUPPO,TunnelSOAP.ID_GRUPPO+".SINCRONO_ATTACHMENT_OPENSPCOOP_DOC"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void sincronoAttachmentsOpenSPCoopDoc() throws TestSuiteException, IOException, Exception{
 		java.io.FileInputStream fin = null;

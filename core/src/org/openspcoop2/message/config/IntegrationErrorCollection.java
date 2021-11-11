@@ -22,7 +22,8 @@
 
 package org.openspcoop2.message.config;
 
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.IntegrationErrorMessageType;
@@ -44,7 +45,7 @@ public class IntegrationErrorCollection implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 
 	
-	private Hashtable<String, org.openspcoop2.message.config.IntegrationErrorConfiguration> map = new Hashtable<String, org.openspcoop2.message.config.IntegrationErrorConfiguration>();
+	private Map<String, org.openspcoop2.message.config.IntegrationErrorConfiguration> map = new HashMap<String, org.openspcoop2.message.config.IntegrationErrorConfiguration>();
 
 	private IntegrationErrorMessageType defaultError;
 	

@@ -418,8 +418,8 @@ public abstract class AbstractXPathExpressionEngine {
 						try{
 							if(reader!=null) {
 								//synchronized (AbstractXPathExpressionEngine.synchronizedObjectForBugFWK005ParseXerces) { // vedi test TestBugFWK005ParseXerces
+								lockObjectForBugFWK005ParseXerces.acquire("concat_openspcoopEvaluate");
 								try {
-									lockObjectForBugFWK005ParseXerces.acquire("concat_openspcoopEvaluate");
 									result = expression.evaluate(new org.xml.sax.InputSource(reader));
 								}finally {
 									lockObjectForBugFWK005ParseXerces.release("concat_openspcoopEvaluate");
@@ -516,15 +516,15 @@ public abstract class AbstractXPathExpressionEngine {
 				// 6. Evaluate the XPath expression on an input document
 				Object result = null;
 				try{
-					if(reader!=null)
+					if(reader!=null) {
 						//synchronized (AbstractXPathExpressionEngine.synchronizedObjectForBugFWK005ParseXerces) { // vedi test TestBugFWK005ParseXerces
+						lockObjectForBugFWK005ParseXerces.acquire("standardEvaluate");
 						try {
-							lockObjectForBugFWK005ParseXerces.acquire("standardEvaluate");
 							result = expression.evaluate(new org.xml.sax.InputSource(reader),returnType.getValore());
 						}finally {
 							lockObjectForBugFWK005ParseXerces.release("standardEvaluate");
 						}
-					else{
+					}else{
 						result = expression.evaluate(this.readXPathElement(contenutoAsElement),returnType.getValore());
 					}
 				}catch(Exception e){

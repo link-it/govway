@@ -26,8 +26,9 @@ package org.openspcoop2.pdd.core;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import javax.xml.soap.SOAPBody;
@@ -1960,13 +1961,13 @@ public class EJBUtils {
 		
 		boolean gestioneSolamenteConIntegrationManager = true;
 		
-		Hashtable<String, Boolean> mapServizioApplicativoConConnettore = new Hashtable<String, Boolean>();
-		Hashtable<String, Boolean> mapSbustamentoSoap = new Hashtable<String, Boolean>();
-		Hashtable<String, Boolean> mapSbustamentoInformazioniProtocollo = new Hashtable<String, Boolean>();
-		Hashtable<String, Boolean> mapGetMessage = new Hashtable<String, Boolean>();
-		Hashtable<String, String> mapTipoConsegna = new Hashtable<String, String>();
-		Hashtable<String, Timestamp> mapOraRegistrazione = new Hashtable<String, Timestamp>();
-		Hashtable<String, ConsegnaContenutiApplicativiMessage> mapConsegnaContenutiApplicativiMessage = new Hashtable<String, ConsegnaContenutiApplicativiMessage>();
+		Map<String, Boolean> mapServizioApplicativoConConnettore = new HashMap<String, Boolean>();
+		Map<String, Boolean> mapSbustamentoSoap = new HashMap<String, Boolean>();
+		Map<String, Boolean> mapSbustamentoInformazioniProtocollo = new HashMap<String, Boolean>();
+		Map<String, Boolean> mapGetMessage = new HashMap<String, Boolean>();
+		Map<String, String> mapTipoConsegna = new HashMap<String, String>();
+		Map<String, Timestamp> mapOraRegistrazione = new HashMap<String, Timestamp>();
+		Map<String, ConsegnaContenutiApplicativiMessage> mapConsegnaContenutiApplicativiMessage = new HashMap<String, ConsegnaContenutiApplicativiMessage>();
 		
 		RichiestaApplicativa richiestaApplicativa = null;
 		if(richiestaApplicativaParam!=null) {
@@ -2271,13 +2272,13 @@ public class EJBUtils {
 		SoggettoVirtuale soggettiRealiMappatiInUnSoggettoVirtuale = message.getSoggettiRealiMappatiInUnSoggettoVirtuale();
 		RichiestaApplicativa richiestaApplicativa = message.getRichiestaApplicativa();
 		
-		Hashtable<String, Boolean> mapServizioApplicativoConConnettore = message.getMapServizioApplicativoConConnettore();
-		Hashtable<String, Boolean> mapSbustamentoSoap = message.getMapSbustamentoSoap();
-		Hashtable<String, Boolean> mapSbustamentoInformazioniProtocollo = message.getMapSbustamentoInformazioniProtocollo();
-		Hashtable<String, Boolean> mapGetMessage = message.getMapGetMessage();
-		Hashtable<String, String> mapTipoConsegna = message.getMapTipoConsegna();
-		Hashtable<String, Timestamp> mapOraRegistrazione = message.getMapOraRegistrazione();
-		Hashtable<String, ConsegnaContenutiApplicativiMessage> mapConsegnaContenutiApplicativiMessage = message.getMapConsegnaContenutiApplicativiMessage();
+		Map<String, Boolean> mapServizioApplicativoConConnettore = message.getMapServizioApplicativoConConnettore();
+		Map<String, Boolean> mapSbustamentoSoap = message.getMapSbustamentoSoap();
+		Map<String, Boolean> mapSbustamentoInformazioniProtocollo = message.getMapSbustamentoInformazioniProtocollo();
+		Map<String, Boolean> mapGetMessage = message.getMapGetMessage();
+		Map<String, String> mapTipoConsegna = message.getMapTipoConsegna();
+		Map<String, Timestamp> mapOraRegistrazione = message.getMapOraRegistrazione();
+		Map<String, ConsegnaContenutiApplicativiMessage> mapConsegnaContenutiApplicativiMessage = message.getMapConsegnaContenutiApplicativiMessage();
 		
 		boolean registrazioneMessaggioPerStatelessEffettuata = message.isRegistrazioneMessaggioPerStatelessEffettuata();
 		boolean gestioneSolamenteConIntegrationManager = message.isGestioneSolamenteConIntegrationManager();
@@ -2473,7 +2474,7 @@ public class EJBUtils {
 			repositoryBuste.registraBustaIntoInBox(busta,propertiesReader.getRepositoryIntervalloScadenzaMessaggi(), true);
 			if(!(state instanceof OpenSPCoopStateful)){
 				if(busta.sizeProperties()>0){
-					Hashtable<String, String> bustaProperties = new Hashtable<String, String>();
+					Map<String, String> bustaProperties = new HashMap<String, String>();
 					String[]propertyNames = busta.getPropertiesNames();
 					if(propertyNames!=null){
 						for (int i = 0; i < propertyNames.length; i++) {

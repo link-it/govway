@@ -25,7 +25,6 @@ package org.openspcoop2.protocol.registry;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -283,7 +282,7 @@ public class RegistroServiziReader {
 		return RegistroServiziReader.registroServiziReader;
 	}
 
-	public static java.util.Hashtable<String, IDriverRegistroServiziGet> getDriverRegistroServizi() {
+	public static java.util.Map<String, IDriverRegistroServiziGet> getDriverRegistroServizi() {
 		return RegistroServiziReader.registroServiziReader.registroServizi.getDriverRegistroServizi();
 	}
 
@@ -334,8 +333,7 @@ public class RegistroServiziReader {
 	 */
 	protected void isAlive(boolean controlloTotale) throws CoreException{
 		if(controlloTotale){
-			for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
-				String nomeRegInLista= (String) en.nextElement();
+			for (String nomeRegInLista : this.registroServizi.getDriverRegistroServizi().keySet()) {
 				try{
 					IMonitoraggioRisorsa monitorDriver = (IMonitoraggioRisorsa) this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
 					monitorDriver.isAlive();
@@ -346,8 +344,7 @@ public class RegistroServiziReader {
 		}else{
 			boolean registroRaggiungibile = false;
 			StringBuilder eccezioni = new StringBuilder();
-			for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
-				String nomeRegInLista= (String) en.nextElement();
+			for (String nomeRegInLista : this.registroServizi.getDriverRegistroServizi().keySet()) {
 				try{
 					IMonitoraggioRisorsa monitorDriver = (IMonitoraggioRisorsa) this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
 					monitorDriver.isAlive();
@@ -375,8 +372,7 @@ public class RegistroServiziReader {
 			boolean validazioneSemanticaAbilitataXML,boolean validazioneSemanticaAbilitataAltriRegistri,
 			Logger logConsole) throws CoreException{
 		if(controlloTotale){
-			for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
-				String nomeRegInLista= (String) en.nextElement();
+			for (String nomeRegInLista : this.registroServizi.getDriverRegistroServizi().keySet()) {
 				try{
 					Object o = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
 					boolean validazione = false;
@@ -402,8 +398,7 @@ public class RegistroServiziReader {
 		}else{
 			boolean registroRaggiungibile = false;
 			StringBuilder eccezioni = new StringBuilder();
-			for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
-				String nomeRegInLista= (String) en.nextElement();
+			for (String nomeRegInLista : this.registroServizi.getDriverRegistroServizi().keySet()) {
 				try{
 					Object o = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
 					boolean validazione = false;
@@ -439,8 +434,7 @@ public class RegistroServiziReader {
 	
 	protected void setValidazioneSemanticaModificaRegistroServiziXML(boolean verificaURI, 
 			String[] tipiSoggettiValidi,String [] tipiServiziSoapValidi, String [] tipiServiziRestValidi, String[] tipiConnettoriValidi) throws CoreException{
-		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
-			String nomeRegInLista= (String) en.nextElement();
+		for (String nomeRegInLista : this.registroServizi.getDriverRegistroServizi().keySet()) {
 			try{
 				Object o = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
 				if(o instanceof DriverRegistroServiziXML){
@@ -456,8 +450,7 @@ public class RegistroServiziReader {
 	
 	
 	protected void verificaConsistenzaRegistroServizi() throws DriverRegistroServiziException {
-		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
-			String nomeRegInLista= (String) en.nextElement();
+		for (String nomeRegInLista : this.registroServizi.getDriverRegistroServizi().keySet()) {
 			Object o = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
 			if(o instanceof DriverRegistroServiziXML){
 				DriverRegistroServiziXML driver = (DriverRegistroServiziXML) o;
@@ -472,8 +465,7 @@ public class RegistroServiziReader {
 	
 	public PortaDominio getPortaDominio_noCache(String nome,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		PortaDominio r = null;
-		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
-			String nomeRegInLista= (String) en.nextElement();
+		for (String nomeRegInLista : this.registroServizi.getDriverRegistroServizi().keySet()) {
 			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
 				continue;
 			}
@@ -493,8 +485,7 @@ public class RegistroServiziReader {
 	
 	public Ruolo getRuolo_noCache(String nome,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		Ruolo r = null;
-		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
-			String nomeRegInLista= (String) en.nextElement();
+		for (String nomeRegInLista : this.registroServizi.getDriverRegistroServizi().keySet()) {
 			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
 				continue;
 			}
@@ -515,8 +506,7 @@ public class RegistroServiziReader {
 	
 	public Soggetto getSoggetto_noCache(IDSoggetto idSoggetto,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		Soggetto r = null;
-		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
-			String nomeRegInLista= (String) en.nextElement();
+		for (String nomeRegInLista : this.registroServizi.getDriverRegistroServizi().keySet()) {
 			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
 				continue;
 			}
@@ -536,8 +526,7 @@ public class RegistroServiziReader {
 	
 	public AccordoServizioParteComune getAccordoServizioParteComune_noCache(IDAccordo idAccordo,String nomeRegistro,Boolean readContenutiAllegati) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		AccordoServizioParteComune r = null;
-		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
-			String nomeRegInLista= (String) en.nextElement();
+		for (String nomeRegInLista : this.registroServizi.getDriverRegistroServizi().keySet()) {
 			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
 				continue;
 			}
@@ -562,8 +551,7 @@ public class RegistroServiziReader {
 	
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica_noCache(IDServizio idServizio,String nomeRegistro,Boolean readContenutiAllegati) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		AccordoServizioParteSpecifica r = null;
-		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
-			String nomeRegInLista= (String) en.nextElement();
+		for (String nomeRegInLista : this.registroServizi.getDriverRegistroServizi().keySet()) {
 			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
 				continue;
 			}
@@ -588,8 +576,7 @@ public class RegistroServiziReader {
 	
 	public AccordoCooperazione getAccordoCooperazione_noCache(IDAccordoCooperazione idAccordo,String nomeRegistro,Boolean readContenutiAllegati) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		AccordoCooperazione r = null;
-		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
-			String nomeRegInLista= (String) en.nextElement();
+		for (String nomeRegInLista : this.registroServizi.getDriverRegistroServizi().keySet()) {
 			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
 				continue;
 			}
@@ -617,8 +604,7 @@ public class RegistroServiziReader {
 	
 	public List<String> getAllIdPorteDominio_noCache(FiltroRicerca filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		List<String> r = null;
-		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
-			String nomeRegInLista= (String) en.nextElement();
+		for (String nomeRegInLista : this.registroServizi.getDriverRegistroServizi().keySet()) {
 			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
 				continue;
 			}
@@ -638,8 +624,7 @@ public class RegistroServiziReader {
 	
 	public List<IDRuolo> getAllIdRuoli_noCache(FiltroRicercaRuoli filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		List<IDRuolo> r = null;
-		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
-			String nomeRegInLista= (String) en.nextElement();
+		for (String nomeRegInLista : this.registroServizi.getDriverRegistroServizi().keySet()) {
 			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
 				continue;
 			}
@@ -659,8 +644,7 @@ public class RegistroServiziReader {
 	
 	public List<IDSoggetto> getAllIdSoggetti_noCache(FiltroRicercaSoggetti filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		List<IDSoggetto> r = null;
-		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
-			String nomeRegInLista= (String) en.nextElement();
+		for (String nomeRegInLista : this.registroServizi.getDriverRegistroServizi().keySet()) {
 			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
 				continue;
 			}
@@ -680,8 +664,7 @@ public class RegistroServiziReader {
 	
 	public List<IDAccordoCooperazione> getAllIdAccordiCooperazione_noCache(FiltroRicercaAccordi filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		List<IDAccordoCooperazione> r = null;
-		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
-			String nomeRegInLista= (String) en.nextElement();
+		for (String nomeRegInLista : this.registroServizi.getDriverRegistroServizi().keySet()) {
 			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
 				continue;
 			}
@@ -701,8 +684,7 @@ public class RegistroServiziReader {
 	
 	public List<IDAccordo> getAllIdAccordiServizioParteComune_noCache(FiltroRicercaAccordi filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		List<IDAccordo> r = null;
-		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
-			String nomeRegInLista= (String) en.nextElement();
+		for (String nomeRegInLista : this.registroServizi.getDriverRegistroServizi().keySet()) {
 			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
 				continue;
 			}
@@ -722,8 +704,7 @@ public class RegistroServiziReader {
 	
 	public List<IDPortType> getAllIdPortType_noCache(FiltroRicercaPortTypes filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		List<IDPortType> r = null;
-		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
-			String nomeRegInLista= (String) en.nextElement();
+		for (String nomeRegInLista : this.registroServizi.getDriverRegistroServizi().keySet()) {
 			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
 				continue;
 			}
@@ -743,8 +724,7 @@ public class RegistroServiziReader {
 	
 	public List<IDPortTypeAzione> getAllIdAzionePortType_noCache(FiltroRicercaOperations filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		List<IDPortTypeAzione> r = null;
-		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
-			String nomeRegInLista= (String) en.nextElement();
+		for (String nomeRegInLista : this.registroServizi.getDriverRegistroServizi().keySet()) {
 			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
 				continue;
 			}
@@ -764,8 +744,7 @@ public class RegistroServiziReader {
 	
 	public List<IDAccordoAzione> getAllIdAzioneAccordo_noCache(FiltroRicercaAzioni filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		List<IDAccordoAzione> r = null;
-		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
-			String nomeRegInLista= (String) en.nextElement();
+		for (String nomeRegInLista : this.registroServizi.getDriverRegistroServizi().keySet()) {
 			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
 				continue;
 			}
@@ -785,8 +764,7 @@ public class RegistroServiziReader {
 	
 	public List<IDServizio> getAllIdServizi_noCache(FiltroRicercaServizi filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		List<IDServizio> r = null;
-		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
-			String nomeRegInLista= (String) en.nextElement();
+		for (String nomeRegInLista : this.registroServizi.getDriverRegistroServizi().keySet()) {
 			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
 				continue;
 			}
@@ -806,8 +784,7 @@ public class RegistroServiziReader {
 	
 	public List<IDFruizione> getAllIdFruizioniServizio_noCache(FiltroRicercaFruizioniServizio filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		List<IDFruizione> r = null;
-		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
-			String nomeRegInLista= (String) en.nextElement();
+		for (String nomeRegInLista : this.registroServizi.getDriverRegistroServizi().keySet()) {
 			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
 				continue;
 			}

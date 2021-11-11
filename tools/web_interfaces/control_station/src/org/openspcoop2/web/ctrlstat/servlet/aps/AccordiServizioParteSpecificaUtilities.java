@@ -22,9 +22,7 @@ package org.openspcoop2.web.ctrlstat.servlet.aps;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -530,8 +528,8 @@ public class AccordiServizioParteSpecificaUtilities {
 		List<PortaDelegata> listaPD = new ArrayList<PortaDelegata>();
 		List<PortaApplicativa> listaPA = new ArrayList<PortaApplicativa>();
 		List<ServizioApplicativo> listaPA_SA = new ArrayList<ServizioApplicativo>();
-		Hashtable<String, AttivazionePolicy> listaPolicyDaAggiornare = new Hashtable<String, AttivazionePolicy>();
-		Hashtable<String, ConfigurazioneAllarmeBean> listaAllarmiDaAggiornare = new Hashtable<String, ConfigurazioneAllarmeBean>();
+		Map<String, AttivazionePolicy> listaPolicyDaAggiornare = new HashMap<String, AttivazionePolicy>();
+		Map<String, ConfigurazioneAllarmeBean> listaAllarmiDaAggiornare = new HashMap<String, ConfigurazioneAllarmeBean>();
 		
 		// check dati modificati
 		String newUri = IDServizioFactory.getInstance().getUriFromAccordo(asps);
@@ -1242,9 +1240,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		
 		// aggiorno le policy di rate limiting
 		if(!listaPolicyDaAggiornare.isEmpty()) {
-			Enumeration<AttivazionePolicy> enPolicy = listaPolicyDaAggiornare.elements();
-			while (enPolicy.hasMoreElements()) {
-				AttivazionePolicy ap = (AttivazionePolicy) enPolicy.nextElement();
+			for (AttivazionePolicy ap : listaPolicyDaAggiornare.values()) {
 				oggettiDaAggiornare.add(ap);
 			}
 		}
@@ -1297,9 +1293,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			
 			// aggiorno le policy di rate limiting
 			if(!listaAllarmiDaAggiornare.isEmpty()) {
-				Enumeration<ConfigurazioneAllarmeBean> enAllarme = listaAllarmiDaAggiornare.elements();
-				while (enAllarme.hasMoreElements()) {
-					ConfigurazioneAllarmeBean allarme = (ConfigurazioneAllarmeBean) enAllarme.nextElement();
+				for (ConfigurazioneAllarmeBean allarme : listaAllarmiDaAggiornare.values()) {
 					oggettiDaAggiornare.add(allarme);
 				}
 			}

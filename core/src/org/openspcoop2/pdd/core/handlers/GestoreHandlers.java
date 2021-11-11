@@ -23,8 +23,9 @@ package org.openspcoop2.pdd.core.handlers;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -183,7 +184,7 @@ public class GestoreHandlers  {
 						GestoreHandlers.initHandlersBuiltIn[i] = (InitHandler) loader.newInstance(classe);
 						if(printInfoBuiltIn)
 							logConsoleInit.info("InitHandler BuiltIn di tipo ["+tipo+"] correttamente inizializzato.");
-					}catch(Exception e){
+					}catch(Throwable e){
 						if(msgDiag!=null) {
 							msgDiag.logErroreGenerico(e, "Inizializzazione InitHandler BuiltIn ["+GestoreHandlers.tipiInitHandlersBuiltIn[i]+"]");
 						}
@@ -206,7 +207,7 @@ public class GestoreHandlers  {
 						GestoreHandlers.exitHandlersBuiltIn[i] = (ExitHandler) loader.newInstance(classe);
 						if(printInfoBuiltIn)
 							logConsoleInit.info("ExitHandler BuiltIn di tipo ["+tipo+"] correttamente inizializzato.");
-					}catch(Exception e){
+					}catch(Throwable e){
 						if(msgDiag!=null) {
 							msgDiag.logErroreGenerico(e, "Inizializzazione ExitHandler BuiltIn ["+GestoreHandlers.tipiExitHandlersBuiltIn[i]+"]");
 						}
@@ -235,7 +236,7 @@ public class GestoreHandlers  {
 						GestoreHandlers.preInRequestHandlersBuiltIn[i] = (PreInRequestHandler) loader.newInstance(classe);
 						if(printInfoBuiltIn)
 							logConsoleInit.info("PreInRequestHandler BuiltIn di tipo ["+tipo+"] correttamente inizializzato.");
-					}catch(Exception e){
+					}catch(Throwable e){
 						if(msgDiag!=null) {
 							msgDiag.logErroreGenerico(e, "Inizializzazione PreInRequestHandler BuiltIn ["+GestoreHandlers.tipiPreInRequestHandlersBuiltIn[i]+"]");
 						}
@@ -264,7 +265,7 @@ public class GestoreHandlers  {
 						GestoreHandlers.inRequestHandlersBuiltIn[i] = (InRequestHandler) loader.newInstance(classe);
 						if(printInfoBuiltIn)
 							logConsoleInit.info("InRequestHandler BuiltIn di tipo ["+tipo+"] correttamente inizializzato.");
-					}catch(Exception e){
+					}catch(Throwable e){
 						if(msgDiag!=null) {
 							msgDiag.logErroreGenerico(e, "Inizializzazione InRequestHandler BuiltIn ["+GestoreHandlers.tipiInRequestHandlersBuiltIn[i]+"]");
 						}
@@ -293,7 +294,7 @@ public class GestoreHandlers  {
 						GestoreHandlers.inRequestProtocolHandlersBuiltIn[i] = (InRequestProtocolHandler) loader.newInstance(classe);
 						if(printInfoBuiltIn)
 							logConsoleInit.info("InRequestProtocolHandler BuiltIn di tipo ["+tipo+"] correttamente inizializzato.");
-					}catch(Exception e){
+					}catch(Throwable e){
 						if(msgDiag!=null) {
 							msgDiag.logErroreGenerico(e, "Inizializzazione InRequestProtocolHandler BuiltIn ["+GestoreHandlers.tipiInRequestProtocolHandlersBuiltIn[i]+"]");
 						}
@@ -322,7 +323,7 @@ public class GestoreHandlers  {
 						GestoreHandlers.outRequestHandlersBuiltIn[i] = (OutRequestHandler) loader.newInstance(classe);
 						if(printInfoBuiltIn)
 							logConsoleInit.info("OutRequestHandler BuiltIn di tipo ["+tipo+"] correttamente inizializzato.");
-					}catch(Exception e){
+					}catch(Throwable e){
 						if(msgDiag!=null) {
 							msgDiag.logErroreGenerico(e, "Inizializzazione OutRequestHandler BuiltIn ["+GestoreHandlers.tipiOutRequestHandlersBuiltIn[i]+"]");
 						}
@@ -351,7 +352,7 @@ public class GestoreHandlers  {
 						GestoreHandlers.postOutRequestHandlersBuiltIn[i] = (PostOutRequestHandler) loader.newInstance(classe);
 						if(printInfoBuiltIn)
 							logConsoleInit.info("PostOutRequestHandler BuiltIn di tipo ["+tipo+"] correttamente inizializzato.");
-					}catch(Exception e){
+					}catch(Throwable e){
 						if(msgDiag!=null) {
 							msgDiag.logErroreGenerico(e, "Inizializzazione PostOutRequestHandler BuiltIn ["+GestoreHandlers.tipiPostOutRequestHandlersBuiltIn[i]+"]");
 						}
@@ -380,7 +381,7 @@ public class GestoreHandlers  {
 						GestoreHandlers.preInResponseHandlersBuiltIn[i] = (PreInResponseHandler) loader.newInstance(classe);
 						if(printInfoBuiltIn)
 							logConsoleInit.info("PreInResponseHandler BuiltIn di tipo ["+tipo+"] correttamente inizializzato.");
-					}catch(Exception e){
+					}catch(Throwable e){
 						if(msgDiag!=null) {
 							msgDiag.logErroreGenerico(e, "Inizializzazione PreInResponseHandler BuiltIn ["+GestoreHandlers.tipiPreInResponseHandlersBuiltIn[i]+"]");
 						}
@@ -409,7 +410,7 @@ public class GestoreHandlers  {
 						GestoreHandlers.inResponseHandlersBuiltIn[i] = (InResponseHandler) loader.newInstance(classe);
 						if(printInfoBuiltIn)
 							logConsoleInit.info("InResponseHandler BuiltIn di tipo ["+tipo+"] correttamente inizializzato.");
-					}catch(Exception e){
+					}catch(Throwable e){
 						if(msgDiag!=null) {
 							msgDiag.logErroreGenerico(e, "Inizializzazione InResponseHandler BuiltIn ["+GestoreHandlers.tipiInResponseHandlersBuiltIn[i]+"]");
 						}
@@ -438,7 +439,7 @@ public class GestoreHandlers  {
 						GestoreHandlers.outResponseHandlersBuiltIn[i] = (OutResponseHandler) loader.newInstance(classe);
 						if(printInfoBuiltIn)
 							logConsoleInit.info("OutResponseHandler BuiltIn di tipo ["+tipo+"] correttamente inizializzato.");
-					}catch(Exception e){
+					}catch(Throwable e){
 						if(msgDiag!=null) {
 							msgDiag.logErroreGenerico(e, "Inizializzazione OutResponseHandler BuiltIn ["+GestoreHandlers.tipiOutResponseHandlersBuiltIn[i]+"]");
 						}
@@ -467,7 +468,7 @@ public class GestoreHandlers  {
 						GestoreHandlers.postOutResponseHandlersBuiltIn[i] = (PostOutResponseHandler) loader.newInstance(classe);
 						if(printInfoBuiltIn)
 							logConsoleInit.info("PostOutResponseHandler BuiltIn di tipo ["+tipo+"] correttamente inizializzato.");
-					}catch(Exception e){
+					}catch(Throwable e){
 						if(msgDiag!=null) {
 							msgDiag.logErroreGenerico(e, "Inizializzazione PostOutResponseHandler BuiltIn ["+GestoreHandlers.tipiPostOutResponseHandlersBuiltIn[i]+"]");
 						}
@@ -490,7 +491,7 @@ public class GestoreHandlers  {
 						GestoreHandlers.integrationManagerRequestHandlersBuiltIn[i] = (IntegrationManagerRequestHandler) loader.newInstance(classe);
 						if(printInfoBuiltIn)
 							logConsoleInit.info("IntegrationManagerRequestHandler BuiltIn di tipo ["+tipo+"] correttamente inizializzato.");
-					}catch(Exception e){
+					}catch(Throwable e){
 						if(msgDiag!=null) {
 							msgDiag.logErroreGenerico(e, "Inizializzazione IntegrationManagerRequestHandler BuiltIn ["+GestoreHandlers.tipiIntegrationManagerRequestHandlersBuiltIn[i]+"]");
 						}
@@ -513,7 +514,7 @@ public class GestoreHandlers  {
 						GestoreHandlers.integrationManagerResponseHandlersBuiltIn[i] = (IntegrationManagerResponseHandler) loader.newInstance(classe);
 						if(printInfoBuiltIn)
 							logConsoleInit.info("IntegrationManagerResponseHandler BuiltIn di tipo ["+tipo+"] correttamente inizializzato.");
-					}catch(Exception e){
+					}catch(Throwable e){
 						if(msgDiag!=null) {
 							msgDiag.logErroreGenerico(e, "Inizializzazione IntegrationManagerResponseHandler BuiltIn ["+GestoreHandlers.tipiIntegrationManagerResponseHandlersBuiltIn[i]+"]");
 						}
@@ -535,7 +536,7 @@ public class GestoreHandlers  {
 			List<String> tipiInitHandlersConfig = null;
 			try {
 				tipiInitHandlersConfig=ConfigurazionePdDManager.getInstance(state).getInitHandlers();
-			}catch(Exception e) {
+			}catch(Throwable e) {
 				if(msgDiag!=null) {
 					msgDiag.logErroreGenerico(e, "Raccolta InitHandlers");
 				}
@@ -553,7 +554,7 @@ public class GestoreHandlers  {
 						GestoreHandlers.initHandlers[i] = (InitHandler) pluginLoader.newInitHandler(tipo);
 						if(printInfo)
 							logConsoleInit.info("InitHandler di tipo ["+tipo+"] correttamente inizializzato.");
-					}catch(Exception e){
+					}catch(Throwable e){
 						if(msgDiag!=null) {
 							msgDiag.logErroreGenerico(e, "Inizializzazione InitHandler ["+GestoreHandlers.tipiInitHandlers[i]+"]");
 						}
@@ -569,7 +570,7 @@ public class GestoreHandlers  {
 			List<String> tipiExitHandlersConfig = null;
 			try {
 				tipiExitHandlersConfig=ConfigurazionePdDManager.getInstance(state).getExitHandlers();
-			}catch(Exception e) {
+			}catch(Throwable e) {
 				if(msgDiag!=null) {
 					msgDiag.logErroreGenerico(e, "Raccolta ExitHandlers");
 				}
@@ -587,7 +588,7 @@ public class GestoreHandlers  {
 						GestoreHandlers.exitHandlers[i] = (ExitHandler) pluginLoader.newExitHandler(tipo);
 						if(printInfo)
 							logConsoleInit.info("ExitHandler di tipo ["+tipo+"] correttamente inizializzato.");
-					}catch(Exception e){
+					}catch(Throwable e){
 						if(msgDiag!=null) {
 							msgDiag.logErroreGenerico(e, "Inizializzazione ExitHandler ["+GestoreHandlers.tipiExitHandlers[i]+"]");
 						}
@@ -603,7 +604,7 @@ public class GestoreHandlers  {
 			List<String> tipiPreInRequestHandlersConfig = null;
 			try {
 				tipiPreInRequestHandlersConfig=ConfigurazionePdDManager.getInstance(state).getPreInRequestHandlers();
-			}catch(Exception e) {
+			}catch(Throwable e) {
 				if(msgDiag!=null) {
 					msgDiag.logErroreGenerico(e, "Raccolta PreInRequestHandlers");
 				}
@@ -627,7 +628,7 @@ public class GestoreHandlers  {
 						}
 						if(printInfo)
 							logConsoleInit.info("PreInRequestHandler di tipo ["+tipo+"] correttamente inizializzato.");
-					}catch(Exception e){
+					}catch(Throwable e){
 						if(msgDiag!=null) {
 							msgDiag.logErroreGenerico(e, "Inizializzazione PreInRequestHandler ["+GestoreHandlers.tipiPreInRequestHandlers[i]+"]");
 						}
@@ -643,7 +644,7 @@ public class GestoreHandlers  {
 			List<String> tipiInRequestHandlersConfig = null;
 			try {
 				tipiInRequestHandlersConfig=ConfigurazionePdDManager.getInstance(state).getInRequestHandlers();
-			}catch(Exception e) {
+			}catch(Throwable e) {
 				if(msgDiag!=null) {
 					msgDiag.logErroreGenerico(e, "Raccolta InRequestHandlers");
 				}
@@ -667,7 +668,7 @@ public class GestoreHandlers  {
 						}
 						if(printInfo)
 							logConsoleInit.info("InRequestHandler di tipo ["+tipo+"] correttamente inizializzato.");
-					}catch(Exception e){
+					}catch(Throwable e){
 						if(msgDiag!=null) {
 							msgDiag.logErroreGenerico(e, "Inizializzazione InRequestHandler ["+GestoreHandlers.tipiInRequestHandlers[i]+"]");
 						}
@@ -683,7 +684,7 @@ public class GestoreHandlers  {
 			List<String> tipiInRequestProtocolHandlersConfig = null;
 			try {
 				tipiInRequestProtocolHandlersConfig=ConfigurazionePdDManager.getInstance(state).getInRequestProtocolHandlers();
-			}catch(Exception e) {
+			}catch(Throwable e) {
 				if(msgDiag!=null) {
 					msgDiag.logErroreGenerico(e, "Raccolta InRequestProtocolHandlers");
 				}
@@ -707,7 +708,7 @@ public class GestoreHandlers  {
 						}
 						if(printInfo)
 							logConsoleInit.info("InRequestProtocolHandler di tipo ["+tipo+"] correttamente inizializzato.");
-					}catch(Exception e){
+					}catch(Throwable e){
 						if(msgDiag!=null) {
 							msgDiag.logErroreGenerico(e, "Inizializzazione InRequestProtocolHandler ["+GestoreHandlers.tipiInRequestProtocolHandlers[i]+"]");
 						}
@@ -723,7 +724,7 @@ public class GestoreHandlers  {
 			List<String> tipiOutRequestHandlersConfig = null;
 			try {
 				tipiOutRequestHandlersConfig=ConfigurazionePdDManager.getInstance(state).getOutRequestHandlers();
-			}catch(Exception e) {
+			}catch(Throwable e) {
 				if(msgDiag!=null) {
 					msgDiag.logErroreGenerico(e, "Raccolta OutRequestHandlers");
 				}
@@ -747,7 +748,7 @@ public class GestoreHandlers  {
 						}
 						if(printInfo)
 							logConsoleInit.info("OutRequestHandler di tipo ["+tipo+"] correttamente inizializzato.");
-					}catch(Exception e){
+					}catch(Throwable e){
 						if(msgDiag!=null) {
 							msgDiag.logErroreGenerico(e, "Inizializzazione OutRequestHandler ["+GestoreHandlers.tipiOutRequestHandlers[i]+"]");
 						}
@@ -763,7 +764,7 @@ public class GestoreHandlers  {
 			List<String> tipiPostOutRequestHandlersConfig = null;
 			try {
 				tipiPostOutRequestHandlersConfig=ConfigurazionePdDManager.getInstance(state).getPostOutRequestHandlers();
-			}catch(Exception e) {
+			}catch(Throwable e) {
 				if(msgDiag!=null) {
 					msgDiag.logErroreGenerico(e, "Raccolta PostOutRequestHandlers");
 				}
@@ -787,7 +788,7 @@ public class GestoreHandlers  {
 						}
 						if(printInfo)
 							logConsoleInit.info("PostOutRequestHandler di tipo ["+tipo+"] correttamente inizializzato.");
-					}catch(Exception e){
+					}catch(Throwable e){
 						if(msgDiag!=null) {
 							msgDiag.logErroreGenerico(e, "Inizializzazione PostOutRequestHandler ["+GestoreHandlers.tipiPostOutRequestHandlers[i]+"]");
 						}
@@ -803,7 +804,7 @@ public class GestoreHandlers  {
 			List<String> tipiPreInResponseHandlersConfig = null;
 			try {
 				tipiPreInResponseHandlersConfig=ConfigurazionePdDManager.getInstance(state).getPreInResponseHandlers();
-			}catch(Exception e) {
+			}catch(Throwable e) {
 				if(msgDiag!=null) {
 					msgDiag.logErroreGenerico(e, "Raccolta PreInResponseHandlers");
 				}
@@ -827,7 +828,7 @@ public class GestoreHandlers  {
 						}
 						if(printInfo)
 							logConsoleInit.info("PreInResponseHandler di tipo ["+tipo+"] correttamente inizializzato.");
-					}catch(Exception e){
+					}catch(Throwable e){
 						if(msgDiag!=null) {
 							msgDiag.logErroreGenerico(e, "Inizializzazione PreInResponseHandler ["+GestoreHandlers.tipiPreInResponseHandlers[i]+"]");
 						}
@@ -843,7 +844,7 @@ public class GestoreHandlers  {
 			List<String> tipiInResponseHandlersConfig = null;
 			try {
 				tipiInResponseHandlersConfig=ConfigurazionePdDManager.getInstance(state).getInResponseHandlers();
-			}catch(Exception e) {
+			}catch(Throwable e) {
 				if(msgDiag!=null) {
 					msgDiag.logErroreGenerico(e, "Raccolta InResponseHandlers");
 				}
@@ -867,7 +868,7 @@ public class GestoreHandlers  {
 						}
 						if(printInfo)
 							logConsoleInit.info("InResponseHandler di tipo ["+tipo+"] correttamente inizializzato.");
-					}catch(Exception e){
+					}catch(Throwable e){
 						if(msgDiag!=null) {
 							msgDiag.logErroreGenerico(e, "Inizializzazione InResponseHandler ["+GestoreHandlers.tipiInResponseHandlers[i]+"]");
 						}
@@ -883,7 +884,7 @@ public class GestoreHandlers  {
 			List<String> tipiOutResponseHandlersConfig = null;
 			try {
 				tipiOutResponseHandlersConfig=ConfigurazionePdDManager.getInstance(state).getOutResponseHandlers();
-			}catch(Exception e) {
+			}catch(Throwable e) {
 				if(msgDiag!=null) {
 					msgDiag.logErroreGenerico(e, "Raccolta OutResponseHandlers");
 				}
@@ -907,7 +908,7 @@ public class GestoreHandlers  {
 						}
 						if(printInfo)
 							logConsoleInit.info("OutResponseHandler di tipo ["+tipo+"] correttamente inizializzato.");
-					}catch(Exception e){
+					}catch(Throwable e){
 						if(msgDiag!=null) {
 							msgDiag.logErroreGenerico(e, "Inizializzazione OutResponseHandler ["+GestoreHandlers.tipiOutResponseHandlers[i]+"]");
 						}
@@ -923,7 +924,7 @@ public class GestoreHandlers  {
 			List<String> tipiPostOutResponseHandlersConfig = null;
 			try {
 				tipiPostOutResponseHandlersConfig=ConfigurazionePdDManager.getInstance(state).getPostOutResponseHandlers();
-			}catch(Exception e) {
+			}catch(Throwable e) {
 				if(msgDiag!=null) {
 					msgDiag.logErroreGenerico(e, "Raccolta PostOutResponseHandlers");
 				}
@@ -947,7 +948,7 @@ public class GestoreHandlers  {
 						}
 						if(printInfo)
 							logConsoleInit.info("PostOutResponseHandler di tipo ["+tipo+"] correttamente inizializzato.");
-					}catch(Exception e){
+					}catch(Throwable e){
 						if(msgDiag!=null) {
 							msgDiag.logErroreGenerico(e, "Inizializzazione PostOutResponseHandler ["+GestoreHandlers.tipiPostOutResponseHandlers[i]+"]");
 						}
@@ -963,7 +964,7 @@ public class GestoreHandlers  {
 			List<String> tipiIntegrationManagerRequestHandlersConfig = null;
 			try {
 				tipiIntegrationManagerRequestHandlersConfig=ConfigurazionePdDManager.getInstance(state).getIntegrationManagerRequestHandlers();
-			}catch(Exception e) {
+			}catch(Throwable e) {
 				if(msgDiag!=null) {
 					msgDiag.logErroreGenerico(e, "Raccolta IntegrationManagerRequestHandlers");
 				}
@@ -981,7 +982,7 @@ public class GestoreHandlers  {
 						GestoreHandlers.integrationManagerRequestHandlers[i] = (IntegrationManagerRequestHandler) pluginLoader.newIntegrationManagerRequestHandler(tipo);
 						if(printInfo)
 							logConsoleInit.info("IntegrationManagerRequestHandler di tipo ["+tipo+"] correttamente inizializzato.");
-					}catch(Exception e){
+					}catch(Throwable e){
 						if(msgDiag!=null) {
 							msgDiag.logErroreGenerico(e, "Inizializzazione IntegrationManagerRequestHandler ["+GestoreHandlers.tipiIntegrationManagerRequestHandlers[i]+"]");
 						}
@@ -997,7 +998,7 @@ public class GestoreHandlers  {
 			List<String> tipiIntegrationManagerResponseHandlersConfig = null;
 			try {
 				tipiIntegrationManagerResponseHandlersConfig=ConfigurazionePdDManager.getInstance(state).getIntegrationManagerResponseHandlers();
-			}catch(Exception e) {
+			}catch(Throwable e) {
 				if(msgDiag!=null) {
 					msgDiag.logErroreGenerico(e, "Raccolta IntegrationManagerResponseHandlers");
 				}
@@ -1015,7 +1016,7 @@ public class GestoreHandlers  {
 						GestoreHandlers.integrationManagerResponseHandlers[i] = (IntegrationManagerResponseHandler) pluginLoader.newIntegrationManagerResponseHandler(tipo);
 						if(printInfo)
 							logConsoleInit.info("IntegrationManagerResponseHandler di tipo ["+tipo+"] correttamente inizializzato.");
-					}catch(Exception e){
+					}catch(Throwable e){
 						if(msgDiag!=null) {
 							msgDiag.logErroreGenerico(e, "Inizializzazione IntegrationManagerResponseHandler ["+GestoreHandlers.tipiIntegrationManagerResponseHandlers[i]+"]");
 						}
@@ -1055,10 +1056,10 @@ public class GestoreHandlers  {
 		if(handlers!=null && handlers.length>0){
 			
 			List<String> handlerPositionHeadId = new ArrayList<String>();
-			Hashtable<String,T> handlerPositionHeadMap = new Hashtable<String,T>();
+			Map<String,T> handlerPositionHeadMap = new HashMap<String,T>();
 			
 			List<String> handlerPositionTailId = new ArrayList<String>();
-			Hashtable<String,T> handlerPositionTailMap = new Hashtable<String,T>();
+			Map<String,T> handlerPositionTailMap = new HashMap<String,T>();
 			
 			List<T> handlerPositionMiddle = new ArrayList<T>();
 			
@@ -1202,7 +1203,7 @@ public class GestoreHandlers  {
 			if(properties.isNotifierInputStreamEnabled()) {
 				notifierInputStreamCallback = properties.getNotifierInputStreamCallback();
 			}
-		}catch(Exception e){}
+		}catch(Throwable e){}
 		if(notifierInputStreamCallback!=null){
 			List<String> list = new ArrayList<String>();
 			list.add(NotifierConstants.TIPO_NOTIFIER);
@@ -1267,7 +1268,7 @@ public class GestoreHandlers  {
 					emitDiagnosticInvokeHandlerStart(handlers[i], msgDiag, log);
 					handlers[i].invoke(context);
 					emitDiagnosticInvokeHandlerEnd(handlers[i], msgDiag, log);
-				}catch(Exception e){
+				}catch(Throwable e){
 					
 					if(log!=null){
 						log.error(name+" ["+tipiHandlers[i]+"] (class:"+handlers[i].getClass().getName()+")",e);
@@ -1315,7 +1316,7 @@ public class GestoreHandlers  {
 			for(int i=0; i<handlers.length; i++){
 				try{
 					handlers[i].invoke(context);
-				}catch(Exception e){
+				}catch(Throwable e){
 					// Gli handler di tipo exit non dovrebbero sollevare una eccezione.
 					// Eventualmento loggo l'errore
 					if(log!=null){
@@ -1436,7 +1437,7 @@ public class GestoreHandlers  {
 						handlers[i].invoke(context);
 						emitDiagnosticInvokeHandlerEnd(handlers[i], null, log);
 					}
-				}catch(Exception e){
+				}catch(Throwable e){
 					// Sollevo l'eccezione
 					/*HandlerException ex = null;
 					if(e instanceof HandlerException){
@@ -1553,7 +1554,7 @@ public class GestoreHandlers  {
 					emitDiagnosticInvokeHandlerStart(handlers[i], msgDiag, log);
 					handlers[i].invoke(context);
 					emitDiagnosticInvokeHandlerEnd(handlers[i], msgDiag, log);
-				}catch(Exception e){
+				}catch(Throwable e){
 					// Sollevo l'eccezione
 					HandlerException ex = null;
 					if(e instanceof HandlerException){
@@ -1673,7 +1674,7 @@ public class GestoreHandlers  {
 					emitDiagnosticInvokeHandlerStart(handlers[i], msgDiag, log);
 					handlers[i].invoke(context);
 					emitDiagnosticInvokeHandlerEnd(handlers[i], msgDiag, log);
-				}catch(Exception e){
+				}catch(Throwable e){
 					// Sollevo l'eccezione
 					HandlerException ex = null;
 					if(e instanceof HandlerException){
@@ -1789,7 +1790,7 @@ public class GestoreHandlers  {
 					emitDiagnosticInvokeHandlerStart(handlers[i], msgDiag, log);
 					handlers[i].invoke(context);
 					emitDiagnosticInvokeHandlerEnd(handlers[i], msgDiag, log);
-				}catch(Exception e){
+				}catch(Throwable e){
 					// Sollevo l'eccezione
 					HandlerException ex = null;
 					if(e instanceof HandlerException){
@@ -1905,7 +1906,7 @@ public class GestoreHandlers  {
 					emitDiagnosticInvokeHandlerStart(handlers[i], msgDiag, log);
 					handlers[i].invoke(context);
 					emitDiagnosticInvokeHandlerEnd(handlers[i], msgDiag, log);
-				}catch(Exception e){
+				}catch(Throwable e){
 					// Sollevo l'eccezione
 					HandlerException ex = null;
 					if(e instanceof HandlerException){
@@ -2021,7 +2022,7 @@ public class GestoreHandlers  {
 					emitDiagnosticInvokeHandlerStart(handlers[i], msgDiag, log);
 					handlers[i].invoke(context);
 					emitDiagnosticInvokeHandlerEnd(handlers[i], msgDiag, log);
-				}catch(Exception e){
+				}catch(Throwable e){
 					// Sollevo l'eccezione
 					HandlerException ex = null;
 					if(e instanceof HandlerException){
@@ -2137,7 +2138,7 @@ public class GestoreHandlers  {
 					emitDiagnosticInvokeHandlerStart(handlers[i], msgDiag, log);
 					handlers[i].invoke(context);
 					emitDiagnosticInvokeHandlerEnd(handlers[i], msgDiag, log);
-				}catch(Exception e){
+				}catch(Throwable e){
 					// Sollevo l'eccezione
 					HandlerException ex = null;
 					if(e instanceof HandlerException){
@@ -2253,7 +2254,7 @@ public class GestoreHandlers  {
 					emitDiagnosticInvokeHandlerStart(handlers[i], msgDiag, log);
 					handlers[i].invoke(context);
 					emitDiagnosticInvokeHandlerEnd(handlers[i], msgDiag, log);
-				}catch(Exception e){
+				}catch(Throwable e){
 					// Sollevo l'eccezione
 					HandlerException ex = null;
 					if(e instanceof HandlerException){
@@ -2369,7 +2370,7 @@ public class GestoreHandlers  {
 					emitDiagnosticInvokeHandlerStart(handlers[i], msgDiag, log);
 					handlers[i].invoke(context);
 					emitDiagnosticInvokeHandlerEnd(handlers[i], msgDiag, log);
-				}catch(Exception e){
+				}catch(Throwable e){
 					// Sollevo l'eccezione
 					HandlerException ex = null;
 					if(e instanceof HandlerException){
@@ -2484,7 +2485,7 @@ public class GestoreHandlers  {
 					emitDiagnosticInvokeHandlerStart(handlers[i], msgDiag, log);
 					handlers[i].invoke(context);
 					emitDiagnosticInvokeHandlerEnd(handlers[i], msgDiag, log);
-				}catch(Exception e){
+				}catch(Throwable e){
 					// Non sollevo l'eccezione poiche' dove viene chiamato questo handler e' finita la gestione, quindi l'eccezione non causa altri avvenimenti
 					// Registro solamento l'evento
 					if(handlers[i] instanceof org.openspcoop2.pdd.core.handlers.transazioni.PostOutResponseHandler) {
@@ -2538,7 +2539,7 @@ public class GestoreHandlers  {
 					emitDiagnosticInvokeHandlerStart(handlers[i], msgDiag, log);
 					handlers[i].invoke(context);
 					emitDiagnosticInvokeHandlerEnd(handlers[i], msgDiag, log);
-				}catch(Exception e){
+				}catch(Throwable e){
 					// Sollevo l'eccezione
 					HandlerException ex = null;
 					if(e instanceof HandlerException){
@@ -2593,7 +2594,7 @@ public class GestoreHandlers  {
 					emitDiagnosticInvokeHandlerStart(handlers[i], msgDiag, log);
 					handlers[i].invoke(context);
 					emitDiagnosticInvokeHandlerEnd(handlers[i], msgDiag, log);
-				}catch(Exception e){
+				}catch(Throwable e){
 					// Sollevo l'eccezione
 					HandlerException ex = null;
 					if(e instanceof HandlerException){

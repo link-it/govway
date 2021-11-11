@@ -20,7 +20,7 @@
 
 package org.openspcoop2.pdd.core.controllo_traffico;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -132,7 +132,7 @@ public class GeneratoreMessaggiDiagnostici {
 		}
 	}
 	
-	public static Hashtable<String, String> convertToProperties(String value) throws Exception{
+	public static Map<String, String> convertToProperties(String value) throws Exception{
 		if(value.contains(MsgDiagnosticiProperties.DIAGNOSTIC_WITH_DYNAMIC_INFO_SEPARATOR)){
 			
 			String [] tmp = value.split(MsgDiagnosticiProperties.DIAGNOSTIC_WITH_DYNAMIC_INFO_SEPARATOR);
@@ -148,7 +148,7 @@ public class GeneratoreMessaggiDiagnostici {
 						"] failed (expected:"+NUMERO_TEMPLATE_DINAMICI+" found:"+tmp.length+")");
 			}
 			
-			Hashtable<String, String> map = new Hashtable<String, String>();
+			Map<String, String> map = new HashMap<String, String>();
 			
 			for (int i = 0; i < tmp.length; i++) {
 				

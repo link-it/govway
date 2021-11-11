@@ -57,10 +57,10 @@ public class Message implements Serializable {
 	private List<Attachment> attachments = new ArrayList<Attachment>();
 	
 	private List<String> _headers_position = new ArrayList<String>();
-	private Map<String,Property> headers = new java.util.Hashtable<String,Property>();
+	private Map<String,Property> headers = new java.util.HashMap<String,Property>();
 	
 	private List<String> _resources_position = new ArrayList<String>();
-	private Map<String,Property> resources = new java.util.Hashtable<String,Property>();
+	private Map<String,Property> resources = new java.util.HashMap<String,Property>();
 	
 	
 	public String getContentType() {

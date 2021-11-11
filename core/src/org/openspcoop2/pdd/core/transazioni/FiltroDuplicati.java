@@ -158,14 +158,14 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 			
 			// Se non esiste registro nel contesto questa transazione.
 			// Comunque OpenSPCoop se torno false, procedera a chiamare registraBusta, il quale metodo non fara' nulla (vedi implementazione sotto stante)
-			// Il metodo di registrazione dell'identificativo busta e' synchronized e controlla che non sia possibile registrare due identificativi busta.
+			// Il metodo di registrazione dell'identificativo busta viene acceduto tramite un semaforo e controlla che non sia possibile registrare due identificativi busta.
 			// Tale implementazione garantisce che nel contesto puo' esistere solo un idBusta, e tale id viene eliminato SOLO dopo 
 			// aver salvato la transazione nel database (vedi implementazione PostOutResponseHandler, metodo removeIdentificativoProtocollo)
 			// Se dopo aver eliminato dal contesto l'id, arriva una nuova busta con stesso id, questo metodo la trova nella tabelle delle transazioni 
 			// e quindi ritornera' immediatamente l'informazione di busta duplicata.
 			try{
 				//System.out.println("@@IS_DUPLICATA ["+idBusta+"] FALSE ....");
-				TransactionContext.registraIdentificativoProtocollo(idBusta);
+				TransactionContext.registraIdentificativoProtocollo(idBusta, this.idTransazione);
 				//System.out.println("@@IS_DUPLICATA ["+idBusta+"] FALSE REGISTRATA");
 			}catch(Exception e){
 				if(e.getMessage()!=null && "DUPLICATA".equals(e.getMessage())){

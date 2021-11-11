@@ -36,16 +36,18 @@ import org.slf4j.Logger;
  */
 public class FSRecoveryDumpImpl extends AbstractFSRecovery {
 	private IDumpProducer dumpAppender;
+	private boolean transazioniRegistrazioneDumpHeadersCompactEnabled = false;
 
 	public FSRecoveryDumpImpl( 
 			Logger log,
 			boolean debug,
-			IDumpProducer dumpAppender,
+			IDumpProducer dumpAppender, boolean transazioniRegistrazioneDumpHeadersCompactEnabled,
 			File directory, File directoryDLQ,
 			int tentativi,
 			int minutiAttesaProcessingFile) {
 		super(log, debug, directory, directoryDLQ, tentativi, minutiAttesaProcessingFile);
 		this.dumpAppender = dumpAppender;
+		this.transazioniRegistrazioneDumpHeadersCompactEnabled = transazioniRegistrazioneDumpHeadersCompactEnabled;
 	}
 
 	@Override
@@ -63,7 +65,8 @@ public class FSRecoveryDumpImpl extends AbstractFSRecovery {
 		//FARE UN WRAPPER COSI COME ABBIAMO FATTO PER TRACCIA E DIAGNOSTICO
 		
 		org.openspcoop2.protocol.sdk.dump.Messaggio messaggioOp2 = new org.openspcoop2.protocol.sdk.dump.Messaggio(dumpMessaggio);
-		this.dumpAppender.dump(connection, messaggioOp2);
+		this.dumpAppender.dump(connection, messaggioOp2, this.transazioniRegistrazioneDumpHeadersCompactEnabled);
+		
 	}
 
 

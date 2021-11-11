@@ -22,8 +22,8 @@
 package org.openspcoop2.example.pdd.client.jmx;
 
 import java.io.*;
-import java.util.Hashtable;
-
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
@@ -174,10 +174,10 @@ public class Client {
 //					args[0].startsWith("wildfly") ||
 //					args[0].startsWith("tomcat")){
 			JMXServiceURL serviceURL = new JMXServiceURL(serverUrl);  
-			Hashtable<String, Object> env = null;
+			Map<String, Object> env = null;
 			if(username!=null && password!=null){
 				String[] creds = {username, password};
-				env = new Hashtable<String, Object>();
+				env = new HashMap<String, Object>();
 				env.put(JMXConnector.CREDENTIALS, creds);
 			}
 			JMXConnector jmxConnector = JMXConnectorFactory.connect(serviceURL, env);             
@@ -185,7 +185,7 @@ public class Client {
 //			}
 //			else{
 //				
-//				Hashtable<String, Object> env = new Hashtable<String, Object>();
+//				Map<String, Object> env = new HashMap<String, Object>();
 //				env.put(javax.naming.Context.INITIAL_CONTEXT_FACTORY, factory);
 //				env.put(javax.naming.Context.PROVIDER_URL, serverUrl);
 //				

@@ -20,8 +20,8 @@
 package org.openspcoop2.generic_project.expression.impl.sql;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.generic_project.beans.FunctionField;
 import org.openspcoop2.generic_project.beans.IField;
@@ -135,7 +135,7 @@ public class PaginatedExpressionSQL extends PaginatedExpressionImpl {
 	
 	/* ************ TO SQL *********** */
 	
-	private String toSql_engine(SQLMode mode,List<Object> oggettiPreparedStatement,Hashtable<String, Object> oggettiJPA)throws ExpressionException{
+	private String toSql_engine(SQLMode mode,List<Object> oggettiPreparedStatement,Map<String, Object> oggettiJPA)throws ExpressionException{
 			
 		ISQLExpression sqlExpression = null;
 		if(this.expressionEngine!=null){
@@ -188,7 +188,7 @@ public class PaginatedExpressionSQL extends PaginatedExpressionImpl {
 		
 	}
 	
-	private void toSql_engine(ISQLQueryObject sqlQueryObject,SQLMode mode,List<Object> oggettiPreparedStatement,Hashtable<String, Object> oggettiJPA)throws ExpressionException{
+	private void toSql_engine(ISQLQueryObject sqlQueryObject,SQLMode mode,List<Object> oggettiPreparedStatement,Map<String, Object> oggettiJPA)throws ExpressionException{
 	
 		ISQLExpression sqlExpression = null;
 		if(this.expressionEngine!=null){
@@ -253,7 +253,7 @@ public class PaginatedExpressionSQL extends PaginatedExpressionImpl {
 	protected String toSqlPreparedStatement(List<Object> oggetti) throws ExpressionException {
 		return toSql_engine(SQLMode.PREPARED_STATEMENT, oggetti, null);
 	}
-	protected String toSqlJPA(Hashtable<String, Object> oggetti) throws ExpressionException {
+	protected String toSqlJPA(Map<String, Object> oggetti) throws ExpressionException {
 		return toSql_engine(SQLMode.JPA, null, oggetti);
 	}
 	
@@ -283,10 +283,10 @@ public class PaginatedExpressionSQL extends PaginatedExpressionImpl {
 				this.getOrderedFields(),this.getGroupByFields());
 	}
 	
-	protected void toSqlJPA(ISQLQueryObject sqlQueryObject,Hashtable<String, Object> oggetti)throws ExpressionException{
+	protected void toSqlJPA(ISQLQueryObject sqlQueryObject,Map<String, Object> oggetti)throws ExpressionException{
 		toSql_engine(sqlQueryObject,SQLMode.JPA, null, oggetti);
 	}
-	protected void toSqlJPAWithFromCondition(ISQLQueryObject sqlQueryObject,Hashtable<String, Object> oggetti,String tableNamePrincipale) throws ExpressionException, ExpressionNotImplementedException{
+	protected void toSqlJPAWithFromCondition(ISQLQueryObject sqlQueryObject,Map<String, Object> oggetti,String tableNamePrincipale) throws ExpressionException, ExpressionNotImplementedException{
 		
 		// preparo condizione di where
 		this.toSqlJPA(sqlQueryObject, oggetti);

@@ -30,9 +30,10 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -365,7 +366,7 @@ public class ZipUtilities {
 		// attraversa le entries presenti nello zip nello stesso ordine in cui sono state salvate.
 		
 		List<String> entryNames = new ArrayList<String>();
-		Hashtable<String, ZipEntry> map = new Hashtable<String, ZipEntry>();
+		Map<String, ZipEntry> map = new HashMap<String, ZipEntry>();
 		Enumeration<?> e = zip.entries();
 		while(e.hasMoreElements()) {
 			ZipEntry zipEntry = (ZipEntry)e.nextElement();

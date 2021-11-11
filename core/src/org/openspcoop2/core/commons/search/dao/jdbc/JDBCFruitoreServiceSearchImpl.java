@@ -662,7 +662,7 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 	protected Map<String, List<IField>> _getMapTableToPKColumn() throws NotImplementedException, Exception{
 	
 		FruitoreFieldConverter converter = this.getFruitoreFieldConverter();
-		Map<String, List<IField>> mapTableToPKColumn = new java.util.Hashtable<String, List<IField>>();
+		Map<String, List<IField>> mapTableToPKColumn = new java.util.HashMap<String, List<IField>>();
 		UtilsTemplate<IField> utilities = new UtilsTemplate<IField>();
 
 		// Fruitore.model()

@@ -24,8 +24,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -174,7 +175,7 @@ public class TemplateCore {
 			boolean foundPdd = false;
 			boolean foundSoggetto = false;
 			boolean foundFruitore = false;
-			Hashtable<String, Boolean> mapFound = new Hashtable<String, Boolean>();
+			Map<String, Boolean> mapFound = new HashMap<String, Boolean>();
 			
 			Iterator<ZipEntry> it = ZipUtilities.entries(zip, true);
 			while (it.hasNext()) {
@@ -259,7 +260,7 @@ public class TemplateCore {
 		}
 	}
 	
-	public void updateOtherResource(String entryName,InputStream inputStream,byte[]xml,Hashtable<String, Boolean> mapFound) throws ProtocolException{
+	public void updateOtherResource(String entryName,InputStream inputStream,byte[]xml,Map<String, Boolean> mapFound) throws ProtocolException{
 		throw new ProtocolException("Elemento ["+entryName+"] non atteso");
 	}
 }

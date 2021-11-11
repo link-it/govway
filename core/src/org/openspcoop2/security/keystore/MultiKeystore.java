@@ -26,8 +26,9 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.security.Key;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.openspcoop2.security.SecurityException;
@@ -58,9 +59,9 @@ public class MultiKeystore implements Serializable  {
 	private final static String KEY_ALGORITHM = ".key.algorithm";
 	
 	private List<String> aliases = new ArrayList<String>();
-	private Hashtable<String, Serializable> keystores = new Hashtable<String, Serializable>();
-	private Hashtable<String, String> mappingAliasToKeyAlias = new Hashtable<String, String>();
-	private Hashtable<String, String> mappingAliasToKeyPassword = new Hashtable<String, String>();
+	private Map<String, Serializable> keystores = new HashMap<String, Serializable>();
+	private Map<String, String> mappingAliasToKeyAlias = new HashMap<String, String>();
+	private Map<String, String> mappingAliasToKeyPassword = new HashMap<String, String>();
 	
 	@Override
 	public String toString() {

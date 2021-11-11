@@ -27,8 +27,9 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import org.openspcoop2.core.constants.CostantiDB;
@@ -3306,23 +3307,23 @@ public abstract class AbstractVerificatoreTraccia {
 	}
 	
 	
-	public Hashtable<String,String> readTracedExtInfoProtocol(String idMessaggio)
+	public Map<String,String> readTracedExtInfoProtocol(String idMessaggio)
 			throws TestSuiteException {
 		return _readTracedExtInfoProtocol(this.prepareStatement(idMessaggio));
 	}
-	public Hashtable<String,String> readTracedExtInfoProtocol(String idMessaggio,IDSoggetto idPortaMessaggio)
+	public Map<String,String> readTracedExtInfoProtocol(String idMessaggio,IDSoggetto idPortaMessaggio)
 			throws TestSuiteException {
 		return _readTracedExtInfoProtocol(this.prepareStatement(idMessaggio,idPortaMessaggio));
 	}
-	public Hashtable<String,String> readTracedExtInfoProtocol(String idMessaggio, DatiServizioAzione datiServizioAzione)
+	public Map<String,String> readTracedExtInfoProtocol(String idMessaggio, DatiServizioAzione datiServizioAzione)
 			throws TestSuiteException {
 		return _readTracedExtInfoProtocol(this.prepareStatement(idMessaggio,datiServizioAzione));
 	}
-	private Hashtable<String,String> _readTracedExtInfoProtocol(PreparedStatement pstmt) throws TestSuiteException{
+	private Map<String,String> _readTracedExtInfoProtocol(PreparedStatement pstmt) throws TestSuiteException{
 
 		ResultSet res = null;
 		PreparedStatement pstmtListaExtInfoProtocol = null;
-		Hashtable<String,String> extInfos = new Hashtable<String, String>();
+		Map<String,String> extInfos = new HashMap<String, String>();
 		int idTraccia = 0;
 		try {
 			res = pstmt.executeQuery();

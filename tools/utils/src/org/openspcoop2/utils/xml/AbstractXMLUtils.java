@@ -31,10 +31,10 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.GregorianCalendar;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -857,9 +857,9 @@ public abstract class AbstractXMLUtils {
 	
 	// NAMESPACE
 	
-	public Hashtable<String, String> getNamespaceDeclaration(Node n){
+	public Map<String, String> getNamespaceDeclaration(Node n){
 		NamedNodeMap map = n.getAttributes();
-		Hashtable<String, String> namespaces = new Hashtable<String, String>();
+		Map<String, String> namespaces = new HashMap<String, String>();
 		if(map!=null){
 			for (int i = 0; i < map.getLength(); i++) {
 				Node attribute = map.item(i);
@@ -939,9 +939,9 @@ public abstract class AbstractXMLUtils {
 		return this.findNamespaceByPrefix(prefix, p, parentNode);
 	}
 	
-	public void addNamespaceDeclaration(Hashtable<String, String> namespace, Element destNode){
+	public void addNamespaceDeclaration(Map<String, String> namespace, Element destNode){
 		if(namespace!=null && namespace.size()>0){
-			Hashtable<String, String> declarationNamespacesDestNode = this.getNamespaceDeclaration(destNode);
+			Map<String, String> declarationNamespacesDestNode = this.getNamespaceDeclaration(destNode);
 //			if(declarationNamespacesDestNode.size()>0){
 //				Enumeration<String> decSchema = declarationNamespacesDestNode.keys();
 //				while (decSchema.hasMoreElements()) {
@@ -949,9 +949,7 @@ public abstract class AbstractXMLUtils {
 //					System.out.println("TROVATO ORIGINALE ["+dec+"]=["+declarationNamespacesDestNode.get(dec)+"]");
 //				}
 //			}
-			Enumeration<String> decSource = namespace.keys();
-			while (decSource.hasMoreElements()) {
-				String dec = decSource.nextElement();
+			for (String dec : namespace.keySet()) {
 				//System.out.println("TROVATO ["+dec+"]=["+namespace.get(dec)+"]");
 				if(declarationNamespacesDestNode.containsKey(dec)==false){
 					//System.out.println("AGGIUNGO IN SCHEMA");
@@ -965,13 +963,11 @@ public abstract class AbstractXMLUtils {
 		}
 	}
 	
-	public void removeNamespaceDeclaration(Hashtable<String, String> namespace, Element destNode){
+	public void removeNamespaceDeclaration(Map<String, String> namespace, Element destNode){
 		
 		// TODO: Da verificare, non ancora utilizzato
 		if(namespace!=null && namespace.size()>0){
-			Enumeration<String> decSource = namespace.keys();
-			while (decSource.hasMoreElements()) {
-				String dec = decSource.nextElement();
+			for (String dec : namespace.keySet()) {
 				//System.out.println("RIMUOVO ["+dec+"]=["+namespace.get(dec)+"]");
 				String name = "xmlns:"+dec;
 				if("".equals(dec)){

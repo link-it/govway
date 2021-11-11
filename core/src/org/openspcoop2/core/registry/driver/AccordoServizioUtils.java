@@ -23,8 +23,9 @@ package org.openspcoop2.core.registry.driver;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.validation.Schema;
 
@@ -199,15 +200,15 @@ public class AccordoServizioUtils {
 			throw new DriverRegistroServiziException("L'accordo di servizio parte comune non contiene schemi XSD");
 		}
 
-		Hashtable<String, byte[]> resources = new Hashtable<String, byte[]>();
-		Hashtable<String, String> mappingNamespaceLocations = new Hashtable<String, String>();
+		Map<String, byte[]> resources = new HashMap<String, byte[]>();
+		Map<String, String> mappingNamespaceLocations = new HashMap<String, String>();
 
 		
 		
 		// --------- WSDL CONCETTUALE/LOGICO EROGATORE ---------------------
 		if(schemiInWsdl.size()>0){
 
-			Hashtable<String, String> declarationNamespacesWSDL = null;
+			Map<String, String> declarationNamespacesWSDL = null;
 			try{
 				declarationNamespacesWSDL = this.xmlUtils.getNamespaceDeclaration(dWsdl.getDocumentElement());
 			}catch(Exception e){
@@ -238,7 +239,7 @@ public class AccordoServizioUtils {
 		// --------- WSDL CONCETTUALE/LOGICO EROGATORE ---------------------
 		if(schemiInWsdlFruitore.size()>0){
 
-			Hashtable<String, String> declarationNamespacesWSDL = null;
+			Map<String, String> declarationNamespacesWSDL = null;
 			try{
 				declarationNamespacesWSDL = this.xmlUtils.getNamespaceDeclaration(dWsdlFruitore.getDocumentElement());
 			}catch(Exception e){

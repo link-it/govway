@@ -20,9 +20,11 @@
 
 package org.openspcoop2.utils.wadl;
 
-import java.util.Hashtable;
-
 import org.slf4j.Logger;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.XMLException;
@@ -45,8 +47,8 @@ public class SchemaCallback implements org.jvnet.ws.wadl.ast.WadlAstBuilder.Sche
 	 * Gli altri schemi volendo possono essere aggiunti tramite il metodo 'addResource' 
 	 **/
 	
-	private Hashtable<String, byte[]> resources = new Hashtable<String, byte[]>();
-	private Hashtable<String, String> mappingNamespaceLocations = new Hashtable<String, String>();
+	private Map<String, byte[]> resources = new HashMap<String, byte[]>();
+	private Map<String, String> mappingNamespaceLocations = new HashMap<String, String>();
 	private Logger log;
 	private AbstractXMLUtils xmlUtils = null;
 	private XSDUtils xsdUtils = null;
@@ -103,11 +105,11 @@ public class SchemaCallback implements org.jvnet.ws.wadl.ast.WadlAstBuilder.Sche
 		}
 	}
 
-	public Hashtable<String, byte[]> getResources() {
+	public Map<String, byte[]> getResources() {
 		return this.resources;
 	}
 
-	public Hashtable<String, String> getMappingNamespaceLocations() {
+	public Map<String, String> getMappingNamespaceLocations() {
 		return this.mappingNamespaceLocations;
 	}
 	

@@ -86,8 +86,8 @@ public class PluginManager {
 		boolean update = false;
 		
 		//synchronized (this.semaphore_expire) {
+		this.lock_expire.acquire("update");
 		try {
-			this.lock_expire.acquire("update");
 			if(this.expireDate==null || nowDate.after(this.expireDate)) {
 				this.expireDate = new Date(nowDate.getTime()+(this.expireSeconds*1000));
 				update = true;
@@ -112,8 +112,8 @@ public class PluginManager {
 	private void update(Logger log, RegistroPlugins pluginsParam) throws Exception {
 		
 		//synchronized (this.semaphore_image) {
+		this.lock_image.acquire("update");
 		try {
-			this.lock_image.acquire("update");
 			
 			RegistroPlugins plugins = null;
 			if(pluginsParam!=null) {
@@ -239,8 +239,8 @@ public class PluginManager {
 		
 		// Chiusura di tutti
 		//synchronized (this.semaphore_image) {
+		this.lock_image.acquireThrowRuntime("close");
 		try {
-			this.lock_image.acquireThrowRuntime("close");
 			
 			if(this.plugins_image!=null && this.plugins_image.plugins.size()>0) {
 				for (Plugin plugin : this.plugins_image.plugins.values()) {

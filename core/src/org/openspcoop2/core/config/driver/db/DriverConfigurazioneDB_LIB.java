@@ -35,10 +35,9 @@ import java.sql.Types;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
@@ -826,7 +825,7 @@ public class DriverConfigurazioneDB_LIB {
 		
 		boolean isAbilitato = false;
 
-		Hashtable<String, String> extendedProperties = new Hashtable<String, String>();
+		Map<String, String> extendedProperties = new HashMap<String, String>();
 		
 		List<String> propertiesGestiteAttraversoColonneAdHoc = new ArrayList<String>();
 		
@@ -1138,19 +1137,17 @@ public class DriverConfigurazioneDB_LIB {
 					sqlQueryObject.addInsertField("id_connettore", "?");
 					sqlQuery = sqlQueryObject.createSQLInsert();
 					
-					Enumeration<String> keys = extendedProperties.keys();
-					while (keys.hasMoreElements()) {
-						nomeProperty = (String) keys.nextElement();
-						valoreProperty = extendedProperties.get(nomeProperty);
+					for (String nomeP : extendedProperties.keySet()) {
+						valoreProperty = extendedProperties.get(nomeP);
 						if (valoreProperty != null && valoreProperty.equals(""))
 							valoreProperty = null;
 					
 						if(valoreProperty==null){
-							throw new Exception("Property ["+nomeProperty+"] without value");
+							throw new Exception("Property ["+nomeP+"] without value");
 						}
 						
 						stm = connection.prepareStatement(sqlQuery);
-						stm.setString(1, nomeProperty);
+						stm.setString(1, nomeP);
 						stm.setString(2, valoreProperty);
 						stm.setLong(3, connettore.getId());
 						stm.executeUpdate();
@@ -1328,19 +1325,17 @@ public class DriverConfigurazioneDB_LIB {
 					sqlQueryObject.addInsertField("id_connettore", "?");
 					sqlQuery = sqlQueryObject.createSQLInsert();
 					
-					Enumeration<String> keys = extendedProperties.keys();
-					while (keys.hasMoreElements()) {
-						nomeProperty = (String) keys.nextElement();
-						valoreProperty = extendedProperties.get(nomeProperty);
+					for (String nomeP : extendedProperties.keySet()) {
+						valoreProperty = extendedProperties.get(nomeP);
 						if (valoreProperty != null && valoreProperty.equals(""))
 							valoreProperty = null;
 					
 						if(valoreProperty==null){
-							throw new Exception("Property ["+nomeProperty+"] without value");
+							throw new Exception("Property ["+nomeP+"] without value");
 						}
 						
 						stm = connection.prepareStatement(sqlQuery);
-						stm.setString(1, nomeProperty);
+						stm.setString(1, nomeP);
 						stm.setString(2, valoreProperty);
 						stm.setLong(3, idConnettore);
 						stm.executeUpdate();

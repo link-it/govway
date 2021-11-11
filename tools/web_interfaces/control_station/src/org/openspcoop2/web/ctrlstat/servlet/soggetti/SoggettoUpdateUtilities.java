@@ -20,9 +20,9 @@
 package org.openspcoop2.web.ctrlstat.servlet.soggetti;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
@@ -383,7 +383,7 @@ public class SoggettoUpdateUtilities {
 		// Porte Delegate
 		// Se e' cambiato il tipo o il nome del soggetto devo effettuare la modifica delle porte delegate
 		// poiche il cambio si riflette sul nome della porta delegata
-		Hashtable<Long, PortaDelegata> listaPD = new Hashtable<Long, PortaDelegata>();
+		Map<Long, PortaDelegata> listaPD = new HashMap<Long, PortaDelegata>();
 		
 		if (!this.oldnomeprov.equals(this.nomeprov) || !this.oldtipoprov.equals(this.tipoprov)) {
 
@@ -905,71 +905,71 @@ public class SoggettoUpdateUtilities {
 
 		// aggiorno le porte delegate
 		
-		Hashtable<String, AttivazionePolicy> listaPolicyPD = new Hashtable<String, AttivazionePolicy>();
-		Hashtable<String, ConfigurazioneAllarmeBean> listaAllarmiPD = new Hashtable<String, ConfigurazioneAllarmeBean>();
+		Map<String, AttivazionePolicy> listaPolicyPD = new HashMap<String, AttivazionePolicy>();
+		Map<String, ConfigurazioneAllarmeBean> listaAllarmiPD = new HashMap<String, ConfigurazioneAllarmeBean>();
 		
-		Enumeration<PortaDelegata> en = listaPD.elements();
-		while (en.hasMoreElements()) {
-			PortaDelegata portaDelegata = en.nextElement();
-			
-			_updateSoggettoInliste(portaDelegata);
-			
-			this.oggettiDaAggiornare.add(portaDelegata);
-			
-			// verifico rate limiting per ogni porta delegata trovata
-			
-			// Controllo policy di Rate Limiting
-			Search ricercaPolicies = new Search(true);
-			List<AttivazionePolicy> listaPolicies = null;
-			String oldNomePorta = portaDelegata.getNome();
-			try {
-				if(portaDelegata.getOldIDPortaDelegataForUpdate()!=null && portaDelegata.getOldIDPortaDelegataForUpdate().getNome()!=null) {
-					oldNomePorta = portaDelegata.getOldIDPortaDelegataForUpdate().getNome();
-				}
-				listaPolicies = this.confCore.attivazionePolicyList(ricercaPolicies, RuoloPolicy.DELEGATA, oldNomePorta);
-			}catch(Exception e) {}
-			if(listaPolicies!=null && !listaPolicies.isEmpty()) {
-				for (AttivazionePolicy ap : listaPolicies) {
-					if(ap.getFiltro()!=null && oldNomePorta.equals(ap.getFiltro().getNomePorta())) {
-						
-						// aggiorno nome porta
-						ap.getFiltro().setNomePorta(portaDelegata.getNome());
-						
-						_updateFiltroSoggetto(ap);
-														
-						listaPolicyPD.put(ap.getIdActivePolicy(), ap);
-					}
-				}
-			}
-			// fine Controllo policy di Rate Limiting
-			
-			if(this.confCore.isConfigurazioneAllarmiEnabled()) {
-				// Controllo allarmi
-				Search ricercaAllarmi = new Search(true);
-				List<ConfigurazioneAllarmeBean> listaAllarmi = null;
-				oldNomePorta = portaDelegata.getNome();
+		if(listaPD!=null && !listaPD.isEmpty()) {
+			for (PortaDelegata portaDelegata : listaPD.values()) {
+				
+				_updateSoggettoInliste(portaDelegata);
+				
+				this.oggettiDaAggiornare.add(portaDelegata);
+				
+				// verifico rate limiting per ogni porta delegata trovata
+				
+				// Controllo policy di Rate Limiting
+				Search ricercaPolicies = new Search(true);
+				List<AttivazionePolicy> listaPolicies = null;
+				String oldNomePorta = portaDelegata.getNome();
 				try {
 					if(portaDelegata.getOldIDPortaDelegataForUpdate()!=null && portaDelegata.getOldIDPortaDelegataForUpdate().getNome()!=null) {
 						oldNomePorta = portaDelegata.getOldIDPortaDelegataForUpdate().getNome();
 					}
-					listaAllarmi = this.confCore.allarmiList(ricercaAllarmi, RuoloPorta.DELEGATA, oldNomePorta);
+					listaPolicies = this.confCore.attivazionePolicyList(ricercaPolicies, RuoloPolicy.DELEGATA, oldNomePorta);
 				}catch(Exception e) {}
-				if(listaAllarmi!=null && !listaAllarmi.isEmpty()) {
-					for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
-						if(allarme.getFiltro()!=null && oldNomePorta.equals(allarme.getFiltro().getNomePorta())) {
+				if(listaPolicies!=null && !listaPolicies.isEmpty()) {
+					for (AttivazionePolicy ap : listaPolicies) {
+						if(ap.getFiltro()!=null && oldNomePorta.equals(ap.getFiltro().getNomePorta())) {
 							
 							// aggiorno nome porta
-							allarme.getFiltro().setNomePorta(portaDelegata.getNome());
+							ap.getFiltro().setNomePorta(portaDelegata.getNome());
 							
-							_updateFiltroSoggetto(allarme);
+							_updateFiltroSoggetto(ap);
 															
-							listaAllarmiPD.put(allarme.getNome(), allarme);
+							listaPolicyPD.put(ap.getIdActivePolicy(), ap);
 						}
 					}
 				}
-				// fine Controllo allarmi
+				// fine Controllo policy di Rate Limiting
+				
+				if(this.confCore.isConfigurazioneAllarmiEnabled()) {
+					// Controllo allarmi
+					Search ricercaAllarmi = new Search(true);
+					List<ConfigurazioneAllarmeBean> listaAllarmi = null;
+					oldNomePorta = portaDelegata.getNome();
+					try {
+						if(portaDelegata.getOldIDPortaDelegataForUpdate()!=null && portaDelegata.getOldIDPortaDelegataForUpdate().getNome()!=null) {
+							oldNomePorta = portaDelegata.getOldIDPortaDelegataForUpdate().getNome();
+						}
+						listaAllarmi = this.confCore.allarmiList(ricercaAllarmi, RuoloPorta.DELEGATA, oldNomePorta);
+					}catch(Exception e) {}
+					if(listaAllarmi!=null && !listaAllarmi.isEmpty()) {
+						for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
+							if(allarme.getFiltro()!=null && oldNomePorta.equals(allarme.getFiltro().getNomePorta())) {
+								
+								// aggiorno nome porta
+								allarme.getFiltro().setNomePorta(portaDelegata.getNome());
+								
+								_updateFiltroSoggetto(allarme);
+																
+								listaAllarmiPD.put(allarme.getNome(), allarme);
+							}
+						}
+					}
+					// fine Controllo allarmi
+				}
+				
 			}
-			
 		}
 		
 		
@@ -1033,10 +1033,10 @@ public class SoggettoUpdateUtilities {
 		
 		
 		// aggiorno le policy di rate limiting associate alle porte delegate
-		Enumeration<AttivazionePolicy> enPolicy = listaPolicyPD.elements();
-		while (enPolicy.hasMoreElements()) {
-			AttivazionePolicy ap = (AttivazionePolicy) enPolicy.nextElement();
-			this.oggettiDaAggiornare.add(ap);
+		if(listaPolicyPD!=null && !listaPolicyPD.isEmpty()) {
+			for (AttivazionePolicy ap : listaPolicyPD.values()) {
+				this.oggettiDaAggiornare.add(ap);
+			}
 		}
 		
 		
@@ -1101,10 +1101,10 @@ public class SoggettoUpdateUtilities {
 			
 			
 			// aggiorno gli allarmi associati alle porte delegate
-			Enumeration<ConfigurazioneAllarmeBean> enAllarme = listaAllarmiPD.elements();
-			while (enAllarme.hasMoreElements()) {
-				ConfigurazioneAllarmeBean allarme = (ConfigurazioneAllarmeBean) enAllarme.nextElement();
-				this.oggettiDaAggiornare.add(allarme);
+			if(listaAllarmiPD!=null && !listaAllarmiPD.isEmpty()) {
+				for (ConfigurazioneAllarmeBean allarme : listaAllarmiPD.values()) {
+					this.oggettiDaAggiornare.add(allarme);
+				}
 			}
 		}
 	}
@@ -1136,10 +1136,10 @@ public class SoggettoUpdateUtilities {
 			// PORTE APPLICATIVE
 			// Se e' cambiato il tipo o il nome del soggetto virtuale devo effettuare la modifica delle porte applicative
 			// poiche il cambio si riflette all'interno delle informazioni delle porte applicative
-			Hashtable<String, PortaApplicativa> listaPA = new Hashtable<String, PortaApplicativa>();
-			Hashtable<String, ServizioApplicativo> listaPA_SA = new Hashtable<String, ServizioApplicativo>();
-			Hashtable<String, AttivazionePolicy> listaPolicyPA = new Hashtable<String, AttivazionePolicy>();
-			Hashtable<String, ConfigurazioneAllarmeBean> listaAllarmiPA = new Hashtable<String, ConfigurazioneAllarmeBean>();
+			Map<String, PortaApplicativa> listaPA = new HashMap<String, PortaApplicativa>();
+			Map<String, ServizioApplicativo> listaPA_SA = new HashMap<String, ServizioApplicativo>();
+			Map<String, AttivazionePolicy> listaPolicyPA = new HashMap<String, AttivazionePolicy>();
+			Map<String, ConfigurazioneAllarmeBean> listaAllarmiPA = new HashMap<String, ConfigurazioneAllarmeBean>();
 
 			
 			if (!this.oldnomeprov.equals(this.nomeprov) || !this.oldtipoprov.equals(this.tipoprov)) {
@@ -1626,29 +1626,29 @@ public class SoggettoUpdateUtilities {
 			}			
 
 			// aggiorno le porte applicative
-			Enumeration<PortaApplicativa> enPA = listaPA.elements();
-			while (enPA.hasMoreElements()) {
-				PortaApplicativa portaApplicativa = (PortaApplicativa) enPA.nextElement();
-				this.oggettiDaAggiornare.add(portaApplicativa);
+			if(listaPA!=null && !listaPA.isEmpty()) {
+				for (PortaApplicativa portaApplicativa : listaPA.values()) {
+					this.oggettiDaAggiornare.add(portaApplicativa);
+				}
 			}
 			// aggiorno i servizi applicativi associati alle porte applicative (vanno aggiornati dopo le PA poiche sono riferiti con i vecchi nomi dentro le pa)
-			Enumeration<ServizioApplicativo> enSA = listaPA_SA.elements();
-			while (enSA.hasMoreElements()) {
-				ServizioApplicativo sa = (ServizioApplicativo) enSA.nextElement();
-				this.oggettiDaAggiornare.add(sa);
+			if(listaPA_SA!=null && !listaPA_SA.isEmpty()) {
+				for (ServizioApplicativo sa : listaPA_SA.values()) {
+					this.oggettiDaAggiornare.add(sa);
+				}
 			}
 			// aggiorno le policy di rate limiting associate alle porte applicative
-			Enumeration<AttivazionePolicy> enPolicy = listaPolicyPA.elements();
-			while (enPolicy.hasMoreElements()) {
-				AttivazionePolicy ap = (AttivazionePolicy) enPolicy.nextElement();
-				this.oggettiDaAggiornare.add(ap);
+			if(listaPolicyPA!=null && !listaPolicyPA.isEmpty()) {
+				for (AttivazionePolicy ap : listaPolicyPA.values()) {
+					this.oggettiDaAggiornare.add(ap);
+				}
 			}
 			if(this.confCore.isConfigurazioneAllarmiEnabled()) {
 				// aggiorno gli allarmi associati alle porte applicative
-				Enumeration<ConfigurazioneAllarmeBean> enAllarme = listaAllarmiPA.elements();
-				while (enAllarme.hasMoreElements()) {
-					ConfigurazioneAllarmeBean allarme = (ConfigurazioneAllarmeBean) enAllarme.nextElement();
-					this.oggettiDaAggiornare.add(allarme);
+				if(listaAllarmiPA!=null && !listaAllarmiPA.isEmpty()) {
+					for (ConfigurazioneAllarmeBean allarme : listaAllarmiPA.values()) {
+						this.oggettiDaAggiornare.add(allarme);
+					}
 				}
 			}
 		}
@@ -1810,7 +1810,7 @@ public class SoggettoUpdateUtilities {
 			
 			if (!this.oldnomeprov.equals(this.nomeprov) || !this.oldtipoprov.equals(this.tipoprov)) {
 			
-				Hashtable<String, AttivazionePolicy> listaPolicyPA = new Hashtable<String, AttivazionePolicy>();
+				Map<String, AttivazionePolicy> listaPolicyPA = new HashMap<String, AttivazionePolicy>();
 				
 				
 				IDSoggetto filtroSoggettoFruitore = new IDSoggetto(this.oldtipoprov, this.oldnomeprov);
@@ -1864,10 +1864,10 @@ public class SoggettoUpdateUtilities {
 				// fine Controllo policy di Rate Limiting
 				
 				// aggiorno le policy di rate limiting globali
-				Enumeration<AttivazionePolicy> enPolicy = listaPolicyPA.elements();
-				while (enPolicy.hasMoreElements()) {
-					AttivazionePolicy ap = (AttivazionePolicy) enPolicy.nextElement();
-					this.oggettiDaAggiornare.add(ap);
+				if(listaPolicyPA!=null && !listaPolicyPA.isEmpty()) {
+					for (AttivazionePolicy ap : listaPolicyPA.values()) {
+						this.oggettiDaAggiornare.add(ap);
+					}
 				}
 			}
 		}

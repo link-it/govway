@@ -23,7 +23,8 @@
 package org.openspcoop2.protocol.sdk.tracciamento;
 
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -71,11 +72,11 @@ public class FiltroRicercaTracce implements java.io.Serializable {
 
 	protected String protocollo;
 
-	protected Hashtable<String, String> properties;
+	protected Map<String, String> properties;
 
 
 	public FiltroRicercaTracce() {
-		this.properties = new Hashtable<String, String>();
+		this.properties = new HashMap<String, String>();
 	}
 
 
@@ -245,7 +246,7 @@ public class FiltroRicercaTracce implements java.io.Serializable {
 	 * 
 	 * 
 	 */
-	public Hashtable<String, String> getProperty() {
+	public Map<String, String> getProperty() {
 		return this.properties;
 	}
 
@@ -315,11 +316,11 @@ public class FiltroRicercaTracce implements java.io.Serializable {
 		return this.properties.keySet().toArray(new String[this.properties.size()]);
 	}
 
-	public void setProperties(Hashtable<String, String> params) {
+	public void setProperties(Map<String, String> params) {
 		this.properties = params;
 	}
 
-	public Hashtable<String, String> getProperties() {
+	public Map<String, String> getProperties() {
 		return this.properties;
 	}
 

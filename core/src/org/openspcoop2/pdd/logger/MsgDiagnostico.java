@@ -25,9 +25,7 @@ package org.openspcoop2.pdd.logger;
 
 import java.sql.Connection;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -765,7 +763,8 @@ public class MsgDiagnostico {
 		}
 		return tmp;
 		*/
-		
+
+		/* Costoso e inutile per quasi tutti i diagnostici
 		// Check di esistenza di almeno 2 '@'
 		if(msg!=null && msg.length()>2){
 			int index1 = msg.indexOf("@");
@@ -774,6 +773,7 @@ public class MsgDiagnostico {
 				return msg; // non serve il replace
 			}
 		}
+		*/
 		
 		StringBuilder bf = new StringBuilder();
 		StringBuilder keyword = new StringBuilder();
@@ -797,7 +797,7 @@ public class MsgDiagnostico {
 					}else{
 						bf.append(valoreRimpiazzato);
 					}
-					keyword.delete(0, keyword.length());
+					keyword.setLength(0);
 					separator=false;
 				}
 			}else{
@@ -809,6 +809,8 @@ public class MsgDiagnostico {
 				}
 			}
 		}
+		if ( separator )
+			bf.append(keyword.toString());
 		return bf.toString();
 	}
 	

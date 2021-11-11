@@ -22,7 +22,8 @@
 
 package org.openspcoop2.utils.resources;
 
-import java.util.Hashtable;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -62,8 +63,8 @@ public class GestoreJNDI {
 	}
 
 	
-	
-	private static Hashtable<String, Object> localTreeJNDI = new Hashtable<String, Object>();
+	private static org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("GestoreJNDI");
+	private static Map<String, Object> localTreeJNDI = new ConcurrentHashMap<String, Object>();
 	public static String LOCAL_TREE_JNDI_PREFIX = "local:/openspcoop2/";
 
 
@@ -79,8 +80,12 @@ public class GestoreJNDI {
 			//System.out.println("-------------------------------- LOCAL LOOKUP ["+fullPath+"]");
 			
 			Object o = null;
-			synchronized (localTreeJNDI) {
+			//synchronized (localTreeJNDI) {
+			semaphore.acquireThrowRuntime("lookup");
+			try {
 				o = localTreeJNDI.get(fullPath);
+			}finally {
+				semaphore.release("lookup");
 			}
 			if(o==null){
 				throw new UtilsException("LocalResource ["+fullPath+"] not found");
@@ -134,8 +139,12 @@ public class GestoreJNDI {
 			//System.out.println("-------------------------------- LOCAL UNBIND ["+fullPath+"]");
 			
 			Object o = null;
-			synchronized (localTreeJNDI) {
+			//synchronized (localTreeJNDI) {
+			semaphore.acquireThrowRuntime("unbind");
+			try {
 				o = localTreeJNDI.remove(fullPath);
+			}finally {
+				semaphore.release("unbind");
 			}
 			if(log!=null)
 				log.warn("LocalResource ["+fullPath+"] not found");
@@ -214,7 +223,9 @@ public class GestoreJNDI {
 			
 			//System.out.println("-------------------------------- LOCAL BIND ["+fullPath+"]");
 			
-			synchronized (localTreeJNDI) {
+			//synchronized (localTreeJNDI) {
+			semaphore.acquireThrowRuntime("bind");
+			try {
 				
 				if(localTreeJNDI.containsKey(fullPath)){
 					if(log!=null)
@@ -226,6 +237,8 @@ public class GestoreJNDI {
 				
 				localTreeJNDI.put(fullPath, toBind);
 				return true;
+			}finally {
+				semaphore.release("bind");
 			}
 			
 		}

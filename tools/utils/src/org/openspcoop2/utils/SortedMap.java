@@ -20,8 +20,9 @@
 package org.openspcoop2.utils;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * SortMap
@@ -33,7 +34,7 @@ import java.util.List;
 public class SortedMap<T> {
 
 	protected List<String> list = new ArrayList<String>(); // per preservare l'ordine
-	protected Hashtable<String, T> map = new Hashtable<String, T>();
+	protected Map<String, T> map = new HashMap<String, T>();
 	
 	public int size(){
 		return this.list.size();
@@ -77,7 +78,7 @@ public class SortedMap<T> {
 		return this.map.containsKey(key);
 	}
 	public boolean containsValue(T value){
-		return this.map.contains(value);
+		return this.map.containsValue(value);
 	}
 	
 	public boolean isEmpty() {

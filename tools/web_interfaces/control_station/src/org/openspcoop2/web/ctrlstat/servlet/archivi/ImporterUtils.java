@@ -26,8 +26,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
@@ -286,9 +286,9 @@ public class ImporterUtils {
 		
 	}
 
-	public Hashtable<String,String> getImportModesWithProtocol(List<String> protocolli) throws ProtocolException{
+	public Map<String,String> getImportModesWithProtocol(List<String> protocolli) throws ProtocolException{
 
-		Hashtable<String,String> importModes = new Hashtable<String,String>();
+		Map<String,String> importModes = new HashMap<String,String>();
 		for (int i = 0; i < protocolli.size(); i++) {
 			String protocolName = protocolli.get(i);
 			if(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO_UNDEFINDED.equals(protocolName)==false){

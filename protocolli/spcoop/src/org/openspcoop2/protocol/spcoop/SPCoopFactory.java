@@ -21,9 +21,13 @@
 package org.openspcoop2.protocol.spcoop;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.xml.soap.SOAPHeaderElement;
 
 import org.openspcoop2.protocol.basic.BasicFactory;
+import org.openspcoop2.protocol.basic.BasicStaticInstanceConfig;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -59,6 +63,7 @@ import org.openspcoop2.protocol.spcoop.validator.SPCoopValidazioneConSchema;
 import org.openspcoop2.protocol.spcoop.validator.SPCoopValidazioneDocumenti;
 import org.openspcoop2.protocol.spcoop.validator.SPCoopValidazioneSemantica;
 import org.openspcoop2.protocol.spcoop.validator.SPCoopValidazioneSintattica;
+import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.slf4j.Logger;
 
 
@@ -84,6 +89,32 @@ public class SPCoopFactory extends BasicFactory<SOAPHeaderElement> {
 		SPCoopProperties.initialize(configPdD.getConfigurationDir(),log);
 		SPCoopProperties properties = SPCoopProperties.getInstance(log);
 		properties.validaConfigurazione(configPdD.getLoader());
+		
+		BasicStaticInstanceConfig staticInstanceConfig = properties.getStaticInstanceConfig();
+		super.initStaticInstance(staticInstanceConfig);
+		if(staticInstanceConfig!=null) {
+			if(staticInstanceConfig.isStaticConfig()) {
+				staticInstanceProtocolManager = new SPCoopProtocolManager(this);
+				staticInstanceProtocolVersionManager = new HashMap<String, IProtocolVersionManager>();
+				staticInstanceTraduttore = new SPCoopTraduttore(this);
+				staticInstanceProtocolConfiguration = new SPCoopProtocolConfiguration(this);
+			}
+			if(staticInstanceConfig.isStaticErrorBuilder()) {
+				staticInstanceErroreApplicativoBuilder = new SPCoopErroreApplicativoBuilder(this);
+			}
+			if(staticInstanceConfig.isStaticEsitoBuilder() && EsitiProperties.isInitializedProtocol(this.getProtocol())) {
+				staticInstanceEsitoBuilder = new SPCoopEsitoBuilder(this);
+			}
+		}
+	}
+	@Override
+	public void initStaticInstance() throws ProtocolException{
+		super.initStaticInstance();
+		if(this.staticInstanceConfig!=null && this.staticInstanceConfig.isStaticEsitoBuilder() && staticInstanceEsitoBuilder==null) {
+			if(EsitiProperties.isInitializedProtocol(this.getProtocol())) {
+				staticInstanceEsitoBuilder = new SPCoopEsitoBuilder(this);
+			}
+		}
 	}
 	
 	
@@ -94,15 +125,17 @@ public class SPCoopFactory extends BasicFactory<SOAPHeaderElement> {
 		return new SPCoopBustaBuilder(this,state);
 	}
 
+	private static org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder staticInstanceErroreApplicativoBuilder = null;
 	@Override
 	public IErroreApplicativoBuilder createErroreApplicativoBuilder()
 			throws ProtocolException {
-		return new SPCoopErroreApplicativoBuilder(this);
+		return staticInstanceErroreApplicativoBuilder!=null ? staticInstanceErroreApplicativoBuilder : new SPCoopErroreApplicativoBuilder(this);
 	}
 	
+	private static org.openspcoop2.protocol.sdk.builder.IEsitoBuilder staticInstanceEsitoBuilder = null;
 	@Override
 	public IEsitoBuilder createEsitoBuilder() throws ProtocolException {
-		return new SPCoopEsitoBuilder(this);
+		return staticInstanceEsitoBuilder!=null ? staticInstanceEsitoBuilder : new SPCoopEsitoBuilder(this);
 	}
 	
 		
@@ -174,27 +207,44 @@ public class SPCoopFactory extends BasicFactory<SOAPHeaderElement> {
 	
 	/* ** CONFIG ** */
 	
+	private static IProtocolManager staticInstanceProtocolManager = null;
 	@Override
 	public IProtocolManager createProtocolManager()
 			throws ProtocolException {
-		return new SPCoopProtocolManager(this);
+		return staticInstanceProtocolManager!=null ? staticInstanceProtocolManager : new SPCoopProtocolManager(this);
 	}
 	
+	private static Map<String, IProtocolVersionManager> staticInstanceProtocolVersionManager = null;
 	@Override
 	public IProtocolVersionManager createProtocolVersionManager(String version)
 			throws ProtocolException {
-		return new SPCoopProtocolVersionManager(this,version);
+		if(staticInstanceProtocolVersionManager!=null) {
+			if(!staticInstanceProtocolVersionManager.containsKey(version)) {
+				initProtocolVersionManager(version);
+			}
+			return staticInstanceProtocolVersionManager.get(version);
+		}
+		else {
+			return new SPCoopProtocolVersionManager(this,version);
+		}
+	}
+	private synchronized void initProtocolVersionManager(String version) throws ProtocolException {
+		if(!staticInstanceProtocolVersionManager.containsKey(version)) {
+			staticInstanceProtocolVersionManager.put(version, new SPCoopProtocolVersionManager(this,version));
+		}
 	}
 
+	private static ITraduttore staticInstanceTraduttore = null;
 	@Override
 	public ITraduttore createTraduttore() throws ProtocolException {
-		return new SPCoopTraduttore(this);
+		return staticInstanceTraduttore!=null ? staticInstanceTraduttore : new SPCoopTraduttore(this);
 	}
 	
+	private static IProtocolConfiguration staticInstanceProtocolConfiguration = null;
 	@Override
 	public IProtocolConfiguration createProtocolConfiguration()
 			throws ProtocolException {
-		return new SPCoopProtocolConfiguration(this);
+		return staticInstanceProtocolConfiguration!=null ? staticInstanceProtocolConfiguration : new SPCoopProtocolConfiguration(this);
 	}
 
 	

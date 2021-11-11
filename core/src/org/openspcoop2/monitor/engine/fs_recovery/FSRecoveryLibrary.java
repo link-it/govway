@@ -45,12 +45,14 @@ public class FSRecoveryLibrary {
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM,
 			ITracciaProducer tracciamentoAppender,
 			IDiagnosticProducer diagnosticoAppender,
-			IDumpProducer dumpAppender,
+			IDumpProducer dumpAppender, boolean transazioniRegistrazioneDumpHeadersCompactEnabled,
 			org.openspcoop2.core.eventi.dao.IServiceManager pluginsEventiSM){
 		generate(config, 
 				daoFactory, daoFactoryLogger, daoFactoryServiceManagerProperties,
 				gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval,
-				transazioniSM, tracciamentoAppender, diagnosticoAppender, dumpAppender, pluginsEventiSM, null);
+				transazioniSM, tracciamentoAppender, diagnosticoAppender, 
+				dumpAppender, transazioniRegistrazioneDumpHeadersCompactEnabled,
+				pluginsEventiSM, null);
 	}
 	public static void generate(FSRecoveryConfig config,
 			DAOFactory daoFactory, Logger daoFactoryLogger, ServiceManagerProperties daoFactoryServiceManagerProperties,
@@ -58,7 +60,7 @@ public class FSRecoveryLibrary {
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM,
 			ITracciaProducer tracciamentoAppender,
 			IDiagnosticProducer diagnosticoAppender,
-			IDumpProducer dumpAppender,
+			IDumpProducer dumpAppender, boolean transazioniRegistrazioneDumpHeadersCompactEnabled,
 			org.openspcoop2.core.eventi.dao.IServiceManager pluginsEventiSM,
 			Connection connection){
 		try{
@@ -114,6 +116,11 @@ public class FSRecoveryLibrary {
 				File dirTransazioniApplicativoServerDLQ = new File(dirTransazioniApplicativoServer,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_DLQ);
 				checkDir(dirTransazioniApplicativoServerDLQ, true, true);
 				
+				File dirTransazioniApplicativoServerConsegnaTerminata = new File(dir,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_TRANSAZIONE_APPLICATIVO_SERVER_CONSEGNA_TERMINATA);
+				checkDir(dirTransazioniApplicativoServerConsegnaTerminata, true, false);
+				File dirTransazioniApplicativoServerConsegnaTerminataDLQ = new File(dirTransazioniApplicativoServerConsegnaTerminata,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_DLQ);
+				checkDir(dirTransazioniApplicativoServerConsegnaTerminataDLQ, true, true);
+				
 				File dirTransazioni = new File(dir,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_TRANSAZIONE);
 				checkDir(dirTransazioni, true, false);
 				File dirTransazioniDLQ = new File(dirTransazioni,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_DLQ);
@@ -123,11 +130,13 @@ public class FSRecoveryLibrary {
 						daoFactory, daoFactoryLogger, daoFactoryServiceManagerProperties,
 						gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval,
 						transazioniSM,
-						tracciamentoAppender, diagnosticoAppender, dumpAppender, 
+						tracciamentoAppender, diagnosticoAppender, 
+						dumpAppender, transazioniRegistrazioneDumpHeadersCompactEnabled, 
 						dirDiagnostici,dirDiagnosticiDLQ,
 						dirTracce,dirTracceDLQ,
 						dirDump,dirDumpDLQ,
 						dirTransazioniApplicativoServer, dirTransazioniApplicativoServerDLQ,
+						dirTransazioniApplicativoServerConsegnaTerminata, dirTransazioniApplicativoServerConsegnaTerminataDLQ,
 						dirTransazioni,dirTransazioniDLQ,
 						config.getTentativi());
 				fs.process(connection);

@@ -24,9 +24,10 @@ import java.net.InetSocketAddress;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -630,7 +631,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			}
 
 			// inserisco i campi hidden
-			Hashtable<String, String> hidden = new Hashtable<String, String>();
+			Map<String, String> hidden = new HashMap<String, String>();
 			hidden.put(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servlet);
 			hidden.put(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID, id != null ? id : "");
 			hidden.put(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SOGGETTO, nomeprov != null ? nomeprov : "");

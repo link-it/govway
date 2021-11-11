@@ -137,8 +137,8 @@ public class PipedUnblockedStream extends InputStream {
 			//this.log.debug("########### READ b["+b.length+"] off["+off+"] len["+len+"] BYTES AVAILABLE FROM PRECEDENT BUFFERING IS NULL ...");
 			//this.log.debug("########### READ b["+b.length+"] off["+off+"] len["+len+"] SYNC ...");
 			//synchronized (this.semaphore) {
+			this.lockPIPE.acquireThrowRuntime("read");
 			try {
-				this.lockPIPE.acquireThrowRuntime("read");
 				//this.log.debug("########### READ b["+b.length+"] off["+off+"] len["+len+"] SYNC A1 ...");
 				this.bout.flush();
 				//this.log.debug("########### READ b["+b.length+"] off["+off+"] len["+len+"] SYNC A2 ...");
@@ -289,8 +289,8 @@ public class PipedUnblockedStream extends InputStream {
 		
 		//this.log.debug("########### WRITE byte SYNC ...");
 		//synchronized (this.semaphore) {
+		this.lockPIPE.acquireThrowRuntime("write(b)");
 		try {
-			this.lockPIPE.acquireThrowRuntime("write(b)");
 			this.bout.write(b);
 			//this.log.debug("########### WRITE byte SYNC OK");
 			//System.out.println("########### WRITE byte SYNC OK ADD[1] SIZE_ATTUALE["+this.bout.size()+"]");
@@ -314,8 +314,8 @@ public class PipedUnblockedStream extends InputStream {
 		
 		//this.log.debug("########### WRITE byte ["+b.length+"] SYNC ...");
 		//synchronized (this.semaphore) {
+		this.lockPIPE.acquireThrowRuntime("write(b[])");
 		try {
-			this.lockPIPE.acquireThrowRuntime("write(b[])");
 			this.bout.write(b);
 			//this.log.debug("########### WRITE byte ["+b.length+"] SYNC OK");
 			//System.out.println("########### WRITE byte SYNC OK ADD["+b.length+"] SIZE_ATTUALE["+this.bout.size()+"]");
@@ -339,8 +339,8 @@ public class PipedUnblockedStream extends InputStream {
 		
 		//this.log.debug("########### WRITE byte ["+b.length+"] off:"+off+" len:"+len+" SYNC ...");
 		//synchronized (this.semaphore) {
+		this.lockPIPE.acquireThrowRuntime("write(b[],off,len)");
 		try {
-			this.lockPIPE.acquireThrowRuntime("write(b[],off,len)");
 			this.bout.write(b, off, len);
 			//this.log.debug("########### WRITE byte ["+b.length+"] off:"+off+" len:"+len+" SYNC OK");
 			//System.out.println("########### WRITE byte SYNC OK ADD["+b.length+"] SIZE_ATTUALE["+this.bout.size()+"]");

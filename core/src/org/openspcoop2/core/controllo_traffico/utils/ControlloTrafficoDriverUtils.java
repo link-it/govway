@@ -25,7 +25,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -1059,7 +1058,7 @@ public class ControlloTrafficoDriverUtils {
 			
 			if(listPolicyAttiveConStatoDisabilitato !=null && listPolicyAttiveConStatoDisabilitato.size()>0) {
 				//System.out.println("UPDATEEEEEEE SOGLIA ("+listPolicyAttiveConStatoDisabilitato.size()+") DISABILITO");
-				Hashtable<String, Boolean> mapStati = new Hashtable<String, Boolean>();
+				Map<String, Boolean> mapStati = new HashMap<String, Boolean>();
 				// NOTA: Devo fare la dobbia modifica perche' c'e' un controllo sul livello db layer che verifica se ci sono state modifiche
 				for (AttivazionePolicy ap : listPolicyAttiveConStatoDisabilitato) {
 					IdActivePolicy idActivePolicy = new IdActivePolicy();

@@ -23,7 +23,8 @@
 package org.openspcoop2.pdd.services.core;
 
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.protocol.engine.RequestInfo;
@@ -57,7 +58,7 @@ public class RicezioneBusteContext extends AbstractContext implements java.io.Se
 	/** Forza gestione messaggio come messaggio che deve essere ricevuto senza duplicati, in caso il messaggio sia gia' in processamento */
 	private boolean forzaFiltroDuplicati_msgGiaInProcessamento = false;
 	/** Proprieta' per filtro PA */
-	private Hashtable<String, String> filtroPA = new 	Hashtable<String, String>();
+	private Map<String, String> filtroPA = new 	HashMap<String, String>();
 
 	
 	/** Costruttore */
@@ -78,13 +79,13 @@ public class RicezioneBusteContext extends AbstractContext implements java.io.Se
 	
 	
 	public void addProprietaFiltroPortaApplicativa(String nome,String valore){
-		if(nome!=null && valore!=null && (this.filtroPA.contains(nome)==false) )
+		if(nome!=null && valore!=null && (this.filtroPA.containsKey(nome)==false) )
 			this.filtroPA.put(nome, valore);
 	}	
-	public Hashtable<String, String> getProprietaFiltroPortaApplicativa(){
+	public Map<String, String> getProprietaFiltroPortaApplicativa(){
 		return this.filtroPA;
 	}
-	public void setProprietaFiltroPortaApplicativa(Hashtable<String, String> filtroPA) {
+	public void setProprietaFiltroPortaApplicativa(Map<String, String> filtroPA) {
 		this.filtroPA = filtroPA;
 	}
 	

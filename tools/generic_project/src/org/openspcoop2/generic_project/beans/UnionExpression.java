@@ -20,7 +20,7 @@
 package org.openspcoop2.generic_project.beans;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +38,7 @@ import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 public class UnionExpression {
 
 	private IExpression expression;
-	private Map<String,Object> returnFieldMap = new Hashtable<String, Object>();
+	private Map<String,Object> returnFieldMap = new HashMap<String, Object>();
 	private List<String> keys = new ArrayList<String>(); // contiene le keys della mappa per preservare l'ordine di inserimento.
 	
 	public UnionExpression(IExpression expression){

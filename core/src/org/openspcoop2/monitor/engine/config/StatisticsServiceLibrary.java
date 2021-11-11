@@ -22,9 +22,9 @@ package org.openspcoop2.monitor.engine.config;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
@@ -157,7 +157,7 @@ public class StatisticsServiceLibrary implements Serializable {
 
 	public List<ConfigurazioneStatistica> mergeServiceActionSearchLibrary(boolean onlyEnabled, boolean orderByLabel) throws Exception{
 
-		Hashtable<String,ConfigurazioneStatistica> plugins = new Hashtable<String,ConfigurazioneStatistica>();
+		Map<String,ConfigurazioneStatistica> plugins = new HashMap<String,ConfigurazioneStatistica>();
 
 		if(this.pluginStatiTransazioniEnabled){
 			ConfigurazioneStatistica conf = this.buildNewConfigurazioneStatistica(StatisticByState.ID, StatisticByState.LABEL, 
@@ -200,11 +200,9 @@ public class StatisticsServiceLibrary implements Serializable {
 		List<ConfigurazioneStatistica> list = new ArrayList<ConfigurazioneStatistica>();
 		if(orderByLabel){
 			List<String> sortedKey = new ArrayList<String>();
-			Hashtable<String, ConfigurazioneStatistica> mapLabelToCorrelazioneStatistica = new Hashtable<String, ConfigurazioneStatistica>();
-			Enumeration<String> keys = plugins.keys();
+			Map<String, ConfigurazioneStatistica> mapLabelToCorrelazioneStatistica = new HashMap<String, ConfigurazioneStatistica>();
 			int count = 0; // lo uso per gestire eventuali label identiche.
-			while (keys.hasMoreElements()) {
-				String className = (String) keys.nextElement();
+			for (String className : plugins.keySet()) {
 				ConfigurazioneStatistica cs = plugins.get(className);
 				String labelKey = cs.getLabel()+count;
 				sortedKey.add(labelKey);
