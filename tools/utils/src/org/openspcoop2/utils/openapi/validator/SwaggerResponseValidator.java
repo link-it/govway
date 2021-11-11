@@ -20,6 +20,7 @@ import com.atlassian.oai.validator.util.ContentTypeUtils;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.BinarySchema;
+import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 
@@ -76,6 +77,23 @@ public class SwaggerResponseValidator {
 		final ApiResponse apiResponse = getApiResponse(response, apiOperation);
 		if (apiResponse.getContent() == null) {
 			return this.normalValidator.validateResponse(response, apiOperation);
+		}
+		
+		//	VALIDAZIONE CUSTOM 1:
+		//	Se la risposta ha un body ma non content-type, solleva errore.
+		
+		//  Anche se la risposta ha un body definito ma non un content-type deve sollevare errore
+		
+		Content contentSchema = apiResponse.getContent();
+		if (contentSchema != null && !contentSchema.isEmpty()) {
+			if ( /*response.getResponseBody().isPresent() &&*/ response.getContentType().isEmpty() /*&& response.getContentType().get().isEmpty()*/) {
+				return ValidationReport.singleton(
+	                    this.normalValidatorMessages.create(
+	                            "validation.response.body.schema.invalidJson",
+	                            "sese manca il content-type!"
+	                            
+	                    ));
+			}
 		}
 		
 		final Optional<String> mostSpecificMatch = findMostSpecificMatch(response, apiResponse.getContent().keySet());

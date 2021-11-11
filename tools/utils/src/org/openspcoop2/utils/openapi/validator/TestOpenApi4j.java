@@ -357,10 +357,8 @@ public class TestOpenApi4j {
 		httpEntityDynamicPath.setUrl(testUrl5);	
 		Map<String, List<String>> parametersTrasportoDynamicPath = new HashMap<>();
 		TransportUtils.addHeader(parametersTrasportoDynamicPath,"api_key", "aaa");
-		//TransportUtils.addHeader(parametersTrasportoDynamicPath,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
 		TransportUtils.addHeader(parametersTrasportoDynamicPath,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
 		httpEntityDynamicPath.setHeaders(parametersTrasportoDynamicPath);
-		//httpEntityDynamicPath.setContentType(HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
 		httpEntityDynamicPath.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 		httpEntityDynamicPath.setContent(json); // volutamente metto un json che comunque dovrebbe trattare come binario!
 		apiValidatorOpenApi4j.validate(httpEntityDynamicPath);
@@ -461,7 +459,7 @@ public class TestOpenApi4j {
 				
 				if(ct.contains("xml") && openAPILibrary == OpenAPILibrary.swagger_request_validator) {
 					System.out.println("\t "+tipoTest+" validate response ...");
-					System.out.println("\t Content-Type " + ct + ": funzionalità non supportata dalla libreria swagger-request-validator");
+					System.out.println("\t Content-Type " + ct + ": funzionalità non supportata dalla libreria swagger-request-validator"); // swagger-request-validator-unsupported
 					continue;
 				}
 						
@@ -788,7 +786,7 @@ public class TestOpenApi4j {
 					if(openapi4j) {
 						String atteso = openAPILibrary == OpenAPILibrary.openapi4j ?
 								"Content type '"+contentTypeTest10+"' is not allowed for body content. (code: 203)" :
-								"Content-Type '"+contentTypeTest10+"' (http response status '201') unsupported";
+								"Content-Type '"+contentTypeTest10+"' (http response status '201') unsupported";	// swagger-request-validator-unsupported 
 									
 						if(!msg.contains(atteso)) {
 							String checkErrore = "Validazione con content-type '"+contentTypeTest10+"' "+tipoTest+" contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
@@ -905,7 +903,7 @@ public class TestOpenApi4j {
 							if (httpEntityTest11.getContent() != null) {
 								atteso = "[ERROR][REQUEST][POST http://petstore.swagger.io/api/documenti/norequestresponse/send] No request body is expected but one was found."; 
 							} else {
-								atteso = "Content-Type '"+contentTypeTest11+"' unsupported";
+								atteso = "Content-Type '"+contentTypeTest11+"' unsupported"; // swagger-request-validator-unsupported
 							}
 						}
 						
@@ -993,6 +991,7 @@ public class TestOpenApi4j {
 						if (openAPILibrary == OpenAPILibrary.swagger_request_validator) {
 							// Quando il content-type non è specificato nello schema, la swagger-request-validator
 							// non effettua validazione per cui ci si rifà al validatore custom
+							// swagger-request-validator-unsupported
 							atteso = "Content-Type '"+contentTypeTest11+"' (http response status '201') unsupported";
 						}
 						if(!msg.contains(atteso)) {
@@ -1203,7 +1202,7 @@ public class TestOpenApi4j {
 					if(openapi4j) {
 						String atteso = openAPILibrary == OpenAPILibrary.openapi4j ?
 								"Content type 'null' is not allowed for body content. (code: 203)" :
-								"Required body undefined";
+								"Required body undefined"; 	// swagger-request-validator-unsupported
 									
 						if(!msg.contains(atteso)) {
 							String checkErrore = "Validazione "+tipoTest+" senza contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
@@ -1725,7 +1724,7 @@ public class TestOpenApi4j {
 		valori_test14.add("2017-07-21T17:32:28 01:00");esiti_test14.add(false); // ko
 		valori_test14.add("2017-07-21T17:32:28+01");esiti_test14.add(false); // ko
 		
-		Set<String> swagger_validator_fallimenti = Set.of( "2017-07-21T17:32:28+0100", "2017-07-21T17:32:28+01" );
+		Set<String> swagger_validator_fallimenti_datetime = Set.of( "2017-07-21T17:32:28+0100", "2017-07-21T17:32:28+01" );
 
 		// ** Test sul body **
 		for (int i = 0; i < valori_test14.size(); i++) {
@@ -1770,7 +1769,7 @@ public class TestOpenApi4j {
 						if(i<3 && !openapi4j) {
 							System.out.println("\t "+tipoTest+" validate, la validazione JSON non rileva l'accezione!!!!");
 							continue;
-						} else if( openAPILibrary == OpenAPILibrary.swagger_request_validator && swagger_validator_fallimenti.contains(valore)) {
+						} else if( openAPILibrary == OpenAPILibrary.swagger_request_validator && swagger_validator_fallimenti_datetime.contains(valore)) {
 							System.out.println("\t "+tipoTest+" validate, lo swagger-request-validator non rileva l'accezione!!!!");
 							continue;
 						}
@@ -1845,7 +1844,7 @@ public class TestOpenApi4j {
 						if(i<3 && !openapi4j) {
 							System.out.println("\t "+tipoTest+" validate, la validazione JSON non rileva l'accezione!!!!");
 							continue;
-						} else if(openAPILibrary == OpenAPILibrary.swagger_request_validator && swagger_validator_fallimenti.contains(valore)) {
+						} else if(openAPILibrary == OpenAPILibrary.swagger_request_validator && swagger_validator_fallimenti_datetime.contains(valore)) {
 							System.out.println("\t "+tipoTest+" validate, lo swagger-request-validator non rileva l'accezione!!!!");
 							continue;
 						}
@@ -1943,7 +1942,7 @@ public class TestOpenApi4j {
 						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
 					}
 					if(openapi4j) {
-						if (openAPILibrary == OpenAPILibrary.swagger_request_validator && swagger_validator_fallimenti.contains(valore)) {
+						if (openAPILibrary == OpenAPILibrary.swagger_request_validator && swagger_validator_fallimenti_datetime.contains(valore)) {
 							System.out.println("\t "+tipoTest+" validate, lo swagger-request-validator non rileva l'accezione!!!!");
 							continue;
 						}
@@ -2019,7 +2018,7 @@ public class TestOpenApi4j {
 						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
 					}
 					if(openapi4j) {
-						if (openAPILibrary == OpenAPILibrary.swagger_request_validator && swagger_validator_fallimenti.contains(valore)) {
+						if (openAPILibrary == OpenAPILibrary.swagger_request_validator && swagger_validator_fallimenti_datetime.contains(valore)) {
 							System.out.println("\t "+tipoTest+" validate, lo swagger-request-validator non rileva l'accezione!!!!");
 							continue;
 						}
@@ -2105,7 +2104,7 @@ public class TestOpenApi4j {
 						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
 					}
 					if(openapi4j) {
-						if (openAPILibrary == OpenAPILibrary.swagger_request_validator && swagger_validator_fallimenti.contains(valore)) {
+						if (openAPILibrary == OpenAPILibrary.swagger_request_validator && swagger_validator_fallimenti_datetime.contains(valore)) {
 							System.out.println("\t "+tipoTest+" validate, lo swagger-request-validator non rileva l'accezione!!!!");
 							continue;
 						}

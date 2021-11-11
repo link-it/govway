@@ -578,6 +578,7 @@ public class Test {
 								"Content type 'application/json' is not allowed for body content. (code: 203)" :
 								"Content-Type 'application/json' (http response status '405') unsupported"; 	
 						// La swagger-request-validation non rileva quest'errore e viene sollevato lo stesso errore del validatore interno
+						// swagger-request-validator-unsupported
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 						}

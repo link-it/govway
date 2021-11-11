@@ -24,6 +24,7 @@ import com.google.common.base.CharMatcher;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.BinarySchema;
+import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 
@@ -60,19 +61,36 @@ public class SwaggerRequestValidator {
 	}
 
 	public ValidationReport validateRequest(Request request, ApiOperation apiOperation) {
+			
+		var requestBodySchema = apiOperation.getOperation().getRequestBody();
+		
+		if (requestBodySchema == null) {
+			return this.normalValidator.validateRequest(request, apiOperation);
+		}
+		
+		//	VALIDAZIONE CUSTOM 1:
+		//	Se la richiesta ha un body ma non content-type, solleva errore.
+		Content contentSchema = requestBodySchema.getContent();
+		
+		if (contentSchema != null && !contentSchema.isEmpty()) {
+			if (request.getRequestBody().isPresent() && request.getContentType().isEmpty()) {
+				return ValidationReport.singleton(
+	                    this.normalValidatorMessages.create(
+	                            "validation.response.body.schema.invalidJson",
+	                            "sese manca lo schema!"
+	                            
+	                    ));
+			}
+		}
+		
+		var maybeMediaType = findApiMediaTypeForRequest(request, requestBodySchema);
 
+		// VALIDAZIONE CUSTOM 2
 		// Se lo schema del request body è: type: string, format: binary, ovvero un
 		// BinarySchema,
 		// allora disattiva la validazione del body e controlla solo che questo sia
 		// presente se è required.
 		// Se invece il format è base64 controlla che sia in base64
-		
-		var requestBody = apiOperation.getOperation().getRequestBody();
-		if (requestBody == null) {
-			return this.normalValidator.validateRequest(request, apiOperation);
-		}		
-		var maybeMediaType = findApiMediaTypeForRequest(request, requestBody);
-		
 		if (!maybeMediaType.isEmpty()) {
 			MediaType type = maybeMediaType.get().getRight();
 			ValidationReport report = ValidationReport.empty();
@@ -117,13 +135,14 @@ public class SwaggerRequestValidator {
 		return ValidationReport.empty();		
 	}
 
+	
 	private Optional<Pair<String, MediaType>> findApiMediaTypeForRequest(Request request, RequestBody apiRequestBodyDefinition) {
 		return Optional.ofNullable(apiRequestBodyDefinition).map(RequestBody::getContent)
 				.flatMap(content -> findMostSpecificMatch(request, content.keySet())
 						.map(mostSpecificMatch -> Pair.of(mostSpecificMatch, content.get(mostSpecificMatch))));
 	}
 	
-	private ValidationReport validateBase64String(String input) {
+	public static final ValidationReport validateBase64String(String input) {
 		
 		/*
 		 * Regex to accurately remove _at most two_ '=' characters from the end of the
