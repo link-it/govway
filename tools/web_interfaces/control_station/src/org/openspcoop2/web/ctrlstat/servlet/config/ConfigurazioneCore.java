@@ -23,7 +23,6 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -535,7 +534,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			List<Plugin> pluginsClassiList = new ArrayList<>();
 			List<Plugin> p = driver.pluginsClassiList(ricercaPlugin);
 			
-			Hashtable<String, Plugin> plugins = new Hashtable<String, Plugin>();
+			Map<String, Plugin> plugins = new HashMap<String, Plugin>();
 			List<String> keys = new ArrayList<String>();
 			if(p!=null && p.size()>0){
 				for (Plugin plugin : p) {

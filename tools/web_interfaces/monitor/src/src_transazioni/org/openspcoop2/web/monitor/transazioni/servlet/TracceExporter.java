@@ -23,8 +23,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -192,7 +193,7 @@ public class TracceExporter extends HttpServlet{
 
 						//devo impostare solo l'idtransazione
 						//filter.setIdEgov(this.diagnosticiBean.getIdEgov());	
-						Hashtable<String, String> properties = new Hashtable<String, String>();
+						Map<String, String> properties = new HashMap<String, String>();
 						properties.put("id_transazione", t.getIdTransazione());
 
 						Traccia tracciaRichiesta = null;

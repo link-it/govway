@@ -77,10 +77,13 @@ public class DumpOpenSPCoopAppenderDB implements IDumpProducer{
 	 * @param messaggio
 	 * @throws DumpException
 	 */
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	@Override
 	public void dump(Connection conOpenSPCoopPdD,Messaggio messaggio) throws DumpException{
 		this.dumpBase.dump(conOpenSPCoopPdD, messaggio);
 	}
+	@Override
 	public void dump(Connection conOpenSPCoopPdD,Messaggio messaggio,boolean headersCompact) throws DumpException{
 		this.dumpBase.dump(conOpenSPCoopPdD,messaggio,headersCompact);
 	}

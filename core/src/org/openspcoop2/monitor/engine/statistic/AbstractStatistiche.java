@@ -22,7 +22,7 @@ package org.openspcoop2.monitor.engine.statistic;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -949,7 +949,7 @@ public abstract class AbstractStatistiche {
 			
 			ISQLFieldConverter fieldConverter = ((IDBServiceUtilities<?>)this.transazioneSearchDAO).getFieldConverter(); 
 			
-			Hashtable<String, StatisticaContenuti> statisticheContenuti = new Hashtable<String, StatisticaContenuti>();
+			Map<String, StatisticaContenuti> statisticheContenuti = new HashMap<String, StatisticaContenuti>();
 			
 			
 			String idRisorsa = null;

@@ -132,6 +132,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 	private Logger log;
 	
 	private final static String VALIDATION_STRUCTURE = "VALIDATION_STRUCTURE";
+	private org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("OpenAPIValidator");
 	
 	@Override
 	public void init(Logger log, Api api, ApiValidatorConfig config)
@@ -142,7 +143,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			throw new ProcessingException("Api cannot be null");
 
 		// la sincronizzazione sull'API serve per evitare che venga inizializzati più volte in maniera concorrente l'API
-		synchronized (api) {
+		//synchronized (api) {
+		this.semaphore.acquireThrowRuntime("init");
+		try {
 					
 			this.api = api;
 			Api apiRest = null;
@@ -787,6 +790,8 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 				throw new ProcessingException(e);
 			}
 			
+		}finally {
+			this.semaphore.release("init");
 		}
 	}
 

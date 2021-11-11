@@ -43,9 +43,9 @@ public class Contenitore{
 		
 	private Property [] arrayProperty = new Property[3];
 
-	private Map<String, Long> mapPrimitive = new java.util.Hashtable<String,Long>(); 
+	private Map<String, Long> mapPrimitive = new java.util.HashMap<String,Long>(); 
 	
-	private Map<String, Property> mapProperty = new java.util.Hashtable<String,Property>();
+	private Map<String, Property> mapProperty = new java.util.HashMap<String,Property>();
 	
 	public List<String> getListPrimitive() {
 		return this.listPrimitive;

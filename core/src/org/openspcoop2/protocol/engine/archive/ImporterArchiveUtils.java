@@ -22,10 +22,9 @@ package org.openspcoop2.protocol.engine.archive;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.allarmi.Allarme;
@@ -41,10 +40,10 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.RegistroPlugin;
 import org.openspcoop2.core.config.ServizioApplicativo;
-import org.openspcoop2.core.config.constants.TipoBehaviour;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
+import org.openspcoop2.core.config.constants.TipoBehaviour;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
@@ -1954,7 +1953,7 @@ public class ImporterArchiveUtils {
 				}
 			}
 			// servizi componenti
-			Hashtable<String, AccordoServizioParteSpecifica> serviziComponenti = new Hashtable<String, AccordoServizioParteSpecifica>();
+			Map<String, AccordoServizioParteSpecifica> serviziComponenti = new HashMap<String, AccordoServizioParteSpecifica>();
 			for (IDServizio idServizioComponente : idServiziComponenti) {
 				
 				AccordoServizioParteSpecifica asps = this.importerEngine.getAccordoServizioParteSpecifica(idServizioComponente);
@@ -2009,10 +2008,8 @@ public class ImporterArchiveUtils {
 				idServizioComponente.setAzione(componente.getAzione());
 				AccordoServizioParteSpecifica asps = serviziComponenti.get(idServizioComponente.toString());
 				if(asps==null){
-					Enumeration<String> idServizi = serviziComponenti.keys();
 					StringBuilder bfException = new StringBuilder();
-					while (idServizi.hasMoreElements()) {
-						String idS = (String) idServizi.nextElement();
+					for (String idS : serviziComponenti.keySet()) {
 						if(bfException.length()>0){
 							bfException.append(",");
 						}
@@ -2119,7 +2116,7 @@ public class ImporterArchiveUtils {
 			RegistroOpenSPCoopUtilities wsdlUtility = new RegistroOpenSPCoopUtilities(defaultFactory, this.log);
 			wsdl=wsdlUtility.eliminaImportASParteComune(wsdl);
 			DefinitionWrapper wsdlObject = new DefinitionWrapper(wsdl,XMLUtils.getInstance(defaultFactory));
-			Hashtable<String, List<String>> mapPortTypeOperations = new Hashtable<String, List<String>>();
+			Map<String, List<String>> mapPortTypeOperations = new HashMap<String, List<String>>();
 			java.util.Map<?,?> pts = wsdlObject.getAllPortTypes();
 			if(pts==null || pts.size()<=0){
 				this.log.warn("Non sono stati definiti port types nel wsdl concettuale");
@@ -2156,7 +2153,7 @@ public class ImporterArchiveUtils {
 			StringBuilder strutturaAccordoOpenSPCoop = new StringBuilder("Servizi/Azioni associati all'accordo:\n");
 			//strutturaAccordoOpenSPCoop.append(indent+"=========================================\n");
 			java.util.ArrayList<String> listPortTypesName = new ArrayList<String>();
-			Hashtable<String, PortType> mapPtNameToObject = new Hashtable<String, PortType>();
+			Map<String, PortType> mapPtNameToObject = new HashMap<String, PortType>();
 			for(int i=0;i<accordoServizioParteComune.sizePortTypeList();i++){
 				PortType ptOpenSPCoop = accordoServizioParteComune.getPortType(i);
 				listPortTypesName.add(ptOpenSPCoop.getNome());

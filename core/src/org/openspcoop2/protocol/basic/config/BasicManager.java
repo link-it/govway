@@ -20,7 +20,7 @@
 
 package org.openspcoop2.protocol.basic.config;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.openspcoop2.core.id.IDServizio;
@@ -163,7 +163,7 @@ public abstract class BasicManager extends BasicComponentFactory implements IPro
 			boolean isRichiesta, TipoIntegrazione tipoIntegrazione)
 			throws ProtocolException {
 		if(busta!=null && busta.sizeProperties()>0){
-			Map<String, String> map = new Hashtable<String, String>();
+			Map<String, String> map = new HashMap<String, String>();
 			String[]names = busta.getPropertiesNames();
 			for (int i = 0; i < names.length; i++) {
 				String nomeProprieta = names[i];

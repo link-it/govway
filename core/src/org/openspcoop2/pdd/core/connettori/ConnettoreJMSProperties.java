@@ -25,7 +25,8 @@ package org.openspcoop2.pdd.core.connettori;
 
 
 
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.openspcoop2.core.id.IDServizio;
@@ -130,8 +131,8 @@ public class ConnettoreJMSProperties {
 	 * @return lista di identificatori dei servizi di pubblicazione definiti
 	 * 
 	 */
-	public Hashtable<String,IDServizio> getIDServizi_Pubblicazione() {	
-	    Hashtable<String,IDServizio> servizi= new Hashtable<String,IDServizio>();
+	public Map<String,IDServizio> getIDServizi_Pubblicazione() {	
+		Map<String,IDServizio> servizi= new HashMap<String,IDServizio>();
 	    try{ 
 		// Raccolta servizi
 		java.util.List<String> idServizi = new java.util.ArrayList<String>();	

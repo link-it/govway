@@ -43,6 +43,8 @@ public class PrincipalReaderFactory {
 			switch(principalReaderType){
 			case PRINCIPAL:
 				return new IdentityPrincipalReader(log);
+			case HEADER:
+				return new IdentityHttpReader(log);
 			}
 		} else {
 			// se non ho trovato una classe corrispondente al paramentro allora carico la classe indicata 

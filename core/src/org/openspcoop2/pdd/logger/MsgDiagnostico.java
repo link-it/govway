@@ -25,9 +25,9 @@ package org.openspcoop2.pdd.logger;
 
 import java.sql.Connection;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -134,14 +134,14 @@ public class MsgDiagnostico {
 	private GeneratoreCasualeDate generatoreDateCasuali = null;
 	
 	/** Properties da aggiungere ai diagnostici (utili nelle implementazioni handler) */
-	private Hashtable<String,String> properties = new Hashtable<String, String>();		
-	public Hashtable<String, String> getProperties() {
+	private Map<String,String> properties = new HashMap<String, String>();		
+	public Map<String, String> getProperties() {
 		return this.properties;
 	}
 
 	/** Keyword per i log personalizzati */
-	private Hashtable<String,String> keywordLogPersonalizzati = new Hashtable<String, String>();	
-	public Hashtable<String, String> getKeywordLogPersonalizzati() {
+	private Map<String,String> keywordLogPersonalizzati = new HashMap<String, String>();	
+	public Map<String, String> getKeywordLogPersonalizzati() {
 		return this.keywordLogPersonalizzati;
 	}
 	
@@ -765,7 +765,8 @@ public class MsgDiagnostico {
 		}
 		return tmp;
 		*/
-		
+
+		/* Costoso e inutile per quasi tutti i diagnostici
 		// Check di esistenza di almeno 2 '@'
 		if(msg!=null && msg.length()>2){
 			int index1 = msg.indexOf("@");
@@ -774,6 +775,7 @@ public class MsgDiagnostico {
 				return msg; // non serve il replace
 			}
 		}
+		*/
 		
 		StringBuilder bf = new StringBuilder();
 		StringBuilder keyword = new StringBuilder();
@@ -797,7 +799,7 @@ public class MsgDiagnostico {
 					}else{
 						bf.append(valoreRimpiazzato);
 					}
-					keyword.delete(0, keyword.length());
+					keyword.setLength(0);
 					separator=false;
 				}
 			}else{
@@ -809,6 +811,8 @@ public class MsgDiagnostico {
 				}
 			}
 		}
+		if ( separator )
+			bf.append(keyword.toString());
 		return bf.toString();
 	}
 	
@@ -2301,9 +2305,7 @@ public class MsgDiagnostico {
 		}
 		
 		if(this.properties!=null){
-			Enumeration<String> keys = this.properties.keys();
-			while (keys.hasMoreElements()) {
-				String key = (String) keys.nextElement();
+			for (String key : this.properties.keySet()) {
 				msgDiagnostico.addProperty(key, this.properties.get(key));
 			}
 		}

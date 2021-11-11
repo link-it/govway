@@ -271,10 +271,10 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 			if(filter.getCredenziali().getSubject()!=null){
 				
 				// Autenticazione SSL deve essere LIKE
-				Hashtable<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoHashtable(filter.getCredenziali().getSubject(), PrincipalType.subject);
-				Hashtable<String, List<String>> hashIssuer = null;
+				Map<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoMap(filter.getCredenziali().getSubject(), PrincipalType.subject);
+				Map<String, List<String>> hashIssuer = null;
 				if(filter.getCredenziali().getIssuer()!=null) {
-					hashIssuer = CertificateUtils.getPrincipalIntoHashtable(filter.getCredenziali().getIssuer(), PrincipalType.issuer);
+					hashIssuer = CertificateUtils.getPrincipalIntoMap(filter.getCredenziali().getIssuer(), PrincipalType.issuer);
 				}
 				
 				Enumeration<String> keys = hashSubject.keys();

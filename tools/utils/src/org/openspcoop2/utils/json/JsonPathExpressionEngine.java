@@ -62,8 +62,15 @@ public class JsonPathExpressionEngine {
 	}
 
 	private static JSONUtils jsonUtils;
-	public static synchronized JSONUtils getJsonUtils() throws UtilsException {
-		if(jsonUtils == null) jsonUtils = JSONUtils.getInstance();
+	public static synchronized void initJsonUtils() throws UtilsException {
+		if(jsonUtils == null) {
+			jsonUtils = JSONUtils.getInstance();
+		}
+	}
+	public static JSONUtils getJsonUtils() throws UtilsException {
+		if(jsonUtils == null) { 
+			initJsonUtils();
+		}
 		return jsonUtils;
 	}
 	
@@ -137,9 +144,14 @@ public class JsonPathExpressionEngine {
 
 
 	private static JSONParser jsonParser;
-	public static synchronized JSONParser getJSONParser() {
+	public static synchronized void initJSONParser() {
 		if(jsonParser == null) {
 			jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE); 
+		}
+	}
+	public static JSONParser getJSONParser() {
+		if(jsonParser == null) {
+			initJSONParser();
 		}
 		return jsonParser; 
 	}

@@ -22,10 +22,10 @@
 
 package org.openspcoop2.pools.core.driver;
 
-import java.util.Vector;
+import java.util.List;
 
-import org.openspcoop2.pools.core.Datasource;
 import org.openspcoop2.pools.core.ConnectionFactory;
+import org.openspcoop2.pools.core.Datasource;
 
 /**
  * Contiene l'interfaccia di un 'reader' della configurazione poolConfig di OpenSPCoop
@@ -90,10 +90,10 @@ public interface IDriverRisorseSistemaGet {
     /**
      * Restituisce un vector contenente tutti i DataSource definiti nel file poolConfig.xml
      *  
-     * @return Vector di {@link org.openspcoop2.pools.core.Datasource}
+     * @return List di {@link org.openspcoop2.pools.core.Datasource}
      * 
      */
-    public Vector<Datasource> getDataSources() throws DriverRisorseSistemaException;
+    public List<Datasource> getDataSources() throws DriverRisorseSistemaException;
 
 
 
@@ -124,10 +124,10 @@ public interface IDriverRisorseSistemaGet {
     /**
      * Restituisce un vector contenente tutti le ConnectionFactory definite nel file poolConfig.xml
      *  
-     * @return Vector di {@link org.openspcoop2.pools.core.ConnectionFactory}
+     * @return List di {@link org.openspcoop2.pools.core.ConnectionFactory}
      * 
      */
-    public Vector<ConnectionFactory> getConnectionFactories() throws DriverRisorseSistemaException;
+    public List<ConnectionFactory> getConnectionFactories() throws DriverRisorseSistemaException;
 
    
 }

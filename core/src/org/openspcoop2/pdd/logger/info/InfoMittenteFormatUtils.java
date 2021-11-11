@@ -20,8 +20,8 @@
 
 package org.openspcoop2.pdd.logger.info;
 
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
@@ -76,7 +76,7 @@ public class InfoMittenteFormatUtils {
 		if(StringUtils.isNotEmpty(sTrasportoMittente) && StringUtils.isNotEmpty(sTipoTrasportoMittente)) {
 			if(sTipoTrasportoMittente.endsWith("_"+TipoAutenticazione.SSL.getValue())) {
 				try {
-					Hashtable<String, List<String>> l = CertificateUtils.getPrincipalIntoHashtable(sTrasportoMittente, PrincipalType.subject);
+					Map<String, List<String>> l = CertificateUtils.getPrincipalIntoMap(sTrasportoMittente, PrincipalType.subject);
 					if(l!=null && !l.isEmpty()) {
 						List<String> cnList = l.get("CN");
 						if(cnList==null || cnList.isEmpty()) {

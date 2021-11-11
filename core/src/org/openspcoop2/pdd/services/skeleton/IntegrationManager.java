@@ -222,7 +222,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	}
 
 	/** IGestoreCredenziali: lista di gestori delle credenziali */
-	//private java.util.Hashtable<String, IGestoreCredenzialiIM> gestoriCredenziali = null;
+	//private java.util.Map<String, IGestoreCredenzialiIM> gestoriCredenziali = null;
 	// E' stato aggiunto lo stato dentro l'oggetto.
 	private String [] tipiGestoriCredenziali = null;
 	private synchronized void initializeGestoreCredenziali(Logger logCore,IProtocolFactory<?> protocolFactory,MsgDiagnostico msgDiag) throws IntegrationManagerException{
@@ -230,7 +230,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			
 			Loader loader = Loader.getInstance();
 			
-			//this.gestoriCredenziali = new java.util.Hashtable<String, IGestoreCredenzialiIM>();
+			//this.gestoriCredenziali = new java.util.HashMap<String, IGestoreCredenzialiIM>();
 			this.tipiGestoriCredenziali = this.propertiesReader.getTipoGestoreCredenzialiIM();
 			if(this.tipiGestoriCredenziali!=null){
 				for (int i = 0; i < this.tipiGestoriCredenziali.length; i++) {

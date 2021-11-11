@@ -25,9 +25,9 @@ package org.openspcoop2.pdd.services.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
@@ -527,7 +527,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 			preInRequestContext.setIdModulo(this.idModulo);
 			preInRequestContext.setProtocolFactory(this.protocolFactory);
 			preInRequestContext.setRequestInfo(this.requestInfo);
-			Hashtable<String, Object> transportContext = new Hashtable<String, Object>();
+			Map<String, Object> transportContext = new HashMap<String, Object>();
 			transportContext.put(PreInRequestContext.SERVLET_REQUEST, this.req);
 			transportContext.put(PreInRequestContext.SERVLET_RESPONSE, this.res);
 			preInRequestContext.setTransportContext(transportContext);	

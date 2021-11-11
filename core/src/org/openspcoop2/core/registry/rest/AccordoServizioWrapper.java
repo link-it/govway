@@ -49,8 +49,14 @@ public class AccordoServizioWrapper implements java.io.Serializable{
 	public void setApi(Api api) {
 		this.api = api;
 	}
-	public synchronized void updateApi(Api api) {
-		this.api = api;
+	private org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("AccordoServizioWrapperREST");
+	public void updateApi(Api api) {
+		this.semaphore.acquireThrowRuntime("updateAPI");
+		try {
+			this.api = api;
+		}finally {
+			this.semaphore.release("updateAPI");
+		}
 	}
 
 

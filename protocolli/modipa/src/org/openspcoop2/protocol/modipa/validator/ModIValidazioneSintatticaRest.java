@@ -24,7 +24,6 @@ import java.io.ByteArrayOutputStream;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -490,7 +489,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			MessageSecurityReceiver_jose joseSignature = new MessageSecurityReceiver_jose();
 			MessageSecurityContextParameters messageSecurityContextParameters = new MessageSecurityContextParameters();
 			MessageSecurityContext messageSecurityContext = new MessageSecurityContext_impl(messageSecurityContextParameters);
-			Hashtable<String,Object> secProperties = new Hashtable<>();
+			Map<String,Object> secProperties = new HashMap<>();
 			secProperties.put(SecurityConstants.SECURITY_ENGINE, SecurityConstants.SECURITY_ENGINE_JOSE);
 			secProperties.put(SecurityConstants.ACTION, SecurityConstants.SIGNATURE_ACTION);
 			secProperties.put(SecurityConstants.SIGNATURE_MODE, SecurityConstants.SIGNATURE_MODE_COMPACT);

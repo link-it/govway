@@ -21,10 +21,9 @@
 package org.openspcoop2.protocol.engine.archive;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -1844,10 +1843,8 @@ public class ImporterInformationMissingUtils {
 			// Lettura WSDL Parte Specifica
 			Document d = this.xmlUtils.newDocument(wsdlImplementativo);
 			DefinitionWrapper wsdl = new DefinitionWrapper(d,this.xmlUtils,false,false);
-			Hashtable<QName,QName> mapBindingToPortTypeImplemented = wsdl.getMapPortTypesImplementedBinding();
-			Enumeration<QName> bindings = mapBindingToPortTypeImplemented.keys();
-			while (bindings.hasMoreElements()) {
-				QName binding = (QName) bindings.nextElement();
+			Map<QName,QName> mapBindingToPortTypeImplemented = wsdl.getMapPortTypesImplementedBinding();
+			for (QName binding : mapBindingToPortTypeImplemented.keySet()) {
 				QName portType = mapBindingToPortTypeImplemented.get(binding);
 				String portTypeName = portType.getLocalPart();
 				if(portTypesImplemented.contains(portTypeName)==false){

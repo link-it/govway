@@ -20,7 +20,11 @@
 
 package org.openspcoop2.protocol.engine;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.openspcoop2.protocol.basic.BasicEmptyRawContentFactory;
+import org.openspcoop2.protocol.basic.BasicStaticInstanceConfig;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
@@ -45,17 +49,62 @@ public class BasicProtocolFactory extends BasicEmptyRawContentFactory {
 	public BasicProtocolFactory(Logger log){
 		super.log = log;
 	}
+	
+	@Override
+	protected void initStaticInstance(BasicStaticInstanceConfig staticInstanceConfig) throws ProtocolException{
+		super.initStaticInstance(staticInstanceConfig);
+		if(staticInstanceConfig!=null) {
+			if(staticInstanceConfig.isStaticConfig()) {
+				if(staticInstanceProtocolManager==null) {
+					staticInstanceProtocolManager = new HashMap<String, IProtocolManager>();
+				}
+				createProtocolManager();
+				if(staticInstanceProtocolVersionManager==null) {
+					staticInstanceProtocolVersionManager = new HashMap<String, IProtocolVersionManager>();
+				}
+				createProtocolVersionManager("-");
+			}
+		}
+	}
 
+	private static Map<String, IProtocolManager> staticInstanceProtocolManager = null;
 	@Override
 	public IProtocolManager createProtocolManager()
 			throws ProtocolException {
-		return new BasicProtocolManager(this);
+		if(staticInstanceProtocolManager!=null) {
+			if(!staticInstanceProtocolManager.containsKey(this.getProtocol())) {
+				initProtocolManager(this.getProtocol());
+			}
+			return staticInstanceProtocolManager.get(this.getProtocol());
+		}
+		else {
+			return new BasicProtocolManager(this);
+		}
+	}
+	private synchronized void initProtocolManager(String protocol) throws ProtocolException {
+		if(!staticInstanceProtocolManager.containsKey(protocol)) {
+			staticInstanceProtocolManager.put(protocol, new BasicProtocolManager(this));
+		}
 	}
 	
+	private static Map<String, IProtocolVersionManager> staticInstanceProtocolVersionManager = null;
 	@Override
 	public IProtocolVersionManager createProtocolVersionManager(String version)
 			throws ProtocolException {
-		return new BasicProtocolVersionManager(this);
+		if(staticInstanceProtocolVersionManager!=null) {
+			if(!staticInstanceProtocolVersionManager.containsKey(this.getProtocol())) {
+				initProtocolVersioneManager(this.getProtocol());
+			}
+			return staticInstanceProtocolVersionManager.get(this.getProtocol());
+		}
+		else {
+			return new BasicProtocolVersionManager(this);
+		}
+	}
+	private synchronized void initProtocolVersioneManager(String protocol) throws ProtocolException {
+		if(!staticInstanceProtocolVersionManager.containsKey(protocol)) {
+			staticInstanceProtocolVersionManager.put(protocol, new BasicProtocolVersionManager(this));
+		}
 	}
 
 	@Override

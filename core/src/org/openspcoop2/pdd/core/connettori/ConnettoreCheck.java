@@ -25,7 +25,6 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -91,9 +90,7 @@ public class ConnettoreCheck {
 	
 	public static void check(long idConnettore, boolean registro, Logger log) throws ConnettoreException{
 		if(registro) {
-			Enumeration<IDriverRegistroServiziGet> drivers = RegistroServiziReader.getDriverRegistroServizi().elements();
-			while (drivers.hasMoreElements()) {
-				IDriverRegistroServiziGet iDriverRegistroServiziGet = (IDriverRegistroServiziGet) drivers.nextElement();
+			for (IDriverRegistroServiziGet iDriverRegistroServiziGet : RegistroServiziReader.getDriverRegistroServizi().values()) {
 				if(iDriverRegistroServiziGet instanceof DriverRegistroServiziDB) {
 					try {
 						org.openspcoop2.core.registry.Connettore connettore = ((DriverRegistroServiziDB)iDriverRegistroServiziGet).getConnettore(idConnettore);
@@ -121,9 +118,7 @@ public class ConnettoreCheck {
 	}
 	public static void check(String nomeConnettore, boolean registro, Logger log) throws ConnettoreException{
 		if(registro) {
-			Enumeration<IDriverRegistroServiziGet> drivers = RegistroServiziReader.getDriverRegistroServizi().elements();
-			while (drivers.hasMoreElements()) {
-				IDriverRegistroServiziGet iDriverRegistroServiziGet = (IDriverRegistroServiziGet) drivers.nextElement();
+			for (IDriverRegistroServiziGet iDriverRegistroServiziGet : RegistroServiziReader.getDriverRegistroServizi().values()) {
 				if(iDriverRegistroServiziGet instanceof DriverRegistroServiziDB) {
 					try {
 						org.openspcoop2.core.registry.Connettore connettore = ((DriverRegistroServiziDB)iDriverRegistroServiziGet).getConnettore(nomeConnettore);
@@ -522,9 +517,7 @@ public class ConnettoreCheck {
 	
 	public static String getCertificati(long idConnettore, boolean registro) throws ConnettoreException{
 		if(registro) {
-			Enumeration<IDriverRegistroServiziGet> drivers = RegistroServiziReader.getDriverRegistroServizi().elements();
-			while (drivers.hasMoreElements()) {
-				IDriverRegistroServiziGet iDriverRegistroServiziGet = (IDriverRegistroServiziGet) drivers.nextElement();
+			for (IDriverRegistroServiziGet iDriverRegistroServiziGet : RegistroServiziReader.getDriverRegistroServizi().values()) {
 				if(iDriverRegistroServiziGet instanceof DriverRegistroServiziDB) {
 					try {
 						org.openspcoop2.core.registry.Connettore connettore = ((DriverRegistroServiziDB)iDriverRegistroServiziGet).getConnettore(idConnettore);
@@ -550,9 +543,7 @@ public class ConnettoreCheck {
 	}
 	public static String getCertificati(String nomeConnettore, boolean registro) throws ConnettoreException{
 		if(registro) {
-			Enumeration<IDriverRegistroServiziGet> drivers = RegistroServiziReader.getDriverRegistroServizi().elements();
-			while (drivers.hasMoreElements()) {
-				IDriverRegistroServiziGet iDriverRegistroServiziGet = (IDriverRegistroServiziGet) drivers.nextElement();
+			for (IDriverRegistroServiziGet iDriverRegistroServiziGet : RegistroServiziReader.getDriverRegistroServizi().values()) {
 				if(iDriverRegistroServiziGet instanceof DriverRegistroServiziDB) {
 					try {
 						org.openspcoop2.core.registry.Connettore connettore = ((DriverRegistroServiziDB)iDriverRegistroServiziGet).getConnettore(nomeConnettore);

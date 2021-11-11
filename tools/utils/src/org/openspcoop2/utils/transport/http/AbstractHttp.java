@@ -22,7 +22,7 @@ package org.openspcoop2.utils.transport.http;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +39,7 @@ public abstract class AbstractHttp {
 
 	private String contentType;
 	private byte[] content;
-	private Map<String, List<String>> headers = new Hashtable<String,List<String>>();
+	private Map<String, List<String>> headers = new HashMap<String,List<String>>();
 	
 	public byte[] getContent() {
 		return this.content;

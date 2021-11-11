@@ -538,7 +538,7 @@ public class Cache {
 			//		 Viene utilizzato l'iterator dentro una struttura dinamica che cambia.
 			//		 A volte, quando poi veniva registrato l'errore soprastante, avveniva questo errore (scoperto aggiungendo stampe nelle classi di JCS)
 			//		 java.util.ConcurrentModificationException
-			//		 	at java.util.Hashtable$Enumerator.next(Hashtable.java:1031)
+			//		 	at java.util.Hash table$Enumerator.next(Hash table.java:1031)
 			//			at org.apache.commons.jcs3.engine.memory.lru.LRUMemoryCache$IteratorWrapper.next(LRUMemoryCache.java:428)
 			//			at org.apache.commons.jcs3.admin.JCSAdminBean.getByteCount(JCSAdminBean.java:95)
 			int tentativi = 0;
@@ -711,11 +711,18 @@ public class Cache {
 		//
 		// Dove in org.apache.commons.jcs3.engine.behavior.ICache
 		// 		public final static String NAME_COMPONENT_DELIMITER = ":";
-		StringBuilder bf = new StringBuilder(key);
+
+		/*StringBuilder bf = new StringBuilder(key);
 		if(bf.toString().endsWith(org.apache.commons.jcs3.engine.behavior.ICache.NAME_COMPONENT_DELIMITER)){
 			bf.append("_");
 		}
-		return bf.toString();
+		return bf.toString();*/
+		if(key.endsWith(org.apache.commons.jcs3.engine.behavior.ICache.NAME_COMPONENT_DELIMITER)) {
+			return key+"_";
+		}
+		else {
+			return key;
+		}
 	}
 	
 	

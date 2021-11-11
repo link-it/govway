@@ -21,8 +21,9 @@
 
 package org.openspcoop2.pools.pdd.jmx;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -49,7 +50,7 @@ public class GestoreRisorseJMX {
 	Logger log = null;
 
 	/** JMX Name */
-	Vector<ObjectName> jmxNames = new Vector<ObjectName>();
+	List<ObjectName> jmxNames = new ArrayList<ObjectName>();
 
 
 	/**

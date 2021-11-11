@@ -133,7 +133,7 @@
 		<fileset dir="${openspcoop2_lib}/shared" >
 			<!-- Devono essere esclusi i jar di saxon, altrimenti non partono i server mtom:
 				java.lang.NullPointerException
-				at java.util.Hashtable.put(Hashtable.java:459)
+				at java.util.Hash table.put(Hashtable.java:459)
 				at java.util.Properties.setProperty(Properties.java:166)
 				at net.sf.saxon.jaxp.IdentityTransformer.setOutputProperty(IdentityTransformer.java:313)
 				at com.sun.xml.internal.bind.v2.model.impl.Runtime...

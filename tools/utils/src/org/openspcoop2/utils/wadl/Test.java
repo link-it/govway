@@ -22,7 +22,6 @@
 package org.openspcoop2.utils.wadl;
 
 import java.net.URI;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
@@ -80,15 +79,11 @@ public class Test {
 		}
         
         System.out.println("Schemi Letti: "+callback.getResources().size());
-        Enumeration<String> keys = callback.getResources().keys();
-        while (keys.hasMoreElements()) {
-			String key = (String) keys.nextElement();
+        for (String key : callback.getResources().keySet()) {
 			System.out.println("Schema ["+key+"]");
 		}
         System.out.println("Namespaces:");
-        keys = callback.getMappingNamespaceLocations().keys();
-        while (keys.hasMoreElements()) {
-			String namespace = (String) keys.nextElement();
+        for (String namespace : callback.getMappingNamespaceLocations().keySet()) {
 			String key = callback.getMappingNamespaceLocations().get(namespace);
 			System.out.println("Schema ["+key+"]: "+namespace);
 		}  

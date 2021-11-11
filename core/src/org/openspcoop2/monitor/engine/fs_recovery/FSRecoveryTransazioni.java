@@ -41,6 +41,7 @@ public class FSRecoveryTransazioni {
 
 	private FSRecoveryTransazioniImpl transazioniImpl;
 	private FSRecoveryTransazioniApplicativoServerImpl transazioniApplicativoServerImpl;
+	private FSRecoveryTransazioniApplicativoServerConsegnaTerminataImpl transazioniApplicativoServerConsegnaTerminataImpl;
 	private FSRecoveryTracceImpl tracceImpl;
 	private FSRecoveryDiagnosticiImpl diagnosticiImpl;
 	private FSRecoveryDumpImpl dumpImpl;
@@ -54,11 +55,12 @@ public class FSRecoveryTransazioni {
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM,
 			ITracciaProducer tracciamentoAppender,
 			IDiagnosticProducer diagnosticoAppender,
-			IDumpProducer dumpAppender,
+			IDumpProducer dumpAppender, boolean transazioniRegistrazioneDumpHeadersCompactEnabled,
 			File directoryDiagnostici, File directoryDiagnosticiDLQ,
 			File directoryTracce, File directoryTracceDLQ,
 			File directoryDump, File directoryDumpDLQ,
 			File directoryTransazioniApplicativoServer, File directoryTransazioniApplicativoServerDLQ,
+			File directoryTransazioniApplicativoServerConsegnaTerminata, File directoryTransazioniApplicativoServerConsegnaTerminataDLQ,
 			File directoryTransazioni, File directoryTransazioniDLQ,
 			int tentativi) {
 	
@@ -67,8 +69,12 @@ public class FSRecoveryTransazioni {
 				daoFactory, daoFactoryLogger, daoFactoryServiceManagerProperties,
 				gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval,
 				transazioniSM, directoryTransazioniApplicativoServer, directoryTransazioniApplicativoServerDLQ, tentativi, MINUTI_ATTESA_PROCESSING_FILE);
+		this.transazioniApplicativoServerConsegnaTerminataImpl = new FSRecoveryTransazioniApplicativoServerConsegnaTerminataImpl(log, debug,
+				daoFactory, daoFactoryLogger, daoFactoryServiceManagerProperties,
+				gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval,
+				transazioniSM, directoryTransazioniApplicativoServerConsegnaTerminata, directoryTransazioniApplicativoServerConsegnaTerminataDLQ, tentativi, MINUTI_ATTESA_PROCESSING_FILE);
 		this.tracceImpl = new FSRecoveryTracceImpl(log, debug, tracciamentoAppender, directoryTracce, directoryTracceDLQ, tentativi, MINUTI_ATTESA_PROCESSING_FILE);
-		this.dumpImpl = new FSRecoveryDumpImpl(log, debug, dumpAppender, directoryDump, directoryDumpDLQ, tentativi, MINUTI_ATTESA_PROCESSING_FILE);
+		this.dumpImpl = new FSRecoveryDumpImpl(log, debug, dumpAppender, transazioniRegistrazioneDumpHeadersCompactEnabled, directoryDump, directoryDumpDLQ, tentativi, MINUTI_ATTESA_PROCESSING_FILE);
 		this.diagnosticiImpl = new FSRecoveryDiagnosticiImpl(log, debug, diagnosticoAppender, directoryDiagnostici, directoryDiagnosticiDLQ, tentativi, MINUTI_ATTESA_PROCESSING_FILE);
 	}
 	
@@ -76,6 +82,7 @@ public class FSRecoveryTransazioni {
 		
 		this.transazioniImpl.process(connection);
 		this.transazioniApplicativoServerImpl.process(connection);
+		this.transazioniApplicativoServerConsegnaTerminataImpl.process(connection);
 		this.tracceImpl.process(connection);
 		this.diagnosticiImpl.process(connection);
 		this.dumpImpl.process(connection);

@@ -277,7 +277,7 @@ public class StandardWSDL {
 		
 		HashMap<String,String> prefixForWSDLErogatore = new HashMap<String, String>();
 		HashMap<String,String> prefixForWSDLFruitore = new HashMap<String, String>();
-		String uniquePrefix = "_n"+IDUtilities.getUniqueSerialNumber()+"_";
+		String uniquePrefix = "_n"+IDUtilities.getUniqueSerialNumber("StandardWSDL.setup")+"_";
 		
 		
 		// ----- Generazione wsdl erogatore -----
@@ -507,7 +507,7 @@ public class StandardWSDL {
 			
 			List<byte[]> schemiDaInglobareInWsdl = new ArrayList<byte[]>();
 			
-			String uniquePrefix = "_n"+IDUtilities.getUniqueSerialNumber()+"_";
+			String uniquePrefix = "_n"+IDUtilities.getUniqueSerialNumber("gestioneSchemiInBaseOutputMode_inputWsdl")+"_";
 			
 			// Schemi lasciati originali
 			if(this.outputMode.equals(StandardWSDLOutputMode.MANTIENI_IMPORT_INCLUDE_ORIGINALI)){

@@ -49,7 +49,7 @@ public class ConnectionConfiguration {
 		return this.toString(false);
 	}
 	public String toString(boolean onlyForConnectionManager) {
-		StringBuffer bf = new StringBuffer("nio");
+		StringBuilder bf = new StringBuilder("nio");
 		if(!onlyForConnectionManager) {
 			bf.append(" ").append("debug:").append(this.debug);
 			if(this.proxyHost!=null) {

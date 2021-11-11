@@ -29,9 +29,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.crypto.CryptoFactory;
@@ -50,10 +51,16 @@ public class SAMLBuilderConfig {
 
 	// ---- STATIC CONFIG CACHE -----
 	
-	private static Hashtable<String, SAMLBuilderConfig> SAML_CACHE_CONFIG = new Hashtable<String, SAMLBuilderConfig>();
-	private static synchronized void addSamlConfig(String propertiesName,SAMLBuilderConfig p){
-		if(SAML_CACHE_CONFIG.containsKey(propertiesName)==false){
-			SAML_CACHE_CONFIG.put(propertiesName, p);
+	private static Map<String, SAMLBuilderConfig> SAML_CACHE_CONFIG = new ConcurrentHashMap<String, SAMLBuilderConfig>();
+	private static org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("SAMLBuilderConfig");
+	private static void addSamlConfig(String propertiesName,SAMLBuilderConfig p){
+		semaphore.acquireThrowRuntime("addSamlConfig");
+		try {
+			if(SAML_CACHE_CONFIG.containsKey(propertiesName)==false){
+				SAML_CACHE_CONFIG.put(propertiesName, p);
+			}
+		}finally {
+			semaphore.release("addSamlConfig");
 		}
 	}
 	public static SAMLBuilderConfig getSamlConfig(String properties) throws IOException {

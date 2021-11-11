@@ -22,8 +22,8 @@
 
 package org.openspcoop2.web.lib.queue.dao;
 
-import java.util.Vector;
-
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * FilterParameter
@@ -37,7 +37,7 @@ import java.util.Vector;
  */
 public class FilterParameter {
 
-	Vector<Parameter> parameters = new Vector<Parameter>();
+	List<Parameter> parameters = new ArrayList<Parameter>();
 	
 	public void addFilterParameter(Parameter p){
 		this.parameters.add(p);

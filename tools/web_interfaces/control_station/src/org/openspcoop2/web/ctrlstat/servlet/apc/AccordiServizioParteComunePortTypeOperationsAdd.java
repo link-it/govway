@@ -22,9 +22,9 @@
 package org.openspcoop2.web.ctrlstat.servlet.apc;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -340,7 +340,7 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 				ArrayList<String> aziCorrList = null;
 				if (apcCore.isShowCorrelazioneAsincronaInAccordi()) {
 					servCorrList = AccordiServizioParteComuneUtilities.selectPortTypeAsincroni(as, profcollop, nomept);
-					Hashtable<String, List<Operation>> operationsListSelezionate = AccordiServizioParteComuneUtilities.selectPortTypeOperationsListAsincrone(as, profcollop, nomept);
+					Map<String, List<Operation>> operationsListSelezionate = AccordiServizioParteComuneUtilities.selectPortTypeOperationsListAsincrone(as, profcollop, nomept);
 					aziCorrList =  AccordiServizioParteComuneUtilities.selectOperationAsincrone(as, servcorr, profProtocollo, profcollop, pt, nomeop, apcCore, operationsListSelezionate);
 				} else {
 
@@ -449,7 +449,7 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 				ArrayList<String> aziCorrList = null;
 				if (apcCore.isShowCorrelazioneAsincronaInAccordi()) {
 					servCorrList = AccordiServizioParteComuneUtilities.selectPortTypeAsincroni(as, profcollop, nomept);
-					Hashtable<String, List<Operation>> operationsListSelezionate = AccordiServizioParteComuneUtilities.selectPortTypeOperationsListAsincrone(as, profcollop, nomept);
+					Map<String, List<Operation>> operationsListSelezionate = AccordiServizioParteComuneUtilities.selectPortTypeOperationsListAsincrone(as, profcollop, nomept);
 					aziCorrList =  AccordiServizioParteComuneUtilities.selectOperationAsincrone(as, servcorr, profProtocollo, profcollop, pt, nomeop, apcCore, operationsListSelezionate);
 				} else {
 

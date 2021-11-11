@@ -22,7 +22,6 @@ package org.openspcoop2.protocol.as4.services.message;
 import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -212,7 +211,7 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 		return this.message.getMessageType();
 	}
 	
-	private Map<String, Object> attributes = new Hashtable<String, Object>();
+	private Map<String, Object> attributes = new HashMap<String, Object>();
 	public void setAttribute(String key, Object object) throws ConnectorException {
 		this.attributes.put(key, object);
 	}

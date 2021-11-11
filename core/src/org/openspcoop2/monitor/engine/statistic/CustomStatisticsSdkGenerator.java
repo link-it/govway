@@ -28,8 +28,9 @@ import org.openspcoop2.monitor.sdk.statistic.StatisticResourceFilter;
 import org.openspcoop2.monitor.sdk.statistic.StatisticFilter;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
@@ -234,7 +235,7 @@ public class CustomStatisticsSdkGenerator implements IStatistic {
 	
 	private List<String> idStatistiche = new ArrayList<String>();
 	private List<String> idRisorse = new ArrayList<String>();
-	private Hashtable<String, String> mapIdRisorsaToIdStatistica = new Hashtable<String, String>();
+	private Map<String, String> mapIdRisorsaToIdStatistica = new HashMap<String, String>();
 	
 	@Override
 	public void createStatistics(String idStatistica,String idRisorsa) throws StatisticException{

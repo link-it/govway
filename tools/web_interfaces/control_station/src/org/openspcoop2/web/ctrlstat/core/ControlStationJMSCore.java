@@ -20,10 +20,9 @@
 
 package org.openspcoop2.web.ctrlstat.core;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.jms.ObjectMessage;
 import javax.jms.Queue;
@@ -88,18 +87,16 @@ public class ControlStationJMSCore {
 		idOperazione.append("[" + operazione.name() + "]");
 		idOperazione.append("[" + oggettoDaSmistare.name() + "]");
 
-		Hashtable<OperationsParameter, Vector<String>> params = operazioneDaSmistare.getParameters();
-		Enumeration<OperationsParameter> keys = params.keys();
-
-		// aggiungo informazioni il filtro
-		while (keys.hasMoreElements()) {
-			OperationsParameter key = keys.nextElement();
-
-			Vector<String> values = params.get(key);
-			for (String value : values) {
-				idOperazione.append("[" + value + "]");
+		Map<OperationsParameter, List<String>> params = operazioneDaSmistare.getParameters();
+		if(params!=null && !params.isEmpty()) {
+			// aggiungo informazioni il filtro
+			for (OperationsParameter key : params.keySet()) {
+				List<String> values = params.get(key);
+				for (String value : values) {
+					idOperazione.append("[" + value + "]");
+				}
+	
 			}
-
 		}
 
 		ControlStationCore.log.debug("[ControlStationCore::setDati] id=[" + idOperazione.toString() + "]");

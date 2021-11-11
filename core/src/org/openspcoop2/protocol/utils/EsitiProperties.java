@@ -167,6 +167,10 @@ public class EsitiProperties {
 
 	}
 
+	public static boolean isInitializedProtocol(String protocol) {
+		return EsitiProperties.esitiPropertiesMap!=null && EsitiProperties.esitiPropertiesMap.containsKey(protocol);
+	}
+	
 	/**
 	 * Ritorna l'istanza di questa classe
 	 *

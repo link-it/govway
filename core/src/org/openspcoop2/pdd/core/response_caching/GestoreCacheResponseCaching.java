@@ -324,9 +324,9 @@ public class GestoreCacheResponseCaching {
 			}
 			
 			//synchronized (cache) {
+			lock_cache.acquire("save");
 			try {
-				lock_cache.acquire("save");
-			
+				
 				o = cache.get(digestKey);
 				if(o!=null) {
 					org.openspcoop2.utils.cache.CacheResponse responseCache = 
@@ -412,8 +412,8 @@ public class GestoreCacheResponseCaching {
 			}
 			
 			//synchronized (cache) {
+			lock_cache.acquire("readByUUID");
 			try {
-				lock_cache.acquire("readByUUID");
 				
 				oDigest = cache.get(uuidKey);
 				if(oDigest==null) {
@@ -477,9 +477,9 @@ public class GestoreCacheResponseCaching {
 			}
 						
 			//synchronized (cache) {
+			lock_cache.acquire("removeByUUID");
 			try {
-				lock_cache.acquire("removeByUUID");
-
+				
 				oDigest = cache.get(uuidKey);
 				if(oDigest==null) {
 					return; // messaggio non precedentemente salvato
@@ -542,9 +542,9 @@ public class GestoreCacheResponseCaching {
 			}
 						
 			//synchronized (cache) {
+			lock_cache.acquire("readByDigest");
 			try {
-				lock_cache.acquire("readByDigest");
-			
+				
 				response = 
 						(org.openspcoop2.utils.cache.CacheResponse) cache.get(digestKey);
 				if(response == null || response.getObject()==null){

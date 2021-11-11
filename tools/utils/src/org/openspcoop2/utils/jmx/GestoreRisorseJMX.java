@@ -23,8 +23,8 @@ package org.openspcoop2.utils.jmx;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.Hashtable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
@@ -155,7 +155,7 @@ public class GestoreRisorseJMX {
             		java.util.Map<String, Object> env = null;
                 	if(modalita2_username!=null && modalita2_password!=null){
         				String[] creds = {modalita2_username, modalita2_password};
-        				env = new Hashtable<String, Object>();
+        				env = new HashMap<String, Object>();
         				env.put("jmx.remote.credentials", creds);
                 	}
                 	

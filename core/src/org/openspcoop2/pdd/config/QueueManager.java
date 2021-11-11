@@ -22,7 +22,8 @@
 
 package org.openspcoop2.pdd.config;
 
-import java.util.Hashtable;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -89,7 +90,7 @@ public class QueueManager implements java.io.Serializable,IMonitoraggioRisorsa{
 	private static OpenSPCoop2Properties openspcoopProperties = OpenSPCoop2Properties.getInstance();
 	
 	/** Informazione sui proprietari che hanno richiesto una connessione */
-	protected static Hashtable<String,Resource> risorseInGestione = new Hashtable<String,Resource>();
+	protected static Map<String,Resource> risorseInGestione = new ConcurrentHashMap<String,Resource>();
 	
 	public static String[] getStatoRisorse() throws Exception{
 		

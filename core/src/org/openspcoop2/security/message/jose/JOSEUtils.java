@@ -27,7 +27,6 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
@@ -76,22 +75,22 @@ public class JOSEUtils {
 		}
 	}
 	
-	public static JwtHeaders getJwtHeaders(Hashtable<String, Object> properties, OpenSPCoop2Message message) throws SecurityException {
+	public static JwtHeaders getJwtHeaders(Map<String, Object> properties, OpenSPCoop2Message message) throws SecurityException {
 		return getJwtHeaders(properties, message, null, null, null);
 	}
-	public static JwtHeaders getJwtHeaders(Hashtable<String, Object> properties, OpenSPCoop2Message message,
+	public static JwtHeaders getJwtHeaders(Map<String, Object> properties, OpenSPCoop2Message message,
 			String alias) throws SecurityException {
 		return getJwtHeaders(properties, message, alias, null, null);
 	}
-	public static JwtHeaders getJwtHeaders(Hashtable<String, Object> properties, OpenSPCoop2Message message,
+	public static JwtHeaders getJwtHeaders(Map<String, Object> properties, OpenSPCoop2Message message,
 			String alias, JWKSet jwkSet) throws SecurityException {
 		return getJwtHeaders(properties, message, alias, jwkSet, null);
 	}
-	public static JwtHeaders getJwtHeaders(Hashtable<String, Object> properties, OpenSPCoop2Message message,
+	public static JwtHeaders getJwtHeaders(Map<String, Object> properties, OpenSPCoop2Message message,
 			String alias, KeyStore keystore) throws SecurityException {
 		return getJwtHeaders(properties, message, alias, null, keystore);
 	}
-	private static JwtHeaders getJwtHeaders(Hashtable<String, Object> properties, OpenSPCoop2Message message,
+	private static JwtHeaders getJwtHeaders(Map<String, Object> properties, OpenSPCoop2Message message,
 			String alias, JWKSet jwkSet, 
 			KeyStore keystore) throws SecurityException {
 		JwtHeaders hdrs = new JwtHeaders();
@@ -323,11 +322,11 @@ public class JOSEUtils {
 	}
 
 	
-	public static boolean useJwtHeaders(Map<String, Properties> properties, JWTOptions options) throws ProviderException, ProviderValidationException {
+	public static boolean useJwtHeaders_mapProperties(Map<String, Properties> properties, JWTOptions options) throws ProviderException, ProviderValidationException {
 		Properties defaultProperties = MultiPropertiesUtilities.getDefaultProperties(properties);
 		return useJwtHeaders(defaultProperties, options);
 	}
-	public static boolean useJwtHeaders(Hashtable<String, Object> propertiesParam, JWTOptions options) {
+	public static boolean useJwtHeaders_map(Map<String, Object> propertiesParam, JWTOptions options) {
 		Properties properties = new Properties();
 		properties.putAll(propertiesParam);
 		return useJwtHeaders(properties, options);
@@ -407,7 +406,7 @@ public class JOSEUtils {
 	}
 	
 
-	public static Properties toSslConfigJwtUrlHeader(Hashtable<String, Object> propertiesParam) throws SecurityException, UtilsException {
+	public static Properties toSslConfigJwtUrlHeader(Map<String, Object> propertiesParam) throws SecurityException, UtilsException {
 		Properties properties = null;
 		if(propertiesParam.containsKey(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_FILE)) {
 			String keystoreFile = (String) propertiesParam.get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_FILE);
@@ -430,7 +429,7 @@ public class JOSEUtils {
 		}
 		return properties;
 	}
-	public static KeyStore readTrustStoreSsl(Hashtable<String, Object> propertiesParam) throws SecurityException, UtilsException {
+	public static KeyStore readTrustStoreSsl(Map<String, Object> propertiesParam) throws SecurityException, UtilsException {
 		Properties properties = new Properties();
 		properties.putAll(propertiesParam);
 		return readTrustStoreSsl(properties);
@@ -441,7 +440,7 @@ public class JOSEUtils {
 				SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_PASSWORD);
 	}
 
-	public static KeyStore readTrustStoreJwtX509Cert(Hashtable<String, Object> propertiesParam) throws SecurityException, UtilsException {
+	public static KeyStore readTrustStoreJwtX509Cert(Map<String, Object> propertiesParam) throws SecurityException, UtilsException {
 		Properties properties = new Properties();
 		properties.putAll(propertiesParam);
 		return readTrustStoreJwtX509Cert(properties);
@@ -452,7 +451,7 @@ public class JOSEUtils {
 				SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_PASSWORD);
 	}
 
-	public static boolean isJWKSetKeystore(Hashtable<String, Object> propertiesParam) {
+	public static boolean isJWKSetKeystore(Map<String, Object> propertiesParam) {
 		Properties properties = new Properties();
 		properties.putAll(propertiesParam);
 		return isJWKSetKeystore(properties);
@@ -467,7 +466,7 @@ public class JOSEUtils {
 		return false;
 	}
 	
-	public static JWKSet readKeyStoreJwtJsonWebKeysCert(Hashtable<String, Object> propertiesParam) throws SecurityException, UtilsException {
+	public static JWKSet readKeyStoreJwtJsonWebKeysCert(Map<String, Object> propertiesParam) throws SecurityException, UtilsException {
 		Properties properties = new Properties();
 		properties.putAll(propertiesParam);
 		return readKeyStoreJwtJsonWebKeysCert(properties);
@@ -489,7 +488,7 @@ public class JOSEUtils {
 		return null;
 	}
 	
-	public static KeyStore readKeyStoreJwtX509Cert(Hashtable<String, Object> propertiesParam) throws SecurityException, UtilsException {
+	public static KeyStore readKeyStoreJwtX509Cert(Map<String, Object> propertiesParam) throws SecurityException, UtilsException {
 		Properties properties = new Properties();
 		properties.putAll(propertiesParam);
 		return readKeyStoreJwtX509Cert(properties);
@@ -500,7 +499,7 @@ public class JOSEUtils {
 				SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_PASSWORD);
 	}
 	
-	public static HashMap<String, String> readJwtX509Cert_mapAliasPassword(Hashtable<String, Object> propertiesParam) throws SecurityException, UtilsException {
+	public static HashMap<String, String> readJwtX509Cert_mapAliasPassword(Map<String, Object> propertiesParam) throws SecurityException, UtilsException {
 		Properties properties = new Properties();
 		properties.putAll(propertiesParam);
 		return readJwtX509Cert_mapAliasPassword(properties);

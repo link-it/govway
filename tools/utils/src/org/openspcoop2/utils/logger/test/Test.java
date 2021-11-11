@@ -351,13 +351,13 @@ public class Test {
 			arrayProperty[2] = p3;
 			c.setArrayProperty(arrayProperty);
 			
-			Map<String, Long> mapPrimitive = new java.util.Hashtable<String,Long>(); 
+			Map<String, Long> mapPrimitive = new java.util.HashMap<String,Long>(); 
 			mapPrimitive.put("K1", 555l);
 			mapPrimitive.put("K2", 666l);
 			mapPrimitive.put("K3", 777l);
 			c.setMapPrimitive(mapPrimitive);
 			
-			Map<String, Property> mapProperty = new java.util.Hashtable<String,Property>(); 
+			Map<String, Property> mapProperty = new java.util.HashMap<String,Property>(); 
 			mapProperty.put("K1", p1);
 			mapProperty.put("K2", p2);
 			mapProperty.put("K3", p3);

@@ -198,8 +198,8 @@ public abstract class BaseBean {
 						java.util.List<Object> lista_parameterSORT = new java.util.ArrayList<Object>();
 						try{
 							java.util.List<String> lista_thisTMP = new java.util.ArrayList<String>();
-							java.util.Hashtable<String, Object> thisTmp = new java.util.Hashtable<String, Object>();
-							java.util.Hashtable<String, Object> parameterTmp = new java.util.Hashtable<String, Object>();
+							java.util.Map<String, Object> thisTmp = new java.util.HashMap<String, Object>();
+							java.util.Map<String, Object> parameterTmp = new java.util.HashMap<String, Object>();
 							for(int k=0; k<lista_this.size(); k++){
 								Object thisObject = lista_this.get(k);
 								Object paramObject = lista_parameter.get(k);
@@ -645,8 +645,8 @@ public abstract class BaseBean {
 							boolean listaNonCompleta = false;
 							try{
 								java.util.List<String> lista_thisTMP = new java.util.ArrayList<String>();
-								java.util.Hashtable<String, Object> thisTmp = new java.util.Hashtable<String, Object>();
-								java.util.Hashtable<String, Object> parameterTmp = new java.util.Hashtable<String, Object>();
+								java.util.Map<String, Object> thisTmp = new java.util.HashMap<String, Object>();
+								java.util.Map<String, Object> parameterTmp = new java.util.HashMap<String, Object>();
 								for(int k=0; k<lista_this.size(); k++){
 									Object thisObject = lista_this.get(k);
 									Object paramObject = lista_parameter.get(k);
@@ -692,12 +692,12 @@ public abstract class BaseBean {
 										bf.append(".");
 										bf.append(fields[i].getName()+"] ");
 										bf.append("Match non trovato in this(size:"+thisTmp.size()+") per l'elemento: "+key);
-										java.util.Enumeration<String> keys =  thisTmp.keys();
-										int j=0;
-										while(keys.hasMoreElements()){
-											String keyJ = keys.nextElement();
-											bf.append("ELEMENTO_THIS_["+j+"]=["+keyJ+"]");
-											j++;
+										if(!thisTmp.isEmpty()) {
+											int j=0;
+											for (String keyJ : thisTmp.keySet()) {
+												bf.append("ELEMENTO_THIS_["+j+"]=["+keyJ+"]");
+												j++;
+											}
 										}
 										listaNonCompleta = true;
 										break;
@@ -710,12 +710,12 @@ public abstract class BaseBean {
 										bf.append(".");
 										bf.append(fields[i].getName()+"] ");
 										bf.append("Match non trovato in param(size:"+parameterTmp.size()+") per l'elemento: "+key);
-										java.util.Enumeration<String> keys =  parameterTmp.keys();
-										int j=0;
-										while(keys.hasMoreElements()){
-											String keyJ = keys.nextElement();
-											bf.append("ELEMENTO_PARAM_["+j+"]=["+keyJ+"]");
-											j++;
+										if(!parameterTmp.isEmpty()) {
+											int j=0;
+											for (String keyJ : parameterTmp.keySet()) {
+												bf.append("ELEMENTO_PARAM_["+j+"]=["+keyJ+"]");
+												j++;
+											}
 										}
 										listaNonCompleta = true;
 										break;

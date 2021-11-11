@@ -25,7 +25,7 @@ package org.openspcoop2.protocol.spcoop.testsuite.units.connettori;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Vector;
 
 import org.apache.axis.AxisFault;
@@ -778,8 +778,8 @@ public class LetturaCredenzialiIngresso extends GestioneViaJmx {
 		
 			
 			// Contesto SSL
-			java.util.Hashtable<String, String> sslContext = null;
-			sslContext = new Hashtable<String, String>();
+			java.util.Map<String, String> sslContext = null;
+			sslContext = new HashMap<String, String>();
 			sslContext.put("trustStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("keyStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("trustStorePassword", "openspcoopjks");
@@ -928,8 +928,8 @@ public class LetturaCredenzialiIngresso extends GestioneViaJmx {
 		
 			
 			// Contesto SSL
-			java.util.Hashtable<String, String> sslContext = null;
-			sslContext = new Hashtable<String, String>();
+			java.util.Map<String, String> sslContext = null;
+			sslContext = new HashMap<String, String>();
 			sslContext.put("trustStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("keyStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("trustStorePassword", "openspcoopjks");
@@ -2131,8 +2131,8 @@ public class LetturaCredenzialiIngresso extends GestioneViaJmx {
 			msg.getSOAPPartAsBytes();
 			
 			// Contesto SSL
-			java.util.Hashtable<String, String> sslContext = null;
-			sslContext = new Hashtable<String, String>();
+			java.util.Map<String, String> sslContext = null;
+			sslContext = new HashMap<String, String>();
 			sslContext.put("trustStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("keyStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("trustStorePassword", "openspcoopjks");
@@ -2271,8 +2271,8 @@ public class LetturaCredenzialiIngresso extends GestioneViaJmx {
 			msg.getSOAPPartAsBytes();
 			
 			// Contesto SSL
-			java.util.Hashtable<String, String> sslContext = null;
-			sslContext = new Hashtable<String, String>();
+			java.util.Map<String, String> sslContext = null;
+			sslContext = new HashMap<String, String>();
 			sslContext.put("trustStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("keyStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("trustStorePassword", "openspcoopjks");
@@ -3355,8 +3355,8 @@ public class LetturaCredenzialiIngresso extends GestioneViaJmx {
 			msg.getSOAPPartAsBytes();
 			
 			// Contesto SSL
-			java.util.Hashtable<String, String> sslContext = null;
-			sslContext = new Hashtable<String, String>();
+			java.util.Map<String, String> sslContext = null;
+			sslContext = new HashMap<String, String>();
 			sslContext.put("trustStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("keyStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("trustStorePassword", "openspcoopjks");
@@ -3544,8 +3544,8 @@ public class LetturaCredenzialiIngresso extends GestioneViaJmx {
 			msg.getSOAPPartAsBytes();
 			
 			// Contesto SSL
-			java.util.Hashtable<String, String> sslContext = null;
-			sslContext = new Hashtable<String, String>();
+			java.util.Map<String, String> sslContext = null;
+			sslContext = new HashMap<String, String>();
 			sslContext.put("trustStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("keyStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("trustStorePassword", "openspcoopjks");

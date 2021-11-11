@@ -24,10 +24,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -474,12 +473,10 @@ public class ValidazioneDocumenti extends BasicComponentFactory implements IVali
 		return result;
 	}
 	private void checkPortTypeInBinding(DefinitionWrapper wsdlParteSpecifica) throws Exception{
-		Hashtable<QName,QName> mapBindingToPortTypeImplemented = wsdlParteSpecifica.getMapPortTypesImplementedBinding();
+		Map<QName,QName> mapBindingToPortTypeImplemented = wsdlParteSpecifica.getMapPortTypesImplementedBinding();
 		List<String> portTypes = new ArrayList<String>();
 		StringBuilder bf = new StringBuilder();
-		Enumeration<QName> bindings = mapBindingToPortTypeImplemented.keys();
-		while (bindings.hasMoreElements()) {
-			QName binding = (QName) bindings.nextElement();
+		for (QName binding : mapBindingToPortTypeImplemented.keySet()) {
 			QName portType = mapBindingToPortTypeImplemented.get(binding);
 			String portTypeName = portType.getLocalPart();
 			if(portTypes.contains(portTypeName)==false){

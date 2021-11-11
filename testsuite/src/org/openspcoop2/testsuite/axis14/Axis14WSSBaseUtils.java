@@ -22,8 +22,7 @@
 
 package org.openspcoop2.testsuite.axis14;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.Map;
 
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
@@ -32,10 +31,10 @@ import javax.xml.soap.SOAPMessage;
 import org.apache.axis.MessageContext;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.server.AxisServer;
-import org.slf4j.Logger;
 import org.apache.ws.security.WSSConfig;
 import org.apache.ws.security.handler.WSHandlerConstants;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.slf4j.Logger;
 
 /**
  * Classe di base per la gestione del WS-Security.
@@ -119,14 +118,14 @@ public class Axis14WSSBaseUtils {
     	}
     }
     
-    public void setMessageContext(Hashtable<?,?> wssProperties) {
+    public void setMessageContext(Map<?,?> wssProperties) {
     	
     	boolean actor = false;
     	boolean mustUnderstandTrue=false;
     	
         if (wssProperties != null && wssProperties.size() > 0) {
-            for (Enumeration<?> e = wssProperties.keys(); e.hasMoreElements();) {
-                String key = (String) e.nextElement();
+        	for (Object oKey : wssProperties.keySet()) {
+                String key = (String) oKey;
                 String value = (String) wssProperties.get(key);
                 if (WSHandlerConstants.ENCRYPTION_USER.equals(key)
                         && WSHandlerConstants.USE_REQ_SIG_CERT.equals(value)) {

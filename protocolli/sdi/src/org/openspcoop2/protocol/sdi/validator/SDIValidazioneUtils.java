@@ -21,9 +21,9 @@ package org.openspcoop2.protocol.sdi.validator;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -306,7 +306,7 @@ public class SDIValidazioneUtils {
 					nomiDaRiportare.add(SDICostanti.SDI_BUSTA_EXT_NOME_FILE_METADATI);
 					nomiDaRiportare.add(SDICostanti.SDI_BUSTA_EXT_SOGGETTO_EMITTENTE);
 					
-					Hashtable<String, String> nomiDaRiportareDiversamente = new Hashtable<>();
+					Map<String, String> nomiDaRiportareDiversamente = new HashMap<>();
 					nomiDaRiportareDiversamente.put(SDICostanti.SDI_BUSTA_EXT_NOME_FILE, SDICostanti.SDI_BUSTA_EXT_NOME_FILE_FATTURA);
 					
 					List<String> prefissiDaRiportare = new ArrayList<>();
@@ -338,9 +338,7 @@ public class SDIValidazioneUtils {
 						}
 						
 						if(!nomiDaRiportareDiversamente.isEmpty()) {
-							Enumeration<String> keys = nomiDaRiportareDiversamente.keys();
-							while (keys.hasMoreElements()) {
-								String nome = (String) keys.nextElement();
+							for (String nome : nomiDaRiportareDiversamente.keySet()) {
 								if(checkNome.equals(nome)) {
 									if(!busta.existsProperty(checkNome)) {
 										busta.addProperty(nomiDaRiportareDiversamente.get(checkNome), checkValue);

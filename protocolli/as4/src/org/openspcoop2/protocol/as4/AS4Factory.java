@@ -21,6 +21,9 @@
 package org.openspcoop2.protocol.as4;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.xml.soap.SOAPElement;
 
 import org.openspcoop2.protocol.as4.archive.AS4Archive;
@@ -32,6 +35,7 @@ import org.openspcoop2.protocol.as4.config.AS4ProtocolVersionManager;
 import org.openspcoop2.protocol.as4.properties.AS4DynamicConfiguration;
 import org.openspcoop2.protocol.as4.validator.AS4ValidazioneSintattica;
 import org.openspcoop2.protocol.basic.BasicFactory;
+import org.openspcoop2.protocol.basic.BasicStaticInstanceConfig;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -66,6 +70,16 @@ public class AS4Factory extends BasicFactory<SOAPElement> {
 		AS4Properties.initialize(configPdD.getConfigurationDir(),log);
 		AS4Properties properties = AS4Properties.getInstance();
 		properties.validaConfigurazione(configPdD.getLoader());
+		
+		BasicStaticInstanceConfig staticInstanceConfig = properties.getStaticInstanceConfig();
+		super.initStaticInstance(staticInstanceConfig);
+		if(staticInstanceConfig!=null) {
+			if(staticInstanceConfig.isStaticConfig()) {
+				staticInstanceProtocolManager = new AS4ProtocolManager(this);
+				staticInstanceProtocolVersionManager = new HashMap<String, IProtocolVersionManager>();
+				staticInstanceProtocolConfiguration = new AS4ProtocolConfiguration(this);
+			}
+		}
 	}
 	
 	
@@ -97,22 +111,38 @@ public class AS4Factory extends BasicFactory<SOAPElement> {
 	
 	/* ** CONFIG ** */
 	
+	private static IProtocolManager staticInstanceProtocolManager = null;
 	@Override
 	public IProtocolManager createProtocolManager()
 			throws ProtocolException {
-		return new AS4ProtocolManager(this);
+		return staticInstanceProtocolManager!=null ? staticInstanceProtocolManager : new AS4ProtocolManager(this);
 	}
 	
+	private static Map<String, IProtocolVersionManager> staticInstanceProtocolVersionManager = null;
 	@Override
 	public IProtocolVersionManager createProtocolVersionManager(String version)
 			throws ProtocolException {
-		return new AS4ProtocolVersionManager(this,version);
+		if(staticInstanceProtocolVersionManager!=null) {
+			if(!staticInstanceProtocolVersionManager.containsKey(version)) {
+				initProtocolVersionManager(version);
+			}
+			return staticInstanceProtocolVersionManager.get(version);
+		}
+		else {
+			return new AS4ProtocolVersionManager(this,version);
+		}
+	}
+	private synchronized void initProtocolVersionManager(String version) throws ProtocolException {
+		if(!staticInstanceProtocolVersionManager.containsKey(version)) {
+			staticInstanceProtocolVersionManager.put(version, new AS4ProtocolVersionManager(this,version));
+		}
 	}
 
+	private static IProtocolConfiguration staticInstanceProtocolConfiguration = null;
 	@Override
 	public IProtocolConfiguration createProtocolConfiguration()
 			throws ProtocolException {
-		return new AS4ProtocolConfiguration(this);
+		return staticInstanceProtocolConfiguration!=null ? staticInstanceProtocolConfiguration : new AS4ProtocolConfiguration(this);
 	}
 
 	

@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.config;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +42,7 @@ public class ConfigurazioneCanaliUtilities {
 
 		boolean deleteCanale = false;
 		// Controllo che il canale non sia in uso
-		Map<ErrorsHandlerCostant, List<String>> whereIsInUso = new Hashtable<ErrorsHandlerCostant, List<String>>();
+		Map<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
 		boolean normalizeObjectIds = !confHelper.isModalitaCompleta();
 		boolean canaleInUso  = confCore.isCanaleInUso(canale, whereIsInUso, normalizeObjectIds);
 
@@ -63,7 +63,7 @@ public class ConfigurazioneCanaliUtilities {
 			ConfigurazioneCore confCore, ConfigurazioneHelper confHelper, StringBuilder inUsoMessage, String newLine) throws Exception {
 
 		// Controllo che il canale non sia in uso
-		Map<ErrorsHandlerCostant, List<String>> whereIsInUso = new Hashtable<ErrorsHandlerCostant, List<String>>();
+		Map<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
 		boolean normalizeObjectIds = !confHelper.isModalitaCompleta();
 		boolean canaleInUso  = confCore.isCanaleInUsoRegistro(canale, whereIsInUso, normalizeObjectIds);
 

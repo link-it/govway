@@ -31,7 +31,6 @@ import org.openspcoop2.monitor.engine.config.TransactionServiceLibrary;
 import org.openspcoop2.monitor.engine.transaction.TransactionContentUtils;
 
 import java.util.List;
-import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.openspcoop2.generic_project.exception.NotFoundException;
@@ -59,7 +58,7 @@ public class PostOutResponseHandler_ContenutiUtilities {
 			Traccia tracciaRichiesta, Traccia tracciaRisposta,
 			List<MsgDiagnostico> msgDiagnostici,
 			IDumpMessaggioService dumpMessageService,
-			Vector<TransactionResource> risorse,
+			List<TransactionResource> risorse,
 			TransactionServiceLibrary transactionServiceLibrary,
 			DAOFactory daoFactory) throws HandlerException{
 

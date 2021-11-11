@@ -22,7 +22,8 @@
 
 package org.openspcoop2.testsuite.units;
 
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.management.MBeanServerConnection;
@@ -172,16 +173,16 @@ public class RisorseEsterne extends GestioneViaJmx {
 		}
 		
 		JMXServiceURL serviceURL = new JMXServiceURL(unitsTestsuiteProperties.getJMXServiceURL(as));   
-		Hashtable<String, Object> env = null;
+		Map<String, Object> env = null;
 		if(unitsTestsuiteProperties.getJMXUsername()!=null && unitsTestsuiteProperties.getJMXPassword()!=null){
 			String[] creds = {unitsTestsuiteProperties.getJMXUsername(), unitsTestsuiteProperties.getJMXPassword()};
-			env = new Hashtable<String, Object>();
+			env = new HashMap<String, Object>();
 			env.put(JMXConnector.CREDENTIALS, creds);
 		}
 		JMXConnector jmxConnector = JMXConnectorFactory.connect(serviceURL, env);           
 		jmxconn = jmxConnector.getMBeanServerConnection();	
 //		}else{
-//			Hashtable<String, Object> env = new Hashtable<String, Object>();
+//			Map<String, Object> env = new HashMap<String, Object>();
 //			env.put(javax.naming.Context.INITIAL_CONTEXT_FACTORY, this.unitsTestsuiteProperties.getJMXFactory());
 //			env.put(javax.naming.Context.PROVIDER_URL, this.unitsTestsuiteProperties.getJMXServer());
 //			

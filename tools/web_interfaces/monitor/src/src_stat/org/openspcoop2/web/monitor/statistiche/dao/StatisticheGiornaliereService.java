@@ -6702,7 +6702,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 			}
 			List<ResDistribuzione> res = new ArrayList<ResDistribuzione>();
-			//			Hashtable<String, ResDistribuzione> map = new Hashtable<String, ResDistribuzione>();
+			//			Map<String, ResDistribuzione> map = new HashMap<String, ResDistribuzione>();
 			if (list != null) {
 
 				// List<Object[]> list = q.getResultList();

@@ -23,7 +23,6 @@ package org.openspcoop2.pdd.config;
 import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -325,11 +324,8 @@ public class ConfigurazionePdDManager {
 	private void resolveDynamicValue(String oggetto, MessageSecurityConfig config, Logger log, OpenSPCoop2Message message, Busta busta, 
 			RequestInfo requestInfo, PdDContext pddContext) {
 		if (config != null && config.getFlowParameters() != null && !config.getFlowParameters().isEmpty()) {
-			Enumeration<String> keys = config.getFlowParameters().keys();
 			ArrayList<String> valuesForReplace = new ArrayList<>();
-
-			while(keys.hasMoreElements()) {
-				String key = (String)keys.nextElement();
+			for (String key : config.getFlowParameters().keySet()) {
 				Object oValue = config.getFlowParameters().get(key);
 				if (oValue != null && oValue instanceof String) {
 					String value = (String)oValue;

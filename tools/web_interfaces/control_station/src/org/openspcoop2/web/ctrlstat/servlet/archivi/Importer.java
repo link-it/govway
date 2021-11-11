@@ -23,8 +23,8 @@ package org.openspcoop2.web.ctrlstat.servlet.archivi;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -191,7 +191,7 @@ public final class Importer extends Action {
 			
 			
 			// show Protocols se esiste più di un importMode per qualche protocollo
-			Hashtable<String, String> importModesMapRispettoATuttiIProtocolli = importerUtils.getImportModesWithProtocol(protocolli);
+			Map<String, String> importModesMapRispettoATuttiIProtocolli = importerUtils.getImportModesWithProtocol(protocolli);
 			boolean showProtocols = importModesMapRispettoATuttiIProtocolli!=null && importModesMapRispettoATuttiIProtocolli.size()>1;
 			
 			
@@ -203,7 +203,7 @@ public final class Importer extends Action {
 			}else{
 				protocolliForModes.addAll(protocolli);
 			}
-			Hashtable<String, String> importModesMap = importerUtils.getImportModesWithProtocol(protocolliForModes);
+			Map<String, String> importModesMap = importerUtils.getImportModesWithProtocol(protocolliForModes);
 			List<ImportMode> importModes = new ArrayList<ImportMode>();
 			for (String imp : importModesMap.keySet()) {
 				importModes.add(new ImportMode(imp));

@@ -23,8 +23,10 @@ package org.openspcoop2.pdd.core.connettori;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.ObjectUtils.Null;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -141,44 +143,50 @@ public class ConnettoreHTTP_urlHttps_keystoreRepository {
 	
 	
 	
-	private static Hashtable<String, Object> mapConnettoreHTTPSProperties = new Hashtable<String, Object>();
+	private static Map<String, Object> mapConnettoreHTTPSProperties = new ConcurrentHashMap<String, Object>();
 	
 	private static String getKeyCache(String tipoNomeSoggetto, boolean fruizioni) {
 		return (fruizioni? "fruizione_" : "erogazione_") + tipoNomeSoggetto;
 	}
 	
-	private static synchronized Object _getConnettoreHTTPSPropertiesFromCache(File fileRepository,String tipoNomeSoggetto,
+	private static org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("ConnettoreHTTP_urlHttps_keystoreRepository");
+	private static Object _getConnettoreHTTPSPropertiesFromCache(File fileRepository,String tipoNomeSoggetto,
 			boolean debug, ConnettoreLogger logger, int size, boolean fruizioni) throws Exception{
 		
-		String keyCache = getKeyCache(tipoNomeSoggetto, fruizioni);
-		String debugRole = (fruizioni? "fruizione" : "erogazione");
-		
-		if(mapConnettoreHTTPSProperties.containsKey(keyCache)){
-			return mapConnettoreHTTPSProperties.get(keyCache);
-		}
-		
-		int dimensioneMassimaCache = size;
-		if(mapConnettoreHTTPSProperties.size()==(dimensioneMassimaCache)){
-			// la cache ha raggiunto la sua dimensione massima, prima di aggiungere la nuova informazione la svuoto.
-			logger.warn("CacheConnettori ha raggiunto la sua capienza massima ["+dimensioneMassimaCache+"]. Viene svuotata interamente");
-			mapConnettoreHTTPSProperties.clear();
-		}
-		
-		ConnettoreHTTPSProperties https = getConnettoreHTTPSPropertiesFromRepository(fileRepository, tipoNomeSoggetto, debug, logger, fruizioni);
-		if(https==null){
-			if(debug){
-				logger.debug("Indicazione configurazione https ("+debugRole+") non presente per soggetto "+tipoNomeSoggetto+" aggiunta in cache");
+		semaphore.acquire("_getConnettoreHTTPSPropertiesFromCache");
+		try {
+			String keyCache = getKeyCache(tipoNomeSoggetto, fruizioni);
+			String debugRole = (fruizioni? "fruizione" : "erogazione");
+			
+			if(mapConnettoreHTTPSProperties.containsKey(keyCache)){
+				return mapConnettoreHTTPSProperties.get(keyCache);
 			}
-			mapConnettoreHTTPSProperties.put(keyCache, org.apache.commons.lang.ObjectUtils.NULL);
-		}
-		else{
-			if(debug){
-				logger.debug("Configurazione https ("+debugRole+") per soggetto "+tipoNomeSoggetto+" aggiunta in cache");
+			
+			int dimensioneMassimaCache = size;
+			if(mapConnettoreHTTPSProperties.size()==(dimensioneMassimaCache)){
+				// la cache ha raggiunto la sua dimensione massima, prima di aggiungere la nuova informazione la svuoto.
+				logger.warn("CacheConnettori ha raggiunto la sua capienza massima ["+dimensioneMassimaCache+"]. Viene svuotata interamente");
+				mapConnettoreHTTPSProperties.clear();
 			}
-			mapConnettoreHTTPSProperties.put(keyCache, https);
+			
+			ConnettoreHTTPSProperties https = getConnettoreHTTPSPropertiesFromRepository(fileRepository, tipoNomeSoggetto, debug, logger, fruizioni);
+			if(https==null){
+				if(debug){
+					logger.debug("Indicazione configurazione https ("+debugRole+") non presente per soggetto "+tipoNomeSoggetto+" aggiunta in cache");
+				}
+				mapConnettoreHTTPSProperties.put(keyCache, org.apache.commons.lang.ObjectUtils.NULL);
+			}
+			else{
+				if(debug){
+					logger.debug("Configurazione https ("+debugRole+") per soggetto "+tipoNomeSoggetto+" aggiunta in cache");
+				}
+				mapConnettoreHTTPSProperties.put(keyCache, https);
+			}
+			
+			return https;
+		}finally {
+			semaphore.release("_getConnettoreHTTPSPropertiesFromCache");
 		}
-		
-		return https;
 	}
 	
 	private static ConnettoreHTTPSProperties getConnettoreHTTPSPropertiesFromCache(File fileRepository,String tipoNomeSoggetto,
@@ -254,7 +262,7 @@ public class ConnettoreHTTP_urlHttps_keystoreRepository {
 				}
 			}catch(Exception eClose){}
 		}
-		Hashtable<String, String> pMap = new Hashtable<String, String>();
+		Map<String, String> pMap = new HashMap<String, String>();
 		Enumeration<?> enP = p.keys();
 		while (enP.hasMoreElements()) {
 			String key = (String) enP.nextElement();

@@ -27,10 +27,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-import java.util.Hashtable;
+import java.util.Map;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.HashMap;
 import java.util.Vector;
 
 import javax.wsdl.Binding;
@@ -326,7 +326,7 @@ public class Validatore {
 		
 		if(implementativo){
 			
-			Hashtable<String, String> mappingPortTypeBinding = new Hashtable<String, String>();
+			Map<String, String> mappingPortTypeBinding = new HashMap<String, String>();
 			
 			// CHECK BINDING
 			Map<?, ?> mBindings = wsdl.getAllBindings();

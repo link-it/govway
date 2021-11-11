@@ -22,8 +22,9 @@ package org.openspcoop2.message.config;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.mail.internet.ContentType;
 
@@ -61,8 +62,8 @@ public class ServiceBindingConfiguration implements Serializable {
 	private ConfigurationServiceBindingRest rest;
 	private ContextUrlCollection contextUrlCollection;
 	
-	private Hashtable<String, ServiceBinding> restrictedServiceBindingContextUrl = new Hashtable<String, ServiceBinding>();
-	private Hashtable<String, ServiceBinding> restrictedServiceBindingServiceType = new Hashtable<String, ServiceBinding>();
+	private Map<String, ServiceBinding> restrictedServiceBindingContextUrl = new HashMap<String, ServiceBinding>();
+	private Map<String, ServiceBinding> restrictedServiceBindingServiceType = new HashMap<String, ServiceBinding>();
 	
 	public ServiceBindingConfiguration(ServiceBinding defaultBinding, 
 			ConfigurationServiceBindingSoap soap, ConfigurationServiceBindingRest rest,

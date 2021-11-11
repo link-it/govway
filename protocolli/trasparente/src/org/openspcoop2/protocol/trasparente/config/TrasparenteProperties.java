@@ -22,6 +22,7 @@ package org.openspcoop2.protocol.trasparente.config;
 
 import java.util.Properties;
 
+import org.openspcoop2.protocol.basic.BasicStaticInstanceConfig;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.Loader;
@@ -148,6 +149,11 @@ public class TrasparenteProperties {
 			
 			this.isUtilizzaTestSuiteGenerazioneTracce();
 			this.isUtilizzaTestSuiteProtocolProperties();
+			
+			this.useConfigStaticInstance();
+			this.useErroreApplicativoStaticInstance();
+			this.useEsitoStaticInstance();
+			this.getStaticInstanceConfig();
 
 		}catch(java.lang.Exception e) {
 			String msg = "Riscontrato errore durante la validazione della proprieta' del protocollo trasparente, "+e.getMessage();
@@ -699,5 +705,105 @@ public class TrasparenteProperties {
 		}
 
 		return TrasparenteProperties.utilizzaTestSuiteProtocolProperties;
+	}
+	
+	
+	
+	private static Boolean useConfigStaticInstance = null;
+	private Boolean useConfigStaticInstance(){
+		if(TrasparenteProperties.useConfigStaticInstance==null){
+			
+			Boolean defaultValue = true;
+			String propertyName = "org.openspcoop2.protocol.trasparente.factory.config.staticInstance";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					TrasparenteProperties.useConfigStaticInstance = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
+					TrasparenteProperties.useConfigStaticInstance = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
+				TrasparenteProperties.useConfigStaticInstance = defaultValue;
+			}
+		}
+
+		return TrasparenteProperties.useConfigStaticInstance;
+	}
+	
+	private static Boolean useErroreApplicativoStaticInstance = null;
+	private Boolean useErroreApplicativoStaticInstance(){
+		if(TrasparenteProperties.useErroreApplicativoStaticInstance==null){
+			
+			Boolean defaultValue = true;
+			String propertyName = "org.openspcoop2.protocol.trasparente.factory.erroreApplicativo.staticInstance";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					TrasparenteProperties.useErroreApplicativoStaticInstance = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
+					TrasparenteProperties.useErroreApplicativoStaticInstance = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
+				TrasparenteProperties.useErroreApplicativoStaticInstance = defaultValue;
+			}
+		}
+
+		return TrasparenteProperties.useErroreApplicativoStaticInstance;
+	}
+	
+	private static Boolean useEsitoStaticInstance = null;
+	private Boolean useEsitoStaticInstance(){
+		if(TrasparenteProperties.useEsitoStaticInstance==null){
+			
+			Boolean defaultValue = true;
+			String propertyName = "org.openspcoop2.protocol.trasparente.factory.esito.staticInstance";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					TrasparenteProperties.useEsitoStaticInstance = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
+					TrasparenteProperties.useEsitoStaticInstance = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.debug("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
+				TrasparenteProperties.useEsitoStaticInstance = defaultValue;
+			}
+		}
+
+		return TrasparenteProperties.useEsitoStaticInstance;
+	}
+	
+	private static BasicStaticInstanceConfig staticInstanceConfig = null;
+	public BasicStaticInstanceConfig getStaticInstanceConfig(){
+		if(TrasparenteProperties.staticInstanceConfig==null){
+			staticInstanceConfig = new BasicStaticInstanceConfig();
+			if(useConfigStaticInstance()!=null) {
+				staticInstanceConfig.setStaticConfig(useConfigStaticInstance());
+			}
+			if(useErroreApplicativoStaticInstance()!=null) {
+				staticInstanceConfig.setStaticErrorBuilder(useErroreApplicativoStaticInstance());
+			}
+			if(useEsitoStaticInstance()!=null) {
+				staticInstanceConfig.setStaticEsitoBuilder(useEsitoStaticInstance());
+			}
+		}
+		return staticInstanceConfig;
 	}
 }

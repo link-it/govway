@@ -20,8 +20,9 @@
 package org.openspcoop2.monitor.engine.transaction;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.transazioni.DumpAllegato;
@@ -99,7 +100,7 @@ public class TransactionManager {
 			}
 						
 			// tracce / diagnostici
-			Hashtable<String, String> propertiesRicerca = new Hashtable<String, String>();
+			Map<String, String> propertiesRicerca = new HashMap<String, String>();
 			
 			propertiesRicerca.put("id_transazione", id);
 			Traccia tracciaRichiesta = null;

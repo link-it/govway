@@ -29,10 +29,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import org.openspcoop2.utils.TipiDatabase;
@@ -66,7 +67,7 @@ public class DataSource implements javax.sql.DataSource,java.sql.Wrapper {
 	
 	private boolean closed = false;
 
-	private Hashtable<String,org.openspcoop2.utils.datasource.Connection> releasedConnections = new Hashtable<String,org.openspcoop2.utils.datasource.Connection>();
+	private Map<String,org.openspcoop2.utils.datasource.Connection> releasedConnections = new ConcurrentHashMap<String,org.openspcoop2.utils.datasource.Connection>();
 	
 	public String[] getJmxStatus() throws UtilsException{	
 		if(this.releasedConnections==null || this.releasedConnections.size()<=0)

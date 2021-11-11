@@ -31,7 +31,7 @@ public class StringBufferCheck {
 
 	public static final String STRING_BUFFER_CHECK = "StringBuffer";
 
-	public static java.util.Vector<String> fileNonValidi = new java.util.Vector<String>();
+	public static java.util.List<String> fileNonValidi = new java.util.ArrayList<String>();
 
 	public static String versione_rilascio = null;
 
@@ -51,7 +51,7 @@ public class StringBufferCheck {
 			
 			check(new File(dir));
 
-			java.util.Vector<String> filePrinted = new java.util.Vector<String>();	    
+			java.util.List<String> filePrinted = new java.util.ArrayList<String>();	    
 			if(fileNonValidi.size()>0){
 				for(int i=0; i<fileNonValidi.size(); i++){
 					String file = fileNonValidi.get(i);

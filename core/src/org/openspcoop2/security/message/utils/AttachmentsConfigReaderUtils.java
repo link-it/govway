@@ -21,8 +21,8 @@
 package org.openspcoop2.security.message.utils;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.message.soap.reference.AttachmentReference;
 import org.openspcoop2.message.soap.reference.Reference;
@@ -56,7 +56,7 @@ public class AttachmentsConfigReaderUtils {
 
 		AttachmentProcessingPart ap = null;
 
-		Hashtable<?,?> wssProperties = null;
+		Map<String,Object> wssProperties = null;
 		if(wssContext.isFunctionAsClient())
 			wssProperties = wssContext.getOutgoingProperties();
 		else

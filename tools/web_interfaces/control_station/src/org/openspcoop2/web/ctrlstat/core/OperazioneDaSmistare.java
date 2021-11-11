@@ -21,8 +21,10 @@
 
 package org.openspcoop2.web.ctrlstat.core;
 
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.List;
 
 import org.openspcoop2.web.ctrlstat.costanti.OperationsParameter;
 import org.openspcoop2.web.ctrlstat.costanti.TipoOggettoDaSmistare;
@@ -52,10 +54,10 @@ public class OperazioneDaSmistare implements java.io.Serializable {
 	private String superuser;
 	private TipoOggettoDaSmistare oggetto;
 
-	private Hashtable<OperationsParameter, Vector<String>> params;
+	private Map<OperationsParameter, List<String>> params;
 
 	public OperazioneDaSmistare() {
-		this.params = new Hashtable<OperationsParameter, Vector<String>>();
+		this.params = new HashMap<OperationsParameter, List<String>>();
 
 	}
 
@@ -71,13 +73,13 @@ public class OperazioneDaSmistare implements java.io.Serializable {
 		// Se esiste gia' una chiave nella tabella
 		// allora aggiungo il parametro alla lista di parametri
 		// altrimenti creo una nuova lista con associata alla chiave
-		Vector<String> v = null;
+		List<String> v = null;
 		if (this.params.containsKey(key)) {
 			v = this.params.get(key);
 			v.add(value);
 
 		} else {
-			v = new Vector<String>();
+			v = new ArrayList<String>();
 			v.add(value);
 
 		}
@@ -93,12 +95,12 @@ public class OperazioneDaSmistare implements java.io.Serializable {
 	 *            La chiave di ricerca
 	 * @return I valori associati alla key, null altrimenti.
 	 */
-	public Vector<String> getParameter(OperationsParameter key) {
+	public List<String> getParameter(OperationsParameter key) {
 		return this.params.get(key);
 	}
 
-	public Hashtable<OperationsParameter, Vector<String>> getParameters() {
-		return new Hashtable<OperationsParameter, Vector<String>>(this.params);
+	public Map<OperationsParameter, List<String>> getParameters() {
+		return new HashMap<OperationsParameter, List<String>>(this.params);
 	}
 
 	public void setIDTable(long id) {

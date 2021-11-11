@@ -26,7 +26,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openspcoop2.utils.CopyStream;
 import org.w3c.dom.ls.LSInput;
@@ -42,13 +43,13 @@ import org.w3c.dom.ls.LSResourceResolver;
 
 public class XSDResourceResolver implements LSResourceResolver {
 
-	private Hashtable<String, byte[]> resources = new Hashtable<String, byte[]>();
+	private Map<String, byte[]> resources = new HashMap<String, byte[]>();
 	
-	public Hashtable<String, byte[]> getResources() {
+	public Map<String, byte[]> getResources() {
 		return this.resources;
 	}
 	public XSDResourceResolver(){}
-	public XSDResourceResolver(Hashtable<String, byte[]> resources){
+	public XSDResourceResolver(Map<String, byte[]> resources){
 		this.resources = resources;
 	}
 	

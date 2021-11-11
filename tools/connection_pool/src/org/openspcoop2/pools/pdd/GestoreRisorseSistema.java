@@ -22,12 +22,13 @@
 
 package org.openspcoop2.pools.pdd;
 
-import java.util.Vector;
-
-
 import org.slf4j.Logger;
 import org.openspcoop2.pools.core.commons.Costanti;
 import org.openspcoop2.pools.core.driver.DriverRisorseSistemaException;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.dbcp2.cpdsadapter.DriverAdapterCPDS;
 import org.apache.commons.dbcp2.datasources.SharedPoolDataSource;
 import org.openspcoop2.pools.core.Datasource;
@@ -59,12 +60,12 @@ public class GestoreRisorseSistema {
 	private RisorseSistema risorseSistema;
 
 	/** Variabile che contiene i DataSource costruiti da OpenSPCoop */
-	private Vector<String> jndi_ds = new Vector<String>();
-	private Vector<SharedPoolDataSource> dsList = new Vector<SharedPoolDataSource>(); 
+	private List<String> jndi_ds = new ArrayList<String>();
+	private List<SharedPoolDataSource> dsList = new ArrayList<SharedPoolDataSource>(); 
 
 	/** Variabile che contiene i ConnectionSessionJMSPool costruiti da OpenSPCoop */
-	private Vector<String> jndi_qm = new Vector<String>();
-	private Vector<javax.jms.ConnectionFactory> qmList = new Vector<javax.jms.ConnectionFactory>(); 
+	private List<String> jndi_qm = new ArrayList<String>();
+	private List<javax.jms.ConnectionFactory> qmList = new ArrayList<javax.jms.ConnectionFactory>(); 
 
 	/** Logger utilizzato per debug. */
 	private Logger logCore = null;

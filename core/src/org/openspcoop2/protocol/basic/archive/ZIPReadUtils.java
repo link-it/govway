@@ -32,9 +32,9 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -345,22 +345,22 @@ public class ZIPReadUtils  {
 						
 			// ExtendedInfoManager
 			ExtendedInfoManager extendedInfoManager = ExtendedInfoManager.getInstance();
-			Hashtable<String, PortaDelegata> mapKeyForExtendedInfo_portaDelegata = new Hashtable<String, PortaDelegata>();
+			Map<String, PortaDelegata> mapKeyForExtendedInfo_portaDelegata = new HashMap<String, PortaDelegata>();
 			boolean existsExtendsConfigForPortaDelegata = extendedInfoManager.newInstanceExtendedInfoPortaDelegata()!=null;
-			Hashtable<String, PortaApplicativa> mapKeyForExtendedInfo_portaApplicativa = new Hashtable<String, PortaApplicativa>();
+			Map<String, PortaApplicativa> mapKeyForExtendedInfo_portaApplicativa = new HashMap<String, PortaApplicativa>();
 			boolean existsExtendsConfigForPortaApplicativa = extendedInfoManager.newInstanceExtendedInfoPortaApplicativa()!=null;
 			
 			// Map per identificativi accordi
-			Hashtable<String, IdentificativoAccordo> mapKeyAccordi = new Hashtable<String, IdentificativoAccordo>();
+			Map<String, IdentificativoAccordo> mapKeyAccordi = new HashMap<String, IdentificativoAccordo>();
 			
 			// Map per identificativi documenti
-			Hashtable<String, IdentificativoDocumento> mapKeyDocumenti = new Hashtable<String, IdentificativoDocumento>();
+			Map<String, IdentificativoDocumento> mapKeyDocumenti = new HashMap<String, IdentificativoDocumento>();
 			
 			// Map per identificativi protocol properties
-			Hashtable<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties = new Hashtable<String, IdentificativoProprietaProtocollo>();
+			Map<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties = new HashMap<String, IdentificativoProprietaProtocollo>();
 			
 			// Map per nomi-file e nomi servizi applicativi
-			Hashtable<String, IdentificativoServizioApplicativo> mapKeyServiziApplicativi = new Hashtable<String, IdentificativoServizioApplicativo>();
+			Map<String, IdentificativoServizioApplicativo> mapKeyServiziApplicativi = new HashMap<String, IdentificativoServizioApplicativo>();
 			
 			String rootDir = null;
 			
@@ -1683,7 +1683,7 @@ public class ZIPReadUtils  {
 	}
 	public void readProprietaServizioApplicativo(Archive archivio,byte[]content,String entryName, String tipoSoggetto, String nomeSoggetto, String nomeSA,
 			String nomeFileSenzaServizioApplicativo, ArchiveVersion archiveVersion,
-			Hashtable<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties) throws ProtocolException {
+			Map<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties) throws ProtocolException {
 		org.openspcoop2.core.config.ServizioApplicativo servizioApplicativo = null;
 		String key = ArchiveServizioApplicativo.buildKey(tipoSoggetto, nomeSoggetto, nomeSA);
 		if(archivio.getServiziApplicativi().containsKey(key)){
@@ -1796,8 +1796,8 @@ public class ZIPReadUtils  {
 	public void readAccordoServizioParteComune(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,
 			String nomeFileSenzaAccordo,String nomeAccordo,String versioneAccordo, boolean servizioComposto,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione,
 			ArchiveVersion archiveVersion,
-			Hashtable<String, IdentificativoDocumento> mapKeyDocumenti,
-			Hashtable<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties) throws ProtocolException{
+			Map<String, IdentificativoDocumento> mapKeyDocumenti,
+			Map<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties) throws ProtocolException{
 		
 		Integer versioneAccordoInt = null;
 		try{
@@ -2085,8 +2085,8 @@ public class ZIPReadUtils  {
 	public void readAccordoServizioParteSpecifica(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,
 			String nomeFileSenzaAccordo,String tipoServizio,String nomeServizio,String versioneServizio,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione,
 			ArchiveVersion archiveVersion,
-			Hashtable<String, IdentificativoDocumento> mapKeyDocumenti,
-			Hashtable<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties) throws ProtocolException{
+			Map<String, IdentificativoDocumento> mapKeyDocumenti,
+			Map<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties) throws ProtocolException{
 		
 		Integer versioneServizioInt = null;
 		try{
@@ -2352,7 +2352,7 @@ public class ZIPReadUtils  {
 			String tipoSoggetto, String nomeSoggetto, String tipoServizio, String nomeServizio, String versioneServizio,
 			boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione,
 			ArchiveVersion archiveVersion,
-			Hashtable<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties) throws ProtocolException{
+			Map<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties) throws ProtocolException{
 		
 		Integer versioneServizioInt = null;
 		try{
@@ -2590,8 +2590,8 @@ public class ZIPReadUtils  {
 	public void readAccordoCooperazione(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,
 			String nomeFileSenzaAccordo,String nomeAccordo,String versioneAccordo,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione,
 			ArchiveVersion archiveVersion,
-			Hashtable<String, IdentificativoDocumento> mapKeyDocumenti,
-			Hashtable<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties) throws ProtocolException{
+			Map<String, IdentificativoDocumento> mapKeyDocumenti,
+			Map<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties) throws ProtocolException{
 		
 		Integer versioneAccordoInt = null;
 		try{
@@ -2737,13 +2737,13 @@ public class ZIPReadUtils  {
 	
 	private void processDocument(String nomeFileSenzaAccordo,String tipoDir, ArchiveVersion archiveVersion, String entryName, byte[] xml,
 			String tipoSoggetto, String nomeSoggetto, String tipoServizio, String nomeServizio, String versioneServizio,
-			Hashtable<String, IdentificativoDocumento> mapKeyDocumenti, List<Documento> documenti) throws ProtocolException{
+			Map<String, IdentificativoDocumento> mapKeyDocumenti, List<Documento> documenti) throws ProtocolException{
 		this.processDocument(nomeFileSenzaAccordo, tipoDir, archiveVersion, entryName, xml, tipoSoggetto, nomeSoggetto, 
 				tipoServizio+nomeServizio, versioneServizio, mapKeyDocumenti, documenti);
 	}
 	private void processDocument(String nomeFileSenzaAccordo,String tipoDir, ArchiveVersion archiveVersion, String entryName, byte[] xml,
 			String tipoSoggetto, String nomeSoggetto, String nomeAccordo, String versioneAccordo,
-			Hashtable<String, IdentificativoDocumento> mapKeyDocumenti, List<Documento> documenti) throws ProtocolException{
+			Map<String, IdentificativoDocumento> mapKeyDocumenti, List<Documento> documenti) throws ProtocolException{
 		String nomeDocumento = nomeFileSenzaAccordo.substring((tipoDir+File.separatorChar).length());
 		if(ArchiveVersion.V_UNDEFINED.equals(archiveVersion)){
 			
@@ -2814,7 +2814,7 @@ public class ZIPReadUtils  {
 			ProprietarioProprietaProtocollo proprietario,
 			String tipoSoggetto, String nomeSoggetto, String nomeAccordo, String versioneAccordo, 
 			String tipoSoggettoFruitore, String nomeSoggettoFruitore,
-			Hashtable<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties, 
+			Map<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties, 
 			List<ProtocolProperty> protocolProperties,
 			HashMap<String,Long> mapIdToLong) throws ProtocolException{
 		String nomePP = nomeFileSenzaAccordo.substring((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES+File.separatorChar).length());
@@ -2887,7 +2887,7 @@ public class ZIPReadUtils  {
 	private void processProtocolPropertyConfig(String nomeFileSenzaId,ArchiveVersion archiveVersion, String entryName, byte[] xml,
 			ProprietarioProprietaProtocollo proprietario,
 			String tipoSoggetto, String nomeSoggetto, String nome,
-			Hashtable<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties, 
+			Map<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties, 
 			List<org.openspcoop2.core.config.ProtocolProperty> protocolProperties,
 			HashMap<String,Long> mapIdToLong) throws ProtocolException{
 		String nomePP = nomeFileSenzaId.substring((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES+File.separatorChar).length());

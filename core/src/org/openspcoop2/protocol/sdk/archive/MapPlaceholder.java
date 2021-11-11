@@ -20,8 +20,8 @@
 package org.openspcoop2.protocol.sdk.archive;
 
 import java.io.Serializable;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * MapPlaceholder
@@ -37,9 +37,9 @@ public class MapPlaceholder implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private Hashtable<String, String> map = new Hashtable<String, String>();
+	private Map<String, String> map = new HashMap<String, String>();
 
-	public Hashtable<String, String> getMap() {
+	public Map<String, String> getMap() {
 		return this.map;
 	}
 	
@@ -51,9 +51,7 @@ public class MapPlaceholder implements Serializable {
 	}
 	
 	public void putAll(MapPlaceholder map){
-		Enumeration<String> keys = map.map.keys();
-		while (keys.hasMoreElements()) {
-			String key = (String) keys.nextElement();
+		for (String key : map.map.keySet()) {
 			this.put(key,map.map.get(key));
 		}
 	}
@@ -64,9 +62,7 @@ public class MapPlaceholder implements Serializable {
 	
 	public byte[] replace(byte[]xml){
 		String xmlAsString = new String(xml);
-		Enumeration<String> enumKeys = this.map.keys();
-		while (enumKeys.hasMoreElements()) {
-			String key = (String) enumKeys.nextElement();
+		for (String key : this.map.keySet()) {
 			
 			while(xmlAsString.contains("@"+key+"@")){
 				xmlAsString = xmlAsString.replace("@"+key+"@", this.map.get(key));

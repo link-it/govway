@@ -21,8 +21,9 @@
 package org.openspcoop2.protocol.sdk;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Security Info
@@ -36,11 +37,11 @@ public class SecurityInfo {
 	private String subject;
 	private String digestHeader;
 	private List<Allegato> listaAllegati = null;
-	private Hashtable<String, String> properties = null;
+	private Map<String, String> properties = null;
 	
 	public SecurityInfo(){
 		this.listaAllegati = new ArrayList<Allegato>();
-		this.properties = new Hashtable<String, String>();
+		this.properties = new HashMap<String, String>();
 	}
 	
 	public List<Allegato> getListaAllegati() {
@@ -106,11 +107,11 @@ public class SecurityInfo {
     	return this.properties.keySet().toArray(new String[this.properties.size()]);
     }
     
-    public void setProperties(Hashtable<String, String> params) {
+    public void setProperties(Map<String, String> params) {
     	this.properties = params;
     }
     
-    public Hashtable<String, String> getProperties() {
+    public Map<String, String> getProperties() {
     	return this.properties;
     }
 }

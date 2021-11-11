@@ -23,10 +23,10 @@ package org.openspcoop2.utils.properties;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -112,7 +112,7 @@ public abstract class InstanceProperties {
 	public java.util.Enumeration<?> propertyNames(){
 		
 		java.util.Enumeration<?> enumProp = this.propertiesOriginale.propertyNames();
-		Vector<String> object = new Vector<String>();
+		List<String> object = new ArrayList<String>();
 		while(enumProp.hasMoreElements()){
 			object.add((String)enumProp.nextElement());		
 		}
@@ -137,7 +137,7 @@ public abstract class InstanceProperties {
 			}
 		}
 		
-		return object.elements();
+		return Collections.enumeration(object);
 	}
 
 

@@ -27,7 +27,8 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Hashtable;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.net.time.TimeTCPClient;
 import org.openspcoop2.utils.UtilsException;
@@ -44,10 +45,11 @@ public class TCPTimeDate implements IDate {
 	private static InetAddress server = null;
 	private static int port = TimeTCPClient.DEFAULT_PORT;
 	private static int defaultTimeout = -1;
-	private static Hashtable<String,Date> time = null;
+	private static Map<String,Date> time = null;
 	private static boolean cacheEnabled = true;
 	private static int cacheRefresh = 100;
 	
+	private static org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("TCPTimeDate");
 	
 	private static TimeTCPClient getTCPClient() throws Exception{
 		if(TCPTimeDate.server==null)
@@ -73,7 +75,9 @@ public class TCPTimeDate implements IDate {
 					//System.out.println("NOW ["+key+"] from cache");
 					return TCPTimeDate.time.get(key);
 				}else{
-					synchronized(TCPTimeDate.time){
+					//synchronized(TCPTimeDate.time){
+					semaphore.acquire("getDateCached");
+					try {
 						if(TCPTimeDate.time.containsKey(key)){
 							//System.out.println("NOW ["+key+"] from cache sync");
 							return TCPTimeDate.time.get(key);
@@ -85,6 +89,8 @@ public class TCPTimeDate implements IDate {
 							TCPTimeDate.time.put(key, d);
 							return d;
 						}
+					}finally {
+						semaphore.release("getDateCached");
 					}
 				}	
 			}
@@ -162,7 +168,7 @@ public class TCPTimeDate implements IDate {
 				}
 			}
 			
-			TCPTimeDate.time = new Hashtable<String,Date>(); 
+			TCPTimeDate.time = new ConcurrentHashMap<String,Date>(); 
 			
 		}catch(Exception e){
 			TCPTimeDate.server=null;

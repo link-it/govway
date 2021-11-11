@@ -950,7 +950,8 @@ public class Dump {
 		if(!onlyLogFileTrace && !dumpIntegrationManager) {
 			for(int i=0; i<this.loggerDumpOpenSPCoopAppender.size();i++){
 				try{
-					this.loggerDumpOpenSPCoopAppender.get(i).dump(getConnectionFromState(false),messaggio);
+					boolean headersCompact = false; //non supportato nei plugins
+					this.loggerDumpOpenSPCoopAppender.get(i).dump(getConnectionFromState(false),messaggio,headersCompact);
 				}catch(Exception e){
 					OpenSPCoop2Logger.loggerOpenSPCoopResources.error("Errore durante il dump personalizzato ["+this.tipoDumpOpenSPCoopAppender.get(i)+
 							"] del contenuto applicativo presente nel messaggio ("+tipoMessaggio+") con identificativo di transazione ["+this.idTransazione+"]: "+e.getMessage(),e);

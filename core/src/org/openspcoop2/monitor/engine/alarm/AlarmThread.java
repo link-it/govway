@@ -85,7 +85,7 @@ public class AlarmThread implements Runnable {
 		this.alarm = alarm;
 		this._log = log;
 		this.alarmEngineConfig = alarmEngineConfig;
-		this.threadName = "T_"+IDUtilities.getUniqueSerialNumber()+"_"+DateManager.getTimeMillis();
+		this.threadName = "T_"+IDUtilities.getUniqueSerialNumber("newAlarmThread")+"_"+DateManager.getTimeMillis();
 		((AlarmImpl)this.alarm).setThreadName(this.threadName);
 		
 		this.alarmLogger = (AlarmLogger) alarm.getLogger();

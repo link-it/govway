@@ -21,8 +21,9 @@
 package org.openspcoop2.utils.id.serial;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.utils.Utilities;
 
@@ -38,7 +39,7 @@ public class InfoStatistics {
 	private int errorSerializableAccess = 0;
 	private List<Throwable> exceptionOccurs = new ArrayList<Throwable>();
 	private List<String> _exceptionOccursDistincts = new ArrayList<String>();
-	private Hashtable<String, Integer> _occurs = new Hashtable<String, Integer>(); 
+	private Map<String, Integer> _occurs = new HashMap<String, Integer>(); 
 	
 	public int getErrorSerializableAccess() {
 		return this.errorSerializableAccess;
@@ -50,28 +51,34 @@ public class InfoStatistics {
 		return this._occurs.get(e.getMessage());
 	}
 	
-	public synchronized void addErrorSerializableAccess(Throwable e){
-		Throwable msgE = Utilities.getInnerNotEmptyMessageException(e);
-		String msg = null;
-		if(msgE!=null) {
-			msg = msgE.getMessage();
-		}
-		else {
-			msg = e.toString();
-		}
-		if(msg==null) {
-			msg = "NullException";
-		}
-		this.errorSerializableAccess++;
-		if(this._exceptionOccursDistincts.contains(msg)==false){
-			this._exceptionOccursDistincts.add(msg);
-			this.exceptionOccurs.add(e);
-			this._occurs.put(msg, 1);
-		}
-		else{
-			int occur = this._occurs.remove(msg);
-			occur++;
-			this._occurs.put(msg, occur);
+	private org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("InfoStatistics");
+	public void addErrorSerializableAccess(Throwable e){
+		this.semaphore.acquireThrowRuntime("addErrorSerializableAccess");
+		try {
+			Throwable msgE = Utilities.getInnerNotEmptyMessageException(e);
+			String msg = null;
+			if(msgE!=null) {
+				msg = msgE.getMessage();
+			}
+			else {
+				msg = e.toString();
+			}
+			if(msg==null) {
+				msg = "NullException";
+			}
+			this.errorSerializableAccess++;
+			if(this._exceptionOccursDistincts.contains(msg)==false){
+				this._exceptionOccursDistincts.add(msg);
+				this.exceptionOccurs.add(e);
+				this._occurs.put(msg, 1);
+			}
+			else{
+				int occur = this._occurs.remove(msg);
+				occur++;
+				this._occurs.put(msg, occur);
+			}
+		}finally {
+			this.semaphore.release("addErrorSerializableAccess");
 		}
 	}
 	

@@ -27,9 +27,9 @@ import java.io.OutputStream;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -138,19 +138,19 @@ public class NotificatoreEventi {
 	private DatiEventoGenerico inMemory_lastMaxRequests = new DatiEventoGenerico();
 	private DatiEventoGenerico inMemory_lastMaxRequests_warningOnly = new DatiEventoGenerico();
 	private DatiEventoGenerico inMemory_lastPddCongestionata = new DatiEventoGenerico();
-	private Hashtable<String, DatiEventoGenerico> inMemory_lastPolicyGlobaliViolated = new Hashtable<String, DatiEventoGenerico>();
-	private Hashtable<String, DatiEventoGenerico> inMemory_lastPolicyGlobaliViolated_warningOnly = new Hashtable<String, DatiEventoGenerico>();
-	private Hashtable<String, DatiEventoGenerico> inMemory_lastPolicyAPIViolated = new Hashtable<String, DatiEventoGenerico>();
-	private Hashtable<String, DatiEventoGenerico> inMemory_lastPolicyAPIViolated_warningOnly = new Hashtable<String, DatiEventoGenerico>();
+	private Map<String, DatiEventoGenerico> inMemory_lastPolicyGlobaliViolated = new HashMap<String, DatiEventoGenerico>();
+	private Map<String, DatiEventoGenerico> inMemory_lastPolicyGlobaliViolated_warningOnly = new HashMap<String, DatiEventoGenerico>();
+	private Map<String, DatiEventoGenerico> inMemory_lastPolicyAPIViolated = new HashMap<String, DatiEventoGenerico>();
+	private Map<String, DatiEventoGenerico> inMemory_lastPolicyAPIViolated_warningOnly = new HashMap<String, DatiEventoGenerico>();
 		
 	// DB_EVENTO
 	private DatabaseDatiEventoGenerico db_lastMaxRequests = new DatabaseDatiEventoGenerico();
 	private DatabaseDatiEventoGenerico db_lastMaxRequests_warningOnly = new DatabaseDatiEventoGenerico();
 	private DatabaseDatiEventoGenerico db_lastPddCongestionata = new DatabaseDatiEventoGenerico();
-	private Hashtable<String, DatabaseDatiEventoGenerico> db_lastPolicyGlobaliViolated = new Hashtable<String, DatabaseDatiEventoGenerico>();
-	private Hashtable<String, DatabaseDatiEventoGenerico> db_lastPolicyGlobaliViolated_warningOnly = new Hashtable<String, DatabaseDatiEventoGenerico>();
-	private Hashtable<String, DatabaseDatiEventoGenerico> db_lastPolicyAPIViolated = new Hashtable<String, DatabaseDatiEventoGenerico>();
-	private Hashtable<String, DatabaseDatiEventoGenerico> db_lastPolicyAPIViolated_warningOnly = new Hashtable<String, DatabaseDatiEventoGenerico>();
+	private Map<String, DatabaseDatiEventoGenerico> db_lastPolicyGlobaliViolated = new HashMap<String, DatabaseDatiEventoGenerico>();
+	private Map<String, DatabaseDatiEventoGenerico> db_lastPolicyGlobaliViolated_warningOnly = new HashMap<String, DatabaseDatiEventoGenerico>();
+	private Map<String, DatabaseDatiEventoGenerico> db_lastPolicyAPIViolated = new HashMap<String, DatabaseDatiEventoGenerico>();
+	private Map<String, DatabaseDatiEventoGenerico> db_lastPolicyAPIViolated_warningOnly = new HashMap<String, DatabaseDatiEventoGenerico>();
 	
 	
 	public void log(CategoriaEventoControlloTraffico evento, Date date, String descrizione) throws Exception{
@@ -166,8 +166,8 @@ public class NotificatoreEventi {
 		
 		case LIMITE_GLOBALE_RICHIESTE_SIMULTANEE:
 			//synchronized (this.semaphore) {
+			lock.acquire("log_"+evento.name());
 			try {
-				lock.acquire("log_"+evento.name());
 				if(this.inMemory_lastMaxRequests.datiConsumatiThread){
 					if(date==null)
 						this.inMemory_lastMaxRequests.data = DateManager.getDate();
@@ -186,8 +186,8 @@ public class NotificatoreEventi {
 			
 		case LIMITE_GLOBALE_RICHIESTE_SIMULTANEE_WARNING_ONLY:
 			//synchronized (this.semaphore) {
+			lock.acquire("log_"+evento.name());
 			try {
-				lock.acquire("log_"+evento.name());
 				if(this.inMemory_lastMaxRequests_warningOnly.datiConsumatiThread){
 					if(date==null)
 						this.inMemory_lastMaxRequests_warningOnly.data = DateManager.getDate();
@@ -206,8 +206,8 @@ public class NotificatoreEventi {
 			
 		case CONGESTIONE_PORTA_DOMINIO:
 			//synchronized (this.semaphore) {
+			lock.acquire("log_"+evento.name());
 			try {
-				lock.acquire("log_"+evento.name());
 				if(this.inMemory_lastPddCongestionata.datiConsumatiThread){
 					if(date==null)
 						this.inMemory_lastPddCongestionata.data = DateManager.getDate();
@@ -229,8 +229,8 @@ public class NotificatoreEventi {
 				throw new Exception("IdPolicy non fornita");
 			}
 			//synchronized (this.semaphore) {
+			lock.acquire("log_"+evento.name());
 			try {
-				lock.acquire("log_"+evento.name());
 				if(this.inMemory_lastPolicyGlobaliViolated.containsKey(idPolicy)==false){
 					this.inMemory_lastPolicyGlobaliViolated.put(idPolicy, new DatiEventoGenerico());
 				}
@@ -260,8 +260,8 @@ public class NotificatoreEventi {
 				throw new Exception("IdPolicy non fornita");
 			}
 			//synchronized (this.semaphore) {
+			lock.acquire("log_"+evento.name());
 			try {
-				lock.acquire("log_"+evento.name());
 				if(this.inMemory_lastPolicyGlobaliViolated_warningOnly.containsKey(idPolicy)==false){
 					this.inMemory_lastPolicyGlobaliViolated_warningOnly.put(idPolicy, new DatiEventoGenerico());
 				}
@@ -292,8 +292,8 @@ public class NotificatoreEventi {
 				throw new Exception("IdPolicy non fornita");
 			}
 			//synchronized (this.semaphore) {
+			lock.acquire("log_"+evento.name());
 			try {
-				lock.acquire("log_"+evento.name());
 				if(this.inMemory_lastPolicyAPIViolated.containsKey(idPolicy)==false){
 					this.inMemory_lastPolicyAPIViolated.put(idPolicy, new DatiEventoGenerico());
 				}
@@ -323,8 +323,8 @@ public class NotificatoreEventi {
 				throw new Exception("IdPolicy non fornita");
 			}
 			//synchronized (this.semaphore) {
+			lock.acquire("log_"+evento.name());
 			try {
-				lock.acquire("log_"+evento.name());
 				if(this.inMemory_lastPolicyAPIViolated_warningOnly.containsKey(idPolicy)==false){
 					this.inMemory_lastPolicyAPIViolated_warningOnly.put(idPolicy, new DatiEventoGenerico());
 				}
@@ -382,45 +382,37 @@ public class NotificatoreEventi {
 		DatiEventoGenerico local_inMemory_lastMaxRequests = null;
 		DatiEventoGenerico local_inMemory_lastMaxRequests_warningOnly = null;
 		DatiEventoGenerico local_inMemory_lastPddCongestionata = null;
-		Hashtable<String, DatiEventoGenerico> local_inMemory_lastPolicyGlobaliViolated = new Hashtable<String, DatiEventoGenerico>();
-		Hashtable<String, DatiEventoGenerico> local_inMemory_lastPolicyGlobaliViolated_warningOnly = new Hashtable<String, DatiEventoGenerico>();	
-		Hashtable<String, DatiEventoGenerico> local_inMemory_lastPolicyAPIViolated = new Hashtable<String, DatiEventoGenerico>();
-		Hashtable<String, DatiEventoGenerico> local_inMemory_lastPolicyAPIViolated_warningOnly = new Hashtable<String, DatiEventoGenerico>();
+		Map<String, DatiEventoGenerico> local_inMemory_lastPolicyGlobaliViolated = new HashMap<String, DatiEventoGenerico>();
+		Map<String, DatiEventoGenerico> local_inMemory_lastPolicyGlobaliViolated_warningOnly = new HashMap<String, DatiEventoGenerico>();	
+		Map<String, DatiEventoGenerico> local_inMemory_lastPolicyAPIViolated = new HashMap<String, DatiEventoGenerico>();
+		Map<String, DatiEventoGenerico> local_inMemory_lastPolicyAPIViolated_warningOnly = new HashMap<String, DatiEventoGenerico>();
 		Date newInterval = null;
 		//synchronized (this.semaphore) {
+		lock.acquire("process");
 		try {
-			lock.acquire("process");
 			
 			local_inMemory_lastMaxRequests = this.inMemory_lastMaxRequests.readAndConsume();
 			local_inMemory_lastMaxRequests_warningOnly = this.inMemory_lastMaxRequests_warningOnly.readAndConsume();
 			local_inMemory_lastPddCongestionata = this.inMemory_lastPddCongestionata.readAndConsume();
 			
 			if(this.inMemory_lastPolicyGlobaliViolated!=null && this.inMemory_lastPolicyGlobaliViolated.size()>0){
-				Enumeration<String> keys = this.inMemory_lastPolicyGlobaliViolated.keys();
-				while (keys.hasMoreElements()) {
-					String key = (String) keys.nextElement();
+				for (String key : this.inMemory_lastPolicyGlobaliViolated.keySet()) {
 					local_inMemory_lastPolicyGlobaliViolated.put(key, this.inMemory_lastPolicyGlobaliViolated.get(key).readAndConsume());
 				}
 			}
 			if(this.inMemory_lastPolicyGlobaliViolated_warningOnly!=null && this.inMemory_lastPolicyGlobaliViolated_warningOnly.size()>0){
-				Enumeration<String> keys = this.inMemory_lastPolicyGlobaliViolated_warningOnly.keys();
-				while (keys.hasMoreElements()) {
-					String key = (String) keys.nextElement();
+				for (String key : this.inMemory_lastPolicyGlobaliViolated_warningOnly.keySet()) {
 					local_inMemory_lastPolicyGlobaliViolated_warningOnly.put(key, this.inMemory_lastPolicyGlobaliViolated_warningOnly.get(key).readAndConsume());
 				}
 			}
 			
 			if(this.inMemory_lastPolicyAPIViolated!=null && this.inMemory_lastPolicyAPIViolated.size()>0){
-				Enumeration<String> keys = this.inMemory_lastPolicyAPIViolated.keys();
-				while (keys.hasMoreElements()) {
-					String key = (String) keys.nextElement();
+				for (String key : this.inMemory_lastPolicyAPIViolated.keySet()) {
 					local_inMemory_lastPolicyAPIViolated.put(key, this.inMemory_lastPolicyAPIViolated.get(key).readAndConsume());
 				}
 			}
 			if(this.inMemory_lastPolicyAPIViolated_warningOnly!=null && this.inMemory_lastPolicyAPIViolated_warningOnly.size()>0){
-				Enumeration<String> keys = this.inMemory_lastPolicyAPIViolated_warningOnly.keys();
-				while (keys.hasMoreElements()) {
-					String key = (String) keys.nextElement();
+				for (String key : this.inMemory_lastPolicyAPIViolated_warningOnly.keySet()) {
 					local_inMemory_lastPolicyAPIViolated_warningOnly.put(key, this.inMemory_lastPolicyAPIViolated_warningOnly.get(key).readAndConsume());
 				}
 			}
@@ -437,10 +429,10 @@ public class NotificatoreEventi {
 		DatabaseDatiEventoGenerico local_db_lastMaxRequests = null;
 		DatabaseDatiEventoGenerico local_db_lastMaxRequests_warningOnly = null;
 		DatabaseDatiEventoGenerico local_db_lastPddCongestionata = null;
-		Hashtable<String, DatabaseDatiEventoGenerico> local_db_lastPolicyGlobaliViolated = new Hashtable<String, DatabaseDatiEventoGenerico>();
-		Hashtable<String, DatabaseDatiEventoGenerico> local_db_lastPolicyGlobaliViolated_warningOnly = new Hashtable<String, DatabaseDatiEventoGenerico>();	
-		Hashtable<String, DatabaseDatiEventoGenerico> local_db_lastPolicyAPIViolated = new Hashtable<String, DatabaseDatiEventoGenerico>();
-		Hashtable<String, DatabaseDatiEventoGenerico> local_db_lastPolicyAPIViolated_warningOnly = new Hashtable<String, DatabaseDatiEventoGenerico>();	
+		Map<String, DatabaseDatiEventoGenerico> local_db_lastPolicyGlobaliViolated = new HashMap<String, DatabaseDatiEventoGenerico>();
+		Map<String, DatabaseDatiEventoGenerico> local_db_lastPolicyGlobaliViolated_warningOnly = new HashMap<String, DatabaseDatiEventoGenerico>();	
+		Map<String, DatabaseDatiEventoGenerico> local_db_lastPolicyAPIViolated = new HashMap<String, DatabaseDatiEventoGenerico>();
+		Map<String, DatabaseDatiEventoGenerico> local_db_lastPolicyAPIViolated_warningOnly = new HashMap<String, DatabaseDatiEventoGenerico>();	
 		local_db_lastMaxRequests = this.db_lastMaxRequests;
 		local_db_lastMaxRequests_warningOnly = this.db_lastMaxRequests_warningOnly;
 		local_db_lastPddCongestionata = this.db_lastPddCongestionata;
@@ -489,66 +481,66 @@ public class NotificatoreEventi {
 		logDebug(log,debug,"3. Analisi controllo della congestione terminata");
 		
 		logDebug(log,debug,"4. Analisi policy globali violate (size:"+local_inMemory_lastPolicyGlobaliViolated.size()+") ...");
-		Enumeration<String> policyGlobaliViolatedKeys = local_inMemory_lastPolicyGlobaliViolated.keys();
-		while (policyGlobaliViolatedKeys.hasMoreElements()) {
-			String idPolicy = (String) policyGlobaliViolatedKeys.nextElement();
-			processSingleEvent(log, 
-					local_inMemory_lastPolicyGlobaliViolated.get(idPolicy), 
-					local_db_lastPolicyGlobaliViolated.get(idPolicy), 
-					this.db_lastPolicyGlobaliViolated.get(idPolicy), 
-					TipoEvento.RATE_LIMITING_POLICY_GLOBALE,
-					CodiceEventoControlloTraffico.VIOLAZIONE, 
-					CodiceEventoControlloTraffico.VIOLAZIONE_RISOLTA, 
-					lastInterval, connection, this.gestoreEventi,
-					idPolicy,debug);	
+		if(!local_inMemory_lastPolicyGlobaliViolated.isEmpty()) {
+			for (String idPolicy : local_inMemory_lastPolicyGlobaliViolated.keySet()) {
+				processSingleEvent(log, 
+						local_inMemory_lastPolicyGlobaliViolated.get(idPolicy), 
+						local_db_lastPolicyGlobaliViolated.get(idPolicy), 
+						this.db_lastPolicyGlobaliViolated.get(idPolicy), 
+						TipoEvento.RATE_LIMITING_POLICY_GLOBALE,
+						CodiceEventoControlloTraffico.VIOLAZIONE, 
+						CodiceEventoControlloTraffico.VIOLAZIONE_RISOLTA, 
+						lastInterval, connection, this.gestoreEventi,
+						idPolicy,debug);
+			}
 		}
 		logDebug(log,debug,"4. Analisi policy globali violate (size:"+local_inMemory_lastPolicyGlobaliViolated.size()+") terminata");
 		
 		logDebug(log,debug,"5. Analisi policy globali violate (size:"+local_inMemory_lastPolicyGlobaliViolated_warningOnly.size()+") (warning-only) ...");
-		Enumeration<String> policyGlobaliViolatedWarningOnlyKeys = local_inMemory_lastPolicyGlobaliViolated_warningOnly.keys();
-		while (policyGlobaliViolatedWarningOnlyKeys.hasMoreElements()) {
-			String idPolicy = (String) policyGlobaliViolatedWarningOnlyKeys.nextElement();
-			processSingleEvent(log, 
-					local_inMemory_lastPolicyGlobaliViolated_warningOnly.get(idPolicy), 
-					local_db_lastPolicyGlobaliViolated_warningOnly.get(idPolicy), 
-					this.db_lastPolicyGlobaliViolated_warningOnly.get(idPolicy), 
-					TipoEvento.RATE_LIMITING_POLICY_GLOBALE,
-					CodiceEventoControlloTraffico.VIOLAZIONE_WARNING_ONLY, 
-					CodiceEventoControlloTraffico.VIOLAZIONE_RISOLTA_WARNING_ONLY, 
-					lastInterval, connection, this.gestoreEventi,
-					idPolicy,debug);	
+		if(!local_inMemory_lastPolicyGlobaliViolated_warningOnly.isEmpty()) {
+			for (String idPolicy : local_inMemory_lastPolicyGlobaliViolated_warningOnly.keySet()) {
+				processSingleEvent(log, 
+						local_inMemory_lastPolicyGlobaliViolated_warningOnly.get(idPolicy), 
+						local_db_lastPolicyGlobaliViolated_warningOnly.get(idPolicy), 
+						this.db_lastPolicyGlobaliViolated_warningOnly.get(idPolicy), 
+						TipoEvento.RATE_LIMITING_POLICY_GLOBALE,
+						CodiceEventoControlloTraffico.VIOLAZIONE_WARNING_ONLY, 
+						CodiceEventoControlloTraffico.VIOLAZIONE_RISOLTA_WARNING_ONLY, 
+						lastInterval, connection, this.gestoreEventi,
+						idPolicy,debug);
+			}
 		}
 		logDebug(log,debug,"5. Analisi policy globali violate (size:"+local_inMemory_lastPolicyGlobaliViolated_warningOnly.size()+") (warning-only) terminata");
 		
 		logDebug(log,debug,"6. Analisi policy API violate (size:"+local_inMemory_lastPolicyAPIViolated.size()+") ...");
-		Enumeration<String> policyAPIViolatedKeys = local_inMemory_lastPolicyAPIViolated.keys();
-		while (policyAPIViolatedKeys.hasMoreElements()) {
-			String idPolicy = (String) policyAPIViolatedKeys.nextElement();
-			processSingleEvent(log, 
-					local_inMemory_lastPolicyAPIViolated.get(idPolicy), 
-					local_db_lastPolicyAPIViolated.get(idPolicy), 
-					this.db_lastPolicyAPIViolated.get(idPolicy), 
-					TipoEvento.RATE_LIMITING_POLICY_API,
-					CodiceEventoControlloTraffico.VIOLAZIONE, 
-					CodiceEventoControlloTraffico.VIOLAZIONE_RISOLTA, 
-					lastInterval, connection, this.gestoreEventi,
-					idPolicy,debug);	
+		if(!local_inMemory_lastPolicyAPIViolated.isEmpty()) {
+			for (String idPolicy : local_inMemory_lastPolicyAPIViolated.keySet()) {
+				processSingleEvent(log, 
+						local_inMemory_lastPolicyAPIViolated.get(idPolicy), 
+						local_db_lastPolicyAPIViolated.get(idPolicy), 
+						this.db_lastPolicyAPIViolated.get(idPolicy), 
+						TipoEvento.RATE_LIMITING_POLICY_API,
+						CodiceEventoControlloTraffico.VIOLAZIONE, 
+						CodiceEventoControlloTraffico.VIOLAZIONE_RISOLTA, 
+						lastInterval, connection, this.gestoreEventi,
+						idPolicy,debug);	
+			}
 		}
 		logDebug(log,debug,"6. Analisi policy API violate (size:"+local_inMemory_lastPolicyAPIViolated.size()+") terminata");
 		
 		logDebug(log,debug,"7. Analisi policy API violate (size:"+local_inMemory_lastPolicyAPIViolated_warningOnly.size()+") (warning-only) ...");
-		Enumeration<String> policyAPIViolatedWarningOnlyKeys = local_inMemory_lastPolicyAPIViolated_warningOnly.keys();
-		while (policyAPIViolatedWarningOnlyKeys.hasMoreElements()) {
-			String idPolicy = (String) policyAPIViolatedWarningOnlyKeys.nextElement();
-			processSingleEvent(log, 
-					local_inMemory_lastPolicyAPIViolated_warningOnly.get(idPolicy), 
-					local_db_lastPolicyAPIViolated_warningOnly.get(idPolicy), 
-					this.db_lastPolicyAPIViolated_warningOnly.get(idPolicy), 
-					TipoEvento.RATE_LIMITING_POLICY_API,
-					CodiceEventoControlloTraffico.VIOLAZIONE_WARNING_ONLY, 
-					CodiceEventoControlloTraffico.VIOLAZIONE_RISOLTA_WARNING_ONLY, 
-					lastInterval, connection, this.gestoreEventi,
-					idPolicy,debug);	
+		if(!local_inMemory_lastPolicyAPIViolated_warningOnly.isEmpty()) {
+			for (String idPolicy : local_inMemory_lastPolicyAPIViolated_warningOnly.keySet()) {
+				processSingleEvent(log, 
+						local_inMemory_lastPolicyAPIViolated_warningOnly.get(idPolicy), 
+						local_db_lastPolicyAPIViolated_warningOnly.get(idPolicy), 
+						this.db_lastPolicyAPIViolated_warningOnly.get(idPolicy), 
+						TipoEvento.RATE_LIMITING_POLICY_API,
+						CodiceEventoControlloTraffico.VIOLAZIONE_WARNING_ONLY, 
+						CodiceEventoControlloTraffico.VIOLAZIONE_RISOLTA_WARNING_ONLY, 
+						lastInterval, connection, this.gestoreEventi,
+						idPolicy,debug);	
+			}
 		}
 		logDebug(log,debug,"7. Analisi policy API violate (size:"+local_inMemory_lastPolicyAPIViolated_warningOnly.size()+") (warning-only) terminata");
 				
@@ -835,9 +827,7 @@ public class NotificatoreEventi {
 			if(this.inMemory_lastPolicyGlobaliViolated!=null && this.inMemory_lastPolicyGlobaliViolated.size()>0) {
 				int index = 1;
 				String inMemoryPolicyDir = inMemoryDir + ZIP_POLICY_GLOBALE + File.separatorChar;
-				Enumeration<String> enKeys = this.inMemory_lastPolicyGlobaliViolated.keys();
-				while (enKeys.hasMoreElements()) {
-					String idPolicy = (String) enKeys.nextElement();
+				for (String idPolicy : this.inMemory_lastPolicyGlobaliViolated.keySet()) {
 					DatiEventoGenerico evento = this.inMemory_lastPolicyGlobaliViolated.get(idPolicy);
 					zipOut.putNextEntry(new ZipEntry(inMemoryPolicyDir+ZIP_POLICY_GLOBALE+"_"+index+".xml"));
 					convertToDatiEventoGenericoSerializabled(evento, idPolicy).
@@ -849,9 +839,7 @@ public class NotificatoreEventi {
 			if(this.inMemory_lastPolicyGlobaliViolated_warningOnly!=null && this.inMemory_lastPolicyGlobaliViolated_warningOnly.size()>0) {
 				int index = 1;
 				String inMemoryPolicyDir = inMemoryDir + ZIP_POLICY_GLOBALE_WARNING_ONLY + File.separatorChar;
-				Enumeration<String> enKeys = this.inMemory_lastPolicyGlobaliViolated_warningOnly.keys();
-				while (enKeys.hasMoreElements()) {
-					String idPolicy = (String) enKeys.nextElement();
+				for (String idPolicy : this.inMemory_lastPolicyGlobaliViolated_warningOnly.keySet()) {
 					DatiEventoGenerico evento = this.inMemory_lastPolicyGlobaliViolated_warningOnly.get(idPolicy);
 					zipOut.putNextEntry(new ZipEntry(inMemoryPolicyDir+ZIP_POLICY_GLOBALE_WARNING_ONLY+"_"+index+".xml"));
 					convertToDatiEventoGenericoSerializabled(evento, idPolicy).
@@ -863,9 +851,7 @@ public class NotificatoreEventi {
 			if(this.inMemory_lastPolicyAPIViolated!=null && this.inMemory_lastPolicyAPIViolated.size()>0) {
 				int index = 1;
 				String inMemoryPolicyDir = inMemoryDir + ZIP_POLICY_API + File.separatorChar;
-				Enumeration<String> enKeys = this.inMemory_lastPolicyAPIViolated.keys();
-				while (enKeys.hasMoreElements()) {
-					String idPolicy = (String) enKeys.nextElement();
+				for (String idPolicy : this.inMemory_lastPolicyAPIViolated.keySet()) {
 					DatiEventoGenerico evento = this.inMemory_lastPolicyAPIViolated.get(idPolicy);
 					zipOut.putNextEntry(new ZipEntry(inMemoryPolicyDir+ZIP_POLICY_API+"_"+index+".xml"));
 					convertToDatiEventoGenericoSerializabled(evento, idPolicy).
@@ -877,9 +863,7 @@ public class NotificatoreEventi {
 			if(this.inMemory_lastPolicyAPIViolated_warningOnly!=null && this.inMemory_lastPolicyAPIViolated_warningOnly.size()>0) {
 				int index = 1;
 				String inMemoryPolicyDir = inMemoryDir + ZIP_POLICY_API_WARNING_ONLY + File.separatorChar;
-				Enumeration<String> enKeys = this.inMemory_lastPolicyAPIViolated_warningOnly.keys();
-				while (enKeys.hasMoreElements()) {
-					String idPolicy = (String) enKeys.nextElement();
+				for (String idPolicy : this.inMemory_lastPolicyAPIViolated_warningOnly.keySet()) {
 					DatiEventoGenerico evento = this.inMemory_lastPolicyAPIViolated_warningOnly.get(idPolicy);
 					zipOut.putNextEntry(new ZipEntry(inMemoryPolicyDir+ZIP_POLICY_API_WARNING_ONLY+"_"+index+".xml"));
 					convertToDatiEventoGenericoSerializabled(evento, idPolicy).
@@ -913,9 +897,7 @@ public class NotificatoreEventi {
 			if(this.db_lastPolicyGlobaliViolated!=null && this.db_lastPolicyGlobaliViolated.size()>0) {
 				int index = 1;
 				String dbPolicyDir = dbDir + ZIP_POLICY_GLOBALE + File.separatorChar;
-				Enumeration<String> enKeys = this.db_lastPolicyGlobaliViolated.keys();
-				while (enKeys.hasMoreElements()) {
-					String idPolicy = (String) enKeys.nextElement();
+				for (String idPolicy : this.db_lastPolicyGlobaliViolated.keySet()) {
 					DatabaseDatiEventoGenerico evento = this.db_lastPolicyGlobaliViolated.get(idPolicy);
 					zipOut.putNextEntry(new ZipEntry(dbPolicyDir+ZIP_POLICY_GLOBALE+"_"+index+".xml"));
 					convertDBToDatiEventoGenericoSerializabled(evento, idPolicy).
@@ -927,9 +909,7 @@ public class NotificatoreEventi {
 			if(this.db_lastPolicyGlobaliViolated_warningOnly!=null && this.db_lastPolicyGlobaliViolated_warningOnly.size()>0) {
 				int index = 1;
 				String dbPolicyDir = dbDir + ZIP_POLICY_GLOBALE_WARNING_ONLY + File.separatorChar;
-				Enumeration<String> enKeys = this.db_lastPolicyGlobaliViolated_warningOnly.keys();
-				while (enKeys.hasMoreElements()) {
-					String idPolicy = (String) enKeys.nextElement();
+				for (String idPolicy : this.db_lastPolicyGlobaliViolated_warningOnly.keySet()) {
 					DatabaseDatiEventoGenerico evento = this.db_lastPolicyGlobaliViolated_warningOnly.get(idPolicy);
 					zipOut.putNextEntry(new ZipEntry(dbPolicyDir+ZIP_POLICY_GLOBALE_WARNING_ONLY+"_"+index+".xml"));
 					convertDBToDatiEventoGenericoSerializabled(evento, idPolicy).
@@ -941,9 +921,7 @@ public class NotificatoreEventi {
 			if(this.db_lastPolicyAPIViolated!=null && this.db_lastPolicyAPIViolated.size()>0) {
 				int index = 1;
 				String dbPolicyDir = dbDir + ZIP_POLICY_API + File.separatorChar;
-				Enumeration<String> enKeys = this.db_lastPolicyAPIViolated.keys();
-				while (enKeys.hasMoreElements()) {
-					String idPolicy = (String) enKeys.nextElement();
+				for (String idPolicy : this.db_lastPolicyAPIViolated.keySet()) {
 					DatabaseDatiEventoGenerico evento = this.db_lastPolicyAPIViolated.get(idPolicy);
 					zipOut.putNextEntry(new ZipEntry(dbPolicyDir+ZIP_POLICY_API+"_"+index+".xml"));
 					convertDBToDatiEventoGenericoSerializabled(evento, idPolicy).
@@ -955,9 +933,7 @@ public class NotificatoreEventi {
 			if(this.db_lastPolicyAPIViolated_warningOnly!=null && this.db_lastPolicyAPIViolated_warningOnly.size()>0) {
 				int index = 1;
 				String dbPolicyDir = dbDir + ZIP_POLICY_API_WARNING_ONLY + File.separatorChar;
-				Enumeration<String> enKeys = this.db_lastPolicyAPIViolated_warningOnly.keys();
-				while (enKeys.hasMoreElements()) {
-					String idPolicy = (String) enKeys.nextElement();
+				for (String idPolicy : this.db_lastPolicyAPIViolated_warningOnly.keySet()) {
 					DatabaseDatiEventoGenerico evento = this.db_lastPolicyAPIViolated_warningOnly.get(idPolicy);
 					zipOut.putNextEntry(new ZipEntry(dbPolicyDir+ZIP_POLICY_API_WARNING_ONLY+"_"+index+".xml"));
 					convertDBToDatiEventoGenericoSerializabled(evento, idPolicy).

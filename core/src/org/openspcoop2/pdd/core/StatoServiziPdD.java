@@ -194,8 +194,8 @@ public class StatoServiziPdD {
 	private static Boolean activePDService = null;	
 	public static void setPDServiceActive(boolean stato) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		//synchronized (semaphoreActivePDService) {
+		StatoServiziPdD.lockActivePDService.acquireThrowRuntime("setPDServiceActive");
 		try {
-			StatoServiziPdD.lockActivePDService.acquireThrowRuntime("setPDServiceActive");
 						
 			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
@@ -222,8 +222,8 @@ public class StatoServiziPdD {
 	private static List<TipoFiltroAbilitazioneServizi> listaAbilitazioniPDService = null;
 	public static void addFiltroAbilitazionePD(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		//synchronized (semaphoreActivePDService) {
+		StatoServiziPdD.lockActivePDService.acquireThrowRuntime("addFiltroAbilitazionePD");
 		try {
-			StatoServiziPdD.lockActivePDService.acquireThrowRuntime("addFiltroAbilitazionePD");
 					
 			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
@@ -244,8 +244,8 @@ public class StatoServiziPdD {
 	}
 	public static void removeFiltroAbilitazionePD(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		//synchronized (semaphoreActivePDService) {
+		StatoServiziPdD.lockActivePDService.acquireThrowRuntime("removeFiltroAbilitazionePD");
 		try {
-			StatoServiziPdD.lockActivePDService.acquireThrowRuntime("removeFiltroAbilitazionePD");
 			
 			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
@@ -275,8 +275,8 @@ public class StatoServiziPdD {
 	private static List<TipoFiltroAbilitazioneServizi> listaDisabilitazioniPDService = null;
 	public static void addFiltroDisabilitazionePD(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		//synchronized (semaphoreActivePDService) {
+		StatoServiziPdD.lockActivePDService.acquireThrowRuntime("addFiltroDisabilitazionePD");
 		try {
-			StatoServiziPdD.lockActivePDService.acquireThrowRuntime("addFiltroDisabilitazionePD");
 			
 			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
@@ -297,8 +297,8 @@ public class StatoServiziPdD {
 	}
 	public static void removeFiltroDisabilitazionePD(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		//synchronized (semaphoreActivePDService) {
+		StatoServiziPdD.lockActivePDService.acquireThrowRuntime("removeFiltroDisabilitazionePD");
 		try {
-			StatoServiziPdD.lockActivePDService.acquireThrowRuntime("removeFiltroDisabilitazionePD");
 			
 			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
@@ -406,8 +406,8 @@ public class StatoServiziPdD {
 	private static Boolean activePAService = null;	
 	public static void setPAServiceActive(boolean stato) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		//synchronized (semaphoreActivePAService) {
+		StatoServiziPdD.lockActivePAService.acquireThrowRuntime("setPAServiceActive");
 		try {
-			StatoServiziPdD.lockActivePAService.acquireThrowRuntime("setPAServiceActive");
 						
 			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
@@ -434,8 +434,8 @@ public class StatoServiziPdD {
 	private static List<TipoFiltroAbilitazioneServizi> listaAbilitazioniPAService = null;
 	public static void addFiltroAbilitazionePA(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		//synchronized (semaphoreActivePAService) {
+		StatoServiziPdD.lockActivePAService.acquireThrowRuntime("addFiltroAbilitazionePA");
 		try {
-			StatoServiziPdD.lockActivePAService.acquireThrowRuntime("addFiltroAbilitazionePA");
 					
 			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
@@ -456,8 +456,8 @@ public class StatoServiziPdD {
 	}
 	public static void removeFiltroAbilitazionePA(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		//synchronized (semaphoreActivePAService) {
+		StatoServiziPdD.lockActivePAService.acquireThrowRuntime("removeFiltroAbilitazionePA");
 		try {
-			StatoServiziPdD.lockActivePAService.acquireThrowRuntime("removeFiltroAbilitazionePA");
 			
 			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
@@ -487,8 +487,8 @@ public class StatoServiziPdD {
 	private static List<TipoFiltroAbilitazioneServizi> listaDisabilitazioniPAService = null;
 	public static void addFiltroDisabilitazionePA(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		//synchronized (semaphoreActivePAService) {
+		StatoServiziPdD.lockActivePAService.acquireThrowRuntime("addFiltroDisabilitazionePA");
 		try {
-			StatoServiziPdD.lockActivePAService.acquireThrowRuntime("addFiltroDisabilitazionePA");
 			
 			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
@@ -509,8 +509,8 @@ public class StatoServiziPdD {
 	}
 	public static void removeFiltroDisabilitazionePA(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		//synchronized (semaphoreActivePAService) {
+		StatoServiziPdD.lockActivePAService.acquireThrowRuntime("removeFiltroDisabilitazionePA");
 		try {
-			StatoServiziPdD.lockActivePAService.acquireThrowRuntime("removeFiltroDisabilitazionePA");
 			
 			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
@@ -563,8 +563,8 @@ public class StatoServiziPdD {
 	private static Boolean activeIMService = null;	
 	public static void setIMServiceActive(boolean stato) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		//synchronized (semaphoreActiveIMService) {
+		StatoServiziPdD.lockActiveIMService.acquireThrowRuntime("setIMServiceActive");
 		try {
-			StatoServiziPdD.lockActiveIMService.acquireThrowRuntime("setIMServiceActive");
 						
 			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();

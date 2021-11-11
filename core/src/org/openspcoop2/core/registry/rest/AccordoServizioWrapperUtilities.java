@@ -24,9 +24,9 @@ package org.openspcoop2.core.registry.rest;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Documento;
@@ -228,9 +228,9 @@ public class AccordoServizioWrapperUtilities {
 	
 	
 	private ApiSchema [] buildSchemas(AccordoServizioParteComune as, boolean fromBytes) throws DriverRegistroServiziException{
-		Hashtable<String, byte[]> resourcesXSD = new Hashtable<String, byte[]>();
-		Hashtable<String, byte[]> resourcesJSON = new Hashtable<String, byte[]>();
-		Hashtable<String, byte[]> resourcesYAML = new Hashtable<String, byte[]>();
+		Map<String, byte[]> resourcesXSD = new HashMap<String, byte[]>();
+		Map<String, byte[]> resourcesJSON = new HashMap<String, byte[]>();
+		Map<String, byte[]> resourcesYAML = new HashMap<String, byte[]>();
 		
 		// --------- ALLEGATI --------- 
 		if(as.sizeAllegatoList()>0){
@@ -355,25 +355,19 @@ public class AccordoServizioWrapperUtilities {
 
 		List<ApiSchema> schemas = new ArrayList<ApiSchema>();
 		if(resourcesXSD!=null && resourcesXSD.size()>0) {
-			Enumeration<String> enKeys = resourcesXSD.keys();
-			while (enKeys.hasMoreElements()) {
-				String key = (String) enKeys.nextElement();
+			for (String key : resourcesXSD.keySet()) {
 				byte[] value = resourcesXSD.get(key);
 				schemas.add(new ApiSchema(key, value, ApiSchemaType.XSD));
 			}
 		}
 		if(resourcesYAML!=null && resourcesYAML.size()>0) {
-			Enumeration<String> enKeys = resourcesYAML.keys();
-			while (enKeys.hasMoreElements()) {
-				String key = (String) enKeys.nextElement();
+			for (String key : resourcesYAML.keySet()) {
 				byte[] value = resourcesYAML.get(key);
 				schemas.add(new ApiSchema(key, value, ApiSchemaType.YAML));
 			}
 		}
 		if(resourcesJSON!=null && resourcesJSON.size()>0) {
-			Enumeration<String> enKeys = resourcesJSON.keys();
-			while (enKeys.hasMoreElements()) {
-				String key = (String) enKeys.nextElement();
+			for (String key : resourcesJSON.keySet()) {
 				byte[] value = resourcesJSON.get(key);
 				schemas.add(new ApiSchema(key, value, ApiSchemaType.JSON));
 			}

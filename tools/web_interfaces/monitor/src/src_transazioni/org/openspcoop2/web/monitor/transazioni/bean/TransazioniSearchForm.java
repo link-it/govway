@@ -22,7 +22,7 @@ package org.openspcoop2.web.monitor.transazioni.bean;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -123,7 +123,7 @@ Context, Cloneable {
 	private String ricercaLiberaIdApplicativo;
 	
 
-	private Hashtable<String, Ricerche> tabellaRicerchePersonalizzate = new Hashtable<String, Ricerche>();
+	private Map<String, Ricerche> tabellaRicerchePersonalizzate = new HashMap<String, Ricerche>();
 
 	private List<Parameter<?>> ricercaSelezionataParameters = new ArrayList<Parameter<?>>();
 
@@ -581,7 +581,7 @@ Context, Cloneable {
 		super.setIdCorrelazioneApplicativa(null);
 	}
 
-	private Hashtable<String, Ricerche> leggiRicerche() {
+	private Map<String, Ricerche> leggiRicerche() {
 
 		try {
 			if (this.tabellaRicerchePersonalizzate != null && this.tabellaRicerchePersonalizzate.size() > 0)
@@ -707,7 +707,7 @@ Context, Cloneable {
 	}
 
 	public void initSearchForm() {
-		this.tabellaRicerchePersonalizzate = new Hashtable<String, Ricerche>();
+		this.tabellaRicerchePersonalizzate = new HashMap<String, Ricerche>();
 		this.ricercaSelezionataParameters = new ArrayList<Parameter<?>>();
 		this.setRicerchePersonalizzate(null);
 		this.setRicercaSelezionata(null);
@@ -776,7 +776,7 @@ Context, Cloneable {
 			this.nomeRisorsa = null;
 			this.valoreRisorsa = null;
 			this.nomeStato = null;
-			this.tabellaRicerchePersonalizzate = new Hashtable<String, Ricerche>();
+			this.tabellaRicerchePersonalizzate = new HashMap<String, Ricerche>();
 
 			if(this.isRicerchePersonalizzateAttive()){
 				this.ricercaSelezionataParameters = new ArrayList<Parameter<?>>();
@@ -825,7 +825,7 @@ Context, Cloneable {
 		this.nomeRisorsa = null;
 		this.valoreRisorsa = null;
 		this.nomeStato = null;
-		this.tabellaRicerchePersonalizzate = new Hashtable<String, Ricerche>();
+		this.tabellaRicerchePersonalizzate = new HashMap<String, Ricerche>();
 		try{
 			// String uri =
 			// this.getNomeServizio().split(" \\(")[1].replace("\\)","");

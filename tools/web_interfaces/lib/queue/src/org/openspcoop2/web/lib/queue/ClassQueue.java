@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
@@ -588,7 +587,7 @@ public class ClassQueue {
 	/*
 	 * METODI PER INTERFACCIA GRAFICA
 	 */
-	public List<Operation> operationsList(ISearch ricerca, OperationStatus os, Vector<String> utenti, String logAdm, String hostname, String pezzoAny, String daSql, String aSql) throws ClassQueueException {
+	public List<Operation> operationsList(ISearch ricerca, OperationStatus os, List<String> utenti, String logAdm, String hostname, String pezzoAny, String daSql, String aSql) throws ClassQueueException {
 		int offset;
 		int limit;
 		int idLista = 0;
@@ -612,11 +611,11 @@ public class ClassQueue {
 		
 		filtroSel = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_UTENTE, "*");
 		
-		Vector<String> newUtenti = new Vector<String>();
+		List<String> newUtenti = new ArrayList<String>();
 		if (filtroSel.equals("*")) {
 			newUtenti.add(logAdm);
 			for (int i = 0; i < utenti.size(); i++)
-				newUtenti.add((String) utenti.elementAt(i));
+				newUtenti.add((String) utenti.get(i));
 		} else
 			newUtenti.add(filtroSel);
 
@@ -624,7 +623,7 @@ public class ClassQueue {
 		for (int i = 0; i < newUtenti.size(); i++) {
 			if (!pezzoUtenti.equals("("))
 				pezzoUtenti += " OR";
-			pezzoUtenti += " superuser='" + newUtenti.elementAt(i) + "'";
+			pezzoUtenti += " superuser='" + newUtenti.get(i) + "'";
 		}
 		pezzoUtenti += ")";
 
@@ -720,11 +719,11 @@ public class ClassQueue {
 		}
 	}
 
-	public Vector<String> hostnameList() throws ClassQueueException {
+	public List<String> hostnameList() throws ClassQueueException {
 		String queryString;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
-		Vector<String> lista = new Vector<String>();
+		List<String> lista = new ArrayList<>();
 
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
@@ -735,7 +734,7 @@ public class ClassQueue {
 			stm = this.connectionDB.prepareStatement(queryString);
 			rs = stm.executeQuery();
 			while (rs.next())
-				lista.addElement(rs.getString("hostname"));
+				lista.add(rs.getString("hostname"));
 			rs.close();
 			stm.close();
 

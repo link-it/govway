@@ -30,7 +30,8 @@ import java.io.Serializable;
  */
 public enum PrincipalReaderType implements  Serializable , Cloneable {
 	
-	PRINCIPAL ("principal");
+	PRINCIPAL ("principal"),
+	HEADER ("header");
 
 	/** Value */
 	private String value;

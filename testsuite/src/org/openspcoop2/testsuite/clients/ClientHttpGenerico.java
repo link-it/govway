@@ -124,7 +124,7 @@ public class ClientHttpGenerico extends ClientCore{
 	
 	
 	/** Costruttore */
-	public ClientHttpGenerico(Repository rep,java.util.Hashtable<String, String> sslContext) throws TestSuiteException {
+	public ClientHttpGenerico(Repository rep,java.util.Map<String, String> sslContext) throws TestSuiteException {
 		super();
 		this.repository=rep;
 		this.method="POST";
@@ -142,7 +142,7 @@ public class ClientHttpGenerico extends ClientCore{
 	public ClientHttpGenerico(Repository rep)throws TestSuiteException{
 		this(rep,null);
 	}
-	public ClientHttpGenerico(java.util.Hashtable<String, String> sslContext)throws TestSuiteException{
+	public ClientHttpGenerico(java.util.Map<String, String> sslContext)throws TestSuiteException{
 		this(new Repository(),sslContext);
 	}
 	public ClientHttpGenerico()throws TestSuiteException{

@@ -23,8 +23,9 @@ package org.openspcoop2.web.ctrlstat.servlet.aps;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -461,7 +462,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			String[] soggettiList = null;
 			String[] soggettiListLabel = null;
 			List<Fruitore> fruList1 = apsCore.getSoggettiWithServizioNotFruitori(idInt,true,null);
-			Hashtable<String, Fruitore> mapFruitori = new Hashtable<>();
+			Map<String, Fruitore> mapFruitori = new HashMap<String, Fruitore>();
 			List<String> keyFruitori = new ArrayList<>();
 			if(fruList1!=null && fruList1.size()>0){
 				for (Fruitore fr : fruList1) {

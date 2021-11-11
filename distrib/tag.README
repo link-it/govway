@@ -11,6 +11,7 @@ Per creare una tag version:
 	   NON usarlo invece per la proprietà 'antinstaller_versione_attuale' la quale NON DEVE possedere il patch level.
    - Sistemare versioni precedenti nella maschera 'aggiornamentoSceltaVersione' (NOTA: in questo caso utilizzare solamente versioni stabili)
    - Se sono state introdotte nuove variabili nel setup, gestirle all'interno del file ant/setup/ant/sqlInstallerProps-build.xml nel task '_sql_settings_installer_properties'
+   - Aggiungere le nuove proprietà nei template all'interno degli script di distribuzione (-dev) e nel progetto govway-docker
 
 4. (PVersion) Inserire la versione corretta nel pom.xml presente nella root, all'interno della proprietà '<govway.version>XXX/govway.version>'
    NOTA: usare eventuale patch level
@@ -25,6 +26,8 @@ Per creare una tag version:
 8. (PVersion) Eseguire i test di verifica JavaDoc, GPL, XSD e StringBuffer.
 
 9. (PVersion) Sistemare file distrib/distrib.sh indicando la corretta versione compresa di suffissi 'rc' o 'beta'
+   - verificare che la compilazione su readthedocs funzioni correttamente
+   - verificare che la compilazione dei pdf sollevi errori solamente relativi a cross references tra documenti differenti
 
 10. Sistemare la documentazione e soprattutto il documento di ReleaseNotes
       Inoltre aggiungere la corretta versione. 
@@ -96,7 +99,6 @@ Per creare una tag version:
 		image: linkitaly/govway:3.3.1_postgres	
     - Ripulire i log:
 	. rm scenari/data/govway/log/* -rf
-	. rm scenari/data/govway/log/tomcat_logs/* -f
     - !!Come utenza root ricreare l'archivio scenari.zip
 	NOTA: Senza utenza root non viene salvata la parte del database postgresql
 

@@ -206,7 +206,7 @@ public class PreLoadingConfig  {
 
 		if(registryNameList.size()>0) {
 			org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer deserializerRegistry = new  org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer (); 
-			java.util.Hashtable<String, IDriverRegistroServiziGet> mapRegistri = RegistroServiziReader.getDriverRegistroServizi();
+			java.util.Map<String, IDriverRegistroServiziGet> mapRegistri = RegistroServiziReader.getDriverRegistroServizi();
 			DriverRegistroServiziDB driverRegistroServizi = (DriverRegistroServiziDB) mapRegistri.values().iterator().next();
 			
 			for (int i = 0; i < registryNameList.size(); i++) {

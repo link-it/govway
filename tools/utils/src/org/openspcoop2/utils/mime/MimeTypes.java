@@ -24,7 +24,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openspcoop2.utils.UtilsException;
 
@@ -37,8 +38,8 @@ import org.openspcoop2.utils.UtilsException;
  */
 public class MimeTypes {
 
-	private Hashtable<String, Object> mapMimeToExt = new Hashtable<String, Object>();
-	private Hashtable<String, String> mapExtToMime = new Hashtable<String, String>();
+	private Map<String, Object> mapMimeToExt = new HashMap<String, Object>();
+	private Map<String, String> mapExtToMime = new HashMap<String, String>();
 	
 	MimeTypes() throws UtilsException{
 		

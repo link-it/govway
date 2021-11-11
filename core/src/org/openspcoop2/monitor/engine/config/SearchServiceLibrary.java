@@ -19,14 +19,14 @@
  */
 package org.openspcoop2.monitor.engine.config;
 
-import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
 
 /**
  * SearchServiceLibrary
@@ -141,7 +141,7 @@ public class SearchServiceLibrary implements Serializable {
 
 	public List<ConfigurazioneRicerca> mergeServiceActionSearchLibrary(boolean onlyEnabled, boolean orderByLabel) throws Exception{
 
-		Hashtable<String,ConfigurazioneRicerca> plugins = new Hashtable<String,ConfigurazioneRicerca>();
+		Map<String,ConfigurazioneRicerca> plugins = new HashMap<String,ConfigurazioneRicerca>();
 
 		// Leggo le risorse associate all'azione specifica
 		if(this.searchActionLibrary!=null && this.searchActionLibrary.size()>0){
@@ -172,11 +172,9 @@ public class SearchServiceLibrary implements Serializable {
 		List<ConfigurazioneRicerca> list = new ArrayList<ConfigurazioneRicerca>();
 		if(orderByLabel){
 			List<String> sortedKey = new ArrayList<String>();
-			Hashtable<String, ConfigurazioneRicerca> mapLabelToCorrelazioneRicerca = new Hashtable<String, ConfigurazioneRicerca>();
-			Enumeration<String> keys = plugins.keys();
+			Map<String, ConfigurazioneRicerca> mapLabelToCorrelazioneRicerca = new HashMap<String, ConfigurazioneRicerca>();
 			int count = 0; // lo uso per gestire eventuali label identiche.
-			while (keys.hasMoreElements()) {
-				String className = (String) keys.nextElement();
+			for (String className : plugins.keySet()) {
 				ConfigurazioneRicerca cr = plugins.get(className);
 				String labelKey = cr.getLabel()+count;
 				sortedKey.add(labelKey);

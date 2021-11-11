@@ -383,7 +383,7 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 //				// NOTA: Al massimo sono selezionate 25 transazioni
 //				// NOTA2: Le transazioni esportate sono sempre ordinate per data
 //				List<String> orderFix = new ArrayList<String>();
-//				Hashtable<String, String> orderMap = new Hashtable<String, String>();
+//				Map<String, String> orderMap = new HashMap<String, String>();
 //				SimpleDateFormat format = Utilities.getSimpleDateFormatMs();
 //				
 //				Iterator<TransazioneBean> it = this.selectedIds.keySet().iterator();

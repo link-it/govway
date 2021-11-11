@@ -54,7 +54,17 @@ public interface IDumpProducer extends IMonitoraggioRisorsa,IComponentFactory {
 	 * @param messaggio
 	 * @throws DumpException
 	 */
-	public void dump(Connection conOpenSPCoopPdD,Messaggio messaggio) throws DumpException;
+	@Deprecated
+	void dump(Connection conOpenSPCoopPdD,Messaggio messaggio) throws DumpException;
+	/**
+	 * Dump di un messaggio
+	 * 
+	 * @param conOpenSPCoopPdD Connessione verso il database della Porta di Dominio
+	 * @param messaggio
+	 * @param headersCompact
+	 * @throws DumpException
+	 */
+	public void dump(Connection conOpenSPCoopPdD,Messaggio messaggio,boolean headersCompact) throws DumpException;
 	
 	
 	

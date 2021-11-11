@@ -572,7 +572,8 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 						this.transazioniRegistrazioneTokenInformazioniNormalizzate,
 						this.transazioniRegistrazioneAttributiInformazioniNormalizzate,
 						this.transazioniRegistrazioneTempiElaborazione);
-				transazioneDTO = transazioneUtilities.fillTransaction(context, transaction, idDominio); // NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
+				transazioneDTO = transazioneUtilities.fillTransaction(context, transaction, idDominio,
+						( (times!=null && this.openspcoopProperties.isTransazioniRegistrazioneSlowLogBuildTransactionDetails()) ? times : null)); // NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
 	
 			}catch (Throwable e) {
 				try{
@@ -605,7 +606,8 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 							timeStart = DateManager.getTimeMillis();
 						}
 						PostOutResponseHandler_GestioneControlloTraffico outHandler = new PostOutResponseHandler_GestioneControlloTraffico();
-						outHandler.process(controlloCongestioneMaxRequestThreadRegistrato, this.log, idTransazione, transazioneDTO, context);
+						outHandler.process(controlloCongestioneMaxRequestThreadRegistrato, this.log, idTransazione, transazioneDTO, context,
+								( (times!=null && this.openspcoopProperties.isTransazioniRegistrazioneSlowLogRateLimitingDetails()) ? times : null));
 					}finally {
 						if(times!=null) {
 							long timeEnd =  DateManager.getTimeMillis();
@@ -993,12 +995,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 							}
 							if(this.debug)
 								this.log.debug("["+idTransazione+"] registrazione di tipo ["+messaggio.getTipoMessaggio()+"] ...");
-							if(this.dumpOpenSPCoopAppender instanceof org.openspcoop2.pdd.logger.DumpOpenSPCoopProtocolAppender) {
-								((org.openspcoop2.pdd.logger.DumpOpenSPCoopProtocolAppender)this.dumpOpenSPCoopAppender).dump(connection,messaggio,this.transazioniRegistrazioneDumpHeadersCompactEnabled);
-							}
-							else {
-								this.dumpOpenSPCoopAppender.dump(connection,messaggio);
-							}
+							this.dumpOpenSPCoopAppender.dump(connection,messaggio,this.transazioniRegistrazioneDumpHeadersCompactEnabled);
 							if(this.debug)
 								this.log.debug("["+idTransazione+"] registrazione di tipo ["+messaggio.getTipoMessaggio()+"] completata");
 						}finally {
@@ -1019,8 +1016,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 						times.insertContents = timeProcess;
 					}
 				}
-				
-				
+
 				
 				
 				
@@ -1047,7 +1043,6 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 				}
 	
 				
-	
 	
 				// COMMIT
 				if(autoCommit==false) {
@@ -1103,6 +1098,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 				
 				// Registrazione su FileSystem informazioni se la gestione e' andata in errore
 				if(errore){
+					
 					try {
 						exceptionSerializerFileSystem.registrazioneFileSystemDiagnosticiTracceDumpEmessiPdD(transaction, idTransazione, transazioneDTO,
 								registraTracciaRichiesta, registraTracciaRisposta, registrazioneMessaggiDiagnostici, registrazioneDumpMessaggi);
@@ -1161,7 +1157,11 @@ class TransazioniProcessTimes{
 
 	String idTransazione;
 	long fillTransaction = -1;
+	List<String> fillTransaction_details = null;
 	long controlloTraffico = -1;
+	long controlloTraffico_removeThread = -1;
+	long controlloTraffico_preparePolicy = -1;
+	List<String> controlloTraffico_policyTimes = null;
 	long fileTrace = -1;
 	long processTransactionInfo = -1;
 	long getConnection = -1;
@@ -1181,11 +1181,42 @@ class TransazioniProcessTimes{
 			}
 			sb.append("buildTransaction:").append(this.fillTransaction);
 		}
+		if(this.fillTransaction_details!=null && !this.fillTransaction_details.isEmpty()) {
+			if(sb.length()>0) {
+				sb.append(" ");
+			}
+			sb.append("buildTransactionDetails:{");
+			boolean first = true;
+			for (String det : this.fillTransaction_details) {
+				if(!first) {
+					sb.append(" ");
+				}
+				sb.append(det);
+				first=false;
+			}
+			sb.append("}");
+		}
 		if(this.controlloTraffico>=0) {
 			if(sb.length()>0) {
 				sb.append(" ");
 			}
 			sb.append("rateLimiting:").append(this.controlloTraffico);
+		}
+		if(this.controlloTraffico_removeThread>=0 || this.controlloTraffico_preparePolicy>=0 || 
+				(this.controlloTraffico_policyTimes!=null && !this.controlloTraffico_policyTimes.isEmpty())) {
+			if(sb.length()>0) {
+				sb.append(" ");
+			}
+			sb.append("rateLimitingDetails:{");
+			sb.append("del:").append(this.controlloTraffico_removeThread);
+			sb.append(" init:").append(this.controlloTraffico_preparePolicy);
+			if(this.controlloTraffico_policyTimes!=null && !this.controlloTraffico_policyTimes.isEmpty()) {
+				sb.append(" policy:").append(this.controlloTraffico_policyTimes.toString());
+			}
+			else {
+				sb.append(" policy:-");
+			}
+			sb.append("}");
 		}
 		if(this.fileTrace>=0) {
 			if(sb.length()>0) {

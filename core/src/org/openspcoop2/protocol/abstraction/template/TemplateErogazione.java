@@ -24,8 +24,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.protocol.abstraction.constants.CostantiAbstraction;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -112,7 +112,7 @@ public class TemplateErogazione extends TemplateCore {
 	
 	
 	@Override
-	public void updateOtherResource(String entryName,InputStream inputStream,byte[]xml,Hashtable<String, Boolean> mapFound) throws ProtocolException{
+	public void updateOtherResource(String entryName,InputStream inputStream,byte[]xml,Map<String, Boolean> mapFound) throws ProtocolException{
 		
 		String rootDirNameExpected = this.getRootDirName()+File.separatorChar;
 		

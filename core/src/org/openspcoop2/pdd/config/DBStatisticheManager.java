@@ -155,7 +155,7 @@ public class DBStatisticheManager implements IMonitoraggioRisorsa {
 				if(bf.length()<=0) {
 					bf.append("DBStatisticheManager");
 				}
-				Resource risorsa = DBManager.buildResource(this.getConnectionFromDatasource(bf.toString(), idTransazione),
+				Resource risorsa = DBManager.buildResource("DBStatisticsManager", this.getConnectionFromDatasource(bf.toString(), idTransazione),
 						idPDD, modulo, idTransazione);	
 				
 				DBStatisticheManager.risorseInGestione.put(risorsa.getId(), risorsa);

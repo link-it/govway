@@ -22,7 +22,7 @@ package org.openspcoop2.security.message.utils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.Hashtable;
+import java.util.Map;
 import java.util.Properties;
 
 import org.openspcoop2.generic_project.exception.NotFoundException;
@@ -118,7 +118,7 @@ public class PropertiesUtils {
 		
 	}
 	
-	private static Properties _readProperties(Hashtable<String,Object> map, String property) throws SecurityException {
+	private static Properties _readProperties(Map<String,Object> map, String property) throws SecurityException {
 	
 		String path = null;
 		File fPath = null;

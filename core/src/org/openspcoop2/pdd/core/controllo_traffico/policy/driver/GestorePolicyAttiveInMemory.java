@@ -22,20 +22,15 @@ package org.openspcoop2.pdd.core.controllo_traffico.policy.driver;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import javax.activation.FileDataSource;
 
-import org.slf4j.Logger;
-import org.openspcoop2.protocol.basic.Costanti;
-import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.io.ZipUtilities;
-import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
@@ -51,6 +46,11 @@ import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyShutdownException;
 import org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbDeserializer;
 import org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbSerializer;
+import org.openspcoop2.protocol.basic.Costanti;
+import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.io.ZipUtilities;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.slf4j.Logger;
 
 /**     
  * GestorePolicyAttiveInMemory
@@ -65,8 +65,8 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	/** 
 	 * Threads allocati sulle Policy. La chiave è l'active-policy-id
 	 **/
-	private Hashtable<String, PolicyGroupByActiveThreads> mapActiveThreadsPolicy = 
-			new Hashtable<String, PolicyGroupByActiveThreads>();
+	private Map<String, PolicyGroupByActiveThreads> mapActiveThreadsPolicy = 
+			new HashMap<String, PolicyGroupByActiveThreads>();
 	private final org.openspcoop2.utils.Semaphore lock = new org.openspcoop2.utils.Semaphore("GestorePolicyAttiveInMemory");
 	
 	private static final String IMPL_DESCR = "Implementazione InMemory IGestorePolicyAttive";
@@ -86,8 +86,8 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	@Override
 	public IPolicyGroupByActiveThreads getActiveThreadsPolicy(ActivePolicy activePolicy) throws PolicyShutdownException,PolicyException {		
 		//synchronized (this.mapActiveThreadsPolicy) {
+		this.lock.acquireThrowRuntime("getActiveThreadsPolicy(ActivePolicy)");
 		try {
-			this.lock.acquireThrowRuntime("getActiveThreadsPolicy(ActivePolicy)");
 			
 			if(this.isStop){
 				throw new PolicyShutdownException("Policy Manager shutdown");
@@ -113,8 +113,8 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	@Override
 	public IPolicyGroupByActiveThreads getActiveThreadsPolicy(String uniqueIdMap) throws PolicyShutdownException,PolicyException,PolicyNotFoundException { // usata per la remove
 		//synchronized (this.mapActiveThreadsPolicy) {
+		this.lock.acquireThrowRuntime("getActiveThreadsPolicy(uniqueIdMap)");
 		try {
-			this.lock.acquireThrowRuntime("getActiveThreadsPolicy(uniqueIdMap)");
 			
 			if(this.isStop){
 				throw new PolicyShutdownException("Policy Manager shutdown");
@@ -138,8 +138,8 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	@Override
 	public long sizeActivePolicyThreads(boolean sum) throws PolicyShutdownException,PolicyException{
 		//synchronized (this.mapActiveThreadsPolicy) {
+		this.lock.acquireThrowRuntime("sizeActivePolicyThreads");
 		try {
-			this.lock.acquireThrowRuntime("sizeActivePolicyThreads");
 			
 			if(this.isStop){
 				throw new PolicyShutdownException("Policy Manager shutdown");
@@ -147,11 +147,10 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 			
 			if(sum){
 				long sumLong = 0;
-				Enumeration<String> keys = this.mapActiveThreadsPolicy.keys();
-				while (keys.hasMoreElements()) {
-					String idPolicy = 
-							(String) keys.nextElement();
-					sumLong = sumLong +this.mapActiveThreadsPolicy.get(idPolicy).getActiveThreads();
+				if(this.mapActiveThreadsPolicy!=null && !this.mapActiveThreadsPolicy.isEmpty()) {
+					for (String idPolicy : this.mapActiveThreadsPolicy.keySet()) {
+						sumLong = sumLong +this.mapActiveThreadsPolicy.get(idPolicy).getActiveThreads();
+					}
 				}
 				return sumLong;
 			}else{
@@ -165,25 +164,24 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	@Override
 	public String printKeysPolicy(String separator) throws PolicyShutdownException, PolicyException{
 		//synchronized (this.mapActiveThreadsPolicy) {
+		this.lock.acquireThrowRuntime("printKeysPolicy");
 		try {
-			this.lock.acquireThrowRuntime("printKeysPolicy");
 			
 			if(this.isStop){
 				throw new PolicyShutdownException("Policy Manager shutdown");
 			}
 			
 			StringBuilder bf = new StringBuilder();
-			Enumeration<String> keys = this.mapActiveThreadsPolicy.keys();
-			int i = 0;
-			while (keys.hasMoreElements()) {
-				String idPolicy = 
-						(String) keys.nextElement();
-				String key = idPolicy;
-				if(i>0){
-					bf.append(separator);
+			if(this.mapActiveThreadsPolicy!=null && !this.mapActiveThreadsPolicy.isEmpty()) {
+				int i = 0;
+				for (String idPolicy : this.mapActiveThreadsPolicy.keySet()) {
+					String key = idPolicy;
+					if(i>0){
+						bf.append(separator);
+					}
+					bf.append("Cache["+i+"]=["+key+"]");
+					i++;
 				}
-				bf.append("Cache["+i+"]=["+key+"]");
-				i++;
 			}
 			return bf.toString();
 		}finally {
@@ -204,8 +202,8 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	@Override
 	public void removeActiveThreadsPolicy(String idActivePolicy) throws PolicyShutdownException, PolicyException{
 		//synchronized (this.mapActiveThreadsPolicy) {
+		this.lock.acquireThrowRuntime("removeActiveThreadsPolicy");
 		try {
-			this.lock.acquireThrowRuntime("removeActiveThreadsPolicy");
 			
 			if(this.isStop){
 				throw new PolicyShutdownException("Policy Manager shutdown");
@@ -222,8 +220,8 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	@Override
 	public void removeAllActiveThreadsPolicy() throws PolicyShutdownException, PolicyException{
 		//synchronized (this.mapActiveThreadsPolicy) {
+		this.lock.acquireThrowRuntime("removeAllActiveThreadsPolicy");
 		try {
-			this.lock.acquireThrowRuntime("removeAllActiveThreadsPolicy");
 			
 			if(this.isStop){
 				throw new PolicyShutdownException("Policy Manager shutdown");
@@ -238,8 +236,8 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	@Override
 	public void resetCountersActiveThreadsPolicy(String idActivePolicy) throws PolicyShutdownException, PolicyException{
 		//synchronized (this.mapActiveThreadsPolicy) {
+		this.lock.acquireThrowRuntime("resetCountersActiveThreadsPolicy");
 		try {
-			this.lock.acquireThrowRuntime("resetCountersActiveThreadsPolicy");
 			
 			if(this.isStop){
 				throw new PolicyShutdownException("Policy Manager shutdown");
@@ -256,19 +254,16 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	@Override
 	public void resetCountersAllActiveThreadsPolicy() throws PolicyShutdownException, PolicyException{
 		//synchronized (this.mapActiveThreadsPolicy) {
+		this.lock.acquireThrowRuntime("resetCountersAllActiveThreadsPolicy");
 		try {
-			this.lock.acquireThrowRuntime("resetCountersAllActiveThreadsPolicy");
 			
 			if(this.isStop){
 				throw new PolicyShutdownException("Policy Manager shutdown");
 			}
 			
 			if(this.mapActiveThreadsPolicy.size()>0){
-				Enumeration<String> kesy = this.mapActiveThreadsPolicy.keys();
-				while (kesy.hasMoreElements()) {
-					String key = (String) kesy.nextElement();
+				for (String key : this.mapActiveThreadsPolicy.keySet()) {
 					this.mapActiveThreadsPolicy.get(key).resetCounters();
-					
 				}
 			}
 		}finally {
@@ -314,9 +309,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 				int index = 1;
 				
 				// Chiavi possiedono la policy id
-				Enumeration<String> enKeys = this.mapActiveThreadsPolicy.keys();
-				while (enKeys.hasMoreElements()) {
-					String idActivePolicy = (String) enKeys.nextElement();
+				for (String idActivePolicy : this.mapActiveThreadsPolicy.keySet()) {
 					
 					// Id File
 					String idFileActivePolicy = ZIP_POLICY_PREFIX+index;
@@ -347,17 +340,14 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 							zipOut.write(serializer.toByteArray(activePolicy.getInstanceConfiguration()));
 						}
 						
-						Hashtable<IDUnivocoGroupByPolicy, DatiCollezionati> map = active.getMapActiveThreads();
+						Map<IDUnivocoGroupByPolicy, DatiCollezionati> map = active.getMapActiveThreads();
 						if(map!=null && map.size()>0){
 							
 							// indice 
 							int indexDatoCollezionato = 1;
 							
 							// Chiavi dei raggruppamenti
-							Enumeration<IDUnivocoGroupByPolicy> enRaggruppamentiKeys = map.keys();
-							while (enRaggruppamentiKeys.hasMoreElements()) {
-								IDUnivocoGroupByPolicy idUnivocoGroupByPolicy = 
-										(IDUnivocoGroupByPolicy) enRaggruppamentiKeys.nextElement();
+							for (IDUnivocoGroupByPolicy idUnivocoGroupByPolicy : map.keySet()) {
 								
 								// Id Raggruppamento
 								String idFileRaggruppamento = idFileActivePolicy+File.separatorChar+"groupBy"+File.separatorChar+"groupBy-"+indexDatoCollezionato;
@@ -427,7 +417,12 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 				FileSystemUtilities.writeFile(f, bytesIn);
 				
 				// Leggo Struttura ZIP
-				zipFile = new ZipFile(f);
+				try {
+					zipFile = new ZipFile(f);
+				}catch(Throwable t) {
+					this.log.error("Inizializzazione immagine ControlloTraffico precedente allo shutdown non ripristinabile, immagine corrotta: "+t.getMessage(),t);
+					return;
+				}
 				
 				JaxbDeserializer deserializer = new JaxbDeserializer();
 				
@@ -438,7 +433,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 				String idActivePolicy = null;
 				ConfigurazionePolicy configurazionePolicy = null;
 				AttivazionePolicy attivazionePolicy = null;
-				Hashtable<IDUnivocoGroupByPolicy, DatiCollezionati> map = null;
+				Map<IDUnivocoGroupByPolicy, DatiCollezionati> map = null;
 				
 				IDUnivocoGroupByPolicy idDatiCollezionati = null;
 				
@@ -489,7 +484,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 									}
 									
 									idActivePolicy = new String(content);
-									map=new Hashtable<IDUnivocoGroupByPolicy, DatiCollezionati>();
+									map=new HashMap<IDUnivocoGroupByPolicy, DatiCollezionati>();
 									
 									//System.out.println("ENTRY ["+idActivePolicy+"] NUOVO ID ["+entryName+"]");
 									
@@ -580,7 +575,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	}
 	
 	private PolicyGroupByActiveThreads buildPolicyGroupByActiveThreads(ConfigurazionePolicy configurazionePolicy,
-			AttivazionePolicy attivazionePolicy, Hashtable<IDUnivocoGroupByPolicy, DatiCollezionati> map,
+			AttivazionePolicy attivazionePolicy, Map<IDUnivocoGroupByPolicy, DatiCollezionati> map,
 			ConfigurazioneControlloTraffico configurazioneControlloTraffico) throws Exception{
 		
 		if(configurazionePolicy==null){
@@ -601,9 +596,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 		
 		PolicyGroupByActiveThreads p = new PolicyGroupByActiveThreads(activePolicy);
 		if(map!=null && map.size()>0){
-			Enumeration<IDUnivocoGroupByPolicy> enumID = map.keys();
-			while (enumID.hasMoreElements()) {
-				IDUnivocoGroupByPolicy id = (IDUnivocoGroupByPolicy) enumID.nextElement();
+			for (IDUnivocoGroupByPolicy id : map.keySet()) {
 				map.get(id).initActiveRequestCounter();
 			}
 			p.getMapActiveThreads().putAll(map);

@@ -35,6 +35,7 @@ import org.openspcoop2.generic_project.beans.UpdateField;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
@@ -63,6 +64,7 @@ public class GestoreTransazioniStateful {
 	private ITracciaProducer tracciamentoOpenSPCoopAppender = null;
 	private IDiagnosticProducer msgDiagnosticiOpenSPCoopAppender = null;
 	private IDumpProducer dumpOpenSPCoopAppender = null;
+	private boolean transazioniRegistrazioneDumpHeadersCompactEnabled = false;
 	
 	public GestoreTransazioniStateful(Logger log,Logger logSql,
 			//String dataSource,
@@ -149,6 +151,9 @@ public class GestoreTransazioniStateful {
 			dumpOpenSPCoopAppender.setPropertyList(dumpOpenSPCoopAppenderProperties);
 			this.dumpOpenSPCoopAppender.initializeAppender(dumpOpenSPCoopAppender);
 			this.dumpOpenSPCoopAppender.isAlive();
+			
+			// Indicazioni sulle modalita' di salvataggio degli header del dump
+			this.transazioniRegistrazioneDumpHeadersCompactEnabled = OpenSPCoop2Properties.getInstance().isTransazioniRegistrazioneDumpHeadersCompactEnabled();
 			
 		}catch(Exception e){
 			throw new Exception("Errore durante l'inizializzazione del DumpAppender: "+e.getMessage(),e);
@@ -278,7 +283,7 @@ public class GestoreTransazioniStateful {
 			
 		case MESSAGGIO:
 			
-			this.dumpOpenSPCoopAppender.dump(con,(Messaggio)so.getObject());		
+			this.dumpOpenSPCoopAppender.dump(con, (Messaggio)so.getObject(), this.transazioniRegistrazioneDumpHeadersCompactEnabled);		
 			if(this.debug)
 				this.log.debug(tipoGestione+"DumpMessaggio inserito nel database");
 			

@@ -26,9 +26,9 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.openspcoop2.core.config.AccessoRegistro;
@@ -121,11 +121,11 @@ public class RegistroServizi  {
 	 * - Registri deployati
 	 */
 	private Cache cache = null;
-	private java.util.Hashtable<String,IDriverRegistroServiziGet> driverRegistroServizi;
+	private java.util.Map<String,IDriverRegistroServiziGet> driverRegistroServizi;
 
 	/** Indicazione se usare la connessione della PdD */
-	private Hashtable<String, String> mappingNomeRegistroToTipiDatabase = new Hashtable<String, String>();
-	private Hashtable<String, Boolean> mappingNomeRegistroToUseConnectionPdD = new Hashtable<String, Boolean>();
+	private Map<String, String> mappingNomeRegistroToTipiDatabase = new HashMap<String, String>();
+	private Map<String, Boolean> mappingNomeRegistroToUseConnectionPdD = new HashMap<String, Boolean>();
 	
 	/** Eventuale RegistriXML da cui prelevare le definizioni dei connettori */
 	private List<DriverRegistroServiziXML> registriXML;
@@ -279,7 +279,7 @@ public class RegistroServizi  {
 			boolean prefillCache, CryptConfig cryptConfigSoggetti)throws DriverRegistroServiziException{
 
 		try{ 
-			this.driverRegistroServizi = new java.util.Hashtable<String,IDriverRegistroServiziGet>();
+			this.driverRegistroServizi = new java.util.HashMap<String,IDriverRegistroServiziGet>();
 			this.registriXML = new ArrayList<DriverRegistroServiziXML>();
 
 			if(alog!=null)
@@ -444,7 +444,7 @@ public class RegistroServizi  {
 	public RegistroServizi(IDriverRegistroServiziGet driverRegistroServiziGET, Logger alog, boolean readObjectStatoBozza, String tipoRegistro)throws DriverRegistroServiziException{
 
 		try{ 
-			this.driverRegistroServizi = new java.util.Hashtable<String,IDriverRegistroServiziGet>();
+			this.driverRegistroServizi = new java.util.HashMap<String,IDriverRegistroServiziGet>();
 			this.registriXML = new ArrayList<DriverRegistroServiziXML>();
 
 			if(alog!=null)
@@ -664,7 +664,7 @@ public class RegistroServizi  {
 
 
 
-	protected java.util.Hashtable<String, IDriverRegistroServiziGet> getDriverRegistroServizi() {
+	protected java.util.Map<String, IDriverRegistroServiziGet> getDriverRegistroServizi() {
 		return this.driverRegistroServizi;
 	}
 
@@ -1374,12 +1374,14 @@ public class RegistroServizi  {
 		}
 		return getObjectCache(keyCache, methodName, nomeRegistro, readContenutoAllegati, connectionPdD, classArgoments, values);
 	}
-	public synchronized Object getObjectCache(String keyCache,String methodName,
+	private static org.openspcoop2.utils.Semaphore semaphore_getObjectCache = new org.openspcoop2.utils.Semaphore("RegistroServizi_Object");
+	public Object getObjectCache(String keyCache,String methodName,
 			String nomeRegistro,
 			Boolean readContenutoAllegati,
 			Connection connectionPdD,
 			Class<?>[] classArgoments, Object[] values) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
+		semaphore_getObjectCache.acquireThrowRuntime("getObjectCache");		
 		DriverRegistroServiziNotFound dNotFound = null;
 		Object obj = null;
 		try{
@@ -1449,6 +1451,8 @@ public class RegistroServizi  {
 				throw (DriverRegistroServiziNotFound) e;
 			else
 				throw new DriverRegistroServiziException("RegistroServizi, Algoritmo di Cache fallito: "+e.getMessage(),e);
+		}finally {
+			semaphore_getObjectCache.release("getObjectCache");
 		}
 
 		if(dNotFound!=null){
@@ -1621,8 +1625,7 @@ public class RegistroServizi  {
 			StringBuilder notFoundProblem = new StringBuilder();
 			StringBuilder exceptionProblem = new StringBuilder();
 			boolean find = false;
-			for (Enumeration<?> en = this.driverRegistroServizi.keys() ; en.hasMoreElements() ;) {
-				String nomeRegInLista= (String) en.nextElement();
+			for (String nomeRegInLista : this.driverRegistroServizi.keySet()) {
 				this.log.debug("Cerco nel registro con nome["+nomeRegInLista+"]");
 				try{
 					//org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet driver = this.driverRegistroServizi.get(nomeRegInLista);
@@ -2673,9 +2676,11 @@ public class RegistroServizi  {
 	 * @return l'oggetto se trovato, null altrimenti.
 	 * 
 	 */
-	private synchronized org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper getAccordoServizioSoapCache(String keyCache,IDServizio idService,
+	private static org.openspcoop2.utils.Semaphore semaphore_getAccordoServizioSoapCache = new org.openspcoop2.utils.Semaphore("RegistroServizi_AccordoServizioSoap");
+	private org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper getAccordoServizioSoapCache(String keyCache,IDServizio idService,
 			InformationApiSource infoWsdlSource,String nomeRegistro,Connection connectionPdD,boolean buildSchemaXSD) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
+		semaphore_getAccordoServizioSoapCache.acquireThrowRuntime("getAccordoServizioSoapCache");
 		DriverRegistroServiziNotFound dNotFound = null;
 		org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper obj = null;
 		try{
@@ -2745,6 +2750,8 @@ public class RegistroServizi  {
 				throw (DriverRegistroServiziNotFound) e;
 			else
 				throw new DriverRegistroServiziException("RegistroServizi, Algoritmo di Cache fallito: "+e.getMessage(),e);
+		}finally {
+			semaphore_getAccordoServizioSoapCache.release("getAccordoServizioSoapCache");
 		}
 
 		if(dNotFound!=null){
@@ -3044,9 +3051,11 @@ public class RegistroServizi  {
 	 * @return l'oggetto se trovato, null altrimenti.
 	 * 
 	 */
-	private synchronized org.openspcoop2.core.registry.rest.AccordoServizioWrapper getAccordoServizioRestCache(String keyCache,IDServizio idService,
+	private static org.openspcoop2.utils.Semaphore semaphore_getAccordoServizioRestCache = new org.openspcoop2.utils.Semaphore("RegistroServizi_AccordoServizioRest");
+	private org.openspcoop2.core.registry.rest.AccordoServizioWrapper getAccordoServizioRestCache(String keyCache,IDServizio idService,
 			InformationApiSource infoWsdlSource,String nomeRegistro,Connection connectionPdD,boolean buildSchemaXSD, boolean processIncludeForOpenApi) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
+		semaphore_getAccordoServizioRestCache.acquireThrowRuntime("getAccordoServizioRestCache");
 		DriverRegistroServiziNotFound dNotFound = null;
 		org.openspcoop2.core.registry.rest.AccordoServizioWrapper obj = null;
 		try{
@@ -3116,6 +3125,8 @@ public class RegistroServizi  {
 				throw (DriverRegistroServiziNotFound) e;
 			else
 				throw new DriverRegistroServiziException("RegistroServizi, Algoritmo di Cache fallito: "+e.getMessage(),e);
+		}finally {
+			semaphore_getAccordoServizioRestCache.release("getAccordoServizioRestCache");
 		}
 
 		if(dNotFound!=null){
@@ -3424,9 +3435,11 @@ public class RegistroServizi  {
 	 * @return l'oggetto se trovato, null altrimenti.
 	 * 
 	 */
-	private synchronized org.openspcoop2.core.registry.constants.ServiceBinding getServiceBindingCache(String keyCache,IDServizio idService,
+	private static org.openspcoop2.utils.Semaphore semaphore_getServiceBindingCache = new org.openspcoop2.utils.Semaphore("RegistroServizi_ServiceBinding");
+	private org.openspcoop2.core.registry.constants.ServiceBinding getServiceBindingCache(String keyCache,IDServizio idService,
 			String nomeRegistro,Connection connectionPdD) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
+		semaphore_getServiceBindingCache.acquireThrowRuntime("getServiceBindingCache");
 		DriverRegistroServiziNotFound dNotFound = null;
 		org.openspcoop2.core.registry.constants.ServiceBinding obj = null;
 		try{
@@ -3496,6 +3509,8 @@ public class RegistroServizi  {
 				throw (DriverRegistroServiziNotFound) e;
 			else
 				throw new DriverRegistroServiziException("RegistroServizi, Algoritmo di Cache fallito: "+e.getMessage(),e);
+		}finally {
+			semaphore_getServiceBindingCache.release("getServiceBindingCache");
 		}
 
 		if(dNotFound!=null){
@@ -3579,8 +3594,7 @@ public class RegistroServizi  {
 			StringBuilder notFoundProblem = new StringBuilder();
 			StringBuilder exceptionProblem = new StringBuilder();
 			boolean find = false;
-			for (Enumeration<?> en = this.driverRegistroServizi.keys() ; en.hasMoreElements() ;) {
-				String nomeRegInLista= (String) en.nextElement();
+			for (String nomeRegInLista : this.driverRegistroServizi.keySet()) {
 				this.log.debug("Cerco nel registro con nome["+nomeRegInLista+"]");
 				try{
 					String uriServizio = IDServizioFactory.getInstance().getUriFromIDServizio(idService);
@@ -3671,38 +3685,46 @@ public class RegistroServizi  {
 		return object;
 	}
 	
-	private synchronized Serializable _pushGenericObject(String keyObject, Serializable object) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	private static org.openspcoop2.utils.Semaphore semaphore_pushGenericObject = new org.openspcoop2.utils.Semaphore("RegistroServizi_GenericObject");
+	private Serializable _pushGenericObject(String keyObject, Serializable object) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		
-		// Raccolta dati
-		if(keyObject == null)
-			throw new DriverRegistroServiziException("[getGenericObject]: Parametro non definito");	
+		semaphore_pushGenericObject.acquireThrowRuntime("_pushGenericObject");
+		try {
 		
-		// se e' attiva una cache provo ad utilizzarla per vedere se un altro thread lo ha già aggiunto
-		String key = null;	
-		key = "getGenericObject_" + keyObject;
-		org.openspcoop2.utils.cache.CacheResponse response = 
-			(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
-		if(response != null){
-			if(response.getException()!=null){
-				if(DriverRegistroServiziNotFound.class.getName().equals(response.getException().getClass().getName()))
-					throw (DriverRegistroServiziNotFound) response.getException();
-				else
-					throw (DriverRegistroServiziException) response.getException();
-			}else{
-				return ((Serializable) response.getObject());
+			// Raccolta dati
+			if(keyObject == null)
+				throw new DriverRegistroServiziException("[getGenericObject]: Parametro non definito");	
+			
+			// se e' attiva una cache provo ad utilizzarla per vedere se un altro thread lo ha già aggiunto
+			String key = null;	
+			key = "getGenericObject_" + keyObject;
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverRegistroServiziNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverRegistroServiziNotFound) response.getException();
+					else
+						throw (DriverRegistroServiziException) response.getException();
+				}else{
+					return ((Serializable) response.getObject());
+				}
 			}
+			
+			// Aggiungo la risposta in cache
+			try{	
+				org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+				responseCache.setObject(object);
+				this.cache.put(key,responseCache);
+			}catch(UtilsException e){
+				this.log.error("Errore durante l'inserimento in cache ["+key+"]: "+e.getMessage());
+			}
+			
+			return object; 
+			
+		}finally {
+			semaphore_pushGenericObject.release("_pushGenericObject");
 		}
-		
-		// Aggiungo la risposta in cache
-		try{	
-			org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
-			responseCache.setObject(object);
-			this.cache.put(key,responseCache);
-		}catch(UtilsException e){
-			this.log.error("Errore durante l'inserimento in cache ["+key+"]: "+e.getMessage());
-		}
-		
-		return object; 
 		
 	}
 	

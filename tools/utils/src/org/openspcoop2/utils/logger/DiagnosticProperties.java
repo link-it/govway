@@ -21,7 +21,8 @@ package org.openspcoop2.utils.logger;
 
 import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.openspcoop2.utils.Utilities;
@@ -65,12 +66,12 @@ public class DiagnosticProperties {
 	
 	private Properties diagnosticProperties;
 	
-	private Hashtable<String, String> mappingFunctionToCode = new Hashtable<String, String>();
-	private Hashtable<String, String> mappingFullCodeToFullString = new Hashtable<String, String>();
-	private Hashtable<String, DiagnosticInfo> mappingStringCodeToDiagnostic = new Hashtable<String, DiagnosticInfo>(); 
+	private Map<String, String> mappingFunctionToCode = new HashMap<String, String>();
+	private Map<String, String> mappingFullCodeToFullString = new HashMap<String, String>();
+	private Map<String, DiagnosticInfo> mappingStringCodeToDiagnostic = new HashMap<String, DiagnosticInfo>(); 
 	
 	private String defaultFunction;
-	private Hashtable<LowSeverity, String> mappingSeverityToCode = new Hashtable<LowSeverity, String>();
+	private Map<LowSeverity, String> mappingSeverityToCode = new HashMap<LowSeverity, String>();
 	
 	private boolean throwExceptionPlaceholderFailedResolution;
 	
@@ -106,40 +107,32 @@ public class DiagnosticProperties {
 		dmNew.throwExceptionPlaceholderFailedResolution = this.throwExceptionPlaceholderFailedResolution;
 		
 		if(this.mappingFullCodeToFullString!=null && this.mappingFullCodeToFullString.size()>0){
-			dmNew.mappingFullCodeToFullString = new Hashtable<String, String>();
-			Enumeration<String> keys = this.mappingFullCodeToFullString.keys();
-			while (keys.hasMoreElements()) {
-				String key = (String) keys.nextElement();
+			dmNew.mappingFullCodeToFullString = new HashMap<String, String>();
+			for (String key : this.mappingFullCodeToFullString.keySet()) {
 				String value = this.mappingFullCodeToFullString.get(key);
 				dmNew.mappingFullCodeToFullString.put(key, value);
 			}
 		}
 		
 		if(this.mappingFunctionToCode!=null && this.mappingFunctionToCode.size()>0){
-			dmNew.mappingFunctionToCode = new Hashtable<String, String>();
-			Enumeration<String> keys = this.mappingFunctionToCode.keys();
-			while (keys.hasMoreElements()) {
-				String key = (String) keys.nextElement();
+			dmNew.mappingFunctionToCode = new HashMap<String, String>();
+			for (String key : this.mappingFunctionToCode.keySet()) {
 				String value = this.mappingFunctionToCode.get(key);
 				dmNew.mappingFunctionToCode.put(key, value);
 			}
 		}
 		
 		if(this.mappingSeverityToCode!=null && this.mappingSeverityToCode.size()>0){
-			dmNew.mappingSeverityToCode = new Hashtable<LowSeverity, String>();
-			Enumeration<LowSeverity> keys = this.mappingSeverityToCode.keys();
-			while (keys.hasMoreElements()) {
-				LowSeverity key = (LowSeverity) keys.nextElement();
+			dmNew.mappingSeverityToCode = new HashMap<LowSeverity, String>();
+			for (LowSeverity key : this.mappingSeverityToCode.keySet()) {
 				String value = this.mappingSeverityToCode.get(key);
 				dmNew.mappingSeverityToCode.put(key, value);
 			}
 		}
 		
 		if(this.mappingStringCodeToDiagnostic!=null && this.mappingStringCodeToDiagnostic.size()>0){
-			dmNew.mappingStringCodeToDiagnostic = new Hashtable<String, DiagnosticInfo>();
-			Enumeration<String> keys = this.mappingStringCodeToDiagnostic.keys();
-			while (keys.hasMoreElements()) {
-				String key = (String) keys.nextElement();
+			dmNew.mappingStringCodeToDiagnostic = new HashMap<String, DiagnosticInfo>();
+			for (String key : this.mappingStringCodeToDiagnostic.keySet()) {
 				DiagnosticInfo value = this.mappingStringCodeToDiagnostic.get(key);
 				dmNew.mappingStringCodeToDiagnostic.put(key, value);
 			}
@@ -269,9 +262,7 @@ public class DiagnosticProperties {
 		
 		
 		// Check ogni diagnostico abbia la tripla definita
-		Enumeration<String> enStringCodes = this.mappingStringCodeToDiagnostic.keys();
-		while (enStringCodes.hasMoreElements()) {
-			String stringCode = (String) enStringCodes.nextElement();
+		for (String stringCode : this.mappingStringCodeToDiagnostic.keySet()) {
 			DiagnosticInfo diagInfo = this.mappingStringCodeToDiagnostic.get(stringCode);
 			if(diagInfo.code==null){
 				throw new UtilsException("Undefined code for diagnostic ["+PREFIX_DIAGNOSTIC+stringCode+"]");
@@ -291,16 +282,16 @@ public class DiagnosticProperties {
 		return this.defaultFunction;
 	}
 	
-	protected Hashtable<String, String> getMappingFunctionToCode() {
+	protected Map<String, String> getMappingFunctionToCode() {
 		return this.mappingFunctionToCode;
 	}
-	protected Hashtable<String, String> getMappingFullCodeToFullString() {
+	protected Map<String, String> getMappingFullCodeToFullString() {
 		return this.mappingFullCodeToFullString;
 	}
-	protected Hashtable<String, DiagnosticInfo> getMappingStringCodeToDiagnostic() {
+	protected Map<String, DiagnosticInfo> getMappingStringCodeToDiagnostic() {
 		return this.mappingStringCodeToDiagnostic;
 	}
-	protected Hashtable<LowSeverity, String> getMappingSeverityToCode() {
+	protected Map<LowSeverity, String> getMappingSeverityToCode() {
 		return this.mappingSeverityToCode;
 	}
 	protected boolean isThrowExceptionPlaceholderFailedResolution() {

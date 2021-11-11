@@ -25,13 +25,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.protocol.basic.BasicFactory;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.engine.mapping.InformazioniServizioURLMapping;
 import org.openspcoop2.protocol.manifest.DefaultIntegrationError;
@@ -85,6 +86,8 @@ public class ProtocolFactoryManager {
 			ProtocolFactoryManager.protocolFactoryManager = new ProtocolFactoryManager(log,configPdD,protocolDefault,false);
 			// Inizializzo anche Esiti.properties
 			EsitiProperties.initialize(configPdD.getConfigurationDir(), log, configPdD.getLoader(), protocolFactoryManager.getProtocolFactories());
+			// Inizializzo risorse statiche che avevano bisogno di altre informazioni (es. esiti properties)
+			protocolFactoryManager.initStaticInstance();
 		}
 	}
 	public synchronized static void initializeSingleProtocol(Logger log,ConfigurazionePdD configPdD,String protocol) throws ProtocolException {
@@ -92,6 +95,8 @@ public class ProtocolFactoryManager {
 			ProtocolFactoryManager.protocolFactoryManager = new ProtocolFactoryManager(log,configPdD,protocol,true);
 			// Inizializzo anche Esiti.properties
 			EsitiProperties.initialize(configPdD.getConfigurationDir(), log, configPdD.getLoader(), protocolFactoryManager.getProtocolFactories());
+			// Inizializzo risorse statiche che avevano bisogno di altre informazioni (es. esiti properties)
+			protocolFactoryManager.initStaticInstance();
 		}
 	}
 	public static ProtocolFactoryManager getInstance() throws ProtocolException {
@@ -198,20 +203,20 @@ public class ProtocolFactoryManager {
 	ProtocolFactoryManager(Logger log,ConfigurazionePdD configPdD,String protocolDefault, boolean searchSingleManifest) throws ProtocolException {
 		try {
 
-			Hashtable<String, Openspcoop2> tmp_manifests = new Hashtable<String, Openspcoop2>();
-			Hashtable<String, URL> tmp_manifestURLs = new Hashtable<String, URL>();
-			Hashtable<String, IProtocolFactory<?>> tmp_factories = new Hashtable<String, IProtocolFactory<?>>();
+			Map<String, Openspcoop2> tmp_manifests = new HashMap<String, Openspcoop2>();
+			Map<String, URL> tmp_manifestURLs = new HashMap<String, URL>();
+			Map<String, IProtocolFactory<?>> tmp_factories = new HashMap<String, IProtocolFactory<?>>();
 			
-			Hashtable<String, List<String>> tmp_tipiSoggettiValidi = new Hashtable<String, List<String>>();
-			Hashtable<String, String> tmp_tipiSoggettiDefault = new Hashtable<String, String>();
+			Map<String, List<String>> tmp_tipiSoggettiValidi = new HashMap<String, List<String>>();
+			Map<String, String> tmp_tipiSoggettiDefault = new HashMap<String, String>();
 			
-			Hashtable<String, List<String>> tmp_tipiServiziValidi_soap = new Hashtable<String, List<String>>();
-			Hashtable<String, String> tmp_tipiServiziDefault_soap = new Hashtable<String, String>();
-			Hashtable<String, List<String>> tmp_tipiServiziValidi_rest = new Hashtable<String, List<String>>();
-			Hashtable<String, String> tmp_tipiServiziDefault_rest = new Hashtable<String, String>();
+			Map<String, List<String>> tmp_tipiServiziValidi_soap = new HashMap<String, List<String>>();
+			Map<String, String> tmp_tipiServiziDefault_soap = new HashMap<String, String>();
+			Map<String, List<String>> tmp_tipiServiziValidi_rest = new HashMap<String, List<String>>();
+			Map<String, String> tmp_tipiServiziDefault_rest = new HashMap<String, String>();
 			
-			Hashtable<String, List<String>> tmp_versioniValide = new Hashtable<String, List<String>>();
-			Hashtable<String, String> tmp_versioniDefault = new Hashtable<String, String>();
+			Map<String, List<String>> tmp_versioniValide = new HashMap<String, List<String>>();
+			Map<String, String> tmp_versioniDefault = new HashMap<String, String>();
 			
 			this.log = configPdD.getLog();
 			this.protocolDefault = protocolDefault;
@@ -257,10 +262,8 @@ public class ProtocolFactoryManager {
 			configPdD.getLog().debug("Validate Manifests ok");
 			
 			// Init protocol factory
-			Enumeration<String> protocolManifestEnum = tmp_manifests.keys();
-			while (protocolManifestEnum.hasMoreElements()) {
-				
-				String protocolManifest = protocolManifestEnum.nextElement();
+			for (String protocolManifest : tmp_manifests.keySet()) {
+
 				configPdD.getLog().debug("Init ProtocolFactory for protocol ["+protocolManifest+"] ...");
 				Openspcoop2 manifestOpenspcoop2 = tmp_manifests.get(protocolManifest);				
 				
@@ -321,7 +324,7 @@ public class ProtocolFactoryManager {
 	}
 	
 	private void loadManifest(ConfigurazionePdD configPdD,URL pluginURL,boolean filtraSenzaErroreProtocolloGiaCaricato,
-			Hashtable<String, Openspcoop2> tmp_manifests, Hashtable<String, URL> tmp_manifestURLs) throws Exception{
+			Map<String, Openspcoop2> tmp_manifests, Map<String, URL> tmp_manifestURLs) throws Exception{
 		// Manifest
 		configPdD.getLog().debug("Analyze manifest ["+pluginURL.toString()+"] ...");
 		
@@ -357,18 +360,15 @@ public class ProtocolFactoryManager {
 		configPdD.getLog().debug("Analyze manifest ["+pluginURL.toString()+"] with success");
 	}
 	
-	private void validateProtocolFactoryLoaded(Hashtable<String, Openspcoop2> tmp_manifests,
-			Hashtable<String, List<String>> tmp_tipiSoggettiValidi,Hashtable<String, String> tmp_tipiSoggettiDefault,
-			Hashtable<String, List<String>> tmp_tipiServiziValidi_soap, Hashtable<String, String> tmp_tipiServiziDefault_soap,
-			Hashtable<String, List<String>> tmp_tipiServiziValidi_rest, Hashtable<String, String> tmp_tipiServiziDefault_rest,
-			Hashtable<String, List<String>> tmp_versioniValide,Hashtable<String, String> tmp_versioniDefault) throws Exception{
+	private void validateProtocolFactoryLoaded(Map<String, Openspcoop2> tmp_manifests,
+			Map<String, List<String>> tmp_tipiSoggettiValidi,Map<String, String> tmp_tipiSoggettiDefault,
+			Map<String, List<String>> tmp_tipiServiziValidi_soap, Map<String, String> tmp_tipiServiziDefault_soap,
+			Map<String, List<String>> tmp_tipiServiziValidi_rest, Map<String, String> tmp_tipiServiziDefault_rest,
+			Map<String, List<String>> tmp_versioniValide,Map<String, String> tmp_versioniDefault) throws Exception{
 				
 		// 1. controllare che solo uno possieda il contesto vuoto
-		Enumeration<String> protocolManifestEnum = tmp_manifests.keys();
 		String protocolContextEmpty = null;
-		while (protocolManifestEnum.hasMoreElements()) {
-			
-			String protocolManifest = protocolManifestEnum.nextElement();
+		for (String protocolManifest : tmp_manifests.keySet()) {
 			Openspcoop2 manifestOpenspcoop2 = tmp_manifests.get(protocolManifest);
 			if(manifestOpenspcoop2.getWeb().getEmptyContext()!=null && manifestOpenspcoop2.getWeb().getEmptyContext().getEnabled()){
 				if(protocolContextEmpty==null){
@@ -382,11 +382,8 @@ public class ProtocolFactoryManager {
 		}
 		
 		// 2. controllare che i contesti siano tutti diversi
-		Hashtable<String, String> mappingContextToProtocol = new Hashtable<String, String>();
-		protocolManifestEnum = tmp_manifests.keys();
-		while (protocolManifestEnum.hasMoreElements()) {
-			
-			String protocolManifest = protocolManifestEnum.nextElement();
+		Map<String, String> mappingContextToProtocol = new HashMap<String, String>();
+		for (String protocolManifest : tmp_manifests.keySet()) {
 			Openspcoop2 manifestOpenspcoop2 = tmp_manifests.get(protocolManifest);
 			
 			for (int i = 0; i < manifestOpenspcoop2.getWeb().sizeContextList(); i++) {
@@ -402,11 +399,8 @@ public class ProtocolFactoryManager {
 		}
 		
 		// 2.b. controllare che le label siano tutti diversi
-		Hashtable<String, String> mappinLabelToProtocol = new Hashtable<String, String>();
-		protocolManifestEnum = tmp_manifests.keys();
-		while (protocolManifestEnum.hasMoreElements()) {
-			
-			String protocolManifest = protocolManifestEnum.nextElement();
+		Map<String, String> mappinLabelToProtocol = new HashMap<String, String>();
+		for (String protocolManifest : tmp_manifests.keySet()) {
 			Openspcoop2 manifestOpenspcoop2 = tmp_manifests.get(protocolManifest);
 			
 			String label = manifestOpenspcoop2.getProtocol().getLabel();
@@ -420,11 +414,8 @@ public class ProtocolFactoryManager {
 		}
 		
 		// 3. controllare e inizializzare i tipi di soggetti in modo che siano tutti diversi
-		Hashtable<String, String> mappingTipiSoggettiToProtocol = new Hashtable<String, String>();
-		protocolManifestEnum = tmp_manifests.keys();
-		while (protocolManifestEnum.hasMoreElements()) {
-			
-			String protocolManifest = protocolManifestEnum.nextElement();
+		Map<String, String> mappingTipiSoggettiToProtocol = new HashMap<String, String>();
+		for (String protocolManifest : tmp_manifests.keySet()) {
 			Openspcoop2 manifestOpenspcoop2 = tmp_manifests.get(protocolManifest);
 			
 			int size = manifestOpenspcoop2.getRegistry().getOrganization().getTypes().sizeTypeList();
@@ -482,11 +473,8 @@ public class ProtocolFactoryManager {
 		// 4. controllare e inizializzare i tipi di servizi in modo che siano tutti diversi
 		String tipoServizioDefaultSoap = null;
 		String tipoServizioDefaultRest = null;
-		Hashtable<String, String> mappingTipiServiziToProtocol = new Hashtable<String, String>();
-		protocolManifestEnum = tmp_manifests.keys();
-		while (protocolManifestEnum.hasMoreElements()) {
-			
-			String protocolManifest = protocolManifestEnum.nextElement();
+		Map<String, String> mappingTipiServiziToProtocol = new HashMap<String, String>();
+		for (String protocolManifest : tmp_manifests.keySet()) {
 			Openspcoop2 manifestOpenspcoop2 = tmp_manifests.get(protocolManifest);
 			
 			int size = manifestOpenspcoop2.getRegistry().getService().getTypes().sizeTypeList();
@@ -567,10 +555,7 @@ public class ProtocolFactoryManager {
 		
 		
 		// 5. controllare e inizializzare le versioni dei protocolli
-		protocolManifestEnum = tmp_manifests.keys();
-		while (protocolManifestEnum.hasMoreElements()) {
-			
-			String protocolManifest = protocolManifestEnum.nextElement();
+		for (String protocolManifest : tmp_manifests.keySet()) {
 			Openspcoop2 manifestOpenspcoop2 = tmp_manifests.get(protocolManifest);
 			
 			int size = manifestOpenspcoop2.getRegistry().getVersions().sizeVersionList();
@@ -603,10 +588,7 @@ public class ProtocolFactoryManager {
 		
 		
 		// 6. controllare e inizializzare i service binding di default
-		protocolManifestEnum = tmp_manifests.keys();
-		while (protocolManifestEnum.hasMoreElements()) {
-			
-			String protocolManifest = protocolManifestEnum.nextElement();
+		for (String protocolManifest : tmp_manifests.keySet()) {
 			Openspcoop2 manifestOpenspcoop2 = tmp_manifests.get(protocolManifest);
 			
 			if(manifestOpenspcoop2.getBinding()==null){
@@ -897,10 +879,7 @@ public class ProtocolFactoryManager {
 		}
 		
 		// 7. controllo configurazione dei parametri di integrazione
-		protocolManifestEnum = tmp_manifests.keys();
-		while (protocolManifestEnum.hasMoreElements()) {
-			
-			String protocolManifest = protocolManifestEnum.nextElement();
+		for (String protocolManifest : tmp_manifests.keySet()) {
 			Openspcoop2 manifestOpenspcoop2 = tmp_manifests.get(protocolManifest);
 			
 			if(manifestOpenspcoop2.getBinding().getRest()!=null) {
@@ -1429,6 +1408,19 @@ public class ProtocolFactoryManager {
 		return protocolli;
 	}
 	
+	public void initStaticInstance() throws ProtocolException {
+		if(this.factories!=null && this.factories.size()>0) {
+			Enumeration<IProtocolFactory<?>> en = this.factories.elements();
+			if(en!=null) {
+				while (en.hasMoreElements()) {
+					IProtocolFactory<?> iProtocolFactory = (IProtocolFactory<?>) en.nextElement();
+					if(iProtocolFactory!=null && iProtocolFactory instanceof BasicFactory<?> ) {
+						((BasicFactory<?>)iProtocolFactory).initStaticInstance();
+					}
+				}
+			}
+		}
+	}
 	
 	// ***** Utilities *****
 	

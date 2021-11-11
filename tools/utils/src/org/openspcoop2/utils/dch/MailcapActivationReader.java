@@ -24,8 +24,9 @@ package org.openspcoop2.utils.dch;
 
 import java.net.URL;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.openspcoop2.utils.Utilities;
@@ -43,7 +44,7 @@ import org.openspcoop2.utils.UtilsException;
 
 public class MailcapActivationReader {
    
-	 private static Hashtable<String, String> mimeTypes = new Hashtable<String, String>();
+	 private static Map<String, String> mimeTypes = new HashMap<String, String>();
 	
 	 public static void initDataContentHandler(Logger log,boolean forceLoadMailcap) throws UtilsException{
 	      try

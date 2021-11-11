@@ -24,9 +24,10 @@ package org.openspcoop2.utils.wadl;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -69,13 +70,13 @@ public class WADLApiReader implements IApiReader {
 	private ApplicationWrapper applicationWadlWrapper;
 	private ApiSchema[] schemas;
 	
-	private Hashtable<String, byte[]> convert(ApiSchema ... schema) {
-		Hashtable<String, byte[]> map = null;
+	private Map<String, byte[]> convert(ApiSchema ... schema) {
+		Map<String, byte[]> map = null;
 		if(schema!=null && schema.length>0) {
 			for (ApiSchema apiSchema : schema) {
 				if(ApiSchemaType.XSD.equals(apiSchema.getType())) {
 					if(map==null) {
-						map = new Hashtable<String, byte[]>();
+						map = new HashMap<String, byte[]>();
 					}
 					map.put(apiSchema.getName(), apiSchema.getContent());
 				}

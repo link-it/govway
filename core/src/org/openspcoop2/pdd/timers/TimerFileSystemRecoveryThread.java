@@ -81,7 +81,7 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 	private IDiagnosticProducer loggerMsgDiagnosticoOpenSPCoopAppender = null; 
 	/** Appender personalizzati per i dump di OpenSPCoop2 */
 	private IDumpProducer loggerDumpOpenSPCoopAppender = null; 
-	
+	private boolean transazioniRegistrazioneDumpHeadersCompactEnabled = false;
 
 	/** Costruttore */
 	public TimerFileSystemRecoveryThread(Logger logCore, Logger logSql) throws Exception{
@@ -205,6 +205,9 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 				this.loggerDumpOpenSPCoopAppender.initializeAppender(dumpOpenSPCoopAppender);
 				this.loggerDumpOpenSPCoopAppender.isAlive();
 				
+				// Indicazioni sulle modalita' di salvataggio degli header del dump
+				this.transazioniRegistrazioneDumpHeadersCompactEnabled = this.properties.isTransazioniRegistrazioneDumpHeadersCompactEnabled();
+				
 			}catch(Exception e){
 				throw new Exception("Errore durante l'inizializzazione del DumpAppender: "+e.getMessage(),e);
 			} 
@@ -278,7 +281,7 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 						transazioniSM, 
 						this.loggerTracciamentoOpenSPCoopAppender, 
 						this.loggerMsgDiagnosticoOpenSPCoopAppender,
-						this.loggerDumpOpenSPCoopAppender,
+						this.loggerDumpOpenSPCoopAppender, this.transazioniRegistrazioneDumpHeadersCompactEnabled,
 						pluginsSM, con);
 				
 			}catch(Exception e){

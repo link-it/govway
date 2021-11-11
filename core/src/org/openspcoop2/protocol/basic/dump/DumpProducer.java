@@ -109,10 +109,13 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 	 * @param messaggio
 	 * @throws DumpException
 	 */
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	@Override
 	public void dump(Connection conOpenSPCoopPdD,Messaggio messaggio) throws DumpException{
 		this.dump(conOpenSPCoopPdD, messaggio, false);
 	}
+	@Override
 	public void dump(Connection conOpenSPCoopPdD,Messaggio messaggio,boolean headersCompact) throws DumpException{
 
 		if(messaggio==null)

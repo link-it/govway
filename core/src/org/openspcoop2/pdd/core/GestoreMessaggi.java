@@ -30,9 +30,10 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.openspcoop2.core.commons.DBUtils;
@@ -572,7 +573,7 @@ public class GestoreMessaggi  {
 
 
 	/** Tabella Hash contenente il mapping tra tipo-id e proprietario */
-	private Hashtable<String,String> tableProprietariMessaggiGestiti;
+	private Map<String,String> tableProprietariMessaggiGestiti;
 
 	/**
 	 * Aggiunge il proprietario di un idGestito.
@@ -589,19 +590,17 @@ public class GestoreMessaggi  {
 		return this.tableProprietariMessaggiGestiti.get(tipo+"@"+idBusta);
 	}
 	 */
-	public void addProprietariMsgGestitiFromTable(Hashtable<String,String> t)throws UtilsException{
+	public void addProprietariMsgGestitiFromTable(Map<String,String> t)throws UtilsException{
 		this.tableProprietariMessaggiGestiti.putAll(t);
 	}
-	public Hashtable<String, String> getTableProprietariMessaggiGestiti() {
+	public Map<String, String> getTableProprietariMessaggiGestiti() {
 		return this.tableProprietariMessaggiGestiti;
 	}
 	public void addProprietariIntoCache_readFromTable(String modulo,String descrizione,String idBustaRichiestaCorrelata,boolean router){
 
 		if (this.openspcoopstate instanceof OpenSPCoopStateless) return; // NOP
 
-		Enumeration<String> keys = this.tableProprietariMessaggiGestiti.keys();
-		while(keys.hasMoreElements()){
-			String key = keys.nextElement();
+		for (String key : this.tableProprietariMessaggiGestiti.keySet()) {
 			String idTipo [] = key.split("@");
 			String value = this.tableProprietariMessaggiGestiti.get(key);
 			try{
@@ -720,7 +719,7 @@ public class GestoreMessaggi  {
 
 
 	/** Tabella Hash contenente l'informazione sull'esistenza di un messaggio */
-	private Hashtable<String,Boolean> tableMessaggiGestiti;
+	private Map<String,Boolean> tableMessaggiGestiti;
 
 	/**
 	 * Regitra l'id di un msg gestito
@@ -741,19 +740,17 @@ public class GestoreMessaggi  {
 
 	}
 	 */
-	public void addMsgGestitiFromTable(Hashtable<String,Boolean> t)throws UtilsException{
+	public void addMsgGestitiFromTable(Map<String,Boolean> t)throws UtilsException{
 		this.tableMessaggiGestiti.putAll(t);
 	}
-	public Hashtable<String, Boolean> getTableMessaggiGestiti() {
+	public Map<String, Boolean> getTableMessaggiGestiti() {
 		return this.tableMessaggiGestiti;
 	}
 	public void addMessaggiIntoCache_readFromTable(String modulo,String descrizione){
 
 		if (this.openspcoopstate instanceof OpenSPCoopStateless) return; //NOP
 
-		Enumeration<String> keys = this.tableMessaggiGestiti.keys();
-		while(keys.hasMoreElements()){
-			String key = keys.nextElement();
+		for (String key : this.tableMessaggiGestiti.keySet()) {
 			String idTipo [] = key.split("@");
 			Boolean value = this.tableMessaggiGestiti.get(key);
 			try{
@@ -868,9 +865,9 @@ public class GestoreMessaggi  {
 		this.openspcoopstate = openspcoopstate;
 		this.isRichiesta = isRichiesta;
 		//state = (isRichiesta) ? openspcoopstate.getStatoRichiesta() : openspcoopstate.getStatoRisposta();
-		// new  Hashtable<String,PreparedStatement>(); in stateful ?? inizializzo ?
-		this.tableProprietariMessaggiGestiti = new  Hashtable<String,String>();
-		this.tableMessaggiGestiti = new Hashtable<String, Boolean>();
+		// new  HashMap<String,PreparedStatement>(); in stateful ?? inizializzo ?
+		this.tableProprietariMessaggiGestiti = new  ConcurrentHashMap<String,String>();
+		this.tableMessaggiGestiti = new ConcurrentHashMap<String, Boolean>();
 		this.idBusta = idBusta;
 		this.tipo = tipo;
 		this.propertiesReader = OpenSPCoop2Properties.getInstance();
@@ -1063,14 +1060,12 @@ public class GestoreMessaggi  {
 				// PdDContext
 				StringBuilder fieldNamesPdDContext = new StringBuilder();
 				StringBuilder fieldValuesPdDContext = new StringBuilder();
-				Hashtable<String, String> contextSerializerParameters = null;
+				Map<String, String> contextSerializerParameters = null;
 				List<Object> objectSerializer = new ArrayList<Object>();
 				if(GestoreMessaggi.pddContextSerializer!=null){
 					contextSerializerParameters = GestoreMessaggi.pddContextSerializer.getGestoreMessaggiKeywords();
 					if(contextSerializerParameters!=null && contextSerializerParameters.size()>0){
-						Enumeration<String> keywordContext = contextSerializerParameters.keys();
-						while(keywordContext.hasMoreElements()){
-							String keyword =  keywordContext.nextElement();
+						for (String keyword : contextSerializerParameters.keySet()) {
 
 							Object o = this.pddContext.getObject(keyword);
 							if(o==null){
@@ -1189,14 +1184,12 @@ public class GestoreMessaggi  {
 			// PdDContext
 			StringBuilder fieldNamesPdDContext = new StringBuilder();
 			StringBuilder fieldValuesPdDContext = new StringBuilder();
-			Hashtable<String, String> contextSerializerParameters = null;
+			Map<String, String> contextSerializerParameters = null;
 			List<Object> objectSerializer = new ArrayList<Object>();
 			if(GestoreMessaggi.pddContextSerializer!=null){
 				contextSerializerParameters = GestoreMessaggi.pddContextSerializer.getGestoreMessaggiKeywords();
 				if(contextSerializerParameters!=null && contextSerializerParameters.size()>0){
-					Enumeration<String> keywordContext = contextSerializerParameters.keys();
-					while(keywordContext.hasMoreElements()){
-						String keyword =  keywordContext.nextElement();
+					for (String keyword : contextSerializerParameters.keySet()) {
 
 						Object o = this.pddContext.getObject(keyword);
 						if(o==null){
@@ -3093,13 +3086,11 @@ public class GestoreMessaggi  {
 
 				// PdDContext
 				StringBuilder fieldNamesPdDContext_db = new StringBuilder();
-				Hashtable<String, String> mapping = new Hashtable<String, String>();
+				Map<String, String> mapping = new HashMap<String, String>();
 				if(GestoreMessaggi.pddContextSerializer!=null){
-					Hashtable<String, String> contextSerializerParameters = GestoreMessaggi.pddContextSerializer.getGestoreMessaggiKeywords();
+					Map<String, String> contextSerializerParameters = GestoreMessaggi.pddContextSerializer.getGestoreMessaggiKeywords();
 					if(contextSerializerParameters!=null && contextSerializerParameters.size()>0){
-						Enumeration<String> keywordContext = contextSerializerParameters.keys();
-						while(keywordContext.hasMoreElements()){
-							String keyword =  keywordContext.nextElement();
+						for (String keyword : contextSerializerParameters.keySet()) {
 							if(fieldNamesPdDContext_db.length()>0)
 								fieldNamesPdDContext_db.append(" , ");
 							String nomeDB = contextSerializerParameters.get(keyword);
@@ -3128,9 +3119,7 @@ public class GestoreMessaggi  {
 				rs = pstmtRead.executeQuery();
 				if(rs.next()){
 
-					Enumeration<String> keysDB = mapping.keys();
-					while(keysDB.hasMoreElements()){
-						String keyDB = keysDB.nextElement();
+					for (String keyDB : mapping.keySet()) {
 						Object object = rs.getObject(keyDB);
 						pddContext.addObject(mapping.get(keyDB), object);
 					}

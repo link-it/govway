@@ -21,7 +21,7 @@ package org.openspcoop2.monitor.engine.config.transazioni.dao.jdbc;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 import java.sql.Connection;
@@ -663,7 +663,7 @@ public class JDBCConfigurazioneTransazioneServiceSearchImpl implements IJDBCServ
 		java.util.List<Object> configurazioneTransazione_configurazioneTransazioneStato_list = jdbcUtilities.executeQuery(sqlQueryObjectGet_configurazioneTransazione_configurazioneTransazioneStato.createSQLQuery(), jdbcProperties.isShowSql(), ConfigurazioneTransazione.model().CONFIGURAZIONE_TRANSAZIONE_STATO, this.getConfigurazioneTransazioneFetch(),
 			new JDBCObject(configurazioneTransazione.getId(),Long.class));
 
-		Hashtable<Long, String> mapIdTransazioneStatoToName = new Hashtable<Long, String>();
+		HashMap<Long, String> mapIdTransazioneStatoToName = new HashMap<Long, String>();
 		
 		if(configurazioneTransazione_configurazioneTransazioneStato_list != null) {
 			for (Object configurazioneTransazione_configurazioneTransazioneStato_object: configurazioneTransazione_configurazioneTransazioneStato_list) {
@@ -828,7 +828,7 @@ public class JDBCConfigurazioneTransazioneServiceSearchImpl implements IJDBCServ
 	protected Map<String, List<IField>> _getMapTableToPKColumn() throws NotImplementedException, Exception{
 	
 		ConfigurazioneTransazioneFieldConverter converter = this.getConfigurazioneTransazioneFieldConverter();
-		Map<String, List<IField>> mapTableToPKColumn = new java.util.Hashtable<String, List<IField>>();
+		Map<String, List<IField>> mapTableToPKColumn = new java.util.HashMap<String, List<IField>>();
 		UtilsTemplate<IField> utilities = new UtilsTemplate<IField>();
 
 		// ConfigurazioneTransazione.model()

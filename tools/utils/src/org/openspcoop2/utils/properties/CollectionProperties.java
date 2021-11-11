@@ -20,7 +20,9 @@
 
 package org.openspcoop2.utils.properties;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
@@ -101,18 +103,18 @@ public class CollectionProperties {
 	}
 	
 	public java.util.Enumeration<?> propertyNames(){
-		return this._keys().elements();
+		return Collections.enumeration(this._keys());
 	}
 	public java.util.Enumeration<?> keys(){ // WRAPPER per java.util.Properties.
-		return this._keys().elements();
+		return Collections.enumeration(this._keys());
 	}
 	public int size(){ // WRAPPER per java.util.Properties.
 		return this._keys().size();
 	}
 	
-	private Vector<String> _keys(){
+	private List<String> _keys(){
 	
-		Vector<String> keys = new Vector<String>();
+		List<String> keys = new ArrayList<String>();
 		
 		if(this.systemVariable!=null){
 			java.util.Enumeration<?> enumProp = this.systemVariable.propertyNames();

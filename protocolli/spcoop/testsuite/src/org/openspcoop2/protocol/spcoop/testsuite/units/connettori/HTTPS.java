@@ -25,7 +25,7 @@ package org.openspcoop2.protocol.spcoop.testsuite.units.connettori;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
@@ -1015,9 +1015,9 @@ public class HTTPS extends GestioneViaJmx {
 			msg.getSOAPPartAsBytes();
 			
 			// Contesto SSL
-			java.util.Hashtable<String, String> sslContext = null;
+			java.util.Map<String, String> sslContext = null;
 			if(location!=null){
-				sslContext = new Hashtable<String, String>();
+				sslContext = new HashMap<String, String>();
 				if(location!=null){
 					sslContext.put("trustStoreLocation", location);
 					sslContext.put("keyStoreLocation", location);
@@ -1168,8 +1168,8 @@ public class HTTPS extends GestioneViaJmx {
 			msg.getSOAPPartAsBytes();
 			
 			// Contesto SSL
-			java.util.Hashtable<String, String> sslContext = null;
-			sslContext = new Hashtable<String, String>();
+			java.util.Map<String, String> sslContext = null;
+			sslContext = new HashMap<String, String>();
 			sslContext.put("trustStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("keyStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("trustStorePassword", "openspcoopjks");
@@ -1293,8 +1293,8 @@ public class HTTPS extends GestioneViaJmx {
 			msg.getSOAPPartAsBytes();
 			
 			// Contesto SSL
-			java.util.Hashtable<String, String> sslContext = null;
-			sslContext = new Hashtable<String, String>();
+			java.util.Map<String, String> sslContext = null;
+			sslContext = new HashMap<String, String>();
 			sslContext.put("trustStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("keyStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("trustStorePassword", "openspcoopjks");
@@ -1449,9 +1449,9 @@ public class HTTPS extends GestioneViaJmx {
 			msg.getSOAPPartAsBytes();
 			
 			// Contesto SSL
-			java.util.Hashtable<String, String> sslContext = null;
+			java.util.Map<String, String> sslContext = null;
 			if(location!=null){
-				sslContext = new Hashtable<String, String>();
+				sslContext = new HashMap<String, String>();
 				if(location!=null){
 					sslContext.put("trustStoreLocation", location);
 					sslContext.put("keyStoreLocation", location);
@@ -2116,11 +2116,26 @@ public class HTTPS extends GestioneViaJmx {
 				String XML_inCache = XML.replace(" fallita", " fallita (in cache)");
 				String DB_inCache = DB.replace(" fallita", " fallita (in cache)");
 				Reporter.log("Controllo Messaggio (id:"+id+") msgXML["+XML+"] msgDB["+DB+"]");
-				Assert.assertTrue( 
-						dataMsg.isTracedMessaggio(id, XML) || 
+				boolean esito = dataMsg.isTracedMessaggio(id, XML) || 
 						dataMsg.isTracedMessaggio(id, DB)  ||
 						dataMsg.isTracedMessaggio(id, XML_inCache) || 
-						dataMsg.isTracedMessaggio(id, DB_inCache)  
+						dataMsg.isTracedMessaggio(id, DB_inCache)  ;
+				if(!esito) {
+					Reporter.log("Controllo fallito, recupero diagnostici... ");
+					Vector<String> diag = dataMsg.getMessaggiDiagnostici(id);
+					if(diag!=null) {
+						Reporter.log("Controllo fallito recuperati diagnostici ["+diag.size()+"] ");
+						if(!diag.isEmpty()) {
+							int i = 0;
+							for (String d : diag) {
+								Reporter.log("Diagnostico-"+i+" ["+d+"]");
+								i++;
+							}
+						}
+					}
+				}
+				Assert.assertTrue( 
+						esito
 						);
 			}
 			
@@ -3263,6 +3278,11 @@ public class HTTPS extends GestioneViaJmx {
 				Reporter.log("Controllo Messaggio (id:"+id+") msg["+msgErrore+"]");
 				boolean condition = dataMsg.isTracedMessaggio(id, msgErrore);
 				if(!condition) {
+					// jenkins venendo caricate entrambe le configurazioni si ha l'effetto che viene identificato un soggetto del protocollo trasparente:
+					String msgErroreJenkins = "processo di autenticazione [ssl] fallito, Identificato un soggetto (tramite profilo di interoperabilità) 'spc/Soggetto1SenzaCredenziali' differente da quello identificato tramite il processo di autenticazione 'gw/EsempioSoggettoTrasparenteCert1'";
+					condition = dataMsg.isTracedMessaggioWithLike(id, msgErroreJenkins);
+				}
+				if(!condition) {
 					List<String> l = dataMsg.getMessaggiDiagnostici(id);
 					Reporter.log("Presenti "+l.size()+" diagnostici");
 					if(!l.isEmpty()) {
@@ -3467,6 +3487,11 @@ public class HTTPS extends GestioneViaJmx {
 				String msgErrore = "Autenticazione [ssl] fallita : [RicezioneBuste] processo di autenticazione [ssl] fallito, Identificato un soggetto (tramite profilo di interoperabilità) 'spc/Soggetto1SenzaCredenziali' registrato con credenziali differenti da quelle ricevute"; 
 				Reporter.log("Controllo Messaggio (id:"+id+") msg["+msgErrore+"]");
 				boolean condition = dataMsg.isTracedMessaggio(id, msgErrore);
+				if(!condition) {
+					// jenkins venendo caricate entrambe le configurazioni si ha l'effetto che viene identificato un soggetto del protocollo trasparente:
+					String msgErroreJenkins = "processo di autenticazione [ssl] fallito, Identificato un soggetto (tramite profilo di interoperabilità) 'spc/Soggetto1SenzaCredenziali' differente da quello identificato tramite il processo di autenticazione 'gw/EsempioSoggettoTrasparenteCert1'";
+					condition = dataMsg.isTracedMessaggioWithLike(id, msgErroreJenkins);
+				}
 				if(!condition) {
 					List<String> l = dataMsg.getMessaggiDiagnostici(id);
 					Reporter.log("Presenti "+l.size()+" diagnostici");

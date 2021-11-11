@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -788,7 +787,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				java.util.Locale [] l = java.util.Locale.getAvailableLocales();
 				if(l!=null){
 					List<String> ll = new ArrayList<String>();
-					Map<String,java.util.Locale> llMap = new Hashtable<String,java.util.Locale>();
+					Map<String,java.util.Locale> llMap = new HashMap<String,java.util.Locale>();
 					for (int i = 0; i < l.length; i++) {
 						ll.add(l[i].getDisplayName());
 						llMap.put(l[i].getDisplayName(), l[i]);

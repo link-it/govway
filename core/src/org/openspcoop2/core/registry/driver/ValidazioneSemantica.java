@@ -23,9 +23,10 @@ package org.openspcoop2.core.registry.driver;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -211,7 +212,7 @@ public class ValidazioneSemantica {
 		}
 	}
 
-	private Hashtable<String, ServiceBinding> mappingAccordiToServiceBinding;
+	private Map<String, ServiceBinding> mappingAccordiToServiceBinding;
 
 	public void validazioneSemantica(boolean showIDOggettiAnalizzati) throws DriverRegistroServiziException {
 
@@ -230,7 +231,7 @@ public class ValidazioneSemantica {
 			printMsg("\n\n------------------------------------AccordiServizioParteComune("+this.registro.sizeAccordoServizioParteComuneList()+")-----------------------------------------------------");
 
 		// accordi di servizio
-		this.mappingAccordiToServiceBinding = new Hashtable<String, ServiceBinding>();
+		this.mappingAccordiToServiceBinding = new HashMap<String, ServiceBinding>();
 		for(int i=0; i<this.registro.sizeAccordoServizioParteComuneList();i++){
 			AccordoServizioParteComune as = this.registro.getAccordoServizioParteComune(i);
 			if(showIDOggettiAnalizzati)

@@ -23,7 +23,7 @@ package org.openspcoop2.protocol.abstraction.csv;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -175,7 +175,7 @@ public class Deserializer {
 			for (Record record : pr.getRecords()) {
 	
 				// Costruisco Mappa
-				Map<String, Object> mapFreemarker = new Hashtable<String, Object>();
+				Map<String, Object> mapFreemarker = new HashMap<String, Object>();
 				if(record.getMap().size()<=0){
 					throw new ProtocolException("Csv Record at line ["+record.getCsvLine()+"] not correct, mapping produce 0 fields");
 				}
@@ -329,7 +329,7 @@ public class Deserializer {
 			for (Record record : pr.getRecords()) {
 	
 				// Costruisco Mappa
-				Map<String, Object> mapFreemarker = new Hashtable<String, Object>();
+				Map<String, Object> mapFreemarker = new HashMap<String, Object>();
 				if(record.getMap().size()<=0){
 					throw new ProtocolException("Csv Record at line ["+record.getCsvLine()+"] not correct, mapping produce 0 fields");
 				}

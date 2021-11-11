@@ -19,9 +19,9 @@
  */
 package org.openspcoop2.generic_project.expression.impl.sql;
 
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.expression.impl.AbstractBaseExpressionImpl;
@@ -46,7 +46,7 @@ public class ConjunctionExpressionSQL extends ConjunctionExpressionImpl implemen
 		this.sqlFieldConverter = sqlFieldConverter;
 	}
 
-	public String toSql_engine(SQLMode mode,ISQLQueryObject sqlQueryObject, List<Object> oggettiPreparedStatement,Hashtable<String, Object> oggettiJPA)throws ExpressionException{
+	public String toSql_engine(SQLMode mode,ISQLQueryObject sqlQueryObject, List<Object> oggettiPreparedStatement,Map<String, Object> oggettiJPA)throws ExpressionException{
 		StringBuilder bf = new StringBuilder();
 		if(isNot()){
 			bf.append("( NOT ");
@@ -110,7 +110,7 @@ public class ConjunctionExpressionSQL extends ConjunctionExpressionImpl implemen
 		return bf.toString();
 	}
 	
-	public void toSql_engine(ISQLQueryObject sqlQueryObject,SQLMode mode,List<Object> oggettiPreparedStatement,Hashtable<String, Object> oggettiJPA)throws ExpressionException{
+	public void toSql_engine(ISQLQueryObject sqlQueryObject,SQLMode mode,List<Object> oggettiPreparedStatement,Map<String, Object> oggettiJPA)throws ExpressionException{
 		try{
 			String s = toSql_engine(mode, sqlQueryObject, oggettiPreparedStatement, oggettiJPA);
 			s = s.substring(1,s.length()-2);
@@ -132,7 +132,7 @@ public class ConjunctionExpressionSQL extends ConjunctionExpressionImpl implemen
 	}
 
 	@Override
-	public String toSqlJPA(Hashtable<String, Object> oggetti)
+	public String toSqlJPA(Map<String, Object> oggetti)
 			throws ExpressionException {
 		return toSql_engine(SQLMode.JPA, null, null, oggetti);
 	}
@@ -149,7 +149,7 @@ public class ConjunctionExpressionSQL extends ConjunctionExpressionImpl implemen
 	}
 
 	@Override
-	public void toSqlJPA(ISQLQueryObject sqlQueryObject,Hashtable<String, Object> oggetti)
+	public void toSqlJPA(ISQLQueryObject sqlQueryObject,Map<String, Object> oggetti)
 			throws ExpressionException {
 		toSql_engine(sqlQueryObject,SQLMode.JPA, null, oggetti);
 	}

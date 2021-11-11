@@ -23,8 +23,9 @@ package org.openspcoop2.security.keystore.cache;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.openspcoop2.security.SecurityException;
@@ -44,7 +45,7 @@ public abstract class AbstractKeystoreCache<T extends Serializable> {
 	private int cacheLifeSecond = -1;
 	private int cacheSize = -1;
 	
-	private Hashtable<String, KeystoreCacheEntry<T>> cache_hashtable = new Hashtable<String, KeystoreCacheEntry<T>>();
+	private Map<String, KeystoreCacheEntry<T>> cache_map = new ConcurrentHashMap<String, KeystoreCacheEntry<T>>();
 	private Cache cache_jcs = null;
 	private final org.openspcoop2.utils.Semaphore lock_cache = new org.openspcoop2.utils.Semaphore(this.getClass().getSimpleName());
 
@@ -123,7 +124,7 @@ public abstract class AbstractKeystoreCache<T extends Serializable> {
 			}
 		}
 		else {
-			o = this.cache_hashtable.get(keyCache);
+			o = this.cache_map.get(keyCache);
 		}
 		return o;
 	}
@@ -138,8 +139,8 @@ public abstract class AbstractKeystoreCache<T extends Serializable> {
 		//	sincronizedObject = this.cache_hashtable;
 		//}
 		//synchronized (sincronizedObject) {
+		this.lock_cache.acquireThrowRuntime("initKeystore");
 		try {
-			this.lock_cache.acquireThrowRuntime("initKeystore");
 			String keyCache = this.getPrefixKey() + keyParam;
 			KeystoreCacheEntry<T> o = this.getObjectFromCache(keyCache);
 			if(o==null) {
@@ -156,7 +157,7 @@ public abstract class AbstractKeystoreCache<T extends Serializable> {
 					}
 				}
 				else {
-					this.cache_hashtable.put(keyCache, cacheEntry);
+					this.cache_map.put(keyCache, cacheEntry);
 				}
 				//System.out.println("CREATO ["+key+"] !!!! DATA["+cacheEntry.getDate()+"]");
 				return keystore;
@@ -180,8 +181,8 @@ public abstract class AbstractKeystoreCache<T extends Serializable> {
 		//	sincronizedObject = this.cache_hashtable;
 		//}
 		//synchronized (sincronizedObject) {
+		this.lock_cache.acquireThrowRuntime("removeKeystore");
 		try {
-			this.lock_cache.acquireThrowRuntime("removeKeystore");
 			if(this.cache_jcs!=null) {
 				try {
 					this.cache_jcs.remove(key);
@@ -190,7 +191,7 @@ public abstract class AbstractKeystoreCache<T extends Serializable> {
 				}
 			}
 			else {
-				this.cache_hashtable.remove(key);
+				this.cache_map.remove(key);
 			}
 		}finally {
 			this.lock_cache.release("removeKeystore");
@@ -211,21 +212,21 @@ public abstract class AbstractKeystoreCache<T extends Serializable> {
 		}
 		if(this.cache_jcs==null) {
 			if(this.cacheSize>-1){
-				if(this.cache_hashtable.size()>this.cacheSize){
+				if(this.cache_map.size()>this.cacheSize){
 					//System.out.println("ECCEDUTA DIMENSIONE ["+entry.getKey()+"]");
-					clearCacheHashtable();
+					clearCacheMap();
 				}
 			}
 		}
 		return keystore;
 	}
-	private void clearCacheHashtable(){
+	private void clearCacheMap(){
 		//synchronized (this.cache_hashtable) {
+		this.lock_cache.acquireThrowRuntime("clearCacheMap");
 		try {
-			this.lock_cache.acquireThrowRuntime("clearCacheHashtable");
-			this.cache_hashtable.clear();
+			this.cache_map.clear();
 		}finally {
-			this.lock_cache.release("clearCacheHashtable");
+			this.lock_cache.release("clearCacheMap");
 		}
 	}
 	

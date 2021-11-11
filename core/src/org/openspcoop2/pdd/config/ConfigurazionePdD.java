@@ -1785,12 +1785,13 @@ public class ConfigurazionePdD  {
 		}
 		return getObjectCache(keyCache, methodName, connectionPdD, tipoConfigurazione, classArgoments, values);
 	}
-	public synchronized Object getObjectCache(String keyCache,String methodName,
+	private static org.openspcoop2.utils.Semaphore semaphore_getObjectCache = new org.openspcoop2.utils.Semaphore("ConfigurazionePdD_Object");
+	public Object getObjectCache(String keyCache,String methodName,
 			Connection connectionPdD,
 			ConfigurazionePdDType tipoConfigurazione,
 			Class<?>[] classArgoments, Object[] values) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
-
+		semaphore_getObjectCache.acquireThrowRuntime("getObjectCache");
 		DriverConfigurazioneNotFound dNotFound = null;
 		Object obj = null;
 		try{
@@ -1859,6 +1860,8 @@ public class ConfigurazionePdD  {
 				throw (DriverConfigurazioneNotFound) e;
 			else
 				throw new DriverConfigurazioneException("Configurazione, Algoritmo di Cache fallito: "+e.getMessage(),e);
+		}finally {
+			semaphore_getObjectCache.release("getObjectCache");
 		}
 
 		if(dNotFound!=null){
@@ -2707,7 +2710,7 @@ public class ConfigurazionePdD  {
 					if(response.getObject()!=null){
 						this.log.debug("Oggetto in cache trovato. Analizzo porte virtuali trovate rispetto alle proprieta' presenti nella busta arrivata: "+this.toStringFiltriProprieta(proprietaPresentiBustaRicevuta));
 						Map<IDSoggetto,PortaApplicativa> pa = (Map<IDSoggetto,PortaApplicativa>) response.getObject();
-						Map<IDSoggetto,PortaApplicativa> paChecked = new java.util.Hashtable<IDSoggetto,PortaApplicativa>();
+						Map<IDSoggetto,PortaApplicativa> paChecked = new java.util.HashMap<IDSoggetto,PortaApplicativa>();
 						Iterator<IDSoggetto> it = pa.keySet().iterator();
 						while (it.hasNext()) {
 							IDSoggetto idS = (IDSoggetto) it.next();
@@ -2743,7 +2746,7 @@ public class ConfigurazionePdD  {
 
 		if(pa!=null){
 			this.log.debug("Oggetto trovato. Analizzo porte virtuali trovate rispetto alle proprieta' presenti nella busta arrivata: "+this.toStringFiltriProprieta(proprietaPresentiBustaRicevuta));
-			Map<IDSoggetto,PortaApplicativa> paChecked = new java.util.Hashtable<IDSoggetto,PortaApplicativa>();
+			Map<IDSoggetto,PortaApplicativa> paChecked = new java.util.HashMap<IDSoggetto,PortaApplicativa>();
 			Iterator<IDSoggetto> it = pa.keySet().iterator();
 			while (it.hasNext()) {
 				IDSoggetto idS = (IDSoggetto) it.next();
@@ -4611,12 +4614,13 @@ public class ConfigurazionePdD  {
 
 		return list;
 	} 
+	private static org.openspcoop2.utils.Semaphore semaphore_getMappingErogazionePortaApplicativaListCache = new org.openspcoop2.utils.Semaphore("ConfigurazionePdD_MappingErogazionePortaApplicativa");
 	@SuppressWarnings("unchecked")
-	public synchronized List<MappingErogazionePortaApplicativa> getMappingErogazionePortaApplicativaListCache(String keyCache,
+	public List<MappingErogazionePortaApplicativa> getMappingErogazionePortaApplicativaListCache(String keyCache,
 			Connection connectionPdD,
 			IDServizio idServizio) throws DriverConfigurazioneException{
 
-
+		semaphore_getMappingErogazionePortaApplicativaListCache.acquireThrowRuntime("getMappingErogazionePortaApplicativaListCache");
 		List<MappingErogazionePortaApplicativa> obj = null;
 		try{
 
@@ -4671,12 +4675,14 @@ public class ConfigurazionePdD  {
 			throw e;
 		}catch(Exception e){
 			throw new DriverConfigurazioneException("Configurazione, Algoritmo di Cache fallito: "+e.getMessage(),e);
+		}finally {
+			semaphore_getMappingErogazionePortaApplicativaListCache.release("getMappingErogazionePortaApplicativaListCache");
 		}
 
 		return obj;
 	}
 	
-	public synchronized List<MappingErogazionePortaApplicativa> _getMappingErogazionePortaApplicativaList(IDServizio idServizio,Connection connectionPdD) throws DriverConfigurazioneException{
+	public List<MappingErogazionePortaApplicativa> _getMappingErogazionePortaApplicativaList(IDServizio idServizio,Connection connectionPdD) throws DriverConfigurazioneException{
 		
 		if(!(this.driverConfigurazionePdD instanceof DriverConfigurazioneDB)) {
 			return new ArrayList<>();
@@ -4735,12 +4741,13 @@ public class ConfigurazionePdD  {
 		return list;
 		
 	} 
+	private static org.openspcoop2.utils.Semaphore semaphore_getMappingFruizionePortaDelegataListCache = new org.openspcoop2.utils.Semaphore("ConfigurazionePdD_MappingFruizionePortaDelegata");
 	@SuppressWarnings("unchecked")
-	public synchronized List<MappingFruizionePortaDelegata> getMappingFruizionePortaDelegataListCache(String keyCache,
+	public List<MappingFruizionePortaDelegata> getMappingFruizionePortaDelegataListCache(String keyCache,
 			Connection connectionPdD,
 			IDSoggetto idFruitore, IDServizio idServizio) throws DriverConfigurazioneException{
 
-
+		semaphore_getMappingFruizionePortaDelegataListCache.acquireThrowRuntime("getMappingFruizionePortaDelegataListCache");
 		List<MappingFruizionePortaDelegata> obj = null;
 		try{
 
@@ -4795,12 +4802,14 @@ public class ConfigurazionePdD  {
 			throw e;
 		}catch(Exception e){
 			throw new DriverConfigurazioneException("Configurazione, Algoritmo di Cache fallito: "+e.getMessage(),e);
+		}finally {
+			semaphore_getMappingFruizionePortaDelegataListCache.release("getMappingFruizionePortaDelegataListCache");
 		}
 
 		return obj;
 	}
 	
-	public synchronized List<MappingFruizionePortaDelegata> _getMappingFruizionePortaDelegataList(IDSoggetto idFruitore, IDServizio idServizio,Connection connectionPdD) throws DriverConfigurazioneException{
+	public List<MappingFruizionePortaDelegata> _getMappingFruizionePortaDelegataList(IDSoggetto idFruitore, IDServizio idServizio,Connection connectionPdD) throws DriverConfigurazioneException{
 		
 		if(!(this.driverConfigurazionePdD instanceof DriverConfigurazioneDB)) {
 			return new ArrayList<>();
@@ -4872,8 +4881,10 @@ public class ConfigurazionePdD  {
 		
 	} 
 	
-	private synchronized boolean isForwardProxyEnabledCache(String keyCache) throws DriverConfigurazioneException{
+	private static org.openspcoop2.utils.Semaphore semaphore_isForwardProxyEnabledCache = new org.openspcoop2.utils.Semaphore("ConfigurazionePdD_ForwardProxy");
+	private boolean isForwardProxyEnabledCache(String keyCache) throws DriverConfigurazioneException{
 
+		semaphore_isForwardProxyEnabledCache.acquireThrowRuntime("isForwardProxyEnabledCache");
 		boolean obj = false;
 		try{
 
@@ -4925,6 +4936,8 @@ public class ConfigurazionePdD  {
 			throw e;
 		}catch(Exception e){
 			throw new DriverConfigurazioneException("Configurazione, Algoritmo di Cache fallito: "+e.getMessage(),e);
+		}finally {
+			semaphore_isForwardProxyEnabledCache.release("isForwardProxyEnabledCache");
 		}
 
 		return obj;
@@ -4985,9 +4998,10 @@ public class ConfigurazionePdD  {
 		
 	} 
 	
-	private synchronized ForwardProxy getForwardProxyConfigCache(String keyCache,boolean fruizione, IDSoggetto dominio, IDServizio idServizio) throws DriverConfigurazioneException{
+	private static org.openspcoop2.utils.Semaphore semaphore_getForwardProxyConfigCache = new org.openspcoop2.utils.Semaphore("ConfigurazionePdD_ForwardProxyConfig");
+	private ForwardProxy getForwardProxyConfigCache(String keyCache,boolean fruizione, IDSoggetto dominio, IDServizio idServizio) throws DriverConfigurazioneException{
 
-
+		semaphore_getForwardProxyConfigCache.acquireThrowRuntime("getForwardProxyConfigCache");
 		ForwardProxy obj = null;
 		try{
 
@@ -5042,6 +5056,8 @@ public class ConfigurazionePdD  {
 			throw e;
 		}catch(Exception e){
 			throw new DriverConfigurazioneException("Configurazione, Algoritmo di Cache fallito: "+e.getMessage(),e);
+		}finally {
+			semaphore_getForwardProxyConfigCache.release("getForwardProxyConfigCache");
 		}
 
 		return obj;
@@ -5098,9 +5114,10 @@ public class ConfigurazionePdD  {
 		
 	} 
 	
-	private synchronized ContentFile getContentFileCache(String keyCache, File file) throws DriverConfigurazioneException{
+	private static org.openspcoop2.utils.Semaphore semaphore_getContentFileCache = new org.openspcoop2.utils.Semaphore("ConfigurazionePdD_ContentFile");
+	private ContentFile getContentFileCache(String keyCache, File file) throws DriverConfigurazioneException{
 
-
+		semaphore_getContentFileCache.acquireThrowRuntime("getContentFileCache");
 		ContentFile obj = null;
 		try{
 
@@ -5155,6 +5172,8 @@ public class ConfigurazionePdD  {
 			throw e;
 		}catch(Exception e){
 			throw new DriverConfigurazioneException("Configurazione, Algoritmo di Cache fallito: "+e.getMessage(),e);
+		}finally {
+			semaphore_getContentFileCache.release("getContentFileCache");
 		}
 
 		return obj;

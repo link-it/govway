@@ -36,9 +36,11 @@ import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.resources.GestoreJNDI;
+import org.slf4j.Logger;
 //import org.apache.commons.dbcp.datasources.SharedPoolDataSource;
 
 
@@ -70,6 +72,11 @@ public class DBManager implements IMonitoraggioRisorsa {
 
 	/** Informazione sui proprietari che hanno richiesto una connessione */
 	private static java.util.concurrent.ConcurrentHashMap<String,Resource> risorseInGestione = new java.util.concurrent.ConcurrentHashMap<String,Resource>();
+	
+	/** Informazioni sui check */
+	private static boolean getConnection_checkAutoCommitDisabled;
+	private static boolean getConnection_checkTransactionIsolation;
+	private static int getConnection_checkTransactionIsolationExpected;
 	
 	/** Stato di inizializzazione del manager */
 	private static boolean initialized = false;
@@ -171,6 +178,15 @@ public class DBManager implements IMonitoraggioRisorsa {
 	public static void initialize(String jndiName,java.util.Properties context) throws Exception{
 		DBManager.manager = new DBManager(jndiName,context);	
 		DBManager.setInitialized(true);
+		
+		OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
+		if(properties!=null) {
+			DBManager.getConnection_checkAutoCommitDisabled = properties.isDataSourceGetConnectionCheckAutoCommitDisabled();
+			DBManager.getConnection_checkTransactionIsolation = properties.isDataSourceGetConnectionCheckTransactionIsolationLevel();
+			if(DBManager.getConnection_checkTransactionIsolation) {
+				DBManager.getConnection_checkTransactionIsolationExpected = properties.getDataSourceGetConnectionCheckTransactionIsolationLevelExpected();
+			}
+		}
 	}
 
 	/**
@@ -244,9 +260,28 @@ public class DBManager implements IMonitoraggioRisorsa {
 		if(connectionDB==null)
 			throw new Exception("is null");
 		//System.out.println("### buildResource ["+dataSourceJndiName+"] modulo:"+modulo+" idTransazione:"+idTransazione+" OK");
-		return buildResource(connectionDB, idPDD, modulo, idTransazione);
+		return buildResource("DBRuntimeManager", connectionDB, idPDD, modulo, idTransazione);
 	}
-	public static Resource buildResource(Connection connectionDB, IDSoggetto idPDD,String modulo,String idTransazione) throws Exception {
+	public static Resource buildResource(String managerId, Connection connectionDB, IDSoggetto idPDD,String modulo,String idTransazione) throws Exception {
+		
+		if(connectionDB!=null) {
+			if(DBManager.getConnection_checkAutoCommitDisabled) {
+				if(!connectionDB.getAutoCommit()) {
+					Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopResources(); 
+					if(log!=null) {
+						log.error(getPrefixLog(managerId, idPDD,modulo,idTransazione)+" Connessione ottenuta possiede autoCommit enabled ?");
+					}
+				}
+			}
+			if(DBManager.getConnection_checkTransactionIsolation) {
+				if(DBManager.getConnection_checkTransactionIsolationExpected != connectionDB.getTransactionIsolation()) {
+					Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopResources(); 
+					if(log!=null) {
+						log.error(getPrefixLog(managerId, idPDD,modulo,idTransazione)+" Connessione ottenuta possiede un transaction isolation level '"+connectionDB.getTransactionIsolation()+"' differente da quello atteso '"+DBManager.getConnection_checkTransactionIsolationExpected+"'");
+					}
+				}
+			}
+		}
 		
 		Resource risorsa = new Resource();
 		String idUnivoco = Resource.generaIdentificatoreUnivoco(idPDD, modulo);
@@ -260,6 +295,34 @@ public class DBManager implements IMonitoraggioRisorsa {
 		
 		return risorsa;
 
+	}
+	private static String getPrefixLog(String managerId, IDSoggetto idPDD,String modulo,String idTransazione) {
+		StringBuilder sb = new StringBuilder("");
+		if(managerId!=null) {
+			if(sb.length()>0) {
+				sb.append(" ");
+			}
+			sb.append("[").append(managerId).append("]");
+		}
+		if(idTransazione!=null) {
+			if(sb.length()>0) {
+				sb.append(" ");
+			}
+			sb.append("<").append(idTransazione).append(">");
+		}
+		if(modulo!=null) {
+			if(sb.length()>0) {
+				sb.append(" ");
+			}
+			sb.append("modulo:").append(modulo);
+		}
+		if(idPDD!=null) {
+			if(sb.length()>0) {
+				sb.append(" ");
+			}
+			sb.append("soggetto:").append(idPDD.toString());
+		}
+		return sb.toString();
 	}
 
 

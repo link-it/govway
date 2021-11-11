@@ -92,7 +92,12 @@ public class DumpByteArrayOutputStream extends ByteArrayOutputStream {
 	private static final String formatNew = "yyyyMMdd_HHmmssSSS"; // compatibile con windows S.O.
 	private static final String prefix = "dump";
 	
-	private synchronized void checkInitFile() throws Exception {
+	private void checkInitFile() throws Exception {
+		if(this.f==null) {
+			this._checkInitFile();
+		}
+	}
+	private synchronized void _checkInitFile() throws Exception {
 		if(this.f==null) {
 			Date d = DateManager.getDate();
 			SimpleDateFormat dateformatDir = DateUtils.getDefaultDateTimeFormatter(formatDir);

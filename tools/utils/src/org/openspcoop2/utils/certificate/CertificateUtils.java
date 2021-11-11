@@ -23,8 +23,9 @@ package org.openspcoop2.utils.certificate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.x500.X500Principal;
 
@@ -96,7 +97,7 @@ public class CertificateUtils {
 			bf.append("\t"+prefix+"getIssuerX500Principal().getName(X500Principal.CANONICAL)="+cert.getIssuerX500Principal().getName(X500Principal.CANONICAL)+"\n");
 			bf.append("\t"+prefix+"getIssuerX500Principal().getName(X500Principal.RFC1779)="+cert.getIssuerX500Principal().getName(X500Principal.RFC1779)+"\n");
 			bf.append("\t"+prefix+"getIssuerX500Principal().getName(X500Principal.RFC2253)="+cert.getIssuerX500Principal().getName(X500Principal.RFC2253)+"\n");
-//				Map<String,String> oidMapCanonical = new Hashtable<String, String>();
+//				Map<String,String> oidMapCanonical = new HashMap<String, String>();
 //				bf.append("\t"+prefix+"getIssuerX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical)="+
 //						cert.getIssuerX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical));
 //				if(oidMapCanonical!=null && oidMapCanonical.size()>0){
@@ -130,7 +131,7 @@ public class CertificateUtils {
 			bf.append("\t"+prefix+"getSubjectX500Principal().getName(X500Principal.CANONICAL)="+cert.getSubjectX500Principal().getName(X500Principal.CANONICAL)+"\n");
 			bf.append("\t"+prefix+"getSubjectX500Principal().getName(X500Principal.RFC1779)="+cert.getSubjectX500Principal().getName(X500Principal.RFC1779)+"\n");
 			bf.append("\t"+prefix+"getSubjectX500Principal().getName(X500Principal.RFC2253)="+cert.getSubjectX500Principal().getName(X500Principal.RFC2253)+"\n");
-//				Map<String,String> oidMapCanonical = new Hashtable<String, String>();
+//				Map<String,String> oidMapCanonical = new HashMap<String, String>();
 //				bf.append("\t"+prefix+"getSubjectX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical)="+
 //						cert.getSubjectX500Principal().getName(X500Principal.CANONICAL,oidMapCanonical));
 //				if(oidMapCanonical!=null && oidMapCanonical.size()>0){
@@ -164,8 +165,8 @@ public class CertificateUtils {
 		//System.out.println("SSL VERIFY CONF["+principalPresenteNellaConfigurazione+"] SSL["+principalArrivatoConnessioneSSL+"]");
 
 		// Costruzione key=value
-		Hashtable<String, List<String>> hashPrincipalArrivatoConnessioneSSL = CertificateUtils.getPrincipalIntoHashtable(principalArrivatoConnessioneSSL, type);
-		Hashtable<String, List<String>> hashPrincipalPresenteNellaConfigurazione = CertificateUtils.getPrincipalIntoHashtable(principalPresenteNellaConfigurazione, type);
+		Map<String, List<String>> hashPrincipalArrivatoConnessioneSSL = CertificateUtils.getPrincipalIntoMap(principalArrivatoConnessioneSSL, type);
+		Map<String, List<String>> hashPrincipalPresenteNellaConfigurazione = CertificateUtils.getPrincipalIntoMap(principalPresenteNellaConfigurazione, type);
 
 		if(hashPrincipalArrivatoConnessioneSSL.size() != hashPrincipalPresenteNellaConfigurazione.size()){
 			//System.out.println("LUNGHEZZA DIVERSA");
@@ -176,16 +177,15 @@ public class CertificateUtils {
 			return false;
 		}
 
-
-		Enumeration<String> keys = hashPrincipalArrivatoConnessioneSSL.keys();
-		while(keys.hasMoreElements()){
-			String key = keys.nextElement();
+		for (String key : hashPrincipalArrivatoConnessioneSSL.keySet()) {
 
 			if(hashPrincipalPresenteNellaConfigurazione.containsKey(key)==false){
 				//System.out.println("KEY ["+key+"] non presente");
 				if(log!=null) {
+					List<String> lKeys = new ArrayList<String>();
+					lKeys.addAll(hashPrincipalPresenteNellaConfigurazione.keySet());
 					log.debug("sslVerify key["+key+"] non trovata in "+type+" Configurazione["+principalPresenteNellaConfigurazione+"], key riscontrate: "+
-						hashPrincipalPresenteNellaConfigurazione.keys());
+							lKeys);
 				}
 				return false;
 			}
@@ -247,12 +247,10 @@ public class CertificateUtils {
 		//System.out.println("PRIMA ["+principal+"]");
 		
 		// Autenticazione SSL deve essere LIKE
-		Hashtable<String, List<String>> hashPrincipal = CertificateUtils.getPrincipalIntoHashtable(principal, type);
+		Map<String, List<String>> hashPrincipal = CertificateUtils.getPrincipalIntoMap(principal, type);
 		StringBuilder bf = new StringBuilder();
 		bf.append("/");
-		Enumeration<String> keys = hashPrincipal.keys();
-		while(keys.hasMoreElements()){
-			String key = keys.nextElement();
+		for (String key : hashPrincipal.keySet()) {
 			
 			List<String> listValues = hashPrincipal.get(key);
 			for (String value : listValues) {
@@ -481,8 +479,8 @@ public class CertificateUtils {
 		return valori;
 	}
 	
-	public static Hashtable<String, List<String>> getPrincipalIntoHashtable(String principal, PrincipalType type) throws UtilsException{
-		Hashtable<String, List<String>> hashPrincipal = new Hashtable<String, List<String>>();
+	public static Map<String, List<String>> getPrincipalIntoMap(String principal, PrincipalType type) throws UtilsException{
+		Map<String, List<String>> hashPrincipal = new HashMap<String, List<String>>();
 		String [] valoriPrincipal = CertificateUtils.getValoriPrincipal(principal, type);
 		for(int i=0; i<valoriPrincipal.length; i++){
 			

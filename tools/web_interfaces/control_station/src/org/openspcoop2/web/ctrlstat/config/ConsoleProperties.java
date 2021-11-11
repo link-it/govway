@@ -27,7 +27,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -625,7 +625,7 @@ public class ConsoleProperties {
 	}
 	
 	public Map<String,List<String>> getJmxPdD_gruppi_aliases() throws UtilsException {
-		Map<String,List<String>> map = new Hashtable<String, List<String>>();
+		Map<String,List<String>> map = new HashMap<String, List<String>>();
 		String nomeP = "risorseJmxPdd.aliases.";
 		Properties p = this.reader.readProperties(nomeP);
 		if(p!=null && !p.isEmpty()) {

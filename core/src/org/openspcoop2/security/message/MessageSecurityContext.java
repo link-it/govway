@@ -24,9 +24,7 @@ package org.openspcoop2.security.message;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -85,8 +83,8 @@ import org.slf4j.Logger;
 public abstract class MessageSecurityContext{
 	
       
-	protected Hashtable<String,Object> incomingProperties = new Hashtable<String,Object>();
-	protected Hashtable<String,Object> outgoingProperties = new Hashtable<String,Object>();
+	protected Map<String,Object> incomingProperties = new HashMap<String,Object>();
+	protected Map<String,Object> outgoingProperties = new HashMap<String,Object>();
 
 	protected boolean useActorDefaultIfNotDefined = true;
 	protected String actorDefault = null;
@@ -200,8 +198,8 @@ public abstract class MessageSecurityContext{
     /** Process */
 	
 	// incoming
-	protected abstract boolean processIncoming(OpenSPCoop2Message message, Busta busta, Hashtable<String, Object> ctx);
-	public boolean processIncoming(OpenSPCoop2Message message, Busta busta, Hashtable<String, Object> ctx, TempiElaborazione tempiElaborazione) {
+	protected abstract boolean processIncoming(OpenSPCoop2Message message, Busta busta, Map<String, Object> ctx);
+	public boolean processIncoming(OpenSPCoop2Message message, Busta busta, Map<String, Object> ctx, TempiElaborazione tempiElaborazione) {
 		MessageRole messageRole = message.getMessageRole();
 		if(MessageRole.REQUEST.equals(messageRole)) {
 			if(tempiElaborazione!=null) {
@@ -231,8 +229,8 @@ public abstract class MessageSecurityContext{
 	}
 
 	// outcoming
-	protected abstract boolean processOutgoing(OpenSPCoop2Message message, Hashtable<String, Object> ctx);
-	public boolean processOutgoing(OpenSPCoop2Message message, Hashtable<String, Object> ctx, TempiElaborazione tempiElaborazione) {
+	protected abstract boolean processOutgoing(OpenSPCoop2Message message, Map<String, Object> ctx);
+	public boolean processOutgoing(OpenSPCoop2Message message, Map<String, Object> ctx, TempiElaborazione tempiElaborazione) {
 		MessageRole messageRole = message.getMessageRole();
 		if(MessageRole.REQUEST.equals(messageRole)) {
 			if(tempiElaborazione!=null) {
@@ -306,7 +304,7 @@ public abstract class MessageSecurityContext{
     	boolean actorDefinito = false;
     	boolean mustUnderstandTrue=false;
     	
-    	Hashtable<?,?> securityProperties = null;
+    	Map<String,Object> securityProperties = null;
     	if(incoming){
     		securityProperties = this.incomingProperties;
     	}else{
@@ -314,8 +312,7 @@ public abstract class MessageSecurityContext{
     	}
 		if (securityProperties != null && securityProperties.size() > 0) {
 			
-			for (Enumeration<?> e = securityProperties.keys(); e.hasMoreElements();) {
-				String key = (String) e.nextElement();
+			for (String key : securityProperties.keySet()) {
 				String value = null;
 				Object oValue = securityProperties.get(key);
 				if(oValue!=null && oValue instanceof String) {
@@ -352,13 +349,13 @@ public abstract class MessageSecurityContext{
 	 * Set/get  proprieta' che verranno usate per i messaggi in ingresso dal MessageSecurity
 	 * @param secProperties
 	 */
-    public void setIncomingProperties(Hashtable<String,Object> secProperties) throws SecurityException{
+    public void setIncomingProperties(Map<String,Object> secProperties) throws SecurityException{
     	this.setIncomingProperties(secProperties, true, false);
     }
-    public void setIncomingProperties(Hashtable<String,Object> secProperties, boolean convertSecProperties) throws SecurityException{
+    public void setIncomingProperties(Map<String,Object> secProperties, boolean convertSecProperties) throws SecurityException{
     	this.setIncomingProperties(secProperties, convertSecProperties, false);
     }
-    public void setIncomingProperties(Hashtable<String,Object> secProperties, boolean convertSecProperties, boolean preserveNotStringProperty) throws SecurityException{
+    public void setIncomingProperties(Map<String,Object> secProperties, boolean convertSecProperties, boolean preserveNotStringProperty) throws SecurityException{
     	if(secProperties!=null && secProperties.size()>0 && convertSecProperties) {
     		this.incomingProperties = convertSecProperties(secProperties, preserveNotStringProperty);
     	}
@@ -370,20 +367,20 @@ public abstract class MessageSecurityContext{
     	this.readSignatureEngine(true);
     	this.resolvePWCallback(true);
     }
-    public Hashtable<String,Object> getIncomingProperties() {
+    public Map<String,Object> getIncomingProperties() {
     	return this.incomingProperties;
     }
 	/**
 	 * Set/get  proprieta' che verranno usate per i messaggi in uscita dal MessageSecurity
 	 * @param secProperties
 	 */
-    public void setOutgoingProperties(Hashtable<String,Object> secProperties) throws SecurityException{
+    public void setOutgoingProperties(Map<String,Object> secProperties) throws SecurityException{
     	this.setOutgoingProperties(secProperties, true, false);
     }
-    public void setOutgoingProperties(Hashtable<String,Object> secProperties, boolean convertSecProperties) throws SecurityException{
+    public void setOutgoingProperties(Map<String,Object> secProperties, boolean convertSecProperties) throws SecurityException{
     	this.setOutgoingProperties(secProperties, convertSecProperties, false);
     }
-    public void setOutgoingProperties(Hashtable<String,Object> secProperties, boolean convertSecProperties, boolean preserveNotStringProperty) throws SecurityException{
+    public void setOutgoingProperties(Map<String,Object> secProperties, boolean convertSecProperties, boolean preserveNotStringProperty) throws SecurityException{
     	
     	if(secProperties!=null && secProperties.size()>0 && convertSecProperties) {
     		this.outgoingProperties = convertSecProperties(secProperties, preserveNotStringProperty);
@@ -396,37 +393,38 @@ public abstract class MessageSecurityContext{
     	this.readSignatureEngine(false);
     	this.resolvePWCallback(false);
     }
-    public Hashtable<String,Object> getOutgoingProperties() {
+    public Map<String,Object> getOutgoingProperties() {
     	return this.outgoingProperties;
     }
     
-    private Hashtable<String,Object> convertSecProperties(Hashtable<String,Object> secProperties, boolean preserveNotStringProperty) throws SecurityException{
+    private Map<String,Object> convertSecProperties(Map<String,Object> secProperties, boolean preserveNotStringProperty) throws SecurityException{
     	
     	try {
     	
     		Map<String, Object> mapNoStringProperty = new HashMap<>();
     		
 	    	Map<String, String> map = new HashMap<>();
-	    	Enumeration<String> keys = secProperties.keys();
-	    	while (keys.hasMoreElements()) {
-				String key = (String) keys.nextElement();
-				Object value = secProperties.get(key);
-				String v = null;
-				if(value!=null && value instanceof String) {
-					v = (String) value;
-				}
-				map.put(key, v);
+	    	if (secProperties != null && secProperties.size() > 0) {
 				
-				if(preserveNotStringProperty) {
-					if(value!=null && !(value instanceof String)) {
-						mapNoStringProperty.put(key, value);
+				for (String key : secProperties.keySet()) {
+					Object value = secProperties.get(key);
+					String v = null;
+					if(value!=null && value instanceof String) {
+						v = (String) value;
+					}
+					map.put(key, v);
+					
+					if(preserveNotStringProperty) {
+						if(value!=null && !(value instanceof String)) {
+							mapNoStringProperty.put(key, value);
+						}
 					}
 				}
-			}
+	    	}
 	    	
 	    	Map<String, Properties> multiMap = DBPropertiesUtils.toMultiMap(map);
 	    	
-	    	Hashtable<String, Object> table = new Hashtable<>();
+	    	Map<String, Object> table = new HashMap<>();
 	    	
 	    	Properties defaultProperties = MultiPropertiesUtilities.removeDefaultProperties(multiMap);
 	    	if(defaultProperties!=null && defaultProperties.size()>0) {
@@ -610,7 +608,7 @@ public abstract class MessageSecurityContext{
     /** SignatureEngine */
     private void resolvePWCallback(boolean incoming) throws SecurityException{
     	try{
-    		Hashtable<String, Object> props = null;
+    		Map<String, Object> props = null;
     		if(incoming) {
     			props = this.incomingProperties;
     		}else {

@@ -22,7 +22,7 @@ package org.openspcoop2.protocol.sdk.state;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.util.Hashtable;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.openspcoop2.utils.UtilsException;
@@ -103,7 +103,7 @@ public class StateMessage implements IState {
 		return this.tablePstmt;
 	}
 	
-	public void setPreparedStatement(Hashtable<String,PreparedStatement> pstm){
+	public void setPreparedStatement(Map<String,PreparedStatement> pstm){
 		this.tablePstmt.setPreparedStatement(pstm);
 	}
 	public void setPreparedStatement(StateMap pstm){
@@ -137,7 +137,7 @@ public class StateMessage implements IState {
 	 * @param pstmt Tabella Hash contenente le PreparedStatement da eseguire.
 	 * 
 	 */
-	public void addPreparedStatement(Hashtable<String,PreparedStatement> pstmt)throws UtilsException{
+	public void addPreparedStatement(Map<String,PreparedStatement> pstmt)throws UtilsException{
 		JDBCUtilities.addPreparedStatement(pstmt,this.tablePstmt.getPreparedStatement(),this.log);
 	}
 	

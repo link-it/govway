@@ -21,10 +21,10 @@ package org.openspcoop2.utils.logger.log4j;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -82,7 +82,7 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 
 	protected Logger logTransaction;
 	protected org.apache.logging.log4j.Logger logDiagnostic;
-	protected Hashtable<String, org.apache.logging.log4j.Logger> mapFunctionToLogDiagnostic = null;
+	protected Map<String, org.apache.logging.log4j.Logger> mapFunctionToLogDiagnostic = null;
 	protected Logger logDump;
 	protected Logger logEvent;
 	
@@ -97,14 +97,15 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 				loggers.add(logger);
 			}
 
-			this.mapFunctionToLogDiagnostic = new Hashtable<String, org.apache.logging.log4j.Logger>();
-			Enumeration<String> functions = this.diagnosticManager.getFunctions();
-			while (functions.hasMoreElements()) {
-				String function = (String) functions.nextElement();
-				//System.out.println("FUNCTION ["+function+"] ");
-				if(loggers.contains("diagnostic."+function)){
-					//System.out.println("REGISTRO");
-					this.mapFunctionToLogDiagnostic.put(function, LoggerWrapperFactory.getLoggerImpl("diagnostic."+function));
+			this.mapFunctionToLogDiagnostic = new HashMap<String, org.apache.logging.log4j.Logger>();
+			List<String> functions = this.diagnosticManager.getFunctions();
+			if(functions!=null && !functions.isEmpty()) {
+				for (String function : functions) {
+					//System.out.println("FUNCTION ["+function+"] ");
+					if(loggers.contains("diagnostic."+function)){
+						//System.out.println("REGISTRO");
+						this.mapFunctionToLogDiagnostic.put(function, LoggerWrapperFactory.getLoggerImpl("diagnostic."+function));
+					}
 				}
 			}
 		}
