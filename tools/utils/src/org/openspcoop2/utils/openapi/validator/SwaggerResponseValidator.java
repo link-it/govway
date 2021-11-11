@@ -26,8 +26,11 @@ import io.swagger.v3.oas.models.responses.ApiResponse;
 public class SwaggerResponseValidator {
 	
 	private final MessageResolver normalValidatorMessages;
-	private final MessageResolver fileValidatorMessages;
+	private final SchemaValidator normalSchemaValidator;
 	private final ResponseValidator normalValidator;
+	
+	private final MessageResolver fileValidatorMessages;
+	private final SchemaValidator fileSchemaValidator;
 	private final ResponseValidator fileValidator;
 	
 	public SwaggerResponseValidator(OpenAPI openApi, OpenapiApi4jValidatorConfig config) {
@@ -35,23 +38,31 @@ public class SwaggerResponseValidator {
 		var errorLevelResolverBuilder = getLevelResolverBuilder(config);
 		
 		this.normalValidatorMessages = new MessageResolver(errorLevelResolverBuilder.build());
-		SchemaValidator schemaValidator = new SchemaValidator(openApi, this.normalValidatorMessages);
+		this.normalSchemaValidator = new SchemaValidator(openApi, this.normalValidatorMessages);
 		
 		if (!config.isInjectingAdditionalProperties()) {
-			var transformers = schemaValidator.transformers;
-			schemaValidator.transformers = transformers.stream()
+			var transformers = this.normalSchemaValidator.transformers;
+			this.normalSchemaValidator.transformers = transformers.stream()
 					.filter( t -> t != AdditionalPropertiesInjectionTransformer.getInstance())
 					.collect(Collectors.toList());
 		}
 		
-		this.normalValidator = new ResponseValidator(schemaValidator, this.normalValidatorMessages, openApi, Arrays.asList());
+		this.normalValidator = new ResponseValidator(this.normalSchemaValidator, this.normalValidatorMessages, openApi, Arrays.asList());
 		
 		errorLevelResolverBuilder.withLevel("validation.response.body", Level.IGNORE);
 		errorLevelResolverBuilder.withLevel("validation.response.body.missing", Level.ERROR);
 
 		this.fileValidatorMessages = new MessageResolver(errorLevelResolverBuilder.build());
-		schemaValidator = new SchemaValidator(openApi, this.fileValidatorMessages);
-		this.fileValidator = new ResponseValidator(schemaValidator, this.fileValidatorMessages, openApi, Arrays.asList());
+		this.fileSchemaValidator = new SchemaValidator(openApi, this.fileValidatorMessages);
+		
+		if (!config.isInjectingAdditionalProperties()) {
+			var transformers = this.fileSchemaValidator.transformers;
+			this.fileSchemaValidator.transformers = transformers.stream()
+					.filter( t -> t != AdditionalPropertiesInjectionTransformer.getInstance())
+					.collect(Collectors.toList());
+		}
+		
+		this.fileValidator = new ResponseValidator(this.fileSchemaValidator, this.fileValidatorMessages, openApi, Arrays.asList());
 	}
 
 	
@@ -109,7 +120,18 @@ public class SwaggerResponseValidator {
 				// TODO: Valida base64
 				return this.fileValidator.validateResponse(response, apiOperation);
 			}						
-		} //else if (mostSpecificMatch)
+		} else {
+			
+			if (!ContentTypeUtils.isJsonContentType(response)) {
+				// Se lo schema non è un Binary Schema, voglio validarlo se il content-type non è a json.
+				// E' comunque uno schema da rispettare.
+				// Questo perchè il bodyValidator valida solo se il content-type è json.
+				// TODO:Migliorare questa parte.
+				return this.normalSchemaValidator
+	                    .validate(() -> response.getResponseBody().get().toJsonNode(),
+	                            type.getSchema(), "response.body");
+			}
+		}
 
 		return this.normalValidator.validateResponse(response, apiOperation);
 	}

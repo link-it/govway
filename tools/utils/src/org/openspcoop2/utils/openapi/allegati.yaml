@@ -1315,7 +1315,7 @@ components:
             - documento
           properties:
              documento:
-                type: string
+                type: object
                 oneOf:
                   - $ref: '#/components/schemas/ContenutoAllegatoInLine'
                   - $ref: '#/components/schemas/ContenutoAllegatoRiferimentoUri'

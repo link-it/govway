@@ -2773,7 +2773,8 @@ public class TestOpenApi4j {
 						
 						// TODO: Validazione swagger-validator qui da errore perchè nella risposta ho 
 						// '*/*' come content type e schema: type: object, ma il validatore swagger non 
-						// parte se il content-type non è json, che fare?
+						// parte se il content-type non è json, che fare? Faccio fare io la validazione 
+						// a mano.
 						if(openapi4j && (ct.contains("Uncorrect") || !ct.contains("json"))) {
 							throw new Exception("Attesa eccezione");
 						}
@@ -2788,7 +2789,9 @@ public class TestOpenApi4j {
 							erroreAtteso = "Unexpected character ('a' (code 97))";
 						}
 						else if(!ct.contains("json")) {
-							erroreAtteso = "body: Type expected 'object', found 'string'. (code: 1027)";
+							erroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ?
+									"body: Type expected 'object', found 'string'. (code: 1027)" :
+									"[ERROR] Unable to parse JSON";
 						}
 						if(erroreAtteso!=null) {
 							if(!e.getMessage().contains(erroreAtteso)) {
@@ -2932,24 +2935,33 @@ public class TestOpenApi4j {
 						}
 						if(openapi4j) {
 							if(valore instanceof Integer) {
-								String msgErroreAtteso = "Type expected 'string', found 'integer'. (code: 1027)";
+								String msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ?
+									"Type expected 'string', found 'integer'. (code: 1027)" :
+									"[ERROR][REQUEST][POST http://petstore.swagger.io/api/test-enum-no-yes @body] [Path '/stato1'] Instance value ("+valore+") not found in enum (possible values: [\"SI\",\"NO\""; 
 								if(!e.getMessage().contains(msgErroreAtteso)) {
 									System.out.println("\t "+tipoTest+" ERRORE!");
 									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 								}
-								msgErroreAtteso = "Value '"+valore+"' is not defined in the schema. (code: 1006)";
+								msgErroreAtteso =  openAPILibrary == OpenAPILibrary.openapi4j ?
+										"Value '"+valore+"' is not defined in the schema. (code: 1006)" :
+										"[ERROR][REQUEST][POST http://petstore.swagger.io/api/test-enum-no-yes @body] [Path '/stato1'] Instance value ("+valore+") not found in enum (possible values: [\"SI\",\"NO\",\"YES\",\"S\",\"N\",\"Y\",\"";
 								if(!e.getMessage().contains(msgErroreAtteso)) {
 									System.out.println("\t "+tipoTest+" ERRORE!");
 									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 								}
 							}
 							else {
-								String msgErroreAtteso = "body.stato1: Value '"+valore.toString().toUpperCase()+"' is not defined in the schema. (code: 1006)";
+								String msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ?
+										"body.stato1: Value '"+valore.toString().toUpperCase()+"' is not defined in the schema. (code: 1006)" :
+										"[ERROR][REQUEST][POST http://petstore.swagger.io/api/test-enum-no-yes @body] [Path '/stato1'] Instance value (\""+valore.toString().toUpperCase()+"\") not found in enum (possible values: [\"SI\",\"NO\",\"YES\",\"S\",\"N\""; 
+								
 								if(!e.getMessage().contains(msgErroreAtteso)) {
 									System.out.println("\t "+tipoTest+" ERRORE!");
 									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 								}
-								msgErroreAtteso = "body.stato2: Value '"+valore.toString().toLowerCase()+"' is not defined in the schema. (code: 1006)";
+								msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ?
+										"body.stato2: Value '"+valore.toString().toLowerCase()+"' is not defined in the schema. (code: 1006)" :
+										"[ERROR][REQUEST][POST http://petstore.swagger.io/api/test-enum-no-yes @body] [Path '/stato1'] Instance value (\""+valore.toString().toUpperCase()+"\") not found in enum (possible values: [\"SI\",\"NO\",\"YES\",\"S\",\"N\"";
 								if(!e.getMessage().contains(msgErroreAtteso)) {
 									System.out.println("\t "+tipoTest+" ERRORE!");
 									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
@@ -2996,24 +3008,35 @@ public class TestOpenApi4j {
 						}
 						if(openapi4j) {
 							if(valore instanceof Integer) {
-								String msgErroreAtteso = "Type expected 'string', found 'integer'. (code: 1027)";
+								String msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ?
+										"Type expected 'string', found 'integer'. (code: 1027)" :
+										"[ERROR][RESPONSE][] [Path '/stato1'] Instance value ("+valore+") not found in enum (possible values: [\"SI\",\"NO\",\"YES\",\"S\",\"N\",\"Y\",\"0\",\"1\",\"ON\",\"OFF\"])";								
 								if(!e.getMessage().contains(msgErroreAtteso)) {
 									System.out.println("\t "+tipoTest+" ERRORE!");
 									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 								}
-								msgErroreAtteso = "Value '"+valore+"' is not defined in the schema. (code: 1006)";
+								msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ?
+										"Value '"+valore+"' is not defined in the schema. (code: 1006)" :
+										"[ERROR][RESPONSE][] [Path '/stato1'] Instance value ("+valore+") not found in enum (possible values: [\"SI\",\"NO\",\"YES\",\"S\",\"N\",\"Y\",\"0\",\"1\",\"ON\",\"OFF\"])";
 								if(!e.getMessage().contains(msgErroreAtteso)) {
 									System.out.println("\t "+tipoTest+" ERRORE!");
 									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 								}
 							}
 							else {
-								String msgErroreAtteso = "body.stato1: Value '"+valore.toString().toUpperCase()+"' is not defined in the schema. (code: 1006)";
+								String msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ?
+										"body.stato1: Value '"+valore.toString().toUpperCase()+"' is not defined in the schema. (code: 1006)" :
+										"[ERROR][RESPONSE][] [Path '/stato1'] Instance value (\""+valore.toString().toUpperCase()+"\") not found in enum (possible values: [\"SI\",\"NO\",\"YES\",\"S\",\"N\",\"Y\",\"0\",\"1\",\"ON\",\"OFF\"])"; 
+								
 								if(!e.getMessage().contains(msgErroreAtteso)) {
 									System.out.println("\t "+tipoTest+" ERRORE!");
 									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 								}
-								msgErroreAtteso = "body.stato2: Value '"+valore.toString().toLowerCase()+"' is not defined in the schema. (code: 1006)";
+								
+								msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ? 
+										"body.stato2: Value '"+valore.toString().toLowerCase()+"' is not defined in the schema. (code: 1006)" :
+											"[ERROR][RESPONSE][] [Path '/stato1'] Instance value (\""+valore.toString().toUpperCase()+"\") not found in enum (possible values: [\"SI\",\"NO\",\"YES\",\"S\",\"N\",\"Y\",\"0\",\"1\",\"ON\",\"OFF\"])";
+
 								if(!e.getMessage().contains(msgErroreAtteso)) {
 									System.out.println("\t "+tipoTest+" ERRORE!");
 									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
@@ -3254,7 +3277,7 @@ public class TestOpenApi4j {
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					}
 				} catch(ValidatorException e) {
-					checkErrorTest20(esito, tipoTest, e, tipologia, openapi4j);
+					checkErrorTest20(esito, tipoTest, e, tipologia, openapi4j, openAPILibrary);
 				}
 				
 				try {
@@ -3262,7 +3285,7 @@ public class TestOpenApi4j {
 					apiValidator.validate(httpEntityResponse_test20);	
 					System.out.println("\t "+tipoTest+" validate response ok");
 				} catch(ValidatorException e) {
-					checkErrorTest20(esito, tipoTest, e, tipologia, openapi4j);
+					checkErrorTest20(esito, tipoTest, e, tipologia, openapi4j, openAPILibrary);
 				}
 			}
 		}
@@ -3288,7 +3311,14 @@ public class TestOpenApi4j {
 		
 		int NUMERO_RISORSE_PET = 5;
 		
+		Set<Integer> swagger_validator_fallimenti_allof = Set.of(0,3);
+		
 		for (int k = 0; k < NUMERO_RISORSE_PET; k++) {
+			
+			if (openAPILibrary == OpenAPILibrary.swagger_request_validator && swagger_validator_fallimenti_allof.contains(k)) {
+				System.out.println("Discriminator con allOf non supportato da swagger-request-validator!");
+				continue;
+			}
 			
 			int numeroPet = (k+1);
 			String testPet = "[test pets"+numeroPet+"] ";
@@ -3369,7 +3399,7 @@ public class TestOpenApi4j {
 		System.out.println("Test #21 Discriminator completato\n\n");
 	}
 
-	private static void checkErrorTest20(boolean esito, String tipoTest, Exception e, String tipologia, boolean openapi4j) throws Exception {
+	private static void checkErrorTest20(boolean esito, String tipoTest, Exception e, String tipologia, boolean openapi4j, OpenAPILibrary openAPILibrary) throws Exception {
 		
 		String error = e.getMessage();
 		if(error.length()>200) {
@@ -3416,17 +3446,27 @@ public class TestOpenApi4j {
 		}
 		if(openapi4j) {
 			if(arrayValuesNull) {
-				String msgErroreAtteso = "body.array_nullable_values_optional.0: Null value is not allowed. (code: 1021)";
+				
+				String msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ?
+						"body.array_nullable_values_optional.0: Null value is not allowed. (code: 1021)" :
+						"[Path '/array_nullable_values_optional/0'] Instance type (null) does not match any allowed primitive type (allowed: [\"string\"])";
+				
 				if(!e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
-				msgErroreAtteso = "body.array_nullable_values_optional.1: Null value is not allowed. (code: 1021)";
+				
+				msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ?
+						"body.array_nullable_values_optional.1: Null value is not allowed. (code: 1021)" :
+						"[Path '/array_nullable_values_optional/1'] Instance type (null) does not match any allowed primitive type (allowed: [\"string\"])";				
 				if(!e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
-				msgErroreAtteso = "body.array_nullable_values_required.0: Null value is not allowed. (code: 1021)";
+				
+				msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ? 
+						"body.array_nullable_values_required.0: Null value is not allowed. (code: 1021)" :
+						"[Path '/array_nullable_values_required/0'] Instance type (null) does not match any allowed primitive type (allowed: [\"string\"])";
 				if(!e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t "+tipoTest+" ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
@@ -3434,7 +3474,10 @@ public class TestOpenApi4j {
 			}
 			else {
 				for (int k = 0; k < 2; k++) {
-					String msgErroreAtteso = "body."+element+(k==0 ? "required" : "optional")+": Null value is not allowed. (code: 1021)";
+					String suffix = (k==0 ? "required" : "optional");
+					String msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ?
+							"body."+element+suffix+": Null value is not allowed. (code: 1021)" :
+							"[Path '/"+element+suffix+"'] Instance type (null) does not match any allowed primitive type (allowed:";
 					if(!e.getMessage().contains(msgErroreAtteso)) {
 						System.out.println("\t "+tipoTest+" ERRORE!");
 						throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
