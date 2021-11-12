@@ -1130,9 +1130,7 @@ public class TestOpenApi4j {
 								atteso = "A request body is required but none found.";
 							}
 						}
-						/*String atteso = openAPILibrary == OpenAPILibrary.openapi4j ?
-								"Body is required but none provided. (code: 200)" :
-								"[ERROR] Required Content-Type is missing"; //"A request body is required but none found.";*/
+						
 						
 						if(!required && contentTypeTest12!=null) {
 							atteso = openAPILibrary == OpenAPILibrary.openapi4j ?
