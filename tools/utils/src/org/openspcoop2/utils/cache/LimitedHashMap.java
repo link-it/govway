@@ -139,7 +139,7 @@ public class LimitedHashMap<K,V> extends ConcurrentHashMap<K, V> {
 		if ( this.insIx < 0 )
 			return 0;
 		if ( this.startIx == this.insIx )
-			return ( isEmpty() ? 0 : this.maxSize );
+			return ( this.elementInfos[this.startIx] != null ? this.maxSize : 0 );
 		if ( this.startIx < this.insIx )
 			return this.insIx - this.startIx;
 		return ( (this.maxSize + this.insIx) - this.startIx );
@@ -180,8 +180,8 @@ public class LimitedHashMap<K,V> extends ConcurrentHashMap<K, V> {
 		if ( this.insIx >= 0 ) {
 			int posIx = this.insIx;
 			this.insIx = (this.insIx + 1) % this.maxSize;
-			if ( posIx == this.startIx && !isEmpty() ) {
-				ElementInfo<K> startElInfo = this.elementInfos[this.startIx];
+			ElementInfo<K> startElInfo = this.elementInfos[this.startIx];
+			if ( posIx == this.startIx && startElInfo != null ) {
 				var removedValue = super.remove( startElInfo.getKey() );
 				if ( removedValue == null )
 					throw new RuntimeException( "fail to remove by add: " + startElInfo.getKey() + " adding " + key );
