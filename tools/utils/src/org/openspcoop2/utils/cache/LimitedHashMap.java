@@ -47,7 +47,6 @@ public class LimitedHashMap<K,V> extends ConcurrentHashMap<K, V> {
 	private ElementInfo<K> elementInfos[] = null;
 	private int startIx = -1;
 	private int insIx = -1;
-	private Map<K,Integer> elementPosMap = null;
 	private org.openspcoop2.utils.Semaphore semaphore = null;
 	
 	private static class ElementInfo<K> {
@@ -110,33 +109,44 @@ public class LimitedHashMap<K,V> extends ConcurrentHashMap<K, V> {
 		this.maxLifeTime = maxLifeTime;
 		if ( maxSize > 0 ) {
 			this.elementInfos = new ElementInfo[ maxSize ];
-			this.elementPosMap = new ConcurrentHashMap<K,Integer>( maxSize );
 			this.startIx = 0;
 			this.insIx = 0;
 		}
 		this.semaphore = new org.openspcoop2.utils.Semaphore(cacheName!=null ? "LimitedHashMap_"+cacheName : "LimitedHashMap");
 	}
 
+	private int previousCircular( int ix ) {
+		if ( ix == 0 )
+			return (this.maxSize - 1);
+		return ix - 1;
+	}
+
+	private int nextCircular( int ix ) {
+		if ( ix == (this.maxSize - 1) )
+			return 0;
+		return ix + 1;
+	}
+
 	private void decrementInsIx() {
-		this.insIx--;
-		if ( this.insIx < 0 )
-			this.insIx = this.maxSize - 1;
+		this.insIx = previousCircular( this.insIx );
 	}
 
 	private void incrementStartIx() {
-		this.startIx = (this.startIx + 1) % this.maxSize;
+		this.startIx = nextCircular( this.startIx );
 	}
 
 	private int posSize() {
-		if ( this.startIx < 0 )
+		if ( this.insIx < 0 )
 			return 0;
-		if ( this.startIx <= this.insIx )
+		if ( this.startIx == this.insIx )
+			return ( isEmpty() ? 0 : this.maxSize );
+		if ( this.startIx < this.insIx )
 			return this.insIx - this.startIx;
 		return ( (this.maxSize + this.insIx) - this.startIx );
 	}
 
 	private void cleanUpExtraTime() {
-		if ( this.startIx < 0 )
+		if ( this.insIx < 0 || this.startIx < 0 )
 			return;
 		long timeMillis = DateManager.getTimeMillis() - (this.maxLifeTime * 1000);
 		while ( posSize() > 0 ) {
@@ -144,12 +154,14 @@ public class LimitedHashMap<K,V> extends ConcurrentHashMap<K, V> {
 			if ( oldestInfo.getTimeMillis() > timeMillis )
 				break;
 			K curKey = oldestInfo.getKey();
-			super.remove( curKey );
+			var removedValue = super.remove( curKey );
+			if ( removedValue == null )
+				throw new RuntimeException( "fail to remove by cleanUp: " + curKey );
 			removeElementInfo( curKey );
 		}
 	}
 	private void syncCleanUpExtraTime() {
-		if ( this.startIx < 0 )
+		if ( this.insIx < 0 )
 			return;
 		if(posSize()<=0) {
 			return;
@@ -165,35 +177,43 @@ public class LimitedHashMap<K,V> extends ConcurrentHashMap<K, V> {
 
 	private void addElementInfo( K key ) {
 		ElementInfo<K> elInfo = new ElementInfo<K>( DateManager.getTimeMillis(), key );
-		if ( this.startIx >= 0 ) {
+		if ( this.insIx >= 0 ) {
 			int posIx = this.insIx;
 			this.insIx = (this.insIx + 1) % this.maxSize;
-			if ( this.insIx == this.startIx ) {
-				ElementInfo<K> toBeRemove = this.elementInfos[this.startIx];
-				super.remove( toBeRemove.getKey() );
+			if ( posIx == this.startIx && !isEmpty() ) {
+				ElementInfo<K> startElInfo = this.elementInfos[this.startIx];
+				var removedValue = super.remove( startElInfo.getKey() );
+				if ( removedValue == null )
+					throw new RuntimeException( "fail to remove by add: " + startElInfo.getKey() + " adding " + key );
 				incrementStartIx();
 			}
 			this.elementInfos[ posIx ] = elInfo;
-			this.elementPosMap.put( key, posIx );
 		} else
-			throw new RuntimeException( "Invalid startIx: not initialized" );
+			throw new RuntimeException( "Invalid insIx: not initialized" );
 	}
 
 	private void removeElementInfo( K key ) {
-		Integer posObj = this.elementPosMap.remove( key );
-		if ( posObj == null )
+		int posIx = -1;
+		for ( int ix = 0; posIx < 0 && ix < this.elementInfos.length; ix++ ) {
+			if ( this.elementInfos[ix] != null && this.elementInfos[ix].getKey().equals( key ) )
+				posIx = ix;
+		}
+		if ( posIx < 0 )
 			return;
 
-		int posIx = posObj.intValue();
-		if ( posIx == (this.insIx - 1) ) {
+		int prevInsIx = previousCircular( this.insIx );
+		if ( posIx == prevInsIx ) {
+			this.elementInfos[ prevInsIx ] = null;
 			decrementInsIx();
 		} else
 		if ( posIx == this.startIx ) {
+			this.elementInfos[ posIx ] = null;
 			incrementStartIx();
 		} else
 		if ( posIx < this.startIx ) {
-			if ( posIx < (this.insIx - 1) ) {
-				System.arraycopy( this.elementInfos, posIx + 1, this.elementInfos, posIx, this.insIx - 1 - posIx );
+			if ( posIx < prevInsIx ) {
+				System.arraycopy( this.elementInfos, posIx + 1, this.elementInfos, posIx, prevInsIx - posIx );
+				this.elementInfos[ prevInsIx ] = null;
 				decrementInsIx();
 			} else
 				throw new RuntimeException( "Invalid index position: " + posIx +
@@ -201,7 +221,8 @@ public class LimitedHashMap<K,V> extends ConcurrentHashMap<K, V> {
 		} else {
 			if ( posIx < this.insIx ) {
 				if ( this.startIx < this.insIx ) {
-					System.arraycopy( this.elementInfos, posIx + 1, this.elementInfos, posIx, this.insIx - 1 - posIx );
+					System.arraycopy( this.elementInfos, posIx + 1, this.elementInfos, posIx, prevInsIx - posIx );
+					this.elementInfos[ prevInsIx ] = null;
 					decrementInsIx();
 				} else
 					throw new RuntimeException( "Invalid index position: " + posIx +
@@ -210,8 +231,11 @@ public class LimitedHashMap<K,V> extends ConcurrentHashMap<K, V> {
 				System.arraycopy( this.elementInfos, posIx + 1, this.elementInfos, posIx, this.maxSize - 1 - posIx );
 				if ( this.insIx > 0 ) {
 					this.elementInfos[ this.maxSize - 1 ] = this.elementInfos[0];
-					System.arraycopy( this.elementInfos, 1, this.elementInfos, 0, this.insIx - 1 );
+					// TBK
+					if ( prevInsIx > 0 )
+						System.arraycopy( this.elementInfos, 1, this.elementInfos, 0, prevInsIx );
 				}
+				this.elementInfos[ prevInsIx ] = null;
 				decrementInsIx();
 			}
 		}
@@ -273,8 +297,7 @@ public class LimitedHashMap<K,V> extends ConcurrentHashMap<K, V> {
 		Random random = new Random();
 		
 		LimitedHashMap<Object,Serializable> map = new LimitedHashMap<>( "TEST", maxSize, maxLifeTime );
-		
-		
+
 		for ( int ix = 0; ix < 100; ix++ ) {
 			String key = Integer.toString(ix);
 			map.put( key, "test-" + key );
@@ -306,13 +329,12 @@ public class LimitedHashMap<K,V> extends ConcurrentHashMap<K, V> {
 			threadsPool.execute(threadsMap.get(id));
 		}
 		latch.await();
-		
+		threadsPool.shutdown();
 		
 		for ( int ix = 0; ix < 100; ix++ ) {
 			String key = Integer.toString(ix);
 			System.out.println( key + " : " +  map.get( key ) );
 		}
 		System.out.println("Attuale size: "+map.size());
-
 	}
 }
