@@ -646,6 +646,7 @@ public class TestOpenApi4j {
 			TransportUtils.addHeader(parametersTrasporto9,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
 			httpEntity9.setHeaders(parametersTrasporto9);
 			httpEntity9.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+			
 			String json9 = "{\"mittente\":\"Mittente\",\"destinatario\":\"EnteDestinatario\",\"procedimento\":\"DescrizioneGenerica ...\","+
 					"\"allegati\":"+
 					"["+
@@ -1121,9 +1122,17 @@ public class TestOpenApi4j {
 					
 					if(openapi4j) {
 						
-						String atteso = openAPILibrary == OpenAPILibrary.openapi4j ?
+						String atteso = "Body is required but none provided. (code: 200)";
+						if (openAPILibrary == OpenAPILibrary.swagger_request_validator) {
+							if (httpEntity12.getContentType() == null) {
+								atteso = "[ERROR] Required Content-Type is missing";
+							} else {
+								atteso = "A request body is required but none found.";
+							}
+						}
+						/*String atteso = openAPILibrary == OpenAPILibrary.openapi4j ?
 								"Body is required but none provided. (code: 200)" :
-								"A request body is required but none found.";
+								"[ERROR] Required Content-Type is missing"; //"A request body is required but none found.";*/
 						
 						if(!required && contentTypeTest12!=null) {
 							atteso = openAPILibrary == OpenAPILibrary.openapi4j ?
@@ -1202,7 +1211,7 @@ public class TestOpenApi4j {
 					if(openapi4j) {
 						String atteso = openAPILibrary == OpenAPILibrary.openapi4j ?
 								"Content type 'null' is not allowed for body content. (code: 203)" :
-								"Required body undefined"; 	// swagger-request-validator-unsupported
+								"[ERROR] Required Content-Type is missing";
 									
 						if(!msg.contains(atteso)) {
 							String checkErrore = "Validazione "+tipoTest+" senza contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
@@ -2359,8 +2368,7 @@ public class TestOpenApi4j {
 						String msgErroreAttesoSwagger2 = "[ERROR][RESPONSE][] Object has missing required properties ([\"esito\"])"; 
 						
 						if (ct==null) {
-							// TODO Validazione Content-Type Assente. Mi affido al validatore interno
-							msgErroreAttesoSwagger="Required body undefined";
+							msgErroreAttesoSwagger="[ERROR] Required Content-Type is missing";
 						}
 
 						if(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807.equals(ct) && code.intValue() != 200) {

@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import com.atlassian.oai.validator.interaction.response.ResponseValidator;
 import com.atlassian.oai.validator.model.ApiOperation;
+import com.atlassian.oai.validator.model.Body;
 import com.atlassian.oai.validator.model.Response;
 import com.atlassian.oai.validator.report.LevelResolver;
 import com.atlassian.oai.validator.report.MessageResolver;
@@ -69,86 +70,66 @@ public class SwaggerResponseValidator {
 	
 	public ValidationReport validateResponse(Response response, ApiOperation apiOperation) {
 		
-		
-		// E' solo la validazione sul body che non va fatta in caso di schema che descrive un file.
-		// Tutta la validazione sulla risposta, eccome se va fatta.
-		//repo.getMessages().
-
-		final ApiResponse apiResponse = getApiResponse(response, apiOperation);
-		if (apiResponse.getContent() == null) {
+		final ApiResponse responseSchema = getApiResponse(response, apiOperation);
+		if (responseSchema.getContent() == null) {
 			return this.normalValidator.validateResponse(response, apiOperation);
 		}
 		
 		//	VALIDAZIONE CUSTOM 1:
-		//	Se la risposta ha un body ma non content-type, solleva errore.
+		//	Controllo che il content-type nullo non sia ammesso quando è richiesto un content
+		//	Le risposte vuote sono quelle senza content, se il content c'è, ci deve essere
+		//	anche il mediaType
 		
-		//  Anche se la risposta ha un body definito ma non un content-type deve sollevare errore
-		
-		Content contentSchema = apiResponse.getContent();
+		Content contentSchema = responseSchema.getContent();
 		if (contentSchema != null && !contentSchema.isEmpty()) {
-			if ( /*response.getResponseBody().isPresent() &&*/ response.getContentType().isEmpty() /*&& response.getContentType().get().isEmpty()*/) {
+			if (response.getContentType().isEmpty()) {
 				return ValidationReport.singleton(
 	                    this.normalValidatorMessages.create(
-	                            "validation.response.body.schema.invalidJson",
-	                            "sese manca il content-type!"
-	                            
+	                    		"validation.response.contentType.notAllowed",
+	                            "Required Content-Type is missing" 	// TODO: Migliora messaggio, dire se siamo in respons eo in request
 	                    ));
 			}
 		}
 		
-		final Optional<String> mostSpecificMatch = findMostSpecificMatch(response, apiResponse.getContent().keySet());
+		// VALIDAZIONE CUSTOM 2
+		// Se lo schema del request body è: type: string, format: binary, ovvero un BinarySchema,
+		// allora al più valida che il body sia un json e valida tutto il resto della richiesta
+		// Se invece il format è base64 controlla che sia in base64
+		
+		final Optional<String> mostSpecificMatch = findMostSpecificMatch(response, responseSchema.getContent().keySet());
 		
 		if (!mostSpecificMatch.isPresent()) {
-			// Se non matcho content-type, lascio fare al normal validator
-			return this.normalValidator.validateResponse(response, apiOperation);
-		}
-
-		final MediaType type = apiResponse.getContent().get(mostSpecificMatch.get());
-		
-		if (type.getSchema() == null) {
+			// Se non matcho il content-type, lascio fare al normal validator, 
 			return this.normalValidator.validateResponse(response, apiOperation);
 		}
 		
-		// Se il content type è json, voglio comunque validarlo e verificare che sia un json corretto
-		if (type.getSchema() instanceof BinarySchema) {
-			BinarySchema schema = (BinarySchema) type.getSchema();
-
+		final MediaType schemaMediaType = responseSchema.getContent().get(mostSpecificMatch.get());
+		final Body responseBody = response.getResponseBody().orElse(null);
+		
+		if (responseBody != null && schemaMediaType.getSchema() instanceof BinarySchema) {
+			BinarySchema schema = (BinarySchema) schemaMediaType.getSchema();
+			ValidationReport report = ValidationReport.empty();
+			
 			if ("string".equals(schema.getType()) && "binary".equals(schema.getFormat())) {
 				if (ContentTypeUtils.isJsonContentType(response)) {
-					try {
-						response.getResponseBody().get().toJsonNode();
-					} catch (final IOException e) {
-		                return ValidationReport.singleton(
-		                        this.normalValidatorMessages.create(
-		                                "validation.response.body.schema.invalidJson",
-		                                this.normalValidatorMessages.get(SchemaValidator.INVALID_JSON_KEY, e.getMessage()).getMessage()
-		                        )
-		                );
-		            }
-					
+					report = report.merge(validateJsonFormat(responseBody,this.normalValidatorMessages));															
 				}
-				return this.fileValidator.validateResponse(response, apiOperation);
 			}
 			else if ("string".equals(schema.getType()) && "base64".equals(schema.getFormat())) {
-				/*try {
-				//	return validateBase64String(request.getRequestBody().get().toString(null));
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}*/
-				// TODO: Valida base64
-				return this.fileValidator.validateResponse(response, apiOperation);
-			}						
-		} else {
-			
-			if (!ContentTypeUtils.isJsonContentType(response)) {
-				// Se lo schema non è un Binary Schema, voglio validarlo se il content-type non è a json.
-				// E' comunque uno schema da rispettare.
-				// Questo perchè il bodyValidator valida solo se il content-type è json.
-				// TODO:Migliorare questa parte.
-				return this.normalSchemaValidator
-	                    .validate(() -> response.getResponseBody().get().toJsonNode(),
-	                            type.getSchema(), "response.body");
+				report = report.merge(validateBase64Body(responseBody,this.normalValidatorMessages));
 			}
+			
+			return report.merge(this.fileValidator.validateResponse(response, apiOperation));
+			
+		} else {
+			// Se il content-type è un json o il subtype è *, lo schema del content deve essere validato.
+			// Se però è un json già lo farà il validatore di atlassian, per cui controlliamo solo il caso del subtype
+			
+            com.google.common.net.MediaType responseMediaType = com.google.common.net.MediaType.parse(mostSpecificMatch.get());
+            if (responseMediaType.subtype().equals("*")) {
+            	return this.normalSchemaValidator
+	                    .validate(() -> response.getResponseBody().get().toJsonNode(),schemaMediaType.getSchema(), "response.body");
+            }	
 		}
 
 		return this.normalValidator.validateResponse(response, apiOperation);
@@ -191,6 +172,34 @@ public class SwaggerResponseValidator {
 		
 		return errorLevelResolver;
 		
+	}
+	
+	private static final ValidationReport validateJsonFormat(Body body, MessageResolver messages) {
+		try {
+			body.toJsonNode();
+		} catch (final IOException e) {
+            return ValidationReport.singleton(
+            		messages.create(
+                            "validation.request.body.schema.invalidJson",
+                            messages.get(SchemaValidator.INVALID_JSON_KEY, e.getMessage()).getMessage()
+                    )
+            );
+        }
+		return ValidationReport.empty();		
+	}
+	
+	private static final ValidationReport validateBase64Body(Body body, MessageResolver messages) {
+		try {		
+			var error = SwaggerRequestValidator.validateBase64String(body.toString(null));
+			if (error.isPresent()) {
+				return ValidationReport.singleton(
+						messages.create("validation.response.body.schema", error.get()));
+			} else {
+				return ValidationReport.empty();
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private ApiResponse getApiResponse(final Response response, final ApiOperation apiOperation) {

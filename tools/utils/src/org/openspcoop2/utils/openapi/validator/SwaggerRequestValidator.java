@@ -31,104 +31,121 @@ import io.swagger.v3.oas.models.parameters.RequestBody;
 public class SwaggerRequestValidator {
 
 	private final MessageResolver normalValidatorMessages;
-	private final MessageResolver fileValidatorMessages;
+	private final SchemaValidator normalSchemaValidator;
 	private final RequestValidator normalValidator;
+	
+	private final MessageResolver fileValidatorMessages;
+	private final SchemaValidator fileSchemaValidator;
 	private final RequestValidator fileValidator;
 	
 	
 	public SwaggerRequestValidator(OpenAPI openApi, OpenapiApi4jValidatorConfig config) {
 	
 		var errorLevelResolverBuilder = SwaggerResponseValidator.getLevelResolverBuilder(config);
-		
 		this.normalValidatorMessages = new MessageResolver(errorLevelResolverBuilder.build());
 		
-		SchemaValidator schemaValidator = new SchemaValidator(openApi, this.normalValidatorMessages);		
+		this.normalSchemaValidator = new SchemaValidator(openApi, this.normalValidatorMessages);		
 		if (!config.isInjectingAdditionalProperties()) {
-			var transformers = schemaValidator.transformers;
-			schemaValidator.transformers = transformers.stream()
+			var transformers = this.normalSchemaValidator.transformers;
+			this.normalSchemaValidator.transformers = transformers.stream()
 					.filter( t -> t != AdditionalPropertiesInjectionTransformer.getInstance())
 					.collect(Collectors.toList());
 		}
 		
-		this.normalValidator = new RequestValidator(schemaValidator, this.normalValidatorMessages, openApi, Arrays.asList());
+		this.normalValidator = new RequestValidator(this.normalSchemaValidator, this.normalValidatorMessages, openApi, Arrays.asList());
 		
 		errorLevelResolverBuilder.withLevel("validation.request.body", Level.IGNORE);
 		errorLevelResolverBuilder.withLevel("validation.request.body.missing", Level.ERROR);
 
 		this.fileValidatorMessages = new MessageResolver(errorLevelResolverBuilder.build());
-		schemaValidator = new SchemaValidator(openApi, this.fileValidatorMessages);
-		this.fileValidator = new RequestValidator(schemaValidator, this.fileValidatorMessages, openApi, Arrays.asList());
+		this.fileSchemaValidator = new SchemaValidator(openApi, this.fileValidatorMessages);
+		
+		if (!config.isInjectingAdditionalProperties()) {
+			var transformers = this.fileSchemaValidator.transformers;
+			this.fileSchemaValidator.transformers = transformers.stream()
+					.filter( t -> t != AdditionalPropertiesInjectionTransformer.getInstance())
+					.collect(Collectors.toList());
+		}
+		this.fileValidator = new RequestValidator(this.fileSchemaValidator, this.fileValidatorMessages, openApi, Arrays.asList());
 	}
 
 	public ValidationReport validateRequest(Request request, ApiOperation apiOperation) {
-			
-		var requestBodySchema = apiOperation.getOperation().getRequestBody();
-		
+
+		var requestBodySchema = apiOperation.getOperation().getRequestBody();		
 		if (requestBodySchema == null) {
 			return this.normalValidator.validateRequest(request, apiOperation);
 		}
 		
 		//	VALIDAZIONE CUSTOM 1:
-		//	Se la richiesta ha un body ma non content-type, solleva errore.
-		Content contentSchema = requestBodySchema.getContent();
+		//  Controllo che il content-type nullo non sia ammesso quando è richiesto un content
+		//	Gli altri casi vengono controllati da atlassian
+		//	Questo completa la richiesta che il content-type passato deve stare fra quelli elencati.
 		
-		if (contentSchema != null && !contentSchema.isEmpty()) {
-			if (request.getRequestBody().isPresent() && request.getContentType().isEmpty()) {
+		Content contentSchema = requestBodySchema.getContent();
+		boolean isContentRequired = requestBodySchema.getRequired() == null ? false : requestBodySchema.getRequired();
+		
+		if (isContentRequired && contentSchema != null && !contentSchema.isEmpty()) {	
+			if (request.getContentType().isEmpty()) {
 				return ValidationReport.singleton(
 	                    this.normalValidatorMessages.create(
-	                            "validation.response.body.schema.invalidJson",
-	                            "sese manca lo schema!"
-	                            
+	                            "validation.request.contentType.notAllowed",
+	                            "Required Content-Type is missing" 	// TODO: Migliora messaggio, dire se siamo in response o in request
 	                    ));
 			}
 		}
-		
-		var maybeMediaType = findApiMediaTypeForRequest(request, requestBodySchema);
 
 		// VALIDAZIONE CUSTOM 2
-		// Se lo schema del request body è: type: string, format: binary, ovvero un
-		// BinarySchema,
-		// allora disattiva la validazione del body e controlla solo che questo sia
-		// presente se è required.
+		// Se lo schema del request body è: type: string, format: binary, ovvero un BinarySchema,
+		// allora al più valida che il body sia un json e valida tutto il resto della richiesta
 		// Se invece il format è base64 controlla che sia in base64
-		if (!maybeMediaType.isEmpty()) {
-			MediaType type = maybeMediaType.get().getRight();
-			ValidationReport report = ValidationReport.empty();
+		
+		var maybeMediaType = findApiMediaTypeForRequest(request, requestBodySchema);
+		if (maybeMediaType.isEmpty()) {
+			// Se non matcho il content-type, lascio fare al normal validator, 
+			return this.normalValidator.validateRequest(request, apiOperation);
+		}
 
-			if (type.getSchema() instanceof BinarySchema) {
-				BinarySchema schema = (BinarySchema) type.getSchema();
+		MediaType type = maybeMediaType.get().getRight();
+		ValidationReport report = ValidationReport.empty();
+		Body requestBody = request.getRequestBody().orElse(null);
 
-				if ("string".equals(schema.getType()) && "binary".equals(schema.getFormat())) {					
-					if (ContentTypeUtils.isJsonContentType(request)) {
-						// Se il content type è json, voglio comunque validarlo e verificare che sia un json corretto
-						report.merge(validateJsonFormat(request.getRequestBody().get()));						
-					}						
-				}				
-				else if ("string".equals(schema.getType()) && "base64".equals(schema.getFormat())) {
-					/*try {
-					//	return validateBase64String(request.getRequestBody().get().toString(null));
-					} catch (IOException e) {
-						throw new RuntimeException(e);
-					}*/
-					// TODO: Valida base64 e eventualmente json
-				}
-				return report.merge(this.fileValidator.validateRequest(request, apiOperation));
+		if (requestBody != null && type.getSchema() instanceof BinarySchema) {
+			BinarySchema schema = (BinarySchema) type.getSchema();
+
+			if ("string".equals(schema.getType()) && "binary".equals(schema.getFormat())) {					
+				if (ContentTypeUtils.isJsonContentType(request)) {
+					report = report.merge(validateJsonFormat(requestBody,this.normalValidatorMessages));						
+				}						
+			}				
+			else if ("string".equals(schema.getType()) && "base64".equals(schema.getFormat())) {
+				report = report.merge(validateBase64Body(requestBody,this.normalValidatorMessages));
 			}
 			
+			return report.merge(this.fileValidator.validateRequest(request, apiOperation));
+		} else {
+			// Se il content-type è un json o il subtype è *, lo schema del content deve essere validato.
+			// Se però è un json già lo farà il validatore di atlassian, per cui controlliamo solo il caso del subtype
+			
+            com.google.common.net.MediaType responseMediaType = com.google.common.net.MediaType.parse(maybeMediaType.get().getLeft());
+            if (responseMediaType.subtype().equals("*")) {
+            	return this.normalSchemaValidator
+	                    .validate( () -> request.getRequestBody().get().toJsonNode(), type.getSchema(), "response.body");
+            }
 		}
-		
+
 		return this.normalValidator.validateRequest(request, apiOperation);
+
 	}
 	
 	
-	private ValidationReport validateJsonFormat(Body body) {
+	private static final ValidationReport validateJsonFormat(Body body, MessageResolver messages) {
 		try {
 			body.toJsonNode();
 		} catch (final IOException e) {
             return ValidationReport.singleton(
-                    this.normalValidatorMessages.create(
+            		messages.create(
                             "validation.response.body.schema.invalidJson",
-                            this.normalValidatorMessages.get(SchemaValidator.INVALID_JSON_KEY, e.getMessage()).getMessage()
+                            messages.get(SchemaValidator.INVALID_JSON_KEY, e.getMessage()).getMessage()
                     )
             );
         }
@@ -141,8 +158,25 @@ public class SwaggerRequestValidator {
 				.flatMap(content -> findMostSpecificMatch(request, content.keySet())
 						.map(mostSpecificMatch -> Pair.of(mostSpecificMatch, content.get(mostSpecificMatch))));
 	}
+
 	
-	public static final ValidationReport validateBase64String(String input) {
+	private static final ValidationReport validateBase64Body(Body body, MessageResolver messages) {
+		try {		
+			var error = validateBase64String(body.toString(null));
+			if (error.isPresent()) {
+				return ValidationReport.singleton(
+						messages.create("validation.request.body.schema", error.get()));
+			} else {
+				return ValidationReport.empty();
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	
+	// Adattata dalla com.github.fgce...jsonschema
+	public static final Optional<String> validateBase64String(String input) {
 		
 		/*
 		 * Regex to accurately remove _at most two_ '=' characters from the end of the
@@ -160,23 +194,17 @@ public class SwaggerRequestValidator {
 				.or(CharMatcher.inRange('0', '9')).or(CharMatcher.anyOf("+/")).negate();
 	 		
 		 if (input.length() % 4 != 0) {
-	    //        report.error(newMsg(data, bundle, "err.format.base64.badLength")
-	    //            .putArgument("length", input.length()));
-		// TODO: Error
-	            return null;
+	            return Optional.of("err.format.base64.badLength, should be multiple of 4: " + input.length());
 	        }
 
 	        final int index
 	            = NOT_BASE64.indexIn(PATTERN.matcher(input).replaceFirst(""));
 
 	        if (index == -1)
-	            return ValidationReport.empty();
+	            return Optional.empty();
 
-	        return null;
-	        // TODO: Error
-	        /*report.error(newMsg(data, bundle, "err.format.base64.illegalChars")
-	            .putArgument("character", Character.toString(input.charAt(index)))
-	            .putArgument("index", index));*/
+	        return Optional.of(
+	        		"err.format.base64.illegalChars: character '" + Character.toString(input.charAt(index)) + "' index " + index);	        
 	}
 	
 
