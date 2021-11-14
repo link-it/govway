@@ -385,25 +385,14 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						}
 											
 						if(this.openApi4jConfig.isValidateAPISpec()) {
-							/*JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
-						    JsonSchema schema = factory.getJsonSchema(schemaNodeRoot);
-						    
-						    ProcessingReport report = schema.validate(schemaNodeRoot);
-						    ListProcessingReport lp = new ListProcessingReport();
-					        lp.mergeWith(report);
-					        
-					        java.util.Iterator<ProcessingMessage> it = lp.iterator();
-					        String outputMsg = "";
-					        while (it.hasNext()) {
-					            ProcessingMessage pm = it.next();
-					            outputMsg += pm.getMessage();					           
-					        }
-//					        
-					        if (outputMsg != "") {
-					        	throw new ProcessingException(
-										"OpenAPI3 not valid: " + outputMsg
-										);
-					        }*/
+							SwaggerOpenApiValidator specValidator = new SwaggerOpenApiValidator();
+							var validationResult = specValidator.validate(schemaNodeRoot);
+							
+							if (validationResult.isPresent()) {
+								throw new ProcessingException(
+										"OpenAPI3 not valid: " + validationResult.get()
+										);								
+							}					    
 							
 							// TODO: E questi? Anche lo swagger validator controlla qualche errore?							
 							if (result.getMessages().size() != 0) {
@@ -1944,6 +1933,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
     }
 
     /**
+     * TODO: Riprova l'esecuzione dei test con questo attivato.
      * Removes the Base64 pattern on the {@link OpenAPI} model.
      * <p>
      * If that pattern would stay on the model all fields of type string / byte would be validated twice. Once
@@ -1954,7 +1944,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
      *
      * @param openAPI the {@link OpenAPI} to correct
      */
-    private static void removeRegexPatternOnStringsOfFormatByte(final OpenAPI openAPI) {
+    protected static void removeRegexPatternOnStringsOfFormatByte(final OpenAPI openAPI) {
         if (openAPI.getPaths() != null) {
             openAPI.getPaths().values().forEach(pathItem -> {
                 pathItem.readOperations().forEach(operation -> {

@@ -77,7 +77,7 @@ public class TestOpenApi4j {
 		
 		// *** TEST per il Parser e validazione dello schema *** //
 		
-		/*{
+		{
 		
 			System.out.println("Test Schema#1 (openapi.yaml) [Elementi aggiuntivi come 'allowEmptyValue'] ...");
 			
@@ -169,7 +169,7 @@ public class TestOpenApi4j {
 			
 			System.out.println("Test Schema#2 (allegati.yaml) [Discriminator non presente o non required Step 1/2] ok");
 			
-		}*/
+		}
 		
 		
 		
