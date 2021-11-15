@@ -94,6 +94,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.CertificateInfo;
@@ -173,7 +174,7 @@ public class RegistroServizi  {
 			throw new DriverRegistroServiziException("Cache gia' abilitata");
 		else{
 			try{
-				this.cache = new Cache(CostantiRegistroServizi.CACHE_REGISTRO_SERVIZI);
+				this.cache = new Cache(CacheType.JCS, CostantiRegistroServizi.CACHE_REGISTRO_SERVIZI);  // lascio JCS come default abilitato via jmx
 			}catch(Exception e){
 				throw new DriverRegistroServiziException(e.getMessage(),e);
 			}
@@ -199,7 +200,7 @@ public class RegistroServizi  {
 				if(itemLifeSecond!=null){
 					configurazioneCache.setItemLifeSecond(itemLifeSecond+"");
 				}
-				initCacheRegistriServizi(configurazioneCache,null,false, cryptConfigSoggetti);
+				initCacheRegistriServizi(CacheType.JCS, configurazioneCache,null,false, cryptConfigSoggetti);  // lascio JCS come default abilitato via jmx
 			}catch(Exception e){
 				throw new DriverRegistroServiziException(e.getMessage(),e);
 			}
@@ -276,7 +277,8 @@ public class RegistroServizi  {
 	public RegistroServizi(AccessoRegistro accessoRegistro,Logger alog,
 			Logger alogConsole,boolean raggiungibilitaTotale, boolean readObjectStatoBozza, 
 			String jndiNameDatasourcePdD, boolean useOp2UtilsDatasource, boolean bindJMX, 
-			boolean prefillCache, CryptConfig cryptConfigSoggetti)throws DriverRegistroServiziException{
+			boolean prefillCache, CryptConfig cryptConfigSoggetti,
+			CacheType cacheType)throws DriverRegistroServiziException{
 
 		try{ 
 			this.driverRegistroServizi = new java.util.HashMap<String,IDriverRegistroServiziGet>();
@@ -425,7 +427,7 @@ public class RegistroServizi  {
 
 			// Inizializzazione della Cache
 			if(accessoRegistro.getCache()!=null){
-				initCacheRegistriServizi(accessoRegistro.getCache(),alogConsole,prefillCache, cryptConfigSoggetti);
+				initCacheRegistriServizi(cacheType, accessoRegistro.getCache(),alogConsole,prefillCache, cryptConfigSoggetti);
 			}
 
 		}catch(Exception e){
@@ -476,8 +478,8 @@ public class RegistroServizi  {
 
 
 
-	private void initCacheRegistriServizi(org.openspcoop2.core.config.Cache configurazioneCache,Logger alogConsole, boolean prefillCache, CryptConfig cryptConfigSoggetti) throws Exception{
-		this.cache = new Cache(CostantiRegistroServizi.CACHE_REGISTRO_SERVIZI);
+	private void initCacheRegistriServizi(CacheType cacheType, org.openspcoop2.core.config.Cache configurazioneCache,Logger alogConsole, boolean prefillCache, CryptConfig cryptConfigSoggetti) throws Exception{
+		this.cache = new Cache(cacheType, CostantiRegistroServizi.CACHE_REGISTRO_SERVIZI);
 
 		if( (configurazioneCache.getDimensione()!=null) ||
 				(configurazioneCache.getAlgoritmo() != null) ){
@@ -639,6 +641,8 @@ public class RegistroServizi  {
 			}
 
 		}
+		
+		this.cache.build();
 		
 		if(prefillCache){
 			this.prefillCache(null,alogConsole, cryptConfigSoggetti);

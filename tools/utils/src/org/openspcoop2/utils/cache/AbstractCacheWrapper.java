@@ -39,27 +39,27 @@ public abstract class AbstractCacheWrapper {
 	private Logger log = null;
 	private String cacheName = null;
 	
-	public AbstractCacheWrapper(String cacheName, Logger log) throws UtilsException{
+	public AbstractCacheWrapper(CacheType cacheType, String cacheName, Logger log) throws UtilsException{
 		
-		this(cacheName, true, log, null, null, null, null);
-		
-	}
-	
-	public AbstractCacheWrapper(String cacheName, boolean initializeCache, Logger log) throws UtilsException{
-		
-		this(cacheName, initializeCache, log, null, null, null, null);
+		this(cacheType, cacheName, true, log, null, null, null, null);
 		
 	}
 	
-	public AbstractCacheWrapper(String cacheName, Logger log,
+	public AbstractCacheWrapper(CacheType cacheType, String cacheName, boolean initializeCache, Logger log) throws UtilsException{
+		
+		this(cacheType, cacheName, initializeCache, log, null, null, null, null);
+		
+	}
+	
+	public AbstractCacheWrapper(CacheType cacheType, String cacheName, Logger log,
 			Integer cacheSize,CacheAlgorithm cacheAlgorithm,
 			Integer itemIdleTimeSeconds, Integer itemLifeTimeSeconds) throws UtilsException{
 		
-		this(cacheName, true, log, cacheSize, cacheAlgorithm, itemIdleTimeSeconds, itemLifeTimeSeconds);
+		this(cacheType, cacheName, true, log, cacheSize, cacheAlgorithm, itemIdleTimeSeconds, itemLifeTimeSeconds);
 		
 	}
 	
-	private AbstractCacheWrapper(String cacheName, boolean initializeCache, Logger log,
+	private AbstractCacheWrapper(CacheType cacheType, String cacheName, boolean initializeCache, Logger log,
 			Integer cacheSize,CacheAlgorithm cacheAlgorithm,
 			Integer itemIdleTimeSeconds, Integer itemLifeTimeSeconds) throws UtilsException{
 		
@@ -74,7 +74,7 @@ public abstract class AbstractCacheWrapper {
 		this.log = log;
 		
 		if(initializeCache){
-			this.initCacheConfigurazione(cacheSize, cacheAlgorithm, itemIdleTimeSeconds, itemLifeTimeSeconds);
+			this.initCacheConfigurazione(cacheType, cacheSize, cacheAlgorithm, itemIdleTimeSeconds, itemLifeTimeSeconds);
 		}
 	}
 	
@@ -82,10 +82,10 @@ public abstract class AbstractCacheWrapper {
 		return this.cacheName;
 	}
 		
-	private void initCacheConfigurazione(Integer cacheSize,CacheAlgorithm cacheAlgorithm,
+	private void initCacheConfigurazione(CacheType cacheType, Integer cacheSize,CacheAlgorithm cacheAlgorithm,
 			Integer itemIdleTimeSeconds, Integer itemLifeTimeSeconds) throws UtilsException{
 		
-		this.cache = new Cache(this.cacheName);
+		this.cache = new Cache(cacheType, this.cacheName);
 		
 		String msg = null;
 		if( (cacheSize!=null) ||
@@ -137,6 +137,8 @@ public abstract class AbstractCacheWrapper {
 			}
 			
 		}
+		
+		this.cache.build();
 	}
 	
 	
@@ -193,7 +195,7 @@ public abstract class AbstractCacheWrapper {
 			throw new UtilsException("Cache already enabled");
 		else{
 			try{
-				this.cache = new Cache(this.cacheName);
+				this.cache = new Cache(CacheType.JCS, this.cacheName); // lascio JCS come default abilitato via jmx
 			}catch(Exception e){
 				throw new UtilsException(e.getMessage(),e);
 			}
@@ -219,7 +221,7 @@ public abstract class AbstractCacheWrapper {
 			throw new UtilsException("Cache already enabled");
 		else{
 			try{
-				initCacheConfigurazione(cacheSize, cacheAlgorithm, itemIdleTimeSeconds, itemLifeTimeSeconds);
+				initCacheConfigurazione(CacheType.JCS, cacheSize, cacheAlgorithm, itemIdleTimeSeconds, itemLifeTimeSeconds); // lascio JCS come default abilitato via jmx
 			}catch(Exception e){
 				throw new UtilsException(e.getMessage(),e);
 			}

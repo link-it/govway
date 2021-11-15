@@ -92,6 +92,7 @@ import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.PrincipalType;
@@ -249,13 +250,15 @@ public class RegistroServiziReader {
 	public static boolean initialize(AccessoRegistro accessoRegistro,Logger aLog,Logger aLogconsole,
 			boolean raggiungibilitaTotale, boolean readObjectStatoBozza, 
 			String jndiNameDatasourcePdD, boolean useOp2UtilsDatasource, boolean bindJMX, 
-			boolean prefillCache, CryptConfig cryptConfigSoggetti){
+			boolean prefillCache, CryptConfig cryptConfigSoggetti,
+			CacheType cacheType){
 
 		try {
 			RegistroServiziReader.registroServiziReader = 
 				new RegistroServiziReader(accessoRegistro,aLog,aLogconsole,raggiungibilitaTotale,readObjectStatoBozza,
 						jndiNameDatasourcePdD,useOp2UtilsDatasource,bindJMX, 
-						prefillCache, cryptConfigSoggetti);	
+						prefillCache, cryptConfigSoggetti,
+						cacheType);	
 			return RegistroServiziReader.initialize;
 		}
 		catch(Exception e) {
@@ -305,7 +308,8 @@ public class RegistroServiziReader {
 	public RegistroServiziReader(AccessoRegistro accessoRegistro,Logger aLog,
 			Logger aLogconsole,boolean raggiungibilitaTotale, boolean readObjectStatoBozza, 
 			String jndiNameDatasourcePdD, boolean useOp2UtilsDatasource, boolean bindJMX, 
-			boolean prefillCache, CryptConfig cryptConfigSoggetti)throws DriverRegistroServiziException{
+			boolean prefillCache, CryptConfig cryptConfigSoggetti,
+			CacheType cacheType)throws DriverRegistroServiziException{
 		try{
 			if(aLog!=null)
 				this.log = aLog;
@@ -313,7 +317,8 @@ public class RegistroServiziReader {
 				this.log = LoggerWrapperFactory.getLogger(RegistroServiziReader.class);
 			this.registroServizi = new RegistroServizi(accessoRegistro,this.log,aLogconsole,raggiungibilitaTotale,readObjectStatoBozza,
 					jndiNameDatasourcePdD, useOp2UtilsDatasource, bindJMX, 
-					prefillCache, cryptConfigSoggetti);
+					prefillCache, cryptConfigSoggetti,
+					cacheType);
 			RegistroServiziReader.initialize = true;
 		}catch(Exception e){
 			RegistroServiziReader.initialize = false;

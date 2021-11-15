@@ -51,6 +51,7 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.id.UUIDUtilsGenerator;
 import org.openspcoop2.utils.io.ArchiveType;
 import org.openspcoop2.utils.io.CompressorUtilities;
@@ -846,7 +847,7 @@ public class Test {
 		configPdD.setLocation(fTmpConfig.getAbsolutePath());
 		FileSystemUtilities.writeFile(fTmpConfig.getAbsolutePath(), CONFIG.getBytes());
 		DriverConfigurazioneXML.disableBuildXsdValidator();
-		ConfigurazionePdDReader.initialize(configPdD, log, log, null, null, true, false, false, false, null);
+		ConfigurazionePdDReader.initialize(configPdD, log, log, null, null, true, false, false, false, null, CacheType.JCS);
 		
 		System.setProperty(JAVA_CONFIG1, JAVA_CONFIG1_VALORE);
 		System.setProperty(JAVA_CONFIG2, JAVA_CONFIG2_VALORE);

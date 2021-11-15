@@ -1179,7 +1179,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			boolean isInitializeConfig = ConfigurazionePdDReader.initialize(accessoConfigurazione,logCore,OpenSPCoop2Startup.log,localConfig,
 					propertiesReader.getJNDIName_DataSource(), false,
 					propertiesReader.isDSOp2UtilsEnabled(), propertiesReader.isRisorseJMXAbilitate(),
-					propertiesReader.isConfigurazioneCache_ConfigPrefill(), propertiesReader.getCryptConfigAutenticazioneApplicativi());
+					propertiesReader.isConfigurazioneCache_ConfigPrefill(), propertiesReader.getCryptConfigAutenticazioneApplicativi(),
+					propertiesReader.getCacheType_config());
 			if(isInitializeConfig == false){
 				this.logError("Riscontrato errore durante l'inizializzazione della configurazione di OpenSPCoop.");
 				return;
@@ -1330,7 +1331,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						}
 					}
 
-					GestoreAutorizzazione.initialize(dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+					GestoreAutorizzazione.initialize(propertiesReader.getCacheType_authorization(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
 				}
 				else{
 					GestoreAutorizzazione.initialize(logCore);
@@ -1381,7 +1382,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						}
 					}
 
-					GestoreAutenticazione.initialize(dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+					GestoreAutenticazione.initialize(propertiesReader.getCacheType_authentication(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
 				}
 				else{
 					GestoreAutenticazione.initialize(logCore);
@@ -1433,7 +1434,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						}
 					}
 
-					GestoreToken.initialize(dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+					GestoreToken.initialize(propertiesReader.getCacheType_token(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
 				}
 				else{
 					GestoreToken.initialize(logCore);
@@ -1489,7 +1490,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						}
 					}
 
-					GestoreCacheResponseCaching.initialize(dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+					GestoreCacheResponseCaching.initialize(propertiesReader.getCacheType_responseCaching(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
 				}
 				else{
 					GestoreCacheResponseCaching.initialize(logCore);
@@ -1557,7 +1558,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						}
 					}
 
-					GestoreKeystoreCaching.initialize(dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+					GestoreKeystoreCaching.initialize(propertiesReader.getCacheType_keystore(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
 					
 					if(itemCrlLifeSecond>0) {
 						GestoreKeystoreCaching.setCacheCrlLifeSeconds(itemCrlLifeSecond, logCore);
@@ -1626,7 +1627,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						}
 					}
 
-					GestoreLoadBalancerCaching.initialize(dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+					GestoreLoadBalancerCaching.initialize(propertiesReader.getCacheType_loadBalancer(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
 				}
 				else{
 					GestoreLoadBalancerCaching.initialize(logCore);
@@ -1870,7 +1871,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						logCore,OpenSPCoop2Startup.log,propertiesReader.isControlloRisorseRegistriRaggiungibilitaTotale(),
 						propertiesReader.isReadObjectStatoBozza(),propertiesReader.getJNDIName_DataSource(),
 						propertiesReader.isDSOp2UtilsEnabled(), propertiesReader.isRisorseJMXAbilitate(),
-						propertiesReader.isConfigurazioneCache_RegistryPrefill(), propertiesReader.getCryptConfigAutenticazioneSoggetti());
+						propertiesReader.isConfigurazioneCache_RegistryPrefill(), propertiesReader.getCryptConfigAutenticazioneSoggetti(),
+						propertiesReader.getCacheType_registry());
 			if(isInitializeRegistro == false){
 				msgDiag.logStartupError("Inizializzazione fallita","Accesso registro/i dei servizi");
 				return;
@@ -2289,7 +2291,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				try{
 					ConfigurazioneGenerale configurazioneControlloTraffico = configurazionePdDManager.getConfigurazioneControlloTraffico();
 					if(configurazioneControlloTraffico.getCache()!=null && configurazioneControlloTraffico.getCache().isCache()){
-						GestoreCacheControlloTraffico.abilitaCache(configurazioneControlloTraffico.getCache().getSize(),
+						GestoreCacheControlloTraffico.initializeCache(propertiesReader.getCacheType_trafficControl(),configurazioneControlloTraffico.getCache().getSize(),
 								CacheAlgorithm.LRU.equals(configurazioneControlloTraffico.getCache().getAlgorithm()),
 								configurazioneControlloTraffico.getCache().getIdleTime(), 
 								configurazioneControlloTraffico.getCache().getLifeTime(), 

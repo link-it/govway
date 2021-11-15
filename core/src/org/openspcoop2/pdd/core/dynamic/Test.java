@@ -41,6 +41,7 @@ import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -196,7 +197,7 @@ public class Test {
 		config.setLocation(fTmpConfig.getAbsolutePath());
 		FileSystemUtilities.writeFile(fTmpConfig.getAbsolutePath(), CONFIG.getBytes());
 		DriverConfigurazioneXML.disableBuildXsdValidator();
-		ConfigurazionePdDReader.initialize(config, log, log, null, null, true, false, false, false, null);
+		ConfigurazionePdDReader.initialize(config, log, log, null, null, true, false, false, false, null, CacheType.JCS);
 						
 		PdDContext pddContext = new PdDContext();
 		pddContext.addObject("TEST1", "VALORE DI ESEMPIO");

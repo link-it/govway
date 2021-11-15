@@ -135,6 +135,7 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.VersionUtilities;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.date.DateEngineType;
 import org.openspcoop2.utils.date.DateUtils;
@@ -568,6 +569,17 @@ public class OpenSPCoop2Properties {
 			this.isConfigurazioneCache_RegistryPrefill();
 			this.isConfigurazioneCache_accessiSynchronized();
 			this.isConfigurazioneCache_transactionContext_accessiSynchronized();
+			
+			this.getCacheType_config();
+			this.getCacheType_registry();
+			this.getCacheType_authentication();
+			this.getCacheType_authorization();
+			this.getCacheType_responseCaching();
+			this.getCacheType_token();
+			this.getCacheType_keystore();
+			this.getCacheType_loadBalancer();
+			this.getCacheType_trafficControl();
+			this.getCacheType_message();
 			
 			if(this.isConfigurazionePluginsEnabled()) {
 				this.isConfigurazionePluginsDebug();
@@ -3897,7 +3909,104 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isConfigurazioneCache_transactionContext_accessiSynchronized;
 	}
 
+	private static CacheType readCacheType_config = null;
+	public CacheType getCacheType_config() {
+		if(readCacheType_config==null) {
+			readCacheType_config = readCacheType("org.openspcoop2.pdd.cache.impl.config");
+		}
+		return readCacheType_config;
+	}
+	
+	private static CacheType readCacheType_registry = null;
+	public CacheType getCacheType_registry() {
+		if(readCacheType_registry==null) {
+			readCacheType_registry = readCacheType("org.openspcoop2.pdd.cache.impl.registry");
+		}
+		return readCacheType_registry;
+	}
+	
+	private static CacheType readCacheType_authentication = null;
+	public CacheType getCacheType_authentication() {
+		if(readCacheType_authentication==null) {
+			readCacheType_authentication = readCacheType("org.openspcoop2.pdd.cache.impl.authentication");
+		}
+		return readCacheType_authentication;
+	}
+	
+	private static CacheType readCacheType_authorization = null;
+	public CacheType getCacheType_authorization() {
+		if(readCacheType_authorization==null) {
+			readCacheType_authorization = readCacheType("org.openspcoop2.pdd.cache.impl.authorization");
+		}
+		return readCacheType_authorization;
+	}
+	
+	private static CacheType readCacheType_responseCaching = null;
+	public CacheType getCacheType_responseCaching() {
+		if(readCacheType_responseCaching==null) {
+			readCacheType_responseCaching = readCacheType("org.openspcoop2.pdd.cache.impl.responseCaching");
+		}
+		return readCacheType_responseCaching;
+	}
 
+	private static CacheType readCacheType_token = null;
+	public CacheType getCacheType_token() {
+		if(readCacheType_token==null) {
+			readCacheType_token = readCacheType("org.openspcoop2.pdd.cache.impl.token");
+		}
+		return readCacheType_token;
+	}
+	
+	private static CacheType readCacheType_keystore = null;
+	public CacheType getCacheType_keystore() {
+		if(readCacheType_keystore==null) {
+			readCacheType_keystore = readCacheType("org.openspcoop2.pdd.cache.impl.keystore");
+		}
+		return readCacheType_keystore;
+	}
+	
+	private static CacheType readCacheType_loadBalancer = null;
+	public CacheType getCacheType_loadBalancer() {
+		if(readCacheType_loadBalancer==null) {
+			readCacheType_loadBalancer = readCacheType("org.openspcoop2.pdd.cache.impl.loadBalancer");
+		}
+		return readCacheType_loadBalancer;
+	}
+	
+	private static CacheType readCacheType_trafficControl = null;
+	public CacheType getCacheType_trafficControl() {
+		if(readCacheType_trafficControl==null) {
+			readCacheType_trafficControl = readCacheType("org.openspcoop2.pdd.cache.impl.trafficControl");
+		}
+		return readCacheType_trafficControl;
+	}
+	
+	private static CacheType readCacheType_message = null;
+	public CacheType getCacheType_message() {
+		if(readCacheType_message==null) {
+			readCacheType_message = readCacheType("org.openspcoop2.pdd.cache.impl.message");
+		}
+		return readCacheType_message;
+	}
+	
+	
+	public CacheType readCacheType(String pName){
+		try{  
+			String value = this.reader.getValue_convertEnvProperties(pName); 
+
+			if(value!=null){
+				value = value.trim();
+				return CacheType.valueOf(value);
+			}else{
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CacheType.JCS);
+				return CacheType.JCS;
+			}
+
+		}catch(java.lang.Exception e) {
+			this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CacheType.JCS+", errore:"+e.getMessage(),e);
+			return CacheType.JCS;
+		}
+	}
 
 
 

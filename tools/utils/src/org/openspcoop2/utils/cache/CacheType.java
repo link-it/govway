@@ -18,36 +18,17 @@
  *
  */
 
-package org.openspcoop2.utils.cache.test;
-
-import java.sql.Connection;
-
-import org.slf4j.Logger;
-import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.cache.AbstractCacheWrapper;
-import org.openspcoop2.utils.cache.CacheType;
+package org.openspcoop2.utils.cache;
 
 /**
- * Cache
+ * CacheImpl
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ExampleConfigCacheWrapper extends AbstractCacheWrapper {
+public enum CacheType {
 
-	public ExampleConfigCacheWrapper(boolean initializeCache, Logger log) throws UtilsException {
-		super(CacheType.JCS, "config", initializeCache, log);
-	}
-
-	@Override
-	public Object getDriver(Object param) throws UtilsException {
-		return new ExampleConfigDummyDriver((Connection)param);
-	}
-
-	@Override
-	public boolean isCachableException(Throwable e) {
-		return e instanceof ExampleExceptionNotFound;
-	}
-
+	JCS, EH, LimitedHashMap
+	
 }

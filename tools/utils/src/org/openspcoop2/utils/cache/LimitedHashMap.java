@@ -44,15 +44,15 @@ public class LimitedHashMap<K,V> extends ConcurrentHashMap<K, V> {
 
 	private int maxSize = -1;
 	private int maxLifeTime = -1;
-	private ElementInfo<K> elementInfos[] = null;
+	private LimitedHashMap.ElementDateInfo<K> elementInfos[] = null;
 	private int startIx = -1;
 	private int insIx = -1;
 	private org.openspcoop2.utils.Semaphore semaphore = null;
 	
-	private static class ElementInfo<K> {
+	private static class ElementDateInfo<K> {
 		private final long timeMillis;
 		private final K key;
-		ElementInfo( long timeMillis, K key ) {
+		ElementDateInfo( long timeMillis, K key ) {
 			this.timeMillis = timeMillis;
 			this.key = key;
 		}
@@ -85,6 +85,7 @@ public class LimitedHashMap<K,V> extends ConcurrentHashMap<K, V> {
 		initElementInfos( cacheName, maxSize, maxLifeTime );
 	}
 
+	/*
 	public LimitedHashMap() {
 		this( null, -1, -1 );
 	}
@@ -100,6 +101,7 @@ public class LimitedHashMap<K,V> extends ConcurrentHashMap<K, V> {
 	public LimitedHashMap( int initialCapacity, float loadFactor, int concurrencyLevel ) {
 		this( null, -1, -1, initialCapacity, loadFactor, concurrencyLevel );
 	}
+	*/
 
 	@SuppressWarnings("unchecked")
 	private void initElementInfos( String cacheName, int maxSize, int maxLifeTime ) {
@@ -108,7 +110,7 @@ public class LimitedHashMap<K,V> extends ConcurrentHashMap<K, V> {
 		this.maxSize = maxSize;
 		this.maxLifeTime = maxLifeTime;
 		if ( maxSize > 0 ) {
-			this.elementInfos = new ElementInfo[ maxSize ];
+			this.elementInfos = new ElementDateInfo[ maxSize ];
 			this.startIx = 0;
 			this.insIx = 0;
 		}
@@ -150,7 +152,7 @@ public class LimitedHashMap<K,V> extends ConcurrentHashMap<K, V> {
 			return;
 		long timeMillis = DateManager.getTimeMillis() - (this.maxLifeTime * 1000);
 		while ( posSize() > 0 ) {
-			ElementInfo<K> oldestInfo = this.elementInfos[ this.startIx ];
+			ElementDateInfo<K> oldestInfo = this.elementInfos[ this.startIx ];
 			if ( oldestInfo.getTimeMillis() > timeMillis )
 				break;
 			K curKey = oldestInfo.getKey();
@@ -166,21 +168,26 @@ public class LimitedHashMap<K,V> extends ConcurrentHashMap<K, V> {
 		if(posSize()<=0) {
 			return;
 		}
+		long timeMillis = DateManager.getTimeMillis() - (this.maxLifeTime * 1000);
+		ElementDateInfo<K> oldestInfo = this.elementInfos[ this.startIx ];
+		if ( oldestInfo.getTimeMillis() <= timeMillis ) {
 
-		this.semaphore.acquireThrowRuntime("cleanUpExtraTime");
-		try {
-			cleanUpExtraTime();
-		}finally {
-			this.semaphore.release("cleanUpExtraTime");
+			this.semaphore.acquireThrowRuntime("cleanUpExtraTime");
+			try {
+				cleanUpExtraTime();
+			}finally {
+				this.semaphore.release("cleanUpExtraTime");
+			}
+			
 		}
 	}
 
 	private void addElementInfo( K key ) {
-		ElementInfo<K> elInfo = new ElementInfo<K>( DateManager.getTimeMillis(), key );
+		ElementDateInfo<K> elInfo = new ElementDateInfo<K>( DateManager.getTimeMillis(), key );
 		if ( this.insIx >= 0 ) {
 			int posIx = this.insIx;
 			this.insIx = (this.insIx + 1) % this.maxSize;
-			ElementInfo<K> startElInfo = this.elementInfos[this.startIx];
+			ElementDateInfo<K> startElInfo = this.elementInfos[this.startIx];
 			if ( posIx == this.startIx && startElInfo != null ) {
 				var removedValue = super.remove( startElInfo.getKey() );
 				if ( removedValue == null )
@@ -291,7 +298,7 @@ public class LimitedHashMap<K,V> extends ConcurrentHashMap<K, V> {
 
 	public static void main( String[] args ) throws Exception {
 		int maxSize = 50;
-		int maxLifeTime = 100000;
+		int maxLifeTime = 10000;
 		int threads = 10;
 		ExecutorService threadsPool = Executors.newFixedThreadPool(threads);
 		Random random = new Random();
@@ -333,6 +340,7 @@ public class LimitedHashMap<K,V> extends ConcurrentHashMap<K, V> {
 		
 		for ( int ix = 0; ix < 100; ix++ ) {
 			String key = Integer.toString(ix);
+			//Utilities.sleep(random.nextInt(50));
 			System.out.println( key + " : " +  map.get( key ) );
 		}
 		System.out.println("Attuale size: "+map.size());
