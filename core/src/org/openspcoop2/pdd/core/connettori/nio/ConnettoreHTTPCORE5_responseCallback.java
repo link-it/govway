@@ -35,6 +35,7 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreLogger;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.pdd.services.connector.AsyncResponseCallbackClientEvent;
+import org.openspcoop2.pdd.services.connector.IAsyncResponseCallback;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -205,12 +206,31 @@ public class ConnettoreHTTPCORE5_responseCallback implements FutureCallback<Conn
 						}
 
 						org.openspcoop2.pdd.core.connettori.ConnettoreHTTPCORE5 connettoreySyncRedirect = new org.openspcoop2.pdd.core.connettori.ConnettoreHTTPCORE5();
+//						org.openspcoop2.pdd.core.PdDContext pddContext = new org.openspcoop2.pdd.core.PdDContext();
+//						for (String key : this.connettore.getPddContext().keys()) {
+//							pddContext.addObject(key, this.connettore.getPddContext().getObject(key));
+//						}
 						connettoreySyncRedirect.init(this.connettore.getPddContext(), this.connettore.getProtocolFactory());
 						connettoreySyncRedirect.setHttpMethod(this.connettore.getHttpMethod());
-						boolean success = connettoreySyncRedirect.send(null, this.request); // caching ricorsivo non serve
-						
-						this.connettore.setAsyncInvocationSuccess(success);
-						return;
+						IAsyncResponseCallback callback = this.request.getAsyncResponseCallback();
+						try {
+							this.request.setAsyncResponseCallback(null);
+							@SuppressWarnings("unused")
+							boolean success = connettoreySyncRedirect.send(null, this.request); // caching ricorsivo non serve
+							
+							this.connettore.setResponseMsg(connettoreySyncRedirect.getResponse());
+							this.connettore.setCodiceTrasporto(connettoreySyncRedirect.getCodiceTrasporto());
+							this.connettore.setResultHTTPMessage(connettoreySyncRedirect.getResultHTTPMessage());
+							this.connettore.setContentLength(connettoreySyncRedirect.getContentLength());
+							this.connettore.getPropertiesTrasportoRisposta().clear();
+							this.connettore.getPropertiesTrasportoRisposta().putAll(connettoreySyncRedirect.getPropertiesTrasportoRisposta());
+							this.connettore.setTipoRisposta(TransportUtils.getObjectAsString(mapHeaderHttpResponse, HttpConstants.CONTENT_TYPE));
+							this.connettore.setInputStreamResponse(connettoreySyncRedirect.getIsResponse());
+	//						this.connettore.setAsyncInvocationSuccess(success);
+	//						return;
+						}finally {
+							this.request.setAsyncResponseCallback(callback);
+						}
 
 					}else{
 						if(this.connettore.isSoap()) {

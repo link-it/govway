@@ -96,6 +96,9 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	
 	/** InputStream Risposta */
 	protected String resultHTTPMessage;
+	public String getResultHTTPMessage() {
+		return this.resultHTTPMessage;
+	}
 	public void setResultHTTPMessage(String resultHTTPMessage) {
 		this.resultHTTPMessage = resultHTTPMessage;
 	}

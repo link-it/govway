@@ -44,8 +44,8 @@ public class PerformanceTest
 
         //int maxSize = 1000000;
         //int maxSize = 100000;
-		//int maxSize = 50000;
-    	int maxSize = 49000;
+		int maxSize = 50000;
+    	//int maxSize = 49000;
     	int lifeTime = 500;
 
     	Cache eh = new Cache(CacheType.EH, "configEH");
