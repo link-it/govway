@@ -201,9 +201,11 @@ public class LimitedHashMap<K,V> extends ConcurrentHashMap<K, V> {
 
 	private void removeElementInfo( K key ) {
 		int posIx = -1;
-		for ( int ix = 0; posIx < 0 && ix < this.elementInfos.length; ix++ ) {
+		int size = posSize();
+		for ( int ix = this.startIx, jx = 0; posIx < 0 && jx < size; jx++ ) {
 			if ( this.elementInfos[ix] != null && this.elementInfos[ix].getKey().equals( key ) )
 				posIx = ix;
+			ix = nextCircular(ix);
 		}
 		if ( posIx < 0 )
 			return;
