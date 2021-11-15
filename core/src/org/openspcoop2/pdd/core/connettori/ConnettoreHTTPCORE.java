@@ -99,6 +99,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 	
 	
 	private static boolean USE_POOL = true;
+	private static boolean gestioneRedirectTramiteLibrerieApache = false; // non sembra funzionare 
 	
 	private HttpEntity httpEntityResponse = null;
 	private HttpClient httpClient = null;
@@ -400,7 +401,23 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			
 			
 			// Gestione automatica del redirect
-			//this.httpConn.setInstanceFollowRedirects(true); 
+			if(this.followRedirects) {
+				if(gestioneRedirectTramiteLibrerieApache && !this.isRest) {
+					requestConfigBuilder.setRedirectsEnabled(true);
+					requestConfigBuilder.setRelativeRedirectsAllowed(true);
+					requestConfigBuilder.setCircularRedirectsAllowed(true);
+					if(this.maxNumberRedirects>0) {
+						requestConfigBuilder.setMaxRedirects(this.maxNumberRedirects);
+					}
+				}
+				else {
+					requestConfigBuilder.setRedirectsEnabled(false);
+				}
+			}
+			else {
+				requestConfigBuilder.setRedirectsEnabled(false);
+			}
+			
 			
 			
 				
@@ -531,8 +548,12 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			// Preparazione messaggio da spedire
 			// Spedizione byte
 			if(httpBody.isDoOutput()){
+				boolean consumeRequestMessage = true;
+				if(this.followRedirects && !gestioneRedirectTramiteLibrerieApache){
+					consumeRequestMessage = false;
+				}
 				if(this.debug)
-					this.logger.debug("Spedizione byte...");
+					this.logger.debug("Spedizione byte (consume-request-message:"+consumeRequestMessage+")...");
 				boolean hasContentRestBuilded = false;
 				boolean hasContentRest = false;
 				OpenSPCoop2RestMessage<?> restMessage = null;
@@ -541,7 +562,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 					hasContentRest = restMessage.hasContent();
 					hasContentRestBuilded = restMessage.isContentBuilded();
 				}
-				if(this.isDumpBinarioRichiesta() || this.isSoap || hasContentRestBuilded) {
+				if(this.isDumpBinarioRichiesta() || this.isSoap || hasContentRestBuilded || !consumeRequestMessage) {
 					DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
 							TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
 					try {
@@ -550,7 +571,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 								this.logger.debug("Sbustamento...");
 							TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,bout);
 						}else{
-							this.requestMsg.writeTo(bout, true);
+							this.requestMsg.writeTo(bout, consumeRequestMessage);
 						}
 						bout.flush();
 						bout.close();
@@ -687,7 +708,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			this.codice = httpResponse.getStatusLine().getStatusCode();
 			this.resultHTTPMessage = httpResponse.getStatusLine().getReasonPhrase();
 			
-			if(this.codice<300)
+			if(this.codice<300) {
 				if(this.isSoap && this.acceptOnlyReturnCode_202_200){
 					if(this.codice!=200 && this.codice!=202){
 						throw new Exception("Return code ["+this.codice+"] non consentito dal WS-I Basic Profile (http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html#HTTP_Success_Status_Codes)");
@@ -696,8 +717,83 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 				if(httpBody.isDoInput()){
 					this.isResponse = this.httpEntityResponse.getContent();
 				}
-			else{
-				this.isResponse = this.httpEntityResponse.getContent();
+			}else{
+				if(this.codice<400){
+					String redirectLocation = TransportUtils.getObjectAsString(mapHeaderHttpResponse, HttpConstants.REDIRECT_LOCATION);
+					
+					// 3XX
+					if(this.followRedirects && !gestioneRedirectTramiteLibrerieApache){
+								
+						if(redirectLocation==null){
+							throw new Exception("Non è stato rilevato l'header HTTP ["+HttpConstants.REDIRECT_LOCATION+"] necessario alla gestione del Redirect (code:"+this.codice+")"); 
+						}
+						
+						TransportUtils.removeObject(request.getConnectorProperties(), CostantiConnettori.CONNETTORE_LOCATION);
+						TransportUtils.removeObject(request.getConnectorProperties(), CostantiConnettori._CONNETTORE_HTTP_REDIRECT_NUMBER);
+						TransportUtils.removeObject(request.getConnectorProperties(), CostantiConnettori._CONNETTORE_HTTP_REDIRECT_ROUTE);
+						request.getConnectorProperties().put(CostantiConnettori.CONNETTORE_LOCATION, redirectLocation);
+						request.getConnectorProperties().put(CostantiConnettori._CONNETTORE_HTTP_REDIRECT_NUMBER, (this.numberRedirect+1)+"" );
+						if(this.routeRedirect!=null){
+							request.getConnectorProperties().put(CostantiConnettori._CONNETTORE_HTTP_REDIRECT_ROUTE, this.routeRedirect+" -> "+redirectLocation );
+						}else{
+							request.getConnectorProperties().put(CostantiConnettori._CONNETTORE_HTTP_REDIRECT_ROUTE, redirectLocation );
+						}
+						
+						this.logger.warn("(hope:"+(this.numberRedirect+1)+") Redirect verso ["+redirectLocation+"] ...");
+						
+						if(this.numberRedirect==this.maxNumberRedirects){
+							throw new Exception("Gestione redirect (code:"+this.codice+" "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") non consentita ulteriormente, sono già stati gestiti "+this.maxNumberRedirects+" redirects: "+this.routeRedirect);
+						}
+						
+						boolean acceptOnlyReturnCode_307 = false;
+						if(this.isSoap) {
+							if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
+								acceptOnlyReturnCode_307 = this.openspcoopProperties.isAcceptOnlyReturnCode_307_consegnaContenutiApplicativi();
+							}
+							else{
+								// InoltroBuste e InoltroRisposte
+								acceptOnlyReturnCode_307 = this.openspcoopProperties.isAcceptOnlyReturnCode_307_inoltroBuste();
+							}
+						}
+						if(acceptOnlyReturnCode_307){
+							if(this.codice!=307){
+								throw new Exception("Return code ["+this.codice+"] (redirect "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") non consentito dal WS-I Basic Profile (http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html#HTTP_Redirect_Status_Codes)");
+							}
+						}
+						// Annullo precedente immagine
+						this.clearRequestHeader();
+						if(this.propertiesTrasportoRisposta!=null) {
+							this.propertiesTrasportoRisposta.clear();
+						}
+						this.contentLength = -1;
+						try {
+							return this.send(request); // caching ricorsivo non serve
+						}finally {
+							/*System.out.println("CHECK ["+redirectLocation+"]");
+							if(this.responseMsg!=null) {
+								System.out.println("MSG ["+this.responseMsg.getContentType()+"]");
+								this.responseMsg.writeTo(System.out, false);
+							}*/
+						}
+						
+					}else{
+						if(this.isSoap) {
+							throw new Exception("Gestione redirect (code:"+this.codice+" "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") non attiva");
+						}
+						else {
+							this.logger.debug("Gestione redirect (code:"+this.codice+" "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") non attiva");
+							
+							if(this.location!=null && redirectLocation!=null){
+								this.location = this.location+" [redirect-location: "+redirectLocation+"]";
+					    	}
+							
+							this.isResponse = this.httpEntityResponse.getContent();
+						}
+					}	
+				}
+				else {
+					this.isResponse = this.httpEntityResponse.getContent();
+				}
 			}
 			
 			

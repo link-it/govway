@@ -610,8 +610,21 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 								throw new Exception("Return code ["+this.codice+"] (redirect "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") non consentito dal WS-I Basic Profile (http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html#HTTP_Redirect_Status_Codes)");
 							}
 						}
-						
-						return this.send(request); // caching ricorsivo non serve
+						// Annullo precedente immagine
+						this.clearRequestHeader();
+						if(this.propertiesTrasportoRisposta!=null) {
+							this.propertiesTrasportoRisposta.clear();
+						}
+						this.contentLength = -1;
+						try {
+							return this.send(request); // caching ricorsivo non serve
+						}finally {
+							/*System.out.println("CHECK ["+redirectLocation+"]");
+							if(this.responseMsg!=null) {
+								System.out.println("MSG ["+this.responseMsg.getContentType()+"]");
+								this.responseMsg.writeTo(System.out, false);
+							}*/
+						}
 						
 					}else{
 						if(this.isSoap) {

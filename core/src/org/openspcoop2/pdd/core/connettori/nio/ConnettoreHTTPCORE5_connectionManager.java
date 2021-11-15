@@ -291,7 +291,7 @@ public class ConnettoreHTTPCORE5_connectionManager {
 			// Redirect
 			//requestConfigBuilder.setRedirectsEnabled(false);
 			requestConfigBuilder.setRedirectsEnabled(connectionConfig.isFollowRedirect());
-			requestConfigBuilder.setCircularRedirectsAllowed(false); // da file properties
+			requestConfigBuilder.setCircularRedirectsAllowed(true); // da file properties
 			requestConfigBuilder.setMaxRedirects(connectionConfig.getMaxNumberRedirects());
 			
 			RequestConfig requestConfig = requestConfigBuilder.build();
