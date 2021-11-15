@@ -79,14 +79,15 @@ public class SwaggerOpenApiValidator {
         ListProcessingReport lp = new ListProcessingReport();
         lp.mergeWith(report);
 
-        String result = "";
+        StringBuilder result = new StringBuilder("");
         java.util.Iterator<ProcessingMessage> it = lp.iterator();
         while (it.hasNext()) {
             ProcessingMessage pm = it.next();
-            result += pm.toString() + "\n";// TODO String builder
+            result.append(pm.toString());
+            result.append("\n");
         }		
 
-        return result.length() == 0 ? Optional.empty() : Optional.of(result);
+        return result.length() == 0 ? Optional.empty() : Optional.of(result.toString());
 	}
 	
 	

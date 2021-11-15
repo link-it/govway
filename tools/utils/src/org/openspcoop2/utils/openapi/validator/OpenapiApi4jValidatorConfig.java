@@ -44,11 +44,16 @@ public class OpenapiApi4jValidatorConfig {
 	private boolean validateResponseBody = true;
 	
 	// TODO PER ANDREA: CONFIGURAZIONI AGGIUNTIVE SWAGGER VALIDATOR
-	private boolean isValidateUnexpectedQueryParam = false;
+	private boolean validateUnexpectedQueryParam = false;
 		
 	// Dice se lasciare il transformer che aggiunge additionalProperties=false negli schemi (true)
 	// o di disattivarlo (false)
-	private boolean isInjectingAdditionalProperties = false; 
+	private boolean injectingAdditionalProperties = false;
+	
+	// Dice se trattare il subtype '*' come json e quindi validare lo schema del body passato
+	private boolean validateWildcardSubtypeAsJson = true;
+	
+	// FINE CONFIGURAZIONI AGGIUNTIVE PER SWAGGER VALIDATOR
 	
 	public OpenAPILibrary getOpenApiLibrary() {
 		return this.openApiLibrary;
@@ -123,19 +128,27 @@ public class OpenapiApi4jValidatorConfig {
 	}
 
 	public boolean isValidateUnexpectedQueryParam() {
-		return this.isValidateUnexpectedQueryParam;
+		return this.validateUnexpectedQueryParam;
 	}
 
 	public void setValidateUnexpectedQueryParam(boolean isValidateUnexpectedQueryParam) {
-		this.isValidateUnexpectedQueryParam = isValidateUnexpectedQueryParam;
+		this.validateUnexpectedQueryParam = isValidateUnexpectedQueryParam;
 	}
 
 	public boolean isInjectingAdditionalProperties() {
-		return this.isInjectingAdditionalProperties;
+		return this.injectingAdditionalProperties;
 	}
 
 	public void setInjectingAdditionalProperties(boolean isInjectingAdditionalProperties) {
-		this.isInjectingAdditionalProperties = isInjectingAdditionalProperties;
+		this.injectingAdditionalProperties = isInjectingAdditionalProperties;
+	}
+
+	public boolean isValidateWildcardSubtypeAsJson() {
+		return this.validateWildcardSubtypeAsJson;
+	}
+
+	public void setValidateWildcardSubtypeAsJson(boolean validateWildcardSubtypeAsJson) {
+		this.validateWildcardSubtypeAsJson = validateWildcardSubtypeAsJson;
 	}
 	
 }

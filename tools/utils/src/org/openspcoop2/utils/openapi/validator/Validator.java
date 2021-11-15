@@ -368,7 +368,8 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			            OpenAPIV3Parser v3Parser = new OpenAPIV3Parser();
 						SwaggerParseResult result = v3Parser.parseJsonNode(null, schemaNodeRoot);
 					
-						OpenAPIResolver v3Resolver = new OpenAPIResolver(result.getOpenAPI(), new ArrayList<>(), null);
+						// TODO: Così il merge funziona liscio! Ma abbiamo solo una parentDirectory da cui leggere i files... Parla con andrea
+						OpenAPIResolver v3Resolver = new OpenAPIResolver(result.getOpenAPI(), new ArrayList<>(), null); //"/home/froggo/sorgenti/link_it/GOVWAY/GovWay/bin/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml"); // Il terzo argomento è la parentFileLocation
 						result.setOpenAPI(v3Resolver.resolve());
 
 						// Passo false per non risolvere i combinators, poichè quando vengono risolti non c'è modo
@@ -394,7 +395,6 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 										);								
 							}					    
 							
-							// TODO: E questi? Anche lo swagger validator controlla qualche errore?							
 							if (result.getMessages().size() != 0) {
 								throw new ProcessingException(
 										"OpenAPI3 not valid: " + String.join("\n", result.getMessages())
@@ -402,9 +402,34 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 							}
 						}
 						
-						if (this.openApi4jConfig.isMergeAPISpec()) {
-							// TODO: Fare qualcosa con le parse Options?
-						}
+						// Merging: l'ExternalRefProcessor pesca i ref dalla cache così:
+						
+				        // final Schema schema = cache.loadRef($ref, refFormat, Schema.class);
+						// La cache ha una map che si chiama externalFileCache, SOLUZIONI:
+						// 		1 - popolare externalFileCache con il toString dei JsonNode
+						// 		2 - (MEGLIO) popolare la resolutionCache con lo Schema del riferiemnto esterno
+						//				2.1 Devo convertire la map di jsonNode in Schema di swagger-models
+						//	
+						// In ogni caso dovrei modificare la libreria swagger-parsers-v3 e rendere protected
+						// la resolverCache e aggiungere un costruttore. Dovrei modificare anche la resolverCache, mmhh..
+						
+						// Forse sarebbe meglio fare leggere i files passando il parentPath e pace.
+						// Fare in modo poi che openspcoop non carichi e non trasformi neanche in json node la map di riferimenti esterni.
+					
+						
+						// , poi
+						// caricarli dentro la cache?
+						// Li carico con RefFormat.URL, perchè quelli relativi e interni già ci sono nel file.
+						// Ma i riferimenti esterni sono su files?
+						
+						// E i riferimenti fra gli schemi sono tutti  di path relativi? O ppure i files sono su db?
+						// Perchè potrei passare all'OpenAPI Resolver la parent location e dello yaml e poi 
+						// lui carica i riferimenti relativi. E dove li prendo i nomi dei file?
+						
+						
+						
+						
+
 					
 						
 						// api.getSchemas().get(0).
@@ -1373,7 +1398,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 	private void validateWithSwaggerRequestValidator(HttpBaseEntity<?> httpEntity, ApiOperation gwOperation) throws ProcessingException, ValidatorException {
 		
 	    // TODO: Mancano i cookies!		  
-		// TODO: Invece di fare la readOperationsMap, meglio uno switch che fa la getGET, getPOST ecc.. giusta.		
+		// IMPROVEMENT: Invece di fare la readOperationsMap, meglio uno switch che fa la getGET, getPOST ecc.. giusta.		
 		
 		// Dentro l'openApiSwagger ho i path col dollaro, nell'oggetto openapi di openspcoop invece
 		// ho il path puliti 		
@@ -1827,7 +1852,6 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 	// ================= SWAGGER REQUEST VALIDATOR GLUE CODE =====================
 
 	private static Method fromHttpMethod(HttpRequestMethod method) {
-		// TODO: Che faccio sollevo eccezione se non c'è?
 		return Method.valueOf(method.toString());
 	}
 	
@@ -1839,7 +1863,6 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		
 		response.getHeaders().forEach(builder::withHeader);
 
-		// TODO: Forse wrappare tutto sotto un try-catch
 		Object content = response.getContent();
 		if(content instanceof String) {
 			builder.withBody( (String) content);
@@ -1883,7 +1906,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 	    request.getParameters().forEach(builder::withQueryParam);
 	                        
 		if(content instanceof String) {
-			builder.withBody(((String) content));	// TODO: Rimetti poi solo string
+			builder.withBody((String) content);
 		}
 		else if(content instanceof byte[]) {
 			builder.withBody((byte[]) content);
@@ -1933,7 +1956,6 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
     }
 
     /**
-     * TODO: Riprova l'esecuzione dei test con questo attivato.
      * Removes the Base64 pattern on the {@link OpenAPI} model.
      * <p>
      * If that pattern would stay on the model all fields of type string / byte would be validated twice. Once
@@ -1944,7 +1966,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
      *
      * @param openAPI the {@link OpenAPI} to correct
      */
-    protected static void removeRegexPatternOnStringsOfFormatByte(final OpenAPI openAPI) {
+    private static void removeRegexPatternOnStringsOfFormatByte(final OpenAPI openAPI) {
         if (openAPI.getPaths() != null) {
             openAPI.getPaths().values().forEach(pathItem -> {
                 pathItem.readOperations().forEach(operation -> {

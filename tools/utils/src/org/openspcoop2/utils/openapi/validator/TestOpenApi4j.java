@@ -21,6 +21,7 @@
 
 package org.openspcoop2.utils.openapi.validator;
 import java.io.File;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,13 +30,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.rest.ApiFactory;
 import org.openspcoop2.utils.rest.ApiFormats;
 import org.openspcoop2.utils.rest.ApiReaderConfig;
 import org.openspcoop2.utils.rest.IApiReader;
 import org.openspcoop2.utils.rest.IApiValidator;
+import org.openspcoop2.utils.rest.ProcessingException;
 import org.openspcoop2.utils.rest.ValidatorException;
 import org.openspcoop2.utils.rest.api.Api;
 import org.openspcoop2.utils.rest.api.ApiSchema;
@@ -70,14 +74,27 @@ public class TestOpenApi4j {
 		if(args!=null && args.length>0) {
 			openAPILibrary = OpenAPILibrary.valueOf(args[0]);
 		}
-		openAPILibrary = OpenAPILibrary.swagger_request_validator;
+		
+		//openAPILibrary = OpenAPILibrary.swagger_request_validator;
 		
 		// TODO: Renderlo parametrico anche su mergeSpec, che di default è a false.
-		boolean mergeSpec = true;
+		// per adesso non supportiamo schemi non mergiati con la swagger_request_validator
+		boolean mergeSpec = false;
+		
+		
+		// *** TEST per validazione json con wildcard nel subtype *** //
+		testSubMediatypeWildcardJsonValidation(openAPILibrary, mergeSpec, true);
+		testSubMediatypeWildcardJsonValidation(openAPILibrary, mergeSpec, false);
+			
+		if (openAPILibrary == OpenAPILibrary.swagger_request_validator)  {
+			testBase64Validation(openAPILibrary, mergeSpec);
+		} else {
+			System.out.println("Skippo Test validazione file upload in base64 per libreria openapi4j");
+		}
 		
 		// *** TEST per il Parser e validazione dello schema *** //
 		
-		{
+		if( openAPILibrary != OpenAPILibrary.swagger_request_validator ){
 		
 			System.out.println("Test Schema#1 (openapi.yaml) [Elementi aggiuntivi come 'allowEmptyValue'] ...");
 			
@@ -546,9 +563,9 @@ public class TestOpenApi4j {
 		valori_test8.add("234567A");esiti_test8.add(false);
 		valori_test8.add("234-67");esiti_test8.add(false);
 		valori_test8.add("234.67");esiti_test8.add(false);
-//		valori_test8.add("234867\\n");esiti_test8.add(false); TODO
-//		valori_test8.add("234867\\r\\n");esiti_test8.add(false);
-//		valori_test8.add("234867\\t");esiti_test8.add(false);
+		valori_test8.add("234867\\n");esiti_test8.add(false);
+		valori_test8.add("234867\\r\\n");esiti_test8.add(false);
+		valori_test8.add("234867\\t");esiti_test8.add(false);
 		for (int i = 0; i < valori_test8.size(); i++) {
 			String valore = valori_test8.get(i);
 			boolean esito = esiti_test8.get(i);
@@ -597,7 +614,7 @@ public class TestOpenApi4j {
 				}
 				String msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ?
 						"body.allegati.0.codiceOpzionaleNumerico: '"+valore+"' does not respect pattern '^\\d{6}$'." :
-						"- [ERROR][] [Path '/allegati/0/codiceOpzionaleNumerico'] ECMA 262 regex \"^\\d{6}$\" does not match input string \""+valore+"";				
+						"- [ERROR][] [Path '/allegati/0/codiceOpzionaleNumerico'] ECMA 262 regex \"^\\d{6}$\" does not match input string \""+StringEscapeUtils.unescapeJava(valore)+"";				
 				if(!e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t (Valore:"+valore+") ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'" +"\nTrovato invece: '"+e.getMessage()+"'");
@@ -626,9 +643,9 @@ public class TestOpenApi4j {
 		valori_test9.add("3GRLLI04L54D969B");esiti_test9.add(false); // CF errato
 		valori_test9.add("GRLLI04L54D969B");esiti_test9.add(false); // CF errato
 		valori_test9.add("NGRLLI04L54D969BA");esiti_test9.add(false); // CF errato
-		//valori_test9.add("NGRLLI04L54D969B\\r\\n");esiti_test9.add(false); // CF errato
-		//valori_test9.add("NGRLLI04L54D969B\\n");esiti_test9.add(false); // CF errato
-		//valori_test9.add("NGRLLI04L54D969B\\t");esiti_test9.add(false); // CF errato
+		valori_test9.add("NGRLLI04L54D969B\\r\\n");esiti_test9.add(false); // CF errato
+		valori_test9.add("NGRLLI04L54D969B\\n");esiti_test9.add(false); // CF errato
+		valori_test9.add("NGRLLI04L54D969B\\t");esiti_test9.add(false); // CF errato
 		valori_test9.add("NGRLLIA4L54D969B");esiti_test9.add(false); // CF errato
 		valori_test9.add("AABC323");esiti_test9.add(false); // Codice errato
 		valori_test9.add("ABC32");esiti_test9.add(false); // Codice errato
@@ -683,7 +700,7 @@ public class TestOpenApi4j {
 				}
 				String msgErroreAtteso = openAPILibrary == OpenAPILibrary.openapi4j ?
 						"body.allegati.0.codiceOpzionaleCodiceFiscaleOrCodiceEsterno: '"+valore+"' does not respect pattern '^[a-zA-Z]{6}[0-9]{2}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}$|^[A-Z0-9]{3}\\d{3}$'." :
-						"- [ERROR][] [Path '/allegati/0/codiceOpzionaleCodiceFiscaleOrCodiceEsterno'] ECMA 262 regex \"^[a-zA-Z]{6}[0-9]{2}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}$|^[A-Z0-9]{3}\\d{3}$\" does not match input string \""+valore+"\"";
+						"- [ERROR][] [Path '/allegati/0/codiceOpzionaleCodiceFiscaleOrCodiceEsterno'] ECMA 262 regex \"^[a-zA-Z]{6}[0-9]{2}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}$|^[A-Z0-9]{3}\\d{3}$\" does not match input string \""+StringEscapeUtils.unescapeJava(valore);
 				if(!e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t (Valore:"+valore+") ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
@@ -1125,7 +1142,7 @@ public class TestOpenApi4j {
 						String atteso = "Body is required but none provided. (code: 200)";
 						if (openAPILibrary == OpenAPILibrary.swagger_request_validator) {
 							if (httpEntity12.getContentType() == null) {
-								atteso = "[ERROR] Required Content-Type is missing";
+								atteso = "Required Content-Type is missing";
 							} else {
 								atteso = "A request body is required but none found.";
 							}
@@ -1209,7 +1226,7 @@ public class TestOpenApi4j {
 					if(openapi4j) {
 						String atteso = openAPILibrary == OpenAPILibrary.openapi4j ?
 								"Content type 'null' is not allowed for body content. (code: 203)" :
-								"[ERROR] Required Content-Type is missing";
+								"Required Content-Type is missing";
 									
 						if(!msg.contains(atteso)) {
 							String checkErrore = "Validazione "+tipoTest+" senza contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
@@ -2366,7 +2383,7 @@ public class TestOpenApi4j {
 						String msgErroreAttesoSwagger2 = "[ERROR][RESPONSE][] Object has missing required properties ([\"esito\"])"; 
 						
 						if (ct==null) {
-							msgErroreAttesoSwagger="[ERROR] Required Content-Type is missing";
+							msgErroreAttesoSwagger="Required Content-Type is missing";
 						}
 
 						if(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807.equals(ct) && code.intValue() != 200) {
@@ -2776,10 +2793,6 @@ public class TestOpenApi4j {
 						apiValidator.validate(httpEntityResponse_test18);	
 						System.out.println("\t "+tipoTest+" validate response ok");
 						
-						// TODO: Validazione swagger-validator qui da errore perchè nella risposta ho 
-						// '*/*' come content type e schema: type: object, ma il validatore swagger non 
-						// parte se il content-type non è json, che fare? Faccio fare io la validazione 
-						// a mano.
 						if(openapi4j && (ct.contains("Uncorrect") || !ct.contains("json"))) {
 							throw new Exception("Attesa eccezione");
 						}
@@ -3402,6 +3415,203 @@ public class TestOpenApi4j {
 		}
 		
 		System.out.println("Test #21 Discriminator completato\n\n");
+	}
+
+	private static void testBase64Validation(OpenAPILibrary openAPILibrary, boolean mergeSpec) throws Exception {
+		
+		System.out.println("TEST #S-2 per validazione file in base64");
+		
+		URL url = TestOpenApi4j.class.getResource("/org/openspcoop2/utils/openapi/allegati.yaml");
+		ApiSchema apiSchemaYaml = new ApiSchema("teamdigitale-openapi_definitions.yaml", 
+				Utilities.getAsByteArray(TestOpenApi4j.class.getResourceAsStream("/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml")), ApiSchemaType.YAML);
+					
+		IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+		ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
+		configOpenApi4j.setProcessInclude(false);
+		
+		apiReaderOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), new File(url.toURI()), configOpenApi4j, apiSchemaYaml);
+		Api apiOpenApi4j = apiReaderOpenApi4j.read();
+								
+		IApiValidator validator = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		OpenapiApiValidatorConfig config = new OpenapiApiValidatorConfig();
+		config.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
+		config.getOpenApi4JConfig().setOpenApiLibrary(openAPILibrary);
+		config.getOpenApi4JConfig().setValidateAPISpec(true);
+		config.getOpenApi4JConfig().setMergeAPISpec(mergeSpec);
+		
+		validator.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), apiOpenApi4j, config);
+		
+		System.out.println("Valido richiesta con contenuto corretto..");
+		
+		TextHttpRequestEntity validRequest = new TextHttpRequestEntity();
+		validRequest.setUrl("documenti/testbase64/"+UUID.randomUUID().toString());	
+		validRequest.setMethod(HttpRequestMethod.POST);
+		validRequest.setContent("Q2lhbyBiYmVsbG8h");
+		Map<String, List<String>> parametersTrasporto = new HashMap<>();
+		TransportUtils.addHeader(parametersTrasporto,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
+		validRequest.setHeaders(parametersTrasporto);
+		validator.validate(validRequest);
+		
+		System.out.println("Nessun errore sollevato, ok!");
+		
+		System.out.println("Valido richiesta con contenuto non corretto..");
+		{
+			TextHttpRequestEntity invalidRequest = new TextHttpRequestEntity();
+			invalidRequest.setUrl("documenti/testbase64/"+UUID.randomUUID().toString());	
+			invalidRequest.setMethod(HttpRequestMethod.POST);
+			invalidRequest.setContent("{ asper");
+			parametersTrasporto = new HashMap<>();
+			TransportUtils.addHeader(parametersTrasporto,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
+			invalidRequest.setHeaders(parametersTrasporto);
+	
+			String erroreAttesoRichiesta = "[ERROR] [REQUEST] err.format.base64.badLength, should be multiple of 4: 7"; 
+			try {				
+				validator.validate(invalidRequest);
+				throw new Exception("Errore atteso '"+erroreAttesoRichiesta+"' non rilevato");			
+			} catch (ValidatorException e) {
+				System.out.println(e.getMessage());
+				if (!e.getMessage().contains(erroreAttesoRichiesta)) {
+					throw new Exception("Errore atteso '"+erroreAttesoRichiesta+"' non rilevato");
+				}
+			}
+			System.out.println("Errore rilevato, ok!");
+		}
+		
+		System.out.println("Valido risposta con contenuto corretto..");
+		{
+			TextHttpResponseEntity validResponse = new TextHttpResponseEntity();
+			validResponse.setUrl("documenti/testbase64/"+UUID.randomUUID().toString());	
+			validResponse.setMethod(HttpRequestMethod.POST);
+			validResponse.setStatus(200);
+			validResponse.setContent("Q2lhbyBiYmVsbG8h");
+			parametersTrasporto = new HashMap<>();
+			TransportUtils.addHeader(parametersTrasporto,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
+			validResponse.setHeaders(parametersTrasporto);
+			validator.validate(validResponse);
+		}
+		
+		System.out.println("Nessun errore sollevato, ok!");
+		
+		System.out.println("Valido risposta con contenuto non corretto..");
+		
+		{
+			TextHttpResponseEntity invalidResponse = new TextHttpResponseEntity();
+			invalidResponse.setUrl("documenti/testbase64/"+UUID.randomUUID().toString());	
+			invalidResponse.setMethod(HttpRequestMethod.POST);
+			invalidResponse.setStatus(200);
+			invalidResponse.setContent("{ asper");
+			parametersTrasporto = new HashMap<>();
+			TransportUtils.addHeader(parametersTrasporto,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
+			invalidResponse.setHeaders(parametersTrasporto);
+	
+			String erroreAttesoRisposta = "[ERROR] [RESPONSE] err.format.base64.badLength, should be multiple of 4: 7"; 	// TODO: Aggiungi contesto nel messaggio di errore? 
+			try {				
+				validator.validate(invalidResponse);
+				throw new Exception("Errore atteso '"+erroreAttesoRisposta+"' non rilevato");			
+			} catch (ValidatorException e) {
+				System.out.println(e.getMessage());
+				if (!e.getMessage().contains(erroreAttesoRisposta)) {
+					throw new Exception("Errore atteso '"+erroreAttesoRisposta+"' non rilevato");
+				}
+			}
+		}
+		System.out.println("Errore rilevato, ok!");
+				
+		System.out.println("TEST #S-2 per validazione file in base64 completato!");
+	}
+
+	
+	
+	private static void testSubMediatypeWildcardJsonValidation(OpenAPILibrary openAPILibrary, boolean mergeSpec, boolean validateWildcard)
+			throws UtilsException, ProcessingException, URISyntaxException, Exception {
+		System.out.println("TEST #S-1 per validazione json con wildcard ("+validateWildcard+") nel subtype");
+		
+		URL url = TestOpenApi4j.class.getResource("/org/openspcoop2/utils/openapi/allegati.yaml");
+		
+		ApiSchema apiSchemaYaml = new ApiSchema("teamdigitale-openapi_definitions.yaml", 
+				Utilities.getAsByteArray(TestOpenApi4j.class.getResourceAsStream("/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml")), ApiSchemaType.YAML);
+					
+		IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+		ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
+		configOpenApi4j.setProcessInclude(false);
+		apiReaderOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), new File(url.toURI()), configOpenApi4j, apiSchemaYaml);
+		Api apiOpenApi4j = apiReaderOpenApi4j.read();
+								
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
+		configO.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
+		configO.getOpenApi4JConfig().setOpenApiLibrary(openAPILibrary);
+		configO.getOpenApi4JConfig().setValidateAPISpec(true);
+		configO.getOpenApi4JConfig().setMergeAPISpec(mergeSpec);
+		configO.getOpenApi4JConfig().setValidateWildcardSubtypeAsJson(validateWildcard);
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), apiOpenApi4j, configO);
+
+		System.out.println("Test Risposta...");
+		
+		{
+			TextHttpResponseEntity httpResponseTestS1 = new TextHttpResponseEntity();
+			
+			httpResponseTestS1.setStatus(200);		
+			httpResponseTestS1.setMethod(HttpRequestMethod.GET);
+			httpResponseTestS1.setUrl("documenti/qualsiasi/"+UUID.randomUUID().toString());	
+			Map<String, List<String>> headersS1 = new HashMap<>();
+			TransportUtils.setHeader(headersS1,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_PLAIN);
+			httpResponseTestS1.setHeaders(headersS1);
+			httpResponseTestS1.setContent("{ a }");
+		
+			String erroreAttesoRisposta = openAPILibrary == OpenAPILibrary.openapi4j ?
+					"body: Type expected 'object', found 'string'. (code: 1027)" : 
+					"[ERROR] Unable to parse JSON - Unexpected character ('a' (code 97)): was expecting double-quote to start field name";
+			try {				
+				apiValidatorOpenApi4j.validate(httpResponseTestS1);
+				
+				if (validateWildcard) {
+					throw new Exception("Errore atteso '"+erroreAttesoRisposta+"' non rilevato");
+				}
+				
+			} catch (ValidatorException e) {
+				System.out.println(e.getMessage());
+				if (!e.getMessage().contains(erroreAttesoRisposta)) {
+					throw new Exception("Errore atteso '"+erroreAttesoRisposta+"' non rilevato");
+				}
+			}
+		}
+			
+		System.out.println("Test Risposta Superato!");
+		System.out.println("Test Richiesta...");
+
+		{ 
+			TextHttpRequestEntity requestS1 = new TextHttpRequestEntity();
+			
+			requestS1.setMethod(HttpRequestMethod.POST);
+			requestS1.setUrl("documenti/qualsiasi/"+UUID.randomUUID().toString());	
+			Map<String, List<String>> headersS1 = new HashMap<>();
+			TransportUtils.setHeader(headersS1,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_PLAIN);
+			requestS1.setHeaders(headersS1);
+			requestS1.setContent("{ a }");
+					
+			String erroreAttesoRichiesta = openAPILibrary == OpenAPILibrary.openapi4j ?
+					"body: Type expected 'object', found 'string'. (code: 1027)" : 
+					"[ERROR] Unable to parse JSON - Unexpected character ('a' (code 97)): was expecting double-quote to start field name";
+			try {				
+				apiValidatorOpenApi4j.validate(requestS1);
+				
+				if (validateWildcard) {
+					throw new Exception("Errore atteso '"+erroreAttesoRichiesta+"' non rilevato");
+				}
+				
+			} catch (ValidatorException e) {
+				System.out.println(e.getMessage());
+				if (!e.getMessage().contains(erroreAttesoRichiesta)) {
+					throw new Exception("Errore atteso '"+erroreAttesoRichiesta+"' non rilevato");
+				}
+			}
+		}
+		System.out.println("Test Richiesta Superato!");
+
+		
+		System.out.println("TEST #S-1 per validazione json con wildcard ("+validateWildcard+") nel subtype completato!");
+
 	}
 
 	private static void checkErrorTest20(boolean esito, String tipoTest, Exception e, String tipologia, boolean openapi4j, OpenAPILibrary openAPILibrary) throws Exception {

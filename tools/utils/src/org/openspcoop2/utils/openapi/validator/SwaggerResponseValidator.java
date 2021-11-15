@@ -23,6 +23,7 @@ package org.openspcoop2.utils.openapi.validator;
 import static com.atlassian.oai.validator.util.ContentTypeUtils.findMostSpecificMatch;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,7 +41,6 @@ import com.atlassian.oai.validator.schema.transform.AdditionalPropertiesInjectio
 import com.atlassian.oai.validator.util.ContentTypeUtils;
 
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.media.BinarySchema;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.responses.ApiResponse;
@@ -55,10 +55,13 @@ public class SwaggerResponseValidator {
 	private final SchemaValidator fileSchemaValidator;
 	private final ResponseValidator fileValidator;
 	
+	private final boolean validateWildcardSubtypeAsJson; 
+	
 	public SwaggerResponseValidator(OpenAPI openApi, OpenapiApi4jValidatorConfig config) {
 		
-		var errorLevelResolverBuilder = getLevelResolverBuilder(config);
+		this.validateWildcardSubtypeAsJson = config.isValidateWildcardSubtypeAsJson();
 		
+		var errorLevelResolverBuilder = getLevelResolverBuilder(config);
 		this.normalValidatorMessages = new MessageResolver(errorLevelResolverBuilder.build());
 		this.normalSchemaValidator = new SchemaValidator(openApi, this.normalValidatorMessages);
 		
@@ -106,9 +109,17 @@ public class SwaggerResponseValidator {
 				return ValidationReport.singleton(
 	                    this.normalValidatorMessages.create(
 	                    		"validation.response.contentType.notAllowed",
-	                            "Required Content-Type is missing" 	// TODO: Migliora messaggio, dire se siamo in respons eo in request
+	                            "[RESPONSE] Required Content-Type is missing"
 	                    ));
 			}
+		}
+		
+		if (response.getResponseBody().isPresent() && response.getContentType().isEmpty()) {
+			return ValidationReport.singleton(
+                    this.normalValidatorMessages.create(
+                            "validation.response.contentType.notAllowed",
+                            "[RESPONSE] Empty Content-Type not allowed if body is present"
+                    ));			
 		}
 		
 		// VALIDAZIONE CUSTOM 2
@@ -116,43 +127,39 @@ public class SwaggerResponseValidator {
 		// allora al più valida che il body sia un json e valida tutto il resto della richiesta
 		// Se invece il format è base64 controlla che sia in base64
 		
-		final Optional<String> mostSpecificMatch = findMostSpecificMatch(response, responseSchema.getContent().keySet());
-		
+		final Optional<String> mostSpecificMatch = findMostSpecificMatch(response, responseSchema.getContent().keySet());		
 		if (!mostSpecificMatch.isPresent()) {
 			// Se non matcho il content-type, lascio fare al normal validator, 
 			return this.normalValidator.validateResponse(response, apiOperation);
 		}
 		
-		final MediaType schemaMediaType = responseSchema.getContent().get(mostSpecificMatch.get());
+		final MediaType mediaType = responseSchema.getContent().get(mostSpecificMatch.get());
+        com.google.common.net.MediaType responseMediaType = com.google.common.net.MediaType.parse(mostSpecificMatch.get());
 		final Body responseBody = response.getResponseBody().orElse(null);
+		ValidationReport report = ValidationReport.empty();
 		
-		if (responseBody != null && schemaMediaType.getSchema() instanceof BinarySchema) {
-			BinarySchema schema = (BinarySchema) schemaMediaType.getSchema();
-			ValidationReport report = ValidationReport.empty();
+		// Validazione schema binario	
+		if (SwaggerValidatorUtils.isBinarySchemaFile(mediaType.getSchema()) && responseBody != null) {
+			if (ContentTypeUtils.isJsonContentType(response)) {
+				report = report.merge(validateJsonFormat(responseBody,this.normalValidatorMessages))
+							.merge(this.fileValidator.validateResponse(response, apiOperation));
+			}		
 			
-			if ("string".equals(schema.getType()) && "binary".equals(schema.getFormat())) {
-				if (ContentTypeUtils.isJsonContentType(response)) {
-					report = report.merge(validateJsonFormat(responseBody,this.normalValidatorMessages));															
-				}
-			}
-			else if ("string".equals(schema.getType()) && "base64".equals(schema.getFormat())) {
-				report = report.merge(validateBase64Body(responseBody,this.normalValidatorMessages));
-			}
+		} else if (SwaggerValidatorUtils.isBase64SchemaFile(mediaType.getSchema()) && responseBody != null) {
+			report = report.merge(validateBase64Body(responseBody,this.normalValidatorMessages))
+					.merge(this.fileValidator.validateResponse(response, apiOperation));
 			
-			return report.merge(this.fileValidator.validateResponse(response, apiOperation));
-			
+		} else if (this.validateWildcardSubtypeAsJson && responseMediaType.subtype().equals("*")) {
+        	report = this.normalSchemaValidator
+                    .validate( () -> response.getResponseBody().get().toJsonNode(), mediaType.getSchema(), "response.body")
+                    .merge(this.normalValidator.validateResponse(response, apiOperation));
+        	
 		} else {
-			// Se il content-type è un json o il subtype è *, lo schema del content deve essere validato.
-			// Se però è un json già lo farà il validatore di atlassian, per cui controlliamo solo il caso del subtype
-			
-            com.google.common.net.MediaType responseMediaType = com.google.common.net.MediaType.parse(mostSpecificMatch.get());
-            if (responseMediaType.subtype().equals("*")) {
-            	return this.normalSchemaValidator
-	                    .validate(() -> response.getResponseBody().get().toJsonNode(),schemaMediaType.getSchema(), "response.body");
-            }	
+			report = this.normalValidator.validateResponse(response, apiOperation);
 		}
-
-		return this.normalValidator.validateResponse(response, apiOperation);
+		
+		return report;
+	
 	}
 	
 	public static LevelResolver.Builder getLevelResolverBuilder(OpenapiApi4jValidatorConfig config) {
@@ -163,7 +170,8 @@ public class SwaggerResponseValidator {
 		// un ERROR, quindi dobbiamo disattivarli selettivamente.
 		// Le chiavi da usare per il LevelResolver sono nel progetto swagger-validator 
 		// sotto src/main/resources/messages.properties
-							
+		// TODO: Effettivamente potrei spezzare questa funzione e mettere le cose che riguardano la risposta
+		// solo qui e quelle che riguardano la richiesta solo nello SwaggerRequestValidator
 		if (!config.isValidateUnexpectedQueryParam()) {
 			errorLevelResolver.withLevel("validation.request.parameter.query.unexpected", Level.IGNORE);
 		}				
@@ -210,10 +218,10 @@ public class SwaggerResponseValidator {
 	
 	private static final ValidationReport validateBase64Body(Body body, MessageResolver messages) {
 		try {		
-			var error = SwaggerRequestValidator.validateBase64String(body.toString(null));
+			var error = SwaggerValidatorUtils.validateBase64String(body.toString(StandardCharsets.UTF_8));
 			if (error.isPresent()) {
 				return ValidationReport.singleton(
-						messages.create("validation.response.body.schema", error.get()));
+						messages.create("validation.response.body.schema", "[RESPONSE] "+error.get()));
 			} else {
 				return ValidationReport.empty();
 			}
