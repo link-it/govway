@@ -372,6 +372,9 @@ public class MsgDiagnostico {
 			this.state = this._configurazionePdDReader.getState();
 			this.responseState = this._configurazionePdDReader.getResponseState();
 		}
+		else {
+			this._configurazionePdDReader = ConfigurazionePdDManager.getInstance();
+		}
 	}
 	
 	private Connection getConnectionFromState(){

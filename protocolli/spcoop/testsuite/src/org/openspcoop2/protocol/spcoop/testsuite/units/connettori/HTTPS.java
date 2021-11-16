@@ -2112,14 +2112,21 @@ public class HTTPS extends GestioneViaJmx {
 				msg2 = msg2.replace("_@AZIONE@", "");
 				msg2 = msg2.replace("@PDD@", " credenzialiMittente ( SSL-Subject 'CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it' )");
 				String XML = msg2 + " (subject estratto dal certificato client [CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it] diverso da quello registrato per la porta di dominio PdDSoggetto2 del mittente [CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it])";
-				String DB = msg2 + " (subject estratto dal certificato client [CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it] diverso da quello registrato per la porta di dominio PdDSoggetto2 del mittente [/l=Pisa/st=Italy/ou=test/emailaddress=apoli@link.it/o=openspcoop.org/c=IT/cn=Soggetto2/])";
+				String template = "CREDENZIALIDB";
+				String _DB = msg2 + " (subject estratto dal certificato client [CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it] diverso da quello registrato per la porta di dominio PdDSoggetto2 del mittente ["+template+"])";
+				String DB1 = _DB.replace(template, "/l=Pisa/st=Italy/ou=test/emailaddress=apoli@link.it/o=openspcoop.org/c=IT/cn=Soggetto2/");
+				String DB2 = _DB.replace(template, "/st=Italy/c=IT/ou=test/emailaddress=apoli@link.it/cn=Soggetto2/l=Pisa/o=openspcoop.org/");
 				String XML_inCache = XML.replace(" fallita", " fallita (in cache)");
-				String DB_inCache = DB.replace(" fallita", " fallita (in cache)");
-				Reporter.log("Controllo Messaggio (id:"+id+") msgXML["+XML+"] msgDB["+DB+"]");
+				String DB1_inCache = DB1.replace(" fallita", " fallita (in cache)");
+				String DB2_inCache = DB2.replace(" fallita", " fallita (in cache)");
+								
+				Reporter.log("Controllo Messaggio (id:"+id+") msgXML["+XML+"] msgDB1["+DB1+"] msgDB2["+DB2+"]");
 				boolean esito = dataMsg.isTracedMessaggio(id, XML) || 
-						dataMsg.isTracedMessaggio(id, DB)  ||
+						dataMsg.isTracedMessaggio(id, DB1)  ||
+						dataMsg.isTracedMessaggio(id, DB2)  ||
 						dataMsg.isTracedMessaggio(id, XML_inCache) || 
-						dataMsg.isTracedMessaggio(id, DB_inCache)  ;
+						dataMsg.isTracedMessaggio(id, DB1_inCache) || 
+						dataMsg.isTracedMessaggio(id, DB2_inCache)  ;
 				if(!esito) {
 					Reporter.log("Controllo fallito, recupero diagnostici... ");
 					Vector<String> diag = dataMsg.getMessaggiDiagnostici(id);
