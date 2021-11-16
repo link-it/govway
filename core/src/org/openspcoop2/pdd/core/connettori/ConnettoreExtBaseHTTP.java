@@ -79,6 +79,8 @@ public abstract class ConnettoreExtBaseHTTP extends ConnettoreBaseHTTP {
 	public int getMaxNumberRedirects() {
 		return this.maxNumberRedirects;
 	}
+	protected String redirectLocation = null;
+	protected String originalAbsolutePrefixForRelativeRedirectLocation = null;
 	
 	/** TransferMode */
 	protected TransferLengthModes tlm = null;
@@ -305,7 +307,12 @@ public abstract class ConnettoreExtBaseHTTP extends ConnettoreBaseHTTP {
     	return this.connettoreHttps ? TipiConnettore.HTTPS.toString() : TipiConnettore.HTTP.toString();
     }
     protected void buildLocation() throws ConnettoreException {
-    	this.location = TransportUtils.getObjectAsString(this.properties,CostantiConnettori.CONNETTORE_LOCATION);	
+    	if(this.redirectLocation!=null) {
+    		this.location = this.redirectLocation;
+    	}
+    	else {
+    		this.location = TransportUtils.getObjectAsString(this.properties,CostantiConnettori.CONNETTORE_LOCATION);
+    	}
     	NameValue nv = this.getTokenQueryParameter();
     	if(nv!=null) {
     		if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null) {
@@ -316,10 +323,12 @@ public abstract class ConnettoreExtBaseHTTP extends ConnettoreBaseHTTP {
     		}
     		TransportUtils.setParameter(this.propertiesUrlBased, nv.getName(), nv.getValue());
     	}
-		this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.logger!=null ? this.logger.getLogger() : null, this.requestMsg, 
-				this._getTipoConnettore(), 
-				this.propertiesUrlBased, this.location,
-				this.getProtocolFactory(), this.idModulo);
+    	if(this.redirectLocation==null) {
+			this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.logger!=null ? this.logger.getLogger() : null, this.requestMsg, 
+					this._getTipoConnettore(), 
+					this.propertiesUrlBased, this.location,
+					this.getProtocolFactory(), this.idModulo);
+    	}
 		
 		this.updateLocation_forwardProxy(this.location);
     }
