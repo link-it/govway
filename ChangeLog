@@ -1,3 +1,8 @@
+2021-11-16  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Corretti problemi presenti sulla funzionalità 'follow-redirect' che non consentivano di ottenere una risposta applicativa una volta seguito il flusso di redirect.
+
 2021-11-09  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

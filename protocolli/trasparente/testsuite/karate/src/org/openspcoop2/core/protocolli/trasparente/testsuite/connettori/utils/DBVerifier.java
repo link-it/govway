@@ -25,6 +25,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -204,6 +205,92 @@ public class DBVerifier {
 		assertNotNull("IdTransazione letto da idApplicativo: "+idApplicativo, idTransazione);
 
 		return idTransazione;
+
+	}
+	
+	
+	
+	
+	public static List<String> getIdsTransazioneByIdApplicativoRichiesta(String idApplicativo) throws Exception  {
+		return getIdsTransazioneByIdApplicativoRichiesta(idApplicativo, null);
+	}
+	public static List<String> getIdsTransazioneByIdApplicativoRichiesta(String idApplicativo, Date now) throws Exception  {
+		
+		// La scrittura su database avviene dopo aver risposto al client
+		
+		Utilities.sleep(100); 
+		try {
+			return DBVerifier._getIdsTransazione(idApplicativo, true, now);
+		}catch(Throwable t) {
+			Utilities.sleep(500);
+			try {
+				return DBVerifier._getIdsTransazione(idApplicativo, true, now);
+			}catch(Throwable t2) {
+				Utilities.sleep(2000);
+				try {
+					return DBVerifier._getIdsTransazione(idApplicativo, true, now);
+				}catch(Throwable t3) {
+					Utilities.sleep(5000);
+					return DBVerifier._getIdsTransazione(idApplicativo, true, now);
+				}
+			}
+		}
+	}
+	public static List<String> getIdsTransazioneByIdApplicativoRisposta(String idApplicativo) throws Exception  {
+		return getIdsTransazioneByIdApplicativoRisposta(idApplicativo, null);
+	}
+	public static List<String> getIdsTransazioneByIdApplicativoRisposta(String idApplicativo, Date now) throws Exception  {
+		
+		// La scrittura su database avviene dopo aver risposto al client
+		
+		Utilities.sleep(100); 
+		try {
+			return DBVerifier._getIdsTransazione(idApplicativo, false, now);
+		}catch(Throwable t) {
+			Utilities.sleep(500);
+			try {
+				return DBVerifier._getIdsTransazione(idApplicativo, false, now);
+			}catch(Throwable t2) {
+				Utilities.sleep(2000);
+				try {
+					return DBVerifier._getIdsTransazione(idApplicativo, false, now);
+				}catch(Throwable t3) {
+					Utilities.sleep(5000);
+					return DBVerifier._getIdsTransazione(idApplicativo, false, now);
+				}
+			}
+		}
+	}
+	private static List<String> _getIdsTransazione(String idApplicativo, boolean richiesta, Date now) throws Exception  {
+		
+		String colonna = richiesta ? "id_correlazione_applicativa" : "id_correlazione_risposta";
+		String query = "select id from transazioni where "+colonna+" = ?";
+		Timestamp t = null;
+		if(now!=null) {
+			t = new Timestamp(now.getTime());
+			query = query + " and data_ingresso_richiesta>=?";
+		}
+		query = query + " order by data_ingresso_richiesta ASC";
+		log().info(query);
+		
+		List<Map<String, Object>> rows = null;
+		if(t!=null) {
+			rows = dbUtils().readRows(query, idApplicativo, t);
+		}
+		else {
+			rows = dbUtils().readRows(query, idApplicativo);
+		}
+		List<String> ids = new ArrayList<String>();
+		if(rows!=null) {
+			for (Map<String, Object> row : rows) {
+				for (String key : row.keySet()) {
+					log().debug("Row["+key+"]="+row.get(key));
+					ids.add((String)row.get(key));
+				}
+			}
+		}
+		
+		return ids;
 
 	}
 }

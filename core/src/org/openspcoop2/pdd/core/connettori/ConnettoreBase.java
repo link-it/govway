@@ -1261,6 +1261,9 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     
     
     private Map<String,List<String>> headersImpostati = new HashMap<String,List<String>>(); // per evitare che header generati nel conettore siano sovrascritti da eventuali forward. Gli header del connettore vengono impostati prima del forward.
+    protected void clearRequestHeader() {
+    	this.headersImpostati.clear();
+    }
     private Messaggio messaggioDumpUscita = null;
     protected void setRequestHeader(String key,List<String> values) throws Exception {} // ridefinito nei connettori dove esistono header da spedire 
     protected void setRequestHeader(String key, String value, Map<String, List<String>> propertiesTrasportoDebug) throws Exception {
