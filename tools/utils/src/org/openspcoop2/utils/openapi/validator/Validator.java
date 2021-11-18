@@ -78,6 +78,7 @@ import org.openspcoop2.utils.openapi.UniqueInterfaceGeneratorConfig;
 import org.openspcoop2.utils.openapi.validator.swagger.SwaggerOpenApiValidator;
 import org.openspcoop2.utils.openapi.validator.swagger.SwaggerRequestValidator;
 import org.openspcoop2.utils.openapi.validator.swagger.SwaggerResponseValidator;
+import org.openspcoop2.utils.openapi.validator.swagger.SwaggerValidatorUtils;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -122,6 +123,7 @@ import com.fasterxml.jackson.databind.node.TextNode;
 
 import io.swagger.models.Swagger;
 import io.swagger.parser.Swagger20Parser;
+import io.swagger.parser.SwaggerParser;
 import io.swagger.parser.util.SwaggerDeserializationResult;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -372,46 +374,45 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 					}
 					else if(OpenAPILibrary.swagger_request_validator.equals(openApiLibrary)) {
 						
-						if (!this.openApi4jConfig.isMergeAPISpec()) {
-				            OpenAPIDeserializer deserializer = new OpenAPIDeserializer();
-				            
-				            for (var entry : schemaMap.entrySet()) {
-				            	System.out.println("Obtaining schema for reference: " + entry.getKey().toString());
-				            	
-				            	// Non è la getSchema, non cerca il campo components, noi qui abbiamo riferita cosa, un'openapi?
-				            	//
-				            	//var externalSchema = deserializer.getSchema( (ObjectNode) entry.getValue(), null, null);
-				            	//System.out.println("Schema obtained: " + externalSchema.get$ref());
-				            }
-				            
-
-						}
-						
-						Swagger20Parser swaggerParser = new Swagger20Parser();
-						SwaggerConverter swaggerConverter = new SwaggerConverter();
-						//SwaggerParseResult result = null;
-						
-					/*	Swagger swagger = swaggerParser.read(schemaNodeRoot);
-						
-						if (swagger != null) {
-							SwaggerDeserializationResult foo = new SwaggerDeserializationResult();
-							foo.setMessages(Arrays.asList());
-							foo.setSwagger(swagger);
-							result = swaggerConverter.convert(foo);
-						} else {*/								           
+						SwaggerParseResult result;
+						String version = SwaggerValidatorUtils.getSchemaVersion(schemaNodeRoot);
+						if (SwaggerValidatorUtils.isSchemaV2(version)) {
+							Swagger20Parser swaggerParser = new Swagger20Parser();
+							SwaggerParser sp = new SwaggerParser();
+							
+							SwaggerConverter swaggerConverter = new SwaggerConverter();
+							Swagger swagger = swaggerParser.read(schemaNodeRoot);
+							if (swagger != null) {
+								SwaggerDeserializationResult foo = new SwaggerDeserializationResult();
+								foo.setMessages(Arrays.asList());
+								foo.setSwagger(swagger);
+								result = swaggerConverter.convert(foo);
+							} else {
+								throw new ProcessingException("Unknown error while parsing the Swagger root node.");								
+							}
+						} else {						
 							OpenAPIV3Parser v3Parser = new OpenAPIV3Parser();
-							SwaggerParseResult result = v3Parser.parseJsonNode(null, schemaNodeRoot);
-						//}
+							result = v3Parser.parseJsonNode(null, schemaNodeRoot);
+						}
 						
 						if (result.getOpenAPI() == null) {
 							throw new ProcessingException("Error while parsing the OpenAPI root node: " + String.join("\n", result.getMessages()));
 						}
-					
-						//OpenAPIResolver v3Resolver = new OpenAPIResolver(result.getOpenAPI(), null, null, 0);
-						OpenAPIResolver v3Resolver = new OpenAPIResolver(result.getOpenAPI(), new ArrayList<>(),
-								//null);
-								"/home/froggo/sorgenti/link_it/GOVWAY/GovWay/bin/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml");
+						
+						// Se l'api non è stata mergiata, recuperiamo gli schemi dei riferimenti esterni
+						Map<String,String> schemaMapSerialized = new HashMap<String,String>();
+						if (!this.openApi4jConfig.isMergeAPISpec() && api.getSchemas()!=null) {
 							
+							for (ApiSchema apiSchema : api.getSchemas()) {
+								if(ApiSchemaType.JSON.equals(apiSchema.getType()) || ApiSchemaType.YAML.equals(apiSchema.getType())) {
+									String schemaBytes = new String(apiSchema.getContent());
+									schemaMapSerialized.put(apiSchema.getName(), schemaBytes);
+									schemaMapSerialized.put("./"+apiSchema.getName(), schemaBytes);
+								}
+							}
+						}
+						
+						OpenAPIResolver v3Resolver = new OpenAPIResolver(result.getOpenAPI(), schemaMapSerialized, null, 0);
 						result.setOpenAPI(v3Resolver.resolve());
 
 						// Passo false per non risolvere i combinators, poichè quando vengono risolti non c'è modo
@@ -424,8 +425,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 					    removeTypeObjectAssociationWithOneOfAndAnyOfModels(result.getOpenAPI());
 						
 						if(this.openApi4jConfig.isValidateAPISpec()) {
-							SwaggerOpenApiValidator specValidator = new SwaggerOpenApiValidator();
-							var validationResult = specValidator.validate(schemaNodeRoot);
+							var validationResult = new SwaggerOpenApiValidator().validate(schemaNodeRoot);
 							
 							if (validationResult.isPresent()) {
 								throw new ProcessingException(
@@ -440,58 +440,8 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 							}
 						}
 						
-						
-						/*  if (expectedType.equals(Schema.class)) {
-					            OpenAPIDeserializer deserializer = new OpenAPIDeserializer();
-					            result = (T) deserializer.getSchema((ObjectNode) tree, definitionPath.replace("/", "."), null);*/
-						// Merging: l'ExternalRefProcessor pesca i ref dalla cache così:
-						
-				        // final Schema schema = cache.loadRef($ref, refFormat, Schema.class);
-						// La cache ha una map che si chiama externalFileCache, SOLUZIONI:
-						// 		1 - popolare externalFileCache con il toString dei JsonNode
-						// 		2 - (MEGLIO) popolare la resolutionCache con lo Schema del riferiemnto esterno
-						//				2.1 Devo convertire la map di jsonNode in Schema di swagger-models
-						//	
-						// In ogni caso dovrei modificare la libreria swagger-parsers-v3 e rendere protected
-						// la resolverCache e aggiungere un costruttore. Dovrei modificare anche la resolverCache, mmhh..
-						
-						// Forse sarebbe meglio fare leggere i files passando il parentPath e pace.
-						// Fare in modo poi che openspcoop non carichi e non trasformi neanche in json node la map di riferimenti esterni.
-					
-						
-						// , poi
-						// caricarli dentro la cache?
-						// Li carico con RefFormat.URL, perchè quelli relativi e interni già ci sono nel file.
-						// Ma i riferimenti esterni sono su files?
-						
-						// E i riferimenti fra gli schemi sono tutti  di path relativi? O ppure i files sono su db?
-						// Perchè potrei passare all'OpenAPI Resolver la parent location e dello yaml e poi 
-						// lui carica i riferimenti relativi. E dove li prendo i nomi dei file?
-						
-						
-						
-						
-
-					
-						
-						// api.getSchemas().get(0).
-						// Potrei impostargli la externalFileCache al contenuto dei file da importare.
-						// O, nella resolution cache mettere quello che andrea ha messo nella schemaMap, ma con i tipi giusti 
-						// presi dall'oggetto openapi
-						// O ANCORA FORSE MEGLIO, fare l'override dell'ExternalRefProcessor
-						/*ResolverCache resolverCache = new ResolverCache(result.getOpenAPI(), new ArrayList<>(), null);
-						resolverCache.getResolutionCache().put("ref", "possometterejsonnode?");*/
-						
-						//result.setOpenAPI(.resolve());
-
-						//final String resPath = "/org/openspcoop2/utils/openapi/testOpenAPI_3.0.json";
-			            //String loc =  "/home/froggo/sorgenti/link_it/GOVWAY/GovWay/bin/org/openspcoop2/utils/openapi/testOpenAPI_3.0.json";			            
-						//SwaggerParseResult result = new OpenAPIParser().readLocation(loc, null, parseOptions);
-
 						this.openApiSwagger = result.getOpenAPI();
-						
 				        this.swaggerRequestValidator = new SwaggerRequestValidator(this.openApiSwagger, this.openApi4jConfig);
-				        		
 				        this.swaggerResponseValidator = new SwaggerResponseValidator(this.openApiSwagger, this.openApi4jConfig);
 					}
 					

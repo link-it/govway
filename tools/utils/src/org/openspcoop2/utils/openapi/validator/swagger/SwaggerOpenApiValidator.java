@@ -67,12 +67,12 @@ public class SwaggerOpenApiValidator {
 		boolean isVersion2 = false;
 		
 		
-		String version = getVersion(spec);
-        if (version != null && (version.startsWith("\"1") || version.startsWith("1"))) {
+		String version = SwaggerValidatorUtils.getSchemaVersion(spec);
+        if (SwaggerValidatorUtils.isSchemaV1(version)) {
         	return Optional.of(INVALID_VERSION);        	
-        } else if (version != null && (version.startsWith("\"2") || version.startsWith("2"))) {
+        } else if (SwaggerValidatorUtils.isSchemaV2(version)) {
             isVersion2 = true;
-        } else if (version == null || (version.startsWith("\"3") || version.startsWith("3"))) {
+        } else if (version == null || SwaggerValidatorUtils.isSchemaV3(version)) {
         	// siamo in v3
         }
         
@@ -92,29 +92,6 @@ public class SwaggerOpenApiValidator {
         return result.length() == 0 ? Optional.empty() : Optional.of(result.toString());
 	}
 	
-	
-	private String getVersion(JsonNode node) {
-        if (node == null) {
-            return null;
-        }
-
-        JsonNode version = node.get("openapi");
-        if (version != null) {
-            return version.toString();
-        }
-
-        version = node.get("swagger");
-        if (version != null) {
-            return version.toString();
-        }
-        version = node.get("swaggerVersion");
-        if (version != null) {
-            return version.toString();
-        }
-
-        return null;
-    }
-
 	
 	private JsonSchema getSchema(boolean isVersion2) {
 		if (isVersion2) {

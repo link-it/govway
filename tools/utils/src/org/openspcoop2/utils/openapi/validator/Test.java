@@ -419,7 +419,7 @@ public class Test {
 					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 								"Content type 'application/ERRORE' is not allowed for body content" :
-								"[ERROR][REQUEST][POST /pets] Request Content-Type header '[application/ERRORE]' does not match any allowed types. Must be one of: [application/json]."; 
+								"[ERROR][REQUEST][POST /pets] Request Content-Type header '[application/ERRORE]' does not match any allowed types. Must be one of: [application/json"; 
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -548,7 +548,7 @@ public class Test {
 					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 								"Content type 'application/ERRORE' is not allowed for body content." :
-								"[ERROR][RESPONSE][] Response Content-Type header 'application/ERRORE' does not match any allowed types. Must be one of: [application/json]."; 
+								"[ERROR][RESPONSE][] Response Content-Type header 'application/ERRORE' does not match any allowed types. Must be one of: [application"; 
 						if(!e.getMessage().contains(msgErroreAtteso)) {
 							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"':"+e.getMessage());
 						}
@@ -618,11 +618,19 @@ public class Test {
 					apiValidator.validate(httpEntity6_error_empty);	
 				}catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
-						String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
-								"Content type 'application/json' is not allowed for body content. (code: 203)" :
-								"[ERROR][RESPONSE][] Response Content-Type header 'application/json' does not match any allowed types. Must be one of: [application/problem+json]."; 
+					
+					if(OpenAPILibrary.openapi4j.equals(openAPILibrary)) {
+						String msgErroreAtteso = "Content type 'application/json' is not allowed for body content. (code: 203)";
+						
 						if(!e.getMessage().contains(msgErroreAtteso)) {
+							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
+						}
+						
+					} else if (OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+						String msgErroreAttesoSwaggerV2  = "[ERROR][RESPONSE][] POST on path '/pets' defines a response schema but no response body found";						
+						String msgErroreAtteso = "[ERROR][RESPONSE][] Response Content-Type header 'application/json' does not match any allowed types. Must be one of: [application/problem+json].";
+						
+						if(!e.getMessage().contains(msgErroreAtteso) && !e.getMessage().contains(msgErroreAttesoSwaggerV2)) {
 							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 						}
 					}
@@ -1010,7 +1018,9 @@ public class Test {
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
+							String msgErroreAtteso = OpenAPILibrary.json_schema.equals(openAPILibrary) ?									
+									"$.a: is not defined in the schema and the schema does not allow additional properties" :
+									"[ERROR][REQUEST][DELETE /pets @body] Object instance has properties which are not allowed by the schema: [\"a\"]";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -1030,7 +1040,9 @@ public class Test {
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
 						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "$.name: is missing but it is required";
+							String msgErroreAtteso =  OpenAPILibrary.json_schema.equals(openAPILibrary) ?
+									"$.name: is missing but it is required" :
+									"[ERROR][REQUEST][DELETE /pets @body] Object has missing required properties ([\"name\"])";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}

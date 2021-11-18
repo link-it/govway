@@ -83,5 +83,9 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.3_lib_karate"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.3_lib_stub"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.3_lib_stub_axis14"/>
+	<classpathentry kind="lib" path="/home/froggo/.m2/repository/io/swagger/parser/v3/swagger-parser-v3/2.0.29-SNAPSHOT/swagger-parser-v3-2.0.29-SNAPSHOT.jar" sourcepath="/swagger-parser-v3"/>
+	<classpathentry kind="lib" path="/home/froggo/.m2/repository/io/swagger/parser/v3/swagger-parser-v2-converter/2.0.29-SNAPSHOT/swagger-parser-v2-converter-2.0.29-SNAPSHOT.jar" sourcepath="/swagger-parser-v2-converter"/>
+	<classpathentry kind="lib" path="/home/froggo/.m2/repository/io/swagger/parser/v3/swagger-parser-core/2.0.29-SNAPSHOT/swagger-parser-core-2.0.29-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="/home/froggo/.m2/repository/io/swagger/parser/v3/swagger-parser/2.0.29-SNAPSHOT/swagger-parser-2.0.29-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

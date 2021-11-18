@@ -3,6 +3,7 @@ package org.openspcoop2.utils.openapi.validator.swagger;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.CharMatcher;
 
 import io.swagger.v3.oas.models.media.Schema;
@@ -47,6 +48,41 @@ public class SwaggerValidatorUtils {
 	
 	        return Optional.of(
 	        		"err.format.base64.illegalChars: character '" + Character.toString(input.charAt(index)) + "' index " + index);	        
+	}
+
+	public static final String getSchemaVersion(JsonNode node) {
+	    if (node == null) {
+	        return null;
+	    }
+	
+	    JsonNode version = node.get("openapi");
+	    if (version != null) {
+	        return version.toString();
+	    }
+	
+	    version = node.get("swagger");
+	    if (version != null) {
+	        return version.toString();
+	    }
+	    version = node.get("swaggerVersion");
+	    if (version != null) {
+	        return version.toString();
+	    }
+	
+	    return null;
+	}
+	
+	public static final boolean isSchemaV1(String version) {
+		return version != null && (version.startsWith("\"1") || version.startsWith("1"));
+	}
+	
+	public static final boolean isSchemaV2(String version) {
+		return version != null && (version.startsWith("\"2") || version.startsWith("2"));		
+	}
+	
+	public static final boolean isSchemaV3(String version) {
+		return version != null && (version.startsWith("\"3") || version.startsWith("3"));
+		
 	}
 
 }
