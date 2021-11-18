@@ -22,7 +22,6 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.redirec
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
-import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.RedirectEngineTest;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**
@@ -117,7 +116,7 @@ public class RestTest extends ConfigLoader {
 
 		String api = "TestRedirectREST";
 		
-		RedirectEngineTest._test(logCore, api, operazione, 
+		RedirectUtilities._test(logCore, api, operazione, 
 				numeroRedirect, httpRedirectStatus, relative, 
 				withContent, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE));
 

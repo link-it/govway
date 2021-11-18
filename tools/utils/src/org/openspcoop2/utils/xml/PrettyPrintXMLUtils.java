@@ -139,168 +139,312 @@ public class PrettyPrintXMLUtils {
 	 * */
 	
 	public static void prettyPrintWithTrAX(Document doc,OutputStream os)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, os, new XMLErrorListener(),false);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, os, new XMLErrorListener(),false, null);
 	}
 	public static void prettyPrintWithTrAX(Document doc,OutputStream os,ErrorListener errorListener)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, os,errorListener,false);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, os,errorListener,false, null);
 	}
 	public static void prettyPrintWithTrAX(Document doc,OutputStream os,boolean omitXMLDeclaration)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, os, new XMLErrorListener(),omitXMLDeclaration);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, os, new XMLErrorListener(),omitXMLDeclaration, null);
 	}
 	public static void prettyPrintWithTrAX(Document doc,OutputStream os,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, os,errorListener,omitXMLDeclaration);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, os,errorListener,omitXMLDeclaration, null);
+	}
+	public static void prettyPrintWithTrAX(Document doc,OutputStream os,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, os, new XMLErrorListener(),false, charset);
+	}
+	public static void prettyPrintWithTrAX(Document doc,OutputStream os,ErrorListener errorListener,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, os,errorListener,false, charset);
+	}
+	public static void prettyPrintWithTrAX(Document doc,OutputStream os,boolean omitXMLDeclaration,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, os, new XMLErrorListener(),omitXMLDeclaration, charset);
+	}
+	public static void prettyPrintWithTrAX(Document doc,OutputStream os,ErrorListener errorListener,boolean omitXMLDeclaration,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, os,errorListener,omitXMLDeclaration, charset);
 	}
 
 	public static void prettyPrintWithTrAX(Document doc,Writer writer)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, writer, new XMLErrorListener(),false);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, writer, new XMLErrorListener(),false, null);
 	}
 	public static void prettyPrintWithTrAX(Document doc,Writer writer,ErrorListener errorListener)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, writer,errorListener,false);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, writer,errorListener,false, null);
 	}
 	public static void prettyPrintWithTrAX(Document doc,Writer writer,boolean omitXMLDeclaration)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, writer, new XMLErrorListener(),omitXMLDeclaration);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, writer, new XMLErrorListener(),omitXMLDeclaration, null);
 	}
 	public static void prettyPrintWithTrAX(Document doc,Writer writer,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, writer,errorListener,omitXMLDeclaration);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, writer,errorListener,omitXMLDeclaration, null);
+	}
+	public static void prettyPrintWithTrAX(Document doc,Writer writer,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, writer, new XMLErrorListener(),false, charset);
+	}
+	public static void prettyPrintWithTrAX(Document doc,Writer writer,ErrorListener errorListener,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, writer,errorListener,false, charset);
+	}
+	public static void prettyPrintWithTrAX(Document doc,Writer writer,boolean omitXMLDeclaration,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, writer, new XMLErrorListener(),omitXMLDeclaration, charset);
+	}
+	public static void prettyPrintWithTrAX(Document doc,Writer writer,ErrorListener errorListener,boolean omitXMLDeclaration,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, writer,errorListener,omitXMLDeclaration, charset);
 	}
 
 	public static void prettyPrintWithTrAX(Document doc,File file)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, file, new XMLErrorListener(),false);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, file, new XMLErrorListener(),false, null);
 	}
 	public static void prettyPrintWithTrAX(Document doc,File file,ErrorListener errorListener)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, file,errorListener,false);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, file,errorListener,false, null);
 	}
 	public static void prettyPrintWithTrAX(Document doc,File file,boolean omitXMLDeclaration)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, file, new XMLErrorListener(),omitXMLDeclaration);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, file, new XMLErrorListener(),omitXMLDeclaration, null);
 	}
 	public static void prettyPrintWithTrAX(Document doc,File file,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, file,errorListener,omitXMLDeclaration);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, file,errorListener,omitXMLDeclaration, null);
+	}
+	public static void prettyPrintWithTrAX(Document doc,File file,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, file, new XMLErrorListener(),false, charset);
+	}
+	public static void prettyPrintWithTrAX(Document doc,File file,ErrorListener errorListener,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, file,errorListener,false, charset);
+	}
+	public static void prettyPrintWithTrAX(Document doc,File file,boolean omitXMLDeclaration,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, file, new XMLErrorListener(),omitXMLDeclaration, charset);
+	}
+	public static void prettyPrintWithTrAX(Document doc,File file,ErrorListener errorListener,boolean omitXMLDeclaration,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, file,errorListener,omitXMLDeclaration, charset);
 	}
 	
 	public static String prettyPrintWithTrAX(Document doc)throws TransformerException,IOException{
-		return PrettyPrintXMLUtils.prettyPrintWithTrAX(doc, new XMLErrorListener(),false);
+		return PrettyPrintXMLUtils.prettyPrintWithTrAX(doc, new XMLErrorListener(),false, null);
 	}
 	public static String prettyPrintWithTrAX(Document doc,ErrorListener errorListener)throws TransformerException,IOException{
-		return PrettyPrintXMLUtils.prettyPrintWithTrAX(doc, errorListener,false);
+		return PrettyPrintXMLUtils.prettyPrintWithTrAX(doc, errorListener,false, null);
 	}
 	public static String prettyPrintWithTrAX(Document doc,boolean omitXMLDeclaration)throws TransformerException,IOException{
-		return PrettyPrintXMLUtils.prettyPrintWithTrAX(doc, new XMLErrorListener(),omitXMLDeclaration);
+		return PrettyPrintXMLUtils.prettyPrintWithTrAX(doc, new XMLErrorListener(),omitXMLDeclaration, null);
 	}
 	public static String prettyPrintWithTrAX(Document doc,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException{
+		return PrettyPrintXMLUtils.prettyPrintWithTrAX(doc, errorListener,omitXMLDeclaration, null);
+	}
+	public static String prettyPrintWithTrAX(Document doc,String charset)throws TransformerException,IOException{
+		return PrettyPrintXMLUtils.prettyPrintWithTrAX(doc, new XMLErrorListener(),false, charset);
+	}
+	public static String prettyPrintWithTrAX(Document doc,ErrorListener errorListener,String charset)throws TransformerException,IOException{
+		return PrettyPrintXMLUtils.prettyPrintWithTrAX(doc, errorListener,false, charset);
+	}
+	public static String prettyPrintWithTrAX(Document doc,boolean omitXMLDeclaration,String charset)throws TransformerException,IOException{
+		return PrettyPrintXMLUtils.prettyPrintWithTrAX(doc, new XMLErrorListener(),omitXMLDeclaration, charset);
+	}
+	public static String prettyPrintWithTrAX(Document doc,ErrorListener errorListener,boolean omitXMLDeclaration,String charset)throws TransformerException,IOException{
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, bout, errorListener,omitXMLDeclaration);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(doc, bout, errorListener,omitXMLDeclaration, charset);
 		bout.flush();
 		bout.close();
 		return bout.toString();
 	}
 
 	public static void prettyPrintWithTrAX(Element element,OutputStream os)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, os, new XMLErrorListener(),false);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, os, new XMLErrorListener(),false,null);
 	}
 	public static void prettyPrintWithTrAX(Element element,OutputStream os,ErrorListener errorListener)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, os,errorListener,false);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, os,errorListener,false,null);
 	}
 	public static void prettyPrintWithTrAX(Element element,OutputStream os,boolean omitXMLDeclaration)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, os, new XMLErrorListener(),omitXMLDeclaration);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, os, new XMLErrorListener(),omitXMLDeclaration,null);
 	}
 	public static void prettyPrintWithTrAX(Element element,OutputStream os,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, os,errorListener,omitXMLDeclaration);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, os,errorListener,omitXMLDeclaration,null);
+	}
+	public static void prettyPrintWithTrAX(Element element,OutputStream os,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, os, new XMLErrorListener(),false, charset);
+	}
+	public static void prettyPrintWithTrAX(Element element,OutputStream os,ErrorListener errorListener,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, os,errorListener,false, charset);
+	}
+	public static void prettyPrintWithTrAX(Element element,OutputStream os,boolean omitXMLDeclaration,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, os, new XMLErrorListener(),omitXMLDeclaration, charset);
+	}
+	public static void prettyPrintWithTrAX(Element element,OutputStream os,ErrorListener errorListener,boolean omitXMLDeclaration,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, os,errorListener,omitXMLDeclaration, charset);
 	}
 
 	public static void prettyPrintWithTrAX(Element element,Writer writer)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, writer, new XMLErrorListener(),false);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, writer, new XMLErrorListener(),false,null);
 	}
 	public static void prettyPrintWithTrAX(Element element,Writer writer,ErrorListener errorListener)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, writer,errorListener,false);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, writer,errorListener,false,null);
 	}
 	public static void prettyPrintWithTrAX(Element element,Writer writer,boolean omitXMLDeclaration)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, writer, new XMLErrorListener(),omitXMLDeclaration);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, writer, new XMLErrorListener(),omitXMLDeclaration,null);
 	}
 	public static void prettyPrintWithTrAX(Element element,Writer writer,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, writer,errorListener,omitXMLDeclaration);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, writer,errorListener,omitXMLDeclaration,null);
+	}
+	public static void prettyPrintWithTrAX(Element element,Writer writer,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, writer, new XMLErrorListener(),false, charset);
+	}
+	public static void prettyPrintWithTrAX(Element element,Writer writer,ErrorListener errorListener,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, writer,errorListener,false, charset);
+	}
+	public static void prettyPrintWithTrAX(Element element,Writer writer,boolean omitXMLDeclaration,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, writer, new XMLErrorListener(),omitXMLDeclaration, charset);
+	}
+	public static void prettyPrintWithTrAX(Element element,Writer writer,ErrorListener errorListener,boolean omitXMLDeclaration,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, writer,errorListener,omitXMLDeclaration, charset);
 	}
 
 	public static void prettyPrintWithTrAX(Element element,File file)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, file, new XMLErrorListener(),false);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, file, new XMLErrorListener(),false,null);
 	}
 	public static void prettyPrintWithTrAX(Element element,File file,ErrorListener errorListener)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, file,errorListener,false);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, file,errorListener,false,null);
 	}
 	public static void prettyPrintWithTrAX(Element element,File file,boolean omitXMLDeclaration)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, file, new XMLErrorListener(),omitXMLDeclaration);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, file, new XMLErrorListener(),omitXMLDeclaration,null);
 	}
 	public static void prettyPrintWithTrAX(Element element,File file,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, file,errorListener,omitXMLDeclaration);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, file,errorListener,omitXMLDeclaration,null);
+	}
+	public static void prettyPrintWithTrAX(Element element,File file,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, file, new XMLErrorListener(),false, charset);
+	}
+	public static void prettyPrintWithTrAX(Element element,File file,ErrorListener errorListener,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, file,errorListener,false, charset);
+	}
+	public static void prettyPrintWithTrAX(Element element,File file,boolean omitXMLDeclaration,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, file, new XMLErrorListener(),omitXMLDeclaration, charset);
+	}
+	public static void prettyPrintWithTrAX(Element element,File file,ErrorListener errorListener,boolean omitXMLDeclaration,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, file,errorListener,omitXMLDeclaration, charset);
 	}
 
 	public static String prettyPrintWithTrAX(Element element)throws TransformerException,IOException{
-		return PrettyPrintXMLUtils.prettyPrintWithTrAX(element, new XMLErrorListener(),false);
+		return PrettyPrintXMLUtils.prettyPrintWithTrAX(element, new XMLErrorListener(),false,null);
 	}
 	public static String prettyPrintWithTrAX(Element element,ErrorListener errorListener)throws TransformerException,IOException{
-		return PrettyPrintXMLUtils.prettyPrintWithTrAX(element, errorListener,false);
+		return PrettyPrintXMLUtils.prettyPrintWithTrAX(element, errorListener,false,null);
 	}
 	public static String prettyPrintWithTrAX(Element element,boolean omitXMLDeclaration)throws TransformerException,IOException{
-		return PrettyPrintXMLUtils.prettyPrintWithTrAX(element, new XMLErrorListener(),omitXMLDeclaration);
+		return PrettyPrintXMLUtils.prettyPrintWithTrAX(element, new XMLErrorListener(),omitXMLDeclaration,null);
 	}
 	public static String prettyPrintWithTrAX(Element element,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException{
+		return PrettyPrintXMLUtils.prettyPrintWithTrAX(element, errorListener,omitXMLDeclaration,null);
+	}
+	public static String prettyPrintWithTrAX(Element element,String charset)throws TransformerException,IOException{
+		return PrettyPrintXMLUtils.prettyPrintWithTrAX(element, new XMLErrorListener(),false, charset);
+	}
+	public static String prettyPrintWithTrAX(Element element,ErrorListener errorListener,String charset)throws TransformerException,IOException{
+		return PrettyPrintXMLUtils.prettyPrintWithTrAX(element, errorListener,false, charset);
+	}
+	public static String prettyPrintWithTrAX(Element element,boolean omitXMLDeclaration,String charset)throws TransformerException,IOException{
+		return PrettyPrintXMLUtils.prettyPrintWithTrAX(element, new XMLErrorListener(),omitXMLDeclaration, charset);
+	}
+	public static String prettyPrintWithTrAX(Element element,ErrorListener errorListener,boolean omitXMLDeclaration,String charset)throws TransformerException,IOException{
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, bout, errorListener,omitXMLDeclaration);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(element, bout, errorListener,omitXMLDeclaration, charset);
 		bout.flush();
 		bout.close();
 		return bout.toString();
 	}
 	
 	public static void prettyPrintWithTrAX(Node node,OutputStream os)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,os, new XMLErrorListener(),false);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,os, new XMLErrorListener(),false,null);
 	}
 	public static void prettyPrintWithTrAX(Node node,OutputStream os,ErrorListener errorListener)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,os,errorListener,false);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,os,errorListener,false,null);
 	}
 	public static void prettyPrintWithTrAX(Node node,OutputStream os,boolean omitXMLDeclaration)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,os, new XMLErrorListener(),omitXMLDeclaration);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,os, new XMLErrorListener(),omitXMLDeclaration,null);
 	}
 	public static void prettyPrintWithTrAX(Node node,OutputStream os,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,os,errorListener,omitXMLDeclaration);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,os,errorListener,omitXMLDeclaration,null);
+	}
+	public static void prettyPrintWithTrAX(Node node,OutputStream os,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,os, new XMLErrorListener(),false, charset);
+	}
+	public static void prettyPrintWithTrAX(Node node,OutputStream os,ErrorListener errorListener,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,os,errorListener,false, charset);
+	}
+	public static void prettyPrintWithTrAX(Node node,OutputStream os,boolean omitXMLDeclaration,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,os, new XMLErrorListener(),omitXMLDeclaration, charset);
+	}
+	public static void prettyPrintWithTrAX(Node node,OutputStream os,ErrorListener errorListener,boolean omitXMLDeclaration,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,os,errorListener,omitXMLDeclaration, charset);
 	}
 
 	public static void prettyPrintWithTrAX(Node node,Writer writer)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,writer, new XMLErrorListener(),false);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,writer, new XMLErrorListener(),false,null);
 	}
 	public static void prettyPrintWithTrAX(Node node,Writer writer,ErrorListener errorListener)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,writer,errorListener,false);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,writer,errorListener,false,null);
 	}
 	public static void prettyPrintWithTrAX(Node node,Writer writer,boolean omitXMLDeclaration)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,writer, new XMLErrorListener(),omitXMLDeclaration);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,writer, new XMLErrorListener(),omitXMLDeclaration,null);
 	}
 	public static void prettyPrintWithTrAX(Node node,Writer writer,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,writer,errorListener,omitXMLDeclaration);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,writer,errorListener,omitXMLDeclaration,null);
+	}
+	public static void prettyPrintWithTrAX(Node node,Writer writer,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,writer, new XMLErrorListener(),false, charset);
+	}
+	public static void prettyPrintWithTrAX(Node node,Writer writer,ErrorListener errorListener,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,writer,errorListener,false, charset);
+	}
+	public static void prettyPrintWithTrAX(Node node,Writer writer,boolean omitXMLDeclaration,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,writer, new XMLErrorListener(),omitXMLDeclaration, charset);
+	}
+	public static void prettyPrintWithTrAX(Node node,Writer writer,ErrorListener errorListener,boolean omitXMLDeclaration,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,writer,errorListener,omitXMLDeclaration, charset);
 	}
 
 	public static void prettyPrintWithTrAX(Node node,File file)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,file, new XMLErrorListener(),false);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,file, new XMLErrorListener(),false,null);
 	}
 	public static void prettyPrintWithTrAX(Node node,File file,ErrorListener errorListener)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,file,errorListener,false);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,file,errorListener,false,null);
 	}
 	public static void prettyPrintWithTrAX(Node node,File file,boolean omitXMLDeclaration)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,file, new XMLErrorListener(),omitXMLDeclaration);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,file, new XMLErrorListener(),omitXMLDeclaration,null);
 	}
 	public static void prettyPrintWithTrAX(Node node,File file,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException{
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,file,errorListener,omitXMLDeclaration);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,file,errorListener,omitXMLDeclaration,null);
+	}
+	public static void prettyPrintWithTrAX(Node node,File file,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,file, new XMLErrorListener(),false, charset);
+	}
+	public static void prettyPrintWithTrAX(Node node,File file,ErrorListener errorListener,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,file,errorListener,false, charset);
+	}
+	public static void prettyPrintWithTrAX(Node node,File file,boolean omitXMLDeclaration,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,file, new XMLErrorListener(),omitXMLDeclaration, charset);
+	}
+	public static void prettyPrintWithTrAX(Node node,File file,ErrorListener errorListener,boolean omitXMLDeclaration,String charset)throws TransformerException,IOException{
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node,file,errorListener,omitXMLDeclaration, charset);
 	}
 	
 	public static String prettyPrintWithTrAX(Node node)throws TransformerException,IOException{
-		return PrettyPrintXMLUtils.prettyPrintWithTrAX(node, new XMLErrorListener(),false);
+		return PrettyPrintXMLUtils.prettyPrintWithTrAX(node, new XMLErrorListener(),false,null);
 	}
 	public static String prettyPrintWithTrAX(Node node,ErrorListener errorListener)throws TransformerException,IOException{
-		return PrettyPrintXMLUtils.prettyPrintWithTrAX(node, errorListener,false);
+		return PrettyPrintXMLUtils.prettyPrintWithTrAX(node, errorListener,false,null);
 	}
 	public static String prettyPrintWithTrAX(Node node,boolean omitXMLDeclaration)throws TransformerException,IOException{
-		return PrettyPrintXMLUtils.prettyPrintWithTrAX(node, new XMLErrorListener(),omitXMLDeclaration);
+		return PrettyPrintXMLUtils.prettyPrintWithTrAX(node, new XMLErrorListener(),omitXMLDeclaration,null);
 	}
 	public static String prettyPrintWithTrAX(Node node,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException{
+		return PrettyPrintXMLUtils.prettyPrintWithTrAX(node, errorListener,omitXMLDeclaration,null);
+	}
+	public static String prettyPrintWithTrAX(Node node,String charset)throws TransformerException,IOException{
+		return PrettyPrintXMLUtils.prettyPrintWithTrAX(node, new XMLErrorListener(),false,charset);
+	}
+	public static String prettyPrintWithTrAX(Node node,ErrorListener errorListener,String charset)throws TransformerException,IOException{
+		return PrettyPrintXMLUtils.prettyPrintWithTrAX(node, errorListener,false,charset);
+	}
+	public static String prettyPrintWithTrAX(Node node,boolean omitXMLDeclaration,String charset)throws TransformerException,IOException{
+		return PrettyPrintXMLUtils.prettyPrintWithTrAX(node, new XMLErrorListener(),omitXMLDeclaration,charset);
+	}
+	public static String prettyPrintWithTrAX(Node node,ErrorListener errorListener,boolean omitXMLDeclaration,String charset)throws TransformerException,IOException{
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node, bout, errorListener,omitXMLDeclaration);
+		PrettyPrintXMLUtils.prettyPrintWithTrAX_engine(node, bout, errorListener,omitXMLDeclaration,charset);
 		bout.flush();
 		bout.close();
 		return bout.toString();
@@ -310,7 +454,7 @@ public class PrettyPrintXMLUtils {
 		return PrettyPrintXMLUtils.class.getResourceAsStream("/org/openspcoop2/utils/xml/pretty-print.xsl");
 	}
 	
-	private static void prettyPrintWithTrAX_engine(Node doc,OutputStream os,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException{
+	private static void prettyPrintWithTrAX_engine(Node doc,OutputStream os,ErrorListener errorListener,boolean omitXMLDeclaration, String charset)throws TransformerException,IOException{
 		// Pretty-prints a DOM document to XML using TrAX.
 		// Note that a stylesheet is needed to make formatting reliable.
 		InputStream is = null;
@@ -326,6 +470,9 @@ public class PrettyPrintXMLUtils {
 			}
 			if(omitXMLDeclaration)
 				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,"yes");
+			if(charset!=null) {
+				transformer.setOutputProperty(OutputKeys.ENCODING, charset);
+			}
 			transformer.setErrorListener(errorListener);
 			transformer.transform(source, result);
 			os.flush();
@@ -337,7 +484,7 @@ public class PrettyPrintXMLUtils {
 			}catch(Exception eClose){}
 		}
 	}
-	private static void prettyPrintWithTrAX_engine(Node doc,Writer writer,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException{
+	private static void prettyPrintWithTrAX_engine(Node doc,Writer writer,ErrorListener errorListener,boolean omitXMLDeclaration, String charset)throws TransformerException,IOException{
 		// Pretty-prints a DOM document to XML using TrAX.
 		// Note that a stylesheet is needed to make formatting reliable.
 		InputStream is = null;
@@ -353,6 +500,9 @@ public class PrettyPrintXMLUtils {
 			}
 			if(omitXMLDeclaration)
 				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,"yes");
+			if(charset!=null) {
+				transformer.setOutputProperty(OutputKeys.ENCODING, charset);
+			}
 			transformer.setErrorListener(errorListener);
 			transformer.transform(source, result);
 			writer.flush();
@@ -364,7 +514,7 @@ public class PrettyPrintXMLUtils {
 			}catch(Exception eClose){}
 		}
 	}
-	private static void prettyPrintWithTrAX_engine(Node doc,File file,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException{
+	private static void prettyPrintWithTrAX_engine(Node doc,File file,ErrorListener errorListener,boolean omitXMLDeclaration, String charset)throws TransformerException,IOException{
 		// Pretty-prints a DOM document to XML using TrAX.
 		// Note that a stylesheet is needed to make formatting reliable.
 		InputStream is = null;
@@ -380,6 +530,9 @@ public class PrettyPrintXMLUtils {
 			}
 			if(omitXMLDeclaration)
 				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,"yes");
+			if(charset!=null) {
+				transformer.setOutputProperty(OutputKeys.ENCODING, charset);
+			}
 			transformer.setErrorListener(errorListener);
 			transformer.transform(source, result);
 		}finally{

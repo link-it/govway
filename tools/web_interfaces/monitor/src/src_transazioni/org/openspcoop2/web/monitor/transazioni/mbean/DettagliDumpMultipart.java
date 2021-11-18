@@ -46,6 +46,7 @@ import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -206,8 +207,43 @@ public class DettagliDumpMultipart extends PdDBaseBean<Transazione, String, ITra
 					break;
 				case SOAP_11:
 				case SOAP_12:
+					@SuppressWarnings("unused") 
+					String charset = null;
+					if(this.dumpMessaggio.getMultipartInfoBody()!=null && this.dumpMessaggio.getMultipartInfoBody().getContentType()!=null) {
+						String contentType = this.dumpMessaggio.getMultipartInfoBody().getContentType();
+						try {
+							charset = ContentTypeUtilities.readCharsetFromContentType(contentType);
+						}catch(Throwable t) {}
+					}
+					else {
+						String contentType = this.dumpMessaggio.getContentType();
+						boolean multipart = false;
+						try {
+							multipart = ContentTypeUtilities.isMultipartType(contentType);
+						}catch(Throwable t) {}
+						if(multipart) {
+							// sicuramente darà errore, non e' trattabile
+							// Comunque sia non dovrebbe arrivare a questo punto se siamo multipart, ma fermarsi all'if precedente
+							break;
+						}
+						try {
+							charset = ContentTypeUtilities.readCharsetFromContentType(contentType);
+						}catch(Throwable t) {}
+					}
+					//toRet = Utils.prettifyXml(this.dumpMessaggio.getBody(), charset);
+					// Fix: fino a che non vengono sistemate le utility 'DumpSoapMessageUtils.dumpMessage' per gestire correttamente il charset, questo contenuto è utf-8
+					toRet = Utils.prettifyXml(this.dumpMessaggio.getBody(), Charset.UTF_8.getValue());
+					break;
 				case XML:
-					toRet = Utils.prettifyXml(this.dumpMessaggio.getBody());
+					charset = null;
+					if(this.dumpMessaggio.getContentType()!=null) {
+						try {
+							charset = ContentTypeUtilities.readCharsetFromContentType(this.dumpMessaggio.getContentType());
+						}catch(Throwable t) {}
+					}
+					//toRet = Utils.prettifyXml(this.dumpMessaggio.getBody(), charset);
+					// Fix: fino a che non vengono sistemate le utility 'DumpRestMessageUtils.dumpMessage' per gestire correttamente il charset, questo contenuto è utf-8
+					toRet = Utils.prettifyXml(this.dumpMessaggio.getBody(), Charset.UTF_8.getValue());
 					break;
 				case BINARY:
 				case MIME_MULTIPART:

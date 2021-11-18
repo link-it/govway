@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils;
+package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.redirect;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -26,6 +26,7 @@ import static org.junit.Assert.assertNull;
 import java.util.Date;
 import java.util.List;
 
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.DBVerifier;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Headers;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
@@ -45,7 +46,7 @@ import org.slf4j.Logger;
 * @author $Author$
 * @version $Rev$, $Date$
 */
-public class RedirectEngineTest {
+public class RedirectUtilities {
 
 	public static void _test(
 			Logger logCore,

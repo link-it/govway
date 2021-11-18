@@ -42,6 +42,7 @@ import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.constants.Costanti;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -74,6 +75,8 @@ import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.controllo_traffico.CostantiControlloTraffico;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.pdd.core.integrazione.UtilitiesIntegrazione;
+import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
+import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.ConnectorUtils;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
@@ -97,6 +100,7 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.CORSRequestType;
+import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -301,6 +305,52 @@ public class ServicesUtils {
 		} 
 	}
 
+	
+	public static void checkCharset(String contentType, List<String> ctDefault, MsgDiagnostico msgDiag, boolean request, TipoPdD tipoPdD) throws MessageException {
+		try {
+			if(contentType!=null && contentType.contains(HttpConstants.CONTENT_TYPE_PARAMETER_CHARSET)){
+				String charset = null;
+				if(ContentTypeUtilities.isMultipart(contentType)) {
+					String ct = ContentTypeUtilities.getInternalMultipartContentType(charset);
+					if(ct!=null) {
+						charset = ContentTypeUtilities.readCharsetFromContentType(ct);
+					}
+				}
+				else {
+					charset = ContentTypeUtilities.readCharsetFromContentType(contentType);
+				}
+				if(charset.startsWith("\"") && charset.length()>1) {
+					charset = charset.substring(1);
+				}
+				if(charset.endsWith("\"") && charset.length()>1) {
+					charset = charset.substring(0,charset.length()-1);
+				}
+				boolean find = false;
+				for (String def : ctDefault) {
+					if(def.toLowerCase().equals(charset.toLowerCase())) {
+						find = true;
+						break;
+					}
+				}
+				if(!find) {
+					msgDiag.addKeyword(CostantiPdD.KEY_CONTENT_TYPE, contentType);
+					StringBuilder sb = new StringBuilder();
+					for (String def : ctDefault) {
+						if(sb.length()>0) {
+							sb.append(",");
+						}
+						sb.append(def);
+					}
+					msgDiag.addKeyword(CostantiPdD.KEY_CHARSET_DEFAULT, sb.toString());
+					String idModuloFunzionale = TipoPdD.DELEGATA.equals(tipoPdD) ? MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI : MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE;
+					String idDiagnostico = request ? "richiesta.warningCharsetDifferenteDefault" : "risposta.warningCharsetDifferenteDefault";
+					msgDiag.logPersonalizzato(idModuloFunzionale, idDiagnostico);
+				}
+			}
+		} catch (Exception ex) {
+			throw new MessageException(ex.getMessage(),ex);
+		}
+	}
 
 	
 	public static boolean verificaRispostaRelazioneCodiceTrasporto202(IProtocolFactory<?> protocolFactory,OpenSPCoop2Properties openSPCoopProperties,

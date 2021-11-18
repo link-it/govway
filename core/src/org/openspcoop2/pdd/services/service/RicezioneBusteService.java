@@ -626,6 +626,30 @@ public class RicezioneBusteService  {
 				}
 			}
 			else{
+				/* ------------ Check Charset ------------- */
+				try {
+					boolean checkEnabled = false;
+					List<String> ctDefault = null;
+					if(ServiceBinding.SOAP.equals(protocolServiceBinding)){
+						if(openSPCoopProperties.isControlloCharsetContentTypeAbilitatoRicezioneBusteSoap()) {
+							checkEnabled = true;
+							ctDefault = openSPCoopProperties.getControlloCharsetContentTypeAbilitatoRicezioneBusteSoap();
+						}
+					}
+					else {
+						if(openSPCoopProperties.isControlloCharsetContentTypeAbilitatoRicezioneBusteRest()) {
+							checkEnabled = true;
+							ctDefault = openSPCoopProperties.getControlloCharsetContentTypeAbilitatoRicezioneBusteRest();
+						}
+					}
+					if(checkEnabled) {
+						ServicesUtils.checkCharset(contentTypeReq, ctDefault, msgDiag, true, TipoPdD.APPLICATIVA);
+					}
+					
+				}catch(Throwable t) {
+					logCore.error("Avvenuto errore durante il controllo del charset della richiesta: "+t.getMessage(),t);
+				}
+								
 				/* ------------  SoapAction check 1 (controlla che non sia null e ne ritorna il valore) ------------- */			
 				String soapAction = null;
 				try{

@@ -214,8 +214,37 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 					break;
 				case SOAP_11:
 				case SOAP_12:
+					String charset = null;
+					if(this.dumpMessaggio.getMultipartContentType()!=null) {
+						String contentType = this.dumpMessaggio.getMultipartContentType();
+						try {
+							charset = ContentTypeUtilities.readCharsetFromContentType(contentType);
+						}catch(Throwable t) {}
+					}
+					else {
+						String contentType = this.dumpMessaggio.getContentType();
+						boolean multipart = false;
+						try {
+							multipart = ContentTypeUtilities.isMultipartType(contentType);
+						}catch(Throwable t) {}
+						if(multipart) {
+							// sicuramente darà errore, non e' trattabile
+							break;
+						}
+						try {
+							charset = ContentTypeUtilities.readCharsetFromContentType(contentType);
+						}catch(Throwable t) {}
+					}
+					toRet = Utils.prettifyXml(this.dumpMessaggio.getBody(), charset);
+					break;
 				case XML:
-					toRet = Utils.prettifyXml(this.dumpMessaggio.getBody());
+					charset = null;
+					if(this.dumpMessaggio.getContentType()!=null) {
+						try {
+							charset = ContentTypeUtilities.readCharsetFromContentType(this.dumpMessaggio.getContentType());
+						}catch(Throwable t) {}
+					}
+					toRet = Utils.prettifyXml(this.dumpMessaggio.getBody(), charset);
 					break;
 				case BINARY:
 				case MIME_MULTIPART:

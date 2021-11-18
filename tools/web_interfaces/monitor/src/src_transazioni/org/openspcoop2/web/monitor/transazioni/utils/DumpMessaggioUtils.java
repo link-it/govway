@@ -56,10 +56,10 @@ public class DumpMessaggioUtils {
 			MessageType messageType = null;
 			if(messageType==null) {
 				String contentTypeInternal = ContentTypeUtilities.getInternalMultipartContentType(contentType);
-				if(HttpConstants.CONTENT_TYPE_SOAP_1_2.equals(contentTypeInternal)) {
+				if(HttpConstants.CONTENT_TYPE_SOAP_1_1.equalsIgnoreCase(contentTypeInternal) || contentTypeInternal.toLowerCase().startsWith(HttpConstants.CONTENT_TYPE_SOAP_1_1)) {
 					messageType = MessageType.SOAP_11;
 				}
-				else if(HttpConstants.CONTENT_TYPE_SOAP_1_2.equals(contentTypeInternal)) {
+				else if(HttpConstants.CONTENT_TYPE_SOAP_1_2.equalsIgnoreCase(contentTypeInternal) || contentTypeInternal.toLowerCase().startsWith(HttpConstants.CONTENT_TYPE_SOAP_1_2)) {
 					messageType = MessageType.SOAP_12;
 				}
 				else {

@@ -124,6 +124,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.logger.Tracciamento;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
+import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.pdd.services.error.AbstractErrorGenerator;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
@@ -2398,6 +2399,34 @@ public class InoltroBuste extends GenericLib{
 							msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, location));
 						}
 					}
+					
+					/* ------------ Check Charset ------------- */
+					try {
+						if(transportResponseContext!=null) {
+							boolean checkEnabled = false;
+							List<String> ctDefault = null;
+							if(requestMessageTrasformato!=null && ServiceBinding.SOAP.equals(requestMessageTrasformato.getServiceBinding())){
+								if(this.propertiesReader.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap()) {
+									checkEnabled = true;
+									ctDefault = this.propertiesReader.getControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap();
+								}
+							}
+							else {
+								if(this.propertiesReader.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest()) {
+									checkEnabled = true;
+									ctDefault = this.propertiesReader.getControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest();
+								}
+							}
+							if(checkEnabled) {
+								if(transportResponseContext.getContentType()!=null) {
+									ServicesUtils.checkCharset(transportResponseContext.getContentType(), ctDefault, msgDiag, false, TipoPdD.DELEGATA);
+								}
+							}
+						}
+					}catch(Throwable t) {
+						this.log.error("Avvenuto errore durante il controllo del charset della risposta: "+t.getMessage(),t);
+					}
+					
 				} catch (Exception e) {
 					msgDiag.addKeywordErroreProcessamento(e, "Analisi risposta fallita");
 					msgDiag.logErroreGenerico(e,"AnalisiRispostaConnettore");

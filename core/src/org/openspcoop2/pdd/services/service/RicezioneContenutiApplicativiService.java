@@ -614,6 +614,30 @@ public class RicezioneContenutiApplicativiService {
 				}
 			}
 			else{
+				/* ------------ Check Charset ------------- */
+				try {
+					boolean checkEnabled = false;
+					List<String> ctDefault = null;
+					if(ServiceBinding.SOAP.equals(integrationServiceBinding)){
+						if(openSPCoopProperties.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap()) {
+							checkEnabled = true;
+							ctDefault = openSPCoopProperties.getControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap();
+						}
+					}
+					else {
+						if(openSPCoopProperties.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest()) {
+							checkEnabled = true;
+							ctDefault = openSPCoopProperties.getControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest();
+						}
+					}
+					if(checkEnabled) {
+						ServicesUtils.checkCharset(contentTypeReq, ctDefault, msgDiag, true, TipoPdD.DELEGATA);
+					}
+					
+				}catch(Throwable t) {
+					logCore.error("Avvenuto errore durante il controllo del charset della richiesta: "+t.getMessage(),t);
+				}
+				
 				/* ------------  SoapAction check 1 (controlla che non sia null e ne ritorna il valore) ------------- */			
 				String soapAction = null;
 				try{

@@ -91,6 +91,14 @@ public class OpenSPCoop2Message_json_impl extends AbstractBaseOpenSPCoop2RestMes
 	protected String buildContentAsString() throws MessageException{
 		return this.content;
 	}
+	@Override
+	protected byte[] buildContentAsByteArray() throws MessageException{
+		try{
+			return this.content.getBytes(this.contentTypeCharsetName);
+		}catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}
+	}
 
 	@Override
 	protected void serializeContent(OutputStream os, boolean consume) throws MessageException {

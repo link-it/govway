@@ -102,10 +102,10 @@ public class DumpRestMessageUtils {
 						ByteArrayOutputStream bout = new ByteArrayOutputStream();
 						switch (msg.getMessageType()) {
 						case XML:
-							bout.write(msg.castAsRestXml().getContentAsString().getBytes());
+							bout.write(msg.castAsRestXml().getContentAsByteArray());
 							break;
 						case JSON:
-							bout.write(msg.castAsRestJson().getContent().getBytes());
+							bout.write(msg.castAsRestJson().getContentAsByteArray());
 							break;
 						case BINARY:
 							bout.write(msg.castAsRestBinary().getContent());

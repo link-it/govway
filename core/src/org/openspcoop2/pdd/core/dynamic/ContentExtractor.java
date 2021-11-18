@@ -441,6 +441,92 @@ public class ContentExtractor {
 		}
 	}
 	
+
+	// Utility XML
 	
+	public void addXmlElement(String name, String value) throws DynamicException {
+		if(!isRestXml()) {
+			throw new DynamicException("Funzionalità richiede un messaggio XML");
+		}
+		try {
+			this.message.castAsRestXml().addElement(name, value);
+		}catch(Exception e) {
+			throw new DynamicException(e.getMessage(),e);
+		}
+	}
+	public void addXmlElement(String name, String namespace, String value) throws DynamicException {
+		if(!isRestXml()) {
+			throw new DynamicException("Funzionalità richiede un messaggio XML");
+		}
+		try {
+			this.message.castAsRestXml().addElement(name, namespace, value);
+		}catch(Exception e) {
+			throw new DynamicException(e.getMessage(),e);
+		}
+	}
+	
+	public void addXmlElementIn(String pattern, String name, String value) throws DynamicException {
+		if(!isRestXml()) {
+			throw new DynamicException("Funzionalità richiede un messaggio XML");
+		}
+		try {
+			this.message.castAsRestXml().addElementIn(pattern, name, value);
+		}catch(Exception e) {
+			throw new DynamicException(e.getMessage(),e);
+		}
+	}
+	public void addXmlElementIn(String pattern, String name, String namespace, String value) throws DynamicException {
+		if(!isRestXml()) {
+			throw new DynamicException("Funzionalità richiede un messaggio XML");
+		}
+		try {
+			this.message.castAsRestXml().addElementIn(pattern, name, namespace, value);
+		}catch(Exception e) {
+			throw new DynamicException(e.getMessage(),e);
+		}
+	}
+	
+	public void removeXmlElement(String name) throws DynamicException {
+		if(!isRestXml()) {
+			throw new DynamicException("Funzionalità richiede un messaggio XML");
+		}
+		try {
+			this.message.castAsRestXml().removeElement(name);
+		}catch(Exception e) {
+			throw new DynamicException(e.getMessage(),e);
+		}
+	}
+	public void removeXmlElement(String name, String namespace) throws DynamicException {
+		if(!isRestXml()) {
+			throw new DynamicException("Funzionalità richiede un messaggio XML");
+		}
+		try {
+			this.message.castAsRestXml().removeElement(name, namespace);
+		}catch(Exception e) {
+			throw new DynamicException(e.getMessage(),e);
+		}
+	}
+	
+	public void removeXmlElementIn(String pattern, String name) throws DynamicException {
+		if(!isRestXml()) {
+			throw new DynamicException("Funzionalità richiede un messaggio XML");
+		}
+		try {
+			this.message.castAsRestXml().removeElementIn(pattern, name);
+		}catch(Exception e) {
+			throw new DynamicException(e.getMessage(),e);
+		}
+	}
+	public void removeXmlElementIn(String pattern, String name, String namespace) throws DynamicException {
+		if(!isRestXml()) {
+			throw new DynamicException("Funzionalità richiede un messaggio XML");
+		}
+		try {
+			this.message.castAsRestXml().removeElementIn(pattern, name, namespace);
+		}catch(Exception e) {
+			throw new DynamicException(e.getMessage(),e);
+		}
+	}
+
 }
 

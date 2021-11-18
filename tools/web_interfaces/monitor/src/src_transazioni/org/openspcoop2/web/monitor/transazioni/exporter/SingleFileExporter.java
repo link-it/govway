@@ -61,6 +61,7 @@ import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
 
@@ -1040,7 +1041,11 @@ public class SingleFileExporter implements IExporter{
 						zip.closeEntry();
 											
 						//salvo il file
-						String ext = MimeTypeUtils.fileExtensionForMIMEType(allegato.getContentType());
+						String ct = allegato.getContentType();
+						if(ct!=null) {
+							ct = ContentTypeUtilities.readBaseTypeFromContentType(ct);
+						}
+						String ext = MimeTypeUtils.fileExtensionForMIMEType(ct);
 						fileName+="."+ext;
 						zip.putNextEntry(new ZipEntry(iEsimoAllegato+fileName));
 						zip.write(allegato.getAllegato());	
@@ -1146,6 +1151,11 @@ public class SingleFileExporter implements IExporter{
 					
 					
 					if(dumpMessaggio.getBody()!=null) {
+						
+						if(dumpMessaggio.getMultipartInfoBody()!=null && dumpMessaggio.getMultipartInfoBody().getContentType()!=null) {
+							ext = MimeTypeUtils.fileExtensionForMIMEType(dumpMessaggio.getMultipartInfoBody().getContentType());
+						}
+						
 						zip.putNextEntry(new ZipEntry(dir+"message."+ext));
 						
 						is = new ByteArrayInputStream(dumpMessaggio.getBody());
@@ -1342,7 +1352,11 @@ public class SingleFileExporter implements IExporter{
 						zip.closeEntry();
 											
 						//salvo il file
-						String ext = MimeTypeUtils.fileExtensionForMIMEType(dumpAttachment.getContentType());
+						String ct = dumpAttachment.getContentType();
+						if(ct!=null) {
+							ct = ContentTypeUtilities.readBaseTypeFromContentType(ct);
+						}
+						String ext = MimeTypeUtils.fileExtensionForMIMEType(ct);
 						fileName+="."+ext;
 						zip.putNextEntry(new ZipEntry(iEsimoAllegato+fileName));
 						zip.write(dumpAttachment.getContent());	

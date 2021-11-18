@@ -1,5 +1,18 @@
 2021-11-18  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Corretti diversi problemi relativi alla gestione di contenuti definiti tramite charset 'UTF-8', 'ISO-8859-1' e 'UTF-16':
+	- la normalizzazione dell'input stream quando viene ritornato vuoto, viene adesso gestito tramite l'utilizzo di un buffer di lunghezza 2 compatibile con il charset 'UTF-16';
+	- aggiunta gestione del charset nella serializzazione presente nei metodi interni alla classe di utility XMLUtils e PrettyPrintXMLUtils;
+	- aggiunte utility per aggiungere e rimuovere elementi nelle richieste XML Rest, utilizzabili all'interno delle trasformazioni;
+	- risolto bug di serializzazione di un messaggio SOAP With Attachments presente quando il messaggio veniva acceduto per funzionalità read-only (es. correlazione applicativa).
+	  Il bug causava una generazione di un content-type con un mimepart differente da quello effettivamente serializzato;
+	- aggiunta gestione del charset nella classe 'OpenSPCoop2MessageSoapStreamReader' utilizzata per leggere le informazioni SOAP in streaming;
+	- aggiunto diagnostico che evidenzia la ricezione di richieste o risposte con un charset differente da quello definito per default. 
+	  Nella configurazione iniziale vengono accettati qualsiasi charset per messaggi REST e solamente il charset UTF-8 per messaggi SOAP.
+
+2021-11-18  Andrea Poli <apoli@link.it>
+
 	* [GovWayConsole]
 	Risolto Bug OP-1282
 	Una connessione al database veniva acceduta dalla console anche per gestire risorse statiche non protette (es. js/autocomplete.js o css/linkit-base.css).

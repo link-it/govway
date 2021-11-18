@@ -773,7 +773,10 @@ public class CostantiPdD {
     	pddContext.addObject(ID_FUNCTION, isEsitoPresenteInCache);
     }
    
-    
+    /** Costante che identifica una keyword per indicare il content-type del messaggio */
+    public final static String KEY_CONTENT_TYPE = "@CONTENT_TYPE@";
+    /** Costante che identifica una keyword per indicare il charset di default */
+    public final static String KEY_CHARSET_DEFAULT = "@CHARSET_DEFAULT@";
     
     public final static String OPTIONS_MESSAGE_FACTORY = "MessageEngine";
     

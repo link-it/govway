@@ -694,6 +694,10 @@ public class OpenSPCoop2Properties {
 			
 			this.isControlloContentTypeAbilitatoRicezioneContenutiApplicativi();
 			this.isControlloContentTypeAbilitatoRicezioneBuste();
+			this.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap();
+			this.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest();
+			this.isControlloCharsetContentTypeAbilitatoRicezioneBusteSoap();
+			this.isControlloCharsetContentTypeAbilitatoRicezioneBusteRest();
 			this.isPrintInfoCertificate();
 			
 			if(this.isGestoreCredenzialiPortaDelegataEnabled()) {
@@ -7893,6 +7897,226 @@ public class OpenSPCoop2Properties {
 			}
 		}
 		return OpenSPCoop2Properties.isControlloContentTypeAbilitatoRicezioneBuste;
+	}
+	
+	private static Boolean isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap= null;
+	private static List<String> listControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap = null;
+	public boolean isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap(){
+		if(OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap==null){
+			String pName = "org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.soap.charsetExpected";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					if("*".equals(value)) {
+						OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap = false;
+					}
+					else {
+						List<String> l = new ArrayList<String>();
+						if(value.contains(",")) {
+							String [] tmp = value.split(",");
+							if(tmp!=null && tmp.length>0) {
+								for (String s : tmp) {
+									if(s!=null && !"".equals(s)) {
+										l.add(s);
+									}
+								}
+							}
+						}
+						else {
+							l.add(value);
+						}
+						if(!l.isEmpty()) {
+							OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap = true;
+							OpenSPCoop2Properties.listControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap = l;
+						}
+						else {
+							OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap = false;
+						}
+					}
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap = false;
+			}
+		}
+		return OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap;
+	}
+	public List<String> getControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap(){
+		if(isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap()) {
+			return OpenSPCoop2Properties.listControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap;
+		}
+		return null;
+	}
+	
+	private static Boolean isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest= null;
+	private static List<String> listControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest = null;
+	public boolean isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest(){
+		if(OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest==null){
+			String pName = "org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.rest.charsetExpected";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					if("*".equals(value)) {
+						OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest = false;
+					}
+					else {
+						List<String> l = new ArrayList<String>();
+						if(value.contains(",")) {
+							String [] tmp = value.split(",");
+							if(tmp!=null && tmp.length>0) {
+								for (String s : tmp) {
+									if(s!=null && !"".equals(s)) {
+										l.add(s);
+									}
+								}
+							}
+						}
+						else {
+							l.add(value);
+						}
+						if(!l.isEmpty()) {
+							OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest = true;
+							OpenSPCoop2Properties.listControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest = l;
+						}
+						else {
+							OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest = false;
+						}
+					}
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest = false;
+			}
+		}
+		return OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest;
+	}
+	public List<String> getControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest(){
+		if(isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest()) {
+			return OpenSPCoop2Properties.listControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest;
+		}
+		return null;
+	}
+	
+	private static Boolean isControlloCharsetContentTypeAbilitatoRicezioneBusteSoap= null;
+	private static List<String> listControlloCharsetContentTypeAbilitatoRicezioneBusteSoap = null;
+	public boolean isControlloCharsetContentTypeAbilitatoRicezioneBusteSoap(){
+		if(OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneBusteSoap==null){
+			String pName = "org.openspcoop2.pdd.services.ricezioneBuste.soap.charsetExpected";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					if("*".equals(value)) {
+						OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneBusteSoap = false;
+					}
+					else {
+						List<String> l = new ArrayList<String>();
+						if(value.contains(",")) {
+							String [] tmp = value.split(",");
+							if(tmp!=null && tmp.length>0) {
+								for (String s : tmp) {
+									if(s!=null && !"".equals(s)) {
+										l.add(s);
+									}
+								}
+							}
+						}
+						else {
+							l.add(value);
+						}
+						if(!l.isEmpty()) {
+							OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneBusteSoap = true;
+							OpenSPCoop2Properties.listControlloCharsetContentTypeAbilitatoRicezioneBusteSoap = l;
+						}
+						else {
+							OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneBusteSoap = false;
+						}
+					}
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneBusteSoap = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneBusteSoap = false;
+			}
+		}
+		return OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneBusteSoap;
+	}
+	public List<String> getControlloCharsetContentTypeAbilitatoRicezioneBusteSoap(){
+		if(isControlloCharsetContentTypeAbilitatoRicezioneBusteSoap()) {
+			return OpenSPCoop2Properties.listControlloCharsetContentTypeAbilitatoRicezioneBusteSoap;
+		}
+		return null;
+	}
+	
+	private static Boolean isControlloCharsetContentTypeAbilitatoRicezioneBusteRest= null;
+	private static List<String> listControlloCharsetContentTypeAbilitatoRicezioneBusteRest = null;
+	public boolean isControlloCharsetContentTypeAbilitatoRicezioneBusteRest(){
+		if(OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneBusteRest==null){
+			String pName = "org.openspcoop2.pdd.services.ricezioneBuste.rest.charsetExpected";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					if("*".equals(value)) {
+						OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneBusteRest = false;
+					}
+					else {
+						List<String> l = new ArrayList<String>();
+						if(value.contains(",")) {
+							String [] tmp = value.split(",");
+							if(tmp!=null && tmp.length>0) {
+								for (String s : tmp) {
+									if(s!=null && !"".equals(s)) {
+										l.add(s);
+									}
+								}
+							}
+						}
+						else {
+							l.add(value);
+						}
+						if(!l.isEmpty()) {
+							OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneBusteRest = true;
+							OpenSPCoop2Properties.listControlloCharsetContentTypeAbilitatoRicezioneBusteRest = l;
+						}
+						else {
+							OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneBusteRest = false;
+						}
+					}
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneBusteRest = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneBusteRest = false;
+			}
+		}
+		return OpenSPCoop2Properties.isControlloCharsetContentTypeAbilitatoRicezioneBusteRest;
+	}
+	public List<String> getControlloCharsetContentTypeAbilitatoRicezioneBusteRest(){
+		if(isControlloCharsetContentTypeAbilitatoRicezioneBusteRest()) {
+			return OpenSPCoop2Properties.listControlloCharsetContentTypeAbilitatoRicezioneBusteRest;
+		}
+		return null;
 	}
 	
 	private static Boolean isPrintInfoCertificate= null;
