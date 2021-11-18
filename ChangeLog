@@ -1,3 +1,9 @@
+2021-11-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1282
+	Una connessione al database veniva acceduta dalla console anche per gestire risorse statiche non protette (es. js/autocomplete.js o css/linkit-base.css).
+
 2021-11-16  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

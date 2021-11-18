@@ -89,15 +89,8 @@ public final class AuthorisationFilter implements Filter {
 		HttpSession session = request.getSession(true);
 
 		session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD, this.core.isSinglePdD());
-		GeneralHelper generalHelper = new GeneralHelper(session);
-
-		LoginHelper loginHelper = null;
-		try {
-			loginHelper = new LoginHelper(request, new PageData(), session);
-		} catch (Exception e) {
-			ControlStationCore.logError("Errore rilevato durante l'authorizationFilter",e);
-			throw new RuntimeException(e.getMessage(),e);
-		}
+		
+		GeneralHelper generalHelper = null;
 		
 		try {
 //			System.out.println("SERVLET PATH ["+request.getServletPath()+"]");
@@ -112,6 +105,18 @@ public final class AuthorisationFilter implements Filter {
 			String urlRichiesta = request.getRequestURI();
 			log.info("Richiesta Risorsa ["+urlRichiesta+"]"); 
 			if (isRisorsaProtetta(request)) { 
+				
+				generalHelper = new GeneralHelper(session);
+
+				LoginHelper loginHelper = null;
+				try {
+					loginHelper = new LoginHelper(request, new PageData(), session);
+				} catch (Exception e) {
+					ControlStationCore.logError("Errore rilevato durante l'authorizationFilter",e);
+					throw new RuntimeException(e.getMessage(),e);
+				}
+				
+				//System.out.println("ENTRO ["+request.getRequestURI()+"]");
 				
 				String userLogin = ServletUtils.getUserLoginFromSession(session);
 				if (userLogin == null) {
@@ -213,12 +218,22 @@ public final class AuthorisationFilter implements Filter {
 					}
 				}
 			}
+			//else {
+			//	System.out.println("NON ENTRO ["+request.getRequestURI()+"]");
+			//}
 
 			// allow others filter to be chained
 			chain.doFilter(request, response);
 		} catch (Exception e) {
 			ControlStationCore.logError("Errore rilevato durante l'authorizationFilter",e);
 			try{
+				if(generalHelper==null) {
+					try{
+						generalHelper = new GeneralHelper(session);
+					}catch(Exception eClose){
+						ControlStationCore.logError("Errore rilevato durante l'authorizationFilter (reInit General Helper)",e);
+					}
+				}
 				this.setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE);
 				// return so that we do not chain to other filters
 				return;
