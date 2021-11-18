@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.utils.openapi.validator;
+package org.openspcoop2.utils.openapi.validator.swagger;
 
 import static com.atlassian.oai.validator.util.ContentTypeUtils.findMostSpecificMatch;
 
@@ -27,6 +27,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.openspcoop2.utils.openapi.validator.OpenapiApi4jValidatorConfig;
 
 import com.atlassian.oai.validator.interaction.response.ResponseValidator;
 import com.atlassian.oai.validator.model.ApiOperation;

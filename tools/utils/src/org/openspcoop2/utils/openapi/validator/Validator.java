@@ -75,6 +75,9 @@ import org.openspcoop2.utils.openapi.OpenapiApi;
 import org.openspcoop2.utils.openapi.OpenapiApiValidatorStructure;
 import org.openspcoop2.utils.openapi.UniqueInterfaceGenerator;
 import org.openspcoop2.utils.openapi.UniqueInterfaceGeneratorConfig;
+import org.openspcoop2.utils.openapi.validator.swagger.SwaggerOpenApiValidator;
+import org.openspcoop2.utils.openapi.validator.swagger.SwaggerRequestValidator;
+import org.openspcoop2.utils.openapi.validator.swagger.SwaggerResponseValidator;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -117,6 +120,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
+import io.swagger.models.Swagger;
+import io.swagger.parser.Swagger20Parser;
+import io.swagger.parser.util.SwaggerDeserializationResult;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
@@ -133,7 +139,9 @@ import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.parser.OpenAPIResolver;
 import io.swagger.v3.parser.OpenAPIV3Parser;
+import io.swagger.v3.parser.converter.SwaggerConverter;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
+import io.swagger.v3.parser.util.OpenAPIDeserializer;
 import io.swagger.v3.parser.util.ResolverFully;
 
 /**
@@ -364,12 +372,46 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 					}
 					else if(OpenAPILibrary.swagger_request_validator.equals(openApiLibrary)) {
 						
-			            
-			            OpenAPIV3Parser v3Parser = new OpenAPIV3Parser();
-						SwaggerParseResult result = v3Parser.parseJsonNode(null, schemaNodeRoot);
+						if (!this.openApi4jConfig.isMergeAPISpec()) {
+				            OpenAPIDeserializer deserializer = new OpenAPIDeserializer();
+				            
+				            for (var entry : schemaMap.entrySet()) {
+				            	System.out.println("Obtaining schema for reference: " + entry.getKey().toString());
+				            	
+				            	// Non è la getSchema, non cerca il campo components, noi qui abbiamo riferita cosa, un'openapi?
+				            	//
+				            	//var externalSchema = deserializer.getSchema( (ObjectNode) entry.getValue(), null, null);
+				            	//System.out.println("Schema obtained: " + externalSchema.get$ref());
+				            }
+				            
+
+						}
+						
+						Swagger20Parser swaggerParser = new Swagger20Parser();
+						SwaggerConverter swaggerConverter = new SwaggerConverter();
+						//SwaggerParseResult result = null;
+						
+					/*	Swagger swagger = swaggerParser.read(schemaNodeRoot);
+						
+						if (swagger != null) {
+							SwaggerDeserializationResult foo = new SwaggerDeserializationResult();
+							foo.setMessages(Arrays.asList());
+							foo.setSwagger(swagger);
+							result = swaggerConverter.convert(foo);
+						} else {*/								           
+							OpenAPIV3Parser v3Parser = new OpenAPIV3Parser();
+							SwaggerParseResult result = v3Parser.parseJsonNode(null, schemaNodeRoot);
+						//}
+						
+						if (result.getOpenAPI() == null) {
+							throw new ProcessingException("Error while parsing the OpenAPI root node: " + String.join("\n", result.getMessages()));
+						}
 					
-						// TODO: Così il merge funziona liscio! Ma abbiamo solo una parentDirectory da cui leggere i files... Parla con andrea
-						OpenAPIResolver v3Resolver = new OpenAPIResolver(result.getOpenAPI(), new ArrayList<>(), null); //"/home/froggo/sorgenti/link_it/GOVWAY/GovWay/bin/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml"); // Il terzo argomento è la parentFileLocation
+						//OpenAPIResolver v3Resolver = new OpenAPIResolver(result.getOpenAPI(), null, null, 0);
+						OpenAPIResolver v3Resolver = new OpenAPIResolver(result.getOpenAPI(), new ArrayList<>(),
+								//null);
+								"/home/froggo/sorgenti/link_it/GOVWAY/GovWay/bin/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml");
+							
 						result.setOpenAPI(v3Resolver.resolve());
 
 						// Passo false per non risolvere i combinators, poichè quando vengono risolti non c'è modo
@@ -381,10 +423,6 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						//removeRegexPatternOnStringsOfFormatByte(result.getOpenAPI());
 					    removeTypeObjectAssociationWithOneOfAndAnyOfModels(result.getOpenAPI());
 						
-						if (result.getOpenAPI() == null) {
-							throw new ProcessingException("Error while parsing the OpenAPI root node: " + String.join("\n", result.getMessages()));
-						}
-											
 						if(this.openApi4jConfig.isValidateAPISpec()) {
 							SwaggerOpenApiValidator specValidator = new SwaggerOpenApiValidator();
 							var validationResult = specValidator.validate(schemaNodeRoot);
@@ -402,6 +440,10 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 							}
 						}
 						
+						
+						/*  if (expectedType.equals(Schema.class)) {
+					            OpenAPIDeserializer deserializer = new OpenAPIDeserializer();
+					            result = (T) deserializer.getSchema((ObjectNode) tree, definitionPath.replace("/", "."), null);*/
 						// Merging: l'ExternalRefProcessor pesca i ref dalla cache così:
 						
 				        // final Schema schema = cache.loadRef($ref, refFormat, Schema.class);

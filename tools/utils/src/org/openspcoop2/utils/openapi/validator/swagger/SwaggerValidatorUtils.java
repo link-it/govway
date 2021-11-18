@@ -1,4 +1,4 @@
-package org.openspcoop2.utils.openapi.validator;
+package org.openspcoop2.utils.openapi.validator.swagger;
 
 import java.util.Optional;
 import java.util.regex.Pattern;

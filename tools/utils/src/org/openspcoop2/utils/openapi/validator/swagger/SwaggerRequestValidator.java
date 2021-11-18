@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.utils.openapi.validator;
+package org.openspcoop2.utils.openapi.validator.swagger;
 
 import static com.atlassian.oai.validator.util.ContentTypeUtils.findMostSpecificMatch;
 
@@ -29,6 +29,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.openspcoop2.utils.openapi.validator.OpenapiApi4jValidatorConfig;
 
 import com.atlassian.oai.validator.interaction.request.RequestValidator;
 import com.atlassian.oai.validator.model.ApiOperation;

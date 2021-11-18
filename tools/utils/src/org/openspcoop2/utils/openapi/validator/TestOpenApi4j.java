@@ -75,7 +75,7 @@ public class TestOpenApi4j {
 			openAPILibrary = OpenAPILibrary.valueOf(args[0]);
 		}
 		
-		//openAPILibrary = OpenAPILibrary.swagger_request_validator;
+		openAPILibrary = OpenAPILibrary.swagger_request_validator;
 		
 		// TODO: Renderlo parametrico anche su mergeSpec, che di default è a false.
 		// per adesso non supportiamo schemi non mergiati con la swagger_request_validator
@@ -186,7 +186,10 @@ public class TestOpenApi4j {
 			
 			System.out.println("Test Schema#2 (allegati.yaml) [Discriminator non presente o non required Step 1/2] ok");
 			
+		} else {
+			System.out.println("Skippo Test Schema (allegati.yaml) per libreria swagger-request-validator");
 		}
+			
 		
 		
 		

@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.utils.openapi.validator;
+package org.openspcoop2.utils.openapi.validator.swagger;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -32,6 +32,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.report.ListProcessingReport;
+import com.github.fge.jsonschema.core.report.ListReportProvider;
+import com.github.fge.jsonschema.core.report.LogLevel;
 import com.github.fge.jsonschema.core.report.ProcessingMessage;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
 import com.github.fge.jsonschema.main.JsonSchema;
@@ -43,8 +45,8 @@ import io.swagger.util.Json;
 // validator-badge
 public class SwaggerOpenApiValidator {
 
-	static final String SCHEMA_FILE = "schema3-fix-format-uri-reference.json";
-	static final String SCHEMA2_FILE = "schema2.json";
+	static final String SCHEMA_FILE = "schema-openapi3.json";
+	static final String SCHEMA2_FILE = "schema-swagger-v2.json";
 	static final String INVALID_VERSION = "Deprecated Swagger version.  Please visit http://swagger.io for information on upgrading to Swagger/OpenAPI 2.0 or OpenAPI 3.0";
 	static ObjectMapper JsonMapper = Json.mapper();
 
@@ -52,7 +54,7 @@ public class SwaggerOpenApiValidator {
 	private JsonSchema schemaV3;
 
 	public SwaggerOpenApiValidator() {
-		String prefix = "/org/openspcoop2/utils/openapi/";
+		String prefix = "/org/openspcoop2/utils/openapi/validator/swagger/";
 		this.schemaV2 = resolveJsonSchema(getResourceFileAsString(prefix + SCHEMA2_FILE), true);
 		this.schemaV3 = resolveJsonSchema(getResourceFileAsString(prefix + SCHEMA_FILE), true);
 	}
@@ -75,7 +77,7 @@ public class SwaggerOpenApiValidator {
         }
         
         JsonSchema schema = getSchema(isVersion2);
-        ProcessingReport report = schema.validate(spec);
+        ProcessingReport report = schema.validateUnchecked(spec);
         ListProcessingReport lp = new ListProcessingReport();
         lp.mergeWith(report);
 
@@ -138,9 +140,17 @@ public class SwaggerOpenApiValidator {
 					oNode.remove("description");
 				}
 			}
+			
 			// Come schema factory utilizzo quella di atlassian che estende il jsonSchema
 			// con altri tipi
-			JsonSchemaFactory factory = SwaggerV20Library.schemaFactory();//JsonSchemaFactory.byDefault();
+			//JsonSchemaFactory factory = SwaggerV20Library.schemaFactory();//JsonSchemaFactory.byDefault();
+			JsonSchemaFactory factory = JsonSchemaFactory
+					.newBuilder()
+			           .setReportProvider(
+		                        // Only emit ERROR and above from the JSON schema validation
+		                        new ListReportProvider(LogLevel.WARNING, LogLevel.FATAL))
+					.freeze();
+			
 			return factory.getJsonSchema(schemaObject);
 		} catch (Exception e) {
 			throw new RuntimeException("Errore inatteso durante  il parsing JSON dello schema: " + e.getMessage());
