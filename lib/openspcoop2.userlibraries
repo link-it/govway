@@ -257,7 +257,7 @@
 	<archive path="/op2_3.3.dev/lib/swagger/swagger-core-1.6.0.jar"/>
 	<archive path="/op2_3.3.dev/lib/swagger/swagger-models-1.6.0.jar"/>
 	<archive path="/op2_3.3.dev/lib/swagger/swagger-ui-3.25.0.jar"/>
-	<archive path="/op2_3.3.dev/lib/swagger/swagger-request-validator-core-2.20.0.jar"/>
+		<!--	<archive path="/op2_3.3.dev/lib/swagger/swagger-request-validator-core-2.20.0.jar"/> -->
 
 	<!-- testsuite-->
         <archive path="/op2_3.3.dev/lib/testsuite/testng-7.1.0.jar"/>
