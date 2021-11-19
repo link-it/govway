@@ -293,4 +293,47 @@ public class DBVerifier {
 		return ids;
 
 	}
+	
+	
+	public static String getIdCorrelazioneApplicativaRichiesta(String idTransazione) throws Exception  {
+		return _getIdCorrelazioneApplicativa(idTransazione, true);
+	}
+	public static String getIdCorrelazioneApplicativaRisposta(String idTransazione) throws Exception  {
+		return _getIdCorrelazioneApplicativa(idTransazione, false);
+	}
+	public static String _getIdCorrelazioneApplicativa(String idTransazione, boolean richiesta) throws Exception  {
+		
+		// La scrittura su database avviene dopo aver risposto al client
+		
+		Utilities.sleep(100); 
+		try {
+			return DBVerifier._getIdCorrelazioneApplicativaEngine(idTransazione, richiesta);
+		}catch(Throwable t) {
+			Utilities.sleep(500);
+			try {
+				return DBVerifier._getIdCorrelazioneApplicativaEngine(idTransazione, richiesta);
+			}catch(Throwable t2) {
+				Utilities.sleep(2000);
+				try {
+					return DBVerifier._getIdCorrelazioneApplicativaEngine(idTransazione, richiesta);
+				}catch(Throwable t3) {
+					Utilities.sleep(5000);
+					return DBVerifier._getIdCorrelazioneApplicativaEngine(idTransazione, richiesta);
+				}
+			}
+		}
+	}
+	private static String _getIdCorrelazioneApplicativaEngine(String idTransazione, boolean richiesta) throws Exception  {
+		
+		String colonna = richiesta ? "id_correlazione_applicativa" : "id_correlazione_risposta";
+		String query = "select "+colonna+" from transazioni where id = ?";
+		log().info(query);
+		
+		String idCorrelazione = dbUtils().readValue(query, String.class, idTransazione);
+		
+		assertNotNull("IdCorrelazione letto da idTransazione: "+idTransazione, idCorrelazione);
+		
+		return idCorrelazione;
+
+	}
 }
