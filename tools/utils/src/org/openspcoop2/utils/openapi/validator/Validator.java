@@ -123,7 +123,6 @@ import com.fasterxml.jackson.databind.node.TextNode;
 
 import io.swagger.models.Swagger;
 import io.swagger.parser.Swagger20Parser;
-import io.swagger.parser.SwaggerParser;
 import io.swagger.parser.util.SwaggerDeserializationResult;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -143,7 +142,6 @@ import io.swagger.v3.parser.OpenAPIResolver;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import io.swagger.v3.parser.converter.SwaggerConverter;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
-import io.swagger.v3.parser.util.OpenAPIDeserializer;
 import io.swagger.v3.parser.util.ResolverFully;
 
 /**
@@ -165,13 +163,11 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 	
 	// SwaggerRequestValidator
 	private SwaggerRequestValidator swaggerRequestValidator;
-	//private RequestValidator swaggerRequestValidator;
 	private SwaggerResponseValidator swaggerResponseValidator;
 	private OpenAPI openApiSwagger;
 
 	// Configuration
 	private OpenapiApi4jValidatorConfig openApi4jConfig;
-		
 	
 	boolean onlySchemas = false;
 	
@@ -374,14 +370,26 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 					}
 					else if(OpenAPILibrary.swagger_request_validator.equals(openApiLibrary)) {
 						
+						// Validazione sintattica se richiesta
+						
+						if(this.openApi4jConfig.isValidateAPISpec()) {
+							var validationResult = new SwaggerOpenApiValidator().validate(schemaNodeRoot);
+							if (validationResult.isPresent()) {
+								throw new ProcessingException(
+										"OpenAPI3 not valid: " + validationResult.get()
+										);								
+							}					    
+						}
+						
+						// Parsing
+						
 						SwaggerParseResult result;
 						String version = SwaggerValidatorUtils.getSchemaVersion(schemaNodeRoot);
 						if (SwaggerValidatorUtils.isSchemaV2(version)) {
 							Swagger20Parser swaggerParser = new Swagger20Parser();
-							SwaggerParser sp = new SwaggerParser();
-							
 							SwaggerConverter swaggerConverter = new SwaggerConverter();
 							Swagger swagger = swaggerParser.read(schemaNodeRoot);
+							
 							if (swagger != null) {
 								SwaggerDeserializationResult foo = new SwaggerDeserializationResult();
 								foo.setMessages(Arrays.asList());
@@ -390,6 +398,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 							} else {
 								throw new ProcessingException("Unknown error while parsing the Swagger root node.");								
 							}
+							
 						} else {						
 							OpenAPIV3Parser v3Parser = new OpenAPIV3Parser();
 							result = v3Parser.parseJsonNode(null, schemaNodeRoot);
@@ -400,9 +409,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						}
 						
 						// Se l'api non è stata mergiata, recuperiamo gli schemi dei riferimenti esterni
+						
 						Map<String,String> schemaMapSerialized = new HashMap<String,String>();
-						if (!this.openApi4jConfig.isMergeAPISpec() && api.getSchemas()!=null) {
-							
+						if (!this.openApi4jConfig.isMergeAPISpec() && api.getSchemas()!=null) {							
 							for (ApiSchema apiSchema : api.getSchemas()) {
 								if(ApiSchemaType.JSON.equals(apiSchema.getType()) || ApiSchemaType.YAML.equals(apiSchema.getType())) {
 									String schemaBytes = new String(apiSchema.getContent());
@@ -414,25 +423,24 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						
 						OpenAPIResolver v3Resolver = new OpenAPIResolver(result.getOpenAPI(), schemaMapSerialized, null, 0);
 						result.setOpenAPI(v3Resolver.resolve());
+						
+						if (this.openApi4jConfig.isResolveFullyApiSpec()) {
+							
+							// Passo false per non risolvere i combinators, poichè quando vengono risolti non c'è modo
+							// di ricordarsi i singoli attributi degli schemi combinati (oneOf, allOf ecc..)
+							
+							ResolverFully v3ResolverFully = new ResolverFully(false);
+							v3ResolverFully.resolveFully(result.getOpenAPI());
+						}
 
-						// Passo false per non risolvere i combinators, poichè quando vengono risolti non c'è modo
-						// di ricordarsi i singoli attributi degli schemi combinati (oneOf, allOf ecc..)
-						ResolverFully v3ResolverFully = new ResolverFully(false);
-						v3ResolverFully.resolveFully(result.getOpenAPI());
-						
 			            // Pulisco la openApi con le utility dell' OpenApiLoader di atlassian
-						//removeRegexPatternOnStringsOfFormatByte(result.getOpenAPI());
-					    removeTypeObjectAssociationWithOneOfAndAnyOfModels(result.getOpenAPI());
 						
+						removeRegexPatternOnStringsOfFormatByte(result.getOpenAPI());
+					    removeTypeObjectAssociationWithOneOfAndAnyOfModels(result.getOpenAPI());
+
+						// Validazione semantica se richiesta
+
 						if(this.openApi4jConfig.isValidateAPISpec()) {
-							var validationResult = new SwaggerOpenApiValidator().validate(schemaNodeRoot);
-							
-							if (validationResult.isPresent()) {
-								throw new ProcessingException(
-										"OpenAPI3 not valid: " + validationResult.get()
-										);								
-							}					    
-							
 							if (result.getMessages().size() != 0) {
 								throw new ProcessingException(
 										"OpenAPI3 not valid: " + String.join("\n", result.getMessages())
@@ -1389,7 +1397,6 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 
 	private void validateWithSwaggerRequestValidator(HttpBaseEntity<?> httpEntity, ApiOperation gwOperation) throws ProcessingException, ValidatorException {
 		
-	    // TODO: Mancano i cookies!		  
 		// IMPROVEMENT: Invece di fare la readOperationsMap, meglio uno switch che fa la getGET, getPOST ecc.. giusta.		
 		
 		// Dentro l'openApiSwagger ho i path col dollaro, nell'oggetto openapi di openspcoop invece

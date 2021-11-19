@@ -48,7 +48,7 @@ public class TestSwagger2 {
 				tipo = args[0];
 			}
 			
-			OpenAPILibrary openAPILibrary = OpenAPILibrary.json_schema;
+			OpenAPILibrary openAPILibrary = OpenAPILibrary.swagger_request_validator;
 			boolean mergeSpec = false;
 			
 			String baseUri = "http://petstore.swagger.io/v2";

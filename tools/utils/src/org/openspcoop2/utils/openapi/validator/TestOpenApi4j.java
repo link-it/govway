@@ -75,11 +75,11 @@ public class TestOpenApi4j {
 			openAPILibrary = OpenAPILibrary.valueOf(args[0]);
 		}
 		
-		//openAPILibrary = OpenAPILibrary.swagger_request_validator;
+		openAPILibrary = OpenAPILibrary.swagger_request_validator;
 		
 		// TODO: Renderlo parametrico anche su mergeSpec, che di default è a false.
 		// per adesso non supportiamo schemi non mergiati con la swagger_request_validator
-		boolean mergeSpec = false;
+		boolean mergeSpec = true;
 		
 		
 		// *** TEST per validazione json con wildcard nel subtype *** //
@@ -3445,15 +3445,17 @@ public class TestOpenApi4j {
 		validator.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), apiOpenApi4j, config);
 		
 		System.out.println("Valido richiesta con contenuto corretto..");
-		
-		TextHttpRequestEntity validRequest = new TextHttpRequestEntity();
-		validRequest.setUrl("documenti/testbase64/"+UUID.randomUUID().toString());	
-		validRequest.setMethod(HttpRequestMethod.POST);
-		validRequest.setContent("Q2lhbyBiYmVsbG8h");
-		Map<String, List<String>> parametersTrasporto = new HashMap<>();
-		TransportUtils.addHeader(parametersTrasporto,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
-		validRequest.setHeaders(parametersTrasporto);
-		validator.validate(validRequest);
+		{
+			TextHttpRequestEntity validRequest = new TextHttpRequestEntity();
+			validRequest.setUrl("documenti/testbase64/"+UUID.randomUUID().toString());	
+			validRequest.setMethod(HttpRequestMethod.POST);
+			validRequest.setContent("Q2lhbyBiYmVsbG8h");
+			Map<String, List<String>> parametersTrasporto = new HashMap<>();
+			TransportUtils.addHeader(parametersTrasporto,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
+			validRequest.setHeaders(parametersTrasporto);
+			validRequest.setContentType(HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
+			validator.validate(validRequest);
+		}
 		
 		System.out.println("Nessun errore sollevato, ok!");
 		
@@ -3463,9 +3465,10 @@ public class TestOpenApi4j {
 			invalidRequest.setUrl("documenti/testbase64/"+UUID.randomUUID().toString());	
 			invalidRequest.setMethod(HttpRequestMethod.POST);
 			invalidRequest.setContent("{ asper");
-			parametersTrasporto = new HashMap<>();
+			Map<String, List<String>> parametersTrasporto = new HashMap<>();
 			TransportUtils.addHeader(parametersTrasporto,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
 			invalidRequest.setHeaders(parametersTrasporto);
+			invalidRequest.setContentType(HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
 	
 			String erroreAttesoRichiesta = "[ERROR] [REQUEST] err.format.base64.badLength, should be multiple of 4: 7"; 
 			try {				
@@ -3487,9 +3490,10 @@ public class TestOpenApi4j {
 			validResponse.setMethod(HttpRequestMethod.POST);
 			validResponse.setStatus(200);
 			validResponse.setContent("Q2lhbyBiYmVsbG8h");
-			parametersTrasporto = new HashMap<>();
+			Map<String, List<String>> parametersTrasporto = new HashMap<>();
 			TransportUtils.addHeader(parametersTrasporto,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
 			validResponse.setHeaders(parametersTrasporto);
+			validResponse.setContentType(HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
 			validator.validate(validResponse);
 		}
 		
@@ -3503,11 +3507,12 @@ public class TestOpenApi4j {
 			invalidResponse.setMethod(HttpRequestMethod.POST);
 			invalidResponse.setStatus(200);
 			invalidResponse.setContent("{ asper");
-			parametersTrasporto = new HashMap<>();
+			Map<String, List<String>> parametersTrasporto = new HashMap<>();
 			TransportUtils.addHeader(parametersTrasporto,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
+			invalidResponse.setContentType(HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
 			invalidResponse.setHeaders(parametersTrasporto);
 	
-			String erroreAttesoRisposta = "[ERROR] [RESPONSE] err.format.base64.badLength, should be multiple of 4: 7"; 	// TODO: Aggiungi contesto nel messaggio di errore? 
+			String erroreAttesoRisposta = "[ERROR] [RESPONSE] err.format.base64.badLength, should be multiple of 4: 7"; 
 			try {				
 				validator.validate(invalidResponse);
 				throw new Exception("Errore atteso '"+erroreAttesoRisposta+"' non rilevato");			
@@ -3560,6 +3565,7 @@ public class TestOpenApi4j {
 			Map<String, List<String>> headersS1 = new HashMap<>();
 			TransportUtils.setHeader(headersS1,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_PLAIN);
 			httpResponseTestS1.setHeaders(headersS1);
+			httpResponseTestS1.setContentType(HttpConstants.CONTENT_TYPE_PLAIN);
 			httpResponseTestS1.setContent("{ a }");
 		
 			String erroreAttesoRisposta = openAPILibrary == OpenAPILibrary.openapi4j ?
@@ -3590,6 +3596,7 @@ public class TestOpenApi4j {
 			requestS1.setUrl("documenti/qualsiasi/"+UUID.randomUUID().toString());	
 			Map<String, List<String>> headersS1 = new HashMap<>();
 			TransportUtils.setHeader(headersS1,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_PLAIN);
+			requestS1.setContentType(HttpConstants.CONTENT_TYPE_PLAIN);
 			requestS1.setHeaders(headersS1);
 			requestS1.setContent("{ a }");
 					

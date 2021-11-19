@@ -53,6 +53,9 @@ public class OpenapiApi4jValidatorConfig {
 	// Dice se trattare il subtype '*' come json e quindi validare lo schema del body passato
 	private boolean validateWildcardSubtypeAsJson = true;
 	
+	// Dice se sostituire inline i $ref nello schema con le loro definizioni
+	private boolean resolveFullyApiSpec = true;
+	
 	// FINE CONFIGURAZIONI AGGIUNTIVE PER SWAGGER VALIDATOR
 	
 	public OpenAPILibrary getOpenApiLibrary() {
@@ -149,6 +152,14 @@ public class OpenapiApi4jValidatorConfig {
 
 	public void setValidateWildcardSubtypeAsJson(boolean validateWildcardSubtypeAsJson) {
 		this.validateWildcardSubtypeAsJson = validateWildcardSubtypeAsJson;
+	}
+
+	public boolean isResolveFullyApiSpec() {
+		return this.resolveFullyApiSpec;
+	}
+
+	public void setResolveFullyApiSpec(boolean resolveFullyApiSpec) {
+		this.resolveFullyApiSpec = resolveFullyApiSpec;
 	}
 	
 }
