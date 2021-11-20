@@ -199,7 +199,8 @@ public class CharsetUtilities {
 				}
 			}
 			
-			String id = DBVerifier.getIdTransazioneByIdApplicativoRichiesta(idCheck, now);
+			boolean assertNotNull_disabled = false;
+			String id = DBVerifier.getIdTransazioneByIdApplicativoRichiesta(idCheck, now, assertNotNull_disabled);
 			if(id==null) {
 				System.out.println("WARN: provo a recuperare l'id di correlazione della richiesta direttamente ("+operazione+") tramite id '"+idTransazione+"' per superare problematiche jenkins");
 				String idCorrelazioneApplicativa = DBVerifier.getIdCorrelazioneApplicativaRichiesta(idTransazione);
@@ -218,7 +219,7 @@ public class CharsetUtilities {
 				assertEquals("richiesta applicativa ["+idCheck+"]", id, idTransazione);
 			}
 			
-			id = DBVerifier.getIdTransazioneByIdApplicativoRisposta(idCheck, now);
+			id = DBVerifier.getIdTransazioneByIdApplicativoRisposta(idCheck, now, assertNotNull_disabled);
 			if(id==null) {
 				System.out.println("WARN: provo a recuperare l'id di correlazione della risposta direttamente ("+operazione+") tramite id '"+idTransazione+"' per superare problematiche jenkins");
 				String idCorrelazioneApplicativa = DBVerifier.getIdCorrelazioneApplicativaRisposta(idTransazione);
