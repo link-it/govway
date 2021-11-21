@@ -208,11 +208,17 @@ public class DBVerifier {
 		log().info(query);
 		
 		String idTransazione = null; 
-		if(t!=null) {
-			idTransazione = dbUtils().readValue(query, String.class, idApplicativo, t);
-		}
-		else {
-			idTransazione = dbUtils().readValue(query, String.class, idApplicativo);
+		try {
+			if(t!=null) {
+				idTransazione = dbUtils().readValue(query, String.class, idApplicativo, t);
+			}
+			else {
+				idTransazione = dbUtils().readValue(query, String.class, idApplicativo);
+			}
+		}catch(org.springframework.dao.EmptyResultDataAccessException tNotFound) {
+			if(assertNotNull) {
+				throw tNotFound;
+			}
 		}
 		if(assertNotNull) {
 			assertNotNull("IdTransazione letto da idApplicativo: "+idApplicativo, idTransazione);
@@ -349,7 +355,14 @@ public class DBVerifier {
 		String query = "select "+colonna+" from transazioni where id = ?";
 		log().info(query);
 		
-		String idCorrelazione = dbUtils().readValue(query, String.class, idTransazione);
+		String idCorrelazione = null;
+		try {
+			idCorrelazione = dbUtils().readValue(query, String.class, idTransazione);
+		}catch(org.springframework.dao.EmptyResultDataAccessException tNotFound) {
+			if(assertNotNull) {
+				throw tNotFound;
+			}
+		}
 		
 		if(assertNotNull) {
 			assertNotNull("IdCorrelazione letto da idTransazione: "+idTransazione, idCorrelazione);
