@@ -137,7 +137,7 @@ public class DBVerifier {
 		return getIdTransazioneByIdApplicativoRichiesta(idApplicativo, null, true);
 	}
 	public static String getIdTransazioneByIdApplicativoRichiesta(String idApplicativo, Date now) throws Exception  {
-		return getIdTransazioneByIdApplicativoRichiesta(idApplicativo, null, true);
+		return getIdTransazioneByIdApplicativoRichiesta(idApplicativo, now, true);
 	}
 	public static String getIdTransazioneByIdApplicativoRichiesta(String idApplicativo, boolean assertNotNull) throws Exception  {
 		return getIdTransazioneByIdApplicativoRichiesta(idApplicativo, null, assertNotNull);
@@ -168,7 +168,7 @@ public class DBVerifier {
 		return getIdTransazioneByIdApplicativoRisposta(idApplicativo, null, true);
 	}
 	public static String getIdTransazioneByIdApplicativoRisposta(String idApplicativo, Date now) throws Exception  {
-		return getIdTransazioneByIdApplicativoRisposta(idApplicativo, null, true);
+		return getIdTransazioneByIdApplicativoRisposta(idApplicativo, now, true);
 	}
 	public static String getIdTransazioneByIdApplicativoRisposta(String idApplicativo, boolean assertNotNull) throws Exception  {
 		return getIdTransazioneByIdApplicativoRisposta(idApplicativo, null, assertNotNull);
