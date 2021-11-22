@@ -51,6 +51,9 @@ public abstract class AbstractCoreSearchForm {
 	private boolean visualizzaSelezioneDimensionePagina = false;
 	private boolean visualizzaFiltroAperto = true;
 	
+	private boolean detached = false;
+	private List<?> wrappedKeys = null;
+	
 	public String aggiorna() {
 		this.initParametriPaginazione();
 		this.aggiornaStatoFiltroRicercaEseguiAggiorna();
@@ -183,7 +186,7 @@ public abstract class AbstractCoreSearchForm {
 	}
 
 	public Integer getCurrentSearchSize() {
-		return this.currentSearchSize;
+		return this.currentSearchSize != null ? this.currentSearchSize : 0;
 	}
 
 	public void setCurrentSearchSize(Integer currentSearchSize) {
@@ -225,5 +228,21 @@ public abstract class AbstractCoreSearchForm {
 	
 	protected void aggiornaStatoFiltroRicercaEseguiAggiorna () {
 		this.setVisualizzaFiltroAperto(false);
+	}
+
+	public boolean isDetached() {
+		return this.detached;
+	}
+
+	public void setDetached(boolean detached) {
+		this.detached = detached;
+	}
+
+	public List<?> getWrappedKeys() {
+		return this.wrappedKeys;
+	}
+
+	public void setWrappedKeys(List<?> wrappedKeys) {
+		this.wrappedKeys = wrappedKeys;
 	}
 }

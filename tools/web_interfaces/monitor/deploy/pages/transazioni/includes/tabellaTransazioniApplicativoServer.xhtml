@@ -79,52 +79,52 @@
 				</f:facet>
 				<h:outputText id="outData2" value="#{item.dataSX}" rendered="#{not empty item.dataSX}">
 					<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss"
-						timeZone="Europe/Rome" />
+						timeZone="#{applicationBean.timeZone}" />
 				</h:outputText>
 				<rich:toolTip for="outData2" style="text-align: right;">
 					<h:outputText value="Accettazione Richiesta: " rendered="#{mBean.visualizzaDataAccettazione}" />
 					<h:outputText value="#{item.dataAccettazioneRichiesta}" rendered="#{mBean.visualizzaDataAccettazione}">
-						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 					</h:outputText>
 					<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{mBean.visualizzaDataAccettazione}" />
 					<h:outputText value="Accettazione Risposta: " rendered="#{mBean.visualizzaDataAccettazione}" />
 					<h:outputText value="#{item.dataAccettazioneRisposta}" rendered="#{mBean.visualizzaDataAccettazione}">
-						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 					</h:outputText>
 					<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{mBean.visualizzaDataAccettazione}" />
 					<h:outputText value="Registrazione: "/>
 					<h:outputText value="#{item.dataRegistrazione}">
-						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 					</h:outputText>
 					<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{item.consegnaIntegrationManager == false and not empty item.dataUscitaRichiesta}" />
 					<h:outputText value="Uscita Richiesta: " rendered="#{item.consegnaIntegrationManager == false and not empty item.dataUscitaRichiesta}"/>
 					<h:outputText value="#{item.dataUscitaRichiesta}" rendered="#{item.consegnaIntegrationManager == false and  not empty item.dataUscitaRichiesta}">
-						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 					</h:outputText>
 					<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{item.consegnaIntegrationManager == false and not empty item.dataIngressoRisposta}" />
 					<h:outputText value="Ingresso Risposta: " rendered="#{item.consegnaIntegrationManager == false and not empty item.dataIngressoRisposta}"/>
 					<h:outputText value="#{item.dataIngressoRisposta}" rendered="#{item.consegnaIntegrationManager == false and not empty item.dataIngressoRisposta}">
-						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 					</h:outputText>
 					<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{item.consegnaIntegrationManager == true and not empty item.dataPrelievoIm}" />
 					<h:outputText value="Prelievo: " rendered="#{item.consegnaIntegrationManager == true and not empty item.dataPrelievoIm}"/>
 					<h:outputText value="#{item.dataPrelievoIm}" rendered="#{item.consegnaIntegrationManager == true and  not empty item.dataPrelievoIm}">
-						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 					</h:outputText>
 					<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{item.consegnaIntegrationManager == true and not empty item.dataPrimoPrelievoIm}" />
 					<h:outputText value="Primo Prelievo: " rendered="#{item.consegnaIntegrationManager == true and not empty item.dataPrimoPrelievoIm}"/>
 					<h:outputText value="#{item.dataPrimoPrelievoIm}" rendered="#{item.consegnaIntegrationManager == true and  not empty item.dataPrimoPrelievoIm}">
-						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 					</h:outputText>
 					<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{item.consegnaIntegrationManager == true and not empty item.dataEliminazioneIm}" />
 					<h:outputText value="Eliminazione: " rendered="#{item.consegnaIntegrationManager == true and not empty item.dataEliminazioneIm}"/>
 					<h:outputText value="#{item.dataEliminazioneIm}" rendered="#{item.consegnaIntegrationManager == true and not empty item.dataEliminazioneIm}">
-						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 					</h:outputText>
 					<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{not empty item.dataMessaggioScaduto}" />
 					<h:outputText value="Scaduto in data: " rendered="#{not empty item.dataMessaggioScaduto}"/>
 					<h:outputText value="#{item.dataMessaggioScaduto}" rendered="#{not empty item.dataMessaggioScaduto}">
-						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 					</h:outputText>
 				</rich:toolTip>
 			</rich:column>	

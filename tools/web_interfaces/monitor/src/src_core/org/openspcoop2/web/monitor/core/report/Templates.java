@@ -26,7 +26,8 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.tableOfContent
 import static net.sf.dynamicreports.report.builder.DynamicReports.template;
 
 import java.awt.Color;
-import java.util.Locale;
+
+import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 
 import net.sf.dynamicreports.report.base.expression.AbstractValueFormatter;
 import net.sf.dynamicreports.report.builder.HyperLinkBuilder;
@@ -118,7 +119,7 @@ public class Templates {
 				.setHeadingStyle(0, stl.style(rootStyle).bold());
 
 		reportTemplate = template()
-				.setLocale(Locale.ITALIAN)
+				.setLocale(ApplicationBean.getInstance().getLocale())
 				.setColumnStyle(columnStyle)
 				.setColumnTitleStyle(columnTitleStyle)
 				.setGroupStyle(groupStyle)

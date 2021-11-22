@@ -240,7 +240,7 @@ public class LoaderCore{
 			this.logoHeaderImage = loaderProperties.getLogoHeaderImage();
 			this.logoHeaderLink = loaderProperties.getLogoHeaderLink();
 			this.logoHeaderTitolo = loaderProperties.getLogoHeaderTitolo();
-			this.visualizzaLinkHomeHeader = loaderProperties.visualizzaLinkHomeHeader;
+			this.visualizzaLinkHomeHeader = loaderProperties.isVisualizzaLinkHomeHeader();
 			
 		} catch (java.lang.Exception e) {
 			LoaderCore.log.error("[OpenSPCoopLoader::initCore] Impossibile leggere i dati dal file loader.properties:" + e.toString());

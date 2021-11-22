@@ -58,6 +58,7 @@ import org.openspcoop2.core.transazioni.constants.DeleteState;
 import org.openspcoop2.core.transazioni.constants.ExportState;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.converter.DurataConverter;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
@@ -95,6 +96,7 @@ public class SingleCsvFileExporter implements IExporter{
 	private boolean abilitaMarcamentoTemporale = false;
 	private String formato = null;
 	private List<String> colonneSelezionate = null;
+	private boolean useCount = true;
 
 	private ITransazioniService transazioniService;
 	private ITracciaDriver tracciamentoService;
@@ -119,7 +121,7 @@ public class SingleCsvFileExporter implements IExporter{
 		this.abilitaMarcamentoTemporale = properties.isAbilitaMarcamentoTemporaleEsportazione();
 		this.formato = properties.getFormato();
 		this.colonneSelezionate = properties.getColonneSelezionate();
-
+		this.useCount = properties.isUseCount();
 
 		this.tracciamentoService = tracciamentoService;
 		this.transazioniService = transazioniService;
@@ -132,6 +134,10 @@ public class SingleCsvFileExporter implements IExporter{
 		SingleCsvFileExporter.log.info("\t -esportazione Diagnostici abilitata: "+this.exportDiagnostici);
 		SingleCsvFileExporter.log.info("\t -enable header info abilitato: "+this.enableHeaderInfo);
 		SingleCsvFileExporter.log.info("\t -formato scelto: "+this.formato);
+		SingleCsvFileExporter.log.info("\t -usa count: "+this.useCount);
+		if(!this.useCount) {
+			SingleCsvFileExporter.log.info("\t -numero massimo elementi esportati: "+Costanti.SELECT_ITEM_VALORE_MASSIMO_ENTRIES);
+		}
 
 		SingleCsvFileExporter.log.info("\t -MimeType handling (mime.throwExceptionIfMappingNotFound):"+this.mimeThrowExceptionIfNotFound);
 	}
@@ -972,15 +978,36 @@ public class SingleCsvFileExporter implements IExporter{
 			List<TransazioneBean> transazioni = new ArrayList<TransazioneBean>();
 
 			transazioni = this.transazioniService.findAll(start, limit);
+			
+			int totale = transazioni.size();
+			boolean stopExport = false;
 
 			try{
-				while(transazioni.size()>0){
+				while(transazioni.size()>0 && !stopExport){
 
 					popolaDataSourceExport(dataSource,transazioni);
 
 					start+=limit;
+					
+					// se la console non utilizza la count devo far l'export del numero massimo di transazioni previste in configurazione
+					// puo' succedere che il numero di risultati totali non sia divisibile per il limit e l'ultima ricerca potrebbe aggingere un numero 
+					// di risultati superiore a quanto previsto, riduco il limit al numero dei risultanti mancanti
+					if(!this.useCount) {
+						int residui = Costanti.SELECT_ITEM_VALORE_MASSIMO_ENTRIES - totale;
+						if(residui > 0 && limit > residui) {
+							limit = residui;
+						}
+					}
 
 					transazioni = this.transazioniService.findAll(start, limit);
+					
+					totale += transazioni.size();
+					
+					if(!this.useCount) {
+						if(totale >= Costanti.SELECT_ITEM_VALORE_MASSIMO_ENTRIES) {
+							stopExport = true;
+						}
+					}
 				}
 
 				JasperReportBuilder reportBuilder = creaReportBuilder(dataSource, SingleCsvFileExporter.log);

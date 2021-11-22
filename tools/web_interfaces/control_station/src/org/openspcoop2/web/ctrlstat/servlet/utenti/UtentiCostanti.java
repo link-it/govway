@@ -219,6 +219,7 @@ public class UtentiCostanti {
 	
 	/* VALORI PARAMETRI */
 	public final static String VALORE_PARAMETRO_MODALITA_ALL = "all";
+	public final static String VALORE_PARAMETRO_PASSWORD_MODALITA_NO_LOGIN_APPLICATION = "changeit";
 	
 	/* MESSAGGI ERRORE */
 	public final static String MESSAGGIO_ERRORE_NOME_SOGGETTO_OBBLIGATORIO = "Selezionare un soggetto";

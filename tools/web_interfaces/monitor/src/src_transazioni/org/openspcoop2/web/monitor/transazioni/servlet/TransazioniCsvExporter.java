@@ -223,6 +223,7 @@ public class TransazioniCsvExporter extends HttpServlet{
 			prop.setColonneSelezionate(colonneSelezionateFromSession);
 			prop.setHeadersAsProperties(this.headersAsProperties);
 			prop.setContenutiAsProperties(this.contenutiAsProperties);
+			prop.setUseCount(searchForm.isUseCount());
 
 			SingleCsvFileExporter sfe = new SingleCsvFileExporter(response.getOutputStream(), prop, service,
 					this.tracciamentoService, this.diagnosticiService,null);
@@ -241,6 +242,9 @@ public class TransazioniCsvExporter extends HttpServlet{
 		}catch(Throwable e){
 			TransazioniCsvExporter.log.error(e.getMessage(),e);
 			throw new ServletException(e.getMessage(),e);
+		} finally {
+			// reset login bean statico
+			Utility.setLoginMBean(null);
 		}
 	}
 	

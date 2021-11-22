@@ -594,6 +594,14 @@ public class ControlStationCore {
 		return this.utenzePasswordManager_backwardCompatibility;
 	}
 	
+	public boolean isCheckPasswordExpire(PasswordVerifier passwordVerifier) throws Exception { 
+		if(passwordVerifier != null) {
+			return this.isLoginApplication() && passwordVerifier.isCheckPasswordExpire();
+		}
+		
+		return false;
+	}
+	
 	/** Login */
 	protected String loginTipo;
 	protected boolean loginApplication;

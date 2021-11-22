@@ -35,7 +35,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
@@ -472,5 +471,9 @@ public class GeneralHelper {
 		}
 
 		return link;
+	}
+
+	public ControlStationCore getCore() {
+		return this.core;
 	}
 }

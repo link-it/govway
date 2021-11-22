@@ -31,6 +31,8 @@ import javax.faces.application.Application;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 
+import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
+
 /**
  * MessageManager
  * 
@@ -130,7 +132,7 @@ public class MessageManager {
 		}catch(Exception e){}
 
 		if(locale == null){
-			locale = Locale.ITALY;
+			locale = ApplicationBean.getInstance().getLocale();
 		}
 
 		return locale;

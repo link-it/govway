@@ -24,7 +24,9 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
@@ -114,6 +116,8 @@ public class ApplicationBean implements Serializable {
 	private boolean permessoStatistiche = false;
 	
 	private boolean loginApplication = true;
+	
+	private Locale locale;
 
 	private static Map<String, Boolean> funzionalitaStaticInstance = null;
 	private synchronized void initializeFunzionalita(PddMonitorProperties govwayMonitorProperties) throws Exception{
@@ -176,6 +180,8 @@ public class ApplicationBean implements Serializable {
 			this.funzionalita.putAll(ApplicationBean.funzionalitaStaticInstance);
 			
 			this.loginApplication = govwayMonitorProperties.isLoginApplication();
+			
+			this.locale = govwayMonitorProperties.getConsoleLocale();
 			
 		} catch (Exception e) {
 			ApplicationBean.log.error("Errore durante l'inizializzazione del ApplicationBean.",e);
@@ -1196,4 +1202,14 @@ public class ApplicationBean implements Serializable {
 		return null; // DEVE ESSERE NULL PER NON NAVIGARE
 	}
 
+	public String getTimeZone() {
+		return TimeZone.getDefault().getID();
+	}
+	
+	public Locale getLocale() {
+		if(this.locale == null)
+			return Locale.getDefault();
+		
+		return this.locale;
+	}
 }

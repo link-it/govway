@@ -84,6 +84,8 @@ public final class UtentiAdd extends Action {
 		try {
 			UtentiCore utentiCore = new UtentiCore();
 			UtentiHelper utentiHelper = new UtentiHelper(request, pd, session);
+			
+			boolean loginApplication = utentiCore.isLoginApplication();
 	
 			String nomesu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
 			String pwsu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_PASSWORD);
@@ -276,7 +278,7 @@ public final class UtentiAdd extends Action {
 			
 			// aggiornamento password
 			PasswordVerifier passwordVerifier = utentiCore.getUtenzePasswordVerifier();
-			if(passwordVerifier.isCheckPasswordExpire()) {
+			if(utentiCore.isCheckPasswordExpire(passwordVerifier)) {
 				newU.setCheckLastUpdatePassword(ServletUtils.isCheckBoxEnabled(scadenza));
 			} else {
 				newU.setCheckLastUpdatePassword(false);
@@ -288,7 +290,7 @@ public final class UtentiAdd extends Action {
 			utentiCore.performCreateOperation(userLogin, utentiHelper.smista(), newU);
 	
 			// Messaggio 'Please Copy'
-			if(secret) {
+			if(loginApplication && secret) {
 				utentiHelper.setSecretPleaseCopy(secret_password, secret_user, secret_appId, ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC, OggettoDialogEnum.UTENTE, nomesu);
 			}
 			

@@ -31,17 +31,15 @@ import javax.faces.context.FacesContext;
 import org.ajax4jsf.model.DataVisitor;
 import org.ajax4jsf.model.Range;
 import org.ajax4jsf.model.SequenceRange;
-import org.openspcoop2.generic_project.dao.IServiceSearchWithId;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.web.monitor.core.bean.AbstractCoreSearchForm;
+import org.openspcoop2.web.monitor.core.dao.ISearchFormService;
 import org.richfaces.model.FilterField;
 import org.richfaces.model.Modifiable;
 import org.richfaces.model.Ordering;
 import org.richfaces.model.SortField2;
 import org.slf4j.Logger;
-
-import org.openspcoop2.web.monitor.core.bean.AbstractCoreSearchForm;
-import org.openspcoop2.web.monitor.core.dao.ISearchFormService;
 
 /***
  * SortableBaseDataModel Estende la classe {@link BaseDataModel} aggiungendo la funzionalita' di ordinamento delle colonne della tabella.
@@ -70,6 +68,7 @@ public abstract class SortableBaseDataModel<K, T, D, S extends AbstractCoreSearc
 	@Override
 	public void modify(List<FilterField> filterFields,
 			List<SortField2> sortFields) {
+		log.debug("AAAAAAAAAAA modify Numero Entries richieste: ["+this.rowsToDisplay+"] ID["+this.toString()+"]");
 		log.debug("L'utente ha modificato l'ordinamento dei risultati.");
 		if (sortFields != null && !sortFields.isEmpty())
 	    {
@@ -123,21 +122,22 @@ public abstract class SortableBaseDataModel<K, T, D, S extends AbstractCoreSearc
 	@Override
 	public void walk(FacesContext context, DataVisitor visitor, Range range, Object argument)	throws IOException	{
 		try{
-			boolean usaBuffer = (this.detached || this.wrappedKeys != null); // && isSortObjectNull;
-//			log.debug("Condizione walk ["+usaBuffer+"]"); 
+			this.checkDataProvider();
+			AbstractCoreSearchForm searchForm =  null;
 			
-			if (usaBuffer){
-				for (final K key : this.wrappedKeys) {
-					setRowKey(key);
-					visitor.process(context, key, argument);
-				}
-			} else {
-				this.checkDataProvider();
-				int start = 0; int limit = 0;
-				AbstractCoreSearchForm searchForm =  null;
-				if(this.dataProvider instanceof ISearchFormService) {
-					searchForm = ((ISearchFormService<T, K, AbstractCoreSearchForm>)this.dataProvider).getSearch();
-
+			if(this.dataProvider instanceof ISearchFormService) {
+				searchForm = ((ISearchFormService<T, K, AbstractCoreSearchForm>)this.dataProvider).getSearch();
+				
+				boolean usaBuffer = (searchForm.isDetached() || searchForm.getWrappedKeys() != null); // && isSortObjectNull;
+				log.debug("AAAAAAAAAAA walk Numero Entries richieste: ["+this.rowsToDisplay+"], usaBuffer ["+usaBuffer+"] ID["+this.toString()+"]");
+				
+				if (usaBuffer){
+					for (final Object key : searchForm.getWrappedKeys()) {
+						setRowKey(key);
+						visitor.process(context, key, argument);
+					}
+				} else {
+					int start = 0; int limit = 0;
 					if(searchForm.isUseCount()) {
 						// ripristino la ricerca.
 						if(searchForm.isRestoreSearch()){
@@ -165,24 +165,44 @@ public abstract class SortableBaseDataModel<K, T, D, S extends AbstractCoreSearc
 						start = searchForm.getStart();
 						limit = searchForm.getLimit();
 					}
+					
+					this.wrappedKeys = new ArrayList<K>();
+					
+					log.debug("AAAAAAAAAAA walk Numero Entries richieste: ["+this.rowsToDisplay+"], Start ["+start+"]. Limit ["+limit+"] ID["+this.toString()+"]");
+					List<T> bufferList = findObjects(start, limit, this.getSortField(), this.getSortOrder());
+					this.currentSearchSize = bufferList != null ?  bufferList.size() : 0;
+					searchForm.setCurrentSearchSize(this.currentSearchSize);
+					for (final T obj : bufferList) {
+						this.wrappedData.put(getId(obj), obj);
+						this.wrappedKeys.add(getId(obj));
+						visitor.process(context,getId(obj) , argument);
+					}
+					searchForm.setWrappedKeys(this.wrappedKeys);
 				}
-				if(this.dataProvider instanceof IServiceSearchWithId){
+			} else {
+				
+				boolean usaBuffer = (this.detached || this.wrappedKeys != null); // && isSortObjectNull;
+				log.debug("AAAAAAAAAAA walk Numero Entries richieste: ["+this.rowsToDisplay+"], usaBuffer ["+usaBuffer+"] ID["+this.toString()+"]");
+				
+				if (usaBuffer){
+					for (final K key : this.wrappedKeys) {
+						setRowKey(key);
+						visitor.process(context, key, argument);
+					}
+				} else {
+					int start = 0; int limit = 0;
 					start = ((SequenceRange)range).getFirstRow();
 					limit = ((SequenceRange)range).getRows();
-				}
-//				final int start = ((SequenceRange) range).getFirstRow();
-//				final int limit = ((SequenceRange) range).getRows();
+					
+					this.wrappedKeys = new ArrayList<K>();
 
-				this.wrappedKeys = new ArrayList<K>();
-
-				List<T> bufferList = findObjects(start, limit, this.getSortField(), this.getSortOrder());
-				if(searchForm != null) {
-					searchForm.setCurrentSearchSize(bufferList != null ? bufferList.size() : 0);
-				}
-				for (final T obj : bufferList) {
-					this.wrappedData.put(getId(obj), obj);
-					this.wrappedKeys.add(getId(obj));
-					visitor.process(context,getId(obj) , argument);
+					List<T> bufferList = findObjects(start, limit, this.getSortField(), this.getSortOrder());
+					this.currentSearchSize = bufferList != null ?  bufferList.size() : 0;
+					for (final T obj : bufferList) {
+						this.wrappedData.put(getId(obj), obj);
+						this.wrappedKeys.add(getId(obj));
+						visitor.process(context,getId(obj) , argument);
+					}
 				}
 			}
 		}catch(Exception e){

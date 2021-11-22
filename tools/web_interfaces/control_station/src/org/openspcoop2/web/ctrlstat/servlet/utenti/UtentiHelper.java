@@ -452,17 +452,19 @@ public class UtentiHelper extends ConsoleHelper {
 			dati.addElement(de);
 		}
 		
+		boolean loginApplication = this.core.isLoginApplication();
 		
-		
-		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PASSWORD);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		if(loginApplication) {
+			de = new DataElement();
+			de.setLabel(UtentiCostanti.LABEL_PASSWORD);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+		}
 		
 		PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
 		
 		// se e' abilitato il controllo sulla scadenza della password visualizzo la checkbox di abilitazione scadenza sul singolo utente
-		if(passwordVerifier.isCheckPasswordExpire()) {
+		if(this.utentiCore.isCheckPasswordExpire(passwordVerifier)) {
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_SCADENZA);
 			de.setType(DataElementType.CHECKBOX);
@@ -504,7 +506,7 @@ public class UtentiHelper extends ConsoleHelper {
 			dati.addElement(de);
 		}
 
-		if(TipoOperazione.CHANGE.equals(tipoOperazione)){
+		if(loginApplication && TipoOperazione.CHANGE.equals(tipoOperazione)){
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_MODIFICA);
 			de.setType(DataElementType.CHECKBOX);
@@ -519,20 +521,25 @@ public class UtentiHelper extends ConsoleHelper {
 		if( (TipoOperazione.ADD.equals(tipoOperazione)) || (ServletUtils.isCheckBoxEnabled(changepwd)) ){
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_PASSWORD);
-			de.setValue(pwsu);
-			de.setType(DataElementType.CRYPT);
-			de.getPassword().setVisualizzaPasswordChiaro(true);
-			de.getPassword().setVisualizzaBottoneGeneraPassword(true);
-			if(passwordVerifier != null) {
-				PasswordGenerator passwordGenerator = new PasswordGenerator(passwordVerifier);
-				passwordGenerator.setDefaultLength(this.utentiCore.getUtenzeLunghezzaPasswordGenerate());
-				de.getPassword().setPasswordGenerator(passwordGenerator);
-				// stesso messaggio in add e change perche' l'amministratore puo' impostare anche password ripetute
-				de.setNote(passwordVerifier.help(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE));
+			if(loginApplication) {
+				de.setValue(pwsu);
+				de.setType(DataElementType.CRYPT);
+				de.getPassword().setVisualizzaPasswordChiaro(true);
+				de.getPassword().setVisualizzaBottoneGeneraPassword(true);
+				if(passwordVerifier != null) {
+					PasswordGenerator passwordGenerator = new PasswordGenerator(passwordVerifier);
+					passwordGenerator.setDefaultLength(this.utentiCore.getUtenzeLunghezzaPasswordGenerate());
+					de.getPassword().setPasswordGenerator(passwordGenerator);
+					// stesso messaggio in add e change perche' l'amministratore puo' impostare anche password ripetute
+					de.setNote(passwordVerifier.help(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE));
+				}
+				de.setRequired(true);
+			} else {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(UtentiCostanti.VALORE_PARAMETRO_PASSWORD_MODALITA_NO_LOGIN_APPLICATION);
 			}
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_PASSWORD);
 			de.setSize(this.getSize());
-			de.setRequired(true);
 			dati.addElement(de);
 		}
 		
@@ -1427,7 +1434,7 @@ public class UtentiHelper extends ConsoleHelper {
 					}
 					
 					// se e' abilitato il check di scadenza delle password e la password e' scaduta imposto il check rosso
-					if(passwordVerifier.isCheckPasswordExpire()) {
+					if(this.core.isCheckPasswordExpire(passwordVerifier)) {
 						if(mySU.isCheckLastUpdatePassword()) {
 							if(passwordVerifier.isPasswordExpire(mySU.getLastUpdatePassword())) {
 								de.setToolTip(UtentiCostanti.LABEL_UTENTI_SCADENZA_PASSWORD_SCADUTA);

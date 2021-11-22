@@ -61,7 +61,7 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.slf4j.Logger;
 
 /**
- * AuthorisationFilter
+ * AuthorizationFilter
  * 
  * @author Andrea Poli (apoli@link.it)
  * @author Stefano Corallo (corallo@link.it)
@@ -70,7 +70,7 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  * 
  */
-public final class AuthorisationFilter implements Filter {
+public final class AuthorizationFilter implements Filter {
 
 	private FilterConfig filterConfig = null;
 	private ControlStationCore core = null;
@@ -138,6 +138,8 @@ public final class AuthorisationFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) res;
 		
+		GeneralHelper generalHelper = null;
+		LoginHelper loginHelper = null;
 		try {
 //			System.out.println("SERVLET PATH ["+request.getServletPath()+"]");
 //			System.out.println("SERVLET URI ["+request.getRequestURI()+"]");
@@ -154,19 +156,20 @@ public final class AuthorisationFilter implements Filter {
 			// Autenticazione gestita dall'applicazione 
 			if(this.loginApplication){
 				HttpSession session = request.getSession(true);
-
 				session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD, this.core.isSinglePdD());
-				GeneralHelper generalHelper = new GeneralHelper(session);
-
-				LoginHelper loginHelper = null;
-				try {
-					loginHelper = new LoginHelper(request, new PageData(), session);
-				} catch (Exception e) {
-					ControlStationCore.logError("Errore rilevato durante l'authorizationFilter",e);
-					throw new RuntimeException(e.getMessage(),e);
-				}
 				
 				if (isRisorsaProtetta(request)) { 
+					
+					generalHelper = new GeneralHelper(session);
+
+					try {
+						loginHelper = new LoginHelper(generalHelper.getCore(), request, new PageData(), session);
+					} catch (Exception e) {
+						ControlStationCore.logError("Errore rilevato durante l'authorizationFilter",e);
+						throw new RuntimeException(e.getMessage(),e);
+					}
+
+					//System.out.println("ENTRO ["+request.getRequestURI()+"]");
 					
 					String userLogin = ServletUtils.getUserLoginFromSession(session);
 					if (userLogin == null) {
@@ -268,21 +271,25 @@ public final class AuthorisationFilter implements Filter {
 						}
 					}
 				}
+				//else {
+				//	System.out.println("NON ENTRO ["+request.getRequestURI()+"]");
+				//}
 			} else {
 				HttpSession session = request.getSession();
-				GeneralHelper generalHelper = new GeneralHelper(session);
-
-				LoginHelper loginHelper = null;
-				try {
-					loginHelper = new LoginHelper(request, new PageData(), session);
-				} catch (Exception e) {
-					ControlStationCore.logError("Errore rilevato durante l'authorizationFilter",e);
-					throw new RuntimeException(e.getMessage(),e);
-				}
-				
 				
 				// lettura delle informazioni di login dal principal 
 				if (isRisorsaProtetta(request)) { 
+					
+					generalHelper = new GeneralHelper(session);
+
+					try {
+						loginHelper = new LoginHelper(generalHelper.getCore(), request, new PageData(), session);
+					} catch (Exception e) {
+						ControlStationCore.logError("Errore rilevato durante l'authorizationFilter",e);
+						throw new RuntimeException(e.getMessage(),e);
+					}
+					
+					//System.out.println("ENTRO ["+request.getRequestURI()+"]");
 					
 					// ricerca utenza in sessione
 					String userLogin = ServletUtils.getUserLoginFromSession(session);
@@ -491,6 +498,9 @@ public final class AuthorisationFilter implements Filter {
 						}
 					}
 				} // end isRisorsaProtetta 
+				//else {
+				//	System.out.println("NON ENTRO ["+request.getRequestURI()+"]");
+				//}
 			}
 			// allow others filter to be chained
 			chain.doFilter(request, response);
@@ -498,8 +508,14 @@ public final class AuthorisationFilter implements Filter {
 			ControlStationCore.logError("Errore rilevato durante l'authorizationFilter",e);
 			try{
 				HttpSession session = request.getSession();
-				GeneralHelper generalHelper = new GeneralHelper(session);
 				
+				if(generalHelper==null) {
+					try{
+						generalHelper = new GeneralHelper(session);
+					}catch(Exception eClose){
+						ControlStationCore.logError("Errore rilevato durante l'authorizationFilter (reInit General Helper)",e);
+					}
+				}
 				this.setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE);
 				// return so that we do not chain to other filters
 				return;
@@ -545,7 +561,7 @@ public final class AuthorisationFilter implements Filter {
 	}
 	
 	
-	public void setLoginWelcomeMsg(GeneralHelper gh,HttpSession session,
+	public void setLoginWelcomeMsg(GeneralHelper gh, HttpSession session,
 			HttpServletRequest request,HttpServletResponse response,String servletDispatcher, LoginCore loginCore) throws IOException,ServletException {
 		
 		// Inizializzo PageData
@@ -558,37 +574,41 @@ public final class AuthorisationFilter implements Filter {
 		String userLogin = ServletUtils.getUserLoginFromSession(session);
 		if(userLogin != null){
 			try{
-			LoginHelper lH = new LoginHelper(request, pd, session);
-			// Preparo il menu
-			lH.makeMenu();
-			
-			LoginSessionUtilities.setLoginParametersSession(session, loginCore, userLogin);
-			lH.updateTipoInterfaccia();
-			
-			// Inizializzo parametri di ricerca
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
-			lH.initializeFilter(ricerca);
-			
-			// Boolean verifico configurazione
-			Login.impostaMessaggioEsitoLogin(pd, loginCore);
+				LoginHelper lH = new LoginHelper(gh.getCore(), request, pd, session);
+				// Preparo il menu
+				lH.makeMenu();
+				
+				LoginSessionUtilities.setLoginParametersSession(session, loginCore, userLogin);
+				lH.updateTipoInterfaccia();
+				
+				// Inizializzo parametri di ricerca
+				Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+				lH.initializeFilter(ricerca);
+				
+				// Boolean verifico configurazione
+				Login.impostaMessaggioEsitoLogin(pd, loginCore);
+				
+				// Inizializzo di nuovo GeneralData, dopo aver messo
+				// in sessione la login dell'utente
+				gd = gh.initGeneralData(request);
 			
 			}catch(Exception e){
 				throw new ServletException(e);
 			}
 		}
 		
-		ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd, true);
+		ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 		this.filterConfig.getServletContext().getRequestDispatcher(servletDispatcher).forward(request, response);
 	}
 	
 	
-	public void setErrorMsg(GeneralHelper gh,HttpSession session,
+	public void setErrorMsg(GeneralHelper gh, HttpSession session,
 			HttpServletRequest request,HttpServletResponse response,String servletDispatcher,String msgErrore) throws IOException,ServletException {
 		setErrorMsg(gh, session, request, response, servletDispatcher, msgErrore, null, MessageType.ERROR); 
 	}
 	
-	public void setErrorMsg(GeneralHelper gh,HttpSession session,
+	public void setErrorMsg(GeneralHelper gh, HttpSession session,
 			HttpServletRequest request,HttpServletResponse response,String servletDispatcher,String msgErrore, MessageType messageType) throws IOException,ServletException {
 		setErrorMsg(gh, session, request, response, servletDispatcher, msgErrore, null, messageType); 
 	}
@@ -606,8 +626,8 @@ public final class AuthorisationFilter implements Filter {
 		String userLogin = ServletUtils.getUserLoginFromSession(session);
 		if(userLogin != null){
 			try{
-			LoginHelper lH = new LoginHelper(request, pd, session);
-			lH.makeMenu();
+				LoginHelper lH = new LoginHelper(gh.getCore(), request, pd, session);
+				lH.makeMenu();
 			}catch(Exception e){
 				throw new ServletException(e);
 			}
