@@ -32,7 +32,7 @@ Scenario: isTest('connettivita-base')
 
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01/v1')
 
-    * call check_server_token ({ from: "SoapBlockingIDAS01/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
+    * call check_server_token ({ from: "SoapBlockingIDAS01/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", response: response })
 
     * def keyRef = /Envelope/Header/Security/Signature/KeyInfo/SecurityTokenReference/Reference/@URI
     * def key = /Envelope/Header/Security/BinarySecurityToken/@Id
@@ -51,7 +51,7 @@ Scenario: isTest('connettivita-base-default-trustore')
 
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01DefaultTrustore/v1')
 
-    * call check_server_token ({ from: "SoapBlockingIDAS01DefaultTrustore/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
+    * call check_server_token ({ from: "SoapBlockingIDAS01DefaultTrustore/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", response: response })
 
     * xmlstring server_response = response
     * eval karateCache.add("Server-Response", server_response)
@@ -77,7 +77,7 @@ Scenario: isTest('connettivita-base-truststore-ca')
 
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01TrustStoreCA/v1')
 
-    * call check_server_token ({ from: "SoapBlockingIDAS01TrustStoreCA/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
+    * call check_server_token ({ from: "SoapBlockingIDAS01TrustStoreCA/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", response: response })
 
     * xmlstring server_response = response
     * eval karateCache.add("Server-Response", server_response)
@@ -128,7 +128,7 @@ Scenario: isTest('enabled-security-on-action') && bodyPath('/Envelope/Body/MRequ
     
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01MultipleOPNoDefaultSecurity/v1')
 
-    * call check_server_token ({ from: "SoapBlockingIDAS01MultipleOPNoDefaultSecurity/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
+    * call check_server_token ({ from: "SoapBlockingIDAS01MultipleOPNoDefaultSecurity/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", response: response })
 
     * xmlstring server_response = response
     * eval karateCache.add("Server-Response", server_response)
@@ -157,7 +157,7 @@ Scenario: isTest('riferimento-x509-SKIKey-IssuerSerial')
     
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01IssuerSerial/v1')
 
-    * call check_server_token ({ from: "SoapBlockingIDAS01IssuerSerial/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
+    * call check_server_token ({ from: "SoapBlockingIDAS01IssuerSerial/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", response: response })
     # Testo la presenza di IssuerSerial nello header
     * match /Envelope/Header/Security/Signature/KeyInfo/SecurityTokenReference/X509Data/X509IssuerSerial/X509IssuerName == "CN=ExampleCA,O=Example,L=Pisa,ST=Italy,C=IT"
     * match /Envelope/Header/Security/Signature/KeyInfo/SecurityTokenReference/X509Data/X509IssuerSerial/X509SerialNumber == "337913909459742394"
@@ -178,7 +178,7 @@ Scenario: isTest('riferimento-x509-ThumbprintKey-SKIKey')
     
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01SKIKey/v1')
 
-    * call check_server_token ({ from: "SoapBlockingIDAS01SKIKey/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
+    * call check_server_token ({ from: "SoapBlockingIDAS01SKIKey/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", response: response })
     # Testo la presenza del Subject Key Identifier nello header
     * match /Envelope/Header/Security/Signature/KeyInfo/SecurityTokenReference/KeyIdentifier == "#present"
 
@@ -197,7 +197,7 @@ Scenario: isTest('riferimento-x509-x509Key-ThumbprintKey')
     
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01ThumbprintKey/v1')
 
-    * call check_server_token ({ from: "SoapBlockingIDAS01ThumbprintKey/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
+    * call check_server_token ({ from: "SoapBlockingIDAS01ThumbprintKey/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", response: response })
     
     * match /Envelope/Header/Security/Signature/KeyInfo/SecurityTokenReference/KeyIdentifier == "#present"
 
@@ -217,7 +217,7 @@ Scenario: isTest('riferimento-x509-IssuerSerial-x509Key')
     
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01X509KeyId/v1')
 
-    * call check_server_token ({ from: "SoapBlockingIDAS01X509KeyId/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
+    * call check_server_token ({ from: "SoapBlockingIDAS01X509KeyId/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", response: response })
     
     # Testo la presenza della thumbprint sha-1 del certificato server
     * match /Envelope/Header/Security/Signature/KeyInfo/SecurityTokenReference/KeyIdentifier == "#present"
@@ -352,7 +352,7 @@ Scenario: isTest('connettivita-base-idas02')
 
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS02/v1')
 
-    * call check_server_token ({ from: "SoapBlockingIDAS02/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
+    * call check_server_token ({ from: "SoapBlockingIDAS02/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", response: response })
 
     * xmlstring server_response = response
     * eval karateCache.add("Server-Response", server_response)
@@ -385,7 +385,7 @@ Scenario: isTest('connettivita-base-idas03')
 
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS03/v1')
 
-    * call check_server_token ({ from: "SoapBlockingIDAS03/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
+    * call check_server_token ({ from: "SoapBlockingIDAS03/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", response: response })
 
     * def keyRef = /Envelope/Header/Security/Signature/KeyInfo/SecurityTokenReference/Reference/@URI
     * def key = /Envelope/Header/Security/BinarySecurityToken/@Id
@@ -457,7 +457,7 @@ Scenario: isTest('connettivita-base-idas03-no-digest-richiesta')
     # Controllo nella risposta che non ci sia il digest della richiesta
     * match /Envelope/Header/X-RequestDigest/Reference/DigestValue == '#notpresent'
 
-    * call check_server_token ({ from: "SoapBlockingIDAS03MultipleOp/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
+    * call check_server_token ({ from: "SoapBlockingIDAS03MultipleOp/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", response: response })
 
     * def keyRef = /Envelope/Header/Security/Signature/KeyInfo/SecurityTokenReference/Reference/@URI
     * def key = /Envelope/Header/Security/BinarySecurityToken/@Id
@@ -562,7 +562,7 @@ Scenario: isTest('informazioni-utente-header') || isTest('informazioni-utente-qu
 
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS03InfoUtente/v1')
 
-    * call check_server_token ({ from: "SoapBlockingIDAS03InfoUtente/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
+    * call check_server_token ({ from: "SoapBlockingIDAS03InfoUtente/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", response: response })
 
     * def keyRef = /Envelope/Header/Security/Signature/KeyInfo/SecurityTokenReference/Reference/@URI
     * def key = /Envelope/Header/Security/BinarySecurityToken/@Id
@@ -595,7 +595,7 @@ Scenario: isTest('informazioni-utente-static')
 
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS03InfoUtente/v1')
 
-    * call check_server_token ({ from: "SoapBlockingIDAS03InfoUtente/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
+    * call check_server_token ({ from: "SoapBlockingIDAS03InfoUtente/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", response: response })
 
     * def keyRef = /Envelope/Header/Security/Signature/KeyInfo/SecurityTokenReference/Reference/@URI
     * def key = /Envelope/Header/Security/BinarySecurityToken/@Id
@@ -628,7 +628,7 @@ Scenario: isTest('informazioni-utente-custom')
 
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS03InfoUtente/v1')
 
-    * call check_server_token ({ from: "SoapBlockingIDAS03InfoUtente/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
+    * call check_server_token ({ from: "SoapBlockingIDAS03InfoUtente/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", response: response })
 
     * def keyRef = /Envelope/Header/Security/Signature/KeyInfo/SecurityTokenReference/Reference/@URI
     * def key = /Envelope/Header/Security/BinarySecurityToken/@Id
@@ -676,8 +676,7 @@ Scenario: isTest('idas03-token-risposta')
     * match /Envelope/Header/ReplyTo/Address == "http://www.w3.org/2005/08/addressing/anonymous"
     * match /Envelope/Header/RelatesTo == "#notpresent"
 
-    * def body = response 
-    * call check_signature [ {element: 'To'}, {element: 'From'}, {element: 'MessageID'}, {element: 'ReplyTo'} ]
+    * call check_signature ([ {element: 'To', body: response}, {element: 'From', body: response}, {element: 'MessageID', body: response}, {element: 'ReplyTo', body: response} ])
     
 
     * def keyRef = /Envelope/Header/Security/Signature/KeyInfo/SecurityTokenReference/Reference/@URI
@@ -726,7 +725,7 @@ Scenario: isTest('idas03-token-azione-puntuale-default')
     # Controllo nella risposta che non ci sia il digest della richiesta
     * match /Envelope/Header/X-RequestDigest/Reference/DigestValue == '#notpresent'
 
-    * call check_server_token ({ from: "SoapBlockingIDAS03TokenAzionePuntuale/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
+    * call check_server_token ({ from: "SoapBlockingIDAS03TokenAzionePuntuale/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", response: response })
 
     * def keyRef = /Envelope/Header/Security/Signature/KeyInfo/SecurityTokenReference/Reference/@URI
     * def key = /Envelope/Header/Security/BinarySecurityToken/@Id
@@ -756,7 +755,7 @@ Scenario: isTest('connettivita-base-idas0302')
 
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS0302/v1')
 
-    * call check_server_token ({ from: "SoapBlockingIDAS0302/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
+    * call check_server_token ({ from: "SoapBlockingIDAS0302/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", response: response })
 
     * def keyRef = /Envelope/Header/Security/Signature/KeyInfo/SecurityTokenReference/Reference/@URI
     * def key = /Envelope/Header/Security/BinarySecurityToken/@Id

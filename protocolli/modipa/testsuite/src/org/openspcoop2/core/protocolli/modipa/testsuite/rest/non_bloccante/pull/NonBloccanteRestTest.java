@@ -29,10 +29,10 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader;
 
-import com.intuit.karate.FileUtils;
 import com.intuit.karate.KarateOptions;
+import com.intuit.karate.core.MockServer;
 import com.intuit.karate.junit4.Karate;
-import com.intuit.karate.netty.FeatureServer;
+import com.intuit.karate.resource.ResourceUtils;
 
 /**
  * NonBloccanteRestTest
@@ -54,13 +54,17 @@ import com.intuit.karate.netty.FeatureServer;
     })
 public class NonBloccanteRestTest extends ConfigLoader { 
     
-    private static FeatureServer server;
+    private static MockServer server;
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	@BeforeClass
     public static void beforeClass() {       
-        File file = FileUtils.getFileRelativeTo(NonBloccanteRestTest.class, "mock-pull.feature");
-        server = FeatureServer.start(file, Integer.valueOf(prop.getProperty("http_port")), false, new HashMap<String,Object>((Map) prop));
+        File file = ResourceUtils.getFileRelativeTo(NonBloccanteRestTest.class, "mock-pull.feature");
+        server = MockServer
+    			.feature(file)
+    			.args(new HashMap<String,Object>((Map) prop))
+    			.http(Integer.valueOf(prop.getProperty("http_port")))
+    			.build();
     }
         
     @AfterClass

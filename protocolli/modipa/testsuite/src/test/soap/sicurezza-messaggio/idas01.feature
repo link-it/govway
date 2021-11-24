@@ -92,7 +92,7 @@ Then status 200
 * match /Envelope/Header/MessageID == "#uuid"
 
 * def body = response
-* call check_signature [ {element: 'To'}, {element: 'From'}, {element: 'MessageID'}, {element: 'ReplyTo'}, {element: 'RelatesTo'} ]
+* call check_signature ([ {element: 'To', body: body}, {element: 'From', body: body}, {element: 'MessageID', body: body}, {element: 'ReplyTo', body: body}, {element: 'RelatesTo', body: body} ])
 
 * def karateCache = Java.type('org.openspcoop2.core.protocolli.modipa.testsuite.KarateCache')
 * xml client_request = karateCache.get("Client-Request")

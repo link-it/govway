@@ -11,4 +11,4 @@ Scenario:
     * match bodyPath('/Envelope/Header/ReplyTo/Address') == "http://www.w3.org/2005/08/addressing/anonymous"
 
     * def body = bodyPath('/')
-    * call check_signature [ {element: 'To'}, {element: 'From'}, {element: 'MessageID'}, {element: 'ReplyTo'} ]
+    * call check_signature ([ {element: 'To', body: body}, {element: 'From', body: body}, {element: 'MessageID', body: body}, {element: 'ReplyTo', body: body} ])

@@ -20,9 +20,10 @@
         <archive path="/op2_3.3.dev/lib/stub/axis14/openspcoop2_integrationManagerStub_axis14.jar"/>
     </library>
     <library name="openspcoop2_3.3_lib_karate" systemlibrary="false">
-        <archive path="/op2_3.3.dev/lib/testsuite/karate-apache-0.9.6.jar"/>
-        <archive path="/op2_3.3.dev/lib/testsuite/karate-core-0.9.6.jar"/>
-        <archive path="/op2_3.3.dev/lib/testsuite/karate-junit4-0.9.6.jar"/>
+        <archive path="/op2_3.3.dev/lib/testsuite/karate-core-1.1.0.jar"/>
+		<archive path="/op2_3.3.dev/lib/testsuite/karate-junit4-1.1.0.jar"/>
+        <archive path="/op2_3.3.dev/lib/testsuite/js-scriptengine-21.2.0.jar"/>
+        <archive path="/op2_3.3.dev/lib/testsuite/js-21.2.0.jar"/>
     </library>
 
 </eclipse-userlibraries>

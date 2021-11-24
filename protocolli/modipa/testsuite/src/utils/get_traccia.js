@@ -13,7 +13,7 @@ function get_traccia(id_transazione, tipo_messaggio) {
 
     db_sleep_before_read = karate.properties['db_sleep_before_read']
     
-    java.lang.Thread.sleep(db_sleep_before_read)
+    java.lang.Thread.sleep(java.lang.Integer.valueOf(db_sleep_before_read))
     DbUtils = Java.type('org.openspcoop2.core.protocolli.modipa.testsuite.DbUtils')
     db = new DbUtils(govwayDbConfig)
     dbquery = "select * from tracce_ext_protocol_info where idtraccia=(select id from tracce where id_transazione='"+id_transazione+"' and tipo_messaggio='"+tipo_messaggio+"')"

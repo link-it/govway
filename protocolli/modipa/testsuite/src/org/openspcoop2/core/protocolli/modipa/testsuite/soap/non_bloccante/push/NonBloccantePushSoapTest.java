@@ -31,10 +31,10 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader;
 
-import com.intuit.karate.FileUtils;
 import com.intuit.karate.KarateOptions;
+import com.intuit.karate.core.MockServer;
 import com.intuit.karate.junit4.Karate;
-import com.intuit.karate.netty.FeatureServer;
+import com.intuit.karate.resource.ResourceUtils;
 
 
 /**
@@ -56,22 +56,32 @@ public class NonBloccantePushSoapTest extends ConfigLoader {
     // e il proxy, contattato dalla fruizione.
     // Il server di mock si comporta come il server di echo, solo che è più
     // flsessibile nel generare risposte.
-    private static FeatureServer mock;
-    private static FeatureServer proxy;
+	 private static MockServer server;
+	 private static MockServer proxy;
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	@BeforeClass
-    public static void beforeClass() {       
-        File file = FileUtils.getFileRelativeTo(NonBloccantePushSoapTest.class, "proxy.feature");
-        mock = FeatureServer.start(file, Integer.valueOf(prop.getProperty("http_port")), false, new HashMap<String,Object>((Map) prop));
+    public static void beforeClass() {
+    	
+        File file = ResourceUtils.getFileRelativeTo(NonBloccantePushSoapTest.class, "proxy.feature");
+        server = MockServer
+                .feature(file)
+                .args(new HashMap<String,Object>((Map) prop))
+                .http(Integer.valueOf(prop.getProperty("http_mock_port")))
+                .build();
+        
 
-        file = FileUtils.getFileRelativeTo(NonBloccantePushSoapTest.class, "mock.feature");
-        proxy = FeatureServer.start(file, Integer.valueOf(prop.getProperty("http_mock_port")), false, new HashMap<String,Object>((Map) prop));
+        file = ResourceUtils.getFileRelativeTo(NonBloccantePushSoapTest.class, "mock.feature");
+    	proxy = MockServer
+    			.feature(file)
+    			.args(new HashMap<String,Object>((Map) prop))
+    			.http(Integer.valueOf(prop.getProperty("http_port")))
+    			.build();
     }
         
     @AfterClass
     public static void afterClass() {
-        mock.stop();
+        server.stop();
         proxy.stop();
     }     
     

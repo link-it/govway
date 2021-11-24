@@ -16,9 +16,11 @@ Background:
     * def confHeaders = 
     """
     function() { 
+        karate.logger.debug("Gli headers arrivati al mock sono: ", karate.get("requestHeaders"))
+        karate.logger.debug("Voglio iniettare: ", karate.get("requestHeaders['govway-transaction-id'][0]"))
         return {
             'Content-type': "application/soap+xml",
-            'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("requestHeaders['GovWay-Transaction-ID'][0]")
+            'GovWay-TestSuite-GovWay-Transaction-ID': karate.get("requestHeaders['govway-transaction-id'][0]")
         }
     }
     """
@@ -48,7 +50,7 @@ Scenario: isTest('connettivita-base-no-sbustamento')
     * match bodyPath('/Envelope/Header/MessageID') == "#uuid"
 
     * def body = bodyPath('/')
-    * call check_signature [ {element: 'To'}, {element: 'From'}, {element: 'MessageID'}, {element: 'ReplyTo'} ]
+    * call check_signature ([ {element: 'To', body: body}, {element: 'From', body: body}, {element: 'MessageID', body: body}, {element: 'ReplyTo', body: body} ])
 
     * def responseStatus = 200
     * def response = read('classpath:test/soap/sicurezza-messaggio/response.xml')

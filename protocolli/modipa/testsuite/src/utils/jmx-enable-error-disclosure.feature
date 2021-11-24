@@ -10,20 +10,20 @@ Scenario:
     * def jmx_password = karate.properties.jmx_password
     
     Given url url_azione
-    And header Authorization = basic({username: jmx_username, password: jmx_password })
+    And header Authorization = call basic ({username: jmx_username, password: jmx_password })
     When method get
     Then status 200
 
     * def url_azione = govway_base_path + "/check?resourceName=ConfigurazionePdD&attributeName=transactionErrorForceSpecificTypeBadResponse&attributeBooleanValue=true"
 
     Given url url_azione
-    And header Authorization = basic({username: jmx_username, password: jmx_password })
+    And header Authorization = call basic ({username: jmx_username, password: jmx_password })
     When method get
     Then status 200
 
     * def url_azione = govway_base_path + "/check?resourceName=ConfigurazionePdD&attributeName=transactionErrorForceSpecificDetails&attributeBooleanValue=true"
 
     Given url url_azione
-    And header Authorization = basic({username: jmx_username, password: jmx_password })
+    And header Authorization = call basic ({username: jmx_username, password: jmx_password })
     When method get
     Then status 200

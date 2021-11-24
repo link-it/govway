@@ -21,15 +21,81 @@
 		<guice.version>4.2.2</guice.version>
 		<testng.version>7.1.0</testng.version>
 		<junit.version>4.13</junit.version>
-		<karate.version>0.9.6</karate.version>
+		<karate.version>1.1.0</karate.version>
 		<hamcrest.version>1.3</hamcrest.version>
 		<picocli.version>4.2.0</picocli.version>
 		<spring.version>${module.spring.version}</spring.version>
 		<logback.version>1.2.3</logback.version>
-
+		<graal.version>21.2.0</graal.version>
+		<ibm.icu.version>69.1</ibm.icu.version>
 	</properties>
 
 	<dependencies>
+
+		<dependency>
+    		<groupId>com.ibm.icu</groupId>
+		    <artifactId>icu4j</artifactId>
+			<version>${ibm.icu.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.graalvm.truffle</groupId>
+			<artifactId>truffle-api</artifactId>
+			<version>${graal.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>test</scope>
+		</dependency>	
+
+		<dependency>
+			<groupId>org.graalvm.sdk</groupId>
+			<artifactId>graal-sdk</artifactId>
+			<version>${graal.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>test</scope>
+		</dependency>
+
+		 <dependency>
+            <groupId>org.graalvm.js</groupId>
+            <artifactId>js-scriptengine</artifactId>
+			<version>${graal.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>test</scope>
+		</dependency>
+
+        <dependency>
+            <groupId>org.graalvm.js</groupId>
+            <artifactId>js</artifactId>
+			<version>${graal.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>test</scope>
+        </dependency>
 	
 		<dependency>
 			<groupId>com.beust</groupId>
@@ -83,18 +149,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>com.intuit.karate</groupId>
-			<artifactId>karate-apache</artifactId>
-			<version>${karate.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>com.intuit.karate</groupId>
 			<artifactId>karate-core</artifactId>

@@ -11,4 +11,4 @@ Scenario:
     * match /Envelope/Header/RelatesTo == bodyPath('/Envelope/Header/MessageID')
 
     * def body = response 
-    * call check_signature [ {element: 'To'}, {element: 'From'}, {element: 'MessageID'}, {element: 'ReplyTo'}, {element: 'RelatesTo'} ]
+    * call check_signature ([ {element: 'To', body: body}, {element: 'From', body: body}, {element: 'MessageID', body: body}, {element: 'ReplyTo', body: body}, {element: 'RelatesTo', body: body} ])
