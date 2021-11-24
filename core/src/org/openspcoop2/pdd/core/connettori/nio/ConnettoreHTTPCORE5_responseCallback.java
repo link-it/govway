@@ -182,6 +182,14 @@ public class ConnettoreHTTPCORE5_responseCallback implements FutureCallback<Conn
 						}else{
 							this.request.getConnectorProperties().put(CostantiConnettori._CONNETTORE_HTTP_REDIRECT_ROUTE, redirectLocation );
 						}
+						if(this.connettore.getOriginalAbsolutePrefixForRelativeRedirectLocation()==null) {
+							this.connettore.setOriginalAbsolutePrefixForRelativeRedirectLocation(this.connettore.url.getProtocol()+"://"+this.connettore.url.getHost()+":"+this.connettore.url.getPort());
+						}
+						this.connettore.setRedirectLocation(redirectLocation); // per la prossima build()
+						if(redirectLocation.startsWith("/")) {
+							// relative
+							this.connettore.setRedirectLocation(this.connettore.getOriginalAbsolutePrefixForRelativeRedirectLocation() + redirectLocation);
+						}
 
 						this.connettore_logger.warn("(hope:"+(this.connettore.getNumberRedirect()+1)+") Redirect verso ["+redirectLocation+"] ...");
 

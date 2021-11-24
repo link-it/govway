@@ -741,6 +741,14 @@ public class ConnettoreHTTPCORE5 extends ConnettoreExtBaseHTTP {
 						}else{
 							request.getConnectorProperties().put(CostantiConnettori._CONNETTORE_HTTP_REDIRECT_ROUTE, redirectLocation );
 						}
+						if(this.originalAbsolutePrefixForRelativeRedirectLocation==null) {
+							this.originalAbsolutePrefixForRelativeRedirectLocation = url.getProtocol()+"://"+url.getHost()+":"+url.getPort();
+						}
+						this.redirectLocation = redirectLocation; // per la prossima build()
+						if(this.redirectLocation.startsWith("/")) {
+							// relative
+							this.redirectLocation = this.originalAbsolutePrefixForRelativeRedirectLocation + this.redirectLocation;
+						}
 						
 						this.logger.warn("(hope:"+(this.numberRedirect+1)+") Redirect verso ["+redirectLocation+"] ...");
 						

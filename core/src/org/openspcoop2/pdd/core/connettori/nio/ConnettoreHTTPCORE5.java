@@ -95,7 +95,8 @@ public class ConnettoreHTTPCORE5 extends ConnettoreExtBaseHTTP {
 
 	private boolean stream = OpenSPCoop2Properties.getInstance().isNIOConfig_asyncClient_doStream();
 	private int dimensione_buffer = OpenSPCoop2Properties.getInstance().getNIOConfig_asyncClient_buffer();
-
+	protected URL url;
+	
 	
 	/* Costruttori */
 	public ConnettoreHTTPCORE5(){
@@ -127,7 +128,7 @@ public class ConnettoreHTTPCORE5 extends ConnettoreExtBaseHTTP {
 			this.buildLocation();		
 			if(this.debug)
 				this.logger.debug("Creazione URL ["+this.location+"]...");
-			URL url = new URL( this.location );	
+			this.url = new URL( this.location );	
 
 			
 			// Collezione header di trasporto per dump

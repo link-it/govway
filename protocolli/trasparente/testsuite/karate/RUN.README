@@ -208,6 +208,9 @@ Di seguito vengono descritti i test del package 'connettori':
 - 'applicativo_server', verifica il funzionamento degli applicativi di tipo server 
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.applicativo_server
 
+- 'redirect', verifica il funzionamento delle funzionalità di follow redirect e renaming dell'header Location 
+   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.redirect
+
 Di seguito vengono descritti i test del package 'token':
 
 - 'attribute_authority', verifica l'interazione con le AttributeAuthority
