@@ -89,6 +89,8 @@ import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazioneCoda;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
+import org.openspcoop2.pdd.config.DBConsegneMessageBoxManager;
+import org.openspcoop2.pdd.config.DBConsegnePreseInCaricoManager;
 import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.DBStatisticheManager;
 import org.openspcoop2.pdd.config.DBTransazioniManager;
@@ -1089,6 +1091,102 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			}catch(Exception e){
 				OpenSPCoop2Startup.log.error("Inizializzazione DBStatisticheManager", e);
 				return;
+			}
+			
+			if(OpenSPCoop2Startup.this.serverJ2EE==false){
+				if(propertiesReader.isTimerConsegnaContenutiApplicativiAbilitato()){
+			
+					// GestoreConsegnePreseInCarico - Smistatore
+					try{
+						if(propertiesReader.isTimerConsegnaContenutiApplicativi_smistatore_runtime_useRuntimeManager()) {
+							DBConsegnePreseInCaricoManager.initSmistatore(DBManager.getInstance(), logCore, propertiesReader.getDatabaseType());
+						}
+						else {
+							DBConsegnePreseInCaricoManager.initSmistatore(propertiesReader.getTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSource(), propertiesReader.getTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSourceJndiContext(), 
+									logCore, propertiesReader.getDatabaseType(), 
+									propertiesReader.isTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSource_useDBUtils(), propertiesReader.isRisorseJMXAbilitate());
+						}
+					}catch(Exception e){
+						OpenSPCoop2Startup.log.error("Inizializzazione GestoreConsegnePreseInCarico.smistatore", e);
+						return;
+					}
+					
+					// GestoreConsegnePreseInCarico - Runtime
+					try{
+						if(propertiesReader.isTimerConsegnaContenutiApplicativi_runtime_useRuntimeManager()) {
+							DBConsegnePreseInCaricoManager.initRuntime(DBManager.getInstance(), logCore, propertiesReader.getDatabaseType());
+						}
+						else {
+							DBConsegnePreseInCaricoManager.initRuntime(propertiesReader.getTimerConsegnaContenutiApplicativi_runtime_dataSource(), propertiesReader.getTimerConsegnaContenutiApplicativi_runtime_dataSourceJndiContext(), 
+									logCore, propertiesReader.getDatabaseType(), 
+									propertiesReader.isTimerConsegnaContenutiApplicativi_runtime_dataSource_useDBUtils(), propertiesReader.isRisorseJMXAbilitate());
+						}
+					}catch(Exception e){
+						OpenSPCoop2Startup.log.error("Inizializzazione GestoreConsegnePreseInCarico.runtime", e);
+						return;
+					}
+					
+					// GestoreConsegnePreseInCarico - Transazioni
+					try{
+						if(propertiesReader.isTimerConsegnaContenutiApplicativi_transazioni_useTransactionManager()) {
+							DBConsegnePreseInCaricoManager.initTransazioni(DBTransazioniManager.getInstance(), logCore, propertiesReader.getDatabaseType());
+						}
+						else {
+							DBConsegnePreseInCaricoManager.initTransazioni(propertiesReader.getTimerConsegnaContenutiApplicativi_transazioni_dataSource(), propertiesReader.getTimerConsegnaContenutiApplicativi_transazioni_dataSourceJndiContext(), 
+									logCore, propertiesReader.getDatabaseType(), 
+									propertiesReader.isTimerConsegnaContenutiApplicativi_transazioni_dataSource_useDBUtils(), propertiesReader.isRisorseJMXAbilitate());
+						}
+					}catch(Exception e){
+						OpenSPCoop2Startup.log.error("Inizializzazione GestoreConsegnePreseInCarico.transazioni", e);
+						return;
+					}
+					
+				}
+			}
+			if(propertiesReader.isIntegrationManagerEnabled()) {
+				// GestoreConsegneMessageBox - Runtime
+				try{
+					if(propertiesReader.isIntegrationManager_runtime_useRuntimeManager()) {
+						DBConsegneMessageBoxManager.initRuntime(DBManager.getInstance(), logCore, propertiesReader.getDatabaseType());
+					}
+					else if(propertiesReader.isIntegrationManager_runtime_useConsegnePreseInCaricoManager()) {
+						DBConsegnePreseInCaricoManager instance = DBConsegnePreseInCaricoManager.getInstanceRuntime();
+						if(instance==null) {
+							throw new Exception("DBConsegnePreseInCaricoManager-runtime richiesto dalla configurazione del servizio MessageBox non risulta attivo");
+						}
+						DBConsegneMessageBoxManager.initRuntime(instance, logCore, propertiesReader.getDatabaseType());
+					}
+					else {
+						DBConsegneMessageBoxManager.initRuntime(propertiesReader.getIntegrationManager_runtime_dataSource(), propertiesReader.getIntegrationManager_runtime_dataSourceJndiContext(), 
+								logCore, propertiesReader.getDatabaseType(), 
+								propertiesReader.isIntegrationManager_runtime_dataSource_useDBUtils(), propertiesReader.isRisorseJMXAbilitate());
+					}
+				}catch(Exception e){
+					OpenSPCoop2Startup.log.error("Inizializzazione GestoreConsegneMessageBox.runtime", e);
+					return;
+				}
+				
+				// GestoreConsegneMessageBox - Transazioni
+				try{
+					if(propertiesReader.isIntegrationManager_transazioni_useTransactionManager()) {
+						DBConsegneMessageBoxManager.initTransazioni(DBTransazioniManager.getInstance(), logCore, propertiesReader.getDatabaseType());
+					}
+					else if(propertiesReader.isIntegrationManager_transazioni_useConsegnePreseInCaricoManager()) {
+						DBConsegnePreseInCaricoManager instance = DBConsegnePreseInCaricoManager.getInstanceTransazioni();
+						if(instance==null) {
+							throw new Exception("DBConsegnePreseInCaricoManager-transazioni richiesto dalla configurazione del servizio MessageBox non risulta attivo");
+						}
+						DBConsegneMessageBoxManager.initTransazioni(instance, logCore, propertiesReader.getDatabaseType());
+					}
+					else {
+						DBConsegneMessageBoxManager.initTransazioni(propertiesReader.getIntegrationManager_transazioni_dataSource(), propertiesReader.getIntegrationManager_transazioni_dataSourceJndiContext(), 
+								logCore, propertiesReader.getDatabaseType(), 
+								propertiesReader.isIntegrationManager_transazioni_dataSource_useDBUtils(), propertiesReader.isRisorseJMXAbilitate());
+					}
+				}catch(Exception e){
+					OpenSPCoop2Startup.log.error("Inizializzazione GestoreConsegneMessageBox.transazioni", e);
+					return;
+				}
 			}
 
 			

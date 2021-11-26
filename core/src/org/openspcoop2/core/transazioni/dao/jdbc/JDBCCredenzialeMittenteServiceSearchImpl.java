@@ -108,9 +108,48 @@ public class JDBCCredenzialeMittenteServiceSearchImpl implements IJDBCServiceSea
 	
 	@Override
 	public CredenzialeMittente get(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdCredenzialeMittente id, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException,Exception {
-		Long id_credenzialeMittente = ( (id!=null && id.getId()!=null && id.getId()>0) ? id.getId() : this.findIdCredenzialeMittente(jdbcProperties, log, connection, sqlQueryObject, id, true));
-		return this._get(jdbcProperties, log, connection, sqlQueryObject, id_credenzialeMittente,idMappingResolutionBehaviour);
 		
+		boolean efficente = true;
+        
+		long id_long = (id!=null && id.getId()!=null && id.getId()>0) ? id.getId() : -1;
+		
+        if(id_long<=0 && efficente){
+		
+        	if(id==null) {
+    			throw new ServiceException("Id undefined");
+    		}
+    		if(id.getTipo()==null) {
+    			throw new ServiceException("Id.tipo undefined");
+    		}
+    		if(id.getCredenziale()==null) {
+    			throw new ServiceException("Id.credenziale undefined");
+    		}
+    		
+    		JDBCPaginatedExpression pagExpr = this.newPaginatedExpression(log);
+        	pagExpr.equals(CredenzialeMittente.model().TIPO, id.getTipo());
+			pagExpr.and();
+			pagExpr.equals(CredenzialeMittente.model().CREDENZIALE, id.getCredenziale());
+			//pagExpr.limit(2); Inefficente, per implementare il multipleresult che poi non può succedere
+			pagExpr.limit(1);
+        	
+        	List<CredenzialeMittente> list = findAll(jdbcProperties, log, connection, sqlQueryObject, pagExpr, idMappingResolutionBehaviour);
+        	
+        	if(list==null || list.size()<1) {
+        		throw new NotFoundException();
+        	}
+        	// C'è lo unique sulle due colonne
+//        	else if(list.size()>1) {
+//        		throw new MultipleResultException();
+//        	}
+        	else {
+        		return list.get(0);
+        	}
+        	
+        }
+        else {
+        	Long id_credenzialeMittente = ( (id!=null && id.getId()!=null && id.getId()>0) ? id.getId() : this.findIdCredenzialeMittente(jdbcProperties, log, connection, sqlQueryObject, id, true));
+        	return this._get(jdbcProperties, log, connection, sqlQueryObject, id_credenzialeMittente,idMappingResolutionBehaviour);
+        }
 		
 	}
 	

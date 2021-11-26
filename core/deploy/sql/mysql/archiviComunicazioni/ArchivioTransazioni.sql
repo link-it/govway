@@ -251,6 +251,8 @@ CREATE TABLE transazioni_sa
 	cluster_id_eliminazione_im VARCHAR(100),
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
+	-- unique constraints
+	CONSTRAINT unique_transazioni_sa_1 UNIQUE (id_transazione,servizio_applicativo_erogatore),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_transazioni_sa PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;

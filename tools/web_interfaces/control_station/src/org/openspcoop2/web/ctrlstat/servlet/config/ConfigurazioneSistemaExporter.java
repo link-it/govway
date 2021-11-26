@@ -37,6 +37,7 @@ import javax.servlet.http.HttpSession;
 import org.openspcoop2.pdd.core.jmx.InformazioniStatoPoolThreads;
 import org.openspcoop2.pdd.core.jmx.InformazioniStatoPorta;
 import org.openspcoop2.pdd.core.jmx.InformazioniStatoPortaCache;
+import org.openspcoop2.pdd.timers.TimerState;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -799,58 +800,67 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			statoTimerConsegnaAsincrona = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
-		List<InformazioniStatoPoolThreads> statoPoolThread = new ArrayList<InformazioniStatoPoolThreads>();
+		TimerState timerState = null;
+		try {
+			timerState = TimerState.valueOf(statoTimerConsegnaAsincrona);
+		}catch(Throwable t) {}
+		boolean timerAttivo = timerState!=null && TimerState.ENABLED.equals(timerState);
 		
-		List<String> code = confCore.getConsegnaNotificaCode();
-		for (String coda : code) {
-		
-			String stato = null;
-			try{
-				stato = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-						confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
-						confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus(alias),
-						coda);
-			}catch(Exception e){
-				ControlStationCore.logError("Errore durante la lettura dello stato del thread pool della coda '"+coda+"' per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
-				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
-			}
+		List<InformazioniStatoPoolThreads> statoPoolThread = null;
+		if(timerAttivo) {
+			statoPoolThread = new ArrayList<InformazioniStatoPoolThreads>();
 			
-			String configurazione = null;
-			try{
-				configurazione = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-						confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
-						confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getQueueConfig(alias),
-						coda);
-			}catch(Exception e){
-				ControlStationCore.logError("Errore durante la lettura della configurazione del thread pool della coda '"+coda+"' per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
-				configurazione = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
-			}
+			List<String> code = confCore.getConsegnaNotificaCode();
+			for (String coda : code) {
 			
-			String connettoriPrioritari = null;
-			try{
-				connettoriPrioritari = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-						confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
-						confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getConnettoriPrioritari(alias),
-						coda);
-			}catch(Exception e){
-				ControlStationCore.logError("Errore durante la lettura della configurazione (connettori prioritari) del thread pool della coda '"+coda+"' per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
-				connettoriPrioritari = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+				String stato = null;
+				try{
+					stato = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+							confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
+							confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus(alias),
+							coda);
+				}catch(Exception e){
+					ControlStationCore.logError("Errore durante la lettura dello stato del thread pool della coda '"+coda+"' per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
+					stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+				}
+				
+				String configurazione = null;
+				try{
+					configurazione = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+							confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
+							confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getQueueConfig(alias),
+							coda);
+				}catch(Exception e){
+					ControlStationCore.logError("Errore durante la lettura della configurazione del thread pool della coda '"+coda+"' per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
+					configurazione = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+				}
+				
+				String connettoriPrioritari = null;
+				try{
+					connettoriPrioritari = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+							confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
+							confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getConnettoriPrioritari(alias),
+							coda);
+				}catch(Exception e){
+					ControlStationCore.logError("Errore durante la lettura della configurazione (connettori prioritari) del thread pool della coda '"+coda+"' per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
+					connettoriPrioritari = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+				}
+				
+				String applicativiPrioritari = null;
+				try{
+					applicativiPrioritari = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+							confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
+							confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getApplicativiPrioritari(alias),
+							coda);
+				}catch(Exception e){
+					ControlStationCore.logError("Errore durante la lettura della configurazione (applicativi prioritari) del thread pool della coda '"+coda+"' per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
+					applicativiPrioritari = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+				}
+				
+				InformazioniStatoPoolThreads info = new InformazioniStatoPoolThreads(coda, stato, configurazione, connettoriPrioritari);
+				info.setApplicativiPrioritari(applicativiPrioritari);
+				statoPoolThread.add(info);
 			}
-			
-			String applicativiPrioritari = null;
-			try{
-				applicativiPrioritari = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-						confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
-						confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getApplicativiPrioritari(alias),
-						coda);
-			}catch(Exception e){
-				ControlStationCore.logError("Errore durante la lettura della configurazione (applicativi prioritari) del thread pool della coda '"+coda+"' per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
-				applicativiPrioritari = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
-			}
-			
-			InformazioniStatoPoolThreads info = new InformazioniStatoPoolThreads(coda, stato, configurazione, connettoriPrioritari);
-			info.setApplicativiPrioritari(applicativiPrioritari);
-			statoPoolThread.add(info);
 		}
 		
 		String statoTimerGenerazioneStatisticheOrarie = null;

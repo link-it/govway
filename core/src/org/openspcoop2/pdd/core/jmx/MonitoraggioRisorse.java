@@ -41,6 +41,8 @@ import javax.management.MBeanParameterInfo;
 import javax.management.NotificationBroadcasterSupport;
 import javax.management.ReflectionException;
 
+import org.openspcoop2.pdd.config.DBConsegneMessageBoxManager;
+import org.openspcoop2.pdd.config.DBConsegnePreseInCaricoManager;
 import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.DBStatisticheManager;
 import org.openspcoop2.pdd.config.DBTransazioniManager;
@@ -715,6 +717,11 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 	public final static String MSG_CONNESSIONI_ALLOCATE = " risorse allocate: ";
 	public final static String MSG_CONNESSIONI_ALLOCATE_TRANSAZIONI = " risorse allocate per la gestione delle transazioni: ";
 	public final static String MSG_CONNESSIONI_ALLOCATE_STATISTICHE = " risorse allocate per la generazione delle statistiche: ";
+	public final static String MSG_CONNESSIONI_ALLOCATE_CONSEGNE_PRESE_IN_CARICO_SMISTATORE = " risorse allocate per lo smistatore dei messaggi presi in carico: ";
+	public final static String MSG_CONNESSIONI_ALLOCATE_CONSEGNE_PRESE_IN_CARICO_RUNTIME = " risorse allocate per il gestore runtime dei messaggi presi in carico: ";
+	public final static String MSG_CONNESSIONI_ALLOCATE_CONSEGNE_PRESE_IN_CARICO_TRANSAZIONI = " risorse allocate per il gestore delle tracce relative ai messaggi presi in carico: ";
+	public final static String MSG_CONNESSIONI_ALLOCATE_CONSEGNE_MESSAGE_BOX_RUNTIME = " risorse allocate per il gestore runtime del servizio MessageBox: ";
+	public final static String MSG_CONNESSIONI_ALLOCATE_CONSEGNE_MESSAGE_BOX_TRANSAZIONI = " risorse allocate per il gestore delle tracce del servizio MessageBox: ";
 	public final static String MSG_CONNESSIONI_HTTP_ALLOCATE = " connessioni allocate: ";
 	
 	public final static String MSG_NESSUNA_TRANSAZIONE_ATTIVA = "Nessuna transazione attiva";
@@ -725,6 +732,11 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 		String[] risorse = null;
 		String[] risorseTransaction = null;
 		String[] risorseStatistiche = null;
+		String[] risorseConsegnePreseInCaricoSmistatore = null;
+		String[] risorseConsegnePreseInCaricoRuntime = null;
+		String[] risorseConsegnePreseInCaricoTransazioni = null;
+		String[] risorseConsegneMessageBoxRuntime = null;
+		String[] risorseConsegneMessageBoxTransazioni = null;
 		try{
 			risorse = DBManager.getStatoRisorse();
 			
@@ -749,13 +761,63 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 				}
 			}
 			
+			if(prop.isServerJ2EE()!=null && prop.isServerJ2EE()==false){
+				if(prop.isTimerConsegnaContenutiApplicativiAbilitato()){
+					boolean useDefaultManager = DBConsegnePreseInCaricoManager.getInstanceSmistatore().useDefaultManager();
+					if(!useDefaultManager) {
+						if(!prop.isTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSource_useDBUtils()) {
+							// le aggiungo altrimenti non c'è altro modo per vederle
+							risorseConsegnePreseInCaricoSmistatore = DBConsegnePreseInCaricoManager.getStatoRisorse_smistatore();
+						}
+					}
+					
+					useDefaultManager = DBConsegnePreseInCaricoManager.getInstanceRuntime().useDefaultManager();
+					if(!useDefaultManager) {
+						if(!prop.isTimerConsegnaContenutiApplicativi_runtime_dataSource_useDBUtils()) {
+							// le aggiungo altrimenti non c'è altro modo per vederle
+							risorseConsegnePreseInCaricoRuntime = DBConsegnePreseInCaricoManager.getStatoRisorse_runtime();
+						}
+					}
+					
+					useDefaultManager = DBConsegnePreseInCaricoManager.getInstanceTransazioni().useDefaultManager();
+					if(!useDefaultManager) {
+						if(!prop.isTimerConsegnaContenutiApplicativi_transazioni_dataSource_useDBUtils()) {
+							// le aggiungo altrimenti non c'è altro modo per vederle
+							risorseConsegnePreseInCaricoTransazioni = DBConsegnePreseInCaricoManager.getStatoRisorse_transazioni();
+						}
+					}
+				}
+			}
+			
+			if(prop.isIntegrationManagerEnabled()) {
+				boolean useDefaultManager = DBConsegneMessageBoxManager.getInstanceRuntime().useDefaultManager() ||  DBConsegneMessageBoxManager.getInstanceRuntime().useConsegnePreseInCaricoManager();
+				if(!useDefaultManager) {
+					if(!prop.isIntegrationManager_runtime_dataSource_useDBUtils()) {
+						// le aggiungo altrimenti non c'è altro modo per vederle
+						risorseConsegneMessageBoxRuntime = DBConsegneMessageBoxManager.getStatoRisorse_runtime();
+					}
+				}
+				
+				useDefaultManager = DBConsegneMessageBoxManager.getInstanceTransazioni().useDefaultManager() ||  DBConsegneMessageBoxManager.getInstanceTransazioni().useConsegnePreseInCaricoManager();
+				if(!useDefaultManager) {
+					if(!prop.isIntegrationManager_transazioni_dataSource_useDBUtils()) {
+						// le aggiungo altrimenti non c'è altro modo per vederle
+						risorseConsegneMessageBoxTransazioni = DBConsegneMessageBoxManager.getStatoRisorse_transazioni();
+					}
+				}
+			}
+			
 		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}		
-		return getResultUsedDBConnections(risorse, risorseTransaction, risorseStatistiche);
+		return getResultUsedDBConnections(risorse, risorseTransaction, risorseStatistiche,
+				risorseConsegnePreseInCaricoSmistatore, risorseConsegnePreseInCaricoRuntime, risorseConsegnePreseInCaricoTransazioni,
+				risorseConsegneMessageBoxRuntime, risorseConsegneMessageBoxTransazioni);
 	}
-	public static String getResultUsedDBConnections(String[] risorse, String[] risorseTransaction, String[] risorseStatistiche) {
+	public static String getResultUsedDBConnections(String[] risorse, String[] risorseTransaction, String[] risorseStatistiche,
+			String[] risorseConsegnePreseInCaricoSmistatore, String[] risorseConsegnePreseInCaricoRuntime, String[] risorseConsegnePreseInCaricoTransazioni,
+			String[] risorseConsegneMessageBoxRuntime, String[] risorseConsegneMessageBoxTransazioni) {
 		
 		if((risorse==null || risorse.length<=0) && 
 				(risorseTransaction==null || risorseTransaction.length<=0) && 
@@ -781,6 +843,36 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 			bf.append(risorseStatistiche.length+MSG_CONNESSIONI_ALLOCATE_STATISTICHE+"\n");
 			for(int i=0; i<risorseStatistiche.length; i++){
 				bf.append(risorseStatistiche[i]+"\n");
+			}
+		}
+		if(risorseConsegnePreseInCaricoSmistatore!=null && risorseConsegnePreseInCaricoSmistatore.length>0) {
+			bf.append(risorseConsegnePreseInCaricoSmistatore.length+MSG_CONNESSIONI_ALLOCATE_CONSEGNE_PRESE_IN_CARICO_SMISTATORE+"\n");
+			for(int i=0; i<risorseConsegnePreseInCaricoSmistatore.length; i++){
+				bf.append(risorseConsegnePreseInCaricoSmistatore[i]+"\n");
+			}
+		}
+		if(risorseConsegnePreseInCaricoRuntime!=null && risorseConsegnePreseInCaricoRuntime.length>0) {
+			bf.append(risorseConsegnePreseInCaricoRuntime.length+MSG_CONNESSIONI_ALLOCATE_CONSEGNE_PRESE_IN_CARICO_RUNTIME+"\n");
+			for(int i=0; i<risorseConsegnePreseInCaricoRuntime.length; i++){
+				bf.append(risorseConsegnePreseInCaricoRuntime[i]+"\n");
+			}
+		}
+		if(risorseConsegnePreseInCaricoTransazioni!=null && risorseConsegnePreseInCaricoTransazioni.length>0) {
+			bf.append(risorseConsegnePreseInCaricoTransazioni.length+MSG_CONNESSIONI_ALLOCATE_CONSEGNE_PRESE_IN_CARICO_TRANSAZIONI+"\n");
+			for(int i=0; i<risorseConsegnePreseInCaricoTransazioni.length; i++){
+				bf.append(risorseConsegnePreseInCaricoTransazioni[i]+"\n");
+			}
+		}
+		if(risorseConsegneMessageBoxRuntime!=null && risorseConsegneMessageBoxRuntime.length>0) {
+			bf.append(risorseConsegneMessageBoxRuntime.length+MSG_CONNESSIONI_ALLOCATE_CONSEGNE_MESSAGE_BOX_RUNTIME+"\n");
+			for(int i=0; i<risorseConsegneMessageBoxRuntime.length; i++){
+				bf.append(risorseConsegneMessageBoxRuntime[i]+"\n");
+			}
+		}
+		if(risorseConsegneMessageBoxTransazioni!=null && risorseConsegneMessageBoxTransazioni.length>0) {
+			bf.append(risorseConsegneMessageBoxTransazioni.length+MSG_CONNESSIONI_ALLOCATE_CONSEGNE_MESSAGE_BOX_TRANSAZIONI+"\n");
+			for(int i=0; i<risorseConsegneMessageBoxTransazioni.length; i++){
+				bf.append(risorseConsegneMessageBoxTransazioni[i]+"\n");
 			}
 		}
 		

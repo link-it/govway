@@ -1041,6 +1041,21 @@ public class OpenSPCoop2Properties {
 			this.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife();
 			this.getTimerConsegnaContenutiApplicativi_getLockAttesaAttiva();
 			this.getTimerConsegnaContenutiApplicativi_getLockCheckInterval();
+			if(!isTimerConsegnaContenutiApplicativi_smistatore_runtime_useRuntimeManager()){
+				getTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSource();	
+				getTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSourceJndiContext();
+				isTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSource_useDBUtils();
+			}
+			if(!isTimerConsegnaContenutiApplicativi_runtime_useRuntimeManager()){
+				getTimerConsegnaContenutiApplicativi_runtime_dataSource();	
+				getTimerConsegnaContenutiApplicativi_runtime_dataSourceJndiContext();
+				isTimerConsegnaContenutiApplicativi_runtime_dataSource_useDBUtils();
+			}
+			if(!isTimerConsegnaContenutiApplicativi_transazioni_useTransactionManager()){
+				getTimerConsegnaContenutiApplicativi_transazioni_dataSource();	
+				getTimerConsegnaContenutiApplicativi_transazioni_dataSourceJndiContext();
+				isTimerConsegnaContenutiApplicativi_transazioni_dataSource_useDBUtils();
+			}
 				
 			
 			
@@ -1445,6 +1460,18 @@ public class OpenSPCoop2Properties {
 			// IntegrationManager (Warning)
 			this.integrationManager_readInformazioniTrasporto();
 			this.integrationManager_isNomePortaDelegataUrlBased();
+			if(this.isIntegrationManagerEnabled()) {
+				if(!isIntegrationManager_runtime_useRuntimeManager() && !isIntegrationManager_runtime_useConsegnePreseInCaricoManager()){
+					getIntegrationManager_runtime_dataSource();	
+					getIntegrationManager_runtime_dataSourceJndiContext();
+					isIntegrationManager_runtime_dataSource_useDBUtils();
+				}
+				if(!isIntegrationManager_transazioni_useTransactionManager() && !isIntegrationManager_transazioni_useConsegnePreseInCaricoManager()){
+					getIntegrationManager_transazioni_dataSource();	
+					getIntegrationManager_transazioni_dataSourceJndiContext();
+					isIntegrationManager_transazioni_dataSource_useDBUtils();
+				}
+			}
 
 			// Gestione Attachments (Warning)
 			this.isDeleteInstructionTargetMachineXml();
@@ -2018,6 +2045,8 @@ public class OpenSPCoop2Properties {
 					this.getTransazioniRegistrazioneSlowLogThresholdMs();
 					this.isTransazioniRegistrazioneSlowLogBuildTransactionDetails();
 					this.isTransazioniRegistrazioneSlowLogRateLimitingDetails();
+					this.isTransazioniRegistrazioneSlowLogConnettoriMultipliProcessTransactionSADetails();
+					this.isTransazioniRegistrazioneSlowLogConnettoriMultipliUpdateTransactionDetails();
 				}
 
 				if(this.isTransazioniFileTraceEnabled()) {
@@ -5704,10 +5733,255 @@ public class OpenSPCoop2Properties {
 	}
 
 	
+	// *** Smistatore ***
+	
+	private static Boolean isTimerConsegnaContenutiApplicativi_smistatore_runtime_useRuntimeManager = null;
+	public boolean isTimerConsegnaContenutiApplicativi_smistatore_runtime_useRuntimeManager() {	
+		if(OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativi_smistatore_runtime_useRuntimeManager==null){
+			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.smistatore.runtime.useRuntimeManager";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativi_smistatore_runtime_useRuntimeManager = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativi_smistatore_runtime_useRuntimeManager = true;
+			}    
+		}
 
+		return OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativi_smistatore_runtime_useRuntimeManager;
+	}
+	
+	private static String getTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSource = null;
+	public String getTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSource() throws Exception {	
+		if(OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSource==null){
+			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.smistatore.runtime.dataSource";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					throw new Exception("Proprieta' non impostata");
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSource = name;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw e;
+			}    
+		}
 
+		return OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSource;
+	}
+	
+	private static Properties getTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSourceJndiContext = null;
+	public Properties getTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSourceJndiContext() throws Exception {	
+		if(OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSourceJndiContext==null){
+			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.smistatore.runtime.dataSource.property.";
+			try{ 
+				OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSourceJndiContext = this.reader.readProperties_convertEnvProperties(pName);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
+				throw e;
+			}    
+		}
 
+		return OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSourceJndiContext;
+	}
+	
+	private static Boolean isTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSource_useDBUtils = null;
+	public boolean isTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSource_useDBUtils() {	
+		if(OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSource_useDBUtils==null){
+			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.smistatore.runtime.datasource.useDSUtils";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSource_useDBUtils = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSource_useDBUtils = true;
+			}    
+		}
 
+		return OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSource_useDBUtils;
+	}
+	
+	
+	
+	// *** Consegne, gestione runtime ***
+	
+	private static Boolean isTimerConsegnaContenutiApplicativi_runtime_useRuntimeManager = null;
+	public boolean isTimerConsegnaContenutiApplicativi_runtime_useRuntimeManager() {	
+		if(OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativi_runtime_useRuntimeManager==null){
+			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.runtime.useRuntimeManager";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativi_runtime_useRuntimeManager = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativi_runtime_useRuntimeManager = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativi_runtime_useRuntimeManager;
+	}
+	
+	private static String getTimerConsegnaContenutiApplicativi_runtime_dataSource = null;
+	public String getTimerConsegnaContenutiApplicativi_runtime_dataSource() throws Exception {	
+		if(OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_runtime_dataSource==null){
+			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.runtime.dataSource";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					throw new Exception("Proprieta' non impostata");
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_runtime_dataSource = name;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_runtime_dataSource;
+	}
+	
+	private static Properties getTimerConsegnaContenutiApplicativi_runtime_dataSourceJndiContext = null;
+	public Properties getTimerConsegnaContenutiApplicativi_runtime_dataSourceJndiContext() throws Exception {	
+		if(OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_runtime_dataSourceJndiContext==null){
+			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.runtime.dataSource.property.";
+			try{ 
+				OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_runtime_dataSourceJndiContext = this.reader.readProperties_convertEnvProperties(pName);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_runtime_dataSourceJndiContext;
+	}
+	
+	private static Boolean isTimerConsegnaContenutiApplicativi_runtime_dataSource_useDBUtils = null;
+	public boolean isTimerConsegnaContenutiApplicativi_runtime_dataSource_useDBUtils() {	
+		if(OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativi_runtime_dataSource_useDBUtils==null){
+			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.runtime.datasource.useDSUtils";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativi_runtime_dataSource_useDBUtils = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativi_runtime_dataSource_useDBUtils = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativi_runtime_dataSource_useDBUtils;
+	}
+	
+	
+	// *** Consegne, gestione tracce ***
+	
+	private static Boolean isTimerConsegnaContenutiApplicativi_transazioni_useTransactionManager = null;
+	public boolean isTimerConsegnaContenutiApplicativi_transazioni_useTransactionManager() {	
+		if(OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativi_transazioni_useTransactionManager==null){
+			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.transazioni.useTransactionManager";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativi_transazioni_useTransactionManager = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativi_transazioni_useTransactionManager = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativi_transazioni_useTransactionManager;
+	}
+	
+	private static String getTimerConsegnaContenutiApplicativi_transazioni_dataSource = null;
+	public String getTimerConsegnaContenutiApplicativi_transazioni_dataSource() throws Exception {	
+		if(OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_transazioni_dataSource==null){
+			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.transazioni.dataSource";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					throw new Exception("Proprieta' non impostata");
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_transazioni_dataSource = name;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_transazioni_dataSource;
+	}
+	
+	private static Properties getTimerConsegnaContenutiApplicativi_transazioni_dataSourceJndiContext = null;
+	public Properties getTimerConsegnaContenutiApplicativi_transazioni_dataSourceJndiContext() throws Exception {	
+		if(OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_transazioni_dataSourceJndiContext==null){
+			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.transazioni.dataSource.property.";
+			try{ 
+				OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_transazioni_dataSourceJndiContext = this.reader.readProperties_convertEnvProperties(pName);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_transazioni_dataSourceJndiContext;
+	}
+	
+	private static Boolean isTimerConsegnaContenutiApplicativi_transazioni_dataSource_useDBUtils = null;
+	public boolean isTimerConsegnaContenutiApplicativi_transazioni_dataSource_useDBUtils() {	
+		if(OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativi_transazioni_dataSource_useDBUtils==null){
+			String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.transazioni.datasource.useDSUtils";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativi_transazioni_dataSource_useDBUtils = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativi_transazioni_dataSource_useDBUtils = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativi_transazioni_dataSource_useDBUtils;
+	}
+	
 
 	/* ********  REPOSITORY DI OPENSPCOOP  ******** */
 
@@ -14245,6 +14519,216 @@ public class OpenSPCoop2Properties {
 
 
 
+	// *** Consegne, gestione runtime ***
+	
+	private static Boolean isIntegrationManager_runtime_useRuntimeManager = null;
+	public boolean isIntegrationManager_runtime_useRuntimeManager() {	
+		if(OpenSPCoop2Properties.isIntegrationManager_runtime_useRuntimeManager==null){
+			String pName = "org.openspcoop2.pdd.service.IntegrationManager.runtime.useRuntimeManager";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isIntegrationManager_runtime_useRuntimeManager = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isIntegrationManager_runtime_useRuntimeManager = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isIntegrationManager_runtime_useRuntimeManager;
+	}
+	
+	private static Boolean isIntegrationManager_runtime_useConsegnePreseInCaricoManager = null;
+	public boolean isIntegrationManager_runtime_useConsegnePreseInCaricoManager() {	
+		if(OpenSPCoop2Properties.isIntegrationManager_runtime_useConsegnePreseInCaricoManager==null){
+			String pName = "org.openspcoop2.pdd.service.IntegrationManager.runtime.useConsegnePreseInCaricoManager";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isIntegrationManager_runtime_useConsegnePreseInCaricoManager = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isIntegrationManager_runtime_useConsegnePreseInCaricoManager = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isIntegrationManager_runtime_useConsegnePreseInCaricoManager;
+	}
+	
+	private static String getIntegrationManager_runtime_dataSource = null;
+	public String getIntegrationManager_runtime_dataSource() throws Exception {	
+		if(OpenSPCoop2Properties.getIntegrationManager_runtime_dataSource==null){
+			String pName = "org.openspcoop2.pdd.service.IntegrationManager.runtime.dataSource";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					throw new Exception("Proprieta' non impostata");
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.getIntegrationManager_runtime_dataSource = name;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getIntegrationManager_runtime_dataSource;
+	}
+	
+	private static Properties getIntegrationManager_runtime_dataSourceJndiContext = null;
+	public Properties getIntegrationManager_runtime_dataSourceJndiContext() throws Exception {	
+		if(OpenSPCoop2Properties.getIntegrationManager_runtime_dataSourceJndiContext==null){
+			String pName = "org.openspcoop2.pdd.service.IntegrationManager.runtime.dataSource.property.";
+			try{ 
+				OpenSPCoop2Properties.getIntegrationManager_runtime_dataSourceJndiContext = this.reader.readProperties_convertEnvProperties(pName);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getIntegrationManager_runtime_dataSourceJndiContext;
+	}
+	
+	private static Boolean isIntegrationManager_runtime_dataSource_useDBUtils = null;
+	public boolean isIntegrationManager_runtime_dataSource_useDBUtils() {	
+		if(OpenSPCoop2Properties.isIntegrationManager_runtime_dataSource_useDBUtils==null){
+			String pName = "org.openspcoop2.pdd.service.IntegrationManager.runtime.datasource.useDSUtils";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isIntegrationManager_runtime_dataSource_useDBUtils = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isIntegrationManager_runtime_dataSource_useDBUtils = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isIntegrationManager_runtime_dataSource_useDBUtils;
+	}
+	
+	
+	// *** Consegne, gestione tracce ***
+	
+	private static Boolean isIntegrationManager_transazioni_useTransactionManager = null;
+	public boolean isIntegrationManager_transazioni_useTransactionManager() {	
+		if(OpenSPCoop2Properties.isIntegrationManager_transazioni_useTransactionManager==null){
+			String pName = "org.openspcoop2.pdd.service.IntegrationManager.transazioni.useTransactionManager";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isIntegrationManager_transazioni_useTransactionManager = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isIntegrationManager_transazioni_useTransactionManager = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isIntegrationManager_transazioni_useTransactionManager;
+	}
+	
+	private static Boolean isIntegrationManager_transazioni_useConsegnePreseInCaricoManager = null;
+	public boolean isIntegrationManager_transazioni_useConsegnePreseInCaricoManager() {	
+		if(OpenSPCoop2Properties.isIntegrationManager_transazioni_useConsegnePreseInCaricoManager==null){
+			String pName = "org.openspcoop2.pdd.service.IntegrationManager.transazioni.useConsegnePreseInCaricoManager";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isIntegrationManager_transazioni_useConsegnePreseInCaricoManager = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isIntegrationManager_transazioni_useConsegnePreseInCaricoManager = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isIntegrationManager_transazioni_useConsegnePreseInCaricoManager;
+	}
+	
+	private static String getIntegrationManager_transazioni_dataSource = null;
+	public String getIntegrationManager_transazioni_dataSource() throws Exception {	
+		if(OpenSPCoop2Properties.getIntegrationManager_transazioni_dataSource==null){
+			String pName = "org.openspcoop2.pdd.service.IntegrationManager.transazioni.dataSource";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					throw new Exception("Proprieta' non impostata");
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.getIntegrationManager_transazioni_dataSource = name;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getIntegrationManager_transazioni_dataSource;
+	}
+	
+	private static Properties getIntegrationManager_transazioni_dataSourceJndiContext = null;
+	public Properties getIntegrationManager_transazioni_dataSourceJndiContext() throws Exception {	
+		if(OpenSPCoop2Properties.getIntegrationManager_transazioni_dataSourceJndiContext==null){
+			String pName = "org.openspcoop2.pdd.service.IntegrationManager.transazioni.dataSource.property.";
+			try{ 
+				OpenSPCoop2Properties.getIntegrationManager_transazioni_dataSourceJndiContext = this.reader.readProperties_convertEnvProperties(pName);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getIntegrationManager_transazioni_dataSourceJndiContext;
+	}
+	
+	private static Boolean isIntegrationManager_transazioni_dataSource_useDBUtils = null;
+	public boolean isIntegrationManager_transazioni_dataSource_useDBUtils() {	
+		if(OpenSPCoop2Properties.isIntegrationManager_transazioni_dataSource_useDBUtils==null){
+			String pName = "org.openspcoop2.pdd.service.IntegrationManager.transazioni.datasource.useDSUtils";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isIntegrationManager_transazioni_dataSource_useDBUtils = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isIntegrationManager_transazioni_dataSource_useDBUtils = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isIntegrationManager_transazioni_dataSource_useDBUtils;
+	}
+	
+
 
 
 
@@ -21518,6 +22002,51 @@ public class OpenSPCoop2Properties {
 
 		return OpenSPCoop2Properties.isTransazioniRegistrazioneSlowLogRateLimitingDetails;
 	}
+	
+	private static Boolean isTransazioniRegistrazioneSlowLogConnettoriMultipliProcessTransactionSADetails = null;
+	public boolean isTransazioniRegistrazioneSlowLogConnettoriMultipliProcessTransactionSADetails() {	
+		if(OpenSPCoop2Properties.isTransazioniRegistrazioneSlowLogConnettoriMultipliProcessTransactionSADetails==null){
+			String pName = "org.openspcoop2.pdd.transazioni.slowLog.connettoriMultipli.processTransactionSADetails.enabled";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniRegistrazioneSlowLogConnettoriMultipliProcessTransactionSADetails = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isTransazioniRegistrazioneSlowLogConnettoriMultipliProcessTransactionSADetails = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniRegistrazioneSlowLogConnettoriMultipliProcessTransactionSADetails;
+	}
+	
+	private static Boolean isTransazioniRegistrazioneSlowLogConnettoriMultipliUpdateTransactionDetails = null;
+	public boolean isTransazioniRegistrazioneSlowLogConnettoriMultipliUpdateTransactionDetails() {	
+		if(OpenSPCoop2Properties.isTransazioniRegistrazioneSlowLogConnettoriMultipliUpdateTransactionDetails==null){
+			String pName = "org.openspcoop2.pdd.transazioni.slowLog.connettoriMultipli.updateTransactionDetails.enabled";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniRegistrazioneSlowLogConnettoriMultipliUpdateTransactionDetails = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isTransazioniRegistrazioneSlowLogConnettoriMultipliUpdateTransactionDetails = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniRegistrazioneSlowLogConnettoriMultipliUpdateTransactionDetails;
+	}
+	
 	
 	// FiltroDuplicati
 	

@@ -4675,23 +4675,23 @@ public class GestoreMessaggi  {
 	/* ------------- LETTURA MESSAGGI DA RICONSEGNARE -------------- */
 
 	public List<MessaggioServizioApplicativo> readMessaggiDaRiconsegnareIntoBoxByPriorita(int limit,
-			boolean verificaPresenzaMessaggiDaRispedire, boolean calcolaDataMinimaMessaggiRispedire,
+			boolean verificaPresenzaMessaggiDaRispedire, boolean calcolaDataMinimaMessaggiRispedire, Integer secondiAnzianitaPerIniziareSpedireNuovoMessaggio,
 			Date riconsegna, int presaInConsegnaMaxLife, 
 			boolean debug, RunnableLogger loggerSql,
 			String coda, String priorita)throws GestoreMessaggiException{
 		return  _readMessaggiDaRiconsegnareIntoBox(limit,
-				verificaPresenzaMessaggiDaRispedire, calcolaDataMinimaMessaggiRispedire,
+				verificaPresenzaMessaggiDaRispedire, calcolaDataMinimaMessaggiRispedire, secondiAnzianitaPerIniziareSpedireNuovoMessaggio,
 				riconsegna, presaInConsegnaMaxLife, 
 				debug, loggerSql,
 				coda, priorita);
 	}
 	public List<MessaggioServizioApplicativo> readMessaggiDaRiconsegnareIntoBoxByServiziApplicativPrioritari(int limit,
-			boolean verificaPresenzaMessaggiDaRispedire, boolean calcolaDataMinimaMessaggiRispedire,
+			boolean verificaPresenzaMessaggiDaRispedire, boolean calcolaDataMinimaMessaggiRispedire, Integer secondiAnzianitaPerIniziareSpedireNuovoMessaggio,
 			Date riconsegna, int presaInConsegnaMaxLife, 
 			boolean debug, RunnableLogger loggerSql,
 			String coda, String ... serviziApplicativiPrioritari)throws GestoreMessaggiException{
 		return  _readMessaggiDaRiconsegnareIntoBox(limit,
-				verificaPresenzaMessaggiDaRispedire, calcolaDataMinimaMessaggiRispedire,
+				verificaPresenzaMessaggiDaRispedire, calcolaDataMinimaMessaggiRispedire, secondiAnzianitaPerIniziareSpedireNuovoMessaggio,
 				riconsegna, presaInConsegnaMaxLife, 
 				debug, loggerSql,
 				coda, null,
@@ -4699,12 +4699,14 @@ public class GestoreMessaggi  {
 	}
 	
 	private List<MessaggioServizioApplicativo> _readMessaggiDaRiconsegnareIntoBox(int limit,
-			boolean verificaPresenzaMessaggiDaRispedire, boolean calcolaDataMinimaMessaggiRispedire,
+			boolean verificaPresenzaMessaggiDaRispedire, boolean calcolaDataMinimaMessaggiRispedire, Integer secondiAnzianitaPerIniziareSpedireNuovoMessaggio,
 			Date riconsegna, int presaInConsegnaMaxLife, 
 			boolean debug, RunnableLogger loggerSql,
 			String coda, String priorita,
 			String ... serviziApplicativiPrioritari)throws GestoreMessaggiException{
 
+		boolean verificaPresenzaMessaggiDaRispedire_consideraAncheNuoviMessaggi = true;
+		
 		if(this.openspcoopstate instanceof OpenSPCoopStateful) {
 			StatefulMessage stateful = (this.isRichiesta) ? ((StatefulMessage)this.openspcoopstate.getStatoRichiesta())
 					: ((StatefulMessage)this.openspcoopstate.getStatoRisposta()) ;
@@ -4733,6 +4735,11 @@ public class GestoreMessaggi  {
 						query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
 						
 						query.append(" WHERE ");
+						
+						if(secondiAnzianitaPerIniziareSpedireNuovoMessaggio!=null && secondiAnzianitaPerIniziareSpedireNuovoMessaggio>0) {
+							// Per non prendere immediatamente i messaggi in carico ed evitare problemi di serializzazione con le tracce, se ancora non è stata scritta
+							query.append(GestoreMessaggi.MESSAGGI).append(".ORA_REGISTRAZIONE<=? ").append(" AND ");
+						}
 						
 						// join
 						query.append(" ");
@@ -4766,7 +4773,16 @@ public class GestoreMessaggi  {
 						else if(priorita!=null) {
 							query.append(" AND ").append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".PRIORITA=? ");
 						}
-						query.append(" AND ").append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".ERRORE_PROCESSAMENTO_COMPACT is not null "); // per non intralciare con la "prima" consegna
+						
+						// per non intralciare con la "prima" registrazione (forse e' un controllo inutile)
+						query.append(" AND ")
+							.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".ERRORE_PROCESSAMENTO_COMPACT is not null ");
+						if(!verificaPresenzaMessaggiDaRispedire_consideraAncheNuoviMessaggi) {
+							// per non intralciare con la "prima" consegna
+							query.append(" AND ")
+								.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".ERRORE_PROCESSAMENTO_COMPACT <> ? ");
+						}
+												
 						query.append(" AND ").append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".RISPEDIZIONE<=? ");
 						query.append(" AND (").
 							append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".LOCK_CONSEGNA is null ").
@@ -4782,6 +4798,11 @@ public class GestoreMessaggi  {
 						sqlQueryObject.addFromTable(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI,"sa");
 
 						sqlQueryObject.addSelectMinField("m", "ORA_REGISTRAZIONE", "minOraMess");
+						
+						if(secondiAnzianitaPerIniziareSpedireNuovoMessaggio!=null && secondiAnzianitaPerIniziareSpedireNuovoMessaggio>0) {
+							// Per non prendere immediatamente i messaggi in carico ed evitare problemi di serializzazione con le tracce, se ancora non è stata scritta
+							sqlQueryObject.addWhereCondition("m.ORA_REGISTRAZIONE<=?");
+						}
 						
 						// join
 						sqlQueryObject.addWhereCondition("m.ID_MESSAGGIO=sa.ID_MESSAGGIO");
@@ -4802,7 +4823,14 @@ public class GestoreMessaggi  {
 						else if(priorita!=null) {
 							sqlQueryObject.addWhereCondition("sa.PRIORITA=?");
 						}
-						sqlQueryObject.addWhereCondition("sa.ERRORE_PROCESSAMENTO_COMPACT is not null"); // per non intralciare con la "prima" consegna
+						
+						// per non intralciare con la "prima" registrazione (forse e' un controllo inutile)
+						sqlQueryObject.addWhereCondition("sa.ERRORE_PROCESSAMENTO_COMPACT is not null");
+						if(!verificaPresenzaMessaggiDaRispedire_consideraAncheNuoviMessaggi) {
+							// per non intralciare con la "prima" consegna
+							sqlQueryObject.addWhereCondition("sa.ERRORE_PROCESSAMENTO_COMPACT <> ?");
+						}
+						
 						sqlQueryObject.addWhereCondition("sa.RISPEDIZIONE<=?");
 						sqlQueryObject.addWhereCondition(false, "sa.LOCK_CONSEGNA is null", "sa.LOCK_CONSEGNA < ?");
 						
@@ -4814,6 +4842,12 @@ public class GestoreMessaggi  {
 					pstmt = connectionDB.prepareStatement(queryString);
 					int index = 1;
 					List<Object> params = new ArrayList<Object>();
+					
+					if(secondiAnzianitaPerIniziareSpedireNuovoMessaggio!=null && secondiAnzianitaPerIniziareSpedireNuovoMessaggio>0) {
+						Timestamp anzianita = new Timestamp(DateManager.getTimeMillis()-(1000*secondiAnzianitaPerIniziareSpedireNuovoMessaggio.intValue()));
+						pstmt.setTimestamp(index++, anzianita);
+						params.add(org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(anzianita));
+					}
 					
 					pstmt.setString(index++,tipo); params.add(tipo);
 					pstmt.setString(index++,ConsegnaContenutiApplicativi.ID_MODULO); params.add(ConsegnaContenutiApplicativi.ID_MODULO);
@@ -4830,6 +4864,12 @@ public class GestoreMessaggi  {
 					else if(priorita!=null) {
 						pstmt.setString(index++,priorita);
 						params.add(priorita);
+					}
+					
+					if(!verificaPresenzaMessaggiDaRispedire_consideraAncheNuoviMessaggi) {
+						// per non intralciare con la "prima" consegna
+						pstmt.setString(index++, TimerConsegnaContenutiApplicativiThread.ID_MODULO);
+						params.add(TimerConsegnaContenutiApplicativiThread.ID_MODULO);
 					}
 					
 					pstmt.setTimestamp(index++,new Timestamp(riconsegna.getTime()));
@@ -4915,6 +4955,11 @@ public class GestoreMessaggi  {
 						query.append(GestoreMessaggi.MESSAGGI).append(".ORA_REGISTRAZIONE>=? ").append(" AND ");
 					}
 					
+					if(secondiAnzianitaPerIniziareSpedireNuovoMessaggio!=null && secondiAnzianitaPerIniziareSpedireNuovoMessaggio>0) {
+						// Per non prendere immediatamente i messaggi in carico ed evitare problemi di serializzazione con le tracce, se ancora non è stata scritta
+						query.append(GestoreMessaggi.MESSAGGI).append(".ORA_REGISTRAZIONE<=? ").append(" AND ");
+					}
+					
 					// join
 					query.append(" ");
 					query.append(GestoreMessaggi.MESSAGGI);
@@ -4948,7 +4993,14 @@ public class GestoreMessaggi  {
 						query.append(" AND ").append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".PRIORITA=? ");
 					}
 					if(verificaPresenzaMessaggiDaRispedire) {
-						query.append(" AND ").append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".ERRORE_PROCESSAMENTO_COMPACT is not null "); // per non intralciare con la "prima" consegna
+						// per non intralciare con la "prima" registrazione (forse e' un controllo inutile)
+						query.append(" AND ").
+							append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".ERRORE_PROCESSAMENTO_COMPACT is not null ");
+						if(!verificaPresenzaMessaggiDaRispedire_consideraAncheNuoviMessaggi) {
+							// per non intralciare con la "prima" consegna
+							query.append(" AND ").
+								append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".ERRORE_PROCESSAMENTO_COMPACT <> ? ");
+						}
 					}
 					else {
 						query.append(" AND ").append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".ERRORE_PROCESSAMENTO_COMPACT = ? "); // prima consegna
@@ -4999,6 +5051,11 @@ public class GestoreMessaggi  {
 						sqlQueryObject.addWhereCondition("sa.ORA_REGISTRAZIONE>=?");
 					}
 					
+					if(secondiAnzianitaPerIniziareSpedireNuovoMessaggio!=null && secondiAnzianitaPerIniziareSpedireNuovoMessaggio>0) {
+						// Per non prendere immediatamente i messaggi in carico ed evitare problemi di serializzazione con le tracce, se ancora non è stata scritta
+						sqlQueryObject.addWhereCondition("m.ORA_REGISTRAZIONE<=?");
+					}
+					
 					// join
 					sqlQueryObject.addWhereCondition("m.ID_MESSAGGIO=sa.ID_MESSAGGIO");
 					
@@ -5019,7 +5076,12 @@ public class GestoreMessaggi  {
 						sqlQueryObject.addWhereCondition("sa.PRIORITA=?");
 					}
 					if(verificaPresenzaMessaggiDaRispedire) {
-						sqlQueryObject.addWhereCondition("sa.ERRORE_PROCESSAMENTO_COMPACT is not null"); // per non intralciare con la "prima" consegna
+						// per non intralciare con la "prima" registrazione (forse e' un controllo inutile)
+						sqlQueryObject.addWhereCondition("sa.ERRORE_PROCESSAMENTO_COMPACT is not null");
+						if(!verificaPresenzaMessaggiDaRispedire_consideraAncheNuoviMessaggi) {
+							// per non intralciare con la "prima" consegna
+							sqlQueryObject.addWhereCondition("sa.ERRORE_PROCESSAMENTO_COMPACT <> ?");
+						}
 					}
 					else {
 						sqlQueryObject.addWhereCondition("sa.ERRORE_PROCESSAMENTO_COMPACT = ?"); // "prima" consegna
@@ -5058,6 +5120,12 @@ public class GestoreMessaggi  {
 					params.add(org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(now));
 				}
 				
+				if(secondiAnzianitaPerIniziareSpedireNuovoMessaggio!=null && secondiAnzianitaPerIniziareSpedireNuovoMessaggio>0) {
+					Timestamp anzianita = new Timestamp(DateManager.getTimeMillis()-(1000*secondiAnzianitaPerIniziareSpedireNuovoMessaggio.intValue()));
+					pstmtMsgDaSpedire.setTimestamp(index++, anzianita);
+					params.add(org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(anzianita));
+				}
+				
 				pstmtMsgDaSpedire.setString(index++,tipo); params.add(tipo);
 				pstmtMsgDaSpedire.setString(index++,ConsegnaContenutiApplicativi.ID_MODULO); params.add(ConsegnaContenutiApplicativi.ID_MODULO);
 				pstmtMsgDaSpedire.setString(index++,GestoreMessaggi.CONSEGNA_TRAMITE_CONNETTORE); params.add(GestoreMessaggi.CONSEGNA_TRAMITE_CONNETTORE);
@@ -5075,7 +5143,14 @@ public class GestoreMessaggi  {
 					params.add(priorita);
 				}
 				
-				if(!verificaPresenzaMessaggiDaRispedire) {
+				if(verificaPresenzaMessaggiDaRispedire) {
+					if(!verificaPresenzaMessaggiDaRispedire_consideraAncheNuoviMessaggi) {
+						// per non intralciare con la "prima" consegna
+						pstmtMsgDaSpedire.setString(index++, TimerConsegnaContenutiApplicativiThread.ID_MODULO);
+						params.add(TimerConsegnaContenutiApplicativiThread.ID_MODULO);
+					}
+				}
+				else {
 					pstmtMsgDaSpedire.setString(index++, TimerConsegnaContenutiApplicativiThread.ID_MODULO);
 					params.add(TimerConsegnaContenutiApplicativiThread.ID_MODULO);
 				}
@@ -5127,6 +5202,8 @@ public class GestoreMessaggi  {
 						if(countLimit==limit)
 							break;
 					}
+					
+					//System.out.println("CHECK verificaPresenzaMessaggiDaRispedire="+verificaPresenzaMessaggiDaRispedire+" TROVATO ["+msg.getIdMessaggio()+"]");
 				}
 				rs.close(); rs = null;
 				pstmtMsgDaSpedire.close(); pstmtMsgDaSpedire=null;

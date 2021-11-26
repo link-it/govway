@@ -36,7 +36,7 @@ import org.openspcoop2.protocol.sdk.state.IState;
 public interface IOpenSPCoopState {
 
 	public void initResource(IDSoggetto identitaPdD,String idModulo,String idTransazione) throws OpenSPCoopStateException;
-
+	public void initResource(IDSoggetto identitaPdD,String idModulo,String idTransazione, OpenSPCoopStateDBManager dbManager)throws OpenSPCoopStateException;
 
 	public void updateResource(String idTransazione) throws OpenSPCoopStateException;
 	public void releaseResource();

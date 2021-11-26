@@ -114,6 +114,7 @@ import org.openspcoop2.pdd.core.integrazione.IGestoreIntegrazionePASoap;
 import org.openspcoop2.pdd.core.integrazione.InResponsePAMessage;
 import org.openspcoop2.pdd.core.integrazione.OutRequestPAMessage;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
+import org.openspcoop2.pdd.core.state.OpenSPCoopStateDBManager;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateException;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
@@ -286,6 +287,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			idApplicativa = consegnaContenutiApplicativiMsg.getRichiestaApplicativa().getIdPortaApplicativa();
 		}
 		
+		OpenSPCoopStateDBManager dbManagerSource = OpenSPCoopStateDBManager.runtime;
+		
 		// Costruisco eventuale oggetto TransazioneServerApplicativo
 		TransazioneApplicativoServer transazioneApplicativoServer = null;
 		ConsegnaContenutiApplicativiBehaviourMessage behaviourConsegna = consegnaContenutiApplicativiMsg.getBehaviour();
@@ -308,6 +311,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			transazioneApplicativoServer.setIdentificativoMessaggio(consegnaContenutiApplicativiMsg.getBusta().getID());
 			
 			msgDiag.setTransazioneApplicativoServer(transazioneApplicativoServer, idApplicativa);
+			
+			dbManagerSource = OpenSPCoopStateDBManager.consegnePreseInCarico;
 		}
 		BehaviourLoadBalancer loadBalancer = null;
 		if(consegnaContenutiApplicativiMsg!=null && consegnaContenutiApplicativiMsg.getLoadBalancer()!=null) {
@@ -327,7 +332,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					this.log.error(prefix+"Errore durante il salvataggio delle informazioni di load balancer: "+t.getMessage(),t);
 				}
 			}
-			esitoLib = this.engine_onMessage(openspcoopstate, registroServiziManager, configurazionePdDManager, msgDiag, transazioneApplicativoServer, oraRegistrazione);
+			esitoLib = this.engine_onMessage(openspcoopstate, dbManagerSource,
+					registroServiziManager, configurazionePdDManager, msgDiag, transazioneApplicativoServer, oraRegistrazione);
 		}finally {
 			if(loadBalancer!=null) {
 				try {
@@ -390,7 +396,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		return esitoLib;
 	}
 	
-	private EsitoLib engine_onMessage(IOpenSPCoopState openspcoopstate,
+	private EsitoLib engine_onMessage(IOpenSPCoopState openspcoopstate, OpenSPCoopStateDBManager dbManagerSource,
 			RegistroServiziManager registroServiziManager,ConfigurazionePdDManager configurazionePdDManager, 
 			MsgDiagnostico msgDiag,
 			TransazioneApplicativoServer transazioneApplicativoServer,
@@ -912,7 +918,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 
 		/* ------------------ Connessione al DB  --------------- */
 		msgDiag.mediumDebug("Richiesta connessione al database per la gestione della richiesta...");
-		openspcoopstate.initResource(identitaPdD, ConsegnaContenutiApplicativi.ID_MODULO,idTransazione);
+		openspcoopstate.initResource(identitaPdD, ConsegnaContenutiApplicativi.ID_MODULO,idTransazione,dbManagerSource);
 		registroServiziManager.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
 		configurazionePdDManager.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
 		msgDiag.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());

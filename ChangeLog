@@ -1,3 +1,15 @@
+2021-11-26  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1280
+	Sono stati effettuati i seguenti interventi aggiuntivi relativi alla funzionalità con presa in carico:
+	- aggiunta configurazione necessaria ad in dicare i secondi dopo il quale un nuovo messaggio può iniziare ad essere schedulato;
+	- rivisto algoritmo di aggiornamento delle informazioni di consegna per evitare gli errori di accesso concorrente, seppure gestiti, su database;
+	- aggiunta possibiltà di configurare datasource differenti da quelli di default, da utilizzare nella fase di consegna dei messaggi presi in carico e nel prelevamento di messaggi dalla MessageBox;
+	- aggiunto log che evidenzia il dettaglio di dove viene speso il tempo in fase di scrittura della transazione;
+	- migliorate query che individuano puntualmente le informazioni relative alle consegne e alle credenziali, eliminando l'utilizzo del vincolo 'LIMIT 2';
+	- nei binari prodotti dall'installer di default, il timer vie adesso disabilitato essendo la funzionalità ancora in fase di sviluppo.
+
 2021-11-18  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

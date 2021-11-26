@@ -49,6 +49,7 @@ import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
 import org.openspcoop2.generic_project.utils.UtilsTemplate;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.openspcoop2.utils.sql.SQLQueryObjectCore;
 import org.slf4j.Logger;
 
 /**     
@@ -106,10 +107,53 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 	
 	@Override
 	public TransazioneApplicativoServer get(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdTransazioneApplicativoServer id, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException,Exception {
-		Long id_transazioneApplicativoServer = ( (id!=null && id.getId()!=null && id.getId()>0) ? id.getId() : this.findIdTransazioneApplicativoServer(jdbcProperties, log, connection, sqlQueryObject, id, true));
-		return this._get(jdbcProperties, log, connection, sqlQueryObject, id_transazioneApplicativoServer,idMappingResolutionBehaviour);
 		
+		boolean efficente = true;
+        
+		long id_long = (id!=null && id.getId()!=null && id.getId()>0) ? id.getId() : -1;
 		
+        if(id_long<=0 && efficente){
+		
+        	if(id==null) {
+    			throw new ServiceException("Id non definito");
+    		}
+    		if(id.getIdTransazione()==null) {
+    			throw new ServiceException("IdTransazione non definito");
+    		}
+    		if(id.getServizioApplicativoErogatore()==null) {
+    			throw new ServiceException("IdServizioApplicativoErogatore non definito");
+    		}
+        	
+    		JDBCPaginatedExpression pagExpr = this.newPaginatedExpression(log);
+        	pagExpr.equals(TransazioneApplicativoServer.model().ID_TRANSAZIONE, id.getIdTransazione());
+			pagExpr.and();
+			pagExpr.equals(TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE, id.getServizioApplicativoErogatore());
+			//pagExpr.limit(2); Inefficente, per implementare il multipleresult che poi non può succedere
+			if(sqlQueryObject==null || !(sqlQueryObject instanceof SQLQueryObjectCore) || !((SQLQueryObjectCore)sqlQueryObject).isSelectForUpdate()) {
+				pagExpr.limit(1);
+				// essendoci lo unique comunque il limit serve a poco, e nello stesso tempo la select for update non lo vuole
+			}
+			        	
+        	List<TransazioneApplicativoServer> list = findAll(jdbcProperties, log, connection, sqlQueryObject, pagExpr, idMappingResolutionBehaviour);
+        	
+        	if(list==null || list.size()<1) {
+        		throw new NotFoundException();
+        	}
+        	// C'è lo unique sulle due colonne
+//        	else if(list.size()>1) {
+//        		throw new MultipleResultException();
+//        	}
+        	else {
+        		return list.get(0);
+        	}
+        	
+        }
+        else {
+		
+        	Long id_transazioneApplicativoServer = ( (id!=null && id.getId()!=null && id.getId()>0) ? id.getId() : this.findIdTransazioneApplicativoServer(jdbcProperties, log, connection, sqlQueryObject, id, true));
+        	return this._get(jdbcProperties, log, connection, sqlQueryObject, id_transazioneApplicativoServer,idMappingResolutionBehaviour);
+		
+        }
 	}
 	
 	@Override

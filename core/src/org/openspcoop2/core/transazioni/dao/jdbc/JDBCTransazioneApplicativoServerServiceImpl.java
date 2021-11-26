@@ -161,7 +161,12 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 		
 		if(efficente) {
 		
-			this._update(jdbcProperties, log, connection, sqlQueryObject, -1, transazioneApplicativoServer, idMappingResolutionBehaviour, oldId);
+			long tableId = -1;
+			if(oldId!=null && oldId.getId()!=null && oldId.getId().longValue()>0) {
+				tableId = oldId.getId().longValue();
+				oldId = null; // uso l'id fisico se presente
+			}
+			this._update(jdbcProperties, log, connection, sqlQueryObject, tableId, transazioneApplicativoServer, idMappingResolutionBehaviour, oldId);
 			
 		}
 		else {
