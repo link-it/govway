@@ -12,6 +12,7 @@ Background:
     """
 
     * def check_signature = read('check-signature.feature')
+    * configure lowerCaseResponseHeaders = false
 
     * def confHeaders = 
     """

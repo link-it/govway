@@ -335,7 +335,7 @@ Scenario Outline: Fruizioni Download SpecificaSemiformale
     When method get
     Then status 200
     And match responseHeaders contains { 'Content-Type': ['<content_type>'] }
-    * match response == allegatoDecodificato
+    * match responseBytes == allegatoDecodificato.getBytes()
 
     * call delete ({ resourcePath: fruizione_petstore_path + '/allegati/' + allegato_specificasemiformale.allegato.nome })
     * call delete ({ resourcePath: 'fruizioni/' + fruizione_key })
@@ -374,7 +374,7 @@ Scenario Outline: Fruizioni Download SpecificaLivelloServizio
     When method get
     Then status 200
     And match responseHeaders contains { 'Content-Type': ['<content_type>'] }
-    * match response == allegatoDecodificato
+    * match responseBytes == allegatoDecodificato.getBytes()
 
     * call delete ({ resourcePath: fruizione_petstore_path + '/allegati/' + allegato_specificalivelloservizio.allegato.nome })
     * call delete ({ resourcePath: 'fruizioni/' + fruizione_key })
@@ -409,7 +409,7 @@ Scenario Outline: Fruizioni Download SpecificaSicurezza
     When method get
     Then status 200
     And match responseHeaders contains { 'Content-Type': ['<content_type>'] }
-    * match response == allegatoDecodificato
+    * match responseBytes == allegatoDecodificato.getBytes()
 
     * call delete ({ resourcePath: fruizione_petstore_path + '/allegati/' + allegato_specificasicurezza.allegato.nome })
     * call delete ({ resourcePath: 'fruizioni/' + fruizione_key })

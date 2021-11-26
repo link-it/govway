@@ -15,6 +15,8 @@ Background:
     * def check_signature = read('check-signature.feature')
     * def check_client_token = read('check-client-token.feature')
     * def check_server_token = read('check-server-token.feature')
+    * configure lowerCaseResponseHeaders = false
+
 
 
 Scenario: isTest('connettivita-base')

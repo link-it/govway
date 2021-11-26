@@ -8,6 +8,7 @@ Background:
     
     * def check_traccia = read('check-tracce/check-traccia.feature')
     * def check_signature = read('classpath:org/openspcoop2/core/protocolli/modipa/testsuite/soap/sicurezza_messaggio/check-signature.feature')
+    * configure lowerCaseResponseHeaders = true
 
 @connettivita-base
 Scenario: Test connettività base

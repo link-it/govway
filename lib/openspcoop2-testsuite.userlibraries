@@ -24,6 +24,9 @@
 		<archive path="/op2_3.3.dev/lib/testsuite/karate-junit4-1.1.0.jar"/>
         <archive path="/op2_3.3.dev/lib/testsuite/js-scriptengine-21.2.0.jar"/>
         <archive path="/op2_3.3.dev/lib/testsuite/js-21.2.0.jar"/>
+        <archive path="/op2_3.3.dev/lib/testsuite/graal-sdk-21.2.0.jar"/>
+        <archive path="/op2_3.3.dev/lib/testsuite/truffle-api-21.2.0.jar"/>
+        <archive path="/op2_3.3.dev/lib/testsuite/icu4j-69.1.jar"/>
     </library>
 
 </eclipse-userlibraries>

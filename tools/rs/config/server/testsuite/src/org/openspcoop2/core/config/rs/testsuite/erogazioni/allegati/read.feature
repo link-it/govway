@@ -318,7 +318,7 @@ Scenario Outline: Erogazioni Download SpecificaSemiformale
     When method get
     Then status 200
     And match responseHeaders contains { 'Content-Type': ['<content_type>'] }
-    * match response == allegatoDecodificato
+    * match responseBytes == allegatoDecodificato.getBytes()
 
     * call delete ({ resourcePath: erogazione_petstore_path + '/allegati/' + allegato_specificasemiformale.allegato.nome })
     * call delete ({ resourcePath: erogazione_petstore_path })
@@ -355,7 +355,7 @@ Scenario Outline: Erogazioni Download SpecificaLivelloServizio
     When method get
     Then status 200
     And match responseHeaders contains { 'Content-Type': ['<content_type>'] }
-    * match response == allegatoDecodificato
+    * match responseBytes == allegatoDecodificato.getBytes()
 
     * call delete ({ resourcePath: erogazione_petstore_path + '/allegati/' + allegato_specificalivelloservizio.allegato.nome })
     * call delete ({ resourcePath: erogazione_petstore_path })
@@ -387,7 +387,7 @@ Scenario Outline: Erogazioni Download SpecificaSicurezza
     When method get
     Then status 200
     And match responseHeaders contains { 'Content-Type': ['<content_type>'] }
-    * match response == allegatoDecodificato
+    * match responseBytes == allegatoDecodificato.getBytes()
 
     * call delete ({ resourcePath: erogazione_petstore_path + '/allegati/' + allegato_specificasicurezza.allegato.nome })
     * call delete ({ resourcePath: erogazione_petstore_path })

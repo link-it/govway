@@ -33,6 +33,20 @@
 	<dependencies>
 
 		<dependency>
+			<groupId>org.graalvm.regex</groupId>
+			<artifactId>regex</artifactId>
+			<version>${graal.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>test</scope>
+		</dependency>
+
+
+		<dependency>
     		<groupId>com.ibm.icu</groupId>
 		    <artifactId>icu4j</artifactId>
 			<version>${ibm.icu.version}</version>

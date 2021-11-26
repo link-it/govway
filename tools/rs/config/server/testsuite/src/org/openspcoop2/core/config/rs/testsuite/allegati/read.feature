@@ -170,7 +170,7 @@ Scenario Outline: SpecificaSemiformale Download
     When method get
     Then status 200
     And match responseHeaders contains { 'Content-Type': ['<content_type>'] }
-    * match response == allegatoDecodificato
+    * match responseBytes == allegatoDecodificato.getBytes()
     
     * call delete ({ resourcePath: 'api/' + api_path + '/allegati/' + allegato_specificasemiformale.allegato.nome, body: allegato_specificasemiformale })
     * call delete ({ resourcePath: "api/" + api_path })

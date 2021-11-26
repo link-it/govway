@@ -20,6 +20,13 @@
 			<include name="karate-*.jar"/>
 			<include name="picocli-4.2.0.jar"/>
 			<include name="logback-*.jar"/>
+			<include name="js-21.2.0.jar"/>
+			<include name="js-scriptengine-21.2.0.jar"/>
+			<include name="graal-sdk-21.2.0.jar"/>
+			<include name="truffle-api-21.2.0.jar"/>
+			<include name="regex-21.2.0.jar"/>
+			<include name="icu4j-69.1.jar"/>
+
                 </fileset>
 		<fileset dir="${required_lib}/commons" >
                         <include name="*.jar"/>
@@ -43,10 +50,15 @@
 
 	<property name="src_testsuite" location="src" />
 	<property name="build_testsuite" location="build" />
+	<property name="log_testsuite" location="log" />
+	<property name="target_testsuite" location="target" />
 	
 	<!-- Ripulisce la distribuzione -->
 	<target name="clean">
 		<delete dir="${build_testsuite}"/>
+		<delete dir="${log_testsuite}"/>
+		<delete dir="${target_testsuite}"/>
+		<delete dir="${output}"/>
 	</target>
 	<target name="init">
 		<mkdir dir="${build_testsuite}"/>
@@ -104,7 +116,8 @@
 			<else>
 				<junit printsummary="yes" haltonfailure="${haltOnFailure}" showoutput="${showOutput}">
 	
-					<jvmarg value="-Dkarate.options=${build_testsuite}/${karate.options}"/>
+					<!--<jvmarg value="-Dkarate.options=${build_testsuite}/${karate.options}"/>-->
+					<jvmarg value="-Dkarate.options=${karate.options}"/>
 
 					<!-- Per non far comparire il Warning: Nashorn engine is planned to be removed from a future JDK release -->
 					<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
