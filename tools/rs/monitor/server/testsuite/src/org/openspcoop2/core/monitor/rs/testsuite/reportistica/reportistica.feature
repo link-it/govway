@@ -18,7 +18,7 @@ Background:
 
 @DistribuzioneTemporaleFiltroMittenteTokenInfo
 Scenario: Ricerca di transazioni filtrate per Token claim
-    * call read('classpath:andamento-temporale-filtro-mittente-token-info.feature');
+    * call read('classpath:andamento-temporale-filtro-mittente-token-info.feature')
 
 @DistribuzioneTemporaleApi
 Scenario: Statistiche Per Distribuzione Temporale con filtraggio per API
