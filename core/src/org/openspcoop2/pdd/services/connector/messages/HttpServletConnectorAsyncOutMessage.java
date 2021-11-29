@@ -159,11 +159,15 @@ public class HttpServletConnectorAsyncOutMessage extends HttpServletConnectorOut
 		try {
 			if ( this.asyncWriteTask != null ) {
 				boolean taskRes = this.asyncWriteTask.get();
-				// TBK gestione del taskRes a false ?
+				this.asyncWriteTask = null;
+				if(!taskRes && throwException) {
+					throw new ConnectorException("Response write uncomplete (flush)?");
+				}
 			}
 		} catch (InterruptedException | ExecutionException e) {
-			// TBK
-			e.printStackTrace();
+			if(throwException) {
+				throw new ConnectorException(e.getMessage(),e);
+			}
 		}
 		if(this.nioException!=null && throwException) {
 			throw new ConnectorException(this.nioException.getMessage(),this.nioException);
@@ -178,6 +182,14 @@ public class HttpServletConnectorAsyncOutMessage extends HttpServletConnectorOut
 		super.close(clientEvent, throwException);
 		
 		try{
+			if ( this.asyncWriteTask != null ) {
+				boolean taskRes = this.asyncWriteTask.get();
+				this.asyncWriteTask = null;
+				if(!taskRes && throwException) {
+					throw new ConnectorException("Response write uncomplete (close)?");
+				}
+			}
+			
 			//if(this._ac!=null && !this.bufferingResponse){
 			if(this._ac!=null) {
 				try{

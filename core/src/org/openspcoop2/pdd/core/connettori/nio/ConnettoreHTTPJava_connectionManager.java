@@ -56,7 +56,7 @@ public class ConnettoreHTTPJava_connectionManager {
 
 	// ******** STATIC **********
 
-	static ExecutorService executors = Executors.newFixedThreadPool( Runtime.getRuntime().availableProcessors() );
+	static ExecutorService executors = null;
 	static Map<String, ConnettoreHTTPJava_connection> mapConnection = new HashMap<String, ConnettoreHTTPJava_connection>();
 
 	// TBK da definire
@@ -64,6 +64,8 @@ public class ConnettoreHTTPJava_connectionManager {
 		
 	public static synchronized void initialize() throws ConnettoreException {
 		try {
+			//executors = Executors.newFixedThreadPool( Runtime.getRuntime().availableProcessors() );
+			executors = Executors.newFixedThreadPool( OpenSPCoop2Properties.getInstance().getNIOConfig_asyncServer_applicativeThreadPoolSize() );
 			// TBK
 //			if(ConnettoreHTTPJava_connectionManager.idleConnectionEvictor==null) {
 //				OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();

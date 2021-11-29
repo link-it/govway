@@ -143,6 +143,19 @@ public abstract class AbstractRicezioneConnectorAsync {
 		long timeout = getTimeout();
 		boolean applicativeThreadPool = op2Properties.isNIOConfig_asyncServer_applicativeThreadPoolEnabled();
 		
+		boolean TEST_SENZA_LISTENER = false;
+		if(TEST_SENZA_LISTENER) {
+			//System.out.println("INVOCAZIONE DIRETTA");
+			try{
+				IRicezioneService ricezioneService = newRicezioneService(generatoreErrore);
+				ricezioneService.process(httpIn, httpOut, dataAccettazioneRichiesta, ConnectorCostanti.ASYNC);
+				return;
+			}catch(Throwable e){
+				System.out.println("ERRORE TEST_SENZA_LISTENER");
+				e.printStackTrace(System.out);
+			}
+		}
+		
 		req.getInputStream().setReadListener( (new ReadListener() {
 			private ServletInputStream is = null;
 			private Logger log;
@@ -170,6 +183,7 @@ public abstract class AbstractRicezioneConnectorAsync {
 				this.stream = stream;
 				if(stream) {
 					this.pipe = new PipedUnblockedStream(log, sizeBuffer);
+					this.pipe.setSource("Request");
 					this.httpIn.updateInputStream(this.pipe);
 				}
 				else {
@@ -198,7 +212,7 @@ public abstract class AbstractRicezioneConnectorAsync {
 			@Override
 			public void onDataAvailable() throws IOException {
 		        int len = -1;
-		        byte b[] = new byte[1024];
+		        byte b[] = new byte[Utilities.DIMENSIONE_BUFFER];
 		        while ( this.is.isReady() && (len = this.is.read(b)) != -1) {
 		        	if(this.stream) {
 		        		this.pipe.write(b, 0, len);
@@ -224,6 +238,7 @@ public abstract class AbstractRicezioneConnectorAsync {
 					IRicezioneService ricezioneService = newRicezioneService(this.generatoreErrore);
 					this.httpIn.updateInputStream(new ByteArrayInputStream(this.os.toByteArray()));	
 					if(this.applicativeThreadPool) {
+						
 						Runnable runnable = new Runnable() {
 							
 							private IRicezioneService ricezioneService;

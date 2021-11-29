@@ -22,6 +22,8 @@ package org.openspcoop2.utils.io.notifier.unblocked;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.openspcoop2.utils.Utilities;
 import org.slf4j.Logger;
@@ -40,8 +42,12 @@ public class PipedUnblockedStream extends InputStream {
 	
 	protected Logger log = null;
 	private long sizeBuffer;
+	private int timeoutMs;
 	
 	public PipedUnblockedStream(Logger log, long sizeBuffer){
+		this(log, sizeBuffer, 120000); // timeout di 120 secondi per default
+	}
+	public PipedUnblockedStream(Logger log, long sizeBuffer, int timeoutMs){
 		this.log = log;
 		// In memoria esistono 2 buffer, 
 		// - [bytesReceived] uno che contiene i bytes gia' consolidati pronti a essere consumati
@@ -49,6 +55,7 @@ public class PipedUnblockedStream extends InputStream {
 		// Quindi puo' succedere che entrambi i buffer siano "pieni". La dimensione massima richiesta in memoria viene quindi divisa per 2.
 		// NOTA: La dimensione di ogni buffer potra' essere this.sizeBuffer + eventualmente ;a dimensione del byte[] fornita con l'ultima write che ha superato il controllo di waitSpaceAvailable 
 		this.sizeBuffer = sizeBuffer / 2; 
+		this.timeoutMs = timeoutMs;
 	}
 	
 	//private final Integer semaphore = 1;
@@ -58,19 +65,60 @@ public class PipedUnblockedStream extends InputStream {
 	private int indexNextByteReceivedForRead = -1;
 	
 	private boolean stop = false;
-	
+
+	private boolean useThreadSleep = false;
 	private static final int ITERAZIONI_WAIT = 128;
+	private CompletableFuture<Boolean> asyncReadTask = null;
+	private CompletableFuture<Boolean> asyncWriteTask = null;
+	
+	private String source = null;
+	public String getPrefixSource() {
+		return this.source!=null ? "["+this.source+"] " : "";
+	}
+	public void setSource(String source) {
+		this.source = source;
+	}
 	
 	// INPUT STREAM
 	
+
 	private void readWaitBytes() throws IOException{
-		int i = 0;
-		while(this.stop==false && this.bout!=null && this.bout.size()==0 && i<ITERAZIONI_WAIT){
-			Utilities.sleep((i+1));
-			i = i + i;
+		if(this.useThreadSleep) {
+			int i = 0;
+			while(this.stop==false && this.bout!=null && this.bout.size()==0 && i<ITERAZIONI_WAIT){
+				Utilities.sleep((i+1));
+				i = i + i;
+			}
+			if(i>=ITERAZIONI_WAIT){
+				throw new IOException(getPrefixSource()+"Timeout, no bytes available for read");
+			}
 		}
-		if(i>=ITERAZIONI_WAIT){
-			throw new IOException("Timeout, no bytes available for read");
+		else {
+			boolean wait = false;
+			this.lockPIPE.acquireThrowRuntime("readWaitBytes");
+			try {
+				if(this.stop==false && this.bout!=null && this.bout.size()==0) {
+					this.asyncReadTask = new CompletableFuture<Boolean>();
+					wait = true;
+				}
+			}finally {
+				this.lockPIPE.release("readWaitBytes");
+			}
+			
+			if(wait) {
+				try {
+					//System.out.println("["+this.source+"] ASPETTO READ...");
+					if(this.timeoutMs>0) {
+						this.asyncReadTask.get(this.timeoutMs,TimeUnit.MILLISECONDS );
+					}
+					else {
+						this.asyncReadTask.get();
+					}
+					//System.out.println("["+this.source+"] READ OK");
+				}catch(Exception timeout) {
+					throw new IOException(getPrefixSource()+"Timeout, no bytes available for read: "+timeout.getMessage(),timeout);
+				}
+			}
 		}
 	}
 	
@@ -91,12 +139,20 @@ public class PipedUnblockedStream extends InputStream {
 			if(this.stop){		
 				if(this.bout==null){
 					//this.log.debug("########### READ b["+b.length+"] off["+off+"] len["+len+"] STOP BOUT NULL return -1");
+					if(this.asyncWriteTask!=null) {
+						//System.out.println("["+this.source+"] READ for WRITE COMPLETE 1");
+						this.asyncWriteTask.complete(true);
+					}
 					return -1;
 				}
 				if(this.bout.size()<=0){
 					this.bout.close();
 					this.bout = null;
 					//this.log.debug("########### READ b["+b.length+"] off["+off+"] len["+len+"] STOP BOUT SIZE<0 return -1");
+					if(this.asyncWriteTask!=null) {
+						//System.out.println("["+this.source+"] READ for WRITE COMPLETE 2");
+						this.asyncWriteTask.complete(true);
+					}
 					return -1;
 				}
 			}
@@ -107,6 +163,10 @@ public class PipedUnblockedStream extends InputStream {
 					if(this.bout==null) {
 						// Viene reso null dal metodo close() che puo' essere chiamato mentre la read e' in corso
 						//this.log.debug("########### READ b["+b.length+"] off["+off+"] len["+len+"] WAIT BYTES FOUND BOUT NULL ON EXIT");
+						if(this.asyncWriteTask!=null) {
+							//System.out.println("["+this.source+"] READ for WRITE COMPLETE 3");
+							this.asyncWriteTask.complete(true);
+						}
 						return -1;
 					}
 				}
@@ -119,12 +179,20 @@ public class PipedUnblockedStream extends InputStream {
 			if(this.stop){			
 				if(this.bout==null){
 					//this.log.debug("########### READ b["+b.length+"] off["+off+"] len["+len+"] BYTES AVAILABLE RETURN -1");
+					if(this.asyncWriteTask!=null) {
+						//System.out.println("["+this.source+"] READ for WRITE COMPLETE 4");
+						this.asyncWriteTask.complete(true);
+					}
 					return -1;
 				}
 				if(this.bout.size()<=0){
 					this.bout.close();
 					this.bout = null;
 					//this.log.debug("########### READ b["+b.length+"] off["+off+"] len["+len+"] BYTES AVAILABLE RETURN -1 (CASO B)");
+					if(this.asyncWriteTask!=null) {
+						//System.out.println("["+this.source+"] READ for WRITE COMPLETE 5");
+						this.asyncWriteTask.complete(true);
+					}
 					return -1;
 				}
 			}
@@ -148,6 +216,10 @@ public class PipedUnblockedStream extends InputStream {
 				//this.log.debug("########### READ b["+b.length+"] off["+off+"] len["+len+"] SYNC A4 ...");
 				//System.out.println("########### RESET ATTUALE DIMENSIONE IN MEMORIA ["+this.bytesReceived.length+"]");
 				this.bout.reset();
+				if(this.asyncWriteTask!=null) {
+					//System.out.println("["+this.source+"] READ for WRITE COMPLETE IN SEMAPHORE");
+					this.asyncWriteTask.complete(true);
+				}
 			}finally {
 				this.lockPIPE.release("read");
 			}
@@ -252,12 +324,22 @@ public class PipedUnblockedStream extends InputStream {
 	
 	@Override
 	public void close() throws IOException {
+				
 		if(this.stop==false){
 			if(! (this.bout.size()>0) ){
+				this.bout.flush();
 				this.bout.close();
-				this.bout = null;
+				//this.bout = null; se si annulla, la read lo trovera' null
 			}
 			this.stop = true;
+		}
+		if(this.asyncWriteTask!=null) {
+			//System.out.println("["+this.source+"] CLOSE for WRITE COMPLETE");
+			this.asyncWriteTask.complete(true);
+		}
+		if(this.asyncReadTask!=null) {
+			//System.out.println("["+this.source+"] CLOSE for READ COMPLETE");
+			this.asyncReadTask.complete(true);
 		}
 	}
 
@@ -265,13 +347,45 @@ public class PipedUnblockedStream extends InputStream {
 	// ALIMENTAZIONE
 	
 	private void writeWaitEmptyBuffer() throws IOException{
-		int i = 0;
-		while(this.stop==false && this.bout.size()>0 && i<ITERAZIONI_WAIT){
-			Utilities.sleep((i+1));
-			i = i + i;
+		if(this.useThreadSleep) {
+			if(this.bout.size()>this.sizeBuffer){
+				int i = 0;
+				while(this.stop==false && this.bout.size()>0 && i<ITERAZIONI_WAIT){
+					Utilities.sleep((i+1));
+					i = i + i;
+				}
+				if(i>=ITERAZIONI_WAIT){
+					throw new IOException(getPrefixSource()+"Timeout, no buffer available for write");
+				}
+			}
 		}
-		if(i>=ITERAZIONI_WAIT){
-			throw new IOException("Timeout, no buffer available for write");
+		else {
+			boolean wait = false;
+			this.lockPIPE.acquireThrowRuntime("writeWaitEmptyBuffer");
+			try {
+				if(this.bout.size()>this.sizeBuffer){
+					if(this.stop==false && this.bout.size()>0 ) {
+						this.asyncWriteTask = new CompletableFuture<Boolean>();
+						wait = true;
+					}
+				}
+			}finally{
+				this.lockPIPE.release("writeWaitEmptyBuffer");
+			}
+			if(wait) {
+				try {
+					//System.out.println("["+this.source+"] ASPETTO WRITE ...");
+					if(this.timeoutMs>0) {
+						this.asyncWriteTask.get(this.timeoutMs,TimeUnit.MILLISECONDS );
+					}
+					else {
+						this.asyncWriteTask.get();
+					}
+					//System.out.println("["+this.source+"] WRITE OK");
+				}catch(Exception timeout) {
+					throw new IOException(getPrefixSource()+"Timeout, no bytes available for read: "+timeout.getMessage(),timeout);
+				}
+			}
 		}
 	}
 	
@@ -280,18 +394,20 @@ public class PipedUnblockedStream extends InputStream {
 		//this.log.debug("########### WRITE byte .....");
 		
 		if(this.bout==null){
-			throw new IOException("Stream already closed");
+			throw new IOException(getPrefixSource()+"Stream already closed");
 		}
 		
-		if(this.bout.size()>this.sizeBuffer){
-			this.writeWaitEmptyBuffer();
-		}
-		
+		this.writeWaitEmptyBuffer();
+				
 		//this.log.debug("########### WRITE byte SYNC ...");
 		//synchronized (this.semaphore) {
 		this.lockPIPE.acquireThrowRuntime("write(b)");
 		try {
 			this.bout.write(b);
+			if(this.asyncReadTask!=null) {
+				//System.out.println("["+this.source+"] WRITE for READ COMPLETE 1");
+				this.asyncReadTask.complete(true);
+			}
 			//this.log.debug("########### WRITE byte SYNC OK");
 			//System.out.println("########### WRITE byte SYNC OK ADD[1] SIZE_ATTUALE["+this.bout.size()+"]");
 		}finally{
@@ -305,18 +421,20 @@ public class PipedUnblockedStream extends InputStream {
 		//this.log.debug("########### WRITE byte ["+b.length+"] .....");
 		
 		if(this.bout==null){
-			throw new IOException("Stream already closed");
+			throw new IOException(getPrefixSource()+"Stream already closed");
 		}
 		
-		if(this.bout.size()>this.sizeBuffer){
-			this.writeWaitEmptyBuffer();
-		}
-		
+		this.writeWaitEmptyBuffer();
+				
 		//this.log.debug("########### WRITE byte ["+b.length+"] SYNC ...");
 		//synchronized (this.semaphore) {
 		this.lockPIPE.acquireThrowRuntime("write(b[])");
 		try {
 			this.bout.write(b);
+			if(this.asyncReadTask!=null) {
+				//System.out.println("["+this.source+"] WRITE for READ COMPLETE 2");
+				this.asyncReadTask.complete(true);
+			}
 			//this.log.debug("########### WRITE byte ["+b.length+"] SYNC OK");
 			//System.out.println("########### WRITE byte SYNC OK ADD["+b.length+"] SIZE_ATTUALE["+this.bout.size()+"]");
 		}finally {
@@ -330,18 +448,20 @@ public class PipedUnblockedStream extends InputStream {
 		//this.log.debug("########### WRITE byte ["+b.length+"] off:"+off+" len:"+len+" .....");
 		
 		if(this.bout==null){
-			throw new IOException("Stream already closed");
+			throw new IOException(getPrefixSource()+"Stream already closed");
 		}
 		
-		if(this.bout.size()>this.sizeBuffer){
-			this.writeWaitEmptyBuffer();
-		}
-		
+		this.writeWaitEmptyBuffer();
+				
 		//this.log.debug("########### WRITE byte ["+b.length+"] off:"+off+" len:"+len+" SYNC ...");
 		//synchronized (this.semaphore) {
 		this.lockPIPE.acquireThrowRuntime("write(b[],off,len)");
 		try {
 			this.bout.write(b, off, len);
+			if(this.asyncReadTask!=null) {
+				//System.out.println("["+this.source+"] WRITE for READ COMPLETE 3");
+				this.asyncReadTask.complete(true);
+			}
 			//this.log.debug("########### WRITE byte ["+b.length+"] off:"+off+" len:"+len+" SYNC OK");
 			//System.out.println("########### WRITE byte SYNC OK ADD["+b.length+"] SIZE_ATTUALE["+this.bout.size()+"]");
 		}finally {

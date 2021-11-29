@@ -21,12 +21,19 @@ package org.openspcoop2.pdd.core.connettori.nio;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.List;
 
-import org.apache.hc.client5.http.async.methods.AbstractBinResponseConsumer;
+import org.apache.hc.core5.concurrent.FutureCallback;
 import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.EntityDetails;
+import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.entity.InputStreamEntity;
+import org.apache.hc.core5.http.nio.AsyncResponseConsumer;
+import org.apache.hc.core5.http.nio.CapacityChannel;
+import org.apache.hc.core5.http.protocol.HttpContext;
+import org.openspcoop2.pdd.services.connector.AsyncThreadPool;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedStream;
 
@@ -37,14 +44,107 @@ import org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedStream;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ConnettoreHTTPCORE5_inputStreamEntityConsumer extends AbstractBinResponseConsumer<ConnettoreHTTPCORE5_httpResponse>{
+public class ConnettoreHTTPCORE5_inputStreamEntityConsumer implements AsyncResponseConsumer<ConnettoreHTTPCORE5_httpResponse>{
 
 	private ConnettoreHTTPCORE5_httpResponse res = null;
 	private ContentType ct = null;
 	private PipedUnblockedStream stream = null;
+	private FutureCallback<ConnettoreHTTPCORE5_httpResponse> callback;
+	private long count = 0;
+	
+	private void invokeCallback() {
+		if(this.callback!=null) {
+			Runnable runnable = new Runnable() {
+				
+				private FutureCallback<ConnettoreHTTPCORE5_httpResponse> callback;
+				private ConnettoreHTTPCORE5_httpResponse res = null;
+			
+				public Runnable init(FutureCallback<ConnettoreHTTPCORE5_httpResponse> callback, ConnettoreHTTPCORE5_httpResponse res) {
+					this.callback = callback;
+					this.res = res;
+					return this;
+				}
+				
+				@Override
+				public void run() {
+					
+					this.callback.completed(this.res);
+				}
+			}.init(this.callback, this.res);
+			//System.out.println("ESEGUO!");
+			AsyncThreadPool.execute(runnable);
+			this.callback = null;
+		}
+	}
+	
+	
+	@Override
+	public void informationResponse(HttpResponse res, HttpContext context) throws HttpException, IOException {
+		//System.out.println("======== informationResponse");
+	}
+	
+	@Override
+	public void consumeResponse(HttpResponse res, EntityDetails entityDetails, HttpContext context,
+			FutureCallback<ConnettoreHTTPCORE5_httpResponse> callback) throws HttpException, IOException {
+		//System.out.println("======== consumeResponse");
+		if(entityDetails!=null && entityDetails.getContentType()!=null) {
+			this.ct = ContentType.parse(entityDetails.getContentType());
+		}
+		this.res = new ConnettoreHTTPCORE5_httpResponse(res);
+		this.callback = callback;
+	}
+	
+	@Override
+	public void consume(ByteBuffer bb) throws IOException {
+		//System.out.println("======== consume");
+		if(bb!=null && bb.remaining()>0) {
+			
+			if(this.stream==null) {
+				this.stream = new PipedUnblockedStream(null, Utilities.DIMENSIONE_BUFFER);
+				this.stream.setSource("Response");
+				this.res.setEntity(new InputStreamEntity(this.stream, this.ct));
+			}
+			
+			if(this.callback!=null) {
+				//System.out.println("invoco la callback tramite CONSUME");
+				invokeCallback();
+			}
+			
+			/*while (bb.hasRemaining()) {
+				this.stream.write(bb.get());
+			}*/
+			while (bb.remaining()>0) {
+				byte[] buf = new byte[bb.remaining()];
+				bb.get(buf);
+				this.stream.write(buf);
+				this.count=this.count+buf.length;
+			}
+		}
+	}
+	
+	@Override
+	public void updateCapacity(CapacityChannel channel) throws IOException {
+		//System.out.println("======== updateCapacity");
+		channel.update(Utilities.DIMENSIONE_BUFFER);
+	}
+	
+	@Override
+	public void streamEnd(List<? extends Header> list) throws HttpException, IOException {
+		//System.out.println("======== streamEnd");
+		if(this.callback!=null) {
+			//System.out.println("invoco la callback via END");
+			//this.callback.completed(this.res);
+			invokeCallback();
+		}
+		
+		if(this.count>0 && this.res!=null) {
+			this.res.setCount(this.count);
+		}
+	}
 
 	@Override
 	public void releaseResources() {
+		//System.out.println("======== releaseResources (RISPOSTA) (scritti: "+this.count+") ("+Utilities.convertBytesToFormatString(this.count)+")");
 		if(this.stream!=null) {
 			try {
 				this.stream.close();
@@ -55,38 +155,17 @@ public class ConnettoreHTTPCORE5_inputStreamEntityConsumer extends AbstractBinRe
 	}
 
 	@Override
-	protected ConnettoreHTTPCORE5_httpResponse buildResult() {
-		//System.out.println("BUILD RESULT!");
-		return this.res;
-	}
-
-	@Override
-	protected void start(HttpResponse res, ContentType ct) throws HttpException, IOException {
-		//System.out.println("START RESPONSE");
-		this.res = new ConnettoreHTTPCORE5_httpResponse(res);
-		this.ct = ct;
-	}
-
-	@Override
-	protected int capacityIncrement() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	protected void data(ByteBuffer bb, boolean endOfStream) throws IOException {
-		//System.out.println("DATA! endOfStream["+endOfStream+"]");
-		if(this.stream==null) {
-			this.stream = new PipedUnblockedStream(null, Utilities.DIMENSIONE_BUFFER);
-			this.res.setEntity(new InputStreamEntity(this.stream, this.ct));
-		}
-		while (bb.hasRemaining()) {
-			//System.out.println("SCRIVOOOOOO");
-			this.stream.write(bb.get());
-        }
-        if (endOfStream) {
-        	releaseResources();
-        }
+	public void failed(Exception exception) {
+		
+		/*
+		 * TODO:
+		 * 1) Timeout
+		 * 2) Pool diviso tra client e server
+		 * 3) Questa eccezione deve essere gestita chiamando la callback se non ancora chiamata o sollevandola sull'input stream altrimenti 
+		 * 
+		 * */
+		
+		System.out.println("======== exception");
 	}
 
 }

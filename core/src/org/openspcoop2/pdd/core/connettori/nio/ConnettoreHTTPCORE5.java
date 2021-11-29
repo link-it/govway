@@ -194,33 +194,33 @@ public class ConnettoreHTTPCORE5 extends ConnettoreExtBaseHTTP {
 			}
 			switch (this.httpMethod) {
 				case GET:
-					this.httpRequest = new HttpGet(url.toString());
+					this.httpRequest = new HttpGet(this.url.toString());
 					break;
 				case DELETE:
-					this.httpRequest = new HttpDelete(url.toString());
+					this.httpRequest = new HttpDelete(this.url.toString());
 					break;
 				case HEAD:
-					this.httpRequest = new HttpHead(url.toString());
+					this.httpRequest = new HttpHead(this.url.toString());
 					break;
 				case POST:
-					this.httpRequest = new HttpPost(url.toString());
+					this.httpRequest = new HttpPost(this.url.toString());
 					break;
 				case PUT:
-					this.httpRequest = new HttpPost(url.toString());
+					this.httpRequest = new HttpPost(this.url.toString());
 					break;
 				case OPTIONS:
-					this.httpRequest = new HttpOptions(url.toString());
+					this.httpRequest = new HttpOptions(this.url.toString());
 					break;
 				case TRACE:
-					this.httpRequest = new HttpTrace(url.toString());
+					this.httpRequest = new HttpTrace(this.url.toString());
 					break;
 				case PATCH:
-					this.httpRequest = new HttpPatch(url.toString());
+					this.httpRequest = new HttpPatch(this.url.toString());
 					break;	
 				case LINK:
 				case UNLINK:
 				default:
-					this.httpRequest = new CustomHttpCore5Entity(this.httpMethod, url.toString());
+					this.httpRequest = new CustomHttpCore5Entity(this.httpMethod, this.url.toString());
 			}
 			if(this.httpRequest==null){
 				throw new Exception("HttpRequest non definito ?");
@@ -501,6 +501,7 @@ public class ConnettoreHTTPCORE5 extends ConnettoreExtBaseHTTP {
 			AsyncRequestProducer requestProducer = new BasicRequestProducer(this.httpRequest, entityProducer);
 			//SimpleHttpRequest s = new 
 			AsyncResponseConsumer<ConnettoreHTTPCORE5_httpResponse> responseConsumer = new ConnettoreHTTPCORE5_inputStreamEntityConsumer();
+			//System.out.println("CLIENT ["+httpClient.getHttpclient().getClass().getName()+"]");
 			httpClient.getHttpclient().execute(requestProducer, responseConsumer, HttpClientContext.create(), responseCallback);
 			
 			// CAPIRE SE SERVE E SEMMAI BUTTARE VIA LE PROPERTIES AGGIUNTE!

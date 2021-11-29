@@ -41,6 +41,7 @@ public class ConnettoreHTTPCORE5_inputStreamEntityProducer implements AsyncEntit
 	private org.apache.hc.core5.http.ContentType contentType;
 	private String contentEncoding;
 	private boolean chunked;
+	private long count = 0;
 	
 	public ConnettoreHTTPCORE5_inputStreamEntityProducer(InputStream is, org.apache.hc.core5.http.ContentType contentType, String contentEncoding,
 			boolean chunked) {
@@ -66,7 +67,9 @@ public class ConnettoreHTTPCORE5_inputStreamEntityProducer implements AsyncEntit
 		while( (letti=this.is.read(buffer)) != -1 ){
 			ByteBuffer bb = ByteBuffer.wrap(buffer, 0, letti);
 			channel.write(bb);
+			this.count = this.count+letti;
 		}
+		//System.out.println("======== writeBytes (RICHIESTA) (scritti: "+this.count+") ("+Utilities.convertBytesToFormatString(this.count)+")");
 		channel.endStream();
 	}
 

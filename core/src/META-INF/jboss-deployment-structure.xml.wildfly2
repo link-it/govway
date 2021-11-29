@@ -35,6 +35,9 @@
 
 			<module name="sun.jdk" />
    		</exclusions>
+                <dependencies>
+                        <module name="java.net.http"/>
+                </dependencies>
 		<!--
 		modulo deprecato da wf18 con java11:
 		<dependencies> 
