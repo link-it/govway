@@ -71,7 +71,7 @@ public class ConnettoreHTTPCORE5_inputStreamEntityConsumer implements AsyncRespo
 					this.callback.completed(this.res);
 				}
 			}.init(this.callback, this.res);
-			//System.out.println("ESEGUO!");
+//			System.out.println("ESEGUO!");
 			AsyncThreadPool.execute(runnable);
 			this.callback = null;
 		}
@@ -79,14 +79,16 @@ public class ConnettoreHTTPCORE5_inputStreamEntityConsumer implements AsyncRespo
 	
 	
 	@Override
+	// Triggered to signal receipt of an intermediate (1xx) HTTP response
 	public void informationResponse(HttpResponse res, HttpContext context) throws HttpException, IOException {
-		//System.out.println("======== informationResponse");
+//		System.out.println("======== informationResponse");
 	}
 	
 	@Override
+	// Triggered to signal receipt of a response message head.
 	public void consumeResponse(HttpResponse res, EntityDetails entityDetails, HttpContext context,
 			FutureCallback<ConnettoreHTTPCORE5_httpResponse> callback) throws HttpException, IOException {
-		//System.out.println("======== consumeResponse");
+//		System.out.println("======== consumeResponse");
 		if(entityDetails!=null && entityDetails.getContentType()!=null) {
 			this.ct = ContentType.parse(entityDetails.getContentType());
 		}
@@ -95,9 +97,10 @@ public class ConnettoreHTTPCORE5_inputStreamEntityConsumer implements AsyncRespo
 	}
 	
 	@Override
+	// Triggered to pass incoming data to the data consumer
 	public void consume(ByteBuffer bb) throws IOException {
-		//System.out.println("======== consume");
 		if(bb!=null && bb.remaining()>0) {
+//			System.out.println("======== consume: "+ bb.remaining());
 			
 			if(this.stream==null) {
 				this.stream = new PipedUnblockedStream(null, Utilities.DIMENSIONE_BUFFER);
@@ -123,16 +126,18 @@ public class ConnettoreHTTPCORE5_inputStreamEntityConsumer implements AsyncRespo
 	}
 	
 	@Override
+	// Triggered to signal ability of the underlying data stream to receive data capacity update
 	public void updateCapacity(CapacityChannel channel) throws IOException {
-		//System.out.println("======== updateCapacity");
+//		System.out.println("======== updateCapacity");
 		channel.update(Utilities.DIMENSIONE_BUFFER);
 	}
 	
 	@Override
+	// Triggered to signal termination of the data stream.
 	public void streamEnd(List<? extends Header> list) throws HttpException, IOException {
-		//System.out.println("======== streamEnd");
+//		System.out.println("======== streamEnd: " + this.count);
 		if(this.callback!=null) {
-			//System.out.println("invoco la callback via END");
+//			System.out.println("invoco la callback via END");
 			//this.callback.completed(this.res);
 			invokeCallback();
 		}
@@ -144,10 +149,11 @@ public class ConnettoreHTTPCORE5_inputStreamEntityConsumer implements AsyncRespo
 
 	@Override
 	public void releaseResources() {
-		//System.out.println("======== releaseResources (RISPOSTA) (scritti: "+this.count+") ("+Utilities.convertBytesToFormatString(this.count)+")");
+//		System.out.println("======== releaseResources (RISPOSTA) (scritti: "+this.count+") ("+Utilities.convertBytesToFormatString(this.count)+")");
 		if(this.stream!=null) {
 			try {
 				this.stream.close();
+				this.stream = null;
 			}catch(Exception e) {
 				throw new RuntimeException(e.getMessage(),e);
 			}
@@ -155,6 +161,7 @@ public class ConnettoreHTTPCORE5_inputStreamEntityConsumer implements AsyncRespo
 	}
 
 	@Override
+	// Triggered to signal a failure in data processing
 	public void failed(Exception exception) {
 		
 		/*
@@ -164,8 +171,8 @@ public class ConnettoreHTTPCORE5_inputStreamEntityConsumer implements AsyncRespo
 		 * 3) Questa eccezione deve essere gestita chiamando la callback se non ancora chiamata o sollevandola sull'input stream altrimenti 
 		 * 
 		 * */
-		
-		System.out.println("======== exception");
+		exception.printStackTrace();
+//		System.out.println("======== exception");
 	}
 
 }
