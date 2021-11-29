@@ -89,7 +89,11 @@ public class TransactionServerUtils {
 				
 				TransazioneApplicativoServer transazioneApplicativoServer = transazioneService.get(idTransazioneApplicativoServer);
 				if(!transazioneApplicativoServer.isConsegnaTerminata() && transazioneApplicativoServer.getDataEliminazioneIm()==null && transazioneApplicativoServer.getDataMessaggioScaduto()==null) {
-					return save(transazioneService, serverInfoParam, true, false, true, false, null);
+					boolean useSelectForUpdate = true;
+					/*
+					 * Grazie alla select for update riesco a mettere il lock solamente sulla riga interessata
+					 */
+					return save(transazioneService, serverInfoParam, true, false, true, useSelectForUpdate, null);
 				}
 				// else ho già registrato l'ultima informazione, è inutile fare update delle informazioni parziali.
 				else {
