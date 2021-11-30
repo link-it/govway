@@ -65,9 +65,18 @@ public class ConnettoreHTTPCORE5_inputStreamEntityProducer implements AsyncEntit
 		byte [] buffer = new byte[Utilities.DIMENSIONE_BUFFER];
 		int letti = 0;
 		while( (letti=this.is.read(buffer)) != -1 ){
-			ByteBuffer bb = ByteBuffer.wrap(buffer, 0, letti);
-			channel.write(bb);
-			this.count = this.count+letti;
+			if ( letti != 0 ) {
+				int startIx = 0;
+				while ( startIx < letti ) {
+					ByteBuffer bb = ByteBuffer.wrap(buffer, startIx, letti - startIx);
+					int writtenBytes = channel.write(bb);
+					if ( writtenBytes == 0 )
+						channel.requestOutput();
+					else
+						startIx += writtenBytes;
+				}
+				this.count = this.count+letti;
+			}
 		}
 		//System.out.println("======== writeBytes (RICHIESTA) (scritti: "+this.count+") ("+Utilities.convertBytesToFormatString(this.count)+")");
 		channel.endStream();

@@ -131,6 +131,17 @@ public class ConnettoreHTTPCORE5_inputStreamEntityConsumer implements AsyncRespo
 //		System.out.println("======== updateCapacity");
 		channel.update(Utilities.DIMENSIONE_BUFFER);
 	}
+
+	private void _streamEnd() {
+		if(this.stream!=null) {
+			try {
+				this.stream.close();
+				this.stream = null;
+			}catch(Exception e) {
+				throw new RuntimeException(e.getMessage(),e);
+			}
+		}
+	}
 	
 	@Override
 	// Triggered to signal termination of the data stream.
@@ -145,19 +156,14 @@ public class ConnettoreHTTPCORE5_inputStreamEntityConsumer implements AsyncRespo
 		if(this.count>0 && this.res!=null) {
 			this.res.setCount(this.count);
 		}
+
+		_streamEnd();
 	}
 
 	@Override
 	public void releaseResources() {
 //		System.out.println("======== releaseResources (RISPOSTA) (scritti: "+this.count+") ("+Utilities.convertBytesToFormatString(this.count)+")");
-		if(this.stream!=null) {
-			try {
-				this.stream.close();
-				this.stream = null;
-			}catch(Exception e) {
-				throw new RuntimeException(e.getMessage(),e);
-			}
-		}
+		_streamEnd();
 	}
 
 	@Override
@@ -171,8 +177,8 @@ public class ConnettoreHTTPCORE5_inputStreamEntityConsumer implements AsyncRespo
 		 * 3) Questa eccezione deve essere gestita chiamando la callback se non ancora chiamata o sollevandola sull'input stream altrimenti 
 		 * 
 		 * */
+		System.out.println("======== exception: " + this.stream + " - " + this.count );
 		exception.printStackTrace();
-//		System.out.println("======== exception");
 	}
 
 }
