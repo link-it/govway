@@ -38,6 +38,7 @@
 		<module>javax</module>
 		<module>jax</module>
 		<module>jetty</module>
+		<module>jetty-client</module>
 		<module>jminix</module>
 		<module>json</module>
 		<module>log</module>

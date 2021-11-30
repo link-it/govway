@@ -232,6 +232,9 @@
 				<include name="*.jar"/>
 				<!-- <include name="json-lib-2.4-jdk15.jar" /> --> <!--jmx mini console -->
 			</lib>
+			<lib dir="${required_lib}/jetty-client">
+				<include name="*.jar"/>
+			</lib>
 			<lib dir="${required_lib}/jackson">
 				<include name="*.jar"/>
 			</lib>

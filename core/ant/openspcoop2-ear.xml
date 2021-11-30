@@ -888,6 +888,9 @@
 				<include name="*.jar"/>
 				<!-- <include name="json-lib-2.4-jdk15.jar" /> --> <!--jmx mini console -->
 			</zipfileset>
+			<zipfileset prefix="lib" dir="${required_lib}/jetty-client">
+				<include name="*.jar"/>
+			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/jackson">
 				<include name="*.jar"/>
 			</zipfileset>
