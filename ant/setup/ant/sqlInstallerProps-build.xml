@@ -559,11 +559,20 @@ INSERT INTO generic_properties (nome, descrizione, tipologia, tipo) VALUES ('@ID
 				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '011-000:sezione', 'Configurazione Avanzata');
 </concat>
 
-				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '011-001:Presa in carico:antinstaller_stateful', '@VALORE@');
+				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '011-001:Presa in carico tramite jms:antinstaller_stateful', '@VALORE@');
 </concat>
 				<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_stateful}"/>
 
-				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '011-002:Contesto 'govwaySec':antinstaller_sec_container', '@VALORE@');
+				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '011-002:Presa in carico tramite timer:antinstaller_timer_consegna', '@VALORE@');
+</concat>
+				<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_timer_consegna}"/>
+
+				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '011-003:Presa in carico tramite message box:antinstaller_integration_manager', '@VALORE@');
+</concat>
+				<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_integration_manager}"/>
+
+
+				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '011-004:Contesto 'govwaySec':antinstaller_sec_container', '@VALORE@');
 </concat>
 				<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_sec_container}"/>
 

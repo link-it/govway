@@ -167,6 +167,8 @@
 			
 		Configurazione Avanzata
 			antinstaller_stateful=false
+			antinstaller_timer_consegna=false
+			antinstaller_integration_manager=false
 			antinstaller_sec_container=false
 
 		Configurazione Profilo eDelivery (1/3)

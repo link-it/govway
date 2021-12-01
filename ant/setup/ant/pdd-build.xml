@@ -213,13 +213,6 @@
 			<param name="value" value="false"/>
 		</antcall>
 
-		<!-- Timer disabilitato, poichè la funzionalità è ancora in fase di sviluppo -->
-		<antcall target="set_property">
-		    <param name="file" value="${file}"/>
-			<param name="token" value="org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.enable"/>
-			<param name="value" value="false"/>
-		</antcall>
-
 		<!-- Autenticazione Applicativi/Soggetti -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
@@ -706,12 +699,161 @@
 			</then>
 		</if>
 		
-		<!-- INTEGRATION MANAGER DISABLED -->
-		<antcall target="set_property">
-		    <param name="file" value="${file}"/>
-			<param name="token" value="org.openspcoop2.pdd.integrationManager.enabled"/>
-			<param name="value" value="false"/>
-		</antcall>
+		<!-- INTEGRATION MANAGER -->
+		<if>
+			<or>
+				<equals arg1="${antinstaller_integration_manager}" arg2="true" />
+			</or>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.integrationManager.enabled"/>
+					<param name="value" value="true"/>
+				</antcall>
+				<!-- runtime -->
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.service.IntegrationManager.runtime.useRuntimeManager"/>
+					<param name="value" value="false"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.service.IntegrationManager.runtime.useConsegnePreseInCaricoManager"/>
+					<param name="value" value="false"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.service.IntegrationManager.runtime.dataSource"/>
+					<param name="value" value="org.govway.datasource.runtime.messageBoxIM"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.service.IntegrationManager.runtime.datasource.useDSUtils"/>
+					<param name="value" value="true"/>
+				</antcall>
+				<!-- tracce -->
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.service.IntegrationManager.transazioni.useTransactionManager"/>
+					<param name="value" value="false"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.service.IntegrationManager.transazioni.useConsegnePreseInCaricoManager"/>
+					<param name="value" value="false"/>
+				</antcall>
+				<if>
+					<equals arg1="${antinstaller_log_db}" arg2="log"/>
+					<then>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.pdd.service.IntegrationManager.transazioni.dataSource"/>
+							<param name="value" value="org.govway.datasource.tracciamento.messageBoxIM"/>
+						</antcall>
+					</then>
+					<else>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.pdd.service.IntegrationManager.transazioni.dataSource"/>
+							<param name="value" value="org.govway.datasource.runtime.messageBoxIM"/>
+						</antcall>
+					</else>
+				</if>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.service.IntegrationManager.transazioni.datasource.useDSUtils"/>
+					<param name="value" value="false"/>
+				</antcall>
+			</then>
+			<else>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.integrationManager.enabled"/>
+					<param name="value" value="false"/>
+				</antcall>
+			</else>
+		</if>
+
+		<!-- CONNETTORI MULTIPLI CON NOTIFICHE -->
+		<if>
+			<or>
+				<equals arg1="${antinstaller_timer_consegna}" arg2="true" />
+			</or>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.enable"/>
+					<param name="value" value="true"/>
+				</antcall>
+				<!-- smistatore -->
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.smistatore.runtime.useRuntimeManager"/>
+					<param name="value" value="false"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.smistatore.runtime.dataSource"/>
+					<param name="value" value="org.govway.datasource.runtime.consegnaAsincrona"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.smistatore.runtime.datasource.useDSUtils"/>
+					<param name="value" value="true"/>
+				</antcall>
+				<!-- runtime -->
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.runtime.useRuntimeManager"/>
+					<param name="value" value="false"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.runtime.dataSource"/>
+					<param name="value" value="org.govway.datasource.runtime.consegnaAsincrona"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.runtime.datasource.useDSUtils"/>
+					<param name="value" value="true"/>
+				</antcall>
+				<!-- tracce -->
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.transazioni.useRuntimeManager"/>
+					<param name="value" value="false"/>
+				</antcall>
+				<if>
+					<equals arg1="${antinstaller_log_db}" arg2="log"/>
+					<then>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.transazioni.dataSource"/>
+							<param name="value" value="org.govway.datasource.tracciamento.consegnaAsincrona"/>
+						</antcall>
+					</then>
+					<else>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.transazioni.dataSource"/>
+							<param name="value" value="org.govway.datasource.runtime.consegnaAsincrona"/>
+						</antcall>
+					</else>
+				</if>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.transazioni.datasource.useDSUtils"/>
+					<param name="value" value="true"/>
+				</antcall>
+			</then>
+			<else>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.enable"/>
+					<param name="value" value="false"/>
+				</antcall>
+			</else>
+		</if>
 
 		<!-- OTHER -->
 		<if>
