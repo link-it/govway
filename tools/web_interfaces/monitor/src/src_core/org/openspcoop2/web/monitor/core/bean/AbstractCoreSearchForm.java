@@ -82,6 +82,8 @@ public abstract class AbstractCoreSearchForm {
 		//this.limit = 25;
 		this.totalCount = 0;
 		this.aggiornamentoDatiAbilitato = false;
+		this.detached = false;
+		this.wrappedKeys = null;
 	}
 	
 	public void resetParametriPaginazione(){
@@ -94,6 +96,8 @@ public abstract class AbstractCoreSearchForm {
 		this.limit = 25;
 		this.totalCount = 0;
 		this.aggiornamentoDatiAbilitato = false;
+		this.detached = false;
+		this.wrappedKeys = null;
 	}
 	
 	protected abstract String ripulisciValori();
