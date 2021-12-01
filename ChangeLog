@@ -1,3 +1,12 @@
+2021-12-03  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 3.3.5.p1
+
+2021-11-30  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	In configurazione avanzata aggiunta la possibilità di abilitare le funzionalità in fase di sviluppo riguardanti la consegna delle notifiche relative ai messaggi presi in carico.
+
 2021-11-26  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

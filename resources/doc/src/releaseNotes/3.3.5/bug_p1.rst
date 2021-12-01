@@ -1,0 +1,68 @@
+.. _3.3.5.1_bug:
+
+Bug Fix 3.3.5.p1
+----------------
+
+Sono stati effettuati i seguenti interventi per migliorare gli aspetti prestazionali:
+
+- gli oggetti java.util.Hashtable e java.util.Vector sono stati sostituiti con strutture più adeguate;
+
+- migliorati sistemi di sincronizzazione relativamente alla negoziazione di connessioni e al filtro dei duplicati;
+
+- gli oggetti restituiti dalle factory dei profili di interoperabilità che contengono solamente configurazioni statiche, vengono adesso istanziate solamente una volta all'avvio del gateway;
+
+- il recupero dell'identificativo della PrimaryKey di una entry appena creata avviene adesso, anche su postgresql, utilizzando la funzionalità 'getGeneratedKeys' fornita dai driver jdbc postgresql con versione superiore alla 9.4.
+
+Sono stati risolti i seguenti bug:
+
+- se venivano ricevuti messaggi SOAP che iniziavano con il carattere '>' l'anomalia veniva correttamente segnalata al client, ma nel log veniva emessa una eccezione relativa ad un caso non gestito (NullPointerException);
+
+- aggiunta gestione del charset nella classe 'OpenSPCoop2MessageSoapStreamReader' utilizzata per leggere le informazioni SOAP in streaming;
+
+- risolto bug di serializzazione di un messaggio SOAP With Attachments, che si presentava quando il messaggio veniva acceduto per funzionalità read-only (es. correlazione applicativa), che provocava la generazione di un content-type con un mimepart differente da quello effettivamente serializzato;
+
+- la normalizzazione dell'input stream 'vuoto', viene adesso gestito tramite l'utilizzo di un buffer di lunghezza 2 compatibile con il charset 'UTF-16';
+
+- corretti problemi presenti sulla funzionalità 'follow-redirect' che non consentivano di ottenere una risposta applicativa una volta seguito il flusso di redirect;
+
+- risolti problemi presenti nella funzione di merge degli schemi OpenAPI:
+
+	- l'import di file i cui nomi erano uno inclusivo dell'altro causavano una serializzazione di un path scorretto;
+
+	- la serializzazione YAML dell'interfaccia generava alcune enumeration (es. in security schema) con i valori maiuscoli invece che minuscoli come atteso dalla specifica OpenAPI;
+
+- in caso l'immagine del controllo del traffico, salvata durante uno shutdown dell'A.S., risultava corrotta il gateway non ripartiva; è stata migliorata la gestione facendo in modo che il gateway riparta con uno stato vergine e segnali l'anomalia su file di log.
+
+È stato inoltre aumento il sistema di log sulle seguenti casistiche:
+
+- aggiunto diagnostico che evidenzia la ricezione di richieste o risposte con un charset differente da quello definito per default nel prodotto (qualsiasi charset per messaggi REST e solamente il charset UTF-8 per messaggi SOAP);
+
+- aggiunta verifica che le connessioni prelevate dal datasource siano con autocommit disabilitato e con livello di serializzazione atteso (ReadCommitted);
+
+- il file di log 'govway_transazioni_slow.log' è stato arricchito con le seguenti informazioni:
+
+	- dettaglio di dove viene speso il tempo sulla costruzione delle informazioni da salvare in fase di scrittura della transazione;
+
+	- informazioni relative alla gestione del rate limiting applicabile in seguito al completamento della richiesta;
+
+- migliorati i log di eventuali errori emersi durante la gestione degli handler.
+
+
+Per la console di gestione sono stati risolti i seguenti bug:
+
+- una connessione al database veniva acceduta dalla console anche per gestire risorse statiche non protette (es. js/autocomplete.js o css/linkit-base.css).
+
+
+
+Per la console di monitoraggio sono stati risolti i seguenti bug:
+
+- le pagine xhtml presentavano erroneamente campi 'date' con un time zone 'forzato' a 'Europe/Rome';
+
+- aggiunta la possibilità di selezionare in blocco gli elementi visualizzati nello storico delle transazioni.
+
+
+Sull'installer è stato corretto il seguente bug:
+
+- nei binari prodotti dall'installer, il timer per la consegna dei messaggi presi in carico viene adesso disabilitato essendo la funzionalità ancora in fase di sviluppo;
+
+- tramite una sezione 'configurazione avanzata', attivabile tramite la presenza del file 'cfg.dodeploy', è stata aggiunta la possibilità di abilitare le funzionalità in fase di sviluppo riguardanti la consegna delle notifiche relative ai messaggi presi in carico.
