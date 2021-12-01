@@ -35,7 +35,8 @@ import org.apache.hc.core5.http.nio.CapacityChannel;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.openspcoop2.pdd.services.connector.AsyncThreadPool;
 import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedStream;
+//import org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedStream;
+import org.openspcoop2.utils.io.notifier.unblocked.PipedBytesStream;
 
 /**
  * ConnettoreHTTPCORE5_inputStreamEntityConsumer
@@ -48,7 +49,8 @@ public class ConnettoreHTTPCORE5_inputStreamEntityConsumer implements AsyncRespo
 
 	private ConnettoreHTTPCORE5_httpResponse res = null;
 	private ContentType ct = null;
-	private PipedUnblockedStream stream = null;
+//	private PipedUnblockedStream stream = null;
+	private PipedBytesStream stream = null;
 	private FutureCallback<ConnettoreHTTPCORE5_httpResponse> callback;
 	private long count = 0;
 	private boolean complete = false;
@@ -104,7 +106,8 @@ public class ConnettoreHTTPCORE5_inputStreamEntityConsumer implements AsyncRespo
 //			System.out.println("======== consume: "+ bb.remaining());
 			
 			if(this.stream==null) {
-				this.stream = new PipedUnblockedStream(null, Utilities.DIMENSIONE_BUFFER);
+//				this.stream = new PipedUnblockedStream(null, Utilities.DIMENSIONE_BUFFER);
+				this.stream = new PipedBytesStream(null, Utilities.DIMENSIONE_BUFFER);
 				this.stream.setSource("Response");
 				this.res.setEntity(new InputStreamEntity(this.stream, this.ct));
 			}
