@@ -51,6 +51,7 @@ public class ConnettoreHTTPCORE5_inputStreamEntityConsumer implements AsyncRespo
 	private PipedUnblockedStream stream = null;
 	private FutureCallback<ConnettoreHTTPCORE5_httpResponse> callback;
 	private long count = 0;
+	private boolean complete = false;
 	
 	private void invokeCallback() {
 		if(this.callback!=null) {
@@ -133,6 +134,7 @@ public class ConnettoreHTTPCORE5_inputStreamEntityConsumer implements AsyncRespo
 	}
 
 	private void _streamEnd() {
+		this.complete = true;
 		if(this.stream!=null) {
 			try {
 				this.stream.close();
@@ -171,14 +173,42 @@ public class ConnettoreHTTPCORE5_inputStreamEntityConsumer implements AsyncRespo
 	public void failed(Exception exception) {
 		
 		/*
-		 * TODO:
-		 * 1) Timeout
-		 * 2) Pool diviso tra client e server
-		 * 3) Questa eccezione deve essere gestita chiamando la callback se non ancora chiamata o sollevandola sull'input stream altrimenti 
-		 * 
-		 * */
-		System.out.println("======== exception: " + this.stream + " - " + this.count );
-		exception.printStackTrace();
+		 * Viene chiamato anche quando la connessione viene rilasciata al pool. 
+		 * Non deve essere sollevata l'eccezione se la risposta è stata correttamente gestita
+		 * Esempio di stacktrace:
+			java.io.InterruptedIOException
+			at deployment.govway.ear//org.apache.hc.client5.http.impl.async.HttpAsyncMainClientExec$1.cancel(HttpAsyncMainClientExec.java:129)
+			at deployment.govway.ear//org.apache.hc.client5.http.impl.async.InternalHttpAsyncExecRuntime$3.cancel(InternalHttpAsyncExecRuntime.java:267)
+			at deployment.govway.ear//org.apache.hc.core5.concurrent.ComplexFuture.setDependency(ComplexFuture.java:55)
+			   ...
+			at deployment.govway.ear//org.apache.hc.client5.http.impl.async.InternalHttpAsyncExecRuntime$1.completed(InternalHttpAsyncExecRuntime.java:114)
+			 ....
+			at deployment.govway.ear//org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManager$1.leaseCompleted(PoolingAsyncClientConnectionManager.java:240)
+			at deployment.govway.ear//org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManager$1.completed(PoolingAsyncClientConnectionManager.java:277)
+			at deployment.govway.ear//org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManager$1.completed(PoolingAsyncClientConnectionManager.java:226)
+			at deployment.govway.ear//org.apache.hc.core5.concurrent.BasicFuture.completed(BasicFuture.java:123)
+			at deployment.govway.ear//org.apache.hc.core5.pool.LaxConnPool$PerRoutePool.lease(LaxConnPool.java:496)
+			at deployment.govway.ear//org.apache.hc.core5.pool.LaxConnPool.lease(LaxConnPool.java:165)
+			at deployment.govway.ear//org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManager.lease(PoolingAsyncClientConnectionManager.java:225)
+			at deployment.govway.ear//org.apache.hc.client5.http.impl.async.InternalHttpAsyncExecRuntime.acquireEndpoint(InternalHttpAsyncExecRuntime.java:100)
+			.....
+			at deployment.govway.ear//org.apache.hc.client5.http.impl.async.CloseableHttpAsyncClient.execute(CloseableHttpAsyncClient.java:107)
+			at deployment.govway.ear//org.openspcoop2.pdd.core.connettori.nio.ConnettoreHTTPCORE5.sendHTTP(ConnettoreHTTPCORE5.java:505)
+		 **/
+		
+		if(!this.complete) {
+		
+			/*
+			 * TODO:
+			 * 1) Timeout
+			 * 2) Pool diviso tra client e server
+			 * 3) Questa eccezione deve essere gestita chiamando la callback se non ancora chiamata o sollevandola sull'input stream altrimenti 
+			 * 
+			 * */
+			System.out.println("======== exception: " + this.stream + " - " + this.count );
+			exception.printStackTrace();
+			
+		}
 	}
 
 }
