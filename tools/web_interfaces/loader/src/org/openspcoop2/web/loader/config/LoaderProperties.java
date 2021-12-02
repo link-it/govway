@@ -234,4 +234,8 @@ public class LoaderProperties {
 	public String getLogoHeaderLink() throws Exception{
 		return this.readProperty(false,"console.header.logo.link");
 	}
+	
+	public boolean isVisualizzaLinkHomeHeader() throws UtilsException{
+		return this.readBooleanProperty(true, "console.header.home.link.enabled");
+	}
 }

@@ -307,5 +307,9 @@ public abstract class BaseOutputField<T> implements OutputField<T> {
 		this.tableHeaderLabelStyleClass = tableHeaderLabelStyleClass;
 	}
 	
+	@Override
+	public String getTimeZone() {
+		return java.util.TimeZone.getDefault().getID();
+	}
 	
 }

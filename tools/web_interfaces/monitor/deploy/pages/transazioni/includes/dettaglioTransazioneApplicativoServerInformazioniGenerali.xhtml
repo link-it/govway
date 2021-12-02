@@ -29,12 +29,12 @@
  		
  			<h:outputLabel value="Data in Coda" styleClass="outputFieldLabel icon-date" />
 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataRegistrazione}">
-				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="Europe/Rome"/>
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
 			</h:outputText>
 			
 			<h:outputLabel styleClass="outputFieldLabel icon-date"  value="Scaduto in data" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataMessaggioScaduto}"/>
 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataMessaggioScaduto}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataMessaggioScaduto}">
-				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 			</h:outputText>
 									
 			<h:outputLabel styleClass="outputFieldLabel" value="Identificativo Messaggio" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.identificativoMessaggio}" />

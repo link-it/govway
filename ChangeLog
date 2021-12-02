@@ -2,6 +2,27 @@
 
 	* Rilasciata versione 3.3.5.p1
 
+2021-12-02  Giuliano Pintori <pintori@link.it>
+
+	* [GovwayConsole]
+	Aggiunta funzionalità OP-1278
+	Aggiunto meccanismo di autenticazione e autorizzazione alternativo basato su principal (es. prelevato tramite header http).
+	Con questa nuova modalità sono state introdotte le seguenti modifiche alla gestione degli utenti:
+	- la creazione di una nuova utenza avviene senza chiedere una password (internamente verrà generata una password 'changeit' utile in caso di ripristino del sistema di login applicativo;
+	- durante la modifica di una utenza non è più concesso modificarne la password;
+	- durante la fase di lettura del profilo utente non viene effettuato il controllo sulla scadenza della password.
+
+2021-12-01  Giuliano Pintori <pintori@link.it>
+
+	* [GovwayMonitor]
+	Aggiunta funzionalità OP-1278
+	Introdotti i seguenti miglioramenti:
+	- aggiunta la possibilità di selezionare in blocco gli elementi visualizzati nello storico delle transazioni attraverso dei link situati nel footer della tabella;
+	- è adesse possibile configurare il Locale utilizzato nell'applicazione;
+	- le pagine xhtml presentavano erroneamente campi 'date' con un time zone 'forzato' a 'Europe/Rome';
+	- il check periodico dello stato del gateway causava un'invalidazione del componente tabella e 
+	  una successiva azione dell'utente all'interno dello storico delle transazioni non veniva soddisfatta ripresentando gli stessi dati visualizzati in precedenza. 
+
 2021-11-30  Andrea Poli <apoli@link.it>
 
 	* [InstallerVersioneBinaria]

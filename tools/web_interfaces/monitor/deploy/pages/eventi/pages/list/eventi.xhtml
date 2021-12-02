@@ -240,7 +240,7 @@
 									target="#{eventiBean.evento}" />
 								<h:outputText id="outData2" value="#{item.oraRegistrazione}">
 								<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS"
-									timeZone="Europe/Rome" />
+									timeZone="#{applicationBean.timeZone}" />
 							</h:outputText>
 							</a4j:htmlCommandLink>
 						</rich:column>

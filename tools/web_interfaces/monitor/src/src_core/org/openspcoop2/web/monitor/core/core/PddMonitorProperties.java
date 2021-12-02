@@ -26,6 +26,7 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
@@ -38,6 +39,7 @@ import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.monitor.core.config.ApplicationProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.status.SondaPddStatus;
@@ -804,6 +806,14 @@ public class PddMonitorProperties {
 	public Properties getLoginProperties() throws Exception{
 		return this.appProperties.readProperties("login.props.");
 	}
+	
+	public boolean isCheckPasswordExpire(PasswordVerifier passwordVerifier) throws Exception { 
+		if(passwordVerifier != null) {
+			return this.isLoginApplication() && passwordVerifier.isCheckPasswordExpire();
+		}
+		
+		return false;
+	}
 
 	// propertiy per la gestione del console.font
 	private String consoleFontName = null;
@@ -835,6 +845,19 @@ public class PddMonitorProperties {
 
 	public void setConsoleFontStyle(int consoleFontStyle) {
 		this.consoleFontStyle = consoleFontStyle;
+	}
+	
+	public Locale getConsoleLocale() throws Exception {
+		String localeLang = this.appProperties.getProperty("console.locale.lang", false, true);
+		String localeCountry = this.appProperties.getProperty("console.locale.country", false, true);
+		
+		if(StringUtils.isNotBlank(localeLang)) {
+			if(StringUtils.isBlank(localeCountry))
+				localeCountry = "";
+			return new Locale(localeLang, localeCountry);
+		}
+		
+		return null;
 	}
 
 	public String getLoginUtenteNonAutorizzatoRedirectUrl() throws Exception{

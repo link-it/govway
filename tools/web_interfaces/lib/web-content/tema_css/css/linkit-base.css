@@ -340,6 +340,11 @@ div.txtA_div {
 	padding: 16px 20px 16px 20px;
 } 
 
+.titleIconLinkLeft {
+	text-decoration: none; 
+	color: #ffffff; 
+}
+
 .td2PageHeader {
 	color: ${page.header.text.color};
 }

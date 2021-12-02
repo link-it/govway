@@ -26,7 +26,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,6 +39,7 @@ import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
 import org.openspcoop2.monitor.engine.statistic.StatisticheSettimanali;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.datamodel.Res;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
@@ -376,16 +376,16 @@ public class StatsUtils {
 						else if(entry instanceof Res){
 							if(sdf==null){
 								if (StatisticType.ORARIA.equals(tempo)) {
-									sdf = new SimpleDateFormat("dd/MM/yy HH", Locale.ITALIAN);
+									sdf = new SimpleDateFormat("dd/MM/yy HH", ApplicationBean.getInstance().getLocale());
 								} 
 								else if (StatisticType.GIORNALIERA.equals(tempo)) {
-									sdf = new SimpleDateFormat("dd/MM/yy", Locale.ITALIAN);
+									sdf = new SimpleDateFormat("dd/MM/yy", ApplicationBean.getInstance().getLocale());
 								} 
 								else if (StatisticType.SETTIMANALE.equals(tempo)) {
-									sdf = new SimpleDateFormat("dd/MM/yy", Locale.ITALIAN);
+									sdf = new SimpleDateFormat("dd/MM/yy", ApplicationBean.getInstance().getLocale());
 								} 
 								else if (StatisticType.MENSILE.equals(tempo)) {
-									sdf = new SimpleDateFormat("MMM/yy", Locale.ITALIAN);
+									sdf = new SimpleDateFormat("MMM/yy", ApplicationBean.getInstance().getLocale());
 								} 
 							}
 							Date rDate = ((Res)entry).getRisultato();
@@ -632,11 +632,11 @@ public class StatsUtils {
 	public static String getXmlAndamentoTemporale(List<Res> list, StatsSearchForm search, String caption, String subCaption,StatisticType tempo){
 		StringBuilder sb = new StringBuilder();
 		SimpleDateFormat sdf;
-		SimpleDateFormat sdf_last = new SimpleDateFormat(CostantiGrafici.PATTERN_HH, Locale.ITALIAN);
+		SimpleDateFormat sdf_last = new SimpleDateFormat(CostantiGrafici.PATTERN_HH, ApplicationBean.getInstance().getLocale());
 		if (StatisticType.ORARIA.equals(tempo)) {
-			sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM_YY_HH, Locale.ITALIAN);
+			sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM_YY_HH, ApplicationBean.getInstance().getLocale());
 		} else {
-			sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM_YY, Locale.ITALIAN);
+			sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM_YY, ApplicationBean.getInstance().getLocale());
 		}
 
 		// calcolo series

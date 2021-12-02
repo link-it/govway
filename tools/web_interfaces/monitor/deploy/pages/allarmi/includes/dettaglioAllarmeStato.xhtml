@@ -25,17 +25,17 @@
 									
 			<h:outputLabel value="Ultima Verifica" id="dataUltimaModifica" styleClass="outputFieldLabel icon-date" rendered="#{not empty allarmiBean.allarme.lasttimestampUpdate}"/>
 			<h:outputText id="outDataUltimaModifica" value="#{allarmiBean.allarme.lasttimestampUpdate}" rendered="#{not empty allarmiBean.allarme.lasttimestampUpdate}">
-				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome"/>
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}"/>
 			</h:outputText>
 
 			<h:outputLabel value="Ultima Modifica" id="dataUltimaModificaStato" styleClass="outputFieldLabel icon-date" rendered="#{not empty allarmiBean.dataUltimaModificaStato}"/>
 			<h:outputText id="outDataUltimaModificaStato" value="#{allarmiBean.dataUltimaModificaStato}" rendered="#{not empty allarmiBean.dataUltimaModificaStato}">
-				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome"/>
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}"/>
 			</h:outputText>
 
 			<h:outputLabel value="Data Creazione" id="dataCreazione" styleClass="outputFieldLabel icon-date" rendered="#{true}"/>
 			<h:outputText id="outDataCreazione" value="#{allarmiBean.allarme.lasttimestampCreate}" rendered="#{true}">
-				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome"/>
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}"/>
 			</h:outputText>
 			
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelAcknowledgde" value="Acknowledge" rendered="#{allarmiBean.visualizzaAck}"/>

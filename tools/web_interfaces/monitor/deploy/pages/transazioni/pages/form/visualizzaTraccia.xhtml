@@ -230,7 +230,7 @@
 								value="#{dettagliBean.traccia.bustaBean.tipoOraRegistrazioneRicavato}"
 								rendered="#{!empty dettagliBean.traccia.bustaBean.tipoOraRegistrazioneRicavato}">
 								<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS"
-									timeZone="Europe/Rome" />
+									timeZone="#{applicationBean.timeZone}" />
 							</h:outputText>
 							<h:outputText id="outSorgenteTemporale3"
 								value="-"
@@ -242,7 +242,7 @@
 								value="#{dettagliBean.traccia.bustaBean.oraRegistrazione}"
 								rendered="#{!empty dettagliBean.traccia.bustaBean.oraRegistrazione}">
 								<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS"
-									timeZone="Europe/Rome" />
+									timeZone="#{applicationBean.timeZone}" />
 							</h:outputText>
 							<h:outputText id="outOraReg3"
 								value="-"
@@ -253,7 +253,7 @@
 								value="#{dettagliBean.traccia.bustaBean.scadenza}"
 								rendered="#{!empty dettagliBean.traccia.bustaBean.scadenza}">
 								<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS"
-									timeZone="Europe/Rome" />
+									timeZone="#{applicationBean.timeZone}" />
 							</h:outputText>
 							<h:outputText id="outScadenza3"
 								value="-"
@@ -336,7 +336,7 @@
 								
 									<h:outputLabel styleClass="outputFieldLabel" value="Riscontro "/>
 									<h:outputText value="#{riscontro.oraRegistrazione}">
-										<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+										<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 									</h:outputText>
 										
 								</h:panelGroup>
@@ -397,7 +397,7 @@
 									<h:outputLabel styleClass="outputFieldLabel" value="Registrazione "/>
 									<h:outputText value="#{trasmissione.oraRegistrazione}">
 										<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS"
-											timeZone="Europe/Rome" />
+											timeZone="#{applicationBean.timeZone}" />
 									</h:outputText>
 										
 								</h:panelGroup>

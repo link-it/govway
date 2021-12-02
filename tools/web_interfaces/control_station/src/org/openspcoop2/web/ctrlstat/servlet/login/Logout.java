@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -90,15 +91,32 @@ public final class Logout extends Action {
 	        
 			// Rimozione del cookie JSESSIONID
 	        ServletUtils.removeCookieFromResponse(org.openspcoop2.web.lib.mvc.Costanti.COOKIE_NAME_JSESSIONID, request, response);
-		
-			// Inizializzo di nuovo GeneralData, dopo aver rimosso
-			// dalla sessione la login dell'utente
-			gd = generalHelper.initGeneralData(request,LoginCostanti.SERVLET_NAME_LOGIN);
-			
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd, true);
-	
+	        
+	        // Inizializzo di nuovo GeneralData, dopo aver rimosso
+ 			// dalla sessione la login dell'utente
+ 			gd = generalHelper.initGeneralData(request,LoginCostanti.SERVLET_NAME_LOGIN);
+ 			
+ 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd, true);
+ 			
+ 			
+ 			if(StringUtils.isBlank(loginCore.getLogoutUrlDestinazione())) {
+ 			// default login interno
+ 		        if(loginCore.isLoginApplication()) {
+ 		        	// Forward control to the specified success URI
+ 					return ServletUtils.getStrutsForwardEditModeFinished(mapping, LoginCostanti.OBJECT_NAME_LOGOUT, ForwardParams.LOGOUT());
+ 		        } else {
+ 		        // Forward control to the specified success URI
+ 		        	pd.setMostraLinkHome(true);
+	    			return ServletUtils.getStrutsForwardEditModeFinished(mapping, LoginCostanti.OBJECT_NAME_LOGIN_MESSAGE_PAGE, ForwardParams.LOGOUT());
+ 		        }
+ 			} else {
+ 				// redirect verso la destinazione prevista
+ 				response.sendRedirect(loginCore.getLogoutUrlDestinazione());
+ 				return ServletUtils.getStrutsForwardEditModeFinished(mapping, LoginCostanti.OBJECT_NAME_LOGOUT, ForwardParams.LOGOUT());
+// 				return new ActionForward(loginCore.getLogoutUrlDestinazione(), true);
+ 			}
 			// Forward control to the specified success URI
-			return ServletUtils.getStrutsForwardEditModeFinished(mapping, LoginCostanti.OBJECT_NAME_LOGOUT, ForwardParams.LOGOUT());
+//			return ServletUtils.getStrutsForwardEditModeFinished(mapping, LoginCostanti.OBJECT_NAME_LOGOUT, ForwardParams.LOGOUT());
 			
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 

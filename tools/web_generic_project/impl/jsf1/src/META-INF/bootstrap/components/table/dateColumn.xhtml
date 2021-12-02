@@ -24,7 +24,7 @@
 			
 		<h:outputText id="#{id}DataValue" value="#{fieldValue.value}" styleClass="#{fieldDescriptor.valueStyleClass}"
 			rendered="#{not empty fieldValue.value}">
-			<f:convertDateTime pattern="#{fieldDescriptor.pattern}" defaultTime="00:00" timeZone="Europe/Rome" />
+			<f:convertDateTime pattern="#{fieldDescriptor.pattern}" defaultTime="00:00" timeZone="#{fieldDescriptor.timeZone}" />
 		</h:outputText>
 	</rich:column>
 </ui:composition>

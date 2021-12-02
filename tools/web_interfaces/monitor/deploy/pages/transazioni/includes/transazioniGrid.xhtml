@@ -66,11 +66,11 @@
 						<f:setPropertyActionListener value="infoGenerali" target="#{targetBean.selectedTab}"/>
 						<h:outputText id="outDataIngRich2" value="#{item.dataIngressoRichiesta}">
 							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss"
-								timeZone="Europe/Rome" />
+								timeZone="#{applicationBean.timeZone}" />
 						</h:outputText>
 						<rich:toolTip for="outDataIngRich2">
 							<h:outputText  value="#{item.dataIngressoRichiesta}">
-								<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+								<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 							</h:outputText>
 						</rich:toolTip>
 					</a4j:htmlCommandLink>
@@ -102,11 +102,11 @@
 						<h:outputText id="colDataAccettazioneRich1" value="Data Accettazione Richiesta" />
 					</f:facet>
 					<h:outputText id="colDataAccettazioneRich2" value="#{item.dataAccettazioneRichiesta}">
-						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss" timeZone="Europe/Rome" />
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss" timeZone="#{applicationBean.timeZone}" />
 					</h:outputText>
 					<rich:toolTip for="colDataAccettazioneRich2">
 						<h:outputText value="#{item.dataAccettazioneRichiesta}">
-							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 						</h:outputText>
 					</rich:toolTip>
 				</rich:column>
@@ -115,11 +115,11 @@
 						<h:outputText id="colDataUscitaRich1" value="Data Uscita Richiesta" />
 					</f:facet>
 					<h:outputText id="colDataUscitaRich2" value="#{item.dataUscitaRichiesta}">
-						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss" timeZone="Europe/Rome" />
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss" timeZone="#{applicationBean.timeZone}" />
 					</h:outputText>
 					<rich:toolTip for="colDataUscitaRich2">
 						<h:outputText value="#{item.dataUscitaRichiesta}">
-							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 						</h:outputText>
 					</rich:toolTip>
 				</rich:column>
@@ -129,11 +129,11 @@
 						<h:outputText id="colDataAccettazioneRisposta1" value="Data Accettazione Risposta" />
 					</f:facet>
 					<h:outputText id="colDataAccettazioneRisposta2" value="#{item.dataAccettazioneRisposta}">
-						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss" timeZone="Europe/Rome" />
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss" timeZone="#{applicationBean.timeZone}" />
 					</h:outputText>
 					<rich:toolTip for="colDataAccettazioneRisposta2">
 						<h:outputText value="#{item.dataAccettazioneRisposta}">
-							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 						</h:outputText>
 					</rich:toolTip>
 				</rich:column>
@@ -142,11 +142,11 @@
 						<h:outputText id="colDataInRisposta1" value="Data Ingresso Risposta" />
 					</f:facet>
 					<h:outputText id="colDataInRisposta2" value="#{item.dataIngressoRisposta}">
-						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss" timeZone="Europe/Rome" />
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss" timeZone="#{applicationBean.timeZone}" />
 					</h:outputText>
 					<rich:toolTip for="colDataInRisposta2">
 						<h:outputText value="#{item.dataIngressoRisposta}">
-							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 						</h:outputText>
 					</rich:toolTip>
 				</rich:column>
@@ -155,11 +155,11 @@
 						<h:outputText id="colDataOutRisposta1" value="Data Uscita Risposta" />
 					</f:facet>
 					<h:outputText id="colDataOutRisposta2" value="#{item.dataUscitaRisposta}">
-						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss" timeZone="Europe/Rome" />
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss" timeZone="#{applicationBean.timeZone}" />
 					</h:outputText>
 					<rich:toolTip for="colDataOutRisposta2">
 						<h:outputText  value="#{item.dataUscitaRisposta}">
-							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 						</h:outputText>
 					</rich:toolTip>
 				</rich:column>
@@ -463,7 +463,7 @@
 				<ui:define name="buttons">
 					<h:panelGrid columns="1" >
 						<h:commandLink id="exportCsv-iconLink" styleClass="icon-csv" 
-					onclick="if(checkSelection('msgDt','msgDt_checkSelection')){ preparaFormModale(getSelectedRows('msgDt')); Richfaces.showModalPanel('exportCsvModalPnl'); } return false;" >
+					onclick="if(checkSelection('msgDt','msgDt_checkSelection')){ preparaFormModale(getSelectedRows('msgDt'),getSelectedAllValue('msgDt')); Richfaces.showModalPanel('exportCsvModalPnl'); } return false;" >
 								<h:outputText value="Esporta" />
 						</h:commandLink>
 					</h:panelGrid>

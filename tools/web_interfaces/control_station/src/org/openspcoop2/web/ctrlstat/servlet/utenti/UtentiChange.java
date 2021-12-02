@@ -421,7 +421,7 @@ public final class UtentiChange extends Action {
 				
 				// Modifico l'utente
 				PasswordVerifier passwordVerifier = utentiCore.getUtenzePasswordVerifier();
-				if(passwordVerifier.isCheckPasswordExpire()) {
+				if(utentiCore.isCheckPasswordExpire(passwordVerifier)) {
 					user.setCheckLastUpdatePassword(ServletUtils.isCheckBoxEnabled(scadenza));
 				} else {
 					user.setCheckLastUpdatePassword(false);

@@ -214,6 +214,7 @@ public class TransazioniExporter extends HttpServlet{
 			prop.setMimeThrowExceptionIfNotFound(TransazioniExporter.mimeThrowExceptionIfNotFound);
 			prop.setHeadersAsProperties(this.headersAsProperties);
 			prop.setContenutiAsProperties(this.contenutiAsProperties);
+			prop.setUseCount(searchForm.isUseCount());
 
 			SingleFileExporter sfe = new SingleFileExporter(response.getOutputStream(), prop, service,
 					this.tracciamentoService, this.diagnosticiService,null);
@@ -232,6 +233,9 @@ public class TransazioniExporter extends HttpServlet{
 		}catch(Throwable e){
 			TransazioniExporter.log.error(e.getMessage(),e);
 			throw new ServletException(e.getMessage(),e);
+		}finally {
+			// reset login bean statico
+			Utility.setLoginMBean(null);
 		}
 	}
 

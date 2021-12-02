@@ -76,7 +76,7 @@ public final class Login extends Action {
 	
 			if(GestoreConsistenzaDati.gestoreConsistenzaDatiInEsecuzione){
 				
-				pd.setMessage("<b>Attenzione</b>: è in esecuzione un controllo sulla consistenza dei dati; attendere il completamento dell'operazione", Costanti.MESSAGE_TYPE_INFO);
+				pd.setMessage(LoginCostanti.MESSAGGIO_INFO_CONTROLLO_CONSISTENZA_DATI_IN_CORSO, Costanti.MESSAGE_TYPE_INFO);
 				
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd, true);
 				
@@ -128,20 +128,7 @@ public final class Login extends Action {
 			loginHelper.initializeFilter(ricerca);
 			
 			// Boolean verifico configurazione
-			StringBuilder verificaConfigurazioneProtocolli = new StringBuilder();
-			boolean configurazioneCorretta = loginCore.verificaConfigurazioneProtocolliRispettoSoggettiDefault(verificaConfigurazioneProtocolli); 
-			
-			if(!configurazioneCorretta) {
-				pd.setMessage(LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO+"<br/><br/><b>Attenzione</b>: il controllo di consistenza tra Profili di Interoperabilità attivati e la configurazione sul Gateway ha rilevato inconsistenze: \n"+verificaConfigurazioneProtocolli.toString(),
-						Costanti.MESSAGE_TYPE_ERROR);
-			}
-			else if(GestoreConsistenzaDati.gestoreConsistenzaDatiEseguitoConErrore){
-				pd.setMessage(LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO+"<br/><br/><b>Attenzione</b>: il controllo sulla consistenza dei dati è terminato con errore; esaminare i log per maggiori dettagli",
-						Costanti.MESSAGE_TYPE_INFO);
-			}
-			else{
-				pd.setMessage(LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO,Costanti.MESSAGE_TYPE_INFO_SINTETICO);
-			}
+			Login.impostaMessaggioEsitoLogin(pd, loginCore);
 	
 			// Inizializzo di nuovo GeneralData, dopo aver messo
 			// in sessione la login dell'utente
@@ -155,6 +142,23 @@ public final class Login extends Action {
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
 					LoginCostanti.OBJECT_NAME_LOGIN, ForwardParams.LOGIN());
+		}
+	}
+
+	public static void impostaMessaggioEsitoLogin(PageData pd, LoginCore loginCore) {
+		StringBuilder verificaConfigurazioneProtocolli = new StringBuilder();
+		boolean configurazioneCorretta = loginCore.verificaConfigurazioneProtocolliRispettoSoggettiDefault(verificaConfigurazioneProtocolli); 
+		
+		if(!configurazioneCorretta) {
+			pd.setMessage(LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO+"<br/><br/><b>Attenzione</b>: il controllo di consistenza tra Profili di Interoperabilità attivati e la configurazione sul Gateway ha rilevato inconsistenze: \n"+verificaConfigurazioneProtocolli.toString(),
+					Costanti.MESSAGE_TYPE_ERROR);
+		}
+		else if(GestoreConsistenzaDati.gestoreConsistenzaDatiEseguitoConErrore){
+			pd.setMessage(LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO+"<br/><br/><b>Attenzione</b>: il controllo sulla consistenza dei dati è terminato con errore; esaminare i log per maggiori dettagli",
+					Costanti.MESSAGE_TYPE_INFO);
+		}
+		else{
+			pd.setMessage(LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO,Costanti.MESSAGE_TYPE_INFO_SINTETICO);
 		}
 	}
 }

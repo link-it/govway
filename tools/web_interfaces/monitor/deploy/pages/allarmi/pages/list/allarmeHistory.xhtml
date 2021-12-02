@@ -49,7 +49,7 @@
 							<h:outputText id="outData" value="Data Aggiornamento" />
 						</f:facet>
 						<h:outputText  value="#{item.timestampUpdate}" id="outData2">
-							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 						</h:outputText>
 					</rich:column>
 

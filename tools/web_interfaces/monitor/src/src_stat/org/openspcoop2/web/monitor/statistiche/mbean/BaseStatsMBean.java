@@ -22,7 +22,6 @@ package org.openspcoop2.web.monitor.statistiche.mbean;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletResponse;
@@ -30,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
+import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
@@ -480,9 +480,9 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 		if(oraMinutiObbligatori){
 			bf.append(CostantiGrafici.WHITE_SPACE + CostantiGrafici.PATTERN_HH_MM);
 		}
-		SimpleDateFormat sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MMMMM_YYYY+bf.toString(), Locale.ITALIAN);
+		SimpleDateFormat sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MMMMM_YYYY+bf.toString(), ApplicationBean.getInstance().getLocale());
 		
-		//SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS", Locale.ITALIAN);
+		//SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS", ApplicationBean.getInstance().getLocale());
 		return sdf.format(date);
 		
 	}

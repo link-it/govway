@@ -38,7 +38,7 @@
 			
 			<h:outputLabel styleClass="outputFieldLabel icon-date"  value="Data Primo Tentativo" rendered="#{dettagliTransazioneApplicativoServerBean.dettaglio.numeroTentativi > 1}"/>
 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataPrimoTentativo}" rendered="#{dettagliTransazioneApplicativoServerBean.dettaglio.numeroTentativi > 1}">
-				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 			</h:outputText>
 			
 			<h:outputLabel styleClass="outputFieldLabel" value="Tempo Risposta Servizio" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.latenzaConsegna and dettagliTransazioneApplicativoServerBean.dettaglio.latenzaConsegna>0}"/>
@@ -71,12 +71,12 @@
 		
 			<h:outputLabel styleClass="outputFieldLabel icon-date"  value="Data Accettazione" rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaDataAccettazione and not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataAccettazioneRichiesta}"/>
 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataAccettazioneRichiesta}" rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaDataAccettazione and not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataAccettazioneRichiesta}">
-				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 			</h:outputText>
 			
 			<h:outputLabel styleClass="outputFieldLabel icon-date"  value="Data Uscita" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataUscitaRichiesta}"/>
 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataUscitaRichiesta}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataUscitaRichiesta}">
-				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 			</h:outputText>
 			
 			<h:outputLabel value="Bytes Uscita" styleClass="outputFieldLabel icon-compress"/>
@@ -163,12 +163,12 @@
 			
 			<h:outputLabel styleClass="outputFieldLabel icon-date"  value="Data Accettazione" rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaDataAccettazione and not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataAccettazioneRisposta}"/>
 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataAccettazioneRisposta}" rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaDataAccettazione and not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataAccettazioneRisposta}">
-				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 			</h:outputText>
 			
 			<h:outputLabel styleClass="outputFieldLabel icon-date"  value="Data Ingresso" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataIngressoRisposta}"/>
 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataIngressoRisposta}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataIngressoRisposta}">
-				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 			</h:outputText>
 			
 			<h:outputLabel value="Bytes Ingresso" styleClass="outputFieldLabel icon-compress"/>

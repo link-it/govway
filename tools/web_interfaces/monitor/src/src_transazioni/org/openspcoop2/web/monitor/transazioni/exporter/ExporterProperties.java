@@ -39,6 +39,7 @@ public class ExporterProperties {
 	private boolean abilitaMarcamentoTemporaleEsportazione;
 	private boolean headersAsProperties = true;
 	private boolean contenutiAsProperties = false;
+	private boolean useCount = true;
 	
 	private Date dataInizio;
 	private Date dataFine;
@@ -109,5 +110,11 @@ public class ExporterProperties {
 	}
 	public void setContenutiAsProperties(boolean contenutiAsProperties) {
 		this.contenutiAsProperties = contenutiAsProperties;
+	}
+	public boolean isUseCount() {
+		return this.useCount;
+	}
+	public void setUseCount(boolean useCount) {
+		this.useCount = useCount;
 	}
 }

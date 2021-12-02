@@ -19,7 +19,7 @@
 
  			<h:outputLabel value="Data" id="data-iconLabel" styleClass="outputFieldLabel icon-date" />
 			<h:outputText id="outData" value="#{dettagliBean.dettaglio.dataAccettazioneRichiesta}">
-				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="Europe/Rome"/>
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
 			</h:outputText>	
 			
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelIdTransazione" value="ID Transazione" rendered="#{not empty dettagliBean.dettaglio.idTransazione}" />

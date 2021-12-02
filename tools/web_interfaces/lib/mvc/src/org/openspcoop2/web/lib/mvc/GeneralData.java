@@ -50,6 +50,7 @@ public class GeneralData {
 	private String logoHeaderImage;
 	private String logoHeaderTitolo;
 	private String logoHeaderLink;
+	private boolean visualizzaLinkHome;
 
 	public GeneralData(String linkFoot) {
 		this.product = "";
@@ -64,6 +65,7 @@ public class GeneralData {
 		this.logoHeaderImage = "";
 		this.logoHeaderLink= "";
 		this.logoHeaderTitolo= "";
+		this.visualizzaLinkHome = false;
 	}
 	public GeneralData() {
 		this("https://link.it");
@@ -157,5 +159,11 @@ public class GeneralData {
 	}
 	public void setSoggettiLinks(Vector<GeneralLink> soggettiLinks) {
 		this.soggettiLinks = soggettiLinks;
+	}
+	public boolean isVisualizzaLinkHome() {
+		return this.visualizzaLinkHome;
+	}
+	public void setVisualizzaLinkHome(boolean visualizzaLinkHome) {
+		this.visualizzaLinkHome = visualizzaLinkHome;
 	}
 }

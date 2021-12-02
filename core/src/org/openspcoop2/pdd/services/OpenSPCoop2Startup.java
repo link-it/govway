@@ -3742,6 +3742,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				jminixStandaloneConsole.shutdown();
 			}
 		}catch (Throwable e) {}
+
+		// *** Repository plugins ***
+		try{
+			CorePluginLoader.close(OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
+		}catch(Throwable e){}
 		
 		// Attendo qualche secondo
 		Utilities.sleep(2000);

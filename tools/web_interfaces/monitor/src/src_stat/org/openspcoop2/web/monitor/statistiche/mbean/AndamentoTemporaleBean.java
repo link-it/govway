@@ -22,7 +22,6 @@ package org.openspcoop2.web.monitor.statistiche.mbean;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.el.ELContext;
@@ -43,6 +42,7 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.dao.IService;
 import org.openspcoop2.web.monitor.core.datamodel.Res;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
@@ -186,9 +186,9 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 				
 				SimpleDateFormat sdf;
 				if (StatisticType.ORARIA.equals(tempo)) {
-					sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM_YY_HH, Locale.ITALIAN);
+					sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM_YY_HH, ApplicationBean.getInstance().getLocale());
 				} else {
-					sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM_YY, Locale.ITALIAN);
+					sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM_YY, ApplicationBean.getInstance().getLocale());
 				}
 				if(StatsUtils.addEstremoSX(list, ((StatsSearchForm)this.search), tempo, sdf)) {
 					this.setMaxCategorie(this.getMaxCategorie() + 1); 

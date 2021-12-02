@@ -22,7 +22,6 @@ package org.openspcoop2.web.monitor.core.bean;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 import javax.faces.event.ActionEvent;
 
@@ -98,7 +97,7 @@ public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 	}
 	
 	public static String printPeriodo(Date inizio,Date fine){
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS", Locale.ITALIAN);
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS", ApplicationBean.getInstance().getLocale());
 		StringBuilder bf = new StringBuilder();
 		bf.append("[ ");
 		if(inizio!=null){
