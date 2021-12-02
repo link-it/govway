@@ -77,6 +77,7 @@ function checkAllCheckboxesInTable( inputId, state ,showSelectAll, _totRows, _ro
 	       		jQuery("[id$='"+inputId+"_selectedAllChbx']").removeAttr("checked");     		
 	        }
         } else {
+        	jQuery("[id$='"+inputId+"_selectedAllChbx']").removeAttr("checked");
         	if(state){
         		jQuery("[id$='"+inputId+"_selectedInfoLbl']").show().text("Selezionati "+size+" elementi");
         		jQuery("[id$='"+inputId+"_selectedInfoPipe1']").show();
