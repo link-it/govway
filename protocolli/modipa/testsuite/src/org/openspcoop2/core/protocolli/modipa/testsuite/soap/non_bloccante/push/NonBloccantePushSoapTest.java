@@ -63,7 +63,7 @@ public class NonBloccantePushSoapTest extends ConfigLoader {
 	@BeforeClass
     public static void beforeClass() {
     	
-        File file = ResourceUtils.getFileRelativeTo(NonBloccantePushSoapTest.class, "proxy.feature");
+        File file = ResourceUtils.getFileRelativeTo(NonBloccantePushSoapTest.class, "mock.feature");
         server = MockServer
                 .feature(file)
                 .args(new HashMap<String,Object>((Map) prop))
@@ -71,7 +71,7 @@ public class NonBloccantePushSoapTest extends ConfigLoader {
                 .build();
         
 
-        file = ResourceUtils.getFileRelativeTo(NonBloccantePushSoapTest.class, "mock.feature");
+        file = ResourceUtils.getFileRelativeTo(NonBloccantePushSoapTest.class, "proxy.feature");
     	proxy = MockServer
     			.feature(file)
     			.args(new HashMap<String,Object>((Map) prop))

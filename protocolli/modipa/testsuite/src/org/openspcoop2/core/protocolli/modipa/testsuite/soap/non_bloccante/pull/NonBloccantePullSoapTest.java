@@ -62,14 +62,14 @@ public class NonBloccantePullSoapTest extends ConfigLoader {
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	@BeforeClass
     public static void beforeClass() {       
-        File file = ResourceUtils.getFileRelativeTo(NonBloccantePullSoapTest.class, "proxy.feature");
+        File file = ResourceUtils.getFileRelativeTo(NonBloccantePullSoapTest.class, "mock.feature");
         mock = MockServer
                 .feature(file)
                 .args(new HashMap<String,Object>((Map) prop))
                 .http(Integer.valueOf(prop.getProperty("http_mock_port")))
                 .build();
 
-        file = ResourceUtils.getFileRelativeTo(NonBloccantePullSoapTest.class, "mock.feature");
+        file = ResourceUtils.getFileRelativeTo(NonBloccantePullSoapTest.class, "proxy.feature");
         proxy = MockServer
     			.feature(file)
     			.args(new HashMap<String,Object>((Map) prop))

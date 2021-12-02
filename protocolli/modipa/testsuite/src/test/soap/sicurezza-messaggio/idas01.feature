@@ -8,7 +8,6 @@ Background:
     
     * def check_traccia = read('check-tracce/check-traccia.feature')
     * def check_signature = read('classpath:org/openspcoop2/core/protocolli/modipa/testsuite/soap/sicurezza_messaggio/check-signature.feature')
-    * configure lowerCaseResponseHeaders = true
 
 @connettivita-base
 Scenario: Test connettività base
@@ -29,6 +28,7 @@ And match response == read("response.xml")
 * xml client_request = karateCache.get("Client-Request")
 * xml server_response = karateCache.get("Server-Response")
 
+* print responseHeaders
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
 * call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT' })
@@ -146,6 +146,7 @@ Scenario: Test di una azione che non ha il payload nella risposta
 
 * def body = read("only-request.xml")
 * def soap_url = govway_base_path + '/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SoapBlockingIDAS01MultipleOP/v1'
+
 
 Given url soap_url
 And request body

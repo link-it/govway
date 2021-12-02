@@ -15,7 +15,6 @@ Background:
     * def check_signature = read('check-signature.feature')
     * def check_client_token = read('check-client-token.feature')
     * def check_server_token = read('check-server-token.feature')
-    * configure lowerCaseResponseHeaders = false
 
 
 
@@ -97,12 +96,12 @@ Scenario: isTest('response-without-payload')
     # La signature non viene fatta su di una risposta vuota quindi non la controllo
     # Controllo qui la traccia della erogazione perchè non posso far viaggiare header
     # opzionali indietro visto che l'azione è one-way
-    
     * def check_traccia = read("classpath:test/soap/sicurezza-messaggio/check-tracce/check-traccia.feature")
     * xml client_request = client_request
 
     * def tid = responseHeaders['GovWay-Transaction-ID'][0]
     * call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT' })
+    * def response = null
 
 
 
@@ -121,12 +120,15 @@ Scenario: isTest('disabled-security-on-action')
 #
 #
 
-Scenario: isTest('enabled-security-on-action') && bodyPath('/Envelope/Body/MRequestOp') != ''
+Scenario: isTest('enabled-security-on-action') && bodyPath('/Envelope/Body/MRequestOp') != null
     
+    * print "REQUEST IS: ", request
+    * print "BODY PATH IS: ", bodyPath('/Envelope/Body/MRequestOp')
+
     * xmlstring client_request = bodyPath('/')
     * eval karateCache.add("Client-Request", client_request)
 
-    * call check_client_token ({ address: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", to: "testsuite" })
+    * call check_client_token ({ address: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", to: "testsuite", request: request })
     
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01MultipleOPNoDefaultSecurity/v1')
 
@@ -136,7 +138,7 @@ Scenario: isTest('enabled-security-on-action') && bodyPath('/Envelope/Body/MRequ
     * eval karateCache.add("Server-Response", server_response)
 
 
-Scenario: isTest('enabled-security-on-action') && bodyPath('/Envelope/Body/MRequestOp1') != ''
+Scenario: isTest('enabled-security-on-action') && bodyPath('/Envelope/Body/MRequestOp1') != null
 
     * def c = request
 
@@ -148,7 +150,8 @@ Scenario: isTest('enabled-security-on-action') && bodyPath('/Envelope/Body/MRequ
 
 
 Scenario: isTest('riferimento-x509-SKIKey-IssuerSerial')
-    
+
+    * print "RICHIESTA AL PROXY: ", request
     * xmlstring client_request = bodyPath('/')
     * eval karateCache.add("Client-Request", client_request)
 
@@ -156,7 +159,8 @@ Scenario: isTest('riferimento-x509-SKIKey-IssuerSerial')
     
     # Testo la presenza del Subject Key Identifier nello header
     * match bodyPath('/Envelope/Header/Security/Signature/KeyInfo/SecurityTokenReference/KeyIdentifier') == "V8ojtQaElmusOPopR34itbvzPW8="
-    
+
+    # BUG! Succede che qui viene passato il request body precedente!!    
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01IssuerSerial/v1')
 
     * call check_server_token ({ from: "SoapBlockingIDAS01IssuerSerial/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", response: response })

@@ -1,6 +1,7 @@
 Feature: Controllo del token server
 
 Scenario:
+    * print "Response = ", response
     * match /Envelope/Header/Security/Signature == "#present"
     * match /Envelope/Header/Security/Timestamp/Created == "#string"
     * match /Envelope/Header/Security/Timestamp/Expires == "#string"

@@ -21,18 +21,21 @@
 
 package org.openspcoop2.core.protocolli.modipa.testsuite.soap.sicurezza_messaggio;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
+import org.junit.Test;
 import org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader;
 
-import com.intuit.karate.KarateOptions;
+import com.intuit.karate.Results;
+import com.intuit.karate.Runner;
 import com.intuit.karate.core.MockServer;
-import com.intuit.karate.junit4.Karate;
 import com.intuit.karate.resource.ResourceUtils;
 
 
@@ -43,14 +46,6 @@ import com.intuit.karate.resource.ResourceUtils;
 * @author $Author$
 * @version $Rev$, $Date$
 */
-@RunWith(Karate.class)
-@KarateOptions(features = {
-    "classpath:test/soap/sicurezza-messaggio/idas01.feature",
-    "classpath:test/soap/sicurezza-messaggio/idas01-no-disclosure.feature",
-    "classpath:test/soap/sicurezza-messaggio/idas02.feature",
-    "classpath:test/soap/sicurezza-messaggio/idas03.feature",
-    "classpath:test/soap/sicurezza-messaggio/idas0302.feature",
-    })
 
 public class BloccanteSoapSicurezzaMessaggioTest extends ConfigLoader {
     
@@ -60,14 +55,14 @@ public class BloccanteSoapSicurezzaMessaggioTest extends ConfigLoader {
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	@BeforeClass
     public static void beforeClass() {
-    	
-    	
+    	    	
     	File file = ResourceUtils.getFileRelativeTo(BloccanteSoapSicurezzaMessaggioTest.class, "mock.feature");
     	server = MockServer
                  .feature(file)
                  .args(new HashMap<String,Object>((Map) prop))
                  .http(Integer.valueOf(prop.getProperty("http_mock_port")))
                  .build();
+    	
     	
     	file = ResourceUtils.getFileRelativeTo(BloccanteSoapSicurezzaMessaggioTest.class, "proxy.feature");
     	proxy = MockServer
@@ -76,6 +71,18 @@ public class BloccanteSoapSicurezzaMessaggioTest extends ConfigLoader {
     			.http(Integer.valueOf(prop.getProperty("http_port")))
     			.build();
     	
+    }
+    
+    @Test
+    public void test() {
+    	Results results = Runner.path(Arrays.asList( 
+    			"classpath:test/soap/sicurezza-messaggio/idas01.feature",
+    		    "classpath:test/soap/sicurezza-messaggio/idas01-no-disclosure.feature",
+    		    "classpath:test/soap/sicurezza-messaggio/idas02.feature",
+    		    "classpath:test/soap/sicurezza-messaggio/idas03.feature",
+    		    "classpath:test/soap/sicurezza-messaggio/idas0302.feature"))
+    			.parallel(1);
+    	assertEquals(0, results.getFailCount());
     }
         
     @AfterClass

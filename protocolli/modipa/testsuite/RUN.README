@@ -119,13 +119,13 @@ Prerequisiti:
 	ant run_test
 
   Per eseguire una sola feature
-	ant run_test -Dkarate.options=test/rest/bloccante/idac02.feature
+	ant run_test -Dkarate.options=rest/bloccante/idac02.feature
 
   Conviene specificare anche la classe di test con l'opzione <-Dtest> sotto la quale è presente la feature, es:
-	ant build run_test -Dtest=NonBloccanteRestTest -Dkarate.options=test/rest/non-bloccante/pull-proxy.feature
+	ant build run_test -Dtest=NonBloccanteRestTest -Dkarate.options=rest/non-bloccante/pull-proxy.feature
   
   Per eseguire uno specifico scenario con un determinato tag usare fra le karate.options, l'opzione <--tags>, es:
-	ant run_test -Dtest=NonBloccanteRestTest -Dkarate.options='test/rest/non-bloccante/pull-proxy.feature --tags @no-location-from-status'
+	ant run_test -Dtest=NonBloccanteRestTest -Dkarate.options='rest/non-bloccante/pull-proxy.feature --tags @no-location-from-status'
 
   Per evitare la creazione e la cancellazione della configurazione di govway passare i parametri <-Dload=false> e <-Ddelete=false>
 

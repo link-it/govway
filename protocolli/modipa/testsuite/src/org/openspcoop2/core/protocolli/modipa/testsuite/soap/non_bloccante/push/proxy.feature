@@ -2,7 +2,7 @@ Feature: Server proxy contattato dalla fruizione
 
 Background:
 
-* configure responseHeaders = { 'Content-type': "application/soap+xml" }
+#* configure responseHeaders = { 'Content-type': "application/soap+xml" }
 
 * def url_erogazione_server_validazione = govway_base_path + "/soap/in/DemoSoggettoErogatore/SoapNonBlockingPushServer/v1"
 * def url_erogazione_client_validazione = govway_base_path + "/soap/in/DemoSoggettoFruitore/SoapNonBlockingPushClient/v1"
@@ -32,9 +32,13 @@ Scenario: isTest('test-ok-richiesta-client')
 
     # Controllo che la fruizione client abbia aggiornato lo header x-replyTo con la url
     # invocazione dell'erogazione lato client
+    * print "Called proxy, matching reply to now.."
     * match request/Envelope/Header/X-ReplyTo == url_erogazione_client_validazione 
 
+    * print "Reply to matched, proceeding to server.."
     * karate.proceed(url_erogazione_server_validazione)
+
+    * print "Response headers: ", responseHeaders
 
     * match responseHeaders['GovWay-Conversation-ID'][0] == task_id
 

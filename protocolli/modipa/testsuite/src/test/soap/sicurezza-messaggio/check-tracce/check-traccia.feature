@@ -25,7 +25,10 @@ Scenario: Controllo traccia IDAS01
 ])
 """
 
+* print 'Checking traccia ', tipo, ' ', tid
 * def traccia_to_match = karate.append(traccia_to_match, other_checks)
 
- * def result = get_traccia(tid,tipo) 
- * match result contains deep traccia_to_match
+* def result = get_traccia(tid,tipo) 
+* print 'Traccia result: ', result
+* print 'Traccia to match: ', traccia_to_match
+* match result contains deep traccia_to_match

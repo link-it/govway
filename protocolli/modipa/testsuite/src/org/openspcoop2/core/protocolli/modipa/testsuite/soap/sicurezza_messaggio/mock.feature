@@ -12,7 +12,6 @@ Background:
     """
 
     * def check_signature = read('check-signature.feature')
-    * configure lowerCaseResponseHeaders = false
 
     * def confHeaders = 
     """
@@ -36,7 +35,9 @@ Scenario: isTest('connettivita-base') || isTest('connettivita-base-default-trust
 		isTest('low-ttl-erogazione') ||	isTest('low-iat-ttl-erogazione') || 
 		isTest('connettivita-base-idas02') 
     
+    * print "Mock Side riferimento-x509-SKIKEY-IssuerSerial"
     * match bodyPath('/Envelope/Header') == ''
+    * print "Body path matched"
     * def responseStatus = 200
     * def response = read('classpath:test/soap/sicurezza-messaggio/response.xml')
 
@@ -70,12 +71,12 @@ Scenario: isTest('disabled-security-on-action')
 
 
 
-Scenario: isTest('enabled-security-on-action') && bodyPath('/Envelope/Body/MRequestOp') != ''
+Scenario: isTest('enabled-security-on-action') && bodyPath('/Envelope/Body/MRequestOp') != null
     * def responseStatus = 200
     * def response = read('classpath:test/soap/sicurezza-messaggio/response-op.xml')
 
 
-Scenario: isTest('enabled-security-on-action') && bodyPath('/Envelope/Body/MRequestOp1') != ''
+Scenario: isTest('enabled-security-on-action') && bodyPath('/Envelope/Body/MRequestOp1') != null
     * def responseStatus = 200
     * def response = read('classpath:test/soap/sicurezza-messaggio/response-op.xml')
 

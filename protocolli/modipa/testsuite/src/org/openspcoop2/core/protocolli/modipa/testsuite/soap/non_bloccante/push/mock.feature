@@ -34,12 +34,12 @@ Scenario: isTest('test-ok-richiesta-client')
     * match request/Envelope/Header/X-ReplyTo == govway_base_path + "/soap/out/DemoSoggettoErogatore/DemoSoggettoFruitore/SoapNonBlockingPushClient/v1"
 
     * def responseStatus = 200
-    * def response = read('classpath:src/test/soap/non-bloccante/push/client-request-response.xml')
+    * def response = read('classpath:test/soap/non-bloccante/push/client-request-response.xml')
 
 Scenario: isTest('test-ok-risposta-server')
 
     * def responseStatus = 200
-    * def response = read('classpath:src/test/soap/non-bloccante/push/server-response-response.xml')
+    * def response = read('classpath:test/soap/non-bloccante/push/server-response-response.xml')
 
 
 # ID Correlazione aggiunto dall'erogazione del server
@@ -71,12 +71,12 @@ Scenario: isTest('correlation-id-added-by-server')
 Scenario: isTest('iniezione-header-id-collaborazione')
 
     * def responseStatus = 200
-    * def response = read('classpath:src/test/soap/non-bloccante/push/server-response-response.xml')
+    * def response = read('classpath:test/soap/non-bloccante/push/server-response-response.xml')
 
 Scenario: isTest('iniezione-header-id-collaborazione-query')
 
     * def responseStatus = 200
-    * def response = read('classpath:src/test/soap/non-bloccante/push/server-response-response.xml')
+    * def response = read('classpath:test/soap/non-bloccante/push/server-response-response.xml')
 
 
 # ID Correlazione aggiunto dalla fruizione server sfruttando
@@ -85,13 +85,13 @@ Scenario: isTest('iniezione-header-id-collaborazione-query')
 Scenario: isTest('iniezione-header-riferimento-id-richiesta')
 
     * def responseStatus = 200
-    * def response = read('classpath:src/test/soap/non-bloccante/push/server-response-response.xml')
+    * def response = read('classpath:test/soap/non-bloccante/push/server-response-response.xml')
 
 
 Scenario: isTest('iniezione-header-riferimento-id-richiesta-query')
 
     * def responseStatus = 200
-    * def response = read('classpath:src/test/soap/non-bloccante/push/server-response-response.xml')
+    * def response = read('classpath:test/soap/non-bloccante/push/server-response-response.xml')
 
 
 # Catch all

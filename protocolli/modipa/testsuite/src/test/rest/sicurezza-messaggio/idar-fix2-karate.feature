@@ -34,7 +34,8 @@ And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', p
 When method put
 Then status 200
 And match response == resp
-And match header Authorization == '#notpresent'
+And match header Authorization == null 
+#'#notpresent'
 
 * def server_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0], "AGID")
 * def response_digest = get server_token $.payload.signed_headers..digest

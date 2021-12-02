@@ -65,6 +65,7 @@
 		<delete dir="${build_testsuite}"/>
 		<delete dir="log"/>
 		<delete dir="target"/>
+		<delete dir="${output}"/>
 	</target>
 	<target name="init">
 		<mkdir dir="${build_testsuite}"/>
@@ -173,7 +174,7 @@
 				<equals arg1="${karate.options}" arg2="$${karate.options}"/>
 			</not>
 			<then>
-				<var name="karateparams" value="-Dkarate.options=${build_testsuite}/${karate.options}"/>
+				<var name="karateparams" value="-Dkarate.options=${karate.options}"/>
 			</then>
 		</if>
 
@@ -204,7 +205,11 @@
 				<if>
 					<equals arg1="${karateparams}" arg2=""/>
 					<then>
-						<junit printsummary="yes" haltonfailure="${haltOnFailure}" showoutput="${showOutput}">
+						<junit fork="yes" forkmode="once" printsummary="yes" haltonfailure="${haltOnFailure}" showoutput="${showOutput}">
+
+							<!-- Abilità modalità debug remota -->
+							<!--						<jvmarg value="-Xdebug"/>
+							<jvmarg value="-Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y"/> -->
 
 							<!-- Per non far comparire il Warning: Nashorn engine is planned to be removed from a future JDK release -->
 							<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
@@ -228,9 +233,13 @@
 						 </junit>
 					</then>
 					<else>
-						<junit printsummary="yes" haltonfailure="${haltOnFailure}" showoutput="${showOutput}">
+						<junit fork="yes" forkmode="once" printsummary="yes" haltonfailure="${haltOnFailure}" showoutput="${showOutput}">
 
 							<jvmarg value="${karateparams}"/>
+
+							<!-- Abilità modalità debug remota -->
+							<!-- <jvmarg value="-Xdebug"/>
+							<jvmarg value="-Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y"/> -->
 
 							<!-- Per non far comparire il Warning: Nashorn engine is planned to be removed from a future JDK release -->
 							<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
