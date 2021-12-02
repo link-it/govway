@@ -33,10 +33,11 @@ import org.apache.hc.core5.http.io.entity.InputStreamEntity;
 import org.apache.hc.core5.http.nio.AsyncResponseConsumer;
 import org.apache.hc.core5.http.nio.CapacityChannel;
 import org.apache.hc.core5.http.protocol.HttpContext;
+import org.openspcoop2.pdd.core.connettori.ConnettoreLogger;
 import org.openspcoop2.pdd.services.connector.AsyncThreadPool;
 import org.openspcoop2.utils.Utilities;
-//import org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedStream;
-import org.openspcoop2.utils.io.notifier.unblocked.PipedBytesStream;
+import org.openspcoop2.utils.io.notifier.unblocked.IPipedUnblockedStream;
+import org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedStreamFactory;
 
 /**
  * ConnettoreHTTPCORE5_inputStreamEntityConsumer
@@ -49,11 +50,20 @@ public class ConnettoreHTTPCORE5_inputStreamEntityConsumer implements AsyncRespo
 
 	private ConnettoreHTTPCORE5_httpResponse res = null;
 	private ContentType ct = null;
-//	private PipedUnblockedStream stream = null;
-	private PipedBytesStream stream = null;
+	private IPipedUnblockedStream stream = null;
 	private FutureCallback<ConnettoreHTTPCORE5_httpResponse> callback;
 	private long count = 0;
 	private boolean complete = false;
+	
+	private ConnettoreLogger logger;
+	private int sizeBuffer;
+	private Integer readTimeout;
+	
+	public ConnettoreHTTPCORE5_inputStreamEntityConsumer(ConnettoreLogger logger, int sizeBuffer, int readTimeout) {
+		this.logger = logger;
+		this.sizeBuffer = sizeBuffer;
+		this.readTimeout = readTimeout;
+	}
 	
 	private void invokeCallback() {
 		if(this.callback!=null) {
@@ -75,11 +85,10 @@ public class ConnettoreHTTPCORE5_inputStreamEntityConsumer implements AsyncRespo
 				}
 			}.init(this.callback, this.res);
 //			System.out.println("ESEGUO!");
-			AsyncThreadPool.execute(runnable);
+			AsyncThreadPool.executeInResponsePool(runnable);
 			this.callback = null;
 		}
 	}
-	
 	
 	@Override
 	// Triggered to signal receipt of an intermediate (1xx) HTTP response
@@ -106,9 +115,7 @@ public class ConnettoreHTTPCORE5_inputStreamEntityConsumer implements AsyncRespo
 //			System.out.println("======== consume: "+ bb.remaining());
 			
 			if(this.stream==null) {
-//				this.stream = new PipedUnblockedStream(null, Utilities.DIMENSIONE_BUFFER);
-				this.stream = new PipedBytesStream(null, Utilities.DIMENSIONE_BUFFER);
-				this.stream.setSource("Response");
+				this.stream = PipedUnblockedStreamFactory.newPipedUnblockedStream(this.logger.getLogger(), this.sizeBuffer, this.readTimeout, "Response");
 				this.res.setEntity(new InputStreamEntity(this.stream, this.ct));
 			}
 			
@@ -203,8 +210,6 @@ public class ConnettoreHTTPCORE5_inputStreamEntityConsumer implements AsyncRespo
 		
 			/*
 			 * TODO:
-			 * 1) Timeout
-			 * 2) Pool diviso tra client e server
 			 * 3) Questa eccezione deve essere gestita chiamando la callback se non ancora chiamata o sollevandola sull'input stream altrimenti 
 			 * 
 			 * */

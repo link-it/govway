@@ -196,6 +196,7 @@ import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
 import org.openspcoop2.utils.id.serial.InfoStatistics;
+import org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedStreamFactory;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.resources.FileSystemMkdirConfig;
@@ -804,6 +805,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					}
 					OpenSPCoop2Startup.log.info("Registrati ulteriori '"+MessageImpl.alternativeAcceptedContentType1_2.size()+"' content-type associabili ai messaggi SOAP 1.2: "+sbCT.toString());
 					
+				}
+				
+				// PipeUnblockedStream
+				if(propertiesReader.getPipedUnblockedStreamClassName()!=null) {
+					PipedUnblockedStreamFactory.setImplementation(propertiesReader.getPipedUnblockedStreamClassName());
 				}
 				
 				// MessageSecurity
@@ -2148,8 +2154,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			/* ----------- Inizializzazione NIO Async Server ------------ */
 			try{
-				if(propertiesReader.isNIOConfig_asyncServer_applicativeThreadPoolEnabled()) {
-					AsyncThreadPool.initialize(propertiesReader.getNIOConfig_asyncServer_applicativeThreadPoolSize());
+				if(propertiesReader.isNIOConfig_asyncRequest_doStream() || propertiesReader.isNIOConfig_asyncResponse_doStream()) {
+					AsyncThreadPool.initialize(propertiesReader.getNIOConfig_asyncRequest_applicativeThreadPoolSize(),
+							propertiesReader.getNIOConfig_asyncResponse_applicativeThreadPoolSize());
 				}
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"Inizializzazione NIO Async Server Manager");

@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.pdd.core.connettori.nio;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -27,8 +29,6 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.entity.InputStreamEntity;
-import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedStream;
 
 /**
  * ConnettoreHTTPCORE5_extendAbstractBinResponseConsumer
@@ -42,7 +42,7 @@ public class ConnettoreHTTPCORE5_extendAbstractBinResponseConsumer extends Abstr
 
 	private ConnettoreHTTPCORE5_httpResponse res = null;
 	private ContentType ct = null;
-	private PipedUnblockedStream stream = null;
+	private ByteArrayOutputStream stream = null;
 
 	@Override
 	public void releaseResources() {
@@ -59,6 +59,7 @@ public class ConnettoreHTTPCORE5_extendAbstractBinResponseConsumer extends Abstr
 	protected ConnettoreHTTPCORE5_httpResponse buildResult() {
 		// NOTA: non funziona in streaming. Il complete viene chiamato solamente quando è stato letto tutto lo stream
 		//System.out.println("BUILD RESULT!");
+		this.res.setEntity(new InputStreamEntity(new ByteArrayInputStream(this.stream.toByteArray()), this.ct));
 		return this.res;
 	}
 
@@ -79,9 +80,7 @@ public class ConnettoreHTTPCORE5_extendAbstractBinResponseConsumer extends Abstr
 	protected void data(ByteBuffer bb, boolean endOfStream) throws IOException {
 		//System.out.println("DATA! endOfStream["+endOfStream+"]");
 		if(this.stream==null) {
-			this.stream = new PipedUnblockedStream(null, Utilities.DIMENSIONE_BUFFER);
-			this.stream.setSource("Response");
-			this.res.setEntity(new InputStreamEntity(this.stream, this.ct));
+			this.stream = new ByteArrayOutputStream();
 		}
 		while (bb.hasRemaining()) {
 			//System.out.println("SCRIVOOOOOO");

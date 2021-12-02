@@ -23,7 +23,6 @@ package org.openspcoop2.pdd.core.connettori.nio;
 import java.net.InetSocketAddress;
 import java.net.ProxySelector;
 import java.net.http.HttpClient;
-import java.net.http.HttpClient.Redirect;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,19 +30,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 
-import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.connettori.ConnettoreException;
 import org.openspcoop2.pdd.core.connettori.ConnettoreLogger;
+import org.openspcoop2.pdd.services.connector.AsyncThreadPool;
 import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
-import org.openspcoop2.utils.transport.http.SSLUtilities;
 
 /**
  * ConnettoreHTTPJava_connectionManager
@@ -65,7 +61,7 @@ public class ConnettoreHTTPJava_connectionManager {
 	public static synchronized void initialize() throws ConnettoreException {
 		try {
 			//executors = Executors.newFixedThreadPool( Runtime.getRuntime().availableProcessors() );
-			executors = Executors.newFixedThreadPool( OpenSPCoop2Properties.getInstance().getNIOConfig_asyncServer_applicativeThreadPoolSize() );
+			executors = AsyncThreadPool.getResponsePool();
 			// TBK
 //			if(ConnettoreHTTPJava_connectionManager.idleConnectionEvictor==null) {
 //				OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
@@ -84,6 +80,7 @@ public class ConnettoreHTTPJava_connectionManager {
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private static synchronized void initialize(String key, SSLContext sslContext, HostnameVerifier hostnameVerifier) throws ConnettoreException {
 /* TBK da rivedere
 		if(!ConnettoreHTTPJava_connectionManager.mapPoolingConnectionManager.containsKey(key)){

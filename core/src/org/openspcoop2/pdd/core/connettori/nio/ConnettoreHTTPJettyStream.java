@@ -24,29 +24,22 @@
 package org.openspcoop2.pdd.core.connettori.nio;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.api.Response;
-import org.eclipse.jetty.client.api.Result;
 import org.eclipse.jetty.client.util.BytesRequestContent;
 import org.eclipse.jetty.client.util.InputStreamRequestContent;
 import org.eclipse.jetty.http.HttpMethod;
-
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
@@ -60,12 +53,11 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreException;
 import org.openspcoop2.pdd.core.connettori.ConnettoreExtBaseHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.utils.NameValue;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
-import org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedStream;
+import org.openspcoop2.utils.io.notifier.unblocked.IPipedUnblockedStream;
+import org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedStreamFactory;
 import org.openspcoop2.utils.transport.TransportUtils;
-import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -94,9 +86,7 @@ public class ConnettoreHTTPJettyStream extends ConnettoreExtBaseHTTP {
 		return this.httpConnectionConfig;
 	}
 
-	private boolean stream = OpenSPCoop2Properties.getInstance().isNIOConfig_asyncClient_doStream();
-	private int dimensione_buffer = OpenSPCoop2Properties.getInstance().getNIOConfig_asyncClient_buffer();
-
+	
 	
 	/* Costruttori */
 	public ConnettoreHTTPJettyStream(){
@@ -407,8 +397,6 @@ public class ConnettoreHTTPJettyStream extends ConnettoreExtBaseHTTP {
 							this.dumpBinarioRichiestaUscita(bout, requestMessageType, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
 						}
 						
-						String baseMimeType = ContentTypeUtilities.readBaseTypeFromContentType(contentTypeRichiesta);
-						org.apache.hc.core5.http.ContentType ct = org.apache.hc.core5.http.ContentType.create(baseMimeType);
 						if(bout.isSerializedOnFileSystem()) {
 							this.httpRequest = this.httpRequest.body( new InputStreamRequestContent( new FileInputStream( bout.getSerializedFile() ) ) );
 //							entityProducer = new FileEntityProducer(bout.getSerializedFile(), ct, TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(this.tlm));
@@ -493,22 +481,25 @@ public class ConnettoreHTTPJettyStream extends ConnettoreExtBaseHTTP {
 			// Spedizione byte
 			if(this.debug)
 				this.logger.debug("Spedizione byte...");
-//			ConnettoreHTTPCORE5_responseCallback responseCallback = new ConnettoreHTTPCORE5_responseCallback(this, request, httpBody);
-//			AsyncRequestProducer requestProducer = new BasicRequestProducer(this.httpRequestBuilder, entityProducer);
-//			AsyncResponseConsumer<ConnettoreHTTPCORE5_httpResponse> responseConsumer = new ConnettoreHTTPCORE5_inputStreamEntityConsumer();
-//			httpClient.getHttpclient().execute(requestProducer, responseConsumer, HttpClientContext.create(), responseCallback);
 
 			// TBK aggiungere le configurazioni sulla request ? es: request timeout
 //			this.httpRequest.timeout( totalReqTimeout, TimeUnit.SECONDS );
 
+			int dimensione_buffer = OpenSPCoop2Properties.getInstance().getNIOConfig_asyncResponse_buffer();
+			int timeoutResponse = readConnectionTimeout;
+			
 			// TBK
 			ConnettoreHTTPJettyStream_responseCallback responseCallback = new ConnettoreHTTPJettyStream_responseCallback( this, request, httpBody );
 			var listener = ( new Response.Listener() {
-				private PipedUnblockedStream stream = null;
+				private IPipedUnblockedStream stream = null;
 
 				@Override
 				public void onHeaders( Response response ) {
-					this.stream = new PipedUnblockedStream( null, Utilities.DIMENSIONE_BUFFER );
+					try {
+						this.stream = PipedUnblockedStreamFactory.newPipedUnblockedStream(ConnettoreHTTPJettyStream.this.logger.getLogger(), dimensione_buffer, timeoutResponse, "Response");
+					}catch(Exception e) {
+						throw new RuntimeException(e.getMessage(),e);
+					}
 					CompletableFuture.runAsync( () -> responseCallback.completed( new ConnettoreHTTPJettyStream_responseConsumer( response, this.stream ) ) );
 				}
 

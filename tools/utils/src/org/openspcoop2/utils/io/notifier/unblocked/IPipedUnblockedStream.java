@@ -18,33 +18,35 @@
  *
  */
 package org.openspcoop2.utils.io.notifier.unblocked;
-import java.util.concurrent.Callable;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.slf4j.Logger;
-import org.openspcoop2.utils.UtilsException;
 
 /**
- * AbstractStreamingHandler
+ * IPipedUnblockedStream
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public abstract class AbstractStreamingHandler extends PipedUnblockedStream implements Callable<ResultStreamingHandler> {
-	
-	
-	public AbstractStreamingHandler(Logger log, long sizeBuffer) throws Exception {
-		super();
-		super.init(log,sizeBuffer,-1,"StreamingHandler");
-	}
+public abstract class IPipedUnblockedStream extends InputStream {
 
-	public abstract boolean isPrematureEnd() throws UtilsException;
-
-	public abstract String getError();
-	
-	public abstract Throwable getException();
+	@Override
+	public abstract int read(byte[] b) throws IOException;
+	@Override
+	public abstract int read(byte[] b, int off, int len) throws IOException;
+	@Override
+	public abstract int read() throws IOException;
 	
 	@Override
-	public abstract ResultStreamingHandler call() throws UtilsException;
+	public abstract void close() throws IOException;
 	
+	public abstract void write(byte b) throws IOException;
+	public abstract void write(byte [] b) throws IOException;
+	public abstract void write(byte[] b, int off, int len) throws IOException;
+	
+	public abstract void init(Logger log, long sizeBuffer, int timeoutMs, String source);
+	public abstract void setTimeout(int timeoutMs);
 }

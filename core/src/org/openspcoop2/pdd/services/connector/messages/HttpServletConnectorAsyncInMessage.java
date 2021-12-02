@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.constants.IDService;
+import org.openspcoop2.utils.io.notifier.unblocked.IPipedUnblockedStream;
 
 /**
  * HttpServletConnectorAsyncInMessage
@@ -41,7 +42,21 @@ public class HttpServletConnectorAsyncInMessage extends HttpServletConnectorInMe
 		super(requestInfo, req, idModuloAsIDService, idModulo);
 	}
 
+	private IPipedUnblockedStream _pipe;
+	
 	public void updateInputStream(InputStream is) {
-		this.is = is;
+		this.is = is; // questo viene poi wrappato
+		if(is!=null && is instanceof IPipedUnblockedStream) {
+			this._pipe = (IPipedUnblockedStream) is;
+		}
 	}
+	
+	@Override
+	public void setRequestReadTimeout(int timeout) {
+		super.setRequestReadTimeout(timeout);
+		if(this._pipe!=null) {
+			this._pipe.setTimeout(timeout);
+		}
+	}
+	
 }

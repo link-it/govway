@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.services.connector;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * AsyncThreadPool
@@ -33,18 +34,65 @@ import java.util.concurrent.Executors;
  */
 public class AsyncThreadPool {
 
-	private static ExecutorService pool;
+	private static ExecutorService requestPool;
+	private static ExecutorService responsePool;
 	
-	public static void initialize(int size) {
-		 pool = Executors.newFixedThreadPool(size);  
-	}
-	public static void execute(Runnable runnable) {
-		pool.execute(runnable);
-	}
-	public static void shutdown() {
-		if(pool!=null) {
-			pool.shutdown();
+	public static void initialize(int requestSizePool, int responseSizePool) {
+		if(requestSizePool>0) {
+			requestPool = Executors.newFixedThreadPool(requestSizePool);
+		}
+		if(responseSizePool>0) {
+			responsePool = Executors.newFixedThreadPool(responseSizePool);
 		}
 	}
 	
+	public static void executeInRequestPool(Runnable runnable) {
+		requestPool.execute(runnable);
+	}
+	public static void executeInResponsePool(Runnable runnable) {
+		responsePool.execute(runnable);
+	}
+	
+	public static ExecutorService getRequestPool() {
+		return requestPool;
+	}
+	public static ExecutorService getResponsePool() {
+		return responsePool;
+	}
+	
+	public static void shutdown() {
+		if(requestPool!=null) {
+			requestPool.shutdown();
+		}
+		if(responsePool!=null) {
+			responsePool.shutdown();
+		}
+	}
+	
+	public String getRequestPoolThreadsImage() {
+		if(requestPool instanceof ThreadPoolExecutor) {
+			ThreadPoolExecutor tpe = (ThreadPoolExecutor) requestPool;
+			return getThreadsImage(tpe);
+		}
+		return null;
+	}
+	public String getResponsePoolThreadsImage() {
+		if(responsePool instanceof ThreadPoolExecutor) {
+			ThreadPoolExecutor tpe = (ThreadPoolExecutor) responsePool;
+			return getThreadsImage(tpe);
+		}
+		return null;
+	}
+	private String getThreadsImage(ThreadPoolExecutor tpe) {
+		return
+                String.format("(queue:%d) [%d/%d] Active: %d, Completed: %d, Task: %d, isShutdown: %s, isTerminated: %s",
+                		tpe.getQueue()!=null ? tpe.getQueue().size() : -1,
+                		tpe.getPoolSize(),
+                		tpe.getCorePoolSize(),
+                		tpe.getActiveCount(),
+                		tpe.getCompletedTaskCount(),
+                		tpe.getTaskCount(),
+                		tpe.isShutdown(),
+                		tpe.isTerminated());
+	}
 }

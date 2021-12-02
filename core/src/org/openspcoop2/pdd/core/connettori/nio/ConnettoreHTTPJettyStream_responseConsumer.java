@@ -22,8 +22,6 @@ package org.openspcoop2.pdd.core.connettori.nio;
 import java.io.InputStream;
 
 import org.eclipse.jetty.client.api.Response;
-import org.eclipse.jetty.client.api.Result;
-import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.http.HttpFields;
 
 /**

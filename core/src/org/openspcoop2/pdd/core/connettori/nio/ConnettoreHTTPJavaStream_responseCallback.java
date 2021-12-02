@@ -21,7 +21,6 @@
 package org.openspcoop2.pdd.core.connettori.nio;
 
 import java.net.http.HttpHeaders;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

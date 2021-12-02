@@ -93,8 +93,6 @@ public class ConnettoreHTTPCORE5 extends ConnettoreExtBaseHTTP {
 		return this.httpConnectionConfig;
 	}
 
-	private boolean stream = OpenSPCoop2Properties.getInstance().isNIOConfig_asyncClient_doStream();
-	private int dimensione_buffer = OpenSPCoop2Properties.getInstance().getNIOConfig_asyncClient_buffer();
 	protected URL url;
 	
 	
@@ -500,44 +498,18 @@ public class ConnettoreHTTPCORE5 extends ConnettoreExtBaseHTTP {
 			//System.out.println("CLIENT ["+httpClient.getHttpclient().getClass().getName()+"]");
 			AsyncRequestProducer requestProducer = new BasicRequestProducer(this.httpRequest, entityProducer);
 			//SimpleHttpRequest s = new 
-			AsyncResponseConsumer<ConnettoreHTTPCORE5_httpResponse> responseConsumer = new ConnettoreHTTPCORE5_inputStreamEntityConsumer();
+			AsyncResponseConsumer<ConnettoreHTTPCORE5_httpResponse> responseConsumer = null;
+			boolean stream = OpenSPCoop2Properties.getInstance().isNIOConfig_asyncResponse_doStream();
+			int dimensione_buffer = OpenSPCoop2Properties.getInstance().getNIOConfig_asyncResponse_buffer();
+			if(stream) {
+				responseConsumer = new ConnettoreHTTPCORE5_inputStreamEntityConsumer(this.logger, dimensione_buffer, readConnectionTimeout);	
+			}
+			else {
+				responseConsumer = new ConnettoreHTTPCORE5_extendAbstractBinResponseConsumer();
+			}
 			//System.out.println("CLIENT ["+httpClient.getHttpclient().getClass().getName()+"]");
 			httpClient.getHttpclient().execute(requestProducer, responseConsumer, HttpClientContext.create(), responseCallback);
-			
-			// CAPIRE SE SERVE E SEMMAI BUTTARE VIA LE PROPERTIES AGGIUNTE!
-//			
-//			if(this.stream && streamOut!=null) {
-//				if(this.isSoap && this.sbustamentoSoap){
-//					if(this.debug)
-//						this.logger.debug("Sbustamento...");
-//					TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,streamOut);
-//				}else{
-//					this.requestMsg.writeTo(streamOut, consumeRequestMessage);
-//				}
-//			}
-			
-//			try {
-//				if(this.debug) {
-//					this.logger.debug("NIO - Sync Wait ...");
-//				}
-//				synchronized (this.httpRequest) {
-//					if(this.callbackResponseFinished) { // questo controllo serve per evitare che si vada in wait sleep dopo che la callback e' già terminata (e quindi ha già fatto il notify)
-//						// la callback associata alla chiamata precedente 'getHttpclient().execute' è già terminata. Non serve dormire.
-//						if(this.debug) {
-//							this.logger.debug("NIO - Sync Wait non necessario, callback gia' terminata");
-//						}
-//					}
-//					else {
-//						if(this.debug) {
-//							this.logger.debug("NIO - Wait ...");
-//						}
-//						this.httpRequest.wait(readConnectionTimeout); // sincronizzo sulla richiesta
-//					}
-//				}
-//			}catch(Throwable t) {
-//				throw new Exception("Read Timeout expired ("+readConnectionTimeout+")",t);
-//			}
-			
+						
 			if(this.debug) {
 				this.logger.debug("NIO - Terminata gestione richiesta");
 			}

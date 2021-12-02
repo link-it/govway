@@ -32,8 +32,9 @@ import java.util.concurrent.Flow.Publisher;
 import java.util.concurrent.Flow.Subscriber;
 import java.util.concurrent.Flow.Subscription;
 
-import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedStream;
+import org.openspcoop2.pdd.core.connettori.ConnettoreLogger;
+import org.openspcoop2.utils.io.notifier.unblocked.IPipedUnblockedStream;
+import org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedStreamFactory;
 
 /**
  * ConnettoreHTTPJava_inputStreamEntityConsumer
@@ -48,31 +49,40 @@ public class ConnettoreHTTPJavaFlow_responseConsumer {
 	private static ExecutorService executors = Executors.newFixedThreadPool( 2 );
 
 	private final HttpResponse< Publisher<List<ByteBuffer>> > res;
-	private PipedUnblockedStream stream = null;
+	private IPipedUnblockedStream stream = null;
 
-	public ConnettoreHTTPJavaFlow_responseConsumer( HttpResponse<Publisher<List<ByteBuffer>>> response ) {
+	private ConnettoreLogger logger;
+	private int sizeBuffer;
+	private Integer readTimeout;
+	
+	public ConnettoreHTTPJavaFlow_responseConsumer( HttpResponse<Publisher<List<ByteBuffer>>> response,
+			ConnettoreLogger logger, int sizeBuffer, int readTimeout) {
 		this.res = response;
+		this.logger = logger;
+		this.sizeBuffer = sizeBuffer;
+		this.readTimeout = readTimeout;
 	}
 
 	public int getResponseCode() {
-		return res.statusCode();
+		return this.res.statusCode();
 	}
 
 	public HttpHeaders getHeaders() {
-		return res.headers();
+		return this.res.headers();
 	}
 
 	public long getContentLength() {
 		return this.res.headers().firstValueAsLong( "Content-Length" ).orElse( -1L );
 	}
 
-	public InputStream getContent() {
+	public InputStream getContent() throws IOException {
 		if ( this.stream == null ) {
-			this.stream = new PipedUnblockedStream( null, Utilities.DIMENSIONE_BUFFER );
+			this.stream = PipedUnblockedStreamFactory.newPipedUnblockedStream(this.logger.getLogger(), this.sizeBuffer, this.readTimeout, "Response");
 			CompletableFuture.runAsync( () -> {
 				this.res.body().subscribe( new Subscriber< List<ByteBuffer> >() {
 					private Subscription subscription = null;
 					private int requestedItems = 0;
+					@SuppressWarnings("unused")
 					private long readBytes = 0L;
 
 					@Override
