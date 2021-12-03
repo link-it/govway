@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader;
 
@@ -78,6 +79,7 @@ public class NonBloccantePushSoapTest extends ConfigLoader {
     			.http(Integer.valueOf(prop.getProperty("http_port")))
     			.build();
     }
+  
         
     @AfterClass
     public static void afterClass() {

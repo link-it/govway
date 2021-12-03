@@ -2,8 +2,9 @@ Feature: Controllo traccia richiesta stato IDAC01 su fruizione ed erogazione per
 
 Scenario: Controllo traccia richiesta stato IDAC01 su fruizione ed erogazione per profilo Non Bloccante Rest
 
-
+* def merge_checks = read('classpath:utils/merge-checks.js')
 * def get_traccia = read('classpath:utils/get_traccia.js')
+
 * def traccia_to_match = 
 """
 [
@@ -15,7 +16,7 @@ Scenario: Controllo traccia richiesta stato IDAC01 su fruizione ed erogazione pe
 ]
 """
 
-* def result = get_traccia(tid, 'Richiesta') 
+* def result = get_traccia(tid, 'Richiesta')
 * match result contains deep traccia_to_match
 
 
@@ -32,8 +33,8 @@ Scenario: Controllo traccia richiesta stato IDAC01 su fruizione ed erogazione pe
 ]
 """
 
-
-* def risposta_to_match = karate.append(risposta_to_match, additional_check)
+* def risposta_to_match = merge_checks(risposta_to_match, additional_check)
+#* def risposta_to_match = karate.append(risposta_to_match, additional_check)
 
 * def result = get_traccia(tid, 'Risposta') 
 * match result contains deep risposta_to_match

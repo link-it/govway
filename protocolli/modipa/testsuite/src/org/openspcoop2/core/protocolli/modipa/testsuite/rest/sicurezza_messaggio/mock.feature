@@ -88,8 +88,8 @@ Scenario: isTest('connettivita-base-no-sbustamento')
 Scenario: isTest('response-without-payload')
     * match requestHeaders['Authorization'] == '#notpresent'
     * def responseStatus = 201
-    * def response = ''
-    * def responseHeaders = ({ 'Content-Type': null })
+    * def response = null
+    
 
 
 Scenario: isTest('request-without-payload')
@@ -101,9 +101,8 @@ Scenario: isTest('request-without-payload')
 Scenario: isTest('request-response-without-payload')
     * match requestHeaders['Authorization'] == '#notpresent'
     * def responseStatus = 204
-    * def response = ''
-    * def responseHeaders = ({ 'Content-Type': null })
-
+    * def response = null
+    
 
 Scenario: isTest('certificato-server-scaduto') || isTest('certificato-server-revocato')
     * def responseStatus = 200
@@ -158,15 +157,14 @@ Scenario: isTest('assenza-header-digest-risposta')
 Scenario: isTest('response-without-payload-idar03')  || isTest('response-without-payload-idar03-tampered-header')
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
     * def responseStatus = 201
-    * def response = ''
-    * def responseHeaders = ({ 'Content-Type': null, 'IDAR03TestHeader': "TestHeaderResponse" })
+    * def response = null
+    * def responseHeaders = ({ 'IDAR03TestHeader': "TestHeaderResponse" })
 
 
 Scenario: isTest('response-without-payload-idar03-digest-richiesta')
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
     * def responseStatus = 201
-    * def response = ''
-    * def responseHeaders = ({ 'Content-Type': null })
+    * def response = null
 
 
 Scenario: isTest('request-without-payload-idar03') || isTest('request-without-payload-idar03-digest-richiesta')
@@ -188,15 +186,14 @@ Scenario: isTest('request-without-payload-idar03') || isTest('request-without-pa
 Scenario: isTest('request-response-without-payload-idar03')
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
     * def responseStatus = 204
-    * def response = ''
-    * def responseHeaders = ({ 'Content-Type': null, 'IDAR03TestHeader': "TestHeaderResponse" })
+    * def response = null
+    * def responseHeaders = ({ 'IDAR03TestHeader': "TestHeaderResponse" })
 
 
 Scenario: isTest('request-response-without-payload-idar03-digest-richiesta')
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
     * def responseStatus = 204
-    * def response = ''
-    * def responseHeaders = ({ 'Content-Type': null })
+    * def response = null
 
 
 Scenario: isTest('informazioni-utente-header') || isTest('informazioni-utente-query') || isTest('informazioni-utente-mixed') || isTest('informazioni-utente-static') || isTest('informazioni-utente-custom')
@@ -221,8 +218,7 @@ Scenario: isTest('idar03-token-azione-puntuale')
 
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
     * def responseStatus = 201
-    * def response = ''
-    * def responseHeaders = ({ 'Content-Type': null })
+    * def response = null
 
 Scenario: isTest('idar03-token-azione-puntuale-default') || isTest('idar03-token-criteri-personalizzati')
     

@@ -34,11 +34,16 @@ Background:
     * def tamper_token = 
     """
     function(tok) {
+        karate.log('tampering token ', tok)
         var prefix = "Bearer"
         tok = tok.slice(prefix.length).trim()
         var components = tok.split('.')
         components[1] = components[1] + 'tamper'
-        return 'Bearer ' + components[0] + '.' + components[1] + '.' + components[2]
+        
+        var ret = 'Bearer ' + components[0] + '.' + components[1] + '.' + components[2]
+        karate.log('token tampered')
+
+        return ret
     }
     """
 
@@ -170,6 +175,7 @@ Scenario: isTest('response-without-payload')
 
     * def url_invocazione_erogazione = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR01CRUD/v1'
     * karate.proceed(url_invocazione_erogazione)
+    * match response == ''
 
     * def server_token_match =
     """
@@ -189,10 +195,10 @@ Scenario: isTest('response-without-payload')
     """
     ({
         'GovWay-TestSuite-GovWay-Client-Token': requestHeaders.Authorization[0],
-        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders.Authorization[0],
-        'Content-Type': null
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders.Authorization[0]        
     })
     """
+    * def response = null
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
 
 
@@ -234,6 +240,7 @@ Scenario: isTest('request-response-without-payload')
 
     * def url_invocazione_erogazione = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR01CRUD/v1'
     * karate.proceed(url_invocazione_erogazione)
+    * match response == ''
 
     * def server_token_match =
     """
@@ -253,10 +260,10 @@ Scenario: isTest('request-response-without-payload')
     """
     ({
         'GovWay-TestSuite-GovWay-Client-Token': requestHeaders.Authorization[0],
-        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders.Authorization[0],
-        'Content-Type': null
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders.Authorization[0]        
     })
     """
+    * def response = null
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
 
 
@@ -573,7 +580,7 @@ Scenario: isTest('low-iat-ttl-erogazione')
 
 Scenario: isTest('manomissione-token-richiesta')
 
-    * set requestHeaders['Authorization'][0] = tamper_token(requestHeaders['Authorization'][0])
+    * set requestHeaders.Authorization = tamper_token(requestHeaders['Authorization'][0])
     * karate.proceed(govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR01NoValidazione/v1')
     * match responseStatus == 400
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/invalid-token-signature-in-request.json')
@@ -582,7 +589,7 @@ Scenario: isTest('manomissione-token-richiesta')
 
 Scenario: isTest('manomissione-token-richiesta-no-disclosure')
 
-    * set requestHeaders['Authorization'][0] = tamper_token(requestHeaders['Authorization'][0])
+    * set requestHeaders.Authorization = tamper_token(requestHeaders['Authorization'][0])
     * karate.proceed(govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR01NoValidazione/v1')
     * match responseStatus == 400
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/interoperability-invalid-request.json')
@@ -958,6 +965,7 @@ Scenario: isTest('response-without-payload-idar03')
 
     * def url_invocazione_erogazione = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CRUD/v1'
     * karate.proceed(url_invocazione_erogazione)
+    * match response == ''
 
     * def server_token_match =
     """
@@ -981,10 +989,10 @@ Scenario: isTest('response-without-payload-idar03')
     """
     ({
         'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['Agid-JWT-Signature'][0],
-        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders['Agid-JWT-Signature'][0],
-        'Content-Type': null
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders['Agid-JWT-Signature'][0],       
     })
     """
+    * def response = null
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
 
 
@@ -1012,6 +1020,7 @@ Scenario: isTest('response-without-payload-idar03-tampered-header')
 
     * def url_invocazione_erogazione = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CRUD/v1'
     * karate.proceed(url_invocazione_erogazione)
+    * match response == ''
 
     * def server_token_match =
     """
@@ -1036,10 +1045,10 @@ Scenario: isTest('response-without-payload-idar03-tampered-header')
     ({
         'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['Agid-JWT-Signature'][0],
         'GovWay-TestSuite-GovWay-Server-Token': responseHeaders['Agid-JWT-Signature'][0],
-        'Content-Type': null,
         'IDAR03TestHeader': 'tampered_header'
     })
     """
+    * def response = null
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
 
 
@@ -1144,6 +1153,7 @@ Scenario: isTest('request-response-without-payload-idar03')
 
     * def url_invocazione_erogazione = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CRUD/v1'
     * karate.proceed(url_invocazione_erogazione)
+    * match response == ''
 
     * def server_token_match =
     """
@@ -1167,10 +1177,10 @@ Scenario: isTest('request-response-without-payload-idar03')
     """
     ({
         'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['Agid-JWT-Signature'][0],
-        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders['Agid-JWT-Signature'][0],
-        'Content-Type': null
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders['Agid-JWT-Signature'][0]      
     })
     """
+    * def response = null
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
 
 
@@ -1197,6 +1207,7 @@ Scenario: isTest('response-without-payload-idar03-digest-richiesta')
 
     * def url_invocazione_erogazione = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CRUDDigestRichiesta/v1'
     * karate.proceed(url_invocazione_erogazione)
+    * match response == ''
 
     * def request_token = decodeToken(requestHeaders['Agid-JWT-Signature'][0], "AGID")
     * def request_digest = get request_token $.payload.signed_headers..digest
@@ -1222,10 +1233,10 @@ Scenario: isTest('response-without-payload-idar03-digest-richiesta')
     """
     ({
         'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['Agid-JWT-Signature'][0],
-        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders['Agid-JWT-Signature'][0],
-        'Content-Type': null
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders['Agid-JWT-Signature'][0]        
     })
     """
+    * def response = null
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
 
 
@@ -1299,6 +1310,7 @@ Scenario: isTest('request-response-without-payload-idar03-digest-richiesta')
 
     * def url_invocazione_erogazione = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CRUDDigestRichiesta/v1'
     * karate.proceed(url_invocazione_erogazione)
+    * match response == ''
 
     * def server_token_match =
     """
@@ -1320,10 +1332,10 @@ Scenario: isTest('request-response-without-payload-idar03-digest-richiesta')
     """
     ({
         'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['Agid-JWT-Signature'][0],
-        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders['Agid-JWT-Signature'][0],
-        'Content-Type': null
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders['Agid-JWT-Signature'][0]        
     })
     """
+    * def response = null
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
 
 
@@ -1690,8 +1702,7 @@ Scenario: isTest('idar03-token-azione-puntuale')
     * def newHeaders = 
     """
     ({
-        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['Agid-JWT-Signature'][0],
-        'Content-Type': null
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['Agid-JWT-Signature'][0],      
     })
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)

@@ -1,5 +1,7 @@
 Feature: Controllo traccia IDAR01
 
+
+
 Scenario: Controllo traccia IDAR01
 
 
@@ -8,7 +10,7 @@ Scenario: Controllo traccia IDAR01
 
 * def other_checks = karate.get('other_checks', [])
 
-
+* def merge_checks = read('classpath:utils/merge-checks.js')
 * def get_traccia = read('classpath:utils/get_traccia.js')
 * def traccia_to_match = 
 """
@@ -29,7 +31,7 @@ Scenario: Controllo traccia IDAR01
 ])
 """
 
-* def traccia_to_match = karate.append(traccia_to_match, other_checks)
+* def traccia_to_match = merge_checks(traccia_to_match, other_checks)
 
 * def result = get_traccia(tid,tipo) 
 * match result contains deep traccia_to_match

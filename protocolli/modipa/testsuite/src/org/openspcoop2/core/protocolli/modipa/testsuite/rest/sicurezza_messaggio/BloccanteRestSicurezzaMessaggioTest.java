@@ -21,16 +21,21 @@
 
 package org.openspcoop2.core.protocolli.modipa.testsuite.rest.sicurezza_messaggio;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader;
 
 import com.intuit.karate.KarateOptions;
+import com.intuit.karate.Results;
+import com.intuit.karate.Runner;
 import com.intuit.karate.core.MockServer;
 import com.intuit.karate.junit4.Karate;
 import com.intuit.karate.resource.ResourceUtils;
@@ -43,14 +48,7 @@ import com.intuit.karate.resource.ResourceUtils;
 * @author $Author$
 * @version $Rev$, $Date$
 */
-@RunWith(Karate.class)
-@KarateOptions(features = {
-    "classpath:test/rest/sicurezza-messaggio/idar01.feature",
-    "classpath:test/rest/sicurezza-messaggio/idar01-no-disclosure.feature",
-    "classpath:test/rest/sicurezza-messaggio/idar02.feature",
-    "classpath:test/rest/sicurezza-messaggio/idar03.feature",
-    "classpath:test/rest/sicurezza-messaggio/idar0302.feature",
-    })
+
 public class BloccanteRestSicurezzaMessaggioTest extends ConfigLoader {
     
 	private static MockServer server;
@@ -72,6 +70,20 @@ public class BloccanteRestSicurezzaMessaggioTest extends ConfigLoader {
     			.args(new HashMap<String,Object>((Map) prop))
     			.http(Integer.valueOf(prop.getProperty("http_port")))
     			.build();
+    }
+    
+    @Test
+    public void test() {
+    	    	
+    	Results results = Runner.path(
+    			"classpath:test/rest/sicurezza-messaggio/idar01.feature",
+    		    "classpath:test/rest/sicurezza-messaggio/idar01-no-disclosure.feature",
+    		    "classpath:test/rest/sicurezza-messaggio/idar02.feature",
+    		    "classpath:test/rest/sicurezza-messaggio/idar03.feature",
+    		    "classpath:test/rest/sicurezza-messaggio/idar0302.feature")
+    		.parallel(1);
+        
+    	assertEquals(0, results.getFailCount());
     }
         
     @AfterClass

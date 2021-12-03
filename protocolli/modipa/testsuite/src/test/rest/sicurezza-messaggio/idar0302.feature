@@ -23,7 +23,7 @@ And header IDAR03TestHeader = "TestHeaderRequest"
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
 
 * def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0], "AGID")
@@ -177,7 +177,7 @@ And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', p
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
 * def client_token_header = responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0]
 * def server_token_header = responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0]
@@ -225,7 +225,7 @@ And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', p
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
 
 * def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0])
@@ -274,7 +274,7 @@ And param userIP = '10.112.32.21'
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
 * def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
 * def client_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0], "AGID")
@@ -337,7 +337,7 @@ And param userIP = '10.112.32.21'
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
 
 
@@ -352,7 +352,7 @@ And header Authorization = call basic ({ username: 'PKCS11-Client1HSM', password
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 And match header Agid-JWT-Signature == '#notpresent'
 
 * def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
@@ -401,7 +401,7 @@ And header Authorization = call basic ({ username: 'PKCS11-Client2HSM', password
 When method post
 Then status 200
 And match response == read('response.json')
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 And match header Agid-JWT-Signature == '#notpresent'
 
 * def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
@@ -451,7 +451,7 @@ And header Authorization = call basic ({ username: 'PKCS11-Client3HSM', password
 When method post
 Then status 200
 And match response == {"esito":"OK"}
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 And match header Agid-JWT-Signature == '#notpresent'
 
 * def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")

@@ -99,5 +99,5 @@ Scenario:
     karate.fail("Nessuno scenario matcahto")
 
 # 
-# * def response = read('classpath:src/test/soap/non-bloccante/pull/richiesta-applicativa-response.xml')
+# * def response = read('classpath:test/soap/non-bloccante/pull/richiesta-applicativa-response.xml')
 # * def responseStatus = 200

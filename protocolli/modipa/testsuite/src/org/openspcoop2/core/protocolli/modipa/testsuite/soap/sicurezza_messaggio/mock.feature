@@ -62,7 +62,7 @@ Scenario: isTest('response-without-payload')
     
     * match bodyPath('/Envelope/Header') == ''
     * def responseStatus = 200
-    * def response = ''
+    * def response = null
 
 
 Scenario: isTest('disabled-security-on-action')
@@ -117,7 +117,7 @@ Scenario: isTest('response-without-payload-idas03') || isTest('response-without-
     
     * match bodyPath('/Envelope/Header') == ''
     * def responseStatus = 200
-    * def response = ''
+    * def response = null
 
 
 Scenario: isTest('informazioni-utente-header') || isTest('informazioni-utente-query')  || isTest('informazioni-utente-mixed') || isTest('informazioni-utente-static') || isTest('informazioni-utente-custom')

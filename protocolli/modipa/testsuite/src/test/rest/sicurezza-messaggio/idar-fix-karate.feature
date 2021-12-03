@@ -19,7 +19,7 @@ And header GovWay-TestSuite-Test-ID = 'request-without-payload'
 And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
 When method get
 Then status 200
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 And match response == read('request.json')
 
 * def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0])
@@ -45,7 +45,7 @@ And header GovWay-TestSuite-Test-ID = 'request-response-without-payload'
 And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
 When method delete
 Then status 204
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
 * def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0])
 * def server_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0])
@@ -70,7 +70,7 @@ And header GovWay-TestSuite-Test-ID = 'request-without-payload-idar03'
 And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
 When method get
 Then status 200
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 And match response == read('request.json')
 
 * def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0], "AGID")
@@ -121,7 +121,7 @@ And header GovWay-TestSuite-Test-ID = 'request-response-without-payload-idar03'
 And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
 When method delete
 Then status 204
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
 * def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0], "AGID")
 * def server_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0], "AGID")
@@ -147,7 +147,7 @@ And header GovWay-TestSuite-Test-ID = 'request-without-payload-idar03-digest-ric
 And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
 When method get
 Then status 200
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 And match response == read('request.json')
 
 * def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0], "AGID")
@@ -185,7 +185,7 @@ And header GovWay-TestSuite-Test-ID = 'request-response-without-payload-idar03-d
 And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
 When method delete
 Then status 204
-And match header Authorization == '#notpresent'
+And match header Authorization == null
 
 * def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0], "AGID")
 * def server_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0], "AGID")
