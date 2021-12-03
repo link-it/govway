@@ -50,8 +50,11 @@ Sono stati risolti i seguenti bug:
 
 Per la console di gestione sono stati risolti i seguenti bug:
 
-- una connessione al database veniva acceduta dalla console anche per gestire risorse statiche non protette (es. js/autocomplete.js o css/linkit-base.css).
+- una connessione al database veniva acceduta dalla console anche per gestire risorse statiche non protette (es. js/autocomplete.js o css/linkit-base.css);
 
+- corretto bug presente nella funzionalità di export e import di un'API che non preservava la configurazione del profilo di collaborazione, del filtro duplicati, del riferimento alla richiesta e dell'id di conversazione in alcune casistiche di configurazione;
+
+- la ricerca delle operazioni effettuate sulla console, tramite la funzionalità di 'Auditing', avviene adesso tramite criteri "contains case insensitive". Inoltre nella lista delle operazioni individuate è stata aggiunta la data di esecuzione dell'operazione.
 
 
 Per la console di monitoraggio sono stati risolti i seguenti bug:

@@ -2,6 +2,16 @@
 
 	* Rilasciata versione 3.3.5.p1
 
+2021-12-03  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole, GovWayCore]
+	Risolto Bug OP-1288
+	Aggiunta la funzionalità di 'Consegna condizionale' anche per API soap con profilo oneway.
+	Nella funzionalità di 'Auditing' le ricerche per identificativo vengono adesso effettuate tramite criteri "contains case insensitive". 
+	Inoltre nella lista dei risultati è stata aggiunta la data di esecuzione dell'operazione.
+	Infine è stato corretto il bug export/import della configurazione dell'API che non preservava la configurazione del profilo di collaborazione, 
+	del filtro duplicati, del riferimento alla richiesta e dell'id di conversazione in alcune casistiche di configurazione.
+
 2021-12-02  Giuliano Pintori <pintori@link.it>
 
 	* [GovwayConsole]

@@ -133,6 +133,7 @@ public class AuditCostanti {
 	public final static String PARAMETRO_AUDIT_OPERATION_ID_OP = "idop";
 	public final static String PARAMETRO_AUDIT_OPERATION_TIME_EXECUTE = "timeex";
 	public final static String PARAMETRO_AUDIT_OPERATION_TIME_REQUEST = "timereq";
+	public final static String PARAMETRO_AUDIT_OPERATION_ID_OPERAZIONE = "iddbop";
 	public final static String PARAMETRO_AUDIT_OPERATION_TIPO_OPERAZIONE = "tipoop";
 	public final static String PARAMETRO_AUDIT_OPERATION_TIPO_OGGETTO = "tipoogg";
 	public final static String PARAMETRO_AUDIT_OPERATION_OBJECT_ID = "objid";
@@ -149,6 +150,7 @@ public class AuditCostanti {
 	public final static String LABEL_PARAMETRO_AUDIT_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_AUDIT_STATO_2 = "Audit";
 	public final static String LABEL_PARAMETRO_AUDIT_UTENTE = "Utente";
+	public final static String LABEL_PARAMETRO_AUDIT_ID_OPERAZIONE = "Id operazione";
 	public final static String LABEL_PARAMETRO_AUDIT_TIPO_OPERAZIONE = "Tipo operazione";
 	public final static String LABEL_PARAMETRO_AUDIT_TIPO_OGGETTO = "Tipo oggetto";
 	public final static String LABEL_PARAMETRO_AUDIT_STATO_OPERAZIONE = "Stato operazione";
@@ -157,6 +159,7 @@ public class AuditCostanti {
 	public final static String LABEL_PARAMETRO_AUDIT_DUMP_AZIONE = "Dump azione";
 	public final static String LABEL_PARAMETRO_AUDIT_STATO_AZIONE = "Stato azione";
 	public final static String LABEL_PARAMETRO_AUDIT_ID_UPPER_CASE = "ID";
+	public final static String LABEL_PARAMETRO_AUDIT_DATA_ESECUZIONE = "Data";
 	public final static String LABEL_PARAMETRO_AUDIT_ID = "Identificativo";
 	public final static String LABEL_PARAMETRO_AUDIT_OPERAZIONE = "Operazione";
 	public final static String LABEL_PARAMETRO_AUDIT_OGGETTO = "Oggetto";

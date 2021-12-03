@@ -36,7 +36,7 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 public enum TipoBehaviour implements IEnumeration , Serializable , Cloneable {
 
 	CONSEGNA_LOAD_BALANCE (CostantiConfigurazione.CONSEGNA_LOAD_BALANCE ,"Load Balance"), // per tutti
-	CONSEGNA_MULTIPLA (CostantiConfigurazione.CONSEGNA_MULTIPLA ,"Più Destinatari"), // per oneway-soap
+	CONSEGNA_MULTIPLA (CostantiConfigurazione.CONSEGNA_MULTIPLA , "Consegna Multipla"), //ex "Più Destinatari"), // per oneway-soap
 	CONSEGNA_CONDIZIONALE (CostantiConfigurazione.CONSEGNA_CONDIZIONALE ,"Consegna Condizionale"), // per tutti
 	CONSEGNA_CON_NOTIFICHE (CostantiConfigurazione.CONSEGNA_CON_NOTIFICHE ,"Consegna con Notifiche"), // per !oneway-soap e rest
 	CUSTOM (CostantiConfigurazione.CONSEGNA_CUSTOM ,"Personalizzata");
@@ -113,12 +113,15 @@ public enum TipoBehaviour implements IEnumeration , Serializable , Cloneable {
 		l.add(TipoBehaviour.CONSEGNA_LOAD_BALANCE);
 		l.add(TipoBehaviour.CONSEGNA_CONDIZIONALE);
 		if(consegnaMultiplaEnabled) {
+			l.add(TipoBehaviour.CONSEGNA_CON_NOTIFICHE);
 			if(soapOneway) {
 				l.add(TipoBehaviour.CONSEGNA_MULTIPLA);
 			}
-			else {
-				l.add(TipoBehaviour.CONSEGNA_CON_NOTIFICHE);
-			}
+			// posso usarla anche su soap oneway
+			//else {
+			// quindi spostata sopra la consegna multipla per coerenza di spiegazione
+			//l.add(TipoBehaviour.CONSEGNA_CON_NOTIFICHE);
+			//}
 		}
 		l.add(TipoBehaviour.CUSTOM);
 		return l;

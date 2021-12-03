@@ -76,6 +76,7 @@ import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
+import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
@@ -1613,78 +1614,144 @@ public class XMLDataConverter {
 		}
 	}
 	
+	public static boolean equals(StatoFunzionalita arg1, StatoFunzionalita arg2) {
+		if(arg1==null) {
+			return arg2==null;
+		}
+		else {
+			return arg1.equals(arg2);
+		}
+	}
+	
 	public static void impostaInformazioniRegistroDB_AccordoServizioParteComune(AccordoServizioParteComune as){
-		ProfiloCollaborazione profiloCollaborazione = as.getProfiloCollaborazione();
 		
 		// Devono essere impostati i comportamenti per la ridefinizione delle azioni
 		for(int k=0; k<as.sizeAzioneList();k++){
-			if( (as.getAzione(k).getConfermaRicezione()!=null) || 
-				(as.getAzione(k).getConsegnaInOrdine()!=null) ||
-				(as.getAzione(k).getFiltroDuplicati()!=null) || 
-				(as.getAzione(k).getIdCollaborazione()!=null) ||
-				(as.getAzione(k).getProfiloCollaborazione()!=null) ||
-				(as.getAzione(k).getScadenza()!=null) ){
-					as.getAzione(k).setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
-				}else{
-					as.getAzione(k).setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_DEFAULT);
-				}
-			
-			if(as.getAzione(k).getProfiloCollaborazione()==null){
-				as.getAzione(k).setProfiloCollaborazione(profiloCollaborazione);
+			if(
+					(as.getAzione(k).getProfiloCollaborazione()!=null && !as.getAzione(k).getProfiloCollaborazione().equals(as.getProfiloCollaborazione())) ||
+					!equals(as.getAzione(k).getConfermaRicezione(),as.getConfermaRicezione()) ||
+					!equals(as.getAzione(k).getConsegnaInOrdine(),as.getConsegnaInOrdine()) ||
+					!equals(as.getAzione(k).getFiltroDuplicati(),as.getFiltroDuplicati()) ||
+					!equals(as.getAzione(k).getIdCollaborazione(),as.getIdCollaborazione()) ||
+					!equals(as.getAzione(k).getIdRiferimentoRichiesta(),as.getIdRiferimentoRichiesta()) ||
+					(as.getAzione(k).getScadenza()!=null && !as.getAzione(k).getScadenza().equals(as.getScadenza()))
+					) {
+				as.getAzione(k).setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
+			}else{
+				as.getAzione(k).setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_DEFAULT);
+				as.getAzione(k).setProfiloCollaborazione(as.getProfiloCollaborazione());
+				as.getAzione(k).setConfermaRicezione(as.getConfermaRicezione());
+				as.getAzione(k).setConsegnaInOrdine(as.getConsegnaInOrdine());
+				as.getAzione(k).setFiltroDuplicati(as.getFiltroDuplicati());
+				as.getAzione(k).setIdCollaborazione(as.getIdCollaborazione());
+				as.getAzione(k).setIdRiferimentoRichiesta(as.getIdRiferimentoRichiesta());
+				as.getAzione(k).setScadenza(as.getScadenza());
 			}
 		}
 		// Devono essere impostati i comportamenti per la ridefinizione dei port-types e delle azioni dei port-types
 		for(int k=0; k<as.sizePortTypeList();k++){
 			PortType pt = as.getPortType(k);
-			if( (pt.getConfermaRicezione()!=null) || 
-				(pt.getConsegnaInOrdine()!=null) ||
-				(pt.getFiltroDuplicati()!=null) || 
-				(pt.getIdCollaborazione()!=null) ||
-				(pt.getProfiloCollaborazione()!=null) ||
-				(pt.getScadenza()!=null) ){
+			if(
+					(pt.getProfiloCollaborazione()!=null && !pt.getProfiloCollaborazione().equals(as.getProfiloCollaborazione())) ||
+					!equals(pt.getConfermaRicezione(),as.getConfermaRicezione()) ||
+					!equals(pt.getConsegnaInOrdine(),as.getConsegnaInOrdine()) ||
+					!equals(pt.getFiltroDuplicati(),as.getFiltroDuplicati()) ||
+					!equals(pt.getIdCollaborazione(),as.getIdCollaborazione()) ||
+					!equals(pt.getIdRiferimentoRichiesta(),as.getIdRiferimentoRichiesta()) ||
+					(pt.getScadenza()!=null && !pt.getScadenza().equals(as.getScadenza()))
+					) {
 				pt.setProfiloPT(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
 			}else{
 				pt.setProfiloPT(CostantiRegistroServizi.PROFILO_AZIONE_DEFAULT);
-			}
-			
-			if(pt.getProfiloCollaborazione()==null){
-				pt.setProfiloCollaborazione(profiloCollaborazione);
+				pt.setProfiloCollaborazione(as.getProfiloCollaborazione());
+				pt.setConfermaRicezione(as.getConfermaRicezione());
+				pt.setConsegnaInOrdine(as.getConsegnaInOrdine());
+				pt.setFiltroDuplicati(as.getFiltroDuplicati());
+				pt.setIdCollaborazione(as.getIdCollaborazione());
+				pt.setIdRiferimentoRichiesta(as.getIdRiferimentoRichiesta());
+				pt.setScadenza(as.getScadenza());
 			}
 			
 			for(int l=0; l<pt.sizeAzioneList();l++){
 				Operation op = pt.getAzione(l);
-				if( (op.getConfermaRicezione()!=null) || 
-						(op.getConsegnaInOrdine()!=null) ||
-						(op.getFiltroDuplicati()!=null) || 
-						(op.getIdCollaborazione()!=null) ||
-						(op.getProfiloCollaborazione()!=null) ||
-						(op.getScadenza()!=null) ){
+				
+				boolean ridefinitoProfiloAzioneParametri = false;
+				ProfiloCollaborazione profiloDefault = null;
+				String scadenzaDefault = null;
+				if(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO.equals(pt.getProfiloPT())) {
+					ridefinitoProfiloAzioneParametri = 
+							!equals(op.getConfermaRicezione(),pt.getConfermaRicezione()) ||
+							!equals(op.getConsegnaInOrdine(),pt.getConsegnaInOrdine()) ||
+							!equals(op.getFiltroDuplicati(),pt.getFiltroDuplicati()) ||
+							!equals(op.getIdCollaborazione(),pt.getIdCollaborazione()) ||
+							!equals(op.getIdRiferimentoRichiesta(),pt.getIdRiferimentoRichiesta());
+					profiloDefault = pt.getProfiloCollaborazione();
+					scadenzaDefault = pt.getScadenza();
+				}
+				else {
+					ridefinitoProfiloAzioneParametri = 
+							!equals(op.getConfermaRicezione(),as.getConfermaRicezione()) ||
+							!equals(op.getConsegnaInOrdine(),as.getConsegnaInOrdine()) ||
+							!equals(op.getFiltroDuplicati(),as.getFiltroDuplicati()) ||
+							!equals(op.getIdCollaborazione(),as.getIdCollaborazione()) ||
+							!equals(op.getIdRiferimentoRichiesta(),as.getIdRiferimentoRichiesta());
+					profiloDefault = as.getProfiloCollaborazione();
+					scadenzaDefault = as.getScadenza();
+				}
+				
+				if(	(op.getProfiloCollaborazione()!=null && !op.getProfiloCollaborazione().equals(profiloDefault)) ||
+						ridefinitoProfiloAzioneParametri ||
+						(op.getScadenza()!=null && !op.getScadenza().equals(scadenzaDefault))
+						) {
 					op.setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
 				}else{
 					op.setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_DEFAULT);
+					
+					if(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO.equals(pt.getProfiloPT())) {
+						op.setProfiloCollaborazione(pt.getProfiloCollaborazione());
+						op.setConfermaRicezione(pt.getConfermaRicezione());
+						op.setConsegnaInOrdine(pt.getConsegnaInOrdine());
+						op.setFiltroDuplicati(pt.getFiltroDuplicati());
+						op.setIdCollaborazione(pt.getIdCollaborazione());
+						op.setIdRiferimentoRichiesta(pt.getIdRiferimentoRichiesta());
+						op.setScadenza(pt.getScadenza());
+					}
+					else {
+						op.setProfiloCollaborazione(as.getProfiloCollaborazione());
+						op.setConfermaRicezione(as.getConfermaRicezione());
+						op.setConsegnaInOrdine(as.getConsegnaInOrdine());
+						op.setFiltroDuplicati(as.getFiltroDuplicati());
+						op.setIdCollaborazione(as.getIdCollaborazione());
+						op.setIdRiferimentoRichiesta(as.getIdRiferimentoRichiesta());
+						op.setScadenza(as.getScadenza());
+					}
 				}
 				
-				if(op.getProfiloCollaborazione()==null){
-					op.setProfiloCollaborazione(pt.getProfiloCollaborazione());
-				}
+
 			}
 		}
 		// Devono essere impostati i comportamenti per la ridefinizione delle azioni
 		for(int k=0; k<as.sizeResourceList();k++){
-			if( (as.getResource(k).getConfermaRicezione()!=null) || 
-				(as.getResource(k).getConsegnaInOrdine()!=null) ||
-				(as.getResource(k).getFiltroDuplicati()!=null) || 
-				(as.getResource(k).getIdCollaborazione()!=null) ||
-				//(as.getResource(k).getProfiloCollaborazione()!=null) ||
-				(as.getResource(k).getScadenza()!=null) ){
-					as.getResource(k).setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
-				}else{
-					as.getResource(k).setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_DEFAULT);
-				}
-			
-//			if(as.getResource(k).getProfiloCollaborazione()==null){
-//				as.getResource(k).setProfiloCollaborazione(profiloCollaborazione);
-//			}
+			if(
+					//(as.getResource(k).getProfiloCollaborazione()!=null && !as.getResource(k).getProfiloCollaborazione().equals(as.getProfiloCollaborazione())) ||
+					!equals(as.getResource(k).getConfermaRicezione(),as.getConfermaRicezione()) ||
+					!equals(as.getResource(k).getConsegnaInOrdine(),as.getConsegnaInOrdine()) ||
+					!equals(as.getResource(k).getFiltroDuplicati(),as.getFiltroDuplicati()) ||
+					!equals(as.getResource(k).getIdCollaborazione(),as.getIdCollaborazione()) ||
+					!equals(as.getResource(k).getIdRiferimentoRichiesta(),as.getIdRiferimentoRichiesta()) ||
+					(as.getResource(k).getScadenza()!=null && !as.getResource(k).getScadenza().equals(as.getScadenza()))
+					) {
+				as.getResource(k).setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
+			}else{
+				as.getResource(k).setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_DEFAULT);
+				//as.getResource(k).setProfiloCollaborazione(as.getProfiloCollaborazione());
+				as.getResource(k).setConfermaRicezione(as.getConfermaRicezione());
+				as.getResource(k).setConsegnaInOrdine(as.getConsegnaInOrdine());
+				as.getResource(k).setFiltroDuplicati(as.getFiltroDuplicati());
+				as.getResource(k).setIdCollaborazione(as.getIdCollaborazione());
+				as.getResource(k).setIdRiferimentoRichiesta(as.getIdRiferimentoRichiesta());
+				as.getResource(k).setScadenza(as.getScadenza());
+			}			
 		}
 	}
 	

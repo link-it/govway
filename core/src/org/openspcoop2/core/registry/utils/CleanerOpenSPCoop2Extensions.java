@@ -25,6 +25,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioCompostoServizioComponente;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
+import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Gruppo;
@@ -35,10 +36,10 @@ import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.ResourceResponse;
-import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.constants.BindingUse;
+import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 
 /**
  * CleanerOpenSPCoop2Extensions
@@ -120,11 +121,44 @@ public class CleanerOpenSPCoop2Extensions {
 		
 		if(accordo.sizePortTypeList()>0){
 			for (PortType portType : accordo.getPortTypeList()) {
+				
+				if(CostantiRegistroServizi.PROFILO_AZIONE_DEFAULT.equals(portType.getProfiloPT())){
+					// si reimpostano tutti, poiche' viene eliminato il profiloPT
+					portType.setProfiloCollaborazione(accordo.getProfiloCollaborazione());
+					portType.setConfermaRicezione(accordo.getConfermaRicezione());
+					portType.setConsegnaInOrdine(accordo.getConsegnaInOrdine());
+					portType.setFiltroDuplicati(accordo.getFiltroDuplicati());
+					portType.setIdCollaborazione(accordo.getIdCollaborazione());
+					portType.setIdRiferimentoRichiesta(accordo.getIdRiferimentoRichiesta());
+					portType.setScadenza(accordo.getScadenza());
+				}
 				portType.setProfiloPT(null);
 				portType.setIdAccordo(null);
 				
 				if(portType.sizeAzioneList()>0){
 					for (Operation operation : portType.getAzioneList()) {
+						
+						if(CostantiRegistroServizi.PROFILO_AZIONE_DEFAULT.equals(operation.getProfAzione())){
+							// si reimpostano tutti, poiche' viene eliminato il profAzione
+							if(CostantiRegistroServizi.PROFILO_AZIONE_DEFAULT.equals(portType.getProfiloPT())){
+								operation.setProfiloCollaborazione(accordo.getProfiloCollaborazione());
+								operation.setConfermaRicezione(accordo.getConfermaRicezione());
+								operation.setConsegnaInOrdine(accordo.getConsegnaInOrdine());
+								operation.setFiltroDuplicati(accordo.getFiltroDuplicati());
+								operation.setIdCollaborazione(accordo.getIdCollaborazione());
+								operation.setIdRiferimentoRichiesta(accordo.getIdRiferimentoRichiesta());
+								operation.setScadenza(accordo.getScadenza());
+							}
+							else {
+								operation.setProfiloCollaborazione(portType.getProfiloCollaborazione());
+								operation.setConfermaRicezione(portType.getConfermaRicezione());
+								operation.setConsegnaInOrdine(portType.getConsegnaInOrdine());
+								operation.setFiltroDuplicati(portType.getFiltroDuplicati());
+								operation.setIdCollaborazione(portType.getIdCollaborazione());
+								operation.setIdRiferimentoRichiesta(portType.getIdRiferimentoRichiesta());
+								operation.setScadenza(portType.getScadenza());
+							}
+						}
 						operation.setProfAzione(null);
 						operation.setIdPortType(null);
 						if(operation.getMessageInput()!=null){
@@ -164,6 +198,17 @@ public class CleanerOpenSPCoop2Extensions {
 		
 		if(accordo.sizeAzioneList()>0){
 			for (Azione azione : accordo.getAzioneList()) {
+				
+				if(CostantiRegistroServizi.PROFILO_AZIONE_DEFAULT.equals(azione.getProfAzione())){
+					// si reimpostano tutti, poiche' viene eliminato il profAzione
+					azione.setProfiloCollaborazione(accordo.getProfiloCollaborazione());
+					azione.setConfermaRicezione(accordo.getConfermaRicezione());
+					azione.setConsegnaInOrdine(accordo.getConsegnaInOrdine());
+					azione.setFiltroDuplicati(accordo.getFiltroDuplicati());
+					azione.setIdCollaborazione(accordo.getIdCollaborazione());
+					azione.setIdRiferimentoRichiesta(accordo.getIdRiferimentoRichiesta());
+					azione.setScadenza(accordo.getScadenza());
+				}
 				azione.setProfAzione(null);
 				azione.setIdAccordo(null);
 				
@@ -177,6 +222,17 @@ public class CleanerOpenSPCoop2Extensions {
 		
 		if(accordo.sizeResourceList()>0){
 			for (Resource resource : accordo.getResourceList()) {
+				
+				if(CostantiRegistroServizi.PROFILO_AZIONE_DEFAULT.equals(resource.getProfAzione())){
+					// si reimpostano tutti, poiche' viene eliminato il profAzione
+					//resource.setProfiloCollaborazione(accordo.getProfiloCollaborazione());
+					resource.setConfermaRicezione(accordo.getConfermaRicezione());
+					resource.setConsegnaInOrdine(accordo.getConsegnaInOrdine());
+					resource.setFiltroDuplicati(accordo.getFiltroDuplicati());
+					resource.setIdCollaborazione(accordo.getIdCollaborazione());
+					resource.setIdRiferimentoRichiesta(accordo.getIdRiferimentoRichiesta());
+					resource.setScadenza(accordo.getScadenza());
+				}
 				resource.setProfAzione(null);
 				resource.setIdAccordo(null);
 				
