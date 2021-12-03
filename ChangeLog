@@ -4,6 +4,13 @@
 
 2021-12-03  Andrea Poli <apoli@link.it>
 
+	* [ProtocolloModIPA]
+	Risolto Bug OP-1290
+	In una API REST configurata con pattern 'Integrity', la validazione degli header firmati non rilevava, in presenza di molteplici header HTTP con medesimo nome, 
+	l'esistenza di un valore ulteriore rispetto a tutti quelli definiti all'interno del claim 'signed_headers'.
+
+2021-12-03  Andrea Poli <apoli@link.it>
+
 	* [GovWayConsole, GovWayCore]
 	Risolto Bug OP-1288
 	Aggiunta la funzionalità di 'Consegna condizionale' anche per API soap con profilo oneway.

@@ -15,6 +15,8 @@ Sono stati effettuati i seguenti interventi per migliorare gli aspetti prestazio
 
 Sono stati risolti i seguenti bug:
 
+- nel profilo di interoperabilità 'ModI' con API REST configurata con pattern 'Integrity', la validazione degli header firmati non rilevava, in presenza di molteplici header HTTP con medesimo nome, l'esistenza di un valore ulteriore rispetto a tutti quelli definiti all'interno del claim 'signed_headers';
+
 - se venivano ricevuti messaggi SOAP che iniziavano con il carattere '>' l'anomalia veniva correttamente segnalata al client, ma nel log veniva emessa una eccezione relativa ad un caso non gestito (NullPointerException);
 
 - aggiunta gestione del charset nella classe 'OpenSPCoop2MessageSoapStreamReader' utilizzata per leggere le informazioni SOAP in streaming;
