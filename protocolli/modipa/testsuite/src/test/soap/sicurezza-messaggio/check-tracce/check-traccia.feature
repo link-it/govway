@@ -32,4 +32,5 @@ Scenario: Controllo traccia IDAS01
 * def result = get_traccia(tid,tipo) 
 * print 'Traccia result: ', result
 * print 'Traccia to match: ', traccia_to_match
+* print 'Other to match: ', other_checks
 * match result contains deep traccia_to_match

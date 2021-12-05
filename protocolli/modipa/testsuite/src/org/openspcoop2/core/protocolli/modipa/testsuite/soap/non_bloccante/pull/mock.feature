@@ -2,7 +2,7 @@ Feature: Server di mock contattato dalla erogazione, svolge il ruolo del TestSer
 
 Background: 
 
-    #* configure responseHeaders = { 'Content-type': "application/soap+xml" }
+    * configure responseHeaders = { 'Content-type': "application/soap+xml" }
 
     * def isTest =
     """

@@ -24,12 +24,14 @@ Background:
 Scenario: methodIs('post') && isTest("no-correlation-in-request-fruizione-validazione")
 
 * def response = read('classpath:test/soap/non-bloccante/pull/richiesta-applicativa-no-correlation-response.xml')
+* def responseHeaders = {'Content-type':  "application/soap+xml" }
 * def responseStatus = 200
 
 
 Scenario: methodIs('post') && isTest("no-correlation-in-request-fruizione")
 
 * def response = read('classpath:test/soap/non-bloccante/pull/richiesta-applicativa-no-correlation-response.xml')
+* def responseHeaders = {'Content-type':  "application/soap+xml" }
 * def responseStatus = 200
 
 
@@ -80,12 +82,16 @@ Scenario: isTest("iniezione-header-soap")
 * match bodyPath('/Envelope/Header/X-Correlation-ID') == 'd2f49459-1624-4710-b80c-15e33d64b608'
 * def responseStatus = 200
 * def response = read('classpath:test/soap/non-bloccante/pull/richiesta-stato-ready-response.xml')
+* def responseHeaders = {'Content-type':  "application/soap+xml" }
+
 
 Scenario: isTest("iniezione-header-soap-risposta")
 
 * match bodyPath('/Envelope/Header/X-Correlation-ID') == 'd2f49459-1624-4710-b80c-15e33d64b608'
 * def responseStatus = 200
 * def response = read('classpath:test/soap/non-bloccante/pull/recupero-risposta-response.xml')
+* def responseHeaders = {'Content-type':  "application/soap+xml" }
+
 
 
 # Catch all

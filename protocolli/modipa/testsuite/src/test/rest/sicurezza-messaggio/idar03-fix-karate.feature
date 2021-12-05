@@ -35,9 +35,9 @@ And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', p
 When method get
 Then status 200
 And match header Authorization == null
-And match header Agid-JWT-Signature == '#notpresent'
-And match header GovWay-TestSuite-GovWay-Client-Integrity-Token == '#notpresent'
-And match header GovWay-TestSuite-GovWay-Server-Authorization-Token == '#notpresent'
+And match header Agid-JWT-Signature == null
+And match header GovWay-TestSuite-GovWay-Client-Integrity-Token == null
+And match header GovWay-TestSuite-GovWay-Server-Authorization-Token == null
 
 * def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
 * def server_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Integrity-Token'][0], "AGID")
@@ -78,8 +78,8 @@ When method get
 Then status 200
 And match response == read('response.json')
 And match header Authorization == null
-And match header Agid-JWT-Signature == '#notpresent'
-And match header GovWay-TestSuite-GovWay-Client-Integrity-Token == '#notpresent'
+And match header Agid-JWT-Signature == null
+And match header GovWay-TestSuite-GovWay-Client-Integrity-Token == null
 
 * def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
 * def server_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Authorization-Token'][0], "Bearer")
@@ -122,9 +122,9 @@ When method DELETE
 Then status 204
 And match response == ''
 And match header Authorization == null
-And match header Agid-JWT-Signature == '#notpresent'
-And match header GovWay-TestSuite-GovWay-Client-Integrity-Token == '#notpresent'
-And match header GovWay-TestSuite-GovWay-Server-Integrity-Token == '#notpresent'
+And match header Agid-JWT-Signature == null
+And match header GovWay-TestSuite-GovWay-Client-Integrity-Token == null
+And match header GovWay-TestSuite-GovWay-Server-Integrity-Token == null
 
 * def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
 * def server_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Authorization-Token'][0], "Bearer")
@@ -159,10 +159,10 @@ When method DELETE
 Then status 204
 And match response == ''
 And match header Authorization == null
-And match header Agid-JWT-Signature == '#notpresent'
-And match header GovWay-TestSuite-GovWay-Client-Integrity-Token == '#notpresent'
-And match header GovWay-TestSuite-GovWay-Server-Authorization-Token == '#notpresent'
-And match header GovWay-TestSuite-GovWay-Server-Integrity-Token == '#notpresent'
+And match header Agid-JWT-Signature == null
+And match header GovWay-TestSuite-GovWay-Client-Integrity-Token == null
+And match header GovWay-TestSuite-GovWay-Server-Authorization-Token == null
+And match header GovWay-TestSuite-GovWay-Server-Integrity-Token == null
 
 * def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
 

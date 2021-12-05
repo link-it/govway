@@ -353,7 +353,7 @@ When method post
 Then status 200
 And match response == read('response.json')
 And match header Authorization == null
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Agid-JWT-Signature == null
 
 * def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
 * def client_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0], "AGID")
@@ -402,7 +402,7 @@ When method post
 Then status 200
 And match response == read('response.json')
 And match header Authorization == null
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Agid-JWT-Signature == null
 
 * def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
 * def client_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0], "AGID")
@@ -452,7 +452,7 @@ When method post
 Then status 200
 And match response == {"esito":"OK"}
 And match header Authorization == null
-And match header Agid-JWT-Signature == '#notpresent'
+And match header Agid-JWT-Signature == null
 
 * def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
 * def client_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0], "AGID")

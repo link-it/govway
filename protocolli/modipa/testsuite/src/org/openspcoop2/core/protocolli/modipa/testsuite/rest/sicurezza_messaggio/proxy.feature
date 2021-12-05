@@ -1690,6 +1690,7 @@ Scenario: isTest('idar03-token-azione-puntuale')
     * call checkToken ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
 
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03TokenAzionePuntuale/v1')
+    * match response == ''
     
     * def request_token = decodeToken(requestHeaders['Agid-JWT-Signature'][0], "AGID")
     * def request_digest = get request_token $.payload.signed_headers..digest
@@ -1706,6 +1707,7 @@ Scenario: isTest('idar03-token-azione-puntuale')
     })
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+    * def response = null
 
 
 Scenario: isTest('idar03-token-azione-puntuale-default')
