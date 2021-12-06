@@ -23,6 +23,7 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 
 import org.slf4j.Logger;
@@ -60,6 +61,18 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 	@Override
 	public void create(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Transazione transazione, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException,ServiceException,Exception {
 
+		if(TipiDatabase.POSTGRESQL.equals(jdbcProperties.getDatabase())){
+			if(transazione.getFaultCooperazione()!=null && org.openspcoop2.utils.jdbc.PostgreSQLUtilities.containsNullByteSequence(transazione.getFaultCooperazione())) {
+				transazione.setFaultCooperazione(org.openspcoop2.utils.jdbc.PostgreSQLUtilities.normalizeString(transazione.getFaultCooperazione()));
+			}
+			if(transazione.getFaultIntegrazione()!=null && org.openspcoop2.utils.jdbc.PostgreSQLUtilities.containsNullByteSequence(transazione.getFaultIntegrazione())) {
+				transazione.setFaultIntegrazione(org.openspcoop2.utils.jdbc.PostgreSQLUtilities.normalizeString(transazione.getFaultIntegrazione()));
+			}
+			if(transazione.getCredenziali()!=null && org.openspcoop2.utils.jdbc.PostgreSQLUtilities.containsNullByteSequence(transazione.getCredenziali())) {
+				transazione.setCredenziali(org.openspcoop2.utils.jdbc.PostgreSQLUtilities.normalizeString(transazione.getCredenziali()));
+			}
+		}
+			
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 		
@@ -280,6 +293,19 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 
 	@Override
 	public void update(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, String oldId, Transazione transazione, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, NotImplementedException, ServiceException, Exception {
+		
+		if(TipiDatabase.POSTGRESQL.equals(jdbcProperties.getDatabase())){
+			if(transazione.getFaultCooperazione()!=null && org.openspcoop2.utils.jdbc.PostgreSQLUtilities.containsNullByteSequence(transazione.getFaultCooperazione())) {
+				transazione.setFaultCooperazione(org.openspcoop2.utils.jdbc.PostgreSQLUtilities.normalizeString(transazione.getFaultCooperazione()));
+			}
+			if(transazione.getFaultIntegrazione()!=null && org.openspcoop2.utils.jdbc.PostgreSQLUtilities.containsNullByteSequence(transazione.getFaultIntegrazione())) {
+				transazione.setFaultIntegrazione(org.openspcoop2.utils.jdbc.PostgreSQLUtilities.normalizeString(transazione.getFaultIntegrazione()));
+			}
+			if(transazione.getCredenziali()!=null && org.openspcoop2.utils.jdbc.PostgreSQLUtilities.containsNullByteSequence(transazione.getCredenziali())) {
+				transazione.setCredenziali(org.openspcoop2.utils.jdbc.PostgreSQLUtilities.normalizeString(transazione.getCredenziali()));
+			}
+		}
+			
 		ISQLQueryObject sqlQueryObjectUpdate = sqlQueryObject.newSQLQueryObject();
 		Object longIdByLogicId = this.findIdTransazione(jdbcProperties, log, connection, sqlQueryObjectUpdate.newSQLQueryObject(), oldId, true, false);
 		if(longIdByLogicId==null){

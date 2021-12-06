@@ -33,7 +33,9 @@ Sono stati risolti i seguenti bug:
 
 	- la serializzazione YAML dell'interfaccia generava alcune enumeration (es. in security schema) con i valori maiuscoli invece che minuscoli come atteso dalla specifica OpenAPI;
 
-- in caso l'immagine del controllo del traffico, salvata durante uno shutdown dell'A.S., risultava corrotta il gateway non ripartiva; è stata migliorata la gestione facendo in modo che il gateway riparta con uno stato vergine e segnali l'anomalia su file di log.
+- in caso l'immagine del controllo del traffico, salvata durante uno shutdown dell'A.S., risultava corrotta il gateway non ripartiva; è stata migliorata la gestione facendo in modo che il gateway riparta con uno stato vergine e segnali l'anomalia su file di log;
+
+- in presenza di richieste malformate che causavano la generazione di un diagnostico contenente il carattere '\u0000', su ambienti con database di tipo Postgresql si otteneva un errore simile al seguente durante il tracciamento: Caused by: org.postgresql.util.PSQLException: ERROR: invalid byte sequence for encoding "UTF8": 0x0.
 
 È stato inoltre aumento il sistema di log sulle seguenti casistiche:
 

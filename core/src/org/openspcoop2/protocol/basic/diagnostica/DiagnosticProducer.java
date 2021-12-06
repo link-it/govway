@@ -90,6 +90,11 @@ public class DiagnosticProducer extends BasicProducer implements IDiagnosticProd
 	 */
 	@Override
 	public void log(Connection conOpenSPCoopPdD,MsgDiagnostico msgDiagnostico) throws MsgDiagnosticoException{
+		
+		if(TipiDatabase.POSTGRESQL.equals(this.tipoDatabase) && org.openspcoop2.utils.jdbc.PostgreSQLUtilities.containsNullByteSequence(msgDiagnostico.getMessaggio())){
+			msgDiagnostico.setMessaggio(org.openspcoop2.utils.jdbc.PostgreSQLUtilities.normalizeString(msgDiagnostico.getMessaggio()));
+		}
+		
 		PreparedStatement stmt = null;
 		Connection con = null;
 		String messaggio = msgDiagnostico.getMessaggio();
