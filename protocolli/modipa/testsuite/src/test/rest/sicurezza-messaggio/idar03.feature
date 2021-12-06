@@ -233,6 +233,56 @@ Then status 502
 And match response == read('error-bodies/manomissione-header-http-firmati-risposta.json')
 
 
+@response-without-payload-tampered-header-double-value
+Scenario: Aggiungo un header con lo stesso nome di uno di quelli da firmare in una risposta senza payload
+
+* def url_invocazione = govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03CRUD/v1"
+
+* def resp =
+"""
+{   
+    "type":"https://govway.org/handling-errors/502/InteroperabilityInvalidResponse.html",
+    "title":"InteroperabilityInvalidResponse",
+    "status":502,
+    "detail":"Header HTTP 'idar03testheader' possiede un numero di valori (2) differente rispetto al numero di valori (1) definiti negli header firmati","govway_id":"#uuid"
+}
+"""
+
+Given url url_invocazione
+And path 'resources', 'object'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'response-without-payload-idar03-tampered-header-double-value'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 502
+And match response == resp
+
+
+@response-without-payload-tampered-header-null-value
+Scenario: Rimuovo uno degli header da firmare
+
+* def url_invocazione = govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03CRUD/v1"
+
+* def resp =
+"""
+{
+    "type":"https://govway.org/handling-errors/502/InteroperabilityInvalidResponse.html",
+    "title":"InteroperabilityInvalidResponse",
+    "status":502,"detail":"Header HTTP 'idar03testheader', dichiarato tra gli header firmati, non trovato",
+    "govway_id":"#uuid"
+}
+"""
+
+Given url url_invocazione
+And path 'resources', 'object'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'response-without-payload-idar03-tampered-header-null-value'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 502
+And match response == resp
+
+
 @response-without-payload-digest-richiesta
 Scenario: Test di un endpoint che non ha il payload nella risposta
 

@@ -1045,12 +1045,125 @@ Scenario: isTest('response-without-payload-idar03-tampered-header')
     ({
         'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['Agid-JWT-Signature'][0],
         'GovWay-TestSuite-GovWay-Server-Token': responseHeaders['Agid-JWT-Signature'][0],
-        'IDAR03TestHeader': 'tampered_header'
     })
     """
     * def response = null
+    #* def responseHeaders = karate.merge(responseHeaders,newHeaders)
+    * eval responseHeaders['IDAR03TestHeader'] = 'tampered_header'
+
+
+Scenario: isTest('response-without-payload-idar03-tampered-header-double-value')
+
+    * def client_token_match = 
+    """
+    ({
+        header: { kid: 'ExampleClient1' },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01',
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json; charset=UTF-8' },
+            ]
+        }
+    })
+    """
+
+    * call checkToken ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
+
+    * def url_invocazione_erogazione = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CRUD/v1'
+    * karate.proceed(url_invocazione_erogazione)
+    * match response == ''
+
+    * def server_token_match =
+    """
+    ({
+        header: { kid: 'ExampleServer'},
+        payload: {
+            aud: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            client_id: 'RestBlockingIDAR03CRUD/v1',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR03CRUD/v1',
+            signed_headers: [
+                { idar03testheader: 'TestHeaderResponse' }
+            ]
+        }
+    })
+    """
+
+    * call checkToken ({token: responseHeaders['Agid-JWT-Signature'][0], match_to: server_token_match, kind: "AGID"  })
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['Agid-JWT-Signature'][0],
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders['Agid-JWT-Signature'][0],
+    })
+    """
+    
+    * def response = null
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
 
+    # In karate 1.0 facendo così, si accoda un ulteriore header invece che sovrascriverlo.
+    * eval responseHeaders['IDAR03TestHeader'] = 'tampered_header'
+
+
+Scenario: isTest('response-without-payload-idar03-tampered-header-null-value')
+
+    * def client_token_match = 
+    """
+    ({
+        header: { kid: 'ExampleClient1' },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01',
+            signed_headers: [
+                { digest: '#string' },
+                { 'content-type': 'application\/json; charset=UTF-8' },
+            ]
+        }
+    })
+    """
+
+    * call checkToken ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
+
+    * def url_invocazione_erogazione = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CRUD/v1'
+    * karate.proceed(url_invocazione_erogazione)
+    * match response == ''
+
+    * def server_token_match =
+    """
+    ({
+        header: { kid: 'ExampleServer'},
+        payload: {
+            aud: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            client_id: 'RestBlockingIDAR03CRUD/v1',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR03CRUD/v1',
+            signed_headers: [
+                { idar03testheader: 'TestHeaderResponse' }
+            ]
+        }
+    })
+    """
+
+    * call checkToken ({token: responseHeaders['Agid-JWT-Signature'][0], match_to: server_token_match, kind: "AGID"  })
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['Agid-JWT-Signature'][0],
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders['Agid-JWT-Signature'][0],
+    })
+    """
+    
+    * def response = null
+    # In karate 1.0 facendo così, si accoda un ulteriore header invece che sovrascriverlo.
+    * eval responseHeaders['IDAR03TestHeader'] = null
 
 
 Scenario: isTest('request-without-payload-idar03')

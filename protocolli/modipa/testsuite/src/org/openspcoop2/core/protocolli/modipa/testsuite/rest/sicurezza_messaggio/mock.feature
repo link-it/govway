@@ -154,7 +154,7 @@ Scenario: isTest('assenza-header-digest-risposta')
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
 
-Scenario: isTest('response-without-payload-idar03')  || isTest('response-without-payload-idar03-tampered-header')
+Scenario: isTest('response-without-payload-idar03')  || isTest('response-without-payload-idar03-tampered-header') || isTest('response-without-payload-idar03-tampered-header-double-value') || isTest('response-without-payload-idar03-tampered-header-null-value')
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
     * def responseStatus = 201
     * def response = null
