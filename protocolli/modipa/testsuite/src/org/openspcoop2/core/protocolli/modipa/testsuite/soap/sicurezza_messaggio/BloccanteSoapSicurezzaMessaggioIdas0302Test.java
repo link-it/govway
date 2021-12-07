@@ -47,7 +47,7 @@ import com.intuit.karate.resource.ResourceUtils;
 * @version $Rev$, $Date$
 */
 
-public class BloccanteSoapSicurezzaMessaggioTest extends ConfigLoader {
+public class BloccanteSoapSicurezzaMessaggioIdas0302Test extends ConfigLoader {
     
     private static MockServer server;
     private static MockServer proxy;
@@ -56,7 +56,7 @@ public class BloccanteSoapSicurezzaMessaggioTest extends ConfigLoader {
 	@BeforeClass
     public static void beforeClass() {
     	    	
-    	File file = ResourceUtils.getFileRelativeTo(BloccanteSoapSicurezzaMessaggioTest.class, "mock.feature");
+    	File file = ResourceUtils.getFileRelativeTo(BloccanteSoapSicurezzaMessaggioIdas0302Test.class, "mock.feature");
     	server = MockServer
                  .feature(file)
                  .args(new HashMap<String,Object>((Map) prop))
@@ -64,7 +64,7 @@ public class BloccanteSoapSicurezzaMessaggioTest extends ConfigLoader {
                  .build();
     	
     	
-    	file = ResourceUtils.getFileRelativeTo(BloccanteSoapSicurezzaMessaggioTest.class, "proxy.feature");
+    	file = ResourceUtils.getFileRelativeTo(BloccanteSoapSicurezzaMessaggioIdas0302Test.class, "proxy.feature");
     	proxy = MockServer
     			.feature(file)
     			.args(new HashMap<String,Object>((Map) prop))
@@ -78,13 +78,7 @@ public class BloccanteSoapSicurezzaMessaggioTest extends ConfigLoader {
     @Test
     public void test() {
     	Results results = Runner.path(Arrays.asList( 
-    			//"classpath:test/soap/sicurezza-messaggio/idas01.feature",
-    		    //"classpath:test/soap/sicurezza-messaggio/idas01-no-disclosure.feature",
-    		    "classpath:test/soap/sicurezza-messaggio/idas0302.feature"))
-    			/*.tags("~@riferimento-x509-IssuerSerial-x509Key", 
-    					"~@riferimento-x509-x509Key-ThumbprintKey", 
-    					"~@riferimento-x509-ThumbprintKey-SKIKey", 
-    					"~@riferimento-x509-SKIKey-IssuerSerial")*/		
+    		    "classpath:test/soap/sicurezza-messaggio/idas0302.feature"))    				
     			.parallel(1);
     	assertEquals(0, results.getFailCount());
    

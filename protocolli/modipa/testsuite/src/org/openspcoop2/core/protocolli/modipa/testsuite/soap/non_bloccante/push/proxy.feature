@@ -107,6 +107,8 @@ Scenario: isTest('no-correlation-id-in-client-request-response')
     </soap:Body>
 </soap:Envelope>
 """
+* def responseHeaders = { 'Content-type': "application/soap+xml" }
+
 
 # Assenza dello header x-correlation-id nella richiesta del flusso di risposta
 #
