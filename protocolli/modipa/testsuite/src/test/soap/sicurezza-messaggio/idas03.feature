@@ -277,7 +277,7 @@ And match response == ''
 
 
 @informazioni-utente-header
-Scenario: Giro Ok IDAR03 con informazioni utente passate negli header http
+Scenario: Giro Ok IDAS03 con informazioni utente passate negli header http
 
 * def soap_url = govway_base_path + '/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SoapBlockingIDAS03InfoUtente/v1'
 
@@ -654,6 +654,8 @@ And match response == read("response.xml")
 
 * def body_reference = get server_response/Envelope/Body/@Id
 * def response_signature = karate.xmlPath(server_response, "/Envelope/Header/Security/Signature/SignedInfo/Reference[@URI='#"+body_reference+"']/DigestValue")
+
+* print "Response signature: ", response_signature
 
 
 * def checks_risposta = 

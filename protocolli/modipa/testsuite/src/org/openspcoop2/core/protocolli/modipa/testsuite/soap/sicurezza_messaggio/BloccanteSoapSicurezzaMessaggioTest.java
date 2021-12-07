@@ -73,31 +73,25 @@ public class BloccanteSoapSicurezzaMessaggioTest extends ConfigLoader {
     	
     }
     
+
+    
     @Test
     public void test() {
     	Results results = Runner.path(Arrays.asList( 
-    			"classpath:test/soap/sicurezza-messaggio/idas01.feature",
-    		    "classpath:test/soap/sicurezza-messaggio/idas01-no-disclosure.feature",
-    		    "classpath:test/soap/sicurezza-messaggio/idas02.feature",
-    		    "classpath:test/soap/sicurezza-messaggio/idas03.feature",
+    			//"classpath:test/soap/sicurezza-messaggio/idas01.feature",
+    		    //"classpath:test/soap/sicurezza-messaggio/idas01-no-disclosure.feature",
     		    "classpath:test/soap/sicurezza-messaggio/idas0302.feature"))
-    			.tags("~@riferimento-x509-IssuerSerial-x509Key", 
+    			/*.tags("~@riferimento-x509-IssuerSerial-x509Key", 
     					"~@riferimento-x509-x509Key-ThumbprintKey", 
     					"~@riferimento-x509-ThumbprintKey-SKIKey", 
-    					"~@riferimento-x509-SKIKey-IssuerSerial")    			
+    					"~@riferimento-x509-SKIKey-IssuerSerial")*/		
     			.parallel(1);
     	assertEquals(0, results.getFailCount());
-    	
-    /*	results = Runner.path(Arrays.asList( 
-    			"classpath:test/soap/sicurezza-messaggio/idas01.feature"))
-    			.tags("@riferimento-x509-IssuerSerial-x509Key", 
-    					"@riferimento-x509-x509Key-ThumbprintKey", 
-    					"@riferimento-x509-ThumbprintKey-SKIKey", 
-    					"@riferimento-x509-SKIKey-IssuerSerial")    			
-    			.parallel(1);
-    	assertEquals(0, results.getFailCount());*/
+   
     }
-        
+    
+    
+    
     @AfterClass
     public static void afterClass() {
         proxy.stop();

@@ -402,8 +402,9 @@ Scenario: isTest('connettivita-base-idas03')
 
     * match digests contains only x_request_digests
     
-    * xmlstring server_response = response
+    * string server_response = response
     * eval karateCache.add("Server-Response", server_response)
+    * def response = responseBytes 
 
 
 Scenario: isTest('manomissione-token-richiesta-idas03')
@@ -469,8 +470,9 @@ Scenario: isTest('connettivita-base-idas03-no-digest-richiesta')
     * def key = /Envelope/Header/Security/BinarySecurityToken/@Id
     * match keyRef == '#' + key
     
-    * xmlstring server_response = response
+    * string server_response = response
     * eval karateCache.add("Server-Response", server_response)
+    * def response = responseBytes
 
 
 Scenario: isTest('response-without-payload-idas03')
@@ -574,8 +576,9 @@ Scenario: isTest('informazioni-utente-header') || isTest('informazioni-utente-qu
     * def key = /Envelope/Header/Security/BinarySecurityToken/@Id
     * match keyRef == '#' + key
     
-    * xmlstring server_response = response
+    * string server_response = response
     * eval karateCache.add("Server-Response", server_response)
+    * def response = responseBytes
 
 
 Scenario: isTest('informazioni-utente-static')
@@ -607,8 +610,9 @@ Scenario: isTest('informazioni-utente-static')
     * def key = /Envelope/Header/Security/BinarySecurityToken/@Id
     * match keyRef == '#' + key
     
-    * xmlstring server_response = response
+    * string server_response = response
     * eval karateCache.add("Server-Response", server_response)
+    * def response = responseBytes
 
 
 Scenario: isTest('informazioni-utente-custom')
@@ -640,8 +644,9 @@ Scenario: isTest('informazioni-utente-custom')
     * def key = /Envelope/Header/Security/BinarySecurityToken/@Id
     * match keyRef == '#' + key
     
-    * xmlstring server_response = response
+    * string server_response = response
     * eval karateCache.add("Server-Response", server_response)
+    * def response = responseBytes
 
 
 
@@ -689,8 +694,9 @@ Scenario: isTest('idas03-token-risposta')
     * def key = /Envelope/Header/Security/BinarySecurityToken/@Id
     * match keyRef == '#' + key
 
-    * xmlstring server_response = response
+    * string server_response = response
     * eval karateCache.add("Server-Response", server_response)
+    * def response = responseBytes
 
 
 Scenario: isTest('idas03-token-azione-puntuale')
@@ -737,8 +743,9 @@ Scenario: isTest('idas03-token-azione-puntuale-default')
     * def key = /Envelope/Header/Security/BinarySecurityToken/@Id
     * match keyRef == '#' + key
     
-    * xmlstring server_response = response
+    * string server_response = response
     * eval karateCache.add("Server-Response", server_response)
+    * def response = responseBytes
 
 
 
@@ -772,7 +779,11 @@ Scenario: isTest('connettivita-base-idas0302')
 
     * match digests contains only x_request_digests
 
-    * xmlstring server_response = response
+    * string server_response = responseBytes
+    # BUGFIX: Il parser xml di karate butta via alcuni campi dalla risposta, il che fa arrabiare il validatore
+    # delle firme di govway. Riassegnando i bytes grezzi alla risposta, questa non viene interpretata e i dati
+    # fluiscono non toccati alla fruizione
+    * def response = responseBytes
     * eval karateCache.add("Server-Response", server_response)
 
 

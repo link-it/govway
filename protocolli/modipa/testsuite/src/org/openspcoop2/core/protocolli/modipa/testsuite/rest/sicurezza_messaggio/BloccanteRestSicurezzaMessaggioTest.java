@@ -30,14 +30,11 @@ import java.util.Map;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader;
 
-import com.intuit.karate.KarateOptions;
 import com.intuit.karate.Results;
 import com.intuit.karate.Runner;
 import com.intuit.karate.core.MockServer;
-import com.intuit.karate.junit4.Karate;
 import com.intuit.karate.resource.ResourceUtils;
 
 

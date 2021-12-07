@@ -22,19 +22,21 @@
 
 package org.openspcoop2.core.protocolli.modipa.testsuite.soap.non_bloccante.push;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.openspcoop2.core.protocolli.modipa.testsuite.ConfigLoader;
 
-import com.intuit.karate.KarateOptions;
+import com.intuit.karate.Results;
+import com.intuit.karate.Runner;
 import com.intuit.karate.core.MockServer;
-import com.intuit.karate.junit4.Karate;
 import com.intuit.karate.resource.ResourceUtils;
 
 
@@ -45,11 +47,6 @@ import com.intuit.karate.resource.ResourceUtils;
 * @author $Author$
 * @version $Rev$, $Date$
 */
-@RunWith(Karate.class)
-@KarateOptions(features = {
-    "classpath:test/soap/non-bloccante/push/push.feature",
-    "classpath:test/soap/non-bloccante/push/push-no-disclosure.feature",
-    })
 
 public class NonBloccantePushSoapTest extends ConfigLoader {
     
@@ -78,6 +75,15 @@ public class NonBloccantePushSoapTest extends ConfigLoader {
     			.args(new HashMap<String,Object>((Map) prop))
     			.http(Integer.valueOf(prop.getProperty("http_port")))
     			.build();
+    }
+    
+    @Test
+    public void test() {
+    	Results results = Runner.path(Arrays.asList( 
+    			"classpath:test/soap/non-bloccante/push/push.feature",
+    		    "classpath:test/soap/non-bloccante/push/push-no-disclosure.feature"))
+    			.parallel(1);
+    	assertEquals(0, results.getFailCount());
     }
   
         
