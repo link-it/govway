@@ -73,7 +73,7 @@ Scenario: Test giro ok con attachments
 
 Given url soap_url
 And request read("richiestaConAllegati.bin")
-And header Content-Type = 'multipart/related; boundary=----=_Part_1_1678144365.1610454048429; type=text/xml'
+And header Content-Type = 'multipart/related; boundary=\"----=_Part_1_1678144365.1610454048429\"; type=\"text/xml\"'
 And header SOAPAction = ""
 And header GovWay-TestSuite-Test-ID = 'attachments-idas03'
 And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
