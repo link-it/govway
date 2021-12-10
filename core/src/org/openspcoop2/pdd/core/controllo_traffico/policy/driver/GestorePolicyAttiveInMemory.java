@@ -85,6 +85,9 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	
 	@Override
 	public IPolicyGroupByActiveThreads getActiveThreadsPolicy(ActivePolicy activePolicy) throws PolicyShutdownException,PolicyException {		
+		
+		String uniqueIdMap = UniqueIdentifierUtilities.getUniqueId(activePolicy.getInstanceConfiguration());
+				
 		//synchronized (this.mapActiveThreadsPolicy) {
 		this.lock.acquireThrowRuntime("getActiveThreadsPolicy(ActivePolicy)");
 		try {
@@ -93,7 +96,6 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 				throw new PolicyShutdownException("Policy Manager shutdown");
 			}
 			
-			String uniqueIdMap = UniqueIdentifierUtilities.getUniqueId(activePolicy.getInstanceConfiguration());
 			PolicyGroupByActiveThreads active = null;
 			//System.out.println("@@@ getActiveThreadsPolicy["+uniqueIdMap+"] contains["+this.mapActiveThreadsPolicy.containsKey(uniqueIdMap)+"]...");
 			if(this.mapActiveThreadsPolicy.containsKey(uniqueIdMap)){

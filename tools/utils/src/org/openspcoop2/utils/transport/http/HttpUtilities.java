@@ -31,7 +31,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.KeyStore;
+import java.security.MessageDigest;
 import java.security.Provider;
+import java.security.Security;
 import java.security.cert.CertStore;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -1527,12 +1529,13 @@ public class HttpUtilities {
 	
 	/* ********* DIGEST HEADER ************ */
 	
-	public static String getDigestHeaderValue(byte[] content, String algorithm) throws UtilsException{
+	@Deprecated
+	public static String getDigestHeaderValueByCommons(byte[] content, String algorithm) throws UtilsException{
 		String digestValue = null;
 		if(algorithm.equals(HttpConstants.DIGEST_ALGO_MD5)) {
 			digestValue = DigestUtils.md5Hex(content);
 		}
-		else if(algorithm.equals(HttpConstants.DIGEST_ALGO_SHA_1)) {
+		else if(algorithm.equals(HttpConstants.DIGEST_ALGO_SHA_1) || algorithm.equals(HttpConstants.DIGEST_ALGO_SHA)) {
 			digestValue = DigestUtils.sha1Hex(content);
 		}
 		else if(algorithm.equals(HttpConstants.DIGEST_ALGO_SHA_256)) {
@@ -1548,5 +1551,57 @@ public class HttpUtilities {
 			throw new UtilsException("Digest algorithm '"+algorithm+"' unsupported");
 		}
 		return algorithm+"="+digestValue;
+	}
+	
+	public static String getDigestHeaderValue(byte[] content, String algorithm) throws UtilsException{
+		return getDigestHeaderValue(content, algorithm, getProvider(HttpUtilities.useBouncyCastleProvider));
+	}
+	public static String getDigestHeaderValue(byte[] content, String algorithm, boolean useBouncyCastleProvider) throws UtilsException{
+		return getDigestHeaderValue(content, algorithm, getProvider(useBouncyCastleProvider));
+	}
+	public static String getDigestHeaderValue(byte[] content, String algorithm, Provider provider) throws UtilsException{
+		MessageDigest digest = null;
+		try {
+			if(provider!=null) {
+				digest = MessageDigest.getInstance(algorithm, provider);
+			}
+			else {
+				digest = MessageDigest.getInstance(algorithm);
+			}
+		}catch(Throwable e) {
+			throw new UtilsException("Message digest (algorithm: '"+algorithm+"') initialization failed: "+e.getMessage(),e);
+		}
+		try {
+			byte[]md5Data = digest.digest(content);
+			String digestValue = org.apache.commons.codec.binary.Hex.encodeHexString(md5Data);
+			return algorithm+"="+digestValue;
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
+	
+	/* ********* PROVIDER ************ */
+	
+	private static boolean useBouncyCastleProvider = false;
+	private static Provider provider = null;
+	public static boolean isUseBouncyCastleProvider() {
+		return useBouncyCastleProvider;
+	}
+	public static void setUseBouncyCastleProvider(boolean useBouncyCastleProvider) {
+		HttpUtilities.useBouncyCastleProvider = useBouncyCastleProvider;
+	}
+	private synchronized static Provider _getProvider() {
+		if ( provider == null )
+			provider = Security.getProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
+		return provider;
+	}
+	private static Provider getProvider(boolean useBouncyCastleProviderParam) {
+		if(!useBouncyCastleProviderParam) {
+			return null;
+		}
+		if ( provider == null )
+			return _getProvider();
+		return provider;
 	}
 }

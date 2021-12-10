@@ -64,32 +64,36 @@ public class GestoreControlloTraffico {
 	 **/
 	//private final Boolean semaphore = true; // Serve perche' senno cambiando i valori usando auto-box un-box, si perde il riferimento.
 	private final org.openspcoop2.utils.Semaphore lock = new org.openspcoop2.utils.Semaphore("GestoreControlloTraffico");
-	private Long activeThreads = 0l;
-	private Boolean pddCongestionata = false;
+	private long activeThreads = 0l;
+	private boolean pddCongestionata = false;
 	private boolean erroreGenerico;
 	public StatoTraffico getStatoControlloTraffico(String idTransazione, boolean sync) {
 		if(sync) {
+			long syncActiveThreads = 0l;
+			boolean syncPddCongestionata = false;
 			//synchronized (this.semaphore) {
 			this.lock.acquireThrowRuntime("getStatoControlloTraffico", idTransazione);
 			try {
-				StatoTraffico stato = new StatoTraffico();
-				stato.setActiveThreads(Long.valueOf(this.activeThreads));
-				stato.setPddCongestionata(Boolean.valueOf(this.pddCongestionata));
-				return stato;
+				syncActiveThreads = this.activeThreads;
+				syncPddCongestionata = this.pddCongestionata;
 			}finally {
 				this.lock.release("getStatoControlloTraffico", idTransazione);
 			}
+			StatoTraffico stato = new StatoTraffico();
+			stato.setActiveThreads(syncActiveThreads);
+			stato.setPddCongestionata(syncPddCongestionata);
+			return stato;
 		}
 		else {
 			//Risolve problema di deadlock che scaturiva utilizzando solamente 1 connessione e facendo un test in cui più thread invocavano con più messaggi, senza avere alcuna informazione in cache
 			// Si perde un pochino in precisione, ma risolve il problema del deadlock
 			StatoTraffico stato = new StatoTraffico();
-			stato.setActiveThreads(Long.valueOf(this.activeThreads));
-			stato.setPddCongestionata(Boolean.valueOf(this.pddCongestionata));
+			stato.setActiveThreads(this.activeThreads);
+			stato.setPddCongestionata(this.pddCongestionata);
 			return stato;
 		}
 	}
-	public void addThread(ServiceBinding serviceBinding, Long maxThreads, Integer threshold, Boolean warningOnly, PdDContext pddContext, MsgDiagnostico msgDiag, 
+	public void addThread(ServiceBinding serviceBinding, Long maxThreadsObj, Integer thresholdObj, Boolean warningOnly, PdDContext pddContext, MsgDiagnostico msgDiag, 
 			TipoErrore tipoErrore, boolean includiDescrizioneErrore,Logger log) throws Exception{
 		
 		boolean emettiDiagnosticoMaxThreadRaggiunto = false;
@@ -103,23 +107,65 @@ public class GestoreControlloTraffico {
 		Date dataEventoPddCongestionata = null;
 		
 		try{
+			long maxThreadsPrimitive = maxThreadsObj.longValue();
+			int thresholdPrimitive = (thresholdObj!=null ? thresholdObj.intValue() : 0);
+			String idTransazione = (pddContext!=null && pddContext.containsKey(Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(Costanti.ID_TRANSAZIONE, pddContext) : null;
+			
+			long activeThreadsSyncBeforeIncrement = -1;
+			boolean errorSync = false;
+			boolean pddCongestionataSync = false; 
+			
 			//synchronized (this.semaphore) {
-			this.lock.acquire("addThread", 
-					(pddContext!=null && pddContext.containsKey(Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(Costanti.ID_TRANSAZIONE, pddContext) : null);
+			this.lock.acquire("addThread", idTransazione);
 			try {
-				
+				activeThreadsSyncBeforeIncrement = this.activeThreads;
 				//System.out.println("@@@addThread CONTROLLO ["+this.activeThreads+"]<["+maxThreads+"] ("+(!(this.activeThreads<maxThreads))+")");
-				HandlerException he = null;
-				if(!(this.activeThreads<maxThreads)){
+				if(!(this.activeThreads<maxThreadsPrimitive)){
+					errorSync = true;
+				}
+				if(!errorSync || warningOnly) {
 					
+					this.activeThreads++;
+					
+					if(thresholdObj!=null){
+						pddCongestionataSync = this._isPddCongestionata(maxThreadsPrimitive, thresholdPrimitive); 
+						
+						//System.out.println("ACTIVE THREADS TOTALI: "+this.activeThreads);
+						//System.out.println("PDD CONGESTIONATA: "+pddCongestionata);
+						
+						// verifica rispetto a variabile interna
+						if(this.pddCongestionata){
+							if(pddCongestionataSync==false){
+								//System.out.println("@@ NON PIU' RICHIESTO");
+								this.pddCongestionata = false;
+							}
+						}
+						else{
+							if(pddCongestionataSync){
+								//System.out.println("@@ C.T. RICHIESTO ATTIVO");
+								this.pddCongestionata = true;
+								
+								// Emetto un evento di congestione in corso
+								emettiEventoPddCongestionata = true;
+								dataEventoPddCongestionata = DateManager.getDate();
+							}
+						}
+					}
+				}
+				//System.out.println("@@@addThread (dopo): "+this.activeThreads);
+			}finally {
+				this.lock.release("addThread", idTransazione);
+				
+				HandlerException he = null;
+				if(errorSync) {
 					emettiDiagnosticoMaxThreadRaggiunto = true;
-					msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_ACTIVE_THREADS, this.activeThreads+"");
-					pddContext.addObject(GeneratoreMessaggiErrore.TEMPLATE_ACTIVE_THREADS, this.activeThreads);
-					msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_MAX_THREADS_THRESHOLD, maxThreads+"");
+					msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_ACTIVE_THREADS, activeThreadsSyncBeforeIncrement+"");
+					pddContext.addObject(GeneratoreMessaggiErrore.TEMPLATE_ACTIVE_THREADS, activeThreadsSyncBeforeIncrement);
+					msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_MAX_THREADS_THRESHOLD, maxThreadsPrimitive+"");
 					
 					//System.out.println("@@@addThread ERR");
 					emettiEventoMaxThreadsViolated = true;
-					descriptionEventoMaxThreadsViolated = "Superato il numero di richieste complessive ("+maxThreads+") gestibili dalla PdD";
+					descriptionEventoMaxThreadsViolated = "Superato il numero di richieste complessive ("+maxThreadsPrimitive+") gestibili dalla PdD";
 					dataEventoMaxThreadsViolated = DateManager.getDate();
 					
 					GeneratoreMessaggiErrore.addPddContextInfo_ControlloTrafficoMaxThreadsViolated(pddContext,warningOnly);
@@ -140,37 +186,17 @@ public class GestoreControlloTraffico {
 					if(warningOnly == false) {
 						throw he;
 					}
-
 				}
-				this.activeThreads++;
-				msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_ACTIVE_THREADS, this.activeThreads+""); // per policy applicabilità
 				
-				if(threshold!=null){
-					boolean pddCongestionata = this._isPddCongestionata(maxThreads, threshold); 
-					
-					//System.out.println("ACTIVE THREADS TOTALI: "+this.activeThreads);
-					//System.out.println("PDD CONGESTIONATA: "+pddCongestionata);
-										
+				long activeThreadsSyncAfterIncrement = activeThreadsSyncBeforeIncrement+1;
+				msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_ACTIVE_THREADS, activeThreadsSyncAfterIncrement+""); // per policy applicabilità
+				
+				if(thresholdObj!=null){
 					// Aggiungo l'informazione se la pdd risulta congestionata nel pddContext.
-					pddContext.addObject(CostantiControlloTraffico.PDD_CONTEXT_PDD_CONGESTIONATA, pddCongestionata);
+					pddContext.addObject(CostantiControlloTraffico.PDD_CONTEXT_PDD_CONGESTIONATA, pddCongestionataSync);
 					
-					// Inoltre
-					if(this.pddCongestionata){
-						if(pddCongestionata==false){
-							//System.out.println("@@ NON PIU' RICHIESTO");
-							this.pddCongestionata = false;
-						}
-					}
-					else{
-						if(pddCongestionata){
-							//System.out.println("@@ C.T. RICHIESTO ATTIVO");
-							this.pddCongestionata = true;
-							
-							// Emetto un evento di congestione in corso
-							emettiEventoPddCongestionata = true;
-							descriptionEventoPddCongestionata = this._buildDescription(maxThreads, threshold, msgDiag);
-							dataEventoPddCongestionata = DateManager.getDate();
-						}
+					if(emettiEventoPddCongestionata) {
+						descriptionEventoPddCongestionata = this._buildDescription(maxThreadsPrimitive, thresholdPrimitive, msgDiag);
 					}
 					
 					// Il timer dovra' vedere se esiste un evento di controllo del traffico.
@@ -181,11 +207,6 @@ public class GestoreControlloTraffico {
 					// caso di warning only
 					throw he;
 				}
-				
-				//System.out.println("@@@addThread (dopo): "+this.activeThreads);
-			}finally {
-				this.lock.release("addThread", 
-						(pddContext!=null && pddContext.containsKey(Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(Costanti.ID_TRANSAZIONE, pddContext) : null);
 			}
 		}
 		finally{
@@ -222,16 +243,18 @@ public class GestoreControlloTraffico {
 		}
 	}
 		
-	public void removeThread(Long maxThreads, Integer threshold, String idTransazione) throws Exception{
+	public void removeThread(Long maxThreadsObj, Integer thresholdObj, String idTransazione) throws Exception{
 		//synchronized (this.semaphore) {
+		long maxThreadsPrimitive = maxThreadsObj.longValue();
+		int thresholdPrimitive = (thresholdObj!=null ? thresholdObj.intValue() : 0);
 		this.lock.acquire("removeThread", idTransazione);
 		try {
 			this.activeThreads--;
 			
-			if(threshold!=null && this.pddCongestionata){
+			if(thresholdObj!=null && this.pddCongestionata){
 //				System.out.println("AGGORNO CONGESTIONE");
 //				boolean old = this.pddCongestionata;
-				this.pddCongestionata = this._isPddCongestionata(maxThreads, threshold);
+				this.pddCongestionata = this._isPddCongestionata(maxThreadsPrimitive, thresholdPrimitive);
 //				if(old!=this.pddCongestionata){
 //					System.out.println("OLD["+old+"] NEW["+this.pddCongestionata+"]");
 //				}
@@ -254,12 +277,14 @@ public class GestoreControlloTraffico {
 		}
 	}
 	
-	public Boolean isPortaDominioCongestionata(Long maxThreads, Integer threshold) {
+	public Boolean isPortaDominioCongestionata(Long maxThreadsObj, Integer thresholdObj) {
 		//synchronized (this.semaphore) {
+		long maxThreadsPrimitive = maxThreadsObj.longValue();
+		int thresholdPrimitive = (thresholdObj!=null ? thresholdObj.intValue() : 0);
 		this.lock.acquireThrowRuntime("isPortaDominioCongestionata");
 		try {
-			if(threshold!=null){
-				this.pddCongestionata = this._isPddCongestionata(maxThreads, threshold); // refresh per evitare che l'ultimo thread abbia lasciato attivo il controllo
+			if(thresholdObj!=null){
+				this.pddCongestionata = this._isPddCongestionata(maxThreadsPrimitive, thresholdPrimitive); // refresh per evitare che l'ultimo thread abbia lasciato attivo il controllo
 			}
 			else{
 				this.pddCongestionata = false; // controllo non attivo
@@ -275,19 +300,19 @@ public class GestoreControlloTraffico {
 	
 	// Utilities
 	
-	private boolean _isPddCongestionata(Long maxThreads, Integer threshold){
-		double dActiveT = maxThreads.doubleValue();
-		double dThreshold = threshold.doubleValue();
+	private boolean _isPddCongestionata(long maxThreads, int threshold){
+		double dActiveT = maxThreads;
+		double dThreshold = threshold;
 		double t = dActiveT / 100d;
-		Double tt = t * dThreshold;
-		int numeroThreadSoglia = tt.intValue();
+		double tt = t * dThreshold;
+		int numeroThreadSoglia = (int)tt;
 		return this.activeThreads > numeroThreadSoglia;  // non ci vuole >=, nella govwayConsole si dice chiaramente 'Il controllo del traffico verrà attivato oltre le <numeroThreadSoglia> richieste '
 	}
-	private String _buildDescription(Long maxThreads, Integer threshold, MsgDiagnostico msgDiag){
+	private String _buildDescription(long maxThreads, int threshold, MsgDiagnostico msgDiag){
 		StringBuilder bf = new StringBuilder();
 		
-		msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_MAX_THREADS_THRESHOLD, maxThreads.toString());
-		msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_CONTROLLO_TRAFFICO_THRESHOLD, threshold.toString());
+		msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_MAX_THREADS_THRESHOLD, maxThreads+"");
+		msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_CONTROLLO_TRAFFICO_THRESHOLD, threshold+"");
 		bf.append(msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_ALL, GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_PDD_CONGESTIONATA));
 		
 		return bf.toString();

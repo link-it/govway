@@ -131,6 +131,7 @@ import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.NameValue;
+import org.openspcoop2.utils.SemaphoreType;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
@@ -1833,6 +1834,8 @@ public class OpenSPCoop2Properties {
 			// semaphore
 			this.getSemaphoreTimeoutMS();
 			this.isSemaphoreDebug();
+			this.getSemaphoreType();
+			this.isSemaphoreFair();
 			
 			// JminixConsole
 			this.getPortJminixConsole();
@@ -18573,6 +18576,59 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.isSemaphoreDebug;
+	}
+	
+	private static SemaphoreType getSemaphoreType = null;
+	public SemaphoreType getSemaphoreType(){
+
+		String pName = "org.openspcoop2.pdd.semaphore.type";
+		if(OpenSPCoop2Properties.getSemaphoreType==null){
+			
+			SemaphoreType defaultV = SemaphoreType.Semaphore;
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.getSemaphoreType = SemaphoreType.valueOf(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+defaultV);
+					OpenSPCoop2Properties.getSemaphoreType = defaultV;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+defaultV+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getSemaphoreType = defaultV;
+			}
+		}
+
+		return OpenSPCoop2Properties.getSemaphoreType;
+	}
+	
+	private static Boolean isSemaphoreFair = null;
+	public boolean isSemaphoreFair(){
+
+		String pName = "org.openspcoop2.pdd.semaphore.fair";
+		if(OpenSPCoop2Properties.isSemaphoreFair==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isSemaphoreFair = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isSemaphoreFair = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isSemaphoreFair = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isSemaphoreFair;
 	}
 	
 	

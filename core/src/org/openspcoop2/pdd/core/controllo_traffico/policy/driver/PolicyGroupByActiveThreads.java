@@ -215,16 +215,16 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 	}
 
 	
-	public Long getActiveThreads(){
+	public long getActiveThreads(){
 		return this.getActiveThreads(null);
 	}
-	public Long getActiveThreads(IDUnivocoGroupByPolicy filtro){
+	public long getActiveThreads(IDUnivocoGroupByPolicy filtro){
 		
 		//synchronized (this.semaphore) {
 		this.lock.acquireThrowRuntime("getActiveThreads");
 		try {
 			
-			Long counter = 0l;
+			long counter = 0l;
 			
 			if(this.mapActiveThreads!=null && !this.mapActiveThreads.isEmpty()) {
 				for (IDUnivocoGroupByPolicy datiGroupBy : this.mapActiveThreads.keySet()) {

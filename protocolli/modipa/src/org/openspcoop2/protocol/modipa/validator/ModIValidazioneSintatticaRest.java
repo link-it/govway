@@ -964,6 +964,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 				bout.close();
 				
 				String newDigestValue = null;
+				boolean formatoSupportato = true;
 				if(digestValueInHeaderHTTP.startsWith(HttpConstants.DIGEST_ALGO_SHA_256+"=")) {
 					newDigestValue = HttpUtilities.getDigestHeaderValue(bout.toByteArray(), HttpConstants.DIGEST_ALGO_SHA_256);
 				}
@@ -974,11 +975,12 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 					newDigestValue = HttpUtilities.getDigestHeaderValue(bout.toByteArray(), HttpConstants.DIGEST_ALGO_SHA_512);
 				}
 				else {
+					formatoSupportato = false;
 					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_INTESTAZIONE_NON_VALIDA, 
 							"Header HTTP '"+digestHeader+"' con un formato non supportato"));
 				}
 				
-				if(!newDigestValue.equals(digestValueInHeaderHTTP)) {
+				if(formatoSupportato && !newDigestValue.equals(digestValueInHeaderHTTP)) {
 					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_VALIDA, 
 							"Header HTTP '"+digestHeader+"' possiede un valore non corrispondente al messaggio"));
 				}

@@ -21,6 +21,7 @@
 package org.openspcoop2.utils;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Semaphore
@@ -32,21 +33,80 @@ import java.util.concurrent.TimeUnit;
  */
 public class Semaphore {
 
-	public static long TIMEOUT_MS = 30000;
-	public static boolean DEBUG = false;
-	
-	private final java.util.concurrent.Semaphore semaphore = new java.util.concurrent.Semaphore(1, true);
+	private static long TIMEOUT_MS = 30000;
+	public static long getTIMEOUT_MS() {
+		return TIMEOUT_MS;
+	}
+	public static void setTIMEOUT_MS(long tIMEOUT_MS) {
+		TIMEOUT_MS = tIMEOUT_MS;
+	}
+
+	private static boolean DEBUG = false;
+	public static boolean isDEBUG() {
+		return DEBUG;
+	}
+	public static void setDEBUG(boolean dEBUG) {
+		DEBUG = dEBUG;
+	}
+
+	private static SemaphoreType semaphoreType = SemaphoreType.Semaphore;
+	public static SemaphoreType getSemaphoreType() {
+		return semaphoreType;
+	}
+	public static void setSemaphoreType(SemaphoreType semaphoreType) {
+		Semaphore.semaphoreType = semaphoreType;
+	}
+
+	private static boolean fair = true;
+	public static boolean isFair() {
+		return fair;
+	}
+	public static void setFair(boolean fair) {
+		Semaphore.fair = fair;
+	}
+
+	private final java.util.concurrent.Semaphore semaphore;
+	private final java.util.concurrent.locks.ReentrantLock reentrantLock;
 	private String semaphoreName = null;
 	
 	public Semaphore(String name) {
+		this(name, Semaphore.semaphoreType, Semaphore.fair);
+	}
+	public Semaphore(String name, boolean fair) {
+		this(name, Semaphore.semaphoreType, fair);
+	}
+	public Semaphore(String name, SemaphoreType semaphoreType, boolean fair) {
 		this.semaphoreName = name;
+		switch (semaphoreType) {
+		case ReentrantLock:
+			this.reentrantLock = new ReentrantLock(fair); 
+			this.semaphore = null;
+			break;
+		case Semaphore:
+			this.reentrantLock = null; 
+			this.semaphore = new java.util.concurrent.Semaphore(1, fair);
+			break;
+		default:
+			this.reentrantLock = null;
+			this.semaphore = null;
+		}
 	}
 	
 	public boolean hasQueuedThreads() {
-		return this.semaphore.hasQueuedThreads();
+		if(this.semaphore!=null) {
+			return this.semaphore.hasQueuedThreads();
+		}
+		else {
+			return this.reentrantLock.hasQueuedThreads();
+		}
 	}
 	public boolean available() {
-		return this.semaphore.availablePermits()>0;
+		if(this.semaphore!=null) {
+			return this.semaphore.availablePermits()>0;
+		}
+		else {
+			return !this.reentrantLock.isLocked();
+		}
 	}
 	
 	private String getPrefix(String methodName, String idTransazione) {
@@ -66,7 +126,12 @@ public class Semaphore {
 				if(DEBUG) {
 					System.out.println(getPrefix(methodName, idTransazione)+" acquire ...");
 				}
-				this.semaphore.acquire();
+				if(this.semaphore!=null) {
+					this.semaphore.acquire();
+				}
+				else {
+					this.reentrantLock.lock();
+				}
 				if(DEBUG) {
 					System.out.println(getPrefix(methodName, idTransazione)+" acquired");
 				}
@@ -75,7 +140,13 @@ public class Semaphore {
 				if(DEBUG) {
 					System.out.println(getPrefix(methodName, idTransazione)+" acquire("+TIMEOUT_MS+"ms) ...");
 				}
-				boolean acquire = this.semaphore.tryAcquire(TIMEOUT_MS, TimeUnit.MILLISECONDS);
+				boolean acquire = false;
+				if(this.semaphore!=null) {
+					acquire = this.semaphore.tryAcquire(TIMEOUT_MS, TimeUnit.MILLISECONDS);
+				}
+				else {
+					acquire = this.reentrantLock.tryLock(TIMEOUT_MS, TimeUnit.MILLISECONDS);
+				}
 				if(!acquire) {
 					throw new InterruptedException("["+this.semaphoreName+"] Could not acquire semaphore after "+TIMEOUT_MS+"ms");
 				}
@@ -109,9 +180,15 @@ public class Semaphore {
 		if(DEBUG) {
 			System.out.println(getPrefix(methodName, idTransazione)+" release ...");
 		}
-		this.semaphore.release();
+		if(this.semaphore!=null) {
+			this.semaphore.release();
+		}
+		else {
+			this.reentrantLock.unlock();
+		}
 		if(DEBUG) {
 			System.out.println(getPrefix(methodName, idTransazione)+" released");
 		}
 	}
 }
+

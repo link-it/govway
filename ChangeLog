@@ -2,6 +2,14 @@
 
 	* Rilasciata versione 3.3.5.p1
 
+2021-12-10  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, Utils]
+	Introdotti i seguenti miglioramenti:
+	- Il calcolo del digest previsto nei pattern di sicurezza INTEGRITY del profilo di Interoperabilità ModI viene adesso effettuato utilizzando il provider fornito da bouncy castle;
+	- Rivista utility 'Semaphore' per poter essere configurata nell'utilizzo di un ReentrantLock e per poter abilitare una modalità non fair;
+	- Nel gestore del controllo del traffico sono state riviste le sezioni che prevedevano istruzioni eseguite in blocchi sincronizzati al fine di ridurle al minimo indispensabile.
+
 2021-12-10  Francesco Scarlato <scarlato@link.it>
 
 	* [GovWayCore, Utils]

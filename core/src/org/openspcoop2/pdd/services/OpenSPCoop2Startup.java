@@ -188,6 +188,7 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.openspcoop2.utils.cache.Cache;
+import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
@@ -203,6 +204,7 @@ import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.semaphore.Semaphore;
 import org.openspcoop2.utils.semaphore.SemaphoreConfiguration;
 import org.openspcoop2.utils.semaphore.SemaphoreMapping;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
 
 import com.sun.xml.messaging.saaj.soap.MessageImpl;
@@ -544,6 +546,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						OpenSPCoop2Startup.log.info("SecureRandom used in CryptoServicesRegistrar di Bouncycastle: '"+secureRandom.getAlgorithm()+"'");
 					}
 				}
+				
+				OpenSPCoop2Startup.log.info("Add Bouncycastle in CertificateInfo utilities");
+				CertificateInfo.setUseBouncyCastleProvider(true);
+				OpenSPCoop2Startup.log.info("Add Bouncycastle in HttpUtilities");
+				HttpUtilities.setUseBouncyCastleProvider(true);
 			}
 						
 			StringBuilder sb = new StringBuilder();
@@ -630,9 +637,14 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			}
 			
 			// Inizializzo Semaphore
-			org.openspcoop2.utils.Semaphore.TIMEOUT_MS=propertiesReader.getSemaphoreTimeoutMS();
-			org.openspcoop2.utils.Semaphore.DEBUG=propertiesReader.isSemaphoreDebug();
-			OpenSPCoop2Startup.log.info("Impostazione semaphore timeoutMS="+org.openspcoop2.utils.Semaphore.TIMEOUT_MS+" debug="+org.openspcoop2.utils.Semaphore.DEBUG);
+			org.openspcoop2.utils.Semaphore.setTIMEOUT_MS(propertiesReader.getSemaphoreTimeoutMS());
+			org.openspcoop2.utils.Semaphore.setDEBUG(propertiesReader.isSemaphoreDebug());
+			org.openspcoop2.utils.Semaphore.setSemaphoreType(propertiesReader.getSemaphoreType());
+			org.openspcoop2.utils.Semaphore.setFair(propertiesReader.isSemaphoreFair());
+			OpenSPCoop2Startup.log.info("Impostazione semaphore timeoutMS="+org.openspcoop2.utils.Semaphore.getTIMEOUT_MS()+
+					" debug="+org.openspcoop2.utils.Semaphore.isDEBUG()+
+					" type="+org.openspcoop2.utils.Semaphore.getSemaphoreType()+
+					" fair="+org.openspcoop2.utils.Semaphore.isFair());
 			
 			
 

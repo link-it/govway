@@ -372,9 +372,9 @@ public class GestoreCacheControlloTraffico {
 				}
 			}
 			
+    		String idTransazione = datiTransazione!=null ? datiTransazione.getIdTransazione() : null;
 			//synchronized (semaphoreNumeroRichieste) {
-    		lockNumeroRichieste.acquire("readNumeroRichiesteInCache",
-					datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
+    		lockNumeroRichieste.acquire("readNumeroRichiesteInCache", idTransazione);
 			try {
     			
 				// se e' attiva una cache provo ad utilizzarla
@@ -422,8 +422,7 @@ public class GestoreCacheControlloTraffico {
 					}
 				}
 			}finally {
-				lockNumeroRichieste.release("readNumeroRichiesteInCache",
-    					datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
+				lockNumeroRichieste.release("readNumeroRichiesteInCache", idTransazione);
 			}
 
 		}
@@ -516,9 +515,9 @@ public class GestoreCacheControlloTraffico {
 				}
 			}
 			
+			String idTransazione = datiTransazione!=null ? datiTransazione.getIdTransazione() : null;
 			//synchronized (semaphoreOccupazioneBanda) {
-			lockOccupazioneBanda.acquire("readOccupazioneBandaInCache",
-					datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
+			lockOccupazioneBanda.acquire("readOccupazioneBandaInCache", idTransazione);
 			try {
     			
 				// se e' attiva una cache provo ad utilizzarla
@@ -567,8 +566,7 @@ public class GestoreCacheControlloTraffico {
 				}
 				
 			}finally {
-				lockOccupazioneBanda.release("readOccupazioneBandaInCache",
-    					datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
+				lockOccupazioneBanda.release("readOccupazioneBandaInCache", idTransazione);
 			}
 
 		}
@@ -662,9 +660,9 @@ public class GestoreCacheControlloTraffico {
 				}
 			}
 			
+			String idTransazione = datiTransazione!=null ? datiTransazione.getIdTransazione() : null;
 			//synchronized (semaphoreLatenza) {
-			lockLatenza.acquire("readLatenzaInCache",
-					datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
+			lockLatenza.acquire("readLatenzaInCache", idTransazione);
 			try {
 				
 				// se e' attiva una cache provo ad utilizzarla
@@ -713,8 +711,7 @@ public class GestoreCacheControlloTraffico {
 				}
 				
 			}finally {
-				lockLatenza.release("readLatenzaInCache",
-						datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
+				lockLatenza.release("readLatenzaInCache", idTransazione);
 			}
 
 		}
@@ -784,9 +781,9 @@ public class GestoreCacheControlloTraffico {
 				}
 			}
 			
+			String idTransazione = datiTransazione!=null ? datiTransazione.getIdTransazione() : null;
 			//synchronized (semaphoreStato) {
-			lockStato.acquire("getStatoInCache",
-					datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
+			lockStato.acquire("getStatoInCache", idTransazione);
 			try {
 				
 				// se e' attiva una cache provo ad utilizzarla
@@ -833,8 +830,7 @@ public class GestoreCacheControlloTraffico {
 				}
 				
 			}finally {
-				lockStato.release("getStatoInCache",
-						datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
+				lockStato.release("getStatoInCache", idTransazione);
 			}
 
 		}
