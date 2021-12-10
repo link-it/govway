@@ -33,6 +33,7 @@
 		<fileset dir="${required_lib}" >
 			<exclude name="**/axis14/*"/>
 			<exclude name="**/applicationServer/**/*.jar"/>
+			<exclude name="**/swagger-codegen/*"/>
 			<exclude name="**/*README"/>
 			<exclude name="*.userlibraries"/>
 		</fileset>

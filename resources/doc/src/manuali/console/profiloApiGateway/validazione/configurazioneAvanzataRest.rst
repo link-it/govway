@@ -5,6 +5,9 @@ Configurazione per API REST
 
 È possibile configurare il tipo di validazione attuata su API REST registrando le seguenti :ref:`configProprieta` sull'erogazione o sulla fruizione:
 
+.. note::
+	Tutte le proprietà configurate vengono verificate in AND tra di loro. Ad esempio è quindi possibile definire sia il codice http che il Content-Type per cui si desidera abilitare una validazione.
+
 - *validation.emptyResponse.enabled* : consente di disabilitare la validazione della risposta in caso di payload http vuoto. I valori associabili alle proprietà sono 'true' o 'false'. Per default questo controllo è abilitato.
 
 - *validation.problemDetails.enabled* : consente di disabilitare la validazione della risposta nel caso il payload http contenga un oggetto *Problem Details* come definito nella specifica *RFC 7807* (https://tools.ietf.org/html/rfc7807). I valori associabili alle proprietà sono 'true' o 'false'. Per default questo controllo è abilitato.
@@ -18,4 +21,4 @@ Configurazione per API REST
 - *validation.contentType.not* : consente di impostare una validazione della risposta solamente per i messaggi che non corrispondono ai Content-Type definiti nella proprietà 'validation.contentType'.
 
 .. note::
-	Tutte le proprietà configurate vengono verificate in AND tra di loro. È quindi possibile definire sia il codice http che il Content-Type per cui si desidera abilitare una validazione.
+    Per la validazione dei messaggi con specifiche di interfaccia OpenAPI 3.x, è possibile attuare una configurazione avanzata del tipo di validazione effettuato. Maggiori dettagli vengono forniti nella sezione :ref:`configAvanzataValidazione`.

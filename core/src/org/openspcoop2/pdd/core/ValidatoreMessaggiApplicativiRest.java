@@ -67,7 +67,8 @@ import org.openspcoop2.utils.json.YAMLUtils;
 import org.openspcoop2.utils.openapi.OpenapiApi;
 import org.openspcoop2.utils.openapi.UniqueInterfaceGenerator;
 import org.openspcoop2.utils.openapi.UniqueInterfaceGeneratorConfig;
-import org.openspcoop2.utils.openapi.validator.OpenapiApi4jValidatorConfig;
+import org.openspcoop2.utils.openapi.validator.OpenAPILibrary;
+import org.openspcoop2.utils.openapi.validator.OpenapiLibraryValidatorConfig;
 import org.openspcoop2.utils.openapi.validator.OpenapiApiValidatorConfig;
 import org.openspcoop2.utils.rest.ApiFactory;
 import org.openspcoop2.utils.rest.ApiFormats;
@@ -124,7 +125,7 @@ public class ValidatoreMessaggiApplicativiRest {
 	/** UseInterface */
 	private boolean useInterface;
 	/** OpenApi4j config */
-	private OpenapiApi4jValidatorConfig configOpenApi4j;
+	private OpenapiLibraryValidatorConfig configOpenApiValidator;
 	/** OpenSPCoop2Properties */
 	private OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 	/** Buffer */
@@ -167,21 +168,29 @@ public class ValidatoreMessaggiApplicativiRest {
 			this.useInterface = readInterfaceAccordoServizio;
 			
 			boolean processIncludeForOpenApi = true;
-			if(this.op2Properties.isValidazioneContenutiApplicativi_openApi_useOpenApi4j()) {
-				this.configOpenApi4j = new OpenapiApi4jValidatorConfig();
-				this.configOpenApi4j.setUseOpenApi4J(true);
-				this.configOpenApi4j.setMergeAPISpec(this.op2Properties.isValidazioneContenutiApplicativi_openApi_openApi4j_mergeAPISpec());
-				this.configOpenApi4j.setValidateAPISpec(this.op2Properties.isValidazioneContenutiApplicativi_openApi_openApi4j_validateAPISpec());
-				this.configOpenApi4j.setValidateRequestQuery(this.op2Properties.isValidazioneContenutiApplicativi_openApi_openApi4j_validateRequestQuery());
-				this.configOpenApi4j.setValidateRequestHeaders(this.op2Properties.isValidazioneContenutiApplicativi_openApi_openApi4j_validateRequestHeaders());
-				this.configOpenApi4j.setValidateRequestCookie(this.op2Properties.isValidazioneContenutiApplicativi_openApi_openApi4j_validateRequestCookie());
-				this.configOpenApi4j.setValidateRequestBody(this.op2Properties.isValidazioneContenutiApplicativi_openApi_openApi4j_validateRequestBody());
-				this.configOpenApi4j.setValidateResponseHeaders(this.op2Properties.isValidazioneContenutiApplicativi_openApi_openApi4j_validateResponseHeaders());
-				this.configOpenApi4j.setValidateResponseBody(this.op2Properties.isValidazioneContenutiApplicativi_openApi_openApi4j_validateResponseBody());
-				updateConfigOpenApi4j(proprieta, this.configOpenApi4j); // aggiorno anche se utilizzarlo o meno
-				if(this.configOpenApi4j.isUseOpenApi4J()) {
-					processIncludeForOpenApi = false;
-				}
+			this.configOpenApiValidator = new OpenapiLibraryValidatorConfig();
+			this.configOpenApiValidator.setOpenApiLibrary(this.op2Properties.getValidazioneContenutiApplicativi_openApi_library());
+			if(OpenAPILibrary.openapi4j.equals(this.configOpenApiValidator.getOpenApiLibrary()) ||
+					OpenAPILibrary.swagger_request_validator.equals(this.configOpenApiValidator.getOpenApiLibrary())) {
+				this.configOpenApiValidator.setMergeAPISpec(this.op2Properties.isValidazioneContenutiApplicativi_openApi_mergeAPISpec());
+				this.configOpenApiValidator.setValidateAPISpec(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateAPISpec());
+				this.configOpenApiValidator.setValidateRequestQuery(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateRequestQuery());
+				this.configOpenApiValidator.setValidateRequestUnexpectedQueryParam(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateRequestUnexpectedQueryParam());
+				this.configOpenApiValidator.setValidateRequestHeaders(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateRequestHeaders());
+				this.configOpenApiValidator.setValidateRequestCookie(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateRequestCookie());
+				this.configOpenApiValidator.setValidateRequestBody(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateRequestBody());
+				this.configOpenApiValidator.setValidateResponseHeaders(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateResponseHeaders());
+				this.configOpenApiValidator.setValidateResponseBody(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateResponseBody());
+				this.configOpenApiValidator.setValidateWildcardSubtypeAsJson(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateWildcardSubtypeAsJson());
+				this.configOpenApiValidator.setSwaggerRequestValidator_InjectingAdditionalPropertiesFalse(this.op2Properties.isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_injectingAdditionalPropertiesFalse());
+				this.configOpenApiValidator.setSwaggerRequestValidator_ResolveFullyApiSpec(this.op2Properties.isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_resolveFullyApiSpec());
+			}
+			
+			updateOpenapiValidatorConfig(proprieta, this.configOpenApiValidator); // aggiorno anche se utilizzarlo o meno
+						
+			if(OpenAPILibrary.openapi4j.equals(this.configOpenApiValidator.getOpenApiLibrary()) ||
+					OpenAPILibrary.swagger_request_validator.equals(this.configOpenApiValidator.getOpenApiLibrary())) {
+				processIncludeForOpenApi = false;
 			}
 			
 			this.bufferMessage_readOnly = OpenSPCoop2Properties.getInstance().isValidazioneContenutiApplicativi_bufferContentRead();
@@ -346,7 +355,7 @@ public class ValidatoreMessaggiApplicativiRest {
 		String interfaceType = null;
 		ApiFormats format = null;
 		ApiValidatorConfig validatorConfig = null;
-		boolean openapi4j = false;
+		OpenAPILibrary openApiLibrary = null; 
 		Api api = this.accordoServizioWrapper.getApi();
 		switch (this.accordoServizioWrapper.getAccordoServizio().getFormatoSpecifica()) {
 		case WADL:
@@ -359,17 +368,33 @@ public class ValidatoreMessaggiApplicativiRest {
 			format=ApiFormats.SWAGGER_2;
 			validatorConfig = new OpenapiApiValidatorConfig();
 			((OpenapiApiValidatorConfig)validatorConfig).setJsonValidatorAPI(this.op2Properties.getValidazioneContenutiApplicativi_openApi_jsonValidator());
+			if(this.useInterface && this.configOpenApiValidator!=null) {
+				openApiLibrary = this.configOpenApiValidator.getOpenApiLibrary();
+				if(OpenAPILibrary.swagger_request_validator.equals(openApiLibrary)) {
+					((OpenapiApiValidatorConfig)validatorConfig).setOpenApiValidatorConfig(this.configOpenApiValidator);
+					if(this.configOpenApiValidator.isMergeAPISpec()) {
+						// forzo a false, la funzionalità di merge non supporta swagger
+						this.configOpenApiValidator.setMergeAPISpec(false);
+					}
+					/*if(this.configOpenApiValidator.isMergeAPISpec() && api instanceof OpenapiApi) {
+						OpenapiApi openapi = (OpenapiApi) api;
+						if(openapi.getValidationStructure()==null) {
+							api = this.mergeApiSpec(openapi, this.accordoServizioWrapper);
+						}
+					}*/
+				}
+			}
 			break;
 		case OPEN_API_3:
 			interfaceType = "Interfaccia OpenAPI 3";
 			format=ApiFormats.OPEN_API_3;
 			validatorConfig = new OpenapiApiValidatorConfig();
 			((OpenapiApiValidatorConfig)validatorConfig).setJsonValidatorAPI(this.op2Properties.getValidazioneContenutiApplicativi_openApi_jsonValidator());
-			if(this.useInterface && this.configOpenApi4j!=null) {
-				openapi4j = this.configOpenApi4j.isUseOpenApi4J();
-				if(openapi4j) {
-					((OpenapiApiValidatorConfig)validatorConfig).setOpenApi4JConfig(this.configOpenApi4j);
-					if(this.configOpenApi4j.isMergeAPISpec() && api instanceof OpenapiApi) {
+			if(this.useInterface && this.configOpenApiValidator!=null) {
+				openApiLibrary = this.configOpenApiValidator.getOpenApiLibrary();
+				if(OpenAPILibrary.openapi4j.equals(openApiLibrary) || OpenAPILibrary.swagger_request_validator.equals(openApiLibrary)) {
+					((OpenapiApiValidatorConfig)validatorConfig).setOpenApiValidatorConfig(this.configOpenApiValidator);
+					if(this.configOpenApiValidator.isMergeAPISpec() && api instanceof OpenapiApi) {
 						OpenapiApi openapi = (OpenapiApi) api;
 						if(openapi.getValidationStructure()==null) {
 							api = this.mergeApiSpec(openapi, this.accordoServizioWrapper);
@@ -447,7 +472,7 @@ public class ValidatoreMessaggiApplicativiRest {
 						OpenSPCoop2RestXmlMessage xmlMsg = this.message.castAsRestXml();
 						Element contentXml = xmlMsg.getContent(this.bufferMessage_readOnly, idTransazione);
 						
-						if(openapi4j) {
+						if(OpenAPILibrary.openapi4j.equals(openApiLibrary) || OpenAPILibrary.swagger_request_validator.equals(openApiLibrary)) {
 							httpRequest = new BinaryHttpRequestEntity();
 							ByteArrayOutputStream bout = new ByteArrayOutputStream();
 							this.message.writeTo(bout, false);
@@ -523,7 +548,7 @@ public class ValidatoreMessaggiApplicativiRest {
 						OpenSPCoop2RestXmlMessage xmlMsg = this.message.castAsRestXml();
 						Element contentXml = xmlMsg.getContent(this.bufferMessage_readOnly, idTransazione);
 						
-						if(openapi4j) {
+						if(OpenAPILibrary.openapi4j.equals(openApiLibrary) || OpenAPILibrary.swagger_request_validator.equals(openApiLibrary)) {
 							httpResponse = new BinaryHttpResponseEntity();
 							ByteArrayOutputStream bout = new ByteArrayOutputStream();
 							this.message.writeTo(bout, false);
@@ -670,102 +695,202 @@ public class ValidatoreMessaggiApplicativiRest {
 
 	}
 	
-	private void updateConfigOpenApi4j(List<Proprieta> proprieta, OpenapiApi4jValidatorConfig configOpenApi4j) {
+	private void updateOpenapiValidatorConfig(List<Proprieta> proprieta, OpenapiLibraryValidatorConfig configOpenApi4j) {
 		if(proprieta==null || proprieta.isEmpty()) {
 			return;
 		}
 		
 		String useOpenApi4j = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_ENABLED);
+		boolean openApi4jForceDisabled = false;
 		if(useOpenApi4j!=null && !StringUtils.isEmpty(useOpenApi4j)) {
 			if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_ENABLED.equals(useOpenApi4j.trim())) {
-				configOpenApi4j.setUseOpenApi4J(true);
+				configOpenApi4j.setOpenApiLibrary(OpenAPILibrary.openapi4j);
 			}
 			else if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_DISABLED.equals(useOpenApi4j.trim())) {
-				configOpenApi4j.setUseOpenApi4J(false);
+				openApi4jForceDisabled = true;
+			}
+		}
+		String useSwaggerRequestValidator = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_ENABLED);
+		boolean swaggerRequestValidatorForceDisabled = false;
+		if(useSwaggerRequestValidator!=null && !StringUtils.isEmpty(useSwaggerRequestValidator)) {
+			if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_SWAGGER_REQUEST_VALIDATOR_ENABLED.equals(useSwaggerRequestValidator.trim())) {
+				configOpenApi4j.setOpenApiLibrary(OpenAPILibrary.swagger_request_validator);
+			}
+			else if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_SWAGGER_REQUEST_VALIDATOR_DISABLED.equals(useSwaggerRequestValidator.trim())) {
+				swaggerRequestValidatorForceDisabled = true;
 			}
 		}
 		
-		if(configOpenApi4j.isUseOpenApi4J()==false) {
+		if(openApi4jForceDisabled && swaggerRequestValidatorForceDisabled) {
+			configOpenApi4j.setOpenApiLibrary(OpenAPILibrary.json_schema);
+		}
+		
+		if(!OpenAPILibrary.openapi4j.equals(configOpenApi4j.getOpenApiLibrary()) && !OpenAPILibrary.swagger_request_validator.equals(configOpenApi4j.getOpenApiLibrary())) {
 			return;
 		}
+		boolean openapi4j = OpenAPILibrary.openapi4j.equals(configOpenApi4j.getOpenApiLibrary());
+		String enabled = openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_ENABLED : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_SWAGGER_REQUEST_VALIDATOR_ENABLED;
+		String disabled = openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_DISABLED : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_SWAGGER_REQUEST_VALIDATOR_DISABLED;
 		
-		String mergeAPISpec = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_MERGE_API_SPEC);
+		String mergeAPISpec = ValidatoreMessaggiApplicativiRest.readValue(proprieta, 
+				openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_MERGE_API_SPEC : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_MERGE_API_SPEC);
+		if(mergeAPISpec==null || StringUtils.isEmpty(mergeAPISpec)) {
+			mergeAPISpec = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_MERGE_API_SPEC);
+		}
 		if(mergeAPISpec!=null && !StringUtils.isEmpty(mergeAPISpec)) {
-			if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_ENABLED.equals(mergeAPISpec.trim())) {
+			if(enabled.equals(mergeAPISpec.trim())) {
 				configOpenApi4j.setMergeAPISpec(true);
 			}
-			else if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_DISABLED.equals(mergeAPISpec.trim())) {
+			else if(disabled.equals(mergeAPISpec.trim())) {
 				configOpenApi4j.setMergeAPISpec(false);
 			}
 		}
 		
-		String validateAPISpec = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_API_SPEC);
+		String validateAPISpec = ValidatoreMessaggiApplicativiRest.readValue(proprieta, 
+				openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_API_SPEC : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_API_SPEC);
+		if(validateAPISpec==null || StringUtils.isEmpty(validateAPISpec)) {
+			validateAPISpec = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_VALIDATE_API_SPEC);
+		}
 		if(validateAPISpec!=null && !StringUtils.isEmpty(validateAPISpec)) {
-			if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_ENABLED.equals(validateAPISpec.trim())) {
+			if(enabled.equals(validateAPISpec.trim())) {
 				configOpenApi4j.setValidateAPISpec(true);
 			}
-			else if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_DISABLED.equals(validateAPISpec.trim())) {
+			else if(disabled.equals(validateAPISpec.trim())) {
 				configOpenApi4j.setValidateAPISpec(false);
 			}
 		}
 		
-		String validateRequestQuery = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_REQUEST_QUERY);
+		String validateRequestQuery = ValidatoreMessaggiApplicativiRest.readValue(proprieta, 
+				openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_REQUEST_QUERY : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_REQUEST_QUERY);
+		if(validateRequestQuery==null || StringUtils.isEmpty(validateRequestQuery)) {
+			validateRequestQuery = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_VALIDATE_REQUEST_QUERY);
+		}
 		if(validateRequestQuery!=null && !StringUtils.isEmpty(validateRequestQuery)) {
-			if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_ENABLED.equals(validateRequestQuery.trim())) {
+			if(enabled.equals(validateRequestQuery.trim())) {
 				configOpenApi4j.setValidateRequestQuery(true);
 			}
-			else if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_DISABLED.equals(validateRequestQuery.trim())) {
+			else if(disabled.equals(validateRequestQuery.trim())) {
 				configOpenApi4j.setValidateRequestQuery(false);
 			}
 		}
 		
-		String validateRequestHeaders = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_REQUEST_HEADERS);
+		String validateRequestQueryUnexpectedQueryParam = ValidatoreMessaggiApplicativiRest.readValue(proprieta, 
+				openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_REQUEST_UNEXPECTED_QUERY_PARAM : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_REQUEST_UNEXPECTED_QUERY_PARAM);
+		if(validateRequestQueryUnexpectedQueryParam==null || StringUtils.isEmpty(validateRequestQueryUnexpectedQueryParam)) {
+			validateRequestQueryUnexpectedQueryParam = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_VALIDATE_REQUEST_UNEXPECTED_QUERY_PARAM);
+		}
+		if(validateRequestQueryUnexpectedQueryParam!=null && !StringUtils.isEmpty(validateRequestQueryUnexpectedQueryParam)) {
+			if(enabled.equals(validateRequestQueryUnexpectedQueryParam.trim())) {
+				configOpenApi4j.setValidateRequestUnexpectedQueryParam(true);
+			}
+			else if(disabled.equals(validateRequestQueryUnexpectedQueryParam.trim())) {
+				configOpenApi4j.setValidateRequestUnexpectedQueryParam(false);
+			}
+		}
+		
+		String validateRequestHeaders = ValidatoreMessaggiApplicativiRest.readValue(proprieta, 
+				openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_REQUEST_HEADERS : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_REQUEST_HEADERS);
+		if(validateRequestHeaders==null || StringUtils.isEmpty(validateRequestHeaders)) {
+			validateRequestHeaders = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_VALIDATE_REQUEST_HEADERS);
+		}
 		if(validateRequestHeaders!=null && !StringUtils.isEmpty(validateRequestHeaders)) {
-			if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_ENABLED.equals(validateRequestHeaders.trim())) {
+			if(enabled.equals(validateRequestHeaders.trim())) {
 				configOpenApi4j.setValidateRequestHeaders(true);
 			}
-			else if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_DISABLED.equals(validateRequestHeaders.trim())) {
+			else if(disabled.equals(validateRequestHeaders.trim())) {
 				configOpenApi4j.setValidateRequestHeaders(false);
 			}
 		}
 		
-		String validateRequestCookie = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_REQUEST_COOKIES);
+		String validateRequestCookie = ValidatoreMessaggiApplicativiRest.readValue(proprieta, 
+				openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_REQUEST_COOKIES : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_REQUEST_COOKIES);
+		if(validateRequestCookie==null || StringUtils.isEmpty(validateRequestCookie)) {
+			validateRequestCookie = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_VALIDATE_REQUEST_COOKIES);
+		}
 		if(validateRequestCookie!=null && !StringUtils.isEmpty(validateRequestCookie)) {
-			if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_ENABLED.equals(validateRequestCookie.trim())) {
+			if(enabled.equals(validateRequestCookie.trim())) {
 				configOpenApi4j.setValidateRequestCookie(true);
 			}
-			else if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_DISABLED.equals(validateRequestCookie.trim())) {
+			else if(disabled.equals(validateRequestCookie.trim())) {
 				configOpenApi4j.setValidateRequestCookie(false);
 			}
 		}
 		
-		String validateRequestBody = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_REQUEST_BODY);
+		String validateRequestBody = ValidatoreMessaggiApplicativiRest.readValue(proprieta, 
+				openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_REQUEST_BODY : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_REQUEST_BODY);
+		if(validateRequestBody==null || StringUtils.isEmpty(validateRequestBody)) {
+			validateRequestBody = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_VALIDATE_REQUEST_BODY);
+		}
 		if(validateRequestBody!=null && !StringUtils.isEmpty(validateRequestBody)) {
-			if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_ENABLED.equals(validateRequestBody.trim())) {
+			if(enabled.equals(validateRequestBody.trim())) {
 				configOpenApi4j.setValidateRequestBody(true);
 			}
-			else if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_DISABLED.equals(validateRequestBody.trim())) {
+			else if(disabled.equals(validateRequestBody.trim())) {
 				configOpenApi4j.setValidateRequestBody(false);
 			}
 		}
 		
-		String validateResponseHeaders = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_RESPONSE_HEADERS);
+		String validateResponseHeaders = ValidatoreMessaggiApplicativiRest.readValue(proprieta, 
+				openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_RESPONSE_HEADERS : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_RESPONSE_HEADERS);
+		if(validateResponseHeaders==null || StringUtils.isEmpty(validateResponseHeaders)) {
+			validateResponseHeaders = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_VALIDATE_RESPONSE_HEADERS);
+		}
 		if(validateResponseHeaders!=null && !StringUtils.isEmpty(validateResponseHeaders)) {
-			if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_ENABLED.equals(validateResponseHeaders.trim())) {
+			if(enabled.equals(validateResponseHeaders.trim())) {
 				configOpenApi4j.setValidateResponseHeaders(true);
 			}
-			else if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_DISABLED.equals(validateResponseHeaders.trim())) {
+			else if(disabled.equals(validateResponseHeaders.trim())) {
 				configOpenApi4j.setValidateResponseHeaders(false);
 			}
 		}
 		
-		String validateResponseBody = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_RESPONSE_BODY);
+		String validateResponseBody = ValidatoreMessaggiApplicativiRest.readValue(proprieta, 
+				openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_RESPONSE_BODY : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_RESPONSE_BODY);
+		if(validateResponseBody==null || StringUtils.isEmpty(validateResponseBody)) {
+			validateResponseBody = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_VALIDATE_RESPONSE_BODY);
+		}
 		if(validateResponseBody!=null && !StringUtils.isEmpty(validateResponseBody)) {
-			if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_ENABLED.equals(validateResponseBody.trim())) {
+			if(enabled.equals(validateResponseBody.trim())) {
 				configOpenApi4j.setValidateResponseBody(true);
 			}
-			else if(CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_OPENAPI4J_DISABLED.equals(validateResponseBody.trim())) {
+			else if(disabled.equals(validateResponseBody.trim())) {
 				configOpenApi4j.setValidateResponseBody(false);
+			}
+		}
+		
+		String validateWildcardSubtypeAsJson = ValidatoreMessaggiApplicativiRest.readValue(proprieta, 
+				openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_WILDCARD_SUBTYPE_AS_JSON : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_WILDCARD_SUBTYPE_AS_JSON);
+		if(validateWildcardSubtypeAsJson==null || StringUtils.isEmpty(validateWildcardSubtypeAsJson)) {
+			validateWildcardSubtypeAsJson = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_VALIDATE_WILDCARD_SUBTYPE_AS_JSON);
+		}
+		if(validateWildcardSubtypeAsJson!=null && !StringUtils.isEmpty(validateWildcardSubtypeAsJson)) {
+			if(enabled.equals(validateWildcardSubtypeAsJson.trim())) {
+				configOpenApi4j.setValidateWildcardSubtypeAsJson(true);
+			}
+			else if(disabled.equals(validateWildcardSubtypeAsJson.trim())) {
+				configOpenApi4j.setValidateWildcardSubtypeAsJson(false);
+			}
+		}
+		
+		if(!openapi4j) {
+			String injectingAdditionalPropertiesFalse = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_INJECTING_ADDITIONAL_PROPERTIES_FALSE);
+			if(injectingAdditionalPropertiesFalse!=null && !StringUtils.isEmpty(injectingAdditionalPropertiesFalse)) {
+				if(enabled.equals(injectingAdditionalPropertiesFalse.trim())) {
+					configOpenApi4j.setSwaggerRequestValidator_InjectingAdditionalPropertiesFalse(true);
+				}
+				else if(disabled.equals(injectingAdditionalPropertiesFalse.trim())) {
+					configOpenApi4j.setSwaggerRequestValidator_InjectingAdditionalPropertiesFalse(false);
+				}
+			}
+			
+			String resolveFullyApiSpec = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_RESOLVE_FULLY_API_SPEC);
+			if(resolveFullyApiSpec!=null && !StringUtils.isEmpty(resolveFullyApiSpec)) {
+				if(enabled.equals(resolveFullyApiSpec.trim())) {
+					configOpenApi4j.setSwaggerRequestValidator_ResolveFullyApiSpec(true);
+				}
+				else if(disabled.equals(resolveFullyApiSpec.trim())) {
+					configOpenApi4j.setSwaggerRequestValidator_ResolveFullyApiSpec(false);
+				}
 			}
 		}
 		

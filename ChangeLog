@@ -2,6 +2,12 @@
 
 	* Rilasciata versione 3.3.5.p1
 
+2021-12-10  Francesco Scarlato <scarlato@link.it>
+
+	* [GovWayCore, Utils]
+	Aggiunta funzionalità OP-1274
+	Aggiunto motore di validazione OpenAPI alternativo che utilizza la libreria: https://bitbucket.org/atlassian/swagger-request-validator
+
 2021-12-06  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

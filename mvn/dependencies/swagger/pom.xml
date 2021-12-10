@@ -17,13 +17,14 @@
 
 		<jar.group.name>swagger</jar.group.name>
 		
-		<swagger-ui.version>3.25.0</swagger-ui.version>
-		<classgraph.version>4.8.65</classgraph.version>
-		<swagger.v3.version>2.1.1</swagger.v3.version>
-		<swagger.parser.v3.version>2.0.17</swagger.parser.v3.version>
-		<swagger.version>1.6.0</swagger.version>
-		<swagger.parser.version>1.0.49</swagger.parser.version>
-
+		<swagger-ui.version>4.1.2</swagger-ui.version>
+		<classgraph.version>4.8.137</classgraph.version>
+		<swagger.v3.version>2.1.11</swagger.v3.version>
+		<swagger.parser.v3.version>2.0.28</swagger.parser.v3.version>
+		<swagger.parser.v3.gov4j.version>2.0.28-gov4j-1</swagger.parser.v3.gov4j.version>
+		<swagger.version>1.6.3</swagger.version>
+		<swagger.parser.version>1.0.56</swagger.parser.version>
+		<swagger.request-validator.gov4j.version>2.23.0-gov4j-1</swagger.request-validator.gov4j.version>
 	</properties>
 
 	<dependencies>
@@ -143,7 +144,7 @@
 		<dependency>
 			<groupId>io.swagger.parser.v3</groupId>
 			<artifactId>swagger-parser-v3</artifactId>
-			<version>${swagger.parser.v3.version}</version>
+			<version>${swagger.parser.v3.gov4j.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
@@ -179,6 +180,18 @@
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-parser</artifactId>
 			<version>${swagger.parser.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>com.atlassian.oai</groupId>
+			<artifactId>swagger-request-validator-core</artifactId>
+			<version>${swagger.request-validator.gov4j.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

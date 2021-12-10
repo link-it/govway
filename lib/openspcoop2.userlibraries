@@ -224,6 +224,7 @@
 	<archive path="/op2_3.3.dev/lib/shared/reactive-streams-1.0.3.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/reflections-0.9.12.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/javassist-3.12.1.GA.jar"/>
+	<archive path="/op2_3.3.dev/lib/shared/rhino-1.7.13.jar"/>
 	<!-- soapbox -->
         <archive path="/op2_3.3.dev/lib/soapbox/ultraesb-core-1.7.1.jar"/>
         <archive path="/op2_3.3.dev/lib/soapbox/ultraesb-api-1.7.1.jar"/>
@@ -243,19 +244,20 @@
 	<archive path="/op2_3.3.dev/lib/spring-security/spring-security-core-5.3.10.RELEASE.jar"/>
 	<archive path="/op2_3.3.dev/lib/spring-security/spring-security-web-5.3.10.RELEASE.jar"/>
 	<!-- swagger -->
-	<archive path="/op2_3.3.dev/lib/swagger/swagger-annotations-2.1.1.jar"/>
-	<archive path="/op2_3.3.dev/lib/swagger/swagger-core-2.1.1.jar"/>
-	<archive path="/op2_3.3.dev/lib/swagger/swagger-models-2.1.1.jar"/>
-	<archive path="/op2_3.3.dev/lib/swagger/swagger-jaxrs2-2.1.1.jar"/>
-	<archive path="/op2_3.3.dev/lib/swagger/swagger-integration-2.1.1.jar"/>
-	<archive path="/op2_3.3.dev/lib/swagger/swagger-parser-2.0.17.jar"/>
-	<archive path="/op2_3.3.dev/lib/swagger/swagger-parser-core-2.0.17.jar"/>
-	<archive path="/op2_3.3.dev/lib/swagger/swagger-parser-v3-2.0.17.jar"/>
-	<archive path="/op2_3.3.dev/lib/swagger/swagger-parser-v2-converter-2.0.17.jar"/>
-	<archive path="/op2_3.3.dev/lib/swagger/swagger-parser-1.0.49.jar"/>
-	<archive path="/op2_3.3.dev/lib/swagger/swagger-core-1.6.0.jar"/>
-	<archive path="/op2_3.3.dev/lib/swagger/swagger-models-1.6.0.jar"/>
-	<archive path="/op2_3.3.dev/lib/swagger/swagger-ui-3.25.0.jar"/>
+	<archive path="/op2_3.3.dev/lib/swagger/swagger-annotations-2.1.11.jar"/>
+	<archive path="/op2_3.3.dev/lib/swagger/swagger-core-2.1.11.jar"/>
+	<archive path="/op2_3.3.dev/lib/swagger/swagger-models-2.1.11.jar"/>
+	<archive path="/op2_3.3.dev/lib/swagger/swagger-jaxrs2-2.1.11.jar"/>
+	<archive path="/op2_3.3.dev/lib/swagger/swagger-integration-2.1.11.jar"/>
+	<archive path="/op2_3.3.dev/lib/swagger/swagger-parser-2.0.28.jar"/>
+	<archive path="/op2_3.3.dev/lib/swagger/swagger-parser-core-2.0.28.jar"/>
+	<archive path="/op2_3.3.dev/lib/swagger/swagger-parser-v3-2.0.28-gov4j-1.jar"/>
+	<archive path="/op2_3.3.dev/lib/swagger/swagger-parser-v2-converter-2.0.28.jar"/>
+	<archive path="/op2_3.3.dev/lib/swagger/swagger-parser-1.0.56.jar"/>
+	<archive path="/op2_3.3.dev/lib/swagger/swagger-core-1.6.3.jar"/>
+	<archive path="/op2_3.3.dev/lib/swagger/swagger-models-1.6.3.jar"/>
+	<archive path="/op2_3.3.dev/lib/swagger/swagger-ui-4.1.2.jar"/>
+	<archive path="/op2_3.3.dev/lib/swagger/swagger-request-validator-core-2.23.0-gov4j-1.jar"/>
 	<!-- testsuite-->
         <archive path="/op2_3.3.dev/lib/testsuite/testng-7.1.0.jar"/>
 	<archive path="/op2_3.3.dev/lib/testsuite/jcommander-1.78.jar"/>

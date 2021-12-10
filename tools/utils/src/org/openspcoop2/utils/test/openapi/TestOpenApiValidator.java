@@ -20,6 +20,7 @@
 
 package org.openspcoop2.utils.test.openapi;
 
+import org.openspcoop2.utils.openapi.validator.OpenAPILibrary;
 import org.openspcoop2.utils.test.Costanti;
 import org.openspcoop2.utils.test.TestLogger;
 import org.testng.annotations.DataProvider;
@@ -35,33 +36,75 @@ import org.testng.annotations.Test;
 public class TestOpenApiValidator {
 
 	private static final String ID_TEST = "OpenAPI-Validator";
-	private static final boolean useOpenApi4j = true;
+	private static boolean mergeSpec = true;
 	
 	@DataProvider(name="openAPIValidatorProvider")
 	public Object[][] provider(){
 		return new Object[][]{
-				{"json", !useOpenApi4j},
-				{"yaml", !useOpenApi4j},
-				{"json", useOpenApi4j},
-				{"yaml", useOpenApi4j}
+				{"json", OpenAPILibrary.json_schema, !mergeSpec},
+				{"yaml", OpenAPILibrary.json_schema, !mergeSpec},
+				
+				{"json", OpenAPILibrary.openapi4j, mergeSpec},
+				{"yaml", OpenAPILibrary.openapi4j, mergeSpec},
+				{"json", OpenAPILibrary.openapi4j, !mergeSpec},
+				{"yaml", OpenAPILibrary.openapi4j, !mergeSpec},
+				
+				{"json", OpenAPILibrary.swagger_request_validator, mergeSpec},
+				{"yaml", OpenAPILibrary.swagger_request_validator, mergeSpec},
+				{"json", OpenAPILibrary.swagger_request_validator, !mergeSpec},
+				{"yaml", OpenAPILibrary.swagger_request_validator, !mergeSpec}
 		};
 	}
 	
 	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST},dataProvider="openAPIValidatorProvider")
-	public void testOpenApiValidator(String tipoInterfaccia, boolean useOpenApi4j) throws Exception{
+	public void testOpenApiValidator(String tipoInterfaccia, OpenAPILibrary openAPILibrary, boolean mergeSpec) throws Exception{
 		
-		TestLogger.info("Run test '"+ID_TEST+"' (interfaccia:"+tipoInterfaccia+" useOpenApi4j:"+useOpenApi4j+") ...");
-		org.openspcoop2.utils.openapi.validator.TestOpenApi3.main(new String[] {tipoInterfaccia, useOpenApi4j+""});
-		TestLogger.info("Run test '"+ID_TEST+"' (interfaccia:"+tipoInterfaccia+" useOpenApi4j:"+useOpenApi4j+") ok");
+		TestLogger.info("Run test '"+ID_TEST+"' (interfaccia:"+tipoInterfaccia+" openAPILibrary:"+openAPILibrary+" mergeSpec:"+mergeSpec+") ...");
+		org.openspcoop2.utils.openapi.validator.TestOpenApi3.main(new String[] {tipoInterfaccia, openAPILibrary.toString(), mergeSpec+""});
+		TestLogger.info("Run test '"+ID_TEST+"' (interfaccia:"+tipoInterfaccia+" openAPILibrary:"+openAPILibrary+" mergeSpec:"+mergeSpec+") ok");
 		
 	}
 	
-	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST})
-	public void testOpenApi4jValidator() throws Exception{
+	
+	@DataProvider(name="openAPI3ExtendedValidatorProvider")
+	public Object[][] extendedProvider(){
+		return new Object[][]{
+				{OpenAPILibrary.json_schema, !mergeSpec},
+				{OpenAPILibrary.json_schema, mergeSpec},
+				
+				{OpenAPILibrary.openapi4j, !mergeSpec},
+				{OpenAPILibrary.openapi4j, mergeSpec},
+				
+				{OpenAPILibrary.swagger_request_validator, !mergeSpec},
+				{OpenAPILibrary.swagger_request_validator, mergeSpec},
+		};
+	}
+	
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST},dataProvider="openAPI3ExtendedValidatorProvider")
+	public void testOpenApi3ExtendedValidator(OpenAPILibrary openAPILibrary, boolean mergeSpec) throws Exception{
 		
-		TestLogger.info("Run test '"+ID_TEST+"' (openapi4j) ...");
-		org.openspcoop2.utils.openapi.validator.TestOpenApi4j.main(new String[] {});
-		TestLogger.info("Run test '"+ID_TEST+"' (openapi4j) ok");
+		TestLogger.info("Run test '"+ID_TEST+"' (openAPILibrary:"+openAPILibrary+" mergeSpec:"+mergeSpec+") ...");
+		org.openspcoop2.utils.openapi.validator.TestOpenApi3Extended.main(new String[] {openAPILibrary.toString(), mergeSpec+""});
+		TestLogger.info("Run test '"+ID_TEST+"' (openAPILibrary:"+openAPILibrary+" mergeSpec:"+mergeSpec+") ok");
+		
+	}
+	
+	
+	
+	@DataProvider(name="openAPI3BigInterfaceValidatorProvider")
+	public Object[][] biggInterfaceProvider(){
+		return new Object[][]{
+				{OpenAPILibrary.swagger_request_validator, !mergeSpec},
+				{OpenAPILibrary.swagger_request_validator, mergeSpec},
+		};
+	}
+	
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST},dataProvider="openAPI3BigInterfaceValidatorProvider")
+	public void testOpenApi3BigInterfaceValidator(OpenAPILibrary openAPILibrary, boolean mergeSpec) throws Exception{
+		
+		TestLogger.info("Run test '"+ID_TEST+"' (openAPILibrary:"+openAPILibrary+" mergeSpec:"+mergeSpec+") ...");
+		org.openspcoop2.utils.openapi.validator.TestInterfaceBigger.main(new String[] {openAPILibrary.toString(), mergeSpec+""});
+		TestLogger.info("Run test '"+ID_TEST+"' (openAPILibrary:"+openAPILibrary+" mergeSpec:"+mergeSpec+") ok");
 		
 	}
 	
