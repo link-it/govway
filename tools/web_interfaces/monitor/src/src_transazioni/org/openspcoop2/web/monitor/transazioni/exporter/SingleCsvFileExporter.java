@@ -854,6 +854,50 @@ public class SingleCsvFileExporter implements IExporter{
 					} else {
 						oneLine.add(CostantiExport.EMPTY_STRING);
 					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_RICHIEDENTE)){
+					String richiedente = t.getRichiedente();
+					if(StringUtils.isNotEmpty(richiedente)){
+						oneLine.add(richiedente + "");
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_DETTAGLIO_ERRORE)){
+					String dettaglio = t.getDettaglioErrore();
+					if(StringUtils.isNotEmpty(dettaglio)){
+						oneLine.add(dettaglio + "");
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_TOKEN_ISSUER)){
+					if(StringUtils.isNotEmpty(t.getTokenIssuerLabel())){
+						oneLine.add(t.getTokenIssuerLabel() + "");
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_TOKEN_SUBJECT)){
+					if(StringUtils.isNotEmpty(t.getTokenSubjectLabel())){
+						oneLine.add(t.getTokenSubjectLabel() + "");
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_TOKEN_CLIENT)){
+					if(StringUtils.isNotEmpty(t.getTokenClientIdLabel())){
+						oneLine.add(t.getTokenClientIdLabel() + "");
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_TOKEN_USERNAME)){
+					if(StringUtils.isNotEmpty(t.getTokenUsernameLabel())){
+						oneLine.add(t.getTokenUsernameLabel() + "");
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_TOKEN_EMAIL)){
+					if(StringUtils.isNotEmpty(t.getTokenMailLabel())){
+						oneLine.add(t.getTokenMailLabel() + "");
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
 				} else {
 					// colonna non riconosciuta
 					throw new ExportException("Colonna ["+keyColonna+"] non definita.");

@@ -1,6 +1,15 @@
-2021-12-0X  Andrea Poli <apoli@link.it>
+2021-12-13  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.5.p1
+
+2021-12-10  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor]
+	Risolto Bug OP-1294
+	Nell'export CSV delle transazioni sono stati aggiunte le seguenti informazioni mancanti:
+	- richiedente;
+	- dettaglio dell'errore o dell'anomalia;
+	- informazioni principali estratte dal token: subject, issuer, clientId, username ed indirizzo eMail.
 
 2021-12-10  Andrea Poli <apoli@link.it>
 

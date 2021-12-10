@@ -64,7 +64,13 @@ Per la console di monitoraggio sono stati risolti i seguenti bug:
 
 - le pagine xhtml presentavano erroneamente campi 'date' con un time zone 'forzato' a 'Europe/Rome';
 
-- aggiunta la possibilità di selezionare in blocco gli elementi visualizzati nello storico delle transazioni.
+- aggiunta la possibilità di selezionare in blocco gli elementi visualizzati nello storico delle transazioni;
+
+- nell'export CSV delle transazioni sono stati aggiunte le seguenti informazioni mancanti:
+
+	- richiedente;
+	- dettaglio dell'errore o dell'anomalia;
+	- informazioni principali estratte dal token: subject, issuer, clientId, username ed indirizzo eMail.
 
 
 Sull'installer è stato corretto il seguente bug:
