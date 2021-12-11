@@ -330,23 +330,31 @@ public class PipedUnblockedStream extends IPipedUnblockedStream {
 
 	@Override
 	public int read() throws IOException {
-		
 		byte[]b = new byte[1];
-		return this.read(b);
-		
+		int len = this.read(b);
+		if ( len == 1 )
+			return b[0];
+		if ( len == -1 )
+			return -1;
+		throw new IOException( "Cannot read single byte" );
 	}
 
 	
 	@Override
 	public void close() throws IOException {	
 		try {
-			if(this.stop==false){
-				if(! (this.bout.size()>0) ){
-					this.bout.flush();
-					this.bout.close();
-					//this.bout = null; se si annulla, la read lo trovera' null
+			this.lockPIPE.acquireThrowRuntime("close");
+			try {
+				if(this.stop==false){
+					if(! (this.bout.size()>0) ){
+						this.bout.flush();
+						this.bout.close();
+						//this.bout = null; se si annulla, la read lo trovera' null
+					}
+					this.stop = true;
 				}
-				this.stop = true;
+			}finally{
+				this.lockPIPE.release("close");
 			}
 			if(this.asyncWriteTask!=null) {
 				//System.out.println("["+this.source+"] CLOSE for WRITE COMPLETE");

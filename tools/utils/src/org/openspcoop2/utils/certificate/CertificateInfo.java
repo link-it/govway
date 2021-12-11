@@ -28,6 +28,8 @@ import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.Provider;
+import java.security.Security;
 import java.security.SignatureException;
 import java.security.cert.CertPathValidator;
 import java.security.cert.CertPathValidatorException;
@@ -63,13 +65,38 @@ public class CertificateInfo implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private static String defaultType = null;
+	private static Provider provider = null;
+
 	private java.security.cert.X509Certificate certificate;
 
 	private String name;
 	
 	private byte[] digest;
 	private String digestBase64Encoded;
-	
+
+	private synchronized static String _getDefaultType() {
+		if ( defaultType == null )
+			defaultType = CertPathValidator.getDefaultType();
+		return defaultType;
+	}
+	private static String getDefaultType() {
+		if ( defaultType == null )
+			return _getDefaultType();
+		return defaultType;
+	}
+
+	private synchronized static Provider _getProvider() {
+		if ( provider == null )
+			provider = Security.getProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
+		return provider;
+	}
+	private static Provider getProvider() {
+		if ( provider == null )
+			return _getProvider();
+		return provider;
+	}
+
 	public CertificateInfo(java.security.cert.X509Certificate certificate, String name) {
 		this.certificate = certificate;
 		this.name = name;
@@ -150,7 +177,7 @@ public class CertificateInfo implements Serializable {
 	private synchronized void initDigest(String algoritmo) throws CertificateException {
 		try {
 			if(this.digest==null) {
-				MessageDigest digest  = MessageDigest.getInstance(algoritmo);
+				MessageDigest digest  = MessageDigest.getInstance(algoritmo, getProvider());
 				digest.update(this.certificate.getEncoded());
 				this.digest = digest.digest();
 			}
@@ -262,10 +289,10 @@ public class CertificateInfo implements Serializable {
 		pkixParameters.setDate(DateManager.getDate()); // per validare i certificati scaduti
 		pkixParameters.addCertStore(crlCertstore);
 		pkixParameters.setRevocationEnabled(true);
-		CertPathValidator certPathValidator = CertPathValidator.getInstance(CertPathValidator.getDefaultType());
+		CertPathValidator certPathValidator = CertPathValidator.getInstance( getDefaultType(), getProvider() );
 		List<java.security.cert.Certificate> lCertificate = new ArrayList<java.security.cert.Certificate>();
 		lCertificate.add(this.certificate);
-		certPathValidator.validate(CertificateFactory.getInstance("X.509").generateCertPath(lCertificate), pkixParameters);
+		certPathValidator.validate(CertificateFactory.getInstance("X.509", getProvider()).generateCertPath(lCertificate), pkixParameters);
 	}
 	
 	public boolean isVerified(KeyStore trustStore, boolean checkSameCertificateInTrustStore) {

@@ -65,10 +65,10 @@ public class PipedBytesStream extends IPipedUnblockedStream {
 	//private final Integer semaphore = 1;
 	private final org.openspcoop2.utils.Semaphore lockPIPE = new org.openspcoop2.utils.Semaphore("PipedBytesStream");
 	private byte [] bytesReading = null;
-	private int indexNextByteReceivedForWrite = 0;
+	private volatile int indexNextByteReceivedForWrite = 0;
 	private List<byte[]> chunkList = new ArrayList<byte[]>();
 	private byte [] bytesReceived = null;
-	private int indexNextByteReceivedForRead = -1;
+	private volatile int indexNextByteReceivedForRead = -1;
 	
 	private boolean stop = false;
 
@@ -209,9 +209,9 @@ public class PipedBytesStream extends IPipedUnblockedStream {
 				try {
 	//				System.out.println("########### READ b["+b.length+"] off["+off+"] len["+len+"] CHUNKS ... " + this.chunkList.size() );
 	//				System.out.println("########### READ b["+b.length+"] off["+off+"] len["+len+"] Next-Byte for write ... " + this.indexNextByteReceivedForWrite );
-					if ( this.chunkList.size() > 0 )
+					if ( this.chunkList.size() > 0 ) {
 						this.bytesReceived = this.chunkList.remove(0);
-					else
+					} else
 					if ( this.indexNextByteReceivedForWrite > 0 ) {
 						this.bytesReceived = new byte[ this.indexNextByteReceivedForWrite ];
 						System.arraycopy( this.bytesReading, 0, this.bytesReceived, 0, this.indexNextByteReceivedForWrite );
@@ -230,19 +230,19 @@ public class PipedBytesStream extends IPipedUnblockedStream {
 			
 			int bytesAvailableForRead = this.bytesReceived.length - this.indexNextByteReceivedForRead;
 			if ( bytesAvailableForRead == len ) {
-				System.arraycopy( this.bytesReceived, this.indexNextByteReceivedForRead, b, 0, bytesAvailableForRead );
+				System.arraycopy( this.bytesReceived, this.indexNextByteReceivedForRead, b, off, bytesAvailableForRead );
 				this.bytesReceived = null;
 				this.indexNextByteReceivedForRead = -1;
 	//			System.out.println("########### READ b["+b.length+"] off["+off+"] len["+len+"] NEXT INDEX["+this.indexNextByteReceivedForRead+"] RETURN LETTI("+len+") EXIT A");
 				return len;
 			} else
 			if ( bytesAvailableForRead > len ) {
-				System.arraycopy( this.bytesReceived, this.indexNextByteReceivedForRead, b, 0, len );
+				System.arraycopy( this.bytesReceived, this.indexNextByteReceivedForRead, b, off, len );
 				this.indexNextByteReceivedForRead += len;
 	//			System.out.println("########### READ b["+b.length+"] off["+off+"] len["+len+"] NEXT INDEX["+this.indexNextByteReceivedForRead+"] RETURN LETTI("+len+") EXIT B");
 				return len;
 			} else {
-				System.arraycopy( this.bytesReceived, this.indexNextByteReceivedForRead, b, 0, bytesAvailableForRead );
+				System.arraycopy( this.bytesReceived, this.indexNextByteReceivedForRead, b, off, bytesAvailableForRead );
 				this.bytesReceived = null;
 				this.indexNextByteReceivedForRead = -1;
 	//			System.out.println("########### READ b["+b.length+"] off["+off+"] len["+len+"] NEXT INDEX["+this.indexNextByteReceivedForRead+"] RETURN LETTI("+bytesAvailableForRead+") EXIT C");
@@ -259,10 +259,13 @@ public class PipedBytesStream extends IPipedUnblockedStream {
 
 	@Override
 	public int read() throws IOException {
-		
 		byte[]b = new byte[1];
-		return this.read(b);
-		
+		int len = this.read(b);
+		if ( len == 1 )
+			return b[0];
+		if ( len == -1 )
+			return -1;
+		throw new IOException( "Cannot read single byte" );
 	}
 
 	
@@ -271,14 +274,19 @@ public class PipedBytesStream extends IPipedUnblockedStream {
 		try {
 			if ( this.stop == false ) {
 	
-				if ( this.indexNextByteReceivedForWrite > 0 ) {
-					byte[] lastChunk = new byte[ this.indexNextByteReceivedForWrite ];
-					System.arraycopy( this.bytesReading, 0, lastChunk, 0, this.indexNextByteReceivedForWrite );
-					this.chunkList.add( lastChunk );
-					this.indexNextByteReceivedForWrite = 0;
+				this.lockPIPE.acquireThrowRuntime("close");
+				try {
+					if ( this.indexNextByteReceivedForWrite > 0 ) {
+						byte[] lastChunk = new byte[ this.indexNextByteReceivedForWrite ];
+						System.arraycopy( this.bytesReading, 0, lastChunk, 0, this.indexNextByteReceivedForWrite );
+						this.chunkList.add( lastChunk );
+						this.indexNextByteReceivedForWrite = 0;
+					}
+					this.bytesReading = null;
+					this.stop = true;
+				}finally{
+					this.lockPIPE.release("close");
 				}
-				this.bytesReading = null;
-				this.stop = true;
 			}
 			if(this.asyncWriteTask!=null) {
 	//			System.out.println("["+this.source+"] CLOSE for WRITE COMPLETE");

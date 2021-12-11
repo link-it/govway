@@ -53,6 +53,19 @@ import org.slf4j.Logger;
  */
 @SuppressWarnings("serial")
 public class OpenSPCoop2Servlet extends HttpServlet {
+	private static Logger logger = null;
+
+	private static synchronized Logger _getLogger() {
+		if ( logger == null ) {
+			logger = LoggerWrapperFactory.getLogger("govway.startup");
+		}
+		return logger;
+	}
+	private static Logger getLogger() {
+		if ( logger == null )
+			_getLogger();
+		return logger;
+	}
 
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -170,7 +183,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 	private void dispatch(HttpServletRequest req, HttpServletResponse res,HttpRequestMethod method) throws ServletException, IOException {
 		
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
-		Logger logOpenSPCoop2Servlet = LoggerWrapperFactory.getLogger("govway.startup");
+		Logger logOpenSPCoop2Servlet = getLogger();
 		
 		OpenSPCoop2Properties op2Properties = null;
 		try {
