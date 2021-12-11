@@ -28,8 +28,6 @@ import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.Provider;
-import java.security.Security;
 import java.security.SignatureException;
 import java.security.cert.CertPathValidator;
 import java.security.cert.CertPathValidatorException;
@@ -64,42 +62,6 @@ public class CertificateInfo implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
-	private static boolean useBouncyCastleProvider = false;
-	private static Provider provider = null;
-	public static boolean isUseBouncyCastleProvider() {
-		return useBouncyCastleProvider;
-	}
-	public static void setUseBouncyCastleProvider(boolean useBouncyCastleProvider) {
-		CertificateInfo.useBouncyCastleProvider = useBouncyCastleProvider;
-	}
-	
-	private synchronized static Provider _getProvider() {
-		if ( provider == null )
-			provider = Security.getProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
-		return provider;
-	}
-	private static Provider getProvider() {
-		if(!useBouncyCastleProvider) {
-			return null;
-		}
-		if ( provider == null )
-			return _getProvider();
-		return provider;
-	}
-
-	private static String certPathDefaultType = null;
-	private synchronized static String _getCertPathDefaultType() {
-		if ( certPathDefaultType == null )
-			certPathDefaultType = CertPathValidator.getDefaultType();
-		return certPathDefaultType;
-	}
-	private static String getCertPathDefaultType() {
-		if ( certPathDefaultType == null )
-			return _getCertPathDefaultType();
-		return certPathDefaultType;
-	}
-	
 	
 	private java.security.cert.X509Certificate certificate;
 
@@ -188,13 +150,7 @@ public class CertificateInfo implements Serializable {
 	private synchronized void initDigest(String algoritmo) throws CertificateException {
 		try {
 			if(this.digest==null) {
-				MessageDigest digest = null;
-				if(useBouncyCastleProvider) {
-					digest = MessageDigest.getInstance(algoritmo, getProvider());
-				}
-				else {
-					digest = MessageDigest.getInstance(algoritmo);
-				}
+				MessageDigest digest = org.openspcoop2.utils.digest.MessageDigestFactory.getMessageDigest(algoritmo);
 				digest.update(this.certificate.getEncoded());
 				this.digest = digest.digest();
 			}
@@ -306,22 +262,10 @@ public class CertificateInfo implements Serializable {
 		pkixParameters.setDate(DateManager.getDate()); // per validare i certificati scaduti
 		pkixParameters.addCertStore(crlCertstore);
 		pkixParameters.setRevocationEnabled(true);
-		CertPathValidator certPathValidator = null;
-		if(useBouncyCastleProvider) {
-			certPathValidator = CertPathValidator.getInstance(getCertPathDefaultType(), getProvider());
-		}
-		else {
-			certPathValidator = CertPathValidator.getInstance(getCertPathDefaultType());
-		}
+		CertPathValidator certPathValidator = org.openspcoop2.utils.certificate.CertificateFactory.getCertPathValidator();
 		List<java.security.cert.Certificate> lCertificate = new ArrayList<java.security.cert.Certificate>();
 		lCertificate.add(this.certificate);
-		CertificateFactory certificateFactory = null;
-		if(useBouncyCastleProvider) {
-			certificateFactory = CertificateFactory.getInstance("X.509", getProvider());
-		}
-		else {
-			certificateFactory = CertificateFactory.getInstance("X.509");
-		}
+		CertificateFactory certificateFactory = org.openspcoop2.utils.certificate.CertificateFactory.getCertificateFactory();
 		certPathValidator.validate(certificateFactory.generateCertPath(lCertificate), pkixParameters);
 	}
 	

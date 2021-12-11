@@ -2,6 +2,12 @@
 
 	* Rilasciata versione 3.3.5.p1
 
+2021-12-11  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Le istanze degli oggetti java.security.cert.CertificateFactory e java.security.cert.CertPathValidator vengono adesso ottenute utilizzando il provider fornito da bouncy castle.
+	Lo stesso provider bouncy castle viene inoltre adesso utilizzato per gestire i certificati all'interno degli oggetti org.apache.wss4j.common.crypto.Merlin.
+
 2021-12-10  Andrea Poli <apoli@link.it>
 
 	* [GovWayMonitor]

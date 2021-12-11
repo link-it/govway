@@ -188,11 +188,12 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.openspcoop2.utils.cache.Cache;
-import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.certificate.CertificateFactory;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
+import org.openspcoop2.utils.digest.MessageDigestFactory;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
 import org.openspcoop2.utils.id.serial.InfoStatistics;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
@@ -204,7 +205,6 @@ import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.semaphore.Semaphore;
 import org.openspcoop2.utils.semaphore.SemaphoreConfiguration;
 import org.openspcoop2.utils.semaphore.SemaphoreMapping;
-import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
 
 import com.sun.xml.messaging.saaj.soap.MessageImpl;
@@ -545,12 +545,19 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					if(secureRandom!=null) {
 						OpenSPCoop2Startup.log.info("SecureRandom used in CryptoServicesRegistrar di Bouncycastle: '"+secureRandom.getAlgorithm()+"'");
 					}
-				}
-				
-				OpenSPCoop2Startup.log.info("Add Bouncycastle in CertificateInfo utilities");
-				CertificateInfo.setUseBouncyCastleProvider(true);
-				OpenSPCoop2Startup.log.info("Add Bouncycastle in HttpUtilities");
-				HttpUtilities.setUseBouncyCastleProvider(true);
+				}				
+			}
+			if(propertiesReader.isUseBouncyCastleProviderForCertificate()) {
+				OpenSPCoop2Startup.log.info("Add Bouncycastle in CertificateFactory");
+				CertificateFactory.setUseBouncyCastleProvider(true);
+			}
+			if(propertiesReader.isUseBouncyCastleProviderForMessageDigest()) {
+				OpenSPCoop2Startup.log.info("Add Bouncycastle in MessageDigestFactory");
+				MessageDigestFactory.setUseBouncyCastleProvider(true);
+			}
+			if(propertiesReader.isUseBouncyCastleProviderForWss4jCryptoMerlin()) {
+				OpenSPCoop2Startup.log.info("Add Bouncycastle in keystore.Merlin provider");
+				org.openspcoop2.security.keystore.Merlin.setUseBouncyCastleProvider(true);
 			}
 						
 			StringBuilder sb = new StringBuilder();

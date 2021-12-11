@@ -117,12 +117,12 @@ public class TestInterfaceBigger {
 				maxAtteso = Long.MAX_VALUE;
 				break;
 			case swagger_request_validator:
-				maxAtteso = 3000; // 3 secondi
+				maxAtteso = 5000; // 5 secondi (jenkins)
 				break;
 			}			
 			System.out.println("\tInit validator time:"+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
 			if(time>maxAtteso) {
-				throw new Exception("Atteso un tempo inferiore a '"+maxAtteso+"'ms");
+				throw new Exception("Atteso un tempo inferiore a '"+maxAtteso+"'ms, trovato '"+time+"'ms");
 			}
 			
 			initT = DateManager.getTimeMillis();
@@ -132,7 +132,7 @@ public class TestInterfaceBigger {
 			time = endT - initT;
 			System.out.println("\tInit second validator time:"+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
 			if(time>maxAtteso) {
-				throw new Exception("Atteso un tempo inferiore a '"+maxAtteso+"'ms");
+				throw new Exception("Atteso un tempo inferiore a '"+maxAtteso+"'ms, trovato '"+time+"'ms");
 			}
 			
 			

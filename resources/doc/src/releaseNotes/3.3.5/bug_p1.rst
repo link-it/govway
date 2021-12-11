@@ -11,7 +11,9 @@ Sono stati effettuati i seguenti interventi migliorativi degli aspetti prestazio
 
 - gli oggetti restituiti dalle factory dei profili di interoperabilità che contengono solamente configurazioni statiche, vengono adesso istanziate solamente una volta all'avvio del gateway;
 
-- il recupero dell'identificativo della PrimaryKey di una nuova entry, avviene adesso, anche su postgresql, utilizzando la funzionalità 'getGeneratedKeys' fornita dai driver jdbc postgresql con versione superiore alla 9.4.
+- il recupero dell'identificativo della PrimaryKey di una nuova entry, avviene adesso, anche su postgresql, utilizzando la funzionalità 'getGeneratedKeys' fornita dai driver jdbc postgresql con versione superiore alla 9.4;
+
+- il provider 'Bouncy Castle' viene adesso utilizzato per gestire i certificati (java.security.cert.CertificateFactory e java.security.cert.CertPathValidator) e per calcolare il digest di un messaggio (java.security.MessageDigest).
 
 Sono stati risolti i seguenti bug:
 

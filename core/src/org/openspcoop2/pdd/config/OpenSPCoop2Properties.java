@@ -1636,6 +1636,9 @@ public class OpenSPCoop2Properties {
 			this.isLoadApacheXMLDSig();
 			this.isLoadBouncyCastle();
 			this.getBouncyCastleSecureRandomAlgorithm();
+			this.isUseBouncyCastleProviderForCertificate();
+			this.isUseBouncyCastleProviderForMessageDigest();
+			this.isUseBouncyCastleProviderForWss4jCryptoMerlin();
 			this.getSecurityEgd();
 			this.isGenerazioneActorDefault(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
 			this.getActorDefault(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
@@ -16347,6 +16350,80 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.bouncyCastleSecureRandomAlgo;
 	}
 	
+	private static Boolean isUseBouncyCastleProviderForCertificate = null;
+	public boolean isUseBouncyCastleProviderForCertificate(){
+
+		if(OpenSPCoop2Properties.isUseBouncyCastleProviderForCertificate==null){
+			String pName = "org.openspcoop2.pdd.security.cert.useBouncyCastleProvider";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isUseBouncyCastleProviderForCertificate = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isUseBouncyCastleProviderForCertificate = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isUseBouncyCastleProviderForCertificate = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isUseBouncyCastleProviderForCertificate;
+	}
+	
+	private static Boolean isUseBouncyCastleProviderForMessageDigest = null;
+	public boolean isUseBouncyCastleProviderForMessageDigest(){
+
+		if(OpenSPCoop2Properties.isUseBouncyCastleProviderForMessageDigest==null){
+			String pName = "org.openspcoop2.pdd.security.digest.useBouncyCastleProvider";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isUseBouncyCastleProviderForMessageDigest = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isUseBouncyCastleProviderForMessageDigest = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isUseBouncyCastleProviderForMessageDigest = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isUseBouncyCastleProviderForMessageDigest;
+	}
+	
+	private static Boolean isUseBouncyCastleProviderForWss4jCryptoMerlin = null;
+	public boolean isUseBouncyCastleProviderForWss4jCryptoMerlin(){
+
+		if(OpenSPCoop2Properties.isUseBouncyCastleProviderForWss4jCryptoMerlin==null){
+			String pName = "org.openspcoop2.pdd.security.wss4jCryptoMerlin.useBouncyCastleProvider";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isUseBouncyCastleProviderForWss4jCryptoMerlin = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isUseBouncyCastleProviderForWss4jCryptoMerlin = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isUseBouncyCastleProviderForWss4jCryptoMerlin = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isUseBouncyCastleProviderForWss4jCryptoMerlin;
+	}
 	
 	private static Boolean securityEgd_read = null;
 	private static String securityEgd = null;

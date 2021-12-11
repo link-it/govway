@@ -680,7 +680,7 @@ public class SSLUtilities {
 			}
 		}
 		List<X509CRL> caCrls = new ArrayList<>();
-		CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
+		CertificateFactory certFactory = org.openspcoop2.utils.certificate.CertificateFactory.getCertificateFactory();
     	for (int i = 0; i < crlBytes.size(); i++) {
 			byte [] crl = crlBytes.get(i);
 			try(ByteArrayInputStream bin = new ByteArrayInputStream(crl)){

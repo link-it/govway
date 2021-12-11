@@ -33,7 +33,6 @@ import java.net.URLConnection;
 import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.Provider;
-import java.security.Security;
 import java.security.cert.CertStore;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -55,6 +54,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
+import org.openspcoop2.utils.digest.MessageDigestFactory;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.mime.MimeTypes;
 import org.openspcoop2.utils.random.RandomGenerator;
@@ -1554,20 +1554,9 @@ public class HttpUtilities {
 	}
 	
 	public static String getDigestHeaderValue(byte[] content, String algorithm) throws UtilsException{
-		return getDigestHeaderValue(content, algorithm, getProvider(HttpUtilities.useBouncyCastleProvider));
-	}
-	public static String getDigestHeaderValue(byte[] content, String algorithm, boolean useBouncyCastleProvider) throws UtilsException{
-		return getDigestHeaderValue(content, algorithm, getProvider(useBouncyCastleProvider));
-	}
-	public static String getDigestHeaderValue(byte[] content, String algorithm, Provider provider) throws UtilsException{
 		MessageDigest digest = null;
 		try {
-			if(provider!=null) {
-				digest = MessageDigest.getInstance(algorithm, provider);
-			}
-			else {
-				digest = MessageDigest.getInstance(algorithm);
-			}
+			digest = MessageDigestFactory.getMessageDigest(algorithm);
 		}catch(Throwable e) {
 			throw new UtilsException("Message digest (algorithm: '"+algorithm+"') initialization failed: "+e.getMessage(),e);
 		}
@@ -1580,28 +1569,4 @@ public class HttpUtilities {
 		}
 	}
 	
-	
-	/* ********* PROVIDER ************ */
-	
-	private static boolean useBouncyCastleProvider = false;
-	private static Provider provider = null;
-	public static boolean isUseBouncyCastleProvider() {
-		return useBouncyCastleProvider;
-	}
-	public static void setUseBouncyCastleProvider(boolean useBouncyCastleProvider) {
-		HttpUtilities.useBouncyCastleProvider = useBouncyCastleProvider;
-	}
-	private synchronized static Provider _getProvider() {
-		if ( provider == null )
-			provider = Security.getProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
-		return provider;
-	}
-	private static Provider getProvider(boolean useBouncyCastleProviderParam) {
-		if(!useBouncyCastleProviderParam) {
-			return null;
-		}
-		if ( provider == null )
-			return _getProvider();
-		return provider;
-	}
 }

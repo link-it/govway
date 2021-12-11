@@ -151,7 +151,7 @@ public class CRLCertstore implements Serializable {
 			
 			// create a X509 certificate factory for later use
 			try {
-				this.certFactory = CertificateFactory.getInstance("X.509");
+				this.certFactory = org.openspcoop2.utils.certificate.CertificateFactory.getCertificateFactory();
 			}catch(Exception e){
 				throw new SecurityException("Error getInstance CertificateFactory: "+e.getMessage(),e);
 			}

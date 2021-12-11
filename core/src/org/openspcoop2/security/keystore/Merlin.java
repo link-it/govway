@@ -43,6 +43,14 @@ import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
  */
 public class Merlin extends org.apache.wss4j.common.crypto.Merlin {
 
+	private static boolean useBouncyCastleProvider = false;
+	public static boolean isUseBouncyCastleProvider() {
+		return useBouncyCastleProvider;
+	}
+	public static void setUseBouncyCastleProvider(boolean useBouncyCastleProvider) {
+		Merlin.useBouncyCastleProvider = useBouncyCastleProvider;
+	}
+	
 	public Merlin() {
 		super();
 	}
@@ -54,6 +62,7 @@ public class Merlin extends org.apache.wss4j.common.crypto.Merlin {
 
 	private org.openspcoop2.utils.certificate.KeyStore op2KeyStore;
 	private org.openspcoop2.utils.certificate.KeyStore op2TrustStore;
+	private Boolean useBouncyCastleProviderDirective = null;
 	
 	@Override
 	public void loadProperties(Properties properties, ClassLoader loader, PasswordEncryptor passwordEncryptor)
@@ -244,7 +253,18 @@ public class Merlin extends org.apache.wss4j.common.crypto.Merlin {
 			}catch(Exception e) {
 				throw new IOException("[CRLCertstore] "+e.getMessage(),e);
 			}
-			
+
+			String useBouncyCastleProvider = properties.getProperty(prefix + "useBouncyCastleProvider");
+			if (useBouncyCastleProvider != null) {
+				if("true".equalsIgnoreCase(useBouncyCastleProvider.trim())) {
+					if(this.truststore!=null && this.truststore.getType()!=null && !this.truststore.getType().equalsIgnoreCase("pkcs11")) {
+						this.useBouncyCastleProviderDirective = true;
+					}
+				}
+				else if("false".equalsIgnoreCase(useBouncyCastleProvider.trim())) {
+					this.useBouncyCastleProviderDirective = false;
+				}
+			}
 		}
 
 
@@ -278,5 +298,18 @@ public class Merlin extends org.apache.wss4j.common.crypto.Merlin {
 	public PrivateKey getPrivateKey(X509Certificate x509, CallbackHandler callbackHandler) throws WSSecurityException {
 		//System.out.println("@@@ getPrivateKey X509Certificatw, CALLBACK");
 		return super.getPrivateKey(x509, callbackHandler);
+	}
+	
+	@Override
+	public String getCryptoProvider() {
+		if(this.useBouncyCastleProviderDirective!=null && this.useBouncyCastleProviderDirective) {
+			return org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME;
+		}
+		else if(Merlin.useBouncyCastleProvider) {
+			return org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME;
+		}
+		else {
+			return super.getCryptoProvider();
+		}
 	}
 }
