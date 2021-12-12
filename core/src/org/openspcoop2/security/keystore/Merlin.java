@@ -257,9 +257,7 @@ public class Merlin extends org.apache.wss4j.common.crypto.Merlin {
 			String useBouncyCastleProvider = properties.getProperty(prefix + "useBouncyCastleProvider");
 			if (useBouncyCastleProvider != null) {
 				if("true".equalsIgnoreCase(useBouncyCastleProvider.trim())) {
-					if(this.truststore!=null && this.truststore.getType()!=null && !this.truststore.getType().equalsIgnoreCase("pkcs11")) {
-						this.useBouncyCastleProviderDirective = true;
-					}
+					this.useBouncyCastleProviderDirective = true;
 				}
 				else if("false".equalsIgnoreCase(useBouncyCastleProvider.trim())) {
 					this.useBouncyCastleProviderDirective = false;
@@ -302,10 +300,18 @@ public class Merlin extends org.apache.wss4j.common.crypto.Merlin {
 	
 	@Override
 	public String getCryptoProvider() {
-		if(this.useBouncyCastleProviderDirective!=null && this.useBouncyCastleProviderDirective) {
-			return org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME;
+		boolean useBC = (this.useBouncyCastleProviderDirective!=null && this.useBouncyCastleProviderDirective) 
+				||
+				(Merlin.useBouncyCastleProvider);
+		if(useBC) {
+			if(this.truststore!=null && this.truststore.getType()!=null && this.truststore.getType().equalsIgnoreCase("pkcs11")) {
+				useBC=false;
+			}
+			if(this.keystore!=null && this.keystore.getType()!=null && this.keystore.getType().equalsIgnoreCase("pkcs11")) {
+				useBC=false;
+			}
 		}
-		else if(Merlin.useBouncyCastleProvider) {
+		if(useBC) {
 			return org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME;
 		}
 		else {
