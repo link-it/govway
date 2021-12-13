@@ -20,11 +20,12 @@
 package org.openspcoop2.web.monitor.statistiche.converter;
 
 import java.text.SimpleDateFormat;
-import java.util.Locale;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
+
+import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 
 /**
  * DateIntervalConverterMensile
@@ -45,7 +46,7 @@ public class DateIntervalConverterMensile implements Converter {
 	@Override
 	public String getAsString(FacesContext ctx, UIComponent component, Object value) {
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("MMM yyyy", Locale.ITALIAN);
+		SimpleDateFormat sdf = new SimpleDateFormat("MMM yyyy", ApplicationBean.getInstance().getLocale());
 
 		return sdf.format(value);
 	}

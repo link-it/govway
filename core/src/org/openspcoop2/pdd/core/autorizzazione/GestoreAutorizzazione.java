@@ -400,9 +400,9 @@ public class GestoreAutorizzazione {
 					}
 				}
     		
+				String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 				//synchronized (GestoreAutorizzazione.semaphoreAutorizzazionePD) {
-				GestoreAutorizzazione.lockAutorizzazionePD.acquire("verificaAutorizzazionePortaDelegata", 
-						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
+				GestoreAutorizzazione.lockAutorizzazionePD.acquire("verificaAutorizzazionePortaDelegata", idTransazione);
 				try {
 					
 					response = 
@@ -445,8 +445,7 @@ public class GestoreAutorizzazione {
 						throw new AutorizzazioneException("Metodo (GestoreAutorizzazione.autorizzazionePortaDelegata.process) ha ritornato un valore di esito null");
 					}
 				}finally {
-					GestoreAutorizzazione.lockAutorizzazionePD.release("verificaAutorizzazionePortaDelegata", 
-							(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
+					GestoreAutorizzazione.lockAutorizzazionePD.release("verificaAutorizzazionePortaDelegata", idTransazione);
 				}
 	    	}
     	}finally {
@@ -541,9 +540,9 @@ public class GestoreAutorizzazione {
 					}
 				}
 	    		
-	    		//synchronized (GestoreAutorizzazione.semaphoreAutorizzazionePA) {
-				GestoreAutorizzazione.lockAutorizzazionePA.acquire("verificaAutorizzazionePortaApplicativa", 
-						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
+				String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
+				//synchronized (GestoreAutorizzazione.semaphoreAutorizzazionePA) {
+				GestoreAutorizzazione.lockAutorizzazionePA.acquire("verificaAutorizzazionePortaApplicativa", idTransazione);
 				try {
 					
 					response = 
@@ -586,8 +585,7 @@ public class GestoreAutorizzazione {
 						throw new AutorizzazioneException("Metodo (GestoreAutorizzazione.autorizzazionePortaApplicativa.process) ha ritornato un valore di esito null");
 					}
 				}finally {
-					GestoreAutorizzazione.lockAutorizzazionePA.release("verificaAutorizzazionePortaApplicativa", 
-							(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
+					GestoreAutorizzazione.lockAutorizzazionePA.release("verificaAutorizzazionePortaApplicativa", idTransazione);
 				}
 	    	}
     	}finally {
@@ -1148,9 +1146,9 @@ public class GestoreAutorizzazione {
 					}
 				}
 	    			    		
+				String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 				//synchronized (GestoreAutorizzazione.semaphoreAutorizzazioneContenutiPD) {
-				GestoreAutorizzazione.lockAutorizzazioneContenutiPD.acquire("verificaAutorizzazioneContenutoPortaDelegata", 
-						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
+				GestoreAutorizzazione.lockAutorizzazioneContenutiPD.acquire("verificaAutorizzazioneContenutoPortaDelegata", idTransazione);
 				try {
 					
 					response = 
@@ -1193,8 +1191,7 @@ public class GestoreAutorizzazione {
 						throw new AutorizzazioneException("Metodo (GestoreAutorizzazione.autorizzazionePortaDelegata.process) ha ritornato un valore di esito null");
 					}
 				}finally {
-					GestoreAutorizzazione.lockAutorizzazioneContenutiPD.release("verificaAutorizzazioneContenutoPortaDelegata", 
-							(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
+					GestoreAutorizzazione.lockAutorizzazioneContenutiPD.release("verificaAutorizzazioneContenutoPortaDelegata", idTransazione);
 				}
 	    	}
     	}finally {
@@ -1246,9 +1243,9 @@ public class GestoreAutorizzazione {
 					}
 				}
 	    		
+				String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 				//synchronized (GestoreAutorizzazione.semaphoreAutorizzazioneContenutiPA) {
-				GestoreAutorizzazione.lockAutorizzazioneContenutiPA.acquire("verificaAutorizzazioneContenutoPortaApplicativa", 
-						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
+				GestoreAutorizzazione.lockAutorizzazioneContenutiPA.acquire("verificaAutorizzazioneContenutoPortaApplicativa", idTransazione);
 				try {
 					
 					response = 
@@ -1291,8 +1288,7 @@ public class GestoreAutorizzazione {
 						throw new AutorizzazioneException("Metodo (GestoreAutorizzazione.autorizzazionePortaApplicativa.process) ha ritornato un valore di esito null");
 					}
 				}finally {
-					GestoreAutorizzazione.lockAutorizzazioneContenutiPA.release("verificaAutorizzazioneContenutoPortaApplicativa", 
-							(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
+					GestoreAutorizzazione.lockAutorizzazioneContenutiPA.release("verificaAutorizzazioneContenutoPortaApplicativa", idTransazione);
 				}
 	    	}
     	}finally {

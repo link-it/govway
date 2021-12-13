@@ -20,9 +20,17 @@
 
 package org.openspcoop2.pdd.logger.info;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.xml.PrettyPrintXMLUtils;
 import org.openspcoop2.utils.xml.XMLUtils;
 import org.slf4j.Logger;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
 
 /**
  * FormatUtils
@@ -70,10 +78,18 @@ public class FormatUtils {
 	}
 
 	public static String prettifyXml(Logger log, String xml) {
+		return prettifyXml(log, xml, null);
+	}
+	public static String prettifyXml(Logger log, String xml, String charset) {
 		if (xml == null || "".equals(xml))
 			return "";
 		try {
-			return PrettyPrintXMLUtils.prettyPrintWithTrAX(XMLUtils.getInstance().newDocument(xml.getBytes()));
+			//return PrettyPrintXMLUtils.prettyPrintWithTrAX(XMLUtils.getInstance().newDocument(xml.getBytes()));
+			if(charset==null) {
+				charset = Charset.UTF_8.getValue();
+			}
+			Element element = buildContent(xml.getBytes(), charset);
+			return PrettyPrintXMLUtils.prettyPrintWithTrAX(element,false,charset);
 		} catch (Exception e) {
 			// non sono riuscito a formattare il messaggio
 			log.error(e.getMessage(),e);
@@ -81,15 +97,49 @@ public class FormatUtils {
 		return xml;
 	}
 	public static String prettifyXml(Logger log, byte[] xml) {
+		return prettifyXml(log, xml, null);
+	}
+	public static String prettifyXml(Logger log, byte[] xml, String charset) {
 		if (xml == null)
 			return "";
 		String res = "";
 		try {
-			return PrettyPrintXMLUtils.prettyPrintWithTrAX(XMLUtils.getInstance().newDocument(xml));
-		} catch (Exception e) {
+			//return PrettyPrintXMLUtils.prettyPrintWithTrAX(XMLUtils.getInstance().newDocument(xml));
+			if(charset==null) {
+				charset = Charset.UTF_8.getValue();
+			}
+			Element element = buildContent(xml, charset);
+			return PrettyPrintXMLUtils.prettyPrintWithTrAX(element,false,charset);
+		} catch (Throwable e) {
+			// non sono riuscito a formattare il messaggio
 			log.error(e.getMessage(),e);
 		}
 		return res;
 	} 
+	private static Element buildContent(byte [] content, String charset) throws MessageException{
+		InputStream is = null;
+		InputStreamReader isr = null;
+		InputSource isSax = null;
+		try{
+			is = new ByteArrayInputStream(content);
+			isr = new InputStreamReader(is,charset);
+			isSax = new InputSource(isr);
+			isSax.setEncoding(charset);
+			return XMLUtils.getInstance().newElement(isSax);
+		}catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}finally{
+			try{
+				if(isr!=null){
+					isr.close();
+				}
+			}catch(Exception eClose){}
+			try{
+				if(is!=null){
+					is.close();
+				}
+			}catch(Exception eClose){}
+		}
+	}
 
 }

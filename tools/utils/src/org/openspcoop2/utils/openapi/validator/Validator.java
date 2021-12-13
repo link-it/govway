@@ -34,7 +34,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -72,6 +75,10 @@ import org.openspcoop2.utils.openapi.OpenapiApi;
 import org.openspcoop2.utils.openapi.OpenapiApiValidatorStructure;
 import org.openspcoop2.utils.openapi.UniqueInterfaceGenerator;
 import org.openspcoop2.utils.openapi.UniqueInterfaceGeneratorConfig;
+import org.openspcoop2.utils.openapi.validator.swagger.SwaggerOpenApiValidator;
+import org.openspcoop2.utils.openapi.validator.swagger.SwaggerRequestValidator;
+import org.openspcoop2.utils.openapi.validator.swagger.SwaggerResponseValidator;
+import org.openspcoop2.utils.openapi.validator.swagger.SwaggerValidatorUtils;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -101,13 +108,42 @@ import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.atlassian.oai.validator.model.ApiPath;
+import com.atlassian.oai.validator.model.ApiPathImpl;
+import com.atlassian.oai.validator.model.NormalisedPath;
+import com.atlassian.oai.validator.model.NormalisedPathImpl;
+import com.atlassian.oai.validator.model.Request.Method;
+import com.atlassian.oai.validator.model.SimpleRequest;
+import com.atlassian.oai.validator.model.SimpleResponse;
+import com.atlassian.oai.validator.report.SimpleValidationReportFormat;
+import com.atlassian.oai.validator.report.ValidationReport;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.networknt.schema.SpecVersion.VersionFlag;
 
+import io.swagger.models.Swagger;
+import io.swagger.parser.Swagger20Parser;
+import io.swagger.parser.util.SwaggerDeserializationResult;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.PathItem.HttpMethod;
+import io.swagger.v3.oas.models.headers.Header;
+import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.ComposedSchema;
+import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.MediaType;
+import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.parameters.Parameter;
+import io.swagger.v3.oas.models.parameters.RequestBody;
+import io.swagger.v3.parser.OpenAPIResolver;
+import io.swagger.v3.parser.OpenAPIV3Parser;
+import io.swagger.v3.parser.converter.SwaggerConverter;
+import io.swagger.v3.parser.core.models.SwaggerParseResult;
+import io.swagger.v3.parser.util.ResolverFully;
 
 /**
  * Validator
@@ -125,7 +161,14 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 	private Map<String, File> fileSchema;
 	// OpenAPI4j Validation
 	private OpenApi3 openApi4j;
-	private OpenapiApi4jValidatorConfig openApi4jConfig;
+	
+	// SwaggerRequestValidator
+	private SwaggerRequestValidator swaggerRequestValidator;
+	private SwaggerResponseValidator swaggerResponseValidator;
+	private OpenAPI openApiSwagger;
+
+	// Configuration
+	private OpenapiLibraryValidatorConfig openApi4jConfig;
 	
 	boolean onlySchemas = false;
 	
@@ -165,16 +208,16 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			}
 			
 			ApiName jsonValidatorAPI = null;
-			boolean useOpenApi4j = false; // ottimizzazione per OpenAPI
+			OpenAPILibrary openApiLibrary = null; // ottimizzazione per OpenAPI
 			ADDITIONAL policyAdditionalProperties = config.getPolicyAdditionalProperties();
 			if(config instanceof OpenapiApiValidatorConfig) {
 				jsonValidatorAPI = ((OpenapiApiValidatorConfig)config).getJsonValidatorAPI();
 				if(openapiApi!=null) {
 					OpenapiApiValidatorConfig c = (OpenapiApiValidatorConfig) config;
-					if(c.getOpenApi4JConfig()!=null) {
-						useOpenApi4j = c.getOpenApi4JConfig().isUseOpenApi4J();
-						if(useOpenApi4j) {
-							this.openApi4jConfig = c.getOpenApi4JConfig();
+					if(c.getOpenApiValidatorConfig()!=null) {
+						openApiLibrary = c.getOpenApiValidatorConfig().getOpenApiLibrary();
+						if(OpenAPILibrary.openapi4j.equals(openApiLibrary) || OpenAPILibrary.swagger_request_validator.equals(openApiLibrary)) {
+							this.openApi4jConfig = c.getOpenApiValidatorConfig();
 						}
 					}
 				}
@@ -185,7 +228,8 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			
 			try {
 			
-				if(useOpenApi4j) {
+				if(OpenAPILibrary.openapi4j.equals(openApiLibrary) || 
+						OpenAPILibrary.swagger_request_validator.equals(openApiLibrary)) {
 					
 					// leggo JSON Node degli schemi
 					
@@ -193,7 +237,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 					URL uriSchemaNodeRoot = null;
 					Map<URL, JsonNode> schemaMap = null;
 					String root = "file:/";
+					boolean validateSchema = true;
 					if(apiValidatorStructure!=null && apiValidatorStructure.getNodeValidatorePrincipale()!=null && !apiValidatorStructure.getNodeValidatorePrincipale().isEmpty()) {
+						validateSchema = false; // validazione dello schema effettuata quando viene costruito
 						for (String nome : apiValidatorStructure.getNodeValidatorePrincipale().keySet()) {
 							if(root.equals(nome)) {
 								schemaNodeRoot = apiValidatorStructure.getNodeValidatorePrincipale().get(nome);
@@ -303,28 +349,118 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						}
 					}
 					
-					// Costruisco OpenAPI3					
-					OAI3Context context = new OAI3Context(uriSchemaNodeRoot, schemaNodeRoot, schemaMap);
-					this.openApi4j = TreeUtil.json.convertValue(context.getBaseDocument(), OpenApi3.class);
-					this.openApi4j.setContext(context);
+					if(OpenAPILibrary.openapi4j.equals(openApiLibrary)) {
 					
-					// Explicit validation of the API spec
+						// Costruisco OpenAPI3					
+						OAI3Context context = new OAI3Context(uriSchemaNodeRoot, schemaNodeRoot, schemaMap);
+						this.openApi4j = TreeUtil.json.convertValue(context.getBaseDocument(), OpenApi3.class);
+						this.openApi4j.setContext(context);
+						
+						// Explicit validation of the API spec
+						
+						if(validateSchema && this.openApi4jConfig.isValidateAPISpec()) {
+							try {
+								ValidationResults results = OpenApi3Validator.instance().validate(this.openApi4j);
+								if(!results.isValid()) {
+									throw new ProcessingException("OpenAPI3 not valid: "+results.toString());
+								}
+							}catch(org.openapi4j.core.validation.ValidationException valExc) {
+								if(valExc.results()!=null) {
+									throw new ProcessingException("OpenAPI3 not valid: "+valExc.results().toString());
+								}
+								else {
+									throw new ProcessingException("OpenAPI3 not valid: "+valExc.getMessage());
+								}
+							}
+						}						
+					} // fine openapi4j
 					
-					if(this.openApi4jConfig.isValidateAPISpec()) {
-						try {
-							ValidationResults results = OpenApi3Validator.instance().validate(this.openApi4j);
-							if(!results.isValid()) {
-								throw new ProcessingException("OpenAPI3 not valid: "+results.toString());
+					else if(OpenAPILibrary.swagger_request_validator.equals(openApiLibrary)) {
+						
+						// Validazione sintattica se richiesta
+						
+						if(validateSchema && this.openApi4jConfig.isValidateAPISpec()) {
+							var validationResult = new SwaggerOpenApiValidator().validate(schemaNodeRoot);
+							if (validationResult.isPresent()) {
+								throw new ProcessingException(
+										"OpenAPI3 not valid: " + validationResult.get()
+										);								
+							}					    
+						}
+						
+						// Parsing
+						
+						SwaggerParseResult result;
+						String version = SwaggerValidatorUtils.getSchemaVersion(schemaNodeRoot);
+						if (SwaggerValidatorUtils.isSchemaV2(version)) {
+							Swagger20Parser swaggerParser = new Swagger20Parser();
+							SwaggerConverter swaggerConverter = new SwaggerConverter();
+							Swagger swagger = swaggerParser.read(schemaNodeRoot);
+							
+							if (swagger != null) {
+								SwaggerDeserializationResult foo = new SwaggerDeserializationResult();
+								foo.setMessages(Arrays.asList());
+								foo.setSwagger(swagger);
+								result = swaggerConverter.convert(foo);
+							} else {
+								throw new ProcessingException("Unknown error while parsing the Swagger root node.");								
 							}
-						}catch(org.openapi4j.core.validation.ValidationException valExc) {
-							if(valExc.results()!=null) {
-								throw new ProcessingException("OpenAPI3 not valid: "+valExc.results().toString());
-							}
-							else {
-								throw new ProcessingException("OpenAPI3 not valid: "+valExc.getMessage());
+							
+						} else {						
+							OpenAPIV3Parser v3Parser = new OpenAPIV3Parser();
+							result = v3Parser.parseJsonNode(null, schemaNodeRoot);
+						}
+						
+						if (result.getOpenAPI() == null) {
+							throw new ProcessingException("Error while parsing the OpenAPI root node: " + String.join("\n", result.getMessages()));
+						}
+						
+						// Se l'api non è stata mergiata, recuperiamo gli schemi dei riferimenti esterni
+						
+						Map<String,String> schemaMapSerialized = new HashMap<String,String>();
+						if (!this.openApi4jConfig.isMergeAPISpec() && api.getSchemas()!=null) {							
+							for (ApiSchema apiSchema : api.getSchemas()) {
+								if(ApiSchemaType.JSON.equals(apiSchema.getType()) || ApiSchemaType.YAML.equals(apiSchema.getType())) {
+									String schemaBytes = new String(apiSchema.getContent());
+									schemaMapSerialized.put(apiSchema.getName(), schemaBytes);
+									schemaMapSerialized.put("./"+apiSchema.getName(), schemaBytes);
+								}
 							}
 						}
-					}
+						
+						OpenAPIResolver v3Resolver = new OpenAPIResolver(result.getOpenAPI(), schemaMapSerialized, null, 0);
+						result.setOpenAPI(v3Resolver.resolve());
+						
+						if (!this.openApi4jConfig.isSwaggerRequestValidator_ResolveFullyApiSpec()) {
+							
+							// Passo false per non risolvere i combinators, poichè quando vengono risolti non c'è modo
+							// di ricordarsi i singoli attributi degli schemi combinati (oneOf, allOf ecc..)
+							
+							ResolverFully v3ResolverFully = new ResolverFully(false);
+							v3ResolverFully.resolveFully(result.getOpenAPI());
+						}
+
+			            // Pulisco la openApi con le utility dell' OpenApiLoader di atlassian
+						
+						removeRegexPatternOnStringsOfFormatByte(result.getOpenAPI());
+					    removeTypeObjectAssociationWithOneOfAndAnyOfModels(result.getOpenAPI());
+
+						// Validazione semantica se richiesta
+
+						if(this.openApi4jConfig.isValidateAPISpec()) {
+							if (result.getMessages().size() != 0) {
+								throw new ProcessingException(
+										"OpenAPI3 not valid: " + String.join("\n", result.getMessages())
+										);
+							}
+						}
+						
+						this.openApiSwagger = result.getOpenAPI();
+				        this.swaggerRequestValidator = new SwaggerRequestValidator(this.openApiSwagger, this.openApi4jConfig);
+				        this.swaggerResponseValidator = new SwaggerResponseValidator(this.openApiSwagger, this.openApi4jConfig);
+					
+					} // fine swagger_request_validator
+					
 					
 					// Salvo informazioni ricostruite
 					if(apiValidatorStructure==null) {
@@ -914,6 +1050,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		if(this.openApi4j!=null) {
 			validateWithOpenApi4j(httpEntity, operation);
 		}
+		else if(this.swaggerRequestValidator!=null) {
+			validateWithSwaggerRequestValidator(httpEntity, operation);
+		}
 		
 		
 		// Controllo poi i campi required come controllo aggiuntivo a openApi4j
@@ -931,7 +1070,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		}
 		
 		// infine se non e' attivo openApi4j effettuo la validazione alternativa
-		if(this.openApi4j==null) {
+		if(this.openApi4j==null && this.swaggerRequestValidator==null) {
 			if(bodyParameters!=null && !bodyParameters.isEmpty()) {
 			
 				try {
@@ -1267,6 +1406,66 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			throw new ProcessingException(e.getMessage(),e);
 		}
 	}
+	
+	
+
+	private void validateWithSwaggerRequestValidator(HttpBaseEntity<?> httpEntity, ApiOperation gwOperation) throws ProcessingException, ValidatorException {
+		
+		// IMPROVEMENT: Invece di fare la readOperationsMap, meglio uno switch che fa la getGET, getPOST ecc.. giusta.		
+		
+		// Dentro l'openApiSwagger ho i path col dollaro, nell'oggetto openapi di openspcoop invece
+		// ho il path puliti 		
+		Optional<Entry<String, PathItem>> item = this.openApiSwagger
+				.getPaths()
+				.entrySet()
+				.stream()
+				.filter( pathItem -> 
+						ApiOperation.normalizePath(pathItem.getKey()).equals(gwOperation.getPath()))
+				.findFirst();
+		
+		if(item.isEmpty()) {
+			throw new ProcessingException(
+					"Resource " + gwOperation.getHttpMethod() + " " + gwOperation.getPath() + " not found in OpenAPI 3");
+		}
+		
+		HttpMethod method = HttpMethod.valueOf(gwOperation.getHttpMethod().toString());
+		
+		io.swagger.v3.oas.models.Operation swaggerOperation = 
+				item.get().getValue().readOperationsMap().get(method);
+	
+		ApiPath apiPath = new ApiPathImpl(httpEntity.getUrl(), null);
+		NormalisedPath requestPath = new NormalisedPathImpl(httpEntity.getUrl(), null);
+						
+		com.atlassian.oai.validator.model.ApiOperation swaggerValidatorOperation = 
+				new com.atlassian.oai.validator.model.ApiOperation(apiPath, requestPath, method, swaggerOperation); 
+		
+		ValidationReport report;
+		
+		
+		
+		if(httpEntity instanceof HttpBaseRequestEntity) {			
+		
+			HttpBaseRequestEntity<?> request = (HttpBaseRequestEntity<?>) httpEntity;
+			var swaggerRequest = buildSwaggerRequest(request);		    
+		    report = this.swaggerRequestValidator.validateRequest(swaggerRequest, swaggerValidatorOperation);		    
+		}
+		else if(httpEntity instanceof HttpBaseResponseEntity<?>) {				
+			HttpBaseResponseEntity<?> response = (HttpBaseResponseEntity<?>) httpEntity;
+			var swaggerResponse = buildSwaggerResponse(response);
+			report = this.swaggerResponseValidator.validateResponse(swaggerResponse, swaggerValidatorOperation);			
+		} else {
+			throw new ProcessingException("Unknown type for HttpBaseEntity: " + httpEntity.getClass().toString());
+		
+		}
+		
+		if (report.hasErrors()) {
+			String msgReport = 	SimpleValidationReportFormat.getInstance().apply(report);		
+			throw new ValidatorException(msgReport);
+		}
+		
+	}
+	
+
 
 
 	@Override
@@ -1661,4 +1860,171 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			return null;
 		}
 	}
+	
+	
+	// ================= SWAGGER REQUEST VALIDATOR GLUE CODE =====================
+
+	private static Method fromHttpMethod(HttpRequestMethod method) {
+		return Method.valueOf(method.toString());
+	}
+	
+	
+	private static com.atlassian.oai.validator.model.Response buildSwaggerResponse(HttpBaseResponseEntity<?> response) throws ProcessingException {
+
+		final SimpleResponse.Builder builder = 
+				new SimpleResponse.Builder(response.getStatus());
+		
+		response.getHeaders().forEach(builder::withHeader);
+
+		Object content = response.getContent();
+		if(content instanceof String) {
+			builder.withBody( (String) content);
+		}
+		else if(content instanceof byte[]) {
+			builder.withBody((byte[]) content);
+		}
+		else if(content instanceof InputStream) {
+			builder.withBody((InputStream) content);
+		}
+		else if(content instanceof Document) {
+			try {
+				builder.withBody(XMLUtils.getInstance().toByteArray(((Document)content)));
+			} catch (Exception e) {
+				throw new ProcessingException(e.getMessage(),e);
+			}
+		}
+		else if(content instanceof Element) {
+			try {
+				builder.withBody(XMLUtils.getInstance().toByteArray(((Element)content)));
+			} catch (Exception e) {
+				throw new ProcessingException(e.getMessage(),e);
+			}
+		}
+		else if (content == null) {
+			// nop
+		} else {
+			throw new ProcessingException("Type '"+content.getClass().getName()+"' unsupported");
+		}
+		
+		return builder.build();
+	
+	}
+	
+	private static com.atlassian.oai.validator.model.Request buildSwaggerRequest(HttpBaseRequestEntity<?> request) throws ProcessingException {
+		Object content = request.getContent();
+		final SimpleRequest.Builder builder =
+                new SimpleRequest.Builder(fromHttpMethod(request.getMethod()),request.getUrl());
+   
+	    request.getHeaders().forEach(builder::withHeader);
+	    request.getParameters().forEach(builder::withQueryParam);
+	                        
+		if(content instanceof String) {
+			builder.withBody((String) content);
+		}
+		else if(content instanceof byte[]) {
+			builder.withBody((byte[]) content);
+		}
+		else if(content instanceof InputStream) {
+			builder.withBody( (InputStream) content);
+		}
+		else if(content != null){
+			throw new ProcessingException("Type '"+content.getClass().getName()+"' unsupported");
+		}
+		
+		return builder.build();
+	}
+	
+	
+	/** 
+	 * 
+	 * 	Questo codice è copiato dall'OpenApiLoader di atlassian, utilizzato perchè il 
+	 * 	resolverfully fa modifiche alla openApi che vanno a interferire con la validazione
+	 */
+	 // Adding this method to strip off the object type association applied by
+    // io.swagger.v3.parser.util.ResolverFully (ln 410) where the operation sets
+    // type field to "object" if type field is null. This causes issues for anyOf
+    // and oneOf validations.
+	
+    private static void removeTypeObjectAssociationWithOneOfAndAnyOfModels(final OpenAPI openAPI) {
+        if (openAPI.getComponents() != null) {
+            removeTypeObjectFromEachValue(openAPI.getComponents().getSchemas(), schema -> schema);
+        }
+    }
+
+    private static <T> void removeTypeObjectFromEachValue(final Map<String, T> map, final Function<T, Object> function) {
+        if (map != null) {
+            map.values().forEach(it -> removeTypeObjectAssociationWithOneOfAndAnyOfFromSchema(function.apply(it)));
+        }
+    }
+
+    private static void removeTypeObjectAssociationWithOneOfAndAnyOfFromSchema(final Object object) {
+        if (object instanceof ObjectSchema) {
+            removeTypeObjectFromEachValue(((ObjectSchema) object).getProperties(), schema -> schema);
+        } else if (object instanceof ArraySchema) {
+            removeTypeObjectAssociationWithOneOfAndAnyOfFromSchema(((ArraySchema) object).getItems());
+        } else if (object instanceof ComposedSchema) {
+            final ComposedSchema composedSchema = (ComposedSchema) object;
+            composedSchema.setType(null);
+        }
+    }
+
+    /**
+     * Removes the Base64 pattern on the {@link OpenAPI} model.
+     * <p>
+     * If that pattern would stay on the model all fields of type string / byte would be validated twice. Once
+     * with the {@link com.github.fge.jsonschema.keyword.validator.common.PatternValidator} and once with
+     * the {@link com.atlassian.oai.validator.schema.format.Base64Attribute}.
+     * To improve validation performance and memory footprint the pattern on string / byte fields will be
+     * removed - so the PatternValidator will not be triggered for those kind of fields.
+     *
+     * @param openAPI the {@link OpenAPI} to correct
+     */
+    private static void removeRegexPatternOnStringsOfFormatByte(final OpenAPI openAPI) {
+        if (openAPI.getPaths() != null) {
+            openAPI.getPaths().values().forEach(pathItem -> {
+                pathItem.readOperations().forEach(operation -> {
+                    excludeBase64PatternFromEachValue(operation.getResponses(), io.swagger.v3.oas.models.responses.ApiResponse::getContent);
+                    if (operation.getRequestBody() != null) {
+                        excludeBase64PatternFromSchema(operation.getRequestBody().getContent());
+                    }
+                    if (operation.getParameters() != null) {
+                        operation.getParameters().forEach(it -> excludeBase64PatternFromSchema(it.getContent()));
+                        operation.getParameters().forEach(it -> excludeBase64PatternFromSchema(it.getSchema()));
+                    }
+                });
+            });
+        }
+        if (openAPI.getComponents() != null) {
+            excludeBase64PatternFromEachValue(openAPI.getComponents().getResponses(), io.swagger.v3.oas.models.responses.ApiResponse::getContent);
+            excludeBase64PatternFromEachValue(openAPI.getComponents().getRequestBodies(), RequestBody::getContent);
+            excludeBase64PatternFromEachValue(openAPI.getComponents().getHeaders(), Header::getContent);
+            excludeBase64PatternFromEachValue(openAPI.getComponents().getHeaders(), Header::getSchema);
+            excludeBase64PatternFromEachValue(openAPI.getComponents().getParameters(), Parameter::getContent);
+            excludeBase64PatternFromEachValue(openAPI.getComponents().getParameters(), Parameter::getSchema);
+            excludeBase64PatternFromEachValue(openAPI.getComponents().getSchemas(), schema -> schema);
+        }
+    }
+
+    private static <T> void excludeBase64PatternFromEachValue(final Map<String, T> map, final Function<T, Object> function) {
+        if (map != null) {
+            map.values().forEach(it -> excludeBase64PatternFromSchema(function.apply(it)));
+        }
+    }
+
+    private static void excludeBase64PatternFromSchema(final Object object) {
+        if (object instanceof Content) {
+            excludeBase64PatternFromEachValue((Content) object, MediaType::getSchema);
+        } else if (object instanceof ObjectSchema) {
+            excludeBase64PatternFromEachValue(((ObjectSchema) object).getProperties(), schema -> schema);
+        } else if (object instanceof ArraySchema) {
+            excludeBase64PatternFromSchema(((ArraySchema) object).getItems());
+        } else if (object instanceof StringSchema) {
+            final StringSchema stringSchema = (StringSchema) object;
+            // remove the pattern _only_ if it's a String / Byte field
+            if ("byte".equals(stringSchema.getFormat())) {
+                stringSchema.setPattern(null);
+            }
+        }
+    }
+	
 }

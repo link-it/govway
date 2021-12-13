@@ -231,6 +231,8 @@ CREATE TABLE transazioni_sa
 	cluster_id_eliminazione_im VARCHAR(100),
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 CYCLE NO CACHE),
+	-- unique constraints
+	CONSTRAINT unique_transazioni_sa_1 UNIQUE (id_transazione,servizio_applicativo_erogatore),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_transazioni_sa PRIMARY KEY (id)
 );

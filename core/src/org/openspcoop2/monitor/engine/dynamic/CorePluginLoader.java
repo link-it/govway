@@ -44,5 +44,9 @@ public class CorePluginLoader {
 	public static IPluginLoader getInstance() {
 		return staticInstance;
 	}
-	
+	public static synchronized void close(Logger log) {
+		if(staticInstance!=null) {
+			staticInstance.close(log);
+		}
+	}
 }

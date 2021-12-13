@@ -10,15 +10,26 @@ Dalla versione 3.3.1, per la validazione dei messaggi riguardanti API REST con s
 
 - *validation.openApi4j.enabled=false*
 
-Se invece si vuole modificare il tipo di validazione effettuata con openapi4j è possibile farlo abilitando (true) o disabilitando (false) la specifica funzionalità registrando una delle seguenti :ref:`configProprieta` (per default tutte le proprietà elencate sono abilitate):
+Dalla versione 3.3.5.p1 è inoltre possibile utilizzare un ulteriore motore di validazione, utilizzando la libreria 'swagger-request-validator' (https://bitbucket.org/atlassian/swagger-request-validator).
+È possibile attivare il nuovo motore di validazione registrando la seguente :ref:`configProprieta` sull'erogazione o sulla fruizione:
 
-- *validation.openApi4j.validateAPISpec*: prima di procedere con la validazione del messaggio, viene controllato che l'interfaccia OpenAPI 3.x sia sintatticamente valida.
-- *validation.openApi4j.validateRequestQuery*: viene effettuata la validazione della query url
-- *validation.openApi4j.validateRequestHeaders*: viene effettuata la validazione degli header http della richiesta
-- *validation.openApi4j.validateResponseHeaders*: viene effettuata la validazione degli header http della risposta
-- *validation.openApi4j.validateRequestCookies*: viene effettuata la validazione dei cookie presenti nella richiesta
-- *validation.openApi4j.validateRequestBody*: viene effettuata la validazione del payload http della richiesta
-- *validation.openApi4j.validateResponseBody*: viene effettuata la validazione del payload http della risposta
-- *validation.openApi4j.mergeAPISpec*: eventuali schemi esterni json o yaml vengono aggiunti all'OpenAPI principale prima di procedere con la validazione
+- *validation.swaggerRequestValidator.enabled=true*
 
+Se invece si vuole modificare il tipo di validazione effettuata con i motori 'openapi4j' o 'swagger-request-validator' è possibile farlo abilitando (true) o disabilitando (false) la specifica funzionalità registrando una delle seguenti :ref:`configProprieta` (per default tutte le proprietà elencate sono abilitate):
+
+- *validation.openApi.validateAPISpec* (default: true): prima di procedere con la validazione del messaggio, viene controllato che l'interfaccia OpenAPI 3.x sia sintatticamente valida;
+- *validation.openApi.validateRequestQuery* (default: true): viene effettuata la validazione della query url;
+- *validation.openApi.validateRequestHeaders* (default: true): viene effettuata la validazione degli header http della richiesta;
+- *validation.openApi.validateResponseHeaders* (default: true): viene effettuata la validazione degli header http della risposta;
+- *validation.openApi.validateRequestCookies* (default: true): viene effettuata la validazione dei cookie presenti nella richiesta;
+- *validation.openApi.validateRequestBody* (default: true): viene effettuata la validazione del payload http della richiesta;
+- *validation.openApi.validateResponseBody* (default: true): viene effettuata la validazione del payload http della risposta;
+- *validation.openApi.mergeAPISpec* (default: true): eventuali schemi esterni json o yaml vengono aggiunti all'OpenAPI principale prima di procedere con la validazione.
+
+Per il motore di validazione 'swagger-request-validator' sono disponibili le ultiori proprietà:
+
+- *validation.swaggerRequestValidator.validateWildcardSubtypeAsJson* (default: true): consente di indicare se le richieste associate a media type definiti con il carattere '\*' nel subtype (es. application/\*) debbano essere validate come richieste json;
+- *validation.swaggerRequestValidator.validateRequestUnexpectedQueryParam* (default: false): se abilitata vengono segnalati gli eventuali parametri non definiti nella specifica;
+- *validation.swaggerRequestValidator.resolveFullyApiSpec* (default: false): indica se sostituire inline i $ref nello schema con le loro definizioni. Per default viene utilizzato il valore 'false' poichè quando vengono risolti inline non vengono gestiti correttamente i singoli attributi degli schemi combinati (oneOf, allOf ecc..). La risoluzione inline consente però di avere delle performance maggiori.
+- *validation.swaggerRequestValidator.injectingAdditionalPropertiesFalse* (default: false): se abilitata, viene riattivato il transformer della libreria che aggiunge additionalProperties=false in tutti gli oggetti degli schemi. È necessario disattivarlo per poter validare correttamente gli schemi che definiscono tale proprietà a true. La libreria lo utilizza come workaround per validare strutture allOf. 
 

@@ -24,6 +24,8 @@ import java.sql.Connection;
 import java.util.List;
 
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.pdd.config.DBConsegneMessageBoxManager;
+import org.openspcoop2.pdd.config.DBConsegnePreseInCaricoManager;
 import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -49,7 +51,11 @@ public abstract class OpenSPCoopState implements IOpenSPCoopState {
 	
 	/* ---------- Connessione al database ---------------- */
 	/** DBManager */
-	protected DBManager dbManager = null;
+	protected DBManager dbManager_runtime= null;
+	/** DBManager */
+	protected DBConsegnePreseInCaricoManager dbManager_consegnePreseInCarico = null;
+	/** DBManager */
+	protected DBConsegneMessageBoxManager dbManager_consegneMessageBox = null;
 	/** Resource */
 	protected Resource resourceDB = null;
 	/** Connessione al database */
@@ -83,7 +89,9 @@ public abstract class OpenSPCoopState implements IOpenSPCoopState {
 	public static OpenSPCoopStateless toStateless(OpenSPCoopStateful stateful,boolean useConnection){
 		OpenSPCoopStateless stateless = new OpenSPCoopStateless();
 		stateless.connectionDB = stateful.connectionDB;
-		stateless.dbManager = stateful.dbManager;
+		stateless.dbManager_runtime = stateful.dbManager_runtime;
+		stateless.dbManager_consegnePreseInCarico = stateful.dbManager_consegnePreseInCarico;
+		stateless.dbManager_consegneMessageBox = stateful.dbManager_consegneMessageBox;
 		stateless.IDMessaggioSessione = stateful.IDMessaggioSessione;
 		stateless.identitaPdD = stateful.identitaPdD;
 		stateless.idModulo = stateful.idModulo;
@@ -123,6 +131,10 @@ public abstract class OpenSPCoopState implements IOpenSPCoopState {
 		
 	@Override
 	public void initResource(IDSoggetto identitaPdD,String idModulo,String idTransazione)throws OpenSPCoopStateException{
+		initResource(identitaPdD,idModulo,idTransazione, OpenSPCoopStateDBManager.runtime);
+	}
+	@Override
+	public void initResource(IDSoggetto identitaPdD,String idModulo,String idTransazione, OpenSPCoopStateDBManager dbManager)throws OpenSPCoopStateException{
 		
 		if(this.useConnection){
 			
@@ -140,9 +152,35 @@ public abstract class OpenSPCoopState implements IOpenSPCoopState {
 			this.logger = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 			
 			// Get Connessione
-			this.dbManager = DBManager.getInstance();
+			if(dbManager!=null) {
+				switch (dbManager) {
+				case runtime:
+					this.dbManager_runtime = DBManager.getInstance();
+					break;
+				case smistatoreMessaggiPresiInCarico:
+					this.dbManager_consegnePreseInCarico = DBConsegnePreseInCaricoManager.getInstanceSmistatore();
+					break;
+				case consegnePreseInCarico:
+					this.dbManager_consegnePreseInCarico = DBConsegnePreseInCaricoManager.getInstanceRuntime();
+					break;
+				case messageBox:
+					this.dbManager_consegneMessageBox = DBConsegneMessageBoxManager.getInstanceRuntime();
+					break;
+				}
+			}
+			else {
+				this.dbManager_runtime = DBManager.getInstance();
+			}
 			try{
-				this.resourceDB = this.dbManager.getResource(identitaPdD,this.idModulo,idTransazione);
+				if(this.dbManager_runtime!=null) {
+					this.resourceDB = this.dbManager_runtime.getResource(identitaPdD,this.idModulo,idTransazione);
+				}
+				else if(this.dbManager_consegnePreseInCarico!=null) {
+					this.resourceDB = this.dbManager_consegnePreseInCarico.getResource(identitaPdD,this.idModulo,idTransazione);
+				}
+				else {
+					this.resourceDB = this.dbManager_consegneMessageBox.getResource(identitaPdD,this.idModulo,idTransazione);
+				}
 			}catch(Exception e){
 				throw new OpenSPCoopStateException("Riscontrato errore durante la richiesta di una connessione al DB",e);
 			}
@@ -160,7 +198,15 @@ public abstract class OpenSPCoopState implements IOpenSPCoopState {
 				this.updateStatoRisposta();
 			}catch(Exception e){
 				this.logger.error("Update stato richiesta/risposta non riuscito",e);
-				this.dbManager.releaseResource(this.identitaPdD,this.idModulo,this.resourceDB);
+				if(this.dbManager_runtime!=null) {
+					this.dbManager_runtime.releaseResource(this.identitaPdD,this.idModulo,this.resourceDB);
+				}
+				else if(this.dbManager_consegnePreseInCarico!=null) {
+					this.dbManager_consegnePreseInCarico.releaseResource(this.identitaPdD,this.idModulo,this.resourceDB);
+				}
+				else {
+					this.dbManager_consegneMessageBox.releaseResource(this.identitaPdD,this.idModulo,this.resourceDB);
+				}
 				throw new OpenSPCoopStateException("Update stato richiesta/risposta non riuscito",e);
 			}
 			
@@ -172,7 +218,15 @@ public abstract class OpenSPCoopState implements IOpenSPCoopState {
 	public void updateResource(String idTransazione) throws OpenSPCoopStateException{
 		if( this.useConnection ){
 			try{
-				this.resourceDB = this.dbManager.getResource(this.identitaPdD,this.idModulo,idTransazione);
+				if(this.dbManager_runtime!=null) {
+					this.resourceDB = this.dbManager_runtime.getResource(this.identitaPdD,this.idModulo,idTransazione);
+				}
+				else if(this.dbManager_consegnePreseInCarico!=null) {
+					this.resourceDB = this.dbManager_consegnePreseInCarico.getResource(this.identitaPdD,this.idModulo,idTransazione);
+				}
+				else {
+					this.resourceDB = this.dbManager_consegneMessageBox.getResource(this.identitaPdD,this.idModulo,idTransazione);
+				}
 			}catch(Exception e){
 				throw new OpenSPCoopStateException("Riscontrato errore durante la richiesta di una connessione al DB",e);
 			}
@@ -226,7 +280,15 @@ public abstract class OpenSPCoopState implements IOpenSPCoopState {
 			}
 			try{
 				if(this.resourceDB!=null){
-					this.dbManager.releaseResource(this.identitaPdD,this.idModulo,this.resourceDB);
+					if(this.dbManager_runtime!=null) {
+						this.dbManager_runtime.releaseResource(this.identitaPdD,this.idModulo,this.resourceDB);
+					}
+					else if(this.dbManager_consegnePreseInCarico!=null) {
+						this.dbManager_consegnePreseInCarico.releaseResource(this.identitaPdD,this.idModulo,this.resourceDB);
+					}
+					else {
+						this.dbManager_consegneMessageBox.releaseResource(this.identitaPdD,this.idModulo,this.resourceDB);
+					}
 				}
 				this.richiestaStato.updateConnection(null);
 				this.rispostaStato.updateConnection(null);

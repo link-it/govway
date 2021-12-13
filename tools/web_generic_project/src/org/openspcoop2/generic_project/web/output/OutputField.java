@@ -106,4 +106,5 @@ public interface OutputField<T> extends Serializable{
 	public String getTableHeaderLabelStyleClass();
 	public void setTableHeaderLabelStyleClass(String tableHeaderLabelStyleClass);
 
+	public String getTimeZone();
 }

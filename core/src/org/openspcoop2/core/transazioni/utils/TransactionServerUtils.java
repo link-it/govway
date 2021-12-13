@@ -36,11 +36,11 @@ import org.openspcoop2.core.transazioni.IdTransazioneApplicativoServer;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
 import org.openspcoop2.core.transazioni.dao.ITransazioneApplicativoServerService;
+import org.openspcoop2.core.transazioni.dao.jdbc.JDBCTransazioneApplicativoServerService;
 import org.openspcoop2.core.transazioni.dao.jdbc.JDBCTransazioneService;
 import org.openspcoop2.core.transazioni.dao.jdbc.converter.TransazioneFieldConverter;
 import org.openspcoop2.generic_project.beans.UpdateField;
 import org.openspcoop2.generic_project.exception.NotFoundException;
-import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.utils.Utilities;
@@ -79,7 +79,7 @@ public class TransactionServerUtils {
 		boolean firstEntry = serverInfoParam.getDataUscitaRichiesta()==null && serverInfoParam.getDataPrelievoIm()==null && serverInfoParam.getDataEliminazioneIm()==null;
 		
 		if(firstEntry) {
-			return save(transazioneService, serverInfoParam, false, false, true);		
+			return save(transazioneService, serverInfoParam, false, false, true, false, null);		
 		}
 		else {
 			IdTransazioneApplicativoServer idTransazioneApplicativoServer = new IdTransazioneApplicativoServer();
@@ -89,7 +89,11 @@ public class TransactionServerUtils {
 				
 				TransazioneApplicativoServer transazioneApplicativoServer = transazioneService.get(idTransazioneApplicativoServer);
 				if(!transazioneApplicativoServer.isConsegnaTerminata() && transazioneApplicativoServer.getDataEliminazioneIm()==null && transazioneApplicativoServer.getDataMessaggioScaduto()==null) {
-					return save(transazioneService, serverInfoParam, true, false, true);
+					boolean useSelectForUpdate = true;
+					/*
+					 * Grazie alla select for update riesco a mettere il lock solamente sulla riga interessata
+					 */
+					return save(transazioneService, serverInfoParam, true, false, true, useSelectForUpdate, null);
 				}
 				// else ho già registrato l'ultima informazione, è inutile fare update delle informazioni parziali.
 				else {
@@ -103,7 +107,8 @@ public class TransactionServerUtils {
 		
 	}
 	
-	public static boolean save(ITransazioneApplicativoServerService transazioneService, TransazioneApplicativoServer serverInfoParam, boolean update, boolean throwNotFoundIfNotExists, boolean recover) throws Exception {
+	public static boolean save(ITransazioneApplicativoServerService transazioneService, TransazioneApplicativoServer serverInfoParam, boolean update, boolean throwNotFoundIfNotExists, boolean recover,
+			boolean useSelectForUpdate, List<String> timeDetails) throws Exception {
 		
 		String idTransazione = serverInfoParam.getIdTransazione();
 		if(idTransazione==null) {
@@ -130,10 +135,44 @@ public class TransactionServerUtils {
 		
 		if(update) {
 			
-			// inefficente: fa 2 query
-			// TransazioneApplicativoServer transazioneApplicativoServer = transazioneService.get(idTransazioneApplicativoServer);
+			long timeStart = -1;
+			if(timeDetails!=null) {
+				timeStart = DateManager.getTimeMillis();
+			}
 			
-			IExpression expression = transazioneService.newExpression();
+			// prima era inefficente: faceva 2 query
+			// adesso e' stata trasformata in efficente e fa una unica query con limit 1
+			TransazioneApplicativoServer transazioneApplicativoServerReadFromDB = null;
+			IdTransazioneApplicativoServer idTransazioneApplicativoServerReadFromDB = null;
+			if(useSelectForUpdate) {
+				JDBCTransazioneApplicativoServerService transazioneServiceSearch = (JDBCTransazioneApplicativoServerService) transazioneService;
+				try {
+					transazioneServiceSearch.enableSelectForUpdate();
+					transazioneApplicativoServerReadFromDB = transazioneService.get(idTransazioneApplicativoServer);
+				}finally {
+					transazioneServiceSearch.disableSelectForUpdate();
+				}
+				// con la select for update devo poi usare lo stesso comando di WHERE poichè ho messo un lock sulla riga
+				// uso quindi idTransazioneApplicativoServer che non possiede l'id long settato
+				idTransazioneApplicativoServerReadFromDB = idTransazioneApplicativoServer; 
+			}
+			else{
+				transazioneApplicativoServerReadFromDB = transazioneService.get(idTransazioneApplicativoServer);
+				idTransazioneApplicativoServerReadFromDB = new IdTransazioneApplicativoServer();
+				idTransazioneApplicativoServerReadFromDB.setId(transazioneApplicativoServerReadFromDB.getId());
+			}
+			
+			if(timeDetails!=null) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				timeDetails.add("readFromDB:"+timeProcess);
+				
+				timeStart = DateManager.getTimeMillis();
+			}
+			
+			/*
+			 * Leggermente inefficente per via del limit 2 con cui viene implementata la find
+			org.openspcoop2.generic_project.expression.IExpression expression = transazioneService.newExpression();
 			expression.equals(TransazioneApplicativoServer.model().ID_TRANSAZIONE, idTransazione);
 			expression.and();
 			expression.equals(TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE, servizioApplicativoErogatore);
@@ -147,7 +186,7 @@ public class TransactionServerUtils {
 				else {
 					return false;
 				}
-			}
+			}*/
 			
 			// aggiorno data registrazione per controllo effettuato durante l'aggiornamento della transazione (metodo sotto: aggiornaInformazioneConsegnaTerminata)
 			serverInfoParam.setDataRegistrazione(transazioneApplicativoServerReadFromDB.getDataRegistrazione());
@@ -275,11 +314,30 @@ public class TransactionServerUtils {
 				
 			}
 			
-			transazioneService.update(idTransazioneApplicativoServer, transazioneApplicativoServerReadFromDB);
+			if(timeDetails!=null) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				timeDetails.add("prepareUpdate:"+timeProcess);
+				
+				timeStart = DateManager.getTimeMillis();
+			}
+			
+			transazioneService.update(idTransazioneApplicativoServerReadFromDB, transazioneApplicativoServerReadFromDB);
+			
+			if(timeDetails!=null) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				timeDetails.add("update:"+timeProcess);
+			}
 			
 			return true;
 		}
 		else {
+			
+			long timeStart = -1;
+			if(timeDetails!=null) {
+				timeStart = DateManager.getTimeMillis();
+			}
 			
 			// ** primo invio **
 			
@@ -307,9 +365,25 @@ public class TransactionServerUtils {
 			
 			// cluster id
 			transazioneApplicativoServer.setClusterIdPresaInCarico(serverInfoParam.getClusterIdPresaInCarico());
-							
+			
+			if(timeDetails!=null) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				timeDetails.add("prepareInsert:"+timeProcess);
+				
+				timeStart = DateManager.getTimeMillis();
+			}
+			
 			// CREO
 			transazioneService.create(transazioneApplicativoServer);
+
+			if(timeDetails!=null) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				timeDetails.add("insert:"+timeProcess);
+				
+				timeStart = DateManager.getTimeMillis();
+			}
 			
 			return true;
 		}
@@ -322,7 +396,8 @@ public class TransactionServerUtils {
 			boolean debug,
 			int esitoConsegnaMultipla, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
 			int esitoIntegrationManagerSingolo, boolean possibileTerminazioneSingleIntegrationManagerMessage,
-			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval) {
+			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval,
+			List<String> timeDetails) {
 		
 		// aggiorno esito transazione
 		try{
@@ -332,7 +407,8 @@ public class TransactionServerUtils {
 					debug,
 					esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
 					esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage,
-					gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval);
+					gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval,
+					timeDetails);
 		}catch(Throwable e){
 			String msg = "Errore durante l'aggiornamento delle transazione relativamente all'informazione del server: " + e.getLocalizedMessage();
 			logCore.error("[id:"+transazioneApplicativoServer.getIdTransazione()+"][sa:"+transazioneApplicativoServer.getServizioApplicativoErogatore()+"]["+transazioneApplicativoServer.getConnettoreNome()+"] "+msg,e);
@@ -346,7 +422,8 @@ public class TransactionServerUtils {
 			boolean debug,
 			int esitoConsegnaMultipla, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
 			int esitoIntegrationManagerSingolo, boolean possibileTerminazioneSingleIntegrationManagerMessage,
-			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval) throws CoreException {
+			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval,
+			List<String> timeDetails) throws CoreException {
 		
 		if(possibileTerminazioneSingleIntegrationManagerMessage) {
 			// Devo comprendere se l'eliminazione del messaggio, effettuata via I.M o tramite scadenza, riguarda la configurazione su connettori multipli o configurazione standard con unico connettore.
@@ -361,6 +438,11 @@ public class TransactionServerUtils {
 //			}
 			int esitoTransazione = -1;
 			for (; i < 3; i++) {
+				
+				long timeStart = -1;
+				if(timeDetails!=null) {
+					timeStart = DateManager.getTimeMillis();
+				}
 				
 				// primo test: finestra di 5 minuti
 				// secondo test: finestra di 1 ora
@@ -384,6 +466,13 @@ public class TransactionServerUtils {
 						daoFactory, logFactory, smpFactory,
 						debug,
 						leftValue, rightValue);
+				
+				if(timeDetails!=null) {
+					long timeEnd =  DateManager.getTimeMillis();
+					long timeProcess = timeEnd-timeStart;
+					timeDetails.add("getEsitoIM-"+i+":"+timeProcess);
+				}
+				
 				if(esitoTransazione>=0) {
 					// transazione trovata
 					if(esitoIntegrationManagerSingolo == esitoTransazione) {
@@ -414,14 +503,16 @@ public class TransactionServerUtils {
 				daoFactory, logFactory, smpFactory,
 				debug,
 				esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
-				gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval);
+				gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval,
+				timeDetails);
 	}
 	private static boolean _aggiornaInformazioneConsegnaTerminata(TransazioneApplicativoServer transazioneApplicativoServer, Connection connectionDB,
 			String tipoDatabase, Logger logCore,
 			IDAOFactory daoFactory, Logger logFactory, ServiceManagerProperties smpFactory,
 			boolean debug,
 			int esitoConsegnaMultipla, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
-			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval) throws CoreException {
+			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval,
+			List<String> timeDetails) throws CoreException {
 		
 		boolean useSerializableMode = false;
 		if(useSerializableMode) {
@@ -445,6 +536,11 @@ public class TransactionServerUtils {
 			int row = -1;
 			for (; i < 3; i++) {
 				
+				long timeStart = -1;
+				if(timeDetails!=null) {
+					timeStart = DateManager.getTimeMillis();
+				}
+				
 				// primo test: finestra di 5 minuti
 				// secondo test: finestra di 1 ora
 				// terzo test: senza finestra temporale
@@ -463,6 +559,7 @@ public class TransactionServerUtils {
 				}
 			
 				boolean USE_SERIALIZABLE = true;
+				StringBuilder sbConflict = new StringBuilder();
 				row = _aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, connectionDB,
 						tipoDatabase, logCore,
 						daoFactory, logFactory, smpFactory,
@@ -470,7 +567,21 @@ public class TransactionServerUtils {
 						esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
 						leftValue, rightValue,
 						USE_SERIALIZABLE,
-						gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval);
+						gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval,
+						sbConflict);
+				
+				if(timeDetails!=null) {
+					long timeEnd =  DateManager.getTimeMillis();
+					long timeProcess = timeEnd-timeStart;
+					String c = "";
+					if(USE_SERIALIZABLE) {
+						if(sbConflict.length()>0) {
+							c="/c"+sbConflict.toString();
+						}
+					}
+					timeDetails.add("updateInfo-"+i+":"+timeProcess+c);
+				}
+				
 				if(row>0) {
 					break;
 				}
@@ -497,7 +608,8 @@ public class TransactionServerUtils {
 			int esitoConsegnaMultipla, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
 			Timestamp leftValue, Timestamp rightValue,
 			boolean serializable,
-			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval) throws CoreException {
+			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval,
+			StringBuilder sbConflict) throws CoreException {
 		
 		if(serializable) {
 			
@@ -524,6 +636,7 @@ public class TransactionServerUtils {
 			
 			int row = -1;
 			Throwable lastT = null;
+			int conflitti = 0;
 			while(updateEffettuato==false && DateManager.getTimeMillis() < scadenzaWhile){
 
 				try{
@@ -546,8 +659,10 @@ public class TransactionServerUtils {
 					try{
 						Utilities.sleep((new java.util.Random()).nextInt(gestioneSerializableDB_CheckInterval)); // random da 0ms a checkIntervalms
 					}catch(Exception eRandom){}
+					conflitti++;
 				}
 			}
+			sbConflict.append(conflitti+"/updated:"+updateEffettuato);
 			// Ripristino Transazione
 			try{
 				connectionDB.setTransactionIsolation(oldTransactionIsolation);

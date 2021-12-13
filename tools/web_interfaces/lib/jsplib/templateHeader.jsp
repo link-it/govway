@@ -40,6 +40,8 @@ GeneralData gd = (GeneralData) session.getAttribute(gdString);
 String logoImage = gd.getLogoHeaderImage();
 String logoLink = gd.getLogoHeaderLink();
 String logoTitolo = gd.getLogoHeaderTitolo();
+boolean visualizzaLinkHome = gd.isVisualizzaLinkHome();
+String homeLink = request.getContextPath() + "/messagePage"+".do?dest=home";
 
 // <span class="item-icon \<\%=icon \%\>"></span>
 %>
@@ -73,7 +75,13 @@ String logoTitolo = gd.getLogoHeaderTitolo();
 			<tbody>
 				 <tr>
 				  	<td class="td1PageHeader">
-				    	<span class="consoleTitle"><%= gd.getTitle() %></span>
+				  		<% if(visualizzaLinkHome){%>
+					  		<a href="<%=homeLink %>" class="titleIconLinkLeft">
+					    		<span class="consoleTitle"><%= gd.getTitle() %></span>
+				    		</a>
+			    		<% } else {%>
+				 			<span class="consoleTitle"><%= gd.getTitle() %></span>
+				 		<% } %>
 				    </td>
 				 	<td class="td2PageHeader" align="right">
 				 		<table>

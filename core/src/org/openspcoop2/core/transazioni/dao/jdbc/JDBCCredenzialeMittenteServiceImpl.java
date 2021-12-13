@@ -22,6 +22,7 @@ package org.openspcoop2.core.transazioni.dao.jdbc;
 
 import java.sql.Connection;
 
+import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 
 import org.slf4j.Logger;
@@ -58,6 +59,10 @@ public class JDBCCredenzialeMittenteServiceImpl extends JDBCCredenzialeMittenteS
 	@Override
 	public void create(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, CredenzialeMittente credenzialeMittente, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException,ServiceException,Exception {
 
+		if(TipiDatabase.POSTGRESQL.equals(jdbcProperties.getDatabase()) && org.openspcoop2.utils.jdbc.PostgreSQLUtilities.containsNullByteSequence(credenzialeMittente.getCredenziale())){
+			credenzialeMittente.setCredenziale(org.openspcoop2.utils.jdbc.PostgreSQLUtilities.normalizeString(credenzialeMittente.getCredenziale()));
+		}
+		
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 		
@@ -105,6 +110,10 @@ public class JDBCCredenzialeMittenteServiceImpl extends JDBCCredenzialeMittenteS
 	@Override
 	public void update(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, CredenzialeMittente credenzialeMittente, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, NotImplementedException, ServiceException, Exception {
 	
+		if(TipiDatabase.POSTGRESQL.equals(jdbcProperties.getDatabase()) && org.openspcoop2.utils.jdbc.PostgreSQLUtilities.containsNullByteSequence(credenzialeMittente.getCredenziale())){
+			credenzialeMittente.setCredenziale(org.openspcoop2.utils.jdbc.PostgreSQLUtilities.normalizeString(credenzialeMittente.getCredenziale()));
+		}
+		
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 		

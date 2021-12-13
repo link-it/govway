@@ -40,6 +40,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.web.monitor.core.bean.AbstractCoreSearchForm;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.dao.ISearchFormService;
+import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.slf4j.Logger;
 
 /**
@@ -70,16 +71,30 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 	protected Integer currentPage = 1;
 	protected Integer rowsToDisplay = 25;
 	protected S search;
+	protected Integer currentSearchSize;
 
 	/**
 	 * The boolean field, detached, starts as false.  
 	 * It will be set to “true” when SerializableDataModel getSerializableModel(Range range) is called, and back to false when public void update() is called.  
 	 * In this manner, the model will not be updated when the jsf component is rebuilt on postback, but rather when the new model is being built.
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void update() {
 		//nothing to do
 		this.detached = false;
+		this.wrappedKeys = null;
+		
+		log.debug("AAAAAAAAAAA update Numero Entries richieste: ["+this.rowsToDisplay+"], detached ["+this.detached+"] wrappedKeys ["+this.wrappedKeys+"] ID["+this.toString()+"]");
+		
+		if(this.dataProvider != null) {
+			if(this.dataProvider instanceof ISearchFormService){
+				if(((ISearchFormService)this.dataProvider).getSearch() != null) {
+					((ISearchFormService)this.dataProvider).getSearch().setDetached(this.detached);
+					((ISearchFormService)this.dataProvider).getSearch().setWrappedKeys(this.wrappedKeys);
+				}
+			}
+		}
 	}
 
 	/**
@@ -119,6 +134,197 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 	@Override
 	public void walk(FacesContext context, DataVisitor visitor, Range range, Object argument) throws IOException {
 		try{
+			this.checkDataProvider();
+			AbstractCoreSearchForm searchForm =  null;
+			
+			if(this.dataProvider instanceof ISearchFormService) {
+				searchForm = ((ISearchFormService<T, K, AbstractCoreSearchForm>)this.dataProvider).getSearch();
+				boolean usaBuffer = (searchForm.isDetached() || searchForm.getWrappedKeys() != null); // && isSortObjectNull;
+				
+				log.debug("AAAAAAAAAAA walk Numero Entries richieste: ["+this.rowsToDisplay+"], usaBuffer ["+usaBuffer+"] ID["+this.toString()+"]");
+				
+				if(usaBuffer) {
+					for (Object key : searchForm.getWrappedKeys()) {
+						setRowKey(key);
+						visitor.process(context, key, argument);
+					}
+				} else {
+					int start = 0; int limit = 0;
+					if(searchForm.isUseCount()) {
+						// ripristino la ricerca.
+						if(searchForm.isRestoreSearch()){
+							start = searchForm.getStart();
+							limit = searchForm.getLimit();
+							searchForm.setRestoreSearch(false);
+
+							int pageIndex = (start / limit) + 1;
+							//					searchForm.setPageIndex(pageIndex);
+							searchForm.setCurrentPage(pageIndex);
+							// Aggiorno valori paginazione
+							range = new SequenceRange(start,limit);
+						}
+						else{
+							start = ((SequenceRange)range).getFirstRow();
+							limit = ((SequenceRange)range).getRows();
+						}
+
+						//				log.debug("Richiesti Record S["+start+"] L["+limit+"], FiltroPagina ["+searchForm.getCurrentPage()+"]"); 
+
+						searchForm.setStart(start);
+						searchForm.setLimit(limit); 
+					}else {
+						// se non uso la count allora start e limit sono gestiti dai tasti nella pagina
+						start = searchForm.getStart();
+						limit = searchForm.getLimit();
+					}
+					
+					log.debug("AAAAAAAAAAA walk Numero Entries richieste: ["+this.rowsToDisplay+"], Start ["+start+"]. Limit ["+limit+"]");
+					List<T> bufferList = this.findObjects(start, limit,null,null);
+					this.currentSearchSize = bufferList != null ?  bufferList.size() : 0;
+					searchForm.setCurrentSearchSize( this.currentSearchSize);
+					
+					this.wrappedKeys = new ArrayList<K>();
+					for (final T obj : bufferList) {
+						this.wrappedData.put(getId(obj), obj);
+						this.wrappedKeys.add(getId(obj));
+						visitor.process(context,getId(obj) , argument);
+					}
+					
+					searchForm.setWrappedKeys(this.wrappedKeys);
+				}
+			} else {
+				boolean usaBuffer = (this.detached || this.wrappedKeys != null); // && isSortObjectNull;
+				log.debug("AAAAAAAAAAA walk Numero Entries richieste: ["+this.rowsToDisplay+"], usaBuffer ["+usaBuffer+"] ID["+this.toString()+"]");
+				
+				if(usaBuffer){
+					for (K key : this.wrappedKeys) {
+						setRowKey(key);
+						visitor.process(context, key, argument);
+					}
+				}else{
+					int start = 0; int limit = 0;
+					start = ((SequenceRange)range).getFirstRow();
+					limit = ((SequenceRange)range).getRows();
+					
+					List<T> bufferList = this.findObjects(start, limit,null,null);
+					this.currentSearchSize = bufferList != null ?  bufferList.size() : 0;
+					
+					this.wrappedKeys = new ArrayList<K>();
+					for (final T obj : bufferList) {
+						this.wrappedData.put(getId(obj), obj);
+						this.wrappedKeys.add(getId(obj));
+						visitor.process(context,getId(obj) , argument);
+					}
+				}
+			}
+		}catch (Exception e) {
+			log.error("Errore durante la walk: "+e.getMessage(),e); 
+		}
+	}
+	
+	/*
+	 	@SuppressWarnings("unchecked")
+	@Override
+	public void walk(FacesContext context, DataVisitor visitor, Range range, Object argument) throws IOException {
+	 try{
+			this.checkDataProvider();
+			AbstractCoreSearchForm searchForm =  null;
+			
+			if(this.dataProvider instanceof ISearchFormService) {
+				searchForm = ((ISearchFormService<T, K, AbstractCoreSearchForm>)this.dataProvider).getSearch();
+				
+				log.debug("AAAAAAAAAAA walk Numero Entries richieste: ["+this.rowsToDisplay+"], detached ["+searchForm.isDetached()+"] ID["+this.toString()+"]");
+				
+				if(searchForm.isDetached()) {
+					for (Object key : searchForm.getWrappedKeys()) {
+						setRowKey(key);
+						visitor.process(context, key, argument);
+					}
+				} else {
+					int start = 0; int limit = 0;
+					if(searchForm.isUseCount()) {
+						// ripristino la ricerca.
+						if(searchForm.isRestoreSearch()){
+							start = searchForm.getStart();
+							limit = searchForm.getLimit();
+							searchForm.setRestoreSearch(false);
+
+							int pageIndex = (start / limit) + 1;
+							//					searchForm.setPageIndex(pageIndex);
+							searchForm.setCurrentPage(pageIndex);
+							// Aggiorno valori paginazione
+							range = new SequenceRange(start,limit);
+						}
+						else{
+							start = ((SequenceRange)range).getFirstRow();
+							limit = ((SequenceRange)range).getRows();
+						}
+
+						//				log.debug("Richiesti Record S["+start+"] L["+limit+"], FiltroPagina ["+searchForm.getCurrentPage()+"]"); 
+
+						searchForm.setStart(start);
+						searchForm.setLimit(limit); 
+					}else {
+						// se non uso la count allora start e limit sono gestiti dai tasti nella pagina
+						start = searchForm.getStart();
+						limit = searchForm.getLimit();
+					}
+					
+					log.debug("AAAAAAAAAAA walk Numero Entries richieste: ["+this.rowsToDisplay+"], Start ["+start+"]. Limit ["+limit+"]");
+					List<T> bufferList = this.findObjects(start, limit,null,null);
+					this.currentSearchSize = bufferList != null ?  bufferList.size() : 0;
+					searchForm.setCurrentSearchSize( this.currentSearchSize);
+					
+					this.wrappedKeys = new ArrayList<K>();
+					for (final T obj : bufferList) {
+						this.wrappedData.put(getId(obj), obj);
+						this.wrappedKeys.add(getId(obj));
+						visitor.process(context,getId(obj) , argument);
+					}
+					
+					searchForm.setWrappedKeys(this.wrappedKeys);
+				}
+			} else {
+				if(this.detached){
+					for (K key : this.wrappedKeys) {
+						setRowKey(key);
+						visitor.process(context, key, argument);
+					}
+				}else{
+					int start = 0; int limit = 0;
+					start = ((SequenceRange)range).getFirstRow();
+					limit = ((SequenceRange)range).getRows();
+					
+					List<T> bufferList = this.findObjects(start, limit,null,null);
+					this.currentSearchSize = bufferList != null ?  bufferList.size() : 0;
+					
+					this.wrappedKeys = new ArrayList<K>();
+					for (final T obj : bufferList) {
+						this.wrappedData.put(getId(obj), obj);
+						this.wrappedKeys.add(getId(obj));
+						visitor.process(context,getId(obj) , argument);
+					}
+				}
+			}
+		}catch (Exception e) {
+			log.error("Errore durante la walk: "+e.getMessage(),e); 
+		}
+		}
+		
+		@SuppressWarnings("unchecked")
+	@Override
+	public void walk(FacesContext context, DataVisitor visitor, Range range, Object argument) throws IOException {
+		try{
+			AbstractCoreSearchForm searchForm =  null;
+			boolean usaBuffer ;
+			if(this.dataProvider instanceof ISearchFormService) {
+				searchForm = ((ISearchFormService<T, K, AbstractCoreSearchForm>)this.dataProvider).getSearch();
+				usaBuffer = (searchForm.isDetached() || searchForm.getWrappedKeys() != null); // && isSortObjectNull;
+			} else {
+				usaBuffer = (this.detached || this.wrappedKeys != null); // && isSortObjectNull;
+			}
+			
+			log.debug("AAAAAAAAAAA walk Numero Entries richieste: ["+this.rowsToDisplay+"], detached ["+this.detached+"] Usabuffer["+usaBuffer+"] ID["+this.toString()+"]");
 			if(this.detached){
 				for (K key : this.wrappedKeys) {
 					setRowKey(key);
@@ -127,7 +333,7 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 			}else{
 				this.checkDataProvider();
 				int start = 0; int limit = 0;
-				AbstractCoreSearchForm searchForm =  null;
+				
 				if(this.dataProvider instanceof ISearchFormService) {
 					searchForm = ((ISearchFormService<T, K, AbstractCoreSearchForm>)this.dataProvider).getSearch();
 
@@ -164,9 +370,11 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 					limit = ((SequenceRange)range).getRows();
 				}
 
+				log.debug("AAAAAAAAAAA walk Numero Entries richieste: ["+this.rowsToDisplay+"], Start ["+start+"]. Limit ["+limit+"]");
 				List<T> bufferList = this.findObjects(start, limit,null,null);
+				this.currentSearchSize = bufferList != null ?  bufferList.size() : 0;
 				if(searchForm != null) {
-					searchForm.setCurrentSearchSize( bufferList != null ?  bufferList.size() : 0);
+					searchForm.setCurrentSearchSize( this.currentSearchSize);
 				} 
 
 				this.wrappedKeys = new ArrayList<K>();
@@ -182,6 +390,7 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 		}
 
 	}
+	 * */
 
 	/**
 	 * This method must return actual data rows count from the Data Provider. It is used by pagination control
@@ -341,10 +550,16 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 	 * In current implementation we just mark current model as serialized. In more complicated cases we may need to 
 	 * transform data to actually serialized form.
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public  SerializableDataModel getSerializableModel(Range range) {
 		if (this.wrappedKeys!=null) {
 			this.detached = true;
+			
+			if(this.dataProvider instanceof ISearchFormService) {
+				((ISearchFormService<T, K, AbstractCoreSearchForm>)this.dataProvider).getSearch().setDetached(this.detached);
+			} 
+			
 			return this; 
 		} else {
 			return null;
@@ -515,6 +730,7 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 	@SuppressWarnings("rawtypes")
 	public void setRowsToDisplay(Integer rowsToDisplay) {
 		this.rowsToDisplay = rowsToDisplay;
+		log.debug("AAAAAAAAAAA   setRowsToDisplay Numero Entries richieste: ["+this.rowsToDisplay+"] ID["+this.toString()+"]");
 		
 		if(this.dataProvider != null) {
 			if(this.dataProvider instanceof ISearchFormService){
@@ -529,6 +745,7 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 	}
 	
 	public void rowsToDisplaySelected(ActionEvent ae) {
+		log.debug("AAAAAAAAAAA   rowsToDisplaySelected Numero Entries richieste: ["+this.rowsToDisplay+"] ID["+this.toString()+"]");
 		firstPage();
 	}
 	
@@ -545,4 +762,46 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 				
 		return Costanti.SELECT_ITEM_ENTRIES;
 	}
+	
+	public Integer getNumeroMassimoRisultati() {
+		return Costanti.SELECT_ITEM_VALORE_MASSIMO_ENTRIES;
+	}
+	
+	public String getNumeroMassimoRisultatiLabel() {
+		return MessageManager.getInstance().getMessageWithParamsFromResourceBundle(Costanti.SELECT_ITEM_VALORE_MASSIMO_ENTRIES_LABEL_KEY, Costanti.SELECT_ITEM_VALORE_MASSIMO_ENTRIES);
+	}
+	
+	public String getSelezionatiPrimiElementiLabel() {
+		return MessageManager.getInstance().getMessageWithParamsFromResourceBundle(Costanti.SELEZIONATI_PRIMI_X_ELEMENTI_LABEL_KEY, Costanti.SELECT_ITEM_VALORE_MASSIMO_ENTRIES);
+	}
+
+	@SuppressWarnings("rawtypes")
+	public Integer getCurrentSearchSize() {
+		if(this.dataProvider != null) {
+			if(this.dataProvider instanceof ISearchFormService){
+				if(((ISearchFormService)this.dataProvider).getSearch() != null)
+					this.currentSearchSize = ((ISearchFormService)this.dataProvider).getSearch().getCurrentSearchSize();
+			}
+		}
+		return this.currentSearchSize;
+	}
+
+	public void setCurrentSearchSize(Integer currentSearchSize) {
+		this.currentSearchSize = currentSearchSize;
+	}
+	
+	public boolean isVisualizzaSelezionePrimiElementi() {
+		// se ho selezionato il valore massimo disponibile nella tendina allora non ha senso visualizzare il link 'visualizza i primi X elementi'
+		if(this.getRowsToDisplay().intValue() == this.getNumeroMassimoRisultati().intValue())
+			return false;
+		
+		// si visualizza la selezione se sono almeno in pagina 2, oppure se sono in pagina 1 e presumo di avere almeno un'altra pagina  
+		if(this.getCurrentPage() > 1 || 
+				(this.getCurrentPage() == 1 && this.getCurrentSearchSize() == this.getRowsToDisplay()))
+			return true;
+
+		return false;
+	}
+	
+	public void setVisualizzaSelezionePrimiElementi(boolean b) {}
 }

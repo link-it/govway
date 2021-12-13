@@ -23,17 +23,17 @@
 				rendered="#{dettagliBean.visualizzaDataAccettazione and not empty dettagliBean.dettaglio.dataAccettazioneRichiesta}"/>
 			<h:outputText id="outDataAccettazioneRich" value="#{dettagliBean.dettaglio.dataAccettazioneRichiesta}" 
 				rendered="#{dettagliBean.visualizzaDataAccettazione and not empty dettagliBean.dettaglio.dataAccettazioneRichiesta}">
-				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="Europe/Rome"/>
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
 			</h:outputText>	
 						
 			<h:outputLabel value="Data Ingresso" id="dataInR-iconLabel" styleClass="outputFieldLabel icon-date" rendered="#{not empty dettagliBean.dettaglio.dataIngressoRichiesta}"/>
 			<h:outputText id="outDataIngressoRich" value="#{dettagliBean.dettaglio.dataIngressoRichiesta}" rendered="#{not empty dettagliBean.dettaglio.dataIngressoRichiesta}">
-				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="Europe/Rome"/>
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
 			</h:outputText>	
 			
 			<h:outputLabel value="Data Uscita" id="dataOR-iconLabel" styleClass="outputFieldLabel icon-date" rendered="#{not empty dettagliBean.dettaglio.dataUscitaRichiesta}"/>
 			<h:outputText id="outDataUscitaRich" value="#{dettagliBean.dettaglio.dataUscitaRichiesta}" rendered="#{not empty dettagliBean.dettaglio.dataUscitaRichiesta}">
-				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="Europe/Rome"/>
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
 			</h:outputText>
 			
 			<h:outputLabel value="Bytes Ingresso" id="dimInR-iconLabel" styleClass="outputFieldLabel icon-compress"/>
@@ -217,7 +217,7 @@
 								<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
 								<h:outputText id="outDataIngrRich" value="#{item.dataIngressoRichiesta}">
 									<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss z"
-										timeZone="Europe/Rome" />
+										timeZone="#{applicationBean.timeZone}" />
 								</h:outputText>
 							</a4j:commandLink>
 						</rich:column>
@@ -243,17 +243,17 @@
 				rendered="#{dettagliBean.visualizzaDataAccettazione and not empty dettagliBean.dettaglio.dataAccettazioneRisposta}"/>
 			<h:outputText id="outDataAccettazioneRisp" value="#{dettagliBean.dettaglio.dataAccettazioneRisposta}" 
 				rendered="#{dettagliBean.visualizzaDataAccettazione and not empty dettagliBean.dettaglio.dataAccettazioneRisposta}">
-				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="Europe/Rome"/>
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
 			</h:outputText>
 					
 			<h:outputLabel value="Data Ingresso" id="dataInResp-iconLabel" styleClass="outputFieldLabel icon-date" rendered="#{not empty dettagliBean.dettaglio.dataIngressoRisposta}"/>
 			<h:outputText id="outDataIngressoRisp" value="#{dettagliBean.dettaglio.dataIngressoRisposta}" rendered="#{not empty dettagliBean.dettaglio.dataIngressoRisposta}">
-				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="Europe/Rome"/>
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
 			</h:outputText>
 			
 			<h:outputLabel value="Data Uscita" id="dataOResp-iconLabel" styleClass="outputFieldLabel icon-date" rendered="#{not empty dettagliBean.dettaglio.dataUscitaRisposta}"/>
 			<h:outputText id="outDataUscitaRisp" value="#{dettagliBean.dettaglio.dataUscitaRisposta}" rendered="#{not empty dettagliBean.dettaglio.dataUscitaRisposta}">
-				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="Europe/Rome"/>
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
 			</h:outputText>
 			
 			<h:outputLabel value="Bytes Ingresso" id="dimInRes-iconLabel" styleClass="outputFieldLabel icon-compress"/>
@@ -467,7 +467,7 @@
 								<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
 								<h:outputText id="outDataIngrRisp" value="#{item.dataIngressoRichiesta}">
 									<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss z"
-										timeZone="Europe/Rome" />
+										timeZone="#{applicationBean.timeZone}" />
 								</h:outputText>
 							</a4j:commandLink>
 						</rich:column>

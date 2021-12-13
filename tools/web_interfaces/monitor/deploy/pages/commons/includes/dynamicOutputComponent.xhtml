@@ -53,7 +53,7 @@
 		<c:if test="#{'CALENDAR'==param.type}">
 			<h:outputLabel styleClass="outputFieldLabel" id="#{param.id}_Label" value="#{param.rendering.label}" rendered="#{param.rendered}"/>
 			<h:outputText id="#{param.id}_val" value="#{param.value}" style=" width : 412px;" rendered="#{param.rendered and not empty param.value}">
-				<f:convertDateTime pattern="yyyy-MM-dd HH:mm.ss.SSS" defaultTime="00:00" timeZone="Europe/Rome" />
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm.ss.SSS" defaultTime="00:00" timeZone="#{applicationBean.timeZone}" />
 			</h:outputText>
 			<h:outputText id="#{param.id}_noVal" value="-" style=" width : 412px;" rendered="#{param.rendered and empty param.value}"/>
 		</c:if>

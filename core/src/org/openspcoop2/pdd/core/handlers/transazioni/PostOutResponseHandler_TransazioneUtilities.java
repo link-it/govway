@@ -1446,6 +1446,14 @@ public class PostOutResponseHandler_TransazioneUtilities {
 							timeStart = DateManager.getTimeMillis();
 						}
 						
+						if(times!=null) {
+							long timeEnd =  DateManager.getTimeMillis();
+							long timeProcess = timeEnd-timeStart;
+							times.fillTransaction_details.add("async-send:"+timeProcess);
+							
+							timeStart = DateManager.getTimeMillis();
+						}
+						
 					}
 					else {
 						

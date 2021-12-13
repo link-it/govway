@@ -100,7 +100,7 @@ SortableBaseDataModel<String, TransazioneBean, ITransazioniService, TransazioniS
 				return count;
 			}else 
 				return 0;
-		} else return 25;
+		} else return this.rowsToDisplay;
 		//		return super._executeTotalCountWithIService(service);
 	}
 

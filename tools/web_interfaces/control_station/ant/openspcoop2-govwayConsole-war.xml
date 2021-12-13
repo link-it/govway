@@ -373,6 +373,7 @@
 				<include name="reactive-streams-1.0.3.jar" />
 				<include name="${jakarta_activation_jar}"/>
 				<include name="velocity-*.jar"/>
+				<include name="rhino-1.7.13.jar"/>
 			</lib>
 			<lib dir="${required_lib_govwayConsole}/cxf">
 				<include name="cxf-core-*.jar" />

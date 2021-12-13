@@ -382,7 +382,45 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
-     
+
+  /documenti/testbase64/{id_documento}:
+    parameters:
+    - $ref: '#/components/parameters/id_documento'
+    post:
+      tags:
+        - document-retrieve
+      description: Esempio di invio dei documenti nella richiesta
+      operationId: SendDocumentDynamicPathBase64
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+                type: string
+                format: base64
+      responses:
+        "200":
+          description: |-
+            Esempio di Risposta
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: base64
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'     
+
   /documenti/test/{id_documento}:
     parameters:
     - $ref: '#/components/parameters/id_documento'
@@ -726,6 +764,24 @@ paths:
   /documenti/qualsiasi/{id_documento}:
     parameters:
     - $ref: '#/components/parameters/id_documento'
+    post:
+      tags:
+        - document-retrieve
+      description: Esempio di postare un documento, per il quale si è ricevuto un riferimento
+      operationId: qualsiasi_doc_id_richiesta
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: object
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+            '*/*':
+              schema:
+                type: object
     get:
       tags:
         - document-retrieve
@@ -1315,7 +1371,7 @@ components:
             - documento
           properties:
              documento:
-                type: string
+                type: object
                 oneOf:
                   - $ref: '#/components/schemas/ContenutoAllegatoInLine'
                   - $ref: '#/components/schemas/ContenutoAllegatoRiferimentoUri'

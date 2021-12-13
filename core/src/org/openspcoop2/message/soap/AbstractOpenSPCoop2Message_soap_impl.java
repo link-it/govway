@@ -95,6 +95,19 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 	}
 	
 	@Override
+	protected byte[] buildContentAsByteArray() throws MessageException{
+		try{
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			this.serializeContent(bout, true);
+			bout.flush();
+			bout.close();
+			return bout.toByteArray();
+		}catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
 	protected void serializeContent(OutputStream os, boolean consume) throws MessageException {
 		try{
 			this.content.writeTo(os, consume);
@@ -218,7 +231,10 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 	
 	@Override
 	public String getContentType() {
-		if(this.isContentBuilded()) {
+		if(this.contentBuffer!=null && !this.contentUpdatable) {
+			return _getContentType();
+		}
+		else if(this.isContentBuilded()) {
 			try{
 				return this.content.getContentType();
 			}catch(Exception eInternal){

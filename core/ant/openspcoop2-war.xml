@@ -200,6 +200,7 @@
 				<include name="java-uuid-generator-4.0.1.jar"/>
 				<include name="freemarker-2.3.31.jar"/>
 				<include name="snakeyaml-1.29.jar"/>
+				<include name="rhino-1.7.13.jar"/>
 			</lib>
 			<lib dir="${required_lib}/jminix">
 				<include name="*.jar"/>

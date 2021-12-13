@@ -120,6 +120,7 @@ public class GeneralHelper {
 		gd.setLogoHeaderImage(this.loaderCore.getLogoHeaderImage());
 		gd.setLogoHeaderLink(this.loaderCore.getLogoHeaderLink());
 		gd.setLogoHeaderTitolo(this.loaderCore.getLogoHeaderTitolo()); 
+		gd.setVisualizzaLinkHome(this.loaderCore.isVisualizzaLinkHomeHeader());
 		if (displayLogin || displayLogout) {
 			Vector<GeneralLink> link = new Vector<GeneralLink>();
 			// 1. Utente collegato

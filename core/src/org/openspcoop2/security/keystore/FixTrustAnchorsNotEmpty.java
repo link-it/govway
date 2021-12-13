@@ -42,7 +42,7 @@ public class FixTrustAnchorsNotEmpty {
 		if(FixTrustAnchorsNotEmpty.cf==null){
 			InputStream is = null;
 			try{
-				FixTrustAnchorsNotEmpty.cf = CertificateFactory.getInstance("X.509");
+				FixTrustAnchorsNotEmpty.cf = org.openspcoop2.utils.certificate.CertificateFactory.getCertificateFactory();
 				is = FixTrustAnchorsNotEmpty.class.getResourceAsStream("/org/openspcoop2/security/keystore/FixTrustAnchorsParameterMustBeNonEmpty.cer");
 				FixTrustAnchorsNotEmpty.certFix = FixTrustAnchorsNotEmpty.cf.generateCertificate(is);
 			}catch(Exception e){

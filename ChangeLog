@@ -1,3 +1,123 @@
+2021-12-14  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 3.3.5.p1
+
+2021-12-12  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Libreria 'lo4j2' aggiornata alla versione '2.15.0' per risolvere la vulnerabilità 'CVE-2021-44228'.
+
+2021-12-11  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Le istanze degli oggetti java.security.cert.CertificateFactory e java.security.cert.CertPathValidator vengono adesso ottenute utilizzando il provider fornito da bouncy castle.
+	Lo stesso provider bouncy castle viene inoltre adesso utilizzato per gestire i certificati all'interno degli oggetti org.apache.wss4j.common.crypto.Merlin.
+
+2021-12-10  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor]
+	Risolto Bug OP-1294
+	Nell'export CSV delle transazioni sono stati aggiunte le seguenti informazioni mancanti:
+	- richiedente;
+	- dettaglio dell'errore o dell'anomalia;
+	- informazioni principali estratte dal token: subject, issuer, clientId, username ed indirizzo eMail.
+
+2021-12-10  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, Utils]
+	Introdotti i seguenti miglioramenti:
+	- Il calcolo del digest previsto nei pattern di sicurezza INTEGRITY del profilo di Interoperabilità ModI viene adesso effettuato utilizzando il provider fornito da bouncy castle;
+	- Rivista utility 'Semaphore' per poter essere configurata nell'utilizzo di un ReentrantLock e per poter abilitare una modalità non fair;
+	- Nel gestore del controllo del traffico sono state riviste le sezioni che prevedevano istruzioni eseguite in blocchi sincronizzati al fine di ridurle al minimo indispensabile.
+
+2021-12-10  Francesco Scarlato <scarlato@link.it>
+
+	* [GovWayCore, Utils]
+	Aggiunta funzionalità OP-1274
+	Aggiunto motore di validazione OpenAPI alternativo che utilizza la libreria: https://bitbucket.org/atlassian/swagger-request-validator
+
+2021-12-06  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1292
+	In caso di richieste malformate che causavano la produzione di un diagnostico contenente nel messaggio il carattere '\u0000', 
+	su ambienti con database di tipo Postgresql si otteneva un errore simile al seguente durante il tracciamento:
+		Caused by: org.postgresql.util.PSQLException: ERROR: invalid byte sequence for encoding "UTF8": 0x00
+	
+2021-12-03  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Risolto Bug OP-1290
+	In una API REST configurata con pattern 'Integrity', la validazione degli header firmati non rilevava, in presenza di molteplici header HTTP con medesimo nome, 
+	l'esistenza di un valore ulteriore rispetto a tutti quelli definiti all'interno del claim 'signed_headers'.
+
+2021-12-03  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole, GovWayCore]
+	Risolto Bug OP-1288
+	Aggiunta la funzionalità di 'Consegna condizionale' anche per API soap con profilo oneway.
+	Nella funzionalità di 'Auditing' le ricerche per identificativo vengono adesso effettuate tramite criteri "contains case insensitive". 
+	Inoltre nella lista dei risultati è stata aggiunta la data di esecuzione dell'operazione.
+	Infine è stato corretto il bug export/import della configurazione dell'API che non preservava la configurazione del profilo di collaborazione, 
+	del filtro duplicati, del riferimento alla richiesta e dell'id di conversazione in alcune casistiche di configurazione.
+
+2021-12-02  Giuliano Pintori <pintori@link.it>
+
+	* [GovwayConsole]
+	Aggiunta funzionalità OP-1278
+	Aggiunto meccanismo di autenticazione e autorizzazione alternativo basato su principal (es. prelevato tramite header http).
+	Con questa nuova modalità sono state introdotte le seguenti modifiche alla gestione degli utenti:
+	- la creazione di una nuova utenza avviene senza chiedere una password (internamente verrà generata una password 'changeit' utile in caso di ripristino del sistema di login applicativo;
+	- durante la modifica di una utenza non è più concesso modificarne la password;
+	- durante la fase di lettura del profilo utente non viene effettuato il controllo sulla scadenza della password.
+
+2021-12-01  Giuliano Pintori <pintori@link.it>
+
+	* [GovwayMonitor]
+	Aggiunta funzionalità OP-1278
+	Introdotti i seguenti miglioramenti:
+	- aggiunta la possibilità di selezionare in blocco gli elementi visualizzati nello storico delle transazioni attraverso dei link situati nel footer della tabella;
+	- è adesse possibile configurare il Locale utilizzato nell'applicazione;
+	- le pagine xhtml presentavano erroneamente campi 'date' con un time zone 'forzato' a 'Europe/Rome';
+	- il check periodico dello stato del gateway causava un'invalidazione del componente tabella e 
+	  una successiva azione dell'utente all'interno dello storico delle transazioni non veniva soddisfatta ripresentando gli stessi dati visualizzati in precedenza. 
+
+2021-11-30  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	In configurazione avanzata aggiunta la possibilità di abilitare le funzionalità in fase di sviluppo riguardanti la consegna delle notifiche relative ai messaggi presi in carico.
+
+2021-11-26  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1280
+	Sono stati effettuati i seguenti interventi aggiuntivi relativi alla funzionalità con presa in carico:
+	- aggiunta configurazione necessaria ad in dicare i secondi dopo il quale un nuovo messaggio può iniziare ad essere schedulato;
+	- rivisto algoritmo di aggiornamento delle informazioni di consegna per evitare gli errori di accesso concorrente, seppure gestiti, su database;
+	- aggiunta possibiltà di configurare datasource differenti da quelli di default, da utilizzare nella fase di consegna dei messaggi presi in carico e nel prelevamento di messaggi dalla MessageBox;
+	- aggiunto log che evidenzia il dettaglio di dove viene speso il tempo in fase di scrittura della transazione;
+	- migliorate query che individuano puntualmente le informazioni relative alle consegne e alle credenziali, eliminando l'utilizzo del vincolo 'LIMIT 2';
+	- nei binari prodotti dall'installer di default, il timer vie adesso disabilitato essendo la funzionalità ancora in fase di sviluppo.
+
+2021-11-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Corretti diversi problemi relativi alla gestione di contenuti definiti tramite charset 'UTF-8', 'ISO-8859-1' e 'UTF-16':
+	- la normalizzazione dell'input stream quando viene ritornato vuoto, viene adesso gestito tramite l'utilizzo di un buffer di lunghezza 2 compatibile con il charset 'UTF-16';
+	- aggiunta gestione del charset nella serializzazione presente nei metodi interni alla classe di utility XMLUtils e PrettyPrintXMLUtils;
+	- aggiunte utility per aggiungere e rimuovere elementi nelle richieste XML Rest, utilizzabili all'interno delle trasformazioni;
+	- risolto bug di serializzazione di un messaggio SOAP With Attachments presente quando il messaggio veniva acceduto per funzionalità read-only (es. correlazione applicativa).
+	  Il bug causava una generazione di un content-type con un mimepart differente da quello effettivamente serializzato;
+	- aggiunta gestione del charset nella classe 'OpenSPCoop2MessageSoapStreamReader' utilizzata per leggere le informazioni SOAP in streaming;
+	- aggiunto diagnostico che evidenzia la ricezione di richieste o risposte con un charset differente da quello definito per default. 
+	  Nella configurazione iniziale vengono accettati qualsiasi charset per messaggi REST e solamente il charset UTF-8 per messaggi SOAP.
+
+2021-11-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1282
+	Una connessione al database veniva acceduta dalla console anche per gestire risorse statiche non protette (es. js/autocomplete.js o css/linkit-base.css).
+
 2021-11-16  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

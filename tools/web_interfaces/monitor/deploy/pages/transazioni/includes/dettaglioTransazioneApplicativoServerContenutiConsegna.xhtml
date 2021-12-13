@@ -16,7 +16,7 @@
 						<h:outputText id="outData1" value="Data" />
 					</f:facet>
 					<h:outputText id="outData2" value="#{item.dataConsegnaErogatore}" >
-						<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome"/>
+						<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}"/>
 					</h:outputText>	
 				</rich:column>
 				

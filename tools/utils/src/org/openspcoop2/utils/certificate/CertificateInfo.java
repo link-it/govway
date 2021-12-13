@@ -62,7 +62,7 @@ public class CertificateInfo implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	
 	private java.security.cert.X509Certificate certificate;
 
 	private String name;
@@ -150,7 +150,7 @@ public class CertificateInfo implements Serializable {
 	private synchronized void initDigest(String algoritmo) throws CertificateException {
 		try {
 			if(this.digest==null) {
-				MessageDigest digest  = MessageDigest.getInstance(algoritmo);
+				MessageDigest digest = org.openspcoop2.utils.digest.MessageDigestFactory.getMessageDigest(algoritmo);
 				digest.update(this.certificate.getEncoded());
 				this.digest = digest.digest();
 			}
@@ -262,10 +262,11 @@ public class CertificateInfo implements Serializable {
 		pkixParameters.setDate(DateManager.getDate()); // per validare i certificati scaduti
 		pkixParameters.addCertStore(crlCertstore);
 		pkixParameters.setRevocationEnabled(true);
-		CertPathValidator certPathValidator = CertPathValidator.getInstance(CertPathValidator.getDefaultType());
+		CertPathValidator certPathValidator = org.openspcoop2.utils.certificate.CertificateFactory.getCertPathValidator();
 		List<java.security.cert.Certificate> lCertificate = new ArrayList<java.security.cert.Certificate>();
 		lCertificate.add(this.certificate);
-		certPathValidator.validate(CertificateFactory.getInstance("X.509").generateCertPath(lCertificate), pkixParameters);
+		CertificateFactory certificateFactory = org.openspcoop2.utils.certificate.CertificateFactory.getCertificateFactory();
+		certPathValidator.validate(certificateFactory.generateCertPath(lCertificate), pkixParameters);
 	}
 	
 	public boolean isVerified(KeyStore trustStore, boolean checkSameCertificateInTrustStore) {

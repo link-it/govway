@@ -30,19 +30,19 @@ package org.openspcoop2.pdd.core.controllo_traffico;
 public class StatoTraffico {
 
 	
-	private Long activeThreads = 0l;
-	private Boolean pddCongestionata = false;
+	private long activeThreads = 0l;
+	private boolean pddCongestionata = false;
 	
-	public Long getActiveThreads() {
+	public long getActiveThreads() {
 		return this.activeThreads;
 	}
-	public void setActiveThreads(Long activeThreads) {
+	public void setActiveThreads(long activeThreads) {
 		this.activeThreads = activeThreads;
 	}
-	public Boolean getPddCongestionata() {
+	public boolean isPddCongestionata() {
 		return this.pddCongestionata;
 	}
-	public void setPddCongestionata(Boolean pddCongestionata) {
+	public void setPddCongestionata(boolean pddCongestionata) {
 		this.pddCongestionata = pddCongestionata;
 	}
 	

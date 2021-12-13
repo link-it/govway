@@ -389,7 +389,8 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 								behaviourType.equals(TipoBehaviour.CONSEGNA_CON_NOTIFICHE)) {
 							consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(portaApplicativa, ControlStationCore.getLog());
 
-							if(!isSoapOneWay) {
+							//if(!isSoapOneWay) {
+							if(!behaviourType.equals(TipoBehaviour.CONSEGNA_MULTIPLA)) {
 								org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(portaApplicativa, ControlStationCore.getLog());
 								connettoreImplementaAPI = configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() != null ? configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() : "";
 								notificheCondizionaliEsito = configurazioneMultiDeliver.isNotificheByEsito();
@@ -639,7 +640,8 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 				} else if(behaviourType.equals(TipoBehaviour.CONSEGNA_MULTIPLA)) {
 					consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(portaApplicativa, ControlStationCore.getLog());
 
-					if(!isSoapOneWay) {
+					//if(!isSoapOneWay) {
+					if(!behaviourType.equals(TipoBehaviour.CONSEGNA_MULTIPLA)) {
 						org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(portaApplicativa, ControlStationCore.getLog());
 						connettoreImplementaAPI = configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() != null ? configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() : "";
 						notificheCondizionaliEsito = configurazioneMultiDeliver.isNotificheByEsito();

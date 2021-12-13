@@ -644,6 +644,30 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 				}
 			}
 			else{
+				/* ------------ Check Charset ------------- */
+				try {
+					boolean checkEnabled = false;
+					List<String> ctDefault = null;
+					if(ServiceBinding.SOAP.equals(protocolServiceBinding)){
+						if(this.openSPCoopProperties.isControlloCharsetContentTypeAbilitatoRicezioneBusteSoap()) {
+							checkEnabled = true;
+							ctDefault = this.openSPCoopProperties.getControlloCharsetContentTypeAbilitatoRicezioneBusteSoap();
+						}
+					}
+					else {
+						if(this.openSPCoopProperties.isControlloCharsetContentTypeAbilitatoRicezioneBusteRest()) {
+							checkEnabled = true;
+							ctDefault = this.openSPCoopProperties.getControlloCharsetContentTypeAbilitatoRicezioneBusteRest();
+						}
+					}
+					if(checkEnabled) {
+						ServicesUtils.checkCharset(contentTypeReq, ctDefault, this.msgDiag, true, TipoPdD.APPLICATIVA);
+					}
+					
+				}catch(Throwable t) {
+					this.logCore.error("Avvenuto errore durante il controllo del charset della richiesta: "+t.getMessage(),t);
+				}
+								
 				/* ------------  SoapAction check 1 (controlla che non sia null e ne ritorna il valore) ------------- */			
 				String soapAction = null;
 				try{

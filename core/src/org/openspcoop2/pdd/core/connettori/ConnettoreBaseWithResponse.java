@@ -23,7 +23,6 @@ package org.openspcoop2.pdd.core.connettori;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.SequenceInputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -101,15 +100,8 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 	
 	public void normalizeInputStreamResponse(int timeout) throws Exception{
 		//Se non e' null, controllo che non sia vuoto.
-		byte[] b = new byte[1];
 		if(this.isResponse!=null){
-			if(this.isResponse.read(b) == -1) {
-				this.isResponse = null;
-			} else {
-				// Metodo alternativo: java.io.PushbackInputStream
-				//System.out.println("NORMALIZED BY FROM ["+this.isResponse.getClass().getName()+"] ...");
-				this.isResponse = new SequenceInputStream(new ByteArrayInputStream(b),this.isResponse);
-			}
+			this.isResponse = Utilities.normalizeStream(this.isResponse, false);
 		}
 		else{
 			this.logger.info("Stream di risposta (return-code:"+this.codice+") is null",true);

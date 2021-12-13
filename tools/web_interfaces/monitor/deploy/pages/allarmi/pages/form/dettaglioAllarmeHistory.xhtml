@@ -51,7 +51,7 @@
 						
 						<h:outputLabel value="Data Aggiornamento" id="dataAggiornamento" styleClass="outputFieldLabel icon-date" rendered="#{not empty allarmiBean.allarmeHistory.timestampUpdate}"/>
 						<h:outputText id="outDataAggiornamento" value="#{allarmiBean.allarmeHistory.timestampUpdate}" rendered="#{not empty allarmiBean.allarmeHistory.timestampUpdate}">
-							<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome"/>
+							<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}"/>
 						</h:outputText>
 						
 						<h:outputLabel styleClass="outputFieldLabel" id="outLabelAbilitato" value="Abilitato" rendered="#{true}"/>

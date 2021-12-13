@@ -113,6 +113,8 @@ public class LoginBean extends AbstractLoginBean {
 	private PasswordVerifier passwordVerifier = null;
 	private String userToUpdate = null;
 	
+	private boolean checkPasswordExpire = false;
+	
 	public LoginBean(boolean initDao){
 		super(initDao);
 		this.caricaProperties();
@@ -148,6 +150,7 @@ public class LoginBean extends AbstractLoginBean {
 				}
 			}
 			
+			this.checkPasswordExpire = PddMonitorProperties.getInstance(this.log).isCheckPasswordExpire(this.passwordVerifier);
 
 		} catch (Exception e) {
 			this.log.error("Errore durante la configurazione del logout: " + e.getMessage(),e);
@@ -182,7 +185,8 @@ public class LoginBean extends AbstractLoginBean {
 					
 					// controllo validita' password
 					UserDetailsBean loadUserByUsername = this.getLoginDao().loadUserByUsername(this.getUsername());
-					if(this.passwordVerifier != null && this.passwordVerifier.isCheckPasswordExpire()) {
+					
+					if(this.passwordVerifier != null && this.checkPasswordExpire) {
 						User user = loadUserByUsername.getUtente();
 						if(user.isCheckLastUpdatePassword()) {
 							StringBuilder bfMotivazioneErrore = new StringBuilder(); 

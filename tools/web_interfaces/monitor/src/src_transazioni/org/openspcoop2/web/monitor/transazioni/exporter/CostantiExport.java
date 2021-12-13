@@ -153,6 +153,13 @@ public class CostantiExport {
 	public static final String KEY_COL_TIPO_RICHIESTA = "colTipoRichiesta";
 	public static final String KEY_COL_CODICE_RISPOSTA_INGRESSO = "colCodiceRispostaIngresso";
 	public static final String KEY_COL_CODICE_RISPOSTA_USCITA = "colCodiceRispostaUscita";
+	public static final String KEY_COL_RICHIEDENTE = "colRichiedente";
+	public static final String KEY_COL_DETTAGLIO_ERRORE = "colDettaglioErrore";
+	public static final String KEY_COL_TOKEN_ISSUER = "colTokenIssuer";
+	public static final String KEY_COL_TOKEN_SUBJECT = "colTokenSubject";
+	public static final String KEY_COL_TOKEN_CLIENT = "colTokenClientId";
+	public static final String KEY_COL_TOKEN_USERNAME = "colTokenUsername";
+	public static final String KEY_COL_TOKEN_EMAIL = "colTokenEMail";
 	
 	/** LABEL campi */
 	
@@ -161,7 +168,7 @@ public class CostantiExport {
 	public static final String LABEL_COL_RUOLO_TRANSAZIONE = "Ruolo Transazione";
 	public static final String LABEL_COL_ESITO = "Esito";
 	public static final String LABEL_COL_ESITO_CONTESTO = "Contesto";
-	public static final String LABEL_COL_PROTOCOLLO = "Protocollo";
+	public static final String LABEL_COL_PROTOCOLLO = "Profilo"; //"Protocollo";
 	public static final String LABEL_COL_DATA_ACCETTAZIONE_RICHIESTA = "Data Accettazione Richiesta";
 	public static final String LABEL_COL_DATA_INGRESSO_RICHIESTA = "Data Ingresso Richiesta";
 	public static final String LABEL_COL_DATA_USCITA_RICHIESTA = "Data Uscita Richiesta";
@@ -231,4 +238,11 @@ public class CostantiExport {
 	public static final String LABEL_COL_TIPO_RICHIESTA = "Metodo HTTP";
 	public static final String LABEL_COL_CODICE_RISPOSTA_INGRESSO = "Codice Risposta Ingresso";
 	public static final String LABEL_COL_CODICE_RISPOSTA_USCITA = "Codice Risposta Uscita";
+	public static final String LABEL_COL_RICHIEDENTE = "Richiedente";
+	public static final String LABEL_COL_DETTAGLIO_ERRORE = "Dettaglio"; // può essere un errore o un'anomalia
+	public static final String LABEL_COL_TOKEN_ISSUER = "Token Issuer";
+	public static final String LABEL_COL_TOKEN_SUBJECT = "Token Subject";
+	public static final String LABEL_COL_TOKEN_CLIENT = "Token ClientId";
+	public static final String LABEL_COL_TOKEN_USERNAME = "Token Username";
+	public static final String LABEL_COL_TOKEN_EMAIL = "Token eMail";
 }

@@ -1,3 +1,8 @@
+2021-11-24  Andrea Poli <apoli@link.it>
+
+	Aggiunto vincolo UNIQUE nella tabella transazioni_sa:
+	CONSTRAINT unique_transazioni_sa_1 UNIQUE (id_transazione,servizio_applicativo_erogatore)
+
 2021-07-27  Andrea Poli <apoli@link.it>
 
 	Aggiunte tabelle che consentono la registrazione delle attribute authority:

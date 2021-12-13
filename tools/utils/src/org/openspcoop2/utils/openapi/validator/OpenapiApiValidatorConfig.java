@@ -33,14 +33,14 @@ import org.openspcoop2.utils.rest.ApiValidatorConfig;
 public class OpenapiApiValidatorConfig extends ApiValidatorConfig {
 
 	private ApiName jsonValidatorAPI;
-	private OpenapiApi4jValidatorConfig openApi4JConfig;
+	private OpenapiLibraryValidatorConfig openApiValidatorConfig;
 
-	public OpenapiApi4jValidatorConfig getOpenApi4JConfig() {
-		return this.openApi4JConfig;
+	public OpenapiLibraryValidatorConfig getOpenApiValidatorConfig() {
+		return this.openApiValidatorConfig;
 	}
 
-	public void setOpenApi4JConfig(OpenapiApi4jValidatorConfig openApi4JConfig) {
-		this.openApi4JConfig = openApi4JConfig;
+	public void setOpenApiValidatorConfig(OpenapiLibraryValidatorConfig openApiValidatorConfig) {
+		this.openApiValidatorConfig = openApiValidatorConfig;
 	}
 
 	public ApiName getJsonValidatorAPI() {

@@ -433,6 +433,11 @@ class ResultAggregate {
 	private List<String> list1 = new ArrayList<String>();
 	private List<String> list2 = new ArrayList<String>();
 	private List<String> list3 = new ArrayList<String>();
+	private List<String> list4 = new ArrayList<String>();
+	private List<String> list5 = new ArrayList<String>();
+	private List<String> list6 = new ArrayList<String>();
+	private List<String> list7 = new ArrayList<String>();
+	private List<String> list8 = new ArrayList<String>();
 	
 	ResultAggregate(String resourceName, String methodName){
 		this.resourceName = resourceName;
@@ -469,6 +474,26 @@ class ResultAggregate {
 						listUse = this.list3;
 						continue;
 					}
+					if(line.contains(MonitoraggioRisorse.MSG_CONNESSIONI_ALLOCATE_CONSEGNE_PRESE_IN_CARICO_SMISTATORE)) {
+						listUse = this.list4;
+						continue;
+					}
+					if(line.contains(MonitoraggioRisorse.MSG_CONNESSIONI_ALLOCATE_CONSEGNE_PRESE_IN_CARICO_RUNTIME)) {
+						listUse = this.list5;
+						continue;
+					}
+					if(line.contains(MonitoraggioRisorse.MSG_CONNESSIONI_ALLOCATE_CONSEGNE_PRESE_IN_CARICO_TRANSAZIONI)) {
+						listUse = this.list6;
+						continue;
+					}
+					if(line.contains(MonitoraggioRisorse.MSG_CONNESSIONI_ALLOCATE_CONSEGNE_MESSAGE_BOX_RUNTIME)) {
+						listUse = this.list7;
+						continue;
+					}
+					if(line.contains(MonitoraggioRisorse.MSG_CONNESSIONI_ALLOCATE_CONSEGNE_MESSAGE_BOX_TRANSAZIONI)) {
+						listUse = this.list8;
+						continue;
+					}
 					
 					listUse.add(line+" ["+hostname+"]");
 				}finally {
@@ -490,6 +515,11 @@ class ResultAggregate {
 				String[] risorse = null;
 				String[] risorseTransaction = null;
 				String[] risorseStatistiche = null;
+				String[] risorseConsegnePreseInCaricoSmistatore = null;
+				String[] risorseConsegnePreseInCaricoRuntime = null;
+				String[] risorseConsegnePreseInCaricoTransazioni = null;
+				String[] risorseConsegneMessageBoxRuntime = null;
+				String[] risorseConsegneMessageBoxTransazioni = null;
 				if(this.list1!=null && this.list1.size()>0) {
 					risorse = this.list1.toArray(new String[1]);
 				}
@@ -499,8 +529,25 @@ class ResultAggregate {
 				if(this.list3!=null && this.list3.size()>0) {
 					risorseStatistiche = this.list3.toArray(new String[1]);
 				}
+				if(this.list4!=null && this.list4.size()>0) {
+					risorseConsegnePreseInCaricoSmistatore = this.list4.toArray(new String[1]);
+				}
+				if(this.list5!=null && this.list5.size()>0) {
+					risorseConsegnePreseInCaricoRuntime = this.list5.toArray(new String[1]);
+				}
+				if(this.list6!=null && this.list6.size()>0) {
+					risorseConsegnePreseInCaricoTransazioni = this.list6.toArray(new String[1]);
+				}
+				if(this.list7!=null && this.list7.size()>0) {
+					risorseConsegneMessageBoxRuntime = this.list7.toArray(new String[1]);
+				}
+				if(this.list8!=null && this.list8.size()>0) {
+					risorseConsegneMessageBoxTransazioni = this.list8.toArray(new String[1]);
+				}
 				if(MonitoraggioRisorse.CONNESSIONI_ALLOCATE_DB_MANAGER.equals(this.methodName)) {
-					content =  MonitoraggioRisorse.getResultUsedDBConnections(risorse, risorseTransaction, risorseStatistiche);
+					content =  MonitoraggioRisorse.getResultUsedDBConnections(risorse, risorseTransaction, risorseStatistiche,
+							risorseConsegnePreseInCaricoSmistatore, risorseConsegnePreseInCaricoRuntime, risorseConsegnePreseInCaricoTransazioni,
+							risorseConsegneMessageBoxRuntime, risorseConsegneMessageBoxTransazioni);
 				}
 				else if(MonitoraggioRisorse.CONNESSIONI_ALLOCATE_QUEUE_MANAGER.equals(this.methodName)) {
 					content =  MonitoraggioRisorse.getResultUsedQueueConnections(risorse);

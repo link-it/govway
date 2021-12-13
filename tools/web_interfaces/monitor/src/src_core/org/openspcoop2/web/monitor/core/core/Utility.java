@@ -29,7 +29,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.faces.context.ExternalContext;
@@ -55,6 +54,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.lib.users.dao.User;
+import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.LoginBean;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
@@ -87,14 +87,10 @@ public class Utility {
 	private static ArrayList<String> intervalloInteresseTracce = null;
 	private static ArrayList<String> statoSistemaStorico = null;
 
-	//	private static LoginBean loginBean;
+	private static LoginBean loginBean;
 
 	public static void setLoginMBean(LoginBean loginBean) {
-		//		Utility.loginBean = loginBean;
-	}
-
-	public void setLoginBean(LoginBean loginBean) {
-		//		Utility.loginBean = loginBean;
+		Utility.loginBean = loginBean;
 	}
 
 	public static LoginBean getLoginBean() { 
@@ -105,8 +101,8 @@ public class Utility {
 
 			return lb;
 		}
-		return null;
-		//		return Utility.loginBean;
+//		return null;
+		return Utility.loginBean;
 	}
 
 	public static LoginBean getLoginBeanFromSession(HttpSession sessione) {
@@ -400,11 +396,14 @@ public class Utility {
 			if(lb!= null && lb.isLoggedIn()){
 				return lb.isShowFiltroSoggettoLocale();
 			}
+			else if(loginBean !=null){
+				return loginBean.isShowFiltroSoggettoLocale();
+			}
 			else if(lb==null){
 				// is null quando si accede via http get service
 				lb = new LoginBean(true);
 				return lb.isShowFiltroSoggettoLocale();
-			}
+			} 
 			
 			return true; // default non ottimizzato
 		}
@@ -715,7 +714,7 @@ public class Utility {
 
 	public static String numberConverter(Number bytes) {
 		//MessageFormat mf = new MessageFormat("{0,number,#,###,###,##0}");
-		NumberFormat nf = NumberFormat.getInstance(Locale.ITALIAN);
+		NumberFormat nf = NumberFormat.getInstance(ApplicationBean.getInstance().getLocale());
 		//		Double len = bytes.doubleValue();
 		String res = "";
 		//		Object[] objs = { len };

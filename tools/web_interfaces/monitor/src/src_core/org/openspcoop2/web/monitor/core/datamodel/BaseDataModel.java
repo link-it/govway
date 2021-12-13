@@ -36,6 +36,7 @@ import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.dao.IService;
+import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.slf4j.Logger;
 
 /**
@@ -65,6 +66,7 @@ public abstract class BaseDataModel<K, T , D> extends SerializableDataModel {
     protected IExpression countFilter= null;
     protected Integer currentPage = 1;
     protected Integer rowsToDisplay = 25;
+    protected Integer currentSearchSize = 0;
     
     /**
      * The boolean field, detached, starts as false.  
@@ -291,4 +293,42 @@ public abstract class BaseDataModel<K, T , D> extends SerializableDataModel {
 	public List<SelectItem> getListaNumeroRisultati(){
 		return Costanti.SELECT_ITEM_ENTRIES;
 	}
+	
+	public Integer getNumeroMassimoRisultati() {
+		return Costanti.SELECT_ITEM_VALORE_MASSIMO_ENTRIES;
+	}
+	
+	public String getNumeroMassimoRisultatiLabel() {
+		return MessageManager.getInstance().getMessageWithParamsFromResourceBundle(Costanti.SELECT_ITEM_VALORE_MASSIMO_ENTRIES_LABEL_KEY, Costanti.SELECT_ITEM_VALORE_MASSIMO_ENTRIES);
+	}
+	
+	public String getSelezionatiPrimiElementiLabel() {
+		return MessageManager.getInstance().getMessageWithParamsFromResourceBundle(Costanti.SELEZIONATI_PRIMI_X_ELEMENTI_LABEL_KEY, Costanti.SELECT_ITEM_VALORE_MASSIMO_ENTRIES);
+	}
+	
+	public Integer getCurrentSearchSize() {
+		if(this.wrappedData != null) {
+			this.currentSearchSize = this.wrappedData.size();
+		}
+		return this.currentSearchSize;
+	}
+
+	public void setCurrentSearchSize(Integer currentSearchSize) {
+		this.currentSearchSize = currentSearchSize;
+	}
+	
+	public boolean isVisualizzaSelezionePrimiElementi() {
+		// se ho selezionato il valore massimo disponibile nella tendina allora non ha senso visualizzare il link 'visualizza i primi X elementi'
+		if(this.getRowsToDisplay().intValue() == this.getNumeroMassimoRisultati().intValue())
+			return false;
+		
+		// si visualizza la selezione se sono almeno in pagina 2, oppure se sono in pagina 1 e presumo di avere almeno un'altra pagina  
+		if(this.getCurrentPage() > 1 || 
+				(this.getCurrentPage() == 1 && this.getCurrentSearchSize() == this.getRowsToDisplay()))
+			return true;
+
+		return false;
+	}
+	
+	public void setVisualizzaSelezionePrimiElementi(boolean b) {}
 }

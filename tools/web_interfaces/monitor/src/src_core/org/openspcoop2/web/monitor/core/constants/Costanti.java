@@ -86,6 +86,8 @@ public class Costanti {
 
 	public final static String LABEL_OPENSPCOOP2_WEB = "https://govway.org";
 	
+	public final static Integer SELECT_ITEM_VALORE_MASSIMO_ENTRIES = Integer.valueOf(1000);
+	
 	public final static List<SelectItem> SELECT_ITEM_ENTRIES = new ArrayList<>();
 	static {
 		SELECT_ITEM_ENTRIES.add(new SelectItem(Integer.valueOf(25), "25 Entries"));  
@@ -93,8 +95,13 @@ public class Costanti {
 		SELECT_ITEM_ENTRIES.add(new SelectItem(Integer.valueOf(125), "125 Entries"));
 		SELECT_ITEM_ENTRIES.add(new SelectItem(Integer.valueOf(250), "250 Entries"));
 		SELECT_ITEM_ENTRIES.add(new SelectItem(Integer.valueOf(500), "500 Entries"));
-		SELECT_ITEM_ENTRIES.add(new SelectItem(Integer.valueOf(1000), "1000 Entries"));
+		SELECT_ITEM_ENTRIES.add(new SelectItem(SELECT_ITEM_VALORE_MASSIMO_ENTRIES, "1000 Entries"));
 	}
+	
+	public static final String SELECT_ITEM_VALORE_MASSIMO_ENTRIES_LABEL_KEY = "commons.search.selezionaNumeroMassimoEntries.label";
+	public static final String SELEZIONATI_PRIMI_X_ELEMENTI_LABEL_KEY = "commons.search.selezionatiPrimiElementi.label";
+	
+	
 	
 	/* costanti properties file messages_it.properties*/ 
 	

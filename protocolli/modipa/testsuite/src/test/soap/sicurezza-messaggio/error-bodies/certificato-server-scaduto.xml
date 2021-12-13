@@ -10,7 +10,7 @@
             </env:Code>
             <env:Reason>
                 <env:Text xml:lang="en-US">modipa/DemoSoggettoFruitore ha rilevato le seguenti eccezioni:
-A security error was encountered when verifying the message ; NotAfter: Tue Jul 09 12:30:00 CEST 2019</env:Text>
+A security error was encountered when verifying the message ; certificate expired on 20190709103000GMT+00:00</env:Text>
             </env:Reason>
             <env:Role>http://govway.org/integration</env:Role>
             <env:Detail>
@@ -19,7 +19,7 @@ A security error was encountered when verifying the message ; NotAfter: Tue Jul 
                     <title>InteroperabilityInvalidResponse</title>
                     <status>502</status>
                     <detail>modipa/DemoSoggettoFruitore ha rilevato le seguenti eccezioni:
-A security error was encountered when verifying the message ; NotAfter: Tue Jul 09 12:30:00 CEST 2019</detail>
+A security error was encountered when verifying the message ; certificate expired on 20190709103000GMT+00:00</detail>
                     <govway_id>#uuid</govway_id>
                 </problem>
             </env:Detail>

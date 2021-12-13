@@ -430,9 +430,9 @@ public class GestoreLoadBalancerCaching {
 				}
 			}
     		
+			String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 			//synchronized (GestoreLoadBalancerCaching.cache) {
-			GestoreLoadBalancerCaching.lock.acquireThrowRuntime("getLoadBalancerPool",
-					(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
+			GestoreLoadBalancerCaching.lock.acquireThrowRuntime("getLoadBalancerPool", idTransazione);
 			try {
 				
 				response = 
@@ -471,8 +471,7 @@ public class GestoreLoadBalancerCaching {
 					throw new BehaviourException("Metodo (getLoadBalancerPool) non è riuscito a costruire un pool");
 				}
 			}finally {
-				GestoreLoadBalancerCaching.lock.release("getLoadBalancerPool",
-						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
+				GestoreLoadBalancerCaching.lock.release("getLoadBalancerPool", idTransazione);
 			}
     	}
     	
@@ -580,9 +579,9 @@ public class GestoreLoadBalancerCaching {
 				}
 			}
     		
+			String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 			//synchronized (GestoreLoadBalancerCaching.cache) {
-			GestoreLoadBalancerCaching.lock.acquireThrowRuntime("getNomeConnettore",
-					(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
+			GestoreLoadBalancerCaching.lock.acquireThrowRuntime("getNomeConnettore", idTransazione);
 			try {
 				
 				response = 
@@ -672,8 +671,7 @@ public class GestoreLoadBalancerCaching {
 				return stickyConnector.getConnector();
 
 			}finally {
-				GestoreLoadBalancerCaching.lock.release("getNomeConnettore",
-						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
+				GestoreLoadBalancerCaching.lock.release("getNomeConnettore", idTransazione);
 			}
     	}
     	

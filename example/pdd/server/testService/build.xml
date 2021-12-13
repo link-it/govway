@@ -239,11 +239,11 @@
 				<include name="reactive-streams-1.0.3.jar"/>
 			</lib>
 			<lib dir="${libs}/swagger">
-				<include name="swagger-annotations-2.1.10.jar"/>
-				<include name="swagger-core-2.1.10.jar"/>
-				<include name="swagger-integration-2.1.10.jar"/>
-				<include name="swagger-jaxrs2-2.1.10.jar"/>
-				<include name="swagger-models-2.1.10.jar"/>
+				<include name="swagger-annotations-2.1.11.jar"/>
+				<include name="swagger-core-2.1.11.jar"/>
+				<include name="swagger-integration-2.1.11.jar"/>
+				<include name="swagger-jaxrs2-2.1.11.jar"/>
+				<include name="swagger-models-2.1.11.jar"/>
 			</lib>
 			<!-- Fine Risoluzione Warning WARN  [org.jboss.as.ee] (MSC service thread 1-5) WFLYEE0007: Not installing optional component org.springframework ... -->
 			<lib dir="${openspcoop2_libs}/">

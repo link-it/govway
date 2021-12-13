@@ -21,6 +21,8 @@
 package org.openspcoop2.message;
 
 
+import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.w3c.dom.Element;
 
 /**
@@ -33,5 +35,16 @@ import org.w3c.dom.Element;
 
 public interface OpenSPCoop2RestXmlMessage extends OpenSPCoop2RestMessage<Element> {
 	
+	public void addElement(String name, String value)  throws MessageException,MessageNotSupportedException;
+	public void addElement(String name, String namespace, String value)  throws MessageException,MessageNotSupportedException;
+	
+	public void addElementIn(String pattern, String name, String value)  throws MessageException,MessageNotSupportedException;
+	public void addElementIn(String pattern, String name, String namespace, String value)  throws MessageException,MessageNotSupportedException;
+	
+	public void removeElement(String name) throws MessageException,MessageNotSupportedException;
+	public void removeElement(String name, String namespace) throws MessageException,MessageNotSupportedException;
+	
+	public void removeElementIn(String pattern, String name) throws MessageException,MessageNotSupportedException;
+	public void removeElementIn(String pattern, String name, String namespace) throws MessageException,MessageNotSupportedException;
 	
 }

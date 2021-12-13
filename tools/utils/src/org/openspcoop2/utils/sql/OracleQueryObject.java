@@ -85,10 +85,11 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 	
 	@Override
 	public String getUnixTimestampConversion(String column){
+		String timeZone = "Europe/Rome";
+		timeZone = java.util.TimeZone.getDefault().getID(); // fix: uso il timeZone di sistema
 		return "("+
 				"(((cast("+column+" as date) - to_date('19700101','YYYYMMDD')) * 86400 * 1000) + to_number(to_char("+column+",'FF3'))) - "+				
-				//"(EXTRACT (timezone_hour from FROM_TZ ("+column+",dbtimezone)))*60*60*1000)";
-				"( (EXTRACT (timezone_hour from FROM_TZ ("+column+",(TZ_OFFSET('Europe/Rome'))))) *60*60*1000 ) "+
+				"( (EXTRACT (timezone_hour from FROM_TZ ("+column+",(TZ_OFFSET('"+timeZone+"'))))) *60*60*1000 ) "+
 				")";
 				
 	}

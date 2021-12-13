@@ -125,14 +125,15 @@ public class PrincipalFilter implements Filter {
 		this.log.debug("Usa il principal per il controllo autorizzazione utente ["+!this.loginApplication+"]"); 
 
 		// popolo la white list degli oggetti che possono essere visti anche se non authenticati, in particolare css, immagini, js, ecc...
-		if(this.loginApplication){
+//		if(this.loginApplication){
 			this.excludedPages.add("a4j");
 			this.excludedPages.add("images");
 			this.excludedPages.add("css");
 			this.excludedPages.add("scripts");
+			this.excludedPages.add("fonts");
 			this.excludedPages.add("/report/statistica");
 			this.excludedPages.add("/report/configurazione");
-		}
+//		}
 
 	}
 

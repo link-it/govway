@@ -39,11 +39,13 @@ public class ConfigurazioneCoda {
 	private int nextMessages_limit;
 	private int nextMessages_intervalloControllo;
 	
+	private Integer scheduleNewMessageAfter;
+	
 	private int nextMessages_consegnaFallita_intervalloControllo;
 	private boolean nextMessages_consegnaFallita_calcolaDataMinimaRiconsegna;
 	
 	private int consegnaFallita_intervalloMinimoRiconsegna;
-	
+		
 	private boolean debug = false;
 	
 	public ConfigurazioneCoda(String name, Properties p) throws Exception {
@@ -54,6 +56,18 @@ public class ConfigurazioneCoda {
 		
 		this.nextMessages_limit = getIntProperty(this.name, p, "nextMessages.limit");
 		this.nextMessages_intervalloControllo = getIntProperty(this.name, p, "nextMessages.intervalloControllo");
+		
+		String tmp = p.getProperty("nextMessages.scheduleNewMessageAfter");
+		if(tmp!=null) {
+			try {
+				this.scheduleNewMessageAfter = Integer.valueOf(tmp);
+			}catch(Throwable t) {
+				throw new Exception("[Queue:"+this.name+"] Property 'nextMessages.scheduleNewMessageAfter' invalid: "+t.getMessage(),t);
+			}
+			if(this.scheduleNewMessageAfter<=0) {// lasciare per poter annullare da properties
+				this.scheduleNewMessageAfter = null;
+			}
+		}
 		
 		this.nextMessages_consegnaFallita_intervalloControllo = getIntProperty(this.name, p, "nextMessages.consegnaFallita.intervalloControllo");
 		this.nextMessages_consegnaFallita_calcolaDataMinimaRiconsegna = getBooleanProperty(this.name, p, "nextMessages.consegnaFallita.calcolaDataMinimaRiconsegna");
@@ -76,6 +90,9 @@ public class ConfigurazioneCoda {
 		sb.append("queueSize:").append(this.queueSize).append(separator);
 		sb.append("nextMessages_limit:").append(this.nextMessages_limit).append(separator);
 		sb.append("nextMessages_newCheckEverySeconds:").append(this.nextMessages_intervalloControllo).append(separator);
+		if(this.scheduleNewMessageAfter!=null) {
+			sb.append("nextMessages_scheduleNewMessageAfter:").append(this.scheduleNewMessageAfter).append(separator);
+		}
 		sb.append("nextMessages_checkFailedDelivery_everySeconds:").append(this.nextMessages_consegnaFallita_intervalloControllo).append(separator);
 		sb.append("nextMessages_checkFailedDelivery_computeMinDate:").append(this.nextMessages_consegnaFallita_calcolaDataMinimaRiconsegna).append(separator);
 		sb.append("nextFailedDeliveryAfterSeconds:").append(this.consegnaFallita_intervalloMinimoRiconsegna);
@@ -126,6 +143,10 @@ public class ConfigurazioneCoda {
 		return this.nextMessages_intervalloControllo;
 	}
 
+	public Integer getScheduleMessageAfter() {
+		return this.scheduleNewMessageAfter;
+	}
+	
 	public int getNextMessages_consegnaFallita_intervalloControllo() {
 		return this.nextMessages_consegnaFallita_intervalloControllo;
 	}

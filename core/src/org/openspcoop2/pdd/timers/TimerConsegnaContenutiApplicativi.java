@@ -35,6 +35,7 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.MessaggioServizioApplicativo;
+import org.openspcoop2.pdd.core.state.OpenSPCoopStateDBManager;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
@@ -141,7 +142,8 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 
 			this.logDebug("Rilascio eventuali messaggi con lock appesi da riconsegnare verso il modulo ConsegnaContenutiApplicativi ...");
 			
-			openspcoopstateGestore.initResource(this.propertiesReader.getIdentitaPortaDefault(null),TimerConsegnaContenutiApplicativiThread.ID_MODULO, "initialize");
+			openspcoopstateGestore.initResource(this.propertiesReader.getIdentitaPortaDefault(null),TimerConsegnaContenutiApplicativiThread.ID_MODULO, "initialize",
+					OpenSPCoopStateDBManager.smistatoreMessaggiPresiInCarico);
 			Connection connectionDB = ((StateMessage)openspcoopstateGestore.getStatoRichiesta()).getConnectionDB();
 
 			// GestoreMessaggi da Ricercare
@@ -245,11 +247,13 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 		try {
 
 			this.logDebug("Inizializzazione connessione al db per ricercare nuovi threads da attivare (limit: "+limit+") ...");
-			openspcoopstateGestore.initResource(this.propertiesReader.getIdentitaPortaDefault(null),TimerConsegnaContenutiApplicativiThread.ID_MODULO, "nextRunnable");
+			openspcoopstateGestore.initResource(this.propertiesReader.getIdentitaPortaDefault(null),TimerConsegnaContenutiApplicativiThread.ID_MODULO, "nextRunnable",
+					OpenSPCoopStateDBManager.smistatoreMessaggiPresiInCarico);
 			Connection connectionDB = ((StateMessage)openspcoopstateGestore.getStatoRichiesta()).getConnectionDB();
 
 			boolean verificaPresenzaMessaggiDaRispedire = false;
 			boolean calcolaDataMinimaMessaggiRispedire = false;
+			Integer secondiAnzianitaPerIniziareSpedireNuovoMessaggio = this.configurazioneCoda.getScheduleMessageAfter();
 			if(this.lastCheckMessaggiDaRispedire==null) {
 				this.lastCheckMessaggiDaRispedire=DateManager.getDate();
 				verificaPresenzaMessaggiDaRispedire = true;
@@ -287,7 +291,7 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 					this.logDebug(prefix+"Lock acquisito, ricerca nuovi threads da attivare (limit: "+limit+") ...");
 					List<MessaggioServizioApplicativo> msgDaRiconsegnareINBOX_priorita = 
 							gestoreMsgSearch.readMessaggiDaRiconsegnareIntoBoxByServiziApplicativPrioritari(limit,
-									verificaPresenzaMessaggiDaRispedire, calcolaDataMinimaMessaggiRispedire,
+									verificaPresenzaMessaggiDaRispedire, calcolaDataMinimaMessaggiRispedire,secondiAnzianitaPerIniziareSpedireNuovoMessaggio,
 									now,
 									this.propertiesReader.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife(),
 									this.debug,this.logSql,
@@ -348,7 +352,7 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 						this.logDebug(prefix+"Lock acquisito, ricerca nuovi threads da attivare (limit: "+limitPriorita+") ...");
 						List<MessaggioServizioApplicativo> msgDaRiconsegnareINBOX_priorita = 
 								gestoreMsgSearch.readMessaggiDaRiconsegnareIntoBoxByPriorita(limitPriorita,
-										verificaPresenzaMessaggiDaRispedire, calcolaDataMinimaMessaggiRispedire,
+										verificaPresenzaMessaggiDaRispedire, calcolaDataMinimaMessaggiRispedire, secondiAnzianitaPerIniziareSpedireNuovoMessaggio,
 										now,
 										this.propertiesReader.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife(),
 										this.debug,this.logSql,

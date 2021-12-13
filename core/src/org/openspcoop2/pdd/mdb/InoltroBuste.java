@@ -127,6 +127,7 @@ import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.services.connector.AsyncResponseCallbackClientEvent;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.IAsyncResponseCallback;
+import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.pdd.services.error.AbstractErrorGenerator;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
@@ -2525,6 +2526,34 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 							this.msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(this.httpRequestMethod, this.location));
 						}
 					}
+					
+					/* ------------ Check Charset ------------- */
+					try {
+						if(this.transportResponseContext!=null) {
+							boolean checkEnabled = false;
+							List<String> ctDefault = null;
+							if(this.requestMessageTrasformato!=null && ServiceBinding.SOAP.equals(this.requestMessageTrasformato.getServiceBinding())){
+								if(this.propertiesReader.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap()) {
+									checkEnabled = true;
+									ctDefault = this.propertiesReader.getControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap();
+								}
+							}
+							else {
+								if(this.propertiesReader.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest()) {
+									checkEnabled = true;
+									ctDefault = this.propertiesReader.getControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest();
+								}
+							}
+							if(checkEnabled) {
+								if(this.transportResponseContext.getContentType()!=null) {
+									ServicesUtils.checkCharset(this.transportResponseContext.getContentType(), ctDefault, this.msgDiag, false, TipoPdD.DELEGATA);
+								}
+							}
+						}
+					}catch(Throwable t) {
+						this.log.error("Avvenuto errore durante il controllo del charset della risposta: "+t.getMessage(),t);
+					}
+					
 				} catch (Exception e) {
 					this.msgDiag.addKeywordErroreProcessamento(e, "Analisi risposta fallita");
 					this.msgDiag.logErroreGenerico(e,"AnalisiRispostaConnettore");

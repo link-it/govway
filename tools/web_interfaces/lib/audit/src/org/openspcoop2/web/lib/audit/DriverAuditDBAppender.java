@@ -677,10 +677,14 @@ public class DriverAuditDBAppender {
 				sqlQueryObject.addWhereCondition("utente = ?");
 			if (statooperazione != null && !statooperazione.equals("-"))
 				sqlQueryObject.addWhereCondition("stato = ?");
-			if (id != null && !id.equals(""))
-				sqlQueryObject.addWhereCondition("object_id = ?");
-			if (oldid != null && !oldid.equals(""))
-				sqlQueryObject.addWhereCondition("object_old_id = ?");
+			if (id != null && !id.equals("")) {
+				//sqlQueryObject.addWhereCondition("object_id = ?");
+				sqlQueryObject.addWhereLikeCondition("object_id",id, true, true);
+			}
+			if (oldid != null && !oldid.equals("")) {
+				//sqlQueryObject.addWhereCondition("object_old_id = ?");
+				sqlQueryObject.addWhereLikeCondition("object_old_id",id, true, true);
+			}
 			if (contoggetto != null && !contoggetto.equals(""))
 				sqlQueryObject.addWhereLikeCondition("object_details",
 						contoggetto, true, true);
@@ -700,10 +704,10 @@ public class DriverAuditDBAppender {
 				stmt.setString(++param_index, utente);
 			if (statooperazione != null && !statooperazione.equals("-"))
 				stmt.setString(++param_index, statooperazione);
-			if (id != null && !id.equals(""))
+			/*if (id != null && !id.equals(""))
 				stmt.setString(++param_index, id);
 			if (oldid != null && !oldid.equals(""))
-				stmt.setString(++param_index, oldid);
+				stmt.setString(++param_index, oldid);*/
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista,risultato.getInt(1));
@@ -730,10 +734,14 @@ public class DriverAuditDBAppender {
 				sqlQueryObject.addWhereCondition("utente = ?");
 			if (statooperazione != null && !statooperazione.equals("-"))
 				sqlQueryObject.addWhereCondition("stato = ?");
-			if (id != null && !id.equals(""))
-				sqlQueryObject.addWhereCondition("object_id = ?");
-			if (oldid != null && !oldid.equals(""))
-				sqlQueryObject.addWhereCondition("object_old_id = ?");
+			if (id != null && !id.equals("")) {
+				//sqlQueryObject.addWhereCondition("object_id = ?");
+				sqlQueryObject.addWhereLikeCondition("object_id",id, true, true);
+			}
+			if (oldid != null && !oldid.equals("")) {
+				//sqlQueryObject.addWhereCondition("object_old_id = ?");
+				sqlQueryObject.addWhereLikeCondition("object_old_id",id, true, true);
+			}
 			if (contoggetto != null && !contoggetto.equals(""))
 				sqlQueryObject.addWhereLikeCondition("object_details",
 						contoggetto, true, true);
@@ -757,10 +765,10 @@ public class DriverAuditDBAppender {
 				stmt.setString(++param_index, utente);
 			if (statooperazione != null && !statooperazione.equals("-"))
 				stmt.setString(++param_index, statooperazione);
-			if (id != null && !id.equals(""))
+			/*if (id != null && !id.equals(""))
 				stmt.setString(++param_index, id);
 			if (oldid != null && !oldid.equals(""))
-				stmt.setString(++param_index, oldid);
+				stmt.setString(++param_index, oldid);*/
 			risultato = stmt.executeQuery();
 			while (risultato.next()) {
 				lista.add(this.getOperation(risultato.getLong("id")));

@@ -89,6 +89,8 @@ import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazioneCoda;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
+import org.openspcoop2.pdd.config.DBConsegneMessageBoxManager;
+import org.openspcoop2.pdd.config.DBConsegnePreseInCaricoManager;
 import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.DBStatisticheManager;
 import org.openspcoop2.pdd.config.DBTransazioniManager;
@@ -189,10 +191,12 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.openspcoop2.utils.cache.Cache;
+import org.openspcoop2.utils.certificate.CertificateFactory;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
+import org.openspcoop2.utils.digest.MessageDigestFactory;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
 import org.openspcoop2.utils.id.serial.InfoStatistics;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
@@ -544,7 +548,19 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					if(secureRandom!=null) {
 						OpenSPCoop2Startup.log.info("SecureRandom used in CryptoServicesRegistrar di Bouncycastle: '"+secureRandom.getAlgorithm()+"'");
 					}
-				}
+				}				
+			}
+			if(propertiesReader.isUseBouncyCastleProviderForCertificate()) {
+				OpenSPCoop2Startup.log.info("Add Bouncycastle in CertificateFactory");
+				CertificateFactory.setUseBouncyCastleProvider(true);
+			}
+			if(propertiesReader.isUseBouncyCastleProviderForMessageDigest()) {
+				OpenSPCoop2Startup.log.info("Add Bouncycastle in MessageDigestFactory");
+				MessageDigestFactory.setUseBouncyCastleProvider(true);
+			}
+			if(propertiesReader.isUseBouncyCastleProviderForWss4jCryptoMerlin()) {
+				OpenSPCoop2Startup.log.info("Add Bouncycastle in keystore.Merlin provider");
+				org.openspcoop2.security.keystore.Merlin.setUseBouncyCastleProvider(true);
 			}
 						
 			StringBuilder sb = new StringBuilder();
@@ -631,9 +647,14 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			}
 			
 			// Inizializzo Semaphore
-			org.openspcoop2.utils.Semaphore.TIMEOUT_MS=propertiesReader.getSemaphoreTimeoutMS();
-			org.openspcoop2.utils.Semaphore.DEBUG=propertiesReader.isSemaphoreDebug();
-			OpenSPCoop2Startup.log.info("Impostazione semaphore timeoutMS="+org.openspcoop2.utils.Semaphore.TIMEOUT_MS+" debug="+org.openspcoop2.utils.Semaphore.DEBUG);
+			org.openspcoop2.utils.Semaphore.setTIMEOUT_MS(propertiesReader.getSemaphoreTimeoutMS());
+			org.openspcoop2.utils.Semaphore.setDEBUG(propertiesReader.isSemaphoreDebug());
+			org.openspcoop2.utils.Semaphore.setSemaphoreType(propertiesReader.getSemaphoreType());
+			org.openspcoop2.utils.Semaphore.setFair(propertiesReader.isSemaphoreFair());
+			OpenSPCoop2Startup.log.info("Impostazione semaphore timeoutMS="+org.openspcoop2.utils.Semaphore.getTIMEOUT_MS()+
+					" debug="+org.openspcoop2.utils.Semaphore.isDEBUG()+
+					" type="+org.openspcoop2.utils.Semaphore.getSemaphoreType()+
+					" fair="+org.openspcoop2.utils.Semaphore.isFair());
 			
 			
 
@@ -1092,6 +1113,102 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			}catch(Exception e){
 				OpenSPCoop2Startup.log.error("Inizializzazione DBStatisticheManager", e);
 				return;
+			}
+			
+			if(OpenSPCoop2Startup.this.serverJ2EE==false){
+				if(propertiesReader.isTimerConsegnaContenutiApplicativiAbilitato()){
+			
+					// GestoreConsegnePreseInCarico - Smistatore
+					try{
+						if(propertiesReader.isTimerConsegnaContenutiApplicativi_smistatore_runtime_useRuntimeManager()) {
+							DBConsegnePreseInCaricoManager.initSmistatore(DBManager.getInstance(), logCore, propertiesReader.getDatabaseType());
+						}
+						else {
+							DBConsegnePreseInCaricoManager.initSmistatore(propertiesReader.getTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSource(), propertiesReader.getTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSourceJndiContext(), 
+									logCore, propertiesReader.getDatabaseType(), 
+									propertiesReader.isTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSource_useDBUtils(), propertiesReader.isRisorseJMXAbilitate());
+						}
+					}catch(Exception e){
+						OpenSPCoop2Startup.log.error("Inizializzazione GestoreConsegnePreseInCarico.smistatore", e);
+						return;
+					}
+					
+					// GestoreConsegnePreseInCarico - Runtime
+					try{
+						if(propertiesReader.isTimerConsegnaContenutiApplicativi_runtime_useRuntimeManager()) {
+							DBConsegnePreseInCaricoManager.initRuntime(DBManager.getInstance(), logCore, propertiesReader.getDatabaseType());
+						}
+						else {
+							DBConsegnePreseInCaricoManager.initRuntime(propertiesReader.getTimerConsegnaContenutiApplicativi_runtime_dataSource(), propertiesReader.getTimerConsegnaContenutiApplicativi_runtime_dataSourceJndiContext(), 
+									logCore, propertiesReader.getDatabaseType(), 
+									propertiesReader.isTimerConsegnaContenutiApplicativi_runtime_dataSource_useDBUtils(), propertiesReader.isRisorseJMXAbilitate());
+						}
+					}catch(Exception e){
+						OpenSPCoop2Startup.log.error("Inizializzazione GestoreConsegnePreseInCarico.runtime", e);
+						return;
+					}
+					
+					// GestoreConsegnePreseInCarico - Transazioni
+					try{
+						if(propertiesReader.isTimerConsegnaContenutiApplicativi_transazioni_useTransactionManager()) {
+							DBConsegnePreseInCaricoManager.initTransazioni(DBTransazioniManager.getInstance(), logCore, propertiesReader.getDatabaseType());
+						}
+						else {
+							DBConsegnePreseInCaricoManager.initTransazioni(propertiesReader.getTimerConsegnaContenutiApplicativi_transazioni_dataSource(), propertiesReader.getTimerConsegnaContenutiApplicativi_transazioni_dataSourceJndiContext(), 
+									logCore, propertiesReader.getDatabaseType(), 
+									propertiesReader.isTimerConsegnaContenutiApplicativi_transazioni_dataSource_useDBUtils(), propertiesReader.isRisorseJMXAbilitate());
+						}
+					}catch(Exception e){
+						OpenSPCoop2Startup.log.error("Inizializzazione GestoreConsegnePreseInCarico.transazioni", e);
+						return;
+					}
+					
+				}
+			}
+			if(propertiesReader.isIntegrationManagerEnabled()) {
+				// GestoreConsegneMessageBox - Runtime
+				try{
+					if(propertiesReader.isIntegrationManager_runtime_useRuntimeManager()) {
+						DBConsegneMessageBoxManager.initRuntime(DBManager.getInstance(), logCore, propertiesReader.getDatabaseType());
+					}
+					else if(propertiesReader.isIntegrationManager_runtime_useConsegnePreseInCaricoManager()) {
+						DBConsegnePreseInCaricoManager instance = DBConsegnePreseInCaricoManager.getInstanceRuntime();
+						if(instance==null) {
+							throw new Exception("DBConsegnePreseInCaricoManager-runtime richiesto dalla configurazione del servizio MessageBox non risulta attivo");
+						}
+						DBConsegneMessageBoxManager.initRuntime(instance, logCore, propertiesReader.getDatabaseType());
+					}
+					else {
+						DBConsegneMessageBoxManager.initRuntime(propertiesReader.getIntegrationManager_runtime_dataSource(), propertiesReader.getIntegrationManager_runtime_dataSourceJndiContext(), 
+								logCore, propertiesReader.getDatabaseType(), 
+								propertiesReader.isIntegrationManager_runtime_dataSource_useDBUtils(), propertiesReader.isRisorseJMXAbilitate());
+					}
+				}catch(Exception e){
+					OpenSPCoop2Startup.log.error("Inizializzazione GestoreConsegneMessageBox.runtime", e);
+					return;
+				}
+				
+				// GestoreConsegneMessageBox - Transazioni
+				try{
+					if(propertiesReader.isIntegrationManager_transazioni_useTransactionManager()) {
+						DBConsegneMessageBoxManager.initTransazioni(DBTransazioniManager.getInstance(), logCore, propertiesReader.getDatabaseType());
+					}
+					else if(propertiesReader.isIntegrationManager_transazioni_useConsegnePreseInCaricoManager()) {
+						DBConsegnePreseInCaricoManager instance = DBConsegnePreseInCaricoManager.getInstanceTransazioni();
+						if(instance==null) {
+							throw new Exception("DBConsegnePreseInCaricoManager-transazioni richiesto dalla configurazione del servizio MessageBox non risulta attivo");
+						}
+						DBConsegneMessageBoxManager.initTransazioni(instance, logCore, propertiesReader.getDatabaseType());
+					}
+					else {
+						DBConsegneMessageBoxManager.initTransazioni(propertiesReader.getIntegrationManager_transazioni_dataSource(), propertiesReader.getIntegrationManager_transazioni_dataSourceJndiContext(), 
+								logCore, propertiesReader.getDatabaseType(), 
+								propertiesReader.isIntegrationManager_transazioni_dataSource_useDBUtils(), propertiesReader.isRisorseJMXAbilitate());
+					}
+				}catch(Exception e){
+					OpenSPCoop2Startup.log.error("Inizializzazione GestoreConsegneMessageBox.transazioni", e);
+					return;
+				}
 			}
 
 			
@@ -3681,6 +3798,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				jminixStandaloneConsole.shutdown();
 			}
 		}catch (Throwable e) {}
+
+		// *** Repository plugins ***
+		try{
+			CorePluginLoader.close(OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
+		}catch(Throwable e){}
 		
 		// Attendo qualche secondo
 		Utilities.sleep(2000);
