@@ -19,6 +19,14 @@
  */
 package org.openspcoop2.utils.jdbc;
 
+/**
+ * PostgreSQLUtilities
+ * 
+ * @author Andrea Poli (poli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class PostgreSQLUtilities {
 
 	public static String NULL_BYTE_SEQUENCE = "\u0000";
