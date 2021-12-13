@@ -112,6 +112,14 @@ public class InitListener implements ServletContextListener {
 			}
 		}
 
+		// chiusura repository dei plugin
+		try {
+			CorePluginLoader.close(InitListener.log);
+		} catch (Throwable e) {
+			String msgErrore = "Errore durante la chiusura del loader dei plugins: " + e.getMessage();
+			InitListener.log.error(msgErrore,e);
+		}
+		
 		InitListener.log.info("Undeploy govwayConsole effettuato.");
 
 	}

@@ -196,18 +196,15 @@ public class Utilities {
 				}
 			}
 			
-			byte[] b = new byte[1];
-			InputStream is = null;
-			if(isParam.read(b) == -1) {
+			InputStream is = normalizeStream(isParam, throwExceptionInputStreamEmpty);
+			if(is==null) {
+				// rifaccio il controllo nonostante l'eccezione venga lanciata nel normalizeStream
 				if(throwExceptionInputStreamEmpty){
-					throw new UtilsException("InputStream is empty");
+					throw new UtilsException("InputStream is empty (class:"+isParam.getClass().getName()+")");
 				}
 				else{
 					return null;
 				}
-			} else {
-				// Metodo alternativo: java.io.PushbackInputStream
-				is = new SequenceInputStream(new ByteArrayInputStream(b),isParam);
 			}
 			
 			isr = new InputStreamReader(is, charsetName);
@@ -327,20 +324,16 @@ public class Utilities {
 				}
 			}
 			
-			byte[] b = new byte[1];
-			InputStream is = null;
-			if(isParam.read(b) == -1) {
+			InputStream is = normalizeStream(isParam, throwExceptionInputStreamEmpty);
+			if(is==null) {
+				// rifaccio il controllo nonostante l'eccezione venga lanciata nel normalizeStream
 				if(throwExceptionInputStreamEmpty){
 					throw new UtilsException("InputStream is empty (class:"+isParam.getClass().getName()+")");
 				}
 				else{
 					return;
 				}
-			} else {
-				// Metodo alternativo: java.io.PushbackInputStream
-				is = new SequenceInputStream(new ByteArrayInputStream(b),isParam);
-			}
-			
+			}			
 			
 //			byte [] buffer = new byte[Utilities.DIMENSIONE_BUFFER];
 //			int letti = 0;
@@ -377,7 +370,39 @@ public class Utilities {
 	}
 
 
-
+	public static InputStream normalizeStream(InputStream is, boolean throwExceptionInputStreamEmpty) throws UtilsException {
+		try {
+			if(is!=null){
+				byte[] buffer = new byte[2]; // UTF-16
+				int letti = is.read(buffer);
+				if( letti <=0 ) {
+					if(throwExceptionInputStreamEmpty){
+						throw new UtilsException("InputStream is empty (class:"+is.getClass().getName()+")");
+					}
+					else{
+						return null;
+					}
+				} else {
+					// Metodo alternativo: java.io.PushbackInputStream
+					//System.out.println("NORMALIZED BY FROM ["+this.isResponse.getClass().getName()+"] ...");
+					byte [] b = null;
+					if(letti==2) {
+						b = buffer;
+					}
+					else {
+						b = new byte[1]; // e' per forza 1
+						b[0] = buffer[0];
+					}
+					return new SequenceInputStream(new ByteArrayInputStream(b),is);
+				}
+			}
+			return is; // null
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
+	
 	
 	/** Copy Stream */
 	

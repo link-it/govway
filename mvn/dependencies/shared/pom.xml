@@ -46,6 +46,7 @@
 		<xmlunit.version>1.6</xmlunit.version>
 		<xom.version>1.2.11</xom.version>
 		<ehcache.version>3.9.7</ehcache.version>
+		<rhino.version>1.7.13</rhino.version>
 
 	</properties>
 
@@ -436,6 +437,18 @@
 			<groupId>org.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
 			<version>${ehcache.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mozilla</groupId>
+			<artifactId>rhino</artifactId>
+			<version>${rhino.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

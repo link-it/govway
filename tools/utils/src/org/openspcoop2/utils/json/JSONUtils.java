@@ -85,6 +85,11 @@ public class JSONUtils extends AbstractUtils {
 				_mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
 				_mapper.configure(com.fasterxml.jackson.databind.SerializationFeature.
 					    WRITE_DATES_AS_TIMESTAMPS , false);
+				// Since 2.1.4, the field exampleSetFlag appears in json produced with ObjectMapper#writeValue(File, Object) when serializing an object of type OpenApi.
+				// "exampleSetFlag" : false
+				// Con il codice sottostante, nelle classi Mixin l'attributo 'getExampleSetFlag' viene ignorato
+				_mapper.addMixIn(io.swagger.v3.oas.models.media.Schema.class, io.swagger.v3.core.jackson.mixin.SchemaMixin.class);
+				_mapper.addMixIn(io.swagger.v3.oas.models.media.MediaType.class, io.swagger.v3.core.jackson.mixin.MediaTypeMixin.class);
 			}
 		}finally {
 			semaphore.release("initMapper");

@@ -55,6 +55,19 @@ public class PluginLoader implements IPluginLoader {
 		this.pluginManager = new PluginManager(registroPluginsReader, expireSeconds);
 	}
 	
+	@Override
+	public void close(Logger log) {
+		if(this.pluginManager!=null) {
+			try {
+				this.pluginManager.close();
+			}catch(Throwable t) {
+				if(log!=null) {
+					log.error("PluginManager close failure: "+t.getMessage(),t);
+				}
+			}
+		}
+	}
+	
 	public boolean isPluginManagerEnabled() {
 		return this.pluginManager!=null;
 	}

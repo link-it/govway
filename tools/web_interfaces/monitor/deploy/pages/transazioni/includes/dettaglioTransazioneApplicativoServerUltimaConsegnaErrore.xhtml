@@ -25,7 +25,7 @@
  			
  			<h:outputLabel styleClass="outputFieldLabel icon-date"  value="Data" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataUltimoErrore}"/>
 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataUltimoErrore}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataUltimoErrore}">
-				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 			</h:outputText>
 			
 			<h:outputLabel styleClass="outputFieldLabel" value="ID Cluster" rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaIdCluster and not empty dettagliTransazioneApplicativoServerBean.dettaglio.clusterIdUltimoErrore}" />

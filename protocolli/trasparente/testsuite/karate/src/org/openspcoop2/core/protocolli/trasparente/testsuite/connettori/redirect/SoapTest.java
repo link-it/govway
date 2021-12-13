@@ -22,7 +22,6 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.redirec
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
-import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.RedirectEngineTest;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**
@@ -118,7 +117,7 @@ public class SoapTest extends ConfigLoader {
 
 		String api = "TestRedirectSOAP";
 		
-		RedirectEngineTest._test(logCore, api, operazione, 
+		RedirectUtilities._test(logCore, api, operazione, 
 				numeroRedirect, httpRedirectStatus, relative, 
 				withContent, 
 				soap11 ? HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2, 

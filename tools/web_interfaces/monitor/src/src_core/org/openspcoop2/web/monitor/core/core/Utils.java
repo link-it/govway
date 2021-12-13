@@ -110,9 +110,15 @@ public class Utils {
 	public static String prettifyXml(String xml) {
 		return FormatUtils.prettifyXml(log, xml);
 	}
+	public static String prettifyXml(String xml, String charset) {
+		return FormatUtils.prettifyXml(log, xml, charset);
+	}
 
 	public static String prettifyXml(byte[] xml) {
 		return FormatUtils.prettifyXml(log, xml);
+	} 
+	public static String prettifyXml(byte[] xml, String charset) {
+		return FormatUtils.prettifyXml(log, xml, charset);
 	} 
 	
 	 public static String getTestoVisualizzabile(byte [] b,StringBuilder stringBuffer, boolean logError) {

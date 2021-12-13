@@ -126,7 +126,7 @@ public class ArchiveLoader {
 	
 			case CER:
 				
-				CertificateFactory fact = CertificateFactory.getInstance("X.509");
+				CertificateFactory fact = org.openspcoop2.utils.certificate.CertificateFactory.getCertificateFactory();
 				X509Certificate cer = (X509Certificate) fact.generateCertificate(new ByteArrayInputStream(content));
 				if(alias==null) {
 					alias = "cert";

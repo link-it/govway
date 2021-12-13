@@ -21,20 +21,25 @@
 
 package org.openspcoop2.utils.openapi.validator;
 import java.io.File;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.rest.ApiFactory;
 import org.openspcoop2.utils.rest.ApiFormats;
 import org.openspcoop2.utils.rest.ApiReaderConfig;
 import org.openspcoop2.utils.rest.IApiReader;
 import org.openspcoop2.utils.rest.IApiValidator;
+import org.openspcoop2.utils.rest.ProcessingException;
 import org.openspcoop2.utils.rest.ValidatorException;
 import org.openspcoop2.utils.rest.api.Api;
 import org.openspcoop2.utils.rest.api.ApiSchema;
@@ -53,155 +58,171 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Test (Estende i test già effettuati in TestOpenApi3
+ * Test (Estende i test già effettuati in TestOpenApi3)
  * 
  * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  *
  */
-public class TestOpenApi4j {
+public class TestOpenApi3Extended {
 
 	public static void main(String[] args) throws Exception {
+		
+		
+		OpenAPILibrary openAPILibrary = OpenAPILibrary.openapi4j;
+		if(args!=null && args.length>0) {
+			openAPILibrary = OpenAPILibrary.valueOf(args[0]);
+		}
+		
+		boolean mergeSpec = true;
+		if(args!=null && args.length>1) {
+			mergeSpec = Boolean.valueOf(args[1]);
+		}
+		
 				
 		// *** TEST per il Parser e validazione dello schema *** //
 		
 		{
-		
 			System.out.println("Test Schema#1 (openapi.yaml) [Elementi aggiuntivi come 'allowEmptyValue'] ...");
 			
-			URL url = TestOpenApi4j.class.getResource("/org/openspcoop2/utils/openapi/openapi.yaml");
+			URL url = TestOpenApi3Extended.class.getResource("/org/openspcoop2/utils/openapi/openapi.yaml");
 			
-			IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
-			ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
-			configOpenApi4j.setProcessInclude(false);
-			apiReaderOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), new File(url.toURI()), configOpenApi4j);
-			Api apiOpenApi4j = apiReaderOpenApi4j.read();
+			IApiReader apiReaderOpenApi = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+			ApiReaderConfig configOpenApi = new ApiReaderConfig();
+			configOpenApi.setProcessInclude(false);
+			apiReaderOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), new File(url.toURI()), configOpenApi);
+			Api apiOpenApi = apiReaderOpenApi.read();
 			
-			IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+			IApiValidator apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 			OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
-			configO.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
-			configO.getOpenApi4JConfig().setUseOpenApi4J(true);
-			configO.getOpenApi4JConfig().setValidateAPISpec(true);
-			apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), apiOpenApi4j, configO);
+			configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
+			configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
+			configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
+			configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
+			apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), apiOpenApi, configO);
 					
 			System.out.println("Test Schema#1 (openapi.yaml) [Elementi aggiuntivi come 'allowEmptyValue'] ok");
 			
 			System.out.println("Test Schema#2 (allegati.yaml) [Discriminator non presente o non required Step 1/2] ...");
 			
-			url = TestOpenApi4j.class.getResource("/org/openspcoop2/utils/openapi/parser.yaml");
+			if( openAPILibrary == OpenAPILibrary.openapi4j ){
 			
-			apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
-			apiReaderOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), new File(url.toURI()), configOpenApi4j);
-			apiOpenApi4j = apiReaderOpenApi4j.read();
-			
-			apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
-			try {
-				apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), apiOpenApi4j, configO);
-				throw new Exception("Atteso errore");
-			}catch(Exception e) {
-				String msgErrore1 = "components.schemas.Pet.discriminator: The discriminator 'pet_type' is not a property of this schema (code: 134)";
-				if(!e.getMessage().contains(msgErrore1)) {
-					throw new Exception("Errore atteso '"+msgErrore1+"' non rilevato",e);
+				url = TestOpenApi3Extended.class.getResource("/org/openspcoop2/utils/openapi/parser.yaml");
+				
+				apiReaderOpenApi = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+				apiReaderOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), new File(url.toURI()), configOpenApi);
+				apiOpenApi = apiReaderOpenApi.read();
+				
+				apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+				try {
+					apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), apiOpenApi, configO);
+					throw new Exception("Atteso errore");
+				}catch(Exception e) {
+					String msgErrore1 = "components.schemas.Pet.discriminator: The discriminator 'pet_type' is not a property of this schema (code: 134)";
+					if(!e.getMessage().contains(msgErrore1)) {
+						throw new Exception("Errore atteso '"+msgErrore1+"' non rilevato",e);
+					}
+					String msgErrore2 = "components.schemas.Pet.discriminator: The discriminator 'pet_type' is required in this schema (code: 135)";
+					if(!e.getMessage().contains(msgErrore2)) {
+						throw new Exception("Errore atteso '"+msgErrore2+"' non rilevato",e);
+					}
+					String msgErrore3 = "components.schemas.Pet2.properties.pet.discriminator: The discriminator 'pet_type' is not required or not a property of the allOf schemas (code: 133)";
+					if(!e.getMessage().contains(msgErrore3)) {
+						throw new Exception("Errore atteso '"+msgErrore3+"' non rilevato",e);
+					}
+					String msgErrore4 = "components.schemas.Pet3.properties.pet.discriminator: The discriminator 'pet_type' is not required or not a property of the allOf schemas (code: 133)";
+					if(!e.getMessage().contains(msgErrore4)) {
+						throw new Exception("Errore atteso '"+msgErrore4+"' non rilevato",e);
+					}
+					String msgErrore5 = "components.schemas.Pet5.properties.pet.discriminator: The discriminator 'pet_type' is not required or not a property of the allOf schemas (code: 133)";
+					if(!e.getMessage().contains(msgErrore5)) {
+						throw new Exception("Errore atteso '"+msgErrore5+"' non rilevato",e);
+					}
+					String msgErrore6 = "components.schemas.Pet6.properties.pet.discriminator: The discriminator 'pet_type' is not required or not a property of the allOf schemas (code: 133)";
+					if(!e.getMessage().contains(msgErrore6)) {
+						throw new Exception("Errore atteso '"+msgErrore6+"' non rilevato",e);
+					}
+					String msgErrore7 = "components.schemas.Pet7.properties.pet.discriminator: The discriminator 'pet_type' is not required or not a property of the allOf schemas (code: 133)";
+					if(!e.getMessage().contains(msgErrore7)) {
+						throw new Exception("Errore atteso '"+msgErrore7+"' non rilevato",e);
+					}
+					String msgErrore8 = "components.schemas.Pet8.properties.pet.discriminator: The discriminator 'pet_type' is not required or not a property of the allOf schemas (code: 133)";
+					if(!e.getMessage().contains(msgErrore8)) {
+						throw new Exception("Errore atteso '"+msgErrore8+"' non rilevato",e);
+					}
 				}
-				String msgErrore2 = "components.schemas.Pet.discriminator: The discriminator 'pet_type' is required in this schema (code: 135)";
-				if(!e.getMessage().contains(msgErrore2)) {
-					throw new Exception("Errore atteso '"+msgErrore2+"' non rilevato",e);
-				}
-				String msgErrore3 = "components.schemas.Pet2.properties.pet.discriminator: The discriminator 'pet_type' is not required or not a property of the allOf schemas (code: 133)";
-				if(!e.getMessage().contains(msgErrore3)) {
-					throw new Exception("Errore atteso '"+msgErrore3+"' non rilevato",e);
-				}
-				String msgErrore4 = "components.schemas.Pet3.properties.pet.discriminator: The discriminator 'pet_type' is not required or not a property of the allOf schemas (code: 133)";
-				if(!e.getMessage().contains(msgErrore4)) {
-					throw new Exception("Errore atteso '"+msgErrore4+"' non rilevato",e);
-				}
-				String msgErrore5 = "components.schemas.Pet5.properties.pet.discriminator: The discriminator 'pet_type' is not required or not a property of the allOf schemas (code: 133)";
-				if(!e.getMessage().contains(msgErrore5)) {
-					throw new Exception("Errore atteso '"+msgErrore5+"' non rilevato",e);
-				}
-				String msgErrore6 = "components.schemas.Pet6.properties.pet.discriminator: The discriminator 'pet_type' is not required or not a property of the allOf schemas (code: 133)";
-				if(!e.getMessage().contains(msgErrore6)) {
-					throw new Exception("Errore atteso '"+msgErrore6+"' non rilevato",e);
-				}
-				String msgErrore7 = "components.schemas.Pet7.properties.pet.discriminator: The discriminator 'pet_type' is not required or not a property of the allOf schemas (code: 133)";
-				if(!e.getMessage().contains(msgErrore7)) {
-					throw new Exception("Errore atteso '"+msgErrore7+"' non rilevato",e);
-				}
-				String msgErrore8 = "components.schemas.Pet8.properties.pet.discriminator: The discriminator 'pet_type' is not required or not a property of the allOf schemas (code: 133)";
-				if(!e.getMessage().contains(msgErrore8)) {
-					throw new Exception("Errore atteso '"+msgErrore8+"' non rilevato",e);
-				}
+			}
+			else {
+				System.out.println("Skipped test per libreria "+openAPILibrary);
 			}
 			
 			System.out.println("Test Schema#2 (allegati.yaml) [Discriminator non presente o non required Step 1/2] ok");
 			
 			System.out.println("Test Schema#2 (allegati.yaml) [Discriminator non presente o non required Step 2/2] ...");
 			
-			url = TestOpenApi4j.class.getResource("/org/openspcoop2/utils/openapi/parser2.yaml");
+			if( openAPILibrary == OpenAPILibrary.openapi4j ){
 			
-			apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
-			apiReaderOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), new File(url.toURI()), configOpenApi4j);
-			apiOpenApi4j = apiReaderOpenApi4j.read();
-			
-			apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
-			try {
-				apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), apiOpenApi4j, configO);
-				throw new Exception("Atteso errore");
-			}catch(Exception e) {
-				String msgErrore = "components.schemas.Pet4.properties.pet.discriminator: The discriminator 'pet_type' is required in this schema (code: 135)";
-				if(!e.getMessage().contains(msgErrore)) {
-					throw new Exception("Errore atteso '"+msgErrore+"' non rilevato",e);
+				url = TestOpenApi3Extended.class.getResource("/org/openspcoop2/utils/openapi/parser2.yaml");
+				
+				apiReaderOpenApi = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+				apiReaderOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), new File(url.toURI()), configOpenApi);
+				apiOpenApi = apiReaderOpenApi.read();
+				
+				apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+				try {
+					apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), apiOpenApi, configO);
+					throw new Exception("Atteso errore");
+				}catch(Exception e) {
+					String msgErrore = "components.schemas.Pet4.properties.pet.discriminator: The discriminator 'pet_type' is required in this schema (code: 135)";
+					if(!e.getMessage().contains(msgErrore)) {
+						throw new Exception("Errore atteso '"+msgErrore+"' non rilevato",e);
+					}
 				}
+				
+			}else {
+				System.out.println("Skipped test per libreria "+openAPILibrary);
 			}
 			
 			System.out.println("Test Schema#2 (allegati.yaml) [Discriminator non presente o non required Step 1/2] ok");
 			
-		}
+		} 
+			
 		
 		
 		
 		// *** TEST per la validazione delle richieste *** //
 		
-		URL url = TestOpenApi4j.class.getResource("/org/openspcoop2/utils/openapi/allegati.yaml");
+		URL url = TestOpenApi3Extended.class.getResource("/org/openspcoop2/utils/openapi/allegati.yaml");
 		
 		ApiSchema apiSchemaYaml = new ApiSchema("teamdigitale-openapi_definitions.yaml", 
-				Utilities.getAsByteArray(TestOpenApi4j.class.getResourceAsStream("/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml")), ApiSchemaType.YAML);
+				Utilities.getAsByteArray(TestOpenApi3Extended.class.getResourceAsStream("/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml")), ApiSchemaType.YAML);
 		
 		String baseUri = "http://petstore.swagger.io/api";
 		
-		IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
-		ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
-		configOpenApi4j.setProcessInclude(false);
-		apiReaderOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), new File(url.toURI()), configOpenApi4j, apiSchemaYaml);
-		Api apiOpenApi4j = apiReaderOpenApi4j.read();
-		
-		IApiReader apiReaderNoOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
-		ApiReaderConfig configNoOpenApi4j = new ApiReaderConfig();
-		configNoOpenApi4j.setProcessInclude(false);
-		apiReaderNoOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), new File(url.toURI()), configNoOpenApi4j, apiSchemaYaml);
-		Api apiNoOpenApi4j = apiReaderNoOpenApi4j.read();
-		
-		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		IApiReader apiReaderOpenApi = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+		ApiReaderConfig configOpenApi = new ApiReaderConfig();
+		configOpenApi.setProcessInclude(false);
+		apiReaderOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), new File(url.toURI()), configOpenApi, apiSchemaYaml);
+		Api apiOpenApi = apiReaderOpenApi.read();
+				
+		IApiValidator apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
-		configO.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
-		configO.getOpenApi4JConfig().setUseOpenApi4J(true);
-		configO.getOpenApi4JConfig().setValidateAPISpec(true);
-		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), apiOpenApi4j, configO);
+		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
+		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
+		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
+		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
+		apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), apiOpenApi, configO);
 		
-		IApiValidator apiValidatorNoOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
-		OpenapiApiValidatorConfig configNo = new OpenapiApiValidatorConfig();
-		configNo.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
-		configNo.getOpenApi4JConfig().setUseOpenApi4J(false);
-		apiValidatorNoOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), apiNoOpenApi4j, configNo);
 		
-		byte [] pdf = Utilities.getAsByteArray(TestOpenApi4j.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test.pdf"));
+		byte [] pdf = Utilities.getAsByteArray(TestOpenApi3Extended.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test.pdf"));
 		
 		String xml = "<prova>Hello World</prova>";
 		Document docXml = XMLUtils.getInstance().newDocument(xml.getBytes());
 		Element elementXml = docXml.getDocumentElement();
 		
 		
+
 		
 		System.out.println("Test #1 (Richiesta POST con parametro /documenti/mixed/send)");
 		String testUrl1 = baseUri+"/documenti/mixed/send";
@@ -227,7 +248,7 @@ public class TestOpenApi4j {
 					"}"+
 				"]}";
 		httpEntity.setContent(json);
-		apiValidatorOpenApi4j.validate(httpEntity);	
+		apiValidatorOpenApi.validate(httpEntity);	
 		System.out.println("Test #1 completato\n\n");
 		
 		
@@ -248,11 +269,22 @@ public class TestOpenApi4j {
 				"]}";
 		httpEntity.setContent(jsonErrato2);
 		try {
-			apiValidatorOpenApi4j.validate(httpEntity);
+			apiValidatorOpenApi.validate(httpEntity);
 			throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 		} catch(ValidatorException e) {
 			System.out.println("Test #2 Errore trovato: " + e.getMessage());
-			String msgErroreAtteso = "body.allegati.0.documento: Field 'uri' is required.";		
+			String msgErroreAtteso = null;
+			switch (openAPILibrary) {
+			case json_schema:
+				msgErroreAtteso = "1028 $.allegati[0].documento.uri: is missing but it is required";
+				break;
+			case openapi4j:
+				msgErroreAtteso = "body.allegati.0.documento: Field 'uri' is required.";
+				break;
+			case swagger_request_validator:
+				msgErroreAtteso = "- [ERROR][] [Path '/allegati/0/documento'] Object has missing required properties ([\"uri\"])";
+				break;
+			}
 			if(!e.getMessage().contains(msgErroreAtteso)) {
 				throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 			}
@@ -276,11 +308,22 @@ public class TestOpenApi4j {
 				"]}";
 		httpEntity.setContent(jsonErrato3);
 		try {
-			apiValidatorOpenApi4j.validate(httpEntity);
+			apiValidatorOpenApi.validate(httpEntity);
 			throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 		} catch(ValidatorException e) {
 			System.out.println("Test #3 Errore trovato: " + e.getMessage());
-			String msgErroreAtteso = "body.allegati.0.documento: Schema selection can't be made for discriminator 'tipoDocumento' with value 'riferimento-uriERRATA'.";
+			String msgErroreAtteso = null;
+			switch (openAPILibrary) {
+			case json_schema:
+				msgErroreAtteso = "1008 $.allegati[0].documento.tipoDocumento: does not have a value in the enumeration [inline, riferimento-uri]";
+				break;
+			case openapi4j:
+				msgErroreAtteso = "body.allegati.0.documento: Schema selection can't be made for discriminator 'tipoDocumento' with value 'riferimento-uriERRATA'.";
+				break;
+			case swagger_request_validator:
+				msgErroreAtteso = "[ERROR][] [Path '/allegati/0/documento/tipoDocumento'] Instance value (\"riferimento-uriERRATA\") not found in enum (possible values: [\"inline\",\"riferimento-uri\"])";
+				break;
+			}
 			if(!e.getMessage().contains(msgErroreAtteso)) {
 				throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 			}
@@ -305,21 +348,53 @@ public class TestOpenApi4j {
 				"]}";
 		httpEntity.setContent(jsonErrato4);
 		try {
-			apiValidatorOpenApi4j.validate(httpEntity);
+			apiValidatorOpenApi.validate(httpEntity);
 			throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 		} catch(ValidatorException e) {
 			System.out.println("Test #4 Errore trovato: " + e.getMessage());
-			String msgErroreAtteso = "body.allegati.1.documento: Property name in content 'tipoDocumento' is not set.";
+			
+			String msgErroreAtteso = null;
+			switch (openAPILibrary) {
+			case json_schema:
+				msgErroreAtteso = "1028 $.allegati[1].documento.tipoDocumento: is missing but it is required";
+				break;
+			case openapi4j:
+				msgErroreAtteso = "body.allegati.1.documento: Property name in content 'tipoDocumento' is not set.";
+				break;
+			case swagger_request_validator:
+				msgErroreAtteso = "[ERROR][] [Path '/allegati/1/documento'] Object has missing required properties ([\"tipoDocumento\"])";
+				break;
+			}		
 			if(!e.getMessage().contains(msgErroreAtteso)) {
 				throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 			}
-			msgErroreAtteso = "From: body.<allOf>.allegati.1.<items>.<#/components/schemas/AllegatoRiferimentoMixed>.<allOf>.documento.<discriminator>";
+			
+			switch (openAPILibrary) {
+			case json_schema:
+				msgErroreAtteso = "1028 $.allegati[1].documento.tipoDocumento: is missing but it is required"; // uso solito messaggio
+				break;
+			case openapi4j:
+				msgErroreAtteso = "From: body.<allOf>.allegati.1.<items>.<#/components/schemas/AllegatoRiferimentoMixed>.<allOf>.documento.<discriminator>";
+				break;
+			case swagger_request_validator:
+				msgErroreAtteso = "* /allOf/1/properties/allegati/items/allOf/1: Discriminator field 'tipoDocumento' is required";
+				break;
+			}	
 			if(!e.getMessage().contains(msgErroreAtteso)) {
 				throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 			}
 			System.out.println("Test #4 completato\n\n");
 		}
 		
+		
+		
+		
+		// Non supera la validazione perchè lo swagger-validator quando incontra il content type json, prima
+		// prova a parsare il body in json e poi cerca di verificare lo schema, che non centra più nulla con un
+		// type: string, format: binary
+		// se infatti metto un octet_stream, la validazione passa.
+		// Dovrei dire al validatore di non convertire i json a tutti costi quando si trova content_type_json
+		// Anzi meglio, può convertirlo e verificare sia un json, ma non deve validarlo per forza
 		
 		System.out.println("Test #5 (Richiesta POST con parametro dinamico /documenti/XYZ)");
 		String testUrl5 = baseUri+"/documenti/test/"+UUID.randomUUID().toString();
@@ -333,9 +408,13 @@ public class TestOpenApi4j {
 		httpEntityDynamicPath.setHeaders(parametersTrasportoDynamicPath);
 		httpEntityDynamicPath.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 		httpEntityDynamicPath.setContent(json); // volutamente metto un json che comunque dovrebbe trattare come binario!
-		apiValidatorOpenApi4j.validate(httpEntityDynamicPath);
+		apiValidatorOpenApi.validate(httpEntityDynamicPath);
 			
 		System.out.println("Test #5 completato\n\n");
+		
+		
+		
+		
 		
 		
 		
@@ -345,7 +424,7 @@ public class TestOpenApi4j {
 		TextHttpRequestEntity httpEntityGET = new TextHttpRequestEntity();
 		httpEntityGET.setMethod(HttpRequestMethod.GET);
 		httpEntityGET.setUrl(testUrl5);	
-		apiValidatorOpenApi4j.validate(httpEntityGET);	
+		apiValidatorOpenApi.validate(httpEntityGET);	
 		
 		List<String> contentTypes_test5 = new ArrayList<String>();
 		contentTypes_test5.add(HttpConstants.CONTENT_TYPE_JSON);
@@ -415,53 +494,48 @@ public class TestOpenApi4j {
 				((BinaryHttpResponseEntity)httpEntityResponse).setContent(pdf);
 			}
 			
-			for (int j = 0; j < 2; j++) {
+			String tipoTest = "ContentType:"+ct+" ";
+			tipoTest = tipoTest+"["+openAPILibrary+"]";
+								
+			try {
+				System.out.println("\t "+tipoTest+" validate response ...");
 				
-				boolean openapi4j = (j==0);
-				IApiValidator apiValidator = null;
-				String tipoTest = "ContentType:"+ct+" ";
-				if(openapi4j) {
-					apiValidator = apiValidatorOpenApi4j;
-					tipoTest = tipoTest+"[openapi4j]";
+				if(ct.contains("xml") && openAPILibrary == OpenAPILibrary.swagger_request_validator) {
+					System.out.println("\t Content-Type " + ct + ": funzionalità non supportata dalla libreria swagger-request-validator"); // swagger-request-validator-unsupported
+					continue;
 				}
-				else {
-					apiValidator = apiValidatorNoOpenApi4j;
-					tipoTest = tipoTest+"[json]";
+				
+				apiValidatorOpenApi.validate(httpEntityResponse);	
+				System.out.println("\t "+tipoTest+" validate response ok");
+				
+				if(openAPILibrary!=OpenAPILibrary.json_schema && ct.contains("Uncorrect")) {
+					throw new Exception("Attesa eccezione");
 				}
-						
-				try {
-					System.out.println("\t "+tipoTest+" validate response ...");
-					apiValidator.validate(httpEntityResponse);	
-					System.out.println("\t "+tipoTest+" validate response ok");
-					
-					if(openapi4j && ct.contains("Uncorrect")) {
-						throw new Exception("Attesa eccezione");
-					}
-					
-				} catch(Throwable e) {
-					String error = e.getMessage();
-					if(error.length()>500) {
-						error = error.substring(0, 498)+" ...";
-					}
-					if(ct.contains("Uncorrect")) {
-						String erroreAtteso = null;
-						if(ct.contains("json")) {
-							erroreAtteso = "Unexpected character ('a' (code 97))";
-						}
-						else {
-							erroreAtteso = "Unclosed tag prova at 16 [character 17 line 1]";
-						}
-						if(!e.getMessage().contains(erroreAtteso)) {
-							System.out.println("\t "+tipoTest+" rilevato errore di validazione diverso da quello atteso ("+erroreAtteso+") : "+error);
-							throw new Exception(""+tipoTest+" rilevato errore di validazione diverso da quello atteso ("+erroreAtteso+") : "+e.getMessage(),e);
-						}
+				
+			} catch(Throwable e) {
+				String error = e.getMessage();
+				if(error.length()>500) {
+					error = error.substring(0, 498)+" ...";
+				}
+				if(ct.contains("Uncorrect")) {
+					String erroreAtteso = null;
+					if(ct.contains("json")) {
+						erroreAtteso = "Unexpected character ('a' (code 97))";
 					}
 					else {
-						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+						erroreAtteso = "Unclosed tag prova at 16 [character 17 line 1]";
+					}
+					if(!e.getMessage().contains(erroreAtteso)) {
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione diverso da quello atteso ("+erroreAtteso+") : "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione diverso da quello atteso ("+erroreAtteso+") : "+e.getMessage(),e);
 					}
 				}
+				else {
+					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+				}
 			}
+			
 		}
 		
 		System.out.println("Test #6 completato\n\n");
@@ -496,8 +570,11 @@ public class TestOpenApi4j {
 					"}"+
 				"]}";
 		httpEntity7.setContent(json7);
-		apiValidatorOpenApi4j.validate(httpEntity7);	
+		apiValidatorOpenApi.validate(httpEntity7);	
 		System.out.println("Test #7 completato\n\n");
+		
+		
+		
 		
 		
 		System.out.println("Test #8 (Richiesta POST con parametro /documenti/mixed/send e elemento valido/nonValido secondo il pattern)");
@@ -545,7 +622,13 @@ public class TestOpenApi4j {
 			httpEntity8.setContent(json8);
 			try {
 				System.out.println("\t (Valore:"+valore+") validate ...");
-				apiValidatorOpenApi4j.validate(httpEntity8);
+				
+				if(valore.endsWith("\\n") && openAPILibrary == OpenAPILibrary.json_schema) {
+					System.out.println("\t (Valore:"+valore+") test skipped; validazione json non individua l'errore di un ritorno a capo");
+					continue;
+				}
+				
+				apiValidatorOpenApi.validate(httpEntity8);
 				if(esito) {
 					System.out.println("\t (Valore:"+valore+") validate ok");
 				}
@@ -561,18 +644,44 @@ public class TestOpenApi4j {
 					System.out.println("\t (Valore:"+valore+") rilevato errore di validazione non atteso: "+e.getMessage());
 					throw new Exception("(Valore:"+valore+") rilevato errore di validazione non atteso: "+e.getMessage(),e);
 				}
-				String msgErroreAtteso = "body.allegati.0.codiceOpzionaleNumerico: '"+valore+"' does not respect pattern '^\\d{6}$'.";
+				
+				String msgErroreAtteso = null;
+				switch (openAPILibrary) {
+				case json_schema:
+					msgErroreAtteso = "1023 $.allegati[0].codiceOpzionaleNumerico: does not match the regex pattern ^\\d{6}$"; 
+					break;
+				case openapi4j:
+					msgErroreAtteso = "body.allegati.0.codiceOpzionaleNumerico: '"+valore+"' does not respect pattern '^\\d{6}$'.";
+					break;
+				case swagger_request_validator:
+					msgErroreAtteso = "- [ERROR][] [Path '/allegati/0/codiceOpzionaleNumerico'] ECMA 262 regex \"^\\d{6}$\" does not match input string \""+StringEscapeUtils.unescapeJava(valore)+"";
+					break;
+				}				
 				if(!e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t (Valore:"+valore+") ERRORE!");
-					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'" +"\nTrovato invece: '"+e.getMessage()+"'");
 				}
-				msgErroreAtteso = "From: body.<allOf>.allegati.0.<items>.<#/components/schemas/AllegatoRiferimentoMixed>.<allOf>.<#/components/schemas/Allegato>.codiceOpzionaleNumerico.<pattern>";
+				
+				msgErroreAtteso = null;
+				switch (openAPILibrary) {
+				case json_schema:
+					msgErroreAtteso = "1023 $.allegati[0].codiceOpzionaleNumerico: does not match the regex pattern ^\\d{6}$"; // uso solito messaggio
+					break;
+				case openapi4j:
+					msgErroreAtteso = "From: body.<allOf>.allegati.0.<items>.<#/components/schemas/AllegatoRiferimentoMixed>.<allOf>.<#/components/schemas/Allegato>.codiceOpzionaleNumerico.<pattern>";
+					break;
+				case swagger_request_validator:
+					msgErroreAtteso = "* /allOf/1/properties/allegati/items/allOf/0";
+					break;
+				}	
 				if(!e.getMessage().contains(msgErroreAtteso)) {
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
 			}
 		}
 		System.out.println("Test #8 completato\n\n");
+		
+		
 		
 		
 		
@@ -608,6 +717,7 @@ public class TestOpenApi4j {
 			TransportUtils.addHeader(parametersTrasporto9,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
 			httpEntity9.setHeaders(parametersTrasporto9);
 			httpEntity9.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+			
 			String json9 = "{\"mittente\":\"Mittente\",\"destinatario\":\"EnteDestinatario\",\"procedimento\":\"DescrizioneGenerica ...\","+
 					"\"allegati\":"+
 					"["+
@@ -626,7 +736,13 @@ public class TestOpenApi4j {
 			httpEntity9.setContent(json9);
 			try {
 				System.out.println("\t (Valore:"+valore+") validate ...");
-				apiValidatorOpenApi4j.validate(httpEntity9);
+				
+				if(valore.endsWith("\\n") && openAPILibrary == OpenAPILibrary.json_schema) {
+					System.out.println("\t (Valore:"+valore+") test skipped; validazione json non individua l'errore di un ritorno a capo");
+					continue;
+				}
+				
+				apiValidatorOpenApi.validate(httpEntity9);
 				if(esito) {
 					System.out.println("\t (Valore:"+valore+") validate ok");
 				}
@@ -642,18 +758,43 @@ public class TestOpenApi4j {
 					System.out.println("\t (Valore:"+valore+") rilevato errore di validazione non atteso: "+e.getMessage());
 					throw new Exception("(Valore:"+valore+") rilevato errore di validazione non atteso: "+e.getMessage(),e);
 				}
-				String msgErroreAtteso = "body.allegati.0.codiceOpzionaleCodiceFiscaleOrCodiceEsterno: '"+valore+"' does not respect pattern '^[a-zA-Z]{6}[0-9]{2}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}$|^[A-Z0-9]{3}\\d{3}$'.";
+				
+				String msgErroreAtteso = null;
+				switch (openAPILibrary) {
+				case json_schema:
+					msgErroreAtteso = "1023 $.allegati[0].codiceOpzionaleCodiceFiscaleOrCodiceEsterno: does not match the regex pattern ^[a-zA-Z]{6}[0-9]{2}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}$|^[A-Z0-9]{3}\\d{3}$";
+					break;
+				case openapi4j:
+					msgErroreAtteso = "body.allegati.0.codiceOpzionaleCodiceFiscaleOrCodiceEsterno: '"+valore+"' does not respect pattern '^[a-zA-Z]{6}[0-9]{2}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}$|^[A-Z0-9]{3}\\d{3}$'.";
+					break;
+				case swagger_request_validator:
+					msgErroreAtteso = "- [ERROR][] [Path '/allegati/0/codiceOpzionaleCodiceFiscaleOrCodiceEsterno'] ECMA 262 regex \"^[a-zA-Z]{6}[0-9]{2}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}$|^[A-Z0-9]{3}\\d{3}$\" does not match input string \""+StringEscapeUtils.unescapeJava(valore);
+					break;
+				}	
 				if(!e.getMessage().contains(msgErroreAtteso)) {
 					System.out.println("\t (Valore:"+valore+") ERRORE!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
-				msgErroreAtteso = "From: body.<allOf>.allegati.0.<items>.<#/components/schemas/AllegatoRiferimentoMixed>.<allOf>.<#/components/schemas/Allegato>.codiceOpzionaleCodiceFiscaleOrCodiceEsterno.<pattern>";
+				
+				msgErroreAtteso = null;
+				switch (openAPILibrary) {
+				case json_schema:
+					msgErroreAtteso = "1023 $.allegati[0].codiceOpzionaleCodiceFiscaleOrCodiceEsterno: does not match the regex pattern ^[a-zA-Z]{6}[0-9]{2}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}$|^[A-Z0-9]{3}\\d{3}$"; // uso solito messaggio
+					break;
+				case openapi4j:
+					msgErroreAtteso = "From: body.<allOf>.allegati.0.<items>.<#/components/schemas/AllegatoRiferimentoMixed>.<allOf>.<#/components/schemas/Allegato>.codiceOpzionaleCodiceFiscaleOrCodiceEsterno.<pattern>";
+					break;
+				case swagger_request_validator:
+					msgErroreAtteso = "* /allOf/1/properties/allegati/items/allOf/0:";
+					break;
+				}	
 				if(!e.getMessage().contains(msgErroreAtteso)) {
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
 			}
 		}
 		System.out.println("Test #9 completato\n\n");
+		
 		
 		
 		
@@ -682,7 +823,7 @@ public class TestOpenApi4j {
 					"}"+
 				"]}";
 		httpEntityTest10.setContent(jsonTest10);
-		apiValidatorOpenApi4j.validate(httpEntityTest10);	
+		apiValidatorOpenApi.validate(httpEntityTest10);	
 		
 		TextHttpResponseEntity httpEntityResponseTest10 = new TextHttpResponseEntity();
 		httpEntityResponseTest10.setStatus(201);
@@ -693,7 +834,7 @@ public class TestOpenApi4j {
 		httpEntityResponseTest10.setHeaders(parametersTrasportoRispostaTest10);
 		
 		System.out.println("\t Validazione senza content-type ...");
-		apiValidatorOpenApi4j.validate(httpEntityResponseTest10);	
+		apiValidatorOpenApi.validate(httpEntityResponseTest10);	
 		System.out.println("\t Validazione senza content-type ok");
 		
 		List<String> contentTypeTest10List = new ArrayList<String>();
@@ -704,24 +845,15 @@ public class TestOpenApi4j {
 		contentTypeTest10List.add(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);
 		for (String contentTypeTest10 : contentTypeTest10List) {
 			
-			for (int i = 0; i < 4; i++) {
+			for (int i = 0; i < 2; i++) {
 				
-				boolean addContenuto = (i==1 || i==3);
+				boolean addContenuto = (i==1);
 				String tipoTest = "senza";
 				if(addContenuto) {
 					tipoTest = "con";
 				}
 				
-				boolean openapi4j = (i==0 || i==1);
-				IApiValidator apiValidator = null;
-				if(openapi4j) {
-					apiValidator = apiValidatorOpenApi4j;
-					tipoTest = "[openapi4j] "+ tipoTest;
-				}
-				else {
-					apiValidator = apiValidatorNoOpenApi4j;
-					tipoTest = "[json] "+ tipoTest;
-				}
+				tipoTest = "["+openAPILibrary+"] "+ tipoTest;
 
 				
 				System.out.println("\t Validazione con content-type '"+contentTypeTest10+"' "+tipoTest+" contenuto ...");
@@ -736,32 +868,31 @@ public class TestOpenApi4j {
 				}
 				boolean esito = false;
 				try {
-					apiValidator.validate(httpEntityResponseTest10);	
+					apiValidatorOpenApi.validate(httpEntityResponseTest10);	
 					esito = true;
 				}
 				catch(Exception e) {
 					String msg = e.getMessage();
-					if(openapi4j) {
-						String atteso = "Content type '"+contentTypeTest10+"' is not allowed for body content. (code: 203)";
-						if(!msg.contains(atteso)) {
-							String checkErrore = "Validazione con content-type '"+contentTypeTest10+"' "+tipoTest+" contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
-							System.out.println("\t "+checkErrore);
-							throw new Exception(checkErrore);
-						}
-						else {
-							System.out.println("\t Validazione con content-type '"+contentTypeTest10+"' "+tipoTest+" contenuto terminato con l'errore atteso: "+msg);
-						}
+					
+					String atteso = null;
+					switch (openAPILibrary) {
+					case json_schema:
+						atteso = "Content-Type '"+contentTypeTest10+"' (http response status '201') unsupported";
+						break;
+					case openapi4j:
+						atteso = "Content type '"+contentTypeTest10+"' is not allowed for body content. (code: 203)";
+						break;
+					case swagger_request_validator:
+						atteso = "Content-Type '"+contentTypeTest10+"' (http response status '201') unsupported"; // swagger-request-validator-unsupported Check risolto da govway
+						break;
+					}	
+					if(!msg.contains(atteso)) {
+						String checkErrore = "Validazione con content-type '"+contentTypeTest10+"' "+tipoTest+" contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
+						System.out.println("\t "+checkErrore);
+						throw new Exception(checkErrore);
 					}
 					else {
-						String atteso = "Content-Type '"+contentTypeTest10+"' (http response status '201') unsupported";
-						if(!msg.equals(atteso)) {
-							String checkErrore = "Validazione con content-type '"+contentTypeTest10+"' "+tipoTest+" contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
-							System.out.println("\t "+checkErrore);
-							throw new Exception(checkErrore);
-						}
-						else {
-							System.out.println("\t Validazione con content-type '"+contentTypeTest10+"' "+tipoTest+" contenuto terminato con l'errore atteso: "+msg);
-						}
+						System.out.println("\t Validazione con content-type '"+contentTypeTest10+"' "+tipoTest+" contenuto terminato con l'errore atteso: "+msg);
 					}
 				}
 				if(esito) {
@@ -773,6 +904,7 @@ public class TestOpenApi4j {
 		}
 		
 		System.out.println("Test #10 completato\n\n");
+		
 		
 		
 		
@@ -809,7 +941,7 @@ public class TestOpenApi4j {
 		httpEntityTest11.setHeaders(parametersTrasportoTest11);
 		
 		System.out.println("\t Validazione richiesta senza content-type ...");
-		apiValidatorOpenApi4j.validate(httpEntityTest11);	
+		apiValidatorOpenApi.validate(httpEntityTest11);	
 		System.out.println("\t Validazione richiesta senza content-type ok");
 		
 		for (String contentTypeTest11 : contentTypeTest11List) {
@@ -821,16 +953,7 @@ public class TestOpenApi4j {
 					tipoTest = "con";
 				}
 		
-				boolean openapi4j = (i==0 || i==1);
-				IApiValidator apiValidator = null;
-				if(openapi4j) {
-					apiValidator = apiValidatorOpenApi4j;
-					tipoTest = "[openapi4j] "+ tipoTest;
-				}
-				else {
-					apiValidator = apiValidatorNoOpenApi4j;
-					tipoTest = "[json] "+ tipoTest;
-				}
+				tipoTest = "["+openAPILibrary+"] "+ tipoTest;
 				
 				System.out.println("\t Validazione richiesta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto ...");
 				TransportUtils.setHeader(parametersTrasportoTest11,HttpConstants.CONTENT_TYPE, contentTypeTest11);
@@ -843,35 +966,35 @@ public class TestOpenApi4j {
 				}
 				boolean esito = false;
 				try {
-					apiValidator.validate(httpEntityTest11);	
+					apiValidatorOpenApi.validate(httpEntityTest11);	
 					esito = true;
 				}
 				catch(Exception e) {
 					String msg = e.getMessage();
-					if(openapi4j) {
-						// Per adesso openapi4j non sembra accorgersi dell'errore.
-						//String atteso = "Content type '"+contentTypeTest11+"' is not allowed for body content. (code: 203)";
-						//if(!msg.contains(atteso)) {
-						String atteso = "Content-Type '"+contentTypeTest11+"' unsupported";
-						if(!msg.equals(atteso)) {
-							String checkErrore = "Validazione richiesta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
-							System.out.println("\t "+checkErrore);
-							throw new Exception(checkErrore);
+					
+					String atteso = null;
+					switch (openAPILibrary) {
+					case json_schema:
+						atteso = "Content-Type '"+contentTypeTest11+"' unsupported";
+						break;
+					case openapi4j:
+						atteso = "Content-Type '"+contentTypeTest11+"' unsupported"; // openapi4j non si accorge dell'errore, check risolto da govway
+						break;
+					case swagger_request_validator:
+						if (httpEntityTest11.getContent() != null) {
+							atteso = "[ERROR][REQUEST][POST http://petstore.swagger.io/api/documenti/norequestresponse/send] No request body is expected but one was found."; 
+						} else {
+							atteso = "Content-Type '"+contentTypeTest11+"' unsupported"; // swagger-request-validator-unsupported, check risolto da govway
 						}
-						else {
-							System.out.println("\t Validazione richiesta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con l'errore atteso: "+msg);
-						}
+						break;
+					}	
+					if(!msg.contains(atteso)) {
+						String checkErrore = "Validazione richiesta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
+						System.out.println("\t "+checkErrore);
+						throw new Exception(checkErrore);
 					}
 					else {
-						String atteso = "Content-Type '"+contentTypeTest11+"' unsupported";
-						if(!msg.equals(atteso)) {
-							String checkErrore = "Validazione richiesta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
-							System.out.println("\t "+checkErrore);
-							throw new Exception(checkErrore);
-						}
-						else {
-							System.out.println("\t Validazione richiesta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con l'errore atteso: "+msg);
-						}
+						System.out.println("\t Validazione richiesta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con l'errore atteso: "+msg);
 					}
 				}
 				if(esito) {
@@ -891,7 +1014,7 @@ public class TestOpenApi4j {
 		httpEntityResponseTest11.setHeaders(parametersTrasportoRispostaTest11);
 		
 		System.out.println("\t Validazione risposta senza content-type ...");
-		apiValidatorOpenApi4j.validate(httpEntityResponseTest11);	
+		apiValidatorOpenApi.validate(httpEntityResponseTest11);	
 		System.out.println("\t Validazione risposta senza content-type ok");
 
 		for (String contentTypeTest11 : contentTypeTest11List) {
@@ -903,16 +1026,7 @@ public class TestOpenApi4j {
 					tipoTest = "con";
 				}
 				
-				boolean openapi4j = (i==0 || i==1);
-				IApiValidator apiValidator = null;
-				if(openapi4j) {
-					apiValidator = apiValidatorOpenApi4j;
-					tipoTest = "[openapi4j] "+ tipoTest;
-				}
-				else {
-					apiValidator = apiValidatorNoOpenApi4j;
-					tipoTest = "[json] "+ tipoTest;
-				}
+				tipoTest = "["+openAPILibrary+"] "+ tipoTest;
 				
 				System.out.println("\t Validazione risposta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto ...");
 				TransportUtils.setHeader(parametersTrasportoRispostaTest11,HttpConstants.CONTENT_TYPE, contentTypeTest11);
@@ -926,32 +1040,32 @@ public class TestOpenApi4j {
 				}
 				boolean esito = false;
 				try {
-					apiValidator.validate(httpEntityResponseTest11);	
+					apiValidatorOpenApi.validate(httpEntityResponseTest11);	
 					esito = true;
 				}
 				catch(Exception e) {
 					String msg = e.getMessage();
-					if(openapi4j) {
-						String atteso = "Content type '"+contentTypeTest11+"' is not allowed for body content. (code: 203)";
-						if(!msg.contains(atteso)) {
-							String checkErrore = "Validazione risposta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
-							System.out.println("\t "+checkErrore);
-							throw new Exception(checkErrore);
-						}
-						else {
-							System.out.println("\t Validazione risposta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con l'errore atteso: "+msg);
-						}
+					
+					String atteso = null;
+					switch (openAPILibrary) {
+					case json_schema:
+						atteso = "Content-Type '"+contentTypeTest11+"' (http response status '201') unsupported";
+						break;
+					case openapi4j:
+						atteso = "Content type '"+contentTypeTest11+"' is not allowed for body content. (code: 203)";
+						break;
+					case swagger_request_validator:
+						// Quando il content-type non è specificato nello schema, la swagger-request-validator non effettua validazione per cui ci si rifà al validatore custom
+						atteso = "Content-Type '"+contentTypeTest11+"' (http response status '201') unsupported"; // swagger-request-validator-unsupported, check risolto da govway 
+						break;
+					}	
+					if(!msg.contains(atteso)) {
+						String checkErrore = "Atteso errore: '"+atteso+"'\nValidazione risposta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
+						System.out.println("\t "+checkErrore);
+						throw new Exception(checkErrore);
 					}
 					else {
-						String atteso = "Content-Type '"+contentTypeTest11+"' (http response status '201') unsupported";
-						if(!msg.equals(atteso)) {
-							String checkErrore = "Validazione risposta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
-							System.out.println("\t "+checkErrore);
-							throw new Exception(checkErrore);
-						}
-						else {
-							System.out.println("\t Validazione risposta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con l'errore atteso: "+msg);
-						}
+						System.out.println("\t Validazione risposta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con l'errore atteso: "+msg);
 					}
 				}
 				if(esito) {
@@ -963,6 +1077,12 @@ public class TestOpenApi4j {
 		}
 		
 		System.out.println("Test #11 completato\n\n");
+		
+		
+		
+		
+		
+		
 		
 		
 		System.out.println("Test #12 (Richiesta POST senza contenuto /documenti/in-line/send[Optional/Required]  (Request Body 'required'))");
@@ -1007,32 +1127,22 @@ public class TestOpenApi4j {
 			TransportUtils.setHeader(parametersTrasporto12_required,HttpConstants.CONTENT_TYPE, contentTypeTest12);
 			httpEntity12_required.setContentType(contentTypeTest12);
 			
-			for (int i = 0; i < 6; i++) {
-				
-				boolean openapi4j = (i==3 || i==4 || i==5);
-				IApiValidator apiValidator = null;
+			for (int i = 0; i < 3; i++) {
 				
 				String tipoTest = tipoTestPrefix;
-				if(openapi4j) {
-					apiValidator = apiValidatorOpenApi4j;
-					tipoTest = tipoTest+"[openapi4j]";
-				}
-				else {
-					apiValidator = apiValidatorNoOpenApi4j;
-					tipoTest = tipoTest+"[json]";
-				}
+				tipoTest = tipoTest+"["+openAPILibrary+"]";
 				
 				TextHttpRequestEntity httpEntity12 = null;
 				boolean required = false;
-				if(i==0 || i==3) {
+				if(i==0) {
 					httpEntity12 = httpEntity12_default;
 					tipoTest = tipoTest + " (required:default)";
 				}
-				else if(i==1 || i==4) {
+				else if(i==1) {
 					httpEntity12 = httpEntity12_optional;
 					tipoTest = tipoTest + " (required:false)";
 				}
-				else if(i==2 || i==5) {
+				else if(i==2) {
 					httpEntity12 = httpEntity12_required;
 					required = true;
 					tipoTest = tipoTest + " (required:true)";
@@ -1042,7 +1152,7 @@ public class TestOpenApi4j {
 				System.out.println("\t Validazione richiesta senza contenuto "+tipoTest+"  ...");
 				boolean esito = false;
 				try {
-					apiValidator.validate(httpEntity12);
+					apiValidatorOpenApi.validate(httpEntity12);
 					esito = true;
 				}
 				catch(Exception e) {
@@ -1058,36 +1168,41 @@ public class TestOpenApi4j {
 						throw new Exception(checkErrore);
 					}
 					
-					if(openapi4j) {
-						String atteso = "Body is required but none provided. (code: 200)";
+					String atteso = null;
+					switch (openAPILibrary) {
+					case json_schema:
+						atteso = "Required body undefined";
 						if(!required && contentTypeTest12!=null) {
 							atteso = "Content-Type '"+contentTypeTest12+"' unsupported";
-						}
-						if(!msg.contains(atteso)) {
-							String checkErrore = "Validazione richiesta "+tipoTest+" senza contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
-							System.out.println("\t "+checkErrore);
-							throw new Exception(checkErrore);
-						}
-						else {
-							System.out.println("\t Validazione richiesta "+tipoTest+" senza contenuto terminato con l'errore atteso: "+msg);
-						}
-					}
-					else {
-						String atteso = "Required body undefined";
-						if(!required && contentTypeTest12!=null) {
-							atteso = "Content-Type '"+contentTypeTest12+"' unsupported";
-							if(HttpConstants.CONTENT_TYPE_JSON.equals(contentTypeTest12) && !openapi4j) {
+							if(HttpConstants.CONTENT_TYPE_JSON.equals(contentTypeTest12)) {
 								atteso = "Content undefined";
 							}
 						}
-						if(!msg.equals(atteso)) {
-							String checkErrore = "Validazione richiesta "+tipoTest+" senza contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
-							System.out.println("\t "+checkErrore);
-							throw new Exception(checkErrore);
+						break;
+					case openapi4j:
+						atteso = "Body is required but none provided. (code: 200)";
+						if(!required && contentTypeTest12!=null) {
+							atteso = "Content-Type '"+contentTypeTest12+"' unsupported";
 						}
-						else {
-							System.out.println("\t Validazione richiesta "+tipoTest+" senza contenuto terminato con l'errore atteso: "+msg);
+						break;
+					case swagger_request_validator:
+						if (httpEntity12.getContentType() == null) {
+							atteso = "Required Content-Type is missing";
+						} else {
+							atteso = "A request body is required but none found.";
 						}
+						if(!required && contentTypeTest12!=null) {
+							atteso = "Request Content-Type header '[text/plain]' does not match any allowed types. Must be one of: [application/json].";
+						}
+						break;
+					}					
+					if(!msg.contains(atteso)) {
+						String checkErrore = "Validazione richiesta "+tipoTest+" senza contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
+						System.out.println("\t "+checkErrore);
+						throw new Exception(checkErrore);
+					}
+					else {
+						System.out.println("\t Validazione richiesta "+tipoTest+" senza contenuto terminato con l'errore atteso: "+msg);
 					}
 				}
 				if(required) {
@@ -1108,60 +1223,49 @@ public class TestOpenApi4j {
 			Map<String, List<String>> parametersTrasportoRispostaTest12 = new HashMap<>();
 			httpEntityResponseTest12.setHeaders(parametersTrasportoRispostaTest12);
 			
-			for (int i = 0; i < 2; i++) {
+			String tipoTest = tipoTestPrefix;
+			tipoTest = tipoTest+"["+openAPILibrary+"]";
+
+			System.out.println("\t Validazione risposta senza contenuto "+tipoTest+"  " + httpEntityResponseTest12.getUrl() + " ...");
+			boolean esito = false;
+			try {
+				apiValidatorOpenApi.validate(httpEntityResponseTest12);	
+				esito = true;
+			}
+			catch(Exception e) {
+				//e.printStackTrace(System.out);
+				String msg = e.getMessage();
 				
-				boolean openapi4j = (i==0);
-				IApiValidator apiValidator = null;
-				String tipoTest = tipoTestPrefix;
-				if(openapi4j) {
-					apiValidator = apiValidatorOpenApi4j;
-					tipoTest = tipoTest+"[openapi4j]";
+				String atteso = null;
+				switch (openAPILibrary) {
+				case json_schema:
+					atteso = "Required body undefined";
+					break;
+				case openapi4j:
+					atteso = "Content type 'null' is not allowed for body content. (code: 203)";
+					break;
+				case swagger_request_validator:
+					atteso = "Required Content-Type is missing";
+					break;
+				}			
+				if(!msg.contains(atteso)) {
+					String checkErrore = "Validazione "+tipoTest+" senza contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
+					System.out.println("\t "+checkErrore);
+					throw new Exception(checkErrore);
 				}
 				else {
-					apiValidator = apiValidatorNoOpenApi4j;
-					tipoTest = tipoTest+"[json]";
-				}
-				
-				System.out.println("\t Validazione risposta senza contenuto "+tipoTest+"  ...");
-				boolean esito = false;
-				try {
-					apiValidator.validate(httpEntityResponseTest12);	
-					esito = true;
-				}
-				catch(Exception e) {
-					//e.printStackTrace(System.out);
-					String msg = e.getMessage();
-					if(openapi4j) {
-						String atteso = "Content type 'null' is not allowed for body content. (code: 203)";
-						if(!msg.contains(atteso)) {
-							String checkErrore = "Validazione "+tipoTest+" senza contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
-							System.out.println("\t "+checkErrore);
-							throw new Exception(checkErrore);
-						}
-						else {
-							System.out.println("\t Validazione risposta "+tipoTest+" senza contenuto terminato con l'errore atteso: "+msg);
-						}
-					}
-					else {
-						String atteso = "Required body undefined";
-						if(!msg.equals(atteso)) {
-							String checkErrore = "Validazione risposta "+tipoTest+" senza contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
-							System.out.println("\t "+checkErrore);
-							throw new Exception(checkErrore);
-						}
-						else {
-							System.out.println("\t Validazione risposta "+tipoTest+" senza contenuto terminato con l'errore atteso: "+msg);
-						}
-					}
-				}
-				if(esito) {
-					System.out.println("\t Validazione risposta "+tipoTest+" senza contenuto: atteso errore");
-					throw new Exception("Validazione risposta "+tipoTest+" senza contenuto: atteso errore");
+					System.out.println("\t Validazione risposta "+tipoTest+" senza contenuto terminato con l'errore atteso: "+msg);
 				}
 			}
+			if(esito) {
+				System.out.println("\t Validazione risposta "+tipoTest+" senza contenuto: atteso errore");
+				throw new Exception("Validazione risposta "+tipoTest+" senza contenuto: atteso errore");
+			}
 		}
+		
 			
 		System.out.println("Test #12 completato\n\n");
+		
 		
 		
 		
@@ -1199,58 +1303,50 @@ public class TestOpenApi4j {
 			String json13 = "{\"data\": \""+valore+"\"}";
 			httpEntity13.setContent(json13);
 			
-			for (int j = 0; j < 2; j++) {
-				
-				boolean openapi4j = (j==0);
-				IApiValidator apiValidator = null;
-				String tipoTest = esito ? "[body con valore ok '"+valore+"']" : "[body con valore errato '"+valore+"']";
-				if(openapi4j) {
-					apiValidator = apiValidatorOpenApi4j;
-					tipoTest = tipoTest+"[openapi4j]";
+			String tipoTest = esito ? "[body con valore ok '"+valore+"']" : "[body con valore errato '"+valore+"']";
+			tipoTest = tipoTest+"["+openAPILibrary+"]";
+			
+			try {
+				System.out.println("\t "+tipoTest+" validate ...");
+				apiValidatorOpenApi.validate(httpEntity13);
+				if(esito) {
+					System.out.println("\t "+tipoTest+" validate ok");
 				}
 				else {
-					apiValidator = apiValidatorNoOpenApi4j;
-					tipoTest = tipoTest+"[json]";
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				}
-			
-				try {
-					System.out.println("\t "+tipoTest+" validate ...");
-					apiValidator.validate(httpEntity13);
-					if(esito) {
-						System.out.println("\t "+tipoTest+" validate ok");
-					}
-					else {
-						System.out.println("\t "+tipoTest+" ERRORE!");
-						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
-					}
-				} catch(ValidatorException e) {
-					String error = e.getMessage();
-					if(error.length()>200) {
-						error = error.substring(0, 198)+" ...";
-					}
-					if(!esito) {
-						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
-					}
-					else {
-						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
-					}
-					if(openapi4j) {
-						String msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date'. (code: 1007)";
-						if(!e.getMessage().contains(msgErroreAtteso)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-						}
-					}
-					else {
-						String msgErroreAtteso = "1034 $.data: "+valore+" is an invalid date";
-						if(!e.getMessage().contains(msgErroreAtteso)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-						}
-					}
+			} catch(ValidatorException e) {
+				String error = e.getMessage();
+				if(error.length()>200) {
+					error = error.substring(0, 198)+" ...";
+				}
+				if(!esito) {
+					System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+				}
+				else {
+					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+				}
+				
+				String msgErroreAtteso = null;
+				switch (openAPILibrary) {
+				case json_schema:
+					msgErroreAtteso = "1034 $.data: "+valore+" is an invalid date";
+					break;
+				case openapi4j:
+					msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date'. (code: 1007)";
+					break;
+				case swagger_request_validator:
+					msgErroreAtteso = "[ERROR][REQUEST][POST http://petstore.swagger.io/api/documenti/datetest/2020-07-21 @body] [Path '/data'] String \""+valore+"\" is invalid against requested date format(s) yyyy-MM-dd";
+					break;
+				}	
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
 			}
+			
 			
 			TextHttpResponseEntity httpEntityResponseTest13 = new TextHttpResponseEntity();
 			httpEntityResponseTest13.setStatus(200);
@@ -1263,56 +1359,47 @@ public class TestOpenApi4j {
 			httpEntityResponseTest13.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 			httpEntityResponseTest13.setContent(json13); 
 			
-			for (int j = 0; j < 2; j++) {
-				
-				boolean openapi4j = (j==0);
-				IApiValidator apiValidator = null;
-				String tipoTest = esito ? "[body response con valore ok '"+valore+"']" : "[body response con valore errato '"+valore+"']";
-				if(openapi4j) {
-					apiValidator = apiValidatorOpenApi4j;
-					tipoTest = tipoTest+"[openapi4j]";
+			tipoTest = esito ? "[body response con valore ok '"+valore+"']" : "[body response con valore errato '"+valore+"']";
+			tipoTest = tipoTest+"["+openAPILibrary+"]";
+			
+			try {
+				System.out.println("\t "+tipoTest+" validate ...");
+				apiValidatorOpenApi.validate(httpEntityResponseTest13);
+				if(esito) {
+					System.out.println("\t "+tipoTest+" validate ok");
 				}
 				else {
-					apiValidator = apiValidatorNoOpenApi4j;
-					tipoTest = tipoTest+"[json]";
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				}
-			
-				try {
-					System.out.println("\t "+tipoTest+" validate ...");
-					apiValidator.validate(httpEntityResponseTest13);
-					if(esito) {
-						System.out.println("\t "+tipoTest+" validate ok");
-					}
-					else {
-						System.out.println("\t "+tipoTest+" ERRORE!");
-						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
-					}
-				} catch(ValidatorException e) {
-					String error = e.getMessage();
-					if(error.length()>200) {
-						error = error.substring(0, 198)+" ...";
-					}
-					if(!esito) {
-						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
-					}
-					else {
-						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
-					}
-					if(openapi4j) {
-						String msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date'. (code: 1007)";
-						if(!e.getMessage().contains(msgErroreAtteso)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-						}
-					}
-					else {
-						String msgErroreAtteso = "1034 $.data: "+valore+" is an invalid date";
-						if(!e.getMessage().contains(msgErroreAtteso)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-						}
-					}
+			} catch(ValidatorException e) {
+				String error = e.getMessage();
+				if(error.length()>200) {
+					error = error.substring(0, 198)+" ...";
+				}
+				if(!esito) {
+					System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+				}
+				else {
+					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+				}
+				
+				String msgErroreAtteso = null;
+				switch (openAPILibrary) {
+				case json_schema:
+					msgErroreAtteso = "1034 $.data: "+valore+" is an invalid date";
+					break;
+				case openapi4j:
+					msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date'. (code: 1007)";
+					break;
+				case swagger_request_validator:
+					msgErroreAtteso = "[ERROR][RESPONSE][] [Path '/data'] String \""+valore+"\" is invalid against requested date format(s) yyyy-MM-dd";
+					break;
+				}	
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
 			}
 		}
@@ -1337,58 +1424,51 @@ public class TestOpenApi4j {
 			String json13 = "{\"data\": \"2020-07-20\"}";
 			httpEntity13.setContent(json13);
 			
-			for (int j = 0; j < 2; j++) {
-				
-				boolean openapi4j = (j==0);
-				IApiValidator apiValidator = null;
-				String tipoTest = esito ? "[header con valore ok '"+valore+"']" : "[header con valore errato '"+valore+"']";
-				if(openapi4j) {
-					apiValidator = apiValidatorOpenApi4j;
-					tipoTest = tipoTest+"[openapi4j]";
+			String tipoTest = esito ? "[header con valore ok '"+valore+"']" : "[header con valore errato '"+valore+"']";
+			tipoTest = tipoTest+"["+openAPILibrary+"]";
+			
+			try {
+				System.out.println("\t "+tipoTest+" validate ...");
+				apiValidatorOpenApi.validate(httpEntity13);
+				if(esito) {
+					System.out.println("\t "+tipoTest+" validate ok");
 				}
 				else {
-					apiValidator = apiValidatorNoOpenApi4j;
-					tipoTest = tipoTest+"[json]";
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				}
-			
-				try {
-					System.out.println("\t "+tipoTest+" validate ...");
-					apiValidator.validate(httpEntity13);
-					if(esito) {
-						System.out.println("\t "+tipoTest+" validate ok");
-					}
-					else {
-						System.out.println("\t "+tipoTest+" ERRORE!");
-						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
-					}
-				} catch(ValidatorException e) {
-					String error = e.getMessage();
-					if(error.length()>200) {
-						error = error.substring(0, 198)+" ...";
-					}
-					if(!esito) {
-						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
-					}
-					else {
-						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
-					}
-					if(openapi4j) {
-						String msgErroreAtteso = "data_documento_header: Value '"+valore+"' does not match format 'date'. (code: 1007)";
-						if(!e.getMessage().contains(msgErroreAtteso)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-						}
-					}
-					else {
-						String msgErroreAtteso = "Invalid value '"+valore+"' in http header 'data_documento_header' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
-						if(!e.getMessage().contains(msgErroreAtteso)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-						}
-					}
+			} catch(ValidatorException e) {
+				String error = e.getMessage();
+				if(error.length()>200) {
+					error = error.substring(0, 198)+" ...";
 				}
+				if(!esito) {
+					System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+				}
+				else {
+					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+				}
+				
+				String msgErroreAtteso = null;
+				switch (openAPILibrary) {
+				case json_schema:
+					msgErroreAtteso = "Invalid value '"+valore+"' in http header 'data_documento_header' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
+					break;
+				case openapi4j:
+					msgErroreAtteso = "data_documento_header: Value '"+valore+"' does not match format 'date'. (code: 1007)";
+					break;
+				case swagger_request_validator:
+					msgErroreAtteso = "[ERROR][REQUEST][POST http://petstore.swagger.io/api/documenti/datetest/2020-07-21 @header.data_documento_header] String \""+valore+"\" is invalid against requested date format(s)";
+					break;
+				}
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+				}
+
 			}
+			
 			
 			TextHttpResponseEntity httpEntityResponseTest13 = new TextHttpResponseEntity();
 			httpEntityResponseTest13.setStatus(200);
@@ -1401,56 +1481,47 @@ public class TestOpenApi4j {
 			httpEntityResponseTest13.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 			httpEntityResponseTest13.setContent(json13); 
 			
-			for (int j = 0; j < 2; j++) {
-				
-				boolean openapi4j = (j==0);
-				IApiValidator apiValidator = null;
-				String tipoTest = esito ? "[header response con valore ok '"+valore+"']" : "[header response con valore errato '"+valore+"']";
-				if(openapi4j) {
-					apiValidator = apiValidatorOpenApi4j;
-					tipoTest = tipoTest+"[openapi4j]";
+			tipoTest = esito ? "[header response con valore ok '"+valore+"']" : "[header response con valore errato '"+valore+"']";
+			tipoTest = tipoTest+"["+openAPILibrary+"]";
+			
+			try {
+				System.out.println("\t "+tipoTest+" validate ...");
+				apiValidatorOpenApi.validate(httpEntityResponseTest13);
+				if(esito) {
+					System.out.println("\t "+tipoTest+" validate ok");
 				}
 				else {
-					apiValidator = apiValidatorNoOpenApi4j;
-					tipoTest = tipoTest+"[json]";
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				}
-			
-				try {
-					System.out.println("\t "+tipoTest+" validate ...");
-					apiValidator.validate(httpEntityResponseTest13);
-					if(esito) {
-						System.out.println("\t "+tipoTest+" validate ok");
-					}
-					else {
-						System.out.println("\t "+tipoTest+" ERRORE!");
-						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
-					}
-				} catch(ValidatorException e) {
-					String error = e.getMessage();
-					if(error.length()>200) {
-						error = error.substring(0, 198)+" ...";
-					}
-					if(!esito) {
-						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
-					}
-					else {
-						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
-					}
-					if(openapi4j) {
-						String msgErroreAtteso = "data_documento_risposta_header: Value '"+valore+"' does not match format 'date'. (code: 1007)";
-						if(!e.getMessage().contains(msgErroreAtteso)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-						}
-					}
-					else {
-						String msgErroreAtteso = "Invalid value '"+valore+"' in http header 'data_documento_risposta_header' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
-						if(!e.getMessage().contains(msgErroreAtteso)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-						}
-					}
+			} catch(ValidatorException e) {
+				String error = e.getMessage();
+				if(error.length()>200) {
+					error = error.substring(0, 198)+" ...";
+				}
+				if(!esito) {
+					System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+				}
+				else {
+					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+				}
+				
+				String msgErroreAtteso = null;
+				switch (openAPILibrary) {
+				case json_schema:
+					msgErroreAtteso = "Invalid value '"+valore+"' in http header 'data_documento_risposta_header' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
+					break;
+				case openapi4j:
+					msgErroreAtteso = "data_documento_risposta_header: Value '"+valore+"' does not match format 'date'. (code: 1007)";
+					break;
+				case swagger_request_validator:
+					msgErroreAtteso = "[ERROR][RESPONSE][] String \""+valore+"\" is invalid against requested date format(s) yyyy-MM-dd";
+					break;
+				}
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
 			}
 		}
@@ -1475,56 +1546,47 @@ public class TestOpenApi4j {
 			String json13 = "{\"data\": \"2020-07-20\"}";
 			httpEntity13.setContent(json13);
 			
-			for (int j = 0; j < 2; j++) {
-				
-				boolean openapi4j = (j==0);
-				IApiValidator apiValidator = null;
-				String tipoTest = esito ? "[query parameter con valore ok '"+valore+"']" : "[query parameter con valore errato '"+valore+"']";
-				if(openapi4j) {
-					apiValidator = apiValidatorOpenApi4j;
-					tipoTest = tipoTest+"[openapi4j]";
+			String tipoTest = esito ? "[query parameter con valore ok '"+valore+"']" : "[query parameter con valore errato '"+valore+"']";
+			tipoTest = tipoTest+"["+openAPILibrary+"]";
+			
+			try {
+				System.out.println("\t "+tipoTest+" validate ...");
+				apiValidatorOpenApi.validate(httpEntity13);
+				if(esito) {
+					System.out.println("\t "+tipoTest+" validate ok");
 				}
 				else {
-					apiValidator = apiValidatorNoOpenApi4j;
-					tipoTest = tipoTest+"[json]";
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				}
-			
-				try {
-					System.out.println("\t "+tipoTest+" validate ...");
-					apiValidator.validate(httpEntity13);
-					if(esito) {
-						System.out.println("\t "+tipoTest+" validate ok");
-					}
-					else {
-						System.out.println("\t "+tipoTest+" ERRORE!");
-						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
-					}
-				} catch(ValidatorException e) {
-					String error = e.getMessage();
-					if(error.length()>200) {
-						error = error.substring(0, 198)+" ...";
-					}
-					if(!esito) {
-						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
-					}
-					else {
-						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
-					}
-					if(openapi4j) {
-						String msgErroreAtteso = "data_documento_query: Value '"+valore+"' does not match format 'date'. (code: 1007)";						
-						if(!e.getMessage().contains(msgErroreAtteso)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-						}
-					}
-					else {
-						String msgErroreAtteso = "Invalid value '"+valore+"' in query parameter 'data_documento_query' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
-						if(!e.getMessage().contains(msgErroreAtteso)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-						}
-					}
+			} catch(ValidatorException e) {
+				String error = e.getMessage();
+				if(error.length()>200) {
+					error = error.substring(0, 198)+" ...";
+				}
+				if(!esito) {
+					System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+				}
+				else {
+					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+				}
+				
+				String msgErroreAtteso = null;
+				switch (openAPILibrary) {
+				case json_schema:
+					msgErroreAtteso = "Invalid value '"+valore+"' in query parameter 'data_documento_query' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
+					break;
+				case openapi4j:
+					msgErroreAtteso = "data_documento_query: Value '"+valore+"' does not match format 'date'. (code: 1007)";
+					break;
+				case swagger_request_validator:
+					msgErroreAtteso = "[ERROR][REQUEST][POST http://petstore.swagger.io/api/documenti/datetest/2020-07-21 @query.data_documento_query] String \""+valore+"\" is invalid against requested date format(s) ";
+					break;
+				}
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
 			}
 		}
@@ -1556,56 +1618,47 @@ public class TestOpenApi4j {
 			String json13 = "{\"data\": \"2020-07-20\"}";
 			httpEntity13.setContent(json13);
 			
-			for (int j = 0; j < 2; j++) {
-				
-				boolean openapi4j = (j==0);
-				IApiValidator apiValidator = null;
-				String tipoTest = esito ? "[path parameter con valore ok '"+valore+"']" : "[path parameter con valore errato '"+valore+"']";
-				if(openapi4j) {
-					apiValidator = apiValidatorOpenApi4j;
-					tipoTest = tipoTest+"[openapi4j]";
+			String tipoTest = esito ? "[path parameter con valore ok '"+valore+"']" : "[path parameter con valore errato '"+valore+"']";
+			tipoTest = tipoTest+"["+openAPILibrary+"]";
+			
+			try {
+				System.out.println("\t "+tipoTest+" validate ...");
+				apiValidatorOpenApi.validate(httpEntity13);
+				if(esito) {
+					System.out.println("\t "+tipoTest+" validate ok");
 				}
 				else {
-					apiValidator = apiValidatorNoOpenApi4j;
-					tipoTest = tipoTest+"[json]";
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				}
-			
-				try {
-					System.out.println("\t "+tipoTest+" validate ...");
-					apiValidator.validate(httpEntity13);
-					if(esito) {
-						System.out.println("\t "+tipoTest+" validate ok");
-					}
-					else {
-						System.out.println("\t "+tipoTest+" ERRORE!");
-						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
-					}
-				} catch(ValidatorException e) {
-					String error = e.getMessage();
-					if(error.length()>200) {
-						error = error.substring(0, 198)+" ...";
-					}
-					if(!esito) {
-						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
-					}
-					else {
-						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
-					}
-					if(openapi4j) {
-						String msgErroreAtteso = "Invalid value '"+valore+"' in dynamic path 'data_documento_path' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
-						if(!e.getMessage().contains(msgErroreAtteso)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-						}
-					}
-					else {
-						String msgErroreAtteso = "Invalid value '"+valore+"' in dynamic path 'data_documento_path' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
-						if(!e.getMessage().contains(msgErroreAtteso)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-						}
-					}
+			} catch(ValidatorException e) {
+				String error = e.getMessage();
+				if(error.length()>200) {
+					error = error.substring(0, 198)+" ...";
+				}
+				if(!esito) {
+					System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+				}
+				else {
+					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+				}
+				
+				String msgErroreAtteso = null;
+				switch (openAPILibrary) {
+				case json_schema:
+					msgErroreAtteso = "Invalid value '"+valore+"' in dynamic path 'data_documento_path' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
+					break;
+				case openapi4j:
+					msgErroreAtteso = "Invalid value '"+valore+"' in dynamic path 'data_documento_path' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
+					break;
+				case swagger_request_validator:
+					msgErroreAtteso = "Invalid value '"+valore+"' in dynamic path 'data_documento_path' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
+					break;
+				}
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
 			}
 		}
@@ -1640,6 +1693,8 @@ public class TestOpenApi4j {
 		valori_test14.add("2017-07-21T173228");esiti_test14.add(false); // ko
 		valori_test14.add("2017-07-21T17:32:28 01:00");esiti_test14.add(false); // ko
 		valori_test14.add("2017-07-21T17:32:28+01");esiti_test14.add(false); // ko
+		
+		Set<String> swagger_validator_fallimenti_datetime = Set.of( "2017-07-21T17:32:28+0100", "2017-07-21T17:32:28+01" );
 
 		// ** Test sul body **
 		for (int i = 0; i < valori_test14.size(); i++) {
@@ -1660,61 +1715,55 @@ public class TestOpenApi4j {
 			String json14 = "{\"data\": \""+valore+"\"}";
 			httpEntity14.setContent(json14);
 			
-			for (int j = 0; j < 2; j++) {
-				
-				boolean openapi4j = (j==0);
-				IApiValidator apiValidator = null;
-				String tipoTest = esito ? "[body con valore ok '"+valore+"']" : "[body con valore errato '"+valore+"']";
-				if(openapi4j) {
-					apiValidator = apiValidatorOpenApi4j;
-					tipoTest = tipoTest+"[openapi4j]";
+			String tipoTest = esito ? "[body con valore ok '"+valore+"']" : "[body con valore errato '"+valore+"']";
+			tipoTest = tipoTest+"["+openAPILibrary+"]";
+			
+			try {
+				System.out.println("\t "+tipoTest+" validate ...");
+				apiValidatorOpenApi.validate(httpEntity14);
+				if(esito) {
+					System.out.println("\t "+tipoTest+" validate ok");
 				}
 				else {
-					apiValidator = apiValidatorNoOpenApi4j;
-					tipoTest = tipoTest+"[json]";
+					if(i<3 && openAPILibrary == OpenAPILibrary.json_schema) {
+						System.out.println("\t "+tipoTest+" validate, la validazione "+OpenAPILibrary.json_schema+" non rileva l'accezione!!!!");
+						continue;
+					} else if( openAPILibrary == OpenAPILibrary.swagger_request_validator && swagger_validator_fallimenti_datetime.contains(valore)) {
+						System.out.println("\t "+tipoTest+" validate, la validazione "+OpenAPILibrary.swagger_request_validator+" non rileva l'accezione!!!!");
+						continue;
+					}
+					
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				}
-			
-				try {
-					System.out.println("\t "+tipoTest+" validate ...");
-					apiValidator.validate(httpEntity14);
-					if(esito) {
-						System.out.println("\t "+tipoTest+" validate ok");
-					}
-					else {
-						if(i<3 && !openapi4j) {
-							System.out.println("\t "+tipoTest+" validate, la validazione JSON non rileva l'accezione!!!!");
-							continue;
-						}
-						
-						System.out.println("\t "+tipoTest+" ERRORE!");
-						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
-					}
-				} catch(ValidatorException e) {
-					String error = e.getMessage();
-					if(error.length()>200) {
-						error = error.substring(0, 198)+" ...";
-					}
-					if(!esito) {
-						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
-					}
-					else {
-						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
-					}
-					if(openapi4j) {
-						String msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
-						if(!e.getMessage().contains(msgErroreAtteso)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-						}
-					}
-					else {
-						String msgErroreAtteso = "1034 $.data: "+valore+" is an invalid date";
-						if(!e.getMessage().contains(msgErroreAtteso)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-						}
-					}
+			} catch(ValidatorException e) {
+				String error = e.getMessage();
+				if(error.length()>200) {
+					error = error.substring(0, 198)+" ...";
+				}
+				if(!esito) {
+					System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+				}
+				else {
+					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+				}
+				
+				String msgErroreAtteso = null;
+				switch (openAPILibrary) {
+				case json_schema:
+					msgErroreAtteso = "1034 $.data: "+valore+" is an invalid date";
+					break;
+				case openapi4j:
+					msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
+					break;
+				case swagger_request_validator:
+					msgErroreAtteso = "[ERROR][REQUEST][POST http://petstore.swagger.io/api/documenti/datetimetest/2020-07-21T17:32:28Z @body] [Path '/data'] String \""+valore+"\" is invalid against requested ";
+					break;
+				}
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
 			}
 			
@@ -1729,61 +1778,55 @@ public class TestOpenApi4j {
 			httpEntityResponseTest14.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 			httpEntityResponseTest14.setContent(json14); 
 			
-			for (int j = 0; j < 2; j++) {
-				
-				boolean openapi4j = (j==0);
-				IApiValidator apiValidator = null;
-				String tipoTest = esito ? "[body response con valore ok '"+valore+"']" : "[body response con valore errato '"+valore+"']";
-				if(openapi4j) {
-					apiValidator = apiValidatorOpenApi4j;
-					tipoTest = tipoTest+"[openapi4j]";
+			tipoTest = esito ? "[body response con valore ok '"+valore+"']" : "[body response con valore errato '"+valore+"']";
+			tipoTest = tipoTest+"["+openAPILibrary+"]";
+			
+			try {
+				System.out.println("\t "+tipoTest+" validate ...");
+				apiValidatorOpenApi.validate(httpEntityResponseTest14);
+				if(esito) {
+					System.out.println("\t "+tipoTest+" validate ok");
 				}
 				else {
-					apiValidator = apiValidatorNoOpenApi4j;
-					tipoTest = tipoTest+"[json]";
+					if(i<3 && openAPILibrary == OpenAPILibrary.json_schema) {
+						System.out.println("\t "+tipoTest+" validate, la validazione "+OpenAPILibrary.json_schema+" non rileva l'accezione!!!!");
+						continue;
+					} else if(openAPILibrary == OpenAPILibrary.swagger_request_validator && swagger_validator_fallimenti_datetime.contains(valore)) {
+						System.out.println("\t "+tipoTest+" validate, la validazione "+OpenAPILibrary.swagger_request_validator+" non rileva l'accezione!!!!");
+						continue;
+					}
+					
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				}
-			
-				try {
-					System.out.println("\t "+tipoTest+" validate ...");
-					apiValidator.validate(httpEntityResponseTest14);
-					if(esito) {
-						System.out.println("\t "+tipoTest+" validate ok");
-					}
-					else {
-						if(i<3 && !openapi4j) {
-							System.out.println("\t "+tipoTest+" validate, la validazione JSON non rileva l'accezione!!!!");
-							continue;
-						}
-						
-						System.out.println("\t "+tipoTest+" ERRORE!");
-						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
-					}
-				} catch(ValidatorException e) {
-					String error = e.getMessage();
-					if(error.length()>200) {
-						error = error.substring(0, 198)+" ...";
-					}
-					if(!esito) {
-						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
-					}
-					else {
-						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
-					}
-					if(openapi4j) {
-						String msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
-						if(!e.getMessage().contains(msgErroreAtteso)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-						}
-					}
-					else {
-						String msgErroreAtteso = "1034 $.data: "+valore+" is an invalid date";
-						if(!e.getMessage().contains(msgErroreAtteso)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-						}
-					}
+			} catch(ValidatorException e) {
+				String error = e.getMessage();
+				if(error.length()>200) {
+					error = error.substring(0, 198)+" ...";
+				}
+				if(!esito) {
+					System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+				}
+				else {
+					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+				}
+				
+				String msgErroreAtteso = null;
+				switch (openAPILibrary) {
+				case json_schema:
+					msgErroreAtteso = "1034 $.data: "+valore+" is an invalid date";
+					break;
+				case openapi4j:
+					msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
+					break;
+				case swagger_request_validator:
+					msgErroreAtteso = "[ERROR][RESPONSE][] [Path '/data'] String \""+valore+"\" is invalid against requested date format(s) [yyyy-MM-dd'T'HH:mm:ssZ, yyyy-MM-dd'T'HH:mm:ss.[0-9]{1,12}Z]";
+					break;
+				}
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
 			}
 		}
@@ -1792,6 +1835,7 @@ public class TestOpenApi4j {
 		
 		for (int i = 0; i < valori_test14.size(); i++) {
 			String valore = valori_test14.get(i);
+						
 			boolean esito = esiti_test14.get(i);
 			
 			TextHttpRequestEntity httpEntity14 = new TextHttpRequestEntity();
@@ -1808,62 +1852,57 @@ public class TestOpenApi4j {
 			String json14 = "{\"data\": \"2020-07-20T17:32:28Z\"}";
 			httpEntity14.setContent(json14);
 			
-			for (int j = 0; j < 2; j++) {
-				
-				boolean openapi4j = (j==0);
-				IApiValidator apiValidator = null;
-				String tipoTest = esito ? "[header con valore ok '"+valore+"']" : "[header con valore errato '"+valore+"']";
-				if(openapi4j) {
-					apiValidator = apiValidatorOpenApi4j;
-					tipoTest = tipoTest+"[openapi4j]";
+			String tipoTest = esito ? "[header con valore ok '"+valore+"']" : "[header con valore errato '"+valore+"']";
+			tipoTest = tipoTest+"["+openAPILibrary+"]";
+			
+			try {
+				System.out.println("\t "+tipoTest+" validate ...");
+				apiValidatorOpenApi.validate(httpEntity14);
+				if(esito) {
+					System.out.println("\t "+tipoTest+" validate ok");
 				}
 				else {
-					apiValidator = apiValidatorNoOpenApi4j;
-					tipoTest = tipoTest+"[json]";
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				}
-			
-				try {
-					System.out.println("\t "+tipoTest+" validate ...");
-					apiValidator.validate(httpEntity14);
-					if(esito) {
-						System.out.println("\t "+tipoTest+" validate ok");
+			} catch(ValidatorException e) {
+				String error = e.getMessage();
+				if(error.length()>200) {
+					error = error.substring(0, 198)+" ...";
+				}
+				if(!esito) {
+					System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+				}
+				else {
+					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+				}
+				
+				String msgErroreAtteso = null;
+				switch (openAPILibrary) {
+				case json_schema:
+					msgErroreAtteso = "Invalid value '"+valore+"' in http header 'datetime_documento_header' (expected type 'date-time'): Found dateTime '"+valore+"' has wrong format (see RFC 3339, section 5.6): ";
+					if(!valore.contains("T")) {
+						msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
 					}
 					else {
-						System.out.println("\t "+tipoTest+" ERRORE!");
-						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+						msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
 					}
-				} catch(ValidatorException e) {
-					String error = e.getMessage();
-					if(error.length()>200) {
-						error = error.substring(0, 198)+" ...";
+					break;
+				case openapi4j:
+					msgErroreAtteso = "datetime_documento_header: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
+					break;
+				case swagger_request_validator:
+					if (swagger_validator_fallimenti_datetime.contains(valore)) {
+						System.out.println("\t "+tipoTest+" validate, lo swagger-request-validator non rileva l'accezione!!!!");
+						continue;
 					}
-					if(!esito) {
-						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
-					}
-					else {
-						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
-					}
-					if(openapi4j) {
-						String msgErroreAtteso = "datetime_documento_header: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
-						if(!e.getMessage().contains(msgErroreAtteso)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-						}
-					}
-					else {
-						String msgErroreAtteso = "Invalid value '"+valore+"' in http header 'datetime_documento_header' (expected type 'date-time'): Found dateTime '"+valore+"' has wrong format (see RFC 3339, section 5.6): ";
-						if(!valore.contains("T")) {
-							msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
-						}
-						else {
-							msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
-						}
-						if(!e.getMessage().contains(msgErroreAtteso)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-						}
-					}
+					msgErroreAtteso = "[ERROR][REQUEST][POST http://petstore.swagger.io/api/documenti/datetimetest/2020-07-21T17:32:28Z @header.datetime_documento_header] String \""+valore+"\" is invalid against requested date format(s) [yyyy-MM-dd'T'HH:mm:ssZ, yyyy-MM-dd'T'HH:mm:ss.[0-9]{1,12}Z]";
+					break;
+				}
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
 			}
 			
@@ -1878,62 +1917,57 @@ public class TestOpenApi4j {
 			httpEntityResponseTest14.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 			httpEntityResponseTest14.setContent(json14); 
 			
-			for (int j = 0; j < 2; j++) {
-				
-				boolean openapi4j = (j==0);
-				IApiValidator apiValidator = null;
-				String tipoTest = esito ? "[header response con valore ok '"+valore+"']" : "[header response con valore errato '"+valore+"']";
-				if(openapi4j) {
-					apiValidator = apiValidatorOpenApi4j;
-					tipoTest = tipoTest+"[openapi4j]";
+			tipoTest = esito ? "[header response con valore ok '"+valore+"']" : "[header response con valore errato '"+valore+"']";
+			tipoTest = tipoTest+"["+openAPILibrary+"]";
+			
+			try {
+				System.out.println("\t "+tipoTest+" validate ...");
+				apiValidatorOpenApi.validate(httpEntityResponseTest14);
+				if(esito) {
+					System.out.println("\t "+tipoTest+" validate ok");
 				}
 				else {
-					apiValidator = apiValidatorNoOpenApi4j;
-					tipoTest = tipoTest+"[json]";
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				}
-			
-				try {
-					System.out.println("\t "+tipoTest+" validate ...");
-					apiValidator.validate(httpEntityResponseTest14);
-					if(esito) {
-						System.out.println("\t "+tipoTest+" validate ok");
+			} catch(ValidatorException e) {
+				String error = e.getMessage();
+				if(error.length()>200) {
+					error = error.substring(0, 198)+" ...";
+				}
+				if(!esito) {
+					System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+				}
+				else {
+					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+				}
+				
+				String msgErroreAtteso = null;
+				switch (openAPILibrary) {
+				case json_schema:
+					msgErroreAtteso = "Invalid value '"+valore+"' in http header 'datetime_documento_risposta_header' (expected type 'date-time'): Found dateTime '"+valore+"' has wrong format (see RFC 3339, section 5.6): ";
+					if(!valore.contains("T")) {
+						msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
 					}
 					else {
-						System.out.println("\t "+tipoTest+" ERRORE!");
-						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+						msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
 					}
-				} catch(ValidatorException e) {
-					String error = e.getMessage();
-					if(error.length()>200) {
-						error = error.substring(0, 198)+" ...";
+					break;
+				case openapi4j:
+					msgErroreAtteso = "datetime_documento_risposta_header: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
+					break;
+				case swagger_request_validator:
+					if (swagger_validator_fallimenti_datetime.contains(valore)) {
+						System.out.println("\t "+tipoTest+" validate, lo swagger-request-validator non rileva l'accezione!!!!");
+						continue;
 					}
-					if(!esito) {
-						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
-					}
-					else {
-						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
-					}
-					if(openapi4j) {
-						String msgErroreAtteso = "datetime_documento_risposta_header: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
-						if(!e.getMessage().contains(msgErroreAtteso)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-						}
-					}
-					else {
-						String msgErroreAtteso = "Invalid value '"+valore+"' in http header 'datetime_documento_risposta_header' (expected type 'date-time'): Found dateTime '"+valore+"' has wrong format (see RFC 3339, section 5.6): ";
-						if(!valore.contains("T")) {
-							msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
-						}
-						else {
-							msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
-						}
-						if(!e.getMessage().contains(msgErroreAtteso)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-						}
-					}
+					msgErroreAtteso = "[ERROR][RESPONSE][] String \""+valore+"\" is invalid against requested date format(s) [yyyy-MM-dd'T'HH:mm:ssZ, yyyy-MM-dd'T'HH:mm:ss.[0-9]{1,12}Z]";
+					break;
+				}
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
 			}
 		}
@@ -1958,62 +1992,57 @@ public class TestOpenApi4j {
 			String json14 = "{\"data\": \"2020-07-20T17:32:28Z\"}";
 			httpEntity14.setContent(json14);
 			
-			for (int j = 0; j < 2; j++) {
-				
-				boolean openapi4j = (j==0);
-				IApiValidator apiValidator = null;
-				String tipoTest = esito ? "[query parameter con valore ok '"+valore+"']" : "[query parameter con valore errato '"+valore+"']";
-				if(openapi4j) {
-					apiValidator = apiValidatorOpenApi4j;
-					tipoTest = tipoTest+"[openapi4j]";
+			String tipoTest = esito ? "[query parameter con valore ok '"+valore+"']" : "[query parameter con valore errato '"+valore+"']";
+			tipoTest = tipoTest+"["+openAPILibrary+"]";
+			
+			try {
+				System.out.println("\t "+tipoTest+" validate ...");
+				apiValidatorOpenApi.validate(httpEntity14);
+				if(esito) {
+					System.out.println("\t "+tipoTest+" validate ok");
 				}
 				else {
-					apiValidator = apiValidatorNoOpenApi4j;
-					tipoTest = tipoTest+"[json]";
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				}
-			
-				try {
-					System.out.println("\t "+tipoTest+" validate ...");
-					apiValidator.validate(httpEntity14);
-					if(esito) {
-						System.out.println("\t "+tipoTest+" validate ok");
+			} catch(ValidatorException e) {
+				String error = e.getMessage();
+				if(error.length()>200) {
+					error = error.substring(0, 198)+" ...";
+				}
+				if(!esito) {
+					System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+				}
+				else {
+					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+				}
+				
+				String msgErroreAtteso = null;
+				switch (openAPILibrary) {
+				case json_schema:
+					msgErroreAtteso = "Invalid value '"+valore+"' in query parameter 'datetime_documento_query' (expected type 'date-time'): Found dateTime '"+valore+"' has wrong format (see RFC 3339, section 5.6): ";
+					if(!valore.contains("T")) {
+						msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
 					}
 					else {
-						System.out.println("\t "+tipoTest+" ERRORE!");
-						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+						msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
 					}
-				} catch(ValidatorException e) {
-					String error = e.getMessage();
-					if(error.length()>200) {
-						error = error.substring(0, 198)+" ...";
+					break;
+				case openapi4j:
+					msgErroreAtteso = "datetime_documento_query: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
+					break;
+				case swagger_request_validator:
+					if (swagger_validator_fallimenti_datetime.contains(valore)) {
+						System.out.println("\t "+tipoTest+" validate, lo swagger-request-validator non rileva l'accezione!!!!");
+						continue;
 					}
-					if(!esito) {
-						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
-					}
-					else {
-						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
-					}
-					if(openapi4j) {
-						String msgErroreAtteso = "datetime_documento_query: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
-						if(!e.getMessage().contains(msgErroreAtteso)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-						}
-					}
-					else {
-						String msgErroreAtteso = "Invalid value '"+valore+"' in query parameter 'datetime_documento_query' (expected type 'date-time'): Found dateTime '"+valore+"' has wrong format (see RFC 3339, section 5.6): ";
-						if(!valore.contains("T")) {
-							msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
-						}
-						else {
-							msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
-						}
-						if(!e.getMessage().contains(msgErroreAtteso)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-						}
-					}
+					msgErroreAtteso = "[ERROR][REQUEST][POST http://petstore.swagger.io/api/documenti/datetimetest/2020-07-21T17:32:28Z @query.datetime_documento_query] String \""+valore+"\" is invalid against r";
+					break;
+				}
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
 			}
 		}
@@ -2045,73 +2074,71 @@ public class TestOpenApi4j {
 			String json14 = "{\"data\": \"2020-07-20T17:32:28Z\"}";
 			httpEntity14.setContent(json14);
 			
-			for (int j = 0; j < 2; j++) {
-				
-				boolean openapi4j = (j==0);
-				IApiValidator apiValidator = null;
-				String tipoTest = esito ? "[path parameter con valore ok '"+valore+"']" : "[path parameter con valore errato '"+valore+"']";
-				if(openapi4j) {
-					apiValidator = apiValidatorOpenApi4j;
-					tipoTest = tipoTest+"[openapi4j]";
+			String tipoTest = esito ? "[path parameter con valore ok '"+valore+"']" : "[path parameter con valore errato '"+valore+"']";
+			tipoTest = tipoTest+"["+openAPILibrary+"]";
+		
+			try {
+				System.out.println("\t "+tipoTest+" validate ...");
+				apiValidatorOpenApi.validate(httpEntity14);
+				if(esito) {
+					System.out.println("\t "+tipoTest+" validate ok");
 				}
 				else {
-					apiValidator = apiValidatorNoOpenApi4j;
-					tipoTest = tipoTest+"[json]";
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				}
-			
-				try {
-					System.out.println("\t "+tipoTest+" validate ...");
-					apiValidator.validate(httpEntity14);
-					if(esito) {
-						System.out.println("\t "+tipoTest+" validate ok");
+			} catch(ValidatorException e) {
+				String error = e.getMessage();
+				if(error.length()>200) {
+					error = error.substring(0, 198)+" ...";
+				}
+				if(!esito) {
+					System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+				}
+				else {
+					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+				}
+				
+				String msgErroreAtteso = null;
+				switch (openAPILibrary) {
+				case json_schema:
+					msgErroreAtteso = "Invalid value '"+valore+"' in dynamic path 'datetime_documento_path' (expected type 'date-time'): Found dateTime '"+valore+"' has wrong format (see RFC 3339, section 5.6): ";
+					if(!valore.contains("T")) {
+						msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
 					}
 					else {
-						System.out.println("\t "+tipoTest+" ERRORE!");
-						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+						msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
 					}
-				} catch(ValidatorException e) {
-					String error = e.getMessage();
-					if(error.length()>200) {
-						error = error.substring(0, 198)+" ...";
-					}
-					if(!esito) {
-						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+					break;
+				case openapi4j:
+					msgErroreAtteso = "Invalid value '"+valore+"' in dynamic path 'datetime_documento_path' (expected type 'date-time'): Found dateTime '"+valore+"' has wrong format (see RFC 3339, section 5.6): ";
+					if(!valore.contains("T")) {
+						msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
 					}
 					else {
-						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+						msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
 					}
-					if(openapi4j) {
-						String msgErroreAtteso = "Invalid value '"+valore+"' in dynamic path 'datetime_documento_path' (expected type 'date-time'): Found dateTime '"+valore+"' has wrong format (see RFC 3339, section 5.6): ";
-						if(!valore.contains("T")) {
-							msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
-						}
-						else {
-							msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
-						}
-						if(!e.getMessage().contains(msgErroreAtteso)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-						}
+					break;
+				case swagger_request_validator:
+					msgErroreAtteso = "Invalid value '"+valore+"' in dynamic path 'datetime_documento_path' (expected type 'date-time'): Found dateTime '"+valore+"' has wrong format (see RFC 3339, section 5.6): ";
+					if(!valore.contains("T")) {
+						msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
 					}
 					else {
-						String msgErroreAtteso = "Invalid value '"+valore+"' in dynamic path 'datetime_documento_path' (expected type 'date-time'): Found dateTime '"+valore+"' has wrong format (see RFC 3339, section 5.6): ";
-						if(!valore.contains("T")) {
-							msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
-						}
-						else {
-							msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
-						}
-						if(!e.getMessage().contains(msgErroreAtteso)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-						}
+						msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
 					}
+					break;
+				}
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
 			}
 		}
 		
 		System.out.println("Test #14 completato\n\n");
+		
 		
 		
 		
@@ -2191,82 +2218,85 @@ public class TestOpenApi4j {
 			httpEntityResponseTest15.setContentType(ct);
 			httpEntityResponseTest15.setContent(msg);
 			
-			for (int j = 0; j < 2; j++) {
-				
-				boolean openapi4j = (j==0);
-				IApiValidator apiValidator = null;
-				String msgRisposta = "RispostaOk";
-				if(msg==null) {
-					 msgRisposta = "EmptyResponse";
-				}
-				else if(json15RispostaOK_fault.equals(msg)) {
-					 msgRisposta = "ProblemDetail";
-				}
-				else if(json15RispostaOK_completamente_diversa.equals(msg)) {
-					 msgRisposta = "RispostaCompletamenteDiversa";
-				}
-				String tipoTest = "AttesoEsitoOk:"+esito+" Risposta:"+msgRisposta+" ContentType:"+ct+" ReturnCode:"+code;
-				if(openapi4j) {
-					apiValidator = apiValidatorOpenApi4j;
-					tipoTest = tipoTest+"[openapi4j]";
+			String msgRisposta = "RispostaOk";
+			if(msg==null) {
+				 msgRisposta = "EmptyResponse";
+			}
+			else if(json15RispostaOK_fault.equals(msg)) {
+				 msgRisposta = "ProblemDetail";
+			}
+			else if(json15RispostaOK_completamente_diversa.equals(msg)) {
+				 msgRisposta = "RispostaCompletamenteDiversa";
+			}
+			String tipoTest = "AttesoEsitoOk:"+esito+" Risposta:"+msgRisposta+" ContentType:"+ct+" ReturnCode:"+code;
+			tipoTest = tipoTest+"["+openAPILibrary+"]";
+		
+			try {
+				System.out.println("\t "+tipoTest+" validate ...");
+				apiValidatorOpenApi.validate(httpEntityResponseTest15);
+				if(esito) {
+					System.out.println("\t "+tipoTest+" validate ok");
 				}
 				else {
-					apiValidator = apiValidatorNoOpenApi4j;
-					tipoTest = tipoTest+"[json]";
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				}
-			
-				try {
-					System.out.println("\t "+tipoTest+" validate ...");
-					apiValidator.validate(httpEntityResponseTest15);
-					if(esito) {
-						System.out.println("\t "+tipoTest+" validate ok");
+			} catch(ValidatorException e) {
+				String error = e.getMessage();
+				if(error.length()>200) {
+					error = error.substring(0, 198)+" ...";
+				}
+				if(!esito) {
+					System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+				}
+				else {
+					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+				}
+				
+				String msgErroreAtteso = null;
+				String msgErroreAtteso2 = null;
+				switch (openAPILibrary) {
+				case json_schema:
+					if(ct==null) {
+						msgErroreAtteso = "Required body undefined";
 					}
 					else {
+						msgErroreAtteso = "Content-Type '"+ct+"' (http response status '"+code+"') unsupported";
+						msgErroreAtteso2 = "1028 $.esito: is missing but it is required";
+						if(code.intValue() != 200) {
+							msgErroreAtteso2 = "1028 $.type: is missing but it is required";
+						}
+					}
+					break;
+				case openapi4j:
+					msgErroreAtteso = "Content type '"+ct+"' is not allowed for body content. (code: 203)";
+					msgErroreAtteso2 = "body: Field 'esito' is required. (code: 1026)";
+					if(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807.equals(ct) && code.intValue() != 200) {
+						msgErroreAtteso2 = "body: Field 'type' is required. (code: 1026)";
+					}
+					break;
+				case swagger_request_validator:
+					msgErroreAtteso = "[ERROR][RESPONSE][] Response Content-Type header '"+ct+"' does not match any allowed types. Must be one of: [application/";
+					msgErroreAtteso2 = "[ERROR][RESPONSE][] Object has missing required properties ([\"esito\"])";
+					if (ct==null) {
+						msgErroreAtteso="Required Content-Type is missing";
+					}
+					if(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807.equals(ct) && code.intValue() != 200) {
+						msgErroreAtteso2 = "[ERROR][RESPONSE][] Object has missing required properties ([\"type\"])"; 
+					}
+					break;
+				}
+				if(msgErroreAtteso2==null) {
+					if(!e.getMessage().contains(msgErroreAtteso)) {
 						System.out.println("\t "+tipoTest+" ERRORE!");
-						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+						throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 					}
-				} catch(ValidatorException e) {
-					String error = e.getMessage();
-					if(error.length()>200) {
-						error = error.substring(0, 198)+" ...";
-					}
-					if(!esito) {
-						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
-					}
-					else {
-						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
-					}
-					if(openapi4j) {
-						String msgErroreAtteso = "Content type '"+ct+"' is not allowed for body content. (code: 203)";
-						String msgErroreAtteso2 = "body: Field 'esito' is required. (code: 1026)";
-						if(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807.equals(ct) && code.intValue() != 200) {
-							msgErroreAtteso2 = "body: Field 'type' is required. (code: 1026)";
-						}
-						if(!e.getMessage().contains(msgErroreAtteso) && !e.getMessage().contains(msgErroreAtteso2)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"' o '"+msgErroreAtteso2+"'");
-						}
-					}
-					else {
-						if(ct==null) {
-							String msgErroreAtteso = "Required body undefined";
-							if(!e.getMessage().contains(msgErroreAtteso)) {
-								System.out.println("\t "+tipoTest+" ERRORE!");
-								throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-							}
-						}
-						else {
-							String msgErroreAtteso = "Content-Type '"+ct+"' (http response status '"+code+"') unsupported";
-							String msgErroreAtteso2 = "1028 $.esito: is missing but it is required";
-							if(code.intValue() != 200) {
-								msgErroreAtteso2 = "1028 $.type: is missing but it is required";
-							}
-							if(!e.getMessage().contains(msgErroreAtteso) && !e.getMessage().contains(msgErroreAtteso2)) {
-								System.out.println("\t "+tipoTest+" ERRORE!");
-								throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"' o '"+msgErroreAtteso2+"'");
-							}
-						}
+				}
+				else {
+					if(!e.getMessage().contains(msgErroreAtteso) && !e.getMessage().contains(msgErroreAtteso2)) {
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"' o '"+msgErroreAtteso2+"'");
 					}
 				}
 			}
@@ -2313,43 +2343,31 @@ public class TestOpenApi4j {
 			httpEntityResponseTest16.setContentType(ct);
 			httpEntityResponseTest16.setContent(msg);
 			
-			for (int j = 0; j < 2; j++) {
-				
-				boolean openapi4j = (j==0);
-				IApiValidator apiValidator = null;
-				String tipoTest = "Url '"+urltest+"'";
-				if(openapi4j) {
-					apiValidator = apiValidatorOpenApi4j;
-					tipoTest = tipoTest+"[openapi4j]";
+			String tipoTest = "Url '"+urltest+"'";
+			tipoTest = tipoTest+"["+openAPILibrary+"]";
+			
+			try {
+				System.out.println("\t "+tipoTest+" validate ...");
+				apiValidatorOpenApi.validate(httpEntityResponseTest16);
+				if(esito) {
+					System.out.println("\t "+tipoTest+" validate ok");
 				}
 				else {
-					apiValidator = apiValidatorNoOpenApi4j;
-					tipoTest = tipoTest+"[json]";
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				}
-			
-				try {
-					System.out.println("\t "+tipoTest+" validate ...");
-					apiValidator.validate(httpEntityResponseTest16);
-					if(esito) {
-						System.out.println("\t "+tipoTest+" validate ok");
-					}
-					else {
-						System.out.println("\t "+tipoTest+" ERRORE!");
-						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
-					}
-				} catch(ValidatorException e) {
-					String error = e.getMessage();
-					if(error.length()>200) {
-						error = error.substring(0, 198)+" ...";
-					}
-					if(!esito) {
-						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
-						throw new Exception(""+tipoTest+" rilevato errore di validazione atteso: "+e.getMessage(),e); // gestire se serve
-					}
-					else {
-						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
-					}
+			} catch(ValidatorException e) {
+				String error = e.getMessage();
+				if(error.length()>200) {
+					error = error.substring(0, 198)+" ...";
+				}
+				if(!esito) {
+					System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+					throw new Exception(""+tipoTest+" rilevato errore di validazione atteso: "+e.getMessage(),e); // gestire se serve
+				}
+				else {
+					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
 				}
 			}
 			
@@ -2448,88 +2466,88 @@ public class TestOpenApi4j {
 			httpEntityResponseTest17.setContentType(ct);
 			httpEntityResponseTest17.setContent(msg);
 			
-			for (int j = 0; j < 2; j++) {
-				
-				boolean openapi4j = (j==0);
-				IApiValidator apiValidator = null;
-				String msgRisposta = "None";
-				if(json17_fault_type_title.equals(msg)) {
-					 msgRisposta = "Type";
-				}
-				else if(json17_fault_title.equals(msg)) {
-					 msgRisposta = "Title";
-				}
-				else if(json17_fault_status.equals(msg)) {
-					 msgRisposta = "Status";
-				}
-				else if(json17_fault_type_title.equals(msg)) {
-					 msgRisposta = "Type e Title";
-				}
-				else if(json17_fault_type_status.equals(msg)) {
-					 msgRisposta = "Type e Status";
-				}
-				else if(json17_fault_title_status.equals(msg)) {
-					 msgRisposta = "Title e Status";
-				}
-				else if(json17_fault_type_title_status.equals(msg)) {
-					 msgRisposta = "Type e Title e Status";
-				}
-				String tipoTest = "Code:"+code+" "+msgRisposta;
-				if(openapi4j) {
-					apiValidator = apiValidatorOpenApi4j;
-					tipoTest = tipoTest+"[openapi4j]";
+			String msgRisposta = "None";
+			if(json17_fault_type_title.equals(msg)) {
+				 msgRisposta = "Type";
+			}
+			else if(json17_fault_title.equals(msg)) {
+				 msgRisposta = "Title";
+			}
+			else if(json17_fault_status.equals(msg)) {
+				 msgRisposta = "Status";
+			}
+			else if(json17_fault_type_title.equals(msg)) {
+				 msgRisposta = "Type e Title";
+			}
+			else if(json17_fault_type_status.equals(msg)) {
+				 msgRisposta = "Type e Status";
+			}
+			else if(json17_fault_title_status.equals(msg)) {
+				 msgRisposta = "Title e Status";
+			}
+			else if(json17_fault_type_title_status.equals(msg)) {
+				 msgRisposta = "Type e Title e Status";
+			}
+			String tipoTest = "Code:"+code+" "+msgRisposta;
+			tipoTest = tipoTest+"["+openAPILibrary+"]";
+		
+			try {
+				System.out.println("\t "+tipoTest+" validate ...");
+				apiValidatorOpenApi.validate(httpEntityResponseTest17);
+				if(esito) {
+					System.out.println("\t "+tipoTest+" validate ok");
 				}
 				else {
-					apiValidator = apiValidatorNoOpenApi4j;
-					tipoTest = tipoTest+"[json]";
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				}
-			
-				try {
-					System.out.println("\t "+tipoTest+" validate ...");
-					apiValidator.validate(httpEntityResponseTest17);
-					if(esito) {
-						System.out.println("\t "+tipoTest+" validate ok");
-					}
-					else {
-						System.out.println("\t "+tipoTest+" ERRORE!");
-						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
-					}
-				} catch(ValidatorException e) {
-					String error = e.getMessage();
-					if(error.length()>500) {
-						error = error.substring(0, 498)+" ...";
-					}
-					if(!esito) {
-						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
-					}
-					else {
-						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
-					}
-					if(openapi4j) {
-						String msgErroreAtteso = "body: Field 'type' is required. (code: 1026)";
-						String msgErroreAtteso2 = "body: Field 'title' is required. (code: 1026)";
-						String msgErroreAtteso3 = "body: Field 'status' is required. (code: 1026)";
-						if(!e.getMessage().contains(msgErroreAtteso) || !e.getMessage().contains(msgErroreAtteso2) || !e.getMessage().contains(msgErroreAtteso3)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"' o '"+msgErroreAtteso2+"'");
-						}
-					}
-					else {
-						String msgErroreAtteso = "1028 $.type: is missing but it is required";
-						String msgErroreAtteso2 = "1028 $.title: is missing but it is required";
-						String msgErroreAtteso3 = "1028 $.status: is missing but it is required";
-						if(!e.getMessage().contains(msgErroreAtteso) || !e.getMessage().contains(msgErroreAtteso2) || !e.getMessage().contains(msgErroreAtteso3)) {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"' o '"+msgErroreAtteso2+"'");
-						}
-					}
+			} catch(ValidatorException e) {
+				String error = e.getMessage();
+				if(error.length()>500) {
+					error = error.substring(0, 498)+" ...";
 				}
+				if(!esito) {
+					System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+				}
+				else {
+					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+				}
+				
+				String msgErroreAtteso = null;
+				String msgErroreAtteso2 = null;
+				String msgErroreAtteso3 = null;
+				switch (openAPILibrary) {
+				case json_schema:
+					msgErroreAtteso = "1028 $.type: is missing but it is required";
+					msgErroreAtteso2 = "1028 $.title: is missing but it is required";
+					msgErroreAtteso3 = "1028 $.status: is missing but it is required";
+					break;
+				case openapi4j:
+					msgErroreAtteso = "body: Field 'type' is required. (code: 1026)";
+					msgErroreAtteso2 = "body: Field 'title' is required. (code: 1026)";
+					msgErroreAtteso3 = "body: Field 'status' is required. (code: 1026)";
+					break;
+				case swagger_request_validator:
+					msgErroreAtteso = "* /allOf/0/anyOf/0: Object has missing required properties ([\"type\"])";
+					msgErroreAtteso2 = "* /allOf/0/anyOf/1: Object has missing required properties ([\"title\"])";
+					msgErroreAtteso3 = "* /allOf/0/anyOf/2: Object has missing required properties ([\"status\"])";
+					break;
+				}
+				if(!e.getMessage().contains(msgErroreAtteso) || !e.getMessage().contains(msgErroreAtteso2) || !e.getMessage().contains(msgErroreAtteso3)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"' o '"+msgErroreAtteso2+"' o '"+msgErroreAtteso3+"'");
+				}
+				
 			}
 			
 		}
 		
 		System.out.println("Test #17 completato\n\n");
+		
+		
+		
+		
 		
 		
 		
@@ -2556,114 +2574,114 @@ public class TestOpenApi4j {
 		for (int i = 0; i < valori_test18.size(); i++) {
 			Integer code = valori_test18.get(i);
 		
-			for (int j = 0; j < 2; j++) {
+			String tipoTest = "Code:"+code+" ";
+			tipoTest = tipoTest+"["+openAPILibrary+"]";
+						
+			TextHttpRequestEntity httpEntityGET_test18 = new TextHttpRequestEntity();
+			httpEntityGET_test18.setMethod(HttpRequestMethod.GET);
+			httpEntityGET_test18.setUrl(testUrl18);	
+			
+			try {
+				System.out.println("\t "+tipoTest+" validate request ...");
+				apiValidatorOpenApi.validate(httpEntityGET_test18);	
+				System.out.println("\t "+tipoTest+" validate request ok");
+			} catch(ValidatorException e) {
+				String error = e.getMessage();
+				if(error.length()>500) {
+					error = error.substring(0, 498)+" ...";
+				}
+				System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+				throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+			}
+			
+			String oldTipoTest = tipoTest;
+			
+			for (String ct : contentTypes_test18) {
 				
-				boolean openapi4j = (j==0);
-				IApiValidator apiValidator = null;
-				String tipoTest = "Code:"+code+" ";
-				if(openapi4j) {
-					apiValidator = apiValidatorOpenApi4j;
-					tipoTest = tipoTest+"[openapi4j]";
+				tipoTest = oldTipoTest + " Content-Type:"+ct;
+				
+				HttpBaseResponseEntity<?> httpEntityResponse_test18 = null;
+				if(ct.contains("json") || ct.contains("plain") || ct.contains("Uncorrect")) {
+					httpEntityResponse_test18 = new TextHttpResponseEntity();
 				}
 				else {
-					apiValidator = apiValidatorNoOpenApi4j;
-					tipoTest = tipoTest+"[json]";
+					httpEntityResponse_test18 = new BinaryHttpResponseEntity();
 				}
-						
-				TextHttpRequestEntity httpEntityGET_test18 = new TextHttpRequestEntity();
-				httpEntityGET_test18.setMethod(HttpRequestMethod.GET);
-				httpEntityGET_test18.setUrl(testUrl18);	
+				
+				httpEntityResponse_test18.setStatus(code);
+				httpEntityResponse_test18.setMethod(HttpRequestMethod.GET);
+				httpEntityResponse_test18.setUrl(testUrl18);	
+				Map<String, List<String>> parametersTrasportoRisposta_test18 = new HashMap<>();
+				TransportUtils.setHeader(parametersTrasportoRisposta_test18,"api_key", "aaa");
+				TransportUtils.setHeader(parametersTrasportoRisposta_test18,HttpConstants.CONTENT_TYPE, ct);
+				httpEntityResponse_test18.setHeaders(parametersTrasportoRisposta_test18);
+				httpEntityResponse_test18.setContentType(ct);
+				
+				if(ct.contains("json") || ct.contains("plain")) {
+					if(ct.contains("Uncorrect")) {
+						((TextHttpResponseEntity)httpEntityResponse_test18).setContent("{ a }");
+						parametersTrasportoRisposta_test18.remove(HttpConstants.CONTENT_TYPE);
+						TransportUtils.setHeader(parametersTrasportoRisposta_test18,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+						httpEntityResponse_test18.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+					}
+					else if(ct.contains("plain")) {
+						((TextHttpResponseEntity)httpEntityResponse_test18).setContent("Hello World!");
+					}
+					else {
+						((TextHttpResponseEntity)httpEntityResponse_test18).setContent(json); // volutamente metto un json che comunque dovrebbe trattare come binario!		
+					}
+				}
+				else {
+					((BinaryHttpResponseEntity)httpEntityResponse_test18).setContent(pdf);
+				}
 				
 				try {
-					System.out.println("\t "+tipoTest+" validate request ...");
-					apiValidator.validate(httpEntityGET_test18);	
-					System.out.println("\t "+tipoTest+" validate request ok");
+					System.out.println("\t "+tipoTest+" validate response ...");
+					apiValidatorOpenApi.validate(httpEntityResponse_test18);	
+					System.out.println("\t "+tipoTest+" validate response ok");
+					
+					if((openAPILibrary != OpenAPILibrary.json_schema) && (ct.contains("Uncorrect") || !ct.contains("json"))) {
+						throw new Exception("Attesa eccezione");
+					}
+					
 				} catch(ValidatorException e) {
 					String error = e.getMessage();
 					if(error.length()>500) {
 						error = error.substring(0, 498)+" ...";
 					}
-					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
-				}
-				
-				String oldTipoTest = tipoTest;
-				
-				for (String ct : contentTypes_test18) {
-					
-					tipoTest = oldTipoTest + " Content-Type:"+ct;
-					
-					HttpBaseResponseEntity<?> httpEntityResponse_test18 = null;
-					if(ct.contains("json") || ct.contains("plain") || ct.contains("Uncorrect")) {
-						httpEntityResponse_test18 = new TextHttpResponseEntity();
+					String erroreAtteso = null;
+					if(ct.contains("Uncorrect")) {
+						erroreAtteso = "Unexpected character ('a' (code 97))";
 					}
-					else {
-						httpEntityResponse_test18 = new BinaryHttpResponseEntity();
-					}
-					
-					httpEntityResponse_test18.setStatus(code);
-					httpEntityResponse_test18.setMethod(HttpRequestMethod.GET);
-					httpEntityResponse_test18.setUrl(testUrl18);	
-					Map<String, List<String>> parametersTrasportoRisposta_test18 = new HashMap<>();
-					TransportUtils.setHeader(parametersTrasportoRisposta_test18,"api_key", "aaa");
-					TransportUtils.setHeader(parametersTrasportoRisposta_test18,HttpConstants.CONTENT_TYPE, ct);
-					httpEntityResponse_test18.setHeaders(parametersTrasportoRisposta_test18);
-					httpEntityResponse_test18.setContentType(ct);
-					
-					if(ct.contains("json") || ct.contains("plain")) {
-						if(ct.contains("Uncorrect")) {
-							((TextHttpResponseEntity)httpEntityResponse_test18).setContent("{ a }");
-							parametersTrasportoRisposta_test18.remove(HttpConstants.CONTENT_TYPE);
-							TransportUtils.setHeader(parametersTrasportoRisposta_test18,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
-							httpEntityResponse_test18.setContentType(HttpConstants.CONTENT_TYPE_JSON);
-						}
-						else if(ct.contains("plain")) {
-							((TextHttpResponseEntity)httpEntityResponse_test18).setContent("Hello World!");
-						}
-						else {
-							((TextHttpResponseEntity)httpEntityResponse_test18).setContent(json); // volutamente metto un json che comunque dovrebbe trattare come binario!		
-						}
-					}
-					else {
-						((BinaryHttpResponseEntity)httpEntityResponse_test18).setContent(pdf);
-					}
-					
-					try {
-						System.out.println("\t "+tipoTest+" validate response ...");
-						apiValidator.validate(httpEntityResponse_test18);	
-						System.out.println("\t "+tipoTest+" validate response ok");
+					else if(!ct.contains("json")) {
 						
-						if(openapi4j && (ct.contains("Uncorrect") || !ct.contains("json"))) {
-							throw new Exception("Attesa eccezione");
-						}
-						
-					} catch(ValidatorException e) {
-						String error = e.getMessage();
-						if(error.length()>500) {
-							error = error.substring(0, 498)+" ...";
-						}
-						String erroreAtteso = null;
-						if(ct.contains("Uncorrect")) {
-							erroreAtteso = "Unexpected character ('a' (code 97))";
-						}
-						else if(!ct.contains("json")) {
+						erroreAtteso = null;
+						switch (openAPILibrary) {
+						case json_schema:
+							// non non si passa qua
+							break;
+						case openapi4j:
 							erroreAtteso = "body: Type expected 'object', found 'string'. (code: 1027)";
+							break;
+						case swagger_request_validator:
+							erroreAtteso = "[ERROR] Unable to parse JSON";
+							break;
 						}
-						if(erroreAtteso!=null) {
-							if(!e.getMessage().contains(erroreAtteso)) {
-								System.out.println("\t "+tipoTest+" rilevato errore di validazione diverso da quello atteso ("+erroreAtteso+") : "+error);
-								throw new Exception(""+tipoTest+" rilevato errore di validazione diverso da quello atteso ("+erroreAtteso+") : "+e.getMessage(),e);
-							}
-							else {
-								System.out.println("\t "+tipoTest+" rilevato errore di validazione atteso: "+error);
-							}
+
+					}
+					if(erroreAtteso!=null) {
+						if(!e.getMessage().contains(erroreAtteso)) {
+							System.out.println("\t "+tipoTest+" rilevato errore di validazione diverso da quello atteso ("+erroreAtteso+") : "+error);
+							throw new Exception(""+tipoTest+" rilevato errore di validazione diverso da quello atteso ("+erroreAtteso+") : "+e.getMessage(),e);
 						}
 						else {
-							System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-							throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+							System.out.println("\t "+tipoTest+" rilevato errore di validazione atteso: "+error);
 						}
 					}
-					
+					else {
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					}
 				}
 			}
 		}
@@ -2701,7 +2719,7 @@ public class TestOpenApi4j {
 		
 		int TEST_NUMERO = 1;
 		// TODO: impostare a 2 per verificare ISSUE 'OP-1136' e risolvere problematica enum non quotata con i valori previsti in yaml1
-		// TEST_NUMERO = 2;
+		//TEST_NUMERO = 2;
 		
 		for (int k = 0; k < TEST_NUMERO; k++) {
 			
@@ -2753,151 +2771,183 @@ public class TestOpenApi4j {
 				httpEntityResponse_test19.setContent(json19);
 	
 				
-				for (int j = 0; j < 2; j++) {
-					
-					boolean openapi4j = (j==0);
-					IApiValidator apiValidator = null;
-					String tipoTest = testYaml+ (esito ? "[stato con valore (type:"+valore.getClass().getName()+") '"+valore+"']" : "[stato con valore errato (type:"+valore.getClass().getName()+") '"+valore+"']");
-					if(openapi4j) {
-						apiValidator = apiValidatorOpenApi4j;
-						tipoTest = tipoTest+"[openapi4j]";
+				String tipoTest = testYaml+ (esito ? "[stato con valore (type:"+valore.getClass().getName()+") '"+valore+"']" : "[stato con valore errato (type:"+valore.getClass().getName()+") '"+valore+"']");
+				tipoTest = tipoTest+"["+openAPILibrary+"]";
+								
+				try {
+					System.out.println("\t "+tipoTest+" validate ...");
+					apiValidatorOpenApi.validate(httpEntity19);
+					if(esito) {
+						System.out.println("\t "+tipoTest+" validate ok");
 					}
 					else {
-						apiValidator = apiValidatorNoOpenApi4j;
-						tipoTest = tipoTest+"[json]";
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					}
-				
-					try {
-						System.out.println("\t "+tipoTest+" validate ...");
-						apiValidator.validate(httpEntity19);
-						if(esito) {
-							System.out.println("\t "+tipoTest+" validate ok");
-						}
-						else {
-							System.out.println("\t "+tipoTest+" ERRORE!");
-							throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
-						}
-					} catch(ValidatorException e) {
-						String error = e.getMessage();
-						if(error.length()>200) {
-							error = error.substring(0, 198)+" ...";
-						}
-						if(!esito) {
-							System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
-						}
-						else {
-							System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-							throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
-						}
-						if(openapi4j) {
-							if(valore instanceof Integer) {
-								String msgErroreAtteso = "Type expected 'string', found 'integer'. (code: 1027)";
-								if(!e.getMessage().contains(msgErroreAtteso)) {
-									System.out.println("\t "+tipoTest+" ERRORE!");
-									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-								}
-								msgErroreAtteso = "Value '"+valore+"' is not defined in the schema. (code: 1006)";
-								if(!e.getMessage().contains(msgErroreAtteso)) {
-									System.out.println("\t "+tipoTest+" ERRORE!");
-									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-								}
-							}
-							else {
-								String msgErroreAtteso = "body.stato1: Value '"+valore.toString().toUpperCase()+"' is not defined in the schema. (code: 1006)";
-								if(!e.getMessage().contains(msgErroreAtteso)) {
-									System.out.println("\t "+tipoTest+" ERRORE!");
-									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-								}
-								msgErroreAtteso = "body.stato2: Value '"+valore.toString().toLowerCase()+"' is not defined in the schema. (code: 1006)";
-								if(!e.getMessage().contains(msgErroreAtteso)) {
-									System.out.println("\t "+tipoTest+" ERRORE!");
-									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-								}
-							}
-						}
-						else {
-							if(valore instanceof Integer) {
-								String tipoJava = valore instanceof Integer ? "integer" : "boolean";
-								String msgErroreAtteso = "1029 $.stato2: "+tipoJava+" found, string expected";
-								if(!e.getMessage().contains(msgErroreAtteso)) {
-									System.out.println("\t "+tipoTest+" ERRORE!");
-									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-								}
-								msgErroreAtteso = "1029 $.stato1: "+tipoJava+" found, string expected";
-								if(!e.getMessage().contains(msgErroreAtteso)) {
-									System.out.println("\t "+tipoTest+" ERRORE!");
-									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-								}
-							}
-							String msgErroreAtteso = "does not have a value in the enumeration [si, no, yes, s, n, y, 0, 1, on, off]";
-							if(!e.getMessage().contains(msgErroreAtteso)) {
-								System.out.println("\t "+tipoTest+" ERRORE!");
-								throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-							}
-						}
+				} catch(ValidatorException e) {
+					String error = e.getMessage();
+					if(error.length()>200) {
+						error = error.substring(0, 198)+" ...";
+					}
+					if(!esito) {
+						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+					}
+					else {
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
 					}
 					
-					try {
-						System.out.println("\t "+tipoTest+" validate response ...");
-						apiValidator.validate(httpEntityResponse_test19);	
-						System.out.println("\t "+tipoTest+" validate response ok");
-					} catch(ValidatorException e) {
-						String error = e.getMessage();
-						if(error.length()>200) {
-							error = error.substring(0, 198)+" ...";
+					String msgErroreAtteso = null;
+					switch (openAPILibrary) {
+					case json_schema:
+						if(valore instanceof Integer) {
+							String tipoJava = valore instanceof Integer ? "integer" : "boolean";
+							msgErroreAtteso = "1029 $.stato2: "+tipoJava+" found, string expected";
 						}
-						if(!esito) {
-							System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
-						}
-						else {
-							System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-							throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
-						}
-						if(openapi4j) {
-							if(valore instanceof Integer) {
-								String msgErroreAtteso = "Type expected 'string', found 'integer'. (code: 1027)";
-								if(!e.getMessage().contains(msgErroreAtteso)) {
-									System.out.println("\t "+tipoTest+" ERRORE!");
-									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-								}
-								msgErroreAtteso = "Value '"+valore+"' is not defined in the schema. (code: 1006)";
-								if(!e.getMessage().contains(msgErroreAtteso)) {
-									System.out.println("\t "+tipoTest+" ERRORE!");
-									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-								}
-							}
-							else {
-								String msgErroreAtteso = "body.stato1: Value '"+valore.toString().toUpperCase()+"' is not defined in the schema. (code: 1006)";
-								if(!e.getMessage().contains(msgErroreAtteso)) {
-									System.out.println("\t "+tipoTest+" ERRORE!");
-									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-								}
-								msgErroreAtteso = "body.stato2: Value '"+valore.toString().toLowerCase()+"' is not defined in the schema. (code: 1006)";
-								if(!e.getMessage().contains(msgErroreAtteso)) {
-									System.out.println("\t "+tipoTest+" ERRORE!");
-									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-								}
-							}
+						break;
+					case openapi4j:
+						if(valore instanceof Integer) {
+							msgErroreAtteso = "Type expected 'string', found 'integer'. (code: 1027)"; 
 						}
 						else {
-							if(valore instanceof Integer) {
-								String tipoJava = valore instanceof Integer ? "integer" : "boolean";
-								String msgErroreAtteso = "1029 $.stato2: "+tipoJava+" found, string expected";
-								if(!e.getMessage().contains(msgErroreAtteso)) {
-									System.out.println("\t "+tipoTest+" ERRORE!");
-									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-								}
-								msgErroreAtteso = "1029 $.stato1: "+tipoJava+" found, string expected";
-								if(!e.getMessage().contains(msgErroreAtteso)) {
-									System.out.println("\t "+tipoTest+" ERRORE!");
-									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-								}
-							}
-							String msgErroreAtteso = "does not have a value in the enumeration [si, no, yes, s, n, y, 0, 1, on, off]";
-							if(!e.getMessage().contains(msgErroreAtteso)) {
-								System.out.println("\t "+tipoTest+" ERRORE!");
-								throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-							}
+							msgErroreAtteso = "body.stato1: Value '"+valore.toString().toUpperCase()+"' is not defined in the schema. (code: 1006)"; 
+						}
+						break;
+					case swagger_request_validator:
+						if(valore instanceof Integer) {
+							msgErroreAtteso = "[ERROR][REQUEST][POST http://petstore.swagger.io/api/test-enum-no-yes @body] [Path '/stato1'] Instance value ("+valore+") not found in enum (possible values: [\"SI\",\"NO\""; 
+						}
+						else {
+							msgErroreAtteso = "[ERROR][REQUEST][POST http://petstore.swagger.io/api/test-enum-no-yes @body] [Path '/stato1'] Instance value (\""+valore.toString().toUpperCase()+"\") not found in enum (possible values: [\"SI\",\"NO\",\"YES\",\"S\",\"N\""; 
+						}
+						break;
+					}
+					if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+					}
+					
+					msgErroreAtteso = null;
+					switch (openAPILibrary) {
+					case json_schema:
+						if(valore instanceof Integer) {
+							String tipoJava = valore instanceof Integer ? "integer" : "boolean";
+							msgErroreAtteso = "1029 $.stato1: "+tipoJava+" found, string expected";
+						}
+						break;
+					case openapi4j:
+						if(valore instanceof Integer) {
+							msgErroreAtteso = "Value '"+valore+"' is not defined in the schema. (code: 1006)";
+						}
+						else {
+							msgErroreAtteso = "body.stato2: Value '"+valore.toString().toLowerCase()+"' is not defined in the schema. (code: 1006)"; 
+						}
+						break;
+					case swagger_request_validator:
+						if(valore instanceof Integer) {
+							msgErroreAtteso = "[ERROR][REQUEST][POST http://petstore.swagger.io/api/test-enum-no-yes @body] [Path '/stato1'] Instance value ("+valore+") not found in enum (possible values: [\"SI\",\"NO\",\"YES\",\"S\",\"N\",\"Y\",\"";							
+						}
+						else {
+							msgErroreAtteso = "[ERROR][REQUEST][POST http://petstore.swagger.io/api/test-enum-no-yes @body] [Path '/stato1'] Instance value (\""+valore.toString().toUpperCase()+"\") not found in enum (possible values: [\"SI\",\"NO\",\"YES\",\"S\",\"N\"";							
+						}
+						break;
+					}
+					if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+					}
+					
+					if(openAPILibrary == OpenAPILibrary.json_schema) {
+						msgErroreAtteso = "does not have a value in the enumeration [si, no, yes, s, n, y, 0, 1, on, off]";
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+				}
+				
+				try {
+					System.out.println("\t "+tipoTest+" validate response ...");
+					apiValidatorOpenApi.validate(httpEntityResponse_test19);	
+					System.out.println("\t "+tipoTest+" validate response ok");
+				} catch(ValidatorException e) {
+					String error = e.getMessage();
+					if(error.length()>200) {
+						error = error.substring(0, 198)+" ...";
+					}
+					if(!esito) {
+						System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+					}
+					else {
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					}
+					
+					String msgErroreAtteso = null;
+					switch (openAPILibrary) {
+					case json_schema:
+						if(valore instanceof Integer) {
+							String tipoJava = valore instanceof Integer ? "integer" : "boolean";
+							msgErroreAtteso = "1029 $.stato2: "+tipoJava+" found, string expected";
+						}
+						break;
+					case openapi4j:
+						if(valore instanceof Integer) {
+							msgErroreAtteso = "Type expected 'string', found 'integer'. (code: 1027)";									
+						}
+						else {
+							msgErroreAtteso = "body.stato1: Value '"+valore.toString().toUpperCase()+"' is not defined in the schema. (code: 1006)";
+						}
+						break;
+					case swagger_request_validator:
+						if(valore instanceof Integer) {
+							msgErroreAtteso = "[ERROR][RESPONSE][] [Path '/stato1'] Instance value ("+valore+") not found in enum (possible values: [\"SI\",\"NO\",\"YES\",\"S\",\"N\",\"Y\",\"0\",\"1\",\"ON\",\"OFF\"])";															
+						}
+						else {
+							msgErroreAtteso = "[ERROR][RESPONSE][] [Path '/stato1'] Instance value (\""+valore.toString().toUpperCase()+"\") not found in enum (possible values: [\"SI\",\"NO\",\"YES\",\"S\",\"N\",\"Y\",\"0\",\"1\",\"ON\",\"OFF\"])"; 
+						}
+						break;
+					}
+					if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+					}
+					
+					msgErroreAtteso = null;
+					switch (openAPILibrary) {
+					case json_schema:
+						if(valore instanceof Integer) {
+							String tipoJava = valore instanceof Integer ? "integer" : "boolean";
+							msgErroreAtteso = "1029 $.stato1: "+tipoJava+" found, string expected";
+						}
+						break;
+					case openapi4j:
+						if(valore instanceof Integer) {
+							msgErroreAtteso = "Value '"+valore+"' is not defined in the schema. (code: 1006)";
+						}
+						else {
+							msgErroreAtteso = "body.stato2: Value '"+valore.toString().toLowerCase()+"' is not defined in the schema. (code: 1006)";
+						}
+						break;
+					case swagger_request_validator:
+						if(valore instanceof Integer) {
+							msgErroreAtteso = "[ERROR][RESPONSE][] [Path '/stato1'] Instance value ("+valore+") not found in enum (possible values: [\"SI\",\"NO\",\"YES\",\"S\",\"N\",\"Y\",\"0\",\"1\",\"ON\",\"OFF\"])";
+						}
+						else {
+							msgErroreAtteso = "[ERROR][RESPONSE][] [Path '/stato1'] Instance value (\""+valore.toString().toUpperCase()+"\") not found in enum (possible values: [\"SI\",\"NO\",\"YES\",\"S\",\"N\",\"Y\",\"0\",\"1\",\"ON\",\"OFF\"])";
+						}
+						break;
+					}
+					if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+					}
+					
+					if(openAPILibrary == OpenAPILibrary.json_schema) {
+						msgErroreAtteso = "does not have a value in the enumeration [si, no, yes, s, n, y, 0, 1, on, off]";
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 						}
 					}
 				}
@@ -3087,42 +3137,29 @@ public class TestOpenApi4j {
 			httpEntityResponse_test20.setContent(valore);
 
 			
-			for (int j = 0; j < 2; j++) {
-				
-				boolean openapi4j = (j==0);
-				IApiValidator apiValidator = null;
-				String tipoTest = testYaml+ (esito ? "["+tipologia+" [/"+contextTestPath+"] MessaggioConforme: '"+valore+"']" : "["+tipologia+" [/"+contextTestPath+"] MessaggioNonConforme: '"+valore+"']");
-				if(openapi4j) {
-					apiValidator = apiValidatorOpenApi4j;
-					tipoTest = tipoTest+"[openapi4j]";
+			String tipoTest = testYaml+ (esito ? "["+tipologia+" [/"+contextTestPath+"] MessaggioConforme: '"+valore+"']" : "["+tipologia+" [/"+contextTestPath+"] MessaggioNonConforme: '"+valore+"']");
+			tipoTest = tipoTest+"["+openAPILibrary+"]";
+			
+			try {
+				System.out.println("\t "+tipoTest+" validate ...");
+				apiValidatorOpenApi.validate(httpEntity20);
+				if(esito) {
+					System.out.println("\t "+tipoTest+" validate ok");
 				}
 				else {
-					apiValidator = apiValidatorNoOpenApi4j;
-					tipoTest = tipoTest+"[json]";
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				}
+			} catch(ValidatorException e) {
+				checkErrorTest20(esito, tipoTest, e, tipologia, openAPILibrary);
+			}
 			
-				
-				try {
-					System.out.println("\t "+tipoTest+" validate ...");
-					apiValidator.validate(httpEntity20);
-					if(esito) {
-						System.out.println("\t "+tipoTest+" validate ok");
-					}
-					else {
-						System.out.println("\t "+tipoTest+" ERRORE!");
-						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
-					}
-				} catch(ValidatorException e) {
-					checkErrorTest20(esito, tipoTest, e, tipologia, openapi4j);
-				}
-				
-				try {
-					System.out.println("\t "+tipoTest+" validate response ...");
-					apiValidator.validate(httpEntityResponse_test20);	
-					System.out.println("\t "+tipoTest+" validate response ok");
-				} catch(ValidatorException e) {
-					checkErrorTest20(esito, tipoTest, e, tipologia, openapi4j);
-				}
+			try {
+				System.out.println("\t "+tipoTest+" validate response ...");
+				apiValidatorOpenApi.validate(httpEntityResponse_test20);	
+				System.out.println("\t "+tipoTest+" validate response ok");
+			} catch(ValidatorException e) {
+				checkErrorTest20(esito, tipoTest, e, tipologia, openAPILibrary);
 			}
 		}
 		
@@ -3147,8 +3184,10 @@ public class TestOpenApi4j {
 		
 		int NUMERO_RISORSE_PET = 5;
 		
+		Set<Integer> swagger_validator_fallimenti_allof = Set.of(0,3);
+		
 		for (int k = 0; k < NUMERO_RISORSE_PET; k++) {
-			
+						
 			int numeroPet = (k+1);
 			String testPet = "[test pets"+numeroPet+"] ";
 			String testUrl21 = testUrl21Base+numeroPet;
@@ -3179,56 +3218,103 @@ public class TestOpenApi4j {
 				httpEntityResponse_test21.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 				httpEntityResponse_test21.setContent(contenuto);
 				
-				int numeroTest = 2; // con 2 viene verificato anche libreria non openapi4j.
-				numeroTest = 1; // la libreria json schema normale non supporta il discriminator e si ottiene un errore simile al seguente se si abilita: 1022 $: should be valid to one and only one of the schemas 
-				for (int j = 0; j < numeroTest; j++) {
-					
-					boolean openapi4j = (j==0);
-					IApiValidator apiValidator = null;
-					String tipoTest = testPet+" ";
-					if(openapi4j) {
-						apiValidator = apiValidatorOpenApi4j;
-						tipoTest = tipoTest+"[openapi4j]";
-					}
-					else {
-						apiValidator = apiValidatorNoOpenApi4j;
-						tipoTest = tipoTest+"[json]";
-					}
-					tipoTest = tipoTest + "(url:"+testUrl21+") contenuto("+contenuto+")";
+				String tipoTest = testPet+" ";
+				tipoTest = tipoTest+"["+openAPILibrary+"]";
+				tipoTest = tipoTest + "(url:"+testUrl21+") contenuto("+contenuto+")";
 				
-					try {
-						System.out.println("\t "+tipoTest+" validate ...");
-						apiValidator.validate(httpEntity21);
-						System.out.println("\t "+tipoTest+" validate ok");
-					} catch(ValidatorException e) {
-						String error = e.getMessage();
-						if(error.length()>200) {
-							error = error.substring(0, 198)+" ...";
-						}
-						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+				try {
+					System.out.println("\t "+tipoTest+" validate ...");
+					
+					if(openAPILibrary == OpenAPILibrary.json_schema) {
+						
+						//  la libreria json schema normale non supporta il discriminator e si ottiene un errore simile al seguente se si abilita: 1022 $: should be valid to one and only one of the schemas  
+						System.out.println("Discriminator con allOf non supportato da "+openAPILibrary);
+						continue;
+						
+					}
+					else if (openAPILibrary == OpenAPILibrary.swagger_request_validator && swagger_validator_fallimenti_allof.contains(k)) {
+						
+						// TODO: 
+						/*
+						Presenta problemi durante la validazione di oggetti oneOf allOf e/o con discriminator.
+						Gli sviluppatori di atlassian sono al corrente della situazione e contano di migrare a una nuova libreria di validazione degli 
+						schemi che supporti la draft v7 (dove questi problemi sembrano fixati o attenuati) fino alla v12 utilizzata tra l'altro da OpenAPI3.1.
+						*/
+						
+						/*
+						 * https://bitbucket.org/atlassian/swagger-request-validator/issues/269/validation-loop-error-occurred-when-allof
+						   https://bitbucket.org/atlassian/swagger-request-validator/issues/349/v3-replace-json-schema-validation-engine
+						 * */
+						
+						// Si ottiene un errore simile al seguente: Caused by: org.openspcoop2.utils.rest.ValidatorException: Validation failed.
+						// [ERROR][REQUEST][PATCH http://petstore.swagger.io/api/pets1 @body] Validation loop: schema "#/components/schemas/Cat" visited twice for pointer "" of validated instance
+						
+						System.out.println("Discriminator con allOf non supportato da swagger-request-validator!");
+						continue;
 					}
 					
-					try {
-						System.out.println("\t "+tipoTest+" validate response ...");
-						apiValidator.validate(httpEntityResponse_test21);	
-						System.out.println("\t "+tipoTest+" validate response ok");
-					} catch(ValidatorException e) {
-						String error = e.getMessage();
-						if(error.length()>200) {
-							error = error.substring(0, 198)+" ...";
-						}
-						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					
+					apiValidatorOpenApi.validate(httpEntity21);
+					System.out.println("\t "+tipoTest+" validate ok");
+				} catch(ValidatorException e) {
+					String error = e.getMessage();
+					if(error.length()>200) {
+						error = error.substring(0, 198)+" ...";
 					}
+					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+				}
+				
+				try {
+					System.out.println("\t "+tipoTest+" validate response ...");
+					apiValidatorOpenApi.validate(httpEntityResponse_test21);	
+					System.out.println("\t "+tipoTest+" validate response ok");
+				} catch(ValidatorException e) {
+					String error = e.getMessage();
+					if(error.length()>200) {
+						error = error.substring(0, 198)+" ...";
+					}
+					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
 				}
 			}
 		}
 		
 		System.out.println("Test #21 Discriminator completato\n\n");
+		
+		
+		
+		
+		
+		// ** Test per validazione json con wildcard nel subtype ... **
+		
+		System.out.println("Test #22 validazione json con wildcard nel subtype ...");
+		
+		// *** TEST per validazione json con wildcard nel subtype *** //
+		testSubMediatypeWildcardJsonValidation(openAPILibrary, mergeSpec, true);
+		testSubMediatypeWildcardJsonValidation(openAPILibrary, mergeSpec, false);
+		
+		System.out.println("Test #22 validazione json con wildcard nel subtype completato\n\n");
+		
+		
+			
+		
+		// ** Test per validazione contenuto base64 ... **
+		
+		System.out.println("Test #23 validazione contenuto base64 ...");
+		
+		if (openAPILibrary == OpenAPILibrary.swagger_request_validator)  {
+			testBase64Validation(openAPILibrary, mergeSpec, apiValidatorOpenApi);
+		} else {
+			System.out.println("Skippo Test validazione file upload in base64 per libreria differente da swagger_request_validator");
+		}
+		
+		System.out.println("Test #23 validazione contenuto base64 completato\n\n");
+		
 	}
 
-	private static void checkErrorTest20(boolean esito, String tipoTest, Exception e, String tipologia, boolean openapi4j) throws Exception {
+	
+	private static void checkErrorTest20(boolean esito, String tipoTest, Exception e, String tipologia, OpenAPILibrary openAPILibrary) throws Exception {
 		
 		String error = e.getMessage();
 		if(error.length()>200) {
@@ -3273,35 +3359,9 @@ public class TestOpenApi4j {
 			System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
 			throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
 		}
-		if(openapi4j) {
-			if(arrayValuesNull) {
-				String msgErroreAtteso = "body.array_nullable_values_optional.0: Null value is not allowed. (code: 1021)";
-				if(!e.getMessage().contains(msgErroreAtteso)) {
-					System.out.println("\t "+tipoTest+" ERRORE!");
-					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-				}
-				msgErroreAtteso = "body.array_nullable_values_optional.1: Null value is not allowed. (code: 1021)";
-				if(!e.getMessage().contains(msgErroreAtteso)) {
-					System.out.println("\t "+tipoTest+" ERRORE!");
-					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-				}
-				msgErroreAtteso = "body.array_nullable_values_required.0: Null value is not allowed. (code: 1021)";
-				if(!e.getMessage().contains(msgErroreAtteso)) {
-					System.out.println("\t "+tipoTest+" ERRORE!");
-					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-				}
-			}
-			else {
-				for (int k = 0; k < 2; k++) {
-					String msgErroreAtteso = "body."+element+(k==0 ? "required" : "optional")+": Null value is not allowed. (code: 1021)";
-					if(!e.getMessage().contains(msgErroreAtteso)) {
-						System.out.println("\t "+tipoTest+" ERRORE!");
-						throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
-					}
-				}
-			}						
-		}
-		else {
+	
+		switch (openAPILibrary) {
+		case json_schema:
 			if(arrayValuesNull) {
 				String msgErroreAtteso = "1029 $.array_nullable_values_optional[0]: null found, string expected";
 				if(!e.getMessage().contains(msgErroreAtteso)) {
@@ -3328,7 +3388,255 @@ public class TestOpenApi4j {
 					}	
 				}	
 			}
+			break;
+		case openapi4j:
+			if(arrayValuesNull) {
+				
+				String msgErroreAtteso = "body.array_nullable_values_optional.0: Null value is not allowed. (code: 1021)";
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+				}
+				
+				msgErroreAtteso = "body.array_nullable_values_optional.1: Null value is not allowed. (code: 1021)";				
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+				}
+				
+				msgErroreAtteso = "body.array_nullable_values_required.0: Null value is not allowed. (code: 1021)";
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+				}
+			}
+			else {
+				for (int k = 0; k < 2; k++) {
+					String suffix = (k==0 ? "required" : "optional");
+					String msgErroreAtteso = "body."+element+suffix+": Null value is not allowed. (code: 1021)";
+					if(!e.getMessage().contains(msgErroreAtteso)) {
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+					}
+				}
+			}	
+			break;
+		case swagger_request_validator:
+			if(arrayValuesNull) {
+				
+				String msgErroreAtteso = "[Path '/array_nullable_values_optional/0'] Instance type (null) does not match any allowed primitive type (allowed: [\"string\"])";
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+				}
+				
+				msgErroreAtteso = "[Path '/array_nullable_values_optional/1'] Instance type (null) does not match any allowed primitive type (allowed: [\"string\"])";				
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+				}
+				
+				msgErroreAtteso = "[Path '/array_nullable_values_required/0'] Instance type (null) does not match any allowed primitive type (allowed: [\"string\"])";
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+				}
+			}
+			else {
+				for (int k = 0; k < 2; k++) {
+					String suffix = (k==0 ? "required" : "optional");
+					String msgErroreAtteso = "[Path '/"+element+suffix+"'] Instance type (null) does not match any allowed primitive type (allowed:";
+					if(!e.getMessage().contains(msgErroreAtteso)) {
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+					}
+				}
+			}	
+			break;
 		}
+		
 	}
 	
+	private static void testSubMediatypeWildcardJsonValidation(OpenAPILibrary openAPILibrary, boolean mergeSpec, boolean validateWildcard)
+			throws UtilsException, ProcessingException, URISyntaxException, Exception {
+		System.out.println("#### Verifica per validazione json con wildcard ("+validateWildcard+") nel subtype ####");
+		
+		URL url = TestOpenApi3Extended.class.getResource("/org/openspcoop2/utils/openapi/allegati.yaml");
+		
+		ApiSchema apiSchemaYaml = new ApiSchema("teamdigitale-openapi_definitions.yaml", 
+				Utilities.getAsByteArray(TestOpenApi3Extended.class.getResourceAsStream("/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml")), ApiSchemaType.YAML);
+					
+		IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+		ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
+		configOpenApi4j.setProcessInclude(false);
+		apiReaderOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), new File(url.toURI()), configOpenApi4j, apiSchemaYaml);
+		Api apiOpenApi4j = apiReaderOpenApi4j.read();
+								
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
+		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
+		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
+		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
+		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
+		configO.getOpenApiValidatorConfig().setValidateWildcardSubtypeAsJson(validateWildcard);
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), apiOpenApi4j, configO);
+
+		System.out.println("Test Richiesta...");
+
+		{ 
+			TextHttpRequestEntity requestS1 = new TextHttpRequestEntity();
+			
+			requestS1.setMethod(HttpRequestMethod.POST);
+			requestS1.setUrl("documenti/qualsiasi/"+UUID.randomUUID().toString());	
+			Map<String, List<String>> headersS1 = new HashMap<>();
+			TransportUtils.setHeader(headersS1,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_PLAIN);
+			requestS1.setContentType(HttpConstants.CONTENT_TYPE_PLAIN);
+			requestS1.setHeaders(headersS1);
+			requestS1.setContent("{ a }");
+					
+			String erroreAttesoRichiesta = openAPILibrary == OpenAPILibrary.openapi4j ?
+					"body: Type expected 'object', found 'string'. (code: 1027)" : 
+					"[ERROR] Unable to parse JSON - Unexpected character ('a' (code 97)): was expecting double-quote to start field name";
+			try {				
+				apiValidatorOpenApi4j.validate(requestS1);
+				
+				if (openAPILibrary != OpenAPILibrary.json_schema && validateWildcard) {
+					throw new Exception("Errore atteso '"+erroreAttesoRichiesta+"' non rilevato");
+				}
+				
+			} catch (ValidatorException e) {
+				System.out.println(e.getMessage());
+				if (!e.getMessage().contains(erroreAttesoRichiesta)) {
+					throw new Exception("Errore atteso '"+erroreAttesoRichiesta+"' non rilevato");
+				}
+			}
+		}
+		System.out.println("Test Richiesta Superato!");
+		
+		System.out.println("Test Risposta...");
+		
+		{
+			TextHttpResponseEntity httpResponseTestS1 = new TextHttpResponseEntity();
+			
+			httpResponseTestS1.setStatus(200);		
+			httpResponseTestS1.setMethod(HttpRequestMethod.GET);
+			httpResponseTestS1.setUrl("documenti/qualsiasi/"+UUID.randomUUID().toString());	
+			Map<String, List<String>> headersS1 = new HashMap<>();
+			TransportUtils.setHeader(headersS1,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_PLAIN);
+			httpResponseTestS1.setHeaders(headersS1);
+			httpResponseTestS1.setContentType(HttpConstants.CONTENT_TYPE_PLAIN);
+			httpResponseTestS1.setContent("{ a }");
+		
+			String erroreAttesoRisposta = openAPILibrary == OpenAPILibrary.openapi4j ?
+					"body: Type expected 'object', found 'string'. (code: 1027)" : 
+					"[ERROR] Unable to parse JSON - Unexpected character ('a' (code 97)): was expecting double-quote to start field name";
+			try {				
+				apiValidatorOpenApi4j.validate(httpResponseTestS1);
+				
+				if (openAPILibrary != OpenAPILibrary.json_schema && validateWildcard) {
+					throw new Exception("Errore atteso '"+erroreAttesoRisposta+"' non rilevato");
+				}
+				
+			} catch (ValidatorException e) {
+				System.out.println(e.getMessage());
+				if (!e.getMessage().contains(erroreAttesoRisposta)) {
+					throw new Exception("Errore atteso '"+erroreAttesoRisposta+"' non rilevato");
+				}
+			}
+		}
+			
+		System.out.println("Test Risposta Superato!");
+		
+		System.out.println("TEST #S-1 per validazione json con wildcard ("+validateWildcard+") nel subtype completato!");
+
+	}
+
+	private static void testBase64Validation(OpenAPILibrary openAPILibrary, boolean mergeSpec, IApiValidator validator) throws Exception {
+		
+		System.out.println("TEST #S-2 per validazione file in base64");
+		
+		System.out.println("Valido richiesta con contenuto corretto..");
+		{
+			TextHttpRequestEntity validRequest = new TextHttpRequestEntity();
+			validRequest.setUrl("documenti/testbase64/"+UUID.randomUUID().toString());	
+			validRequest.setMethod(HttpRequestMethod.POST);
+			validRequest.setContent("Q2lhbyBiYmVsbG8h");
+			Map<String, List<String>> parametersTrasporto = new HashMap<>();
+			TransportUtils.addHeader(parametersTrasporto,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
+			validRequest.setHeaders(parametersTrasporto);
+			validRequest.setContentType(HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
+			validator.validate(validRequest);
+		}
+		
+		System.out.println("Nessun errore sollevato, ok!");
+		
+		System.out.println("Valido richiesta con contenuto non corretto..");
+		{
+			TextHttpRequestEntity invalidRequest = new TextHttpRequestEntity();
+			invalidRequest.setUrl("documenti/testbase64/"+UUID.randomUUID().toString());	
+			invalidRequest.setMethod(HttpRequestMethod.POST);
+			invalidRequest.setContent("{ asper");
+			Map<String, List<String>> parametersTrasporto = new HashMap<>();
+			TransportUtils.addHeader(parametersTrasporto,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
+			invalidRequest.setHeaders(parametersTrasporto);
+			invalidRequest.setContentType(HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
+	
+			String erroreAttesoRichiesta = "[ERROR] [REQUEST] err.format.base64.badLength, should be multiple of 4: 7"; 
+			try {				
+				validator.validate(invalidRequest);
+				throw new Exception("Errore atteso '"+erroreAttesoRichiesta+"' non rilevato");			
+			} catch (ValidatorException e) {
+				System.out.println(e.getMessage());
+				if (!e.getMessage().contains(erroreAttesoRichiesta)) {
+					throw new Exception("Errore atteso '"+erroreAttesoRichiesta+"' non rilevato");
+				}
+			}
+			System.out.println("Errore rilevato, ok!");
+		}
+		
+		System.out.println("Valido risposta con contenuto corretto..");
+		{
+			TextHttpResponseEntity validResponse = new TextHttpResponseEntity();
+			validResponse.setUrl("documenti/testbase64/"+UUID.randomUUID().toString());	
+			validResponse.setMethod(HttpRequestMethod.POST);
+			validResponse.setStatus(200);
+			validResponse.setContent("Q2lhbyBiYmVsbG8h");
+			Map<String, List<String>> parametersTrasporto = new HashMap<>();
+			TransportUtils.addHeader(parametersTrasporto,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
+			validResponse.setHeaders(parametersTrasporto);
+			validResponse.setContentType(HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
+			validator.validate(validResponse);
+		}
+		
+		System.out.println("Nessun errore sollevato, ok!");
+		
+		System.out.println("Valido risposta con contenuto non corretto..");
+		
+		{
+			TextHttpResponseEntity invalidResponse = new TextHttpResponseEntity();
+			invalidResponse.setUrl("documenti/testbase64/"+UUID.randomUUID().toString());	
+			invalidResponse.setMethod(HttpRequestMethod.POST);
+			invalidResponse.setStatus(200);
+			invalidResponse.setContent("{ asper");
+			Map<String, List<String>> parametersTrasporto = new HashMap<>();
+			TransportUtils.addHeader(parametersTrasporto,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
+			invalidResponse.setContentType(HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
+			invalidResponse.setHeaders(parametersTrasporto);
+	
+			String erroreAttesoRisposta = "[ERROR] [RESPONSE] err.format.base64.badLength, should be multiple of 4: 7"; 
+			try {				
+				validator.validate(invalidResponse);
+				throw new Exception("Errore atteso '"+erroreAttesoRisposta+"' non rilevato");			
+			} catch (ValidatorException e) {
+				System.out.println(e.getMessage());
+				if (!e.getMessage().contains(erroreAttesoRisposta)) {
+					throw new Exception("Errore atteso '"+erroreAttesoRisposta+"' non rilevato");
+				}
+			}
+		}
+		System.out.println("Errore rilevato, ok!");
+				
+		System.out.println("TEST #S-2 per validazione file in base64 completato!");
+	}
+
 }

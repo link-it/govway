@@ -265,11 +265,13 @@
 .extdt-footer, .rich-table-footer {
 	background-image: none;
 	background-color: ${table.tfooter.background.color};
+	color: ${table.thead.action.menu.color};
 }
 
 .extdt-footercell, .rich-table-footercell {
 	border: none;
 	padding: 0px;
+	color: ${table.thead.action.menu.color};
 }
 
 .rich-table-subheadercell {

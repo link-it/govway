@@ -31,7 +31,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,6 +39,7 @@ import org.openspcoop2.core.statistiche.constants.TipoLatenza;
 import org.openspcoop2.core.statistiche.constants.TipoStatistica;
 import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
+import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.converter.DurataConverter;
 import org.openspcoop2.web.monitor.core.core.Utility;
@@ -607,21 +607,21 @@ public class ExportUtils {
 		SimpleDateFormat sdf_last_hour = null;
 		switch (modalitaTemporale) {
 		case MENSILE:
-			sdf = new SimpleDateFormat("MMM yyyy", Locale.ITALIAN);
+			sdf = new SimpleDateFormat("MMM yyyy", ApplicationBean.getInstance().getLocale());
 			break;
 		case SETTIMANALE:
-			sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.ITALIAN);
-			sdf_last_hour = new SimpleDateFormat("yyyy/MM/dd",Locale.ITALIAN);
+			sdf = new SimpleDateFormat("yyyy/MM/dd", ApplicationBean.getInstance().getLocale());
+			sdf_last_hour = new SimpleDateFormat("yyyy/MM/dd", ApplicationBean.getInstance().getLocale());
 			break;
 
 		case ORARIA: 
-			sdf = new SimpleDateFormat("yyyy/MM/dd HH", Locale.ITALIAN);
-			sdf_last_hour = new SimpleDateFormat("HH",Locale.ITALIAN);
+			sdf = new SimpleDateFormat("yyyy/MM/dd HH", ApplicationBean.getInstance().getLocale());
+			sdf_last_hour = new SimpleDateFormat("HH", ApplicationBean.getInstance().getLocale());
 			break;
 
 		case GIORNALIERA:
 		default:
-			sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.ITALIAN);
+			sdf = new SimpleDateFormat("yyyy/MM/dd", ApplicationBean.getInstance().getLocale());
 			break;
 		}
 
@@ -644,8 +644,8 @@ public class ExportUtils {
 				break;
 
 			case ORARIA: 
-				sdf = new SimpleDateFormat("yyyy/MM/dd HH", Locale.ITALIAN);
-				sdf_last_hour = new SimpleDateFormat("HH",Locale.ITALIAN);
+				sdf = new SimpleDateFormat("yyyy/MM/dd HH", ApplicationBean.getInstance().getLocale());
+				sdf_last_hour = new SimpleDateFormat("HH", ApplicationBean.getInstance().getLocale());
 
 				c = Calendar.getInstance();
 				c.setTime((Date)risultato.getRisultato());
@@ -1028,21 +1028,21 @@ public class ExportUtils {
 		SimpleDateFormat sdf_last_hour = null;
 		switch (modalitaTemporale) {
 		case MENSILE:
-			sdf = new SimpleDateFormat("MMM yyyy", Locale.ITALIAN);
+			sdf = new SimpleDateFormat("MMM yyyy", ApplicationBean.getInstance().getLocale());
 			break;
 		case SETTIMANALE:
-			sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.ITALIAN);
-			sdf_last_hour = new SimpleDateFormat("yyyy/MM/dd",Locale.ITALIAN);
+			sdf = new SimpleDateFormat("yyyy/MM/dd", ApplicationBean.getInstance().getLocale());
+			sdf_last_hour = new SimpleDateFormat("yyyy/MM/dd", ApplicationBean.getInstance().getLocale());
 			break;
 
 		case ORARIA: 
-			sdf = new SimpleDateFormat("yyyy/MM/dd HH", Locale.ITALIAN);
-			sdf_last_hour = new SimpleDateFormat("HH",Locale.ITALIAN);
+			sdf = new SimpleDateFormat("yyyy/MM/dd HH", ApplicationBean.getInstance().getLocale());
+			sdf_last_hour = new SimpleDateFormat("HH", ApplicationBean.getInstance().getLocale());
 			break;
 
 		case GIORNALIERA:
 		default:
-			sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.ITALIAN);
+			sdf = new SimpleDateFormat("yyyy/MM/dd", ApplicationBean.getInstance().getLocale());
 			break;
 		}
 
@@ -1074,8 +1074,8 @@ public class ExportUtils {
 						break;
 
 					case ORARIA: 
-						sdf = new SimpleDateFormat("yyyy/MM/dd HH", Locale.ITALIAN);
-						sdf_last_hour = new SimpleDateFormat("HH",Locale.ITALIAN);
+						sdf = new SimpleDateFormat("yyyy/MM/dd HH", ApplicationBean.getInstance().getLocale());
+						sdf_last_hour = new SimpleDateFormat("HH", ApplicationBean.getInstance().getLocale());
 
 						c = Calendar.getInstance();
 						c.setTime((Date)risultato.getRisultato());

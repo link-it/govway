@@ -977,10 +977,10 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 			}
 		}
 		StatoTraffico statoControlloCongestione = gestoreControlloCongestione.getStatoControlloTraffico(idTransazione,sync);
-		if(statoControlloCongestione.getPddCongestionata()!=isPddCongestionataInformazioneIdentificataDalThread){
+		if(statoControlloCongestione.isPddCongestionata()!=isPddCongestionataInformazioneIdentificataDalThread){
 			//System.out.println("Rilevata differenza tra controllo del traffico attivo PREINHANDLER ["+controlloTrafficoAttivoThread+"] e stato attuale["+statoControlloCongestione.getControlloTraffico()+"]");
 			pddContext.removeObject(CostantiControlloTraffico.PDD_CONTEXT_PDD_CONGESTIONATA);
-			pddContext.addObject(CostantiControlloTraffico.PDD_CONTEXT_PDD_CONGESTIONATA, statoControlloCongestione.getPddCongestionata());
+			pddContext.addObject(CostantiControlloTraffico.PDD_CONTEXT_PDD_CONGESTIONATA, statoControlloCongestione.isPddCongestionata());
 		}
 		
 		// Aggiungo al msgDiag i valori delle tre costanti poichè mi servirà anche per diagnostici durante la verifica delle policy.
@@ -999,7 +999,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 			msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_CONTROLLO_TRAFFICO_THRESHOLD, oThreshold.toString());
 		}
 		
-		if(statoControlloCongestione.getPddCongestionata()){
+		if(statoControlloCongestione.isPddCongestionata()){
 			// Emetto qua il diagnostico che la porta è congestionata.
 			// Potrei emetterlo anche nel preInHandler, però lo emetto anzi qua perche viene poi usato qua la condizione per capire se attivare o meno una policy.
 			
@@ -1013,7 +1013,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 			
 		}
 		
-		return statoControlloCongestione.getPddCongestionata();
+		return statoControlloCongestione.isPddCongestionata();
 	}
 	
 	

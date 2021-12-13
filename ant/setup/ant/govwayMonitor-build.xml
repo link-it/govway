@@ -123,7 +123,7 @@
 			</else>
 		</if>
 		
-		<!-- INTEGRATION MANAGER DISABLED -->
+		<!-- INTEGRATION MANAGER TRANSACTION DISABLED -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="transazioni_im_enabled"/>
@@ -131,14 +131,52 @@
 		</antcall>
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
-			<param name="token" value="transazioni.esitoMessageBox.enabled"/>
-			<param name="value" value="false"/>
-		</antcall>
-		<antcall target="set_property">
-		    <param name="file" value="${file}"/>
 			<param name="token" value="transazioni_sql_im_enabled"/>
 			<param name="value" value="false"/>
 		</antcall>
+
+		<!-- INTEGRATION MANAGER (Filtro per esito che indica il salvataggio delle transazioni su MessageBox) -->
+		<if>
+			<or>
+				<equals arg1="${antinstaller_integration_manager}" arg2="true" />
+			</or>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="transazioni.esitoMessageBox.enabled"/>
+					<param name="value" value="true"/>
+				</antcall>
+			</then>
+			<else>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="transazioni.esitoMessageBox.enabled"/>
+					<param name="value" value="false"/>
+				</antcall>
+			</else>
+		</if>
+
+		<!-- CONNETTORI MULTIPLI CON NOTIFICHE 
+		     Indica se nei menu di ricerca, tra gli esiti, devono essere considerati anche gli esiti di consegna multipla -->
+		<if>
+			<or>
+				<equals arg1="${antinstaller_timer_consegna}" arg2="true" />
+			</or>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="console.searchForm.esiti.consegnaMultiplaEnabled"/>
+					<param name="value" value="true"/>
+				</antcall>
+			</then>
+			<else>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="console.searchForm.esiti.consegnaMultiplaEnabled"/>
+					<param name="value" value="false"/>
+				</antcall>
+			</else>
+		</if>
 
 		<!-- ALLARMI CONFIG DIR -->
 		<antcall target="set_property">

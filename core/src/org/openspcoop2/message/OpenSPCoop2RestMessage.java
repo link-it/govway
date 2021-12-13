@@ -49,6 +49,9 @@ public interface OpenSPCoop2RestMessage<T> extends OpenSPCoop2Message {
 	public String getContentAsString() throws MessageException,MessageNotSupportedException;
 	public String getContentAsString(boolean readOnly, String idTransazione) throws MessageException,MessageNotSupportedException;
 	
+	public byte[] getContentAsByteArray() throws MessageException,MessageNotSupportedException;
+	public byte[] getContentAsByteArray(boolean readOnly, String idTransazione) throws MessageException,MessageNotSupportedException;
+	
 	public void updateContent(T content) throws MessageException,MessageNotSupportedException;
 	public void setContentUpdatable() throws MessageException,MessageNotSupportedException;
 

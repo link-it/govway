@@ -6602,10 +6602,35 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setType(DataElementType.SELECT);
 			List<String> modalitaLabels = TipoBehaviour.getLabels(this.porteApplicativeCore.isConnettoriMultipliConsegnaMultiplaEnabled(), isSoapOneWay);
 			List<String> modalitaValues = TipoBehaviour.getValues(this.porteApplicativeCore.isConnettoriMultipliConsegnaMultiplaEnabled(), isSoapOneWay);
-			de.setValues(modalitaValues);
-			de.setLabels(modalitaLabels);
-			de.setPostBack(true);
-			de.setSelected(modalitaConsegna);
+			
+			if(modalitaConsegna!=null && !"".equals(modalitaConsegna) && !"-".equals(modalitaConsegna) && !modalitaValues.contains(modalitaConsegna)) {
+			
+				de.setType(DataElementType.TEXT);
+				
+				// Provo a tradurre la modalita trovata
+				TipoBehaviour modalitaValuesCompleta = TipoBehaviour.toEnumConstant(modalitaConsegna);
+				if(modalitaValuesCompleta!=null && !TipoBehaviour.CUSTOM.equals(modalitaValuesCompleta)) {
+					de.setValue(modalitaValuesCompleta.getLabel());
+				}
+				else {
+					de.setValue(modalitaConsegna);
+				}
+				
+				this.pd.setMessage("L'impostazione presente nel campo '"+PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA+"' non è più disponibile. <BR/>Verificare che il profilo di collaborazione delle operazioni definite nell'API non sia cambiato e risulti compatibile.");
+				this.pd.setInserisciBottoni(false);
+				this.pd.disableEditMode();
+				
+				dati.addElement(de);
+			
+				return dati;
+				
+			}
+			else {
+				de.setValues(modalitaValues);
+				de.setLabels(modalitaLabels);
+				de.setPostBack(true);
+				de.setSelected(modalitaConsegna);
+			}
 		} else {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(modalitaConsegna);

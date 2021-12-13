@@ -392,9 +392,9 @@ public class GestoreAutenticazione {
 					}
 				}
 	    		
+				String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 				//synchronized (GestoreAutenticazione.semaphoreAutenticazionePD) {
-				GestoreAutenticazione.lockAutenticazionePD.acquire("verificaAutenticazionePortaDelegata", 
-						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
+				GestoreAutenticazione.lockAutenticazionePD.acquire("verificaAutenticazionePortaDelegata", idTransazione);
 				try {
 					
 					response = 
@@ -437,8 +437,7 @@ public class GestoreAutenticazione {
 						throw new AutenticazioneException("Metodo (GestoreAutenticazione.autenticazionePortaDelegata.process) ha ritornato un valore di esito null");
 					}
 				}finally{
-					GestoreAutenticazione.lockAutenticazionePD.release("verificaAutenticazionePortaDelegata", 
-							(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
+					GestoreAutenticazione.lockAutenticazionePD.release("verificaAutenticazionePortaDelegata", idTransazione);
 				}
 	    	}
     	}finally {
@@ -481,9 +480,9 @@ public class GestoreAutenticazione {
 					}
 				}
 	    		
+				String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 				//synchronized (GestoreAutenticazione.semaphoreAutenticazionePA) {
-				GestoreAutenticazione.lockAutenticazionePA.acquire("verificaAutenticazionePortaApplicativa", 
-						(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
+				GestoreAutenticazione.lockAutenticazionePA.acquire("verificaAutenticazionePortaApplicativa", idTransazione);
 				try {
 					
 					response = 
@@ -526,8 +525,7 @@ public class GestoreAutenticazione {
 						throw new AutenticazioneException("Metodo (GestoreAutenticazione.autenticazionePortaApplicativa.process) ha ritornato un valore di esito null");
 					}
 				}finally {
-					GestoreAutenticazione.lockAutenticazionePA.release("verificaAutenticazionePortaApplicativa", 
-							(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null);
+					GestoreAutenticazione.lockAutenticazionePA.release("verificaAutenticazionePortaApplicativa", idTransazione);
 				}
 	    	}
     	}finally {

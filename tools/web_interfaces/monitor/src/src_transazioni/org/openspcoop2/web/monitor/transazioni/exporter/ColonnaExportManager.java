@@ -134,6 +134,13 @@ public class ColonnaExportManager {
 		this._addColonna(CostantiExport.KEY_COL_DUPLICATI_RISPOSTA, CostantiExport.LABEL_COL_DUPLICATI_RISPOSTA, !SHOW_IN_CUSTOM_VIEW);
 		this._addColonna(CostantiExport.KEY_COL_INDIRIZZO_CLIENT, CostantiExport.LABEL_COL_INDIRIZZO_CLIENT, SHOW_IN_CUSTOM_VIEW);
 		this._addColonna(CostantiExport.KEY_COL_X_FORWARDED_FOR, CostantiExport.LABEL_COL_X_FORWARDED_FOR, SHOW_IN_CUSTOM_VIEW);
+		this._addColonna(CostantiExport.KEY_COL_RICHIEDENTE, CostantiExport.LABEL_COL_RICHIEDENTE, SHOW_IN_CUSTOM_VIEW);
+		this._addColonna(CostantiExport.KEY_COL_DETTAGLIO_ERRORE, CostantiExport.LABEL_COL_DETTAGLIO_ERRORE, !SHOW_IN_CUSTOM_VIEW);
+		this._addColonna(CostantiExport.KEY_COL_TOKEN_ISSUER, CostantiExport.LABEL_COL_TOKEN_ISSUER, !SHOW_IN_CUSTOM_VIEW);
+		this._addColonna(CostantiExport.KEY_COL_TOKEN_SUBJECT, CostantiExport.LABEL_COL_TOKEN_SUBJECT, !SHOW_IN_CUSTOM_VIEW);
+		this._addColonna(CostantiExport.KEY_COL_TOKEN_CLIENT, CostantiExport.LABEL_COL_TOKEN_CLIENT, !SHOW_IN_CUSTOM_VIEW);
+		this._addColonna(CostantiExport.KEY_COL_TOKEN_USERNAME, CostantiExport.LABEL_COL_TOKEN_USERNAME, !SHOW_IN_CUSTOM_VIEW);
+		this._addColonna(CostantiExport.KEY_COL_TOKEN_EMAIL, CostantiExport.LABEL_COL_TOKEN_EMAIL, !SHOW_IN_CUSTOM_VIEW);
 
 		
 //		// AGGIUNTA TRACCE GESTITE DALL'UTENTE NELLA FORM NELLA PAGINA

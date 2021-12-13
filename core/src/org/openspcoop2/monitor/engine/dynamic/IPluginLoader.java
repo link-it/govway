@@ -44,4 +44,6 @@ public interface IPluginLoader {
 	
 	public Object newInstance(String customTipoClasse, String tipo) throws Exception;
 	
+	public void close(Logger log);
+	
 }

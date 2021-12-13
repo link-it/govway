@@ -21,6 +21,7 @@ package org.openspcoop2.core.transazioni.dao.jdbc;
 
 import java.sql.Connection;
 
+import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 
 import org.slf4j.Logger;
@@ -57,6 +58,12 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 	@Override
 	public void create(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, TransazioneApplicativoServer transazioneApplicativoServer, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException,ServiceException,Exception {
 
+		if(TipiDatabase.POSTGRESQL.equals(jdbcProperties.getDatabase())){
+			if(transazioneApplicativoServer.getFault()!=null && org.openspcoop2.utils.jdbc.PostgreSQLUtilities.containsNullByteSequence(transazioneApplicativoServer.getFault())) {
+				transazioneApplicativoServer.setFault(org.openspcoop2.utils.jdbc.PostgreSQLUtilities.normalizeString(transazioneApplicativoServer.getFault()));
+			}
+		}
+			
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 		
@@ -161,7 +168,12 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 		
 		if(efficente) {
 		
-			this._update(jdbcProperties, log, connection, sqlQueryObject, -1, transazioneApplicativoServer, idMappingResolutionBehaviour, oldId);
+			long tableId = -1;
+			if(oldId!=null && oldId.getId()!=null && oldId.getId().longValue()>0) {
+				tableId = oldId.getId().longValue();
+				oldId = null; // uso l'id fisico se presente
+			}
+			this._update(jdbcProperties, log, connection, sqlQueryObject, tableId, transazioneApplicativoServer, idMappingResolutionBehaviour, oldId);
 			
 		}
 		else {
@@ -193,6 +205,12 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 			long tableId, TransazioneApplicativoServer transazioneApplicativoServer, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour,
 			IdTransazioneApplicativoServer idLogico) throws NotFoundException, NotImplementedException, ServiceException, Exception {
 	
+		if(TipiDatabase.POSTGRESQL.equals(jdbcProperties.getDatabase())){
+			if(transazioneApplicativoServer.getFault()!=null && org.openspcoop2.utils.jdbc.PostgreSQLUtilities.containsNullByteSequence(transazioneApplicativoServer.getFault())) {
+				transazioneApplicativoServer.setFault(org.openspcoop2.utils.jdbc.PostgreSQLUtilities.normalizeString(transazioneApplicativoServer.getFault()));
+			}
+		}
+			
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 		

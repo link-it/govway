@@ -28,6 +28,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.util.ByteArrayDataSource;
 import javax.xml.soap.AttachmentPart;
 
+import org.openspcoop2.core.protocolli.trasparente.testsuite.encoding.charset.CharsetUtilities;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
@@ -38,6 +39,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.dch.InputStreamDataSource;
 import org.openspcoop2.utils.mime.MimeMultipart;
+import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**
@@ -59,6 +61,7 @@ public class Bodies {
 	
 	private final static String PATH = "/org/openspcoop2/core/protocolli/trasparente/testsuite/";
 	
+	@SuppressWarnings("unused")
 	private final static String getXmlPayload(int sizePayload,String prefix) { 
 		return getXmlPayload(sizePayload, prefix, null);
 	}
@@ -75,9 +78,12 @@ public class Bodies {
 	}
 	
 	public final static String getXML(int sizePayload) { 
+		return getXML(sizePayload, null);
+	}
+	public final static String getXML(int sizePayload, String applicativeId) { 
 		return "<ns2:Test xmlns:ns2=\"http://govway.org/example\">\n" + 
-			getXmlPayload(sizePayload,"") +
-			"\n</ns2:Test>";
+				getXmlPayload(sizePayload,"",applicativeId) +
+				"\n</ns2:Test>";
 	}
 	
 	public final static String getSOAPEnvelope11(int sizePayload) { 
@@ -235,98 +241,168 @@ public class Bodies {
 	
 	
 	public final static OpenSPCoop2Message getSOAP11WithAttachments(int sizePayload) throws Throwable{
-		return _getSOAPWithAttachments(MessageType.SOAP_11, HttpConstants.CONTENT_TYPE_SOAP_1_1, getSOAPEnvelope11(sizePayload).getBytes());
+		return getSOAP11WithAttachments(sizePayload, null, null);
+	}
+	public final static OpenSPCoop2Message getSOAP11WithAttachments(int sizePayload, String applicativeId) throws Throwable{
+		return getSOAP11WithAttachments(sizePayload, applicativeId, null);	
+	}
+	public final static OpenSPCoop2Message getSOAP11WithAttachments(int sizePayload, String applicativeId, Charset charset) throws Throwable{
+		return getSOAP11WithAttachments(sizePayload, applicativeId, charset,
+				true, true, true, true, true);
+	}
+	public final static OpenSPCoop2Message getSOAP11WithAttachments(int sizePayload, String applicativeId,
+			boolean xmlAttachment, boolean jsonAttachment, boolean pdfAttachment, boolean textAttachment, boolean zipAttachment) throws Throwable{
+		return getSOAP11WithAttachments(sizePayload, applicativeId, null,
+				xmlAttachment, jsonAttachment, pdfAttachment, textAttachment, zipAttachment);
+	}
+	public final static OpenSPCoop2Message getSOAP11WithAttachments(int sizePayload, String applicativeId, Charset charset,
+			boolean xmlAttachment, boolean jsonAttachment, boolean pdfAttachment, boolean textAttachment, boolean zipAttachment) throws Throwable{
+		String envelope = getSOAPEnvelope11(sizePayload, applicativeId);
+		if(charset!=null) {
+			envelope = "<?xml version=\"1.0\" encoding=\""+charset.getValue()+"\"?>"+"\n"+envelope;
+			envelope = CharsetUtilities.convertTo(null, envelope, charset);
+		}
+		String charsetSuffix = "";
+		byte [] envelopeB = null;
+		if(charset!=null) {
+			charsetSuffix = ";charset="+charset.getValue();
+			envelopeB = envelope.getBytes(charset.getValue());
+		}
+		else {
+			envelopeB = envelope.getBytes();
+		}
+		return _getSOAPWithAttachments(MessageType.SOAP_11, HttpConstants.CONTENT_TYPE_SOAP_1_1+charsetSuffix, envelopeB, 
+				xmlAttachment, jsonAttachment, pdfAttachment, textAttachment, zipAttachment);
 	}
 	public final static OpenSPCoop2Message getSOAP12WithAttachments(int sizePayload) throws Throwable{
-		return _getSOAPWithAttachments(MessageType.SOAP_12, HttpConstants.CONTENT_TYPE_SOAP_1_2, getSOAPEnvelope12(sizePayload).getBytes());
+		return getSOAP12WithAttachments(sizePayload, null, null);
 	}
-	private final static OpenSPCoop2Message _getSOAPWithAttachments(MessageType messageType, String contentType, byte [] envelope) throws Throwable { 
+	public final static OpenSPCoop2Message getSOAP12WithAttachments(int sizePayload, String applicativeId) throws Throwable{
+		return getSOAP12WithAttachments(sizePayload, applicativeId, null);
+	}
+	public final static OpenSPCoop2Message getSOAP12WithAttachments(int sizePayload, String applicativeId, Charset charset) throws Throwable{
+		return getSOAP12WithAttachments(sizePayload, applicativeId, charset,
+				true, true, true, true, true);
+	}
+	public final static OpenSPCoop2Message getSOAP12WithAttachments(int sizePayload, String applicativeId,
+			boolean xmlAttachment, boolean jsonAttachment, boolean pdfAttachment, boolean textAttachment, boolean zipAttachment) throws Throwable{
+		return getSOAP12WithAttachments(sizePayload, applicativeId, null,
+				xmlAttachment, jsonAttachment, pdfAttachment, textAttachment, zipAttachment);
+	}
+	public final static OpenSPCoop2Message getSOAP12WithAttachments(int sizePayload, String applicativeId, Charset charset,
+			boolean xmlAttachment, boolean jsonAttachment, boolean pdfAttachment, boolean textAttachment, boolean zipAttachment) throws Throwable{
+		String envelope = getSOAPEnvelope12(sizePayload, applicativeId);
+		if(charset!=null) {
+			envelope = "<?xml version=\"1.0\" encoding=\""+charset.getValue()+"\"?>"+"\n"+envelope;
+			envelope = CharsetUtilities.convertTo(null, envelope, charset);
+		}
+		String charsetSuffix = "";
+		byte [] envelopeB = null;
+		if(charset!=null) {
+			charsetSuffix = ";charset="+charset.getValue();
+			envelopeB = envelope.getBytes(charset.getValue());
+		}
+		else {
+			envelopeB = envelope.getBytes();
+		}
+		return _getSOAPWithAttachments(MessageType.SOAP_12, HttpConstants.CONTENT_TYPE_SOAP_1_2+charsetSuffix, envelopeB, 
+				xmlAttachment, jsonAttachment, pdfAttachment, textAttachment, zipAttachment);
+	}
+	private final static OpenSPCoop2Message _getSOAPWithAttachments(MessageType messageType, String contentType, byte [] envelope, 
+			boolean xmlAttachment, boolean jsonAttachment, boolean pdfAttachment, boolean textAttachment, boolean zipAttachment) throws Throwable { 
 		
 		OpenSPCoop2MessageFactory factory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		OpenSPCoop2MessageParseResult parse = factory.createMessage(messageType, MessageRole.NONE, contentType, envelope);
 		OpenSPCoop2Message msg = parse.getMessage_throwParseThrowable();
 		OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
 		
-		AttachmentPart apXml = null;
-		String contentTypeXml = HttpConstants.CONTENT_TYPE_XML;
-		byte [] contentXml = getXML(SMALL_SIZE).getBytes();
-		InputStreamDataSource isSourceXml = new InputStreamDataSource("attachXml", contentTypeXml, contentXml);
-		apXml = soapMsg.createAttachmentPart(new DataHandler(isSourceXml));		
-		String contentIDXml = soapMsg.createContentID("http://govway.org/example");
-		if(contentIDXml.startsWith("<")){
-			contentIDXml = contentIDXml.substring(1);
+		if(xmlAttachment) {
+			AttachmentPart apXml = null;
+			Charset charset = Charset.UTF_8;
+			String contentTypeXml = HttpConstants.CONTENT_TYPE_XML+";charset="+charset.getValue();
+			String xml = getXML(SMALL_SIZE);
+			xml = xml +"<?xml version=\"1.0\" encoding=\""+charset.getValue()+"\"?>"+"\n";
+			byte [] contentXml = xml.getBytes();
+			InputStreamDataSource isSourceXml = new InputStreamDataSource("attachXml", contentTypeXml, contentXml);
+			apXml = soapMsg.createAttachmentPart(new DataHandler(isSourceXml));		
+			String contentIDXml = soapMsg.createContentID("http://govway.org/example");
+			if(contentIDXml.startsWith("<")){
+				contentIDXml = contentIDXml.substring(1);
+			}
+			if(contentIDXml.endsWith(">")){
+				contentIDXml = contentIDXml.substring(0,contentIDXml.length()-1);
+			}
+			apXml.setContentId(contentIDXml);
+			soapMsg.addAttachmentPart(apXml);
 		}
-		if(contentIDXml.endsWith(">")){
-			contentIDXml = contentIDXml.substring(0,contentIDXml.length()-1);
-		}
-		apXml.setContentId(contentIDXml);
-		soapMsg.addAttachmentPart(apXml);
 
-		
-		AttachmentPart apJson = null;
-		String contentTypeJson = HttpConstants.CONTENT_TYPE_JSON;
-		byte [] contentJson = getJson(SMALL_SIZE).getBytes();
-		InputStreamDataSource isSourceJson = new InputStreamDataSource("attachJson", contentTypeJson, contentJson);
-		apJson = soapMsg.createAttachmentPart(new DataHandler(isSourceJson));		
-		String contentIDJson = soapMsg.createContentID("http://govway.org/example");
-		if(contentIDJson.startsWith("<")){
-			contentIDJson = contentIDJson.substring(1);
+		if(jsonAttachment) {
+			AttachmentPart apJson = null;
+			String contentTypeJson = HttpConstants.CONTENT_TYPE_JSON;
+			byte [] contentJson = getJson(SMALL_SIZE).getBytes();
+			InputStreamDataSource isSourceJson = new InputStreamDataSource("attachJson", contentTypeJson, contentJson);
+			apJson = soapMsg.createAttachmentPart(new DataHandler(isSourceJson));		
+			String contentIDJson = soapMsg.createContentID("http://govway.org/example");
+			if(contentIDJson.startsWith("<")){
+				contentIDJson = contentIDJson.substring(1);
+			}
+			if(contentIDJson.endsWith(">")){
+				contentIDJson = contentIDJson.substring(0,contentIDJson.length()-1);
+			}
+			apJson.setContentId(contentIDJson);
+			soapMsg.addAttachmentPart(apJson);
 		}
-		if(contentIDJson.endsWith(">")){
-			contentIDJson = contentIDJson.substring(0,contentIDJson.length()-1);
+		
+		if(pdfAttachment) {
+			AttachmentPart apPdf = null;
+			String contentTypePdf = HttpConstants.CONTENT_TYPE_PDF;
+			byte [] contentPdf = getPdf();
+			InputStreamDataSource isSourcePdf = new InputStreamDataSource("attachPdf", contentTypePdf, contentPdf);
+			apPdf = soapMsg.createAttachmentPart(new DataHandler(isSourcePdf));		
+			String contentIDPdf = soapMsg.createContentID("http://govway.org/example");
+			if(contentIDPdf.startsWith("<")){
+				contentIDPdf = contentIDPdf.substring(1);
+			}
+			if(contentIDPdf.endsWith(">")){
+				contentIDPdf = contentIDPdf.substring(0,contentIDPdf.length()-1);
+			}
+			apPdf.setContentId(contentIDPdf);
+			soapMsg.addAttachmentPart(apPdf);
 		}
-		apJson.setContentId(contentIDJson);
-		soapMsg.addAttachmentPart(apJson);
 		
-		
-		AttachmentPart apPdf = null;
-		String contentTypePdf = HttpConstants.CONTENT_TYPE_PDF;
-		byte [] contentPdf = getPdf();
-		InputStreamDataSource isSourcePdf = new InputStreamDataSource("attachPdf", contentTypePdf, contentPdf);
-		apPdf = soapMsg.createAttachmentPart(new DataHandler(isSourcePdf));		
-		String contentIDPdf = soapMsg.createContentID("http://govway.org/example");
-		if(contentIDPdf.startsWith("<")){
-			contentIDPdf = contentIDPdf.substring(1);
+		if(textAttachment) {		
+			AttachmentPart apTextPlain = null;
+			String contentTypeTextPlain = HttpConstants.CONTENT_TYPE_PLAIN;
+			byte [] contentTextPlain = "Hello world".getBytes();
+			InputStreamDataSource isSourceTextPlain = new InputStreamDataSource("attachTextPlain", contentTypeTextPlain, contentTextPlain);
+			apTextPlain = soapMsg.createAttachmentPart(new DataHandler(isSourceTextPlain));		
+			String contentIDTextPlain = soapMsg.createContentID("http://govway.org/example");
+			if(contentIDTextPlain.startsWith("<")){
+				contentIDTextPlain = contentIDTextPlain.substring(1);
+			}
+			if(contentIDTextPlain.endsWith(">")){
+				contentIDTextPlain = contentIDTextPlain.substring(0,contentIDTextPlain.length()-1);
+			}
+			apTextPlain.setContentId(contentIDTextPlain);
+			soapMsg.addAttachmentPart(apTextPlain);
 		}
-		if(contentIDPdf.endsWith(">")){
-			contentIDPdf = contentIDPdf.substring(0,contentIDPdf.length()-1);
+		
+		if(zipAttachment) {		
+			AttachmentPart apZip = null;
+			String contentTypeZip = HttpConstants.CONTENT_TYPE_ZIP;
+			byte [] contentZip = getZip();
+			InputStreamDataSource isSourceZip = new InputStreamDataSource("attachZip", contentTypeZip, contentZip);
+			apZip = soapMsg.createAttachmentPart(new DataHandler(isSourceZip));		
+			String contentIDZip = soapMsg.createContentID("http://govway.org/example");
+			if(contentIDZip.startsWith("<")){
+				contentIDZip = contentIDZip.substring(1);
+			}
+			if(contentIDZip.endsWith(">")){
+				contentIDZip = contentIDZip.substring(0,contentIDZip.length()-1);
+			}
+			apZip.setContentId(contentIDZip);
+			soapMsg.addAttachmentPart(apZip);
 		}
-		apPdf.setContentId(contentIDPdf);
-		soapMsg.addAttachmentPart(apPdf);
-		
-		
-		
-		AttachmentPart apTextPlain = null;
-		String contentTypeTextPlain = HttpConstants.CONTENT_TYPE_PLAIN;
-		byte [] contentTextPlain = "Hello world".getBytes();
-		InputStreamDataSource isSourceTextPlain = new InputStreamDataSource("attachTextPlain", contentTypeTextPlain, contentTextPlain);
-		apTextPlain = soapMsg.createAttachmentPart(new DataHandler(isSourceTextPlain));		
-		String contentIDTextPlain = soapMsg.createContentID("http://govway.org/example");
-		if(contentIDTextPlain.startsWith("<")){
-			contentIDTextPlain = contentIDTextPlain.substring(1);
-		}
-		if(contentIDTextPlain.endsWith(">")){
-			contentIDTextPlain = contentIDTextPlain.substring(0,contentIDTextPlain.length()-1);
-		}
-		apTextPlain.setContentId(contentIDTextPlain);
-		soapMsg.addAttachmentPart(apTextPlain);
-		
-		
-		
-		AttachmentPart apZip = null;
-		String contentTypeZip = HttpConstants.CONTENT_TYPE_ZIP;
-		byte [] contentZip = getZip();
-		InputStreamDataSource isSourceZip = new InputStreamDataSource("attachZip", contentTypeZip, contentZip);
-		apZip = soapMsg.createAttachmentPart(new DataHandler(isSourceZip));		
-		String contentIDZip = soapMsg.createContentID("http://govway.org/example");
-		if(contentIDZip.startsWith("<")){
-			contentIDZip = contentIDZip.substring(1);
-		}
-		if(contentIDZip.endsWith(">")){
-			contentIDZip = contentIDZip.substring(0,contentIDZip.length()-1);
-		}
-		apZip.setContentId(contentIDZip);
-		soapMsg.addAttachmentPart(apZip);
 		
 		
 		return soapMsg;

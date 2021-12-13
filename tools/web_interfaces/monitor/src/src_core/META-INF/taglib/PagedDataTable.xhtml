@@ -147,34 +147,50 @@
 					<rich:column align="center" width="50px" id="ckbClmn" rendered="#{showSelectAll and not empty mBean}">
 	                    <f:facet name="header">
 	                      <h:panelGroup style="width:50px;" layout="block" id="chkClmnPg">
-	                        <h:selectBooleanCheckbox id="#{id}_checkAll" title="Seleziona Tutti" onclick="checkAllCheckboxesInTable( '#{id}', this.checked , #{showSelectAll}, #{value.rowCount} , #{rowsToDisplay});">
+	                        <h:selectBooleanCheckbox id="#{id}_checkAll" title="Seleziona Tutti" onclick="checkVisualizzaSelezionePrimiElementi(); checkAllCheckboxesInTable( '#{id}', this.checked , #{showSelectAll}, #{value.rowCount} , #{rowsToDisplay} , #{useCount});">
 	                        	
 	                        </h:selectBooleanCheckbox>
 	                        <h:selectBooleanCheckbox id="#{id}_selectedAllChbx" value="#{mBean.selectedAll}" style="display:none"/>
 	                      </h:panelGroup>
 	                    </f:facet>
-	                    <h:selectBooleanCheckbox id="#{id}_column_ckb" value="#{selectionMapTarget}" disabled="false"  onclick="singleCheckboxListener( '#{id}', this.checked , #{showSelectAll} ,#{value.rowCount} , #{rowsToDisplay} );"/>
+	                    <h:selectBooleanCheckbox id="#{id}_column_ckb" value="#{selectionMapTarget}" disabled="false"  onclick="checkVisualizzaSelezionePrimiElementi(); singleCheckboxListener( '#{id}', this.checked , #{showSelectAll} ,#{value.rowCount} , #{rowsToDisplay}, #{useCount} );"/>
 	                </rich:column>
 					  
 					  <ui:insert/>
 					  
 				      <f:facet name="footer">
 				      	<a4j:outputPanel layout="block">
-				      		<a4j:outputPanel layout="block" rendered="#{mostraComandiFooter}" styleClass="selectionInfoCtr">
-						      		<div class="selectionInfoItems">
-						      			<h:outputText id="#{id}_selectedInfoLbl" style="display:none" value="" styleClass="selectionInfoItem"/>
-
-										<h:outputLink style="display:none" id="#{id}_selectAllLink" styleClass="selectionInfoItem" value="Seleziona tutti gli elementi" onclick="selectAllListener('#{id}',true,#{value.rowCount}); return false;"/>
-					      				<h:outputLink style="display:none" id="#{id}_undoSelectAllLink" styleClass="selectionInfoItem" value="Annulla selezione" onclick="selectAllListener('#{id}',false,#{value.rowCount}); return false;"/>
-	
-						      		</div>
-			      					
-			      				
+				      		<a4j:outputPanel layout="block" rendered="#{mostraComandiFooter}" styleClass="selectionInfoCtr" id="#{id}_panelComandiFooter">
+					      		<div class="selectionInfoItems">
+									<c:if test="#{useCount == true}">
+										<h:outputText style="display:none" id="#{id}_selectedInfoLbl" value="" styleClass="selectionInfoItem"/>
+										<h:outputText style="display:none" id="#{id}_selectedInfoPipe1"  value="|" styleClass="selectionInfoItem"/>
+										<h:outputLink style="display:none" id="#{id}_selectAllLink" styleClass="selectionInfoItem" value="Seleziona tutti gli elementi" onclick="selectAllListener('#{id}',true,#{value.rowCount} , #{useCount}); return false;"/>
+				      					<h:outputLink style="display:none" id="#{id}_undoSelectAllLink" styleClass="selectionInfoItem" value="Annulla selezione" onclick="selectAllListener('#{id}',false,#{value.rowCount} , #{useCount}); return false;"/>
+				      				</c:if>
+				      				<c:if test="#{useCount == false}">
+				      					<h:outputText style="display:none" id="#{id}_selectedInfoLbl" value="" styleClass="selectionInfoItem"/>
+				      					<h:outputText style="display:none" id="#{id}_selectedInfoPipe1"  value="|" styleClass="selectionInfoItem"/>
+				      					<h:outputLink style="display:none" id="#{id}_selectAllTableItemsLink" styleClass="selectionInfoItem" value="#" 				
+				      						onclick="checkVisualizzaSelezionePrimiElementi(); checkAllCheckboxesInTable( '#{id}', true , #{showSelectAll}, #{value.rowCount} , #{rowsToDisplay} , #{useCount}); return false;">Seleziona tutti gli elementi visualizzati</h:outputLink>
+				      					<h:outputText style="display:none" id="#{id}_selectedInfoPipe2"  value="|" styleClass="selectionInfoItem"/>
+				      					<h:outputLink style="display:none" id="#{id}_selectAllLink" styleClass="selectionInfoItem" value="#" 
+				      						onclick="selectAllListener('#{id}',true,#{value.rowCount} , #{useCount}, '#{value.selezionatiPrimiElementiLabel}'); return false;">#{value.numeroMassimoRisultatiLabel}</h:outputLink>
+				      					<h:outputText style="display:none" id="#{id}_selectedInfoPipe3"  value="|" styleClass="selectionInfoItem"/>
+				      					<h:outputLink style="display:none" id="#{id}_undoSelectAllLink" styleClass="selectionInfoItem" value="#" 
+				      						onclick="checkVisualizzaSelezionePrimiElementi(); selectAllListener('#{id}',false,#{value.rowCount} , #{useCount}); return false;">Annulla selezione</h:outputLink>
+				      				</c:if>
+					      		</div>
 			      			</a4j:outputPanel>
 				      	</a4j:outputPanel>					
 					  </f:facet>
 			</rich:dataTable>
 			<c:if test="#{useCount == true}">
+				<script type="text/javascript">	
+					function checkVisualizzaSelezionePrimiElementi(){
+						//donothing
+					}
+				</script>
 				<rich:datascroller id="#{id}_ds_down" styleClass="ds_down"
 						   for="#{id}_tbl" 
 						   maxPages="15"
@@ -187,7 +203,7 @@
 								<rich:spacer width="10px"/>
 								<h:panelGroup id="tableDsDownText">
 									<h:outputText value="Pagina #{value.currentPage}" rendered="#{not mostraComandiFooterSelezionePageSize}"/>
-									<rich:comboBox id="rowsToDisplayCombo" value="#{value.rowsToDisplay}" converter="selectItemConverter" width="120" rendered="#{mostraComandiFooterSelezionePageSize}" enableManualInput="false">
+									<rich:comboBox id="rowsToDisplayCombo" value="#{value.rowsToDisplay}" converter="selectItemConverter" width="140" rendered="#{mostraComandiFooterSelezionePageSize}" enableManualInput="false">
 										<f:selectItems value="#{value.listaNumeroRisultati}"  />
 										<a4j:support status="mainStatus" event="onselect" reRender="#{reRenderIds}" limitToList="true" 
 											actionListener="#{value.rowsToDisplaySelected}" />
@@ -243,6 +259,9 @@
 				</rich:datascroller>
 			</c:if>
 			<c:if test="#{useCount == false}">
+	        	<a4j:outputPanel layout="block" ajaxRendered="false" id="#{id}_checkVisualizzaSelezionePrimiElementiPanel">
+	        		<h:inputHidden id="#{id}_checkVisualizzaSelezionePrimiElementi" value="#{value.visualizzaSelezionePrimiElementi}" />
+	        	</a4j:outputPanel>
 				<a4j:outputPanel layout="block" id="#{id}_ds_down">
 					<script type="text/javascript">			
 					 jQuery(document).ready(function() {
@@ -337,7 +356,7 @@
 											<rich:spacer width="10px"/>
 											<h:panelGroup id="tableDsDownText">
 												<h:outputText value="Pagina #{value.currentPage}" rendered="#{not mostraComandiFooterSelezionePageSize}"/>
-												<rich:comboBox id="rowsToDisplayCombo" value="#{value.rowsToDisplay}" converter="selectItemConverter" width="120" rendered="#{mostraComandiFooterSelezionePageSize}" enableManualInput="false">
+												<rich:comboBox id="rowsToDisplayCombo" value="#{value.rowsToDisplay}" converter="selectItemConverter" width="140" rendered="#{mostraComandiFooterSelezionePageSize}" enableManualInput="false">
 													<f:selectItems value="#{value.listaNumeroRisultati}"  />
 													<a4j:support status="mainStatus" event="onselect" reRender="#{reRenderIds}" limitToList="true" 
 														actionListener="#{value.rowsToDisplaySelected}" />

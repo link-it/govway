@@ -9,7 +9,7 @@
                 </env:Subcode>
             </env:Code>
             <env:Reason>
-                <env:Text xml:lang="en-US">A security error was encountered when verifying the message ; NotAfter: Tue Jul 09 12:30:00 CEST 2019</env:Text>
+                <env:Text xml:lang="en-US">A security error was encountered when verifying the message ; certificate expired on 20190709103000GMT+00:00</env:Text>
             </env:Reason>
             <env:Role>http://govway.org/integration</env:Role>
             <env:Detail>
@@ -17,7 +17,7 @@
                     <type>https://govway.org/handling-errors/400/InteroperabilityInvalidRequest.html</type>
                     <title>InteroperabilityInvalidRequest</title>
                     <status>400</status>
-                    <detail>A security error was encountered when verifying the message ; NotAfter: Tue Jul 09 12:30:00 CEST 2019</detail>
+                    <detail>A security error was encountered when verifying the message ; certificate expired on 20190709103000GMT+00:00</detail>
                     <govway_id>#uuid</govway_id>
                 </problem>
             </env:Detail>

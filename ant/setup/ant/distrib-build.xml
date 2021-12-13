@@ -178,6 +178,84 @@
 					value="&lt;max-pool-size>20&lt;/max-pool-size>"/>
 			</then>
 		</if>
+		<if>
+			<or>
+				<equals arg1="${antinstaller_integration_manager}" arg2="true" />
+				<equals arg1="${antinstaller_timer_consegna}" arg2="true" />
+			</or>
+			<then>
+				<if>
+					<equals arg1="${antinstaller_console_env}" arg2="manager"/>
+					<then>
+						<var name="datasource_dir_ds_creati" value="${dist}/datasource/runtime"/>
+					</then>
+					<else>
+						<var name="datasource_dir_ds_creati" value="${dist}/datasource"/>
+					</else>
+				</if>
+
+				<if>
+					<equals arg1="${antinstaller_timer_consegna}" arg2="true" />
+					<then>
+						<copy file="${datasource_dir_ds_creati}/govway-ds.xml" tofile="${datasource_dir_ds_creati}/govway_runtime_consegnaAsincrona-ds.xml" />
+						<replace file="${datasource_dir_ds_creati}/govway_runtime_consegnaAsincrona-ds.xml" 
+							token="&lt;min-pool-size>10&lt;/min-pool-size>" 
+							value="&lt;min-pool-size>5&lt;/min-pool-size>"/>
+						<replace file="${datasource_dir_ds_creati}/govway_runtime_consegnaAsincrona-ds.xml" 
+							token="&lt;max-pool-size>50&lt;/max-pool-size>" 
+							value="&lt;max-pool-size>20&lt;/max-pool-size>"/>
+						<replace file="${datasource_dir_ds_creati}/govway_runtime_consegnaAsincrona-ds.xml" 
+							token="org.govway.datasource" 
+							value="org.govway.datasource.runtime.consegnaAsincrona"/>
+						<if>
+							<equals arg1="${antinstaller_log_db}" arg2="log"/>
+							<then>
+								<copy file="${datasource_dir_ds_creati}/govway_tracciamento-ds.xml" tofile="${datasource_dir_ds_creati}/govway_tracciamento_consegnaAsincrona-ds.xml" />
+								<replace file="${datasource_dir_ds_creati}/govway_tracciamento_consegnaAsincrona-ds.xml" 
+									token="&lt;min-pool-size>10&lt;/min-pool-size>" 
+									value="&lt;min-pool-size>5&lt;/min-pool-size>"/>
+								<replace file="${datasource_dir_ds_creati}/govway_tracciamento_consegnaAsincrona-ds.xml" 
+									token="&lt;max-pool-size>50&lt;/max-pool-size>" 
+									value="&lt;max-pool-size>20&lt;/max-pool-size>"/>
+								<replace file="${datasource_dir_ds_creati}/govway_tracciamento_consegnaAsincrona-ds.xml" 
+									token="org.govway.datasource.tracciamento" 
+									value="org.govway.datasource.tracciamento.consegnaAsincrona"/>
+							</then>
+						</if>
+					</then>
+				</if>
+				<if>
+					<equals arg1="${antinstaller_integration_manager}" arg2="true" />
+					<then>
+						<copy file="${datasource_dir_ds_creati}/govway-ds.xml" tofile="${datasource_dir_ds_creati}/govway_runtime_messageBoxIM-ds.xml" />
+						<replace file="${datasource_dir_ds_creati}/govway_runtime_messageBoxIM-ds.xml" 
+							token="&lt;min-pool-size>10&lt;/min-pool-size>" 
+							value="&lt;min-pool-size>5&lt;/min-pool-size>"/>
+						<replace file="${datasource_dir_ds_creati}/govway_runtime_messageBoxIM-ds.xml" 
+							token="&lt;max-pool-size>50&lt;/max-pool-size>" 
+							value="&lt;max-pool-size>20&lt;/max-pool-size>"/>
+						<replace file="${datasource_dir_ds_creati}/govway_runtime_messageBoxIM-ds.xml" 
+							token="org.govway.datasource" 
+							value="org.govway.datasource.runtime.messageBoxIM"/>
+						<if>
+							<equals arg1="${antinstaller_log_db}" arg2="log"/>
+							<then>
+								<copy file="${datasource_dir_ds_creati}/govway_tracciamento-ds.xml" tofile="${datasource_dir_ds_creati}/govway_tracciamento_messageBoxIM-ds.xml" />
+								<replace file="${datasource_dir_ds_creati}/govway_tracciamento_messageBoxIM-ds.xml" 
+									token="&lt;min-pool-size>10&lt;/min-pool-size>" 
+									value="&lt;min-pool-size>5&lt;/min-pool-size>"/>
+								<replace file="${datasource_dir_ds_creati}/govway_tracciamento_messageBoxIM-ds.xml" 
+									token="&lt;max-pool-size>50&lt;/max-pool-size>" 
+									value="&lt;max-pool-size>20&lt;/max-pool-size>"/>
+								<replace file="${datasource_dir_ds_creati}/govway_tracciamento_messageBoxIM-ds.xml" 
+									token="org.govway.datasource.tracciamento" 
+									value="org.govway.datasource.tracciamento.messageBoxIM"/>
+							</then>
+						</if>
+					</then>
+				</if>
+			</then>
+		</if>
 
 
 		<!-- Cfg -->
@@ -1203,6 +1281,100 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 		<res-ref-name>govwayds.statistiche</res-ref-name>
 		<res-type>javax.sql.DataSource</res-type>
 		<lookup-name>java:/org.govway.datasource.statistiche</lookup-name>
+	</resource-ref>]]>
+				</concat>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${antinstaller_console_env}" arg2="manager"/>
+			<then>
+				<available file="${dist}/datasource/runtime/govway_runtime_consegnaAsincrona-ds.xml" type="file" property="dsRuntimeConsegnaAsincrona.present"/>
+			</then>
+			<else>
+				<available file="${dist}/datasource/govway_runtime_consegnaAsincrona-ds.xml" type="file" property="dsRuntimeConsegnaAsincrona.present"/>
+			</else>
+		</if>
+		<if>
+			<and>
+				<equals arg1="${dsRuntimeConsegnaAsincrona.present}" arg2="true"/>
+			</and>
+			<then>
+				<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" append="yes">
+<![CDATA[	<resource-ref>
+		<res-ref-name>govwayds.runtime.consegnaAsincrona</res-ref-name>
+		<res-type>javax.sql.DataSource</res-type>
+		<lookup-name>java:/org.govway.datasource.runtime.consegnaAsincrona</lookup-name>
+	</resource-ref>]]>
+				</concat>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${antinstaller_console_env}" arg2="manager"/>
+			<then>
+				<available file="${dist}/datasource/runtime/govway_tracciamento_consegnaAsincrona-ds.xml" type="file" property="dsTracciamentoConsegnaAsincrona.present"/>
+			</then>
+			<else>
+				<available file="${dist}/datasource/govway_tracciamento_consegnaAsincrona-ds.xml" type="file" property="dsTracciamentoConsegnaAsincrona.present"/>
+			</else>
+		</if>
+		<if>
+			<and>
+				<equals arg1="${dsTracciamentoConsegnaAsincrona.present}" arg2="true"/>
+				<equals arg1="${antinstaller_log_db}" arg2="log"/>
+			</and>
+			<then>
+				<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" append="yes">
+<![CDATA[	<resource-ref>
+		<res-ref-name>govwayds.tracciamento.consegnaAsincrona</res-ref-name>
+		<res-type>javax.sql.DataSource</res-type>
+		<lookup-name>java:/org.govway.datasource.tracciamento.consegnaAsincrona</lookup-name>
+	</resource-ref>]]>
+				</concat>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${antinstaller_console_env}" arg2="manager"/>
+			<then>
+				<available file="${dist}/datasource/runtime/govway_runtime_messageBoxIM-ds.xml" type="file" property="dsRuntimeMessageBoxIM.present"/>
+			</then>
+			<else>
+				<available file="${dist}/datasource/govway_runtime_messageBoxIM-ds.xml" type="file" property="dsRuntimeMessageBoxIM.present"/>
+			</else>
+		</if>
+		<if>
+			<and>
+				<equals arg1="${dsRuntimeMessageBoxIM.present}" arg2="true"/>
+			</and>
+			<then>
+				<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" append="yes">
+<![CDATA[	<resource-ref>
+		<res-ref-name>govwayds.runtime.messageBoxIM</res-ref-name>
+		<res-type>javax.sql.DataSource</res-type>
+		<lookup-name>java:/org.govway.datasource.runtime.messageBoxIM</lookup-name>
+	</resource-ref>]]>
+				</concat>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${antinstaller_console_env}" arg2="manager"/>
+			<then>
+				<available file="${dist}/datasource/runtime/govway_tracciamento_messageBoxIM-ds.xml" type="file" property="dsTracciamentoMessageBoxIM.present"/>
+			</then>
+			<else>
+				<available file="${dist}/datasource/govway_tracciamento_messageBoxIM-ds.xml" type="file" property="dsTracciamentoMessageBoxIM.present"/>
+			</else>
+		</if>
+		<if>
+			<and>
+				<equals arg1="${dsTracciamentoMessageBoxIM.present}" arg2="true"/>
+				<equals arg1="${antinstaller_log_db}" arg2="log"/>
+			</and>
+			<then>
+				<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" append="yes">
+<![CDATA[	<resource-ref>
+		<res-ref-name>govwayds.tracciamento.messageBoxIM</res-ref-name>
+		<res-type>javax.sql.DataSource</res-type>
+		<lookup-name>java:/org.govway.datasource.tracciamento.messageBoxIM</lookup-name>
 	</resource-ref>]]>
 				</concat>
 			</then>

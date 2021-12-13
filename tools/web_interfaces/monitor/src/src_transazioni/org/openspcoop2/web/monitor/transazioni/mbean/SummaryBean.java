@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -443,7 +442,7 @@ public class SummaryBean implements Serializable{
 		boolean clearEndMs = false;
 
 		if(CostantiReport.ULTIMO_ANNO.equals(this.periodo)){
-			sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_MMM_YY, Locale.ITALIAN);
+			sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_MMM_YY, ApplicationBean.getInstance().getLocale());
 
 			field = Calendar.MONTH;
 			increment = 1;
@@ -457,8 +456,8 @@ public class SummaryBean implements Serializable{
 
 
 		}else if(CostantiReport.ULTIMI_30_GIORNI.equals(this.periodo)){
-			sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM, Locale.ITALIAN);
-			sdfend = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM, Locale.ITALIAN);
+			sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM, ApplicationBean.getInstance().getLocale());
+			sdfend = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM, ApplicationBean.getInstance().getLocale());
 			field = Calendar.WEEK_OF_YEAR;
 			increment = 1;
 
@@ -469,7 +468,7 @@ public class SummaryBean implements Serializable{
 			actualStart.clear(Calendar.MILLISECOND);
 
 		}else if(CostantiReport.ULTIMI_7_GIORNI.equals(this.periodo)){
-			sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_EEE_DD_MM, Locale.ITALIAN);
+			sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_EEE_DD_MM, ApplicationBean.getInstance().getLocale());
 			field = Calendar.DATE;
 			increment = 1;
 
@@ -480,8 +479,8 @@ public class SummaryBean implements Serializable{
 			actualStart.clear(Calendar.MILLISECOND);
 
 		}else if(CostantiReport.ULTIME_24_ORE.equals(this.periodo)){
-			sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_HH, Locale.ITALIAN);
-			sdfend = new SimpleDateFormat(CostantiGrafici.PATTERN_HH, Locale.ITALIAN);
+			sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_HH, ApplicationBean.getInstance().getLocale());
+			sdfend = new SimpleDateFormat(CostantiGrafici.PATTERN_HH, ApplicationBean.getInstance().getLocale());
 			field = Calendar.HOUR_OF_DAY;
 			increment = 1;
 
@@ -551,7 +550,7 @@ public class SummaryBean implements Serializable{
 
 		String color = Colors.CODE_OK+","+Colors.CODE_FAULT_APPLICATIVO+","+Colors.CODE_ERROR;
 		
-		sdf = new SimpleDateFormat("dd MMMMM yyyy HH:mm", Locale.ITALIAN);
+		sdf = new SimpleDateFormat("dd MMMMM yyyy HH:mm", ApplicationBean.getInstance().getLocale());
 		StringBuilder sb = new StringBuilder();
 		sb.append("<chart pallete='3' caption='");
 		sb.append(this.getCaption());
@@ -659,7 +658,7 @@ public class SummaryBean implements Serializable{
 				boolean clearEndMs = false;
 
 				if(CostantiReport.ULTIMO_ANNO.equals(this.periodo)){
-					sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_MMM_YY, Locale.ITALIAN);
+					sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_MMM_YY, ApplicationBean.getInstance().getLocale());
 
 					field = Calendar.MONTH;
 					increment = 1;
@@ -673,8 +672,8 @@ public class SummaryBean implements Serializable{
 
 
 				}else if(CostantiReport.ULTIMI_30_GIORNI.equals(this.periodo)){
-					sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM, Locale.ITALIAN);
-					sdfend = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM, Locale.ITALIAN);
+					sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM, ApplicationBean.getInstance().getLocale());
+					sdfend = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM, ApplicationBean.getInstance().getLocale());
 					field = Calendar.WEEK_OF_YEAR;
 					increment = 1;
 
@@ -685,7 +684,7 @@ public class SummaryBean implements Serializable{
 					actualStart.clear(Calendar.MILLISECOND);
 
 				}else if(CostantiReport.ULTIMI_7_GIORNI.equals(this.periodo)){
-					sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_EEE_DD_MM, Locale.ITALIAN);
+					sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_EEE_DD_MM, ApplicationBean.getInstance().getLocale());
 					field = Calendar.DATE;
 					increment = 1;
 
@@ -696,8 +695,8 @@ public class SummaryBean implements Serializable{
 					actualStart.clear(Calendar.MILLISECOND);
 
 				}else if(CostantiReport.ULTIME_24_ORE.equals(this.periodo)){
-					sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_HH, Locale.ITALIAN);
-					sdfend = new SimpleDateFormat(CostantiGrafici.PATTERN_HH, Locale.ITALIAN);
+					sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_HH, ApplicationBean.getInstance().getLocale());
+					sdfend = new SimpleDateFormat(CostantiGrafici.PATTERN_HH, ApplicationBean.getInstance().getLocale());
 					field = Calendar.HOUR_OF_DAY;
 					increment = 1;
 
@@ -834,9 +833,9 @@ public class SummaryBean implements Serializable{
 	private String getSubCaption() {
 		SimpleDateFormat sdf = null;
 		if(!CostantiReport.ULTIME_24_ORE.equals(this.periodo)){
-			sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MMMMM_YYYY, Locale.ITALIAN);
+			sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MMMMM_YYYY, ApplicationBean.getInstance().getLocale());
 		}else{
-			sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MMMMM_YYYY_ORE_HH_MM, Locale.ITALIAN);
+			sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MMMMM_YYYY_ORE_HH_MM, ApplicationBean.getInstance().getLocale());
 		}
 		String res = MessageFormat.format(CostantiGrafici.DAL_AL_PATTERN, sdf.format(this.getMinDate()), sdf.format(this.getMaxDate())); 
 

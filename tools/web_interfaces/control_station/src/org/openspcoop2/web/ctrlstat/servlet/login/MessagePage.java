@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -69,35 +70,45 @@ public class MessagePage extends Action {
 		try {
 			ConsoleHelper consoleHelper = new ConsoleHelper(request, pd, session);
 			
-			consoleHelper.makeMenu();
+			String destinazione = consoleHelper.getParameter(LoginCostanti.PARAMETRO_LOGIN_DESTINAZIONE);
 			
-			String messageText = consoleHelper.getParameter(CostantiControlStation.PARAMETER_MESSAGE_TEXT);
-			if(messageText == null) {
-				messageText = Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE;
+			// ricerca utenza in sessione
+			String userLogin = ServletUtils.getUserLoginFromSession(session);
+			
+			// utente non loggato
+			if (userLogin != null) {
+				consoleHelper.makeMenu();
 			}
-			String messageType = consoleHelper.getParameter(CostantiControlStation.PARAMETER_MESSAGE_TYPE);
-			MessageType mt = MessageType.ERROR;
-			if(messageType != null) {
-				try {
-					mt = MessageType.fromValue(messageType);
-					if(mt == null)
-						mt = MessageType.ERROR;
-				}catch(Exception e) {
-					mt= MessageType.ERROR;
+			
+			if(StringUtils.isBlank(destinazione)) {
+				String messageText = consoleHelper.getParameter(CostantiControlStation.PARAMETER_MESSAGE_TEXT);
+				if(messageText == null) {
+					messageText = Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE;
 				}
+				String messageType = consoleHelper.getParameter(CostantiControlStation.PARAMETER_MESSAGE_TYPE);
+				MessageType mt = MessageType.ERROR;
+				if(messageType != null) {
+					try {
+						mt = MessageType.fromValue(messageType);
+						if(mt == null)
+							mt = MessageType.ERROR;
+					}catch(Exception e) {
+						mt= MessageType.ERROR;
+					}
+				}
+				String messageTitle = consoleHelper.getParameter(CostantiControlStation.PARAMETER_MESSAGE_TITLE);
+				String messageBreadcrumbs = consoleHelper.getParameter(CostantiControlStation.PARAMETER_MESSAGE_BREADCRUMB);
+				
+				if(messageBreadcrumbs!= null) {
+					// setto la barra del titolo
+					List<Parameter> lstParam = new ArrayList<Parameter>();
+					lstParam.add(new Parameter(messageBreadcrumbs, null));
+					ServletUtils.setPageDataTitle(pd, lstParam);
+				}
+				
+				// imposto il messaggio da visualizzare
+				pd.setMessage(messageText, messageTitle, mt);
 			}
-			String messageTitle = consoleHelper.getParameter(CostantiControlStation.PARAMETER_MESSAGE_TITLE);
-			String messageBreadcrumbs = consoleHelper.getParameter(CostantiControlStation.PARAMETER_MESSAGE_BREADCRUMB);
-			
-			if(messageBreadcrumbs!= null) {
-				// setto la barra del titolo
-				List<Parameter> lstParam = new ArrayList<Parameter>();
-				lstParam.add(new Parameter(messageBreadcrumbs, null));
-				ServletUtils.setPageDataTitle(pd, lstParam);
-			}
-			
-			// imposto il messaggio da visualizzare
-			pd.setMessage(messageText, messageTitle, mt);
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			

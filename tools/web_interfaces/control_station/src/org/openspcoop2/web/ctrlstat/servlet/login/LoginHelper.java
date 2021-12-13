@@ -136,7 +136,7 @@ public class LoginHelper extends ConsoleHelper {
 			ServletUtils.removeObjectFromSession(this.session, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
 			// controllo scadenza password
 			PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
-			if(passwordVerifier.isCheckPasswordExpire()) {
+			if(this.utentiCore.isCheckPasswordExpire(passwordVerifier)) {
 				User u = this.utentiCore.getUser(login);
 				if(u.isCheckLastUpdatePassword()) {
 					StringBuilder bfMotivazioneErrore = new StringBuilder(); 

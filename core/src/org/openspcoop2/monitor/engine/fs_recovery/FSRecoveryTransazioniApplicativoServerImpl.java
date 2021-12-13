@@ -130,7 +130,8 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 							this.debug,
 							esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
 							esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage,
-							this.gestioneSerializableDB_AttesaAttiva,this.gestioneSerializableDB_CheckInterval);
+							this.gestioneSerializableDB_AttesaAttiva,this.gestioneSerializableDB_CheckInterval,
+							null);
 					//}
 					
 				}finally{

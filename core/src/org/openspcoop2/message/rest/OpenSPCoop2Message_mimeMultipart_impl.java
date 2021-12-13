@@ -90,6 +90,18 @@ public class OpenSPCoop2Message_mimeMultipart_impl extends AbstractBaseOpenSPCoo
 			throw new MessageException(e.getMessage(),e);
 		}
 	}
+	@Override
+	protected byte[] buildContentAsByteArray() throws MessageException{
+		try{
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			this.serializeContent(bout, true);
+			bout.flush();
+			bout.close();
+			return bout.toByteArray();
+		}catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}
+	}
 
 	@Override
 	protected void serializeContent(OutputStream os, boolean consume) throws MessageException {

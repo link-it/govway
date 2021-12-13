@@ -36,6 +36,7 @@
             scope="request" validate="true">
             <forward name="logoutOk" path="/jsplib/logout.jsp"/>
             <forward name="logoutError" path="/jsplib/info.jsp"/>
+            <forward name="loginMessagePageOk" path="/jsplib/info-nomenu.jsp"/>
         </action>
         
         <action path="/loginAsSu" type="org.openspcoop2.web.ctrlstat.servlet.login.LoginAsSu"
@@ -52,6 +53,11 @@
             <forward name="messagePageError" path="/jsplib/info.jsp"/>
         </action>
     
+    	<action path="/loginMessagePage" type="org.openspcoop2.web.ctrlstat.servlet.login.LoginMessagePage" 
+            scope="request" validate="true">
+            <forward name="loginMessagePageOk" path="/jsplib/info-nomenu.jsp"/>
+            <forward name="loginMessagePageError" path="/jsplib/info-nomenu.jsp"/>
+        </action>
     
     	<!--  Utenti -->
     

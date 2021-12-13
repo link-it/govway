@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.core.commons.ISearch;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.web.lib.audit.costanti.Costanti;
 import org.openspcoop2.web.lib.audit.dao.Filtro;
@@ -885,7 +886,7 @@ public class AuditHelper {
 
 			// setto le label delle colonne
 			String[] labels = {
-					AuditCostanti.LABEL_PARAMETRO_AUDIT_ID_UPPER_CASE,
+					AuditCostanti.LABEL_PARAMETRO_AUDIT_DATA_ESECUZIONE,
 					AuditCostanti.LABEL_PARAMETRO_AUDIT_OPERAZIONE,
 					AuditCostanti.LABEL_PARAMETRO_AUDIT_STATO,
 					AuditCostanti.LABEL_PARAMETRO_AUDIT_OGGETTO,
@@ -911,7 +912,7 @@ public class AuditHelper {
 							pDataInizio, pDataFine, pTipoOperazione, pTipoOggetto, pId, pOldId, pUtente, pStatoOperazione, pContoggetto
 
 							);
-					de.setValue(""+op.getId());
+					de.setValue(DateUtils.getSimpleDateFormatMs().format(op.getTimeExecute())); //+ " ["+op.getId()+"]");
 					de.setIdToRemove(""+op.getId());
 					e.addElement(de);
 
@@ -980,6 +981,13 @@ public class AuditHelper {
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_OPERATION_TIME_EXECUTE);
 			dati.addElement(de);
 
+			de = new DataElement();
+			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_ID_OPERAZIONE);
+			de.setValue(""+op.getId());
+			de.setType(DataElementType.TEXT);
+			de.setName(AuditCostanti.PARAMETRO_AUDIT_OPERATION_ID_OPERAZIONE);
+			dati.addElement(de);
+			
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_TIPO_OPERAZIONE);
 			de.setValue(op.getTipologia().getValue());

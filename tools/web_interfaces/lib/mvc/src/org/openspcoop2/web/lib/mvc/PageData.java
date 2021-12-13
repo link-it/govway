@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.web.lib.mvc.DataElement.STATO_APERTURA_SEZIONI;
 
 /**
@@ -71,6 +72,7 @@ public class PageData {
 	List<DataElement> filter_values = null;
 	int pageSize, index, numEntries;
 	boolean mostraLinkHome = false;
+	List<String> linkHomeLabels = null;
 	String customListViewName = null;
 	String labelBottoneInvia = null;
 	String labelBottoneFiltra = null;
@@ -727,6 +729,26 @@ public class PageData {
 
 	public void setMostraLinkHome(boolean mostraLinkHome) {
 		this.mostraLinkHome = mostraLinkHome;
+	}
+	
+	public List<String> getLinkHomeLabels() {
+		return this.linkHomeLabels;
+	}
+
+	public void setLinkHomeLabels(String pre, String labelLink, String post ) {
+		this.linkHomeLabels = new ArrayList<String>();
+
+		this.linkHomeLabels.add(StringUtils.isNotBlank(pre) ? pre : "");
+		this.linkHomeLabels.add(StringUtils.isNotBlank(labelLink) ? labelLink : Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE_BACK_HOME);
+		this.linkHomeLabels.add(StringUtils.isNotBlank(post) ? post : "");
+	}
+	
+	public List<String> getDefaultLinkHomeLabels() {
+		List<String> l = new ArrayList<String>();
+		l.add(Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE_BACK_HOME_PRE);
+		l.add(Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE_BACK_HOME);
+		l.add(Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE_BACK_HOME_POST);
+		return l;
 	}
 
 	public String getCustomListViewName() {

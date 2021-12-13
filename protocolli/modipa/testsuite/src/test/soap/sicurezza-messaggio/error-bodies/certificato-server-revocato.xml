@@ -10,7 +10,7 @@
             </env:Code>
             <env:Reason>
                 <env:Text xml:lang="en-US">modipa/DemoSoggettoFruitore ha rilevato le seguenti eccezioni:
-A security error was encountered when verifying the message ; Certificate has been revoked, reason: KEY_COMPROMISE, revocation date: Tue Jul 09 12:32:00 CEST 2019, authority: CN=ExampleCA, O=Example, L=Pisa, ST=Italy, C=IT, extension OIDs: [2.5.29.21, 2.5.29.24]</env:Text>
+A security error was encountered when verifying the message ; Certificate revocation after 2019-07-09 10:32:00 +0000, reason: keyCompromise</env:Text>
             </env:Reason>
             <env:Role>http://govway.org/integration</env:Role>
             <env:Detail>
@@ -19,7 +19,7 @@ A security error was encountered when verifying the message ; Certificate has be
                     <title>InteroperabilityInvalidResponse</title>
                     <status>502</status>
                     <detail>modipa/DemoSoggettoFruitore ha rilevato le seguenti eccezioni:
-A security error was encountered when verifying the message ; Certificate has been revoked, reason: KEY_COMPROMISE, revocation date: Tue Jul 09 12:32:00 CEST 2019, authority: CN=ExampleCA, O=Example, L=Pisa, ST=Italy, C=IT, extension OIDs: [2.5.29.21, 2.5.29.24]</detail>
+A security error was encountered when verifying the message ; Certificate revocation after 2019-07-09 10:32:00 +0000, reason: keyCompromise</detail>
                     <govway_id>#uuid</govway_id>
                 </problem>
             </env:Detail>

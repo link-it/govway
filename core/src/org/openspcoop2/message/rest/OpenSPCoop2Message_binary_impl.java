@@ -73,6 +73,10 @@ public class OpenSPCoop2Message_binary_impl extends AbstractBaseOpenSPCoop2RestM
 			throw new MessageException(e.getMessage(),e);
 		}
 	}
+	@Override
+	protected byte[] buildContentAsByteArray() throws MessageException{
+		return this.content;
+	}
 	
 	@Override
 	protected void serializeContent(OutputStream os, boolean consume) throws MessageException {

@@ -40,30 +40,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.lang.StringUtils;
-import org.openspcoop2.protocol.basic.archive.ZIPUtils;
-import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
-import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
-import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
-import org.openspcoop2.protocol.sdk.XMLRootElement;
-import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiNotFoundException;
-import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnosticiConPaginazione;
-import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
-import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticSerializer;
-import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
-import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoException;
-import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoNotFoundException;
-import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
-import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
-import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
-import org.openspcoop2.protocol.utils.EsitiProperties;
-import org.openspcoop2.utils.CopyStream;
-import org.openspcoop2.utils.transport.TransportUtils;
-import org.openspcoop2.utils.transport.http.HttpConstants;
-import org.slf4j.Logger;
-
 import org.openspcoop2.core.transazioni.DumpAllegato;
 import org.openspcoop2.core.transazioni.DumpContenuto;
 import org.openspcoop2.core.transazioni.DumpHeaderAllegato;
@@ -78,6 +54,30 @@ import org.openspcoop2.core.transazioni.constants.ExportState;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.utils.DumpAttachment;
 import org.openspcoop2.message.utils.DumpMessaggioMultipartInfo;
+import org.openspcoop2.protocol.basic.archive.ZIPUtils;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.XMLRootElement;
+import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
+import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
+import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiNotFoundException;
+import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnosticiConPaginazione;
+import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
+import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticSerializer;
+import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
+import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoException;
+import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoNotFoundException;
+import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
+import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
+import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
+import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.CopyStream;
+import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
+import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.MimeTypeUtils;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneApplicativoServerBean;
@@ -87,6 +87,7 @@ import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniApplicativoServer
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniExportService;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
 import org.openspcoop2.web.monitor.transazioni.utils.DumpMessaggioUtils;
+import org.slf4j.Logger;
 
 /**
  * SingleFileExporter
@@ -109,6 +110,7 @@ public class SingleFileExporter implements IExporter{
 	private boolean abilitaMarcamentoTemporale = false;
 	private boolean headersAsProperties = true;
 	private boolean contenutiAsProperties = false;
+	private boolean useCount = true;
 	
 	private ITransazioniService transazioniService;
 	private ITransazioniApplicativoServerService transazioniApplicativoService;
@@ -132,6 +134,7 @@ public class SingleFileExporter implements IExporter{
 		this.abilitaMarcamentoTemporale = properties.isAbilitaMarcamentoTemporaleEsportazione();
 		this.headersAsProperties = properties.isHeadersAsProperties();
 		this.contenutiAsProperties = properties.isContenutiAsProperties();
+		this.useCount = properties.isUseCount();
 		
 		this.tracciamentoService = tracciamentoService;
 		this.transazioniService = transazioniService;
@@ -144,6 +147,10 @@ public class SingleFileExporter implements IExporter{
 		SingleFileExporter.log.info("\t -esportazione Tracce      abilitata: "+this.exportTracce);
 		SingleFileExporter.log.info("\t -esportazione Contenuti   abilitata: "+this.exportContenuti);
 		SingleFileExporter.log.info("\t -esportazione Diagnostici abilitata: "+this.exportDiagnostici);
+		SingleFileExporter.log.info("\t -usa count: "+this.useCount);
+		if(!this.useCount) {
+			SingleFileExporter.log.info("\t -numero massimo elementi esportati: "+Costanti.SELECT_ITEM_VALORE_MASSIMO_ENTRIES);
+		}
 		
 		SingleFileExporter.log.info("\t -MimeType handling (mime.throwExceptionIfMappingNotFound):"+this.mimeThrowExceptionIfNotFound);
 	}
@@ -702,6 +709,9 @@ public class SingleFileExporter implements IExporter{
 			List<TransazioneBean> transazioni = new ArrayList<TransazioneBean>();
 			
 			transazioni = this.transazioniService.findAll(start, limit);
+			
+			int totale = transazioni.size();
+			boolean stopExport = false;
 						
 			//creo sempre il file anche se non ci sono transazioni
 			//il file conterra' solo il SearchFilter.xml
@@ -713,17 +723,36 @@ public class SingleFileExporter implements IExporter{
 				//search filter
 				try{
 					this.zip.putNextEntry(new ZipEntry(rootDir+"SearchFilter.xml"));
-					 UtilityTransazioni.writeSearchFilterXml(this.transazioniService.getSearch(),this.zip);
+					UtilityTransazioni.writeSearchFilterXml(this.transazioniService.getSearch(),this.zip);
 					this.zip.flush();
 					this.zip.closeEntry();
 
-					while(transazioni.size()>0){
+					while(transazioni.size()>0 && !stopExport){
 
 						export(rootDir,transazioni);
 
 						start+=limit;
-
+						
+						// se la console non utilizza la count devo far l'export del numero massimo di transazioni previste in configurazione
+						// puo' succedere che il numero di risultati totali non sia divisibile per il limit e l'ultima ricerca potrebbe aggingere un numero 
+						// di risultati superiore a quanto previsto, riduco il limit al numero dei risultanti mancanti
+						if(!this.useCount) {
+							int residui = Costanti.SELECT_ITEM_VALORE_MASSIMO_ENTRIES - totale;
+							if(residui > 0 && limit >= residui) {
+								limit = residui;
+							}
+						}
+						
 						transazioni = this.transazioniService.findAll(start, limit);
+						
+						totale += transazioni.size();
+						
+						if(!this.useCount) {
+							if(totale >= Costanti.SELECT_ITEM_VALORE_MASSIMO_ENTRIES) {
+								stopExport = true;
+								export(rootDir,transazioni); // altrimenti l'ultima lista recuperata non viene inserita
+							}
+						}
 					}
 
 					this.zip.flush();
@@ -1040,7 +1069,11 @@ public class SingleFileExporter implements IExporter{
 						zip.closeEntry();
 											
 						//salvo il file
-						String ext = MimeTypeUtils.fileExtensionForMIMEType(allegato.getContentType());
+						String ct = allegato.getContentType();
+						if(ct!=null) {
+							ct = ContentTypeUtilities.readBaseTypeFromContentType(ct);
+						}
+						String ext = MimeTypeUtils.fileExtensionForMIMEType(ct);
 						fileName+="."+ext;
 						zip.putNextEntry(new ZipEntry(iEsimoAllegato+fileName));
 						zip.write(allegato.getAllegato());	
@@ -1146,6 +1179,11 @@ public class SingleFileExporter implements IExporter{
 					
 					
 					if(dumpMessaggio.getBody()!=null) {
+						
+						if(dumpMessaggio.getMultipartInfoBody()!=null && dumpMessaggio.getMultipartInfoBody().getContentType()!=null) {
+							ext = MimeTypeUtils.fileExtensionForMIMEType(dumpMessaggio.getMultipartInfoBody().getContentType());
+						}
+						
 						zip.putNextEntry(new ZipEntry(dir+"message."+ext));
 						
 						is = new ByteArrayInputStream(dumpMessaggio.getBody());
@@ -1342,7 +1380,11 @@ public class SingleFileExporter implements IExporter{
 						zip.closeEntry();
 											
 						//salvo il file
-						String ext = MimeTypeUtils.fileExtensionForMIMEType(dumpAttachment.getContentType());
+						String ct = dumpAttachment.getContentType();
+						if(ct!=null) {
+							ct = ContentTypeUtilities.readBaseTypeFromContentType(ct);
+						}
+						String ext = MimeTypeUtils.fileExtensionForMIMEType(ct);
 						fileName+="."+ext;
 						zip.putNextEntry(new ZipEntry(iEsimoAllegato+fileName));
 						zip.write(dumpAttachment.getContent());	

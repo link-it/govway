@@ -30,7 +30,7 @@
 			
 			<h:outputLabel styleClass="outputFieldLabel icon-date"  value="Data Eliminazione" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataEliminazioneIm}"/>
 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataEliminazioneIm}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataEliminazioneIm}">
-				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 			</h:outputText>
 			
 			<h:outputLabel styleClass="outputFieldLabel" value="ID Cluster Eliminazione" rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaIdCluster and not empty dettagliTransazioneApplicativoServerBean.dettaglio.clusterIdEliminazioneIm}" />
@@ -41,7 +41,7 @@
 			
 			<h:outputLabel styleClass="outputFieldLabel icon-date"  value="Data Prelievo" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataPrelievoIm}"/>
 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataPrelievoIm}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataPrelievoIm}">
-				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 			</h:outputText>
 			
 			<h:outputLabel styleClass="outputFieldLabel" value="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataEliminazioneIm ? 'ID Cluster Prelievo' : 'ID Cluster'}" rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaIdCluster and not empty dettagliTransazioneApplicativoServerBean.dettaglio.clusterIdPrelievoIm}" />
@@ -49,7 +49,7 @@
 			
 			<h:outputLabel styleClass="outputFieldLabel icon-date"  value="Data Primo Prelievo" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataPrimoPrelievoIm and dettagliTransazioneApplicativoServerBean.dettaglio.numeroPrelieviIm > 1}"/>
 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataPrimoPrelievoIm}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataPrimoPrelievoIm and dettagliTransazioneApplicativoServerBean.dettaglio.numeroPrelieviIm > 1}">
-				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />
 			</h:outputText>
 			
 		</h:panelGrid>

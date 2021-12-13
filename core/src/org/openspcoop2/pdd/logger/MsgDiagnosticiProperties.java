@@ -660,6 +660,8 @@ public class MsgDiagnosticiProperties {
 		MSG_DIAGNOSTICI_WARNING.add("001091"); // ricezioneContenutiApplicativi.gestioneTokenInCorso.introspectionToken.warningOnly.fallita
 		MSG_DIAGNOSTICI_WARNING.add("001098"); // ricezioneContenutiApplicativi.gestioneTokenInCorso.userInfoToken.warningOnly.fallita
 		MSG_DIAGNOSTICI_WARNING.add("001108"); // ricezioneContenutiApplicativi.validazioneContenutiApplicativiRichiestaNonRiuscita.warningOnly
+		MSG_DIAGNOSTICI_WARNING.add("001122"); // ricezioneContenutiApplicativi.richiesta.warningCharsetDifferenteDefault
+		MSG_DIAGNOSTICI_WARNING.add("001123"); // ricezioneContenutiApplicativi.risposta.warningCharsetDifferenteDefault
 		
 		MSG_DIAGNOSTICI_WARNING.add("003060"); // inoltroBuste.validazioneContenutiApplicativiRispostaNonRiuscita.warningOnly
 		
@@ -669,6 +671,8 @@ public class MsgDiagnosticiProperties {
 		MSG_DIAGNOSTICI_WARNING.add("004114"); // ricezioneBuste.gestioneTokenInCorso.introspectionToken.warningOnly.fallita
 		MSG_DIAGNOSTICI_WARNING.add("004121"); // ricezioneBuste.gestioneTokenInCorso.userInfoToken.warningOnly.fallita
 		MSG_DIAGNOSTICI_WARNING.add("004131"); // ricezioneBuste.validazioneContenutiApplicativiRichiestaNonRiuscita.warningOnly
+		MSG_DIAGNOSTICI_WARNING.add("004145"); // ricezioneBuste.richiesta.warningCharsetDifferenteDefault
+		MSG_DIAGNOSTICI_WARNING.add("004146"); // ricezioneBuste.risposta.warningCharsetDifferenteDefault
 		
 		MSG_DIAGNOSTICI_WARNING.add("007059"); // consegnaContenutiApplicativi.validazioneContenutiApplicativiRispostaNonRiuscita.warningOnly
 	}
@@ -837,6 +841,8 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"gestioneAAInCorso.retrieve.completataSuccesso",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"gestioneAAInCorso.retrieve.completataSuccesso.inCache",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"gestioneAAInCorso.retrieve.fallita",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"richiesta.warningCharsetDifferenteDefault",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"risposta.warningCharsetDifferenteDefault",
 		MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO+"registroServizi.ricercaServizioInCorso",
 		MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO+"registroServizi.ricercaServizioEffettuata",
 		MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO+"registroServizi.ricercaServizioFallita",
@@ -1059,6 +1065,8 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"gestioneAAInCorso.retrieve.completataSuccesso",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"gestioneAAInCorso.retrieve.completataSuccesso.inCache",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"gestioneAAInCorso.retrieve.fallita",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"richiesta.warningCharsetDifferenteDefault",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"risposta.warningCharsetDifferenteDefault",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"ricezioneBustaErrore",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"ricezioneBusta.eccezioniNonGravi",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"validazioneNonRiuscita",

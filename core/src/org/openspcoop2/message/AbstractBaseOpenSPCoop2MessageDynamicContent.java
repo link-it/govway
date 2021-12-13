@@ -20,11 +20,9 @@
 
 package org.openspcoop2.message;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.SequenceInputStream;
 
 import org.apache.commons.io.input.CountingInputStream;
 import org.apache.commons.io.output.CountingOutputStream;
@@ -103,23 +101,22 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 				}
 				
 				// check se esiste del contenuto nello stream, lo stream può essere diverso da null però vuoto.
-				byte[] b = new byte[1];
-				if(isParam.read(b) == -1) {
+				InputStream normalizedIs = Utilities.normalizeStream(isParam, false);
+				if(normalizedIs==null) {
 					// stream vuoto
 					this.hasContent = false;
 				} else {
-					InputStream seq = new SequenceInputStream(new ByteArrayInputStream(b),isParam);
 					
 					if(soap) {
 						if(soapStreamReader==null) {
 							if(AbstractBaseOpenSPCoop2MessageDynamicContent.soapReader) {
 								this.soapStreamReader = new OpenSPCoop2MessageSoapStreamReader(messageFactory,
-										this.contentType, seq, AbstractBaseOpenSPCoop2MessageDynamicContent.soapReaderBufferThresholdKb);
+										this.contentType, normalizedIs, AbstractBaseOpenSPCoop2MessageDynamicContent.soapReaderBufferThresholdKb);
 								try {
 									this.soapStreamReader.read();
 								}finally {
 									// anche in caso di eccezione devo cmq aggiornare is
-									seq = this.soapStreamReader.getBufferedInputStream();
+									normalizedIs = this.soapStreamReader.getBufferedInputStream();
 								}
 							}
 						}
@@ -131,7 +128,7 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 						}
 					}
 					
-					this.countingInputStream = new CountingInputStream(seq);
+					this.countingInputStream = new CountingInputStream(normalizedIs);
 					this.hasContent = true;
 				}
 
@@ -148,6 +145,7 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 	protected abstract T buildContent() throws MessageException;
 	protected abstract T buildContent(DumpByteArrayOutputStream contentBuffer) throws MessageException;
 	protected abstract String buildContentAsString() throws MessageException;
+	protected abstract byte[] buildContentAsByteArray() throws MessageException;
 	protected abstract void serializeContent(OutputStream os, boolean consume) throws MessageException;
 	
 
@@ -238,6 +236,31 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 				}
 				
 				return this.buildContentAsString();
+			}
+			return null;
+		}catch(MessageException e){
+			throw e;
+		}
+		catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}
+	}
+	
+	public byte[] getContentAsByteArray() throws MessageException,MessageNotSupportedException{
+		return getContentAsByteArray(false, null);
+	}
+	public byte[] getContentAsByteArray(boolean readOnly, String idTransazione) throws MessageException,MessageNotSupportedException{
+		try{
+			if(this.hasContent){
+				if(this.content==null){
+					this.initializeContent(readOnly, idTransazione);
+				}
+				
+				if(!readOnly) {
+					this.contentUpdatable = true;
+				}
+				
+				return this.buildContentAsByteArray();
 			}
 			return null;
 		}catch(MessageException e){

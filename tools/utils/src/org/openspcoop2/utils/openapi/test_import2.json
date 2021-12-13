@@ -1,3 +1,4 @@
+{"openapi": "3.0.3",
 "components": {
     "schemas": {
       "Import2Pet": {
@@ -22,4 +23,5 @@
         "$ref": "test_import.json#/components/schemas/ImportError"
       }    
    }
+}
 }

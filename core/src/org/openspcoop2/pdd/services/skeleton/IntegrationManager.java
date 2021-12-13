@@ -58,6 +58,7 @@ import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.IntegrationManagerRequestContext;
 import org.openspcoop2.pdd.core.handlers.IntegrationManagerResponseContext;
+import org.openspcoop2.pdd.core.state.OpenSPCoopStateDBManager;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
 import org.openspcoop2.pdd.core.transazioni.GestoreConsegnaMultipla;
 import org.openspcoop2.pdd.logger.Dump;
@@ -642,7 +643,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			
 			// init stato
 			stato = new OpenSPCoopStateful();
-			stato.initResource(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol()),IntegrationManager.ID_MODULO, idTransazione);
+			stato.initResource(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol()),IntegrationManager.ID_MODULO, idTransazione, 
+					OpenSPCoopStateDBManager.messageBox);
 			ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance(stato.getStatoRichiesta(),stato.getStatoRisposta());
 			msgDiag.updateState(configPdDManager);
 			
@@ -955,7 +957,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 
 			// init stato
 			stato = new OpenSPCoopStateful();
-			stato.initResource(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol()),IntegrationManager.ID_MODULO, idTransazione);
+			stato.initResource(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol()),IntegrationManager.ID_MODULO, idTransazione, 
+					OpenSPCoopStateDBManager.messageBox);
 			ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance(stato.getStatoRichiesta(),stato.getStatoRisposta());
 			msgDiag.updateState(configPdDManager);
 			
@@ -1428,7 +1431,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 
 			// init stato
 			stato = new OpenSPCoopStateful();
-			stato.initResource(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol()),IntegrationManager.ID_MODULO, idTransazione);
+			stato.initResource(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol()),IntegrationManager.ID_MODULO, idTransazione, 
+					OpenSPCoopStateDBManager.messageBox);
 			ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance(stato.getStatoRichiesta(),stato.getStatoRisposta());
 			msgDiag.updateState(configPdDManager);	
 			
@@ -1746,7 +1750,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 
 			// init stato
 			stato = new OpenSPCoopStateful();
-			stato.initResource(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol()),IntegrationManager.ID_MODULO, idTransazione);
+			stato.initResource(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol()),IntegrationManager.ID_MODULO, idTransazione, 
+					OpenSPCoopStateDBManager.messageBox);
 			ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance(stato.getStatoRichiesta(),stato.getStatoRisposta());
 			msgDiag.updateState(configPdDManager);	
 			

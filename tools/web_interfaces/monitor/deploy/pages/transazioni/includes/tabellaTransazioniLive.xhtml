@@ -86,7 +86,7 @@
 				<f:setPropertyActionListener value="#{item.pddCodice}" target="#{targetBean.identificativoPorta}"/>
 				<h:outputText id="outDataRichLive2" value="#{item.dataIngressoRichiesta}">
 					<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss"
-						timeZone="Europe/Rome" />
+						timeZone="#{applicationBean.timeZone}" />
 				</h:outputText>
 				<f:setPropertyActionListener value="infoGenerali" target="#{targetBean.selectedTab}"/>
 			</a4j:htmlCommandLink>

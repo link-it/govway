@@ -964,6 +964,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 				bout.close();
 				
 				String newDigestValue = null;
+				boolean formatoSupportato = true;
 				if(digestValueInHeaderHTTP.startsWith(HttpConstants.DIGEST_ALGO_SHA_256+"=")) {
 					newDigestValue = HttpUtilities.getDigestHeaderValue(bout.toByteArray(), HttpConstants.DIGEST_ALGO_SHA_256);
 				}
@@ -974,11 +975,12 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 					newDigestValue = HttpUtilities.getDigestHeaderValue(bout.toByteArray(), HttpConstants.DIGEST_ALGO_SHA_512);
 				}
 				else {
+					formatoSupportato = false;
 					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_INTESTAZIONE_NON_VALIDA, 
 							"Header HTTP '"+digestHeader+"' con un formato non supportato"));
 				}
 				
-				if(!newDigestValue.equals(digestValueInHeaderHTTP)) {
+				if(formatoSupportato && !newDigestValue.equals(digestValueInHeaderHTTP)) {
 					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_VALIDA, 
 							"Header HTTP '"+digestHeader+"' possiede un valore non corrispondente al messaggio"));
 				}
@@ -1053,15 +1055,19 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 					while (headers.hasNext()) {
 						String hdrName = (String) headers.next();
 						List<String> hrdAttesiValues = headerHttpAttesi.get(hdrName);
+						boolean checkHdrAttesiSize = true;
+						List<String> hdrFound = null;
 						for (String hdrAttesoValue : hrdAttesiValues) {
 							boolean valid = false;
 							String valueInHttpHeader = null;
+							boolean multiHeader = false;
 							if(digestHeader.toLowerCase().equalsIgnoreCase(hdrName)) {
+								checkHdrAttesiSize = false; // il controllo che non esista piu' di un header digest e' stato fatto in precedenza
 								findDigestInClaimSignedHeader = true;
 								if(digestValueInHeaderHTTP==null) {
 									erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_VALIDA, 
 											"Header HTTP '"+hdrName+"', dichiarato tra gli header firmati, non trovato"));
-									valid = true; // per non far segnalare l'eccezione
+									valid = true; // per non far segnalare l'eccezione, che e' stata personalizzata sopra
 								}
 								else {
 									valueInHttpHeader = digestValueInHeaderHTTP;
@@ -1070,32 +1076,55 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 								}
 							}
 							else {
-								List<String> hdrFound = null;
 								if(request && msg.getTransportRequestContext()!=null) {
 									hdrFound = msg.getTransportRequestContext().getHeaderValues(hdrName);
 								}
 								else if(!request && msg.getTransportResponseContext()!=null) {
 									hdrFound = msg.getTransportResponseContext().getHeaderValues(hdrName);
 								}
+								
+								if(checkHdrAttesiSize && hdrFound!=null) {
+									// Fix: per verificare che non esistano altri copie dell'header, oltre a quelli attesi, con valori differenti
+									if(hrdAttesiValues.size()!=hdrFound.size()) {
+										this.log.error("Header HTTP '"+hdrName+"' possiede "+(hdrFound!=null ? hdrFound.size() : 0)+" valori '"+(hdrFound!=null ? hdrFound.toString() : "non presente")+
+												"' mentre negli header firmati sono presenti "+hrdAttesiValues.size()+" valori '"+hrdAttesiValues.toString()+"'");
+										erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_VALIDA, 
+												"Header HTTP '"+hdrName+"' possiede un numero di valori ("+(hdrFound!=null ? hdrFound.size() : 0)
+													+") differente rispetto al numero di valori ("+hrdAttesiValues.size()+") definiti negli header firmati"));
+										valid = true; // per non far segnalare l'eccezione, che e' stata personalizzata sopra
+										break; // e' inutile continuare a controllare i valori degli header
+									}
+									checkHdrAttesiSize=false; // questo controllo per ogni header basta 1 volta, non serve farlo per ogni valore
+								}
+								
 								if(hdrFound==null || hdrFound.isEmpty()) {
-									valid = true;
 									erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_VALIDA, 
 											"Header HTTP '"+hdrName+"', dichiarato tra gli header firmati, non trovato"));
+									valid = true; // per non far segnalare l'eccezione, che e' stata personalizzata sopra
+									break; // e' inutile continuare a controllare i valori degli header
 								}
 								else if(hdrFound.size()==1) {
 									valueInHttpHeader = hdrFound.get(0);
 									valid = hdrAttesoValue.equals(valueInHttpHeader);
 								}
 								else {
+									multiHeader = true;
 									valueInHttpHeader = hdrFound.toString();
 									valid = hdrFound.contains(hdrAttesoValue); 
 								}
+																
 								//System.out.println("VALID HDR '"+hdrName+"': "+valid);
 							}
 							if(!valid) {
-								this.log.error("Header HTTP '"+hdrName+"' possiede un valore '"+valueInHttpHeader+"' differente rispetto a quello presente negli header firmati '"+hdrAttesoValue+"'");
+								String errorMsg = "possiede un valore '"+valueInHttpHeader+"' differente";
+								String errorExc = "possiede un valore differente";
+								if(multiHeader) {
+									errorMsg = "possiede dei valori '"+valueInHttpHeader+"' differenti";
+									errorExc = "possiede dei valori differenti";
+								}
+								this.log.error("Header HTTP '"+hdrName+"' "+errorMsg+" rispetto a quello presente negli header firmati '"+hdrAttesoValue+"'");
 								erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_VALIDA, 
-										"Header HTTP '"+hdrName+"' possiede un valore differente rispetto a quello presente negli header firmati"));
+										"Header HTTP '"+hdrName+"' "+errorExc+" rispetto a quello presente negli header firmati"));
 							}
 						}
 					}

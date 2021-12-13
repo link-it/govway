@@ -9,7 +9,7 @@
                 </env:Subcode>
             </env:Code>
             <env:Reason>
-                <env:Text xml:lang="en-US">A security error was encountered when verifying the message ; Certificate has been revoked, reason: KEY_COMPROMISE, revocation date: Tue Jul 09 12:32:00 CEST 2019, authority: CN=ExampleCA, O=Example, L=Pisa, ST=Italy, C=IT, extension OIDs: [2.5.29.21, 2.5.29.24]</env:Text>
+                <env:Text xml:lang="en-US">A security error was encountered when verifying the message ; Certificate revocation after 2019-07-09 10:32:00 +0000, reason: keyCompromise</env:Text>
             </env:Reason>
             <env:Role>http://govway.org/integration</env:Role>
             <env:Detail>
@@ -17,7 +17,7 @@
                     <type>https://govway.org/handling-errors/400/InteroperabilityInvalidRequest.html</type>
                     <title>InteroperabilityInvalidRequest</title>
                     <status>400</status>
-                    <detail>A security error was encountered when verifying the message ; Certificate has been revoked, reason: KEY_COMPROMISE, revocation date: Tue Jul 09 12:32:00 CEST 2019, authority: CN=ExampleCA, O=Example, L=Pisa, ST=Italy, C=IT, extension OIDs: [2.5.29.21, 2.5.29.24]</detail>
+                    <detail>A security error was encountered when verifying the message ; Certificate revocation after 2019-07-09 10:32:00 +0000, reason: keyCompromise</detail>
                     <govway_id>#uuid</govway_id>
                 </problem>
             </env:Detail>

@@ -117,9 +117,9 @@ public class SecurityConfig extends org.adroitlogic.soapbox.SecurityConfig {
         // disable CRL checking since we are not supplying any CRLs
         this.validatorParams.setRevocationEnabled(false);
        	// create the validator and validate the path
-        this.certPathValidator = CertPathValidator.getInstance(CertPathValidator.getDefaultType());
+        this.certPathValidator = org.openspcoop2.utils.certificate.CertificateFactory.getCertPathValidator();
         // create a X509 certificate factory for later use
-        this.certFactory = CertificateFactory.getInstance("X.509");
+        this.certFactory = org.openspcoop2.utils.certificate.CertificateFactory.getCertificateFactory();
 
         if(crlPath!=null){
 	        try{

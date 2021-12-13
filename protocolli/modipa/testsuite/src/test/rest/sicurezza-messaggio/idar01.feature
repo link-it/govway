@@ -447,7 +447,7 @@ Then status 502
 
 
 @certificato-server-scaduto
-Scenario: Per l'erogazione viene utilizzato un certificato scaduto, facendo arrabbiare la fruizione
+Scenario: Per l'erogazione viene utilizzato un certificato server scaduto, facendo arrabbiare la fruizione
 
 Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01TrustStoreCA/v1"
 And path 'resources', 1, 'M'
@@ -461,7 +461,7 @@ And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRespons
 
 
 @certificato-server-revocato
-Scenario: Per l'erogazione viene utilizzato un certificato scaduto, facendo arrabbiare la fruizione
+Scenario: Per l'erogazione viene utilizzato un certificato server revocato, facendo arrabbiare la fruizione
 
 Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01TrustStoreCA/v1"
 And path 'resources', 1, 'M'

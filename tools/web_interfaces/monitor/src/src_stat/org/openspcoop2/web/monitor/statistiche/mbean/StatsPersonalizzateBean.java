@@ -23,7 +23,6 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.el.ELContext;
@@ -48,6 +47,7 @@ import org.openspcoop2.core.statistiche.constants.TipoLatenza;
 import org.openspcoop2.core.statistiche.constants.TipoReport;
 import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
+import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.datamodel.Res;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
@@ -120,16 +120,15 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 		StringBuilder sb = new StringBuilder();
 		try {
 			SimpleDateFormat sdf;
-			SimpleDateFormat sdf_last_hour = new SimpleDateFormat(CostantiGrafici.PATTERN_HH,
-					Locale.ITALIAN);
+			SimpleDateFormat sdf_last_hour = new SimpleDateFormat(CostantiGrafici.PATTERN_HH, ApplicationBean.getInstance().getLocale());
 			StatisticType tempo = this.getTempo();
 
 			if (StatisticType.MENSILE.equals(tempo)) {
-				sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_MM_YY, Locale.ITALIAN);
+				sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_MM_YY, ApplicationBean.getInstance().getLocale());
 			} else if (StatisticType.ORARIA.equals(tempo)) {
-				sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM_YY_HH, Locale.ITALIAN);
+				sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM_YY_HH, ApplicationBean.getInstance().getLocale());
 			} else {
-				sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM_YY, Locale.ITALIAN);
+				sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM_YY, ApplicationBean.getInstance().getLocale());
 			}
 
 
@@ -185,16 +184,15 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 		JSONObject grafico = null;
 		try {
 			SimpleDateFormat sdf;
-			SimpleDateFormat sdf_last_hour = new SimpleDateFormat(CostantiGrafici.PATTERN_HH,
-					Locale.ITALIAN);
+			SimpleDateFormat sdf_last_hour = new SimpleDateFormat(CostantiGrafici.PATTERN_HH, ApplicationBean.getInstance().getLocale());
 			StatisticType tempo = this.getTempo();
 
 			if (StatisticType.MENSILE.equals(tempo)) {
-				sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_MM_YY, Locale.ITALIAN);
+				sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_MM_YY, ApplicationBean.getInstance().getLocale());
 			} else if (StatisticType.ORARIA.equals(tempo)) {
-				sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM_YY_HH, Locale.ITALIAN);
+				sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM_YY_HH, ApplicationBean.getInstance().getLocale());
 			} else {
-				sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM_YY, Locale.ITALIAN);
+				sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM_YY, ApplicationBean.getInstance().getLocale());
 			}
 
 
@@ -284,11 +282,11 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 //
 //		SimpleDateFormat sdf;
 //		if (StatisticType.MENSILE.equals(tempo)) {
-//			sdf = new SimpleDateFormat("MM/yy", Locale.ITALIAN);
+//			sdf = new SimpleDateFormat("MM/yy", ApplicationBean.getInstance().getLocale());
 //		} else if (StatisticType.ORARIA.equals(tempo)) {
-//			sdf = new SimpleDateFormat("dd/MM/yy HH", Locale.ITALIAN);
+//			sdf = new SimpleDateFormat("dd/MM/yy HH", ApplicationBean.getInstance().getLocale());
 //		} else {
-//			sdf = new SimpleDateFormat("dd/MM/yy", Locale.ITALIAN);
+//			sdf = new SimpleDateFormat("dd/MM/yy", ApplicationBean.getInstance().getLocale());
 //		}
 //		if(this.search.getDataInizio() != null && this.search.getDataFine() != null)
 //			caption.append(" (dal " + sdf.format(this.search.getDataInizio())	+ " al " + sdf.format(this.search.getDataFine()) + " )");

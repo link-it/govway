@@ -1,0 +1,1 @@
+ALTER TABLE transazioni_sa ADD CONSTRAINT unique_transazioni_sa_1 UNIQUE (id_transazione,servizio_applicativo_erogatore);

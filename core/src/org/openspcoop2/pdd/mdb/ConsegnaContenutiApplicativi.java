@@ -114,6 +114,7 @@ import org.openspcoop2.pdd.core.integrazione.IGestoreIntegrazionePASoap;
 import org.openspcoop2.pdd.core.integrazione.InResponsePAMessage;
 import org.openspcoop2.pdd.core.integrazione.OutRequestPAMessage;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
+import org.openspcoop2.pdd.core.state.OpenSPCoopStateDBManager;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateException;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
@@ -131,6 +132,7 @@ import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.services.connector.AsyncResponseCallbackClientEvent;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.IAsyncResponseCallback;
+import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -270,6 +272,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 
 
 	private IOpenSPCoopState openspcoopstate = null;
+	private OpenSPCoopStateDBManager dbManagerSource;
 	private RegistroServiziManager registroServiziManager = null;
 	private ConfigurazionePdDManager configurazionePdDManager = null;
 	private MsgDiagnostico msgDiag = null;
@@ -445,6 +448,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 			idApplicativa = this.consegnaContenutiApplicativiMsg.getRichiestaApplicativa().getIdPortaApplicativa();
 		}
 		
+		this.dbManagerSource = OpenSPCoopStateDBManager.runtime;
+		
 		// Costruisco eventuale oggetto TransazioneServerApplicativo
 		ConsegnaContenutiApplicativiBehaviourMessage behaviourConsegna = this.consegnaContenutiApplicativiMsg.getBehaviour();
 		if(behaviourConsegna!=null && behaviourConsegna.getIdTransazioneApplicativoServer()!=null) {
@@ -465,6 +470,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 			this.transazioneApplicativoServer.setIdentificativoMessaggio(this.consegnaContenutiApplicativiMsg.getBusta().getID());
 			
 			this.msgDiag.setTransazioneApplicativoServer(this.transazioneApplicativoServer, idApplicativa);
+			
+			this.dbManagerSource = OpenSPCoopStateDBManager.consegnePreseInCarico;
 		}
 		BehaviourLoadBalancer loadBalancer = null;
 		if(this.consegnaContenutiApplicativiMsg!=null && this.consegnaContenutiApplicativiMsg.getLoadBalancer()!=null) {
@@ -1032,7 +1039,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 
 		/* ------------------ Connessione al DB  --------------- */
 		this.msgDiag.mediumDebug("Richiesta connessione al database per la gestione della richiesta...");
-		this.openspcoopstate.initResource(this.identitaPdD, ConsegnaContenutiApplicativi.ID_MODULO,this.idTransazione);
+		this.openspcoopstate.initResource(this.identitaPdD, ConsegnaContenutiApplicativi.ID_MODULO,this.idTransazione,this.dbManagerSource);
 		this.registroServiziManager = this.registroServiziManager.refreshState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
 		this.configurazionePdDManager = this.configurazionePdDManager.refreshState(this.registroServiziManager);
 		this.msgDiag.updateState(this.configurazionePdDManager);
@@ -2331,6 +2338,34 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 							this.msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(this.httpRequestMethod, this.location));
 						}
 					}
+					
+					/* ------------ Check Charset ------------- */
+					try {
+						if(this.transportResponseContext!=null) {
+							boolean checkEnabled = false;
+							List<String> ctDefault = null;
+							if(this.consegnaMessageTrasformato!=null && ServiceBinding.SOAP.equals(this.consegnaMessageTrasformato.getServiceBinding())){
+								if(this.propertiesReader.isControlloCharsetContentTypeAbilitatoRicezioneBusteSoap()) {
+									checkEnabled = true;
+									ctDefault = this.propertiesReader.getControlloCharsetContentTypeAbilitatoRicezioneBusteSoap();
+								}
+							}
+							else {
+								if(this.propertiesReader.isControlloCharsetContentTypeAbilitatoRicezioneBusteRest()) {
+									checkEnabled = true;
+									ctDefault = this.propertiesReader.getControlloCharsetContentTypeAbilitatoRicezioneBusteRest();
+								}
+							}
+							if(checkEnabled) {
+								if(this.transportResponseContext.getContentType()!=null) {
+									ServicesUtils.checkCharset(this.transportResponseContext.getContentType(), ctDefault, this.msgDiag, false, TipoPdD.APPLICATIVA);
+								}
+							}
+						}
+					}catch(Throwable t) {
+						this.log.error("Avvenuto errore durante il controllo del charset della risposta: "+t.getMessage(),t);
+					}
+					
 				} catch (Exception e) {
 					this.msgDiag.addKeywordErroreProcessamento(e, "Analisi risposta fallita");
 					this.msgDiag.logErroreGenerico(e,"AnalisiRispostaConnettore");

@@ -20,6 +20,7 @@
 
 package org.openspcoop2.utils.test.openapi;
 
+import org.openspcoop2.utils.openapi.validator.OpenAPILibrary;
 import org.openspcoop2.utils.test.Costanti;
 import org.openspcoop2.utils.test.TestLogger;
 import org.testng.annotations.DataProvider;
@@ -35,21 +36,29 @@ import org.testng.annotations.Test;
 public class TestSwaggerValidator {
 
 	private static final String ID_TEST = "Swagger-Validator";
+	private static boolean mergeSpec = true;
 	
 	@DataProvider(name="swaggerValidatorProvider")
 	public Object[][] provider(){
 		return new Object[][]{
-				{"json"},
-				{"yaml"}
+			{"json", OpenAPILibrary.json_schema, mergeSpec},
+			{"yaml", OpenAPILibrary.json_schema, mergeSpec},
+			{"json", OpenAPILibrary.json_schema, !mergeSpec},
+			{"yaml", OpenAPILibrary.json_schema, !mergeSpec},
+			
+			//{"json", OpenAPILibrary.swagger_request_validator, mergeSpec},
+			//{"yaml", OpenAPILibrary.swagger_request_validator, mergeSpec},
+			{"json", OpenAPILibrary.swagger_request_validator, !mergeSpec},
+			{"yaml", OpenAPILibrary.swagger_request_validator, !mergeSpec}
 		};
 	}
 	
 	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST},dataProvider="swaggerValidatorProvider")
-	public void testSwaggerValidator(String tipoInterfaccia) throws Exception{
+	public void testSwaggerValidator(String tipoInterfaccia, OpenAPILibrary openAPILibrary, boolean mergeSpec) throws Exception{
 		
-		TestLogger.info("Run test '"+ID_TEST+"' (interfaccia:"+tipoInterfaccia+") ...");
-		org.openspcoop2.utils.openapi.validator.TestSwagger2.main(new String[] {tipoInterfaccia});
-		TestLogger.info("Run test '"+ID_TEST+"' (interfaccia:"+tipoInterfaccia+") ok");
+		TestLogger.info("Run test '"+ID_TEST+"' (interfaccia:"+tipoInterfaccia+" openAPILibrary:"+openAPILibrary+" mergeSpec:"+mergeSpec+") ...");
+		org.openspcoop2.utils.openapi.validator.TestSwagger2.main(new String[] {tipoInterfaccia, openAPILibrary.toString(), mergeSpec+""});
+		TestLogger.info("Run test '"+ID_TEST+"' (interfaccia:"+tipoInterfaccia+" openAPILibrary:"+openAPILibrary+" mergeSpec:"+mergeSpec+") ok");
 		
 	}
 	

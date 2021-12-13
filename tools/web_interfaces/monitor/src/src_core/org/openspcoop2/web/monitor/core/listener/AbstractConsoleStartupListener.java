@@ -505,6 +505,16 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 			CacheJMXUtils.unregister();
 		}
 		
+		// chiusura repository dei plugin
+		try {
+			CorePluginLoader.close(AbstractConsoleStartupListener.log);
+		} catch (Throwable e) {
+			if(AbstractConsoleStartupListener.log!=null) {
+				String msgErrore = "Errore durante la chiusura del loader dei plugins: " + e.getMessage();
+				AbstractConsoleStartupListener.log.error(msgErrore,e);
+			}
+		}
+		
 		if(AbstractConsoleStartupListener.log!=null)
 			AbstractConsoleStartupListener.log.info("Undeploy govwayMonitor Console effettuato.");
 

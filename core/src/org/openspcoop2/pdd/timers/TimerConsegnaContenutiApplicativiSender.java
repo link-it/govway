@@ -44,6 +44,7 @@ import org.openspcoop2.pdd.core.behaviour.StatoFunzionalita;
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneGestioneConsegnaNotifiche;
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.GestioneConsegnaNotificheUtils;
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils;
+import org.openspcoop2.pdd.core.state.OpenSPCoopStateDBManager;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -140,7 +141,8 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 
 			this.log.debug("Riconsegna in corso del messaggio '"+idMsgDaInoltrare+"' per l'applicativo '"+servizioApplicativo+"' ...");
 			
-			openspcoopstateGestore.initResource(this.propertiesReader.getIdentitaPortaDefault(null),TimerConsegnaContenutiApplicativiThread.ID_MODULO, identificativo);
+			openspcoopstateGestore.initResource(this.propertiesReader.getIdentitaPortaDefault(null),TimerConsegnaContenutiApplicativiThread.ID_MODULO, identificativo,
+					OpenSPCoopStateDBManager.consegnePreseInCarico);
 				
 			GestoreMessaggi messaggioDaInviare = null;
 			try{

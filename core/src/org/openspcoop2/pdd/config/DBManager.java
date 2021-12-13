@@ -264,6 +264,10 @@ public class DBManager implements IMonitoraggioRisorsa {
 	}
 	public static Resource buildResource(String managerId, Connection connectionDB, IDSoggetto idPDD,String modulo,String idTransazione) throws Exception {
 		
+		/*if(modulo==null || !modulo.contains("Timer") || modulo.contains("TimerConsegnaContenutiApplicativi")) {
+			System.out.println("### buildResource managerId["+managerId+"] modulo:"+modulo+" idTransazione:"+idTransazione+" ...");
+		}*/
+		
 		if(connectionDB!=null) {
 			if(DBManager.getConnection_checkAutoCommitDisabled) {
 				if(!connectionDB.getAutoCommit()) {

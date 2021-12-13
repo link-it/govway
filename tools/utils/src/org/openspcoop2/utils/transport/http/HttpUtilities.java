@@ -31,6 +31,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.KeyStore;
+import java.security.MessageDigest;
 import java.security.Provider;
 import java.security.cert.CertStore;
 import java.util.ArrayList;
@@ -53,6 +54,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
+import org.openspcoop2.utils.digest.MessageDigestFactory;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.mime.MimeTypes;
 import org.openspcoop2.utils.random.RandomGenerator;
@@ -1527,12 +1529,13 @@ public class HttpUtilities {
 	
 	/* ********* DIGEST HEADER ************ */
 	
-	public static String getDigestHeaderValue(byte[] content, String algorithm) throws UtilsException{
+	@Deprecated
+	public static String getDigestHeaderValueByCommons(byte[] content, String algorithm) throws UtilsException{
 		String digestValue = null;
 		if(algorithm.equals(HttpConstants.DIGEST_ALGO_MD5)) {
 			digestValue = DigestUtils.md5Hex(content);
 		}
-		else if(algorithm.equals(HttpConstants.DIGEST_ALGO_SHA_1)) {
+		else if(algorithm.equals(HttpConstants.DIGEST_ALGO_SHA_1) || algorithm.equals(HttpConstants.DIGEST_ALGO_SHA)) {
 			digestValue = DigestUtils.sha1Hex(content);
 		}
 		else if(algorithm.equals(HttpConstants.DIGEST_ALGO_SHA_256)) {
@@ -1549,4 +1552,21 @@ public class HttpUtilities {
 		}
 		return algorithm+"="+digestValue;
 	}
+	
+	public static String getDigestHeaderValue(byte[] content, String algorithm) throws UtilsException{
+		MessageDigest digest = null;
+		try {
+			digest = MessageDigestFactory.getMessageDigest(algorithm);
+		}catch(Throwable e) {
+			throw new UtilsException("Message digest (algorithm: '"+algorithm+"') initialization failed: "+e.getMessage(),e);
+		}
+		try {
+			byte[]md5Data = digest.digest(content);
+			String digestValue = org.apache.commons.codec.binary.Hex.encodeHexString(md5Data);
+			return algorithm+"="+digestValue;
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
 }

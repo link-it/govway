@@ -95,7 +95,8 @@ public class HttpConstants {
 	/** Digest */
 	public final static String DIGEST = "Digest";
 	public final static String DIGEST_ALGO_MD5 = "MD5";
-	public final static String DIGEST_ALGO_SHA_1 = "SHA";
+	public final static String DIGEST_ALGO_SHA = "SHA";
+	public final static String DIGEST_ALGO_SHA_1 = "SHA-1";
 	public final static String DIGEST_ALGO_SHA_256 = "SHA-256";
 	public final static String DIGEST_ALGO_SHA_384 = "SHA-384";
 	public final static String DIGEST_ALGO_SHA_512 = "SHA-512";

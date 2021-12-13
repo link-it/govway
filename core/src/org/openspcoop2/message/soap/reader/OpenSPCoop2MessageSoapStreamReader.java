@@ -40,6 +40,7 @@ import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.soap.OpenSPCoop2Message_saaj_11_impl;
 import org.openspcoop2.message.soap.OpenSPCoop2Message_saaj_12_impl;
 import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.xml.XMLUtils;
@@ -110,13 +111,22 @@ public class OpenSPCoop2MessageSoapStreamReader {
 		try {
 			multipart = ContentTypeUtilities.isMultipartType(this.contentType);
 		}catch(Throwable t) {}
-				
+		String charset = null;
+		try {
+			if(!multipart) {
+				charset = ContentTypeUtilities.readCharsetFromContentType(this.contentType);
+				if(Charset.UTF_8.getValue().equalsIgnoreCase(charset)) {
+					charset = null;
+				}
+			}
+		}catch(Throwable t) {}
+		
 		try {
 			ByteArrayOutputStream bufferReaded = new ByteArrayOutputStream();
-			int letti = 0;
+			int lettiBuffer = 0;
 			
 			StringBuilder sbActual = null;
-			byte[] b = new byte[1024];
+			byte[] bufferRaw = new byte[1024];
 			int kbLetti = 0;
 			
 			boolean envelopeFound = false; 
@@ -139,15 +149,26 @@ public class OpenSPCoop2MessageSoapStreamReader {
 //			System.out.println("STREAM: "+check);
 //			this.is = new java.io.ByteArrayInputStream(check.getBytes());
 			
-			while ( (letti=this.is.read(b)) !=-1) {
+			while ( (lettiBuffer=this.is.read(bufferRaw)) !=-1) {
 				
 				// bufferizzo (1024 byte = 1kb alla volta)
-				bufferReaded.write(b, 0, letti);
+				bufferReaded.write(bufferRaw, 0, lettiBuffer);
 				kbLetti++;
+			
+				// In caso di charset differente, uso una stringa
+				String bufferString = null;
+				if(charset!=null) {
+					ByteArrayOutputStream bufferTmp = new ByteArrayOutputStream();
+					bufferTmp.write(bufferRaw, 0, lettiBuffer);
+					bufferTmp.flush();
+					bufferTmp.close();
+					bufferString = new String(bufferTmp.toByteArray(), charset);
+					lettiBuffer = bufferString.length();
+				}
 				
 				// analizzo
-				for (int i = 0; i < letti; i++) {
-					char c = (char) b[i];
+				for (int i = 0; i < lettiBuffer; i++) {
+					char c = bufferString!=null ? bufferString.charAt(i) : (char) bufferRaw[i];
 					if( (c == '<' || (sbActual!=null && sbActual.toString().startsWith("&lt;"))) 
 							&& 
 							!cdataFound) {
@@ -343,7 +364,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 			if(bufferReaded.size()>0) {
 				this.bufferSize = bufferReaded.size();
 				ByteArrayInputStream bin = new ByteArrayInputStream(bufferReaded.toByteArray());
-				if(letti!=-1) {
+				if(lettiBuffer!=-1) {
 					// sono uscita prima della chiusura dello stream
 					this.bufferedInputStream = new SequenceInputStream(bin,this.is);
 				}

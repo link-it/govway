@@ -1606,9 +1606,13 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 					</linkit:interface>
 					<linkit:sql-table-mapping name="transazioni_sa" sequence-cycle="true"
 						comment="Contiene le informazioni relative alle consegne verso gli applicativi server">
+						<linkit:sql-table-unique>
+							<linkit:sql-table-unique-field name="id-transazione"/>
+							<linkit:sql-table-unique-field name="servizio-applicativo-erogatore"/>
+						</linkit:sql-table-unique>
 						<!-- Indici per ottimizzare le ricerche basate sull'id della trasazione -->
 						<linkit:sql-table-index>
-							<linkit:sql-table-index-field name="id-transazione"/>
+							<linkit:sql-table-index-field name="id-transazione" />
 						</linkit:sql-table-index>
 						<!-- 
 							Indici per ricerche
