@@ -212,22 +212,39 @@ public class ConnettoreHTTPCORE5_connectionManager {
 		}
 		
 	}
-		
+	
+	private static final org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("ConnettoreHTTPCORE5_connectionManager");
 	
 	private static void init(ConnectionConfiguration connectionConfig,
 			Loader loader, ConnettoreLogger logger, StringBuilder bf) throws ConnettoreException {
 		String key = connectionConfig.toString();
-		synchronized(mapConnection) {
+		//synchronized(mapConnection) {
+		String idTransazione = logger!=null ? logger.getIdTransazione() : null;
+		try {
+			semaphore.acquire("initConnection",idTransazione);
+		}catch(Throwable t) {
+			throw new ConnettoreException(t.getMessage(),t);
+		}
+		try {
 			if(!mapConnection.containsKey(key)) {
 				ConnettoreHTTPCORE5_connection resource = buildAsyncClient(connectionConfig, loader, logger, bf, key);
 				mapConnection.put(key, resource);
 			}
+		}finally {
+			semaphore.release("initConnection",idTransazione);
 		}
 	}
 	private static ConnettoreHTTPCORE5_connection update(ConnectionConfiguration connectionConfig,
 			Loader loader, ConnettoreLogger logger, StringBuilder bf) throws ConnettoreException {
 		String key = connectionConfig.toString();
-		synchronized(mapConnection) {
+		//synchronized(mapConnection) {
+		String idTransazione = logger!=null ? logger.getIdTransazione() : null;
+		try {
+			semaphore.acquire("updateConnection",idTransazione);
+		}catch(Throwable t) {
+			throw new ConnettoreException(t.getMessage(),t);
+		}
+		try {
 			if(mapConnection.containsKey(key)) {
 				ConnettoreHTTPCORE5_connection con = mapConnection.remove(key);
 				mapConnection.put("expired_"+key+"_"+UUID.randomUUID().toString(), con);
@@ -235,6 +252,8 @@ public class ConnettoreHTTPCORE5_connectionManager {
 			ConnettoreHTTPCORE5_connection resource = buildAsyncClient(connectionConfig, loader, logger, bf, key);
 			mapConnection.put(key, resource);
 			return resource;
+		}finally {
+			semaphore.release("updateConnection",idTransazione);
 		}
 	}
 

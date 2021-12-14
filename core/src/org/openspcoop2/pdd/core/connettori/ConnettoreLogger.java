@@ -65,6 +65,10 @@ public class ConnettoreLogger {
 		}
 	}
 	
+	public String getIdTransazione() {
+		return this.idTransazione;
+	}
+	
 	public String buildMsg(String msg){
 		StringBuilder bf = new StringBuilder();
 		if(this.idTransazione!=null){

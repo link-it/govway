@@ -334,16 +334,6 @@ public class ConnettoreHTTPJavaStream_responseCallback {
 	}
 	
 	private void notifyCallbackFinished(AsyncResponseCallbackClientEvent clientEvent) {
-//		if(connettore_debug) {
-//			connettore_logger.debug("NIO - Sync Notify ...");
-//		}
-//		this.connettore.callbackResponseFinished = true;
-//		synchronized (this.connettore.httpRequest) {
-//			if(connettore_debug) {
-//				connettore_logger.debug("NIO - Notify ...");
-//			}
-//			this.connettore.httpRequest.notify(); // risveglio gestione ferma sul connettore	
-//		}
 		this.connettore.asyncComplete(clientEvent);
 		if(this.connettore_debug) {
 			this.connettore_logger.debug("NIO - Callback Response finished");

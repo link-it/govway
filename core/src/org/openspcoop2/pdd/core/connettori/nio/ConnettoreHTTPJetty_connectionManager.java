@@ -203,20 +203,38 @@ public class ConnettoreHTTPJetty_connectionManager {
 	}
 		
 	
+	private static final org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("ConnettoreHTTPJetty_connectionManager");
+	
 	private static void init(ConnectionConfiguration connectionConfig,
 			Loader loader, ConnettoreLogger logger, StringBuilder bf) throws ConnettoreException {
 		String key = connectionConfig.toString();
-		synchronized(mapConnection) {
+		//synchronized(mapConnection) {
+		String idTransazione = logger!=null ? logger.getIdTransazione() : null;
+		try {
+			semaphore.acquire("initConnection",idTransazione);
+		}catch(Throwable t) {
+			throw new ConnettoreException(t.getMessage(),t);
+		}
+		try {
 			if(!mapConnection.containsKey(key)) {
 				ConnettoreHTTPJetty_connection resource = buildAsyncClient(connectionConfig, loader, logger, bf, key);
 				mapConnection.put(key, resource);
 			}
+		}finally {
+			semaphore.release("initConnection",idTransazione);
 		}
 	}
 	private static ConnettoreHTTPJetty_connection update(ConnectionConfiguration connectionConfig,
 			Loader loader, ConnettoreLogger logger, StringBuilder bf) throws ConnettoreException {
 		String key = connectionConfig.toString();
-		synchronized(mapConnection) {
+		//synchronized(mapConnection) {
+		String idTransazione = logger!=null ? logger.getIdTransazione() : null;
+		try {
+			semaphore.acquire("updateConnection",idTransazione);
+		}catch(Throwable t) {
+			throw new ConnettoreException(t.getMessage(),t);
+		}
+		try {
 			if(mapConnection.containsKey(key)) {
 				ConnettoreHTTPJetty_connection con = mapConnection.remove(key);
 				try {
@@ -230,6 +248,8 @@ public class ConnettoreHTTPJetty_connectionManager {
 			ConnettoreHTTPJetty_connection resource = buildAsyncClient(connectionConfig, loader, logger, bf, key);
 			mapConnection.put(key, resource);
 			return resource;
+		}finally {
+			semaphore.release("updateConnection",idTransazione);
 		}
 	}
 

@@ -533,40 +533,6 @@ public class ConnettoreHTTPJettyStream extends ConnettoreExtBaseHTTP {
 				}
 			} );
 			this.httpRequest.send( listener );
-
-			// CAPIRE SE SERVE E SEMMAI BUTTARE VIA LE PROPERTIES AGGIUNTE!
-//			
-//			if(this.stream && streamOut!=null) {
-//				if(this.isSoap && this.sbustamentoSoap){
-//					if(this.debug)
-//						this.logger.debug("Sbustamento...");
-//					TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,streamOut);
-//				}else{
-//					this.requestMsg.writeTo(streamOut, consumeRequestMessage);
-//				}
-//			}
-			
-//			try {
-//				if(this.debug) {
-//					this.logger.debug("NIO - Sync Wait ...");
-//				}
-//				synchronized (this.httpRequest) {
-//					if(this.callbackResponseFinished) { // questo controllo serve per evitare che si vada in wait sleep dopo che la callback e' già terminata (e quindi ha già fatto il notify)
-//						// la callback associata alla chiamata precedente 'getHttpclient().execute' è già terminata. Non serve dormire.
-//						if(this.debug) {
-//							this.logger.debug("NIO - Sync Wait non necessario, callback gia' terminata");
-//						}
-//					}
-//					else {
-//						if(this.debug) {
-//							this.logger.debug("NIO - Wait ...");
-//						}
-//						this.httpRequest.wait(readConnectionTimeout); // sincronizzo sulla richiesta
-//					}
-//				}
-//			}catch(Throwable t) {
-//				throw new Exception("Read Timeout expired ("+readConnectionTimeout+")",t);
-//			}
 			
 			if(this.debug) {
 				this.logger.debug("NIO - Terminata gestione richiesta");

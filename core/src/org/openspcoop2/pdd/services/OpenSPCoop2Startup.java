@@ -3822,11 +3822,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		// UniversallyUniqueIdentifierProducer (fermo dopo lo stop di tutte le altre attivita)
 		try{
 			if(OpenSPCoop2Startup.this.universallyUniqueIdentifierProducer!=null){
-				System.out.println("fERMO.....");
 				OpenSPCoop2Startup.this.universallyUniqueIdentifierProducer.setStop(true);
-				System.out.println("WAIT.....");
 				OpenSPCoop2Startup.this.universallyUniqueIdentifierProducer.waitShutdown();
-				System.out.println("FINE!");
 			}
 		}catch(Throwable e){}
 		
