@@ -87,15 +87,15 @@ public class TestInterfaceBigger {
 			switch (openAPILibrary) {
 			case json_schema:
 			case openapi4j:
-				maxAtteso = 1000; // 1 secondo
+				maxAtteso = 2000; // 2 secondi (jenkins)
 				break;
 			case swagger_request_validator:
-				maxAtteso = 1000; // 1 secondo
+				maxAtteso = 2000; // 2 secondi (jenkins)
 				break;
 			}	
 			System.out.println("\tReader time:"+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
 			if(time>maxAtteso) {
-				throw new Exception("Atteso un tempo inferiore a '"+maxAtteso+"'ms");
+				throw new Exception("Atteso un tempo inferiore a '"+maxAtteso+"'ms, trovato '"+time+"'ms");
 			}
 			
 			initT = DateManager.getTimeMillis();

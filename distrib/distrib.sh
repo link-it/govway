@@ -199,7 +199,7 @@ if [ $# -eq 0 ] ; then
 	    infoPrintln "Verifiche (GPL/JavaDoc/StringBuffer) sui sorgenti ..."
 	    pushd ${WORKING_COPY} >> ${LOG_FILE} 2>&1
 	    ERROROUTPUT=
-	    for check in GPLCheck JavaDocCheck StringBufferCheck #XSDCheck
+	    for check in GPLCheck JavaDocCheck StringBufferCheck HashtableCheck VectorCheck #XSDCheck
 	    do
 		    [ $check == "XSDCheck" ] && PARAM=core/src/schemi/
 		    [ $check == "JavaDocCheck" ] && PARAM=true
