@@ -1720,6 +1720,7 @@ public class OpenSPCoop2Properties {
 				}
 				useIDManagerWithThreadLocal();
 				getIDManagerParameters();
+				getIDManagerBufferSize();
 				try{
 					IUniqueIdentifierGenerator uniqueIdentifier = (IUniqueIdentifierGenerator) loaderOpenSPCoop.newInstance(tipoIdManger);
 					uniqueIdentifier.toString();
@@ -18219,6 +18220,30 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.listIDManagerParameters;
 	}
 	
+	private static Integer getIDManagerBufferSize = null;
+	public int getIDManagerBufferSize(){
+
+		String pName = "org.openspcoop2.pdd.idGenerator.buffer";
+		if(OpenSPCoop2Properties.getIDManagerBufferSize==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.getIDManagerBufferSize = Integer.valueOf(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=-1");
+					OpenSPCoop2Properties.getIDManagerBufferSize = -1;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=-1, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getIDManagerBufferSize = -1;
+			}
+		}
+
+		return OpenSPCoop2Properties.getIDManagerBufferSize;
+	}
 	
 	
 	

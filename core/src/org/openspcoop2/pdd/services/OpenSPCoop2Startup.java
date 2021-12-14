@@ -199,6 +199,7 @@ import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.digest.MessageDigestFactory;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
+import org.openspcoop2.utils.id.UniversallyUniqueIdentifierProducer;
 import org.openspcoop2.utils.id.serial.InfoStatistics;
 import org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedStreamFactory;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
@@ -292,6 +293,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	
 	/** DynamicCluster */
 	private TimerClusterDinamicoThread threadClusterDinamico;
+	
+	/** UUIDProducer */
+	private UniversallyUniqueIdentifierProducer universallyUniqueIdentifierProducer;
 	
 	/** indicazione se è un server j2ee */
 	private boolean serverJ2EE = false;
@@ -1256,7 +1260,6 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						}
 					}
 					UniqueIdentifierManager.inizializzaUniqueIdentifierManager(propertiesReader.useIDManagerWithThreadLocal(),classClusterID,paramsObject);
-					
 					OpenSPCoop2Startup.log.info("UUID Generator: "+classClusterID);
 					
 					if(propertiesReader.generazioneDateCasualiLogAbilitato()){
@@ -1265,6 +1268,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 								OpenSPCoop2Startup.log);
 						OpenSPCoop2Startup.log.info("Abilitata generazione date casuali");
 					}
+					
+					// BufferProducer avviato in fondo allo startup
 				}
 								
 			}catch(Exception e){
@@ -3363,6 +3368,20 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+			/*----------- Buffer UUID --------------*/
+			try{
+				if(UniqueIdentifierManager.isBufferSupported() && propertiesReader.getIDManagerBufferSize()>0) {
+					UniversallyUniqueIdentifierProducer.initialize(propertiesReader.getIDManagerBufferSize(), OpenSPCoop2Logger.getLoggerOpenSPCoopTimers());
+					OpenSPCoop2Startup.this.universallyUniqueIdentifierProducer = UniversallyUniqueIdentifierProducer.getInstance();
+					OpenSPCoop2Startup.this.universallyUniqueIdentifierProducer.start();
+					OpenSPCoop2Startup.log.info("Thread per la produzione di un buffer di uuid avviato correttamente");
+				}
+			}catch(Exception e){
+				this.logError("Riscontrato errore durante l'inizializzazione del thread che produce e mantiene in un buffer gli uuid: "+e.getMessage(),e);
+				return;
+			}
+			
+			
 			
 			
 			
@@ -3722,7 +3741,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		if(this.gestoreRisorseJMX!=null){
 			this.gestoreRisorseJMX.unregisterMBeans();
 		}
-
+		
 		// Verifico che i timer siano conclusi prima di rilasciare i lock
 		try{
 			if(this.threadEventi!=null)
@@ -3799,6 +3818,17 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		// L'errore puo' avvenire poiche' lo shutdown puo' anche disattivare il datasource
 		boolean logErrorConnection = false;
 		TimerUtils.relaseLockTimers(properties, ID_MODULO, OpenSPCoop2Logger.getLoggerOpenSPCoopTimers(), logErrorConnection);
+		
+		// UniversallyUniqueIdentifierProducer (fermo dopo lo stop di tutte le altre attivita)
+		try{
+			if(OpenSPCoop2Startup.this.universallyUniqueIdentifierProducer!=null){
+				System.out.println("fERMO.....");
+				OpenSPCoop2Startup.this.universallyUniqueIdentifierProducer.setStop(true);
+				System.out.println("WAIT.....");
+				OpenSPCoop2Startup.this.universallyUniqueIdentifierProducer.waitShutdown();
+				System.out.println("FINE!");
+			}
+		}catch(Throwable e){}
 		
 		// DataManger
 		DateManager.close();

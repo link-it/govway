@@ -45,5 +45,27 @@ public abstract class AbstractUniversallyUniqueIdentifierGenerator implements IU
 	public void init(Object... o) throws UniqueIdentifierException {
 		
 	}
+	
+	@Override
+	public boolean isBufferSupperted() {
+		return true;
+	}
+	@Override
+	public final IUniqueIdentifier newID() throws UniqueIdentifierException {
+		return newID(true);
+	}
+	@Override
+	public final IUniqueIdentifier newID(boolean useBuffer) throws UniqueIdentifierException {
+		UniversallyUniqueIdentifier uuidOpenSPCoop = null;
+		UniversallyUniqueIdentifierProducer uuidProducer = useBuffer ? UniversallyUniqueIdentifierProducer.getInstance() : null;
+		if ( uuidProducer != null ) {
+			uuidOpenSPCoop = (UniversallyUniqueIdentifier) uuidProducer.newUniqueIdentifier();
+		} else {
+			uuidOpenSPCoop = new UniversallyUniqueIdentifier();
+			uuidOpenSPCoop.setUuid( this.generateUUID() );
+		}
+		return uuidOpenSPCoop;
+	}
 
+	protected abstract UUID generateUUID();
 }

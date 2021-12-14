@@ -21,6 +21,8 @@
 
 package org.openspcoop2.utils.id;
 
+import java.util.UUID;
+
 import com.fasterxml.uuid.Generators;
 import com.fasterxml.uuid.impl.RandomBasedGenerator;
 /**
@@ -42,10 +44,8 @@ public class UniversallyUniqueIdentifierV4GeneratorSecureRandom extends Abstract
 	private RandomBasedGenerator uuidv4 = Generators.randomBasedGenerator(new java.security.SecureRandom());
 	
 	@Override
-	public IUniqueIdentifier newID() throws UniqueIdentifierException {
-		UniversallyUniqueIdentifier uuidOpenSPCoop = new UniversallyUniqueIdentifier();
-		uuidOpenSPCoop.setUuid(this.uuidv4.generate());
-		return uuidOpenSPCoop;
+	protected UUID generateUUID() {
+		return this.uuidv4.generate();
 	}
 
 }
