@@ -24,6 +24,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.SequenceInputStream;
+import java.io.StringReader;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -169,7 +170,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 				// analizzo
 				for (int i = 0; i < lettiBuffer; i++) {
 					char c = bufferString!=null ? bufferString.charAt(i) : (char) bufferRaw[i];
-					if( (c == '<' || (sbActual!=null && sbActual.toString().startsWith("&lt;"))) 
+					if( (c == '<' || startsWithLessThan(sbActual)) 
 							&& 
 							!cdataFound) {
 												
@@ -178,7 +179,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 								
 								// devo verificare se ho incontrato un cdata o sto continuando a leggere un header
 								String sPreClosure = sbActual.toString();
-								sbActual.delete(0, sbActual.length());
+								sbActual.setLength(0);
 								
 								if(sPreClosure.startsWith("<![CDATA[")) {
 									//System.out.println("FOND CDATA! in sPreClosure");
@@ -194,7 +195,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 					if(sbActual!=null) {
 						sbActual.append(c);
 					}
-					if(c == '>' || (sbActual!=null && sbActual.toString().endsWith("&gt;"))) {
+					if(c == '>' || endsWithGreaterThan(sbActual)) {
 						
 						if(sbActual==null) {
 							//NO: gli attachments potrebbero rientrare in questo caso
@@ -211,7 +212,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 						//System.out.println("S ["+s+"]");
 						
 						if(cdataFound) {
-							sbActual.delete(0, sbActual.length());
+							sbActual.setLength(0);
 							//System.out.println("continuo perche CDATA... ");
 							if(s.endsWith("]]>")) {
 								cdataFound=false;
@@ -259,7 +260,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 							if(headerClosure!=null) {
 								//System.out.println("AGGIUNGO AD HEADER ["+s+"]");
 								header.append(s);
-								sbActual.delete(0, sbActual.length());
+								sbActual.setLength(0);
 								if(s.startsWith(headerClosure)) {
 									headerClosure=null;	
 									headerCompletato = true;
@@ -354,7 +355,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 			// svuoto
 			if(sbActual!=null) {
 				if(sbActual.length()>0) {
-					sbActual.delete(0, sbActual.length());
+					sbActual.setLength(0);
 				}
 			}
 			
@@ -393,7 +394,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 				if(headerCompletato) {
 					StringBuilder sbHeaderAnalizer = new StringBuilder();
 					sbHeaderAnalizer.append(this.envelope);
-					sbHeaderAnalizer.append(header.toString());
+					sbHeaderAnalizer.append(header);
 					sbHeaderAnalizer.append("<").append(prefixEnvelope).append("Body/>");
 					sbHeaderAnalizer.append("</").append(prefixEnvelope).append("Envelope>");
 					this.header = sbHeaderAnalizer.toString();
@@ -503,7 +504,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 					RootElementSaxContentHandler saxHandler = new RootElementSaxContentHandler(this.namespace);
 					xmlReader.setContentHandler(saxHandler);
 					//System.out.println("ANALIZZO '"+sbElementAnalizer.toString()+"'");
-					try(ByteArrayInputStream bin = new ByteArrayInputStream(sbElementAnalizer.toString().getBytes())){
+					try(StringReader bin = new StringReader(sbElementAnalizer.toString())){
 						InputSource inputSource = new InputSource(bin);
 						xmlReader.parse(inputSource);
 					}
@@ -544,6 +545,17 @@ public class OpenSPCoop2MessageSoapStreamReader {
 		
 		return;
 		
+	}
+	private boolean endsWithGreaterThan( StringBuilder buffer ) {
+		if ( buffer == null || buffer.length() < 4 )
+			return false;
+		int startIx = buffer.length() - 4;
+		return ( buffer.charAt(startIx) == '&' && buffer.charAt(startIx + 1) == 'g' && buffer.charAt(startIx + 2) == 't' && buffer.charAt(startIx + 3) == ';' );
+	}
+	private boolean startsWithLessThan( StringBuilder buffer ) {
+		if ( buffer == null || buffer.length() < 4 )
+			return false;
+		return ( buffer.charAt(0) == '&' && buffer.charAt(1) == 'l' && buffer.charAt(2) == 't' && buffer.charAt(3) == ';' );
 	}
 	
 	private boolean analizyEnvelopeNamespace(String envelope) throws Exception {
