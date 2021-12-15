@@ -37,31 +37,18 @@ public class BloccanteSoapSicurezzaMessaggioIdas01FixKarateTest extends ConfigLo
 				.http(Integer.valueOf(prop.getProperty("http_port"))).build();
 	}
 	
+	
 	  @Test
 	  public void test() {
 	    	Results results = Runner.path(Arrays.asList( 
 	    			"classpath:test/soap/sicurezza-messaggio/idas01.feature",
 	    		    "classpath:test/soap/sicurezza-messaggio/idas01-no-disclosure.feature"))	  
-	    			.tags("~@riferimento-x509-IssuerSerial-x509Key", 
-	    					"~@riferimento-x509-x509Key-ThumbprintKey", 
-	    					"~@riferimento-x509-ThumbprintKey-SKIKey", 
-	    					"~@riferimento-x509-SKIKey-IssuerSerial")		
 	    			.parallel(1);
 	    	assertEquals(0, results.getFailCount());
 	   
 	    }
 
-	  
-    @Test
-    public void testAloneIdas01() {
-    	System.out.println("Testing scenario da soli.");
-    	Results results = Runner.path(Arrays.asList( 
-    			"classpath:test/soap/sicurezza-messaggio/idas01.feature"))
-    			.tags("@riferimento-x509-IssuerSerial-x509Key, @riferimento-x509-x509Key-ThumbprintKey, @riferimento-x509-ThumbprintKey-SKIKey, @riferimento-x509-SKIKey-IssuerSerial" )    			    			
-    			.parallel(1);
-    	assertEquals(0, results.getFailCount());
-    }
-    
+	     
     
 	@AfterClass
 	public static void afterClass() {

@@ -2,6 +2,9 @@ Feature: Controllo del token client
 
 Scenario:
 
+    #* karate.log('Client request in check-client-token.feature: ', request)
+
+
     * match bodyPath('/Envelope/Header/Security/Signature') == "#present"
     * match bodyPath('/Envelope/Header/Security/Timestamp/Created') == "#string"
     * match bodyPath('/Envelope/Header/Security/Timestamp/Expires') == "#string"

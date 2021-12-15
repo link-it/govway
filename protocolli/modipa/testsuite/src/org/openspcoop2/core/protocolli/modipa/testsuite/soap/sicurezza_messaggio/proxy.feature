@@ -128,7 +128,7 @@ Scenario: isTest('enabled-security-on-action') && bodyPath('/Envelope/Body/MRequ
     * xmlstring client_request = bodyPath('/')
     * eval karateCache.add("Client-Request", client_request)
 
-    * call check_client_token ({ address: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", to: "testsuite", request: request })
+    * call check_client_token ({ address: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", to: "testsuite" })
     
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01MultipleOPNoDefaultSecurity/v1')
 
@@ -216,10 +216,21 @@ Scenario: isTest('riferimento-x509-IssuerSerial-x509Key')
     * xmlstring client_request = bodyPath('/')
     * eval karateCache.add("Client-Request", client_request)
 
+
+    # Questa chiamata sostituisce l'oggetto request O_O
+    # Ok, trovato il bug, chissà perchè chiamare questa feature fa si che nello scope
+    # della feature chiamata venga usato il vecchio oggetto request, e poi alla sua uscita
+    # il vecchio oggetto request sostituisce quello corrente.
+    # Ma la feature precedente a questa non chiama mica la check_client_token, che sta succedendo?
     * call check_client_token ({ address: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", to: "testsuite" })
+
+    * karate.log('Client request: ', request)
+    * karate.log('In bytes: ', requestBytes)
+    * karate.log('Client xmlstring request:', client_request)
     
     * match bodyPath('/Envelope/Header/Security/Signature/KeyInfo/SecurityTokenReference/X509Data/X509IssuerSerial/X509IssuerName') == "#present"
     * match bodyPath('/Envelope/Header/Security/Signature/KeyInfo/SecurityTokenReference/X509Data/X509IssuerSerial/X509SerialNumber') == "#present"
+    
     
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01X509KeyId/v1')
 
