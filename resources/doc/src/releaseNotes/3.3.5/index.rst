@@ -11,6 +11,7 @@ si può invece far riferimento al file ChangeLog di questa versione.
 
    Per la versione 3.3.5 utilizzare l'ultima patch version che risolve bug importanti descritti nelle sezioni:
 
+   - :ref:`3.3.5.2_bug`
    - :ref:`3.3.5.1_bug`
 
 
@@ -27,4 +28,5 @@ si può invece far riferimento al file ChangeLog di questa versione.
 	installer
 	bug
 	bug_p1
+	bug_p2
 

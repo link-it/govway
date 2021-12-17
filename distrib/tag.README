@@ -108,4 +108,6 @@ Per creare una tag version:
 
 19. Riportazione indicazione di backwardCompatibility e hotUpgrade sul wiki (per indicare le info sull'aggiornamento della base dati)
 
-20. (PVersion) Creazione versione tag
+22. Aggiungere la nuova versione come directory all'interno degli script di distribuzione delle immagini docker
+
+21. (PVersion) Creazione versione tag

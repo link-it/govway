@@ -11,8 +11,8 @@ si può invece far riferimento al file ChangeLog di questa versione.
 
    Per la versione 3.3.4 utilizzare l'ultima patch version che risolve bug importanti descritti nelle sezioni:
 
-   - :ref:`3.3.4.1_bug`
    - :ref:`3.3.4.2_bug`
+   - :ref:`3.3.4.1_bug`
 
 .. toctree::
         :maxdepth: 2

@@ -1,3 +1,18 @@
+2021-12-18  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 3.3.5.p2
+
+2021-12-17  Andrea Poli <apoli@link.it>
+
+	* [GovwayConsole]
+	Nella console di gestione, se configurata in Load Balancing per gestire molteplici nodi, 
+	l'accesso alla sezione 'Runtime' causava delle invocazioni verso i nodi gestiti ancor prima di averne selezionato qualcuno o aver richiesto operazioni di gestione (es. svuota cache).
+
+2021-12-17  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Libreria 'lo4j2' aggiornata alla versione '2.16.0' per risolvere la vulnerabilità 'CVE-2021-45046'.
+
 2021-12-14  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.5.p1
