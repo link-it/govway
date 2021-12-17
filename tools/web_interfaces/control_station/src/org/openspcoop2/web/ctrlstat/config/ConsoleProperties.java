@@ -616,6 +616,10 @@ public class ConsoleProperties {
 	
 	/* ----- Opzioni Accesso JMX della PdD ------- */
 	
+	public boolean isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus() throws UtilsException{
+		return this.readBooleanProperty(true, "risorseJmxPdd.linkClearAllCaches.remoteCheckCacheStatus");
+	}
+	
 	public List<String> getJmxPdD_aliases() throws UtilsException {
 		List<String> list = new ArrayList<String>();
 		String tipo = this.readProperty(false, "risorseJmxPdd.aliases");

@@ -4622,42 +4622,47 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 				
 		boolean resetAllCaches = false;
-		for (String alias : this.confCore.getJmxPdD_aliases()) {
-			
-			Object gestoreRisorseJMX = this.confCore.getGestoreRisorseJMX(alias);
-			
-			List<String> caches = this.confCore.getJmxPdD_caches(alias);
-			if(caches!=null && caches.size()>0){
-				for (String cache : caches) {
+		if(this.confCore.isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus()) {
+			for (String alias : this.confCore.getJmxPdD_aliases()) {
 				
-					String stato = null;
-					try{
-						stato = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-								cache,
-								this.confCore.getJmxPdD_cache_nomeAttributo_cacheAbilitata(alias));
-						if(stato.equalsIgnoreCase("true")){
-							stato = "abilitata";
-						}
-						else if(stato.equalsIgnoreCase("false")){
-							stato = "disabilitata";
-						}
-						else{
-							throw new Exception("Stato ["+stato+"] sconosciuto");
-						}
-					}catch(Exception e){
-						this.log.error("Errore durante la lettura dello stato della cache ["+cache+"](jmxResourcePdD): "+e.getMessage(),e);
-						stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
-					}
+				Object gestoreRisorseJMX = this.confCore.getGestoreRisorseJMX(alias);
+				
+				List<String> caches = this.confCore.getJmxPdD_caches(alias);
+				if(caches!=null && caches.size()>0){
+					for (String cache : caches) {
 					
-					if("abilitata".equals(stato)){
-						resetAllCaches = true;
-						break;
+						String stato = null;
+						try{
+							stato = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+									cache,
+									this.confCore.getJmxPdD_cache_nomeAttributo_cacheAbilitata(alias));
+							if(stato.equalsIgnoreCase("true")){
+								stato = "abilitata";
+							}
+							else if(stato.equalsIgnoreCase("false")){
+								stato = "disabilitata";
+							}
+							else{
+								throw new Exception("Stato ["+stato+"] sconosciuto");
+							}
+						}catch(Exception e){
+							this.log.error("Errore durante la lettura dello stato della cache ["+cache+"](jmxResourcePdD): "+e.getMessage(),e);
+							stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+						}
+						
+						if("abilitata".equals(stato)){
+							resetAllCaches = true;
+							break;
+						}
 					}
 				}
+				if(resetAllCaches) {
+					break;
+				}
 			}
-			if(resetAllCaches) {
-				break;
-			}
+		}
+		else {
+			resetAllCaches = true;
 		}
 		if(resetAllCaches){
 			de = new DataElement();

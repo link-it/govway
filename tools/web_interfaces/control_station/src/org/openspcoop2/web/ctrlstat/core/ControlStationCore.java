@@ -1392,6 +1392,7 @@ public class ControlStationCore {
 	}
 	
 	/** Opzioni Accesso JMX della PdD */
+	private boolean isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus = false;
 	private List<String> jmxPdD_aliases = new ArrayList<String>();
 	private Map<String,List<String>>  jmxPdD_gruppi_aliases = new HashMap<String, List<String>>();
 	private Map<String, String> jmxPdD_descrizioni = new HashMap<String, String>();
@@ -1526,6 +1527,9 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdD_cache_nomeMetodo_resetCache = new HashMap<String, String>();
 	private Map<String, String> jmxPdD_cache_nomeMetodo_prefillCache = new HashMap<String, String>();
 	
+	public boolean isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus() {
+		return this.isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus;
+	}
 	public List<String> getJmxPdD_aliases() {
 		return this.jmxPdD_aliases;
 	}
@@ -2663,6 +2667,7 @@ public class ControlStationCore {
 		this.pluginPortaApplicativa = core.pluginPortaApplicativa;
 		
 		/** Opzioni Accesso JMX della PdD */
+		this.isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus = core.isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus;
 		this.jmxPdD_aliases = core.jmxPdD_aliases;
 		this.jmxPdD_gruppi_aliases = core.jmxPdD_gruppi_aliases;
 		this.jmxPdD_descrizioni = core.jmxPdD_descrizioni;
@@ -3127,6 +3132,7 @@ public class ControlStationCore {
 			consoleProperties = ConsoleProperties.getInstance();
 					
 			// Opzioni Accesso JMX della PdD
+			this.isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus = consoleProperties.isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus();
 			this.jmxPdD_aliases = consoleProperties.getJmxPdD_aliases();
 			if(this.singlePdD==false){
 				// se esistono degli alias allora assegno poi come alias i nomi delle pdd operative
