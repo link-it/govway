@@ -133,11 +133,11 @@
 	<archive path="/op2_3.3.dev/lib/json/jettison-1.4.0.jar"/>
 	<!-- log -->
         <archive path="/op2_3.3.dev/lib/log/slf4j-api-1.7.30-gov4j-1.jar"/>
-	<archive path="/op2_3.3.dev/lib/log/log4j-1.2-api-2.16.0.jar"/>
-        <archive path="/op2_3.3.dev/lib/log/log4j-api-2.16.0.jar"/>
-	<archive path="/op2_3.3.dev/lib/log/log4j-core-2.16.0.jar"/>
-	<archive path="/op2_3.3.dev/lib/log/log4j-slf4j-impl-2.16.0.jar"/>
-	<archive path="/op2_3.3.dev/lib/log/log4j-jcl-2.16.0.jar"/>
+	<archive path="/op2_3.3.dev/lib/log/log4j-1.2-api-2.17.0.jar"/>
+        <archive path="/op2_3.3.dev/lib/log/log4j-api-2.17.0.jar"/>
+	<archive path="/op2_3.3.dev/lib/log/log4j-core-2.17.0.jar"/>
+	<archive path="/op2_3.3.dev/lib/log/log4j-slf4j-impl-2.17.0.jar"/>
+	<archive path="/op2_3.3.dev/lib/log/log4j-jcl-2.17.0.jar"/>
 	<!-- lucene -->
         <archive path="/op2_3.3.dev/lib/lucene/lucene-core-8.4.1.jar"/>
 	<archive path="/op2_3.3.dev/lib/lucene/lucene-analyzers-common-8.4.1.jar"/>

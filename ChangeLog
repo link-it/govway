@@ -1,3 +1,8 @@
+2021-12-20  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Libreria 'lo4j2' aggiornata alla versione '2.17.0' per risolvere la vulnerabilità 'CVE-2021-45105'.
+
 2021-12-18  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.5.p2
