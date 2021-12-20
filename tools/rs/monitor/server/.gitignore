@@ -7,5 +7,8 @@ tmp
 target
 .ant-targets-build.xml
 local_env.xml
+#testsuite ignores
+testsuite/RisultatiTestSuite/
+testsuite/jdbc/**
 # Except this file
 !.gitignore

@@ -82,7 +82,8 @@
 	<!-- Ripulisce la distribuzione -->
 	<target name="clean">
 		<delete dir="${build_testsuite}"/>
-		<delete dir="log"/>
+		<delete dir="${log_testsuite}"/>
+		<delete dir="${output}"/>
 		<delete dir="target"/>
 	</target>
 	<target name="init">
