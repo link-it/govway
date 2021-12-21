@@ -300,15 +300,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		 * La richiesta viene instradata al connettore con il minimo numero di
 		 * connessioni attive.
 		 * 
-		 * L'erogazione ha 4 connettori. Ogni connettore ha nei parametri query della
-		 * url invocazione il suo identificativo in modo che il server di echo risponda
-		 * al client con l'identificativo del connettore attivato.
-		 * 
-		 * Test 1: Test effettivo della funzionalità. Faccio quattro richieste seriali
-		 * con sleep e attendo la terminazione. Mi assicuro che siano stati raggiunti
-		 * tutti e 4 i connettori.
-		 * 
-		 * Poi variante parallela: 20 richieste parallele con sleep e mi aspetto che si
+		 * 20 richieste parallele con sleep e mi aspetto che si
 		 * comporti esattamente come un round robin: una richiesta alla volta per
 		 * connettore.
 		 */
