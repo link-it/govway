@@ -94,6 +94,7 @@ import org.openspcoop2.core.config.ResponseCachingConfigurazioneControl;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
+import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaRichiesta;
@@ -185,6 +186,8 @@ import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLo
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerType;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyUtils;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
+import org.openspcoop2.pdd.core.connettori.ConnettoreNULL;
+import org.openspcoop2.pdd.core.connettori.ConnettoreNULLEcho;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
@@ -8156,6 +8159,9 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public void setStatoRateLimiting(DataElement de, List<AttivazionePolicy> listaPolicy) throws DriverControlStationException, DriverControlStationNotFound {
+		setStatoRateLimiting(de, listaPolicy, true);
+	}
+	public void setStatoRateLimiting(DataElement de, List<AttivazionePolicy> listaPolicy, boolean upperFirstChar) throws DriverControlStationException, DriverControlStationNotFound {
 		de.setType(DataElementType.CHECKBOX);
 		if(listaPolicy!=null && listaPolicy.size()>0) {
 			Map<String, Integer> mapActive = new HashMap<>();
@@ -8215,12 +8221,13 @@ public class ConsoleHelper implements IConsoleHelper {
 							bf.append("(").append(count).append(")");
 						}
 					}
+					String vAbilitato = upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO) : CostantiControlStation.DEFAULT_VALUE_ABILITATO;
 					if(bf.length()>0 && bf.length()<CostantiControlStation.MAX_LENGTH_VALORE_STATO_RATE_LIMITING) {
-						String value = this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO)+" [ "+bf.toString()+" ]";
+						String value = vAbilitato+" [ "+bf.toString()+" ]";
 						de.addStatus(value, CheckboxStatusType.CONFIG_ENABLE);
 					}
 					else {
-						String value = this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO);
+						String value = vAbilitato;
 						de.addStatus(bf.toString(), value, CheckboxStatusType.CONFIG_ENABLE);
 					}
 				} 
@@ -8237,12 +8244,13 @@ public class ConsoleHelper implements IConsoleHelper {
 							bf.append("(").append(count).append(")");
 						}
 					}
+					String vWarningOnly = upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_WARNING_ONLY) : CostantiControlStation.DEFAULT_VALUE_WARNING_ONLY;
 					if(bf.length()>0 && bf.length()<CostantiControlStation.MAX_LENGTH_VALORE_STATO_RATE_LIMITING) {
-						String value = this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_WARNING_ONLY)+" [ "+bf.toString()+" ]";
+						String value = vWarningOnly+" [ "+bf.toString()+" ]";
 						de.addStatus(value, CheckboxStatusType.CONFIG_WARNING);
 					}
 					else {
-						String value = this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_WARNING_ONLY);
+						String value = vWarningOnly;
 						de.addStatus(bf.toString(), value, CheckboxStatusType.CONFIG_WARNING);
 					}
 				} 
@@ -8250,14 +8258,16 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			else {
 				de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
-				de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));
+				String vDisable = upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO) :  CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
+				de.setStatusValue(vDisable);
 				de.setStatusToolTip("Sull'API sono registrate "+listaPolicy.size()+" politiche di Rate Limiting tutte con stato disabilitato");
 			}
 			
 		}
 		else {
 			de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
-			de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));
+			String vDisable = upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO) :  CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
+			de.setStatusValue(vDisable);
 		}
 	}
 	
@@ -8636,6 +8646,11 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	public void setStatoSicurezzaMessaggio(DataElement de, MessageSecurity securityPorta, 
 			ConfigManager configManager, PropertiesSourceConfiguration propertiesSourceConfiguration) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		setStatoSicurezzaMessaggio(de, securityPorta, 
+				configManager, propertiesSourceConfiguration, true);
+	}
+	public void setStatoSicurezzaMessaggio(DataElement de, MessageSecurity securityPorta, 
+			ConfigManager configManager, PropertiesSourceConfiguration propertiesSourceConfiguration, boolean upperFirstChar) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		
 		boolean request = (
 				securityPorta!=null &&
@@ -8656,7 +8671,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		if (securityPorta == null || (!request && !response) ) {
 			de.setType(DataElementType.CHECKBOX);
 			de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
-			de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));		
+			String value = upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO) : CostantiControlStation.DEFAULT_VALUE_DISABILITATO; 
+			de.setStatusValue(value);		
 		} else {
 			
 			de.setType(DataElementType.MULTI_SELECT);
@@ -8674,7 +8690,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					List<String> labelConfigurazione = configManager.convertToLabel(propertiesSourceConfiguration, nome);
 					label = labelConfigurazione.get(0);
 				}
-				String value = CostantiControlStation.LABEL_PARAMETRO_RICHIESTA+" [ "+label+" ]";
+				String value = (upperFirstChar ? CostantiControlStation.LABEL_PARAMETRO_RICHIESTA : CostantiControlStation.LABEL_PARAMETRO_RICHIESTA.toLowerCase())+" [ "+label+" ]";
 				de.addStatus(tooltip, value, type);
 			}
 			
@@ -8691,7 +8707,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					List<String> labelConfigurazione = configManager.convertToLabel(propertiesSourceConfiguration, nome);
 					label = labelConfigurazione.get(0);
 				}
-				String value = CostantiControlStation.LABEL_PARAMETRO_RISPOSTA+" [ "+label+" ]";
+				String value = (upperFirstChar ? CostantiControlStation.LABEL_PARAMETRO_RISPOSTA : CostantiControlStation.LABEL_PARAMETRO_RISPOSTA.toLowerCase())+" [ "+label+" ]";
 				de.addStatus(tooltip, value, type);
 			}
 		}
@@ -8699,6 +8715,9 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public void setStatoMTOM(DataElement de, MtomProcessor mtomPorta) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		setStatoMTOM(de, mtomPorta, true);
+	}
+	public void setStatoMTOM(DataElement de, MtomProcessor mtomPorta, boolean upperFirstChar) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		
 		boolean request = false;
 		boolean response= false;
@@ -8723,7 +8742,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		if (mtomPorta == null || (!request && !response) ) {
 			de.setType(DataElementType.CHECKBOX);
 			de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
-			de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));		
+			String vUpper = upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO) :  CostantiControlStation.DEFAULT_VALUE_DISABILITATO; 
+			de.setStatusValue(vUpper);		
 		} else {
 			
 			de.setType(DataElementType.MULTI_SELECT);
@@ -8742,7 +8762,8 @@ public class ConsoleHelper implements IConsoleHelper {
 					type = CheckboxStatusType.CONFIG_ENABLE;
 					break;
 				}
-				String value = CostantiControlStation.LABEL_PARAMETRO_RICHIESTA+" [ "+this.getUpperFirstChar(mtomPorta.getRequestFlow().getMode().getValue())+" ]";
+				String v = mtomPorta.getRequestFlow().getMode().getValue();
+				String value = (upperFirstChar ? CostantiControlStation.LABEL_PARAMETRO_RICHIESTA : CostantiControlStation.LABEL_PARAMETRO_RICHIESTA.toLowerCase())+" [ "+this.getUpperFirstChar(v)+" ]";
 				de.addStatus(tooltip, value, type);
 			}
 			
@@ -8760,7 +8781,8 @@ public class ConsoleHelper implements IConsoleHelper {
 					type = CheckboxStatusType.CONFIG_ENABLE;
 					break;
 				}
-				String value = CostantiControlStation.LABEL_PARAMETRO_RISPOSTA+" [ "+this.getUpperFirstChar(mtomPorta.getResponseFlow().getMode().getValue())+" ]";
+				String v = mtomPorta.getResponseFlow().getMode().getValue();
+				String value = (upperFirstChar ? CostantiControlStation.LABEL_PARAMETRO_RISPOSTA : CostantiControlStation.LABEL_PARAMETRO_RISPOSTA.toLowerCase())+" [ "+this.getUpperFirstChar(v)+" ]";
 				de.addStatus(tooltip, value, type);
 			}
 			
@@ -8769,6 +8791,9 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public void setStatoTrasformazioni(DataElement de, Trasformazioni trasformazioni, ServiceBinding serviceBindingMessage) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		setStatoTrasformazioni(de, trasformazioni, serviceBindingMessage, true);
+	}
+	public void setStatoTrasformazioni(DataElement de, Trasformazioni trasformazioni, ServiceBinding serviceBindingMessage, boolean upperFirstChar) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		
 		de.setType(DataElementType.CHECKBOX);
 		
@@ -8778,7 +8803,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		if(listaTrasformazioni==null || listaTrasformazioni.size()<=0) {
 			de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
-			de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));		
+			String vDisabilitato = upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO) :  CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
+			de.setStatusValue(vDisabilitato);		
 		}
 		else {
 			StringBuilder bfToolTip = new StringBuilder();
@@ -8846,7 +8872,8 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			if(regoleAbilitate==0) {
 				de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
-				de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));	
+				String vDisabilitato = upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO) :  CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
+				de.setStatusValue(vDisabilitato);	
 				if(regoleDisabilitate>0) {
 					de.setStatusToolTip("Sono registrate, con stato disabilitato, "+regoleDisabilitate+" regole di trasformazione dei messaggi");
 				}
@@ -8857,7 +8884,8 @@ public class ConsoleHelper implements IConsoleHelper {
 					type = CheckboxStatusType.CONFIG_ENABLE;
 				}
 				de.setStatusType(type);
-				de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO));
+				String vAbilitato = upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO) :  CostantiControlStation.DEFAULT_VALUE_ABILITATO;
+				de.setStatusValue(vAbilitato);
 				if(bfToolTip.length()>0) {
 					de.setStatusToolTip(bfToolTip.toString());
 				}
@@ -8941,6 +8969,9 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public void setStatoDump(DataElement de, DumpConfigurazione dumpConfigurazionePorta, Configurazione configurazioneGenerale, boolean portaApplicativa) {
+		setStatoDump(de, dumpConfigurazionePorta, configurazioneGenerale, portaApplicativa, true);
+	}
+	public void setStatoDump(DataElement de, DumpConfigurazione dumpConfigurazionePorta, Configurazione configurazioneGenerale, boolean portaApplicativa, boolean upperFirstChar) {
 		
 		de.setType(DataElementType.MULTI_SELECT);
 		
@@ -9147,20 +9178,20 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			if(bfRichiesta.length()>0) {
 				de.addStatus(tooltip+"\n"+bfRichiesta.toString(), 
-						CostantiControlStation.LABEL_PARAMETRO_RICHIESTA+" [ "+bfRichiestaOptions.toString()+" ]", 
+						(upperFirstChar ? CostantiControlStation.LABEL_PARAMETRO_RICHIESTA : CostantiControlStation.LABEL_PARAMETRO_RICHIESTA.toLowerCase())+" [ "+bfRichiestaOptions.toString()+" ]", 
 						CheckboxStatusType.CONFIG_ENABLE);
 			}
 			
 			if(bfRisposta.length()>0) {
 				de.addStatus(tooltip+"\n"+bfRisposta.toString(), 
-						CostantiControlStation.LABEL_PARAMETRO_RISPOSTA+" [ "+bfRispostaOptions.toString()+" ]", 
+						(upperFirstChar ? CostantiControlStation.LABEL_PARAMETRO_RISPOSTA : CostantiControlStation.LABEL_PARAMETRO_RISPOSTA.toLowerCase())+" [ "+bfRispostaOptions.toString()+" ]", 
 						CheckboxStatusType.CONFIG_ENABLE);
 			}
 			
 		}
 		else {
 			de.addStatus(tooltip, 
-					this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO), 
+					(upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO) : CostantiControlStation.DEFAULT_VALUE_DISABILITATO), 
 					CheckboxStatusType.CONFIG_DISABLE);
 		}
 	}
@@ -9188,6 +9219,21 @@ public class ConsoleHelper implements IConsoleHelper {
 			StatoFunzionalita stateless, PortaDelegataLocalForward localForward,
 			StatoFunzionalita ricevutaAsincronaSimmetrica, StatoFunzionalita ricevutaAsincronaAsimmetrica,
 			StatoFunzionalita gestioneManifest, ConfigurazionePortaHandler configPortaHandler) throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverConfigurazioneException {
+		setStatoOpzioniAvanzate(de, 
+				protocollo, serviceBinding,
+				allegaBody, scartaBody, 
+				integrazione, behaviour,
+				stateless, localForward,
+				ricevutaAsincronaSimmetrica, ricevutaAsincronaAsimmetrica,
+				gestioneManifest, configPortaHandler, true);
+	}
+	public void setStatoOpzioniAvanzate(DataElement de, 
+			String protocollo, ServiceBinding serviceBinding,
+			StatoFunzionalita allegaBody, StatoFunzionalita scartaBody, 
+			String integrazione, String behaviour,
+			StatoFunzionalita stateless, PortaDelegataLocalForward localForward,
+			StatoFunzionalita ricevutaAsincronaSimmetrica, StatoFunzionalita ricevutaAsincronaAsimmetrica,
+			StatoFunzionalita gestioneManifest, ConfigurazionePortaHandler configPortaHandler, boolean upperFirstChar) throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverConfigurazioneException {
 		
 		boolean supportoAsincroni = this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding);
 		boolean supportoGestioneManifest = isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.MANIFEST_ATTACHMENTS);
@@ -9456,27 +9502,33 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		if(bf.length()>0) {
 			de.setStatusType(CheckboxStatusType.CONFIG_ENABLE);
-			de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO)+" [ "+bf.toString()+" ]");
+			String vAbilitato = upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO) : CostantiControlStation.DEFAULT_VALUE_ABILITATO; 
+			de.setStatusValue(vAbilitato+" [ "+bf.toString()+" ]");
 			de.setStatusToolTip(bfTooltips.toString());
 		}
 		else {
 			de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
-			de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));
+			String vDisabilitato = upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO) : CostantiControlStation.DEFAULT_VALUE_DISABILITATO; 
+			de.setStatusValue(vDisabilitato);
 		}
 		
 	}
 	
 	public void setStatoExtendedList(DataElement de, int size, String stato, String statoTooltip) {
+		setStatoExtendedList(de, size, stato, statoTooltip, true);
+	}
+	public void setStatoExtendedList(DataElement de, int size, String stato, String statoTooltip, boolean upperFirstChar) {
 		
 		de.setType(DataElementType.CHECKBOX);
 		
 		if(size>0) {
 			de.setStatusType(CheckboxStatusType.CONFIG_ENABLE);
+			String vAbilitato = upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO) : CostantiControlStation.DEFAULT_VALUE_ABILITATO; 
 			if(stato!=null) {
-				de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO)+" [" +stato+ " ]");
+				de.setStatusValue(vAbilitato+" [" +stato+ " ]");
 			}
 			else {
-				de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO));
+				de.setStatusValue(vAbilitato);
 			}
 			if(statoTooltip!=null) {
 				de.setStatusToolTip(statoTooltip);
@@ -9487,7 +9539,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		else {
 			de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
-			de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));
+			String vDisabilitato = upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO) : CostantiControlStation.DEFAULT_VALUE_DISABILITATO; 
+			de.setStatusValue(vDisabilitato);
 		}
 		
 	}
@@ -14616,6 +14669,152 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 	}
 	
+	public boolean isConnettoreRidefinito(PortaApplicativa paDefault,	PortaApplicativaServizioApplicativo paSADefault,
+			PortaApplicativa paCurrent, PortaApplicativaServizioApplicativo paSACurrent) {
+		boolean connettoreRidefinito = (
+				(
+					paDefault.getServizioApplicativoDefault() == null && (paCurrent.getServizioApplicativoDefault() != null || paSACurrent.getNome().equals(paCurrent.getNome()))
+				) || (
+					paDefault.getServizioApplicativoDefault() != null && 
+						(
+							paCurrent.getServizioApplicativoDefault() == null 
+							|| 
+							!paDefault.getServizioApplicativoDefault().equals(paCurrent.getServizioApplicativoDefault())
+							||
+							paDefault.sizeServizioApplicativoList()!=paCurrent.sizeServizioApplicativoList()
+							||
+							(paDefault.sizeServizioApplicativoList()==1 && paCurrent.sizeServizioApplicativoList()==1 && !paDefault.getServizioApplicativo(0).getNome().equals(paCurrent.getServizioApplicativo(0).getNome()))
+						)
+					//!paSADefault.getNome().equals(paSACurrent.getNome()))
+				)
+			);
+		return connettoreRidefinito;
+	}
+	
+	public String getTooltipConnettore(ServizioApplicativo sa, org.openspcoop2.core.config.InvocazioneServizio is, boolean addExtInfo) {
+		StringBuilder sbCon = new StringBuilder();
+		if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
+			sbCon.append(ConnettoriCostanti.LABEL_SERVER);
+			sbCon.append(": ");
+			sbCon.append(sa.getNome());
+			sbCon.append(CostantiControlStation.TOOLTIP_BREAK_LINE);
+		}
+		sbCon.append(this.getLabelConnettore(is, addExtInfo, true));
+		return sbCon.toString();
+	}
+	
+	public String getLabelConnettore(ServizioApplicativo sa, org.openspcoop2.core.config.InvocazioneServizio is, boolean addExtInfo) {
+		StringBuilder sbCon = new StringBuilder();
+		if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
+			//sbCon.append(sa.getNome());
+			//sbCon.append(" ");
+		}
+		sbCon.append(this.getLabelConnettore(is, addExtInfo, false));
+		return sbCon.toString();
+	}
+	
+	public String getLabelConnettore(org.openspcoop2.core.config.InvocazioneServizio is, boolean addExtInfo, boolean tooltip) {
+		String urlConnettore = this.getLabelConnettore(is.getConnettore(), addExtInfo, tooltip);
+		
+		if(is.getGetMessage()!=null && StatoFunzionalita.ABILITATO.equals(is.getGetMessage())) {
+			urlConnettore = urlConnettore + " [MessageBox]";
+		}
+		
+		return urlConnettore;
+	}
+	public String getLabelConnettore(org.openspcoop2.core.registry.Connettore connettore, boolean addExtInfo, boolean tooltip) {
+		return this.getLabelConnettore(connettore.mappingIntoConnettoreConfigurazione(), addExtInfo, tooltip);
+	}
+	public String getLabelConnettore(org.openspcoop2.core.config.Connettore connettore, boolean addExtInfo, boolean tooltip) {
+		String urlConnettore = "";
+		
+		List<org.openspcoop2.core.config.Property> cp = connettore.getPropertyList();
+		
+		//TipiConnettore.HTTP.getNome() e anche TipiConnettore.HTTPS.getNome() -> location
+		//TipiConnettore.DISABILITATO.getNome() ci scrivi "disabilitato"
+		//TipiConnettore.FILE.getNome() CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE
+		//TipiConnettore.JMS.compareTo() CostantiConnettori.CONNETTORE_LOCATION
+//			TipiConnettore.NULL 
+//			TipiConnettore.CUSTOM -> connettore custom
+		String tipo = connettore.getTipo();
+		
+		TipiConnettore tipoC = TipiConnettore.toEnumFromName(connettore.getTipo());
+		String labelC = connettore.getTipo();
+		if(tipoC!=null) {
+			labelC = tipoC.getLabel();
+		}
+		String tipoLabel = "[" + labelC + "] ";
+		if ((connettore.getCustom()!=null && connettore.getCustom()) && 
+				!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS) && 
+				!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE)) {
+			tipo = ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM;
+		}  
+
+		if(tipo.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM)) {
+			if(this.connettoriCore.isConfigurazionePluginsEnabled()) {
+				tipoLabel = "[" + TipiConnettore.CUSTOM.getLabel() + "] ";
+				Plugin plugin = null;
+				try {
+					plugin = this.confCore.getPlugin(TipoPlugin.CONNETTORE,connettore.getTipo(), false);
+				}catch(Throwable e) {}
+				if(plugin!=null) {
+					urlConnettore = tipoLabel + plugin.getLabel();
+				}
+				else {
+					// backward compatibility
+					urlConnettore = tipoLabel + connettore.getTipo();
+				}
+			}
+			else {
+				urlConnettore = tipoLabel + ConnettoriCostanti.LABEL_CONNETTORE_CUSTOM;
+			}
+		} else	if(tipo.equals(TipiConnettore.DISABILITATO.getNome())) {
+			urlConnettore = CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
+		} else if(tipo.equals(TipiConnettore.NULL.getNome())) {
+			urlConnettore = tipoLabel + ConnettoreNULL.LOCATION;
+		} else if(tipo.equals(TipiConnettore.NULLECHO.getNome())) {
+			urlConnettore = tipoLabel + ConnettoreNULLEcho.LOCATION;
+		} else {  
+			String propertyName = CostantiConnettori.CONNETTORE_LOCATION;
+			if(tipo.equals(TipiConnettore.FILE.getNome()))
+				propertyName = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE;
+		
+			// Prefix token
+			String token = "";
+			if(addExtInfo) {
+				if(tipo.equals(TipiConnettore.HTTP.getNome()) || tipo.equals(TipiConnettore.HTTPS.getNome())) {
+					for (int i = 0; i < connettore.sizePropertyList(); i++) {
+						org.openspcoop2.core.config.Property singlecp = cp.get(i);
+						if (singlecp.getNome().equals(CostantiConnettori.CONNETTORE_TOKEN_POLICY) && 
+								singlecp.getValore()!=null && StringUtils.isNotEmpty(singlecp.getValore())) {
+							if(tooltip) {
+								token = "[token: "+singlecp.getValore()+"]\n";
+							}
+							else {
+								token = "[token] ";
+							}
+						}
+					}
+				}
+			}
+			
+			for (int i = 0; i < connettore.sizePropertyList(); i++) {
+				org.openspcoop2.core.config.Property singlecp = cp.get(i);
+				if (singlecp.getNome().equals(propertyName)) {
+					if(!tipo.equals(TipiConnettore.HTTP.getNome()) && !tipo.equals(TipiConnettore.HTTPS.getNome())) {
+						urlConnettore = tipoLabel + singlecp.getValore();
+					}
+					else {
+						urlConnettore = token + singlecp.getValore();
+					}
+					
+					break;
+				}
+			}
+		}
+		return urlConnettore;
+	}
+	
 	public void addConfigurazioneResponseCachingPorteToDati(TipoOperazione tipoOperazione,Vector<DataElement> dati, boolean showStato, String statoResponseCachingPorta, boolean responseCachingEnabled, int responseCachingSeconds,
 			boolean responseCachingMaxResponseSize, long responseCachingMaxResponseSizeBytes,
 			boolean responseCachingDigestUrlInvocazione, boolean responseCachingDigestHeaders,
@@ -18397,22 +18596,44 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public void addInUsoButtonVisualizzazioneClassica(Vector<DataElement> e, String titolo, String id, InUsoType inUsoType) {
-		this.addInUsoButton(e, DataElementType.BUTTON, titolo, id, inUsoType);
+		this.addInUsoButton(e, DataElementType.BUTTON, titolo, id, inUsoType,
+				CostantiControlStation.LABEL_IN_USO_TOOLTIP, Costanti.ICON_USO,
+				CostantiControlStation.LABEL_IN_USO_BODY_HEADER_RISULTATI,
+				true, true);
 	}
 	
 	public void addInUsoButton(Vector<DataElement> e, String titolo, String id, InUsoType inUsoType) {
-		this.addInUsoButton(e, DataElementType.IMAGE, titolo, id, inUsoType);
+		this.addInUsoButton(e, DataElementType.IMAGE, titolo, id, inUsoType,
+				CostantiControlStation.LABEL_IN_USO_TOOLTIP, Costanti.ICON_USO,
+				CostantiControlStation.LABEL_IN_USO_BODY_HEADER_RISULTATI,
+				true, true);
 	}
 	
-	private void addInUsoButton(Vector<DataElement> e, DataElementType deType, String titolo, String id, InUsoType inUsoType) {
+	public void addInUsoInfoButton(Vector<DataElement> e, String titolo, String id, InUsoType inUsoType) {
+		this.addInUsoButton(e, DataElementType.IMAGE, titolo, id, inUsoType,
+				CostantiControlStation.LABEL_IN_USO_INFORMAZIONI_TOOLTIP, Costanti.ICON_USO_INFO,
+				CostantiControlStation.LABEL_IN_USO_BODY_HEADER_INFORMAZIONI, 
+				true, true);
+	}
+	
+	private void addInUsoButton(Vector<DataElement> e, DataElementType deType, String titolo, String id, InUsoType inUsoType,
+			String tooltip, String icon, String headerRiga1, 
+			Boolean resizable, Boolean draggable) {
 		DataElement de = new DataElement();
 		de.setType(deType);
-		de.setToolTip(CostantiControlStation.LABEL_IN_USO_TOOLTIP);
+		de.setToolTip(tooltip);
 		de.setWidthPx(15);	
 		Dialog deDialog = new Dialog();
-		deDialog.setIcona(Costanti.ICON_USO);
+		deDialog.setIcona(icon);
 		deDialog.setTitolo(titolo);
-		deDialog.setHeaderRiga1(CostantiControlStation.LABEL_IN_USO_BODY_HEADER_RISULTATI);
+		deDialog.setHeaderRiga1(headerRiga1);
+		if(resizable!=null) {
+			deDialog.setResizable(resizable);
+		}
+		if(draggable!=null) {
+			deDialog.setDraggable(draggable);
+		}
+		deDialog.setWidth("800px"); // modifico il default, che è più piccolo e calibrato per la creazione delle credenziali
 		
 		// Inserire sempre la url come primo elemento del body
 		BodyElement bodyElementURL = new Dialog().new BodyElement();
@@ -18430,6 +18651,9 @@ public class ConsoleHelper implements IConsoleHelper {
 		bodyElement.setLabel("");
 		bodyElement.setValue("");
 		bodyElement.setRows(15);
+		if(resizable!=null) {
+			bodyElement.setResizable(resizable);
+		}
 		deDialog.addBodyElement(bodyElement );
 		
 		de.setDialog(deDialog );

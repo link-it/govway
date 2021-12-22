@@ -517,6 +517,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_ELENCO_SORGENTI_DATI_MESSAGGI_DIAGNOSTICI = "Elenco Sorgenti Dati Messaggi Diagnostici";
 	public final static String LABEL_CONFIGURAZIONE_ELENCO_APPENDER_DUMP = "Elenco Appender Dump";
 	
+	public final static String LABEL_CONFIGURAZIONE_PROPRIETA_LABEL2 = "Proprietà";
 	public final static String LABEL_CONFIGURAZIONE_PROPRIETA = "Propriet&agrave;";
 	public final static String LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA = "Propriet&agrave; di Sistema";
 	
@@ -688,6 +689,8 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_TRANSAZIONI = "Transazioni";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI = "Transazioni Registrate";
 	public final static String LABEL_NOTE_CONFIGURAZIONE_REGISTRAZIONE_ESITI = "Selezionare gli esiti che verranno registrati nello storico";
+	
+	public final static String LABEL_SEVERITA = "Severità";
 	
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_ALL = CostantiControlStation.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_ALL;
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK = CostantiControlStation.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK;

@@ -637,7 +637,7 @@ public class Utilities {
 		}
 
 		if(millisecondiCheck){
-			if(millisecondi>=0){
+			if(millisecondi>0 || (millisecondi==0 && printZeroValues)){
 				if(bf.length()>0){
 					bf.append(separatorMs);
 				}

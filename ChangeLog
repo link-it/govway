@@ -1,3 +1,10 @@
+2021-12-22  Andrea Poli <apoli@link.it>
+
+	* [GovwayConsole]
+	Aggiunta funzionalità OP-1296
+	Direttamente dall'elenco delle erogazioni e delle fruizioni è adesso possibile ottenere una informativa generale della configurazione senza entrare nella maschera di dettaglio.
+	L'informativa generale è ottenibile cliccando sull'icona 'i' visualizzata sulla parte destra nell'elenco delle erogazioni o delle fruizioni.
+
 2021-12-20  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

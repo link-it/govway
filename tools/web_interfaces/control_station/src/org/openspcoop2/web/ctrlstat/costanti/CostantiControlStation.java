@@ -197,6 +197,7 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CONTROLLI_AUTORIZZAZIONE = "Autorizzazione Contenuti - controlli richiesti";
 	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CONTROLLI_AUTORIZZAZIONE_CUSTOM = "Autorizzazione Contenuti - controlli custom";
 	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_GESTIONE_TOKEN = "Autenticazione Token"; //"Gestione Token";
+	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_MODALITA_GESTIONE_TOKEN = "Gestione Token";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE = "Stato";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM = "Tipo Personalizzato";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_BASIC_FORWARD = "Forward Authorization";
@@ -411,6 +412,7 @@ public class CostantiControlStation {
 	public final static String LABEL_CONFIGURAZIONE_MTOM_INCOMPLETA = "Configurazione incompleta";
 	public final static String LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN = "Stato";
 	public final static String LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY = "Policy";
+	public final static String LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY_LABEL_COMPLETA = "Token Policy";
 	public final static String LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_OPZIONALE = "Token Opzionale";
 	public final static String LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT = "Validazione JWT";
 	public final static String LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION = "Introspection";
@@ -791,6 +793,8 @@ public class CostantiControlStation {
 	public final static String LABEL_IN_USO_COLONNA_HEADER = "Uso";
 	public final static String LABEL_IN_USO_TOOLTIP = "Riferimenti";
 	public final static String LABEL_IN_USO_BODY_HEADER_RISULTATI = "Risultati della ricerca";
+	public final static String LABEL_IN_USO_INFORMAZIONI_TOOLTIP = "Informazioni";
+	public final static String LABEL_IN_USO_BODY_HEADER_INFORMAZIONI = "Dettagli della configurazione";
 	
 	public final static String LABEL_CONFIGURAZIONE_CANALE_DEFAULT = "Configurazione di default del Gateway";
 	public final static String LABEL_CONFIGURAZIONE_CANALE_DEFAULT_API = "Configurazione di default dell'API";

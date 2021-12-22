@@ -70,6 +70,7 @@ String customListViewName = pd.getCustomListViewName();
 <link rel="stylesheet" href="css/ui.core.css" type="text/css">
 <link rel="stylesheet" href="css/ui.theme.css" type="text/css">
 <link rel="stylesheet" href="css/ui.dialog.css" type="text/css">
+<link rel="stylesheet" href="css/ui.resizable.css" type="text/css">
 <link rel="stylesheet" href="css/bootstrap-tagsinput.css" type="text/css">
 <script type="text/javascript" src="js/webapps.js"></script>
 
@@ -492,6 +493,8 @@ if (
 <!--Funzioni di utilita -->
 <script type="text/javascript" src="js/ui.core.js"></script>
 <script type="text/javascript" src="js/ui.dialog.js"></script>
+<script type="text/javascript" src="js/ui.resizable.js"></script>
+<script type="text/javascript" src="js/ui.draggable.js"></script>
 <script type="text/javascript">
 function togglePanelListaRicerca(panelListaRicercaOpen){
 	if(panelListaRicercaOpen) {

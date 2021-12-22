@@ -19,6 +19,7 @@
 
 
 
+<%@page import="org.openspcoop2.web.lib.mvc.Dialog.BodyElement"%>
 <%@ page session="true" import="java.util.*, org.openspcoop2.web.lib.mvc.*" %>
 
 <%
@@ -137,6 +138,113 @@ for (int j = 0; j < riga.size(); j++) {
 					<% } %>
 				</div>
 			<% } %>
+			
+			<% if(vectorImmagini.size() > 0){
+				%>
+				<div id="titolo_<%=numeroEntryS %>_info" class="titoloInfo">
+			<%
+				for(int idxLink =0; idxLink < vectorImmagini.size() ; idxLink ++ ){
+					DataElement de = (DataElement) vectorImmagini.elementAt(idxLink);
+					String deTip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
+					String classLink = "";
+					
+					if(de.getInfo() != null) {
+						DataElementInfo deInfo = de.getInfo();
+						String idDivIconInfo = "divIconInfo_"+numeroEntry;
+						String idIconInfo = "iconInfo_"+numeroEntry; 
+						String idSpanInfo = "spanIconInfoBoxList_"+numeroEntry;
+						
+						%>
+						<div class="iconInfoBoxList" id="<%=idDivIconInfo %>" <%=deTip %> >
+							<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+		   					<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+       						<span class="spanIconInfoBoxList" id="<%=idSpanInfo %>">
+								<i class="material-icons md-18" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+							</span>
+       					</div>
+						<script type="text/javascript">
+						// info
+				    	if($("#<%=idSpanInfo %>").length>0){
+				    		$("#<%=idSpanInfo %>").click(function(e){
+				    			var iconInfoBoxId = $(this).parent().attr('id');
+				    			var idx = iconInfoBoxId.substring(iconInfoBoxId.indexOf("_")+1);
+				    			console.log(idx);
+				    			if(idx) {
+				    				var label = $("#hidden_title_iconInfo_"+ idx).val();
+									var body = $("#hidden_body_iconInfo_"+ idx).val();
+									mostraDataElementInfoModal(label,body);
+				    			}
+				    			e.stopPropagation();
+							});
+				    	}
+						</script>
+						
+						<%						
+					}
+					
+					if(de.getDialog() != null) {
+						Dialog dialog = de.getDialog();
+						String idDivIconUso = "divIconUso_"+numeroEntry;
+						String idIconUso = "iconUso_"+numeroEntry; 
+						String idSpanUso = "spanIconUsoBoxList_"+numeroEntry;
+						
+						BodyElement urlElement = dialog.getBody().remove(0);
+						
+						request.setAttribute("idFinestraModale_"+numeroEntry, de.getDialog());
+						
+						String identificativoFinestraModale = "idFinestraModale_" + numeroEntry;
+						%>
+						<div class="iconUsoBoxList" id="<%=idDivIconUso %>" <%=deTip %> >
+							<input type="hidden" name="__i_hidden_title_<%= idIconUso %>" id="hidden_title_<%= idIconUso %>"  value="<%= urlElement.getUrl() %>"/>
+							<span class="spanIconUsoBoxList" id="<%=idSpanUso %>">
+								<i class="material-icons md-18" id="<%=idIconUso %>"><%= dialog.getIcona() %></i>
+							</span>
+       					</div>
+						<jsp:include page="/jsplib/info-uso-modal.jsp" flush="true">
+							<jsp:param name="idFinestraModale" value="<%=identificativoFinestraModale %>"/>
+						</jsp:include>
+						<script type="text/javascript">
+						// info
+				    	if($("#<%=idSpanUso %>").length>0){
+				    		$("#<%=idSpanUso %>").click(function(e){
+				    			var iconInfoBoxId = $(this).parent().attr('id');
+				    			var idx = iconInfoBoxId.substring(iconInfoBoxId.indexOf("_")+1);
+				    			console.log(idx);
+				    			if(idx) {
+				    				var url = $("#hidden_title_iconUso_"+ idx).val();
+				    				// chiamata al servizio
+				    				<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
+				    				
+				    				$.ajax({
+				    							url : url,
+				    							method: 'GET',
+				    							async : false,
+				    							success: function(data, textStatus, jqXHR){
+				    								// inserimento del valore nella text area
+								    				$("textarea[id^='idFinestraModale_<%=numeroEntryS %>_txtA']").val(data);
+								    				
+								    				<%=Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>
+								    				// apertura modale
+								    				var idToOpen = '#' + 'idFinestraModale_<%= numeroEntry %>';
+								    				$(idToOpen).dialog("open");
+				    							},
+				    							error: function(data, textStatus, jqXHR){
+				    								<%=Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>
+				    							}
+				    						}
+				    					);
+				    			}
+				    			e.stopPropagation();
+							});
+				    	}
+						</script>
+						<%	
+					}
+					%>
+				<% 		
+				}
+			%></div> <% 
+			}%>
 		</div>
 		<% 
 			DataElement deMetadati = (DataElement) vectorRiepilogo.elementAt(1);
@@ -147,33 +255,4 @@ for (int j = 0; j < riga.size(); j++) {
 		</div>
 	</div>
 </td>
-<% if(vectorImmagini.size() > 0){ %>
-	<td>
-		<div id="funzionalita_<%=numeroEntryS %>" class="funzionalitaFruizione">
-			<% 
-			
-			for (int j = 0; j < vectorImmagini.size(); j++) {
-			    DataElement de = (DataElement) vectorImmagini.elementAt(j);
-			 	String deValue = de.getValue();
-			    String deName = !de.getName().equals("") ? de.getName() : "de_name_"+j;
-				int wCount = deValue.split(" ") != null ? deValue.split(" ").length : 1;
-				String spanClass= wCount == 1 ? "configurazioneFruizioneSpanOneLine" : "configurazioneFruizioneSpan";			
-			  	%>
-			  		<div id="configurazione_<%=j %>" class="configurazioneFruizione" title="<%=deValue %>">
-			  			<div class="configurazioneFruizioneIcon">
-				  			<span class="configurazioneFruizioneIcon" id="iconConfigurazione_<%=j %>">
-								<i class="material-icons md-18 md-light">&#xE5CA;</i>
-							</span>
-						</div>
-						<div class="<%=spanClass %>">
-			  				<span class="<%=spanClass %>" ><%=deValue %></span>
-		  				</div>
-			  		</div>
-		  		<%
-			  	
-			} // for
-			%>
-		</div>
-	</td>
-<% } %>
 

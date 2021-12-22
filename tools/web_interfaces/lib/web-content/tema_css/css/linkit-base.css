@@ -1719,7 +1719,9 @@ div.txtA_div_propDialog {
 .entryApplicativi .titoloInfo,
 .entrySoggetti .titoloInfo,
 .entryRuoli .titoloInfo,
-.entryScope .titoloInfo {
+.entryScope .titoloInfo,
+.entryErogazione .titoloInfo,
+.entryFruizione .titoloInfo {
 	display: inline-flex;
 	vertical-align: middle;
 	float: right;
@@ -2289,6 +2291,10 @@ div.txtA_div_propDialogInfoUso {
 
 .txtA_propDialogInfoUsoNoResize{
 	resize: none;
+	width: 99% !important;
+}
+
+.txtA_propDialogInfoUsoResize{
 	width: 99% !important;
 }
 

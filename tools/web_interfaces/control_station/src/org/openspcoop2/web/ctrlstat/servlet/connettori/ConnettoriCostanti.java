@@ -335,6 +335,11 @@ public class ConnettoriCostanti {
 	public final static String LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ = "Delete After Read";
 	public final static String LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME = "WaitTime ifNotExists (ms)";
 		
+	public static final String LABEL_INPUT_FILE_HEADER = "InputFile (Header)";
+	public static final String LABEL_INPUT_FILE = "InputFile";
+	public static final String LABEL_OUTPUT_FILE_HEADER = "OutputFile (Header)";
+	public static final String LABEL_OUTPUT_FILE = "OutputFile";
+	
 	public final static String LABEL_SEZIONE_CONNETTORE_CUSTOM_PROPRIETA = "Proprietà";
 	
 	public final static String LABEL_PARAMETRO_CONNETTORE_CUSTOM_NOME = "Nome";
@@ -393,6 +398,7 @@ public class ConnettoriCostanti {
 	public final static String LABEL_BUTTON_INVIA_CARICA_CERTIFICATO = "Carica Certificato";
 	
 	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_CONNECTION_TIMEOUT = LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT;
+	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_READ_TIMEOUT = LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT;
 	
 	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP = "Autenticazione Http";
 	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP_USERNAME = LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME;

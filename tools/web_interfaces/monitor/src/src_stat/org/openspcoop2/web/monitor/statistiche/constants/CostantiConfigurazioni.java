@@ -184,6 +184,7 @@ public class CostantiConfigurazioni {
 	public static final String LABEL_CONNETTORE_ENDPOINT = "Connettore (Endpoint)";
 	public static final String LABEL_CONNETTORE_DEBUG = "Connettore (Debug)";
 	public static final String LABEL_CONNETTORE_USERNAME = "Connettore (Username)";
+	public static final String LABEL_CONNETTORE_TOKEN = "Connettore (Token)";
 	public static final String LABEL_CONNETTORE_PROXY_ENDPOINT = "Connettore (Proxy Endpoint)";
 	public static final String LABEL_CONNETTORE_SSL_TYPE = "Connettore (SSL Type)";
 	public static final String LABEL_CONNETTORE_ALTRE_CONFIGURAZIONI = "Connettore (Altre Configurazioni)";

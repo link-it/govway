@@ -4547,27 +4547,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			throw new Exception(e);
 		}
 	}
-	public boolean isConnettoreRidefinito(PortaApplicativa paDefault,	PortaApplicativaServizioApplicativo paSADefault,
-			PortaApplicativa paCurrent, PortaApplicativaServizioApplicativo paSACurrent) {
-		boolean connettoreRidefinito = (
-				(
-					paDefault.getServizioApplicativoDefault() == null && (paCurrent.getServizioApplicativoDefault() != null || paSACurrent.getNome().equals(paCurrent.getNome()))
-				) || (
-					paDefault.getServizioApplicativoDefault() != null && 
-						(
-							paCurrent.getServizioApplicativoDefault() == null 
-							|| 
-							!paDefault.getServizioApplicativoDefault().equals(paCurrent.getServizioApplicativoDefault())
-							||
-							paDefault.sizeServizioApplicativoList()!=paCurrent.sizeServizioApplicativoList()
-							||
-							(paDefault.sizeServizioApplicativoList()==1 && paCurrent.sizeServizioApplicativoList()==1 && !paDefault.getServizioApplicativo(0).getNome().equals(paCurrent.getServizioApplicativo(0).getNome()))
-						)
-					//!paSADefault.getNome().equals(paSACurrent.getNome()))
-				)
-			);
-		return connettoreRidefinito;
-	}
 
 
 	

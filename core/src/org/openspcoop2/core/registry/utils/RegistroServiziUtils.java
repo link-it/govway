@@ -21,7 +21,17 @@
 
 package org.openspcoop2.core.registry.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.Operation;
+import org.openspcoop2.core.registry.PortType;
+import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
+import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -109,5 +119,80 @@ public class RegistroServiziUtils {
 			return org.openspcoop2.message.constants.ServiceBinding.REST;
 		}
 		return null;
+	}
+	
+	public static List<String> fillPropertyProtocollo(String propertyName, AccordoServizioParteComune api, String portType, boolean booleanValue) {
+		
+		List<String> apiValues = new ArrayList<String>();
+		
+		for (ProtocolProperty pp : api.getProtocolPropertyList()) {
+			if(propertyName.equals(pp.getName())) {
+				String apiValue = booleanValue ? (pp.getBooleanValue()!=null ? pp.getBooleanValue().toString() : "false") : pp.getValue();
+				if(apiValue!=null && !apiValues.contains(apiValue)) {
+					apiValues.add(apiValue);
+				}
+				break;
+			}
+		} 
+		
+		if(ServiceBinding.REST.equals(api.getServiceBinding())) {
+			for (Resource resource : api.getResourceList()) {
+				if(resource.sizeProtocolPropertyList()>0) {
+					boolean ridefinito = false;					
+					for (ProtocolProperty pp : resource.getProtocolPropertyList()) {
+						if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE.equals(pp.getName())) {
+							String v = pp.getValue(); 
+							ridefinito = CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(v);
+							break;
+						}
+					}
+					if(ridefinito) {
+						for (ProtocolProperty pp : resource.getProtocolPropertyList()) {
+							if(propertyName.equals(pp.getName())) {
+								String apiValue = booleanValue ? (pp.getBooleanValue()!=null ? pp.getBooleanValue().toString() : "false") : pp.getValue();
+								if(apiValue!=null && !apiValues.contains(apiValue)) {
+									apiValues.add(apiValue);
+								}
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		else {
+			for (PortType pt : api.getPortTypeList()) {
+				if(pt.getNome().equals(portType)) {
+					
+					for (Operation op : pt.getAzioneList()) {
+						if(op.sizeProtocolPropertyList()>0) {
+							boolean ridefinito = false;					
+							for (ProtocolProperty pp : op.getProtocolPropertyList()) {
+								if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE.equals(pp.getName())) {
+									String v = pp.getValue(); 
+									ridefinito = CostantiDB.MODIPA_PROFILO_RIDEFINISCI.equals(v);
+									break;
+								}
+							}
+							if(ridefinito) {
+								for (ProtocolProperty pp : op.getProtocolPropertyList()) {
+									if(propertyName.equals(pp.getName())) {
+										String apiValue = booleanValue ? (pp.getBooleanValue()!=null ? pp.getBooleanValue().toString() : "false") : pp.getValue();
+										if(apiValue!=null && !apiValues.contains(apiValue)) {
+											apiValues.add(apiValue);
+										}
+										break;
+									}
+								}
+							}
+						}
+					}
+					
+					break;
+				}
+			}
+		}
+		
+		return apiValues;
 	}
 }

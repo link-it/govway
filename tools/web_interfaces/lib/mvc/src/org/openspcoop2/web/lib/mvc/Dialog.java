@@ -44,6 +44,11 @@ public class Dialog implements Serializable{
 	private List<BodyElement> body;
 	private String notaFinale;
 	
+	private boolean resizable = false;
+	private boolean draggable = false;
+	private String height = "auto";
+	private String width = "660px"; 
+	
 	public Dialog() {
 		this.body = new ArrayList<Dialog.BodyElement>();
 		this.icona = Costanti.ICON_DIALOG_HEADER;
@@ -85,8 +90,31 @@ public class Dialog implements Serializable{
 	public void setNotaFinale(String notaFinale) {
 		this.notaFinale = notaFinale;
 	}
-
-
+	
+	public boolean isResizable() {
+		return this.resizable;
+	}
+	public void setResizable(boolean resizable) {
+		this.resizable = resizable;
+	}
+	public boolean isDraggable() {
+		return this.draggable;
+	}
+	public void setDraggable(boolean draggable) {
+		this.draggable = draggable;
+	}
+	public String getHeight() {
+		return this.height;
+	}
+	public void setHeight(String height) {
+		this.height = height;
+	}
+	public String getWidth() {
+		return this.width;
+	}
+	public void setWidth(String width) {
+		this.width = width;
+	}
 
 	public class BodyElement extends DataElement  implements Serializable{
 
@@ -97,6 +125,7 @@ public class Dialog implements Serializable{
 		
 		private boolean visualizzaCopyAction;
 		private String tooltipCopyAction;
+		private boolean resizable = false;
 		
 		public boolean isVisualizzaCopyAction() {
 			return this.visualizzaCopyAction;
@@ -109,6 +138,12 @@ public class Dialog implements Serializable{
 		}
 		public void setTooltipCopyAction(String tooltipCopyAction) {
 			this.tooltipCopyAction = tooltipCopyAction;
+		}
+		public boolean isResizable() {
+			return this.resizable;
+		}
+		public void setResizable(boolean resizable) {
+			this.resizable = resizable;
 		}
 	}
 	
