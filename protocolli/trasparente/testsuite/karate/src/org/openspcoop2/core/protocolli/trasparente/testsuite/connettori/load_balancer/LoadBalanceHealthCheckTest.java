@@ -1,4 +1,4 @@
-package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balance;
+package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer;
 
 import org.junit.Test;
 

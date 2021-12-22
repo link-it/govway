@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balance;
+package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -71,6 +72,12 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 	
 	public static final String ID_CONNETTORE_REPLY_PREFIX = "GovWay-TestSuite-";
 	public static final String ID_CONNETTORE_QUERY = ID_CONNETTORE_REPLY_PREFIX+"id_connettore";
+	
+	private static final int durataBloccante = Integer
+			.valueOf(System.getProperty("connettori.load_balancer.least_connections.durata_bloccante"));
+	
+	private static final int delayRichiesteBackground = Integer
+			.valueOf(System.getProperty("connettori.load_balancer.least_connections.delay_richieste_background"));
 
 	@Test
 	public void roundRobin() {
@@ -174,7 +181,6 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 	
 	@Test
 	public void weightedRandom() {
-		
 		/*
 		 * Le richieste vengono distribuite casualmente considerando il peso di ciascun connettore.
 		 * Controllo che su un carico abbastanza alto di richieste, le relazioni d'ordine tra il numero 
@@ -300,37 +306,134 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		 * La richiesta viene instradata al connettore con il minimo numero di
 		 * connessioni attive.
 		 * 
-		 * 20 richieste parallele con sleep e mi aspetto che si
+		 * L'erogazione ha il connettore rotto disabilitato in modo da non interferire con il parametro sleep
+		 * destinato al server di echo. Se la richiesta venisse instradata al connettore rotto non avremmo la pausa
+		 * desiderata.
+		 * 
+	
+		 * Test 1: Test effettivo della funzionalità. Faccio 5 richieste parallele
+		 * con sleep e attendo la terminazione. Mi assicuro che siano stati raggiunti
+		 * tutti e 4 i connettori.
+		 */ 
+		
+		final String erogazione = "LoadBalanceLeastConnections";
+		
+		HttpRequest requestBlocking = new HttpRequest();
+		requestBlocking.setContentType("application/json");
+		requestBlocking.setMethod(HttpRequestMethod.GET);
+		requestBlocking.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
+				+ "?sleep="+durataBloccante +
+				"&replyQueryParameter=id_connettore&replyPrefixQueryParameter="
+				+ ID_CONNETTORE_REPLY_PREFIX);
+		
+		HttpRequest request = new HttpRequest();
+		request.setContentType("application/json");
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test" +
+				"&replyQueryParameter=id_connettore&replyPrefixQueryParameter="
+				+ ID_CONNETTORE_REPLY_PREFIX);
+		
+		
+		// Lancio una richiesta in backgroun per tenere "occupato" un connettore a caso.
+		var blockingRespFuture = Utils.makeBackgroundRequest(requestBlocking);
+		
+		// Dopo faccio 3 richieste parallele che devono raggiungere gli altri 3 connettori attivi
+		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
+		Map<String, Integer> howManys = contaConnettoriUtilizzati(responses);
+		HttpResponse blockingResp;
+		try {
+			blockingResp = blockingRespFuture.get();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+
+		// Il connettore "bloccato" non deve essere stato raggiunto da queste richieste.
+		assertEquals(false, howManys.containsKey(getIdConnettore(blockingResp)));
+		
+		 /* Poi variante parallela: 20 richieste parallele con sleep e mi aspetto che si
 		 * comporti esattamente come un round robin: una richiesta alla volta per
 		 * connettore.
 		 */
 		//
 		// Inizio 3 richieste con una sleep sui primi 3
 	}
+	
+	@Test
+	public void leastConnectionsAsRoundRobin() {
+		// Facendo delle richieste in background con sleep, una dopo l'altra, 
+		// la strategia deve comportarsi come un weighted round robin con tutti i pesi a 1
+		
+		final String erogazione = "LoadBalanceLeastConnections";
+		
+		HttpRequest requestBlocking = new HttpRequest();
+		requestBlocking.setContentType("application/json");
+		requestBlocking.setMethod(HttpRequestMethod.GET);
+		requestBlocking.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
+				+ "?sleep="+durataBloccante +
+				"&replyQueryParameter=id_connettore&replyPrefixQueryParameter="
+				+ ID_CONNETTORE_REPLY_PREFIX);
+		
+		HttpRequest request = new HttpRequest();
+		request.setContentType("application/json");
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test" +
+				"&replyQueryParameter=id_connettore&replyPrefixQueryParameter="
+				+ ID_CONNETTORE_REPLY_PREFIX);
+		
+		
+		// Occupo Quattro connettori, ne deve restare libero uno solo
+		var futureBlockingResponses = Utils.makeBackgroundRequests(requestBlocking, 4, delayRichiesteBackground);
+		
+		Vector<HttpResponse> responses = new Vector<>();
+		responses = Utils.awaitResponses(futureBlockingResponses);
+		Map<String, Integer> howManys = contaConnettoriUtilizzati(responses);
+		
+		assertEquals(4, howManys.keySet().size());
+		
+		
+		// Adesso tengo due connettori occupati per più tempo e mando due richieste
+		// sugli altri due, poi altre due sempre sugli altri due.
+		// Devo aver sempre e solo raggiunto gli altri due
+		HttpRequest requestBlockingLong = new HttpRequest();
+		requestBlockingLong.setContentType("application/json");
+		requestBlockingLong.setMethod(HttpRequestMethod.GET);
+		requestBlockingLong.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
+				+ "?sleep="+durataBloccante+2000 +
+				"&replyQueryParameter=id_connettore&replyPrefixQueryParameter="
+				+ ID_CONNETTORE_REPLY_PREFIX);
+		
+		var futureLongBlockResponse = Utils.makeBackgroundRequests(requestBlockingLong, 2, delayRichiesteBackground);	// TODO: rendere il delay un parametro
+
+		
+	}
 
 
-	private void printMap(Map<String,Integer> howManys) {
+	private static void printMap(Map<String,Integer> howManys) {
 		for (var e : howManys.entrySet()) {
 			System.out.println(e.getKey() + ": " + e.getValue());
 		}
 	}
 
 	
-	private Map<String, Integer> contaConnettoriUtilizzati(Vector<HttpResponse> responses) {
+	private static Map<String, Integer> contaConnettoriUtilizzati(Vector<HttpResponse> responses) {
 		Map<String, Integer> howManys = new HashMap<>();
+		
 		for (var response : responses) {
-			String id_connettore;
-			if (response.getResultHTTPOperation() == 200) {				 
-				id_connettore = response.getHeaderFirstValue(ID_CONNETTORE_QUERY);
-			} else {
-				id_connettore = CONNETTORE_ROTTO;
-			}
-			
+			String id_connettore = getIdConnettore(response);						
 			assertNotEquals(null, id_connettore);
-
 			howManys.put(id_connettore, howManys.getOrDefault(id_connettore, 0)+1);
 		}
 		return howManys;
+	}
+	
+
+	private static String getIdConnettore(HttpResponse response) {
+		if (response.getResultHTTPOperation() == 200) {				 
+			return response.getHeaderFirstValue(ID_CONNETTORE_QUERY);
+		} else {
+			return CONNETTORE_ROTTO;
+		}		
 	}
 
 	

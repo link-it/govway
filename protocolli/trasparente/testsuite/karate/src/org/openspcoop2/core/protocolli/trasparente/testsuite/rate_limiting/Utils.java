@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -115,6 +116,77 @@ public class Utils {
 	}
 	
 	public static Logger logRateLimiting = ConfigLoader.getLoggerRateLimiting();
+	 
+	
+	public static Future<HttpResponse> makeBackgroundRequest(HttpRequest request) {
+		logRateLimiting = ConfigLoader.getLoggerCore();
+
+		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+		
+		return executor.submit(() -> {
+				try {
+					logRateLimiting.info(request.getMethod() + " " + request.getUrl());
+					HttpResponse resp = HttpUtilities.httpInvoke(request);
+					logRateLimiting.info("Richiesta effettuata..");
+					return resp;
+				} catch (UtilsException e) {
+					e.printStackTrace();
+					throw new RuntimeException(e);
+				}
+			});
+	}
+	
+
+	/**
+	 * Esegue `count` richieste `request` parallele in background e restituisce le futures per le relative
+	 * risposte 
+	 * 
+	 */
+	public static Vector<Future<HttpResponse>> makeBackgroundRequests(HttpRequest request, int count, int request_delay) {
+		logRateLimiting = ConfigLoader.getLoggerRateLimiting();
+
+		final Vector<Future<HttpResponse>> responses = new Vector<>();
+		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(count);
+
+		for (int i = 0; i < count; i++) {
+			var future = executor.submit(() -> {
+				try {
+					logRateLimiting.info(request.getMethod() + " " + request.getUrl());
+					HttpResponse resp = HttpUtilities.httpInvoke(request);
+					logRateLimiting.info("Richiesta effettuata..");
+					return resp;
+				} catch (UtilsException e) {
+					e.printStackTrace();
+					throw new RuntimeException(e);
+				}
+			});
+			responses.add(future);
+			
+			if (request_delay > 0) {
+				org.openspcoop2.utils.Utilities.sleep(request_delay);
+			}
+		}		
+
+		return responses;
+	}
+	
+	
+	public static Vector<HttpResponse> awaitResponses(Vector<Future<HttpResponse>> futureBlockingResponses) {
+		Vector<HttpResponse> responses = new Vector<>();
+		
+		for(var blockingRespFuture : futureBlockingResponses) {
+			try {
+				responses.add(blockingRespFuture.get());
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}
+		}
+
+		return responses;
+	}
+
+	
 
 	
 	/**

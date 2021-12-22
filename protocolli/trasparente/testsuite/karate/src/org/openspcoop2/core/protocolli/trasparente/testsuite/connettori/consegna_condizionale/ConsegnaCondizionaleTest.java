@@ -59,12 +59,12 @@ public class ConsegnaCondizionaleTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void filtroNomeHttp() {
+	public void filtroNomeInHeaderHttp() {
 		
 	}
 	
 	@Test
-	public void filtroNomeUrlInvocazione() {
+	public void filtroNomeInUrlInvocazione() {
 		
 	}
 	
@@ -72,13 +72,13 @@ public class ConsegnaCondizionaleTest extends ConfigLoader {
 	// ....
 	
 	@Test
-	public void filtroFiltroHttp() {
+	public void filtroFiltroInHeaderHttp() {
 		
 	}
 	
 	
 	@Test
-	public void filtroFiltroUrlInvocazione() {
+	public void filtroFiltroInUrlInvocazione() {
 		
 	}
 	
