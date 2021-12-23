@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +36,7 @@ import java.util.zip.ZipFile;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
+import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
 import org.openspcoop2.pdd.config.ConfigurazionePriorita;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -44,7 +44,6 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.ZipUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
-import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.slf4j.Logger;
 
 
@@ -196,7 +195,7 @@ public class ConsoleProperties {
 		try{
 			return Long.parseLong(tmp);
 		}catch(Exception e){
-			throw new UtilsException("Property ["+property+"] with uncorrect value ["+tmp+"] (int value expected)");
+			throw new UtilsException("Property ["+property+"] with uncorrect value ["+tmp+"] (long value expected)");
 		}
 	}
 	
@@ -500,7 +499,15 @@ public class ConsoleProperties {
 	}
 	
 	public Boolean isClusterDinamico_enabled() throws UtilsException{
-		return this.readBooleanProperty(true, "cluster_dinamico.enabled");
+		ConfigurazioneNodiRuntime config = getConfigurazioneNodiRuntime();
+		if(config!=null) {
+			return config.isClusterDinamico();
+		}
+		else {
+			//return getBackwardCompatibilityConfigurazioneNodiRuntime().isClusterDinamico();
+			// abbiamo cambiato il nome della proprietà nella gestione 'ConfigurazioneNodiRuntime'
+			return this.readBooleanProperty(true, "cluster_dinamico.enabled");
+		}
 	}
 
 	public String getHSMConfigurazione() throws Exception{
@@ -620,59 +627,75 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "risorseJmxPdd.linkClearAllCaches.remoteCheckCacheStatus");
 	}
 	
-	public List<String> getJmxPdD_aliases() throws UtilsException {
-		List<String> list = new ArrayList<String>();
-		String tipo = this.readProperty(false, "risorseJmxPdd.aliases");
-		if(tipo!=null && !"".equals(tipo)){
-			String [] tmp = tipo.split(",");
-			for (int i = 0; i < tmp.length; i++) {
-				list.add(tmp[i].trim());
-			}
-		}
-		return list;
+	public String getJmxPdD_externalConfiguration() throws UtilsException{
+		return this.readProperty(false, "risorseJmxPdd.configurazioneNodiRun");
 	}
 	
-	public Map<String,List<String>> getJmxPdD_gruppi_aliases() throws UtilsException {
-		Map<String,List<String>> map = new HashMap<String, List<String>>();
-		String nomeP = "risorseJmxPdd.aliases.";
-		Properties p = this.reader.readProperties(nomeP);
-		if(p!=null && !p.isEmpty()) {
-			
-			List<String> aliasesRegistrati = getJmxPdD_aliases();
-			
-			Enumeration<?> en = p.keys();
-			while (en.hasMoreElements()) {
-				Object object = (Object) en.nextElement();
-				if(object instanceof String) {
-					String gruppo = (String) object;
-					if(map.containsKey(gruppo)) {
-						throw new UtilsException("Gruppo '"+gruppo+"' definito più di una volta nella proprietà '"+nomeP+"*'");
-					}
-					String aliases = p.getProperty(gruppo);
-					if(aliases!=null && !"".equals(aliases)){
-						String [] tmp = aliases.split(",");
-						if(tmp!=null && tmp.length>0) {
-							List<String> list = new ArrayList<String>();
-							for (int i = 0; i < tmp.length; i++) {
-								String alias = tmp[i].trim();
-								if(aliasesRegistrati.contains(alias)==false) {
-									throw new UtilsException("Alias '"+alias+"' indicato nella proprietà '"+nomeP+""+gruppo+"' non è uno degli alias censiti in 'risorseJmxPdd.aliases'");
-								}
-								list.add(alias);
-							}
-							if(!list.isEmpty()) {
-								map.put(gruppo, list);
-							}
-						}
-					}
+	public String getJmxPdD_backwardCompatibilityPrefix() {
+		return "risorseJmxPdd.";
+	}
+	
+	public Properties getJmxPdD_backwardCompatibilityProperties() throws UtilsException{
+		
+		String prefix = getJmxPdD_backwardCompatibilityPrefix();
+		
+		Properties p = new Properties();
+		Enumeration<?> en = this.reader.propertyNames();
+		while (en.hasMoreElements()) {
+			Object object = (Object) en.nextElement();
+			if(object !=null && object instanceof String) {
+				String key = (String) object;
+				if(key.contains(prefix)) {
+					String newKey = key.replace(prefix, "");
+					p.put(newKey, this.reader.getValue_convertEnvProperties(key));
 				}
 			}
 		}
-		return map;
+		return p;
+		
+	}
+	
+	private static ConfigurazioneNodiRuntime externalConfigurazioneNodiRuntime = null;
+	private static ConfigurazioneNodiRuntime backwardCompatibilityConfigurazioneNodiRuntime = null;
+	private static synchronized void initConfigurazioneNodiRuntime(String prefix) {
+		if(backwardCompatibilityConfigurazioneNodiRuntime==null) {
+			externalConfigurazioneNodiRuntime = ConfigurazioneNodiRuntime.getConfigurazioneNodiRuntime();
+			backwardCompatibilityConfigurazioneNodiRuntime = ConfigurazioneNodiRuntime.getConfigurazioneNodiRuntime(prefix);
+		}
+	}
+	private ConfigurazioneNodiRuntime _getConfigurazioneNodiRuntime() {
+		if(backwardCompatibilityConfigurazioneNodiRuntime==null) {
+			initConfigurazioneNodiRuntime(getJmxPdD_backwardCompatibilityPrefix());
+		}
+		return externalConfigurazioneNodiRuntime;
+	}
+	private ConfigurazioneNodiRuntime _getBackwardCompatibilityConfigurazioneNodiRuntime() {
+		if(backwardCompatibilityConfigurazioneNodiRuntime==null) {
+			initConfigurazioneNodiRuntime(getJmxPdD_backwardCompatibilityPrefix());
+		}
+		return backwardCompatibilityConfigurazioneNodiRuntime;
+	}
+	public ConfigurazioneNodiRuntime getConfigurazioneNodiRuntime() {
+		ConfigurazioneNodiRuntime config = _getConfigurazioneNodiRuntime();
+		if(config==null) {
+			config = _getBackwardCompatibilityConfigurazioneNodiRuntime();
+		}
+		return config;
+	}
+	
+	public List<String> getJmxPdD_aliases() throws UtilsException {
+		ConfigurazioneNodiRuntime config = getConfigurazioneNodiRuntime();
+		return config.getAliases();
+	}
+	
+	public Map<String,List<String>> getJmxPdD_gruppi_aliases() throws UtilsException {
+		ConfigurazioneNodiRuntime config = getConfigurazioneNodiRuntime();
+		return config.getGruppi_aliases();
 	}
 	
 	public String getJmxPdD_descrizione(String alias) throws UtilsException {
-		return this.readProperty(false, alias+".risorseJmxPdd.descrizione");
+		ConfigurazioneNodiRuntime config = getConfigurazioneNodiRuntime();
+		return config.getDescrizione(alias);
 	}
 	
 	private String _getJmxPdD_value(boolean required, String alias, String prop) throws UtilsException{
@@ -683,55 +706,6 @@ public class ConsoleProperties {
 		return tmp;
 	}
 	
-	public String getJmxPdD_tipoAccesso(String alias) throws UtilsException {
-		String tipo = _getJmxPdD_value(true, alias, "risorseJmxPdd.tipoAccesso");
-		if(!CostantiControlStation.RESOURCE_JMX_PDD_TIPOLOGIA_ACCESSO_JMX.equals(tipo) && !CostantiControlStation.RESOURCE_JMX_PDD_TIPOLOGIA_ACCESSO_OPENSPCOOP.equals(tipo)){
-			throw new UtilsException("Tipo ["+tipo+"] non supportato per la proprieta' 'risorseJmxPdd.tipoAccesso'");
-		}
-		return tipo;
-	}
-	public String getJmxPdD_remoteAccess_username(String alias) throws UtilsException {
-		return _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.username");
-	}
-	public String getJmxPdD_remoteAccess_password(String alias) throws UtilsException {
-		return _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.password");
-	}
-	public boolean isJmxPdD_remoteAccess_https(String alias) throws UtilsException {
-		String v = _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.https");
-		return v!=null ? Boolean.valueOf(v.trim()) : false; // default false
-	}
-	public boolean isJmxPdD_remoteAccess_https_verificaHostName(String alias) throws UtilsException {
-		String v = _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.https.verificaHostName");
-		return v!=null ? Boolean.valueOf(v.trim()) : true; // default true
-	}
-	public boolean isJmxPdD_remoteAccess_https_autenticazioneServer(String alias) throws UtilsException {
-		String v = _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.https.autenticazioneServer");
-		return v!=null ? Boolean.valueOf(v.trim()) : true; // default true
-	}
-	public String getJmxPdD_remoteAccess_https_autenticazioneServer_truststorePath(String alias) throws UtilsException {
-		return _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.https.autenticazioneServer.truststorePath");
-	}
-	public String getJmxPdD_remoteAccess_https_autenticazioneServer_truststoreType(String alias) throws UtilsException {
-		return _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.https.autenticazioneServer.truststoreType");
-	}
-	public String getJmxPdD_remoteAccess_https_autenticazioneServer_truststorePassword(String alias) throws UtilsException {
-		return _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.https.autenticazioneServer.truststorePassword");
-	}
-	public String getJmxPdD_remoteAccess_connectionTimeout(String alias) throws Exception {
-		return _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.connectionTimeout");
-	}
-	public String getJmxPdD_remoteAccess_readConnectionTimeout(String alias) throws Exception {
-		return _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.readConnectionTimeout");
-	}
-	public String getJmxPdD_remoteAccess_applicationServer(String alias) throws UtilsException {
-		return _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.as");
-	}
-	public String getJmxPdD_remoteAccess_factory(String alias) throws UtilsException {
-		return _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.factory");
-	}
-	public String getJmxPdD_remoteAccess_url(String alias) throws UtilsException {
-		return _getJmxPdD_value(false, alias, "risorseJmxPdd.remoteAccess.url");
-	}
 	public String getJmxPdD_dominio(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.dominio");
 	}

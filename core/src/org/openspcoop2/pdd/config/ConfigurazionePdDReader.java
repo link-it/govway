@@ -63,6 +63,7 @@ import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.CorsConfigurazione;
+import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.Dump;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GenericProperties;
@@ -109,8 +110,10 @@ import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
 import org.openspcoop2.core.config.driver.ValidazioneSemantica;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.config.driver.xml.DriverConfigurazioneXML;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.constants.StatoCheck;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
@@ -171,8 +174,12 @@ import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.NameValue;
+import org.openspcoop2.utils.certificate.ArchiveLoader;
+import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.crypt.CryptConfig;
+import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.slf4j.Logger;
 
@@ -3918,7 +3925,147 @@ public class ConfigurazionePdDReader {
 
 
 
+	// CHECK CERTIFICATI
+	
+	protected StatoCheck checkCertificateConfiguration(Connection connectionPdD,boolean useCache,
+			long idSA, int sogliaWarningGiorni, StringBuilder sbDetails) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		if(useCache) {
+			throw new DriverConfigurazioneException("Not Implemented");
+		}
+		
+		ServizioApplicativo sa = null;
+		IDriverConfigurazioneGet driver = this.configurazionePdD.getDriverConfigurazionePdD();
+		if(driver instanceof DriverConfigurazioneDB) {
+			DriverConfigurazioneDB driverDB = (DriverConfigurazioneDB) driver;
+			sa = driverDB.getServizioApplicativo(idSA);
+		}
+		else {
+			throw new DriverConfigurazioneException("Not Implemented with driver '"+driver.getClass().getName()+"'");
+		}
+		return checkCertificateConfiguration(sa,sogliaWarningGiorni, sbDetails);
+	}
+	protected StatoCheck checkCertificateConfiguration(Connection connectionPdD,boolean useCache,
+			IDServizioApplicativo idSA, int sogliaWarningGiorni, StringBuilder sbDetails) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		ServizioApplicativo sa = null;
+		if(useCache) {
+			this.configurazionePdD.getServizioApplicativo(connectionPdD, idSA);
+		}
+		else {
+			sa = this.configurazionePdD.getDriverConfigurazionePdD().getServizioApplicativo(idSA);
+		}
+		return checkCertificateConfiguration(sa, sogliaWarningGiorni,sbDetails);
+	}
+	private StatoCheck checkCertificateConfiguration(ServizioApplicativo sa, int sogliaWarningGiorni, StringBuilder sbDetails) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		if(sa.getInvocazionePorta()==null || sa.getInvocazionePorta().sizeCredenzialiList()<=0) {
+			throw new DriverConfigurazioneException("Nessuna credenziale risulta associata all'applicativo");
+		}
+		
+		boolean error = false;
+		boolean warning = false;
+		boolean almostOneValid = false;
+		for (int i = 0; i < sa.getInvocazionePorta().sizeCredenzialiList(); i++) {
+			Credenziali c = sa.getInvocazionePorta().getCredenziali(i);
+			if(!org.openspcoop2.core.config.constants.CredenzialeTipo.SSL.equals(c.getTipo())) {
+				throw new DriverConfigurazioneException("La credenziale ("+c.getTipo()+") associata all'applicativo non è un certificato x509");
+			}
+			if(c.getCertificate()!=null) {
+				boolean principale = (i==0);
+				Certificate certificate = null;
+				String credenziale = "Certificato";
+				if(principale && sa.getInvocazionePorta().sizeCredenzialiList()>1) {
+					credenziale = credenziale + " principale";
+				}
+				try {
+					certificate = ArchiveLoader.load(c.getCertificate());
+					
+					String hex = certificate.getCertificate().getSerialNumberHex();
+					credenziale = credenziale+ " (CN:"+certificate.getCertificate().getSubject().getCN()+" serialNumber:"+hex+")";
+					boolean check = true;
+					try {
+						certificate.getCertificate().checkValid();
+					}catch(Throwable t) {
+						check = false;
+						if(sbDetails.length()>0) {
+							sbDetails.append("\n");
+						}
+						sbDetails.append(credenziale+" non valida: "+t.getMessage());
+						if(c.isCertificateStrictVerification()) {
+							error = true;
+							continue;
+						}
+						else {
+							warning = true;
+						}
+					}
+										
+					if(check && certificate.getCertificateChain()!=null && !certificate.getCertificateChain().isEmpty()) {
+						for (CertificateInfo caChain : certificate.getCertificateChain()) {
+							String hex_caChain = caChain.getSerialNumberHex();
+							String credenziale_caChain = "(CN:"+caChain.getSubject().getCN()+" serialNumber:"+hex_caChain+")";
+							try {
+								caChain.checkValid();
+							}catch(Throwable t) {
+								check = false;
+								if(sbDetails.length()>0) {
+									sbDetails.append("\n");
+								}
+								sbDetails.append(credenziale+"; un certificato della catena "+credenziale_caChain+" non risulta valido: "+t.getMessage());
+								if(c.isCertificateStrictVerification()) {
+									error = true;
+									continue;
+								}
+								else {
+									warning = true;
+								}
+							}
+						}
+					}
+					
+					if(check && sogliaWarningGiorni>0) {
+						if(certificate.getCertificate().getNotAfter()!=null) {
+							long expire = certificate.getCertificate().getNotAfter().getTime();
+							long now = DateManager.getTimeMillis();
+							long diff = expire - now;
+							long soglia = (1000*60*60*24) * sogliaWarningGiorni; 
+							if(diff<soglia) {
+								if(sbDetails.length()>0) {
+									sbDetails.append("\n");
+								}
+								sbDetails.append(credenziale+" vicina alla scadenza: "+DateUtils.getSimpleDateFormatDay().format(certificate.getCertificate().getNotAfter()));
+								warning = true;
+							}
+						}
+					}
+					
+				}catch(Throwable t) {
+					// non dovrebbe succedere
+					String msgError = "L'analisi del certificato associato alla credenziale i-"+i+" ha prodotto un errore non atteso: "+t.getMessage();
+					sbDetails.append(msgError); 
+					OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error(msgError, t);	
+					error = true;
+					continue;
+				}
+				
+				almostOneValid = true;
+			}
+		}
+		
+		if(almostOneValid) {
+			if(error || warning) {
+				return StatoCheck.WARN;
+			}
+			else {
+				return StatoCheck.OK;
+			}
+		}
+		else {
+			return StatoCheck.ERROR;
+		}
 
+	}
 
 
 

@@ -123,12 +123,13 @@ import org.openspcoop2.monitor.engine.alarm.AlarmConfigProperties;
 import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
 import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
 import org.openspcoop2.monitor.engine.dynamic.PluginLoader;
+import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
 import org.openspcoop2.pdd.config.ConfigurazionePriorita;
+import org.openspcoop2.pdd.config.InvokerNodiRuntime;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
-import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.pdd.logger.DriverMsgDiagnostici;
 import org.openspcoop2.pdd.logger.DriverTracciamento;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -157,11 +158,6 @@ import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.resources.ScriptInvoker;
-import org.openspcoop2.utils.transport.TransportUtils;
-import org.openspcoop2.utils.transport.http.HttpRequest;
-import org.openspcoop2.utils.transport.http.HttpRequestMethod;
-import org.openspcoop2.utils.transport.http.HttpResponse;
-import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -1393,24 +1389,10 @@ public class ControlStationCore {
 	
 	/** Opzioni Accesso JMX della PdD */
 	private boolean isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus = false;
+	private InvokerNodiRuntime invoker = null;
 	private List<String> jmxPdD_aliases = new ArrayList<String>();
 	private Map<String,List<String>>  jmxPdD_gruppi_aliases = new HashMap<String, List<String>>();
 	private Map<String, String> jmxPdD_descrizioni = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_tipoAccesso = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_remoteAccess_username = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_remoteAccess_password = new HashMap<String, String>();
-	private Map<String, Boolean> jmxPdD_remoteAccess_https = new HashMap<String, Boolean>();
-	private Map<String, Boolean> jmxPdD_remoteAccess_https_verificaHostName = new HashMap<String, Boolean>();
-	private Map<String, Boolean> jmxPdD_remoteAccess_https_autenticazioneServer = new HashMap<String, Boolean>();
-	private Map<String, String> jmxPdD_remoteAccess_https_truststorePath = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_remoteAccess_https_truststoreType = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_remoteAccess_https_truststorePassword = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_remoteAccess_connectionTimeout = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_remoteAccess_readConnectionTimeout = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_remoteAccess_as = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_remoteAccess_factory = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_remoteAccess_url = new HashMap<String, String>();
-	private Map<String, String> jmxPdD_dominio = new HashMap<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_type = new HashMap<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsa = new HashMap<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_versionePdD = new HashMap<String, String>();
@@ -1554,67 +1536,6 @@ public class ControlStationCore {
 			}
 		}
 		return descrizione;
-	}
-	public boolean isJmxPdD_tipoAccessoOpenSPCoop(String alias) {
-		return CostantiControlStation.RESOURCE_JMX_PDD_TIPOLOGIA_ACCESSO_OPENSPCOOP.equals(this.jmxPdD_tipoAccesso.get(alias));
-	}
-	public String getJmxPdD_remoteAccess_username(String alias) {
-		return this.jmxPdD_remoteAccess_username.get(alias);
-	}
-	public String getJmxPdD_remoteAccess_password(String alias) {
-		return this.jmxPdD_remoteAccess_password.get(alias);
-	}
-	public boolean isJmxPdD_remoteAccess_https(String alias) {
-		return this.jmxPdD_remoteAccess_https.get(alias);
-	}
-	public boolean isJmxPdD_remoteAccess_https_verificaHostName(String alias) {
-		return this.jmxPdD_remoteAccess_https_verificaHostName.get(alias);
-	}
-	public boolean isJmxPdD_remoteAccess_https_autenticazioneServer(String alias) {
-		return this.jmxPdD_remoteAccess_https_autenticazioneServer.get(alias);
-	}
-	public String getJmxPdD_remoteAccess_https_truststorePath(String alias) {
-		return this.jmxPdD_remoteAccess_https_truststorePath.get(alias);
-	}
-	public String getJmxPdD_remoteAccess_https_truststoreType(String alias) {
-		return this.jmxPdD_remoteAccess_https_truststoreType.get(alias);
-	}
-	public String getJmxPdD_remoteAccess_https_truststorePassword(String alias) {
-		return this.jmxPdD_remoteAccess_https_truststorePassword.get(alias);
-	}
-	public String getJmxPdD_remoteAccess_connectionTimeout(String alias) {
-		return this.jmxPdD_remoteAccess_connectionTimeout.get(alias);
-	}
-	public String getJmxPdD_remoteAccess_readConnectionTimeout(String alias) {
-		return this.jmxPdD_remoteAccess_readConnectionTimeout.get(alias);
-	}
-	public String getJmxPdD_remoteAccess_as(String alias) {
-		return this.jmxPdD_remoteAccess_as.get(alias);
-	}
-	public String getJmxPdD_remoteAccess_factory(String alias) {
-		return this.jmxPdD_remoteAccess_factory.get(alias);
-	}
-	public String getJmxPdD_remoteAccess_url(String alias) throws Exception {
-		String url = this.jmxPdD_remoteAccess_url.get(alias);
-		if(url!=null && this.singlePdD==false){
-			// replace con url del nodo
-			PddCore pddCore = new PddCore(this);
-			PdDControlStation pdd = pddCore.getPdDControlStation(alias); // esiste per forza
-			url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_IP_GESTIONE, pdd.getIpGestione());
-			url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_PORTA_GESTIONE, pdd.getPortaGestione()+"");
-			url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_PROTOCOLLO_GESTIONE, pdd.getProtocolloGestione());
-			url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_IP_PUBBLICO, pdd.getIp());
-			url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_PORTA_PUBBLICA, pdd.getPorta()+"");
-			url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_PROTOCOLLO_PUBBLICO, pdd.getProtocollo());
-		}
-		return url;
-	}
-	public String getJmxPdD_dominio(String alias) throws Exception {
-		String dominio = this.jmxPdD_dominio.get(alias);
-		if(dominio==null || "".equals(dominio)){
-			throw new Exception("Configurazione errata (pdd:"+alias+") accesso via jmx. Non e' stata indicato il dominio");
-		}
-		return dominio;
 	}
 	public String getJmxPdD_configurazioneSistema_type(String alias) {
 		return this.jmxPdD_configurazioneSistema_type.get(alias);
@@ -1961,251 +1882,9 @@ public class ControlStationCore {
 	public String getJmxPdD_cache_nomeMetodo_prefillCache(String alias) {
 		return this.jmxPdD_cache_nomeMetodo_prefillCache.get(alias);
 	}
-	
-	public Object getGestoreRisorseJMX(String alias)  throws Exception{
-		try {
-			if(this.isJmxPdD_tipoAccessoOpenSPCoop(alias)){
-				//System.out.println("=================== REMOTA OPENSPCOOP =======================");
-				String remoteUrl = this.getJmxPdD_remoteAccess_url(alias);
-				if(remoteUrl==null){
-					throw new Exception("Configurazione errata (pdd:"+alias+") accesso via check. Non e' stata indicata la url");
-				}
-				return remoteUrl;
-			}
-			else{
-				org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX gestoreJMX = null;
-				
-				if(this.getJmxPdD_remoteAccess_url(alias)!=null && !"".equals(this.getJmxPdD_remoteAccess_url(alias)) 
-						&& !"locale".equals(this.getJmxPdD_remoteAccess_url(alias)) ){
-					//System.out.println("=================== REMOTA =======================");
-					String remoteUrl = this.getJmxPdD_remoteAccess_url(alias);
-					String factory = this.getJmxPdD_remoteAccess_factory(alias);
-					if(factory==null){
-						throw new Exception("Configurazione errata (pdd:"+alias+") per l'accesso alla url ["+remoteUrl+"] via jmx. Non e' stata indicata una factory");
-					}
-					String as = this.getJmxPdD_remoteAccess_as(alias);
-					if(as==null){
-						throw new Exception("Configurazione errata (pdd:"+alias+") per l'accesso alla url ["+remoteUrl+"] via jmx. Non e' stato indicato il tipo di application server");
-					}
-					gestoreJMX = new org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX(as, factory, remoteUrl, 
-							this.getJmxPdD_remoteAccess_username(alias), 
-							this.getJmxPdD_remoteAccess_password(alias), getLog());
-				}
-				else{
-					//System.out.println("=================== LOCALE =======================");
-					gestoreJMX = new org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX(getLog());
-					
-				}
-				
-				return gestoreJMX;
-			}
-		} catch (Exception e) {
-			throw e;
-		}
-	}
-	
-	private HttpResponse invokeHttp(String urlWithParameters, String alias) throws Exception {
-		String username = this.getJmxPdD_remoteAccess_username(alias);
-		String password = this.getJmxPdD_remoteAccess_password(alias);
-		boolean https = this.isJmxPdD_remoteAccess_https(alias);
-		boolean https_verificaHostName = true;
-		boolean https_autenticazioneServer = true;
-		String https_truststorePath = null;
-		String https_truststoreType = null;
-		String https_truststorePassword = null;
-		if(https) {
-			https_verificaHostName = this.isJmxPdD_remoteAccess_https_verificaHostName(alias);
-			https_autenticazioneServer = this.isJmxPdD_remoteAccess_https_autenticazioneServer(alias);
-			if(https_autenticazioneServer) {
-				https_truststorePath = this.getJmxPdD_remoteAccess_https_truststorePath(alias);
-				if(StringUtils.isEmpty(https_truststorePath)) {
-					throw new Exception("[alias:"+alias+"] TLS Truststore path non fornito");
-				}
-				https_truststoreType = this.getJmxPdD_remoteAccess_https_truststoreType(alias);
-				if(StringUtils.isEmpty(https_truststoreType)) {
-					throw new Exception("[alias:"+alias+"] TLS Truststore type non fornito");
-				}
-				https_truststorePassword = this.getJmxPdD_remoteAccess_https_truststorePassword(alias);
-				if(StringUtils.isEmpty(https_truststorePassword)) {
-					throw new Exception("[alias:"+alias+"] TLS Truststore password non fornito");
-				}
-			}
-		}
-		
-		Integer connectionTimeout = HttpUtilities.HTTP_CONNECTION_TIMEOUT;
-		Integer readConnectionTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
-		// Fix abbasso i tempi di default
-		connectionTimeout = 5000;
-		readConnectionTimeout = 5000;
-		String connectionTimeoutS = this.getJmxPdD_remoteAccess_connectionTimeout(alias);
-		if(connectionTimeoutS!=null) {
-			connectionTimeout = Integer.valueOf(connectionTimeoutS);
-		}
-		String readConnectionTimeoutS = this.getJmxPdD_remoteAccess_readConnectionTimeout(alias);
-		if(readConnectionTimeoutS!=null) {
-			readConnectionTimeout = Integer.valueOf(readConnectionTimeoutS);
-		}
-		
-		HttpResponse response = null;
-		if(https) {
-			HttpRequest httpRequest = new HttpRequest();
-			httpRequest.setUrl(urlWithParameters);
-			httpRequest.setConnectTimeout(connectionTimeout);
-			httpRequest.setReadTimeout(readConnectionTimeout);
-			httpRequest.setUsername(username);
-			httpRequest.setPassword(password);
-			httpRequest.setMethod(HttpRequestMethod.GET);
-			httpRequest.setHostnameVerifier(https_verificaHostName);
-			if(https_autenticazioneServer) {
-				httpRequest.setTrustStorePath(https_truststorePath);
-				httpRequest.setTrustStoreType(https_truststoreType);
-				httpRequest.setTrustStorePassword(https_truststorePassword);
-			}
-			else {
-				httpRequest.setTrustAllCerts(true);
-			}
-			response = HttpUtilities.httpInvoke(httpRequest);
-		}
-		else {
-			response = HttpUtilities.getHTTPResponse(urlWithParameters, 
-					readConnectionTimeout, connectionTimeout,
-					username, password);
-		}
-		return response;
-	}
-	
-	public String invokeJMXMethod(Object gestore, String alias, String type, String nomeRisorsa, String nomeMetodo) throws Exception{
-		return invokeJMXMethod(gestore, alias, type, nomeRisorsa, nomeMetodo, null);
-	}
-	public String invokeJMXMethod(Object gestore, String alias, String type, String nomeRisorsa, String nomeMetodo, String parametro) throws Exception{
-		try {
-			if(gestore instanceof org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX){
-				
-				Object [] params = null;
-				String [] signatures = null;
-				if(parametro!=null && !"".equals(parametro)){
-					params = new Object[] {parametro};
-					signatures = new String[] {String.class.getName()};
-				}
-				
-				String tmp = (String) ((org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX)gestore).invoke(this.getJmxPdD_dominio(alias), 
-						type, nomeRisorsa, nomeMetodo, params, signatures);
-				if(tmp.startsWith(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA)){
-					throw new Exception(tmp); 
-				}
-				return tmp;
-			}
-			else if(gestore instanceof String){
-				String url = (String) gestore;
-				
-				Map<String, List<String>> p = new HashMap<String, List<String>>();
-				TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, nomeRisorsa);
-				TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_METHOD_NAME, nomeMetodo);
-				if(parametro!=null && !"".equals(parametro)){
-					TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_PARAM_VALUE, parametro);
-				}
-				String urlWithParameters = TransportUtils.buildUrlWithParameters(p, url);
 
-				HttpResponse response = invokeHttp(urlWithParameters, alias);
-				if(response.getResultHTTPOperation()!=200){
-					String error = "[httpCode "+response.getResultHTTPOperation()+"]";
-					if(response.getContent()!=null){
-						error+= " "+new String(response.getContent());
-					}
-					return error;
-				}
-				else{
-					return new String(response.getContent());
-				}
-			}
-			else {
-				throw new Exception("Gestore di tipo ["+gestore.getClass().getName()+"] non gestito");
-			}
-		} catch (Exception e) {
-			throw e;
-		}
-	}
-	
-	public String readJMXAttribute(Object gestore, String alias, String type, String nomeRisorsa, String nomeAttributo) throws Exception{
-		try {
-			if(gestore instanceof org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX){
-				Object t = ((org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX)gestore).getAttribute(this.getJmxPdD_dominio(alias), type, nomeRisorsa, nomeAttributo);
-				if(t instanceof String){
-					String tmp = (String) t; 
-					if(tmp.startsWith(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA)){
-						throw new Exception(tmp); 
-					}
-					return tmp;
-				}
-				else if(t instanceof Boolean){
-					return ((Boolean)t).toString();
-				}
-				else{
-					return t.toString();
-				}
-			}
-			else if(gestore instanceof String){
-				String url = (String) gestore;
-				
-				Map<String, List<String>> p = new HashMap<String, List<String>>();
-				TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, nomeRisorsa);
-				TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_NAME, nomeAttributo);
-				String urlWithParameters = TransportUtils.buildUrlWithParameters(p, url);
-				
-				HttpResponse response = invokeHttp(urlWithParameters, alias);
-				if(response.getResultHTTPOperation()!=200){
-					String error = "[httpCode "+response.getResultHTTPOperation()+"]";
-					if(response.getContent()!=null){
-						error+= " "+new String(response.getContent());
-					}
-					return error;
-				}
-				else{
-					return new String(response.getContent());
-				}
-			}
-			else {
-				throw new Exception("Gestore di tipo ["+gestore.getClass().getName()+"] non gestito");
-			}
-		} catch (Exception e) {
-			throw e;
-		}
-	}
-	
-	public void setJMXAttribute(Object gestore, String alias, String type, String nomeRisorsa, String nomeAttributo, Object value) throws Exception{
-		try {
-			if(gestore instanceof org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX){
-				((org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX)gestore).setAttribute(this.getJmxPdD_dominio(alias), type, nomeRisorsa, nomeAttributo, value);
-			}
-			else if(gestore instanceof String){
-				String url = (String) gestore;
-				
-				Map<String, List<String>> p = new HashMap<String, List<String>>();
-				TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, nomeRisorsa);
-				TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_NAME, nomeAttributo);
-				if(value instanceof Boolean){
-					TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_BOOLEAN_VALUE, value.toString());
-				}
-				else{
-					TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_VALUE, value.toString());
-				}
-				String urlWithParameters = TransportUtils.buildUrlWithParameters(p, url);
-				
-				HttpResponse response = invokeHttp(urlWithParameters, alias);
-				if(response.getResultHTTPOperation()!=200){
-					String error = "[httpCode "+response.getResultHTTPOperation()+"]";
-					if(response.getContent()!=null){
-						error+= " "+new String(response.getContent());
-					}
-					throw new Exception(error);
-				}
-			}
-			else {
-				throw new Exception("Gestore di tipo ["+gestore.getClass().getName()+"] non gestito");
-			}
-		} catch (Exception e) {
-			throw e;
-		}
+	public InvokerNodiRuntime getInvoker() {
+		return this.invoker;
 	}
 	
 	
@@ -2667,25 +2346,11 @@ public class ControlStationCore {
 		this.pluginPortaApplicativa = core.pluginPortaApplicativa;
 		
 		/** Opzioni Accesso JMX della PdD */
+		this.invoker = core.invoker;
 		this.isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus = core.isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus;
 		this.jmxPdD_aliases = core.jmxPdD_aliases;
 		this.jmxPdD_gruppi_aliases = core.jmxPdD_gruppi_aliases;
 		this.jmxPdD_descrizioni = core.jmxPdD_descrizioni;
-		this.jmxPdD_tipoAccesso = core.jmxPdD_tipoAccesso;
-		this.jmxPdD_remoteAccess_username = core.jmxPdD_remoteAccess_username;
-		this.jmxPdD_remoteAccess_password = core.jmxPdD_remoteAccess_password;
-		this.jmxPdD_remoteAccess_https = core.jmxPdD_remoteAccess_https;
-		this.jmxPdD_remoteAccess_https_verificaHostName = core.jmxPdD_remoteAccess_https_verificaHostName;
-		this.jmxPdD_remoteAccess_https_autenticazioneServer = core.jmxPdD_remoteAccess_https_autenticazioneServer;
-		this.jmxPdD_remoteAccess_https_truststorePath = core.jmxPdD_remoteAccess_https_truststorePath;
-		this.jmxPdD_remoteAccess_https_truststoreType = core.jmxPdD_remoteAccess_https_truststoreType;
-		this.jmxPdD_remoteAccess_https_truststorePassword = core.jmxPdD_remoteAccess_https_truststorePassword;
-		this.jmxPdD_remoteAccess_connectionTimeout = core.jmxPdD_remoteAccess_connectionTimeout;
-		this.jmxPdD_remoteAccess_readConnectionTimeout = core.jmxPdD_remoteAccess_readConnectionTimeout;
-		this.jmxPdD_remoteAccess_as = core.jmxPdD_remoteAccess_as;
-		this.jmxPdD_remoteAccess_factory = core.jmxPdD_remoteAccess_factory;
-		this.jmxPdD_remoteAccess_url = core.jmxPdD_remoteAccess_url;
-		this.jmxPdD_dominio = core.jmxPdD_dominio;
 		this.jmxPdD_configurazioneSistema_type = core.jmxPdD_configurazioneSistema_type;
 		this.jmxPdD_configurazioneSistema_nomeRisorsa = core.jmxPdD_configurazioneSistema_nomeRisorsa;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_versionePdD = core.jmxPdD_configurazioneSistema_nomeMetodo_versionePdD;
@@ -3132,6 +2797,10 @@ public class ControlStationCore {
 			consoleProperties = ConsoleProperties.getInstance();
 					
 			// Opzioni Accesso JMX della PdD
+			
+			ConfigurazioneNodiRuntime config = consoleProperties.getConfigurazioneNodiRuntime();
+			this.invoker = new InvokerNodiRuntime(log, config);
+			
 			this.isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus = consoleProperties.isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus();
 			this.jmxPdD_aliases = consoleProperties.getJmxPdD_aliases();
 			if(this.singlePdD==false){
@@ -3157,41 +2826,21 @@ public class ControlStationCore {
 					String descrizione = consoleProperties.getJmxPdD_descrizione(alias);
 					if(descrizione!=null)
 						this.jmxPdD_descrizioni.put(alias,descrizione);
-					this.jmxPdD_tipoAccesso.put(alias,consoleProperties.getJmxPdD_tipoAccesso(alias));
-					String username = consoleProperties.getJmxPdD_remoteAccess_username(alias);
-					if(username!=null)
-						this.jmxPdD_remoteAccess_username.put(alias,username);
-					String password = consoleProperties.getJmxPdD_remoteAccess_password(alias);
-					if(password!=null)
-						this.jmxPdD_remoteAccess_password.put(alias,password);
-					this.jmxPdD_remoteAccess_https.put(alias, consoleProperties.isJmxPdD_remoteAccess_https(alias));
-					this.jmxPdD_remoteAccess_https_verificaHostName.put(alias, consoleProperties.isJmxPdD_remoteAccess_https_verificaHostName(alias));
-					this.jmxPdD_remoteAccess_https_autenticazioneServer.put(alias, consoleProperties.isJmxPdD_remoteAccess_https_autenticazioneServer(alias));
-					String sslAuthServer_truststorePath = consoleProperties.getJmxPdD_remoteAccess_https_autenticazioneServer_truststorePath(alias);
-					if(sslAuthServer_truststorePath!=null)
-						this.jmxPdD_remoteAccess_https_truststorePath.put(alias,sslAuthServer_truststorePath);
-					String sslAuthServer_truststoreType = consoleProperties.getJmxPdD_remoteAccess_https_autenticazioneServer_truststoreType(alias);
-					if(sslAuthServer_truststoreType!=null)
-						this.jmxPdD_remoteAccess_https_truststoreType.put(alias,sslAuthServer_truststoreType);
-					String sslAuthServer_truststorePassword = consoleProperties.getJmxPdD_remoteAccess_https_autenticazioneServer_truststorePassword(alias);
-					if(sslAuthServer_truststorePassword!=null)
-						this.jmxPdD_remoteAccess_https_truststorePassword.put(alias,sslAuthServer_truststorePassword);
-					String connectionTimeout = consoleProperties.getJmxPdD_remoteAccess_connectionTimeout(alias);
-					if(connectionTimeout!=null)
-						this.jmxPdD_remoteAccess_connectionTimeout.put(alias,connectionTimeout);
-					String readConnectionTimeout = consoleProperties.getJmxPdD_remoteAccess_readConnectionTimeout(alias);
-					if(readConnectionTimeout!=null)
-						this.jmxPdD_remoteAccess_readConnectionTimeout.put(alias,readConnectionTimeout);
-					String as = consoleProperties.getJmxPdD_remoteAccess_applicationServer(alias);
-					if(as!=null)
-						this.jmxPdD_remoteAccess_as.put(alias,as);
-					String factory = consoleProperties.getJmxPdD_remoteAccess_factory(alias);
-					if(factory!=null)
-						this.jmxPdD_remoteAccess_factory.put(alias,factory);
-					String url = consoleProperties.getJmxPdD_remoteAccess_url(alias);
-					if(url!=null)
-						this.jmxPdD_remoteAccess_url.put(alias,url);
-					this.jmxPdD_dominio.put(alias,consoleProperties.getJmxPdD_dominio(alias));
+					
+					if(this.singlePdD==false){
+						String url = config.getResourceUrl(alias);
+						// replace con url del nodo
+						PddCore pddCore = new PddCore(this);
+						PdDControlStation pdd = pddCore.getPdDControlStation(alias); // esiste per forza
+						url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_IP_GESTIONE, pdd.getIpGestione());
+						url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_PORTA_GESTIONE, pdd.getPortaGestione()+"");
+						url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_PROTOCOLLO_GESTIONE, pdd.getProtocolloGestione());
+						url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_IP_PUBBLICO, pdd.getIp());
+						url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_PORTA_PUBBLICA, pdd.getPorta()+"");
+						url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_PROTOCOLLO_PUBBLICO, pdd.getProtocollo());
+						config.addForceResourceUrl(alias, url);
+					}
+					
 					this.jmxPdD_configurazioneSistema_type.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_type(alias));
 					this.jmxPdD_configurazioneSistema_nomeRisorsa.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsa(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_versionePdD.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_versionePdD(alias));

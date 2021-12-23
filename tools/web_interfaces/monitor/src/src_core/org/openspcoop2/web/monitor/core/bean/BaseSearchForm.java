@@ -43,6 +43,7 @@ import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
 import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
 import org.openspcoop2.monitor.sdk.condition.IFilter;
+import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -87,6 +88,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	private boolean visualizzaIdCluster = false;
 	private boolean visualizzaIdClusterAsSelectList = false;
 	private List<String> listIdCluster;
+	private List<String> listLabelIdCluster;
 	protected String clusterId;
 	
 	private boolean visualizzaCanali = false;
@@ -436,6 +438,16 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			this.listIdCluster = new ArrayList<String>();
 			this.listIdCluster.add("--");
 			this.listIdCluster.addAll(pddMonitorare);
+			
+			this.listLabelIdCluster = new ArrayList<String>();
+			ConfigurazioneNodiRuntime config = pddMonitorProperties.getConfigurazioneNodiRuntime();
+			for (String nodoRun : this.listIdCluster) {
+				String descrizione = null;
+				if(config.containsNode(nodoRun)) {
+					descrizione = config.getDescrizione(nodoRun);
+				}
+				this.listLabelIdCluster.add(descrizione!=null ? descrizione : nodoRun);
+			}
 		}
 		
 		this.visualizzaCanali = Utility.isCanaliAbilitato();
@@ -2436,11 +2448,13 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		ArrayList<SelectItem> list = new ArrayList<SelectItem>();
 		
 		if(this.listIdCluster!=null && this.listIdCluster.size()>0){
-			for (String id : this.listIdCluster) {
+			for (int i = 0; i < this.listIdCluster.size(); i++) {
+				String id = this.listIdCluster.get(i);
 				if("--".equals(id)) {
 					list.add(new SelectItem(id));
 					continue;
 				}
+				String label = this.listLabelIdCluster.get(i);
 				if(this.canale!=null && !"".equals(this.canale) && !"--".equals(this.canale) &&
 						this.visualizzaCanali && this.mapCanaleToNodi!=null) {
 					List<String> nodi = this.mapCanaleToNodi.get(this.canale);
@@ -2448,7 +2462,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 						continue;
 					}
 				}
-				list.add(new SelectItem(id));
+				list.add(new SelectItem(id,label));
 			}
 		}
 		return list;

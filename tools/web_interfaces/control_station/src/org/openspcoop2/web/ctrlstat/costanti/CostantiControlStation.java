@@ -1452,8 +1452,6 @@ public class CostantiControlStation {
 	public final static String JS_DIR = "js";
 	public final static String FONTS_DIR = "fonts";
 	public final static String OPERATIONS_DELIMITER = "\n--------------------------------------------\n\n";
-	public final static String RESOURCE_JMX_PDD_TIPOLOGIA_ACCESSO_JMX = "jmx";
-	public final static String RESOURCE_JMX_PDD_TIPOLOGIA_ACCESSO_OPENSPCOOP = "openspcoop";
 	
 	/** ICONE */
 	public final static String ICONA_FRECCIA_SU = "&#xE316;";

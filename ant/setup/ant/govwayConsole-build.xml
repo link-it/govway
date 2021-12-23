@@ -210,6 +210,13 @@
 			<param name="token" value="allarmi.configurazione"/>
 			<param name="value" value="${work_dir}/allarmi_configurazione.properties"/>
 		</antcall>
+
+		<!-- NODI RUN CONFIG DIR -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="risorseJmxPdd.configurazioneNodiRun"/>
+			<param name="value" value="${work_dir}/govway.nodirun.properties"/>
+		</antcall>
 	
 		<!-- HSM CONFIG DIR -->
 		<antcall target="set_property">

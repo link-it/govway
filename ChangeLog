@@ -1,3 +1,11 @@
+2021-12-23  Andrea Poli <apoli@link.it>
+
+	* [GovwayConsole, GovWayMonitor]
+	Aggiunta funzionalità OP-1299
+	Uniformata la gestione dei nodi runtime in un unico file govway.nodirun.properties. 
+	Inoltre, in una configurazione con cluster dinamico, è stata aggiunta la possibilità di configurare lo schema utilizzato (https/http), 
+	la porta e i parametri di utilizzo del connettore https per il servizio proxy quando deve effettuare il forward della chiamata al servizio check dei nodi.
+
 2021-12-22  Andrea Poli <apoli@link.it>
 
 	* [GovwayConsole]

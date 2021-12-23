@@ -978,7 +978,7 @@ public class DocumentoExporter extends HttpServlet {
 					}
 					
 					try{
-						String stato = archiviCore.invokeJMXMethod(archiviCore.getGestoreRisorseJMX(aliasForVerificaConnettore), aliasForVerificaConnettore, archiviCore.getJmxPdD_configurazioneSistema_type(aliasForVerificaConnettore),
+						String stato = archiviCore.getInvoker().invokeJMXMethod(aliasForVerificaConnettore, archiviCore.getJmxPdD_configurazioneSistema_type(aliasForVerificaConnettore),
 								risorsa, 
 								archiviCore.getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById(aliasForVerificaConnettore), 
 								idConnettore+"");

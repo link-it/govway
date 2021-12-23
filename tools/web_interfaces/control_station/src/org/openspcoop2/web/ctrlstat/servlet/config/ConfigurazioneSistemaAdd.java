@@ -209,7 +209,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 																		
 									String stato = null;
 									try{
-										stato = confCore.readJMXAttribute(confCore.getGestoreRisorseJMX(aliasForResetCache), aliasForResetCache,confCore.getJmxPdD_configurazioneSistema_type(aliasForResetCache), 
+										stato = confCore.getInvoker().readJMXAttribute(aliasForResetCache,confCore.getJmxPdD_configurazioneSistema_type(aliasForResetCache), 
 												cache,
 												confCore.getJmxPdD_cache_nomeAttributo_cacheAbilitata(aliasForResetCache));
 										if(stato.equalsIgnoreCase("true")){
@@ -238,7 +238,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 										String result = null;
 										try{
 											String nomeMetodoResetCache = confCore.getJmxPdD_cache_nomeMetodo_resetCache(aliasForResetCache);
-											result = confCore.invokeJMXMethod(confCore.getGestoreRisorseJMX(aliasForResetCache),aliasForResetCache,confCore.getJmxPdD_cache_type(aliasForResetCache), 
+											result = confCore.getInvoker().invokeJMXMethod(aliasForResetCache,confCore.getJmxPdD_cache_type(aliasForResetCache), 
 													cache,
 													nomeMetodoResetCache);
 										}catch(Exception e){
@@ -336,7 +336,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 							
 							String stato = null;
 							try{
-								stato = confCore.readJMXAttribute(confCore.getGestoreRisorseJMX(alias), alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+								stato = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 										cache,
 										confCore.getJmxPdD_cache_nomeAttributo_cacheAbilitata(alias));
 								if(stato.equalsIgnoreCase("true")){
@@ -360,7 +360,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 								}
 								String result = null;
 								try{
-									result = confCore.invokeJMXMethod(confCore.getGestoreRisorseJMX(alias),alias,confCore.getJmxPdD_cache_type(alias), 
+									result = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_cache_type(alias), 
 											cache,
 											nomeMetodoResetCache);
 								}catch(Exception e){
@@ -379,14 +379,14 @@ public final class ConfigurazioneSistemaAdd extends Action {
 				else{
 					try{
 						if(resetConnettoriPrioritari) {
-							String result = confCore.invokeJMXMethod(confCore.getGestoreRisorseJMX(alias),alias,confCore.getJmxPdD_cache_type(alias), 
+							String result = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_cache_type(alias), 
 									confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
 									nomeMetodo,
 									nomeCache);
 							messagePerOperazioneEffettuata = "Coda ["+confCore.getConsegnaNotificaCodaLabel(nomeCache)+"]: "+result;
 						}
 						else {
-							String result = confCore.invokeJMXMethod(confCore.getGestoreRisorseJMX(alias),alias,confCore.getJmxPdD_cache_type(alias), 
+							String result = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_cache_type(alias), 
 									nomeCache,
 									nomeMetodo);
 							messagePerOperazioneEffettuata = "Cache ["+nomeCache+"]: "+result;
@@ -737,12 +737,12 @@ public final class ConfigurazioneSistemaAdd extends Action {
 					}
 					
 					if(nomeAttributo!=null){
-						confCore.setJMXAttribute(confCore.getGestoreRisorseJMX(alias),alias,confCore.getJmxPdD_cache_type(alias), 
+						confCore.getInvoker().setJMXAttribute(alias,confCore.getJmxPdD_cache_type(alias), 
 							confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 							nomeAttributo, 
 							nuovoStato);
 						if(nomeAttributo_2!=null) {
-							confCore.setJMXAttribute(confCore.getGestoreRisorseJMX(alias),alias,confCore.getJmxPdD_cache_type(alias), 
+							confCore.getInvoker().setJMXAttribute(alias,confCore.getJmxPdD_cache_type(alias), 
 									confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 									nomeAttributo_2, 
 									nuovoStato);
@@ -759,7 +759,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 						messageDialog = "Configurazione aggiornata con successo";
 					}
 					else if(nomeMetodoJmx!=null){
-						String tmp = confCore.invokeJMXMethod(confCore.getGestoreRisorseJMX(alias),alias, confCore.getJmxPdD_cache_type(alias), 
+						String tmp = confCore.getInvoker().invokeJMXMethod(alias, confCore.getJmxPdD_cache_type(alias), 
 								nomeRisorsa, 
 								nomeMetodoJmx);
 						if(!ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_FILE_TRACE_UPDATE.equals(nomeParametroPostBack)){

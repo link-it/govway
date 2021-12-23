@@ -35,10 +35,10 @@ import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.generic_project.beans.IProjectInfo;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
+import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
 import org.openspcoop2.utils.TipiDatabase;
-import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.monitor.core.config.ApplicationProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
@@ -560,77 +560,35 @@ public class PddMonitorProperties {
 		return tmp;
 	}
 	
-	public List<String> getJmxPdD_aliases() throws Exception {
-		List<String> list = new ArrayList<String>();
-		String tipo = this.getProperty("configurazioni.risorseJmxPdd.aliases",false,true);
-		if(tipo!=null && !"".equals(tipo)){
-			String [] tmp = tipo.split(",");
-			for (int i = 0; i < tmp.length; i++) {
-				list.add(tmp[i].trim());
-			}
+	private static ConfigurazioneNodiRuntime externalConfigurazioneNodiRuntime = null;
+	private static ConfigurazioneNodiRuntime backwardCompatibilityConfigurazioneNodiRuntime = null;
+	private static synchronized void initConfigurazioneNodiRuntime(String prefix) {
+		if(backwardCompatibilityConfigurazioneNodiRuntime==null) {
+			externalConfigurazioneNodiRuntime = ConfigurazioneNodiRuntime.getConfigurazioneNodiRuntime();
+			backwardCompatibilityConfigurazioneNodiRuntime = ConfigurazioneNodiRuntime.getConfigurazioneNodiRuntime(prefix);
 		}
-		return list;
 	}
-	
-	public final static String RESOURCE_JMX_PDD_TIPOLOGIA_ACCESSO_JMX = "jmx";
-	public final static String RESOURCE_JMX_PDD_TIPOLOGIA_ACCESSO_OPENSPCOOP = "openspcoop";
-	public String getJmxPdD_tipoAccesso(String alias) throws Exception {
-		String tipo = _getJmxPdD_value(true, alias, "configurazioni.risorseJmxPdd.tipoAccesso");
-		if(!RESOURCE_JMX_PDD_TIPOLOGIA_ACCESSO_JMX.equals(tipo) && !RESOURCE_JMX_PDD_TIPOLOGIA_ACCESSO_OPENSPCOOP.equals(tipo)){
-			throw new UtilsException("Tipo ["+tipo+"] non supportato per la proprieta' 'configurazioni.risorseJmxPdd.tipoAccesso'");
+	private ConfigurazioneNodiRuntime _getConfigurazioneNodiRuntime() {
+		if(backwardCompatibilityConfigurazioneNodiRuntime==null) {
+			initConfigurazioneNodiRuntime(this.appProperties.getJmxPdD_backwardCompatibilityPrefix());
 		}
-		return tipo;
+		return externalConfigurazioneNodiRuntime;
 	}
+	private ConfigurazioneNodiRuntime _getBackwardCompatibilityConfigurazioneNodiRuntime() {
+		if(backwardCompatibilityConfigurazioneNodiRuntime==null) {
+			initConfigurazioneNodiRuntime(this.appProperties.getJmxPdD_backwardCompatibilityPrefix());
+		}
+		return backwardCompatibilityConfigurazioneNodiRuntime;
+	}
+	public ConfigurazioneNodiRuntime getConfigurazioneNodiRuntime() {
+		ConfigurazioneNodiRuntime config = _getConfigurazioneNodiRuntime();
+		if(config==null) {
+			config = _getBackwardCompatibilityConfigurazioneNodiRuntime();
+		}
+		return config;
+	}
+
 	
-	public String getJmxPdD_remoteAccess_username(String alias) throws Exception {
-		return _getJmxPdD_value(false, alias, "configurazioni.risorseJmxPdd.remoteAccess.username");
-	}
-	public String getJmxPdD_remoteAccess_password(String alias) throws Exception {
-		return _getJmxPdD_value(false, alias, "configurazioni.risorseJmxPdd.remoteAccess.password");
-	}
-	
-	public boolean isJmxPdD_remoteAccess_https(String alias) throws Exception {
-		String v = _getJmxPdD_value(false, alias, "configurazioni.risorseJmxPdd.remoteAccess.https");
-		return v!=null ? Boolean.valueOf(v.trim()) : false; // default false
-	}
-	public boolean isJmxPdD_remoteAccess_https_verificaHostName(String alias) throws Exception {
-		String v = _getJmxPdD_value(false, alias, "configurazioni.risorseJmxPdd.remoteAccess.https.verificaHostName");
-		return v!=null ? Boolean.valueOf(v.trim()) : true; // default true
-	}
-	public boolean isJmxPdD_remoteAccess_https_autenticazioneServer(String alias) throws Exception {
-		String v = _getJmxPdD_value(false, alias, "configurazioni.risorseJmxPdd.remoteAccess.https.autenticazioneServer");
-		return v!=null ? Boolean.valueOf(v.trim()) : true; // default true
-	}
-	public String getJmxPdD_remoteAccess_https_autenticazioneServer_truststorePath(String alias) throws Exception {
-		return _getJmxPdD_value(false, alias, "configurazioni.risorseJmxPdd.remoteAccess.https.autenticazioneServer.truststorePath");
-	}
-	public String getJmxPdD_remoteAccess_https_autenticazioneServer_truststoreType(String alias) throws Exception {
-		return _getJmxPdD_value(false, alias, "configurazioni.risorseJmxPdd.remoteAccess.https.autenticazioneServer.truststoreType");
-	}
-	public String getJmxPdD_remoteAccess_https_autenticazioneServer_truststorePassword(String alias) throws Exception {
-		return _getJmxPdD_value(false, alias, "configurazioni.risorseJmxPdd.remoteAccess.https.autenticazioneServer.truststorePassword");
-	}
-	
-	public String getJmxPdD_remoteAccess_connectionTimeout(String alias) throws Exception {
-		return _getJmxPdD_value(false, alias, "configurazioni.risorseJmxPdd.remoteAccess.connectionTimeout");
-	}
-	public String getJmxPdD_remoteAccess_readConnectionTimeout(String alias) throws Exception {
-		return _getJmxPdD_value(false, alias, "configurazioni.risorseJmxPdd.remoteAccess.readConnectionTimeout");
-	}
-	
-	public String getJmxPdD_remoteAccess_applicationServer(String alias) throws Exception {
-		return _getJmxPdD_value(false, alias, "configurazioni.risorseJmxPdd.remoteAccess.as");
-	}
-	public String getJmxPdD_remoteAccess_factory(String alias) throws Exception {
-		return _getJmxPdD_value(false, alias, "configurazioni.risorseJmxPdd.remoteAccess.factory");
-	}
-	public String getJmxPdD_remoteAccess_url(String alias) throws Exception {
-		return _getJmxPdD_value(false, alias, "configurazioni.risorseJmxPdd.remoteAccess.url");
-	}
-	
-	public String getJmxPdD_dominio(String alias) throws Exception {
-		return _getJmxPdD_value(true, alias, "configurazioni.risorseJmxPdd.dominio");
-	}
 	
 	public String getJmxPdD_cache_type(String alias) throws Exception {
 		return _getJmxPdD_value(true, alias, "configurazioni.risorseJmxPdd.cache.tipo");
@@ -720,7 +678,9 @@ public class PddMonitorProperties {
 		
 		if(SondaPddStatus.GATEWAY_DEFAULT.equals(tmp)) {
 			// se sono definiti dei nodi tramite aliases uso quelli
-			List<String> listaAliases = this.getJmxPdD_aliases();
+			ConfigurazioneNodiRuntime config = getConfigurazioneNodiRuntime();
+			
+			List<String> listaAliases = config.getAliases();
 			if(listaAliases!=null && !listaAliases.isEmpty()) {
 				if(listaAliases.size()>1) {
 					lista = listaAliases;
@@ -785,7 +745,15 @@ public class PddMonitorProperties {
 	
 	// Abilita il cluster dinamico
 	public boolean isClusterDinamico() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("cluster_dinamico.enabled", true, true));
+		ConfigurazioneNodiRuntime config = getConfigurazioneNodiRuntime();
+		if(config!=null) {
+			return config.isClusterDinamico();
+		}
+		else {
+			//return getBackwardCompatibilityConfigurazioneNodiRuntime().isClusterDinamico();
+			// abbiamo cambiato il nome della proprietà nella gestione 'ConfigurazioneNodiRuntime'
+			return "true".equalsIgnoreCase(this.appProperties.getProperty("cluster_dinamico.enabled", true, true));
+		}
 	}
 	public int getClusterDinamicoRefresh() throws Exception{
 		if(this.isClusterDinamico()) {

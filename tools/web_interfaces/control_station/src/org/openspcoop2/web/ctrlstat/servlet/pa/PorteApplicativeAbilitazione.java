@@ -179,7 +179,7 @@ public final class PorteApplicativeAbilitazione extends Action {
 								porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa(alias) :
 								porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa(alias);
 						try{
-							String stato = porteApplicativeCore.invokeJMXMethod(porteApplicativeCore.getGestoreRisorseJMX(alias), alias, 
+							String stato = porteApplicativeCore.getInvoker().invokeJMXMethod(alias, 
 									porteApplicativeCore.getJmxPdD_configurazioneSistema_type(alias),
 									porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 									metodo, 

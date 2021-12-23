@@ -1788,10 +1788,25 @@ public class OpenSPCoop2Properties {
 			this.isCheckReadJMXResourcesEnabled();
 			this.getCheckReadJMXResourcesUsername();
 			this.getCheckReadJMXResourcesPassword();
-			this.isProxyReadJMXResourcesEnabled();
-			this.getProxyReadJMXResourcesUsername();
-			this.getProxyReadJMXResourcesPassword();
 			if(this.isProxyReadJMXResourcesEnabled()) {
+				this.getProxyReadJMXResourcesSchema();
+				this.getProxyReadJMXResourcesPort();
+				if(this.isProxyReadJMXResourcesHttpsEnabled()) {
+					this.isProxyReadJMXResourcesHttpsEnabled_verificaHostName();
+					if(this.isProxyReadJMXResourcesHttpsEnabled_autenticazioneServer()) {
+						if(this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePath()==null) {
+							return false;
+						}
+						if(this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststoreType()==null) {
+							return false;
+						}
+						if(this.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePassword()==null) {
+							return false;
+						}
+					}
+				}
+				this.getProxyReadJMXResourcesUsername();
+				this.getProxyReadJMXResourcesPassword();
 				this.getProxyReadJMXResourcesConnectionTimeout();
 				this.getProxyReadJMXResourcesReadTimeout();
 			}
@@ -18321,6 +18336,44 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isProxyReadJMXResourcesEnabled;
 	}
 	
+	private static String getProxyReadJMXResourcesSchema = null;
+	private static Boolean getProxyReadJMXResourcesSchema_read = null;
+	public String getProxyReadJMXResourcesSchema() {	
+		if(OpenSPCoop2Properties.getProxyReadJMXResourcesSchema_read==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.schema");
+				if(name!=null){
+					name = name.trim();
+				}
+				OpenSPCoop2Properties.getProxyReadJMXResourcesSchema_read = true;
+				OpenSPCoop2Properties.getProxyReadJMXResourcesSchema = name;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.schema': "+e.getMessage(),e);
+			}    
+		}
+		return OpenSPCoop2Properties.getProxyReadJMXResourcesSchema;
+	}
+	
+	private static Integer getProxyReadJMXResourcesPort = null;
+	private static Boolean getProxyReadJMXResourcesPort_read = null;
+	public Integer getProxyReadJMXResourcesPort() {	
+		if(OpenSPCoop2Properties.getProxyReadJMXResourcesPort_read==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.port");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getProxyReadJMXResourcesPort = Integer.valueOf(name);
+				}
+				OpenSPCoop2Properties.getProxyReadJMXResourcesPort_read = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.port': "+e.getMessage(),e);
+			}    
+		}
+		return OpenSPCoop2Properties.getProxyReadJMXResourcesPort;
+	}
+	
 	private static String getProxyReadJMXResourcesUsername = null;
 	private static Boolean getProxyReadJMXResourcesUsername_read = null;
 	public String getProxyReadJMXResourcesUsername() {	
@@ -18357,6 +18410,141 @@ public class OpenSPCoop2Properties {
 			}    
 		}
 		return OpenSPCoop2Properties.getProxyReadJMXResourcesPassword;
+	}
+	
+	private static Boolean isProxyReadJMXResourcesHttpsEnabled = null;
+	public boolean isProxyReadJMXResourcesHttpsEnabled() {	
+		if(OpenSPCoop2Properties.isProxyReadJMXResourcesHttpsEnabled==null){
+			String pName = "org.openspcoop2.pdd.proxyJMXResources.https";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.debug("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isProxyReadJMXResourcesHttpsEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				OpenSPCoop2Properties.isProxyReadJMXResourcesHttpsEnabled = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isProxyReadJMXResourcesHttpsEnabled;
+	}
+	
+	private static Boolean isProxyReadJMXResourcesHttpsEnabled_verificaHostName = null;
+	public boolean isProxyReadJMXResourcesHttpsEnabled_verificaHostName() {	
+		if(OpenSPCoop2Properties.isProxyReadJMXResourcesHttpsEnabled_verificaHostName==null){
+			String pName = "org.openspcoop2.pdd.proxyJMXResources.https.verificaHostName";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.debug("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isProxyReadJMXResourcesHttpsEnabled_verificaHostName = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				OpenSPCoop2Properties.isProxyReadJMXResourcesHttpsEnabled_verificaHostName = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isProxyReadJMXResourcesHttpsEnabled_verificaHostName;
+	}
+	
+	private static Boolean isProxyReadJMXResourcesHttpsEnabled_autenticazioneServer = null;
+	public boolean isProxyReadJMXResourcesHttpsEnabled_autenticazioneServer() {	
+		if(OpenSPCoop2Properties.isProxyReadJMXResourcesHttpsEnabled_autenticazioneServer==null){
+			String pName = "org.openspcoop2.pdd.proxyJMXResources.https.autenticazioneServer";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.debug("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isProxyReadJMXResourcesHttpsEnabled_autenticazioneServer = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				OpenSPCoop2Properties.isProxyReadJMXResourcesHttpsEnabled_autenticazioneServer = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isProxyReadJMXResourcesHttpsEnabled_autenticazioneServer;
+	}
+	
+	private static String getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePath = null;
+	private static Boolean getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePath_read = null;
+	public String getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePath() {	
+		if(OpenSPCoop2Properties.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePath_read==null){
+			String pName = "org.openspcoop2.pdd.proxyJMXResources.https.autenticazioneServer.truststorePath";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				OpenSPCoop2Properties.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePath_read = true;
+				OpenSPCoop2Properties.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePath = name;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}    
+		}
+		return OpenSPCoop2Properties.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePath;
+	}
+	
+	private static String getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststoreType = null;
+	private static Boolean getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststoreType_read = null;
+	public String getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststoreType() {	
+		if(OpenSPCoop2Properties.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststoreType_read==null){
+			String pName = "org.openspcoop2.pdd.proxyJMXResources.https.autenticazioneServer.truststoreType";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				OpenSPCoop2Properties.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststoreType_read = true;
+				OpenSPCoop2Properties.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststoreType = name;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}    
+		}
+		return OpenSPCoop2Properties.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststoreType;
+	}
+	
+	private static String getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePassword = null;
+	private static Boolean getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePassword_read = null;
+	public String getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePassword() {	
+		if(OpenSPCoop2Properties.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePassword_read==null){
+			String pName = "org.openspcoop2.pdd.proxyJMXResources.https.autenticazioneServer.truststorePassword";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				OpenSPCoop2Properties.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePassword_read = true;
+				OpenSPCoop2Properties.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePassword = name;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}    
+		}
+		return OpenSPCoop2Properties.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePassword;
 	}
 	
 	private static Integer getProxyReadJMXResourcesConnectionTimeout = null;

@@ -71,6 +71,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
+import org.openspcoop2.core.constants.StatoCheck;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
@@ -1069,6 +1070,16 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.consegnaRispostaAsincronaRispostaPerRiferimento(sa);
 	}
 
+	public StatoCheck checkCertificateConfigurationWithoutCache(long idSA, int sogliaWarningGiorni, StringBuilder sbDetails) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificateConfiguration(null, false,
+				idSA, sogliaWarningGiorni, sbDetails);
+	}
+
+	public StatoCheck checkCertificateConfigurationWithoutCache(IDServizioApplicativo idSA, int sogliaWarningGiorni, StringBuilder sbDetails) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificateConfiguration(null, false,
+				idSA, sogliaWarningGiorni, sbDetails);
+	}
+	
 
 	/* ********  CONFIGURAZIONE  ******** */
 

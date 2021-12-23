@@ -826,7 +826,7 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 			for (String alias : aliasJmx) {
 				String metodo = porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeMetodo_updateConnettoriPrioritari(alias);
 				try{
-					String stato = porteApplicativeCore.invokeJMXMethod(porteApplicativeCore.getGestoreRisorseJMX(alias), alias, 
+					String stato = porteApplicativeCore.getInvoker().invokeJMXMethod(alias, 
 							porteApplicativeCore.getJmxPdD_configurazioneSistema_type(alias),
 							porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias), 
 							metodo, 

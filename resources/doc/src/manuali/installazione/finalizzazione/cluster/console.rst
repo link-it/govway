@@ -12,7 +12,7 @@ il timeout della cache o richiedere riavvii dell'AS.
 
 A tale scopo sarà necessario:
 
-#. Editare il file <directory-lavoro>/govway_local.properties
+#. Editare il file *<directory-lavoro>/govway_local.properties*
    aggiungendo le seguenti righe su ogni GovWay in Load Balancing:
 
    ::
@@ -27,15 +27,23 @@ A tale scopo sarà necessario:
    dovranno essere utilizzate dalle console e che dovranno essere
    configurate nei punti successivi di questo paragrafo.
 
-#. Editare il file <directory-lavoro>/console_local.properties
-   aggiungendo le seguenti righe al fine di configurare la
-   govwayConsole:
+#. Editare il file *<directory-lavoro>/govway.nodirun.properties*
+
+   Disabilitare la configurazione per la singola istanza commentando la
+   proprietà 'remoteAccess.checkStatus.url':
 
    ::
 
-      # Configurazione gateway in Load Balancing
-      risorseJmxPdd.tipoAccesso=openspcoop
-      risorseJmxPdd.aliases=#IDGW1#,..,#IDGWN#                        
+      # Configurazione in Singola Istanza
+      #remoteAccess.checkStatus.url=http://127.0.0.1:8080/govway/check
+
+   Abilitare la configurazione della gestione in Load Balancing scommentando le seguenti righe:
+
+   ::
+
+      # Configurazione in Load Balancing
+      tipoAccesso=govway
+      aliases=#IDGW1#,..,#IDGWN#                        
                               
 
    Devono essere elencati tutti gli identificativi, di ogni nodo gateway
@@ -52,16 +60,16 @@ A tale scopo sarà necessario:
    ::
 
       # Configurazione IDGW1
-      #IDGW1#.risorseJmxPdd.descrizione=#DESCRIZIONEGW1#
-      #IDGW1#.risorseJmxPdd.remoteAccess.url=http://#HOSTGW1#:#PORTGW1#/govway/check
-      #IDGW1#.risorseJmxPdd.remoteAccess.username=#USERNAMEGW1#
-      #IDGW1#.risorseJmxPdd.remoteAccess.password=#PASSWORDGW1#
+      #IDGW1#.descrizione=#DESCRIZIONEGW1#
+      #IDGW1#.remoteAccess.url=http://#HOSTGW1#:#PORTGW1#/govway/check
+      #IDGW1#.remoteAccess.username=#USERNAMEGW1#
+      #IDGW1#.remoteAccess.password=#PASSWORDGW1#
       ...
       # Configurazione IDGWN
-      #IDGWN#.risorseJmxPdd.descrizione=#DESCRIZIONEGWN#
-      #IDGWN#.risorseJmxPdd.remoteAccess.url=http://#HOSTGWN#:#PORTGWN#/govway/check
-      #IDGWN#.risorseJmxPdd.remoteAccess.username=#USERNAMEGWN#
-      #IDGWN#.risorseJmxPdd.remoteAccess.password=#PASSWORDGWN#
+      #IDGWN#.descrizione=#DESCRIZIONEGWN#
+      #IDGWN#.remoteAccess.url=http://#HOSTGWN#:#PORTGWN#/govway/check
+      #IDGWN#.remoteAccess.username=#USERNAMEGWN#
+      #IDGWN#.remoteAccess.password=#PASSWORDGWN#
                               
 
    Devono essere elencati inserendo al posto di #USERNAMEGW# e
@@ -78,73 +86,77 @@ A tale scopo sarà necessario:
    fornita una descrizione per ogni nodo in Load Balancing al posto di
    #DESCRIZIONEGW#.
 
-#. Editare il file <directory-lavoro>/monitor_local.properties
-   Disabilitare la configurazione per la singola istanza commentando la
-   proprietà 'statoPdD.sonde.standard.Gateway.url':
+.. note::
+   Per mantenere una retrocompatibilità con le configurazioni descritte nelle precedenti versioni e attuate sui file *<directory-lavoro>/console_local.properties* e *<directory-lavoro>/monitor_local.properties*, le console utilizzeranno tali configurazioni se non riscontrano la presenza del nuovo file *<directory-lavoro>/govway.nodirun.properties*.
+
+**Configurazione HTTPS**
+
+È possibile configurare un accesso ad una url https tramite le seguenti proprietà aggiuntive, definendo il truststore da utilizzare per verificare il certificato ritornato dal server:
 
    ::
 
-      # Configurazione in Singola Istanza
-      #statoPdD.sonde.standard.Gateway.url=http://127.0.0.1:8080/govway/check
-                              
+      # Esempio per nodo IDGWX di un accesso tramite connettore https
+      #IDGWX.remoteAccess.https=true
+      #IDGWX.remoteAccess.https.verificaHostName=true
+      #IDGWX.remoteAccess.https.autenticazioneServer=true
+      #IDGWX.remoteAccess.https.autenticazioneServer.truststorePath=PATH
+      #IDGWX.remoteAccess.https.autenticazioneServer.truststoreType=jks
+      #IDGWX.remoteAccess.https.autenticazioneServer.truststorePassword=PASSWORD
 
-   Aggiungere le seguenti righe al fine di configurare la govwayMonitor
-   per il Load Balancing:
+Disabilitando l'autenticazione server, non sarà invece necessario definire un truststore ma verrà accettato qualsiasi certificato server (insecure):
+
+   ::
+
+      # Esempio per nodo IDGWX di un accesso tramite connettore https
+      #IDGWX.remoteAccess.https=true
+      #IDGWX.remoteAccess.https.verificaHostName=true
+      #IDGWX.remoteAccess.https.autenticazioneServer=false
+
+Le proprietà suddette, oltre a poter essere definite per ogni nodo possono anche essere configurate una volta sola eliminando il prefisso che identifica un nodo. Ad esempio:
+
+   ::
+
+      # Esempio di un accesso tramite connettore https valido per tutti i nodi
+      remoteAccess.https=true
+      remoteAccess.https.verificaHostName=true
+      remoteAccess.https.autenticazioneServer=false
+
+**Configurazione Timeout**
+
+È possibile configurare i parametri di timeout (valori in millisecondi) agendo sulle seguenti proprietà:
+
+   ::
+
+      #IDGW1.remoteAccess.readConnectionTimeout=5000
+      #IDGW1.remoteAccess.connectionTimeout=5000
+
+**Gruppi di Nodi (govwayConsole)**
+
+La console di gestione consente, nella sezione 'Runtime', di svuotare le cache di tutti i nodi tramite un'unica operazione. Per attuare un comportamento simile ma limitato ad un gruppo di nodi è possibile configurare le seguenti proprietà classificando i nodi in gruppi:
+
+   ::
+
+      # Classificazione dei nodi in gruppi
+      aliases.<idGruppo1>=#IDGW1,#IDGW2
+      aliases.<idGruppo2>=#IDGW2,#IDGWN
+
+**Configurazione Avanzata delle Sonde (govwayMonitor)**
+
+La console di monitoraggio invoca periodicamente un servizio 'sonda' di ogni nodo registrato per verificarne il corretto funzionamento. Per default la url invocata è quella configurata nella proprietà '#IDGWN#.remoteAccess.url' descritta in precedenza. È possibile far utilizzare alla console di monitoraggio una url differente aggiungendo al file *<directory-lavoro>/govway.nodirun.properties* la seguente configurazione aggiuntiva:
+   
+   ::
+
+      # Configurazione IDGW1
+      #IDGW1#.remoteAccess.checkStatus.url=http://#HOSTGW1#:#PORTGW1#/govway/check
+      ...
+      # Configurazione IDGWN
+      #IDGWN#.remoteAccess.checkStatus.url=http://#HOSTGWN#:#PORTGWN#/govway/check
+
+È inoltre possibile elencare un numero di nodi differenti aggiungendo nel file *<directory-lavoro>/monitor_local.properties* la seguente proprietà:
 
    ::
 
       # Configurazione in Load Balancing
-      configurazioni.risorseJmxPdd.tipoAccesso=openspcoop
-      configurazioni.risorseJmxPdd.aliases=IDGW1,..,IDGWN
-      transazioni.idCluster.useSondaPdDList=true
-                              
-
-   Devono essere elencati tutti gli identificativi, di ogni GovWay in Load
-   Balancing, registrati nel file govway_local.properties nella
-   proprietà 'org.openspcoop2.pdd.cluster_id' come descritto in precedenza.
-   Per ogni identificativo devono inoltre essere fornite le seguenti
-   informazioni:
-
-   ::
-
-      # Configurazione IDGW1
-      #IDGW1#.configurazioni.risorseJmxPdd.remoteAccess.url=http://#HOSTGW1#:#PORTGW1/govway/check
-      #IDGW1#.configurazioni.risorseJmxPdd.remoteAccess.username=#USERNAMEGW1#
-      #IDGW1#.configurazioni.risorseJmxPdd.remoteAccess.password=#PASSWORDGW1#
-      ...
-      # Configurazione IDGWN
-      #IDGWN#.configurazioni.risorseJmxPdd.remoteAccess.url=http://#HOSTGWN#:#PORTGWN/govway/check
-      #IDGWN#.configurazioni.risorseJmxPdd.remoteAccess.username=#USERNAMEGWN#
-      #IDGWN#.configurazioni.risorseJmxPdd.remoteAccess.password=#PASSWORDGWN#
-                              
-
-   Devono essere elencati inserendo al posto di #USERNAMEGW# e
-   #PASSWORDGW# le credenziali utilizzate in precedenza nel file 'govway_local.properties', proprietà:
-
-   ::
- 
-      org.openspcoop2.pdd.check.readJMXResources.username e
-      org.openspcoop2.pdd.check.readJMXResources.password
-
-   Indicare inoltre al posto di #HOSTGW# e #PORTGW# l'hostname e la
-   porta con cui è raggiungibile GovWay.
-
-.. note::
-   È possibile utilizzare un servizio 'sonda' differente da quello di default abilitando la seguente configurazione aggiuntiva:
-   
-      ::
-
-         # Configurazione IDGW1
-         statoPdD.sonde.standard.#IDGW1#.url=http://#HOSTGW1#:#PORTGW1#/govway/check
-         ...
-         # Configurazione IDGWN
-         statoPdD.sonde.standard.#IDGWN#.url=http://#HOSTGWN#:#PORTGWN#/govway/check
-
-   È inoltre possibile elencare un numero di nodi differenti tramite la seguente proprietà:
-
-      ::
-
-         # Configurazione in Load Balancing
-         statoPdD.sonde.standard.nodi=IDGW1,..,IDGWN
+      statoPdD.sonde.standard.nodi=IDGW1,..,IDGWN
 
 

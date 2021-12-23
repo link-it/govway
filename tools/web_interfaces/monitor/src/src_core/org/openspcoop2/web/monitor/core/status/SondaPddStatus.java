@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -42,7 +43,7 @@ import org.slf4j.Logger;
 public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 
 	public final static String GATEWAY_DEFAULT = "Gateway";
-	public final static String ALIAS_DEFAULT = "pdd";
+	public final static String ALIAS_DEFAULT = ConfigurazioneNodiRuntime.ALIAS_DEFAULT;
 	
 	/**
 	 * 
@@ -60,14 +61,29 @@ public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 
 			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(this.log);
 
-			for (String namePdD : this.getListaPdDMonitorate_StatusPdD()) {
+			List<String> listaPdDMonitorate_StatusPdD = this.getListaPdDMonitorate_StatusPdD();
+
+			ConfigurazioneNodiRuntime config = pddMonitorProperties.getConfigurazioneNodiRuntime();
+			
+			
+			for (String nomeSonda : listaPdDMonitorate_StatusPdD) {
 				
-				String url = this.propertiesSonda.getProperty(namePdD+".url"); //"pdd."+
+				String nomeNodoRuntime = nomeSonda;
+				if(listaPdDMonitorate_StatusPdD.size()==1 && SondaPddStatus.GATEWAY_DEFAULT.equals(nomeSonda)) {
+					if(!config.containsNode(nomeSonda) && config.containsNode(SondaPddStatus.ALIAS_DEFAULT)) {
+						nomeNodoRuntime = SondaPddStatus.ALIAS_DEFAULT;
+					}
+				}
+				
+				String url = config.getCheckStatusUrl(nomeNodoRuntime); // leggo prima il file unico dei nodi, se presente (la configurazione backward non avrà questa impostata, poichè si tratta di una nuova proprietà)
 				if(url==null) {
-					url = pddMonitorProperties.getJmxPdD_remoteAccess_url(namePdD);
+					url = this.propertiesSonda.getProperty(nomeSonda+".url"); //"pdd."+
 				}
 				if(url==null) {
-					String p1 = "statoPdD.sonde.standard."+namePdD+".url";
+					url = config.getResourceUrl(nomeNodoRuntime);
+				}
+				if(url==null) {
+					String p1 = "statoPdD.sonde.standard."+nomeSonda+".url";
 					throw new Exception("Alternative Properties ["+p1+"] or [configurazioni.risorseJmxPdd.remoteAccess.url] not found");
 				}
 				
@@ -80,25 +96,25 @@ public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 				Integer connectionTimeout = null;
 				Integer readConnectionTimeout = null;
 				
-				String httpsP = this.propertiesSonda.getProperty(namePdD+".https");
+				String httpsP = this.propertiesSonda.getProperty(nomeSonda+".https");
 				if(httpsP!=null) {
 					https = "true".equals(httpsP.trim()); // default false
 				}
 				else {
-					https = pddMonitorProperties.isJmxPdD_remoteAccess_https(namePdD);
+					https = config.isHttps(nomeNodoRuntime);
 				}
 				
-				String connectionTimeoutS = this.propertiesSonda.getProperty(namePdD+".connectionTimeout");
+				String connectionTimeoutS = this.propertiesSonda.getProperty(nomeSonda+".connectionTimeout");
 				if(connectionTimeoutS==null) {
-					connectionTimeoutS = pddMonitorProperties.getJmxPdD_remoteAccess_connectionTimeout(namePdD);
+					connectionTimeoutS = config.getConnectionTimeout(nomeNodoRuntime);
 				}					
 				if(connectionTimeoutS!=null) {
 					connectionTimeout = Integer.valueOf(connectionTimeoutS);
 				}
 				
-				String readConnectionTimeoutS = this.propertiesSonda.getProperty(namePdD+".readConnectionTimeout");
+				String readConnectionTimeoutS = this.propertiesSonda.getProperty(nomeSonda+".readConnectionTimeout");
 				if(readConnectionTimeoutS==null) {
-					readConnectionTimeoutS = pddMonitorProperties.getJmxPdD_remoteAccess_readConnectionTimeout(namePdD);
+					readConnectionTimeoutS = config.getReadConnectionTimeout(nomeNodoRuntime);
 				}
 				if(readConnectionTimeoutS!=null) {
 					readConnectionTimeout = Integer.valueOf(readConnectionTimeoutS);
@@ -106,52 +122,57 @@ public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 								
 				if(https) {
 					
-					String httpsP_verificaHostName = this.propertiesSonda.getProperty(namePdD+".https.verificaHostName");
+					String httpsP_verificaHostName = this.propertiesSonda.getProperty(nomeSonda+".https.verificaHostName");
 					if(httpsP_verificaHostName!=null) {
 						https_verificaHostName = "false".equals(httpsP_verificaHostName.trim()); // default true
 					}
 					else {
-						https_verificaHostName = pddMonitorProperties.isJmxPdD_remoteAccess_https_verificaHostName(namePdD);
+						https_verificaHostName = config.isHttps_verificaHostName(nomeNodoRuntime);
 					}
 					
-					String httpsP_autenticazioneServer = this.propertiesSonda.getProperty(namePdD+".https.autenticazioneServer");
+					String httpsP_autenticazioneServer = this.propertiesSonda.getProperty(nomeSonda+".https.autenticazioneServer");
 					if(httpsP_autenticazioneServer!=null) {
 						https_autenticazioneServer = "false".equals(httpsP_autenticazioneServer.trim()); // default true
 					}
 					else {
-						https_autenticazioneServer = pddMonitorProperties.isJmxPdD_remoteAccess_https_autenticazioneServer(namePdD);
+						https_autenticazioneServer = config.isHttps_autenticazioneServer(nomeNodoRuntime);
 					}
 				
 					if(https_autenticazioneServer) {
 						
-						https_truststorePath = this.propertiesSonda.getProperty(namePdD+".https.autenticazioneServer.truststorePath");
+						https_truststorePath = this.propertiesSonda.getProperty(nomeSonda+".https.autenticazioneServer.truststorePath");
 						if(https_truststorePath==null) {
-							https_truststorePath = pddMonitorProperties.getJmxPdD_remoteAccess_https_autenticazioneServer_truststorePath(namePdD);
+							https_truststorePath = config.getHttps_autenticazioneServer_truststorePath(nomeNodoRuntime);
 						}
 						if(StringUtils.isEmpty(https_truststorePath)) {
-							throw new Exception("[gateway:"+namePdD+"] TLS Truststore path non fornito");
+							throw new Exception("[gateway:"+nomeSonda+"] TLS Truststore path non fornito");
 						}
 						
-						https_truststoreType = this.propertiesSonda.getProperty(namePdD+".https.autenticazioneServer.truststoreType");
+						https_truststoreType = this.propertiesSonda.getProperty(nomeSonda+".https.autenticazioneServer.truststoreType");
 						if(https_truststoreType==null) {
-							https_truststoreType = pddMonitorProperties.getJmxPdD_remoteAccess_https_autenticazioneServer_truststoreType(namePdD);
+							https_truststoreType = config.getHttps_autenticazioneServer_truststoreType(nomeNodoRuntime);
 						}
 						if(StringUtils.isEmpty(https_truststoreType)) {
-							throw new Exception("[gateway:"+namePdD+"] TLS Truststore type non fornito");
+							throw new Exception("[gateway:"+nomeSonda+"] TLS Truststore type non fornito");
 						}
 						
-						https_truststorePassword = this.propertiesSonda.getProperty(namePdD+".https.autenticazioneServer.truststorePassword");
+						https_truststorePassword = this.propertiesSonda.getProperty(nomeSonda+".https.autenticazioneServer.truststorePassword");
 						if(https_truststorePassword==null) {
-							https_truststorePassword = pddMonitorProperties.getJmxPdD_remoteAccess_https_autenticazioneServer_truststorePassword(namePdD);
+							https_truststorePassword = config.getHttps_autenticazioneServer_truststorePassword(nomeNodoRuntime);
 						}
 						if(StringUtils.isEmpty(https_truststorePassword)) {
-							throw new Exception("[gateway:"+namePdD+"] TLS Truststore password non fornito");
+							throw new Exception("[gateway:"+nomeSonda+"] TLS Truststore password non fornito");
 						}
 					}
 				}
 				
 				PddStatus pddStat = new PddStatus();
-				pddStat.setNome(namePdD);
+				//pddStat.setNome(nomeSonda);
+				String descrizione = null;
+				if(config.containsNode(nomeNodoRuntime)) {
+					descrizione = config.getDescrizione(nomeNodoRuntime);
+				}
+				pddStat.setNome(descrizione!=null ? descrizione : nomeSonda);
 				pddStat.setUrl(url);
 				pddStat.setHttps(https);
 				pddStat.setHttps_verificaHostName(https_verificaHostName);

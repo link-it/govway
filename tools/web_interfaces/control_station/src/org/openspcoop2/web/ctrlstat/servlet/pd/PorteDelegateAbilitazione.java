@@ -203,7 +203,7 @@ public final class PorteDelegateAbilitazione extends Action {
 								porteDelegateCore.getJmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata(alias) :
 									porteDelegateCore.getJmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata(alias);
 						try{
-							String stato = porteDelegateCore.invokeJMXMethod(porteDelegateCore.getGestoreRisorseJMX(alias), alias, 
+							String stato = porteDelegateCore.getInvoker().invokeJMXMethod(alias, 
 									porteDelegateCore.getJmxPdD_configurazioneSistema_type(alias),
 									porteDelegateCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 									metodo, 
