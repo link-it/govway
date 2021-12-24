@@ -114,6 +114,14 @@ public class ConfigurazioneNodiRuntime {
 		}
 		return null;
 	}
+	public static List<String> getPrefixes(){
+		if(staticInstanceMap!=null && !staticInstanceMap.isEmpty()) {
+			List<String> l = new ArrayList<String>();
+			l.addAll(staticInstanceMap.keySet());
+			return l;
+		}
+		return null;
+	}
 	
 	private PropertiesReader reader;
 	private PropertiesReader readerClasspath;
@@ -178,6 +186,15 @@ public class ConfigurazioneNodiRuntime {
 		String tipo = this.readProperty(false, "clusterDinamico");
 		if(tipo!=null) {
 			this.clusterDinamico = "true".equalsIgnoreCase(tipo);
+		}
+		else {
+			// backward compatibility
+			if(!PREFIX_DEFAULT.equals(this.prefix)){
+				tipo = this.readProperty(false, "cluster_dinamico.enabled");
+				if(tipo!=null) {
+					this.clusterDinamico = "true".equalsIgnoreCase(tipo);
+				}
+			}
 		}
 	}
 	public boolean isClusterDinamico() {
