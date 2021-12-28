@@ -201,6 +201,7 @@
 			</then>
 		</if>
 
+
 		<if>
 			<and>
 				<equals arg1="${package}" arg2="$${package}"/>
@@ -208,7 +209,10 @@
 				<equals arg1="${methods}" arg2="$${methods}"/>
 			</and>
 			<then>
-				<junit printsummary="yes" haltonfailure="${haltOnFailure}" showoutput="${showOutput}">
+				<junit printsummary="yes" haltonfailure="${haltOnFailure}" showoutput="${showOutput}" fork="yes" forkmode="once">
+
+<!-- 					<jvmarg value="-Xdebug" /> -->
+<!-- 					<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8787" /> -->
 
 					<!-- Per non far comparire il Warning: Nashorn engine is planned to be removed from a future JDK release -->
 					<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
@@ -298,7 +302,10 @@
 								<if>
 									<equals arg1="${karateparams}" arg2=""/>
 									<then>
-										<junit printsummary="yes" haltonfailure="${haltOnFailure}" showoutput="${showOutput}">
+										<junit printsummary="yes" haltonfailure="${haltOnFailure}" showoutput="${showOutput}" fork="yes" forkmode="once">
+											
+											<!-- <jvmarg value="-Xdebug" /> -->
+											<!-- <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8787" /> -->
 
 											<!-- Per non far comparire il Warning: Nashorn engine is planned to be removed from a future JDK release -->
 											<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
@@ -320,7 +327,11 @@
 										</junit>
 									</then>
 									<else>
-										<junit printsummary="yes" haltonfailure="${haltOnFailure}" showoutput="${showOutput}">
+										<junit printsummary="yes" haltonfailure="${haltOnFailure}" showoutput="${showOutput}" fork="yes" forkmode="once">
+											
+											<!-- <jvmarg value="-Xdebug" /> -->
+											<!-- <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8787" /> -->
+											
 
 											<jvmarg value="${karateparams}"/>
 
@@ -350,7 +361,11 @@
 								<if>
 									<equals arg1="${karateparams}" arg2=""/>
 									<then>
-										<junit printsummary="yes" haltonfailure="${haltOnFailure}" showoutput="${showOutput}">
+										<junit printsummary="yes" haltonfailure="${haltOnFailure}" showoutput="${showOutput}" fork="yes" forkmode="once">
+											
+
+											<!-- <jvmarg value="-Xdebug" /> -->
+											<!-- <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8787" /> -->
 
 											<!-- Per non far comparire il Warning: Nashorn engine is planned to be removed from a future JDK release -->
 											<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
@@ -376,8 +391,11 @@
 										</junit>
 									</then>
 									<else>
-										<junit printsummary="yes" haltonfailure="${haltOnFailure}" showoutput="${showOutput}">
-
+										<junit printsummary="yes" haltonfailure="${haltOnFailure}" showoutput="${showOutput}" fork="yes" forkmode="once">
+											
+											<!-- <jvmarg value="-Xdebug" /> -->
+											<!-- <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8787" /> -->
+											
 											<jvmarg value="${karateparams}"/>
 
 											<!-- Per non far comparire il Warning: Nashorn engine is planned to be removed from a future JDK release -->

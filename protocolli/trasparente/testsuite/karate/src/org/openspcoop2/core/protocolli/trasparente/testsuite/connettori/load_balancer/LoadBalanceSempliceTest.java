@@ -22,6 +22,9 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_ba
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.ID_CONNETTORE_REPLY_PREFIX;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.delayRichiesteBackground;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.printMap;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,7 +33,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -43,14 +45,6 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
-/*
-	6 Connettori per erogazione.
-	ID = 0, 1, 2, 3					=> Connettori funzionanti
-	ID = 'connettore-disabilitato'	=> Connettore disabilitato
-	ID = 'connettore-rotto'			=> Connettore con errore di connessione
-	
-	Testo anche che al connettore disabilitato non venga instradato nulla, ogni politica ha un connettore disabilitato.
-*/
 
 /**
  * RestTest
@@ -58,6 +52,18 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  * @author Francesco Scarlato (scarlato@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
+ * 
+ * 
+ * 
+ * 	6 Connettori per erogazione.
+ *	ID = 0, 1, 2, 3					=> Connettori funzionanti
+ *	ID = 'connettore-disabilitato'	=> Connettore disabilitato
+ *	ID = 'connettore-rotto'			=> Connettore con errore di connessione
+	
+ *	I nomi invece sono:
+ *	Connettore0, Connettore1, Connettore2, Connettore3, ConnettoreDisabilitato, ConnettoreRotto
+	
+ *	Testo anche che al connettore disabilitato non venga instradato nulla, ogni politica ha un connettore disabilitato.
  */
 public class LoadBalanceSempliceTest extends ConfigLoader {
 
@@ -67,18 +73,31 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 	public static final String CONNETTORE_1 = "1";
 	public static final String CONNETTORE_2 = "2";
 	public static final String CONNETTORE_3 = "3";
-	public static final String CONNETTORE_ROTTO = "connettore-rotto";	
+	public static final String CONNETTORE_ROTTO = "connettore-rotto";
 	public static final String CONNETTORE_DISABILITATO = "connettore-disabilitato";
 	
-	public static final String ID_CONNETTORE_REPLY_PREFIX = "GovWay-TestSuite-";
-	public static final String ID_CONNETTORE_QUERY = ID_CONNETTORE_REPLY_PREFIX+"id_connettore";
-	
-	private static final int durataBloccante = Integer
-			.valueOf(System.getProperty("connettori.load_balancer.least_connections.durata_bloccante"));
-	
-	private static final int delayRichiesteBackground = Integer
-			.valueOf(System.getProperty("connettori.load_balancer.least_connections.delay_richieste_background"));
+	// TODO: Armonizza con gli altri connettori di ConsegnaCondizionale
+	private static String getIdConnettore(HttpResponse response) {
+		if (response.getResultHTTPOperation() == 200) {				 
+			return response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE);
+		} else {
+			return CONNETTORE_ROTTO;
+		}		
+	}
 
+	
+	public static Map<String, Integer> contaConnettoriUtilizzati(Vector<HttpResponse> responses) {
+		Map<String, Integer> howManys = new HashMap<>();
+		
+		for (var response : responses) {
+			String id_connettore = getIdConnettore(response);						
+			assertNotEquals(null, id_connettore);
+			howManys.put(id_connettore, howManys.getOrDefault(id_connettore, 0)+1);
+		}
+		return howManys;
+	}
+
+	
 	@Test
 	public void roundRobin() {
 		/*
@@ -89,13 +108,13 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 
 		final String erogazione = "LoadBalanceRoundRobin";
 
-		HttpRequest okRequest = new HttpRequest();
-		okRequest.setContentType("application/json");
-		okRequest.setMethod(HttpRequestMethod.GET);
-		okRequest.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
+		HttpRequest request = new HttpRequest();
+		request.setContentType("application/json");
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
 
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(okRequest, 15);
+		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 15);
 
 		// Ho 5 connettori buoni, mi aspetto tre richieste per ognuno.
 		Map<String, Integer> howManys = contaConnettoriUtilizzati(responses);
@@ -244,7 +263,9 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 	public void sourceIpHashWithHeader_ForwardedFor() throws UtilsException {
 		/* 
 		 * Viene fatto l'hash dell'indirizzo ip del client e del valore dello header 
-		 * Forwarded-For e in base a questo valore viene identificato il connettore. 
+		 * Forwarded-For e in base a questo valore viene identificato il connettore.
+		 * 
+		 *  TODO: Se il valore dello header non è un indirizzo ip, lo hash butta tutto sullo stesso connettore, VERIFICA.
 		 */
 
 		final String erogazione = "LoadBalanceSourceIpHash";
@@ -322,7 +343,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		requestBlocking.setContentType("application/json");
 		requestBlocking.setMethod(HttpRequestMethod.GET);
 		requestBlocking.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
-				+ "?sleep="+durataBloccante +
+				+ "?sleep="+org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.durataBloccante +
 				"&replyQueryParameter=id_connettore&replyPrefixQueryParameter="
 				+ ID_CONNETTORE_REPLY_PREFIX);
 		
@@ -359,6 +380,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		// Inizio 3 richieste con una sleep sui primi 3
 	}
 	
+	
 	@Test
 	public void leastConnectionsAsRoundRobin() {
 		// Facendo delle richieste in background con sleep, una dopo l'altra, 
@@ -370,7 +392,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		requestBlocking.setContentType("application/json");
 		requestBlocking.setMethod(HttpRequestMethod.GET);
 		requestBlocking.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
-				+ "?sleep="+durataBloccante +
+				+ "?sleep="+org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.durataBloccante +
 				"&replyQueryParameter=id_connettore&replyPrefixQueryParameter="
 				+ ID_CONNETTORE_REPLY_PREFIX);
 		
@@ -399,7 +421,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		requestBlockingLong.setContentType("application/json");
 		requestBlockingLong.setMethod(HttpRequestMethod.GET);
 		requestBlockingLong.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
-				+ "?sleep="+durataBloccante+2000 +
+				+ "?sleep="+org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.durataBloccante+2000 +
 				"&replyQueryParameter=id_connettore&replyPrefixQueryParameter="
 				+ ID_CONNETTORE_REPLY_PREFIX);
 		
@@ -408,34 +430,5 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		
 	}
 
-
-	private static void printMap(Map<String,Integer> howManys) {
-		for (var e : howManys.entrySet()) {
-			System.out.println(e.getKey() + ": " + e.getValue());
-		}
-	}
-
-	
-	private static Map<String, Integer> contaConnettoriUtilizzati(Vector<HttpResponse> responses) {
-		Map<String, Integer> howManys = new HashMap<>();
-		
-		for (var response : responses) {
-			String id_connettore = getIdConnettore(response);						
-			assertNotEquals(null, id_connettore);
-			howManys.put(id_connettore, howManys.getOrDefault(id_connettore, 0)+1);
-		}
-		return howManys;
-	}
-	
-
-	private static String getIdConnettore(HttpResponse response) {
-		if (response.getResultHTTPOperation() == 200) {				 
-			return response.getHeaderFirstValue(ID_CONNETTORE_QUERY);
-		} else {
-			return CONNETTORE_ROTTO;
-		}		
-	}
-
-	
 
 }
