@@ -405,6 +405,9 @@ public class ConsegnaCondizionaleTest extends ConfigLoader {
 	@Test
 	public void templateByNome() {
 				
+		// TODO: Se non metto content-type application/json govway si arrabbia e non parte
+		// l'identificazione col template, è un bug.
+		
 		// Il template pesca il valore del parametro query govway-testsuite-id_connettore_request,
 		// riuso quanto fatto per il test parametro query
 		
