@@ -155,6 +155,40 @@ public class ConsegnaCondizionaleTest extends ConfigLoader {
 	}
 	
 	
+	HttpRequest buildRequest_FreemarkerTemplateByNome(String connettore) {
+
+		// L'espressione regolare sull'erogazione matcha il parametro query govway-testsuite-id_connettore_request.
+
+		final String erogazione = "ConsegnaCondizionaleFreemarkerTemplateByNome";
+		
+		HttpRequest request = new HttpRequest();
+		// request.setContentType("application/json"); TODO: adesso il test fallisce, dopo il fix di andrea non sarà più necessario settare il content type
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
+				+ "&govway-testsuite-id_connettore_request="+connettore); 		 
+
+		return request;
+	}
+	
+	
+	HttpRequest buildRequest_VelocityTemplateByNome(String connettore) {
+
+		// L'espressione regolare sull'erogazione matcha il parametro query govway-testsuite-id_connettore_request.
+
+		final String erogazione = "ConsegnaCondizionaleVelocityTemplateByNome";
+		
+		HttpRequest request = new HttpRequest();
+		//request.setContentType("application/json"); //TODO: adesso il test fallisce, dopo il fix di andrea non sarà più necessario settare il content type
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
+				+ "&govway-testsuite-id_connettore_request="+connettore); 		 
+
+		return request;
+	}
+	
+	
 
 	/* 
 	 * Esegue un thread per ogni richiesta e per ogni thread esegue requests_per_batch richieste
@@ -406,6 +440,7 @@ public class ConsegnaCondizionaleTest extends ConfigLoader {
 	public void templateByNome() {
 				
 		// TODO: Se non metto content-type application/json govway si arrabbia e non parte
+		// TODO: Una volta che andrea ha risolto, fai i due test
 		// l'identificazione col template, è un bug.
 		
 		// Il template pesca il valore del parametro query govway-testsuite-id_connettore_request,
@@ -419,6 +454,38 @@ public class ConsegnaCondizionaleTest extends ConfigLoader {
 		
 		matchResponsesWithConnettori(connettoriAbilitati, responsesByConnettore);		
 		
+	}
+	
+	
+	@Test
+	public void freemarkerTemplateByNome() {
+		
+		// Test uguale a templateByNome
+		
+		var requestsByConnettore = connettoriAbilitati.stream()
+				.map(this::buildRequest_FreemarkerTemplateByNome)
+				.collect(Collectors.toList());
+							
+		var responsesByConnettore = makeBatchedRequests(requestsByConnettore, 3);
+		
+		matchResponsesWithConnettori(connettoriAbilitati, responsesByConnettore);		
+		
+	}
+	
+	
+	@Test
+	public void velocityTemplateByNome() {
+		
+		// Test uguale a templateByNome
+		
+		var requestsByConnettore = connettoriAbilitati.stream()
+				.map(this::buildRequest_VelocityTemplateByNome)
+				.collect(Collectors.toList());
+							
+		var responsesByConnettore = makeBatchedRequests(requestsByConnettore, 3);
+		
+		matchResponsesWithConnettori(connettoriAbilitati, responsesByConnettore);		
+
 	}
 
 
