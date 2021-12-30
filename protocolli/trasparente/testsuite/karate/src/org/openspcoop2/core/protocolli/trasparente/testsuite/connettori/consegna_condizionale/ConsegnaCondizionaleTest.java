@@ -495,8 +495,8 @@ public class ConsegnaCondizionaleTest extends ConfigLoader {
 			assertEquals(200, resp.getResultHTTPOperation());
 			assertEquals(connettore, resp.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));			
 		}	
-		
 	}
+	
 	
 	@Test
 	public void ordinamentoRegole() throws UtilsException {
@@ -537,6 +537,18 @@ public class ConsegnaCondizionaleTest extends ConfigLoader {
 		var response = HttpUtilities.httpInvoke(request);
 		
 		assertEquals(CONNETTORE_0, response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
+		
+		String id_transazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		String messaggio1 = "Identificazione 'HeaderBased' (Header HTTP: GovWay-TestSuite-Connettore) non è riuscita ad estrarre dalla richiesta l'informazione utile ad identificare il connettore da utilizzare: header non presente";
+		String messaggio2 = "Per la consegna viene utilizzato il connettore 'Connettore0', configurato per essere utilizzato in caso di identificazione condizionale fallita";
+		
+		String query = "select count(*) from msgdiagnostici where id_transazione=? AND messaggio=?";
+				
+		Integer nrows = getDbUtils().readValue(query, Integer.class, id_transazione, messaggio1);
+		assertEquals(Integer.valueOf(0), nrows);
+		
+		nrows = getDbUtils().readValue(query, Integer.class, id_transazione, messaggio2);		
+		assertEquals(Integer.valueOf(1), nrows);
 	}
 	
 	
@@ -605,8 +617,39 @@ public class ConsegnaCondizionaleTest extends ConfigLoader {
 	
 	
 	@Test
-	public void nessunConnettoreUtilizzabileNoDiagnostico() {
+	public void nessunConnettoreUtilizzabileNoDiagnostico() throws UtilsException {
+		// Come per identificazioneFallitaNoDisagnostico, il connettore di fallback è il 0
+		// Devo inoltre controllare che non sia stato emesso il messaggio sul db
 		
+		// TODO Prova anche provando a instradare verso il connettore disabilitato che succede
+		
+		final String erogazione = "ConsegnaCondizionaleNessunConnettoreUtilizzabileNoDiagnostico";
+		
+		HttpRequest request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
+		request.addHeader(HEADER_CONDIZIONE, "CONNETTORE_INESISTENTE");
+		
+		var response = HttpUtilities.httpInvoke(request);
+		
+		assertEquals(CONNETTORE_0, response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
+		
+		String id_transazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		System.out.println("ID TRANSAZIONE " + id_transazione);
+		
+		/*String messaggio1 = "Identificazione 'HeaderBased' (Header HTTP: GovWay-TestSuite-Connettore) non è riuscita ad estrarre dalla richiesta l'informazione utile ad identificare il connettore da utilizzare: header non presente";
+		String messaggio2 = "Per la consegna viene utilizzato il connettore 'Connettore0', configurato per essere utilizzato in caso di identificazione condizionale fallita";
+		
+		String query = "select count(*) from msgdiagnostici where id_transazione=? AND severita=? AND messaggio=?";
+				
+		Integer nrows = getDbUtils().readValue(query, Integer.class, id_transazione, Integer.valueOf(2), messaggio1);
+		
+		assertEquals(Integer.valueOf(1), nrows);
+		
+		nrows = getDbUtils().readValue(query, Integer.class, id_transazione, Integer.valueOf(4), messaggio2);
+		
+		assertEquals(Integer.valueOf(1), nrows);*/
 	}
 	
 	
@@ -627,6 +670,20 @@ public class ConsegnaCondizionaleTest extends ConfigLoader {
 		
 	}
 	
+	@Test
+	public void prefisso() {
+		
+	}
+	
+	@Test
+	public void suffisso() {
+		
+	}
+	
+	@Test
+	public void prefissoESuffisso() {
+		
+	}
 	// TODO Prova anche Identificazione fallita + Nessun Connettore Utilizzabile    
 
 
@@ -676,26 +733,6 @@ public class ConsegnaCondizionaleTest extends ConfigLoader {
 		}
 	
 		return ret;
-	}
-	
-	
-	
-	
-	
-
-	
-	
-	@Test
-	public void identificazioneCondizioneFallitaLogError() {
-		// Il connettore di fallback è il 3
-		// TODO Chiedi ad andrea come verificare il messaggio di log, suppongo la traccia?
-		// TODO: Faccio anche il test per "disabilitato?" l'obbiettivo è sempre tenere basso il tempo totale..
-
-		
-	}
-	
-	@Test
-	public void identificazioneCondizioneFallitaLogInfo() {
 	}
 	
 	
