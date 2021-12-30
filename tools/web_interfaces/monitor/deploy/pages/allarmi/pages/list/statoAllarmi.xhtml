@@ -352,7 +352,7 @@
 								<h:outputText value="Dettaglio" id="outDettaglio" />
 							</f:facet>
 							<h:panelGroup layout="block" style="width: 60px;">
-								<a4j:htmlCommandLink id="dettaglio-iconLink" styleClass="#{item.existsAlmostOneManuallyUpdateState ? 'edit-link' : ''}" value="" action="#{allarmiBean.dettaglioAllarme}">
+								<a4j:htmlCommandLink id="dettaglio-iconLink" styleClass="#{(item.existsAlmostOneManuallyUpdateState or item.existsAlmostOneManuallyAckCriteria) ? 'edit-link' : ''}" value="" action="#{allarmiBean.dettaglioAllarme}">
 									<i class="material-icons md-18" id="iconaDettaglioOpen">&#xE8B6;</i>
 									<rich:toolTip id="dettaglioToolLink" for="dettaglio-iconLink" mode="client" value="Visualizza Dettaglio" />
 									<f:setPropertyActionListener value="#{item}" target="#{allarmiBean.allarme}" />
@@ -360,12 +360,18 @@
 									<f:setPropertyActionListener value="#{false}" target="#{allarmiBean.editMode}"/>
 								</a4j:htmlCommandLink>
 								<a4j:htmlCommandLink id="edit-iconLink" styleClass="edit-link" value="" action="#{allarmiBean.dettaglioAllarme}" 
-									rendered="#{item.enabled == 1 and item.manuallyUpdateState and (item.modalitaAttiva ? allarmiBean.allarmiConsultazioneModificaStatoAbilitataAllarmeAttivo : allarmiBean.allarmiConsultazioneModificaStatoAbilitataAllarmePassivo)}">
+									rendered="#{item.enabled == 1 and (
+										 (item.manuallyUpdateState and (item.modalitaAttiva ? allarmiBean.allarmiConsultazioneModificaStatoAbilitataAllarmeAttivo : allarmiBean.allarmiConsultazioneModificaStatoAbilitataAllarmePassivo))
+										 or
+										 (item.manuallyAckCriteria and (item.modalitaAttiva ? allarmiBean.allarmiConsultazioneModificaAckCriteriaAllarmeAttivo : allarmiBean.allarmiConsultazioneModificaAckCriteriaAllarmePassivo))
+										 )}">
 									<i class="material-icons md-18" id="iconaModificaOpen">edit</i>
-									<rich:toolTip id="editToolLink" for="edit-iconLink" mode="client" value="Modifica Stato" />
+									<rich:toolTip id="editToolLink" for="edit-iconLink" mode="client" value="#{(item.manuallyUpdateState and (item.modalitaAttiva ? allarmiBean.allarmiConsultazioneModificaStatoAbilitataAllarmeAttivo : allarmiBean.allarmiConsultazioneModificaStatoAbilitataAllarmePassivo)) ? 
+										'Modifica Stato' : 'Modifica Criteri Acknowledge'}" />
 									<f:setPropertyActionListener value="#{item}" target="#{allarmiBean.allarme}" />
 									<f:setPropertyActionListener value="stato" target="#{allarmiBean.selectedTab}"/>
-									<f:setPropertyActionListener value="#{true}" target="#{allarmiBean.editMode}"/>
+									<f:setPropertyActionListener value="#{(item.manuallyUpdateState and (item.modalitaAttiva ? allarmiBean.allarmiConsultazioneModificaStatoAbilitataAllarmeAttivo : allarmiBean.allarmiConsultazioneModificaStatoAbilitataAllarmePassivo))}" target="#{allarmiBean.editMode}"/>
+									<f:setPropertyActionListener value="#{ (item.manuallyAckCriteria and (item.modalitaAttiva ? allarmiBean.allarmiConsultazioneModificaAckCriteriaAllarmeAttivo : allarmiBean.allarmiConsultazioneModificaAckCriteriaAllarmePassivo))}" target="#{allarmiBean.ackMode}"/>
 								</a4j:htmlCommandLink>
 							</h:panelGroup>
 						</rich:column>

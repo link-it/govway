@@ -45,19 +45,26 @@ public class AlarmLogger implements IAlarmLogger {
 	private String nome;
 	private String id;
 	private Logger _log;
+	private Logger _logSql;
 	
-	public AlarmLogger(String nome, String id, String threadName, Logger log) {
+	
+	public AlarmLogger(String nome, String id, String threadName, Logger log, Logger logSql) {
 		this.logHistory = new CircularFifoQueue<String>(NUMERO_EVENTI); // mantiene gli ultimi x log
 		this.nome = nome;
 		this.id = id;
 		this.threadName = threadName;
 		this._log = log;
+		this._logSql = logSql;
 	}
 	
 
 	@Override
 	public Logger getInternalLogger() {
 		return this._log;
+	}
+	@Override
+	public Logger getInternalSqlLogger() {
+		return this._logSql;
 	}
 	
 	@Override

@@ -68,7 +68,7 @@ public class ConfigurazioneNodiRuntime {
 		if(path!=null && StringUtils.isNotEmpty(path)) {
 			File f = new File(path);
 			boolean read = false;
-			if(backwardCompatibilitiesProperties!=null && backwardCompatibilitiesProperties.length>0) {
+			if(cpClasspath!=null || (backwardCompatibilitiesProperties!=null && backwardCompatibilitiesProperties.length>0)) {
 				// la configurazione di default e' opzionale, se siamo in backwardCompatibilities mode
 				if(f.exists() && f.canRead()) {
 					read = true;

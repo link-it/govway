@@ -28,6 +28,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
@@ -784,7 +785,7 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTENT_PATTERN = ModalitaIdentificazione.CONTENT_BASED.getLabelParametro();
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO = "Applicativo Erogatore";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI = "Applicativi Erogatori";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE = "Connettore";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE = CostantiLabel.LABEL_CONNETTORE;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI = "Connettori";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_VERIFICA_CONNETTORE = CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI = CostantiControlStation.LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI;

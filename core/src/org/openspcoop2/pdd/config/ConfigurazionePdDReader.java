@@ -113,6 +113,7 @@ import org.openspcoop2.core.config.driver.ValidazioneSemantica;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.config.driver.xml.DriverConfigurazioneXML;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.StatoCheck;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
@@ -166,20 +167,20 @@ import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.mapping.IdentificazioneDinamicaException;
 import org.openspcoop2.protocol.engine.mapping.ModalitaIdentificazioneAzione;
 import org.openspcoop2.protocol.engine.mapping.OperationFinder;
+import org.openspcoop2.protocol.registry.CertificateCheck;
+import org.openspcoop2.protocol.registry.CertificateUtils;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.NameValue;
-import org.openspcoop2.utils.certificate.ArchiveLoader;
-import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.crypt.CryptConfig;
-import org.openspcoop2.utils.date.DateManager;
-import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.slf4j.Logger;
 
@@ -3927,8 +3928,9 @@ public class ConfigurazionePdDReader {
 
 	// CHECK CERTIFICATI
 	
-	protected StatoCheck checkCertificateConfiguration(Connection connectionPdD,boolean useCache,
-			long idSA, int sogliaWarningGiorni, StringBuilder sbDetails) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+	protected CertificateCheck checkCertificatoApplicativo(Connection connectionPdD,boolean useCache,
+			long idSA, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 		
 		if(useCache) {
 			throw new DriverConfigurazioneException("Not Implemented");
@@ -3943,10 +3945,13 @@ public class ConfigurazionePdDReader {
 		else {
 			throw new DriverConfigurazioneException("Not Implemented with driver '"+driver.getClass().getName()+"'");
 		}
-		return checkCertificateConfiguration(sa,sogliaWarningGiorni, sbDetails);
+		return checkCertificatoApplicativo(sa,sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
 	}
-	protected StatoCheck checkCertificateConfiguration(Connection connectionPdD,boolean useCache,
-			IDServizioApplicativo idSA, int sogliaWarningGiorni, StringBuilder sbDetails) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+	protected CertificateCheck checkCertificatoApplicativo(Connection connectionPdD,boolean useCache,
+			IDServizioApplicativo idSA, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 		
 		ServizioApplicativo sa = null;
 		if(useCache) {
@@ -3955,119 +3960,135 @@ public class ConfigurazionePdDReader {
 		else {
 			sa = this.configurazionePdD.getDriverConfigurazionePdD().getServizioApplicativo(idSA);
 		}
-		return checkCertificateConfiguration(sa, sogliaWarningGiorni,sbDetails);
+		return checkCertificatoApplicativo(sa, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
 	}
-	private StatoCheck checkCertificateConfiguration(ServizioApplicativo sa, int sogliaWarningGiorni, StringBuilder sbDetails) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+	public static CertificateCheck checkCertificatoApplicativo(ServizioApplicativo sa, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 		
 		if(sa.getInvocazionePorta()==null || sa.getInvocazionePorta().sizeCredenzialiList()<=0) {
 			throw new DriverConfigurazioneException("Nessuna credenziale risulta associata all'applicativo");
 		}
-		
-		boolean error = false;
-		boolean warning = false;
-		boolean almostOneValid = false;
+		List<byte[]> certs = new ArrayList<byte[]>();
+		List<Boolean> strictValidation = new ArrayList<Boolean>();
 		for (int i = 0; i < sa.getInvocazionePorta().sizeCredenzialiList(); i++) {
 			Credenziali c = sa.getInvocazionePorta().getCredenziali(i);
 			if(!org.openspcoop2.core.config.constants.CredenzialeTipo.SSL.equals(c.getTipo())) {
 				throw new DriverConfigurazioneException("La credenziale ("+c.getTipo()+") associata all'applicativo non è un certificato x509");
 			}
 			if(c.getCertificate()!=null) {
-				boolean principale = (i==0);
-				Certificate certificate = null;
-				String credenziale = "Certificato";
-				if(principale && sa.getInvocazionePorta().sizeCredenzialiList()>1) {
-					credenziale = credenziale + " principale";
-				}
-				try {
-					certificate = ArchiveLoader.load(c.getCertificate());
-					
-					String hex = certificate.getCertificate().getSerialNumberHex();
-					credenziale = credenziale+ " (CN:"+certificate.getCertificate().getSubject().getCN()+" serialNumber:"+hex+")";
-					boolean check = true;
-					try {
-						certificate.getCertificate().checkValid();
-					}catch(Throwable t) {
-						check = false;
-						if(sbDetails.length()>0) {
-							sbDetails.append("\n");
-						}
-						sbDetails.append(credenziale+" non valida: "+t.getMessage());
-						if(c.isCertificateStrictVerification()) {
-							error = true;
-							continue;
-						}
-						else {
-							warning = true;
-						}
-					}
-										
-					if(check && certificate.getCertificateChain()!=null && !certificate.getCertificateChain().isEmpty()) {
-						for (CertificateInfo caChain : certificate.getCertificateChain()) {
-							String hex_caChain = caChain.getSerialNumberHex();
-							String credenziale_caChain = "(CN:"+caChain.getSubject().getCN()+" serialNumber:"+hex_caChain+")";
-							try {
-								caChain.checkValid();
-							}catch(Throwable t) {
-								check = false;
-								if(sbDetails.length()>0) {
-									sbDetails.append("\n");
-								}
-								sbDetails.append(credenziale+"; un certificato della catena "+credenziale_caChain+" non risulta valido: "+t.getMessage());
-								if(c.isCertificateStrictVerification()) {
-									error = true;
-									continue;
-								}
-								else {
-									warning = true;
-								}
-							}
-						}
-					}
-					
-					if(check && sogliaWarningGiorni>0) {
-						if(certificate.getCertificate().getNotAfter()!=null) {
-							long expire = certificate.getCertificate().getNotAfter().getTime();
-							long now = DateManager.getTimeMillis();
-							long diff = expire - now;
-							long soglia = (1000*60*60*24) * sogliaWarningGiorni; 
-							if(diff<soglia) {
-								if(sbDetails.length()>0) {
-									sbDetails.append("\n");
-								}
-								sbDetails.append(credenziale+" vicina alla scadenza: "+DateUtils.getSimpleDateFormatDay().format(certificate.getCertificate().getNotAfter()));
-								warning = true;
-							}
-						}
-					}
-					
-				}catch(Throwable t) {
-					// non dovrebbe succedere
-					String msgError = "L'analisi del certificato associato alla credenziale i-"+i+" ha prodotto un errore non atteso: "+t.getMessage();
-					sbDetails.append(msgError); 
-					OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error(msgError, t);	
-					error = true;
-					continue;
-				}
-				
-				almostOneValid = true;
+				certs.add(c.getCertificate());
+				strictValidation.add(c.isCertificateStrictVerification());
 			}
 		}
-		
-		if(almostOneValid) {
-			if(error || warning) {
-				return StatoCheck.WARN;
-			}
-			else {
-				return StatoCheck.OK;
-			}
+		if(certs.isEmpty()) {
+			throw new DriverConfigurazioneException("Nessun certificato risulta associata all'applicativo");
 		}
 		else {
-			return StatoCheck.ERROR;
+			try {
+				return CertificateUtils.checkCertificateClient(certs, strictValidation, sogliaWarningGiorni,  
+						addCertificateDetails, separator, newLine,
+						log);
+			}catch(Throwable t) {
+				throw new DriverConfigurazioneException(t.getMessage(),t);
+			}
 		}
 
 	}
 
+	protected CertificateCheck checkCertificatoModiApplicativo(Connection connectionPdD,boolean useCache,
+			long idSA, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		if(useCache) {
+			throw new DriverConfigurazioneException("Not Implemented");
+		}
+		
+		ServizioApplicativo sa = null;
+		IDriverConfigurazioneGet driver = this.configurazionePdD.getDriverConfigurazionePdD();
+		if(driver instanceof DriverConfigurazioneDB) {
+			DriverConfigurazioneDB driverDB = (DriverConfigurazioneDB) driver;
+			sa = driverDB.getServizioApplicativo(idSA);
+		}
+		else {
+			throw new DriverConfigurazioneException("Not Implemented with driver '"+driver.getClass().getName()+"'");
+		}
+		return checkCertificatoModiApplicativo(sa,sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	protected CertificateCheck checkCertificatoModiApplicativo(Connection connectionPdD,boolean useCache,
+			IDServizioApplicativo idSA, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		ServizioApplicativo sa = null;
+		if(useCache) {
+			this.configurazionePdD.getServizioApplicativo(connectionPdD, idSA);
+		}
+		else {
+			sa = this.configurazionePdD.getDriverConfigurazionePdD().getServizioApplicativo(idSA);
+		}
+		return checkCertificatoModiApplicativo(sa, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	public static CertificateCheck checkCertificatoModiApplicativo(ServizioApplicativo sa, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		String protocollo = null;
+		try {
+			protocollo = ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(sa.getTipoSoggettoProprietario());
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+		boolean modi = CostantiLabel.MODIPA_PROTOCOL_NAME.equals(protocollo);
+		if(!modi) {
+			throw new DriverConfigurazioneException("Il profilo di interoperabilità dell'applicativo non è "+CostantiLabel.MODIPA_PROTOCOL_LABEL);
+		}
+		
+		KeystoreParams keystoreParams = ModIUtils.getApplicativoKeystoreParams(sa.getProtocolPropertyList());
+		if(keystoreParams==null) {
+			throw new DriverConfigurazioneException("Non risulta alcun keystore, da utilizzare per la firma "+CostantiLabel.MODIPA_PROTOCOL_LABEL+", associato all'applicativo");
+		}
+		
+		CertificateCheck check = null;
+		try {
+			if(keystoreParams.getStore()!=null) {
+				check = CertificateUtils.checkKeyStore(keystoreParams.getStore(), keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(),
+						sogliaWarningGiorni, 
+						addCertificateDetails, separator, newLine,
+						log);
+			}
+			else {
+				check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(),
+						sogliaWarningGiorni, 
+						addCertificateDetails, separator, newLine,
+						log);
+			}
+		}catch(Throwable t) {
+			throw new DriverConfigurazioneException(t.getMessage(),t);
+		}
 
+		if(StatoCheck.OK.equals(check.getStatoCheck())) {
+			byte[] cert = ModIUtils.getApplicativoKeystoreCertificate(sa.getProtocolPropertyList());
+			if(cert!=null && cert.length>0) {
+				try {
+					CertificateCheck checkSingleCertificate = CertificateUtils.checkSingleCertificate("Certificato associato al keystore ModI", cert, 
+							sogliaWarningGiorni, 
+							addCertificateDetails, separator, newLine,
+							log);
+					return checkSingleCertificate;
+				}catch(Throwable t) {
+					throw new DriverConfigurazioneException(t.getMessage(),t);
+				}
+			}
+		}
+		
+		return check;
+	}
 
 
 

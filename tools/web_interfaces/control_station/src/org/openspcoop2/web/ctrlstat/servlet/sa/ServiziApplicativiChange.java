@@ -1604,6 +1604,10 @@ public final class ServiziApplicativiChange extends Action {
 						credenziali.setCnSubject(cSelezionato.getCertificate().getSubject().getCN()); 
 						credenziali.setCertificate(cSelezionato.getCertificate().getCertificate().getEncoded());
 						credenziali.setCertificateStrictVerification(ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLVerificaTuttiICampi));
+						
+						credenziali.setSubject(null);
+						credenziali.setIssuer(null);
+						
 					} else { // configurazione manuale
 						credenziali.setSubject(subjectSA);
 						if(ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLConfigurazioneManualeSelfSigned)) {
@@ -1611,6 +1615,11 @@ public final class ServiziApplicativiChange extends Action {
 						} else {
 							credenziali.setIssuer(issuerSA);
 						}
+						
+						credenziali.setCnIssuer(null);
+						credenziali.setCnSubject(null);
+						credenziali.setCertificate(null);
+						credenziali.setCertificateStrictVerification(false);
 					}
 				}
 				else if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL)) {

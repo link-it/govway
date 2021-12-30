@@ -214,6 +214,13 @@ public class AllarmeFieldConverter extends AbstractSQLFieldConverter {
 				return "acknowledged";
 			}
 		}
+		if(field.equals(Allarme.model().DETTAGLIO_ACKNOWLEDGED)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".dettaglio_acknowledged";
+			}else{
+				return "dettaglio_acknowledged";
+			}
+		}
 		if(field.equals(Allarme.model().TIPO_PERIODO)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".periodo_tipo";
@@ -498,6 +505,9 @@ public class AllarmeFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(Allarme.model(), returnAlias);
 		}
 		if(field.equals(Allarme.model().ACKNOWLEDGED)){
+			return this.toTable(Allarme.model(), returnAlias);
+		}
+		if(field.equals(Allarme.model().DETTAGLIO_ACKNOWLEDGED)){
 			return this.toTable(Allarme.model(), returnAlias);
 		}
 		if(field.equals(Allarme.model().TIPO_PERIODO)){

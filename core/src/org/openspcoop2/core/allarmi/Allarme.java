@@ -52,6 +52,7 @@ import java.util.List;
  * 			&lt;element name="lasttimestamp-update" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="enabled" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="acknowledged" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="dettaglio-acknowledged" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="tipo-periodo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="periodo" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="filtro" type="{http://www.openspcoop2.org/core/allarmi}allarme-filtro" minOccurs="1" maxOccurs="1"/&gt;
@@ -84,6 +85,7 @@ import java.util.List;
   	"lasttimestampUpdate",
   	"enabled",
   	"acknowledged",
+  	"dettaglioAcknowledged",
   	"tipoPeriodo",
   	"periodo",
   	"filtro",
@@ -236,6 +238,14 @@ public class Allarme extends org.openspcoop2.utils.beans.BaseBean implements Ser
     this.acknowledged = acknowledged;
   }
 
+  public java.lang.String getDettaglioAcknowledged() {
+    return this.dettaglioAcknowledged;
+  }
+
+  public void setDettaglioAcknowledged(java.lang.String dettaglioAcknowledged) {
+    this.dettaglioAcknowledged = dettaglioAcknowledged;
+  }
+
   public java.lang.String getTipoPeriodo() {
     return this.tipoPeriodo;
   }
@@ -368,6 +378,10 @@ public class Allarme extends org.openspcoop2.utils.beans.BaseBean implements Ser
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlElement(name="acknowledged",required=true,nillable=false)
   protected java.lang.Integer acknowledged;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="dettaglio-acknowledged",required=false,nillable=false)
+  protected java.lang.String dettaglioAcknowledged;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tipo-periodo",required=false,nillable=false)

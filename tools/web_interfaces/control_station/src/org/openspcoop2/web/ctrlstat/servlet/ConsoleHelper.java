@@ -6367,8 +6367,9 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			// tipo autenticazione custom
+			String autenticazioneCustom = null;
 			if(autenticazione != null && autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM)) {
-				String autenticazioneCustom = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM );
+				autenticazioneCustom = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM );
 				
 				if(StringUtils.isEmpty(autenticazioneCustom) || CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED.equals(autenticazioneCustom)){
 					if(this.confCore.isConfigurazionePluginsEnabled()) {
@@ -6643,6 +6644,9 @@ public class ConsoleHelper implements IConsoleHelper {
 						String prefix = "";
 						
 						boolean modificataAutenticazione = !pd.getAutenticazione().equals(autenticazione);
+						if(autenticazioneCustom!=null && !"".equals(autenticazioneCustom)) {
+							modificataAutenticazione = !pd.getAutenticazione().equals(autenticazioneCustom);
+						}
 						if(!modificataAutenticazione) {
 							if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY.equals(autenticazione)) {
 								// verifico che non sia stato cambiato 'AppId'

@@ -43,5 +43,6 @@ public interface IAlarmLogger {
 	public void error(String messaggio, Throwable t);
 	
 	public Logger getInternalLogger();
+	public Logger getInternalSqlLogger();
 	
 }

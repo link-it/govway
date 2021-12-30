@@ -492,6 +492,25 @@ public final class CostantiDB {
     public static final String CONFIG_GENERIC_PROPERTY_COLUMN_ID_PROPS = "id_props";
     public static final String CONFIG_GENERIC_PROPERTY_COLUMN_NOME = "nome";
     public static final String CONFIG_GENERIC_PROPERTY_COLUMN_VALORE = "valore";
+
+    /**
+     * PROPRIETA SICUREZZA
+     */
+
+    public static final String KEY_IDENTIFIER_BST_DIRECT_REFERENCE = "DirectReference";
+    public static final String KEY_IDENTIFIER_ISSUER_SERIAL = "IssuerSerial";
+    public static final String KEY_IDENTIFIER_X509 = "X509KeyIdentifier";
+    public static final String KEY_IDENTIFIER_SKI = "SKIKeyIdentifier";
+    public static final String KEY_IDENTIFIER_EMBEDDED_KEY_NAME = "EmbeddedKeyName";
+    public static final String KEY_IDENTIFIER_THUMBPRINT = "Thumbprint";
+    public static final String KEY_IDENTIFIER_ENCRYPTED_KEY_SHA1 = "EncryptedKeySHA1";
+    
+    public static final String INCLUSIVE_C14N_10_OMITS_COMMENTS_URI = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
+    public static final String INCLUSIVE_C14N_10_WITH_COMMENTS_URI = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments";
+    public static final String INCLUSIVE_C14N_11_OMITS_COMMENTS_URI = "http://www.w3.org/2006/12/xml-c14n11";
+    public static final String INCLUSIVE_C14N_11_WITH_COMMENTS_URI = "http://www.w3.org/2006/12/xml-c14n11#WithComments";
+    public static final String EXCLUSIVE_C14N_10_OMITS_COMMENTS_URI = "http://www.w3.org/2001/10/xml-exc-c14n#";
+    public static final String EXCLUSIVE_C14N_10_WITH_COMMENTS_URI = "http://www.w3.org/2001/10/xml-exc-c14n#WithComments";
     
     
     /**
@@ -641,9 +660,18 @@ public final class CostantiDB {
     public static final String MODIPA_KEYSTORE_MODE_VALUE_HSM = "hsm";
     
     public static final String MODIPA_KEYSTORE_TYPE = "modipaKeystoreType";
+    public static final String MODIPA_KEYSTORE_TYPE_VALUE_JKS = "jks";
+    public static final String MODIPA_KEYSTORE_TYPE_VALUE_PKCS12 = "pkcs12";
+    
     public static final String MODIPA_KEYSTORE_PATH = "modipaKeystorePath";
     
+    public static final String MODIPA_KEYSTORE_PASSWORD = "modipaKeystorePassword";
+    
+    public static final String MODIPA_KEYSTORE_ARCHIVE = "modipaKeystoreArchive";
+    public static final String MODIPA_KEYSTORE_CERTIFICATE = "modipaKeystoreCertificate";
+    
     public static final String MODIPA_KEY_ALIAS = "modipaKeyAlias";
+    public static final String MODIPA_KEY_PASSWORD = "modipaKeyPassword";
     
     public static final String MODIPA_KEY_CN_SUBJECT = "modipaKeyCNSubject";
     public static final String MODIPA_KEY_CN_ISSUER = "modipaKeyCNIssuer";

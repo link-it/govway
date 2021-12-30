@@ -404,6 +404,21 @@ public class ConfigurazioneAllarmiAdd extends Action {
 			allarme.setLasttimestampCreate(new Date());
 			allarme.setAcknowledged(Integer.valueOf(0));
 			
+			// imposto il dettaglio dell'ack
+			if(allarme.getPlugin() != null) {
+				try{
+					IDynamicLoader dl = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME, allarme.getPlugin().getTipo(), allarme.getPlugin().getClassName(), ControlStationCore.getLog());
+					IAlarmProcessing alarm = (IAlarmProcessing) dl.newInstance();
+					if(alarm.isManuallyAckCriteria()) {
+						if(alarm.getDefaultManuallyAckCriteria()!=null) {
+							allarme.setDettaglioAcknowledged(alarm.getDefaultManuallyAckCriteria());
+						}
+					}
+				}catch(Exception e){
+					ControlStationCore.getLog().error(e.getMessage(), e);
+				}
+			}
+			
 			// insert sul db
 			confCore.performCreateOperation(userLogin, confHelper.smista(), allarme);
 			

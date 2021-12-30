@@ -24,11 +24,11 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.monitor.engine.status.GatewayStatus;
+import org.openspcoop2.monitor.engine.status.IStatus;
+import org.openspcoop2.monitor.engine.status.SondaStatus;
+import org.openspcoop2.monitor.engine.status.StatusUtilities;
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
-import org.openspcoop2.utils.transport.http.HttpRequest;
-import org.openspcoop2.utils.transport.http.HttpRequestMethod;
-import org.openspcoop2.utils.transport.http.HttpUtilities;
-import org.openspcoop2.utils.transport.http.HttpUtilsException;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.slf4j.Logger;
 
@@ -84,7 +84,7 @@ public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 				}
 				if(url==null) {
 					String p1 = "statoPdD.sonde.standard."+nomeSonda+".url";
-					throw new Exception("Alternative Properties ["+p1+"] or [configurazioni.risorseJmxPdd.remoteAccess.url] not found");
+					throw new Exception("Alternative Properties ["+p1+"] or [remoteAccess.url] not found");
 				}
 				
 				boolean https = false;
@@ -166,7 +166,7 @@ public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 					}
 				}
 				
-				PddStatus pddStat = new PddStatus();
+				GatewayStatus pddStat = new GatewayStatus();
 				//pddStat.setNome(nomeSonda);
 				String descrizione = null;
 				if(config.containsNode(nomeNodoRuntime)) {
@@ -203,81 +203,11 @@ public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 	@Override
 	public List<IStatus> updateStato() throws Exception {
 
-		for (IStatus pddBean : this.listaStatus) {
-
-			try{
-				_check(((PddStatus) pddBean));
-				pddBean.setStato(SondaStatus.OK);
-				pddBean.setDescrizione(null);
-			}catch(Exception e){
-				if(e instanceof HttpUtilsException) {
-					HttpUtilsException http = (HttpUtilsException) e;
-					if(http.getReturnCode()>=200 && http.getReturnCode()<=299) {
-						pddBean.setStato(SondaStatus.WARNING);
-					}
-					else {
-						pddBean.setStato(SondaStatus.ERROR);
-					}
-				}
-				else {
-					pddBean.setStato(SondaStatus.ERROR);
-				}
-				pddBean.setDescrizione(e.getMessage());
-				this.log.error("Sonda '"+pddBean.getNome()+"' ha rilevato un errore: "+e.getMessage(),e);
-			}
-
-		}
-
-		return this.listaStatus;
-	}
-
-	private void _check(PddStatus pdd) throws Exception {
-		boolean https = pdd.isHttps();
-		boolean https_verificaHostName = true;
-		boolean https_autenticazioneServer = true;
-		String https_truststorePath = null;
-		String https_truststoreType = null;
-		String https_truststorePassword = null;
-		if(https) {
-			https_verificaHostName = pdd.isHttps_verificaHostName();
-			https_autenticazioneServer = pdd.isHttps_autenticazioneServer();
-			if(https_autenticazioneServer) {
-				https_truststorePath = pdd.getHttps_autenticazioneServer_truststorePath();
-				if(StringUtils.isEmpty(https_truststorePath)) {
-					throw new Exception("[alias:"+pdd.getNome()+"] TLS Truststore path non fornito");
-				}
-				https_truststoreType = pdd.getHttps_autenticazioneServer_truststoreType();
-				if(StringUtils.isEmpty(https_truststoreType)) {
-					throw new Exception("[alias:"+pdd.getNome()+"] TLS Truststore type non fornito");
-				}
-				https_truststorePassword = pdd.getHttps_autenticazioneServer_truststorePassword();
-				if(StringUtils.isEmpty(https_truststorePassword)) {
-					throw new Exception("[alias:"+pdd.getNome()+"] TLS Truststore password non fornito");
-				}
-			}
-		}
+		return StatusUtilities.updateStato(this.listaStatus, this.log);
 		
-		if(https) {
-			HttpRequest httpRequest = new HttpRequest();
-			httpRequest.setUrl(pdd.getUrl());
-			httpRequest.setReadTimeout(pdd.getReadConnectionTimeout());
-			httpRequest.setConnectTimeout(pdd.getConnectionTimeout());
-			httpRequest.setMethod(HttpRequestMethod.GET);
-			httpRequest.setHostnameVerifier(https_verificaHostName);
-			if(https_autenticazioneServer) {
-				httpRequest.setTrustStorePath(https_truststorePath);
-				httpRequest.setTrustStoreType(https_truststoreType);
-				httpRequest.setTrustStorePassword(https_truststorePassword);
-			}
-			else {
-				httpRequest.setTrustAllCerts(true);
-			}
-			HttpUtilities.check(httpRequest);
-		}
-		else {
-			HttpUtilities.check(pdd.getUrl(), pdd.getReadConnectionTimeout(), pdd.getConnectionTimeout());
-		}
 	}
+
+	
 	
 	public List<String> getListaPdDMonitorate_StatusPdD() throws Exception{
 		return PddMonitorProperties.getInstance(this.log).getListaPdDMonitorate_StatusPdD();
@@ -285,69 +215,13 @@ public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 
 	@Override
 	public String getMessaggioStatoSondaPdd() throws Exception {
-		int tot_ok = this.getTotOk();
-		// Tutti in errore
-		if(tot_ok == 0){
-			if(this.listaStatus.size()==1)
-				return "Il Gateway non è funzionante";
-			else
-				return "Nessuno dei "+this.listaStatus.size()+" nodi del Gateway è funzionante";
-		}else 
-			// parzialmente in errore
-			if(tot_ok< this.listaStatus.size()){
-				return  (this.listaStatus.size() - tot_ok) + " su " +this.listaStatus.size()+ " nodi del Gateway non sono funzionanti";
-			}else {
-				// tutti ok
-				if(this.listaStatus.size()==1)
-					return "Il Gateway è funzionante";
-				else
-					return "Tutti i "+this.listaStatus.size()+" nodi del Gateway sono funzionanti";
-			}
+		return StatusUtilities.getDetailStatesProcess(this.listaStatus);
 	}
 
-
-	public int getTotOk() throws Exception {
-		int totOk = 0;
-		try{
-			for (IStatus pddBean : this.listaStatus) {
-				if(pddBean.getStato().equals(SondaStatus.OK)) 
-					totOk ++;
-			}
-		}catch(Exception e){
-
-		}
-		return totOk;
-	}
 
 	@Override
 	public SondaStatus getStatoSondaPdd() throws Exception {
-		int tot_ok = this.getTotOk();
-		// Tutti in errore
-		if(tot_ok == 0){
-			boolean findWarning = false;
-			try{
-				for (IStatus pddBean : this.listaStatus) {
-					if(pddBean.getStato().equals(SondaStatus.WARNING)) { 
-						findWarning = true;
-						break;
-					}
-				}
-				if(findWarning) {
-					return SondaStatus.WARNING;
-				}
-				else {
-					return SondaStatus.ERROR;
-				}
-			}catch(Exception e){
-				return SondaStatus.ERROR;
-			}
-		}else
-			// parzialmente in errore
-			if(tot_ok< this.listaStatus.size()){
-				return  SondaStatus.WARNING;
-			}else {
-				return SondaStatus.OK;
-			}
+		return StatusUtilities.statesProcess(this.listaStatus);
 	}
 
 }

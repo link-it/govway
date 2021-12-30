@@ -90,6 +90,7 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().LASTTIMESTAMP_UPDATE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().ENABLED,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().ACKNOWLEDGED,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().DETTAGLIO_ACKNOWLEDGED,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().TIPO_PERIODO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().PERIODO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().FILTRO.ENABLED,false),"?");
@@ -143,6 +144,7 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getLasttimestampUpdate(),Allarme.model().LASTTIMESTAMP_UPDATE.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getEnabled(),Allarme.model().ENABLED.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getAcknowledged(),Allarme.model().ACKNOWLEDGED.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getDettaglioAcknowledged(),Allarme.model().DETTAGLIO_ACKNOWLEDGED.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getTipoPeriodo(),Allarme.model().TIPO_PERIODO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getPeriodo(),Allarme.model().PERIODO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getFiltro().getEnabled(),Allarme.model().FILTRO.ENABLED.getFieldType()),
@@ -279,6 +281,8 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 		lstObjects.add(new JDBCObject(allarme.getEnabled(), Allarme.model().ENABLED.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().ACKNOWLEDGED,false), "?");
 		lstObjects.add(new JDBCObject(allarme.getAcknowledged(), Allarme.model().ACKNOWLEDGED.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().DETTAGLIO_ACKNOWLEDGED,false), "?");
+		lstObjects.add(new JDBCObject(allarme.getDettaglioAcknowledged(), Allarme.model().DETTAGLIO_ACKNOWLEDGED.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().TIPO_PERIODO,false), "?");
 		lstObjects.add(new JDBCObject(allarme.getTipoPeriodo(), Allarme.model().TIPO_PERIODO.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().PERIODO,false), "?");

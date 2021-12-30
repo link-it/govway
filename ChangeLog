@@ -1,3 +1,13 @@
+2021-12-30  Andrea Poli <apoli@link.it>
+
+	* [GovwayConsole]
+	Corretto bug che non consentiva di variare la modalità di caricamento di una credenziale ssl di un applicativo.
+
+2021-12-29  Andrea Poli <apoli@link.it>
+
+	* [GovwayConsole, GovWayMonitor, GovWayCore]
+	Aggiunti criteri di acknowledged alla funzionalità degli allarmi.
+
 2021-12-23  Andrea Poli <apoli@link.it>
 
 	* [GovwayConsole, GovWayMonitor]

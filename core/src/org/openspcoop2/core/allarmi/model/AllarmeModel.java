@@ -54,6 +54,7 @@ public class AllarmeModel extends AbstractModel<Allarme> {
 		this.LASTTIMESTAMP_UPDATE = new Field("lasttimestamp-update",java.util.Date.class,"allarme",Allarme.class);
 		this.ENABLED = new Field("enabled",java.lang.Integer.class,"allarme",Allarme.class);
 		this.ACKNOWLEDGED = new Field("acknowledged",java.lang.Integer.class,"allarme",Allarme.class);
+		this.DETTAGLIO_ACKNOWLEDGED = new Field("dettaglio-acknowledged",java.lang.String.class,"allarme",Allarme.class);
 		this.TIPO_PERIODO = new Field("tipo-periodo",java.lang.String.class,"allarme",Allarme.class);
 		this.PERIODO = new Field("periodo",java.lang.Integer.class,"allarme",Allarme.class);
 		this.FILTRO = new org.openspcoop2.core.allarmi.model.AllarmeFiltroModel(new Field("filtro",org.openspcoop2.core.allarmi.AllarmeFiltro.class,"allarme",Allarme.class));
@@ -80,6 +81,7 @@ public class AllarmeModel extends AbstractModel<Allarme> {
 		this.LASTTIMESTAMP_UPDATE = new ComplexField(father,"lasttimestamp-update",java.util.Date.class,"allarme",Allarme.class);
 		this.ENABLED = new ComplexField(father,"enabled",java.lang.Integer.class,"allarme",Allarme.class);
 		this.ACKNOWLEDGED = new ComplexField(father,"acknowledged",java.lang.Integer.class,"allarme",Allarme.class);
+		this.DETTAGLIO_ACKNOWLEDGED = new ComplexField(father,"dettaglio-acknowledged",java.lang.String.class,"allarme",Allarme.class);
 		this.TIPO_PERIODO = new ComplexField(father,"tipo-periodo",java.lang.String.class,"allarme",Allarme.class);
 		this.PERIODO = new ComplexField(father,"periodo",java.lang.Integer.class,"allarme",Allarme.class);
 		this.FILTRO = new org.openspcoop2.core.allarmi.model.AllarmeFiltroModel(new ComplexField(father,"filtro",org.openspcoop2.core.allarmi.AllarmeFiltro.class,"allarme",Allarme.class));
@@ -117,6 +119,8 @@ public class AllarmeModel extends AbstractModel<Allarme> {
 	public IField ENABLED = null;
 	 
 	public IField ACKNOWLEDGED = null;
+	 
+	public IField DETTAGLIO_ACKNOWLEDGED = null;
 	 
 	public IField TIPO_PERIODO = null;
 	 

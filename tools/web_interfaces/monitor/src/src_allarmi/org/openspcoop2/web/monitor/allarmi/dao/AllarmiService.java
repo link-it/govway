@@ -501,6 +501,7 @@ public class AllarmiService implements IAllarmiService {
 				List<ConfigurazioneAllarmeBean> toRet = new ArrayList<ConfigurazioneAllarmeBean>();
 
 				boolean existsAlmostOneManuallyUpdateState = false;
+				boolean existsAlmostOneManuallyAckCriteria = false;
 				
 				for (Allarme al : findAll) {
 					IdPlugin idPlugin = new IdPlugin();
@@ -512,11 +513,15 @@ public class AllarmiService implements IAllarmiService {
 					if(allarmeBean.isManuallyUpdateState()) {
 						existsAlmostOneManuallyUpdateState = true;
 					}
+					if(allarmeBean.isManuallyAckCriteria()) {
+						existsAlmostOneManuallyAckCriteria = true;
+					}
 					toRet.add(allarmeBean);
 				}
 				
 				for (ConfigurazioneAllarmeBean allarmeBean : toRet) {
 					allarmeBean.setExistsAlmostOneManuallyUpdateState(existsAlmostOneManuallyUpdateState);
+					allarmeBean.setExistsAlmostOneManuallyAckCriteria(existsAlmostOneManuallyAckCriteria);
 				}
 
 				return toRet;

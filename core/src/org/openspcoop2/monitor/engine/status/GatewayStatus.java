@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.web.monitor.core.status;
+package org.openspcoop2.monitor.engine.status;
 
 /**
  * PddStatus
@@ -27,7 +27,7 @@ package org.openspcoop2.web.monitor.core.status;
  * @version $Rev$, $Date$
  *
  */
-public class PddStatus extends BaseStatus{
+public class GatewayStatus extends BaseStatus{
 
 	/**
 	 * 
@@ -45,7 +45,7 @@ public class PddStatus extends BaseStatus{
 	// Fix: uso un tempo più basso in modo da non bloccare la console
 	private int readConnectionTimeout = 5000; //org.openspcoop2.utils.transport.http.HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
 	
-	public PddStatus(){
+	public GatewayStatus(){
 		super();
 	}
 	

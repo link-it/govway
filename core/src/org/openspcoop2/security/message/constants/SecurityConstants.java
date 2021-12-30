@@ -30,6 +30,7 @@ import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.apache.wss4j.common.ConfigurationConstants;
 import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.dom.handler.WSHandlerConstants;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.digest.Constants;
 
@@ -386,13 +387,13 @@ public class SecurityConstants {
 	public static final String ACTION_CUSTOM_TOKEN = ConfigurationConstants.CUSTOM_TOKEN;
 	
     
-    public static final String KEY_IDENTIFIER_BST_DIRECT_REFERENCE = "DirectReference";
-    public static final String KEY_IDENTIFIER_ISSUER_SERIAL = "IssuerSerial";
-    public static final String KEY_IDENTIFIER_X509 = "X509KeyIdentifier";
-    public static final String KEY_IDENTIFIER_SKI = "SKIKeyIdentifier";
-    public static final String KEY_IDENTIFIER_EMBEDDED_KEY_NAME = "EmbeddedKeyName";
-    public static final String KEY_IDENTIFIER_THUMBPRINT = "Thumbprint";
-    public static final String KEY_IDENTIFIER_ENCRYPTED_KEY_SHA1 = "EncryptedKeySHA1";
+    public static final String KEY_IDENTIFIER_BST_DIRECT_REFERENCE = CostantiDB.KEY_IDENTIFIER_BST_DIRECT_REFERENCE;
+    public static final String KEY_IDENTIFIER_ISSUER_SERIAL = CostantiDB.KEY_IDENTIFIER_ISSUER_SERIAL;
+    public static final String KEY_IDENTIFIER_X509 = CostantiDB.KEY_IDENTIFIER_X509;
+    public static final String KEY_IDENTIFIER_SKI = CostantiDB.KEY_IDENTIFIER_SKI;
+    public static final String KEY_IDENTIFIER_EMBEDDED_KEY_NAME = CostantiDB.KEY_IDENTIFIER_EMBEDDED_KEY_NAME;
+    public static final String KEY_IDENTIFIER_THUMBPRINT = CostantiDB.KEY_IDENTIFIER_THUMBPRINT;
+    public static final String KEY_IDENTIFIER_ENCRYPTED_KEY_SHA1 = CostantiDB.KEY_IDENTIFIER_ENCRYPTED_KEY_SHA1;
 
     public static final String KEY_IDENTIFIER_BST_DIRECT_REFERENCE_USE_SINGLE_CERTIFICATE = ConfigurationConstants.USE_SINGLE_CERTIFICATE;
     

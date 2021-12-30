@@ -71,7 +71,6 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
-import org.openspcoop2.core.constants.StatoCheck;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
@@ -116,6 +115,7 @@ import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.mapping.IdentificazioneDinamicaException;
+import org.openspcoop2.protocol.registry.CertificateCheck;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -1070,14 +1070,32 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.consegnaRispostaAsincronaRispostaPerRiferimento(sa);
 	}
 
-	public StatoCheck checkCertificateConfigurationWithoutCache(long idSA, int sogliaWarningGiorni, StringBuilder sbDetails) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
-		return this.configurazionePdDReader.checkCertificateConfiguration(null, false,
-				idSA, sogliaWarningGiorni, sbDetails);
+	public CertificateCheck checkCertificatoApplicativoWithoutCache(long idSA, int sogliaWarningGiorni,  
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatoApplicativo(null, false,
+				idSA, sogliaWarningGiorni,  
+				addCertificateDetails, separator, newLine);
 	}
 
-	public StatoCheck checkCertificateConfigurationWithoutCache(IDServizioApplicativo idSA, int sogliaWarningGiorni, StringBuilder sbDetails) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
-		return this.configurazionePdDReader.checkCertificateConfiguration(null, false,
-				idSA, sogliaWarningGiorni, sbDetails);
+	public CertificateCheck checkCertificatoApplicativoWithoutCache(IDServizioApplicativo idSA, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatoApplicativo(null, false,
+				idSA, sogliaWarningGiorni,  
+				addCertificateDetails, separator, newLine);
+	}
+	
+	public CertificateCheck checkCertificatoModiApplicativoWithoutCache(long idSA, int sogliaWarningGiorni,  
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatoModiApplicativo(null, false,
+				idSA, sogliaWarningGiorni,  
+				addCertificateDetails, separator, newLine);
+	}
+
+	public CertificateCheck checkCertificatoModiApplicativoWithoutCache(IDServizioApplicativo idSA, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatoModiApplicativo(null, false,
+				idSA, sogliaWarningGiorni,  
+				addCertificateDetails, separator, newLine);
 	}
 	
 

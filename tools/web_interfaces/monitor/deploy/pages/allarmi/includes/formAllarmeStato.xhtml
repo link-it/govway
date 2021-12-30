@@ -22,7 +22,7 @@
 		<div class="form-container noborder nopadding">
 			<a4j:form>
 			
-				<link:fieldset legend="Stato" rendered="#{true}" collapsible="false" closed="false">
+				<link:fieldset legend="Stato" rendered="#{allarmiBean.editMode}" collapsible="false" closed="false">
 				
 					<link:prop label="Stato Attuale">
 						<a4j:outputPanel layout="block" styleClass="divNoEdit">
@@ -43,6 +43,26 @@
 													
 					<link:prop label="Dettaglio">
 						<h:inputTextarea value="#{allarmiBean.modificaDettaglioStato}" styleClass="inputTextAreaLong" rows="7" cols="80"/>
+					</link:prop>
+												
+					<a4j:outputPanel id="idAcknowledge" layout="block" rendered="#{allarmiBean.visualizzaAck}">
+						<link:prop label="Acknowledge">
+							<h:selectOneRadio id="idAcknowledgeAbilitato" styleClass="controlset" value="#{allarmiBean.modificaAcknowledged}" 
+								disabled="#{(allarmiBean.allarme.enabled == 0) or (allarmiBean.allarme.stato == 0)}">
+								<f:selectItem itemValue="1" itemLabel="Si"/>
+								<f:selectItem itemValue="0" itemLabel="No"/>
+							</h:selectOneRadio>
+						</link:prop>
+					</a4j:outputPanel>
+					<a4j:outputPanel id="idAcknowledgeHidden" layout="block" rendered="#{not allarmiBean.visualizzaAck}">
+						<h:inputHidden value="#{allarmiBean.modificaAcknowledged}" rendered="#{not allarmiBean.visualizzaAck}" />
+					</a4j:outputPanel>
+		
+				</link:fieldset>
+				<link:fieldset legend="Criteri Acknowledge" rendered="#{allarmiBean.ackMode}" collapsible="false" closed="false">
+								
+					<link:prop label="Criteri">
+						<h:inputTextarea value="#{allarmiBean.modificaCriteriAck}" styleClass="inputTextAreaLong" rows="7" cols="80"/>
 					</link:prop>
 												
 					<a4j:outputPanel id="idAcknowledge" layout="block" rendered="#{allarmiBean.visualizzaAck}">

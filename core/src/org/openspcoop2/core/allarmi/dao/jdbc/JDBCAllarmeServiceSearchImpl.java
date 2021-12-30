@@ -530,6 +530,7 @@ public class JDBCAllarmeServiceSearchImpl implements IJDBCServiceSearchWithId<Al
 		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().LASTTIMESTAMP_UPDATE,true));
 		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().ENABLED,true));
 		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().ACKNOWLEDGED,true));
+		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().DETTAGLIO_ACKNOWLEDGED,true));
 		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().TIPO_PERIODO,true));
 		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().PERIODO,true));
 		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().FILTRO.ENABLED,true));

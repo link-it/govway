@@ -52,14 +52,11 @@ public interface IAlarm {
 	
 	public DAOFactory getDAOFactory();
 
-	/**
-	 * Permette di modificare lo stato di un allarme 'passivo' identificato tramite il parametro idAllarme
-	 * 
-	 * @param statoAllarme Nuovo stato dell'allarme
-	 * @throws AlarmException
-	 */
-	
 	public void changeStatus(AlarmStatus statoAllarme) throws AlarmException, AlarmNotifyException;
 
 	public boolean isManuallyUpdateState();
+	
+	public boolean isManuallyAckCriteria();
+	
+	public IAlarmThreadStatus getActiveThreadStatus();
 }

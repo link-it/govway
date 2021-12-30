@@ -114,21 +114,21 @@ public class ModICostanti {
     public static final String MODIPA_KEYSTORE_MODE_VALUE_PATH = CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_PATH;
     public static final String MODIPA_KEYSTORE_MODE_VALUE_HSM = CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_HSM;
     
-    public static final String MODIPA_KEYSTORE_ARCHIVE = "modipaKeystoreArchive";
+    public static final String MODIPA_KEYSTORE_ARCHIVE = CostantiDB.MODIPA_KEYSTORE_ARCHIVE;
     
-    public static final String MODIPA_KEYSTORE_CERTIFICATE = "modipaKeystoreCertificate";
+    public static final String MODIPA_KEYSTORE_CERTIFICATE = CostantiDB.MODIPA_KEYSTORE_CERTIFICATE;
     
     public static final String MODIPA_KEYSTORE_PATH = CostantiDB.MODIPA_KEYSTORE_PATH;
     
     public static final String MODIPA_KEYSTORE_TYPE = CostantiDB.MODIPA_KEYSTORE_TYPE;
-    public static final String MODIPA_KEYSTORE_TYPE_VALUE_JKS = "jks";
-    public static final String MODIPA_KEYSTORE_TYPE_VALUE_PKCS12 = "pkcs12";
+    public static final String MODIPA_KEYSTORE_TYPE_VALUE_JKS = CostantiDB.MODIPA_KEYSTORE_TYPE_VALUE_JKS;
+    public static final String MODIPA_KEYSTORE_TYPE_VALUE_PKCS12 = CostantiDB.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12;
     
-    public static final String MODIPA_KEYSTORE_PASSWORD = "modipaKeystorePassword";
+    public static final String MODIPA_KEYSTORE_PASSWORD = CostantiDB.MODIPA_KEYSTORE_PASSWORD;
     
     public static final String MODIPA_KEY_ALIAS = CostantiDB.MODIPA_KEY_ALIAS;
     
-    public static final String MODIPA_KEY_PASSWORD = "modipaKeyPassword";
+    public static final String MODIPA_KEY_PASSWORD = CostantiDB.MODIPA_KEY_PASSWORD;
     
     public static final String MODIPA_KEY_CN_SUBJECT = CostantiDB.MODIPA_KEY_CN_SUBJECT;
     public static final String MODIPA_KEY_CN_ISSUER = CostantiDB.MODIPA_KEY_CN_ISSUER;

@@ -19058,7 +19058,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				String tipoPeriodoS = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPO_PERIODO);
 				
 				if(StringUtils.isNotBlank(periodoS)) {
-					allarme.setPeriodo(Integer.parseInt(periodoS));
+					try {
+						allarme.setPeriodo(Integer.parseInt(periodoS));
+					}catch(Throwable t) {
+						this.log.error("Periodo indicato non è un intero ["+periodoS+"]: "+t.getMessage(),t);
+					}
 				}
 				
 				if(StringUtils.isNotBlank(tipoPeriodoS)) {

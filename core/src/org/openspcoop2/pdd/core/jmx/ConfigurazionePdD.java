@@ -44,7 +44,6 @@ import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
-import org.openspcoop2.core.constants.StatoCheck;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -75,6 +74,7 @@ import org.openspcoop2.pdd.timers.TimerStatisticheLib;
 import org.openspcoop2.pdd.timers.TimerStatisticheThread;
 import org.openspcoop2.pdd.timers.TimerThresholdThread;
 import org.openspcoop2.protocol.basic.Costanti;
+import org.openspcoop2.protocol.registry.CertificateCheck;
 import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
@@ -687,6 +687,53 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			return this.checkCertificatoApplicativoByNome(param1, soglia);
 		}
 		
+		if(actionName.equals(CHECK_CERTIFICATO_MODI_SERVIZIO_APPLICATIVO_BY_ID)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATO_MODI_SERVIZIO_APPLICATIVO_BY_ID+"] Lunghezza parametri non corretta: "+params.length));
+			
+			Long param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				if(params[0] instanceof Long) {
+					param1 = (Long)params[0];
+				}
+				else {
+					param1 = Long.valueOf(params[0].toString());
+				}
+				if(param1<0){
+					param1 = null;
+				}
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatoModiApplicativoById(param1, soglia);
+		}
+		if(actionName.equals(CHECK_CERTIFICATO_MODI_SERVIZIO_APPLICATIVO_BY_NOME)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATO_MODI_SERVIZIO_APPLICATIVO_BY_NOME+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatoModiApplicativoByNome(param1, soglia);
+		}
+		
 		
 		
 		if(actionName.equals(ABILITA_PORTA_DELEGATA)){
@@ -1077,6 +1124,26 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			String.class.getName(),
 			MBeanOperationInfo.ACTION);
 		
+		// MetaData per l'operazione checkCertificatoModIApplicativoById
+		MBeanOperationInfo checkCertificatoModIApplicativoById 
+		= new MBeanOperationInfo(CHECK_CERTIFICATO_MODI_SERVIZIO_APPLICATIVO_BY_ID,"Verifica il keystore ModI associato all'applicativo che possiede l'id fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("idApplicativo",long.class.getName(),"Identificativo dell'applicativo"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkCertificatoModIApplicativoByNome
+		MBeanOperationInfo checkCertificatoModIApplicativoByNome 
+		= new MBeanOperationInfo(CHECK_CERTIFICATO_SERVIZIO_APPLICATIVO_BY_NOME,"Verifica il keystore ModI associato all'applicativo che possiede l'id fornito come parametro (formato: nomeApplicativo@tipoSoggetto/nomeSoggetto)",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("idApplicativo",String.class.getName(),"Identificativo dell'applicativo"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
 		// MetaData per l'operazione enablePortaDelegata
 		MBeanOperationInfo enablePortaDelegata 
 		= new MBeanOperationInfo(ABILITA_PORTA_DELEGATA,"Abilita lo stato della porta con nome fornito come parametro",
@@ -1161,6 +1228,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		listOperation.add(getCertificatiConnettoreByNome);
 		listOperation.add(checkCertificatoApplicativoById);
 		listOperation.add(checkCertificatoApplicativoByNome);
+		listOperation.add(checkCertificatoModIApplicativoById);
+		listOperation.add(checkCertificatoModIApplicativoByNome);
 		listOperation.add(enablePortaDelegata);
 		listOperation.add(disablePortaDelegata);
 		listOperation.add(enablePortaApplicativa);
@@ -1482,10 +1551,12 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	
 	public String checkCertificatoApplicativoById(long idApplicativo, int sogliaWarningGiorni) {
 		try{
-			StringBuilder sb = new StringBuilder();
-			StatoCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificateConfigurationWithoutCache(idApplicativo, sogliaWarningGiorni, sb);
-			String details = sb.length()>0 ? " "+sb.toString() : "";
-			return statoCheck.toString()+details;
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatoApplicativoWithoutCache(idApplicativo, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
 		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
@@ -1517,10 +1588,68 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 						IDServizioApplicativo idSA = new IDServizioApplicativo();
 						idSA.setNome(nome);
 						idSA.setIdSoggettoProprietario(new IDSoggetto(tipoSoggetto, nomeSoggetto));
-						StringBuilder sb = new StringBuilder();
-						StatoCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificateConfigurationWithoutCache(idSA, sogliaWarningGiorni, sb);
-						String details = sb.length()>0 ? " "+sb.toString() : "";
-						return statoCheck.toString()+details;
+						
+						boolean addCertificateDetails = true;
+						String separator = ": ";
+						String newLine = "\n";
+						CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatoApplicativoWithoutCache(idSA, sogliaWarningGiorni, 
+								addCertificateDetails, separator, newLine);
+						return statoCheck.toString(newLine);
+					}
+				}
+			}
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatoModiApplicativoById(long idApplicativo, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatoModiApplicativoWithoutCache(idApplicativo, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatoModiApplicativoByNome(String idApplicativo, int sogliaWarningGiorni) {
+		try{
+			if(!idApplicativo.contains("@") || !idApplicativo.contains("/")) {
+				throw new Exception("Formato non valido (nome@tipoSoggetto/nomeSoggetto)");
+			}
+			String [] tmp = idApplicativo.split("@");
+			if(tmp==null || tmp.length!=2 || tmp[0]==null || tmp[1]==null) {
+				throw new Exception("Formato non valido (nome@tipoSoggetto/nomeSoggetto)");
+			}
+			else {
+				String nome = tmp[0];
+				if(!tmp[1].contains("/")) {
+					throw new Exception("Formato non valido (nome@tipoSoggetto/nomeSoggetto)");
+				}
+				else {
+					String [] tmp2 = tmp[1].split("/");
+					if(tmp2==null || tmp2.length!=2 || tmp2[0]==null || tmp2[1]==null) {
+						throw new Exception("Formato non valido (nome@tipoSoggetto/nomeSoggetto)");
+					}
+					else {
+						String tipoSoggetto = tmp2[0];
+						String nomeSoggetto = tmp2[1];
+						IDServizioApplicativo idSA = new IDServizioApplicativo();
+						idSA.setNome(nome);
+						idSA.setIdSoggettoProprietario(new IDSoggetto(tipoSoggetto, nomeSoggetto));
+						
+						boolean addCertificateDetails = true;
+						String separator = ": ";
+						String newLine = "\n";
+						CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatoModiApplicativoWithoutCache(idSA, sogliaWarningGiorni, 
+								addCertificateDetails, separator, newLine);
+						return statoCheck.toString(newLine);
 					}
 				}
 			}

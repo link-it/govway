@@ -38,7 +38,6 @@ import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.GestioneTokenAutenticazione;
-import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.MessageSecurity;
 import org.openspcoop2.core.config.MtomProcessor;
@@ -68,7 +67,6 @@ import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
-import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TipiConnettore;
@@ -101,12 +99,11 @@ import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
+import org.openspcoop2.pdd.core.connettori.ConnettoreUtils;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.protocol.engine.constants.Costanti;
-import org.openspcoop2.protocol.engine.utils.ModIUtils;
 import org.openspcoop2.protocol.utils.EsitiConfigUtils;
-import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.certificate.hsm.HSMUtils;
+import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -118,7 +115,6 @@ import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCor
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
@@ -127,7 +123,6 @@ import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
-import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.scope.ScopeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -1774,9 +1769,24 @@ public class ErogazioniDetailsUtilities {
 				ricevutaAsincronaSimmetrica, ricevutaAsincronaAsimmetrica,
 				gestioneManifest, configPortaHandler,
 				false);
-		printConfigurazioneFromStatusValues(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE,
-				sb,
-				separator, newLine);
+		List<String> l = de.getStatusValuesAsList();
+		boolean print = false;
+		if(l!=null && !l.isEmpty()) {
+			if(l.size()>1) {
+				print = true;
+			}
+			else {
+				String s = l.get(0);
+				if(s!=null && !"".equalsIgnoreCase(s)) {
+					print = !CostantiConfigurazione.DISABILITATO.getValue().toLowerCase().equals(s.toLowerCase());
+				}
+			}
+		}
+		if(print) {
+			printConfigurazioneFromStatusValues(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE,
+					sb,
+					separator, newLine);
+		}
 	}
 	
 	private static void printConfigurazionePortaDelegataExtended(ConsoleHelper consoleHelper, SoggettiCore soggettiCore, 
@@ -1932,293 +1942,33 @@ public class ErogazioniDetailsUtilities {
 			String separator, String newLine,
 			boolean printIntestazione) {
 
-		if(connettoreStatic) {
-			return; // non visualizzo nulla
-		}
-		
-		Boolean integrationManager = null;
-		InvocazioneCredenziali invCredenziali = null;
-		if(sa!=null) {
-			InvocazioneServizio is = sa.getInvocazioneServizio();
-			integrationManager = is.getGetMessage()!=null && StatoFunzionalita.ABILITATO.equals(is.getGetMessage());
-			invCredenziali = is.getCredenziali();
-		}
-		
 		TipiConnettore tipo = TipiConnettore.toEnumFromName(connettore.getTipo());
 		if(tipo==null) {
 			tipo = TipiConnettore.CUSTOM;
 		}
-		
-		if(printIntestazione) {
-			sb.append(newLine);
-			String label = labelNomeConnettore!=null ? " "+labelNomeConnettore : "";
-			sb.append("- "+PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE+label+" -");
-		}
-		
-		String tipoConnettore = tipo.getLabel();
+		String labelTipoConnettore = tipo.getLabel();
 		if(TipiConnettore.CUSTOM.equals(tipo)){
 			try {
 				ConfigurazioneCore confCore = new ConfigurazioneCore(consoleHelper.getCore());
 				Plugin p = confCore.getPlugin(TipoPlugin.CONNETTORE, connettore.getTipo(), false);
 				if(p!=null) {
-					tipoConnettore = p.getLabel();
+					labelTipoConnettore = p.getLabel();
 				}
 				else {
-					tipoConnettore = connettore.getTipo();
+					labelTipoConnettore = connettore.getTipo();
 				}
 			}catch(Throwable t) {
-				tipoConnettore = connettore.getTipo();
-			}
-		}
-		if(TipiConnettore.DISABILITATO.equals(tipo)) {
-			if(integrationManager!=null && integrationManager) {
-				tipoConnettore = "MessageBox";
-			}
-		}
-		else {
-			if(integrationManager!=null && integrationManager) {
-				tipoConnettore = tipoConnettore + " + MessageBox";
-			}
-		}
-		sb.append(newLine);
-		sb.append(ConnettoriCostanti.LABEL_FILTRO_TIPO_CONNETTORE);
-		sb.append(separator);
-		sb.append(tipoConnettore);
-		
-		String labelEndpoint = ConnettoriCostanti.LABEL_FILTRO_CONNETTORE_ENDPOINT;
-		String endpoint = null;
-		if(TipiConnettore.HTTP.getNome().equals(connettore.getTipo()) || TipiConnettore.HTTPS.getNome().equals(connettore.getTipo())){
-			endpoint = getProperty(CostantiConnettori.CONNETTORE_LOCATION, connettore.getPropertyList());
-		}
-		else if(TipiConnettore.JMS.getNome().equals(connettore.getTipo())){
-			String tipoCoda = getProperty(CostantiConnettori.CONNETTORE_JMS_TIPO, connettore.getPropertyList());
-			labelEndpoint = ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_NOME_CODA+" "+tipoCoda;
-			endpoint = getProperty(CostantiConnettori.CONNETTORE_LOCATION, connettore.getPropertyList());
-		}
-		else if(TipiConnettore.FILE.getNome().equals(connettore.getTipo())){
-			labelEndpoint = ConnettoriCostanti.LABEL_OUTPUT_FILE;
-			endpoint = getProperty(CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE, connettore.getPropertyList());
-		}
-		else if(TipiConnettore.NULL.getNome().equals(connettore.getTipo())){
-			//endpoint = org.openspcoop2.pdd.core.connettori.ConnettoreNULL.LOCATION;
-		}
-		else if(TipiConnettore.NULLECHO.getNome().equals(connettore.getTipo())){
-			//endpoint = org.openspcoop2.pdd.core.connettori.ConnettoreNULLEcho.LOCATION;
-		}
-		else {
-			String endpointV = getProperty(CostantiConnettori.CONNETTORE_LOCATION, connettore.getPropertyList());
-			if(StringUtils.isNotEmpty(endpointV)) {
-				endpoint = endpointV;
-			}
-		}
-		if(endpoint!=null) {
-			sb.append(newLine);
-			sb.append(labelEndpoint);
-			sb.append(separator);
-			sb.append(endpoint);
-		}
-		
-		if(sa!=null && ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
-			sb.append(newLine);
-			sb.append(ConnettoriCostanti.LABEL_SERVER);
-			sb.append(separator);
-			sb.append(sa.getNome());
-		}
-		
-		String connectionTimeout = getProperty(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT, connettore.getPropertyList());
-		if(connectionTimeout!=null) {
-			try {
-				long l = Long.valueOf(connectionTimeout);
-				if(l>0) {
-					sb.append(newLine);
-					sb.append(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_CONNECTION_TIMEOUT);
-					sb.append(separator);
-					sb.append(Utilities.convertSystemTimeIntoString_millisecondi(l, true, false, " "," ",""));
-				}
-			}catch(Throwable t) {}
-		}
-		String readConnectionTimeout = getProperty(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT, connettore.getPropertyList());
-		if(readConnectionTimeout!=null) {
-			try {
-				long l = Long.valueOf(readConnectionTimeout);
-				if(l>0) {
-					sb.append(newLine);
-					sb.append(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_READ_TIMEOUT);
-					sb.append(separator);
-					sb.append(Utilities.convertSystemTimeIntoString_millisecondi(l, true, false, " "," ",""));
-				}
-			}catch(Throwable t) {}
-		}
-		
-		if(TipiConnettore.HTTP.getNome().equals(connettore.getTipo()) || TipiConnettore.HTTPS.getNome().equals(connettore.getTipo())){
-			
-			String token = getProperty(CostantiConnettori.CONNETTORE_TOKEN_POLICY, connettore.getPropertyList());
-			if(token!=null) {
-				sb.append(newLine);
-				sb.append(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_TOKEN).append(" - ").append(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TOKEN_POLICY);
-				sb.append(separator);
-				sb.append(token);
-			}
-			
-			String username = null;
-			if(invCredenziali!=null){
-				username = invCredenziali.getUser();
-			}
-			else{
-				username = getProperty(CostantiConnettori.CONNETTORE_USERNAME, connettore.getPropertyList());
-			}
-			if(username!=null) {
-				sb.append(newLine);
-				sb.append(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP).append(" - ").append(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP_USERNAME);
-				sb.append(separator);
-				sb.append(username);
+				labelTipoConnettore = connettore.getTipo();
 			}
 		}
 		
-		if(TipiConnettore.HTTPS.getNome().equals(connettore.getTipo())){
-			
-			boolean trustAllCerts = false;
-			String trustAllCertsV = getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_ALL_CERTS, connettore.getPropertyList());
-			if("true".equalsIgnoreCase(trustAllCertsV)) {
-				trustAllCerts = true;
-			}
-			
-			String trustLocation = getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION, connettore.getPropertyList());
-			
-			if(trustAllCerts || trustLocation!=null) {
-				
-				String sslType = getProperty(CostantiConnettori.CONNETTORE_HTTPS_SSL_TYPE, connettore.getPropertyList());
-				if(sslType!=null) {
-					sb.append(newLine);
-					sb.append(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS);
-					sb.append(separator);
-					sb.append(sslType);
-				}
-				
-				String hostnameVerifieri = getProperty(CostantiConnettori.CONNETTORE_HTTPS_HOSTNAME_VERIFIER, connettore.getPropertyList());
-				if(hostnameVerifieri!=null) {
-					sb.append(newLine);
-					sb.append(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_HOSTNAME_VERIFIER);
-					sb.append(separator);
-					sb.append(hostnameVerifieri);
-				}
-				
-				sb.append(newLine);
-				sb.append(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE);
-				sb.append(separator);
-				if(trustAllCerts) {
-					sb.append(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUST_ALL_CERTS);
-				}
-				else {
-					String trustType = getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_TYPE, connettore.getPropertyList());
-					boolean hsm = HSMUtils.isKeystoreHSM(trustType);
-					if(hsm) {
-						trustLocation = "HSM";
-					}
-					sb.append("(").append(trustType).append(") ").append(trustLocation);
-				}
-				
-				String trustCRL = getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs, connettore.getPropertyList());
-				if(trustCRL!=null) {
-					sb.append(newLine);
-					sb.append(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_CRLs);
-					sb.append(separator);
-					sb.append(hostnameVerifieri);
-				}
-			}
-			
-			String keyLocation = getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION, connettore.getPropertyList());
-			if(keyLocation!=null) {
-				
-				sb.append(newLine);
-				sb.append(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEYSTORE);
-				sb.append(separator);
-				
-				String keyType = getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_TYPE, connettore.getPropertyList());
-				boolean hsm = HSMUtils.isKeystoreHSM(keyType);
-				if(hsm) {
-					keyLocation = "HSM";
-				}
-				sb.append("(").append(keyType).append(") ").append(keyLocation);
-				
-				String keyAlias = getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_ALIAS, connettore.getPropertyList());
-				if(keyAlias!=null) {
-					sb.append(newLine);
-					sb.append(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEY_ALIAS);
-					sb.append(separator);
-					sb.append(keyAlias);
-				}
-			}
-		}
-		
-		if(TipiConnettore.HTTP.getNome().equals(connettore.getTipo()) || TipiConnettore.HTTPS.getNome().equals(connettore.getTipo())){
-			String proxyHostname = getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME, connettore.getPropertyList());
-			if(proxyHostname!=null) {
-				sb.append(newLine);
-				sb.append(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY);
-				sb.append(separator);
-				String proxyPort = getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT, connettore.getPropertyList());
-				if(proxyPort!=null) {
-					sb.append(proxyHostname).append(":").append(proxyPort);
-				}
-			}
-		}
-		
-		if(TipiConnettore.JMS.getNome().equals(connettore.getTipo())){
-			 
-			String username = null;
-			if(invCredenziali!=null){
-				username = invCredenziali.getUser();
-			}
-			else{
-				username = getProperty(CostantiConnettori.CONNETTORE_USERNAME, connettore.getPropertyList());
-			}
-			if(username!=null) {
-				sb.append(newLine);
-				sb.append(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_USERNAME);
-				sb.append(separator);
-				sb.append(username);
-			}
-			
-		}
+		ConnettoreUtils.printDatiConnettore(connettore, labelTipoConnettore, labelNomeConnettore,
+				sa, 
+				connettoreStatic,
+				sb,
+				separator, newLine,
+				printIntestazione);
 
-		if(TipiConnettore.FILE.getNome().equals(connettore.getTipo())){
-			
-			String f = getProperty(CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS, connettore.getPropertyList());
-			if(f!=null) {
-				sb.append(newLine);
-				sb.append(ConnettoriCostanti.LABEL_OUTPUT_FILE_HEADER);
-				sb.append(separator);
-				sb.append(f);
-			}
-			
-			f = getProperty(CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_FILE, connettore.getPropertyList());
-			if(f!=null) {
-				sb.append(newLine);
-				sb.append(ConnettoriCostanti.LABEL_INPUT_FILE);
-				sb.append(separator);
-				sb.append(f);
-			}
-			
-			f = getProperty(CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS, connettore.getPropertyList());
-			if(f!=null) {
-				sb.append(newLine);
-				sb.append(ConnettoriCostanti.LABEL_INPUT_FILE_HEADER);
-				sb.append(separator);
-				sb.append(f);
-			}
-		}
-		
-	}
-	private static String getProperty(String nome,List<org.openspcoop2.core.config.Property> list){
-		if(list!=null && list.size()>0){
-			for (org.openspcoop2.core.config.Property property : list) {
-				if(property.getNome().equals(nome)){
-					return property.getValore();
-				}
-			}
-		}
-		return null;
 	}
 	private static String getProprieta(String nome,List<org.openspcoop2.core.config.Proprieta> list){
 		if(list!=null && list.size()>0){

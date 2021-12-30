@@ -121,6 +121,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	
 	private String selectedTab = null;
 	private boolean editMode = false;
+	private boolean ackMode = false;
 	
 	public boolean isShowFilter() throws Exception {
 		if(this.allarme==null || this.allarme.getPlugin()==null){
@@ -215,6 +216,13 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	public boolean isAllarmiConsultazioneModificaStatoAbilitataAllarmePassivo() {
 		return this.alarmEngineConfig.isOptionsUpdateStatePassiveAlarm();
 	}
+	
+	public boolean isAllarmiConsultazioneModificaAckCriteriaAllarmeAttivo() {
+		return this.alarmEngineConfig.isOptionsUpdateAckCriteriaActiveAlarm();
+	}
+	public boolean isAllarmiConsultazioneModificaAckCriteriaAllarmePassivo() {
+		return this.alarmEngineConfig.isOptionsUpdateAckCriteriaPassiveAlarm();
+	}
 		
 	public boolean isAllarmiAssociazioneAcknowledgedStatoAllarme() {
 		return this.alarmEngineConfig.isOptionsAcknowledgedStatusAssociation();
@@ -282,6 +290,13 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 			return this.allarme.getDettaglioStato();
 		}
 		return null;
+	}
+	
+	public void setModificaCriteriAck(String nuovoDettaglio){
+		this.allarme.setDettaglioAcknowledged(nuovoDettaglio);
+	}
+	public String getModificaCriteriAck(){
+		return this.allarme.getDettaglioAcknowledged();
 	}
 	
 	public void setModificaAcknowledged(int nuovoAck){
@@ -543,6 +558,15 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 			} catch (Exception e) {
 				MessageUtils.addErrorMsg("Allarme salvato con successo, ma invio notifica terminato con errore: " + e.getMessage());
 			}
+			
+			/* ******** RIPULISCO RICERCA *************** */
+			if(this.ackMode) {
+				// per far si che venga visto il nuovo stato dell'allarme, ripulisco la ricerca
+				// per adesso come workaround
+				// Altrimenti quando si entra immediatamente nel dettaglio dell'allarme, non viene visualizzata l'ultima immagine
+				this.search.ripulisci();
+			}
+			
 		} catch (Exception e) {
 			MessageUtils.addErrorMsg("Si e' verificato un errore. Riprovare.");
 			AllarmiBean.log.error(e.getMessage(), e);
@@ -1342,6 +1366,14 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 
 	public void setEditMode(boolean editMode) {
 		this.editMode = editMode;
+	}
+	
+	public boolean isAckMode() {
+		return this.ackMode;
+	}
+
+	public void setAckMode(boolean ackMode) {
+		this.ackMode = ackMode;
 	}
 
 	public boolean isVisualizzaParametri() {

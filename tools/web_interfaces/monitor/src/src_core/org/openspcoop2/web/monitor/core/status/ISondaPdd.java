@@ -22,6 +22,9 @@ package org.openspcoop2.web.monitor.core.status;
 import java.io.Serializable;
 import java.util.List;
 
+import org.openspcoop2.monitor.engine.status.IStatus;
+import org.openspcoop2.monitor.engine.status.SondaStatus;
+
 /**
  * ISondaPdd
  * 

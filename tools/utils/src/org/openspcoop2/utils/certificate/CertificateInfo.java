@@ -75,6 +75,10 @@ public class CertificateInfo implements Serializable {
 		this.name = name;
 	}
 
+	public String getName() {
+		return this.name;
+	}
+	
 	public CertificatePrincipal getSubject() {
 		if(this.certificate.getSubjectX500Principal()!=null) {
 			return new CertificatePrincipal(this.certificate.getSubjectX500Principal(), PrincipalType.subject);

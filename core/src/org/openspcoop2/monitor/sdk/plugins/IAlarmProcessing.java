@@ -46,6 +46,10 @@ public interface IAlarmProcessing extends ISearchArguments {
 	public boolean isUsableGroupBy();
 	
 	public boolean isManuallyUpdateState();
+	public boolean isManuallyAckCriteria();
+	public default String getDefaultManuallyAckCriteria() {
+		return null;
+	}
 	
 	public default String getParameterSectionTitle() {
 		return null;

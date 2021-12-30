@@ -59,6 +59,10 @@ public class DAOFactory implements IDAOFactory {
 
 
 	private Logger log = null;
+	public Logger getLog() {
+		return this.log;
+	}
+
 	private DAOFactoryProperties daoFactoryProperties = null;
 
 	public DAOFactory(Logger log) throws DAOFactoryException{

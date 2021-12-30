@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.protocol.engine.utils;
+package org.openspcoop2.protocol.utils;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -35,8 +35,9 @@ import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.utils.RegistroServiziUtils;
-import org.openspcoop2.security.message.constants.SecurityConstants;
-import org.openspcoop2.security.message.constants.SignatureC14NAlgorithm;
+//import org.openspcoop2.security.message.constants.SecurityConstants;
+//import org.openspcoop2.security.message.constants.SignatureC14NAlgorithm;
+import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 
 /**
@@ -382,13 +383,13 @@ public class ModIUtils {
 			}
 			if(idProfiloSicurezzaMessaggioAlgC14NItem!=null) {
 				String algoLabel = getStringValue(protocolPropertyList, idProfiloSicurezzaMessaggioAlgC14NItem);
-				if(SignatureC14NAlgorithm.INCLUSIVE_C14N_10_OMITS_COMMENTS.getUri().equals(algoLabel)) {
+				if(CostantiDB.INCLUSIVE_C14N_10_OMITS_COMMENTS_URI.equals(algoLabel)) {
 					algoLabel = CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SOAP_CANONICALIZATION_ALG_LABEL_INCLUSIVE_C14N_10;
 				}
-				else if(SignatureC14NAlgorithm.INCLUSIVE_C14N_11_OMITS_COMMENTS.getUri().equals(algoLabel)) {
+				else if(CostantiDB.INCLUSIVE_C14N_11_OMITS_COMMENTS_URI.equals(algoLabel)) {
 					algoLabel = CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SOAP_CANONICALIZATION_ALG_LABEL_INCLUSIVE_C14N_11;
 				}
-				else if(SignatureC14NAlgorithm.EXCLUSIVE_C14N_10_OMITS_COMMENTS.getUri().equals(algoLabel)) {
+				else if(CostantiDB.EXCLUSIVE_C14N_10_OMITS_COMMENTS_URI.equals(algoLabel)) {
 					algoLabel = CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SOAP_CANONICALIZATION_ALG_LABEL_EXCLUSIVE_C14N_10;
 				}
 				map.put(prefixKey+API_IMPL_SICUREZZA_MESSAGGIO_CANONICALIZATION_ALGORITHM,algoLabel);
@@ -417,22 +418,22 @@ public class ModIUtils {
 			boolean includeSignatureToken = false;
 			if(rifX509Id!=null) {
 				String refLabel = getStringValue(protocolPropertyList, rifX509Id);
-				if(SecurityConstants.KEY_IDENTIFIER_BST_DIRECT_REFERENCE.equals(refLabel)){
+				if(CostantiDB.KEY_IDENTIFIER_BST_DIRECT_REFERENCE.equals(refLabel)){
 					refLabel = CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RIFERIMENTO_X509_LABEL_BINARY_SECURITY_TOKEN;
 					useCertificateChain = true;
 				}
-				else if(SecurityConstants.KEY_IDENTIFIER_ISSUER_SERIAL.equals(refLabel)){
+				else if(CostantiDB.KEY_IDENTIFIER_ISSUER_SERIAL.equals(refLabel)){
 					refLabel = CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RIFERIMENTO_X509_LABEL_SECURITY_TOKEN_REFERENCE;
 					includeSignatureToken = true;
 				}
-				else if(SecurityConstants.KEY_IDENTIFIER_X509.equals(refLabel)){
+				else if(CostantiDB.KEY_IDENTIFIER_X509.equals(refLabel)){
 					refLabel = CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RIFERIMENTO_X509_LABEL_KEY_IDENTIFIER_X509;
 				}
-				else if(SecurityConstants.KEY_IDENTIFIER_THUMBPRINT.equals(refLabel)){
+				else if(CostantiDB.KEY_IDENTIFIER_THUMBPRINT.equals(refLabel)){
 					refLabel = CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RIFERIMENTO_X509_LABEL_KEY_IDENTIFIER_THUMBPRINT;
 					includeSignatureToken = true;
 				}
-				else if(SecurityConstants.KEY_IDENTIFIER_SKI.equals(refLabel)){
+				else if(CostantiDB.KEY_IDENTIFIER_SKI.equals(refLabel)){
 					refLabel = CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RIFERIMENTO_X509_LABEL_KEY_IDENTIFIER_SKI;
 					includeSignatureToken = true;
 				}
@@ -672,14 +673,14 @@ public class ModIUtils {
 			map.put(prefixKey+HSM,hsm+"");
 			
 			if(hsm) {
-				map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_STORE_PATH,"HSM");
+				map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_STORE_PATH,CostantiLabel.STORE_HSM);
 			}
 			else if(path!=null) {
 				String vPath = getStringValue(protocolPropertyList, path);
 				map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_STORE_PATH,vPath);
 			}
 			else if(keystoreModeArchive) {
-				map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_STORE_PATH,"Archivio caricato");
+				map.put(prefixKey+ API_IMPL_SICUREZZA_MESSAGGIO_STORE_PATH,CostantiLabel.STORE_CARICATO_BASEDATI);
 			}
 			
 			if(crl!=null) {
@@ -695,39 +696,7 @@ public class ModIUtils {
 		}
 		
 	}
-	
-	private static String getStringValue(List<ProtocolProperty> protocolPropertyList, String id) {
-		for (ProtocolProperty protocolProperty : protocolPropertyList) {
-			if(protocolProperty.getName().equals(id)) {
-				if(StringUtils.isNotEmpty(protocolProperty.getValue())) {
-					return protocolProperty.getValue();
-				}
-				else if(protocolProperty.getNumberValue()!=null) {
-					return protocolProperty.getNumberValue().toString();
-				}
-				else if(protocolProperty.getBooleanValue()!=null) {
-					return protocolProperty.getBooleanValue().toString();
-				}
-				else if(protocolProperty.getByteFile()!=null) {
-					return "Archivio binario";
-				}
-				else {
-					return null;
-				}
-			}
-		}
-		return null;
-	}
-	private static String getBooleanValueAsStato(List<ProtocolProperty> protocolPropertyList, String id) {
-		for (ProtocolProperty protocolProperty : protocolPropertyList) {
-			if(protocolProperty.getName().equals(id)) {
-				return protocolProperty.getBooleanValue()!=null && protocolProperty.getBooleanValue() ? 
-						StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
-			}
-		}
-		return null;
-	}
-	
+		
 	private static boolean isProfiloSicurezzaMessaggioConIntegrita(AccordoServizioParteComune api, String portType) {
 		List<String> tmp = RegistroServiziUtils.fillPropertyProtocollo(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, api, portType, false);
 		if(tmp!=null && !tmp.isEmpty()) {
@@ -782,5 +751,168 @@ public class ModIUtils {
 		Method mGetRestSecurityTokenHeaderModI = instance.getClass().getMethod("getRestSecurityTokenHeaderModI");
 		return (String) mGetRestSecurityTokenHeaderModI.invoke(instance);
 	}
+	
+	public static KeystoreParams getApplicativoKeystoreParams(List<org.openspcoop2.core.config.ProtocolProperty> protocolPropertyList) {
+		
+		if(protocolPropertyList==null || protocolPropertyList.isEmpty()) {
+			return null;
+		}
+		
+		KeystoreParams keystoreParams = null;
+		
+		String sicurezza = getStringValue_config(protocolPropertyList,CostantiDB.MODIPA_SICUREZZA_MESSAGGIO);
+		if("true".equals(sicurezza)) {
+			
+			@SuppressWarnings("unused")
+			boolean keystoreModePath = false;
+			boolean keystoreModeArchive = false;
+			boolean keystoreModeHsm = false;
+			String mode = getStringValue_config(protocolPropertyList, CostantiDB.MODIPA_KEYSTORE_MODE);
+			String path =null;
+			String type = CostantiDB.MODIPA_KEYSTORE_TYPE;
+			if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(mode)) {
+				keystoreModeArchive = true;
+			}
+			else if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_PATH.equals(mode)) {
+				keystoreModePath = true;
+				path = CostantiDB.MODIPA_KEYSTORE_PATH;
+			}
+			else if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_HSM.equals(mode)) {
+				keystoreModeHsm = true;
+			}
+			
+			String vType = null;
+			if(type!=null) {
+				vType = getStringValue_config(protocolPropertyList, type);
+			}
+			
+			String vPath = null;
+			byte[] vStore = null;
+			if(keystoreModeHsm) {
+				vPath = CostantiLabel.STORE_HSM;
+			}
+			else if(path!=null) {
+				vPath = getStringValue_config(protocolPropertyList, path);
+			}
+			else if(keystoreModeArchive) {
+				vPath = CostantiLabel.STORE_CARICATO_BASEDATI;
+				vStore = getBinaryValue_config(protocolPropertyList, CostantiDB.MODIPA_KEYSTORE_ARCHIVE);
+			}
+			
+			String password = CostantiDB.MODIPA_KEYSTORE_PASSWORD;
+			String vPassword = getStringValue_config(protocolPropertyList, password);
+			
+			String aliasKey = CostantiDB.MODIPA_KEY_ALIAS;
+			String vAliasKey = getStringValue_config(protocolPropertyList, aliasKey);
+			
+			keystoreParams = new KeystoreParams();
+			keystoreParams.setType(vType);
+			keystoreParams.setPath(vPath);
+			keystoreParams.setStore(vStore);
+			keystoreParams.setPassword(vPassword);
+			keystoreParams.setKeyAlias(vAliasKey);
+			
+		}
+	
+		return keystoreParams;
+	}
+	
+	public static byte[] getApplicativoKeystoreCertificate(List<org.openspcoop2.core.config.ProtocolProperty> protocolPropertyList) {
+		
+		if(protocolPropertyList==null || protocolPropertyList.isEmpty()) {
+			return null;
+		}
+		
+		String sicurezza = getStringValue_config(protocolPropertyList,CostantiDB.MODIPA_SICUREZZA_MESSAGGIO);
+		if("true".equals(sicurezza)) {
+			
+			return getBinaryValue_config(protocolPropertyList, CostantiDB.MODIPA_KEYSTORE_CERTIFICATE);
+			
+		}
+	
+		return null;
+	}
 
+	
+	private static String getStringValue(List<ProtocolProperty> protocolPropertyList, String id) {
+		for (ProtocolProperty protocolProperty : protocolPropertyList) {
+			if(protocolProperty.getName().equals(id)) {
+				if(StringUtils.isNotEmpty(protocolProperty.getValue())) {
+					return protocolProperty.getValue();
+				}
+				else if(protocolProperty.getNumberValue()!=null) {
+					return protocolProperty.getNumberValue().toString();
+				}
+				else if(protocolProperty.getBooleanValue()!=null) {
+					return protocolProperty.getBooleanValue().toString();
+				}
+				else if(protocolProperty.getByteFile()!=null) {
+					return "Archivio binario";
+				}
+				else {
+					return null;
+				}
+			}
+		}
+		return null;
+	}
+	private static String getBooleanValueAsStato(List<ProtocolProperty> protocolPropertyList, String id) {
+		for (ProtocolProperty protocolProperty : protocolPropertyList) {
+			if(protocolProperty.getName().equals(id)) {
+				return protocolProperty.getBooleanValue()!=null && protocolProperty.getBooleanValue() ? 
+						StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
+			}
+		}
+		return null;
+	}
+	@SuppressWarnings("unused")
+	private static byte[] getBinaryValue(List<ProtocolProperty> protocolPropertyList, String id) {
+		for (ProtocolProperty protocolProperty : protocolPropertyList) {
+			if(protocolProperty.getName().equals(id)) {
+				return protocolProperty.getByteFile();
+			}
+		}
+		return null;
+	}
+	
+	private static String getStringValue_config(List<org.openspcoop2.core.config.ProtocolProperty> protocolPropertyList, String id) {
+		for (org.openspcoop2.core.config.ProtocolProperty protocolProperty : protocolPropertyList) {
+			if(protocolProperty.getName().equals(id)) {
+				if(StringUtils.isNotEmpty(protocolProperty.getValue())) {
+					return protocolProperty.getValue();
+				}
+				else if(protocolProperty.getNumberValue()!=null) {
+					return protocolProperty.getNumberValue().toString();
+				}
+				else if(protocolProperty.getBooleanValue()!=null) {
+					return protocolProperty.getBooleanValue().toString();
+				}
+				else if(protocolProperty.getByteFile()!=null) {
+					return "Archivio binario";
+				}
+				else {
+					return null;
+				}
+			}
+		}
+		return null;
+	}
+	@SuppressWarnings("unused")
+	private static String getBooleanValueAsStato_config(List<org.openspcoop2.core.config.ProtocolProperty> protocolPropertyList, String id) {
+		for (org.openspcoop2.core.config.ProtocolProperty protocolProperty : protocolPropertyList) {
+			if(protocolProperty.getName().equals(id)) {
+				return protocolProperty.getBooleanValue()!=null && protocolProperty.getBooleanValue() ? 
+						StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
+			}
+		}
+		return null;
+	}
+	private static byte[] getBinaryValue_config(List<org.openspcoop2.core.config.ProtocolProperty> protocolPropertyList, String id) {
+		for (org.openspcoop2.core.config.ProtocolProperty protocolProperty : protocolPropertyList) {
+			if(protocolProperty.getName().equals(id)) {
+				return protocolProperty.getByteFile();
+			}
+		}
+		return null;
+	}
 }

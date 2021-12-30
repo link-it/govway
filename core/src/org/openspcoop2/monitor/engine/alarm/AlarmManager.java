@@ -175,6 +175,7 @@ public class AlarmManager {
 				IDynamicLoader cAllarme = DynamicFactory.getInstance().newDynamicLoader(tipoPlugin, allarme.getTipo(), plugin.getClassName(), log);
 				IAlarmProcessing alarmProc = (IAlarmProcessing) cAllarme.newInstance();
 				alarm.setManuallyUpdateState(alarmProc.isManuallyUpdateState());
+				alarm.setManuallyAckCriteria(alarmProc.isManuallyAckCriteria());
 				AlarmContext ctx = new AlarmContext(allarme, log, daoFactory);
 				List<Parameter<?>> listParameters = alarmProc.getParameters(ctx);
 				

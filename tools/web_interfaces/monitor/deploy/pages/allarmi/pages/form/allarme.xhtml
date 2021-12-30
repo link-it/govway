@@ -15,8 +15,9 @@
 				</li>
 				<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
 				<li>
-					<h:outputText id="visualizzaAllarme" value="Dettagli Allarme (#{allarmiBean.allarme.alias})" rendered="#{not allarmiBean.editMode}" styleClass="ultimo-path" />
+					<h:outputText id="visualizzaAllarme" value="Dettagli Allarme (#{allarmiBean.allarme.alias})" rendered="#{(not allarmiBean.editMode) and (not allarmiBean.ackMode)}" styleClass="ultimo-path" />
 					<h:outputText id="modificaAllarme" value="Stato Allarme (#{allarmiBean.allarme.alias})" rendered="#{allarmiBean.editMode}" styleClass="ultimo-path" />
+					<h:outputText id="ackAllarme" value="Criteri Acknowledge Allarme (#{allarmiBean.allarme.alias})" rendered="#{allarmiBean.ackMode}" styleClass="ultimo-path" />
 				</li>
 			</ul>
 		</ui:define>
@@ -24,11 +25,22 @@
 			<a4j:keepAlive beanName="allarmiBean" />
 			
 			<rich:panel styleClass="noborder" id="paginaAllarme"> 
-				<f:facet name="header">
-					<h:outputText id="outDettagli1" value="Dettagli Allarme (#{allarmiBean.allarme.alias})" rendered="#{not allarmiBean.editMode}"  />
-					<h:outputText id="outDettagli2" value="Stato Allarme (#{allarmiBean.allarme.alias})" rendered="#{allarmiBean.editMode}" />
-				</f:facet>
-				<c:if test="#{not allarmiBean.editMode}">
+				<c:if test="#{(not allarmiBean.editMode) and (not allarmiBean.ackMode)}">
+					<f:facet name="header">
+						<h:outputText id="outDettagli1" value="Dettagli Allarme (#{allarmiBean.allarme.alias})" rendered="#{true}" />
+					</f:facet>
+				</c:if>
+				<c:if test="#{allarmiBean.editMode}">
+					<f:facet name="header">
+						<h:outputText id="outDettagli2" value="Stato Allarme (#{allarmiBean.allarme.alias})" rendered="#{true}" />
+					</f:facet>
+				</c:if>
+				<c:if test="#{allarmiBean.ackMode}">
+					<f:facet name="header">
+						<h:outputText id="outDettagli3" value="Criteri Acknowledge Allarme (#{allarmiBean.allarme.alias})" rendered="#{true}" />
+					</f:facet>
+				</c:if>
+				<c:if test="#{(not allarmiBean.editMode) and (not allarmiBean.ackMode)}">
 				
 					<rich:tabPanel switchType="ajax" selectedTab="#{allarmiBean.selectedTab}">
 						<rich:tab name="stato">
@@ -56,7 +68,7 @@
 					</rich:tabPanel>
 				</c:if>
 				
-				<c:if test="#{allarmiBean.editMode}">
+				<c:if test="#{allarmiBean.editMode or allarmiBean.ackMode}">
 				 	<ui:include src="/allarmi/includes/formAllarmeStato.xhtml" >
 			    	</ui:include>
 				</c:if>

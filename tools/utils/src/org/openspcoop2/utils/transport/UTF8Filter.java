@@ -17,32 +17,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.web.monitor.core.status;
+package org.openspcoop2.utils.transport;
 
-import java.io.Serializable;
+import java.io.IOException;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+
+import org.openspcoop2.utils.resources.Charset;
 
 /**
- * IStatus
+ * UTF8Filter
  * 
  * @author Pintori Giuliano (pintori@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  *
  */
-public interface IStatus extends Serializable{
+public class UTF8Filter  implements Filter{
 
-	// Nome dell'oggetto di cui si vuole visualizzare lo stato
-	public String getNome();
-	public void setNome(String nome);
+	@Override
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
 
-	// Stato dell'oggetto
-	public SondaStatus getStato();
-	public void setStato(SondaStatus stato);
-	// Stato dell'oggetto in stringa
-	
+		request.setCharacterEncoding(Charset.UTF_8.getValue());
+		
+		chain.doFilter(request, response);
 
-	// Descrizione dello stato rilevato
-	public String getDescrizione();
-	public void setDescrizione(String descrizione);
-	
+	}
 }
