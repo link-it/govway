@@ -198,7 +198,8 @@ public class ConsegnaCondizionaleTest extends ConfigLoader {
 		return request;
 	}
 	
-	
+	// TODO: Test header http multipli e parametro query multiplo
+
 
 	@Test
 	public void headerHttpByNome() {
@@ -208,11 +209,14 @@ public class ConsegnaCondizionaleTest extends ConfigLoader {
 		HttpRequest request0 = buildRequest_HeaderHttpByNome(CONNETTORE_0, erogazione);
 		HttpRequest request1 = buildRequest_HeaderHttpByNome(CONNETTORE_1, erogazione);
 		HttpRequest request2 = buildRequest_HeaderHttpByNome(CONNETTORE_2, erogazione);
+		// La terza richiesta specifica due volte lo stesso connettore. deve comunque funzionare
 		HttpRequest request3 = buildRequest_HeaderHttpByNome(CONNETTORE_3, erogazione);
-		//HttpRequest requestRotto = buildRequest(CONNETTORE_ROTTO);
+		request3.addHeader(HEADER_CONDIZIONE, CONNETTORE_3); 	
+		
+		HttpRequest requestRotto = buildRequest_HeaderHttpByNome(CONNETTORE_ROTTO, erogazione);
 
-		// Non testo il connettore rotto nella consegna condizionale altrimenti i test ci mettono troppo
-		HttpRequest[] requestsByConnettore = { request0, request1, request2, request3/*, requestRotto*/ };
+		// Testo l'instradamento verso il connettore rotto solo in questo test.
+		HttpRequest[] requestsByConnettore = { request0, request1, request2, request3, requestRotto };
 		List<List<HttpResponse>> responsesByConnettore = new ArrayList<>(requestsByConnettore.length);
 		responsesByConnettore.add(new ArrayList<>());
 		responsesByConnettore.add(new ArrayList<>());
@@ -256,7 +260,59 @@ public class ConsegnaCondizionaleTest extends ConfigLoader {
 			}
 			
 		}
+	}
+	
+	
+	@Test
+	public void headerHttpByNomeConflitti() throws UtilsException {
+		// TODO: Segnala ad andrea questo test, deve decidere se è giusto che fallisca o meno
+		// e cioè se è possibile mandare valori diversi sullo header che identifica la condizione
+		final String erogazione = "ConsegnaCondizionaleHeaderHttpByNome";
 		
+		HttpRequest request = buildRequest_HeaderHttpByNome(CONNETTORE_1, erogazione);
+		request.addHeader(HEADER_CONDIZIONE, CONNETTORE_0);
+
+		var response = HttpUtilities.httpInvoke(request);
+		assertEquals(400,response.getResultHTTPOperation());
+	}
+	
+
+	@Test
+	public void parametroUrlByNomeConflitti() throws UtilsException {
+		// TODO: Segnala ad andrea questo test, deve decidere se è giusto che fallisca o meno
+		// e cioè se è possibile mandare valori diversi sullo header che identifica la condizione
+		
+		final String erogazione = "ConsegnaCondizionaleParametroUrlByNome";
+
+		HttpRequest request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-parametro-url"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
+				+ "&govway-testsuite-id_connettore_request="+CONNETTORE_0
+				+ "&govway-testsuite-id_connettore_request="+CONNETTORE_1);
+		
+		var response = HttpUtilities.httpInvoke(request);
+		assertEquals(400,response.getResultHTTPOperation());
+	}
+	
+	
+	@Test
+	public void XForwardedForByNomeConflitti() throws UtilsException {
+		// TODO: Segnala ad andrea questo test, deve decidere se è giusto che fallisca o meno
+		// e cioè se è possibile mandare valori diversi sullo header che identifica la condizione
+		
+		final String erogazione = "ConsegnaCondizionaleXForwardedForByNome";
+		List<String> forwardedHeaders = HttpUtilities.getClientAddressHeaders();
+
+		HttpRequest request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
+		request.addHeader(forwardedHeaders.get(0), CONNETTORE_0);
+		request.addHeader(forwardedHeaders.get(1), CONNETTORE_1);
+		
+		var response = HttpUtilities.httpInvoke(request);
+		assertEquals(400,response.getResultHTTPOperation());		
 	}
 	
 	
@@ -559,6 +615,95 @@ public class ConsegnaCondizionaleTest extends ConfigLoader {
 		var response = HttpUtilities.httpInvoke(requestForwardedFor);
 		
 		assertEquals(400, response.getResultHTTPOperation());
+	}
+	
+	@Test
+	public void identificazioneFallita() throws UtilsException {
+		// Per ogni regola per cui è possibile farlo, faccio fallire l'identificazione controllando che non avvengano 
+		// dei 500 dovuti a null pointer exceptions, ma solo 400
+		final String erogazione = "ConsegnaCondizionaleRegoleByNome";
+
+		final String content = "{ \"campo_inutile\": 1 }";
+
+		HttpRequest request_contenuto = new HttpRequest();
+		request_contenuto.setMethod(HttpRequestMethod.POST);
+		request_contenuto.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-contenuto"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);		
+		request_contenuto.setContentType("application/json");
+		request_contenuto.setContent(content.getBytes());
+		
+		var resp = HttpUtilities.httpInvoke(request_contenuto);
+		assertEquals(400, resp.getResultHTTPOperation());
+		
+		HttpRequest request_parametro_url = new HttpRequest();
+		request_parametro_url.setMethod(HttpRequestMethod.GET);
+		request_parametro_url.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-parametro-url"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
+				+ "&govway-testsuite-id_connettore_request="); // faccio mancare il valore del parametro
+
+		resp = HttpUtilities.httpInvoke(request_parametro_url);
+		assertEquals(400, resp.getResultHTTPOperation());
+
+			
+		HttpRequest request_template = new HttpRequest();
+		request_template.setContentType("application/json");	// TODO: con questa riga commentata il test fallisce, dopo il fix di andrea non sarà più necessario settare il content type
+		request_template.setMethod(HttpRequestMethod.GET);
+		request_template.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-template"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
+				+ "&govway-testsuite-id_connettore_request="); // faccio mancare il valore del parametro
+		
+		resp = HttpUtilities.httpInvoke(request_template);
+		assertEquals(400, resp.getResultHTTPOperation());
+		
+		
+		HttpRequest request_freemarker = new HttpRequest();
+		request_freemarker.setContentType("application/json"); // TODO: con questa riga commentata il test fallisce, dopo il fix di andrea non sarà più necessario settare il content type
+		request_freemarker.setMethod(HttpRequestMethod.GET);
+		request_freemarker.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-freemarker-template"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
+				+ "&govway-testsuite-id_connettore_request=");	// faccio mancare il valore del parametro
+		
+		resp = HttpUtilities.httpInvoke(request_freemarker);
+		assertEquals(400, resp.getResultHTTPOperation());
+
+
+		HttpRequest request_velocity = new HttpRequest();
+		request_velocity.setContentType("application/json"); // TODO: con questa riga commentata il test fallisce, dopo il fix di andrea non sarà più necessario settare il content type
+		request_velocity.setMethod(HttpRequestMethod.GET);
+		request_velocity.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-velocity-template"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
+				+ "&govway-testsuite-id_connettore_request="); // faccio mancare il valore del parametro
+		
+		resp = HttpUtilities.httpInvoke(request_velocity);
+		assertEquals(400, resp.getResultHTTPOperation());
+		
+		HttpRequest request_header_http = new HttpRequest();
+		request_header_http.setMethod(HttpRequestMethod.GET);
+		request_header_http.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-header-http"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
+		// faccio mancare il valore del parametro header
+		
+		resp = HttpUtilities.httpInvoke(request_header_http);
+		assertEquals(400, resp.getResultHTTPOperation());
+		
+		HttpRequest request_forwarded_for = new HttpRequest();
+		request_forwarded_for.setMethod(HttpRequestMethod.GET);
+		request_forwarded_for.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-xforwarded-for"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
+		// faccio mancare il valore del parametro header
+		
+		resp = HttpUtilities.httpInvoke(request_forwarded_for);
+		assertEquals(400, resp.getResultHTTPOperation());
+		
+		
+		HttpRequest request_url_invocazione = new HttpRequest();
+		request_url_invocazione.setMethod(HttpRequestMethod.GET);
+		request_url_invocazione.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-url-invocazione"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
+				+ "&govway-testsuite-id_connettore_request="); // faccio mancare il valore del parametro 		 
+		
+		resp = HttpUtilities.httpInvoke(request_url_invocazione);
+		assertEquals(400, resp.getResultHTTPOperation());		
 	}
 	
 	
