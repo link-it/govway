@@ -25,21 +25,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.allarmi.Allarme;
+import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.constants.TipoPdD;
+import org.openspcoop2.core.transazioni.utils.ProjectInfo;
+import org.openspcoop2.generic_project.beans.IProjectInfo;
+import org.openspcoop2.monitor.sdk.constants.CRUDType;
+import org.openspcoop2.monitor.sdk.constants.SearchType;
+import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.web.monitor.allarmi.mbean.AllarmiBean;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
-import org.apache.commons.lang.StringUtils;
-import org.openspcoop2.core.commons.dao.DAOFactory;
-import org.openspcoop2.core.constants.TipoPdD;
-import org.openspcoop2.core.transazioni.utils.ProjectInfo;
-import org.openspcoop2.generic_project.beans.IProjectInfo;
-import org.openspcoop2.monitor.sdk.condition.Context;
-import org.openspcoop2.monitor.sdk.constants.CRUDType;
-import org.openspcoop2.monitor.sdk.constants.SearchType;
-import org.openspcoop2.monitor.sdk.parameters.Parameter;
+import org.slf4j.Logger;
 
 /**
  * AllarmiContext 
@@ -48,7 +48,7 @@ import org.openspcoop2.monitor.sdk.parameters.Parameter;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class AllarmiContext implements Context{ 
+public class AllarmiContext implements org.openspcoop2.monitor.sdk.condition.AlarmContext { 
 
 	private AllarmiBean allarmiBean = null;
 	private TipiDatabase tipoDatabase = null;
@@ -244,6 +244,14 @@ public class AllarmiContext implements Context{
 		if(this.allarmiBean!=null) {
 			this.allarmiBean.setShowFilter(filter);
 		}
+	}
+
+	@Override
+	public Allarme getConfigAllarme() {
+		if(this.allarmiBean!=null) {
+			return this.allarmiBean.getAllarme();
+		}
+		return null;
 	}
 
 

@@ -71,6 +71,12 @@ public class AllarmiSearchForm extends BaseSearchForm implements Cloneable {
 	}
 	
 	@Override
+	protected String eseguiFiltra() {
+		this.setAggiornamentoDatiAbilitato(true); // abilito aggiornamento
+		return super.eseguiFiltra();
+	}
+	
+	@Override
 	public void initSearchListener(ActionEvent ae) {
 		super.initSearchListener(ae);
 		

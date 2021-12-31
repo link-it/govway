@@ -410,8 +410,10 @@ public class ConfigurazioneAllarmiAdd extends Action {
 					IDynamicLoader dl = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME, allarme.getPlugin().getTipo(), allarme.getPlugin().getClassName(), ControlStationCore.getLog());
 					IAlarmProcessing alarm = (IAlarmProcessing) dl.newInstance();
 					if(alarm.isManuallyAckCriteria()) {
-						if(alarm.getDefaultManuallyAckCriteria()!=null) {
-							allarme.setDettaglioAcknowledged(alarm.getDefaultManuallyAckCriteria());
+						Context context = confHelper.createAlarmContext(allarme, parameters);
+						String ackCriteria = alarm.getDefaultManuallyAckCriteria(context);
+						if(ackCriteria!=null) {
+							allarme.setDettaglioAcknowledged(ackCriteria);
 						}
 					}
 				}catch(Exception e){

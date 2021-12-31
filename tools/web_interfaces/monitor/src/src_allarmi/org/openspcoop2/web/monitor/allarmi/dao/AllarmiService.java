@@ -1332,14 +1332,14 @@ public class AllarmiService implements IAllarmiService {
 	}
 
 	@Override
-	public boolean isUsableFilter(Allarme configurazioneAllarme) throws Exception{
-		return _isUsable(configurazioneAllarme, true);
+	public boolean isUsableFilter(Allarme configurazioneAllarme, Context context) throws Exception{
+		return _isUsable(configurazioneAllarme, context, true);
 	}
 	@Override
-	public boolean isUsableGroupBy(Allarme configurazioneAllarme) throws Exception{
-		return _isUsable(configurazioneAllarme, false);
+	public boolean isUsableGroupBy(Allarme configurazioneAllarme, Context context) throws Exception{
+		return _isUsable(configurazioneAllarme, context, false);
 	}
-	public boolean _isUsable(Allarme configurazioneAllarme, boolean filter) throws Exception{
+	public boolean _isUsable(Allarme configurazioneAllarme, Context context, boolean filter) throws Exception{
 		
 		try {
 			IdPlugin idPlugin = new IdPlugin();
@@ -1350,7 +1350,7 @@ public class AllarmiService implements IAllarmiService {
 			
 			IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME, configurazioneAllarme.getTipo(), plugin.getClassName(), AllarmiService.log);
 			IAlarmProcessing alarmProcessing = (IAlarmProcessing) bl.newInstance();
-			return filter ? alarmProcessing.isUsableFilter() : alarmProcessing.isUsableGroupBy();
+			return filter ? alarmProcessing.isUsableFilter(context) : alarmProcessing.isUsableGroupBy(context);
 
 		} catch (Exception e) {
 			AllarmiService.log.error(e.getMessage(), e);
@@ -1359,7 +1359,7 @@ public class AllarmiService implements IAllarmiService {
 	}
 	
 	@Override
-	public String getParameterSectionTitle(Allarme configurazioneAllarme) throws Exception{
+	public String getParameterSectionTitle(Allarme configurazioneAllarme, Context context) throws Exception{
 		try {
 			IdPlugin idPlugin = new IdPlugin();
 			idPlugin.setTipoPlugin(TipoPlugin.ALLARME.getValue());
@@ -1370,7 +1370,7 @@ public class AllarmiService implements IAllarmiService {
 			IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME, configurazioneAllarme.getTipo(), plugin.getClassName(), AllarmiService.log);
 			IAlarmProcessing alarmProcessing = (IAlarmProcessing) bl.newInstance();
 			
-			boolean groupBy = alarmProcessing.isUsableGroupBy();
+			boolean groupBy = alarmProcessing.isUsableGroupBy(context);
 			
 			String s = alarmProcessing.getParameterSectionTitle();
 			if(s==null || StringUtils.isEmpty(s)) {

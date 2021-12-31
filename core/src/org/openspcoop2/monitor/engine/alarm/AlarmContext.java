@@ -26,19 +26,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.utils.ProjectInfo;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.generic_project.beans.IProjectInfo;
-import org.openspcoop2.monitor.sdk.condition.Context;
 import org.openspcoop2.monitor.sdk.constants.CRUDType;
 import org.openspcoop2.monitor.sdk.constants.SearchType;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.utils.TipiDatabase;
+import org.slf4j.Logger;
 
 /**
  * AlarmContext
@@ -47,7 +46,7 @@ import org.openspcoop2.utils.TipiDatabase;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class AlarmContext implements Context{
+public class AlarmContext implements org.openspcoop2.monitor.sdk.condition.AlarmContext{
 	
 	private Allarme allarme;
 	private Logger log;
@@ -265,4 +264,8 @@ public class AlarmContext implements Context{
 		}
 	}
 
+	@Override
+	public Allarme getConfigAllarme() {
+		return this.allarme;
+	}
 }

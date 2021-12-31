@@ -95,6 +95,8 @@ import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
 import org.openspcoop2.monitor.sdk.condition.Context;
 import org.openspcoop2.monitor.sdk.constants.ParameterType;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
+import org.openspcoop2.monitor.sdk.plugins.FiltersConfiguration;
+import org.openspcoop2.monitor.sdk.plugins.GroupByConfiguration;
 import org.openspcoop2.monitor.sdk.plugins.IAlarmProcessing;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
@@ -2649,15 +2651,15 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
-	public boolean isUsableFilter(ConfigurazioneAllarmeBean configurazioneAllarme) throws Exception{
-		return this._isUsable(configurazioneAllarme, true);
+	public boolean isUsableFilter(ConfigurazioneAllarmeBean configurazioneAllarme, Context context) throws Exception{
+		return this._isUsable(configurazioneAllarme, context, true);
 	}
 	
-	public boolean isUsableGroupBy(ConfigurazioneAllarmeBean configurazioneAllarme) throws Exception{
-		return this._isUsable(configurazioneAllarme, false);
+	public boolean isUsableGroupBy(ConfigurazioneAllarmeBean configurazioneAllarme, Context context) throws Exception{
+		return this._isUsable(configurazioneAllarme, context, false);
 	}
 	
-	public boolean _isUsable(ConfigurazioneAllarmeBean configurazioneAllarme, boolean filter) throws Exception{
+	public boolean _isUsable(ConfigurazioneAllarmeBean configurazioneAllarme, Context context, boolean filter) throws Exception{
 		String nomeMetodo = "_isUsable";
 		Connection con = null;
 		DriverControlStationDB driver = null;
@@ -2672,7 +2674,50 @@ public class ConfigurazioneCore extends ControlStationCore {
 			
 			IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME, configurazioneAllarme.getPlugin().getTipo(), plugin.getClassName(), ControlStationCore.log);
 			IAlarmProcessing alarmProcessing = (IAlarmProcessing) bl.newInstance();
-			return filter ? alarmProcessing.isUsableFilter() : alarmProcessing.isUsableGroupBy();
+			return filter ? alarmProcessing.isUsableFilter(context) : alarmProcessing.isUsableGroupBy(context);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public FiltersConfiguration getFiltersConfiguration(ConfigurazioneAllarmeBean configurazioneAllarme, Context context) throws Exception{
+		return (FiltersConfiguration) this._getFilterGroupByConfig(configurazioneAllarme, context, true);
+	}
+	
+	public GroupByConfiguration getGroupByConfiguration(ConfigurazioneAllarmeBean configurazioneAllarme, Context context) throws Exception{
+		return (GroupByConfiguration) this._getFilterGroupByConfig(configurazioneAllarme, context, false);
+	}
+	
+	public Object _getFilterGroupByConfig(ConfigurazioneAllarmeBean configurazioneAllarme, Context context, boolean filter) throws Exception{
+		String nomeMetodo = "_getFilterGroupByConfig";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			Plugin plugin = driver.getPlugin(TipoPlugin.ALLARME, configurazioneAllarme.getPlugin().getTipo(), true);
+			
+			IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME, configurazioneAllarme.getPlugin().getTipo(), plugin.getClassName(), ControlStationCore.log);
+			IAlarmProcessing alarmProcessing = (IAlarmProcessing) bl.newInstance();
+			
+			if(filter) {
+				if(alarmProcessing.isUsableFilter(context)) {
+					return alarmProcessing.getFiltersConfiguration(context);
+				}
+			}
+			else {
+				if(alarmProcessing.isUsableGroupBy(context)) {
+					return alarmProcessing.getGroupByConfiguration(context);
+				}
+			}
+			return null;
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);

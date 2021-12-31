@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.commons.CoreException;
-import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
@@ -305,8 +304,26 @@ public class RegistroServiziManager {
 	
 	/* ********  P R O P R I E T A  ******** */
 	
-	public Map<String, String> getProprietaConfigurazione(Soggetto soggetto) throws DriverConfigurazioneException {
+	public Map<String, String> getProprietaConfigurazione(Soggetto soggetto) throws DriverRegistroServiziException {
 		return this.registroServiziReader.getProprietaConfigurazione(soggetto);
+	}
+	
+	
+	
+	/* ********  C E R T I F I C A T I  ******** */
+	
+	public CertificateCheck checkCertificatoSoggettoWithoutCache(long idSoggetto, int sogliaWarningGiorni,  
+			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		return this.registroServiziReader.checkCertificatoSoggetto(null, false,
+				idSoggetto, sogliaWarningGiorni,  
+				addCertificateDetails, separator, newLine);
+	}
+
+	public CertificateCheck checkCertificatoSoggettoWithoutCache(IDSoggetto idSoggetto, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		return this.registroServiziReader.checkCertificatoSoggetto(null, false,
+				idSoggetto, sogliaWarningGiorni,  
+				addCertificateDetails, separator, newLine);
 	}
 	
 	

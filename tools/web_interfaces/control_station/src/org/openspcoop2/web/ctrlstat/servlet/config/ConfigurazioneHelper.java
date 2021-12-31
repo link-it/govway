@@ -154,6 +154,8 @@ import org.openspcoop2.monitor.engine.dynamic.IDynamicValidator;
 import org.openspcoop2.monitor.sdk.condition.Context;
 import org.openspcoop2.monitor.sdk.constants.ParameterType;
 import org.openspcoop2.monitor.sdk.exceptions.ValidationException;
+import org.openspcoop2.monitor.sdk.plugins.FiltersConfiguration;
+import org.openspcoop2.monitor.sdk.plugins.GroupByConfiguration;
 import org.openspcoop2.pdd.config.ConfigurazionePdD;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
@@ -20211,7 +20213,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 		}
 
-		boolean groupByAllarme = this.isShowGroupBy(allarme);
+		Context context = this.createAlarmContext(allarme, parameters);
+		boolean groupByAllarme = this.isShowGroupBy(allarme, context);
 		
 		if( (parameters != null && parameters.size() > 0) || groupByAllarme) {
 			de = new DataElement();
@@ -20248,13 +20251,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		// sezione group by
 		if(groupByAllarme) {
-			this.addToDatiAllarmeGroupBy(dati, tipoOperazione, allarme, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_RAGGRUPPAMENTO,
+			this.addToDatiAllarmeGroupBy(dati, tipoOperazione, allarme, context,
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_RAGGRUPPAMENTO,
 					ruoloPorta, nomePorta, serviceBinding, tokenAbilitato);
 		}
 		
 		// Sezione filtro
-		if(this.isShowFilter(allarme)) {
-			this.addToDatiAllarmeFiltro(dati, tipoOperazione, allarme, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO,
+		if(this.isShowFilter(allarme, context)) {
+			this.addToDatiAllarmeFiltro(dati, tipoOperazione, allarme, context,
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO,
 					ruoloPorta, nomePorta, serviceBinding, idSoggettoProprietario, tokenAbilitato , tipoAutenticazione, 
 					appId, pddTipologiaSoggettoAutenticati, gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore);
 		}
@@ -20427,21 +20432,35 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 	}
 	
-	public boolean isShowFilter(ConfigurazioneAllarmeBean allarme) throws Exception {
+	public boolean isShowFilter(ConfigurazioneAllarmeBean allarme, Context context) throws Exception {
 		if(allarme==null || allarme.getPlugin() == null){
 			return false; // all'inizio deve prima essere scelto il plugin
 		}
 		
-		return this.confCore.isUsableFilter(allarme);
+		return this.confCore.isUsableFilter(allarme, context);
+	}
+	
+	public FiltersConfiguration getFiltersConfiguration(ConfigurazioneAllarmeBean allarme, Context context) throws Exception {
+		if(allarme==null || allarme.getPlugin() == null){
+			return null;
+		}
+		return this.confCore.getFiltersConfiguration(allarme, context);
 	}
 	
 	
-	public boolean isShowGroupBy(ConfigurazioneAllarmeBean allarme) throws Exception {
+	public boolean isShowGroupBy(ConfigurazioneAllarmeBean allarme, Context context) throws Exception {
 		if(allarme==null || allarme.getPlugin() == null){
 			return false; // all'inizio deve prima essere scelto il plugin
 		}
 		
-		return this.confCore.isUsableGroupBy(allarme);
+		return this.confCore.isUsableGroupBy(allarme, context);
+	}
+	
+	public GroupByConfiguration getGroupByConfiguration(ConfigurazioneAllarmeBean allarme, Context context) throws Exception {
+		if(allarme==null || allarme.getPlugin() == null){
+			return null;
+		}
+		return this.confCore.getGroupByConfiguration(allarme, context);
 	}
 	
 	public String getParameterSectionTitle(ConfigurazioneAllarmeBean allarme, boolean groupByAllarme) throws Exception {
@@ -20451,7 +20470,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return this.confCore.getParameterSectionTitle(allarme, groupByAllarme);
 	}
 	
-	private void addToDatiAllarmeFiltro(Vector<DataElement> dati, TipoOperazione tipoOperazione, ConfigurazioneAllarmeBean allarme, String nomeSezione,
+	private void addToDatiAllarmeFiltro(Vector<DataElement> dati, TipoOperazione tipoOperazione, ConfigurazioneAllarmeBean allarme, Context context, String nomeSezione,
 			RuoloPorta ruoloPorta, String nomePorta, ServiceBinding serviceBinding,
 			IDSoggetto idSoggettoProprietario, boolean tokenAbilitato, 
 			CredenzialeTipo tipoAutenticazione, Boolean appId, 
@@ -20477,6 +20496,23 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		boolean multitenant = this.confCore.isMultitenant();
 		
+		FiltersConfiguration filterConfig = this.confCore.getFiltersConfiguration(allarme, context);
+		
+		// Ruolo Gateway
+		RuoloPorta ruoloPortaFiltro = null;
+		if(allarme!=null && allarme.getFiltro()!=null) {
+			ruoloPortaFiltro = allarme.getFiltro().getRuoloPorta();
+		}
+		if(configurazione && filterConfig!=null && !filterConfig.isHideGatewayRole() &&
+				(filterConfig.isForceInGatewayRole() || filterConfig.isForceOutGatewayRole())) {
+			if(filterConfig.isForceInGatewayRole()) {
+				ruoloPortaFiltro = RuoloPorta.APPLICATIVA;
+			}
+			else if(filterConfig.isForceOutGatewayRole()) {
+				ruoloPortaFiltro = RuoloPorta.DELEGATA;
+			}
+		}
+
 		
 		// Elaboro valori con dipendenze
 		
@@ -20616,11 +20652,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					List<IDSoggetto> listErogatori = new ArrayList<>();
 
 					List<IDSoggetto> listSoggettiPreFilterMultitenant = this.confCore.getSoggettiErogatori(protocolloSelezionatoValue, protocolliValue);
-					if(allarme.getFiltro().getRuoloPorta()!=null && !RuoloPorta.ENTRAMBI.equals(allarme.getFiltro().getRuoloPorta())) {
+					if(ruoloPortaFiltro!=null && !RuoloPorta.ENTRAMBI.equals(ruoloPortaFiltro)) {
 						for (IDSoggetto idSoggetto : listSoggettiPreFilterMultitenant) {
 							Soggetto s = this.soggettiCore.getSoggettoRegistro(idSoggetto);
 							boolean isPddEsterna = this.pddCore.isPddEsterna(s.getPortaDominio());
-							if(RuoloPorta.DELEGATA.equals(allarme.getFiltro().getRuoloPorta())) {
+							if(RuoloPorta.DELEGATA.equals(ruoloPortaFiltro)) {
 								if(isPddEsterna) {
 									listErogatori.add(idSoggetto);
 								}	
@@ -20949,9 +20985,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 //			// servizi applicativi erogatore
 //			if(configurazione) {
-//				if(allarme.getFiltro().getRuoloPorta()==null ||
-//						RuoloPorta.ENTRAMBI.equals(allarme.getFiltro().getRuoloPorta()) || 
-//						RuoloPorta.APPLICATIVA.equals(allarme.getFiltro().getRuoloPorta())){
+//				if(ruoloPortaFiltro==null ||
+//						RuoloPorta.ENTRAMBI.equals(ruoloPortaFiltro) || 
+//						RuoloPorta.APPLICATIVA.equals(ruoloPortaFiltro)){
 //					if(protocolloAssociatoFiltroNonSelezionatoUtente) {
 //						if(allarme.getFiltro().getServizioApplicativoErogatore()!=null){
 //							servizioApplicativoErogatoreSelezionatoValue = allarme.getFiltro().getServizioApplicativoErogatore();
@@ -21023,11 +21059,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					List<IDSoggetto> listSoggetti = new ArrayList<>();
 					if(configurazione) {
 						List<IDSoggetto> listSoggettiPreFilterMultitenant = this.confCore.getSoggetti(protocolloSelezionatoValue, protocolliValue);
-						if(allarme.getFiltro().getRuoloPorta()!=null && !RuoloPorta.ENTRAMBI.equals(allarme.getFiltro().getRuoloPorta())) {
+						if(ruoloPortaFiltro!=null && !RuoloPorta.ENTRAMBI.equals(ruoloPortaFiltro)) {
 							for (IDSoggetto idSoggetto : listSoggettiPreFilterMultitenant) {
 								Soggetto s = this.soggettiCore.getSoggettoRegistro(idSoggetto);
 								boolean isPddEsterna = this.pddCore.isPddEsterna(s.getPortaDominio());
-								if(RuoloPorta.APPLICATIVA.equals(allarme.getFiltro().getRuoloPorta())) {
+								if(RuoloPorta.APPLICATIVA.equals(ruoloPortaFiltro)) {
 									if(isPddEsterna) {
 										listSoggetti.add(idSoggetto);
 									}	
@@ -21294,10 +21330,19 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_PDD);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_PDD);
-			if(allarme.getFiltro().getRuoloPorta()!=null){
-				de.setValue(allarme.getFiltro().getRuoloPorta().getValue());
+			if(ruoloPortaFiltro!=null){
+				de.setValue(ruoloPortaFiltro.getValue());
 			}
-			if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
+			if(filterConfig!=null && filterConfig.isHideGatewayRole()) {
+				de.setType(DataElementType.HIDDEN);
+				dati.addElement(de);
+			}
+			else if(configurazione && filterConfig!=null && 
+					(filterConfig.isForceInGatewayRole() || filterConfig.isForceOutGatewayRole())) {
+				de.setType(DataElementType.HIDDEN);
+				dati.addElement(de);
+			}
+			else if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
 				de.setType(DataElementType.HIDDEN);
 				dati.addElement(de);
 				
@@ -21305,8 +21350,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_PDD+"___LABEL");
 					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_PDD);
-					if(allarme.getFiltro().getRuoloPorta()!=null){
-						de.setValue(allarme.getFiltro().getRuoloPorta().getValue());
+					if(ruoloPortaFiltro!=null){
+						de.setValue(ruoloPortaFiltro.getValue());
 					}
 					else {
 						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI);
@@ -21317,8 +21362,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			else {
 				de.setValues(ConfigurazioneCostanti.TIPI_RUOLO_PDD);
 				de.setLabels(ConfigurazioneCostanti.LABEL_TIPI_RUOLO_PDD);
-				if(allarme.getFiltro().getRuoloPorta()!=null){
-					de.setSelected(allarme.getFiltro().getRuoloPorta().getValue());
+				if(ruoloPortaFiltro!=null){
+					de.setSelected(ruoloPortaFiltro.getValue());
 				}
 				de.setType(DataElementType.SELECT);
 				de.setPostBack_viaPOST(true);
@@ -21331,7 +21376,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_PROTOCOLLO);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_PROTOCOLLO);
 			de.setValue(protocolloSelezionatoValue); // un protocollo e' sempre selezionato 
-			if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
+			if(filterConfig!=null && filterConfig.isHideProtocol()) {
+				de.setType(DataElementType.HIDDEN);
+				dati.addElement(de);
+			}
+			else if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
 				de.setType(DataElementType.HIDDEN);
 				dati.addElement(de);
 				
@@ -21369,7 +21418,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_EROGATORE);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_EROGATORE);
-			if(datiIdentificativiErogatoreSelezionatoValue!=null) {
+			if(filterConfig!=null && filterConfig.isHideProviderRole()) {
+				de.setType(DataElementType.HIDDEN);
+			}
+			else if(datiIdentificativiErogatoreSelezionatoValue!=null) {
 				de.setType(DataElementType.HIDDEN);
 			}
 			else {
@@ -21400,7 +21452,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_EROGATORE);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_EROGATORE);
-			if(ruoloErogatoreSelezionatoValue!=null) {
+			if(filterConfig!=null && filterConfig.isHideProvider()) {
+				de.setType(DataElementType.HIDDEN);
+			}
+			else if(ruoloErogatoreSelezionatoValue!=null) {
 				de.setType(DataElementType.HIDDEN);
 			}
 			else {
@@ -21433,7 +21488,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_TAG);
 			de.setValue(datiIdentificativiTagSelezionatoValue);
 			boolean allarmiFiltroApi = this.core.getAllarmiConfig().isOptionsFilterApi();
-			if(!configurazione) {
+			if(filterConfig!=null && filterConfig.isHideTag()) {
+				de.setType(DataElementType.HIDDEN);
+				dati.addElement(de);
+			}
+			else if(!configurazione) {
 				de.setType(DataElementType.HIDDEN);
 				dati.addElement(de);
 			}
@@ -21457,7 +21516,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_SERVIZIO);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_SERVIZIO);
 			de.setValue(datiIdentificativiServizioSelezionatoValue);
-			if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
+			if(filterConfig!=null && filterConfig.isHideService()) {
+				de.setType(DataElementType.HIDDEN);
+				dati.addElement(de);
+			}
+			else if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
 				de.setType(DataElementType.HIDDEN);
 				dati.addElement(de);
 				
@@ -21492,7 +21555,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// Azione
 			boolean showAzione = true;
 			if(configurazione) {
-				if(datiIdentificativiServizioSelezionatoValue==null) {
+				if(filterConfig!=null && filterConfig.isHideAction()) {
+					showAzione = false;
+				}
+				else if(datiIdentificativiServizioSelezionatoValue==null) {
+					showAzione = false;
+				}
+			}
+			else {
+				if(filterConfig!=null && filterConfig.isHideAction()) {
 					showAzione = false;
 				}
 			}
@@ -21653,7 +21724,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //			else {
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_RICHIEDENTE);
 			//}
-			if((datiIdentificativiFruitoreSelezionatoValue!=null && !delegata) || servizioApplicativoFruitoreSelezionatoValue!=null || !showRuoloRichiedente) {
+			if(filterConfig!=null && filterConfig.isHideSubscriberRole()) {
+				de.setType(DataElementType.HIDDEN);
+			}
+			else if((datiIdentificativiFruitoreSelezionatoValue!=null && !delegata) || servizioApplicativoFruitoreSelezionatoValue!=null || !showRuoloRichiedente) {
 				de.setType(DataElementType.HIDDEN);
 			}
 			else {
@@ -21690,7 +21764,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_FRUITORE);
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_FRUITORE);
-				if(ruoloFruitoreSelezionatoValue!=null) {
+				if(filterConfig!=null && filterConfig.isHideSubscriber()) {
+					de.setType(DataElementType.HIDDEN);
+				}
+				else if(ruoloFruitoreSelezionatoValue!=null) {
 					de.setType(DataElementType.HIDDEN);
 				}
 				else {
@@ -21723,7 +21800,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_SA_FRUITORE);
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_SA_FRUITORE);
-				if(ruoloFruitoreSelezionatoValue!=null) {
+				if(filterConfig!=null && filterConfig.isHideApplication()) {
+					de.setType(DataElementType.HIDDEN);
+				}
+				else if(ruoloFruitoreSelezionatoValue!=null) {
 					de.setType(DataElementType.HIDDEN);
 				}
 				else {
@@ -21753,7 +21833,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 	}
 	
-	private void addToDatiAllarmeGroupBy(Vector<DataElement> dati, TipoOperazione tipoOperazione,ConfigurazioneAllarmeBean allarme, String nomeSezione,	
+	private void addToDatiAllarmeGroupBy(Vector<DataElement> dati, TipoOperazione tipoOperazione,ConfigurazioneAllarmeBean allarme, Context context, String nomeSezione,	
 			RuoloPorta ruoloPorta, String nomePorta, ServiceBinding serviceBinding,
 			boolean tokenAbilitato) throws Exception {
 	
@@ -21822,24 +21902,55 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		if(allarme.getGroupBy().isEnabled()){
 		
+			GroupByConfiguration groupByConfig = this.confCore.getGroupByConfiguration(allarme, context);
+			
 			
 			// --- GENERALI ---
 			
 			if(configurazione) {
 				
-				boolean showRuoloPdD = allarme.getFiltro()==null || 
-						allarme.getFiltro().isEnabled()==false || 
-						allarme.getFiltro().getRuoloPorta()==null ||
-						RuoloPorta.ENTRAMBI.equals(allarme.getFiltro().getRuoloPorta());
+				// Ruolo Gateway
+				FiltersConfiguration filterConfig = this.confCore.getFiltersConfiguration(allarme, context);
+				RuoloPorta ruoloPortaFiltro = null;
+				if(allarme!=null && allarme.getFiltro()!=null && allarme.getFiltro().isEnabled()) {
+					ruoloPortaFiltro = allarme.getFiltro().getRuoloPorta();
+				}
+				if(filterConfig!=null && !filterConfig.isHideGatewayRole() &&
+						(filterConfig.isForceInGatewayRole() || filterConfig.isForceOutGatewayRole())) {
+					if(filterConfig.isForceInGatewayRole()) {
+						ruoloPortaFiltro = RuoloPorta.APPLICATIVA;
+					}
+					else if(filterConfig.isForceOutGatewayRole()) {
+						ruoloPortaFiltro = RuoloPorta.DELEGATA;
+					}
+				}
+				
+				boolean showRuoloPdD = ruoloPortaFiltro==null || 
+						RuoloPorta.ENTRAMBI.equals(ruoloPortaFiltro);
+				if(showRuoloPdD) {
+					if(groupByConfig!=null && groupByConfig.isHideGatewayRole()) {
+						showRuoloPdD = false;
+					}
+				}
 				
 				boolean showProtocollo = protocolli.size()>1 && (allarme.getFiltro()==null || 
 						allarme.getFiltro().isEnabled()==false || 
 						allarme.getFiltro().getProtocollo()==null);
+				if(showProtocollo) {
+					if(groupByConfig!=null && groupByConfig.isHideProtocol()) {
+						showProtocollo = false;
+					}
+				}
 				
 				boolean showErogatore = allarme.getFiltro()==null || 
 						allarme.getFiltro().isEnabled()==false || 
 						allarme.getFiltro().getTipoErogatore()==null ||
 						allarme.getFiltro().getNomeErogatore()==null;
+				if(showErogatore) {
+					if(groupByConfig!=null && groupByConfig.isHideProvider()) {
+						showErogatore = false;
+					}
+				}
 				
 				if(showRuoloPdD || showProtocollo || showErogatore) {
 //					de = new DataElement();
@@ -21900,6 +22011,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					allarme.getFiltro().getAzione()==null ||
 					"".equals(allarme.getFiltro().getAzione()) ||
 					allarme.getFiltro().getAzione().contains(",");
+			if(showAzione) {
+				if(groupByConfig!=null && groupByConfig.isHideAction()) {
+					showAzione = false;
+				}
+			}
 			
 //			boolean showSAErogatore = false;
 			
@@ -21910,10 +22026,20 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							allarme.getFiltro().isEnabled()==false || 
 							allarme.getFiltro().getTipoServizio()==null ||
 							allarme.getFiltro().getNomeServizio()==null;
+					if(showServizio) {
+						if(groupByConfig!=null && groupByConfig.isHideService()) {
+							showServizio = false;
+						}
+					}
 				}
 
 				if(showAzione) {
 					showAzione = showServizio && allarme.getGroupBy().isServizio(); // l'azione la scelgo se ho prima selezionato una API
+					if(showAzione) {
+						if(groupByConfig!=null && groupByConfig.isHideAction()) {
+							showAzione = false;
+						}
+					}
 				}
 				
 //				showSAErogatore = allarme.getFiltro()==null || 
@@ -22002,6 +22128,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						allarme.getFiltro().isEnabled()==false || 
 						allarme.getFiltro().getTipoFruitore()==null ||
 						allarme.getFiltro().getNomeFruitore()==null;
+				if(showFruitore) {
+					if(groupByConfig!=null && groupByConfig.isHideSubscriber()) {
+						showFruitore = false;
+					}
+				}
 				
 				// Fruitore
 				if( showFruitore ){
@@ -22019,6 +22150,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						allarme.getFiltro().isEnabled()==false || 
 						allarme.getFiltro().getRuoloPorta()==null ||
 						allarme.getFiltro().getServizioApplicativoFruitore()==null;
+				if(showRichiedenteApplicativo) {
+					if(groupByConfig!=null && groupByConfig.isHideApplication()) {
+						showRichiedenteApplicativo = false;
+					}
+				}
 				
 				// Applicativo Fruitore
 				if( showRichiedenteApplicativo ){
@@ -22034,14 +22170,23 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			else {
 			
+				boolean showRichiedente = true;
+				if(showRichiedente) {
+					if(groupByConfig!=null && groupByConfig.isHideSenderIdentity()) {
+						showRichiedente = false;
+					}
+				}
+				
 				// Richiedente API (Significa SoggettoMittente per le erogazioni, Applicativo e Identificativo Autenticato sia per le erogazioni che per le fruizioni)
-				de = new DataElement();
-				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_RICHIEDENTE);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_RICHIEDENTE);
-				de.setType(DataElementType.CHECKBOX);
-				de.setSelected(allarme.getGroupBy().isIdentificativoAutenticato()); // uso isIdentificativoAutenticato come informazione equivalente a isServizioApplicativoFruitore e isSoggettoFruitore
-				de.setValue(allarme.getGroupBy().isIdentificativoAutenticato()+"");
-				dati.addElement(de);
+				if(showRichiedente) {
+					de = new DataElement();
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_RICHIEDENTE);
+					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_RICHIEDENTE);
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(allarme.getGroupBy().isIdentificativoAutenticato()); // uso isIdentificativoAutenticato come informazione equivalente a isServizioApplicativoFruitore e isSoggettoFruitore
+					de.setValue(allarme.getGroupBy().isIdentificativoAutenticato()+"");
+					dati.addElement(de);
+				}
 			
 			}
 			
@@ -22078,26 +22223,42 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					groupByToken = ServletUtils.isCheckBoxEnabled(token);
 				}
 				
-				de = new DataElement();
-				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_TOKEN);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_TOKEN);
-				de.setType(DataElementType.CHECKBOX);
-				de.setSelected(groupByToken); // uso isIdentificativoAutenticato come informazione equivalente a isServizioApplicativoFruitore e isSoggettoFruitore
-				de.setValue(groupByToken+"");
-				de.setPostBack_viaPOST(true);
-				dati.addElement(de);
+				boolean showToken = true;
+				if(showToken) {
+					if(groupByConfig!=null && groupByConfig.isHideToken()) {
+						showToken = false;
+					}
+				}
 				
-				if(groupByToken) {
+				if(showToken) {
 					de = new DataElement();
-					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_TOKEN_CLAIMS);
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_TOKEN_CLAIMS);
-					de.setValues(CostantiControlStation.TOKEN_VALUES_WITHOUT_ISSUER);
-					de.setLabels(CostantiControlStation.LABEL_TOKEN_VALUES_WITHOUT_ISSUER);
-					de.setSelezionati(tokenSelezionatiSenzaIssuer);
-					de.setType(DataElementType.MULTI_SELECT);
-					de.setRows(4); 
-					de.setRequired(true);
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_TOKEN);
+					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_TOKEN);
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(groupByToken); // uso isIdentificativoAutenticato come informazione equivalente a isServizioApplicativoFruitore e isSoggettoFruitore
+					de.setValue(groupByToken+"");
+					de.setPostBack_viaPOST(true);
 					dati.addElement(de);
+					
+					boolean showTokenClaims = true;
+					if(showTokenClaims) {
+						if(groupByConfig!=null && groupByConfig.isHideTokenClaims()) {
+							showTokenClaims = false;
+						}
+					}
+					
+					if(showTokenClaims && groupByToken) {
+						de = new DataElement();
+						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_TOKEN_CLAIMS);
+						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_TOKEN_CLAIMS);
+						de.setValues(CostantiControlStation.TOKEN_VALUES_WITHOUT_ISSUER);
+						de.setLabels(CostantiControlStation.LABEL_TOKEN_VALUES_WITHOUT_ISSUER);
+						de.setSelezionati(tokenSelezionatiSenzaIssuer);
+						de.setType(DataElementType.MULTI_SELECT);
+						de.setRows(4); 
+						de.setRequired(true);
+						dati.addElement(de);
+					}
 				}
 				
 			}

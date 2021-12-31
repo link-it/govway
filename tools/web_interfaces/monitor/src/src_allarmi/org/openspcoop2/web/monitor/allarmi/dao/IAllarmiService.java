@@ -54,11 +54,11 @@ public interface IAllarmiService extends
 	
 	public List<Parameter<?>> instanceParameters(Allarme configurazioneAllarme, Context context) throws Exception;
 	
-	public boolean isUsableFilter(Allarme configurazioneAllarme) throws Exception;
+	public boolean isUsableFilter(Allarme configurazioneAllarme, Context context) throws Exception;
 	
-	public boolean isUsableGroupBy(Allarme configurazioneAllarme) throws Exception;
+	public boolean isUsableGroupBy(Allarme configurazioneAllarme, Context context) throws Exception;
 	
-	public String getParameterSectionTitle(Allarme configurazioneAllarme) throws Exception;
+	public String getParameterSectionTitle(Allarme configurazioneAllarme, Context context) throws Exception;
 	
 	public ConfigurazioneAllarmeBean getAllarme(String nome) throws NotFoundException, ServiceException;
 

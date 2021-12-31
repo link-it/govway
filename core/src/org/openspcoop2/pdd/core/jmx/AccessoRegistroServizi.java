@@ -42,9 +42,12 @@ import javax.management.ReflectionException;
 
 import org.slf4j.Logger;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.connettori.ConnettoreCheck;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.registry.CertificateCheck;
+import org.openspcoop2.protocol.registry.RegistroServiziManager;
 
 
 /**
@@ -64,6 +67,8 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 	public final static String CHECK_CONNETTORE_BY_NOME = "checkConnettoreByNome";
 	public final static String GET_CERTIFICATI_CONNETTORE_BY_ID = "getCertificatiConnettoreById";
 	public final static String GET_CERTIFICATI_CONNETTORE_BY_NOME = "getCertificatiConnettoreByNome";
+	public final static String CHECK_CERTIFICATO_SOGGETTO_BY_ID = "checkCertificatoSoggettoById";
+	public final static String CHECK_CERTIFICATO_SOGGETTO_BY_NOME = "checkCertificatoSoggettoByNome";
 	
 	/** Attributi */
 	private boolean cacheAbilitata = false;
@@ -313,6 +318,53 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 			return this.getCertificatiConnettoreByNome(param1);
 		}
 		
+		if(actionName.equals(CHECK_CERTIFICATO_SOGGETTO_BY_ID)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATO_SOGGETTO_BY_ID+"] Lunghezza parametri non corretta: "+params.length));
+			
+			Long param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				if(params[0] instanceof Long) {
+					param1 = (Long)params[0];
+				}
+				else {
+					param1 = Long.valueOf(params[0].toString());
+				}
+				if(param1<0){
+					param1 = null;
+				}
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatoSoggettoById(param1, soglia);
+		}
+		if(actionName.equals(CHECK_CERTIFICATO_SOGGETTO_BY_NOME)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATO_SOGGETTO_BY_NOME+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatoSoggettoByNome(param1, soglia);
+		}
+		
 		throw new UnsupportedOperationException("Operazione "+actionName+" sconosciuta");
 	}
 	
@@ -393,6 +445,26 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 			String.class.getName(),
 			MBeanOperationInfo.ACTION);
 		
+		// MetaData per l'operazione checkCertificatoSoggettoById
+		MBeanOperationInfo checkCertificatoSoggettoById 
+		= new MBeanOperationInfo(CHECK_CERTIFICATO_SOGGETTO_BY_ID,"Verifica i certificati client associati al soggetto che possiede l'id fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("idSoggetto",long.class.getName(),"Identificativo del soggetto"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkCertificatoSoggettoByNome
+		MBeanOperationInfo checkCertificatoSoggettoByNome 
+		= new MBeanOperationInfo(CHECK_CERTIFICATO_SOGGETTO_BY_NOME,"Verifica i certificati client associati al soggetto che possiede l'id fornito come parametro (formato: tipoSoggetto/nomeSoggetto)",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("idSoggetto",String.class.getName(),"Identificativo del soggetto"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
 		// Mbean costruttore
 		MBeanConstructorInfo defaultConstructor = new MBeanConstructorInfo("Default Constructor","Crea e inizializza una nuova istanza del MBean",null);
 
@@ -418,6 +490,8 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 		listOperation.add(checkConnettoreByNome);
 		listOperation.add(getCertificatiConnettoreById);
 		listOperation.add(getCertificatiConnettoreByNome);
+		listOperation.add(checkCertificatoSoggettoById);
+		listOperation.add(checkCertificatoSoggettoByNome);
 		MBeanOperationInfo[] operations = listOperation.toArray(new MBeanOperationInfo[1]);
 		
 		return new MBeanInfo(className,description,attributes,constructors,operations,null);
@@ -599,6 +673,47 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 	public String getCertificatiConnettoreByNome(String nomeConnettore) {
 		try{
 			return ConnettoreCheck.getCertificati(nomeConnettore, true);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatoSoggettoById(long idSoggetto, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = RegistroServiziManager.getInstance().checkCertificatoSoggettoWithoutCache(idSoggetto, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatoSoggettoByNome(String idSoggetto, int sogliaWarningGiorni) {
+		try{
+			if(!idSoggetto.contains("/")) {
+				throw new Exception("Formato non valido (tipoSoggetto/nomeSoggetto)");
+			}
+			String [] tmp = idSoggetto.split("/");
+			if(tmp==null || tmp.length!=2 || tmp[0]==null || tmp[1]==null) {
+				throw new Exception("Formato non valido (tipoSoggetto/nomeSoggetto)");
+			}
+			else {
+				String tipoSoggetto = tmp[0];
+				String nomeSoggetto = tmp[1];
+				IDSoggetto idSog = new IDSoggetto(tipoSoggetto, nomeSoggetto);
+				
+				boolean addCertificateDetails = true;
+				String separator = ": ";
+				String newLine = "\n";
+				CertificateCheck statoCheck = RegistroServiziManager.getInstance().checkCertificatoSoggettoWithoutCache(idSog, sogliaWarningGiorni, 
+						addCertificateDetails, separator, newLine);
+				return statoCheck.toString(newLine);
+			}
 		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();

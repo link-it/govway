@@ -24,6 +24,7 @@ package org.openspcoop2.protocol.registry;
 
 import java.io.Serializable;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +34,6 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
-import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
@@ -50,6 +50,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
+import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Proprieta;
@@ -2641,9 +2642,9 @@ public class RegistroServiziReader {
 	
 	/* ********  P R O P R I E T A  ******** */
 	
-	public Map<String, String> getProprietaConfigurazione(Soggetto soggetto) throws DriverConfigurazioneException {
+	public Map<String, String> getProprietaConfigurazione(Soggetto soggetto) throws DriverRegistroServiziException {
 		if (soggetto == null) {
-			throw new DriverConfigurazioneException("Soggetto non fornito");
+			throw new DriverRegistroServiziException("Soggetto non fornito");
 		} else if (soggetto.sizeProprietaList() <= 0) {
 			return null;
 		} else {
@@ -2658,6 +2659,86 @@ public class RegistroServiziReader {
 		}
 	}
 	
+	
+	
+	
+	
+	/* ********  C E R T I F I C A T I  ******** */
+	
+	protected CertificateCheck checkCertificatoSoggetto(Connection connectionPdD,boolean useCache,
+			long idSoggetto, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		
+		if(useCache) {
+			throw new DriverRegistroServiziException("Not Implemented");
+		}
+		
+		Soggetto soggetto = null;
+		for (IDriverRegistroServiziGet driver : this.registroServizi.getDriverRegistroServizi().values()) {
+			if(driver instanceof DriverRegistroServiziDB) {
+				DriverRegistroServiziDB driverDB = (DriverRegistroServiziDB) driver;
+				soggetto = driverDB.getSoggetto(idSoggetto);
+				break;
+			}
+			else {
+				throw new DriverRegistroServiziException("Not Implemented with driver '"+driver.getClass().getName()+"'");
+			}
+		}
+		
+		return checkCertificatoSoggetto(soggetto,sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	protected CertificateCheck checkCertificatoSoggetto(Connection connectionPdD,boolean useCache,
+			IDSoggetto idSoggetto, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		
+		Soggetto soggetto = null;
+		if(useCache) {
+			this.registroServizi.getSoggetto(connectionPdD, null, idSoggetto);
+		}
+		else {
+			for (IDriverRegistroServiziGet driver : this.registroServizi.getDriverRegistroServizi().values()) {
+				soggetto = driver.getSoggetto(idSoggetto);		
+			}
+		}
+		return checkCertificatoSoggetto(soggetto, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	public static CertificateCheck checkCertificatoSoggetto(Soggetto soggetto, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		
+		if(soggetto.sizeCredenzialiList()<=0) {
+			throw new DriverRegistroServiziException("Nessuna credenziale risulta associata al soggetto");
+		}
+		List<byte[]> certs = new ArrayList<byte[]>();
+		List<Boolean> strictValidation = new ArrayList<Boolean>();
+		for (int i = 0; i < soggetto.sizeCredenzialiList(); i++) {
+			CredenzialiSoggetto c = soggetto.getCredenziali(i);
+			if(!org.openspcoop2.core.registry.constants.CredenzialeTipo.SSL.equals(c.getTipo())) {
+				throw new DriverRegistroServiziException("La credenziale ("+c.getTipo()+") associata al soggetto non è un certificato x509");
+			}
+			if(c.getCertificate()!=null) {
+				certs.add(c.getCertificate());
+				strictValidation.add(c.isCertificateStrictVerification());
+			}
+		}
+		if(certs.isEmpty()) {
+			throw new DriverRegistroServiziException("Nessun certificato risulta associata al soggetto");
+		}
+		else {
+			try {
+				return org.openspcoop2.protocol.registry.CertificateUtils.checkCertificateClient(certs, strictValidation, sogliaWarningGiorni,  
+						addCertificateDetails, separator, newLine,
+						log);
+			}catch(Throwable t) {
+				throw new DriverRegistroServiziException(t.getMessage(),t);
+			}
+		}
+
+	}
 	
 	
 	

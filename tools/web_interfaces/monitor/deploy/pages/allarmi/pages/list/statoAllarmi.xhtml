@@ -121,11 +121,20 @@
 				</h:panelGrid>
 			</rich:panel>
 			<div class="spacerDettaglio"></div>
-			<rich:simpleTogglePanel id="panelFiltri1" opened="true" label="Modifica Filtri di Ricerca" switchType="client">
+			<rich:simpleTogglePanel id="panelFiltri1" opened="#{searchFormAllarmi.visualizzaFiltroAperto}" label="Modifica Filtri di Ricerca" switchType="client">
 				<f:facet name="openMarker">
 					<a4j:outputPanel id="openMarkerPnl" styleClass="icon-search-box">
-						<i class="material-icons md-24" id="iconaSearchOpen">&#xE8B6;</i>
-						<rich:toolTip for="openMarkerPnl" value="#{msg['commons.search.filtroRicerca.visualizza.tooltip']}" />
+						<a4j:outputPanel id="openMarkerPnl1" styleClass="" rendered="#{
+															searchFormAllarmi.aggiornamentoDatiAbilitato}">
+							<i class="material-icons md-24" id="iconaRefreshOpen">&#xE863;</i>
+							<rich:toolTip for="openMarkerPnl1" value="#{msg['commons.search.filtroRicerca.refresh.tooltip']}" />
+							<a4j:support event="onclick" action="#{searchFormAllarmi.filtra}" 
+														reRender="panelPaginaRicerca,statusPnl,statusPnlWithAcknoledged" />
+						</a4j:outputPanel>
+						<a4j:outputPanel id="openMarkerPnl2" styleClass="">
+							<i class="material-icons md-24" id="iconaSearchOpen">&#xE8B6;</i>
+							<rich:toolTip for="openMarkerPnl2" value="#{msg['commons.search.filtroRicerca.visualizza.tooltip']}" />
+						</a4j:outputPanel>
 					</a4j:outputPanel>
 				</f:facet>
 				

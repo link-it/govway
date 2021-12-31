@@ -42,12 +42,28 @@ public interface IAlarmProcessing extends ISearchArguments {
 	public String getAutomaticSuffixName(Context context);
 	
 	// Per comprendere se l'allarme è configurabile con criteri di filtro o raggruppamento
-	public boolean isUsableFilter();
-	public boolean isUsableGroupBy();
+	public default boolean isUsableFilter() {
+		return false;
+	}
+	public default boolean isUsableFilter(Context context) {
+		return isUsableFilter();
+	}
+	public default FiltersConfiguration getFiltersConfiguration(Context context) {
+		return null;
+	}
+	public default boolean isUsableGroupBy() {
+		return false;
+	}
+	public default boolean isUsableGroupBy(Context context) {
+		return isUsableGroupBy();
+	}
+	public default GroupByConfiguration getGroupByConfiguration(Context context) {
+		return null;
+	}
 	
 	public boolean isManuallyUpdateState();
 	public boolean isManuallyAckCriteria();
-	public default String getDefaultManuallyAckCriteria() {
+	public default String getDefaultManuallyAckCriteria(Context context) {
 		return null;
 	}
 	

@@ -128,7 +128,8 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 			return false; // all'inizio deve prima essere scelto il plugin
 		}
 		
-		this.showFilter = ((IAllarmiService)this.service).isUsableFilter(this.allarme);
+		Context context = new AllarmiContext(this);
+		this.showFilter = ((IAllarmiService)this.service).isUsableFilter(this.allarme, context);
 		
 		return this.showFilter;
 	}
@@ -142,7 +143,8 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 			return false; // all'inizio deve prima essere scelto il plugin
 		}
 		
-		this.showGroupBy = ((IAllarmiService)this.service).isUsableGroupBy(this.allarme);
+		Context context = new AllarmiContext(this);
+		this.showGroupBy = ((IAllarmiService)this.service).isUsableGroupBy(this.allarme, context);
 		
 		return this.showGroupBy;
 	}
@@ -155,7 +157,8 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 		if(this.allarme==null || this.allarme.getPlugin()==null){
 			return org.openspcoop2.monitor.engine.constants.Costanti.LABEL_ALLARMI_PARAMETRI; // all'inizio deve prima essere scelto il plugin
 		}
-		return ((IAllarmiService)this.service).getParameterSectionTitle(this.allarme);
+		Context context = new AllarmiContext(this);
+		return ((IAllarmiService)this.service).getParameterSectionTitle(this.allarme, context);
 	}
 	
 	public boolean isShowParameters() throws Exception {
@@ -998,7 +1001,9 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 //					showRuoloRichiedente = true;
 //				}
 //			}
-			
+			else {
+				showRuoloRichiedente = true; // comunque viene visualizzato solo se definito
+			}
 			
 			if((this.allarme.getFiltro().getTipoFruitore()!=null && this.allarme.getFiltro().getNomeFruitore()!=null) ||
 					this.allarme.getFiltro().getServizioApplicativoFruitore() != null || !showRuoloRichiedente) {
