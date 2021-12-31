@@ -61,6 +61,7 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 public class ConsegnaCondizionaleTest extends ConfigLoader {
 	
+	private static final String MESSAGGIO_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA = "Identificazione 'HeaderBased' (Header HTTP: GovWay-TestSuite-Connettore) non è riuscita ad estrarre dalla richiesta l'informazione utile ad identificare il connettore da utilizzare: header non presente";
 	public static final String CONNETTORE_0 = "Connettore0";
 	public static final String CONNETTORE_1 = "Connettore1";
 	public static final String CONNETTORE_2 = "Connettore2";
@@ -75,6 +76,24 @@ public class ConsegnaCondizionaleTest extends ConfigLoader {
 			CONNETTORE_1,
 			CONNETTORE_2,
 			CONNETTORE_3);
+	
+	
+	// TODO: Chiedi ad andrea dove prenderli
+	private static final String CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_ERROR = "007045";
+	private static final String CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_INFO = "007046";
+	
+	private static final String CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_ERROR = "007041";
+	private static final String CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_INFO = "007042";	
+	private static final String CODICE_DIAGNOSTICO_UTILIZZO_CONNETTORE_DEFAULT = "007047";
+	private static final int DIAGNOSTICO_SEVERITA_INFO = 4;
+	private static final int DIAGNOSTICO_SEVERITA_ERROR = 2;
+	
+	private static final String MESSAGGIO_DIAGNOSTICO_NESSUN_CONNETTORE_TROVATO = "Il valore estratto dalla richiesta 'CONNETTORE_INESISTENTE', ottenuto tramite identificazione 'HeaderBased' (Header HTTP: GovWay-TestSuite-Connettore), non corrisponde al nome di nessun connettore";
+	
+	private static final String MESSAGGIO_DIAGNOSTICO_FALLBACK_IDENTIFICAZIONE_FALLITA = "Per la consegna viene utilizzato il connettore 'Connettore0', configurato per essere utilizzato in caso di identificazione condizionale fallita";
+	// TODO x andrea, tofix TODO: Reimpostare alla stringa prima della consegna, in modo da far fallire i test che devono fallire.
+	private static final String MESSAGGIO_DIAGNOSTICO_FALLBACK_NESSUN_CONNETTORE_TROVATO = MESSAGGIO_DIAGNOSTICO_FALLBACK_IDENTIFICAZIONE_FALLITA; //"MESSAGGIO DA SOSTITUIRE DOPO IL FIX. ATTUALMENTE VIENE RESTITUITO QUELLO DELLA RIGA DI SOPRA CHE PARLA INVECE DI 'IDENTIFICAZIONE CONDIZIONALE FALLITA' INVECE CHE 'ASSENZA DI CONNETTORI UTILIZZABILI'";
+
 	
 	HttpRequest buildRequest_HeaderHttpByNome(String connettore, String erogazione) {
 		HttpRequest request = new HttpRequest();
@@ -159,10 +178,31 @@ public class ConsegnaCondizionaleTest extends ConfigLoader {
 	}
 	
 	
+	HttpRequest buildRequest_NessunConnettoreUtilizzabile(String erogazione) {
+		HttpRequest request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
+		request.addHeader(HEADER_CONDIZIONE, "CONNETTORE_INESISTENTE");
+		
+		return request;
+	}
+	
+
+	private HttpRequest buildRequest_IdentificazioneFallita(final String erogazione) {
+		HttpRequest request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
+		request.addHeader("HeaderSbagliato", CONNETTORE_1);
+		return request;
+	}
+	
+	
 
 	@Test
 	public void headerHttpByNome() {
-		
+		// TODO: Rendilo come gli altri.
 		final String erogazione = "ConsegnaCondizionaleHeaderHttpByNome";
 		
 		HttpRequest request0 = buildRequest_HeaderHttpByNome(CONNETTORE_0, erogazione);
@@ -383,8 +423,8 @@ public class ConsegnaCondizionaleTest extends ConfigLoader {
 	@Test
 	public void templateByNome() {
 		// TODO: Se non metto content-type application/json govway si arrabbia e non parte
-		// TODO: Una volta che andrea ha risolto, fai i due test
-		// l'identificazione col template, è un bug.
+		// TODO: Prima della consegna togli il content-type dalla richiesta in modo che
+		// i test non vengano superati e andrea se ne accorge
 		
 		// Il template pesca il valore del parametro query govway-testsuite-id_connettore_request,
 		// riuso quanto fatto per il test parametro query
@@ -523,63 +563,39 @@ public class ConsegnaCondizionaleTest extends ConfigLoader {
 	
 	
 	@Test
-	public void identificazioneFallitaNoDisagnostico() throws UtilsException {
+	public void identificazioneFallitaNoDiagnostico() throws UtilsException {
 		// L'erogazione ha l'identificazione sullo header HTTP GovWay-TestSuite-Connettore
 		// nel caso di identificazione fallita passa al CONNETTORE_0
 		
 		final String erogazione = "ConsegnaCondizionaleIdentificazioneFallitaNoDiagnostico";
-		HttpRequest request = new HttpRequest();
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
-		request.addHeader("HeaderSbagliato", CONNETTORE_1);
+		HttpRequest request = buildRequest_IdentificazioneFallita(erogazione);
 		
 		var response = HttpUtilities.httpInvoke(request);
 		
 		assertEquals(CONNETTORE_0, response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
 		
 		String id_transazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
-		String messaggio1 = "Identificazione 'HeaderBased' (Header HTTP: GovWay-TestSuite-Connettore) non è riuscita ad estrarre dalla richiesta l'informazione utile ad identificare il connettore da utilizzare: header non presente";
-		String messaggio2 = "Per la consegna viene utilizzato il connettore 'Connettore0', configurato per essere utilizzato in caso di identificazione condizionale fallita";
-		
-		String query = "select count(*) from msgdiagnostici where id_transazione=? AND messaggio=?";
-				
-		Integer nrows = getDbUtils().readValue(query, Integer.class, id_transazione, messaggio1);
-		assertEquals(Integer.valueOf(0), nrows);
-		
-		nrows = getDbUtils().readValue(query, Integer.class, id_transazione, messaggio2);		
-		assertEquals(Integer.valueOf(1), nrows);
+		checkAssenzaDiagnosticoTransazione(id_transazione, CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_ERROR);
+		checkAssenzaDiagnosticoTransazione(id_transazione, CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_INFO);
+		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_INFO, CODICE_DIAGNOSTICO_UTILIZZO_CONNETTORE_DEFAULT, MESSAGGIO_DIAGNOSTICO_FALLBACK_IDENTIFICAZIONE_FALLITA);		
 	}
 	
 	
 	@Test
-	public void identificazioneFallitaDiagnositcoInfo() throws UtilsException {
+	public void identificazioneFallitaDiagnosticoInfo() throws UtilsException {
 		// Come per identificazioneFallitaNoDisagnostico, il connettore di fallback è il 0
 		// Devo inoltre controllare che sia stato emesso il messaggio sul db
-		final String erogazione = "ConsegnaCondizionaleIdentificazioneFallitaDiagnosticoInfo";
-		HttpRequest request = new HttpRequest();
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
-		request.addHeader("HeaderSbagliato", CONNETTORE_1);
 		
+		final String erogazione = "ConsegnaCondizionaleIdentificazioneFallitaDiagnosticoInfo";
+
+		HttpRequest request = buildRequest_IdentificazioneFallita(erogazione);
 		var response = HttpUtilities.httpInvoke(request);
 		
 		assertEquals(CONNETTORE_0, response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
 		
 		String id_transazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
-		String messaggio1 = "Identificazione 'HeaderBased' (Header HTTP: GovWay-TestSuite-Connettore) non è riuscita ad estrarre dalla richiesta l'informazione utile ad identificare il connettore da utilizzare: header non presente";
-		String messaggio2 = "Per la consegna viene utilizzato il connettore 'Connettore0', configurato per essere utilizzato in caso di identificazione condizionale fallita";
-		
-		String query = "select count(*) from msgdiagnostici where id_transazione=? AND severita=4 AND messaggio=?";
-				
-		Integer nrows = getDbUtils().readValue(query, Integer.class, id_transazione, messaggio1);
-		
-		assertEquals(Integer.valueOf(1), nrows);
-		
-		nrows = getDbUtils().readValue(query, Integer.class, id_transazione, messaggio2);
-		
-		assertEquals(Integer.valueOf(1), nrows);
+		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_INFO, CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_INFO, MESSAGGIO_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA);
+		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_INFO, CODICE_DIAGNOSTICO_UTILIZZO_CONNETTORE_DEFAULT, MESSAGGIO_DIAGNOSTICO_FALLBACK_IDENTIFICAZIONE_FALLITA);
 	}
 	
 	
@@ -588,32 +604,19 @@ public class ConsegnaCondizionaleTest extends ConfigLoader {
 		
 		// Come per identificazioneFallitaNoDisagnostico, il connettore di fallback è il 0
 		// Devo inoltre controllare che sia stato emesso il messaggio sul db
-		final String erogazione = "ConsegnaCondizionaleIdentificazioneFallitaDiagnosticoError";
-		HttpRequest request = new HttpRequest();
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
-		request.addHeader("HeaderSbagliato", CONNETTORE_1);
 		
+		final String erogazione = "ConsegnaCondizionaleIdentificazioneFallitaDiagnosticoError";
+		
+		HttpRequest request = buildRequest_IdentificazioneFallita(erogazione);
 		var response = HttpUtilities.httpInvoke(request);
 		
 		assertEquals(CONNETTORE_0, response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
 		
 		String id_transazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
-		String messaggio1 = "Identificazione 'HeaderBased' (Header HTTP: GovWay-TestSuite-Connettore) non è riuscita ad estrarre dalla richiesta l'informazione utile ad identificare il connettore da utilizzare: header non presente";
-		String messaggio2 = "Per la consegna viene utilizzato il connettore 'Connettore0', configurato per essere utilizzato in caso di identificazione condizionale fallita";
-		
-		String query = "select count(*) from msgdiagnostici where id_transazione=? AND severita=? AND messaggio=?";
-				
-		Integer nrows = getDbUtils().readValue(query, Integer.class, id_transazione, Integer.valueOf(2), messaggio1);
-		
-		assertEquals(Integer.valueOf(1), nrows);
-		
-		nrows = getDbUtils().readValue(query, Integer.class, id_transazione, Integer.valueOf(4), messaggio2);
-		
-		assertEquals(Integer.valueOf(1), nrows);
-		
+		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_ERROR, CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_ERROR, MESSAGGIO_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA);
+		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_INFO, CODICE_DIAGNOSTICO_UTILIZZO_CONNETTORE_DEFAULT, MESSAGGIO_DIAGNOSTICO_FALLBACK_IDENTIFICAZIONE_FALLITA);
 	}
+
 	
 	
 	@Test
@@ -625,43 +628,64 @@ public class ConsegnaCondizionaleTest extends ConfigLoader {
 		
 		final String erogazione = "ConsegnaCondizionaleNessunConnettoreUtilizzabileNoDiagnostico";
 		
-		HttpRequest request = new HttpRequest();
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
-		request.addHeader(HEADER_CONDIZIONE, "CONNETTORE_INESISTENTE");
-		
+		var request = buildRequest_NessunConnettoreUtilizzabile(erogazione);
 		var response = HttpUtilities.httpInvoke(request);
 		
 		assertEquals(CONNETTORE_0, response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
 		
 		String id_transazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
-		System.out.println("ID TRANSAZIONE " + id_transazione);
-		
-		/*String messaggio1 = "Identificazione 'HeaderBased' (Header HTTP: GovWay-TestSuite-Connettore) non è riuscita ad estrarre dalla richiesta l'informazione utile ad identificare il connettore da utilizzare: header non presente";
-		String messaggio2 = "Per la consegna viene utilizzato il connettore 'Connettore0', configurato per essere utilizzato in caso di identificazione condizionale fallita";
-		
-		String query = "select count(*) from msgdiagnostici where id_transazione=? AND severita=? AND messaggio=?";
-				
-		Integer nrows = getDbUtils().readValue(query, Integer.class, id_transazione, Integer.valueOf(2), messaggio1);
-		
-		assertEquals(Integer.valueOf(1), nrows);
-		
-		nrows = getDbUtils().readValue(query, Integer.class, id_transazione, Integer.valueOf(4), messaggio2);
-		
-		assertEquals(Integer.valueOf(1), nrows);*/
+		checkAssenzaDiagnosticoTransazione(id_transazione, CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_INFO);
+		checkAssenzaDiagnosticoTransazione(id_transazione, CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_ERROR);
+		// Il messaggio di scelta del connettore di default, avviene sempre TODO: Patchare in govway il messaggio!
+		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_INFO, CODICE_DIAGNOSTICO_UTILIZZO_CONNETTORE_DEFAULT, MESSAGGIO_DIAGNOSTICO_FALLBACK_NESSUN_CONNETTORE_TROVATO);
 	}
 	
 	
 	@Test
-	public void nessunConnettoreUtilizzabileDiagnosticoInfo() {
+	public void nessunConnettoreUtilizzabileDiagnosticoInfo() throws UtilsException {
 		
+		final String erogazione = "ConsegnaCondizionaleNessunConnettoreUtilizzabileDiagnosticoInfo";
+		
+		var request = buildRequest_NessunConnettoreUtilizzabile(erogazione);
+		var response = HttpUtilities.httpInvoke(request);
+		
+		assertEquals(CONNETTORE_0, response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
+		
+		String id_transazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_INFO, CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_INFO, MESSAGGIO_DIAGNOSTICO_NESSUN_CONNETTORE_TROVATO);
+		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_INFO, CODICE_DIAGNOSTICO_UTILIZZO_CONNETTORE_DEFAULT, MESSAGGIO_DIAGNOSTICO_FALLBACK_NESSUN_CONNETTORE_TROVATO);
+	}
+
+	
+	// TODO: In ogni test di consegna condizionale, aggiungere una richiesta in cui sono assenti i dati della consegna condizionale, e,g,:
+	//		nel test header http, non inviare lo header http. (Lo stesso per sessione sticky ecc..)
+	@Test
+	public void nessunConnettoreUtilizzabileDiagnosticoError() throws UtilsException {
+		
+		final String erogazione = "ConsegnaCondizionaleNessunConnettoreUtilizzabileDiagnosticoError";
+
+		var request = buildRequest_NessunConnettoreUtilizzabile(erogazione);
+		var response = HttpUtilities.httpInvoke(request);
+		
+		assertEquals(CONNETTORE_0, response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
+		
+		String id_transazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_ERROR, CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_ERROR, MESSAGGIO_DIAGNOSTICO_NESSUN_CONNETTORE_TROVATO);
+		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_INFO, CODICE_DIAGNOSTICO_UTILIZZO_CONNETTORE_DEFAULT, MESSAGGIO_DIAGNOSTICO_FALLBACK_NESSUN_CONNETTORE_TROVATO);
 	}
 	
 	
-	@Test
-	public void nessunConnettoreUtilizzabileDiagnosticoError() {
-		
+	void checkAssenzaDiagnosticoTransazione(String id_transazione, String codice) {
+		String query = "select count(*) from msgdiagnostici where id_transazione=? AND codice=?";
+		int nrows = getDbUtils().readValue(query, Integer.class, id_transazione, codice);
+		assertEquals(0, nrows);
+	}
+	
+	
+	void checkDiagnosticoTransazione(String id_transazione, Integer severita, String codice, String messaggio) {
+		String query = "select count(*) from msgdiagnostici where id_transazione=? AND severita=? AND codice=? AND messaggio=?";
+		int nrows = getDbUtils().readValue(query, Integer.class, id_transazione, severita, codice, messaggio);
+		assertEquals(1, nrows);
 	}
 	
 	
