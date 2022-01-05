@@ -1,24 +1,107 @@
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Vector;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
+import org.openspcoop2.utils.transport.http.HttpRequest;
+import org.openspcoop2.utils.transport.http.HttpResponse;
 
 public class Common {
-	
+	public static final String CONNETTORE_0 = "Connettore0";
+	public static final String CONNETTORE_1 = "Connettore1";
+	public static final String CONNETTORE_2 = "Connettore2";
+	public static final String CONNETTORE_3 = "Connettore3";
+	public static final String CONNETTORE_ROTTO = "ConnettoreRotto";
+	public static final String CONNETTORE_DISABILITATO = "ConnettoreDisabilitato";
+	public static final String HEADER_CONDIZIONE = "GovWay-TestSuite-Connettore";
+
 	public static final String ID_CONNETTORE_REPLY_PREFIX = "GovWay-TestSuite-";
 	public static final String HEADER_ID_CONNETTORE = ID_CONNETTORE_REPLY_PREFIX + "id_connettore";
-	
-	
+
 	public static final int durataBloccante = Integer
 			.valueOf(System.getProperty("connettori.load_balancer.least_connections.durata_bloccante"));
-	
-	
+
 	public static final int delayRichiesteBackground = Integer
 			.valueOf(System.getProperty("connettori.load_balancer.least_connections.delay_richieste_background"));
 
-
-	public static void printMap(Map<String,Integer> howManys) {
+	public static final List<String> connettoriAbilitati = Arrays.asList(
+			Common.CONNETTORE_0,
+			Common.CONNETTORE_1, 
+			Common.CONNETTORE_2,
+			Common.CONNETTORE_3);
+	
+	
+	public static void printMap(Map<String, Integer> howManys) {
 		for (var e : howManys.entrySet()) {
 			System.out.println(e.getKey() + ": " + e.getValue());
 		}
 	}
+
+	
+	// TODO: Forse questi posso rimetterli dentro ConsegnaCondizionaleFiltroNome
+	public static void matchResponsesWithConnettori(List<String> connettori,
+			Vector<Vector<HttpResponse>> responsesByConnettore) {
+		for (int i = 0; i < connettori.size(); i++) {
+			String connettoreRichiesta = connettori.get(i);
+			
+			/*if (connettoreRichiesta.equals(CONNETTORE_DISABILITATO)) {
+				for (var response : responsesByConnettore.get(i)) {
+					assertEquals(400,response.getResultHTTPOperation());
+				}
+			} else if (connettoreRichiesta.equals(CONNETTORE_ROTTO)) {
+				for (var response : responsesByConnettore.get(i)) {
+					assertEquals(400,response.getResultHTTPOperation());
+				}
+			} else {*/
+				for (var response : responsesByConnettore.get(i)) {
+					String connettoreRisposta = response.getHeaderFirstValue(HEADER_ID_CONNETTORE);
+					assertEquals(connettoreRichiesta, connettoreRisposta);
+				}
+			//}
+		}
+	}
+
+	/*
+	 * Esegue un thread per ogni richiesta e per ogni thread esegue
+	 * requests_per_batch richieste
+	 * 
+	 * Restituisce le risposte raggruppate per richiesta, e.g: il primo vettore di
+	 * risposte corrisponde al batch di richieste fatte per la prima richiesta della
+	 * lista `requests`
+	 * TODO: Credo posso rimetterlo in ConsegnaCondizionaleFiltroNome
+	 */
+	public static Vector<Vector<HttpResponse>> makeBatchedRequests(List<HttpRequest> requests, int requests_per_batch) {
+
+		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(requests.size());
+		var ret = new Vector<Vector<HttpResponse>>(requests.size());
+
+		for (int i = 0; i < requests.size(); i++) {
+			ret.add(new Vector<>());
+			int index = i;
+
+			executor.execute(() -> {
+				ret.get(index).addAll(Utils.makeSequentialRequests(requests.get(index), requests_per_batch));
+			});
+		}
+
+		try {
+			executor.shutdown();
+			executor.awaitTermination(20, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			// logRateLimiting.error("Le richieste hanno impiegato più di venti secondi!");
+			throw new RuntimeException(e);
+		}
+
+		return ret;
+	}
+
+	
 }
