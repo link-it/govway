@@ -60,6 +60,8 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  *   TODO: Per ogni test aggiungi un set di richieste per cui fallisce l'identificazione, 
  *   			un set di richieste per cui il connettore non viene trovato
  *   			e un set di richieste che vanno sul connettore disabilitato
+ *   TODO: Test XForwardedFor con più headers appartenenti alla stessa classe
+ *   TODO: Il test identificazioneFallita, ripetilo anche sulle singole erogazioni oltre che sulle regole
  *   
  *   Non vengono fatti test di case sensitivity sui valori in quanto i valori di parametri query, headers http
  *   e contenuto della richiesta sono tutti case sensitive.
@@ -569,97 +571,6 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	}
 	
 	
-	@Test
-	public void identificazioneFallita() throws UtilsException {
-		// Per ogni regola per cui è possibile farlo, faccio fallire l'identificazione controllando che non avvengano 
-		// dei 500 dovuti a null pointer exceptions, ma solo 400
-		final String erogazione = "ConsegnaCondizionaleRegoleByNome";
-
-		final String content = "{ \"campo_inutile\": 1 }";
-
-		HttpRequest request_contenuto = new HttpRequest();
-		request_contenuto.setMethod(HttpRequestMethod.POST);
-		request_contenuto.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-contenuto"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);		
-		request_contenuto.setContentType("application/json");
-		request_contenuto.setContent(content.getBytes());
-		
-		var resp = HttpUtilities.httpInvoke(request_contenuto);
-		assertEquals(400, resp.getResultHTTPOperation());
-		
-		HttpRequest request_parametro_url = new HttpRequest();
-		request_parametro_url.setMethod(HttpRequestMethod.GET);
-		request_parametro_url.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-parametro-url"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
-				+ "&govway-testsuite-id_connettore_request="); // faccio mancare il valore del parametro
-
-		resp = HttpUtilities.httpInvoke(request_parametro_url);
-		assertEquals(400, resp.getResultHTTPOperation());
-
-			
-		HttpRequest request_template = new HttpRequest();
-		request_template.setContentType("application/json");	// TODO: con questa riga commentata il test fallisce, dopo il fix di andrea non sarà più necessario settare il content type
-		request_template.setMethod(HttpRequestMethod.GET);
-		request_template.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-template"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
-				+ "&govway-testsuite-id_connettore_request="); // faccio mancare il valore del parametro
-		
-		resp = HttpUtilities.httpInvoke(request_template);
-		assertEquals(400, resp.getResultHTTPOperation());
-		
-		
-		HttpRequest request_freemarker = new HttpRequest();
-		request_freemarker.setContentType("application/json"); // TODO: con questa riga commentata il test fallisce, dopo il fix di andrea non sarà più necessario settare il content type
-		request_freemarker.setMethod(HttpRequestMethod.GET);
-		request_freemarker.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-freemarker-template"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
-				+ "&govway-testsuite-id_connettore_request=");	// faccio mancare il valore del parametro
-		
-		resp = HttpUtilities.httpInvoke(request_freemarker);
-		assertEquals(400, resp.getResultHTTPOperation());
-
-
-		HttpRequest request_velocity = new HttpRequest();
-		request_velocity.setContentType("application/json"); // TODO: con questa riga commentata il test fallisce, dopo il fix di andrea non sarà più necessario settare il content type
-		request_velocity.setMethod(HttpRequestMethod.GET);
-		request_velocity.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-velocity-template"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
-				+ "&govway-testsuite-id_connettore_request="); // faccio mancare il valore del parametro
-		
-		resp = HttpUtilities.httpInvoke(request_velocity);
-		assertEquals(400, resp.getResultHTTPOperation());
-		
-		HttpRequest request_header_http = new HttpRequest();
-		request_header_http.setMethod(HttpRequestMethod.GET);
-		request_header_http.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-header-http"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
-		// faccio mancare il valore del parametro header
-		
-		resp = HttpUtilities.httpInvoke(request_header_http);
-		assertEquals(400, resp.getResultHTTPOperation());
-		
-		HttpRequest request_forwarded_for = new HttpRequest();
-		request_forwarded_for.setMethod(HttpRequestMethod.GET);
-		request_forwarded_for.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-xforwarded-for"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
-		// faccio mancare il valore del parametro header
-		
-		resp = HttpUtilities.httpInvoke(request_forwarded_for);
-		assertEquals(400, resp.getResultHTTPOperation());
-		
-		
-		HttpRequest request_url_invocazione = new HttpRequest();
-		request_url_invocazione.setMethod(HttpRequestMethod.GET);
-		request_url_invocazione.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-url-invocazione"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
-				+ "&govway-testsuite-id_connettore_request="); // faccio mancare il valore del parametro 		 
-		
-		resp = HttpUtilities.httpInvoke(request_url_invocazione);
-		assertEquals(400, resp.getResultHTTPOperation());		
-	}
-	
-	
-
 	
 	@Test
 	public void prefisso() {

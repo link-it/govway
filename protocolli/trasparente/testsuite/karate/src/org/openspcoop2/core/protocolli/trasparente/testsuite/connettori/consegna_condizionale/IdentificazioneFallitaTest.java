@@ -28,6 +28,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_bal
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
+import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 
@@ -218,8 +219,25 @@ public class IdentificazioneFallitaTest extends ConfigLoader {
 		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_ERROR, CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_ERROR, MESSAGGIO_DIAGNOSTICO_NESSUN_CONNETTORE_TROVATO);
 		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_INFO, CODICE_DIAGNOSTICO_UTILIZZO_CONNETTORE_DEFAULT, diagnostico);
 	}
-
 	
+	
+	@Test
+	public void identificazioneFallitaByNome() throws UtilsException {
+		// Per ogni regola per cui è possibile farlo, faccio fallire l'identificazione controllando che non avvengano 
+		// dei 500 dovuti a null pointer exceptions, ma solo 400
+		final String erogazione = "ConsegnaCondizionaleRegoleByNome";
+		identificazioneFallitaImpl(erogazione);
+	}
+	
+	@Test
+	public void identificazioneFallitaByFiltro() throws UtilsException {
+		// Per ogni regola per cui è possibile farlo, faccio fallire l'identificazione controllando che non avvengano 
+		// dei 500 dovuti a null pointer exceptions per parametri mancanti, ma solo 400 
+		final String erogazione = "ConsegnaCondizionaleRegoleByFiltro";
+		identificazioneFallitaImpl(erogazione);
+	}
+
+
 	
 	void checkAssenzaDiagnosticoTransazione(String id_transazione, String codice) {
 		String query = "select count(*) from msgdiagnostici where id_transazione=? AND codice=?";
@@ -232,6 +250,93 @@ public class IdentificazioneFallitaTest extends ConfigLoader {
 		String query = "select count(*) from msgdiagnostici where id_transazione=? AND severita=? AND codice=? AND messaggio=?";
 		int nrows = getDbUtils().readValue(query, Integer.class, id_transazione, severita, codice, messaggio);
 		assertEquals(1, nrows);
+	}
+
+
+	static void identificazioneFallitaImpl(String erogazione) throws UtilsException {
+		
+		final String content = "{ \"campo_inutile\": 1 }";
+	
+		HttpRequest request_contenuto = new HttpRequest();
+		request_contenuto.setMethod(HttpRequestMethod.POST);
+		request_contenuto.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-contenuto"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);		
+		request_contenuto.setContentType("application/json");
+		request_contenuto.setContent(content.getBytes());
+		
+		var resp = HttpUtilities.httpInvoke(request_contenuto);
+		assertEquals(400, resp.getResultHTTPOperation());
+		
+		HttpRequest request_parametro_url = new HttpRequest();
+		request_parametro_url.setMethod(HttpRequestMethod.GET);
+		request_parametro_url.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-parametro-url"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
+				+ "&govway-testsuite-id_connettore_request="); // faccio mancare il valore del parametro
+	
+		resp = HttpUtilities.httpInvoke(request_parametro_url);
+		assertEquals(400, resp.getResultHTTPOperation());
+	
+			
+		HttpRequest request_template = new HttpRequest();
+		request_template.setContentType("application/json");	// TODO: con questa riga commentata il test fallisce, dopo il fix di andrea non sarà più necessario settare il content type
+		request_template.setMethod(HttpRequestMethod.GET);
+		request_template.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-template"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
+				+ "&govway-testsuite-id_connettore_request="); // faccio mancare il valore del parametro
+		
+		resp = HttpUtilities.httpInvoke(request_template);
+		assertEquals(400, resp.getResultHTTPOperation());
+		
+		
+		HttpRequest request_freemarker = new HttpRequest();
+		request_freemarker.setContentType("application/json"); // TODO: con questa riga commentata il test fallisce, dopo il fix di andrea non sarà più necessario settare il content type
+		request_freemarker.setMethod(HttpRequestMethod.GET);
+		request_freemarker.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-freemarker-template"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
+				+ "&govway-testsuite-id_connettore_request=");	// faccio mancare il valore del parametro
+		
+		resp = HttpUtilities.httpInvoke(request_freemarker);
+		assertEquals(400, resp.getResultHTTPOperation());
+	
+	
+		HttpRequest request_velocity = new HttpRequest();
+		request_velocity.setContentType("application/json"); // TODO: con questa riga commentata il test fallisce, dopo il fix di andrea non sarà più necessario settare il content type
+		request_velocity.setMethod(HttpRequestMethod.GET);
+		request_velocity.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-velocity-template"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
+				+ "&govway-testsuite-id_connettore_request="); // faccio mancare il valore del parametro
+		
+		resp = HttpUtilities.httpInvoke(request_velocity);
+		assertEquals(400, resp.getResultHTTPOperation());
+		
+		HttpRequest request_header_http = new HttpRequest();
+		request_header_http.setMethod(HttpRequestMethod.GET);
+		request_header_http.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-header-http"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
+		// faccio mancare il valore del parametro header
+		
+		resp = HttpUtilities.httpInvoke(request_header_http);
+		assertEquals(400, resp.getResultHTTPOperation());
+		
+		HttpRequest request_forwarded_for = new HttpRequest();
+		request_forwarded_for.setMethod(HttpRequestMethod.GET);
+		request_forwarded_for.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-xforwarded-for"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
+		// faccio mancare il valore del parametro header
+		
+		resp = HttpUtilities.httpInvoke(request_forwarded_for);
+		assertEquals(400, resp.getResultHTTPOperation());
+		
+		
+		HttpRequest request_url_invocazione = new HttpRequest();
+		request_url_invocazione.setMethod(HttpRequestMethod.GET);
+		request_url_invocazione.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-url-invocazione"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
+				+ "&govway-testsuite-id_connettore_request="); // faccio mancare il valore del parametro 		 
+		
+		resp = HttpUtilities.httpInvoke(request_url_invocazione);
+		assertEquals(400, resp.getResultHTTPOperation());		
+		
 	}
 	
 	
