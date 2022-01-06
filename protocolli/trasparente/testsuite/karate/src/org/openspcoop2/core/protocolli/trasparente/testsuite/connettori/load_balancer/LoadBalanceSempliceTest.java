@@ -47,12 +47,7 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 
 /**
- * RestTest
- *
  * @author Francesco Scarlato (scarlato@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
- * 
  * 
  * 
  * 	6 Connettori per erogazione.
