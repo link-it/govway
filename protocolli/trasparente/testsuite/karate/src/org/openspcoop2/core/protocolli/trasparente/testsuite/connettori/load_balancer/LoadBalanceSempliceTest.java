@@ -81,7 +81,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 	}
 
 	
-	public static Map<String, Integer> contaConnettoriUtilizzati(Vector<HttpResponse> responses) {
+	public static Map<String, Integer> contaConnettoriUtilizzati(List<HttpResponse> responses) {
 		Map<String, Integer> howManys = new HashMap<>();
 		
 		for (var response : responses) {

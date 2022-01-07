@@ -14,6 +14,10 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 
+// Query Freemarker Template: ${query["govway-testsuite-id_connettore_request"]}
+// Query Template: 
+// Query Velocity Template: $query["govway-testsuite-id_connettore_request"]
+
 public class Common {
 	public static final String CONNETTORE_0 = "Connettore0";
 	public static final String CONNETTORE_1 = "Connettore1";

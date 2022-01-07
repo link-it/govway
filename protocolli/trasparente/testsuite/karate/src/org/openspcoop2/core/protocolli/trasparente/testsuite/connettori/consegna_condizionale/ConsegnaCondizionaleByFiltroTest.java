@@ -78,7 +78,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		);
 			
 	
-	List<HttpRequest> buildRequests_Contenuto(List<String> filtri, String erogazione) {
+	public static List<HttpRequest> buildRequests_Contenuto(List<String> filtri, String erogazione) {
 		return filtri.stream()
 				.map( filtro ->
 					ConsegnaCondizionaleByNomeTest.buildRequest_ContenutoByNome(filtro, erogazione))
@@ -86,7 +86,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 	}
 	
 	
-	List<HttpRequest> buildRequests_Template(List<String> filtri, String erogazione) {
+	public static List<HttpRequest> buildRequests_Template(List<String> filtri, String erogazione) {
 		return filtri.stream()
 				.map( filtro ->
 					ConsegnaCondizionaleByNomeTest.buildRequest_TemplateByNome(filtro, erogazione))
@@ -94,7 +94,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 	}
 	
 	
-	List<HttpRequest> buildRequests_FreemarkerTemplate(List<String> filtri, String erogazione) {
+	public static List<HttpRequest> buildRequests_FreemarkerTemplate(List<String> filtri, String erogazione) {
 		return filtri.stream()
 				.map( filtro ->
 					ConsegnaCondizionaleByNomeTest.buildRequest_FreemarkerTemplateByNome(filtro, erogazione))
@@ -102,7 +102,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 	}
 	
 	
-	List<HttpRequest> buildRequests_VelocityTemplate(List<String> filtri, String erogazione) {
+	public static List<HttpRequest> buildRequests_VelocityTemplate(List<String> filtri, String erogazione) {
 		return filtri.stream()
 				.map( filtro ->
 					ConsegnaCondizionaleByNomeTest.buildRequest_VelocityTemplateByNome(filtro, erogazione))
@@ -110,7 +110,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 	}
 	
 	
-	List<HttpRequest> buildRequests_ParametroUrl(List<String> filtri, String erogazione) {
+	public static List<HttpRequest> buildRequests_ParametroUrl(List<String> filtri, String erogazione) {
 		return filtri.stream()
 				.map( filtro ->
 					ConsegnaCondizionaleByNomeTest.buildRequest_ParametroUrlByNome(filtro, erogazione))
@@ -118,7 +118,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 	}
 	
 	
-	List<HttpRequest> buildRequests_UrlInvocazione(List<String> filtri, String erogazione) {
+	public static List<HttpRequest> buildRequests_UrlInvocazione(List<String> filtri, String erogazione) {
 		return filtri.stream()
 				.map( filtro ->
 					ConsegnaCondizionaleByNomeTest.buildRequest_UrlInvocazioneByNome(filtro, erogazione))
@@ -126,7 +126,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 	}
 	
 	
-	List<HttpRequest> buildRequests_HeaderHttp(List<String> filtri, String erogazione) {
+	public static List<HttpRequest> buildRequests_HeaderHttp(List<String> filtri, String erogazione) {
 		return filtri.stream()
 				.map( filtro ->
 					ConsegnaCondizionaleByNomeTest.buildRequest_HeaderHttpByNome(filtro, erogazione))
@@ -134,7 +134,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 	}
 	
 	
-	List<HttpRequest> buildRequests_ForwardedFor(List<String> filtri, List<String> forwardingHeaders, String erogazione) {
+	public static List<HttpRequest> buildRequests_ForwardedFor(List<String> filtri, List<String> forwardingHeaders, String erogazione) {
 		// Costruisco un'array di richieste, ciascuna richiesta è costruita scegliendo un filtro e il forwardingHeader
 		// su cui inviarlo
 		
