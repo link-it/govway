@@ -20,6 +20,7 @@
 
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.ConsegnaCondizionaleByFiltroTest.buildRequests_HeaderHttp;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_0;
@@ -45,6 +46,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpRequest;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
@@ -91,6 +93,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 	public static final String POOL_1 = "Pool1";
 	public static final String POOL_2 = "Pool2";
 	public static final String POOL_ROTTO = "PoolRotto";
+	public static final String POOL_LOCALHOST = "PoolLocalhost";
 	
 	public static List<String> pools = Arrays.asList(
 			POOL_0, POOL_1, POOL_2	// Non includo il pool rotto per velocizzare i test
@@ -100,7 +103,8 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 			POOL_0, Arrays.asList(CONNETTORE_0,CONNETTORE_1,CONNETTORE_2, CONNETTORE_DISABILITATO),
 			POOL_1, Arrays.asList(CONNETTORE_1,CONNETTORE_2,CONNETTORE_3, CONNETTORE_DISABILITATO),
 			POOL_2, Arrays.asList(CONNETTORE_2,CONNETTORE_3,CONNETTORE_0, CONNETTORE_DISABILITATO),
-			POOL_ROTTO, Arrays.asList(CONNETTORE_0,CONNETTORE_1,CONNETTORE_2, CONNETTORE_ROTTO, CONNETTORE_DISABILITATO)
+			POOL_ROTTO, Arrays.asList(CONNETTORE_0,CONNETTORE_1,CONNETTORE_2, CONNETTORE_ROTTO, CONNETTORE_DISABILITATO),
+			POOL_LOCALHOST, Arrays.asList(CONNETTORE_0,CONNETTORE_1,CONNETTORE_2, CONNETTORE_DISABILITATO)
 		);
 	
 	public static Map<String,List<String>> filtriPools = Map.of(
@@ -200,8 +204,20 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 	
 	@Test
 	public void clientIp() {
+		/**
+		 * Non ho modo di cambiare l'indirizzo ip sorgente, per cui verifico semplicemente
+		 * che tutto vada a finire nello stesso connettore.
+		 */
 		final String erogazione = "LoadBalanceConsegnaCondizionaleClientIp";
-		// ci penso dopo, che filtri metto? solo 127.0.0.1 viene scelto
+		
+		HttpRequest request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
+		
+		var responses = Utils.makeParallelRequests(request, 15);
+		
+		checkResponses(Map.of(POOL_LOCALHOST, responses));
 	}
 	
 	
@@ -260,11 +276,33 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 	public void regole() {
 		final String erogazione = "LoadBalanceConsegnaCondizionaleRegole";
 		
+		// Configurazione Filtro Regola Statica: Pool2-Filtro1
+		//	Va sui connettori del pool2
+		
+		HttpRequest requestIdentificazioneStatica = new HttpRequest();
+		requestIdentificazioneStatica.setMethod(HttpRequestMethod.GET);
+		requestIdentificazioneStatica.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-statica"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
+		
+
+		HttpRequest requestClientIp = new HttpRequest();
+		requestClientIp.setMethod(HttpRequestMethod.GET);
+		requestClientIp.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-client-ip"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
+		
+		// TODO
+		
 	}
 	
 	
+	/**
+	 * Verifica che le richieste siano arrivate ai pool indicati e che nei pool
+	 * indicati il round robin sia avvenuto correttamente.
+	 *  
+	 * @param responsesByPool
+	 */
 
-	private void checkResponses(Map<String, List<HttpResponse>> responsesByPool) {
+	private static void checkResponses(Map<String, List<HttpResponse>> responsesByPool) {
 		for(String pool : responsesByPool.keySet()) {
 			List<HttpResponse> responses = responsesByPool.get(pool);
 			List<String> connettoriPool = connettoriPools.get(pool);
@@ -273,6 +311,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 			for (var resp : responses) {
 				String connettore_utilizzato = resp.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE);
 				assertTrue(connettoriPool.contains(connettore_utilizzato));
+				assertEquals(200, resp.getResultHTTPOperation());
 			}
 
 			// Verifico la strategia di round robin per il pool
@@ -346,7 +385,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 	}
 
 
-	private Map<String, Integer> contaConnettoriUtilizzati(List<HttpResponse> responses) {
+	private static Map<String, Integer> contaConnettoriUtilizzati(List<HttpResponse> responses) {
 		Map<String,Integer> ret = new HashMap<>();
 		for (var r : responses) {
 			String connettore = r.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE);

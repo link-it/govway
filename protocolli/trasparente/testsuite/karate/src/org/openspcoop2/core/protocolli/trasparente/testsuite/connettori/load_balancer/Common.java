@@ -15,8 +15,11 @@ import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 
 // Query Freemarker Template: ${query["govway-testsuite-id_connettore_request"]}
-// Query Template: 
+// Query Template: ${query:govway-testsuite-id_connettore_request}
 // Query Velocity Template: $query["govway-testsuite-id_connettore_request"]
+// Query UrlInvocazione: .+govway-testsuite-id_connettore_request=([^&]*).*
+// Query contenuto: $.id_connettore_request
+// Query HeaderHttp: GovWay-TestSuite-id_connettore
 
 public class Common {
 	public static final String CONNETTORE_0 = "Connettore0";
