@@ -52,6 +52,7 @@ import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.openspcoop2.utils.transport.http.SSLConfig;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 import org.openspcoop2.utils.transport.http.WrappedLogSSLSocketFactory;
 import org.slf4j.Logger;
@@ -270,7 +271,7 @@ public class ConnettoreCheck {
 		
 	private static void _checkHTTP(TipiConnettore tipoConnettore, Connettore connettore, Logger log) throws Exception {
 		
-		ConnettoreHTTPSProperties sslContextProperties = null;
+		SSLConfig sslContextProperties = null;
 		
 		Map<String,String> properties = connettore.getProperties();
 		

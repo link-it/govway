@@ -54,6 +54,7 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.transport.http.RFC2047Encoding;
 import org.openspcoop2.utils.transport.http.RFC2047Utilities;
+import org.openspcoop2.utils.transport.http.SSLConfig;
 
 /**
  * ConnettoreBaseHTTP
@@ -89,7 +90,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	
 	/** SSL Configuration */
 	protected boolean connettoreHttps = false;
-	protected ConnettoreHTTPSProperties sslContextProperties;
+	protected SSLConfig sslContextProperties;
 	
 	/** InputStream Risposta */
 	protected String resultHTTPMessage;

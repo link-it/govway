@@ -30,10 +30,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.core.commons.ConnettoreHTTPSProperties;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.constants.CostantiLabel;
+import org.openspcoop2.core.constants.StatoCheck;
+import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
@@ -50,7 +54,9 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
+import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
+import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Proprieta;
@@ -92,12 +98,15 @@ import org.openspcoop2.protocol.sdk.Servizio;
 import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.CertificateUtils;
+import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.transport.http.SSLConfig;
 import org.slf4j.Logger;
 
 /**
@@ -2740,7 +2749,287 @@ public class RegistroServiziReader {
 
 	}
 	
+	protected CertificateCheck checkCertificatiConnettoreHttpsById(Connection connectionPdD,boolean useCache,
+			long idConnettore, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		
+		if(useCache) {
+			throw new DriverRegistroServiziException("Not Implemented");
+		}
+		
+		Connettore connettore = null;
+		for (IDriverRegistroServiziGet driver : this.registroServizi.getDriverRegistroServizi().values()) {
+			if(driver instanceof DriverRegistroServiziDB) {
+				DriverRegistroServiziDB driverDB = (DriverRegistroServiziDB) driver;
+				connettore = driverDB.getConnettore(idConnettore);
+				break;
+			}
+			else {
+				throw new DriverRegistroServiziException("Not Implemented with driver '"+driver.getClass().getName()+"'");
+			}
+		}
+		
+		return checkCertificatiConnettoreHttpsById(connettore,sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	public static CertificateCheck checkCertificatiConnettoreHttpsById(Connettore connettore, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		
+		TipiConnettore tipo = TipiConnettore.toEnumFromName(connettore.getTipo());
+		if( !TipiConnettore.HTTPS.equals(tipo)) {
+			throw new DriverRegistroServiziException("Il connettore indicato non è di tipo https");
+		}
+		
+		SSLConfig httpsProp = null;
+		try {
+			httpsProp = ConnettoreHTTPSProperties.readProperties(connettore.getProperties());
+		}catch(Throwable t) {
+			throw new DriverRegistroServiziException(t.getMessage(),t);
+		}
+		CertificateCheck check = null;
+				
+		String storeDetails = null; // per evitare duplicazione
+		
+		if(httpsProp.getKeyStoreLocation()!=null) {
+			try {
+				check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(httpsProp.getKeyStoreLocation(), httpsProp.getKeyStoreType(), 
+						httpsProp.getKeyStorePassword(), httpsProp.getKeyAlias(),
+						sogliaWarningGiorni, 
+						false, //addCertificateDetails, 
+						separator, newLine,
+						log);
+				
+				if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+					storeDetails = org.openspcoop2.protocol.registry.CertificateUtils.toStringKeyStore(httpsProp.getKeyStoreLocation(), httpsProp.getKeyStoreType(),
+							httpsProp.getKeyAlias(), 
+							separator, newLine);
+				}
+			}catch(Throwable t) {
+				throw new DriverRegistroServiziException(t.getMessage(),t);
+			}
+		}
+		
+		if(check==null || StatoCheck.OK.equals(check.getStatoCheck())) {
+			if(!httpsProp.isTrustAllCerts() && httpsProp.getTrustStoreLocation()!=null) {
+				try {
+					check = org.openspcoop2.protocol.registry.CertificateUtils.checkTrustStore(httpsProp.getTrustStoreLocation(), httpsProp.getTrustStoreType(), 
+							httpsProp.getTrustStorePassword(), httpsProp.getTrustStoreCRLsLocation(),
+							sogliaWarningGiorni, 
+							false, //addCertificateDetails, 
+							separator, newLine,
+							log);
+					
+					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+						storeDetails = org.openspcoop2.protocol.registry.CertificateUtils.toStringTrustStore(httpsProp.getTrustStoreLocation(), httpsProp.getTrustStoreType(),
+								httpsProp.getTrustStoreCRLsLocation(), 
+								separator, newLine);
+					}
+				}catch(Throwable t) {
+					throw new DriverRegistroServiziException(t.getMessage(),t);
+				}
+			}
+		}
+		
+		if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+			String id = "Configurazione connettore https";
+			if(addCertificateDetails && storeDetails!=null) {
+				id = id + newLine + storeDetails;
+			}
+			check.setConfigurationId(id);	
+		}	
+		
+		if(check==null) {
+			// connettore https con truststore 'all' senza client autentication
+			check = new CertificateCheck();
+			check.setStatoCheck(StatoCheck.OK);
+		}
+		
+		return check;
+	}
 	
+	protected CertificateCheck checkCertificatiModIErogazioneById(Connection connectionPdD,boolean useCache,
+			long idAsps, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		
+		if(useCache) {
+			throw new DriverRegistroServiziException("Not Implemented");
+		}
+		
+		AccordoServizioParteSpecifica asps = null;
+		for (IDriverRegistroServiziGet driver : this.registroServizi.getDriverRegistroServizi().values()) {
+			if(driver instanceof DriverRegistroServiziDB) {
+				DriverRegistroServiziDB driverDB = (DriverRegistroServiziDB) driver;
+				asps = driverDB.getAccordoServizioParteSpecifica(idAsps);
+				break;
+			}
+			else {
+				throw new DriverRegistroServiziException("Not Implemented with driver '"+driver.getClass().getName()+"'");
+			}
+		}
+		
+		return checkCertificatiModIErogazioneById(asps,sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	public static CertificateCheck checkCertificatiModIErogazioneById(AccordoServizioParteSpecifica asps, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		
+		boolean modi = asps.getTipoSoggettoErogatore().equals(CostantiLabel.MODIPA_PROTOCOL_NAME);
+		if(!modi) {
+			throw new DriverRegistroServiziException("Il profilo di interoperabilità non è "+CostantiLabel.MODIPA_PROTOCOL_LABEL);
+		}
+		
+		KeystoreParams keystoreParams = ModIUtils.getKeyStoreParams(asps.getProtocolPropertyList());
+		KeystoreParams truststoreParams = ModIUtils.getTrustStoreParams(asps.getProtocolPropertyList());
+		KeystoreParams truststoreSslParams = ModIUtils.getTrustStoreSSLParams(asps.getProtocolPropertyList());
+
+		return _checkStore(keystoreParams, 
+				truststoreParams,
+				truststoreSslParams, 
+				sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				log);
+	}
+	
+	protected CertificateCheck checkCertificatiModIFruizioneById(Connection connectionPdD,boolean useCache,
+			long idFruitore, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		
+		if(useCache) {
+			throw new DriverRegistroServiziException("Not Implemented");
+		}
+		
+		Fruitore fruitore = null;
+		for (IDriverRegistroServiziGet driver : this.registroServizi.getDriverRegistroServizi().values()) {
+			if(driver instanceof DriverRegistroServiziDB) {
+				DriverRegistroServiziDB driverDB = (DriverRegistroServiziDB) driver;
+				fruitore = driverDB.getServizioFruitore(idFruitore);
+				break;
+			}
+			else {
+				throw new DriverRegistroServiziException("Not Implemented with driver '"+driver.getClass().getName()+"'");
+			}
+		}
+		if(fruitore==null) {
+			throw new DriverRegistroServiziNotFound("Fruitore con id '"+idFruitore+"' non trovato");
+		}
+		
+		return checkCertificatiModIFruizioneById(fruitore,sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	public static CertificateCheck checkCertificatiModIFruizioneById(Fruitore fruitore, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		
+		boolean modi = fruitore.getTipo().equals(CostantiLabel.MODIPA_PROTOCOL_NAME);
+		if(!modi) {
+			throw new DriverRegistroServiziException("Il profilo di interoperabilità non è "+CostantiLabel.MODIPA_PROTOCOL_LABEL);
+		}
+		
+		KeystoreParams keystoreParams = ModIUtils.getKeyStoreParams(fruitore.getProtocolPropertyList());
+		KeystoreParams truststoreParams = ModIUtils.getTrustStoreParams(fruitore.getProtocolPropertyList());
+		KeystoreParams truststoreSslParams = ModIUtils.getTrustStoreSSLParams(fruitore.getProtocolPropertyList());
+		
+		return _checkStore(keystoreParams, 
+				truststoreParams,
+				truststoreSslParams, 
+				sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				log);
+	}
+	
+	private static CertificateCheck _checkStore(KeystoreParams keystoreParams, 
+			KeystoreParams truststoreParams,
+			KeystoreParams truststoreSslParams, 
+			int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverRegistroServiziException {
+		
+		if(keystoreParams==null && truststoreParams==null && truststoreSslParams==null) {
+			throw new DriverRegistroServiziException("Non risulta alcun keystore ridefinito, da utilizzare per la gestione della firma "+CostantiLabel.MODIPA_PROTOCOL_LABEL);
+		}
+		
+		CertificateCheck check = null;		
+		
+		String storeDetails = null; // per evitare duplicazione
+		
+		if(keystoreParams!=null) {
+			try {
+				if(keystoreParams.getStore()!=null) {
+					check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(keystoreParams.getStore(), keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(),
+							sogliaWarningGiorni, 
+							false, //addCertificateDetails, 
+							separator, newLine,
+							log);
+				}
+				else {
+					check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(keystoreParams.getPath(), keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(),
+							sogliaWarningGiorni, 
+							false, //addCertificateDetails, 
+							separator, newLine,
+							log);
+				}
+				
+				if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+					storeDetails = org.openspcoop2.protocol.registry.CertificateUtils.toStringKeyStore(keystoreParams, separator, newLine);
+				}
+			}catch(Throwable t) {
+				throw new DriverRegistroServiziException(t.getMessage(),t);
+			}
+		}
+		
+		if(check==null || StatoCheck.OK.equals(check.getStatoCheck())) {
+			if(truststoreParams!=null) {
+				try {
+					check = org.openspcoop2.protocol.registry.CertificateUtils.checkTrustStore(truststoreParams.getPath(), truststoreParams.getType(), 
+							truststoreParams.getPassword(), truststoreParams.getCrls(),
+							sogliaWarningGiorni, 
+							false, //addCertificateDetails, 
+							separator, newLine,
+							log);
+					
+					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+						storeDetails = org.openspcoop2.protocol.registry.CertificateUtils.toStringTrustStore(truststoreParams, separator, newLine);
+					}
+				}catch(Throwable t) {
+					throw new DriverRegistroServiziException(t.getMessage(),t);
+				}
+			}
+		}
+		
+		if(check==null || StatoCheck.OK.equals(check.getStatoCheck())) {
+			if(truststoreSslParams!=null) {
+				try {
+					check = org.openspcoop2.protocol.registry.CertificateUtils.checkTrustStore(truststoreSslParams.getPath(), truststoreSslParams.getType(), 
+							truststoreSslParams.getPassword(), truststoreSslParams.getCrls(),
+							sogliaWarningGiorni, 
+							false, //addCertificateDetails, 
+							separator, newLine,
+							log);
+					
+					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+						storeDetails = org.openspcoop2.protocol.registry.CertificateUtils.toStringTrustStore(truststoreSslParams, separator, newLine);
+					}
+				}catch(Throwable t) {
+					throw new DriverRegistroServiziException(t.getMessage(),t);
+				}
+			}
+		}
+		
+		if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+			String id = "Configurazione della firma "+CostantiLabel.MODIPA_PROTOCOL_LABEL;
+			if(addCertificateDetails && storeDetails!=null) {
+				id = id + newLine + storeDetails;
+			}
+			check.setConfigurationId(id);	
+		}
+		
+		return check;
+	}
 	
 	
 	

@@ -680,11 +680,13 @@ public final class CostantiDB {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE = "modipaTruststoreType";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH = "modipaTruststorePath";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS = "modipaTruststoreCRLs";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD = "modipaTruststorePassword";
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_MODE = "modipaSslTruststoreMode";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE = "modipaSslTruststoreType";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PATH = "modipaSslTruststorePath";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_CRLS = "modipaSslTruststoreCRLs";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PASSWORD = "modipaSslTruststorePassword";
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_IAT = "modipaSecurityMessageRequestIatMode";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_IAT = "modipaSecurityMessageResponseIatMode";

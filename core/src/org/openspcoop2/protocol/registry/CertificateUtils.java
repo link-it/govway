@@ -32,6 +32,7 @@ import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.CRLCertstore;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.date.DateManager;
@@ -95,6 +96,12 @@ public class CertificateUtils {
 		return sb.toString();
 	}
 	
+	public static String toStringKeyStore(KeystoreParams params,
+			String separator, String newLine) {
+		return _toString(true, params.getKeyAlias(), null,
+				params.getPath(), params.getType(), 
+				separator, newLine);
+	}
 	public static String toStringKeyStore(String storePath, String storeType,
 			String keyAlias,
 			String separator, String newLine) {
@@ -102,10 +109,16 @@ public class CertificateUtils {
 				storePath, storeType, 
 				separator, newLine);
 	}
+	public static String toStringTrustStore(KeystoreParams params,
+			String separator, String newLine) {
+		return _toString(false, null, params.getCrls(),
+				params.getPath(), params.getType(), 
+				separator, newLine);
+	}
 	public static String toStringTrustStore(String storePath, String storeType,
 			String trustCRL,
 			String separator, String newLine) {
-		return _toString(true, null, trustCRL,
+		return _toString(false, null, trustCRL,
 				storePath, storeType, 
 				separator, newLine);
 	}
@@ -290,7 +303,10 @@ public class CertificateUtils {
 				}
 				String errorDetails = CostantiLabel.TRUSTSTORE;
 				if(!addCertificateDetails) {
-					errorDetails = errorDetails + " '"+f.getAbsolutePath()+"'";
+					errorDetails = errorDetails + " '"+
+							//f.getAbsolutePath()+  // nel caso di path relativo viene visualizzato un PATH basato sul bin di wildfly ed e' forviante
+							trustStore+
+							"'";
 				}
 				errorDetails = errorDetails + (!f.exists() ? " not exists" : " cannot read"); 
 				
@@ -333,7 +349,10 @@ public class CertificateUtils {
 				}
 				String errorDetails = CostantiLabel.KEYSTORE;
 				if(!addCertificateDetails) {
-					errorDetails = errorDetails + " '"+f.getAbsolutePath()+"'";
+					errorDetails = errorDetails + " '"+
+							//f.getAbsolutePath()+  // nel caso di path relativo viene visualizzato un PATH basato sul bin di wildfly ed e' forviante
+							keyStore+
+							"'";
 				}
 				errorDetails = errorDetails + (!f.exists() ? " not exists" : " cannot read"); 
 				
@@ -368,7 +387,7 @@ public class CertificateUtils {
 		
 		SimpleDateFormat sdf = new SimpleDateFormat(FORMAT_DATE_CERTIFICATE);
 		
-		String storeDetails = null;
+		String storeDetails = "";
 		if(addCertificateDetails) {
 			if(keystore) {
 				storeDetails = toStringKeyStore(storePath, type, aliasKey, separator, newLine);
@@ -386,10 +405,17 @@ public class CertificateUtils {
 					File f = new File(path);
 					if(f.exists()==false || f.canRead()==false) {
 						
-						String identita = CostantiLabel.CRL+" '"+path+"'";
+						//String identita = CostantiLabel.CRL+" '"+path+"'";
+						String identita = CostantiLabel.CRL;
+						if(addCertificateDetails) {
+							identita = CostantiLabel.CRL+" '"+path+"'";
+						}
 						String errorDetails = identita;
 						if(!addCertificateDetails) {
-							errorDetails = errorDetails + " '"+f.getAbsolutePath()+"'";
+							errorDetails = errorDetails + " '"+
+									//f.getAbsolutePath()+  // nel caso di path relativo viene visualizzato un PATH basato sul bin di wildfly ed e' forviante
+									path+
+									"'";
 						}
 						errorDetails = errorDetails + (!f.exists() ? " not exists" : " cannot read"); 
 						
@@ -429,7 +455,7 @@ public class CertificateUtils {
 				while (aliases.hasMoreElements()) {
 					String aliasCheck = (String) aliases.nextElement();
 					if(store.getKeystore().isKeyEntry(aliasCheck)) {
-						alias.add(aliasKey);
+						alias.add(aliasCheck);
 					}
 				}
 			}
@@ -507,7 +533,8 @@ public class CertificateUtils {
 				
 				String aliasDetails = "";
 				if(!storeDetails.contains(CostantiLabel.KEY_ALIAS+separator+aliasVerify)) {
-					aliasDetails = newLine + CostantiLabel.ALIAS+separator+aliasVerify;
+					aliasDetails = (addCertificateDetails ? newLine : "") + 
+							CostantiLabel.ALIAS+separator+aliasVerify;
 				}
 				String certificateDetails = CertificateUtils.toString(certificate, separator, newLine);
 				certificateDetails = storeDetails +

@@ -1098,6 +1098,13 @@ public class ConfigurazionePdDManager {
 				addCertificateDetails, separator, newLine);
 	}
 	
+	public CertificateCheck checkCertificatiConnettoreHttpsByIdWithoutCache(long idConnettore, int sogliaWarningGiorni,  
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatiConnettoreHttpsById(null, false,
+				idConnettore, sogliaWarningGiorni,  
+				addCertificateDetails, separator, newLine);
+	}
+	
 
 	/* ********  CONFIGURAZIONE  ******** */
 

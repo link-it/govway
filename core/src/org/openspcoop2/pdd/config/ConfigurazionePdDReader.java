@@ -115,6 +115,7 @@ import org.openspcoop2.core.config.driver.xml.DriverConfigurazioneXML;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.StatoCheck;
+import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
@@ -147,6 +148,7 @@ import org.openspcoop2.monitor.sdk.alarm.AlarmStatus;
 import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
+import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPSProperties;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.GestoreErroreConnettore;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
@@ -182,6 +184,7 @@ import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.SSLConfig;
 import org.slf4j.Logger;
 
 
@@ -4072,7 +4075,7 @@ public class ConfigurazionePdDReader {
 			throw new DriverConfigurazioneException(t.getMessage(),t);
 		}
 
-		if(StatoCheck.OK.equals(check.getStatoCheck())) {
+		if(check==null || StatoCheck.OK.equals(check.getStatoCheck())) {
 			byte[] cert = ModIUtils.getApplicativoKeystoreCertificate(sa.getProtocolPropertyList());
 			if(cert!=null && cert.length>0) {
 				try {
@@ -4090,7 +4093,103 @@ public class ConfigurazionePdDReader {
 		return check;
 	}
 
-
+	
+	protected CertificateCheck checkCertificatiConnettoreHttpsById(Connection connectionPdD,boolean useCache,
+			long idConnettore, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		if(useCache) {
+			throw new DriverConfigurazioneException("Not Implemented");
+		}
+		
+		Connettore connettore = null;
+		IDriverConfigurazioneGet driver = this.configurazionePdD.getDriverConfigurazionePdD();
+		if(driver instanceof DriverConfigurazioneDB) {
+			DriverConfigurazioneDB driverDB = (DriverConfigurazioneDB) driver;
+			connettore = driverDB.getConnettore(idConnettore);
+		}
+		else {
+			throw new DriverConfigurazioneException("Not Implemented with driver '"+driver.getClass().getName()+"'");
+		}
+		return checkCertificatiConnettoreHttpsById(connettore,sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	public static CertificateCheck checkCertificatiConnettoreHttpsById(Connettore connettore, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		TipiConnettore tipo = TipiConnettore.toEnumFromName(connettore.getTipo());
+		if( !TipiConnettore.HTTPS.equals(tipo)) {
+			throw new DriverConfigurazioneException("Il connettore indicato non è di tipo https");
+		}
+		
+		SSLConfig httpsProp = null;
+		try {
+			httpsProp = ConnettoreHTTPSProperties.readProperties(connettore.getProperties());
+		}catch(Throwable t) {
+			throw new DriverConfigurazioneException(t.getMessage(),t);
+		}
+		CertificateCheck check = null;
+				
+		String storeDetails = null; // per evitare duplicazione
+		
+		if(httpsProp.getKeyStoreLocation()!=null) {
+			try {
+				check = CertificateUtils.checkKeyStore(httpsProp.getKeyStoreLocation(), httpsProp.getKeyStoreType(), 
+						httpsProp.getKeyStorePassword(), httpsProp.getKeyAlias(),
+						sogliaWarningGiorni, 
+						false, //addCertificateDetails,  
+						separator, newLine,
+						log);
+				
+				if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+					storeDetails = CertificateUtils.toStringKeyStore(httpsProp.getKeyStoreLocation(), httpsProp.getKeyStoreType(),
+							httpsProp.getKeyAlias(), 
+							separator, newLine);
+				}
+			}catch(Throwable t) {
+				throw new DriverConfigurazioneException(t.getMessage(),t);
+			}
+		}
+		
+		if(check==null || StatoCheck.OK.equals(check.getStatoCheck())) {
+			if(!httpsProp.isTrustAllCerts() && httpsProp.getTrustStoreLocation()!=null) {
+				try {
+					check = CertificateUtils.checkTrustStore(httpsProp.getTrustStoreLocation(), httpsProp.getTrustStoreType(), 
+							httpsProp.getTrustStorePassword(), httpsProp.getTrustStoreCRLsLocation(),
+							sogliaWarningGiorni, 
+							false, //addCertificateDetails, 
+							separator, newLine,
+							log);
+					
+					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+						storeDetails = CertificateUtils.toStringTrustStore(httpsProp.getTrustStoreLocation(), httpsProp.getTrustStoreType(),
+								httpsProp.getTrustStoreCRLsLocation(), 
+								separator, newLine);
+					}
+				}catch(Throwable t) {
+					throw new DriverConfigurazioneException(t.getMessage(),t);
+				}
+			}
+		}
+		
+		if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+			String id = "Configurazione connettore https";
+			if(addCertificateDetails && storeDetails!=null) {
+				id = id + newLine + storeDetails;
+			}
+			check.setConfigurationId(id);	
+		}	
+		
+		if(check==null) {
+			// connettore https con truststore 'all' senza client autentication
+			check = new CertificateCheck();
+			check.setStatoCheck(StatoCheck.OK);
+		}
+		
+		return check;
+	}
 
 
 

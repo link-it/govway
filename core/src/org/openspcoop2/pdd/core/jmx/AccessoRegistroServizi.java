@@ -65,10 +65,13 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 	/** Nomi metodi' */
 	public final static String CHECK_CONNETTORE_BY_ID = "checkConnettoreById";
 	public final static String CHECK_CONNETTORE_BY_NOME = "checkConnettoreByNome";
+	public final static String CHECK_CERTIFICATI_CONNETTORE_HTTPS_BY_ID = "checkCertificatiConnettoreHttpsById";
 	public final static String GET_CERTIFICATI_CONNETTORE_BY_ID = "getCertificatiConnettoreById";
 	public final static String GET_CERTIFICATI_CONNETTORE_BY_NOME = "getCertificatiConnettoreByNome";
 	public final static String CHECK_CERTIFICATO_SOGGETTO_BY_ID = "checkCertificatoSoggettoById";
 	public final static String CHECK_CERTIFICATO_SOGGETTO_BY_NOME = "checkCertificatoSoggettoByNome";
+	public final static String CHECK_CERTIFICATI_MODI_EROGAZIONE_BY_ID = "checkCertificatiModIErogazioneById";
+	public final static String CHECK_CERTIFICATI_MODI_FRUIZIONE_BY_ID = "checkCertificatiModIFruizioneById";
 	
 	/** Attributi */
 	private boolean cacheAbilitata = false;
@@ -318,6 +321,34 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 			return this.getCertificatiConnettoreByNome(param1);
 		}
 		
+		if(actionName.equals(CHECK_CERTIFICATI_CONNETTORE_HTTPS_BY_ID)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_CONNETTORE_HTTPS_BY_ID+"] Lunghezza parametri non corretta: "+params.length));
+			
+			Long param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				if(params[0] instanceof Long) {
+					param1 = (Long)params[0];
+				}
+				else {
+					param1 = Long.valueOf(params[0].toString());
+				}
+				if(param1<0){
+					param1 = null;
+				}
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatiConnettoreHttpsById(param1, soglia);
+		}
+		
 		if(actionName.equals(CHECK_CERTIFICATO_SOGGETTO_BY_ID)){
 			if(params.length != 2)
 				throw new MBeanException(new Exception("["+CHECK_CERTIFICATO_SOGGETTO_BY_ID+"] Lunghezza parametri non corretta: "+params.length));
@@ -363,6 +394,62 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 			}
 			
 			return this.checkCertificatoSoggettoByNome(param1, soglia);
+		}
+		
+		if(actionName.equals(CHECK_CERTIFICATI_MODI_EROGAZIONE_BY_ID)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_MODI_EROGAZIONE_BY_ID+"] Lunghezza parametri non corretta: "+params.length));
+			
+			Long param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				if(params[0] instanceof Long) {
+					param1 = (Long)params[0];
+				}
+				else {
+					param1 = Long.valueOf(params[0].toString());
+				}
+				if(param1<0){
+					param1 = null;
+				}
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatiModIErogazioneById(param1, soglia);
+		}
+		
+		if(actionName.equals(CHECK_CERTIFICATI_MODI_FRUIZIONE_BY_ID)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_MODI_FRUIZIONE_BY_ID+"] Lunghezza parametri non corretta: "+params.length));
+			
+			Long param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				if(params[0] instanceof Long) {
+					param1 = (Long)params[0];
+				}
+				else {
+					param1 = Long.valueOf(params[0].toString());
+				}
+				if(param1<0){
+					param1 = null;
+				}
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatiModIFruizioneById(param1, soglia);
 		}
 		
 		throw new UnsupportedOperationException("Operazione "+actionName+" sconosciuta");
@@ -445,6 +532,16 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 			String.class.getName(),
 			MBeanOperationInfo.ACTION);
 		
+		// MetaData per l'operazione checkCertificatiConnettoreHttpsById
+		MBeanOperationInfo checkCertificatiConnettoreHttpsById 
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_CONNETTORE_HTTPS_BY_ID,"Verifica i certificati presenti nei keystore e truststore del connettore https che possiede l'id fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("idConnettore",long.class.getName(),"Identificativo del connettore"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
 		// MetaData per l'operazione checkCertificatoSoggettoById
 		MBeanOperationInfo checkCertificatoSoggettoById 
 		= new MBeanOperationInfo(CHECK_CERTIFICATO_SOGGETTO_BY_ID,"Verifica i certificati client associati al soggetto che possiede l'id fornito come parametro",
@@ -460,6 +557,26 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 		= new MBeanOperationInfo(CHECK_CERTIFICATO_SOGGETTO_BY_NOME,"Verifica i certificati client associati al soggetto che possiede l'id fornito come parametro (formato: tipoSoggetto/nomeSoggetto)",
 			new MBeanParameterInfo[]{
 				new MBeanParameterInfo("idSoggetto",String.class.getName(),"Identificativo del soggetto"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkCertificatiModIErogazioneById
+		MBeanOperationInfo checkCertificatiModIErogazioneById 
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_MODI_EROGAZIONE_BY_ID,"Verifica i certificati presenti nei keystore e truststore dell'erogazione che possiede l'id fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("idErogazione",long.class.getName(),"Identificativo dell'erogazione"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkCertificatiModIFruizioneById
+		MBeanOperationInfo checkCertificatiModIFruizioneById 
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_MODI_FRUIZIONE_BY_ID,"Verifica i certificati presenti nei keystore e truststore della fruizione che possiede l'id fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("idFruizione",long.class.getName(),"Identificativo della fruizione"),
 				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
 			},
 			String.class.getName(),
@@ -490,8 +607,11 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 		listOperation.add(checkConnettoreByNome);
 		listOperation.add(getCertificatiConnettoreById);
 		listOperation.add(getCertificatiConnettoreByNome);
+		listOperation.add(checkCertificatiConnettoreHttpsById);
 		listOperation.add(checkCertificatoSoggettoById);
 		listOperation.add(checkCertificatoSoggettoByNome);
+		listOperation.add(checkCertificatiModIErogazioneById);
+		listOperation.add(checkCertificatiModIFruizioneById);
 		MBeanOperationInfo[] operations = listOperation.toArray(new MBeanOperationInfo[1]);
 		
 		return new MBeanInfo(className,description,attributes,constructors,operations,null);
@@ -679,6 +799,20 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 		}
 	}
 	
+	public String checkCertificatiConnettoreHttpsById(long idConnettore, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = RegistroServiziManager.getInstance().checkCertificatiConnettoreHttpsByIdWithoutCache(idConnettore, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
 	public String checkCertificatoSoggettoById(long idSoggetto, int sogliaWarningGiorni) {
 		try{
 			boolean addCertificateDetails = true;
@@ -714,6 +848,34 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 						addCertificateDetails, separator, newLine);
 				return statoCheck.toString(newLine);
 			}
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatiModIErogazioneById(long idErogazione, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = RegistroServiziManager.getInstance().checkCertificatiModIErogazioneByIdWithoutCache(idErogazione, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatiModIFruizioneById(long idFruizione, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = RegistroServiziManager.getInstance().checkCertificatiModIFruizioneByIdWithoutCache(idFruizione, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
 		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();

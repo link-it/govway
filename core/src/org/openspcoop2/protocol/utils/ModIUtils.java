@@ -832,6 +832,133 @@ public class ModIUtils {
 	
 		return null;
 	}
+	
+	public static KeystoreParams getKeyStoreParams(List<org.openspcoop2.core.registry.ProtocolProperty> protocolPropertyList) {
+		return _getKeystoreParams(protocolPropertyList, false, false);
+	}
+	public static KeystoreParams getTrustStoreParams(List<org.openspcoop2.core.registry.ProtocolProperty> protocolPropertyList) {
+		return _getKeystoreParams(protocolPropertyList, false, true);
+	}
+	public static KeystoreParams getTrustStoreSSLParams(List<org.openspcoop2.core.registry.ProtocolProperty> protocolPropertyList) {
+		return _getKeystoreParams(protocolPropertyList, true, false);
+	}
+	private static KeystoreParams _getKeystoreParams(List<org.openspcoop2.core.registry.ProtocolProperty> protocolPropertyList,
+			boolean ssl, boolean truststore) {
+		
+		if(protocolPropertyList==null || protocolPropertyList.isEmpty()) {
+			return null;
+		}
+		
+		KeystoreParams keystoreParams = null;
+		
+		String id = null;
+		if(ssl) {
+			id = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_MODE; 
+		}
+		else if(truststore) {
+			id = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE;
+		}
+		else {
+			id = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE;
+		}
+		
+		String v = getStringValue(protocolPropertyList, id);
+		if(v!=null && !StringUtils.isEmpty(v) && !CostantiDB.MODIPA_PROFILO_DEFAULT.equals(v)) {
+			
+			String type = null;
+			String path = null;
+			String archive = null;
+			String password = null;
+			String crl = null;
+			String aliasKey = null;
+			@SuppressWarnings("unused")
+			boolean keystoreModePath = false;
+			boolean keystoreModeArchive = false;
+			boolean keystoreModeHsm = false;
+			if(ssl) {
+				type = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE;
+				path = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PATH;
+				password = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PASSWORD;
+				crl = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_CRLS;
+			}
+			else if(truststore) {
+				type = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE;
+				path = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH;
+				password = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD;
+				crl = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS;
+			}
+			else {
+				type = CostantiDB.MODIPA_KEYSTORE_TYPE;
+				password = CostantiDB.MODIPA_KEYSTORE_PASSWORD;
+				aliasKey = CostantiDB.MODIPA_KEY_ALIAS;
+				String mode = getStringValue(protocolPropertyList, CostantiDB.MODIPA_KEYSTORE_MODE);
+				if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(mode)) {
+					keystoreModeArchive = true;
+					archive = CostantiDB.MODIPA_KEYSTORE_ARCHIVE;
+				}
+				else if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_PATH.equals(mode)) {
+					keystoreModePath = true;
+					path = CostantiDB.MODIPA_KEYSTORE_PATH;
+				}
+				else if(CostantiDB.MODIPA_KEYSTORE_MODE_VALUE_HSM.equals(mode)) {
+					keystoreModeHsm = true;
+				}
+			}
+			
+			String vType = null;
+			if(type!=null) {
+				vType = getStringValue(protocolPropertyList, type);
+			}
+			
+			String vPassword = null;
+			if(password!=null) {
+				vPassword = getStringValue(protocolPropertyList, password);
+			}
+			
+			boolean hsm = false;
+			if(ssl || truststore) {
+				if(vType!=null) {
+					hsm = HSMUtils.isKeystoreHSM(vType);
+				}
+			}
+			else {
+				hsm = keystoreModeHsm;
+			}
+			
+			String vPath = null;
+			byte[] vStore = null;
+			if(hsm) {
+				vPath = CostantiLabel.STORE_HSM;
+			}
+			else if(path!=null) {
+				vPath = getStringValue(protocolPropertyList, path);
+			}
+			else if(keystoreModeArchive) {
+				vPath = CostantiLabel.STORE_CARICATO_BASEDATI;
+				vStore = getBinaryValue(protocolPropertyList, archive);
+			}
+			
+			String vCrl = null;
+			if(crl!=null) {
+				vCrl = getStringValue(protocolPropertyList, crl);
+			}
+			
+			String vAliasKey = null;
+			if(aliasKey!=null) {
+				vAliasKey = getStringValue(protocolPropertyList, aliasKey);
+			}
+			
+			keystoreParams = new KeystoreParams();
+			keystoreParams.setType(vType);
+			keystoreParams.setPath(vPath);
+			keystoreParams.setStore(vStore);
+			keystoreParams.setPassword(vPassword);
+			keystoreParams.setCrls(vCrl);
+			keystoreParams.setKeyAlias(vAliasKey);
+		}
+	
+		return keystoreParams;
+	}
 
 	
 	private static String getStringValue(List<ProtocolProperty> protocolPropertyList, String id) {

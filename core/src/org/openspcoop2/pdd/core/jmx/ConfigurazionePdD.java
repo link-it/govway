@@ -138,6 +138,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public final static String CHECK_CONNETTORE_BY_NOME = "checkConnettoreByNome";
 	public final static String GET_CERTIFICATI_CONNETTORE_BY_ID = "getCertificatiConnettoreById";
 	public final static String GET_CERTIFICATI_CONNETTORE_BY_NOME = "getCertificatiConnettoreByNome";
+	public final static String CHECK_CERTIFICATI_CONNETTORE_HTTPS_BY_ID = "checkCertificatiConnettoreHttpsById";
 	public final static String CHECK_CERTIFICATO_SERVIZIO_APPLICATIVO_BY_ID = "checkCertificatoApplicativoById";
 	public final static String CHECK_CERTIFICATO_SERVIZIO_APPLICATIVO_BY_NOME = "checkCertificatoApplicativoByNome";
 	public final static String CHECK_CERTIFICATO_MODI_SERVIZIO_APPLICATIVO_BY_ID = "checkCertificatoModIApplicativoById";
@@ -640,6 +641,34 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			return this.getCertificatiConnettoreByNome(param1);
 		}
 		
+		if(actionName.equals(CHECK_CERTIFICATI_CONNETTORE_HTTPS_BY_ID)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_CONNETTORE_HTTPS_BY_ID+"] Lunghezza parametri non corretta: "+params.length));
+			
+			Long param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				if(params[0] instanceof Long) {
+					param1 = (Long)params[0];
+				}
+				else {
+					param1 = Long.valueOf(params[0].toString());
+				}
+				if(param1<0){
+					param1 = null;
+				}
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatiConnettoreHttpsById(param1, soglia);
+		}
+		
 		if(actionName.equals(CHECK_CERTIFICATO_SERVIZIO_APPLICATIVO_BY_ID)){
 			if(params.length != 2)
 				throw new MBeanException(new Exception("["+CHECK_CERTIFICATO_SERVIZIO_APPLICATIVO_BY_ID+"] Lunghezza parametri non corretta: "+params.length));
@@ -1104,6 +1133,16 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			String.class.getName(),
 			MBeanOperationInfo.ACTION);
 		
+		// MetaData per l'operazione checkCertificatiConnettoreHttpsById
+		MBeanOperationInfo checkCertificatiConnettoreHttpsById 
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_CONNETTORE_HTTPS_BY_ID,"Verifica i certificati presenti nei keystore e truststore del connettore https che possiede l'id fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("idConnettore",long.class.getName(),"Identificativo del connettore"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
 		// MetaData per l'operazione checkCertificatoApplicativoById
 		MBeanOperationInfo checkCertificatoApplicativoById 
 		= new MBeanOperationInfo(CHECK_CERTIFICATO_SERVIZIO_APPLICATIVO_BY_ID,"Verifica i certificati client associati all'applicativo che possiede l'id fornito come parametro",
@@ -1226,6 +1265,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		listOperation.add(checkConnettoreByNome);
 		listOperation.add(getCertificatiConnettoreById);
 		listOperation.add(getCertificatiConnettoreByNome);
+		listOperation.add(checkCertificatiConnettoreHttpsById);
 		listOperation.add(checkCertificatoApplicativoById);
 		listOperation.add(checkCertificatoApplicativoByNome);
 		listOperation.add(checkCertificatoModIApplicativoById);
@@ -1543,6 +1583,20 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public String getCertificatiConnettoreByNome(String nomeConnettore) {
 		try{
 			return ConnettoreCheck.getCertificati(nomeConnettore, true);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatiConnettoreHttpsById(long idConnettore, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiConnettoreHttpsByIdWithoutCache(idConnettore, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
 		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();

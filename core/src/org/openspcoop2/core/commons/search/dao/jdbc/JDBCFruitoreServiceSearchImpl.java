@@ -19,45 +19,42 @@
  */
 package org.openspcoop2.core.commons.search.dao.jdbc;
 
-import java.util.List;
+import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-import java.sql.Connection;
-
-import org.slf4j.Logger;
-
-import org.openspcoop2.utils.sql.ISQLQueryObject;
-
-import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
-import org.openspcoop2.generic_project.dao.jdbc.utils.IJDBCFetch;
-import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
-import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceSearchWithId;
+import org.openspcoop2.core.commons.search.Fruitore;
+import org.openspcoop2.core.commons.search.IdAccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.IdFruitore;
 import org.openspcoop2.core.commons.search.IdSoggetto;
-import org.openspcoop2.generic_project.utils.UtilsTemplate;
+import org.openspcoop2.core.commons.search.dao.IDBAccordoServizioParteSpecificaServiceSearch;
+import org.openspcoop2.core.commons.search.dao.IDBSoggettoServiceSearch;
+import org.openspcoop2.core.commons.search.dao.jdbc.converter.FruitoreFieldConverter;
+import org.openspcoop2.core.commons.search.dao.jdbc.fetch.FruitoreFetch;
+import org.openspcoop2.generic_project.beans.AliasField;
 import org.openspcoop2.generic_project.beans.CustomField;
-import org.openspcoop2.generic_project.beans.InUse;
-import org.openspcoop2.generic_project.beans.IField;
-import org.openspcoop2.generic_project.beans.NonNegativeNumber;
-import org.openspcoop2.generic_project.beans.UnionExpression;
-import org.openspcoop2.generic_project.beans.Union;
 import org.openspcoop2.generic_project.beans.FunctionField;
+import org.openspcoop2.generic_project.beans.IField;
+import org.openspcoop2.generic_project.beans.InUse;
+import org.openspcoop2.generic_project.beans.NonNegativeNumber;
+import org.openspcoop2.generic_project.beans.Union;
+import org.openspcoop2.generic_project.beans.UnionExpression;
+import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceSearchWithId;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
+import org.openspcoop2.generic_project.dao.jdbc.utils.IJDBCFetch;
+import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
-import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
-import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
-
-import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
-import org.openspcoop2.core.commons.search.dao.jdbc.converter.FruitoreFieldConverter;
-import org.openspcoop2.core.commons.search.dao.jdbc.fetch.FruitoreFetch;
-import org.openspcoop2.core.commons.search.dao.IDBAccordoServizioParteSpecificaServiceSearch;
-import org.openspcoop2.core.commons.search.dao.IDBSoggettoServiceSearch;
-import org.openspcoop2.core.commons.search.Fruitore;
-import org.openspcoop2.core.commons.search.IdAccordoServizioParteSpecifica;
+import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
+import org.openspcoop2.generic_project.utils.UtilsTemplate;
+import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.slf4j.Logger;
 
 /**     
  * JDBCFruitoreServiceSearchImpl
@@ -160,20 +157,119 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 
         List<Fruitore> list = new ArrayList<Fruitore>();
         
-        // TODO: implementazione non efficente. 
-		// Per ottenere una implementazione efficente:
-		// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari
-		// 2. Usare metodo getFruitoreFetch() sul risultato della select per ottenere un oggetto Fruitore
-		//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 
-
-        List<Long> ids = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, expression);
+        boolean efficente = true;
         
-        for(Long id: ids) {
-        	list.add(this.get(jdbcProperties, log, connection, sqlQueryObject, id, idMappingResolutionBehaviour));
+        if(efficente){
+        	
+        	List<IField> fields = new ArrayList<IField>();
+    		String aliasAccordoTipo = "accordoTipo";
+    		fields.add(new AliasField(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.TIPO, aliasAccordoTipo));
+    		String aliasAccordoNome = "accordoNome";
+    		fields.add(new AliasField(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.NOME, aliasAccordoNome));
+    		String aliasAccordoVersione = "accordoVersione";
+    		fields.add(new AliasField(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.VERSIONE, aliasAccordoVersione));
+    		String aliasAccordoSoggettoErogatoreTipo = "accordoSoggettoReferenteTipo";
+    		fields.add(new AliasField(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.ID_EROGATORE.TIPO, aliasAccordoSoggettoErogatoreTipo));
+    		String aliasAccordoSoggettoErogatoreNome = "accordoSoggettoReferenteNome";
+    		fields.add(new AliasField(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.ID_EROGATORE.NOME, aliasAccordoSoggettoErogatoreNome));
+    		String aliasSoggettoFruitoreTipo = "accordoSoggettoErogatoreTipo";
+    		fields.add(new AliasField(Fruitore.model().ID_FRUITORE.TIPO, aliasSoggettoFruitoreTipo));
+    		String aliasSoggettoFruitoreNome = "accordoSoggettoErogatoreNome";
+    		fields.add(new AliasField(Fruitore.model().ID_FRUITORE.NOME, aliasSoggettoFruitoreNome));
+        	
+    		List<Map<String, Object>> returnMap = null;
+    		try{
+    			// non usare true altrimenti non funzionano alcuni meccanismi di ricerca, ad es. la valorizzazione dei select field nel servizio della govwayMonitor.
+    			// Tanto le join non comportano righe multiple uguali
+    			boolean distinct = false; 
+    			returnMap = this.select(jdbcProperties, log, connection, sqlQueryObject, expression, distinct, fields.toArray(new IField[1]));
+    			
+	    		for(Map<String, Object> map: returnMap) {
+	    			
+	    			Fruitore fruitore = (Fruitore) this.getFruitoreFetch().fetch(jdbcProperties.getDatabase(), Fruitore.model(), map);
+	    			
+	    			Object apcTipo = this.getObjectFromMap(map, aliasAccordoTipo);
+	    			Object apcNome = this.getObjectFromMap(map, aliasAccordoNome);
+	    			Object apcVersione = this.getObjectFromMap(map, aliasAccordoVersione);
+	    			Object apcSoggettoErogatoreTipo = this.getObjectFromMap(map, aliasAccordoSoggettoErogatoreTipo);
+	    			Object apcSoggettoErogatoreNome = this.getObjectFromMap(map, aliasAccordoSoggettoErogatoreNome);
+	    			Object soggettoFruitoreTipo = this.getObjectFromMap(map, aliasSoggettoFruitoreTipo);
+	    			Object soggettoFruitoreNome = this.getObjectFromMap(map, aliasSoggettoFruitoreNome);
+	    			if(apcTipo!=null && apcNome!=null && apcVersione!=null) {
+	    				IdAccordoServizioParteSpecifica idAccordoServizioParteSpecifica = new IdAccordoServizioParteSpecifica();
+	    				if(apcTipo!=null && apcTipo instanceof String) {
+	    					idAccordoServizioParteSpecifica.setTipo((String) apcTipo);
+	    				}
+	    				if(apcNome!=null && apcNome instanceof String) {
+	    					idAccordoServizioParteSpecifica.setNome((String) apcNome);
+	    				}
+	    				if(apcVersione!=null && apcVersione instanceof Integer) {
+	    					idAccordoServizioParteSpecifica.setVersione((Integer) apcVersione);
+	    				}
+	    				if(apcSoggettoErogatoreTipo!=null && apcSoggettoErogatoreNome!=null) {
+	    					IdSoggetto idSoggetto = new IdSoggetto();
+	    					if(apcSoggettoErogatoreTipo!=null && apcSoggettoErogatoreTipo instanceof String) {
+	    						idSoggetto.setTipo((String) apcSoggettoErogatoreTipo);
+		    				}
+	    					if(apcSoggettoErogatoreNome!=null && apcSoggettoErogatoreNome instanceof String) {
+	    						idSoggetto.setNome((String) apcSoggettoErogatoreNome);
+		    				}
+	    					idAccordoServizioParteSpecifica.setIdErogatore(idSoggetto);
+	    				}
+	    				fruitore.setIdAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica);
+	    			}
+	    			if(soggettoFruitoreTipo!=null && soggettoFruitoreNome!=null) {
+    					IdSoggetto idSoggetto = new IdSoggetto();
+    					if(soggettoFruitoreTipo!=null && soggettoFruitoreTipo instanceof String) {
+    						idSoggetto.setTipo((String) soggettoFruitoreTipo);
+	    				}
+    					if(soggettoFruitoreNome!=null && soggettoFruitoreNome instanceof String) {
+    						idSoggetto.setNome((String) soggettoFruitoreNome);
+	    				}
+    					fruitore.setIdFruitore(idSoggetto);
+    				} 			
+	    			
+	    			list.add(fruitore);
+	    		}
+    		}catch(NotFoundException notFound){}
+        }
+
+        else{
+        
+	        // TODO: implementazione non efficente. 
+			// Per ottenere una implementazione efficente:
+			// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari
+			// 2. Usare metodo getFruitoreFetch() sul risultato della select per ottenere un oggetto Fruitore
+			//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 
+	
+	        List<Long> ids = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, expression);
+	        
+	        for(Long id: ids) {
+	        	list.add(this.get(jdbcProperties, log, connection, sqlQueryObject, id, idMappingResolutionBehaviour));
+	        }
+	        
         }
 
         return list;      
 		
+	}
+	
+	private Object getObjectFromMap(Map<String,Object> map,String name){
+		if(map==null){
+			return null;
+		}
+		else if(map.containsKey(name)){
+			Object o = map.get(name);
+			if(o instanceof org.apache.commons.lang.ObjectUtils.Null){
+				return null;
+			}
+			else{
+				return o;
+			}
+		}
+		else{
+			return null;
+		}
 	}
 	
 	@Override

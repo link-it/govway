@@ -67,6 +67,7 @@ import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
 import org.openspcoop2.utils.rest.problem.XmlDeserializer;
 import org.openspcoop2.utils.rest.problem.XmlSerializer;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.SSLConfig;
 import org.openspcoop2.utils.transport.http.SSLHostNameVerifierDisabled;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
@@ -119,7 +120,7 @@ public class ClientHttpGenerico extends ClientCore{
 	
 	/** SSL Configuration */
 	private boolean https = false;
-	private ConnettoreHTTPSProperties sslContextProperties;
+	private SSLConfig sslContextProperties;
 	
 	
 	

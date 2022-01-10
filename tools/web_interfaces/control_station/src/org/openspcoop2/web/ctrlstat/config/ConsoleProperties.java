@@ -685,17 +685,32 @@ public class ConsoleProperties {
 	
 	public List<String> getJmxPdD_aliases() throws UtilsException {
 		ConfigurazioneNodiRuntime config = getConfigurazioneNodiRuntime();
-		return config.getAliases();
+		if(config!=null) {
+			return config.getAliases();
+		}
+		else {
+			return null;
+		}
 	}
 	
 	public Map<String,List<String>> getJmxPdD_gruppi_aliases() throws UtilsException {
 		ConfigurazioneNodiRuntime config = getConfigurazioneNodiRuntime();
-		return config.getGruppi_aliases();
+		if(config!=null) {
+			return config.getGruppi_aliases();
+		}
+		else {
+			return null;
+		}
 	}
 	
 	public String getJmxPdD_descrizione(String alias) throws UtilsException {
 		ConfigurazioneNodiRuntime config = getConfigurazioneNodiRuntime();
-		return config.getDescrizione(alias);
+		if(config!=null) {
+			return config.getDescrizione(alias);
+		}
+		else {
+			return null;
+		}
 	}
 	
 	private String _getJmxPdD_value(boolean required, String alias, String prop) throws UtilsException{

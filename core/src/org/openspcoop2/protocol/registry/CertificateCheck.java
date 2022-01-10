@@ -35,6 +35,7 @@ import org.openspcoop2.core.constants.StatoCheck;
 public class CertificateCheck {
 
 	private StatoCheck statoCheck;
+	private String configurationId;
 	private List<String> errorCertificateIdentity = new ArrayList<String>();
 	private List<String> errorDetails = new ArrayList<String>();
 	private List<String> errorCertificateDetails = new ArrayList<String>();
@@ -51,6 +52,9 @@ public class CertificateCheck {
 		this.warningCertificateIdentity.add(identity);
 		this.warningDetails.add(details);
 		this.warningCertificateDetails.add(certificateDetails!=null ? certificateDetails : "");
+	}
+	public void setConfigurationId(String configurationId) {
+		this.configurationId = configurationId;
 	}
 	
 	public StatoCheck getStatoCheck() {
@@ -87,6 +91,10 @@ public class CertificateCheck {
 	private void printDetails(StringBuilder sbEsito, String newLine,
 			List<String> certificateIdentities, List<String> detailsList, List<String> certificateDetailsList) {
 		if(!detailsList.isEmpty()) {
+			if(this.configurationId!=null) {
+				sbEsito.append(newLine);
+				sbEsito.append(this.configurationId);
+			}
 			for (int i = 0; i < detailsList.size(); i++) {
 				String details = detailsList.get(i);
 				String certificateDetails = certificateDetailsList.get(i);

@@ -326,6 +326,27 @@ public class RegistroServiziManager {
 				addCertificateDetails, separator, newLine);
 	}
 	
+	public CertificateCheck checkCertificatiConnettoreHttpsByIdWithoutCache(long idConnettore, int sogliaWarningGiorni,  
+			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		return this.registroServiziReader.checkCertificatiConnettoreHttpsById(null, false,
+				idConnettore, sogliaWarningGiorni,  
+				addCertificateDetails, separator, newLine);
+	}
+	
+	public CertificateCheck checkCertificatiModIErogazioneByIdWithoutCache(long idErogazione, int sogliaWarningGiorni,  
+			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		return this.registroServiziReader.checkCertificatiModIErogazioneById(null, false,
+				idErogazione, sogliaWarningGiorni,  
+				addCertificateDetails, separator, newLine);
+	}
+	
+	public CertificateCheck checkCertificatiModIFruizioneByIdWithoutCache(long idFruizione, int sogliaWarningGiorni,  
+			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		return this.registroServiziReader.checkCertificatiModIFruizioneById(null, false,
+				idFruizione, sogliaWarningGiorni,  
+				addCertificateDetails, separator, newLine);
+	}
+	
 	
 	
 	/* ********  R I C E R C A  E L E M E N T I   P R I M I T I V I  ******** */
