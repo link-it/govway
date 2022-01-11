@@ -840,7 +840,7 @@ public class JsonPathExpressionEngine {
 		try {
 			JsonPath.compile(path);
 		} catch(Exception e) {
-			throw new JsonPathNotValidException("Validazione dell'xpath indicato ["+path+"] fallita: "+e.getMessage(),e);
+			throw new JsonPathNotValidException("Validazione del jsonPath indicato ["+path+"] fallita: "+e.getMessage(),e);
 		}
 	}
 

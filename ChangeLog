@@ -1,3 +1,17 @@
+2022-01-11  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovwayConsole]
+	Aggiunta funzionalità OP-1301
+	Aggiunta validazione delle espressioni regolari, xpath e jsonPath utilizzabili nelle varie funzionalità del gateway.
+	Effettuati inoltre i seguenti miglioramenti nella gestione dei connettori multipli:
+	- rivista gestione in modo che successivamente ad un'operazione di aggiunta o modifica (nome, descrizione, weight ...)
+	  si venga riposizionati nella lista dei connettori e sia selezionato il connettore oggetto della precedente operazione;
+	- nella maschera di creazione di una regola specifica per azione/risorsa veniva riportata erroneamente la dicitura 'Container' invece di 'Contenuto';
+	- aggiunto controllo di assegnazione univoca di un filtro ad un connettore, nel caso di consegna condizionale;
+	- l'utilizzo di una consegna condizionale basata su template non era utilizzabile su richieste senza payload (es. HTTP GET)
+	  dove si ottevena un errore simile al seguente: "Selettore 'Template' non supportato per il message-type 'BINARY'".
+	  È stato aggiunto il supporto.
+
 2022-01-10  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

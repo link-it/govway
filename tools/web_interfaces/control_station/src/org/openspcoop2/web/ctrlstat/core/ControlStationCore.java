@@ -922,6 +922,10 @@ public class ControlStationCore {
 	public boolean isConnettoriMultipliEnabled() {
 		return this.isConnettoriMultipliEnabled;
 	}
+	private boolean isConnettoriMultipliConsegnaCondizionaleStessFiltroPermesso;
+	public boolean isConnettoriMultipliConsegnaCondizionaleStessFiltroPermesso() {
+		return this.isConnettoriMultipliConsegnaCondizionaleStessFiltroPermesso;
+	}
 	private boolean isConnettoriMultipliConsegnaMultiplaEnabled;
 	public boolean isConnettoriMultipliConsegnaMultiplaEnabled() {
 		return this.isConnettoriMultipliConsegnaMultiplaEnabled;
@@ -2216,6 +2220,7 @@ public class ControlStationCore {
 		
 		/** Connettori Multipli */
 		this.isConnettoriMultipliEnabled = core.isConnettoriMultipliEnabled;
+		this.isConnettoriMultipliConsegnaCondizionaleStessFiltroPermesso = core.isConnettoriMultipliConsegnaCondizionaleStessFiltroPermesso; 
 		this.isConnettoriMultipliConsegnaMultiplaEnabled = core.isConnettoriMultipliConsegnaMultiplaEnabled;
 		
 		/** Applicativi Server */
@@ -2599,6 +2604,7 @@ public class ControlStationCore {
 			this.isApplicativiCredenzialiBasicCheckUniqueUsePassword = consoleProperties.isApplicativiCredenzialiBasicCheckUniqueUsePassword();
 			this.isConnettoriAllTypesEnabled = consoleProperties.isConnettoriAllTypesEnabled();
 			this.isConnettoriMultipliEnabled = consoleProperties.isConnettoriMultipliEnabled();
+			this.isConnettoriMultipliConsegnaCondizionaleStessFiltroPermesso = consoleProperties.isConnettoriMultipliConsegnaCondizionaleStessFiltroPermesso();
 			this.isConnettoriMultipliConsegnaMultiplaEnabled = consoleProperties.isConnettoriMultipliConsegnaMultiplaEnabled();
 			this.isApplicativiServerEnabled = consoleProperties.isApplicativiServerEnabled();
 			this.consegnaNotificaCode = consoleProperties.getConsegnaNotificaCode();

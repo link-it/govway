@@ -1404,7 +1404,9 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 
 			ErogazioniApiHelper.overrideFruizioneUrlInvocazione(env.requestWrapper, idErogatore, idServizio, pd, pdAzione, setPattern, idAzione);
 
-			if (!env.pdHelper.porteDelegateCheckData(TipoOperazione.CHANGE, pd.getNome(), false)) {
+			org.openspcoop2.message.constants.ServiceBinding serviceBinding = org.openspcoop2.message.constants.ServiceBinding.valueOf(apc.getServiceBinding().name());
+			if (!env.pdHelper.porteDelegateCheckData(TipoOperazione.CHANGE, pd.getNome(), false,
+					serviceBinding)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
 			}
 

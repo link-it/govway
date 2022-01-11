@@ -41,6 +41,7 @@ import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -134,6 +135,7 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 			
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
 			AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
+			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(apc.getServiceBinding());
 			
 			String nomeTrasformazione = regola.getNome();
 			Parameter pIdTrasformazione = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE, idTrasformazione+"");
@@ -208,7 +210,8 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 			}
 			
 			
-			boolean isOk = porteApplicativeHelper.trasformazioniRispostaCheckData(TipoOperazione.ADD, regola, null);
+			boolean isOk = porteApplicativeHelper.trasformazioniRispostaCheckData(TipoOperazione.ADD, regola, null,
+					serviceBinding);
 			
 			if(isOk) {
 				// quando un parametro viene inviato come vuoto, sul db viene messo null, gestisco il caso

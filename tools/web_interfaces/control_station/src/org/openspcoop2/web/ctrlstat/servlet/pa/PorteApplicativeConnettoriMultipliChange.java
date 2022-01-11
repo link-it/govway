@@ -601,6 +601,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps);
 			String idTabP = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
 			Parameter pIdTab = new Parameter(CostantiControlStation.PARAMETRO_ID_TAB, idTabP != null ? idTabP : "");
+			Parameter pIdConnTab = new Parameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB, idConnTab != null ? idConnTab : "");
 			Parameter pAccessoDaAPS = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro != null ? accessoDaAPSParametro : "");
 			String connettoreAccessoGruppi = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI);
 			String connettoreRegistro = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO);
@@ -616,6 +617,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			listParametersConfigutazioneConnettoriMultipli.add(pNomePorta);
 			listParametersConfigutazioneConnettoriMultipli.add(pIdAsps);
 			listParametersConfigutazioneConnettoriMultipli.add(pIdTab);
+			listParametersConfigutazioneConnettoriMultipli.add(pIdConnTab);
 			listParametersConfigutazioneConnettoriMultipli.add(pAccessoDaAPS);
 			listParametersConfigutazioneConnettoriMultipli.add(pConnettoreAccessoDaGruppi);
 			listParametersConfigutazioneConnettoriMultipli.add(pConnettoreAccesso);
@@ -1141,7 +1143,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idsogg, idPorta,idAsps, dati);
 
-				dati = porteApplicativeHelper.addInformazioniGruppiAsHiddenToDati(TipoOperazione.CHANGE, dati, idTabP, null, accessoDaAPSParametro != null ? accessoDaAPSParametro : "", 
+				dati = porteApplicativeHelper.addInformazioniGruppiAsHiddenToDati(TipoOperazione.CHANGE, dati, idTabP, idConnTab, accessoDaAPSParametro != null ? accessoDaAPSParametro : "", 
 						connettoreAccessoGruppi, connettoreRegistro, connettoreAccessoListaConnettori);
 
 				if(visualizzaSezioneConnettore) {
@@ -1276,7 +1278,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idsogg, idPorta, idAsps, dati);
 
-				dati = porteApplicativeHelper.addInformazioniGruppiAsHiddenToDati(TipoOperazione.CHANGE, dati, idTabP, null, accessoDaAPSParametro != null ? accessoDaAPSParametro : "", 
+				dati = porteApplicativeHelper.addInformazioniGruppiAsHiddenToDati(TipoOperazione.CHANGE, dati, idTabP, idConnTab, accessoDaAPSParametro != null ? accessoDaAPSParametro : "", 
 						connettoreAccessoGruppi, connettoreRegistro, connettoreAccessoListaConnettori);	
 
 				if(visualizzaSezioneConnettore) {
@@ -1396,10 +1398,15 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 			boolean isDefault = datiConnettore != null ? !datiConnettore.isNotifica() : true;
 
+			String nomeConnettoreChanged = null;
+			
 			if(visualizzaSezioneDatiGenerali) {
 				datiConnettore.setNome(nomeConnettore);
 
 				if(!nomeConnettore.equals(oldNomeConnettore)) {
+					
+					nomeConnettoreChanged = nomeConnettore;
+					
 					if(pa.getBehaviour() != null) {
 
 						TipoBehaviour behaviourType = TipoBehaviour.toEnumConstant(pa.getBehaviour().getNome());
@@ -1903,7 +1910,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			IDSoggetto idSoggettoProprietario = new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario());
 			List<PortaApplicativaServizioApplicativo> listaFiltrata = porteApplicativeHelper.applicaFiltriRicercaConnettoriMultipli(ricerca, idLista, pa.getServizioApplicativoList(), idSoggettoProprietario);
 			
-			porteApplicativeHelper.preparePorteAppConnettoriMultipliList(pa.getNome(), ricerca, listaFiltrata, pa);
+			porteApplicativeHelper.preparePorteAppConnettoriMultipliList_fromChangeNomeConnettore(pa.getNome(), ricerca, listaFiltrata, pa, 
+					nomeConnettoreChanged);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI

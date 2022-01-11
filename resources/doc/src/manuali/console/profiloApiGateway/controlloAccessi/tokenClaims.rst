@@ -19,7 +19,7 @@ Le espressioni utilizzabili come parti dinamiche, risolte a runtime dal gateway,
 
 - ${header:NAME}: valore presente nell'header http che possiede il nome 'NAME'
 - ${query:NAME}: valore associato al parametro della url con nome 'NAME'
-- ${urlRegExp:EXPR}: espressione regolare applicata sulla url di invocazione
+- ${urlRegExp:EXPR}: espressione regolare applicata sulla url di invocazione (l'espressione deve avere un match con l'intera url)
 - ${xPath:EXPR}: espressione XPath applicata su un messaggio XML
 - ${jsonPath:EXPR}: espressione JSONPath applicata su un messaggio JSON
 - ${transportContext:FIELD}: permette di accedere ai dati della richiesta http; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext' (es. per il principal usare ${transportContext:credential.principal})

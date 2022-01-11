@@ -1097,7 +1097,8 @@ public final class PorteDelegateChange extends Action {
 
 			// Controlli sui campi immessi
 
-			boolean isOk = porteDelegateHelper.porteDelegateCheckData(TipoOperazione.CHANGE, oldNomePD, datiAltroPorta);
+			boolean isOk = porteDelegateHelper.porteDelegateCheckData(TipoOperazione.CHANGE, oldNomePD, datiAltroPorta,
+					serviceBinding);
 
 			if (!isOk) {
 				// setto la barra del titolo

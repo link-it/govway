@@ -13,7 +13,7 @@ Per identificare una risorsa sono utilizzabili le seguenti espressioni dinamiche
 
 - ${header:NAME}: valore presente nell'header http che possiede il nome 'NAME'
 - ${query:NAME}: valore associato al parametro della url con nome 'NAME'
-- ${urlRegExp:EXPR}: espressione regolare applicata sulla url di invocazione
+- ${urlRegExp:EXPR}: espressione regolare applicata sulla url di invocazione (l'espressione deve avere un match con l'intera url)
 - ${xPath:EXPR}: espressione XPath applicata su un messaggio XML
 - ${jsonPath:EXPR}: espressione JSONPath applicata su un messaggio JSON
 - ${tokenInfo:FIELD}: permette di accedere ai claim di un token; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.pdd.core.token.InformazioniToken' (es. per ottenere il valore del claim 'sub' usare ${tokenInfo:sub})

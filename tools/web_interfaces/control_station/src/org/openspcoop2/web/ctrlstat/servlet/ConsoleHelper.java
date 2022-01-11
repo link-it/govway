@@ -227,6 +227,7 @@ import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.regexp.RegExpException;
@@ -234,6 +235,8 @@ import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
+import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
+import org.openspcoop2.utils.xml.XPathExpressionEngine;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.Connettori;
@@ -2717,6 +2720,66 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
+	public boolean checkRegexp(String pattern, String object) throws Exception{
+		try {
+			RegularExpressionEngine.validate(pattern);
+		}catch(Exception e) {
+			this.pd.setMessage("Il campo '"+object+"' non contiene un'espressione regolare valida: "+e.getMessage());
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean checkXPath(String pattern, String object) throws Exception{
+		try {
+			AbstractXPathExpressionEngine engine = new XPathExpressionEngine();
+			engine.validate(pattern);
+		}catch(Exception e) {
+			this.pd.setMessage("Il campo '"+object+"' non contiene un'espressione xpath valida: "+e.getMessage());
+			return false;
+		}
+		return true;
+	}
+	public boolean checkJsonPath(String pattern, String object) throws Exception{
+		try {
+			JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
+			engine.validate(pattern);
+		}catch(Exception e) {
+			this.pd.setMessage("Il campo '"+object+"' non contiene un'espressione json-path valida: "+e.getMessage());
+			return false;
+		}
+		return true;
+	}
+	public boolean checkXPathOrJsonPath(String pattern, String object) throws Exception{
+		StringBuilder sb = new StringBuilder();
+		try {
+			AbstractXPathExpressionEngine engine = new XPathExpressionEngine();
+			engine.validate(pattern);
+			return true;
+		}catch(Exception e) {
+			if(sb.length()>0) {
+				sb.append("<BR/>");
+			}
+			sb.append("XPath: "+e.getMessage());
+		}
+		try {
+			JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
+			engine.validate(pattern);
+			return true;
+		}catch(Exception e) {
+			if(sb.length()>0) {
+				sb.append("<BR/>");
+			}
+			sb.append("JsonPath: "+e.getMessage());
+		}
+		if(sb.length()>0) {
+			this.pd.setMessage("Il campo '"+object+"' non contiene un'espressione valida:"+"<BR/>"+sb.toString());
+			return false;
+		}
+		return true;
+	}
+	
+	
 	// *** Utilities condivise tra Porte Delegate e Porte Applicative ***
 	
 	public Vector<DataElement> addPorteServizioApplicativoToDati(TipoOperazione tipoOp, Vector<DataElement> dati, 
@@ -3326,7 +3389,8 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 
 	// Controlla i dati della correlazione applicativa richiesta della porta delegata
-	public boolean correlazioneApplicativaRichiestaCheckData(TipoOperazione tipoOp,boolean portaDelegata) throws Exception {
+	public boolean correlazioneApplicativaRichiestaCheckData(TipoOperazione tipoOp,boolean portaDelegata,
+			ServiceBinding serviceBinding) throws Exception {
 		try {
 			String id = this.getParameter(CostantiControlStation.PARAMETRO_ID);
 			int idInt = Integer.parseInt(id);
@@ -3379,6 +3443,24 @@ public class ConsoleHelper implements IConsoleHelper {
 				return false;
 			}
 
+			if (mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED)) {
+				if(this.checkRegexp(pattern,ModalitaIdentificazione.URL_BASED.getLabelParametro())==false){
+					return false;
+				}
+			}
+			if (mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED)) {
+				if(ServiceBinding.SOAP.equals(serviceBinding)) {
+					if(this.checkXPath(pattern,ModalitaIdentificazione.CONTENT_BASED.getLabelParametro())==false){
+						return false;
+					}
+				}
+				else {
+					if(this.checkXPathOrJsonPath(pattern,ModalitaIdentificazione.CONTENT_BASED.getLabelParametro())==false){
+						return false;
+					}
+				}
+			}
+			
 			// Controllo che non esistano altre correlazioni applicative con gli
 			// stessi dati
 			boolean giaRegistrato = false;
@@ -3406,7 +3488,8 @@ public class ConsoleHelper implements IConsoleHelper {
 
 
 	// Controlla i dati della correlazione applicativa della porta delegata
-	public boolean correlazioneApplicativaRispostaCheckData(TipoOperazione tipoOp,boolean portaDelegata) throws Exception {
+	public boolean correlazioneApplicativaRispostaCheckData(TipoOperazione tipoOp,boolean portaDelegata,
+			ServiceBinding serviceBinding) throws Exception {
 		try {
 			String id = this.getParameter(CostantiControlStation.PARAMETRO_ID);
 			int idInt = Integer.parseInt(id);
@@ -3459,6 +3542,24 @@ public class ConsoleHelper implements IConsoleHelper {
 				return false;
 			}
 
+			if (mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED)) {
+				if(this.checkRegexp(pattern,ModalitaIdentificazione.URL_BASED.getLabelParametro())==false){
+					return false;
+				}
+			}
+			if (mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED)) {
+				if(ServiceBinding.SOAP.equals(serviceBinding)) {
+					if(this.checkXPath(pattern,ModalitaIdentificazione.CONTENT_BASED.getLabelParametro())==false){
+						return false;
+					}
+				}
+				else {
+					if(this.checkXPathOrJsonPath(pattern,ModalitaIdentificazione.CONTENT_BASED.getLabelParametro())==false){
+						return false;
+					}
+				}
+			}
+			
 			// Controllo che non esistano altre correlazioni applicative con gli
 			// stessi dati
 			boolean giaRegistrato = false;
@@ -6267,6 +6368,11 @@ public class ConsoleHelper implements IConsoleHelper {
 						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_ESPRESSIONE));
 						return false;
 					}
+					
+					if(this.checkRegexp(autenticazioneParametroList.get(0),ModalitaIdentificazione.URL_BASED.getLabelParametro())==false){
+						return false;
+					}
+					
 					break;
 				case TOKEN:
 					if(autenticazioneParametroList==null || autenticazioneParametroList.isEmpty() || StringUtils.isEmpty(autenticazioneParametroList.get(0))){
@@ -15881,7 +15987,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		return dati;
 	}
 	
-	public boolean trasformazioniCheckData(TipoOperazione tipoOp, long idPorta, String nome, TrasformazioneRegola regolaDBCheck_criteri, TrasformazioneRegola trasformazioneDBCheck_nome,  TrasformazioneRegola oldRegola) throws Exception {
+	public boolean trasformazioniCheckData(TipoOperazione tipoOp, long idPorta, String nome, TrasformazioneRegola regolaDBCheck_criteri, TrasformazioneRegola trasformazioneDBCheck_nome,  TrasformazioneRegola oldRegola,
+			ServiceBinding serviceBinding) throws Exception {
 		try{
 //			String [] azioni = this.getParameterValues(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_AZIONI);
 //			String pattern = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_PATTERN);
@@ -15915,6 +16022,21 @@ public class ConsoleHelper implements IConsoleHelper {
 				else if (trasformazioneDBCheck_nome != null && trasformazioneDBCheck_nome.getId().longValue() != oldRegola.getId().longValue()) {
 					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_NOME);
 					return false;
+				}
+			}
+			
+			
+			String pattern = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_PATTERN);
+			if(pattern!=null && StringUtils.isNotEmpty(pattern)) {
+				if(ServiceBinding.SOAP.equals(serviceBinding)) {
+					if(this.checkXPath(pattern,CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_PATTERN)==false){
+						return false;
+					}
+				}
+				else {
+					if(this.checkXPathOrJsonPath(pattern,CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_PATTERN)==false){
+						return false;
+					}
 				}
 			}
 			
@@ -16095,7 +16217,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	public boolean trasformazioniRispostaCheckData(TipoOperazione tipoOp, TrasformazioneRegola regolaRichiesta, TrasformazioneRegolaRisposta oldRegolaRisposta) throws Exception {
+	public boolean trasformazioniRispostaCheckData(TipoOperazione tipoOp, TrasformazioneRegola regolaRichiesta, TrasformazioneRegolaRisposta oldRegolaRisposta,
+			ServiceBinding serviceBinding) throws Exception {
 		try{
 
 			String nome = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_NOME);
@@ -16116,6 +16239,20 @@ public class ConsoleHelper implements IConsoleHelper {
 					CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN, 
 					CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MAX)==false) {
 				return false;
+			}
+			
+			String pattern = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_PATTERN);
+			if(pattern!=null && StringUtils.isNotEmpty(pattern)) {
+				if(ServiceBinding.SOAP.equals(serviceBinding)) {
+					if(this.checkXPath(pattern,CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_PATTERN)==false){
+						return false;
+					}
+				}
+				else {
+					if(this.checkXPathOrJsonPath(pattern,CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_PATTERN)==false){
+						return false;
+					}
+				}
 			}
 			
 			// Se tipoOp = add, controllo che la trasformazione risposta non sia gia' stato registrata

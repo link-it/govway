@@ -399,6 +399,10 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "connettoriMultipli.enabled");
 	}
 	
+	public boolean isConnettoriMultipliConsegnaCondizionaleStessFiltroPermesso() throws UtilsException{
+		return this.readBooleanProperty(true, "connettoriMultipli.consegnaCondizionale.stessoFiltro");
+	}
+	
 	public boolean isConnettoriMultipliConsegnaMultiplaEnabled() throws UtilsException{
 		return this.readBooleanProperty(true, "connettoriMultipli.consegnaMultipla.enabled");
 	}

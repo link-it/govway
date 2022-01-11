@@ -398,7 +398,8 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 			}
 			
 				
-			boolean isOk = porteDelegateHelper.trasformazioniRispostaCheckData(TipoOperazione.CHANGE, oldRegola, oldRisposta);
+			boolean isOk = porteDelegateHelper.trasformazioniRispostaCheckData(TipoOperazione.CHANGE, oldRegola, oldRisposta,
+					serviceBindingMessage);
 			
 			if(isOk) {
 				// quando un parametro viene inviato come vuoto, sul db viene messo null, gestisco il caso

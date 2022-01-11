@@ -39,6 +39,7 @@ import org.openspcoop2.core.config.constants.CorrelazioneApplicativaGestioneIden
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaRispostaIdentificazione;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -112,6 +113,7 @@ public final class PorteDelegateCorrelazioneApplicativaResponseAdd extends Actio
 			PortaDelegata pde = porteDelegateCore.getPortaDelegata(idInt);
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
 			AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
+			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(apc.getServiceBinding());
 			String nome = pde.getNome();
 
 			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
@@ -166,7 +168,8 @@ public final class PorteDelegateCorrelazioneApplicativaResponseAdd extends Actio
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = porteDelegateHelper.correlazioneApplicativaRispostaCheckData(TipoOperazione.ADD,true);
+			boolean isOk = porteDelegateHelper.correlazioneApplicativaRispostaCheckData(TipoOperazione.ADD,true,
+					serviceBinding);
 			if (!isOk) {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam);

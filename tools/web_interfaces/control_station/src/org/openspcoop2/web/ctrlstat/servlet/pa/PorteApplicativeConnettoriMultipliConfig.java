@@ -487,7 +487,8 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 			// Controlli sui campi immessi
 			boolean isOk = porteApplicativeHelper.connettoriMultipliConfigurazioneCheckData(TipoOperazione.OTHER, stato, modalitaConsegna, tipoCustom, loadBalanceStrategia, isSoapOneWay,
 					sticky, stickyTipoSelettore, stickyTipoSelettorePattern, stickyMaxAge,
-					passiveHealthCheck, passiveHealthCheck_excludeForSeconds);
+					passiveHealthCheck, passiveHealthCheck_excludeForSeconds,
+					serviceBinding);
 
 			if(!isOk) {
 				// preparo i campi

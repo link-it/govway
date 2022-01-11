@@ -26,7 +26,7 @@ Il valore del filtro (utilizzato per identificare il connettore di consegna) o i
 
 - *Header HTTP*: nome di un header http;
 
-- *Url di Invocazione*: espressione regolare applicata sulla url di invocazione;
+- *Url di Invocazione*: espressione regolare applicata sulla url di invocazione (l'espressione deve avere un match con l'intera url);
 
 - *Parametro della Url*: nome del parametro presente nella url di invocazione;
 
@@ -57,7 +57,7 @@ Tramite le checkbox 'Termina con Errore' è infine possibile configurare l'eroga
 
 Le regole per la selezione del connettore sopra descritte possono essere ridefinite per singole o gruppi di operazioni attraverso la definizione di regole specifiche, accedendo al link 'regole' presente nella maschera di configurazione.
 
-La creazione di una regola specifica deve innanzitutto identificare le operazioni dell'API a cui la regola è riferita tramite il campo 'Risorsa' o 'Azione'. È possibile specifica l'operazione in diverse modalità:
+La creazione di una regola specifica deve innanzitutto identificare le operazioni dell'API a cui la regola è riferita tramite il campo 'Risorsa' o 'Azione' attraverso una delle seguenti modalità:
 
 - nome dell'operazione
 - metodoHTTP.nomeOperazione (solo per API REST)

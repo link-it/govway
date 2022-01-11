@@ -47,6 +47,7 @@ import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -190,6 +191,7 @@ public class PorteDelegateTrasformazioniChange extends Action {
 
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
 			AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
+			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(apc.getServiceBinding());
 			Map<String,String> azioniAccordo = porteDelegateCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<String>());
 			
 			if(azioniAccordo!=null && azioniAccordo.size()>0) {
@@ -322,7 +324,8 @@ public class PorteDelegateTrasformazioniChange extends Action {
 			TrasformazioneRegola trasformazioneDBCheck_criteri = porteDelegateCore.getTrasformazione(Long.parseLong(id), azioniDBCheck, patternDBCheck, contentTypeDBCheck, applicabilitaApplicativi);
 			TrasformazioneRegola trasformazioneDBCheck_nome = porteDelegateCore.getTrasformazione(Long.parseLong(id), nome);
 			
-			boolean isOk = porteDelegateHelper.trasformazioniCheckData(TipoOperazione.CHANGE, Long.parseLong(id), nome, trasformazioneDBCheck_criteri, trasformazioneDBCheck_nome, oldRegola);
+			boolean isOk = porteDelegateHelper.trasformazioniCheckData(TipoOperazione.CHANGE, Long.parseLong(id), nome, trasformazioneDBCheck_criteri, trasformazioneDBCheck_nome, oldRegola,
+					serviceBinding);
 			if (!isOk) {
 
 				// preparo i campi

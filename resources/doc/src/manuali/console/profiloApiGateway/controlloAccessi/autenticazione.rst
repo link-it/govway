@@ -100,7 +100,7 @@ La richiesta deve possedere il "principal" che identifica il chiamante. La modal
 
 - *Parametro della Url*: il principal viene estratto da un parametro della query string il cui nome viene indicato successivamente. È inoltre possibile attivare l'opzione *Forward Parametro Url* per far sì che il gateway propaghi il dato di autenticazione.
 
-- *Url di Invocazione*: il principal viene estratto direttamente dalla URL di invocazione tramite l'espressione regolare che viene fornita successivamente.
+- *Url di Invocazione*: il principal viene estratto direttamente dalla URL di invocazione tramite l'espressione regolare che viene fornita successivamente (l'espressione deve avere un match con l'intera url).
 
 - *Client IP*: il principal utilizzato è l'indirizzo IP di provenienza.
 

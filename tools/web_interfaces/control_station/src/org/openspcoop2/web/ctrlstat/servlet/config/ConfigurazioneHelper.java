@@ -15663,7 +15663,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return false;
 		}
 		
-		boolean check = this.checkAttivazionePolicy(configurazioneControlloTraffico,policy,infoPolicy);
+		boolean check = this.checkAttivazionePolicy(configurazioneControlloTraffico,policy,infoPolicy,
+				serviceBinding);
 		if(!check) {
 			return false;
 		}
@@ -15682,7 +15683,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return true;
 	}
 	
-	public boolean checkAttivazionePolicy(ConfigurazioneGenerale c,AttivazionePolicy policy,InfoPolicy infoPolicy) throws Exception{
+	public boolean checkAttivazionePolicy(ConfigurazioneGenerale c,AttivazionePolicy policy,InfoPolicy infoPolicy,
+			ServiceBinding serviceBinding) throws Exception{
 		
 		// IdPolicy
 		if(policy.getIdPolicy()==null || "".equals(policy.getIdPolicy()) || "-".equals(policy.getIdPolicy())){
@@ -15809,6 +15811,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(!TipoFiltroApplicativo.SOAPACTION_BASED.equals(tipo) &&
 						!TipoFiltroApplicativo.INDIRIZZO_IP.equals(tipo) &&
 						!TipoFiltroApplicativo.INDIRIZZO_IP_FORWARDED.equals(tipo)){
+					
+					String label = "'"+
+							ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED
+							+" - "+getLabelTipoInformazioneApplicativaFiltro(policy.getFiltro().getInformazioneApplicativaTipo())+"'";
+					
 					if(policy.getFiltro().getInformazioneApplicativaNome()==null || 
 							CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED.equals(policy.getFiltro().getInformazioneApplicativaNome())){
 						String messaggio = null;
@@ -15816,12 +15823,28 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							messaggio = ConfigurazioneCostanti.MESSAGGIO_ERRORE_RATE_LIMITING_PLUGIN_FILTRO_NON_SELEZIONATO;
 						}
 						else {
-							messaggio = "Deve essere indicato un valore in '"+
-								ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED
-								+" - "+getLabelTipoInformazioneApplicativaFiltro(policy.getFiltro().getInformazioneApplicativaTipo())+"'";
+							messaggio = "Deve essere indicato un valore in "+label;
 						}
 						this.pd.setMessage(messaggio);
 						return false;
+					}
+					
+					if (TipoFiltroApplicativo.URLBASED.equals(tipo)) {
+						if(this.checkRegexp(policy.getFiltro().getInformazioneApplicativaNome(),label)==false){
+							return false;
+						}
+					}
+					if (TipoFiltroApplicativo.CONTENT_BASED.equals(tipo)) {
+						if(ServiceBinding.SOAP.equals(serviceBinding)) {
+							if(this.checkXPath(policy.getFiltro().getInformazioneApplicativaNome(),label)==false){
+								return false;
+							}
+						}
+						else {
+							if(this.checkXPathOrJsonPath(policy.getFiltro().getInformazioneApplicativaNome(),label)==false){
+								return false;
+							}
+						}
 					}
 				}
 							

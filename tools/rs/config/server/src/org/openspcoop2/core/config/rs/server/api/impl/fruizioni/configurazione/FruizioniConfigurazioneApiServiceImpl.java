@@ -128,6 +128,7 @@ import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.constants.ScopeContesto;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
@@ -581,13 +582,21 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 			final Long idPorta = pd.getId();
 			
+			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
+					"Fruizione");
+			final AccordoServizioParteComuneSintetico apc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
+			ServiceBinding serviceBinding = env.apcCore.toMessageServiceBinding(apc.getServiceBinding());
+			
 			StringBuilder existsMessage = new StringBuilder();
 			if ( ConsoleUtilities.alreadyExistsCorrelazioneApplicativaRichiesta(env.pdCore, idPorta, body.getElemento(), 0, existsMessage)) {
 				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(existsMessage.toString()));
 			}
 
 			
-			if ( !correlazioneApplicativaRichiestaCheckData(TipoOperazione.ADD, env.requestWrapper, env.paHelper, true, body, idPorta, null) ) {
+			if ( !correlazioneApplicativaRichiestaCheckData(TipoOperazione.ADD, env.requestWrapper, env.paHelper, true, body, idPorta, null,
+					serviceBinding) ) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 									
@@ -639,12 +648,20 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 			final Long idPorta = pd.getId();
 			
+			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
+					"Fruizione");
+			final AccordoServizioParteComuneSintetico apc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
+			ServiceBinding serviceBinding = env.apcCore.toMessageServiceBinding(apc.getServiceBinding());
+			
 			StringBuilder existsMessage = new StringBuilder();
 			if ( ConsoleUtilities.alreadyExistsCorrelazioneApplicativaRisposta(env.pdCore, idPorta, body.getElemento(), 0, existsMessage)) {
 				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(existsMessage.toString()));
 			}
 			
-			if ( !correlazioneApplicativaRispostaCheckData(TipoOperazione.ADD, env.requestWrapper, env.pdHelper, true, body, idPorta, null)) {
+			if ( !correlazioneApplicativaRispostaCheckData(TipoOperazione.ADD, env.requestWrapper, env.pdHelper, true, body, idPorta, null,
+					serviceBinding)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
                        			
@@ -2720,6 +2737,13 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);   
 			final Long idPorta = pd.getId();
 			
+			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
+					"Fruizione");
+			final AccordoServizioParteComuneSintetico apc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
+			ServiceBinding serviceBinding = env.apcCore.toMessageServiceBinding(apc.getServiceBinding());
+			
 			if (pd.getCorrelazioneApplicativa() == null)
 				pd.setCorrelazioneApplicativa(new org.openspcoop2.core.config.CorrelazioneApplicativa());
 			
@@ -2729,7 +2753,8 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			if ( oldElem == null ) 
 				throw FaultCode.NOT_FOUND.toException("Correlazione Applicativa Richiesta per l'elemento " + elemento + " non trovata ");
 			
-			if ( !correlazioneApplicativaRichiestaCheckData(TipoOperazione.CHANGE, env.requestWrapper, env.pdHelper, true, body, idPorta, oldElem.getId())) {
+			if ( !correlazioneApplicativaRichiestaCheckData(TipoOperazione.CHANGE, env.requestWrapper, env.pdHelper, true, body, idPorta, oldElem.getId(),
+					serviceBinding)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			
@@ -2781,6 +2806,13 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);   
 			final Long idPorta = pd.getId();
+
+			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
+					"Fruizione");
+			final AccordoServizioParteComuneSintetico apc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
+			ServiceBinding serviceBinding = env.apcCore.toMessageServiceBinding(apc.getServiceBinding());
 			
 			if (pd.getCorrelazioneApplicativaRisposta() == null)
 				pd.setCorrelazioneApplicativaRisposta(new org.openspcoop2.core.config.CorrelazioneApplicativaRisposta());
@@ -2791,7 +2823,8 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			if ( oldElem == null ) 
 				throw FaultCode.NOT_FOUND.toException("Correlazione Applicativa Risposta per l'elemento " + elemento + " non trovata ");
 			
-			if ( !correlazioneApplicativaRispostaCheckData(TipoOperazione.CHANGE, env.requestWrapper, env.pdHelper, true, body, idPorta, oldElem.getId())) {
+			if ( !correlazioneApplicativaRispostaCheckData(TipoOperazione.CHANGE, env.requestWrapper, env.pdHelper, true, body, idPorta, oldElem.getId(),
+					serviceBinding)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			

@@ -1483,7 +1483,9 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			}
 
 			final String oldNomePA = pa.getNome();
-			if (!env.paHelper.porteAppCheckData(TipoOperazione.CHANGE, oldNomePA, env.isSupportatoAutenticazioneSoggetti, false)) {
+			org.openspcoop2.message.constants.ServiceBinding serviceBinding = org.openspcoop2.message.constants.ServiceBinding.valueOf(apc.getServiceBinding().name());
+			if (!env.paHelper.porteAppCheckData(TipoOperazione.CHANGE, oldNomePA, env.isSupportatoAutenticazioneSoggetti, false,
+					serviceBinding)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 

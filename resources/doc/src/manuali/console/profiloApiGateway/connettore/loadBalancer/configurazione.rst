@@ -51,7 +51,7 @@ L'identificativo di sessione utilizzato è individuabile tramite una delle segue
 
 - *Header HTTP*: nome di un header http;
 
-- *Url di Invocazione*: espressione regolare applicata sulla url di invocazione;
+- *Url di Invocazione*: espressione regolare applicata sulla url di invocazione (l'espressione deve avere un match con l'intera url);
 
 - *Parametro della Url*: nome del parametro presente nella url di invocazione;
 

@@ -8,7 +8,7 @@ Le regole di trasformazione possono avvalersi di un contesto di risorse, con val
 -   *header:NAME* : valore dell'header http, corrispondente all'identificativo NAME, della richiesta.
 -   *query:NAME* : valore di un parametro della url di invocazione, corrispondente all'identificativo NAME.
 -   *form:NAME* : valore di un parametro della form, corrispondente all'identificativo NAME.
--   *urlRegExp:EXPR* : applicazione di un’espressione regolare, rappresentata dal valore EXPR, alla url di invocazione.
+-   *urlRegExp:EXPR* : applicazione di un’espressione regolare, rappresentata dal valore EXPR, alla url di invocazione (l'espressione deve avere un match con l'intera url).
 -   *xPath:EXPR* : applicazione di un'espressione XPath, rappresentata dal valore EXPR, alla richiesta xml (o soap).
 -   *jsonPath:EXPR* : applicazione di un'espressione jsonPath, rappresentata dal valore EXPR, alla richiesta json.
 -   *transaction:id* : l'identificativo UUID della transazione corrente.

@@ -35,10 +35,12 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativoConnettore;
 import org.openspcoop2.core.config.constants.TipoBehaviour;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
@@ -49,6 +51,7 @@ import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNot
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaTrasporto;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
@@ -257,6 +260,7 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 			Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps);
 			String idTabP = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
 			Parameter pIdTab = new Parameter(CostantiControlStation.PARAMETRO_ID_TAB, idTabP != null ? idTabP : "");
+			Parameter pIdConnTab = new Parameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB, idConnTab != null ? idConnTab : "");
 			Parameter pAccessoDaAPS = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro != null ? accessoDaAPSParametro : "");
 			String connettoreAccessoGruppi = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI);
 			String connettoreRegistro = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO);
@@ -269,6 +273,7 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 			listParametersConfigutazioneConnettoriMultipli.add(pNomePorta);
 			listParametersConfigutazioneConnettoriMultipli.add(pIdAsps);
 			listParametersConfigutazioneConnettoriMultipli.add(pIdTab);
+			listParametersConfigutazioneConnettoriMultipli.add(pIdConnTab);
 			listParametersConfigutazioneConnettoriMultipli.add(pAccessoDaAPS);
 			listParametersConfigutazioneConnettoriMultipli.add(pConnettoreAccessoDaGruppi);
 			listParametersConfigutazioneConnettoriMultipli.add(pConnettoreAccesso);
@@ -502,7 +507,7 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, idPorta,idAsps, dati);
 
-				dati = porteApplicativeHelper.addInformazioniGruppiAsHiddenToDati(TipoOperazione.OTHER, dati, idTabP, null, accessoDaAPSParametro != null ? accessoDaAPSParametro : "", 
+				dati = porteApplicativeHelper.addInformazioniGruppiAsHiddenToDati(TipoOperazione.OTHER, dati, idTabP, idConnTab, accessoDaAPSParametro != null ? accessoDaAPSParametro : "", 
 						connettoreAccessoGruppi, connettoreRegistro, connettoreAccessoListaConnettori);
 
 				pd.setDati(dati);
@@ -539,7 +544,7 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, idPorta, idAsps, dati);
 
-				dati = porteApplicativeHelper.addInformazioniGruppiAsHiddenToDati(TipoOperazione.OTHER, dati, idTabP, null, accessoDaAPSParametro != null ? accessoDaAPSParametro : "", 
+				dati = porteApplicativeHelper.addInformazioniGruppiAsHiddenToDati(TipoOperazione.OTHER, dati, idTabP, idConnTab, accessoDaAPSParametro != null ? accessoDaAPSParametro : "", 
 						connettoreAccessoGruppi, connettoreRegistro, connettoreAccessoListaConnettori);	
 
 				pd.setDati(dati);
@@ -603,211 +608,236 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 				}
 			}
 			
+			// Serve per le breadcump
+			ServletUtils.removeRisultatiRicercaFromSession(session, Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI);
+			
 			// ricarico la configurazione
 			pa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
 
-			paSA = null;
-			for (PortaApplicativaServizioApplicativo paSATmp : pa.getServizioApplicativoList()) {
-				if(paSATmp.getNome().equals(nomeSAConnettore)) {
-					paSA = paSATmp;					
-				}
-			}
+			boolean rimanereInEditPage = false;
 			
-			ConfigurazioneGestioneConsegnaNotifiche configurazioneGestioneConsegnaNotifiche =
-					org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(paSA, ControlStationCore.getLog());
-
-			if(configurazioneGestioneConsegnaNotifiche != null) {
-				// cadenza rispedizione
-				cadenzaRispedizione = configurazioneGestioneConsegnaNotifiche.getCadenzaRispedizione() != null ? configurazioneGestioneConsegnaNotifiche.getCadenzaRispedizione()+ "" : "";
-				
-				TipoGestioneNotificaTrasporto gestioneTrasporto2xxE = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto2xx();
-				if(gestioneTrasporto2xxE != null) {
-					codiceRisposta2xx = gestioneTrasporto2xxE.getValue();
-					codiceRisposta2xxValueMin = "";
-					codiceRisposta2xxValueMax = "";
-					codiceRisposta2xxValue = "";
-
-					switch(gestioneTrasporto2xxE) {
-					case CONSEGNA_COMPLETATA:
-					case CONSEGNA_FALLITA:
-						break;
-					case CODICI_CONSEGNA_COMPLETATA:
-						StringBuilder sb = new StringBuilder();
-						for(Integer x : configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto2xx_codes()) {
-							if(sb.length() > 0) {
-								sb.append(",");
-							}
-							sb.append(x+ "");
-						}
-						codiceRisposta2xxValue = sb.toString();
-						break;
-					case INTERVALLO_CONSEGNA_COMPLETATA:
-						codiceRisposta2xxValueMin = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto2xx_leftInterval() + "";
-						codiceRisposta2xxValueMax = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto2xx_rightInterval() + "";
-						break;
+			if(rimanereInEditPage) {
+			
+				paSA = null;
+				for (PortaApplicativaServizioApplicativo paSATmp : pa.getServizioApplicativoList()) {
+					if(paSATmp.getNome().equals(nomeSAConnettore)) {
+						paSA = paSATmp;					
 					}
+				}
+				
+				ConfigurazioneGestioneConsegnaNotifiche configurazioneGestioneConsegnaNotifiche =
+						org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(paSA, ControlStationCore.getLog());
+	
+				if(configurazioneGestioneConsegnaNotifiche != null) {
+					// cadenza rispedizione
+					cadenzaRispedizione = configurazioneGestioneConsegnaNotifiche.getCadenzaRispedizione() != null ? configurazioneGestioneConsegnaNotifiche.getCadenzaRispedizione()+ "" : "";
+					
+					TipoGestioneNotificaTrasporto gestioneTrasporto2xxE = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto2xx();
+					if(gestioneTrasporto2xxE != null) {
+						codiceRisposta2xx = gestioneTrasporto2xxE.getValue();
+						codiceRisposta2xxValueMin = "";
+						codiceRisposta2xxValueMax = "";
+						codiceRisposta2xxValue = "";
+	
+						switch(gestioneTrasporto2xxE) {
+						case CONSEGNA_COMPLETATA:
+						case CONSEGNA_FALLITA:
+							break;
+						case CODICI_CONSEGNA_COMPLETATA:
+							StringBuilder sb = new StringBuilder();
+							for(Integer x : configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto2xx_codes()) {
+								if(sb.length() > 0) {
+									sb.append(",");
+								}
+								sb.append(x+ "");
+							}
+							codiceRisposta2xxValue = sb.toString();
+							break;
+						case INTERVALLO_CONSEGNA_COMPLETATA:
+							codiceRisposta2xxValueMin = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto2xx_leftInterval() + "";
+							codiceRisposta2xxValueMax = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto2xx_rightInterval() + "";
+							break;
+						}
+					} else {
+						codiceRisposta2xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
+						codiceRisposta2xxValueMin = "";
+						codiceRisposta2xxValueMax = "";
+						codiceRisposta2xxValue = "";
+					}
+					
+					TipoGestioneNotificaTrasporto gestioneTrasporto3xxE = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto3xx();
+					if(gestioneTrasporto3xxE != null) {
+						codiceRisposta3xx = gestioneTrasporto3xxE.getValue();
+						codiceRisposta3xxValueMin = "";
+						codiceRisposta3xxValueMax = "";
+						codiceRisposta3xxValue = "";
+	
+						switch(gestioneTrasporto3xxE) {
+						case CONSEGNA_COMPLETATA:
+						case CONSEGNA_FALLITA:
+							break;
+						case CODICI_CONSEGNA_COMPLETATA:
+							StringBuilder sb = new StringBuilder();
+							for(Integer x : configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto3xx_codes()) {
+								if(sb.length() > 0) {
+									sb.append(",");
+								}
+								sb.append(x+ "");
+							}
+							codiceRisposta3xxValue = sb.toString();
+							break;
+						case INTERVALLO_CONSEGNA_COMPLETATA:
+							codiceRisposta3xxValueMin = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto3xx_leftInterval() + "";
+							codiceRisposta3xxValueMax = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto3xx_rightInterval() + "";
+							break;
+						}
+					} else {
+						codiceRisposta3xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
+						codiceRisposta3xxValueMin = "";
+						codiceRisposta3xxValueMax = "";
+						codiceRisposta3xxValue = "";
+					}
+					
+					TipoGestioneNotificaTrasporto gestioneTrasporto4xxE = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto4xx();
+					if(gestioneTrasporto4xxE != null) {
+						codiceRisposta4xx = gestioneTrasporto4xxE.getValue();
+						codiceRisposta4xxValueMin = "";
+						codiceRisposta4xxValueMax = "";
+						codiceRisposta4xxValue = "";
+	
+						switch(gestioneTrasporto4xxE) {
+						case CONSEGNA_COMPLETATA:
+						case CONSEGNA_FALLITA:
+							break;
+						case CODICI_CONSEGNA_COMPLETATA:
+							StringBuilder sb = new StringBuilder();
+							for(Integer x : configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto4xx_codes()) {
+								if(sb.length() > 0) {
+									sb.append(",");
+								}
+								sb.append(x+ "");
+							}
+							codiceRisposta4xxValue = sb.toString();
+							break;
+						case INTERVALLO_CONSEGNA_COMPLETATA:
+							codiceRisposta4xxValueMin = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto4xx_leftInterval() + "";
+							codiceRisposta4xxValueMax = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto4xx_rightInterval() + "";
+							break;
+						}
+					} else {
+						codiceRisposta4xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
+						codiceRisposta4xxValueMin = "";
+						codiceRisposta4xxValueMax = "";
+						codiceRisposta4xxValue = "";
+					}
+					
+					TipoGestioneNotificaTrasporto gestioneTrasporto5xxE = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto5xx();
+					if(gestioneTrasporto5xxE != null) {
+						codiceRisposta5xx = gestioneTrasporto5xxE.getValue();
+						codiceRisposta5xxValueMin = "";
+						codiceRisposta5xxValueMax = "";
+						codiceRisposta5xxValue = "";
+	
+						switch(gestioneTrasporto5xxE) {
+						case CONSEGNA_COMPLETATA:
+						case CONSEGNA_FALLITA:
+							break;
+						case CODICI_CONSEGNA_COMPLETATA:
+							StringBuilder sb = new StringBuilder();
+							for(Integer x : configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto5xx_codes()) {
+								if(sb.length() > 0) {
+									sb.append(",");
+								}
+								sb.append(x+ "");
+							}
+							codiceRisposta5xxValue = sb.toString();
+							break;
+						case INTERVALLO_CONSEGNA_COMPLETATA:
+							codiceRisposta5xxValueMin = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto5xx_leftInterval() + "";
+							codiceRisposta5xxValueMax = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto5xx_rightInterval() + "";
+							break;
+						}
+					} else {
+						codiceRisposta5xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
+						codiceRisposta5xxValueMin = "";
+						codiceRisposta5xxValueMax = "";
+						codiceRisposta5xxValue = "";
+					}
+					
+					if(configurazioneGestioneConsegnaNotifiche.getFault() != null) {
+						gestioneFault = configurazioneGestioneConsegnaNotifiche.getFault().getValue();
+					} else {
+						gestioneFault = TipoGestioneNotificaFault.CONSEGNA_COMPLETATA.getValue();
+					}
+					
+					faultCode = configurazioneGestioneConsegnaNotifiche.getFaultCode() != null ? configurazioneGestioneConsegnaNotifiche.getFaultCode() : "";
+					faultActor = configurazioneGestioneConsegnaNotifiche.getFaultActor() != null ? configurazioneGestioneConsegnaNotifiche.getFaultActor() : "";
+					faultMessage = configurazioneGestioneConsegnaNotifiche.getFaultMessage() != null ? configurazioneGestioneConsegnaNotifiche.getFaultMessage() : "";
+					
 				} else {
+					cadenzaRispedizione = "";
 					codiceRisposta2xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
 					codiceRisposta2xxValueMin = "";
 					codiceRisposta2xxValueMax = "";
 					codiceRisposta2xxValue = "";
-				}
-				
-				TipoGestioneNotificaTrasporto gestioneTrasporto3xxE = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto3xx();
-				if(gestioneTrasporto3xxE != null) {
-					codiceRisposta3xx = gestioneTrasporto3xxE.getValue();
-					codiceRisposta3xxValueMin = "";
-					codiceRisposta3xxValueMax = "";
-					codiceRisposta3xxValue = "";
-
-					switch(gestioneTrasporto3xxE) {
-					case CONSEGNA_COMPLETATA:
-					case CONSEGNA_FALLITA:
-						break;
-					case CODICI_CONSEGNA_COMPLETATA:
-						StringBuilder sb = new StringBuilder();
-						for(Integer x : configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto3xx_codes()) {
-							if(sb.length() > 0) {
-								sb.append(",");
-							}
-							sb.append(x+ "");
-						}
-						codiceRisposta3xxValue = sb.toString();
-						break;
-					case INTERVALLO_CONSEGNA_COMPLETATA:
-						codiceRisposta3xxValueMin = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto3xx_leftInterval() + "";
-						codiceRisposta3xxValueMax = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto3xx_rightInterval() + "";
-						break;
-					}
-				} else {
 					codiceRisposta3xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
 					codiceRisposta3xxValueMin = "";
 					codiceRisposta3xxValueMax = "";
 					codiceRisposta3xxValue = "";
-				}
-				
-				TipoGestioneNotificaTrasporto gestioneTrasporto4xxE = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto4xx();
-				if(gestioneTrasporto4xxE != null) {
-					codiceRisposta4xx = gestioneTrasporto4xxE.getValue();
-					codiceRisposta4xxValueMin = "";
-					codiceRisposta4xxValueMax = "";
-					codiceRisposta4xxValue = "";
-
-					switch(gestioneTrasporto4xxE) {
-					case CONSEGNA_COMPLETATA:
-					case CONSEGNA_FALLITA:
-						break;
-					case CODICI_CONSEGNA_COMPLETATA:
-						StringBuilder sb = new StringBuilder();
-						for(Integer x : configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto4xx_codes()) {
-							if(sb.length() > 0) {
-								sb.append(",");
-							}
-							sb.append(x+ "");
-						}
-						codiceRisposta4xxValue = sb.toString();
-						break;
-					case INTERVALLO_CONSEGNA_COMPLETATA:
-						codiceRisposta4xxValueMin = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto4xx_leftInterval() + "";
-						codiceRisposta4xxValueMax = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto4xx_rightInterval() + "";
-						break;
-					}
-				} else {
 					codiceRisposta4xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
 					codiceRisposta4xxValueMin = "";
 					codiceRisposta4xxValueMax = "";
 					codiceRisposta4xxValue = "";
-				}
-				
-				TipoGestioneNotificaTrasporto gestioneTrasporto5xxE = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto5xx();
-				if(gestioneTrasporto5xxE != null) {
-					codiceRisposta5xx = gestioneTrasporto5xxE.getValue();
-					codiceRisposta5xxValueMin = "";
-					codiceRisposta5xxValueMax = "";
-					codiceRisposta5xxValue = "";
-
-					switch(gestioneTrasporto5xxE) {
-					case CONSEGNA_COMPLETATA:
-					case CONSEGNA_FALLITA:
-						break;
-					case CODICI_CONSEGNA_COMPLETATA:
-						StringBuilder sb = new StringBuilder();
-						for(Integer x : configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto5xx_codes()) {
-							if(sb.length() > 0) {
-								sb.append(",");
-							}
-							sb.append(x+ "");
-						}
-						codiceRisposta5xxValue = sb.toString();
-						break;
-					case INTERVALLO_CONSEGNA_COMPLETATA:
-						codiceRisposta5xxValueMin = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto5xx_leftInterval() + "";
-						codiceRisposta5xxValueMax = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto5xx_rightInterval() + "";
-						break;
-					}
-				} else {
 					codiceRisposta5xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
 					codiceRisposta5xxValueMin = "";
 					codiceRisposta5xxValueMax = "";
 					codiceRisposta5xxValue = "";
-				}
-				
-				if(configurazioneGestioneConsegnaNotifiche.getFault() != null) {
-					gestioneFault = configurazioneGestioneConsegnaNotifiche.getFault().getValue();
-				} else {
 					gestioneFault = TipoGestioneNotificaFault.CONSEGNA_COMPLETATA.getValue();
+					faultCode = "";
+					faultActor = "";
+					faultMessage = "";
 				}
+	
+				// preparo i campi
+				Vector<DataElement> dati = new Vector<DataElement>();
+	
+				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+	
+				dati = porteApplicativeHelper.addConnettoriMultipliNotificheToDati(dati, TipoOperazione.OTHER, beaBehaviourType, nomeSAConnettore, serviceBinding, cadenzaRispedizione, 
+						codiceRisposta2xx, codiceRisposta2xxValueMin, codiceRisposta2xxValueMax, codiceRisposta2xxValue, 
+						codiceRisposta3xx, codiceRisposta3xxValueMin, codiceRisposta3xxValueMax, codiceRisposta3xxValue, 
+						codiceRisposta4xx, codiceRisposta4xxValueMin, codiceRisposta4xxValueMax, codiceRisposta4xxValue, 
+						codiceRisposta5xx, codiceRisposta5xxValueMin, codiceRisposta5xxValueMax, codiceRisposta5xxValue, 
+						gestioneFault, faultCode, faultActor, faultMessage,
+						consegnaSincrona,
+						coda, priorita, prioritaMax);
+	
+				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, idPorta, idAsps, dati);
+	
+				dati = porteApplicativeHelper.addInformazioniGruppiAsHiddenToDati(TipoOperazione.OTHER, dati, idTabP, idConnTab, accessoDaAPSParametro != null ? accessoDaAPSParametro : "", 
+						connettoreAccessoGruppi, connettoreRegistro, connettoreAccessoListaConnettori);	
+	
+				pd.setDati(dati);
+	
+				pd.setMessage(CostantiControlStation.LABEL_AGGIORNAMENTO_EFFETTUATO_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
 				
-				faultCode = configurazioneGestioneConsegnaNotifiche.getFaultCode() != null ? configurazioneGestioneConsegnaNotifiche.getFaultCode() : "";
-				faultActor = configurazioneGestioneConsegnaNotifiche.getFaultActor() != null ? configurazioneGestioneConsegnaNotifiche.getFaultActor() : "";
-				faultMessage = configurazioneGestioneConsegnaNotifiche.getFaultMessage() != null ? configurazioneGestioneConsegnaNotifiche.getFaultMessage() : "";
-				
-			} else {
-				cadenzaRispedizione = "";
-				codiceRisposta2xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
-				codiceRisposta2xxValueMin = "";
-				codiceRisposta2xxValueMax = "";
-				codiceRisposta2xxValue = "";
-				codiceRisposta3xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
-				codiceRisposta3xxValueMin = "";
-				codiceRisposta3xxValueMax = "";
-				codiceRisposta3xxValue = "";
-				codiceRisposta4xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
-				codiceRisposta4xxValueMin = "";
-				codiceRisposta4xxValueMax = "";
-				codiceRisposta4xxValue = "";
-				codiceRisposta5xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
-				codiceRisposta5xxValueMin = "";
-				codiceRisposta5xxValueMax = "";
-				codiceRisposta5xxValue = "";
-				gestioneFault = TipoGestioneNotificaFault.CONSEGNA_COMPLETATA.getValue();
-				faultCode = "";
-				faultActor = "";
-				faultMessage = "";
 			}
+			
+			else {
+				
+				// Preparo la lista
+				Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
-			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
+				int idLista = Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI;
 
-			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 
-			dati = porteApplicativeHelper.addConnettoriMultipliNotificheToDati(dati, TipoOperazione.OTHER, beaBehaviourType, nomeSAConnettore, serviceBinding, cadenzaRispedizione, 
-					codiceRisposta2xx, codiceRisposta2xxValueMin, codiceRisposta2xxValueMax, codiceRisposta2xxValue, 
-					codiceRisposta3xx, codiceRisposta3xxValueMin, codiceRisposta3xxValueMax, codiceRisposta3xxValue, 
-					codiceRisposta4xx, codiceRisposta4xxValueMin, codiceRisposta4xxValueMax, codiceRisposta4xxValue, 
-					codiceRisposta5xx, codiceRisposta5xxValueMin, codiceRisposta5xxValueMax, codiceRisposta5xxValue, 
-					gestioneFault, faultCode, faultActor, faultMessage,
-					consegnaSincrona,
-					coda, priorita, prioritaMax);
-
-			dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, idPorta, idAsps, dati);
-
-			dati = porteApplicativeHelper.addInformazioniGruppiAsHiddenToDati(TipoOperazione.OTHER, dati, idTabP, null, accessoDaAPSParametro != null ? accessoDaAPSParametro : "", 
-					connettoreAccessoGruppi, connettoreRegistro, connettoreAccessoListaConnettori);	
-
-			pd.setDati(dati);
-
-			pd.setMessage(CostantiControlStation.LABEL_AGGIORNAMENTO_EFFETTUATO_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
+				IDSoggetto idSoggettoProprietario = new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario());
+				List<PortaApplicativaServizioApplicativo> listaFiltrata = porteApplicativeHelper.applicaFiltriRicercaConnettoriMultipli(ricerca, idLista, pa.getServizioApplicativoList(), idSoggettoProprietario);
+				
+				porteApplicativeHelper.preparePorteAppConnettoriMultipliList(pa.getNome(), ricerca, listaFiltrata, pa);
+				
+			}
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI
