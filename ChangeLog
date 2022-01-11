@@ -1,5 +1,13 @@
 2022-01-11  Andrea Poli <apoli@link.it>
 
+	* [GovWayMonitor]
+	Risolto Bug OP-1311
+	In caso di registrazione dei contenuti abilitati, se veniva salvata una richiesta contenente un Content-Type Multipart senza però possedere effettivamente degli attachments, 
+	la successiva consultazione tramite la console di monitoraggio per visualizzare i contenuti multipart produceva un errore non atteso e una pagina bianca. 
+	Anche la funzionalità di export dei contenuti multipart generava un errore.
+
+2022-01-11  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, GovwayConsole]
 	Aggiunta funzionalità OP-1301
 	Aggiunta validazione delle espressioni regolari, xpath e jsonPath utilizzabili nelle varie funzionalità del gateway.

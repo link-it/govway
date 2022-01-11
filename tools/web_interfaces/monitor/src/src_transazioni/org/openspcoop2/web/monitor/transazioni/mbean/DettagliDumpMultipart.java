@@ -427,7 +427,7 @@ public class DettagliDumpMultipart extends PdDBaseBean<Transazione, String, ITra
 		if(this.attachments == null) {
 		List<DumpAttachment> list = this.dumpMessaggio.getAttachments();
 
-		if(list.size()>0){
+		if(list!=null && list.size()>0){
 			this.attachments = new ArrayList<DumpAttachmentBean>();
 			for (DumpAttachment dumpAllegato : list) {  
 				this.attachments.add(new DumpAttachmentBean(dumpAllegato));
