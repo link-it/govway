@@ -526,7 +526,8 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addConnettoriMultipliToDati(dati, TipoOperazione.ADD, beaBehaviourType, nomeSAConnettore,
-						nomeConnettore, descrizioneConnettore, statoConnettore, behaviourConFiltri, filtriConnettore, null, null, null, null);
+						nomeConnettore, descrizioneConnettore, statoConnettore, behaviourConFiltri, filtriConnettore, null, null, null, null,
+						null);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta,idAsps, dati);
 				
@@ -611,7 +612,8 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteApplicativeHelper.addConnettoriMultipliToDati(dati, TipoOperazione.ADD, beaBehaviourType, nomeSAConnettore,
-						nomeConnettore, descrizioneConnettore, statoConnettore, behaviourConFiltri, filtriConnettore, null, null, null, null);
+						nomeConnettore, descrizioneConnettore, statoConnettore, behaviourConFiltri, filtriConnettore, null, null, null, null,
+						null);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, dati);
 				
