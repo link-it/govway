@@ -29,7 +29,6 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.l
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,7 +41,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
-import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.ConsegnaCondizionaleByFiltroTest;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpRequest;
@@ -95,6 +93,8 @@ public class SessioneStickyTest extends ConfigLoader {
 	static int richiesteParallele = Integer.valueOf(System.getProperty("soglia_richieste_simultanee"));
 	
 	static int richiesteTestRandom = 50; // TODOInteger.valueOf("connettori.load_balancer.numero_richieste_random");
+	
+	static int maxAge = 2;
 	
 	
 	static List<String> IDSessioni = Arrays.asList(
@@ -511,14 +511,11 @@ public class SessioneStickyTest extends ConfigLoader {
 		
 	@Test
 	public void velocityTemplate() {
-		// TODO:
-		// Questo test lavora con la least connections quindi segue uno schema leggermente diverso:
-		// Prima teniamo bloccati con una richiesta lunga due connettori usando l'id sessione.
-		// Durante il mantenimento di quete richieste, fare il test che sto per fare sotto.
-		// Delle 13 restanti richieste, 4 e 4 le continuo a mandare con l'id sessione impostato, le altre
-		// 4 mi aspetto non raggiungano mai questi due connettori iniziali.
-		// Vengono smistati infatti tra i restanti tre (All'uopo fare un quinto connettore abilitato. (Il Connettore4)
-		//
+		// TODO: Il least connections 
+		// 	Ne tengo occupati due con 5 richiesta lunghe per ognuno.
+		//	Faccio 5 richieste senza id sessione e verifico che valga il round robin per le altre due
+		//	Scadono le richieste del punto 1
+		//	Ripeto il test delle least connections.
 		final String erogazione = "LoadBalanceSessioneStickyVelocityTemplate";
 		
 		List<HttpRequest> richieste = Arrays.asList(
@@ -568,7 +565,42 @@ public class SessioneStickyTest extends ConfigLoader {
 
 	@Test
 	public void maxAge() {
-		// TODO
+		
+		// Per i max Age una classe di test a parte, laddove posso tengo traccia dello stato dello
+		// scheduler e alla richiesta successiva dopo lo scadere del maxAge devo controllare che
+		// vada sul connettore atteso.
+		// TODO: Per tutte le strategie di load balancing
+		
+		final String erogazione = "LoadBalanceSessioneStickyHeaderHttpMaxAge";
+		
+		List<HttpRequest> richieste = Arrays.asList(
+				buildRequest_HeaderHttp(IDSessioni.get(0), erogazione), 
+				buildRequest_HeaderHttp(IDSessioni.get(1), erogazione),
+				buildRequest_LoadBalanced(erogazione)
+			);
+
+		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, richiesteParallele);
+		
+		// Tutte le richieste con lo stesso id sessione finiscono
+		// sullo stesso connettore.
+		checkAllResponsesSameConnettore(responsesByKind.get(0));
+		checkAllResponsesSameConnettore(responsesByKind.get(1));
+		
+		// Tra le richieste\risposte che sono state bilanciate vanno considerate
+		// anche le prime richieste che portano con se un id sessione ancora mai visto prima.
+		// Le risposte che qui vado a pescare non sono necessariamente corrispondenti a tali richieste
+		// ma sono utili ai fini del conteggio.
+		var balancedResponses = responsesByKind.get(2);
+		balancedResponses.add(responsesByKind.get(0).get(0));
+		balancedResponses.add(responsesByKind.get(1).get(0));
+		
+		checkRoundRobin(balancedResponses, Common.setConnettoriAbilitati);
+		
+		org.openspcoop2.utils.Utilities.sleep(maxAge*1000);
+		
+		// Sono in round robin, il connettore che ha meno richieste dovrà essere il prossimo selezionato
+		// dalla sessione sticky.
+
 	}
 
 	

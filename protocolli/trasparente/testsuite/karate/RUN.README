@@ -112,8 +112,17 @@
    In modo che la console consenta di assegnare più volte lo stesso filtro a connettori diversi e rilevare l'errore a runtime durante una richiesta
 
 - In src/testsuite.properties
-	 connettori.load_balancer.numero_richieste_random=50
-	 Per far si che venga generata una distribuzione casuale accettabile dei connettori scelti dalle politiche casuali
+	+ connettori.load_balancer.numero_richieste_random=50
+	 	Per far si che venga generata una distribuzione casuale accettabile dei connettori scelti dalle politiche casuali
+
+	+ connettori.load_balancer.sessione_sticky.max_age=2
+		Numero di secondi per cui un id sessione viene legato ad uno specifico connettore nella sessione sticy
+
+	+ connettori.load_balancer.least_connections.durata_bloccante=2500
+
+	+ connettori.load_balancer.least_connections.delay_richieste_background=500
+
+
 
 
 
