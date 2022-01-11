@@ -126,9 +126,9 @@ Scenario: Imposta l'autenticazione in modalità principal\form-based
 
 @UpdatePrincipalUrlBased
 Scenario: Imposta l'autenticazione in modalità principal\url-based
-    * def options = { tipo_principal: 'url-based', pattern: '*.*' }
+    * def options = { tipo_principal: 'url-based', pattern: '.*' }
     * eval authn_principal.autenticazione.tipo_principal = 'url-based'
-    * eval authn_principal.autenticazione.pattern = '*.*'
+    * eval authn_principal.autenticazione.pattern = '.*'
 
     Given url configUrl
     And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
