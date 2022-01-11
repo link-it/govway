@@ -262,7 +262,7 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 			IDSoggetto idSoggettoProprietario = new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario());
 			List<PortaApplicativaServizioApplicativo> listaFiltrata = porteApplicativeHelper.applicaFiltriRicercaConnettoriMultipli(ricerca, idLista, pa.getServizioApplicativoList(), idSoggettoProprietario);
 						
-			porteApplicativeHelper.preparePorteAppConnettoriMultipliList(pa.getNome(), ricerca, listaFiltrata, pa, true);
+			porteApplicativeHelper.preparePorteAppConnettoriMultipliList_fromDeleteConnettore(pa.getNome(), ricerca, listaFiltrata, pa);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI
