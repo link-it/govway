@@ -8,6 +8,7 @@
 	  si venga riposizionati nella lista dei connettori e sia selezionato il connettore oggetto della precedente operazione;
 	- nella maschera di creazione di una regola specifica per azione/risorsa veniva riportata erroneamente la dicitura 'Container' invece di 'Contenuto';
 	- aggiunto controllo di assegnazione univoca di un filtro ad un connettore, nel caso di consegna condizionale;
+	- eliminata la possibilità di associare filtri al connettore di default, nel caso di consegna condizionale;
 	- l'utilizzo di una consegna condizionale basata su template non era utilizzabile su richieste senza payload (es. HTTP GET)
 	  dove si ottevena un errore simile al seguente: "Selettore 'Template' non supportato per il message-type 'BINARY'".
 	  È stato aggiunto il supporto.

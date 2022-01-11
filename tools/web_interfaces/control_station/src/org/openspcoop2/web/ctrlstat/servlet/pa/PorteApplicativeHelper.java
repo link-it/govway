@@ -8274,7 +8274,13 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				e.addElement(de);
 				
 				// Filtri
-				if(behaviourConFiltri) {
+				boolean showFiltri = behaviourConFiltri;
+				if(showFiltri) {
+					if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType) && this.isConnettoreDefault(paSA)) {
+						showFiltri = false;
+					}
+				}
+				if(showFiltri) {
 					de = new DataElement();
 					de.setType(DataElementType.BUTTON);
 					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRI);
@@ -8730,7 +8736,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	
 	public Vector<DataElement> addConnettoriMultipliToDati(Vector<DataElement> dati, TipoOperazione tipoOp,
 			TipoBehaviour beaBehaviourType, String nomeSAConnettore,
-			String nome, String descrizione, String stato, boolean behaviourConFiltri, String filtri, String vDatiGenerali, String vDescrizione, String vFiltri, String vConnettore) {
+			String nome, String descrizione, String stato, boolean behaviourConFiltri, String filtri, String vDatiGenerali, String vDescrizione, String vFiltri, String vConnettore,
+			PortaApplicativaServizioApplicativo paSA) {
 		
 		boolean visualizzaDatiGenerali = ServletUtils.isCheckBoxEnabled(vDatiGenerali);
 		boolean visualizzaDescrizione = ServletUtils.isCheckBoxEnabled(vDescrizione);
@@ -8815,9 +8822,13 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRI);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRI);
-		if(behaviourConFiltri) {
-			
-			
+		boolean showFiltri = behaviourConFiltri;
+		if(showFiltri) {
+			if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(beaBehaviourType) && paSA!=null && this.isConnettoreDefault(paSA)) {
+				showFiltri = false;
+			}
+		}
+		if(showFiltri) {
 			if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && visualizzaFiltri)) {
 				de.setType(DataElementType.TEXT_EDIT);
 				de.enableTags();
