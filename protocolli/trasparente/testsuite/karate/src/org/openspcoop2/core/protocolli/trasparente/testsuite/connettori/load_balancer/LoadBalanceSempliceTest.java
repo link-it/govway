@@ -24,9 +24,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.ID_CONNETTORE_REPLY_PREFIX;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.delayRichiesteBackground;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.durataBloccante;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.printMap;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -57,8 +57,14 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 	
  *	I nomi invece sono:
  *	Connettore0, Connettore1, Connettore2, Connettore3, ConnettoreDisabilitato, ConnettoreRotto
-	
+ *
+ *	Questa differenza fra ID e nomi vale solo su questa classe di test, che è stata la prima scritta
+ *  per i test sui connettori multipli.
+ *	Per tutte le altre classi di test della testsuite dei connettori multipli invece, l'id connettore
+ *  e il nome connettore coincidono.
+ *
  *	Testo anche che al connettore disabilitato non venga instradato nulla, ogni politica ha un connettore disabilitato.
+ *
  */
 public class LoadBalanceSempliceTest extends ConfigLoader {
 
@@ -70,28 +76,6 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 	public static final String CONNETTORE_3 = "3";
 	public static final String CONNETTORE_ROTTO = "connettore-rotto";
 	public static final String CONNETTORE_DISABILITATO = "connettore-disabilitato";
-	
-	// TODO: Armonizza con gli altri connettori di ConsegnaCondizionale
-	private static String getIdConnettore(HttpResponse response) {
-		if (response.getResultHTTPOperation() == 200) {				 
-			return response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE);
-		} else {
-			return CONNETTORE_ROTTO;
-		}		
-	}
-
-	
-	public static Map<String, Integer> contaConnettoriUtilizzati(List<HttpResponse> responses) {
-		Map<String, Integer> howManys = new HashMap<>();
-		
-		for (var response : responses) {
-			String id_connettore = getIdConnettore(response);						
-			assertNotEquals(null, id_connettore);
-			howManys.put(id_connettore, howManys.getOrDefault(id_connettore, 0)+1);
-		}
-		return howManys;
-	}
-
 	
 	@Test
 	public void roundRobin() {
@@ -112,7 +96,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 15);
 
 		// Ho 5 connettori buoni, mi aspetto tre richieste per ognuno.
-		Map<String, Integer> howManys = contaConnettoriUtilizzati(responses);
+		Map<String, Integer> howManys = Common.contaConnettoriUtilizzati(responses);
 
 		for (var results : howManys.entrySet()) {
 			assertEquals(Integer.valueOf(3), results.getValue());
@@ -136,7 +120,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
 
 		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 15);
-		Map<String, Integer> howManys = contaConnettoriUtilizzati(responses);
+		Map<String, Integer> howManys = Common.contaConnettoriUtilizzati(responses);
 
 		// 		PESI:
 		// Connettore0 => 1
@@ -180,7 +164,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 					+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
 
 			Vector<HttpResponse> responses = Utils.makeParallelRequests(request, nRequests);
-			Map<String, Integer> howManys = contaConnettoriUtilizzati(responses);
+			Map<String, Integer> howManys = Common.contaConnettoriUtilizzati(responses);
 			
 			assertNotEquals(1, howManys.keySet().size());
 			
@@ -220,7 +204,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
 		
 		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxParallelRequests, requestsPerThread);
-		Map<String, Integer> howManys = contaConnettoriUtilizzati(responses);
+		Map<String, Integer> howManys = Common.contaConnettoriUtilizzati(responses);
 		
 		assertEquals(true, howManys.get(CONNETTORE_ROTTO) > howManys.get(CONNETTORE_3));
 		assertEquals(true, howManys.get(CONNETTORE_3) > howManys.get(CONNETTORE_2));
@@ -245,7 +229,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
 
 		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 15);	
-		Map<String, Integer> howManys = contaConnettoriUtilizzati(responses);
+		Map<String, Integer> howManys = Common.contaConnettoriUtilizzati(responses);
 		
 		// In questo caso controlliamo che un unico connettore venga raggiunto.
 	
@@ -287,7 +271,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 				request.addHeader(forwardedHeader, forwardedFor);
 											
 				Vector<HttpResponse> responses = Utils.makeSequentialRequests(request, reqsPerThread);				
-				Map<String, Integer> howManys = contaConnettoriUtilizzati(responses);
+				Map<String, Integer> howManys = Common.contaConnettoriUtilizzati(responses);
 				
 				// Controlliamo all'interno del thread che un unico connettore venga raggiunto,
 				// perchè le richieste di un thread hanno tutte lo stesso header Forwarded-For
@@ -309,7 +293,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		}
 		
 		// Considero un errore Se con 15 hash diversi ho raggiunto sempre lo stesso connettore.
-		Map<String, Integer> howManys = contaConnettoriUtilizzati(wholeResponses);
+		Map<String, Integer> howManys = Common.contaConnettoriUtilizzati(wholeResponses);
 		printMap(howManys);
 		assertNotEquals(1, howManys.keySet().size());
 		
@@ -338,7 +322,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		requestBlocking.setContentType("application/json");
 		requestBlocking.setMethod(HttpRequestMethod.GET);
 		requestBlocking.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
-				+ "?sleep="+org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.durataBloccante +
+				+ "?sleep="+durataBloccante +
 				"&replyQueryParameter=id_connettore&replyPrefixQueryParameter="
 				+ ID_CONNETTORE_REPLY_PREFIX);
 		
@@ -355,7 +339,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		
 		// Dopo faccio 3 richieste parallele che devono raggiungere gli altri 3 connettori attivi
 		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
-		Map<String, Integer> howManys = contaConnettoriUtilizzati(responses);
+		Map<String, Integer> howManys = Common.contaConnettoriUtilizzati(responses);
 		HttpResponse blockingResp;
 		try {
 			blockingResp = blockingRespFuture.get();
@@ -365,19 +349,14 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		}
 
 		// Il connettore "bloccato" non deve essere stato raggiunto da queste richieste.
-		assertEquals(false, howManys.containsKey(getIdConnettore(blockingResp)));
-		
-		 /* Poi variante parallela: 20 richieste parallele con sleep e mi aspetto che si
-		 * comporti esattamente come un round robin: una richiesta alla volta per
-		 * connettore.
-		 */
-		//
-		// Inizio 3 richieste con una sleep sui primi 3
+		assertEquals(false, howManys.containsKey(Common.getIdConnettore(blockingResp)));
+			
 	}
 	
 	
 	@Test
 	public void leastConnectionsAsRoundRobin() {
+		// TODO
 		// Facendo delle richieste in background con sleep, una dopo l'altra, 
 		// la strategia deve comportarsi come un weighted round robin con tutti i pesi a 1
 		
@@ -387,7 +366,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		requestBlocking.setContentType("application/json");
 		requestBlocking.setMethod(HttpRequestMethod.GET);
 		requestBlocking.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
-				+ "?sleep="+org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.durataBloccante +
+				+ "?sleep="+durataBloccante +
 				"&replyQueryParameter=id_connettore&replyPrefixQueryParameter="
 				+ ID_CONNETTORE_REPLY_PREFIX);
 		
@@ -404,7 +383,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		
 		Vector<HttpResponse> responses = new Vector<>();
 		responses = Utils.awaitResponses(futureBlockingResponses);
-		Map<String, Integer> howManys = contaConnettoriUtilizzati(responses);
+		Map<String, Integer> howManys = Common.contaConnettoriUtilizzati(responses);
 		
 		assertEquals(4, howManys.keySet().size());
 		
@@ -416,7 +395,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		requestBlockingLong.setContentType("application/json");
 		requestBlockingLong.setMethod(HttpRequestMethod.GET);
 		requestBlockingLong.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
-				+ "?sleep="+org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.durataBloccante+2000 +
+				+ "?sleep="+durataBloccante+2000 +
 				"&replyQueryParameter=id_connettore&replyPrefixQueryParameter="
 				+ ID_CONNETTORE_REPLY_PREFIX);
 		

@@ -1,8 +1,10 @@
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -108,6 +110,27 @@ public class Common {
 		}
 
 		return ret;
+	}
+
+
+	public static Map<String, Integer> contaConnettoriUtilizzati(List<HttpResponse> responses) {
+		Map<String, Integer> howManys = new HashMap<>();
+		
+		for (var response : responses) {
+			String id_connettore = Common.getIdConnettore(response);						
+			assertNotEquals(null, id_connettore);
+			howManys.put(id_connettore, howManys.getOrDefault(id_connettore, 0)+1);
+		}
+		return howManys;
+	}
+
+
+	public static String getIdConnettore(HttpResponse response) {
+		if (response.getResultHTTPOperation() == 200) {				 
+			return response.getHeaderFirstValue(HEADER_ID_CONNETTORE);
+		} else {
+			return LoadBalanceSempliceTest.CONNETTORE_ROTTO;
+		}		
 	}
 
 	
