@@ -1674,19 +1674,25 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			de.setValue(labelProtocollo);
 			de.setType(DataElementType.TEXT);
 			
+			List<Parameter> listFruitori = null;
 			if(modificaDatiProfilo) {
-				
 				listParametersServizio.remove(listParametersServizio.size()-1);
 				listParametersServizio.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_PROFILO, "true"));
 				
+				if(gestioneFruitori) {
+					listFruitori = new ArrayList<>();
+					listFruitori.addAll(listParametersServizio);
+					listFruitori.add(pIdFruitore);
+				}
+			}
+						
+			if(modificaDatiProfilo) {
+				
 				image = new DataElementImage();
 				if(gestioneFruitori) {
-					List<Parameter> list = new ArrayList<>();
-					list.addAll(listParametersServizio);
-					list.add(pIdFruitore);
 					image.setUrl(
 							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE,
-							list.toArray(new Parameter[1]));
+							listFruitori.toArray(new Parameter[1]));
 				}
 				else {
 					image.setUrl(
@@ -1696,7 +1702,36 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,
 						AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_PROTOCOLLO));
 				image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
-				de.setImage(image);
+				de.addImage(image);
+				
+			}
+			
+			boolean modi = this.core.isProfiloModIPA(protocollo);
+			boolean showVerificaCertificati = false;
+			if(modi && modificaDatiProfilo) {
+				if(gestioneFruitori) {
+					showVerificaCertificati = this.core.isModipaFruizioniVerificaCertificati();
+				}
+				else {
+					showVerificaCertificati = this.core.isModipaErogazioniVerificaCertificati();
+				}
+			}
+			if(showVerificaCertificati)	{
+				image = new DataElementImage();
+				if(gestioneFruitori) {
+					image.setUrl(
+							"",//AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_VERIFICA_CERTIFICATI,
+							listFruitori.toArray(new Parameter[1]));
+				}
+				else {
+					image.setUrl(
+							"",//AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_VERIFICA_CERTIFICATI,
+							listParametersServizio.toArray(new Parameter[1]));
+				}
+				image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,
+						AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_PROTOCOLLO));
+				image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CERTIFICATI);
+				de.addImage(image);
 				
 			}
 			

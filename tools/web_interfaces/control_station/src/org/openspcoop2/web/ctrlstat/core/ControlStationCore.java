@@ -829,14 +829,22 @@ public class ControlStationCore {
 	
 	/** PolicyGestioneToken PropertiesSourceConfiguration */
 	private PropertiesSourceConfiguration policyGestioneTokenPropertiesSourceConfiguration = null;
+	private boolean isPolicyGestioneTokenVerificaCertificati = false;
 	public PropertiesSourceConfiguration getPolicyGestioneTokenPropertiesSourceConfiguration() {
 		return this.policyGestioneTokenPropertiesSourceConfiguration;
+	}
+	public boolean isPolicyGestioneTokenVerificaCertificati() {
+		return this.isPolicyGestioneTokenVerificaCertificati;
 	}
 	
 	/** AttributeAuthority PropertiesSourceConfiguration */
 	private PropertiesSourceConfiguration attributeAuthorityPropertiesSourceConfiguration = null;
+	private boolean isAttributeAuthorityVerificaCertificati = false;
 	public PropertiesSourceConfiguration getAttributeAuthorityPropertiesSourceConfiguration() {
 		return this.attributeAuthorityPropertiesSourceConfiguration;
+	}
+	public boolean isAttributeAuthorityVerificaCertificati() {
+		return this.isAttributeAuthorityVerificaCertificati;
 	}
 	
 	/** ControlloTraffico */
@@ -871,8 +879,18 @@ public class ControlStationCore {
 	
 	/** Soggetti */
 	private Integer soggettiNomeMaxLength;
+	private boolean isSoggettiVerificaCertificati;
 	public Integer getSoggettiNomeMaxLength() {
 		return this.soggettiNomeMaxLength;
+	}
+	public boolean isSoggettiVerificaCertificati() {
+		return this.isSoggettiVerificaCertificati;
+	}
+	
+	/** Applicativi */
+	private boolean isApplicativiVerificaCertificati;
+	public boolean isApplicativiVerificaCertificati() {
+		return this.isApplicativiVerificaCertificati;
 	}
 	
 	/** API */
@@ -959,8 +977,16 @@ public class ControlStationCore {
 	}
 	
 	/** ModI */
+	private boolean isModipaErogazioniVerificaCertificati;
+	private boolean isModipaFruizioniVerificaCertificati;
 	private boolean isModipaFruizioniConnettoreCheckHttps;
 	private boolean isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi;
+	public boolean isModipaErogazioniVerificaCertificati() {
+		return this.isModipaErogazioniVerificaCertificati;
+	}
+	public boolean isModipaFruizioniVerificaCertificati() {
+		return this.isModipaFruizioniVerificaCertificati;
+	}
 	public boolean isModipaFruizioniConnettoreCheckHttps() {
 		return this.isModipaFruizioniConnettoreCheckHttps;
 	}
@@ -2181,9 +2207,11 @@ public class ControlStationCore {
 		
 		/** PolicyGestioneToken PropertiesSourceConfiguration */
 		this.policyGestioneTokenPropertiesSourceConfiguration = core.policyGestioneTokenPropertiesSourceConfiguration;
+		this.isPolicyGestioneTokenVerificaCertificati = core.isPolicyGestioneTokenVerificaCertificati; 
 		
 		/** AttributeAuthority PropertiesSourceConfiguration */
 		this.attributeAuthorityPropertiesSourceConfiguration = core.attributeAuthorityPropertiesSourceConfiguration;
+		this.isAttributeAuthorityVerificaCertificati = core.isAttributeAuthorityVerificaCertificati; 
 		
 		/** ControlloTraffico */
 		this.isControlloTrafficoPolicyGlobaleGroupByApi = core.isControlloTrafficoPolicyGlobaleGroupByApi;
@@ -2199,6 +2227,10 @@ public class ControlStationCore {
 		
 		/** Soggetti */
 		this.soggettiNomeMaxLength = core.soggettiNomeMaxLength;
+		this.isSoggettiVerificaCertificati = core.isSoggettiVerificaCertificati;
+		
+		/** Applicativi */
+		this.isApplicativiVerificaCertificati = core.isApplicativiVerificaCertificati;
 		
 		/** API */
 		this.isApiResourcePathValidatorEnabled = core.isApiResourcePathValidatorEnabled;
@@ -2233,6 +2265,8 @@ public class ControlStationCore {
 		this.consegnaNotificaConfigurazionePriorita = core.consegnaNotificaConfigurazionePriorita;
 		
 		/** ModI */
+		this.isModipaErogazioniVerificaCertificati = core.isModipaErogazioniVerificaCertificati;
+		this.isModipaFruizioniVerificaCertificati = core.isModipaFruizioniVerificaCertificati;
 		this.isModipaFruizioniConnettoreCheckHttps = core.isModipaFruizioniConnettoreCheckHttps;
 		this.isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi = core.isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi;
 		
@@ -2587,7 +2621,9 @@ public class ControlStationCore {
 			this.soggettiApiKeyLunghezzaPasswordGenerate = consoleProperties.getConsoleSoggettiApiKeyLunghezzaPasswordGenerate();			
 			this.messageSecurityPropertiesSourceConfiguration = consoleProperties.getMessageSecurityPropertiesSourceConfiguration();
 			this.policyGestioneTokenPropertiesSourceConfiguration = consoleProperties.getPolicyGestioneTokenPropertiesSourceConfiguration();
+			this.isPolicyGestioneTokenVerificaCertificati = consoleProperties.isPolicyGestioneTokenVerificaCertificati();
 			this.attributeAuthorityPropertiesSourceConfiguration = consoleProperties.getAttributeAuthorityPropertiesSourceConfiguration();
+			this.isAttributeAuthorityVerificaCertificati = consoleProperties.isAttributeAuthorityVerificaCertificati(); 
 			this.isControlloTrafficoPolicyGlobaleGroupByApi = consoleProperties.isControlloTrafficoPolicyGlobaleGroupByApi();
 			this.isControlloTrafficoPolicyGlobaleFiltroApi = consoleProperties.isControlloTrafficoPolicyGlobaleFiltroApi();
 			this.isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore = consoleProperties.isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore();
@@ -2595,6 +2631,8 @@ public class ControlStationCore {
 			this.isIntegrationManagerEnabled = consoleProperties.isIntegrationManagerEnabled();
 			this.isIntegrationManagerTraceMessageBoxOperationEnabled = consoleProperties.isIntegrationManagerTraceMessageBoxOperationEnabled();
 			this.soggettiNomeMaxLength = consoleProperties.getSoggettiNomeMaxLength();
+			this.isSoggettiVerificaCertificati = consoleProperties.isSoggettiVerificaCertificati();
+			this.isApplicativiVerificaCertificati = consoleProperties.isApplicativiVerificaCertificati();
 			this.isApiResourcePathValidatorEnabled = consoleProperties.isApiResourcePathValidatorEnabled();
 			this.isApiResourceHttpMethodAndPathQualsiasiEnabled = consoleProperties.isApiResourceHttpMethodAndPathQualsiasiEnabled();
 			this.getApiResourcePathQualsiasiSpecialChar = consoleProperties.getApiResourcePathQualsiasiSpecialChar();
@@ -2615,6 +2653,8 @@ public class ControlStationCore {
 			for (String priorita : this.consegnaNotificaPriorita) {
 				this.consegnaNotificaConfigurazionePriorita.put(priorita, consoleProperties.getConsegnaNotificaConfigurazionePriorita(priorita));
 			}
+			this.isModipaErogazioniVerificaCertificati = consoleProperties.isModipaErogazioniVerificaCertificati();
+			this.isModipaFruizioniVerificaCertificati = consoleProperties.isModipaFruizioniVerificaCertificati();
 			this.isModipaFruizioniConnettoreCheckHttps = consoleProperties.isModipaFruizioniConnettoreCheckHttps();
 			this.isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi = consoleProperties.isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi();
 			this.configurazionePluginsEnabled = consoleProperties.isConfigurazionePluginsEnabled();

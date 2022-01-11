@@ -299,10 +299,18 @@ public class ConsoleProperties {
 				"policyGestioneToken.builtIn", "policyGestioneToken.builtIn.refresh");
 	}
 	
+	public boolean isPolicyGestioneTokenVerificaCertificati() throws UtilsException{
+		return this.readBooleanProperty(true, "policyGestioneToken.verificaCertificati");
+	}
+	
 	public PropertiesSourceConfiguration getAttributeAuthorityPropertiesSourceConfiguration() throws UtilsException {
 		return _getSourceConfiguration("attributeAuthority", 
 				"attributeAuthority.dir", "attributeAuthority.dir.refresh", 
 				"attributeAuthority.builtIn", "attributeAuthority.builtIn.refresh");
+	}
+	
+	public boolean isAttributeAuthorityVerificaCertificati() throws UtilsException{
+		return this.readBooleanProperty(true, "attributeAuthority.verificaCertificati");
 	}
 	
 	public boolean isControlloTrafficoPolicyGlobaleGroupByApi() throws UtilsException{
@@ -335,6 +343,14 @@ public class ConsoleProperties {
 	
 	public Integer getSoggettiNomeMaxLength() throws UtilsException{
 		return this.readIntegerProperty(false, "soggetti.nome.maxLength");
+	}
+	
+	public boolean isSoggettiVerificaCertificati() throws UtilsException{
+		return this.readBooleanProperty(true, "soggetti.verificaCertificati");
+	}
+	
+	public boolean isApplicativiVerificaCertificati() throws UtilsException{
+		return this.readBooleanProperty(true, "applicativi.verificaCertificati");
 	}
 	
 	public boolean isApiResourcePathValidatorEnabled() throws UtilsException{
@@ -443,6 +459,13 @@ public class ConsoleProperties {
 	public ConfigurazionePriorita getConsegnaNotificaConfigurazionePriorita(String nome) throws Exception{
 		Properties p = this.reader.readProperties_convertEnvProperties("consegnaNotifiche.priorita."+nome+".");
 		return new ConfigurazionePriorita(nome, p);
+	}
+	
+	public boolean isModipaErogazioniVerificaCertificati() throws UtilsException{
+		return this.readBooleanProperty(true, "modipa.erogazioni.verificaCertificati");
+	}
+	public boolean isModipaFruizioniVerificaCertificati() throws UtilsException{
+		return this.readBooleanProperty(true, "modipa.fruizioni.verificaCertificati");
 	}
 	
 	public boolean isModipaFruizioniConnettoreCheckHttps() throws UtilsException{
