@@ -592,7 +592,8 @@ public final class PorteDelegateAdd extends Action {
 				//				(mapping.findForward("AddPortaDelegataForm"));
 			}
 			// Controlli sui campi immessi
-			boolean isOk = porteDelegateHelper.porteDelegateCheckData(TipoOperazione.ADD, "", false);
+			boolean isOk = porteDelegateHelper.porteDelegateCheckData(TipoOperazione.ADD, "", false,
+					serviceBinding);
 			if (!isOk) {
 
 				// setto la barra del titolo

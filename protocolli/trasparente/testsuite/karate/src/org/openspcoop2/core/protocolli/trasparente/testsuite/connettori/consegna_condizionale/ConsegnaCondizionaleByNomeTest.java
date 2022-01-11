@@ -120,7 +120,6 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	
 	static HttpRequest buildRequest_TemplateByNome(String connettore, String erogazione) {
 		HttpRequest request = new HttpRequest();
-		request.setContentType("application/json");	// TODO: con questa riga commentata il test fallisce, dopo il fix di andrea non sarà più necessario settare il content type
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-template"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
@@ -132,7 +131,6 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	
 	static HttpRequest buildRequest_FreemarkerTemplateByNome(String connettore, String erogazione) {
 		HttpRequest request = new HttpRequest();
-		request.setContentType("application/json"); // TODO: con questa riga commentata il test fallisce, dopo il fix di andrea non sarà più necessario settare il content type
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-freemarker-template"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
@@ -144,7 +142,6 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	
 	static HttpRequest buildRequest_VelocityTemplateByNome(String connettore, String erogazione) {
 		HttpRequest request = new HttpRequest();
-		request.setContentType("application/json"); // TODO: con questa riga commentata il test fallisce, dopo il fix di andrea non sarà più necessario settare il content type
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-velocity-template"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX

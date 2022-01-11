@@ -4904,7 +4904,8 @@ public class ErogazioniApiHelper {
 			boolean isDelegata,
 			CorrelazioneApplicativaRichiesta body,
 			Long idPorta,
-			Long idCorrelazione
+			Long idCorrelazione,
+			org.openspcoop2.message.constants.ServiceBinding serviceBinding
 			
 		) throws Exception {
 		
@@ -4921,7 +4922,8 @@ public class ErogazioniApiHelper {
 		
 		wrap.overrideParameter( CostantiControlStation.PARAMETRO_ID_CORRELAZIONE, evalnull( () -> idCorrelazione.toString() ) );					// Questo va impostato nella update.
 		
-		return paHelper.correlazioneApplicativaRichiestaCheckData(tipoOp,isDelegata);
+		return paHelper.correlazioneApplicativaRichiestaCheckData(tipoOp,isDelegata,
+				serviceBinding);
 		
 	}
 	
@@ -4980,7 +4982,8 @@ public class ErogazioniApiHelper {
 			boolean isDelegata,
 			CorrelazioneApplicativaRisposta body,
 			Long idPorta,
-			Long idCorrelazione 
+			Long idCorrelazione,
+			org.openspcoop2.message.constants.ServiceBinding serviceBinding
 		) throws Exception {
 		
 		wrap.overrideParameter( CostantiControlStation.PARAMETRO_ID, idPorta.toString() );
@@ -4997,7 +5000,8 @@ public class ErogazioniApiHelper {
 		wrap.overrideParameter( CostantiControlStation.PARAMETRO_ID_CORRELAZIONE, evalnull( () -> idCorrelazione.toString() ));
 	
 		
-		return paHelper.correlazioneApplicativaRichiestaCheckData(TipoOperazione.ADD,isDelegata);
+		return paHelper.correlazioneApplicativaRichiestaCheckData(TipoOperazione.ADD,isDelegata,
+				serviceBinding);
 		
 	}
 

@@ -31,7 +31,7 @@ package org.openspcoop2.utils.regexp;
  */
 
 
-public class RegExpNotValidException extends Exception {
+public class RegExpNotValidException extends RegExpException {
 
 	 public RegExpNotValidException(String message, Throwable cause)
 		{

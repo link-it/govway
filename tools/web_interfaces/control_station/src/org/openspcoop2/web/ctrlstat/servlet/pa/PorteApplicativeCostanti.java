@@ -1395,10 +1395,15 @@ public class PorteApplicativeCostanti {
 	public static final String MESSAGGIO_ERRORE_ESISTE_GIA_UNA_REGOLA_XX = "Esiste gi&agrave; una Regola con Nome ''{0}''";
 	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_ALMENO_UNO_TRA_XX = "Dati incompleti. &Egrave; necessario indicare almeno uno tra: {0}";
 	public static final String MESSAGGIO_ERRORE_CODICI_NON_VALIDI_NEL_CAMPO_XX = "Inserire solo codici numerici validi separati da '','' nel campo ''{0}''";
+	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_ALMENO_UNA_CONSEGNA_COMPLETATA_XX = "Dati incompleti. &Egrave; necessario indicare almeno un criterio di consegna completata tra: {0}";
 
 	public static final String MESSAGGIO_ERRORE_BEHAVIOUR_CUSTOM_NON_INDICATA = "Non è stato selezionato nessun plugin da utilizzare come modalità di consegna";
 	
 	public static final String MESSAGGIO_ERRORE_RICERCA_CONNETTORI_MULTIPLI_NO_RISULTATI = "Non &egrave; stato trovato nessun connettore che corrisponde ai criteri di ricerca indicati.";
 	public static final String MESSAGGIO_ERRORE_ELIMINATI_CONNETTORI_MULTIPLI_CORRISPONDENTI_AL_FILTRO_RICERCA = "Attenzione, sono stati eliminati tutti i connettori corrispondenti ai criteri di ricerca indicati.";
+	
+	public static final String MESSAGGIO_ERRORE_CONNETTORI_MULTIPLI_NOME_GIA_UTILIZZATO = "&Egrave; gi&agrave; presente un Connettore con nome ''{0}''.";
+	public static final String MESSAGGIO_ERRORE_CONNETTORI_MULTIPLI_APPLICATIVO_SERVER_GIA_UTILIZZATO = "L''Applicativo ''{0}'' &egrave; gi&agrave; utilizzato nel connettore ''{1}''.";
+	public static final String MESSAGGIO_ERRORE_CONNETTORI_MULTIPLI_FILTRO_GIA_UTILIZZATO = "Il filtro ''{0}'' &egrave; gi&agrave; utilizzato nel connettore ''{1}''.";
 	
 }

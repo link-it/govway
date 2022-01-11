@@ -34,14 +34,17 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativoConnettore;
 import org.openspcoop2.core.config.constants.TipoBehaviour;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerPool;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
@@ -170,6 +173,7 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaForm extends
 			Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps);
 			String idTabP = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
 			Parameter pIdTab = new Parameter(CostantiControlStation.PARAMETRO_ID_TAB, idTabP != null ? idTabP : "");
+			Parameter pIdConnTab = new Parameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB, idConnTab != null ? idConnTab : "");
 			Parameter pAccessoDaAPS = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro != null ? accessoDaAPSParametro : "");
 			String connettoreAccessoGruppi = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI);
 			String connettoreRegistro = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO);
@@ -182,6 +186,7 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaForm extends
 			listParametersConfigutazioneConnettoriMultipli.add(pNomePorta);
 			listParametersConfigutazioneConnettoriMultipli.add(pIdAsps);
 			listParametersConfigutazioneConnettoriMultipli.add(pIdTab);
+			listParametersConfigutazioneConnettoriMultipli.add(pIdConnTab);
 			listParametersConfigutazioneConnettoriMultipli.add(pAccessoDaAPS);
 			listParametersConfigutazioneConnettoriMultipli.add(pConnettoreAccessoDaGruppi);
 			listParametersConfigutazioneConnettoriMultipli.add(pConnettoreAccesso);
@@ -219,7 +224,7 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaForm extends
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, idPorta,idAsps, dati);
 
-				dati = porteApplicativeHelper.addInformazioniGruppiAsHiddenToDati(TipoOperazione.OTHER, dati, idTabP, null, accessoDaAPSParametro != null ? accessoDaAPSParametro : "", 
+				dati = porteApplicativeHelper.addInformazioniGruppiAsHiddenToDati(TipoOperazione.OTHER, dati, idTabP, idConnTab, accessoDaAPSParametro != null ? accessoDaAPSParametro : "", 
 						connettoreAccessoGruppi, connettoreRegistro, connettoreAccessoListaConnettori);
 
 				pd.setDati(dati);
@@ -244,7 +249,7 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaForm extends
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, idPorta, idAsps, dati);
 
-				dati = porteApplicativeHelper.addInformazioniGruppiAsHiddenToDati(TipoOperazione.OTHER, dati, idTabP, null, accessoDaAPSParametro != null ? accessoDaAPSParametro : "", 
+				dati = porteApplicativeHelper.addInformazioniGruppiAsHiddenToDati(TipoOperazione.OTHER, dati, idTabP, idConnTab, accessoDaAPSParametro != null ? accessoDaAPSParametro : "", 
 						connettoreAccessoGruppi, connettoreRegistro, connettoreAccessoListaConnettori);	
 
 				pd.setDati(dati);
@@ -278,42 +283,67 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaForm extends
 
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
 
+			// Serve per le breadcump
+			ServletUtils.removeRisultatiRicercaFromSession(session, Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI);
+			
 			// ricarico la configurazione
 			pa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
-
-			paSA = null;
-			for (PortaApplicativaServizioApplicativo paSATmp : pa.getServizioApplicativoList()) {
-				if(paSATmp.getNome().equals(nomeSAConnettore)) {
-					paSA = paSATmp;					
-				}
-			}
-
-			peso = org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLoadBalancer.readLoadBalancerWeight(paSA);
 			
-			if(peso == null) {
-				peso = LoadBalancerPool.DEFAULT_WEIGHT+"";
+			boolean rimanereInEditPage = false;
+			
+			if(rimanereInEditPage) {
+				
+				paSA = null;
+				for (PortaApplicativaServizioApplicativo paSATmp : pa.getServizioApplicativoList()) {
+					if(paSATmp.getNome().equals(nomeSAConnettore)) {
+						paSA = paSATmp;					
+					}
+				}
+	
+				peso = org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLoadBalancer.readLoadBalancerWeight(paSA);
+				
+				if(peso == null) {
+					peso = LoadBalancerPool.DEFAULT_WEIGHT+"";
+				}
+	
+				// preparo i campi
+				Vector<DataElement> dati = new Vector<DataElement>();
+	
+				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+	
+				dati = porteApplicativeHelper.addConnettoriMultipliLoadBalanceToDati(dati, TipoOperazione.OTHER, beaBehaviourType, nomeSAConnettore, peso);
+	
+				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, idPorta, idAsps, dati);
+	
+				dati = porteApplicativeHelper.addInformazioniGruppiAsHiddenToDati(TipoOperazione.OTHER, dati, idTabP, idConnTab, accessoDaAPSParametro != null ? accessoDaAPSParametro : "", 
+						connettoreAccessoGruppi, connettoreRegistro, connettoreAccessoListaConnettori);	
+	
+				pd.setDati(dati);
+	
+				pd.setMessage(CostantiControlStation.LABEL_AGGIORNAMENTO_EFFETTUATO_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
+					
 			}
+			else {
+				
+				// Preparo la lista
+				Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
-			// preparo i campi
-			Vector<DataElement> dati = new Vector<DataElement>();
+				int idLista = Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI;
 
-			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 
-			dati = porteApplicativeHelper.addConnettoriMultipliLoadBalanceToDati(dati, TipoOperazione.OTHER, beaBehaviourType, nomeSAConnettore, peso);
-
-			dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, idPorta, idAsps, dati);
-
-			dati = porteApplicativeHelper.addInformazioniGruppiAsHiddenToDati(TipoOperazione.OTHER, dati, idTabP, null, accessoDaAPSParametro != null ? accessoDaAPSParametro : "", 
-					connettoreAccessoGruppi, connettoreRegistro, connettoreAccessoListaConnettori);	
-
-			pd.setDati(dati);
-
-			pd.setMessage(CostantiControlStation.LABEL_AGGIORNAMENTO_EFFETTUATO_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
-
+				IDSoggetto idSoggettoProprietario = new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario());
+				List<PortaApplicativaServizioApplicativo> listaFiltrata = porteApplicativeHelper.applicaFiltriRicercaConnettoriMultipli(ricerca, idLista, pa.getServizioApplicativoList(), idSoggettoProprietario);
+				
+				porteApplicativeHelper.preparePorteAppConnettoriMultipliList(pa.getNome(), ricerca, listaFiltrata, pa);
+				
+			}
+			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_FORM, 
 					ForwardParams.OTHER(""));
+			
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
 					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_FORM,

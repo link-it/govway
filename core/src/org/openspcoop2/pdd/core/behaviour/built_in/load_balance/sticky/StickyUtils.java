@@ -39,6 +39,7 @@ import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.behaviour.BehaviourEmitDiagnosticException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourPropertiesUtils;
+import org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.core.dynamic.MessageContent;
@@ -115,7 +116,11 @@ public class StickyUtils  {
 						messageContent = new MessageContent(message.castAsRestJson(), bufferMessage_readOnly, pddContext);
 					}
 					else{
-						throw new Exception("Selettore '"+tipoSelettore.getValue()+"' non supportato per il message-type '"+message.getMessageType()+"'");
+						if(TipoSelettore.CONTENT_BASED.equals(tipoSelettore) 
+								// Nei template potrei utilizzare gli header o altre informazioni che non entrano nel merito del contenuto //|| tipoSelettore.isTemplate()
+								) {
+							throw new Exception("Selettore '"+tipoSelettore.getValue()+"' non supportato per il message-type '"+message.getMessageType()+"'");
+						}
 					}
 				}
 			}

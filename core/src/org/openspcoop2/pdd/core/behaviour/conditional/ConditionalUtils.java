@@ -161,7 +161,11 @@ public class ConditionalUtils  {
 							messageContent = new MessageContent(message.castAsRestJson(), bufferMessage_readOnly, pddContext);
 						}
 						else{
-							throw new Exception("Selettore '"+tipoSelettore.getValue()+"' non supportato per il message-type '"+message.getMessageType()+"'");
+							if(TipoSelettore.CONTENT_BASED.equals(tipoSelettore) 
+									// Nei template potrei utilizzare gli header o altre informazioni che non entrano nel merito del contenuto //|| tipoSelettore.isTemplate()
+									) {
+								throw new Exception("Selettore '"+tipoSelettore.getValue()+"' non supportato per il message-type '"+message.getMessageType()+"'");
+							}
 						}
 					}
 				}

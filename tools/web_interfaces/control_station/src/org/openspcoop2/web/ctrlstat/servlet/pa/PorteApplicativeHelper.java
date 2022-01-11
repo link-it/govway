@@ -167,7 +167,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	}
 
 	// Controlla i dati della porta applicativa
-	public boolean porteAppCheckData(TipoOperazione tipoOp, String oldNomePA, boolean isSupportatoAutenticazione, boolean datiAltroPorta) throws Exception {
+	public boolean porteAppCheckData(TipoOperazione tipoOp, String oldNomePA, boolean isSupportatoAutenticazione, boolean datiAltroPorta,
+			ServiceBinding serviceBinding) throws Exception {
 		try {
 			String idPorta = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			String nomePorta = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA);
@@ -479,6 +480,24 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_CONTENT_BASED)) && (azione==null || azione.equals(""))) {
 				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_PATTERN_AZIONE);
 				return false;
+			}
+			
+			if (modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_URL_BASED)) {
+				if(this.checkRegexp(azione,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ESPRESSIONE_REGOLARE)==false){
+					return false;
+				}
+			}
+			if (modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_CONTENT_BASED)) {
+				if(ServiceBinding.SOAP.equals(serviceBinding)) {
+					if(this.checkXPath(azione,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTENT_PATTERN)==false){
+						return false;
+					}
+				}
+				else {
+					if(this.checkXPathOrJsonPath(azione,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTENT_PATTERN)==false){
+						return false;
+					}
+				}
 			}
 			
 			if ((modeaz != null) && !modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT) && 
@@ -7481,7 +7500,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	public boolean connettoriMultipliConfigurazioneCheckData(TipoOperazione tipoOp, String stato, String modalitaConsegna, String tipoCustom, String loadBalanceStrategia, 
 			boolean isSoapOneWay,
 			boolean sticky, String stickyTipoSelettore, String stickyTipoSelettorePattern, String stickyMaxAge,
-			boolean passiveHealthCheck, String passiveHealthCheck_excludeForSeconds) throws Exception{
+			boolean passiveHealthCheck, String passiveHealthCheck_excludeForSeconds,
+			ServiceBinding serviceBinding) throws Exception{
 		
 		if (StringUtils.isEmpty(stato)) {
 			this.pd.setMessage("Il campo "+PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO+" non pu&ograve; essere vuoto");
@@ -7533,6 +7553,24 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						
 						if(this.checkLength4000(stickyTipoSelettorePattern, this.getLabelStickySessionPattern(stickyTipoSelettore))==false) {
 							return false;
+						}
+						
+						if (org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyTipoSelettore.URLBASED.equals(tipo)) {
+							if(this.checkRegexp(stickyTipoSelettorePattern,ModalitaIdentificazione.URL_BASED.getLabelParametro())==false){
+								return false;
+							}
+						}
+						if (org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyTipoSelettore.CONTENT_BASED.equals(tipo)) {
+							if(ServiceBinding.SOAP.equals(serviceBinding)) {
+								if(this.checkXPath(stickyTipoSelettorePattern,ModalitaIdentificazione.CONTENT_BASED.getLabelParametro())==false){
+									return false;
+								}
+							}
+							else {
+								if(this.checkXPathOrJsonPath(stickyTipoSelettorePattern,ModalitaIdentificazione.CONTENT_BASED.getLabelParametro())==false){
+									return false;
+								}
+							}
 						}
 					}
 					
@@ -7638,6 +7676,25 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						if(this.checkLength4000(identificazioneCondizionalePattern, this.getLabelIdentificazioneCondizionalePattern(identificazioneCondizionale))==false) {
 							return false;
 						}
+						
+						
+						if (org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.URLBASED.equals(tipo)) {
+							if(this.checkRegexp(identificazioneCondizionalePattern,ModalitaIdentificazione.URL_BASED.getLabelParametro())==false){
+								return false;
+							}
+						}
+						if (org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.CONTENT_BASED.equals(tipo)) {
+							if(ServiceBinding.SOAP.equals(serviceBinding)) {
+								if(this.checkXPath(identificazioneCondizionalePattern,ModalitaIdentificazione.CONTENT_BASED.getLabelParametro())==false){
+									return false;
+								}
+							}
+							else {
+								if(this.checkXPathOrJsonPath(identificazioneCondizionalePattern,ModalitaIdentificazione.CONTENT_BASED.getLabelParametro())==false){
+									return false;
+								}
+							}
+						}
 					}
 					
 										
@@ -7727,14 +7784,57 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	public void preparePorteAppConnettoriMultipliList(String nomePorta, Search ricerca, 
 			List<PortaApplicativaServizioApplicativo> listaFiltrata,
 			PortaApplicativa pa) throws Exception {
-		this.preparePorteAppConnettoriMultipliList(nomePorta, ricerca, 
+		this._preparePorteAppConnettoriMultipliList(nomePorta, ricerca, 
 				listaFiltrata,
-				pa, false);
+				pa, 
+				false,
+				false, 
+				false,
+				null);
+	}
+	public void preparePorteAppConnettoriMultipliList_fromAddConnettore(String nomePorta, Search ricerca, 
+			List<PortaApplicativaServizioApplicativo> listaFiltrata,
+			PortaApplicativa pa,
+			String nomeConnettoreAdd) throws Exception {
+		this._preparePorteAppConnettoriMultipliList(nomePorta, ricerca, 
+				listaFiltrata,
+				pa, 
+				true,
+				false,
+				false, 
+				nomeConnettoreAdd);
+	}
+	public void preparePorteAppConnettoriMultipliList_fromChangeNomeConnettore(String nomePorta, Search ricerca, 
+			List<PortaApplicativaServizioApplicativo> listaFiltrata,
+			PortaApplicativa pa,
+			String nomeConnettoreChanged) throws Exception {
+		this._preparePorteAppConnettoriMultipliList(nomePorta, ricerca, 
+				listaFiltrata,
+				pa, 
+				false,
+				true, 
+				false,
+				nomeConnettoreChanged);
+	}
+	public void preparePorteAppConnettoriMultipliList_fromDeleteConnettore(String nomePorta, Search ricerca, 
+			List<PortaApplicativaServizioApplicativo> listaFiltrata,
+			PortaApplicativa pa) throws Exception {
+		this._preparePorteAppConnettoriMultipliList(nomePorta, ricerca, 
+				listaFiltrata,
+				pa, 
+				false,
+				false,
+				true, 
+				null);
 	}
 	
-	public void preparePorteAppConnettoriMultipliList(String nomePorta, Search ricerca, 
+	private void _preparePorteAppConnettoriMultipliList(String nomePorta, Search ricerca, 
 			List<PortaApplicativaServizioApplicativo> listaFiltrata,
-			PortaApplicativa pa, boolean fromDelete) throws Exception {
+			PortaApplicativa pa,
+			boolean fromAdd, 
+			boolean fromChange,
+			boolean fromDelete,
+			String nomeConnettoreProcessed) throws Exception {
 		try {
 			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
@@ -7963,6 +8063,36 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			
 			// dopo aver filtrato i risultati evidenzio il tab con il nome contenuto nella ricerca
 			int tab = 0; // primo a sx 
+			
+			if(StringUtils.isBlank(tabSelezionato)) {
+				if( (fromAdd || fromChange) && StringUtils.isNotBlank(nomeConnettoreProcessed)){
+					if(listOrdinata!=null && !listOrdinata.isEmpty()) {
+						for (int i = 0; i < listOrdinata.size(); i++) {
+							String tabSelezionatoCheck =  this.getLabelNomePortaApplicativaServizioApplicativo(listOrdinata.get(i));
+							if(nomeConnettoreProcessed.equals(tabSelezionatoCheck)) {
+								tabSelezionato = nomeConnettoreProcessed;
+								break;
+							}
+						}
+					}
+				}
+				
+				if( !fromDelete &&
+						(tabSelezionato==null || StringUtils.isBlank(tabSelezionato)) 
+						) {
+					String idConnTabP = this.getParameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB);
+					if(StringUtils.isNotBlank(idConnTabP)) {
+						int idConnTab = -1;
+						try {
+							idConnTab = Integer.valueOf(idConnTabP);
+							if(idConnTab>=0 && listOrdinata!=null && listOrdinata.size()>idConnTab) {
+								tabSelezionato =  this.getLabelNomePortaApplicativaServizioApplicativo(listOrdinata.get(idConnTab));
+							}
+						}catch(Throwable t) {}
+					}
+				}
+			}
+			
 			ServletUtils.setObjectIntoSession(this.session, tab+"", CostantiControlStation.PARAMETRO_ID_CONN_TAB);
 			if(StringUtils.isBlank(tabSelezionato)) {
 				if(listOrdinata.size() > 0) {
@@ -8144,7 +8274,13 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				e.addElement(de);
 				
 				// Filtri
-				if(behaviourConFiltri) {
+				boolean showFiltri = behaviourConFiltri;
+				if(showFiltri) {
+					if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType) && this.isConnettoreDefault(paSA)) {
+						showFiltri = false;
+					}
+				}
+				if(showFiltri) {
 					de = new DataElement();
 					de.setType(DataElementType.BUTTON);
 					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRI);
@@ -8600,7 +8736,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	
 	public Vector<DataElement> addConnettoriMultipliToDati(Vector<DataElement> dati, TipoOperazione tipoOp,
 			TipoBehaviour beaBehaviourType, String nomeSAConnettore,
-			String nome, String descrizione, String stato, boolean behaviourConFiltri, String filtri, String vDatiGenerali, String vDescrizione, String vFiltri, String vConnettore) {
+			String nome, String descrizione, String stato, boolean behaviourConFiltri, String filtri, String vDatiGenerali, String vDescrizione, String vFiltri, String vConnettore,
+			PortaApplicativaServizioApplicativo paSA) {
 		
 		boolean visualizzaDatiGenerali = ServletUtils.isCheckBoxEnabled(vDatiGenerali);
 		boolean visualizzaDescrizione = ServletUtils.isCheckBoxEnabled(vDescrizione);
@@ -8685,9 +8822,13 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRI);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRI);
-		if(behaviourConFiltri) {
-			
-			
+		boolean showFiltri = behaviourConFiltri;
+		if(showFiltri) {
+			if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(beaBehaviourType) && paSA!=null && this.isConnettoreDefault(paSA)) {
+				showFiltri = false;
+			}
+		}
+		if(showFiltri) {
 			if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && visualizzaFiltri)) {
 				de.setType(DataElementType.TEXT_EDIT);
 				de.enableTags();
@@ -8830,7 +8971,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					for (PortaApplicativaServizioApplicativo paSA : servizioApplicativoList) {
 						String nomePaSA = getLabelNomePortaApplicativaServizioApplicativo(paSA);
 						if(nome.equals(nomePaSA)) {
-							this.pd.setMessage("&Egrave; gi&agrave; presente un Connettore con nome '"+nome+"'.");
+							this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_CONNETTORI_MULTIPLI_NOME_GIA_UTILIZZATO,
+									nome));
 							return false;
 						}
 					}
@@ -8841,12 +8983,15 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					for (PortaApplicativaServizioApplicativo paSA : servizioApplicativoList) {
 						String nomePaSA = getLabelNomePortaApplicativaServizioApplicativo(paSA);
 						if(nome.equals(nomePaSA)) {
-							this.pd.setMessage("&Egrave; gi&agrave; presente un Connettore con nome '"+nome+"'.");
+							this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_CONNETTORI_MULTIPLI_NOME_GIA_UTILIZZATO,
+									nome));
 							return false;
 						}
 					}
 				}
 			}
+			
+			// check univocita' applicativo server
 			
 			if(tipoOp.equals(TipoOperazione.ADD)) {
 				String erogazioneServizioApplicativoServerEnabledS = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ABILITA_USO_APPLICATIVO_SERVER);
@@ -8856,7 +9001,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					for (PortaApplicativaServizioApplicativo paSA : pa.getServizioApplicativoList()) {
 						if(paSA.getNome().equals(erogazioneServizioApplicativoServer)) {
 							String nomeConfigurazione = getLabelNomePortaApplicativaServizioApplicativo(paSA);
-							this.pd.setMessage("L'Applicativo '"+erogazioneServizioApplicativoServer+"' &egrave; gi&agrave; utilizzato nel connettore '"+nomeConfigurazione+"'.");
+							this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_CONNETTORI_MULTIPLI_APPLICATIVO_SERVER_GIA_UTILIZZATO,
+									erogazioneServizioApplicativoServer,nomeConfigurazione));
 							return false;
 						}
 					}
@@ -8872,11 +9018,57 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						// usato da un altro PASA che non sia quello in corso di modifica
 						if(!paSA.getNome().equals(nomeSAConnettore) &&   paSA.getNome().equals(erogazioneServizioApplicativoServer) ) {
 							String nomeConfigurazione = getLabelNomePortaApplicativaServizioApplicativo(paSA);
-							this.pd.setMessage("L'Applicativo '"+erogazioneServizioApplicativoServer+"' &egrave; gi&agrave; utilizzato nel connettore '"+nomeConfigurazione+"'.");
+							this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_CONNETTORI_MULTIPLI_APPLICATIVO_SERVER_GIA_UTILIZZATO,
+									erogazioneServizioApplicativoServer,nomeConfigurazione));
 							return false;
 						}
 					}
 				}
+			}
+			
+			// check univocita' filtro
+			if(TipoBehaviour.CONSEGNA_CONDIZIONALE.equals(beaBehaviourType) &&
+					!this.porteApplicativeCore.isConnettoriMultipliConsegnaCondizionaleStessFiltroPermesso()) {
+				
+				if(StringUtils.isNotEmpty(filtri)) {
+					List<String> filtriV = Arrays.asList(filtri.split(","));
+					
+					for (String filtro : filtriV) {
+						
+						if(tipoOp.equals(TipoOperazione.ADD)) {
+							for (PortaApplicativaServizioApplicativo paSA : pa.getServizioApplicativoList()) {
+								if(paSA.getDatiConnettore()!=null && paSA.getDatiConnettore().sizeFiltroList()>0) {
+									for (String filtroCheck : paSA.getDatiConnettore().getFiltroList()) {
+										if(filtroCheck.equals(filtro)) {
+											String nomeConfigurazione = getLabelNomePortaApplicativaServizioApplicativo(paSA);
+											this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_CONNETTORI_MULTIPLI_FILTRO_GIA_UTILIZZATO,
+													filtro,nomeConfigurazione));
+											return false;
+										}			
+									}
+								}
+							}
+						}
+						
+						if(tipoOp.equals(TipoOperazione.CHANGE)) {
+							for (PortaApplicativaServizioApplicativo paSA : pa.getServizioApplicativoList()) {
+								if(paSA.getDatiConnettore()!=null && paSA.getDatiConnettore().sizeFiltroList()>0) {
+									for (String filtroCheck : paSA.getDatiConnettore().getFiltroList()) {
+										// usato da un altro PASA che non sia quello in corso di modifica
+										if(!paSA.getNome().equals(nomeSAConnettore) && filtroCheck.equals(filtro) ) {
+											String nomeConfigurazione = getLabelNomePortaApplicativaServizioApplicativo(paSA);
+											this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_CONNETTORI_MULTIPLI_FILTRO_GIA_UTILIZZATO,
+													filtro,nomeConfigurazione));
+											return false;
+										}
+									}
+								}
+							}
+						}
+						
+					}
+				}
+					
 			}
 			
 			// Controllo che i campi DataElementType.SELECT abbiano uno dei valori ammessi
@@ -9880,7 +10072,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				ModalitaIdentificazione.URL_BASED,
 				ModalitaIdentificazione.FORM_BASED,
 				ModalitaIdentificazione.SOAP_ACTION_BASED,
-				ModalitaIdentificazione.CONTAINER_BASED,
+				ModalitaIdentificazione.CONTENT_BASED,
 				ModalitaIdentificazione.INDIRIZZO_IP_BASED,
 				ModalitaIdentificazione.X_FORWARD_FOR_BASED,
 				ModalitaIdentificazione.GOVWAY_TEMPLATE,
@@ -10045,6 +10237,24 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				if(this.checkLength4000(identificazioneCondizionalePattern, this.getLabelIdentificazioneCondizionalePattern(identificazioneCondizionale))==false) {
 					return false;
+				}
+				
+				if (org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.URLBASED.equals(tipo)) {
+					if(this.checkRegexp(identificazioneCondizionalePattern,ModalitaIdentificazione.URL_BASED.getLabelParametro())==false){
+						return false;
+					}
+				}
+				if (org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.CONTENT_BASED.equals(tipo)) {
+					if(ServiceBinding.SOAP.equals(serviceBinding)) {
+						if(this.checkXPath(identificazioneCondizionalePattern,ModalitaIdentificazione.CONTENT_BASED.getLabelParametro())==false){
+							return false;
+						}
+					}
+					else {
+						if(this.checkXPathOrJsonPath(identificazioneCondizionalePattern,ModalitaIdentificazione.CONTENT_BASED.getLabelParametro())==false){
+							return false;
+						}
+					}
 				}
 			}
 			
@@ -10815,10 +11025,13 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				return false;
 			}
 			
+			boolean almenoUnaConsegnaCompletata = false;
+			
 			// 2xx
 			TipoGestioneNotificaTrasporto gestioneTrasporto2xx = TipoGestioneNotificaTrasporto.toEnumConstant(codiceRisposta2xx);
 			switch(gestioneTrasporto2xx) {
 			case CODICI_CONSEGNA_COMPLETATA:
+				almenoUnaConsegnaCompletata=true;
 				if(StringUtils.isEmpty(codiceRisposta2xxValue)) {
 					this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,
 							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_2XX));
@@ -10850,6 +11063,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				}
 				break;
 			case INTERVALLO_CONSEGNA_COMPLETATA:
+				almenoUnaConsegnaCompletata=true;
 				if(StringUtils.isEmpty(codiceRisposta2xxValueMin)) {
 					this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,
 							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_2XX));
@@ -10891,6 +11105,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			TipoGestioneNotificaTrasporto gestioneTrasporto3xx = TipoGestioneNotificaTrasporto.toEnumConstant(codiceRisposta3xx);
 			switch(gestioneTrasporto3xx) {
 			case CODICI_CONSEGNA_COMPLETATA:
+				almenoUnaConsegnaCompletata=true;
 				if(StringUtils.isEmpty(codiceRisposta3xxValue)) {
 					this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,
 							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_3XX));
@@ -10923,6 +11138,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				break;
 			case INTERVALLO_CONSEGNA_COMPLETATA:
+				almenoUnaConsegnaCompletata=true;
 				if(StringUtils.isEmpty(codiceRisposta3xxValueMin)) {
 					this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,
 							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_3XX));
@@ -10965,6 +11181,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			TipoGestioneNotificaTrasporto gestioneTrasporto4xx = TipoGestioneNotificaTrasporto.toEnumConstant(codiceRisposta4xx);
 			switch(gestioneTrasporto4xx) {
 			case CODICI_CONSEGNA_COMPLETATA:
+				almenoUnaConsegnaCompletata=true;
 				if(StringUtils.isEmpty(codiceRisposta4xxValue)) {
 					this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,
 							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_4XX));
@@ -10997,6 +11214,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				break;
 			case INTERVALLO_CONSEGNA_COMPLETATA:
+				almenoUnaConsegnaCompletata=true;
 				if(StringUtils.isEmpty(codiceRisposta4xxValueMin)) {
 					this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,
 							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_4XX));
@@ -11038,6 +11256,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			TipoGestioneNotificaTrasporto gestioneTrasporto5xx = TipoGestioneNotificaTrasporto.toEnumConstant(codiceRisposta5xx);
 			switch(gestioneTrasporto5xx) {
 			case CODICI_CONSEGNA_COMPLETATA:
+				almenoUnaConsegnaCompletata=true;
 				if(StringUtils.isEmpty(codiceRisposta5xxValue)) {
 					this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,
 							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_5XX));
@@ -11070,6 +11289,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				break;
 			case INTERVALLO_CONSEGNA_COMPLETATA:
+				almenoUnaConsegnaCompletata=true;
 				if(StringUtils.isEmpty(codiceRisposta5xxValueMin)) {
 					this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,
 							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_5XX));
@@ -11110,9 +11330,12 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			TipoGestioneNotificaFault fault = TipoGestioneNotificaFault.toEnumConstant(gestioneFault);
 			switch(fault) {
 			case CONSEGNA_COMPLETATA:
+				almenoUnaConsegnaCompletata=true;
+				break;
 			case CONSEGNA_FALLITA:
 				break;
 			case CUSTOM:
+				almenoUnaConsegnaCompletata=true;
 				// almeno un elemento obbligatorio
 				if(StringUtils.isEmpty(faultCode) && StringUtils.isEmpty(faultActor) && StringUtils.isEmpty(faultMessage)) {
 					StringBuilder sb = new StringBuilder();
@@ -11174,7 +11397,23 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				break;
 			}
 			
-			
+			if(!almenoUnaConsegnaCompletata) {
+				
+				StringBuilder sb = new StringBuilder();
+				sb.append(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_2XX);
+				sb.append(", ");
+				sb.append(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_3XX);
+				sb.append(", ");
+				sb.append(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_4XX);
+				sb.append(", ");
+				sb.append(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_5XX);
+				sb.append(", ");
+				sb.append(serviceBinding.equals(ServiceBinding.SOAP) ? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_SOAP_FAULT : 
+					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PROBLEM_DETAIL);
+				
+				this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_ALMENO_UNA_CONSEGNA_COMPLETATA_XX,	sb.toString()));
+				return false;
+			}
 			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
