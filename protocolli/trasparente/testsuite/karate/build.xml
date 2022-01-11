@@ -303,7 +303,7 @@
 									<equals arg1="${karateparams}" arg2=""/>
 									<then>
 										<junit printsummary="yes" haltonfailure="${haltOnFailure}" showoutput="${showOutput}" fork="yes" forkmode="once">
-											
+											<!-- Caso in cui vengono specificati package test e method !-->
 											<!-- <jvmarg value="-Xdebug" /> -->
 											<!-- <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8787" /> -->
 

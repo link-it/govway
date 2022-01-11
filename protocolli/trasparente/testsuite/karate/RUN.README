@@ -105,6 +105,18 @@
 - HSM per TLS Keystore. Seguire le indicazioni descritte in PKCS11.README
   Poi 'cp tools/utils/src/org/openspcoop2/utils/certificate/test/govway_test_hsm.properties  /etc/govway/hsm.properties'
 
+
+#### PARAMETRI TESTSUITE CONNETTORI-MULTIPLI ####
+ - Impostare in govway_local.properties:
+	 	connettoriMultipli.consegnaCondizionale.stessoFiltro=true
+   In modo che la console consenta di assegnare più volte lo stesso filtro a connettori diversi e rilevare l'errore a runtime durante una richiesta
+
+- In src/testsuite.properties
+	 connettori.load_balancer.numero_richieste_random=50
+	 Per far si che venga generata una distribuzione casuale accettabile dei connettori scelti dalle politiche casuali
+
+
+
 Per eseguire i test:
 	ant run_test
 

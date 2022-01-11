@@ -5,16 +5,21 @@ import static org.junit.Assert.assertNotEquals;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpResponse;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 // Query Freemarker Template: ${query["govway-testsuite-id_connettore_request"]}
 // Query Template: ${query:govway-testsuite-id_connettore_request}
@@ -46,6 +51,8 @@ public class Common {
 			Common.CONNETTORE_1, 
 			Common.CONNETTORE_2,
 			Common.CONNETTORE_3);
+	
+	public static final Set<String> setConnettoriAbilitati = new HashSet<>(connettoriAbilitati);
 	
 	
 	public static void printMap(Map<String, Integer> howManys) {
@@ -110,6 +117,58 @@ public class Common {
 		}
 
 		return ret;
+	}
+	
+	
+	/**
+	 * Esegue `count` richieste `request` parallele, alloca soglia_richieste_simultanee
+	 * thread concorrenti. Solo da questo differisce dalla
+	 * 	org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.makeParallelRequests
+	 * ma non posso modificarla perchè è appunto usata in test di rate limiting 
+	 * 
+	 */
+	public static Vector<HttpResponse> makeParallelRequests(HttpRequest request, int count) {
+		
+		if (count < 0) {
+			throw new IllegalArgumentException("Request count must be > 0");
+		} else if (count == 0) {
+			return new Vector<>();
+		}
+		
+		int nthreads = Integer.valueOf(System.getProperty("soglia_richieste_simultanee"));
+		var logRateLimiting = ConfigLoader.getLoggerRateLimiting();
+
+		final Vector<HttpResponse> responses = new Vector<>();
+		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nthreads);
+
+		for (int i = 0; i < count; i++) {
+			executor.execute(() -> {
+				try {
+					logRateLimiting.info(request.getMethod() + " " + request.getUrl());
+					responses.add(HttpUtilities.httpInvoke(request));
+					logRateLimiting.info("Richiesta effettuata..");
+				} catch (UtilsException e) {
+					e.printStackTrace();
+					throw new RuntimeException(e);
+				}
+			});
+		}
+		
+		try {
+			executor.shutdown();
+			executor.awaitTermination(20, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			logRateLimiting.error("Le richieste hanno impiegato più di venti secondi!");
+			throw new RuntimeException(e);
+		}
+		
+		logRateLimiting.info("RESPONSES: ");
+		responses.forEach(r -> {
+			logRateLimiting.info("statusCode: " + r.getResultHTTPOperation());
+			logRateLimiting.info("headers: " + r.getHeadersValues());
+		});
+
+		return responses;
 	}
 
 
