@@ -24,8 +24,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.HEADER_CONDIZIONE;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.HEADER_ID_CONNETTORE;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.HEADER_ID_SESSIONE;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.IDSessioni;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.delayRichiesteBackground;
 
 import java.util.ArrayList;
@@ -44,6 +46,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.ConsegnaCondizionaleByNomeTest;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpRequest;
@@ -51,44 +54,46 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
-//Query Freemarker Template: ${query["govway-testsuite-id_sessione_request"]}
-//Query Template: ${query:govway-testsuite-id_sessione_request}
-//Query Velocity Template: $query["govway-testsuite-id_sessione_request"]
-//Query UrlInvocazione: .+govway-testsuite-id_sessione_request=([^&]*).*
-//Query contenuto: $.id_sessione_request
-//Query HeaderHttp: GovWay-TestSuite-ID-Sessione
-//Query ParametroUrl: govway-testsuite-id_sessione_request
-//Query cookie: govway-testsuite-id_sessione_cookie
+
+// TODO: Cookie, prova a fare il test header http utilizzando come header il Cookie o i vari forwarded for.
+// TODO: Anche qui test con valori multipli per lo stesso header,
+//	  	 conflitti fra gli headers appartenenti alla classe XForwardedFor
+// 		 e test con valori mancanti per i null pointers. NOTA: Andrea e tito hanno deciso
+//		 che va bene prendere uno qualunque dei valori\header, faccio comunque il test per verificare
+//		 che uno dei due venga preso
+// TODO: gli health check si potrebbero scrivere tirando su un mock che si chiude da solo dopo 
+//		aver gestito una richiesta.
+
 
 /**
- * La strategia di Load Balancing viene cambiata al cambiare dell'identificazione dell'ID sessione,
- * in modo da coprire più path nel codice lasciando invariato il numero di test.
+ *	La strategia di Load Balancing viene cambiata al cambiare dell'identificazione dell'ID sessione,
+ *	in modo da coprire più path nel codice lasciando invariato il numero di test.
  * 
- * In questi test il ConnettoreRotto è disabilitato di default, in modo da non rallentare
- * l'esecuzione dei test.
+ *	In questi test il ConnettoreRotto è disabilitato di default, in modo da non rallentare
+ *	l'esecuzione dei test.
+ *
+ *  NOTA: Nelle erogazioni della sessione sticky il connettore rotto è disabilitato in modo da
+ *			non far durare troppo e inutilmente i test.
+ *
+ * 	STRUTTURA DEI TEST: tutte richieste in parallelo
+ *	due gruppi di richieste con id sessione impostato,
+ *  un gruppo di richieste senza id sessione impostato e che segue un round robin per i conti propri
+ *	verifico che le richieste con l'id sessione impostato siano finite sullo stesso connettore.
+ *	verifico la politica di bilanciamento del carico per l'altro gruppo di richieste
+ * 
+ *  Query Freemarker Template: ${query["govway-testsuite-id_sessione_request"]}
+ *  Query Template: ${query:govway-testsuite-id_sessione_request}
+ *	Query Velocity Template: $query["govway-testsuite-id_sessione_request"]
+ *	Query UrlInvocazione: .+govway-testsuite-id_sessione_request=([^&]*).*
+ *	Query contenuto: $.id_sessione_request
+ *	Query HeaderHttp: GovWay-TestSuite-ID-Sessione
+ *	Query ParametroUrl: govway-testsuite-id_sessione_request
+ *	Query cookie: govway-testsuite-id_sessione_cookie
  * 
  * @author froggo
  *
  */
 
-
-// NOTA: Nelle erogazioni della sessione sticky il connettore rotto è disabilitato in modo da
-//			non far durare troppo e inutilmente i test.
-//
-// TODO: Aggiungere in ogni caso nei check, la capacità di controllare anche le richieste finite ad
-//	un connettore rotto.
-//
-// TODO: Cookie, prova a fare il test header http utilizzando come header il Cookie o i vari forwarded for.
-// 	Struttura dei test: tutte richieste in parallelo:
-//	due gruppi di richieste con id sessione impostato,
-//  un gruppo di richieste senza id sessione impostato e che segue un round robin per i conti propri
-//	verifico che le richieste con l'id sessione impostato siano finite sullo stesso connettore.
-//	verifico la politica di bilanciamento del carico per l'altro gruppo di richieste
-// TODO: Anche qui test con valori multipli per lo stesso header,
-//			conflitti fra gli headers appartenenti alla classe XForwardedFor
-// 			e test con valori mancanti per i null pointers. NOTA: Andrea e tito hanno deciso
-//			che va bene prendere uno qualunque dei valori\header, faccio comunque il test per verificare
-//			che uno dei due venga preso
 public class SessioneStickyTest extends ConfigLoader {
 
 	// Costruisce richieste che non portano con se alcun ID Sessione e che quindi 
@@ -205,8 +210,8 @@ public class SessioneStickyTest extends ConfigLoader {
 		final String erogazione = "LoadBalanceSessioneStickyHeaderHttp";
 		
 		List<HttpRequest> richieste = Arrays.asList(
-				buildRequest_HeaderHttp(Common.IDSessioni.get(0), erogazione), 
-				buildRequest_HeaderHttp(Common.IDSessioni.get(1), erogazione),
+				buildRequest_HeaderHttp(IDSessioni.get(0), erogazione), 
+				buildRequest_HeaderHttp(IDSessioni.get(1), erogazione),
 				buildRequest_LoadBalanced(erogazione)
 			);
 
@@ -242,8 +247,8 @@ public class SessioneStickyTest extends ConfigLoader {
 		//	Una richiesta che verrà bilanciata in round robin
 		
 		List<HttpRequest> richieste = new ArrayList<>();
-		richieste.addAll(buildRequests_ForwardedFor(Common.IDSessioni.get(0), forwardingHeaders, erogazione));
-		richieste.addAll(buildRequests_ForwardedFor(Common.IDSessioni.get(1), forwardingHeaders, erogazione));
+		richieste.addAll(buildRequests_ForwardedFor(IDSessioni.get(0), forwardingHeaders, erogazione));
+		richieste.addAll(buildRequests_ForwardedFor(IDSessioni.get(1), forwardingHeaders, erogazione));
 		richieste.add(buildRequest_LoadBalanced(erogazione));
 		
 		Map<Integer, List<HttpResponse>> responsesByIndex = makeRequests(richieste, richieste.size()*3);
@@ -278,8 +283,8 @@ public class SessioneStickyTest extends ConfigLoader {
 		final String erogazione = "LoadBalanceSessioneStickyContenuto";
 		
 		List<HttpRequest> richieste = Arrays.asList(
-				buildRequest_Contenuto(Common.IDSessioni.get(0), erogazione), 
-				buildRequest_Contenuto(Common.IDSessioni.get(1), erogazione),
+				buildRequest_Contenuto(IDSessioni.get(0), erogazione), 
+				buildRequest_Contenuto(IDSessioni.get(1), erogazione),
 				buildRequest_LoadBalanced(erogazione)
 			);
 
@@ -307,8 +312,8 @@ public class SessioneStickyTest extends ConfigLoader {
 		final String erogazione = "LoadBalanceSessioneStickyCookie";
 		
 		List<HttpRequest> richieste = Arrays.asList(
-				buildRequest_Cookie(Common.IDSessioni.get(0), erogazione), 
-				buildRequest_Cookie(Common.IDSessioni.get(1), erogazione),
+				buildRequest_Cookie(IDSessioni.get(0), erogazione), 
+				buildRequest_Cookie(IDSessioni.get(1), erogazione),
 				buildRequest_LoadBalanced(erogazione)
 			);
 
@@ -347,8 +352,8 @@ public class SessioneStickyTest extends ConfigLoader {
 		final String erogazione = "LoadBalanceSessioneStickyFreemarkerTemplate";
 		
 		List<HttpRequest> richieste = Arrays.asList(
-				buildRequest_FreemarkerTemplate(Common.IDSessioni.get(0), erogazione), 
-				buildRequest_FreemarkerTemplate(Common.IDSessioni.get(1), erogazione),
+				buildRequest_FreemarkerTemplate(IDSessioni.get(0), erogazione), 
+				buildRequest_FreemarkerTemplate(IDSessioni.get(1), erogazione),
 				buildRequest_LoadBalanced(erogazione)
 			);
 
@@ -388,8 +393,8 @@ public class SessioneStickyTest extends ConfigLoader {
 		final String erogazione = "LoadBalanceSessioneStickyUrlInvocazione";
 		
 		List<HttpRequest> richieste = Arrays.asList(
-				buildRequest_UrlInvocazione(Common.IDSessioni.get(0), erogazione), 
-				buildRequest_UrlInvocazione(Common.IDSessioni.get(1), erogazione),
+				buildRequest_UrlInvocazione(IDSessioni.get(0), erogazione), 
+				buildRequest_UrlInvocazione(IDSessioni.get(1), erogazione),
 				buildRequest_LoadBalanced(erogazione)
 			);
 
@@ -422,8 +427,8 @@ public class SessioneStickyTest extends ConfigLoader {
 		final String erogazione = "LoadBalanceSessioneStickyTemplate";
 		
 		List<HttpRequest> richieste = Arrays.asList(
-				buildRequest_Template(Common.IDSessioni.get(0), erogazione), 
-				buildRequest_Template(Common.IDSessioni.get(1), erogazione),
+				buildRequest_Template(IDSessioni.get(0), erogazione), 
+				buildRequest_Template(IDSessioni.get(1), erogazione),
 				buildRequest_LoadBalanced(erogazione)
 			);
 
@@ -457,8 +462,8 @@ public class SessioneStickyTest extends ConfigLoader {
 		final String erogazione = "LoadBalanceSessioneStickyParametroUrl";
 		
 		List<HttpRequest> richieste = Arrays.asList(
-				buildRequest_ParametroUrl(Common.IDSessioni.get(0), erogazione), 
-				buildRequest_ParametroUrl(Common.IDSessioni.get(1), erogazione),
+				buildRequest_ParametroUrl(IDSessioni.get(0), erogazione), 
+				buildRequest_ParametroUrl(IDSessioni.get(1), erogazione),
 				buildRequest_LoadBalanced(erogazione)
 			);
 
@@ -495,10 +500,10 @@ public class SessioneStickyTest extends ConfigLoader {
 		final String erogazione = "LoadBalanceSessioneStickyVelocityTemplate";
 		
 		// Lancio le due chiamate bloccanti, devono durare per tutto il test
-		HttpRequest requestBlockingIdSessione1 = buildRequest_VelocityTemplate(Common.IDSessioni.get(0), erogazione);
+		HttpRequest requestBlockingIdSessione1 = buildRequest_VelocityTemplate(IDSessioni.get(0), erogazione);
 		requestBlockingIdSessione1.setUrl(requestBlockingIdSessione1.getUrl()+"&sleep="+Common.durataBloccanteLunga);
 		
-		HttpRequest requestBlockingIdSessione2 = buildRequest_VelocityTemplate(Common.IDSessioni.get(1), erogazione);
+		HttpRequest requestBlockingIdSessione2 = buildRequest_VelocityTemplate(IDSessioni.get(1), erogazione);
 		requestBlockingIdSessione2.setUrl(requestBlockingIdSessione2.getUrl()+"&sleep="+Common.durataBloccanteLunga);
 		
 		var futureResp1 = Utils.makeBackgroundRequest(requestBlockingIdSessione1);
@@ -610,7 +615,7 @@ public class SessioneStickyTest extends ConfigLoader {
 		
 		List<HttpRequest> richieste = Arrays.asList(
 				requestConnettoreRotto,
-				buildRequest_HeaderHttp(Common.IDSessioni.get(1), erogazione),
+				buildRequest_HeaderHttp(IDSessioni.get(1), erogazione),
 				buildRequest_LoadBalanced(erogazione)
 			);
 
@@ -649,21 +654,144 @@ public class SessioneStickyTest extends ConfigLoader {
 		assertNotEquals(null,idSessioneConnettoreRotto);
 		
 	}
-	
-	// Test2 - Lo posso fare solo se tiro su un mock server.
-	
-	// Facciamo andare una richiesta con id sessione e va diciamo sul connettore1
-	// Mi assicuro che la sticky funzioni e mando altre richieste con lo stesso id sessione.
-	// Adesso mando una richiesta con lo stesso id sessione e dico al server echo di non rispondere,
-	//	il connettore verrà escluso dal pool
-	// Rimando una richiesta con il primo id sessione e mi assicuro che vada su un connettore diverso
-	// dal connettore1
 
+	@Test
+	public void healthCheckConsegnaCondizionale() {
+		// TODO dopo l'eventuale fix sul maxAge
+	}
+	
+	
+	private static String findPoolForConnettore(String connettore) {
+		
+		Set<String> toDiscard = Set.of(Common.POOL_LOCALHOST, Common.POOL_ROTTO);
+		
+		for( var poolAndConnettori : Common.connettoriPools.entrySet()) {			
+			if (toDiscard.contains(poolAndConnettori.getKey())) {
+				continue;
+			}			
+			else if (poolAndConnettori.getValue().contains(connettore)) {
+				return poolAndConnettori.getKey();
+			}			
+		}
+		return null;
+	}
 	
 	
 	@Test
+	public void consegnaCondizionaleSemplice() {
+		final String erogazione = "LoadBalanceSessioneStickyConsegnaCondizionaleSempliceHeaderHttp";
+		
+		// Simile al test consegnaCondizionale ma tutte le richieste lavorano
+		// con il filtro.
+		String pool1 = Common.POOL_0;
+		String pool2 = Common.POOL_1;
+		String pool3 = Common.POOL_2;
+		
+		HttpRequest req1 = buildRequest_HeaderHttp(IDSessioni.get(0), erogazione);
+		req1.addHeader(HEADER_CONDIZIONE, Common.filtriPools.get(pool1).get(0));
+		
+		HttpRequest req2 = buildRequest_HeaderHttp(IDSessioni.get(1), erogazione);
+		req2.addHeader(HEADER_CONDIZIONE, Common.filtriPools.get(pool2).get(0));
+		
+		HttpRequest req3 = ConsegnaCondizionaleByNomeTest.buildRequest_HeaderHttpByNome(
+				Common.filtriPools.get(pool3).get(0), erogazione);
+
+		List<HttpRequest> richieste = Arrays.asList(
+				req1, 			// Vanno tutte sullo stesso connettore dell pool1
+				req2,			// Vanno tutte sullo stesso connettore del pool2
+				req3			// Vengono bilanciate in round robin sul connettore del pool3
+			);
+
+		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, richieste.size()*5);
+		
+		checkAllResponsesSameConnettore(responsesByKind.get(0));
+		checkAllResponsesSameConnettore(responsesByKind.get(1));
+
+		Set<String> connettoriBilanciati = new HashSet<>(Common.connettoriPools.get(pool3));
+		connettoriBilanciati.remove(Common.CONNETTORE_DISABILITATO);
+		
+		checkRoundRobin(responsesByKind.get(2), connettoriBilanciati);	
+	}
+	
+	@Test
 	public void consegnaCondizionale() {
-		// TODO test funzionalità semplice
+		
+		// Sulla erogazione l'identificazione condizione fallita è impostata in modo
+		// da utilizzare tutti i connettori possibili.
+		// In questo modo posso in questo testo posso fare richieste senza l'id condizione
+		// impostato.
+		
+		final String erogazione = "LoadBalanceSessioneStickyConsegnaCondizionaleHeaderHttp";
+		
+		// Prima faccio avvenire delle richieste solo con l'id sessione per sapere in che pool
+		// sono finiti i connettori sticky.
+		HttpRequest req1 = buildRequest_HeaderHttp(IDSessioni.get(0), erogazione);
+		HttpRequest req2 = buildRequest_HeaderHttp(IDSessioni.get(1), erogazione);
+		
+		var resp1 = Utils.makeRequest(req1);
+		var resp2 = Utils.makeRequest(req2);
+		
+		String connettore1 = resp1.getHeaderFirstValue(HEADER_ID_CONNETTORE); 
+		String connettore2 = resp2.getHeaderFirstValue(HEADER_ID_CONNETTORE);
+		
+		// Siamo in round robin quindi i connettori devono essere diversi.
+		assertNotEquals(null, connettore1);
+		assertNotEquals(connettore1, connettore2);
+		
+		String pool1 = findPoolForConnettore(connettore1);
+		String pool2 = findPoolForConnettore(connettore2);
+		
+		Set<String> poolCandidates = new HashSet<>(Common.pools);
+		poolCandidates.remove(pool1);
+		poolCandidates.remove(pool2);
+		String pool3 = poolCandidates.stream().findAny().get();
+
+		// Successivamente ripeto le richieste con l'id sessione più filtro 
+		// insieme ad altre richieste senza id sessione e con filtro
+		// ed altre richieste senza id sessione e senza filtro...
+		req1.addHeader(HEADER_CONDIZIONE, Common.filtriPools.get(pool1).get(0));
+		req2.addHeader(HEADER_CONDIZIONE, Common.filtriPools.get(pool2).get(0));
+		
+		HttpRequest requestSoloFiltro = ConsegnaCondizionaleByNomeTest.buildRequest_HeaderHttpByNome(pool3, erogazione);
+		HttpRequest requestSoloIdSessione = buildRequest_HeaderHttp("IDSessioneDiverso", erogazione);
+		HttpRequest requestSemplice = buildRequest_LoadBalanced(erogazione);
+				
+		List<HttpRequest> richieste = Arrays.asList(
+				req1, 		// Va nel poolX, senza attivare il load balancing perchè l'id sessione è impostato
+				req2,		// Va nel poolY, senza attivare il load balancing perchè l'id sessione è impostato
+				requestSoloIdSessione, // Attiva una sola volta il load balancing su TUTTI i connettori perchè l'id sessione è impostato ma è nuovo
+				requestSoloFiltro, // Va nel PoolW che è diverso da tutti gli altri perchè scelto ad hoc
+				requestSemplice // Va nel pool di tutti i connettori
+			);
+
+		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, richieste.size()*5);
+
+		// Tests:
+		// Le prime richieste vanno tutte sullo stesso connettore1
+		assertEquals(connettore1, responsesByKind.get(0).get(0).getHeaderFirstValue(HEADER_ID_CONNETTORE));
+		checkAllResponsesSameConnettore(responsesByKind.get(0));
+		
+		// Le seconde richieste vanno tutte sullo stesso connettore2
+		assertEquals(connettore2, responsesByKind.get(1).get(0).getHeaderFirstValue(HEADER_ID_CONNETTORE));
+		checkAllResponsesSameConnettore(responsesByKind.get(1));
+		
+		// Le terze richieste vanno tutte sullo stesso connettore X
+		checkAllResponsesSameConnettore(responsesByKind.get(2));
+
+		// Le quarte richieste vanno sul poolW diverso da tutti e con un round robin suo
+		checkRoundRobin(responsesByKind.get(3), Common.setConnettoriAbilitati);
+		
+		// Le quinte risposte vanno sul pool di tutti i connettori e hanno un round robin loro
+		
+		// Tra le richieste\risposte che sono state bilanciate vanno considerate
+		// anche le prime richieste che portano con se un id sessione ancora mai visto prima.
+		// Le risposte che qui vado a pescare non sono necessariamente corrispondenti a tali richieste
+		// ma sono utili ai fini del conteggio.
+		var balancedResponses = responsesByKind.get(4);
+		balancedResponses.add(resp1);
+		balancedResponses.add(resp2);
+		balancedResponses.add(responsesByKind.get(2).get(0));
+		checkRoundRobin(balancedResponses, Common.setConnettoriAbilitati);
 	}
 	
 	
@@ -672,8 +800,32 @@ public class SessioneStickyTest extends ConfigLoader {
 		// TODO: La consegna condizionale dice di andare su un pool di connettori
 		//		ma l'id sessione dice di andare su un altro.
 		
-		// TODO: La consegna condizionale identifica un set di connettori ma la sessione sticky
-		//		butta la richiesta su un connettore fuori da questo pool
+		final String erogazione = "LoadBalanceSessioneStickyConsegnaCondizionaleConflitti";
+		
+		// Simile al test consegnaCondizionale ma tutte le richieste lavorano
+		// con il filtro.
+		String pool1 = Common.POOL_0;
+		String pool2 = Common.POOL_2;
+		
+		// Prima faccio avvenire una richiesta solo con l'id sessione per creare
+		// la sessione. 
+		HttpRequest req1 = buildRequest_HeaderHttp(IDSessioni.get(0), erogazione);
+		req1.addHeader(HEADER_CONDIZIONE, Common.filtriPools.get(pool1).get(0));
+
+		var resp1 = Utils.makeRequest(req1);
+		
+		String connettore1 = resp1.getHeaderFirstValue(HEADER_ID_CONNETTORE); 
+		
+		// Poi faccio delle richieste con un pool disgiunto dal POOL_0 ma stesso id sessione 
+		HttpRequest requestConflict = buildRequest_HeaderHttp(IDSessioni.get(0), erogazione);
+		req1.addHeader(HEADER_CONDIZIONE, Common.filtriPools.get(pool1).get(0));
+		
+		var responseConflict = Utils.makeRequest(requestConflict);
+		
+		assertNotEquals(200, resp1.getResultHTTPOperation());
+
+		
+
 	}
 	
 	

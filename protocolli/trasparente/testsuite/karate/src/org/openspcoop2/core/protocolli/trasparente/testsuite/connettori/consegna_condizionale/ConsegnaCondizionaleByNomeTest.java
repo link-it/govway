@@ -71,7 +71,7 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	
-	static HttpRequest buildRequest_HeaderHttpByNome(String connettore, String erogazione) {
+	public static HttpRequest buildRequest_HeaderHttpByNome(String connettore, String erogazione) {
 		HttpRequest request = new HttpRequest();
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-header-http"

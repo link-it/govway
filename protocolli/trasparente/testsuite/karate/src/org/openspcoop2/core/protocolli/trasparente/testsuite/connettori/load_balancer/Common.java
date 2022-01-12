@@ -37,6 +37,11 @@ public class Common {
 	public static final String CONNETTORE_3 = "Connettore3";
 	public static final String CONNETTORE_ROTTO = "ConnettoreRotto";
 	public static final String CONNETTORE_DISABILITATO = "ConnettoreDisabilitato";
+	public static final String POOL_0 = "Pool0";
+	public static final String POOL_1 = "Pool1";
+	public static final String POOL_2 = "Pool2";
+	public static final String POOL_ROTTO = "PoolRotto";
+	public static final String POOL_LOCALHOST = "PoolLocalhost";
 
 	public static final String ID_CONNETTORE_REPLY_PREFIX = "GovWay-TestSuite-";
 	
@@ -75,12 +80,31 @@ public class Common {
 				CONNETTORE_3, 3);
 
 	public static final List<String> connettoriAbilitati = Arrays
-			.asList(Common.CONNETTORE_0,
-					Common.CONNETTORE_1, 
-					Common.CONNETTORE_2,
-					Common.CONNETTORE_3);
+			.asList(CONNETTORE_0,
+					CONNETTORE_1, 
+					CONNETTORE_2,
+					CONNETTORE_3);
 	
 	public static final Set<String> setConnettoriAbilitati = new HashSet<>(connettoriAbilitati);
+	
+	
+	public static Map<String,List<String>> filtriPools = Map
+			.of(POOL_0, Arrays.asList("Pool0-Filtro0", "Pool0-Filtro1"),
+				POOL_1, Arrays.asList("Pool1-Filtro0", "Pool1-Filtro1"),
+				POOL_2, Arrays.asList("Pool2-Filtro0", "Pool2-Filtro1"));
+				//POOL_ROTTO, Arrays.asList("PoolRotto-Filtro0", "PoolRotto-Filtro1"));
+
+
+	public static List<String> pools = Arrays
+		.asList(POOL_0, POOL_1, POOL_2);
+	
+
+	public static Map<String,List<String>> connettoriPools = Map
+		.of(POOL_0, Arrays.asList(CONNETTORE_0,CONNETTORE_1,CONNETTORE_2, CONNETTORE_DISABILITATO),
+			POOL_1, Arrays.asList(CONNETTORE_1,CONNETTORE_2,CONNETTORE_3, CONNETTORE_DISABILITATO),
+			POOL_2, Arrays.asList(CONNETTORE_2,CONNETTORE_3,CONNETTORE_0, CONNETTORE_DISABILITATO),
+			POOL_ROTTO, Arrays.asList(CONNETTORE_0,CONNETTORE_1,CONNETTORE_2, CONNETTORE_ROTTO, CONNETTORE_DISABILITATO),
+			POOL_LOCALHOST, Arrays.asList(CONNETTORE_0,CONNETTORE_1,CONNETTORE_2, CONNETTORE_DISABILITATO));
 
 	
 	public static void printMap(Map<String, Integer> howManys) {
@@ -91,6 +115,7 @@ public class Common {
 			logger.info(e.getKey() + ": " + e.getValue());
 		}
 	}
+	
 	
 	// TODO: Forse questi posso rimetterli dentro ConsegnaCondizionaleFiltroNome
 	public static void matchResponsesWithConnettori(List<String> connettori,
@@ -222,5 +247,4 @@ public class Common {
 		}		
 	}
 
-	
 }

@@ -23,14 +23,7 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_ba
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.ConsegnaCondizionaleByFiltroTest.buildRequests_HeaderHttp;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_0;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_1;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_2;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_3;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_DISABILITATO;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_ROTTO;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,9 +51,8 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  * TODO: Devo fare anche identificazione condizione fallita e nessun connettore utilizzabile?
  * 		SI.
  * TODO: prefisso e suffisso
- * TODO: Dire ad andrea che qui la strategia usata è sempre round robin, se vuole la si può modificare
- * 		e usare una strategia diversa per ogni tipo di consegna condizionale.
- * 
+
+ * TODO: Test regole
  * La Consegna Condizionale sul Load Balancer identifica l'insieme di connettori
  * che parteciperanno alla strategia di load balancing.
  * 
@@ -89,39 +81,12 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 	
-	public static final String POOL_0 = "Pool0";
-	public static final String POOL_1 = "Pool1";
-	public static final String POOL_2 = "Pool2";
-	public static final String POOL_ROTTO = "PoolRotto";
-	public static final String POOL_LOCALHOST = "PoolLocalhost";
-	
-	public static List<String> pools = Arrays.asList(
-			POOL_0, POOL_1, POOL_2	// Non includo il pool rotto per velocizzare i test
-			);
-	
-	public static Map<String,List<String>> connettoriPools = Map.of(
-			POOL_0, Arrays.asList(CONNETTORE_0,CONNETTORE_1,CONNETTORE_2, CONNETTORE_DISABILITATO),
-			POOL_1, Arrays.asList(CONNETTORE_1,CONNETTORE_2,CONNETTORE_3, CONNETTORE_DISABILITATO),
-			POOL_2, Arrays.asList(CONNETTORE_2,CONNETTORE_3,CONNETTORE_0, CONNETTORE_DISABILITATO),
-			POOL_ROTTO, Arrays.asList(CONNETTORE_0,CONNETTORE_1,CONNETTORE_2, CONNETTORE_ROTTO, CONNETTORE_DISABILITATO),
-			POOL_LOCALHOST, Arrays.asList(CONNETTORE_0,CONNETTORE_1,CONNETTORE_2, CONNETTORE_DISABILITATO)
-		);
-	
-	public static Map<String,List<String>> filtriPools = Map.of(
-			POOL_0, Arrays.asList("Pool0-Filtro0", "Pool0-Filtro1"),
-			POOL_1, Arrays.asList("Pool1-Filtro0", "Pool1-Filtro1"),
-			POOL_2, Arrays.asList("Pool2-Filtro0", "Pool2-Filtro1")
-	//		POOL_ROTTO, Arrays.asList("PoolRotto-Filtro0", "PoolRotto-Filtro1")
-		);
-			
-	
-	
 	@Test
 	public void headerHttp() {
 		final String erogazione = "LoadBalanceConsegnaCondizionaleHeaderHttp";
 		
 		Map<String,List<HttpRequest>> requestsByPool = new HashMap<>();
-		for (var e : filtriPools.entrySet()) {
+		for (var e : Common.filtriPools.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
 					buildRequests_HeaderHttp(e.getValue(), erogazione)
@@ -138,7 +103,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		final String erogazione = "LoadBalanceConsegnaCondizionaleUrlInvocazione";
 		
 		Map<String,List<HttpRequest>> requestsByPool = new HashMap<>();
-		for (var e : filtriPools.entrySet()) {
+		for (var e : Common.filtriPools.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
 					ConsegnaCondizionaleByFiltroTest.buildRequests_UrlInvocazione(e.getValue(), erogazione)
@@ -155,7 +120,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		final String erogazione = "LoadBalanceConsegnaCondizionaleParametroUrl";
 		
 		Map<String,List<HttpRequest>> requestsByPool = new HashMap<>();
-		for (var e : filtriPools.entrySet()) {
+		for (var e : Common.filtriPools.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
 					ConsegnaCondizionaleByFiltroTest.buildRequests_ParametroUrl(e.getValue(), erogazione)
@@ -172,7 +137,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		final String erogazione = "LoadBalanceConsegnaCondizionaleContenuto";
 
 		Map<String,List<HttpRequest>> requestsByPool = new HashMap<>();
-		for (var e : filtriPools.entrySet()) {
+		for (var e : Common.filtriPools.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
 					ConsegnaCondizionaleByFiltroTest.buildRequests_Contenuto(e.getValue(), erogazione)
@@ -190,7 +155,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		var forwardingHeaders = HttpUtilities.getClientAddressHeaders();
 
 		Map<String,List<HttpRequest>> requestsByPool = new HashMap<>();
-		for (var e : filtriPools.entrySet()) {
+		for (var e : Common.filtriPools.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
 					ConsegnaCondizionaleByFiltroTest.buildRequests_ForwardedFor(e.getValue(), forwardingHeaders, erogazione)
@@ -217,7 +182,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		
 		var responses = Utils.makeParallelRequests(request, 15);
 		
-		checkResponses(Map.of(POOL_LOCALHOST, responses));
+		checkResponses(Map.of(Common.POOL_LOCALHOST, responses));
 	}
 	
 	
@@ -226,7 +191,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		final String erogazione = "LoadBalanceConsegnaCondizionaleTemplate";
 		
 		Map<String,List<HttpRequest>> requestsByPool = new HashMap<>();
-		for (var e : filtriPools.entrySet()) {
+		for (var e : Common.filtriPools.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
 					ConsegnaCondizionaleByFiltroTest.buildRequests_Template(e.getValue(), erogazione)
@@ -243,7 +208,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		final String erogazione = "LoadBalanceConsegnaCondizionaleFreemarkerTemplate";
 		
 		Map<String,List<HttpRequest>> requestsByPool = new HashMap<>();
-		for (var e : filtriPools.entrySet()) {
+		for (var e : Common.filtriPools.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
 					ConsegnaCondizionaleByFiltroTest.buildRequests_FreemarkerTemplate(e.getValue(), erogazione)
@@ -260,7 +225,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		final String erogazione = "LoadBalanceConsegnaCondizionaleVelocityTemplate";
 		
 		Map<String,List<HttpRequest>> requestsByPool = new HashMap<>();
-		for (var e : filtriPools.entrySet()) {
+		for (var e : Common.filtriPools.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
 					ConsegnaCondizionaleByFiltroTest.buildRequests_VelocityTemplate(e.getValue(), erogazione)
@@ -302,10 +267,10 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 	 * @param responsesByPool
 	 */
 
-	private static void checkResponses(Map<String, List<HttpResponse>> responsesByPool) {
+	static void checkResponses(Map<String, List<HttpResponse>> responsesByPool) {
 		for(String pool : responsesByPool.keySet()) {
 			List<HttpResponse> responses = responsesByPool.get(pool);
-			List<String> connettoriPool = connettoriPools.get(pool);
+			List<String> connettoriPool = Common.connettoriPools.get(pool);
 
 			// Verifico che le richieste siano arrivate ai pools adeguati
 			for (var resp : responses) {
@@ -341,7 +306,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 	}
 
 
-	private Map<String, List<HttpResponse>> makeBatchedRequests(Map<String, List<HttpRequest>> requestsByPool) {
+	static Map<String, List<HttpResponse>> makeBatchedRequests(Map<String, List<HttpRequest>> requestsByPool) {
 		Map<String, List<HttpResponse>> responsesByPool = new ConcurrentHashMap<>();
 		for(var e : requestsByPool.keySet()) {
 			responsesByPool.put(e, new Vector<HttpResponse>());
@@ -356,7 +321,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		int npools = requestsByPool.keySet().size();
 		
 		while(i<nthreads) {
-			String pool = pools.get(pool_index%npools);
+			String pool = Common.pools.get(pool_index%npools);
 			var requests = requestsByPool.get(pool);
 			int req_index = i % 2;
 			
