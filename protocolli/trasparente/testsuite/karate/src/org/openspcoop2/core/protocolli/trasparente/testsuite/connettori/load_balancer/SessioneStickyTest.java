@@ -506,7 +506,8 @@ public class SessioneStickyTest extends ConfigLoader {
 		var futureResp2 = Utils.makeBackgroundRequest(requestBlockingIdSessione2);
 
 		// Faccio una serie di richieste con id sessione impostato e verifico che vadano tutte nello stesso connettore
-		List<HttpRequest> richieste = Arrays.asList(
+		// Per il debug di andrea commento queste richieste qui. TODO: decommentare sotto dopo il fix di andrea
+		/*List<HttpRequest> richieste = Arrays.asList(
 				buildRequest_VelocityTemplate(Common.IDSessioni.get(0), erogazione), 
 				buildRequest_VelocityTemplate(Common.IDSessioni.get(1), erogazione)				
 			);
@@ -521,7 +522,7 @@ public class SessioneStickyTest extends ConfigLoader {
 		assertNotEquals(connettoreSessione0, connettoreSessione1);
 		
 		getLoggerCore().info("Connettore sessione 0: " + connettoreSessione0);
-		getLoggerCore().info("Connettore sessione 1: " + connettoreSessione1);
+		getLoggerCore().info("Connettore sessione 1: " + connettoreSessione1);*/
 		
 		assertFalse(futureResp1.isDone() || futureResp2.isDone());
 		
@@ -537,6 +538,7 @@ public class SessioneStickyTest extends ConfigLoader {
 		var howManys = Common.contaConnettoriUtilizzati(balancedResponses);
 		Common.printMap(howManys);
 		for (var connettore : howManys.keySet()) {
+			// TODO: Qui fallisce.
 			assertEquals(Integer.valueOf(1), howManys.get(connettore));
 		}
 		
@@ -548,8 +550,8 @@ public class SessioneStickyTest extends ConfigLoader {
 		var responseIdSessione0 = futureResp1.get();
 		var responseIdSessione1 = futureResp2.get();
 		
-		assertEquals(connettoreSessione0, responseIdSessione0.getHeaderFirstValue(HEADER_ID_CONNETTORE));
-		assertEquals(connettoreSessione1, responseIdSessione1.getHeaderFirstValue(HEADER_ID_CONNETTORE));
+	/*	assertEquals(connettoreSessione0, responseIdSessione0.getHeaderFirstValue(HEADER_ID_CONNETTORE)); TODO: Decommentare dopo il fix di andrea
+		assertEquals(connettoreSessione1, responseIdSessione1.getHeaderFirstValue(HEADER_ID_CONNETTORE));*/
 		
 	}
 	

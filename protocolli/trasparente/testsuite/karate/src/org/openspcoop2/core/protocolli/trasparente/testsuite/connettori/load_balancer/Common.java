@@ -50,7 +50,7 @@ public class Common {
 	public static final int durataBloccante = Integer
 			.valueOf(System.getProperty("connettori.load_balancer.least_connections.durata_bloccante"));
 
-	public static final int durataBloccanteLunga = durataBloccante + 1; 	// TODO: Il +1 diventa una proprietà
+	public static final int durataBloccanteLunga = durataBloccante + 1500; 	// TODO: Il +1 diventa una proprietà
 	
 	public static final int delayRichiesteBackground = Integer
 			.valueOf(System.getProperty("connettori.load_balancer.least_connections.delay_richieste_background"));
