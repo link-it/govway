@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.Vector;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -29,38 +30,67 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 // Query HeaderHttp: GovWay-TestSuite-id_connettore
 
 public class Common {
+	
 	public static final String CONNETTORE_0 = "Connettore0";
 	public static final String CONNETTORE_1 = "Connettore1";
 	public static final String CONNETTORE_2 = "Connettore2";
 	public static final String CONNETTORE_3 = "Connettore3";
 	public static final String CONNETTORE_ROTTO = "ConnettoreRotto";
 	public static final String CONNETTORE_DISABILITATO = "ConnettoreDisabilitato";
-	public static final String HEADER_CONDIZIONE = "GovWay-TestSuite-Connettore";
 
 	public static final String ID_CONNETTORE_REPLY_PREFIX = "GovWay-TestSuite-";
+	
 	public static final String HEADER_ID_CONNETTORE = ID_CONNETTORE_REPLY_PREFIX + "id_connettore";
+	
+	public static final String HEADER_ID_SESSIONE = ID_CONNETTORE_REPLY_PREFIX + "ID-Sessione";
+	
+	public static final String HEADER_CONDIZIONE = ID_CONNETTORE_REPLY_PREFIX+"Connettore";
+
 
 	public static final int durataBloccante = Integer
 			.valueOf(System.getProperty("connettori.load_balancer.least_connections.durata_bloccante"));
 
+	public static final int durataBloccanteLunga = durataBloccante + 1; 	// TODO: Il +1 diventa una proprietà
+	
 	public static final int delayRichiesteBackground = Integer
 			.valueOf(System.getProperty("connettori.load_balancer.least_connections.delay_richieste_background"));
+	
+	public static final int richiesteTestRandom = Integer
+			.valueOf(System.getProperty("connettori.load_balancer.numero_richieste_random"));
+	
+	public static final int maxAge = Integer
+			.valueOf(System.getProperty("connettori.load_balancer.sessione_sticky.max_age"));
+	
+	public static final int richiesteParallele = Integer
+			.valueOf(System.getProperty("soglia_richieste_simultanee"));
+	
+	public static final List<String> IDSessioni = Arrays
+			.asList(UUID.randomUUID().toString(),
+					UUID.randomUUID().toString());
+	
+	public static final Map<String,Integer> pesiConnettoriStandard = Map
+			.of(CONNETTORE_0, 1,
+				CONNETTORE_1, 1,
+				CONNETTORE_2, 2,
+				CONNETTORE_3, 3);
 
-	public static final List<String> connettoriAbilitati = Arrays.asList(
-			Common.CONNETTORE_0,
-			Common.CONNETTORE_1, 
-			Common.CONNETTORE_2,
-			Common.CONNETTORE_3);
+	public static final List<String> connettoriAbilitati = Arrays
+			.asList(Common.CONNETTORE_0,
+					Common.CONNETTORE_1, 
+					Common.CONNETTORE_2,
+					Common.CONNETTORE_3);
 	
 	public static final Set<String> setConnettoriAbilitati = new HashSet<>(connettoriAbilitati);
-	
+
 	
 	public static void printMap(Map<String, Integer> howManys) {
+		var logger = ConfigLoader.getLoggerCore();
+		
+		logger.info("Map di connettori: ");
 		for (var e : howManys.entrySet()) {
-			System.out.println(e.getKey() + ": " + e.getValue());
+			logger.info(e.getKey() + ": " + e.getValue());
 		}
 	}
-
 	
 	// TODO: Forse questi posso rimetterli dentro ConsegnaCondizionaleFiltroNome
 	public static void matchResponsesWithConnettori(List<String> connettori,

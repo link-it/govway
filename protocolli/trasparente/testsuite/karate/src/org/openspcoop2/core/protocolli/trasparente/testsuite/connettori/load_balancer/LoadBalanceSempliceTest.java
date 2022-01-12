@@ -381,8 +381,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		// Occupo Quattro connettori, ne deve restare libero uno solo
 		var futureBlockingResponses = Utils.makeBackgroundRequests(requestBlocking, 4, delayRichiesteBackground);
 		
-		Vector<HttpResponse> responses = new Vector<>();
-		responses = Utils.awaitResponses(futureBlockingResponses);
+		Vector<HttpResponse> responses = Utils.awaitResponses(futureBlockingResponses);
 		Map<String, Integer> howManys = Common.contaConnettoriUtilizzati(responses);
 		
 		assertEquals(4, howManys.keySet().size());
