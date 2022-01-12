@@ -25,6 +25,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.HEADER_ID_CONNETTORE;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.HEADER_ID_SESSIONE;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.delayRichiesteBackground;
 
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -105,7 +107,7 @@ public class SessioneStickyTest extends ConfigLoader {
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-header-http"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
-		request.addHeader(Common.HEADER_ID_SESSIONE, IDSessione);
+		request.addHeader(HEADER_ID_SESSIONE, IDSessione);
 		return request;
 	}
 	
@@ -575,13 +577,88 @@ public class SessioneStickyTest extends ConfigLoader {
 		
 	}
 	
-
-	
 	
 	@Test
 	public void healthCheck() {
-		// TODO
+		// Forziamo una richiesta con id sessione ad andare verso il connettore rotto.
+		// Ci assicuriamo che nelle prossime richieste con lo stesso id sessione, queste
+		// vengano instradate ad un altro connettore.
+		
+		// TODO: Non funziona il passive Health Check.
+		final String erogazione = "LoadBalanceSessioneStickyHealthCheckHeaderHttp";
+		
+		var idSessioni = Arrays.asList("a", "b", "c", "d", "e");
+		List<HttpRequest> richiesteSonda = idSessioni.stream()
+				.map( idSessione -> buildRequest_HeaderHttp(idSessione, erogazione))
+				.collect(Collectors.toList());
+		
+		String idSessioneConnettoreRotto = null;
+		
+		for(var request : richiesteSonda) {
+			HttpResponse response = Utils.makeRequest(request);
+			if (response.getResultHTTPOperation() == 200) {
+				assertNotEquals(null,response.getHeaderFirstValue(HEADER_ID_CONNETTORE));
+			} else {
+				assertEquals(null, idSessioneConnettoreRotto);	// Un solo connettore rotto
+				idSessioneConnettoreRotto = request.getHeaderFirstValue(HEADER_ID_SESSIONE);
+			}
+		}
+		assertNotEquals(null,idSessioneConnettoreRotto);
+		
+		// Questa richiesta adesso deve essere instradata ad un connettore buono
+		HttpRequest requestConnettoreRotto = buildRequest_HeaderHttp(idSessioneConnettoreRotto, erogazione);
+		
+		List<HttpRequest> richieste = Arrays.asList(
+				requestConnettoreRotto,
+				buildRequest_HeaderHttp(Common.IDSessioni.get(1), erogazione),
+				buildRequest_LoadBalanced(erogazione)
+			);
+
+		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, Common.richiesteParallele);
+		
+		// Tutte le richieste con lo stesso id sessione finiscono
+		// sullo stesso connettore.
+		checkAllResponsesSameConnettore(responsesByKind.get(0));
+		checkAllResponsesSameConnettore(responsesByKind.get(1));
+		
+		// Tra le richieste\risposte che sono state bilanciate vanno considerate
+		// anche le prime richieste che portano con se un id sessione ancora mai visto prima.
+		// Le risposte che qui vado a pescare non sono necessariamente corrispondenti a tali richieste
+		// ma sono utili ai fini del conteggio.
+		var balancedResponses = responsesByKind.get(2);
+		balancedResponses.add(responsesByKind.get(0).get(0));
+		balancedResponses.add(responsesByKind.get(1).get(0));
+		
+		checkRoundRobin(balancedResponses, Common.setConnettoriAbilitati);
+		
+		// Attendo che venga reinserito nel pool e ripeto la parte iniziale del test
+		// per instradare una richiesta nuovamente sul connettore rotto
+		org.openspcoop2.utils.Utilities.sleep(2100);
+
+		idSessioneConnettoreRotto = null;
+		
+		for(var request : richiesteSonda) {
+			HttpResponse response = Utils.makeRequest(request);
+			if (response.getResultHTTPOperation() == 200) {
+				assertNotEquals(null,response.getHeaderFirstValue(HEADER_ID_CONNETTORE));
+			} else {
+				assertEquals(null, idSessioneConnettoreRotto);	// Un solo connettore rotto
+				idSessioneConnettoreRotto = request.getHeaderFirstValue(HEADER_ID_SESSIONE);
+			}
+		}
+		assertNotEquals(null,idSessioneConnettoreRotto);
+		
 	}
+	
+	// Test2 - Lo posso fare solo se tiro su un mock server.
+	
+	// Facciamo andare una richiesta con id sessione e va diciamo sul connettore1
+	// Mi assicuro che la sticky funzioni e mando altre richieste con lo stesso id sessione.
+	// Adesso mando una richiesta con lo stesso id sessione e dico al server echo di non rispondere,
+	//	il connettore verrà escluso dal pool
+	// Rimando una richiesta con il primo id sessione e mi assicuro che vada su un connettore diverso
+	// dal connettore1
+
 	
 	
 	@Test
@@ -598,6 +675,7 @@ public class SessioneStickyTest extends ConfigLoader {
 		// TODO: La consegna condizionale identifica un set di connettori ma la sessione sticky
 		//		butta la richiesta su un connettore fuori da questo pool
 	}
+	
 	
 
 	static int getPesoTotale(Map<String,Integer> pesiConnettori) {
@@ -740,6 +818,7 @@ public class SessioneStickyTest extends ConfigLoader {
 
 	static void checkAllResponsesSameConnettore(List<HttpResponse> responses) {
 		String connettore = responses.get(0).getHeaderFirstValue(HEADER_ID_CONNETTORE);
+		assertNotEquals(null, connettore);
 		for(var resp : responses) {
 			assertEquals(connettore, resp.getHeaderFirstValue(HEADER_ID_CONNETTORE));
 		}
