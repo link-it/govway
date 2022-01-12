@@ -30,6 +30,7 @@ import java.util.Properties;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPFault;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.GestioneErroreCodiceTrasporto;
 import org.openspcoop2.core.config.GestioneErroreSoapFault;
@@ -244,13 +245,16 @@ public class GestoreErroreConnettore {
 	 * 
 	 * @param gestioneErrore Gestione Errore
 	 * @param msgErroreConnettore Messaggio di errore fornito con il connettore
-	 * @param codiceTrasporto Codice Trasporto fornito dal connettore
-	 * @param messageResponse Messaggio di risposta fornito dal connettore
+	 * @param connectorSender connettore
 	 * @return true se la consegna e' stata effettuata con successo, false altrimenti.
 	 */
 	public boolean verificaConsegna(GestioneErrore gestioneErrore,String msgErroreConnettore,Exception eccezioneErroreConnettore,
-			long codiceTrasporto,OpenSPCoop2Message messageResponse) throws GestoreMessaggiException,javax.xml.soap.SOAPException,UtilsException{	
+			IConnettore connectorSender) throws GestoreMessaggiException,javax.xml.soap.SOAPException,UtilsException{	
 
+		long codiceTrasporto = connectorSender.getCodiceTrasporto();
+		OpenSPCoop2Message messageResponse = connectorSender.getResponse();
+		String protocolloConnettore = connectorSender.getProtocollo();
+		
 		// ESITO CONNETTORE:
 		// Se ho un errore sul connettore:
 		// - la consegna non e' andata a buon fine (return false)
@@ -730,7 +734,8 @@ public class GestoreErroreConnettore {
 
 				// match
 				if(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG.equals(gestore.getComportamento())){
-					this.errore = "errore di trasporto, codice "+codiceTrasporto;
+					//this.errore = "errore di trasporto, codice "+codiceTrasporto;
+					this.errore = "errore "+formatProtocolloConnettore(protocolloConnettore)+codiceTrasporto;
 					if(this.fault!=null){
 						try{
 							this.errore = this.errore + " (" +SoapUtils.safe_toString(messageResponse.getFactory(), this.fault, GestoreErroreConnettore.log)+ ")";
@@ -766,7 +771,8 @@ public class GestoreErroreConnettore {
 
 		// Match non trovato, assumo comportamento di default
 		if(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG.equals(gestioneErrore.getComportamento())){
-			this.errore = "errore di trasporto, codice "+codiceTrasporto;
+			//this.errore = "errore di trasporto, codice "+codiceTrasporto;
+			this.errore = "errore "+formatProtocolloConnettore(protocolloConnettore)+codiceTrasporto;
 			if(this.fault!=null){
 				try{
 					this.errore = this.errore + " (" +SoapUtils.safe_toString(messageResponse.getFactory(), this.fault, GestoreErroreConnettore.log)+ ")";
@@ -834,5 +840,10 @@ public class GestoreErroreConnettore {
 	}
 
 
-
+	public static String formatProtocolloConnettore(String protocollo) {
+		if(protocollo==null || StringUtils.isEmpty(protocollo)) {
+			return "";
+		}
+		return protocollo+" ";
+	}
 }

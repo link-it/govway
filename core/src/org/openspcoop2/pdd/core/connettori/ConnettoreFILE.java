@@ -66,6 +66,10 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 
+    @Override
+	public String getProtocollo() {
+    	return "FILE";
+    }
 	
 	/* ********  F I E L D S  P R I V A T I  ******** */
 

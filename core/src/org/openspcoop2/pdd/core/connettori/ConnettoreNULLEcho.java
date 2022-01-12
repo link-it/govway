@@ -92,6 +92,11 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 	
+    @Override
+	public String getProtocollo() {
+    	return "";
+    }
+	
 	public final static String LOCATION = "govway://echo";
     
 

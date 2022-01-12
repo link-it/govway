@@ -55,6 +55,11 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 
 public class ConnettoreNULL extends ConnettoreBase {
 	
+    @Override
+	public String getProtocollo() {
+    	return "";
+    }
+	
 	public final static String LOCATION = "govway://dev/null";
     
 	

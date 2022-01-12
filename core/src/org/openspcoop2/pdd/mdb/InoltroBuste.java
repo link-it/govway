@@ -2326,7 +2326,7 @@ public class InoltroBuste extends GenericLib{
 					//	interpretazione esito consegna
 					GestioneErrore gestioneConsegnaConnettore =configurazionePdDManager.getGestioneErroreConnettoreComponenteCooperazione(protocolFactory, requestMessageTrasformato.getServiceBinding());
 					GestoreErroreConnettore gestoreErrore = new GestoreErroreConnettore();
-					errorConsegna = !gestoreErrore.verificaConsegna(gestioneConsegnaConnettore,motivoErroreConsegna,eccezioneProcessamentoConnettore,connectorSender.getCodiceTrasporto(),connectorSender.getResponse());
+					errorConsegna = !gestoreErrore.verificaConsegna(gestioneConsegnaConnettore,motivoErroreConsegna,eccezioneProcessamentoConnettore,connectorSender);
 					if(errorConsegna){
 						motivoErroreConsegna = gestoreErrore.getErrore();
 						riconsegna = gestoreErrore.isRiconsegna();

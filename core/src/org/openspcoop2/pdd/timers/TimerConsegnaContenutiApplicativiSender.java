@@ -26,9 +26,12 @@ import java.util.Date;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.transazioni.IdTransazioneApplicativoServer;
 import org.openspcoop2.pdd.config.ConfigurazioneCoda;
@@ -178,6 +181,15 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 						bustaToSend.getVersioneServizio()); 
 				servizioBusta.setAzione(bustaToSend.getAzione());	
 	
+				IDAccordo idAccordo = null;
+				AccordoServizioParteSpecifica asps = null;
+				try{
+					asps = this.registroServiziReader.getAccordoServizioParteSpecifica(servizioBusta, null, false);
+					idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+				}catch(Exception e){
+					msgDiag.logErroreGenerico(e,"ConsegnaAsincrona getAccordoServizioParteSpecifica("+servizioBusta+")");
+				}
+					
 				IDSoggetto identitaPdD = null;
 				String dominioRD = null;
 				try{
@@ -186,7 +198,7 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 						throw new Exception("Dominio is null");
 					}
 				}catch(Exception e){
-					msgDiag.logErroreGenerico(e,"BustaNonRiscontrata getDominio("+servizioBusta.getSoggettoErogatore()+")");
+					msgDiag.logErroreGenerico(e,"ConsegnaAsincrona getDominio("+servizioBusta.getSoggettoErogatore()+")");
 				}
 				if(dominioRD==null){
 					identitaPdD = this.propertiesReader.getIdentitaPortaDefault(null);
@@ -199,6 +211,7 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 				RichiestaApplicativa richiestaApplicativa = new RichiestaApplicativa(soggettoFruitore, identitaPdD, idPA);
 				richiestaApplicativa.setServizioApplicativo(servizioApplicativo);
 				richiestaApplicativa.setIdentitaServizioApplicativoFruitore(bustaToSend.getServizioApplicativoFruitore());
+				richiestaApplicativa.setIdAccordo(idAccordo);
 	
 				ConsegnaContenutiApplicativiMessage consegnaMSG = new ConsegnaContenutiApplicativiMessage();
 				consegnaMSG.setBusta(bustaToSend);

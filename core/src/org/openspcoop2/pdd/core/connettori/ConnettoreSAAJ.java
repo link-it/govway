@@ -73,6 +73,11 @@ import org.openspcoop2.utils.transport.http.RFC2047Utilities;
 
 public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 
+    @Override
+	public String getProtocollo() {
+    	return "HTTP";
+    }
+	
 	public static final String ENDPOINT_TYPE = "saaj";
 	
 

@@ -61,6 +61,10 @@ import org.openspcoop2.utils.transport.TransportUtils;
 
 public class ConnettoreJMS extends ConnettoreBase {
 
+    @Override
+	public String getProtocollo() {
+    	return "JMS";
+    }
 
 	/** Cache per le locations */
 	private static Map<String,Destination> locations = new ConcurrentHashMap<String,Destination>();

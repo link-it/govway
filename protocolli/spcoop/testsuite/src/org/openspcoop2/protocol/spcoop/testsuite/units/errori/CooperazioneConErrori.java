@@ -842,7 +842,7 @@ public class CooperazioneConErrori extends GestioneViaJmx {
 		param.setEliminaMessaggioErogatore(false);
 		param.setIndexIdMessaggioDaEliminare(0);
 		param.setMotivoErroreProcessamento(
-				new String[]{"[spedizione n.1] Consegna [http] con errore: errore di trasporto, codice 500",
+				new String[]{"[spedizione n.1] Consegna [http] con errore: errore HTTP 500",
 						"Server.faultExample",
 						"Fault ritornato dalla servlet di esempio di OpenSPCoop"});
 		param.setModalitaAsincrona(true);
@@ -870,7 +870,7 @@ public class CooperazioneConErrori extends GestioneViaJmx {
 		param.setEliminaMessaggioErogatore(false);
 		param.setIndexIdMessaggioDaEliminare(2);
 		param.setMotivoErroreProcessamento(
-				new String[]{"[spedizione n.1] Consegna [http] con errore: errore di trasporto, codice 500",
+				new String[]{"[spedizione n.1] Consegna [http] con errore: errore HTTP 500",
 						"Server.faultExample",
 						"Fault ritornato dalla servlet di esempio di OpenSPCoop"});
 		param.setModalitaAsincrona(true);
@@ -898,7 +898,7 @@ public class CooperazioneConErrori extends GestioneViaJmx {
 		param.setEliminaMessaggioErogatore(false);
 		param.setIndexIdMessaggioDaEliminare(4);
 		param.setMotivoErroreProcessamento(
-				new String[]{"[spedizione n.1] Consegna [http] con errore: errore di trasporto, codice 500",
+				new String[]{"[spedizione n.1] Consegna [http] con errore: errore HTTP 500",
 						"Server.faultExample",
 						"Fault ritornato dalla servlet di esempio di OpenSPCoop"});
 		param.setModalitaAsincrona(true);
@@ -2892,7 +2892,7 @@ public class CooperazioneConErrori extends GestioneViaJmx {
 		param.setEliminaMessaggioErogatore(false);
 		param.setIndexIdMessaggioDaEliminare(2);
 		param.setMotivoErroreProcessamento(
-				new String[]{"[spedizione n.1] Consegna [http] con errore: errore di trasporto, codice 500",
+				new String[]{"[spedizione n.1] Consegna [http] con errore: errore HTTP 500",
 						"Server.faultExample",
 						"Fault ritornato dalla servlet di esempio di OpenSPCoop"});
 		param.setModalitaAsincrona(true);
@@ -2961,7 +2961,7 @@ public class CooperazioneConErrori extends GestioneViaJmx {
 		param.setEliminaMessaggioErogatore(false);
 		param.setIndexIdMessaggioDaEliminare(7);
 		param.setMotivoErroreProcessamento(
-				new String[]{"[spedizione n.1] Consegna [http] con errore: errore di trasporto, codice 500",
+				new String[]{"[spedizione n.1] Consegna [http] con errore: errore HTTP 500",
 						"Server.faultExample",
 						"Fault ritornato dalla servlet di esempio di OpenSPCoop"});
 		param.setModalitaAsincrona(true);
@@ -3148,7 +3148,7 @@ public class CooperazioneConErrori extends GestioneViaJmx {
 		param.setEliminaMessaggioErogatore(false);
 		param.setIndexIdMessaggioDaEliminare(1);
 		param.setMotivoErroreProcessamento(
-				new String[]{"[spedizione n.1] Consegna [http] con errore: errore di trasporto, codice 500",
+				new String[]{"[spedizione n.1] Consegna [http] con errore: errore HTTP 500",
 						"Server.faultExample",
 						"Fault ritornato dalla servlet di esempio di OpenSPCoop"});
 		param.setModalitaAsincrona(true);
@@ -3312,7 +3312,7 @@ public class CooperazioneConErrori extends GestioneViaJmx {
 		param.setEliminaMessaggioErogatore(false);
 		param.setIndexIdMessaggioDaEliminare(1);
 		param.setMotivoErroreProcessamento(
-				new String[]{"[spedizione n.1] Consegna [http] con errore: errore di trasporto, codice 500",
+				new String[]{"[spedizione n.1] Consegna [http] con errore: errore HTTP 500",
 						"Server.faultExample",
 						"Fault ritornato dalla servlet di esempio di OpenSPCoop"});
 		param.setModalitaAsincrona(true);

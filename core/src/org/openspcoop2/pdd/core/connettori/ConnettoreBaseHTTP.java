@@ -67,6 +67,11 @@ import org.openspcoop2.utils.transport.http.SSLConfig;
 
 public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	
+    @Override
+	public String getProtocollo() {
+    	return "HTTP";
+    }
+	
 	/** httpMethod */
 	protected HttpRequestMethod httpMethod = null;
 	public HttpRequestMethod getHttpMethod() {

@@ -53,6 +53,10 @@ import org.openspcoop2.utils.date.DateManager;
 
 public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 
+    @Override
+	public String getProtocollo() {
+    	return "VM";
+    }
 	
 	
 	/* ********  METODI  ******** */

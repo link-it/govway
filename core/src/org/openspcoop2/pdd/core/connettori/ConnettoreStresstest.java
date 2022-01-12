@@ -67,6 +67,11 @@ import org.openspcoop2.utils.date.DateManager;
  */
 public class ConnettoreStresstest extends ConnettoreBase {
 
+    @Override
+	public String getProtocollo() {
+    	return "HTTP";
+    }
+	
 	public final static String ENDPOINT_TYPE = "stresstest";
 	
 	public final static String LOCATION = "openspcoop2://stresstest";

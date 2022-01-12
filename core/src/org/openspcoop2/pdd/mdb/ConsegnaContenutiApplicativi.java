@@ -2157,7 +2157,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					}
 					//	interpretazione esito consegna
 					GestoreErroreConnettore gestoreErrore = new GestoreErroreConnettore();
-					errorConsegna = !gestoreErrore.verificaConsegna(gestioneConsegnaConnettore,motivoErroreConsegna,eccezioneProcessamentoConnettore,connectorSender.getCodiceTrasporto(),connectorSender.getResponse());
+					errorConsegna = !gestoreErrore.verificaConsegna(gestioneConsegnaConnettore,motivoErroreConsegna,eccezioneProcessamentoConnettore,connectorSender);
 					if(errorConsegna){
 						motivoErroreConsegna = gestoreErrore.getErrore();
 						riconsegna = gestoreErrore.isRiconsegna();

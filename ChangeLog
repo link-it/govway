@@ -1,3 +1,13 @@
+2022-01-12  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1313
+	Il diagnostico "errore di trasporto, codice XXX" poteva far pensare a problematiche interenti il trasporto.
+	Il testo è stato modificato in "errore HTTP XXX".
+	Inoltre è stata corretta un'anomalia che si presentava durante una consegna di una notifica asincrona (connettori multipli) se il backend restituiva un HTTP Redirect 3XX con header 'Location'.
+	L'errore che veniva riportato nel diagnostico era simile al seguente:
+	"Errore durante l'aggiornamento dell'header 'Location' attraverso la funzione di proxy pass reverse: [getAccordoServizioParteComune]: Parametro non definito"
+
 2022-01-11  Andrea Poli <apoli@link.it>
 
 	* [GovWayMonitor]

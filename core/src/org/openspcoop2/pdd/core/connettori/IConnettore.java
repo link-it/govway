@@ -143,6 +143,13 @@ public interface IConnettore extends ICore {
      */
     public NotifierInputStreamParams getNotifierInputStreamParamsResponse() throws ConnettoreException;
 
+    /**
+     * Ritorna il protocollo associato al connettore (es. HTTP)
+     * 
+     * @return protocollo
+     */
+    public String getProtocollo();
+    	
 }
 
 
