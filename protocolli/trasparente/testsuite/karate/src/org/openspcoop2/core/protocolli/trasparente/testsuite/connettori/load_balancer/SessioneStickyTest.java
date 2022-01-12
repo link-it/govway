@@ -24,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.HEADER_ID_CONNETTORE;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.delayRichiesteBackground;
 
 import java.util.ArrayList;
@@ -499,6 +500,9 @@ public class SessioneStickyTest extends ConfigLoader {
 		requestBlockingIdSessione2.setUrl(requestBlockingIdSessione2.getUrl()+"&sleep="+Common.durataBloccanteLunga);
 		
 		var futureResp1 = Utils.makeBackgroundRequest(requestBlockingIdSessione1);
+		
+		org.openspcoop2.utils.Utilities.sleep(delayRichiesteBackground);
+		
 		var futureResp2 = Utils.makeBackgroundRequest(requestBlockingIdSessione2);
 
 		// Faccio una serie di richieste con id sessione impostato e verifico che vadano tutte nello stesso connettore
@@ -511,8 +515,8 @@ public class SessioneStickyTest extends ConfigLoader {
 		checkAllResponsesSameConnettore(responsesByKind.get(0));
 		checkAllResponsesSameConnettore(responsesByKind.get(1));
 
-		String connettoreSessione0 = responsesByKind.get(0).get(0).getHeaderFirstValue(Common.HEADER_ID_CONNETTORE);
-		String connettoreSessione1 = responsesByKind.get(0).get(0).getHeaderFirstValue(Common.HEADER_ID_CONNETTORE);
+		String connettoreSessione0 = responsesByKind.get(0).get(0).getHeaderFirstValue(HEADER_ID_CONNETTORE);
+		String connettoreSessione1 = responsesByKind.get(1).get(0).getHeaderFirstValue(HEADER_ID_CONNETTORE);
 		
 		assertNotEquals(connettoreSessione0, connettoreSessione1);
 		
@@ -544,8 +548,8 @@ public class SessioneStickyTest extends ConfigLoader {
 		var responseIdSessione0 = futureResp1.get();
 		var responseIdSessione1 = futureResp2.get();
 		
-		assertEquals(connettoreSessione0, responseIdSessione0.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
-		assertEquals(connettoreSessione1, responseIdSessione1.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
+		assertEquals(connettoreSessione0, responseIdSessione0.getHeaderFirstValue(HEADER_ID_CONNETTORE));
+		assertEquals(connettoreSessione1, responseIdSessione1.getHeaderFirstValue(HEADER_ID_CONNETTORE));
 		
 	}
 	
@@ -561,10 +565,10 @@ public class SessioneStickyTest extends ConfigLoader {
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
 		
 		var responses = Common.makeParallelRequests(request, Common.richiesteParallele);
-		String connettore = responses.get(0).getHeaderFirstValue(Common.HEADER_ID_CONNETTORE);
+		String connettore = responses.get(0).getHeaderFirstValue(HEADER_ID_CONNETTORE);
 		for (var resp : responses) {
 			assertEquals(200, resp.getResultHTTPOperation());
-			assertEquals(connettore, resp.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));			
+			assertEquals(connettore, resp.getHeaderFirstValue(HEADER_ID_CONNETTORE));			
 		}
 		
 	}
@@ -733,9 +737,9 @@ public class SessioneStickyTest extends ConfigLoader {
 	
 
 	static void checkAllResponsesSameConnettore(List<HttpResponse> responses) {
-		String connettore = responses.get(0).getHeaderFirstValue(Common.HEADER_ID_CONNETTORE);
+		String connettore = responses.get(0).getHeaderFirstValue(HEADER_ID_CONNETTORE);
 		for(var resp : responses) {
-			assertEquals(connettore, resp.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
+			assertEquals(connettore, resp.getHeaderFirstValue(HEADER_ID_CONNETTORE));
 		}
 	}
 
