@@ -149,6 +149,11 @@ public class Utils {
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(count);
 
 		for (int i = 0; i < count; i++) {
+			
+			if (request_delay > 0) {
+				org.openspcoop2.utils.Utilities.sleep(request_delay);
+			}
+			
 			var future = executor.submit(() -> {
 				try {
 					logRateLimiting.info(request.getMethod() + " " + request.getUrl());
@@ -161,10 +166,6 @@ public class Utils {
 				}
 			});
 			responses.add(future);
-			
-			if (request_delay > 0) {
-				org.openspcoop2.utils.Utilities.sleep(request_delay);
-			}
 		}		
 
 		return responses;

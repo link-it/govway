@@ -44,6 +44,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.ConsegnaCondizionaleByNomeTest;
@@ -97,6 +98,15 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 public class SessioneStickyTest extends ConfigLoader {
 
+	@BeforeClass
+	public static void resetCache() {
+		try {
+			ConfigLoader.resetCache();
+		}catch(Throwable t) {
+            throw new RuntimeException(t.getMessage(),t);
+        }
+	}
+	
 	// Costruisce richieste che non portano con se alcun ID Sessione e che quindi 
 	// viene bilanciata fra i vari connettori
 	static HttpRequest buildRequest_LoadBalanced(String erogazione) {
@@ -548,6 +558,9 @@ public class SessioneStickyTest extends ConfigLoader {
 		Common.printMap(howManys);
 		for (var connettore : howManys.keySet()) {
 			// TODO: Qui fallisce.
+			
+			// TODO: Verificare anche che i connettori utilizzati senza id di sessione siano differenti da quelli utilizzati con l'id di sessione
+			
 			assertEquals(Integer.valueOf(1), howManys.get(connettore));
 		}
 		
