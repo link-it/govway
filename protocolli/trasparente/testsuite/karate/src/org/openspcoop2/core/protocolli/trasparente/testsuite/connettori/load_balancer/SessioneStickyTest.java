@@ -64,6 +64,7 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 // TODO: gli health check si potrebbero scrivere tirando su un mock che si chiude da solo dopo 
 //		aver gestito una richiesta.
 
+// TODO: il logRateLimiting va sostituito con il loggerCore
 
 /**
  *	La strategia di Load Balancing viene cambiata al cambiare dell'identificazione dell'ID sessione,
