@@ -702,13 +702,151 @@ public class SessioneStickyTest extends ConfigLoader {
 	@Test
 	public void healthCheckConsegnaCondizionale() {
 
+		//	 PoolRotto: Connettore0, Connettore1, Connettore2, ConnettoreRotto
+		// Uguale al test di sopra ma tutto filtrato per Pool0-Filtro0
+		final String erogazione = "LoadBalanceSessioneStickyHealthCheckConsegnaCondizionale";
 		
-		// Test
-		// PRIMA HEALTH CHECK LOAD BALANCE SEMPLICE
-		// Test:
-		// Verifico la funzionalità nel suo complesso, ovvero che la sessione sticky + consegna condizionale
-		// fun
-		// 
+		List<String> connettoriPoolRotto = Common.connettoriPools.get(Common.POOL_ROTTO);
+		
+		var idSessioni = Arrays.asList("a", "b", "c", "d");
+		List<HttpRequest> richiesteSonda = idSessioni.stream()
+				.map( idSessione -> {
+					var request = buildRequest_HeaderHttp(idSessione, erogazione);
+					request.addHeader(Common.HEADER_ID_CONDIZIONE, "PoolRotto-Filtro0");
+					return request;
+				})
+				.collect(Collectors.toList());
+		
+		String idSessioneConnettoreRotto = null;
+		
+		for(var request : richiesteSonda) {
+			HttpResponse response = Utils.makeRequest(request);
+			if (response.getResultHTTPOperation() == 200) {
+				
+				String connettore = response.getHeaderFirstValue(HEADER_ID_CONNETTORE);
+				assertNotEquals(null, connettore);
+				assertTrue(connettoriPoolRotto.contains(connettore));
+				
+			} else if (response.getResultHTTPOperation() == 503) {
+				
+				assertEquals(null, idSessioneConnettoreRotto);	// Un solo connettore rotto
+				idSessioneConnettoreRotto = request.getHeaderFirstValue(HEADER_ID_SESSIONE);
+				
+			} else {
+				
+				assertFalse(true);	// Status code non riconosciuto
+				
+			}
+		}
+		assertNotEquals(null,idSessioneConnettoreRotto);
+		
+		// Questa richiesta adesso deve essere instradata ad un connettore buono
+		HttpRequest requestConnettoreRotto = buildRequest_HeaderHttp(idSessioneConnettoreRotto, erogazione);
+		requestConnettoreRotto.addHeader(Common.HEADER_ID_CONDIZIONE, "PoolRotto-Filtro0");
+		
+		HttpRequest requestIdSessione =	buildRequest_HeaderHttp(IDSessioni.get(1), erogazione);
+		requestIdSessione.addHeader(Common.HEADER_ID_CONDIZIONE, "PoolRotto-Filtro0");
+		
+		HttpRequest requestBalanced = buildRequest_LoadBalanced(erogazione);
+		requestBalanced.addHeader(Common.HEADER_ID_CONDIZIONE, "PoolRotto-Filtro0");
+
+		List<HttpRequest> richieste = Arrays.asList(
+				requestConnettoreRotto,
+				requestIdSessione,
+				requestBalanced
+			);
+
+		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, Common.richiesteParallele);
+		
+		// Tutte le richieste con lo stesso id sessione finiscono
+		// sullo stesso connettore.
+		checkAllResponsesSameConnettore(responsesByKind.get(0));
+		checkAllResponsesSameConnettore(responsesByKind.get(1));
+		
+		// Tra le richieste\risposte che sono state bilanciate vanno considerate
+		// anche le prime richieste che portano con se un id sessione ancora mai visto prima.
+		// Le risposte che qui vado a pescare non sono necessariamente corrispondenti a tali richieste
+		// ma sono utili ai fini del conteggio.
+		var balancedResponses = responsesByKind.get(2);
+		balancedResponses.add(responsesByKind.get(0).get(0));
+		balancedResponses.add(responsesByKind.get(1).get(0));
+		
+		// TODO Forse farei meglio a far controllare alle varie check* che
+		// non ci sia il connettore disabilitato.
+		Set<String> connettoriDaRaggiungere = new HashSet<>( Arrays.asList(
+				Common.CONNETTORE_0, 
+				Common.CONNETTORE_1, 
+				Common.CONNETTORE_2));
+		checkRoundRobin(balancedResponses, connettoriDaRaggiungere);
+		
+		// Nuova batteria dove il connettore rotto non deve essere preso in considerazione
+		
+		idSessioni = Arrays.asList("aNewBefore", "bNewBefore", "cNewBefore", "dNewBefore", "eNewBefore");
+		richiesteSonda = idSessioni.stream()
+				.map( idSessione -> {
+					var request = buildRequest_HeaderHttp(idSessione, erogazione);
+					request.addHeader(Common.HEADER_ID_CONDIZIONE, "PoolRotto-Filtro0");
+					return request;
+				})
+				.collect(Collectors.toList());
+		
+		idSessioneConnettoreRotto = null;
+		for(var request : richiesteSonda) {
+			HttpResponse response = Utils.makeRequest(request);
+			if (response.getResultHTTPOperation() == 200) {
+				
+				String connettore = response.getHeaderFirstValue(HEADER_ID_CONNETTORE);
+				assertNotEquals(null, connettore);
+				assertTrue(connettoriPoolRotto.contains(connettore));
+				
+			} else if (response.getResultHTTPOperation() == 503) {
+				
+				assertEquals(null, idSessioneConnettoreRotto);	// Un solo connettore rotto
+				idSessioneConnettoreRotto = request.getHeaderFirstValue(HEADER_ID_SESSIONE);
+				
+			} else {
+				
+				assertFalse(true);	// Status code non riconosciuto
+				
+			}
+		}
+		assertEquals(null,idSessioneConnettoreRotto);
+		
+		// Attendo che venga reinserito nel pool e ripeto la parte iniziale del test
+		// per instradare una richiesta nuovamente sul connettore rotto
+		org.openspcoop2.utils.Utilities.sleep(Common.intervalloEsclusione + 100);
+
+		idSessioni = Arrays.asList("aNewAfter", "bNewAfter", "cNewAfter", "dNewAfter", "eNewAfter"); // uso nuovi id di sessione per verificare che adesso venga ripreso il connettore rotto
+		richiesteSonda = idSessioni.stream()
+				.map( idSessione -> {
+					var request = buildRequest_HeaderHttp(idSessione, erogazione);
+					request.addHeader(Common.HEADER_ID_CONDIZIONE, "PoolRotto-Filtro0");
+					return request;
+				})
+				.collect(Collectors.toList());
+		
+		idSessioneConnettoreRotto = null;
+		for(var request : richiesteSonda) {
+			HttpResponse response = Utils.makeRequest(request);
+			if (response.getResultHTTPOperation() == 200) {
+				
+				String connettore = response.getHeaderFirstValue(HEADER_ID_CONNETTORE);
+				assertNotEquals(null, connettore);
+				assertTrue(connettoriPoolRotto.contains(connettore));
+				
+			} else if (response.getResultHTTPOperation() == 503) {
+				
+				assertEquals(null, idSessioneConnettoreRotto);	// Un solo connettore rotto
+				idSessioneConnettoreRotto = request.getHeaderFirstValue(HEADER_ID_SESSIONE);
+				
+			} else {
+				
+				assertFalse(true);	// Status code non riconosciuto
+				
+			}
+		}
+		assertNotEquals(null,idSessioneConnettoreRotto);
+
 	}
 	
 	

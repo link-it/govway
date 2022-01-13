@@ -66,8 +66,10 @@ public class Common {
 	public static final int intervalloEsclusione = Integer
 			.valueOf(System.getProperty("connettori.load_balancer.health_check.intervallo_esclusione")) * 1000;	// Lo trasformo in millisecondi
 	
-	public static final int richiesteParallele = Integer
+	public static final int sogliaRichiesteSimultanee = Integer
 			.valueOf(System.getProperty("soglia_richieste_simultanee"));
+	
+	public static final int richiesteParallele = sogliaRichiesteSimultanee;
 	
 	public static final List<String> IDSessioni = Arrays
 			.asList(UUID.randomUUID().toString(),

@@ -49,6 +49,7 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  * 
  * @author Francesco Scarlato (scarlato@link.it)
  *
+ * TODO: Per fare meglio l'health check servirebbe il mock
  * TODO: Devo fare anche identificazione condizione fallita e nessun connettore utilizzabile?
  * 		SI.
  * TODO: prefisso e suffisso
@@ -241,13 +242,13 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 	public void healthCheckOvunqueDisabilitato() {
 		final String erogazione = "LoadBalanceConsegnaCondizionaleHealthCheck";
 		
-		// In questa erogazione abbiamo riuniti nel PoolRotto il [Connettore3, ConnettoreDisabilitato, ConnettoreRotto]
+		// In questa erogazione abbiamo riuniti nel PoolRotto il [Connettore2, Connettore3, ConnettoreDisabilitato, ConnettoreRotto]
 		
 		// Contatto il connettore rotto in un pool.
 
 		Map<String,List<HttpRequest>> requestsByPool = new HashMap<>();
 		requestsByPool.put(POOL_ROTTO, 
-					Common.buildRequests_HeaderHttp(Arrays.asList("PoolRotto-Filtro0"), /*Common.filtriPoolRotto,*/ erogazione));
+					Common.buildRequests_HeaderHttp(Arrays.asList("PoolRotto-Filtro0"), erogazione));
 		
 		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool,3);
 		var responses = responsesByPool.get(POOL_ROTTO);
@@ -257,15 +258,47 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		assertEquals(Integer.valueOf(1), howManys.get(Common.CONNETTORE_2));
 		assertEquals(Integer.valueOf(1), howManys.get(Common.CONNETTORE_3));
 		
-		// Mi aspetto di non contattarlo più fra gli altri pool
-
-	}
-	
-	
-	@Test
-	public void healthCheck() {
+		// Ripeto con lo stesso filtro, stavolta non devo contattare il pool rotto
+		responsesByPool = makeBatchedRequests(requestsByPool,3);
+		responses = responsesByPool.get(POOL_ROTTO);
+		howManys = Common.contaConnettoriUtilizzati(responses);
+		Common.printMap(howManys);
+		assertEquals(null, howManys.get(Common.CONNETTORE_ROTTO));
+		assertTrue(howManys.get(Common.CONNETTORE_2) > 0 && howManys.get(Common.CONNETTORE_2) < 3);
+		assertTrue(howManys.get(Common.CONNETTORE_3) > 0 && howManys.get(Common.CONNETTORE_3) < 3);
 		
-		// TODO
+		// Mi aspetto di non contattarlo più se cambio filtro, TODO: Come non detto,
+		// cambiando filtro questo viene ricontattato dalla politica di load balancer
+		// Che faccio, inverto il test?
+		requestsByPool = new HashMap<>();
+		requestsByPool.put(POOL_ROTTO, 
+				Common.buildRequests_HeaderHttp(Arrays.asList("PoolRotto-Filtro1"), erogazione));
+	
+		responsesByPool = makeBatchedRequests(requestsByPool,3);
+		responses = responsesByPool.get(POOL_ROTTO);
+		howManys = Common.contaConnettoriUtilizzati(responses);
+		Common.printMap(howManys);
+		
+		assertEquals(null, howManys.get(Common.CONNETTORE_ROTTO));
+		assertTrue(howManys.get(Common.CONNETTORE_2) > 0 && howManys.get(Common.CONNETTORE_2) < 3);
+		assertTrue(howManys.get(Common.CONNETTORE_3) > 0 && howManys.get(Common.CONNETTORE_3) < 3);
+
+		// Attendo che il connettore venga reinserito e mi aspetto di raggiungere nuovamente
+		// il connettore rotto
+		org.openspcoop2.utils.Utilities.sleep(Common.intervalloEsclusione + 100);
+		
+		requestsByPool = new HashMap<>();
+		requestsByPool.put(POOL_ROTTO, 
+				Common.buildRequests_HeaderHttp(Arrays.asList("PoolRotto-Filtro0"), erogazione));
+	
+		responsesByPool = makeBatchedRequests(requestsByPool,3);
+		responses = responsesByPool.get(POOL_ROTTO);
+		howManys = Common.contaConnettoriUtilizzati(responses);
+		Common.printMap(howManys);
+		assertEquals(Integer.valueOf(1), howManys.get(Common.CONNETTORE_ROTTO));
+		assertEquals(Integer.valueOf(1), howManys.get(Common.CONNETTORE_2));
+		assertEquals(Integer.valueOf(1), howManys.get(Common.CONNETTORE_3));
+
 	}
 	
 	
@@ -344,13 +377,13 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 	}
 	
 	static Map<String, List<HttpResponse>> makeBatchedRequests(Map<String, List<HttpRequest>> requestsByPool, int count) {
+		
 		Map<String, List<HttpResponse>> responsesByPool = new ConcurrentHashMap<>();
 		for(var e : requestsByPool.keySet()) {
 			responsesByPool.put(e, new Vector<HttpResponse>());
 		}
 		
-		int nthreads = Integer.valueOf(System.getProperty("soglia_richieste_simultanee"));
-		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nthreads);
+		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(Common.sogliaRichiesteSimultanee);
 				
 		List<String> poolCandidates = new ArrayList<>(requestsByPool.keySet());
 		int npools = poolCandidates.size();
