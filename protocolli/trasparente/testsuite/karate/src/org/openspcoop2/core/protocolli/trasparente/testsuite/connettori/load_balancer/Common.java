@@ -17,7 +17,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
-import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -118,41 +117,6 @@ public class Common {
 		for (var e : howManys.entrySet()) {
 			logger.info(e.getKey() + ": " + e.getValue());
 		}
-	}
-	
-	
-	/*
-	 * Esegue un thread per ogni richiesta e per ogni thread esegue
-	 * requests_per_batch richieste
-	 * 
-	 * Restituisce le risposte raggruppate per richiesta, e.g: il primo vettore di
-	 * risposte corrisponde al batch di richieste fatte per la prima richiesta della
-	 * lista `requests`
-	 * TODO: Credo posso rimetterlo in ConsegnaCondizionaleFiltroNome
-	 */
-	public static Vector<Vector<HttpResponse>> makeBatchedRequests(List<HttpRequest> requests, int requests_per_batch) {
-
-		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(requests.size());
-		var ret = new Vector<Vector<HttpResponse>>(requests.size());
-
-		for (int i = 0; i < requests.size(); i++) {
-			ret.add(new Vector<>());
-			int index = i;
-
-			executor.execute(() -> {
-				ret.get(index).addAll(Utils.makeSequentialRequests(requests.get(index), requests_per_batch));
-			});
-		}
-
-		try {
-			executor.shutdown();
-			executor.awaitTermination(20, TimeUnit.SECONDS);
-		} catch (InterruptedException e) {
-			// logRateLimiting.error("Le richieste hanno impiegato più di venti secondi!");
-			throw new RuntimeException(e);
-		}
-
-		return ret;
 	}
 	
 	

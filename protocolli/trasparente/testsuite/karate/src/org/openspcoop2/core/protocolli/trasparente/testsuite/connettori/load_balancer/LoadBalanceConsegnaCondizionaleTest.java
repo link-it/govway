@@ -53,8 +53,9 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  * TODO: Per fare meglio l'health check servirebbe il mock
  * TODO: Devo fare anche identificazione condizione fallita e nessun connettore utilizzabile?
  * 		SI.
-
  * TODO: Test regole
+ * 
+ * 
  * La Consegna Condizionale sul Load Balancer identifica l'insieme di connettori
  * che parteciperanno alla strategia di load balancing.
  * 

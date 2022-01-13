@@ -277,7 +277,6 @@ public class IdentificazioneFallitaTest extends ConfigLoader {
 	
 			
 		HttpRequest request_template = new HttpRequest();
-		request_template.setContentType("application/json");	// TODO: con questa riga commentata il test fallisce, dopo il fix di andrea non sarà più necessario settare il content type
 		request_template.setMethod(HttpRequestMethod.GET);
 		request_template.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-template"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
@@ -288,7 +287,6 @@ public class IdentificazioneFallitaTest extends ConfigLoader {
 		
 		
 		HttpRequest request_freemarker = new HttpRequest();
-		request_freemarker.setContentType("application/json"); // TODO: con questa riga commentata il test fallisce, dopo il fix di andrea non sarà più necessario settare il content type
 		request_freemarker.setMethod(HttpRequestMethod.GET);
 		request_freemarker.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-freemarker-template"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
@@ -299,7 +297,6 @@ public class IdentificazioneFallitaTest extends ConfigLoader {
 	
 	
 		HttpRequest request_velocity = new HttpRequest();
-		request_velocity.setContentType("application/json"); // TODO: con questa riga commentata il test fallisce, dopo il fix di andrea non sarà più necessario settare il content type
 		request_velocity.setMethod(HttpRequestMethod.GET);
 		request_velocity.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-velocity-template"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX

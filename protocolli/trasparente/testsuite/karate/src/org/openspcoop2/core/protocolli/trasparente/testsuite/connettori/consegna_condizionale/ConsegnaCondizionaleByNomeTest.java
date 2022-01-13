@@ -60,7 +60,6 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  *  
  *   TODO: Provare nei test caratteri unicode strani, tipo le emoticon 😛
  *   TODO: Aggiungere nei test il connettore disabilitato e rilevare il 400
- *   TODO: Rinominare i metodi di questa classe e rimuovere il byNome
  *   TODO: Per ogni test aggiungi un set di richieste per cui fallisce l'identificazione, 
  *   			un set di richieste per cui il connettore non viene trovato
  *   			e un set di richieste che vanno sul connettore disabilitato
@@ -76,7 +75,7 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	
 	@Test
-	public void headerHttpByNome() {
+	public void headerHttp() {
 		final String erogazione = "ConsegnaCondizionaleHeaderHttpByNome";
 		
 		HttpRequest request0 = Common.buildRequest_HeaderHttp(CONNETTORE_0, erogazione);
@@ -157,7 +156,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	
 
 	@Test
-	public void parametroUrlByNomeConflitti() throws UtilsException {
+	public void parametroUrlConflitti() throws UtilsException {
 		// Quando sono presenti più valori da estrarre, govway sceglie il primo ed è 
 		// contento con quello.
 		
@@ -181,7 +180,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	
 	
 	@Test
-	public void XForwardedForByNomeConflitti() throws UtilsException {		
+	public void XForwardedForConflitti() throws UtilsException {		
 		
 		final String erogazione = "ConsegnaCondizionaleXForwardedForByNome";
 		List<String> forwardedHeaders = HttpUtilities.getClientAddressHeaders();
@@ -204,7 +203,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	
 	
 	@Test
-	public void urlInvocazioneByNome() {
+	public void urlInvocazione() {
 		
 		final String erogazione = "ConsegnaCondizionaleUrlInvocazioneByNome";
 		// Da qui in poi Il pattern per i test della consegna condizionale è lo steso per tutti.
@@ -216,21 +215,21 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 				.map(c -> Common.buildRequest_UrlInvocazione(c,erogazione))
 				.collect(Collectors.toList());
 							
-		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
+		var responsesByConnettore = ConsegnaCondizionaleByNomeTest.makeBatchedRequests(requestsByConnettore, 3);
 		
 		matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);
 	}
 
 	
 	@Test
-	public void parametroUrlByNome() {
+	public void parametroUrl() {
 		final String erogazione = "ConsegnaCondizionaleParametroUrlByNome";
 		
 		var requestsByConnettore = Common.connettoriAbilitati.stream()
 				.map(c -> Common.buildRequest_ParametroUrl(c,erogazione))
 				.collect(Collectors.toList());
 							
-		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
+		var responsesByConnettore = ConsegnaCondizionaleByNomeTest.makeBatchedRequests(requestsByConnettore, 3);
 		
 		matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);		
 
@@ -238,7 +237,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	
 	
 	@Test
-	public void contenutoByNome() {
+	public void contenuto() {
 		
 		final String erogazione = "ConsegnaCondizionaleContenutoByNome";
 		
@@ -246,7 +245,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 				.map(c -> Common.buildRequest_Contenuto(c,erogazione))
 				.collect(Collectors.toList());
 							
-		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
+		var responsesByConnettore = ConsegnaCondizionaleByNomeTest.makeBatchedRequests(requestsByConnettore, 3);
 		
 		matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);		
 		
@@ -268,7 +267,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 				.map(c -> Common.buildRequest_Contenuto(c,erogazione))
 				.collect(Collectors.toList());
 							
-		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
+		var responsesByConnettore = ConsegnaCondizionaleByNomeTest.makeBatchedRequests(requestsByConnettore, 3);
 		
 		for(int i=0;i<connettori.size();i++) {
 			String connettoreRichiesta = connettori.get(i);
@@ -311,7 +310,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	
 	
 	@Test
-	public void XForwardedForByNome() throws UtilsException {
+	public void XForwardedFor() throws UtilsException {
 		
 		List<String> forwardedHeaders = HttpUtilities.getClientAddressHeaders();
 		
@@ -373,7 +372,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 				.map(c -> Common.buildRequest_Template(c, erogazione))
 				.collect(Collectors.toList());
 							
-		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
+		var responsesByConnettore = ConsegnaCondizionaleByNomeTest.makeBatchedRequests(requestsByConnettore, 3);
 		
 		matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);		
 		
@@ -381,7 +380,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	
 	
 	@Test
-	public void freemarkerTemplateByNome() {
+	public void freemarkerTemplate() {
 		// Test uguale a templateByNome
 		final String erogazione = "ConsegnaCondizionaleFreemarkerTemplateByNome";
 		
@@ -389,7 +388,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 				.map(c -> Common.buildRequest_FreemarkerTemplate(c, erogazione))
 				.collect(Collectors.toList());
 
-		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
+		var responsesByConnettore = ConsegnaCondizionaleByNomeTest.makeBatchedRequests(requestsByConnettore, 3);
 		
 		matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);		
 		
@@ -405,7 +404,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 				.map(c -> Common.buildRequest_VelocityTemplate(c, erogazione))
 				.collect(Collectors.toList());
 							
-		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
+		var responsesByConnettore = ConsegnaCondizionaleByNomeTest.makeBatchedRequests(requestsByConnettore, 3);
 		
 		matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);		
 	}
@@ -453,7 +452,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 				.map( (List<Object> l) -> (HttpRequest) l.get(1))
 				.collect(Collectors.toList());
 		
-		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
+		var responsesByConnettore = ConsegnaCondizionaleByNomeTest.makeBatchedRequests(requestsByConnettore, 3);
 		
 		// Per tutti i batch so determinare a priori quale sarà il connettore di destinazione,
 		// tranne che per l'ultimo, il ClientIp.
@@ -515,7 +514,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 				.map(c -> Common.buildRequest_HeaderHttp(c, erogazione))
 				.collect(Collectors.toList());
 							
-		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
+		var responsesByConnettore = ConsegnaCondizionaleByNomeTest.makeBatchedRequests(requestsByConnettore, 3);
 		
 		matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);	
 	}
@@ -533,7 +532,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 				.map(c -> Common.buildRequest_HeaderHttp(c, erogazione))
 				.collect(Collectors.toList());
 							
-		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
+		var responsesByConnettore = ConsegnaCondizionaleByNomeTest.makeBatchedRequests(requestsByConnettore, 3);
 		
 		matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);	
 	}
@@ -554,7 +553,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 				.map(c -> Common.buildRequest_HeaderHttp(c, erogazione))
 				.collect(Collectors.toList());
 							
-		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
+		var responsesByConnettore = ConsegnaCondizionaleByNomeTest.makeBatchedRequests(requestsByConnettore, 3);
 		
 		matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);	
 		
@@ -606,6 +605,40 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		assertEquals(200, response.getResultHTTPOperation());
 		assertEquals(CONNETTORE_0, response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
 
+	}
+
+
+	/*
+	 * Esegue un thread per ogni richiesta e per ogni thread esegue
+	 * requests_per_batch richieste
+	 * 
+	 * Restituisce le risposte raggruppate per richiesta, e.g: il primo vettore di
+	 * risposte corrisponde al batch di richieste fatte per la prima richiesta della
+	 * lista `requests`
+	 */
+	public static Vector<Vector<HttpResponse>> makeBatchedRequests(List<HttpRequest> requests, int requests_per_batch) {
+	
+		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(requests.size());
+		var ret = new Vector<Vector<HttpResponse>>(requests.size());
+	
+		for (int i = 0; i < requests.size(); i++) {
+			ret.add(new Vector<>());
+			int index = i;
+	
+			executor.execute(() -> {
+				ret.get(index).addAll(Utils.makeSequentialRequests(requests.get(index), requests_per_batch));
+			});
+		}
+	
+		try {
+			executor.shutdown();
+			executor.awaitTermination(20, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			// logRateLimiting.error("Le richieste hanno impiegato più di venti secondi!");
+			throw new RuntimeException(e);
+		}
+	
+		return ret;
 	}
 
 

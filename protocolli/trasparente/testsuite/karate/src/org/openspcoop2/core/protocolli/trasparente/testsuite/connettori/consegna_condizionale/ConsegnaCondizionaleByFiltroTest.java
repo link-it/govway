@@ -71,9 +71,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 	//		Fixare la console impedendo tale configurazione e mettere una proprietà in govway per
 	//		disabilitare questo fix, in modo da poterlo testare.
 	// TODO: Aggiungere anche qui il controllo sul connettore disabilitato?
-	
-	// TODO: prefisso e suffisso?
-		
+			
 	static Map<String,List<String>> filtriConnettori = Map.of(
 			CONNETTORE_0, Arrays.asList("Connettore0-Filtro0", "Connettore0-Filtro1"),
 			CONNETTORE_1, Arrays.asList("Connettore1-Filtro0", "Connettore1-Filtro1"),
