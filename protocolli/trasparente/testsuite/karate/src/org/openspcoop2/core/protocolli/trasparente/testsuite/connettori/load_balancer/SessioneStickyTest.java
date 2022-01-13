@@ -508,6 +508,10 @@ public class SessioneStickyTest extends ConfigLoader {
 		
 	@Test
 	public void velocityTemplate() throws InterruptedException, ExecutionException {
+		
+		// TODO 1 Qui il problema è dovuto al fatto che il velocity template $query["govway-testsuite-id_sessione_request"] 
+		// restituisce il template stesso se la chiave non è presente, quindi un id sessione veniva comunque trovato.
+				
 		final String erogazione = "LoadBalanceSessioneStickyVelocityTemplate";
 		
 		// Lancio le due chiamate bloccanti, devono durare per tutto il test
@@ -654,6 +658,7 @@ public class SessioneStickyTest extends ConfigLoader {
 		
 		// Attendo che venga reinserito nel pool e ripeto la parte iniziale del test
 		// per instradare una richiesta nuovamente sul connettore rotto
+		// TODO: Usare il parametro e aumentare anche nella configurazione da 2 a 4 o 5
 		org.openspcoop2.utils.Utilities.sleep(2100);
 
 		idSessioneConnettoreRotto = null;
@@ -736,6 +741,9 @@ public class SessioneStickyTest extends ConfigLoader {
 		// da utilizzare tutti i connettori possibili.
 		// In questo modo posso in questo testo posso fare richieste senza l'id condizione
 		// impostato.
+		
+		// TODO: Il fatto di avere un'associazione
+
 		
 		final String erogazione = "LoadBalanceSessioneStickyConsegnaCondizionaleHeaderHttp";
 		
