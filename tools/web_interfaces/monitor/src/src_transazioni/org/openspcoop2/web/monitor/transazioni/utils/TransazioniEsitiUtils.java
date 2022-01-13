@@ -74,6 +74,9 @@ public class TransazioniEsitiUtils {
 					esitoLabel = "HTTP " +httpStatusCode.intValue()+" (Limite Richieste)";
 				}
 				else if(esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA) == esito.intValue()) {
+					esitoLabel = "HTTP " +httpStatusCode.intValue()+" (Consegna Multipla in Attesa di Consegna)";
+				}
+				else if(esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_IN_CORSO) == esito.intValue()) {
 					esitoLabel = "HTTP " +httpStatusCode.intValue()+" (Consegna Multipla in Corso)";
 				}
 				else if(esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_COMPLETATA) == esito.intValue()) {

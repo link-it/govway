@@ -142,6 +142,10 @@
 	font-weight: bold;
 }
 
+.rich-panel-reversed {
+	background-color: ${panel.header.background.color};
+}
+
 .icon-search-box {
 	margin-right: 16px;
 }

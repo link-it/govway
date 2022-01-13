@@ -1522,6 +1522,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 					escludiEsiti = new ArrayList<Integer>();
 				}
 				escludiEsiti.add(esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA));
+				escludiEsiti.add(esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_IN_CORSO));
 				escludiEsiti.add(esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_COMPLETATA));
 				escludiEsiti.add(esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_FALLITA));
 			}

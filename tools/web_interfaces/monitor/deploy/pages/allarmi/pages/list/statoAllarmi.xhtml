@@ -12,75 +12,89 @@
 
 	<ui:define name="body">
 		<style>
-			#crumbs {display: none;	}					
+			#crumbs {display: none;	}		
 		</style>
 		<a4j:outputPanel id="panelPaginaRicerca" layout="block">
-			<rich:panel id="statusPnl" rendered="#{allarmiBean.allarmiAssociazioneAcknowledgedStatoAllarme==false}">
+			<rich:panel id="statusPnl" rendered="#{allarmiBean.allarmiAssociazioneAcknowledgedStatoAllarme==false}" styleClass="rich-panel-reversed">
 				<f:facet name="header">	
-					<h:outputText value="Stato Allarmi" />
+					<h:outputText value="Stato Allarmi" rendered="#{false}"/>
 				</f:facet>
 				<h:panelGrid columns="7">
 					<h:panelGrid columns="2" columnClasses="labelAllineataDx,valueAllineataSx" styleClass="borderSpacingTable">
-						<h:outputText value="Ok:" styleClass="outputFieldLabel"/>
-						<h:panelGrid columns="2">
-							<h:outputText value="#{allarmiBean.totOk}" />
-							<h:graphicImage value="/images/tema_link/status_green.png"/>
+						<h:outputText value="Ok:" styleClass="outputFieldLabelReversed"/>
+						<h:panelGrid columns="3">
+							<h:outputText value="#{allarmiBean.totOk}" styleClass="outputTextNumeroAllarmiReversed" />
+							<h:outputText value="&#160;" />
+							<a4j:outputPanel styleClass="icona-allarme-ok">
+								<i class="material-icons md-18" id="iconaSearchOpen">lens</i>
+							</a4j:outputPanel>
 						</h:panelGrid>
 					</h:panelGrid>
 					<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
 					
 					<h:panelGrid columns="2" columnClasses="labelAllineataDx,valueAllineataSx" styleClass="borderSpacingTable">
-						<h:outputText value="Warn:" styleClass="outputFieldLabel" />
-						<h:panelGrid columns="2">
-							<h:outputText value="#{allarmiBean.totWarn}" />
-							<h:graphicImage value="/images/tema_link/status_yellow.png" />
+						<h:outputText value="Warn:" styleClass="outputFieldLabelReversed" />
+						<h:panelGrid columns="3">
+							<h:outputText value="#{allarmiBean.totWarn}" styleClass="outputTextNumeroAllarmiReversed" />
+							<h:outputText value="&#160;" />
+							<a4j:outputPanel styleClass="icona-allarme-warning">
+								<i class="material-icons md-18" id="iconaSearchOpen">lens</i>
+							</a4j:outputPanel>
 						</h:panelGrid>
 					</h:panelGrid>
 					<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
 					
 					<h:panelGrid columns="2" columnClasses="labelAllineataDx,valueAllineataSx" styleClass="borderSpacingTable">
-						<h:outputText value="Error:" styleClass="outputFieldLabel" />
-						<h:panelGrid columns="2">
-							<h:outputText value="#{allarmiBean.totError}" />
-							<h:graphicImage value="/images/tema_link/status_red.png"/>
+						<h:outputText value="Error:" styleClass="outputFieldLabelReversed" />
+						<h:panelGrid columns="3">
+							<h:outputText value="#{allarmiBean.totError}" styleClass="outputTextNumeroAllarmiReversed" />
+							<h:outputText value="&#160;" />
+							<a4j:outputPanel styleClass="icona-allarme-error">
+								<i class="material-icons md-18" id="iconaSearchOpen">lens</i>
+							</a4j:outputPanel>
 						</h:panelGrid>
 					</h:panelGrid>
 					<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
 					
 					<h:panelGrid columns="2" columnClasses="labelAllineataDx,valueAllineataSx" styleClass="borderSpacingTable">
-						<h:outputText value="Disabilitati:" styleClass="outputFieldLabel" />
-						<h:panelGrid columns="2">
-							<h:outputText value="#{allarmiBean.totDisabilitati}" />
-							<h:graphicImage value="/images/tema_link/circle_light_grey.png"/>
+						<h:outputText value="Disabilitati:" styleClass="outputFieldLabelReversed" />
+						<h:panelGrid columns="3">
+							<h:outputText value="#{allarmiBean.totDisabilitati}" styleClass="outputTextNumeroAllarmiReversed" />
+							<h:outputText value="&#160;" />
+							<a4j:outputPanel styleClass="icona-allarme-disabilitato">
+								<i class="material-icons md-18" id="iconaSearchOpen">lens</i>
+							</a4j:outputPanel>
 						</h:panelGrid>
 					</h:panelGrid>
 				</h:panelGrid>
 			</rich:panel>
-			<rich:panel id="statusPnlWithAcknoledged" rendered="#{allarmiBean.allarmiAssociazioneAcknowledgedStatoAllarme}">
+			<rich:panel id="statusPnlWithAcknoledged" rendered="#{allarmiBean.allarmiAssociazioneAcknowledgedStatoAllarme}" styleClass="rich-panel-reversed">
 				<f:facet name="header">	
-					<h:outputText value="Stato Allarmi" />
+					<h:outputText value="Stato Allarmi" rendered="#{false}" />
 				</f:facet>
 				<h:panelGrid columns="7">
 					<h:panelGrid columns="2" columnClasses="labelAllineataDx,valueAllineataSx" styleClass="borderSpacingTable">
-						<h:outputText value="Ok:" styleClass="outputFieldLabel"/>
+						<h:outputText value="Ok:" styleClass="outputFieldLabelReversed"/>
 						<h:panelGrid columns="3">
-							<h:outputText value="#{allarmiBean.totOk}" />
+							<h:outputText value="#{allarmiBean.totOk}" styleClass="outputTextNumeroAllarmiReversed" />
 							<h:outputText value="&#160;" />
-							<h:graphicImage value="/images/tema_link/status_green.png"/>
+							<a4j:outputPanel styleClass="icona-allarme-ok">
+								<i class="material-icons md-18" id="iconaSearchOpen">lens</i>
+							</a4j:outputPanel>
 						</h:panelGrid>
 					</h:panelGrid>
 					<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
 					
 					<h:panelGrid columns="2" columnClasses="labelAllineataDx,valueAllineataSx" styleClass="borderSpacingTable">
-						<h:outputText value="Warn:" styleClass="outputFieldLabel" />
+						<h:outputText value="Warn:" styleClass="outputFieldLabelReversed" />
 						<h:panelGrid columns="7">
-							<h:outputText value="#{allarmiBean.totWarnNoAck}" />
+							<h:outputText value="#{allarmiBean.totWarnNoAck}" styleClass="outputTextNumeroAllarmiReversed" />
 							<h:outputText value="&#160;" />
 							<a4j:outputPanel styleClass="icona-allarme-warning">
 								<i class="material-icons md-18" id="iconaSearchOpen">error</i>
 							</a4j:outputPanel>
 							<h:outputText value="&#160;&#160;" />
-							<h:outputText value="#{allarmiBean.totWarnAck}" />
+							<h:outputText value="#{allarmiBean.totWarnAck}" styleClass="outputTextNumeroAllarmiReversed" />
 							<h:outputText value="&#160;" />
 							<a4j:outputPanel styleClass="icona-allarme-warning">
 								<i class="material-icons md-18" id="iconaSearchOpen">check_circle</i>
@@ -90,15 +104,15 @@
 					<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
 					
 					<h:panelGrid columns="2" columnClasses="labelAllineataDx,valueAllineataSx" styleClass="borderSpacingTable">
-						<h:outputText value="Error:" styleClass="outputFieldLabel" />
+						<h:outputText value="Error:" styleClass="outputFieldLabelReversed" />
 						<h:panelGrid columns="7">
-							<h:outputText value="#{allarmiBean.totErrorNoAck}" />
+							<h:outputText value="#{allarmiBean.totErrorNoAck}" styleClass="outputTextNumeroAllarmiReversed" />
 							<h:outputText value="&#160;" />
 							<a4j:outputPanel styleClass="icona-allarme-error">
 								<i class="material-icons md-18" id="iconaSearchOpen">error</i>
 							</a4j:outputPanel>
 							<h:outputText value="&#160;&#160;" />
-							<h:outputText value="#{allarmiBean.totErrorAck}" />
+							<h:outputText value="#{allarmiBean.totErrorAck}" styleClass="outputTextNumeroAllarmiReversed" />
 							<h:outputText value="&#160;" />
 							<a4j:outputPanel styleClass="icona-allarme-error">
 								<i class="material-icons md-18" id="iconaSearchOpen">check_circle</i>
@@ -108,11 +122,12 @@
 					<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
 					
 					<h:panelGrid columns="2" columnClasses="labelAllineataDx,valueAllineataSx" styleClass="borderSpacingTable">
-						<h:outputText value="Disabilitati:" styleClass="outputFieldLabel" />
-						<h:panelGrid columns="2">
-							<h:outputText value="#{allarmiBean.totDisabilitati}" />
+						<h:outputText value="Disabilitati:" styleClass="outputFieldLabelReversed" />
+						<h:panelGrid columns="3">
+							<h:outputText value="#{allarmiBean.totDisabilitati}" styleClass="outputTextNumeroAllarmiReversed" />
+							<h:outputText value="&#160;" />
 							<a4j:outputPanel styleClass="icona-allarme-disabilitato">
-								<i class="material-icons md-20" id="iconaSearchOpen">fiber_manual_record</i>
+								<i class="material-icons md-18" id="iconaSearchOpen">lens</i>
 							</a4j:outputPanel>
 						</h:panelGrid>
 					</h:panelGrid>
@@ -261,7 +276,7 @@
 							</f:facet>
 							<h:panelGroup layout="block" style="width: 40px;">
 								<a4j:outputPanel rendered="#{item.enabled==0}" id="alarmDisabledPnl" styleClass="icona-allarme-disabilitato">
-									<i class="material-icons md-20" id="iconaSearchOpen">fiber_manual_record</i>
+									<i class="material-icons md-18" id="iconaSearchOpen">lens</i>
 									<rich:toolTip for="alarmDisabledPnl" mode="client" value="Disabilitato"/>
 								</a4j:outputPanel>
 								<a4j:outputPanel rendered="#{ 
@@ -275,11 +290,12 @@
 											(item.invocaScriptAlert==1 and item.scriptAckMode==1)
 										) 
 									}">
-									<h:graphicImage value="/images/tema_link/status_green.png" rendered="#{item.stato==0}" id="imgStatoOk">
+									<a4j:outputPanel styleClass="icona-allarme-ok" rendered="#{item.stato==0}" id="imgStatoOk">
+										<i class="material-icons md-18" id="iconaSearchOpen">lens</i>
 										<rich:toolTip mode="client" for="imgStatoOk">
 											<h:outputText value="Ok" />
 										</rich:toolTip>
-									</h:graphicImage>
+									</a4j:outputPanel>
 									<rich:toolTip mode="client" for="ackLinkT">
 										<h:outputText value="Click to Acknowledge." />
 									</rich:toolTip>
@@ -291,14 +307,14 @@
 										 reRender="allarmiTbl,statusPnlWithAcknoledged">
 										<f:setPropertyActionListener value="#{item}" target="#{allarmiBean.allarme}" />
 										<a4j:actionparam name="ack" value="true" assignTo="#{allarmiBean.ack}" actionListener="#{allarmiBean.toggleAck}"/>
-										<i class="material-icons md-16" id="iconaSearchOpen">error</i>
+										<i class="material-icons md-18" id="iconaSearchOpen">error</i>
 									</a4j:commandLink>					
 									<a4j:commandLink id="ackLinkF" styleClass="#{item.stato==1 ? 'icona-allarme-warning' : 'icona-allarme-error'}"
 										rendered="#{(item.acknowledged==1) and (item.stato>0)}"
 										 reRender="allarmiTbl,statusPnlWithAcknoledged">
 										<f:setPropertyActionListener value="#{item}" target="#{allarmiBean.allarme}" />
 										<a4j:actionparam name="ack" value="false" assignTo="#{allarmiBean.ack}" actionListener="#{allarmiBean.toggleAck}"/>
-										<i class="material-icons md-16" id="iconaSearchOpen">check_circle</i>
+										<i class="material-icons md-18" id="iconaSearchOpen">check_circle</i>
 									</a4j:commandLink>
 								</a4j:outputPanel> 
 								<a4j:outputPanel rendered="#{ 
@@ -312,9 +328,24 @@
 											(item.invocaScriptAlert==1 and item.scriptAckMode==1)
 										) 
 									}">
-									<h:graphicImage value="/images/tema_link/status_green.png" rendered="#{item.stato==0}" title="Ok"/>
-									<h:graphicImage value="/images/tema_link/status_red.png" rendered="#{item.stato==2}" title="Error"/>
-									<h:graphicImage value="/images/tema_link/status_yellow.png" rendered="#{item.stato==1}" title="Warn"/>
+									<a4j:outputPanel styleClass="icona-allarme-ok" rendered="#{item.stato==0}" id="imgStatoOk_NA">
+										<i class="material-icons md-18" id="iconaSearchOpen">lens</i>
+										<rich:toolTip mode="client" for="imgStatoOk_NA">
+											<h:outputText value="Ok" />
+										</rich:toolTip>
+									</a4j:outputPanel>
+									<a4j:outputPanel styleClass="icona-allarme-error" rendered="#{item.stato==2}" id="imgStatoError_NA">
+										<i class="material-icons md-18" id="iconaSearchOpen">lens</i>
+										<rich:toolTip mode="client" for="imgStatoError_NA">
+											<h:outputText value="Error" />
+										</rich:toolTip>
+									</a4j:outputPanel>
+									<a4j:outputPanel styleClass="icona-allarme-warning" rendered="#{item.stato==1}" id="imgStatoWarn_NA">
+										<i class="material-icons md-18" id="iconaSearchOpen">lens</i>
+										<rich:toolTip mode="client" for="imgStatoWarn_NA">
+											<h:outputText value="Warn" />
+										</rich:toolTip>
+									</a4j:outputPanel>
 								</a4j:outputPanel> 
 							</h:panelGroup>
 						</rich:column>
