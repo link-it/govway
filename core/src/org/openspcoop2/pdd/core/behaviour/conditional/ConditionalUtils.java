@@ -259,6 +259,9 @@ public class ConditionalUtils  {
 							pForm,
 							errorHandler);
 					condition = DynamicUtils.convertDynamicPropertyValue("ConditionalConfig.gwt", patternSelettore, dynamicMap, pddContext, true);
+					if(condition!=null) {
+						condition = ConditionalUtils.normalizeTemplateResult(condition);
+					}
 					break;
 					
 				case FREEMARKER_TEMPLATE:
@@ -284,6 +287,9 @@ public class ConditionalUtils  {
 					bout.flush();
 					bout.close();
 					condition = bout.toString();
+					if(condition!=null) {
+						condition = ConditionalUtils.normalizeTemplateResult(condition);
+					}
 					break;
 					
 				case VELOCITY_TEMPLATE:
@@ -309,6 +315,9 @@ public class ConditionalUtils  {
 					bout.flush();
 					bout.close();
 					condition = bout.toString();
+					if(condition!=null) {
+						condition = ConditionalUtils.normalizeTemplateResult(condition);
+					}
 					break;
 				}
 			
@@ -585,6 +594,19 @@ public class ConditionalUtils  {
 		
 		return l;
 		
+	}
+	
+	public static String normalizeTemplateResult(String condition) {
+		if(condition!=null) {
+			condition = condition.trim();
+			if(condition.startsWith("\n") && condition.length()>1) {
+				condition = condition.substring(1);
+			}
+			if(condition.endsWith("\n") && condition.length()>1) {
+				condition = condition.substring(0, condition.length()-1);
+			}
+		}
+		return condition;
 	}
 	
 	public static boolean isConfigurazioneCondizionale(PortaApplicativa pa, Logger log) {
