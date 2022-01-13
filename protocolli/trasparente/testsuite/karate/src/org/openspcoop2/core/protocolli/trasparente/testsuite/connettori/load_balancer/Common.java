@@ -99,6 +99,7 @@ public class Common {
 		.asList(POOL_0, POOL_1, POOL_2);
 	
 
+	// TODO: sostituire List<String> con Set<String> anche in altri posti
 	public static Map<String,List<String>> connettoriPools = Map
 		.of(POOL_0, Arrays.asList(CONNETTORE_0,CONNETTORE_1,CONNETTORE_2, CONNETTORE_DISABILITATO),
 			POOL_1, Arrays.asList(CONNETTORE_1,CONNETTORE_2,CONNETTORE_3, CONNETTORE_DISABILITATO),

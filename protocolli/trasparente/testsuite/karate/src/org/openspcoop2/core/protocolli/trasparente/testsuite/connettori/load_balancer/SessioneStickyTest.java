@@ -65,6 +65,7 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 // TODO: gli health check si potrebbero scrivere tirando su un mock che si chiude da solo dopo 
 //		aver gestito una richiesta.
 
+// TODO: il logRateLimiting va sostituito con il loggerCore
 
 /**
  *	La strategia di Load Balancing viene cambiata al cambiare dell'identificazione dell'ID sessione,
@@ -544,6 +545,7 @@ public class SessioneStickyTest extends ConfigLoader {
 		assertFalse(futureResp1.isDone() || futureResp2.isDone());
 		
 		// Faccio 2 richieste senza idSessione impostato e verifico che vadano a finire negli altri 2 connettori
+		// TODO: Questo è perchè il velocity template restituisce il template stesso se l'accesso alla map $query fallisce.
 		
 		HttpRequest requestBalanced = buildRequest_LoadBalanced(erogazione);
 		requestBalanced.setUrl(requestBalanced.getUrl()+"&sleep="+Common.durataBloccante);
@@ -569,6 +571,7 @@ public class SessioneStickyTest extends ConfigLoader {
 		
 		var responseIdSessione0 = futureResp1.get();
 		var responseIdSessione1 = futureResp2.get();
+		
 		
 	/*	assertEquals(connettoreSessione0, responseIdSessione0.getHeaderFirstValue(HEADER_ID_CONNETTORE)); TODO: Decommentare dopo il fix di andrea
 		assertEquals(connettoreSessione1, responseIdSessione1.getHeaderFirstValue(HEADER_ID_CONNETTORE));*/
@@ -763,6 +766,9 @@ public class SessioneStickyTest extends ConfigLoader {
 		
 		// Prima faccio avvenire delle richieste solo con l'id sessione per sapere in che pool
 		// sono finiti i connettori sticky.
+		// Fare test semplice che mostra come non ricorda l'associazione tra id sessione
+		// e connettore quando si cambia il pool con il filtro.
+		
 		HttpRequest req1 = buildRequest_HeaderHttp(IDSessioni.get(0), erogazione);
 		HttpRequest req2 = buildRequest_HeaderHttp(IDSessioni.get(1), erogazione);
 		
@@ -790,15 +796,19 @@ public class SessioneStickyTest extends ConfigLoader {
 		req1.addHeader(HEADER_CONDIZIONE, Common.filtriPools.get(pool1).get(0));
 		req2.addHeader(HEADER_CONDIZIONE, Common.filtriPools.get(pool2).get(0));
 		
-		HttpRequest requestSoloFiltro = ConsegnaCondizionaleByNomeTest.buildRequest_HeaderHttpByNome(pool3, erogazione);
+		HttpRequest requestSoloFiltro = ConsegnaCondizionaleByNomeTest
+				.buildRequest_HeaderHttpByNome(
+						Common.filtriPools.get(pool3).get(0),
+						erogazione);
+		
 		HttpRequest requestSoloIdSessione = buildRequest_HeaderHttp("IDSessioneDiverso", erogazione);
 		HttpRequest requestSemplice = buildRequest_LoadBalanced(erogazione);
 				
 		List<HttpRequest> richieste = Arrays.asList(
-				req1, 		// Va nel poolX, senza attivare il load balancing perchè l'id sessione è impostato
-				req2,		// Va nel poolY, senza attivare il load balancing perchè l'id sessione è impostato
+				req1, 		// Va nel pool1, senza attivare il load balancing perchè l'id sessione è impostato
+				req2,		// Va nel pool2, senza attivare il load balancing perchè l'id sessione è impostato
 				requestSoloIdSessione, // Attiva una sola volta il load balancing su TUTTI i connettori perchè l'id sessione è impostato ma è nuovo
-				requestSoloFiltro, // Va nel PoolW che è diverso da tutti gli altri perchè scelto ad hoc
+				requestSoloFiltro, // Va nel pool3 che è diverso da tutti gli altri perchè scelto ad hoc
 				requestSemplice // Va nel pool di tutti i connettori
 			);
 
@@ -817,7 +827,10 @@ public class SessioneStickyTest extends ConfigLoader {
 		checkAllResponsesSameConnettore(responsesByKind.get(2));
 
 		// Le quarte richieste vanno sul poolW diverso da tutti e con un round robin suo
-		checkRoundRobin(responsesByKind.get(3), Common.setConnettoriAbilitati);
+		var connettoriAbilitatiPool3 = new HashSet<>(Common.connettoriPools.get(pool3));
+		connettoriAbilitatiPool3.remove(Common.CONNETTORE_DISABILITATO);
+		
+		checkRoundRobin(responsesByKind.get(3), connettoriAbilitatiPool3);
 		
 		// Le quinte risposte vanno sul pool di tutti i connettori e hanno un round robin loro
 		
