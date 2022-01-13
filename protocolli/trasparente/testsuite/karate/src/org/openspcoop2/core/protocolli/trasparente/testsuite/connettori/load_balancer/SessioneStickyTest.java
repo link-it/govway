@@ -502,7 +502,7 @@ public class SessioneStickyTest extends ConfigLoader {
 			remaining -= nReq;
 		}
 		
-		checkRandomStrategy(balancedResponses, Common.pesiConnettoriStandard);
+		checkRandomStrategy(balancedResponses, Common.setConnettoriAbilitati);
 	}
 	
 		
@@ -696,9 +696,6 @@ public class SessioneStickyTest extends ConfigLoader {
 	}
 	
 	
-	
-
-	
 	@Test
 	public void healthCheckConsegnaCondizionale() {
 
@@ -771,8 +768,6 @@ public class SessioneStickyTest extends ConfigLoader {
 		balancedResponses.add(responsesByKind.get(0).get(0));
 		balancedResponses.add(responsesByKind.get(1).get(0));
 		
-		// TODO Forse farei meglio a far controllare alle varie check* che
-		// non ci sia il connettore disabilitato.
 		Set<String> connettoriDaRaggiungere = new HashSet<>( Arrays.asList(
 				Common.CONNETTORE_0, 
 				Common.CONNETTORE_1, 
@@ -962,6 +957,11 @@ public class SessioneStickyTest extends ConfigLoader {
 		var howManys = Common.contaConnettoriUtilizzati(responses);
 		Common.printMap(howManys);
 		
+		for (var connettore : howManys.keySet()) {
+			// Ogni connettore raggiunto deve essere nel set dei connettori
+			assertTrue(pesiConnettori.keySet().contains(connettore));
+		}
+		
 		int richiestaInPiu = 0;
 		for (var connettore : pesiConnettori.keySet()) {
 			// Tutti i connettori devono essere stati raggiunti
@@ -990,6 +990,12 @@ public class SessioneStickyTest extends ConfigLoader {
 		 */		
 		var howManys = Common.contaConnettoriUtilizzati(responses);
 		Common.printMap(howManys);
+		
+		for (var connettore : howManys.keySet()) {
+			// Ogni connettore raggiunto deve essere nel set dei connettori
+			assertTrue(pesiConnettori.keySet().contains(connettore));
+		}
+		
 		for (var connettore : pesiConnettori.keySet()) {
 			// Tutti i connettori devono essere stati raggiunti
 			assertTrue(howManys.containsKey(connettore));
@@ -1003,15 +1009,20 @@ public class SessioneStickyTest extends ConfigLoader {
 	}
 
 	
-	static void checkRandomStrategy(List<HttpResponse> responses, Map<String,Integer> pesiConnettori) {
+	static void checkRandomStrategy(List<HttpResponse> responses, Set<String> connettori) {
 		// Sotto un numero di richieste alto, controllo che
 		// nessun connettore riceva molte più richieste degli altri.
 		int nRequests = responses.size();
-		int n = nRequests / pesiConnettori.size();
+		int n = nRequests / connettori.size();
 		
 		var howManys = Common.contaConnettoriUtilizzati(responses);
 		
-		for (var connettore : pesiConnettori.keySet()) {
+		for (var connettore : howManys.keySet()) {
+			// Ogni connettore raggiunto deve essere nel set dei connettori
+			assertTrue(connettori.contains(connettore));
+		}
+		
+		for (var connettore : connettori) {
 			// Il connettore deve essere stato raggiunto
 			assertTrue(howManys.containsKey(connettore));
 			// Mi aspetto un random uniforme, nessun connettore deve avere più di n richieste
