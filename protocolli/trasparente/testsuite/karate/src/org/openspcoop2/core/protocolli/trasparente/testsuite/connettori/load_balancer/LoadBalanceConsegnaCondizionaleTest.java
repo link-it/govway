@@ -99,6 +99,17 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		checkResponses(responsesByPool);
 	}
 	
+	@Test
+	public void identificazioneFallita() {
+		/** 
+		 * Raggiungo correttamente il pool0 e il pool1, e sbaglio l'identificazione per un 
+		 * terzo pool. Quel terzo pool diventa quello dei connettori abilitati.
+		 */
+		
+		
+		
+	}
+	
 	
 	@Test
 	public void prefisso() {
