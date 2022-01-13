@@ -546,6 +546,9 @@ public class SessioneStickyTest extends ConfigLoader {
 		Common.printMap(howManys);
 		for (var connettore : howManys.keySet()) {
 			// TODO: Qui fallisce.
+			
+			// TODO: Verificare anche che i connettori utilizzati senza id di sessione siano differenti da quelli utilizzati con l'id di sessione
+			
 			assertEquals(Integer.valueOf(1), howManys.get(connettore));
 		}
 		
