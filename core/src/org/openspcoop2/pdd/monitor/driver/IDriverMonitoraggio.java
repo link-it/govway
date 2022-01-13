@@ -83,4 +83,12 @@ public interface IDriverMonitoraggio {
 	 */
 	public long aggiornaDataRispedizioneRichiestePendenti(FilterSearch search) throws DriverMonitoraggioException;
 	
+	/**
+	 * Ritorna lo stato delle consegne asincrone
+	 * 
+	 * @return stato delle consegne asincrone
+	 * @throws DriverMonitoraggioException
+	 */
+	public StatoConsegneAsincrone getStatoConsegneAsincrone(FiltroStatoConsegnaAsincrona filtro) throws DriverMonitoraggioException;
+	
 }

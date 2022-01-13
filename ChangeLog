@@ -5,6 +5,7 @@
 	Effettuati i seguenti miglioramenti nella gestione e nel monitoraggio dei connettori multipli (consegne asincrone):
 	- aggiunto la possibilità di disabilitare lo scheduling delle consegne di un connettore, consentento l'acquisizione dei messaggi senza consegnarli fino a che non avviene la riabilitazione;
 	- l'identificativo di una consegna condizionale o l'id di sessione ottenuto tramite un template viene adesso normalizzato per eliminare spazi o ritorni a capo presenti nella parte iniziale o finale;
+	- nella funzionalità 'Coda Messaggi' è adesso possibile avere una informazione sintetica sulle consegne in corso;
 	- aggiunto uno stato della transazione, per i connettori multipli, di "attesa consegna" che consente di differenziare rispetto alla "consegna in corso", perchè la seconda ha già tentato una consegna, la prima no.
 
 2022-01-13  Giuliano Pintori <pintori@link.it>

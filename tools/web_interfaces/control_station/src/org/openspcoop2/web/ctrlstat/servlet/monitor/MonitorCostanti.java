@@ -134,6 +134,7 @@ public class MonitorCostanti {
 	public final static String PARAMETRO_MONITOR_AZIONE = "azione";
 	public final static String PARAMETRO_MONITOR_SOGLIA = "soglia";
 	public final static String PARAMETRO_MONITOR_STATO = "stato";
+	public final static String PARAMETRO_MONITOR_ORDER_BY_CONSEGNA_ASINCRONA = "orderAsinc";
 	public final static String PARAMETRO_MONITOR_PDD = "pdd";
 	public final static String PARAMETRO_MONITOR_SORGENTE = "sorgente";
 	public final static String PARAMETRO_MONITOR_RISCONTRO = "riscontro";
@@ -165,6 +166,7 @@ public class MonitorCostanti {
 	
 	public final static String LABEL_PARAMETRO_MONITOR_METHOD = "Metodo";
 	public final static String LABEL_PARAMETRO_MONITOR_SORGENTE = "Runtime";
+	public final static String LABEL_PARAMETRO_MONITOR_PARAMETRO_MONITOR_ORDER_BY_CONSEGNA_ASINCRONA = "Criterio di Ordinamento";
 	public final static String LABEL_PARAMETRO_MONITOR_PORTA_DOMINIO = "Porta di Dominio";
 	public final static String LABEL_PARAMETRO_MONITOR_TIPO = "Tipo";
 	public final static String LABEL_PARAMETRO_MONITOR_TIPO_PROFILO_COLLABORAZIONE = "Profilo di collaborazione";
@@ -204,6 +206,25 @@ public class MonitorCostanti {
 	public final static String LABEL_PARAMETRO_MONITOR_CODA = "Coda";
 	public final static String LABEL_PARAMETRO_MONITOR_PRIORITA = "Priorita";
 	public final static String LABEL_PARAMETRO_MONITOR_ATTESA_ESITO = "Attesa Esito Sincrono";
+	
+	public final static String LABEL_PARAMETRO_MONITOR_NOW = "Ora Attuale";
+	public final static String LABEL_PARAMETRO_MONITOR_SERVIZIO_APPLICATIVO = "Servizio";
+	
+	public final static String LABEL_PARAMETRO_MONITOR_VECCHIO = "Vecchio: ";
+	public final static String LABEL_PARAMETRO_MONITOR_RECENTE = "Recente: ";
+	
+	public final static String LABEL_PARAMETRO_MONITOR_IN_CODA = "In Coda";
+	public final static String LABEL_PARAMETRO_MONITOR_IN_CODA_VECCHIO = "Vecchio in Coda";
+	public final static String LABEL_PARAMETRO_MONITOR_IN_CODA_RECENTE = "Recente in Coda";
+
+	public final static String LABEL_PARAMETRO_MONITOR_IN_RICONSEGNA = "In Riconsegna";
+	public final static String LABEL_PARAMETRO_MONITOR_IN_RICONSEGNA_VECCHIO = "Vecchio in Riconsegna";
+	public final static String LABEL_PARAMETRO_MONITOR_IN_RICONSEGNA_RECENTE = "Recente in Riconsegna";
+	
+	public final static String LABEL_PARAMETRO_MONITOR_IN_MESSAGE_BOX = "In MessageBox";
+	public final static String LABEL_PARAMETRO_MONITOR_IN_MESSAGE_BOX_VECCHIO = "Vecchio in MessageBox";
+	public final static String LABEL_PARAMETRO_MONITOR_IN_MESSAGE_BOX_RECENTE = "Recente in MessageBox";
+
 	
 	/* DEFAULT VALUE PARAMETRI */
 

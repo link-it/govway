@@ -86,6 +86,8 @@ public class PageData {
 
 	boolean postBackResult=false;
 	boolean includiMenuLateraleSx = true;
+	
+	private boolean paginazione = true;
 		
 	public PageData() {
 		this.pageDescription = "";
@@ -120,6 +122,7 @@ public class PageData {
 		this.labelBottoneRipulsci = Costanti.LABEL_MONITOR_BUTTON_RIPULISCI;
 		this.postBackResult=false;
 		this.includiMenuLateraleSx = true;
+		this.paginazione = true;
 	}
 
 	public void setPageDescription(String s) {
@@ -875,5 +878,13 @@ public class PageData {
 		}
 		
 		return deValue;
+	}
+	
+	public boolean isPaginazione() {
+		return this.paginazione;
+	}
+
+	public void setPaginazione(boolean paginazione) {
+		this.paginazione = paginazione;
 	}
 }

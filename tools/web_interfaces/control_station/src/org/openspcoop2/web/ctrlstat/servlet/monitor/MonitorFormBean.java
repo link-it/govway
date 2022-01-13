@@ -40,6 +40,8 @@ public class MonitorFormBean {
 	private String pdd;
 	private String sorgenteDati;
 	
+	private String orderByConsegnaAsincrona;
+	
 	private String idMessaggio;
 	private String messagePattern;
 	private BustaSoggetto mittente;
@@ -68,6 +70,14 @@ public class MonitorFormBean {
 
 	public void setSorgenteDati(String sorgenteDati) {
 		this.sorgenteDati = sorgenteDati;
+	}
+	
+	public String getOrderByConsegnaAsincrona() {
+		return this.orderByConsegnaAsincrona;
+	}
+
+	public void setOrderByConsegnaAsincrona(String orderByConsegnaAsincrona) {
+		this.orderByConsegnaAsincrona = orderByConsegnaAsincrona;
 	}
 	
 	public String getTipo() {

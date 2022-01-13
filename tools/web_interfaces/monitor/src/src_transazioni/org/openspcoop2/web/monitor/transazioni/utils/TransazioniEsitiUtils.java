@@ -74,16 +74,16 @@ public class TransazioniEsitiUtils {
 					esitoLabel = "HTTP " +httpStatusCode.intValue()+" (Limite Richieste)";
 				}
 				else if(esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA) == esito.intValue()) {
-					esitoLabel = "HTTP " +httpStatusCode.intValue()+" (Consegna Multipla in Attesa di Consegna)";
+					esitoLabel = "HTTP " +httpStatusCode.intValue()+" (Consegna Asincrona in Coda)";
 				}
 				else if(esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_IN_CORSO) == esito.intValue()) {
-					esitoLabel = "HTTP " +httpStatusCode.intValue()+" (Consegna Multipla in Corso)";
+					esitoLabel = "HTTP " +httpStatusCode.intValue()+" (Consegna Asincrona in Corso)";
 				}
 				else if(esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_COMPLETATA) == esito.intValue()) {
-					esitoLabel = "HTTP " +httpStatusCode.intValue()+" (Consegna Multipla)";
+					esitoLabel = "HTTP " +httpStatusCode.intValue()+" (Consegna Asincrona)";
 				}
 				else if(esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_FALLITA) == esito.intValue()) {
-					esitoLabel = "HTTP " +httpStatusCode.intValue()+" (Consegna Multipla Fallita)";
+					esitoLabel = "HTTP " +httpStatusCode.intValue()+" (Consegna Asincrona Fallita)";
 				}
 				else if(esitiProperties.convertoToCode(EsitoTransazioneName.HTTP_3xx) == esito.intValue()) {
 					esitoLabel = esitoLabel.replace("Risposta ", "").replace("3xx", httpStatusCode.intValue()+"");

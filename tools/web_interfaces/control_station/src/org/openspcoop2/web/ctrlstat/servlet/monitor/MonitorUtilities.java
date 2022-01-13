@@ -28,6 +28,8 @@ import javax.xml.ws.BindingProvider;
 import org.openspcoop2.pdd.monitor.Messaggio;
 import org.openspcoop2.pdd.monitor.StatoPdd;
 import org.openspcoop2.pdd.monitor.driver.FilterSearch;
+import org.openspcoop2.pdd.monitor.driver.FiltroStatoConsegnaAsincrona;
+import org.openspcoop2.pdd.monitor.driver.StatoConsegneAsincrone;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 
@@ -87,6 +89,14 @@ public class MonitorUtilities {
 		}
 	}
 	
+	public static StatoConsegneAsincrone getStatoConsegneAsincrone(FiltroStatoConsegnaAsincrona filtro, String sorgenteDati) throws Exception{
+		if(Monitor.singlePdD){
+			return Monitor.driverMonitoraggioLocale.get(sorgenteDati).getStatoConsegneAsincrone(filtro);
+		}
+		else{
+			throw new Exception("Non supportato");
+		}
+	}
 	
 	private static String getWSUrl(String pddName, boolean statoPdD) throws Exception{
 		String ipPdd = null;

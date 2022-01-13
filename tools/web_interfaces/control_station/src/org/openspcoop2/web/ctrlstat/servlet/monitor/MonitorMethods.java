@@ -35,8 +35,9 @@ import java.util.ArrayList;
  */
 public enum MonitorMethods {
 
+	STATO_CONSEGNE_ASINCRONE("Stato"),
 	LISTA_RICHIESTE_PENDENTI("Lista"), 
-	STATO_RICHIESTE("Stato"),
+	STATO_RICHIESTE("Stato Generale"),
 	RICONSEGNA_IMMEDIATA_RICHIESTE_PENDENTI(MonitorCostanti.LABEL_ACTION_RICONSEGNA_IMMEDIATA),
 	ELIMINAZIONE_RICHIESTE_PENDENTI("Eliminazione");
 

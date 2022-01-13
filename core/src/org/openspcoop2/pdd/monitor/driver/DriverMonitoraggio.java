@@ -48,6 +48,7 @@ import org.openspcoop2.pdd.monitor.ServizioApplicativoConsegna;
 import org.openspcoop2.pdd.monitor.StatoPdd;
 import org.openspcoop2.pdd.monitor.constants.CostantiMonitoraggio;
 import org.openspcoop2.pdd.monitor.constants.StatoMessaggio;
+import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativiThread;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -1140,6 +1141,90 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 	}
 
 
+	@Override
+	public StatoConsegneAsincrone getStatoConsegneAsincrone(FiltroStatoConsegnaAsincrona filtro) throws DriverMonitoraggioException{
+		
+		String nomeMetodo = "getStatoConsegneAsincrone";
+		
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sqlQuery = null;
+		try{
+			// Ottengo connessione
+			if (this.datasource!=null)
+				con = this.datasource.getConnection();
+			else
+				con = this.globalConnection;
+			if(con==null)
+				throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+
+			// Query
+			sqlQuery = this.newSQLQueryStatoConsegneAsincrone(filtro);
+			//System.out.println("QUERY: "+sqlQuery);
+			pstmt = con.prepareStatement(sqlQuery);
+			rs = pstmt.executeQuery();
+			StatoConsegneAsincrone stati = new StatoConsegneAsincrone();
+
+			this.log.debug("query["+sqlQuery+"] getStatoConsegneAsincrone");
+			
+			while(rs.next()){
+				StatoConsegnaAsincrona stato = new StatoConsegnaAsincrona();
+				
+				// dati generali
+				stato.setNow(rs.getTimestamp(StatoConsegnaAsincrona.ALIAS_NOW));
+				stato.setServizioApplicativo(rs.getString(StatoConsegnaAsincrona.ALIAS_SERVIZIO_APPLICATIVO));
+				
+				// InCoda
+				stato.setInCoda(rs.getLong(StatoConsegnaAsincrona.ALIAS_IN_CODA));
+				stato.setVecchioInCoda(rs.getTimestamp(StatoConsegnaAsincrona.ALIAS_IN_CODA_VECCHIO));
+				stato.setRecenteInCoda(rs.getTimestamp(StatoConsegnaAsincrona.ALIAS_IN_CODA_RECENTE));
+				
+				// InRiconsegna
+				stato.setInRiconsegna(rs.getLong(StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA));
+				stato.setVecchioInRiconsegna(rs.getTimestamp(StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA_VECCHIO));
+				stato.setRecenteInRiconsegna(rs.getTimestamp(StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA_RECENTE));
+				
+				// InMessageBox
+				stato.setInMessageBox(rs.getLong(StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX));
+				stato.setVecchioInMessageBox(rs.getTimestamp(StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX_VECCHIO));
+				stato.setRecenteInMessageBox(rs.getTimestamp(StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX_RECENTE));
+				
+				stati.addStato(stato);
+			}
+			rs.close();
+			pstmt.close();
+
+			this.log.debug("trovati "+stati.size()+" stati");
+	
+			return stati;
+
+		}catch(Exception e){
+			if(sqlQuery!=null){
+				this.log.error(nomeMetodo+" error SQL["+sqlQuery+"]",e);
+				throw new DriverMonitoraggioException(nomeMetodo+" error SQL["+sqlQuery+"]: "+e.getMessage(),e);
+			}else{
+				this.log.error(nomeMetodo+" error",e);
+				throw new DriverMonitoraggioException(nomeMetodo+" error: "+e.getMessage(),e);
+			}
+		}finally{
+			try{
+				if(rs!=null)
+					rs.close();
+			}catch(Exception e){}
+			try{
+				if(pstmt!=null)
+					pstmt.close();
+			}catch(Exception e){}
+			try{
+				if(this.datasource!=null && con!=null)
+					con.close();
+			}catch(Exception e){}
+		}
+		
+	}
+	
+	
 
 
 
@@ -1494,5 +1579,200 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 		}
 
 		return sqlQueryObject;
+	}
+	
+	
+	private String newSQLQueryStatoConsegneAsincrone(FiltroStatoConsegnaAsincrona filtro) throws SQLQueryObjectException{
+
+		String ALIAS_TABLE_SERVIZI_APPLICATIVI = "sa";
+		String ALIAS_TABLE_MESSAGGI = "m";
+		
+		// ** InCoda **
+		
+		/*
+		 *	select 0 as inRiconsegna, count(*) as inCoda, 
+		 *  null::timestamp as vecchioInRiconsegna, null::timestamp as recenteInRiconsegna, 
+		 *  min(sa.ora_registrazione) as vecchioInCoda, max(sa.ora_registrazione) as recenteInCoda, 
+		 *  0 as inCaricoIM, null::timestamp as vecchioInCaricoIM, null::timestamp as recenteInCaricoIM, 
+		 *  sa.SERVIZIO_APPLICATIVO  
+		 *  from msg_servizi_applicativi sa,messaggi m 
+		 *  where 
+		 *  sa.attesa_esito=0 AND 
+		 *  (sa.errore_processamento_compact='TimerConsegnaContenutiApplicativi') AND 
+		 *  sa.tipo_consegna='Connettore' AND 
+		 *  m.id_messaggio=sa.id_messaggio AND 
+		 *  m.proprietario<>'GestoreMessaggi' 
+		 *  group by sa.servizio_applicativo
+		 **/
+		
+		ISQLQueryObject sqlQueryObjectCoda = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+		
+		sqlQueryObjectCoda.addFromTable(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI,ALIAS_TABLE_SERVIZI_APPLICATIVI);
+		sqlQueryObjectCoda.addFromTable(GestoreMessaggi.MESSAGGI,ALIAS_TABLE_MESSAGGI);
+		
+		sqlQueryObjectCoda.addSelectAliasField(getIntZeroValue(),StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA);
+		sqlQueryObjectCoda.addSelectCountField(StatoConsegnaAsincrona.ALIAS_IN_CODA);
+		sqlQueryObjectCoda.addSelectAliasField(getNullTimestampValue(),StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA_VECCHIO);
+		sqlQueryObjectCoda.addSelectAliasField(getNullTimestampValue(),StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA_RECENTE);
+		sqlQueryObjectCoda.addSelectMinField(ALIAS_TABLE_SERVIZI_APPLICATIVI, GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ORA_REGISTRAZIONE, StatoConsegnaAsincrona.ALIAS_IN_CODA_VECCHIO);
+		sqlQueryObjectCoda.addSelectMaxField(ALIAS_TABLE_SERVIZI_APPLICATIVI, GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ORA_REGISTRAZIONE, StatoConsegnaAsincrona.ALIAS_IN_CODA_RECENTE);
+		sqlQueryObjectCoda.addSelectAliasField(getIntZeroValue(),StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX);
+		sqlQueryObjectCoda.addSelectAliasField(getNullTimestampValue(),StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX_VECCHIO);
+		sqlQueryObjectCoda.addSelectAliasField(getNullTimestampValue(),StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX_RECENTE);
+		sqlQueryObjectCoda.addSelectAliasField(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_SERVIZIO_APPLICATIVO,StatoConsegnaAsincrona.ALIAS_SERVIZIO_APPLICATIVO);
+		
+		sqlQueryObjectCoda.setANDLogicOperator(true);
+		sqlQueryObjectCoda.addWhereCondition(ALIAS_TABLE_SERVIZI_APPLICATIVI+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ATTESA_ESITO+"=0");
+		sqlQueryObjectCoda.addWhereCondition(ALIAS_TABLE_SERVIZI_APPLICATIVI+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ERRORE_PROCESSAMENTO_COMPACT+"='"+TimerConsegnaContenutiApplicativiThread.ID_MODULO+"'");
+		sqlQueryObjectCoda.addWhereCondition(ALIAS_TABLE_SERVIZI_APPLICATIVI+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_TIPO_CONSEGNA+"='"+GestoreMessaggi.CONSEGNA_TRAMITE_CONNETTORE+"'");
+		sqlQueryObjectCoda.addWhereCondition(ALIAS_TABLE_MESSAGGI+"."+GestoreMessaggi.MESSAGGI_COLUMN_ID_MESSAGGIO+"="+ALIAS_TABLE_SERVIZI_APPLICATIVI+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ID_MESSAGGIO);
+		sqlQueryObjectCoda.addWhereCondition(ALIAS_TABLE_MESSAGGI+"."+GestoreMessaggi.MESSAGGI_COLUMN_PROPRIETARIO+"<>'"+TimerGestoreMessaggi.ID_MODULO+"'");
+		
+		sqlQueryObjectCoda.addGroupBy(StatoConsegnaAsincrona.ALIAS_SERVIZIO_APPLICATIVO);
+		
+		
+		// ** InRiconsegna **
+		
+		/*
+		 *	select count(*) as inRiconsegna, 0 as inCoda, 
+		 *  min(sa.ora_registrazione) as vecchioInRiconsegna, max(sa.ora_registrazione) as recenteInRiconsegna,  
+		 *  null::timestamp as vecchioInCoda, null::timestamp as recenteInCoda, 
+		 *  0 as inCaricoIM, null::timestamp as vecchioInCaricoIM, null::timestamp as recenteInCaricoIM, 
+		 *  sa.SERVIZIO_APPLICATIVO 
+		 *  from msg_servizi_applicativi sa,messaggi m 
+		 *  where 
+		 *  sa.attesa_esito=0 AND 
+		 *  (sa.errore_processamento_compact<>'TimerConsegnaContenutiApplicativi') AND 
+		 *  sa.tipo_consegna='Connettore' AND 
+		 *  m.id_messaggio=sa.id_messaggio AND 
+		 *  m.proprietario<>'GestoreMessaggi' 
+		 *  group by sa.servizio_applicativo
+		 **/
+		
+		ISQLQueryObject sqlQueryObjectRiconsegna = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+		
+		sqlQueryObjectRiconsegna.addFromTable(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI,ALIAS_TABLE_SERVIZI_APPLICATIVI);
+		sqlQueryObjectRiconsegna.addFromTable(GestoreMessaggi.MESSAGGI,ALIAS_TABLE_MESSAGGI);
+		
+		sqlQueryObjectRiconsegna.addSelectCountField(StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA);
+		sqlQueryObjectRiconsegna.addSelectAliasField(getIntZeroValue(),StatoConsegnaAsincrona.ALIAS_IN_CODA);
+		sqlQueryObjectRiconsegna.addSelectMinField(ALIAS_TABLE_SERVIZI_APPLICATIVI, GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ORA_REGISTRAZIONE, StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA_VECCHIO);
+		sqlQueryObjectRiconsegna.addSelectMaxField(ALIAS_TABLE_SERVIZI_APPLICATIVI, GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ORA_REGISTRAZIONE, StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA_RECENTE);
+		sqlQueryObjectRiconsegna.addSelectAliasField(getNullTimestampValue(),StatoConsegnaAsincrona.ALIAS_IN_CODA_VECCHIO);
+		sqlQueryObjectRiconsegna.addSelectAliasField(getNullTimestampValue(),StatoConsegnaAsincrona.ALIAS_IN_CODA_RECENTE);
+		sqlQueryObjectRiconsegna.addSelectAliasField(getIntZeroValue(),StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX);
+		sqlQueryObjectRiconsegna.addSelectAliasField(getNullTimestampValue(),StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX_VECCHIO);
+		sqlQueryObjectRiconsegna.addSelectAliasField(getNullTimestampValue(),StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX_RECENTE);
+		sqlQueryObjectRiconsegna.addSelectAliasField(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_SERVIZIO_APPLICATIVO,StatoConsegnaAsincrona.ALIAS_SERVIZIO_APPLICATIVO);
+		
+		sqlQueryObjectRiconsegna.setANDLogicOperator(true);
+		sqlQueryObjectRiconsegna.addWhereCondition(ALIAS_TABLE_SERVIZI_APPLICATIVI+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ATTESA_ESITO+"=0");
+		sqlQueryObjectRiconsegna.addWhereCondition(ALIAS_TABLE_SERVIZI_APPLICATIVI+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ERRORE_PROCESSAMENTO_COMPACT+"<>'"+TimerConsegnaContenutiApplicativiThread.ID_MODULO+"'");
+		sqlQueryObjectRiconsegna.addWhereCondition(ALIAS_TABLE_SERVIZI_APPLICATIVI+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_TIPO_CONSEGNA+"='"+GestoreMessaggi.CONSEGNA_TRAMITE_CONNETTORE+"'");
+		sqlQueryObjectRiconsegna.addWhereCondition(ALIAS_TABLE_MESSAGGI+"."+GestoreMessaggi.MESSAGGI_COLUMN_ID_MESSAGGIO+"="+ALIAS_TABLE_SERVIZI_APPLICATIVI+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ID_MESSAGGIO);
+		sqlQueryObjectRiconsegna.addWhereCondition(ALIAS_TABLE_MESSAGGI+"."+GestoreMessaggi.MESSAGGI_COLUMN_PROPRIETARIO+"<>'"+TimerGestoreMessaggi.ID_MODULO+"'");
+		
+		sqlQueryObjectRiconsegna.addGroupBy(StatoConsegnaAsincrona.ALIAS_SERVIZIO_APPLICATIVO);
+		
+		
+		// ** InMessageBox **
+		
+		/*
+		 *	select 0 as inRiconsegna, 0 as inCoda, 
+		 *  null::timestamp as vecchioInRiconsegna, null::timestamp as recenteInRiconsegna,  
+		 *  null::timestamp as vecchioInCoda, null::timestamp as recenteInCoda, 
+		 *  count(*) as inCaricoIM, min(sa.ora_registrazione) as vecchioInCaricoIM, max(sa.ora_registrazione) as recenteInCaricoIM, 
+		 *  sa.SERVIZIO_APPLICATIVO 
+		 *  from msg_servizi_applicativi sa,messaggi m 
+		 *  where 
+		 *  sa.tipo_consegna='IntegrationManager' AND 
+		 *  m.id_messaggio=sa.id_messaggio AND 
+		 *  m.proprietario<>'GestoreMessaggi' 
+		 *  group by sa.servizio_applicativo
+		 **/
+		
+		ISQLQueryObject sqlQueryObjectMessageBox = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+		
+		sqlQueryObjectMessageBox.addFromTable(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI,ALIAS_TABLE_SERVIZI_APPLICATIVI);
+		sqlQueryObjectMessageBox.addFromTable(GestoreMessaggi.MESSAGGI,ALIAS_TABLE_MESSAGGI);
+		
+		sqlQueryObjectMessageBox.addSelectAliasField(getIntZeroValue(),StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA);
+		sqlQueryObjectMessageBox.addSelectAliasField(getIntZeroValue(),StatoConsegnaAsincrona.ALIAS_IN_CODA);
+		sqlQueryObjectMessageBox.addSelectAliasField(getNullTimestampValue(),StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA_VECCHIO);
+		sqlQueryObjectMessageBox.addSelectAliasField(getNullTimestampValue(),StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA_RECENTE);
+		sqlQueryObjectMessageBox.addSelectAliasField(getNullTimestampValue(),StatoConsegnaAsincrona.ALIAS_IN_CODA_VECCHIO);
+		sqlQueryObjectMessageBox.addSelectAliasField(getNullTimestampValue(),StatoConsegnaAsincrona.ALIAS_IN_CODA_RECENTE);
+		sqlQueryObjectMessageBox.addSelectCountField(StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX);
+		sqlQueryObjectMessageBox.addSelectMinField(ALIAS_TABLE_SERVIZI_APPLICATIVI, GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ORA_REGISTRAZIONE, StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX_VECCHIO);
+		sqlQueryObjectMessageBox.addSelectMaxField(ALIAS_TABLE_SERVIZI_APPLICATIVI, GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ORA_REGISTRAZIONE, StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX_RECENTE);
+		sqlQueryObjectMessageBox.addSelectAliasField(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_SERVIZIO_APPLICATIVO,StatoConsegnaAsincrona.ALIAS_SERVIZIO_APPLICATIVO);
+		
+		sqlQueryObjectMessageBox.setANDLogicOperator(true);
+		sqlQueryObjectMessageBox.addWhereCondition(ALIAS_TABLE_SERVIZI_APPLICATIVI+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_TIPO_CONSEGNA+"='"+GestoreMessaggi.CONSEGNA_TRAMITE_INTEGRATION_MANAGER+"'");
+		sqlQueryObjectMessageBox.addWhereCondition(ALIAS_TABLE_MESSAGGI+"."+GestoreMessaggi.MESSAGGI_COLUMN_ID_MESSAGGIO+"="+ALIAS_TABLE_SERVIZI_APPLICATIVI+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ID_MESSAGGIO);
+		sqlQueryObjectMessageBox.addWhereCondition(ALIAS_TABLE_MESSAGGI+"."+GestoreMessaggi.MESSAGGI_COLUMN_PROPRIETARIO+"<>'"+TimerGestoreMessaggi.ID_MODULO+"'");
+		
+		sqlQueryObjectMessageBox.addGroupBy(StatoConsegnaAsincrona.ALIAS_SERVIZIO_APPLICATIVO);
+
+		
+		// ** UNION **
+		
+		/*
+		 * select CURRENT_TIMESTAMP as now, 
+		 * max(inRiconsegna) as inRiconsegna, max(inCoda) as inCoda, 
+		 * min(vecchioInRiconsegna) as vecchioInRiconsegna, max(recenteInRiconsegna) as recenteInRiconsegna, 
+		 * min(vecchioInCoda) as vecchioInCoda, max(recenteInCoda) as recenteInCoda, 
+		 * max(inCaricoIM) as inCaricoIM, min(vecchioInCaricoIM) as vecchioInCaricoIM, max(recenteInCaricoIM) as recenteInCaricoIM,  
+		 * servizio_applicativo from (
+				QUERY_IN_CODA
+			UNION ALL
+				QUERY_IN_RICONSEGNA
+			UNION ALL
+				QUERY_MESSAGE_BOX
+		   ) as query group by servizio_applicativo;
+		 */
+		
+		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+		
+		sqlQueryObject.addSelectAliasField("CURRENT_TIMESTAMP", StatoConsegnaAsincrona.ALIAS_NOW);
+		sqlQueryObject.addSelectMaxField(StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA, StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA);
+		sqlQueryObject.addSelectMaxField(StatoConsegnaAsincrona.ALIAS_IN_CODA, StatoConsegnaAsincrona.ALIAS_IN_CODA);
+		sqlQueryObject.addSelectMinField(StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA_VECCHIO, StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA_VECCHIO);
+		sqlQueryObject.addSelectMaxField(StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA_RECENTE, StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA_RECENTE);
+		sqlQueryObject.addSelectMinField(StatoConsegnaAsincrona.ALIAS_IN_CODA_VECCHIO, StatoConsegnaAsincrona.ALIAS_IN_CODA_VECCHIO);
+		sqlQueryObject.addSelectMaxField(StatoConsegnaAsincrona.ALIAS_IN_CODA_RECENTE, StatoConsegnaAsincrona.ALIAS_IN_CODA_RECENTE);
+		sqlQueryObject.addSelectMaxField(StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX, StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX);
+		sqlQueryObject.addSelectMinField(StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX_VECCHIO, StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX_VECCHIO);
+		sqlQueryObject.addSelectMaxField(StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX_RECENTE, StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX_RECENTE);		
+		sqlQueryObject.addSelectAliasField(StatoConsegnaAsincrona.ALIAS_SERVIZIO_APPLICATIVO, StatoConsegnaAsincrona.ALIAS_SERVIZIO_APPLICATIVO);
+		
+		sqlQueryObject.addGroupBy(StatoConsegnaAsincrona.ALIAS_SERVIZIO_APPLICATIVO);
+		
+		if(filtro!=null) {
+			if(filtro.isOrderByInCoda()) {
+				sqlQueryObject.addOrderBy(StatoConsegnaAsincrona.ALIAS_IN_CODA, false);
+			}
+			if(filtro.isOrderByInRiconsegna()) {
+				sqlQueryObject.addOrderBy(StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA, false);
+			}
+			if(filtro.isOrderByInMessageBox()) {
+				sqlQueryObject.addOrderBy(StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX, false);
+			}
+		}
+		sqlQueryObject.addOrderBy(StatoConsegnaAsincrona.ALIAS_SERVIZIO_APPLICATIVO, true);
+			
+		return sqlQueryObject.createSQLUnion(true, sqlQueryObjectRiconsegna, sqlQueryObjectCoda, sqlQueryObjectMessageBox);
+	}
+	
+	private String getNullTimestampValue() {
+		if(TipiDatabase.POSTGRESQL.equals(this.tipoDatabase)) {
+			return "null::timestamp";
+		}
+		else {
+			return "null";
+		}
+	}
+	private String getIntZeroValue() {
+		return "0";
 	}
 }

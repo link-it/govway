@@ -32961,4 +32961,141 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		
 		return query;
 	}
+	
+	
+	public IDServizio getLabelNomeServizioApplicativo(String nomeServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		// viene inserito come azione dell'IDServizio
+		
+		Connection con = null;
+		ResultSet rs = null;
+		PreparedStatement stm = null;
+		
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("findAllAllarmi");
+
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::findAllAllarmi] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+			sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI + ".id");
+			sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI + ".tipo");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addWhereCondition("nome=?");
+
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+
+			stm = con.prepareStatement(sqlQuery);
+			stm.setString(1, nomeServizioApplicativo);
+
+			this.log.debug("eseguo query: " + sqlQuery);
+			
+			long idSA = -1;
+			String tipo = null;
+			rs = stm.executeQuery();
+			if(rs.next()) {
+				idSA = rs.getLong("id");
+				tipo = rs.getString("tipo");
+			}
+			rs.close(); rs=null;
+			stm.close(); stm = null;
+
+			if(idSA>0) {
+
+				if(CostantiConfigurazione.SERVER.equals(tipo)){
+					return null; // non serve normalizzazione, si puo' usare il nome stesso
+				}
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SA);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE + ".behaviour");
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE_SA + ".connettore_nome");
+				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".tipo_soggetto");
+				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".nome_soggetto");
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE + ".tipo_servizio");
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE + ".servizio");
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE + ".versione_servizio");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE + ".id="+CostantiDB.PORTE_APPLICATIVE_SA + ".id_porta");
+				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI + ".id="+CostantiDB.PORTE_APPLICATIVE + ".id_soggetto");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_SA + ".id_servizio_applicativo=?");
+
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idSA);
+
+				this.log.debug("eseguo query: " + sqlQuery);
+				
+				List<IDServizio> nomiConnettore = new ArrayList<IDServizio>();
+				rs = stm.executeQuery();
+				while(rs.next()) {
+					
+					String behaviour = rs.getString("behaviour");
+					String nomeConnettore = rs.getString("connettore_nome");
+					
+					String tipo_soggetto = rs.getString("tipo_soggetto");
+					String nome_soggetto = rs.getString("nome_soggetto");
+					String tipo_servizio = rs.getString("tipo_servizio");
+					String servizio = rs.getString("servizio");
+					int versione_servizio = rs.getInt("versione_servizio");
+					
+					IDServizio idServizio = IDServizioUtils.buildIDServizio(tipo_servizio, servizio,
+							new IDSoggetto(tipo_soggetto, nome_soggetto),
+							versione_servizio);
+					
+					if(nomeConnettore!=null && !"".equals(nomeConnettore)) {
+						idServizio.setAzione(nomeConnettore);
+					}
+					else {
+						if(behaviour!=null && !"".equals(behaviour)) {
+							idServizio.setAzione(CostantiConfigurazione.NOME_CONNETTORE_DEFAULT);
+						}
+					}
+
+					nomiConnettore.add(idServizio);
+				}
+				rs.close(); rs=null;
+				stm.close(); stm = null;
+				
+				if(!nomiConnettore.isEmpty() && nomiConnettore.size()==1) {
+					return nomiConnettore.get(0);
+				}
+				// else esistono più associazione e non e' di tipo server ???
+			}
+			
+			return null; // normalizzazione non riuscita, si puo' usare il nome stesso
+			
+		} catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::findAllAllarmi] Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+	}
 }
