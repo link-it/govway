@@ -351,27 +351,26 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		
 		int nthreads = Integer.valueOf(System.getProperty("soglia_richieste_simultanee"));
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nthreads);
-		
-		int i = 0;
-		int pool_index = 0;		
+				
 		List<String> poolCandidates = new ArrayList<>(requestsByPool.keySet());
 		int npools = poolCandidates.size();
 		
-		while(i<count) {
+		int pool_index = 0;
+		int i = 0;
+		
+		while(count>0) {
 			String pool = poolCandidates.get(pool_index%npools);
 			var requests = requestsByPool.get(pool);
-			int req_index = i % 2;
 			
+			HttpRequest request = requests.get(i % requests.size());
 			executor.execute(() -> {
-				HttpRequest request = requests.get(req_index);
 				responsesByPool.get(pool).add(Utils.makeRequest(request));
-				requests.add(request);
 			});
 			
-			// Ogni due richieste cambio pool, chiaramente se ho meno di due richieste
-			// per pool il test crasha dando errore alla requests.remove(0)
+			count--;
 			i++;
-			if (i%2 == 0) {
+			if (i >= requests.size()) {
+				i = 0;
 				pool_index++;
 			}
 		}

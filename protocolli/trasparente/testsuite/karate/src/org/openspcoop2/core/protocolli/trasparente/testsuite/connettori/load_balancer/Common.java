@@ -381,7 +381,7 @@ public class Common {
 		if (response.getResultHTTPOperation() == 200) {				 
 			return response.getHeaderFirstValue(HEADER_ID_CONNETTORE);
 		} else {
-			return LoadBalanceSempliceTest.CONNETTORE_ROTTO;
+			return CONNETTORE_ROTTO;
 		}		
 	}
 
