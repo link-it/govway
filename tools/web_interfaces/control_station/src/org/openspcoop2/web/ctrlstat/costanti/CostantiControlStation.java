@@ -1740,7 +1740,7 @@ public class CostantiControlStation {
 	public final static String ICONA_VERIFICA_TOOLTIP = "Verifica";
 	public final static String ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO = "Verifica {0}";
 	
-	public final static String ICONA_VERIFICA_CERTIFICATI = "&#xE8E8;";
+	public final static String ICONA_VERIFICA_CERTIFICATI = "&#xEA17;";
 	
 	public final static String ICONA_MODIFICA_CONFIGURAZIONE_CONNETTORI_MULTIPLI = "&#xE8B8;";
 	public final static String ICONA_MODIFICA_CONFIGURAZIONE_CONNETTORI_MULTIPLI_TOOLTIP = "Configurazione Connettori Multipli";

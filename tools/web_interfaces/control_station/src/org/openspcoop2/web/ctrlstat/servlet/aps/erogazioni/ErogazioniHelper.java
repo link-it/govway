@@ -20,6 +20,7 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni;
 
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,7 @@ import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDFruizione;
@@ -88,6 +90,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilit
 import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
+import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
@@ -1720,12 +1723,12 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				image = new DataElementImage();
 				if(gestioneFruitori) {
 					image.setUrl(
-							"",//AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_VERIFICA_CERTIFICATI,
+							ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_VERIFICA_CERTIFICATI,
 							listFruitori.toArray(new Parameter[1]));
 				}
 				else {
 					image.setUrl(
-							"",//AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_VERIFICA_CERTIFICATI,
+							ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_VERIFICA_CERTIFICATI,
 							listParametersServizio.toArray(new Parameter[1]));
 				}
 				image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,
@@ -3566,6 +3569,50 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 
 		this.pd.setDati(datiPagina);
 		this.pd.disableEditMode();
+	}
+	
+	public void addDescrizioneVerificaCertificatoToDati(Vector<DataElement> dati, String server, boolean registro, String aliasCertificato) throws Exception {
+		
+		if(server!=null && !"".equals(server)) {
+			DataElement de = new DataElement();
+			de.setType(DataElementType.TEXT);
+			de.setLabel(ConnettoriCostanti.LABEL_SERVER);
+			de.setValue(server);
+			dati.add(de);
+		}
+		
+		// TODO Poli
+		DataElement de = new DataElement();
+		de.setType(DataElementType.TEXT);
+		de.setLabel("TODO");
+		de.setValue("TODO");
+		dati.add(de);
+		
+		
+		
+	}
+	
+	
+	public void addVerificaCertificatoSceltaAlias(List<String> aliases,Vector<DataElement> dati) throws Exception {
+		
+		DataElement de = new DataElement();
+		de.setType(DataElementType.SELECT);
+		List<String> values = new ArrayList<String>();
+		List<String> labels = new ArrayList<String>();
+		values.add(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI);
+		labels.add(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI);
+		values.addAll(this.confCore.getJmxPdD_aliases());
+		for (String alias : this.confCore.getJmxPdD_aliases()) {
+			labels.add(this.confCore.getJmxPdD_descrizione(alias));
+		}
+		de.setValues(values);
+		de.setLabels(labels);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
+		de.setSize(this.getSize());
+		//de.setPostBack(true);
+		dati.addElement(de);
+		
 	}
 	
 }

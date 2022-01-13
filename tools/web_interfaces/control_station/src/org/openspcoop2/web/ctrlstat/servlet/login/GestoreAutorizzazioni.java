@@ -212,6 +212,7 @@ public class GestoreAutorizzazioni {
 		this.servletServizi.addAll(AccordiServizioParteSpecificaCostanti.SERVLET_APS_PORTE_APPLICATIVE);
 		this.servletServizi.add(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT);
 		this.servletServizi.addAll(ErogazioniCostanti.SERVLET_ASPS_EROGAZIONI);
+		this.servletServizi.add(ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_VERIFICA_CERTIFICATI);
 		/** Permessi associati alla gestione dei servizi */
 		this.permessiServizi = new PermessiUtente();
 		this.permessiServizi.setServizi(true);

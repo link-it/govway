@@ -993,6 +993,15 @@
             <forward name="accordiServizioParteSpecificaError" path="/jsplib/info.jsp"/>
             <forward name="aspsErogazioniDel" path="/jsplib/listElement.jsp"/>
         </action>
+        
+        <!-- Accordi di Servizio Parte Specifica (Erogazioni/Fruizioni) Verifica Certificati -->
+        <action path="/aspsErogazioniVerificaCertificati" type="org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniVerificaCertificati"
+            scope="request" validate="true">
+            <forward name="aspsErogazioniVerificaCertificatiForm" path="/jsplib/addElement.jsp"/>
+            <forward name="aspsErogazioniVerificaCertificatiOk" path="/jsplib/addElement.jsp"/>
+            <forward name="aspsErogazioniVerificaCertificatiCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="aspsErogazioniVerificaCertificatiError" path="/jsplib/info.jsp"/>
+        </action>
 		
 		<!--  Accordi di Cooperazione -->
 		
