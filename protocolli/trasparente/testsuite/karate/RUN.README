@@ -122,15 +122,20 @@
 	 	Per far si che venga generata una distribuzione casuale accettabile dei connettori scelti dalle politiche casuali
 
 	+ connettori.load_balancer.sessione_sticky.max_age=2
-		Numero di secondi per cui un id sessione viene legato ad uno specifico connettore nella sessione sticy
+		Numero di secondi per cui un id sessione viene legato ad uno specifico connettore nella sessione sticky
+	
+    + connettori.load_balancer.health_check.intervallo_esclusione=2
+		Numero di secondi per cui un connettore viene escluso dal pool dal momento in cui genera un errore di connessione
+
+
+	+connettori.load_balancer.least_connections.durata_bloccante_lunga=4000
+		Millisecondi necessari a tenere bloccato un connettore dall'inizio alla fine dei test di least_connections
 
 	+ connettori.load_balancer.least_connections.durata_bloccante=2500
+		 Quanti millisecondi tenere bloccato un connettore durante i test di least_connections
 
 	+ connettori.load_balancer.least_connections.delay_richieste_background=500
-
-
-
-
+		Attesa tra una richiesta e l'altra per attendere che venga contata e presa in carico dalla strategia least_connections
 
 Per eseguire i test:
 	ant run_test

@@ -22,8 +22,10 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_ba
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.ConsegnaCondizionaleByFiltroTest.buildRequests_HeaderHttp;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.POOL_ROTTO;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +37,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
-import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.ConsegnaCondizionaleByFiltroTest;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpRequest;
@@ -89,7 +90,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		for (var e : Common.filtriPools.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
-					buildRequests_HeaderHttp(e.getValue(), erogazione)
+					Common.buildRequests_HeaderHttp(e.getValue(), erogazione)
 				);
 		}
 		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
@@ -106,7 +107,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		for (var e : Common.filtriPools.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
-					ConsegnaCondizionaleByFiltroTest.buildRequests_UrlInvocazione(e.getValue(), erogazione)
+					Common.buildRequests_UrlInvocazione(e.getValue(), erogazione)
 				);
 		}
 		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
@@ -123,7 +124,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		for (var e : Common.filtriPools.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
-					ConsegnaCondizionaleByFiltroTest.buildRequests_ParametroUrl(e.getValue(), erogazione)
+					Common.buildRequests_ParametroUrl(e.getValue(), erogazione)
 				);
 		}
 		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
@@ -140,7 +141,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		for (var e : Common.filtriPools.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
-					ConsegnaCondizionaleByFiltroTest.buildRequests_Contenuto(e.getValue(), erogazione)
+					Common.buildRequests_Contenuto(e.getValue(), erogazione)
 				);
 		}
 		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
@@ -158,7 +159,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		for (var e : Common.filtriPools.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
-					ConsegnaCondizionaleByFiltroTest.buildRequests_ForwardedFor(e.getValue(), forwardingHeaders, erogazione)
+					Common.buildRequests_ForwardedFor(e.getValue(), forwardingHeaders, erogazione)
 				);
 		}
 		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
@@ -194,7 +195,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		for (var e : Common.filtriPools.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
-					ConsegnaCondizionaleByFiltroTest.buildRequests_Template(e.getValue(), erogazione)
+					Common.buildRequests_Template(e.getValue(), erogazione)
 				);
 		}
 		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
@@ -211,7 +212,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		for (var e : Common.filtriPools.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
-					ConsegnaCondizionaleByFiltroTest.buildRequests_FreemarkerTemplate(e.getValue(), erogazione)
+					Common.buildRequests_FreemarkerTemplate(e.getValue(), erogazione)
 				);
 		}
 		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
@@ -228,12 +229,43 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		for (var e : Common.filtriPools.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
-					ConsegnaCondizionaleByFiltroTest.buildRequests_VelocityTemplate(e.getValue(), erogazione)
+					Common.buildRequests_VelocityTemplate(e.getValue(), erogazione)
 				);
 		}
 		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
 
 		checkResponses(responsesByPool);
+	}
+	
+	@Test
+	public void healthCheckOvunqueDisabilitato() {
+		final String erogazione = "LoadBalanceConsegnaCondizionaleHealthCheck";
+		
+		// In questa erogazione abbiamo riuniti nel PoolRotto il [Connettore3, ConnettoreDisabilitato, ConnettoreRotto]
+		
+		// Contatto il connettore rotto in un pool.
+
+		Map<String,List<HttpRequest>> requestsByPool = new HashMap<>();
+		requestsByPool.put(POOL_ROTTO, 
+					Common.buildRequests_HeaderHttp(Arrays.asList("PoolRotto-Filtro0"), /*Common.filtriPoolRotto,*/ erogazione));
+		
+		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool,3);
+		var responses = responsesByPool.get(POOL_ROTTO);
+		var howManys = Common.contaConnettoriUtilizzati(responses);
+		Common.printMap(howManys);
+		assertEquals(Integer.valueOf(1), howManys.get(Common.CONNETTORE_ROTTO));
+		assertEquals(Integer.valueOf(1), howManys.get(Common.CONNETTORE_2));
+		assertEquals(Integer.valueOf(1), howManys.get(Common.CONNETTORE_3));
+		
+		// Mi aspetto di non contattarlo più fra gli altri pool
+
+	}
+	
+	
+	@Test
+	public void healthCheck() {
+		
+		// TODO
 	}
 	
 	
@@ -307,21 +339,26 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 
 
 	static Map<String, List<HttpResponse>> makeBatchedRequests(Map<String, List<HttpRequest>> requestsByPool) {
+		int count = Common.richiesteParallele;
+		return makeBatchedRequests(requestsByPool, count); 
+	}
+	
+	static Map<String, List<HttpResponse>> makeBatchedRequests(Map<String, List<HttpRequest>> requestsByPool, int count) {
 		Map<String, List<HttpResponse>> responsesByPool = new ConcurrentHashMap<>();
 		for(var e : requestsByPool.keySet()) {
 			responsesByPool.put(e, new Vector<HttpResponse>());
 		}
 		
-		int nthreads = 15;
-		assertTrue(nthreads <= Integer.valueOf(System.getProperty("soglia_richieste_simultanee")));		
+		int nthreads = Integer.valueOf(System.getProperty("soglia_richieste_simultanee"));
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nthreads);
 		
 		int i = 0;
-		int pool_index = 0;
-		int npools = requestsByPool.keySet().size();
+		int pool_index = 0;		
+		List<String> poolCandidates = new ArrayList<>(requestsByPool.keySet());
+		int npools = poolCandidates.size();
 		
-		while(i<nthreads) {
-			String pool = Common.pools.get(pool_index%npools);
+		while(i<count) {
+			String pool = poolCandidates.get(pool_index%npools);
 			var requests = requestsByPool.get(pool);
 			int req_index = i % 2;
 			

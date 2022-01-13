@@ -77,6 +77,17 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 	public static final String CONNETTORE_ROTTO = "connettore-rotto";
 	public static final String CONNETTORE_DISABILITATO = "connettore-disabilitato";
 	
+	
+	private HttpRequest buildRequest(final String erogazione) {
+		HttpRequest request = new HttpRequest();
+		request.setContentType("application/json");
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
+		return request;
+	}
+
+	
 	@Test
 	public void roundRobin() {
 		/*
@@ -87,11 +98,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 
 		final String erogazione = "LoadBalanceRoundRobin";
 
-		HttpRequest request = new HttpRequest();
-		request.setContentType("application/json");
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
+		HttpRequest request = buildRequest(erogazione);
 
 		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 15);
 
@@ -103,7 +110,6 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		}
 
 	}
-
 	
 	@Test
 	public void weightedRoundRobin() {
@@ -113,11 +119,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 
 		final String erogazione = "LoadBalanceWeightedRoundRobin";
 
-		HttpRequest request = new HttpRequest();
-		request.setContentType("application/json");
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
+		HttpRequest request = buildRequest(erogazione);
 
 		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 15);
 		Map<String, Integer> howManys = Common.contaConnettoriUtilizzati(responses);
@@ -222,11 +224,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		
 		final String erogazione = "LoadBalanceSourceIpHash";
 		
-		HttpRequest request = new HttpRequest();
-		request.setContentType("application/json");
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
+		HttpRequest request = buildRequest(erogazione);
 
 		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 15);	
 		Map<String, Integer> howManys = Common.contaConnettoriUtilizzati(responses);
@@ -299,6 +297,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		
 	}
 	
+
 	
 	@Test
 	public void leastConnections() {

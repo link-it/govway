@@ -2,6 +2,7 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_ba
 
 import static org.junit.Assert.assertNotEquals;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,11 +14,13 @@ import java.util.Vector;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpRequest;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
@@ -42,13 +45,14 @@ public class Common {
 	
 	public static final String HEADER_ID_SESSIONE = ID_CONNETTORE_REPLY_PREFIX + "ID-Sessione";
 	
-	public static final String HEADER_CONDIZIONE = ID_CONNETTORE_REPLY_PREFIX+"Connettore";
+	public static final String HEADER_ID_CONDIZIONE = ID_CONNETTORE_REPLY_PREFIX+"Connettore";
 
 
 	public static final int durataBloccante = Integer
 			.valueOf(System.getProperty("connettori.load_balancer.least_connections.durata_bloccante"));
 
-	public static final int durataBloccanteLunga = durataBloccante + 1500; 	// TODO: Il +1 diventa una proprietà
+	public static final int durataBloccanteLunga = Integer
+			.valueOf(System.getProperty("connettori.load_balancer.least_connections.durata_bloccante_lunga"));
 	
 	public static final int delayRichiesteBackground = Integer
 			.valueOf(System.getProperty("connettori.load_balancer.least_connections.delay_richieste_background"));
@@ -57,7 +61,10 @@ public class Common {
 			.valueOf(System.getProperty("connettori.load_balancer.numero_richieste_random"));
 	
 	public static final int maxAge = Integer
-			.valueOf(System.getProperty("connettori.load_balancer.sessione_sticky.max_age"));
+			.valueOf(System.getProperty("connettori.load_balancer.sessione_sticky.max_age")) * 1000;	// Lo trasformo in millisecondi
+	
+	public static final int intervalloEsclusione = Integer
+			.valueOf(System.getProperty("connettori.load_balancer.health_check.intervallo_esclusione")) * 1000;	// Lo trasformo in millisecondi
 	
 	public static final int richiesteParallele = Integer
 			.valueOf(System.getProperty("soglia_richieste_simultanee"));
@@ -80,6 +87,7 @@ public class Common {
 	
 	public static final Set<String> setConnettoriAbilitati = new HashSet<>(connettoriAbilitati);
 	
+	public static final List<String> filtriPoolRotto = Arrays.asList("PoolRotto-Filtro0", "PoolRotto-Filtro1"); 
 	
 	public static Map<String,List<String>> filtriPools = Map
 			.of(POOL_0, Arrays.asList("Pool0-Filtro0", "Pool0-Filtro1"),
@@ -162,7 +170,7 @@ public class Common {
 		}
 		
 		int nthreads = Integer.valueOf(System.getProperty("soglia_richieste_simultanee"));
-		var logRateLimiting = ConfigLoader.getLoggerRateLimiting();
+		var logger = ConfigLoader.getLoggerCore();
 
 		final Vector<HttpResponse> responses = new Vector<>();
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nthreads);
@@ -170,9 +178,9 @@ public class Common {
 		for (int i = 0; i < count; i++) {
 			executor.execute(() -> {
 				try {
-					logRateLimiting.info(request.getMethod() + " " + request.getUrl());
+					logger.info(request.getMethod() + " " + request.getUrl());
 					responses.add(HttpUtilities.httpInvoke(request));
-					logRateLimiting.info("Richiesta effettuata..");
+					logger.info("Richiesta effettuata..");
 				} catch (UtilsException e) {
 					e.printStackTrace();
 					throw new RuntimeException(e);
@@ -184,14 +192,14 @@ public class Common {
 			executor.shutdown();
 			executor.awaitTermination(20, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
-			logRateLimiting.error("Le richieste hanno impiegato più di venti secondi!");
+			logger.error("Le richieste hanno impiegato più di venti secondi!");
 			throw new RuntimeException(e);
 		}
 		
-		logRateLimiting.info("RESPONSES: ");
+		logger.info("RESPONSES: ");
 		responses.forEach(r -> {
-			logRateLimiting.info("statusCode: " + r.getResultHTTPOperation());
-			logRateLimiting.info("headers: " + r.getHeadersValues());
+			logger.info("statusCode: " + r.getResultHTTPOperation());
+			logger.info("headers: " + r.getHeadersValues());
 		});
 
 		return responses;
@@ -207,6 +215,165 @@ public class Common {
 			howManys.put(id_connettore, howManys.getOrDefault(id_connettore, 0)+1);
 		}
 		return howManys;
+	}
+
+
+	public static List<HttpRequest> buildRequests_Contenuto(List<String> filtri, String erogazione) {
+		return filtri.stream()
+				.map( filtro ->
+					Common.buildRequest_Contenuto(filtro, erogazione))
+				.collect(Collectors.toList());
+	}
+
+
+	public static List<HttpRequest> buildRequests_Template(List<String> filtri, String erogazione) {
+		return filtri.stream()
+				.map( filtro ->
+					Common.buildRequest_Template(filtro, erogazione))
+				.collect(Collectors.toList());				
+	}
+
+
+	public static List<HttpRequest> buildRequests_FreemarkerTemplate(List<String> filtri, String erogazione) {
+		return filtri.stream()
+				.map( filtro ->
+					Common.buildRequest_FreemarkerTemplate(filtro, erogazione))
+				.collect(Collectors.toList());				
+	}
+
+
+	public static List<HttpRequest> buildRequests_VelocityTemplate(List<String> filtri, String erogazione) {
+		return filtri.stream()
+				.map( filtro ->
+					Common.buildRequest_VelocityTemplate(filtro, erogazione))
+				.collect(Collectors.toList());
+	}
+
+
+	public static List<HttpRequest> buildRequests_ParametroUrl(List<String> filtri, String erogazione) {
+		return filtri.stream()
+				.map( filtro ->
+					Common.buildRequest_ParametroUrl(filtro, erogazione))
+				.collect(Collectors.toList());
+	}
+
+
+	public static List<HttpRequest> buildRequests_UrlInvocazione(List<String> filtri, String erogazione) {
+		return filtri.stream()
+				.map( filtro ->
+					Common.buildRequest_UrlInvocazione(filtro, erogazione))
+				.collect(Collectors.toList());
+	}
+
+
+	public static List<HttpRequest> buildRequests_HeaderHttp(List<String> filtri, String erogazione) {
+		return filtri.stream()
+				.map( filtro ->
+					Common.buildRequest_HeaderHttp(filtro, erogazione))
+				.collect(Collectors.toList());
+	}
+
+
+	public static List<HttpRequest> buildRequests_ForwardedFor(List<String> filtri, List<String> forwardingHeaders, String erogazione) {
+		// Costruisco un'array di richieste, ciascuna richiesta è costruita scegliendo un filtro e il forwardingHeader
+		// su cui inviarlo
+		
+		List<HttpRequest> ret = new ArrayList<>();
+		
+		// Faccio viaggiare ogni filtro su tutti gli headers
+		for(String filtro : filtri) {
+			for(String header : forwardingHeaders) {
+				HttpRequest request = new HttpRequest();
+				request.setMethod(HttpRequestMethod.GET);
+				request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-xforwarded-for"
+						+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
+				request.addHeader(header, filtro);
+				ret.add(request);
+			}
+		}
+				
+		return ret;
+	}
+
+
+	public static HttpRequest buildRequest_HeaderHttp(String connettore, String erogazione) {
+		HttpRequest request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-header-http"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
+		request.addHeader(HEADER_ID_CONDIZIONE, connettore);
+		
+		return request;
+	}
+
+
+	public static HttpRequest buildRequest_UrlInvocazione(String connettore, String erogazione) {
+		// L'espressione regolare sull'erogazione matcha il parametro query govway-testsuite-id_connettore_request.		
+		HttpRequest request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-url-invocazione"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX
+				+ "&govway-testsuite-id_connettore_request="+connettore); 		 
+	
+		return request;
+	}
+
+
+	public static HttpRequest buildRequest_ParametroUrl(String connettore, String erogazione) {
+		HttpRequest request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-parametro-url"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX
+				+ "&govway-testsuite-id_connettore_request="+connettore); 		 
+	
+		return request;
+	}
+
+
+	public static HttpRequest buildRequest_Contenuto(String connettore, String erogazione) {
+		final String content = "{ \"id_connettore_request\": \""+connettore+"\" }";
+		
+		HttpRequest request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.POST);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-contenuto"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
+		request.setContentType("application/json");
+		request.setContent(content.getBytes());
+	
+		return request;
+	}
+
+
+	public static HttpRequest buildRequest_Template(String connettore, String erogazione) {
+		HttpRequest request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-template"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX
+				+ "&govway-testsuite-id_connettore_request="+connettore); 		 
+	
+		return request;
+	}
+
+
+	public static HttpRequest buildRequest_FreemarkerTemplate(String connettore, String erogazione) {
+		HttpRequest request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-freemarker-template"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX
+				+ "&govway-testsuite-id_connettore_request="+connettore); 		 
+	
+		return request;
+	}
+
+
+	public static HttpRequest buildRequest_VelocityTemplate(String connettore, String erogazione) {
+		HttpRequest request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-velocity-template"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX
+				+ "&govway-testsuite-id_connettore_request="+connettore); 		 
+	
+		return request;
 	}
 
 

@@ -85,7 +85,7 @@ public class SessioneStickyMaxAgeTest extends ConfigLoader {
 		
 		SessioneStickyTest.checkRoundRobin(balancedResponses, Common.setConnettoriAbilitati);
 		
-		org.openspcoop2.utils.Utilities.sleep(Common.maxAge*1000);
+		org.openspcoop2.utils.Utilities.sleep(Common.maxAge);
 		
 		// Sono in round robin, il connettore che ha meno richieste dovrà essere il prossimo selezionato
 		// dalla sessione sticky.

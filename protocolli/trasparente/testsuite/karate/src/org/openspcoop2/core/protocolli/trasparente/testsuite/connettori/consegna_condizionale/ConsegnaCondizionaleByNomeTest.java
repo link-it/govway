@@ -22,6 +22,10 @@
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_0;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_1;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.HEADER_ID_CONDIZIONE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -71,99 +75,18 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	
-	public static HttpRequest buildRequest_HeaderHttpByNome(String connettore, String erogazione) {
-		HttpRequest request = new HttpRequest();
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-header-http"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
-		request.addHeader(Common.HEADER_CONDIZIONE, connettore);
-		
-		return request;
-	}
-	
-
-	static HttpRequest buildRequest_UrlInvocazioneByNome(String connettore, String erogazione) {
-		// L'espressione regolare sull'erogazione matcha il parametro query govway-testsuite-id_connettore_request.		
-		HttpRequest request = new HttpRequest();
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-url-invocazione"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
-				+ "&govway-testsuite-id_connettore_request="+connettore); 		 
-
-		return request;
-	}
-	
-	
-	static HttpRequest buildRequest_ParametroUrlByNome(String connettore, String erogazione) {
-		HttpRequest request = new HttpRequest();
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-parametro-url"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
-				+ "&govway-testsuite-id_connettore_request="+connettore); 		 
-
-		return request;
-	}
-	
-	static HttpRequest buildRequest_ContenutoByNome(String connettore, String erogazione) {
-		final String content = "{ \"id_connettore_request\": \""+connettore+"\" }";
-		
-		HttpRequest request = new HttpRequest();
-		request.setMethod(HttpRequestMethod.POST);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-contenuto"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
-		request.setContentType("application/json");
-		request.setContent(content.getBytes());
-
-		return request;
-	}
-	
-	
-	static HttpRequest buildRequest_TemplateByNome(String connettore, String erogazione) {
-		HttpRequest request = new HttpRequest();
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-template"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
-				+ "&govway-testsuite-id_connettore_request="+connettore); 		 
-
-		return request;
-	}
-	
-	
-	static HttpRequest buildRequest_FreemarkerTemplateByNome(String connettore, String erogazione) {
-		HttpRequest request = new HttpRequest();
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-freemarker-template"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
-				+ "&govway-testsuite-id_connettore_request="+connettore); 		 
-
-		return request;
-	}
-	
-	
-	static HttpRequest buildRequest_VelocityTemplateByNome(String connettore, String erogazione) {
-		HttpRequest request = new HttpRequest();
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-velocity-template"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
-				+ "&govway-testsuite-id_connettore_request="+connettore); 		 
-
-		return request;
-	}
-		
-
 	@Test
 	public void headerHttpByNome() {
-		// TODO: Rendilo come gli altri.
 		final String erogazione = "ConsegnaCondizionaleHeaderHttpByNome";
 		
-		HttpRequest request0 = buildRequest_HeaderHttpByNome(Common.CONNETTORE_0, erogazione);
-		HttpRequest request1 = buildRequest_HeaderHttpByNome(Common.CONNETTORE_1, erogazione);
-		HttpRequest request2 = buildRequest_HeaderHttpByNome(Common.CONNETTORE_2, erogazione);
+		HttpRequest request0 = Common.buildRequest_HeaderHttp(CONNETTORE_0, erogazione);
+		HttpRequest request1 = Common.buildRequest_HeaderHttp(CONNETTORE_1, erogazione);
+		HttpRequest request2 = Common.buildRequest_HeaderHttp(Common.CONNETTORE_2, erogazione);
 		// La terza richiesta specifica due volte lo stesso connettore. deve comunque funzionare
-		HttpRequest request3 = buildRequest_HeaderHttpByNome(Common.CONNETTORE_3, erogazione);
-		request3.addHeader(Common.HEADER_CONDIZIONE, Common.CONNETTORE_3); 	
+		HttpRequest request3 = Common.buildRequest_HeaderHttp(Common.CONNETTORE_3, erogazione);
+		request3.addHeader(HEADER_ID_CONDIZIONE, Common.CONNETTORE_3); 	
 		
-		HttpRequest requestRotto = buildRequest_HeaderHttpByNome(Common.CONNETTORE_ROTTO, erogazione);
+		HttpRequest requestRotto = Common.buildRequest_HeaderHttp(Common.CONNETTORE_ROTTO, erogazione);
 
 		// Testo l'instradamento verso il connettore rotto solo in questo test.
 		HttpRequest[] requestsByConnettore = { request0, request1, request2, request3, requestRotto };
@@ -197,7 +120,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		}
 		
 		for(int i=0;i<requestsByConnettore.length;i++) {
-			String connettoreRichiesta = requestsByConnettore[i].getHeaderFirstValue(Common.HEADER_CONDIZIONE);
+			String connettoreRichiesta = requestsByConnettore[i].getHeaderFirstValue(HEADER_ID_CONDIZIONE);
 			
 			for(var response : responsesByConnettore.get(i)) {
 				
@@ -214,24 +137,29 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	
 	
 	@Test
-	public void headerHttpByNomeConflitti() throws UtilsException {
-		// TODO: Segnala ad andrea questo test, deve decidere se è giusto che fallisca o meno
-		// e cioè se è possibile mandare valori diversi sullo header che identifica la condizione
-		// TODO: Una volta corretto da andrea, scrivili anche per ConsegnaCondizionelaByFiltroTest
+	public void headerHttpConflitti() throws UtilsException {
+		// Quando sono presenti più valori da estrarre, govway sceglie il primo ed è 
+		// contento con quello.
+		
 		final String erogazione = "ConsegnaCondizionaleHeaderHttpByNome";
 		
-		HttpRequest request = buildRequest_HeaderHttpByNome(Common.CONNETTORE_1, erogazione);
-		request.addHeader(Common.HEADER_CONDIZIONE, Common.CONNETTORE_0);
+		HttpRequest request = Common.buildRequest_HeaderHttp(CONNETTORE_1, erogazione);
+		request.addHeader(HEADER_ID_CONDIZIONE, CONNETTORE_0);
 
 		var response = HttpUtilities.httpInvoke(request);
-		assertEquals(400,response.getResultHTTPOperation());
+		assertEquals(200,response.getResultHTTPOperation());
+		
+		String connettore = response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE);
+		boolean oneOrTheOther = connettore.equals(CONNETTORE_1) || connettore.equals(CONNETTORE_0);
+		
+		assertTrue(oneOrTheOther);
 	}
 	
 
 	@Test
 	public void parametroUrlByNomeConflitti() throws UtilsException {
-		// TODO: Segnala ad andrea questo test, deve decidere se è giusto che fallisca o meno
-		// e cioè se è possibile mandare valori diversi sullo header che identifica la condizione
+		// Quando sono presenti più valori da estrarre, govway sceglie il primo ed è 
+		// contento con quello.
 		
 		final String erogazione = "ConsegnaCondizionaleParametroUrlByNome";
 
@@ -239,18 +167,21 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-parametro-url"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
-				+ "&govway-testsuite-id_connettore_request="+Common.CONNETTORE_0
-				+ "&govway-testsuite-id_connettore_request="+Common.CONNETTORE_1);
+				+ "&govway-testsuite-id_connettore_request="+CONNETTORE_0
+				+ "&govway-testsuite-id_connettore_request="+CONNETTORE_1);
 		
 		var response = HttpUtilities.httpInvoke(request);
-		assertEquals(400,response.getResultHTTPOperation());
+		assertEquals(200,response.getResultHTTPOperation());
+		
+		String connettore = response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE);
+		boolean oneOrTheOther = connettore.equals(CONNETTORE_1) || connettore.equals(CONNETTORE_0);
+		
+		assertTrue(oneOrTheOther);
 	}
 	
 	
 	@Test
-	public void XForwardedForByNomeConflitti() throws UtilsException {
-		// TODO: Segnala ad andrea questo test, deve decidere se è giusto che fallisca o meno
-		// e cioè se è possibile mandare valori diversi sullo header che identifica la condizione
+	public void XForwardedForByNomeConflitti() throws UtilsException {		
 		
 		final String erogazione = "ConsegnaCondizionaleXForwardedForByNome";
 		List<String> forwardedHeaders = HttpUtilities.getClientAddressHeaders();
@@ -259,11 +190,16 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
-		request.addHeader(forwardedHeaders.get(0), Common.CONNETTORE_0);
-		request.addHeader(forwardedHeaders.get(1), Common.CONNETTORE_1);
+		request.addHeader(forwardedHeaders.get(0), CONNETTORE_0);
+		request.addHeader(forwardedHeaders.get(1), CONNETTORE_1);
 		
 		var response = HttpUtilities.httpInvoke(request);
-		assertEquals(400,response.getResultHTTPOperation());		
+		assertEquals(200,response.getResultHTTPOperation());
+		
+		String connettore = response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE);
+		boolean oneOrTheOther = connettore.equals(CONNETTORE_1) || connettore.equals(CONNETTORE_0);
+		
+		assertTrue(oneOrTheOther);
 	}
 	
 	
@@ -277,7 +213,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		// Quindi Controllo che nelle risposte di quel thread sia stato raggiunto sempre lo stesso connettore. 
 		
 		var requestsByConnettore = Common.connettoriAbilitati.stream()
-				.map(c -> buildRequest_UrlInvocazioneByNome(c,erogazione))
+				.map(c -> Common.buildRequest_UrlInvocazione(c,erogazione))
 				.collect(Collectors.toList());
 							
 		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
@@ -291,7 +227,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		final String erogazione = "ConsegnaCondizionaleParametroUrlByNome";
 		
 		var requestsByConnettore = Common.connettoriAbilitati.stream()
-				.map(c -> buildRequest_ParametroUrlByNome(c,erogazione))
+				.map(c -> Common.buildRequest_ParametroUrl(c,erogazione))
 				.collect(Collectors.toList());
 							
 		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
@@ -307,7 +243,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		final String erogazione = "ConsegnaCondizionaleContenutoByNome";
 		
 		var requestsByConnettore = Common.connettoriAbilitati.stream()
-				.map(c -> buildRequest_ContenutoByNome(c,erogazione))
+				.map(c -> Common.buildRequest_Contenuto(c,erogazione))
 				.collect(Collectors.toList());
 							
 		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
@@ -322,14 +258,14 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		
 		final String erogazione = "ConsegnaCondizionaleContenutoByNome";
 		
-		List<String> connettori = Arrays.asList( Common.CONNETTORE_0,
-				Common.CONNETTORE_1,
+		List<String> connettori = Arrays.asList( CONNETTORE_0,
+				CONNETTORE_1,
 				Common.CONNETTORE_2,
 				Common.CONNETTORE_3,
 				Common.CONNETTORE_DISABILITATO);
 		
 		var requestsByConnettore = connettori.stream()
-				.map(c -> buildRequest_ContenutoByNome(c,erogazione))
+				.map(c -> Common.buildRequest_Contenuto(c,erogazione))
 				.collect(Collectors.toList());
 							
 		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
@@ -427,17 +363,14 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	
 	
 	@Test
-	public void templateByNome() {
-		// TODO: Se non metto content-type application/json govway si arrabbia e non parte
-		// TODO: Prima della consegna togli il content-type dalla richiesta in modo che
-		// i test non vengano superati e andrea se ne accorge
+	public void template() {
 		
 		// Il template pesca il valore del parametro query govway-testsuite-id_connettore_request,
 		// riuso quanto fatto per il test parametro query
 		final String erogazione = "ConsegnaCondizionaleTemplateByNome";
 		
 		var requestsByConnettore = Common.connettoriAbilitati.stream()
-				.map(c -> buildRequest_TemplateByNome(c, erogazione))
+				.map(c -> Common.buildRequest_Template(c, erogazione))
 				.collect(Collectors.toList());
 							
 		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
@@ -453,7 +386,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		final String erogazione = "ConsegnaCondizionaleFreemarkerTemplateByNome";
 		
 		var requestsByConnettore = Common.connettoriAbilitati.stream()
-				.map(c -> buildRequest_FreemarkerTemplateByNome(c, erogazione))
+				.map(c -> Common.buildRequest_FreemarkerTemplate(c, erogazione))
 				.collect(Collectors.toList());
 
 		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
@@ -469,7 +402,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		final String erogazione = "ConsegnaCondizionaleVelocityTemplateByNome";
 		
 		var requestsByConnettore = Common.connettoriAbilitati.stream()
-				.map(c -> buildRequest_VelocityTemplateByNome(c, erogazione))
+				.map(c -> Common.buildRequest_VelocityTemplate(c, erogazione))
 				.collect(Collectors.toList());
 							
 		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
@@ -503,15 +436,15 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		
 		
 		List<List<Object>> connettoriAndrequests = Arrays.asList(
-				Arrays.asList(Common.CONNETTORE_0, buildRequest_HeaderHttpByNome(Common.CONNETTORE_0, erogazione)),
-				Arrays.asList(Common.CONNETTORE_1, buildRequest_UrlInvocazioneByNome(Common.CONNETTORE_1, erogazione)),
-				Arrays.asList(Common.CONNETTORE_2, buildRequest_ParametroUrlByNome(Common.CONNETTORE_2, erogazione)),				
-				Arrays.asList(Common.CONNETTORE_3, buildRequest_ContenutoByNome(Common.CONNETTORE_3, erogazione)),				
-				Arrays.asList(Common.CONNETTORE_0, buildRequest_TemplateByNome(Common.CONNETTORE_0, erogazione)),
-				Arrays.asList(Common.CONNETTORE_1, buildRequest_FreemarkerTemplateByNome(Common.CONNETTORE_1, erogazione)),
-				Arrays.asList(Common.CONNETTORE_2, buildRequest_VelocityTemplateByNome(Common.CONNETTORE_2, erogazione)),
+				Arrays.asList(CONNETTORE_0, Common.buildRequest_HeaderHttp(CONNETTORE_0, erogazione)),
+				Arrays.asList(CONNETTORE_1, Common.buildRequest_UrlInvocazione(CONNETTORE_1, erogazione)),
+				Arrays.asList(Common.CONNETTORE_2, Common.buildRequest_ParametroUrl(Common.CONNETTORE_2, erogazione)),				
+				Arrays.asList(Common.CONNETTORE_3, Common.buildRequest_Contenuto(Common.CONNETTORE_3, erogazione)),				
+				Arrays.asList(CONNETTORE_0, Common.buildRequest_Template(CONNETTORE_0, erogazione)),
+				Arrays.asList(CONNETTORE_1, Common.buildRequest_FreemarkerTemplate(CONNETTORE_1, erogazione)),
+				Arrays.asList(Common.CONNETTORE_2, Common.buildRequest_VelocityTemplate(Common.CONNETTORE_2, erogazione)),
 				Arrays.asList(Common.CONNETTORE_3, requestForwardedFor),
-				Arrays.asList(Common.CONNETTORE_0,requestIdentificazioneStatica),
+				Arrays.asList(CONNETTORE_0,requestIdentificazioneStatica),
 				Arrays.asList(null, requestIdentificazioneClientIp)
 			);
 		
@@ -555,7 +488,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		requestForwardedFor.setMethod(HttpRequestMethod.GET);
 		requestForwardedFor.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-xforwarded-for"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
-		requestForwardedFor.addHeader(Common.HEADER_CONDIZIONE, Common.CONNETTORE_0);
+		requestForwardedFor.addHeader(HEADER_ID_CONDIZIONE, CONNETTORE_0);
 		
 		// Sebbene sull'erogazione sia presente la regola di default che guarda il valore dello header
 		// HEADER_CONDIZIONE, la richiesta deve comunque fallire perchè la regola matchata è quella 
@@ -579,7 +512,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		var connettoriSuffissi = Arrays.asList("0", "1", "2", "3"); 
 		
 		var requestsByConnettore = connettoriSuffissi.stream()
-				.map(c -> buildRequest_HeaderHttpByNome(c, erogazione))
+				.map(c -> Common.buildRequest_HeaderHttp(c, erogazione))
 				.collect(Collectors.toList());
 							
 		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
@@ -597,7 +530,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		final String erogazione = "ConsegnaCondizionaleSuffisso";
 		
 		var requestsByConnettore = Common.connettoriAbilitati.stream()
-				.map(c -> buildRequest_HeaderHttpByNome(c, erogazione))
+				.map(c -> Common.buildRequest_HeaderHttp(c, erogazione))
 				.collect(Collectors.toList());
 							
 		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
@@ -618,7 +551,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		var connettoriSuffissi = Arrays.asList("0", "1", "2", "3"); 
 		
 		var requestsByConnettore = connettoriSuffissi.stream()
-				.map(c -> buildRequest_HeaderHttpByNome(c, erogazione))
+				.map(c -> Common.buildRequest_HeaderHttp(c, erogazione))
 				.collect(Collectors.toList());
 							
 		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
@@ -659,7 +592,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		
 		var responseContenuto = HttpUtilities.httpInvoke(requestContenuto);
 		assertEquals(200, responseContenuto.getResultHTTPOperation());
-		assertEquals(Common.CONNETTORE_0, responseContenuto.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
+		assertEquals(CONNETTORE_0, responseContenuto.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
 		
 		// La freemarker template la riprovo sullo header per vedere se funge
 		HttpRequest requestFreemarkerTemplate = new HttpRequest();
@@ -667,16 +600,15 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		requestFreemarkerTemplate.setContentType("application/json");	// TODO: Rimuovere dopo il fix
 		requestFreemarkerTemplate.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-freemarker-template"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
-		requestFreemarkerTemplate.addHeader(Common.HEADER_CONDIZIONE, "😛😛");
+		requestFreemarkerTemplate.addHeader(HEADER_ID_CONDIZIONE, "😛😛");
 		
 		var response = HttpUtilities.httpInvoke(requestFreemarkerTemplate);
 		assertEquals(200, response.getResultHTTPOperation());
-		assertEquals(Common.CONNETTORE_0, response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
+		assertEquals(CONNETTORE_0, response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
 
 	}
 
 
-	// TODO: Forse questi posso rimetterli dentro ConsegnaCondizionaleFiltroNome
 	public static void matchResponsesWithConnettori(List<String> connettori,
 			Vector<Vector<HttpResponse>> responsesByConnettore) {
 		for (int i = 0; i < connettori.size(); i++) {

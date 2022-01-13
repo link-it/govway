@@ -37,7 +37,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -61,7 +60,8 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  * Query contenuto: $.id_connettore_request
  * Query HeaderHttp: GovWay-TestSuite-id_connettore
  * 
- *
+ * I test seguono lo schema per la consegna condizionale by nome, solo che ogni connettore
+ * viene raggiunto da due filtri, invece che solo da uno.
  * 
  */
 public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
@@ -71,99 +71,14 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 	//		Fixare la console impedendo tale configurazione e mettere una proprietà in govway per
 	//		disabilitare questo fix, in modo da poterlo testare.
 	// TODO: Aggiungere anche qui il controllo sul connettore disabilitato?
-	
-	
-	/* 
-	 * I test seguono lo schema per la consegna condizionale by nome, solo che ogni connettore
-	 * viene raggiunto da due filtri, invece che solo da uno.
-	 * 
-	 */	
-	
+		
 	static Map<String,List<String>> filtriConnettori = Map.of(
 			CONNETTORE_0, Arrays.asList("Connettore0-Filtro0", "Connettore0-Filtro1"),
-			Common.CONNETTORE_1, Arrays.asList("Connettore1-Filtro0", "Connettore1-Filtro1"),
+			CONNETTORE_1, Arrays.asList("Connettore1-Filtro0", "Connettore1-Filtro1"),
 			CONNETTORE_2, Arrays.asList("Connettore2-Filtro0", "Connettore2-Filtro1"),
 			CONNETTORE_3, Arrays.asList("Connettore3-Filtro0", "Connettore3-Filtro1")
 		);
 			
-	
-	public static List<HttpRequest> buildRequests_Contenuto(List<String> filtri, String erogazione) {
-		return filtri.stream()
-				.map( filtro ->
-					ConsegnaCondizionaleByNomeTest.buildRequest_ContenutoByNome(filtro, erogazione))
-				.collect(Collectors.toList());
-	}
-	
-	
-	public static List<HttpRequest> buildRequests_Template(List<String> filtri, String erogazione) {
-		return filtri.stream()
-				.map( filtro ->
-					ConsegnaCondizionaleByNomeTest.buildRequest_TemplateByNome(filtro, erogazione))
-				.collect(Collectors.toList());				
-	}
-	
-	
-	public static List<HttpRequest> buildRequests_FreemarkerTemplate(List<String> filtri, String erogazione) {
-		return filtri.stream()
-				.map( filtro ->
-					ConsegnaCondizionaleByNomeTest.buildRequest_FreemarkerTemplateByNome(filtro, erogazione))
-				.collect(Collectors.toList());				
-	}
-	
-	
-	public static List<HttpRequest> buildRequests_VelocityTemplate(List<String> filtri, String erogazione) {
-		return filtri.stream()
-				.map( filtro ->
-					ConsegnaCondizionaleByNomeTest.buildRequest_VelocityTemplateByNome(filtro, erogazione))
-				.collect(Collectors.toList());
-	}
-	
-	
-	public static List<HttpRequest> buildRequests_ParametroUrl(List<String> filtri, String erogazione) {
-		return filtri.stream()
-				.map( filtro ->
-					ConsegnaCondizionaleByNomeTest.buildRequest_ParametroUrlByNome(filtro, erogazione))
-				.collect(Collectors.toList());
-	}
-	
-	
-	public static List<HttpRequest> buildRequests_UrlInvocazione(List<String> filtri, String erogazione) {
-		return filtri.stream()
-				.map( filtro ->
-					ConsegnaCondizionaleByNomeTest.buildRequest_UrlInvocazioneByNome(filtro, erogazione))
-				.collect(Collectors.toList());
-	}
-	
-	
-	public static List<HttpRequest> buildRequests_HeaderHttp(List<String> filtri, String erogazione) {
-		return filtri.stream()
-				.map( filtro ->
-					ConsegnaCondizionaleByNomeTest.buildRequest_HeaderHttpByNome(filtro, erogazione))
-				.collect(Collectors.toList());
-	}
-	
-	
-	public static List<HttpRequest> buildRequests_ForwardedFor(List<String> filtri, List<String> forwardingHeaders, String erogazione) {
-		// Costruisco un'array di richieste, ciascuna richiesta è costruita scegliendo un filtro e il forwardingHeader
-		// su cui inviarlo
-		
-		List<HttpRequest> ret = new ArrayList<>();
-		
-		// Faccio viaggiare ogni filtro su tutti gli headers
-		for(String filtro : filtri) {
-			for(String header : forwardingHeaders) {
-				HttpRequest request = new HttpRequest();
-				request.setMethod(HttpRequestMethod.GET);
-				request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-xforwarded-for"
-						+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
-				request.addHeader(header, filtro);
-				ret.add(request);
-			}
-		}
-				
-		return ret;
-	}
-	
 	
 	@Test
 	public void headerHttp() {
@@ -180,7 +95,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		connettoriAbilitati.forEach( connettore -> {
 			requestsByConnettore.put(
 					connettore,
-					buildRequests_HeaderHttp(filtriConnettori.get(connettore), erogazione));
+					Common.buildRequests_HeaderHttp(filtriConnettori.get(connettore), erogazione));
 		});
 		
 		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
@@ -198,8 +113,8 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		
 		final String erogazione = "ConsegnaCondizionaleConflittoFiltri";
 
-		var requestError = ConsegnaCondizionaleByNomeTest.buildRequest_HeaderHttpByNome("Connettore0-Filtro0", erogazione);
-		var requestOk = ConsegnaCondizionaleByNomeTest.buildRequest_HeaderHttpByNome("Connettore0-Filtro1", erogazione);
+		var requestError = Common.buildRequest_HeaderHttp("Connettore0-Filtro0", erogazione);
+		var requestOk = Common.buildRequest_HeaderHttp("Connettore0-Filtro1", erogazione);
 		
 		var responseError = Utils.makeRequest(requestError);
 		
@@ -222,7 +137,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		connettoriAbilitati.forEach( connettore -> {
 			requestsByConnettore.put(
 					connettore,
-					buildRequests_UrlInvocazione(filtriConnettori.get(connettore), erogazione));
+					Common.buildRequests_UrlInvocazione(filtriConnettori.get(connettore), erogazione));
 		});
 		
 		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
@@ -241,7 +156,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		connettoriAbilitati.forEach( connettore -> {
 			requestsByConnettore.put(
 					connettore,
-					buildRequests_ParametroUrl(filtriConnettori.get(connettore), erogazione));
+					Common.buildRequests_ParametroUrl(filtriConnettori.get(connettore), erogazione));
 		});
 		
 		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
@@ -259,7 +174,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		connettoriAbilitati.forEach( connettore -> {
 			requestsByConnettore.put(
 					connettore,
-					buildRequests_Contenuto(filtriConnettori.get(connettore), erogazione));
+					Common.buildRequests_Contenuto(filtriConnettori.get(connettore), erogazione));
 		});
 		
 		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
@@ -278,7 +193,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		connettoriAbilitati.forEach( connettore -> {
 			requestsByConnettore.put(
 					connettore,
-					buildRequests_Template(filtriConnettori.get(connettore), erogazione));
+					Common.buildRequests_Template(filtriConnettori.get(connettore), erogazione));
 		});
 		
 		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
@@ -296,7 +211,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		connettoriAbilitati.forEach( connettore -> {
 			requestsByConnettore.put(
 					connettore, 
-					buildRequests_FreemarkerTemplate(filtriConnettori.get(connettore), erogazione));
+					Common.buildRequests_FreemarkerTemplate(filtriConnettori.get(connettore), erogazione));
 		});
 		
 		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
@@ -314,7 +229,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		connettoriAbilitati.forEach( connettore -> {
 			requestsByConnettore.put(
 					connettore, 
-					buildRequests_VelocityTemplate(filtriConnettori.get(connettore), erogazione));
+					Common.buildRequests_VelocityTemplate(filtriConnettori.get(connettore), erogazione));
 		});
 		
 		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
@@ -354,7 +269,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		connettoriAbilitati.forEach( connettore -> {
 			requestsByConnettore.put(
 					connettore, 
-					buildRequests_ForwardedFor(filtriConnettori.get(connettore), headers, erogazione));
+					Common.buildRequests_ForwardedFor(filtriConnettori.get(connettore), headers, erogazione));
 		});
 		
 		
@@ -393,35 +308,35 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		connettoriAbilitati.forEach( c -> requestsByConnettore.put(c, new ArrayList<HttpRequest>()));
 		
 		requestsByConnettore.get(CONNETTORE_0)
-			.addAll(buildRequests_HeaderHttp(filtriConnettori.get(CONNETTORE_0), erogazione));
+			.addAll(Common.buildRequests_HeaderHttp(filtriConnettori.get(CONNETTORE_0), erogazione));
 		
 		requestsByConnettore.get(CONNETTORE_0)
-			.addAll(buildRequests_UrlInvocazione(filtriConnettori.get(CONNETTORE_0), erogazione));
+			.addAll(Common.buildRequests_UrlInvocazione(filtriConnettori.get(CONNETTORE_0), erogazione));
 		
 		requestsByConnettore.get(CONNETTORE_0)
 			.add(requestIdentificazioneStatica);
 
 		
 		requestsByConnettore.get(CONNETTORE_1)
-			.addAll(buildRequests_ParametroUrl(filtriConnettori.get(CONNETTORE_1), erogazione));
+			.addAll(Common.buildRequests_ParametroUrl(filtriConnettori.get(CONNETTORE_1), erogazione));
 		
 		requestsByConnettore.get(CONNETTORE_1)
-			.addAll(buildRequests_Contenuto(filtriConnettori.get(CONNETTORE_1), erogazione));
+			.addAll(Common.buildRequests_Contenuto(filtriConnettori.get(CONNETTORE_1), erogazione));
 		
 		
 		requestsByConnettore.get(CONNETTORE_2)
-			.addAll(buildRequests_ForwardedFor(filtriConnettori.get(CONNETTORE_2), HttpUtilities.getClientAddressHeaders(), erogazione));
+			.addAll(Common.buildRequests_ForwardedFor(filtriConnettori.get(CONNETTORE_2), HttpUtilities.getClientAddressHeaders(), erogazione));
 		
 		requestsByConnettore.get(CONNETTORE_2)
-			.addAll(buildRequests_Template(filtriConnettori.get(CONNETTORE_2), erogazione));
+			.addAll(Common.buildRequests_Template(filtriConnettori.get(CONNETTORE_2), erogazione));
 		
 		requestsByConnettore.get(CONNETTORE_2).add(requestClientIp);
 		
 		requestsByConnettore.get(CONNETTORE_3)
-			.addAll(buildRequests_VelocityTemplate(filtriConnettori.get(CONNETTORE_3), erogazione));
+			.addAll(Common.buildRequests_VelocityTemplate(filtriConnettori.get(CONNETTORE_3), erogazione));
 		
 		requestsByConnettore.get(CONNETTORE_3)
-			.addAll(buildRequests_FreemarkerTemplate(filtriConnettori.get(CONNETTORE_3), erogazione));
+			.addAll(Common.buildRequests_FreemarkerTemplate(filtriConnettori.get(CONNETTORE_3), erogazione));
 		
 		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
 		
