@@ -706,6 +706,14 @@ public class ConfigurazionePdDManager {
 		this.configurazionePdDReader.updateStatoPortaApplicativa(this.getConnection(), idPA, stato);
 	}
 	
+	public String updateStatoConnettoreMultiplo(IDPortaApplicativa idPA, String nomeConnettore, StatoFunzionalita stato) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.updateStatoConnettoreMultiplo(this.getConnection(), idPA, nomeConnettore, stato);
+	}
+	
+	public String updateSchedulingConnettoreMultiplo(IDPortaApplicativa idPA, String nomeConnettore, StatoFunzionalita stato) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.updateSchedulingConnettoreMultiplo(this.getConnection(), idPA, nomeConnettore, stato);
+	}
+	
 	public Map<String, String> getProprietaConfigurazione(PortaApplicativa pa) throws DriverConfigurazioneException {
 		return this.configurazionePdDReader.getProprietaConfigurazione(pa);
 	}

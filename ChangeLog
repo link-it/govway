@@ -1,3 +1,19 @@
+2022-01-13  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovwayConsole, GovWayMonitor]
+	Aggiunta funzionalità OP-1315
+	Effettuati i seguenti miglioramenti nella gestione e nel monitoraggio dei connettori multipli (consegne asincrone):
+	- aggiunto la possibilità di disabilitare lo scheduling delle consegne di un connettore, consentento l'acquisizione dei messaggi senza consegnarli fino a che non avviene la riabilitazione;
+	- l'identificativo di una consegna condizionale o l'id di sessione ottenuto tramite un template viene adesso normalizzato per eliminare spazi o ritorni a capo presenti nella parte iniziale o finale;
+	- aggiunto uno stato della transazione, per i connettori multipli, di "attesa consegna" che consente di differenziare rispetto alla "consegna in corso", perchè la seconda ha già tentato una consegna, la prima no.
+
+2022-01-13  Giuliano Pintori <pintori@link.it>
+
+	* [GovwayConsole, GovWayMonitor]
+	Aggiunta funzionalità OP-1303
+	Aggiornate icone e font MaterialIcons alla versione 4.
+	Restyling della pagina che riporta lo stato degli allarmi nella console di monitoraggio.
+
 2022-01-12  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

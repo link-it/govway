@@ -879,6 +879,7 @@ public class GestoreConsegnaMultipla {
 		ServiceManagerProperties smp = debug ? daoFactoryServiceManagerPropertiesTransazioni : daoFactoryDevNullServiceManagerPropertiesTransazioni;
 		
 		int esitoConsegnaMultipla = -1;
+		int esitoConsegnaMultiplaInCorso = -1;
 		int esitoConsegnaMultiplaFallita = -1;
 		int esitoConsegnaMultiplaCompletata = -1;
 		int ok = -1;
@@ -886,6 +887,7 @@ public class GestoreConsegnaMultipla {
 		boolean esitiLetti = false;
 		try {
 			esitoConsegnaMultipla = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA);
+			esitoConsegnaMultiplaInCorso = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_IN_CORSO);
 			esitoConsegnaMultiplaFallita = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_FALLITA);
 			esitoConsegnaMultiplaCompletata = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_COMPLETATA);
 			ok = esitiProperties.convertoToCode(EsitoTransazioneName.OK);
@@ -902,7 +904,7 @@ public class GestoreConsegnaMultipla {
 					this.tipoDatabase, this.log,
 					daoF,logFactory,smp,
 					this.debug,
-					esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
+					esitoConsegnaMultipla, esitoConsegnaMultiplaInCorso, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
 					esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage,
 					openspcoopProperties.getGestioneSerializableDB_AttesaAttiva(),openspcoopProperties.getGestioneSerializableDB_CheckInterval(),
 					timeDetails);

@@ -23,6 +23,9 @@
 package org.openspcoop2.pdd.timers;
 
 import org.slf4j.Logger;
+
+import java.sql.Timestamp;
+
 import org.openspcoop2.pdd.config.ConfigurazioneCoda;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -34,6 +37,7 @@ import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.threads.GestoreCodaRunnable;
 import org.openspcoop2.utils.threads.RunnableLogger;
 
@@ -49,7 +53,14 @@ public class TimerConsegnaContenutiApplicativiThread extends GestoreCodaRunnable
 
     /** Variabile che indica il Nome del modulo dell'architettura di OpenSPCoop rappresentato da questa classe */
     public final static String ID_MODULO = "TimerConsegnaContenutiApplicativi";
-	
+    public static Timestamp LOCK_CONSEGNA_FUTURA = null;
+    static {
+    	try {
+    		LOCK_CONSEGNA_FUTURA = new Timestamp(DateUtils.getSimpleDateFormatDay().parse("2200-12-31").getTime());
+    	}catch(Throwable t) {
+    		throw new RuntimeException(t.getMessage(),t);
+    	}
+    }
 	
 	/** Properties Reader */
 	@SuppressWarnings("unused")

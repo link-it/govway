@@ -969,6 +969,24 @@ public class ConsoleProperties {
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.disablePortaApplicativa");
 	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_enableConnettoreMultiplo(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.enableConnettoreMultiplo");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_disableConnettoreMultiplo(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.disableConnettoreMultiplo");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiplo(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.enableSchedulingConnettoreMultiplo");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiplo(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.disableSchedulingConnettoreMultiplo");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiploRuntimeRepository(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.enableSchedulingConnettoreMultiploRuntimeRepository");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.disableSchedulingConnettoreMultiploRuntimeRepository");
+	}
 	public String getJmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaAccessoRegistroServizi");
 	}

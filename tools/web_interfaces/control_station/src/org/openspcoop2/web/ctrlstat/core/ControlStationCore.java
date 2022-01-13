@@ -1476,6 +1476,12 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata = new HashMap<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa = new HashMap<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_enableConnettoreMultiplo = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disableConnettoreMultiplo = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiplo = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiplo = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiploRuntimeRepository = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository = new HashMap<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi = new HashMap<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD = new HashMap<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata = new HashMap<String, String>();
@@ -1777,6 +1783,24 @@ public class ControlStationCore {
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_enableConnettoreMultiplo(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_enableConnettoreMultiplo.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_disableConnettoreMultiplo(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_disableConnettoreMultiplo.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiplo(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiplo.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiplo(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiplo.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiploRuntimeRepository(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiploRuntimeRepository.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository.get(alias);
 	}
 	public String getJmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi.get(alias);
@@ -2435,6 +2459,12 @@ public class ControlStationCore {
 		this.jmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata = core.jmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa = core.jmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa = core.jmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_enableConnettoreMultiplo = core.jmxPdD_configurazioneSistema_nomeMetodo_enableConnettoreMultiplo;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_disableConnettoreMultiplo = core.jmxPdD_configurazioneSistema_nomeMetodo_disableConnettoreMultiplo;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiplo = core.jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiplo;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiplo = core.jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiplo;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiploRuntimeRepository = core.jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiploRuntimeRepository;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository = core.jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository;
 		this.jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi = core.jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi;
 		this.jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD = core.jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD;
 		this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata = core.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata;
@@ -2925,6 +2955,12 @@ public class ControlStationCore {
 					this.jmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_disablePortaApplicativa(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_enableConnettoreMultiplo.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_enableConnettoreMultiplo(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_disableConnettoreMultiplo.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_disableConnettoreMultiplo(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiplo.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiplo(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiplo.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiplo(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiploRuntimeRepository.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiploRuntimeRepository(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository(alias));
 					this.jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi(alias));
 					this.jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias));
 					this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata(alias));

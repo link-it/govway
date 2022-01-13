@@ -23271,6 +23271,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					int notificaConnettore = rs.getInt("connettore_notifica");
 					String descrizioneConnettore = rs.getString("connettore_descrizione");
 					String statoConnettore = rs.getString("connettore_stato");
+					String schedulingConnettore = rs.getString("connettore_scheduling");
 					String filtriConnettore = rs.getString("connettore_filtri");
 					String codaConnettore = rs.getString("connettore_coda");
 					String prioritaConnettore = rs.getString("connettore_priorita");
@@ -23302,7 +23303,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 								servizioApplicativo.getDatiConnettore().setNome(nomeConnettore);
 								servizioApplicativo.getDatiConnettore().setNotifica(notificaConnettore == CostantiDB.TRUE);
 								servizioApplicativo.getDatiConnettore().setDescrizione(descrizioneConnettore);
-								servizioApplicativo.getDatiConnettore().setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(statoConnettore));
+								if(statoConnettore!=null) {
+									// prende il default
+									servizioApplicativo.getDatiConnettore().setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(statoConnettore));
+								}
+								if(schedulingConnettore!=null) {
+									// prende il default
+									servizioApplicativo.getDatiConnettore().setScheduling(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(schedulingConnettore));
+								}
 								servizioApplicativo.getDatiConnettore().setCoda(codaConnettore);
 								servizioApplicativo.getDatiConnettore().setPriorita(prioritaConnettore);
 								servizioApplicativo.getDatiConnettore().setPrioritaMax(maxPrioritaConnettore == CostantiDB.TRUE);

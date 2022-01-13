@@ -156,8 +156,11 @@ public class GestoreMessaggi  {
 	public static final String MSG_SERVIZI_APPLICATIVI  = "MSG_SERVIZI_APPLICATIVI";
 	/* Colonne dei Messaggi Servizi Applicativi */
 	public static final String MSG_SERVIZI_APPLICATIVI_COLUMN_ID_MESSAGGIO  = "ID_MESSAGGIO";
+	public static final String MSG_SERVIZI_APPLICATIVI_COLUMN_TIPO  = "TIPO";
 	public static final String MSG_SERVIZI_APPLICATIVI_COLUMN_SERVIZIO_APPLICATIVO  = "SERVIZIO_APPLICATIVO";
 	public static final String MSG_SERVIZI_APPLICATIVI_COLUMN_ORA_REGISTRAZIONE  = "ORA_REGISTRAZIONE";
+	public static final String MSG_SERVIZI_APPLICATIVI_COLUMN_INTEGRATION_MANAGER  = "INTEGRATION_MANAGER";
+	public static final String MSG_SERVIZI_APPLICATIVI_COLUMN_LOCK_CONSEGNA  = "LOCK_CONSEGNA";
 
 	/** Tabella che definisce il contenuto di un messaggio */
 	public static final String DEFINIZIONE_MESSAGGI = "DEFINIZIONE_MESSAGGI";
@@ -1307,7 +1310,7 @@ public class GestoreMessaggi  {
 			boolean sbustamentoSOAP,boolean sbustamentoInfoProtocol,
 			boolean integrationManager,String tipoConsegna,Timestamp oraRegistrazioneMessaggio,
 			String nomePorta, boolean attesaEsito, boolean impostaPerConsegnaTimerContenutiApplicativi,
-			String coda, String priorita)throws GestoreMessaggiException{
+			String coda, String priorita, boolean schedulingNonAttivo)throws GestoreMessaggiException{
 		if(this.openspcoopstate instanceof OpenSPCoopStateful || this.oneWayVersione11) {
 			StateMessage stateMSG = (this.isRichiesta) ? ((StateMessage)this.openspcoopstate.getStatoRichiesta()) 
 					: ((StateMessage)this.openspcoopstate.getStatoRisposta()) ;
@@ -1326,6 +1329,8 @@ public class GestoreMessaggi  {
 				String valuePriorita = "";
 				String columnErroreProcessamento = "";
 				String valueErroreProcessamento = "";
+				String columnLockConsegna = "";
+				String valueLockConsegna = "";
 				if(coda!=null) {
 					columnCoda=",CODA";
 					valueCoda=", ?";
@@ -1338,10 +1343,21 @@ public class GestoreMessaggi  {
 					columnErroreProcessamento = ",ERRORE_PROCESSAMENTO,ERRORE_PROCESSAMENTO_COMPACT";
 					valueErroreProcessamento = ", ? , ?";
 				}
+				if(schedulingNonAttivo) {
+					columnLockConsegna=",LOCK_CONSEGNA";
+					valueLockConsegna=", ?";
+				}
 				query.append("(ID_MESSAGGIO,SERVIZIO_APPLICATIVO,SBUSTAMENTO_SOAP,SBUSTAMENTO_INFO_PROTOCOL,INTEGRATION_MANAGER,TIPO_CONSEGNA,ORA_REGISTRAZIONE,RISPEDIZIONE,NOME_PORTA,ATTESA_ESITO"+
-							columnCoda+columnPriorita+columnErroreProcessamento+
+							columnCoda+
+							columnPriorita+
+							columnErroreProcessamento+
+							columnLockConsegna+
 						") VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ?"+
-							valueCoda+valuePriorita+valueErroreProcessamento+")");
+							valueCoda+
+							valuePriorita+
+							valueErroreProcessamento+
+							valueLockConsegna+
+							")");
 
 				pstmt = connectionDB.prepareStatement(query.toString());
 				int index = 1;
@@ -1382,6 +1398,10 @@ public class GestoreMessaggi  {
 				if(impostaPerConsegnaTimerContenutiApplicativi) {
 					pstmt.setString(index++, TimerConsegnaContenutiApplicativiThread.ID_MODULO);
 					pstmt.setString(index++, TimerConsegnaContenutiApplicativiThread.ID_MODULO);
+				}
+				
+				if(schedulingNonAttivo) {
+					pstmt.setTimestamp(index++, TimerConsegnaContenutiApplicativiThread.LOCK_CONSEGNA_FUTURA);
 				}
 
 				//this.log.debug("[registraDestinatarioMessaggio] Aggiorno MSG["+this.tipo+"/"+this.idBusta+"] RISPEDIZIONE["+oraRegistrazioneMessaggio.toString()+"]");
@@ -4674,6 +4694,109 @@ public class GestoreMessaggi  {
 
 	/* ------------- LETTURA MESSAGGI DA RICONSEGNARE -------------- */
 
+	public static int abilitaSchedulingMessaggiDaRiconsegnareIntoBox(String servizioApplicativo, boolean checkEliminazioneLogica,
+			Logger loggerSql, Connection connectionDB, boolean debug) throws GestoreMessaggiException{
+		return _updateLockConsegnaMessaggiDaRiconsegnareIntoBox(servizioApplicativo, true, 
+				checkEliminazioneLogica,
+				loggerSql, connectionDB, debug);
+	}
+	public static int disabilitaSchedulingMessaggiDaRiconsegnareIntoBox(String servizioApplicativo, boolean checkEliminazioneLogica,
+			Logger loggerSql, Connection connectionDB, boolean debug) throws GestoreMessaggiException{
+		return _updateLockConsegnaMessaggiDaRiconsegnareIntoBox(servizioApplicativo, false, 
+				checkEliminazioneLogica,
+				loggerSql, connectionDB, debug);
+	}
+	private static int _updateLockConsegnaMessaggiDaRiconsegnareIntoBox(String servizioApplicativo, boolean abilitaScheduling, boolean checkEliminazioneLogica,
+			Logger loggerSql, Connection connectionDB, boolean debug) throws GestoreMessaggiException{
+	
+		String idOperazione = abilitaScheduling ? "abilitaSchedulingNotificheAsincrone" : "disabilitaSchedulingNotificheAsincrone";
+				
+		PreparedStatement pstmt = null;
+		String updateString = null;
+		try{ 
+			
+			String tipoDatabase = Configurazione.getSqlQueryObjectType();
+			if(tipoDatabase==null) {
+				throw new GestoreMessaggiException("Funzionalità supportata solamente se viene definito il tipo di database");
+			}
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+			sqlQueryObject.addSelectField(MESSAGGI_COLUMN_ID_MESSAGGIO);
+			sqlQueryObject.addFromTable(GestoreMessaggi.MESSAGGI);
+			sqlQueryObject.addWhereCondition(MESSAGGI_COLUMN_PROPRIETARIO+"<>?");
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			ISQLQueryObject sqlQueryObjectMsgServiziApplicativi = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+			sqlQueryObjectMsgServiziApplicativi.addUpdateTable(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
+			sqlQueryObjectMsgServiziApplicativi.addUpdateField(MSG_SERVIZI_APPLICATIVI_COLUMN_LOCK_CONSEGNA, "?");
+			sqlQueryObjectMsgServiziApplicativi.addWhereCondition(MSG_SERVIZI_APPLICATIVI_COLUMN_SERVIZIO_APPLICATIVO+"=?");
+			if(checkEliminazioneLogica) {
+				sqlQueryObjectMsgServiziApplicativi.addWhereCondition(MSG_SERVIZI_APPLICATIVI_COLUMN_TIPO+"=?");
+				sqlQueryObjectMsgServiziApplicativi.addWhereINSelectSQLCondition(false, MSG_SERVIZI_APPLICATIVI_COLUMN_ID_MESSAGGIO, sqlQueryObject);
+					sqlQueryObjectMsgServiziApplicativi.setANDLogicOperator(true);
+			}
+			if(abilitaScheduling) {
+				sqlQueryObjectMsgServiziApplicativi.addWhereCondition(MSG_SERVIZI_APPLICATIVI_COLUMN_LOCK_CONSEGNA+"=?"); // precedentemente disabilitato
+			}
+			else {
+				sqlQueryObjectMsgServiziApplicativi.addWhereCondition(false,
+						MSG_SERVIZI_APPLICATIVI_COLUMN_LOCK_CONSEGNA+" is null",
+						MSG_SERVIZI_APPLICATIVI_COLUMN_LOCK_CONSEGNA+"<>?"); // gia' disabilitato
+			}
+			sqlQueryObjectMsgServiziApplicativi.setANDLogicOperator(true);
+		
+			updateString = sqlQueryObjectMsgServiziApplicativi.createSQLUpdate();
+			
+			pstmt = connectionDB.prepareStatement(updateString);
+			
+			int index = 1;
+			List<Object> params = new ArrayList<Object>();
+		
+			if(abilitaScheduling) {
+				pstmt.setTimestamp(index++,null); 
+				params.add("null");
+			}
+			else {
+				pstmt.setTimestamp(index++,TimerConsegnaContenutiApplicativiThread.LOCK_CONSEGNA_FUTURA); 
+				params.add(org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(TimerConsegnaContenutiApplicativiThread.LOCK_CONSEGNA_FUTURA));
+			}
+				
+			pstmt.setString(index++,servizioApplicativo); params.add(servizioApplicativo);
+			if(checkEliminazioneLogica) {
+				pstmt.setString(index++,Costanti.INBOX); params.add(Costanti.INBOX);
+				pstmt.setString(index++,TimerGestoreMessaggi.ID_MODULO); params.add(TimerGestoreMessaggi.ID_MODULO);
+			}
+			
+			pstmt.setTimestamp(index++,TimerConsegnaContenutiApplicativiThread.LOCK_CONSEGNA_FUTURA); 
+			params.add(org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(TimerConsegnaContenutiApplicativiThread.LOCK_CONSEGNA_FUTURA));
+			
+			long startDateSQLCommand = DateManager.getTimeMillis();
+			String comandoSql = null;
+			if(debug) {
+				comandoSql = DBUtils.formatSQLString(updateString, params.toArray());
+				loggerSql.debug("[UPDATE] (Messaggi."+idOperazione+") ["+comandoSql+"] ...");
+			}
+			int result = pstmt.executeUpdate();
+			long endDateSQLCommand = DateManager.getTimeMillis();
+			long diffSQLCommand = endDateSQLCommand - startDateSQLCommand;
+			if(debug) {
+				loggerSql.debug("[UPDATE] (Messaggi."+idOperazione+") ["+comandoSql+"] [row:"+result+"] effettuato in "+Utilities.convertSystemTimeIntoString_millisecondi(diffSQLCommand, true));
+			}
+			
+			return result;
+		
+		} catch(Exception e) {
+			String errorMsg = "[GestoreMessaggi."+idOperazione+"] errore, queryString["+updateString+"]: "+e.getMessage();
+			loggerSql.error(errorMsg,e);
+			throw new GestoreMessaggiException(errorMsg,e);
+		}finally {
+			try{
+				if(pstmt != null)
+					pstmt.close();
+			} catch(Exception er) { }
+		}
+	}
+	
 	public List<MessaggioServizioApplicativo> readMessaggiDaRiconsegnareIntoBoxByPriorita(int limit,
 			boolean verificaPresenzaMessaggiDaRispedire, boolean calcolaDataMinimaMessaggiRispedire, Integer secondiAnzianitaPerIniziareSpedireNuovoMessaggio,
 			Date riconsegna, int presaInConsegnaMaxLife, 
@@ -5504,7 +5627,7 @@ public class GestoreMessaggi  {
 
 				// Costruzione Query Update
 				String condition = (clusterId==null || "".equals(clusterId)) ? "CLUSTER_ID is null" : " CLUSTER_ID=?";
-				String query = "UPDATE "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+" SET LOCK_CONSEGNA=?, CLUSTER_ID=? WHERE "+condition+" AND CODA=? AND LOCK_CONSEGNA is not null";
+				String query = "UPDATE "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+" SET LOCK_CONSEGNA=?, CLUSTER_ID=? WHERE "+condition+" AND CODA=? AND LOCK_CONSEGNA is not null AND LOCK_CONSEGNA<?";
 				//log.debug("Query: "+query);
 				pstmt= connectionDB.prepareStatement(query);
 				int index = 1;
@@ -5514,10 +5637,13 @@ public class GestoreMessaggi  {
 					pstmt.setString(index++,clusterId);
 				}
 				pstmt.setString(index++,queue);
+				pstmt.setTimestamp(index++, TimerConsegnaContenutiApplicativiThread.LOCK_CONSEGNA_FUTURA);
 
 				int row = pstmt.executeUpdate();
 				if(debug) {
-					loggerSql.debug("(rows update: "+row+") (clusterID: "+clusterId+") UPDATE MSG_SERVIZI_APPLICATIVI SET LOCK_CONSEGNA=null, CLUSTER_ID=null WHERE "+condition+" AND CODA="+queue+" AND LOCK_CONSEGNA is not null");
+					loggerSql.debug("(rows update: "+row+") (clusterID: "+clusterId+") UPDATE MSG_SERVIZI_APPLICATIVI SET LOCK_CONSEGNA=null, CLUSTER_ID=null WHERE "+
+							condition+" AND CODA="+queue+" AND LOCK_CONSEGNA is not null AND LOCK_CONSEGNA<"+
+							DateUtils.getSimpleDateFormatMs().format(TimerConsegnaContenutiApplicativiThread.LOCK_CONSEGNA_FUTURA));
 				}
 				
 				pstmt.close();

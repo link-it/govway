@@ -589,6 +589,7 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_AZIONE_ID = "azid";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_SERVICE_BINDING = CostantiControlStation.PARAMETRO_SERVICE_BINDING;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_ABILITA = CostantiControlStation.PARAMETRO_ABILITA;
+	public final static String PARAMETRO_PORTE_APPLICATIVE_SCHEDULING = "cmScheduling";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE = ConnettoriCostanti.PARAMETRO_CONNETTORE_MODALITA;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_LIST_AZIONI_READ_ONLY = "listAzioniReadOnly";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_NOME_PROP = "nomeProp";
@@ -1212,6 +1213,13 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_CONFERMA_ABILITAZIONE_CONFIG_DI = "Conferma abilitazione di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_CONFERMA_DISABILITAZIONE_CONFIG_DI = "Conferma disabilitazione di ";
 	
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_ABILITATO_TOOLTIP = "Scheduling consegna abilitata (Clicca per disabilitare)";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_DISABILITATO_TOOLTIP = "Scheduling consegna disabilitata (Clicca per abilitare)";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_ABILITATO_TOOLTIP_NO_ACTION = "Scheduling consegna abilitata";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_DISABILITATO_TOOLTIP_NO_ACTION = "Scheduling consegna disabilitata";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_CONFERMA_ABILITAZIONE_CONFIG_DI = "Conferma abilitazione di ";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_CONFERMA_DISABILITAZIONE_CONFIG_DI = "Conferma disabilitazione di ";
+	
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SAX_PREFIX = ConnettoriCostanti.PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX;
 	
 	
@@ -1350,6 +1358,8 @@ public class PorteApplicativeCostanti {
 	
 	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_CONNETTORE ="Procedere con l''abilitazione del connettore ''{0}''?"; 
 	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_CONNETTORE ="Procedere con la disabilitazione del connettore ''{0}''?"; 
+	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_SCHEDULING_CONNETTORE ="Procedere con l''abilitazione dello scheduling delle consegne verso il connettore ''{0}''?"; 
+	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_SCHEDULING_CONNETTORE ="Procedere con la disabilitazione dello scheduling delle consegne verso il connettore ''{0}''?"; 
 	
 	public static final String MESSAGGIO_IMPOSSIBILE_DISABILITARE_IL_CONNETTORE_0_DEVE_RIMANARE_ALMENTO_UN_CONNETTORE_ABILITATO = "Impossibile disabilitare il connettore ''{0}'', deve rimanare almento un connettore abilitato";
 	public static final String MESSAGGIO_IMPOSSIBILE_DISABILITARE_IL_CONNETTORE_UTILIZZATI_IN_CONFIGURAZIONE = "Impossibile disabilitare il connettore selezionato.<br/>&Egrave; utilizzato all'interno della sezione '"+PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG+"'";

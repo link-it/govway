@@ -1,3 +1,8 @@
+2022-01-12  Andrea Poli <apoli@link.it>
+
+	Aggiunta colonna per gestione scheduling di un connettore
+	ALTER TABLE porte_applicative_sa ADD COLUMN connettore_scheduling VARCHAR(255);
+
 2021-12-27  Andrea Poli <apoli@link.it>
 
 	Aggiunta colonna che riporta il dettaglio di un acknowledgement

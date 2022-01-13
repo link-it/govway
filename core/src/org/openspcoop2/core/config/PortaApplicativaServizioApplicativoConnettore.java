@@ -46,6 +46,7 @@ import java.util.List;
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * 		&lt;attribute name="notifica" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional"/&gt;
  * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
+ * 		&lt;attribute name="scheduling" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
  * 		&lt;attribute name="coda" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * 		&lt;attribute name="priorita" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * 		&lt;attribute name="priorita-max" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
@@ -182,6 +183,26 @@ public class PortaApplicativaServizioApplicativoConnettore extends org.openspcoo
     this.stato = stato;
   }
 
+  public void set_value_scheduling(String value) {
+    this.scheduling = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
+  }
+
+  public String get_value_scheduling() {
+    if(this.scheduling == null){
+    	return null;
+    }else{
+    	return this.scheduling.toString();
+    }
+  }
+
+  public org.openspcoop2.core.config.constants.StatoFunzionalita getScheduling() {
+    return this.scheduling;
+  }
+
+  public void setScheduling(org.openspcoop2.core.config.constants.StatoFunzionalita scheduling) {
+    this.scheduling = scheduling;
+  }
+
   public java.lang.String getCoda() {
     return this.coda;
   }
@@ -295,6 +316,12 @@ public class PortaApplicativaServizioApplicativoConnettore extends org.openspcoo
 
   @XmlAttribute(name="stato",required=false)
   protected StatoFunzionalita stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_scheduling;
+
+  @XmlAttribute(name="scheduling",required=false)
+  protected StatoFunzionalita scheduling = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="coda",required=false)

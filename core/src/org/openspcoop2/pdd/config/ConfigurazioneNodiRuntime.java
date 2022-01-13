@@ -149,6 +149,7 @@ public class ConfigurazioneNodiRuntime {
 	
 	private Map<String, String> connectionTimeout;
 	private Map<String, String> readConnectionTimeout;
+	private Map<String, String> readConnectionTimeout_slowOperation;
 	
 	private Map<String, String> as;
 	private Map<String, String> factory;
@@ -293,6 +294,7 @@ public class ConfigurazioneNodiRuntime {
 		
 		this.connectionTimeout = new HashMap<String, String>();
 		this.readConnectionTimeout = new HashMap<String, String>();
+		this.readConnectionTimeout_slowOperation = new HashMap<String, String>();
 		
 		this.as = new HashMap<String, String>();
 		this.factory = new HashMap<String, String>();
@@ -372,6 +374,11 @@ public class ConfigurazioneNodiRuntime {
 					this.readConnectionTimeout.put(alias, v);
 				}
 				
+				v = _getValue(false, alias, "remoteAccess.readConnectionTimeout.slowOperation");
+				if(v!=null) {
+					this.readConnectionTimeout_slowOperation.put(alias, v);
+				}
+				
 				v = _getValue(false, alias, "remoteAccess.as");
 				if(v!=null) {
 					this.as.put(alias, v);
@@ -442,6 +449,9 @@ public class ConfigurazioneNodiRuntime {
 	}
 	public String getReadConnectionTimeout(String alias) throws UtilsException {
 		return this.readConnectionTimeout.get(alias);
+	}
+	public String getReadConnectionTimeout_slowOperation(String alias) throws UtilsException {
+		return this.readConnectionTimeout_slowOperation.get(alias);
 	}
 	
 	public String getAs(String alias) throws UtilsException {

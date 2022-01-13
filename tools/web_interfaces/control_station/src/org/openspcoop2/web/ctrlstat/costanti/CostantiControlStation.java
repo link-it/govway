@@ -1465,6 +1465,9 @@ public class CostantiControlStation {
 	public final static String ICONA_ALARM_ACTIVE = "&#xe855;";
 	public final static String ICONA_ALARM_PASSIVE = "&#xe857;";
 	
+	public final static String ICONA_SCHEDULE_ACTIVE = "&#xe889;";
+	public final static String ICONA_SCHEDULE_PASSIVE = "&#xf17d;";
+	
 	/** COSTANTI FILE TEMPORANEI */
 	public final static String TEMP_FILE_PREFIX = "__pddconsole__";
 	public final static String TEMP_FILE_SUFFIX = ".tmp"; 

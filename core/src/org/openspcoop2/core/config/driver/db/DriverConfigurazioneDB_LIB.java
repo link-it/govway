@@ -5581,6 +5581,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("connettore_notifica", "?");
 				sqlQueryObject.addInsertField("connettore_descrizione", "?");
 				sqlQueryObject.addInsertField("connettore_stato", "?");
+				sqlQueryObject.addInsertField("connettore_scheduling", "?");
 				sqlQueryObject.addInsertField("connettore_filtri", "?");
 				sqlQueryObject.addInsertField("connettore_coda", "?");
 				sqlQueryObject.addInsertField("connettore_priorita", "?");
@@ -5616,6 +5617,7 @@ public class DriverConfigurazioneDB_LIB {
 					stm.setInt(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? (servizioApplicativo.getDatiConnettore().isNotifica() ? CostantiDB.TRUE : CostantiDB.FALSE) : CostantiDB.FALSE);
 					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? servizioApplicativo.getDatiConnettore().getDescrizione() : null);
 					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? getValue(servizioApplicativo.getDatiConnettore().getStato()) : null);
+					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? getValue(servizioApplicativo.getDatiConnettore().getScheduling()) : null);
 					
 					String filtri = null; 
 					if(servizioApplicativo.getDatiConnettore()!=null) {
@@ -6703,6 +6705,7 @@ public class DriverConfigurazioneDB_LIB {
 					sqlQueryObject.addInsertField("connettore_notifica", "?");
 					sqlQueryObject.addInsertField("connettore_descrizione", "?");
 					sqlQueryObject.addInsertField("connettore_stato", "?");
+					sqlQueryObject.addInsertField("connettore_scheduling", "?");
 					sqlQueryObject.addInsertField("connettore_filtri", "?");
 					sqlQueryObject.addInsertField("connettore_coda", "?");
 					sqlQueryObject.addInsertField("connettore_priorita", "?");
@@ -6717,6 +6720,7 @@ public class DriverConfigurazioneDB_LIB {
 					stm.setInt(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? (servizioApplicativo.getDatiConnettore().isNotifica() ? CostantiDB.TRUE : CostantiDB.FALSE) : CostantiDB.FALSE);
 					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? servizioApplicativo.getDatiConnettore().getDescrizione() : null);
 					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? getValue(servizioApplicativo.getDatiConnettore().getStato()) : null);
+					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? getValue(servizioApplicativo.getDatiConnettore().getScheduling()) : null);
 					
 					String filtri = null; 
 					if(servizioApplicativo.getDatiConnettore()!=null) {

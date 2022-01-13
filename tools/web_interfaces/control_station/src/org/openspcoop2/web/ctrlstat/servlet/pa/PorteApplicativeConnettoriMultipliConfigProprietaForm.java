@@ -334,8 +334,14 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaForm extends
 
 				IDSoggetto idSoggettoProprietario = new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario());
 				List<PortaApplicativaServizioApplicativo> listaFiltrata = porteApplicativeHelper.applicaFiltriRicercaConnettoriMultipli(ricerca, idLista, pa.getServizioApplicativoList(), idSoggettoProprietario);
+
+				String nomeConnettoreChangeList = datiConnettore.getNome();
+				if(nomeConnettoreChangeList==null) {
+					nomeConnettoreChangeList = CostantiConfigurazione.NOME_CONNETTORE_DEFAULT;
+				}
 				
-				porteApplicativeHelper.preparePorteAppConnettoriMultipliList(pa.getNome(), ricerca, listaFiltrata, pa);
+				porteApplicativeHelper.preparePorteAppConnettoriMultipliList_fromChangeConnettore(pa.getNome(), ricerca, listaFiltrata, pa,
+						nomeConnettoreChangeList);
 				
 			}
 			

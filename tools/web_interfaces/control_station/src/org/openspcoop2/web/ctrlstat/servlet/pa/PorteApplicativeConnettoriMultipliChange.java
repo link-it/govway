@@ -1400,14 +1400,14 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 			boolean isDefault = datiConnettore != null ? !datiConnettore.isNotifica() : true;
 
-			String nomeConnettoreChanged = null;
+			String nomeConnettoreChangeList = null;
 			
 			if(visualizzaSezioneDatiGenerali) {
 				datiConnettore.setNome(nomeConnettore);
 
+				nomeConnettoreChangeList = nomeConnettore;
+				
 				if(!nomeConnettore.equals(oldNomeConnettore)) {
-					
-					nomeConnettoreChanged = nomeConnettore;
 					
 					if(pa.getBehaviour() != null) {
 
@@ -1479,6 +1479,12 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							}
 						}
 					}
+				}
+			}
+			else {
+				nomeConnettoreChangeList = datiConnettore.getNome();
+				if(nomeConnettoreChangeList==null) {
+					nomeConnettoreChangeList = CostantiConfigurazione.NOME_CONNETTORE_DEFAULT;
 				}
 			}
 
@@ -1912,8 +1918,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			IDSoggetto idSoggettoProprietario = new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario());
 			List<PortaApplicativaServizioApplicativo> listaFiltrata = porteApplicativeHelper.applicaFiltriRicercaConnettoriMultipli(ricerca, idLista, pa.getServizioApplicativoList(), idSoggettoProprietario);
 			
-			porteApplicativeHelper.preparePorteAppConnettoriMultipliList_fromChangeNomeConnettore(pa.getNome(), ricerca, listaFiltrata, pa, 
-					nomeConnettoreChanged);
+			porteApplicativeHelper.preparePorteAppConnettoriMultipliList_fromChangeConnettore(pa.getNome(), ricerca, listaFiltrata, pa, 
+					nomeConnettoreChangeList);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI

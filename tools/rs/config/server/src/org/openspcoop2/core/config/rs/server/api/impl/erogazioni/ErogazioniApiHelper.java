@@ -54,6 +54,7 @@ import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAzione;
 import org.openspcoop2.core.config.Proprieta;
@@ -2317,6 +2318,7 @@ public class ErogazioniApiHelper {
 
 			int numeroAbilitate = 0;
 			int numeroConfigurazioni = listaMappingErogazionePortaApplicativa.size();
+			int numeroConfigurazioniSchedulingDisabilitato = -1;
 			boolean allActionRedefined = false;
 						
 			if(listaMappingErogazionePortaApplicativa.size()>1) {
@@ -2335,14 +2337,27 @@ public class ErogazioniApiHelper {
 						numeroAbilitate ++;
 					}
 				}
+				
+				if(allActionRedefined && paAssociata.getNome().equals(nomePortaDefault)) {
+					// se tutte le azioni sono state ridefinite non devo controllare la porta di default
+					continue;
+				}
 
 				if(!paAssociata.getNome().equals(nomePortaDefault) && env.apsHelper.isConnettoreRidefinito(paDefault, paDefault.getServizioApplicativoList().get(0), paAssociata, paAssociata.getServizioApplicativoList().get(0))) {
 					isRidefinito = true;
 				}
 				
+				if(paAssociata.getBehaviour()!=null && paAssociata.sizeServizioApplicativoList()>0) {
+					for (PortaApplicativaServizioApplicativo paSA : paAssociata.getServizioApplicativoList()) {
+						if(paSA!=null && paSA.getDatiConnettore()!=null && 
+								StatoFunzionalita.DISABILITATO.equals(paSA.getDatiConnettore().getScheduling())) {
+							numeroConfigurazioniSchedulingDisabilitato++;
+						}
+					}
+				}
 			}
 			
-			StatoDescrizione stato = getStatoDescrizione(numeroAbilitate, allActionRedefined, numeroConfigurazioni );
+			StatoDescrizione stato = getStatoDescrizione(numeroAbilitate, allActionRedefined, numeroConfigurazioni, numeroConfigurazioniSchedulingDisabilitato );
 			
 			ApiCanale canale = ErogazioniApiHelper.toApiCanale(env, paDefault, apc, false);
 			
@@ -2366,7 +2381,7 @@ public class ErogazioniApiHelper {
 			
 	}
 	
-	public static final StatoDescrizione getStatoDescrizione(int numeroAbilitate, boolean allActionRedefined, int numeroConfigurazioni ) {
+	public static final StatoDescrizione getStatoDescrizione(int numeroAbilitate, boolean allActionRedefined, int numeroConfigurazioni, int numeroConfigurazioniSchedulingDisabilitato ) {
 		String stato_descrizione;
 		StatoApiEnum statoApi;
 		
@@ -2380,8 +2395,14 @@ public class ErogazioniApiHelper {
 				||
 				(allActionRedefined && numeroAbilitate == (numeroConfigurazioni-1)) // escludo la regola che non viene usata poiche' tutte le azioni sono ridefinite 
 				) {
-			statoApi = StatoApiEnum.OK;
-			stato_descrizione = ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_ABILITATE_TOOLTIP; 
+			if(numeroConfigurazioniSchedulingDisabilitato>0) {
+				statoApi = StatoApiEnum.WARN;
+				stato_descrizione = ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_CONNETTORI_MULTIPLI_SCHEDULING_DISABILITATO_TOOLTIP;
+			}
+			else {
+				statoApi = StatoApiEnum.OK;
+				stato_descrizione = ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_ABILITATE_TOOLTIP; 
+			}
 		} else  {
 			statoApi = StatoApiEnum.WARN;
 			stato_descrizione = ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_PARZIALMENTE_ABILITATE_TOOLTIP;
@@ -2454,9 +2475,16 @@ public class ErogazioniApiHelper {
 					numeroAbilitate ++;
 				}
 			}
+			
+			if(allActionRedefined && pdAssociata.getNome().equals(nomePortaDefault)) {
+				// se tutte le azioni sono state ridefinite non devo controllare la porta di default
+				continue;
+			}
+			
+			// aggiungere qua eventuali altri check
 		}
 		
-		StatoDescrizione stato = getStatoDescrizione(numeroAbilitate, allActionRedefined, numeroConfigurazioni );		
+		StatoDescrizione stato = getStatoDescrizione(numeroAbilitate, allActionRedefined, numeroConfigurazioni, -1);		
 		
 		IDPortaDelegata idPDdefault = new IDPortaDelegata();
 		idPDdefault.setNome(nomePortaDefault);

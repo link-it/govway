@@ -46,6 +46,7 @@ import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativoConnettore;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.RoutingTable;
@@ -2551,6 +2552,95 @@ public class ConfigurazionePdD  {
 				db.updatePortaApplicativa(pa);
 			}
 		}
+	}
+	
+	public String updateStatoConnettoreMultiplo(Connection connectionPdD,IDPortaApplicativa idPA, String nomeConnettore, StatoFunzionalita stato) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return _updateStatoConnettoreMultiplo(connectionPdD,idPA, nomeConnettore, stato, false);
+	}
+	public String updateSchedulingConnettoreMultiplo(Connection connectionPdD,IDPortaApplicativa idPA, String nomeConnettore, StatoFunzionalita stato) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return _updateStatoConnettoreMultiplo(connectionPdD,idPA, nomeConnettore, stato, true);
+	}
+	public String _updateStatoConnettoreMultiplo(Connection connectionPdD,IDPortaApplicativa idPA, String nomeConnettore, StatoFunzionalita stato, boolean scheduling) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+			
+		if(this.cache==null){
+			return null;
+		}
+		
+		// Raccolta dati
+		if(idPA==null)
+			throw new DriverConfigurazioneException("[updateStatoPortaApplicativa]: Parametro non definito (idPA)");
+		if(idPA.getNome()==null)
+			throw new DriverConfigurazioneException("[updateStatoPortaApplicativa]: Parametro non definito (nome)");
+		if(nomeConnettore==null)
+			throw new DriverConfigurazioneException("[updateStatoPortaApplicativa]: Parametro non definito (nomeConnettore)");
+
+		// se e' attiva una cache provo ad utilizzarla
+		String key = this._getKey_getPortaApplicativa(idPA);
+		org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+		if(response != null){
+			if(response.getException()==null && response.getObject()!=null){
+				PortaApplicativa pa = (PortaApplicativa)  response.getObject();
+				if(pa.sizeServizioApplicativoList()>0) {
+					for (PortaApplicativaServizioApplicativo paSA : pa.getServizioApplicativoList()) {
+						String nomePaSA = paSA.getDatiConnettore()!= null ? paSA.getDatiConnettore().getNome() : CostantiConfigurazione.NOME_CONNETTORE_DEFAULT;
+						if(nomeConnettore.equals(nomePaSA)) {
+							if(paSA.getDatiConnettore()==null) {
+								paSA.setDatiConnettore(new PortaApplicativaServizioApplicativoConnettore());
+							}
+							if(scheduling) {
+								paSA.getDatiConnettore().setScheduling(stato);
+							}
+							else {
+								paSA.getDatiConnettore().setStato(stato);
+							}
+							break;
+						}
+					}
+				}
+			}
+		}
+		
+		
+		PortaApplicativa pa = (PortaApplicativa) this.getObject("getPortaApplicativa",connectionPdD,ConfigurazionePdDType.config,idPA);
+		boolean update = false;
+		String nomeSA = null;
+		if(pa.sizeServizioApplicativoList()>0) {
+			for (PortaApplicativaServizioApplicativo paSA : pa.getServizioApplicativoList()) {
+				String nomePaSA = paSA.getDatiConnettore()!= null ? paSA.getDatiConnettore().getNome() : CostantiConfigurazione.NOME_CONNETTORE_DEFAULT;
+				if(nomeConnettore.equals(nomePaSA)) {
+					nomeSA = paSA.getNome();
+					StatoFunzionalita check = null;
+					if(paSA.getDatiConnettore()!=null) {
+						check = paSA.getDatiConnettore().getStato();
+					}
+					if(!stato.equals(check)) {
+						update = true;
+						if(paSA.getDatiConnettore()==null) {
+							paSA.setDatiConnettore(new PortaApplicativaServizioApplicativoConnettore());
+						}
+						if(scheduling) {
+							paSA.getDatiConnettore().setScheduling(stato);
+						}
+						else {
+							paSA.getDatiConnettore().setStato(stato);
+						}
+					}
+					break;
+				}
+			}
+		}
+		if(update) {
+			org.openspcoop2.core.config.driver.IDriverConfigurazioneGet driver = getDriver(connectionPdD);
+			if(driver instanceof DriverConfigurazioneDB) {
+				DriverConfigurazioneDB db = (DriverConfigurazioneDB) driver;
+				IDPortaApplicativa oldIDPortaApplicativaForUpdate = new IDPortaApplicativa();
+				oldIDPortaApplicativaForUpdate.setNome(idPA.getNome());
+				pa.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
+				db.updatePortaApplicativa(pa);
+			}
+		}
+		return nomeSA;
 	}
 	
 	private String _getKey_getPorteApplicative(IDServizio idServizio, boolean ricercaPuntuale){

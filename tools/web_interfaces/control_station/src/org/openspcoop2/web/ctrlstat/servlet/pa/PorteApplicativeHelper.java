@@ -7804,7 +7804,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				false, 
 				nomeConnettoreAdd);
 	}
-	public void preparePorteAppConnettoriMultipliList_fromChangeNomeConnettore(String nomePorta, Search ricerca, 
+	public void preparePorteAppConnettoriMultipliList_fromChangeConnettore(String nomePorta, Search ricerca, 
 			List<PortaApplicativaServizioApplicativo> listaFiltrata,
 			PortaApplicativa pa,
 			String nomeConnettoreChanged) throws Exception {
@@ -8064,7 +8064,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			// dopo aver filtrato i risultati evidenzio il tab con il nome contenuto nella ricerca
 			int tab = 0; // primo a sx 
 			
-			if(StringUtils.isBlank(tabSelezionato)) {
+			if(StringUtils.isBlank(tabSelezionato) || ((fromAdd || fromChange) && StringUtils.isNotBlank(nomeConnettoreProcessed))) {
 				if( (fromAdd || fromChange) && StringUtils.isNotBlank(nomeConnettoreProcessed)){
 					if(listOrdinata!=null && !listOrdinata.isEmpty()) {
 						for (int i = 0; i < listOrdinata.size(); i++) {
@@ -8154,10 +8154,27 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				String nomeConnettore =  this.getLabelNomePortaApplicativaServizioApplicativo(paSA);
 				StatoFunzionalita stato = datiConnettore != null ? datiConnettore.getStato() : StatoFunzionalita.ABILITATO;
 				boolean statoPA = stato.equals(StatoFunzionalita.ABILITATO);
+				StatoFunzionalita scheduling = datiConnettore != null ? datiConnettore.getScheduling() : StatoFunzionalita.ABILITATO;
+				boolean schedulingPA = scheduling.equals(StatoFunzionalita.ABILITATO);
 				String statoMapping = statoPA ? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO_TOOLTIP : PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO_TOOLTIP;
+				String statoScheduling = schedulingPA ? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_ABILITATO_TOOLTIP : PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_DISABILITATO_TOOLTIP;
 				boolean urlCambiaStato = true;
 				
 				boolean connettoreDefault = this.isConnettoreDefault(paSA);
+				
+				boolean showCambiaStati = urlCambiaStato;
+				boolean showCambiaScheduling = false; 
+				if(pa.sizeServizioApplicativoList()>1) {	
+					if(showCambiaStati) {
+						if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType) && this.isConnettoreDefault(paSA)) {
+							showCambiaStati = false;
+						}
+						if(showCambiaStati) {
+							showCambiaScheduling = TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType) || TipoBehaviour.CONSEGNA_MULTIPLA.equals(behaviourType);
+						}
+					}
+				}
+				
 				
 				// Nome / Stato
 				DataElement de = new DataElement();
@@ -8167,6 +8184,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				de.setStatusToolTip(statoPA ? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO_TOOLTIP_NO_ACTION : PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO_TOOLTIP_NO_ACTION);
 				de.setStatusType(statoPA ? CheckboxStatusType.ABILITATO : CheckboxStatusType.DISABILITATO);
+				if(statoPA && showCambiaScheduling && !schedulingPA) {
+					de.setStatusType(CheckboxStatusType.WARNING_ONLY);
+					de.setStatusToolTip(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_DISABILITATO_TOOLTIP_NO_ACTION);
+				}
 				
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME);
 				de.setValue(nomeConnettore);
@@ -8187,15 +8208,27 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					if(!connettoreDefault) 
 						de.setIdToRemove(paSA.getNome());
 					
-					if(urlCambiaStato) {
+					if(showCambiaStati) {
+					
 						Parameter pAbilita = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ABILITA,  (statoPA ? Costanti.CHECK_BOX_DISABLED : Costanti.CHECK_BOX_ENABLED_TRUE));
 						image = new DataElementImage();
 						image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ABILITAZIONE, pIdSogg, pNomePorta, pIdPorta,pIdAsps,  pNomePaSA, pIdTAb, pAbilita,
 								pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM);
 						image.setToolTip(statoMapping);
 						image.setImage(statoPA ? CostantiControlStation.ICONA_MODIFICA_TOGGLE_ON : CostantiControlStation.ICONA_MODIFICA_TOGGLE_OFF);
-						
 						de.addImage(image);
+						
+						if(showCambiaScheduling) {
+							pAbilita = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ABILITA,  (schedulingPA ? Costanti.CHECK_BOX_DISABLED : Costanti.CHECK_BOX_ENABLED_TRUE));
+							Parameter pScheduling = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SCHEDULING,  "true");
+							image = new DataElementImage();
+							image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ABILITAZIONE, pIdSogg, pNomePorta, pIdPorta,pIdAsps,  pNomePaSA, pIdTAb, pAbilita,
+									pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM,
+									pScheduling);
+							image.setToolTip(statoScheduling);
+							image.setImage(schedulingPA ? CostantiControlStation.ICONA_SCHEDULE_ACTIVE : CostantiControlStation.ICONA_SCHEDULE_PASSIVE);
+							de.addImage(image);
+						}
 					}
 					
 				}	
@@ -9222,19 +9255,29 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		return prefix+this.core.getLabelGroup(this.getLabelNomePortaApplicativaServizioApplicativo(paSA));
 	}
 	
-	public String getMessaggioConfermaModificaRegolaStatoConnettoreMultiplo(boolean fromAPI, PortaApplicativaServizioApplicativo paSA, boolean abilitazione, boolean multiline,boolean listElement) throws DriverConfigurazioneException {
+	public String getMessaggioConfermaModificaRegolaStatoConnettoreMultiplo(boolean fromAPI, PortaApplicativaServizioApplicativo paSA, boolean abilitazione, 
+			boolean multiline,boolean listElement,
+			boolean scheduling) throws DriverConfigurazioneException {
 		boolean connettoreDefault = this.isConnettoreDefault(paSA);
 		String nomeConnettore = this.getLabelNomePortaApplicativaServizioApplicativo(paSA);
-		return this.getMessaggioConfermaModificaStatoConnettore(fromAPI, connettoreDefault, nomeConnettore, abilitazione, multiline, listElement);
+		return this.getMessaggioConfermaModificaStatoConnettore(fromAPI, connettoreDefault, nomeConnettore, abilitazione, multiline, listElement, scheduling);
 	}
 	
 	
 	public String getMessaggioConfermaModificaStatoConnettore(boolean fromAPI, boolean isDefault, String connettore,
-			boolean abilitazione, boolean multiline,boolean listElement) throws DriverConfigurazioneException {
+			boolean abilitazione, boolean multiline,boolean listElement,
+			boolean scheduling) throws DriverConfigurazioneException {
 		String pre = Costanti.HTML_MODAL_SPAN_PREFIX;
 		String post = Costanti.HTML_MODAL_SPAN_SUFFIX;
 		
-		return pre + ( abilitazione ? MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_ABILITAZIONE_CONNETTORE,connettore) : MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_DISABILITAZIONE_CONNETTORE,connettore) )  + post;
+		if(scheduling) {
+			return pre + ( abilitazione ? MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_ABILITAZIONE_SCHEDULING_CONNETTORE,connettore) : 
+				MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_DISABILITAZIONE_SCHEDULING_CONNETTORE,connettore) )  + post;
+		}
+		else {
+			return pre + ( abilitazione ? MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_ABILITAZIONE_CONNETTORE,connettore) : 
+				MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_DISABILITAZIONE_CONNETTORE,connettore) )  + post;
+		}
 	}
 	
 	

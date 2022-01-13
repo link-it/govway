@@ -39,6 +39,7 @@ import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.behaviour.BehaviourEmitDiagnosticException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourPropertiesUtils;
+import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
 import org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
@@ -242,6 +243,9 @@ public class StickyUtils  {
 						pForm,
 						errorHandler);
 				condition = DynamicUtils.convertDynamicPropertyValue("ConditionalConfig.gwt", patternSelettore, dynamicMap, pddContext, true);
+				if(condition!=null) {
+					condition = ConditionalUtils.normalizeTemplateResult(condition);
+				}
 				break;
 				
 			case FREEMARKER_TEMPLATE:
@@ -267,6 +271,9 @@ public class StickyUtils  {
 				bout.flush();
 				bout.close();
 				condition = bout.toString();
+				if(condition!=null) {
+					condition = ConditionalUtils.normalizeTemplateResult(condition);
+				}
 				break;
 				
 			case VELOCITY_TEMPLATE:
@@ -292,6 +299,9 @@ public class StickyUtils  {
 				bout.flush();
 				bout.close();
 				condition = bout.toString();
+				if(condition!=null) {
+					condition = ConditionalUtils.normalizeTemplateResult(condition);
+				}
 				break;
 			}
 		

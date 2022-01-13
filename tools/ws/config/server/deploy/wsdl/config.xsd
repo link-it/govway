@@ -368,6 +368,7 @@
 		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
 		<xsd:attribute name="notifica" type="xsd:boolean" use="optional"/>
 		<xsd:attribute default="abilitato" name="stato" type="StatoFunzionalita"/>
+		<xsd:attribute default="abilitato" name="scheduling" type="StatoFunzionalita"/>
 		<xsd:attribute name="coda" type="xsd:string" use="optional"/>
 		<xsd:attribute name="priorita" type="xsd:string" use="optional"/>
 		<xsd:attribute default="false" name="priorita-max" type="xsd:boolean" use="optional"/>

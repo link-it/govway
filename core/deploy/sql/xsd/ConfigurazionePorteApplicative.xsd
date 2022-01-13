@@ -1247,6 +1247,17 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="connettore_scheduling" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="connettore_scheduling"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se lo scheduling è abilitato (abilitato/disabilitato)</linkit:sql-ddl-column-comment>      
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
                 <xsd:element name="connettore_filtri" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>

@@ -878,7 +878,7 @@ public class EJBUtils {
 				msgResponse.registraDestinatarioMessaggio(richiestaDelegata.getServizioApplicativo(),
 						sbustamentoSoap,sbustamentoInformazioniProtocollo,getMessageAbilitato,tipoConsegna,oraRegistrazioneMessaggio,
 						nomePorta, false, false,
-						null, null);
+						null, null, false);
 
 			} // end Gestione Risposta
 
@@ -1128,7 +1128,7 @@ public class EJBUtils {
 				msgResponse.registraDestinatarioMessaggio(richiestaDelegata.getServizioApplicativo(),
 						sbustamentoSoap,sbustamentoInformazioniProtocollo,getMessageAbilitato,tipoConsegna,oraRegistrazioneMessaggio,
 						nomePorta, false, false,
-						null, null);
+						null, null, false);
 			} // end Gestione Risposta
 
 
@@ -1381,7 +1381,7 @@ public class EJBUtils {
 			gestoreMessaggi.registraDestinatarioMessaggio(richiestaDelegata.getServizioApplicativo(),
 					sbustamentoSoap,sbustamentoInformazioniProtocollo,getMessageAbilitato,tipoConsegna,oraRegistrazioneMessaggio,
 					nomePorta, false, false,
-					null, null);
+					null, null, false);
 
 			// Aggiungo costante servizio applicativo
 			this.msgDiag.addKeyword(CostantiPdD.KEY_SA_EROGATORE, richiestaDelegata.getServizioApplicativo());
@@ -2006,6 +2006,7 @@ public class EJBUtils {
 			
 			String coda = null;
 			String priorita = null;
+			boolean schedulingNonAttivo = false;
 			if(presaInCarico) {
 				coda = CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_CODA_DEFAULT;
 				priorita = CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRIORITA_DEFAULT;
@@ -2031,6 +2032,9 @@ public class EJBUtils {
 									}
 									if(pasa.getDatiConnettore().getPriorita()!=null) {
 										priorita = pasa.getDatiConnettore().getPriorita();
+									}
+									if(org.openspcoop2.core.config.constants.StatoFunzionalita.DISABILITATO.equals(pasa.getDatiConnettore().getScheduling())) {
+										schedulingNonAttivo = true;
 									}
 								}
 							}
@@ -2167,7 +2171,7 @@ public class EJBUtils {
 					sbustamento_soap,sbustamento_informazioni_protocollo,
 					getMessageAbilitato,tipoConsegna,oraRegistrazioneMessaggio, nomePorta,
 					attendiEsitoTransazioneSincronaPrimaDiSpedire, (servizioApplicativoConConnettore && !spedizioneConsegnaContenuti),
-					coda, priorita);
+					coda, priorita, schedulingNonAttivo);
 			
 			mapServizioApplicativoConConnettore.put(servizioApplicativo, servizioApplicativoConConnettore);
 			mapSbustamentoSoap.put(servizioApplicativo, sbustamento_soap);
@@ -2426,7 +2430,7 @@ public class EJBUtils {
 							sbustamento_soap,sbustamento_informazioni_protocollo,
 							getMessageAbilitato,tipoConsegna,oraRegistrazioneMessaggio,
 							nomePorta, false, false,
-							null, null);
+							null, null, false);
 					gestoreMessaggi.setOneWayVersione11(false);
 				}
 

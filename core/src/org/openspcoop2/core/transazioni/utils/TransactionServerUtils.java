@@ -394,7 +394,7 @@ public class TransactionServerUtils {
 			String tipoDatabase, Logger logCore,
 			IDAOFactory daoFactory, Logger logFactory, ServiceManagerProperties smpFactory,
 			boolean debug,
-			int esitoConsegnaMultipla, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
+			int esitoConsegnaMultipla, int esitoConsegnaMultiplaInCorso, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
 			int esitoIntegrationManagerSingolo, boolean possibileTerminazioneSingleIntegrationManagerMessage,
 			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval,
 			List<String> timeDetails) {
@@ -405,7 +405,7 @@ public class TransactionServerUtils {
 					tipoDatabase, logCore,
 					daoFactory, logFactory, smpFactory,
 					debug,
-					esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
+					esitoConsegnaMultipla, esitoConsegnaMultiplaInCorso, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
 					esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage,
 					gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval,
 					timeDetails);
@@ -420,7 +420,7 @@ public class TransactionServerUtils {
 			String tipoDatabase, Logger logCore,
 			IDAOFactory daoFactory, Logger logFactory, ServiceManagerProperties smpFactory,
 			boolean debug,
-			int esitoConsegnaMultipla, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
+			int esitoConsegnaMultipla, int esitoConsegnaMultiplaInCorso, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
 			int esitoIntegrationManagerSingolo, boolean possibileTerminazioneSingleIntegrationManagerMessage,
 			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval,
 			List<String> timeDetails) throws CoreException {
@@ -502,7 +502,7 @@ public class TransactionServerUtils {
 				tipoDatabase, logCore,
 				daoFactory, logFactory, smpFactory,
 				debug,
-				esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
+				esitoConsegnaMultipla, esitoConsegnaMultiplaInCorso, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
 				gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval,
 				timeDetails);
 	}
@@ -510,7 +510,7 @@ public class TransactionServerUtils {
 			String tipoDatabase, Logger logCore,
 			IDAOFactory daoFactory, Logger logFactory, ServiceManagerProperties smpFactory,
 			boolean debug,
-			int esitoConsegnaMultipla, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
+			int esitoConsegnaMultipla, int esitoConsegnaMultiplaInCorso, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
 			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval,
 			List<String> timeDetails) throws CoreException {
 		
@@ -564,7 +564,7 @@ public class TransactionServerUtils {
 						tipoDatabase, logCore,
 						daoFactory, logFactory, smpFactory,
 						debug,
-						esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
+						esitoConsegnaMultipla, esitoConsegnaMultiplaInCorso, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
 						leftValue, rightValue,
 						USE_SERIALIZABLE,
 						gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval,
@@ -605,7 +605,7 @@ public class TransactionServerUtils {
 			String tipoDatabase, Logger logCore,
 			IDAOFactory daoFactory, Logger logFactory, ServiceManagerProperties smpFactory,
 			boolean debug,
-			int esitoConsegnaMultipla, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
+			int esitoConsegnaMultipla, int esitoConsegnaMultiplaInCorso, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
 			Timestamp leftValue, Timestamp rightValue,
 			boolean serializable,
 			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval,
@@ -644,7 +644,7 @@ public class TransactionServerUtils {
 							tipoDatabase, logCore,
 							daoFactory, logFactory, smpFactory,
 							debug,
-							esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
+							esitoConsegnaMultipla, esitoConsegnaMultiplaInCorso, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
 							leftValue, rightValue);
 
 					updateEffettuato = true;
@@ -701,7 +701,7 @@ public class TransactionServerUtils {
 					tipoDatabase, logCore,
 					daoFactory, logFactory, smpFactory,
 					debug,
-					esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
+					esitoConsegnaMultipla, esitoConsegnaMultiplaInCorso, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
 					leftValue, rightValue);
 			
 		}
@@ -711,7 +711,7 @@ public class TransactionServerUtils {
 			String tipoDatabase, Logger logCore,
 			IDAOFactory daoFactory, Logger logFactory, ServiceManagerProperties smpFactory,
 			boolean debug,
-			int esitoConsegnaMultipla, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
+			int esitoConsegnaMultipla, int esitoConsegnaMultiplaInCorso, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
 			Timestamp leftValue, Timestamp rightValue) throws CoreException {
 	
 		PreparedStatement pstmt = null;
@@ -733,7 +733,7 @@ public class TransactionServerUtils {
 				/* UPDATE transazioni 
 				 * 		SET consegne_multiple=consegne_multiple-1, 
 				 * 		    esito=esitoConsegnaMultiplaFallita  
-				 * WHERE (ESITO=esitoConsegnaMultipla OR ESITO=esitoConsegnaMultiplaFallita)
+				 * WHERE (ESITO=esitoConsegnaMultipla OR ESITO=esitoConsegnaMultiplaInCorso OR ESITO=esitoConsegnaMultiplaFallita)
 				 */
 				sqlQueryObject.addUpdateField(esitoColumn,"?");   
 			}
@@ -741,13 +741,15 @@ public class TransactionServerUtils {
 				 /*	UPDATE transazioni 
 				 * 		SET consegne_multiple=consegne_multiple-1, 
 				 *			esito = ( CASE
-				 *					  WHEN (consegne_multiple=1 AND esito=esitoConsegnaMultipla) THEN esitoConsegnaMultiplaCompletata 
+				 *					  WHEN (consegne_multiple<=1 AND (esito=esitoConsegnaMultipla OR esito=esitoConsegnaMultiplaInCorso)) THEN esitoConsegnaMultiplaCompletata 
+				 *					  WHEN (consegne_multiple>1 AND esito=esitoConsegnaMultipla) THEN esitoConsegnaMultiplaInCorso 
 				 *					  ELSE  (ESITO)
 				 *					END )
-				 * WHERE (ESITO=esitoConsegnaMultipla OR ESITO=esitoConsegnaMultiplaFallita)
+				 * WHERE (ESITO=esitoConsegnaMultipla OR ESITO=esitoConsegnaMultiplaInCorso OR ESITO=esitoConsegnaMultiplaFallita)
 				 */
 				Case caseValue = new Case(CastColumnType.INT, esitoColumn); 
-				caseValue.addCase(consegneMultipleInCorsoColumn+"<=? AND "+esitoColumn+"=?", "?");
+				caseValue.addCase(consegneMultipleInCorsoColumn+"<=? AND ("+esitoColumn+"=? OR "+esitoColumn+"=?)", "?");
+				caseValue.addCase(consegneMultipleInCorsoColumn+">? AND "+esitoColumn+"=?", "?");
 				sqlQueryObject.addUpdateField(esitoColumn, caseValue);
 			}
 			
@@ -760,6 +762,7 @@ public class TransactionServerUtils {
 			sqlQueryObject.addWhereCondition(idTransazioneColumn+"=?");
 			
 			sqlQueryObject.addWhereCondition(false, 
+					esitoColumn+"=?",
 					esitoColumn+"=?",
 					esitoColumn+"=?");
 			
@@ -775,12 +778,22 @@ public class TransactionServerUtils {
 				params.add(esitoConsegnaMultiplaFallita);
 			}
 			else {
+				// primo case
 				pstmt.setInt(index++, 1); // il decremento nell'unico comando di update funziona transazionalmente; quindi quando lo porto a 0, il valore nella condizione è 1(lascio il <= per stare tranquillo)
 				params.add(1);
 				pstmt.setInt(index++, esitoConsegnaMultipla);
 				params.add(esitoConsegnaMultipla);
+				pstmt.setInt(index++, esitoConsegnaMultiplaInCorso);
+				params.add(esitoConsegnaMultiplaInCorso);
 				pstmt.setInt(index++, esitoConsegnaMultiplaCompletata);
 				params.add(esitoConsegnaMultiplaCompletata);
+				// secondo case
+				pstmt.setInt(index++, 1);
+				params.add(1);
+				pstmt.setInt(index++, esitoConsegnaMultipla);
+				params.add(esitoConsegnaMultipla);
+				pstmt.setInt(index++, esitoConsegnaMultiplaInCorso);
+				params.add(esitoConsegnaMultiplaInCorso);
 			}
 			
 			if(leftValue!=null && rightValue!=null) {
@@ -795,6 +808,8 @@ public class TransactionServerUtils {
 			
 			pstmt.setInt(index++, esitoConsegnaMultipla);
 			params.add(esitoConsegnaMultipla);
+			pstmt.setInt(index++, esitoConsegnaMultiplaInCorso);
+			params.add(esitoConsegnaMultiplaInCorso);
 			pstmt.setInt(index++, esitoConsegnaMultiplaFallita);
 			params.add(esitoConsegnaMultiplaFallita);
 			
@@ -811,7 +826,7 @@ public class TransactionServerUtils {
 				}
 			}
 			
-			//String comandoSql = formatSQLString(updateCommand, params.toArray());
+			//String comandoSql = DBUtils.formatSQLString(updateCommand, params.toArray());
 			//System.out.println("ROW: "+row+" (app:"+transazioneApplicativoServer.getConnettoreNome()+" id:"+transazioneApplicativoServer.getIdTransazione()+") sql:"+comandoSql);
 			
 			pstmt.close();

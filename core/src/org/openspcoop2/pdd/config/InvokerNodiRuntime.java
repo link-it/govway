@@ -99,7 +99,7 @@ public class InvokerNodiRuntime {
 		}
 	}
 	
-	private HttpResponse invokeHttp(String urlWithParameters, String alias) throws Exception {
+	private HttpResponse invokeHttp(String urlWithParameters, String alias, Boolean slowOperation) throws Exception {
 		String username = this.configurazioneNodiRuntime.getUsername(alias);
 		String password = this.configurazioneNodiRuntime.getPassword(alias);
 		boolean https = this.configurazioneNodiRuntime.isHttps(alias);
@@ -140,6 +140,15 @@ public class InvokerNodiRuntime {
 		if(readConnectionTimeoutS!=null) {
 			readConnectionTimeout = Integer.valueOf(readConnectionTimeoutS);
 		}
+		if(slowOperation!=null && slowOperation) {
+			String readConnectionTimeoutSlowOperationS = this.configurazioneNodiRuntime.getReadConnectionTimeout_slowOperation(alias);
+			if(readConnectionTimeoutSlowOperationS!=null) {
+				readConnectionTimeout = Integer.valueOf(readConnectionTimeoutSlowOperationS);
+			}
+			else {
+				readConnectionTimeout = 60000; // default 60 secondi
+			}
+		}
 		
 		HttpResponse response = null;
 		if(https) {
@@ -170,16 +179,26 @@ public class InvokerNodiRuntime {
 	}
 	
 	public String invokeJMXMethod(String alias, String type, String nomeRisorsa, String nomeMetodo) throws Exception{
-		return _invokeJMXMethod(alias, type, nomeRisorsa, nomeMetodo);
+		return _invokeJMXMethod(alias, type, nomeRisorsa, nomeMetodo, false);
+	}
+	public String invokeJMXMethod(String alias, String type, String nomeRisorsa, String nomeMetodo, Boolean slowOperation) throws Exception{
+		return _invokeJMXMethod(alias, type, nomeRisorsa, nomeMetodo, slowOperation);
 	}
 	public String invokeJMXMethod(String alias, String type, String nomeRisorsa, String nomeMetodo, String parametro) throws Exception{
-		return _invokeJMXMethod(alias, type, nomeRisorsa, nomeMetodo, 
+		return _invokeJMXMethod(alias, type, nomeRisorsa, nomeMetodo, false, 
+				(parametro!=null && !"".equals(parametro)) ? parametro : null);
+	}
+	public String invokeJMXMethod(String alias, String type, String nomeRisorsa, String nomeMetodo, Boolean slowOperation, String parametro) throws Exception{
+		return _invokeJMXMethod(alias, type, nomeRisorsa, nomeMetodo, slowOperation, 
 				(parametro!=null && !"".equals(parametro)) ? parametro : null);
 	}
 	public String invokeJMXMethod(String alias, String type, String nomeRisorsa, String nomeMetodo, Object ... parametri ) throws Exception{
-		return _invokeJMXMethod(alias, type, nomeRisorsa, nomeMetodo, parametri );
+		return _invokeJMXMethod(alias, type, nomeRisorsa, nomeMetodo, false, parametri );
 	}
-	private String _invokeJMXMethod(String alias, String type, String nomeRisorsa, String nomeMetodo, Object ... parametri ) throws Exception{
+	public String invokeJMXMethod(String alias, String type, String nomeRisorsa, String nomeMetodo, Boolean slowOperation, Object ... parametri ) throws Exception{
+		return _invokeJMXMethod(alias, type, nomeRisorsa, nomeMetodo, slowOperation, parametri );
+	}
+	private String _invokeJMXMethod(String alias, String type, String nomeRisorsa, String nomeMetodo, Boolean slowOperation, Object ... parametri ) throws Exception{
 		
 		Object gestore = this.getGestoreRisorseJMX(alias);
 		
@@ -279,7 +298,7 @@ public class InvokerNodiRuntime {
 				
 				String urlWithParameters = TransportUtils.buildUrlWithParameters(p, url);
 				
-				HttpResponse response = invokeHttp(urlWithParameters, alias);
+				HttpResponse response = invokeHttp(urlWithParameters, alias, slowOperation);
 				if(response.getResultHTTPOperation()!=200){
 					String error = "[httpCode "+response.getResultHTTPOperation()+"]";
 					if(response.getContent()!=null){
@@ -300,6 +319,9 @@ public class InvokerNodiRuntime {
 	}
 	
 	public String readJMXAttribute(String alias, String type, String nomeRisorsa, String nomeAttributo) throws Exception{
+		return readJMXAttribute(alias, type, nomeRisorsa, nomeAttributo, false);
+	}
+	public String readJMXAttribute(String alias, String type, String nomeRisorsa, String nomeAttributo, Boolean slowOperation) throws Exception{
 		
 		Object gestore = this.getGestoreRisorseJMX(alias);
 		
@@ -328,7 +350,7 @@ public class InvokerNodiRuntime {
 				TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_NAME, nomeAttributo);
 				String urlWithParameters = TransportUtils.buildUrlWithParameters(p, url);
 				
-				HttpResponse response = invokeHttp(urlWithParameters, alias);
+				HttpResponse response = invokeHttp(urlWithParameters, alias, slowOperation);
 				if(response.getResultHTTPOperation()!=200){
 					String error = "[httpCode "+response.getResultHTTPOperation()+"]";
 					if(response.getContent()!=null){
@@ -349,6 +371,9 @@ public class InvokerNodiRuntime {
 	}
 	
 	public void setJMXAttribute(String alias, String type, String nomeRisorsa, String nomeAttributo, Object value) throws Exception{
+		setJMXAttribute(alias, type, nomeRisorsa, nomeAttributo, value, false);	
+	}
+	public void setJMXAttribute(String alias, String type, String nomeRisorsa, String nomeAttributo, Object value, Boolean slowOperation) throws Exception{
 		
 		Object gestore = this.getGestoreRisorseJMX(alias);
 		
@@ -370,7 +395,7 @@ public class InvokerNodiRuntime {
 				}
 				String urlWithParameters = TransportUtils.buildUrlWithParameters(p, url);
 				
-				HttpResponse response = invokeHttp(urlWithParameters, alias);
+				HttpResponse response = invokeHttp(urlWithParameters, alias, slowOperation);
 				if(response.getResultHTTPOperation()!=200){
 					String error = "[httpCode "+response.getResultHTTPOperation()+"]";
 					if(response.getContent()!=null){

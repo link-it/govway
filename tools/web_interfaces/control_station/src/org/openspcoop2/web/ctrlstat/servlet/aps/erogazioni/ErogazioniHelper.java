@@ -193,6 +193,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			List<MappingErogazionePortaApplicativa> listaMappingErogazionePortaApplicativa, List<PortaApplicativa> listaPorteApplicativeAssociate) throws Exception {
 		int numeroAbilitate = 0;
 		int numeroConfigurazioni = 0;
+		int numeroConfigurazioniSchedulingDisabilitato = 0;
 		boolean allActionRedefined = false;
 		String msgControlloAccessiMalConfigurato = null;
 		// stato gruppi
@@ -272,10 +273,20 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						}
 					}
 				}
+				
+				if(paAssociata.getBehaviour()!=null && paAssociata.sizeServizioApplicativoList()>0) {
+					for (PortaApplicativaServizioApplicativo paSA : paAssociata.getServizioApplicativoList()) {
+						if(paSA!=null && paSA.getDatiConnettore()!=null && 
+								StatoFunzionalita.DISABILITATO.equals(paSA.getDatiConnettore().getScheduling()) &&
+								!StatoFunzionalita.DISABILITATO.equals(paSA.getDatiConnettore().getStato())) {
+							numeroConfigurazioniSchedulingDisabilitato++;
+						}
+					}
+				}
 			}
 		}
 		
-		return newDataElementStatoApi(de, setWidthPx, msgControlloAccessiMalConfigurato, null, numeroAbilitate, numeroConfigurazioni, allActionRedefined);
+		return newDataElementStatoApi(de, setWidthPx, msgControlloAccessiMalConfigurato, null, numeroAbilitate, numeroConfigurazioni, numeroConfigurazioniSchedulingDisabilitato, allActionRedefined);
 	}
 	
 	public DataElement newDataElementStatoApiFruizione(DataElement de, boolean setWidthPx,
@@ -364,11 +375,12 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			}
 		}
 		
-		return newDataElementStatoApi(de, setWidthPx, msgControlloAccessiMalConfigurato, null, numeroAbilitate, numeroConfigurazioni, allActionRedefined);
+		return newDataElementStatoApi(de, setWidthPx, msgControlloAccessiMalConfigurato, null, numeroAbilitate, numeroConfigurazioni, -1, allActionRedefined);
 	}
 	
 	private DataElement newDataElementStatoApi(DataElement deParam, boolean setWidthPx, String msgControlloAccessiMalConfiguratoError,  String msgControlloAccessiMalConfiguratoWarning, 
-			int numeroAbilitate, int numeroConfigurazioni, boolean allActionRedefined) {
+			int numeroAbilitate, int numeroConfigurazioni, int numeroConfigurazioniSchedulingDisabilitato, 
+			boolean allActionRedefined) {
 		
 		DataElement de = deParam;
 		boolean list = false;
@@ -396,8 +408,15 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				||
 				(allActionRedefined && numeroAbilitate == (numeroConfigurazioni-1)) // escludo la regola che non viene usata poiche' tutte le azioni sono ridefinite 
 				) {
-			de.setStatusType(CheckboxStatusType.ABILITATO);
-			de.setStatusToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_ABILITATE_TOOLTIP);
+			
+			if(numeroConfigurazioniSchedulingDisabilitato>0) {
+				de.setStatusType(CheckboxStatusType.WARNING_ONLY);
+				de.setStatusToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_CONNETTORI_MULTIPLI_SCHEDULING_DISABILITATO_TOOLTIP);
+			}
+			else {
+				de.setStatusType(CheckboxStatusType.ABILITATO);
+				de.setStatusToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_ABILITATE_TOOLTIP);
+			}
 		} else  {
 			de.setStatusType(CheckboxStatusType.WARNING_ONLY);
 			de.setStatusToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_PARZIALMENTE_ABILITATE_TOOLTIP);

@@ -1384,6 +1384,7 @@ public abstract class AbstractStatistiche {
 		if(stat.getDestinatario()!=null && stat.getDestinatario().getTipo()!=null) {
 			EsitiProperties esitiProperties = null;
 			int esitoConsegnaMultipla = -1;
+			int esitoConsegnaMultiplaInCorso = -1;
 			int esitoConsegnaMultiplaFallita = -1;
 			int esitoConsegnaMultiplaCompletata = -1;
 			try {
@@ -1405,9 +1406,12 @@ public abstract class AbstractStatistiche {
 				}
 				esitiProperties = EsitiProperties.getInstance(this.logger, protocollo);
 				esitoConsegnaMultipla = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA);
+				esitoConsegnaMultiplaInCorso = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_IN_CORSO);
 				esitoConsegnaMultiplaFallita = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_FALLITA);
 				esitoConsegnaMultiplaCompletata = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_COMPLETATA);
-				if(stat.getEsito().intValue() == esitoConsegnaMultiplaFallita || stat.getEsito().intValue() == esitoConsegnaMultiplaCompletata) {
+				if(stat.getEsito().intValue() == esitoConsegnaMultiplaInCorso || 
+						stat.getEsito().intValue() == esitoConsegnaMultiplaFallita || 
+						stat.getEsito().intValue() == esitoConsegnaMultiplaCompletata) {
 					statisticaBase.setEsito(esitoConsegnaMultipla);
 				}
 				else {

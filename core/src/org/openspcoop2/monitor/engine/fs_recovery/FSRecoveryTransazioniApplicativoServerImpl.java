@@ -80,6 +80,7 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 		if(ripristinato) {
 			
 			int esitoConsegnaMultipla = -1;
+			int esitoConsegnaMultiplaInCorso = -1;
 			int esitoConsegnaMultiplaFallita = -1;
 			int esitoConsegnaMultiplaCompletata = -1;
 			int ok = -1;
@@ -88,6 +89,7 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 			try {
 				EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log, transazioneApplicativoServer.getProtocollo());
 				esitoConsegnaMultipla = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA);
+				esitoConsegnaMultiplaInCorso = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_IN_CORSO);
 				esitoConsegnaMultiplaFallita = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_FALLITA);
 				esitoConsegnaMultiplaCompletata = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_COMPLETATA);
 				ok = esitiProperties.convertoToCode(EsitoTransazioneName.OK);
@@ -128,7 +130,7 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 							this.daoFactoryServiceManagerProperties.getDatabaseType(), this.log,
 							this.daoFactory,this.daoFactoryLogger,this.daoFactoryServiceManagerProperties,
 							this.debug,
-							esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
+							esitoConsegnaMultipla, esitoConsegnaMultiplaInCorso, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
 							esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage,
 							this.gestioneSerializableDB_AttesaAttiva,this.gestioneSerializableDB_CheckInterval,
 							null);

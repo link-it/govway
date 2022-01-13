@@ -21,6 +21,7 @@
 
 package org.openspcoop2.pdd.core.jmx;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -42,7 +43,10 @@ import javax.management.ReflectionException;
 
 import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.OpenspcoopAppender;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.Tracciamento;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -50,6 +54,9 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
+import org.openspcoop2.pdd.config.DBManager;
+import org.openspcoop2.pdd.config.Resource;
+import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.connettori.ConnettoreCheck;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -147,6 +154,12 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public final static String DISABILITA_PORTA_DELEGATA = "disablePortaDelegata";
 	public final static String ABILITA_PORTA_APPLICATIVA = "enablePortaApplicativa";
 	public final static String DISABILITA_PORTA_APPLICATIVA = "disablePortaApplicativa";
+	public final static String ABILITA_CONNETTORE_MULTIPLO = "enableConnettoreMultiplo";
+	public final static String DISABILITA_CONNETTORE_MULTIPLO = "disableConnettoreMultiplo";
+	public final static String ABILITA_SCHEDULING_CONNETTORE_MULTIPLO = "enableSchedulingConnettoreMultiplo";
+	public final static String DISABILITA_SCHEDULING_CONNETTORE_MULTIPLO = "disableSchedulingConnettoreMultiplo";
+	public final static String ABILITA_SCHEDULING_CONNETTORE_MULTIPLO_RUNTIME = "enableSchedulingConnettoreMultiploRuntimeRepository";
+	public final static String DISABILITA_SCHEDULING_CONNETTORE_MULTIPLO_RUNTIME = "disableSchedulingConnettoreMultiploRuntimeRepository";
 	
 	/** Attributi */
 	private boolean cacheAbilitata = false;
@@ -813,6 +826,108 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			return this.updateStatoPortaApplicativa(param1, false);
 		}
 		
+		if(actionName.equals(ABILITA_CONNETTORE_MULTIPLO)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+ABILITA_CONNETTORE_MULTIPLO+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			String param2 = null;
+			if(params[1]!=null && !"".equals(params[1])){
+				param2 = (String)params[1];
+			}
+			
+			return this.updateStatoConnettoreMultiplo(param1, param2, true);
+		}
+		
+		if(actionName.equals(DISABILITA_CONNETTORE_MULTIPLO)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+DISABILITA_CONNETTORE_MULTIPLO+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			String param2 = null;
+			if(params[1]!=null && !"".equals(params[1])){
+				param2 = (String)params[1];
+			}
+			
+			return this.updateStatoConnettoreMultiplo(param1, param2, false);
+		}
+		
+		if(actionName.equals(ABILITA_SCHEDULING_CONNETTORE_MULTIPLO)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+ABILITA_SCHEDULING_CONNETTORE_MULTIPLO+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			String param2 = null;
+			if(params[1]!=null && !"".equals(params[1])){
+				param2 = (String)params[1];
+			}
+			
+			return this.updateSchedulingConnettoreMultiplo(param1, param2, true);
+		}
+		
+		if(actionName.equals(DISABILITA_SCHEDULING_CONNETTORE_MULTIPLO)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+DISABILITA_SCHEDULING_CONNETTORE_MULTIPLO+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			String param2 = null;
+			if(params[1]!=null && !"".equals(params[1])){
+				param2 = (String)params[1];
+			}
+			
+			return this.updateSchedulingConnettoreMultiplo(param1, param2, false);
+		}
+		
+		if(actionName.equals(ABILITA_SCHEDULING_CONNETTORE_MULTIPLO_RUNTIME)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+ABILITA_SCHEDULING_CONNETTORE_MULTIPLO_RUNTIME+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			String param2 = null;
+			if(params[1]!=null && !"".equals(params[1])){
+				param2 = (String)params[1];
+			}
+			
+			return this.updateSchedulingConnettoreMultiploMessaggiPresiInCarico(param1, param2, true);
+		}
+		
+		if(actionName.equals(DISABILITA_SCHEDULING_CONNETTORE_MULTIPLO_RUNTIME)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+DISABILITA_SCHEDULING_CONNETTORE_MULTIPLO_RUNTIME+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			String param2 = null;
+			if(params[1]!=null && !"".equals(params[1])){
+				param2 = (String)params[1];
+			}
+			
+			return this.updateSchedulingConnettoreMultiploMessaggiPresiInCarico(param1, param2, false);
+		}
+		
 		throw new UnsupportedOperationException("Operazione "+actionName+" sconosciuta");
 	}
 	
@@ -1219,6 +1334,66 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			String.class.getName(),
 			MBeanOperationInfo.ACTION);
 		
+		// MetaData per l'operazione enableConnettoreMultiplo
+		MBeanOperationInfo enableConnettoreMultiplo 
+		= new MBeanOperationInfo(ABILITA_PORTA_APPLICATIVA,"Abilita lo stato del connettore della porta identificato dai parametri",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePorta",String.class.getName(),"Nome della Porta"),
+				new MBeanParameterInfo("nomeConnettore",String.class.getName(),"Nome del Connettore"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione disableConnettoreMultiplo
+		MBeanOperationInfo disableConnettoreMultiplo
+		= new MBeanOperationInfo(DISABILITA_PORTA_APPLICATIVA,"Disabilita lo stato del connettore della porta identificato dai parametri",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePorta",String.class.getName(),"Nome della Porta"),
+				new MBeanParameterInfo("nomeConnettore",String.class.getName(),"Nome del Connettore"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione enableSchedulingConnettoreMultiplo
+		MBeanOperationInfo enableSchedulingConnettoreMultiplo 
+		= new MBeanOperationInfo(ABILITA_PORTA_APPLICATIVA,"Abilita lo scheduling del connettore della porta identificato dai parametri",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePorta",String.class.getName(),"Nome della Porta"),
+				new MBeanParameterInfo("nomeConnettore",String.class.getName(),"Nome del Connettore"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione disableSchedulingConnettoreMultiplo
+		MBeanOperationInfo disableSchedulingConnettoreMultiplo
+		= new MBeanOperationInfo(DISABILITA_PORTA_APPLICATIVA,"Disabilita lo scheduling del connettore della porta identificato dai parametri",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePorta",String.class.getName(),"Nome della Porta"),
+				new MBeanParameterInfo("nomeConnettore",String.class.getName(),"Nome del Connettore"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione enableSchedulingConnettoreMultiploRuntimeRepository
+		MBeanOperationInfo enableSchedulingConnettoreMultiploRuntimeRepository
+		= new MBeanOperationInfo(ABILITA_PORTA_APPLICATIVA,"Abilita lo scheduling del connettore della porta identificato dai parametri nel RuntimeRepository",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePorta",String.class.getName(),"Nome della Porta"),
+				new MBeanParameterInfo("nomeConnettore",String.class.getName(),"Nome del Connettore"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione disableSchedulingConnettoreMultiploRuntimeRepository
+		MBeanOperationInfo disableSchedulingConnettoreMultiploRuntimeRepository
+		= new MBeanOperationInfo(DISABILITA_PORTA_APPLICATIVA,"Disabilita lo scheduling del connettore della porta identificato dai parametri nel RuntimeRepository",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePorta",String.class.getName(),"Nome della Porta"),
+				new MBeanParameterInfo("nomeConnettore",String.class.getName(),"Nome del Connettore"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
 		// Mbean costruttore
 		MBeanConstructorInfo defaultConstructor = new MBeanConstructorInfo("Default Constructor","Crea e inizializza una nuova istanza del MBean",null);
 
@@ -1274,6 +1449,12 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		listOperation.add(disablePortaDelegata);
 		listOperation.add(enablePortaApplicativa);
 		listOperation.add(disablePortaApplicativa);
+		listOperation.add(enableConnettoreMultiplo);
+		listOperation.add(disableConnettoreMultiplo);
+		listOperation.add(enableSchedulingConnettoreMultiplo);
+		listOperation.add(disableSchedulingConnettoreMultiplo);
+		listOperation.add(enableSchedulingConnettoreMultiploRuntimeRepository);
+		listOperation.add(disableSchedulingConnettoreMultiploRuntimeRepository);
 		MBeanOperationInfo[] operations = listOperation.toArray(new MBeanOperationInfo[1]);
 		
 		return new MBeanInfo(className,description,attributes,constructors,operations,null);
@@ -1730,6 +1911,92 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			IDPortaApplicativa idPA = new IDPortaApplicativa();
 			idPA.setNome(nomePorta);
 			this.configReader.updateStatoPortaApplicativa(idPA, enable ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String updateStatoConnettoreMultiplo(String nomePorta, String nomeConnettore, boolean enable) {
+		try{
+			IDPortaApplicativa idPA = new IDPortaApplicativa();
+			idPA.setNome(nomePorta);
+			String nomeServizioApplicativo = this.configReader.updateStatoConnettoreMultiplo(idPA, nomeConnettore, enable ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+			if(nomeServizioApplicativo==null) {
+				throw new Exception("Connettore '"+nomeConnettore+"' non trovato nella porta '"+nomePorta+"'");
+			}
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String updateSchedulingConnettoreMultiplo(String nomePorta, String nomeConnettore, boolean enable) {
+		try{
+			IDPortaApplicativa idPA = new IDPortaApplicativa();
+			idPA.setNome(nomePorta);
+			String nomeServizioApplicativo = this.configReader.updateSchedulingConnettoreMultiplo(idPA, nomeConnettore, enable ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+			if(nomeServizioApplicativo==null) {
+				throw new Exception("Connettore '"+nomeConnettore+"' non trovato nella porta '"+nomePorta+"'");
+			}
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String updateSchedulingConnettoreMultiploMessaggiPresiInCarico(String nomePorta, String nomeConnettore, boolean enable) {
+		try{
+			IDPortaApplicativa idPA = new IDPortaApplicativa();
+			idPA.setNome(nomePorta);
+			PortaApplicativa pa = this.configReader.getPortaApplicativa(idPA);
+			String nomeServizioApplicativo = null;
+			if(pa.sizeServizioApplicativoList()>0) {
+				for (PortaApplicativaServizioApplicativo paSA : pa.getServizioApplicativoList()) {
+					String nomePaSA = paSA.getDatiConnettore()!= null ? paSA.getDatiConnettore().getNome() : CostantiConfigurazione.NOME_CONNETTORE_DEFAULT;
+					if(nomeConnettore.equals(nomePaSA)) {
+						nomeServizioApplicativo = paSA.getNome();
+						break;
+					}
+				}
+			}
+			if(nomeServizioApplicativo==null) {
+				throw new Exception("Connettore '"+nomeConnettore+"' non trovato nella porta '"+nomePorta+"'");
+			}
+			
+			DBManager dbManager = DBManager.getInstance();
+			Resource resource = null;
+			IDSoggetto dominio = this.openspcoopProperties.getIdentitaPortaDefault(null);
+			String modulo = this.getClass().getName()+".schedulingConnettoreMultiplo";
+			try {
+				resource = dbManager.getResource(dominio, modulo, null);
+				Connection c = (Connection) resource.getResource();
+				boolean debug = this.openspcoopProperties.isTimerConsegnaContenutiApplicativiSchedulingDebug();
+				boolean checkEliminazioneLogica = this.openspcoopProperties.isTimerConsegnaContenutiApplicativiSchedulingCheckEliminazioneLogica();
+				int row = -1;
+				String op = "";
+				if(enable) {
+					op = "abilitato";
+					row = GestoreMessaggi.abilitaSchedulingMessaggiDaRiconsegnareIntoBox(nomeServizioApplicativo, checkEliminazioneLogica,
+							OpenSPCoop2Logger.getLoggerOpenSPCoopConsegnaContenutiSql(debug), c,  debug);
+				}else {
+					op = "disabilitato";
+					row = GestoreMessaggi.disabilitaSchedulingMessaggiDaRiconsegnareIntoBox(nomeServizioApplicativo, checkEliminazioneLogica,
+							OpenSPCoop2Logger.getLoggerOpenSPCoopConsegnaContenutiSql(debug), c,  debug);
+				}
+				if(row>=0) {
+					return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO+"; "+op+" scheduling in "+row+" messagg"+(row==1 ? "io" : "i");
+				}
+			}finally {
+				try{
+					if(dbManager!=null)
+						dbManager.releaseResource(dominio, modulo, resource);
+				}catch(Exception eClose){}
+			}
+			
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
 		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
