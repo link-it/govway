@@ -163,11 +163,18 @@ public class ConfigLoader {
         
         org.openspcoop2.utils.resources.ScriptInvoker scriptInvoker = new org.openspcoop2.utils.resources.ScriptInvoker(scriptPath);
         scriptInvoker.run(new File(configLoaderPath), trasparenteBundle);
-
+        
         // Dopo aver caricato lo script, resetto le cache
+        resetCache();
+    }
+    
+    public static void resetCache() throws Exception {
+        
+    	org.slf4j.Logger logger = LoggerWrapperFactory.getLogger("com.intuit.karate");
+    	
         String jmx_user = prop.getProperty("jmx_username");
         String jmx_pass = prop.getProperty("jmx_password"); 
-        
+    	
         String[] govwayCaches = prop.getProperty("jmx_cache_resources").split(",");
         for (String resource : govwayCaches) {
             logger.debug("Resetto cache: " + resource);
