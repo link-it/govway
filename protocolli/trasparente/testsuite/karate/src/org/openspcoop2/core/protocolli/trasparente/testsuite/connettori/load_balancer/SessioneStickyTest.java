@@ -649,12 +649,37 @@ public class SessioneStickyTest extends ConfigLoader {
 		
 		checkRoundRobin(balancedResponses, Common.setConnettoriAbilitati);
 		
+		
+		// Nuova batteria dove il connettore rotto non deve essere preso in considerazione
+		
+		idSessioni = Arrays.asList("aNewBefore", "bNewBefore", "cNewBefore", "dNewBefore", "eNewBefore");
+		richiesteSonda = idSessioni.stream()
+				.map( idSessione -> buildRequest_HeaderHttp(idSessione, erogazione))
+				.collect(Collectors.toList());
+		
+		idSessioneConnettoreRotto = null;
+		for(var request : richiesteSonda) {
+			HttpResponse response = Utils.makeRequest(request);
+			if (response.getResultHTTPOperation() == 200) {
+				assertNotEquals(null,response.getHeaderFirstValue(HEADER_ID_CONNETTORE));
+			} else {
+				assertEquals(null, idSessioneConnettoreRotto);	// Un solo connettore rotto
+				idSessioneConnettoreRotto = request.getHeaderFirstValue(HEADER_ID_SESSIONE);
+			}
+		}
+		assertEquals(null,idSessioneConnettoreRotto);
+		
+		
 		// Attendo che venga reinserito nel pool e ripeto la parte iniziale del test
 		// per instradare una richiesta nuovamente sul connettore rotto
-		org.openspcoop2.utils.Utilities.sleep(2100);
+		org.openspcoop2.utils.Utilities.sleep(2100); // TODO Mettere MaxAge preso dalle proprieta' + 100
 
-		idSessioneConnettoreRotto = null;
+		idSessioni = Arrays.asList("aNewAfter", "bNewAfter", "cNewAfter", "dNewAfter", "eNewAfter"); // uso nuovi id di sessione per verificare che adesso venga ripreso il connettore rotto
+		richiesteSonda = idSessioni.stream()
+				.map( idSessione -> buildRequest_HeaderHttp(idSessione, erogazione))
+				.collect(Collectors.toList());
 		
+		idSessioneConnettoreRotto = null;
 		for(var request : richiesteSonda) {
 			HttpResponse response = Utils.makeRequest(request);
 			if (response.getResultHTTPOperation() == 200) {
