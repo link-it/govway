@@ -188,6 +188,31 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 	}
 	
 	
+	
+	@Test
+	public void conflittoFiltri() {
+		// Abilitando la proprietà connettoriMultipli.consegnaCondizionale.stessoFiltro=true
+		// in console_local.properties è possibile assegnare lo stesso filtro a più connettori.
+		// L'engine della consegna condizionale quando identifica più di un connettore candidato,
+		// deve sollevare errore.
+		
+		final String erogazione = "ConsegnaCondizionaleConflittoFiltri";
+
+		var requestError = ConsegnaCondizionaleByNomeTest.buildRequest_HeaderHttpByNome("Connettore0-Filtro0", erogazione);
+		var requestOk = ConsegnaCondizionaleByNomeTest.buildRequest_HeaderHttpByNome("Connettore0-Filtro1", erogazione);
+		
+		var responseError = Utils.makeRequest(requestError);
+		
+		assertEquals(400, responseError.getResultHTTPOperation());
+		
+		var responseOk = Utils.makeRequest(requestOk);
+		
+		assertEquals(200, responseOk.getResultHTTPOperation());
+		assertEquals(Common.CONNETTORE_0, responseOk.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
+	}
+	
+	
+	
 	@Test
 	public void urlInvocazione() {
 
@@ -404,6 +429,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		
 	}
 	
+
 	
 	/**
 	 * Per ogni chiave della map @requestsByConnettore argomento viene creato un thread che esegue @requests_per_batch

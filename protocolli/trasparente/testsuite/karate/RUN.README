@@ -107,9 +107,15 @@
 
 
 #### PARAMETRI TESTSUITE CONNETTORI-MULTIPLI ####
- - Impostare in govway_local.properties:
+- Impostare in govway_local.properties:
 	 	connettoriMultipli.consegnaCondizionale.stessoFiltro=true
    In modo che la console consenta di assegnare più volte lo stesso filtro a connettori diversi e rilevare l'errore a runtime durante una richiesta
+
+- In console_local.properties:
+	# Indicazione se nella Consegna Condizionale è possibile associare lo stesso filtro a differenti connettori (per test)
+		connettoriMultipli.consegnaCondizionale.stessoFiltro=true
+	Per i test che controllano l'univocità dei filtri nella consegna condizionale, cioè che due connettori non possono
+	avere lo stesso filtro.
 
 - In src/testsuite.properties
 	+ connettori.load_balancer.numero_richieste_random=50

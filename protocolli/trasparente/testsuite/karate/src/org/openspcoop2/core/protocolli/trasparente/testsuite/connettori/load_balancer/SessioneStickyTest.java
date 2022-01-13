@@ -511,6 +511,8 @@ public class SessioneStickyTest extends ConfigLoader {
 		
 		// TODO 1 Qui il problema è dovuto al fatto che il velocity template $query["govway-testsuite-id_sessione_request"] 
 		// restituisce il template stesso se la chiave non è presente, quindi un id sessione veniva comunque trovato.
+		//	Aspetta di fixare quando andrea ti ha risposto alla mail sulla ConsegnaCondizionaleByNomeTest.velocityTemplate,
+		//		dove con l'if viene aggiunto uno spazio al connettore scelto e l'identificazione fallisce
 				
 		final String erogazione = "LoadBalanceSessioneStickyVelocityTemplate";
 		
@@ -610,7 +612,6 @@ public class SessioneStickyTest extends ConfigLoader {
 		// Ci assicuriamo che nelle prossime richieste con lo stesso id sessione, queste
 		// vengano instradate ad un altro connettore.
 		
-		// TODO: Non funziona il passive Health Check.
 		final String erogazione = "LoadBalanceSessioneStickyHealthCheckHeaderHttp";
 		
 		var idSessioni = Arrays.asList("a", "b", "c", "d", "e");
@@ -677,11 +678,10 @@ public class SessioneStickyTest extends ConfigLoader {
 		}
 		assertEquals(null,idSessioneConnettoreRotto);
 		
-		// Questa parte qui riportarla anche su LoadBalanceSemplice
+		// TODO: Questa parte qui riportarla anche su LoadBalanceSemplice
 		// Attendo che venga reinserito nel pool e ripeto la parte iniziale del test
 		// per instradare una richiesta nuovamente sul connettore rotto
-		// TODO: Usare il parametro e aumentare anche nella configurazione da 2 a 4 o 5
-		org.openspcoop2.utils.Utilities.sleep(2100);
+		org.openspcoop2.utils.Utilities.sleep(Common.maxAge + 100);
 
 		idSessioni = Arrays.asList("aNewAfter", "bNewAfter", "cNewAfter", "dNewAfter", "eNewAfter"); // uso nuovi id di sessione per verificare che adesso venga ripreso il connettore rotto
 		richiesteSonda = idSessioni.stream()
@@ -704,7 +704,8 @@ public class SessioneStickyTest extends ConfigLoader {
 
 	@Test
 	public void healthCheckConsegnaCondizionale() {
-		// TODO dopo l'eventuale fix sul maxAge
+		// TODO dopo l'eventuale fix sul maxAge, non c'era nessun problema sul 
+		// maxAge, era un mix
 	}
 	
 	
@@ -725,8 +726,8 @@ public class SessioneStickyTest extends ConfigLoader {
 	
 	
 	@Test
-	public void consegnaCondizionaleSemplice() {
-		final String erogazione = "LoadBalanceSessioneStickyConsegnaCondizionaleSempliceHeaderHttp";
+	public void consegnaCondizionale() {
+		final String erogazione = "LoadBalanceSessioneStickyConsegnaCondizionaleHeaderHttp";
 		
 		// Simile al test consegnaCondizionale ma tutte le richieste lavorano
 		// con il filtro.
@@ -734,128 +735,54 @@ public class SessioneStickyTest extends ConfigLoader {
 		String pool2 = Common.POOL_1;
 		String pool3 = Common.POOL_2;
 		
-		HttpRequest req1 = buildRequest_HeaderHttp(IDSessioni.get(0), erogazione);
-		req1.addHeader(HEADER_CONDIZIONE, Common.filtriPools.get(pool1).get(0));
+		HttpRequest requestPool1IdSessione = buildRequest_HeaderHttp(IDSessioni.get(0), erogazione);
+		requestPool1IdSessione.addHeader(HEADER_CONDIZIONE, Common.filtriPools.get(pool1).get(0));
 		
-		HttpRequest req2 = buildRequest_HeaderHttp(IDSessioni.get(1), erogazione);
-		req2.addHeader(HEADER_CONDIZIONE, Common.filtriPools.get(pool2).get(0));
+		HttpRequest requestPool2IdSessione = buildRequest_HeaderHttp(IDSessioni.get(1), erogazione);
+		requestPool2IdSessione.addHeader(HEADER_CONDIZIONE, Common.filtriPools.get(pool2).get(0));
 		
-		HttpRequest req3 = ConsegnaCondizionaleByNomeTest.buildRequest_HeaderHttpByNome(
+		HttpRequest requestPool1NoIdSessione = ConsegnaCondizionaleByNomeTest
+				.buildRequest_HeaderHttpByNome(Common.filtriPools.get(pool1).get(1), erogazione);
+		
+		HttpRequest requestPool2NoIdSessione = ConsegnaCondizionaleByNomeTest
+				.buildRequest_HeaderHttpByNome(Common.filtriPools.get(pool2).get(1), erogazione);
+		
+		HttpRequest requestPool3NoIdSessione = ConsegnaCondizionaleByNomeTest.buildRequest_HeaderHttpByNome(
 				Common.filtriPools.get(pool3).get(0), erogazione);
+		
+		HttpRequest requestNoPoolNoIdSessione = buildRequest_LoadBalanced(erogazione);
 
 		List<HttpRequest> richieste = Arrays.asList(
-				req1, 			// Vanno tutte sullo stesso connettore dell pool1
-				req2,			// Vanno tutte sullo stesso connettore del pool2
-				req3			// Vengono bilanciate in round robin sul connettore del pool3
+				requestPool1IdSessione, 				// 0 Vanno tutte sullo stesso connettore dell pool1 senza attivare il load balancing sul pool1
+				requestPool2IdSessione,					// 1 Vanno tutte sullo stesso connettore del pool2 senza attivare il load balancing sul pool2
+				requestPool1NoIdSessione,				// 2 Vengono bilanciate in round robin sui connettori del pool1
+				requestPool2NoIdSessione,				// 3 Vengono bilanciate in round robin sui connettori del pool2
+				requestPool3NoIdSessione,				// 4 Vengono bilanciate in round robin sui connettori del pool3
+				requestNoPoolNoIdSessione				// 5 Vengono bilanciate in round robin sul pool di tutti i connettori
 			);
 
 		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, richieste.size()*5);
 		
 		checkAllResponsesSameConnettore(responsesByKind.get(0));
 		checkAllResponsesSameConnettore(responsesByKind.get(1));
+		
+		// - 2 Richieste che vanno sul pool1 senza id sessione e vengono bilanciate
+		Set<String> connettoriBilanciati = new HashSet<>(Common.connettoriPools.get(pool1));
+		connettoriBilanciati.remove(Common.CONNETTORE_DISABILITATO);		
+		checkRoundRobin(responsesByKind.get(2), connettoriBilanciati);
+		
+		// 3 - Richieste che vanno sul pool2 senza id sessione e vengono bilanciate
+		connettoriBilanciati = new HashSet<>(Common.connettoriPools.get(pool2));
+		connettoriBilanciati.remove(Common.CONNETTORE_DISABILITATO);		
+		checkRoundRobin(responsesByKind.get(3), connettoriBilanciati);
 
-		Set<String> connettoriBilanciati = new HashSet<>(Common.connettoriPools.get(pool3));
+		// 4 - Vengono bilanciate in round robin sul connettore del pool3
+		connettoriBilanciati = new HashSet<>(Common.connettoriPools.get(pool3));
 		connettoriBilanciati.remove(Common.CONNETTORE_DISABILITATO);
+		checkRoundRobin(responsesByKind.get(4), connettoriBilanciati);	
 		
-		checkRoundRobin(responsesByKind.get(2), connettoriBilanciati);	
-	}
-	
-	@Test
-	public void consegnaCondizionale() {
-		
-		// Sulla erogazione l'identificazione condizione fallita è impostata in modo
-		// da utilizzare tutti i connettori possibili.
-		// In questo modo posso in questo testo posso fare richieste senza l'id condizione
-		// impostato.
-		
-		// Il fatto che non venga preservata l'associazione esistente fra la sessione e un connettore
-		// al variare del filtro o del pool identificato dal filtro, sarebbe un bug ma è una situazione
-		// che non si verifica.
-		
-		// TODO: Il fatto di avere un'associazione
-
-		
-		final String erogazione = "LoadBalanceSessioneStickyConsegnaCondizionaleHeaderHttp";
-		
-		// Prima faccio avvenire delle richieste solo con l'id sessione per sapere in che pool
-		// sono finiti i connettori sticky.
-		// Fare test semplice che mostra come non ricorda l'associazione tra id sessione
-		// e connettore quando si cambia il pool con il filtro.
-		
-		HttpRequest req1 = buildRequest_HeaderHttp(IDSessioni.get(0), erogazione);
-		HttpRequest req2 = buildRequest_HeaderHttp(IDSessioni.get(1), erogazione);
-		
-		var resp1 = Utils.makeRequest(req1);
-		var resp2 = Utils.makeRequest(req2);
-		
-		String connettore1 = resp1.getHeaderFirstValue(HEADER_ID_CONNETTORE); 
-		String connettore2 = resp2.getHeaderFirstValue(HEADER_ID_CONNETTORE);
-		
-		// Siamo in round robin quindi i connettori devono essere diversi.
-		assertNotEquals(null, connettore1);
-		assertNotEquals(connettore1, connettore2);
-		
-		String pool1 = findPoolForConnettore(connettore1);
-		String pool2 = findPoolForConnettore(connettore2);
-		
-		Set<String> poolCandidates = new HashSet<>(Common.pools);
-		poolCandidates.remove(pool1);
-		poolCandidates.remove(pool2);
-		String pool3 = poolCandidates.stream().findAny().get();
-
-		// Successivamente ripeto le richieste con l'id sessione più filtro 
-		// insieme ad altre richieste senza id sessione e con filtro
-		// ed altre richieste senza id sessione e senza filtro...
-		req1.addHeader(HEADER_CONDIZIONE, Common.filtriPools.get(pool1).get(0));
-		req2.addHeader(HEADER_CONDIZIONE, Common.filtriPools.get(pool2).get(0));
-		
-		HttpRequest requestSoloFiltro = ConsegnaCondizionaleByNomeTest
-				.buildRequest_HeaderHttpByNome(
-						Common.filtriPools.get(pool3).get(0),
-						erogazione);
-		
-		HttpRequest requestSoloIdSessione = buildRequest_HeaderHttp("IDSessioneDiverso", erogazione);
-		HttpRequest requestSemplice = buildRequest_LoadBalanced(erogazione);
-				
-		List<HttpRequest> richieste = Arrays.asList(
-				req1, 		// Va nel pool1, senza attivare il load balancing perchè l'id sessione è impostato
-				req2,		// Va nel pool2, senza attivare il load balancing perchè l'id sessione è impostato
-				requestSoloIdSessione, // Attiva una sola volta il load balancing su TUTTI i connettori perchè l'id sessione è impostato ma è nuovo
-				requestSoloFiltro, // Va nel pool3 che è diverso da tutti gli altri perchè scelto ad hoc
-				requestSemplice // Va nel pool di tutti i connettori
-			);
-
-		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, richieste.size()*5);
-
-		// Tests:
-		// Le prime richieste vanno tutte sullo stesso connettore1
-		assertEquals(connettore1, responsesByKind.get(0).get(0).getHeaderFirstValue(HEADER_ID_CONNETTORE));
-		checkAllResponsesSameConnettore(responsesByKind.get(0));
-		
-		// Le seconde richieste vanno tutte sullo stesso connettore2
-		assertEquals(connettore2, responsesByKind.get(1).get(0).getHeaderFirstValue(HEADER_ID_CONNETTORE));
-		checkAllResponsesSameConnettore(responsesByKind.get(1));
-		
-		// Le terze richieste vanno tutte sullo stesso connettore X
-		checkAllResponsesSameConnettore(responsesByKind.get(2));
-
-		// Le quarte richieste vanno sul poolW diverso da tutti e con un round robin suo
-		var connettoriAbilitatiPool3 = new HashSet<>(Common.connettoriPools.get(pool3));
-		connettoriAbilitatiPool3.remove(Common.CONNETTORE_DISABILITATO);
-		
-		checkRoundRobin(responsesByKind.get(3), connettoriAbilitatiPool3);
-		
-		// Le quinte risposte vanno sul pool di tutti i connettori e hanno un round robin loro
-		
-		// Tra le richieste\risposte che sono state bilanciate vanno considerate
-		// anche le prime richieste che portano con se un id sessione ancora mai visto prima.
-		// Le risposte che qui vado a pescare non sono necessariamente corrispondenti a tali richieste
-		// ma sono utili ai fini del conteggio.
-		var balancedResponses = responsesByKind.get(4);
-		balancedResponses.add(resp1);
-		balancedResponses.add(resp2);
-		balancedResponses.add(responsesByKind.get(2).get(0));
-		checkRoundRobin(balancedResponses, Common.setConnettoriAbilitati);
+		// 5 - Vengono bilanciate in round robin sul pool di tutti i connettori
+		checkRoundRobin(responsesByKind.get(5), Common.setConnettoriAbilitati);
 	}
 	
 	
