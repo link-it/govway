@@ -602,6 +602,7 @@ public class SessioneStickyTest extends ConfigLoader {
 		
 	}
 	
+	// 
 	
 	@Test
 	public void healthCheck() {
@@ -656,13 +657,38 @@ public class SessioneStickyTest extends ConfigLoader {
 		
 		checkRoundRobin(balancedResponses, Common.setConnettoriAbilitati);
 		
+		
+		// Nuova batteria dove il connettore rotto non deve essere preso in considerazione
+		
+		idSessioni = Arrays.asList("aNewBefore", "bNewBefore", "cNewBefore", "dNewBefore", "eNewBefore");
+		richiesteSonda = idSessioni.stream()
+				.map( idSessione -> buildRequest_HeaderHttp(idSessione, erogazione))
+				.collect(Collectors.toList());
+		
+		idSessioneConnettoreRotto = null;
+		for(var request : richiesteSonda) {
+			HttpResponse response = Utils.makeRequest(request);
+			if (response.getResultHTTPOperation() == 200) {
+				assertNotEquals(null,response.getHeaderFirstValue(HEADER_ID_CONNETTORE));
+			} else {
+				assertEquals(null, idSessioneConnettoreRotto);	// Un solo connettore rotto
+				idSessioneConnettoreRotto = request.getHeaderFirstValue(HEADER_ID_SESSIONE);
+			}
+		}
+		assertEquals(null,idSessioneConnettoreRotto);
+		
+		// Questa parte qui riportarla anche su LoadBalanceSemplice
 		// Attendo che venga reinserito nel pool e ripeto la parte iniziale del test
 		// per instradare una richiesta nuovamente sul connettore rotto
 		// TODO: Usare il parametro e aumentare anche nella configurazione da 2 a 4 o 5
 		org.openspcoop2.utils.Utilities.sleep(2100);
 
-		idSessioneConnettoreRotto = null;
+		idSessioni = Arrays.asList("aNewAfter", "bNewAfter", "cNewAfter", "dNewAfter", "eNewAfter"); // uso nuovi id di sessione per verificare che adesso venga ripreso il connettore rotto
+		richiesteSonda = idSessioni.stream()
+				.map( idSessione -> buildRequest_HeaderHttp(idSessione, erogazione))
+				.collect(Collectors.toList());
 		
+		idSessioneConnettoreRotto = null;
 		for(var request : richiesteSonda) {
 			HttpResponse response = Utils.makeRequest(request);
 			if (response.getResultHTTPOperation() == 200) {
@@ -741,6 +767,10 @@ public class SessioneStickyTest extends ConfigLoader {
 		// da utilizzare tutti i connettori possibili.
 		// In questo modo posso in questo testo posso fare richieste senza l'id condizione
 		// impostato.
+		
+		// Il fatto che non venga preservata l'associazione esistente fra la sessione e un connettore
+		// al variare del filtro o del pool identificato dal filtro, sarebbe un bug ma è una situazione
+		// che non si verifica.
 		
 		// TODO: Il fatto di avere un'associazione
 
