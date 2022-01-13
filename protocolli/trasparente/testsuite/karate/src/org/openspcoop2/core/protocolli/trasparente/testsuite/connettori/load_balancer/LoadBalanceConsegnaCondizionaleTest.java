@@ -34,6 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -52,7 +53,6 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  * TODO: Per fare meglio l'health check servirebbe il mock
  * TODO: Devo fare anche identificazione condizione fallita e nessun connettore utilizzabile?
  * 		SI.
- * TODO: prefisso e suffisso
 
  * TODO: Test regole
  * La Consegna Condizionale sul Load Balancer identifica l'insieme di connettori
@@ -89,6 +89,91 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		
 		Map<String,List<HttpRequest>> requestsByPool = new HashMap<>();
 		for (var e : Common.filtriPools.entrySet()) {
+			requestsByPool.put(
+					e.getKey(),
+					Common.buildRequests_HeaderHttp(e.getValue(), erogazione)
+				);
+		}
+		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
+
+		checkResponses(responsesByPool);
+	}
+	
+	
+	@Test
+	public void prefisso() {
+		/*
+		 * Mando solo i suffissi, la consegna condizionale aggiungerà il prefisso "Pool"
+		 * mentre l'id connettore inviato al server di echo resta lo stesso.
+		 */
+		
+		final String erogazione = "LoadBalanceConsegnaCondizionalePrefisso";
+		
+		Map<String,List<HttpRequest>> requestsByPool = new HashMap<>();
+		for (var e : Common.filtriPools.entrySet()) {
+			var filtri = e.getValue().stream()
+					.map( filtro -> filtro.substring("Pool".length()))
+					.collect(Collectors.toList());
+			
+			requestsByPool.put(
+					e.getKey(),
+					Common.buildRequests_HeaderHttp(filtri, erogazione)
+				);
+		}
+		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
+
+		checkResponses(responsesByPool);
+	}
+	
+	@Test
+	public void prefissoESuffisso() {
+		/**
+		 * Il suffisso configurato sull'erogazione è: "-Filtro0", in queso modo raggiungo 
+		 * solo i vari PoolX-Filtro0
+		 * Il prefisso è "Pool"
+		 * 
+		 * Mando solo [0,1,2]
+		 */
+		
+		final String erogazione = "LoadBalanceConsegnaCondizionalePrefissoESuffisso";
+		
+		 Map<String,List<String>> filtriPoolsNoSuffissoNoPrefisso = Map
+					.of(Common.POOL_0, Arrays.asList("0"),
+						Common.POOL_1, Arrays.asList("1"),
+						Common.POOL_2, Arrays.asList("2"));
+
+		Map<String,List<HttpRequest>> requestsByPool = new HashMap<>();
+		for (var e : filtriPoolsNoSuffissoNoPrefisso.entrySet()) {
+			requestsByPool.put(
+					e.getKey(),
+					Common.buildRequests_HeaderHttp(e.getValue(), erogazione)
+				);
+		}
+		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
+
+		checkResponses(responsesByPool);
+	}
+	
+	
+	
+	@Test
+	public void suffisso() {
+		/**
+		 * Il suffisso configurato sull'erogazione è: "-Filtro0", in queso modo raggiungo 
+		 * solo i vari PoolX-Filtro0
+		 * 
+		 * Mando solo [Pool0,Pool1,Pool2]
+		 */
+		
+		final String erogazione = "LoadBalanceConsegnaCondizionaleSuffisso";
+		
+		 Map<String,List<String>> filtriPoolsNoSuffissoNoPrefisso = Map
+					.of(Common.POOL_0, Arrays.asList("Pool0"),
+						Common.POOL_1, Arrays.asList("Pool1"),
+						Common.POOL_2, Arrays.asList("Pool2"));
+
+		Map<String,List<HttpRequest>> requestsByPool = new HashMap<>();
+		for (var e : filtriPoolsNoSuffissoNoPrefisso.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
 					Common.buildRequests_HeaderHttp(e.getValue(), erogazione)
