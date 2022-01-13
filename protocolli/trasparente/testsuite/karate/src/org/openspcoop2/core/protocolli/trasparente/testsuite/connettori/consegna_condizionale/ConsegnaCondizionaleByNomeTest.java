@@ -282,7 +282,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 							
 		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
 		
-		Common.matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);
+		matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);
 	}
 
 	
@@ -296,7 +296,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 							
 		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
 		
-		Common.matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);		
+		matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);		
 
 	}
 	
@@ -312,7 +312,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 							
 		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
 		
-		Common.matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);		
+		matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);		
 		
 	}
 	
@@ -422,7 +422,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 			throw new RuntimeException(e);
 		}
 		
-		Common.matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);
+		matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);
 	}
 	
 	
@@ -442,7 +442,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 							
 		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
 		
-		Common.matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);		
+		matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);		
 		
 	}
 	
@@ -458,13 +458,13 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 
 		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
 		
-		Common.matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);		
+		matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);		
 		
 	}
 	
 	
 	@Test
-	public void velocityTemplateByNome() {
+	public void velocityTemplate() {
 		// Test uguale a templateByNome
 		final String erogazione = "ConsegnaCondizionaleVelocityTemplateByNome";
 		
@@ -474,8 +474,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 							
 		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
 		
-		Common.matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);		
-
+		matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);		
 	}
 	
 	
@@ -585,7 +584,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 							
 		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
 		
-		Common.matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);	
+		matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);	
 	}
 	
 	@Test
@@ -603,7 +602,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 							
 		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
 		
-		Common.matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);	
+		matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);	
 	}
 	
 	
@@ -624,7 +623,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 							
 		var responsesByConnettore = Common.makeBatchedRequests(requestsByConnettore, 3);
 		
-		Common.matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);	
+		matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);	
 		
 	}
 
@@ -674,6 +673,30 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		assertEquals(200, response.getResultHTTPOperation());
 		assertEquals(Common.CONNETTORE_0, response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
 
+	}
+
+
+	// TODO: Forse questi posso rimetterli dentro ConsegnaCondizionaleFiltroNome
+	public static void matchResponsesWithConnettori(List<String> connettori,
+			Vector<Vector<HttpResponse>> responsesByConnettore) {
+		for (int i = 0; i < connettori.size(); i++) {
+			String connettoreRichiesta = connettori.get(i);
+			
+			/*if (connettoreRichiesta.equals(CONNETTORE_DISABILITATO)) {
+				for (var response : responsesByConnettore.get(i)) {
+					assertEquals(400,response.getResultHTTPOperation());
+				}
+			} else if (connettoreRichiesta.equals(CONNETTORE_ROTTO)) {
+				for (var response : responsesByConnettore.get(i)) {
+					assertEquals(400,response.getResultHTTPOperation());
+				}
+			} else {*/
+				for (var response : responsesByConnettore.get(i)) {
+					String connettoreRisposta = response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE);
+					assertEquals(connettoreRichiesta, connettoreRisposta);
+				}
+			//}
+		}
 	}
 		
 		

@@ -54,6 +54,15 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  *
  * @author Francesco Scarlato (scarlato@link.it)
  * 
+ * Query Freemarker Template: ${query["govway-testsuite-id_connettore_request"]}
+ * Query Template: ${query:govway-testsuite-id_connettore_request}
+ * Query Velocity Template: $query["govway-testsuite-id_connettore_request"]
+ * Query UrlInvocazione: .+govway-testsuite-id_connettore_request=([^&]*).*
+ * Query contenuto: $.id_connettore_request
+ * Query HeaderHttp: GovWay-TestSuite-id_connettore
+ * 
+ *
+ * 
  */
 public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 	

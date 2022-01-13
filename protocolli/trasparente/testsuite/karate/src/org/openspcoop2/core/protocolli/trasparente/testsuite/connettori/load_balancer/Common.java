@@ -1,6 +1,5 @@
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 import java.util.Arrays;
@@ -22,12 +21,6 @@ import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
-// Query Freemarker Template: ${query["govway-testsuite-id_connettore_request"]}
-// Query Template: ${query:govway-testsuite-id_connettore_request}
-// Query Velocity Template: $query["govway-testsuite-id_connettore_request"]
-// Query UrlInvocazione: .+govway-testsuite-id_connettore_request=([^&]*).*
-// Query contenuto: $.id_connettore_request
-// Query HeaderHttp: GovWay-TestSuite-id_connettore
 
 public class Common {
 	
@@ -118,29 +111,6 @@ public class Common {
 	}
 	
 	
-	// TODO: Forse questi posso rimetterli dentro ConsegnaCondizionaleFiltroNome
-	public static void matchResponsesWithConnettori(List<String> connettori,
-			Vector<Vector<HttpResponse>> responsesByConnettore) {
-		for (int i = 0; i < connettori.size(); i++) {
-			String connettoreRichiesta = connettori.get(i);
-			
-			/*if (connettoreRichiesta.equals(CONNETTORE_DISABILITATO)) {
-				for (var response : responsesByConnettore.get(i)) {
-					assertEquals(400,response.getResultHTTPOperation());
-				}
-			} else if (connettoreRichiesta.equals(CONNETTORE_ROTTO)) {
-				for (var response : responsesByConnettore.get(i)) {
-					assertEquals(400,response.getResultHTTPOperation());
-				}
-			} else {*/
-				for (var response : responsesByConnettore.get(i)) {
-					String connettoreRisposta = response.getHeaderFirstValue(HEADER_ID_CONNETTORE);
-					assertEquals(connettoreRichiesta, connettoreRisposta);
-				}
-			//}
-		}
-	}
-
 	/*
 	 * Esegue un thread per ogni richiesta e per ogni thread esegue
 	 * requests_per_batch richieste
