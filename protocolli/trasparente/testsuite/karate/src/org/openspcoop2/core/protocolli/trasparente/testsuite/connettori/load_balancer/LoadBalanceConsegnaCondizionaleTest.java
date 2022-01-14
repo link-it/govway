@@ -522,7 +522,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 	
 	
 	@Test
-	public void regole() {
+	public void regole() throws UtilsException {
 		 // Regola+FIltro identifica il pool
 		// Uso filtri diversi sulla stessa regola e verifico la condizionalita e il load balancing
 
@@ -583,6 +583,15 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		
 		responsesByPool = makeBatchedRequests(requestsByPool,15);
 		checkResponses(responsesByPool);
+		
+		requestsByPool = new HashMap<>();
+		requestsByPool.put(Common.POOL_0, Arrays.asList(buildRequest_ForwardedFor("Pool0-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_1, Arrays.asList(buildRequest_ForwardedFor("Pool1-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_2, Arrays.asList(buildRequest_ForwardedFor("Pool2-Filtro0", erogazione)));
+		
+		responsesByPool = makeBatchedRequests(requestsByPool,15);
+		checkResponses(responsesByPool);
+		
 		
 		// Dalla configurazione, il filtro statico è Pool2-Filtro1, quindi viene attivato
 		// il load balancing sul pool2
@@ -709,16 +718,15 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		}
 		return responsesByPool;
 	}
-
-
-	/*private static Map<String, Integer> contaConnettoriUtilizzati(List<HttpResponse> responses) {
-		Map<String,Integer> ret = new HashMap<>();
-		for (var r : responses) {
-			String connettore = r.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE);
-			ret.put(connettore, ret.getOrDefault(connettore, 0) + 1);			
-		}
-		return ret;
-	}*/
 	
+	private static HttpRequest buildRequest_ForwardedFor(String connettore, String erogazione) throws UtilsException {
+		HttpRequest request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-xforwarded-for"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
+		request.addHeader("X-Forwarded-For", connettore);
+		
+		return request;
+	}
 
 }

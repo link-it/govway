@@ -303,8 +303,8 @@ public class Common {
 		
 		return request;
 	}
-
-
+	
+	
 	public static HttpRequest buildRequest_UrlInvocazione(String connettore, String erogazione) {
 		// L'espressione regolare sull'erogazione matcha il parametro query govway-testsuite-id_connettore_request.		
 		HttpRequest request = new HttpRequest();

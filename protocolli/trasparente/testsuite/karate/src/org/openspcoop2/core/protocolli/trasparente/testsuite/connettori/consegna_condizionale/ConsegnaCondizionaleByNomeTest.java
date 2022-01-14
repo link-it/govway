@@ -60,10 +60,13 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  *  
  *   TODO: Provare nei test caratteri unicode strani, tipo le emoticon 😛
  *   TODO: Aggiungere nei test il connettore disabilitato e rilevare il 400
+ *   
  *   TODO: Per ogni test aggiungi un set di richieste per cui fallisce l'identificazione, 
  *   			un set di richieste per cui il connettore non viene trovato
  *   			e un set di richieste che vanno sul connettore disabilitato
- *   TODO: Test XForwardedFor con più headers appartenenti alla stessa classe
+ *   
+ *   TODO: Test XForwardedFor con più headers appartenenti alla stessa classe, ne deve essere scelto uno a caso
+ *   
  *   TODO: Il test identificazioneFallita, ripetilo anche sulle singole erogazioni oltre che sulle regole
  *   
  *   Non vengono fatti test di case sensitivity sui valori in quanto i valori di parametri query, headers http
