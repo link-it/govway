@@ -535,11 +535,11 @@ public class ConditionalUtils  {
 				msgDiag.addKeyword(CostantiPdD.KEY_NOME_CONNETTORE, nomeConnettoreDaUsare);
 				if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType)) {
 					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
-							"connettoriMultipli.consegnaCondizionale.connettoreNotificaDefault");
+							"connettoriMultipli.consegnaCondizionale.nessunConnettoreIdentificato.connettoreNotificaDefault");
 				}
 				else {
 					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
-							"connettoriMultipli.consegnaCondizionale.connettoreDefault");
+							"connettoriMultipli.consegnaCondizionale.nessunConnettoreIdentificato.connettoreDefault");
 				}
 				
 				return result;
