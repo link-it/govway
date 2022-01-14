@@ -36,8 +36,10 @@ import org.openspcoop2.core.statistiche.constants.TipoReport;
 import org.openspcoop2.core.statistiche.constants.TipoStatistica;
 import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
 import org.openspcoop2.generic_project.expression.SortOrder;
+import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.web.monitor.core.bean.AbstractDateSearchForm;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
@@ -165,8 +167,72 @@ public class StatsSearchForm extends BaseSearchForm{
 		return this.dataFineDellaRicerca;
 	}
 
+	
+	@Override
+	public List<SelectItem> getEsitiGruppo() {
+		if(this.tipoStatistica!=null && this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_ERRORI)) {
+		
+			ArrayList<SelectItem> list = new ArrayList<SelectItem>();
+			try{
+				EsitoUtils esitoUtils = new EsitoUtils(StatsSearchForm.log, getSafeProtocol());
+				//list.add(new SelectItem(EsitoUtils.ALL_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_VALUE,false)));
+				list.add(new SelectItem(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE,false)));
+				list.add(new SelectItem(EsitoUtils.ALL_ERROR_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_ERROR_VALUE,false)));
+				list.add(new SelectItem(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE,false)));
+				list.add(new SelectItem(EsitoUtils.ALL_ERROR_CONSEGNA_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_ERROR_CONSEGNA_VALUE,false)));
+				list.add(new SelectItem(EsitoUtils.ALL_ERROR_RICHIESTE_SCARTATE_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_ERROR_RICHIESTE_SCARTATE_VALUE,false)));
+				//list.add(new SelectItem(EsitoUtils.ALL_OK_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_OK_VALUE,false)));
+				list.add(new SelectItem(EsitoUtils.ALL_PERSONALIZZATO_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_PERSONALIZZATO_VALUE,false)));
+		
+				return list;
+			}catch(Exception e){
+				StatsSearchForm.log.error("Errore durante il recupero della lista dei gruppi di esito "+e.getMessage(),e);
+				throw new RuntimeException(e.getMessage(),e);
+			}
+			
+		}
+		else {
+			return super.getEsitiGruppo();
+		}
+	}
+	
 	public List<SelectItem> getEsitiDettaglio() {
+		if(this.tipoStatistica!=null && this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_ERRORI)) {
+			if(EsitoUtils.ALL_VALUE == this.getEsitoGruppo() || EsitoUtils.ALL_OK_VALUE == this.getEsitoGruppo()){
+				this.setEsitoGruppo(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE);
+			}
+		}
+		
 		return super.getEsitiDettaglio(true);
+	}
+	
+	@Override
+	protected List<Integer> getEsitiOrderLabel() throws Exception {
+		if(this.tipoStatistica!=null && this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_ERRORI)) {
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(StatsSearchForm.log, getSafeProtocol());
+			List<Integer> esiti = esitiProperties.getEsitiCodeOrderLabel(); // mantengo l'ordine
+			List<Integer> esitiOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
+			if(esiti!=null && !esiti.isEmpty()) {
+				List<Integer> esitiErrori = new ArrayList<Integer>();
+				for (Integer esito : esiti) {
+					boolean found = false;
+					for (Integer esitoOk : esitiOk) {
+						if(esito.intValue() == esitoOk.intValue()) {
+							found = true;
+							break;
+						}
+					}
+					if(!found) {
+						esitiErrori.add(esito);
+					}
+				}
+				return esitiErrori;
+			}
+			return esiti;
+		}
+		else {
+			return super.getEsitiOrderLabel();
+		}
 	}
 	
 	public List<SelectItem> getEsitiDettagliPersonalizzati() {
@@ -931,4 +997,5 @@ public class StatsSearchForm extends BaseSearchForm{
 	public boolean isShowUnitaTempoPersonalizzato() {
 		return !this.isShowUnitaTempo() && this.isPeriodoPersonalizzato();
 	}
+
 }

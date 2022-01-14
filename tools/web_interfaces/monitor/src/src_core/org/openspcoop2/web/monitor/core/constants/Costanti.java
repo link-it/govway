@@ -106,6 +106,8 @@ public class Costanti {
 	/* costanti properties file messages_it.properties*/ 
 	
 	public static final String DATA_LABEL_KEY = "commons.data.label";
+	public static final String ESITO_LABEL_KEY = "commons.esito.label";
+	public static final String DESCRIZIONE_LABEL_KEY = "commons.descrizione.label";
 	public static final String AZIONE_LABEL_KEY = "commons.azione.label";
 	public static final String SERVIZIO_APPLICATIVO_LABEL_KEY = "commons.applicativo.label";
 	public static final String API_LABEL_KEY = "commons.api.label";

@@ -403,6 +403,13 @@ public class PddMonitorProperties {
 		return null;
 	}
 	
+	public List<String> getStatisticheForceIndexDistribuzioneErroriGroupBy(Properties externalRepository) throws Exception{
+		return this.getIndexList("statistiche.forceIndex.distribuzioneErrori.groupBy", externalRepository);
+	}
+	public List<String> getStatisticheForceIndexDistribuzioneErroriCount(Properties externalRepository) throws Exception{
+		return this.getIndexList("statistiche.forceIndex.distribuzioneErrori.count", externalRepository);
+	}
+	
 	public List<String> getStatisticheForceIndexDistribuzioneSoggettoGroupBy(Properties externalRepository) throws Exception{
 		return this.getIndexList("statistiche.forceIndex.distribuzioneSoggetto.groupBy", externalRepository);
 	}
@@ -680,15 +687,17 @@ public class PddMonitorProperties {
 			// se sono definiti dei nodi tramite aliases uso quelli
 			ConfigurazioneNodiRuntime config = getConfigurazioneNodiRuntime();
 			
-			List<String> listaAliases = config.getAliases();
-			if(listaAliases!=null && !listaAliases.isEmpty()) {
-				if(listaAliases.size()>1) {
-					lista = listaAliases;
-				}
-				else {
-					String alias = listaAliases.get(0);
-					if(!SondaPddStatus.GATEWAY_DEFAULT.equals(alias) && !SondaPddStatus.ALIAS_DEFAULT.equals(alias)) {
+			if(config!=null) {
+				List<String> listaAliases = config.getAliases();
+				if(listaAliases!=null && !listaAliases.isEmpty()) {
+					if(listaAliases.size()>1) {
 						lista = listaAliases;
+					}
+					else {
+						String alias = listaAliases.get(0);
+						if(!SondaPddStatus.GATEWAY_DEFAULT.equals(alias) && !SondaPddStatus.ALIAS_DEFAULT.equals(alias)) {
+							lista = listaAliases;
+						}
 					}
 				}
 			}

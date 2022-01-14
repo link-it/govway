@@ -87,6 +87,7 @@ public class AnalisiStatisticaBean implements Serializable {
 
 			this.tipiDistribuzione.add(new SelectItem(CostantiGrafici.TIPO_DISTRIBUZIONE_TEMPORALE, MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TEMPORALE_LABEL_KEY))); 
 			this.tipiDistribuzione.add(new SelectItem(CostantiGrafici.TIPO_DISTRIBUZIONE_ESITI, MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_ESITI_LABEL_KEY)));
+			this.tipiDistribuzione.add(new SelectItem(CostantiGrafici.TIPO_DISTRIBUZIONE_ERRORI, MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_ERRORI_LABEL_KEY)));
 			this.tipiDistribuzione.add(new SelectItem(CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO, MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO_LABEL_KEY)));
 			this.tipiDistribuzione.add(new SelectItem(CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE, MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE_LABEL_KEY)));
 			this.tipiDistribuzione.add(new SelectItem(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO, MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SERVIZIO_LABEL_KEY)));
@@ -132,6 +133,15 @@ public class AnalisiStatisticaBean implements Serializable {
 		gruppoEsiti.setListaAnalisiStatistica(listaAnalisiGruppoEsiti);
 		this.tipiAnalisiStatistica.add(gruppoEsiti);
 
+		
+		GruppoAnalisiStatistica gruppoErrori = new GruppoAnalisiStatistica();
+		gruppoErrori.setLabel(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_ERRORI_LABEL_KEY));
+		List<AnalisiStatistica> listaAnalisiGruppoErrori = new ArrayList<>();
+		listaAnalisiGruppoErrori.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_ERRORI,CostantiGrafici.TIPO_REPORT_BAR_CHART,TipoReport.BAR_CHART));
+		listaAnalisiGruppoErrori.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_ERRORI,CostantiGrafici.TIPO_REPORT_PIE_CHART,TipoReport.PIE_CHART));
+		listaAnalisiGruppoErrori.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_ERRORI,CostantiGrafici.TIPO_REPORT_TABELLA,TipoReport.TABELLA));
+		gruppoErrori.setListaAnalisiStatistica(listaAnalisiGruppoErrori);
+		this.tipiAnalisiStatistica.add(gruppoErrori);
 
 		GruppoAnalisiStatistica gruppoSoggettoRemoto = new GruppoAnalisiStatistica();
 		gruppoSoggettoRemoto.setLabel(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO_LABEL_KEY));
@@ -241,6 +251,9 @@ public class AnalisiStatisticaBean implements Serializable {
 			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_ESITI)) {
 				//				this.search = getBean(CostantiGrafici.SEARCH_DISTRIBUZIONE_ESITI, StatsSearchForm.class);
 				((AndamentoTemporaleBean) this.mBean).initSearchListenerDistribuzionePerEsiti(ae); 
+			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_ERRORI)) {
+				((DistribuzionePerErroriBean<?>) this.mBean).getSearch().initSearchListener(ae);
+				//				this.search = getBean(CostantiGrafici.SEARCH_DISTRIBUZIONE_ERRORI, StatsSearchForm.class);
 			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO)) {
 				((DistribuzionePerSoggettoBean<?>) this.mBean).initSearchListenerRemoto(ae);
 				//				this.search = getBean(CostantiGrafici.SEARCH_DISTRIBUZIONE_SOGGETTO_REMOTO, StatsSearchForm.class);
@@ -280,7 +293,10 @@ public class AnalisiStatisticaBean implements Serializable {
 			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_ESITI)) {
 				this.mBean = getBean(CostantiGrafici.MBEAN_DISTRIBUZIONE_ESITI, AndamentoTemporaleBean.class);
 				//				this.search = getBean(CostantiGrafici.SEARCH_DISTRIBUZIONE_ESITI, StatsSearchForm.class);
-			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO)) {
+			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_ERRORI)) {
+				this.mBean = getBean(CostantiGrafici.MBEAN_DISTRIBUZIONE_ERRORI, DistribuzionePerErroriBean.class);
+				//				this.search = getBean(CostantiGrafici.SEARCH_DISTRIBUZIONE_ERRORI, StatsSearchForm.class);
+			}  else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO)) {
 				this.mBean = getBean(CostantiGrafici.MBEAN_DISTRIBUZIONE_SOGGETTO_REMOTO, DistribuzionePerSoggettoBean.class);
 				//				this.search = getBean(CostantiGrafici.SEARCH_DISTRIBUZIONE_SOGGETTO_REMOTO, StatsSearchForm.class);
 			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE)) {
@@ -313,6 +329,9 @@ public class AnalisiStatisticaBean implements Serializable {
 			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_ESITI)) {
 				//				this.search = getBean(CostantiGrafici.SEARCH_DISTRIBUZIONE_ESITI, StatsSearchForm.class);
 				((AndamentoTemporaleBean) this.mBean).initSearchListenerDistribuzionePerEsiti(null); 
+			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_ERRORI)) {
+				((DistribuzionePerErroriBean<?>) this.mBean).getSearch().initSearchListener(null);
+				//				this.search = getBean(CostantiGrafici.SEARCH_DISTRIBUZIONE_ERRORI, StatsSearchForm.class);
 			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO)) {
 				((DistribuzionePerSoggettoBean<?>) this.mBean).initSearchListenerRemoto(null);
 				//				this.search = getBean(CostantiGrafici.SEARCH_DISTRIBUZIONE_SOGGETTO_REMOTO, StatsSearchForm.class);
@@ -433,6 +452,8 @@ public class AnalisiStatisticaBean implements Serializable {
 				return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TEMPORALE_LABEL_KEY);
 			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_ESITI)) {
 				return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_ESITI_LABEL_KEY);
+			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_ERRORI)) {
+				return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_ERRORI_LABEL_KEY);
 			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO)) {
 				return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO_LABEL_KEY);
 			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE)) {

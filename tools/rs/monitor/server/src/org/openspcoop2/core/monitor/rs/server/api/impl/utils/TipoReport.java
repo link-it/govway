@@ -33,6 +33,7 @@ public enum TipoReport {
 
 	temporale(CostantiExporter.TIPO_DISTRIBUZIONE_TEMPORALE),
 	esiti(CostantiExporter.TIPO_DISTRIBUZIONE_ESITI),
+	errori(CostantiExporter.TIPO_DISTRIBUZIONE_ERRORI),
 	soggetto_remoto(CostantiExporter.TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO),
 	soggetto_locale(CostantiExporter.TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE),
 	api(CostantiExporter.TIPO_DISTRIBUZIONE_SERVIZIO),

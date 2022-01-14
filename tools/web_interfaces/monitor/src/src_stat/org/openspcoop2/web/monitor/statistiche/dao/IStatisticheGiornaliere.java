@@ -45,6 +45,11 @@ public interface IStatisticheGiornaliere extends IService<ResBase, Integer>,ILiv
 	public List<Res> findAllAndamentoTemporale(int start, int limit) throws ServiceException;
 	public int countAllAndamentoTemporale() throws ServiceException;
 	
+	//Distribuzione Per Errori
+	public List<ResDistribuzione> findAllDistribuzioneErrori() throws ServiceException;
+	public List<ResDistribuzione> findAllDistribuzioneErrori(int start, int limit) throws ServiceException;
+	public int countAllDistribuzioneErrori() throws ServiceException;
+	
 	//Distribuzione Per Soggetto
 	public List<ResDistribuzione> findAllDistribuzioneSoggetto() throws ServiceException;
 	public List<ResDistribuzione> findAllDistribuzioneSoggetto(int start, int limit) throws ServiceException;

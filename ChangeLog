@@ -1,3 +1,12 @@
+2022-01-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor, ApiRsMonitoraggio]
+	Aggiunta funzionalità OP-1317
+	Aggiunto tra i report statistici una distribuzione per errori.
+	È stato inoltre corretto l'OpenAPI dell'Api di Monitoraggio creato al momento del primo startup del Gateway:
+	- aggiunta enumeration 'ModI' tra i profili utilizzabili;
+	- modificato tipo associato ad un identificativo di un documento da NCName a string.
+
 2022-01-13  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovwayConsole]

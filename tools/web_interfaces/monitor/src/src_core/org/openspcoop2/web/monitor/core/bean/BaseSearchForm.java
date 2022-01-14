@@ -1597,13 +1597,19 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		return list;
 	}
 
+	protected List<Integer> getEsitiOrderLabel() throws Exception {
+		EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log, getSafeProtocol());
+		List<Integer> esiti = esitiProperties.getEsitiCodeOrderLabel();
+		return esiti;
+	}
+	
 	public List<SelectItem> getEsitiDettagliPersonalizzati(boolean statistiche) {
 		try{
 			ArrayList<SelectItem> list = new ArrayList<SelectItem>();
 
 			EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log, getSafeProtocol());
 
-			List<Integer> esiti = esitiProperties.getEsitiCodeOrderLabel();
+			List<Integer> esiti = getEsitiOrderLabel();
 
 			for (Integer esito : esiti) {
 

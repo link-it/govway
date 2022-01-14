@@ -31,7 +31,7 @@ import javax.validation.Valid;
 public class ListaRiepilogoApi extends Lista {
   
   @Schema(required = true, description = "")
-  private List<RiepilogoApiItem> items = new ArrayList<RiepilogoApiItem>();
+  private List<RiepilogoApiItem> items = new ArrayList<>();
  /**
    * Get items
    * @return items

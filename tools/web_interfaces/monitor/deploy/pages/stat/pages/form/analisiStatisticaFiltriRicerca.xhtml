@@ -43,6 +43,13 @@
 				           	</ui:include>
 						</c:if>
 						
+						<c:if test="#{analisiStatisticaBean.tipoDistribuzione == 'errori'}">
+							<ui:include src="/stat/includes/searchFormDistribErrori.xhtml">
+				               	<ui:param name="mBean" value="#{analisiStatisticaBean.mBean}" />
+				               	<ui:param name="search" value="#{mBean.search}" />
+				           	</ui:include>
+						</c:if>
+						
 						<c:if test="#{analisiStatisticaBean.tipoDistribuzione == 'soggetto_remoto' or analisiStatisticaBean.tipoDistribuzione == 'soggetto_locale'}">
 							<ui:include src="/stat/includes/searchFormDistribSoggetto.xhtml">
 				               	<ui:param name="mBean" value="#{analisiStatisticaBean.mBean}" />

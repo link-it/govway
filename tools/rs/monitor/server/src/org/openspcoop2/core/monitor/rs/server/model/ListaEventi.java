@@ -31,7 +31,7 @@ import javax.validation.Valid;
 public class ListaEventi extends ListaSenzaTotale {
   
   @Schema(required = true, description = "")
-  private List<Evento> items = new ArrayList<Evento>();
+  private List<Evento> items = new ArrayList<>();
  /**
    * Get items
    * @return items

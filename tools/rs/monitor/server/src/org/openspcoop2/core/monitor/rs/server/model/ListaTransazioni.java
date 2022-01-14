@@ -31,7 +31,7 @@ import javax.validation.Valid;
 public class ListaTransazioni extends ListaSenzaTotale {
   
   @Schema(required = true, description = "")
-  private List<ItemTransazione> items = new ArrayList<ItemTransazione>();
+  private List<ItemTransazione> items = new ArrayList<>();
  /**
    * Get items
    * @return items

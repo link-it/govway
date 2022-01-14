@@ -31,6 +31,7 @@ import javax.faces.application.Application;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 
 /**
@@ -100,6 +101,7 @@ public class MessageManager {
 			text = bundle.getString(key);
 		} catch(MissingResourceException e){
 			text = "?? key " + key + " not found ??";
+			LoggerWrapperFactory.getLogger(MessageManager.class).error(text,e);
 		}
 		if(params != null){
 			MessageFormat mf = new MessageFormat(text, locale);
@@ -129,7 +131,7 @@ public class MessageManager {
 				if(viewRoot != null)
 					locale = viewRoot.getLocale();
 			}
-		}catch(Exception e){}
+		}catch(Throwable e){}
 
 		if(locale == null){
 			locale = ApplicationBean.getInstance().getLocale();

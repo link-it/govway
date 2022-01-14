@@ -186,6 +186,32 @@
 		<value>#{statisticheGiornaliereService}</value>
 	</managed-property>
 </managed-bean>
+
+ <managed-bean>
+	<managed-bean-name>distribuzionePerErroriBean</managed-bean-name>
+	<managed-bean-class>org.openspcoop2.web.monitor.statistiche.mbean.DistribuzionePerErroriBean</managed-bean-class>
+ 	<managed-bean-scope>request</managed-bean-scope>
+ 	<managed-property>
+  		<property-name>service</property-name>
+  		<property-class>org.openspcoop2.web.monitor.statistiche.dao.IStatisticheGiornaliere</property-class>
+  		<value>#{statisticheGiornaliereService}</value>
+ 	</managed-property>
+ 	<managed-property>
+  		<property-name>search</property-name>
+  		<property-class>org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm</property-class>
+  		<value>#{distribuzioneErroriSearchForm}</value>
+	</managed-property>
+</managed-bean>
+<managed-bean>
+	<managed-bean-name>distribuzionePerErroriDM</managed-bean-name>
+	<managed-bean-class>org.openspcoop2.web.monitor.statistiche.datamodel.DistribuzioneErroriDM</managed-bean-class>
+	<managed-bean-scope>request</managed-bean-scope>
+	<managed-property>
+	 	<property-name>dataProvider</property-name>
+	 	<property-class>org.openspcoop2.web.monitor.statistiche.dao.IStatisticheGiornaliere</property-class>
+		<value>#{statisticheGiornaliereService}</value>
+	</managed-property>
+</managed-bean>
  
   <managed-bean>
 	<managed-bean-name>configurazioniDM</managed-bean-name>
@@ -252,12 +278,29 @@
 			<from-outcome>distribAzioneGrafico</from-outcome>
 			<to-view-id>/stat/pages/form/distribAzioneGrafico.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>distribErroriGrafico</from-outcome>
+			<to-view-id>/stat/pages/form/distribErroriGrafico.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
  
 	 	<!-- Andamento Temporale grafico -->
 	<navigation-rule>
 		<from-view-id>/stat/pages/form/andamentoTemporaleGrafico.xhtml</from-view-id>
    		<navigation-case>
+   			<from-outcome>analisiStatisticaStart</from-outcome>
+   			<to-view-id>/stat/pages/form/analisiStatistica.xhtml</to-view-id>
+  		</navigation-case>
+		<navigation-case>
+			<from-outcome>analisiStatistica</from-outcome>
+			<to-view-id>/stat/pages/form/analisiStatisticaFiltriRicerca.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- Distribuzione Errori grafico -->
+ 	<navigation-rule>
+		<from-view-id>/stat/pages/form/distribErroriGrafico.xhtml</from-view-id>
+		<navigation-case>
    			<from-outcome>analisiStatisticaStart</from-outcome>
    			<to-view-id>/stat/pages/form/analisiStatistica.xhtml</to-view-id>
   		</navigation-case>

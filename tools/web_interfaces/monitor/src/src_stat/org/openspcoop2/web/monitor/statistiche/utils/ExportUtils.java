@@ -138,6 +138,11 @@ public class ExportUtils {
 		}
 		else{
 			switch (tipoStatistica) {
+			case DISTRIBUZIONE_ERRORI:
+				headerValueCategory = "parent_0";
+				headerValueLabel =  MessageManager.getInstance().getMessage(Costanti.DESCRIZIONE_LABEL_KEY);
+				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()));
+				break;
 			case DISTRIBUZIONE_AZIONE:
 				headerValueCategory = "parent_0";
 				headerValueLabel =  MessageManager.getInstance().getMessage(Costanti.API_LABEL_KEY);
@@ -272,6 +277,11 @@ public class ExportUtils {
 		}
 		else{
 			switch (tipoStatistica) {
+			case DISTRIBUZIONE_ERRORI:
+				headerValueCategory = "parent_0";
+				headerValueLabel =  MessageManager.getInstance().getMessage(Costanti.DESCRIZIONE_LABEL_KEY);
+				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));	
+				break;
 			case DISTRIBUZIONE_AZIONE:
 				headerValueCategory = "parent_0";
 				headerValueLabel =  MessageManager.getInstance().getMessage(Costanti.API_LABEL_KEY);
@@ -409,6 +419,12 @@ public class ExportUtils {
 		}
 		else{
 			switch (tipoStatistica) {
+			case DISTRIBUZIONE_ERRORI:
+				headerValueCategory = "parent_0";
+				headerValueLabel =  MessageManager.getInstance().getMessage(Costanti.DESCRIZIONE_LABEL_KEY);
+				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setStretchWithOverflow(false)
+						.addProperty(JasperProperty.PRINT_KEEP_FULL_TEXT, "true"));
+				break;
 			case DISTRIBUZIONE_AZIONE:
 				headerValueCategory = "parent_0";
 				headerValueLabel =  MessageManager.getInstance().getMessage(Costanti.API_LABEL_KEY);
@@ -1189,6 +1205,9 @@ public class ExportUtils {
 		header.add("nome");
 
 		switch (tipoStatistica) {
+		case DISTRIBUZIONE_ERRORI:
+			header.add("parent_0");
+			break;
 		case DISTRIBUZIONE_AZIONE:
 			header.add("parent_0");
 			header.add("parent_1");

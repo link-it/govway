@@ -136,9 +136,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	private Integer timeoutRicerche = null;
 
 	private static final String FALSA_UNION_DEFAULT_VALUE = "gbyfake";
+	private static final Integer FALSA_UNION_DEFAULT_VALUE_INT = -99999;
 	private static final Integer FALSA_UNION_DEFAULT_VALUE_VERSIONE = 1;
 
 	private StatsSearchForm andamentoTemporaleSearch;
+	private StatsSearchForm distribErroriSearch;
 	private StatsSearchForm distribSoggettoSearch;
 	private StatsSearchForm distribServizioSearch;
 	private StatsSearchForm distribAzioneSearch;
@@ -353,6 +355,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		this.andamentoTemporaleSearch = andamentoTemporaleSearch;
 	}
 
+	public void setDistribErroriSearch(StatsSearchForm distribErroriSearch) {
+		this.distribErroriSearch = distribErroriSearch;
+	}
+	
 	public void setDistribSoggettoSearch(StatsSearchForm distribSoggettoSearch) {
 		this.distribSoggettoSearch = distribSoggettoSearch;
 	}
@@ -372,6 +378,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	public void setStatistichePersonalizzateSearch(
 			StatistichePersonalizzateSearchForm statistichePersonalizzateSearch) {
 		this.statistichePersonalizzateSearch = statistichePersonalizzateSearch;
+	}
+	
+	public StatsSearchForm getDistribErroriSearch() {
+		return this.distribErroriSearch;
 	}
 	
 	public StatsSearchForm getDistribSoggettoSearch() {
@@ -2243,6 +2253,656 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		return new ResLive(Long.valueOf("0"), Long.valueOf("0"), Long.valueOf("0"));
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// ********** DISTRIBUZIONE PER ERRORI ******************
+	
+	@Override
+	public int countAllDistribuzioneErrori() throws ServiceException {
+		try {
+			StatisticType tipologia = this.distribErroriSearch.getModalitaTemporale();
+			StatisticaModel model = null;
+			IServiceSearchWithoutId<?> dao = null;
+
+			switch (tipologia) {
+			case GIORNALIERA:
+				model = StatisticaGiornaliera.model().STATISTICA_BASE;
+				dao = this.statGiornaliereSearchDAO;
+				break;
+			case MENSILE:
+				model = StatisticaMensile.model().STATISTICA_BASE;
+				dao = this.statMensileSearchDAO;
+				break;
+			case ORARIA:
+				model = StatisticaOraria.model().STATISTICA_BASE;
+				dao = this.statOrariaSearchDAO;
+				break;
+			case SETTIMANALE:
+				model = StatisticaSettimanale.model().STATISTICA_BASE;
+				dao = this.statSettimanaleSearchDAO;
+				break;
+			}
+			List<Index> forceIndexes = null;
+			try{
+				forceIndexes = 
+						this.convertForceIndexList(model, 
+								this.govwayMonitorProperties.getStatisticheForceIndexDistribuzioneErroriCount(this.govwayMonitorProperties.getExternalForceIndexRepository()));
+			}catch(Exception e){
+				throw new ServiceException(e.getMessage(),e);
+			}
+			
+			IExpression gByExpr = createDistribuzioneErroriExpression(dao, model, true);
+			
+			if(forceIndexes!=null && forceIndexes.size()>0){
+				for (Index index : forceIndexes) {
+					gByExpr.addForceIndex(index);	
+				}
+			}
+			
+			NonNegativeNumber nnn = dao.count(gByExpr);
+
+			return nnn != null ? Long.valueOf(nnn.longValue()).intValue() : 0;
+		} catch (ServiceException e) {
+			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			throw e;
+		} catch (NotImplementedException e) {
+			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			throw new ServiceException(e);
+		} catch (Exception e) {
+			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			throw new ServiceException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public List<ResDistribuzione> findAllDistribuzioneErrori() throws ServiceException {
+		return this.executeDistribuzioneErrori(null, null);
+	}
+	@Override
+	public List<ResDistribuzione> findAllDistribuzioneErrori(int start, int limit) throws ServiceException {
+		return this.executeDistribuzioneErrori(start, limit);
+	}
+
+	private IExpression createDistribuzioneErroriExpression(IServiceSearchWithoutId<?> dao, StatisticaModel model, boolean isCount) throws ServiceException {
+		IExpression expr = null;
+
+		StatisticheGiornaliereService.log.debug("creo Expression per distribuzione Errori!");
+
+		List<Soggetto> listaSoggettiGestione = this.distribErroriSearch.getSoggettiGestione();
+
+		try {
+
+			EsitoUtils esitoUtils = new EsitoUtils(StatisticheGiornaliereService.log, this.distribErroriSearch.getProtocollo());
+
+			expr = dao.newExpression();
+			// Data
+			expr.between(model.DATA,
+					this.distribErroriSearch.getDataInizio(),
+					this.distribErroriSearch.getDataFine());
+			
+			// Record validi
+			StatisticheUtils.selezionaRecordValidi(expr, model);
+
+			// Protocollo
+			String protocollo = null;
+			// aggiungo la condizione sul protocollo se e' impostato e se e' presente piu' di un protocollo
+			// protocollo e' impostato anche scegliendo la modalita'
+//				if (StringUtils.isNotEmpty(this.distribErroriSearch.getProtocollo()) && this.distribErroriSearch.isShowListaProtocolli()) {
+			if (this.distribErroriSearch.isSetFiltroProtocollo()) {
+				//				expr.and().equals(model.PROTOCOLLO,	this.distribErroriSearch.getProtocollo());
+				protocollo = this.distribErroriSearch.getProtocollo();
+
+				impostaTipiCompatibiliConProtocollo(dao, model, expr, protocollo, this.distribErroriSearch.getTipologiaRicercaEnum());
+
+			}
+
+			// permessi utente operatore
+			if(this.distribErroriSearch.getPermessiUtenteOperatore()!=null){
+				IExpression permessi = this.distribErroriSearch.getPermessiUtenteOperatore().toExpression(dao, model.ID_PORTA, 
+						model.TIPO_DESTINATARIO,model.DESTINATARIO,
+						model.TIPO_SERVIZIO,model.SERVIZIO, model.VERSIONE_SERVIZIO);
+				expr.and(permessi);
+			}
+			
+			// soggetto locale
+			if(Utility.isFiltroDominioAbilitato() && this.distribErroriSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.distribErroriSearch.getSoggettoLocale()) && 
+					!"--".equals(this.distribErroriSearch.getSoggettoLocale())){
+				String tipoSoggettoLocale = this.distribErroriSearch.getTipoSoggettoLocale();
+				String nomeSoggettoLocale = this.distribErroriSearch.getSoggettoLocale();
+				String idPorta = Utility.getIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale);
+				expr.and().equals(model.ID_PORTA, idPorta);
+			}
+
+			// esito
+			int esitoGruppo = EsitoUtils.ALL_ERROR_VALUE;
+			if(this.distribErroriSearch.getEsitoGruppo()!=null) {
+				int esito = this.distribErroriSearch.getEsitoGruppo();
+				if(EsitoUtils.ALL_VALUE == esitoGruppo) {
+					// non compatibile con questa distribuzione
+				}
+				else if(EsitoUtils.ALL_OK_VALUE == esitoGruppo) {
+					// non compatibile con questa distribuzione
+				}
+				else {
+					esitoGruppo = esito;
+				}
+			}
+			
+			esitoUtils.setExpression(expr, esitoGruppo, 
+					this.distribErroriSearch.getEsitoDettaglio(),
+					this.distribErroriSearch.getEsitoDettaglioPersonalizzato(),
+					this.distribErroriSearch.getEsitoContesto(),
+					this.distribErroriSearch.isEscludiRichiesteScartate(),
+					model.ESITO, model.ESITO_CONTESTO,
+					dao.newExpression());
+
+			// ho 3 diversi tipi di query in base alla tipologia di ricerca
+
+			// imposto il soggetto (loggato) come mittente o destinatario in
+			// base
+			// alla tipologia di ricerca selezionata
+			if (this.distribErroriSearch.getTipologiaRicercaEnum() == null || TipologiaRicerca.all.equals(this.distribErroriSearch.getTipologiaRicercaEnum())) {
+				// il soggetto loggato puo essere mittente o destinatario
+				// se e' selezionato "trafficoPerSoggetto" allora il nome
+				// del
+				// soggetto selezionato va messo come complementare
+
+				boolean trafficoSoggetto = StringUtils
+						.isNotBlank(this.distribErroriSearch
+								.getTrafficoPerSoggetto());
+				boolean soggetto = listaSoggettiGestione.size() > 0;
+				String tipoTrafficoSoggetto = null;
+				String nomeTrafficoSoggetto = null;
+				if (trafficoSoggetto) {
+					tipoTrafficoSoggetto = this.distribErroriSearch
+							.getTipoTrafficoPerSoggetto();
+					nomeTrafficoSoggetto = this.distribErroriSearch
+							.getTrafficoPerSoggetto();
+				}
+
+				IExpression e1 = dao.newExpression();
+				IExpression e2 = dao.newExpression();
+
+				// se trafficoSoggetto e soggetto sono impostati allora devo
+				// fare la
+				// OR
+				if (trafficoSoggetto && soggetto) {
+					expr.and();
+
+					if (listaSoggettiGestione.size() > 0) {
+						IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
+						                                           .size()];
+						IExpression[] orSoggetti2 = new IExpression[listaSoggettiGestione
+						                                            .size()];
+
+						int i = 0;
+						for (Soggetto sog : listaSoggettiGestione) {
+							IExpression se = dao.newExpression();
+							IExpression se2 = dao.newExpression();
+							se.equals(model.TIPO_MITTENTE,
+									sog.getTipoSoggetto());
+							se.and().equals(model.MITTENTE,
+									sog.getNomeSoggetto());
+							orSoggetti[i] = se;
+
+							se2.equals(model.TIPO_DESTINATARIO,
+									sog.getTipoSoggetto());
+							se2.and().equals(
+									model.DESTINATARIO,
+									sog.getNomeSoggetto());
+							orSoggetti2[i] = se2;
+
+							i++;
+						}
+						e1.or(orSoggetti);
+						e2.or(orSoggetti2);
+					}
+
+					e1.and().equals(model.TIPO_DESTINATARIO,
+							tipoTrafficoSoggetto);
+					e1.and().equals(model.DESTINATARIO,
+							nomeTrafficoSoggetto);
+
+					e2.and().equals(model.TIPO_MITTENTE,
+							tipoTrafficoSoggetto);
+					e2.and().equals(model.MITTENTE,
+							nomeTrafficoSoggetto);
+
+					// OR
+					expr.or(e1, e2);
+				} else if (trafficoSoggetto && !soggetto) {
+					// il mio soggetto non e' stato impostato (soggetto in
+					// gestione,
+					// puo succedero solo in caso admin)
+					expr.and();
+
+					e1.equals(model.TIPO_DESTINATARIO,
+							tipoTrafficoSoggetto);
+					e1.and().equals(model.DESTINATARIO,
+							nomeTrafficoSoggetto);
+
+					e2.equals(model.TIPO_MITTENTE,
+							tipoTrafficoSoggetto);
+					e2.and().equals(model.MITTENTE,
+							nomeTrafficoSoggetto);
+					// OR
+					expr.or(e1, e2);
+				} else if (!trafficoSoggetto && soggetto) {
+					// e' impostato solo il soggetto in gestione
+					expr.and();
+
+					if (listaSoggettiGestione.size() > 0) {
+						IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
+						                                           .size()];
+						IExpression[] orSoggetti2 = new IExpression[listaSoggettiGestione
+						                                            .size()];
+
+						int i = 0;
+						for (Soggetto sog : listaSoggettiGestione) {
+							IExpression se = dao.newExpression();
+							IExpression se2 = dao.newExpression();
+							se.equals(model.TIPO_MITTENTE,
+									sog.getTipoSoggetto());
+							se.and().equals(model.MITTENTE,
+									sog.getNomeSoggetto());
+							orSoggetti[i] = se;
+
+							se2.equals(model.TIPO_DESTINATARIO,
+									sog.getTipoSoggetto());
+							se2.and().equals(
+									model.DESTINATARIO,
+									sog.getNomeSoggetto());
+							orSoggetti2[i] = se2;
+
+							i++;
+						}
+						e1.or(orSoggetti);
+						e2.or(orSoggetti2);
+					}
+
+					// OR
+					expr.or(e1, e2);
+				} else {
+					// nessun filtro da impostare
+				}
+
+			} else if (TipologiaRicerca.ingresso.equals(this.distribErroriSearch.getTipologiaRicercaEnum())) {
+				// EROGAZIONE
+				expr.and().notEquals(model.TIPO_PORTA,
+						"delegata");
+
+				// il mittente e' l'utente loggato (sempre presente se non
+				// sn admin)
+				if (listaSoggettiGestione.size() > 0) {
+					expr.and();
+
+					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
+					                                           .size()];
+					int i = 0;
+					for (Soggetto soggetto : listaSoggettiGestione) {
+						IExpression se = dao.newExpression();
+						se.equals(model.TIPO_DESTINATARIO,
+								soggetto.getTipoSoggetto());
+						se.and().equals(model.DESTINATARIO,
+								soggetto.getNomeSoggetto());
+						orSoggetti[i] = se;
+						i++;
+					}
+					expr.or(orSoggetti);
+				}
+
+				// il destinatario puo nn essere specificato
+				if (StringUtils.isNotBlank(this.distribErroriSearch
+						.getNomeMittente())) {
+					expr.and().equals(model.TIPO_MITTENTE,
+							this.distribErroriSearch.getTipoMittente());
+					expr.and().equals(model.MITTENTE,
+							this.distribErroriSearch.getNomeMittente());
+				}
+
+			} else {
+				// FRUIZIONE
+				expr.and().notEquals(model.TIPO_PORTA,
+						"applicativa");
+
+				// il mittente e' l'utente loggato (sempre presente se non
+				// sn admin)
+				if (listaSoggettiGestione.size() > 0) {
+					expr.and();
+
+					IExpression[] orSoggetti = new IExpression[listaSoggettiGestione
+					                                           .size()];
+					int i = 0;
+					for (Soggetto soggetto : listaSoggettiGestione) {
+						IExpression se = dao.newExpression();
+						se.equals(model.TIPO_MITTENTE,
+								soggetto.getTipoSoggetto());
+						se.and().equals(model.MITTENTE,
+								soggetto.getNomeSoggetto());
+						orSoggetti[i] = se;
+						i++;
+					}
+					expr.or(orSoggetti);
+				}
+
+				// il destinatario puo nn essere specificato
+				if (StringUtils.isNotBlank(this.distribErroriSearch
+						.getNomeDestinatario())) {
+					expr.and().equals(model.TIPO_DESTINATARIO,
+							this.distribErroriSearch.getTipoDestinatario());
+					expr.and().equals(model.DESTINATARIO,
+							this.distribErroriSearch.getNomeDestinatario());
+				}
+			}
+
+			// azione
+			if (StringUtils.isNotBlank(this.distribErroriSearch
+					.getNomeAzione()))
+				expr.and().equals(model.AZIONE,
+						this.distribSoggettoSearch.getNomeAzione());
+			
+			// nome servizio  e tipo
+			if (StringUtils.isNotBlank(this.distribErroriSearch.getNomeServizio())){
+				
+				IDServizio idServizio = ParseUtility.parseServizioSoggetto(this.distribErroriSearch.getNomeServizio());
+				
+				expr.and().
+					equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
+					equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
+					equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
+					equals(model.SERVIZIO,	idServizio.getNome()).
+					equals(model.VERSIONE_SERVIZIO, idServizio.getVersione()); 
+
+			}
+			
+			this.impostaFiltroDatiMittente(expr, this.distribErroriSearch, model, isCount); 
+			
+			this.impostaFiltroGruppo(expr, this.distribErroriSearch, model, isCount);
+			
+			this.impostaFiltroApi(expr, this.distribErroriSearch, model, isCount);
+
+			this.impostaFiltroIdClusterOrCanale(expr, this.distribErroriSearch, model, isCount);
+			
+			expr.addGroupBy(model.ESITO);
+
+		} catch (ServiceException e) {
+			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			throw e;
+		} catch (NotImplementedException e) {
+			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			throw new ServiceException(e);
+		} catch (ExpressionNotImplementedException e) {
+			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			throw new ServiceException(e);
+		} catch (ExpressionException e) {
+			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			throw new ServiceException(e);
+		} catch (CoreException e) {
+			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+		} catch (Exception e) {
+			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+		}
+
+		return expr;
+	}
+
+	private List<ResDistribuzione> executeDistribuzioneErrori(Integer start, Integer limit) throws ServiceException {
+		try {
+			StatisticType tipologia = this.distribErroriSearch.getModalitaTemporale();
+			StatisticaModel model = null;
+//			IServiceSearchWithoutId<?> dao = null;
+
+			switch (tipologia) {
+			case GIORNALIERA:
+				model = StatisticaGiornaliera.model().STATISTICA_BASE;
+				this.dao = this.statGiornaliereSearchDAO;
+				break;
+			case MENSILE:
+				model = StatisticaMensile.model().STATISTICA_BASE;
+				this.dao = this.statMensileSearchDAO;
+				break;
+			case ORARIA:
+				model = StatisticaOraria.model().STATISTICA_BASE;
+				this.dao = this.statOrariaSearchDAO;
+				break;
+			case SETTIMANALE:
+				model = StatisticaSettimanale.model().STATISTICA_BASE;
+				this.dao = this.statSettimanaleSearchDAO;
+				break;
+			}
+			
+			IExpression gByExpr = this.createDistribuzioneErroriExpression(this.dao,	model, false);
+
+			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.ESITO);
+
+			List<Index> forceIndexes = null;
+			try{
+				forceIndexes = 
+						this.convertForceIndexList(model, 
+								this.govwayMonitorProperties.getStatisticheForceIndexDistribuzioneErroriGroupBy(this.govwayMonitorProperties.getExternalForceIndexRepository()));
+			}catch(Exception e){
+				throw new ServiceException(e.getMessage(),e);
+			}
+			
+			if(forceIndexes!=null && forceIndexes.size()>0){
+				for (Index index : forceIndexes) {
+					gByExpr.addForceIndex(index);	
+				}
+			}
+			
+			UnionExpression unionExpr = new UnionExpression(gByExpr);
+			String aliasFieldEsito = "esito";
+			
+			unionExpr.addSelectField(model.ESITO,		aliasFieldEsito);
+
+			// Espressione finta per usare l'ordinamento
+			IExpression fakeExpr = this.dao.newExpression();
+			UnionExpression unionExprFake = new UnionExpression(fakeExpr);
+			unionExprFake.addSelectField(new ConstantField(aliasFieldEsito, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_INT,
+					model.ESITO.getFieldType()), aliasFieldEsito);
+			
+			Union union = new Union();
+			union.setUnionAll(true);
+			union.addField(aliasFieldEsito);
+			union.addGroupBy(aliasFieldEsito);
+
+			TipoVisualizzazione tipoVisualizzazione = this.distribErroriSearch.getTipoVisualizzazione();
+			String sommaAliasName = "somma";
+			String datoParamAliasName = "dato";
+			switch (tipoVisualizzazione) {
+			case DIMENSIONE_TRANSAZIONI:
+
+				TipoBanda tipoBanda = this.distribErroriSearch.getTipoBanda();
+
+				union.addOrderBy(sommaAliasName,SortOrder.DESC);
+				union.addField(sommaAliasName, Function.SUM, datoParamAliasName);
+
+				switch (tipoBanda) {
+				case COMPLESSIVA:
+					unionExpr.addSelectFunctionField(new FunctionField(
+							model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,
+							Function.SUM, datoParamAliasName));
+					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_complessiva",
+							Integer.valueOf(0), model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()), Function.SUM, datoParamAliasName));
+					break;
+				case INTERNA:
+					unionExpr.addSelectFunctionField(new FunctionField(
+							model.DIMENSIONI_BYTES_BANDA_INTERNA,
+							Function.SUM, datoParamAliasName));
+					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_interna",
+							Integer.valueOf(0), model.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()), Function.SUM, datoParamAliasName));
+					break;
+				case ESTERNA:
+					unionExpr.addSelectFunctionField(new FunctionField(
+							model.DIMENSIONI_BYTES_BANDA_ESTERNA,
+							Function.SUM, datoParamAliasName));
+					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_esterna",
+							Integer.valueOf(0), model.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()), Function.SUM, datoParamAliasName));
+					break;
+				}
+				break;
+
+			case NUMERO_TRANSAZIONI:
+				union.addOrderBy(sommaAliasName,SortOrder.DESC);
+				union.addField(sommaAliasName, Function.SUM, datoParamAliasName);
+				unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("numero_transazioni",
+						Integer.valueOf(0), model.NUMERO_TRANSAZIONI.getFieldType()), Function.SUM, datoParamAliasName));
+
+				unionExpr.addSelectFunctionField(new FunctionField(
+						model.NUMERO_TRANSAZIONI, Function.SUM,
+						datoParamAliasName));
+				break;
+
+			case TEMPO_MEDIO_RISPOSTA:{
+
+				TipoLatenza tipoLatenza = this.distribErroriSearch.getTipoLatenza();
+
+				union.addOrderBy(sommaAliasName,SortOrder.DESC);
+				union.addField(sommaAliasName, Function.AVG, datoParamAliasName);
+
+				switch (tipoLatenza) {
+				case LATENZA_PORTA:
+					fakeExpr.isNotNull(model.LATENZA_PORTA);
+					gByExpr.isNotNull(model.LATENZA_PORTA);
+					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta",
+							Integer.valueOf(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, datoParamAliasName));
+
+					unionExpr.addSelectFunctionField(new FunctionField(
+							model.LATENZA_PORTA,
+							Function.AVG, datoParamAliasName));
+					break;
+				case LATENZA_SERVIZIO:
+					fakeExpr.isNotNull(model.LATENZA_SERVIZIO);
+					gByExpr.isNotNull(model.LATENZA_SERVIZIO);
+					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio", 
+							Integer.valueOf(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, datoParamAliasName));
+
+					unionExpr.addSelectFunctionField(new FunctionField(
+							model.LATENZA_SERVIZIO,
+							Function.AVG, datoParamAliasName));
+					break;
+
+				case LATENZA_TOTALE:
+				default:
+					fakeExpr.isNotNull(model.LATENZA_TOTALE);
+					gByExpr.isNotNull(model.LATENZA_TOTALE);
+					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale",
+							Integer.valueOf(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, datoParamAliasName));
+
+					unionExpr.addSelectFunctionField(new FunctionField(
+							model.LATENZA_TOTALE,
+							Function.AVG, datoParamAliasName));
+					break;
+				}
+				break;
+			}
+			}
+
+			ArrayList<ResDistribuzione> res = new ArrayList<ResDistribuzione>();
+
+			if(start != null)
+				union.setOffset(start);
+			if(start != null)
+				union.setLimit(limit);
+
+			this.timeoutEvent = false;
+			
+			List<Map<String, Object>> list = null;
+			if(this.timeoutRicerche == null) {
+				list = this.dao.union(union, unionExpr, unionExprFake);
+			} else {
+				try {
+					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.union(union, unionExpr, unionExprFake)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
+				} catch (InterruptedException e) {
+					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+				} catch (ExecutionException e) {
+					if(e.getCause() instanceof NotFoundException) {
+						throw (NotFoundException) e.getCause();
+					}
+					if(e.getCause() instanceof ServiceException) {
+						throw (ServiceException) e.getCause();
+					}
+					if(e.getCause() instanceof NotImplementedException) {
+						throw (NotImplementedException) e.getCause();
+					}
+					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+				} catch (TimeoutException e) {
+					this.timeoutEvent = true;
+					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+				}
+			}
+			if (list != null) {
+
+				EsitiProperties esitiProperties = null;
+				try {
+					esitiProperties = EsitiProperties.getInstance(StatisticheGiornaliereService.log, this.distribErroriSearch.getProtocollo());
+				}catch(Throwable t) {
+					StatisticheGiornaliereService.log.error("EsitiProperties reader non disponibile: "+t.getMessage(), t);
+				}
+								
+				// List<Object[]> list = q.getResultList();
+				for (Map<String, Object> row : list) {
+
+					ResDistribuzione r = new ResDistribuzione();
+					
+					int esito = ((Integer) row.get(aliasFieldEsito));
+					if(esito == StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_INT) {
+						continue;
+					} 	
+					
+					try {
+						r.setRisultato(esitiProperties.getEsitoLabel(esito));
+					}catch(Throwable t) {
+						r.setRisultato("Esito '"+esito+"'");
+						StatisticheGiornaliereService.log.error("Traduzione esito '"+esito+"' non riuscita: "+t.getMessage(), t);
+					}
+					
+					try {
+						r.getParentMap().put("0",esitiProperties.getEsitoDescription(esito));
+					}catch(Throwable t) {
+						r.getParentMap().put("0","");
+						StatisticheGiornaliereService.log.error("Traduzione esito '"+esito+"' in descrizione non riuscita: "+t.getMessage(), t);
+					}
+						
+					Number somma = StatsUtils.converToNumber(row.get(sommaAliasName));
+					if(somma!=null){
+						r.setSomma(somma);
+					}else{
+						r.setSomma(0);
+					}
+
+					res.add(r);
+				}
+
+			}
+
+			return res;
+
+		} catch (ServiceException e) {
+			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			throw e;
+		} catch (NotImplementedException e) {
+			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			throw new ServiceException(e);
+		} catch (ExpressionNotImplementedException e) {
+			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			throw new ServiceException(e);
+		} catch (ExpressionException e) {
+			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			throw new ServiceException(e);
+		} catch (NotFoundException e) {
+			StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente.");
+		}
+		return new ArrayList<ResDistribuzione>();
+	}
+	
+	
 	
 	
 	
