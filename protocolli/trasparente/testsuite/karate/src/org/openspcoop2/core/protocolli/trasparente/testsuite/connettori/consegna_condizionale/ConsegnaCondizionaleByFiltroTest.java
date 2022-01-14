@@ -26,6 +26,7 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.l
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_1;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_2;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_3;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_DISABILITATO;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.connettoriAbilitati;
 
 import java.util.ArrayList;
@@ -92,6 +93,14 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 					Common.buildRequests_HeaderHttp(filtriConnettori.get(connettore), erogazione));
 		});
 		
+		HttpRequest requestIdentificazioneFallita = Common.buildRequest_Semplice(erogazione);
+		HttpRequest requestConnettoreNonTrovato = Common.buildRequest_HeaderHttp("ConnettoreInesistente", erogazione);
+		HttpRequest requestConnettoreDisabilitato = Common.buildRequest_HeaderHttp(CONNETTORE_DISABILITATO, erogazione);
+		
+		requestsByConnettore.put(Common.CONNETTORE_DISABILITATO,List.of(requestConnettoreDisabilitato));
+		requestsByConnettore.put(Common.CONNETTORE_ID_FALLITA,List.of(requestIdentificazioneFallita));
+		requestsByConnettore.put(Common.CONNETTORE_ID_NON_TROVATO,List.of(requestConnettoreNonTrovato));
+		
 		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
 		matchResponsesByConnettore(responsesByConnettore);
 	}
@@ -134,8 +143,15 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 					Common.buildRequests_UrlInvocazione(filtriConnettori.get(connettore), erogazione));
 		});
 		
-		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
+		HttpRequest requestIdentificazioneFallita = Common.buildRequest_Semplice(erogazione);
+		HttpRequest requestConnettoreNonTrovato = Common.buildRequest_UrlInvocazione("ConnettoreInesistente", erogazione);
+		HttpRequest requestConnettoreDisabilitato = Common.buildRequest_UrlInvocazione(CONNETTORE_DISABILITATO, erogazione);
 		
+		requestsByConnettore.put(Common.CONNETTORE_DISABILITATO,List.of(requestConnettoreDisabilitato));
+		requestsByConnettore.put(Common.CONNETTORE_ID_FALLITA,List.of(requestIdentificazioneFallita));
+		requestsByConnettore.put(Common.CONNETTORE_ID_NON_TROVATO,List.of(requestConnettoreNonTrovato));
+		
+		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
 		matchResponsesByConnettore(responsesByConnettore);
 	}
 	
@@ -153,8 +169,15 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 					Common.buildRequests_ParametroUrl(filtriConnettori.get(connettore), erogazione));
 		});
 		
-		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
+		HttpRequest requestIdentificazioneFallita = Common.buildRequest_Semplice(erogazione);
+		HttpRequest requestConnettoreNonTrovato = Common.buildRequest_ParametroUrl("ConnettoreInesistente", erogazione);
+		HttpRequest requestConnettoreDisabilitato = Common.buildRequest_ParametroUrl(CONNETTORE_DISABILITATO, erogazione);
 		
+		requestsByConnettore.put(Common.CONNETTORE_DISABILITATO,List.of(requestConnettoreDisabilitato));
+		requestsByConnettore.put(Common.CONNETTORE_ID_FALLITA,List.of(requestIdentificazioneFallita));
+		requestsByConnettore.put(Common.CONNETTORE_ID_NON_TROVATO,List.of(requestConnettoreNonTrovato));
+		
+		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
 		matchResponsesByConnettore(responsesByConnettore);
 	}
 
@@ -171,8 +194,15 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 					Common.buildRequests_Contenuto(filtriConnettori.get(connettore), erogazione));
 		});
 		
-		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
+		HttpRequest requestIdentificazioneFallita = Common.buildRequest_Semplice(erogazione);
+		HttpRequest requestConnettoreNonTrovato = Common.buildRequest_Contenuto("ConnettoreInesistente", erogazione);
+		HttpRequest requestConnettoreDisabilitato = Common.buildRequest_Contenuto(CONNETTORE_DISABILITATO, erogazione);
 		
+		requestsByConnettore.put(Common.CONNETTORE_DISABILITATO,List.of(requestConnettoreDisabilitato));
+		requestsByConnettore.put(Common.CONNETTORE_ID_FALLITA,List.of(requestIdentificazioneFallita));
+		requestsByConnettore.put(Common.CONNETTORE_ID_NON_TROVATO,List.of(requestConnettoreNonTrovato));
+		
+		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
 		matchResponsesByConnettore(responsesByConnettore);
 	}
 	
@@ -190,8 +220,15 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 					Common.buildRequests_Template(filtriConnettori.get(connettore), erogazione));
 		});
 		
-		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
+		HttpRequest requestIdentificazioneFallita = Common.buildRequest_Semplice(erogazione);
+		HttpRequest requestConnettoreNonTrovato = Common.buildRequest_Template("ConnettoreInesistente", erogazione);
+		HttpRequest requestConnettoreDisabilitato = Common.buildRequest_Template(CONNETTORE_DISABILITATO, erogazione);
 		
+		requestsByConnettore.put(Common.CONNETTORE_DISABILITATO,List.of(requestConnettoreDisabilitato));
+		requestsByConnettore.put(Common.CONNETTORE_ID_FALLITA,List.of(requestIdentificazioneFallita));
+		requestsByConnettore.put(Common.CONNETTORE_ID_NON_TROVATO,List.of(requestConnettoreNonTrovato));
+		
+		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
 		matchResponsesByConnettore(responsesByConnettore);
 	}
 	
@@ -208,8 +245,15 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 					Common.buildRequests_FreemarkerTemplate(filtriConnettori.get(connettore), erogazione));
 		});
 		
-		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
+		HttpRequest requestIdentificazioneFallita = Common.buildRequest_Semplice(erogazione);
+		HttpRequest requestConnettoreNonTrovato = Common.buildRequest_FreemarkerTemplate("ConnettoreInesistente", erogazione);
+		HttpRequest requestConnettoreDisabilitato = Common.buildRequest_FreemarkerTemplate(CONNETTORE_DISABILITATO, erogazione);
 		
+		requestsByConnettore.put(Common.CONNETTORE_DISABILITATO,List.of(requestConnettoreDisabilitato));
+		requestsByConnettore.put(Common.CONNETTORE_ID_FALLITA,List.of(requestIdentificazioneFallita));
+		requestsByConnettore.put(Common.CONNETTORE_ID_NON_TROVATO,List.of(requestConnettoreNonTrovato));
+		
+		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
 		matchResponsesByConnettore(responsesByConnettore);
 	}
 
@@ -226,8 +270,15 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 					Common.buildRequests_VelocityTemplate(filtriConnettori.get(connettore), erogazione));
 		});
 		
-		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
+		HttpRequest requestIdentificazioneFallita = Common.buildRequest_Semplice(erogazione);
+		HttpRequest requestConnettoreNonTrovato = Common.buildRequest_VelocityTemplate("ConnettoreInesistente", erogazione);
+		HttpRequest requestConnettoreDisabilitato = Common.buildRequest_VelocityTemplate(CONNETTORE_DISABILITATO, erogazione);
 		
+		requestsByConnettore.put(Common.CONNETTORE_DISABILITATO,List.of(requestConnettoreDisabilitato));
+		requestsByConnettore.put(Common.CONNETTORE_ID_FALLITA,List.of(requestIdentificazioneFallita));
+		requestsByConnettore.put(Common.CONNETTORE_ID_NON_TROVATO,List.of(requestConnettoreNonTrovato));
+		
+		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
 		matchResponsesByConnettore(responsesByConnettore);
 	}
 	
@@ -267,10 +318,14 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		});
 		
 		
-		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
+		HttpRequest requestIdentificazioneFallita = Common.buildRequest_Semplice(erogazione);
+		HttpRequest requestConnettoreNonTrovato = Common.buildRequest_ForwardedFor("ConnettoreInesistente", erogazione);
+		HttpRequest requestConnettoreDisabilitato = Common.buildRequest_ForwardedFor(CONNETTORE_DISABILITATO, erogazione);
 		
-		matchResponsesByConnettore(responsesByConnettore);
-		
+		requestsByConnettore.put(Common.CONNETTORE_DISABILITATO,List.of(requestConnettoreDisabilitato));
+		requestsByConnettore.put(Common.CONNETTORE_ID_FALLITA,List.of(requestIdentificazioneFallita));
+		requestsByConnettore.put(Common.CONNETTORE_ID_NON_TROVATO,List.of(requestConnettoreNonTrovato));
+	
 	}
 
 	
@@ -371,12 +426,26 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 	}
 
 
+	// Verifico che le risposte sotto una certa chiave siano finite tutte sotto lo stesso
+	// connettore che corrisponde alla chiave.
+	
 	private void matchResponsesByConnettore(Map<String, List<HttpResponse>> responsesByConnettore) {
 		for (String connettore : responsesByConnettore.keySet()) {
+			
 			var responses = responsesByConnettore.get(connettore);
-			for (var resp: responses) {
-				assertEquals(200,resp.getResultHTTPOperation());
-				assertEquals(connettore, resp.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
+			
+			if (connettore.equals(CONNETTORE_DISABILITATO) || 
+				connettore.equals(Common.CONNETTORE_ID_FALLITA) || 
+				connettore.equals(Common.CONNETTORE_ID_NON_TROVATO)) {
+				
+				for (var response : responses) {
+					assertEquals(400,response.getResultHTTPOperation());
+				}
+			} else {			
+				for (var resp: responses) {
+					assertEquals(200,resp.getResultHTTPOperation());
+					assertEquals(connettore, resp.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
+				}
 			}
 		}
 	}

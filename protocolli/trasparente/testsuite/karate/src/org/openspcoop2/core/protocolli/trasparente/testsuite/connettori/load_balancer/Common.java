@@ -424,4 +424,19 @@ public class Common {
 		assertEquals(restoRequests,nDiPiu);
 	}
 
+
+	public static String CONNETTORE_ID_FALLITA = "ConnettoreIdentificazioneFallita";
+	public static String CONNETTORE_ID_NON_TROVATO = "ConnettoreNessunConnettoreTrovato";
+
+
+	public static HttpRequest buildRequest_ForwardedFor(String connettore, String erogazione) throws UtilsException {
+		HttpRequest request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-xforwarded-for"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
+		request.addHeader("X-Forwarded-For", connettore);
+		
+		return request;
+	}
+
 }

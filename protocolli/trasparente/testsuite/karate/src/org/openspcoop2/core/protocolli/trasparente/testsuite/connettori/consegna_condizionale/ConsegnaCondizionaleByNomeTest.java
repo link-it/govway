@@ -58,6 +58,9 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  *	
  *   Invio N batch (per ora 1) di 15 richieste parallele, tre per connettore. Verifico che ciascuna richiesta
  *   raggiunga il connettore deisderato. In questo modo simulo un pattern di richieste verosimile.
+ *   Faccio anche tre batch di richieste che ottengono 400, il test non è in grado di distinguere tra i casi
+ *   di identificazione fallita, connettore non trovato o connettore disabilitato, quello che ci interessa in questi
+ *   test è che la consegna condizionale avvenga correttamente sotto un carico di lavoro realistico.
  *  
  *   TODO: Provare nei test caratteri unicode strani, tipo le emoticon 😛
  *    *   
@@ -66,6 +69,16 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  * 
  */
 public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
+	
+	public static List<String> connettoriTestati = List
+			.of(CONNETTORE_0,
+				CONNETTORE_1, 
+				CONNETTORE_2,
+				CONNETTORE_3,
+				Common.CONNETTORE_ID_FALLITA,
+				Common.CONNETTORE_ID_NON_TROVATO,
+				CONNETTORE_DISABILITATO);
+	
 	
 	@Test
 	public void headerHttp() {
@@ -194,18 +207,6 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		assertTrue(oneOrTheOther);
 	}
 	
-	
-	static String CONNETTORE_ID_FALLITA = "ConnettoreIdentificazioneFallita"; 
-	static String CONNETTORE_ID_NON_TROVATO = "ConnettoreNessunConnettoreTrovato";
-	
-	static List<String> connettoriTestati = List
-			.of(CONNETTORE_0,
-				CONNETTORE_1, 
-				CONNETTORE_2,
-				CONNETTORE_3,
-				CONNETTORE_ID_FALLITA,
-				CONNETTORE_ID_NON_TROVATO,
-				CONNETTORE_DISABILITATO);
 	
 	@Test
 	public void urlInvocazione() {
@@ -701,8 +702,8 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 			
 			
 			if (connettoreRichiesta.equals(CONNETTORE_DISABILITATO) 
-					|| connettoreRichiesta.equals(CONNETTORE_ID_FALLITA) 
-					|| connettoreRichiesta.equals(CONNETTORE_ID_NON_TROVATO)) {
+					|| connettoreRichiesta.equals(Common.CONNETTORE_ID_FALLITA) 
+					|| connettoreRichiesta.equals(Common.CONNETTORE_ID_NON_TROVATO)) {
 				
 				for (var response : responsesByConnettore.get(i)) {
 					assertEquals(400,response.getResultHTTPOperation());
