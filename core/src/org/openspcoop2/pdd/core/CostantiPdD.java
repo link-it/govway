@@ -795,6 +795,7 @@ public class CostantiPdD {
     public final static String PREFIX_HTTP_STATUS_CODE_IN = "In=";
     public final static String PREFIX_HTTP_STATUS_CODE_OUT = "Out=";
     public final static String PREFIX_API = "API=";
+    public final static String PREFIX_CONNETTORI_MULTIPLI = "Async=";
     
     
     public final static String PREFIX_MESSAGGIO_CONNETTORE_MULTIPLO = "gw-";

@@ -141,6 +141,31 @@ public class PostOutResponseHandler_TransazioneUtilities {
 		}
 		return connettoriMultipli;
 	}
+	public static String getConnettoriMultipli(PostOutResponseContext context) {
+		String connettoriMultipli = null;
+		if(context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI_BY_ID)) {
+			Object oConnettori = context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI_BY_ID );
+			if (oConnettori!=null && oConnettori instanceof List){
+				List<?> l = (List<?>) oConnettori;
+				if(!l.isEmpty()) {
+					StringBuilder sb = new StringBuilder();
+					for (Object object : l) {
+						if(object!=null && object instanceof String) {
+							String s = (String) object;
+							if(sb.length()>0) {
+								sb.append(",");
+							}
+							sb.append(s);
+						}
+					}
+					if(sb.length()>0) {
+						return sb.toString();
+					}
+				}
+			}
+		}
+		return connettoriMultipli;
+	}
 	
 	public Transazione fillTransaction(PostOutResponseContext context,
 			Transaction transaction,
@@ -1280,6 +1305,18 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			}
 			if(op2Properties.isTransazioniTipoApiAsEvent() && transactionDTO.getTipoApi()>0) {
 				String evento = CostantiPdD.PREFIX_API+transactionDTO.getTipoApi();
+				String dbValue = AbstractCredenzialeList.getDBValue(evento);
+				if(count+dbValue.length()<maxLengthCredenziali) {
+					eventiGestione.add( evento );
+					count = count+dbValue.length();
+				}
+				else {
+					// tronco gli eventi ai primi trovati. Sono troppi eventi successi sulla transazione.
+				}
+			}
+			String consegneMultipleById = getConnettoriMultipli(context);
+			if(op2Properties.isTransazioniConnettoriMultipliAsEvent() && consegneMultipleById!=null) {
+				String evento = CostantiPdD.PREFIX_CONNETTORI_MULTIPLI+consegneMultipleById;
 				String dbValue = AbstractCredenzialeList.getDBValue(evento);
 				if(count+dbValue.length()<maxLengthCredenziali) {
 					eventiGestione.add( evento );

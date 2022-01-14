@@ -22409,6 +22409,28 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isTransazioniTipoApiAsEvent;
 	}
 	
+	private static Boolean isTransazioniConnettoriMultipliAsEvent = null;
+	public boolean isTransazioniConnettoriMultipliAsEvent() {	
+		if(OpenSPCoop2Properties.isTransazioniConnettoriMultipliAsEvent==null){
+			String pName = "org.openspcoop2.pdd.transazioni.connettoriMultipliAsEvent";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniConnettoriMultipliAsEvent = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isTransazioniConnettoriMultipliAsEvent = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniConnettoriMultipliAsEvent;
+	}
+	
 	private static Boolean isTransazioniRegistrazioneSlowLog = null;
 	public boolean isTransazioniRegistrazioneSlowLog() {	
 		if(OpenSPCoop2Properties.isTransazioniRegistrazioneSlowLog==null){

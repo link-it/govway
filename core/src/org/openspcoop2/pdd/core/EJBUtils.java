@@ -40,6 +40,7 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
 import org.openspcoop2.core.id.IDServizio;
@@ -1781,6 +1782,12 @@ public class EJBUtils {
 
 			/* ----- Registro destinatari messaggi e spedizione messaggi ----- */
 			if(behaviour_idSA_SyncResponder==null && (behaviour==null || !registraNuoviMessaggiViaBehaviour)){
+				
+				List<String> serviziApplicativiAbilitatiById = DriverConfigurazioneDB.normalizeConnettoriMultpliById(serviziApplicativiAbilitati, pa);
+				if(serviziApplicativiAbilitatiById!=null && !serviziApplicativiAbilitatiById.isEmpty()) {
+					this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI_BY_ID, serviziApplicativiAbilitatiById);
+				}
+				
 				_sendMessageToServiziApplicativi(serviziApplicativiAbilitati, soggettiRealiMappatiInUnSoggettoVirtuale, 
 						richiestaApplicativa, localForwardRichiestaDelegata, gestoreMessaggi, busta, pa, repositoryBuste,
 						null,null,stateless,this.openSPCoopState,false,
@@ -1833,6 +1840,10 @@ public class EJBUtils {
 						throw new EJBUtilsConsegnaException(this.msgDiag,MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI,"behaviour.servizioApplicativoNonDefinito");
 					}
 					
+					List<String> serviziApplicativiAbilitatiForwardToNormalizedById = DriverConfigurazioneDB.normalizeConnettoriMultpliById(serviziApplicativiAbilitatiForwardTo, pa);
+					if(serviziApplicativiAbilitatiForwardToNormalizedById!=null && !serviziApplicativiAbilitatiForwardToNormalizedById.isEmpty()) {
+						this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI_BY_ID, serviziApplicativiAbilitatiForwardToNormalizedById);
+					}
 					this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI, serviziApplicativiAbilitatiForwardTo.size());
 										
 					String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);

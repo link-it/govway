@@ -437,6 +437,9 @@ public class TransazioneBean extends Transazione{
 		String tmp = this.getEventiGestione();
 		if(tmp!=null){
 			tmp = tmp.trim();
+			if(tmp.contains(CostantiPdD.PREFIX_CONNETTORI_MULTIPLI)) {
+				tmp = tmp.replace(CostantiPdD.PREFIX_CONNETTORI_MULTIPLI, "");
+			}
 			if(tmp.contains(",")){
 				String [] split = tmp.split(",");
 				if(split!=null && split.length>0){

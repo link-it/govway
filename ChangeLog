@@ -1,5 +1,12 @@
 2022-01-14  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore, GovWayMonitor]
+	Aggiunta funzionalità OP-1319
+	In caso di consegna multipla è stata aggiunta alla transazione l'informazione riguardante i nomi dei connettori selezionati.
+	Tale informazione è ricercabile tramite la console di monitoraggio utilizzando la casella 'Eventi'.
+
+2022-01-14  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Differenziato diagnostico emesso in caso di consegna condizionale configurata per utilizzare un connettore di default 
 	sia nel caso di estrazione della condizione fallita che in caso di individuazione di un connettore tramite la condizione estratta dalla richiesta.

@@ -29,6 +29,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -33097,5 +33098,41 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			}
 		}
 		
+	}
+	
+	
+	public static List<String> normalizeConnettoriMultpliById(List<String> sa, PortaApplicativa pa){
+		
+		if(pa==null || pa.getBehaviour()==null || pa.sizeServizioApplicativoList()<=0) {
+			return null;
+		}
+		
+		List<String> lId = new ArrayList<String>();
+		Map<String, String> m = new HashMap<String, String>();
+		for (String s : sa) {
+			for (PortaApplicativaServizioApplicativo pasa : pa.getServizioApplicativoList()) {
+				if(pasa.getNome().equals(s)) {
+					if(pasa.getId()==null || pasa.getId()<=0) {
+						return null;
+					}
+					long id = pasa.getId();
+					String nomeConnettore = CostantiConfigurazione.NOME_CONNETTORE_DEFAULT;
+					if(pasa!=null && pasa.getDatiConnettore()!=null && pasa.getDatiConnettore().getNome()!=null) {
+						nomeConnettore = pasa.getDatiConnettore().getNome();
+					}
+					lId.add(id+"");
+					m.put(id+"",nomeConnettore);
+					break;
+				}
+			}
+		}
+		
+		List<String> sorted = new ArrayList<String>();
+		Collections.sort(lId);
+		for (String sId : lId) {
+			sorted.add(m.get(sId));
+		}
+		
+		return sorted;
 	}
 }
