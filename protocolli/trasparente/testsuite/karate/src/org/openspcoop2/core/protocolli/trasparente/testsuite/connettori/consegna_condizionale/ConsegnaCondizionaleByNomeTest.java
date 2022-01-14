@@ -62,11 +62,12 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  *   di identificazione fallita, connettore non trovato o connettore disabilitato, quello che ci interessa in questi
  *   test è che la consegna condizionale avvenga correttamente sotto un carico di lavoro realistico.
  *  
- *   TODO: Provare nei test caratteri unicode strani, tipo le emoticon 😛
- *    *   
+ * 
+ *
  *   Non vengono fatti test di case sensitivity sui valori in quanto i valori di parametri query, headers http
  *   e contenuto della richiesta sono tutti case sensitive.
  * 
+ * 	TODO: SoapActionConsegnaCondizionaleByNome SoapActionConsegnaCondizionaleByFiltro SoapActionLoadBalancingConsegnaCondizionale 
  */
 public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	
@@ -612,50 +613,41 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 
 
 	
+	@Test
 	public void unicode() throws UtilsException {
 		
 		// Connettori:
 		//	😛😛 => Connettore0
 		//  ΛΛ => Connettore1
 		
-		// TODO: La console consente caratteri unicode nei filtri, ma poi viene dato 400 quando si cerca di usarli
 		final String erogazione = "ConsegnaCondizionaleUnicode";
 		
-/*		HttpRequest requestHeaderHttp = new HttpRequest();
-		requestHeaderHttp.setMethod(HttpRequestMethod.GET);
-		requestHeaderHttp.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-header-http"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
-		requestHeaderHttp.addHeader(HEADER_CONDIZIONE, "😛😛");
-		
-		var response = HttpUtilities.httpInvoke(requestHeaderHttp);
-		assertEquals(200, response.getResultHTTPOperation());
-		assertEquals(CONNETTORE_0, response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));*/
-		
 		final String content = "{ \"id_connettore_request\": \"😛😛\" }";
+		final String content2 = "{ \"id_connettore_request\": \"ΛΛ\" }";
+
 		
-		HttpRequest requestContenuto = new HttpRequest();
-		requestContenuto.setMethod(HttpRequestMethod.POST);
-		requestContenuto.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-contenuto"
+		HttpRequest request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.POST);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-contenuto"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
-		requestContenuto.setContentType("application/json");
-		requestContenuto.setContent(content.getBytes());
+		request.setContentType("application/json");
+		request.setContent(content.getBytes());
 		
-		var responseContenuto = HttpUtilities.httpInvoke(requestContenuto);
-		assertEquals(200, responseContenuto.getResultHTTPOperation());
-		assertEquals(CONNETTORE_0, responseContenuto.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
-		
-		// La freemarker template la riprovo sullo header per vedere se funge
-		HttpRequest requestFreemarkerTemplate = new HttpRequest();
-		requestFreemarkerTemplate.setMethod(HttpRequestMethod.GET);
-		requestFreemarkerTemplate.setContentType("application/json");	// TODO: Rimuovere dopo il fix
-		requestFreemarkerTemplate.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-freemarker-template"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
-		requestFreemarkerTemplate.addHeader(HEADER_ID_CONDIZIONE, "😛😛");
-		
-		var response = HttpUtilities.httpInvoke(requestFreemarkerTemplate);
+		var response = HttpUtilities.httpInvoke(request);
 		assertEquals(200, response.getResultHTTPOperation());
 		assertEquals(CONNETTORE_0, response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
 
+		// Forwarded For
+		request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.POST);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-freemarker-template"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
+		request.setContentType("application/json");
+		request.setContent(content2.getBytes());
+		
+		response = HttpUtilities.httpInvoke(request);
+		assertEquals(200, response.getResultHTTPOperation());
+		assertEquals(CONNETTORE_1, response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
 	}
 
 
