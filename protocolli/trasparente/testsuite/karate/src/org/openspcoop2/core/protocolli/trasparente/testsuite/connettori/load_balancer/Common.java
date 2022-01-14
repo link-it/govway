@@ -1,6 +1,28 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * https://govway.org
+ * 
+ * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +45,12 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
-
+/**
+ * Costanti e metodi comuni per i test sui connettori multipli.
+ * 
+ * @author froggo
+ *
+ */
 public class Common {
 	
 	public static final String CONNETTORE_0 = "Connettore0";
@@ -105,7 +132,6 @@ public class Common {
 		.asList(POOL_0, POOL_1, POOL_2);
 	
 
-	// TODO: sostituire List<String> con Set<String> anche in altri posti
 	public static Map<String,List<String>> connettoriPools = Map
 		.of(POOL_0, Arrays.asList(CONNETTORE_0,CONNETTORE_1,CONNETTORE_2, CONNETTORE_DISABILITATO),
 			POOL_1, Arrays.asList(CONNETTORE_1,CONNETTORE_2,CONNETTORE_3, CONNETTORE_DISABILITATO),
@@ -355,6 +381,39 @@ public class Common {
 		} else {
 			return CONNETTORE_ROTTO;
 		}		
+	}
+
+
+	public static void checkRoundRobin(List<HttpResponse> responses, Set<String> connettori) {
+		// A ciascun connettore devono essere arrivate almeno nRequests/nConnettori richieste
+		// (nRequests % nConnettori) connettori hanno una richiesta in più
+		// Tutti i connettori indicati nel secondo parametro devono essere stati raggiunti.		
+		int nRequests = responses.size();
+		int nConnettori = connettori.size();
+		int minRequests = nRequests / nConnettori;
+		int restoRequests = nRequests % nConnettori;
+		int nDiPiu = 0;		// Quanti connettori sono stati raggiunti da al più 
+		
+		var howManys = contaConnettoriUtilizzati(responses);
+		printMap(howManys);
+		
+		for (var connettore : howManys.keySet()) {
+			// Ogni connettore raggiunto deve essere nel set dei connettori
+			assertTrue(connettori.contains(connettore));
+		}
+		
+		for (var connettore : connettori) {
+			// Tutti i connettori devono essere stati raggiunti
+			assertTrue(howManys.containsKey(connettore));
+			int q = howManys.get(connettore);
+			assertTrue(q>=minRequests);
+			assertTrue(q<=minRequests+1);
+			if (q==minRequests+1) {
+				nDiPiu++;
+			}
+		}
+		
+		assertEquals(restoRequests,nDiPiu);
 	}
 
 }

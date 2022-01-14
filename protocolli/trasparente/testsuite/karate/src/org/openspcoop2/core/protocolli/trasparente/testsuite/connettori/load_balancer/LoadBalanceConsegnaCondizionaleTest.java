@@ -27,6 +27,7 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.l
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,9 +52,6 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  * 
  * @author Francesco Scarlato (scarlato@link.it)
  *
- * TODO: Test regole
- * 
- * 
  * La Consegna Condizionale sul Load Balancer identifica l'insieme di connettori
  * che parteciperanno alla strategia di load balancing.
  * 
@@ -466,7 +464,6 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		final String erogazione = "LoadBalanceConsegnaCondizionaleHealthCheck";
 		
 		// In questa erogazione abbiamo riuniti nel PoolRotto il [Connettore2, Connettore3, ConnettoreDisabilitato, ConnettoreRotto]
-		
 		// Contatto il connettore rotto in un pool.
 
 		Map<String,List<HttpRequest>> requestsByPool = new HashMap<>();
@@ -490,9 +487,8 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		assertTrue(howManys.get(Common.CONNETTORE_2) > 0 && howManys.get(Common.CONNETTORE_2) < 3);
 		assertTrue(howManys.get(Common.CONNETTORE_3) > 0 && howManys.get(Common.CONNETTORE_3) < 3);
 		
-		// Mi aspetto di non contattarlo più se cambio filtro, TODO: Come non detto,
-		// cambiando filtro questo viene ricontattato dalla politica di load balancer
-		// Che faccio, inverto il test?
+		// Mi aspetto di ricontattarlo più se cambio filtro
+		// Cambiando filtro questo viene ricontattato dalla politica di load balancer
 		requestsByPool = new HashMap<>();
 		requestsByPool.put(POOL_ROTTO, 
 				Common.buildRequests_HeaderHttp(Arrays.asList("PoolRotto-Filtro1"), erogazione));
@@ -502,9 +498,9 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		howManys = Common.contaConnettoriUtilizzati(responses);
 		Common.printMap(howManys);
 		
-		assertEquals(null, howManys.get(Common.CONNETTORE_ROTTO));
-		assertTrue(howManys.get(Common.CONNETTORE_2) > 0 && howManys.get(Common.CONNETTORE_2) < 3);
-		assertTrue(howManys.get(Common.CONNETTORE_3) > 0 && howManys.get(Common.CONNETTORE_3) < 3);
+		assertEquals(Integer.valueOf(1), howManys.get(Common.CONNETTORE_ROTTO));
+		assertEquals(Integer.valueOf(1), howManys.get(Common.CONNETTORE_2));
+		assertEquals(Integer.valueOf(1), howManys.get(Common.CONNETTORE_3));
 
 		// Attendo che il connettore venga reinserito e mi aspetto di raggiungere nuovamente
 		// il connettore rotto
@@ -527,24 +523,96 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 	
 	@Test
 	public void regole() {
+		 // Regola+FIltro identifica il pool
+		// Uso filtri diversi sulla stessa regola e verifico la condizionalita e il load balancing
+
 		final String erogazione = "LoadBalanceConsegnaCondizionaleRegole";
+
+		Map<String,List<HttpRequest>> requestsByPool = new HashMap<>();
+		requestsByPool.put(Common.POOL_0, Arrays.asList(Common.buildRequest_HeaderHttp("Pool0-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_1, Arrays.asList(Common.buildRequest_HeaderHttp("Pool1-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_2, Arrays.asList(Common.buildRequest_HeaderHttp("Pool2-Filtro0", erogazione)));
 		
-		// Configurazione Filtro Regola Statica: Pool2-Filtro1
-		//	Va sui connettori del pool2
+		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool,15);
+		checkResponses(responsesByPool);
 		
+		requestsByPool = new HashMap<>();
+		requestsByPool.put(Common.POOL_0, Arrays.asList(Common.buildRequest_UrlInvocazione("Pool0-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_1, Arrays.asList(Common.buildRequest_UrlInvocazione("Pool1-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_2, Arrays.asList(Common.buildRequest_UrlInvocazione("Pool2-Filtro0", erogazione)));
+		
+		responsesByPool = makeBatchedRequests(requestsByPool,15);
+		checkResponses(responsesByPool);
+		
+		requestsByPool = new HashMap<>();
+		requestsByPool.put(Common.POOL_0, Arrays.asList(Common.buildRequest_ParametroUrl("Pool0-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_1, Arrays.asList(Common.buildRequest_ParametroUrl("Pool1-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_2, Arrays.asList(Common.buildRequest_ParametroUrl("Pool2-Filtro0", erogazione)));
+		
+		responsesByPool = makeBatchedRequests(requestsByPool,15);
+		checkResponses(responsesByPool);
+		
+		requestsByPool = new HashMap<>();
+		requestsByPool.put(Common.POOL_0, Arrays.asList(Common.buildRequest_Contenuto("Pool0-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_1, Arrays.asList(Common.buildRequest_Contenuto("Pool1-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_2, Arrays.asList(Common.buildRequest_Contenuto("Pool2-Filtro0", erogazione)));
+		
+		responsesByPool = makeBatchedRequests(requestsByPool,15);
+		checkResponses(responsesByPool);
+		
+		requestsByPool = new HashMap<>();
+		requestsByPool.put(Common.POOL_0, Arrays.asList(Common.buildRequest_Template("Pool0-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_1, Arrays.asList(Common.buildRequest_Template("Pool1-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_2, Arrays.asList(Common.buildRequest_Template("Pool2-Filtro0", erogazione)));
+		
+		responsesByPool = makeBatchedRequests(requestsByPool,15);
+		checkResponses(responsesByPool);
+		
+		requestsByPool = new HashMap<>();
+		requestsByPool.put(Common.POOL_0, Arrays.asList(Common.buildRequest_VelocityTemplate("Pool0-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_1, Arrays.asList(Common.buildRequest_VelocityTemplate("Pool1-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_2, Arrays.asList(Common.buildRequest_VelocityTemplate("Pool2-Filtro0", erogazione)));
+		
+		responsesByPool = makeBatchedRequests(requestsByPool,15);
+		checkResponses(responsesByPool);
+		
+		requestsByPool = new HashMap<>();
+		requestsByPool.put(Common.POOL_0, Arrays.asList(Common.buildRequest_FreemarkerTemplate("Pool0-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_1, Arrays.asList(Common.buildRequest_FreemarkerTemplate("Pool1-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_2, Arrays.asList(Common.buildRequest_FreemarkerTemplate("Pool2-Filtro0", erogazione)));
+		
+		responsesByPool = makeBatchedRequests(requestsByPool,15);
+		checkResponses(responsesByPool);
+		
+		// Dalla configurazione, il filtro statico è Pool2-Filtro1, quindi viene attivato
+		// il load balancing sul pool2
 		HttpRequest requestIdentificazioneStatica = new HttpRequest();
 		requestIdentificazioneStatica.setMethod(HttpRequestMethod.GET);
 		requestIdentificazioneStatica.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-statica"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
 		
+		var responses = Common.makeParallelRequests(requestIdentificazioneStatica, 15);
+		for (var r : responses) {
+			assertEquals(200, r.getResultHTTPOperation());
+		}
+		
+		Set<String> connettoriPool2 = new HashSet<>(Common.connettoriPools.get(Common.POOL_2));
+		connettoriPool2.remove(Common.CONNETTORE_DISABILITATO);
+		Common.checkRoundRobin(responses, connettoriPool2);
+
 
 		HttpRequest requestClientIp = new HttpRequest();
 		requestClientIp.setMethod(HttpRequestMethod.GET);
 		requestClientIp.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-client-ip"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
 		
-		// TODO
-		
+		Set<String> connettoriPoolLocalhost = new HashSet<>(Common.connettoriPools.get(Common.POOL_LOCALHOST));
+		connettoriPoolLocalhost.remove(Common.CONNETTORE_DISABILITATO);
+		responses = Common.makeParallelRequests(requestClientIp, 15);
+		for (var r : responses) {
+			assertEquals(200, r.getResultHTTPOperation());
+		}
+		Common.checkRoundRobin(responses, connettoriPoolLocalhost);
 	}
 	
 	
@@ -557,6 +625,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 
 	static void checkResponses(Map<String, List<HttpResponse>> responsesByPool) {
 		for(String pool : responsesByPool.keySet()) {
+			logCore.info("Checking Responses for pool: " + pool);
 			List<HttpResponse> responses = responsesByPool.get(pool);
 			List<String> connettoriPool = Common.connettoriPools.get(pool);
 
@@ -581,10 +650,10 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 			int requests_per_connettore = nrequests / nconnettori;
 			int min_req = Integer.MAX_VALUE;
 			int max_req = Integer.MIN_VALUE;
-			Map<String,Integer> connettoriUtilizzati = contaConnettoriUtilizzati(responses);
-			
-			for(var connettore : connettoriUtilizzati.keySet()) {
-				int n = connettoriUtilizzati.get(connettore);
+			Map<String,Integer> howManys = Common.contaConnettoriUtilizzati(responses);
+			Common.printMap(howManys);
+			for(var connettore : howManys.keySet()) {
+				int n = howManys.get(connettore);
 				assertTrue(n >= requests_per_connettore);
 				if(n<min_req) min_req = n;
 				if(n>max_req) max_req = n;
@@ -642,14 +711,14 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 	}
 
 
-	private static Map<String, Integer> contaConnettoriUtilizzati(List<HttpResponse> responses) {
+	/*private static Map<String, Integer> contaConnettoriUtilizzati(List<HttpResponse> responses) {
 		Map<String,Integer> ret = new HashMap<>();
 		for (var r : responses) {
 			String connettore = r.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE);
 			ret.put(connettore, ret.getOrDefault(connettore, 0) + 1);			
 		}
 		return ret;
-	}
+	}*/
 	
 
 }

@@ -274,7 +274,7 @@ public class SessioneStickyTest extends ConfigLoader {
 		balancedResponses.add(responsesByKind.get(0).get(0));
 		balancedResponses.add(responsesByKind.get(1).get(0));
 		
-		checkRoundRobin(balancedResponses, Common.setConnettoriAbilitati);
+		Common.checkRoundRobin(balancedResponses, Common.setConnettoriAbilitati);
 	}
 	
 	
@@ -312,7 +312,7 @@ public class SessioneStickyTest extends ConfigLoader {
 		balancedResponses.add(responsesByKind.get(0).get(0));
 		balancedResponses.add(responsesByKind.get(1).get(0));
 		
-		checkRoundRobin(balancedResponses, Common.setConnettoriAbilitati);
+		Common.checkRoundRobin(balancedResponses, Common.setConnettoriAbilitati);
 	}
 
 	
@@ -356,7 +356,7 @@ public class SessioneStickyTest extends ConfigLoader {
 		balancedResponses.add(responsesByKind.get(0).get(0));
 		balancedResponses.add(responsesByKind.get(1).get(0));
 		
-		checkRoundRobin(balancedResponses, Common.setConnettoriAbilitati);
+		Common.checkRoundRobin(balancedResponses, Common.setConnettoriAbilitati);
 	}
 	
 	
@@ -385,7 +385,7 @@ public class SessioneStickyTest extends ConfigLoader {
 		balancedResponses.add(responsesByKind.get(0).get(0));
 		balancedResponses.add(responsesByKind.get(1).get(0));
 		
-		checkRoundRobin(balancedResponses, Common.setConnettoriAbilitati);
+		Common.checkRoundRobin(balancedResponses, Common.setConnettoriAbilitati);
 	}
 	
 	
@@ -721,7 +721,7 @@ public class SessioneStickyTest extends ConfigLoader {
 		balancedResponses.add(responsesByKind.get(0).get(0));
 		balancedResponses.add(responsesByKind.get(1).get(0));
 		
-		checkRoundRobin(balancedResponses, Common.setConnettoriAbilitati);
+		Common.checkRoundRobin(balancedResponses, Common.setConnettoriAbilitati);
 		
 		
 		// Nuova batteria dove il connettore rotto non deve essere preso in considerazione
@@ -843,7 +843,7 @@ public class SessioneStickyTest extends ConfigLoader {
 				Common.CONNETTORE_0, 
 				Common.CONNETTORE_1, 
 				Common.CONNETTORE_2));
-		checkRoundRobin(balancedResponses, connettoriDaRaggiungere);
+		Common.checkRoundRobin(balancedResponses, connettoriDaRaggiungere);
 		
 		// Nuova batteria dove il connettore rotto non deve essere preso in considerazione
 		
@@ -960,58 +960,25 @@ public class SessioneStickyTest extends ConfigLoader {
 		// - 2 Richieste che vanno sul pool1 senza id sessione e vengono bilanciate
 		Set<String> connettoriBilanciati = new HashSet<>(Common.connettoriPools.get(pool1));
 		connettoriBilanciati.remove(Common.CONNETTORE_DISABILITATO);		
-		checkRoundRobin(responsesByKind.get(2), connettoriBilanciati);
+		Common.checkRoundRobin(responsesByKind.get(2), connettoriBilanciati);
 		
 		// 3 - Richieste che vanno sul pool2 senza id sessione e vengono bilanciate
 		connettoriBilanciati = new HashSet<>(Common.connettoriPools.get(pool2));
 		connettoriBilanciati.remove(Common.CONNETTORE_DISABILITATO);		
-		checkRoundRobin(responsesByKind.get(3), connettoriBilanciati);
+		Common.checkRoundRobin(responsesByKind.get(3), connettoriBilanciati);
 
 		// 4 - Vengono bilanciate in round robin sul connettore del pool3
 		connettoriBilanciati = new HashSet<>(Common.connettoriPools.get(pool3));
 		connettoriBilanciati.remove(Common.CONNETTORE_DISABILITATO);
-		checkRoundRobin(responsesByKind.get(4), connettoriBilanciati);	
+		Common.checkRoundRobin(responsesByKind.get(4), connettoriBilanciati);	
 		
 		// 5 - Vengono bilanciate in round robin sul pool di tutti i connettori
-		checkRoundRobin(responsesByKind.get(5), Common.setConnettoriAbilitati);
+		Common.checkRoundRobin(responsesByKind.get(5), Common.setConnettoriAbilitati);
 	}	
 	
 
 	static int getPesoTotale(Map<String,Integer> pesiConnettori) {
 		return pesiConnettori.values().stream().reduce(0, Integer::sum);
-	}
-	
-	
-	static void checkRoundRobin(List<HttpResponse> responses, Set<String> connettori) {
-		// A ciascun connettore devono essere arrivate almeno nRequests/nConnettori richieste
-		// (nRequests % nConnettori) connettori hanno una richiesta in più
-		// Tutti i connettori indicati nel secondo parametro devono essere stati raggiunti.		
-		int nRequests = responses.size();
-		int nConnettori = connettori.size();
-		int minRequests = nRequests / nConnettori;
-		int restoRequests = nRequests % nConnettori;
-		int nDiPiu = 0;		// Quanti connettori sono stati raggiunti da al più 
-		
-		var howManys = Common.contaConnettoriUtilizzati(responses);
-		Common.printMap(howManys);
-		
-		for (var connettore : howManys.keySet()) {
-			// Ogni connettore raggiunto deve essere nel set dei connettori
-			assertTrue(connettori.contains(connettore));
-		}
-		
-		for (var connettore : connettori) {
-			// Tutti i connettori devono essere stati raggiunti
-			assertTrue(howManys.containsKey(connettore));
-			int q = howManys.get(connettore);
-			assertTrue(q>=minRequests);
-			assertTrue(q<=minRequests+1);
-			if (q==minRequests+1) {
-				nDiPiu++;
-			}
-		}
-		
-		assertEquals(restoRequests,nDiPiu);
 	}
 	
 	

@@ -297,7 +297,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		
 		try {
 			executor.shutdown();
-			executor.awaitTermination(1000, TimeUnit.SECONDS);
+			executor.awaitTermination(20, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
 			logCore.error("Le richieste hanno impiegato più di venti secondi!");
 			throw new RuntimeException(e);

@@ -83,7 +83,7 @@ public class SessioneStickyMaxAgeTest extends ConfigLoader {
 		balancedResponses.add(responsesByKind.get(0).get(0));
 		balancedResponses.add(responsesByKind.get(1).get(0));
 		
-		SessioneStickyTest.checkRoundRobin(balancedResponses, Common.setConnettoriAbilitati);
+		Common.checkRoundRobin(balancedResponses, Common.setConnettoriAbilitati);
 		
 		org.openspcoop2.utils.Utilities.sleep(Common.maxAge);
 		
