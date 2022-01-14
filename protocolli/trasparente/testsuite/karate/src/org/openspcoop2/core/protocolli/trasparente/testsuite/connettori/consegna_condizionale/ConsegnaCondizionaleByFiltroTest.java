@@ -66,12 +66,6 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  */
 public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 	
-	// TODO: Se la consegna condizionale identifica più di un connettore, segnala errore.
-	//		La console però consente di creare questa configurazione non valida.
-	//		Fixare la console impedendo tale configurazione e mettere una proprietà in govway per
-	//		disabilitare questo fix, in modo da poterlo testare.
-	// TODO: Aggiungere anche qui il controllo sul connettore disabilitato?
-			
 	static Map<String,List<String>> filtriConnettori = Map.of(
 			CONNETTORE_0, Arrays.asList("Connettore0-Filtro0", "Connettore0-Filtro1"),
 			CONNETTORE_1, Arrays.asList("Connettore1-Filtro0", "Connettore1-Filtro1"),
@@ -370,7 +364,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 			executor.shutdown();
 			executor.awaitTermination(20, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
-			logRateLimiting.error("Le richieste hanno impiegato più di venti secondi!");
+			logCore.error("Le richieste hanno impiegato più di venti secondi!");
 			throw new RuntimeException(e);
 		}
 		return responsesByConnettore;

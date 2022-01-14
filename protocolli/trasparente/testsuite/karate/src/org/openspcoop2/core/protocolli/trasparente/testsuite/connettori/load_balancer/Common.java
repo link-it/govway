@@ -37,6 +37,9 @@ public class Common {
 	public static final String POOL_2 = "Pool2";
 	public static final String POOL_ROTTO = "PoolRotto";
 	public static final String POOL_LOCALHOST = "PoolLocalhost";
+	public static final String POOL_IDENTIFICAZIONE_FALLITA = "Pool-Identificazione-Fallita";
+	public static final String POOL_IDENTIFICAZIONE_FALLITA_NO_CONNETTORI = "Pool-Identificazione-Fallita-No-Connettori";
+
 
 	public static final String ID_CONNETTORE_REPLY_PREFIX = "GovWay-TestSuite-";
 	
@@ -88,7 +91,8 @@ public class Common {
 	
 	public static final Set<String> setConnettoriAbilitati = new HashSet<>(connettoriAbilitati);
 	
-	public static final List<String> filtriPoolRotto = Arrays.asList("PoolRotto-Filtro0", "PoolRotto-Filtro1"); 
+	public static final List<String> filtriPoolRotto = Arrays.asList("PoolRotto-Filtro0", "PoolRotto-Filtro1");
+	 
 	
 	public static Map<String,List<String>> filtriPools = Map
 			.of(POOL_0, Arrays.asList("Pool0-Filtro0", "Pool0-Filtro1"),
@@ -107,7 +111,9 @@ public class Common {
 			POOL_1, Arrays.asList(CONNETTORE_1,CONNETTORE_2,CONNETTORE_3, CONNETTORE_DISABILITATO),
 			POOL_2, Arrays.asList(CONNETTORE_2,CONNETTORE_3,CONNETTORE_0, CONNETTORE_DISABILITATO),
 			POOL_ROTTO, Arrays.asList(CONNETTORE_0,CONNETTORE_1,CONNETTORE_2, CONNETTORE_ROTTO, CONNETTORE_DISABILITATO),
-			POOL_LOCALHOST, Arrays.asList(CONNETTORE_0,CONNETTORE_1,CONNETTORE_2, CONNETTORE_DISABILITATO));
+			POOL_LOCALHOST, Arrays.asList(CONNETTORE_0,CONNETTORE_1,CONNETTORE_2, CONNETTORE_DISABILITATO),
+			POOL_IDENTIFICAZIONE_FALLITA, connettoriAbilitati,
+			POOL_IDENTIFICAZIONE_FALLITA_NO_CONNETTORI, connettoriAbilitati);
 
 	
 	public static void printMap(Map<String, Integer> howManys) {

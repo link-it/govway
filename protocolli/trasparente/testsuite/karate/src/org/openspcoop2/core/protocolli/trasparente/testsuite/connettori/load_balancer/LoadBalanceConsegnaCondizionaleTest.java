@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -50,9 +51,6 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  * 
  * @author Francesco Scarlato (scarlato@link.it)
  *
- * TODO: Per fare meglio l'health check servirebbe il mock
- * TODO: Devo fare anche identificazione condizione fallita e nessun connettore utilizzabile?
- * 		SI.
  * TODO: Test regole
  * 
  * 
@@ -105,10 +103,138 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		/** 
 		 * Raggiungo correttamente il pool0 e il pool1, e sbaglio l'identificazione per un 
 		 * terzo pool. Quel terzo pool diventa quello dei connettori abilitati.
+		 * Controllo che sia avvenuto il round robin sui tre pool
 		 */
 		
+		final String erogazione = "LoadBalanceConsegnaCondizionaleIdentificazioneFallita";
+
+		Map<String,List<String>> filtriPoolsIdentificazioneOk = Map
+				.of(Common.POOL_0, Arrays.asList("Pool0-Filtro0"),
+					Common.POOL_1, Arrays.asList("Pool1-Filtro0"));
 		
+		Map<String,List<HttpRequest>> requestsByPool = new HashMap<>();
+		for (var e : filtriPoolsIdentificazioneOk.entrySet()) {
+			requestsByPool.put(
+					e.getKey(),
+					Common.buildRequests_HeaderHttp(e.getValue(), erogazione)
+				);			
+		}
 		
+		HttpRequest requestIdentificazioneFallita = new HttpRequest();
+		requestIdentificazioneFallita.setMethod(HttpRequestMethod.GET);
+		requestIdentificazioneFallita.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
+		
+		requestsByPool.put(
+				Common.POOL_IDENTIFICAZIONE_FALLITA,
+				Arrays.asList( requestIdentificazioneFallita )
+			);
+		
+		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
+
+		checkResponses(responsesByPool);
+		
+		// Controllo anche che le richieste con l'identificazione fallita abbiano
+		// raggiunto tutti i connettori disponibili della erogazione
+		
+		Set<String> connettoriRaggiunti = responsesByPool.get(Common.POOL_IDENTIFICAZIONE_FALLITA)
+				.stream()
+				.map( resp -> resp.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE))
+				.collect(Collectors.toSet());
+		for(String connettore : Common.setConnettoriAbilitati) {
+			assertTrue(connettoriRaggiunti.contains(connettore));
+		}
+	}
+	
+	
+	@Test
+	public void nessunConnettoreUtilizzabile() {
+		// Uguale al test di identificazione fallita, però questa volta la condizione
+		// la metto con un filtro inesistente.
+		
+		final String erogazione = "LoadBalanceConsegnaCondizionaleNessunConnettoreUtilizzabile";
+
+		Map<String,List<String>> filtriPoolsIdentificazione = Map
+				.of(Common.POOL_0, Arrays.asList("Pool0-Filtro0"),
+					Common.POOL_1, Arrays.asList("Pool1-Filtro0"),
+					Common.POOL_IDENTIFICAZIONE_FALLITA_NO_CONNETTORI, Arrays.asList("FiltroInesistente"));
+
+		Map<String,List<HttpRequest>> requestsByPool = new HashMap<>();
+		for (var e : filtriPoolsIdentificazione.entrySet()) {
+			requestsByPool.put(
+					e.getKey(),
+					Common.buildRequests_HeaderHttp(e.getValue(), erogazione)
+				);			
+		}
+		
+		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
+
+		checkResponses(responsesByPool);
+		
+		// Controllo anche che le richieste con l'identificazione fallita abbiano
+		// raggiunto tutti i connettori disponibili della erogazione
+		
+		Set<String> connettoriRaggiunti = responsesByPool.get(Common.POOL_IDENTIFICAZIONE_FALLITA_NO_CONNETTORI)
+				.stream()
+				.map( resp -> resp.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE))
+				.collect(Collectors.toSet());
+		for(String connettore : Common.setConnettoriAbilitati) {
+			assertTrue(connettoriRaggiunti.contains(connettore));
+		}
+	}
+	
+	
+	@Test
+	public void identificazioneFallitaNessunConnettoreUtilizzabile() {
+		// Come i test di sopra, ma ci sono due pool di richieste che vengono dirottati
+		// sul pool di tutti i connettori 
+		
+		final String erogazione = "LoadBalanceConsegnaCondizionaleIdentificazioneFallitaNessunConnettoreUtilizzabile";
+		
+		Map<String,List<String>> filtriPoolsIdentificazioneOk = Map
+				.of(Common.POOL_0, Arrays.asList("Pool0-Filtro0"),
+					Common.POOL_IDENTIFICAZIONE_FALLITA_NO_CONNETTORI, Arrays.asList("FiltroInesistente"));
+		
+		Map<String,List<HttpRequest>> requestsByPool = new HashMap<>();
+		for (var e : filtriPoolsIdentificazioneOk.entrySet()) {
+			requestsByPool.put(
+					e.getKey(),
+					Common.buildRequests_HeaderHttp(e.getValue(), erogazione)
+				);			
+		}
+		
+		HttpRequest requestIdentificazioneFallita = new HttpRequest();
+		requestIdentificazioneFallita.setMethod(HttpRequestMethod.GET);
+		requestIdentificazioneFallita.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
+		requestsByPool.put(
+				Common.POOL_IDENTIFICAZIONE_FALLITA,
+				Arrays.asList( requestIdentificazioneFallita )
+			);
+		
+		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
+
+		checkResponses(responsesByPool);
+		
+		// Controllo anche che le richieste con l'identificazione fallita abbiano
+		// raggiunto tutti i connettori disponibili della erogazione
+		
+		Set<String> connettoriRaggiunti = responsesByPool.get(Common.POOL_IDENTIFICAZIONE_FALLITA)
+				.stream()
+				.map( resp -> resp.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE))
+				.collect(Collectors.toSet());
+		for(String connettore : Common.setConnettoriAbilitati) {
+			assertTrue(connettoriRaggiunti.contains(connettore));
+		}
+		
+		connettoriRaggiunti = responsesByPool.get(Common.POOL_IDENTIFICAZIONE_FALLITA_NO_CONNETTORI)
+				.stream()
+				.map( resp -> resp.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE))
+				.collect(Collectors.toSet());
+		for(String connettore : Common.setConnettoriAbilitati) {
+			assertTrue(connettoriRaggiunti.contains(connettore));
+		}
+	
 	}
 	
 	

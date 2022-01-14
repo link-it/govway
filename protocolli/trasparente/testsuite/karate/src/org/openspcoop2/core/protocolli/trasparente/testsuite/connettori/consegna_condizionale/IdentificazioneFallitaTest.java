@@ -40,7 +40,6 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  */
 public class IdentificazioneFallitaTest extends ConfigLoader {
 	
-	// TODO: Chiedi ad andrea dove prenderli
 	private static final String CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_ERROR = "007045";
 	private static final String CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_INFO = "007046";
 	

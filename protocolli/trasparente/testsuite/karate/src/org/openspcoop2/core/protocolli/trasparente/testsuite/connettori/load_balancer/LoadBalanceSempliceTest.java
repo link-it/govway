@@ -23,7 +23,6 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_ba
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.ID_CONNETTORE_REPLY_PREFIX;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.delayRichiesteBackground;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.durataBloccante;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.printMap;
 
@@ -32,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -242,7 +242,6 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		 * Viene fatto l'hash dell'indirizzo ip del client e del valore dello header 
 		 * Forwarded-For e in base a questo valore viene identificato il connettore.
 		 * 
-		 *  TODO: Se il valore dello header non è un indirizzo ip, lo hash butta tutto sullo stesso connettore, VERIFICA.
 		 */
 
 		final String erogazione = "LoadBalanceSourceIpHash";
@@ -253,6 +252,8 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nthreads);
 
 		Vector<HttpResponse> wholeResponses = new Vector<>();
+		
+		Map<Integer,String> indiciConnettori = new ConcurrentHashMap<>();
 		
 		for (int i = 0; i < nthreads; i++) {
 
@@ -279,12 +280,24 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 				assertEquals(1, howManys.keySet().size());
 				
 				wholeResponses.addAll(responses);
+				
+				// Controllo che allo stesso hash venga assegnato lo stesso connettore.
+				final String ipToHash = "127.0.0.1 " + forwardedFor;
+				int index = ipToHash.hashCode() % Common.setConnettoriAbilitati.size();
+				String connettore = responses.get(0).getHeaderFirstValue(Common.HEADER_ID_CONNETTORE);
+				
+				if (!indiciConnettori.containsKey(index)) {
+					indiciConnettori.put(index, connettore);
+				} else {
+					indiciConnettori.get(index).equals(connettore);					
+				}
+				
 			});
 		}
 		
 		try {
 			executor.shutdown();
-			executor.awaitTermination(20, TimeUnit.SECONDS);
+			executor.awaitTermination(1000, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
 			logCore.error("Le richieste hanno impiegato più di venti secondi!");
 			throw new RuntimeException(e);
@@ -352,55 +365,5 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 			
 	}
 	
-	
-	@Test
-	public void leastConnectionsAsRoundRobin() {
-		// TODO
-		// Facendo delle richieste in background con sleep, una dopo l'altra, 
-		// la strategia deve comportarsi come un weighted round robin con tutti i pesi a 1
-		
-		final String erogazione = "LoadBalanceLeastConnections";
-		
-		HttpRequest requestBlocking = new HttpRequest();
-		requestBlocking.setContentType("application/json");
-		requestBlocking.setMethod(HttpRequestMethod.GET);
-		requestBlocking.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
-				+ "?sleep="+durataBloccante +
-				"&replyQueryParameter=id_connettore&replyPrefixQueryParameter="
-				+ ID_CONNETTORE_REPLY_PREFIX);
-		
-		HttpRequest request = new HttpRequest();
-		request.setContentType("application/json");
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test" +
-				"&replyQueryParameter=id_connettore&replyPrefixQueryParameter="
-				+ ID_CONNETTORE_REPLY_PREFIX);
-		
-		
-		// Occupo Quattro connettori, ne deve restare libero uno solo
-		var futureBlockingResponses = Utils.makeBackgroundRequests(requestBlocking, 4, delayRichiesteBackground);
-		
-		Vector<HttpResponse> responses = Utils.awaitResponses(futureBlockingResponses);
-		Map<String, Integer> howManys = Common.contaConnettoriUtilizzati(responses);
-		
-		assertEquals(4, howManys.keySet().size());
-		
-		
-		// Adesso tengo due connettori occupati per più tempo e mando due richieste
-		// sugli altri due, poi altre due sempre sugli altri due.
-		// Devo aver sempre e solo raggiunto gli altri due
-		HttpRequest requestBlockingLong = new HttpRequest();
-		requestBlockingLong.setContentType("application/json");
-		requestBlockingLong.setMethod(HttpRequestMethod.GET);
-		requestBlockingLong.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
-				+ "?sleep="+durataBloccante+2000 +
-				"&replyQueryParameter=id_connettore&replyPrefixQueryParameter="
-				+ ID_CONNETTORE_REPLY_PREFIX);
-		
-		var futureLongBlockResponse = Utils.makeBackgroundRequests(requestBlockingLong, 2, delayRichiesteBackground);	// TODO: rendere il delay un parametro
-
-		
-	}
-
 
 }

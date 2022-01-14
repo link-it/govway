@@ -54,18 +54,6 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
-// TODO: Porta il passive health check dell'health check da 2 a 3\4 secondi, per tutte le erogazioni health check e 
-//			modifica la proprietà
-// TODO: Cookie, prova a fare il test header http utilizzando come header il Cookie o i vari forwarded for.
-// TODO: Anche qui test con valori multipli per lo stesso header,
-//	  	 conflitti fra gli headers appartenenti alla classe XForwardedFor
-// 		 e test con valori mancanti per i null pointers. NOTA: Andrea e tito hanno deciso
-//		 che va bene prendere uno qualunque dei valori\header, faccio comunque il test per verificare
-//		 che uno dei due venga preso
-// TODO: gli health check si potrebbero scrivere tirando su un mock che si chiude da solo dopo 
-//		aver gestito una richiesta.
-
-// TODO: il logRateLimiting va sostituito con il loggerCore
 
 /**
  *	La strategia di Load Balancing viene cambiata al cambiare dell'identificazione dell'ID sessione,
@@ -213,7 +201,52 @@ public class SessioneStickyTest extends ConfigLoader {
 		return ret;
 	}
 	
-
+	@Test
+	public void headerHttpValoriMultipli() 
+	{
+		// NOTA: E' stato deciso che va bene prendere uno qualunque dei valori\header, faccio comunque il test per verificare
+		//	 	che uno dei due venga preso.
+		//Inviando più id sessione nella stessa richiesta, ne deve essere preso uno fra i tanti
+		
+		final String erogazione = "LoadBalanceSessioneStickyHeaderHttpValoriMultipli";
+		
+		HttpRequest request = buildRequest_HeaderHttp(IDSessioni.get(0), erogazione);
+		request.addHeader(HEADER_ID_CONDIZIONE, IDSessioni.get(1));
+		
+		var responses = Utils.makeParallelRequests(request, 15);
+		for (var r : responses) {
+			assertEquals(200, r.getResultHTTPOperation());
+		}
+		var howManys = Common.contaConnettoriUtilizzati(responses);
+		
+		assertTrue(howManys.keySet().size() <= 2 && howManys.keySet().size() >= 1);
+	}
+	
+	
+	@Test
+	public void XForwardedForValoriMultipli()
+	{
+		// Inviando più id sessione nella stessa richiesta, ne deve essere preso uno fra i tanti
+		
+		final String erogazione = "LoadBalanceSessioneStickyHeaderHttpValoriMultipli";
+		
+		HttpRequest request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-header-http"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
+		request.addHeader("X-Forwarded-For", IDSessioni.get(0));
+		request.addHeader("X-Forwarded-For", IDSessioni.get(1));
+		
+		var responses = Utils.makeParallelRequests(request, 15);
+		for (var r : responses) {
+			assertEquals(200, r.getResultHTTPOperation());
+		}
+		
+		// Devo aver utilizzato al più due connettori
+		var howManys = Common.contaConnettoriUtilizzati(responses);
+		assertTrue(howManys.keySet().size() <= 2 && howManys.keySet().size() >= 1);
+	}
+	
 	
 	@Test
 	public void headerHttp() {
@@ -244,6 +277,44 @@ public class SessioneStickyTest extends ConfigLoader {
 		checkRoundRobin(balancedResponses, Common.setConnettoriAbilitati);
 	}
 	
+	
+	@Test
+	public void headerHttpCookie() {
+		// Faccio il test header http utilizzando come header il Cookie verificando che govway
+		// non lo rimuova dagli headers
+
+		final String erogazione = "LoadBalanceSessioneStickyHeaderHttpCookie";
+		
+		HttpRequest requestCookie1 = buildRequest_LoadBalanced(erogazione);
+		requestCookie1.addHeader("Cookie", IDSessioni.get(0));
+		
+		HttpRequest requestCookie2 = buildRequest_LoadBalanced(erogazione);
+		requestCookie2.addHeader("Cookie", IDSessioni.get(1));
+		
+		List<HttpRequest> richieste = Arrays.asList(
+				requestCookie1, 
+				requestCookie2,
+				buildRequest_LoadBalanced(erogazione)
+			);
+
+		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, Common.richiesteParallele);
+		
+		// Tutte le richieste con lo stesso id sessione finiscono
+		// sullo stesso connettore.
+		checkAllResponsesSameConnettore(responsesByKind.get(0));
+		checkAllResponsesSameConnettore(responsesByKind.get(1));
+		
+		// Tra le richieste\risposte che sono state bilanciate vanno considerate
+		// anche le prime richieste che portano con se un id sessione ancora mai visto prima.
+		// Le risposte che qui vado a pescare non sono necessariamente corrispondenti a tali richieste
+		// ma sono utili ai fini del conteggio.
+		var balancedResponses = responsesByKind.get(2);
+		balancedResponses.add(responsesByKind.get(0).get(0));
+		balancedResponses.add(responsesByKind.get(1).get(0));
+		
+		checkRoundRobin(balancedResponses, Common.setConnettoriAbilitati);
+	}
+
 	
 	@Test
 	public void XForwardedFor() throws UtilsException {

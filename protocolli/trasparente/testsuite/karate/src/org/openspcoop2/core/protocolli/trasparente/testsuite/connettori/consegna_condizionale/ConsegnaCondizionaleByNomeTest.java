@@ -114,7 +114,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 			executor.shutdown();
 			executor.awaitTermination(20, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
-			logRateLimiting.error("Le richieste hanno impiegato più di venti secondi!");
+			logCore.error("Le richieste hanno impiegato più di venti secondi!");
 			throw new RuntimeException(e);
 		}
 		
@@ -353,7 +353,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 			executor.shutdown();
 			executor.awaitTermination(20, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
-			logRateLimiting.error("Le richieste hanno impiegato più di venti secondi!");
+			logCore.error("Le richieste hanno impiegato più di venti secondi!");
 			throw new RuntimeException(e);
 		}
 		
@@ -634,7 +634,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 			executor.shutdown();
 			executor.awaitTermination(20, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
-			// logRateLimiting.error("Le richieste hanno impiegato più di venti secondi!");
+			// logCore.error("Le richieste hanno impiegato più di venti secondi!");
 			throw new RuntimeException(e);
 		}
 	
