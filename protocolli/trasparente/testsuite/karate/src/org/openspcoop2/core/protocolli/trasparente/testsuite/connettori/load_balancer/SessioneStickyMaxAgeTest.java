@@ -20,12 +20,12 @@
 
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 
@@ -53,43 +53,117 @@ import org.openspcoop2.utils.transport.http.HttpResponse;
 public class SessioneStickyMaxAgeTest extends ConfigLoader {
 
 	@Test
-	public void maxAgeRoundRobin() {
+	public void headerHttpRoundRobin() {
 		
 		// Per i max Age una classe di test a parte, laddove posso tengo traccia dello stato dello
 		// scheduler e alla richiesta successiva dopo lo scadere del maxAge devo controllare che
 		// vada sul connettore atteso.
-		// TODO: Per tutte le strategie di load balancing
 		
 		final String erogazione = "LoadBalanceSessioneStickyHeaderHttpMaxAge";
 		
-		List<HttpRequest> richieste = Arrays.asList(
-				SessioneStickyTest.buildRequest_HeaderHttp(Common.IDSessioni.get(0), erogazione), 
-				SessioneStickyTest.buildRequest_HeaderHttp(Common.IDSessioni.get(1), erogazione),
-				SessioneStickyTest.buildRequest_LoadBalanced(erogazione)
-			);
-
-		Map<Integer, List<HttpResponse>> responsesByKind = SessioneStickyTest.makeRequests(richieste, Common.richiesteParallele);
+		HttpRequest request1 = SessioneStickyTest.buildRequest_HeaderHttp(Common.IDSessioni.get(0), erogazione);
+		HttpRequest request2 = SessioneStickyTest.buildRequest_HeaderHttp(Common.IDSessioni.get(1), erogazione);
 		
-		// Tutte le richieste con lo stesso id sessione finiscono
-		// sullo stesso connettore.
-		SessioneStickyTest.checkAllResponsesSameConnettore(responsesByKind.get(0));
-		SessioneStickyTest.checkAllResponsesSameConnettore(responsesByKind.get(1));
+		HttpResponse response1 = Utils.makeRequest(request1);
+		HttpResponse response2 = Utils.makeRequest(request2);
 		
-		// Tra le richieste\risposte che sono state bilanciate vanno considerate
-		// anche le prime richieste che portano con se un id sessione ancora mai visto prima.
-		// Le risposte che qui vado a pescare non sono necessariamente corrispondenti a tali richieste
-		// ma sono utili ai fini del conteggio.
-		var balancedResponses = responsesByKind.get(2);
-		balancedResponses.add(responsesByKind.get(0).get(0));
-		balancedResponses.add(responsesByKind.get(1).get(0));
+		String connettore1 = response1.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE);
+		String connettore2 = response2.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE);
 		
-		Common.checkRoundRobin(balancedResponses, Common.setConnettoriAbilitati);
+		var responsesSameConnettore = Utils.makeParallelRequests(request1, 10);
+		Common.checkAll200(responsesSameConnettore);
+		Common.checkAllResponsesSameConnettore(responsesSameConnettore);
 		
+		responsesSameConnettore = Utils.makeParallelRequests(request2, 10);
+		Common.checkAll200(responsesSameConnettore);
+		Common.checkAllResponsesSameConnettore(responsesSameConnettore);
+		
+		// Faccio le richieste rimanenti per completare il giro del round robin
+		int richiesteRimanenti = Common.setConnettoriAbilitati.size() - 2;
+		HttpRequest balancedRequest = Common.buildRequest_Semplice(erogazione);
+		var balancedResponses = Utils.makeParallelRequests(balancedRequest, richiesteRimanenti);
+		Common.checkAll200(balancedResponses);
+		
+		// Adesso attendo il max Age e faccio scadere la sessione
 		org.openspcoop2.utils.Utilities.sleep(Common.maxAge);
 		
-		// Sono in round robin, il connettore che ha meno richieste dovrà essere il prossimo selezionato
-		// dalla sessione sticky.
-
+		// Faccio due richieste per saltare i due connettori iniziali
+		var responses = Utils.makeSequentialRequests(balancedRequest, 2);
+		assertEquals(connettore1, responses.get(0).getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
+		assertEquals(connettore2, responses.get(1).getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
+		
+		HttpResponse responseNuova1 = Utils.makeRequest(request1);
+		HttpResponse responseNuova2 = Utils.makeRequest(request2);
+		
+		String connettoreNuovo1 = responseNuova1.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE);
+		String connettoreNuovo2 = responseNuova2.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE);
+		
+		assertNotEquals(connettore1, connettoreNuovo1);
+		assertNotEquals(connettore1, connettoreNuovo2);
+		assertNotEquals(connettore2, connettoreNuovo1);
+		assertNotEquals(connettore2, connettoreNuovo2);
+		assertNotEquals(connettoreNuovo1, connettoreNuovo2);
+		
 	}
+	
+	@Test
+	public void urlInvocazioneWeightedRoundRobin() {
+		
+		final String erogazione = "LoadBalanceSessioneStickyWeightedRoundRobinMaxAge";
+		
+		/** 
+		 * La specifica non indica tipo di politica Weight random, se interleaved o classica, per cui
+		 * non sono certo nel prevedere quale connettore verrà raggiunto. 
+		 * Faccio un test classico assicurandomi che il load balancing e la sessione sticky funzionino.
+		 * 
+		 */
+		SessioneStickyTest.urlInvocazione_Impl(erogazione);
+		
+		// Adesso attendo il max Age e faccio scadere la sessione
+		org.openspcoop2.utils.Utilities.sleep(Common.maxAge);
+		
+		SessioneStickyTest.urlInvocazione_Impl(erogazione);
+	}
+	
+	@Test
+	public void parametroUrlRandom()
+	{
+		final String erogazione = "LoadBalanceSessioneStickyRandomMaxAge";
+		
+		/**
+		 * Con la strategia random non sono in grado di determinare su quale
+		 * connettore va la prossima richiesta, per cui mi limito a ripetere il test.
+		 */
+		SessioneStickyTest.parametroUrl_Impl(erogazione);
+		
+		// Adesso attendo il max Age e faccio scadere la sessione
+		org.openspcoop2.utils.Utilities.sleep(Common.maxAge);
+		
+		SessioneStickyTest.parametroUrl_Impl(erogazione);
+	}
+	
+	
+	@Test
+	public void freemarkerTemplateWeightedRandom() {
+		final String erogazione = "LoadBalanceSessioneStickyWeightedRandomMaxAge";
+		
+		SessioneStickyTest.freemarkerTemplate_Impl(erogazione);
+
+		// Adesso attendo il max Age e faccio scadere la sessione
+		org.openspcoop2.utils.Utilities.sleep(Common.maxAge);
+		
+		SessioneStickyTest.freemarkerTemplate_Impl(erogazione);
+	}
+	
+	
+	@Test
+	public void velocityTemplateLeastConnections() {
+		
+		final String erogazione = "LoadBalanceSessioneStickyLeastConnectionsMaxAge";
+
+		// Ne tengo occupati 
+		
+	}
+	
 
 }

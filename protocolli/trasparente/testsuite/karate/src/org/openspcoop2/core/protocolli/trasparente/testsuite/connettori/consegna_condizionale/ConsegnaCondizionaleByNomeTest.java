@@ -80,7 +80,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 				Common.CONNETTORE_ID_NON_TROVATO,
 				CONNETTORE_DISABILITATO);
 	
-	
+
 	@Test
 	public void headerHttp() {
 		final String erogazione = "ConsegnaCondizionaleHeaderHttpByNome";
@@ -160,6 +160,15 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		
 		assertTrue(oneOrTheOther);
 	}
+	
+	
+	@Test
+	public void soapAction() {
+		final String erogazione = "ConsegnaCondizionaleHeaderHttpByNome";
+
+		// TODO
+	}
+	
 	
 
 	@Test

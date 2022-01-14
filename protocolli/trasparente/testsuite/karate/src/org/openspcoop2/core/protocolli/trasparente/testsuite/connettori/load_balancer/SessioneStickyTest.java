@@ -73,12 +73,17 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  * 
  *  Query Freemarker Template: ${query["govway-testsuite-id_sessione_request"]}
  *  Query Template: ${query:govway-testsuite-id_sessione_request}
- *	Query Velocity Template: $query["govway-testsuite-id_sessione_request"]
+ *	Query Velocity Template: 
+				#if($query.containsKey("govway-testsuite-id_sessione_request"))
+				$query["govway-testsuite-id_connettore_request"]
+				#end
  *	Query UrlInvocazione: .+govway-testsuite-id_sessione_request=([^&]*).*
  *	Query contenuto: $.id_sessione_request
  *	Query HeaderHttp: GovWay-TestSuite-ID-Sessione
  *	Query ParametroUrl: govway-testsuite-id_sessione_request
  *	Query cookie: govway-testsuite-id_sessione_cookie
+ *
+ *  TODO: Aggiungere ovunque Common.checkAll200();
  * 
  * @author froggo
  *
@@ -263,8 +268,8 @@ public class SessioneStickyTest extends ConfigLoader {
 		
 		// Tutte le richieste con lo stesso id sessione finiscono
 		// sullo stesso connettore.
-		checkAllResponsesSameConnettore(responsesByKind.get(0));
-		checkAllResponsesSameConnettore(responsesByKind.get(1));
+		Common.checkAllResponsesSameConnettore(responsesByKind.get(0));
+		Common.checkAllResponsesSameConnettore(responsesByKind.get(1));
 		
 		// Tra le richieste\risposte che sono state bilanciate vanno considerate
 		// anche le prime richieste che portano con se un id sessione ancora mai visto prima.
@@ -301,8 +306,8 @@ public class SessioneStickyTest extends ConfigLoader {
 		
 		// Tutte le richieste con lo stesso id sessione finiscono
 		// sullo stesso connettore.
-		checkAllResponsesSameConnettore(responsesByKind.get(0));
-		checkAllResponsesSameConnettore(responsesByKind.get(1));
+		Common.checkAllResponsesSameConnettore(responsesByKind.get(0));
+		Common.checkAllResponsesSameConnettore(responsesByKind.get(1));
 		
 		// Tra le richieste\risposte che sono state bilanciate vanno considerate
 		// anche le prime richieste che portano con se un id sessione ancora mai visto prima.
@@ -374,8 +379,8 @@ public class SessioneStickyTest extends ConfigLoader {
 		
 		// Tutte le richieste con lo stesso id sessione finiscono
 		// sullo stesso connettore.
-		checkAllResponsesSameConnettore(responsesByKind.get(0));
-		checkAllResponsesSameConnettore(responsesByKind.get(1));
+		Common.checkAllResponsesSameConnettore(responsesByKind.get(0));
+		Common.checkAllResponsesSameConnettore(responsesByKind.get(1));
 		
 		// Tra le richieste\risposte che sono state bilanciate vanno considerate
 		// anche le prime richieste che portano con se un id sessione ancora mai visto prima.
@@ -403,8 +408,8 @@ public class SessioneStickyTest extends ConfigLoader {
 		
 		// Tutte le richieste con lo stesso id sessione finiscono
 		// sullo stesso connettore.
-		checkAllResponsesSameConnettore(responsesByKind.get(0));
-		checkAllResponsesSameConnettore(responsesByKind.get(1));
+		Common.checkAllResponsesSameConnettore(responsesByKind.get(0));
+		Common.checkAllResponsesSameConnettore(responsesByKind.get(1));
 		
 		// Tra le richieste\risposte che sono state bilanciate vanno considerate
 		// anche le prime richieste che portano con se un id sessione ancora mai visto prima.
@@ -430,80 +435,19 @@ public class SessioneStickyTest extends ConfigLoader {
 	
 	@Test
 	public void freemarkerTemplate() {
-		
 		final String erogazione = "LoadBalanceSessioneStickyFreemarkerTemplate";
-		
-		List<HttpRequest> richieste = Arrays.asList(
-				buildRequest_FreemarkerTemplate(IDSessioni.get(0), erogazione), 
-				buildRequest_FreemarkerTemplate(IDSessioni.get(1), erogazione),
-				buildRequest_LoadBalanced(erogazione)
-			);
-
-		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, Common.richiesteParallele);
-		
-		// Tutte le richieste con lo stesso id sessione finiscono
-		// sullo stesso connettore.
-		checkAllResponsesSameConnettore(responsesByKind.get(0));
-		checkAllResponsesSameConnettore(responsesByKind.get(1));
-		
-		// Tra le richieste\risposte che sono state bilanciate vanno considerate
-		// anche le prime richieste che portano con se un id sessione ancora mai visto
-		// prima.
-		// Le risposte che qui vado a pescare non sono necessariamente corrispondenti a
-		// tali richieste
-		// ma sono utili ai fini del conteggio.
-		var balancedResponses = responsesByKind.get(2);
-		balancedResponses.add(responsesByKind.get(0).get(0));
-		balancedResponses.add(responsesByKind.get(1).get(0));
-
-		// Per testare il weighted random faccio un numero di richieste elevato, in modo
-		// tale
-		// da creare la distribuzione secondo i pesi
-		int remaining = Common.richiesteTestRandom - balancedResponses.size();
-		while (remaining > 0) {
-			int nReq = Math.min(Common.richiesteParallele, remaining);
-			balancedResponses.addAll(Common.makeParallelRequests(richieste.get(2), nReq));
-			remaining -= nReq;
-		}
-
-		checkWeightedRandomStrategy(balancedResponses, Common.pesiConnettoriStandard);
+		freemarkerTemplate_Impl(erogazione);
 	}
-	
+
 	
 	@Test	
 	public void urlInvocazione() {
 		final String erogazione = "LoadBalanceSessioneStickyUrlInvocazione";
 		
-		List<HttpRequest> richieste = Arrays.asList(
-				buildRequest_UrlInvocazione(IDSessioni.get(0), erogazione), 
-				buildRequest_UrlInvocazione(IDSessioni.get(1), erogazione),
-				buildRequest_LoadBalanced(erogazione)
-			);
-
-		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, Common.richiesteParallele);
-		
-		// Tutte le richieste con lo stesso id sessione finiscono
-		// sullo stesso connettore.
-		checkAllResponsesSameConnettore(responsesByKind.get(0));
-		checkAllResponsesSameConnettore(responsesByKind.get(1));
-		
-		// Tra le richieste\risposte che sono state bilanciate vanno considerate
-		// anche le prime richieste che portano con se un id sessione ancora mai visto prima.
-		// Le risposte che qui vado a pescare non sono necessariamente corrispondenti a tali richieste
-		// ma sono utili ai fini del conteggio.
-		var balancedResponses = responsesByKind.get(2);
-		balancedResponses.add(responsesByKind.get(0).get(0));
-		balancedResponses.add(responsesByKind.get(1).get(0));
-		
-		// Per testare il weighted round robin mi assicuro di aver fatto Smax+1 richieste
-		int remaining = (getPesoTotale(Common.pesiConnettoriStandard)+1) - balancedResponses.size();
-		balancedResponses.addAll(Common.makeParallelRequests(richieste.get(2), remaining));
-		
-		checkWeightedRoundRobin(balancedResponses, Common.pesiConnettoriStandard);
+		urlInvocazione_Impl(erogazione);
 	}
 	
-	
-	
+
 	@Test
 	public void template() {
 		final String erogazione = "LoadBalanceSessioneStickyTemplate";
@@ -518,8 +462,8 @@ public class SessioneStickyTest extends ConfigLoader {
 		
 		// Tutte le richieste con lo stesso id sessione finiscono
 		// sullo stesso connettore.
-		checkAllResponsesSameConnettore(responsesByKind.get(0));
-		checkAllResponsesSameConnettore(responsesByKind.get(1));
+		Common.checkAllResponsesSameConnettore(responsesByKind.get(0));
+		Common.checkAllResponsesSameConnettore(responsesByKind.get(1));
 		
 	
 		// Tra le richieste\risposte che sono state bilanciate vanno considerate
@@ -543,37 +487,7 @@ public class SessioneStickyTest extends ConfigLoader {
 	public void parametroUrl() {
 		final String erogazione = "LoadBalanceSessioneStickyParametroUrl";
 		
-		List<HttpRequest> richieste = Arrays.asList(
-				buildRequest_ParametroUrl(IDSessioni.get(0), erogazione), 
-				buildRequest_ParametroUrl(IDSessioni.get(1), erogazione),
-				buildRequest_LoadBalanced(erogazione)
-			);
-
-		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, Common.richiesteParallele);
-		
-		// Tutte le richieste con lo stesso id sessione finiscono
-		// sullo stesso connettore.
-		checkAllResponsesSameConnettore(responsesByKind.get(0));
-		checkAllResponsesSameConnettore(responsesByKind.get(1));
-		
-		// Tra le richieste\risposte che sono state bilanciate vanno considerate
-		// anche le prime richieste che portano con se un id sessione ancora mai visto prima.
-		// Le risposte che qui vado a pescare non sono necessariamente corrispondenti a tali richieste
-		// ma sono utili ai fini del conteggio.
-		var balancedResponses = responsesByKind.get(2);
-		balancedResponses.add(responsesByKind.get(0).get(0));
-		balancedResponses.add(responsesByKind.get(1).get(0));
-		
-		// Per testare il random faccio un numero di richieste elevato, in modo tale
-		//	da creare la distribuzione
-		int remaining = Common.richiesteTestRandom - balancedResponses.size();
-		while (remaining > 0) {
-			int nReq = Math.min(Common.richiesteParallele, remaining);
-			balancedResponses.addAll(Common.makeParallelRequests(richieste.get(2), nReq));
-			remaining -= nReq;
-		}
-		
-		checkRandomStrategy(balancedResponses, Common.setConnettoriAbilitati);
+		parametroUrl_Impl(erogazione);
 	}
 	
 		
@@ -582,6 +496,7 @@ public class SessioneStickyTest extends ConfigLoader {
 				
 		final String erogazione = "LoadBalanceSessioneStickyVelocityTemplate";
 		
+		// Qui viene usata la strategia di bilanciamento LeastConnections,
 		// Lancio le due chiamate bloccanti, devono durare per tutto il test
 		HttpRequest requestBlockingIdSessione1 = buildRequest_VelocityTemplate(IDSessioni.get(0), erogazione);
 		requestBlockingIdSessione1.setUrl(requestBlockingIdSessione1.getUrl()+"&sleep="+Common.durataBloccanteLunga);
@@ -607,8 +522,8 @@ public class SessioneStickyTest extends ConfigLoader {
 			);
 		
 		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, Common.richiesteParallele-2);
-		checkAllResponsesSameConnettore(responsesByKind.get(0));
-		checkAllResponsesSameConnettore(responsesByKind.get(1));
+		Common.checkAllResponsesSameConnettore(responsesByKind.get(0));
+		Common.checkAllResponsesSameConnettore(responsesByKind.get(1));
 
 		String connettoreSessione0 = responsesByKind.get(0).get(0).getHeaderFirstValue(HEADER_ID_CONNETTORE);
 		String connettoreSessione1 = responsesByKind.get(1).get(0).getHeaderFirstValue(HEADER_ID_CONNETTORE);
@@ -710,8 +625,8 @@ public class SessioneStickyTest extends ConfigLoader {
 		
 		// Tutte le richieste con lo stesso id sessione finiscono
 		// sullo stesso connettore.
-		checkAllResponsesSameConnettore(responsesByKind.get(0));
-		checkAllResponsesSameConnettore(responsesByKind.get(1));
+		Common.checkAllResponsesSameConnettore(responsesByKind.get(0));
+		Common.checkAllResponsesSameConnettore(responsesByKind.get(1));
 		
 		// Tra le richieste\risposte che sono state bilanciate vanno considerate
 		// anche le prime richieste che portano con se un id sessione ancora mai visto prima.
@@ -828,8 +743,8 @@ public class SessioneStickyTest extends ConfigLoader {
 		
 		// Tutte le richieste con lo stesso id sessione finiscono
 		// sullo stesso connettore.
-		checkAllResponsesSameConnettore(responsesByKind.get(0));
-		checkAllResponsesSameConnettore(responsesByKind.get(1));
+		Common.checkAllResponsesSameConnettore(responsesByKind.get(0));
+		Common.checkAllResponsesSameConnettore(responsesByKind.get(1));
 		
 		// Tra le richieste\risposte che sono state bilanciate vanno considerate
 		// anche le prime richieste che portano con se un id sessione ancora mai visto prima.
@@ -954,8 +869,8 @@ public class SessioneStickyTest extends ConfigLoader {
 
 		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, richieste.size()*5);
 		
-		checkAllResponsesSameConnettore(responsesByKind.get(0));
-		checkAllResponsesSameConnettore(responsesByKind.get(1));
+		Common.checkAllResponsesSameConnettore(responsesByKind.get(0));
+		Common.checkAllResponsesSameConnettore(responsesByKind.get(1));
 		
 		// - 2 Richieste che vanno sul pool1 senza id sessione e vengono bilanciate
 		Set<String> connettoriBilanciati = new HashSet<>(Common.connettoriPools.get(pool1));
@@ -974,9 +889,112 @@ public class SessioneStickyTest extends ConfigLoader {
 		
 		// 5 - Vengono bilanciate in round robin sul pool di tutti i connettori
 		Common.checkRoundRobin(responsesByKind.get(5), Common.setConnettoriAbilitati);
-	}	
+	}
+	
+	
+	static void urlInvocazione_Impl(String erogazione) {
+		List<HttpRequest> richieste = Arrays.asList(
+				buildRequest_UrlInvocazione(IDSessioni.get(0), erogazione), 
+				buildRequest_UrlInvocazione(IDSessioni.get(1), erogazione),
+				buildRequest_LoadBalanced(erogazione)
+			);
+
+		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, Common.richiesteParallele);
+		
+		// Tutte le richieste con lo stesso id sessione finiscono
+		// sullo stesso connettore.
+		Common.checkAllResponsesSameConnettore(responsesByKind.get(0));
+		Common.checkAllResponsesSameConnettore(responsesByKind.get(1));
+		
+		// Tra le richieste\risposte che sono state bilanciate vanno considerate
+		// anche le prime richieste che portano con se un id sessione ancora mai visto prima.
+		// Le risposte che qui vado a pescare non sono necessariamente corrispondenti a tali richieste
+		// ma sono utili ai fini del conteggio.
+		var balancedResponses = responsesByKind.get(2);
+		balancedResponses.add(responsesByKind.get(0).get(0));
+		balancedResponses.add(responsesByKind.get(1).get(0));
+		
+		// Per testare il weighted round robin mi assicuro di aver fatto Smax+1 richieste
+		int remaining = (getPesoTotale(Common.pesiConnettoriStandard)+1) - balancedResponses.size();
+		balancedResponses.addAll(Common.makeParallelRequests(richieste.get(2), remaining));
+		
+		checkWeightedRoundRobin(balancedResponses, Common.pesiConnettoriStandard);
+	}
+	
+	
+	static void parametroUrl_Impl(String erogazione) {
+		List<HttpRequest> richieste = Arrays.asList(
+				buildRequest_ParametroUrl(IDSessioni.get(0), erogazione), 
+				buildRequest_ParametroUrl(IDSessioni.get(1), erogazione),
+				buildRequest_LoadBalanced(erogazione)
+			);
+
+		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, Common.richiesteParallele);
+		
+		// Tutte le richieste con lo stesso id sessione finiscono
+		// sullo stesso connettore.
+		Common.checkAllResponsesSameConnettore(responsesByKind.get(0));
+		Common.checkAllResponsesSameConnettore(responsesByKind.get(1));
+		
+		// Tra le richieste\risposte che sono state bilanciate vanno considerate
+		// anche le prime richieste che portano con se un id sessione ancora mai visto prima.
+		// Le risposte che qui vado a pescare non sono necessariamente corrispondenti a tali richieste
+		// ma sono utili ai fini del conteggio.
+		var balancedResponses = responsesByKind.get(2);
+		balancedResponses.add(responsesByKind.get(0).get(0));
+		balancedResponses.add(responsesByKind.get(1).get(0));
+		
+		// Per testare il random faccio un numero di richieste elevato, in modo tale
+		//	da creare la distribuzione
+		int remaining = Common.richiesteTestRandom - balancedResponses.size();
+		while (remaining > 0) {
+			int nReq = Math.min(Common.richiesteParallele, remaining);
+			balancedResponses.addAll(Common.makeParallelRequests(richieste.get(2), nReq));
+			remaining -= nReq;
+		}
+		
+		checkRandomStrategy(balancedResponses, Common.setConnettoriAbilitati);
+	}
 	
 
+	static void freemarkerTemplate_Impl(String erogazione) {
+		List<HttpRequest> richieste = Arrays.asList(
+				buildRequest_FreemarkerTemplate(IDSessioni.get(0), erogazione), 
+				buildRequest_FreemarkerTemplate(IDSessioni.get(1), erogazione),
+				buildRequest_LoadBalanced(erogazione)
+			);
+
+		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, Common.richiesteParallele);
+		
+		// Tutte le richieste con lo stesso id sessione finiscono
+		// sullo stesso connettore.
+		Common.checkAllResponsesSameConnettore(responsesByKind.get(0));
+		Common.checkAllResponsesSameConnettore(responsesByKind.get(1));
+		
+		// Tra le richieste\risposte che sono state bilanciate vanno considerate
+		// anche le prime richieste che portano con se un id sessione ancora mai visto
+		// prima.
+		// Le risposte che qui vado a pescare non sono necessariamente corrispondenti a
+		// tali richieste
+		// ma sono utili ai fini del conteggio.
+		var balancedResponses = responsesByKind.get(2);
+		balancedResponses.add(responsesByKind.get(0).get(0));
+		balancedResponses.add(responsesByKind.get(1).get(0));
+
+		// Per testare il weighted random faccio un numero di richieste elevato, in modo
+		// tale
+		// da creare la distribuzione secondo i pesi
+		int remaining = Common.richiesteTestRandom - balancedResponses.size();
+		while (remaining > 0) {
+			int nReq = Math.min(Common.richiesteParallele, remaining);
+			balancedResponses.addAll(Common.makeParallelRequests(richieste.get(2), nReq));
+			remaining -= nReq;
+		}
+
+		checkWeightedRandomStrategy(balancedResponses, Common.pesiConnettoriStandard);
+	}
+	
+	
 	static int getPesoTotale(Map<String,Integer> pesiConnettori) {
 		return pesiConnettori.values().stream().reduce(0, Integer::sum);
 	}
@@ -1100,15 +1118,6 @@ public class SessioneStickyTest extends ConfigLoader {
 			throw new RuntimeException(e);
 		}
 		return responsesByKind;
-	}
-	
-
-	static void checkAllResponsesSameConnettore(List<HttpResponse> responses) {
-		String connettore = responses.get(0).getHeaderFirstValue(HEADER_ID_CONNETTORE);
-		assertNotEquals(null, connettore);
-		for(var resp : responses) {
-			assertEquals(connettore, resp.getHeaderFirstValue(HEADER_ID_CONNETTORE));
-		}
 	}
 
 }

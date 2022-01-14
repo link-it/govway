@@ -48,6 +48,9 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 /**
  * Costanti e metodi comuni per i test sui connettori multipli.
  * 
+ * TODO: I vari build requests che sono qui, non vanno confusi con quelli di SessioneStickyTest.
+ * fai in modo che non si crei confusione.
+ * 
  * @author froggo
  *
  */
@@ -437,6 +440,21 @@ public class Common {
 		request.addHeader("X-Forwarded-For", connettore);
 		
 		return request;
+	}
+
+
+	static void checkAllResponsesSameConnettore(List<HttpResponse> responses) {
+		String connettore = responses.get(0).getHeaderFirstValue(HEADER_ID_CONNETTORE);
+		assertNotEquals(null, connettore);
+		for(var resp : responses) {
+			assertEquals(connettore, resp.getHeaderFirstValue(HEADER_ID_CONNETTORE));
+		}
+	}
+	
+
+	static void checkAll200(List<HttpResponse> responses) {
+		for (var resp : responses)
+			assertEquals(200, resp.getResultHTTPOperation());
 	}
 
 }

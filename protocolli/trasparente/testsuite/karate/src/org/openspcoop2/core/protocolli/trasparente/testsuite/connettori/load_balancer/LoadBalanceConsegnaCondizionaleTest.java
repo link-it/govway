@@ -69,13 +69,10 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  * 			- PoolRotto: Connettore0, Connettore1, Connettore2, ConnettoreRotto, ConnettoreDisabilitato
  * 
  * 		- Ciascun pool viene raggiunto in maniera concorrente da più richieste
-		  e in maniera concorrente viene raggiunto anche ciascun pool
+		  		e in maniera concorrente viene raggiunto anche ciascun pool
  *  
- * 		- L'implementazione di govway tratta l'insieme di connettori identificato per una richiesta come un un'unica 
- * 			unità sulla quale poi applicare la strategia di load balancing. Perciò anche se i vari pools condividono 
- * 			connettori non è necessario resettare la cache dopo ogni pool di richieste. Se un connettore
- * 			è stato raggiunto perchè facente parte del pool A, allora le richieste al pool B non terranno conto di questo, applicando
- * 			di fatto una strategia di load balancing a parte su ogni singolo insieme di connettori. 
+ * 		- L'implementazione di govway tratta l'insieme di connettori identificato da un filtro come un un'unica 
+ * 			unità sulla quale poi applicare la strategia di load balancing. 
  */
 
 public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
