@@ -2114,7 +2114,7 @@ public final class Monitor extends Action {
 
 			
 			List<String> labels = new ArrayList<String>();
-			labels.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOW);
+//			labels.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOW);
 			labels.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_SERVIZIO_APPLICATIVO);
 			labels.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_CODA);
 			labels.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_RICONSEGNA);
@@ -2144,9 +2144,9 @@ public final class Monitor extends Action {
 					
 					StatoConsegnaAsincrona stato = statoConsegneAsincrone.getStato(servizioApplicativo);
 					
-					de = new DataElement();
-					de.setValue(formatter.format(stato.getNow()));
-					e.addElement(de);
+//					de = new DataElement();
+//					de.setValue(formatter.format(stato.getNow()));
+//					e.addElement(de);
 					
 					de = new DataElement();
 					IDServizio idServizio = monitorCore.getLabelNomeServizioApplicativo(stato.getServizioApplicativo());
@@ -2163,19 +2163,26 @@ public final class Monitor extends Action {
 							de.setValue(nomeErogazione);
 						}
 					}
+					de.setToolTip(MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOW+": "+formatter.format(stato.getNow()));
 					e.addElement(de);
 					
 					de = new DataElement();
 					if(stato.getInCoda()>0) {
 						StringBuilder sb = new StringBuilder();
-						sb.append(stato.getInCoda());
+						sb.append("<b>").append(stato.getInCoda()).append("</b> ");
 						if(stato.getVecchioInCoda()!=null) {
-							sb.append("<BR/>").append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_VECCHIO).
+							sb.append(" ("). //append("<BR/>").
+								//append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_VECCHIO).
 								append(formatter.format(stato.getVecchioInCoda()));
 						}
 						if(stato.getRecenteInCoda()!=null) {
-							sb.append("<BR/>").append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_RECENTE).
-								append(formatter.format(stato.getRecenteInCoda()));
+							if(stato.getVecchioInCoda()!=null) {
+								sb.append(" -");
+							}
+							sb.append(" "). //.append("<BR/>").
+								//append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_RECENTE).
+								append(formatter.format(stato.getRecenteInCoda())).
+								append(")");
 						}
 						de.setValue(sb.toString());
 					}
@@ -2187,14 +2194,20 @@ public final class Monitor extends Action {
 					de = new DataElement();
 					if(stato.getInRiconsegna()>0) {
 						StringBuilder sb = new StringBuilder();
-						sb.append(stato.getInRiconsegna());
+						sb.append("<b>").append(stato.getInRiconsegna()).append("</b> ");
 						if(stato.getVecchioInRiconsegna()!=null) {
-							sb.append("<BR/>").append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_VECCHIO).
+							sb.append(" ("). //append("<BR/>").
+								//append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_VECCHIO).
 								append(formatter.format(stato.getVecchioInRiconsegna()));
 						}
 						if(stato.getRecenteInRiconsegna()!=null) {
-							sb.append("<BR/>").append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_RECENTE).
-								append(formatter.format(stato.getRecenteInRiconsegna()));
+							if(stato.getVecchioInRiconsegna()!=null) {
+								sb.append(" -");
+							}
+							sb.append(" "). //.append("<BR/>").
+								//append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_RECENTE).
+								append(formatter.format(stato.getRecenteInRiconsegna())).
+								append(")");
 						}
 						de.setValue(sb.toString());
 					}
@@ -2206,14 +2219,20 @@ public final class Monitor extends Action {
 					de = new DataElement();
 					if(stato.getInMessageBox()>0) {
 						StringBuilder sb = new StringBuilder();
-						sb.append(stato.getInMessageBox());
+						sb.append("<b>").append(stato.getInMessageBox()).append("</b> ");
 						if(stato.getVecchioInMessageBox()!=null) {
-							sb.append("<BR/>").append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_VECCHIO).
+							sb.append(" ("). //append("<BR/>").
+								//append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_VECCHIO).
 								append(formatter.format(stato.getVecchioInMessageBox()));
 						}
 						if(stato.getRecenteInMessageBox()!=null) {
-							sb.append("<BR/>").append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_RECENTE).
-								append(formatter.format(stato.getRecenteInMessageBox()));
+							if(stato.getVecchioInMessageBox()!=null) {
+								sb.append(" -");
+							}
+							sb.append(" "). //.append("<BR/>").
+								//append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_RECENTE).
+								append(formatter.format(stato.getRecenteInMessageBox())).
+								append(")");
 						}
 						de.setValue(sb.toString());
 					}

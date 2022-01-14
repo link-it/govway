@@ -132,7 +132,8 @@ public class LoadBalancer {
 		List<String> serverList = new ArrayList<>();
 		serverList.addAll(servers);
 		String remoteId = clientIp;
-		Integer index = remoteId.hashCode() % serverList.size();
+		int absoluteHashCode = java.lang.Math.abs(remoteId.hashCode());
+		Integer index = absoluteHashCode % serverList.size();
 		String target = serverList.get(index);
 		
 		if(this.pool.isPassiveHealthCheck()) {

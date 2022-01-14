@@ -3101,6 +3101,30 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				boolean change = TipoOperazione.CHANGE.equals(tipoOperazione);
 				
 				boolean passwordCifrata = ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLVerificaTuttiICampi); // tipoCredenzialiSSLVerificaTuttiICampi usata come informazione per sapere se una password e' cifrata o meno
+				if(change && passwordCifrata) {
+					try {
+						long idS = -1;
+						if(idsil!=null) {
+							idS = Long.valueOf(idsil);
+						}
+						if(idS>0) {
+							ServizioApplicativo oldSA = this.saCore.getServizioApplicativo(idS);
+							boolean oldIMState = false;
+							if(isInvocazioneServizio) {
+								oldIMState = oldSA.getInvocazioneServizio()!=null && oldSA.getInvocazioneServizio().getGetMessage()!=null && 
+										StatoFunzionalita.ABILITATO.equals(oldSA.getInvocazioneServizio().getGetMessage());
+							}
+							else {
+								oldIMState = oldSA.getRispostaAsincrona()!=null && oldSA.getRispostaAsincrona().getGetMessage()!=null && 
+										StatoFunzionalita.ABILITATO.equals(oldSA.getRispostaAsincrona().getGetMessage());
+							}
+							if(!oldIMState) {
+								// se prima di questa modifica l'integration manager non era abilitato, devo far impostare la password
+								passwordCifrata = false;
+							}
+						}
+					}catch(Throwable t) {}
+				}
 				
 				if(change && passwordCifrata ){
 					DataElement deModifica = new DataElement();

@@ -8175,6 +8175,27 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					}
 				}
 				
+				IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
+				idServizioApplicativo.setIdSoggettoProprietario(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
+				idServizioApplicativo.setNome(paSA.getNome());
+				ServizioApplicativo sa = this.saCore.getServizioApplicativo(idServizioApplicativo);
+				org.openspcoop2.core.config.InvocazioneServizio is = sa.getInvocazioneServizio();
+				org.openspcoop2.core.config.Connettore connettore = is.getConnettore();
+				
+				if(showCambiaScheduling) {
+					if(is!=null && is.getGetMessage()!=null && StatoFunzionalita.ABILITATO.equals(is.getGetMessage())) {
+						if(connettore!=null && connettore.getTipo()!=null) {
+							String tipo = connettore.getTipo();
+							TipiConnettore tipoC = TipiConnettore.toEnumFromName(tipo);
+							if(TipiConnettore.DISABILITATO.equals(tipoC)) {
+								showCambiaScheduling = false;
+							}
+						}
+						else {
+							showCambiaScheduling = false;
+						}
+					}
+				}
 				
 				// Nome / Stato
 				DataElement de = new DataElement();
@@ -8266,15 +8287,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				// Connettore
 				de = new DataElement();
 				de.setType(DataElementType.TEXT);
-				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE);
-				
-				IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
-				idServizioApplicativo.setIdSoggettoProprietario(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
-				idServizioApplicativo.setNome(paSA.getNome());
-				ServizioApplicativo sa = this.saCore.getServizioApplicativo(idServizioApplicativo);
-				org.openspcoop2.core.config.InvocazioneServizio is = sa.getInvocazioneServizio();
-				org.openspcoop2.core.config.Connettore connettore = is.getConnettore();
-				
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE);				
 				de.setValue(this.getLabelConnettore(sa,is,true));
 				String tooltipConnettore = this.getTooltipConnettore(sa,is,true);
 				de.setToolTip(tooltipConnettore);

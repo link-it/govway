@@ -1149,7 +1149,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 				if(visualizzaSezioneConnettore) {
 
-					porteApplicativeHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
+					porteApplicativeHelper.addEndPointToDati(dati,(idsil!=null ? idsil : oldSA.getId()+""),nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 							getmsg,getmsgUsername,getmsgPassword,true,
 							invrifRichiesta,risprif,nomeProtocollo,true,true, true,
 							parentPA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled,
@@ -1193,7 +1193,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							erogazioneServizioApplicativoServer, ServiziApplicativiHelper.toArray(listaIdSAServer));
 				} else {
 
-					porteApplicativeHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
+					porteApplicativeHelper.addEndPointToDati(dati,(idsil!=null ? idsil : oldSA.getId()+""),nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 							getmsg,getmsgUsername,getmsgPassword,true,
 							invrifRichiesta,risprif,nomeProtocollo,true,true, true,
 							parentPA,serviceBinding, accessoDaAPSParametro, true,
@@ -1285,7 +1285,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 				if(visualizzaSezioneConnettore) {
 
-					porteApplicativeHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
+					porteApplicativeHelper.addEndPointToDati(dati,(idsil!=null ? idsil : oldSA.getId()+""),nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 							getmsg,getmsgUsername,getmsgPassword,true,
 							invrifRichiesta,risprif,nomeProtocollo,true,true, true,
 							parentPA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled,
@@ -1329,7 +1329,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							erogazioneServizioApplicativoServer, ServiziApplicativiHelper.toArray(listaIdSAServer));
 				} else {
 
-					porteApplicativeHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
+					porteApplicativeHelper.addEndPointToDati(dati,(idsil!=null ? idsil : oldSA.getId()+""),nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 							getmsg,getmsgUsername,getmsgPassword,true,
 							invrifRichiesta,risprif,nomeProtocollo,true,true, true,
 							parentPA,serviceBinding, accessoDaAPSParametro, true,

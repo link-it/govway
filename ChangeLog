@@ -1,5 +1,14 @@
 2022-01-13  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore, GovwayConsole]
+	Risolto Bug
+	Risolte le seguenti anomalie:
+	- in caso di utilizzo della funzionalità Load Balancer con algoritmo 'SourceIpHash', 
+	  la transazione terminava in errore in presenza di indirizzi ip per cui il calcolo 'hashCode' produceva un numero negativo.
+	- nella maschera di modifica di un connettore in cui veniva abilitata la funzionalità 'IntegrationManager/MessageBox' veniva erroneamente riportato il checkbox 'Modifica Password'.
+
+2022-01-13  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, GovwayConsole, GovWayMonitor]
 	Aggiunta funzionalità OP-1315
 	Effettuati i seguenti miglioramenti nella gestione e nel monitoraggio dei connettori multipli (consegne asincrone):
