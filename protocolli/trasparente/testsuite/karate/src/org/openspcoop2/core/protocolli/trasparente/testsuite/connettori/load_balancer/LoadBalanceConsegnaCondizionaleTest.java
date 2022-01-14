@@ -585,9 +585,9 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		checkResponses(responsesByPool);
 		
 		requestsByPool = new HashMap<>();
-		requestsByPool.put(Common.POOL_0, Arrays.asList(buildRequest_ForwardedFor("Pool0-Filtro0", erogazione)));
-		requestsByPool.put(Common.POOL_1, Arrays.asList(buildRequest_ForwardedFor("Pool1-Filtro0", erogazione)));
-		requestsByPool.put(Common.POOL_2, Arrays.asList(buildRequest_ForwardedFor("Pool2-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_0, Arrays.asList(Common.buildRequest_ForwardedFor("Pool0-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_1, Arrays.asList(Common.buildRequest_ForwardedFor("Pool1-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_2, Arrays.asList(Common.buildRequest_ForwardedFor("Pool2-Filtro0", erogazione)));
 		
 		responsesByPool = makeBatchedRequests(requestsByPool,15);
 		checkResponses(responsesByPool);
@@ -717,16 +717,6 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 			throw new RuntimeException(e);
 		}
 		return responsesByPool;
-	}
-	
-	private static HttpRequest buildRequest_ForwardedFor(String connettore, String erogazione) throws UtilsException {
-		HttpRequest request = new HttpRequest();
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-xforwarded-for"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
-		request.addHeader("X-Forwarded-For", connettore);
-		
-		return request;
 	}
 
 }

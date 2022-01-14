@@ -144,6 +144,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 	}
 	
 
+	// TODO: Riguarda i test random
 	@Test
 	public void random() {
 		/*
