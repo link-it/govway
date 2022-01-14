@@ -25,6 +25,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_0;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_1;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_2;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_3;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_DISABILITATO;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.HEADER_ID_CONDIZIONE;
 
 import java.util.ArrayList;
@@ -53,28 +56,17 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  * 
  *	Connettore0, Connettore1, Connettore2, Connettore3, ConnettoreDisabilitato, ConnettoreRotto
  *	
- *	Testo anche che al connettore disabilitato non venga instradato nulla, ogni politica ha un connettore disabilitato.
- *
- *  Invio N batch (per ora 1) di 15 richieste parallele, tre per connettore. Verifico che ciascuna richiesta
- *  raggiunga il connettore deisderato. In questo modo simulo un pattern di ri richieste verosimile.
+ *   Invio N batch (per ora 1) di 15 richieste parallele, tre per connettore. Verifico che ciascuna richiesta
+ *   raggiunga il connettore deisderato. In questo modo simulo un pattern di richieste verosimile.
  *  
  *   TODO: Provare nei test caratteri unicode strani, tipo le emoticon 😛
- *   TODO: Aggiungere nei test il connettore disabilitato e rilevare il 400
- *   
- *   TODO: Per ogni test aggiungi un set di richieste per cui fallisce l'identificazione, 
- *   			un set di richieste per cui il connettore non viene trovato
- *   			e un set di richieste che vanno sul connettore disabilitato
  *   
  *   TODO: Test XForwardedFor con più headers appartenenti alla stessa classe, ne deve essere scelto uno a caso
- *   
- *   TODO: Il test identificazioneFallita, ripetilo anche sulle singole erogazioni oltre che sulle regole
  *   
  *   Non vengono fatti test di case sensitivity sui valori in quanto i valori di parametri query, headers http
  *   e contenuto della richiesta sono tutti case sensitive.
  * 
  */
-
-
 public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	
 	@Test
@@ -83,10 +75,10 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		
 		HttpRequest request0 = Common.buildRequest_HeaderHttp(CONNETTORE_0, erogazione);
 		HttpRequest request1 = Common.buildRequest_HeaderHttp(CONNETTORE_1, erogazione);
-		HttpRequest request2 = Common.buildRequest_HeaderHttp(Common.CONNETTORE_2, erogazione);
+		HttpRequest request2 = Common.buildRequest_HeaderHttp(CONNETTORE_2, erogazione);
 		// La terza richiesta specifica due volte lo stesso connettore. deve comunque funzionare
-		HttpRequest request3 = Common.buildRequest_HeaderHttp(Common.CONNETTORE_3, erogazione);
-		request3.addHeader(HEADER_ID_CONDIZIONE, Common.CONNETTORE_3); 	
+		HttpRequest request3 = Common.buildRequest_HeaderHttp(CONNETTORE_3, erogazione);
+		request3.addHeader(HEADER_ID_CONDIZIONE, CONNETTORE_3); 	
 		
 		HttpRequest requestRotto = Common.buildRequest_HeaderHttp(Common.CONNETTORE_ROTTO, erogazione);
 
@@ -204,6 +196,22 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		assertTrue(oneOrTheOther);
 	}
 	
+	 /*   TODO: Per ogni test aggiungi un set di richieste per cui fallisce l'identificazione, 
+	 *   			un set di richieste per cui il connettore non viene trovato
+	 *   			e un set di richieste che vanno sul connettore disabilitato
+	 */
+	
+	static String CONNETTORE_ID_FALLITA = "ConnettoreIdentificazioneFallita"; 
+	static String CONNETTORE_ID_NON_TROVATO = "ConnettoreNessunConnettoreTrovato";
+	
+	static List<String> connettoriTestati = List
+			.of(CONNETTORE_0,
+				CONNETTORE_1, 
+				CONNETTORE_2,
+				CONNETTORE_3,
+				CONNETTORE_ID_FALLITA,
+				CONNETTORE_ID_NON_TROVATO,
+				CONNETTORE_DISABILITATO);
 	
 	@Test
 	public void urlInvocazione() {
@@ -217,10 +225,18 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		var requestsByConnettore = Common.connettoriAbilitati.stream()
 				.map(c -> Common.buildRequest_UrlInvocazione(c,erogazione))
 				.collect(Collectors.toList());
+		
+		HttpRequest requestIdentificazioneFallita = Common.buildRequest_Semplice(erogazione);
+		HttpRequest requestConnettoreNonTrovato = Common.buildRequest_UrlInvocazione("ConnettoreInesistente", erogazione);
+		HttpRequest requestConnettoreDisabilitato = Common.buildRequest_UrlInvocazione(CONNETTORE_DISABILITATO, erogazione);
+		
+		requestsByConnettore.add(requestIdentificazioneFallita);
+		requestsByConnettore.add(requestConnettoreNonTrovato);
+		requestsByConnettore.add(requestConnettoreDisabilitato);
 							
 		var responsesByConnettore = ConsegnaCondizionaleByNomeTest.makeBatchedRequests(requestsByConnettore, 3);
 		
-		matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);
+		matchResponsesWithConnettori(connettoriTestati, responsesByConnettore);
 	}
 
 	
@@ -262,9 +278,9 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		
 		List<String> connettori = Arrays.asList( CONNETTORE_0,
 				CONNETTORE_1,
-				Common.CONNETTORE_2,
-				Common.CONNETTORE_3,
-				Common.CONNETTORE_DISABILITATO);
+				CONNETTORE_2,
+				CONNETTORE_3,
+				CONNETTORE_DISABILITATO);
 		
 		var requestsByConnettore = connettori.stream()
 				.map(c -> Common.buildRequest_Contenuto(c,erogazione))
@@ -275,7 +291,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		for(int i=0;i<connettori.size();i++) {
 			String connettoreRichiesta = connettori.get(i);
 			
-			if (Common.CONNETTORE_DISABILITATO.equals(connettoreRichiesta)) {
+			if (CONNETTORE_DISABILITATO.equals(connettoreRichiesta)) {
 				for(var response : responsesByConnettore.get(i)) {
 					assertEquals(400, response.getResultHTTPOperation());
 				}
@@ -424,7 +440,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		requestForwardedFor.setMethod(HttpRequestMethod.GET);
 		requestForwardedFor.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-xforwarded-for"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
-		requestForwardedFor.addHeader("X-Forwarded-For", Common.CONNETTORE_3);
+		requestForwardedFor.addHeader("X-Forwarded-For", CONNETTORE_3);
 		
 		HttpRequest requestIdentificazioneStatica = new HttpRequest();
 		requestIdentificazioneStatica.setMethod(HttpRequestMethod.GET);
@@ -440,12 +456,12 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		List<List<Object>> connettoriAndrequests = Arrays.asList(
 				Arrays.asList(CONNETTORE_0, Common.buildRequest_HeaderHttp(CONNETTORE_0, erogazione)),
 				Arrays.asList(CONNETTORE_1, Common.buildRequest_UrlInvocazione(CONNETTORE_1, erogazione)),
-				Arrays.asList(Common.CONNETTORE_2, Common.buildRequest_ParametroUrl(Common.CONNETTORE_2, erogazione)),				
-				Arrays.asList(Common.CONNETTORE_3, Common.buildRequest_Contenuto(Common.CONNETTORE_3, erogazione)),				
+				Arrays.asList(CONNETTORE_2, Common.buildRequest_ParametroUrl(CONNETTORE_2, erogazione)),				
+				Arrays.asList(CONNETTORE_3, Common.buildRequest_Contenuto(CONNETTORE_3, erogazione)),				
 				Arrays.asList(CONNETTORE_0, Common.buildRequest_Template(CONNETTORE_0, erogazione)),
 				Arrays.asList(CONNETTORE_1, Common.buildRequest_FreemarkerTemplate(CONNETTORE_1, erogazione)),
-				Arrays.asList(Common.CONNETTORE_2, Common.buildRequest_VelocityTemplate(Common.CONNETTORE_2, erogazione)),
-				Arrays.asList(Common.CONNETTORE_3, requestForwardedFor),
+				Arrays.asList(CONNETTORE_2, Common.buildRequest_VelocityTemplate(CONNETTORE_2, erogazione)),
+				Arrays.asList(CONNETTORE_3, requestForwardedFor),
 				Arrays.asList(CONNETTORE_0,requestIdentificazioneStatica),
 				Arrays.asList(null, requestIdentificazioneClientIp)
 			);
@@ -620,7 +636,8 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	 * lista `requests`
 	 */
 	public static Vector<Vector<HttpResponse>> makeBatchedRequests(List<HttpRequest> requests, int requests_per_batch) {
-	
+		assertTrue(Common.sogliaRichiesteSimultanee >= requests.size());
+		
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(requests.size());
 		var ret = new Vector<Vector<HttpResponse>>(requests.size());
 	
@@ -645,25 +662,27 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	}
 
 
-	public static void matchResponsesWithConnettori(List<String> connettori,
-			Vector<Vector<HttpResponse>> responsesByConnettore) {
+	public static void matchResponsesWithConnettori(List<String> connettori, List<Vector<HttpResponse>> responsesByConnettore) {
+		assertEquals(connettori.size(), responsesByConnettore.size());
+		
 		for (int i = 0; i < connettori.size(); i++) {
 			String connettoreRichiesta = connettori.get(i);
 			
-			/*if (connettoreRichiesta.equals(CONNETTORE_DISABILITATO)) {
+			
+			if (connettoreRichiesta.equals(CONNETTORE_DISABILITATO) 
+					|| connettoreRichiesta.equals(CONNETTORE_ID_FALLITA) 
+					|| connettoreRichiesta.equals(CONNETTORE_ID_NON_TROVATO)) {
+				
 				for (var response : responsesByConnettore.get(i)) {
 					assertEquals(400,response.getResultHTTPOperation());
 				}
-			} else if (connettoreRichiesta.equals(CONNETTORE_ROTTO)) {
-				for (var response : responsesByConnettore.get(i)) {
-					assertEquals(400,response.getResultHTTPOperation());
-				}
-			} else {*/
+				
+			} else {
 				for (var response : responsesByConnettore.get(i)) {
 					String connettoreRisposta = response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE);
 					assertEquals(connettoreRichiesta, connettoreRisposta);
 				}
-			//}
+			}
 		}
 	}
 		

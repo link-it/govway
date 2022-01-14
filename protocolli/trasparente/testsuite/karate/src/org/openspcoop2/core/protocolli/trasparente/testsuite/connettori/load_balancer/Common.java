@@ -293,6 +293,14 @@ public class Common {
 		return ret;
 	}
 
+	public static HttpRequest buildRequest_Semplice(String erogazione) {
+		HttpRequest request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-header-http"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
+		return request;
+	}
+	
 
 	public static HttpRequest buildRequest_HeaderHttp(String connettore, String erogazione) {
 		HttpRequest request = new HttpRequest();
