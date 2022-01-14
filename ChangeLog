@@ -1,5 +1,11 @@
 2022-01-14  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Differenziato diagnostico emesso in caso di consegna condizionale configurata per utilizzare un connettore di default 
+	sia nel caso di estrazione della condizione fallita che in caso di individuazione di un connettore tramite la condizione estratta dalla richiesta.
+
+2022-01-14  Andrea Poli <apoli@link.it>
+
 	* [GovWayMonitor, ApiRsMonitoraggio]
 	Aggiunta funzionalità OP-1317
 	Aggiunto tra i report statistici una distribuzione per errori.
