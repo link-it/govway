@@ -1,3 +1,9 @@
+2022-01-15  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolta anomalia presente nella maschera di configurazione di un connettore di tipo 'LoadBalancer' dove è stata configurata una Sessione Sticky.
+	Modificando la strategia in 'Source IP hash', sparisce la possibilità di abilitare la sessione sticky poichè non supportata dalla strategia, però rimane erroneamente la sezione precedentemente configurata.
+
 2022-01-14  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayMonitor]
