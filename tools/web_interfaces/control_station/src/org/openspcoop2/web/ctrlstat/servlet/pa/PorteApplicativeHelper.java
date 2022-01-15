@@ -6658,6 +6658,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			
 		if(stato.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO)) {
 			
+			LoadBalancerType lbt = null;
+						
 			// custom
 			if(TipoBehaviour.CUSTOM.getValue().equals(modalitaConsegna)) {
 				
@@ -6717,7 +6719,6 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				// sticky
 				
-				LoadBalancerType lbt = null;
 				if(loadBalanceStrategia!=null) {
 					lbt = LoadBalancerType.toEnumConstant(loadBalanceStrategia, true);
 				}
@@ -6822,7 +6823,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				}
 			}
 			
-			if(TipoBehaviour.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna) && sticky) {
+			if(TipoBehaviour.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna) && sticky &&
+					lbt!=null && lbt.isSticky() ) {
 			
 				de = new DataElement();
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY);
