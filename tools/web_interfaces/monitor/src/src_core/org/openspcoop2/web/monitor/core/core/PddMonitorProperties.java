@@ -637,6 +637,10 @@ public class PddMonitorProperties {
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.distribuzioneNonTemporale.mostraUnitaTempo", true, true));
 	}
 	
+	public boolean isMostraUnitaTempoDistribuzioneNonTemporale_periodoPersonalizzato() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.distribuzioneNonTemporale.periodoPersonalizzato.mostraUnitaTempo", true, true));
+	}
+	
 	public Integer getIntervalloTimeoutRicercaStatistiche() throws Exception{
 		String timeoutS = this.appProperties.getProperty("statistiche.timeoutRicercaStatistiche", false, true);
 		return StringUtils.isNotBlank(timeoutS) ? Integer.parseInt(timeoutS) : null;

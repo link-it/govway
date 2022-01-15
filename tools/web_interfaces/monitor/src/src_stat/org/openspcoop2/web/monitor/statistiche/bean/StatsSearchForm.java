@@ -103,6 +103,7 @@ public class StatsSearchForm extends BaseSearchForm{
 	private boolean andamentoTemporalePerEsiti = false; 
 
 	private boolean isMostraUnitaTempoDistribuzioneNonTemporale = false;
+	private boolean isMostraUnitaTempoDistribuzioneNonTemporale_periodoPersonalizzato = false;
 	
 	private boolean distribuzionePerImplementazioneApi = true;
 	
@@ -147,6 +148,9 @@ public class StatsSearchForm extends BaseSearchForm{
 			initIdClusterAndCanali(govwayMonitorProperties);
 			
 			this.isMostraUnitaTempoDistribuzioneNonTemporale = govwayMonitorProperties.isMostraUnitaTempoDistribuzioneNonTemporale();
+			if(!this.isMostraUnitaTempoDistribuzioneNonTemporale) {
+				this.isMostraUnitaTempoDistribuzioneNonTemporale_periodoPersonalizzato = govwayMonitorProperties.isMostraUnitaTempoDistribuzioneNonTemporale_periodoPersonalizzato();
+			}
 		} catch (Exception e) {
 			StatsSearchForm.log.error("Errore il calcolo della proprieta' 'useDistribuzioneStatisticaGiornalieraPerElaborazioneSettimanaleMensile': " + e.getMessage(),e);
 		}
@@ -980,6 +984,11 @@ public class StatsSearchForm extends BaseSearchForm{
 				// Fix: l'impostazione dei minuti non ha senso nelle statistiche poichè non esiste un campionamento sui minuti. La soluzione è di impostare l'intervallo più esterno '00' in data inizio e '59' in data fine.
 				return "yyyy-MM-dd HH:mm";
 			default:
+				if(!TipoStatistica.ANDAMENTO_TEMPORALE.equals(this.tipoStatistica) &&
+						!this.isMostraUnitaTempoDistribuzioneNonTemporale &&
+						!this.isMostraUnitaTempoDistribuzioneNonTemporale_periodoPersonalizzato) {
+					return "yyyy-MM-dd HH:mm"; // i minuti servono sempre per le distribuzioni statistiche se non visualizzo l'unita di tempo nel periodo personalizzato
+				}
 				return "yyyy-MM-dd";
 			}
 		}
@@ -995,7 +1004,10 @@ public class StatsSearchForm extends BaseSearchForm{
 		return TipoStatistica.ANDAMENTO_TEMPORALE.equals(this.tipoStatistica) || this.isMostraUnitaTempoDistribuzioneNonTemporale;
 	}
 	public boolean isShowUnitaTempoPersonalizzato() {
-		return !this.isShowUnitaTempo() && this.isPeriodoPersonalizzato();
+		return !this.isShowUnitaTempo() && this.isPeriodoPersonalizzato() && this.isMostraUnitaTempoDistribuzioneNonTemporale_periodoPersonalizzato;
+	}
+	public boolean isShowUnitaTempoPersonalizzato_periodoPersonalizzato() {
+		return this.isMostraUnitaTempoDistribuzioneNonTemporale_periodoPersonalizzato;
 	}
 
 }

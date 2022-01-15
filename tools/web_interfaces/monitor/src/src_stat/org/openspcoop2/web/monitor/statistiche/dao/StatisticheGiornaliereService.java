@@ -97,6 +97,7 @@ import org.openspcoop2.pdd.config.DynamicClusterManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.constants.CaseSensitiveMatch;
 import org.openspcoop2.web.monitor.core.constants.TipoMatch;
@@ -458,6 +459,42 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		return null;
 	}
 	
+	public StatisticType checkStatisticType(StatsSearchForm form) {
+		StatisticType tipologia = form.getModalitaTemporale();
+		if(!form.isShowUnitaTempo()) {
+			if(form.isPeriodoPersonalizzato() && !form.isShowUnitaTempoPersonalizzato_periodoPersonalizzato()) {
+				// calcolo qua
+				Date dInizio = form.getDataInizio();
+				Date dFine = form.getDataFine();
+				if(dInizio!=null && dFine!=null) {
+					/*
+					long msDiff = dFine.getTime() - dInizio.getTime();
+					long ore24ms = 86400000;
+					if(msDiff > ore24ms) {
+						tipologia = StatisticType.GIORNALIERA; 
+					}
+					else {
+						tipologia = StatisticType.ORARIA; 
+					}*/
+					
+					// nel personalizzato considero sempre le ore
+					String format = "HH:mm";
+					String inizio = DateUtils.getSimpleDateFormat(format).format(dInizio);
+					String fine = DateUtils.getSimpleDateFormat(format).format(dFine);
+					if("00:00".equals(inizio) && "23:59".equals(fine)) {
+						tipologia = StatisticType.GIORNALIERA; 
+					}
+					else {
+						tipologia = StatisticType.ORARIA; 
+					}
+				}
+				if(tipologia==null) {
+					tipologia = StatisticType.GIORNALIERA; // default in caso di errore
+				}
+			}
+		}
+		return tipologia;
+	}
 	
 	
 	
@@ -2256,18 +2293,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	
 	
 	
+
 	
-	
-	
-	
-	
-	
+		
 	// ********** DISTRIBUZIONE PER ERRORI ******************
 	
 	@Override
 	public int countAllDistribuzioneErrori() throws ServiceException {
 		try {
-			StatisticType tipologia = this.distribErroriSearch.getModalitaTemporale();
+			StatisticType tipologia = checkStatisticType(this.distribErroriSearch);
 			StatisticaModel model = null;
 			IServiceSearchWithoutId<?> dao = null;
 
@@ -2654,7 +2688,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 	private List<ResDistribuzione> executeDistribuzioneErrori(Integer start, Integer limit) throws ServiceException {
 		try {
-			StatisticType tipologia = this.distribErroriSearch.getModalitaTemporale();
+			StatisticType tipologia = checkStatisticType(this.distribErroriSearch);
 			StatisticaModel model = null;
 //			IServiceSearchWithoutId<?> dao = null;
 
@@ -2916,7 +2950,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 		try {
 
-			StatisticType tipologia = this.distribSoggettoSearch.getModalitaTemporale();
+			StatisticType tipologia = checkStatisticType(this.distribSoggettoSearch);
 			StatisticaModel model = null;
 			IServiceSearchWithoutId<?> dao = null;
 
@@ -2952,7 +2986,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	public List<ResDistribuzione> findAllDistribuzioneSoggetto() throws ServiceException{
 		try {
 
-			StatisticType tipologia = this.distribSoggettoSearch.getModalitaTemporale();
+			StatisticType tipologia = checkStatisticType(this.distribSoggettoSearch);
 			StatisticaModel model = null;
 			IServiceSearchWithoutId<?> dao = null;
 
@@ -3002,7 +3036,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	public List<ResDistribuzione> findAllDistribuzioneSoggetto(int start,int limit)  throws ServiceException{
 		try {
 
-			StatisticType tipologia = this.distribSoggettoSearch.getModalitaTemporale();
+			StatisticType tipologia = checkStatisticType(this.distribSoggettoSearch);
 			StatisticaModel model = null;
 			IServiceSearchWithoutId<?> dao = null;
 
@@ -4835,7 +4869,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	@Override
 	public int countAllDistribuzioneServizio() throws ServiceException {
 		try {
-			StatisticType tipologia = this.distribSoggettoSearch.getModalitaTemporale();
+			StatisticType tipologia = checkStatisticType(this.distribServizioSearch);
 			StatisticaModel model = null;
 			IServiceSearchWithoutId<?> dao = null;
 
@@ -4905,7 +4939,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	private List<ResDistribuzione> executeDistribuzioneServizio(Integer start, Integer limit) throws ServiceException {
 		try {
 			
-			StatisticType tipologia = this.distribServizioSearch.getModalitaTemporale();
+			StatisticType tipologia = checkStatisticType(this.distribServizioSearch);
 			StatisticaModel model = null;
 //			IServiceSearchWithoutId<?> dao = null;
 
@@ -5522,7 +5556,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	@Override
 	public int countAllDistribuzioneAzione() throws ServiceException {
 		try {
-			StatisticType tipologia = this.distribAzioneSearch.getModalitaTemporale();
+			StatisticType tipologia = checkStatisticType(this.distribAzioneSearch);
 			StatisticaModel model = null;
 			IServiceSearchWithoutId<?> dao = null;
 
@@ -5903,7 +5937,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 	private List<ResDistribuzione> executeDistribuzioneAzione(Integer start, Integer limit) throws ServiceException {
 		try {
-			StatisticType tipologia = this.distribAzioneSearch.getModalitaTemporale();
+			StatisticType tipologia = checkStatisticType(this.distribAzioneSearch);
 			StatisticaModel model = null;
 //			IServiceSearchWithoutId<?> dao = null;
 
@@ -6184,7 +6218,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	@Override
 	public int countAllDistribuzioneServizioApplicativo() throws ServiceException{
 		try {
-			StatisticType tipologia = this.distribSaSearch.getModalitaTemporale();
+			StatisticType tipologia = checkStatisticType(this.distribSaSearch);
 			StatisticaModel model = null;
 			IServiceSearchWithoutId<?> dao = null;
 
@@ -6302,7 +6336,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		
 
 		try {
-			StatisticType tipologia = this.distribSaSearch.getModalitaTemporale();
+			StatisticType tipologia = checkStatisticType(this.distribSaSearch);
 			StatisticaModel model = null;
 //			IServiceSearchWithoutId<?> dao = null;
 
