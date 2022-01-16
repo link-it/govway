@@ -146,7 +146,7 @@ public class SessioneStickyMaxAgeTest extends ConfigLoader {
 	@Test
 	public void parametroUrlRandom()
 	{
-		final String erogazione = "LoadBalanceSessioneStickyRandomMaxAge";
+		final String erogazione = "LoadBalanceSessioneStickyParametroUrlRandomMaxAge";
 		
 		/**
 		 * Con la strategia random non sono in grado di determinare su quale
@@ -163,7 +163,7 @@ public class SessioneStickyMaxAgeTest extends ConfigLoader {
 	
 	@Test
 	public void freemarkerTemplateWeightedRandom() {
-		final String erogazione = "LoadBalanceSessioneStickyWeightedRandomMaxAge";
+		final String erogazione = "LoadBalanceSessioneStickyFreemarkerTemplateWeightedRandomMaxAge";
 		
 		SessioneStickyTest.freemarkerTemplate_Impl(erogazione);
 		
@@ -202,7 +202,7 @@ public class SessioneStickyMaxAgeTest extends ConfigLoader {
 		// bloccato il primo connettore
 		var blockingRequest = SessioneStickyTest.buildRequest_VelocityTemplate(IDSessioni.get(0), erogazione);
 		
-		// TODO: Sleep del tempo necessario: maxAge - ( now - start ) + 500; guardalo anche su altri test
+		// TODO: Sleep del tempo necessario: maxAge - ( now - start ) + 500; guardalo anche sugli altri test fatti l'anno scorso, tipo rate limiting ecc..
 		blockingRequest.setUrl(blockingRequest.getUrl() + "&sleep=" + Common.maxAge + 1000);
 		var futureResponse = Utils.makeBackgroundRequest(blockingRequest);
 				
