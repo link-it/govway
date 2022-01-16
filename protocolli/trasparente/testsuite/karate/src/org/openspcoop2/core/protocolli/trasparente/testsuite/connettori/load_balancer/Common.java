@@ -444,6 +444,7 @@ public class Common {
 
 
 	static void checkAllResponsesSameConnettore(List<HttpResponse> responses) {
+		checkAll200(responses);
 		String connettore = responses.get(0).getHeaderFirstValue(HEADER_ID_CONNETTORE);
 		assertNotEquals(null, connettore);
 		for(var resp : responses) {

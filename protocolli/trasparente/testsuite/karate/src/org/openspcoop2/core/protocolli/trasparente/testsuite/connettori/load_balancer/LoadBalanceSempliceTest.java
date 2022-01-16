@@ -323,10 +323,6 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		 * destinato al server di echo. Se la richiesta venisse instradata al connettore rotto non avremmo la pausa
 		 * desiderata.
 		 * 
-	
-		 * Test 1: Test effettivo della funzionalità. Faccio 5 richieste parallele
-		 * con sleep e attendo la terminazione. Mi assicuro che siano stati raggiunti
-		 * tutti e 4 i connettori.
 		 */ 
 		
 		final String erogazione = "LoadBalanceLeastConnections";

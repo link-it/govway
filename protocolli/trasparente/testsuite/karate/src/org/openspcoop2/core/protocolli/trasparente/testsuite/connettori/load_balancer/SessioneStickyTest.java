@@ -490,79 +490,86 @@ public class SessioneStickyTest extends ConfigLoader {
 		parametroUrl_Impl(erogazione);
 	}
 	
-		
-	@Test
-	public void velocityTemplate() throws InterruptedException, ExecutionException {
-				
-		final String erogazione = "LoadBalanceSessioneStickyVelocityTemplate";
-		
+	
+	public static void velocityTemplate_Impl(String erogazione)  throws InterruptedException, ExecutionException {
 		// Qui viene usata la strategia di bilanciamento LeastConnections,
 		// Lancio le due chiamate bloccanti, devono durare per tutto il test
 		HttpRequest requestBlockingIdSessione1 = buildRequest_VelocityTemplate(IDSessioni.get(0), erogazione);
-		requestBlockingIdSessione1.setUrl(requestBlockingIdSessione1.getUrl()+"&sleep="+Common.durataBloccanteLunga);
-		
+		requestBlockingIdSessione1
+				.setUrl(requestBlockingIdSessione1.getUrl() + "&sleep=" + Common.durataBloccanteLunga);
+
 		HttpRequest requestBlockingIdSessione2 = buildRequest_VelocityTemplate(IDSessioni.get(1), erogazione);
-		requestBlockingIdSessione2.setUrl(requestBlockingIdSessione2.getUrl()+"&sleep="+Common.durataBloccanteLunga);
-		
+		requestBlockingIdSessione2
+				.setUrl(requestBlockingIdSessione2.getUrl() + "&sleep=" + Common.durataBloccanteLunga);
+
 		var futureResp1 = Utils.makeBackgroundRequest(requestBlockingIdSessione1);
-		
+
 		org.openspcoop2.utils.Utilities.sleep(delayRichiesteBackground);
-		
+
 		var futureResp2 = Utils.makeBackgroundRequest(requestBlockingIdSessione2);
-		
+
 		org.openspcoop2.utils.Utilities.sleep(delayRichiesteBackground);
-		
+
 		assertFalse(futureResp1.isDone() || futureResp2.isDone());
-		
-		// Faccio una serie di richieste con id sessione impostato e verifico che vadano tutte nello stesso connettore
-		// Per il debug di andrea commento queste richieste qui.
-		List<HttpRequest> richieste = Arrays.asList(
-				buildRequest_VelocityTemplate(Common.IDSessioni.get(0), erogazione), 
-				buildRequest_VelocityTemplate(Common.IDSessioni.get(1), erogazione)				
-			);
-		
-		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, Common.richiesteParallele-2);
+
+		// Faccio una serie di richieste con id sessione impostato e verifico che vadano
+		// tutte nello stesso connettore
+		List<HttpRequest> richieste = Arrays
+				.asList(buildRequest_VelocityTemplate(Common.IDSessioni.get(0), erogazione),
+						buildRequest_VelocityTemplate(Common.IDSessioni.get(1), erogazione));
+
+		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, 5);
 		Common.checkAllResponsesSameConnettore(responsesByKind.get(0));
 		Common.checkAllResponsesSameConnettore(responsesByKind.get(1));
 
 		String connettoreSessione0 = responsesByKind.get(0).get(0).getHeaderFirstValue(HEADER_ID_CONNETTORE);
 		String connettoreSessione1 = responsesByKind.get(1).get(0).getHeaderFirstValue(HEADER_ID_CONNETTORE);
-		
+
 		assertNotEquals(connettoreSessione0, connettoreSessione1);
-		
+
 		getLoggerCore().info("Connettore sessione 0: " + connettoreSessione0);
 		getLoggerCore().info("Connettore sessione 1: " + connettoreSessione1);
-		
+
 		assertFalse(futureResp1.isDone() || futureResp2.isDone());
-		
-		// Faccio 2 richieste senza idSessione impostato e verifico che vadano a finire negli altri 2 connettori
-		
+
+		// Faccio 2 richieste senza idSessione impostato e verifico che vadano a finire
+		// negli altri 2 connettori
+
 		HttpRequest requestBalanced = buildRequest_LoadBalanced(erogazione);
-		requestBalanced.setUrl(requestBalanced.getUrl()+"&sleep="+Common.durataBloccante);
-		
+		requestBalanced.setUrl(requestBalanced.getUrl() + "&sleep=" + Common.durataBloccante);
+
 		var futureBlockingResponses = Utils.makeBackgroundRequests(requestBalanced, 2, delayRichiesteBackground);
-		
+
 		Vector<HttpResponse> balancedResponses = Utils.awaitResponses(futureBlockingResponses);
-		
+
 		var howManys = Common.contaConnettoriUtilizzati(balancedResponses);
 		Common.printMap(howManys);
-		assertEquals(2,howManys.size());
+		assertEquals(2, howManys.size());
 		assertFalse(howManys.keySet().contains(connettoreSessione0));
 		assertFalse(howManys.keySet().contains(connettoreSessione1));
 		for (var connettore : howManys.keySet()) {
 			assertEquals(Integer.valueOf(1), howManys.get(connettore));
 		}
-		
+
 		assertFalse(futureResp1.isDone() || futureResp2.isDone());
-		
-		// Mi assicuro che le richieste con id sessione impostato siano andate sui connettori
-		// scelti durante le prime due richieste.		
-		
+
+		// Mi assicuro che le richieste con id sessione impostato siano andate sui
+		// connettori
+		// scelti durante le prime due richieste.
+
 		var responseIdSessione0 = futureResp1.get();
 		var responseIdSessione1 = futureResp2.get();
-		
+
 		assertEquals(connettoreSessione0, responseIdSessione0.getHeaderFirstValue(HEADER_ID_CONNETTORE));
 		assertEquals(connettoreSessione1, responseIdSessione1.getHeaderFirstValue(HEADER_ID_CONNETTORE));
+
+	}
+	
+		
+	@Test
+	public void velocityTemplate() throws InterruptedException, ExecutionException {
+		final String erogazione = "LoadBalanceSessioneStickyVelocityTemplate";
+		velocityTemplate_Impl(erogazione);
 	}
 	
 	
