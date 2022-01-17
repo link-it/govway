@@ -103,7 +103,7 @@ public class Common {
 	
 	public static final int richiesteParallele = sogliaRichiesteSimultanee;
 	
-	public static final List<String> IDSessioni = Arrays
+	public static List<String> IDSessioni = Arrays
 			.asList(UUID.randomUUID().toString(),
 					UUID.randomUUID().toString());
 	

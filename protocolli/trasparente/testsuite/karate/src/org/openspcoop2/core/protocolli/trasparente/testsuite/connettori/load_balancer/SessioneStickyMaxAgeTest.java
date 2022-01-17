@@ -26,6 +26,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.HEADER_ID_CONNETTORE;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.IDSessioni;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -36,6 +37,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
@@ -69,6 +71,14 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  *
  */
 public class SessioneStickyMaxAgeTest extends ConfigLoader {
+	
+    @Before
+    public void Before() {
+    	// Prima di ogni metodo di test resetto l'id sessione.
+    	Common.IDSessioni = Arrays
+    			.asList(UUID.randomUUID().toString(),
+    					UUID.randomUUID().toString());
+    }
 
 	@Test
 	public void headerHttpRoundRobin() {
@@ -178,6 +188,9 @@ public class SessioneStickyMaxAgeTest extends ConfigLoader {
 	public void velocityTemplateLeastConnections() throws InterruptedException, ExecutionException {
 		
 		final String erogazione = "LoadBalanceSessioneStickyLeastConnectionsMaxAge";
+		
+		// Faccio quattro richieste con ID Sessione diverso, per tenere occupati i 4 connettori abilitati
+		// e per creare le associazioni fra ID Sessione e connettore
 		var idSessioni = List
 				.of(IDSessioni.get(0), IDSessioni.get(1), UUID.randomUUID().toString(), UUID.randomUUID().toString());
 		
