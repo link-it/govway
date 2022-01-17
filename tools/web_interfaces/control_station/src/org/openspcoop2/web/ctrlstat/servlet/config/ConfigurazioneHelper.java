@@ -190,6 +190,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostan
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
@@ -210,6 +211,7 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.mvc.dynamic.components.BaseComponent;
 import org.openspcoop2.web.lib.mvc.dynamic.components.Hidden;
+import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
 import org.openspcoop2.web.lib.users.dao.User;
 
 /**
@@ -16191,6 +16193,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			Parameter pInfoType = new Parameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE, infoType); 
 			boolean attributeAuthority = ConfigurazioneCostanti.isConfigurazioneAttributeAuthority(infoType);
 			
+			// decido la vista custom da mostrare
+			if(attributeAuthority) {
+				this.pd.setCustomListViewName(ConfigurazioneCostanti.CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_NOME_VISTA_CUSTOM_LISTA_ATTRIBUTE_AUTHORITY);
+			} else {
+				this.pd.setCustomListViewName(ConfigurazioneCostanti.CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_NOME_VISTA_CUSTOM_LISTA_TOKEN_POLICIY);
+			}
+			
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
@@ -16236,15 +16245,18 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			List<String> lstLabels = new ArrayList<>();
-			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME);
-			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_DESCRIZIONE);
+			
+//			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME);
+//			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_DESCRIZIONE);
 			boolean forceId = attributeAuthority ?
 					this.core.isAttributeAuthorityForceIdEnabled() :
 					this.core.isTokenPolicyForceIdEnabled();
-			if(!forceId) {
-				lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
-			}
-			lstLabels.add(CostantiControlStation.LABEL_IN_USO_COLONNA_HEADER); // inuso
+//			if(!forceId) {
+//				lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
+//			}
+//			lstLabels.add(CostantiControlStation.LABEL_IN_USO_COLONNA_HEADER); // inuso
+			
+			lstLabels.add(label);
 			
 			// setto le label delle colonne
 			String[] labels = lstLabels.toArray(new String[lstLabels.size()]);
@@ -16256,45 +16268,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			if (lista != null) {
 				for (int i = 0; i < lista.size(); i++) {
-					Vector<DataElement> e = new Vector<DataElement>();
-					GenericProperties policy = lista.get(i);
-					
-					Parameter pPolicyId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID, policy.getId() + ""); 
-
-					DataElement de = new DataElement();
-					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_CHANGE, pInfoType, pPolicyId);
-					de.setValue(policy.getNome());
-					de.setIdToRemove(""+policy.getId());
-					e.addElement(de);
-					
-					de = new DataElement();
-					de.setValue(policy.getDescrizione());
-					e.addElement(de);
-					
-					if(!forceId) {
-						de = new DataElement();
-						if(nomiConfigurazioniPolicyGestioneToken!=null && nomiConfigurazioniPolicyGestioneToken.contains(policy.getTipo())) {
-							boolean found = false;
-							for (int j = 0; j < nomiConfigurazioniPolicyGestioneToken.size(); j++) {
-								String nome = nomiConfigurazioniPolicyGestioneToken.get(j);
-								if(nome.equals(policy.getTipo())) {
-									de.setValue(labelConfigurazioniPolicyGestioneToken.get(j));
-									found = true;
-									break;
-								}
-							}
-							if(!found) {
-								de.setValue(policy.getTipo());
-							}
-						}
-						else {
-							de.setValue(policy.getTipo());
-						}
-						e.addElement(de);
-					}
-					
-					InUsoType inUsoType = attributeAuthority ? InUsoType.ATTRIBUTE_AUTHORITY : InUsoType.TOKEN_POLICY;
-					this.addInUsoButtonVisualizzazioneClassica(e, policy.getNome(), policy.getId()+"", inUsoType);
+					Vector<DataElement> e = creaEntryTokenPolicyCustom(lista, pInfoType, attributeAuthority,
+							nomiConfigurazioniPolicyGestioneToken, labelConfigurazioniPolicyGestioneToken, forceId, i);
 					
 					dati.addElement(e);
 				}
@@ -16342,6 +16317,123 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
+	}
+	
+	public Vector<DataElement> creaEntryTokenPolicy(List<GenericProperties> lista, Parameter pInfoType,
+			boolean attributeAuthority, List<String> nomiConfigurazioniPolicyGestioneToken,
+			List<String> labelConfigurazioniPolicyGestioneToken, boolean forceId, int i) {
+		Vector<DataElement> e = new Vector<DataElement>();
+		GenericProperties policy = lista.get(i);
+		
+		Parameter pPolicyId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID, policy.getId() + ""); 
+
+		DataElement de = new DataElement();
+		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_CHANGE, pInfoType, pPolicyId);
+		de.setValue(policy.getNome());
+		de.setIdToRemove(""+policy.getId());
+		e.addElement(de);
+		
+		de = new DataElement();
+		de.setValue(policy.getDescrizione());
+		e.addElement(de);
+		
+		if(!forceId) {
+			de = new DataElement();
+			if(nomiConfigurazioniPolicyGestioneToken!=null && nomiConfigurazioniPolicyGestioneToken.contains(policy.getTipo())) {
+				boolean found = false;
+				for (int j = 0; j < nomiConfigurazioniPolicyGestioneToken.size(); j++) {
+					String nome = nomiConfigurazioniPolicyGestioneToken.get(j);
+					if(nome.equals(policy.getTipo())) {
+						de.setValue(labelConfigurazioniPolicyGestioneToken.get(j));
+						found = true;
+						break;
+					}
+				}
+				if(!found) {
+					de.setValue(policy.getTipo());
+				}
+			}
+			else {
+				de.setValue(policy.getTipo());
+			}
+			e.addElement(de);
+		}
+		
+		InUsoType inUsoType = attributeAuthority ? InUsoType.ATTRIBUTE_AUTHORITY : InUsoType.TOKEN_POLICY;
+		this.addInUsoButtonVisualizzazioneClassica(e, policy.getNome(), policy.getId()+"", inUsoType);
+		return e;
+	}
+	
+	private Vector<DataElement> creaEntryTokenPolicyCustom(List<GenericProperties> lista, Parameter pInfoType,
+			boolean attributeAuthority, List<String> nomiConfigurazioniPolicyGestioneToken,
+			List<String> labelConfigurazioniPolicyGestioneToken, boolean forceId, int i) {
+		Vector<DataElement> e = new Vector<DataElement>();
+		GenericProperties policy = lista.get(i);
+		
+		Parameter pPolicyId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID, policy.getId() + "");
+		
+		List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+		listaParametriChange.add(pInfoType);
+		listaParametriChange.add(pPolicyId);
+		
+		// TITOLO nome
+		DataElement de = new DataElement();
+		de.setValue(policy.getNome());
+		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_CHANGE, pInfoType, pPolicyId);
+		de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
+		de.setIdToRemove(""+policy.getId());
+		de.setType(DataElementType.TITLE);
+		e.addElement(de);
+		
+		// seconda riga
+		boolean visualizzaSecondaRiga = StringUtils.isNotBlank(policy.getDescrizione()) || !forceId;
+		
+		if(visualizzaSecondaRiga) {
+			de = new DataElement();
+			de.setValue(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_ATTRIBUTE_AUTHORITY, policy.getDescrizione()));
+			
+			if(!forceId) {
+				String labelTipo = policy.getTipo();
+				if(nomiConfigurazioniPolicyGestioneToken!=null && nomiConfigurazioniPolicyGestioneToken.contains(policy.getTipo())) {
+					boolean found = false;
+					for (int j = 0; j < nomiConfigurazioniPolicyGestioneToken.size(); j++) {
+						String nome = nomiConfigurazioniPolicyGestioneToken.get(j);
+						if(nome.equals(policy.getTipo())) {
+							labelTipo = labelConfigurazioniPolicyGestioneToken.get(j);
+							found = true;
+							break;
+						}
+					}
+					if(!found) {
+						labelTipo = policy.getTipo();
+					}
+				}
+				else {
+					 labelTipo = policy.getTipo();
+				}
+				
+				if(StringUtils.isNotBlank(policy.getDescrizione())) {
+					de.setValue(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_TOKEN_POLICY, labelTipo, policy.getDescrizione()));
+				} else {
+					de.setValue(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_TOKEN_POLICY_SOLO_TIPO, labelTipo));
+				}
+			}
+			
+			de.setType(DataElementType.SUBTITLE);
+			e.addElement(de);
+		}
+		
+		// validazione certificati
+		boolean visualizzaValidazioneCertificati = attributeAuthority ? this.core.isAttributeAuthorityVerificaCertificati() : this.core.isPolicyGestioneTokenVerificaCertificati();
+		
+		if(visualizzaValidazioneCertificati) {
+			this.addVerificaCertificatiButton(e, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI, listaParametriChange);
+		}
+		
+		// in uso
+		InUsoType inUsoType = attributeAuthority ? InUsoType.ATTRIBUTE_AUTHORITY : InUsoType.TOKEN_POLICY;
+		this.addInUsoButton(e, policy.getNome(), policy.getId()+"", inUsoType);
+		return e;
 	}
 
 	public Vector<DataElement> addPolicyGestioneTokenToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String id, String nome, String descrizione, String tipo, String[] propConfigPolicyGestioneTokenLabelList, String[] propConfigPolicyGestioneTokenList,
@@ -23257,5 +23349,43 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		handlerDestinazione.setStato(handlerSorgente.getStato());
 		handlerDestinazione.setTipo(handlerSorgente.getTipo());
 		//handlerDestinazione.setId(handlerSorgente.getId());
+	}
+	
+	public void addDescrizioneVerificaCertificatoToDati(Vector<DataElement> dati, GenericProperties genericProperties,
+			boolean attributeAuthority, String server, boolean registro, String aliasCertificato) throws Exception {
+		
+		if(server!=null && !"".equals(server)) {
+			DataElement de = new DataElement();
+			de.setType(DataElementType.TEXT);
+			de.setLabel(ConnettoriCostanti.LABEL_SERVER);
+			de.setValue(server);
+			dati.add(de);
+		}
+		
+		// TODO Poli
+		DataElement de = new DataElement();
+		de.setType(DataElementType.TEXT);
+		de.setLabel("TODO");
+		de.setValue("TODO");
+		dati.add(de);
+		
+	}
+	public Vector<DataElement> addTokenPolicyHiddenToDati(Vector<DataElement> dati, String id, String infoType) {
+		
+		DataElement de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID);
+		de.setValue(id);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+		de.setValue(infoType);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+		dati.addElement(de);
+		
+		return dati;
 	}
 }

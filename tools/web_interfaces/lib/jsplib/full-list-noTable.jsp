@@ -229,7 +229,15 @@ if (hidden!=null && !hidden.isEmpty()) {
 								<jsp:include page="/jsp/list/scope.jsp" flush="true">
 									<jsp:param name="numeroEntry" value="<%=i %>"/>
 								</jsp:include>
-							<% } %>						
+							<% } else if(customListViewName.equals("tokenPolicy")){ %>
+								<jsp:include page="/jsp/list/tokenPolicy.jsp" flush="true">
+									<jsp:param name="numeroEntry" value="<%=i %>"/>
+								</jsp:include>
+							<% } else if(customListViewName.equals("attributeAuthority")){ %>
+								<jsp:include page="/jsp/list/attributeAuthority.jsp" flush="true">
+									<jsp:param name="numeroEntry" value="<%=i %>"/>
+								</jsp:include>
+							<% } %>							
 					 	 </tr><%
 					}
 					

@@ -1673,7 +1673,9 @@ div.txtA_div_propDialog {
 .entryApplicativi,
 .entrySoggetti,
 .entryRuoli,
-.entryScope {
+.entryScope,
+.entryTokenPolicy,
+.entryAttributeAuthority {
 	cursor: pointer;
 	padding: 16px;
 }
@@ -1684,7 +1686,9 @@ div.txtA_div_propDialog {
 .entryApplicativi .titoloEntry,
 .entrySoggetti .titoloEntry,
 .entryRuoli .titoloEntry,
-.entryScope .titoloEntry {
+.entryScope .titoloEntry,
+.entryTokenPolicy .titoloEntry,
+.entryAttributeAuthority .titoloEntry {
 	padding: 4px 4px 4px 0px;
     font-weight: bold;
     font-size: 16px;
@@ -1696,7 +1700,9 @@ div.txtA_div_propDialog {
 .entryApplicativi .metadatiEntry,
 .entrySoggetti .metadatiEntry,
 .entryRuoli .metadatiEntry,
-.entryScope .metadatiEntry {
+.entryScope .metadatiEntry,
+.entryTokenPolicy .metadatiEntry,
+.entryAttributeAuthority .metadatiEntry {
 	padding: 4px 4px 4px 0px;
 	color: ${body.secondary.color};
 }
@@ -1721,7 +1727,9 @@ div.txtA_div_propDialog {
 .entryRuoli .titoloInfo,
 .entryScope .titoloInfo,
 .entryErogazione .titoloInfo,
-.entryFruizione .titoloInfo {
+.entryFruizione .titoloInfo,
+.entryTokenPolicy .titoloInfo,
+.entryAttributeAuthority .titoloInfo {
 	display: inline-flex;
 	vertical-align: middle;
 	float: right;

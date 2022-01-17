@@ -3482,6 +3482,17 @@
             <forward name="configurazionePolicyGestioneTokenError" path="/jsplib/info.jsp"/>
         </action>
         
+        
+        <!-- Configurazione Policy Gestione Token Verifica Certificati -->
+        <action path="/configurazionePolicyGestioneTokenVerificaCertificati" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazionePolicyGestioneTokenVerificaCertificati"
+            scope="request" validate="true">
+            <forward name="configurazionePolicyGestioneTokenVerificaCertificatiForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazionePolicyGestioneTokenVerificaCertificatiOk" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazionePolicyGestioneTokenVerificaCertificatiCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazionePolicyGestioneTokenVerificaCertificatiError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        
         <!-- Configurazione Regole Proxy Pass -->
 
         <action path="/configurazioneProxyPassRegolaAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneProxyPassRegolaAdd"
