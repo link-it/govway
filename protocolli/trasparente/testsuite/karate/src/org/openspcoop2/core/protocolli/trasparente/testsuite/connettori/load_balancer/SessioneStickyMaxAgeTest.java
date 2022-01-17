@@ -21,14 +21,13 @@
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.HEADER_ID_CONNETTORE;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.IDSessioni;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
@@ -37,14 +36,11 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
-import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste.Commons;
-import org.openspcoop2.utils.UtilsAlreadyExistsException;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.mail.CommonsNetSender;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -72,14 +68,15 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  */
 public class SessioneStickyMaxAgeTest extends ConfigLoader {
 	
-    @Before
-    public void Before() {
-    	// Prima di ogni metodo di test resetto l'id sessione.
-    	Common.IDSessioni = Arrays
-    			.asList(UUID.randomUUID().toString(),
-    					UUID.randomUUID().toString());
-    }
-
+	@BeforeClass
+	public static void resetCache() {
+		try {
+			ConfigLoader.resetCache();
+		}catch(Throwable t) {
+            throw new RuntimeException(t.getMessage(),t);
+        }
+	}
+	
 	@Test
 	public void headerHttpRoundRobin() {
 		
@@ -191,41 +188,39 @@ public class SessioneStickyMaxAgeTest extends ConfigLoader {
 		
 		// Faccio quattro richieste con ID Sessione diverso, per tenere occupati i 4 connettori abilitati
 		// e per creare le associazioni fra ID Sessione e connettore
+		
+		// NOTA: Solo Per l'erogazione di questo test il maxAge è impostato a 6 secondi invece che a 4
+		// perchè nel test delle least connections ci sono più attese e la sessione nel frattempo scadrebbe
 		var idSessioni = List
 				.of(IDSessioni.get(0), IDSessioni.get(1), UUID.randomUUID().toString(), UUID.randomUUID().toString());
-		
 		List<HttpRequest> requests = idSessioni.stream()
 				.map( id -> {
 					var request = SessioneStickyTest.buildRequest_VelocityTemplate(id, erogazione);
-					request.setUrl(request.getUrl() + "&sleep="+(Common.maxAge+500));
+					request.setUrl(request.getUrl() + "&sleep="+(Common.maxAge+2000));
 					return request;
 				})
 				.collect(Collectors.toList());
-		
-		// Mi segno a quali connettori corrispondono gli idSessione, la prima future
-		// conterrà la risposta della prima richiesta, la seconda future della seconda ecc..
-		
-		final Vector<Future<HttpResponse>> oldFutureResponses = makeBackgroundRequests(requests, requests.size(), Common.delayRichiesteBackground);
-		var oldResponses = Utils.awaitResponses(oldFutureResponses);	// TODO: Rimuovere
+		final Vector<Future<HttpResponse>> oldAsyncResponses = makeBackgroundRequests(requests, requests.size(), Common.delayRichiesteBackground);
 
-		/*org.openspcoop2.utils.Utilities.sleep(Common.delayRichiesteBackground);
+		org.openspcoop2.utils.Utilities.sleep(Common.delayRichiesteBackground);
 		
 		SessioneStickyTest.velocityTemplate_Impl(erogazione);
 		
-		// La sessione non ancora è finita, faccio una richieste con sleep per mantenere
+		// La sessione non ancora è finita, faccio una richiesta con sleep per mantenere
 		// bloccato il primo connettore
-		var blockingRequest = SessioneStickyTest.buildRequest_VelocityTemplate(IDSessioni.get(0), erogazione);
-		
 		// TODO: Sleep del tempo necessario: maxAge - ( now - start ) + 500; guardalo anche sugli altri test fatti l'anno scorso, tipo rate limiting ecc..
-		blockingRequest.setUrl(blockingRequest.getUrl() + "&sleep=" + Common.maxAge + 1000);
-		var futureResponse = Utils.makeBackgroundRequest(blockingRequest);
+		var blockingRequest = SessioneStickyTest.buildRequest_VelocityTemplate(IDSessioni.get(0), erogazione);
+		blockingRequest.setUrl(blockingRequest.getUrl() + "&sleep=" + (Common.maxAge + 1000));
+		var asyncBlockingResponse = Utils.makeBackgroundRequest(blockingRequest);
+		
+		org.openspcoop2.utils.Utilities.sleep(Common.delayRichiesteBackground);
+
 				
-		// Adesso attendo le prime richieste con sleep superiore al max Age facendo quindi 
-		// scadere le prime sessioni.
+		// Adesso attendo le prime richieste facendo quindi scadere sessioni.
 		// Ripetendo una richiesta con il primo id sessione, questa deve cadere su un
 		// connettore diverso dal primo perchè è ancora tenuto occupato 
 		// e la sua associazione è andata persa nel tempo.
-		var oldResponses = Utils.awaitResponses(oldFutureResponses);
+		var oldResponses = Utils.awaitResponses(oldAsyncResponses);
 		String oldConnettore = oldResponses.get(0).getHeaderFirstValue(HEADER_ID_CONNETTORE);
 		
 		var newRequest = SessioneStickyTest.buildRequest_VelocityTemplate(IDSessioni.get(0), erogazione);
@@ -236,9 +231,10 @@ public class SessioneStickyMaxAgeTest extends ConfigLoader {
 		assertNotNull(newConnettore);
 		assertNotEquals(oldConnettore, newConnettore);
 		
-		var resp = futureResponse.get();
+		assertFalse(asyncBlockingResponse.isDone());
+		var resp = asyncBlockingResponse.get();
 		assertEquals(200, resp.getResultHTTPOperation());
-		assertEquals(oldConnettore, resp.getHeaderFirstValue(HEADER_ID_CONNETTORE));*/
+		assertEquals(oldConnettore, resp.getHeaderFirstValue(HEADER_ID_CONNETTORE));
 	}
 
 	// TODO: Mettere nella nuova classe di utils, fanne tre:

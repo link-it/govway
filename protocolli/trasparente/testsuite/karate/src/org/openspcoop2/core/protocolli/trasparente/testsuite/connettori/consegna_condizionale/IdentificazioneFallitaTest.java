@@ -45,19 +45,21 @@ public class IdentificazioneFallitaTest extends ConfigLoader {
 	
 	private static final String CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_ERROR = "007041";
 	private static final String CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_INFO = "007042";	
-	private static final String CODICE_DIAGNOSTICO_UTILIZZO_CONNETTORE_DEFAULT = "007047";
+	
+	private static final String CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_UTILIZZO_CONNETTORE_DEFAULT = "007047";
+	private static final String CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_UTILIZZO_CONNETTORE_DEFAULT = "007061";
+	
 	private static final int DIAGNOSTICO_SEVERITA_INFO = 4;
 	private static final int DIAGNOSTICO_SEVERITA_ERROR = 2;
 	
 	private static final String MESSAGGIO_DIAGNOSTICO_NESSUN_CONNETTORE_TROVATO = "Il valore estratto dalla richiesta 'CONNETTORE_INESISTENTE', ottenuto tramite identificazione 'HeaderBased' (Header HTTP: GovWay-TestSuite-Connettore), non corrisponde al nome di nessun connettore";
+	
 	private static final String MESSAGGIO_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA = "Identificazione 'HeaderBased' (Header HTTP: GovWay-TestSuite-Connettore) non è riuscita ad estrarre dalla richiesta l'informazione utile ad identificare il connettore da utilizzare: header non presente";
 	
-	private static final String MESSAGGIO_DIAGNOSTICO_FALLBACK_IDENTIFICAZIONE_FALLITA = "Per la consegna viene utilizzato il connettore 'Connettore0', configurato per essere utilizzato in caso di identificazione condizionale fallita";
+	private static final String MESSAGGIO_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_FALLBACK = "Per la consegna viene utilizzato il connettore 'Connettore0', configurato per essere utilizzato in caso di identificazione condizionale fallita";
 	
-	// TODO x andrea, tofix TODO: Reimpostare alla stringa prima della consegna, in modo da far fallire i test che devono fallire.
-	private static final String MESSAGGIO_DIAGNOSTICO_FALLBACK_NESSUN_CONNETTORE_TROVATO = MESSAGGIO_DIAGNOSTICO_FALLBACK_IDENTIFICAZIONE_FALLITA; //"MESSAGGIO DA SOSTITUIRE DOPO IL FIX. ATTUALMENTE VIENE RESTITUITO QUELLO DELLA RIGA DI SOPRA CHE PARLA INVECE DI 'IDENTIFICAZIONE CONDIZIONALE FALLITA' INVECE CHE 'ASSENZA DI CONNETTORI UTILIZZABILI'";
+	private static final String MESSAGGIO_DIAGNOSTICO_NESSUN_CONNETTORE_TROVATO_FALLBACK = "Per la consegna viene utilizzato il connettore 'Connettore0', configurato per essere utilizzato nel caso in cui la condizione estratta dalla richiesta non ha permesso di identificare alcun connettore";
 
-	
 
 	HttpRequest buildRequest_NessunConnettoreUtilizzabile(String erogazione) {
 		HttpRequest request = new HttpRequest();
@@ -95,7 +97,7 @@ public class IdentificazioneFallitaTest extends ConfigLoader {
 		String id_transazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		checkAssenzaDiagnosticoTransazione(id_transazione, CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_ERROR);
 		checkAssenzaDiagnosticoTransazione(id_transazione, CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_INFO);
-		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_INFO, CODICE_DIAGNOSTICO_UTILIZZO_CONNETTORE_DEFAULT, MESSAGGIO_DIAGNOSTICO_FALLBACK_IDENTIFICAZIONE_FALLITA);		
+		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_INFO, CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_UTILIZZO_CONNETTORE_DEFAULT, MESSAGGIO_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_FALLBACK);		
 	}
 	
 	
@@ -113,8 +115,9 @@ public class IdentificazioneFallitaTest extends ConfigLoader {
 		assertEquals(Common.CONNETTORE_0, response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
 		
 		String id_transazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		
 		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_INFO, CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_INFO, MESSAGGIO_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA);
-		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_INFO, CODICE_DIAGNOSTICO_UTILIZZO_CONNETTORE_DEFAULT, MESSAGGIO_DIAGNOSTICO_FALLBACK_IDENTIFICAZIONE_FALLITA);
+		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_INFO, CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_UTILIZZO_CONNETTORE_DEFAULT, MESSAGGIO_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_FALLBACK);
 	}
 	
 	
@@ -133,7 +136,7 @@ public class IdentificazioneFallitaTest extends ConfigLoader {
 		
 		String id_transazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_ERROR, CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_ERROR, MESSAGGIO_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA);
-		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_INFO, CODICE_DIAGNOSTICO_UTILIZZO_CONNETTORE_DEFAULT, MESSAGGIO_DIAGNOSTICO_FALLBACK_IDENTIFICAZIONE_FALLITA);
+		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_INFO, CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_UTILIZZO_CONNETTORE_DEFAULT, MESSAGGIO_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_FALLBACK);
 	}
 
 	
@@ -151,10 +154,14 @@ public class IdentificazioneFallitaTest extends ConfigLoader {
 		assertEquals(Common.CONNETTORE_0, response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
 		
 		String id_transazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		System.out.println("ID TRANSAZIONE: " + id_transazione);
 		checkAssenzaDiagnosticoTransazione(id_transazione, CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_INFO);
 		checkAssenzaDiagnosticoTransazione(id_transazione, CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_ERROR);
-		// Il messaggio di scelta del connettore di default, avviene sempre TODO: Patchare in govway il messaggio!
-		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_INFO, CODICE_DIAGNOSTICO_UTILIZZO_CONNETTORE_DEFAULT, MESSAGGIO_DIAGNOSTICO_FALLBACK_NESSUN_CONNETTORE_TROVATO);
+		checkDiagnosticoTransazione(
+				id_transazione,
+				DIAGNOSTICO_SEVERITA_INFO,
+				CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_UTILIZZO_CONNETTORE_DEFAULT, 
+				MESSAGGIO_DIAGNOSTICO_NESSUN_CONNETTORE_TROVATO_FALLBACK);
 	}
 	
 	
@@ -170,7 +177,11 @@ public class IdentificazioneFallitaTest extends ConfigLoader {
 		
 		String id_transazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_INFO, CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_INFO, MESSAGGIO_DIAGNOSTICO_NESSUN_CONNETTORE_TROVATO);
-		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_INFO, CODICE_DIAGNOSTICO_UTILIZZO_CONNETTORE_DEFAULT, MESSAGGIO_DIAGNOSTICO_FALLBACK_NESSUN_CONNETTORE_TROVATO);
+		checkDiagnosticoTransazione(
+				id_transazione, 
+				DIAGNOSTICO_SEVERITA_INFO,
+				CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_UTILIZZO_CONNETTORE_DEFAULT, 
+				MESSAGGIO_DIAGNOSTICO_NESSUN_CONNETTORE_TROVATO_FALLBACK);
 	}
 
 	
@@ -186,7 +197,11 @@ public class IdentificazioneFallitaTest extends ConfigLoader {
 		
 		String id_transazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_ERROR, CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_ERROR, MESSAGGIO_DIAGNOSTICO_NESSUN_CONNETTORE_TROVATO);
-		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_INFO, CODICE_DIAGNOSTICO_UTILIZZO_CONNETTORE_DEFAULT, MESSAGGIO_DIAGNOSTICO_FALLBACK_NESSUN_CONNETTORE_TROVATO);
+		checkDiagnosticoTransazione(
+				id_transazione, 
+				DIAGNOSTICO_SEVERITA_INFO,
+				CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_UTILIZZO_CONNETTORE_DEFAULT, 
+				MESSAGGIO_DIAGNOSTICO_NESSUN_CONNETTORE_TROVATO_FALLBACK);
 	}
 	
 	
@@ -202,7 +217,7 @@ public class IdentificazioneFallitaTest extends ConfigLoader {
 		
 		String id_transazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_INFO, CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_INFO, MESSAGGIO_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA);
-		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_INFO, CODICE_DIAGNOSTICO_UTILIZZO_CONNETTORE_DEFAULT, MESSAGGIO_DIAGNOSTICO_FALLBACK_IDENTIFICAZIONE_FALLITA);
+		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_INFO, CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_UTILIZZO_CONNETTORE_DEFAULT, MESSAGGIO_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_FALLBACK);
 		
 		// Nessun connettore utilizzabile va sul connettore_1 con livello log error
 		
@@ -211,11 +226,15 @@ public class IdentificazioneFallitaTest extends ConfigLoader {
 		
 		assertEquals(Common.CONNETTORE_1, response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
 		
-		final String diagnostico = "Per la consegna viene utilizzato il connettore 'Connettore1', configurato per essere utilizzato in caso di identificazione condizionale fallita";
+		final String diagnostico = "Per la consegna viene utilizzato il connettore 'Connettore1', configurato per essere utilizzato nel caso in cui la condizione estratta dalla richiesta non ha permesso di identificare alcun connettore";
 		
 		id_transazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_ERROR, CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_ERROR, MESSAGGIO_DIAGNOSTICO_NESSUN_CONNETTORE_TROVATO);
-		checkDiagnosticoTransazione(id_transazione, DIAGNOSTICO_SEVERITA_INFO, CODICE_DIAGNOSTICO_UTILIZZO_CONNETTORE_DEFAULT, diagnostico);
+		checkDiagnosticoTransazione(
+				id_transazione, 
+				DIAGNOSTICO_SEVERITA_INFO,
+				CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_UTILIZZO_CONNETTORE_DEFAULT, 
+				diagnostico);
 	}
 	
 	

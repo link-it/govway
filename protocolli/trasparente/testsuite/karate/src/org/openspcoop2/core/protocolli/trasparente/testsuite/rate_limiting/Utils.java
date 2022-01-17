@@ -237,39 +237,6 @@ public class Utils {
 		return responses;
 	}
 	
-	/*
-	 * Esegue `count` richieste sequenziali per ognuno dei `nthread' threads.
-	 * Le richieste dei threads vanno in parallelo.
-	 */
-	public static Vector<HttpResponse> makeParallelRequests(HttpRequest request, int nthreads, int reqsPerThread) {
-		logRateLimiting = ConfigLoader.getLoggerRateLimiting();
-
-		final Vector<HttpResponse> responses = new Vector<>();
-		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nthreads);
-
-		for (int i = 0; i < nthreads; i++) {
-			executor.execute(() -> {
-				responses.addAll(makeSequentialRequests(request, reqsPerThread));				
-			});
-		}
-		
-		try {
-			executor.shutdown();
-			executor.awaitTermination(20, TimeUnit.SECONDS);
-		} catch (InterruptedException e) {
-			logRateLimiting.error("Le richieste hanno impiegato più di venti secondi!");
-			throw new RuntimeException(e);
-		}
-		
-		logRateLimiting.info("RESPONSES: ");
-		responses.forEach(r -> {
-			logRateLimiting.info("statusCode: " + r.getResultHTTPOperation());
-			logRateLimiting.info("headers: " + r.getHeadersValues());
-		});
-
-		return responses;
-	}
-	
 	
 	public static HttpResponse makeRequest(HttpRequest request) {
 		

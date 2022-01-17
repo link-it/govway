@@ -26,7 +26,6 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.l
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.durataBloccante;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.printMap;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -134,7 +133,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		// pari al loro peso
 		
 		for (var results : howManys.entrySet()) {
-			if (results.getKey().equals(CONNETTORE_ROTTO)) {
+			if (results.getKey().equals(Common.CONNETTORE_ROTTO)) {
 				assertEquals(Integer.valueOf(5), results.getValue());
 			} else {			
 				Integer expected = Integer.valueOf(results.getKey()) + 1;
@@ -144,7 +143,6 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 	}
 	
 
-	// TODO: Riguarda i test random
 	@Test
 	public void random() {
 		/*
@@ -155,28 +153,18 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		 */
 		
 		final String erogazione = "LoadBalanceRandom";
-		final int nRequests = 15;
 		
-		Set<String> connettoriRaggiunti = new HashSet<>();
-		for(int i=0;i<4;i++) {
-			
-			HttpRequest request = new HttpRequest();
-			request.setContentType("application/json");
-			request.setMethod(HttpRequestMethod.GET);
-			request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
-					+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
-
-			Vector<HttpResponse> responses = Common.makeParallelRequests(request, nRequests);
-			Map<String, Integer> howManys = Common.contaConnettoriUtilizzati(responses);
-			
-			assertNotEquals(1, howManys.keySet().size());
-			
-			for (var results : howManys.entrySet()) {
-				connettoriRaggiunti.add(results.getKey());
-			}			
-		}
+		HttpRequest request = new HttpRequest();
+		request.setContentType("application/json");
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
 		
-		assertEquals(5, connettoriRaggiunti.size());			
+		var responses = Common.makeParallelRequests(request, Common.richiesteTestRandom);
+		
+		Set<String> toCheck = Set.of("0", "1", "2", "3", Common.CONNETTORE_ROTTO);
+		SessioneStickyTest.checkRandomStrategy(responses, toCheck);
+		
 	}
 	
 	
@@ -197,8 +185,6 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		// ConnettoreRotto => 5
 		
 		final String erogazione = "LoadBalanceWeightedRandom";
-		final int maxParallelRequests = 15;
-		final int requestsPerThread = 5;
 		
 		HttpRequest request = new HttpRequest();
 		request.setContentType("application/json");
@@ -206,10 +192,11 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, Common.richiesteTestRandom, requestsPerThread);
+		Vector<HttpResponse> responses = Common.makeParallelRequests(request, Common.richiesteTestRandom);
 		Map<String, Integer> howManys = Common.contaConnettoriUtilizzati(responses);
+		Common.printMap(howManys);
 		
-		assertEquals(true, howManys.get(CONNETTORE_ROTTO) > howManys.get(CONNETTORE_3));
+		assertEquals(true, howManys.get(Common.CONNETTORE_ROTTO) > howManys.get(CONNETTORE_3));
 		assertEquals(true, howManys.get(CONNETTORE_3) > howManys.get(CONNETTORE_2));
 		assertEquals(true, howManys.get(CONNETTORE_2) > howManys.get(CONNETTORE_1));
 		assertEquals(true, howManys.get(CONNETTORE_1) > howManys.get(CONNETTORE_0));
