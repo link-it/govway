@@ -169,6 +169,7 @@ public class GestoreAutorizzazioni {
 		this.servletSoggetti.addAll(SoggettiCostanti.SERVLET_SOGGETTI_RUOLI);
 		this.servletSoggetti.addAll(SoggettiCostanti.SERVLET_SOGGETTI_CREDENZIALI);
 		this.servletSoggetti.addAll(SoggettiCostanti.SERVLET_SOGGETTI_PROPRIETA);
+		this.servletSoggetti.add(SoggettiCostanti.SERVLET_NAME_SOGGETTI_VERIFICA_CERTIFICATI);
 		/** Permessi associati alla gestione dei soggetti */
 		this.permessiSoggetti = new PermessiUtente();
 		this.permessiSoggetti.setServizi(true);
@@ -323,6 +324,7 @@ public class GestoreAutorizzazioni {
 		this.servletServiziApplicativi.addAll(ServiziApplicativiCostanti.SERVLET_SERVIZI_APPLICATIVI_RUOLI);
 		this.servletServiziApplicativi.addAll(ServiziApplicativiCostanti.SERVLET_SERVIZI_APPLICATIVI_CREDENZIALI);
 		this.servletServiziApplicativi.addAll(ServiziApplicativiCostanti.SERVLET_SERVIZI_APPLICATIVI_PROPRIETA);
+		this.servletServiziApplicativi.add(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI);
 		/** Permessi associati alla gestione i servizi applicativi */
 		this.permessiServiziApplicativi = new PermessiUtente();
 		this.permessiServiziApplicativi.setServizi(true);

@@ -47,6 +47,7 @@ import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.Proprieta;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
@@ -1500,11 +1501,13 @@ public class SoggettiHelper extends ConnettoriHelper {
 		// Titolo (nome soggetto)
 		String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(elem.getTipo());
 		
+		List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+		listaParametriChange.add(new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""));
+		listaParametriChange.add(new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,elem.getNome()));
+		listaParametriChange.add(new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,elem.getTipo()));
+		
 		DataElement de = new DataElement();
-		de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
-				new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""),
-				new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,elem.getNome()),
-				new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,elem.getTipo()));
+		de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE, listaParametriChange.toArray(new Parameter[listaParametriChange.size()]));
 		de.setValue(this.getLabelNomeSoggetto(protocollo, elem.getTipo(), elem.getNome()));
 		de.setIdToRemove(elem.getId().toString());
 		de.setToolTip(de.getValue());
@@ -1577,6 +1580,22 @@ public class SoggettiHelper extends ConnettoriHelper {
 			e.addElement(de);
 		}
 		
+		if(this.core.isSoggettiVerificaCertificati()) {
+			// Verifica certificati visualizzato solo se il soggetto ha credenziali https
+			CredenzialiSoggetto credenziali = null;
+			CredenzialeTipo tipoauthSoggetto = null;
+			if(elem.sizeCredenzialiList()>0) {
+				credenziali = elem.getCredenziali(0);
+			}
+			if (credenziali != null){
+				if(credenziali.getTipo()!=null)
+					tipoauthSoggetto = credenziali.getTipo();
+			}
+			
+			if(tipoauthSoggetto != null && tipoauthSoggetto.equals(CredenzialeTipo.SSL)) {
+				this.addVerificaCertificatiButton(e, SoggettiCostanti.SERVLET_NAME_SOGGETTI_VERIFICA_CERTIFICATI, listaParametriChange);
+			}
+		}
 		// TODO 
 //				de = new DataElement();
 //				de.setType(DataElementType.IMAGE);
@@ -2500,5 +2519,23 @@ public class SoggettiHelper extends ConnettoriHelper {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
+	}
+	public void addDescrizioneVerificaCertificatoToDati(Vector<DataElement> dati, Soggetto soggettoRegistry, 
+			org.openspcoop2.core.config.Soggetto soggettoConfig, String server, boolean registro, String aliasCertificato) throws Exception {
+		
+		if(server!=null && !"".equals(server)) {
+			DataElement de = new DataElement();
+			de.setType(DataElementType.TEXT);
+			de.setLabel(ConnettoriCostanti.LABEL_SERVER);
+			de.setValue(server);
+			dati.add(de);
+		}
+		
+		// TODO Poli
+		DataElement de = new DataElement();
+		de.setType(DataElementType.TEXT);
+		de.setLabel("TODO");
+		de.setValue("TODO");
+		dati.add(de);
 	}
 }

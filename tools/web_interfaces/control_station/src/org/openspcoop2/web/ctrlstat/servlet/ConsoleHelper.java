@@ -18801,6 +18801,26 @@ public class ConsoleHelper implements IConsoleHelper {
 		e.addElement(de);
 	}
 	
+	public void addVerificaCertificatiButton(Vector<DataElement> e, String servletName, List<Parameter> parameters) {
+		this.addAzioneButton(e, DataElementType.IMAGE, 
+				MessageFormat.format(CostantiControlStation.ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO, CostantiControlStation.LABEL_CERTIFICATI),
+				CostantiControlStation.ICONA_VERIFICA_CERTIFICATI, servletName,parameters);
+	}
+	
+	private void addAzioneButton(Vector<DataElement> e, DataElementType deType, String tooltip, String icon, String servletName, List<Parameter> parameters) {
+		DataElement de = new DataElement();
+		de.setType(deType);
+		de.setToolTip(tooltip);
+		if(parameters != null && parameters.size() >0) {
+			de.setUrl(servletName, parameters.toArray(new Parameter[parameters.size()]));
+		} else {
+			de.setUrl(servletName);
+		}
+		de.setIcon(icon);
+		
+		e.addElement(de);
+	}
+	
 	public void addCanaleToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, String canaleStato, String canale, String canaleAPI,
 			List<CanaleConfigurazione> canaleList, boolean gestioneCanaliEnabled) {
 		this.addCanaleToDati(dati, tipoOperazione, canaleStato, canale, canaleAPI, canaleList, gestioneCanaliEnabled, true);
@@ -19728,5 +19748,27 @@ public class ConsoleHelper implements IConsoleHelper {
 		else {
 			return info;
 		}
+	}
+	
+	public void addVerificaCertificatoSceltaAlias(List<String> aliases,Vector<DataElement> dati) throws Exception {
+		
+		DataElement de = new DataElement();
+		de.setType(DataElementType.SELECT);
+		List<String> values = new ArrayList<String>();
+		List<String> labels = new ArrayList<String>();
+		values.add(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI);
+		labels.add(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI);
+		values.addAll(this.confCore.getJmxPdD_aliases());
+		for (String alias : this.confCore.getJmxPdD_aliases()) {
+			labels.add(this.confCore.getJmxPdD_descrizione(alias));
+		}
+		de.setValues(values);
+		de.setLabels(labels);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
+		de.setSize(this.getSize());
+		//de.setPostBack(true);
+		dati.addElement(de);
+		
 	}
 }

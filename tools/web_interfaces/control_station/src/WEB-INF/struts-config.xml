@@ -320,6 +320,15 @@
             <forward name="soggettiProprietaError" path="/jsplib/info.jsp"/>
         </action>
         
+        <!-- Soggetti Verifica Certificati -->
+        <action path="/soggettiVerificaCertificati" type="org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiVerificaCertificati"
+            scope="request" validate="true">
+            <forward name="soggettiVerificaCertificatiForm" path="/jsplib/addElement.jsp"/>
+            <forward name="soggettiVerificaCertificatiOk" path="/jsplib/addElement.jsp"/>
+            <forward name="soggettiVerificaCertificatiCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="soggettiVerificaCertificatiError" path="/jsplib/info.jsp"/>
+        </action>
+        
         
         
         <!--  Connettori -->
@@ -461,6 +470,15 @@
             scope="request" validate="true">
             <forward name="serviziApplicativiProprietaDel" path="/jsplib/listElement.jsp"/>
             <forward name="serviziApplicativiProprietaError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!-- Servizi Applicativi Verifica Certificati -->
+        <action path="/serviziApplicativiVerificaCertificati" type="org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiVerificaCertificati"
+            scope="request" validate="true">
+            <forward name="serviziApplicativiVerificaCertificatiForm" path="/jsplib/addElement.jsp"/>
+            <forward name="serviziApplicativiVerificaCertificatiOk" path="/jsplib/addElement.jsp"/>
+            <forward name="serviziApplicativiVerificaCertificatiCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="serviziApplicativiVerificaCertificatiError" path="/jsplib/info.jsp"/>
         </action>
     
     

@@ -311,6 +311,9 @@ public class CostantiControlStation {
 	public final static String LABEL_INTEGRAZIONE = "Integrazione";
 	public final static String LABEL_INTEGRAZIONE_STATO = "Stato";
 	public final static String LABEL_METADATI = "Metadati";
+	public final static String LABEL_VERIFICA_CERTIFICATI = "Verifica Certificati";
+	public final static String LABEL_VERIFICA_CERTIFICATI_DI = "Verifica Certificati di ";
+	public final static String LABEL_CERTIFICATI = "Certificati";
 	
 	public final static String LABEL_METADATI_INFO = "Per consentire lo scambio di informazioni, funzionali all’integrazione tra applicativi e gateway, sono previste differenti strutture dati, indicate con il termine Header di Integrazione, che possono essere attivate puntualmente su una API.<BR/>"+
 			"Il Gateway dispone di una sua configurazione di default per la generazione degli header. Tramite il campo '"+CostantiControlStation.LABEL_METADATI+"' è possibile ridefinire tale comportamento o disabilitare la generazione degli header di integrazione.";

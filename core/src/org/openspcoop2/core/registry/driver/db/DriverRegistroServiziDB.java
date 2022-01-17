@@ -19138,6 +19138,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("server");
 				sqlQueryObject.addSelectField("id_connettore");
 				sqlQueryObject.addSelectField("codice_ipa");
+				sqlQueryObject.addSelectField("tipoauth");
+				
 				if(filterSoggettoDefault) {
 					sqlQueryObject.addWhereCondition("is_default = ?");
 				}
@@ -19214,6 +19216,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("server");
 				sqlQueryObject.addSelectField("id_connettore");
 				sqlQueryObject.addSelectField("codice_ipa");
+				sqlQueryObject.addSelectField("tipoauth");
+				
 				if(filterSoggettoDefault) {
 					sqlQueryObject.addWhereCondition("is_default = ?");
 				}
@@ -19327,6 +19331,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 				long idConnettore = risultato.getLong("id_connettore");
 				sog.setConnettore(getConnettore(idConnettore, con));
 
+				String tipoAuth = risultato.getString("tipoauth");
+				if(tipoAuth != null && !tipoAuth.equals("")){
+					CredenzialiSoggetto credenziali = new CredenzialiSoggetto();
+					credenziali.setTipo(DriverRegistroServiziDB_LIB.getEnumCredenzialeTipo(tipoAuth));
+					sog.addCredenziali( credenziali );
+				}
+				
 				lista.add(sog);
 
 			}

@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni;
+package org.openspcoop2.web.ctrlstat.servlet.sa;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,20 +32,21 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.Fruitore;
-import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
+import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
-import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -54,10 +55,9 @@ import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
-import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
- * ErogazioniVerificaCertificati
+ * ServiziApplicativiVerificaCertificati
  * 
  * @author Andrea Poli (poli@link.it)
  * @author Giuliano Pintori (pintori@link.it)
@@ -65,7 +65,7 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  * @version $Rev$, $Date$
  * 
  */
-public class ErogazioniVerificaCertificati  extends Action {
+public class ServiziApplicativiVerificaCertificati extends Action {
 	
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -80,126 +80,122 @@ public class ErogazioniVerificaCertificati  extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
-		// Parametri relativi al tipo operazione
-		TipoOperazione tipoOp = TipoOperazione.OTHER;
-		
 		try {
-			ErogazioniHelper apsHelper = new ErogazioniHelper(request, pd, session);
-			String id = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
-			long idInt  = Long.parseLong(id);
-			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
-			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idInt);
-			String idsogg = apsHelper.getParameter(CostantiControlStation.PARAMETRO_ID_SOGGETTO);
+			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
 			
-			String tipoSoggettoFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE);
-			String nomeSoggettoFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE);
-			IDSoggetto idSoggettoFruitore = null;
-			if(tipoSoggettoFruitore!=null && !"".equals(tipoSoggettoFruitore) &&
-					nomeSoggettoFruitore!=null && !"".equals(nomeSoggettoFruitore)) {
-				idSoggettoFruitore = new IDSoggetto(tipoSoggettoFruitore, nomeSoggettoFruitore);
-			}
+			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
+			SoggettiCore soggettiCore = new SoggettiCore(saCore);
+			ConfigurazioneCore confCore = new ConfigurazioneCore(saCore);
+			PddCore pddCore = new PddCore(saCore);
 			
-			String alias = apsHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
+			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session);
+			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
+			Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
 			
-			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
-			boolean gestioneFruitori = false;
-//			boolean gestioneErogatori = false;
-			if(tipologia!=null) {
-				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
-					gestioneFruitori = true;
-				}
-//				else if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
-//					gestioneErogatori = true;
-//				}
-			}
+			String id = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
+			int idServizioApplicativo = Integer.parseInt(id);
+			String idProvider = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			
-			Fruitore fruitore = null;
-			String idFruizione = null;
-			if(gestioneFruitori) {
-				// In questa modalità ci deve essere un fruitore indirizzato
-				for (Fruitore check : asps.getFruitoreList()) {
-					if(check.getTipo().equals(idSoggettoFruitore.getTipo()) && check.getNome().equals(idSoggettoFruitore.getNome())) {
-						fruitore = check;
-						break;
-					}
-				}
-			}
-			if(fruitore!=null) {
-				idFruizione = fruitore.getId()+"";
-			}
+			String alias = saHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
 			
 			// Preparo il menu
-			apsHelper.makeMenu();
-			
-			ConfigurazioneCore confCore = new ConfigurazioneCore(apsCore);
-			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
+			saHelper.makeMenu();
 			
 			// Prendo la lista di aliases
 			List<String> aliases = confCore.getJmxPdD_aliases();
 			if(aliases==null || aliases.size()<=0){
 				throw new Exception("Pagina non prevista, la sezione configurazione non permette di accedere a questa pagina, se la configurazione non e' corretta");
 			}
+
+			// Prendo il nome e il provider del servizioApplicativo
+			ServizioApplicativo sa = saCore.getServizioApplicativo(idServizioApplicativo);
+			String nomeSA = sa.getNome();
+			IDSoggetto idSoggettoProprietario = new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario());
+			IDServizioApplicativo IdServizioApplicativo = new IDServizioApplicativo();
+			IdServizioApplicativo.setIdSoggettoProprietario(idSoggettoProprietario);
+			IdServizioApplicativo.setNome(nomeSA);
 			
+			Soggetto soggettoProprietario = soggettiCore.getSoggettoRegistro(idSoggettoProprietario);
+			String dominio = pddCore.isPddEsterna(soggettoProprietario.getPortaDominio()) ? SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE : SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE;
+		
+			List<Parameter> parametersServletSAChange = new ArrayList<Parameter>();
+			Parameter pIdSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId()+"");
+			parametersServletSAChange.add(pIdSA);
+			Parameter pIdSoggettoSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, sa.getIdSoggetto()+"");
+			parametersServletSAChange.add(pIdSoggettoSA);
+			if(dominio != null) {
+				Parameter pDominio = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO, dominio);
+				parametersServletSAChange.add(pDominio);
+			}
 			
-			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
-			String tipoProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(asps.getTipoSoggettoErogatore());
-			
+			boolean modalitaCompleta = saHelper.isModalitaCompleta();
 			String tmpTitle = null;
-			if(gestioneFruitori) {
-				tmpTitle = apsHelper.getLabelServizioFruizione(tipoProtocollo, idSoggettoFruitore, idServizio);
-			}
-			else {
-				tmpTitle = apsHelper.getLabelServizioErogazione(tipoProtocollo, idServizio);
-			}
-			
-			// setto la barra del titolo
-			List<Parameter> listParameterChange = new ArrayList<>();
-			Parameter pIdsoggErogatore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+asps.getIdSoggetto());
-			Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
-			Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
-			Parameter pTipoSoggettoFruitore = null;
-			Parameter pNomeSoggettoFruitore = null;
-			if(gestioneFruitori) {
-				pTipoSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE, tipoSoggettoFruitore);
-				pNomeSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE, nomeSoggettoFruitore);
-			}
-			
-			listParameterChange.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""));
-			listParameterChange.add(pNomeServizio);
-			listParameterChange.add(pTipoServizio);
-			listParameterChange.add(pIdsoggErogatore);
-			
-			List<Parameter> lstParm = new ArrayList<Parameter>();
-
-			if(gestioneFruitori) {
-				lstParm.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_FRUIZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
+			String protocolloSoggetto = null;
+			boolean supportAsincroni = true;
+			if(useIdSogg){
+				if(saCore.isRegistroServiziLocale()){
+					Soggetto tmpSogg =  soggettiCore.getSoggettoRegistro(Integer.parseInt(idProvider));
+					protocolloSoggetto = soggettiCore.getProtocolloAssociatoTipoSoggetto(tmpSogg.getTipo());
+					tmpTitle = saHelper.getLabelNomeSoggetto(protocolloSoggetto, tmpSogg.getTipo() , tmpSogg.getNome());
+				}else{
+					org.openspcoop2.core.config.Soggetto tmpSogg = soggettiCore.getSoggetto(Integer.parseInt(idProvider));
+					protocolloSoggetto = soggettiCore.getProtocolloAssociatoTipoSoggetto(tmpSogg.getTipo());
+					tmpTitle = saHelper.getLabelNomeSoggetto(protocolloSoggetto, tmpSogg.getTipo() , tmpSogg.getNome());
+				}
 				
-				listParameterChange.add(pTipoSoggettoFruitore);
-				listParameterChange.add(pNomeSoggettoFruitore);
+				List<ServiceBinding> serviceBindingListProtocollo = saCore.getServiceBindingListProtocollo(protocolloSoggetto);
+				for (ServiceBinding serviceBinding : serviceBindingListProtocollo) {
+					supportAsincroni = saCore.isProfiloDiCollaborazioneSupportatoDalProtocollo(protocolloSoggetto,serviceBinding, ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO)
+							|| saCore.isProfiloDiCollaborazioneSupportatoDalProtocollo(protocolloSoggetto, serviceBinding, ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO);
+				}
+				
+				if(supportAsincroni==false){
+					if (saHelper.isModalitaAvanzata()){
+						supportAsincroni = saCore.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona();
+					}
+				}
 			}
-			else {
-				lstParm.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_EROGAZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
-			}
-			lstParm.add(new Parameter(tmpTitle, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, listParameterChange.toArray(new Parameter[listParameterChange.size()])));
-			lstParm.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_VERIFICA_CERTIFICATI, null));
-
-			// setto la barra del titolo
-			ServletUtils.setPageDataTitle(pd, lstParm );
 			
+			// setto la barra del titolo
+			String labelApplicativi = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
+			String labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI;
+			if(modalitaCompleta==false) {
+				labelApplicativi = ServiziApplicativiCostanti.LABEL_APPLICATIVI;
+				labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_APPLICATIVI_DI;
+			}
+			
+			List<Parameter> lstParam = new ArrayList<Parameter>();
+			if(!useIdSogg){
+				lstParam.add(new Parameter(labelApplicativi, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST));
+//				lstParam.add(new Parameter(sa.getNome(), ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE, parametersServletSAChange.toArray(new Parameter[parametersServletSAChange.size()])));
+			} else {
+				String provider = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+				lstParam.add(new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
+				lstParam.add(new Parameter(labelApplicativiDi + tmpTitle, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST, new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,provider)));
+//				lstParam.add(new Parameter(sa.getNome(), ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE, parametersServletSAChange.toArray(new Parameter[parametersServletSAChange.size()])));
+			}
+			
+			String labelVerifica = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI_DI  + sa.getNome();
+			lstParam.add(new Parameter(labelVerifica, null));
+			
+			// setto la barra del titolo
+			ServletUtils.setPageDataTitle(pd, lstParam );
+						
 			Vector<DataElement> dati = new Vector<DataElement>();
 			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 			DataElement deTestConnettivita = new DataElement();
 			deTestConnettivita.setType(DataElementType.TITLE);
-			deTestConnettivita.setLabel(ErogazioniCostanti.LABEL_ASPS_VERIFICA_CERTIFICATI);
+			deTestConnettivita.setLabel(ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI);
 			dati.add(deTestConnettivita);
 			
 			if(aliases.size()==1 || alias!=null) {
-				apsHelper.addDescrizioneVerificaCertificatoToDati(dati, asps, idSoggettoFruitore, null, true, 
+				saHelper.addDescrizioneVerificaCertificatoToDati(dati, sa,  null, true, 
 						(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI.equals(alias)) ? aliases.get(0) : (alias!=null ? alias : aliases.get(0))
 						);
 				
-				if (!apsHelper.isEditModeInProgress()) {
+				if (!saHelper.isEditModeInProgress()) {
 					
 					List<String> aliases_for_check = new ArrayList<>();
 					if(aliases.size()==1) {
@@ -287,25 +283,20 @@ public class ErogazioniVerificaCertificati  extends Action {
 				}
 				
 			} else {
-				apsHelper.addVerificaCertificatoSceltaAlias(aliases, dati);	
+				saHelper.addVerificaCertificatoSceltaAlias(aliases, dati);
 			}
 			
 			pd.setLabelBottoneInvia(CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_BOTTONE);
 			
+			dati = saHelper.addServizioApplicativoHiddenToDati(dati, id, idProvider, dominio, sa.getNome());
 			
-			if(idSoggettoFruitore != null) {
-				dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, idsogg, id, asps.getId()+"", idFruizione, tipoSoggettoFruitore, nomeSoggettoFruitore, dati);
-			}else {
-				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, asps.getId()+"", null, null, dati);
-			}
-
 			pd.setDati(dati);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
-			return ServletUtils.getStrutsForwardEditModeInProgress(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI_VERIFICA_CERTIFICATI, ForwardParams.OTHER(""));
+			return ServletUtils.getStrutsForwardEditModeInProgress(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI, ForwardParams.OTHER(""));
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI_VERIFICA_CERTIFICATI, ForwardParams.OTHER(""));
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI, ForwardParams.OTHER(""));
 		}  
 	}
 }

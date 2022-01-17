@@ -37,6 +37,8 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.Credenziali;
+import org.openspcoop2.core.config.InvocazionePorta;
+import org.openspcoop2.core.config.InvocazionePortaGestioneErrore;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
@@ -78,6 +80,7 @@ import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.Certificate;
+import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.crypt.PasswordGenerator;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -2660,6 +2663,11 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		Parameter pSAIdSoggetto = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, sa.getIdSoggetto()+"");
 		Parameter pDominio = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO, dominio);
 		
+		
+		List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+		listaParametriChange.add(pSAId);
+		listaParametriChange.add(pSAIdSoggetto);
+		listaParametriChange.add(pDominio);
 		// TITOLO (nome + soggetto)
 		String nome = sa.getNome();
 		DataElement de = new DataElement();
@@ -2738,6 +2746,35 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de.setToolTip(RuoliCostanti.LABEL_RUOLI); 
 				
 				e.addElement(de);
+			}
+		}
+		
+		
+		// Verifica certificati visualizzato solo se l'applicativo ha credenziali https oppure 
+		if(this.core.isApplicativiVerificaCertificati()) {
+			boolean modi = this.core.isProfiloModIPA(protocollo);
+			boolean sicurezzaMessaggio = false;
+			if(modi){
+				KeystoreParams keystoreParams =	org.openspcoop2.protocol.utils.ModIUtils.getApplicativoKeystoreParams(sa.getProtocolPropertyList());
+				sicurezzaMessaggio = keystoreParams!= null;
+			}
+			
+			InvocazionePorta ip = sa.getInvocazionePorta();
+			Credenziali credenziali = null;
+			if (ip != null) {
+				if(ip.sizeCredenzialiList()>0) {
+					credenziali = ip.getCredenziali(0);
+				}
+			}
+			
+			CredenzialeTipo tipoauthSA = null;
+			if (credenziali != null){
+				if(credenziali.getTipo()!=null)
+					tipoauthSA = credenziali.getTipo();
+			}
+			
+			if(sicurezzaMessaggio || (tipoauthSA != null && tipoauthSA.equals(CredenzialeTipo.SSL))) {
+				this.addVerificaCertificatiButton(e, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI, listaParametriChange);
 			}
 		}
 		
@@ -4458,5 +4495,22 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
+	}
+	public void addDescrizioneVerificaCertificatoToDati(Vector<DataElement> dati, ServizioApplicativo sa, String server, boolean registro, String aliasCertificato) throws Exception {
+		
+		if(server!=null && !"".equals(server)) {
+			DataElement de = new DataElement();
+			de.setType(DataElementType.TEXT);
+			de.setLabel(ConnettoriCostanti.LABEL_SERVER);
+			de.setValue(server);
+			dati.add(de);
+		}
+		
+		// TODO Poli
+		DataElement de = new DataElement();
+		de.setType(DataElementType.TEXT);
+		de.setLabel("TODO");
+		de.setValue("TODO");
+		dati.add(de);
 	}
 }
