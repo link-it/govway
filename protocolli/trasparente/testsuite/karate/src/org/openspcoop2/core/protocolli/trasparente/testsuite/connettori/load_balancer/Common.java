@@ -467,19 +467,19 @@ public class Common {
 	}
 
 
-	public static HttpRequest buildSoapRequest(String filtro, String erogazione, String versioneSoap) {
+	public static HttpRequest buildSoapRequest(String filtro, String erogazione, String contentTypeSoap) {
 		// nel soap 1.1 l'azione è specifica nello header SOAPAction
 		// versioneSoap =[ HttpConstants.CONTENT_TYPE_SOAP_1_1; |  HttpConstants.CONTENT_TYPE_SOAP_1_2 ]
 		
 		//  Questo namespace è per soap 1.1 "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n";
 		final String operazione = filtro;
 		
-		if (versioneSoap.equals(HttpConstants.CONTENT_TYPE_SOAP_1_1)) {	// TODO:Questo namespace è solo per soap 1.2
-			String content = "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">\n" +  
+		if (contentTypeSoap.equals(HttpConstants.CONTENT_TYPE_SOAP_1_1)) {	// TODO:Questo namespace è solo per soap 1.2
+			String content = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +  
 					"    <soap:Body>\n" + 
-					"        <ns2:NoPolicy xmlns:ns2=\"http://amministrazioneesempio.it/nomeinterfacciaservizio\">\n" +
+					"        <ns2:BodySoap1_1 xmlns:ns2=\"http://amministrazioneesempio.it/nomeinterfacciaservizio\">\n" +
 								 
-					"        </ns2:NoPolicy>\n" + 
+					"        </ns2:BodySoap1_1>\n" + 
 					"    </soap:Body>\n" + 
 					"</soap:Envelope>";
 			
@@ -487,25 +487,31 @@ public class Common {
 			request.addHeader(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, "\""+operazione+"\"");
 			request.setMethod(HttpRequestMethod.POST);
 			request.setContent(content.getBytes());
-			request.setContentType(versioneSoap);
-			request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/"
+			request.setContentType(contentTypeSoap);
+			request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/"+operazione
 					+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
 			
 			return request;
 			
-		} else if (versioneSoap.equals(HttpConstants.CONTENT_TYPE_SOAP_1_2)) {
-			String content = null;
+		} else if (contentTypeSoap.equals(HttpConstants.CONTENT_TYPE_SOAP_1_2)) {
+			String content = "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">\n" +  
+					"    <soap:Body>\n" + 
+					"        <ns2:BodySoap1_2 xmlns:ns2=\"http://amministrazioneesempio.it/nomeinterfacciaservizio\">\n" +
+								 
+					"        </ns2:BodySoap1_2>\n" + 
+					"    </soap:Body>\n" + 
+					"</soap:Envelope>";
 			
 			HttpRequest request = new HttpRequest();
 			request.setMethod(HttpRequestMethod.POST);
-			request.setContentType(versioneSoap);
+			request.setContentType(contentTypeSoap);
 			request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/"
 					+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
 			request.setContent(content.getBytes());
 			
 			return request;
 			
-		} else throw new IllegalArgumentException("Content Type Soap non riconosciuto: " + versioneSoap);
+		} else throw new IllegalArgumentException("Content Type Soap non riconosciuto: " + contentTypeSoap);
 		
 	}
 
