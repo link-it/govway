@@ -44,6 +44,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
@@ -197,6 +198,35 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		HttpRequest requestIdentificazioneFallita = Common.buildRequest_Semplice(erogazione);
 		HttpRequest requestConnettoreNonTrovato = Common.buildRequest_Contenuto("ConnettoreInesistente", erogazione);
 		HttpRequest requestConnettoreDisabilitato = Common.buildRequest_Contenuto(CONNETTORE_DISABILITATO, erogazione);
+		
+		requestsByConnettore.put(Common.CONNETTORE_DISABILITATO,List.of(requestConnettoreDisabilitato));
+		requestsByConnettore.put(Common.CONNETTORE_ID_FALLITA,List.of(requestIdentificazioneFallita));
+		requestsByConnettore.put(Common.CONNETTORE_ID_NON_TROVATO,List.of(requestConnettoreNonTrovato));
+		
+		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
+		matchResponsesByConnettore(responsesByConnettore);
+	}
+	
+	
+	@Test
+	public void soapAction() {
+		
+		// Non posso avere due azioni che si chiamano allo stesso modo, quindi uso solo un filtro.
+		final String erogazione = "ConsegnaCondizionaleSoapActionByFiltro";
+		var requestsByConnettore = new HashMap<String,List<HttpRequest>>();
+		final String versioneSoap = HttpConstants.CONTENT_TYPE_SOAP_1_1;	// TODO v2
+ 
+		
+		connettoriAbilitati.forEach( connettore -> {
+			requestsByConnettore.put(
+					connettore,
+					Arrays.asList( Common.buildSoapRequest(filtriConnettori.get(connettore).get(0), erogazione,versioneSoap)) );
+		});
+		
+			
+		HttpRequest requestIdentificazioneFallita = Common.buildSoapRequest_Semplice(erogazione,versioneSoap);
+		HttpRequest requestConnettoreNonTrovato = Common.buildSoapRequest("ConnettoreInesistente", erogazione,versioneSoap);
+		HttpRequest requestConnettoreDisabilitato = Common.buildSoapRequest(CONNETTORE_DISABILITATO, erogazione,versioneSoap);
 		
 		requestsByConnettore.put(Common.CONNETTORE_DISABILITATO,List.of(requestConnettoreDisabilitato));
 		requestsByConnettore.put(Common.CONNETTORE_ID_FALLITA,List.of(requestIdentificazioneFallita));

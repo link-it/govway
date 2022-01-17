@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
@@ -456,6 +457,62 @@ public class Common {
 	static void checkAll200(List<HttpResponse> responses) {
 		for (var resp : responses)
 			assertEquals(200, resp.getResultHTTPOperation());
+	}
+
+
+	public static HttpRequest buildSoapRequest_Semplice(String erogazione, String versioneSoap) {
+		String operazione = "operazioneSemplice";
+		return buildSoapRequest(operazione, erogazione, versioneSoap);
+
+	}
+
+
+	public static HttpRequest buildSoapRequest(String filtro, String erogazione, String versioneSoap) {
+		// nel soap 1.1 l'azione è specifica nello header SOAPAction
+		// versioneSoap =[ HttpConstants.CONTENT_TYPE_SOAP_1_1; |  HttpConstants.CONTENT_TYPE_SOAP_1_2 ]
+		
+		//  Questo namespace è per soap 1.1 "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n";
+		final String operazione = filtro;
+		
+		if (versioneSoap.equals(HttpConstants.CONTENT_TYPE_SOAP_1_1)) {	// TODO:Questo namespace è solo per soap 1.2
+			String content = "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">\n" +  
+					"    <soap:Body>\n" + 
+					"        <ns2:NoPolicy xmlns:ns2=\"http://amministrazioneesempio.it/nomeinterfacciaservizio\">\n" +
+								 
+					"        </ns2:NoPolicy>\n" + 
+					"    </soap:Body>\n" + 
+					"</soap:Envelope>";
+			
+			HttpRequest request = new HttpRequest();
+			request.addHeader(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, "\""+operazione+"\"");
+			request.setMethod(HttpRequestMethod.POST);
+			request.setContent(content.getBytes());
+			request.setContentType(versioneSoap);
+			request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/"
+					+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
+			
+			return request;
+			
+		} else if (versioneSoap.equals(HttpConstants.CONTENT_TYPE_SOAP_1_2)) {
+			String content = null;
+			
+			HttpRequest request = new HttpRequest();
+			request.setMethod(HttpRequestMethod.POST);
+			request.setContentType(versioneSoap);
+			request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/"
+					+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
+			request.setContent(content.getBytes());
+			
+			return request;
+			
+		} else throw new IllegalArgumentException("Content Type Soap non riconosciuto: " + versioneSoap);
+		
+	}
+
+
+	public static List<HttpRequest> buildSoapRequests(List<String> filtri, String erogazione, String versioneSoap) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

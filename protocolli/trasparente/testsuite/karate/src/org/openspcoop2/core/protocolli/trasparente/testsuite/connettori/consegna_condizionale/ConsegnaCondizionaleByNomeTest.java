@@ -44,6 +44,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
@@ -160,16 +161,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		
 		assertTrue(oneOrTheOther);
 	}
-	
-	
-	@Test
-	public void soapAction() {
-		final String erogazione = "ConsegnaCondizionaleHeaderHttpByNome";
 
-		// TODO
-	}
-	
-	
 
 	@Test
 	public void parametroUrlConflitti() throws UtilsException {
@@ -266,6 +258,33 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		matchResponsesWithConnettori(connettoriTestati, responsesByConnettore);
 
 	}
+	
+	
+	
+	@Test
+	public void soapAction() {
+		// TODO
+		final String erogazione = "ConsegnaCondizionaleSoapActionByNome";
+		final String versioneSoap = HttpConstants.CONTENT_TYPE_SOAP_1_1;
+		
+		var requestsByConnettore = Common.connettoriAbilitati.stream()
+				.map(c -> Common.buildSoapRequest(c,erogazione,versioneSoap))
+				.collect(Collectors.toList());
+							
+		HttpRequest requestIdentificazioneFallita = Common.buildSoapRequest_Semplice(erogazione, versioneSoap);
+		HttpRequest requestConnettoreNonTrovato = Common.buildSoapRequest("ConnettoreInesistente", erogazione, versioneSoap);
+		HttpRequest requestConnettoreDisabilitato = Common.buildSoapRequest(CONNETTORE_DISABILITATO, erogazione, versioneSoap);
+		
+		requestsByConnettore.add(requestIdentificazioneFallita);
+		requestsByConnettore.add(requestConnettoreNonTrovato);
+		requestsByConnettore.add(requestConnettoreDisabilitato);
+							
+		var responsesByConnettore = makeBatchedRequests(requestsByConnettore, 3);
+		
+		matchResponsesWithConnettori(connettoriTestati, responsesByConnettore);
+	}
+	
+	
 	
 	
 	@Test

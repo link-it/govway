@@ -42,6 +42,7 @@ import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
@@ -332,6 +333,28 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
 
 		checkResponses(responsesByPool);
+	}
+	
+	
+	@Test
+	public void soapAction() {
+		// TODO: Qui devo creare l'azione che si chiama "Pool0-Filtro0", "Pool0-Filtro1", "Pool1-Filtro0" ecc..
+		// TODO: Duplica i test e falli sia in soap v1 che soap v2
+		final String erogazione = "LoadBalanceConsegnaCondizionaleSoapAction";
+		final String versioneSoap = HttpConstants.CONTENT_TYPE_SOAP_1_1; // TODO V2
+
+		
+		Map<String,List<HttpRequest>> requestsByPool = new HashMap<>();
+		for (var e : Common.filtriPools.entrySet()) {
+			requestsByPool.put(
+					e.getKey(),
+					Common.buildSoapRequests(e.getValue(), erogazione, versioneSoap)
+				);
+		}
+		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
+
+		checkResponses(responsesByPool);
+		
 	}
 
 
