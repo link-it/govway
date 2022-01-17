@@ -193,8 +193,9 @@ public class SessioneStickyMaxAgeTest extends ConfigLoader {
 		// conterrà la risposta della prima richiesta, la seconda future della seconda ecc..
 		
 		final Vector<Future<HttpResponse>> oldFutureResponses = makeBackgroundRequests(requests, requests.size(), Common.delayRichiesteBackground);
-		
-		org.openspcoop2.utils.Utilities.sleep(Common.delayRichiesteBackground);
+		var oldResponses = Utils.awaitResponses(oldFutureResponses);	// TODO: Rimuovere
+
+		/*org.openspcoop2.utils.Utilities.sleep(Common.delayRichiesteBackground);
 		
 		SessioneStickyTest.velocityTemplate_Impl(erogazione);
 		
@@ -224,7 +225,7 @@ public class SessioneStickyMaxAgeTest extends ConfigLoader {
 		
 		var resp = futureResponse.get();
 		assertEquals(200, resp.getResultHTTPOperation());
-		assertEquals(oldConnettore, resp.getHeaderFirstValue(HEADER_ID_CONNETTORE));
+		assertEquals(oldConnettore, resp.getHeaderFirstValue(HEADER_ID_CONNETTORE));*/
 	}
 
 	// TODO: Mettere nella nuova classe di utils, fanne tre:

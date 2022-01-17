@@ -121,7 +121,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 
 		HttpRequest request = buildRequest(erogazione);
 
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 15);
+		Vector<HttpResponse> responses = Common.makeParallelRequests(request, 15);
 		Map<String, Integer> howManys = Common.contaConnettoriUtilizzati(responses);
 
 		// 		PESI:
@@ -166,7 +166,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 			request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
 					+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
 
-			Vector<HttpResponse> responses = Utils.makeParallelRequests(request, nRequests);
+			Vector<HttpResponse> responses = Common.makeParallelRequests(request, nRequests);
 			Map<String, Integer> howManys = Common.contaConnettoriUtilizzati(responses);
 			
 			assertNotEquals(1, howManys.keySet().size());
@@ -206,7 +206,7 @@ public class LoadBalanceSempliceTest extends ConfigLoader {
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
 		
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxParallelRequests, requestsPerThread);
+		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, Common.richiesteTestRandom, requestsPerThread);
 		Map<String, Integer> howManys = Common.contaConnettoriUtilizzati(responses);
 		
 		assertEquals(true, howManys.get(CONNETTORE_ROTTO) > howManys.get(CONNETTORE_3));
