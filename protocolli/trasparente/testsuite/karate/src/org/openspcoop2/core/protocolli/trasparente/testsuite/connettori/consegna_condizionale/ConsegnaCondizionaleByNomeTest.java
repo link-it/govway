@@ -233,7 +233,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 							
 		var responsesByConnettore = makeBatchedRequests(requestsByConnettore, 3);
 		
-		matchResponsesWithConnettori(connettoriTestati, responsesByConnettore);
+		matchResponsesWithConnettoriRest(connettoriTestati, responsesByConnettore);
 	}
 
 	
@@ -255,33 +255,23 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 							
 		var responsesByConnettore = makeBatchedRequests(requestsByConnettore, 3);
 		
-		matchResponsesWithConnettori(connettoriTestati, responsesByConnettore);
+		matchResponsesWithConnettoriRest(connettoriTestati, responsesByConnettore);
 
 	}
 	
 	
 	
 	@Test
-	public void soapAction() {
-		// TODO
-		final String erogazione = "ConsegnaCondizionaleSoapActionByNome";
-		final String versioneSoap = HttpConstants.CONTENT_TYPE_SOAP_1_1;
-		
-		var requestsByConnettore = Common.connettoriAbilitati.stream()
-				.map(c -> Common.buildSoapRequest(c,erogazione,versioneSoap))
-				.collect(Collectors.toList());
-							
-		HttpRequest requestIdentificazioneFallita = Common.buildSoapRequest_Semplice(erogazione, versioneSoap);
-		HttpRequest requestConnettoreNonTrovato = Common.buildSoapRequest("ConnettoreInesistente", erogazione, versioneSoap);
-		HttpRequest requestConnettoreDisabilitato = Common.buildSoapRequest(CONNETTORE_DISABILITATO, erogazione, versioneSoap);
-		
-		requestsByConnettore.add(requestIdentificazioneFallita);
-		requestsByConnettore.add(requestConnettoreNonTrovato);
-		requestsByConnettore.add(requestConnettoreDisabilitato);
-							
-		var responsesByConnettore = makeBatchedRequests(requestsByConnettore, 3);
-		
-		matchResponsesWithConnettori(connettoriTestati, responsesByConnettore);
+	public void soapAction1_1() {
+		final String erogazione = "ConsegnaCondizionaleByNomeSoap";
+		soapActionImpl(erogazione, HttpConstants.CONTENT_TYPE_SOAP_1_1);
+	}
+	
+	
+	@Test
+	public void soapAction1_2() {
+		final String erogazione = "ConsegnaCondizionaleByNomeSoap";
+		soapActionImpl(erogazione, HttpConstants.CONTENT_TYPE_SOAP_1_2);
 	}
 	
 	
@@ -306,7 +296,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 							
 		var responsesByConnettore = makeBatchedRequests(requestsByConnettore, 3);
 		
-		matchResponsesWithConnettori(connettoriTestati, responsesByConnettore);
+		matchResponsesWithConnettoriRest(connettoriTestati, responsesByConnettore);
 	}
 	
 	
@@ -415,7 +405,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 			throw new RuntimeException(e);
 		}
 		
-		matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);
+		matchResponsesWithConnettoriRest(Common.connettoriAbilitati, responsesByConnettore);
 	}
 	
 	
@@ -440,7 +430,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 							
 		var responsesByConnettore = makeBatchedRequests(requestsByConnettore, 3);
 		
-		matchResponsesWithConnettori(connettoriTestati, responsesByConnettore);
+		matchResponsesWithConnettoriRest(connettoriTestati, responsesByConnettore);
 	}
 	
 	
@@ -463,7 +453,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 							
 		var responsesByConnettore = makeBatchedRequests(requestsByConnettore, 3);
 		
-		matchResponsesWithConnettori(connettoriTestati, responsesByConnettore);
+		matchResponsesWithConnettoriRest(connettoriTestati, responsesByConnettore);
 	}
 	
 	
@@ -486,7 +476,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 							
 		var responsesByConnettore = makeBatchedRequests(requestsByConnettore, 3);
 		
-		matchResponsesWithConnettori(connettoriTestati, responsesByConnettore);
+		matchResponsesWithConnettoriRest(connettoriTestati, responsesByConnettore);
 	}
 	
 	
@@ -596,7 +586,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 							
 		var responsesByConnettore = ConsegnaCondizionaleByNomeTest.makeBatchedRequests(requestsByConnettore, 3);
 		
-		matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);	
+		matchResponsesWithConnettoriRest(Common.connettoriAbilitati, responsesByConnettore);	
 	}
 	
 	@Test
@@ -614,7 +604,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 							
 		var responsesByConnettore = ConsegnaCondizionaleByNomeTest.makeBatchedRequests(requestsByConnettore, 3);
 		
-		matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);	
+		matchResponsesWithConnettoriRest(Common.connettoriAbilitati, responsesByConnettore);	
 	}
 	
 	
@@ -635,7 +625,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 							
 		var responsesByConnettore = ConsegnaCondizionaleByNomeTest.makeBatchedRequests(requestsByConnettore, 3);
 		
-		matchResponsesWithConnettori(Common.connettoriAbilitati, responsesByConnettore);	
+		matchResponsesWithConnettoriRest(Common.connettoriAbilitati, responsesByConnettore);	
 		
 	}
 
@@ -677,6 +667,25 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		assertEquals(200, response.getResultHTTPOperation());
 		assertEquals(CONNETTORE_1, response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
 	}
+	
+	static void soapActionImpl(String erogazione, String versioneSoap) {
+
+		var requestsByConnettore = Common.connettoriAbilitati.stream()
+				.map(c -> Common.buildSoapRequest(c,c,erogazione,versioneSoap))
+				.collect(Collectors.toList());
+							
+		HttpRequest requestIdentificazioneFallita = Common.buildSoapRequest_Semplice(erogazione, versioneSoap);
+		HttpRequest requestConnettoreNonTrovato = Common.buildSoapRequest("ConnettoreInesistente", "ConnettoreInesistente", erogazione, versioneSoap);
+		HttpRequest requestConnettoreDisabilitato = Common.buildSoapRequest(CONNETTORE_DISABILITATO, CONNETTORE_DISABILITATO, erogazione, versioneSoap);
+		
+		requestsByConnettore.add(requestIdentificazioneFallita);
+		requestsByConnettore.add(requestConnettoreNonTrovato);
+		requestsByConnettore.add(requestConnettoreDisabilitato);
+							
+		var responsesByConnettore = makeBatchedRequests(requestsByConnettore, 3);
+		
+		matchResponsesWithConnettoriSoap(connettoriTestati, responsesByConnettore);
+	}
 
 
 	/*
@@ -714,7 +723,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	}
 
 
-	public static void matchResponsesWithConnettori(List<String> connettori, List<Vector<HttpResponse>> responsesByConnettore) {
+	public static void matchResponsesWithConnettoriRest(List<String> connettori, List<Vector<HttpResponse>> responsesByConnettore) {
 		assertEquals(connettori.size(), responsesByConnettore.size());
 		
 		for (int i = 0; i < connettori.size(); i++) {
@@ -727,6 +736,31 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 				
 				for (var response : responsesByConnettore.get(i)) {
 					assertEquals(400,response.getResultHTTPOperation());
+				}
+				
+			} else {
+				for (var response : responsesByConnettore.get(i)) {
+					String connettoreRisposta = response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE);
+					assertEquals(connettoreRichiesta, connettoreRisposta);
+				}
+			}
+		}
+	}
+	
+	
+	public static void matchResponsesWithConnettoriSoap(List<String> connettori, List<Vector<HttpResponse>> responsesByConnettore) {
+		assertEquals(connettori.size(), responsesByConnettore.size());
+		
+		for (int i = 0; i < connettori.size(); i++) {
+			String connettoreRichiesta = connettori.get(i);
+			
+			
+			if (connettoreRichiesta.equals(CONNETTORE_DISABILITATO) 
+					|| connettoreRichiesta.equals(Common.CONNETTORE_ID_FALLITA) 
+					|| connettoreRichiesta.equals(Common.CONNETTORE_ID_NON_TROVATO)) {
+				
+				for (var response : responsesByConnettore.get(i)) {
+					assertEquals(500,response.getResultHTTPOperation());
 				}
 				
 			} else {

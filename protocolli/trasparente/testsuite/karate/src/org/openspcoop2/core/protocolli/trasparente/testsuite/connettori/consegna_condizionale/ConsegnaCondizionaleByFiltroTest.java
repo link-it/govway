@@ -103,7 +103,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		requestsByConnettore.put(Common.CONNETTORE_ID_NON_TROVATO,List.of(requestConnettoreNonTrovato));
 		
 		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
-		matchResponsesByConnettore(responsesByConnettore);
+		matchResponsesByConnettoreRest(responsesByConnettore);
 	}
 	
 	
@@ -153,7 +153,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		requestsByConnettore.put(Common.CONNETTORE_ID_NON_TROVATO,List.of(requestConnettoreNonTrovato));
 		
 		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
-		matchResponsesByConnettore(responsesByConnettore);
+		matchResponsesByConnettoreRest(responsesByConnettore);
 	}
 	
 
@@ -179,7 +179,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		requestsByConnettore.put(Common.CONNETTORE_ID_NON_TROVATO,List.of(requestConnettoreNonTrovato));
 		
 		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
-		matchResponsesByConnettore(responsesByConnettore);
+		matchResponsesByConnettoreRest(responsesByConnettore);
 	}
 
 	
@@ -204,38 +204,25 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		requestsByConnettore.put(Common.CONNETTORE_ID_NON_TROVATO,List.of(requestConnettoreNonTrovato));
 		
 		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
-		matchResponsesByConnettore(responsesByConnettore);
+		matchResponsesByConnettoreRest(responsesByConnettore);
 	}
 	
 	
 	@Test
-	public void soapAction() {
+	public void soapAction1_1() {
 		
-		// Non posso avere due azioni che si chiamano allo stesso modo, quindi uso solo un filtro.
 		final String erogazione = "ConsegnaCondizionaleSoapActionByFiltro";
-		var requestsByConnettore = new HashMap<String,List<HttpRequest>>();
-		final String versioneSoap = HttpConstants.CONTENT_TYPE_SOAP_1_1;	// TODO v2
- 
-		
-		connettoriAbilitati.forEach( connettore -> {
-			requestsByConnettore.put(
-					connettore,
-					Arrays.asList( Common.buildSoapRequest(filtriConnettori.get(connettore).get(0), erogazione,versioneSoap)) );
-		});
-		
-			
-		HttpRequest requestIdentificazioneFallita = Common.buildSoapRequest_Semplice(erogazione,versioneSoap);
-		HttpRequest requestConnettoreNonTrovato = Common.buildSoapRequest("ConnettoreInesistente", erogazione,versioneSoap);
-		HttpRequest requestConnettoreDisabilitato = Common.buildSoapRequest(CONNETTORE_DISABILITATO, erogazione,versioneSoap);
-		
-		requestsByConnettore.put(Common.CONNETTORE_DISABILITATO,List.of(requestConnettoreDisabilitato));
-		requestsByConnettore.put(Common.CONNETTORE_ID_FALLITA,List.of(requestIdentificazioneFallita));
-		requestsByConnettore.put(Common.CONNETTORE_ID_NON_TROVATO,List.of(requestConnettoreNonTrovato));
-		
-		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
-		matchResponsesByConnettore(responsesByConnettore);
+		soapActionImpl(erogazione, HttpConstants.CONTENT_TYPE_SOAP_1_1);		
 	}
 	
+	
+
+	@Test
+	public void soapAction1_2() {
+		
+		final String erogazione = "ConsegnaCondizionaleSoapActionByFiltro";
+		soapActionImpl(erogazione, HttpConstants.CONTENT_TYPE_SOAP_1_2);		
+	}
 	
 	
 	@Test
@@ -259,7 +246,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		requestsByConnettore.put(Common.CONNETTORE_ID_NON_TROVATO,List.of(requestConnettoreNonTrovato));
 		
 		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
-		matchResponsesByConnettore(responsesByConnettore);
+		matchResponsesByConnettoreRest(responsesByConnettore);
 	}
 	
 	
@@ -284,7 +271,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		requestsByConnettore.put(Common.CONNETTORE_ID_NON_TROVATO,List.of(requestConnettoreNonTrovato));
 		
 		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
-		matchResponsesByConnettore(responsesByConnettore);
+		matchResponsesByConnettoreRest(responsesByConnettore);
 	}
 
 
@@ -309,7 +296,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		requestsByConnettore.put(Common.CONNETTORE_ID_NON_TROVATO,List.of(requestConnettoreNonTrovato));
 		
 		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
-		matchResponsesByConnettore(responsesByConnettore);
+		matchResponsesByConnettoreRest(responsesByConnettore);
 	}
 	
 	
@@ -419,7 +406,36 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		
 		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
 		
-		matchResponsesByConnettore(responsesByConnettore);
+		matchResponsesByConnettoreRest(responsesByConnettore);
+		
+	}
+	
+
+	private static void soapActionImpl(String erogazione, String versioneSoap) {
+		// Non posso avere due azioni che si chiamano allo stesso modo, quindi uso solo un filtro.
+
+		var requestsByConnettore = new HashMap<String,List<HttpRequest>>();
+ 
+		
+		connettoriAbilitati.forEach( connettore -> {
+			String filtroConnettore = filtriConnettori.get(connettore).get(0);
+			String azione = connettore;
+			requestsByConnettore.put(
+					connettore,
+					Arrays.asList( Common.buildSoapRequest(filtroConnettore,azione, erogazione,versioneSoap)) );
+		});
+		
+			
+		HttpRequest requestIdentificazioneFallita = Common.buildSoapRequest_Semplice(erogazione,versioneSoap);
+		HttpRequest requestConnettoreNonTrovato = Common.buildSoapRequest("ConnettoreInesistente", "ConnettoreInesistente", erogazione,versioneSoap);
+		HttpRequest requestConnettoreDisabilitato = Common.buildSoapRequest(CONNETTORE_DISABILITATO+"-Filtro0",CONNETTORE_DISABILITATO, erogazione,versioneSoap);
+		
+		requestsByConnettore.put(Common.CONNETTORE_DISABILITATO,List.of(requestConnettoreDisabilitato));
+		requestsByConnettore.put(Common.CONNETTORE_ID_FALLITA,List.of(requestIdentificazioneFallita));
+		requestsByConnettore.put(Common.CONNETTORE_ID_NON_TROVATO,List.of(requestConnettoreNonTrovato));
+		
+		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
+		matchResponsesByConnettoreSoap(responsesByConnettore);
 		
 	}
 	
@@ -430,7 +446,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 	 * richieste pescandole dalla lista assegnata.
 	 * 
 	 */
-	Map<String,List<HttpResponse>> makeBatchedRequests(Map<String,List<HttpRequest>> requestsByConnettore, int requests_per_batch) {
+	static Map<String,List<HttpResponse>> makeBatchedRequests(Map<String,List<HttpRequest>> requestsByConnettore, int requests_per_batch) {
 		var responsesByConnettore = new ConcurrentHashMap<String,List<HttpResponse>>();
 		
 		int nThreads = requestsByConnettore.keySet().size();
@@ -459,7 +475,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 	// Verifico che le risposte sotto una certa chiave siano finite tutte sotto lo stesso
 	// connettore che corrisponde alla chiave.
 	
-	private void matchResponsesByConnettore(Map<String, List<HttpResponse>> responsesByConnettore) {
+	static void matchResponsesByConnettoreRest(Map<String, List<HttpResponse>> responsesByConnettore) {
 		for (String connettore : responsesByConnettore.keySet()) {
 			
 			var responses = responsesByConnettore.get(connettore);
@@ -470,6 +486,28 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 				
 				for (var response : responses) {
 					assertEquals(400,response.getResultHTTPOperation());
+				}
+			} else {			
+				for (var resp: responses) {
+					assertEquals(200,resp.getResultHTTPOperation());
+					assertEquals(connettore, resp.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
+				}
+			}
+		}
+	}
+	
+	
+	static void matchResponsesByConnettoreSoap(Map<String, List<HttpResponse>> responsesByConnettore) {
+		for (String connettore : responsesByConnettore.keySet()) {
+			
+			var responses = responsesByConnettore.get(connettore);
+			
+			if (connettore.equals(CONNETTORE_DISABILITATO) || 
+				connettore.equals(Common.CONNETTORE_ID_FALLITA) || 
+				connettore.equals(Common.CONNETTORE_ID_NON_TROVATO)) {
+				
+				for (var response : responses) {
+					assertEquals(500,response.getResultHTTPOperation());
 				}
 			} else {			
 				for (var resp: responses) {

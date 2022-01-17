@@ -337,24 +337,31 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 	
 	
 	@Test
-	public void soapAction() {
-		// TODO: Qui devo creare l'azione che si chiama "Pool0-Filtro0", "Pool0-Filtro1", "Pool1-Filtro0" ecc..
-		// TODO: Duplica i test e falli sia in soap v1 che soap v2
+	public void soapAction1_1() {
 		final String erogazione = "LoadBalanceConsegnaCondizionaleSoapAction";
-		final String versioneSoap = HttpConstants.CONTENT_TYPE_SOAP_1_1; // TODO V2
-
+		soapAction_Impl(erogazione, HttpConstants.CONTENT_TYPE_SOAP_1_1);
+	}
+	
+	
+	@Test
+	public void soapAction1_2() {
+		final String erogazione = "LoadBalanceConsegnaCondizionaleSoapAction";
+		soapAction_Impl(erogazione, HttpConstants.CONTENT_TYPE_SOAP_1_2);
+	}
+	
+	
+	public void soapAction_Impl(String erogazione, String contentTypeVersioneSoap) {
 		
 		Map<String,List<HttpRequest>> requestsByPool = new HashMap<>();
 		for (var e : Common.filtriPools.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
-					Common.buildSoapRequests(e.getValue(), erogazione, versioneSoap)
+					Common.buildSoapRequests(e.getValue(), erogazione, contentTypeVersioneSoap)
 				);
 		}
 		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
 
 		checkResponses(responsesByPool);
-		
 	}
 
 

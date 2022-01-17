@@ -460,35 +460,32 @@ public class Common {
 	}
 
 
-	public static HttpRequest buildSoapRequest_Semplice(String erogazione, String versioneSoap) {
+	public static HttpRequest buildSoapRequest_Semplice(String erogazione, String contentTypeSoap) {
 		String operazione = "operazioneSemplice";
-		return buildSoapRequest(operazione, erogazione, versioneSoap);
+		return buildSoapRequest(operazione, operazione, erogazione, contentTypeSoap);
 
 	}
 
 
-	public static HttpRequest buildSoapRequest(String filtro, String erogazione, String contentTypeSoap) {
+	public static HttpRequest buildSoapRequest(String filtro, String azione, String erogazione, String contentTypeSoap) {
 		// nel soap 1.1 l'azione è specifica nello header SOAPAction
 		// versioneSoap =[ HttpConstants.CONTENT_TYPE_SOAP_1_1; |  HttpConstants.CONTENT_TYPE_SOAP_1_2 ]
-		
-		//  Questo namespace è per soap 1.1 "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n";
-		final String operazione = filtro;
-		
-		if (contentTypeSoap.equals(HttpConstants.CONTENT_TYPE_SOAP_1_1)) {	// TODO:Questo namespace è solo per soap 1.2
+				
+		if (contentTypeSoap.equals(HttpConstants.CONTENT_TYPE_SOAP_1_1)) {	// TODO: togli la A iniziale dal body quando andrea fixa
 			String content = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +  
 					"    <soap:Body>\n" + 
-					"        <ns2:BodySoap1_1 xmlns:ns2=\"http://amministrazioneesempio.it/nomeinterfacciaservizio\">\n" +
+					"        <ns2:ABodySoap1_1 xmlns:ns2=\"http://amministrazioneesempio.it/nomeinterfacciaservizio\">\n" +
 								 
-					"        </ns2:BodySoap1_1>\n" + 
+					"        </ns2:ABodySoap1_1>\n" + 
 					"    </soap:Body>\n" + 
 					"</soap:Envelope>";
 			
 			HttpRequest request = new HttpRequest();
-			request.addHeader(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, "\""+operazione+"\"");
+			request.addHeader(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, "\""+filtro+"\"");
 			request.setMethod(HttpRequestMethod.POST);
 			request.setContent(content.getBytes());
 			request.setContentType(contentTypeSoap);
-			request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/"+operazione
+			request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/"+azione
 					+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
 			
 			return request;
@@ -496,16 +493,17 @@ public class Common {
 		} else if (contentTypeSoap.equals(HttpConstants.CONTENT_TYPE_SOAP_1_2)) {
 			String content = "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">\n" +  
 					"    <soap:Body>\n" + 
-					"        <ns2:BodySoap1_2 xmlns:ns2=\"http://amministrazioneesempio.it/nomeinterfacciaservizio\">\n" +
+					"        <ns2:ABodySoap1_2 xmlns:ns2=\"http://amministrazioneesempio.it/nomeinterfacciaservizio\">\n" +
 								 
-					"        </ns2:BodySoap1_2>\n" + 
+					"        </ns2:ABodySoap1_2>\n" + 
 					"    </soap:Body>\n" + 
 					"</soap:Envelope>";
 			
 			HttpRequest request = new HttpRequest();
 			request.setMethod(HttpRequestMethod.POST);
-			request.setContentType(contentTypeSoap);
-			request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/"
+			
+			request.setContentType(contentTypeSoap + ";" + HttpConstants.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION+"=\""+filtro+"\"");
+			request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/"+azione
 					+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+ID_CONNETTORE_REPLY_PREFIX);
 			request.setContent(content.getBytes());
 			
@@ -516,9 +514,10 @@ public class Common {
 	}
 
 
-	public static List<HttpRequest> buildSoapRequests(List<String> filtri, String erogazione, String versioneSoap) {
-		// TODO Auto-generated method stub
-		return null;
+	public static List<HttpRequest> buildSoapRequests(List<String> filtri, String erogazione, String contentTypeSoap) {
+		return filtri.stream()
+				.map( filtro -> buildSoapRequest(filtro, filtro, erogazione, contentTypeSoap))
+				.collect(Collectors.toList());
 	}
 
 }

@@ -39,7 +39,7 @@
 		# Consentono di far passare i parametri url dal client al backend della erogazione
 		org.openspcoop2.pdd.soap.urlParameters.forward.enable=true
 		org.openspcoop2.pdd.soap.urlParameters.blackList.internal=*
-		org.openspcoop2.pdd.soap.urlParameters.whiteList=fault*,returnCode,sleep
+		org.openspcoop2.pdd.soap.urlParameters.whiteList=fault*,returnCode,sleep,reply*,GovWay-TestSuite-*
 
 - Abilitare la congestione del traffico impostando una soglia del 55% in modo
   che il sistema venga considerato congestionato con 8 richieste simultanee.
