@@ -663,10 +663,10 @@ public class SessioneStickyTest extends ConfigLoader {
 		requestPool2IdSessione.addHeader(HEADER_ID_CONDIZIONE, Common.filtriPools.get(pool2).get(0));
 		
 		HttpRequest requestPool1NoIdSessione = RequestBuilder
-				.buildRequest_HeaderHttp(Common.filtriPools.get(pool1).get(1), erogazione);
+				.buildRequest_HeaderHttp(Common.filtriPools.get(pool1).get(0), erogazione);
 		
 		HttpRequest requestPool2NoIdSessione = RequestBuilder
-				.buildRequest_HeaderHttp(Common.filtriPools.get(pool2).get(1), erogazione);
+				.buildRequest_HeaderHttp(Common.filtriPools.get(pool2).get(0), erogazione);
 		
 		HttpRequest requestPool3NoIdSessione = RequestBuilder.buildRequest_HeaderHttp(
 				Common.filtriPools.get(pool3).get(0), erogazione);

@@ -123,9 +123,9 @@ public class Common {
 	 
 	
 	public static Map<String,List<String>> filtriPools = Map
-			.of(POOL_0, Arrays.asList("Pool0-Filtro0", "Pool0-Filtro1"),
-				POOL_1, Arrays.asList("Pool1-Filtro0", "Pool1-Filtro1"),
-				POOL_2, Arrays.asList("Pool2-Filtro0", "Pool2-Filtro1"));
+			.of(POOL_0, Arrays.asList("Pool0-Filtro0"),
+				POOL_1, Arrays.asList("Pool1-Filtro0"),
+				POOL_2, Arrays.asList("Pool2-Filtro0"));
 
 	public static List<String> pools = Arrays
 		.asList(POOL_0, POOL_1, POOL_2);
