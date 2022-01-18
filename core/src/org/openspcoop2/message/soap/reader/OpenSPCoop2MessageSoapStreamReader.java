@@ -142,6 +142,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 			String elementAfterBody = null;
 			
 			boolean cdataFound = false;
+			boolean commentFound = false;
 			
 			boolean analisiTerminata = false;
 			
@@ -171,7 +172,8 @@ public class OpenSPCoop2MessageSoapStreamReader {
 					char c = bufferString!=null ? bufferString.charAt(i) : (char) bufferRaw[i];
 					if( (c == '<' || (sbActual!=null && sbActual.toString().startsWith("&lt;"))) 
 							&& 
-							!cdataFound) {
+							!cdataFound &&
+							!commentFound) {
 												
 						if(sbActual!=null) {
 							if(sbActual.length()>0) {
@@ -183,6 +185,12 @@ public class OpenSPCoop2MessageSoapStreamReader {
 								if(sPreClosure.startsWith("<![CDATA[")) {
 									//System.out.println("FOND CDATA! in sPreClosure");
 									cdataFound=true;
+								}
+								else if(sPreClosure.startsWith("<!--")) {
+									//System.out.println("FOND <!-- COMMENTO in sPreClosure: ["+sPreClosure+"]");
+									if(!sPreClosure.endsWith("-->")){
+										commentFound=true;
+									}
 								}
 								
 							}
@@ -220,16 +228,36 @@ public class OpenSPCoop2MessageSoapStreamReader {
 							continue;
 						}
 						if(s.startsWith("<![CDATA[")) {
-							//System.out.println("FOND CDATA!");
+							//System.out.println("FOUND CDATA!");
 							cdataFound=true;
 							continue;
 						}
 						
-						if(s.startsWith("<!") || s.startsWith("<?")) {
+						if(commentFound) {
+							sbActual.delete(0, sbActual.length());
+							//System.out.println("continuo perche COMMENTO... ");
+							if(s.endsWith("-->")) {
+								commentFound=false;
+								//System.out.println("FOUND FINE COMMENTO");
+							}
+							continue;
+						}
+						if(s.startsWith("<!--")) {
+							//System.out.println("FOUND <!-- COMMENTO: ["+s+"]");
+							if(s.endsWith("-->")){
+								sbActual.delete(0, sbActual.length());
+							}
+							else {
+								commentFound=true;
+							}
 							continue;
 						}
 						
-						if(s.startsWith("<Envelope") && !envelopeFound) {
+						if(s.startsWith("<?")) {
+							continue;
+						}
+						
+						if(!envelopeFound && isOpenedElement(s,"<Envelope")) {
 							this.envelope = s;
 							if(!analizyEnvelopeNamespace(this.envelope)) {
 								analisiTerminata=true;
@@ -238,7 +266,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 							envelopeFound = true;
 							prefixEnvelope = "";
 						}
-						else if(s.contains(":Envelope") && !envelopeFound) {
+						else if(!envelopeFound && isOpenedElement(s,":Envelope")) {
 							String sPrefix = s.substring(0, s.indexOf(":Envelope"));
 							if(sPrefix.startsWith("<") && !sPrefix.contains(" ") && sPrefix.length()>1) {
 								this.envelope = s;
@@ -267,7 +295,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 								continue;
 							}
 							
-							if(s.startsWith("<Header")) {
+							if(header==null && isOpenedElement(s,"<Header")) {
 								header = new StringBuilder(s);
 								if(!s.endsWith("/>")) {
 									headerClosure = "</Header";
@@ -277,7 +305,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 									break;
 								}
 							}
-							else if(s.contains(":Header")) {
+							else if(header==null && isOpenedElement(s,":Header")) {
 								String sPrefix = s.substring(0, s.indexOf(":Header"));
 								if(sPrefix.startsWith("<") && !sPrefix.contains(" ") && sPrefix.length()>1) {
 									header = new StringBuilder(s);
@@ -294,12 +322,12 @@ public class OpenSPCoop2MessageSoapStreamReader {
 									break;
 								}
 							}
-							else if(s.startsWith("<Body")) {
+							else if(!bodyFound && isOpenedElement(s,"<Body")) {
 								this.body = s;
 								bodyFound = true;
 								prefixBody = "";
 							}
-							else if(s.contains(":Body")) {
+							else if(!bodyFound && isOpenedElement(s,":Body")) {
 								String sPrefix = s.substring(0, s.indexOf(":Body"));
 								if(sPrefix.startsWith("<") && !sPrefix.contains(" ") && sPrefix.length()>1) {
 									this.body = s;
@@ -312,10 +340,10 @@ public class OpenSPCoop2MessageSoapStreamReader {
 								}
 							}
 							else if(bodyFound) {
-								if(s.startsWith("<Fault")) {
+								if(this.fault==null && isOpenedElement(s,"<Fault")) {
 									this.fault = s;
 								}
-								else if(s.contains(":Fault")) {
+								else if(this.fault==null && isOpenedElement(s,":Fault")) {
 									String sPrefix = s.substring(0, s.indexOf(":Fault"));
 									if(sPrefix.startsWith("<") && !sPrefix.contains(" ")) {
 										this.fault = s;
@@ -325,7 +353,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 									
 									String closeBody = "</"+prefixBody+"Body";
 									String closeEnvelope = "</"+prefixEnvelope+"Envelope";
-									if(s.startsWith(closeBody) || s.startsWith(closeEnvelope)) {
+									if( isClosedElement(s,closeBody) || isClosedElement(s,closeEnvelope) ){
 										this.parsingComplete = true;
 									}
 									else {
@@ -544,6 +572,18 @@ public class OpenSPCoop2MessageSoapStreamReader {
 		
 		return;
 		
+	}
+	
+	private boolean isOpenedElement(String s, String prefix) {
+		if(prefix.startsWith(":")) {
+			return s.contains(prefix+" ") || s.contains(prefix+">") || s.contains(prefix+"/")  || s.contains(prefix+"\n") || s.contains(prefix+"\t");
+		}
+		else {
+			return s.startsWith(prefix+" ") || s.startsWith(prefix+">") || s.startsWith(prefix+"/")  || s.startsWith(prefix+"\n") || s.startsWith(prefix+"\t");
+		}
+	}
+	private boolean isClosedElement(String s, String prefix) {
+		return s.startsWith(prefix+" ") || s.startsWith(prefix+">") || s.startsWith(prefix+"\n") || s.startsWith(prefix+"\t");
 	}
 	
 	private boolean analizyEnvelopeNamespace(String envelope) throws Exception {

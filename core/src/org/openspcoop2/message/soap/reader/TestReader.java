@@ -64,9 +64,13 @@ public class TestReader {
 		"&lt;redro&gt;lobmys&gt;SUN&lt;/lobmys&gt;DIreyub&gt;indika&lt;/DIreyub&gt;ecirp&gt;14.56&lt;/ecirp&gt;emulov&gt;500&lt;/emulov&gt;/redro&gt;\n"+
 		"&lt;redro&gt;lobmys&gt;GOOG&lt;/lobmys&gt;DIreyub&gt;chathura&lt;/DIreyub&gt;ecirp&gt;60.24&lt;/ecirp&gt;emulov&gt;40000&lt;/emulov&gt;/redro&gt;</xsd:skcotSyub></soapenv:Header>";
 	private static final String HEADER_CARATTERI_ACAPO_TAB = "<soapenv:Header xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns=\"AltroperTest\" xmlns:xsd=\"http://services.samples/xsd\" xmlns:xsd2=\"http://services.samples/xsd\"><xsd:skcotSyub><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro></xsd:skcotSyub></soapenv:Header>";
-	
 	private static final QName ROOT_ELEMENT_SKCOT = new QName("http://services.samples/xsd", "skcotSyub");
 	private static final QName ROOT_ELEMENT_FAULT = new QName("http://services.samples/xsd", "Fault");
+	private static final QName ROOT_ELEMENT_BODY_NOPOLICY = new QName("http://services.samples/xsd", "BodyNoPolicy");
+	private static final QName ROOT_ELEMENT_BODY_EXACT = new QName("http://services.samples/xsd", "Body");
+	private static final String HEADER_NOPOLICY = "<soap:Header xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><ns2:HeaderNoPolicy xmlns:ns2=\"http://services.samples/xsd\"><xsd:skcotSyub xmlns:xsd=\"http://services.samples/xsd\"/></ns2:HeaderNoPolicy></soap:Header>";
+	private static final String HEADER_EXACT = "<soap:Header xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><ns2:Header xmlns:ns2=\"http://services.samples/xsd\"><xsd:skcotSyub xmlns:xsd=\"http://services.samples/xsd\"/></ns2:Header></soap:Header>";
+	private static final String HEADER_SENZA_COMMENTI = "<soapenv:Header xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><xsd:skcotSyub xmlns:xsd=\"http://services.samples/xsd\"><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro></xsd:skcotSyub></soapenv:Header>";	
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -529,6 +533,100 @@ public class TestReader {
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT, HEADER_MIME);
 		
+		
+		
+		System.out.println("\n\n*** TEST SPECIAL CASE SOAP 11 con BodyChildName (buffer 1k) ***");
+		test("requestFirstChildNameBody_soap11.xml", contentTypeSoap11, 1, expectedFullBuffer, 240,
+				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_BODY_NOPOLICY, HEADER_SOAP_NON_ATTESO);
+		
+		System.out.println("\n\n*** TEST SPECIAL CASE SOAP 12 con BodyChildName (buffer 1k) ***");
+		test("requestFirstChildNameBody_soap12.xml", contentTypeSoap11, 1, expectedFullBuffer, 238,
+				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_BODY_NOPOLICY, HEADER_SOAP_NON_ATTESO);
+		
+		System.out.println("\n\n*** TEST SPECIAL CASE SOAP 11 con BodyChildNameExact (buffer 1k) ***");
+		test("requestFirstChildNameExactBody_soap11.xml", contentTypeSoap11, 1, expectedFullBuffer, 224,
+				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_BODY_EXACT, HEADER_SOAP_NON_ATTESO);
+		
+		System.out.println("\n\n*** TEST SPECIAL CASE SOAP 12 con BodyChildNameExact (buffer 1k) ***");
+		test("requestFirstChildNameExactBody_soap12.xml", contentTypeSoap11, 1, expectedFullBuffer, 222,
+				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_BODY_EXACT, HEADER_SOAP_NON_ATTESO);
+		
+		System.out.println("\n\n*** TEST SPECIAL CASE SOAP 11 con HeaderChildName (buffer 1k) ***");
+		test("requestFirstChildNameHeader_soap11.xml", contentTypeSoap11, 1, expectedFullBuffer, 444,
+				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_SKCOT, HEADER_NOPOLICY);
+		
+		System.out.println("\n\n*** TEST SPECIAL CASE SOAP 12 con HeaderChildName (buffer 1k) ***");
+		test("requestFirstChildNameHeader_soap12.xml", contentTypeSoap11, 1, expectedFullBuffer, 442,
+				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_SKCOT, HEADER_NOPOLICY);
+		
+		System.out.println("\n\n*** TEST SPECIAL CASE SOAP 11 con HeaderChildNameExact (buffer 1k) ***");
+		test("requestFirstChildNameExactHeader_soap11.xml", contentTypeSoap11, 1, expectedFullBuffer, 428,
+				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_SKCOT, HEADER_EXACT);
+		
+		System.out.println("\n\n*** TEST SPECIAL CASE SOAP 12 con HeaderChildNameExact (buffer 1k) ***");
+		test("requestFirstChildNameExactHeader_soap12.xml", contentTypeSoap11, 1, expectedFullBuffer, 426,
+				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_SKCOT, HEADER_EXACT);
+		
+		System.out.println("\n\n*** TEST SPECIAL CASE SOAP 11 con HeaderChildNameExact (buffer 1k) ***");
+		test("requestFirstChildNameExactHeader_soap11.xml", contentTypeSoap11, 1, expectedFullBuffer, 428,
+				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_SKCOT, HEADER_EXACT);
+		
+		
+		
+		System.out.println("\n\n*** TEST SPECIAL CASE SOAP 12 con XmlDeclaration a capo (buffer 1k) ***");
+		test("requestXmlDeclarationACapo_soap11.xml", contentTypeSoap11, 1, expectedFullBuffer, 485,
+				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_SKCOT, HEADER_EXACT);
+		
+		System.out.println("\n\n*** TEST SPECIAL CASE SOAP 12 con XmlDeclaration a capo (buffer 1k) ***");
+		test("requestXmlDeclarationACapo_soap12.xml", contentTypeSoap11, 1, expectedFullBuffer, 483,
+				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_SKCOT, HEADER_EXACT);
+		
+		
+		
+		System.out.println("\n\n*** TEST DichiarazioneCommentata SOAP12 , e messaggio SOAP 11 (buffer 1k) ***");
+		test("requestSoap12Commentata_soap11.xml", contentTypeSoap11, 1, expectedFullBuffer, 319,
+				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_SKCOT, HEADER_SOAP_NON_ATTESO);
+		
+		System.out.println("\n\n*** TEST DichiarazioneCommentata SOAP11 , e messaggio SOAP 12 (buffer 1k) ***");
+		test("requestSoap11Commentata_soap12.xml", contentTypeSoap11, 1, expectedFullBuffer, 314,
+				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_SKCOT, HEADER_SOAP_NON_ATTESO);
+		
+		System.out.println("\n\n*** TEST DichiarazioneCommentata SOAP12 (ACapo) , e messaggio SOAP 11 (buffer 1k) ***");
+		test("requestSoap12CommentataACapo_soap11.xml", contentTypeSoap11, 1, expectedFullBuffer, 331,
+				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_SKCOT, HEADER_SOAP_NON_ATTESO);
+		
+		System.out.println("\n\n*** TEST DichiarazioneCommentata SOAP11 (ACapo) , e messaggio SOAP 12 (buffer 1k) ***");
+		test("requestSoap11CommentataACapo_soap12.xml", contentTypeSoap11, 1, expectedFullBuffer, 327,
+				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_SKCOT, HEADER_SOAP_NON_ATTESO);
+	
+		
+		
+		System.out.println("\n\n*** TEST SOAP11 con vari commenti (buffer "+buffer_dimensione_default+"k) ***");
+		test("requestHeaderBodyVariCommenti_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 2048,
+				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_SKCOT, HEADER_SENZA_COMMENTI);
+		
+		System.out.println("\n\n*** TEST SOAP12 con vari commenti (buffer "+buffer_dimensione_default+"k) ***");
+		test("requestHeaderBodyVariCommenti_soap12.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 2048,
+				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_SKCOT, HEADER_SENZA_COMMENTI);
+				
+		System.out.println("\n\nTestsuite completata con successo");
 	}
 	
 	

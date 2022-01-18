@@ -1,0 +1,18 @@
+<?xml 
+  version="1.0"
+   encoding="UTF-8"
+   
+   
+  ?>
+
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+		<soap:Header>
+		        <ns2:Header xmlns:ns2="http://services.samples/xsd">
+		        	<xsd:skcotSyub xmlns:xsd="http://services.samples/xsd"/>
+                </ns2:Header>
+		</soap:Header>
+        <soap:Body>
+                <ns2:skcotSyub xmlns:ns2="http://services.samples/xsd">
+                </ns2:skcotSyub>
+        </soap:Body>
+</soap:Envelope>

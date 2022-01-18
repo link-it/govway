@@ -1,0 +1,11 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+		<soap:Header>
+		        <ns2:Header xmlns:ns2="http://services.samples/xsd">
+		        	<xsd:skcotSyub xmlns:xsd="http://services.samples/xsd"/>
+                </ns2:Header>
+		</soap:Header>
+        <soap:Body>
+                <ns2:skcotSyub xmlns:ns2="http://services.samples/xsd">
+                </ns2:skcotSyub>
+        </soap:Body>
+</soap:Envelope>
