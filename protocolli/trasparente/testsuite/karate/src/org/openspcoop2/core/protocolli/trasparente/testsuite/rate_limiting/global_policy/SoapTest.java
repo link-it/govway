@@ -97,9 +97,7 @@ public class SoapTest extends ConfigLoader {
 		Vector<HttpResponse> responseBlocked = Utils.makeSequentialRequests(request, maxRequests);
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, maxRequests);
-		// TODO: Gli header da controllare sono diversi.
 		// X-RateLimit-Limit=10, 10;w=3600, X-RateLimit-Remaining=9
-		// Sono solo questi due. Siamo sicuri? Chiedi ad andrea.
 		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste_completate_con_successo.SoapTest.checkOkRequests(responseOk, windowSize, maxRequests);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste_completate_con_successo.SoapTest.checkFailedRequests(responseBlocked, windowSize, maxRequests);
 	}

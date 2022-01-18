@@ -437,7 +437,7 @@ public class SoapTest extends ConfigLoader {
 			assertNotEquals(null, Integer.valueOf(r.getHeaderFirstValue(Headers.FaultRemaining)));
 			assertEquals(500, r.getResultHTTPOperation());
 						
-			Element element = Utils.buildXmlElement(r.getContent());
+			Element element = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.buildXmlElement(r.getContent());
 			Utils.matchEchoFaultResponseSoap(idTransazione, element);	
 			
 			logRateLimiting.debug("Verifico dati della transazione '"+idTransazione+"' ok");

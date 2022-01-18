@@ -1,3 +1,8 @@
+2021-01-18  Francesco Scarlato <scarlato@link.it>
+
+	* [TestsuiteProtocolloTrasparente]
+	Aggiunti test che verificano la funzionalità di LoadBalancer e ConsegnaCondizionale dei ConnettoriMultipli
+
 2022-01-18  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

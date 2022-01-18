@@ -440,7 +440,7 @@ public class SoapTest extends ConfigLoader {
 			assertNotEquals(null, Integer.valueOf(r.getHeaderFirstValue(Headers.FailedRemaining)));
 			assertEquals(500, r.getResultHTTPOperation());
 			
-			Element element = Utils.buildXmlElement(r.getContent());
+			Element element = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.buildXmlElement(r.getContent());
 			Utils.matchApiUnavaliableSoap(idTransazione, element);
 			
 			logRateLimiting.debug("Verifico dati della transazione '"+idTransazione+"' ok");
