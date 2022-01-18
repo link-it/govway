@@ -403,6 +403,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 	
 	@Test
 	public void XForwardedFor() throws UtilsException {
+		// TODO:
 		final String erogazione = "LoadBalanceConsegnaCondizionaleXForwardedFor";
 		var forwardingHeaders = HttpUtilities.getClientAddressHeaders();
 

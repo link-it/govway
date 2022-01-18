@@ -151,7 +151,19 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		requestsByConnettore.put(Common.CONNETTORE_ID_FALLITA,List.of(requestIdentificazioneFallita));
 		requestsByConnettore.put(Common.CONNETTORE_ID_NON_TROVATO,List.of(requestConnettoreNonTrovato));
 		
-		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
+		// La prima volta che viene eseguito fallisce, viene superata la soglia richieste simultanee.
+		// Questo perchè govway non ha ancora le cache pronte e impiega tempo per rispondere e nel mentre
+		// aggiorna i contatori per il numero di richieste simultanee, ne arrivano di nuove che fanno superare
+		// la soglia.
+		// Stranamente accade solo per questo test. Faccio prima un giro di richieste sequenziali per popolare
+		// la cache in modo che makeBatchedRequests non generi  dei 429
+		
+		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,1);
+		matchResponsesByConnettoreRest(responsesByConnettore);
+		
+		org.openspcoop2.utils.Utilities.sleep(Common.delayRichiesteBackground);
+		
+		responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
 		matchResponsesByConnettoreRest(responsesByConnettore);
 	}
 	
@@ -448,7 +460,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 	static Map<String,List<HttpResponse>> makeBatchedRequests(Map<String,List<HttpRequest>> requestsByConnettore, int requests_per_batch) {
 		var responsesByConnettore = new ConcurrentHashMap<String,List<HttpResponse>>();
 		
-		int nThreads = requestsByConnettore.keySet().size();
+		int nThreads = Common.sogliaRichiesteSimultanee; //requestsByConnettore.keySet().size();
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nThreads);
 
 		for (var connettore : requestsByConnettore.keySet()) {			
