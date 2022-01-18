@@ -153,7 +153,7 @@ public class IdentificazioneFallitaTest extends ConfigLoader {
 		assertEquals(Common.CONNETTORE_0, response.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE));
 		
 		String id_transazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
-		System.out.println("ID TRANSAZIONE: " + id_transazione);
+		//System.out.println("ID TRANSAZIONE: " + id_transazione);
 		checkAssenzaDiagnosticoTransazione(id_transazione, CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_INFO);
 		checkAssenzaDiagnosticoTransazione(id_transazione, CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_ERROR);
 		checkDiagnosticoTransazione(
@@ -263,7 +263,7 @@ public class IdentificazioneFallitaTest extends ConfigLoader {
 	
 	
 	void checkDiagnosticoTransazione(String id_transazione, Integer severita, String codice, String messaggio) {
-		String query = "select count(*) from msgdiagnostici where id_transazione=? AND severita=? AND codice=? AND messaggio=?";
+		String query = "select count(*) from msgdiagnostici where id_transazione=? AND severita=? AND codice=? AND messaggio LIKE ?";
 		int nrows = getDbUtils().readValue(query, Integer.class, id_transazione, severita, codice, messaggio);
 		assertEquals(1, nrows);
 	}

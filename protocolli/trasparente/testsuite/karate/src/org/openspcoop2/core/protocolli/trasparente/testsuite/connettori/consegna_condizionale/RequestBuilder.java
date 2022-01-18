@@ -152,12 +152,12 @@ public class RequestBuilder {
 		// nel soap 1.1 l'azione è specifica nello header SOAPAction
 		// versioneSoap =[ HttpConstants.CONTENT_TYPE_SOAP_1_1; |  HttpConstants.CONTENT_TYPE_SOAP_1_2 ]
 				
-		if (contentTypeSoap.equals(HttpConstants.CONTENT_TYPE_SOAP_1_1)) {	// TODO: togli la A iniziale dal body quando andrea fixa
+		if (contentTypeSoap.equals(HttpConstants.CONTENT_TYPE_SOAP_1_1)) {	
 			String content = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +  
 					"    <soap:Body>\n" + 
-					"        <ns2:ABodySoap1_1 xmlns:ns2=\"http://amministrazioneesempio.it/nomeinterfacciaservizio\">\n" +
+					"        <ns2:BodySoap1_1 xmlns:ns2=\"http://amministrazioneesempio.it/nomeinterfacciaservizio\">\n" +
 								 
-					"        </ns2:ABodySoap1_1>\n" + 
+					"        </ns2:BodySoap1_1>\n" + 
 					"    </soap:Body>\n" + 
 					"</soap:Envelope>";
 			
@@ -174,9 +174,9 @@ public class RequestBuilder {
 		} else if (contentTypeSoap.equals(HttpConstants.CONTENT_TYPE_SOAP_1_2)) {
 			String content = "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">\n" +  
 					"    <soap:Body>\n" + 
-					"        <ns2:ABodySoap1_2 xmlns:ns2=\"http://amministrazioneesempio.it/nomeinterfacciaservizio\">\n" +
+					"        <ns2:BodySoap1_2 xmlns:ns2=\"http://amministrazioneesempio.it/nomeinterfacciaservizio\">\n" +
 								 
-					"        </ns2:ABodySoap1_2>\n" + 
+					"        </ns2:BodySoap1_2>\n" + 
 					"    </soap:Body>\n" + 
 					"</soap:Envelope>";
 			

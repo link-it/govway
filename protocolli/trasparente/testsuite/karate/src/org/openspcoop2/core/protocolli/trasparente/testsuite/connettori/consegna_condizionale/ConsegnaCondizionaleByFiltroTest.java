@@ -460,7 +460,7 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 	static Map<String,List<HttpResponse>> makeBatchedRequests(Map<String,List<HttpRequest>> requestsByConnettore, int requests_per_batch) {
 		var responsesByConnettore = new ConcurrentHashMap<String,List<HttpResponse>>();
 		
-		int nThreads = Common.sogliaRichiesteSimultanee; //requestsByConnettore.keySet().size();
+		int nThreads = Common.sogliaRichiesteSimultanee; 
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nThreads);
 
 		for (var connettore : requestsByConnettore.keySet()) {			

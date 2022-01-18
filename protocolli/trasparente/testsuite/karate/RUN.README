@@ -105,37 +105,29 @@
 - HSM per TLS Keystore. Seguire le indicazioni descritte in PKCS11.README
   Poi 'cp tools/utils/src/org/openspcoop2/utils/certificate/test/govway_test_hsm.properties  /etc/govway/hsm.properties'
 
-
-#### PARAMETRI TESTSUITE CONNETTORI-MULTIPLI ####
-- Impostare in govway_local.properties:
-	 	connettoriMultipli.consegnaCondizionale.stessoFiltro=true
-   In modo che la console consenta di assegnare più volte lo stesso filtro a connettori diversi e rilevare l'errore a runtime durante una richiesta
-
-- In console_local.properties:
+- Impostare in <console_local.properties>:
 	# Indicazione se nella Consegna Condizionale è possibile associare lo stesso filtro a differenti connettori (per test)
-		connettoriMultipli.consegnaCondizionale.stessoFiltro=true
-	Per i test che controllano l'univocità dei filtri nella consegna condizionale, cioè che due connettori non possono
-	avere lo stesso filtro.
+	connettoriMultipli.consegnaCondizionale.stessoFiltro=true
+   In modo che la console consenta di assegnare più volte lo stesso filtro a connettori diversi in una consegna condizionale e rilevare l'errore a runtime durante una richiesta.
 
-- In src/testsuite.properties
+- Per modificare i tempi e il numero di operazioni effettuate per i connettori multipli agire sul <testsuite.properties>:
 	+ connettori.load_balancer.numero_richieste_random=500
-	 	Per far si che venga generata una distribuzione casuale accettabile dei connettori scelti dalle politiche casuali
+	 Per far si che venga generata una distribuzione casuale accettabile dei connettori scelti dalle politiche casuali
 
 	+ connettori.load_balancer.sessione_sticky.max_age=4
-		Numero di secondi per cui un id sessione viene legato ad uno specifico connettore nella sessione sticky
+	Numero di secondi per cui un id sessione viene legato ad uno specifico connettore nella sessione sticky
 	
-    + connettori.load_balancer.health_check.intervallo_esclusione=4
-		Numero di secondi per cui un connettore viene escluso dal pool dal momento in cui genera un errore di connessione
-
+	+ connettori.load_balancer.health_check.intervallo_esclusione=4
+	Numero di secondi per cui un connettore viene escluso dal pool dal momento in cui genera un errore di connessione
 
 	+connettori.load_balancer.least_connections.durata_bloccante_lunga=4000
-		Millisecondi necessari a tenere bloccato un connettore dall'inizio alla fine dei test di least_connections
+	Millisecondi necessari a tenere bloccato un connettore dall'inizio alla fine dei test di least_connections
 
 	+ connettori.load_balancer.least_connections.durata_bloccante=1000
-		 Quanti millisecondi tenere bloccato un connettore durante i test di least_connections
+	 Quanti millisecondi tenere bloccato un connettore durante i test di least_connections
 
 	+ connettori.load_balancer.least_connections.delay_richieste_background=300
-		Attesa tra una richiesta e l'altra per attendere che venga contata e presa in carico dalla strategia least_connections
+	Attesa tra una richiesta e l'altra per attendere che venga contata e presa in carico dalla strategia least_connections
 
 Per eseguire i test:
 	ant run_test
@@ -242,6 +234,12 @@ Di seguito vengono descritti i test del package 'connettori':
 
 - 'redirect', verifica il funzionamento delle funzionalità di follow redirect e renaming dell'header Location 
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.redirect
+
+- 'consegna_condizionale', verifica la funzionalità dei connettori multipli con tipo 'Consegna Condizionale'
+   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.consegna_condizionale
+
+- 'load_balancer', verifica la funzionalità dei connettori multipli con tipo 'Load Balancer'
+   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.load_balancer
 
 Di seguito vengono descritti i test del package 'token':
 

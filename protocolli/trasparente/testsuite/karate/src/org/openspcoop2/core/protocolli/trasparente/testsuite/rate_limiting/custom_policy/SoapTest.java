@@ -67,7 +67,6 @@ public class SoapTest extends ConfigLoader {
 	 *
 	 * Controllo che gli headers remaining abbiano il conteggio giusto.
 	 * Per il tempo medio invece, non avendo uno header -Remaining, controllo i contatori sulla policy
-	 * TODO: Potrei controllare che lo header -Limit abbia la finestra adatta?
 	 * @param tipoServizio
 	 */
 	public static void customPolicy(TipoServizio tipoServizio) {

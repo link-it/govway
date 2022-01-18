@@ -53,7 +53,7 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 public class SoapTest extends ConfigLoader {
 	
 	private static final String basePath = System.getProperty("govway_base_path");
-	private static final String testIdHeader = "GovWay-TestSuite-RL-Grouping";	// TODO: Mettilo globale
+	private static final String testIdHeader = "GovWay-TestSuite-RL-Grouping";
 	
 	@Test
 	public void perRichiedenteFruizione() {
