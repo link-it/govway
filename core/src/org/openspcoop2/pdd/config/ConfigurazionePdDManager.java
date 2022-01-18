@@ -1113,6 +1113,13 @@ public class ConfigurazionePdDManager {
 				addCertificateDetails, separator, newLine);
 	}
 	
+	public CertificateCheck checkCertificatiJvm(int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException {
+		return this.configurazionePdDReader.checkCertificatiJvm(sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine);
+	}
+
+	
 
 	/* ********  CONFIGURAZIONE  ******** */
 

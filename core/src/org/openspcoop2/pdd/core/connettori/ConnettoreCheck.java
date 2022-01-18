@@ -36,6 +36,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 
 import org.openspcoop2.core.config.Connettore;
+import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.CostantiConnettori;
@@ -46,8 +47,10 @@ import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.core.token.Costanti;
 import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
+import org.openspcoop2.protocol.registry.CertificateUtils;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -147,6 +150,89 @@ public class ConnettoreCheck {
 		throw new ConnettoreException("Connettore con nome '"+nomeConnettore+"' non trovato");
 	}
 
+	public static Connettore convertConfigProxyJvmToConnettore(Logger log) throws ConnettoreException{
+		
+		Connettore connettore = null;
+		
+		String httpProxyHost = System.getProperty("http.proxyHost");
+		String httpProxyPort = System.getProperty("http.proxyPort");
+		if(httpProxyHost!=null) {
+			connettore = new Connettore();
+			
+			String url = "http://"+httpProxyHost+":"+(httpProxyPort!=null ? httpProxyPort : 80+"");
+			addProperty(connettore, CostantiConnettori.CONNETTORE_LOCATION, url);
+			
+			/*
+			addProperty(connettore, CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME, httpProxyHost);
+			addProperty(connettore, CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT, httpProxyPort!=null ? httpProxyPort : 80+"");
+			
+			String httpProxyUser = System.getProperty("http.proxyUser");
+			String httpProxyPassword = System.getProperty("http.proxyPassword");
+			if(httpProxyUser!=null && httpProxyPassword!=null) {
+				addProperty(connettore, CostantiConnettori.CONNETTORE_HTTP_PROXY_USERNAME, httpProxyUser);
+				addProperty(connettore, CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD, httpProxyPassword);
+			}
+			*/
+		}
+		else {
+			String httpsProxyHost = System.getProperty("https.proxyHost");
+			String httpsProxyPort = System.getProperty("https.proxyPort");
+			if(httpsProxyHost!=null) {
+				connettore = new Connettore();
+				
+				String url = "http://"+httpsProxyHost+":"+(httpsProxyPort!=null ? httpsProxyPort : 80+"");
+				addProperty(connettore, CostantiConnettori.CONNETTORE_LOCATION, url);
+				
+				/*
+				addProperty(connettore, CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME, httpsProxyHost);
+				addProperty(connettore, CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT, httpsProxyPort!=null ? httpsProxyPort : 443+"");
+				
+				String httpsProxyUser = System.getProperty("https.proxyUser");
+				String httpsProxyPassword = System.getProperty("https.proxyPassword");
+				if(httpsProxyUser!=null && httpsProxyPassword!=null) {
+					addProperty(connettore, CostantiConnettori.CONNETTORE_HTTP_PROXY_USERNAME, httpsProxyUser);
+					addProperty(connettore, CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD, httpsProxyPassword);
+				}*/
+			}
+		}
+		
+		if(connettore!=null) {
+			KeystoreParams truststoreParams = CertificateUtils.readTrustStoreParamsJVM();
+			if(truststoreParams!=null) {
+				addProperty(connettore, CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION, truststoreParams.getPath());
+				addProperty(connettore, CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_TYPE, truststoreParams.getType());
+				addProperty(connettore, CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD, truststoreParams.getPassword());
+			}
+		}
+		
+		if(connettore!=null) {
+			connettore.setTipo(TipiConnettore.HTTP.getNome());
+		}
+	
+		return connettore;
+	}
+	
+	public static void checkProxyJvm(Logger log) throws ConnettoreException{
+		
+		Connettore connettore = convertConfigProxyJvmToConnettore(log);
+		
+		if(connettore!=null) {
+			try {
+				_checkHTTP(TipiConnettore.HTTP, connettore, log);
+			}catch(Throwable e) {
+				throw new ConnettoreException(e.getMessage(),e);
+			}
+		}
+		
+	}
+	private static void addProperty(Connettore connettore, String nome, String valore) {
+		Property p = new Property();
+		p.setNome(nome);
+		p.setValore(valore);
+		connettore.addProperty(p);
+	}
+	
+	
 	public static void check(org.openspcoop2.core.registry.Connettore connettore, Logger log) throws ConnettoreException{
 		_check(connettore.mappingIntoConnettoreConfigurazione(), log);
 	}

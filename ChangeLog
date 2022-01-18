@@ -1,3 +1,20 @@
+2022-01-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	La funzionalità di verifica connettività riportava un errore non corretto di 'Read timed out',
+	invece di 'connect timed out', quando veniva verificato un endpoint non raggiungibile ad esempio per problematiche di firewall.
+	L'anomalia è stata risolta aumentando il tempo di atteso dello stato di verifica connettività recuperato dalla console interrogando i nodi run, 
+	portando l'attesa da 5 secondi a 60 secondi per default per questo tipo di operazione.
+
+2022-01-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1321
+	Risolte anomalie presenti nella classe 'OpenSPCoop2MessageSoapStreamReader' utilizzata per leggere le informazioni SOAP in streaming:
+	- i messaggi che contenevano prima della definizione dell'elemento Envelope un commento xml (<!-- ... -->) contenente una definizione Envelope con versione soap differente,
+	  venivano interpretati erroneamente con la versione SOAP indicata nella dichiarazione commentata;
+	- i messaggi che contenevano come rootElement del Body un child element vuoto con nome che iniziava con 'Body' venivano erroneamente interpretati come messaggi SOAP con body vuoto.
+
 2022-01-15  Andrea Poli <apoli@link.it>
 
 	* [GovWayMonitor]

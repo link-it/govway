@@ -4199,7 +4199,79 @@ public class ConfigurazionePdDReader {
 		return check;
 	}
 
-
+	public CertificateCheck checkCertificatiJvm(int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException{
+		return checkCertificatiJvm(sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	
+	public static CertificateCheck checkCertificatiJvm(int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverConfigurazioneException {
+		
+		CertificateCheck check = null;
+		
+		String storeDetails = null; // per evitare duplicazione
+		
+		KeystoreParams keystoreParams = CertificateUtils.readKeyStoreParamsJVM();
+		KeystoreParams truststoreParams = CertificateUtils.readTrustStoreParamsJVM();
+		
+		if(keystoreParams!=null) {
+			try {
+				check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), keystoreParams.getType(),
+						keystoreParams.getPassword(), keystoreParams.getKeyAlias(),
+						sogliaWarningGiorni, 
+						false, //addCertificateDetails,  
+						separator, newLine,
+						log);
+				
+				if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+					storeDetails = CertificateUtils.toStringKeyStore(keystoreParams, 
+							separator, newLine);
+				}
+			}catch(Throwable t) {
+				throw new DriverConfigurazioneException(t.getMessage(),t);
+			}
+		}
+		
+		if(check==null || StatoCheck.OK.equals(check.getStatoCheck())) {
+			if(truststoreParams!=null) {
+				try {
+					check = CertificateUtils.checkTrustStore(truststoreParams.getPath(), truststoreParams.getType(), 
+							truststoreParams.getPassword(), truststoreParams.getCrls(),
+							sogliaWarningGiorni, 
+							false, //addCertificateDetails, 
+							separator, newLine,
+							log);
+					
+					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+						storeDetails = CertificateUtils.toStringTrustStore(truststoreParams,
+								separator, newLine);
+					}
+				}catch(Throwable t) {
+					throw new DriverConfigurazioneException(t.getMessage(),t);
+				}
+			}
+		}
+		
+		if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+			//String id = "Configurazione https della JVM";
+			String id = "";
+			if(addCertificateDetails && storeDetails!=null) {
+				id = id + newLine + storeDetails;
+			}
+			check.setConfigurationId(id);	
+		}	
+		
+		if(check==null) {
+			// connettore https con truststore 'all' senza client autentication
+			check = new CertificateCheck();
+			check.setStatoCheck(StatoCheck.OK);
+		}
+		
+		return check;
+	}
 
 
 

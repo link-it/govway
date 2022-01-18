@@ -155,6 +155,52 @@ public class CertificateUtils {
 	}
 	
 	
+	public static KeystoreParams readKeyStoreParamsJVM() {
+		
+		KeystoreParams params = null;
+		
+		String keyStoreLocation = System.getProperty("javax.net.ssl.keyStore");
+		String keyStoreType = System.getProperty("javax.net.ssl.keyStoreType");
+		String keyStorePassword = System.getProperty("javax.net.ssl.keyStorePassword");
+		
+		if(keyStoreLocation!=null || keyStoreType!=null) {
+			if(keyStoreLocation==null) {
+				keyStoreLocation = "NONE";
+			}
+			if(keyStoreType==null) {
+				keyStoreType = "JKS";
+			}
+			params = new KeystoreParams();
+			params.setPath(keyStoreLocation);
+			params.setType(keyStoreType);
+			params.setPassword(keyStorePassword);
+		}
+	
+		return params;
+	}
+	
+	public static KeystoreParams readTrustStoreParamsJVM() {
+		
+		KeystoreParams params = null;
+		
+		String trustStoreLocation = System.getProperty("javax.net.ssl.trustStore");
+		String trustStoreType = System.getProperty("javax.net.ssl.trustStoreType");
+		String trustStorePassword = System.getProperty("javax.net.ssl.trustStorePassword");
+		
+		if(trustStoreLocation!=null) {
+			if(trustStoreType==null) {
+				trustStoreType = "JKS";
+			}
+			params = new KeystoreParams();
+			params.setPath(trustStoreLocation);
+			params.setType(trustStoreType);
+			params.setPassword(trustStorePassword);
+		}
+	
+		return params;
+	}
+	
+	
 	public static CertificateCheck checkCertificateClient(List<byte[]>certs, List<Boolean> strictValidation, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws Exception{

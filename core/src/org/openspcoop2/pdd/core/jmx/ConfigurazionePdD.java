@@ -150,6 +150,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public final static String CHECK_CERTIFICATO_SERVIZIO_APPLICATIVO_BY_NOME = "checkCertificatoApplicativoByNome";
 	public final static String CHECK_CERTIFICATO_MODI_SERVIZIO_APPLICATIVO_BY_ID = "checkCertificatoModIApplicativoById";
 	public final static String CHECK_CERTIFICATO_MODI_SERVIZIO_APPLICATIVO_BY_NOME = "checkCertificatoModIApplicativoByNome";
+	public final static String CHECK_CERTIFICATI_CONFIGURAZIONE_JVM = "checkCertificatiJvm";
+	public final static String CHECK_PROXY_CONFIGURAZIONE_JVM = "checkProxyJvm";
 	public final static String ABILITA_PORTA_DELEGATA = "enablePortaDelegata";
 	public final static String DISABILITA_PORTA_DELEGATA = "disablePortaDelegata";
 	public final static String ABILITA_PORTA_APPLICATIVA = "enablePortaApplicativa";
@@ -776,6 +778,23 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			return this.checkCertificatoModiApplicativoByNome(param1, soglia);
 		}
 		
+		if(actionName.equals(CHECK_CERTIFICATI_CONFIGURAZIONE_JVM)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_CONFIGURAZIONE_JVM+"] Lunghezza parametri non corretta: "+params.length));
+			
+			int soglia = -1;
+			if(params[0] instanceof Integer) {
+				soglia = (Integer)params[0];
+			}
+			else {
+				soglia = Integer.valueOf(params[0].toString());
+			}
+			
+			return this.checkCertificatiJvm(soglia);
+		}
+		if(actionName.equals(CHECK_PROXY_CONFIGURAZIONE_JVM)){
+			return this.checkProxyJvm();
+		}
 		
 		
 		if(actionName.equals(ABILITA_PORTA_DELEGATA)){
@@ -1298,6 +1317,22 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			String.class.getName(),
 			MBeanOperationInfo.ACTION);
 		
+		// MetaData per l'operazione checkCertificatiJvm
+		MBeanOperationInfo checkCertificatiJvm 
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_CONFIGURAZIONE_JVM,"Verifica il keystore e truststore associato alla jvm",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkProxyJvm
+		MBeanOperationInfo checkProxyJvm 
+		= new MBeanOperationInfo(CHECK_PROXY_CONFIGURAZIONE_JVM,"Verifica l'eventuale proxy associato alla jvm",
+			null,
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
 		// MetaData per l'operazione enablePortaDelegata
 		MBeanOperationInfo enablePortaDelegata 
 		= new MBeanOperationInfo(ABILITA_PORTA_DELEGATA,"Abilita lo stato della porta con nome fornito come parametro",
@@ -1445,6 +1480,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		listOperation.add(checkCertificatoApplicativoByNome);
 		listOperation.add(checkCertificatoModIApplicativoById);
 		listOperation.add(checkCertificatoModIApplicativoByNome);
+		listOperation.add(checkCertificatiJvm);
+		listOperation.add(checkProxyJvm);
 		listOperation.add(enablePortaDelegata);
 		listOperation.add(disablePortaDelegata);
 		listOperation.add(enablePortaApplicativa);
@@ -1888,6 +1925,30 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 					}
 				}
 			}
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatiJvm(int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiJvm(sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkProxyJvm() {
+		try{
+			ConnettoreCheck.checkProxyJvm(this.logConnettori);
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
 		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
