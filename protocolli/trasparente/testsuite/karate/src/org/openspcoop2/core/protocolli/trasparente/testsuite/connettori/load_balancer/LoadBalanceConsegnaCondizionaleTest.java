@@ -22,7 +22,7 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_ba
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.POOL_ROTTO;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.POOL_ROTTO;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +40,8 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.RequestBuilder;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -86,7 +88,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		for (var e : Common.filtriPools.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
-					Common.buildRequests_HeaderHttp(e.getValue(), erogazione)
+					RequestBuilder.buildRequests_HeaderHttp(e.getValue(), erogazione)
 				);
 		}
 		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
@@ -112,7 +114,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		for (var e : filtriPoolsIdentificazioneOk.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
-					Common.buildRequests_HeaderHttp(e.getValue(), erogazione)
+					RequestBuilder.buildRequests_HeaderHttp(e.getValue(), erogazione)
 				);			
 		}
 		
@@ -159,7 +161,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		for (var e : filtriPoolsIdentificazione.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
-					Common.buildRequests_HeaderHttp(e.getValue(), erogazione)
+					RequestBuilder.buildRequests_HeaderHttp(e.getValue(), erogazione)
 				);			
 		}
 		
@@ -195,7 +197,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		for (var e : filtriPoolsIdentificazioneOk.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
-					Common.buildRequests_HeaderHttp(e.getValue(), erogazione)
+					RequestBuilder.buildRequests_HeaderHttp(e.getValue(), erogazione)
 				);			
 		}
 		
@@ -251,7 +253,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 			
 			requestsByPool.put(
 					e.getKey(),
-					Common.buildRequests_HeaderHttp(filtri, erogazione)
+					RequestBuilder.buildRequests_HeaderHttp(filtri, erogazione)
 				);
 		}
 		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
@@ -280,7 +282,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		for (var e : filtriPoolsNoSuffissoNoPrefisso.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
-					Common.buildRequests_HeaderHttp(e.getValue(), erogazione)
+					RequestBuilder.buildRequests_HeaderHttp(e.getValue(), erogazione)
 				);
 		}
 		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
@@ -310,7 +312,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		for (var e : filtriPoolsNoSuffissoNoPrefisso.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
-					Common.buildRequests_HeaderHttp(e.getValue(), erogazione)
+					RequestBuilder.buildRequests_HeaderHttp(e.getValue(), erogazione)
 				);
 		}
 		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
@@ -327,7 +329,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		for (var e : Common.filtriPools.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
-					Common.buildRequests_UrlInvocazione(e.getValue(), erogazione)
+					RequestBuilder.buildRequests_UrlInvocazione(e.getValue(), erogazione)
 				);
 		}
 		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
@@ -356,7 +358,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		for (var e : Common.filtriPools.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
-					Common.buildSoapRequests(e.getValue(), erogazione, contentTypeVersioneSoap)
+					RequestBuilder.buildSoapRequests(e.getValue(), erogazione, contentTypeVersioneSoap)
 				);
 		}
 		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
@@ -373,7 +375,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		for (var e : Common.filtriPools.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
-					Common.buildRequests_ParametroUrl(e.getValue(), erogazione)
+					RequestBuilder.buildRequests_ParametroUrl(e.getValue(), erogazione)
 				);
 		}
 		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
@@ -390,7 +392,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		for (var e : Common.filtriPools.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
-					Common.buildRequests_Contenuto(e.getValue(), erogazione)
+					RequestBuilder.buildRequests_Contenuto(e.getValue(), erogazione)
 				);
 		}
 		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
@@ -408,7 +410,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		for (var e : Common.filtriPools.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
-					Common.buildRequests_ForwardedFor(e.getValue(), forwardingHeaders, erogazione)
+					RequestBuilder.buildRequests_ForwardedFor(e.getValue(), forwardingHeaders, erogazione)
 				);
 		}
 		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
@@ -444,7 +446,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		for (var e : Common.filtriPools.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
-					Common.buildRequests_Template(e.getValue(), erogazione)
+					RequestBuilder.buildRequests_Template(e.getValue(), erogazione)
 				);
 		}
 		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
@@ -461,7 +463,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		for (var e : Common.filtriPools.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
-					Common.buildRequests_FreemarkerTemplate(e.getValue(), erogazione)
+					RequestBuilder.buildRequests_FreemarkerTemplate(e.getValue(), erogazione)
 				);
 		}
 		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
@@ -478,7 +480,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		for (var e : Common.filtriPools.entrySet()) {
 			requestsByPool.put(
 					e.getKey(),
-					Common.buildRequests_VelocityTemplate(e.getValue(), erogazione)
+					RequestBuilder.buildRequests_VelocityTemplate(e.getValue(), erogazione)
 				);
 		}
 		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool);
@@ -495,7 +497,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 
 		Map<String,List<HttpRequest>> requestsByPool = new HashMap<>();
 		requestsByPool.put(POOL_ROTTO, 
-					Common.buildRequests_HeaderHttp(Arrays.asList("PoolRotto-Filtro0"), erogazione));
+					RequestBuilder.buildRequests_HeaderHttp(Arrays.asList("PoolRotto-Filtro0"), erogazione));
 		
 		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool,3);
 		var responses = responsesByPool.get(POOL_ROTTO);
@@ -518,7 +520,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		// Cambiando filtro questo viene ricontattato dalla politica di load balancer
 		requestsByPool = new HashMap<>();
 		requestsByPool.put(POOL_ROTTO, 
-				Common.buildRequests_HeaderHttp(Arrays.asList("PoolRotto-Filtro1"), erogazione));
+				RequestBuilder.buildRequests_HeaderHttp(Arrays.asList("PoolRotto-Filtro1"), erogazione));
 	
 		responsesByPool = makeBatchedRequests(requestsByPool,3);
 		responses = responsesByPool.get(POOL_ROTTO);
@@ -535,7 +537,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		
 		requestsByPool = new HashMap<>();
 		requestsByPool.put(POOL_ROTTO, 
-				Common.buildRequests_HeaderHttp(Arrays.asList("PoolRotto-Filtro0"), erogazione));
+				RequestBuilder.buildRequests_HeaderHttp(Arrays.asList("PoolRotto-Filtro0"), erogazione));
 	
 		responsesByPool = makeBatchedRequests(requestsByPool,3);
 		responses = responsesByPool.get(POOL_ROTTO);
@@ -556,65 +558,65 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 		final String erogazione = "LoadBalanceConsegnaCondizionaleRegole";
 
 		Map<String,List<HttpRequest>> requestsByPool = new HashMap<>();
-		requestsByPool.put(Common.POOL_0, Arrays.asList(Common.buildRequest_HeaderHttp("Pool0-Filtro0", erogazione)));
-		requestsByPool.put(Common.POOL_1, Arrays.asList(Common.buildRequest_HeaderHttp("Pool1-Filtro0", erogazione)));
-		requestsByPool.put(Common.POOL_2, Arrays.asList(Common.buildRequest_HeaderHttp("Pool2-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_0, Arrays.asList(RequestBuilder.buildRequest_HeaderHttp("Pool0-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_1, Arrays.asList(RequestBuilder.buildRequest_HeaderHttp("Pool1-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_2, Arrays.asList(RequestBuilder.buildRequest_HeaderHttp("Pool2-Filtro0", erogazione)));
 		
 		Map<String, List<HttpResponse>> responsesByPool = makeBatchedRequests(requestsByPool,15);
 		checkResponses(responsesByPool);
 		
 		requestsByPool = new HashMap<>();
-		requestsByPool.put(Common.POOL_0, Arrays.asList(Common.buildRequest_UrlInvocazione("Pool0-Filtro0", erogazione)));
-		requestsByPool.put(Common.POOL_1, Arrays.asList(Common.buildRequest_UrlInvocazione("Pool1-Filtro0", erogazione)));
-		requestsByPool.put(Common.POOL_2, Arrays.asList(Common.buildRequest_UrlInvocazione("Pool2-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_0, Arrays.asList(RequestBuilder.buildRequest_UrlInvocazione("Pool0-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_1, Arrays.asList(RequestBuilder.buildRequest_UrlInvocazione("Pool1-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_2, Arrays.asList(RequestBuilder.buildRequest_UrlInvocazione("Pool2-Filtro0", erogazione)));
 		
 		responsesByPool = makeBatchedRequests(requestsByPool,15);
 		checkResponses(responsesByPool);
 		
 		requestsByPool = new HashMap<>();
-		requestsByPool.put(Common.POOL_0, Arrays.asList(Common.buildRequest_ParametroUrl("Pool0-Filtro0", erogazione)));
-		requestsByPool.put(Common.POOL_1, Arrays.asList(Common.buildRequest_ParametroUrl("Pool1-Filtro0", erogazione)));
-		requestsByPool.put(Common.POOL_2, Arrays.asList(Common.buildRequest_ParametroUrl("Pool2-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_0, Arrays.asList(RequestBuilder.buildRequest_ParametroUrl("Pool0-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_1, Arrays.asList(RequestBuilder.buildRequest_ParametroUrl("Pool1-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_2, Arrays.asList(RequestBuilder.buildRequest_ParametroUrl("Pool2-Filtro0", erogazione)));
 		
 		responsesByPool = makeBatchedRequests(requestsByPool,15);
 		checkResponses(responsesByPool);
 		
 		requestsByPool = new HashMap<>();
-		requestsByPool.put(Common.POOL_0, Arrays.asList(Common.buildRequest_Contenuto("Pool0-Filtro0", erogazione)));
-		requestsByPool.put(Common.POOL_1, Arrays.asList(Common.buildRequest_Contenuto("Pool1-Filtro0", erogazione)));
-		requestsByPool.put(Common.POOL_2, Arrays.asList(Common.buildRequest_Contenuto("Pool2-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_0, Arrays.asList(RequestBuilder.buildRequest_Contenuto("Pool0-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_1, Arrays.asList(RequestBuilder.buildRequest_Contenuto("Pool1-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_2, Arrays.asList(RequestBuilder.buildRequest_Contenuto("Pool2-Filtro0", erogazione)));
 		
 		responsesByPool = makeBatchedRequests(requestsByPool,15);
 		checkResponses(responsesByPool);
 		
 		requestsByPool = new HashMap<>();
-		requestsByPool.put(Common.POOL_0, Arrays.asList(Common.buildRequest_Template("Pool0-Filtro0", erogazione)));
-		requestsByPool.put(Common.POOL_1, Arrays.asList(Common.buildRequest_Template("Pool1-Filtro0", erogazione)));
-		requestsByPool.put(Common.POOL_2, Arrays.asList(Common.buildRequest_Template("Pool2-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_0, Arrays.asList(RequestBuilder.buildRequest_Template("Pool0-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_1, Arrays.asList(RequestBuilder.buildRequest_Template("Pool1-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_2, Arrays.asList(RequestBuilder.buildRequest_Template("Pool2-Filtro0", erogazione)));
 		
 		responsesByPool = makeBatchedRequests(requestsByPool,15);
 		checkResponses(responsesByPool);
 		
 		requestsByPool = new HashMap<>();
-		requestsByPool.put(Common.POOL_0, Arrays.asList(Common.buildRequest_VelocityTemplate("Pool0-Filtro0", erogazione)));
-		requestsByPool.put(Common.POOL_1, Arrays.asList(Common.buildRequest_VelocityTemplate("Pool1-Filtro0", erogazione)));
-		requestsByPool.put(Common.POOL_2, Arrays.asList(Common.buildRequest_VelocityTemplate("Pool2-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_0, Arrays.asList(RequestBuilder.buildRequest_VelocityTemplate("Pool0-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_1, Arrays.asList(RequestBuilder.buildRequest_VelocityTemplate("Pool1-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_2, Arrays.asList(RequestBuilder.buildRequest_VelocityTemplate("Pool2-Filtro0", erogazione)));
 		
 		responsesByPool = makeBatchedRequests(requestsByPool,15);
 		checkResponses(responsesByPool);
 		
 		requestsByPool = new HashMap<>();
-		requestsByPool.put(Common.POOL_0, Arrays.asList(Common.buildRequest_FreemarkerTemplate("Pool0-Filtro0", erogazione)));
-		requestsByPool.put(Common.POOL_1, Arrays.asList(Common.buildRequest_FreemarkerTemplate("Pool1-Filtro0", erogazione)));
-		requestsByPool.put(Common.POOL_2, Arrays.asList(Common.buildRequest_FreemarkerTemplate("Pool2-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_0, Arrays.asList(RequestBuilder.buildRequest_FreemarkerTemplate("Pool0-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_1, Arrays.asList(RequestBuilder.buildRequest_FreemarkerTemplate("Pool1-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_2, Arrays.asList(RequestBuilder.buildRequest_FreemarkerTemplate("Pool2-Filtro0", erogazione)));
 		
 		responsesByPool = makeBatchedRequests(requestsByPool,15);
 		checkResponses(responsesByPool);
 		
 		requestsByPool = new HashMap<>();
-		requestsByPool.put(Common.POOL_0, Arrays.asList(Common.buildRequest_ForwardedFor("Pool0-Filtro0", erogazione)));
-		requestsByPool.put(Common.POOL_1, Arrays.asList(Common.buildRequest_ForwardedFor("Pool1-Filtro0", erogazione)));
-		requestsByPool.put(Common.POOL_2, Arrays.asList(Common.buildRequest_ForwardedFor("Pool2-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_0, Arrays.asList(RequestBuilder.buildRequest_ForwardedFor("Pool0-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_1, Arrays.asList(RequestBuilder.buildRequest_ForwardedFor("Pool1-Filtro0", erogazione)));
+		requestsByPool.put(Common.POOL_2, Arrays.asList(RequestBuilder.buildRequest_ForwardedFor("Pool2-Filtro0", erogazione)));
 		
 		responsesByPool = makeBatchedRequests(requestsByPool,15);
 		checkResponses(responsesByPool);

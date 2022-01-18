@@ -24,11 +24,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.HEADER_ID_CONDIZIONE;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.HEADER_ID_CONNETTORE;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.HEADER_ID_SESSIONE;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.IDSessioni;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.delayRichiesteBackground;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.HEADER_ID_CONDIZIONE;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.HEADER_ID_CONNETTORE;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.HEADER_ID_SESSIONE;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.IDSessioni;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.delayRichiesteBackground;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,6 +47,8 @@ import java.util.stream.Collectors;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.RequestBuilder;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpRequest;
@@ -100,112 +102,6 @@ public class SessioneStickyTest extends ConfigLoader {
         }
 	}
 	
-	// Costruisce richieste che non portano con se alcun ID Sessione e che quindi 
-	// viene bilanciata fra i vari connettori
-	static HttpRequest buildRequest_LoadBalanced(String erogazione) {
-		HttpRequest request = new HttpRequest();
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
-		return request;
-	}
-	
-	
-	static HttpRequest buildRequest_HeaderHttp(String IDSessione, String erogazione) {
-		HttpRequest request = new HttpRequest();
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-header-http"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
-		request.addHeader(HEADER_ID_SESSIONE, IDSessione);
-		return request;
-	}
-	
-	
-	static HttpRequest buildRequest_Cookie(String IDSessione, String erogazione) {
-		HttpRequest request = new HttpRequest();
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-cookie"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
-		request.addHeader("Cookie", "govway-testsuite-id_sessione_cookie=" + IDSessione);
-		return request;
-	}
-		
-
-	static HttpRequest buildRequest_UrlInvocazione(String IDSessione, String erogazione) {
-		HttpRequest request = new HttpRequest();
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-url-invocazione"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
-				+ "&govway-testsuite-id_sessione_request="+IDSessione); 		 
-		return request;
-	}
-	
-	
-	static HttpRequest buildRequest_ParametroUrl(String IDSessione, String erogazione) {
-		HttpRequest request = new HttpRequest();
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-parametro-url"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
-				+ "&govway-testsuite-id_sessione_request="+IDSessione);		
-		return request;
-	}
-	
-
-	static HttpRequest buildRequest_Contenuto(String IDSessione, String erogazione) {
-		String body = "{ \"id_sessione_request\": \""+IDSessione+"\" }";
-		HttpRequest request = new HttpRequest();
-		request.setMethod(HttpRequestMethod.POST);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-contenuto"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
-		request.setContentType("application/json");
-		request.setContent(body.getBytes());
-		return request;
-	}
-	
-	
-	static HttpRequest buildRequest_Template(String IDSessione, String erogazione) {
-		HttpRequest request = new HttpRequest();
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-template"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
-				+ "&govway-testsuite-id_sessione_request="+IDSessione);		
-		return request;
-	}
-	
-	
-	static HttpRequest buildRequest_VelocityTemplate(String IDSessione, String erogazione) {
-		HttpRequest request = new HttpRequest();
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-velocity-template"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
-				+ "&govway-testsuite-id_sessione_request="+IDSessione);		
-		return request;
-	}
-	
-	
-	static HttpRequest buildRequest_FreemarkerTemplate(String IDSessione, String erogazione) {
-		HttpRequest request = new HttpRequest();
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-freemarker-template"
-				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
-				+ "&govway-testsuite-id_sessione_request="+IDSessione);		
-		return request;
-	}
-	
-	static List<HttpRequest> buildRequests_ForwardedFor(String IDSessione, List<String> forwardingHeaders, String erogazione) {
-		var ret = new ArrayList<HttpRequest>();
-		for(String header : forwardingHeaders) {
-			HttpRequest request = new HttpRequest();
-			request.setMethod(HttpRequestMethod.GET);
-			request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-xforwarded-for"
-					+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
-			request.addHeader(header, IDSessione);
-			ret.add(request);
-		}
-		
-		return ret;
-	}
-	
 	@Test
 	public void headerHttpValoriMultipli() 
 	{
@@ -215,7 +111,7 @@ public class SessioneStickyTest extends ConfigLoader {
 		
 		final String erogazione = "LoadBalanceSessioneStickyHeaderHttpValoriMultipli";
 		
-		HttpRequest request = buildRequest_HeaderHttp(IDSessioni.get(0), erogazione);
+		HttpRequest request = org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_HeaderHttp(IDSessioni.get(0), erogazione);
 		request.addHeader(HEADER_ID_CONDIZIONE, IDSessioni.get(1));
 		
 		var responses = Utils.makeParallelRequests(request, 15);
@@ -259,9 +155,9 @@ public class SessioneStickyTest extends ConfigLoader {
 		final String erogazione = "LoadBalanceSessioneStickyHeaderHttp";
 		
 		List<HttpRequest> richieste = Arrays.asList(
-				buildRequest_HeaderHttp(IDSessioni.get(0), erogazione), 
-				buildRequest_HeaderHttp(IDSessioni.get(1), erogazione),
-				buildRequest_LoadBalanced(erogazione)
+				org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_HeaderHttp(IDSessioni.get(0), erogazione), 
+				org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_HeaderHttp(IDSessioni.get(1), erogazione),
+				org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_LoadBalanced(erogazione)
 			);
 
 		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, Common.richiesteParallele);
@@ -288,16 +184,16 @@ public class SessioneStickyTest extends ConfigLoader {
 
 		final String erogazione = "LoadBalanceSessioneStickyHeaderHttpCookie";
 		
-		HttpRequest requestCookie1 = buildRequest_LoadBalanced(erogazione);
+		HttpRequest requestCookie1 = org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_LoadBalanced(erogazione);
 		requestCookie1.addHeader("Cookie", IDSessioni.get(0));
 		
-		HttpRequest requestCookie2 = buildRequest_LoadBalanced(erogazione);
+		HttpRequest requestCookie2 = org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_LoadBalanced(erogazione);
 		requestCookie2.addHeader("Cookie", IDSessioni.get(1));
 		
 		List<HttpRequest> richieste = Arrays.asList(
 				requestCookie1, 
 				requestCookie2,
-				buildRequest_LoadBalanced(erogazione)
+				org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_LoadBalanced(erogazione)
 			);
 
 		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, Common.richiesteParallele);
@@ -330,9 +226,9 @@ public class SessioneStickyTest extends ConfigLoader {
 		//	Una richiesta che verrà bilanciata in round robin
 		
 		List<HttpRequest> richieste = new ArrayList<>();
-		richieste.addAll(buildRequests_ForwardedFor(IDSessioni.get(0), forwardingHeaders, erogazione));
-		richieste.addAll(buildRequests_ForwardedFor(IDSessioni.get(1), forwardingHeaders, erogazione));
-		richieste.add(buildRequest_LoadBalanced(erogazione));
+		richieste.addAll(org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequests_ForwardedFor(IDSessioni.get(0), forwardingHeaders, erogazione));
+		richieste.addAll(org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequests_ForwardedFor(IDSessioni.get(1), forwardingHeaders, erogazione));
+		richieste.add(org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_LoadBalanced(erogazione));
 		
 		Map<Integer, List<HttpResponse>> responsesByIndex = makeRequests(richieste, richieste.size()*3);
 		
@@ -366,9 +262,9 @@ public class SessioneStickyTest extends ConfigLoader {
 		final String erogazione = "LoadBalanceSessioneStickyContenuto";
 		
 		List<HttpRequest> richieste = Arrays.asList(
-				buildRequest_Contenuto(IDSessioni.get(0), erogazione), 
-				buildRequest_Contenuto(IDSessioni.get(1), erogazione),
-				buildRequest_LoadBalanced(erogazione)
+				org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_Contenuto(IDSessioni.get(0), erogazione), 
+				org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_Contenuto(IDSessioni.get(1), erogazione),
+				org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_LoadBalanced(erogazione)
 			);
 
 		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, Common.richiesteParallele);
@@ -393,9 +289,9 @@ public class SessioneStickyTest extends ConfigLoader {
 		final String erogazione = "LoadBalanceSessioneStickyCookie";
 		
 		List<HttpRequest> richieste = Arrays.asList(
-				buildRequest_Cookie(IDSessioni.get(0), erogazione), 
-				buildRequest_Cookie(IDSessioni.get(1), erogazione),
-				buildRequest_LoadBalanced(erogazione)
+				org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_Cookie(IDSessioni.get(0), erogazione), 
+				org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_Cookie(IDSessioni.get(1), erogazione),
+				org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_LoadBalanced(erogazione)
 			);
 
 		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, Common.richiesteParallele);
@@ -441,9 +337,9 @@ public class SessioneStickyTest extends ConfigLoader {
 		final String erogazione = "LoadBalanceSessioneStickyTemplate";
 		
 		List<HttpRequest> richieste = Arrays.asList(
-				buildRequest_Template(IDSessioni.get(0), erogazione), 
-				buildRequest_Template(IDSessioni.get(1), erogazione),
-				buildRequest_LoadBalanced(erogazione)
+				org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_Template(IDSessioni.get(0), erogazione), 
+				org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_Template(IDSessioni.get(1), erogazione),
+				org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_LoadBalanced(erogazione)
 			);
 
 		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, Common.richiesteParallele);
@@ -513,7 +409,7 @@ public class SessioneStickyTest extends ConfigLoader {
 		final String erogazione = "LoadBalanceSessioneStickyHealthCheckHeaderHttp";
 		var idSessioni = Arrays.asList("a", "b", "c", "d", "e");
 		List<HttpRequest> richiesteSonda = idSessioni.stream()
-				.map( idSessione -> buildRequest_HeaderHttp(idSessione, erogazione))
+				.map( idSessione -> org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_HeaderHttp(idSessione, erogazione))
 				.collect(Collectors.toList());
 		
 		String idSessioneConnettoreRotto = null;
@@ -532,12 +428,12 @@ public class SessioneStickyTest extends ConfigLoader {
 		assertNotEquals(null,idSessioneConnettoreRotto);
 		
 		// Questa richiesta adesso deve essere instradata ad un connettore buono
-		HttpRequest requestConnettoreRotto = buildRequest_HeaderHttp(idSessioneConnettoreRotto, erogazione);
+		HttpRequest requestConnettoreRotto = org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_HeaderHttp(idSessioneConnettoreRotto, erogazione);
 		
 		List<HttpRequest> richieste = Arrays.asList(
 				requestConnettoreRotto,
-				buildRequest_HeaderHttp(IDSessioni.get(1), erogazione),
-				buildRequest_LoadBalanced(erogazione)
+				org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_HeaderHttp(IDSessioni.get(1), erogazione),
+				org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_LoadBalanced(erogazione)
 			);
 
 		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, Common.richiesteParallele);
@@ -562,7 +458,7 @@ public class SessioneStickyTest extends ConfigLoader {
 		
 		idSessioni = Arrays.asList("aNewBefore", "bNewBefore", "cNewBefore", "dNewBefore", "eNewBefore");
 		richiesteSonda = idSessioni.stream()
-				.map( idSessione -> buildRequest_HeaderHttp(idSessione, erogazione))
+				.map( idSessione -> org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_HeaderHttp(idSessione, erogazione))
 				.collect(Collectors.toList());
 		
 		idSessioneConnettoreRotto = null;
@@ -583,7 +479,7 @@ public class SessioneStickyTest extends ConfigLoader {
 
 		idSessioni = Arrays.asList("aNewAfter", "bNewAfter", "cNewAfter", "dNewAfter", "eNewAfter"); // uso nuovi id di sessione per verificare che adesso venga ripreso il connettore rotto
 		richiesteSonda = idSessioni.stream()
-				.map( idSessione -> buildRequest_HeaderHttp(idSessione, erogazione))
+				.map( idSessione -> org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_HeaderHttp(idSessione, erogazione))
 				.collect(Collectors.toList());
 		
 		idSessioneConnettoreRotto = null;
@@ -613,7 +509,7 @@ public class SessioneStickyTest extends ConfigLoader {
 		var idSessioni = Arrays.asList("a", "b", "c", "d");
 		List<HttpRequest> richiesteSonda = idSessioni.stream()
 				.map( idSessione -> {
-					var request = buildRequest_HeaderHttp(idSessione, erogazione);
+					var request = org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_HeaderHttp(idSessione, erogazione);
 					request.addHeader(Common.HEADER_ID_CONDIZIONE, "PoolRotto-Filtro0");
 					return request;
 				})
@@ -643,13 +539,13 @@ public class SessioneStickyTest extends ConfigLoader {
 		assertNotEquals(null,idSessioneConnettoreRotto);
 		
 		// Questa richiesta adesso deve essere instradata ad un connettore buono
-		HttpRequest requestConnettoreRotto = buildRequest_HeaderHttp(idSessioneConnettoreRotto, erogazione);
+		HttpRequest requestConnettoreRotto = org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_HeaderHttp(idSessioneConnettoreRotto, erogazione);
 		requestConnettoreRotto.addHeader(Common.HEADER_ID_CONDIZIONE, "PoolRotto-Filtro0");
 		
-		HttpRequest requestIdSessione =	buildRequest_HeaderHttp(IDSessioni.get(1), erogazione);
+		HttpRequest requestIdSessione =	org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_HeaderHttp(IDSessioni.get(1), erogazione);
 		requestIdSessione.addHeader(Common.HEADER_ID_CONDIZIONE, "PoolRotto-Filtro0");
 		
-		HttpRequest requestBalanced = buildRequest_LoadBalanced(erogazione);
+		HttpRequest requestBalanced = org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_LoadBalanced(erogazione);
 		requestBalanced.addHeader(Common.HEADER_ID_CONDIZIONE, "PoolRotto-Filtro0");
 
 		List<HttpRequest> richieste = Arrays.asList(
@@ -684,7 +580,7 @@ public class SessioneStickyTest extends ConfigLoader {
 		idSessioni = Arrays.asList("aNewBefore", "bNewBefore", "cNewBefore", "dNewBefore", "eNewBefore");
 		richiesteSonda = idSessioni.stream()
 				.map( idSessione -> {
-					var request = buildRequest_HeaderHttp(idSessione, erogazione);
+					var request = org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_HeaderHttp(idSessione, erogazione);
 					request.addHeader(Common.HEADER_ID_CONDIZIONE, "PoolRotto-Filtro0");
 					return request;
 				})
@@ -719,7 +615,7 @@ public class SessioneStickyTest extends ConfigLoader {
 		idSessioni = Arrays.asList("aNewAfter", "bNewAfter", "cNewAfter", "dNewAfter", "eNewAfter"); // uso nuovi id di sessione per verificare che adesso venga ripreso il connettore rotto
 		richiesteSonda = idSessioni.stream()
 				.map( idSessione -> {
-					var request = buildRequest_HeaderHttp(idSessione, erogazione);
+					var request = org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_HeaderHttp(idSessione, erogazione);
 					request.addHeader(Common.HEADER_ID_CONDIZIONE, "PoolRotto-Filtro0");
 					return request;
 				})
@@ -760,22 +656,22 @@ public class SessioneStickyTest extends ConfigLoader {
 		String pool2 = Common.POOL_1;
 		String pool3 = Common.POOL_2;
 		
-		HttpRequest requestPool1IdSessione = buildRequest_HeaderHttp(IDSessioni.get(0), erogazione);
+		HttpRequest requestPool1IdSessione = org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_HeaderHttp(IDSessioni.get(0), erogazione);
 		requestPool1IdSessione.addHeader(HEADER_ID_CONDIZIONE, Common.filtriPools.get(pool1).get(0));
 		
-		HttpRequest requestPool2IdSessione = buildRequest_HeaderHttp(IDSessioni.get(1), erogazione);
+		HttpRequest requestPool2IdSessione = org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_HeaderHttp(IDSessioni.get(1), erogazione);
 		requestPool2IdSessione.addHeader(HEADER_ID_CONDIZIONE, Common.filtriPools.get(pool2).get(0));
 		
-		HttpRequest requestPool1NoIdSessione = Common
+		HttpRequest requestPool1NoIdSessione = RequestBuilder
 				.buildRequest_HeaderHttp(Common.filtriPools.get(pool1).get(1), erogazione);
 		
-		HttpRequest requestPool2NoIdSessione = Common
+		HttpRequest requestPool2NoIdSessione = RequestBuilder
 				.buildRequest_HeaderHttp(Common.filtriPools.get(pool2).get(1), erogazione);
 		
-		HttpRequest requestPool3NoIdSessione = Common.buildRequest_HeaderHttp(
+		HttpRequest requestPool3NoIdSessione = RequestBuilder.buildRequest_HeaderHttp(
 				Common.filtriPools.get(pool3).get(0), erogazione);
 		
-		HttpRequest requestNoPoolNoIdSessione = buildRequest_LoadBalanced(erogazione);
+		HttpRequest requestNoPoolNoIdSessione = org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_LoadBalanced(erogazione);
 
 		List<HttpRequest> richieste = Arrays.asList(
 				requestPool1IdSessione, 				// 0 Vanno tutte sullo stesso connettore dell pool1 senza attivare il load balancing sul pool1
@@ -813,9 +709,9 @@ public class SessioneStickyTest extends ConfigLoader {
 	
 	static void urlInvocazione_Impl(String erogazione) {
 		List<HttpRequest> richieste = Arrays.asList(
-				buildRequest_UrlInvocazione(IDSessioni.get(0), erogazione), 
-				buildRequest_UrlInvocazione(IDSessioni.get(1), erogazione),
-				buildRequest_LoadBalanced(erogazione)
+				org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_UrlInvocazione(IDSessioni.get(0), erogazione), 
+				org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_UrlInvocazione(IDSessioni.get(1), erogazione),
+				org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_LoadBalanced(erogazione)
 			);
 
 		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, Common.richiesteParallele);
@@ -843,9 +739,9 @@ public class SessioneStickyTest extends ConfigLoader {
 	
 	static void parametroUrl_Impl(String erogazione) {
 		List<HttpRequest> richieste = Arrays.asList(
-				buildRequest_ParametroUrl(IDSessioni.get(0), erogazione), 
-				buildRequest_ParametroUrl(IDSessioni.get(1), erogazione),
-				buildRequest_LoadBalanced(erogazione)
+				org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_ParametroUrl(IDSessioni.get(0), erogazione), 
+				org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_ParametroUrl(IDSessioni.get(1), erogazione),
+				org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_LoadBalanced(erogazione)
 			);
 
 		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, Common.richiesteParallele);
@@ -878,9 +774,9 @@ public class SessioneStickyTest extends ConfigLoader {
 
 	static void freemarkerTemplate_Impl(String erogazione) {
 		List<HttpRequest> richieste = Arrays.asList(
-				buildRequest_FreemarkerTemplate(IDSessioni.get(0), erogazione), 
-				buildRequest_FreemarkerTemplate(IDSessioni.get(1), erogazione),
-				buildRequest_LoadBalanced(erogazione)
+				org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_FreemarkerTemplate(IDSessioni.get(0), erogazione), 
+				org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_FreemarkerTemplate(IDSessioni.get(1), erogazione),
+				org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_LoadBalanced(erogazione)
 			);
 
 		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, Common.richiesteParallele);
@@ -913,11 +809,11 @@ public class SessioneStickyTest extends ConfigLoader {
 	public static void velocityTemplate_Impl(String erogazione)  throws InterruptedException, ExecutionException {
 		// Qui viene usata la strategia di bilanciamento LeastConnections,
 		// Lancio le due chiamate bloccanti, devono durare per tutto il test
-		HttpRequest requestBlockingIdSessione1 = buildRequest_VelocityTemplate(IDSessioni.get(0), erogazione);
+		HttpRequest requestBlockingIdSessione1 = org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_VelocityTemplate(IDSessioni.get(0), erogazione);
 		requestBlockingIdSessione1
 				.setUrl(requestBlockingIdSessione1.getUrl() + "&sleep=" + Common.durataBloccanteLunga);
 
-		HttpRequest requestBlockingIdSessione2 = buildRequest_VelocityTemplate(IDSessioni.get(1), erogazione);
+		HttpRequest requestBlockingIdSessione2 = org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_VelocityTemplate(IDSessioni.get(1), erogazione);
 		requestBlockingIdSessione2
 				.setUrl(requestBlockingIdSessione2.getUrl() + "&sleep=" + Common.durataBloccanteLunga);
 
@@ -932,8 +828,8 @@ public class SessioneStickyTest extends ConfigLoader {
 		// Faccio una serie di richieste con id sessione impostato e verifico che vadano
 		// tutte nello stesso connettore
 		List<HttpRequest> richieste = Arrays
-				.asList(buildRequest_VelocityTemplate(Common.IDSessioni.get(0), erogazione),
-						buildRequest_VelocityTemplate(Common.IDSessioni.get(1), erogazione));
+				.asList(org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_VelocityTemplate(Common.IDSessioni.get(0), erogazione),
+						org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_VelocityTemplate(Common.IDSessioni.get(1), erogazione));
 
 		Map<Integer, List<HttpResponse>> responsesByKind = makeRequests(richieste, 5);
 	
@@ -953,7 +849,7 @@ public class SessioneStickyTest extends ConfigLoader {
 		// Faccio 2 richieste senza idSessione impostato e verifico che vadano a finire
 		// negli altri 2 connettori
 
-		HttpRequest requestBalanced = buildRequest_LoadBalanced(erogazione);
+		HttpRequest requestBalanced = org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.RequestBuilder.buildRequest_LoadBalanced(erogazione);
 		requestBalanced.setUrl(requestBalanced.getUrl() + "&sleep=" + Common.durataBloccante);
 
 		var futureBlockingResponses = Utils.makeBackgroundRequests(requestBalanced, 2, delayRichiesteBackground);
