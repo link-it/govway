@@ -23,12 +23,12 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegn
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_0;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_1;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_2;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_3;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_DISABILITATO;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.HEADER_ID_CONDIZIONE;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_0;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_1;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_2;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_3;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_DISABILITATO;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.HEADER_ID_CONDIZIONE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +41,6 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
-import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -68,7 +67,6 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  *   Non vengono fatti test di case sensitivity sui valori in quanto i valori di parametri query, headers http
  *   e contenuto della richiesta sono tutti case sensitive.
  * 
- * 	TODO: SoapActionConsegnaCondizionaleByNome SoapActionConsegnaCondizionaleByFiltro SoapActionLoadBalancingConsegnaCondizionale 
  */
 public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	
@@ -86,14 +84,14 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	public void headerHttp() {
 		final String erogazione = "ConsegnaCondizionaleHeaderHttpByNome";
 		
-		HttpRequest request0 = Common.buildRequest_HeaderHttp(CONNETTORE_0, erogazione);
-		HttpRequest request1 = Common.buildRequest_HeaderHttp(CONNETTORE_1, erogazione);
-		HttpRequest request2 = Common.buildRequest_HeaderHttp(CONNETTORE_2, erogazione);
+		HttpRequest request0 = RequestBuilder.buildRequest_HeaderHttp(CONNETTORE_0, erogazione);
+		HttpRequest request1 = RequestBuilder.buildRequest_HeaderHttp(CONNETTORE_1, erogazione);
+		HttpRequest request2 = RequestBuilder.buildRequest_HeaderHttp(CONNETTORE_2, erogazione);
 		// La terza richiesta specifica due volte lo stesso connettore. deve comunque funzionare
-		HttpRequest request3 = Common.buildRequest_HeaderHttp(CONNETTORE_3, erogazione);
+		HttpRequest request3 = RequestBuilder.buildRequest_HeaderHttp(CONNETTORE_3, erogazione);
 		request3.addHeader(HEADER_ID_CONDIZIONE, CONNETTORE_3); 	
 		
-		HttpRequest requestRotto = Common.buildRequest_HeaderHttp(Common.CONNETTORE_ROTTO, erogazione);
+		HttpRequest requestRotto = RequestBuilder.buildRequest_HeaderHttp(Common.CONNETTORE_ROTTO, erogazione);
 
 		// Testo l'instradamento verso il connettore rotto solo in questo test.
 		HttpRequest[] requestsByConnettore = { request0, request1, request2, request3, requestRotto };
@@ -150,7 +148,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		
 		final String erogazione = "ConsegnaCondizionaleHeaderHttpByNome";
 		
-		HttpRequest request = Common.buildRequest_HeaderHttp(CONNETTORE_1, erogazione);
+		HttpRequest request = RequestBuilder.buildRequest_HeaderHttp(CONNETTORE_1, erogazione);
 		request.addHeader(HEADER_ID_CONDIZIONE, CONNETTORE_0);
 
 		var response = HttpUtilities.httpInvoke(request);
@@ -220,12 +218,12 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		// Quindi Controllo che nelle risposte di quel thread sia stato raggiunto sempre lo stesso connettore. 
 		
 		var requestsByConnettore = Common.connettoriAbilitati.stream()
-				.map(c -> Common.buildRequest_UrlInvocazione(c,erogazione))
+				.map(c -> RequestBuilder.buildRequest_UrlInvocazione(c,erogazione))
 				.collect(Collectors.toList());
 		
 		HttpRequest requestIdentificazioneFallita = Common.buildRequest_Semplice(erogazione);
-		HttpRequest requestConnettoreNonTrovato = Common.buildRequest_UrlInvocazione("ConnettoreInesistente", erogazione);
-		HttpRequest requestConnettoreDisabilitato = Common.buildRequest_UrlInvocazione(CONNETTORE_DISABILITATO, erogazione);
+		HttpRequest requestConnettoreNonTrovato = RequestBuilder.buildRequest_UrlInvocazione("ConnettoreInesistente", erogazione);
+		HttpRequest requestConnettoreDisabilitato = RequestBuilder.buildRequest_UrlInvocazione(CONNETTORE_DISABILITATO, erogazione);
 		
 		requestsByConnettore.add(requestIdentificazioneFallita);
 		requestsByConnettore.add(requestConnettoreNonTrovato);
@@ -242,12 +240,12 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		final String erogazione = "ConsegnaCondizionaleParametroUrlByNome";
 		
 		var requestsByConnettore = Common.connettoriAbilitati.stream()
-				.map(c -> Common.buildRequest_ParametroUrl(c,erogazione))
+				.map(c -> RequestBuilder.buildRequest_ParametroUrl(c,erogazione))
 				.collect(Collectors.toList());
 							
 		HttpRequest requestIdentificazioneFallita = Common.buildRequest_Semplice(erogazione);
-		HttpRequest requestConnettoreNonTrovato = Common.buildRequest_ParametroUrl("ConnettoreInesistente", erogazione);
-		HttpRequest requestConnettoreDisabilitato = Common.buildRequest_ParametroUrl(CONNETTORE_DISABILITATO, erogazione);
+		HttpRequest requestConnettoreNonTrovato = RequestBuilder.buildRequest_ParametroUrl("ConnettoreInesistente", erogazione);
+		HttpRequest requestConnettoreDisabilitato = RequestBuilder.buildRequest_ParametroUrl(CONNETTORE_DISABILITATO, erogazione);
 		
 		requestsByConnettore.add(requestIdentificazioneFallita);
 		requestsByConnettore.add(requestConnettoreNonTrovato);
@@ -283,12 +281,12 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		final String erogazione = "ConsegnaCondizionaleContenutoByNome";
 		
 		var requestsByConnettore = Common.connettoriAbilitati.stream()
-				.map(c -> Common.buildRequest_Contenuto(c,erogazione))
+				.map(c -> RequestBuilder.buildRequest_Contenuto(c,erogazione))
 				.collect(Collectors.toList());
 							
 		HttpRequest requestIdentificazioneFallita = Common.buildRequest_Semplice(erogazione);
-		HttpRequest requestConnettoreNonTrovato = Common.buildRequest_Contenuto("ConnettoreInesistente", erogazione);
-		HttpRequest requestConnettoreDisabilitato = Common.buildRequest_Contenuto(CONNETTORE_DISABILITATO, erogazione);
+		HttpRequest requestConnettoreNonTrovato = RequestBuilder.buildRequest_Contenuto("ConnettoreInesistente", erogazione);
+		HttpRequest requestConnettoreDisabilitato = RequestBuilder.buildRequest_Contenuto(CONNETTORE_DISABILITATO, erogazione);
 		
 		requestsByConnettore.add(requestIdentificazioneFallita);
 		requestsByConnettore.add(requestConnettoreNonTrovato);
@@ -312,7 +310,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 				CONNETTORE_DISABILITATO);
 		
 		var requestsByConnettore = connettori.stream()
-				.map(c -> Common.buildRequest_Contenuto(c,erogazione))
+				.map(c -> RequestBuilder.buildRequest_Contenuto(c,erogazione))
 				.collect(Collectors.toList());
 							
 		var responsesByConnettore = ConsegnaCondizionaleByNomeTest.makeBatchedRequests(requestsByConnettore, 3);
@@ -417,12 +415,12 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		final String erogazione = "ConsegnaCondizionaleTemplateByNome";
 		
 		var requestsByConnettore = Common.connettoriAbilitati.stream()
-				.map(c -> Common.buildRequest_Template(c, erogazione))
+				.map(c -> RequestBuilder.buildRequest_Template(c, erogazione))
 				.collect(Collectors.toList());
 							
 		HttpRequest requestIdentificazioneFallita = Common.buildRequest_Semplice(erogazione);
-		HttpRequest requestConnettoreNonTrovato = Common.buildRequest_Template("ConnettoreInesistente", erogazione);
-		HttpRequest requestConnettoreDisabilitato = Common.buildRequest_Template(CONNETTORE_DISABILITATO, erogazione);
+		HttpRequest requestConnettoreNonTrovato = RequestBuilder.buildRequest_Template("ConnettoreInesistente", erogazione);
+		HttpRequest requestConnettoreDisabilitato = RequestBuilder.buildRequest_Template(CONNETTORE_DISABILITATO, erogazione);
 		
 		requestsByConnettore.add(requestIdentificazioneFallita);
 		requestsByConnettore.add(requestConnettoreNonTrovato);
@@ -440,12 +438,12 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		final String erogazione = "ConsegnaCondizionaleFreemarkerTemplateByNome";
 		
 		var requestsByConnettore = Common.connettoriAbilitati.stream()
-				.map(c -> Common.buildRequest_FreemarkerTemplate(c, erogazione))
+				.map(c -> RequestBuilder.buildRequest_FreemarkerTemplate(c, erogazione))
 				.collect(Collectors.toList());
 
 		HttpRequest requestIdentificazioneFallita = Common.buildRequest_Semplice(erogazione);
-		HttpRequest requestConnettoreNonTrovato = Common.buildRequest_FreemarkerTemplate("ConnettoreInesistente", erogazione);
-		HttpRequest requestConnettoreDisabilitato = Common.buildRequest_FreemarkerTemplate(CONNETTORE_DISABILITATO, erogazione);
+		HttpRequest requestConnettoreNonTrovato = RequestBuilder.buildRequest_FreemarkerTemplate("ConnettoreInesistente", erogazione);
+		HttpRequest requestConnettoreDisabilitato = RequestBuilder.buildRequest_FreemarkerTemplate(CONNETTORE_DISABILITATO, erogazione);
 		
 		requestsByConnettore.add(requestIdentificazioneFallita);
 		requestsByConnettore.add(requestConnettoreNonTrovato);
@@ -463,12 +461,12 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		final String erogazione = "ConsegnaCondizionaleVelocityTemplateByNome";
 		
 		var requestsByConnettore = Common.connettoriAbilitati.stream()
-				.map(c -> Common.buildRequest_VelocityTemplate(c, erogazione))
+				.map(c -> RequestBuilder.buildRequest_VelocityTemplate(c, erogazione))
 				.collect(Collectors.toList());
 							
 		HttpRequest requestIdentificazioneFallita = Common.buildRequest_Semplice(erogazione);
-		HttpRequest requestConnettoreNonTrovato = Common.buildRequest_VelocityTemplate("ConnettoreInesistente", erogazione);
-		HttpRequest requestConnettoreDisabilitato = Common.buildRequest_VelocityTemplate(CONNETTORE_DISABILITATO, erogazione);
+		HttpRequest requestConnettoreNonTrovato = RequestBuilder.buildRequest_VelocityTemplate("ConnettoreInesistente", erogazione);
+		HttpRequest requestConnettoreDisabilitato = RequestBuilder.buildRequest_VelocityTemplate(CONNETTORE_DISABILITATO, erogazione);
 		
 		requestsByConnettore.add(requestIdentificazioneFallita);
 		requestsByConnettore.add(requestConnettoreNonTrovato);
@@ -505,13 +503,13 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		
 		
 		List<List<Object>> connettoriAndrequests = Arrays.asList(
-				Arrays.asList(CONNETTORE_0, Common.buildRequest_HeaderHttp(CONNETTORE_0, erogazione)),
-				Arrays.asList(CONNETTORE_1, Common.buildRequest_UrlInvocazione(CONNETTORE_1, erogazione)),
-				Arrays.asList(CONNETTORE_2, Common.buildRequest_ParametroUrl(CONNETTORE_2, erogazione)),				
-				Arrays.asList(CONNETTORE_3, Common.buildRequest_Contenuto(CONNETTORE_3, erogazione)),				
-				Arrays.asList(CONNETTORE_0, Common.buildRequest_Template(CONNETTORE_0, erogazione)),
-				Arrays.asList(CONNETTORE_1, Common.buildRequest_FreemarkerTemplate(CONNETTORE_1, erogazione)),
-				Arrays.asList(CONNETTORE_2, Common.buildRequest_VelocityTemplate(CONNETTORE_2, erogazione)),
+				Arrays.asList(CONNETTORE_0, RequestBuilder.buildRequest_HeaderHttp(CONNETTORE_0, erogazione)),
+				Arrays.asList(CONNETTORE_1, RequestBuilder.buildRequest_UrlInvocazione(CONNETTORE_1, erogazione)),
+				Arrays.asList(CONNETTORE_2, RequestBuilder.buildRequest_ParametroUrl(CONNETTORE_2, erogazione)),				
+				Arrays.asList(CONNETTORE_3, RequestBuilder.buildRequest_Contenuto(CONNETTORE_3, erogazione)),				
+				Arrays.asList(CONNETTORE_0, RequestBuilder.buildRequest_Template(CONNETTORE_0, erogazione)),
+				Arrays.asList(CONNETTORE_1, RequestBuilder.buildRequest_FreemarkerTemplate(CONNETTORE_1, erogazione)),
+				Arrays.asList(CONNETTORE_2, RequestBuilder.buildRequest_VelocityTemplate(CONNETTORE_2, erogazione)),
 				Arrays.asList(CONNETTORE_3, requestForwardedFor),
 				Arrays.asList(CONNETTORE_0,requestIdentificazioneStatica),
 				Arrays.asList(null, requestIdentificazioneClientIp)
@@ -581,7 +579,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		var connettoriSuffissi = Arrays.asList("0", "1", "2", "3"); 
 		
 		var requestsByConnettore = connettoriSuffissi.stream()
-				.map(c -> Common.buildRequest_HeaderHttp(c, erogazione))
+				.map(c -> RequestBuilder.buildRequest_HeaderHttp(c, erogazione))
 				.collect(Collectors.toList());
 							
 		var responsesByConnettore = ConsegnaCondizionaleByNomeTest.makeBatchedRequests(requestsByConnettore, 3);
@@ -599,7 +597,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		final String erogazione = "ConsegnaCondizionaleSuffisso";
 		
 		var requestsByConnettore = Common.connettoriAbilitati.stream()
-				.map(c -> Common.buildRequest_HeaderHttp(c, erogazione))
+				.map(c -> RequestBuilder.buildRequest_HeaderHttp(c, erogazione))
 				.collect(Collectors.toList());
 							
 		var responsesByConnettore = ConsegnaCondizionaleByNomeTest.makeBatchedRequests(requestsByConnettore, 3);
@@ -620,7 +618,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 		var connettoriSuffissi = Arrays.asList("0", "1", "2", "3"); 
 		
 		var requestsByConnettore = connettoriSuffissi.stream()
-				.map(c -> Common.buildRequest_HeaderHttp(c, erogazione))
+				.map(c -> RequestBuilder.buildRequest_HeaderHttp(c, erogazione))
 				.collect(Collectors.toList());
 							
 		var responsesByConnettore = ConsegnaCondizionaleByNomeTest.makeBatchedRequests(requestsByConnettore, 3);
@@ -671,12 +669,12 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	static void soapActionImpl(String erogazione, String versioneSoap) {
 
 		var requestsByConnettore = Common.connettoriAbilitati.stream()
-				.map(c -> Common.buildSoapRequest(c,c,erogazione,versioneSoap))
+				.map(c -> RequestBuilder.buildSoapRequest(c,c,erogazione,versioneSoap))
 				.collect(Collectors.toList());
 							
-		HttpRequest requestIdentificazioneFallita = Common.buildSoapRequest_Semplice(erogazione, versioneSoap);
-		HttpRequest requestConnettoreNonTrovato = Common.buildSoapRequest("ConnettoreInesistente", "ConnettoreInesistente", erogazione, versioneSoap);
-		HttpRequest requestConnettoreDisabilitato = Common.buildSoapRequest(CONNETTORE_DISABILITATO, CONNETTORE_DISABILITATO, erogazione, versioneSoap);
+		HttpRequest requestIdentificazioneFallita = RequestBuilder.buildSoapRequest_Semplice(erogazione, versioneSoap);
+		HttpRequest requestConnettoreNonTrovato = RequestBuilder.buildSoapRequest("ConnettoreInesistente", "ConnettoreInesistente", erogazione, versioneSoap);
+		HttpRequest requestConnettoreDisabilitato = RequestBuilder.buildSoapRequest(CONNETTORE_DISABILITATO, CONNETTORE_DISABILITATO, erogazione, versioneSoap);
 		
 		requestsByConnettore.add(requestIdentificazioneFallita);
 		requestsByConnettore.add(requestConnettoreNonTrovato);

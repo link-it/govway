@@ -23,13 +23,14 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_ba
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.ID_CONNETTORE_REPLY_PREFIX;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.ID_CONNETTORE_REPLY_PREFIX;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 

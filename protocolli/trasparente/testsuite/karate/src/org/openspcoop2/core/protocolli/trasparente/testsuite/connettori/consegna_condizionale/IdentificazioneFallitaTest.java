@@ -24,7 +24,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
-import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;

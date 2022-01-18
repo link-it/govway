@@ -22,12 +22,12 @@
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale;
 
 import static org.junit.Assert.assertEquals;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_0;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_1;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_2;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_3;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.CONNETTORE_DISABILITATO;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.connettoriAbilitati;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_0;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_1;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_2;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_3;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_DISABILITATO;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.connettoriAbilitati;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +41,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
-import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -91,12 +90,12 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		connettoriAbilitati.forEach( connettore -> {
 			requestsByConnettore.put(
 					connettore,
-					Common.buildRequests_HeaderHttp(filtriConnettori.get(connettore), erogazione));
+					RequestBuilder.buildRequests_HeaderHttp(filtriConnettori.get(connettore), erogazione));
 		});
 		
 		HttpRequest requestIdentificazioneFallita = Common.buildRequest_Semplice(erogazione);
-		HttpRequest requestConnettoreNonTrovato = Common.buildRequest_HeaderHttp("ConnettoreInesistente", erogazione);
-		HttpRequest requestConnettoreDisabilitato = Common.buildRequest_HeaderHttp(CONNETTORE_DISABILITATO, erogazione);
+		HttpRequest requestConnettoreNonTrovato = RequestBuilder.buildRequest_HeaderHttp("ConnettoreInesistente", erogazione);
+		HttpRequest requestConnettoreDisabilitato = RequestBuilder.buildRequest_HeaderHttp(CONNETTORE_DISABILITATO, erogazione);
 		
 		requestsByConnettore.put(Common.CONNETTORE_DISABILITATO,List.of(requestConnettoreDisabilitato));
 		requestsByConnettore.put(Common.CONNETTORE_ID_FALLITA,List.of(requestIdentificazioneFallita));
@@ -117,8 +116,8 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		
 		final String erogazione = "ConsegnaCondizionaleConflittoFiltri";
 
-		var requestError = Common.buildRequest_HeaderHttp("Connettore0-Filtro0", erogazione);
-		var requestOk = Common.buildRequest_HeaderHttp("Connettore0-Filtro1", erogazione);
+		var requestError = RequestBuilder.buildRequest_HeaderHttp("Connettore0-Filtro0", erogazione);
+		var requestOk = RequestBuilder.buildRequest_HeaderHttp("Connettore0-Filtro1", erogazione);
 		
 		var responseError = Utils.makeRequest(requestError);
 		
@@ -141,12 +140,12 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		connettoriAbilitati.forEach( connettore -> {
 			requestsByConnettore.put(
 					connettore,
-					Common.buildRequests_UrlInvocazione(filtriConnettori.get(connettore), erogazione));
+					RequestBuilder.buildRequests_UrlInvocazione(filtriConnettori.get(connettore), erogazione));
 		});
 		
 		HttpRequest requestIdentificazioneFallita = Common.buildRequest_Semplice(erogazione);
-		HttpRequest requestConnettoreNonTrovato = Common.buildRequest_UrlInvocazione("ConnettoreInesistente", erogazione);
-		HttpRequest requestConnettoreDisabilitato = Common.buildRequest_UrlInvocazione(CONNETTORE_DISABILITATO, erogazione);
+		HttpRequest requestConnettoreNonTrovato = RequestBuilder.buildRequest_UrlInvocazione("ConnettoreInesistente", erogazione);
+		HttpRequest requestConnettoreDisabilitato = RequestBuilder.buildRequest_UrlInvocazione(CONNETTORE_DISABILITATO, erogazione);
 		
 		requestsByConnettore.put(Common.CONNETTORE_DISABILITATO,List.of(requestConnettoreDisabilitato));
 		requestsByConnettore.put(Common.CONNETTORE_ID_FALLITA,List.of(requestIdentificazioneFallita));
@@ -167,12 +166,12 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		connettoriAbilitati.forEach( connettore -> {
 			requestsByConnettore.put(
 					connettore,
-					Common.buildRequests_ParametroUrl(filtriConnettori.get(connettore), erogazione));
+					RequestBuilder.buildRequests_ParametroUrl(filtriConnettori.get(connettore), erogazione));
 		});
 		
 		HttpRequest requestIdentificazioneFallita = Common.buildRequest_Semplice(erogazione);
-		HttpRequest requestConnettoreNonTrovato = Common.buildRequest_ParametroUrl("ConnettoreInesistente", erogazione);
-		HttpRequest requestConnettoreDisabilitato = Common.buildRequest_ParametroUrl(CONNETTORE_DISABILITATO, erogazione);
+		HttpRequest requestConnettoreNonTrovato = RequestBuilder.buildRequest_ParametroUrl("ConnettoreInesistente", erogazione);
+		HttpRequest requestConnettoreDisabilitato = RequestBuilder.buildRequest_ParametroUrl(CONNETTORE_DISABILITATO, erogazione);
 		
 		requestsByConnettore.put(Common.CONNETTORE_DISABILITATO,List.of(requestConnettoreDisabilitato));
 		requestsByConnettore.put(Common.CONNETTORE_ID_FALLITA,List.of(requestIdentificazioneFallita));
@@ -192,12 +191,12 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		connettoriAbilitati.forEach( connettore -> {
 			requestsByConnettore.put(
 					connettore,
-					Common.buildRequests_Contenuto(filtriConnettori.get(connettore), erogazione));
+					RequestBuilder.buildRequests_Contenuto(filtriConnettori.get(connettore), erogazione));
 		});
 		
 		HttpRequest requestIdentificazioneFallita = Common.buildRequest_Semplice(erogazione);
-		HttpRequest requestConnettoreNonTrovato = Common.buildRequest_Contenuto("ConnettoreInesistente", erogazione);
-		HttpRequest requestConnettoreDisabilitato = Common.buildRequest_Contenuto(CONNETTORE_DISABILITATO, erogazione);
+		HttpRequest requestConnettoreNonTrovato = RequestBuilder.buildRequest_Contenuto("ConnettoreInesistente", erogazione);
+		HttpRequest requestConnettoreDisabilitato = RequestBuilder.buildRequest_Contenuto(CONNETTORE_DISABILITATO, erogazione);
 		
 		requestsByConnettore.put(Common.CONNETTORE_DISABILITATO,List.of(requestConnettoreDisabilitato));
 		requestsByConnettore.put(Common.CONNETTORE_ID_FALLITA,List.of(requestIdentificazioneFallita));
@@ -234,12 +233,12 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		connettoriAbilitati.forEach( connettore -> {
 			requestsByConnettore.put(
 					connettore,
-					Common.buildRequests_Template(filtriConnettori.get(connettore), erogazione));
+					RequestBuilder.buildRequests_Template(filtriConnettori.get(connettore), erogazione));
 		});
 		
 		HttpRequest requestIdentificazioneFallita = Common.buildRequest_Semplice(erogazione);
-		HttpRequest requestConnettoreNonTrovato = Common.buildRequest_Template("ConnettoreInesistente", erogazione);
-		HttpRequest requestConnettoreDisabilitato = Common.buildRequest_Template(CONNETTORE_DISABILITATO, erogazione);
+		HttpRequest requestConnettoreNonTrovato = RequestBuilder.buildRequest_Template("ConnettoreInesistente", erogazione);
+		HttpRequest requestConnettoreDisabilitato = RequestBuilder.buildRequest_Template(CONNETTORE_DISABILITATO, erogazione);
 		
 		requestsByConnettore.put(Common.CONNETTORE_DISABILITATO,List.of(requestConnettoreDisabilitato));
 		requestsByConnettore.put(Common.CONNETTORE_ID_FALLITA,List.of(requestIdentificazioneFallita));
@@ -259,12 +258,12 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		connettoriAbilitati.forEach( connettore -> {
 			requestsByConnettore.put(
 					connettore, 
-					Common.buildRequests_FreemarkerTemplate(filtriConnettori.get(connettore), erogazione));
+					RequestBuilder.buildRequests_FreemarkerTemplate(filtriConnettori.get(connettore), erogazione));
 		});
 		
 		HttpRequest requestIdentificazioneFallita = Common.buildRequest_Semplice(erogazione);
-		HttpRequest requestConnettoreNonTrovato = Common.buildRequest_FreemarkerTemplate("ConnettoreInesistente", erogazione);
-		HttpRequest requestConnettoreDisabilitato = Common.buildRequest_FreemarkerTemplate(CONNETTORE_DISABILITATO, erogazione);
+		HttpRequest requestConnettoreNonTrovato = RequestBuilder.buildRequest_FreemarkerTemplate("ConnettoreInesistente", erogazione);
+		HttpRequest requestConnettoreDisabilitato = RequestBuilder.buildRequest_FreemarkerTemplate(CONNETTORE_DISABILITATO, erogazione);
 		
 		requestsByConnettore.put(Common.CONNETTORE_DISABILITATO,List.of(requestConnettoreDisabilitato));
 		requestsByConnettore.put(Common.CONNETTORE_ID_FALLITA,List.of(requestIdentificazioneFallita));
@@ -284,12 +283,12 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		connettoriAbilitati.forEach( connettore -> {
 			requestsByConnettore.put(
 					connettore, 
-					Common.buildRequests_VelocityTemplate(filtriConnettori.get(connettore), erogazione));
+					RequestBuilder.buildRequests_VelocityTemplate(filtriConnettori.get(connettore), erogazione));
 		});
 		
 		HttpRequest requestIdentificazioneFallita = Common.buildRequest_Semplice(erogazione);
-		HttpRequest requestConnettoreNonTrovato = Common.buildRequest_VelocityTemplate("ConnettoreInesistente", erogazione);
-		HttpRequest requestConnettoreDisabilitato = Common.buildRequest_VelocityTemplate(CONNETTORE_DISABILITATO, erogazione);
+		HttpRequest requestConnettoreNonTrovato = RequestBuilder.buildRequest_VelocityTemplate("ConnettoreInesistente", erogazione);
+		HttpRequest requestConnettoreDisabilitato = RequestBuilder.buildRequest_VelocityTemplate(CONNETTORE_DISABILITATO, erogazione);
 		
 		requestsByConnettore.put(Common.CONNETTORE_DISABILITATO,List.of(requestConnettoreDisabilitato));
 		requestsByConnettore.put(Common.CONNETTORE_ID_FALLITA,List.of(requestIdentificazioneFallita));
@@ -331,13 +330,13 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		connettoriAbilitati.forEach( connettore -> {
 			requestsByConnettore.put(
 					connettore, 
-					Common.buildRequests_ForwardedFor(filtriConnettori.get(connettore), headers, erogazione));
+					RequestBuilder.buildRequests_ForwardedFor(filtriConnettori.get(connettore), headers, erogazione));
 		});
 		
 		
 		HttpRequest requestIdentificazioneFallita = Common.buildRequest_Semplice(erogazione);
-		HttpRequest requestConnettoreNonTrovato = Common.buildRequest_ForwardedFor("ConnettoreInesistente", erogazione);
-		HttpRequest requestConnettoreDisabilitato = Common.buildRequest_ForwardedFor(CONNETTORE_DISABILITATO, erogazione);
+		HttpRequest requestConnettoreNonTrovato = RequestBuilder.buildRequest_ForwardedFor("ConnettoreInesistente", erogazione);
+		HttpRequest requestConnettoreDisabilitato = RequestBuilder.buildRequest_ForwardedFor(CONNETTORE_DISABILITATO, erogazione);
 		
 		requestsByConnettore.put(Common.CONNETTORE_DISABILITATO,List.of(requestConnettoreDisabilitato));
 		requestsByConnettore.put(Common.CONNETTORE_ID_FALLITA,List.of(requestIdentificazioneFallita));
@@ -374,35 +373,35 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 		connettoriAbilitati.forEach( c -> requestsByConnettore.put(c, new ArrayList<HttpRequest>()));
 		
 		requestsByConnettore.get(CONNETTORE_0)
-			.addAll(Common.buildRequests_HeaderHttp(filtriConnettori.get(CONNETTORE_0), erogazione));
+			.addAll(RequestBuilder.buildRequests_HeaderHttp(filtriConnettori.get(CONNETTORE_0), erogazione));
 		
 		requestsByConnettore.get(CONNETTORE_0)
-			.addAll(Common.buildRequests_UrlInvocazione(filtriConnettori.get(CONNETTORE_0), erogazione));
+			.addAll(RequestBuilder.buildRequests_UrlInvocazione(filtriConnettori.get(CONNETTORE_0), erogazione));
 		
 		requestsByConnettore.get(CONNETTORE_0)
 			.add(requestIdentificazioneStatica);
 
 		
 		requestsByConnettore.get(CONNETTORE_1)
-			.addAll(Common.buildRequests_ParametroUrl(filtriConnettori.get(CONNETTORE_1), erogazione));
+			.addAll(RequestBuilder.buildRequests_ParametroUrl(filtriConnettori.get(CONNETTORE_1), erogazione));
 		
 		requestsByConnettore.get(CONNETTORE_1)
-			.addAll(Common.buildRequests_Contenuto(filtriConnettori.get(CONNETTORE_1), erogazione));
+			.addAll(RequestBuilder.buildRequests_Contenuto(filtriConnettori.get(CONNETTORE_1), erogazione));
 		
 		
 		requestsByConnettore.get(CONNETTORE_2)
-			.addAll(Common.buildRequests_ForwardedFor(filtriConnettori.get(CONNETTORE_2), HttpUtilities.getClientAddressHeaders(), erogazione));
+			.addAll(RequestBuilder.buildRequests_ForwardedFor(filtriConnettori.get(CONNETTORE_2), HttpUtilities.getClientAddressHeaders(), erogazione));
 		
 		requestsByConnettore.get(CONNETTORE_2)
-			.addAll(Common.buildRequests_Template(filtriConnettori.get(CONNETTORE_2), erogazione));
+			.addAll(RequestBuilder.buildRequests_Template(filtriConnettori.get(CONNETTORE_2), erogazione));
 		
 		requestsByConnettore.get(CONNETTORE_2).add(requestClientIp);
 		
 		requestsByConnettore.get(CONNETTORE_3)
-			.addAll(Common.buildRequests_VelocityTemplate(filtriConnettori.get(CONNETTORE_3), erogazione));
+			.addAll(RequestBuilder.buildRequests_VelocityTemplate(filtriConnettori.get(CONNETTORE_3), erogazione));
 		
 		requestsByConnettore.get(CONNETTORE_3)
-			.addAll(Common.buildRequests_FreemarkerTemplate(filtriConnettori.get(CONNETTORE_3), erogazione));
+			.addAll(RequestBuilder.buildRequests_FreemarkerTemplate(filtriConnettori.get(CONNETTORE_3), erogazione));
 		
 		var responsesByConnettore = makeBatchedRequests(requestsByConnettore,5);
 		
@@ -422,13 +421,13 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 			String azione = connettore;
 			requestsByConnettore.put(
 					connettore,
-					Arrays.asList( Common.buildSoapRequest(filtroConnettore,azione, erogazione,versioneSoap)) );
+					Arrays.asList( RequestBuilder.buildSoapRequest(filtroConnettore,azione, erogazione,versioneSoap)) );
 		});
 		
 			
-		HttpRequest requestIdentificazioneFallita = Common.buildSoapRequest_Semplice(erogazione,versioneSoap);
-		HttpRequest requestConnettoreNonTrovato = Common.buildSoapRequest("ConnettoreInesistente", "ConnettoreInesistente", erogazione,versioneSoap);
-		HttpRequest requestConnettoreDisabilitato = Common.buildSoapRequest(CONNETTORE_DISABILITATO+"-Filtro0",CONNETTORE_DISABILITATO, erogazione,versioneSoap);
+		HttpRequest requestIdentificazioneFallita = RequestBuilder.buildSoapRequest_Semplice(erogazione,versioneSoap);
+		HttpRequest requestConnettoreNonTrovato = RequestBuilder.buildSoapRequest("ConnettoreInesistente", "ConnettoreInesistente", erogazione,versioneSoap);
+		HttpRequest requestConnettoreDisabilitato = RequestBuilder.buildSoapRequest(CONNETTORE_DISABILITATO+"-Filtro0",CONNETTORE_DISABILITATO, erogazione,versioneSoap);
 		
 		requestsByConnettore.put(Common.CONNETTORE_DISABILITATO,List.of(requestConnettoreDisabilitato));
 		requestsByConnettore.put(Common.CONNETTORE_ID_FALLITA,List.of(requestIdentificazioneFallita));

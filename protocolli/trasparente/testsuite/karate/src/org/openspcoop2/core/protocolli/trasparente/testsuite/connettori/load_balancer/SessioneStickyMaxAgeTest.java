@@ -24,26 +24,23 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.HEADER_ID_CONNETTORE;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.load_balancer.Common.IDSessioni;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.HEADER_ID_CONNETTORE;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.IDSessioni;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
-import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpResponse;
-import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 /**
  * SessioneStickyMaxAgeTest
@@ -86,8 +83,8 @@ public class SessioneStickyMaxAgeTest extends ConfigLoader {
 		
 		final String erogazione = "LoadBalanceSessioneStickyHeaderHttpMaxAge";
 		
-		HttpRequest request1 = SessioneStickyTest.buildRequest_HeaderHttp(IDSessioni.get(0), erogazione);
-		HttpRequest request2 = SessioneStickyTest.buildRequest_HeaderHttp(IDSessioni.get(1), erogazione);
+		HttpRequest request1 = RequestBuilder.buildRequest_HeaderHttp(IDSessioni.get(0), erogazione);
+		HttpRequest request2 = RequestBuilder.buildRequest_HeaderHttp(IDSessioni.get(1), erogazione);
 		
 		HttpResponse response1 = Utils.makeRequest(request1);
 		HttpResponse response2 = Utils.makeRequest(request2);
@@ -195,12 +192,12 @@ public class SessioneStickyMaxAgeTest extends ConfigLoader {
 				.of(IDSessioni.get(0), IDSessioni.get(1), UUID.randomUUID().toString(), UUID.randomUUID().toString());
 		List<HttpRequest> requests = idSessioni.stream()
 				.map( id -> {
-					var request = SessioneStickyTest.buildRequest_VelocityTemplate(id, erogazione);
+					var request = RequestBuilder.buildRequest_VelocityTemplate(id, erogazione);
 					request.setUrl(request.getUrl() + "&sleep="+(Common.maxAge+2000));
 					return request;
 				})
 				.collect(Collectors.toList());
-		final Vector<Future<HttpResponse>> oldAsyncResponses = makeBackgroundRequests(requests, requests.size(), Common.delayRichiesteBackground);
+		final Vector<Future<HttpResponse>> oldAsyncResponses = Common.makeBackgroundRequests(requests, requests.size(), Common.delayRichiesteBackground);
 
 		org.openspcoop2.utils.Utilities.sleep(Common.delayRichiesteBackground);
 		
@@ -208,8 +205,7 @@ public class SessioneStickyMaxAgeTest extends ConfigLoader {
 		
 		// La sessione non ancora è finita, faccio una richiesta con sleep per mantenere
 		// bloccato il primo connettore
-		// TODO: Sleep del tempo necessario: maxAge - ( now - start ) + 500; guardalo anche sugli altri test fatti l'anno scorso, tipo rate limiting ecc..
-		var blockingRequest = SessioneStickyTest.buildRequest_VelocityTemplate(IDSessioni.get(0), erogazione);
+		var blockingRequest = RequestBuilder.buildRequest_VelocityTemplate(IDSessioni.get(0), erogazione);
 		blockingRequest.setUrl(blockingRequest.getUrl() + "&sleep=" + (Common.maxAge + 1000));
 		var asyncBlockingResponse = Utils.makeBackgroundRequest(blockingRequest);
 		
@@ -223,7 +219,7 @@ public class SessioneStickyMaxAgeTest extends ConfigLoader {
 		var oldResponses = Utils.awaitResponses(oldAsyncResponses);
 		String oldConnettore = oldResponses.get(0).getHeaderFirstValue(HEADER_ID_CONNETTORE);
 		
-		var newRequest = SessioneStickyTest.buildRequest_VelocityTemplate(IDSessioni.get(0), erogazione);
+		var newRequest = RequestBuilder.buildRequest_VelocityTemplate(IDSessioni.get(0), erogazione);
 		var newResponse = Utils.makeRequest(newRequest);
 		
 		String newConnettore = newResponse.getHeaderFirstValue(HEADER_ID_CONNETTORE);
@@ -236,40 +232,5 @@ public class SessioneStickyMaxAgeTest extends ConfigLoader {
 		assertEquals(200, resp.getResultHTTPOperation());
 		assertEquals(oldConnettore, resp.getHeaderFirstValue(HEADER_ID_CONNETTORE));
 	}
-
-	// TODO: Mettere nella nuova classe di utils, fanne tre:
-	//	Common
-	//	CommonConsegnaCondizionale
-	//	CommonSessioneSticky
-	
-	public static Vector<Future<HttpResponse>> makeBackgroundRequests(List<HttpRequest> requests, int count,
-			int request_delay) {
-		final Vector<Future<HttpResponse>> oldFutureResponses = new Vector<>();
-		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(Common.sogliaRichiesteSimultanee);
-
-		for (int i = 0; i < count; i++) {
-			
-			if (request_delay > 0) {
-				org.openspcoop2.utils.Utilities.sleep(request_delay);
-			}
-			int index = i % requests.size();
-			
-			var future = executor.submit(() -> {
-				try {
-					var request = requests.get(index);
-					logRateLimiting.info(request.getMethod() + " " + request.getUrl());
-					HttpResponse resp = HttpUtilities.httpInvoke(request);
-					logRateLimiting.info("Richiesta effettuata..");
-					return resp;
-				} catch (UtilsException e) {
-					e.printStackTrace();
-					throw new RuntimeException(e);
-				}
-			});
-			oldFutureResponses.add(future);
-		}
-		return oldFutureResponses;
-	}
-	
 
 }
