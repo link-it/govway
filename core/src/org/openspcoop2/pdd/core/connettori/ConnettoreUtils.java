@@ -419,6 +419,14 @@ public class ConnettoreUtils {
 				sb.append(separator);
 				sb.append(username);
 			}
+			
+			String bearerToken = getProperty(CostantiConnettori.CONNETTORE_BEARER_TOKEN, connettore.getPropertyList());
+			if(bearerToken!=null) {
+				sb.append(newLine);
+				sb.append(CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_BEARER).append(" ").append(CostantiLabel.LABEL_CONNETTORE_BEARER_TOKEN);
+				sb.append(separator);
+				sb.append(bearerToken);
+			}
 		}
 		
 		if(TipiConnettore.HTTPS.getNome().equals(connettore.getTipo())){

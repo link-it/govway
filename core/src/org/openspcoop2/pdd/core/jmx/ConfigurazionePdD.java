@@ -143,6 +143,9 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	/** Nomi metodi' */
 	public final static String CHECK_CONNETTORE_BY_ID = "checkConnettoreById";
 	public final static String CHECK_CONNETTORE_BY_NOME = "checkConnettoreByNome";
+	public final static String CHECK_CONNETTORE_TOKEN_POLICY_VALIDATION = "checkConnettoreTokenPolicyValidazione";
+	public final static String CHECK_CONNETTORE_TOKEN_POLICY_RETRIEVE = "checkConnettoreTokenPolicyNegoziazione";
+	public final static String CHECK_CONNETTORE_ATTRIBUTE_AUTHORITY = "checkConnettoreAttributeAuthority";
 	public final static String GET_CERTIFICATI_CONNETTORE_BY_ID = "getCertificatiConnettoreById";
 	public final static String GET_CERTIFICATI_CONNETTORE_BY_NOME = "getCertificatiConnettoreByNome";
 	public final static String CHECK_CERTIFICATI_CONNETTORE_HTTPS_BY_ID = "checkCertificatiConnettoreHttpsById";
@@ -624,6 +627,48 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				param1 = (String)params[0];
 			}
 			return this.checkConnettoreByNome(param1);
+		}
+		
+		if(actionName.equals(CHECK_CONNETTORE_TOKEN_POLICY_VALIDATION)){
+			if(params.length != 1 && params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CONNETTORE_TOKEN_POLICY_VALIDATION+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			if(params.length==1) {
+				return this.checkConnettoreTokenPolicyValidazione(param1);
+			}
+			else {
+				String param2 = null;
+				if(params[1]!=null && !"".equals(params[1])){
+					param2 = (String)params[1];
+				}
+				return this.checkConnettoreTokenPolicyValidazione(param1,param2);
+			}
+		}
+		
+		if(actionName.equals(CHECK_CONNETTORE_TOKEN_POLICY_RETRIEVE)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+CHECK_CONNETTORE_TOKEN_POLICY_RETRIEVE+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			return this.checkConnettoreTokenPolicyNegoziazione(param1);
+		}
+		
+		if(actionName.equals(CHECK_CONNETTORE_ATTRIBUTE_AUTHORITY)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+CHECK_CONNETTORE_ATTRIBUTE_AUTHORITY+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			return this.checkConnettoreAttributeAuthority(param1);
 		}
 		
 		if(actionName.equals(GET_CERTIFICATI_CONNETTORE_BY_ID)){
@@ -1248,7 +1293,42 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			},
 			String.class.getName(),
 			MBeanOperationInfo.ACTION);
-			
+		
+		// MetaData per l'operazione checkConnettoreTokenPolicyValidazione
+		MBeanOperationInfo checkConnettoreTokenPolicyValidazione 
+		= new MBeanOperationInfo(CHECK_CONNETTORE_BY_NOME,"Verifica la raggiungibilità dei connettori definiti nella Token Policy di validazione con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome della Token Policy di Validazione"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		MBeanOperationInfo checkConnettoreTokenPolicyValidazione_2
+		= new MBeanOperationInfo(CHECK_CONNETTORE_BY_NOME,"Verifica la raggiungibilità dei connettori definiti nella Token Policy di validazione con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome della Token Policy di Validazione"),
+				new MBeanParameterInfo("tipoConnettore",String.class.getName(),"Tipo del connettore da verificare ["+ConnettoreCheck.POLICY_TIPO_ENDPOINT_INTROSPECTION+","+ConnettoreCheck.POLICY_TIPO_ENDPOINT_USERINFO+"]"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkConnettoreTokenPolicyNegoziazione
+		MBeanOperationInfo checkConnettoreTokenPolicyNegoziazione 
+		= new MBeanOperationInfo(CHECK_CONNETTORE_BY_NOME,"Verifica la raggiungibilità del connettore definito nella Token Policy di negoziazione con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome della Token Policy di Negoziazione"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkConnettoreAttributeAuthority
+		MBeanOperationInfo checkConnettoreAttributeAuthority 
+		= new MBeanOperationInfo(CHECK_CONNETTORE_BY_NOME,"Verifica la raggiungibilità del connettore definito nell'AttributeAuthority con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome dell'AttributeAuthority"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+
 		// MetaData per l'operazione getCertificatiConnettoreById
 		MBeanOperationInfo getCertificatiConnettoreById 
 		= new MBeanOperationInfo(GET_CERTIFICATI_CONNETTORE_BY_ID,"Recupera i certificati server del connettore con id fornito come parametro",
@@ -1473,6 +1553,10 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		listOperation.add(removeObjectCacheOP);
 		listOperation.add(checkConnettoreById);
 		listOperation.add(checkConnettoreByNome);
+		listOperation.add(checkConnettoreTokenPolicyValidazione);
+		listOperation.add(checkConnettoreTokenPolicyValidazione_2);
+		listOperation.add(checkConnettoreTokenPolicyNegoziazione);
+		listOperation.add(checkConnettoreAttributeAuthority);
 		listOperation.add(getCertificatiConnettoreById);
 		listOperation.add(getCertificatiConnettoreByNome);
 		listOperation.add(checkCertificatiConnettoreHttpsById);
@@ -1782,6 +1866,45 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public String checkConnettoreByNome(String nomeConnettore) {
 		try{
 			ConnettoreCheck.check(nomeConnettore, false, this.logConnettori);
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkConnettoreTokenPolicyValidazione(String nomePolicy) {
+		try{
+			ConnettoreCheck.checkTokenPolicyValidazione(nomePolicy, this.logConnettori);
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	public String checkConnettoreTokenPolicyValidazione(String nomePolicy, String tipoConnettore) {
+		try{
+			ConnettoreCheck.checkTokenPolicyValidazione(nomePolicy, tipoConnettore, this.logConnettori);
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkConnettoreTokenPolicyNegoziazione(String nomePolicy) {
+		try{
+			ConnettoreCheck.checkTokenPolicyNegoziazione(nomePolicy, this.logConnettori);
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkConnettoreAttributeAuthority(String nomePolicy) {
+		try{
+			ConnettoreCheck.checkAttributeAuthority(nomePolicy, this.logConnettori);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
 		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);

@@ -105,6 +105,9 @@ public final class CostantiLabel {
 	
 	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP = "Autenticazione Http";
 	
+	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_BEARER = "Autenticazione Bearer";
+	public final static String LABEL_CONNETTORE_BEARER_TOKEN = "Token";
+	
 	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_TOKEN = "Autenticazione Token";
 	public final static String LABEL_CONNETTORE_TOKEN_POLICY = "Policy";
 	

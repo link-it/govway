@@ -25,8 +25,10 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -35,8 +37,12 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.Connettore;
+import org.openspcoop2.core.config.GenericProperties;
+import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.Property;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.CostantiConnettori;
@@ -46,7 +52,11 @@ import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.core.token.Costanti;
+import org.openspcoop2.pdd.core.token.PolicyGestioneToken;
 import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
+import org.openspcoop2.pdd.core.token.TokenUtilities;
+import org.openspcoop2.pdd.core.token.attribute_authority.AttributeAuthorityUtilities;
+import org.openspcoop2.pdd.core.token.attribute_authority.PolicyAttributeAuthority;
 import org.openspcoop2.protocol.registry.CertificateUtils;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -150,6 +160,305 @@ public class ConnettoreCheck {
 		throw new ConnettoreException("Connettore con nome '"+nomeConnettore+"' non trovato");
 	}
 
+	public static final String POLICY_TIPO_ENDPOINT = "__POLICY_TIPO_ENDPOINT";
+	public static List<Connettore> convertPolicyToConnettore(GenericProperties gp, Logger log) throws ConnettoreException{
+		
+		if(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA.equals(gp.getTipologia())) {
+			// PolicyValidazione
+			return convertTokenPolicyValidazioneToConnettore(gp, log);
+		}
+		else if(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA_RETRIEVE.equals(gp.getTipologia())) {
+			// PolicyNegoziazione
+			return convertTokenPolicyNegoziazioneToConnettore(gp, log);
+		}
+		else if(org.openspcoop2.pdd.core.token.Costanti.ATTRIBUTE_AUTHORITY.equals(gp.getTipologia())) {
+			// ATTRIBUTE_AUTHORITY
+			return convertAttributeAuthorityToConnettore(gp, log);
+		}
+		else {
+			throw new ConnettoreException("Tipologia '"+gp.getTipologia()+"' non gestita");
+		}
+		
+	}
+	
+	public static final String POLICY_TIPO_ENDPOINT_INTROSPECTION = "Introspection";
+	public static final String POLICY_TIPO_ENDPOINT_USERINFO = "UserInfo";
+	public static List<Connettore> convertTokenPolicyValidazioneToConnettore(GenericProperties gp, Logger log) throws ConnettoreException{
+		try {
+			GestioneToken gestione = new GestioneToken();
+			gestione.setIntrospection(StatoFunzionalitaConWarning.ABILITATO);
+			gestione.setUserInfo(StatoFunzionalitaConWarning.ABILITATO);
+			PolicyGestioneToken policy = TokenUtilities.convertTo(gp, gestione);
+			
+			Connettore connettoreIntrospection = null;
+			Connettore connettoreUserInfo = null;
+			
+			String introspectionEndpoint = policy.getIntrospection_endpoint();
+			if(StringUtils.isNotEmpty(introspectionEndpoint)) {
+				connettoreIntrospection = new Connettore();
+				addProperty(connettoreIntrospection, POLICY_TIPO_ENDPOINT, POLICY_TIPO_ENDPOINT_INTROSPECTION);
+				addProperty(connettoreIntrospection, CostantiConnettori.CONNETTORE_LOCATION, introspectionEndpoint);
+				
+				if(policy.isIntrospection_basicAuthentication() && StringUtils.isNotEmpty(policy.getIntrospection_basicAuthentication_username()) && policy.getIntrospection_basicAuthentication_password()!=null) {
+					addProperty(connettoreIntrospection, CostantiConnettori.CONNETTORE_USERNAME, policy.getIntrospection_basicAuthentication_username());
+					addProperty(connettoreIntrospection, CostantiConnettori.CONNETTORE_PASSWORD, policy.getIntrospection_basicAuthentication_password());
+				}
+				if(policy.isIntrospection_bearerAuthentication() && StringUtils.isNotEmpty(policy.getIntrospection_beareAuthentication_token())) {
+					addProperty(connettoreIntrospection, CostantiConnettori.CONNETTORE_BEARER_TOKEN, policy.getIntrospection_beareAuthentication_token());
+				}
+			}
+			
+			String userInfoEndpoint = policy.getUserInfo_endpoint();
+			if(StringUtils.isNotEmpty(userInfoEndpoint)) {
+				connettoreUserInfo = new Connettore();
+				addProperty(connettoreUserInfo, POLICY_TIPO_ENDPOINT, POLICY_TIPO_ENDPOINT_USERINFO);
+				addProperty(connettoreUserInfo, CostantiConnettori.CONNETTORE_LOCATION, userInfoEndpoint);
+				
+				if(policy.isUserInfo_basicAuthentication() && StringUtils.isNotEmpty(policy.getUserInfo_basicAuthentication_username()) && policy.getUserInfo_basicAuthentication_password()!=null) {
+					addProperty(connettoreUserInfo, CostantiConnettori.CONNETTORE_USERNAME, policy.getUserInfo_basicAuthentication_username());
+					addProperty(connettoreUserInfo, CostantiConnettori.CONNETTORE_PASSWORD, policy.getUserInfo_basicAuthentication_password());
+				}
+				if(policy.isUserInfo_bearerAuthentication() && StringUtils.isNotEmpty(policy.getUserInfo_beareAuthentication_token())) {
+					addProperty(connettoreUserInfo, CostantiConnettori.CONNETTORE_BEARER_TOKEN, policy.getUserInfo_beareAuthentication_token());
+				}
+			}
+			
+			if(connettoreIntrospection!=null || connettoreUserInfo!=null) {
+				
+				if(connettoreIntrospection!=null) {
+					Map<String,String> mapProperties = connettoreIntrospection.getProperties();
+									
+					Properties endpointConfig = policy.getProperties().get(Costanti.POLICY_ENDPOINT_CONFIG);
+					if(endpointConfig!=null && !endpointConfig.isEmpty()) {
+						putAll(endpointConfig, mapProperties);
+					}
+					
+					connettoreIntrospection.setProperties(mapProperties);
+				}
+				if(connettoreUserInfo!=null) {
+					Map<String,String> mapProperties = connettoreUserInfo.getProperties();
+									
+					Properties endpointConfig = policy.getProperties().get(Costanti.POLICY_ENDPOINT_CONFIG);
+					if(endpointConfig!=null && !endpointConfig.isEmpty()) {
+						putAll(endpointConfig, mapProperties);
+					}
+					
+					connettoreUserInfo.setProperties(mapProperties);
+				}
+				
+				boolean https = policy.isEndpointHttps();
+				if(https) {
+					Properties sslConfig = policy.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CONFIG);
+					
+					if(connettoreIntrospection!=null) {
+						Map<String,String> mapProperties = connettoreIntrospection.getProperties();
+						putAll(sslConfig, mapProperties);
+												
+						boolean introspectionHttpsClient = policy.isIntrospection_httpsAuthentication();
+						if(introspectionHttpsClient) {
+							Properties introspectionSslClientConfig = policy.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG);
+							putAll(introspectionSslClientConfig, mapProperties);
+						}
+						
+						connettoreIntrospection.setProperties(mapProperties);
+					}
+					
+					if(connettoreUserInfo!=null) {
+						Map<String,String> mapProperties = connettoreUserInfo.getProperties();
+						putAll(sslConfig, mapProperties);
+						
+						boolean userInfoHttpsClient = policy.isUserInfo_httpsAuthentication();
+						if(userInfoHttpsClient) {
+							Properties userInfoSslClientConfig = policy.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG);
+							putAll(userInfoSslClientConfig, mapProperties);
+						}
+						
+						connettoreUserInfo.setProperties(mapProperties);
+					}
+				}
+				
+				List<Connettore> l = new ArrayList<Connettore>();
+				if(connettoreIntrospection!=null) {
+					connettoreIntrospection.setTipo(https ? TipiConnettore.HTTPS.getNome() : TipiConnettore.HTTP.getNome());
+					l.add(connettoreIntrospection);
+				}
+				if(connettoreUserInfo!=null) {
+					connettoreUserInfo.setTipo(https ? TipiConnettore.HTTPS.getNome() : TipiConnettore.HTTP.getNome());
+					l.add(connettoreUserInfo);
+				}
+				return l;
+			}
+			
+			return null;
+			
+		}catch(Throwable t) {
+			throw new ConnettoreException(t.getMessage(),t);
+		}
+	}
+	public static List<Connettore> convertTokenPolicyNegoziazioneToConnettore(GenericProperties gp, Logger log) throws ConnettoreException{
+		try {
+			PolicyNegoziazioneToken policy = TokenUtilities.convertTo(gp);
+			
+			Connettore connettore = null;
+			
+			String endpoint = policy.getEndpoint();
+			if(StringUtils.isNotEmpty(endpoint)) {
+				connettore = new Connettore();
+				//addProperty(connettore, POLICY_TIPO_ENDPOINT, "Negoziazione"); // solo 1 tipo
+				addProperty(connettore, CostantiConnettori.CONNETTORE_LOCATION, endpoint);
+				
+				if(policy.isBasicAuthentication() && StringUtils.isNotEmpty(policy.getBasicAuthentication_username()) && policy.getBasicAuthentication_password()!=null) {
+					addProperty(connettore, CostantiConnettori.CONNETTORE_USERNAME, policy.getBasicAuthentication_username());
+					addProperty(connettore, CostantiConnettori.CONNETTORE_PASSWORD, policy.getBasicAuthentication_password());
+				}
+				if(policy.isBearerAuthentication() && StringUtils.isNotEmpty(policy.getBeareAuthentication_token())) {
+					addProperty(connettore, CostantiConnettori.CONNETTORE_BEARER_TOKEN, policy.getBeareAuthentication_token());
+				}
+
+				Map<String,String> mapProperties = connettore.getProperties();
+								
+				Properties endpointConfig = policy.getProperties().get(Costanti.POLICY_ENDPOINT_CONFIG);
+				if(endpointConfig!=null && !endpointConfig.isEmpty()) {
+					putAll(endpointConfig, mapProperties);
+				}
+				
+				boolean https = policy.isEndpointHttps();
+				if(https) {
+					Properties sslConfig = policy.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CONFIG);
+					putAll(sslConfig, mapProperties);
+											
+					boolean httpsClient = policy.isHttpsAuthentication();
+					if(httpsClient) {
+						Properties introspectionSslClientConfig = policy.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG);
+						putAll(introspectionSslClientConfig, mapProperties);
+					}
+					
+					connettore.setProperties(mapProperties);
+				}
+				
+				List<Connettore> l = new ArrayList<Connettore>();
+				if(connettore!=null) {
+					connettore.setTipo(https ? TipiConnettore.HTTPS.getNome() : TipiConnettore.HTTP.getNome());
+					l.add(connettore);
+				}
+
+				return l;
+			}
+			
+			return null;
+			
+		}catch(Throwable t) {
+			throw new ConnettoreException(t.getMessage(),t);
+		}
+	}
+	public static List<Connettore> convertAttributeAuthorityToConnettore(GenericProperties gp, Logger log) throws ConnettoreException{
+		try {
+			PolicyAttributeAuthority policy = AttributeAuthorityUtilities.convertTo(gp);
+			
+			Connettore connettore = null;
+			
+			String endpoint = policy.getEndpoint();
+			if(StringUtils.isNotEmpty(endpoint)) {
+				connettore = new Connettore();
+				//addProperty(connettore, POLICY_TIPO_ENDPOINT, "Negoziazione"); // solo 1 tipo
+				addProperty(connettore, CostantiConnettori.CONNETTORE_LOCATION, endpoint);
+				
+				if(policy.isBasicAuthentication() && StringUtils.isNotEmpty(policy.getBasicAuthentication_username()) && policy.getBasicAuthentication_password()!=null) {
+					addProperty(connettore, CostantiConnettori.CONNETTORE_USERNAME, policy.getBasicAuthentication_username());
+					addProperty(connettore, CostantiConnettori.CONNETTORE_PASSWORD, policy.getBasicAuthentication_password());
+				}
+				if(policy.isBearerAuthentication() && StringUtils.isNotEmpty(policy.getBeareAuthentication_token())) {
+					addProperty(connettore, CostantiConnettori.CONNETTORE_BEARER_TOKEN, policy.getBeareAuthentication_token());
+				}
+				
+				Map<String,String> mapProperties = connettore.getProperties();
+								
+				Properties endpointConfig = policy.getProperties().get(Costanti.POLICY_ENDPOINT_CONFIG);
+				if(endpointConfig!=null && !endpointConfig.isEmpty()) {
+					putAll(endpointConfig, mapProperties);
+				}
+
+				boolean https = policy.isEndpointHttps();
+				if(https) {
+					Properties sslConfig = policy.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CONFIG);
+					putAll(sslConfig, mapProperties);
+											
+					boolean httpsClient = policy.isHttpsAuthentication();
+					if(httpsClient) {
+						Properties introspectionSslClientConfig = policy.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG);
+						putAll(introspectionSslClientConfig, mapProperties);
+					}
+					
+					connettore.setProperties(mapProperties);
+				}
+				
+				List<Connettore> l = new ArrayList<Connettore>();
+				if(connettore!=null) {
+					connettore.setTipo(https ? TipiConnettore.HTTPS.getNome() : TipiConnettore.HTTP.getNome());
+					l.add(connettore);
+				}
+
+				return l;
+			}
+			
+			return null;
+			
+		}catch(Throwable t) {
+			throw new ConnettoreException(t.getMessage(),t);
+		}
+	}
+	public static void checkTokenPolicyValidazione(String nome, Logger log) throws ConnettoreException{
+		checkPolicy(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA, nome, log, null);
+	}
+	public static void checkTokenPolicyValidazione(String nome, String tipoConnettore, Logger log) throws ConnettoreException{
+		checkPolicy(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA, nome, log, tipoConnettore);
+	}
+	public static void checkTokenPolicyValidazioneIntrospection(String nome, Logger log) throws ConnettoreException{
+		checkPolicy(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA, nome, log, POLICY_TIPO_ENDPOINT_INTROSPECTION);
+	}
+	public static void checkTokenPolicyValidazioneUserInfo(String nome, Logger log) throws ConnettoreException{
+		checkPolicy(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA, nome, log, POLICY_TIPO_ENDPOINT_USERINFO);
+	}
+	public static void checkTokenPolicyNegoziazione(String nome, Logger log) throws ConnettoreException{
+		checkPolicy(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA_RETRIEVE, nome, log, null);
+	}
+	public static void checkAttributeAuthority(String nome, Logger log) throws ConnettoreException{
+		checkPolicy(org.openspcoop2.pdd.core.token.Costanti.ATTRIBUTE_AUTHORITY, nome, log, null);
+	}
+	private static void checkPolicy(String tipologia, String nome, Logger log,
+			String tipoConnettore) throws ConnettoreException{
+		IDriverConfigurazioneGet iDriverConfigurazioneGet = ConfigurazionePdDReader.getDriverConfigurazionePdD();
+		if(iDriverConfigurazioneGet instanceof DriverConfigurazioneDB) {
+			try {
+				GenericProperties gp = ((DriverConfigurazioneDB)iDriverConfigurazioneGet).getGenericProperties(tipologia, nome);
+				List<Connettore> l = convertPolicyToConnettore(gp, log);
+				if(l!=null && !l.isEmpty()) {
+					for (Connettore connettore : l) {
+						if(tipoConnettore!=null) {
+							String tipo = getPropertyValue(connettore, POLICY_TIPO_ENDPOINT);
+							if(!tipoConnettore.equalsIgnoreCase(tipo)) {
+								continue;
+							}
+						}
+						try {
+							check(connettore, log);
+						}catch(Throwable e) {
+							//String tipo = getPropertyValue(connettore, POLICY_TIPO_ENDPOINT);
+							String tipo = null; // lascio l'errore puro, il tipo di endpoint verrà gestito in altri log
+							String prefixConnettore = tipo!=null ?  ("["+tipo+"] ") : "";
+							throw new Exception(prefixConnettore+e.getMessage(),e);
+						}
+					}
+				}
+				return;
+			}catch(Throwable e) {
+				throw new ConnettoreException(e.getMessage(),e);
+			}
+		}
+				
+		throw new ConnettoreException("Configurazione con tipologia '"+tipologia+"' e nome '"+nome+"' non trovata");
+	}
+	
 	public static Connettore convertConfigProxyJvmToConnettore(Logger log) throws ConnettoreException{
 		
 		Connettore connettore = null;
@@ -231,7 +540,16 @@ public class ConnettoreCheck {
 		p.setValore(valore);
 		connettore.addProperty(p);
 	}
-	
+	public static String getPropertyValue(Connettore connettore, String nome) {
+		if(connettore!=null && connettore.sizePropertyList()>0) {
+			for (Property p : connettore.getPropertyList()) {
+				if(p.getNome().equals(nome)) {
+					return p.getValore();
+				}
+			}
+		}
+		return null;
+	}
 	
 	public static void check(org.openspcoop2.core.registry.Connettore connettore, Logger log) throws ConnettoreException{
 		_check(connettore.mappingIntoConnettoreConfigurazione(), log);
@@ -342,7 +660,7 @@ public class ConnettoreCheck {
 			}
 		}
 	}
-	private static void putAll(Properties config, Map<String, String> mapProperties) {
+	public static void putAll(Properties config, Map<String, String> mapProperties) {
 		if(config!=null && !config.isEmpty()) {
 			Iterator<?> it = config.keySet().iterator();
 			while (it.hasNext()) {
@@ -573,6 +891,15 @@ public class ConnettoreCheck {
 				httpConn.setRequestProperty(HttpConstants.AUTHORIZATION,authentication);
 				if(debug)
 					log.info("Impostazione autenticazione (username:"+user+" password:"+password+") ["+authentication+"]");
+			}
+			
+			// Authentication Bearer Token
+			String bearerToken = properties.get(CostantiConnettori.CONNETTORE_BEARER_TOKEN);
+			if(bearerToken!=null){
+				String authorizationHeader = HttpConstants.AUTHORIZATION_PREFIX_BEARER+bearerToken;
+				httpConn.setRequestProperty(HttpConstants.AUTHORIZATION,authorizationHeader);
+				if(debug)
+					log.info("Impostazione autenticazione bearer ["+authorizationHeader+"]");
 			}
 			
 			// Check

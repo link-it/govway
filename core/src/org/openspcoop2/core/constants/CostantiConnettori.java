@@ -38,6 +38,7 @@ public class CostantiConnettori {
 	public final static String CONNETTORE_DEBUG = "debug";
     public static final String CONNETTORE_USERNAME = "user";
     public static final String CONNETTORE_PASSWORD = "password";
+    public static final String CONNETTORE_BEARER_TOKEN = "bearerToken";
     public static final String CONNETTORE_CONNECTION_TIMEOUT = "connectionTimeout";
     public static final String CONNETTORE_READ_CONNECTION_TIMEOUT = "readConnectionTimeout";
     public static final String CONNETTORE_TEMPO_MEDIO_RISPOSTA = "avgResponseTime";
