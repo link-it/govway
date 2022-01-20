@@ -19,6 +19,7 @@
 
 
 
+<%@page import="java.util.List"%>
 <%@page import="org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti"%>
 <%@ page session="true" import="java.util.Vector, org.apache.commons.lang.StringEscapeUtils ,org.openspcoop2.web.lib.mvc.*" %>
 
@@ -58,9 +59,10 @@
 		if(titoloSezione != null && titoloSezione.equals(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI))
 			titoloSezione = null;
 	} 
-	boolean mostraFormHeader = false;
-	int colFormHeader = (mostraFormHeader ? 2 : 1);
-	String classPanelTitolo = mostraFormHeader ? "panelDettaglioForm" : "panelDettaglioNoForm";
+	List<DataElement> listaComandi = pd.getComandiAzioneBarraTitoloDettaglioElemento();
+	boolean mostraComandiHeader = listaComandi != null && listaComandi.size() > 0;
+	int colFormHeader = (mostraComandiHeader ? 2 : 1);
+	String classPanelTitolo = "panelDettaglioNoForm";
 	
 	Vector<DataElement> vectorRiepilogo = new Vector<DataElement>();
 	Vector<DataElement> vectorLink = new Vector<DataElement>();
@@ -90,12 +92,31 @@
 								<td class="titoloSezione" id="dettaglioFormHeader" colspan="<%= colFormHeader %>">
 									<span class="history"><%= titoloSezione %></span>
 								</td>
-								<% if(mostraFormHeader) { %>
-								<td class="titoloSezione titoloSezione-right">
-									<span class="icon-box" id="iconaPanelDettaglioSpan">
-										<i class="material-icons md-18" id="iconaPanelDettaglio">&#xE5CF;</i>
-									</span>
-								</td>
+								<% if(mostraComandiHeader) { %>
+									<td class="titoloSezione titoloSezione-right">
+										<% 
+											for(int idxLink =0; idxLink < listaComandi.size() ; idxLink ++ ){
+												DataElement de = (DataElement) listaComandi.get(idxLink);
+												String deTip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
+												String classLink = "";
+												String deTarget = " ";
+										  		if (!de.getTarget().equals("")) {
+										  			deTarget = " target=\""+ de.getTarget() +"\"";
+										  		}
+										  		
+										  		String deVisualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+												
+										  		String deIconName = de.getIcon(); 
+										  		%>
+						    					<a class="panelDettaglioTitoloAzioneLink <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= de.getUrl() %>" type="button" onClick="<%= deVisualizzaAjaxStatus %>return true;">
+						    						<span class="icon-box">
+														<i class="material-icons md-24"><%= deIconName %></i>
+													</span>
+						    					</a>
+											<% 
+											}
+										%>
+									</td>
 								<% }%>
 							</tr>
 						</tbody>

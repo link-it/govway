@@ -311,6 +311,12 @@ div.txtA_div {
     font-weight: bold;
 }
 
+.panelDettaglioTitoloAzioneLink {
+	float: right;
+	padding: 0px 0px 0px 8px;
+	color: ${panel.header.color};
+}
+
 /* Componenti del layout generale */
 
 /* Body Wrapper */ 
@@ -2313,4 +2319,85 @@ div.txtA_div_propDialogInfoUso {
 .text-action-link span.icon-box {
 	vertical-align: middle;
 }
+
+.context-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  user-select: none;
+  overflow-y: auto;
+/*   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; */
+  font-weight: 400;
+  box-shadow: 0px 4px 8px rgba(44, 62, 80, 0.4);
+  background-color: ${paginacorrente.background.color};
+  color: ${body.color};
+  margin: 4px;
+  padding: 12px 0px;
+  min-width: 140px;
+  max-width: 280px;
+  max-height: 480px;
+  border: none;
+  border-radius: 3px;
+}
+.context-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.context-menu ul li {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+.context-menu ul li a {
+  text-decoration: none;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0px;
+  padding: 8px 18px;
+  cursor: pointer;
+  background-color: ${paginacorrente.background.color};
+  color: ${body.color};
+  transition: none;
+}
+.context-menu ul li a:hover {
+	background-color: ${table.row.hover.background.color};
+/*   background-color: rgba(0, 0, 0, 0.05); */
+/*   color: #2c3e50; */
+}
+.context-menu ul li a .material-icons {
+  line-height: 0;
+  display: inline-flex;
+  vertical-align: middle;
+  font-size: 22px;
+  margin-top: -4px;
+  margin-right: 6px;
+}
+.context-menu ul li a .material-icons:hover {
+	background-color: ${table.row.hover.background.color};
+/*   background-color: rgba(0, 0, 0, 0.05); */
+/*   color: #2c3e50; */
+}
+.context-menu ul li a [class^=fa] {
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
+  font-size: 22px;
+  width: 22px;
+  margin-right: 6px;
+}
+.context-menu ul li a [class^=fa]:hover {
+  background-color: ${table.row.hover.background.color};
+/*   background-color: rgba(0, 0, 0, 0.05); */
+/*   color: #2c3e50; */
+}
+
+.context-menu-trigger .context-menu-content {
+  display: none;
+}
+
+
+
 

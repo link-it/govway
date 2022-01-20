@@ -105,7 +105,7 @@ public final class RuoliAdd extends Action {
 
 
 				dati = ruoliHelper.addRuoloToDati(TipoOperazione.ADD, null, nome != null ? nome : "", descrizione != null ? descrizione : "",
-						tipologia, nomeEsterno, contesto, dati);
+						tipologia, nomeEsterno, contesto, dati, null);
 
 				pd.setDati(dati);
 
@@ -128,7 +128,7 @@ public final class RuoliAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = ruoliHelper.addRuoloToDati(TipoOperazione.ADD, null, nome, descrizione, tipologia, nomeEsterno, contesto, dati);
+				dati = ruoliHelper.addRuoloToDati(TipoOperazione.ADD, null, nome, descrizione, tipologia, nomeEsterno, contesto, dati, null);
 
 				pd.setDati(dati);
 

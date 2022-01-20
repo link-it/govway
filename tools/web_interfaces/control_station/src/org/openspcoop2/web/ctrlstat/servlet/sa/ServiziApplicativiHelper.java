@@ -321,7 +321,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		}
 	}
 
-	public Vector<DataElement> addServizioApplicativoToDati(Vector<DataElement> dati, String nome, String tipoENomeSoggetto, String fault, TipoOperazione tipoOperazione,  
+	public Vector<DataElement> addServizioApplicativoToDati(Vector<DataElement> dati, String oldNomeSA, String nome, String tipoENomeSoggetto, String fault, TipoOperazione tipoOperazione,  
 			long idSA, Boolean contaListe,String[] soggettiList,String[] soggettiListLabel, String provider, String dominio,
 			String utente,String password, String subject, String principal, String tipoauth,
 			String faultactor,String genericfault,String prefixfault, String invrif, String sbustamentoInformazioniProtocolloRisposta,
@@ -2782,14 +2782,11 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		idServizioApplicativo.setNome(sa.getNome());
 		idServizioApplicativo.setIdSoggettoProprietario(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
 		
-		// TODO 
-//			de = new DataElement();
-//			de.setType(DataElementType.IMAGE);
-//			DataElementInfo dInfoUtilizzo = new DataElementInfo(ServiziApplicativiCostanti.LABEL_APPLICATIVO);
-//			dInfoUtilizzo.setBody("L'applicativo " + nome + " gestisce...");
-//			de.setInfo(dInfoUtilizzo);
-//			de.setToolTip("Visualizza Info");
-//			e.addElement(de);
+		// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
+		if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
+			this.addComandoResetCacheButton(e, (this.isSoggettoMultitenantSelezionato() ? sa.getNome() : this.getLabelServizioApplicativoConDominioSoggetto(idServizioApplicativo)), 
+					 ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE, listaParametriChange);
+		}
 		
 		// In Uso Button
 		this.addInUsoButton(e, 

@@ -149,6 +149,8 @@ public final class ServiziApplicativiChange extends Action {
 		try {
 			Boolean contaListe = ServletUtils.getContaListeFromSession(session);
 
+			String userLogin = ServletUtils.getUserLoginFromSession(session);
+			
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
 			
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
@@ -383,6 +385,9 @@ public final class ServiziApplicativiChange extends Action {
 			String responseInputDeleteAfterRead = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
 			String responseInputWaitTime = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 			
+			String resetElementoCacheS = saHelper.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
+			boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);
+			
 			boolean integrationManagerEnabled = !saHelper.isModalitaStandard() && saCore.isIntegrationManagerEnabled();
 						
 			boolean visualizzaModificaCertificato = false;
@@ -473,7 +478,6 @@ public final class ServiziApplicativiChange extends Action {
 			String nomeProtocollo = null;
 			String tipoENomeSoggetto = null;
 			String nomePdd = null;
-			@SuppressWarnings("unused")
 			IDSoggetto idSoggetto = null;
 			if(saCore.isRegistroServiziLocale()){
 				org.openspcoop2.core.registry.Soggetto soggetto = soggettiCore.getSoggettoRegistro(idProv);
@@ -666,6 +670,61 @@ public final class ServiziApplicativiChange extends Action {
 					appId = null;
 					apiKey = null;
 				}
+				
+			}
+			
+			// reset elemento dalla cache
+			if(resetElementoCache) {
+				// TODO Poli aggiungere procedura JMX
+				
+				pd.setMessage(oldNome + " eliminato dalla cache", MessageType.INFO);
+				
+				
+				// preparo lista
+				Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+				
+				int idLista = -1;
+				if(!useIdSogg){
+					idLista = Liste.SERVIZIO_APPLICATIVO;
+				}
+				else {
+					idLista = Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO;
+				}
+				
+				List<ServizioApplicativo> lista = null;
+
+				if(!useIdSogg){
+					ricerca = saHelper.checkSearchParameters(idLista, ricerca);
+
+					boolean filtroSoggetto = false;
+					if(saHelper.isSoggettoMultitenantSelezionato()) {
+						List<String> protocolli = saCore.getProtocolli(session,false);
+						if(protocolli!=null && protocolli.size()==1) { // dovrebbe essere l'unico caso in cui un soggetto multitenant è selezionato
+							String protocollo = protocolli.get(0);
+							filtroSoggetto = !saHelper.isProfiloModIPA(protocollo);  // in modipa devono essere fatti vedere anche quelli
+						}
+					}
+					if(filtroSoggetto) {
+						ricerca.addFilter(idLista, Filtri.FILTRO_SOGGETTO, saHelper.getSoggettoMultitenantSelezionato());
+					}
+					
+					if(saCore.isVisioneOggettiGlobale(userLogin)){
+						lista = saCore.soggettiServizioApplicativoList(null, ricerca);
+					}else{
+						lista = saCore.soggettiServizioApplicativoList(userLogin, ricerca);
+					}
+				}else {
+					ricerca = saHelper.checkSearchParameters(idLista, ricerca);
+					
+					lista = saCore.soggettiServizioApplicativoList(ricerca,soggLong);
+				}
+
+				saHelper.prepareServizioApplicativoList(ricerca, lista, useIdSogg);
+				
+				
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+
+				return ServletUtils.getStrutsForwardEditModeFinished(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, ForwardParams.CHANGE());
 			}
 			
 			boolean checkWizard = false;
@@ -1317,7 +1376,7 @@ public final class ServiziApplicativiChange extends Action {
 				this.consoleDynamicConfiguration.updateDynamicConfigServizioApplicativo(this.consoleConfiguration, this.consoleOperationType, saHelper, this.protocolProperties, 
 						this.registryReader, this.configRegistryReader, oldIdServizioApplicativo); 
 				
-				dati = saHelper.addServizioApplicativoToDati(dati, nomeParameter, tipoENomeSoggetto, fault, 
+				dati = saHelper.addServizioApplicativoToDati(dati, oldNome, nomeParameter, tipoENomeSoggetto, fault, 
 						TipoOperazione.CHANGE, idServizioApplicativo, contaListe,null,null,provider,dominio,
 						utenteSA,passwordSA,subjectSA,principalSA,tipoauthSA,faultactor,genericfault,prefixfault,invrifRisposta,
 						sbustamentoInformazioniProtocolloRisposta,
@@ -1426,7 +1485,7 @@ public final class ServiziApplicativiChange extends Action {
 				this.consoleDynamicConfiguration.updateDynamicConfigServizioApplicativo(this.consoleConfiguration, this.consoleOperationType, saHelper, this.protocolProperties, 
 						this.registryReader, this.configRegistryReader, oldIdServizioApplicativo); 
 				
-				dati = saHelper.addServizioApplicativoToDati(dati, nomeParameter, tipoENomeSoggetto, fault, 
+				dati = saHelper.addServizioApplicativoToDati(dati, oldNome, nomeParameter, tipoENomeSoggetto, fault, 
 						TipoOperazione.CHANGE, idServizioApplicativo, contaListe,null,null,provider,dominio,
 						utenteSA,passwordSA,subjectSA,principalSA,tipoauthSA,faultactor,genericfault,prefixfault,invrifRisposta,
 						sbustamentoInformazioniProtocolloRisposta,
@@ -1875,8 +1934,6 @@ public final class ServiziApplicativiChange extends Action {
 			
 			//imposto properties custom
 			sa.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesConfig(this.protocolProperties, this.consoleOperationType, oldProtocolPropertyList)); 
-			
-			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			
 			// eseguo l'aggiornamento
 			List<Object> listOggettiDaAggiornare = ServiziApplicativiUtilities.getOggettiDaAggiornare(saCore, oldIdServizioApplicativo, sa);

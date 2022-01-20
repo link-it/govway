@@ -29,6 +29,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
@@ -70,6 +71,14 @@ public class ApiChange extends Action {
 			
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idInt);
+			
+			String resetElementoCacheS = apiHelper.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
+			boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);
+			
+			if(resetElementoCache) {
+				// reset elemento dalla cache
+				return apiHelper.prepareApiResetCache(mapping, gd, tipoOp, as);
+			}
 			
 			apiHelper.prepareApiChange(tipoOp, as);
 			

@@ -18801,6 +18801,19 @@ public class ConsoleHelper implements IConsoleHelper {
 		e.addElement(de);
 	}
 	
+	
+	public void addComandoResetCacheButton(Vector<DataElement> e, String nomeElementoSuCuiEffettuareIlReset, String servletName, List<Parameter> parameters) {
+		if(parameters == null) {
+			parameters = new ArrayList<Parameter>();
+		}
+		
+		parameters.add(new Parameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE, "true"));
+		
+		this.addAzioneButton(e, DataElementType.IMAGE,  Costanti.ICONA_RESET_CACHE_ELEMENTO_TOOLTIP,
+//				MessageFormat.format(Costanti.ICONA_RESET_CACHE_ELEMENTO_TOOLTIP_CON_PARAMETRO, nomeElementoSuCuiEffettuareIlReset),
+				Costanti.ICONA_RESET_CACHE_ELEMENTO, servletName,parameters);
+	}
+	
 	public void addVerificaCertificatiButton(Vector<DataElement> e, String servletName, List<Parameter> parameters) {
 		this.addAzioneButton(e, DataElementType.IMAGE, 
 				MessageFormat.format(CostantiControlStation.ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO, CostantiControlStation.LABEL_CERTIFICATI),
@@ -19771,4 +19784,5 @@ public class ConsoleHelper implements IConsoleHelper {
 		dati.addElement(de);
 		
 	}
+	
 }

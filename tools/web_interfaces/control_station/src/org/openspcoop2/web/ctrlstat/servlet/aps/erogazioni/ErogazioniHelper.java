@@ -30,6 +30,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
@@ -88,6 +90,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilit
 import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
@@ -101,6 +104,8 @@ import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementImage;
 import org.openspcoop2.web.lib.mvc.DataElementType;
+import org.openspcoop2.web.lib.mvc.GeneralData;
+import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
@@ -1281,6 +1286,14 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 							e.addElement(de);
 						}
 					}
+				}
+				
+				// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
+				if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
+					List<Parameter> listaParametriChange = new ArrayList<Parameter>();		
+					listaParametriChange.addAll(listParameters);
+					
+					this.addComandoResetCacheButton(e, labelServizio, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, listaParametriChange);
 				}
 				
 				// In Uso Button
@@ -3563,9 +3576,97 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		}
 		
 		datiPagina = this.addErogazioneToDati(datiPagina, tipoOp, asps, as, tipoProtocollo, serviceBinding, gestioneErogatori, gestioneFruitori, listaMappingErogazionePortaApplicativa, listaPorteApplicativeAssociate, listaMappingFruzionePortaDelegata, listaPorteDelegateAssociate, fruitore);
-
+		
 		this.pd.setDati(datiPagina);
 		this.pd.disableEditMode();
+	}
+	
+	public ActionForward prepareErogazioneChangeResetCache(ActionMapping mapping, GeneralData gd, Search ricerca, TipoOperazione tipoOp, AccordoServizioParteSpecifica asps, IDSoggetto idSoggettoFruitore) throws Exception {
+		
+		String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+		boolean gestioneFruitori = false;
+		boolean gestioneErogatori = false;
+		if(tipologia!=null) {
+			if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+				gestioneFruitori = true;
+			}
+			else if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
+				gestioneErogatori = true;
+			}
+		}
+		
+		IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
+		String tipoProtocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(asps.getTipoSoggettoErogatore());
+		
+		String tmpTitle = null;
+		if(gestioneFruitori) {
+			tmpTitle = this.getLabelServizioFruizione(tipoProtocollo, idSoggettoFruitore, idServizio);
+		}
+		else {
+			tmpTitle = this.getLabelServizioErogazione(tipoProtocollo, idServizio);
+		}
+						
+		List<MappingErogazionePortaApplicativa> listaMappingErogazionePortaApplicativa = new ArrayList<>();
+		List<PortaApplicativa> listaPorteApplicativeAssociate = new ArrayList<>();
+		if(gestioneErogatori) {
+			// lettura delle configurazioni associate
+			listaMappingErogazionePortaApplicativa = this.apsCore.mappingServiziPorteAppList(idServizio,asps.getId(), null);
+			for(MappingErogazionePortaApplicativa mappinErogazione : listaMappingErogazionePortaApplicativa) {
+				listaPorteApplicativeAssociate.add(this.porteApplicativeCore.getPortaApplicativa(mappinErogazione.getIdPortaApplicativa()));
+			}
+		}
+
+		List<MappingFruizionePortaDelegata> listaMappingFruzionePortaDelegata = new ArrayList<>();
+		List<PortaDelegata> listaPorteDelegateAssociate = new ArrayList<>();
+		Fruitore fruitore = null;
+		if(gestioneFruitori) {
+			// In questa modalità ci deve essere un fruitore indirizzato
+			for (Fruitore check : asps.getFruitoreList()) {
+				if(check.getTipo().equals(idSoggettoFruitore.getTipo()) && check.getNome().equals(idSoggettoFruitore.getNome())) {
+					fruitore = check;
+					break;
+				}
+			}
+			listaMappingFruzionePortaDelegata = this.apsCore.serviziFruitoriMappingList(fruitore.getId(), idSoggettoFruitore, idServizio, null);	
+			for(MappingFruizionePortaDelegata mappingFruizione : listaMappingFruzionePortaDelegata) {
+				listaPorteDelegateAssociate.add(this.porteDelegateCore.getPortaDelegata(mappingFruizione.getIdPortaDelegata()));
+			}
+		}
+		
+		this.makeMenu();
+		
+		// setto la barra del titolo
+		List<Parameter> lstParm = new ArrayList<Parameter>();
+
+		if(gestioneFruitori) {
+			lstParm.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_FRUIZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
+		}
+		else {
+			lstParm.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_EROGAZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
+		}
+		lstParm.add(new Parameter(tmpTitle, null));
+
+		// setto la barra del titolo
+		ServletUtils.setPageDataTitle(this.pd, lstParm );
+
+		// TODO Poli aggiungere procedura JMX
+		
+		this.pd.setMessage( tmpTitle + " eliminato dalla cache", MessageType.INFO);
+		
+		String userLogin = ServletUtils.getUserLoginFromSession(this.session);	
+		
+		// preparo lista
+		boolean [] permessi = AccordiServizioParteSpecificaUtilities.getPermessiUtente(this);
+		List<AccordoServizioParteSpecifica> listaAccordi = null;
+		if(this.apsCore.isVisioneOggettiGlobale(userLogin)){
+			listaAccordi = this.apsCore.soggettiServizioList(null, ricerca,permessi, gestioneFruitori, gestioneErogatori);
+		}else{
+			listaAccordi = this.apsCore.soggettiServizioList(userLogin, ricerca, permessi, gestioneFruitori, gestioneErogatori);
+		}
+		
+		this.prepareErogazioniList(ricerca, listaAccordi);
+		ServletUtils.setGeneralAndPageDataIntoSession(this.session, gd, this.pd);
+		return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, CostantiControlStation.TIPO_OPERAZIONE_RESET_CACHE_ELEMENTO);
 	}
 	
 	public void addDescrizioneVerificaCertificatoToDati(Vector<DataElement> dati, AccordoServizioParteSpecifica asps, IDSoggetto idSoggettoFruitore, String server, boolean registro, String aliasCertificato) throws Exception {

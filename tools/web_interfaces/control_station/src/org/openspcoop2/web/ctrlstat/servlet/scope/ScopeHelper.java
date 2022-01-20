@@ -71,7 +71,7 @@ public class ScopeHelper extends ConsoleHelper{
 	}
 
 	public Vector<DataElement> addScopeToDati(TipoOperazione tipoOP, Long scopeId, String nome, String descrizione, String tipologia,
-			String nomeEsterno, String contesto, Vector<DataElement> dati) {
+			String nomeEsterno, String contesto, Vector<DataElement> dati, String oldNomeScope) {
 		
 		DataElement de = new DataElement();
 		de.setLabel(ScopeCostanti.LABEL_SCOPE);
@@ -495,14 +495,13 @@ public class ScopeHelper extends ConsoleHelper{
 		de.setType(DataElementType.SUBTITLE);
 		e.addElement(de);
 		
-		// TODO 
-//					de = new DataElement();
-//					de.setType(DataElementType.IMAGE);
-//					DataElementInfo dInfoUtilizzo = new DataElementInfo(SoggettiCostanti.LABEL_SOGGETTO);
-//					dInfoUtilizzo.setBody("Il soggetto " + this.getLabelNomeSoggetto(protocollo, elem.getTipo(), elem.getNome()) + " gestisce...");
-//					de.setInfo(dInfoUtilizzo);
-//					de.setToolTip("Visualizza Info");
-//					e.addElement(de);
+		// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
+		if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
+			List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+			listaParametriChange.add(pId);
+			
+			this.addComandoResetCacheButton(e, scope.getNome(), ScopeCostanti.SERVLET_NAME_SCOPE_CHANGE, listaParametriChange);
+		}
 
 		// In Uso Button
 		this.addInUsoButton(e, scope.getNome(), scope.getNome(), InUsoType.SCOPE);

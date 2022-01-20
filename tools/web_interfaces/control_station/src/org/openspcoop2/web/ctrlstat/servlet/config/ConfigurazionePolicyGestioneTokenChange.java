@@ -42,10 +42,12 @@ import org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils;
 import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
+import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
@@ -95,6 +97,9 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 			}
 			boolean attributeAuthority = ConfigurazioneCostanti.isConfigurazioneAttributeAuthority(infoType);
 			
+			String resetElementoCacheS = confHelper.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
+			boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);
+			
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			
 			Properties mapId = attributeAuthority ?
@@ -131,6 +136,43 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 			
 			configurazioneBean.updateConfigurazione(configurazione);
 			ServletUtils.saveConfigurazioneBeanIntoSession(session, configurazioneBean, configurazioneBean.getId());
+			
+			// reset elemento dalla cache
+			if(resetElementoCache) {
+				// TODO Poli aggiungere procedura JMX
+				
+				pd.setMessage(genericProperties.getNome()  + " eliminato dalla cache", MessageType.INFO);
+				
+				// preparo lista
+				Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+				
+				int idLista = attributeAuthority ? Liste.CONFIGURAZIONE_GESTIONE_ATTRIBUTE_AUTHORITY : Liste.CONFIGURAZIONE_GESTIONE_POLICY_TOKEN;
+				
+				ricerca = confHelper.checkSearchParameters(idLista, ricerca);
+
+				List<String> tipologie = new ArrayList<>();
+				if(attributeAuthority) {
+					tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_ATTRIBUTE_AUTHORITY);
+				}
+				else {
+					tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);
+					tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN);
+				}
+				
+				List<GenericProperties> lista = confCore.gestorePolicyTokenList(idLista, tipologie, ricerca);
+				
+				confHelper.prepareGestorePolicyTokenList(ricerca, lista, idLista); 
+				
+				// reset di eventuali configurazioni salvate in sessione
+				ServletUtils.removeConfigurazioneBeanFromSession(session, configurazioneBean.getId());
+				
+				// salvo l'oggetto ricerca nella sessione
+				ServletUtils.setSearchObjectIntoSession(session, ricerca);
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				
+				// Forward control to the specified success URI
+				return ServletUtils.getStrutsForwardEditModeFinished(mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN, ForwardParams.CHANGE());
+			}
 			
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();

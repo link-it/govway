@@ -237,6 +237,9 @@ public final class SoggettiChange extends Action {
 			String servletCredenzialiAdd = SoggettiCostanti.SERVLET_NAME_SOGGETTI_CREDENZIALI_ADD;
 			
 			this.modificaOperativo = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_MODIFICA_OPERATIVO);
+			
+			String resetElementoCacheS = soggettiHelper.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
+			boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);
 	
 			// Preparo il menu
 			soggettiHelper.makeMenu();
@@ -580,6 +583,40 @@ public final class SoggettiChange extends Action {
 					appId = null;
 					apiKey = null;
 				}
+			}
+			
+			// reset elemento dalla cache
+			if(resetElementoCache) {
+				// TODO Poli aggiungere procedura JMX
+				
+				pd.setMessage(soggettiHelper.getLabelNomeSoggetto(this.protocollo, oldtipoprov , oldnomeprov) + " eliminato dalla cache", MessageType.INFO);
+				
+				
+				// preparo lista
+				Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+				
+				if(soggettiCore.isRegistroServiziLocale()){
+					List<Soggetto> listaSoggetti = null;
+					if(soggettiCore.isVisioneOggettiGlobale(userLogin)){
+						listaSoggetti = soggettiCore.soggettiRegistroList(null, ricerca);
+					}else{
+						listaSoggetti = soggettiCore.soggettiRegistroList(userLogin, ricerca);
+					}
+					soggettiHelper.prepareSoggettiList(listaSoggetti, ricerca);
+				}
+				else{
+					List<org.openspcoop2.core.config.Soggetto> listaSoggetti = null;
+					if(soggettiCore.isVisioneOggettiGlobale(userLogin)){
+						listaSoggetti = soggettiCore.soggettiList(null, ricerca);
+					}else{
+						listaSoggetti = soggettiCore.soggettiList(userLogin, ricerca);
+					}
+					soggettiHelper.prepareSoggettiConfigList(listaSoggetti, ricerca);
+				}
+				
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+
+				return ServletUtils.getStrutsForwardEditModeFinished(mapping, SoggettiCostanti.OBJECT_NAME_SOGGETTI, ForwardParams.CHANGE());
 			}
 			
 			boolean checkWizard = false;

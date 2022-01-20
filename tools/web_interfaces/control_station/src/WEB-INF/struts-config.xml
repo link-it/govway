@@ -533,6 +533,7 @@
             <forward name="accordiServizioParteComuneApiChangeForm" path="/jsplib/addElement.jsp"/>
             <forward name="accordiServizioParteComuneApiChangeOk" path="/jsplib/addElement.jsp"/>
             <forward name="accordiServizioParteComuneApiError" path="/jsplib/info.jsp"/>
+            <forward name="accordiServizioParteComuneApiResetCacheElementoOk" path="/jsplib/listElement.jsp"/>
         </action>
 		<action path="/accordiServizioParteComuneApiList" type="org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiList"
             scope="request" validate="true">
@@ -999,6 +1000,7 @@
             <forward name="aspsErogazioniChangeForm" path="/jsplib/addElement.jsp"/>
             <forward name="aspsErogazioniChangeOk" path="/jsplib/addElement.jsp"/>
             <forward name="aspsErogazioniError" path="/jsplib/info.jsp"/>
+            <forward name="aspsErogazioniResetCacheElementoOk" path="/jsplib/listElement.jsp"/>
         </action>
 		<action path="/aspsErogazioniList" type="org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniList"
             scope="request" validate="true">

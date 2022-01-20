@@ -40,10 +40,12 @@ import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
+import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
@@ -85,6 +87,8 @@ public final class RuoliChange extends Action {
 			String tipologia = ruoliHelper.getParameter(RuoliCostanti.PARAMETRO_RUOLO_TIPOLOGIA);
 			String nomeEsterno = ruoliHelper.getParameter(RuoliCostanti.PARAMETRO_RUOLO_NOME_ESTERNO);
 			String contesto = ruoliHelper.getParameter(RuoliCostanti.PARAMETRO_RUOLO_CONTESTO);
+			String resetElementoCacheS = ruoliHelper.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
+			boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);
 			
 			RuoliCore ruoliCore = new RuoliCore();
 
@@ -93,6 +97,29 @@ public final class RuoliChange extends Action {
 
 			// Prendo il ruolo
 			Ruolo ruolo  = ruoliCore.getRuolo(ruoloId);
+			
+			// reset elemento dalla cache
+			if(resetElementoCache) {
+				// TODO Poli aggiungere procedura JMX
+				
+				pd.setMessage(ruolo.getNome() + " eliminato dalla cache", MessageType.INFO);
+				
+				// preparo lista
+				Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+				
+				List<Ruolo> lista = null;
+				if(ruoliCore.isVisioneOggettiGlobale(userLogin)){
+					lista = ruoliCore.ruoliList(null, ricerca);
+				}else{
+					lista = ruoliCore.ruoliList(userLogin, ricerca);
+				}
+				
+				ruoliHelper.prepareRuoliList(ricerca, lista);
+				
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+
+				return ServletUtils.getStrutsForwardEditModeFinished(mapping, RuoliCostanti.OBJECT_NAME_RUOLI, ForwardParams.CHANGE());
+			}
 			
 			// Se nomehid = null, devo visualizzare la pagina per la
 			// modifica dati
@@ -123,7 +150,7 @@ public final class RuoliChange extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = ruoliHelper.addRuoloToDati(TipoOperazione.CHANGE, ruoloId, nome, descrizione, tipologia, nomeEsterno, contesto, dati);
+				dati = ruoliHelper.addRuoloToDati(TipoOperazione.CHANGE, ruoloId, nome, descrizione, tipologia, nomeEsterno, contesto, dati, ruolo.getNome());
 
 				pd.setDati(dati);
 
@@ -147,7 +174,7 @@ public final class RuoliChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = ruoliHelper.addRuoloToDati(TipoOperazione.CHANGE, ruoloId, nome, descrizione, tipologia, nomeEsterno, contesto, dati);
+				dati = ruoliHelper.addRuoloToDati(TipoOperazione.CHANGE, ruoloId, nome, descrizione, tipologia, nomeEsterno, contesto, dati, ruolo.getNome());
 
 				pd.setDati(dati);
 

@@ -124,110 +124,157 @@ visualizzaMetadati = vectorRiepilogo.size() > 1;
 			<% } %>	
 			
 			<% if(vectorImmagini.size() > 0){
+				String iconaComandiMenu = Costanti.ICONA_MENU_AZIONI_BUTTON;
+				String tipComandiMenu = " title=\"" + Costanti.ICONA_MENU_AZIONI_BUTTON_TOOLTIP + "\"" ;
+				String idDivIconMenu = "divIconMenu_"+numeroEntry;
+				String idIconMenu = "iconMenu_"+numeroEntry; 
+				String idSpanMenu = "spanIconMenu_"+numeroEntry;
+				String idContextMenu = "contextMenu_"+numeroEntry;
+				
 				%>
 				<div id="titolo_<%=numeroEntryS %>_info" class="titoloInfo">
-			<%
-				for(int idxLink =0; idxLink < vectorImmagini.size() ; idxLink ++ ){
-					DataElement de = (DataElement) vectorImmagini.elementAt(idxLink);
-					String deTip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
-					String classLink = "";
-					
-					if(de.getInfo() != null) {
-						DataElementInfo deInfo = de.getInfo();
-						String idDivIconInfo = "divIconInfo_"+numeroEntry;
-						String idIconInfo = "iconInfo_"+numeroEntry; 
-						String idSpanInfo = "spanIconInfoBoxList_"+numeroEntry;
-						
-						%>
-						<div class="iconInfoBoxList" id="<%=idDivIconInfo %>" <%=deTip %> >
-							<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
-		   					<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
-       						<span class="spanIconInfoBoxList" id="<%=idSpanInfo %>">
-								<i class="material-icons md-18" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
+				
+					<div class="iconInfoBoxList" id="<%=idDivIconMenu %>" <%=tipComandiMenu %> >
+    						<span class="icon-box" id="<%=idSpanMenu %>">
+								<i class="material-icons md-18" id="<%=idIconMenu %>"><%= iconaComandiMenu %></i>
 							</span>
-       					</div>
-						<script type="text/javascript">
-						// info
-				    	if($("#<%=idSpanInfo %>").length>0){
-				    		$("#<%=idSpanInfo %>").click(function(e){
-				    			var iconInfoBoxId = $(this).parent().attr('id');
-				    			var idx = iconInfoBoxId.substring(iconInfoBoxId.indexOf("_")+1);
-				    			console.log(idx);
-				    			if(idx) {
-				    				var label = $("#hidden_title_iconInfo_"+ idx).val();
-									var body = $("#hidden_body_iconInfo_"+ idx).val();
-									mostraDataElementInfoModal(label,body);
-				    			}
-				    			e.stopPropagation();
-							});
-				    	}
-						</script>
+   					</div>
+   					
+   					<% 
+					// creazione elementi hidden necessari per visualizzare le modali
+					for(int idxLink =0; idxLink < vectorImmagini.size() ; idxLink ++ ){
+						DataElement de = (DataElement) vectorImmagini.elementAt(idxLink);
+						String deTip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
+						String classLink = "";
 						
-						<%						
-					}
-					
-					if(de.getDialog() != null) {
-						Dialog dialog = de.getDialog();
-						String idDivIconUso = "divIconUso_"+numeroEntry;
-						String idIconUso = "iconUso_"+numeroEntry; 
-						String idSpanUso = "spanIconUsoBoxList_"+numeroEntry;
-						
-						BodyElement urlElement = dialog.getBody().remove(0);
-						
-						request.setAttribute("idFinestraModale_"+numeroEntry, de.getDialog());
-						
-						String identificativoFinestraModale = "idFinestraModale_" + numeroEntry;
+						// gestione link che visualizzano la finestra modale
+						if(de.getInfo() != null || de.getDialog() != null){
+							if(de.getInfo() != null) {
+								DataElementInfo deInfo = de.getInfo();
+								String idDivIconInfo = "divIconInfo_"+numeroEntry;
+								String idIconInfo = "iconInfo_"+numeroEntry; 
+								String idSpanInfo = "spanIconInfoBoxList_"+numeroEntry;
 						%>
-						<div class="iconUsoBoxList" id="<%=idDivIconUso %>" <%=deTip %> >
+						<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+	   					<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+                
+		                <%						
+							}
+							
+							if(de.getDialog() != null) {
+								Dialog dialog = de.getDialog();
+								String idDivIconUso = "divIconUso_"+numeroEntry;
+								String idIconUso = "iconUso_"+numeroEntry; 
+								String idSpanUso = "spanIconUsoBoxList_"+numeroEntry;
+								
+								BodyElement urlElement = dialog.getBody().remove(0);
+								
+								request.setAttribute("idFinestraModale_"+numeroEntry, de.getDialog());
+								
+								String identificativoFinestraModale = "idFinestraModale_" + numeroEntry;
+							%>
 							<input type="hidden" name="__i_hidden_title_<%= idIconUso %>" id="hidden_title_<%= idIconUso %>"  value="<%= urlElement.getUrl() %>"/>
-							<span class="spanIconUsoBoxList" id="<%=idSpanUso %>">
-								<i class="material-icons md-18" id="<%=idIconUso %>"><%= dialog.getIcona() %></i>
-							</span>
-       					</div>
-						<jsp:include page="/jsplib/info-uso-modal.jsp" flush="true">
-							<jsp:param name="idFinestraModale" value="<%=identificativoFinestraModale %>"/>
-						</jsp:include>
-						<script type="text/javascript">
-						// info
-				    	if($("#<%=idSpanUso %>").length>0){
-				    		$("#<%=idSpanUso %>").click(function(e){
-				    			var iconInfoBoxId = $(this).parent().attr('id');
-				    			var idx = iconInfoBoxId.substring(iconInfoBoxId.indexOf("_")+1);
-				    			console.log(idx);
-				    			if(idx) {
-				    				var url = $("#hidden_title_iconUso_"+ idx).val();
-				    				// chiamata al servizio
-				    				<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
-				    				
-				    				$.ajax({
-				    							url : url,
-				    							method: 'GET',
-				    							async : false,
-				    							success: function(data, textStatus, jqXHR){
-				    								// inserimento del valore nella text area
-								    				$("textarea[id^='idFinestraModale_<%=numeroEntryS %>_txtA']").val(data);
-								    				
-								    				<%=Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>
-								    				// apertura modale
-								    				var idToOpen = '#' + 'idFinestraModale_<%= numeroEntry %>';
-								    				$(idToOpen).dialog("open");
-				    							},
-				    							error: function(data, textStatus, jqXHR){
-				    								<%=Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>
-				    							}
-				    						}
-				    					);
-				    			}
-				    			e.stopPropagation();
-							});
-				    	}
-						</script>
-						<%	
+							<jsp:include page="/jsplib/info-uso-modal.jsp" flush="true">
+								<jsp:param name="idFinestraModale" value="<%=identificativoFinestraModale %>"/>
+							</jsp:include>
+							
+							<%	
+							}
+						} else { // link classico non sono necessarie risorse
+						}
 					}
-					%>
-				<% 		
-				}
-			%></div> <% 
+	                %>
+   					
+				<script type="text/javascript">
+					if($("#<%=idSpanMenu %>").length>0){
+						// create context menu
+			            var contextMenu_<%=numeroEntry %> = $('#<%=idSpanMenu %>').contextMenu();
+						
+			         	// set context menu button
+			            contextMenu_<%=numeroEntry %>.button = mouseButton.LEFT;
+						<% 
+							for(int idxLink =0; idxLink < vectorImmagini.size() ; idxLink ++ ){
+								DataElement de = (DataElement) vectorImmagini.elementAt(idxLink);
+								String deTip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
+								String classLink = "";
+								
+								
+								if(de.getInfo() != null || de.getDialog() != null){
+									
+									%>
+									// add third item with function
+						            contextMenu_<%=numeroEntry %>.menu().addItem('<%=de.getToolTip()%>', function () {
+							            <%
+										
+										if(de.getInfo() != null) {
+											%>
+						    				var labelM_<%=numeroEntry %> = $("#hidden_title_iconInfo_"+ <%= numeroEntry %>).val();
+											var bodyM_<%=numeroEntry %> = $("#hidden_body_iconInfo_"+ <%= numeroEntry %>).val();
+											mostraDataElementInfoModal(labelM_<%=numeroEntry %>,bodyM_<%=numeroEntry %>);
+							    			<%
+										}
+										
+										if(de.getDialog() != null) {
+											Dialog dialog = de.getDialog();
+											BodyElement urlElement = dialog.getBody().remove(0);
+											request.setAttribute("idFinestraModale_"+numeroEntry, de.getDialog());
+											String identificativoFinestraModale = "idFinestraModale_" + numeroEntry;
+											
+											%>
+											var urlD_<%= numeroEntry %> = $("#hidden_title_iconUso_"+ <%= numeroEntry %>).val();
+						    				// chiamata al servizio
+						    				<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
+						    				
+						    				$.ajax({
+					    							url : urlD_<%= numeroEntry %>,
+					    							method: 'GET',
+					    							async : false,
+					    							success: function(data, textStatus, jqXHR){
+					    								// inserimento del valore nella text area
+									    				$("textarea[id^='idFinestraModale_<%=numeroEntryS %>_txtA']").val(data);
+									    				
+									    				<%=Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>
+									    				// apertura modale
+									    				var idToOpen = '#' + 'idFinestraModale_<%= numeroEntry %>';
+									    				$(idToOpen).dialog("open");
+					    							},
+					    							error: function(data, textStatus, jqXHR){
+					    								<%=Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>
+					    							}
+					    						}
+					    					);
+							    			<%
+						                }
+										
+										%>
+						            });
+									<%
+									
+								} else {
+									
+									String deVisualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+									%>
+									contextMenu_<%=numeroEntry %>.menu().addItem('<%=de.getToolTip()%>', function () {
+										
+										<%= deVisualizzaAjaxStatus %>
+										
+										document.location = '<%= de.getUrl() %>';
+											
+									 });	
+									<%
+								}
+								
+							}
+						%>				                
+			             // generate context menu
+		             	contextMenu_<%=numeroEntry %>.init();	
+				                
+		                $("#<%=idSpanMenu %>").click(function(e){       
+			            	e.stopPropagation();
+						});
+					}
+				</script>
+			</div> <% 
 			}%>
 		</div>
 		<% 

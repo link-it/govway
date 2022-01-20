@@ -194,6 +194,7 @@ public class Costanti {
 	/** FUNZIONE ESEGUI / ANNULLA  CONFERMA **/
 	
 	public final static String PARAMETRO_ACTION_CONFIRM = "actionConfirm";
+	public final static String PARAMETRO_IS_POSTBACK = "isPostback";
 	
 	public final static String LABEL_MONITOR_BUTTON_OK = "Ok";
 	public final static String LABEL_MONITOR_BUTTON_CONFERMA = "Conferma";
@@ -293,6 +294,13 @@ public class Costanti {
 	public final static String ICON_COPY = "file_copy";
 	public final static String ICON_USO = "find_in_page";//"location_searching";
 	public final static String ICON_USO_INFO = INFO_BUTTON_ICON; //"info";
+	
+	public final static String ICONA_RESET_CACHE_ELEMENTO = "&#xE863;";
+	public final static String ICONA_RESET_CACHE_ELEMENTO_TOOLTIP = "Rimuovi dalla cache";
+	public final static String ICONA_RESET_CACHE_ELEMENTO_TOOLTIP_CON_PARAMETRO = "Rimuovi {0} dalla cache";
+	
+	public final static String ICONA_MENU_AZIONI_BUTTON = "&#xE5D4;";
+	public final static String ICONA_MENU_AZIONI_BUTTON_TOOLTIP = "Visualizza azioni disponibili";
 	
 	public static final int LUNGHEZZA_LABEL_TABS = 30;
 	public static final int LUNGHEZZA_RIGA_TESTO_TABELLA = 150;

@@ -147,6 +147,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			String multipleApiKey, String appId, String apiKey, 
 			boolean visualizzaModificaCertificato, boolean visualizzaAddCertificato, String servletCredenzialiList, List<Parameter> parametersServletCredenzialiList, Integer numeroCertificati, String servletCredenzialiAdd, int numeroProprieta) throws Exception {
 
+		
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 		
 		if(TipoOperazione.CHANGE.equals(tipoOp)){
@@ -1578,6 +1579,11 @@ public class SoggettiHelper extends ConnettoriHelper {
 			de.setToolTip(RuoliCostanti.LABEL_RUOLI); 
 			
 			e.addElement(de);
+		}
+		
+		// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
+		if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
+			this.addComandoResetCacheButton(e,this.getLabelNomeSoggetto(protocollo, elem.getTipo(), elem.getNome()), SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE, listaParametriChange);
 		}
 		
 		if(this.core.isSoggettiVerificaCertificati()) {

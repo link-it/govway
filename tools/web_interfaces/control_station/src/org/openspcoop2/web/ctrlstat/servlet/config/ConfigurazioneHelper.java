@@ -211,7 +211,6 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.mvc.dynamic.components.BaseComponent;
 import org.openspcoop2.web.lib.mvc.dynamic.components.Hidden;
-import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
 import org.openspcoop2.web.lib.users.dao.User;
 
 /**
@@ -16421,6 +16420,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			de.setType(DataElementType.SUBTITLE);
 			e.addElement(de);
+		}
+		
+		// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
+		if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
+			this.addComandoResetCacheButton(e,policy.getNome(), ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_CHANGE, listaParametriChange);
 		}
 		
 		// validazione certificati

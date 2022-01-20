@@ -1225,6 +1225,10 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "elenchi.visualizzaCountElementi");
 	}
 	
+	public boolean isElenchiAbilitaResetCacheSingoloElemento() throws UtilsException{
+		return this.readBooleanProperty(true, "elenchi.risultati.abilitaResetCacheSingoloElemento");
+	}
+	
 	public Boolean isElenchiRicercaConservaCriteri() throws UtilsException{
 		return this.readBooleanProperty(true, "elenchi.ricerca.conservaCriteri");
 	}
@@ -1280,7 +1284,6 @@ public class ConsoleProperties {
 	public boolean isSetSearchAfterAdd() throws UtilsException{
 		return this.readBooleanProperty(true, "console.setSearchAfterAdd");
 	}
-
 	
 	/* ---------------- Gestione govwayConsole centralizzata ----------------------- */
 

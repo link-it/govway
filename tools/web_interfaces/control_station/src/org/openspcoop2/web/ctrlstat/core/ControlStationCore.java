@@ -1113,6 +1113,7 @@ public class ControlStationCore {
 	private Integer selectListSoggettiOperativi_dimensioneMassimaLabel = null;
 	private Integer viewLunghezzaMassimaInformazione = null;
 	private boolean isSetSearchAfterAdd = false;
+	private boolean elenchiVisualizzaComandoResetCacheSingoloElemento = false;
 	
 	public boolean isShowCorrelazioneAsincronaInAccordi() {
 		return this.showCorrelazioneAsincronaInAccordi;
@@ -1234,7 +1235,9 @@ public class ControlStationCore {
 	public boolean showCodaMessage() {
 		return this.isShowJ2eeOptions() || this.isIntegrationManagerEnabled();
 	}
-
+	public boolean isElenchiVisualizzaComandoResetCacheSingoloElemento() {
+		return this.elenchiVisualizzaComandoResetCacheSingoloElemento;
+	}
 
 	/** Motori di Sincronizzazione */
 	private boolean sincronizzazionePddEngineEnabled;
@@ -2339,6 +2342,7 @@ public class ControlStationCore {
 		this.selectListSoggettiOperativi_dimensioneMassimaLabel = core.selectListSoggettiOperativi_dimensioneMassimaLabel;
 		this.viewLunghezzaMassimaInformazione = core.viewLunghezzaMassimaInformazione;
 		this.isSetSearchAfterAdd = core.isSetSearchAfterAdd;
+		this.elenchiVisualizzaComandoResetCacheSingoloElemento = core.elenchiVisualizzaComandoResetCacheSingoloElemento;
 
 		/** Motori di Sincronizzazione */
 		this.sincronizzazionePddEngineEnabled = core.sincronizzazionePddEngineEnabled;
@@ -2743,6 +2747,7 @@ public class ControlStationCore {
 			this.selectListSoggettiOperativi_dimensioneMassimaLabel = consoleProperties.getLunghezzaMassimaLabelSoggettiOperativiMenuUtente();
 			this.viewLunghezzaMassimaInformazione = consoleProperties.getLunghezzaMassimaInformazioneView();
 			this.isSetSearchAfterAdd = consoleProperties.isSetSearchAfterAdd();
+			this.elenchiVisualizzaComandoResetCacheSingoloElemento = consoleProperties.isElenchiAbilitaResetCacheSingoloElemento();
 			
 			// Gestione govwayConsole centralizzata
 			if(this.singlePdD == false){

@@ -20,6 +20,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.ruoli;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -67,7 +68,7 @@ public class RuoliHelper extends ConsoleHelper{
 	}
 
 	public Vector<DataElement> addRuoloToDati(TipoOperazione tipoOP, Long ruoloId, String nome, String descrizione, String tipologia,
-			String nomeEsterno, String contesto, Vector<DataElement> dati) {
+			String nomeEsterno, String contesto, Vector<DataElement> dati, String oldNomeRuolo) {
 		
 		DataElement de = new DataElement();
 		de.setLabel(RuoliCostanti.LABEL_RUOLO);
@@ -509,14 +510,13 @@ public class RuoliHelper extends ConsoleHelper{
 		de.setType(DataElementType.SUBTITLE);
 		e.addElement(de);
 		
-		// TODO 
-//			de = new DataElement();
-//			de.setType(DataElementType.IMAGE);
-//			DataElementInfo dInfoUtilizzo = new DataElementInfo(SoggettiCostanti.LABEL_SOGGETTO);
-//			dInfoUtilizzo.setBody("Il soggetto " + this.getLabelNomeSoggetto(protocollo, elem.getTipo(), elem.getNome()) + " gestisce...");
-//			de.setInfo(dInfoUtilizzo);
-//			de.setToolTip("Visualizza Info");
-//			e.addElement(de);
+		// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
+		if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
+			List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+			listaParametriChange.add(pId);
+			
+			this.addComandoResetCacheButton(e, ruolo.getNome(), RuoliCostanti.SERVLET_NAME_RUOLI_CHANGE, listaParametriChange);
+		}
 		
 		// In Uso Button
 		this.addInUsoButton(e, ruolo.getNome(), ruolo.getNome(), InUsoType.RUOLO);

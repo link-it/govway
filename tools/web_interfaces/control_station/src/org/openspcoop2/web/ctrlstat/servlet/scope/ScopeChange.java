@@ -36,14 +36,18 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.registry.Scope;
+import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.ScopeContesto;
 //import org.openspcoop2.core.registry.constants.ScopeTipologia;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
+import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
@@ -84,6 +88,8 @@ public final class ScopeChange extends Action {
 			String tipologia = scopeHelper.getParameter(ScopeCostanti.PARAMETRO_SCOPE_TIPOLOGIA);
 			String nomeEsterno = scopeHelper.getParameter(ScopeCostanti.PARAMETRO_SCOPE_NOME_ESTERNO);
 			String contesto = scopeHelper.getParameter(ScopeCostanti.PARAMETRO_SCOPE_CONTESTO);
+			String resetElementoCacheS = scopeHelper.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
+			boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);
 			
 			ScopeCore scopeCore = new ScopeCore();
 
@@ -92,6 +98,29 @@ public final class ScopeChange extends Action {
 
 			// Prendo il scope
 			Scope scope  = scopeCore.getScope(scopeId);
+			
+			// reset elemento dalla cache
+			if(resetElementoCache) {
+				// TODO Poli aggiungere procedura JMX
+				
+				pd.setMessage(scope.getNome() + " eliminato dalla cache", MessageType.INFO);
+				
+				// preparo lista
+				Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+				
+				List<Scope> lista = null;
+				if(scopeCore.isVisioneOggettiGlobale(userLogin)){
+					lista = scopeCore.scopeList(null, ricerca);
+				}else{
+					lista = scopeCore.scopeList(userLogin, ricerca);
+				}
+				
+				scopeHelper.prepareScopeList(ricerca, lista);
+				
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+
+				return ServletUtils.getStrutsForwardEditModeFinished(mapping, ScopeCostanti.OBJECT_NAME_SCOPE , ForwardParams.CHANGE());
+			}
 			
 			// Se nomehid = null, devo visualizzare la pagina per la
 			// modifica dati
@@ -122,7 +151,7 @@ public final class ScopeChange extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = scopeHelper.addScopeToDati(TipoOperazione.CHANGE, scopeId, nome, descrizione, tipologia, nomeEsterno, contesto, dati);
+				dati = scopeHelper.addScopeToDati(TipoOperazione.CHANGE, scopeId, nome, descrizione, tipologia, nomeEsterno, contesto, dati, scope.getNome());
 
 				pd.setDati(dati);
 
@@ -146,7 +175,7 @@ public final class ScopeChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = scopeHelper.addScopeToDati(TipoOperazione.CHANGE, scopeId, nome, descrizione, tipologia, nomeEsterno, contesto, dati);
+				dati = scopeHelper.addScopeToDati(TipoOperazione.CHANGE, scopeId, nome, descrizione, tipologia, nomeEsterno, contesto, dati, scope.getNome());
 
 				pd.setDati(dati);
 

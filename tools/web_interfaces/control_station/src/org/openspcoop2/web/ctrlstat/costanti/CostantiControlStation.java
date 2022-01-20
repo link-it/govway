@@ -43,6 +43,7 @@ import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
 import org.openspcoop2.pdd.core.integrazione.TipoIntegrazione;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.web.lib.mvc.Costanti;
+import org.openspcoop2.web.lib.mvc.ForwardParams;
 
 /**
  * CostantiControlStation
@@ -123,6 +124,9 @@ public class CostantiControlStation {
 	public final static String SESSION_PARAMETRO_SAME_DB_WEBUI = "sameDBWebUI";
 	public final static String SESSION_PARAMETRO_TIPO_DB = "tipoDB";
 	public final static String SESSION_PARAMETRO_OLD_CONFIGURAZIONE_PROPERTIES_PREFIX = Costanti.SESSION_PARAMETRO_OLD_CONFIGURAZIONE_PROPERTIES_PREFIX;
+	
+	/** STRUTS FORWARD */
+	public final static ForwardParams TIPO_OPERAZIONE_RESET_CACHE_ELEMENTO = ForwardParams.OTHER("ResetCacheElemento");
 	
 	
 	/** LABEL GENERALI */
@@ -1157,6 +1161,9 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_PORTE_METADATI_GRUPPO = "metadatiGruppo";
 	public final static String PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO = "mdG_";
 	
+	
+	public final static String PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE = "rmElFromCache";
+	
 	/** PARAMETRI MESSAGE PAGE **/
 	
 	public static final String PARAMETER_MESSAGE_TEXT = Costanti.PARAMETER_MESSAGE_TEXT;
@@ -1759,6 +1766,10 @@ public class CostantiControlStation {
 	
 	public final static String ICONA_MODIFICA_TOGGLE_ON = "toggle_on";
 	public final static String ICONA_MODIFICA_TOGGLE_OFF = "toggle_off";
+	
+	public final static String ICONA_RESET_CACHE_ELEMENTO = Costanti.ICONA_RESET_CACHE_ELEMENTO;
+	public final static String ICONA_RESET_CACHE_ELEMENTO_TOOLTIP = Costanti.ICONA_RESET_CACHE_ELEMENTO_TOOLTIP;
+	public final static String ICONA_RESET_CACHE_ELEMENTO_TOOLTIP_CON_PARAMETRO = Costanti.ICONA_RESET_CACHE_ELEMENTO_TOOLTIP_CON_PARAMETRO;
 	
 	// Indica il numero delle possibili classi CSS per i tag dei gruppi, modificare questo valore se si vuole modificare il numero delle classi disponibili
 	public final static Integer NUMERO_GRUPPI_CSS = Costanti.NUMERO_GRUPPI_CSS;
