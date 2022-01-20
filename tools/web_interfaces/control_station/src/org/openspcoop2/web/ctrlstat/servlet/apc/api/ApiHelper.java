@@ -69,7 +69,6 @@ import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementImage;
 import org.openspcoop2.web.lib.mvc.DataElementType;
-import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -231,7 +230,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			
 			List<String> labelLst = new ArrayList<>();
 			labelLst.add("");//AccordiServizioParteComuneCostanti.LABEL_APC_STATO); // colonna stato
-			labelLst.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
+			labelLst.add(termine); // AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
 			
 			String [] labels = labelLst.toArray(new String[labelLst.size()]);
 			this.pd.setLabels(labels);

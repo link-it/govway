@@ -18820,7 +18820,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				CostantiControlStation.ICONA_VERIFICA_CERTIFICATI, servletName,parameters);
 	}
 	
-	private void addAzioneButton(Vector<DataElement> e, DataElementType deType, String tooltip, String icon, String servletName, List<Parameter> parameters) {
+	protected void addAzioneButton(Vector<DataElement> e, DataElementType deType, String tooltip, String icon, String servletName, List<Parameter> parameters) {
 		DataElement de = new DataElement();
 		de.setType(deType);
 		de.setToolTip(tooltip);

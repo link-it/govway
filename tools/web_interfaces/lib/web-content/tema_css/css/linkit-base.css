@@ -1681,7 +1681,8 @@ div.txtA_div_propDialog {
 .entryRuoli,
 .entryScope,
 .entryTokenPolicy,
-.entryAttributeAuthority {
+.entryAttributeAuthority,
+.entryAllarmi {
 	cursor: pointer;
 	padding: 16px;
 }
@@ -1694,7 +1695,8 @@ div.txtA_div_propDialog {
 .entryRuoli .titoloEntry,
 .entryScope .titoloEntry,
 .entryTokenPolicy .titoloEntry,
-.entryAttributeAuthority .titoloEntry {
+.entryAttributeAuthority .titoloEntry,
+.entryAllarmi .titoloEntry {
 	padding: 4px 4px 4px 0px;
     font-weight: bold;
     font-size: 16px;
@@ -1708,21 +1710,24 @@ div.txtA_div_propDialog {
 .entryRuoli .metadatiEntry,
 .entryScope .metadatiEntry,
 .entryTokenPolicy .metadatiEntry,
-.entryAttributeAuthority .metadatiEntry {
+.entryAttributeAuthority .metadatiEntry,
+.entryAllarmi .metadatiEntry {
 	padding: 4px 4px 4px 0px;
 	color: ${body.secondary.color};
 }
 
 .entryErogazione .titoloTags,
 .entryFruizione .titoloTags,
-.entryApi .titoloTags {
+.entryApi .titoloTags,
+.entryAllarmi .titoloTags {
 	display: inline-flex;
 }
 
 .entryApplicativi .titoloRuoli,
 .entrySoggetti .titoloRuoli,
 .entryRuoli .titoloRuoli,
-.entryScope .titoloRuoli {
+.entryScope .titoloRuoli,
+.entryAllarmi .titoloRuoli {
 	display: inline-flex;
 	vertical-align: middle;
 }
@@ -1735,7 +1740,8 @@ div.txtA_div_propDialog {
 .entryErogazione .titoloInfo,
 .entryFruizione .titoloInfo,
 .entryTokenPolicy .titoloInfo,
-.entryAttributeAuthority .titoloInfo {
+.entryAttributeAuthority .titoloInfo,
+.entryAllarmi .titoloInfo {
 	display: inline-flex;
 	vertical-align: middle;
 	float: right;
@@ -2364,6 +2370,8 @@ div.txtA_div_propDialogInfoUso {
 }
 .context-menu ul li a:hover {
 	background-color: ${table.row.hover.background.color};
+	font-weight: bold;
+	padding-right: 16px;
 /*   background-color: rgba(0, 0, 0, 0.05); */
 /*   color: #2c3e50; */
 }
@@ -2377,6 +2385,8 @@ div.txtA_div_propDialogInfoUso {
 }
 .context-menu ul li a .material-icons:hover {
 	background-color: ${table.row.hover.background.color};
+	font-weight: bold;
+	padding-right: 16px;
 /*   background-color: rgba(0, 0, 0, 0.05); */
 /*   color: #2c3e50; */
 }
@@ -2390,6 +2400,8 @@ div.txtA_div_propDialogInfoUso {
 }
 .context-menu ul li a [class^=fa]:hover {
   background-color: ${table.row.hover.background.color};
+  font-weight: bold;
+  padding-right: 16px;
 /*   background-color: rgba(0, 0, 0, 0.05); */
 /*   color: #2c3e50; */
 }

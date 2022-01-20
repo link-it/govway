@@ -237,6 +237,10 @@ if (hidden!=null && !hidden.isEmpty()) {
 								<jsp:include page="/jsp/list/attributeAuthority.jsp" flush="true">
 									<jsp:param name="numeroEntry" value="<%=i %>"/>
 								</jsp:include>
+							<% } else if(customListViewName.equals("allarmi")){ %>
+								<jsp:include page="/jsp/list/allarmi.jsp" flush="true">
+								<jsp:param name="numeroEntry" value="<%=i %>"/>
+							</jsp:include>
 							<% } %>							
 					 	 </tr><%
 					}

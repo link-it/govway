@@ -508,6 +508,7 @@ public class ConfigurazioneCostanti {
 	/* NOME VISTA CUSTOM */
 	public final static String CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_NOME_VISTA_CUSTOM_LISTA_TOKEN_POLICIY = "tokenPolicy";
 	public final static String CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_NOME_VISTA_CUSTOM_LISTA_ATTRIBUTE_AUTHORITY = "attributeAuthority";
+	public final static String CONFIGURAZIONE_ALLARMI_NOME_VISTA_CUSTOM_LISTA = "allarmi";
 
 	/* LABEL GENERALI */
 	
@@ -2479,6 +2480,15 @@ public class ConfigurazioneCostanti {
 	public final static String MESSAGE_METADATI_TOKEN_POLICY_SOLO_TIPO = "Tipo: {0}";
 	public final static String MESSAGE_METADATI_TOKEN_POLICY = "Tipo: {0}, Descrizione: {1}";
 	public final static String MESSAGE_METADATI_ATTRIBUTE_AUTHORITY = "Descrizione: {0}";
+	
+	public final static String MESSAGE_METADATI_ALLARMI_LIST_MODALITA = "Modalit&agrave;: {0}";
+	public final static String MESSAGE_METADATI_ALLARMI_LIST_MODALITA_DESCRIZIONE = "Modalit&agrave;: {0}, Descrizione: {1}";
+	
+	/** ICONE */
+	
+	public final static String ICONA_VISUALIZZA_RUNTIME_ALLARME = Costanti.ICON_USO;
+	public final static String ICONA_VISUALIZZA_RUNTIME_ALLARME_TOOLTIP = "Visualizza Runtime";
+	
 }
 
 	

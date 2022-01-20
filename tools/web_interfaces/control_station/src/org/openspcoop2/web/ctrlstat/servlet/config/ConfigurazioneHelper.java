@@ -171,6 +171,7 @@ import org.openspcoop2.protocol.sdk.archive.ExportMode;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.resources.MapReader;
@@ -187,6 +188,7 @@ import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.servlet.ApiKeyState;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
@@ -18527,6 +18529,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 			
+			this.pd.setCustomListViewName(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARMI_NOME_VISTA_CUSTOM_LISTA);
+			
 			
 			List<Parameter> lstParamPorta = null;
 			if(ruoloPorta!=null) {
@@ -18570,12 +18574,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// setto le label delle colonne	
 			List<String> lstLabels = new ArrayList<>();
 			//lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO);
-			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STATO);
-			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA);
+//			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STATO);
+//			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA);
 			//lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPO);
-			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ALIAS);
-			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESCRIZIONE);
-			lstLabels.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME);
+//			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ALIAS);
+//			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESCRIZIONE);
+//			lstLabels.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME);
+			
+			// label vista custom
+			lstLabels.add("");//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STATO); // colonna stato
+			lstLabels.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI);
+			
 			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
 
 			// preparo i dati
@@ -18584,131 +18593,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if (lista != null) {
 				Iterator<ConfigurazioneAllarmeBean> it = lista.iterator();
 				while (it.hasNext()) {
-					ConfigurazioneAllarmeBean allarme = it.next();
-					
-					Parameter pId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME, allarme.getId() + "");
-					List<Parameter> lstParamEntry = new ArrayList<Parameter>();
-					lstParamEntry.add(pId);
-					if(lstParamSession.size() > 0) {
-						lstParamEntry.addAll(lstParamSession);
-					}
-					
-					Vector<DataElement> e = new Vector<DataElement>();
-					
-					// Abilitato
-					DataElement de = new DataElement();
-					de.setWidthPx(10);
-					de.setType(DataElementType.CHECKBOX);
-					if(allarme.getEnabled() == 1){
-						if(this.confCore.isShowAllarmiElenchiStatiAllarmi()) {
-							if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK) {
-								de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
-								de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
-								de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
-							} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_ERROR) {
-								de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
-								de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
-								de.setSelected(CheckboxStatusType.CONFIG_ERROR);
-							} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_WARNING) {
-								de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
-								de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
-								de.setSelected(CheckboxStatusType.CONFIG_WARNING);
-							}
-						}
-						else {
-							de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
-							de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
-							de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
-						}
-					}
-					else{
-						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
-						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
-						de.setSelected(CheckboxStatusType.CONFIG_DISABLE);
-					}
-					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntry.toArray(new Parameter[lstParamEntry.size()]));
-					e.addElement(de);
-					
-					// Stato
-//					de = new DataElement();
-//					
-//					if(allarme.getEnabled() == 1) {
-//						if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK) {
-//							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
-//							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
-//						} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_ERROR) {
-//							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
-//							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
-//						} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_WARNING) {
-//							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
-//							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
-//						}
-//					} else {
-//						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
-//						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
-//					}
-//					
-//					e.addElement(de);
-					
-//					// Tipo
-//					de = new DataElement();
-//					de.setValue(allarme.getTipo());
-//					e.addElement(de);
-					
-					// TipoAllarme
-					
-					de = new DataElement();
-					de.setWidthPx(24);
-					de.setType(DataElementType.IMAGE);
-					DataElementImage imageUp = new DataElementImage();
-					String mode = TipoAllarme.ATTIVO.equals(allarme.getTipoAllarme()) ? ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_ATTIVA : ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_PASSIVA;
-					if(TipoAllarme.ATTIVO.equals(allarme.getTipoAllarme())) {
-						imageUp.setImage(CostantiControlStation.ICONA_ALARM_ACTIVE);
-						imageUp.setToolTip(mode);
-					}
-					else {
-						imageUp.setImage(CostantiControlStation.ICONA_ALARM_PASSIVE);
-						imageUp.setToolTip(mode);
-					}
-					de.addImage(imageUp);
-					de.allineaTdAlCentro();
-					de.setValue(mode);
-					e.addElement(de);
-					
-					// Nome 
-					de = new DataElement();
-					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntry.toArray(new Parameter[lstParamEntry.size()]));
-					de.setValue(allarme.getAlias());
-					de.setIdToRemove(""+allarme.getId());
-					//de.setToolTip(allarme.getNome());
-					de.setToolTip(allarme.getAlias());
-					e.addElement(de);
-					
-					// Descrizione
-					de = new DataElement();
-					de.setValue(allarme.getDescrizioneAbbr());
-					de.setToolTip(allarme.getDescrizione()); 
-					e.addElement(de);
-					
-					// Runtime
-					boolean isActive = allarme.getEnabled() == 1 && TipoAllarme.ATTIVO.equals(allarme.getTipoAllarme());
-					de = new DataElement();
-					if(isActive){
-						de.setValue("Visualizza");
-					}
-					else{
-						de.setValue("-");
-					}
-					de.allineaTdAlCentro();
-					de.setWidthPx(60);
-					if(isActive){
-						Parameter pState = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE, true+"");
-						List<Parameter> lstParamEntryState = new ArrayList<Parameter>();
-						lstParamEntryState.addAll(lstParamEntry);
-						lstParamEntryState.add(pState);
-						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntryState.toArray(new Parameter[lstParamEntryState.size()]));
-					}
-					e.addElement(de);
+					Vector<DataElement> e = creaEntryAllarmeCustom(lstParamSession, it);
 										
 					dati.addElement(e);
 				}
@@ -18747,6 +18632,210 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
+	}
+	
+	public Vector<DataElement> creaEntryAllarme(List<Parameter> lstParamSession, Iterator<ConfigurazioneAllarmeBean> it)
+			throws UtilsException {
+		ConfigurazioneAllarmeBean allarme = it.next();
+		
+		Parameter pId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME, allarme.getId() + "");
+		List<Parameter> lstParamEntry = new ArrayList<Parameter>();
+		lstParamEntry.add(pId);
+		if(lstParamSession.size() > 0) {
+			lstParamEntry.addAll(lstParamSession);
+		}
+		
+		Vector<DataElement> e = new Vector<DataElement>();
+		
+		// Abilitato
+		DataElement de = new DataElement();
+		de.setWidthPx(10);
+		de.setType(DataElementType.CHECKBOX);
+		if(allarme.getEnabled() == 1){
+			if(this.confCore.isShowAllarmiElenchiStatiAllarmi()) {
+				if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK) {
+					de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
+					de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
+					de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
+				} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_ERROR) {
+					de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
+					de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
+					de.setSelected(CheckboxStatusType.CONFIG_ERROR);
+				} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_WARNING) {
+					de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
+					de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
+					de.setSelected(CheckboxStatusType.CONFIG_WARNING);
+				}
+			}
+			else {
+				de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
+				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
+				de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
+			}
+		}
+		else{
+			de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+			de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+			de.setSelected(CheckboxStatusType.CONFIG_DISABLE);
+		}
+		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntry.toArray(new Parameter[lstParamEntry.size()]));
+		e.addElement(de);
+		
+		// Stato
+//					de = new DataElement();
+//					
+//					if(allarme.getEnabled() == 1) {
+//						if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK) {
+//							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
+//							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
+//						} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_ERROR) {
+//							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
+//							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
+//						} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_WARNING) {
+//							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
+//							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
+//						}
+//					} else {
+//						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+//						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+//					}
+//					
+//					e.addElement(de);
+		
+//					// Tipo
+//					de = new DataElement();
+//					de.setValue(allarme.getTipo());
+//					e.addElement(de);
+		
+		// TipoAllarme
+		
+		de = new DataElement();
+		de.setWidthPx(24);
+		de.setType(DataElementType.IMAGE);
+		DataElementImage imageUp = new DataElementImage();
+		String mode = TipoAllarme.ATTIVO.equals(allarme.getTipoAllarme()) ? ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_ATTIVA : ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_PASSIVA;
+		if(TipoAllarme.ATTIVO.equals(allarme.getTipoAllarme())) {
+			imageUp.setImage(CostantiControlStation.ICONA_ALARM_ACTIVE);
+			imageUp.setToolTip(mode);
+		}
+		else {
+			imageUp.setImage(CostantiControlStation.ICONA_ALARM_PASSIVE);
+			imageUp.setToolTip(mode);
+		}
+		de.addImage(imageUp);
+		de.allineaTdAlCentro();
+		de.setValue(mode);
+		e.addElement(de);
+		
+		// Nome 
+		de = new DataElement();
+		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntry.toArray(new Parameter[lstParamEntry.size()]));
+		de.setValue(allarme.getAlias());
+		de.setIdToRemove(""+allarme.getId());
+		//de.setToolTip(allarme.getNome());
+		de.setToolTip(allarme.getAlias());
+		e.addElement(de);
+		
+		// Descrizione
+		de = new DataElement();
+		de.setValue(allarme.getDescrizioneAbbr());
+		de.setToolTip(allarme.getDescrizione()); 
+		e.addElement(de);
+		
+		// Runtime
+		boolean isActive = allarme.getEnabled() == 1 && TipoAllarme.ATTIVO.equals(allarme.getTipoAllarme());
+		de = new DataElement();
+		if(isActive){
+			de.setValue("Visualizza");
+		}
+		else{
+			de.setValue("-");
+		}
+		de.allineaTdAlCentro();
+		de.setWidthPx(60);
+		if(isActive){
+			Parameter pState = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE, true+"");
+			List<Parameter> lstParamEntryState = new ArrayList<Parameter>();
+			lstParamEntryState.addAll(lstParamEntry);
+			lstParamEntryState.add(pState);
+			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntryState.toArray(new Parameter[lstParamEntryState.size()]));
+		}
+		e.addElement(de);
+		return e;
+	}
+	
+	private Vector<DataElement> creaEntryAllarmeCustom(List<Parameter> lstParamSession, Iterator<ConfigurazioneAllarmeBean> it) throws UtilsException {
+		ConfigurazioneAllarmeBean allarme = it.next();
+		
+		Parameter pId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME, allarme.getId() + "");
+		List<Parameter> lstParamEntry = new ArrayList<Parameter>();
+		lstParamEntry.add(pId);
+		if(lstParamSession.size() > 0) {
+			lstParamEntry.addAll(lstParamSession);
+		}
+		
+		Vector<DataElement> e = new Vector<DataElement>();
+		
+		// Riga 1 Titolo
+		DataElement de = new DataElement();
+		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntry.toArray(new Parameter[lstParamEntry.size()]));
+		de.setValue(allarme.getAlias());
+		de.setIdToRemove(""+allarme.getId());
+		de.setType(DataElementType.TITLE);
+		e.addElement(de);
+		
+		// Riga2 : Modalita' + descrizione
+		de = new DataElement();
+		String mode = TipoAllarme.ATTIVO.equals(allarme.getTipoAllarme()) ? ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_ATTIVA : ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_PASSIVA;
+		String descrAbbr = allarme.getDescrizioneAbbr();
+		if(StringUtils.isNotBlank(descrAbbr)) {
+			de.setValue(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_ALLARMI_LIST_MODALITA_DESCRIZIONE, mode, descrAbbr));
+		} else {
+			de.setValue(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_ALLARMI_LIST_MODALITA, mode));
+		}
+		de.setType(DataElementType.SUBTITLE);
+		e.addElement(de);
+		
+		// Abilitato
+		de = new DataElement();
+		de.setWidthPx(16);
+		de.setType(DataElementType.CHECKBOX);
+		if(allarme.getEnabled() == 1){
+			if(this.confCore.isShowAllarmiElenchiStatiAllarmi()) {
+				if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK) {
+					de.setStatusType(CheckboxStatusType.CONFIG_ENABLE);
+					de.setStatusToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
+				} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_ERROR) {
+					de.setStatusType(CheckboxStatusType.CONFIG_ERROR);
+					de.setStatusToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
+				} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_WARNING) {
+					de.setStatusType(CheckboxStatusType.CONFIG_WARNING);
+					de.setStatusToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
+				}
+			}
+			else {
+				de.setStatusType(CheckboxStatusType.CONFIG_ENABLE);
+				de.setStatusToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
+			}
+		}
+		else{
+			de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
+			de.setStatusToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+		}
+		e.addElement(de);
+		
+		// Runtime
+		boolean isActive = allarme.getEnabled() == 1 && TipoAllarme.ATTIVO.equals(allarme.getTipoAllarme());
+		de = new DataElement();
+		if(isActive){
+			Parameter pState = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE, true+"");
+			List<Parameter> lstParamEntryState = new ArrayList<Parameter>();
+			lstParamEntryState.addAll(lstParamEntry);
+			lstParamEntryState.add(pState);
+			this.addVisualizzaRuntimeButton(e, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntryState);
+		}
+		
+		return e;
 	}
 	
 	public List<Parameter> getTitleListAllarmi(RuoloPorta ruoloPorta, String nomePorta, ServiceBinding serviceBinding, String nomeOggetto) throws Exception{
@@ -18826,6 +18915,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		return lstParamPorta;
 	}
+	
+	
 	
 	public boolean allarmeCheckData(StringBuilder sbParsingError, TipoOperazione tipoOp, ConfigurazioneAllarmeBean oldAllarme, ConfigurazioneAllarmeBean allarme, int numeroPluginRegistrati
 			, List<org.openspcoop2.monitor.sdk.parameters.Parameter<?>> parameters) throws Exception {
@@ -23391,5 +23482,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 		
 		return dati;
+	}
+	
+	public void addVisualizzaRuntimeButton(Vector<DataElement> e, String servletName, List<Parameter> parameters) {
+		this.addAzioneButton(e, DataElementType.IMAGE, 
+				ConfigurazioneCostanti.ICONA_VISUALIZZA_RUNTIME_ALLARME_TOOLTIP,
+				ConfigurazioneCostanti.ICONA_VISUALIZZA_RUNTIME_ALLARME, servletName,parameters);
 	}
 }
