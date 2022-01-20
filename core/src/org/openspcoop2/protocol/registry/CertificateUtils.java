@@ -20,6 +20,7 @@
 package org.openspcoop2.protocol.registry;
 
 import java.io.File;
+import java.io.InputStream;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import java.util.List;
 
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.StatoCheck;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.CRLCertstore;
 import org.openspcoop2.utils.certificate.Certificate;
@@ -111,14 +113,23 @@ public class CertificateUtils {
 	}
 	public static String toStringTrustStore(KeystoreParams params,
 			String separator, String newLine) {
-		return _toString(false, null, params.getCrls(),
+		return _toString(false, params.getKeyAlias(), params.getCrls(),
 				params.getPath(), params.getType(), 
 				separator, newLine);
 	}
 	public static String toStringTrustStore(String storePath, String storeType,
 			String trustCRL,
 			String separator, String newLine) {
-		return _toString(false, null, trustCRL,
+		return toStringTrustStore(storePath, storeType,
+				trustCRL,
+				null,
+				separator, newLine);
+	}
+	public static String toStringTrustStore(String storePath, String storeType,
+			String trustCRL,
+			String certAlias,
+			String separator, String newLine) {
+		return _toString(false, certAlias, trustCRL,
 				storePath, storeType, 
 				separator, newLine);
 	}
@@ -144,9 +155,14 @@ public class CertificateUtils {
 			sb.append(trustCRL);
 		}
 		
-		if(keystore && keyAlias!=null) {
+		if(keyAlias!=null) {
 			sb.append(newLine);
-			sb.append(CostantiLabel.KEY_ALIAS);
+			if(keystore) {
+				sb.append(CostantiLabel.KEY_ALIAS);
+			}
+			else {
+				sb.append(CostantiLabel.CERTIFICATE_ALIAS);
+			}
 			sb.append(separator);
 			sb.append(keyAlias);
 		}
@@ -333,7 +349,16 @@ public class CertificateUtils {
 
 	}
 	
-	public static CertificateCheck checkTrustStore(String trustStore, String type, String password, String trustStoreCrls,
+	public static CertificateCheck checkTrustStore(String trustStore, boolean classpathSupported, String type, String password, String trustStoreCrls,
+			int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws Exception{
+		return checkTrustStore(trustStore, classpathSupported, type, password, trustStoreCrls, null,
+				sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				log);
+	}
+	public static CertificateCheck checkTrustStore(String trustStore, boolean classpathSupported, String type, String password, String trustStoreCrls,String certAlias,
 			int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws Exception{
@@ -341,11 +366,26 @@ public class CertificateUtils {
 		byte [] keystoreBytes = null;
 		if(!hsm) {
 			File f = new File(trustStore);
-			if(f.exists()==false || f.canRead()==false) {
+			boolean exists = f.exists();
+			boolean inClasspath = false;
+			if(exists==false && classpathSupported) {
+				String uri = trustStore;
+				if(!trustStore.startsWith("/")) {
+					uri = "/" + uri;	
+				}
+				try( InputStream is = CertificateUtils.class.getResourceAsStream(uri); ){
+					exists = (is!=null);
+					if(exists) {
+						inClasspath = true;
+						keystoreBytes = Utilities.getAsByteArray(is);
+					}
+				}
+			}
+			if(exists==false || (!inClasspath && f.canRead()==false)) {
 				
 				String storeDetails = null;
 				if(addCertificateDetails) {
-					storeDetails = toStringTrustStore(trustStore, type, trustStoreCrls, separator, newLine);
+					storeDetails = toStringTrustStore(trustStore, type, trustStoreCrls, certAlias, separator, newLine);
 				}
 				String errorDetails = CostantiLabel.TRUSTSTORE;
 				if(!addCertificateDetails) {
@@ -354,16 +394,18 @@ public class CertificateUtils {
 							trustStore+
 							"'";
 				}
-				errorDetails = errorDetails + (!f.exists() ? " not exists" : " cannot read"); 
+				errorDetails = errorDetails + (!exists ? " not exists" : " cannot read"); 
 				
 				CertificateCheck esito = new CertificateCheck();
 				esito.setStatoCheck(StatoCheck.ERROR);
 				esito.addError(trustStore, errorDetails, storeDetails);
 				return esito;
 			}
-			keystoreBytes = FileSystemUtilities.readBytesFromFile(f);
+			if(!inClasspath) {
+				keystoreBytes = FileSystemUtilities.readBytesFromFile(f);
+			}
 		}
-		return checkStore(false, null, trustStoreCrls,
+		return checkStore(false, certAlias, trustStoreCrls,
 				trustStore, keystoreBytes, type, password, 
 				sogliaWarningGiorni, 
 				addCertificateDetails, separator, newLine,
@@ -379,7 +421,7 @@ public class CertificateUtils {
 				addCertificateDetails, separator, newLine,
 				log);
 	}
-	public static CertificateCheck checkKeyStore(String keyStore, String type, String password, String aliasKey,
+	public static CertificateCheck checkKeyStore(String keyStore, boolean classpathSupported, String type, String password, String aliasKey,
 			int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws Exception{
@@ -387,7 +429,22 @@ public class CertificateUtils {
 		byte [] keystoreBytes = null;
 		if(!hsm) {
 			File f = new File(keyStore);
-			if(f.exists()==false || f.canRead()==false) {
+			boolean exists = f.exists();
+			boolean inClasspath = false;
+			if(exists==false && classpathSupported) {
+				String uri = keyStore;
+				if(!keyStore.startsWith("/")) {
+					uri = "/" + uri;	
+				}
+				try( InputStream is = CertificateUtils.class.getResourceAsStream(uri); ){
+					exists = (is!=null);
+					if(exists) {
+						inClasspath = true;
+						keystoreBytes = Utilities.getAsByteArray(is);
+					}
+				}
+			}
+			if(exists==false || (!inClasspath && f.canRead()==false)) {
 				
 				String storeDetails = null;
 				if(addCertificateDetails) {
@@ -400,14 +457,16 @@ public class CertificateUtils {
 							keyStore+
 							"'";
 				}
-				errorDetails = errorDetails + (!f.exists() ? " not exists" : " cannot read"); 
+				errorDetails = errorDetails + (!exists ? " not exists" : " cannot read"); 
 				
 				CertificateCheck esito = new CertificateCheck();
 				esito.setStatoCheck(StatoCheck.ERROR);
 				esito.addError(keyStore, errorDetails, storeDetails);
 				return esito;
 			}
-			keystoreBytes = FileSystemUtilities.readBytesFromFile(f);
+			if(!inClasspath) {
+				keystoreBytes = FileSystemUtilities.readBytesFromFile(f);
+			}
 		}
 		return checkStore(true, aliasKey, null,
 				keyStore, keystoreBytes, type, password, 
@@ -439,7 +498,7 @@ public class CertificateUtils {
 				storeDetails = toStringKeyStore(storePath, type, aliasKey, separator, newLine);
 			}
 			else {
-				storeDetails = toStringTrustStore(storePath, type, trustStoreCrls, separator, newLine);
+				storeDetails = toStringTrustStore(storePath, type, trustStoreCrls, aliasKey, separator, newLine);
 			}
 		}
 		
@@ -518,10 +577,15 @@ public class CertificateUtils {
 		else {
 			
 			List<String> alias = new ArrayList<String>();
-			Enumeration<String> aliases = store.aliases();
-			while (aliases.hasMoreElements()) {
-				String aliasCheck = (String) aliases.nextElement();
-				alias.add(aliasCheck);
+			if(aliasKey!=null) {
+				alias.add(aliasKey);
+			}
+			else {
+				Enumeration<String> aliases = store.aliases();
+				while (aliases.hasMoreElements()) {
+					String aliasCheck = (String) aliases.nextElement();
+					alias.add(aliasCheck);
+				}
 			}
 			
 			if(alias.isEmpty()) {

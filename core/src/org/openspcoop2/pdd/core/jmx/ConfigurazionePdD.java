@@ -154,6 +154,14 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public final static String CHECK_CERTIFICATO_MODI_SERVIZIO_APPLICATIVO_BY_ID = "checkCertificatoModIApplicativoById";
 	public final static String CHECK_CERTIFICATO_MODI_SERVIZIO_APPLICATIVO_BY_NOME = "checkCertificatoModIApplicativoByNome";
 	public final static String CHECK_CERTIFICATI_CONFIGURAZIONE_JVM = "checkCertificatiJvm";
+	public final static String CHECK_CERTIFICATI_CONNETTORE_HTTPS_TOKEN_POLICY_VALIDAZIONE = "checkCertificatiConnettoreHttpsTokenPolicyValidazione";
+	public final static String CHECK_CERTIFICATI_VALIDAZIONE_JWT_TOKEN_POLICY_VALIDAZIONE = "checkCertificatiValidazioneJwtTokenPolicyValidazione";
+	public final static String CHECK_CERTIFICATI_FORWARD_TO_JWT_TOKEN_POLICY_VALIDAZIONE = "checkCertificatiForwardToJwtTokenPolicyValidazione";
+	public final static String CHECK_CERTIFICATI_CONNETTORE_HTTPS_TOKEN_POLICY_NEGOZIAZIONE = "checkCertificatiConnettoreHttpsTokenPolicyNegoziazione";
+	public final static String CHECK_CERTIFICATI_SIGNED_JWT_TOKEN_POLICY_NEGOZIAZIONE = "checkCertificatiSignedJwtTokenPolicyNegoziazione";
+	public final static String CHECK_CERTIFICATI_CONNETTORE_HTTPS_ATTRIBUTE_AUTHORITY = "checkCertificatiConnettoreHttpsAttributeAuthority";
+	public final static String CHECK_CERTIFICATI_ATTRIBUTE_AUTHORITY_JWT_RICHIESTA = "checkCertificatiAttributeAuthorityJwtRichiesta";
+	public final static String CHECK_CERTIFICATI_ATTRIBUTE_AUTHORITY_JWT_RISPOSTA = "checkCertificatiAttributeAuthorityJwtRisposta";
 	public final static String CHECK_PROXY_CONFIGURAZIONE_JVM = "checkProxyJvm";
 	public final static String ABILITA_PORTA_DELEGATA = "enablePortaDelegata";
 	public final static String DISABILITA_PORTA_DELEGATA = "disablePortaDelegata";
@@ -841,6 +849,182 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			return this.checkProxyJvm();
 		}
 		
+		if(actionName.equals(CHECK_CERTIFICATI_CONNETTORE_HTTPS_TOKEN_POLICY_VALIDAZIONE)){
+			if(params.length != 2 && params.length != 3)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_CONNETTORE_HTTPS_TOKEN_POLICY_VALIDAZIONE+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			String tipo = null;
+			if(params.length == 3) {
+				if(params[1]!=null && !"".equals(params[1])){
+					tipo = (String)params[1];
+				}
+			}
+			
+			int soglia = -1;
+			if(params.length == 2) {
+				if(params[1] instanceof Integer) {
+					soglia = (Integer)params[1];
+				}
+				else {
+					soglia = Integer.valueOf(params[1].toString());
+				}
+			}
+			else {
+				if(params[2] instanceof Integer) {
+					soglia = (Integer)params[2];
+				}
+				else {
+					soglia = Integer.valueOf(params[2].toString());
+				}
+			}
+			
+			if(params.length == 3) {
+				return this.checkCertificatiConnettoreHttpsTokenPolicyValidazione(param1, tipo, soglia);
+			}
+			else {
+				return this.checkCertificatiConnettoreHttpsTokenPolicyValidazione(param1, soglia);
+			}
+		}
+		if(actionName.equals(CHECK_CERTIFICATI_VALIDAZIONE_JWT_TOKEN_POLICY_VALIDAZIONE)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_VALIDAZIONE_JWT_TOKEN_POLICY_VALIDAZIONE+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatiValidazioneJwtTokenPolicyValidazione(param1, soglia);
+		}
+		if(actionName.equals(CHECK_CERTIFICATI_FORWARD_TO_JWT_TOKEN_POLICY_VALIDAZIONE)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_FORWARD_TO_JWT_TOKEN_POLICY_VALIDAZIONE+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatiForwardToJwtTokenPolicyValidazione(param1, soglia);
+		}
+		
+		if(actionName.equals(CHECK_CERTIFICATI_CONNETTORE_HTTPS_TOKEN_POLICY_NEGOZIAZIONE)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_CONNETTORE_HTTPS_TOKEN_POLICY_NEGOZIAZIONE+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatiConnettoreHttpsTokenPolicyNegoziazione(param1, soglia);
+		}
+		if(actionName.equals(CHECK_CERTIFICATI_SIGNED_JWT_TOKEN_POLICY_NEGOZIAZIONE)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_SIGNED_JWT_TOKEN_POLICY_NEGOZIAZIONE+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatiSignedJwtTokenPolicyNegoziazione(param1, soglia);
+		}
+		
+		if(actionName.equals(CHECK_CERTIFICATI_CONNETTORE_HTTPS_ATTRIBUTE_AUTHORITY)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_CONNETTORE_HTTPS_ATTRIBUTE_AUTHORITY+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatiConnettoreHttpsAttributeAuthority(param1, soglia);
+		}
+		if(actionName.equals(CHECK_CERTIFICATI_ATTRIBUTE_AUTHORITY_JWT_RICHIESTA)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_ATTRIBUTE_AUTHORITY_JWT_RICHIESTA+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatiAttributeAuthorityJwtRichiesta(param1, soglia);
+		}
+		if(actionName.equals(CHECK_CERTIFICATI_ATTRIBUTE_AUTHORITY_JWT_RISPOSTA)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_ATTRIBUTE_AUTHORITY_JWT_RISPOSTA+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatiAttributeAuthorityJwtRisposta(param1, soglia);
+		}
 		
 		if(actionName.equals(ABILITA_PORTA_DELEGATA)){
 			if(params.length != 1)
@@ -1413,6 +1597,96 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			String.class.getName(),
 			MBeanOperationInfo.ACTION);
 		
+		// MetaData per l'operazione checkCertificatiConnettoreHttpsTokenPolicyValidazione
+		MBeanOperationInfo checkCertificatiConnettoreHttpsTokenPolicyValidazione
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_CONNETTORE_HTTPS_TOKEN_POLICY_VALIDAZIONE,"Verifica i certificati del connettore https definito nella Token Policy di validazione con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome della Token Policy di Validazione"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		MBeanOperationInfo checkCertificatiConnettoreHttpsTokenPolicyValidazione_2
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_CONNETTORE_HTTPS_TOKEN_POLICY_VALIDAZIONE,"Verifica i certificati del connettore https definito nella Token Policy di validazione con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome della Token Policy di Validazione"),
+				new MBeanParameterInfo("tipoConnettore",String.class.getName(),"Tipo del connettore da verificare ["+ConnettoreCheck.POLICY_TIPO_ENDPOINT_INTROSPECTION+","+ConnettoreCheck.POLICY_TIPO_ENDPOINT_USERINFO+"]"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkCertificatiValidazioneJwtTokenPolicyValidazione
+		MBeanOperationInfo checkCertificatiValidazioneJwtTokenPolicyValidazione
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_VALIDAZIONE_JWT_TOKEN_POLICY_VALIDAZIONE,"Verifica i certificati utilizzati per la validazione JWT del Token definito nella Token Policy di validazione con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome della Token Policy di Validazione"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkCertificatiForwardToJwtTokenPolicyValidazione
+		MBeanOperationInfo checkCertificatiForwardToJwtTokenPolicyValidazione
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_FORWARD_TO_JWT_TOKEN_POLICY_VALIDAZIONE,"Verifica i certificati utilizzati per firmare il JWT contenente le informazioni del Token definito nella Token Policy di validazione con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome della Token Policy di Validazione"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		
+		// MetaData per l'operazione checkCertificatiConnettoreHttpsTokenPolicyNegoziazione
+		MBeanOperationInfo checkCertificatiConnettoreHttpsTokenPolicyNegoziazione
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_CONNETTORE_HTTPS_TOKEN_POLICY_NEGOZIAZIONE,"Verifica i certificati del connettore https definito nella Token Policy di negoziazione con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome della Token Policy di Negoziazione"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkCertificatiSignedJwtTokenPolicyNegoziazione
+		MBeanOperationInfo checkCertificatiSignedJwtTokenPolicyNegoziazione
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_SIGNED_JWT_TOKEN_POLICY_NEGOZIAZIONE,"Verifica i certificati utilizzati per firmare l'asserzione JWT definita nella Token Policy di negoziazione con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome della Token Policy di Negoziazione"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkCertificatiConnettoreHttpsAttributeAuthority
+		MBeanOperationInfo checkCertificatiConnettoreHttpsAttributeAuthority
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_CONNETTORE_HTTPS_ATTRIBUTE_AUTHORITY,"Verifica i certificati del connettore https definito nell'AttributeAuthority con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome dell'AttributeAuthority"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkCertificatiAttributeAuthorityJwtRichiesta
+		MBeanOperationInfo checkCertificatiAttributeAuthorityJwtRichiesta
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_ATTRIBUTE_AUTHORITY_JWT_RICHIESTA,"Verifica i certificati utilizzati per firmare il JWT della richiesta definito nell'AttributeAuthority con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome dell'AttributeAuthority"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkCertificatiAttributeAuthorityJwtRisposta
+		MBeanOperationInfo checkCertificatiAttributeAuthorityJwtRisposta
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_ATTRIBUTE_AUTHORITY_JWT_RISPOSTA,"Verifica i certificati utilizzati per firmare il JWT della richiesta definito nell'AttributeAuthority con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome dell'AttributeAuthority"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+				
 		// MetaData per l'operazione enablePortaDelegata
 		MBeanOperationInfo enablePortaDelegata 
 		= new MBeanOperationInfo(ABILITA_PORTA_DELEGATA,"Abilita lo stato della porta con nome fornito come parametro",
@@ -1566,6 +1840,15 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		listOperation.add(checkCertificatoModIApplicativoByNome);
 		listOperation.add(checkCertificatiJvm);
 		listOperation.add(checkProxyJvm);
+		listOperation.add(checkCertificatiConnettoreHttpsTokenPolicyValidazione);
+		listOperation.add(checkCertificatiConnettoreHttpsTokenPolicyValidazione_2);
+		listOperation.add(checkCertificatiValidazioneJwtTokenPolicyValidazione);
+		listOperation.add(checkCertificatiForwardToJwtTokenPolicyValidazione);
+		listOperation.add(checkCertificatiConnettoreHttpsTokenPolicyNegoziazione);
+		listOperation.add(checkCertificatiSignedJwtTokenPolicyNegoziazione);
+		listOperation.add(checkCertificatiConnettoreHttpsAttributeAuthority);
+		listOperation.add(checkCertificatiAttributeAuthorityJwtRichiesta);
+		listOperation.add(checkCertificatiAttributeAuthorityJwtRisposta);
 		listOperation.add(enablePortaDelegata);
 		listOperation.add(disablePortaDelegata);
 		listOperation.add(enablePortaApplicativa);
@@ -2072,6 +2355,132 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			ConnettoreCheck.checkProxyJvm(this.logConnettori);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatiConnettoreHttpsTokenPolicyValidazione(String nomePolicy, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiConnettoreHttpsTokenPolicyValidazione(nomePolicy, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	public String checkCertificatiConnettoreHttpsTokenPolicyValidazione(String nomePolicy, String tipo, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiConnettoreHttpsTokenPolicyValidazione(nomePolicy, tipo, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+
+	public String checkCertificatiValidazioneJwtTokenPolicyValidazione(String nomePolicy, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiValidazioneJwtTokenPolicyValidazione(nomePolicy, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatiForwardToJwtTokenPolicyValidazione(String nomePolicy, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiForwardToJwtTokenPolicyValidazione(nomePolicy, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatiConnettoreHttpsTokenPolicyNegoziazione(String nomePolicy, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiConnettoreHttpsTokenPolicyNegoziazione(nomePolicy, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatiSignedJwtTokenPolicyNegoziazione(String nomePolicy, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiSignedJwtTokenPolicyNegoziazione(nomePolicy, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatiConnettoreHttpsAttributeAuthority(String nomePolicy, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiConnettoreHttpsAttributeAuthority(nomePolicy, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatiAttributeAuthorityJwtRichiesta(String nomePolicy, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiAttributeAuthorityJwtRichiesta(nomePolicy, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	
+	public String checkCertificatiAttributeAuthorityJwtRisposta(String nomePolicy, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiAttributeAuthorityJwtRisposta(nomePolicy, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
 		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();

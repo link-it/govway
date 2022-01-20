@@ -61,6 +61,7 @@ public final class CostantiLabel {
 	public final static String CRL = "CRL";
 	public final static String CRLs = "CRLs";
 	public final static String KEY_ALIAS = "Key Alias";
+	public final static String CERTIFICATE_ALIAS = "Certificate Alias";
 	public final static String ALIAS = "Alias";
 	
 	/**

@@ -2789,12 +2789,13 @@ public class RegistroServiziReader {
 			throw new DriverRegistroServiziException(t.getMessage(),t);
 		}
 		CertificateCheck check = null;
+		boolean classpathSupported = false;
 				
 		String storeDetails = null; // per evitare duplicazione
 		
 		if(httpsProp.getKeyStoreLocation()!=null) {
 			try {
-				check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(httpsProp.getKeyStoreLocation(), httpsProp.getKeyStoreType(), 
+				check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(httpsProp.getKeyStoreLocation(), classpathSupported, httpsProp.getKeyStoreType(), 
 						httpsProp.getKeyStorePassword(), httpsProp.getKeyAlias(),
 						sogliaWarningGiorni, 
 						false, //addCertificateDetails, 
@@ -2814,7 +2815,7 @@ public class RegistroServiziReader {
 		if(check==null || StatoCheck.OK.equals(check.getStatoCheck())) {
 			if(!httpsProp.isTrustAllCerts() && httpsProp.getTrustStoreLocation()!=null) {
 				try {
-					check = org.openspcoop2.protocol.registry.CertificateUtils.checkTrustStore(httpsProp.getTrustStoreLocation(), httpsProp.getTrustStoreType(), 
+					check = org.openspcoop2.protocol.registry.CertificateUtils.checkTrustStore(httpsProp.getTrustStoreLocation(), classpathSupported, httpsProp.getTrustStoreType(), 
 							httpsProp.getTrustStorePassword(), httpsProp.getTrustStoreCRLsLocation(),
 							sogliaWarningGiorni, 
 							false, //addCertificateDetails, 
@@ -2954,6 +2955,7 @@ public class RegistroServiziReader {
 		}
 		
 		CertificateCheck check = null;		
+		boolean classpathSupported = false;
 		
 		String storeDetails = null; // per evitare duplicazione
 		
@@ -2967,7 +2969,7 @@ public class RegistroServiziReader {
 							log);
 				}
 				else {
-					check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(keystoreParams.getPath(), keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(),
+					check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(),
 							sogliaWarningGiorni, 
 							false, //addCertificateDetails, 
 							separator, newLine,
@@ -2985,7 +2987,7 @@ public class RegistroServiziReader {
 		if(check==null || StatoCheck.OK.equals(check.getStatoCheck())) {
 			if(truststoreParams!=null) {
 				try {
-					check = org.openspcoop2.protocol.registry.CertificateUtils.checkTrustStore(truststoreParams.getPath(), truststoreParams.getType(), 
+					check = org.openspcoop2.protocol.registry.CertificateUtils.checkTrustStore(truststoreParams.getPath(), classpathSupported, truststoreParams.getType(), 
 							truststoreParams.getPassword(), truststoreParams.getCrls(),
 							sogliaWarningGiorni, 
 							false, //addCertificateDetails, 
@@ -3004,7 +3006,7 @@ public class RegistroServiziReader {
 		if(check==null || StatoCheck.OK.equals(check.getStatoCheck())) {
 			if(truststoreSslParams!=null) {
 				try {
-					check = org.openspcoop2.protocol.registry.CertificateUtils.checkTrustStore(truststoreSslParams.getPath(), truststoreSslParams.getType(), 
+					check = org.openspcoop2.protocol.registry.CertificateUtils.checkTrustStore(truststoreSslParams.getPath(), classpathSupported, truststoreSslParams.getType(), 
 							truststoreSslParams.getPassword(), truststoreSslParams.getCrls(),
 							sogliaWarningGiorni, 
 							false, //addCertificateDetails, 

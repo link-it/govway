@@ -1119,6 +1119,70 @@ public class ConfigurazionePdDManager {
 				addCertificateDetails, separator, newLine);
 	}
 
+	public CertificateCheck checkCertificatiConnettoreHttpsTokenPolicyValidazione(String nomePolicy, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatiConnettoreHttpsTokenPolicyValidazione(null, false,
+				nomePolicy, null, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine);
+	}
+	public CertificateCheck checkCertificatiConnettoreHttpsTokenPolicyValidazione(String nomePolicy, String tipo, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatiConnettoreHttpsTokenPolicyValidazione(null, false,
+				nomePolicy, tipo, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine);
+	}
+	
+	public CertificateCheck checkCertificatiValidazioneJwtTokenPolicyValidazione(String nomePolicy, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatiValidazioneJwtTokenPolicyValidazione(null, false,
+				nomePolicy, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine);
+	}
+	
+	public CertificateCheck checkCertificatiForwardToJwtTokenPolicyValidazione(String nomePolicy, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatiForwardToJwtTokenPolicyValidazione(null, false,
+				nomePolicy, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine);
+	}
+	
+	public CertificateCheck checkCertificatiConnettoreHttpsTokenPolicyNegoziazione(String nomePolicy, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatiConnettoreHttpsTokenPolicyNegoziazione(null, false,
+				nomePolicy, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine);
+	}
+	
+	public CertificateCheck checkCertificatiSignedJwtTokenPolicyNegoziazione(String nomePolicy, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatiSignedJwtTokenPolicyNegoziazione(null, false,
+				nomePolicy, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine);
+	}
+	
+	public CertificateCheck checkCertificatiConnettoreHttpsAttributeAuthority(String nomePolicy, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatiConnettoreHttpsAttributeAuthority(null, false,
+				nomePolicy, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine);
+	}
+	
+	public CertificateCheck checkCertificatiAttributeAuthorityJwtRichiesta(String nomePolicy, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatiAttributeAuthorityJwtRichiesta(null, false,
+				nomePolicy, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine);
+	}
+	
+	public CertificateCheck checkCertificatiAttributeAuthorityJwtRisposta(String nomePolicy, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatiAttributeAuthorityJwtRisposta(null, false,
+				nomePolicy, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine);
+	}
+	
+	
+
 	
 
 	/* ********  CONFIGURAZIONE  ******** */

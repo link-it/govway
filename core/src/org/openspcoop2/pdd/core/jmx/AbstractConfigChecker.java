@@ -25,12 +25,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.constants.StatoCheck;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.config.InvokerNodiRuntime;
+import org.openspcoop2.pdd.core.connettori.ConnettoreCheck;
 import org.openspcoop2.protocol.registry.CertificateCheck;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.slf4j.Logger;
@@ -116,6 +118,14 @@ public abstract class AbstractConfigChecker {
 	public abstract String getJmxResourceNomeMetodoCheckCertificatiModIErogazioneById() throws Exception;
 	public abstract String getJmxResourceNomeMetodoCheckCertificatiModIFruizioneById() throws Exception;
 	public abstract String getJmxResourceNomeMetodoCheckCertificatiJvm() throws Exception;
+	public abstract String getJmxResourceNomeMetodoCheckCertificatiConnettoreHttpsTokenPolicyValidazione() throws Exception;
+	public abstract String getJmxResourceNomeMetodoCheckCertificatiValidazioneJwtTokenPolicyValidazione() throws Exception;
+	public abstract String getJmxResourceNomeMetodoCheckCertificatiForwardToJwtTokenPolicyValidazione() throws Exception;
+	public abstract String getJmxResourceNomeMetodoCheckCertificatiConnettoreHttpsTokenPolicyNegoziazione() throws Exception;
+	public abstract String getJmxResourceNomeMetodoCheckCertificatiSignedJwtTokenPolicyNegoziazione() throws Exception;
+	public abstract String getJmxResourceNomeMetodoCheckCertificatiConnettoreHttpsAttributeAuthority() throws Exception;
+	public abstract String getJmxResourceNomeMetodoCheckCertificatiAttributeAuthorityJwtRichiesta() throws Exception;
+	public abstract String getJmxResourceNomeMetodoCheckCertificatiAttributeAuthorityJwtRisposta() throws Exception;
 	
 	private InvokerNodiRuntime invoker;
 	private ConfigurazioneNodiRuntime config;
@@ -277,6 +287,150 @@ public abstract class AbstractConfigChecker {
 		checkCertificate(_sbError, _sbWarning, 
 					sogliaWarningGiorni,
 					new org.openspcoop2.core.config.Configurazione());
+		
+		if(_sbError.length()>0) {
+			sbDetailsError.append(_sbError.toString());
+		}
+		else {
+			if(_sbWarning.length()>0) {
+				sbDetailsWarning.append(_sbWarning.toString());
+			}
+			else if(_sbWarningModi.length()>0) {
+				sbDetailsWarning.append(_sbWarningModi.toString());
+			}
+		}
+		
+	}
+	
+	
+	public void checkTokenPolicyValidazione(StringBuilder sbDetailsError, StringBuilder sbDetailsWarning,
+			boolean httpsIntrospection, boolean httpsUserInfo, boolean validazioneJwt, boolean forwardToJwt,
+			GenericProperties gp,
+			int sogliaWarningGiorni) throws Exception {
+		
+		StringBuilder _sbError = new StringBuilder();
+		
+		StringBuilder _sbWarning = new StringBuilder();
+		StringBuilder _sbWarningModi = new StringBuilder();
+		
+		if(httpsIntrospection) {
+			checkCertificateGenericProperties(_sbError, _sbWarning, 
+					sogliaWarningGiorni,
+					getJmxResourceNomeMetodoCheckCertificatiConnettoreHttpsTokenPolicyValidazione(), 
+					gp.getNome(), ConnettoreCheck.POLICY_TIPO_ENDPOINT_INTROSPECTION);
+		}
+		if(_sbError.length()<=0) {
+			if(httpsUserInfo) {
+				checkCertificateGenericProperties(_sbError, _sbWarning, 
+						sogliaWarningGiorni,
+						getJmxResourceNomeMetodoCheckCertificatiConnettoreHttpsTokenPolicyValidazione(), 
+						gp.getNome(), ConnettoreCheck.POLICY_TIPO_ENDPOINT_USERINFO);
+			}
+		}
+		if(_sbError.length()<=0) {
+			if(validazioneJwt) {
+				checkCertificateGenericProperties(_sbError, _sbWarning, 
+						sogliaWarningGiorni,
+						getJmxResourceNomeMetodoCheckCertificatiValidazioneJwtTokenPolicyValidazione(),
+						gp.getNome());
+			}
+		}
+		if(_sbError.length()<=0) {
+			if(forwardToJwt) {
+				checkCertificateGenericProperties(_sbError, _sbWarning, 
+						sogliaWarningGiorni,
+						getJmxResourceNomeMetodoCheckCertificatiForwardToJwtTokenPolicyValidazione(),
+						gp.getNome());
+			}
+		}
+		
+		if(_sbError.length()>0) {
+			sbDetailsError.append(_sbError.toString());
+		}
+		else {
+			if(_sbWarning.length()>0) {
+				sbDetailsWarning.append(_sbWarning.toString());
+			}
+			else if(_sbWarningModi.length()>0) {
+				sbDetailsWarning.append(_sbWarningModi.toString());
+			}
+		}
+		
+	}
+	
+	
+	public void checkTokenPolicyNegoziazione(StringBuilder sbDetailsError, StringBuilder sbDetailsWarning,
+			boolean https, boolean signedJwt,
+			GenericProperties gp,
+			int sogliaWarningGiorni) throws Exception {
+		
+		StringBuilder _sbError = new StringBuilder();
+		
+		StringBuilder _sbWarning = new StringBuilder();
+		StringBuilder _sbWarningModi = new StringBuilder();
+		
+		if(https) {
+			checkCertificateGenericProperties(_sbError, _sbWarning, 
+					sogliaWarningGiorni,
+					getJmxResourceNomeMetodoCheckCertificatiConnettoreHttpsTokenPolicyNegoziazione(),
+					gp.getNome());
+		}
+		if(_sbError.length()<=0) {
+			if(signedJwt) {
+				checkCertificateGenericProperties(_sbError, _sbWarning, 
+						sogliaWarningGiorni,
+						getJmxResourceNomeMetodoCheckCertificatiSignedJwtTokenPolicyNegoziazione(), 
+						gp.getNome());
+			}
+		}
+		
+		if(_sbError.length()>0) {
+			sbDetailsError.append(_sbError.toString());
+		}
+		else {
+			if(_sbWarning.length()>0) {
+				sbDetailsWarning.append(_sbWarning.toString());
+			}
+			else if(_sbWarningModi.length()>0) {
+				sbDetailsWarning.append(_sbWarningModi.toString());
+			}
+		}
+		
+	}
+	
+	
+	public void checkAttributeAuthority(StringBuilder sbDetailsError, StringBuilder sbDetailsWarning,
+			boolean https, boolean jwtRichiesta, boolean jwtRisposta,
+			GenericProperties gp,
+			int sogliaWarningGiorni) throws Exception {
+		
+		StringBuilder _sbError = new StringBuilder();
+		
+		StringBuilder _sbWarning = new StringBuilder();
+		StringBuilder _sbWarningModi = new StringBuilder();
+		
+		if(https) {
+			checkCertificateGenericProperties(_sbError, _sbWarning, 
+					sogliaWarningGiorni,
+					getJmxResourceNomeMetodoCheckCertificatiConnettoreHttpsAttributeAuthority(),
+					gp.getNome());
+		}
+		if(_sbError.length()<=0) {
+			if(jwtRichiesta) {
+				checkCertificateGenericProperties(_sbError, _sbWarning, 
+						sogliaWarningGiorni,
+						getJmxResourceNomeMetodoCheckCertificatiAttributeAuthorityJwtRichiesta(),
+						gp.getNome());
+			}
+		}
+		if(_sbError.length()<=0) {
+			if(jwtRisposta) {
+				checkCertificateGenericProperties(_sbError, _sbWarning, 
+						sogliaWarningGiorni,
+						getJmxResourceNomeMetodoCheckCertificatiAttributeAuthorityJwtRisposta(),
+						gp.getNome());
+			}
+		}
 		
 		if(_sbError.length()>0) {
 			sbDetailsError.append(_sbError.toString());
@@ -549,4 +703,88 @@ public abstract class AbstractConfigChecker {
 
 	}
 	
+	private void checkCertificateGenericProperties(StringBuilder sbDetailsError, StringBuilder sbDetailsWarning, 
+			int sogliaWarningGiorni,
+			String metodo, String nomePolicy) throws Exception {
+		checkCertificateGenericProperties(sbDetailsError, sbDetailsWarning, 
+				sogliaWarningGiorni,
+				metodo, nomePolicy, null); 
+	}
+	private void checkCertificateGenericProperties(StringBuilder sbDetailsError, StringBuilder sbDetailsWarning, 
+			int sogliaWarningGiorni,
+			String metodo, String nomePolicy, String tipo) throws Exception {
+		
+		String risorsa = this.getJmxResourceNomeRisorsaConfigurazionePdD();
+				
+		Map<String,List<String>> mapErrori = new HashMap<String,List<String>>();
+		Map<String,List<String>> mapWarning = new HashMap<String,List<String>>();
+		
+		String error = StatoCheck.ERROR.toString();
+		String warn = StatoCheck.WARN.toString();
+		String ok = StatoCheck.OK.toString();
+		
+		for (String nomeNodoRuntime : this.nodiRuntime) {
+			String stato = null;
+			String descrizione = null;
+			String errorDetail = null;
+			String warnDetail = null;
+			try{		
+				if(this.config.containsNode(nomeNodoRuntime)) {
+					descrizione = this.config.getDescrizione(nomeNodoRuntime);
+				}
+				
+				if(tipo!=null) {
+					stato = this.invoker.invokeJMXMethod(nomeNodoRuntime, this.getJmxResourceType(),
+							risorsa, 
+							metodo,
+							nomePolicy, tipo, sogliaWarningGiorni);
+				}
+				else {
+					stato = this.invoker.invokeJMXMethod(nomeNodoRuntime, this.getJmxResourceType(),
+							risorsa, 
+							metodo,
+							nomePolicy, sogliaWarningGiorni);
+				}
+				
+				if(stato!=null && stato.equals(error)){
+					errorDetail = stato;
+				}
+				else if(stato!=null && stato.startsWith(error+"\n")){
+					errorDetail = stato.substring((error+"\n").length());
+				}
+				else if(stato!=null && stato.equals(warn)){
+					warnDetail = warn;
+				}
+				else if(stato!=null && stato.startsWith(warn+"\n")){
+					warnDetail = stato.substring((warn+"\n").length());
+				}
+				else if(stato!=null && stato.startsWith(ok)){
+					// nop
+				}
+				else {
+					errorDetail = stato;
+				}
+			}catch(Exception e){
+				this.error("Errore durante la verifica dei certificati (jmxResource '"+risorsa+"') (node:"+nomeNodoRuntime+"): "+e.getMessage(),e);
+				stato = e.getMessage();
+			}
+			
+			if(errorDetail!=null) {
+				AbstractConfigChecker.addErrore(mapErrori, errorDetail, 
+						descrizione!=null ? descrizione : nomeNodoRuntime);
+			}
+			else if(warnDetail!=null) {
+				AbstractConfigChecker.addErrore(mapWarning, warnDetail, 
+						descrizione!=null ? descrizione : nomeNodoRuntime);
+			}
+		}
+		
+		if(!mapErrori.isEmpty()) {
+			AbstractConfigChecker.printErrore(mapErrori, sbDetailsError);
+		}
+		else if(!mapWarning.isEmpty()) {
+			AbstractConfigChecker.printErrore(mapWarning, sbDetailsWarning);
+		}
+
+	}
 }
