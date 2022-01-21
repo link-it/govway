@@ -75,6 +75,7 @@ public final class PorteApplicativeConnettoriMultipliList extends Action {
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			String nomePorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
+			String nomeConnettoreChangeListBreadcump = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_FROM_BREADCUMP_CHANGE_NOME_CONNETTORE);
 	
 			String idTab = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
 			if(!porteApplicativeHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
@@ -108,7 +109,12 @@ public final class PorteApplicativeConnettoriMultipliList extends Action {
 				ServletUtils.setRisultatiRicercaIntoSession(session, idLista, listaFiltrata); // salvo poiche' esistono filtri che hanno necessita di postback
 			}
 			
-			porteApplicativeHelper.preparePorteAppConnettoriMultipliList(nomePorta, ricerca, listaFiltrata, portaApplicativa);
+			if(nomeConnettoreChangeListBreadcump!=null && StringUtils.isNotEmpty(nomeConnettoreChangeListBreadcump)) {
+				porteApplicativeHelper.preparePorteAppConnettoriMultipliList_fromChangeConnettore(nomePorta, ricerca, listaFiltrata, portaApplicativa, nomeConnettoreChangeListBreadcump);
+			}
+			else {
+				porteApplicativeHelper.preparePorteAppConnettoriMultipliList(nomePorta, ricerca, listaFiltrata, portaApplicativa);
+			}
 	
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);

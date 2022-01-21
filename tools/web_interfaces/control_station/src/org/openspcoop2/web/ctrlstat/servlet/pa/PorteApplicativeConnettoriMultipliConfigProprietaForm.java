@@ -181,6 +181,25 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaForm extends
 			Parameter pConnettoreAccesso = new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, connettoreRegistro);
 			String connettoreAccessoListaConnettori = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_LISTA_CONNETTORI_MULTIPLI);
 
+			String nomeConnettoreChangeListBreadcump = null;
+			{
+				// valora iniziale della configurazione
+				PortaApplicativaServizioApplicativo paSA = null;
+				for (PortaApplicativaServizioApplicativo paSATmp : pa.getServizioApplicativoList()) {
+					if(paSATmp.getNome().equals(nomeSAConnettore)) {
+						paSA = paSATmp;					
+					}
+				}
+	
+				PortaApplicativaServizioApplicativoConnettore datiConnettore = paSA.getDatiConnettore();
+				
+				nomeConnettoreChangeListBreadcump = datiConnettore.getNome();
+				if(nomeConnettoreChangeListBreadcump==null) {
+					nomeConnettoreChangeListBreadcump = CostantiConfigurazione.NOME_CONNETTORE_DEFAULT;
+				}
+			}
+			Parameter pChangeNomeConnettoreBreadcump = new Parameter(CostantiControlStation.PARAMETRO_FROM_BREADCUMP_CHANGE_NOME_CONNETTORE, nomeConnettoreChangeListBreadcump);
+						
 			listParametersConfigutazioneConnettoriMultipli.add(pIdSogg);
 			listParametersConfigutazioneConnettoriMultipli.add(pIdPorta);
 			listParametersConfigutazioneConnettoriMultipli.add(pNomePorta);
@@ -190,6 +209,7 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaForm extends
 			listParametersConfigutazioneConnettoriMultipli.add(pAccessoDaAPS);
 			listParametersConfigutazioneConnettoriMultipli.add(pConnettoreAccessoDaGruppi);
 			listParametersConfigutazioneConnettoriMultipli.add(pConnettoreAccesso);
+			listParametersConfigutazioneConnettoriMultipli.add(pChangeNomeConnettoreBreadcump);
 
 			lstParam.add(new Parameter(labelPerPorta,  PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LIST, listParametersConfigutazioneConnettoriMultipli.toArray(new Parameter[1])));
 

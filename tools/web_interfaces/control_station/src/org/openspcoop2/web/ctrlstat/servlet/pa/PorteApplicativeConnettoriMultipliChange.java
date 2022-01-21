@@ -612,6 +612,38 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			String idConnTabP = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB);
 			Parameter pIdConTab = new Parameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB, idConnTabP != null ? idConnTabP : "");
 			
+			String visualizzaDatiGenerali = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_DATI_GENERALI);
+			String visualizzaDescrizione = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_DESCRIZIONE);
+			String visualizzaConnettore = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_CONNETTORE);
+			String visualizzaFiltri = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_FILTRO);
+			boolean visualizzaSezioneDatiGenerali = ServletUtils.isCheckBoxEnabled(visualizzaDatiGenerali);
+			boolean visualizzaSezioneDescrizione = ServletUtils.isCheckBoxEnabled(visualizzaDescrizione);
+			boolean visualizzaSezioneConnettore = ServletUtils.isCheckBoxEnabled(visualizzaConnettore);
+			boolean visualizzaSezioneFiltri = ServletUtils.isCheckBoxEnabled(visualizzaFiltri);
+			
+			String nomeConnettoreChangeListBreadcump = null;
+			if(visualizzaSezioneDatiGenerali) {
+				nomeConnettoreChangeListBreadcump = nomeConnettore;
+			}
+			else {
+				
+				// valora iniziale della configurazione
+				PortaApplicativaServizioApplicativo paSA = null;
+				for (PortaApplicativaServizioApplicativo paSATmp : pa.getServizioApplicativoList()) {
+					if(paSATmp.getNome().equals(nomeSAConnettore)) {
+						paSA = paSATmp;					
+					}
+				}
+
+				PortaApplicativaServizioApplicativoConnettore datiConnettore = paSA.getDatiConnettore();
+				
+				nomeConnettoreChangeListBreadcump = datiConnettore.getNome();
+				if(nomeConnettoreChangeListBreadcump==null) {
+					nomeConnettoreChangeListBreadcump = CostantiConfigurazione.NOME_CONNETTORE_DEFAULT;
+				}
+			}
+			Parameter pChangeNomeConnettoreBreadcump = new Parameter(CostantiControlStation.PARAMETRO_FROM_BREADCUMP_CHANGE_NOME_CONNETTORE, nomeConnettoreChangeListBreadcump);
+						
 			listParametersConfigutazioneConnettoriMultipli.add(pIdSogg);
 			listParametersConfigutazioneConnettoriMultipli.add(pIdPorta);
 			listParametersConfigutazioneConnettoriMultipli.add(pNomePorta);
@@ -621,6 +653,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			listParametersConfigutazioneConnettoriMultipli.add(pAccessoDaAPS);
 			listParametersConfigutazioneConnettoriMultipli.add(pConnettoreAccessoDaGruppi);
 			listParametersConfigutazioneConnettoriMultipli.add(pConnettoreAccesso);
+			listParametersConfigutazioneConnettoriMultipli.add(pChangeNomeConnettoreBreadcump);
 
 			lstParam.add(new Parameter(labelPerPorta,  PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LIST, listParametersConfigutazioneConnettoriMultipli.toArray(new Parameter[1])));
 
@@ -629,14 +662,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			String labelPagina = oldNomeConnettore;
 
 
-			String visualizzaDatiGenerali = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_DATI_GENERALI);
-			String visualizzaDescrizione = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_DESCRIZIONE);
-			String visualizzaConnettore = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_CONNETTORE);
-			String visualizzaFiltri = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_FILTRO);
-			boolean visualizzaSezioneDatiGenerali = ServletUtils.isCheckBoxEnabled(visualizzaDatiGenerali);
-			boolean visualizzaSezioneDescrizione = ServletUtils.isCheckBoxEnabled(visualizzaDescrizione);
-			boolean visualizzaSezioneConnettore = ServletUtils.isCheckBoxEnabled(visualizzaConnettore);
-			boolean visualizzaSezioneFiltri = ServletUtils.isCheckBoxEnabled(visualizzaFiltri);
+
 
 			lstParam.add(new Parameter(labelPagina, null));
 
