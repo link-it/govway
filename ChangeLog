@@ -1,3 +1,18 @@
+2022-01-21  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolte anomalie presenti nella gestione dei connettori multipli:
+	- nella consegna con notifiche, se si imposta una configurazione delle risposte accettate con "Consegna Completata" su tutti i codici http e "Consegna Fallita" nel fault, 
+	  si ottiene una segnalazione errata di configurazione non valida;
+	- con la seguente combinazione di operazioni si provocava una visualizzazione errata della configurazione:
+	  . disattivare lo scheduling o lo stato di un connettore multiplo;
+	  . andare dentro una sottomaschera qualunque del connettore, e.g. "Descrizione";
+	  . dalla sottomaschera usare la breadcump "Connettori Multipli" per tornare all'elenco dei connettori;
+	  . lo stato visualizzato del connettore non riporta la modifica precedentemente attuata.
+	- nell'elenco dei connettori, dopo aver modificato un connettore, 
+	  se si accede alla sottomaschera di un connettore differente e si ritorna all'elenco grazie alla breadcump "Connettori Multipli" viene visualizzato il precedente connettore modificato e non l'ultimo acceduto;
+	- aggiunta la possibilità di aggiungere un connettore con stato abilitato e scheduling disabilitato.
+
 2021-01-18  Francesco Scarlato <scarlato@link.it>
 
 	* [TestsuiteProtocolloTrasparente]
