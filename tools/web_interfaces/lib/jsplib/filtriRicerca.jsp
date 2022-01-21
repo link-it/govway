@@ -63,10 +63,14 @@ boolean mostraFormHeader = (
 		pd.getFilterValues().size()>0
 	);
 
-int colFormHeader = (mostraFormHeader ? 2 : 1);
-String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRicercaNoForm";
-
 boolean inserisciSearch = true;
+
+List<DataElement> listaComandi = pd.getComandiAzioneBarraTitoloDettaglioElemento();
+
+boolean mostraComandiHeader = mostraFormHeader || (listaComandi != null && listaComandi.size() > 0);
+
+int colFormHeader = (mostraComandiHeader ? 2 : 1);
+String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRicercaNoForm";
 %>
 
 <tr>
@@ -78,11 +82,37 @@ boolean inserisciSearch = true;
 						<td class="titoloSezione" id="searchFormHeader" colspan="<%= colFormHeader %>">
 							<span class="history"><%=titoloSezione %></span>
 						</td>
-						<% if(mostraFormHeader) { %>
+						<% if(mostraComandiHeader) { %>
 							<td class="titoloSezione titoloSezione-right">
-								<span class="icon-box" id="iconaPanelListaSpan">
-									<i class="material-icons md-24" id="iconaPanelLista">&#xE8B6;</i>
-								</span>
+								<div class="titoloSezioneDiv">
+									<% 
+										for(int idxLink =0; idxLink < listaComandi.size() ; idxLink ++ ){
+											DataElement de = (DataElement) listaComandi.get(idxLink);
+											String deTip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
+											String classLink = "";
+											String deTarget = " ";
+									  		if (!de.getTarget().equals("")) {
+									  			deTarget = " target=\""+ de.getTarget() +"\"";
+									  		}
+									  		
+									  		String deVisualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+											
+									  		String deIconName = de.getIcon(); 
+									  		%>
+					    					<a class="titoloSezioneAzioneLink <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= de.getUrl() %>" type="button" onClick="<%= deVisualizzaAjaxStatus %>return true;">
+					    						<span class="icon-box">
+													<i class="material-icons md-24"><%= deIconName %></i>
+												</span>
+					    					</a>
+										<% 
+										}
+									%>
+									<% if(mostraFormHeader) { %>
+										<span class="icon-box" id="iconaPanelListaSpan">
+											<i class="material-icons md-24" id="iconaPanelLista">&#xE8B6;</i>
+										</span>
+									<% }%>
+								</div>
 							</td>
 						<% }%>
 					</tr>

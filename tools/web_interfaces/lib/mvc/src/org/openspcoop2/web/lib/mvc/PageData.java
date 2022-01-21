@@ -884,20 +884,30 @@ public class PageData {
 	public List<DataElement> getComandiAzioneBarraTitoloDettaglioElemento() {
 		return this.comandiAzioneBarraTitoloDettaglioElemento;
 	}
-
-	// TODO rimuovere
-	public void addComandoResetCacheButton(String nomeElementoSuCuiEffettuareIlReset, String postbackElementName, String servletName, List<Parameter> parameters) {
+	
+	public void addComandoResetCacheElementoButton(String servletName, List<Parameter> parameters) {
 		if(parameters == null) {
 			parameters = new ArrayList<Parameter>();
 		}
 		// aggiungo parametri postback (come si fa in postback.js)
-		parameters.add(new Parameter(Costanti.POSTBACK_ELEMENT_NAME, postbackElementName));
+		parameters.add(new Parameter(Costanti.POSTBACK_ELEMENT_NAME, Costanti.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE));
 		parameters.add(new Parameter(Costanti.PARAMETRO_IS_POSTBACK, "true"));
 		parameters.add(new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME, Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_IN_PROGRESS_POSTBACK));
 		
-		this.addAzioneBarraTitoloDettaglioElemento(this.getComandiAzioneBarraTitoloDettaglioElemento(), DataElementType.IMAGE, 
-				MessageFormat.format(Costanti.ICONA_RESET_CACHE_ELEMENTO_TOOLTIP_CON_PARAMETRO, nomeElementoSuCuiEffettuareIlReset),
-				Costanti.ICONA_RESET_CACHE_ELEMENTO, servletName,parameters);
+		this.addAzioneBarraTitoloDettaglioElemento(this.getComandiAzioneBarraTitoloDettaglioElemento(), 
+				DataElementType.IMAGE, Costanti.ICONA_RESET_CACHE_ELEMENTO_TOOLTIP, Costanti.ICONA_RESET_CACHE_ELEMENTO, servletName,parameters);
+	}
+
+	public void addComandoAggiornaRicercaButton(String servletName, List<Parameter> parameters) {
+		if(parameters == null) {
+			parameters = new ArrayList<Parameter>();
+		}
+		// aggiungo parametri postback (come si fa in postback.js)
+		parameters.add(new Parameter(Costanti.POSTBACK_ELEMENT_NAME, Costanti.PARAMETRO_AGGIORNA_RICERCA));
+		parameters.add(new Parameter(Costanti.PARAMETRO_IS_POSTBACK, "true"));
+		parameters.add(new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME, Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_IN_PROGRESS_POSTBACK));
+		
+		this.addAzioneBarraTitoloDettaglioElemento(this.getComandiAzioneBarraTitoloDettaglioElemento(), DataElementType.IMAGE, Costanti.ICONA_AGGIORNA_RICERCA_TOOLTIP, Costanti.ICONA_AGGIORNA_RICERCA, servletName,parameters);
 	}
 	
 	private void addAzioneBarraTitoloDettaglioElemento(List<DataElement> e, DataElementType deType, String tooltip, String icon, String servletName, List<Parameter> parameters) {

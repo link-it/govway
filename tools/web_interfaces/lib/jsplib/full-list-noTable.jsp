@@ -241,6 +241,10 @@ if (hidden!=null && !hidden.isEmpty()) {
 								<jsp:include page="/jsp/list/allarmi.jsp" flush="true">
 								<jsp:param name="numeroEntry" value="<%=i %>"/>
 							</jsp:include>
+							<% } else if(customListViewName.equals("gruppi")){ %>
+								<jsp:include page="/jsp/list/gruppi.jsp" flush="true">
+								<jsp:param name="numeroEntry" value="<%=i %>"/>
+							</jsp:include>
 							<% } %>							
 					 	 </tr><%
 					}

@@ -195,6 +195,8 @@ public class Costanti {
 	
 	public final static String PARAMETRO_ACTION_CONFIRM = "actionConfirm";
 	public final static String PARAMETRO_IS_POSTBACK = "isPostback";
+	public final static String PARAMETRO_AGGIORNA_RICERCA = "aggiornaRicerca";
+	public final static String PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE = "rmElFromCache";
 	
 	public final static String LABEL_MONITOR_BUTTON_OK = "Ok";
 	public final static String LABEL_MONITOR_BUTTON_CONFERMA = "Conferma";
@@ -298,6 +300,9 @@ public class Costanti {
 	public final static String ICONA_RESET_CACHE_ELEMENTO = "&#xE863;";
 	public final static String ICONA_RESET_CACHE_ELEMENTO_TOOLTIP = "Rimuovi dalla cache";
 	public final static String ICONA_RESET_CACHE_ELEMENTO_TOOLTIP_CON_PARAMETRO = "Rimuovi {0} dalla cache";
+	
+	public final static String ICONA_AGGIORNA_RICERCA = "&#xE863;";
+	public final static String ICONA_AGGIORNA_RICERCA_TOOLTIP = "Aggiorna Ricerca";
 	
 	public final static String ICONA_MENU_AZIONI_BUTTON = "&#xE5D4;";
 	public final static String ICONA_MENU_AZIONI_BUTTON_TOOLTIP = "Visualizza azioni disponibili";

@@ -104,6 +104,7 @@ import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementImage;
 import org.openspcoop2.web.lib.mvc.DataElementType;
+import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -1398,6 +1399,22 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		boolean showSoggettoFruitoreInFruizioni = gestioneFruitori &&  this.core.isMultitenant() && 
 				!this.isSoggettoMultitenantSelezionato();
 		
+		
+		// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
+		if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
+			List<Parameter> listaParametriChange = new ArrayList<Parameter>();		
+			listaParametriChange.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""));
+			listaParametriChange.add(pNomeServizio);
+			listaParametriChange.add(pTipoServizio);
+			listaParametriChange.add(pIdSoggettoErogatore);
+			if(gestioneFruitori) {
+				listaParametriChange.add(pTipoSoggettoFruitore);
+				listaParametriChange.add(pNomeSoggettoFruitore);
+				listaParametriChange.add(pIdProviderFruitore);
+			}
+			
+			this.pd.addComandoResetCacheElementoButton(ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, listaParametriChange);
+		}
 		
 		// sezione 1 riepilogo
 		Vector<DataElement> dati = datiPagina.elementAt(0);
@@ -3653,20 +3670,31 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		
 		this.pd.setMessage( tmpTitle + " eliminato dalla cache", MessageType.INFO);
 		
-		String userLogin = ServletUtils.getUserLoginFromSession(this.session);	
+		String resetElementoCacheS = this.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
+		boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);
 		
-		// preparo lista
-		boolean [] permessi = AccordiServizioParteSpecificaUtilities.getPermessiUtente(this);
-		List<AccordoServizioParteSpecifica> listaAccordi = null;
-		if(this.apsCore.isVisioneOggettiGlobale(userLogin)){
-			listaAccordi = this.apsCore.soggettiServizioList(null, ricerca,permessi, gestioneFruitori, gestioneErogatori);
-		}else{
-			listaAccordi = this.apsCore.soggettiServizioList(userLogin, ricerca, permessi, gestioneFruitori, gestioneErogatori);
+		// reset delle cache richiesto dal link nella lista, torno alla lista
+		if(resetElementoCache) {
+			
+			String userLogin = ServletUtils.getUserLoginFromSession(this.session);	
+			
+			// preparo lista
+			boolean [] permessi = AccordiServizioParteSpecificaUtilities.getPermessiUtente(this);
+			List<AccordoServizioParteSpecifica> listaAccordi = null;
+			if(this.apsCore.isVisioneOggettiGlobale(userLogin)){
+				listaAccordi = this.apsCore.soggettiServizioList(null, ricerca,permessi, gestioneFruitori, gestioneErogatori);
+			}else{
+				listaAccordi = this.apsCore.soggettiServizioList(userLogin, ricerca, permessi, gestioneFruitori, gestioneErogatori);
+			}
+			
+			this.prepareErogazioniList(ricerca, listaAccordi);
+			ServletUtils.setGeneralAndPageDataIntoSession(this.session, gd, this.pd);
+			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, CostantiControlStation.TIPO_OPERAZIONE_RESET_CACHE_ELEMENTO);
+		} else { // reset richiesto dal dettaglio, torno al dettaglio
+			this.prepareErogazioneChange(tipoOp, asps, idSoggettoFruitore);
+			ServletUtils.setGeneralAndPageDataIntoSession(this.session, gd, this.pd);
+			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());
 		}
-		
-		this.prepareErogazioniList(ricerca, listaAccordi);
-		ServletUtils.setGeneralAndPageDataIntoSession(this.session, gd, this.pd);
-		return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, CostantiControlStation.TIPO_OPERAZIONE_RESET_CACHE_ELEMENTO);
 	}
 	
 	public void addDescrizioneVerificaCertificatoToDati(Vector<DataElement> dati, AccordoServizioParteSpecifica asps, IDSoggetto idSoggettoFruitore, String server, boolean registro, String aliasCertificato) throws Exception {

@@ -81,6 +81,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.audit.appender.AuditDisabilitatoException;
 import org.openspcoop2.web.lib.audit.appender.IDOperazione;
 import org.openspcoop2.web.lib.audit.log.constants.Tipologia;
@@ -587,6 +588,8 @@ public final class Monitor extends Action {
 					request.setAttribute(Costanti.REQUEST_ATTIBUTE_PARAMS, ServletUtils.getParametersAsString(false, pMethod, pNewSearch, pPdd));
 				}
 
+				// refresh ricerca
+				pd.addComandoAggiornaRicercaButton(MonitorCostanti.SERVLET_NAME_MONITOR, new ArrayList<Parameter>());
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

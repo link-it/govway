@@ -75,7 +75,13 @@ public class ApiChange extends Action {
 			String resetElementoCacheS = apiHelper.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
 			boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);
 			
-			if(resetElementoCache) {
+			boolean resetElementoCacheDettaglio = false;
+			String postBackElementName = apiHelper.getPostBackElementName();
+			if(postBackElementName != null && postBackElementName.equals(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE)) {
+				resetElementoCacheDettaglio = true;
+			}
+			
+			if(resetElementoCache || resetElementoCacheDettaglio) {
 				// reset elemento dalla cache
 				return apiHelper.prepareApiResetCache(mapping, gd, tipoOp, as);
 			}

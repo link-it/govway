@@ -100,7 +100,13 @@ public final class ErogazioniChange extends Action {
 			String resetElementoCacheS = apsHelper.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
 			boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);
 			
-			if(resetElementoCache) {
+			boolean resetElementoCacheDettaglio = false;
+			String postBackElementName = apsHelper.getPostBackElementName();
+			if(postBackElementName != null && postBackElementName.equals(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE)) {
+				resetElementoCacheDettaglio = true;
+			}
+			
+			if(resetElementoCache || resetElementoCacheDettaglio) {
 				// reset elemento dalla cache
 				return apsHelper.prepareErogazioneChangeResetCache(mapping, gd, ricerca, tipoOp, asps, idSoggettoFruitore);
 			}

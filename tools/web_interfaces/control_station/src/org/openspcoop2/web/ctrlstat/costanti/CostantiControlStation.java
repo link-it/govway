@@ -1162,7 +1162,7 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO = "mdG_";
 	
 	
-	public final static String PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE = "rmElFromCache";
+	public final static String PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE = Costanti.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE;
 	
 	/** PARAMETRI MESSAGE PAGE **/
 	

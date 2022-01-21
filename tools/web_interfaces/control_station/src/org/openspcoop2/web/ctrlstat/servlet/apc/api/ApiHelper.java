@@ -69,6 +69,7 @@ import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementImage;
 import org.openspcoop2.web.lib.mvc.DataElementType;
+import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -529,14 +530,24 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 				
 		this.pd.setMessage(labelASTitle  + " eliminato dalla cache", MessageType.INFO);
 		
-		// preparo lista
-		Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(this.session, Search.class);
+		String resetElementoCacheS = this.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
+		boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);
 		
-		List<AccordoServizioParteComuneSintetico> lista = AccordiServizioParteComuneUtilities.accordiList(this.apcCore, userLogin, ricerca, tipoAccordo);
+		// reset delle cache richiesto dal link nella lista, torno alla lista
+		if(resetElementoCache) {
+			// preparo lista
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(this.session, Search.class);
+			
+			List<AccordoServizioParteComuneSintetico> lista = AccordiServizioParteComuneUtilities.accordiList(this.apcCore, userLogin, ricerca, tipoAccordo);
 
-		this.prepareApiList(lista, ricerca, tipoAccordo); 
-		ServletUtils.setGeneralAndPageDataIntoSession(this.session, gd, this.pd);
-		return ServletUtils.getStrutsForwardEditModeFinished(mapping, ApiCostanti.OBJECT_NAME_APC_API, CostantiControlStation.TIPO_OPERAZIONE_RESET_CACHE_ELEMENTO);
+			this.prepareApiList(lista, ricerca, tipoAccordo); 
+			ServletUtils.setGeneralAndPageDataIntoSession(this.session, gd, this.pd);
+			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ApiCostanti.OBJECT_NAME_APC_API, CostantiControlStation.TIPO_OPERAZIONE_RESET_CACHE_ELEMENTO);
+		} else { // reset richiesto dal dettaglio, torno al dettaglio
+			this.prepareApiChange(tipoOp, as);
+			ServletUtils.setGeneralAndPageDataIntoSession(this.session, gd, this.pd);
+			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ApiCostanti.OBJECT_NAME_APC_API, ForwardParams.CHANGE());
+		}
 	}
 
 
@@ -562,6 +573,16 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		listParametersApi.add(pIdAccordo);
 		listParametersApi.add(pNomeAccordo);
 		listParametersApi.add(pTipoAccordo);
+		
+		// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
+		if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
+			List<Parameter> listaParametriChange = new ArrayList<Parameter>();				
+			listaParametriChange.add(pIdAccordo);
+			listaParametriChange.add(pNomeAccordo);
+			listaParametriChange.add(pTipoAccordo);
+			
+			this.pd.addComandoResetCacheElementoButton(ApiCostanti.SERVLET_NAME_APC_API_CHANGE, listaParametriChange);
+		}
 		
 		// Titolo API
 		DataElement de = new DataElement();
