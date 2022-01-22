@@ -43,6 +43,14 @@ import net.minidev.json.JSONObject;
 */
 public class Utils {
 
+	public static boolean isJenkins() {
+		String j = System.getProperty("jenkins");
+		if(j!=null) {
+			return "true".equalsIgnoreCase(j);
+		}
+		return false;
+	}
+	
 	@SuppressWarnings("deprecation")
 	public static String buildUrl(Map<String,String> propertiesURLBased, String urlBase) {
 		return TransportUtils.buildLocationWithURLBasedParameter(propertiesURLBased, urlBase);
