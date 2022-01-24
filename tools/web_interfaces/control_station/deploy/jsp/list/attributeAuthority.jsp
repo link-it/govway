@@ -183,9 +183,7 @@ visualizzaMetadati = vectorRiepilogo.size() > 1;
 										
 										if(de.getDialog() != null) {
 											Dialog dialog = de.getDialog();
-											BodyElement urlElement = dialog.getBody().remove(0);
 											request.setAttribute("idFinestraModale_"+numeroEntry, de.getDialog());
-											String identificativoFinestraModale = "idFinestraModale_" + numeroEntry;
 											
 											%>
 											var urlD_<%= numeroEntry %> = $("#hidden_title_iconUso_"+ <%= numeroEntry %>).val();
