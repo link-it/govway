@@ -8241,7 +8241,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						image.setImage(statoPA ? CostantiControlStation.ICONA_MODIFICA_TOGGLE_ON : CostantiControlStation.ICONA_MODIFICA_TOGGLE_OFF);
 						de.addImage(image);
 						
-						if(showCambiaScheduling) {
+						if(showCambiaScheduling && statoPA) {
 							pAbilita = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ABILITA,  (schedulingPA ? Costanti.CHECK_BOX_DISABLED : Costanti.CHECK_BOX_ENABLED_TRUE));
 							Parameter pScheduling = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SCHEDULING,  "true");
 							image = new DataElementImage();
@@ -8842,8 +8842,15 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		
 		if(tipoOp.equals(TipoOperazione.ADD)) {
 			de.setType(DataElementType.SELECT);
-			String [] values = { StatoFunzionalita.ABILITATO.getValue() , StatoFunzionalita.DISABILITATO.getValue()};
-			de.setValues(values);			
+			//String [] values = { StatoFunzionalita.ABILITATO.getValue() , StatoFunzionalita.DISABILITATO.getValue()};
+			String [] values = { StatoFunzionalita.ABILITATO.getValue() , 
+					PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO_MA_NON_SCHEDULATO,
+					StatoFunzionalita.DISABILITATO.getValue()};
+			String [] labels = { StatoFunzionalita.ABILITATO.getValue() , 
+					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO_MA_NON_SCHEDULATO,
+					StatoFunzionalita.DISABILITATO.getValue()};
+			de.setValues(values);
+			de.setLabels(labels);
 			de.setSelected(stato);
 		} else {
 			de.setType(DataElementType.HIDDEN);
@@ -11149,6 +11156,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				}
 				break;
 			case CONSEGNA_COMPLETATA:
+				almenoUnaConsegnaCompletata=true;
+				break;	
 			case CONSEGNA_FALLITA:
 				break;		
 			}
@@ -11225,6 +11234,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				break;
 			case CONSEGNA_COMPLETATA:
+				almenoUnaConsegnaCompletata=true;
+				break;	
 			case CONSEGNA_FALLITA:
 				break;		
 			}
@@ -11300,6 +11311,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				}
 				break;
 			case CONSEGNA_COMPLETATA:
+				almenoUnaConsegnaCompletata=true;
+				break;	
 			case CONSEGNA_FALLITA:
 				break;		
 			}
@@ -11375,6 +11388,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				}
 				break;
 			case CONSEGNA_COMPLETATA:
+				almenoUnaConsegnaCompletata=true;
+				break;	
 			case CONSEGNA_FALLITA:
 				break;		
 			}

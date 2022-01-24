@@ -339,6 +339,8 @@ public final class PorteApplicativeConnettoriMultipliAbilitazione extends Action
 						}
 					}
 				}
+				
+				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI);
 			}
 
 			// Preparo la lista

@@ -1031,6 +1031,7 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_RESET_ID_TAB = "rIdTab";
 	public final static String PARAMETRO_ID_CONN_TAB = "idConnTab";
 	public final static String PARAMETRO_RESET_ID_CONN_TAB = "rIdConnTab";
+	public final static String PARAMETRO_FROM_BREADCUMP_CHANGE_NOME_CONNETTORE = "fromChangeNomeCon";
 	
 	public final static String PARAMETRO_API_PAGE_INFO = "fromApiPageInfo";
 	

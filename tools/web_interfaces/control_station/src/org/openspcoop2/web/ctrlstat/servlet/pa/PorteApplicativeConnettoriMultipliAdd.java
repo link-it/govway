@@ -671,10 +671,16 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 			datiConnettore.setNotifica(true); // connettore notifica
 			datiConnettore.setNome(nomeConnettore);
 			datiConnettore.setDescrizione(descrizioneConnettore);
-			if(statoConnettore.equals(StatoFunzionalita.ABILITATO.getValue()))
+			if(statoConnettore.equals(StatoFunzionalita.ABILITATO.getValue())) {
 				datiConnettore.setStato(StatoFunzionalita.ABILITATO);
-			else 
+			}
+			else if(statoConnettore.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO_MA_NON_SCHEDULATO)) {
+				datiConnettore.setStato(StatoFunzionalita.ABILITATO);
+				datiConnettore.setScheduling(StatoFunzionalita.DISABILITATO);
+			}
+			else {
 				datiConnettore.setStato(StatoFunzionalita.DISABILITATO);
+			}
 			
 			if(StringUtils.isNotEmpty(filtriConnettore)) {
 				List<String> filtri = Arrays.asList(filtriConnettore.split(","));
