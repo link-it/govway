@@ -176,8 +176,8 @@
 																
 																if(de.getInfo() != null) {
 																	%>
-												    				var labelM_<%=numeroEntry %> = $("#hidden_title_iconInfo_"+ <%= numeroEntry %>).val();
-																	var bodyM_<%=numeroEntry %> = $("#hidden_body_iconInfo_"+ <%= numeroEntry %>).val();
+												    				var labelM_<%=numeroEntry %> = $("#hidden_title_iconInfo_<%= numeroEntry %>").val();
+																	var bodyM_<%=numeroEntry %> = $("#hidden_body_iconInfo_<%= numeroEntry %>").val();
 																	mostraDataElementInfoModal(labelM_<%=numeroEntry %>,bodyM_<%=numeroEntry %>);
 													    			<%
 																}
@@ -187,7 +187,7 @@
 																	request.setAttribute("idFinestraModale_"+numeroEntry, de.getDialog());
 																	
 																	%>
-																	var urlD_<%= numeroEntry %> = $("#hidden_title_iconUso_"+ <%= numeroEntry %>).val();
+																	var urlD_<%= numeroEntry %> = $("#hidden_title_iconUso_<%= numeroEntry %>").val();
 												    				// chiamata al servizio
 												    				<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
 												    				
