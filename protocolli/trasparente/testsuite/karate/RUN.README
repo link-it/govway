@@ -106,7 +106,6 @@
   Poi 'cp tools/utils/src/org/openspcoop2/utils/certificate/test/govway_test_hsm.properties  /etc/govway/hsm.properties'
 
 - Impostare in <console_local.properties>:
-	# Indicazione se nella Consegna Condizionale è possibile associare lo stesso filtro a differenti connettori (per test)
 	connettoriMultipli.consegnaCondizionale.stessoFiltro=true
    In modo che la console consenta di assegnare più volte lo stesso filtro a connettori diversi in una consegna condizionale e rilevare l'errore a runtime durante una richiesta.
 
@@ -128,6 +127,9 @@
 
 	+ connettori.load_balancer.least_connections.delay_richieste_background=300
 	Attesa tra una richiesta e l'altra per attendere che venga contata e presa in carico dalla strategia least_connections
+
+
+- Creare la cartella /tmp/govway-testsuite dove l'application server deve avere i permessi di scrittura
 
 Per eseguire i test:
 	ant run_test
