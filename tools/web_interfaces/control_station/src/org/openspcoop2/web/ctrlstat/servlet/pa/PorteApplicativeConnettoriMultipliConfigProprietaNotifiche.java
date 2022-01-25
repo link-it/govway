@@ -280,7 +280,9 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 	
 				PortaApplicativaServizioApplicativoConnettore datiConnettore = paSA.getDatiConnettore();
 				
-				nomeConnettoreChangeListBreadcump = datiConnettore.getNome();
+				if(datiConnettore!=null) {
+					nomeConnettoreChangeListBreadcump = datiConnettore.getNome();
+				}
 				if(nomeConnettoreChangeListBreadcump==null) {
 					nomeConnettoreChangeListBreadcump = CostantiConfigurazione.NOME_CONNETTORE_DEFAULT;
 				}
