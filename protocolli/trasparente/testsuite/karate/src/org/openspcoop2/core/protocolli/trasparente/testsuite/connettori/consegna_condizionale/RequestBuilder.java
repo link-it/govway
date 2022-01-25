@@ -144,11 +144,10 @@ public class RequestBuilder {
 
 	public static HttpRequest buildSoapRequest_Semplice(String erogazione, String contentTypeSoap) {
 		String operazione = "operazioneSemplice";
-		return RequestBuilder.buildSoapRequest(operazione, operazione, erogazione, contentTypeSoap);
-	
+		return RequestBuilder.buildSoapRequest(erogazione, operazione, operazione,  contentTypeSoap);
 	}
 
-	public static HttpRequest buildSoapRequest(String filtro, String azione, String erogazione, String contentTypeSoap) {
+	public static HttpRequest buildSoapRequest(String erogazione, String azione, String soapAction, String contentTypeSoap) {
 		// nel soap 1.1 l'azione è specifica nello header SOAPAction
 		// versioneSoap =[ HttpConstants.CONTENT_TYPE_SOAP_1_1; |  HttpConstants.CONTENT_TYPE_SOAP_1_2 ]
 				
@@ -162,7 +161,7 @@ public class RequestBuilder {
 					"</soap:Envelope>";
 			
 			HttpRequest request = new HttpRequest();
-			request.addHeader(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, "\""+filtro+"\"");
+			request.addHeader(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, "\""+soapAction+"\"");
 			request.setMethod(HttpRequestMethod.POST);
 			request.setContent(content.getBytes());
 			request.setContentType(contentTypeSoap);
@@ -183,7 +182,7 @@ public class RequestBuilder {
 			HttpRequest request = new HttpRequest();
 			request.setMethod(HttpRequestMethod.POST);
 			
-			request.setContentType(contentTypeSoap + ";" + HttpConstants.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION+"=\""+filtro+"\"");
+			request.setContentType(contentTypeSoap + ";" + HttpConstants.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION+"=\""+soapAction+"\"");
 			request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/"+azione
 					+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
 			request.setContent(content.getBytes());
@@ -196,7 +195,7 @@ public class RequestBuilder {
 
 	public static List<HttpRequest> buildSoapRequests(List<String> filtri, String erogazione, String contentTypeSoap) {
 		return filtri.stream()
-				.map( filtro -> buildSoapRequest(filtro, filtro, erogazione, contentTypeSoap))
+				.map( filtro -> buildSoapRequest(erogazione, filtro, filtro,  contentTypeSoap))
 				.collect(Collectors.toList());
 	}
 

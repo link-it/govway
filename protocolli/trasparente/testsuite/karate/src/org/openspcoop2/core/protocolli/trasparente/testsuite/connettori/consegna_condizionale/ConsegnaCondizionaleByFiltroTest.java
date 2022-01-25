@@ -426,19 +426,18 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 
 		var requestsByConnettore = new HashMap<String,List<HttpRequest>>();
  
-		
 		connettoriAbilitati.forEach( connettore -> {
 			String filtroConnettore = filtriConnettori.get(connettore).get(0);
 			String azione = connettore;
 			requestsByConnettore.put(
 					connettore,
-					Arrays.asList( RequestBuilder.buildSoapRequest(filtroConnettore,azione, erogazione,versioneSoap)) );
+					Arrays.asList( RequestBuilder.buildSoapRequest(erogazione, azione, filtroConnettore, versioneSoap)) );
 		});
 		
 			
 		HttpRequest requestIdentificazioneFallita = RequestBuilder.buildSoapRequest_Semplice(erogazione,versioneSoap);
-		HttpRequest requestConnettoreNonTrovato = RequestBuilder.buildSoapRequest("ConnettoreInesistente", "ConnettoreInesistente", erogazione,versioneSoap);
-		HttpRequest requestConnettoreDisabilitato = RequestBuilder.buildSoapRequest(CONNETTORE_DISABILITATO+"-Filtro0",CONNETTORE_DISABILITATO, erogazione,versioneSoap);
+		HttpRequest requestConnettoreNonTrovato = RequestBuilder.buildSoapRequest(erogazione, "ConnettoreInesistente", "ConnettoreInesistente", versioneSoap);
+		HttpRequest requestConnettoreDisabilitato = RequestBuilder.buildSoapRequest(erogazione, CONNETTORE_DISABILITATO, CONNETTORE_DISABILITATO+"-Filtro0", versioneSoap);
 		
 		requestsByConnettore.put(Common.CONNETTORE_DISABILITATO,List.of(requestConnettoreDisabilitato));
 		requestsByConnettore.put(Common.CONNETTORE_ID_FALLITA,List.of(requestIdentificazioneFallita));
@@ -452,8 +451,8 @@ public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
 
 	
 	/**
-	 * Per ogni chiave della map @requestsByConnettore argomento viene creato un thread che esegue @requests_per_batch
-	 * richieste pescandole dalla lista assegnata.
+	 * Per ogni chiave della map @requestsByConnettore vengono fatte @requests_per_batch
+	 * richieste pescandol la richiesta dalla lista assegnata.
 	 * 
 	 */
 	static Map<String,List<HttpResponse>> makeBatchedRequests(Map<String,List<HttpRequest>> requestsByConnettore, int requests_per_batch) {

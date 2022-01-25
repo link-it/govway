@@ -668,12 +668,12 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	static void soapActionImpl(String erogazione, String versioneSoap) {
 
 		var requestsByConnettore = Common.connettoriAbilitati.stream()
-				.map(c -> RequestBuilder.buildSoapRequest(c,c,erogazione,versioneSoap))
+				.map(c -> RequestBuilder.buildSoapRequest(erogazione, c,c, versioneSoap))
 				.collect(Collectors.toList());
 							
 		HttpRequest requestIdentificazioneFallita = RequestBuilder.buildSoapRequest_Semplice(erogazione, versioneSoap);
-		HttpRequest requestConnettoreNonTrovato = RequestBuilder.buildSoapRequest("ConnettoreInesistente", "ConnettoreInesistente", erogazione, versioneSoap);
-		HttpRequest requestConnettoreDisabilitato = RequestBuilder.buildSoapRequest(CONNETTORE_DISABILITATO, CONNETTORE_DISABILITATO, erogazione, versioneSoap);
+		HttpRequest requestConnettoreNonTrovato = RequestBuilder.buildSoapRequest(erogazione, "ConnettoreInesistente", "ConnettoreInesistente",  versioneSoap);
+		HttpRequest requestConnettoreDisabilitato = RequestBuilder.buildSoapRequest(erogazione, CONNETTORE_DISABILITATO, CONNETTORE_DISABILITATO,  versioneSoap);
 		
 		requestsByConnettore.add(requestIdentificazioneFallita);
 		requestsByConnettore.add(requestConnettoreNonTrovato);
@@ -693,7 +693,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 	 * risposte corrisponde al batch di richieste fatte per la prima richiesta della
 	 * lista `requests`
 	 */
-	public static Vector<Vector<HttpResponse>> makeBatchedRequests(List<HttpRequest> requests, int requests_per_batch) {
+	public static Vector<Vector<HttpResponse>> makeBatchedRequests(List<HttpRequest> requests, int nsequential_requests) {
 		assertTrue(Common.sogliaRichiesteSimultanee >= requests.size());
 		
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(requests.size());
@@ -704,7 +704,7 @@ public class ConsegnaCondizionaleByNomeTest extends ConfigLoader {
 			int index = i;
 	
 			executor.execute(() -> {
-				ret.get(index).addAll(org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeSequentialRequests(requests.get(index), requests_per_batch));
+				ret.get(index).addAll(org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeSequentialRequests(requests.get(index), nsequential_requests));
 			});
 		}
 	

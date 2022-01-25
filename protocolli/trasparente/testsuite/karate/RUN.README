@@ -128,8 +128,51 @@
 	+ connettori.load_balancer.least_connections.delay_richieste_background=300
 	Attesa tra una richiesta e l'altra per attendere che venga contata e presa in carico dalla strategia least_connections
 
+#### CONNETTORI MULTIPLI ######
 
 - Creare la cartella /tmp/govway-testsuite dove l'application server deve avere i permessi di scrittura
+
+- Configurare in <govway_local.properties>
+	# ogni quanti secondi verifica se ci sono NUOVI messaggi da consegnare più vecchi di X secondi (proprietà successiva)
+
+		org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.nextMessages.intervalloControllo=2
+
+	# età minima, in secondi, in cui vengono considerati i nuovi messaggi
+
+		org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.nextMessages.scheduleNewMessageAfter=1
+
+	# ogni quanti secondi verifica se ci sono messaggi precedentemente falliti in consegna
+
+		org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.nextMessages.consegnaFallita.intervalloControllo=30
+
+	# i secondi minimi in cui riconsegnare un messaggio fallito
+
+		org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.consegnaFallita.intervalloMinimoRiconsegna=60
+		org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.debug=true
+
+
+	# opzione valida solamente per tipologia 'soap', consente il passaggio di statusCode diversi da 202 e 200
+		org.openspcoop2.pdd.connettori.inoltroBuste.returnCode.2xx.acceptOnly_202_200=false
+		org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.returnCode.2xx.acceptOnly_202_200=false
+
+
+- Configurare gli stessi valori di sopra, in <testsuite.properties>
+
+	# ogni quanti secondi verifica se ci sono NUOVI messaggi da consegnare più vecchi di X secondi (proprietà successiva)
+		connettori.consegna_multipla.next_messages.intervallo_controllo=2
+
+	# età minima, in secondi, in cui vengono considerati i nuovi messaggi
+		connettori.consegna_multipla.next_messages.schedule_new_after=1
+
+	# ogni quanti secondi verifica se ci sono messaggi precedentemente falliti in consegna
+	# org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.nextMessages.consegnaFallita.intervalloControllo=30
+
+	# i secondi minimi in cui riconsegnare un messaggio fallito
+	# org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.consegnaFallita.intervalloMinimoRiconsegna=60
+
+
+
+
 
 Per eseguire i test:
 	ant run_test
