@@ -318,7 +318,8 @@ public class Common {
 	
 	public static void fermaRiconsegne(DbUtils dbUtils) {
 		String query = "UPDATE messaggi set proprietario='GestoreMessaggi'";
-		dbUtils.update(query);		
+		dbUtils.update(query);
+		
 	}
 	
 	public static void fermaRiconsegner(DbUtils dbUtils, String transazione) {
