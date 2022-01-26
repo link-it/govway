@@ -187,11 +187,6 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 	@Test
 	public void secondoTest() throws IOException {
 		final String erogazione = "TestConsegnaMultipla";
-		
-		/* TODO: Fai un test a parte per andrea sulla gestione della 300
-		 * HttpRequest request3xx = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1 ); TODO: Per la 3xx manda mail ad andrea
-		request3xx.setUrl(request3xx.getUrl() + "&returnCode=304");
-		HttpResponse response3xx = Utils.makeRequest(request3xx);*/
 
 		// Sui connettori file è sempre tutto ok
 		Set<String> connettoriFile = Set.of(CONNETTORE_2, CONNETTORE_3);
@@ -217,6 +212,13 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 			request4xx.setUrl(request4xx.getUrl()+"&returnCode=" + (400+i));
 			requestsByKind.add(new RequestAndExpectations(request4xx, connettoriSuccessoRequest5xx, connettoriFallimentoRequest5xx, ESITO_CONSEGNA_MULTIPLA_IN_CORSO));
 		}
+		
+		 for(int i=0; i<10;i++) { 
+			HttpRequest request3xx = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1 );
+			request3xx.setUrl(request3xx.getUrl()+"&returnCode=" + (300+i));
+			requestsByKind.add(new RequestAndExpectations(request3xx, connettoriSuccessoRequest5xx, connettoriFallimentoRequest5xx, ESITO_CONSEGNA_MULTIPLA_IN_CORSO));
+		}
+		
 		
 		HttpRequest requestSoapFault = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1 );
 		requestSoapFault.setUrl(requestSoapFault.getUrl() +"&fault=true");
