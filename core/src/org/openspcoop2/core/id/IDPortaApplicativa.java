@@ -63,16 +63,17 @@ public class IDPortaApplicativa implements java.io.Serializable{
 		this.identificativiErogazione = identificativiErogazione;
 	}
 	
-
+	public static final String PORTA_APPLICATIVA_PREFIX = "PA:";
+	public static final String PORTA_APPLICATIVA_SUFFIX = " ";
 	
 	@Override
 	public String toString(){
 		StringBuilder bf = new StringBuilder();
 		if(this.nome!=null)
-			bf.append("PA:"+this.nome);
+			bf.append(PORTA_APPLICATIVA_PREFIX+this.nome);
 		else
-			bf.append("PA:NonDefinita");
-		bf.append(" ");
+			bf.append(PORTA_APPLICATIVA_PREFIX+"NonDefinita");
+		bf.append(PORTA_APPLICATIVA_SUFFIX);
 		if(this.identificativiErogazione!=null)
 			bf.append("Erogazione:"+this.identificativiErogazione.toString());
 		else

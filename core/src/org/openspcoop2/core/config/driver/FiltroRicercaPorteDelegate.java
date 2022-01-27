@@ -89,7 +89,9 @@ public class FiltroRicercaPorteDelegate extends FiltroRicercaBase implements Ser
 	private String nomePortaDelegante;
 	
 		
-
+	public static final String PREFIX_PORTA_DELEGANTE = FiltroRicercaPorteApplicative.PREFIX_PORTA_DELEGANTE;
+	public static final String SUFFIX_PORTA_DELEGANTE = FiltroRicercaPorteApplicative.SUFFIX_PORTA_DELEGANTE;
+	
 	@Override
 	public String toString(){
 		StringBuilder bf = new StringBuilder();
@@ -121,7 +123,7 @@ public class FiltroRicercaPorteDelegate extends FiltroRicercaBase implements Ser
 		if(this.stato!=null)
 			bf.append(" [stato:"+this.stato+"]");
 		if(this.nomePortaDelegante!=null)
-			bf.append(" [nomePortaDelegante:"+this.nomePortaDelegante+"]");
+			bf.append(PREFIX_PORTA_DELEGANTE+this.nomePortaDelegante+SUFFIX_PORTA_DELEGANTE);
 		if(bf.length()=="Filtro:".length())
 			bf.append(" nessun filtro presente");
 		return bf.toString();

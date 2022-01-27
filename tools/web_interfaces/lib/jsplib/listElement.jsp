@@ -449,6 +449,9 @@ function isModificaUrlRicerca(formAction, urlToCheck){
 	if(formAction.indexOf('#') > 0) {
 		formAction = formAction.substring(0, formAction.indexOf('#'));
 	}
+	if(formAction.indexOf('?') > 0) {
+		formAction = formAction.substring(0, formAction.indexOf('?'));
+	}
 	
 	return ieEndsWith(formAction, urlToCheck);
 }
@@ -580,6 +583,7 @@ function mostraDataElementInfoModal(title,body){
 <script type="text/javascript" src="js/utils.js"></script>
 <script type="text/javascript" src="js/jquery-on.js"></script>
 <script type="text/javascript" src="js/jquery.searchabledropdown-1.0.8.min.js"></script>
+<script type="text/javascript" src="js/jquery.context-menu.min.js"></script>
 <jsp:include page="/jsplib/menuUtente.jsp" flush="true" />
 <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
 </head>

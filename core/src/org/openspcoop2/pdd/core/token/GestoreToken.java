@@ -44,6 +44,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TransferLengthModes;
+import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -245,6 +246,17 @@ public class GestoreToken {
 			throw new TokenException("Cache non abilitata");
 		}
 	}
+	public static List<String> keysCache() throws TokenException{
+		if(GestoreToken.cacheToken!=null){
+			try{
+				return GestoreToken.cacheToken.keys();
+			}catch(Exception e){
+				throw new TokenException(e.getMessage(),e);
+			}
+		}else{
+			throw new TokenException("Cache non abilitata");
+		}
+	}
 	public static String getObjectCache(String key) throws TokenException{
 		if(GestoreToken.cacheToken!=null){
 			try{
@@ -272,6 +284,81 @@ public class GestoreToken {
 			throw new TokenException("Cache non abilitata");
 		}
 	}
+	
+	
+	
+	
+	
+	/*----------------- CLEANER --------------------*/
+	
+	public static void removeGenericProperties(IDGenericProperties idGP) throws Exception {
+		
+		if(GestoreToken.cacheToken!=null){
+			
+			String prefixKeyValidazioneJwt = null;
+			String prefixKeyIntrospection = null;
+			String prefixKeyUserInfo = null;
+			
+			String prefixKeyAA = null;
+			
+			boolean checkKeys = false;
+			
+			if(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION.equals(idGP.getTipologia())) {
+				
+				prefixKeyValidazioneJwt = buildPrefixCacheKeyValidazione(idGP.getNome(), VALIDAZIONE_JWT_FUNCTION);
+				prefixKeyIntrospection = buildPrefixCacheKeyValidazione(idGP.getNome(), INTROSPECTION_FUNCTION);
+				prefixKeyUserInfo = buildPrefixCacheKeyValidazione(idGP.getNome(), USERINFO_FUNCTION);
+				
+				checkKeys = true;
+			}
+			else if(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE.equals(idGP.getTipologia())) {
+				
+				String keyNegoziazione = buildCacheKeyNegoziazione(idGP.getNome(), RETRIEVE_FUNCTION);
+				removeObjectCache(keyNegoziazione);
+				
+			}
+			else if(CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY.equals(idGP.getTipologia())) {
+				
+				prefixKeyAA = buildCacheKeyRecuperoAttributiPrefix(idGP.getNome(), ATTRIBUTE_AUTHORITY_FUNCTION);
+				
+				checkKeys = true;
+			}
+			
+			if(checkKeys) {
+				List<String> keyForClean = new ArrayList<String>();
+				List<String> keys = GestoreToken.keysCache();
+				if(keys!=null && !keys.isEmpty()) {
+					for (String key : keys) {
+						if(key!=null) {
+							if(prefixKeyValidazioneJwt!=null && key.startsWith(prefixKeyValidazioneJwt)) {
+								keyForClean.add(key);
+							}
+							else if(prefixKeyIntrospection!=null && key.startsWith(prefixKeyIntrospection)) {
+								keyForClean.add(key);
+							}
+							else if(prefixKeyUserInfo!=null && key.startsWith(prefixKeyUserInfo)) {
+								keyForClean.add(key);
+							}
+							else if(prefixKeyAA!=null && key.startsWith(prefixKeyAA)) {
+								keyForClean.add(key);
+							}
+						}
+					}
+				}
+				if(keyForClean!=null && !keyForClean.isEmpty()) {
+					for (String key : keyForClean) {
+						removeObjectCache(key);
+					}
+				}
+			}
+				
+		}
+		
+	}
+	
+	
+	
+	
 	
 
 
@@ -625,6 +712,8 @@ public class GestoreToken {
 	
 	// ********* [VALIDAZIONE-TOKEN] VALIDAZIONE JWT TOKEN ****************** */
 	
+	public static final String VALIDAZIONE_JWT_FUNCTION = "ValidazioneJWT";
+		
 	public static EsitoGestioneToken validazioneJWTToken(Logger log, AbstractDatiInvocazione datiInvocazione, 
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
 			String token, boolean portaDelegata) throws Exception {
@@ -635,8 +724,8 @@ public class GestoreToken {
 			esitoGestioneToken = _validazioneJWTToken(log, datiInvocazione, token, portaDelegata);
 		}
     	else{
-    		String funzione = "ValidazioneJWT";
-    		String keyCache = buildCacheKey(funzione, portaDelegata, token);
+    		String funzione = VALIDAZIONE_JWT_FUNCTION;
+    		String keyCache = buildCacheKeyValidazione(datiInvocazione.getPolicyGestioneToken().getName(), funzione, portaDelegata, token);
 
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
     		
@@ -819,6 +908,8 @@ public class GestoreToken {
 	
 	// ********* [VALIDAZIONE-TOKEN] INTROSPECTION TOKEN ****************** */
 	
+	public static final String INTROSPECTION_FUNCTION = "Introspection";
+	
 	public static EsitoGestioneToken introspectionToken(Logger log, AbstractDatiInvocazione datiInvocazione, 
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
 			String token, boolean portaDelegata) throws Exception {
@@ -830,8 +921,8 @@ public class GestoreToken {
 					token, portaDelegata);
 		}
     	else{
-    		String funzione = "Introspection";
-    		String keyCache = buildCacheKey(funzione, portaDelegata, token);
+    		String funzione = INTROSPECTION_FUNCTION;
+    		String keyCache = buildCacheKeyValidazione(datiInvocazione.getPolicyGestioneToken().getName(), funzione, portaDelegata, token);
 
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
     		
@@ -1002,6 +1093,8 @@ public class GestoreToken {
 	
 	// ********* [VALIDAZIONE-TOKEN] USER INFO TOKEN ****************** */
 	
+	public static final String USERINFO_FUNCTION = "UserInfo";
+	
 	public static EsitoGestioneToken userInfoToken(Logger log, AbstractDatiInvocazione datiInvocazione, 
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
 			String token, boolean portaDelegata) throws Exception {
@@ -1013,8 +1106,8 @@ public class GestoreToken {
 					token, portaDelegata);
 		}
     	else{
-    		String funzione = "UserInfo";
-    		String keyCache = buildCacheKey(funzione, portaDelegata, token);
+    		String funzione = USERINFO_FUNCTION;
+    		String keyCache = buildCacheKeyValidazione(datiInvocazione.getPolicyGestioneToken().getName(), funzione, portaDelegata, token);
 
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
     		
@@ -2069,9 +2162,16 @@ public class GestoreToken {
 		}
 	}
 	
-	private static String buildCacheKey(String funzione, boolean portaDelegata, String token) {
-    	StringBuilder bf = new StringBuilder(funzione);
+	private static String buildPrefixCacheKeyValidazione(String policy, String funzione) {
+		StringBuilder bf = new StringBuilder(funzione);
     	bf.append("_");
+    	bf.append(policy);
+    	bf.append("_");
+    	return bf.toString();
+	}
+	private static String buildCacheKeyValidazione(String policy, String funzione, boolean portaDelegata, String token) {
+    	StringBuilder bf = new StringBuilder();
+    	bf.append(buildPrefixCacheKeyValidazione(policy, funzione));
     	if(portaDelegata){
     		bf.append("PD");
     	}
@@ -2380,6 +2480,8 @@ public class GestoreToken {
 	
 	// ********* [NEGOZIAZIONE-TOKEN] ENDPOINT TOKEN ****************** */
 	
+	public static final String RETRIEVE_FUNCTION = "Negoziazione";
+		
 	public static EsitoNegoziazioneToken endpointToken(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken, 
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory) throws Exception {
 		EsitoNegoziazioneToken esitoNegoziazioneToken = null;
@@ -2397,8 +2499,8 @@ public class GestoreToken {
 			
 		}
     	else{
-    		String funzione = "Negoziazione";
-    		String keyCache = buildCacheKeyNegoziazione(funzione, policyNegoziazioneToken.getName());
+    		String funzione = RETRIEVE_FUNCTION;
+    		String keyCache = buildCacheKeyNegoziazione(policyNegoziazioneToken.getName(), funzione);
 
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
     		
@@ -2571,7 +2673,7 @@ public class GestoreToken {
 	
 	// ********* [NEGOZIAZIONE-TOKEN]  UTILITIES INTERNE ****************** */
 	
-	private static String buildCacheKeyNegoziazione(String funzione, String nomePolicy) {
+	private static String buildCacheKeyNegoziazione(String nomePolicy, String funzione) {
     	StringBuilder bf = new StringBuilder(funzione);
     	bf.append("_");
     	bf.append(nomePolicy);
@@ -2953,6 +3055,8 @@ public class GestoreToken {
 	
 	// ********* [ATTRIBUTE AUTHORITY] ENDPOINT TOKEN ****************** */
 	
+	public static final String ATTRIBUTE_AUTHORITY_FUNCTION = "Negoziazione";
+	
 	public static EsitoRecuperoAttributi readAttributes(Logger log, org.openspcoop2.pdd.core.token.attribute_authority.AbstractDatiInvocazione datiInvocazione,
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
 			boolean portaDelegata) throws Exception {
@@ -2987,14 +3091,14 @@ public class GestoreToken {
 			
 		}
     	else{
-    		String funzione = "Negoziazione";
+    		String funzione = ATTRIBUTE_AUTHORITY_FUNCTION;
     		
     		Map<String, Object> dynamicMap = buildDynamicAAMap(message, busta, requestInfo, pddContext, log,
 					policyAttributeAuthority.getName(), datiInvocazione);
     		
     		boolean addIdAndDate = true;
     		String requestKeyCache = buildDynamicAARequest(message, busta, requestInfo, pddContext, log, policyAttributeAuthority, dynamicMap, !addIdAndDate);
-    		String keyCache = buildCacheKeyRecuperoAttributi(funzione, policyAttributeAuthority.getName(), requestKeyCache);
+    		String keyCache = buildCacheKeyRecuperoAttributi(policyAttributeAuthority.getName(), funzione, requestKeyCache);
 
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
     		
@@ -3243,12 +3347,17 @@ public class GestoreToken {
 		}
 	}
 	
-	private static String buildCacheKeyRecuperoAttributi(String funzione, String nomePolicy,
-			String request) {
+	private static String buildCacheKeyRecuperoAttributiPrefix(String nomePolicy, String funzione) {
     	StringBuilder bf = new StringBuilder("AttributeAuthority_"+funzione);
     	bf.append("_");
     	bf.append(nomePolicy);
     	bf.append("_");
+    	return bf.toString();
+	}
+	private static String buildCacheKeyRecuperoAttributi(String nomePolicy, String funzione,
+			String request) {
+    	StringBuilder bf = new StringBuilder();
+    	bf.append(buildCacheKeyRecuperoAttributiPrefix(nomePolicy, funzione));
     	bf.append(Base64Utilities.encodeAsString(request.getBytes())); // codifico in base64 la richiesta
     	return bf.toString();
     }

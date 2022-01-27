@@ -273,6 +273,7 @@
 
 	<!-- Compilazione della PddConsole-->
 	<target name="compile_govwayConsole" depends="init_compile_govwayConsole,compile_dipendenze,compile_openspcoop2_govwayConsole" description="compila govwayConsole"/>
+	<target name="build_only_govwayConsole" depends="compile_openspcoop2_govwayConsole" description="compila solo il jar della govwayConsole"/>
 
 
 	<!-- Creazione del modulo .WAR -->

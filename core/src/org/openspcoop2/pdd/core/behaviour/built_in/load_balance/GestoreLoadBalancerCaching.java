@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.pdd.core.behaviour.built_in.load_balance;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -28,6 +29,7 @@ import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoBehaviour;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.behaviour.BehaviourEmitDiagnosticException;
@@ -40,8 +42,11 @@ import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalFilterResult;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
@@ -146,7 +151,17 @@ public class GestoreLoadBalancerCaching {
 			throw new Exception("Visualizzazione chiavi presenti nella cache per i dati contenenti i dati di bilanciamento del carico non riuscita: "+e.getMessage(),e);
 		}
 	}
-	
+	public static List<String> keysCache() throws Exception{
+		if(cache!=null){
+			try{
+				return cache.keys();
+			}catch(Exception e){
+				throw new Exception(e.getMessage(),e);
+			}
+		}else{
+			throw new Exception("Cache non abilitata");
+		}
+	}
 	public static String getObjectCache(String key) throws Exception{
 		try{
 			if(cache!=null){
@@ -183,6 +198,64 @@ public class GestoreLoadBalancerCaching {
 			throw new Exception("Rimozione oggetto presente nella cache per i dati contenenti i dati di bilanciamento del carico non riuscita: "+e.getMessage(),e);
 		}
 	}
+	
+	
+	
+	
+	
+	/*----------------- CLEANER --------------------*/
+	
+	public static void removePortaApplicativa(IDPortaApplicativa idPA) throws Exception {
+		
+		if(cache!=null){
+			
+			IProtocolFactory<?> protocolFactory = null;
+			PorteNamingUtils namingUtils = null;
+			try {
+				ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
+				String protocol = protocolFactoryManager.getProtocolByOrganizationType(idPA.getIdentificativiErogazione().getIdServizio().getSoggettoErogatore().getTipo());
+				protocolFactory = protocolFactoryManager.getProtocolFactoryByName(protocol);
+				namingUtils = new PorteNamingUtils(protocolFactory);
+			}catch(Throwable t) {
+				OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Errore durante la comprensione del protocol factory della PA ["+idPA+"]");
+			}
+			
+			String nomePorta = idPA.getNome(); 
+			String nomePorta_normalized = null; 
+			if(namingUtils!=null) {
+				nomePorta_normalized = namingUtils.normalizePA(nomePorta);
+			}
+			
+			String porta = _toKey_getKeyCacheNomePorta(nomePorta);
+			String porta_normalized = null;
+			if(nomePorta_normalized!=null){
+				porta_normalized = _toKey_getKeyCacheNomePorta(nomePorta_normalized);
+			}
+			
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = GestoreLoadBalancerCaching.keysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				for (String key : keys) {
+					if(key!=null) {
+						if(key.contains(porta)) {
+							keyForClean.add(key);
+						}
+						else if(porta_normalized!=null && key.contains(porta_normalized)) {
+							keyForClean.add(key);
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+			
+		}
+	}
+	
+	
 	
 
 	/*----------------- INIZIALIZZAZIONE --------------------*/
@@ -376,12 +449,17 @@ public class GestoreLoadBalancerCaching {
 		
 	}
 	
+	protected static String _toKey_getKeyCacheNomePorta(String nomePorta) {
+		return " pa:"+nomePorta+" ";
+	}
+	
 	private static String getKeyCache(PortaApplicativa pa, OpenSPCoop2Message message, Busta busta, 
 			RequestInfo requestInfo, PdDContext pddContext, 
 			MsgDiagnostico msgDiag, Logger log,
 			ConditionalFilterResult filterResult) throws BehaviourException, BehaviourEmitDiagnosticException {
 		
-		String keyCache = "["+pa.getBehaviour().getNome()+"] "+pa.getTipoSoggettoProprietario()+"/"+pa.getNomeSoggettoProprietario()+" "+pa.getNome();
+		String keyCache = "["+pa.getBehaviour().getNome()+"] "+pa.getTipoSoggettoProprietario()+"/"+pa.getNomeSoggettoProprietario()+
+				_toKey_getKeyCacheNomePorta(pa.getNome());
 		if(filterResult!=null) {
 			if(filterResult.isByFilter()) {
 				keyCache = keyCache +" [Conditional-By-Filter] ";

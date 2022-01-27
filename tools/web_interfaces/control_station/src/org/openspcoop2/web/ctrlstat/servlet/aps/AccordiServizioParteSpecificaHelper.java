@@ -2607,7 +2607,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							
 							if(!mapping.isDefault()) {
 								PortaApplicativaServizioApplicativo portaApplicativaAssociataServizioApplicativo = paAssociata.getServizioApplicativoList().get(0);
-								boolean connettoreConfigurazioneRidefinito = this.isConnettoreRidefinito(paDefault, paSADefault, paAssociata, portaApplicativaAssociataServizioApplicativo);
+								boolean connettoreConfigurazioneRidefinito = this.isConnettoreRidefinito(paDefault, paSADefault, paAssociata, portaApplicativaAssociataServizioApplicativo, paAssociata.getServizioApplicativoList());
 								if(connettoreConfigurazioneRidefinito) {
 									visualizzaConnettore = false;
 									break;
@@ -3901,7 +3901,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							
 						}else {
 							// Connettore e' ridefinito se
-							connettoreRidefinito = isConnettoreRidefinito(paAssociataDefault, portaApplicativaServizioApplicativoDefault, paAssociata, portaApplicativaServizioApplicativo);
+							connettoreRidefinito = isConnettoreRidefinito(paAssociataDefault, portaApplicativaServizioApplicativoDefault, paAssociata, portaApplicativaServizioApplicativo, paAssociata.getServizioApplicativoList());
 							
 							if(!connettoreRidefinito) { 
 								servletConnettore = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORE_DEFAULT;

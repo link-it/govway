@@ -21,6 +21,7 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.scope;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -33,6 +34,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.registry.Scope;
@@ -40,6 +42,7 @@ import org.openspcoop2.core.registry.constants.ScopeContesto;
 //import org.openspcoop2.core.registry.constants.ScopeTipologia;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -84,6 +87,8 @@ public final class ScopeChange extends Action {
 			String tipologia = scopeHelper.getParameter(ScopeCostanti.PARAMETRO_SCOPE_TIPOLOGIA);
 			String nomeEsterno = scopeHelper.getParameter(ScopeCostanti.PARAMETRO_SCOPE_NOME_ESTERNO);
 			String contesto = scopeHelper.getParameter(ScopeCostanti.PARAMETRO_SCOPE_CONTESTO);
+			String resetElementoCacheS = scopeHelper.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
+			boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);
 			
 			ScopeCore scopeCore = new ScopeCore();
 
@@ -92,6 +97,74 @@ public final class ScopeChange extends Action {
 
 			// Prendo il scope
 			Scope scope  = scopeCore.getScope(scopeId);
+			
+			// reset elemento dalla cache
+			if(resetElementoCache) {
+				
+				// Uso lo stessoAlias
+				List<String> aliases = scopeCore.getJmxPdD_aliases();
+				String alias = null;
+				if(aliases!=null && !aliases.isEmpty()) {
+					alias = aliases.get(0);
+				}
+				String labelScope = scope.getNome();
+				scopeCore.invokeJmxMethodAllNodesAndSetResult(pd, scopeCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+						scopeCore.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheScope(alias),
+						MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_SUCCESSO,labelScope),
+						MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_FALLITO_PREFIX,labelScope),
+						scope.getId());				
+				
+				String resetFromLista = scopeHelper.getParameter(CostantiControlStation.PARAMETRO_RESET_CACHE_FROM_LISTA);
+				boolean arrivoDaLista = "true".equalsIgnoreCase(resetFromLista);
+				
+				if(arrivoDaLista) {
+					
+					// preparo lista
+					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+
+					int idLista = Liste.SCOPE;
+
+					// poiche' esistono filtri che hanno necessita di postback salvo in sessione
+					List<Scope> lista = null;
+					if(!ServletUtils.isSearchDone(scopeHelper)) {
+						lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista, Scope.class);
+					}
+					
+					ricerca = scopeHelper.checkSearchParameters(idLista, ricerca);
+					
+					scopeHelper.clearFiltroSoggettoByPostBackProtocollo(ScopeHelper.POSIZIONE_FILTRO_PROTOCOLLO, ricerca, idLista);
+					
+					if(lista==null) {
+						boolean filtroSoggetto = false;
+						List<String> protocolli = scopeCore.getProtocolli(session,false);
+						if(protocolli!=null && protocolli.size()==1) { // dovrebbe essere l'unico caso in cui un soggetto multitenant è selezionato
+							filtroSoggetto = true;
+						}
+						if(filtroSoggetto) {
+							ricerca.addFilter(idLista, Filtri.FILTRO_SOGGETTO, scopeHelper.getSoggettoMultitenantSelezionato());
+						}
+						
+						if(scopeCore.isVisioneOggettiGlobale(userLogin)){
+							lista = scopeCore.scopeList(null, ricerca);
+						}else{
+							lista = scopeCore.scopeList(userLogin, ricerca);
+						}
+					}
+					
+					if(!scopeHelper.isPostBackFilterElement()) {
+						ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+					}
+					
+					scopeHelper.prepareScopeList(ricerca, lista);
+
+					// salvo l'oggetto ricerca nella sessione
+					ServletUtils.setSearchObjectIntoSession(session, ricerca);
+				
+					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+
+					return ServletUtils.getStrutsForwardEditModeFinished(mapping, ScopeCostanti.OBJECT_NAME_SCOPE , ForwardParams.CHANGE());
+				}
+			}
 			
 			// Se nomehid = null, devo visualizzare la pagina per la
 			// modifica dati
@@ -122,7 +195,7 @@ public final class ScopeChange extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = scopeHelper.addScopeToDati(TipoOperazione.CHANGE, scopeId, nome, descrizione, tipologia, nomeEsterno, contesto, dati);
+				dati = scopeHelper.addScopeToDati(TipoOperazione.CHANGE, scopeId, nome, descrizione, tipologia, nomeEsterno, contesto, dati, scope.getNome());
 
 				pd.setDati(dati);
 
@@ -146,7 +219,7 @@ public final class ScopeChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = scopeHelper.addScopeToDati(TipoOperazione.CHANGE, scopeId, nome, descrizione, tipologia, nomeEsterno, contesto, dati);
+				dati = scopeHelper.addScopeToDati(TipoOperazione.CHANGE, scopeId, nome, descrizione, tipologia, nomeEsterno, contesto, dati, scope.getNome());
 
 				pd.setDati(dati);
 

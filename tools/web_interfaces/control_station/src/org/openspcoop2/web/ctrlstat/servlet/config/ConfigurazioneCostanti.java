@@ -106,6 +106,8 @@ public class ConfigurazioneCostanti {
 	
 	public final static String OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN = "configurazionePolicyGestioneToken";
 	
+	public final static String OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI = "configurazionePolicyGestioneTokenVerificaCertificati";
+	
 	public final static String OBJECT_NAME_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA = "configurazioneResponseCachingConfigurazioneRegola";
 	
 	public final static String OBJECT_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA = "configurazioneProxyPassRegola";
@@ -377,6 +379,8 @@ public class ConfigurazioneCostanti {
 		SERVLET_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN.add(SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST);
 	}
 	
+	public final static String SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI = OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI+".do";
+	
 	public final static String SERVLET_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA_ADD = OBJECT_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA+"Add.do";
 	public final static String SERVLET_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA_CHANGE = OBJECT_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA+"Change.do";
 	public final static String SERVLET_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA_DELETE = OBJECT_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA+"Del.do";
@@ -500,6 +504,11 @@ public class ConfigurazioneCostanti {
 	
 	public final static String SESSION_PARAMETRO_OLD_PLUGIN = "_confAllPluginScelto_";
 	public final static String SESSION_PARAMETRO_OLD_PARAMETRI = "_confAllParameterPluginScelto_";
+	
+	/* NOME VISTA CUSTOM */
+	public final static String CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_NOME_VISTA_CUSTOM_LISTA_TOKEN_POLICIY = "tokenPolicy";
+	public final static String CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_NOME_VISTA_CUSTOM_LISTA_ATTRIBUTE_AUTHORITY = "attributeAuthority";
+	public final static String CONFIGURAZIONE_ALLARMI_NOME_VISTA_CUSTOM_LISTA = "allarmi";
 
 	/* LABEL GENERALI */
 	
@@ -525,6 +534,12 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_RUNTIME_ACCEDI = "Accedi";
 	
 	public final static String LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN = "Token Policy";
+	
+	public final static String LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI = CostantiControlStation.LABEL_VERIFICA_CERTIFICATI;
+	public final static String LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI_DI = CostantiControlStation.LABEL_VERIFICA_CERTIFICATI_DI;
+	
+	public final static String LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CONNETTIVITA = CostantiControlStation.LABEL_VERIFICA_CONNETTIVITA;
+	public final static String LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CONNETTIVITA_DI = CostantiControlStation.LABEL_VERIFICA_CONNETTIVITA_DI;
 	
 	public final static String LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY = "Attribute Authority";
 	
@@ -2464,6 +2479,29 @@ public class ConfigurazioneCostanti {
 	
 	/** COSTANTI VISUALIZZAZIONE MESSAGGI MODIFICA POSIZIONE HANDLERS */
 	public static final boolean VISUALIZZA_MESSAGGIO_CONFERMA_SPOSTAMENTO_HANDLER = false;
+	
+	public final static String MESSAGE_METADATI_DESCRIZIONE = "Descrizione: {0}";
+	
+	public final static String MESSAGE_METADATI_SEPARATORE = ", ";
+	
+	public final static String MESSAGE_METADATI_TOKEN_POLICY_TIPO = "Tipo: {0}";
+	public final static String MESSAGE_METADATI_TOKEN_POLICY_DESCRIZIONE = "Descrizione: {0}";
+	public final static String MESSAGE_METADATI_TOKEN_POLICY_TOKEN = "Token: {0}";
+	public final static String MESSAGE_METADATI_TOKEN_POLICY_VALIDAZIONE = "Validazione: {0}";
+	public final static String MESSAGE_METADATI_TOKEN_POLICY_FORWARD = "Forward: {0}";
+	public final static String MESSAGE_METADATI_TOKEN_POLICY_MODALITA = "Modalità: {0}";
+	
+	public final static String MESSAGE_METADATI_ATTRIBUTE_AUTHORITY_SOLO_ATTRIBUTI = "Attributi: {0}";
+	public final static String MESSAGE_METADATI_ATTRIBUTE_AUTHORITY_ATTRIBUTI_E_DESCRIZIONE = "Attributi: {0}, Descrizione: {1}";
+	
+	public final static String MESSAGE_METADATI_ALLARMI_LIST_MODALITA = "Modalit&agrave;: {0}";
+	public final static String MESSAGE_METADATI_ALLARMI_LIST_MODALITA_DESCRIZIONE = "Modalit&agrave;: {0}, Descrizione: {1}";
+	
+	/** ICONE */
+	
+	public final static String ICONA_VISUALIZZA_RUNTIME_ALLARME = Costanti.ICONA_VISUALIZZA_RUNTIME_ALLARME;
+	public final static String ICONA_VISUALIZZA_RUNTIME_ALLARME_TOOLTIP = Costanti.ICONA_VISUALIZZA_RUNTIME_ALLARME_TOOLTIP;
+	
 }
 
 	

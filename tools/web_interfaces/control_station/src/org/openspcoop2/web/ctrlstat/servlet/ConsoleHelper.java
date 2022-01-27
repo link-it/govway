@@ -14780,7 +14780,8 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public boolean isConnettoreRidefinito(PortaApplicativa paDefault,	PortaApplicativaServizioApplicativo paSADefault,
-			PortaApplicativa paCurrent, PortaApplicativaServizioApplicativo paSACurrent) {
+			PortaApplicativa paCurrent, PortaApplicativaServizioApplicativo paSACurrent,
+			List<PortaApplicativaServizioApplicativo> list_paSACurrent) {
 		boolean connettoreRidefinito = (
 				(
 					paDefault.getServizioApplicativoDefault() == null && (paCurrent.getServizioApplicativoDefault() != null || paSACurrent.getNome().equals(paCurrent.getNome()))
@@ -14798,6 +14799,19 @@ public class ConsoleHelper implements IConsoleHelper {
 					//!paSADefault.getNome().equals(paSACurrent.getNome()))
 				)
 			);
+		if(!connettoreRidefinito) {
+			boolean connettoreMultiploEnabled = paCurrent.getBehaviour() != null;
+			if(connettoreMultiploEnabled && paDefault.getServizioApplicativoDefault() == null && paCurrent.getServizioApplicativoDefault() == null) {
+				if(list_paSACurrent!=null && !list_paSACurrent.isEmpty() && list_paSACurrent.size()>1) { // se uguale a 1 si rientra nel primo caso sopra, altrimenti l'ordine potrebbe cambiare e non essere alla posizione 0 quello di default
+					for (PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo : list_paSACurrent) {
+						if(portaApplicativaServizioApplicativo.getNome().equals(paCurrent.getNome())){
+							connettoreRidefinito = true;
+							break;
+						}
+					}
+				}
+			}
+		}
 		return connettoreRidefinito;
 	}
 	
@@ -18760,44 +18774,80 @@ public class ConsoleHelper implements IConsoleHelper {
 	private void addInUsoButton(Vector<DataElement> e, DataElementType deType, String titolo, String id, InUsoType inUsoType,
 			String tooltip, String icon, String headerRiga1, 
 			Boolean resizable, Boolean draggable) {
+		
+		ServletUtils.addInUsoButton(UtilsCostanti.SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO, e, deType, titolo, id, inUsoType.toString(),
+				tooltip, icon, headerRiga1, 
+				resizable, draggable);
+		
+	}
+	
+	
+	public void addComandoInUsoButton(Vector<DataElement> e, String titolo, String id, InUsoType inUsoType) {
+		 addComandoInUsoElementoButton(titolo, id, inUsoType,
+				 CostantiControlStation.LABEL_IN_USO_TOOLTIP, Costanti.ICON_USO,
+					CostantiControlStation.LABEL_IN_USO_BODY_HEADER_RISULTATI,
+					true, true);
+	}
+	public void addComandoInUsoInfoButton(Vector<DataElement> e, String titolo, String id, InUsoType inUsoType) {
+		 addComandoInUsoElementoButton(titolo, id, inUsoType,
+				 CostantiControlStation.LABEL_IN_USO_INFORMAZIONI_TOOLTIP, Costanti.ICON_USO_INFO,
+					CostantiControlStation.LABEL_IN_USO_BODY_HEADER_INFORMAZIONI, 
+					true, true);
+	}
+	private void addComandoInUsoElementoButton(String titolo, String id, InUsoType inUsoType,
+			String tooltip, String icon, String headerRiga1, 
+			Boolean resizable, Boolean draggable) {
+		this.pd.addComandoInUsoElementoButton(UtilsCostanti.SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO,
+				titolo, id, inUsoType.toString(),
+				tooltip, icon, headerRiga1, 
+				resizable, draggable);
+	}
+	
+	public void addComandoVerificaCertificatiButton(Vector<DataElement> e, String nomeElementoSuCuiEffettuareLaVerifica, String servletName, List<Parameter> parameters) {
+		if(parameters == null) {
+			parameters = new ArrayList<Parameter>();
+		}
+
+		this.addAzioneButton(e, DataElementType.IMAGE,  CostantiControlStation.ICONA_VERIFICA_CERTIFICATI_TOOLTIP,
+//				MessageFormat.format(Costanti.ICONA_RESET_CACHE_ELEMENTO_TOOLTIP_CON_PARAMETRO, nomeElementoSuCuiEffettuareLaVerifica),
+				CostantiControlStation.ICONA_VERIFICA_CERTIFICATI, servletName,parameters);
+	}
+	
+	public void addComandoResetCacheButton(Vector<DataElement> e, String nomeElementoSuCuiEffettuareIlReset, String servletName, List<Parameter> parameters) {
+		if(parameters == null) {
+			parameters = new ArrayList<Parameter>();
+		}
+		
+		parameters.add(new Parameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE, "true"));
+		
+		this.addAzioneButton(e, DataElementType.IMAGE,  Costanti.ICONA_RESET_CACHE_ELEMENTO_TOOLTIP,
+//				MessageFormat.format(Costanti.ICONA_RESET_CACHE_ELEMENTO_TOOLTIP_CON_PARAMETRO, nomeElementoSuCuiEffettuareIlReset),
+				Costanti.ICONA_RESET_CACHE_ELEMENTO, servletName,parameters);
+	}
+	
+	public void addVerificaCertificatiButton(Vector<DataElement> e, String servletName, List<Parameter> parameters) {
+		this.addAzioneButton(e, DataElementType.IMAGE, 
+				MessageFormat.format(CostantiControlStation.ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO, CostantiControlStation.LABEL_CERTIFICATI.toLowerCase()),
+				CostantiControlStation.ICONA_VERIFICA_CERTIFICATI, servletName,parameters);
+	}
+	
+	public void addVerificaConnettivitaButton(Vector<DataElement> e, String servletName, List<Parameter> parameters) {
+		this.addAzioneButton(e, DataElementType.IMAGE, 
+				MessageFormat.format(CostantiControlStation.ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO, CostantiControlStation.LABEL_CONFIGURAZIONE_CONNETTIVITA.toLowerCase()),
+				CostantiControlStation.ICONA_VERIFICA, servletName,parameters);
+	}
+	
+	protected void addAzioneButton(Vector<DataElement> e, DataElementType deType, String tooltip, String icon, String servletName, List<Parameter> parameters) {
 		DataElement de = new DataElement();
 		de.setType(deType);
 		de.setToolTip(tooltip);
-		de.setWidthPx(15);	
-		Dialog deDialog = new Dialog();
-		deDialog.setIcona(icon);
-		deDialog.setTitolo(titolo);
-		deDialog.setHeaderRiga1(headerRiga1);
-		if(resizable!=null) {
-			deDialog.setResizable(resizable);
+		if(parameters != null && parameters.size() >0) {
+			de.setUrl(servletName, parameters.toArray(new Parameter[parameters.size()]));
+		} else {
+			de.setUrl(servletName);
 		}
-		if(draggable!=null) {
-			deDialog.setDraggable(draggable);
-		}
-		deDialog.setWidth("800px"); // modifico il default, che è più piccolo e calibrato per la creazione delle credenziali
+		de.setIcon(icon);
 		
-		// Inserire sempre la url come primo elemento del body
-		BodyElement bodyElementURL = new Dialog().new BodyElement();
-		bodyElementURL.setType(DataElementType.HIDDEN);
-		bodyElementURL.setName(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_URL);
-		Parameter pIdOggetto = new Parameter(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_ID_OGGETTO, id);
-		Parameter pTipoOggetto = new Parameter(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_OGGETTO, inUsoType.toString());
-		Parameter pTipoRisposta = new Parameter(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA, UtilsCostanti.VALUE_PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA_TEXT);
-		bodyElementURL.setUrl(UtilsCostanti.SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO, pIdOggetto,pTipoOggetto,pTipoRisposta);
-		deDialog.addBodyElement(bodyElementURL);
-		
-		// TextArea
-		BodyElement bodyElement = new Dialog().new BodyElement();
-		bodyElement.setType(DataElementType.TEXT_AREA);
-		bodyElement.setLabel("");
-		bodyElement.setValue("");
-		bodyElement.setRows(15);
-		if(resizable!=null) {
-			bodyElement.setResizable(resizable);
-		}
-		deDialog.addBodyElement(bodyElement );
-		
-		de.setDialog(deDialog );
 		e.addElement(de);
 	}
 	
@@ -19729,4 +19779,27 @@ public class ConsoleHelper implements IConsoleHelper {
 			return info;
 		}
 	}
+	
+	public void addVerificaCertificatoSceltaAlias(List<String> aliases,Vector<DataElement> dati) throws Exception {
+		
+		DataElement de = new DataElement();
+		de.setType(DataElementType.SELECT);
+		List<String> values = new ArrayList<String>();
+		List<String> labels = new ArrayList<String>();
+		values.add(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI);
+		labels.add(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI);
+		values.addAll(this.confCore.getJmxPdD_aliases());
+		for (String alias : this.confCore.getJmxPdD_aliases()) {
+			labels.add(this.confCore.getJmxPdD_descrizione(alias));
+		}
+		de.setValues(values);
+		de.setLabels(labels);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
+		de.setSize(this.getSize());
+		//de.setPostBack(true);
+		dati.addElement(de);
+		
+	}
+	
 }

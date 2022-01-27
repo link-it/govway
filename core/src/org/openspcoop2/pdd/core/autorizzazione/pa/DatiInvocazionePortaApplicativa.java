@@ -129,6 +129,10 @@ public class DatiInvocazionePortaApplicativa extends AbstractDatiInvocazione {
 		this.soggettoFruitore = soggettoFruitore;
 	}
 	
+	public static final String APPLICATIVO_FRUITORE_PREFIX = " IDServizioApplicativoFruitore(";
+	public static final String APPLICATIVO_FRUITORE_SUFFIX = ")";
+	public static final String SOGGETTO_FRUITORE_PREFIX = " IDSoggettoFruitore(";
+	public static final String SOGGETTO_FRUITORE_SUFFIX = ")";
 	
 	@Override
 	public String getKeyCache(){
@@ -152,9 +156,9 @@ public class DatiInvocazionePortaApplicativa extends AbstractDatiInvocazione {
 		}
 		
 		if(this.identitaServizioApplicativoFruitore!=null){
-			bf.append(" IDServizioApplicativoFruitore(");
+			bf.append(APPLICATIVO_FRUITORE_PREFIX);
 			bf.append(this.identitaServizioApplicativoFruitore.toString());
-			bf.append(")");
+			bf.append(APPLICATIVO_FRUITORE_SUFFIX);
 		}
 		
 		if(this.subjectServizioApplicativoFruitoreFromMessageSecurityHeader!=null){
@@ -188,9 +192,9 @@ public class DatiInvocazionePortaApplicativa extends AbstractDatiInvocazione {
 		}
 		
 		if(this.idSoggettoFruitore!=null){
-			bf.append(" IDSoggettoFruitore(");
+			bf.append(SOGGETTO_FRUITORE_PREFIX);
 			bf.append(this.idSoggettoFruitore.toString());
-			bf.append(")");
+			bf.append(SOGGETTO_FRUITORE_SUFFIX);
 		}
 		
 		if(keyCache==false){

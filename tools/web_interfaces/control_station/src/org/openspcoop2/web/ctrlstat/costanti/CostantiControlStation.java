@@ -43,6 +43,7 @@ import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
 import org.openspcoop2.pdd.core.integrazione.TipoIntegrazione;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.web.lib.mvc.Costanti;
+import org.openspcoop2.web.lib.mvc.ForwardParams;
 
 /**
  * CostantiControlStation
@@ -123,6 +124,10 @@ public class CostantiControlStation {
 	public final static String SESSION_PARAMETRO_SAME_DB_WEBUI = "sameDBWebUI";
 	public final static String SESSION_PARAMETRO_TIPO_DB = "tipoDB";
 	public final static String SESSION_PARAMETRO_OLD_CONFIGURAZIONE_PROPERTIES_PREFIX = Costanti.SESSION_PARAMETRO_OLD_CONFIGURAZIONE_PROPERTIES_PREFIX;
+	
+	/** STRUTS FORWARD */
+	public final static ForwardParams TIPO_OPERAZIONE_RESET_CACHE_ELEMENTO = ForwardParams.OTHER("ResetCacheElemento");
+	public final static ForwardParams TIPO_OPERAZIONE_VERIFICA_CERTIFICATI = ForwardParams.OTHER("VerificaCertificati");
 	
 	
 	/** LABEL GENERALI */
@@ -311,6 +316,11 @@ public class CostantiControlStation {
 	public final static String LABEL_INTEGRAZIONE = "Integrazione";
 	public final static String LABEL_INTEGRAZIONE_STATO = "Stato";
 	public final static String LABEL_METADATI = "Metadati";
+	public final static String LABEL_VERIFICA_CERTIFICATI = "Verifica Certificati";
+	public final static String LABEL_VERIFICA_CERTIFICATI_DI = "Verifica Certificati di ";
+	public final static String LABEL_CERTIFICATI = "Certificati";
+	public final static String LABEL_VERIFICA_CONNETTIVITA = "Verifica Connettività";
+	public final static String LABEL_VERIFICA_CONNETTIVITA_DI = "Verifica Connettività di ";
 	
 	public final static String LABEL_METADATI_INFO = "Per consentire lo scambio di informazioni, funzionali all’integrazione tra applicativi e gateway, sono previste differenti strutture dati, indicate con il termine Header di Integrazione, che possono essere attivate puntualmente su una API.<BR/>"+
 			"Il Gateway dispone di una sua configurazione di default per la generazione degli header. Tramite il campo '"+CostantiControlStation.LABEL_METADATI+"' è possibile ridefinire tale comportamento o disabilitare la generazione degli header di integrazione.";
@@ -513,6 +523,7 @@ public class CostantiControlStation {
 	public final static String LABEL_CONFIGURAZIONE_CANALE_DI = "Canale di ";
 	
 	
+	public final static String LABEL_CONFIGURAZIONE_ENDPOINT = "Endpoint";
 	public final static String LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_BOTTONE = "Verifica";
 	public final static String LABEL_CONFIGURAZIONE_CONNETTIVITA = "Connettività";
 	public final static String LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_TITLE = "Verifica Connettività";
@@ -792,9 +803,9 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_ID_APPLICATIVO_SERVER = "Applicativo";
 	
 	public final static String LABEL_IN_USO_COLONNA_HEADER = "Uso";
-	public final static String LABEL_IN_USO_TOOLTIP = "Riferimenti";
+	public final static String LABEL_IN_USO_TOOLTIP = "Visualizza riferimenti";
 	public final static String LABEL_IN_USO_BODY_HEADER_RISULTATI = "Risultati della ricerca";
-	public final static String LABEL_IN_USO_INFORMAZIONI_TOOLTIP = "Informazioni";
+	public final static String LABEL_IN_USO_INFORMAZIONI_TOOLTIP = "Visualizza dettagli della configurazione";
 	public final static String LABEL_IN_USO_BODY_HEADER_INFORMAZIONI = "Dettagli della configurazione";
 	
 	public final static String LABEL_CONFIGURAZIONE_CANALE_DEFAULT = "Configurazione di default del Gateway";
@@ -948,6 +959,9 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_ABILITA_USO_APPLICATIVO_SERVER = "saServerEnabled";
 	public final static String PARAMETRO_ID_APPLICATIVO_SERVER = "saServer";
 	public final static String PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO_TITLE = "authContenutiStatoTitle";
+	public final static String PARAMETRO_VERIFICA_CERTIFICATI_FROM_LISTA = "certVerFromLista";
+	public final static String PARAMETRO_RESET_CACHE_FROM_LISTA = "resetFromLista";
+	public final static String PARAMETRO_VERIFICA_CONNETTIVITA = "tokenVerConn";
 	
 	public final static String PARAMETRO_RESET_SEARCH = "resetSearch";
 	
@@ -1154,6 +1168,9 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_PORTE_INTEGRAZIONE = "integrazione";
 	public final static String PARAMETRO_PORTE_METADATI_GRUPPO = "metadatiGruppo";
 	public final static String PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO = "mdG_";
+	
+	
+	public final static String PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE = Costanti.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE;
 	
 	/** PARAMETRI MESSAGE PAGE **/
 	
@@ -1497,6 +1514,16 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_FORCE_INTERFACE_BASED_LEFT = "Identificazione tramite API";
 	public final static String LABEL_PARAMETRO_FORCE_INTERFACE_BASED_RIGHT = "Modalità alternativa utilizzata se l'identificazione indicata fallisce";
 	
+	public final static String LABEL_ELIMINATO_CACHE_SUCCESSO = "{0} eliminato dalla cache";
+	public final static String LABEL_ELIMINATO_CACHE_FALLITO_PREFIX = "Eliminazione {0} dalla cache non riuscita: ";
+	
+	public final static String LABEL_VERIFICA_CERTIFICATI_NON_PRESENTI = "Non sono state rilevate configurazioni che utilizzano certificati";
+	public final static String LABEL_VERIFICA_CERTIFICATI_PRESENTE_SOLO_CONFIGURAZIONE_MANUALE = LABEL_VERIFICA_CERTIFICATI_NON_PRESENTI+"."+org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+"È presente una configurazione manuale del Subject e dell'Issuer";
+	public final static String LABEL_VERIFICA_CERTIFICATI_SUCCESSO = "Tutti i certificati riferiti risultano validi";
+	public final static String LABEL_VERIFICA_CERTIFICATI_WARNING_PREFIX = "Rilevati certificati prossimi alla scadenza in ";
+	public final static String LABEL_VERIFICA_CERTIFICATI_WARNING_ANCHE_SCADUTI_PREFIX = "Rilevati certificati prossimi alla scadenza o scaduti in ";
+	public final static String LABEL_VERIFICA_CERTIFICATI_ERROR_PREFIX = "Rilevati certificati non validi in ";
+	
 	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA = "Espressione applicata sul messaggio; se si ha un match la regola di correlazione verrà utilizzata.<br/>I tipi di espressione utilizzabili sono:";
 	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_SOAP = "<b>Path</b>: espressione XPath";
 	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_XPATH = "<b>XPath</b>: espressione XPath utilizzabile con messaggi XML";
@@ -1740,9 +1767,13 @@ public class CostantiControlStation {
 	public final static String ICONA_VISUALIZZA_TOOLTIP = "Visualizza";
 	public final static String ICONA_VISUALIZZA_TOOLTIP_CON_PARAMETRO = "Visualizza {0}";
 	
-	public final static String ICONA_VERIFICA = "&#xE8BE;";
-	public final static String ICONA_VERIFICA_TOOLTIP = "Verifica";
-	public final static String ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO = "Verifica {0}";
+	public final static String ICONA_VERIFICA = Costanti.ICONA_VERIFICA;
+	public final static String ICONA_VERIFICA_TOOLTIP = Costanti.ICONA_VERIFICA_TOOLTIP;
+	public final static String ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO = Costanti.ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO;
+	
+	public final static String ICONA_VERIFICA_CERTIFICATI = Costanti.ICONA_VERIFICA_CERTIFICATI;
+	public final static String ICONA_VERIFICA_CERTIFICATI_TOOLTIP = Costanti.ICONA_VERIFICA_CERTIFICATI_TOOLTIP;
+	public final static String ICONA_VERIFICA_CERTIFICATI_TOOLTIP_CON_PARAMETRO = Costanti.ICONA_VERIFICA_CERTIFICATI_TOOLTIP_CON_PARAMETRO;
 	
 	public final static String ICONA_MODIFICA_CONFIGURAZIONE_CONNETTORI_MULTIPLI = "&#xE8B8;";
 	public final static String ICONA_MODIFICA_CONFIGURAZIONE_CONNETTORI_MULTIPLI_TOOLTIP = "Configurazione Connettori Multipli";
@@ -1758,6 +1789,10 @@ public class CostantiControlStation {
 	
 	public final static String ICONA_MODIFICA_TOGGLE_ON = "toggle_on";
 	public final static String ICONA_MODIFICA_TOGGLE_OFF = "toggle_off";
+	
+	public final static String ICONA_RESET_CACHE_ELEMENTO = Costanti.ICONA_RESET_CACHE_ELEMENTO;
+	public final static String ICONA_RESET_CACHE_ELEMENTO_TOOLTIP = Costanti.ICONA_RESET_CACHE_ELEMENTO_TOOLTIP;
+	public final static String ICONA_RESET_CACHE_ELEMENTO_TOOLTIP_CON_PARAMETRO = Costanti.ICONA_RESET_CACHE_ELEMENTO_TOOLTIP_CON_PARAMETRO;
 	
 	// Indica il numero delle possibili classi CSS per i tag dei gruppi, modificare questo valore se si vuole modificare il numero delle classi disponibili
 	public final static Integer NUMERO_GRUPPI_CSS = Costanti.NUMERO_GRUPPI_CSS;

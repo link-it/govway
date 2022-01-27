@@ -60,27 +60,30 @@ public abstract class AbstractConfigChecker {
 	}
 	
 	public static void printErrore(Map<String,List<String>> mapErrori, StringBuilder sbDetails) {
+		printErrore(mapErrori, sbDetails, -1, "");
+	}
+	public static void printErrore(Map<String,List<String>> mapErrori, StringBuilder sbDetails, int nodes, String multipleNodeSeparator) {
 		if(!mapErrori.isEmpty()) {
 			if(mapErrori.size()==1) {
 				if(sbDetails.length()>0) {
 					sbDetails.append("\n");
 				}
-				sbDetails.append(mapErrori.keySet().iterator().next());
+				String errore = mapErrori.keySet().iterator().next();
+				
+				List<String> nodiRuntimeErrore = mapErrori.get(errore);
+				if(nodes>1 && (nodiRuntimeErrore!=null && nodiRuntimeErrore.size()!=nodes)) {
+					String nodesLabel = printNodes(mapErrori, errore);
+					sbDetails.append("(").append(nodesLabel).append(") ");
+				}
+				
+				sbDetails.append(errore);
 			}
 			else {
 				boolean first = true;
 				for (String errore : mapErrori.keySet()) {
-					List<String> nodiRuntimeErrore = mapErrori.get(errore);
-					StringBuilder sbNodir = new StringBuilder();
-					for (String nodo : nodiRuntimeErrore) {
-						if(sbNodir.length()>0) {
-							sbNodir.append(", ");
-						}
-						sbNodir.append(nodo);
-					}
-					
 					if(sbDetails.length()>0) {
 						sbDetails.append("\n");
+						sbDetails.append(multipleNodeSeparator);
 					}
 					else {
 						if(first) {
@@ -88,16 +91,33 @@ public abstract class AbstractConfigChecker {
 						}
 						else {
 							sbDetails.append("\n");
+							sbDetails.append(multipleNodeSeparator);
 						}
 					}
-					sbDetails.append("(").append(sbNodir.toString()).append(") ");
+					
+					String nodesLabel = printNodes(mapErrori, errore);
+					sbDetails.append("(").append(nodesLabel).append(") ");
+					
 					sbDetails.append(errore);
 				}
 			}
 		}
 	}
+	private static String printNodes(Map<String,List<String>> mapErrori, String errore) {
+		List<String> nodiRuntimeErrore = mapErrori.get(errore);
+		StringBuilder sbNodir = new StringBuilder();
+		for (String nodo : nodiRuntimeErrore) {
+			if(sbNodir.length()>0) {
+				sbNodir.append(", ");
+			}
+			sbNodir.append(nodo);
+		}
+		return sbNodir.toString();
+	}
 	
-	
+	protected String getMultipleNodeSeparator() {
+		return "";
+	}
 	
 	public abstract void error(String msg);
 	public abstract void error(String msg, Throwable t);
@@ -205,16 +225,38 @@ public abstract class AbstractConfigChecker {
 			boolean connettoreSsl, org.openspcoop2.core.config.Connettore connettore,
 			boolean sicurezzaModi, org.openspcoop2.core.registry.AccordoServizioParteSpecifica asps,
 			int sogliaWarningGiorni) throws Exception {
+		List<org.openspcoop2.core.config.Connettore> connettori = null;
+		if(connettore!=null) {
+			connettori = new ArrayList<>();
+			connettori.add(connettore);
+		}
+		checkErogazione(sbDetailsError, sbDetailsWarning,
+				connettoreSsl, connettori,
+				sicurezzaModi, asps,
+				sogliaWarningGiorni);
+	}
+	public void checkErogazione(StringBuilder sbDetailsError, StringBuilder sbDetailsWarning,
+			boolean connettoreSsl, List<org.openspcoop2.core.config.Connettore> connettori,
+			boolean sicurezzaModi, org.openspcoop2.core.registry.AccordoServizioParteSpecifica asps,
+			int sogliaWarningGiorni) throws Exception {
 		
 		StringBuilder _sbError = new StringBuilder();
 		
 		StringBuilder _sbWarning = new StringBuilder();
 		StringBuilder _sbWarningModi = new StringBuilder();
 		
-		if(connettoreSsl) {
-			checkCertificate(_sbError, _sbWarning, 
-					sogliaWarningGiorni,
-					connettore);
+		if(connettoreSsl && connettori!=null && !connettori.isEmpty()) {
+			for (org.openspcoop2.core.config.Connettore connettore : connettori) {
+				StringBuilder _sbWarning_connettore = new StringBuilder();
+				if(_sbError.length()<=0) {
+					checkCertificate(_sbError, _sbWarning_connettore, 
+							sogliaWarningGiorni,
+							connettore);	
+				}
+				if(_sbWarning.length()<=0 && _sbWarning_connettore.length()>0) {
+					_sbWarning.append(_sbWarning_connettore.toString()); // tengo solo un warning alla volta, come per gli errori
+				}
+			}
 		}
 		if(_sbError.length()<=0) {
 			if(sicurezzaModi) {
@@ -242,16 +284,38 @@ public abstract class AbstractConfigChecker {
 			boolean connettoreSsl, org.openspcoop2.core.registry.Connettore connettore,
 			boolean sicurezzaModi, org.openspcoop2.core.registry.AccordoServizioParteSpecifica asps, org.openspcoop2.core.registry.Fruitore fruitore,
 			int sogliaWarningGiorni) throws Exception {
+		List<org.openspcoop2.core.registry.Connettore> connettori = null;
+		if(connettore!=null) {
+			connettori = new ArrayList<>();
+			connettori.add(connettore);
+		}
+		checkFruizione(sbDetailsError, sbDetailsWarning,
+				connettoreSsl, connettori,
+				sicurezzaModi, asps, fruitore,
+				sogliaWarningGiorni);
+	}
+	public void checkFruizione(StringBuilder sbDetailsError, StringBuilder sbDetailsWarning,
+			boolean connettoreSsl, List<org.openspcoop2.core.registry.Connettore> connettori,
+			boolean sicurezzaModi, org.openspcoop2.core.registry.AccordoServizioParteSpecifica asps, org.openspcoop2.core.registry.Fruitore fruitore,
+			int sogliaWarningGiorni) throws Exception {
 		
 		StringBuilder _sbError = new StringBuilder();
 		
 		StringBuilder _sbWarning = new StringBuilder();
 		StringBuilder _sbWarningModi = new StringBuilder();
 		
-		if(connettoreSsl) {
-			checkCertificate(_sbError, _sbWarning, 
-					sogliaWarningGiorni,
-					connettore);
+		if(connettoreSsl && connettori!=null && !connettori.isEmpty()) {
+			for (org.openspcoop2.core.registry.Connettore connettore : connettori) {
+				StringBuilder _sbWarning_connettore = new StringBuilder();
+				if(_sbError.length()<=0) {
+					checkCertificate(_sbError, _sbWarning_connettore, 
+							sogliaWarningGiorni,
+							connettore);	
+				}
+				if(_sbWarning.length()<=0 && _sbWarning_connettore.length()>0) {
+					_sbWarning.append(_sbWarning_connettore.toString()); // tengo solo un warning alla volta, come per gli errori
+				}
+			}
 		}
 		if(_sbError.length()<=0) {
 			if(sicurezzaModi) {
@@ -583,6 +647,7 @@ public abstract class AbstractConfigChecker {
 			}catch(Exception e){
 				this.error("Errore durante la verifica dei certificati (jmxResource '"+risorsa+"') (node:"+nomeNodoRuntime+"): "+e.getMessage(),e);
 				stato = e.getMessage();
+				errorDetail = stato;
 			}
 			
 			if(errorDetail!=null) {
@@ -596,10 +661,10 @@ public abstract class AbstractConfigChecker {
 		}
 		
 		if(!mapErrori.isEmpty()) {
-			AbstractConfigChecker.printErrore(mapErrori, sbDetailsError);
+			AbstractConfigChecker.printErrore(mapErrori, sbDetailsError, nodiRuntime.size(), getMultipleNodeSeparator());
 		}
 		else if(!mapWarning.isEmpty()) {
-			AbstractConfigChecker.printErrore(mapWarning, sbDetailsWarning);
+			AbstractConfigChecker.printErrore(mapWarning, sbDetailsWarning, nodiRuntime.size(), getMultipleNodeSeparator());
 		}
 
 	}
@@ -682,6 +747,7 @@ public abstract class AbstractConfigChecker {
 			}catch(Exception e){
 				this.error("Errore durante la verifica dei certificati (jmxResource '"+risorsa+"') (node:"+nomeNodoRuntime+"): "+e.getMessage(),e);
 				stato = e.getMessage();
+				errorDetail = stato;
 			}
 			
 			if(errorDetail!=null) {
@@ -695,10 +761,10 @@ public abstract class AbstractConfigChecker {
 		}
 		
 		if(!mapErrori.isEmpty()) {
-			AbstractConfigChecker.printErrore(mapErrori, sbDetailsError);
+			AbstractConfigChecker.printErrore(mapErrori, sbDetailsError, this.nodiRuntime.size(), getMultipleNodeSeparator());
 		}
 		else if(!mapWarning.isEmpty()) {
-			AbstractConfigChecker.printErrore(mapWarning, sbDetailsWarning);
+			AbstractConfigChecker.printErrore(mapWarning, sbDetailsWarning, this.nodiRuntime.size(), getMultipleNodeSeparator());
 		}
 
 	}
@@ -767,6 +833,7 @@ public abstract class AbstractConfigChecker {
 			}catch(Exception e){
 				this.error("Errore durante la verifica dei certificati (jmxResource '"+risorsa+"') (node:"+nomeNodoRuntime+"): "+e.getMessage(),e);
 				stato = e.getMessage();
+				errorDetail = stato;
 			}
 			
 			if(errorDetail!=null) {
@@ -780,10 +847,10 @@ public abstract class AbstractConfigChecker {
 		}
 		
 		if(!mapErrori.isEmpty()) {
-			AbstractConfigChecker.printErrore(mapErrori, sbDetailsError);
+			AbstractConfigChecker.printErrore(mapErrori, sbDetailsError, this.nodiRuntime.size(), getMultipleNodeSeparator());
 		}
 		else if(!mapWarning.isEmpty()) {
-			AbstractConfigChecker.printErrore(mapWarning, sbDetailsWarning);
+			AbstractConfigChecker.printErrore(mapWarning, sbDetailsWarning, this.nodiRuntime.size(), getMultipleNodeSeparator());
 		}
 
 	}

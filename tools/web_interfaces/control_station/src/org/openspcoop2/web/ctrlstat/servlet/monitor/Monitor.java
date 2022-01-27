@@ -581,12 +581,24 @@ public final class Monitor extends Action {
 
 				this.showStatoConsegneAsincrone(pd, monitorHelper, statoConsegneAsincrone, MonitorMethods.STATO_CONSEGNE_ASINCRONE.getNome(), formBean);
 
+				// imposto i parametri per l'eventuale richiesta di nextPage
+				Parameter pMethod = new Parameter(MonitorCostanti.PARAMETRO_MONITOR_METHOD, MonitorMethods.STATO_CONSEGNE_ASINCRONE.getNome());
+				Parameter pNewSearch = new Parameter(MonitorCostanti.PARAMETRO_MONITOR_NEW_SEARCH, MonitorCostanti.DEFAULT_VALUE_FALSE);
+				Parameter pSorgente = new Parameter(MonitorCostanti.PARAMETRO_MONITOR_SORGENTE, formBean.getSorgenteDati());
+				
 				// salvo l'oggetto ricerca nella sessione
 				ServletUtils.setSearchObjectIntoSession(session, ricerca);
 				// conservo il form bean nella session per eventuali richieste
 				// successive (nextPage)
 				session.setAttribute(MonitorCostanti.SESSION_ATTRIBUTE_FORM_BEAN, formBean);
-				session.setAttribute(MonitorCostanti.SESSION_ATTRIBUTE_FILTER_SEARCH, filter);
+				session.setAttribute(MonitorCostanti.SESSION_ATTRIBUTE_FILTER_SEARCH, filterConsegnaAsincrona);
+				
+				// refresh ricerca
+				List<Parameter> listRefresh = new ArrayList<Parameter>();
+				listRefresh.add(pMethod);
+				listRefresh.add(pNewSearch);
+				listRefresh.add(pSorgente);
+				pd.addComandoAggiornaRicercaButton(MonitorCostanti.SERVLET_NAME_MONITOR, listRefresh);
 				
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
@@ -644,6 +656,12 @@ public final class Monitor extends Action {
 					request.setAttribute(Costanti.REQUEST_ATTIBUTE_PARAMS, ServletUtils.getParametersAsString(false, pMethod, pNewSearch, pPdd));
 				}
 
+				// refresh ricerca
+				List<Parameter> listRefresh = new ArrayList<Parameter>();
+				listRefresh.add(pMethod);
+				listRefresh.add(pNewSearch);
+				listRefresh.add(pSorgente);
+				pd.addComandoAggiornaRicercaButton(MonitorCostanti.SERVLET_NAME_MONITOR, listRefresh);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

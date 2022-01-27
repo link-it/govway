@@ -22,6 +22,7 @@
 package org.openspcoop2.pdd.core.token;
 
 import java.io.Serializable;
+import java.text.MessageFormat;
 
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
@@ -432,4 +433,64 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_USER_INFO_MODE_URL_PARAMETER_NAME);
 	}
 
+	public String getAzioniForwardToken() throws ProviderException, ProviderValidationException {
+		StringBuilder bf = new StringBuilder();
+		if(this.isForwardToken()) {
+			boolean first = true;
+			if(this.isForwardToken_trasparente()) {
+				String mode = this.getForwardToken_trasparenteMode();
+				if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_AS_RECEIVED.equals(mode)) {
+					bf.append(Costanti.LABEL_POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_AS_RECEIVED_ORIGINALE);
+				}
+				else if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_RFC6750_HEADER.equals(mode)) {
+					bf.append(Costanti.LABEL_POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_RFC6750_HEADER);
+				}
+				else if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_RFC6750_URL.equals(mode)) {
+					bf.append(Costanti.LABEL_POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_RFC6750_URL);
+				}
+				else if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER.equals(mode)) {
+					bf.append(MessageFormat.format(Costanti.LABEL_POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER,getForwardToken_trasparenteModeCustomHeader()));
+				}
+				else if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL.equals(mode)) {
+					bf.append(MessageFormat.format(Costanti.LABEL_POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL,getForwardToken_trasparenteModeCustomUrl()));
+				}
+				else {
+					bf.append("Originale '"+mode+"'");
+				}
+				first = false;
+			}
+			if(this.isForwardToken_informazioniRaccolte()) {
+				if(!first) {
+					bf.append(",");
+				}
+				String mode = this.getForwardToken_informazioniRaccolteMode();
+				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_HEADERS.equals(mode)) {
+					bf.append(Costanti.LABEL_POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_HEADERS);
+				}
+				else if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JSON.equals(mode)) {
+					bf.append(Costanti.LABEL_POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JSON);
+				}
+				else if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JWS.equals(mode)) {
+					bf.append(Costanti.LABEL_POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JWS);
+				}
+				else if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWS.equals(mode)) {
+					bf.append(Costanti.LABEL_POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWS);
+				}
+				else if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE.equals(mode)) {
+					bf.append(Costanti.LABEL_POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE);
+				}
+				else if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JSON.equals(mode)) {
+					bf.append(Costanti.LABEL_POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JSON);
+				}
+				else {
+					bf.append(mode);
+				}
+				first = false;
+			}
+			return bf.toString();
+		}
+		else {
+			return "Disabilitato";
+		}
+	}
 }

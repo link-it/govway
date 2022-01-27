@@ -36,6 +36,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -76,10 +77,14 @@ public final class ServiziApplicativiList extends Action {
 			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
 			Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
 			
+			String resetCacheFromLista = saHelper.getParameter(CostantiControlStation.PARAMETRO_RESET_CACHE_FROM_LISTA);
+			String verificaCertificatiFromLista = saHelper.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CERTIFICATI_FROM_LISTA);
+			boolean arrivoDaLista = "true".equalsIgnoreCase(resetCacheFromLista) || "true".equalsIgnoreCase(verificaCertificatiFromLista);
+						
 			String idsogg = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			long soggLong = -1;
 			// Posso arrivare a questa pagina anche dal menu' senza specificare il soggetto
-			if(idsogg != null){
+			if(idsogg != null && !arrivoDaLista){
 				soggLong = Long.parseLong(idsogg);
 				useIdSogg = true;
 			} else {

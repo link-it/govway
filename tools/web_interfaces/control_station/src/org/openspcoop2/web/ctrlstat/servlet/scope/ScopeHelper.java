@@ -71,7 +71,27 @@ public class ScopeHelper extends ConsoleHelper{
 	}
 
 	public Vector<DataElement> addScopeToDati(TipoOperazione tipoOP, Long scopeId, String nome, String descrizione, String tipologia,
-			String nomeEsterno, String contesto, Vector<DataElement> dati) {
+			String nomeEsterno, String contesto, Vector<DataElement> dati, String oldNomeScope) {
+		
+		if(TipoOperazione.CHANGE.equals(tipoOP)){
+			
+			List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+			Parameter pId = new Parameter(ScopeCostanti.PARAMETRO_SCOPE_ID, scopeId+"");
+			listaParametriChange.add(pId);
+			
+			// In Uso Button
+			this.addComandoInUsoButton(dati, nome,
+					nome,
+					InUsoType.SCOPE);
+			
+			
+			// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
+			if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
+				listaParametriChange.add(new Parameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE, "true"));
+				this.pd.addComandoResetCacheElementoButton(ScopeCostanti.SERVLET_NAME_SCOPE_CHANGE, listaParametriChange);
+			}		
+						
+		}
 		
 		DataElement de = new DataElement();
 		de.setLabel(ScopeCostanti.LABEL_SCOPE);
@@ -476,6 +496,7 @@ public class ScopeHelper extends ConsoleHelper{
 		
 		
 		de = new DataElement();
+		
 		String contestoLabel = "";
 		if(ScopeContesto.PORTA_APPLICATIVA.getValue().equals(scope.getContestoUtilizzo().getValue())){
 			contestoLabel = ScopeCostanti.SCOPE_CONTESTO_UTILIZZO_LABEL_EROGAZIONE;
@@ -487,25 +508,30 @@ public class ScopeHelper extends ConsoleHelper{
 			contestoLabel = ScopeCostanti.SCOPE_CONTESTO_UTILIZZO_LABEL_QUALSIASI;
 		}
 		
+		String identificativoEsternoLabelPrefix = "";
+		if(scope.getNomeEsterno()!=null) {
+			identificativoEsternoLabelPrefix = MessageFormat.format(ScopeCostanti.MESSAGE_METADATI_SCOPE_IDENTIFICATIVO_ESTERNO, scope.getNomeEsterno());
+		}
+				
 		if(mostraFiltroScopeTipologia){
-			de.setValue(MessageFormat.format(ScopeCostanti.MESSAGE_METADATI_SCOPE_CON_TIPO, contestoLabel, scope.getTipologia()));
+			de.setValue(identificativoEsternoLabelPrefix+MessageFormat.format(ScopeCostanti.MESSAGE_METADATI_SCOPE_CON_TIPO, contestoLabel, scope.getTipologia()));
 		} else {
-			de.setValue(MessageFormat.format(ScopeCostanti.MESSAGE_METADATI_SCOPE_SOLO_CONTESTO, contestoLabel));
+			de.setValue(identificativoEsternoLabelPrefix+MessageFormat.format(ScopeCostanti.MESSAGE_METADATI_SCOPE_SOLO_CONTESTO, contestoLabel));
 		}
 		de.setType(DataElementType.SUBTITLE);
 		e.addElement(de);
 		
-		// TODO 
-//					de = new DataElement();
-//					de.setType(DataElementType.IMAGE);
-//					DataElementInfo dInfoUtilizzo = new DataElementInfo(SoggettiCostanti.LABEL_SOGGETTO);
-//					dInfoUtilizzo.setBody("Il soggetto " + this.getLabelNomeSoggetto(protocollo, elem.getTipo(), elem.getNome()) + " gestisce...");
-//					de.setInfo(dInfoUtilizzo);
-//					de.setToolTip("Visualizza Info");
-//					e.addElement(de);
+		List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+		listaParametriChange.add(pId);
+		listaParametriChange.add(new Parameter(CostantiControlStation.PARAMETRO_RESET_CACHE_FROM_LISTA, "true"));
 
 		// In Uso Button
 		this.addInUsoButton(e, scope.getNome(), scope.getNome(), InUsoType.SCOPE);
+		
+		// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
+		if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
+			this.addComandoResetCacheButton(e, scope.getNome(), ScopeCostanti.SERVLET_NAME_SCOPE_CHANGE, listaParametriChange);
+		}
 
 		return e;
 	}

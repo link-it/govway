@@ -58,16 +58,19 @@ public class IDPortaDelegata implements java.io.Serializable{
 	public void setIdentificativiFruizione(IdentificativiFruizione identificativiFruizione) {
 		this.identificativiFruizione = identificativiFruizione;
 	}
+
 	
+	public static final String PORTA_DELEGATA_PREFIX = "PD:";
+	public static final String PORTA_DELEGATA_SUFFIX = " ";
 
 	@Override
 	public String toString(){
 		StringBuilder bf = new StringBuilder();
 		if(this.nome!=null)
-			bf.append("PD:"+this.nome);
+			bf.append(PORTA_DELEGATA_PREFIX+this.nome);
 		else
-			bf.append("PD:NonDefinita");
-		bf.append(" ");
+			bf.append(PORTA_DELEGATA_PREFIX+"NonDefinita");
+		bf.append(PORTA_DELEGATA_SUFFIX);
 		if(this.identificativiFruizione!=null)
 			bf.append("Fruizione:"+this.identificativiFruizione.toString());
 		else

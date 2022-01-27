@@ -147,6 +147,10 @@ public class ArchiviCostanti {
 	public final static String PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_ALIAS_CONNETTORE = "aliasConn";
 	public final static String PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_ID_CONNETTORE = "idConn";
 	public final static String PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_NOME_CONNETTORE = "nomeConn";
+	
+	public final static String PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_TOKEN_NOME = "tokNome";
+	public final static String PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_TOKEN_TIPOLOGIA = "tokTlg";
+	public final static String PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_TOKEN_TIPO = "tokTipo";
 			
 	public final static String PARAMETRO_ARCHIVI_JAR_NOME_ARCHVIO = "nomeJar";
 	public final static String PARAMETRO_ARCHIVI_JAR_NOME_PLUGIN = "nomePlugin";

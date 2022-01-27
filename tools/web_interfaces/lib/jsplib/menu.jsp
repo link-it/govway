@@ -74,7 +74,9 @@ PageData pd = (PageData) session.getAttribute(pdString);
 										window.location = val;
 							       });
 						   </script>	
-		      				<a class='<%= cssClass %>' title='<%= entries[j][0] %>' href='<%= entries[j][1] %>'><%= entries[j][0] %></a>
+		      				<a class='<%= cssClass %>' title='<%= entries[j][0] %>' href='<%= entries[j][1] %>'>
+		      					<p class='<%= cssClass %>'><%= entries[j][0] %></p>
+		      					</a>
 			      			</div>
 			      		<%
 			    		} else if (entries[j].length == 3) {
@@ -88,7 +90,9 @@ PageData pd = (PageData) session.getAttribute(pdString);
 										window.location = val;
 							       });
 						   </script>
-			      			<a class='<%= cssClass %>' target='<%= entries[j][2] %>' title='<%= entries[j][0] %>' href='<%= entries[j][1] %>'><%= entries[j][0] %></a>
+			      			<a class='<%= cssClass %>' target='<%= entries[j][2] %>' title='<%= entries[j][0] %>' href='<%= entries[j][1] %>'>
+			      				<p class='<%= cssClass %>'><%= entries[j][0] %></p>
+			      			</a>
 			      			</div>
 			      		<%
 			    		}

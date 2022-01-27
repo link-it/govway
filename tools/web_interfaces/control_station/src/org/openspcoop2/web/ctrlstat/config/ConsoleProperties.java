@@ -299,10 +299,18 @@ public class ConsoleProperties {
 				"policyGestioneToken.builtIn", "policyGestioneToken.builtIn.refresh");
 	}
 	
+	public boolean isPolicyGestioneTokenVerificaCertificati() throws UtilsException{
+		return this.readBooleanProperty(true, "policyGestioneToken.verificaCertificati");
+	}
+	
 	public PropertiesSourceConfiguration getAttributeAuthorityPropertiesSourceConfiguration() throws UtilsException {
 		return _getSourceConfiguration("attributeAuthority", 
 				"attributeAuthority.dir", "attributeAuthority.dir.refresh", 
 				"attributeAuthority.builtIn", "attributeAuthority.builtIn.refresh");
+	}
+	
+	public boolean isAttributeAuthorityVerificaCertificati() throws UtilsException{
+		return this.readBooleanProperty(true, "attributeAuthority.verificaCertificati");
 	}
 	
 	public boolean isControlloTrafficoPolicyGlobaleGroupByApi() throws UtilsException{
@@ -337,6 +345,20 @@ public class ConsoleProperties {
 		return this.readIntegerProperty(false, "soggetti.nome.maxLength");
 	}
 	
+	public boolean isSoggettiVerificaCertificati() throws UtilsException{
+		return this.readBooleanProperty(true, "soggetti.verificaCertificati");
+	}
+	public boolean isSoggettiVerificaCertificati_checkCertificatoSoggettoById_useApi() throws UtilsException{
+		return this.readBooleanProperty(true, "soggetti.verificaCertificati.checkCertificatoSoggettoById.useApi");
+	}
+	
+	public boolean isApplicativiVerificaCertificati() throws UtilsException{
+		return this.readBooleanProperty(true, "applicativi.verificaCertificati");
+	}
+	public boolean isApplicativiVerificaCertificati_checkCertificatoApplicativoById_useApi() throws UtilsException{
+		return this.readBooleanProperty(true, "applicativi.verificaCertificati.checkCertificatoApplicativoById.useApi");
+	}
+	
 	public boolean isApiResourcePathValidatorEnabled() throws UtilsException{
 		return this.readBooleanProperty(true, "api.resource.pathValidator");
 	}
@@ -360,6 +382,13 @@ public class ConsoleProperties {
 	
 	public boolean isAccordiCooperazioneEnabled() throws UtilsException{
 		return this.readBooleanProperty(true, "accordiCooperazione.enabled");
+	}
+	
+	public boolean isErogazioniVerificaCertificati() throws UtilsException{
+		return this.readBooleanProperty(true, "erogazioni.verificaCertificati");
+	}
+	public boolean isFruizioniVerificaCertificati() throws UtilsException{
+		return this.readBooleanProperty(true, "fruizioni.verificaCertificati");
 	}
 
 	public List<String> getMessageEngines() throws UtilsException{
@@ -445,6 +474,13 @@ public class ConsoleProperties {
 		return new ConfigurazionePriorita(nome, p);
 	}
 	
+	public boolean isModipaErogazioniVerificaCertificati() throws UtilsException{
+		return this.readBooleanProperty(true, "modipa.erogazioni.verificaCertificati");
+	}
+	public boolean isModipaFruizioniVerificaCertificati() throws UtilsException{
+		return this.readBooleanProperty(true, "modipa.fruizioni.verificaCertificati");
+	}
+	
 	public boolean isModipaFruizioniConnettoreCheckHttps() throws UtilsException{
 		return this.readBooleanProperty(true, "modipa.fruizioni.connettore.checkHttps");
 	}
@@ -524,6 +560,22 @@ public class ConsoleProperties {
 	public boolean isHSMKeyPasswordConfigurable() throws UtilsException{
 		Boolean b = this.readBooleanProperty(false, "hsm.keyPassword");
 		return b!=null ? b : false;
+	}
+	
+	public Integer getVerificaCertificati_warning_expirationDays() throws Exception{
+		String cacheV = this.readProperty(true, "verificaCertificati.warning.expirationDays");
+		if(cacheV!=null && StringUtils.isNotEmpty(cacheV)) {
+			Integer i = Integer.valueOf(cacheV);
+			if(i.intValue()>0) {
+				return i;
+			}
+		}
+		return 10;
+	}
+	
+	public boolean isVerificaCertificati_sceltaClusterId() throws UtilsException{
+		Boolean b = this.readBooleanProperty(false, "verificaCertificati.sceltaClusterId");
+		return b!=null ? b : true;
 	}
 	
 	
@@ -957,6 +1009,24 @@ public class ConsoleProperties {
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getCertificatiConnettoreById");
 	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyValidazione(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkConnettoreTokenPolicyValidazione");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyNegoziazione(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkConnettoreTokenPolicyNegoziazione");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreAttributeAuthority(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkConnettoreAttributeAuthority");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyValidazione(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getCertificatiConnettoreTokenPolicyValidazione");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyNegoziazione(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getCertificatiConnettoreTokenPolicyNegoziazione");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreAttributeAuthority(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getCertificatiConnettoreAttributeAuthority");
+	}	
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.enablePortaDelegata");
 	}
@@ -986,6 +1056,75 @@ public class ConsoleProperties {
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.disableSchedulingConnettoreMultiploRuntimeRepository");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAccordoCooperazione(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheAccordoCooperazione");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApi(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheApi");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheErogazione(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheErogazione");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheFruizione(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheFruizione");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheSoggetto(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheSoggetto");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApplicativo(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheApplicativo");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheRuolo(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheRuolo");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheScope(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheScope");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyValidazione(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheTokenPolicyValidazione");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyNegoziazione(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheTokenPolicyNegoziazione");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAttributeAuthority(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.ripulisciRiferimentiCacheAttributeAuthority");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatoApplicativoById(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatoApplicativoById");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatoModIApplicativoById(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatoModIApplicativoById");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiConnettoreHttpsById(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiConnettoreHttpsById");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiJvm(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiJvm");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiConnettoreHttpsTokenPolicyValidazione(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiConnettoreHttpsTokenPolicyValidazione");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiValidazioneJwtTokenPolicyValidazione(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiValidazioneJwtTokenPolicyValidazione");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiForwardToJwtTokenPolicyValidazione(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiForwardToJwtTokenPolicyValidazione");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiConnettoreHttpsTokenPolicyNegoziazione(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiConnettoreHttpsTokenPolicyNegoziazione");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiSignedJwtTokenPolicyNegoziazione(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiSignedJwtTokenPolicyNegoziazione");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiConnettoreHttpsAttributeAuthority(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiConnettoreHttpsAttributeAuthority");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiAttributeAuthorityJwtRichiesta(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiAttributeAuthorityJwtRichiesta");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiAttributeAuthorityJwtRisposta(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiAttributeAuthorityJwtRisposta");
 	}
 	public String getJmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaAccessoRegistroServizi");
@@ -1031,6 +1170,18 @@ public class ConsoleProperties {
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.disabilitaServizioIntegrationManager");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatoSoggettoById(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatoSoggettoById");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiConnettoreHttpsByIdRegistro(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiConnettoreHttpsByIdRegistro");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiModIErogazioneById(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiModIErogazioneById");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkCertificatiModIFruizioneById(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiModIFruizioneById");
 	}
 	public String getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaDatasourceGW");
@@ -1220,6 +1371,10 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "elenchi.visualizzaCountElementi");
 	}
 	
+	public boolean isElenchiAbilitaResetCacheSingoloElemento() throws UtilsException{
+		return this.readBooleanProperty(true, "elenchi.risultati.abilitaResetCacheSingoloElemento");
+	}
+	
 	public Boolean isElenchiRicercaConservaCriteri() throws UtilsException{
 		return this.readBooleanProperty(true, "elenchi.ricerca.conservaCriteri");
 	}
@@ -1275,7 +1430,6 @@ public class ConsoleProperties {
 	public boolean isSetSearchAfterAdd() throws UtilsException{
 		return this.readBooleanProperty(true, "console.setSearchAfterAdd");
 	}
-
 	
 	/* ---------------- Gestione govwayConsole centralizzata ----------------------- */
 

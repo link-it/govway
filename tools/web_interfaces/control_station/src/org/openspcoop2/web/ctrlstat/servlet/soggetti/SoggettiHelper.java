@@ -146,6 +146,43 @@ public class SoggettiHelper extends ConnettoriHelper {
 			String multipleApiKey, String appId, String apiKey, 
 			boolean visualizzaModificaCertificato, boolean visualizzaAddCertificato, String servletCredenzialiList, List<Parameter> parametersServletCredenzialiList, Integer numeroCertificati, String servletCredenzialiAdd, int numeroProprieta) throws Exception {
 
+
+		if(TipoOperazione.CHANGE.equals(tipoOp)){
+			String labelSoggetto = this.getLabelNomeSoggetto(protocollo, tipoprov, nomeprov);
+			
+			List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+			listaParametriChange.add(new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,id));
+			listaParametriChange.add(new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,nomeprov));
+			listaParametriChange.add(new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,tipoprov));
+			
+			// In Uso Button
+			this.addComandoInUsoButton(dati, labelSoggetto,
+					id,
+					InUsoType.SOGGETTO);
+			
+			// Verifica Certificati
+			if(this.core.isSoggettiVerificaCertificati()) {
+				// Verifica certificati visualizzato solo se il soggetto ha credenziali https
+				boolean ssl = false;
+				if(org.openspcoop2.core.registry.constants.CredenzialeTipo.SSL.equals(tipoauth)) { 
+						//&& c.getCertificate()!=null) { non viene ritornato dalla lista
+					ssl = true;
+				}
+				if(ssl) {
+					this.pd.addComandoVerificaCertificatiElementoButton(SoggettiCostanti.SERVLET_NAME_SOGGETTI_VERIFICA_CERTIFICATI, listaParametriChange);
+				}
+			}
+			
+			// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
+			if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
+				listaParametriChange.add(new Parameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE, "true"));
+				this.pd.addComandoResetCacheElementoButton(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE, listaParametriChange);
+			}
+		}
+		
+
+		
+		
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 		
 		if(TipoOperazione.CHANGE.equals(tipoOp)){
@@ -1500,11 +1537,13 @@ public class SoggettiHelper extends ConnettoriHelper {
 		// Titolo (nome soggetto)
 		String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(elem.getTipo());
 		
+		List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+		listaParametriChange.add(new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""));
+		listaParametriChange.add(new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,elem.getNome()));
+		listaParametriChange.add(new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,elem.getTipo()));
+				
 		DataElement de = new DataElement();
-		de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
-				new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""),
-				new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,elem.getNome()),
-				new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,elem.getTipo()));
+		de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE, listaParametriChange.toArray(new Parameter[listaParametriChange.size()]));
 		de.setValue(this.getLabelNomeSoggetto(protocollo, elem.getTipo(), elem.getNome()));
 		de.setIdToRemove(elem.getId().toString());
 		de.setToolTip(de.getValue());
@@ -1577,17 +1616,31 @@ public class SoggettiHelper extends ConnettoriHelper {
 			e.addElement(de);
 		}
 		
-		// TODO 
-//				de = new DataElement();
-//				de.setType(DataElementType.IMAGE);
-//				DataElementInfo dInfoUtilizzo = new DataElementInfo(SoggettiCostanti.LABEL_SOGGETTO);
-//				dInfoUtilizzo.setBody("Il soggetto " + this.getLabelNomeSoggetto(protocollo, elem.getTipo(), elem.getNome()) + " gestisce...");
-//				de.setInfo(dInfoUtilizzo);
-//				de.setToolTip("Visualizza Info");
-//				e.addElement(de);
+		listaParametriChange.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CERTIFICATI_FROM_LISTA, "true"));
+		listaParametriChange.add(new Parameter(CostantiControlStation.PARAMETRO_RESET_CACHE_FROM_LISTA, "true"));
 		
 		// In Uso Button
 		this.addInUsoButton(e, this.getLabelNomeSoggetto(protocollo, elem.getTipo(), elem.getNome()), elem.getId()+"", InUsoType.SOGGETTO);
+		
+		if(this.core.isSoggettiVerificaCertificati()) {
+			// Verifica certificati visualizzato solo se il soggetto ha credenziali https
+			boolean ssl = false;
+			for (int i = 0; i < elem.sizeCredenzialiList(); i++) {
+				CredenzialiSoggetto c = elem.getCredenziali(i);
+				if(org.openspcoop2.core.registry.constants.CredenzialeTipo.SSL.equals(c.getTipo())) { 
+						//&& c.getCertificate()!=null) { non viene ritornato dalla lista
+					ssl = true;
+				}
+			}
+			if(ssl) {
+				this.addVerificaCertificatiButton(e, SoggettiCostanti.SERVLET_NAME_SOGGETTI_VERIFICA_CERTIFICATI, listaParametriChange);
+			}
+		}
+				
+		// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
+		if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
+			this.addComandoResetCacheButton(e,this.getLabelNomeSoggetto(protocollo, elem.getTipo(), elem.getNome()), SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE, listaParametriChange);
+		}
 		
 		return e;
 	}
@@ -2501,4 +2554,5 @@ public class SoggettiHelper extends ConnettoriHelper {
 			throw new Exception(e);
 		}
 	}
+
 }

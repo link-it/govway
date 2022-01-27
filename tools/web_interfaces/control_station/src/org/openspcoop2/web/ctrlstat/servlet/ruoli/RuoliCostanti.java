@@ -120,6 +120,7 @@ public class RuoliCostanti {
 		RUOLI_CONTESTO_UTILIZZO_LABEL.add(RUOLI_CONTESTO_UTILIZZO_LABEL_FRUIZIONE);
 	}
 	
+	public final static String MESSAGE_METADATI_RUOLO_IDENTIFICATIVO_ESTERNO = RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME_ESTERNO + ": {0}, ";
 	public final static String MESSAGE_METADATI_RUOLO_TIPO_E_CONTESTO = CostantiControlStation.LABEL_PARAMETRO_RUOLO_TIPOLOGIA + ": {0}, "+ CostantiControlStation.LABEL_PARAMETRO_RUOLO_CONTESTO +": {1}";
 	
 	public final static String LABEL_IN_USO_BODY_HEADER_NESSUN_RISULTATO = "Il ruolo non risulta utilizzato in alcuna configurazione";

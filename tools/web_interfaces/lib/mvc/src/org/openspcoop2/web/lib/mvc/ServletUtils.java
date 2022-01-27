@@ -34,6 +34,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.protocol.sdk.properties.IConsoleHelper;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
+import org.openspcoop2.web.lib.mvc.Dialog.BodyElement;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.slf4j.Logger;
@@ -539,5 +540,54 @@ public class ServletUtils {
 			return null;
 
 		return (ConfigBean) obj;
+	}
+	
+	
+	
+	
+	/* ------ IN USO ---- */
+	
+	public static void addInUsoButton(String servletName, List<DataElement> e, DataElementType deType, String titolo, String id, String inUsoType,
+			String tooltip, String icon, String headerRiga1, 
+			Boolean resizable, Boolean draggable) {
+		DataElement de = new DataElement();
+		de.setType(deType);
+		de.setToolTip(tooltip);
+		de.setWidthPx(15);	
+		Dialog deDialog = new Dialog();
+		deDialog.setIcona(icon);
+		deDialog.setTitolo(titolo);
+		deDialog.setHeaderRiga1(headerRiga1);
+		if(resizable!=null) {
+			deDialog.setResizable(resizable);
+		}
+		if(draggable!=null) {
+			deDialog.setDraggable(draggable);
+		}
+		deDialog.setWidth("800px"); // modifico il default, che è più piccolo e calibrato per la creazione delle credenziali
+		
+		// Inserire sempre la url come primo elemento del body
+		BodyElement bodyElementURL = new Dialog().new BodyElement();
+		bodyElementURL.setType(DataElementType.HIDDEN);
+		bodyElementURL.setName(Costanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_URL);
+		Parameter pIdOggetto = new Parameter(Costanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_ID_OGGETTO, id);
+		Parameter pTipoOggetto = new Parameter(Costanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_OGGETTO, inUsoType);
+		Parameter pTipoRisposta = new Parameter(Costanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA, Costanti.VALUE_PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA_TEXT);
+		bodyElementURL.setUrl(servletName, pIdOggetto,pTipoOggetto,pTipoRisposta);
+		deDialog.addBodyElement(bodyElementURL);
+		
+		// TextArea
+		BodyElement bodyElement = new Dialog().new BodyElement();
+		bodyElement.setType(DataElementType.TEXT_AREA);
+		bodyElement.setLabel("");
+		bodyElement.setValue("");
+		bodyElement.setRows(15);
+		if(resizable!=null) {
+			bodyElement.setResizable(resizable);
+		}
+		deDialog.addBodyElement(bodyElement );
+		
+		de.setDialog(deDialog );
+		e.add(de);
 	}
 }

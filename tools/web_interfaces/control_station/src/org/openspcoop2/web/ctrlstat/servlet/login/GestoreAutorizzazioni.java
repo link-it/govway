@@ -169,6 +169,7 @@ public class GestoreAutorizzazioni {
 		this.servletSoggetti.addAll(SoggettiCostanti.SERVLET_SOGGETTI_RUOLI);
 		this.servletSoggetti.addAll(SoggettiCostanti.SERVLET_SOGGETTI_CREDENZIALI);
 		this.servletSoggetti.addAll(SoggettiCostanti.SERVLET_SOGGETTI_PROPRIETA);
+		this.servletSoggetti.add(SoggettiCostanti.SERVLET_NAME_SOGGETTI_VERIFICA_CERTIFICATI);
 		/** Permessi associati alla gestione dei soggetti */
 		this.permessiSoggetti = new PermessiUtente();
 		this.permessiSoggetti.setServizi(true);
@@ -212,6 +213,7 @@ public class GestoreAutorizzazioni {
 		this.servletServizi.addAll(AccordiServizioParteSpecificaCostanti.SERVLET_APS_PORTE_APPLICATIVE);
 		this.servletServizi.add(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT);
 		this.servletServizi.addAll(ErogazioniCostanti.SERVLET_ASPS_EROGAZIONI);
+		this.servletServizi.add(ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_VERIFICA_CERTIFICATI);
 		/** Permessi associati alla gestione dei servizi */
 		this.permessiServizi = new PermessiUtente();
 		this.permessiServizi.setServizi(true);
@@ -322,6 +324,7 @@ public class GestoreAutorizzazioni {
 		this.servletServiziApplicativi.addAll(ServiziApplicativiCostanti.SERVLET_SERVIZI_APPLICATIVI_RUOLI);
 		this.servletServiziApplicativi.addAll(ServiziApplicativiCostanti.SERVLET_SERVIZI_APPLICATIVI_CREDENZIALI);
 		this.servletServiziApplicativi.addAll(ServiziApplicativiCostanti.SERVLET_SERVIZI_APPLICATIVI_PROPRIETA);
+		this.servletServiziApplicativi.add(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI);
 		/** Permessi associati alla gestione i servizi applicativi */
 		this.permessiServiziApplicativi = new PermessiUtente();
 		this.permessiServiziApplicativi.setServizi(true);
@@ -375,6 +378,7 @@ public class GestoreAutorizzazioni {
 			this.servletConfigurazione.add(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_CONFIGURAZIONE);
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_CONTROLLO_TRAFFICO);
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN);
+			this.servletConfigurazione.add(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI);
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA);
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_PROXY_PASS_REGOLA);
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_CANALI);

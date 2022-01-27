@@ -23,6 +23,7 @@
 package org.openspcoop2.pdd.core.autenticazione;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,7 +33,9 @@ import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.IdCredenzialeMittente;
@@ -335,6 +338,117 @@ public class GestoreAutenticazione {
 	}
 	
 
+	
+	
+	
+	/*----------------- CLEANER --------------------*/
+	
+	public static void removePortaApplicativa(IDPortaApplicativa idPA) throws Exception {
+		if(GestoreAutenticazione.cacheAutenticazione!=null) {
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = GestoreAutenticazione.cacheAutenticazione.keys();
+			if(keys!=null && !keys.isEmpty()) {
+				String match = IDPortaApplicativa.PORTA_APPLICATIVA_PREFIX+idPA.getNome()+IDPortaApplicativa.PORTA_APPLICATIVA_SUFFIX;
+				for (String key : keys) {
+					if(key!=null && key.contains(match)) {
+						keyForClean.add(key);
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	public static void removePortaDelegata(IDPortaDelegata idPD) throws Exception {
+		if(GestoreAutenticazione.cacheAutenticazione!=null) {
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = GestoreAutenticazione.cacheAutenticazione.keys();
+			if(keys!=null && !keys.isEmpty()) {
+				String match = IDPortaDelegata.PORTA_DELEGATA_PREFIX+idPD.getNome()+IDPortaDelegata.PORTA_DELEGATA_SUFFIX;
+				for (String key : keys) {
+					if(key!=null && key.contains(match)) {
+						keyForClean.add(key);
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	public static void removeSoggetto(IDSoggetto idSoggetto) throws Exception {
+		if(GestoreAutenticazione.cacheAutenticazione!=null) {
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = GestoreAutenticazione.cacheAutenticazione.keys();
+			if(keys!=null && !keys.isEmpty()) {
+				for (String key : keys) {
+					if(key!=null) {
+						Object o = GestoreAutenticazione.cacheAutenticazione.get(key);
+						if(o!=null) {
+							if(o instanceof EsitoAutenticazionePortaApplicativa) {
+								EsitoAutenticazionePortaApplicativa esito = (EsitoAutenticazionePortaApplicativa) o;
+								if(esito.getIdSoggetto()!=null && esito.getIdSoggetto().equals(idSoggetto)) {
+									keyForClean.add(key);
+								}
+							}
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	public static void removeApplicativo(IDServizioApplicativo idApplicativo) throws Exception {
+		if(GestoreAutenticazione.cacheAutenticazione!=null) {
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = GestoreAutenticazione.cacheAutenticazione.keys();
+			if(keys!=null && !keys.isEmpty()) {
+				for (String key : keys) {
+					if(key!=null) {
+						Object o = GestoreAutenticazione.cacheAutenticazione.get(key);
+						if(o!=null) {
+							if(o instanceof EsitoAutenticazionePortaDelegata) {
+								EsitoAutenticazionePortaDelegata esito = (EsitoAutenticazionePortaDelegata) o;
+								if(esito.getIdServizioApplicativo()!=null && esito.getIdServizioApplicativo().equals(idApplicativo)) {
+									keyForClean.add(key);
+								}
+							}
+							else if(o instanceof EsitoAutenticazionePortaApplicativa) {
+								EsitoAutenticazionePortaApplicativa esito = (EsitoAutenticazionePortaApplicativa) o;
+								if(esito.getIdServizioApplicativo()!=null && esito.getIdServizioApplicativo().equals(idApplicativo)) {
+									keyForClean.add(key);
+								}
+							}
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	
+	
+	
+	
+	/*----------------- AUTENTICAZIONE --------------------*/
+	
     public static EsitoAutenticazionePortaDelegata verificaAutenticazionePortaDelegata(String tipoAutenticazione, 
     		DatiInvocazionePortaDelegata datiInvocazione, ParametriAutenticazione parametriAutenticazione,
  		  PdDContext pddContext,IProtocolFactory<?> protocolFactory, OpenSPCoop2Message msg) throws Exception{

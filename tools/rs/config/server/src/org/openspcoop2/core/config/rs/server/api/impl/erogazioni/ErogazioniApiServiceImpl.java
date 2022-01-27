@@ -920,7 +920,8 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 				idPa = BaseHelper.supplyOrNonValida( () -> ErogazioniApiHelper.getIDGruppoPA(gruppo, idAsps, env.apsCore), "Gruppo per l'erogazione scelta");
 				pa = env.paCore.getPortaApplicativa(idPa);
 
-				creaNuovoConnettore = !env.apsHelper.isConnettoreRidefinito(paDefault, paDefault.getServizioApplicativoList().get(0), pa, pa.getServizioApplicativoList().get(0));
+				creaNuovoConnettore = !env.apsHelper.isConnettoreRidefinito(paDefault, paDefault.getServizioApplicativoList().get(0), pa, 
+						pa.getServizioApplicativoList().get(0), pa.getServizioApplicativoList());
 			} else {
 				idPa = idPaDefault;
 				pa = paDefault;

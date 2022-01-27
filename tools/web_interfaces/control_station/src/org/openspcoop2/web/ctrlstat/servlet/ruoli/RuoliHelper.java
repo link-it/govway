@@ -20,6 +20,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.ruoli;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -67,7 +68,28 @@ public class RuoliHelper extends ConsoleHelper{
 	}
 
 	public Vector<DataElement> addRuoloToDati(TipoOperazione tipoOP, Long ruoloId, String nome, String descrizione, String tipologia,
-			String nomeEsterno, String contesto, Vector<DataElement> dati) {
+			String nomeEsterno, String contesto, Vector<DataElement> dati, String oldNomeRuolo) {
+		
+		if(TipoOperazione.CHANGE.equals(tipoOP)){
+		
+			List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+			Parameter pId = new Parameter(RuoliCostanti.PARAMETRO_RUOLO_ID, ruoloId+"");
+			listaParametriChange.add(pId);
+			
+			// In Uso Button
+			this.addComandoInUsoButton(dati, nome,
+					nome,
+					InUsoType.RUOLO);
+			
+			
+			// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
+			if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
+				listaParametriChange.add(new Parameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE, "true"));
+				this.pd.addComandoResetCacheElementoButton(RuoliCostanti.SERVLET_NAME_RUOLI_CHANGE, listaParametriChange);
+			}		
+						
+		}
+		
 		
 		DataElement de = new DataElement();
 		de.setLabel(RuoliCostanti.LABEL_RUOLO);
@@ -481,8 +503,9 @@ public class RuoliHelper extends ConsoleHelper{
 		
 		// Metadati (tipologia e contesto)
 
-		String tipologiaRuoloLabel = "";
 		de = new DataElement();
+		
+		String tipologiaRuoloLabel = "";
 		if(RuoloTipologia.INTERNO.getValue().equals(ruolo.getTipologia().getValue())){
 			tipologiaRuoloLabel = RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_INTERNO;
 		}
@@ -494,7 +517,6 @@ public class RuoliHelper extends ConsoleHelper{
 		}
 		
 		String contestoRuoloLabel = "";
-		
 		if(RuoloContesto.PORTA_APPLICATIVA.getValue().equals(ruolo.getContestoUtilizzo().getValue())){
 			contestoRuoloLabel = RuoliCostanti.RUOLI_CONTESTO_UTILIZZO_LABEL_EROGAZIONE;
 		}
@@ -505,21 +527,26 @@ public class RuoliHelper extends ConsoleHelper{
 			contestoRuoloLabel = RuoliCostanti.RUOLI_CONTESTO_UTILIZZO_LABEL_QUALSIASI;
 		}
 		
-		de.setValue(MessageFormat.format(RuoliCostanti.MESSAGE_METADATI_RUOLO_TIPO_E_CONTESTO, tipologiaRuoloLabel, contestoRuoloLabel));
+		String identificativoEsternoLabelPrefix = "";
+		if(ruolo.getNomeEsterno()!=null) {
+			identificativoEsternoLabelPrefix = MessageFormat.format(RuoliCostanti.MESSAGE_METADATI_RUOLO_IDENTIFICATIVO_ESTERNO, ruolo.getNomeEsterno());
+		}
+		
+		de.setValue(identificativoEsternoLabelPrefix+MessageFormat.format(RuoliCostanti.MESSAGE_METADATI_RUOLO_TIPO_E_CONTESTO, tipologiaRuoloLabel, contestoRuoloLabel));
 		de.setType(DataElementType.SUBTITLE);
 		e.addElement(de);
 		
-		// TODO 
-//			de = new DataElement();
-//			de.setType(DataElementType.IMAGE);
-//			DataElementInfo dInfoUtilizzo = new DataElementInfo(SoggettiCostanti.LABEL_SOGGETTO);
-//			dInfoUtilizzo.setBody("Il soggetto " + this.getLabelNomeSoggetto(protocollo, elem.getTipo(), elem.getNome()) + " gestisce...");
-//			de.setInfo(dInfoUtilizzo);
-//			de.setToolTip("Visualizza Info");
-//			e.addElement(de);
+		List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+		listaParametriChange.add(pId);
+		listaParametriChange.add(new Parameter(CostantiControlStation.PARAMETRO_RESET_CACHE_FROM_LISTA, "true"));
 		
 		// In Uso Button
 		this.addInUsoButton(e, ruolo.getNome(), ruolo.getNome(), InUsoType.RUOLO);
+		
+		// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
+		if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
+			this.addComandoResetCacheButton(e, ruolo.getNome(), RuoliCostanti.SERVLET_NAME_RUOLI_CHANGE, listaParametriChange);
+		}
 		
 		return e;
 	}

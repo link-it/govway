@@ -124,9 +124,11 @@ import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ElencoIdPolicy;
 import org.openspcoop2.core.controllo_traffico.ElencoIdPolicyAttive;
 import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDConnettore;
+import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -175,12 +177,14 @@ import org.openspcoop2.protocol.engine.mapping.OperationFinder;
 import org.openspcoop2.protocol.registry.CertificateCheck;
 import org.openspcoop2.protocol.registry.CertificateUtils;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
+import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.utils.ModIUtils;
+import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.certificate.CertificateInfo;
@@ -314,12 +318,39 @@ public class ConfigurazionePdDReader {
 			throw new DriverConfigurazioneException("Visualizzazione chiavi presenti nella cache della Configurazione non riuscita: "+e.getMessage(),e);
 		}
 	}
+	public static List<String> keysCache() throws DriverConfigurazioneException{
+		try{
+			ConfigurazionePdDReader configurazionePdDReader = org.openspcoop2.pdd.config.ConfigurazionePdDReader.getInstance();
+			if(configurazionePdDReader!=null && configurazionePdDReader.configurazionePdD!=null){
+				return configurazionePdDReader.configurazionePdD.keysCache();
+			}
+			else{
+				throw new Exception("ConfigurazionePdD Non disponibile");
+			}
+		}catch(Exception e){
+			throw new DriverConfigurazioneException("Visualizzazione chiavi presenti nella cache della Configurazione non riuscita: "+e.getMessage(),e);
+		}
+	}
 
 	public static String getObjectCache(String key) throws DriverConfigurazioneException{
 		try{
 			ConfigurazionePdDReader configurazionePdDReader = org.openspcoop2.pdd.config.ConfigurazionePdDReader.getInstance();
 			if(configurazionePdDReader!=null && configurazionePdDReader.configurazionePdD!=null){
 				return configurazionePdDReader.configurazionePdD.getObjectCache(key);
+			}
+			else{
+				throw new Exception("ConfigurazionePdD Non disponibile");
+			}
+		}catch(Exception e){
+			throw new DriverConfigurazioneException("Visualizzazione oggetto presente nella cache della Configurazione non riuscita: "+e.getMessage(),e);
+		}
+	}
+	
+	public static Object getRawObjectCache(String key) throws DriverConfigurazioneException{
+		try{
+			ConfigurazionePdDReader configurazionePdDReader = org.openspcoop2.pdd.config.ConfigurazionePdDReader.getInstance();
+			if(configurazionePdDReader!=null && configurazionePdDReader.configurazionePdD!=null){
+				return configurazionePdDReader.configurazionePdD.getRawObjectCache(key);
 			}
 			else{
 				throw new Exception("ConfigurazionePdD Non disponibile");
@@ -342,6 +373,599 @@ public class ConfigurazionePdDReader {
 			throw new DriverConfigurazioneException("Rimozione oggetto presente nella cache della Configurazione non riuscita: "+e.getMessage(),e);
 		}
 	}
+	
+	
+	
+	
+	
+	/*----------------- CLEANER --------------------*/
+	
+	public static void removeErogazione(IDServizio idServizio) throws Exception {
+		removeApiImpl(null, idServizio, true);
+	}
+	public static void removeFruizione(IDSoggetto fruitore, IDServizio idServizio) throws Exception {
+		removeApiImpl(fruitore, idServizio, false);
+	}
+	private static void removeApiImpl(IDSoggetto idFruitore, IDServizio idServizio, boolean erogazione) throws Exception {
+		if(ConfigurazionePdDReader.isCacheAbilitata()) {
+			
+			boolean soggettiVirtuali = OpenSPCoop2Properties.getInstance().isSoggettiVirtualiEnabled();
+			
+			if(soggettiVirtuali) {
+				String keyServizi_SoggettiVirtuali = ConfigurazionePdD._getKey_getServizi_SoggettiVirtuali();
+				Object oServizi_SoggettiVirtuali = ConfigurazionePdDReader.getRawObjectCache(keyServizi_SoggettiVirtuali);
+				if(oServizi_SoggettiVirtuali!=null && oServizi_SoggettiVirtuali instanceof List<?>) {
+					List<?> l = (List<?>) oServizi_SoggettiVirtuali;
+					if(l!=null && !l.isEmpty()) {
+						boolean checkAzione = true;
+						for (Object object : l) {
+							if(object!=null && object instanceof IDServizio) {
+								IDServizio idS = (IDServizio) object;
+								if(idS.equals(idServizio, !checkAzione)) {
+									ConfigurazionePdDReader.removeObjectCache(keyServizi_SoggettiVirtuali);
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = ConfigurazionePdDReader.keysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				
+				String prefixPorta = null;
+				if(erogazione) {
+					prefixPorta = ConfigurazionePdD._getKey_MappingErogazionePortaApplicativaList(idServizio, false);
+				}
+				else {
+					prefixPorta = ConfigurazionePdD._getKey_MappingFruizionePortaDelegataList(idFruitore, idServizio, false);
+				}
+				
+				String prefixForwardProxy = ConfigurazionePdD._toKey_ForwardProxyConfigPrefix(!erogazione);
+				String suffixForwardProxy = ConfigurazionePdD._toKey_ForwardProxyConfigSuffix(idServizio);
+				
+				String prefixPorteApplicativeRicercaPuntuale = null;
+				String prefixPorteApplicativeRicercaNonPuntuale = null;
+				if(erogazione) {
+					prefixPorteApplicativeRicercaPuntuale = ConfigurazionePdD._toKey_getPorteApplicativePrefix(idServizio, true);
+					prefixPorteApplicativeRicercaNonPuntuale = ConfigurazionePdD._toKey_getPorteApplicativePrefix(idServizio, false);
+				}
+				
+				String prefixPorteApplicativeVirtualiRicercaPuntuale = null;
+				String prefixPorteApplicativeVirtualiRicercaNonPuntuale = null;
+				String porteApplicativeVirtualiIdServizio = null;
+				if(soggettiVirtuali) {
+					prefixPorteApplicativeVirtualiRicercaPuntuale = ConfigurazionePdD._toKey_getPorteApplicativeVirtualiPrefix(true);
+					prefixPorteApplicativeVirtualiRicercaNonPuntuale = ConfigurazionePdD._toKey_getPorteApplicativeVirtualiPrefix(false);
+					porteApplicativeVirtualiIdServizio = ConfigurazionePdD._toKey_getPorteApplicativeVirtuali_idServizio(idServizio);
+				}
+				
+				String prefixPorteApplicativeSoggettiVirtuali = null;
+				if(soggettiVirtuali) {
+					prefixPorteApplicativeSoggettiVirtuali = ConfigurazionePdD._toKey_getPorteApplicative_SoggettiVirtualiPrefix(idServizio);
+				}
+				
+				for (String key : keys) {
+					if(key!=null) {
+						if(key.startsWith(prefixPorta) ) {
+							keyForClean.add(key);
+						}
+						else if(key.startsWith(prefixForwardProxy) && key.endsWith(suffixForwardProxy) ) {
+							keyForClean.add(key);
+						}
+						else if(erogazione &&
+								(key.startsWith(prefixPorteApplicativeRicercaPuntuale) || key.startsWith(prefixPorteApplicativeRicercaNonPuntuale)) ) {
+							keyForClean.add(key);
+						}
+						else if( soggettiVirtuali &&
+							((key.startsWith(prefixPorteApplicativeVirtualiRicercaPuntuale)) || (key.startsWith(prefixPorteApplicativeVirtualiRicercaNonPuntuale)))
+							&&
+							key.contains(porteApplicativeVirtualiIdServizio)) {
+							keyForClean.add(key);
+						}
+						else if( soggettiVirtuali &&
+								key.startsWith(prefixPorteApplicativeSoggettiVirtuali)) {
+							keyForClean.add(key);
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+			
+		}
+	}
+	
+	public static void removePortaDelegata(IDPortaDelegata idPD) throws Exception {
+		if(ConfigurazionePdDReader.isCacheAbilitata()) {
+			
+			boolean removeControlloTraffico = true; 
+			
+			IProtocolFactory<?> protocolFactory = null;
+			PorteNamingUtils namingUtils = null;
+			try {
+				ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
+				String protocol = protocolFactoryManager.getProtocolByOrganizationType(idPD.getIdentificativiFruizione().getSoggettoFruitore().getTipo());
+				protocolFactory = protocolFactoryManager.getProtocolFactoryByName(protocol);
+				namingUtils = new PorteNamingUtils(protocolFactory);
+			}catch(Throwable t) {
+				OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Errore durante la comprensione del protocol factory della PD ["+idPD+"]");
+			}
+						
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = ConfigurazionePdDReader.keysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				
+				String nomePorta = idPD.getNome(); 
+				String nomePorta_normalized = null; 
+				if(namingUtils!=null) {
+					nomePorta_normalized = namingUtils.normalizePD(nomePorta);
+				}
+				
+				String prefixKeyIdPD = ConfigurazionePdD._getKey_getIDPortaDelegata(nomePorta);
+				String prefixKeyIdPD_normalized = null; 
+				if(nomePorta_normalized!=null) {
+					prefixKeyIdPD_normalized = ConfigurazionePdD._getKey_getIDPortaDelegata(nomePorta_normalized);
+				}
+				
+				String prefixKeyPD = ConfigurazionePdD._getKey_getPortaDelegata(idPD);
+				
+				String prefixCT = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI(TipoPdD.DELEGATA, nomePorta);
+				String prefixCT_normalized = null; 
+				if(nomePorta_normalized!=null) {
+					prefixCT_normalized  = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI(TipoPdD.DELEGATA, nomePorta_normalized);
+				}
+				
+				String prefixCT_dimensioneMessaggio = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI_dimensioneMessaggio(TipoPdD.DELEGATA, nomePorta);
+				String prefixCT_dimensioneMessaggio_normalized = null; 
+				if(nomePorta_normalized!=null) {
+					prefixCT_dimensioneMessaggio_normalized  = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI_dimensioneMessaggio(TipoPdD.DELEGATA, nomePorta_normalized);
+				}
+				
+				String prefixGetAllId = ConfigurazionePdD._toKey_getAllIdPorteDelegate_method();
+				
+				String prefixAttivazionePolicy = ConfigurazionePdD._toKey_AttivazionePolicyPrefix();
+				
+				for (String key : keys) {
+					if(key!=null) {
+						if(key.startsWith(prefixKeyIdPD)) {
+							keyForClean.add(key);
+						}
+						else if(prefixKeyIdPD_normalized!=null && key.startsWith(prefixKeyIdPD_normalized)) {
+							keyForClean.add(key);
+						}
+						else if(key.startsWith(prefixKeyPD)) {
+							keyForClean.add(key);
+						}
+						if(removeControlloTraffico && key.startsWith(prefixCT)) {
+							keyForClean.add(key);
+						}
+						else if(removeControlloTraffico && prefixCT_normalized!=null && key.startsWith(prefixCT_normalized)) {
+							keyForClean.add(key);
+						}
+						if(removeControlloTraffico && key.startsWith(prefixCT_dimensioneMessaggio)) {
+							keyForClean.add(key);
+						}
+						else if(removeControlloTraffico && prefixCT_dimensioneMessaggio_normalized!=null && key.startsWith(prefixCT_dimensioneMessaggio_normalized)) {
+							keyForClean.add(key);
+						}
+						else if(key.startsWith(prefixGetAllId)) {
+							Object oCode = ConfigurazionePdDReader.getRawObjectCache(key);
+							if(oCode!=null) {
+								if(oCode instanceof List<?>) {
+									List<?> l = (List<?>) oCode;
+									if(l!=null && !l.isEmpty()) {
+										for (Object object : l) {
+											if(object!=null && object instanceof IDPortaDelegata) {
+												IDPortaDelegata idPDcheck = (IDPortaDelegata) object;
+												if(idPDcheck.getNome().equals(nomePorta)) {
+													keyForClean.add(key);
+													break;
+												}
+												else if(nomePorta_normalized!=null && idPDcheck.getNome().equals(nomePorta_normalized)) {
+													keyForClean.add(key);
+													break;
+												}
+											}
+										}
+									}
+								}
+								else if(oCode instanceof Exception) {
+									Exception t = (Exception) oCode;
+									String msg = t.getMessage();
+									if(msg!=null) {
+										String check = FiltroRicercaPorteDelegate.PREFIX_PORTA_DELEGANTE + nomePorta + FiltroRicercaPorteDelegate.SUFFIX_PORTA_DELEGANTE;
+										if(msg.contains(check)){
+											keyForClean.add(key);
+											break;
+										}
+										else {
+											if(nomePorta_normalized!=null) {
+												String check_normalized = FiltroRicercaPorteDelegate.PREFIX_PORTA_DELEGANTE + nomePorta_normalized + FiltroRicercaPorteDelegate.SUFFIX_PORTA_DELEGANTE;
+												if(msg.contains(check_normalized)){
+													keyForClean.add(key);
+													break;
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+						else if(removeControlloTraffico && key.startsWith(prefixAttivazionePolicy)) {
+							Object oCode = ConfigurazionePdDReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof AttivazionePolicy) {
+								AttivazionePolicy aPolicy = (AttivazionePolicy) oCode;
+								if(aPolicy.getFiltro()!=null && aPolicy.getFiltro().isEnabled() && 
+										RuoloPolicy.DELEGATA.equals(aPolicy.getFiltro().getRuoloPorta())){
+									if(nomePorta.equals(aPolicy.getFiltro().getNomePorta())) {
+										keyForClean.add(key);
+									}
+									else if(nomePorta_normalized!=null && nomePorta_normalized.equals(aPolicy.getFiltro().getNomePorta())) {
+										keyForClean.add(key);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	public static void removePortaApplicativa(IDPortaApplicativa idPA) throws Exception {
+		if(ConfigurazionePdDReader.isCacheAbilitata()) {
+			
+			boolean removeControlloTraffico = true; 
+			
+			IProtocolFactory<?> protocolFactory = null;
+			PorteNamingUtils namingUtils = null;
+			try {
+				ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
+				String protocol = protocolFactoryManager.getProtocolByOrganizationType(idPA.getIdentificativiErogazione().getIdServizio().getSoggettoErogatore().getTipo());
+				protocolFactory = protocolFactoryManager.getProtocolFactoryByName(protocol);
+				namingUtils = new PorteNamingUtils(protocolFactory);
+			}catch(Throwable t) {
+				OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Errore durante la comprensione del protocol factory della PA ["+idPA+"]");
+			}
+							
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = ConfigurazionePdDReader.keysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				
+				String nomePorta = idPA.getNome(); 
+				String nomePorta_normalized = null; 
+				if(namingUtils!=null) {
+					nomePorta_normalized = namingUtils.normalizePA(nomePorta);
+				}
+				
+				String prefixKeyIdPA = ConfigurazionePdD._getKey_getIDPortaApplicativa(nomePorta);
+				String prefixKeyIdPA_normalized = null; 
+				if(nomePorta_normalized!=null) {
+					prefixKeyIdPA_normalized = ConfigurazionePdD._getKey_getIDPortaApplicativa(nomePorta_normalized);
+				}
+				
+				String prefixKeyPA = ConfigurazionePdD._getKey_getPortaApplicativa(idPA);
+				
+				String prefixCT = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI(TipoPdD.APPLICATIVA, nomePorta);
+				String prefixCT_normalized = null; 
+				if(nomePorta_normalized!=null) {
+					prefixCT_normalized  = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI(TipoPdD.APPLICATIVA, nomePorta_normalized);
+				}
+				
+				String prefixCT_dimensioneMessaggio = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI_dimensioneMessaggio(TipoPdD.APPLICATIVA, nomePorta);
+				String prefixCT_dimensioneMessaggio_normalized = null; 
+				if(nomePorta_normalized!=null) {
+					prefixCT_dimensioneMessaggio_normalized  = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI_dimensioneMessaggio(TipoPdD.APPLICATIVA, nomePorta_normalized);
+				}
+				
+				String prefixGetAllId = ConfigurazionePdD._toKey_getAllIdPorteApplicative_method();
+				
+				String prefixAttivazionePolicy = ConfigurazionePdD._toKey_AttivazionePolicyPrefix();
+				
+				for (String key : keys) {
+					if(key!=null) {
+						if(key.startsWith(prefixKeyIdPA)) {
+							keyForClean.add(key);
+						}
+						else if(prefixKeyIdPA_normalized!=null && key.startsWith(prefixKeyIdPA_normalized)) {
+							keyForClean.add(key);
+						}
+						else if(key.startsWith(prefixKeyPA)) {
+							keyForClean.add(key);
+						}
+						if(removeControlloTraffico && key.startsWith(prefixCT)) {
+							keyForClean.add(key);
+						}
+						else if(removeControlloTraffico && prefixCT_normalized!=null && key.startsWith(prefixCT_normalized)) {
+							keyForClean.add(key);
+						}
+						if(removeControlloTraffico && key.startsWith(prefixCT_dimensioneMessaggio)) {
+							keyForClean.add(key);
+						}
+						else if(removeControlloTraffico && prefixCT_dimensioneMessaggio_normalized!=null && key.startsWith(prefixCT_dimensioneMessaggio_normalized)) {
+							keyForClean.add(key);
+						}
+						else if(key.startsWith(prefixGetAllId)) {
+							Object oCode = ConfigurazionePdDReader.getRawObjectCache(key);
+							if(oCode!=null) {								
+								if(oCode instanceof List<?>) {
+									List<?> l = (List<?>) oCode;
+									if(l!=null && !l.isEmpty()) {
+										for (Object object : l) {
+											if(object!=null && object instanceof IDPortaApplicativa) {
+												IDPortaApplicativa idPAcheck = (IDPortaApplicativa) object;
+												if(idPAcheck.getNome().equals(nomePorta)) {
+													keyForClean.add(key);
+													break;
+												}
+												else if(nomePorta_normalized!=null && idPAcheck.getNome().equals(nomePorta_normalized)) {
+													keyForClean.add(key);
+													break;
+												}
+											}
+										}
+									}
+								}
+								else if(oCode instanceof Exception) {
+									Exception t = (Exception) oCode;
+									String msg = t.getMessage();
+									if(msg!=null) {
+										String check = FiltroRicercaPorteApplicative.PREFIX_PORTA_DELEGANTE + nomePorta + FiltroRicercaPorteApplicative.SUFFIX_PORTA_DELEGANTE;
+										if(msg.contains(check)){
+											keyForClean.add(key);
+											break;
+										}
+										else {
+											if(nomePorta_normalized!=null) {
+												String check_normalized = FiltroRicercaPorteApplicative.PREFIX_PORTA_DELEGANTE + nomePorta_normalized + FiltroRicercaPorteApplicative.SUFFIX_PORTA_DELEGANTE;
+												if(msg.contains(check_normalized)){
+													keyForClean.add(key);
+													break;
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+						else if(removeControlloTraffico && key.startsWith(prefixAttivazionePolicy)) {
+							Object oCode = ConfigurazionePdDReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof AttivazionePolicy) {
+								AttivazionePolicy aPolicy = (AttivazionePolicy) oCode;
+								if(aPolicy.getFiltro()!=null && aPolicy.getFiltro().isEnabled() && 
+										RuoloPolicy.APPLICATIVA.equals(aPolicy.getFiltro().getRuoloPorta())){
+									if(nomePorta.equals(aPolicy.getFiltro().getNomePorta())) {
+										keyForClean.add(key);
+									}
+									else if(nomePorta_normalized!=null && nomePorta_normalized.equals(aPolicy.getFiltro().getNomePorta())) {
+										keyForClean.add(key);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	public static void removeConnettore(IDConnettore idConnettore) throws Exception {
+		if(ConfigurazionePdDReader.isCacheAbilitata()) {
+			
+			OpenSPCoop2Properties openSPCoop2Properties = OpenSPCoop2Properties.getInstance();
+			
+			if(openSPCoop2Properties.isTimerConsegnaContenutiApplicativiAbilitato()) {
+				List<String> code = openSPCoop2Properties.getTimerConsegnaContenutiApplicativiCode();
+				for (String coda : code) {
+					String key = ConfigurazionePdD.getKey_getConnettoriConsegnaNotifichePrioritarie(coda);
+					Object oCode = ConfigurazionePdDReader.getRawObjectCache(key);
+					if(oCode!=null && oCode instanceof List<?>) {
+						List<?> l = (List<?>) oCode;
+						if(l!=null && !l.isEmpty()) {
+							for (Object object : l) {
+								if(object!=null && object instanceof IDConnettore) {
+									IDConnettore idC = (IDConnettore) object;
+									if(idC.equals(idConnettore)) {
+										ConfigurazionePdDReader.removeObjectCache(key);
+										break;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+					
+		}
+	}
+	
+	public static void removeSoggetto(IDSoggetto idSoggetto) throws Exception {
+		if(ConfigurazionePdDReader.isCacheAbilitata()) {
+			
+			boolean soggettiVirtuali = OpenSPCoop2Properties.getInstance().isSoggettiVirtualiEnabled();
+			
+			String keySoggetto = ConfigurazionePdD._getKey_getSoggettoByID(idSoggetto);
+			ConfigurazionePdDReader.removeObjectCache(keySoggetto);
+			
+			String keyRouter = ConfigurazionePdD._getKey_getRouter();
+			Object oRouter = ConfigurazionePdDReader.getRawObjectCache(keyRouter);
+			if(oRouter!=null && oRouter instanceof Soggetto) {
+				Soggetto s = (Soggetto) oRouter;
+				if(s.getTipo().equals(idSoggetto.getTipo()) 
+						&&
+					s.getNome().equals(idSoggetto.getNome()) ) {
+					ConfigurazionePdDReader.removeObjectCache(keyRouter);
+				}
+			}
+			
+			if(soggettiVirtuali) {
+				String keySoggettiVirtuali = ConfigurazionePdD._getKey_getSoggettiVirtuali();
+				Object oSoggettiVirtuali = ConfigurazionePdDReader.getRawObjectCache(keySoggettiVirtuali);
+				if(oSoggettiVirtuali!=null && oSoggettiVirtuali instanceof List<?>) {
+					List<?> l = (List<?>) oSoggettiVirtuali;
+					if(l!=null && !l.isEmpty()) {
+						for (Object object : l) {
+							if(object!=null && object instanceof IDSoggetto) {
+								IDSoggetto idS = (IDSoggetto) object;
+								if(idS.equals(idSoggetto)) {
+									ConfigurazionePdDReader.removeObjectCache(keySoggettiVirtuali);
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			if(soggettiVirtuali) {
+				List<String> keyForClean = new ArrayList<String>();
+				List<String> keys = ConfigurazionePdDReader.keysCache();
+				if(keys!=null && !keys.isEmpty()) {
+					String prefixPorteApplicativeVirtualiRicercaPuntuale = ConfigurazionePdD._toKey_getPorteApplicativeVirtualiPrefix(true);
+					String prefixPorteApplicativeVirtualiRicercaNonPuntuale = ConfigurazionePdD._toKey_getPorteApplicativeVirtualiPrefix(false);
+					String porteApplicativeVirtualiIdSoggetto = ConfigurazionePdD._toKey_getPorteApplicativeVirtuali_idSoggettoVirtuale(idSoggetto);
+					for (String key : keys) {
+						if(key!=null) {
+							if( 
+								((key.startsWith(prefixPorteApplicativeVirtualiRicercaPuntuale)) || (key.startsWith(prefixPorteApplicativeVirtualiRicercaNonPuntuale)))
+								&&
+								key.contains(porteApplicativeVirtualiIdSoggetto)) {
+								keyForClean.add(key);
+							}
+						}
+					}
+				}
+				if(keyForClean!=null && !keyForClean.isEmpty()) {
+					for (String key : keyForClean) {
+						removeObjectCache(key);
+					}
+				}
+			}
+
+		}
+	}
+	
+	public static void removeApplicativo(IDServizioApplicativo idApplicativo) throws Exception {
+		if(ConfigurazionePdDReader.isCacheAbilitata()) {
+			
+			String keyApplicativo = ConfigurazionePdD._getKey_getServizioApplicativo(idApplicativo);
+			ConfigurazionePdDReader.removeObjectCache(keyApplicativo);
+			
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = ConfigurazionePdDReader.keysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				
+				String prefixCredenzialiBasic = ConfigurazionePdD._toKey_getServizioApplicativoByCredenzialiBasicPrefix();
+				String prefixCredenzialiApiKey = ConfigurazionePdD._toKey_getServizioApplicativoByCredenzialiApiKeyPrefix(false);
+				String prefixCredenzialiApiKeyAppId = ConfigurazionePdD._toKey_getServizioApplicativoByCredenzialiApiKeyPrefix(true);
+				String prefixCredenzialiSsl = ConfigurazionePdD._toKey_getServizioApplicativoByCredenzialiSslPrefix(true);
+				String prefixCredenzialiSslCert = ConfigurazionePdD._toKey_getServizioApplicativoByCredenzialiSslCertPrefix(true);
+				String prefixCredenzialiPrincipal = ConfigurazionePdD._toKey_getServizioApplicativoByCredenzialiPrincipalPrefix();
+				
+				String prefixGetAllId = ConfigurazionePdD._toKey_getAllIdServiziApplicativi_method();
+								
+				for (String key : keys) {
+					if(key!=null) {
+						if(key.startsWith(prefixCredenzialiBasic) ||
+								key.startsWith(prefixCredenzialiApiKey) || 
+								key.startsWith(prefixCredenzialiApiKeyAppId) || 
+								key.startsWith(prefixCredenzialiSsl) || 
+								key.startsWith(prefixCredenzialiSslCert) || 
+								key.startsWith(prefixCredenzialiPrincipal)) {
+							
+							Object o = ConfigurazionePdDReader.getRawObjectCache(key);
+							if(o!=null && o instanceof ServizioApplicativo) {
+								ServizioApplicativo sa = (ServizioApplicativo) o;
+								if(idApplicativo.getNome().equals(idApplicativo.getNome()) &&
+										idApplicativo.getIdSoggettoProprietario().getTipo().equals(sa.getTipoSoggettoProprietario()) &&
+										idApplicativo.getIdSoggettoProprietario().getNome().equals(sa.getNomeSoggettoProprietario())) {
+									keyForClean.add(key);
+								}
+							}
+							
+						}
+						else if(key.startsWith(prefixGetAllId)) {
+							Object oCode = ConfigurazionePdDReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof List<?>) {
+								List<?> l = (List<?>) oCode;
+								if(l!=null && !l.isEmpty()) {
+									for (Object object : l) {
+										if(object!=null && object instanceof IDServizioApplicativo) {
+											IDServizioApplicativo idSAcheck = (IDServizioApplicativo) object;
+											if(idSAcheck.equals(idApplicativo)) {
+												keyForClean.add(key);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+			
+			OpenSPCoop2Properties openSPCoop2Properties = OpenSPCoop2Properties.getInstance();
+			
+			if(openSPCoop2Properties.isTimerConsegnaContenutiApplicativiAbilitato()) {
+				List<String> code = openSPCoop2Properties.getTimerConsegnaContenutiApplicativiCode();
+				for (String coda : code) {
+					String key = ConfigurazionePdD.getKey_getConnettoriConsegnaNotifichePrioritarie(coda);
+					Object oCode = ConfigurazionePdDReader.getRawObjectCache(key);
+					if(oCode!=null && oCode instanceof List<?>) {
+						List<?> l = (List<?>) oCode;
+						if(l!=null && !l.isEmpty()) {
+							for (Object object : l) {
+								if(object!=null && object instanceof IDConnettore) {
+									IDConnettore idC = (IDConnettore) object;
+									if(idC.getNome().equals(idApplicativo.getNome()) &&
+											idC.getIdSoggettoProprietario().equals(idApplicativo.getIdSoggettoProprietario())) {
+										ConfigurazionePdDReader.removeObjectCache(key);
+										break;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	public static void removeGenericProperties(IDGenericProperties idGP) throws Exception {
+		if(ConfigurazionePdDReader.isCacheAbilitata()) {
+			
+			String keyGP = ConfigurazionePdD._getKey_getGenericProperties(idGP.getTipologia(), idGP.getNome());
+			ConfigurazionePdDReader.removeObjectCache(keyGP);
+			
+			String keyGPTipologia = ConfigurazionePdD._getKey_getGenericProperties(idGP.getTipologia());
+			ConfigurazionePdDReader.removeObjectCache(keyGPTipologia);
+			
+		}
+	}
+	
+	
 
 
 	/*   -------------- Metodi di inizializzazione -----------------  */
@@ -4188,7 +4812,7 @@ public class ConfigurazionePdDReader {
 		}
 		
 		if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
-			String id = "Configurazione connettore https";
+			String id = RegistroServiziReader.ID_CONFIGURAZIONE_CONNETTORE_HTTPS;
 			if(addCertificateDetails && storeDetails!=null) {
 				id = id + newLine + storeDetails;
 			}
@@ -4350,6 +4974,7 @@ public class ConfigurazionePdDReader {
 				addCertificateDetails, separator, newLine,
 				this.log);
 	}
+	public static final String ID_CONFIGURAZIONE_TOKEN_VALIDAZIONE_JWT = "Configurazione Validazione JWT";
 	public static CertificateCheck checkCertificatiValidazioneJwtTokenPolicyValidazione(GenericProperties gp, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
@@ -4428,7 +5053,7 @@ public class ConfigurazionePdDReader {
 		}
 		
 		if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
-			String id = "Configurazione Validazione JWT";
+			String id = ID_CONFIGURAZIONE_TOKEN_VALIDAZIONE_JWT;
 			if(addCertificateDetails && storeDetails!=null) {
 				id = id + newLine + storeDetails;
 			}
@@ -4466,6 +5091,7 @@ public class ConfigurazionePdDReader {
 				addCertificateDetails, separator, newLine,
 				this.log);
 	}
+	public static final String ID_CONFIGURAZIONE_TOKEN_VALIDAZIONE_FORWARD_TO_JWT = "Configurazione ForwardTo JWT";
 	public static CertificateCheck checkCertificatiForwardToJwtTokenPolicyValidazione(GenericProperties gp, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
@@ -4546,7 +5172,7 @@ public class ConfigurazionePdDReader {
 		}
 		
 		if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
-			String id = "Configurazione ForwardTo JWT";
+			String id = ID_CONFIGURAZIONE_TOKEN_VALIDAZIONE_FORWARD_TO_JWT;
 			if(addCertificateDetails && storeDetails!=null) {
 				id = id + newLine + storeDetails;
 			}
@@ -4632,6 +5258,7 @@ public class ConfigurazionePdDReader {
 				addCertificateDetails, separator, newLine,
 				this.log);
 	}
+	public static final String ID_CONFIGURAZIONE_TOKEN_NEGOZIAZIONE_SIGNED_JWT = "Configurazione SignedJWT";
 	public static CertificateCheck checkCertificatiSignedJwtTokenPolicyNegoziazione(GenericProperties gp, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
@@ -4676,7 +5303,7 @@ public class ConfigurazionePdDReader {
 		}
 		
 		if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
-			String id = "Configurazione SignedJWT";
+			String id = ID_CONFIGURAZIONE_TOKEN_NEGOZIAZIONE_SIGNED_JWT;
 			if(addCertificateDetails && storeDetails!=null) {
 				id = id + newLine + storeDetails;
 			}
@@ -4762,6 +5389,7 @@ public class ConfigurazionePdDReader {
 				addCertificateDetails, separator, newLine,
 				this.log);
 	}
+	public static final String ID_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_JWT_RICHIESTA = "Configurazione JWS Richiesta";
 	public static CertificateCheck checkCertificatiAttributeAuthorityJwtRichiesta(GenericProperties gp, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
@@ -4806,7 +5434,7 @@ public class ConfigurazionePdDReader {
 		}
 		
 		if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
-			String id = "Configurazione JWS Richiesta";
+			String id = ID_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_JWT_RICHIESTA;
 			if(addCertificateDetails && storeDetails!=null) {
 				id = id + newLine + storeDetails;
 			}
@@ -4822,6 +5450,7 @@ public class ConfigurazionePdDReader {
 		return check;
 	}
 	
+	public static final String ID_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_JWT_RISPOSTA = "Configurazione JWS Risposta";
 	protected CertificateCheck checkCertificatiAttributeAuthorityJwtRisposta(Connection connectionPdD,boolean useCache,
 			String nome, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
@@ -4887,7 +5516,7 @@ public class ConfigurazionePdDReader {
 		}
 		
 		if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
-			String id = "Configurazione JWS Risposta";
+			String id = ID_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_JWT_RISPOSTA;
 			if(addCertificateDetails && storeDetails!=null) {
 				id = id + newLine + storeDetails;
 			}
@@ -4967,7 +5596,7 @@ public class ConfigurazionePdDReader {
 					}
 					
 					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
-						String id = "Configurazione connettore https";
+						String id = RegistroServiziReader.ID_CONFIGURAZIONE_CONNETTORE_HTTPS;
 						if(addCertificateDetails && storeDetails!=null) {
 							id = id + newLine + storeDetails;
 						}

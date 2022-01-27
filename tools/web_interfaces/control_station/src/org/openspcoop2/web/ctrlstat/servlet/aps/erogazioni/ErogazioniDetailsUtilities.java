@@ -626,7 +626,7 @@ public class ErogazioniDetailsUtilities {
 						separator, newLine);
 				
 				PortaApplicativaServizioApplicativo portaApplicativaAssociataServizioApplicativo = paAssociata.getServizioApplicativoList().get(0);
-				boolean connettoreConfigurazioneRidefinito = consoleHelper.isConnettoreRidefinito(paDefault, paSADefault, paAssociata, portaApplicativaAssociataServizioApplicativo);
+				boolean connettoreConfigurazioneRidefinito = consoleHelper.isConnettoreRidefinito(paDefault, paSADefault, paAssociata, portaApplicativaAssociataServizioApplicativo, paAssociata.getServizioApplicativoList());
 				if(!mapping.isDefault() && connettoreConfigurazioneRidefinito) {
 				
 					sb.append(newLine);

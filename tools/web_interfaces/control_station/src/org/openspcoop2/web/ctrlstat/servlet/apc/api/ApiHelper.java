@@ -27,6 +27,8 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
@@ -67,6 +69,8 @@ import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementImage;
 import org.openspcoop2.web.lib.mvc.DataElementType;
+import org.openspcoop2.web.lib.mvc.ForwardParams;
+import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
@@ -226,7 +230,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			
 			List<String> labelLst = new ArrayList<>();
 			labelLst.add("");//AccordiServizioParteComuneCostanti.LABEL_APC_STATO); // colonna stato
-			labelLst.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
+			labelLst.add(termine); // AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
 			
 			String [] labels = labelLst.toArray(new String[labelLst.size()]);
 			this.pd.setLabels(labels);
@@ -390,11 +394,20 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 						e.addElement(de);
 					}
 				}
-				
-				
+								
 				// In Uso Button
 				this.addInUsoButton(e, labelAccordo, accordoServizio.getId()+"", InUsoType.ACCORDO_SERVIZIO_PARTE_COMUNE);
 				
+				// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
+				if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
+					
+					List<Parameter> listaParametriChange = new ArrayList<Parameter>();				
+					listaParametriChange.add(pIdAccordo);
+					listaParametriChange.add(pNomeAccordo);
+					listaParametriChange.add(pTipoAccordo);
+					
+					this.addComandoResetCacheButton(e, labelAccordo, ApiCostanti.SERVLET_NAME_APC_API_CHANGE, listaParametriChange);
+				}
 
 				// aggiungo entry
 				dati.addElement(e);
@@ -484,6 +497,86 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		this.pd.setDati(datiPagina);
 		this.pd.disableEditMode();
 	}
+	
+	public ActionForward prepareApiResetCache(ActionMapping mapping, GeneralData gd, 
+			TipoOperazione tipoOp, AccordoServizioParteComune as) throws Exception{
+		
+		String tipoAccordo = this.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
+		Parameter pTipoAccordo = AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo);
+		
+		IDAccordo idAccordoOLD = this.idAccordoFactory.getIDAccordoFromValues(as.getNome(),BeanUtilities.getSoggettoReferenteID(as.getSoggettoReferente()),as.getVersione());
+		String tipoProtocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
+		String labelASTitle = this.getLabelIdAccordo(tipoProtocollo, idAccordoOLD);
+		
+		ServletUtils.setObjectIntoSession(this.session, Boolean.valueOf(true), ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API);
+		
+		String userLogin = ServletUtils.getUserLoginFromSession(this.session);	
+		
+		// setto la barra del titolo
+		List<Parameter> lstParm = new ArrayList<Parameter>();
+		String termine = AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo);
+		lstParm.add(new Parameter(termine, ApiCostanti.SERVLET_NAME_APC_API_LIST,pTipoAccordo));
+		lstParm.add(new Parameter(labelASTitle, null));
+
+		// setto la barra del titolo
+		ServletUtils.setPageDataTitle(this.pd, lstParm);
+		
+		// Preparo il menu
+		this.makeMenu();
+		
+		// Uso lo stessoAlias
+		List<String> aliases = this.apcCore.getJmxPdD_aliases();
+		String alias = null;
+		if(aliases!=null && !aliases.isEmpty()) {
+			alias = aliases.get(0);
+		}
+		this.apcCore.invokeJmxMethodAllNodesAndSetResult(this.pd, this.apcCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+				this.apcCore.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApi(alias),
+				MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_SUCCESSO,labelASTitle),
+				MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_FALLITO_PREFIX,labelASTitle),
+				as.getId().longValue());
+		
+		String resetElementoCacheS = this.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
+		boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);
+		
+		// reset delle cache richiesto dal link nella lista, torno alla lista
+		if(resetElementoCache) {
+			// preparo lista
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(this.session, Search.class);
+			
+			int idLista = Liste.ACCORDI;
+			
+			// poiche' esistono filtri che hanno necessita di postback salvo in sessione
+			List<AccordoServizioParteComuneSintetico> lista = null;
+			if(this.apcCore.isRegistroServiziLocale()){
+				if(!ServletUtils.isSearchDone(this)) {
+					lista = ServletUtils.getRisultatiRicercaFromSession(this.session, idLista,  AccordoServizioParteComuneSintetico.class);
+				}
+			}
+
+			ricerca = this.checkSearchParameters(idLista, ricerca);
+			
+			if(lista==null) {
+				lista = AccordiServizioParteComuneUtilities.accordiList(this.apcCore, userLogin, ricerca, tipoAccordo);
+			}
+
+			if(!this.isPostBackFilterElement()) {
+				ServletUtils.setRisultatiRicercaIntoSession(this.session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+			}
+			
+			this.prepareApiList(lista, ricerca, tipoAccordo);
+
+			// salvo l'oggetto ricerca nella sessione
+			ServletUtils.setSearchObjectIntoSession(this.session, ricerca);
+ 
+			ServletUtils.setGeneralAndPageDataIntoSession(this.session, gd, this.pd);
+			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ApiCostanti.OBJECT_NAME_APC_API, CostantiControlStation.TIPO_OPERAZIONE_RESET_CACHE_ELEMENTO);
+		} else { // reset richiesto dal dettaglio, torno al dettaglio
+			this.prepareApiChange(tipoOp, as);
+			ServletUtils.setGeneralAndPageDataIntoSession(this.session, gd, this.pd);
+			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ApiCostanti.OBJECT_NAME_APC_API, ForwardParams.CHANGE());
+		}
+	}
 
 
 	private Vector<Vector<DataElement>> addApiToDati(Vector<Vector<DataElement>> datiPagina, TipoOperazione tipoOp,
@@ -496,6 +589,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		Parameter pTipoAccordo = AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo);
 		
 		IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromAccordo(as);
+		String labelAccordo = getLabelIdAccordo(tipoProtocollo, idAccordo);
 		boolean showProtocolli = this.core.countProtocolli(this.session)>1;
 		// sezione 1 riepilogo
 		// nome accordo + link edit
@@ -508,6 +602,19 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		listParametersApi.add(pIdAccordo);
 		listParametersApi.add(pNomeAccordo);
 		listParametersApi.add(pTipoAccordo);
+		
+		// In Uso Button
+		this.addComandoInUsoButton(dati, labelAccordo, as.getId()+"", InUsoType.ACCORDO_SERVIZIO_PARTE_COMUNE);
+
+		// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
+		if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
+			List<Parameter> listaParametriChange = new ArrayList<Parameter>();				
+			listaParametriChange.add(pIdAccordo);
+			listaParametriChange.add(pNomeAccordo);
+			listaParametriChange.add(pTipoAccordo);
+			
+			this.pd.addComandoResetCacheElementoButton(ApiCostanti.SERVLET_NAME_APC_API_CHANGE, listaParametriChange);
+		}
 		
 		// Titolo API
 		DataElement de = new DataElement();

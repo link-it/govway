@@ -990,6 +990,91 @@ public class ConnettoreCheck {
 	public static String getCertificati(Connettore connettore) throws ConnettoreException{
 		return _getCertificati(connettore);
 	}
+	
+	public static String getCertificatiTokenPolicyValidazione(String nome, Logger log) throws ConnettoreException{
+		return getCertificatiPolicy(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA, nome, log, null);
+	}
+	public static String getCertificatiTokenPolicyValidazione(String nome, String tipoConnettore, Logger log) throws ConnettoreException{
+		return getCertificatiPolicy(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA, nome, log, tipoConnettore);
+	}
+	public static String getCertificatiTokenPolicyValidazioneIntrospection(String nome, Logger log) throws ConnettoreException{
+		return getCertificatiPolicy(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA, nome, log, POLICY_TIPO_ENDPOINT_INTROSPECTION);
+	}
+	public static String getCertificatiTokenPolicyValidazioneUserInfo(String nome, Logger log) throws ConnettoreException{
+		return getCertificatiPolicy(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA, nome, log, POLICY_TIPO_ENDPOINT_USERINFO);
+	}
+	public static String getCertificatiTokenPolicyNegoziazione(String nome, Logger log) throws ConnettoreException{
+		return getCertificatiPolicy(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA_RETRIEVE, nome, log, null);
+	}
+	public static String getCertificatiAttributeAuthority(String nome, Logger log) throws ConnettoreException{
+		return getCertificatiPolicy(org.openspcoop2.pdd.core.token.Costanti.ATTRIBUTE_AUTHORITY, nome, log, null);
+	}
+	private static String getCertificatiPolicy(String tipologia, String nome, Logger log,
+			String tipoConnettore) throws ConnettoreException{
+		IDriverConfigurazioneGet iDriverConfigurazioneGet = ConfigurazionePdDReader.getDriverConfigurazionePdD();
+		if(iDriverConfigurazioneGet instanceof DriverConfigurazioneDB) {
+			try {
+				GenericProperties gp = ((DriverConfigurazioneDB)iDriverConfigurazioneGet).getGenericProperties(tipologia, nome);
+				List<Connettore> l = convertPolicyToConnettore(gp, log);
+				List<String> hostPort = new ArrayList<String>();
+				if(l!=null && !l.isEmpty()) {
+					StringBuilder sb = new StringBuilder();
+					for (Connettore connettore : l) {
+						if(tipoConnettore!=null) {
+							String tipo = getPropertyValue(connettore, POLICY_TIPO_ENDPOINT);
+							if(!tipoConnettore.equalsIgnoreCase(tipo)) {
+								continue;
+							}
+						}
+						
+						if(l.size()>1 && !hostPort.isEmpty()) {
+							String endpoint = getPropertyValue(connettore, CostantiConnettori.CONNETTORE_LOCATION);
+							if(endpoint!=null) {
+								try {
+									URL url = new URL(endpoint);
+									int port = url.getPort();
+									if(port<=0) {
+										if("https".equals(url.getProtocol())){
+											port = 443;
+										}
+										else {
+											port = 80;
+										}
+									}
+									String check = url.getHost()+":"+port; 
+									if(hostPort.contains(check)) {
+										continue;
+									}
+									else {
+										hostPort.add(check);
+									}
+								}catch(Throwable t) {}
+							}
+						}
+						
+						try {
+							String s = _getCertificati(connettore);
+							sb.append(s);
+						}catch(Throwable e) {
+							//String tipo = getPropertyValue(connettore, POLICY_TIPO_ENDPOINT);
+							String tipo = null; // lascio l'errore puro, il tipo di endpoint verrà gestito in altri log
+							String prefixConnettore = tipo!=null ?  ("["+tipo+"] ") : "";
+							throw new ConnettoreException(prefixConnettore+e.getMessage(),e);
+						}
+					}
+					if(sb.length()>0) {
+						return sb.toString();
+					}
+				}
+			}
+			catch(Throwable e) {
+				throw new ConnettoreException(e.getMessage(),e);
+			}
+		}
+				
+		throw new ConnettoreException("Configurazione con tipologia '"+tipologia+"' e nome '"+nome+"' non trovata");
+	}
+	
 	private static String _getCertificati(Connettore connettore) throws ConnettoreException {
 		
 		try {

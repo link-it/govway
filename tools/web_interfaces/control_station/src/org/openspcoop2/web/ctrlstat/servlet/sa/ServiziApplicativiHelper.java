@@ -37,6 +37,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.Credenziali;
+import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
@@ -78,6 +79,7 @@ import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.Certificate;
+import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.crypt.PasswordGenerator;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -319,7 +321,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		}
 	}
 
-	public Vector<DataElement> addServizioApplicativoToDati(Vector<DataElement> dati, String nome, String tipoENomeSoggetto, String fault, TipoOperazione tipoOperazione,  
+	public Vector<DataElement> addServizioApplicativoToDati(Vector<DataElement> dati, String oldNomeSA, String nome, String tipoENomeSoggetto, String fault, TipoOperazione tipoOperazione,  
 			long idSA, Boolean contaListe,String[] soggettiList,String[] soggettiListLabel, String provider, String dominio,
 			String utente,String password, String subject, String principal, String tipoauth,
 			String faultactor,String genericfault,String prefixfault, String invrif, String sbustamentoInformazioniProtocolloRisposta,
@@ -357,6 +359,67 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			boolean integrationManagerEnabled, 
 			boolean visualizzaModificaCertificato, boolean visualizzaAddCertificato, String servletCredenzialiList, List<Parameter> parametersServletCredenzialiList, Integer numeroCertificati, String servletCredenzialiAdd) throws Exception {
 
+		
+		ServizioApplicativo sa = null;
+		if(TipoOperazione.CHANGE.equals(tipoOperazione)){
+			
+			sa = this.saCore.getServizioApplicativo(idSA);
+
+			IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
+			idServizioApplicativo.setNome(sa.getNome());
+			idServizioApplicativo.setIdSoggettoProprietario(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+			
+			String labelApplicativo = (this.isSoggettoMultitenantSelezionato() ? sa.getNome() : this.getLabelServizioApplicativoConDominioSoggetto(idServizioApplicativo));
+			
+			Parameter pSAId = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId()+"");
+			Parameter pSAIdSoggetto = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, sa.getIdSoggetto()+"");
+			Parameter pDominio = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO, dominio);
+			List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+			listaParametriChange.add(pSAId);
+			listaParametriChange.add(pSAIdSoggetto);
+			listaParametriChange.add(pDominio);
+
+			
+			// In Uso Button
+			this.addComandoInUsoButton(dati, labelApplicativo,
+					idSA+"",
+					InUsoType.SERVIZIO_APPLICATIVO);
+			
+			// Verifica Certificati
+			if(this.core.isApplicativiVerificaCertificati()) {
+				
+				// Verifica certificati visualizzato solo se il soggetto ha credenziali https
+				boolean ssl = false;
+				InvocazionePorta ip = sa.getInvocazionePorta();
+				for (int i = 0; i < ip.sizeCredenzialiList(); i++) {
+					Credenziali c = ip.getCredenziali(i);
+					if(org.openspcoop2.core.config.constants.CredenzialeTipo.SSL.equals(c.getTipo())) { 
+							//&& c.getCertificate()!=null) { non viene ritornato dalla lista
+						ssl = true;
+					}
+				}
+	
+				// Verifica configurazione modi di sicurezza
+				boolean modi = this.core.isProfiloModIPA(tipoProtocollo);
+				boolean sicurezzaMessaggioModi = false;
+				if(modi){
+					KeystoreParams keystoreParams =	org.openspcoop2.protocol.utils.ModIUtils.getApplicativoKeystoreParams(sa.getProtocolPropertyList());
+					sicurezzaMessaggioModi = keystoreParams!= null;
+				}
+				
+				if(ssl || sicurezzaMessaggioModi) {
+					this.pd.addComandoVerificaCertificatiElementoButton(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI, listaParametriChange);
+				}
+			}
+			
+			// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
+			if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
+				listaParametriChange.add(new Parameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE, "true"));
+				this.pd.addComandoResetCacheElementoButton(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE, listaParametriChange);
+			}
+		}
+
+		
 		if(ruoloFruitore==null){
 			ruoloFruitore = TipologiaFruizione.DISABILITATO.getValue();
 		}
@@ -471,7 +534,6 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		
 		
 		
-		ServizioApplicativo sa = null;
 		String oldtipoauth = null;
 		String nomePdd = null;
 		// se operazione change visualizzo i link per invocazione servizio,
@@ -479,7 +541,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		// e ruoli
 		if (TipoOperazione.CHANGE.equals(tipoOperazione)) {
 
-			sa = this.saCore.getServizioApplicativo(idSA);
+			if(sa==null) {
+				sa = this.saCore.getServizioApplicativo(idSA);
+			}
 			String tipoSoggetto = null;
 			String nomeSoggetto = null;
 			if(this.core.isRegistroServiziLocale()){
@@ -2048,10 +2112,16 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 
 	public void prepareServizioApplicativoList(ISearch ricerca, List<ServizioApplicativo> lista, boolean useIdSoggetto) throws Exception {
+		prepareServizioApplicativoList(ricerca, lista, useIdSoggetto, true);
+	}
+	public void prepareServizioApplicativoList(ISearch ricerca, List<ServizioApplicativo> lista, boolean useIdSoggetto, boolean readProvider) throws Exception {
 		try {
 			boolean modalitaCompleta = this.isModalitaCompleta();
 			
-			String idProvider = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+			String idProvider = null;
+			if(readProvider) {
+				idProvider = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+			}
 			
 			boolean multitenant = this.saCore.isMultitenant();
 			
@@ -2660,6 +2730,11 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		Parameter pSAIdSoggetto = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, sa.getIdSoggetto()+"");
 		Parameter pDominio = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO, dominio);
 		
+		
+		List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+		listaParametriChange.add(pSAId);
+		listaParametriChange.add(pSAIdSoggetto);
+		listaParametriChange.add(pDominio);
 		// TITOLO (nome + soggetto)
 		String nome = sa.getNome();
 		DataElement de = new DataElement();
@@ -2741,24 +2816,53 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			}
 		}
 		
-		// Info e usedIn 2 immagini
+		
 		IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
 		idServizioApplicativo.setNome(sa.getNome());
 		idServizioApplicativo.setIdSoggettoProprietario(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
 		
-		// TODO 
-//			de = new DataElement();
-//			de.setType(DataElementType.IMAGE);
-//			DataElementInfo dInfoUtilizzo = new DataElementInfo(ServiziApplicativiCostanti.LABEL_APPLICATIVO);
-//			dInfoUtilizzo.setBody("L'applicativo " + nome + " gestisce...");
-//			de.setInfo(dInfoUtilizzo);
-//			de.setToolTip("Visualizza Info");
-//			e.addElement(de);
+		listaParametriChange.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CERTIFICATI_FROM_LISTA, "true"));
+		listaParametriChange.add(new Parameter(CostantiControlStation.PARAMETRO_RESET_CACHE_FROM_LISTA, "true"));
 		
 		// In Uso Button
 		this.addInUsoButton(e, 
 				(this.isSoggettoMultitenantSelezionato() ? sa.getNome() : this.getLabelServizioApplicativoConDominioSoggetto(idServizioApplicativo)), 
 				sa.getId()+"", InUsoType.SERVIZIO_APPLICATIVO);
+		
+		// Verifica certificati visualizzato solo se l'applicativo ha credenziali https oppure una configurazione modi di sicurezza
+		if(this.core.isApplicativiVerificaCertificati()) {
+			
+			// Verifica certificati visualizzato solo se il soggetto ha credenziali https
+			boolean ssl = false;
+			InvocazionePorta ip = sa.getInvocazionePorta();
+			for (int i = 0; i < ip.sizeCredenzialiList(); i++) {
+				Credenziali c = ip.getCredenziali(i);
+				if(org.openspcoop2.core.config.constants.CredenzialeTipo.SSL.equals(c.getTipo())) { 
+						//&& c.getCertificate()!=null) { non viene ritornato dalla lista
+					ssl = true;
+				}
+			}
+
+			// Verifica configurazione modi di sicurezza
+			boolean modi = this.core.isProfiloModIPA(protocollo);
+			boolean sicurezzaMessaggioModi = false;
+			if(modi){
+				KeystoreParams keystoreParams =	org.openspcoop2.protocol.utils.ModIUtils.getApplicativoKeystoreParams(sa.getProtocolPropertyList());
+				sicurezzaMessaggioModi = keystoreParams!= null;
+			}
+			
+			if(ssl || sicurezzaMessaggioModi) {
+				this.addVerificaCertificatiButton(e, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI, listaParametriChange);
+			}
+		}
+		
+		// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
+		if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
+			this.addComandoResetCacheButton(e, (this.isSoggettoMultitenantSelezionato() ? sa.getNome() : this.getLabelServizioApplicativoConDominioSoggetto(idServizioApplicativo)), 
+					 ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE, listaParametriChange);
+		}
+		
+
 		
 		return e;
 	}
@@ -4483,4 +4587,5 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			throw new Exception(e);
 		}
 	}
+
 }

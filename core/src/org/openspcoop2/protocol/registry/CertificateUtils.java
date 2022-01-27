@@ -536,11 +536,18 @@ public class CertificateUtils {
 		}
 		
 		org.openspcoop2.utils.certificate.KeyStore store = null;
-		if(HSMUtils.isKeystoreHSM(type)) {
-			store = HSMManager.getInstance().getKeystore(type);
-		}
-		else {
-			store = new org.openspcoop2.utils.certificate.KeyStore(storeBytes, type, password);
+		try {
+			if(HSMUtils.isKeystoreHSM(type)) {
+				store = HSMManager.getInstance().getKeystore(type);
+			}
+			else {
+				store = new org.openspcoop2.utils.certificate.KeyStore(storeBytes, type, password);
+			}
+		}catch(Throwable t) {
+			CertificateCheck esito = new CertificateCheck();
+			esito.setStatoCheck(StatoCheck.ERROR);
+			esito.addError(storePath, "Non è possibile accedere al "+(keystore ? CostantiLabel.KEYSTORE : CostantiLabel.TRUSTSTORE)+": "+t.getMessage(), storeDetails);
+			return esito;
 		}
 		
 		CertificateCheck esito = new CertificateCheck();

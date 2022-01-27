@@ -68,6 +68,9 @@ public class DatiInvocazionePortaDelegata extends AbstractDatiInvocazione {
 		this.servizioApplicativo = servizioApplicativo;
 	}
 	
+	public static final String APPLICATIVO_PREFIX = " IDServizioApplicativo(";
+	public static final String APPLICATIVO_SUFFIX = ")";
+	
 	@Override
 	public String getKeyCache(){
 		return this._toString(true);
@@ -96,9 +99,9 @@ public class DatiInvocazionePortaDelegata extends AbstractDatiInvocazione {
 		}
 		
 		if(this.idServizioApplicativo!=null){
-			bf.append(" IDServizioApplicativo(");
+			bf.append(APPLICATIVO_PREFIX);
 			bf.append(this.idServizioApplicativo.toString());
-			bf.append(")");
+			bf.append(APPLICATIVO_SUFFIX);
 		}
 		
 		if(keyCache==false){

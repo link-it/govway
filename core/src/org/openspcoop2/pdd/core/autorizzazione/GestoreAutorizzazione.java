@@ -22,6 +22,7 @@
 
 package org.openspcoop2.pdd.core.autorizzazione;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Scope;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.ScopeTipoMatch;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -314,6 +316,94 @@ public class GestoreAutorizzazione {
 			throw new UtilsException("Cache disabled");
 		}
 		return GestoreAutorizzazione.cacheAutorizzazione.isDisableSyncronizedGet();
+	}
+	
+	
+	
+	
+	
+	
+/*----------------- CLEANER --------------------*/
+	
+	public static void removePortaApplicativa(IDPortaApplicativa idPA) throws Exception {
+		if(GestoreAutorizzazione.cacheAutorizzazione!=null) {
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = GestoreAutorizzazione.cacheAutorizzazione.keys();
+			if(keys!=null && !keys.isEmpty()) {
+				String match = IDPortaApplicativa.PORTA_APPLICATIVA_PREFIX+idPA.getNome()+IDPortaApplicativa.PORTA_APPLICATIVA_SUFFIX;
+				for (String key : keys) {
+					if(key!=null && key.contains(match)) {
+						keyForClean.add(key);
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	public static void removePortaDelegata(IDPortaDelegata idPD) throws Exception {
+		if(GestoreAutorizzazione.cacheAutorizzazione!=null) {
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = GestoreAutorizzazione.cacheAutorizzazione.keys();
+			if(keys!=null && !keys.isEmpty()) {
+				String match = IDPortaDelegata.PORTA_DELEGATA_PREFIX+idPD.getNome()+IDPortaDelegata.PORTA_DELEGATA_SUFFIX;
+				for (String key : keys) {
+					if(key!=null && key.contains(match)) {
+						keyForClean.add(key);
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	public static void removeSoggetto(IDSoggetto idSoggetto) throws Exception {
+		if(GestoreAutorizzazione.cacheAutorizzazione!=null) {
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = GestoreAutorizzazione.cacheAutorizzazione.keys();
+			if(keys!=null && !keys.isEmpty()) {
+				String matchSoggettoFruitore = DatiInvocazionePortaApplicativa.SOGGETTO_FRUITORE_PREFIX+idSoggetto.toString()+DatiInvocazionePortaApplicativa.SOGGETTO_FRUITORE_SUFFIX;
+				for (String key : keys) {
+					if(key!=null && key.contains(matchSoggettoFruitore)) {
+						keyForClean.add(key);
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	public static void removeApplicativo(IDServizioApplicativo idApplicativo) throws Exception {
+		if(GestoreAutorizzazione.cacheAutorizzazione!=null) {
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = GestoreAutorizzazione.cacheAutorizzazione.keys();
+			if(keys!=null && !keys.isEmpty()) {
+				String matchApplicativoFruitore = DatiInvocazionePortaApplicativa.APPLICATIVO_FRUITORE_PREFIX+idApplicativo.toString()+DatiInvocazionePortaApplicativa.APPLICATIVO_FRUITORE_SUFFIX;
+				String matchApplicativo = DatiInvocazionePortaDelegata.APPLICATIVO_PREFIX+idApplicativo.toString()+DatiInvocazionePortaDelegata.APPLICATIVO_SUFFIX;
+				for (String key : keys) {
+					if(key!=null && (key.contains(matchApplicativoFruitore) || key.contains(matchApplicativo))) {
+						keyForClean.add(key);
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
 	}
 	
 	

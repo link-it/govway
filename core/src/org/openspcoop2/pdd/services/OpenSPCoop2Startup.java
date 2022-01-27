@@ -110,6 +110,7 @@ import org.openspcoop2.pdd.core.StatoServiziPdD;
 import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
 import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazione;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.GestoreLoadBalancerCaching;
+import org.openspcoop2.pdd.core.cache.GestoreCacheCleaner;
 import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.GestoreControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.INotify;
@@ -3326,6 +3327,16 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+			
+			
+			
+			/* ----------- Inizializzazione Cache Cleaner ------------ */
+			try{
+				GestoreCacheCleaner.initialize();
+			}catch(Exception e){
+				this.logError("Riscontrato errore durante l'inizializzazione del ripulitore delle cache: "+e.getMessage(),e);
+				return;
+			}
 			
 			
 			

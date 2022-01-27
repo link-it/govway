@@ -106,7 +106,7 @@ public final class ScopeAdd extends Action {
 
 
 				dati = scopeHelper.addScopeToDati(TipoOperazione.ADD, null, nome != null ? nome : "", descrizione != null ? descrizione : "",
-						tipologia, nomeEsterno, contesto, dati);
+						tipologia, nomeEsterno, contesto, dati, null);
 
 				pd.setDati(dati);
 
@@ -129,7 +129,7 @@ public final class ScopeAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = scopeHelper.addScopeToDati(TipoOperazione.ADD, null, nome, descrizione, tipologia, nomeEsterno, contesto, dati);
+				dati = scopeHelper.addScopeToDati(TipoOperazione.ADD, null, nome, descrizione, tipologia, nomeEsterno, contesto, dati, null);
 
 				pd.setDati(dati);
 

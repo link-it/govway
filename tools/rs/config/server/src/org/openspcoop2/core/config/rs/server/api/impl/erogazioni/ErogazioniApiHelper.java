@@ -2343,7 +2343,8 @@ public class ErogazioniApiHelper {
 					continue;
 				}
 
-				if(!paAssociata.getNome().equals(nomePortaDefault) && env.apsHelper.isConnettoreRidefinito(paDefault, paDefault.getServizioApplicativoList().get(0), paAssociata, paAssociata.getServizioApplicativoList().get(0))) {
+				if(!paAssociata.getNome().equals(nomePortaDefault) && env.apsHelper.isConnettoreRidefinito(paDefault, paDefault.getServizioApplicativoList().get(0), paAssociata, 
+						paAssociata.getServizioApplicativoList().get(0), paAssociata.getServizioApplicativoList())) {
 					isRidefinito = true;
 				}
 				
@@ -2700,7 +2701,8 @@ public class ErogazioniApiHelper {
 		
 		final ServizioApplicativo sa;
 		
-		if(gruppo != null && env.apsHelper.isConnettoreRidefinito(paDefault, paDefault.getServizioApplicativoList().get(0), pa, pa.getServizioApplicativoList().get(0))) {
+		if(gruppo != null && env.apsHelper.isConnettoreRidefinito(paDefault, paDefault.getServizioApplicativoList().get(0), pa, 
+				pa.getServizioApplicativoList().get(0), pa.getServizioApplicativoList())) {
 			sa = env.saCore.getServizioApplicativo(env.saCore.getIdServizioApplicativo(idServizio.getSoggettoErogatore(), pa.getServizioApplicativoList().get(0).getNome()));
 		} else {
 			sa = env.saCore.getServizioApplicativo(env.saCore.getIdServizioApplicativo(idServizio.getSoggettoErogatore(), paDefault.getServizioApplicativoList().get(0).getNome()));

@@ -131,6 +131,7 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
+import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.pdd.logger.DriverMsgDiagnostici;
 import org.openspcoop2.pdd.logger.DriverTracciamento;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -182,6 +183,7 @@ import org.openspcoop2.web.ctrlstat.plugins.WrapperExtendedBean;
 import org.openspcoop2.web.ctrlstat.registro.GestoreRegistroServiziRemoto;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.audit.DriverAudit;
@@ -195,6 +197,7 @@ import org.openspcoop2.web.lib.audit.dao.Filtro;
 import org.openspcoop2.web.lib.audit.log.constants.Stato;
 import org.openspcoop2.web.lib.audit.log.constants.Tipologia;
 import org.openspcoop2.web.lib.mvc.Costanti;
+import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.queue.config.QueueProperties;
 import org.openspcoop2.web.lib.queue.costanti.Operazione;
@@ -830,14 +833,22 @@ public class ControlStationCore {
 	
 	/** PolicyGestioneToken PropertiesSourceConfiguration */
 	private PropertiesSourceConfiguration policyGestioneTokenPropertiesSourceConfiguration = null;
+	private boolean isPolicyGestioneTokenVerificaCertificati = false;
 	public PropertiesSourceConfiguration getPolicyGestioneTokenPropertiesSourceConfiguration() {
 		return this.policyGestioneTokenPropertiesSourceConfiguration;
+	}
+	public boolean isPolicyGestioneTokenVerificaCertificati() {
+		return this.isPolicyGestioneTokenVerificaCertificati;
 	}
 	
 	/** AttributeAuthority PropertiesSourceConfiguration */
 	private PropertiesSourceConfiguration attributeAuthorityPropertiesSourceConfiguration = null;
+	private boolean isAttributeAuthorityVerificaCertificati = false;
 	public PropertiesSourceConfiguration getAttributeAuthorityPropertiesSourceConfiguration() {
 		return this.attributeAuthorityPropertiesSourceConfiguration;
+	}
+	public boolean isAttributeAuthorityVerificaCertificati() {
+		return this.isAttributeAuthorityVerificaCertificati;
 	}
 	
 	/** ControlloTraffico */
@@ -872,8 +883,18 @@ public class ControlStationCore {
 	
 	/** Soggetti */
 	private Integer soggettiNomeMaxLength;
+	private boolean isSoggettiVerificaCertificati;
 	public Integer getSoggettiNomeMaxLength() {
 		return this.soggettiNomeMaxLength;
+	}
+	public boolean isSoggettiVerificaCertificati() {
+		return this.isSoggettiVerificaCertificati;
+	}
+	
+	/** Applicativi */
+	private boolean isApplicativiVerificaCertificati;
+	public boolean isApplicativiVerificaCertificati() {
+		return this.isApplicativiVerificaCertificati;
 	}
 	
 	/** API */
@@ -894,6 +915,16 @@ public class ControlStationCore {
 	private boolean isAccordiCooperazioneEnabled;
 	public boolean isAccordiCooperazioneEnabled() {
 		return this.isAccordiCooperazioneEnabled;
+	}
+	
+	/** API Impl */
+	private boolean isErogazioniVerificaCertificati;
+	private boolean isFruizioniVerificaCertificati;
+	public boolean isErogazioniVerificaCertificati() {
+		return this.isErogazioniVerificaCertificati;
+	}
+	public boolean isFruizioniVerificaCertificati() {
+		return this.isFruizioniVerificaCertificati;
 	}
 	
 	/** Message Engine */
@@ -960,8 +991,16 @@ public class ControlStationCore {
 	}
 	
 	/** ModI */
+	private boolean isModipaErogazioniVerificaCertificati;
+	private boolean isModipaFruizioniVerificaCertificati;
 	private boolean isModipaFruizioniConnettoreCheckHttps;
 	private boolean isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi;
+	public boolean isModipaErogazioniVerificaCertificati() {
+		return this.isModipaErogazioniVerificaCertificati;
+	}
+	public boolean isModipaFruizioniVerificaCertificati() {
+		return this.isModipaFruizioniVerificaCertificati;
+	}
 	public boolean isModipaFruizioniConnettoreCheckHttps() {
 		return this.isModipaFruizioniConnettoreCheckHttps;
 	}
@@ -1028,6 +1067,16 @@ public class ControlStationCore {
 		return this.isClusterDinamico_enabled;
 	}
 	
+	/** Certificati */
+	private int verificaCertificati_warning_expirationDays;
+	private boolean verificaCertificati_sceltaClusterId;
+	public int getVerificaCertificati_warning_expirationDays() {
+		return this.verificaCertificati_warning_expirationDays;
+	}
+	public boolean isVerificaCertificati_sceltaClusterId() {
+		return this.verificaCertificati_sceltaClusterId;
+	}
+	
 	/** Parametri pdd */
 	private int portaPubblica = 80;
 	private int portaGestione = 80;
@@ -1088,6 +1137,7 @@ public class ControlStationCore {
 	private Integer selectListSoggettiOperativi_dimensioneMassimaLabel = null;
 	private Integer viewLunghezzaMassimaInformazione = null;
 	private boolean isSetSearchAfterAdd = false;
+	private boolean elenchiVisualizzaComandoResetCacheSingoloElemento = false;
 	
 	public boolean isShowCorrelazioneAsincronaInAccordi() {
 		return this.showCorrelazioneAsincronaInAccordi;
@@ -1209,7 +1259,9 @@ public class ControlStationCore {
 	public boolean showCodaMessage() {
 		return this.isShowJ2eeOptions() || this.isIntegrationManagerEnabled();
 	}
-
+	public boolean isElenchiVisualizzaComandoResetCacheSingoloElemento() {
+		return this.elenchiVisualizzaComandoResetCacheSingoloElemento;
+	}
 
 	/** Motori di Sincronizzazione */
 	private boolean sincronizzazionePddEngineEnabled;
@@ -1395,9 +1447,11 @@ public class ControlStationCore {
 	/** Opzioni Accesso JMX della PdD */
 	private boolean isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus = false;
 	private InvokerNodiRuntime invoker = null;
+	private ConfigurazioneNodiRuntime configurazioneNodiRuntime = null;
 	private List<String> jmxPdD_aliases = new ArrayList<String>();
 	private Map<String,List<String>>  jmxPdD_gruppi_aliases = new HashMap<String, List<String>>();
 	private Map<String, String> jmxPdD_descrizioni = new HashMap<String, String>();
+	private CertificateChecker jmxPdD_certificateChecker;
 	private Map<String, String> jmxPdD_configurazioneSistema_type = new HashMap<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsa = new HashMap<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_versionePdD = new HashMap<String, String>();
@@ -1473,6 +1527,12 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread = new HashMap<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById = new HashMap<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyValidazione = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyNegoziazione = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreAttributeAuthority = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyValidazione = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyNegoziazione = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreAttributeAuthority = new HashMap<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata = new HashMap<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata = new HashMap<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa = new HashMap<String, String>();
@@ -1483,6 +1543,17 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiplo = new HashMap<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiploRuntimeRepository = new HashMap<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAccordoCooperazione = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApi = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheErogazione = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheFruizione = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheSoggetto = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApplicativo = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheRuolo = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheScope = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyValidazione = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyNegoziazione = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAttributeAuthority = new HashMap<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi = new HashMap<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD = new HashMap<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata = new HashMap<String, String>();
@@ -1547,6 +1618,12 @@ public class ControlStationCore {
 			}
 		}
 		return descrizione;
+	}
+	public CertificateChecker getJmxPdD_certificateChecker() {
+		return this.jmxPdD_certificateChecker;
+	}
+	public CertificateChecker newJmxPdD_certificateChecker(List<String> alias) throws Exception {
+		return new CertificateChecker(log, this.invoker, this.configurazioneNodiRuntime, alias, ConsoleProperties.getInstance());
 	}
 	public String getJmxPdD_configurazioneSistema_type(String alias) {
 		return this.jmxPdD_configurazioneSistema_type.get(alias);
@@ -1773,6 +1850,24 @@ public class ControlStationCore {
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById.get(alias);
 	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyValidazione(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyValidazione.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyNegoziazione(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyNegoziazione.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreAttributeAuthority(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreAttributeAuthority.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyValidazione(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyValidazione.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyNegoziazione(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyNegoziazione.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreAttributeAuthority(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreAttributeAuthority.get(alias);
+	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata.get(alias);
 	}
@@ -1802,6 +1897,39 @@ public class ControlStationCore {
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAccordoCooperazione(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAccordoCooperazione.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApi(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApi.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheErogazione(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheErogazione.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheFruizione(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheFruizione.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheSoggetto(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheSoggetto.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApplicativo(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApplicativo.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheRuolo(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheRuolo.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheScope(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheScope.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyValidazione(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyValidazione.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyNegoziazione(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyNegoziazione.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAttributeAuthority(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAttributeAuthority.get(alias);
 	}
 	public String getJmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi.get(alias);
@@ -2206,9 +2334,11 @@ public class ControlStationCore {
 		
 		/** PolicyGestioneToken PropertiesSourceConfiguration */
 		this.policyGestioneTokenPropertiesSourceConfiguration = core.policyGestioneTokenPropertiesSourceConfiguration;
+		this.isPolicyGestioneTokenVerificaCertificati = core.isPolicyGestioneTokenVerificaCertificati; 
 		
 		/** AttributeAuthority PropertiesSourceConfiguration */
 		this.attributeAuthorityPropertiesSourceConfiguration = core.attributeAuthorityPropertiesSourceConfiguration;
+		this.isAttributeAuthorityVerificaCertificati = core.isAttributeAuthorityVerificaCertificati; 
 		
 		/** ControlloTraffico */
 		this.isControlloTrafficoPolicyGlobaleGroupByApi = core.isControlloTrafficoPolicyGlobaleGroupByApi;
@@ -2224,6 +2354,10 @@ public class ControlStationCore {
 		
 		/** Soggetti */
 		this.soggettiNomeMaxLength = core.soggettiNomeMaxLength;
+		this.isSoggettiVerificaCertificati = core.isSoggettiVerificaCertificati;
+		
+		/** Applicativi */
+		this.isApplicativiVerificaCertificati = core.isApplicativiVerificaCertificati;
 		
 		/** API */
 		this.isApiResourcePathValidatorEnabled = core.isApiResourcePathValidatorEnabled;
@@ -2232,6 +2366,10 @@ public class ControlStationCore {
 		
 		/** Accordi di Cooperazione */
 		this.isAccordiCooperazioneEnabled = core.isAccordiCooperazioneEnabled;
+		
+		/** API Impl */
+		this.isErogazioniVerificaCertificati = core.isErogazioniVerificaCertificati;
+		this.isFruizioniVerificaCertificati = core.isFruizioniVerificaCertificati;
 		
 		/** Message Engine */
 		this.messageEngines = core.messageEngines;
@@ -2258,6 +2396,8 @@ public class ControlStationCore {
 		this.consegnaNotificaConfigurazionePriorita = core.consegnaNotificaConfigurazionePriorita;
 		
 		/** ModI */
+		this.isModipaErogazioniVerificaCertificati = core.isModipaErogazioniVerificaCertificati;
+		this.isModipaFruizioniVerificaCertificati = core.isModipaFruizioniVerificaCertificati;
 		this.isModipaFruizioniConnettoreCheckHttps = core.isModipaFruizioniConnettoreCheckHttps;
 		this.isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi = core.isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi;
 		
@@ -2283,6 +2423,10 @@ public class ControlStationCore {
 		
 		/** Cluster dinamico */
 		this.isClusterDinamico_enabled = core.isClusterDinamico_enabled;
+		
+		/** Certificati */
+		this.verificaCertificati_warning_expirationDays = core.verificaCertificati_warning_expirationDays;
+		this.verificaCertificati_sceltaClusterId = core.verificaCertificati_sceltaClusterId; 
 		
 		/** Parametri pdd */
 		this.portaPubblica = core.portaPubblica;
@@ -2330,6 +2474,7 @@ public class ControlStationCore {
 		this.selectListSoggettiOperativi_dimensioneMassimaLabel = core.selectListSoggettiOperativi_dimensioneMassimaLabel;
 		this.viewLunghezzaMassimaInformazione = core.viewLunghezzaMassimaInformazione;
 		this.isSetSearchAfterAdd = core.isSetSearchAfterAdd;
+		this.elenchiVisualizzaComandoResetCacheSingoloElemento = core.elenchiVisualizzaComandoResetCacheSingoloElemento;
 
 		/** Motori di Sincronizzazione */
 		this.sincronizzazionePddEngineEnabled = core.sincronizzazionePddEngineEnabled;
@@ -2377,10 +2522,12 @@ public class ControlStationCore {
 		
 		/** Opzioni Accesso JMX della PdD */
 		this.invoker = core.invoker;
+		this.configurazioneNodiRuntime = core.configurazioneNodiRuntime;
 		this.isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus = core.isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus;
 		this.jmxPdD_aliases = core.jmxPdD_aliases;
 		this.jmxPdD_gruppi_aliases = core.jmxPdD_gruppi_aliases;
 		this.jmxPdD_descrizioni = core.jmxPdD_descrizioni;
+		this.jmxPdD_certificateChecker = core.jmxPdD_certificateChecker;
 		this.jmxPdD_configurazioneSistema_type = core.jmxPdD_configurazioneSistema_type;
 		this.jmxPdD_configurazioneSistema_nomeRisorsa = core.jmxPdD_configurazioneSistema_nomeRisorsa;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_versionePdD = core.jmxPdD_configurazioneSistema_nomeMetodo_versionePdD;
@@ -2456,6 +2603,12 @@ public class ControlStationCore {
 		this.jmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread = core.jmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById = core.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById = core.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyValidazione = core.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyValidazione;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyNegoziazione = core.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyNegoziazione;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreAttributeAuthority = core.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreAttributeAuthority;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyValidazione = core.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyValidazione;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyNegoziazione = core.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyNegoziazione;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreAttributeAuthority = core.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreAttributeAuthority;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata = core.jmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata = core.jmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa = core.jmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa;
@@ -2466,6 +2619,17 @@ public class ControlStationCore {
 		this.jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiplo = core.jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiplo;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiploRuntimeRepository = core.jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiploRuntimeRepository;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository = core.jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAccordoCooperazione = core.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAccordoCooperazione;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApi = core.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApi;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheErogazione = core.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheErogazione;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheFruizione = core.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheFruizione;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheSoggetto = core.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheSoggetto;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApplicativo = core.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApplicativo;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheRuolo = core.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheRuolo;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheScope = core.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheScope;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyValidazione = core.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyValidazione;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyNegoziazione = core.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyNegoziazione;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAttributeAuthority = core.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAttributeAuthority;
 		this.jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi = core.jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi;
 		this.jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD = core.jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD;
 		this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata = core.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata;
@@ -2618,7 +2782,9 @@ public class ControlStationCore {
 			this.soggettiApiKeyLunghezzaPasswordGenerate = consoleProperties.getConsoleSoggettiApiKeyLunghezzaPasswordGenerate();			
 			this.messageSecurityPropertiesSourceConfiguration = consoleProperties.getMessageSecurityPropertiesSourceConfiguration();
 			this.policyGestioneTokenPropertiesSourceConfiguration = consoleProperties.getPolicyGestioneTokenPropertiesSourceConfiguration();
+			this.isPolicyGestioneTokenVerificaCertificati = consoleProperties.isPolicyGestioneTokenVerificaCertificati();
 			this.attributeAuthorityPropertiesSourceConfiguration = consoleProperties.getAttributeAuthorityPropertiesSourceConfiguration();
+			this.isAttributeAuthorityVerificaCertificati = consoleProperties.isAttributeAuthorityVerificaCertificati(); 
 			this.isControlloTrafficoPolicyGlobaleGroupByApi = consoleProperties.isControlloTrafficoPolicyGlobaleGroupByApi();
 			this.isControlloTrafficoPolicyGlobaleFiltroApi = consoleProperties.isControlloTrafficoPolicyGlobaleFiltroApi();
 			this.isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore = consoleProperties.isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore();
@@ -2626,10 +2792,14 @@ public class ControlStationCore {
 			this.isIntegrationManagerEnabled = consoleProperties.isIntegrationManagerEnabled();
 			this.isIntegrationManagerTraceMessageBoxOperationEnabled = consoleProperties.isIntegrationManagerTraceMessageBoxOperationEnabled();
 			this.soggettiNomeMaxLength = consoleProperties.getSoggettiNomeMaxLength();
+			this.isSoggettiVerificaCertificati = consoleProperties.isSoggettiVerificaCertificati();
+			this.isApplicativiVerificaCertificati = consoleProperties.isApplicativiVerificaCertificati();
 			this.isApiResourcePathValidatorEnabled = consoleProperties.isApiResourcePathValidatorEnabled();
 			this.isApiResourceHttpMethodAndPathQualsiasiEnabled = consoleProperties.isApiResourceHttpMethodAndPathQualsiasiEnabled();
 			this.getApiResourcePathQualsiasiSpecialChar = consoleProperties.getApiResourcePathQualsiasiSpecialChar();
 			this.isAccordiCooperazioneEnabled = consoleProperties.isAccordiCooperazioneEnabled();
+			this.isErogazioniVerificaCertificati = consoleProperties.isErogazioniVerificaCertificati();
+			this.isFruizioniVerificaCertificati = consoleProperties.isFruizioniVerificaCertificati();
 			this.messageEngines = consoleProperties.getMessageEngines();
 			this.isSoggettiCredenzialiBasicCheckUniqueUsePassword = consoleProperties.isSoggettiCredenzialiBasicCheckUniqueUsePassword();
 			this.isApplicativiCredenzialiBasicCheckUniqueUsePassword = consoleProperties.isApplicativiCredenzialiBasicCheckUniqueUsePassword();
@@ -2646,6 +2816,8 @@ public class ControlStationCore {
 			for (String priorita : this.consegnaNotificaPriorita) {
 				this.consegnaNotificaConfigurazionePriorita.put(priorita, consoleProperties.getConsegnaNotificaConfigurazionePriorita(priorita));
 			}
+			this.isModipaErogazioniVerificaCertificati = consoleProperties.isModipaErogazioniVerificaCertificati();
+			this.isModipaFruizioniVerificaCertificati = consoleProperties.isModipaFruizioniVerificaCertificati();
 			this.isModipaFruizioniConnettoreCheckHttps = consoleProperties.isModipaFruizioniConnettoreCheckHttps();
 			this.isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi = consoleProperties.isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi();
 			this.configurazionePluginsEnabled = consoleProperties.isConfigurazionePluginsEnabled();
@@ -2663,6 +2835,8 @@ public class ControlStationCore {
 			}
 			this.isRegistrazioneMessaggi_multipartPayloadParsing_enabled = consoleProperties.isRegistrazioneMessaggi_multipartPayloadParsing_enabled();
 			this.isClusterDinamico_enabled = consoleProperties.isClusterDinamico_enabled();
+			this.verificaCertificati_warning_expirationDays = consoleProperties.getVerificaCertificati_warning_expirationDays();
+			this.verificaCertificati_sceltaClusterId = consoleProperties.isVerificaCertificati_sceltaClusterId();
 		
 			// Impostazioni grafiche
 			this.consoleNomeSintesi = consoleProperties.getConsoleNomeSintesi();
@@ -2734,6 +2908,7 @@ public class ControlStationCore {
 			this.selectListSoggettiOperativi_dimensioneMassimaLabel = consoleProperties.getLunghezzaMassimaLabelSoggettiOperativiMenuUtente();
 			this.viewLunghezzaMassimaInformazione = consoleProperties.getLunghezzaMassimaInformazioneView();
 			this.isSetSearchAfterAdd = consoleProperties.isSetSearchAfterAdd();
+			this.elenchiVisualizzaComandoResetCacheSingoloElemento = consoleProperties.isElenchiAbilitaResetCacheSingoloElemento();
 			
 			// Gestione govwayConsole centralizzata
 			if(this.singlePdD == false){
@@ -2835,8 +3010,8 @@ public class ControlStationCore {
 					
 			// Opzioni Accesso JMX della PdD
 			
-			ConfigurazioneNodiRuntime config = consoleProperties.getConfigurazioneNodiRuntime();
-			this.invoker = new InvokerNodiRuntime(log, config);
+			this.configurazioneNodiRuntime = consoleProperties.getConfigurazioneNodiRuntime();
+			this.invoker = new InvokerNodiRuntime(log, this.configurazioneNodiRuntime);
 			
 			this.isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus = consoleProperties.isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus();
 			this.jmxPdD_aliases = consoleProperties.getJmxPdD_aliases();
@@ -2859,13 +3034,16 @@ public class ControlStationCore {
 			this.jmxPdD_configurazioneSistema_showInformazioniCryptographyKeyLength = consoleProperties.isJmxPdD_configurazioneSistema_showInformazioniCryptographyKeyLength();
 			
 			if(this.jmxPdD_aliases!=null){
+				
+				this.jmxPdD_certificateChecker = new CertificateChecker(log, this.invoker, this.configurazioneNodiRuntime, this.jmxPdD_aliases, consoleProperties);
+								
 				for (String alias : this.jmxPdD_aliases) {
 					String descrizione = consoleProperties.getJmxPdD_descrizione(alias);
 					if(descrizione!=null)
 						this.jmxPdD_descrizioni.put(alias,descrizione);
 					
 					if(this.singlePdD==false){
-						String url = config.getResourceUrl(alias);
+						String url = this.configurazioneNodiRuntime.getResourceUrl(alias);
 						// replace con url del nodo
 						PddCore pddCore = new PddCore(this);
 						PdDControlStation pdd = pddCore.getPdDControlStation(alias); // esiste per forza
@@ -2875,7 +3053,7 @@ public class ControlStationCore {
 						url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_IP_PUBBLICO, pdd.getIp());
 						url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_PORTA_PUBBLICA, pdd.getPorta()+"");
 						url = url.replace(CostantiControlStation.PLACEHOLDER_INFORMAZIONI_PDD_PROTOCOLLO_PUBBLICO, pdd.getProtocollo());
-						config.addForceResourceUrl(alias, url);
+						this.configurazioneNodiRuntime.addForceResourceUrl(alias, url);
 					}
 					
 					this.jmxPdD_configurazioneSistema_type.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_type(alias));
@@ -2952,6 +3130,12 @@ public class ControlStationCore {
 					this.jmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread(alias));	
 					this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyValidazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyValidazione(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyNegoziazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyNegoziazione(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreAttributeAuthority.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreAttributeAuthority(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyValidazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyValidazione(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyNegoziazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyNegoziazione(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreAttributeAuthority.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreAttributeAuthority(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_enablePortaDelegata(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_disablePortaDelegata(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_enablePortaApplicativa(alias));
@@ -2962,6 +3146,17 @@ public class ControlStationCore {
 					this.jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiplo.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiplo(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiploRuntimeRepository.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiploRuntimeRepository(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAccordoCooperazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAccordoCooperazione(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApi.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApi(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheErogazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheErogazione(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheFruizione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheFruizione(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheSoggetto.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheSoggetto(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApplicativo.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApplicativo(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheRuolo.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheRuolo(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheScope.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheScope(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyValidazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyValidazione(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyNegoziazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyNegoziazione(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAttributeAuthority.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAttributeAuthority(alias));
 					this.jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi(alias));
 					this.jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias));
 					this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata(alias));
@@ -7793,5 +7988,113 @@ public class ControlStationCore {
 			return sb.toString();
 		}
 		return null;
+	}
+	
+	public void invokeJmxMethodAllNodesAndSetResult(PageData pd, String risorsa, String metodo, 
+			String msgSuccesso, String msgFallimento,
+			Object ... parametri) throws Exception {
+		boolean rilevatoErrore = false;
+		String messagePerOperazioneEffettuata = "";
+		int index = 0;
+		List<String> aliases = this.getJmxPdD_aliases();
+		for (String alias : aliases) {
+			
+			StringBuilder bfExternal = new StringBuilder();
+			String descrizione = this.getJmxPdD_descrizione(alias);
+			if(aliases.size()>1) {
+				if(index>0) {
+					bfExternal.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+				}
+				bfExternal.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER).append(" ").append(descrizione).append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+			}						
+			try{
+				String stato = this.getInvoker().invokeJMXMethod(alias, this.getJmxPdD_configurazioneSistema_type(alias),
+						risorsa, 
+						metodo, 
+						parametri);
+				if(JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO.equals(stato)){
+					bfExternal.append(msgSuccesso);
+				}
+				else{
+					rilevatoErrore = true;
+					bfExternal.append(msgFallimento);
+					if(stato.startsWith(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA)) {
+						bfExternal.append(stato.substring(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA.length()));
+					}
+					else {
+						bfExternal.append(stato);
+					}
+				}
+			}catch(Exception e){
+				ControlStationCore.logError("Errore durante l'invocazione del metodo '"+metodo+"' (jmxResource '"+risorsa+"') (node:"+alias+"): "+e.getMessage(),e);
+				rilevatoErrore = true;
+				String stato = e.getMessage();
+				bfExternal.append(msgFallimento);
+				if(stato.startsWith(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA)) {
+					bfExternal.append(stato.substring(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA.length()));
+				}
+				else {
+					bfExternal.append(stato);
+				}
+			}
+
+			if(messagePerOperazioneEffettuata.length()>0){
+				messagePerOperazioneEffettuata+= org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
+			}
+			messagePerOperazioneEffettuata+= bfExternal.toString();
+			
+			index++;
+		}
+		if(messagePerOperazioneEffettuata!=null){
+			if(rilevatoErrore) {
+				pd.setMessage(messagePerOperazioneEffettuata);
+			}else { 
+				//pd.setMessage(messagePerOperazioneEffettuata,Costanti.MESSAGE_TYPE_INFO);
+				// non riporto elenco dei nodi ma solamente che l'operazione è andata a buon fine
+				pd.setMessage(msgSuccesso,Costanti.MESSAGE_TYPE_INFO);
+			}
+		}
+	}
+	
+	public void formatVerificaCertificatiEsito(PageData pd, List<String> formatIds, 
+			String errore, String extraErrore, String posizioneErrore,
+			String warning, String extraWarning, String posizioneWarning,
+			boolean piuCertificatiAssociatiEntita) {
+		if(errore!=null && errore.length()>0) {
+			String error = errore.replaceAll("\n", org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE).trim();
+			if(!error.startsWith(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE)) {
+				error = org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE + error;
+			}
+			for (String formatId : formatIds) {
+				error = error.replace(formatId, formatId+org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+			}
+			pd.setMessage(CostantiControlStation.LABEL_VERIFICA_CERTIFICATI_ERROR_PREFIX+posizioneErrore+
+					org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
+					(extraErrore!=null ? (org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+extraErrore+org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE) : "")+
+					error,
+					Costanti.MESSAGE_TYPE_ERROR);
+		}
+		else if(warning!=null && warning.length()>0) {
+			String w = warning.replaceAll("\n", org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE).trim();
+			if(!w.startsWith(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE)) {
+				w = org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE + w;
+			}
+			for (String formatId : formatIds) {
+				w = w.replace(formatId, formatId+org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+			}
+			String messaggio = CostantiControlStation.LABEL_VERIFICA_CERTIFICATI_WARNING_PREFIX;
+			if(piuCertificatiAssociatiEntita) {
+				messaggio = CostantiControlStation.LABEL_VERIFICA_CERTIFICATI_WARNING_ANCHE_SCADUTI_PREFIX;
+			}
+			pd.setMessage(messaggio+posizioneWarning+
+					org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
+					(extraWarning!=null ? (org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+extraWarning+org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE) : "")+
+					w,
+					Costanti.MESSAGE_TYPE_WARN);
+		}
+		else {
+			pd.setMessage(CostantiControlStation.LABEL_VERIFICA_CERTIFICATI_SUCCESSO,
+					Costanti.MESSAGE_TYPE_INFO);
+		}
 	}
 }

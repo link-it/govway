@@ -160,9 +160,14 @@ public class Costanti {
 	public final static String POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_RFC6750_URL = "RFC6750_url";
 	public final static String POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER = "CUSTOM_header";
 	public final static String POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL = "CUSTOM_url";
+	public final static String LABEL_POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_AS_RECEIVED = "Come è stato ricevuto";
+	public final static String LABEL_POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_AS_RECEIVED_ORIGINALE = "Token Originale";
+	public final static String LABEL_POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_RFC6750_HEADER = "Header HTTP 'Authorization Bearer'";
+	public final static String LABEL_POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_RFC6750_URL = "Parametro URL 'access_token'";
+	public final static String LABEL_POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER = "Header HTTP ''{0}''";
+	public final static String LABEL_POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL = "Parametro URL ''{0}''";
 	public final static String POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER_NAME = "policy.tokenForward.trasparente.mode.header";
 	public final static String POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL_PARAMETER_NAME = "policy.tokenForward.trasparente.mode.queryParameter";
-	
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_STATO = "policy.tokenForward.infoRaccolte.stato";
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE = "policy.tokenForward.infoRaccolte.mode";
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_HEADERS = "op2header";
@@ -171,6 +176,12 @@ public class Costanti {
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWS = "jws";
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE = "jwe";
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JSON = "json";
+	public final static String LABEL_POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_HEADERS = "GovWay Headers";
+	public final static String LABEL_POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JSON = "GovWay JSON";
+	public final static String LABEL_POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JWS = "GovWay JWS";
+	public final static String LABEL_POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWS = "JWS";
+	public final static String LABEL_POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE = "JWE";
+	public final static String LABEL_POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JSON = "JSON";
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_ENCODE_BASE64 = "policy.tokenForward.infoRaccolte.base64";
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_HEADER = "CUSTOM_header";
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_URL = "CUSTOM_url";

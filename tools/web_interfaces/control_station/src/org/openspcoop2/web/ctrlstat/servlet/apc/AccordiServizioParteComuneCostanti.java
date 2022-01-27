@@ -70,7 +70,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String OBJECT_NAME_APC_RESOURCES_RISPOSTE = "accordiServizioParteComuneResourcesRisposte";
 	public final static String OBJECT_NAME_APC_RESOURCES_REPRESENTATIONS = "accordiServizioParteComuneResourcesRepresentation";
 	public final static String OBJECT_NAME_APC_RESOURCES_PARAMETERS = "accordiServizioParteComuneResourcesParameters";
-
+	
 	/* SERVLET NAME */
 
 	public final static String SERVLET_NAME_APC_ADD = OBJECT_NAME_APC+"Add.do";

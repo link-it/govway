@@ -1,3 +1,18 @@
+2022-01-27  Giuliano Pintori <pintori@link.it>
+
+	* [GovwayConsole, GovWayMonitor]
+	Aggiunta funzionalità OP-1303
+	In ogni oggetto del registro, sia dall'elenco che dal dettaglio, è adesso possibile intraprendere le seguenti azioni:
+	- rimuovere dalla cache i dati relativi all'oggetto;
+	- visualizzare i riferimenti di dove un oggetto viene utilizzato;
+	- verificare i certificati associati o inclusi nei keystore riferiti;
+	- per le token policy è inoltre adesso possibile verificare la connettività agli endpoint configurati.
+	È stato inoltre effettuato un restyling dell'elenco delle Token Policy e degli Attribute Authority.
+	L'intervento include la risoluzione dei seguenti problemi:
+	- il download dei report statistici come immagine, non preservava il font visualizzato nella console di monitoraggio;
+	- nel menù della console di gestione è adesso possibile utilizzare il tasto destro su tutta la voce e non solo sul testo.
+	Nella documentazione il visualizzatore delle API di configurazione e monitoraggio è stato modificato da 'generator.swagger.io' a 'redocly.github.io'.
+
 2022-01-21  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

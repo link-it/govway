@@ -49,6 +49,8 @@ public class SoggettiCostanti {
 	
 	public final static String OBJECT_NAME_SOGGETTI_PROPRIETA = "soggettiProprieta";
 	
+	public final static String OBJECT_NAME_SOGGETTI_VERIFICA_CERTIFICATI = "soggettiVerificaCertificati";
+	
 	/* SERVLET NAME */
 
 	public final static String SERVLET_NAME_SOGGETTI_ADD = OBJECT_NAME_SOGGETTI
@@ -107,6 +109,8 @@ public class SoggettiCostanti {
 		SERVLET_SOGGETTI_PROPRIETA.add(SERVLET_NAME_SOGGETTI_PROPRIETA_LIST);
 	}
 	
+	public final static String SERVLET_NAME_SOGGETTI_VERIFICA_CERTIFICATI = OBJECT_NAME_SOGGETTI_VERIFICA_CERTIFICATI+".do";
+	
 	/* NOME VISTA CUSTOM */
 	public final static String SOGGETTI_NOME_VISTA_CUSTOM_LISTA = "soggetti";
 
@@ -123,6 +127,8 @@ public class SoggettiCostanti {
 	public final static String LABEL_SOGGETTI_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.SOGGETTO.name()+"')";
 	public final static String LABEL_SOGGETTI_MENU_VISUALE_AGGREGATA = "Soggetti";
 	public final static String LABEL_SOGGETTI_RISULTATI_RICERCA = "Risultati ricerca";
+	public final static String LABEL_SOGGETTI_VERIFICA_CERTIFICATI = CostantiControlStation.LABEL_VERIFICA_CERTIFICATI;
+	public final static String LABEL_SOGGETTI_VERIFICA_CERTIFICATI_DI = CostantiControlStation.LABEL_VERIFICA_CERTIFICATI_DI;
 
 	/* PARAMETRI */
 

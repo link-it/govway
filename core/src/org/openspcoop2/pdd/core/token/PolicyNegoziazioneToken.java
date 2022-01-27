@@ -109,6 +109,21 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_MODE);
 		return Costanti.ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD.equals(mode);
 	}
+	public String getLabelGrant() throws ProviderException, ProviderValidationException {
+		if(this.isClientCredentialsGrant()) {
+			return Costanti.ID_RETRIEVE_TOKEN_METHOD_CLIENT_CREDENTIAL_LABEL;
+		}
+		else if(this.isUsernamePasswordGrant()) {
+			return Costanti.ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD_LABEL;
+		}
+		else if(this.isRfc7523_x509_Grant()) {
+			return Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509_LABEL;
+		}
+		else if(this.isRfc7523_clientSecret_Grant()) {
+			return Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET_LABEL;
+		}
+		return "Non definita";
+	} 
 	
 	public String getUsernamePasswordGrant_username() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_USERNAME);

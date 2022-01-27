@@ -86,6 +86,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
+import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
@@ -134,6 +135,17 @@ public class RegistroServiziReader {
 	private IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 
 	/* --------------- Reset Cache --------------------*/
+	public static boolean isCacheAbilitata() throws DriverRegistroServiziException{
+		try{
+			RegistroServiziReader registroServiziReader = org.openspcoop2.protocol.registry.RegistroServiziReader.getInstance();
+			if(registroServiziReader!=null && registroServiziReader.registroServizi!=null){
+				return registroServiziReader.registroServizi.isCacheAbilitata();
+			}
+			return false;
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("IsCacheAbilitata, recupero informazione della cache del registri dei servizi non riuscita: "+e.getMessage(),e);
+		}
+	}
 	public static void resetCache() throws DriverRegistroServiziException{
 		try{
 			RegistroServiziReader registroServiziReader = org.openspcoop2.protocol.registry.RegistroServiziReader.getInstance();
@@ -210,6 +222,19 @@ public class RegistroServiziReader {
 			throw new DriverRegistroServiziException("Visualizzazione chiavi presenti nella cache del RegistroServizi non riuscita: "+e.getMessage(),e);
 		}
 	}
+	public static List<String> keysCache() throws DriverRegistroServiziException{
+		try{
+			RegistroServiziReader registroServiziReader = org.openspcoop2.protocol.registry.RegistroServiziReader.getInstance();
+			if(registroServiziReader!=null && registroServiziReader.registroServizi!=null){
+				return registroServiziReader.registroServizi.keysCache();
+			}
+			else{
+				throw new Exception("RegistroServizi Non disponibile");
+			}
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("Visualizzazione chiavi presenti nella cache del RegistroServizi non riuscita: "+e.getMessage(),e);
+		}
+	}
 	
 	public static String getObjectCache(String key) throws DriverRegistroServiziException{
 		try{
@@ -219,6 +244,20 @@ public class RegistroServiziReader {
 			}
 			else{
 				throw new Exception("RegistroServizi Non disponibile");
+			}
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("Visualizzazione oggetto presente nella cache del RegistroServizi non riuscita: "+e.getMessage(),e);
+		}
+	}
+	
+	public static Object getRawObjectCache(String key) throws DriverRegistroServiziException{
+		try{
+			RegistroServiziReader registroServiziReader = org.openspcoop2.protocol.registry.RegistroServiziReader.getInstance();
+			if(registroServiziReader!=null && registroServiziReader.registroServizi!=null){
+				return registroServiziReader.registroServizi.getRawObjectCache(key);
+			}
+			else{
+				throw new Exception("ConfigurazionePdD Non disponibile");
 			}
 		}catch(Exception e){
 			throw new DriverRegistroServiziException("Visualizzazione oggetto presente nella cache del RegistroServizi non riuscita: "+e.getMessage(),e);
@@ -238,6 +277,491 @@ public class RegistroServiziReader {
 			throw new DriverRegistroServiziException("Rimozione oggetto presente nella cache del RegistroServizi non riuscita: "+e.getMessage(),e);
 		}
 	}
+	
+	
+	
+	
+	
+	
+	/*----------------- CLEANER --------------------*/
+
+	public static void removeAccordoCooperazione(IDAccordoCooperazione idAccordo) throws Exception {
+		if(RegistroServiziReader.isCacheAbilitata()) {
+			
+			for (int i = 0; i < 3; i++) {
+				Boolean readContenutiAllegati = null;
+				if(i==1) {
+					readContenutiAllegati = true;
+				}
+				else if(i==2) {
+					readContenutiAllegati = false;
+				}
+				String keyIdAccordo = RegistroServizi._getKey_getAccordoCooperazione(IDAccordoCooperazioneFactory.getInstance(), idAccordo,readContenutiAllegati);
+				RegistroServiziReader.removeObjectCache(keyIdAccordo);
+			}
+			
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = RegistroServiziReader.keysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				
+				String prefixGetAllId = RegistroServizi._toKey_getAllIdAccordiCooperazione_method();
+				
+				for (String key : keys) {
+					if(key!=null) {
+						if(key.startsWith(prefixGetAllId)) {
+							Object oCode = RegistroServiziReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof List<?>) {
+								List<?> l = (List<?>) oCode;
+								if(l!=null && !l.isEmpty()) {
+									for (Object object : l) {
+										if(object!=null && object instanceof IDAccordoCooperazione) {
+											IDAccordoCooperazione idCheck = (IDAccordoCooperazione) object;
+											if(idCheck.equals(idAccordo)) {
+												keyForClean.add(key);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	public static void removeApi(IDAccordo idAccordo) throws Exception {
+		if(RegistroServiziReader.isCacheAbilitata()) {
+			
+			for (int i = 0; i < 3; i++) {
+				Boolean readContenutiAllegati = null;
+				if(i==1) {
+					readContenutiAllegati = true;
+				}
+				else if(i==2) {
+					readContenutiAllegati = false;
+				}
+				String keyIdAccordo = RegistroServizi._getKey_getAccordoServizioParteComune(IDAccordoFactory.getInstance(), idAccordo,readContenutiAllegati);
+				RegistroServiziReader.removeObjectCache(keyIdAccordo);
+			}
+
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = RegistroServiziReader.keysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				
+				String prefixServizioCorrelatoPrefix = RegistroServizi._toKey_getAccordoServizioParteSpecifica_ServizioCorrelato_prefix();
+				String servizioCorrelato = RegistroServizi._toKey_getAccordoServizioParteSpecifica_ServizioCorrelato(IDAccordoFactory.getInstance(), idAccordo);
+				
+				String prefixGetAllId = RegistroServizi._toKey_getAllIdAccordiServizioParteComune_method();
+				String prefixGetAllId_portTypes = RegistroServizi._toKey_getAllIdPortType_method();
+				String prefixGetAllId_azionePortType = RegistroServizi._toKey_getAllIdAzionePortType_method();
+				String prefixGetAllId_azione = RegistroServizi._toKey_getAllIdAzione_method();
+				String prefixGetAllId_resource = RegistroServizi._toKey_getAllIdResource_method();
+				
+				for (String key : keys) {
+					if(key!=null) {
+						if(key.startsWith(prefixServizioCorrelatoPrefix) && key.contains(servizioCorrelato)) {
+							keyForClean.add(key);
+						}
+						else if(key.startsWith(prefixGetAllId)) {
+							Object oCode = RegistroServiziReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof List<?>) {
+								List<?> l = (List<?>) oCode;
+								if(l!=null && !l.isEmpty()) {
+									for (Object object : l) {
+										if(object!=null && object instanceof IDAccordo) {
+											IDAccordo idCheck = (IDAccordo) object;
+											if(idCheck.equals(idAccordo)) {
+												keyForClean.add(key);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+						else if(key.startsWith(prefixGetAllId_portTypes)) {
+							Object oCode = RegistroServiziReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof List<?>) {
+								List<?> l = (List<?>) oCode;
+								if(l!=null && !l.isEmpty()) {
+									for (Object object : l) {
+										if(object!=null && object instanceof IDPortType) {
+											IDPortType idCheck = (IDPortType) object;
+											if(idCheck.getIdAccordo().equals(idAccordo)) {
+												keyForClean.add(key);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+						else if(key.startsWith(prefixGetAllId_azionePortType)) {
+							Object oCode = RegistroServiziReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof List<?>) {
+								List<?> l = (List<?>) oCode;
+								if(l!=null && !l.isEmpty()) {
+									for (Object object : l) {
+										if(object!=null && object instanceof IDPortTypeAzione) {
+											IDPortTypeAzione idCheck = (IDPortTypeAzione) object;
+											if(idCheck.getIdPortType().getIdAccordo().equals(idAccordo)) {
+												keyForClean.add(key);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+						else if(key.startsWith(prefixGetAllId_azione)) {
+							Object oCode = RegistroServiziReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof List<?>) {
+								List<?> l = (List<?>) oCode;
+								if(l!=null && !l.isEmpty()) {
+									for (Object object : l) {
+										if(object!=null && object instanceof IDAccordoAzione) {
+											IDAccordoAzione idCheck = (IDAccordoAzione) object;
+											if(idCheck.getIdAccordo().equals(idAccordo)) {
+												keyForClean.add(key);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+						else if(key.startsWith(prefixGetAllId_resource)) {
+							Object oCode = RegistroServiziReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof List<?>) {
+								List<?> l = (List<?>) oCode;
+								if(l!=null && !l.isEmpty()) {
+									for (Object object : l) {
+										if(object!=null && object instanceof IDResource) {
+											IDResource idCheck = (IDResource) object;
+											if(idCheck.getIdAccordo().equals(idAccordo)) {
+												keyForClean.add(key);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+			
+		}
+	}
+	
+	public static void removeErogazione(IDServizio idServizio) throws Exception {
+		removeApiImpl(null, idServizio, true);
+	}
+	public static void removeFruizione(IDSoggetto fruitore, IDServizio idServizio) throws Exception {
+		removeApiImpl(fruitore, idServizio, false);
+	}
+	private static void removeApiImpl(IDSoggetto idFruitore, IDServizio idServizio, boolean erogazione) throws Exception {
+		if(RegistroServiziReader.isCacheAbilitata()) {
+			
+			// non funziona, viene anche inserita l'azione nella chiave della cache
+//			for (int i = 0; i < 3; i++) {
+//				Boolean readContenutiAllegati = null;
+//				if(i==1) {
+//					readContenutiAllegati = true;
+//				}
+//				else if(i==2) {
+//					readContenutiAllegati = false;
+//				}
+//				String keyIdAccordo = RegistroServizi._getKey_getAccordoServizioParteSpecifica(idServizio,readContenutiAllegati);
+//				RegistroServiziReader.removeObjectCache(keyIdAccordo);
+//			}
+			
+			String keyServiceBinding = RegistroServizi._getKey_getServiceBinding(idServizio);
+			RegistroServiziReader.removeObjectCache(keyServiceBinding);
+			
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = RegistroServiziReader.keysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				
+				String prefixAccordo = RegistroServizi._toKey_getAccordoServizioParteSpecificaPrefix(idServizio);
+				
+				String prefixGetAllId = RegistroServizi._toKey_getAllIdServizi_method();
+				String prefixGetAllIdFruizione = null;
+				if(!erogazione) {
+					prefixGetAllIdFruizione = RegistroServizi._toKey_getAllIdFruizioniServizio_method();
+				}
+				
+				String wsdlAccordoServizioPrefix = RegistroServizi._toKey_getWsdlAccordoServizioPrefix();
+				String wsdlAccordoServizioService = RegistroServizi._toKey_getWsdlAccordoServizioService(idServizio);
+				
+				String restAccordoServizioPrefix = RegistroServizi._toKey_getRestAccordoServizioPrefix();
+				String restAccordoServizioService = RegistroServizi._toKey_getRestAccordoServizioService(idServizio);
+				
+				for (String key : keys) {
+					if(key!=null) {
+						if(key.startsWith(prefixAccordo)) {
+							keyForClean.add(key);
+						}
+						else if(key.startsWith(prefixGetAllId)) {
+							Object oCode = RegistroServiziReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof List<?>) {
+								List<?> l = (List<?>) oCode;
+								if(l!=null && !l.isEmpty()) {
+									for (Object object : l) {
+										if(object!=null && object instanceof IDServizio) {
+											IDServizio idCheck = (IDServizio) object;
+											if(idCheck.equals(idServizio, false)) {
+												keyForClean.add(key);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+						else if(!erogazione && key.startsWith(prefixGetAllIdFruizione)) {
+							Object oCode = RegistroServiziReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof List<?>) {
+								List<?> l = (List<?>) oCode;
+								if(l!=null && !l.isEmpty()) {
+									for (Object object : l) {
+										if(object!=null && object instanceof IDFruizione) {
+											IDFruizione idCheck = (IDFruizione) object;
+											if(idCheck.getIdFruitore().equals(idFruitore) && idCheck.getIdServizio().equals(idServizio, false)) {
+												keyForClean.add(key);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+						else if(key.startsWith(wsdlAccordoServizioPrefix) && key.contains(wsdlAccordoServizioService)) {
+							keyForClean.add(key);
+						}
+						else if(key.startsWith(restAccordoServizioPrefix) && key.contains(restAccordoServizioService)) {
+							keyForClean.add(key);
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+			
+		}
+	}
+	
+	public static void removePdd(String portaDominio) throws Exception {
+		if(RegistroServiziReader.isCacheAbilitata()) {
+			
+			String keyPdd = RegistroServizi._getKey_getPortaDominio(portaDominio);
+			RegistroServiziReader.removeObjectCache(keyPdd);
+			
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = RegistroServiziReader.keysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				
+				String prefixGetAllId = RegistroServizi._toKey_getAllIdPorteDominio_method();
+				
+				for (String key : keys) {
+					if(key!=null) {
+						if(key.startsWith(prefixGetAllId)) {
+							Object oCode = RegistroServiziReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof List<?>) {
+								List<?> l = (List<?>) oCode;
+								if(l!=null && !l.isEmpty()) {
+									for (Object object : l) {
+										if(object!=null && object instanceof String) {
+											String idCheck = (String) object;
+											if(idCheck.equals(portaDominio)) {
+												keyForClean.add(key);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+			
+		}
+	}
+	public static void removeSoggetto(IDSoggetto idSoggetto) throws Exception {
+		if(RegistroServiziReader.isCacheAbilitata()) {
+			
+			String keySoggetto = RegistroServizi._getKey_getSoggetto(idSoggetto);
+			RegistroServiziReader.removeObjectCache(keySoggetto);
+			
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = RegistroServiziReader.keysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				
+				String prefixCredenzialiBasic = RegistroServizi._toKey_getSoggettoByCredenzialiBasicPrefix();
+				String prefixCredenzialiApiKey = RegistroServizi._toKey_getSoggettoByCredenzialiApiKeyPrefix(false);
+				String prefixCredenzialiApiKeyAppId = RegistroServizi._toKey_getSoggettoByCredenzialiApiKeyPrefix(true);
+				String prefixCredenzialiSsl = RegistroServizi._toKey_getSoggettoByCredenzialiSslPrefix(true);
+				String prefixCredenzialiSslCert = RegistroServizi._toKey_getSoggettoByCredenzialiSslCertPrefix(true);
+				String prefixCredenzialiPrincipal = RegistroServizi._toKey_getSoggettoByCredenzialiPrincipalPrefix();
+				
+				String prefixGetAllId = RegistroServizi._toKey_getAllIdSoggetti_method();
+				
+				for (String key : keys) {
+					if(key!=null) {
+						if(key.startsWith(prefixCredenzialiBasic) ||
+								key.startsWith(prefixCredenzialiApiKey) || 
+								key.startsWith(prefixCredenzialiApiKeyAppId) || 
+								key.startsWith(prefixCredenzialiSsl) || 
+								key.startsWith(prefixCredenzialiSslCert) || 
+								key.startsWith(prefixCredenzialiPrincipal)) {
+							
+							Object o = RegistroServiziReader.getRawObjectCache(key);
+							if(o!=null && o instanceof Soggetto) {
+								Soggetto soggetto = (Soggetto) o;
+								if(soggetto.getTipo().equals(idSoggetto.getTipo()) &&
+										soggetto.getNome().equals(idSoggetto.getNome())) {
+									keyForClean.add(key);
+								}
+							}
+							
+						}
+						else if(key.startsWith(prefixGetAllId)) {
+							Object oCode = RegistroServiziReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof List<?>) {
+								List<?> l = (List<?>) oCode;
+								if(l!=null && !l.isEmpty()) {
+									for (Object object : l) {
+										if(object!=null && object instanceof IDSoggetto) {
+											IDSoggetto idCheck = (IDSoggetto) object;
+											if(idCheck.equals(idSoggetto)) {
+												keyForClean.add(key);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	public static void removeRuolo(IDRuolo idRuolo) throws Exception {
+		if(RegistroServiziReader.isCacheAbilitata()) {
+			
+			String keyRuolo = RegistroServizi._getKey_getRuolo(idRuolo.getNome());
+			RegistroServiziReader.removeObjectCache(keyRuolo);
+			
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = RegistroServiziReader.keysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				
+				String prefixGetAllId = RegistroServizi._toKey_getAllIdRuoli_method();
+				
+				for (String key : keys) {
+					if(key!=null) {
+						if(key.startsWith(prefixGetAllId)) {
+							Object oCode = RegistroServiziReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof List<?>) {
+								List<?> l = (List<?>) oCode;
+								if(l!=null && !l.isEmpty()) {
+									for (Object object : l) {
+										if(object!=null && object instanceof IDRuolo) {
+											IDRuolo idCheck = (IDRuolo) object;
+											if(idCheck.equals(idRuolo)) {
+												keyForClean.add(key);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	public static void removeScope(IDScope idScope) throws Exception {
+		if(RegistroServiziReader.isCacheAbilitata()) {
+			
+			String keyScope = RegistroServizi._getKey_getScope(idScope.getNome());
+			RegistroServiziReader.removeObjectCache(keyScope);
+			
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = RegistroServiziReader.keysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				
+				String prefixGetAllId = RegistroServizi._toKey_getAllIdScope_method();
+				
+				for (String key : keys) {
+					if(key!=null) {
+						if(key.startsWith(prefixGetAllId)) {
+							Object oCode = RegistroServiziReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof List<?>) {
+								List<?> l = (List<?>) oCode;
+								if(l!=null && !l.isEmpty()) {
+									for (Object object : l) {
+										if(object!=null && object instanceof IDScope) {
+											IDScope idCheck = (IDScope) object;
+											if(idCheck.equals(idScope)) {
+												keyForClean.add(key);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	
+	
+	
+	
 
 
 	/*   -------------- Metodi di inizializzazione -----------------  */
@@ -2773,6 +3297,7 @@ public class RegistroServiziReader {
 				addCertificateDetails, separator, newLine,
 				this.log);
 	}
+	public static final String ID_CONFIGURAZIONE_CONNETTORE_HTTPS = "Configurazione connettore https";
 	public static CertificateCheck checkCertificatiConnettoreHttpsById(Connettore connettore, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
@@ -2834,7 +3359,7 @@ public class RegistroServiziReader {
 		}
 		
 		if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
-			String id = "Configurazione connettore https";
+			String id = ID_CONFIGURAZIONE_CONNETTORE_HTTPS;
 			if(addCertificateDetails && storeDetails!=null) {
 				id = id + newLine + storeDetails;
 			}
@@ -2943,6 +3468,7 @@ public class RegistroServiziReader {
 				log);
 	}
 	
+	public static final String ID_CONFIGURAZIONE_FIRMA_MODI = "Configurazione della firma "+CostantiLabel.MODIPA_PROTOCOL_LABEL;
 	private static CertificateCheck _checkStore(KeystoreParams keystoreParams, 
 			KeystoreParams truststoreParams,
 			KeystoreParams truststoreSslParams, 
@@ -3023,7 +3549,7 @@ public class RegistroServiziReader {
 		}
 		
 		if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
-			String id = "Configurazione della firma "+CostantiLabel.MODIPA_PROTOCOL_LABEL;
+			String id = ID_CONFIGURAZIONE_FIRMA_MODI;
 			if(addCertificateDetails && storeDetails!=null) {
 				id = id + newLine + storeDetails;
 			}

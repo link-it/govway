@@ -94,6 +94,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.cache.CacheResponse;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.CertificateInfo;
@@ -148,6 +149,9 @@ public class RegistroServizi  {
 		
 	
 	/* --------------- Cache --------------------*/
+	public boolean isCacheAbilitata(){
+		return this.cache!=null;
+	}
 	public void resetCache() throws DriverRegistroServiziException{
 		if(this.cache!=null){
 			try{
@@ -228,6 +232,17 @@ public class RegistroServizi  {
 			throw new DriverRegistroServiziException("Cache non abilitata");
 		}
 	}
+	public List<String> keysCache() throws DriverRegistroServiziException{
+		if(this.cache!=null){
+			try{
+				return this.cache.keys();
+			}catch(Exception e){
+				throw new DriverRegistroServiziException(e.getMessage(),e);
+			}
+		}else{
+			throw new DriverRegistroServiziException("Cache non abilitata");
+		}
+	}
 	public String getObjectCache(String key) throws DriverRegistroServiziException{
 		if(this.cache!=null){
 			try{
@@ -236,6 +251,31 @@ public class RegistroServizi  {
 					return o.toString();
 				}else{
 					return "oggetto con chiave ["+key+"] non presente";
+				}
+			}catch(Exception e){
+				throw new DriverRegistroServiziException(e.getMessage(),e);
+			}
+		}else{
+			throw new DriverRegistroServiziException("Cache non abilitata");
+		}
+	}
+	public Object getRawObjectCache(String key) throws DriverRegistroServiziException{
+		if(this.cache!=null){
+			try{
+				Object o = this.cache.get(key);
+				if(o!=null){
+					if(o instanceof CacheResponse) {
+						CacheResponse cR = (CacheResponse) o;
+						if(cR.getObject()!=null) {
+							o = cR.getObject();
+						}
+						else if(cR.getException()!=null) {
+							o = cR.getException();
+						}
+					}
+					return o;
+				}else{
+					return null;
 				}
 			}catch(Exception e){
 				throw new DriverRegistroServiziException(e.getMessage(),e);
@@ -725,14 +765,14 @@ public class RegistroServizi  {
 					}
 					
 					try{
-						this.cache.remove(_getKey_getAccordoServizioParteComune(idAccordo, null));
+						this.cache.remove(_getKey_getAccordoServizioParteComune(this.idAccordoFactory, idAccordo, null));
 						this.getAccordoServizioParteComune(connectionPdD, nomeRegistro, idAccordo);
 					}
 					catch(DriverRegistroServiziNotFound notFound){}
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 					
 					try{
-						this.cache.remove(_getKey_getAccordoServizioParteComune(idAccordo, false));
+						this.cache.remove(_getKey_getAccordoServizioParteComune(this.idAccordoFactory, idAccordo, false));
 						this.getAccordoServizioParteComune(connectionPdD, nomeRegistro, idAccordo, false);
 					}
 					catch(DriverRegistroServiziNotFound notFound){}
@@ -740,7 +780,7 @@ public class RegistroServizi  {
 					
 					AccordoServizioParteComune as = null;
 					try{
-						this.cache.remove(_getKey_getAccordoServizioParteComune(idAccordo, true));
+						this.cache.remove(_getKey_getAccordoServizioParteComune(this.idAccordoFactory, idAccordo, true));
 						as = this.getAccordoServizioParteComune(connectionPdD, nomeRegistro, idAccordo, true);
 					}
 					catch(DriverRegistroServiziNotFound notFound){}
@@ -1303,21 +1343,21 @@ public class RegistroServizi  {
 				for (IDAccordoCooperazione idAccordoCooperazione : listAccordiCooperazione) {
 					
 					try{
-						this.cache.remove(_getKey_getAccordoCooperazione(idAccordoCooperazione, null));
+						this.cache.remove(_getKey_getAccordoCooperazione(this.idAccordoCooperazioneFactory, idAccordoCooperazione, null));
 						this.getAccordoCooperazione(connectionPdD, nomeRegistro, idAccordoCooperazione);
 					}
 					catch(DriverRegistroServiziNotFound notFound){}
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 					
 					try{
-						this.cache.remove(_getKey_getAccordoCooperazione(idAccordoCooperazione, false));
+						this.cache.remove(_getKey_getAccordoCooperazione(this.idAccordoCooperazioneFactory, idAccordoCooperazione, false));
 						this.getAccordoCooperazione(connectionPdD, nomeRegistro, idAccordoCooperazione, false);
 					}
 					catch(DriverRegistroServiziNotFound notFound){}
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 					
 					try{
-						this.cache.remove(_getKey_getAccordoCooperazione(idAccordoCooperazione, true));
+						this.cache.remove(_getKey_getAccordoCooperazione(this.idAccordoCooperazioneFactory, idAccordoCooperazione, true));
 						this.getAccordoCooperazione(connectionPdD, nomeRegistro, idAccordoCooperazione, true);
 					}
 					catch(DriverRegistroServiziNotFound notFound){}
@@ -1821,8 +1861,8 @@ public class RegistroServizi  {
 
 	/* ********  R I C E R C A    S E R V I Z I  (utilizzo dei driver) ******** */ 
 	
-	private String _getKey_getAccordoServizioParteComune(IDAccordo idAccordo,Boolean readContenutiAllegati) throws DriverRegistroServiziException{
-		String uriAccordoServizio = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
+	protected static String _getKey_getAccordoServizioParteComune(IDAccordoFactory idAccordoFactory, IDAccordo idAccordo,Boolean readContenutiAllegati) throws DriverRegistroServiziException{
+		String uriAccordoServizio = idAccordoFactory.getUriFromIDAccordo(idAccordo);
 		String key = "getAccordoServizio_" + uriAccordoServizio;
 		if(readContenutiAllegati!=null){
 			key = key + "_READ-ALLEGATI("+readContenutiAllegati.booleanValue()+")";
@@ -1843,7 +1883,7 @@ public class RegistroServizi  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = this._getKey_getAccordoServizioParteComune(idAccordo, readContenutiAllegati);
+			key = _getKey_getAccordoServizioParteComune(this.idAccordoFactory, idAccordo, readContenutiAllegati);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1877,7 +1917,7 @@ public class RegistroServizi  {
 	}
 
 	
-	private String _getKey_getPortaDominio(String nomePdD) throws DriverRegistroServiziException{
+	protected static String _getKey_getPortaDominio(String nomePdD) throws DriverRegistroServiziException{
 		return "getPortaDominio_" + nomePdD;
 	}
 	public org.openspcoop2.core.registry.PortaDominio getPortaDominio(Connection connectionPdD,String nomeRegistro,String nomePdD) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
@@ -1889,7 +1929,7 @@ public class RegistroServizi  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = this._getKey_getPortaDominio(nomePdD);
+			key = _getKey_getPortaDominio(nomePdD);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1921,7 +1961,7 @@ public class RegistroServizi  {
 	}
 	
 	
-	private String _getKey_getRuolo(String nomeRuolo) throws DriverRegistroServiziException{
+	protected static String _getKey_getRuolo(String nomeRuolo) throws DriverRegistroServiziException{
 		return "getRuolo_" + nomeRuolo;
 	}
 	public org.openspcoop2.core.registry.Ruolo getRuolo(Connection connectionPdD,String nomeRegistro,String nomeRuolo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
@@ -1934,7 +1974,7 @@ public class RegistroServizi  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = this._getKey_getRuolo(nomeRuolo);
+			key = _getKey_getRuolo(nomeRuolo);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1966,7 +2006,7 @@ public class RegistroServizi  {
 	}
 	
 	
-	private String _getKey_getScope(String nomeScope) throws DriverRegistroServiziException{
+	protected static String _getKey_getScope(String nomeScope) throws DriverRegistroServiziException{
 		return "getScope_" + nomeScope;
 	}
 	public org.openspcoop2.core.registry.Scope getScope(Connection connectionPdD,String nomeRegistro,String nomeScope) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
@@ -1979,7 +2019,7 @@ public class RegistroServizi  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = this._getKey_getScope(nomeScope);
+			key = _getKey_getScope(nomeScope);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -2010,7 +2050,7 @@ public class RegistroServizi  {
 
 	}
 	
-	private String _getKey_getSoggetto(IDSoggetto idSoggetto) throws DriverRegistroServiziException{
+	protected static String _getKey_getSoggetto(IDSoggetto idSoggetto) throws DriverRegistroServiziException{
 		return "getSoggetto_" + idSoggetto.getTipo() +"/" + idSoggetto.getNome();
 	}
 	public Soggetto getSoggetto(Connection connectionPdD,String nomeRegistro,IDSoggetto idSoggetto) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
@@ -2026,7 +2066,7 @@ public class RegistroServizi  {
 		//	se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = this._getKey_getSoggetto(idSoggetto);
+			key = _getKey_getSoggetto(idSoggetto);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -2056,8 +2096,11 @@ public class RegistroServizi  {
 
 	}
 
+	protected static String _toKey_getSoggettoByCredenzialiBasicPrefix() {
+		return "getSoggettoByCredenzialiBasic_";
+	}
 	private String _getKey_getSoggettoByCredenzialiBasic(String user,String password) throws DriverRegistroServiziException{
-		return "getSoggettoByCredenzialiBasic_" + user +"_" + password;
+		return _toKey_getSoggettoByCredenzialiBasicPrefix() + user +"_" + password;
 	}
 	public Soggetto getSoggettoByCredenzialiBasic(Connection connectionPdD,String nomeRegistro,String user,String password, CryptConfig config) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
@@ -2100,8 +2143,11 @@ public class RegistroServizi  {
 
 	}
 	
+	protected static String _toKey_getSoggettoByCredenzialiApiKeyPrefix(boolean appId) {
+		return (appId ? "getSoggettoByCredenzialiMultipleApiKey_" : "getSoggettoByCredenzialiApiKey_");
+	}
 	private String _getKey_getSoggettoByCredenzialiApiKey(String user,String password, boolean appId) throws DriverRegistroServiziException{
-		return (appId ? "getSoggettoByCredenzialiMultipleApiKey_" : "getSoggettoByCredenzialiApiKey_") + user +"_" + password;
+		return _toKey_getSoggettoByCredenzialiApiKeyPrefix(appId) + user +"_" + password;
 	}
 	public Soggetto getSoggettoByCredenzialiApiKey(Connection connectionPdD,String nomeRegistro,String user,String password, boolean appId, CryptConfig config) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
@@ -2144,8 +2190,11 @@ public class RegistroServizi  {
 
 	}
 	
+	protected static String _toKey_getSoggettoByCredenzialiSslPrefix(boolean separator) {
+		return "getSoggettoByCredenzialiSsl"+(separator?"_":"");
+	}
 	private String _getKey_getSoggettoByCredenzialiSsl(String aSubject, String Issuer){
-		String key = "getSoggettoByCredenzialiSsl";
+		String key = _toKey_getSoggettoByCredenzialiSslPrefix(false);
 		key = key +"_subject:"+aSubject;
 		if(Issuer!=null) {
 			key = key +"_issuer:"+Issuer;
@@ -2196,9 +2245,12 @@ public class RegistroServizi  {
 
 	}
 	
+	protected static String _toKey_getSoggettoByCredenzialiSslCertPrefix(boolean separator) {
+		return "getSoggettoByCredenzialiSslCert"+(separator?"_":"");
+	}
 	private String _getKey_getSoggettoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier) throws DriverRegistroServiziException{
 		try {
-			String key = "getSoggettoByCredenzialiSslCert";
+			String key = _toKey_getSoggettoByCredenzialiSslCertPrefix(false);
 			key = key +"_cert:"+certificate.digestBase64Encoded();
 			key = key +"_strictVerifier:"+strictVerifier;
 			return key;
@@ -2247,8 +2299,11 @@ public class RegistroServizi  {
 
 	}
 	
+	protected static String _toKey_getSoggettoByCredenzialiPrincipalPrefix() {
+		return "getSoggettoByCredenzialiPrincipal_";
+	}
 	private String _getKey_getSoggettoByCredenzialiPrincipal(String principal) throws DriverRegistroServiziException{
-		return "getSoggettoByCredenzialiPrincipal_" + principal;
+		return _toKey_getSoggettoByCredenzialiPrincipalPrefix() + principal;
 	}
 	public Soggetto getSoggettoByCredenzialiPrincipal(Connection connectionPdD,String nomeRegistro,String principal) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
@@ -2289,16 +2344,21 @@ public class RegistroServizi  {
 
 	}
 	
-	private String _getKey_getAccordoServizioParteSpecifica(IDServizio idService,Boolean readContenutiAllegati) throws DriverRegistroServiziException{
+	protected static String _toKey_getAccordoServizioParteSpecificaPrefix(IDServizio idService) throws DriverRegistroServiziException{
 		String servizio = idService.getNome();
 		String tipoServizio = idService.getTipo();
 		Integer versioneServizio = idService.getVersione();
-		String azione = idService.getAzione();
 		String tipoSogg = idService.getSoggettoErogatore().getTipo();
 		String nomeSogg = idService.getSoggettoErogatore().getNome();
 		
 		String key = "getServizio_"+ tipoSogg +"/" + nomeSogg +
 				"_" + tipoServizio + "/" + servizio+"/"+versioneServizio.intValue();
+		
+		return key;
+	}
+	protected static String _getKey_getAccordoServizioParteSpecifica(IDServizio idService,Boolean readContenutiAllegati) throws DriverRegistroServiziException{
+		String key = _toKey_getAccordoServizioParteSpecificaPrefix(idService);
+		String azione = idService.getAzione();
 		if(azione !=null)
 			key = key + "_" + azione;	   
 		if(readContenutiAllegati!=null){
@@ -2327,7 +2387,7 @@ public class RegistroServizi  {
 		//	se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = this._getKey_getAccordoServizioParteSpecifica(idService, readContenutiAllegati);
+			key = _getKey_getAccordoServizioParteSpecifica(idService, readContenutiAllegati);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -2356,12 +2416,17 @@ public class RegistroServizi  {
 			throw new DriverRegistroServiziNotFound("[getAccordoServizioParteSpecifica] Servizio non trovato");
 	}
 
-	
+	protected static String _toKey_getAccordoServizioParteSpecifica_ServizioCorrelato_prefix() throws DriverRegistroServiziException{
+		return "getServizioCorrelato(RicercaPerAccordo)_";
+	}
+	protected static String _toKey_getAccordoServizioParteSpecifica_ServizioCorrelato(IDAccordoFactory idAccordoFactory, IDAccordo idAccordo) throws DriverRegistroServiziException{
+		return "_"+idAccordoFactory.getUriFromIDAccordo(idAccordo)+"_";
+	}
 	private String _getKey_getAccordoServizioParteSpecifica_ServizioCorrelato(IDSoggetto idSoggetto, IDAccordo idAccordo,Boolean readContenutiAllegati) throws DriverRegistroServiziException{
-		String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
-		String key = "getServizioCorrelato(RicercaPerAccordo)_"+ idSoggetto.getTipo() +"/" + idSoggetto.getNome() +"_" + uriAccordo;
+		String key = _toKey_getAccordoServizioParteSpecifica_ServizioCorrelato_prefix() + idSoggetto.getTipo() +"/" + idSoggetto.getNome();
+		key = key + _toKey_getAccordoServizioParteSpecifica_ServizioCorrelato(this.idAccordoFactory, idAccordo);
 		if(readContenutiAllegati!=null){
-			key = key + "_READ-ALLEGATI("+readContenutiAllegati.booleanValue()+")";
+			key = key + "READ-ALLEGATI("+readContenutiAllegati.booleanValue()+")";
 		}
 		return key;
 	}
@@ -2411,8 +2476,8 @@ public class RegistroServizi  {
 			throw new DriverRegistroServiziNotFound("[getAccordoServizioParteSpecifica_ServizioCorrelato] ServizioCorrelato non trovato");
 	}
 	
-	private String _getKey_getAccordoCooperazione(IDAccordoCooperazione idAccordo,Boolean readContenutiAllegati) throws DriverRegistroServiziException{
-		String uriAccordoCooperazione = this.idAccordoCooperazioneFactory.getUriFromIDAccordo(idAccordo);
+	protected static String _getKey_getAccordoCooperazione(IDAccordoCooperazioneFactory idAccordoCooperazioneFactory, IDAccordoCooperazione idAccordo,Boolean readContenutiAllegati) throws DriverRegistroServiziException{
+		String uriAccordoCooperazione = idAccordoCooperazioneFactory.getUriFromIDAccordo(idAccordo);
 
 		String key = "getAccordoCooperazione_" + uriAccordoCooperazione;   
 		if(readContenutiAllegati!=null){
@@ -2434,7 +2499,7 @@ public class RegistroServizi  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = this._getKey_getAccordoCooperazione(idAccordo, readContenutiAllegati);
+			key = _getKey_getAccordoCooperazione(this.idAccordoCooperazioneFactory, idAccordo, readContenutiAllegati);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -2469,64 +2534,100 @@ public class RegistroServizi  {
 	
 	/* ********  R I C E R C A  I D   E L E M E N T I   P R I M I T I V I  ******** */
 	
+	protected static String _toKey_getAllIdPorteDominio_method(){
+		return "getAllIdPorteDominio";
+	}
 	@SuppressWarnings("unchecked")
 	public List<String> getAllIdPorteDominio(Connection connectionPdD,String nomeRegistro,FiltroRicerca filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
-		return (List<String>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdPorteDominio");
+		return (List<String>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, _toKey_getAllIdPorteDominio_method());
 	}
 	
+	protected static String _toKey_getAllIdRuoli_method(){
+		return "getAllIdRuoli";
+	}
 	@SuppressWarnings("unchecked")
 	public List<IDRuolo> getAllIdRuoli(Connection connectionPdD,String nomeRegistro,FiltroRicercaRuoli filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
-		return (List<IDRuolo>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdRuoli");
+		return (List<IDRuolo>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, _toKey_getAllIdRuoli_method());
 	}
 	
+	protected static String _toKey_getAllIdScope_method(){
+		return "getAllIdScope";
+	}
 	@SuppressWarnings("unchecked")
 	public List<IDScope> getAllIdScope(Connection connectionPdD,String nomeRegistro,FiltroRicercaScope filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
-		return (List<IDScope>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdScope");
+		return (List<IDScope>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, _toKey_getAllIdScope_method());
 	}
 
+	protected static String _toKey_getAllIdSoggetti_method(){
+		return "getAllIdSoggetti";
+	}
 	@SuppressWarnings("unchecked")
 	public List<IDSoggetto> getAllIdSoggetti(Connection connectionPdD,String nomeRegistro, FiltroRicercaSoggetti filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
-		return (List<IDSoggetto>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdSoggetti");
+		return (List<IDSoggetto>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, _toKey_getAllIdSoggetti_method());
 	}
 	
+	protected static String _toKey_getAllIdAccordiCooperazione_method(){
+		return "getAllIdAccordiCooperazione";
+	}
 	@SuppressWarnings("unchecked")
 	public List<IDAccordoCooperazione> getAllIdAccordiCooperazione(Connection connectionPdD,String nomeRegistro, FiltroRicercaAccordi filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
-		return (List<IDAccordoCooperazione>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdAccordiCooperazione");
+		return (List<IDAccordoCooperazione>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, _toKey_getAllIdAccordiCooperazione_method());
 	}
 	
+	protected static String _toKey_getAllIdAccordiServizioParteComune_method(){
+		return "getAllIdAccordiServizioParteComune";
+	}
 	@SuppressWarnings("unchecked")
 	public List<IDAccordo> getAllIdAccordiServizioParteComune(Connection connectionPdD,String nomeRegistro, FiltroRicercaAccordi filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
-		return (List<IDAccordo>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdAccordiServizioParteComune");
+		return (List<IDAccordo>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, _toKey_getAllIdAccordiServizioParteComune_method());
 	}
 	
+	protected static String _toKey_getAllIdPortType_method(){
+		return "getAllIdPortType";
+	}
 	@SuppressWarnings("unchecked")
 	public List<IDPortType> getAllIdPortType(Connection connectionPdD,String nomeRegistro, FiltroRicercaPortTypes filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return (List<IDPortType>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdPortType");
+		return (List<IDPortType>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, _toKey_getAllIdPortType_method());
 	}
 	
+	protected static String _toKey_getAllIdAzionePortType_method(){
+		return "getAllIdAzionePortType";
+	}
 	@SuppressWarnings("unchecked")
 	public List<IDPortTypeAzione> getAllIdAzionePortType(Connection connectionPdD, String nomeRegistro, FiltroRicercaOperations filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return (List<IDPortTypeAzione>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdAzionePortType");
+		return (List<IDPortTypeAzione>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, _toKey_getAllIdAzione_method());
 	}
 	
+	protected static String _toKey_getAllIdAzione_method(){
+		return "getAllIdAzioneAccordo";
+	}
 	@SuppressWarnings("unchecked")
 	public List<IDAccordoAzione> getAllIdAzioneAccordo(Connection connectionPdD, String nomeRegistro, FiltroRicercaAzioni filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return (List<IDAccordoAzione>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdAzioneAccordo");
+		return (List<IDAccordoAzione>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, _toKey_getAllIdAzione_method());
 	}
 	
+	protected static String _toKey_getAllIdResource_method(){
+		return "getAllIdResource";
+	}
 	@SuppressWarnings("unchecked")
 	public List<IDResource> getAllIdResource(Connection connectionPdD, String nomeRegistro, FiltroRicercaResources filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return (List<IDResource>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdResource");
+		return (List<IDResource>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, _toKey_getAllIdResource_method());
 	}
 	
+	protected static String _toKey_getAllIdServizi_method(){
+		return "getAllIdServizi";
+	}
 	@SuppressWarnings("unchecked")
 	public List<IDServizio> getAllIdServizi(Connection connectionPdD, String nomeRegistro, FiltroRicercaServizi filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
-		return (List<IDServizio>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdServizi");
+		return (List<IDServizio>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, _toKey_getAllIdServizi_method());
 	}
 	
+	protected static String _toKey_getAllIdFruizioniServizio_method(){
+		return "getAllIdFruizioniServizio";
+	}
 	@SuppressWarnings("unchecked")
 	public List<IDFruizione> getAllIdFruizioniServizio(Connection connectionPdD, String nomeRegistro, FiltroRicercaFruizioniServizio filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
-		return (List<IDFruizione>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdFruizioniServizio");
+		return (List<IDFruizione>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, _toKey_getAllIdFruizioniServizio_method());
 	}
 	
 	private List<?> _getAllIdEngine(Connection connectionPdD,String nomeRegistro,Object filtroRicerca,String nomeMetodo) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
@@ -2602,7 +2703,19 @@ public class RegistroServizi  {
 
 
 
-
+	protected static String _toKey_getWsdlAccordoServizioPrefix(){
+		return "getWsdlAccordoServizio_";
+	}
+	protected static String _toKey_getWsdlAccordoServizioService(IDServizio idService){
+		String servizio = idService.getNome();
+		String tipoServizio = idService.getTipo();
+		Integer versioneServizio = idService.getVersione();
+		String tipoSogg = idService.getSoggettoErogatore().getTipo();
+		String nomeSogg = idService.getSoggettoErogatore().getNome();
+		return "_"+ tipoSogg +"/" + nomeSogg +
+				"_" + tipoServizio + "/" + servizio+"/"+versioneServizio.intValue()+"_";
+	}
+	
 	/**
 	 * Si occupa di ritornare le informazioni sui wsdl di un servizio
 	 * 
@@ -2630,9 +2743,9 @@ public class RegistroServizi  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getWsdlAccordoServizio_"+infoWsdlSource.name()+"_"+ tipoSogg +"/" + nomeSogg +
-			"_" + tipoServizio + "/" + servizio+"/"+versioneServizio.intValue()
-			+"_schema_"+buildSchemaXSD;
+			key = _toKey_getWsdlAccordoServizioPrefix()+infoWsdlSource.name()+
+					_toKey_getWsdlAccordoServizioService(idService)+
+					"schema_"+buildSchemaXSD;
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -2977,6 +3090,19 @@ public class RegistroServizi  {
 	
 	
 	
+	protected static String _toKey_getRestAccordoServizioPrefix(){
+		return "getRestAccordoServizio_";
+	}
+	protected static String _toKey_getRestAccordoServizioService(IDServizio idService){
+		String servizio = idService.getNome();
+		String tipoServizio = idService.getTipo();
+		Integer versioneServizio = idService.getVersione();
+		String tipoSogg = idService.getSoggettoErogatore().getTipo();
+		String nomeSogg = idService.getSoggettoErogatore().getNome();
+		return "_"+ tipoSogg +"/" + nomeSogg +
+				"_" + tipoServizio + "/" + servizio+"/"+versioneServizio.intValue()+"_";
+	}
+	
 	/**
 	 * Si occupa di ritornare le informazioni sulla specifica REST di un servizio
 	 * 
@@ -3004,9 +3130,9 @@ public class RegistroServizi  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getRestAccordoServizio_"+infoWsdlSource.name()+"_"+ tipoSogg +"/" + nomeSogg +
-			"_" + tipoServizio + "/" + servizio+"/"+versioneServizio.intValue()
-			+"_schema_"+buildSchemaXSD
+			key = _toKey_getRestAccordoServizioPrefix()+infoWsdlSource.name()+
+			_toKey_getRestAccordoServizioService(idService)
+			+"schema_"+buildSchemaXSD
 			+"_processInclude_"+processIncludeForOpenApi;
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
@@ -3363,7 +3489,15 @@ public class RegistroServizi  {
 	
 	
 	
-	
+	protected static String _getKey_getServiceBinding(IDServizio idService){
+		String servizio = idService.getNome();
+		String tipoServizio = idService.getTipo();
+		Integer versioneServizio = idService.getVersione();
+		String tipoSogg = idService.getSoggettoErogatore().getTipo();
+		String nomeSogg = idService.getSoggettoErogatore().getNome();
+		return "getServiceBinding_"+tipoSogg +"/" + nomeSogg +
+				"_" + tipoServizio + "/" + servizio+"/"+versioneServizio.intValue();
+	}
 	/**
 	 * Si occupa di ritornare il tipo di service binding del servizio
 	 * 
@@ -3390,8 +3524,7 @@ public class RegistroServizi  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getServiceBinding_"+tipoSogg +"/" + nomeSogg +
-			"_" + tipoServizio + "/" + servizio+"/"+versioneServizio.intValue();
+			key = _getKey_getServiceBinding(idService);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){

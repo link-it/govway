@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.config;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,7 @@ import org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils;
 import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -95,6 +97,9 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 			}
 			boolean attributeAuthority = ConfigurazioneCostanti.isConfigurazioneAttributeAuthority(infoType);
 			
+			String resetElementoCacheS = confHelper.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
+			boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);
+			
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			
 			Properties mapId = attributeAuthority ?
@@ -131,6 +136,106 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 			
 			configurazioneBean.updateConfigurazione(configurazione);
 			ServletUtils.saveConfigurazioneBeanIntoSession(session, configurazioneBean, configurazioneBean.getId());
+			
+			// reset elemento dalla cache
+			if(resetElementoCache) {
+				
+				// Uso lo stessoAlias
+				List<String> aliases = confCore.getJmxPdD_aliases();
+				String alias = null;
+				if(aliases!=null && !aliases.isEmpty()) {
+					alias = aliases.get(0);
+				}
+				
+				String metodo = null;
+				if(attributeAuthority) {
+					metodo = confCore.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheAttributeAuthority(alias);
+				}
+				else {
+					boolean validazione = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN.equals(genericProperties.getTipologia());
+					boolean negoziazione = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN.equals(genericProperties.getTipologia());
+					if(validazione) {
+						metodo = confCore.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyValidazione(alias);
+					}
+					else if(negoziazione) {
+						metodo = confCore.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheTokenPolicyNegoziazione(alias);
+					}
+					else {
+						throw new Exception("Tipologia '"+genericProperties.getTipologia()+"' non supportata");
+					}
+				}
+				
+				String labelPolicy = genericProperties.getNome();
+				confCore.invokeJmxMethodAllNodesAndSetResult(pd, confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+						metodo,
+						MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_SUCCESSO,labelPolicy),
+						MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_FALLITO_PREFIX,labelPolicy),
+						genericProperties.getId());				
+				
+				String resetFromLista = confHelper.getParameter(CostantiControlStation.PARAMETRO_RESET_CACHE_FROM_LISTA);
+				boolean arrivoDaLista = "true".equalsIgnoreCase(resetFromLista);
+				
+				if(arrivoDaLista) {
+					
+					// preparo lista
+				
+					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+
+					String infoTypeA = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+					String infoTypeSession = ServletUtils.getObjectFromSession(session, String.class, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+					if(infoTypeA==null) {
+						infoTypeA = infoTypeSession;
+					}
+					else {
+						ServletUtils.setObjectIntoSession(session, infoTypeA, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+					}
+					attributeAuthority = ConfigurazioneCostanti.isConfigurazioneAttributeAuthority(infoTypeA);
+					
+					// reset di eventuali configurazioni salvate in sessione
+					mapId = attributeAuthority ?
+							confCore.getAttributeAuthorityTipologia() :
+							confCore.getTokenPolicyTipologia();
+					if(mapId!=null && !mapId.isEmpty()) {
+						propertiesSourceConfiguration = attributeAuthority ? 
+								confCore.getAttributeAuthorityPropertiesSourceConfiguration() :
+								confCore.getPolicyGestioneTokenPropertiesSourceConfiguration();
+						configManager.leggiConfigurazioni(propertiesSourceConfiguration, true);
+						for (Object oTipo : mapId.keySet()) {
+							if(oTipo!=null && oTipo instanceof String) {
+								String ti = (String) oTipo;
+								Config config = configManager.getConfigurazione(propertiesSourceConfiguration, ti);
+								ServletUtils.removeConfigurazioneBeanFromSession(session, config.getId());
+							}
+						}
+					}
+					
+					int idLista = attributeAuthority ? Liste.CONFIGURAZIONE_GESTIONE_ATTRIBUTE_AUTHORITY : Liste.CONFIGURAZIONE_GESTIONE_POLICY_TOKEN;
+					
+					ricerca = confHelper.checkSearchParameters(idLista, ricerca);
+
+					List<String> tipologie = new ArrayList<>();
+					if(attributeAuthority) {
+						tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_ATTRIBUTE_AUTHORITY);
+					}
+					else {
+						tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);
+						tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN);
+					}
+					
+					List<GenericProperties> lista = confCore.gestorePolicyTokenList(idLista, tipologie, ricerca);
+					
+					confHelper.prepareGestorePolicyTokenList(ricerca, lista, idLista); 
+					
+					// salvo l'oggetto ricerca nella sessione
+					ServletUtils.setSearchObjectIntoSession(session, ricerca);
+					
+					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				
+					// Forward control to the specified success URI
+					return ServletUtils.getStrutsForwardEditModeFinished(mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN, ForwardParams.CHANGE());
+					
+				}
+			}
 			
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
