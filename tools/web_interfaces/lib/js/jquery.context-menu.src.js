@@ -86,7 +86,9 @@ const mouseButton = {
      * @returns {*}
      * @constructor
      */
-    function LOG(data, isError = false) {
+    function LOG(data, isError) {
+    	isError = (typeof isError !== 'undefined') ?  isError : false;
+    	//if (!isError) isError = false;
         /**
          * Check if data parameter exists.
          */
@@ -160,7 +162,8 @@ const mouseButton = {
      * Open context menu with animation.
      * @param event
      */
-    $.fn.contextMenuOpenAnimation = function (event = function () { }) {
+    $.fn.contextMenuOpenAnimation = function (event) {
+    	event = (typeof event !== 'undefined') ?  event : function () { };
         /**
          * Context menu positions.
          * @type {{top: number, left: number}}
@@ -217,7 +220,8 @@ const mouseButton = {
      * Close context menu with animation.
      * @param event
      */
-    $.fn.contextMenuCloseAnimation = function (event = function () { }) {
+    $.fn.contextMenuCloseAnimation = function (event) {
+    	event = (typeof event !== 'undefined') ?  event : function () { };
         // Context menu closing animation.
         $(this).animate({
             'padding-top': 0,
@@ -281,7 +285,8 @@ const mouseButton = {
                      * @param click
                      * @returns {[]}
                      */
-                    'addItem' : function (text, click = function () {  }) {
+                    'addItem' : function (text, click) {
+                    	click = (typeof click !== 'undefined') ?  click : function () { };
 
                         LOG('Adding new item to context menu.');
 
@@ -360,7 +365,8 @@ const mouseButton = {
             /**
              * Context menu open function.
              */
-            'open'      :  function (event = function () { }) {
+            'open'      :  function (event) {
+            	event = (typeof event !== 'undefined') ?  event : function () { };
                 LOG('Opening context menu.');
 
                 /**
@@ -384,7 +390,8 @@ const mouseButton = {
             /**
              * Context menu close function.
              */
-            'close'     : function (event = function () { }) {
+            'close'     : function (event) {
+            	event = (typeof event !== 'undefined') ?  event : function () { };
                 var _this = this;
                 LOG('Closing context menu.');
                 menuElement.contextMenuCloseAnimation(function () {
