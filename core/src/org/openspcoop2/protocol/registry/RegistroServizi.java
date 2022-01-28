@@ -2595,7 +2595,7 @@ public class RegistroServizi  {
 	}
 	@SuppressWarnings("unchecked")
 	public List<IDPortTypeAzione> getAllIdAzionePortType(Connection connectionPdD, String nomeRegistro, FiltroRicercaOperations filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return (List<IDPortTypeAzione>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, _toKey_getAllIdAzione_method());
+		return (List<IDPortTypeAzione>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, _toKey_getAllIdAzionePortType_method());
 	}
 	
 	protected static String _toKey_getAllIdAzione_method(){
