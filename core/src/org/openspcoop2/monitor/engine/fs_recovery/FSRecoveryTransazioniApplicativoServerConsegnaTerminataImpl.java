@@ -108,6 +108,7 @@ public class FSRecoveryTransazioniApplicativoServerConsegnaTerminataImpl extends
 				connection.setAutoCommit(autoCommit);
 				
 				boolean possibileTerminazioneSingleIntegrationManagerMessage = false;
+				boolean consegnaInErrore = false;
 				// consegna terminata
 				if(transazioneApplicativoServer.isConsegnaTerminata()) {
 					// nop
@@ -118,13 +119,17 @@ public class FSRecoveryTransazioniApplicativoServerConsegnaTerminataImpl extends
 				else if(transazioneApplicativoServer.getDataMessaggioScaduto()!=null) {
 					possibileTerminazioneSingleIntegrationManagerMessage = true;
 				}
+				else if(transazioneApplicativoServer.isConsegnaTrasparente() && transazioneApplicativoServer.getNumeroTentativi()>0) {
+					// !transazioneApplicativoServer.isConsegnaTerminata() altrimenti entrava nel primo if
+					consegnaInErrore = true;
+				}
 				
 				TransactionServerUtils.safe_aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, connection, 
 						this.daoFactoryServiceManagerProperties.getDatabaseType(), this.log,
 						this.daoFactory,this.daoFactoryLogger,this.daoFactoryServiceManagerProperties,
 						this.debug,
 						esitoConsegnaMultipla, esitoConsegnaMultiplaInCorso, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
-						esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage,
+						esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage, consegnaInErrore,
 						this.gestioneSerializableDB_AttesaAttiva,this.gestioneSerializableDB_CheckInterval,
 						null);
 				

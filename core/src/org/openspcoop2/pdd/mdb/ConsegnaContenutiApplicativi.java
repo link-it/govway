@@ -309,6 +309,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			transazioneApplicativoServer.setProtocollo(protocol);
 			transazioneApplicativoServer.setDataAccettazioneRichiesta(DateManager.getDate());
 			transazioneApplicativoServer.setIdentificativoMessaggio(consegnaContenutiApplicativiMsg.getBusta().getID());
+			transazioneApplicativoServer.setConsegnaTrasparente(true);
 			
 			msgDiag.setTransazioneApplicativoServer(transazioneApplicativoServer, idApplicativa);
 			

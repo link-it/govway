@@ -10671,15 +10671,21 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_3XX);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_3XX );
-		de.setType(DataElementType.SELECT);
-		de.setValues(codificaRispostaValues);
-		de.setLabels(codificaRispostaLabels);
-		de.setSelected(codiceRisposta3xx);
-		de.setPostBack(true);
+		if(ServiceBinding.REST.equals(serviceBinding)){
+			de.setType(DataElementType.SELECT);
+			de.setValues(codificaRispostaValues);
+			de.setLabels(codificaRispostaLabels);
+			de.setSelected(codiceRisposta3xx);
+			de.setPostBack(true);
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(codiceRisposta3xx);
+		}
 		dati.add(de);
 		
 		// intervallo consegna
-		if(org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaTrasporto.INTERVALLO_CONSEGNA_COMPLETATA.getValue().equals(codiceRisposta3xx)) {
+		if(ServiceBinding.REST.equals(serviceBinding) && org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaTrasporto.INTERVALLO_CONSEGNA_COMPLETATA.getValue().equals(codiceRisposta3xx)) {
 			de = new DataElement();
 			de.setType(DataElementType.INTERVAL_NUMBER);
 			de.setLabel("&nbsp;");
@@ -10694,7 +10700,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			dati.add(de);
 		} 
 		// Codici Consegna
-		if(org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaTrasporto.CODICI_CONSEGNA_COMPLETATA.getValue().equals(codiceRisposta3xx)) {
+		if(ServiceBinding.REST.equals(serviceBinding) && org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaTrasporto.CODICI_CONSEGNA_COMPLETATA.getValue().equals(codiceRisposta3xx)) {
 			de = new DataElement();
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setLabel("&nbsp;");
