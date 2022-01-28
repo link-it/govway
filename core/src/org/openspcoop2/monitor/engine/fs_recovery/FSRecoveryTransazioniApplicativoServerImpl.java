@@ -108,10 +108,11 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 					boolean autoCommit = false;
 					connection.setAutoCommit(autoCommit);
 					
-					// consegna terminata
 					@SuppressWarnings("unused")
 					boolean isMessaggioConsegnato = false;
 					boolean possibileTerminazioneSingleIntegrationManagerMessage = false;
+					boolean consegnaInErrore = false;
+					// consegna terminata
 					if(transazioneApplicativoServer.isConsegnaTerminata()) {
 						isMessaggioConsegnato = true;
 					}
@@ -123,6 +124,10 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 						isMessaggioConsegnato = true;
 						possibileTerminazioneSingleIntegrationManagerMessage = true;
 					}
+					else if(transazioneApplicativoServer.isConsegnaTrasparente() && transazioneApplicativoServer.getNumeroTentativi()>0) {
+						// !transazioneApplicativoServer.isConsegnaTerminata() altrimenti entrava nel primo if
+						consegnaInErrore = true;
+					}
 					
 					// Grazie all'istruzione sopra 'boolean ripristinato = TransactionServerUtils.recover' entro nell'if solo se la consegna e' quella terminata
 					//if(isMessaggioConsegnato) { 
@@ -131,7 +136,7 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 							this.daoFactory,this.daoFactoryLogger,this.daoFactoryServiceManagerProperties,
 							this.debug,
 							esitoConsegnaMultipla, esitoConsegnaMultiplaInCorso, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
-							esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage,
+							esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage, consegnaInErrore,
 							this.gestioneSerializableDB_AttesaAttiva,this.gestioneSerializableDB_CheckInterval,
 							null);
 					//}

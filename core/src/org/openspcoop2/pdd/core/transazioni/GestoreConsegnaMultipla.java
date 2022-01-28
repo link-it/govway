@@ -418,6 +418,7 @@ public class GestoreConsegnaMultipla {
 		Connection con = null;
 		boolean isMessaggioConsegnato = false;
 		boolean possibileTerminazioneSingleIntegrationManagerMessage = false;
+		boolean consegnaInErrore = false;
 		TransazioneApplicativoServer transazioneApplicativoServer = null;
 		boolean useConnectionRuntime = false;
 		try{
@@ -522,6 +523,10 @@ public class GestoreConsegnaMultipla {
 					else if(transazioneApplicativoServer.getDataMessaggioScaduto()!=null) {
 						isMessaggioConsegnato = true;
 						possibileTerminazioneSingleIntegrationManagerMessage = true;
+					}
+					else if(transazioneApplicativoServer.isConsegnaTrasparente() && transazioneApplicativoServer.getDataUscitaRichiesta()!=null) {
+						// !transazioneApplicativoServer.isConsegnaTerminata() altrimenti entrava nel primo if
+						consegnaInErrore = true;
 					}
 	
 					boolean useSelectForUpdate = true;
@@ -723,7 +728,7 @@ public class GestoreConsegnaMultipla {
 
 		}finally{
 			
-			if(isMessaggioConsegnato) {
+			if(isMessaggioConsegnato || consegnaInErrore) {
 
 				long timeStart = -1;
 				try{
@@ -737,7 +742,7 @@ public class GestoreConsegnaMultipla {
 					}
 				
 					// aggiorno esito transazione (non viene sollevata alcuna eccezione)
-					boolean transazioneAggiornata = _safe_aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, con, esitiProperties, possibileTerminazioneSingleIntegrationManagerMessage, timeDetails);
+					boolean transazioneAggiornata = _safe_aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, con, esitiProperties, possibileTerminazioneSingleIntegrationManagerMessage, consegnaInErrore, timeDetails);
 					if(!transazioneAggiornata) {
 						
 						String prefix = "[id:"+transazioneApplicativoServer.getIdTransazione()+"][sa:"+transazioneApplicativoServer.getServizioApplicativoErogatore()+"]["+transazioneApplicativoServer.getConnettoreNome()+"] 'gestisciErroreAggiornamentoInformazioneConsegnaTerminata'";
@@ -868,7 +873,7 @@ public class GestoreConsegnaMultipla {
 	}
 
 	private boolean _safe_aggiornaInformazioneConsegnaTerminata(TransazioneApplicativoServer transazioneApplicativoServer, Connection con, EsitiProperties esitiProperties,
-			 boolean possibileTerminazioneSingleIntegrationManagerMessage,
+			 boolean possibileTerminazioneSingleIntegrationManagerMessage,boolean consegnaInErrore,
 			 List<String> timeDetails) {
 		
 		boolean debug = this.debug;
@@ -905,7 +910,7 @@ public class GestoreConsegnaMultipla {
 					daoF,logFactory,smp,
 					this.debug,
 					esitoConsegnaMultipla, esitoConsegnaMultiplaInCorso, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
-					esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage,
+					esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage, consegnaInErrore,
 					openspcoopProperties.getGestioneSerializableDB_AttesaAttiva(),openspcoopProperties.getGestioneSerializableDB_CheckInterval(),
 					timeDetails);
 		}

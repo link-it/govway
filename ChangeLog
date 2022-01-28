@@ -1,6 +1,13 @@
+2022-01-28  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Risolto Bug OP-1323
+	Durante la consegna asincrona, se tutti i connettori multipli fallivano, l'esito delle transazione rimaneva 'in coda'.
+	Eliminata inoltre l'opzione '3xx' tra i parametri di riconsegna in caso di API SOAP.
+
 2022-01-27  Giuliano Pintori <pintori@link.it>
 
-	* [GovwayConsole, GovWayMonitor]
+	* [GovWayConsole, GovWayMonitor]
 	Aggiunta funzionalità OP-1303
 	In ogni oggetto del registro, sia dall'elenco che dal dettaglio, è adesso possibile intraprendere le seguenti azioni:
 	- rimuovere dalla cache i dati relativi all'oggetto;
