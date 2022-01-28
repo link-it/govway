@@ -187,7 +187,7 @@
 				<include name="commons-jcs-core-2.2.1-gov4j-1.jar"/>
 				<include name="wsdl4j-1.6.3.jar"/>
 				<include name="uddi4j-2.0.5.jar"/>
-				<include name="xercesImpl-2.12.0.jar"/>
+				<include name="xercesImpl-2.12.2.jar"/>
 				<include name="xml-apis-1.4.01.jar"/>
 				<include name="xalan-2.7.2.jar"/>
 				<include name="serializer-2.7.2.jar"/> 

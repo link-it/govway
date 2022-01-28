@@ -41,7 +41,7 @@
 		<pathelement path="${openspcoop2_lib}/shared/mailapi-1.6.4.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/jakarta.activation-1.2.1.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/com.springsource.edu.oswego.cs.dl.util.concurrent-1.3.4.jar"/>
-		<pathelement path="${openspcoop2_lib}/shared/xercesImpl-2.12.0.jar"/>
+		<pathelement path="${openspcoop2_lib}/shared/xercesImpl-2.12.2.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/xml-apis-1.4.01.jar"/>
 		<pathelement path="${openspcoop2_lib}/javax/javax.servlet-api-4.0.1.jar"/>
 		<pathelement path="${openspcoop2.lib}/commons/commons-codec-1.14.jar"/>

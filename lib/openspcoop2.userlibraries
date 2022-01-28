@@ -199,7 +199,7 @@
 	<!-- shared -->
         <archive path="/op2_3.3.dev/lib/shared/xom-1.2.11.jar"/>
         <archive path="/op2_3.3.dev/lib/shared/xmldb-1.0.jar"/>
-        <archive path="/op2_3.3.dev/lib/shared/xercesImpl-2.12.0.jar"/>
+        <archive path="/op2_3.3.dev/lib/shared/xercesImpl-2.12.2.jar"/>
 	<!-- <archive path="/op2_3.3.dev/lib/shared/xml-apis-1.4.01.jar"/> The package org.w3c.dom is accessible from more than one module: <unnamed>, java.xml -->
         <archive path="/op2_3.3.dev/lib/shared/serializer-2.7.2.jar"/>
         <archive path="/op2_3.3.dev/lib/shared/xalan-2.7.2.jar"/>
