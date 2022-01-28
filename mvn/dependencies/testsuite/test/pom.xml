@@ -20,7 +20,7 @@
 		<jcommander.version>1.78</jcommander.version>
 		<guice.version>4.2.2</guice.version>
 		<testng.version>7.1.0</testng.version>
-		<junit.version>4.13</junit.version>
+		<junit.version>4.13.1</junit.version>
 		<karate.version>0.9.6</karate.version>
 		<hamcrest.version>1.3</hamcrest.version>
 		<picocli.version>4.2.0</picocli.version>
