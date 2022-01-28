@@ -138,10 +138,24 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN;
 			
 			lstParam.add(new Parameter(label, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST));
-			String labelVerifica = 
-					(verificaConnettivita ? ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CONNETTIVITA_DI : ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI_DI)
-							+ genericProperties.getNome();
-			lstParam.add(new Parameter(labelVerifica, null));
+			
+			if(arrivoDaLista) {
+				String labelVerifica = 
+						(verificaConnettivita ? ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CONNETTIVITA_DI : ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI_DI)
+								+ genericProperties.getNome();
+				lstParam.add(new Parameter(labelVerifica, null));
+			}
+			else {
+				Parameter pPolicyId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID, genericProperties.getId() + "");
+				Parameter pInfoType = new Parameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE, infoType); 
+				
+				lstParam.add(new Parameter(genericProperties.getNome(), 
+						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_CHANGE, 
+						pInfoType, pPolicyId));
+				
+				String labelVerifica = (verificaConnettivita ? ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CONNETTIVITA : ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI);
+				lstParam.add(new Parameter(labelVerifica, null));
+			}
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParam );
@@ -315,9 +329,11 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 									else if(negoziazione) {
 										nomeMetodo = confCore.getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreTokenPolicyNegoziazione(aliasForVerificaConnettore);
 									}
+									Boolean slowOperation = true; // altrimenti un eventuale connection timeout (es. 10 secondi) termina dopo il readTimeout associato all'invocazione dell'operazione via http check e quindi viene erroneamenteo ritornato un readTimeout
 									String stato = confCore.getInvoker().invokeJMXMethod(aliasForVerificaConnettore, confCore.getJmxPdD_configurazioneSistema_type(aliasForVerificaConnettore),
 											risorsa, 
 											nomeMetodo, 
+											slowOperation,
 											genericProperties.getNome());
 									if(JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO.equals(stato)){
 										bfExternal.append(CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_EFFETTUATO_CON_SUCCESSO);

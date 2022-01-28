@@ -232,8 +232,14 @@ public class ErogazioniVerificaCertificati  extends Action {
 			else {
 				lstParm.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_EROGAZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
 			}
-			lstParm.add(new Parameter(tmpTitle, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, listParameterChange.toArray(new Parameter[listParameterChange.size()])));
-			lstParm.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_VERIFICA_CERTIFICATI, null));
+			if(arrivoDaLista) {
+				String labelVerifica = ErogazioniCostanti.LABEL_ASPS_VERIFICA_CERTIFICATI_DI  + tmpTitle;
+				lstParm.add(new Parameter(labelVerifica, null));
+			}
+			else {
+				lstParm.add(new Parameter(tmpTitle, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, listParameterChange.toArray(new Parameter[listParameterChange.size()])));
+				lstParm.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_VERIFICA_CERTIFICATI, null));
+			}
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParm );

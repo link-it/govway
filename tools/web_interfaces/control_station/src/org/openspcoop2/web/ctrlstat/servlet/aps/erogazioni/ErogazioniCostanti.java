@@ -70,6 +70,7 @@ public class ErogazioniCostanti extends AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_ASPS_GESTIONE_CONFIGURAZIONI_CONFIGURA = "Configura";
 	public final static String LABEL_ASPS_GESTIONE_GRUPPI_CON_PARAMETRO = "Gruppi"; // il codice è già agganciato, riscommentare il seguente codice per avere risorse/azioni:  "Gruppi {0}";
 	public final static String LABEL_ASPS_VERIFICA_CERTIFICATI = CostantiControlStation.LABEL_VERIFICA_CERTIFICATI;
+	public final static String LABEL_ASPS_VERIFICA_CERTIFICATI_DI = CostantiControlStation.LABEL_VERIFICA_CERTIFICATI_DI;
 	
 	public final static String ASPS_EROGAZIONI_PARAMETRO_NUMERO_CONFIGURAZIONI_ATTIVE = "nConfAttive";
 	public final static String ASPS_EROGAZIONI_PARAMETRO_NUMERO_CONFIGURAZIONI_DISPONIBILI = "nConfDisponibili";

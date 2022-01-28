@@ -92,8 +92,6 @@ import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB_LIB;
 import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
-import org.openspcoop2.core.constants.CostantiConnettori;
-import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
@@ -201,7 +199,6 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostan
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
-import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
@@ -20073,7 +20070,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					// Dormo qualche secondo per dare il tempo di fare il recheck o stop/start dell'allarme
 					Utilities.sleep(3000);
 					
-					this.pd.setMessage(label+" effettuato con successo", MessageType.INFO);
+					if(refresh) {
+						this.pd.setMessage(label+" avviato con successo", MessageType.INFO);
+					}
+					else {
+						this.pd.setMessage(label+" effettuato con successo", MessageType.INFO);
+					}
 					
 				} catch(Exception e) {
 					String errorMsg = "Richiesta di aggiornamento dello stato dell'allarme '"+allarme.getAlias()+"' fallita: "+e.getMessage();
@@ -23657,239 +23659,20 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			for (Connettore connettore : l) {
 				
 				String tipo = ConnettoreCheck.getPropertyValue(connettore, ConnettoreCheck.POLICY_TIPO_ENDPOINT);
-				
-				DataElement de = new DataElement();
-				de.setType(DataElementType.TITLE);
-				String label = ConnettoriCostanti.LABEL_CONNETTORE+(tipo!=null ? " "+tipo : "");
-				de.setLabel(label);
-				de.setValue(label);
-				dati.add(de);
-				
-				Map<String,String> properties = connettore.getProperties();
-				String location = properties!=null ? properties.get(CostantiConnettori.CONNETTORE_LOCATION) : null;	
 								
-				de = new DataElement();
-				de.setType(DataElementType.TEXT);
-				de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_ENDPOINT);
-				de.setValue(location);
-				dati.add(de);
+				List<Parameter> downloadCertServerParameters = new ArrayList<Parameter>();
 				
-				if(aliasConnettore!=null && !"".equals(aliasConnettore) &&
-						(TipiConnettore.HTTP.getNome().equalsIgnoreCase(connettore.getTipo()) ||
-						TipiConnettore.HTTPS.getNome().equalsIgnoreCase(connettore.getTipo()))
-						){
-					if(location!=null && !"".equals(location) && location.toLowerCase().startsWith("https")) {
-						String nomeConnettore = null;
-						try {
-							URL url = new URL( location );
-							String host = url.getHost();
-							if(host==null || "".equals(host)) {
-								throw new Exception("L'endpoint '"+host+"' non contiene un host");
-							}
-							nomeConnettore = host;
-							int port = url.getPort();
-							if(port>0 && port!=443) {
-								nomeConnettore=nomeConnettore+"_"+port;
-							}
-							
-							de = new DataElement();
-							de.setType(DataElementType.LINK);
-							de.setValue(ConnettoriCostanti.LABEL_DOWNLOAD_CERTIFICATI_SERVER);
-							de.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, 
-									new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_CONNETTORE_CERTIFICATO_SERVER),
-									new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_CONNETTORE_CERTIFICATO_SERVER),
-									new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_TOKEN_NOME, genericProperties.getNome()),
-									new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_TOKEN_TIPOLOGIA, genericProperties.getTipologia()),
-									new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_TOKEN_TIPO, tipo!=null ? tipo : ""),
-									new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_TIPO_CONNETTORE_REGISTRO, registro ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED),
-									new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_ALIAS_CONNETTORE, aliasConnettore),
-									new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_NOME_CONNETTORE, nomeConnettore));
-							dati.add(de);
-							
-						}catch(Exception e) {
-							this.log.error("Errore durante l'identificazione dell'endpoint: "+e.getMessage(),e);
-						}
-					}
-				}
+				downloadCertServerParameters.add(new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_TOKEN_NOME, genericProperties.getNome()));
+				downloadCertServerParameters.add(new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_TOKEN_TIPOLOGIA, genericProperties.getTipologia()));
+				downloadCertServerParameters.add(new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_TOKEN_TIPO, tipo!=null ? tipo : ""));
 				
-				if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)) {
-					
-					de = new DataElement();
-					de.setType(DataElementType.TEXT);
-					de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_CONNECTION_TIMEOUT);
-					de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT));
-					dati.add(de);
-					
-				}
-				
-				if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_USERNAME)) {
-					
-					de = new DataElement();
-					de.setType(DataElementType.SUBTITLE);
-					de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP);
-					de.setValue(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP);
-					dati.add(de);
-				
-					de = new DataElement();
-					de.setType(DataElementType.TEXT);
-					de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP_USERNAME);
-					de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_USERNAME));
-					dati.add(de);
-					
-					if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_PASSWORD)) {
-						
-						de = new DataElement();
-						de.setType(DataElementType.TEXT);
-						de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP_PASSWORD);
-						de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_PASSWORD));
-						dati.add(de);
-						
-					}
-					
-				}
-				
-				if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
-					
-					de = new DataElement();
-					de.setType(DataElementType.SUBTITLE);
-					de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_TOKEN);
-					de.setValue(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_TOKEN);
-					dati.add(de);
-				
-					de = new DataElement();
-					de.setType(DataElementType.TEXT);
-					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TOKEN_POLICY);
-					de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY));
-					dati.add(de);
-					
-				}
-				
-				boolean trustAllCerts = false;
-				if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_TRUST_ALL_CERTS)) {
-					String v = connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_ALL_CERTS);
-					if("true".equalsIgnoreCase(v)) {
-						trustAllCerts = true;
-					}
-				}
-				
-				if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION) || 
-						trustAllCerts) {
-				
-					de = new DataElement();
-					de.setType(DataElementType.SUBTITLE);
-					de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS);
-					de.setValue(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS);
-					dati.add(de);
-				
-					if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_SSL_TYPE)) {
-						
-						de = new DataElement();
-						de.setType(DataElementType.TEXT);
-						de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_SSL_TYPE);
-						de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_SSL_TYPE));
-						dati.add(de);
-						
-					}
-					if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_HOSTNAME_VERIFIER)) {
-						
-						de = new DataElement();
-						de.setType(DataElementType.TEXT);
-						de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_HOSTNAME_VERIFIER);
-						de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_HOSTNAME_VERIFIER));
-						dati.add(de);
-						
-					}
-						
-					de = new DataElement();
-					de.setType(DataElementType.TEXT);
-					de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE);
-					if(trustAllCerts) {
-						de.setValue(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUST_ALL_CERTS);
-					}
-					else {
-						de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION));
-					}
-					dati.add(de);
-						
-					if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs)) {
-						
-						de = new DataElement();
-						de.setType(DataElementType.TEXT);
-						de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_CRLs);
-						de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs));
-						dati.add(de);
-						
-					}
-					
-					if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION)) {
-						
-						de = new DataElement();
-						de.setType(DataElementType.TEXT);
-						de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEYSTORE);
-						de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION));
-						dati.add(de);
-						
-						if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_KEY_ALIAS)) {
-							
-							de = new DataElement();
-							de.setType(DataElementType.TEXT);
-							de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEY_ALIAS);
-							de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_KEY_ALIAS));
-							dati.add(de);
-							
-						}
-						
-					}
-				}
-				
-				if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME)) {
-					
-					de = new DataElement();
-					de.setType(DataElementType.SUBTITLE);
-					de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY);
-					de.setValue(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY);
-					dati.add(de);
-				
-					de = new DataElement();
-					de.setType(DataElementType.TEXT);
-					de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_HOSTNAME);
-					de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME));
-					dati.add(de);
-					
-					if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT)) {
-						
-						de = new DataElement();
-						de.setType(DataElementType.TEXT);
-						de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_PORT);
-						de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT));
-						dati.add(de);
-						
-					}
-					
-					if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTP_PROXY_USERNAME)) {
-						
-						de = new DataElement();
-						de.setType(DataElementType.TEXT);
-						de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_USERNAME);
-						de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTP_PROXY_USERNAME));
-						dati.add(de);
-						
-					}
-
-					if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD)) {
-						
-						de = new DataElement();
-						de.setType(DataElementType.TEXT);
-						de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_PASSWORD);
-						de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD));
-						dati.add(de);
-						
-					}
-				}
-				
+				this.addDescrizioneVerificaConnettivitaToDati(dati, connettore,
+						server, registro, aliasConnettore,
+						downloadCertServerParameters,
+						true, true);
+								
 			}
 		}
-		
 		
 	}
 	public Vector<DataElement> addTokenPolicyHiddenToDati(Vector<DataElement> dati, String id, String infoType) {

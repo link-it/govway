@@ -157,13 +157,14 @@ public abstract class AbstractConfigChecker {
 	}
 	
 	public void checkApplicativo(StringBuilder sbDetailsError, StringBuilder sbDetailsWarning,
-		    boolean ssl, boolean sicurezzaModi, org.openspcoop2.core.config.ServizioApplicativo servizioApplicativo,
+		    boolean ssl, boolean sicurezzaModi, boolean connettoreHttps, org.openspcoop2.core.config.ServizioApplicativo servizioApplicativo,
 		    int sogliaWarningGiorni) throws Exception {
 		
 		StringBuilder _sbError = new StringBuilder();
 		
 		StringBuilder _sbWarning = new StringBuilder();
 		StringBuilder _sbWarningModi = new StringBuilder();
+		StringBuilder _sbWarningConnettore = new StringBuilder();
 		
 		if(ssl) {
 			checkCertificate(_sbError, _sbWarning, 
@@ -172,9 +173,22 @@ public abstract class AbstractConfigChecker {
 		}
 		if(_sbError.length()<=0) {
 			if(sicurezzaModi) {
-				checkCertificateModI(_sbError, _sbWarning, 
+				checkCertificateModI(_sbError, _sbWarningModi, 
 						sogliaWarningGiorni,
 						servizioApplicativo);
+			}
+		}
+		if(_sbError.length()<=0) {
+			if(connettoreHttps) {
+				org.openspcoop2.core.config.Connettore connettore = null;
+				if(servizioApplicativo.getInvocazioneServizio()!=null) {
+					connettore = servizioApplicativo.getInvocazioneServizio().getConnettore();
+				}
+				if(connettore!=null) {
+					checkCertificate(_sbError, _sbWarningConnettore, 
+							sogliaWarningGiorni,
+							connettore);	
+				}
 			}
 		}
 		
@@ -188,6 +202,9 @@ public abstract class AbstractConfigChecker {
 			else if(_sbWarningModi.length()>0) {
 				sbDetailsWarning.append(_sbWarningModi.toString());
 			}
+			else if(_sbWarningConnettore.length()>0) {
+				sbDetailsWarning.append(_sbWarningConnettore.toString());
+			}
 		}
 		
 	}
@@ -199,7 +216,6 @@ public abstract class AbstractConfigChecker {
 		StringBuilder _sbError = new StringBuilder();
 		
 		StringBuilder _sbWarning = new StringBuilder();
-		StringBuilder _sbWarningModi = new StringBuilder();
 		
 		if(ssl) {
 			checkCertificate(_sbError, _sbWarning, 
@@ -213,9 +229,6 @@ public abstract class AbstractConfigChecker {
 		else {
 			if(_sbWarning.length()>0) {
 				sbDetailsWarning.append(_sbWarning.toString());
-			}
-			else if(_sbWarningModi.length()>0) {
-				sbDetailsWarning.append(_sbWarningModi.toString());
 			}
 		}
 		
@@ -260,7 +273,7 @@ public abstract class AbstractConfigChecker {
 		}
 		if(_sbError.length()<=0) {
 			if(sicurezzaModi) {
-				checkCertificateModI(_sbError, _sbWarning, 
+				checkCertificateModI(_sbError, _sbWarningModi, 
 						sogliaWarningGiorni,
 						asps);
 			}
@@ -319,7 +332,7 @@ public abstract class AbstractConfigChecker {
 		}
 		if(_sbError.length()<=0) {
 			if(sicurezzaModi) {
-				checkCertificateModI(_sbError, _sbWarning, 
+				checkCertificateModI(_sbError, _sbWarningModi, 
 						sogliaWarningGiorni,
 						fruitore);
 			}
@@ -346,7 +359,6 @@ public abstract class AbstractConfigChecker {
 		StringBuilder _sbError = new StringBuilder();
 		
 		StringBuilder _sbWarning = new StringBuilder();
-		StringBuilder _sbWarningModi = new StringBuilder();
 		
 		checkCertificate(_sbError, _sbWarning, 
 					sogliaWarningGiorni,
@@ -358,9 +370,6 @@ public abstract class AbstractConfigChecker {
 		else {
 			if(_sbWarning.length()>0) {
 				sbDetailsWarning.append(_sbWarning.toString());
-			}
-			else if(_sbWarningModi.length()>0) {
-				sbDetailsWarning.append(_sbWarningModi.toString());
 			}
 		}
 		
@@ -374,18 +383,20 @@ public abstract class AbstractConfigChecker {
 		
 		StringBuilder _sbError = new StringBuilder();
 		
-		StringBuilder _sbWarning = new StringBuilder();
-		StringBuilder _sbWarningModi = new StringBuilder();
+		StringBuilder _sbWarningIntrospection = new StringBuilder();
+		StringBuilder _sbWarningUserInfo = new StringBuilder();
+		StringBuilder _sbWarningValidazioneJwt = new StringBuilder();
+		StringBuilder _sbWarningForwardToJwt = new StringBuilder();
 		
 		if(httpsIntrospection) {
-			checkCertificateGenericProperties(_sbError, _sbWarning, 
+			checkCertificateGenericProperties(_sbError, _sbWarningIntrospection, 
 					sogliaWarningGiorni,
 					getJmxResourceNomeMetodoCheckCertificatiConnettoreHttpsTokenPolicyValidazione(), 
 					gp.getNome(), ConnettoreCheck.POLICY_TIPO_ENDPOINT_INTROSPECTION);
 		}
 		if(_sbError.length()<=0) {
 			if(httpsUserInfo) {
-				checkCertificateGenericProperties(_sbError, _sbWarning, 
+				checkCertificateGenericProperties(_sbError, _sbWarningUserInfo, 
 						sogliaWarningGiorni,
 						getJmxResourceNomeMetodoCheckCertificatiConnettoreHttpsTokenPolicyValidazione(), 
 						gp.getNome(), ConnettoreCheck.POLICY_TIPO_ENDPOINT_USERINFO);
@@ -393,7 +404,7 @@ public abstract class AbstractConfigChecker {
 		}
 		if(_sbError.length()<=0) {
 			if(validazioneJwt) {
-				checkCertificateGenericProperties(_sbError, _sbWarning, 
+				checkCertificateGenericProperties(_sbError, _sbWarningValidazioneJwt, 
 						sogliaWarningGiorni,
 						getJmxResourceNomeMetodoCheckCertificatiValidazioneJwtTokenPolicyValidazione(),
 						gp.getNome());
@@ -401,7 +412,7 @@ public abstract class AbstractConfigChecker {
 		}
 		if(_sbError.length()<=0) {
 			if(forwardToJwt) {
-				checkCertificateGenericProperties(_sbError, _sbWarning, 
+				checkCertificateGenericProperties(_sbError, _sbWarningForwardToJwt, 
 						sogliaWarningGiorni,
 						getJmxResourceNomeMetodoCheckCertificatiForwardToJwtTokenPolicyValidazione(),
 						gp.getNome());
@@ -412,11 +423,17 @@ public abstract class AbstractConfigChecker {
 			sbDetailsError.append(_sbError.toString());
 		}
 		else {
-			if(_sbWarning.length()>0) {
-				sbDetailsWarning.append(_sbWarning.toString());
+			if(_sbWarningIntrospection.length()>0) {
+				sbDetailsWarning.append(_sbWarningIntrospection.toString());
 			}
-			else if(_sbWarningModi.length()>0) {
-				sbDetailsWarning.append(_sbWarningModi.toString());
+			else if(_sbWarningUserInfo.length()>0) {
+				sbDetailsWarning.append(_sbWarningUserInfo.toString());
+			}
+			else if(_sbWarningValidazioneJwt.length()>0) {
+				sbDetailsWarning.append(_sbWarningValidazioneJwt.toString());
+			}
+			else if(_sbWarningForwardToJwt.length()>0) {
+				sbDetailsWarning.append(_sbWarningForwardToJwt.toString());
 			}
 		}
 		
@@ -431,7 +448,7 @@ public abstract class AbstractConfigChecker {
 		StringBuilder _sbError = new StringBuilder();
 		
 		StringBuilder _sbWarning = new StringBuilder();
-		StringBuilder _sbWarningModi = new StringBuilder();
+		StringBuilder _sbWarningSignedJwt = new StringBuilder();
 		
 		if(https) {
 			checkCertificateGenericProperties(_sbError, _sbWarning, 
@@ -441,7 +458,7 @@ public abstract class AbstractConfigChecker {
 		}
 		if(_sbError.length()<=0) {
 			if(signedJwt) {
-				checkCertificateGenericProperties(_sbError, _sbWarning, 
+				checkCertificateGenericProperties(_sbError, _sbWarningSignedJwt, 
 						sogliaWarningGiorni,
 						getJmxResourceNomeMetodoCheckCertificatiSignedJwtTokenPolicyNegoziazione(), 
 						gp.getNome());
@@ -455,8 +472,8 @@ public abstract class AbstractConfigChecker {
 			if(_sbWarning.length()>0) {
 				sbDetailsWarning.append(_sbWarning.toString());
 			}
-			else if(_sbWarningModi.length()>0) {
-				sbDetailsWarning.append(_sbWarningModi.toString());
+			else if(_sbWarningSignedJwt.length()>0) {
+				sbDetailsWarning.append(_sbWarningSignedJwt.toString());
 			}
 		}
 		
@@ -471,7 +488,8 @@ public abstract class AbstractConfigChecker {
 		StringBuilder _sbError = new StringBuilder();
 		
 		StringBuilder _sbWarning = new StringBuilder();
-		StringBuilder _sbWarningModi = new StringBuilder();
+		StringBuilder _sbWarningJwtRichiesta = new StringBuilder();
+		StringBuilder _sbWarningJwtRisposta = new StringBuilder();
 		
 		if(https) {
 			checkCertificateGenericProperties(_sbError, _sbWarning, 
@@ -481,7 +499,7 @@ public abstract class AbstractConfigChecker {
 		}
 		if(_sbError.length()<=0) {
 			if(jwtRichiesta) {
-				checkCertificateGenericProperties(_sbError, _sbWarning, 
+				checkCertificateGenericProperties(_sbError, _sbWarningJwtRichiesta, 
 						sogliaWarningGiorni,
 						getJmxResourceNomeMetodoCheckCertificatiAttributeAuthorityJwtRichiesta(),
 						gp.getNome());
@@ -489,7 +507,7 @@ public abstract class AbstractConfigChecker {
 		}
 		if(_sbError.length()<=0) {
 			if(jwtRisposta) {
-				checkCertificateGenericProperties(_sbError, _sbWarning, 
+				checkCertificateGenericProperties(_sbError, _sbWarningJwtRisposta, 
 						sogliaWarningGiorni,
 						getJmxResourceNomeMetodoCheckCertificatiAttributeAuthorityJwtRisposta(),
 						gp.getNome());
@@ -503,8 +521,11 @@ public abstract class AbstractConfigChecker {
 			if(_sbWarning.length()>0) {
 				sbDetailsWarning.append(_sbWarning.toString());
 			}
-			else if(_sbWarningModi.length()>0) {
-				sbDetailsWarning.append(_sbWarningModi.toString());
+			else if(_sbWarningJwtRichiesta.length()>0) {
+				sbDetailsWarning.append(_sbWarningJwtRichiesta.toString());
+			}
+			else if(_sbWarningJwtRisposta.length()>0) {
+				sbDetailsWarning.append(_sbWarningJwtRisposta.toString());
 			}
 		}
 		

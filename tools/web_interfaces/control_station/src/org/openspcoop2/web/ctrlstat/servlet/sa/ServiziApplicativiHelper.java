@@ -91,6 +91,7 @@ import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
@@ -402,14 +403,23 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				// Verifica configurazione modi di sicurezza
 				boolean modi = this.core.isProfiloModIPA(tipoProtocollo);
 				boolean sicurezzaMessaggioModi = false;
+				boolean server = ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo());
 				if(modi){
 					KeystoreParams keystoreParams =	org.openspcoop2.protocol.utils.ModIUtils.getApplicativoKeystoreParams(sa.getProtocolPropertyList());
 					sicurezzaMessaggioModi = keystoreParams!= null;
 				}
 				
-				if(ssl || sicurezzaMessaggioModi) {
+				if(ssl || sicurezzaMessaggioModi || server) {
 					this.pd.addComandoVerificaCertificatiElementoButton(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI, listaParametriChange);
 				}
+			}
+
+			// Verifica connettività 
+			if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
+				List<Parameter> listaParametriVerificaConnettivitaChange = new ArrayList<Parameter>();
+				listaParametriVerificaConnettivitaChange.addAll(listaParametriChange);
+				listaParametriVerificaConnettivitaChange.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTIVITA, "true"));
+				this.pd.addComandoVerificaConnettivitaElementoButton(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI, listaParametriVerificaConnettivitaChange);
 			}
 			
 			// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
@@ -2846,14 +2856,23 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			// Verifica configurazione modi di sicurezza
 			boolean modi = this.core.isProfiloModIPA(protocollo);
 			boolean sicurezzaMessaggioModi = false;
+			boolean server = ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo());
 			if(modi){
 				KeystoreParams keystoreParams =	org.openspcoop2.protocol.utils.ModIUtils.getApplicativoKeystoreParams(sa.getProtocolPropertyList());
 				sicurezzaMessaggioModi = keystoreParams!= null;
 			}
 			
-			if(ssl || sicurezzaMessaggioModi) {
+			if(ssl || sicurezzaMessaggioModi || server) {
 				this.addVerificaCertificatiButton(e, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI, listaParametriChange);
 			}
+		}
+		
+		// Verifica connettività 
+		if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
+			List<Parameter> listaParametriVerificaConnettivitaChange = new ArrayList<Parameter>();
+			listaParametriVerificaConnettivitaChange.addAll(listaParametriChange);
+			listaParametriVerificaConnettivitaChange.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTIVITA, "true"));
+			this.addVerificaConnettivitaButton(e, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI, listaParametriVerificaConnettivitaChange);
 		}
 		
 		// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
@@ -4588,4 +4607,17 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		}
 	}
 
+	public void addDescrizioneVerificaConnettivitaToDati(Vector<DataElement> dati, Connettore connettore,
+			String server, String aliasConnettore) throws Exception {
+						
+		List<Parameter> downloadCertServerParameters = new ArrayList<Parameter>();
+		
+		downloadCertServerParameters.add(new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_ID_CONNETTORE, connettore.getId().longValue()+""));
+		
+		this.addDescrizioneVerificaConnettivitaToDati(dati, connettore,
+				server, false, aliasConnettore,
+				downloadCertServerParameters,
+				true, false);
+		
+	}
 }

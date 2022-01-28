@@ -165,8 +165,20 @@ public class SoggettiVerificaCertificati extends Action {
 //							SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE, parametersServletSoggettoChange.toArray(new Parameter[parametersServletSoggettoChange.size()])));
 			
 			String labelSoggetto = soggettiHelper.getLabelNomeSoggetto(protocollo, soggettoRegistry.getTipo() , soggettoRegistry.getNome());
-			String labelVerifica = SoggettiCostanti.LABEL_SOGGETTI_VERIFICA_CERTIFICATI_DI + labelSoggetto;
-			listParameter.add(new Parameter(labelVerifica, null));
+			
+			if(arrivoDaLista) {
+				String labelVerifica = SoggettiCostanti.LABEL_SOGGETTI_VERIFICA_CERTIFICATI_DI + labelSoggetto;
+				listParameter.add(new Parameter(labelVerifica, null));
+			}
+			else {
+				listParameter.add(new Parameter(labelSoggetto, 
+						SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE, 
+						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,soggettoRegistry.getId()+""),
+						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,soggettoRegistry.getNome()),
+						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,soggettoRegistry.getTipo())));
+				String labelVerifica = SoggettiCostanti.LABEL_SOGGETTI_VERIFICA_CERTIFICATI;
+				listParameter.add(new Parameter(labelVerifica, null));
+			}
 			
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, listParameter );

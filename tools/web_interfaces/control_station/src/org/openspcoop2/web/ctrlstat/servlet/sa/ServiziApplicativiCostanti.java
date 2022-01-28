@@ -138,6 +138,8 @@ public class ServiziApplicativiCostanti {
 	public final static String LABEL_SA_MENU_VISUALE_AGGREGATA = "Servizi Applicativi";
 	public final static String LABEL_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI = CostantiControlStation.LABEL_VERIFICA_CERTIFICATI;
 	public final static String LABEL_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI_DI = CostantiControlStation.LABEL_VERIFICA_CERTIFICATI_DI;
+	public final static String LABEL_SERVIZI_APPLICATIVI_VERIFICA_CONNETTIVITA = CostantiControlStation.LABEL_VERIFICA_CONNETTIVITA;
+	public final static String LABEL_SERVIZI_APPLICATIVI_VERIFICA_CONNETTIVITA_DI = CostantiControlStation.LABEL_VERIFICA_CONNETTIVITA_DI;
 	
 	/* PARAMETRI */
 	
