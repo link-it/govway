@@ -576,8 +576,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	        			
 			/* ------------ 
 			 * Inizializzazione Resource Bundle:
-			 * - org/apache/xml/security/resource/xmlsecurity_en.properties (xmlsec-2.1.2.jar)
-			 * - org/apache/xml/security/resource/xmlsecurity_de.properties (xmlsec-2.1.2.jar)
+			 * - org/apache/xml/security/resource/xmlsecurity_en.properties (xmlsec-2.1.7.jar)
+			 * - org/apache/xml/security/resource/xmlsecurity_de.properties (xmlsec-2.1.7.jar)
 			 * - messages/wss4j_errors.properties (wss4j-ws-security-common-2.2.2.jar)
 			 * 
 			 * L'inizializzazione di questa classe DEVE essere all'inizio altrimenti si puo' incorrere in errori tipo il seguente:
@@ -588,7 +588,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			 * per risolvere l'id. Tale classe utilizza normalmente il properties 'org/apache/xml/security/resource/xmlsecurity_en.properties'
 			 * Mentre l'id 'noUserCertsFound' e' dentro il properties 'messages/wss4j_errors.properties'
 			 * Pero' xmlsec permette di inizializzare il resource bundle da usare anche grazie ad un metodo dove viene fornito l'intero resource bundle.
-			 * Questo avviene in xmlsec-2.0.7/src/main/java/org/apache/xml/security/utils/I18n.java metodo init(ResourceBundle resourceBundle)
+			 * Questo avviene in xmlsec-2.1.7/src/main/java/org/apache/xml/security/utils/I18n.java metodo init(ResourceBundle resourceBundle)
 			 * L'inizializzazione avviene pero' solamente una volta. Quindi se qualche altra libreria l'inizializza prima, poi il metodo init diventa una nop.
 			 * Tale init viene quindi richiamata dalla classe org.apache.wss4j.dom.engine.WSSConfig.init che prepara un resource bundle
 			 * contenente sia il contenuto originale del properties 'org/apache/xml/security/resource/xmlsecurity_en.properties' che 

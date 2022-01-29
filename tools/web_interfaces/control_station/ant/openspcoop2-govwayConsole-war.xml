@@ -401,7 +401,7 @@
 				<include name="${javax.jms-api-2.0.1.jar}"/>
 			</lib>
 			<lib dir="${required_lib}/security">
-				<include name="xmlsec-2.1.4.jar"/>
+				<include name="xmlsec-2.1.7.jar"/>
 				<include name="${neethi_jar}" />
 				<include name="${govwayConsoleRemota_security_neethi}"/>
 				<include name="herasaf-xacml-core-1.0.4.RELEASE.jar"/>

@@ -145,7 +145,7 @@
 			</lib>
 			<lib dir="${openspcoop2.lib}/security">
 				<include name="neethi-3.1.1.jar"/>
-				<include name="xmlsec-2.1.4.jar"/>
+				<include name="xmlsec-2.1.7.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/jax">
 				<include name="jaxws-*.jar"/>

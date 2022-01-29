@@ -128,7 +128,7 @@
 	<archive path="/op2_3.3.dev/lib/json/uri-template-0.9.jar"/>
 	<archive path="/op2_3.3.dev/lib/json/accessors-smart-1.2.jar"/>
 	<archive path="/op2_3.3.dev/lib/json/json-path-2.4.0.jar"/>
-	<archive path="/op2_3.3.dev/lib/json/json-smart-2.3.jar"/>
+	<archive path="/op2_3.3.dev/lib/json/json-smart-2.4.7.jar"/>
 	<archive path="/op2_3.3.dev/lib/json/json-lib-2.4-jdk15.jar"/>
 	<archive path="/op2_3.3.dev/lib/json/jettison-1.4.0.jar"/>
 	<!-- log -->
@@ -188,7 +188,7 @@
 	<archive path="/op2_3.3.dev/lib/saaj/stax-ex-1.8.2.jar"/>
 	<archive path="/op2_3.3.dev/lib/saaj/mimepull-1.9.12.jar"/>
 	<!-- security -->
-        <archive path="/op2_3.3.dev/lib/security/xmlsec-2.1.4.jar"/>
+        <archive path="/op2_3.3.dev/lib/security/xmlsec-2.1.7.jar"/>
         <archive path="/op2_3.3.dev/lib/security/neethi-3.1.1.jar"/>
         <archive path="/op2_3.3.dev/lib/security/bcprov-ext-jdk15on-1.69.jar"/>
 	<archive path="/op2_3.3.dev/lib/security/bcpkix-jdk15on-1.69.jar"/>
@@ -262,7 +262,7 @@
         <archive path="/op2_3.3.dev/lib/testsuite/testng-7.1.0.jar"/>
 	<archive path="/op2_3.3.dev/lib/testsuite/jcommander-1.78.jar"/>
 	<archive path="/op2_3.3.dev/lib/testsuite/guice-4.2.2.jar"/>
-	<archive path="/op2_3.3.dev/lib/testsuite/junit-4.13.jar"/>
+	<archive path="/op2_3.3.dev/lib/testsuite/junit-4.13.2.jar"/>
 	<archive path="/op2_3.3.dev/lib/testsuite/karate-core-0.9.6.jar"/>
 	<archive path="/op2_3.3.dev/lib/testsuite/karate-apache-0.9.6.jar"/>
 	<archive path="/op2_3.3.dev/lib/testsuite/karate-junit4-0.9.6.jar"/>

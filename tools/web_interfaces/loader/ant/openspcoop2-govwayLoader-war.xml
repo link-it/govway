@@ -107,7 +107,7 @@
 				<include name="joda-time-2.10.5.jar"/>	
 			</lib>
 			<lib dir="${required_lib_loaderConsole}/security" >
-				<include name="xmlsec-2.1.4.jar"/>
+				<include name="xmlsec-2.1.7.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
 			</lib>
 			<lib dir="${required_lib_loaderConsole}/saaj" >

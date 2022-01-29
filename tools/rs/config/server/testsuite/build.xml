@@ -16,7 +16,7 @@
 	<path id="karate_testsuite" >
                 <fileset dir="${required_lib}/testsuite" >
                         <include name="hamcrest-core-1.3.jar"/>
-			<include name="junit-4.13.jar"/>
+			<include name="junit-4.13.2.jar"/>
 			<include name="karate-*.jar"/>
 			<include name="picocli-4.2.0.jar"/>
 			<include name="logback-*.jar"/>

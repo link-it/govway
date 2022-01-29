@@ -24,7 +24,7 @@
 		<herasaf-xacml-core.version>1.0.4.RELEASE</herasaf-xacml-core.version>
 		<jasypt.version>1.9.3</jasypt.version>
 		<neethi.version>3.1.1</neethi.version>
-		<xmlsec.version>2.1.4</xmlsec.version>
+		<xmlsec.version>2.1.7</xmlsec.version>
 		<xml-security-impl.version>1.0</xml-security-impl.version>
 		<nimbus-jose.version>8.6</nimbus-jose.version>
 
