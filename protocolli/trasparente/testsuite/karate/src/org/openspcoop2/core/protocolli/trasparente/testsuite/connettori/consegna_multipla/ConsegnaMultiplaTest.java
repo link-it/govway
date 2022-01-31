@@ -30,6 +30,9 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_FALLITA;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_IN_CORSO;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.buildRequestAndExpectations;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkSchedulingConnettoreCompletato;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkStatoConsegna;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.getNumeroTentativiSchedulingConnettore;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,9 +63,9 @@ import org.openspcoop2.utils.transport.http.HttpResponse;
 
 
 // TODO: Per ora sto usando gli esiti come numeri interi, poi usa costanti presi da esiti properties?
-// TODO: Test soap 1_2
 // TODO: Aggiungi anche i test con connettore con scheduling disabilitato
 // TODO: Aggiungi un test con connettore rotto
+// TODO: E' possibile volendo raggruppare i test Soap 1_1 e Soap 1_2 facendo prima le richieste per entrambi
 /**
  * 
  * @author froggo
@@ -152,6 +155,17 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 	}
 	
 	
+	@Test
+	public void cadenzaRispedizione1_1() {
+		cadenzaRispedizione_Impl( HttpConstants.CONTENT_TYPE_SOAP_1_1);
+	}
+
+	
+	@Test
+	public void cadenzaRispedizione1_2() {
+		cadenzaRispedizione_Impl( HttpConstants.CONTENT_TYPE_SOAP_1_2);
+	}
+	
 	
 	private void consegnaMultiplaSemplice_Impl(String soapContentType) throws IOException {
 		final String erogazione = "TestConsegnaMultipla";
@@ -240,6 +254,101 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 			}
 		}
 		
+	}
+
+	
+	private void cadenzaRispedizione_Impl(String soapContentType) {
+		// La configurazione della API è come quella del primo test: TestConsegnaMultipla
+		// L'unica differenza è sul Connettore0 dove è stato impostato un intervallo di rispedizione pari ad un minuto.
+		// Il test dunque controlla che in caso di mancata consegna, per gli altri connettori avviene il reinvio dopo "intervalloControlloFallite",
+		// per il Connettore0 invece il reinvio avviene dopo un minuto + intervalloControlloFallite
+		
+		final String erogazione = "TestConsegnaMultiplaRispedizione";
+		
+		
+		Set<String> connettoriSuccessoRequest = Set.of();
+		Set<String> connettoriFallimentoRequest = Common.setConnettoriAbilitati;
+		
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+		for(int i=0; i<10;i++) {
+			HttpRequest request5xx = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", soapContentType );
+			request5xx.setUrl(request5xx.getUrl()+"&returnCode=" + (500+i));
+			requestsByKind.add(new RequestAndExpectations(request5xx, connettoriSuccessoRequest, connettoriFallimentoRequest, ESITO_CONSEGNA_MULTIPLA_IN_CORSO));
+		}		
+		
+		for(int i=0; i<10;i++) {
+			HttpRequest request2xx = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", soapContentType );
+			request2xx.setUrl(request2xx.getUrl()+"&returnCode=" + (200+i));
+			requestsByKind.add(new RequestAndExpectations(request2xx, Common.setConnettoriAbilitati, Set.of(), ESITO_CONSEGNA_MULTIPLA_COMPLETATA ));
+		}
+		
+		for(int i=0; i<10;i++) {
+			HttpRequest request4xx = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", soapContentType );
+			request4xx.setUrl(request4xx.getUrl()+"&returnCode=" + (400+i));
+			requestsByKind.add(new RequestAndExpectations(request4xx, connettoriSuccessoRequest, connettoriFallimentoRequest, ESITO_CONSEGNA_MULTIPLA_IN_CORSO));
+		}
+		
+		HttpRequest requestSoapFault =  RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", soapContentType );
+		requestsByKind.add(new RequestAndExpectations(requestSoapFault, Common.setConnettoriAbilitati, Set.of(),  ESITO_CONSEGNA_MULTIPLA_FALLITA ));
+		
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+		
+		// Tutte le richieste indipendentemente dal tipo devono essere state prese in consegna e lo scheduling inizia su tutti i connettori abilitati
+		for (var responses : responsesByKind.values()) {
+			CommonConsegnaMultipla.checkPresaInConsegna(responses);
+			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
+		}
+		
+		// Attendo la consegna
+		org.openspcoop2.utils.Utilities.sleep(2 * CommonConsegnaMultipla.intervalloControllo);
+
+		for (var requestAndExpectation : responsesByKind.keySet()) {
+			for (var response : responsesByKind.get(requestAndExpectation)) {
+				CommonConsegnaMultipla.checkRequestExpectations(requestAndExpectation, response);
+			}
+		}
+		
+		// Attendo una riconsegna, per ogni richiesta andata male, solo il connettore0 non deve avere effettuato rispedizioni
+		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControlloFallite);
+		for (var requestAndExpectation : responsesByKind.keySet()) {
+			for (var response : responsesByKind.get(requestAndExpectation)) {
+
+				for (var connettore : requestAndExpectation.connettoriFallimento) {
+					if (connettore.equals(CONNETTORE_0) ) {
+						assertTrue(	getNumeroTentativiSchedulingConnettore(response, connettore) == 1);
+					} else {
+						assertTrue(	getNumeroTentativiSchedulingConnettore(response, connettore) >= 2);
+					}
+				}
+
+				for (var connettore : requestAndExpectation.connettoriSuccesso) {
+					checkSchedulingConnettoreCompletato(response, connettore);
+				}
+				
+				checkStatoConsegna(response, requestAndExpectation.esito, requestAndExpectation.connettoriFallimento.size());
+			}
+		}
+		
+		// Attendo un minuto, anche il connettore 0 ora deve avere una rispedizione in più
+		org.openspcoop2.utils.Utilities.sleep(1000*60);
+		for (var requestAndExpectation : responsesByKind.keySet()) {
+			for (var response : responsesByKind.get(requestAndExpectation)) {
+
+				for (var connettore : requestAndExpectation.connettoriFallimento) {
+					if (connettore.equals(CONNETTORE_0) ) {
+						assertTrue(	getNumeroTentativiSchedulingConnettore(response, connettore) == 2);
+					} else {
+						assertTrue(	getNumeroTentativiSchedulingConnettore(response, connettore) >= 2);
+					}
+				}
+
+				for (var connettore : requestAndExpectation.connettoriSuccesso) {
+					checkSchedulingConnettoreCompletato(response, connettore);
+				}
+				
+				checkStatoConsegna(response, requestAndExpectation.esito, requestAndExpectation.connettoriFallimento.size());
+			}
+		}
 	}
 	
 
@@ -333,7 +442,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		requestSoapMessageContains.setUrl(requestSoapMessageContains.getUrl()+"&faultActor=12345&faultCode=2341&faultMessage=Container-MessageRispeditaContains-Container"); 
 	
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
-		
+		// TODO: In 1_2 non va, aspetta il parere di andrea.
 		requestsByKind.add(new RequestAndExpectations(
 				requestSoapFaultTuttiValorizzati,				
 				Set.of(CONNETTORE_1,CONNETTORE_2),
@@ -386,11 +495,6 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 			}
 		}
 
-	}
-	
-	@Test
-	public void cadenzaRispedizione() {
-		// TODO
 	}
 	
 	private static EsitiProperties getEsitiProperties() {
