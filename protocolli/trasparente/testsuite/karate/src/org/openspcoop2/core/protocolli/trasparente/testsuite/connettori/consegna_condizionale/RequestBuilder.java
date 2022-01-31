@@ -146,6 +146,13 @@ public class RequestBuilder {
 		String operazione = "operazioneSemplice";
 		return RequestBuilder.buildSoapRequest(erogazione, operazione, operazione,  contentTypeSoap);
 	}
+	
+	public static HttpRequest buildSoapRequestFault(String erogazione, String azione, String soapAction, String soapContentType) {
+		String faultSoapVersion = soapContentType.equals(HttpConstants.CONTENT_TYPE_SOAP_1_1)  ?  "11" : "12";
+		var requestSoapFault  = buildSoapRequest(erogazione, azione, soapAction, soapContentType);
+		requestSoapFault.setUrl(requestSoapFault.getUrl() +"&fault=true&faultSoapVersion="+faultSoapVersion);
+		return requestSoapFault;
+	}
 
 	public static HttpRequest buildSoapRequest(String erogazione, String azione, String soapAction, String contentTypeSoap) {
 		// nel soap 1.1 l'azione è specifica nello header SOAPAction

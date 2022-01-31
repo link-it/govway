@@ -40,9 +40,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common;
-import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.RequestBuilder;
 import org.openspcoop2.utils.transport.http.HttpConstants;
-import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 
 /**
@@ -65,7 +63,8 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 	@Test
 	public void headerHttp() {
 		final String erogazione = "TestConsegnaMultiplaCondizionaleByFiltroHeaderHttp";
-		
+		final String soapContentType = HttpConstants.CONTENT_TYPE_SOAP_1_1;
+
 		// TODO: Configura l'erogazione come hai fatto per il test su TestConsegnaMultiplaVarieCombinazioniDiRegole
 		
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
@@ -93,16 +92,16 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 		
 		// Prima costruisco le richieste normalmente
 		for (var entry : statusCode2xxVsConnettori.entrySet()) {
-			requestsByKind.add(buildRequestAndExpectations(erogazione, entry.getKey(), entry.getValue()));
+			requestsByKind.add(buildRequestAndExpectations(erogazione, entry.getKey(), entry.getValue(), soapContentType));
 		}
 		
-		/*for (var entry : statusCode4xxVsConnettori.entrySet()) {
-			requestsByKind.add(buildRequestAndExpectations(erogazione, entry.getKey(), entry.getValue()));
-		}*/
+		for (var entry : statusCode4xxVsConnettori.entrySet()) {
+			requestsByKind.add(buildRequestAndExpectations(erogazione, entry.getKey(), entry.getValue(), soapContentType));
+		}
 		
-		/*for (var entry : statusCode5xxVsConnettori.entrySet()) { 
-			requestsByKind.add(buildRequestAndExpectations(erogazione, entry.getKey(), entry.getValue()));
-		}*/
+		for (var entry : statusCode5xxVsConnettori.entrySet()) { 
+			requestsByKind.add(buildRequestAndExpectations(erogazione, entry.getKey(), entry.getValue(), soapContentType));
+		}
 		
 		// Successivamente associo ad ogni richiesta un filtro e rimuovo dal set di connettori ok e 
 		// dal set di connettori errore di i connettori filtrati via dalla consegna condizionale

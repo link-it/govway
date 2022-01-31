@@ -39,7 +39,6 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.RequestBuilder;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
-import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 
@@ -122,8 +121,22 @@ public class CommonConsegnaMultipla {
 		String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
 		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class,  id_transazione, esito, consegne_multiple_rimanenti);
 		assertEquals(Integer.valueOf(1), count);
-		
 	}
+	
+
+	static void checkPresaInConsegna(HttpResponse response) {
+		/**
+		 * esito | 38 		CONSEGNA MULTIPLA
+		 * esito_sincrono | 0			Transazione gestita con successo
+		 * consegne_multiple | 4	 Sono il numero di consegne multiple rimanenti
+		 */
+		
+		String query = "select count(*) from transazioni where id=? and esito = 38 and esito_sincrono = 0 and consegne_multiple = 4";
+		String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class,  id_transazione);
+		assertEquals(Integer.valueOf(1), count);
+	}
+
 
 	public static void checkConsegnaCompletata(HttpResponse response, int esito) {
 		String query = "select count(*) from transazioni where id=? and esito = ? and esito_sincrono = 0 and consegne_multiple = 0";
@@ -137,19 +150,6 @@ public class CommonConsegnaMultipla {
 		String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
 	
 		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore);
-		assertEquals(Integer.valueOf(1), count);
-	}
-
-	static void checkPresaInConsegna(HttpResponse response) {
-		/**
-		 * esito | 38 		CONSEGNA MULTIPLA
-		 * esito_sincrono | 0			Transazione gestita con successo
-		 * consegne_multiple | 4	 Sono il numero di consegne multiple rimanenti
-		 */
-		
-		String query = "select count(*) from transazioni where id=? and esito = 38 and esito_sincrono = 0 and consegne_multiple = 4";
-		String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
-		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class,  id_transazione);
 		assertEquals(Integer.valueOf(1), count);
 	}
 
@@ -222,13 +222,29 @@ public class CommonConsegnaMultipla {
 		checkStatoConsegna(response,requestAndExpectation.esito, requestAndExpectation.connettoriFallimento.size());
 	}
 
-	public static RequestAndExpectations buildRequestAndExpectations(String erogazione, int statusCode, Set<String> connettoriOk) {
-		HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1 );
+	/**
+	 * Costruisce la richiesta e le condizioni attese sull'esito della richiesta.
+	 * 
+	 * Se la richiesta ha uno status != 2xx e viene accettata da un connettore, lo stato diventa ESITO_CONSEGNA_MULTIPLA_FALLITA
+	 * 
+	 * 
+	 * Nel caso 
+	 * @return
+	 */
+	public static RequestAndExpectations buildRequestAndExpectations(String erogazione, int statusCode, Set<String> connettoriOk, String soapContentType) {
+		HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
 		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
 		
 		var connettoriErrore = new HashSet<>(Common.setConnettoriAbilitati);
 		connettoriErrore.removeAll(connettoriOk);
-		int esito = connettoriErrore.isEmpty() ? ESITO_CONSEGNA_MULTIPLA_COMPLETATA : ESITO_CONSEGNA_MULTIPLA_IN_CORSO;
+		int esito;
+		
+		// Se qualsiasi connettore accetta uno status code non OK, la consegna multipla va segnata come fallita.
+		if ( ( statusCode < 200 || statusCode > 299) && !connettoriOk.isEmpty()) {
+			esito = ESITO_CONSEGNA_MULTIPLA_FALLITA;
+		} else {
+			esito =  connettoriErrore.isEmpty() ? ESITO_CONSEGNA_MULTIPLA_COMPLETATA : ESITO_CONSEGNA_MULTIPLA_IN_CORSO;
+		}
 		
 		return new RequestAndExpectations(request, connettoriOk, connettoriErrore, esito);
 	}
