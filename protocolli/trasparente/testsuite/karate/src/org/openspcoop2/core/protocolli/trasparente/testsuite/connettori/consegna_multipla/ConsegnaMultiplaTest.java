@@ -334,7 +334,14 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 		}
 		
-		// Attendo la consegna
+		// Attendo la consegna, TODO: Dopo due secondi deve diventare in CORSO, 
+		// se tutti e quattro i connettori falliscono lo stato rimaneva IN CODA (38) fare un test
+		// su questo dopo il pull
+		
+		// TODO  Se la transazione fallita (4xx,5xx) è marcata come completata, anche se c'è un connettore
+		// che è completato con un 2xx la transazione viene marcata come fallita (Non appena c'è un connettore che completa e accetta un 4xx e 5xx, la transazione padre viene marcata come fallita)
+		// TESTARE QUINDI QUESTA COSA, 
+		//
 		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
 		
 		for (var requestAndExpectation : responsesByKind.keySet()) {
