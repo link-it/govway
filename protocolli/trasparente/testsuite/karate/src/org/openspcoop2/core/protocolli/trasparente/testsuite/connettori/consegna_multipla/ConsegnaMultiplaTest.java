@@ -54,7 +54,15 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 
+ 
+// se tutti e quattro i connettori falliscono lo stato rimaneva IN CODA (38) fare un test
+// su questo dopo il pull
 
+
+// TODO: Per ora sto usando gli esiti come numeri interi, poi usa costanti presi da esiti properties?
+// TODO: Test soap 1_2
+// TODO: Aggiungi anche i test con connettore con scheduling disabilitato
+// TODO: Aggiungi un test con connettore rotto
 /**
  * 
  * @author froggo
@@ -64,10 +72,7 @@ import org.openspcoop2.utils.transport.http.HttpResponse;
  * Connettore2: file
  * Connettore3: file
  * 
- * TODO: Per ora sto usando gli esiti come numeri interi, poi usa costanti presi da esiti properties?
- * TODO: Test soap 1_2
- *  TODO: Aggiungi anche i test con connettore con scheduling disabilitato
- *  TODO: Aggiungi un test con connettore rotto
+ *  
  * 
  */
 public class ConsegnaMultiplaTest  extends ConfigLoader {
@@ -131,6 +136,21 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 	public void varieCombinazioniDiRegole1_2() {
 		varieCombinazioniDiRegole_Impl(HttpConstants.CONTENT_TYPE_SOAP_1_2);
 	}
+	
+	/**
+	 * In questo test viene controllato che la rispedizione avvenga in caso di match col soapFault, e che non viene
+	 * rispedita se non c'è match.
+	 */
+	@Test
+	public void  testRegoleSoapFault1_1() {
+		testRegoleSoapFault_Impl(HttpConstants.CONTENT_TYPE_SOAP_1_1);
+	}
+	
+	@Test
+	public void  testRegoleSoapFault1_2() {
+		testRegoleSoapFault_Impl(HttpConstants.CONTENT_TYPE_SOAP_1_2);
+	}
+	
 	
 	
 	private void consegnaMultiplaSemplice_Impl(String soapContentType) throws IOException {
@@ -296,58 +316,51 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 	}
 	
 	
-	@Test
-	public void testRegoleSoapFault() {
+	private void testRegoleSoapFault_Impl(String soapContentType) {
 		final String erogazione = "TestConsegnaMultiplaRegoleSoapFault";
 		
-		// passare al server di echo faultSoapVersion (11 o 12) TODO?
-		String soapContentType = HttpConstants.CONTENT_TYPE_SOAP_1_1;
+		HttpRequest requestSoapFaultTuttiValorizzati = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", soapContentType );
+		requestSoapFaultTuttiValorizzati.setUrl(requestSoapFaultTuttiValorizzati.getUrl()+"&faultActor=ActorRispedita&faultCode=CodeRispedita&faultMessage=MessageRispedita");	
 		
-		HttpRequest requestSoapFaultByCode = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", soapContentType );
-		requestSoapFaultByCode.setUrl(requestSoapFaultByCode.getUrl()+"&fault=true&faultActor=Actor&faultCode=CodeCompletata&faultMessage=Message");	
+		HttpRequest requestSoapFaultTuttiRegex = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", soapContentType );
+		requestSoapFaultTuttiRegex.setUrl(requestSoapFaultTuttiRegex.getUrl()+"&faultActor=ActorRispedita123&faultCode=CodeRispedita123&faultMessage=MessageRispedita123");
 		
-		HttpRequest requestSoapFaultByActor = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", soapContentType );
-		requestSoapFaultByActor.setUrl(requestSoapFaultByActor.getUrl()+"&fault=true&faultActor=ActorCompletata&faultCode=Code&faultMessage=Message");
-		
-		HttpRequest requestSoapFaultByMessage = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", soapContentType );
-		requestSoapFaultByMessage.setUrl(requestSoapFaultByMessage.getUrl()+"&fault=true&faultActor=Actor&faultCode=Code&faultMessage=MessageCompletata");
-		
-		// TODO: Chiedi ad andrea se i campi del soap fault sono in and
-		// TODO: Sembra inoltre che sia il contrario di quello che mi ha detto lui, ovvero che se c'è un match fra 
-		//	uno dei campi actor message e code, allora la richiesta è considerata fallita
-		
-		HttpRequest requestSoapFaultByRegex = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", soapContentType );
-		requestSoapFaultByRegex.setUrl(requestSoapFaultByCode.getUrl()+"&fault=true&faultActor=12345&faultCode=2341&faultMessage=MessageCompletataRegex"); 
+		HttpRequest requestSoapFaultSoloActor = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", soapContentType );
+		requestSoapFaultSoloActor.setUrl(requestSoapFaultSoloActor.getUrl()+"&faultActor=ActorRispedita&faultCode=CodeNotImportant&faultMessage=MessageNotImportant");
+
+		// Questa richiesta testa che sul campo message venga fatto il contains.
+		HttpRequest requestSoapMessageContains = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", soapContentType );
+		requestSoapMessageContains.setUrl(requestSoapMessageContains.getUrl()+"&faultActor=12345&faultCode=2341&faultMessage=Container-MessageRispeditaContains-Container"); 
 	
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 		
-/*		requestsByKind.add(new RequestAndExpectations(
-				requestSoapFaultCode,
-				Set.of(CONNETTORE_0), 
-				Set.of(CONNETTORE_1,CONNETTORE_2,CONNETTORE_3), 
-				ESITO_CONSEGNA_MULTIPLA_IN_CORSO)
-			);*/
+		requestsByKind.add(new RequestAndExpectations(
+				requestSoapFaultTuttiValorizzati,				
+				Set.of(CONNETTORE_1,CONNETTORE_2),
+				Set.of(CONNETTORE_0, CONNETTORE_3),
+				ESITO_CONSEGNA_MULTIPLA_FALLITA)
+			);
 		
 		/*requestsByKind.add(new RequestAndExpectations(
-				requestSoapFaultActor,
+				requestSoapFaultTuttiRegex,
+				Set.of(CONNETTORE_0,CONNETTORE_2,CONNETTORE_3),
 				Set.of(CONNETTORE_1), 
-				Set.of(CONNETTORE_0,CONNETTORE_2,CONNETTORE_3), 
-				ESITO_CONSEGNA_MULTIPLA_IN_CORSO)
-			);*/
-		
-		/*requestsByKind.add(new RequestAndExpectations(
-				requestSoapFaultByMessage,
-				Set.of(CONNETTORE_2), 
-				Set.of(CONNETTORE_0,CONNETTORE_1,CONNETTORE_3), 
-				ESITO_CONSEGNA_MULTIPLA_IN_CORSO)
-			);*/
+				ESITO_CONSEGNA_MULTIPLA_FALLITA)
+			);
 		
 		requestsByKind.add(new RequestAndExpectations(
-				requestSoapFaultByRegex,
+				requestSoapFaultSoloActor,
+				Set.of(CONNETTORE_0,CONNETTORE_1,CONNETTORE_2),
 				Set.of(CONNETTORE_3), 
-				Set.of(CONNETTORE_0,CONNETTORE_1,CONNETTORE_2), 
-				ESITO_CONSEGNA_MULTIPLA_IN_CORSO)
+				ESITO_CONSEGNA_MULTIPLA_FALLITA)
 			);
+
+		requestsByKind.add(new RequestAndExpectations(
+				requestSoapMessageContains,				
+				Set.of(CONNETTORE_0,CONNETTORE_1,CONNETTORE_3),
+				Set.of(CONNETTORE_2),
+				ESITO_CONSEGNA_MULTIPLA_FALLITA)
+			);*/
 		
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		
@@ -357,18 +370,6 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 		}
 		
-		//Durante la consegna asincrona, se tutti i connettori multipli fallivano, l'esito delle transazione rimaneva 'in coda'.
-	    // Eliminata inoltre l'opzione '3xx' tra i parametri di riconsegna in caso di API SOAP.
-
-		
-		// Attendo la consegna, TODO: Dopo due secondi deve diventare in CORSO, 
-		// se tutti e quattro i connettori falliscono lo stato rimaneva IN CODA (38) fare un test
-		// su questo dopo il pull
-		
-		// TODO  Se la transazione fallita (4xx,5xx) è marcata come completata, anche se c'è un connettore
-		// che è completato con un 2xx la transazione viene marcata come fallita (Non appena c'è un connettore che completa e accetta un 4xx e 5xx, la transazione padre viene marcata come fallita)
-		// TESTARE QUINDI QUESTA COSA, 
-		//
 		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
 		
 		for (var requestAndExpectation : responsesByKind.keySet()) {
