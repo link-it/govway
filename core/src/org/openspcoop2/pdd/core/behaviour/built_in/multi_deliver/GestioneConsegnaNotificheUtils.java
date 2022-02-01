@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.GestioneErroreCodiceTrasporto;
 import org.openspcoop2.core.config.GestioneErroreSoapFault;
@@ -33,6 +34,13 @@ import org.openspcoop2.pdd.core.behaviour.BehaviourException;
  * @version $Rev$, $Date$
  */
 public class GestioneConsegnaNotificheUtils  {
+	
+	public final static String LABEL_CODE = "Code";
+	public final static String LABEL_ACTOR = "Actor";
+	public final static String LABEL_MESSAGE = "Message";
+	public final static String LABEL_TYPE = "Type";
+	public final static String LABEL_STATUS = "Status";
+	public final static String LABEL_CLAIMS = "Claims";
 	
 	public static ConfigurazioneGestioneConsegnaNotifiche getGestioneDefault() throws BehaviourException {
 		
@@ -245,9 +253,15 @@ public class GestioneConsegnaNotificheUtils  {
 				faultFallita.setComportamento(GestioneErroreComportamento.RISPEDISCI);
 				gestioneErrore.addSoapFault(faultFallita);
 				break;
-			case CUSTOM:
+			case CONSEGNA_COMPLETATA_PERSONALIZZATA:
+			case CONSEGNA_FALLITA_PERSONALIZZATA:
 				GestioneErroreSoapFault faultCustom = new GestioneErroreSoapFault();
-				faultCustom.setComportamento(GestioneErroreComportamento.RISPEDISCI);
+				if(TipoGestioneNotificaFault.CONSEGNA_FALLITA_PERSONALIZZATA.equals(config.getFault())) {
+					faultCustom.setComportamento(GestioneErroreComportamento.RISPEDISCI);
+				}
+				else {
+					faultCustom.setComportamento(GestioneErroreComportamento.ACCETTA);
+				}
 				if(config.getFaultCode()!=null && !"".equals(config.getFaultCode())) {
 					faultCustom.setFaultCode(config.getFaultCode());
 				}
@@ -458,7 +472,8 @@ public class GestioneConsegnaNotificheUtils  {
 				break;
 			case CONSEGNA_FALLITA:
 				break;
-			case CUSTOM:
+			case CONSEGNA_COMPLETATA_PERSONALIZZATA:
+			case CONSEGNA_FALLITA_PERSONALIZZATA:
 				if(!first) {
 					bf.append(" o");
 				}
@@ -468,10 +483,62 @@ public class GestioneConsegnaNotificheUtils  {
 				else {
 					bf.append(" Problem Detail");
 				}
+				
+				String tipoFaultCompletato = null;
+				if(!StringUtils.isEmpty(config.getFaultCode())) { 
+					String label = soap ? LABEL_CODE : LABEL_TYPE;
+					tipoFaultCompletato = label;
+				}
+				if(!StringUtils.isEmpty(config.getFaultActor())) {
+					String label = soap ? LABEL_ACTOR : LABEL_STATUS;
+					if(tipoFaultCompletato!=null) {
+						tipoFaultCompletato = tipoFaultCompletato +", ";
+					}
+					else {
+						tipoFaultCompletato = "";
+					}
+					tipoFaultCompletato = tipoFaultCompletato + label;
+				}
+				if(!StringUtils.isEmpty(config.getFaultMessage())) {
+					String label = soap ? LABEL_MESSAGE : LABEL_CLAIMS;
+					if(tipoFaultCompletato!=null) {
+						tipoFaultCompletato = tipoFaultCompletato +", ";
+					}
+					else {
+						tipoFaultCompletato = "";
+					}
+					tipoFaultCompletato = tipoFaultCompletato + label;
+				}
+				if(tipoFaultCompletato!=null) {
+					String prefix = "";
+					if(TipoGestioneNotificaFault.CONSEGNA_FALLITA_PERSONALIZZATA.equals(config.getFault())) {
+						prefix = " non";
+					}
+					tipoFaultCompletato = prefix+" contenente le personalizzazioni definite per "+tipoFaultCompletato;
+				}
+				bf.append(tipoFaultCompletato);
+				
 				break;
 			}
 		}
 		
-		return bf.toString();
+		String s = bf.toString();
+		if(s!=null) {
+			// check caso limite senza consegne completate in alcun codice http
+			String errorMsg = null;
+			String replaceMsg = null;
+			if(soap) {
+				errorMsg = "codice SOAP Fault";
+				replaceMsg = "SOAP Fault";
+			}
+			else {
+				errorMsg = "codice Problem Detail";
+				replaceMsg = "Problem Detail";
+			}
+			if(s.contains(errorMsg)) {
+				s = s.replace(errorMsg, replaceMsg);
+			}
+		}
+		return s;
 	}
 }

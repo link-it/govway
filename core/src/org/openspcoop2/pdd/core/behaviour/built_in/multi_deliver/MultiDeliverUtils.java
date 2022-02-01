@@ -423,7 +423,8 @@ public class MultiDeliverUtils  {
 			case CONSEGNA_COMPLETATA:
 			case CONSEGNA_FALLITA:
 				break;
-			case CUSTOM:
+			case CONSEGNA_COMPLETATA_PERSONALIZZATA:
+			case CONSEGNA_FALLITA_PERSONALIZZATA:
 				if(configurazione.getFaultCode()!=null) {
 					BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_FAULT_CODE, configurazione.getFaultCode());
 				}

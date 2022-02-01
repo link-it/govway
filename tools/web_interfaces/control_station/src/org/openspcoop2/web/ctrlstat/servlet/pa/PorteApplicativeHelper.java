@@ -10790,12 +10790,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		String [] gestioneValues = {
 				org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaFault.CONSEGNA_COMPLETATA.getValue(),
 				org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaFault.CONSEGNA_FALLITA.getValue(),
-				org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaFault.CUSTOM.getValue()
+				org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaFault.CONSEGNA_COMPLETATA_PERSONALIZZATA.getValue(),
+				org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaFault.CONSEGNA_FALLITA_PERSONALIZZATA.getValue()
 		};
 		String [] gestioneLabels = {
 				org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaFault.CONSEGNA_COMPLETATA.getLabel(),
 				org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaFault.CONSEGNA_FALLITA.getLabel(),
-				org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaFault.CUSTOM.getLabel()
+				org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaFault.CONSEGNA_COMPLETATA_PERSONALIZZATA.getLabel(),
+				org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaFault.CONSEGNA_FALLITA_PERSONALIZZATA.getLabel()
 		};
 		
 		de = new DataElement();
@@ -10816,7 +10818,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de.setLabels(gestioneLabels);
 		de.setSelected(gestioneFault);
 		de.setPostBack(true);
-		if(org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaFault.CUSTOM.getValue().equals(gestioneFault)) {
+		if(org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaFault.CONSEGNA_COMPLETATA_PERSONALIZZATA.getValue().equals(gestioneFault) ||
+				org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaFault.CONSEGNA_FALLITA_PERSONALIZZATA.getValue().equals(gestioneFault)) {
 			StringBuilder sb = new StringBuilder();
 			
 			sb.append("'");
@@ -10838,7 +10841,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		}
 		dati.add(de);
 		
-		if(org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaFault.CUSTOM.getValue().equals(gestioneFault)) {
+		if(org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaFault.CONSEGNA_COMPLETATA_PERSONALIZZATA.getValue().equals(gestioneFault) ||
+				org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaFault.CONSEGNA_FALLITA_PERSONALIZZATA.getValue().equals(gestioneFault)) {
 			//code
 			de = new DataElement();
 			de.setType(DataElementType.TEXT_EDIT);
@@ -11048,7 +11052,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		case CONSEGNA_COMPLETATA:
 		case CONSEGNA_FALLITA:
 			break;
-		case CUSTOM:
+		case CONSEGNA_COMPLETATA_PERSONALIZZATA:
+		case CONSEGNA_FALLITA_PERSONALIZZATA:
 			configurazioneGestioneConsegnaNotifiche.setFaultCode(faultCode);
 			configurazioneGestioneConsegnaNotifiche.setFaultActor(faultActor);
 			configurazioneGestioneConsegnaNotifiche.setFaultMessage(faultMessage);
@@ -11407,13 +11412,15 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 			
 			TipoGestioneNotificaFault fault = TipoGestioneNotificaFault.toEnumConstant(gestioneFault);
+			String tipoFaultCompletato = null;
 			switch(fault) {
 			case CONSEGNA_COMPLETATA:
 				almenoUnaConsegnaCompletata=true;
 				break;
 			case CONSEGNA_FALLITA:
 				break;
-			case CUSTOM:
+			case CONSEGNA_COMPLETATA_PERSONALIZZATA:
+			case CONSEGNA_FALLITA_PERSONALIZZATA:
 				almenoUnaConsegnaCompletata=true;
 				// almeno un elemento obbligatorio
 				if(StringUtils.isEmpty(faultCode) && StringUtils.isEmpty(faultActor) && StringUtils.isEmpty(faultMessage)) {
@@ -11438,18 +11445,29 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					return false;
 				}
 				if(!StringUtils.isEmpty(faultCode)) { 
-//					String label = serviceBinding.equals(ServiceBinding.SOAP) ? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODE : 
-//						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_TYPE;
+					String label = serviceBinding.equals(ServiceBinding.SOAP) ? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODE : 
+						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_TYPE;
 //					this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	label));
 //					return false;
+					tipoFaultCompletato = label;
 				}
 				if(!StringUtils.isEmpty(faultActor)) {
-//					String label = serviceBinding.equals(ServiceBinding.SOAP) ? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_ACTOR : 
-//						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_STATUS;
+					String label = serviceBinding.equals(ServiceBinding.SOAP) ? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_ACTOR : 
+						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_STATUS;
 //					this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	label));
 //					return false;
+					if(tipoFaultCompletato!=null) {
+						tipoFaultCompletato = tipoFaultCompletato +", ";
+					}
+					else {
+						tipoFaultCompletato = "";
+					}
+					tipoFaultCompletato = tipoFaultCompletato + label;
 				}
 				if(!StringUtils.isEmpty(faultMessage)) {
+					
+					String label = serviceBinding.equals(ServiceBinding.SOAP) ? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_MESSAGE : 
+						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CLAIMS;
 					
 					if(serviceBinding.equals(ServiceBinding.REST) ) {
 						Scanner scanner = new Scanner(faultMessage);
@@ -11472,6 +11490,22 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							return false;
 						}
 					}
+					
+					if(tipoFaultCompletato!=null) {
+						tipoFaultCompletato = tipoFaultCompletato +", ";
+					}
+					else {
+						tipoFaultCompletato = "";
+					}
+					tipoFaultCompletato = tipoFaultCompletato + label;
+				}
+				
+				if(tipoFaultCompletato!=null) {
+					String prefix = "";
+					if(TipoGestioneNotificaFault.CONSEGNA_FALLITA_PERSONALIZZATA.equals(fault)) {
+						prefix = " non";
+					}
+					tipoFaultCompletato = prefix+" contenente le personalizzazioni definite per "+tipoFaultCompletato;
 				}
 				break;
 			}
