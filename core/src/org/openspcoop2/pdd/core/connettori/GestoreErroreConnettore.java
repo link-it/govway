@@ -23,10 +23,14 @@
 package org.openspcoop2.pdd.core.connettori;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
+import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPFault;
 
@@ -338,6 +342,20 @@ public class GestoreErroreConnettore {
 					else{
 						codice = this.fault.getFaultCode();
 					}
+					
+					List<String> subCodice_soap12 = new ArrayList<String>();
+					List<String> subCodiceNamespace_soap12 = new ArrayList<String>();
+					if(this.fault.getFaultSubcodes()!=null) {
+						Iterator<QName> it = this.fault.getFaultSubcodes();
+						while (it.hasNext()) {
+							QName qName = (QName) it.next();
+							if(qName.getLocalPart()!=null) {
+								subCodice_soap12.add(qName.getLocalPart());
+								subCodiceNamespace_soap12.add(qName.getNamespaceURI()!=null ? qName.getNamespaceURI() : "");
+							}
+						}
+					}
+							
 
 					if( gestore.getFaultCode().equalsIgnoreCase(codice) == false) {
 
@@ -352,7 +370,33 @@ public class GestoreErroreConnettore {
 						}
 
 						if(!matchRegExpr) {
-							match = false; // non ha il codice definito
+							
+							boolean matchSoap12 = false;
+							if(!subCodice_soap12.isEmpty()) {
+								for (String code12 : subCodice_soap12) {
+									if( gestore.getFaultCode().equalsIgnoreCase(code12) ) {
+										matchSoap12 = true;
+										break;
+									}
+									else {
+										boolean matchRegExprSoap12 = false;
+										try {
+											matchRegExprSoap12 = RegularExpressionEngine.isMatch(code12, gestore.getFaultCode());
+										}catch(RegExpNotFoundException notFound) {}
+										catch(Exception e)	{
+											GestoreErroreConnettore.log.error("Verifica espressione regolare '"+gestore.getFaultCode()+"' per fault subcode 1.2 '"+code12+"' fallita: "+e.getMessage());
+										}
+										if(matchRegExprSoap12) {
+											matchSoap12 = true;
+											break;
+										}
+									}
+								}
+							}
+							
+							if(!matchSoap12) {
+								match = false; // non ha il codice definito
+							}
 						}
 					}
 
