@@ -1,3 +1,11 @@
+2022-02-01  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1325
+	È stata aggiunta la possibilità di personalizzare la configurazione che riguarda la gestione delle credenziali client ricevute tramite header HTTP 
+	dal webServer nel quale viene effettuato il processo di autenticazione.
+	La personalizzazione è attuabile in funzione del profilo di interoperabilità o per puntualmente sul soggetto associato ad ogni dominio gestito.
+
 2022-01-28  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]

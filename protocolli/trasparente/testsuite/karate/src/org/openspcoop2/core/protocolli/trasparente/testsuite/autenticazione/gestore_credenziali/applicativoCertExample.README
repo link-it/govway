@@ -1,0 +1,3 @@
+Certificato generato con il comando: 
+	openssl req -x509 -newkey rsa:4096 -keyout applicativoCertExample.key -out applicativoCertExample.pem -sha256 -days 36500 -subj '/CN=example.gestoreCredenziali/O=test/C=IT/'
+password: 123456

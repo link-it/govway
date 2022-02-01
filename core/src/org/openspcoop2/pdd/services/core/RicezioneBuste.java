@@ -2652,7 +2652,7 @@ public class RicezioneBuste {
 					}
 					
 					if (gestore != null) {
-						Credenziali credenzialiRitornate = gestore.elaborazioneCredenziali(inRequestContext.getConnettore(), requestMessage);
+						Credenziali credenzialiRitornate = gestore.elaborazioneCredenziali(identitaPdD, inRequestContext.getConnettore(), requestMessage);
 						if(credenzialiRitornate==null){
 							throw new Exception("Credenziali non ritornate");
 						}

@@ -105,6 +105,21 @@
 - HSM per TLS Keystore. Seguire le indicazioni descritte in PKCS11.README
   Poi 'cp tools/utils/src/org/openspcoop2/utils/certificate/test/govway_test_hsm.properties  /etc/govway/hsm.properties'
 
+- Per i test sulle credenziali aggiungere in govway_local.properties la configurazione che si trova in 'src/org/openspcoop2/core/protocolli/trasparente/testsuite/autenticazione/gestore_credenziali/govway_local.properties.adjunct'.
+
+- Configurare l'application server in modo tale da supportare connessioni ssl sulla porta 8444 e 8445 utilizzando le configurazioni presenti nella directory config_https:
+  a) un connettore HTTPS che esegue autenticazione client (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8444)
+        Esempio in config_https/ConnettoreHTTPS_withClientAuth.xml
+        La configurazione del connettore assume che il keystore config_https/jks/erogatore.jks sia stato copiato in /etc/govway/keys
+  b) un connettore HTTPS senza autenticazione client (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8445)
+        Esempio in config_https/ConnettoreHTTPS_noClientAuth.xml
+        La configurazione del connettore assume che il keystore config_https/jks/erogatore.jks sia stato copiato in /etc/govway/keys
+  c) Configurazione della JVM dell'A.S. in modo che utilizzi il truststore config_https/jks/erogatore.jks
+       Indicazioni descritte per JBoss in config_https/configurazioneTrustStoreJBOSS.txt
+
+- Configurare nuove utenze nel container per poter gestire l'autenticazione tramite principal.
+  Seguire le indicazioni presenti in Esempio in ./protocolli/trasparente/testsuite/deploy/principal/README.txt
+
 - Impostare in <console_local.properties>:
 	# Indicazione se nella Consegna Condizionale è possibile associare lo stesso filtro a differenti connettori (per test)
 	connettoriMultipli.consegnaCondizionale.stessoFiltro=true
@@ -250,6 +265,15 @@ Di seguito vengono descritti i test del package 'encoding':
 
 - 'charset', verifica le comunicazioni in stream, con dump, la costruzione di oggetti in memoria read only e per trasformazioni, con charset UTF-8, UTF-16 e ISO-8859-1
    ant run_test -Ddelete=false -Dload=false -Dpackage=encoding.charset
+
+Di seguito vengono descritti i test del package 'autenticazione':
+
+- 'gestore_credenziali', verifica la gestione di credenziali inoltrate da un frontend che si occupa del processo di autenticazione tramite header HTTP.
+   ant run_test -Ddelete=false -Dload=false -Dpackage=autenticazione.gestore_credenziali
+
+- 'gestore_credenziali_principal', si tratta di un test simile a quelli effettuati nel gruppo precedente, dove però il frontend web viene autenticato tramite container principal.
+   NOTA: su wildfly25 o superiore è necessario abilitare il l'application-security-domain 'other' prima di eseguire il test
+   ant run_test -Ddelete=false -Dload=false -Dpackage=autenticazione.gestore_credenziali_principal
 
 Di seguito vengono descritti i test del package 'pkcs11':
 

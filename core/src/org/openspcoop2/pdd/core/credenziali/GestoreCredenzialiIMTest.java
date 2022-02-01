@@ -38,7 +38,7 @@ public class GestoreCredenzialiIMTest extends AbstractCore implements IGestoreCr
 	public Credenziali elaborazioneCredenziali(InfoConnettoreIngresso infoConnettoreIngresso) throws GestoreCredenzialiException,GestoreCredenzialiConfigurationException{
 		
 		this.test = new GestoreCredenzialiTest();
-		return this.test.elaborazioneCredenziali(infoConnettoreIngresso, null);
+		return this.test.elaborazioneCredenziali(null,infoConnettoreIngresso, null);
 		
 	}
 	

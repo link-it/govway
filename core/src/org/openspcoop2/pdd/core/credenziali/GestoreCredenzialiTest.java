@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.core.credenziali;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
@@ -49,7 +50,8 @@ public class GestoreCredenzialiTest extends AbstractCore implements IGestoreCred
 	private String identita = null;
 	
 	@Override
-	public Credenziali elaborazioneCredenziali(InfoConnettoreIngresso infoConnettoreIngresso, 
+	public Credenziali elaborazioneCredenziali(IDSoggetto idSoggetto,
+			InfoConnettoreIngresso infoConnettoreIngresso, 
 			OpenSPCoop2Message messaggio) throws GestoreCredenzialiException,GestoreCredenzialiConfigurationException{
 		
 		Credenziali c = new Credenziali();

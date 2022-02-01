@@ -226,14 +226,37 @@ Batterie di test:
 - 'RESTAutenticazionePortaApplicativa': uguale al test precedente per la porta applicativa
 
 NOTA!!! Da wildfly25 compreso in differenziare i test che richiedono l'application-security-domain 'other' da quelli che non lo richiedono con i seguenti comandi.
+        Per far attivare l'autenticazione tramite container, da wildfly25 è necessario editare il file standalone-full.xml e attivare l'application-security-domain come segue. 
+	Poichè però causa un 401 per le altre richieste con credenziali non valide, deve essere abilitato solamente per i test seguenti dove indicato che il security domain è necessario.
+
 (Default) non richiesto:
+Security domain richiesto:
+       <subsystem xmlns="urn:jboss:domain:undertow:12.0" default-server="default-server" .....>
+           ....
+            <handlers>
+                ....
+            </handlers>
+            <application-security-domains>
+               <!-- <application-security-domain name="other" security-domain="ApplicationDomain"/> -->
+            </application-security-domains>
+        </subsystem>
 - 'AutenticazionePortaDelegataNoPrincipal'
 - 'AutenticazionePortaApplicativaNoPrincipal'
 - 'AutorizzazionePortaDelegataNoPrincipal'
 - 'AutorizzazionePortaApplicativaNoPrincipal'
 - 'RESTAutenticazionePortaDelegataNoPrincipal'
 - 'RESTAutenticazionePortaApplicativaNoPrincipal'
+
 Security domain richiesto:
+       <subsystem xmlns="urn:jboss:domain:undertow:12.0" default-server="default-server" .....>
+           ....
+            <handlers>
+                ....
+            </handlers>
+            <application-security-domains>
+               <application-security-domain name="other" security-domain="ApplicationDomain"/>
+            </application-security-domains>
+        </subsystem>
 - 'AutenticazionePortaDelegataPrincipal'
 - 'AutenticazionePortaApplicativaPrincipal'
 - 'AutorizzazionePortaDelegataPrincipal'

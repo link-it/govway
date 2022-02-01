@@ -43,7 +43,7 @@ public class HttpRequest extends AbstractHttp {
 	private HttpRequestMethod method;
 	
 	private Boolean followRedirects;
-	
+		
 	private boolean trustAllCerts = false;
 	private KeyStore trustStore;
 	private boolean trustStoreHsm;
@@ -53,6 +53,13 @@ public class HttpRequest extends AbstractHttp {
 	
 	private CertStore crlStore;
 	private String crlPath;
+	
+	private KeyStore keyStore;
+	private String keyStorePath;
+	private String keyStorePassword;
+	private String keyStoreType;
+	private String keyAlias;
+	private String keyPassword;
 	
 	private boolean secureRandom = false;
 	private String secureRandomAlgorithm = null;
@@ -231,5 +238,53 @@ public class HttpRequest extends AbstractHttp {
 
 	public void setDisconnect(boolean disconnect) {
 		this.disconnect = disconnect;
+	}
+	
+	public KeyStore getKeyStore() {
+		return this.keyStore;
+	}
+
+	public void setKeyStore(KeyStore keyStore) {
+		this.keyStore = keyStore;
+	}
+
+	public String getKeyStorePath() {
+		return this.keyStorePath;
+	}
+
+	public void setKeyStorePath(String keyStorePath) {
+		this.keyStorePath = keyStorePath;
+	}
+
+	public String getKeyStorePassword() {
+		return this.keyStorePassword;
+	}
+
+	public void setKeyStorePassword(String keyStorePassword) {
+		this.keyStorePassword = keyStorePassword;
+	}
+
+	public String getKeyStoreType() {
+		return this.keyStoreType;
+	}
+
+	public void setKeyStoreType(String keyStoreType) {
+		this.keyStoreType = keyStoreType;
+	}
+
+	public String getKeyAlias() {
+		return this.keyAlias;
+	}
+
+	public void setKeyAlias(String keyAlias) {
+		this.keyAlias = keyAlias;
+	}
+
+	public String getKeyPassword() {
+		return this.keyPassword;
+	}
+
+	public void setKeyPassword(String keyPassword) {
+		this.keyPassword = keyPassword;
 	}
 }
