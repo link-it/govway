@@ -146,19 +146,19 @@ public class CommonConsegnaMultipla {
 	}
 
 	public static void checkSchedulingConnettoreInCorso(HttpResponse response, String connettore) {
-		String query = "select count(*) from transazioni_sa where id_transazione=? and connettore_nome = ?  and consegna_terminata = false and numero_tentativi >=1";
+		String query = "select count(*) from transazioni_sa where id_transazione=? and connettore_nome = ?  and consegna_terminata = ? and numero_tentativi >=1";
 		String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
 	
-		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore);
+		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, false);
 		assertEquals(Integer.valueOf(1), count);
 	}
 
 
 	public  static void checkSchedulingConnettoreIniziato(HttpResponse response, String connettore) {
-		String query = "select count(*) from transazioni_sa where id_transazione=? and connettore_nome = ?  and consegna_terminata = false and numero_tentativi = 0";
+		String query = "select count(*) from transazioni_sa where id_transazione=? and connettore_nome = ?  and consegna_terminata = ? and numero_tentativi = 0";
 		String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
 	
-		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore);
+		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, false);
 		assertEquals(Integer.valueOf(1), count);
 	}
 
@@ -168,18 +168,18 @@ public class CommonConsegnaMultipla {
 	 * 
 	 */
 	public static void checkSchedulingConnettoreCompletato(HttpResponse response, String connettore) {
-			String query = "select count(*) from transazioni_sa where id_transazione=? and connettore_nome = ?  and consegna_terminata = true and numero_tentativi = 1";
+			String query = "select count(*) from transazioni_sa where id_transazione=? and connettore_nome = ?  and consegna_terminata = ? and numero_tentativi = 1";
 			String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
 	
-			Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore);
+			Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, true);
 			assertEquals(Integer.valueOf(1), count);				
 	}
 
 	public static  int getNumeroTentativiSchedulingConnettore(HttpResponse response, String connettore) {
-		String query = "select numero_tentativi from transazioni_sa where id_transazione=? and connettore_nome = ?  and consegna_terminata = false";
+		String query = "select numero_tentativi from transazioni_sa where id_transazione=? and connettore_nome = ?  and consegna_terminata = ?";
 		String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
 		
-		return ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore);
+		return ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, false);
 	}
 
 	/**
