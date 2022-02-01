@@ -5699,6 +5699,10 @@ public class DriverConfigurazioneDB_LIB {
 							
 							Proprieta p = servizioApplicativo.getDatiConnettore().getProprieta(j);
 							
+							if(p.getValore()==null || "".equals(p.getValore())) {
+								continue; // non devo serializzare valori vuoti o null (DB oracle non lo permette)
+							}
+							
 							stm.setLong(1, idPA_SA);
 							stm.setString(2, p.getNome());
 							stm.setString(3, p.getValore());
@@ -6803,6 +6807,10 @@ public class DriverConfigurazioneDB_LIB {
 						for ( ; j < servizioApplicativo.getDatiConnettore().sizeProprietaList(); j++) {
 							
 							Proprieta p = servizioApplicativo.getDatiConnettore().getProprieta(j);
+							
+							if(p.getValore()==null || "".equals(p.getValore())) {
+								continue; // non devo serializzare valori vuoti o null (DB oracle non lo permette)
+							}
 							
 							stm.setLong(1, idPA_SA);
 							stm.setString(2, p.getNome());

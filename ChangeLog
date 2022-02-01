@@ -1,6 +1,12 @@
 2022-02-01  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
+	Durante la consegna asincrona, la personalizzazione della consegna fallita per SoapFaultCode non considerava il subFaultCode in Soap1.2.
+	È stata inoltre aggiunta la possibilità di personalizzare una consegna completata per i SoapFault e i ProblemDetail.
+
+2022-02-01  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
 	Aggiunta funzionalità OP-1325
 	È stata aggiunta la possibilità di personalizzare la configurazione che riguarda la gestione delle credenziali client ricevute tramite header HTTP 
 	dal webServer nel quale viene effettuato il processo di autenticazione.

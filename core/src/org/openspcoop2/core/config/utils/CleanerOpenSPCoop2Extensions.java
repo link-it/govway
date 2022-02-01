@@ -20,11 +20,15 @@
 
 package org.openspcoop2.core.config.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ProtocolProperty;
 import org.openspcoop2.core.config.ServizioApplicativo;
 
@@ -180,6 +184,30 @@ public class CleanerOpenSPCoop2Extensions {
 		if(portaApplicativa.sizeServizioApplicativoList()>0) {
 			for (PortaApplicativaServizioApplicativo pasa : portaApplicativa.getServizioApplicativoList()) {
 				pasa.setIdServizioApplicativo(null);
+				if(pasa.getDatiConnettore()!=null) {
+					if(pasa.getDatiConnettore().sizeProprietaList()>0) {
+						
+						List<String> nomiDaEliminare = new ArrayList<String>();
+						
+						for (Proprieta p : pasa.getDatiConnettore().getProprietaList()) {
+							if(p.getValore()==null || "".equals(p.getValore())) {
+								// non devo serializzare valori vuoti o null (DB oracle non lo permette)
+								nomiDaEliminare.add(p.getNome());
+							}
+						}
+						
+						while(nomiDaEliminare.size()>0) {
+							String nome = nomiDaEliminare.remove(0);
+							for (int i = 0; i < pasa.getDatiConnettore().sizeProprietaList(); i++) {
+								Proprieta p = pasa.getDatiConnettore().getProprieta(i);
+								if(p.getNome().equals(nome)) {
+									pasa.getDatiConnettore().removeProprieta(i);
+									break;
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 		
