@@ -68,7 +68,7 @@ import org.openspcoop2.utils.transport.http.HttpResponse;
 // TODO: Per ora sto usando gli esiti come numeri interi, poi usa costanti presi da esiti properties?
 // TODO: Aggiungi anche i test con connettore con scheduling disabilitato
 // TODO: Aggiungi un test con connettore rotto
-// TODO: E' possibile volendo raggruppare i test Soap 1_1 e Soap 1_2 facendo prima le richieste per entrambi
+// TODO: raggruppai test Soap 1_1 e Soap 1_2 facendo prima le richieste per entrambi
 // TODO: Test threading, se riesco a fare dei test sull'allocazione dei threads di govway, anche solo due test magari da un minuto solo, va bene.
 
 
