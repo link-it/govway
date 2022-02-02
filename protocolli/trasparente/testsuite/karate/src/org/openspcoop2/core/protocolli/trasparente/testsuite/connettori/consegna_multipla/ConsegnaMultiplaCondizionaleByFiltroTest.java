@@ -89,7 +89,8 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 			Set<String> connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
 			
 			RequestAndExpectations current = requestsByKind.get(i);
-			current.request.addHeader(Common.HEADER_ID_CONDIZIONE, Common.filtriPools.get(pool).get(0));
+			//current.request.addHeader(Common.HEADER_ID_CONDIZIONE, Common.filtriPools.get(pool).get(0));
+			current.request.addHeader(Common.HEADER_ID_CONDIZIONE, "Filtro-Connettore0");
 			current.connettoriSuccesso = setIntersection(current.connettoriSuccesso,connettoriPool);
 			current.connettoriFallimento = setIntersection(current.connettoriFallimento, connettoriPool);
 		}
