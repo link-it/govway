@@ -140,7 +140,7 @@ public class Utilities extends ConfigLoader {
 			url = url.replace("http:", "https:");
 			url = url.replace(":8080", ":8444");
 		}
-		else if(request.getUsername()!=null && request.getUsername().equals("esempioFruitoreTrasparentePrincipal")) {
+		else if(request.getUsername()!=null && (request.getUsername().equals("esempioFruitoreTrasparentePrincipal") || request.getUsername().equals("esempioFruitoreTrasparentePrincipal2"))) {
 			url = url.replace("govway", "govwaySec");
 		}
 		//System.out.println("URL ["+url+"]");

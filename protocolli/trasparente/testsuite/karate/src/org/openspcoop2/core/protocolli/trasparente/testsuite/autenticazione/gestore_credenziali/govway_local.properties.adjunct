@@ -12,7 +12,7 @@ org.openspcoop2.pdd.services.pd.gestoreCredenziali.trasparente-gw-SoggettoIntern
 org.openspcoop2.pdd.services.pd.gestoreCredenziali.autenticazioneCanale=none
 # Credenziali attese da GovWay (a seconda della modalità di autenticazione indicata) che identificano il webServer
 org.openspcoop2.pdd.services.pd.gestoreCredenziali.SoggettoInternoTestGestoreCredenzialeSsl.autenticazioneCanale=ssl
-org.openspcoop2.pdd.services.pd.gestoreCredenziali.SoggettoInternoTestGestoreCredenzialeSsl.autenticazioneCanale.ssl.subject=CN=Erogatore, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it
+org.openspcoop2.pdd.services.pd.gestoreCredenziali.SoggettoInternoTestGestoreCredenzialeSsl.autenticazioneCanale.ssl.subject=CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it
 org.openspcoop2.pdd.services.pd.gestoreCredenziali.gw-SoggettoInternoTestGestoreCredenzialeBasic.autenticazioneCanale=basic
 org.openspcoop2.pdd.services.pd.gestoreCredenziali.gw-SoggettoInternoTestGestoreCredenzialeBasic.autenticazioneCanale.basic.username=WebServerFruizioniSoggettoAuthBasic
 org.openspcoop2.pdd.services.pd.gestoreCredenziali.gw-SoggettoInternoTestGestoreCredenzialeBasic.autenticazioneCanale.basic.password=123456
@@ -66,7 +66,7 @@ org.openspcoop2.pdd.services.pa.gestoreCredenziali.trasparente-SoggettoInternoTe
 org.openspcoop2.pdd.services.pa.gestoreCredenziali.autenticazioneCanale=none
 # Credenziali attese da GovWay (a seconda della modalità di autenticazione indicata) che identificano il webServer
 org.openspcoop2.pdd.services.pa.gestoreCredenziali.SoggettoInternoTestGestoreCredenzialeSsl.autenticazioneCanale=ssl
-org.openspcoop2.pdd.services.pa.gestoreCredenziali.SoggettoInternoTestGestoreCredenzialeSsl.autenticazioneCanale.ssl.subject=CN=Erogatore, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.SoggettoInternoTestGestoreCredenzialeSsl.autenticazioneCanale.ssl.subject=CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it
 org.openspcoop2.pdd.services.pa.gestoreCredenziali.gw-SoggettoInternoTestGestoreCredenzialeBasic.autenticazioneCanale=basic
 org.openspcoop2.pdd.services.pa.gestoreCredenziali.gw-SoggettoInternoTestGestoreCredenzialeBasic.autenticazioneCanale.basic.username=WebServerErogazioniSoggettoAuthBasic
 org.openspcoop2.pdd.services.pa.gestoreCredenziali.gw-SoggettoInternoTestGestoreCredenzialeBasic.autenticazioneCanale.basic.password=123456

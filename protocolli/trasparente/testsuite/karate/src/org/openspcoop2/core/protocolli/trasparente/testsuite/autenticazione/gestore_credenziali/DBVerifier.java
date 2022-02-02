@@ -133,7 +133,7 @@ public class DBVerifier {
 		}
 		else {
 			Object oSoggetto = row.get("nome_soggetto_fruitore");
-			boolean isNull = oSoggetto == null;
+			boolean isNull = (oSoggetto == null) || ("".equals(oSoggetto.toString()));
 			assertTrue(msg+" atteso soggetto null, trovato: "+oSoggetto, isNull);
 		}
 		
@@ -149,7 +149,7 @@ public class DBVerifier {
 		}
 		else {
 			Object oApplicativo = row.get("servizio_applicativo_fruitore");
-			boolean isNull = oApplicativo == null;
+			boolean isNull = (oApplicativo == null) || ("".equals(oApplicativo.toString()));
 			assertTrue(msg+" atteso applicativo null, trovato: "+oApplicativo, isNull);
 		}
 		
@@ -168,7 +168,7 @@ public class DBVerifier {
 		}
 		else {
 			Object oCredenziali = row.get("credenziali");
-			boolean isNull = oCredenziali == null;
+			boolean isNull = (oCredenziali == null) || ("".equals(oCredenziali.toString()));
 			assertTrue(msg+" attese credenziali null, trovate: "+oCredenziali, isNull);
 		}
 

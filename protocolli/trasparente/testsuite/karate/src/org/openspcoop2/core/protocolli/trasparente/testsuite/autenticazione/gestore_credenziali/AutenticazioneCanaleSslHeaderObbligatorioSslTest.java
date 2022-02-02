@@ -43,10 +43,10 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		
 		HttpRequest request = new HttpRequest();
 		request.setTrustAllCerts(true);
-		request.setKeyStorePath("/etc/govway/keys/erogatore.jks");
+		request.setKeyStorePath("/etc/govway/keys/soggetto2.jks");
 		request.setKeyStoreType("JKS");
-		request.setKeyStorePassword("openspcoop");
-		request.setKeyAlias("erogatore");
+		request.setKeyStorePassword("openspcoopjks");
+		request.setKeyAlias("soggetto2");
 		request.setKeyPassword("openspcoop");
 		
 		Map<String, String> headers = new HashMap<String, String>();
@@ -114,10 +114,10 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		
 		HttpRequest request = new HttpRequest();
 		request.setTrustAllCerts(true);
-		request.setKeyStorePath("/etc/govway/keys/erogatore.jks");
+		request.setKeyStorePath("/etc/govway/keys/soggetto2.jks");
 		request.setKeyStoreType("JKS");
-		request.setKeyStorePassword("openspcoop");
-		request.setKeyAlias("erogatore");
+		request.setKeyStorePassword("openspcoopjks");
+		request.setKeyAlias("soggetto2");
 		request.setKeyPassword("openspcoop");
 		
 		Map<String, String> headers = new HashMap<String, String>();
@@ -130,7 +130,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 				headers,
 				null,
 				null,
-				"SSL-Subject 'CN=Erogatore, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Erogatore, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634112674'",
+				"SSL-Subject 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634114074'",
 				"mTLS realm=\"GovWay\", error=\"invalid_request\", error_description=\"The request is missing a required client certificate\"",
 				Utilities.CREDENZIALI_PROXY_FORNITE_NON_CONFORMI,
 				"Header HTTP 'X-Erogazione-SSL-Subject' o 'X-Erogazione-SSL-Cert' non presente");
@@ -141,10 +141,10 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		
 		HttpRequest request = new HttpRequest();
 		request.setTrustAllCerts(true);
-		request.setKeyStorePath("/etc/govway/keys/erogatore.jks");
+		request.setKeyStorePath("/etc/govway/keys/soggetto2.jks");
 		request.setKeyStoreType("JKS");
-		request.setKeyStorePassword("openspcoop");
-		request.setKeyAlias("erogatore");
+		request.setKeyStorePassword("openspcoopjks");
+		request.setKeyAlias("soggetto2");
 		request.setKeyPassword("openspcoop");
 		
 		Map<String, String> headers = new HashMap<String, String>();
@@ -156,7 +156,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 				headers,
 				null,
 				null,
-				"SSL-Subject 'CN=Erogatore, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Erogatore, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634112674'",
+				"SSL-Subject 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634114074'",
 				"mTLS realm=\"GovWay\", error=\"invalid_request\", error_description=\"The request is missing a required client certificate\"",
 				Utilities.CREDENZIALI_PROXY_FORNITE_NON_CONFORMI,
 				"Header HTTP 'X-Erogazione-SSL-Subject' o 'X-Erogazione-SSL-Cert' non presente");
@@ -167,10 +167,10 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		
 		HttpRequest request = new HttpRequest();
 		request.setTrustAllCerts(true);
-		request.setKeyStorePath("/etc/govway/keys/erogatore.jks");
+		request.setKeyStorePath("/etc/govway/keys/soggetto2.jks");
 		request.setKeyStoreType("JKS");
-		request.setKeyStorePassword("openspcoop");
-		request.setKeyAlias("erogatore");
+		request.setKeyStorePassword("openspcoopjks");
+		request.setKeyAlias("soggetto2");
 		request.setKeyPassword("openspcoop");
 		
 		Map<String, String> headers = new HashMap<String, String>();
@@ -181,7 +181,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 				headers,
 				null,
 				null,
-				"SSL-Subject 'CN=Erogatore, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Erogatore, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634112674'",
+				"SSL-Subject 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634114074'",
 				"mTLS realm=\"GovWay\", error=\"invalid_request\", error_description=\"The request is missing a required client certificate\"",
 				Utilities.CREDENZIALI_PROXY_FORNITE_NON_CONFORMI,
 				"Header HTTP 'X-Erogazione-SSL-Subject' o 'X-Erogazione-SSL-Cert' non presente");
@@ -197,10 +197,10 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		
 		HttpRequest request = new HttpRequest();
 		request.setTrustAllCerts(true);
-		request.setKeyStorePath("/etc/govway/keys/erogatore.jks");
+		request.setKeyStorePath("/etc/govway/keys/soggetto2.jks");
 		request.setKeyStoreType("JKS");
-		request.setKeyStorePassword("openspcoop");
-		request.setKeyAlias("erogatore");
+		request.setKeyStorePassword("openspcoopjks");
+		request.setKeyAlias("soggetto2");
 		request.setKeyPassword("openspcoop");
 		
 		Map<String, String> headers = new HashMap<String, String>();
@@ -265,10 +265,10 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		
 		HttpRequest request = new HttpRequest();
 		request.setTrustAllCerts(true);
-		request.setKeyStorePath("/etc/govway/keys/erogatore.jks");
+		request.setKeyStorePath("/etc/govway/keys/soggetto2.jks");
 		request.setKeyStoreType("JKS");
-		request.setKeyStorePassword("openspcoop");
-		request.setKeyAlias("erogatore");
+		request.setKeyStorePassword("openspcoopjks");
+		request.setKeyAlias("soggetto2");
 		request.setKeyPassword("openspcoop");
 		
 		Map<String, String> headers = new HashMap<String, String>();
@@ -281,7 +281,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 				headers,
 				"SoggettoInternoTestGestoreCredenzialeSsl",
 				null,
-				"SSL-Subject 'CN=Erogatore, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Erogatore, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634112674'",
+				"SSL-Subject 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634114074'",
 				"mTLS realm=\"GovWay\", error=\"invalid_request\", error_description=\"The request is missing a required client certificate\"",
 				Utilities.CREDENZIALI_PROXY_FORNITE_NON_CONFORMI,
 				"Header HTTP 'X-Fruizione-SSL-Subject' o 'X-Fruizione-SSL-Cert' non presente");
@@ -292,10 +292,10 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		
 		HttpRequest request = new HttpRequest();
 		request.setTrustAllCerts(true);
-		request.setKeyStorePath("/etc/govway/keys/erogatore.jks");
+		request.setKeyStorePath("/etc/govway/keys/soggetto2.jks");
 		request.setKeyStoreType("JKS");
-		request.setKeyStorePassword("openspcoop");
-		request.setKeyAlias("erogatore");
+		request.setKeyStorePassword("openspcoopjks");
+		request.setKeyAlias("soggetto2");
 		request.setKeyPassword("openspcoop");
 		
 		Map<String, String> headers = new HashMap<String, String>();
@@ -307,7 +307,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 				headers,
 				"SoggettoInternoTestGestoreCredenzialeSsl",
 				null,
-				"SSL-Subject 'CN=Erogatore, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Erogatore, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634112674'",
+				"SSL-Subject 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634114074'",
 				"mTLS realm=\"GovWay\", error=\"invalid_request\", error_description=\"The request is missing a required client certificate\"",
 				Utilities.CREDENZIALI_PROXY_FORNITE_NON_CONFORMI,
 				"Header HTTP 'X-Fruizione-SSL-Subject' o 'X-Fruizione-SSL-Cert' non presente");
@@ -318,10 +318,10 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		
 		HttpRequest request = new HttpRequest();
 		request.setTrustAllCerts(true);
-		request.setKeyStorePath("/etc/govway/keys/erogatore.jks");
+		request.setKeyStorePath("/etc/govway/keys/soggetto2.jks");
 		request.setKeyStoreType("JKS");
-		request.setKeyStorePassword("openspcoop");
-		request.setKeyAlias("erogatore");
+		request.setKeyStorePassword("openspcoopjks");
+		request.setKeyAlias("soggetto2");
 		request.setKeyPassword("openspcoop");
 		
 		Map<String, String> headers = new HashMap<String, String>();
@@ -333,7 +333,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 				headers,
 				"SoggettoInternoTestGestoreCredenzialeSsl",
 				null,
-				"SSL-Subject 'CN=Erogatore, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Erogatore, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634112674'",
+				"SSL-Subject 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-Issuer 'CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it'\nSSL-ClientCert-SerialNumber '1634114074'",
 				"mTLS realm=\"GovWay\", error=\"invalid_request\", error_description=\"The request is missing a required client certificate\"",
 				Utilities.CREDENZIALI_PROXY_FORNITE_NON_CONFORMI,
 				"Header HTTP 'X-Fruizione-SSL-Subject' o 'X-Fruizione-SSL-Cert' non presente");
