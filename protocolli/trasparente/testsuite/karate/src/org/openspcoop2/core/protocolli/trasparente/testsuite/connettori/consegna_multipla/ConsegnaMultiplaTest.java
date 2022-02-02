@@ -26,6 +26,7 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_1;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_2;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_3;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_ROTTO;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_COMPLETATA;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_FALLITA;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_IN_CORSO;
@@ -33,6 +34,9 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkSchedulingConnettoreCompletato;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkStatoConsegna;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.getNumeroTentativiSchedulingConnettore;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.statusCode2xxVsConnettori;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.statusCode4xxVsConnettori;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.statusCode5xxVsConnettori;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,6 +44,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,8 +56,6 @@ import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.RequestBuilder;
-import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpResponse;
@@ -84,8 +87,6 @@ import org.openspcoop2.utils.transport.http.HttpResponse;
 public class ConsegnaMultiplaTest  extends ConfigLoader {
 	
 	// Prima di ogni test  fermo le attuali riconsegne in atto.
-	
-	final static EsitiProperties esitiProperties = getEsitiProperties();
 	
 	@BeforeClass
 	public static void Before() {
@@ -160,15 +161,54 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 	
 	@Test
 	public void cadenzaRispedizione1_1() {
-		cadenzaRispedizione_Impl( HttpConstants.CONTENT_TYPE_SOAP_1_1);
+		cadenzaRispedizione_Impl(HttpConstants.CONTENT_TYPE_SOAP_1_1);
 	}
 
 	
 	@Test
 	public void cadenzaRispedizione1_2() {
-		cadenzaRispedizione_Impl( HttpConstants.CONTENT_TYPE_SOAP_1_2);
+		cadenzaRispedizione_Impl(HttpConstants.CONTENT_TYPE_SOAP_1_2);
 	}
 	
+	@Test
+	public void connettoreRotto1_1() {
+		connettoreRotto_Impl(HttpConstants.CONTENT_TYPE_SOAP_1_1);
+	}
+	
+	@Test
+	public void connettoreRotto1_2() {
+		connettoreRotto_Impl(HttpConstants.CONTENT_TYPE_SOAP_1_2);
+	}
+	
+	private void connettoreRotto_Impl(String soapContentType) {
+		final String erogazione = "TestConsegnaMultiplaConnettoreRotto";
+		
+		// Va come il primo test, ci si aspetta che funzionino tutti i connettori
+		// eccetto quello rotto, dove devono avvenire le rispedizioni.
+		HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", soapContentType );
+		
+		var responses = Common.makeParallelRequests(request, 10);
+   	   Common.checkAll200(responses);
+		
+		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
+   	   	Set<String> connettoriSchedulati = new HashSet<>(Common.setConnettoriAbilitati);
+   	   	connettoriSchedulati.add(CONNETTORE_ROTTO);
+   	   	
+		for (var r : responses) {
+			CommonConsegnaMultipla.checkPresaInConsegna(r,connettoriSchedulati.size());
+			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, connettoriSchedulati);
+		}
+	
+		// Attendo la consegna
+		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
+	
+		// La consegna deve risultare ancora in corso per via dell'errore sul connettore rotto, con un connettore
+		// in rispedizione
+		for (var r : responses) {
+			CommonConsegnaMultipla.checkStatoConsegna(r, ESITO_CONSEGNA_MULTIPLA_IN_CORSO, 1);
+		}
+		
+	}
 	
 	private void consegnaMultiplaSemplice_Impl(String soapContentType) throws IOException {
 		final String erogazione = "TestConsegnaMultipla";
@@ -187,7 +227,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
 		
 		for (var r : responses) {
-			CommonConsegnaMultipla.checkConsegnaCompletata(r, ESITO_CONSEGNA_MULTIPLA_COMPLETATA);
+			CommonConsegnaMultipla.checkConsegnaCompletata(r);
 		}
 
 		// Per i connettori di tipo file, controllo anche che la scrittura della richiesta di consegna multipla sia avvenuta.
@@ -234,6 +274,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		
 		// Tutte le richieste indipendentemente dal tipo devono essere state prese in consegna e lo scheduling inizia su tutti i connettori abilitati
 		for (var responses : responsesByKind.values()) {
+			Common.checkAll200(responses);
 			CommonConsegnaMultipla.checkPresaInConsegna(responses);
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 		}
@@ -298,6 +339,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		
 		// Tutte le richieste indipendentemente dal tipo devono essere state prese in consegna e lo scheduling inizia su tutti i connettori abilitati
 		for (var responses : responsesByKind.values()) {
+		   	Common.checkAll200(responses);
 			CommonConsegnaMultipla.checkPresaInConsegna(responses);
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 		}
@@ -355,32 +397,11 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 	}
 	
 
-	private void varieCombinazioniDiRegole_Impl(String soapContentType) {
+	private static void varieCombinazioniDiRegole_Impl(String soapContentType) {
 		final String erogazione = "TestConsegnaMultiplaVarieCombinazioniDiRegole";
 		
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 
-		Map<Integer, Set<String>> statusCode2xxVsConnettori  = Map
-				.of(200, Set.of(CONNETTORE_1,CONNETTORE_2),
-					  201, Set.of(CONNETTORE_1, CONNETTORE_3),
-					  202, Set.of(CONNETTORE_1,CONNETTORE_2, CONNETTORE_3),
-					  206, Set.of(CONNETTORE_1),
-					  299, Set.of(CONNETTORE_1));
-		
-		Map<Integer, Set<String>> statusCode4xxVsConnettori  = Map
-				.of(400, Set.of(CONNETTORE_1,CONNETTORE_2),
-					  401, Set.of(CONNETTORE_1, CONNETTORE_3),
-					  402, Set.of(CONNETTORE_1,CONNETTORE_2, CONNETTORE_3),
-					  406, Set.of(CONNETTORE_1),
-					  499, Set.of(CONNETTORE_1));
-		
-		Map<Integer, Set<String>> statusCode5xxVsConnettori  = Map
-				.of(500, Set.of(CONNETTORE_1,CONNETTORE_2),
-					  501, Set.of(CONNETTORE_1, CONNETTORE_3),
-					  502, Set.of(CONNETTORE_1,CONNETTORE_2, CONNETTORE_3),
-					  506, Set.of(CONNETTORE_1),
-				  	  599, Set.of(CONNETTORE_1));
-		
 		
 		for (var entry : statusCode2xxVsConnettori.entrySet()) {
 			requestsByKind.add(buildRequestAndExpectations(erogazione, entry.getKey(), entry.getValue(), soapContentType));
@@ -405,6 +426,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		
 		// Tutte le richieste indipendentemente dal tipo devono essere state prese in consegna e lo scheduling inizia su tutti i connettori abilitati
 		for (var responses : responsesByKind.values()) {
+		   	Common.checkAll200(responses);
 			CommonConsegnaMultipla.checkPresaInConsegna(responses);
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 		}
@@ -445,7 +467,6 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		requestSoapMessageContains.setUrl(requestSoapMessageContains.getUrl()+"&faultActor=12345&faultCode=2341&faultMessage=Container-MessageRispeditaContains-Container"); 
 	
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
-		// TODO: In 1_2 non va, aspetta il parere di andrea.
 		requestsByKind.add(new RequestAndExpectations(
 				requestSoapFaultTuttiValorizzati,				
 				Set.of(CONNETTORE_1,CONNETTORE_2),
@@ -453,7 +474,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 				ESITO_CONSEGNA_MULTIPLA_FALLITA)
 			);
 		
-		/*requestsByKind.add(new RequestAndExpectations(
+		requestsByKind.add(new RequestAndExpectations(
 				requestSoapFaultTuttiRegex,
 				Set.of(CONNETTORE_0,CONNETTORE_2,CONNETTORE_3),
 				Set.of(CONNETTORE_1), 
@@ -472,12 +493,13 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 				Set.of(CONNETTORE_0,CONNETTORE_1,CONNETTORE_3),
 				Set.of(CONNETTORE_2),
 				ESITO_CONSEGNA_MULTIPLA_FALLITA)
-			);*/
+			);
 		
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		
 		// Tutte le richieste indipendentemente dal tipo devono essere state prese in consegna e lo scheduling inizia su tutti i connettori abilitati
 		for (var responses : responsesByKind.values()) {
+			Common.checkAll200(responses);
 			CommonConsegnaMultipla.checkPresaInConsegna(responses);
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 		}
@@ -498,15 +520,6 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 			}
 		}
 
-	}
-	
-	private static EsitiProperties getEsitiProperties() {
-		try {
-			return EsitiProperties.getInstance(logCore, CommonConsegnaMultipla.PROTOCOL_NAME);
-		} catch (ProtocolException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		}
 	}
 	
 

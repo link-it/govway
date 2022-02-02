@@ -20,15 +20,13 @@
 
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla;
 
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_1;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_2;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_3;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.checkAll200;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.buildRequestAndExpectations;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkPresaInConsegna;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkRequestExpectations;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkRequestExpectationsFinal;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkSchedulingConnettoreIniziato;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.setIntersection;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.statusCode2xxVsConnettori;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -50,94 +48,87 @@ import org.openspcoop2.utils.transport.http.HttpResponse;
 public class ConsegnaMultiplaCondizionaleByNomeTest extends ConfigLoader {
 	
 	@Test
+	public void consegnaMultiplaFallita() {
+		// TODO: 1 -Manca il campo identificativo.
+		//					2- Nome connettore errato
+		//					3 - Utilizzo connettore disabiltato
+		//					4 - Utilizzo connettore con scheduling disabilitato.
+	}
+	
+	@Test
 	public void headerHttp() {
 		final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeHeaderHttp";
 		final String soapContentType = HttpConstants.CONTENT_TYPE_SOAP_1_1;
 		
-		// TODO: Configura l'erogazione come hai fatto per il test su TestConsegnaMultiplaVarieCombinazioniDiRegole
-		
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 
-		Map<Integer, Set<String>> statusCode2xxVsConnettori  = Map
-				.of(200, Set.of(CONNETTORE_1,CONNETTORE_2),
-					  201, Set.of(CONNETTORE_1, CONNETTORE_3),
-					  202, Set.of(CONNETTORE_1,CONNETTORE_2, CONNETTORE_3),
-					  206, Set.of(CONNETTORE_1),
-					  299, Set.of(CONNETTORE_1));
-		
-		Map<Integer, Set<String>> statusCode4xxVsConnettori  = Map
-				.of(400, Set.of(CONNETTORE_1,CONNETTORE_2),
-					  401, Set.of(CONNETTORE_1, CONNETTORE_3),
-					  402, Set.of(CONNETTORE_1,CONNETTORE_2, CONNETTORE_3),
-					  406, Set.of(CONNETTORE_1),
-					  499, Set.of(CONNETTORE_1));
-		
-		Map<Integer, Set<String>> statusCode5xxVsConnettori  = Map
-				.of(500, Set.of(CONNETTORE_1,CONNETTORE_2),
-					  501, Set.of(CONNETTORE_1, CONNETTORE_3),
-					  502, Set.of(CONNETTORE_1,CONNETTORE_2, CONNETTORE_3),
-					  506, Set.of(CONNETTORE_1),
-				  	  599, Set.of(CONNETTORE_1));
-		
 		// Prima costruisco le richieste normalmente
 		for (var entry : statusCode2xxVsConnettori.entrySet()) {
 			requestsByKind.add(buildRequestAndExpectations(erogazione, entry.getKey(), entry.getValue(), soapContentType) );
 		}
 		
-		// Successivamente associo ad ogni richiesta un filtro e rimuovo dal set di connettori ok e 
-		// dall set di connettori errore di i connettori filtrati via dalla consegna condizionale
-		for(int i=0;i<requestsByKind.size();i++) {
-			String connettore = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
-			Set<String> connettoriPool = Set.of(connettore);
-			
-			RequestAndExpectations current = requestsByKind.get(i);
-			current.request.addHeader(Common.HEADER_ID_CONDIZIONE, connettore);
-			current.connettoriSuccesso = setIntersection(current.connettoriSuccesso,connettoriPool);
-			current.connettoriFallimento = setIntersection(current.connettoriFallimento, connettoriPool);
-		}
-		
 		/*for (var entry : statusCode4xxVsConnettori.entrySet()) {
 			requestsByKind.add(buildRequestAndExpectations(erogazione, entry.getKey(), entry.getValue()));
 		}*/
-	
+
 		/*for (var entry : statusCode5xxVsConnettori.entrySet()) { 
 			requestsByKind.add(buildRequestAndExpectations(erogazione, entry.getKey(), entry.getValue()));
 		}*/
 		
-		
-	Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
-		
-		// Tutte le richieste indipendentemente dal tipo devono essere state prese in consegna e lo scheduling inizia 
+		// Successivamente associo ad ogni richiesta un filtro e rimuovo dal set di connettori ok e 
+		// dall set di connettori errore di i connettori filtrati via dalla consegna condizionale
+		for (int i = 0; i < requestsByKind.size(); i++) {
+			String connettore = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
+			Set<String> connettoriPool = Set.of(connettore);
+
+			RequestAndExpectations current = requestsByKind.get(i);
+			current.request.addHeader(Common.HEADER_ID_CONDIZIONE, connettore);
+			current.connettoriSuccesso = setIntersection(current.connettoriSuccesso, connettoriPool);
+			current.connettoriFallimento = setIntersection(current.connettoriFallimento, connettoriPool);
+		}
+
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla
+				.makeRequestsByKind(requestsByKind, 1);
+
+		// Tutte le richieste indipendentemente dal tipo devono essere state prese in
+		// consegna e lo scheduling inizia
 		// su tutti i connettori abilitati e filtrati dalla consegna condizionale
-		for (var requestAndExpectation : responsesByKind.keySet() ) {
+		for (var requestAndExpectation : responsesByKind.keySet()) {
 			var responses = responsesByKind.get(requestAndExpectation);
-			
-			checkPresaInConsegna(responses);
+
+			checkAll200(responses);
 			Set<String> connettoriGestiti = new HashSet<>(requestAndExpectation.connettoriSuccesso);
 			connettoriGestiti.addAll(requestAndExpectation.connettoriFallimento);
-			
+			CommonConsegnaMultipla.checkStatoConsegna(responses, CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA, connettoriGestiti.size());
+
 			// Deve essere la fusione dei connettoriOk e i connettoriErrore\conettoriScheduling Disabilitato
+			// NO, quando si usa la consegna multipla per nome, siccome viene identificato un solo connettore il sistema torna a lavorare 
+			// con la consegna semplice sul connettore individuato. L'esito della tranzazione diventa 0 (ESITO_OK) 
+			// Chiedi ad andrea se va bene così, ma immagino di si.
+			
 			checkSchedulingConnettoreIniziato(responses, connettoriGestiti);
-			// // TODO: Controlla che lo scheduling sia arrivato solo ai connettori specificati, modifico la checkSchedulingConnettoreInziato?
+			// // TODO: Controlla che lo scheduling sia arrivato solo ai connettori
+			// specificati, modifico la checkSchedulingConnettoreInziato?
 		}
-		
+
 		// Attendo la consegna
-		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
-		
+		org.openspcoop2.utils.Utilities.sleep(2 * CommonConsegnaMultipla.intervalloControllo);
+
 		for (var requestAndExpectation : responsesByKind.keySet()) {
 			for (var response : responsesByKind.get(requestAndExpectation)) {
 				checkRequestExpectations(requestAndExpectation, response);
 			}
 		}
-		
-		// Attendo l'intervallo di riconsegna e controllo che il contatore delle consegne sia almeno a 2
-		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControlloFallite);
+
+		// Attendo l'intervallo di riconsegna e controllo che il contatore delle
+		// consegne sia almeno a 2
+		org.openspcoop2.utils.Utilities.sleep(2 * CommonConsegnaMultipla.intervalloControlloFallite);
 		for (var requestAndExpectation : responsesByKind.keySet()) {
 			for (var response : responsesByKind.get(requestAndExpectation)) {
 				checkRequestExpectationsFinal(requestAndExpectation, response);
 			}
 		}
-		
+
 	}
 		
 }
