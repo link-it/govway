@@ -43,6 +43,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.pdd.core.GestoreMessaggiException;
@@ -315,9 +316,11 @@ public class GestoreErroreConnettore {
 
 		// ESITO SOAP FAULT:
 		SOAPBody bodyConFault = null;
+		MessageType messageType = null;
 
 		if(messageResponse!=null && (messageResponse instanceof OpenSPCoop2SoapMessage) ){
 			try{
+				messageResponse.getMessageType();
 				if(messageResponse.castAsSoap().hasSOAPFault()) {
 					bodyConFault = messageResponse.castAsSoap().getSOAPBody();
 				}
@@ -345,13 +348,15 @@ public class GestoreErroreConnettore {
 					
 					List<String> subCodice_soap12 = new ArrayList<String>();
 					List<String> subCodiceNamespace_soap12 = new ArrayList<String>();
-					if(this.fault.getFaultSubcodes()!=null) {
-						Iterator<QName> it = this.fault.getFaultSubcodes();
-						while (it.hasNext()) {
-							QName qName = (QName) it.next();
-							if(qName.getLocalPart()!=null) {
-								subCodice_soap12.add(qName.getLocalPart());
-								subCodiceNamespace_soap12.add(qName.getNamespaceURI()!=null ? qName.getNamespaceURI() : "");
+					if(MessageType.SOAP_12.equals(messageType)) {
+						if(this.fault.getFaultSubcodes()!=null) {
+							Iterator<QName> it = this.fault.getFaultSubcodes();
+							while (it.hasNext()) {
+								QName qName = (QName) it.next();
+								if(qName.getLocalPart()!=null) {
+									subCodice_soap12.add(qName.getLocalPart());
+									subCodiceNamespace_soap12.add(qName.getNamespaceURI()!=null ? qName.getNamespaceURI() : "");
+								}
 							}
 						}
 					}
