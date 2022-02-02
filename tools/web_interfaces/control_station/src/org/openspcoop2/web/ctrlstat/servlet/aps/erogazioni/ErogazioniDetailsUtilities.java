@@ -1800,7 +1800,8 @@ public class ErogazioniDetailsUtilities {
 			int numExtended = extendedServletList.sizeList(portaDelegata);
 			DataElement de = new DataElement();
 			consoleHelper.setStatoExtendedList(de, numExtended, stato, statoTooltip, false);
-			printConfigurazioneFromStatusValues(de, "ExtInfo",
+			String label = extendedServletList.getListTitle(consoleHelper);
+			printConfigurazioneFromStatusValues(de, label,
 					sb,
 					separator, newLine);
 		}
@@ -1816,7 +1817,8 @@ public class ErogazioniDetailsUtilities {
 			int numExtended = extendedServletList.sizeList(portaApplicativa);
 			DataElement de = new DataElement();
 			consoleHelper.setStatoExtendedList(de, numExtended, stato, statoTooltip, false);
-			printConfigurazioneFromStatusValues(de, "ExtInfo",
+			String label = extendedServletList.getListTitle(consoleHelper);
+			printConfigurazioneFromStatusValues(de, label,
 					sb,
 					separator, newLine);
 		}
