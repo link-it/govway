@@ -221,7 +221,12 @@ public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehavio
 					saveMessage = listaServiziApplicativi_consegnaSenzaRisposta.size()>0;
 				}
 				else {
-					saveMessage = listaServiziApplicativi_consegnaSenzaRisposta.size()>1;
+					if(TipoBehaviour.CONSEGNA_MULTIPLA.equals(this.bt)) {
+						saveMessage = listaServiziApplicativi_consegnaSenzaRisposta.size()>0; // comunque prendo in carico !
+					}
+					else {
+						saveMessage = listaServiziApplicativi_consegnaSenzaRisposta.size()>1;
+					}
 				}
 			}
 			if(saveMessage) {
