@@ -104,6 +104,13 @@ public class CommonConsegnaMultipla {
 				  502, Set.of(CONNETTORE_1,CONNETTORE_2, CONNETTORE_3),
 				  506, Set.of(CONNETTORE_1),
 			  	  599, Set.of(CONNETTORE_1));
+	
+	final static Map<Integer,Set<String>> statusCodeVsConnettori = new HashMap<>();
+	static {
+		statusCodeVsConnettori.putAll(statusCode2xxVsConnettori);
+		statusCodeVsConnettori.putAll(statusCode4xxVsConnettori);
+		statusCodeVsConnettori.putAll(statusCode5xxVsConnettori);
+	}
 
 	public static <T> Set<T> setIntersection(Set<T> lhs, Set<T> rhs) {
 		Set<T> ret = new HashSet<T>();
@@ -114,6 +121,12 @@ public class CommonConsegnaMultipla {
 			}
 		}
 				
+		return ret;
+	}
+	
+	public static <T> Set<T> setSum(Set<T> lhs, Set<T> rhs) {
+		Set<T> ret = new HashSet<T>(lhs);
+		ret.addAll(rhs);
 		return ret;
 	}
 	
@@ -248,9 +261,8 @@ public class CommonConsegnaMultipla {
 			checkSchedulingConnettoreCompletato(response, connettore);
 		}
 		
-		// TODO: Devo controllare sotto transazioni_sa che non siano stati raggiunti o schedulati connettori in più
-		// oltre a quelli specificati in connettoriFallimento e connettoriSuccesso, in questo modo sono a posto anche
-		// per la consegna condizionale
+		Set<String> wholeConnettori = setSum(requestAndExpectation.connettoriSuccesso,requestAndExpectation.connettoriFallimento);
+		checkConnettoriRaggiuntiEsclusivamente(response, wholeConnettori);
 		
 		checkStatoConsegna(response,requestAndExpectation.esito, requestAndExpectation.connettoriFallimento.size());
 	}
@@ -264,28 +276,32 @@ public class CommonConsegnaMultipla {
 			checkSchedulingConnettoreCompletato(response, connettore);
 		}
 		
-		// TODO: Devo controllare sotto transazioni_sa che non siano stati raggiunti o schedulati connettori in più
-		// oltre a quelli specificati in connettoriFallimento e connettoriSuccesso, in questo modo sono a posto anche
-		// per la consegna condizionale
+		Set<String> wholeConnettori = setSum(requestAndExpectation.connettoriSuccesso,requestAndExpectation.connettoriFallimento);
+		checkConnettoriRaggiuntiEsclusivamente(response, wholeConnettori);
 		
 		checkStatoConsegna(response,requestAndExpectation.esito, requestAndExpectation.connettoriFallimento.size());
 	}
 
 	/**
+	 * @deprecated
+
+	 */
+	public static RequestAndExpectations buildRequestAndExpectations(String erogazione, int statusCode, Set<String> connettoriOk, String soapContentType) {		
+		var connettoriErrore = new HashSet<>(Common.setConnettoriAbilitati);
+		connettoriErrore.removeAll(connettoriOk);
+		return buildRequestAndExpectations(erogazione, statusCode, connettoriOk, connettoriOk, soapContentType);
+	}
+	
+	/**
 	 * Costruisce la richiesta e le condizioni attese sull'esito della richiesta.
 	 * 
 	 * Se la richiesta ha uno status != 2xx e viene accettata da un connettore, lo stato diventa ESITO_CONSEGNA_MULTIPLA_FALLITA
 	 * 
-	 * 
-	 * Nel caso 
-	 * @return
 	 */
-	public static RequestAndExpectations buildRequestAndExpectations(String erogazione, int statusCode, Set<String> connettoriOk, String soapContentType) {
+	public static RequestAndExpectations buildRequestAndExpectations(String erogazione, int statusCode, Set<String> connettoriOk, Set<String> connettoriErrore, String soapContentType) {
 		HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
 		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
 		
-		var connettoriErrore = new HashSet<>(Common.setConnettoriAbilitati);
-		connettoriErrore.removeAll(connettoriOk);
 		int esito;
 		
 		// Se qualsiasi connettore accetta uno status code non OK, la consegna multipla va segnata come fallita.
@@ -298,23 +314,42 @@ public class CommonConsegnaMultipla {
 		return new RequestAndExpectations(request, connettoriOk, connettoriErrore, esito);
 	}
 	
+	
 
 
 	public  static void checkSchedulingConnettoriCompletato(HttpResponse response, Set<String> connettori) {
 		for (var connettore : connettori) {
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, connettore);			
-		}		
+			checkSchedulingConnettoreCompletato(response, connettore);			
+		}
+		
+		// Controllo che lo scheduling sia stato effettuato solo sui connettori indicati
+		checkConnettoriRaggiuntiEsclusivamente(response, connettori);
 	}
 
 	public static void checkSchedulingConnettoreIniziato(HttpResponse response, Set<String> connettori) {	
 		for (var connettore : connettori) {
-			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(response, connettore);
-		}		
+			checkSchedulingConnettoreIniziato(response, connettore);
+		}
+		
+		// Controllo che lo scheduling sia stato effettuato solo sui connettori indicati
+		checkConnettoriRaggiuntiEsclusivamente(response, connettori);
+	}
+
+
+	private static void checkConnettoriRaggiuntiEsclusivamente(HttpResponse response, Set<String> connettori) {
+		String query = "select connettore_nome  from transazioni_sa where id_transazione=?";
+		String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+	
+		List<Map<String, Object>> connettoriRaggiunti = ConfigLoader.getDbUtils().readRows(query, id_transazione);
+		for(var row : connettoriRaggiunti) {
+			String connettore = (String) row.get("connettore_nome");
+			assertTrue(connettori.contains(connettore));
+		}
 	}
 	
 	public static void checkSchedulingConnettoreIniziato(List<HttpResponse> responses, Set<String> connettori) {
 		for (var r : responses) {
-			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, connettori);
+			checkSchedulingConnettoreIniziato(r, connettori);
 		}
 	}
 

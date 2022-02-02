@@ -153,8 +153,12 @@ public class RequestBuilder {
 		requestSoapFault.setUrl(requestSoapFault.getUrl() +"&fault=true&faultSoapVersion="+faultSoapVersion);
 		return requestSoapFault;
 	}
-
+	
 	public static HttpRequest buildSoapRequest(String erogazione, String azione, String soapAction, String contentTypeSoap) {
+		return buildSoapRequest(erogazione, azione, soapAction, contentTypeSoap, "");
+	}
+
+	public static HttpRequest buildSoapRequest(String erogazione, String azione, String soapAction, String contentTypeSoap, String body) {
 		// nel soap 1.1 l'azione è specifica nello header SOAPAction
 		// versioneSoap =[ HttpConstants.CONTENT_TYPE_SOAP_1_1; |  HttpConstants.CONTENT_TYPE_SOAP_1_2 ]
 				
@@ -162,7 +166,7 @@ public class RequestBuilder {
 			String content = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +  
 					"    <soap:Body>\n" + 
 					"        <ns2:BodySoap1_1 xmlns:ns2=\"http://amministrazioneesempio.it/nomeinterfacciaservizio\">\n" +
-								 
+					body +
 					"        </ns2:BodySoap1_1>\n" + 
 					"    </soap:Body>\n" + 
 					"</soap:Envelope>";
@@ -181,7 +185,7 @@ public class RequestBuilder {
 			String content = "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">\n" +  
 					"    <soap:Body>\n" + 
 					"        <ns2:BodySoap1_2 xmlns:ns2=\"http://amministrazioneesempio.it/nomeinterfacciaservizio\">\n" +
-								 
+					body +
 					"        </ns2:BodySoap1_2>\n" + 
 					"    </soap:Body>\n" + 
 					"</soap:Envelope>";
