@@ -211,6 +211,7 @@ public class CommonConsegnaMultipla {
 		String query = "select count(*) from transazioni_sa where id_transazione=? and connettore_nome = ?  and consegna_terminata = ? and numero_tentativi >=1";
 		String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
 	
+		ConfigLoader.getLoggerCore().info("Checking scheduling connettore in corso for transazione:  " + id_transazione + " AND connettore = " + connettore);
 		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, false);
 		assertEquals(Integer.valueOf(1), count);
 	}
@@ -219,7 +220,7 @@ public class CommonConsegnaMultipla {
 	public  static void checkSchedulingConnettoreIniziato(HttpResponse response, String connettore) {
 		String query = "select count(*) from transazioni_sa where id_transazione=? and connettore_nome = ?  and consegna_terminata = ? and numero_tentativi = 0";
 		String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
-	
+		ConfigLoader.getLoggerCore().info("Checking scheduling connettore iniziato for transazione:  " + id_transazione + " AND connettore = " + connettore);
 		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, false);
 		assertEquals(Integer.valueOf(1), count);
 	}
@@ -232,7 +233,7 @@ public class CommonConsegnaMultipla {
 	public static void checkSchedulingConnettoreCompletato(HttpResponse response, String connettore) {
 			String query = "select count(*) from transazioni_sa where id_transazione=? and connettore_nome = ?  and consegna_terminata = ? and numero_tentativi = 1";
 			String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
-	
+			ConfigLoader.getLoggerCore().info("Checking scheduling connettore completato for transazione:  " + id_transazione + " AND connettore = " + connettore);
 			Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, true);
 			assertEquals(Integer.valueOf(1), count);				
 	}
