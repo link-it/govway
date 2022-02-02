@@ -20,6 +20,7 @@
 
 package org.openspcoop2.pdd.core.integrazione;
 
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 
@@ -35,6 +36,13 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 public class GestoreIntegrazionePAAutenticazione extends AbstractCore implements IGestoreIntegrazionePA{
 
 
+	private boolean rest = true;
+	private boolean soap = true;
+	
+	protected GestoreIntegrazionePAAutenticazione( boolean rest, boolean soap ){
+		this.rest = rest;
+		this.soap = soap;
+	}
 	public GestoreIntegrazionePAAutenticazione(){
 	}
 	
@@ -52,9 +60,22 @@ public class GestoreIntegrazionePAAutenticazione extends AbstractCore implements
 	@Override
 	public void setOutRequestHeader(HeaderIntegrazione integrazione,
 			OutRequestPAMessage outRequestPAMessage) throws HeaderIntegrazioneException{
-		UtilitiesAutenticazione utilities = new UtilitiesAutenticazione(integrazione, outRequestPAMessage, 
-				this.getPddContext(), OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
-		utilities.process();
+		
+		boolean process = false;
+		if(outRequestPAMessage!=null && outRequestPAMessage.getMessage()!=null && outRequestPAMessage.getMessage().getServiceBinding()!=null) {
+			if(ServiceBinding.REST.equals(outRequestPAMessage.getMessage().getServiceBinding())) {
+				process = this.rest;
+			}
+			else {
+				process = this.soap;
+			}
+		}
+		
+		if(process) {
+			UtilitiesAutenticazione utilities = new UtilitiesAutenticazione(integrazione, outRequestPAMessage, 
+					this.getPddContext(), OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
+			utilities.process();
+		}
 	}
 	
 	// IN - Response
