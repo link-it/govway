@@ -21,6 +21,7 @@
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla;
 
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.checkAll200;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.connettoriAbilitati;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkRequestExpectations;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkRequestExpectationsFinal;
@@ -29,6 +30,7 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.setIntersection;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +70,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 
 	
 	public RequestAndExpectations buildRequestAndExpectationFiltered(HttpRequest request, int statusCode, Set<String> connettoriSuccesso, Set<String> connettoriFiltrati, String soapContentType) {
+		connettoriFiltrati = new HashSet<>(connettoriFiltrati);
 		connettoriFiltrati.remove(Common.CONNETTORE_DISABILITATO);
 		connettoriSuccesso = setIntersection(connettoriSuccesso, connettoriFiltrati);
 		connettoriFiltrati.removeAll(connettoriSuccesso);
@@ -236,6 +239,38 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 	@Test
 	public void soapAction( ) {
 		final String erogazione = "TestConsegnaMultiplaCondizionaleByFiltroSoapAction";
+		
+		final String soapContentType = HttpConstants.CONTENT_TYPE_SOAP_1_1;
+		
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+
+		int i = 0;
+		// Prima costruisco le richieste normalmente
+		for (var entry : CommonConsegnaMultipla.statusCodeVsConnettori.entrySet()) {
+			String pool = Common.pools.get(i % Common.pools.size());
+			Set<String> connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
+
+			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   Common.filtriPools.get(pool).get(0),  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			
+			var current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool, soapContentType);
+
+			requestsByKind.add(current);
+			i++;
+		}
+				
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+		
+		checkResponses(responsesByKind);
+		
+		
+		/*connettoriAbilitati.forEach( connettore -> {
+			String filtroConnettore = filtriConnettori.get(connettore).get(0);
+			String azione = connettore;
+			requestsByConnettore.put(
+					connettore,
+					Arrays.asList( RequestBuilder.buildSoapRequest(erogazione, azione, filtroConnettore, versioneSoap)) );
+		});*/
 
 		// TODO: devi creare una nuova API così come hai fatto per la consegna condizionale normale dando
 		//		Alle azioni il nome dei filtri dei connettori.
@@ -244,7 +279,28 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 	
 	@Test
 	public void clientIp() {
+		// TODO: Si ritorna al caso con un solo connettore e niente consegna multipla.
 		final String erogazione = "TestConsegnaMultiplaCondizionaleByFiltroClientIp";
+		final String soapContentType = HttpConstants.CONTENT_TYPE_SOAP_1_1;
+
+/*		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+		int i=0;
+		// Finiscono tutte sul primo connettore
+		for (var entry : CommonConsegnaMultipla.statusCodeVsConnettori.entrySet()) {
+			Set<String> connettoriPool = Set.of(Common.CONNETTORE_0);
+			
+			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			//request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+Common.filtriPools.get(pool).get(0));
+			
+			var current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool, soapContentType);
+			requestsByKind.add(current);
+			i++;
+		}
+				
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+		
+		checkResponses(responsesByKind);*/
 		
 	}
 	
