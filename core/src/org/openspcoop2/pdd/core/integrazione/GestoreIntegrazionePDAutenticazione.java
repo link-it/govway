@@ -32,44 +32,35 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class GestoreIntegrazionePATemplate extends AbstractCore implements IGestoreIntegrazionePA{
+public class GestoreIntegrazionePDAutenticazione extends AbstractCore implements IGestoreIntegrazionePD{
 
-	private boolean transformRequest = true;
-	private boolean transformResponse = true;
-	
-	protected GestoreIntegrazionePATemplate( boolean transformRequest, boolean transformResponse ){
-		this.transformRequest = transformRequest;
-		this.transformResponse = transformResponse;
-	}
-	public GestoreIntegrazionePATemplate(){
+	public GestoreIntegrazionePDAutenticazione(){
 	}
 	
-	
+
 	// IN - Request
-	
+
 	@Override
 	public void readInRequestHeader(HeaderIntegrazione integrazione,
-			InRequestPAMessage inRequestPAMessage) throws HeaderIntegrazioneException {
+			InRequestPDMessage inRequestPDMessage) throws HeaderIntegrazioneException{
 		// nop
 	}
-	
+
 	// OUT - Request
 	
 	@Override
 	public void setOutRequestHeader(HeaderIntegrazione integrazione,
-			OutRequestPAMessage outRequestPAMessage) throws HeaderIntegrazioneException{
-		if(this.transformRequest) {
-			UtilitiesTemplate utilities = new UtilitiesTemplate("template-request", integrazione, outRequestPAMessage, 
-					this.getPddContext(), OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
-			utilities.process(true);
-		}
+			OutRequestPDMessage outRequestPDMessage) throws HeaderIntegrazioneException{
+		UtilitiesAutenticazione utilities = new UtilitiesAutenticazione(integrazione, outRequestPDMessage, 
+				this.getPddContext(), OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
+		utilities.process();
 	}
 	
 	// IN - Response
 	
 	@Override
 	public void readInResponseHeader(HeaderIntegrazione integrazione,
-			InResponsePAMessage inResponsePAMessage) throws HeaderIntegrazioneException{
+			InResponsePDMessage inResponsePDMessage) throws HeaderIntegrazioneException{
 		// nop
 	}
 		
@@ -77,11 +68,7 @@ public class GestoreIntegrazionePATemplate extends AbstractCore implements IGest
 
 	@Override
 	public void setOutResponseHeader(HeaderIntegrazione integrazione,
-			OutResponsePAMessage outResponsePAMessage) throws HeaderIntegrazioneException{
-		if(this.transformResponse) {
-			UtilitiesTemplate utilities = new UtilitiesTemplate("template-response", integrazione, outResponsePAMessage, 
-					this.getPddContext(), OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
-			utilities.process(false);
-		}
+			OutResponsePDMessage outResponsePDMessage) throws HeaderIntegrazioneException{
+		// nop
 	}
 }

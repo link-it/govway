@@ -61,7 +61,7 @@ public class GestoreIntegrazionePDTemplate extends AbstractCore implements IGest
 		if(this.transformRequest) {
 			UtilitiesTemplate utilities = new UtilitiesTemplate("template-request", integrazione, outRequestPDMessage, 
 					this.getPddContext(), OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
-			utilities.process();
+			utilities.process(true);
 		}
 	}
 	
@@ -81,7 +81,7 @@ public class GestoreIntegrazionePDTemplate extends AbstractCore implements IGest
 		if(this.transformResponse) {
 			UtilitiesTemplate utilities = new UtilitiesTemplate("template-response", integrazione, outResponsePDMessage, 
 					this.getPddContext(), OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
-			utilities.process();
+			utilities.process(false);
 		}
 	}
 }

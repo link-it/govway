@@ -199,15 +199,23 @@ public class UtilitiesTemplate {
 	}
 
 		
-	public void process() throws HeaderIntegrazioneException {
+	public void process(boolean request) throws HeaderIntegrazioneException {
 		try {
 			if(this.msg==null) {
 				return;
 			}
 			
 			boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
-			Map<String, Object> dynamicMap = DynamicUtils.buildDynamicMap(this.msg, this.context, this.busta, this.log,
+			Map<String, Object> dynamicMapRequest = DynamicUtils.buildDynamicMap(this.msg, this.context, this.busta, this.log,
 					bufferMessage_readOnly);
+			Map<String, Object> dynamicMapResponse = null;
+			if(!request) {
+				dynamicMapResponse = DynamicUtils.buildDynamicMapResponse(this.msg, this.context, this.busta, this.log,
+						bufferMessage_readOnly,
+						dynamicMapRequest);
+			}
+			
+			Map<String, Object> dynamicMap = request ? dynamicMapRequest : dynamicMapResponse;
 			
 			if(this.tipoTrasformazione==null) {
 				throw new Exception("Tipo di trasformazione non definita");

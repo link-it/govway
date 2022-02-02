@@ -1102,6 +1102,17 @@ public class OpenSPCoop2Properties {
 			getIntegrazioneTemplatePortaApplicativaResponseTipo();
 			getIntegrazioneTemplatePortaApplicativaResponseFile();
 			
+			getIntegrazioneAutenticazionePortaDelegataRequestHeaders();
+			getIntegrazioneAutenticazionePortaDelegataRequestHeadersMap();
+			getIntegrazioneAutenticazionePortaApplicativaRequestHeaders();
+			getIntegrazioneAutenticazionePortaApplicativaRequestHeadersMap();
+			if(this.getIntegrazioneAutenticazionePropertyHeaders()==null) {
+				return false;
+			}
+			if(this.getIntegrazioneAutenticazionePropertyHeaderPrefix()==null) {
+				return false;
+			}			
+			
 			// Warning
 			this.isIntegrazioneAsincroniConIdCollaborazioneEnabled();
 			this.getHeaderIntegrazioneSOAPPdDVersione();
@@ -11352,9 +11363,180 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getIntegrazioneTemplatePortaApplicativaResponseFile;
 	}
 	
+	
+	/* ********  INTEGRAZIONE AUTENTICAZIONE  ******** */
+	
+	private static List<String> getIntegrazioneAutenticazionePortaDelegataRequestHeaders = null;
+	public List<String> getIntegrazioneAutenticazionePortaDelegataRequestHeaders() throws Exception{
+		String pName = "org.openspcoop2.pdd.integrazione.autenticazione.pd.request.headers";
+		if(OpenSPCoop2Properties.getIntegrazioneAutenticazionePortaDelegataRequestHeaders==null){
+			try{
+				
+				OpenSPCoop2Properties.getIntegrazioneAutenticazionePortaDelegataRequestHeaders = new ArrayList<String>();
+				
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null) {
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							String v = split[i];
+							if(v!=null) {
+								v = v.trim();
+							}
+							if(!"".equals(v)) {
+								OpenSPCoop2Properties.getIntegrazioneAutenticazionePortaDelegataRequestHeaders.add(v);
+							}
+						}
+					}
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new Exception (e);
+			}    
+		}
+
+		return OpenSPCoop2Properties.getIntegrazioneAutenticazionePortaDelegataRequestHeaders;
+	}
    
+	private static Map<String, String> getIntegrazioneAutenticazionePortaDelegataRequestHeadersMap = null;
+	public Map<String, String> getIntegrazioneAutenticazionePortaDelegataRequestHeadersMap() throws Exception{
+		String pNamePrefix = "org.openspcoop2.pdd.integrazione.autenticazione.pd.request.header.";
+		if(OpenSPCoop2Properties.getIntegrazioneAutenticazionePortaDelegataRequestHeadersMap==null){
+			try{
+				
+				OpenSPCoop2Properties.getIntegrazioneAutenticazionePortaDelegataRequestHeadersMap = new HashMap<String, String>();
+				List<String> getIntegrazioneAutenticazionePortaDelegataRequestHeaders = getIntegrazioneAutenticazionePortaDelegataRequestHeaders();
+				if(getIntegrazioneAutenticazionePortaDelegataRequestHeaders!=null && !getIntegrazioneAutenticazionePortaDelegataRequestHeaders.isEmpty()) {
+					for (String hdrName : getIntegrazioneAutenticazionePortaDelegataRequestHeaders) {
+						String pName = pNamePrefix+hdrName;
+						try {
+							String hdrValue = this.reader.getValue_convertEnvProperties(pName);
+							if(hdrValue==null) {
+								throw new Exception("non definita");
+							}
+							hdrValue = hdrValue.trim();
+							OpenSPCoop2Properties.getIntegrazioneAutenticazionePortaDelegataRequestHeadersMap.put(hdrName, hdrValue);
+						}catch(java.lang.Exception e) {
+							throw new Exception ("Proprietà '"+pName+"' "+e.getMessage(),e);
+						}   
+					}
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNamePrefix+".*': "+e.getMessage(),e);
+				throw new Exception (e);
+			}    
+		}
 
+		return OpenSPCoop2Properties.getIntegrazioneAutenticazionePortaDelegataRequestHeadersMap;
+	}
+	
+	private static List<String> getIntegrazioneAutenticazionePortaApplicativaRequestHeaders = null;
+	public List<String> getIntegrazioneAutenticazionePortaApplicativaRequestHeaders() throws Exception{
+		String pName = "org.openspcoop2.pdd.integrazione.autenticazione.pa.request.headers";
+		if(OpenSPCoop2Properties.getIntegrazioneAutenticazionePortaApplicativaRequestHeaders==null){
+			try{
+				
+				OpenSPCoop2Properties.getIntegrazioneAutenticazionePortaApplicativaRequestHeaders = new ArrayList<String>();
+				
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null) {
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							String v = split[i];
+							if(v!=null) {
+								v = v.trim();
+							}
+							if(!"".equals(v)) {
+								OpenSPCoop2Properties.getIntegrazioneAutenticazionePortaApplicativaRequestHeaders.add(v);
+							}
+						}
+					}
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new Exception (e);
+			}    
+		}
 
+		return OpenSPCoop2Properties.getIntegrazioneAutenticazionePortaApplicativaRequestHeaders;
+	}
+   
+	private static Map<String, String> getIntegrazioneAutenticazionePortaApplicativaRequestHeadersMap = null;
+	public Map<String, String> getIntegrazioneAutenticazionePortaApplicativaRequestHeadersMap() throws Exception{
+		String pNamePrefix = "org.openspcoop2.pdd.integrazione.autenticazione.pa.request.header.";
+		if(OpenSPCoop2Properties.getIntegrazioneAutenticazionePortaApplicativaRequestHeadersMap==null){
+			try{
+				
+				OpenSPCoop2Properties.getIntegrazioneAutenticazionePortaApplicativaRequestHeadersMap = new HashMap<String, String>();
+				List<String> getIntegrazioneAutenticazionePortaApplicativaRequestHeaders = getIntegrazioneAutenticazionePortaApplicativaRequestHeaders();
+				if(getIntegrazioneAutenticazionePortaApplicativaRequestHeaders!=null && !getIntegrazioneAutenticazionePortaApplicativaRequestHeaders.isEmpty()) {
+					for (String hdrName : getIntegrazioneAutenticazionePortaApplicativaRequestHeaders) {
+						String pName = pNamePrefix+hdrName;
+						try {
+							String hdrValue = this.reader.getValue_convertEnvProperties(pName);
+							if(hdrValue==null) {
+								throw new Exception("non definita");
+							}
+							hdrValue = hdrValue.trim();
+							OpenSPCoop2Properties.getIntegrazioneAutenticazionePortaApplicativaRequestHeadersMap.put(hdrName, hdrValue);
+						}catch(java.lang.Exception e) {
+							throw new Exception ("Proprietà '"+pName+"' "+e.getMessage(),e);
+						}   
+					}
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNamePrefix+".*': "+e.getMessage(),e);
+				throw new Exception (e);
+			}    
+		}
+
+		return OpenSPCoop2Properties.getIntegrazioneAutenticazionePortaApplicativaRequestHeadersMap;
+	}
+	
+	private static String getIntegrazioneAutenticazionePropertyHeaders = null;
+	public String getIntegrazioneAutenticazionePropertyHeaders() {
+		String pName = "org.openspcoop2.pdd.integrazione.autenticazione.request.property.headers";
+		if(OpenSPCoop2Properties.getIntegrazioneAutenticazionePropertyHeaders==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null)
+					throw new Exception("non definita");
+				name = name.trim();
+				OpenSPCoop2Properties.getIntegrazioneAutenticazionePropertyHeaders = name;
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				OpenSPCoop2Properties.getIntegrazioneAutenticazionePropertyHeaders = null;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getIntegrazioneAutenticazionePropertyHeaders;
+	}
+	
+	private static String getIntegrazioneAutenticazionePropertyHeaderPrefix = null;
+	public String getIntegrazioneAutenticazionePropertyHeaderPrefix() {
+		String pName = "org.openspcoop2.pdd.integrazione.autenticazione.request.property.header.prefix";
+		if(OpenSPCoop2Properties.getIntegrazioneAutenticazionePropertyHeaderPrefix==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null)
+					throw new Exception("non definita");
+				name = name.trim();
+				OpenSPCoop2Properties.getIntegrazioneAutenticazionePropertyHeaderPrefix = name;
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				OpenSPCoop2Properties.getIntegrazioneAutenticazionePropertyHeaderPrefix = null;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getIntegrazioneAutenticazionePropertyHeaderPrefix;
+	}
 
 
 	/* ********  CONNETTORI  ******** */

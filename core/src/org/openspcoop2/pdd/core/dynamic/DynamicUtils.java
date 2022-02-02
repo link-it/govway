@@ -534,7 +534,9 @@ public class DynamicUtils {
 				}
 				urlInvocazione = message.getTransportRequestContext().getUrlInvocazione_formBased();
 			}
-			else if(message.getTransportResponseContext()!=null) {
+			//else
+			// se c'e' la risposta devo usare quello come parametri della risposta
+				if(message.getTransportResponseContext()!=null) {
 				if(message.getTransportResponseContext().getHeaders()!=null &&
 						!message.getTransportResponseContext().getHeaders().isEmpty()) {
 					parametriTrasporto = message.getTransportResponseContext().getHeaders();

@@ -19160,17 +19160,37 @@ public class ConsoleHelper implements IConsoleHelper {
 						
 						de.setName(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO+group.getValue());
 						
-						if(group.isMulti()) {
-							de.setType(DataElementType.MULTI_SELECT);
-							de.setSelezionati(valoriMulti);
-						} else {
-							de.setType(DataElementType.SELECT);
-							de.setSelected(valoreSingolo);
+						if(!group.isConfig()) {
+							de.setType(DataElementType.HIDDEN);
+//							if(group.isMulti()) {
+//								de.setValue(Arrays.asList(valoriMulti).toString());
+//							}
+//							else {
+							if(valoreSingolo==null || "".equals(valoreSingolo)) {
+								String [] tipo = TipoIntegrazione.toValues(group); // in questo caso con config a false, dovrebbe esisterne uno solo
+								if(tipo!=null && tipo.length==1 && tipo[0]!=null) {
+									de.setValue(tipo[0]);
+								}
+							}
+							else {
+								de.setValue(valoreSingolo);
+							}
+//							}
 						}
-						de.setValues(TipoIntegrazione.toValues(group));
-						de.setLabels(TipoIntegrazione.toLabels(group));
-						de.setRequired(true);
+						else {
+							if(group.isMulti()) {
+								de.setType(DataElementType.MULTI_SELECT);
+								de.setSelezionati(valoriMulti);
+							} else {
+								de.setType(DataElementType.SELECT);
+								de.setSelected(valoreSingolo);
+							}
+							de.setValues(TipoIntegrazione.toValues(group));
+							de.setLabels(TipoIntegrazione.toLabels(group));
+							de.setRequired(true);
+						}
 						deIntegrazione.addElement(de);
+						
 					} else {
 						if(group.isMulti()) {
 							this.addMultiSelectCustomField(TipoPlugin.INTEGRAZIONE, ruoloConfigurazione, null, 

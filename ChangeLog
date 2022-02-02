@@ -1,3 +1,9 @@
+2022-02-02  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1327
+	Introdotto un nuovo header di integrazione che consentire di generare Header HTTP utilizzabili dal backend per autenticare l’API Gateway.
+
 2022-02-01  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

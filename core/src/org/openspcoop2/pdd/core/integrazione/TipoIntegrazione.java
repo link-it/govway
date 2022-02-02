@@ -55,6 +55,8 @@ public enum TipoIntegrazione {
 	TEMPLATE_REQUEST ("template-request", "Abilitato solo sulla richiesta", GruppoIntegrazione.TEMPLATE),
 	TEMPLATE_RESPONSE ("template-response", "Abilitato solo sulla risposta", GruppoIntegrazione.TEMPLATE),
 	
+	AUTENTICAZIONE ("autenticazione", "Abilitato su richiesta e risposta", GruppoIntegrazione.AUTENTICAZIONE),
+	
 	OPENSPCOOP2_TRASPORTO_EXT ("openspcoop2-trasportoExt", "Abilitato verso dominio interno e esterno senza prefisso 'X-'", GruppoIntegrazione.BACKWARD_COMPATIBILITY_OPENSPCOOP2_HTTP),
 	OPENSPCOOP2_TRASPORTO ("openspcoop2-trasporto", "Abilitato solo verso dominio interno senza prefisso 'X-'", GruppoIntegrazione.BACKWARD_COMPATIBILITY_OPENSPCOOP2_HTTP),
 	OPENSPCOOP2_X_TRASPORTO_EXT ("openspcoop2-x-trasportoExt", "Abilitato verso dominio interno e esterno con prefisso 'X-'", GruppoIntegrazione.BACKWARD_COMPATIBILITY_OPENSPCOOP2_HTTP),

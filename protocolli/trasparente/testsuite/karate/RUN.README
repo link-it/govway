@@ -105,6 +105,10 @@
 - HSM per TLS Keystore. Seguire le indicazioni descritte in PKCS11.README
   Poi 'cp tools/utils/src/org/openspcoop2/utils/certificate/test/govway_test_hsm.properties  /etc/govway/hsm.properties'
 
+- Per i test sulle integrazione 'template' copiare i seguenti file in /etc/govway/
+	- src/org/openspcoop2/core/protocolli/trasparente/testsuite/integrazione/template/IntegrazioneTemplateTrasformazione.ftl
+	- src/org/openspcoop2/core/protocolli/trasparente/testsuite/integrazione/template/IntegrazioneTemplateTrasformazioneRisposta.ftl
+
 - Per i test sulle credenziali aggiungere in govway_local.properties la configurazione che si trova in 'src/org/openspcoop2/core/protocolli/trasparente/testsuite/autenticazione/gestore_credenziali/govway_local.properties.adjunct'.
 
 - Configurare l'application server in modo tale da supportare connessioni ssl sulla porta 8444 e 8445 utilizzando le configurazioni presenti nella directory config_https:
@@ -265,6 +269,14 @@ Di seguito vengono descritti i test del package 'encoding':
 
 - 'charset', verifica le comunicazioni in stream, con dump, la costruzione di oggetti in memoria read only e per trasformazioni, con charset UTF-8, UTF-16 e ISO-8859-1
    ant run_test -Ddelete=false -Dload=false -Dpackage=encoding.charset
+
+Di seguito vengono descritti i test del package 'integrazione':
+
+- 'autenticazione', verifica  l'integrazione 'autenticazione' che consente di generare Header HTTP utilizzabili dal backend per autenticare l'API Gateway.
+   ant run_test -Ddelete=false -Dload=false -Dpackage=integrazione.autenticazione
+
+- 'template', verifica  l'integrazione 'template' che consente di applicare una trasformazione al messaggio.
+   ant run_test -Ddelete=false -Dload=false -Dpackage=integrazione.template
 
 Di seguito vengono descritti i test del package 'autenticazione':
 

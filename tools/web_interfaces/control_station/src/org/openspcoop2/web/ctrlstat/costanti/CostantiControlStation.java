@@ -331,10 +331,14 @@ public class CostantiControlStation {
 	public final static String LABEL_METADATI_RIDEFINITI_INFO_HEADER_SOAP =
 			"- <b>"+GruppoIntegrazione.SOAP.getCompactLabel()+"</b>: le informazioni sono incluse in uno specifico header SOAP proprietario di GovWay;<BR/>"+
 			"- <b>"+GruppoIntegrazione.WSA.getCompactLabel()+"</b>: le informazioni sono incluse in un header SOAP secondo il formato standard WS-Addressing;<BR/>";
-	public final static String LABEL_METADATI_RIDEFINITI_INFO_TEMPLATE_PLUGIN_BACKWARD =
+	public final static String LABEL_METADATI_RIDEFINITI_INFO_TEMPLATE_AUTENTICAZIONE_PLUGIN_BACKWARD =
 			org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
 			"- <b>"+GruppoIntegrazione.TEMPLATE.getCompactLabel()+"</b>: modalità che consente di definire tramite un template freemaker o velocity (definito a livello globale) come le informazioni siano inserite nel messaggio.<BR/>"+
 			"Il tipo di template (freemarker/velocity) e il path del file template possono essere specifici per API indicandoli nelle proprietà 'integrazione.template.richiesta/risposta.tipo' e 'integrazione.template.richiesta/risposta.file'.<BR/>"+
+			org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
+			"- <b>"+GruppoIntegrazione.AUTENTICAZIONE.getCompactLabel()+"</b>: modalità che consente di generare Header HTTP utilizzabili dal backend per autenticare l'API Gateway.<BR/>"+
+			"I nomi degli header generati ed i loro valori sono definiti a livello globale ma possono anche essere ridefiniti sull'API tramite la proprietà 'integrazione.autenticazione.headers'.<BR/>"+
+			"Per ridefinire un valore di un header è invece possibile utilizzare la proprietà 'integrazione.autenticazione.header.NOME_HEADER'.<BR/>"+
 			org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
 			"- <b>"+GruppoIntegrazione.PLUGIN.getCompactLabel()+"</b>: consente di selezionare un plugin personalizzato;<BR/>"+
 			org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
@@ -353,12 +357,12 @@ public class CostantiControlStation {
 	public final static String LABEL_METADATI_RIDEFINITI_INFO_SOAP = 
 			LABEL_METADATI_RIDEFINITI_INFO_START+
 			LABEL_METADATI_RIDEFINITI_INFO_HEADER_SOAP+
-			LABEL_METADATI_RIDEFINITI_INFO_TEMPLATE_PLUGIN_BACKWARD+
+			LABEL_METADATI_RIDEFINITI_INFO_TEMPLATE_AUTENTICAZIONE_PLUGIN_BACKWARD+
 			LABEL_METADATI_RIDEFINITI_INFO_BACKWARD_SOAP;
 
 	public final static String LABEL_METADATI_RIDEFINITI_INFO_REST = 
 			LABEL_METADATI_RIDEFINITI_INFO_START+
-			LABEL_METADATI_RIDEFINITI_INFO_TEMPLATE_PLUGIN_BACKWARD;
+			LABEL_METADATI_RIDEFINITI_INFO_TEMPLATE_AUTENTICAZIONE_PLUGIN_BACKWARD;
 	
 	public final static String LABEL_METADATI_BACKWARD_COMPATIBILITY_OPENSPCOOP_2 = "Backward Compatibility OpenSPCoop 2.x";
 	public final static String LABEL_METADATI_BACKWARD_COMPATIBILITY_OPENSPCOOP_1 = "Backward Compatibility OpenSPCoop 1.x";
