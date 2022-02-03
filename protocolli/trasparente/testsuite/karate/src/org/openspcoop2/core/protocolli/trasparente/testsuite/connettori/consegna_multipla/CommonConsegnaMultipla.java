@@ -28,6 +28,8 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -37,6 +39,8 @@ import java.util.Vector;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common;
@@ -156,7 +160,9 @@ public class CommonConsegnaMultipla {
 			responses.put(request, new Vector<>());
 			
 			for (int i = 0; i<requests_per_batch; i++) {
-				executor.execute( () -> responses.get(request).add(Utils.makeRequest(request.request)));
+				executor.execute( () -> {
+					responses.get(request).add(Utils.makeRequest(request.request));
+				});
 			}			
 		}
 		try {
@@ -191,9 +197,24 @@ public class CommonConsegnaMultipla {
 	}
 	
 	public static void checkStatoConsegna(List<HttpResponse> responses, int esito, int consegneMultipleRimanenti) {
-		for(var response : responses) {
+	/*	for(var response : responses) {
 			checkStatoConsegna(response, esito, consegneMultipleRimanenti);
 		}
+	*/
+		var id_transazioni = responses.stream()
+				.map( response -> response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE));
+		var sargs = Stream.of(esito, consegneMultipleRimanenti);
+		
+		Object[] args = Stream.concat(id_transazioni,sargs).toArray();
+		
+		// Questo mi crea una stringa del tipo ( ?, ?, ? )
+		String IN_CLAUSE = "( " + String.join(",", Collections.nCopies(responses.size(), "?")) + ") ";
+		
+		String query = "select count(*) from transazioni where id in "+IN_CLAUSE+" and esito = ? and esito_sincrono = 0 and consegne_multiple = ?";
+		//String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+		ConfigLoader.getLoggerCore().info("Checking stato consegna for transazioni:  " + IN_CLAUSE + " AND esito = " + esito + " AND consegne-rimanenti: " + consegneMultipleRimanenti);
+		Integer count = ConfigLoader.getDbUtils().readValueArray(query, Integer.class,  args);
+		assertEquals(Integer.valueOf(responses.size()), count);
 	}
 
 	/**

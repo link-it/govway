@@ -74,6 +74,16 @@ public class DbUtils {
     public <T> T readValue(String query, Class<T> classObject, Object... args) {
         return this.jdbc.queryForObject(query, classObject, args);
     }
+    
+    public <T> T readValueArray(String query, Class<T> classObject, Object[] args) {
+        return this.jdbc.queryForObject(query, args, classObject);
+    }
+    
+    /*public <T> T readValue(String query, Class<T> classObject, Object[] args) {
+        return this.jdbc.queryForObject(query, classObject, args);
+    }*/
+    
+    
 
     public Map<String, Object> readRow(String query) {
     	Map<String, Object> mapReaded = this.jdbc.queryForMap(query);
