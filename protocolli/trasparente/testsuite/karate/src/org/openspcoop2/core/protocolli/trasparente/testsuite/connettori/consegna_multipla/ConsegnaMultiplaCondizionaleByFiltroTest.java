@@ -31,7 +31,6 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.statusCodeVsConnettori;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -739,7 +738,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 				
 				IdentificazioneFallitaTest.checkDiagnosticoTransazione(id_transazione, 
 						DIAGNOSTICO_SEVERITA_ERROR, 
-						CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_ERROR_2,			// TODO Chiedi ad andrea perchè questo è diverso e invece per l'identificazione fallita no
+						CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_ERROR_2,	
 						messaggioAtteso);
 				
 				IdentificazioneFallitaTest.checkDiagnosticoTransazione(
@@ -755,18 +754,20 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 	@Test
 	public void clientIp() {
 		final String erogazione = "TestConsegnaMultiplaCondizionaleByFiltroClientIp";
-		final String soapContentType = HttpConstants.CONTENT_TYPE_SOAP_1_1;
 
+		int i = 0;
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 		// Finiscono tutte sul primo connettore
 		for (var entry : statusCodeVsConnettori.entrySet()) {
 			Set<String> connettoriPool = Set.of(Common.CONNETTORE_0);
+			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
 			
 			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
 			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
 			
 			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
 			requestsByKind.add(current);
+			i++;
 		}
 				
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);

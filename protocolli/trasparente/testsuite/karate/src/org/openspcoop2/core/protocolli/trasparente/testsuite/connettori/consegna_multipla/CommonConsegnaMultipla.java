@@ -39,6 +39,7 @@ import java.util.Vector;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -365,6 +366,11 @@ public class CommonConsegnaMultipla {
 		for(var row : connettoriRaggiunti) {
 			String connettore = (String) row.get("connettore_nome");
 			assertTrue(connettori.contains(connettore));
+		}
+		
+		for (var connettore : connettori) {
+			var nomeRaggiunti = connettoriRaggiunti.stream().map( row -> row.get("connettore_nome")).collect(Collectors.toList());
+			assertTrue(nomeRaggiunti.contains(connettore));
 		}
 	}
 	
