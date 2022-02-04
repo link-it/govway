@@ -135,19 +135,19 @@
 - Configurare in <govway_local.properties>
 	# ogni quanti secondi verifica se ci sono NUOVI messaggi da consegnare più vecchi di X secondi (proprietà successiva)
 
-		org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.nextMessages.intervalloControllo=2
+		org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.nextMessages.intervalloControllo=4
 
 	# età minima, in secondi, in cui vengono considerati i nuovi messaggi
 
-		org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.nextMessages.scheduleNewMessageAfter=1
+		org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.nextMessages.scheduleNewMessageAfter=4
 
 	# ogni quanti secondi verifica se ci sono messaggi precedentemente falliti in consegna
 
-		org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.nextMessages.consegnaFallita.intervalloControllo=30
+		org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.nextMessages.consegnaFallita.intervalloControllo=2
 
 	# i secondi minimi in cui riconsegnare un messaggio fallito
 
-		org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.consegnaFallita.intervalloMinimoRiconsegna=60
+		org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.consegnaFallita.intervalloMinimoRiconsegna=2
 		org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.debug=true
 
 
@@ -159,19 +159,16 @@
 - Configurare gli stessi valori di sopra, in <testsuite.properties>
 
 	# ogni quanti secondi verifica se ci sono NUOVI messaggi da consegnare più vecchi di X secondi (proprietà successiva)
-		connettori.consegna_multipla.next_messages.intervallo_controllo=2
+		connettori.consegna_multipla.next_messages.intervallo_controllo=4
 
 	# età minima, in secondi, in cui vengono considerati i nuovi messaggi
-		connettori.consegna_multipla.next_messages.schedule_new_after=1
+		connettori.consegna_multipla.next_messages.schedule_new_after=4
 
 	# ogni quanti secondi verifica se ci sono messaggi precedentemente falliti in consegna
-	# org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.nextMessages.consegnaFallita.intervalloControllo=30
+		connettori.consegna_multipla.next_messages.consegna_fallita.intervallo_controllo=2
 
 	# i secondi minimi in cui riconsegnare un messaggio fallito
-	# org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.consegnaFallita.intervalloMinimoRiconsegna=60
-
-
-
+		connettori.consegna_multipla.next_messages.consegna_fallita.intervallo_minimo_riconsegna=2
 
 
 Per eseguire i test:

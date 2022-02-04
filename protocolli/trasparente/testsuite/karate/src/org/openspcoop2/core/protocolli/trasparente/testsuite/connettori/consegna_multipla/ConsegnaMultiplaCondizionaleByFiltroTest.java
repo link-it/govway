@@ -30,6 +30,13 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.setIntersection;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.setSum;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.statusCodeVsConnettori;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_ERROR;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.DIAGNOSTICO_SEVERITA_INFO;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_UTILIZZO_CONNETTORE_DEFAULT;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_UTILIZZO_TUTTI_CONNETTORI;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.MESSAGGIO_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_FALLBACK;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.MESSAGGIO_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_FALLBACK_TUTTI_CONNETTORI;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_INFO;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -41,6 +48,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.RequestBuilder;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -52,7 +60,8 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  * 
  * @author froggo
  *
- * TODO: Identificazione condizione fallita, Prefisso e Suffisso
+ * TODO: Identificazione condizione fallita
+ * 	Aggiungi per ogni test delle richieste per cui deve fallire l'identificazione e che restituiscono 500
  * 
  * TODO: mail andrea:  per velocity template non c'è Prefisso e Suffisso.. E' giusto?
  * 	Credo di si, sarà perchè posso metterli nel template il prefisso e il suffisso.
@@ -60,6 +69,16 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  * TODO: Potrei farmi una passata di tutte le erogazioni e personalizzare ulteriormente i vari status code e le combinazioni
  * 		di  regole per far passare o meno una consegna, chiedi ad andrea.
  * TODO: regole
+ * 
+ * QUERY:
+ * 
+ * TestContenuto: //Filtro/text()
+ * Template: ${query:govway-testsuite-id_connettore_request}
+ * Freemarker: ${query["govway-testsuite-id_connettore_request"]}
+ * Velocity:		#if($query.containsKey("govway-testsuite-id_connettore_request"))
+							$query["govway-testsuite-id_connettore_request"]
+						#end
+ * UrlInvocazione: .+govway-testsuite-id_connettore_request=([^&]*).*
  */
 public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 	
@@ -119,10 +138,12 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void regole() {
+	public void regole() throws UtilsException {
 		final String erogazione = "TestConsegnaMultiplaCondizionaleByRegole";
 		
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+		List<String> forwardingHeaders = HttpUtilities.getClientAddressHeaders();
+
 
 		int i = 0;
 		// Prima costruisco le richieste normalmente
@@ -132,19 +153,85 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
 			final String filtro = Common.filtriPools.get(pool).get(0); 
 
-			
+			// Filtro HeaderHttp
 			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaHeaderHttp",   "SA_TestRegolaHeaderHttp",  soapContentType);
 			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
 			request.addHeader(Common.HEADER_ID_CONDIZIONE, filtro);
 			var current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool, soapContentType);
 			requestsByKind.add(current);
 			
+			// Filtro ParametroUrl
 			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaParametroUrl",   "SA_TestRegolaParametroUrl",  soapContentType);
 			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
 			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
 			current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool, soapContentType);
 			requestsByKind.add(current);
 			
+			// Filtro Regola Statica, vanno tutte sul pool2
+			Set<String> connettoriPoolStatica = new HashSet<>(Common.connettoriPools.get(Common.POOL_2));
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaStatica",   "SA_TestRegolaStatica",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPoolStatica, soapContentType);
+			requestsByKind.add(current);
+			
+			// Filtro Regola ClientI Ip, vanno tutte sul Connettore0
+			Set<String> connettoriPoolClientIp = Set.of(Common.CONNETTORE_0);
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaClientIp",   "SA_TestRegolaClientIp",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPoolClientIp, soapContentType);
+			requestsByKind.add(current);
+			
+			
+			// Filtro Regola Contenuto
+			String content = "<Filtro>"+filtro+"</Filtro>";
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaContenuto",   "SA_TestRegolaContenuto",  soapContentType, content);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool, soapContentType);
+			requestsByKind.add(current);
+			
+			// Filtro Regola FreemarkerTemplate
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaFreemarkerTemplate",   "SA_TestRegolaFreemarkerTemplate",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
+			current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool, soapContentType);
+			requestsByKind.add(current);
+
+			// Filtro Regola Velocity Template
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaVelocityTemplate",   "SA_TestRegolaVelocityTemplate",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
+			current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool, soapContentType);
+			requestsByKind.add(current);
+			
+			// Filtro Regola Template
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaTemplate",   "SA_TestRegolaTemplate",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
+			current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool, soapContentType);
+			requestsByKind.add(current);
+			
+			// Filtro Regola SoapAction, è il filtro Pool0-Filtro0, va sul pool0
+			Set<String> connettoriPoolSoapAction = new HashSet<>(Common.connettoriPools.get(Common.POOL_0));
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaSoapAction",   "Pool0-Filtro0",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPoolSoapAction, soapContentType);
+			requestsByKind.add(current);
+			
+			// Filtro Regola Url Invocazione
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaUrlInvocazione",   "SA_TestRegolaUrlInvocazione",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
+			current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool, soapContentType);
+			requestsByKind.add(current);
+			
+			// Filtro Regola XForwardedFor
+			String header = forwardingHeaders.get(i%forwardingHeaders.size());
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaXForwardedFor",   "SA_TestRegolaXForwardedFor",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.addHeader(header, filtro);
+			current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool, soapContentType);
+			requestsByKind.add(current);
+
 			i++;
 		}
 				
@@ -167,16 +254,116 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 	
 	
 	@Test
-	public void velocityTemplate() {
-		final String erogazione = "TestConsegnaMultiplaCondizionaleByFiltroVelocityTemplate";
-		parametroUrl_Impl(erogazione);
+	public void velocityTemplateNCUQualsiasiNoDiagnostico() {
+		final String erogazione = "TestConsegnaMultiplaCondizionaleByFiltroVelocityTemplateNCUQualsiasiNoDiagnostico";
+		
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+		Set<RequestAndExpectations> toCheckForDiagnostici = new HashSet<>();
+		var connettoriRipiego = Common.setConnettoriAbilitati;
+
+		int i = 0;
+		// Prima costruisco le richieste normalmente
+		for (var entry : statusCodeVsConnettori.entrySet()) {
+			String pool = Common.pools.get(i % Common.pools.size());
+			Set<String> connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
+			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
+			
+			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+Common.filtriPools.get(pool).get(0));
+			
+			var current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool, soapContentType);
+			requestsByKind.add(current);
+			
+			// Request identificazione fallita			
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request=FiltroInesistente");
+			current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriRipiego, soapContentType);
+			requestsByKind.add(current);
+			
+			toCheckForDiagnostici.add(current);
+			i++;
+		}
+				
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+		
+		checkResponses(responsesByKind);
+		
+		// Recupero tutte le risposte che devono aver fallito l'identificazione e controllo i diagnostici
+		// TODO: Dopo che hai abilitato i diagnostici su un altra erogazione, ricontrolla questi check di sotto se controllaano effettivamente l'assenza del messaggio corretto
+		for (var toCheck: toCheckForDiagnostici) {
+			for (var response : responsesByKind.get(toCheck) ) {
+				String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+				IdentificazioneFallitaTest.checkAssenzaDiagnosticoTransazione(id_transazione, CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_ERROR);
+				IdentificazioneFallitaTest.checkAssenzaDiagnosticoTransazione(id_transazione, CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_INFO);
+				
+				IdentificazioneFallitaTest.checkDiagnosticoTransazione(
+						id_transazione, 
+						DIAGNOSTICO_SEVERITA_INFO,
+						CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_UTILIZZO_TUTTI_CONNETTORI, 
+						MESSAGGIO_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_FALLBACK_TUTTI_CONNETTORI);
+			}
+		}
 	}
 	
 	
 	@Test
-	public void freemarkerTemplate() {
-		final String erogazione = "TestConsegnaMultiplaCondizionaleByFiltroFreemarkerTemplate";
-		parametroUrl_Impl(erogazione);
+	public void freemarkerTemplateIDFQualsiasiNoDiagnostico() {
+		/**
+		 * Le richieste con identificazione fallita vengono redirette su tutti i connettori
+		 */
+		final String erogazione = "TestConsegnaMultiplaCondizionaleByFiltroFreemarkerTemplateIDFQualsiasiNoDiagnostico";
+		var connettoriRipiego = Common.setConnettoriAbilitati;
+
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+		
+		Set<RequestAndExpectations> toCheckForDiagnostici = new HashSet<>();
+		
+		int i = 0;
+		// Prima costruisco le richieste normalmente
+		for (var entry : statusCodeVsConnettori.entrySet()) {
+			String pool = Common.pools.get(i % Common.pools.size());
+			Set<String> connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
+			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
+			
+			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+Common.filtriPools.get(pool).get(0));
+			
+			var current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool, soapContentType);
+			requestsByKind.add(current);
+			
+			// Request identificazione fallita			
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.setUrl(request.getUrl() + "&govway-testsuite-id_SBAGLIATO_connettore_request=FiltroInesistente");
+			current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriRipiego, soapContentType);
+			requestsByKind.add(current);
+			toCheckForDiagnostici.add(current);
+			
+			i++;
+		}
+				
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+	
+		checkResponses(responsesByKind);
+		
+		// Recupero tutte le risposte che devono aver fallito l'identificazione e controllo i diagnostici
+		for (var toCheck: toCheckForDiagnostici) {
+			for (var response : responsesByKind.get(toCheck) ) {
+				String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+				IdentificazioneFallitaTest.checkAssenzaDiagnosticoTransazione(id_transazione, CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_ERROR);
+				IdentificazioneFallitaTest.checkAssenzaDiagnosticoTransazione(id_transazione, CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_INFO);
+				
+				IdentificazioneFallitaTest.checkDiagnosticoTransazione(
+						id_transazione, 
+						DIAGNOSTICO_SEVERITA_INFO,
+						CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_UTILIZZO_TUTTI_CONNETTORI, 
+						MESSAGGIO_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_FALLBACK_TUTTI_CONNETTORI);
+			}
+		}
+		
 	}
 	
 	@Test
@@ -286,7 +473,6 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 		}
 				
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
-		
 		checkResponses(responsesByKind);
 	}
 
