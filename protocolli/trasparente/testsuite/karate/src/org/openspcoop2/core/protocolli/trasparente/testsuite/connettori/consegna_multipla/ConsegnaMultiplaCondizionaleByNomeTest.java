@@ -159,7 +159,6 @@ public class ConsegnaMultiplaCondizionaleByNomeTest extends ConfigLoader {
 			
 			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
 			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-			
 			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
 			requestsByKind.add(current);
 		}
@@ -167,6 +166,112 @@ public class ConsegnaMultiplaCondizionaleByNomeTest extends ConfigLoader {
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		
 		CommonConsegnaMultipla.checkResponses(responsesByKind);
+	}
+	
+	@Test
+	public void regole() throws UtilsException {
+		// TODO: Crea il connettore per la regola clientIp
+		// TODO: Fai prima anche il test SoapAction
+		final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeRegole";
+		
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+		List<String> forwardingHeaders = HttpUtilities.getClientAddressHeaders();
+
+
+		int i = 0;
+		// Prima costruisco le richieste normalmente
+		for (var entry : statusCodeVsConnettori.entrySet()) {
+			final String filtro = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
+			var connettoriPool = Set.of(filtro);
+			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
+ 
+
+			// Filtro HeaderHttp
+			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaHeaderHttp",   "SA_TestRegolaHeaderHttp",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.addHeader(Common.HEADER_ID_CONDIZIONE, filtro);
+			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
+			requestsByKind.add(current);
+			
+			// Filtro ParametroUrl
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaParametroUrl",   "SA_TestRegolaParametroUrl",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
+			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
+			requestsByKind.add(current);
+			
+			// Filtro Regola Statica, vanno tutte sul pool2
+			Set<String> connettoriPoolStatica = new HashSet<>(Common.connettoriPools.get(Common.POOL_2));
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaStatica",   "SA_TestRegolaStatica",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPoolStatica);
+			requestsByKind.add(current);
+			
+			// Filtro Regola ClientI Ip, vanno tutte sul Connettore0
+			Set<String> connettoriPoolClientIp = Set.of(Common.CONNETTORE_0);
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaClientIp",   "SA_TestRegolaClientIp",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPoolClientIp);
+			requestsByKind.add(current);
+			
+			
+			// Filtro Regola Contenuto
+			String content = "<Filtro>"+filtro+"</Filtro>";
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaContenuto",   "SA_TestRegolaContenuto",  soapContentType, content);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
+			requestsByKind.add(current);
+			
+			// Filtro Regola FreemarkerTemplate
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaFreemarkerTemplate",   "SA_TestRegolaFreemarkerTemplate",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
+			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
+			requestsByKind.add(current);
+
+			// Filtro Regola Velocity Template
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaVelocityTemplate",   "SA_TestRegolaVelocityTemplate",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
+			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
+			requestsByKind.add(current);
+			
+			// Filtro Regola Template
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaTemplate",   "SA_TestRegolaTemplate",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
+			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
+			requestsByKind.add(current);
+			
+			// Filtro Regola SoapAction, è il filtro Pool0-Filtro0, va sul pool0
+			Set<String> connettoriPoolSoapAction = new HashSet<>(Common.connettoriPools.get(Common.POOL_0));
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaSoapAction",   "Pool0-Filtro0",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPoolSoapAction);
+			requestsByKind.add(current);
+			
+			// Filtro Regola Url Invocazione
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaUrlInvocazione",   "SA_TestRegolaUrlInvocazione",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
+			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
+			requestsByKind.add(current);
+			
+			// Filtro Regola XForwardedFor
+			String header = forwardingHeaders.get(i%forwardingHeaders.size());
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaXForwardedFor",   "SA_TestRegolaXForwardedFor",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.addHeader(header, filtro);
+			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
+			requestsByKind.add(current);
+
+			i++;
+		}
+				
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+		
+		CommonConsegnaMultipla.checkResponses(responsesByKind);
+		
 	}
 	
 	@Test
