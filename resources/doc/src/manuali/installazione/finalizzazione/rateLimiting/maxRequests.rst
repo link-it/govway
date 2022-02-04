@@ -28,8 +28,8 @@ Per poter modificare il limite si deve agire sull'attributo 'maxThreads' degli e
 
 **WildFly**
 
-L'application server, per default, limita il numero di worker threads tramite la formula 'cpuCount * 16' (es. https://docs.wildfly.org/23/wildscribe/subsystem/io/worker/index.html). 
-Inoltre i worker threads sono condivisi da tutti gli http-listener che per default utilizzando il worker 'default' (es. https://docs.wildfly.org/23/wildscribe/subsystem/undertow/server/http-listener/index.html).
+L'application server, per default, limita il numero di worker threads tramite la formula 'cpuCount * 16' (es. https://docs.wildfly.org/26/wildscribe/subsystem/io/worker/index.html). 
+Inoltre i worker threads sono condivisi da tutti gli http-listener che per default utilizzando il worker 'default' (es. https://docs.wildfly.org/26/wildscribe/subsystem/undertow/server/http-listener/index.html).
 
 Per modificare il livello di soglia e configurare per ogni http-listener un pool di threads dedicato si deve agire sulla configurazione di WildFly (es. in standalone/configuration/standalone.xml) prima creando un worker che definisce il pool di thread.
 

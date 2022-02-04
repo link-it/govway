@@ -116,7 +116,7 @@
         <large-select defaultValue="wildfly25" property="antinstaller_as" displayText="Application Server">
       
 		<!-- Uniformare i valori quando la compilazione e' identica -->
-		<option value="wildfly25" text="WildFly 25"/>
+		<option value="wildfly25" text="WildFly 25-26"/>
 		<option value="wildfly22" text="WildFly 22-24"/>
 		<option value="wildfly18" text="WildFly 18-21"/>
 		<!--
@@ -182,7 +182,7 @@
         <large-select defaultValue="wildfly25" property="antinstaller_as" displayText="Application Server">
       
 		<!-- Uniformare i valori quando la compilazione e' identica -->
-		<option value="wildfly25" text="WildFly 25"/>
+		<option value="wildfly25" text="WildFly 25-26"/>
 		<option value="wildfly22" text="WildFly 22-24"/>
 		<option value="wildfly18" text="WildFly 18-21"/>
 		<!--

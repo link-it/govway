@@ -482,6 +482,7 @@
 				<if>
 					<or>
 						<matches string="${as}" pattern="wildfly25"/>
+						<matches string="${as}" pattern="wildfly26"/>
 					</or>
 					<then>
 						<antcall target="set_property">
@@ -541,6 +542,7 @@
 				<matches string="${as}" pattern="wildfly23"/>
 				<matches string="${as}" pattern="wildfly24"/>
 				<matches string="${as}" pattern="wildfly25"/>
+				<matches string="${as}" pattern="wildfly26"/>
 			</or>
 			<then>
 				<unzip src="${required_lib}/shared/mailapi-1.6.4.jar" dest="${build}/tmp/mailapi"/>
@@ -674,6 +676,7 @@
 								<matches string="${as}" pattern="wildfly23"/>
 								<matches string="${as}" pattern="wildfly24"/>
 								<matches string="${as}" pattern="wildfly25"/>
+								<matches string="${as}" pattern="wildfly26"/>
 							</or>
 							<then>
 								<copy file="${src}/META-INF/jboss-deployment-structure.xml.wildfly2" tofile="${build}/tmp/jboss-deployment-structure.xml" />

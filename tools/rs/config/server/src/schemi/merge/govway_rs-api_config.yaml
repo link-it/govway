@@ -11467,13 +11467,13 @@ components:
       - "message-box"
     ConnettoreJmsTipoEnum:
       type: "string"
-      example: "ok"
+      example: "queue"
       enum:
       - "queue"
       - "topic"
     ConnettoreJmsSendAsEnum:
       type: "string"
-      example: "ok"
+      example: "text"
       enum:
       - "text"
       - "bytes"

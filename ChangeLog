@@ -1,3 +1,13 @@
+2022-02-08  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 3.3.6
+
+2022-02-03  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1308
+	Aggiunto supporto per wildfly 26.
+
 2022-02-02  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

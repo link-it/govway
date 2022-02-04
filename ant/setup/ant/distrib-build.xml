@@ -84,7 +84,7 @@
 								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_WILDFLY_v8_v9" tofile="${dist}/INSTALL.txt" />
 							</then>
 							<else>
-								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_WILDFLY_v10-v25" tofile="${dist}/INSTALL.txt" />
+								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_WILDFLY_v10-v26" tofile="${dist}/INSTALL.txt" />
 							</else>
 						</if>
 						<mkdir dir="${dist}/jms" />
@@ -1517,6 +1517,7 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 								<matches string="${as}" pattern="wildfly23"/>
 								<matches string="${as}" pattern="wildfly24"/>
 								<matches string="${as}" pattern="wildfly25"/>
+								<matches string="${as}" pattern="wildfly26"/>
 							</or>
 							<then>
 								<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
@@ -1569,6 +1570,7 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 								<matches string="${as}" pattern="wildfly23"/>
 								<matches string="${as}" pattern="wildfly24"/>
 								<matches string="${as}" pattern="wildfly25"/>
+								<matches string="${as}" pattern="wildfly26"/>
 							</or>
 							<then>
 								<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
@@ -1624,6 +1626,7 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 								<matches string="${as}" pattern="wildfly23"/>
 								<matches string="${as}" pattern="wildfly24"/>
 								<matches string="${as}" pattern="wildfly25"/>
+								<matches string="${as}" pattern="wildfly26"/>
 							</or>
 							<then>
 								<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">

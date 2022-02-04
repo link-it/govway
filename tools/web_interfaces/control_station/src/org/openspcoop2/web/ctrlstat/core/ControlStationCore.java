@@ -136,6 +136,7 @@ import org.openspcoop2.pdd.logger.DriverMsgDiagnostici;
 import org.openspcoop2.pdd.logger.DriverTracciamento;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.AzioniUtils;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -5470,7 +5471,7 @@ public class ControlStationCore {
 					if(error.length()>0) {
 						error.append("\n");
 					}
-					error.append("Configurazione non corretta; non è stato rilevato un soggetto di default per il protocollo '"+protocolName+"'.");
+					error.append("Configurazione non corretta; non è stato rilevato un soggetto di default per il profilo di interoperabilità '"+NamingUtils.getLabelProtocollo(protocolName)+"'.");
 					
 				}
 			}
@@ -5488,10 +5489,40 @@ public class ControlStationCore {
 					error.append("Configurazione non corretta; non è stato rilevato alcun soggetto di default");
 				}
 				else {
+					Map<String, List<IDSoggetto>> defaultByProtocol = new HashMap<String, List<IDSoggetto>>(); 
 					List<String> tipi_con_protocolli_censiti = protocolFactoryManager.getOrganizationTypesAsList();
-					for (IDSoggetto idSoggeto : soggettiDefault) {
-						if(!tipi_con_protocolli_censiti.contains(idSoggeto.getTipo())) {
-							error.append("Configurazione non corretta; Non esiste un protocollo che possa gestire il soggetto di default '"+idSoggeto.toString()+"' rilevato.");
+					for (IDSoggetto idSoggetto : soggettiDefault) {
+						if(!tipi_con_protocolli_censiti.contains(idSoggetto.getTipo())) {
+							error.append("Configurazione non corretta; Non esiste un profilo di interoperabilità che possa gestire il soggetto di default '"+idSoggetto.toString()+"' rilevato.");
+						}
+						String protocolName = protocolFactoryManager.getProtocolByOrganizationType(idSoggetto.getTipo());
+						List<IDSoggetto> l = null;
+						if(defaultByProtocol.containsKey(protocolName)) {
+							l = defaultByProtocol.get(protocolName);
+						}
+						else {
+							l = new ArrayList<IDSoggetto>();
+							defaultByProtocol.put(protocolName, l);
+						}
+						l.add(idSoggetto);
+					}
+					
+					if(!defaultByProtocol.isEmpty()) {
+						for (String protocolName : defaultByProtocol.keySet()) {
+							List<IDSoggetto> l = defaultByProtocol.get(protocolName);
+							if(l.size()>1) {
+								if(error.length()>0) {
+									error.append("\n");
+								}
+								StringBuilder sbSoggetti = new StringBuilder();
+								for (IDSoggetto id : l) {
+									if(sbSoggetti.length()>0) {
+										sbSoggetti.append(", ");
+									}
+									sbSoggetti.append(NamingUtils.getLabelSoggetto(id));
+								}
+								error.append("Sono stati riscontrati più soggetti di default associati al profilo di interoperabilità '"+NamingUtils.getLabelProtocollo(protocolName)+"': "+sbSoggetti.toString());		
+							}
 						}
 					}
 				}

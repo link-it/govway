@@ -202,7 +202,7 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = confHelper.addPolicyGestioneTokenToDati(tipoOperazione,dati,id,nome,descrizione,tipo,propConfigPolicyGestioneTokenLabelList,propConfigPolicyGestioneTokenList,
-						attributeAuthority);
+						attributeAuthority, null);
 				
 				dati = confHelper.addPropertiesConfigToDati(tipoOperazione,dati, tipo, configurazioneBean,false);
 				
@@ -230,7 +230,7 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = confHelper.addPolicyGestioneTokenToDati(tipoOperazione,dati,id,nome,descrizione,tipo,propConfigPolicyGestioneTokenLabelList,propConfigPolicyGestioneTokenList,
-						attributeAuthority);
+						attributeAuthority, null);
 						
 				dati = confHelper.addPropertiesConfigToDati(tipoOperazione,dati, tipo, configurazioneBean,false);
 				

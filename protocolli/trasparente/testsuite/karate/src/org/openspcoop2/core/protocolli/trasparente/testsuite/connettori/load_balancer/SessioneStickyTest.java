@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -85,8 +85,9 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  *	Query cookie: govway-testsuite-id_sessione_cookie
  *
  * 
- * @author froggo
- *
+ * @author Francesco Scarlato (scarlato@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 public class SessioneStickyTest extends ConfigLoader {

@@ -236,6 +236,7 @@
 						<matches string="${as}" pattern="wildfly23"/>
 						<matches string="${as}" pattern="wildfly24"/>
 						<matches string="${as}" pattern="wildfly25"/>
+						<matches string="${as}" pattern="wildfly26"/>
 					</or>
 					<then>
 						<copy file="${src_openspcoop2Pools}/META-INF/jboss-deployment-structure.openspcoop2Pools.wildfly2.xml" 

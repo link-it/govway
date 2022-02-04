@@ -16395,6 +16395,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// seconda riga
 		boolean visualizzaSecondaRiga = StringUtils.isNotBlank(policy.getDescrizione()) || !forceId || attributeAuthority;
 		
+		boolean verificaConnettivita = true;
+		
 		if(visualizzaSecondaRiga) {
 			de = new DataElement();
 			de.setValue(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_DESCRIZIONE, policy.getDescrizione()));
@@ -16450,6 +16452,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						labelForward = labelForward.replaceAll(",", " - ").trim();
 						sb.append(ConfigurazioneCostanti.MESSAGE_METADATI_SEPARATORE);
 						sb.append(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_TOKEN_POLICY_FORWARD, labelForward));
+						
+						if(!policyGestioneToken.isIntrospection() && !policyGestioneToken.isUserInfo()) {
+							verificaConnettivita = false;
+						}
+						
 					}catch(Throwable t) {
 						this.log.error(t.getMessage(),t);
 					}
@@ -16542,10 +16549,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		// verifica connettivita
-		List<Parameter> listaParametriVerificaConnettivitaChange = new ArrayList<Parameter>();
-		listaParametriVerificaConnettivitaChange.addAll(listaParametriChange);
-		listaParametriVerificaConnettivitaChange.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTIVITA, "true"));
-		this.addVerificaConnettivitaButton(e, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI, listaParametriVerificaConnettivitaChange);
+		if(verificaConnettivita) {
+			List<Parameter> listaParametriVerificaConnettivitaChange = new ArrayList<Parameter>();
+			listaParametriVerificaConnettivitaChange.addAll(listaParametriChange);
+			listaParametriVerificaConnettivitaChange.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTIVITA, "true"));
+			this.addVerificaConnettivitaButton(e, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI, listaParametriVerificaConnettivitaChange);
+		}
 				
 		// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
 		if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
@@ -16557,7 +16566,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 
 	public Vector<DataElement> addPolicyGestioneTokenToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String id, String nome, String descrizione, String tipo, String[] propConfigPolicyGestioneTokenLabelList, String[] propConfigPolicyGestioneTokenList,
-			boolean attributeAuthority) throws Exception {
+			boolean attributeAuthority, GenericProperties genericProperties) throws Exception {
 		
 		if(TipoOperazione.CHANGE.equals(tipoOperazione)){
 			
@@ -16573,6 +16582,24 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			listaParametriChange.add(pInfoType);
 			listaParametriChange.add(pPolicyId);
 			
+			boolean verificaConnettivita = true;
+			boolean validazione = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN.equals(genericProperties.getTipologia());
+			if(validazione) {
+				GestioneToken gestioneToken = new GestioneToken();
+				gestioneToken.setIntrospection(StatoFunzionalitaConWarning.ABILITATO);
+				gestioneToken.setUserInfo(StatoFunzionalitaConWarning.ABILITATO);
+				gestioneToken.setValidazione(StatoFunzionalitaConWarning.ABILITATO);
+				gestioneToken.setForward(StatoFunzionalita.ABILITATO);
+				try {
+					PolicyGestioneToken policyGestioneToken = TokenUtilities.convertTo(genericProperties, gestioneToken);
+					if(!policyGestioneToken.isIntrospection() && !policyGestioneToken.isUserInfo()) {
+						verificaConnettivita = false;
+					}
+				}catch(Throwable t) {
+					this.log.error(t.getMessage(),t);
+				}
+			}
+			
 			// In Uso Button
 			InUsoType inUsoType = attributeAuthority ? InUsoType.ATTRIBUTE_AUTHORITY : InUsoType.TOKEN_POLICY;
 			this.addComandoInUsoButton(dati, nome,
@@ -16586,11 +16613,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			// verifica connettivita
-			List<Parameter> listaParametriVerificaConnettivitaChange = new ArrayList<Parameter>();
-			listaParametriVerificaConnettivitaChange.addAll(listaParametriChange);
-			listaParametriVerificaConnettivitaChange.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTIVITA, "true"));
-			this.pd.addComandoVerificaConnettivitaElementoButton(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI, listaParametriVerificaConnettivitaChange);
-			
+			if(verificaConnettivita) {
+				List<Parameter> listaParametriVerificaConnettivitaChange = new ArrayList<Parameter>();
+				listaParametriVerificaConnettivitaChange.addAll(listaParametriChange);
+				listaParametriVerificaConnettivitaChange.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTIVITA, "true"));
+				this.pd.addComandoVerificaConnettivitaElementoButton(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI, listaParametriVerificaConnettivitaChange);
+			}
+				
 			// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
 			if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
 				listaParametriChange.add(new Parameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE, "true"));
