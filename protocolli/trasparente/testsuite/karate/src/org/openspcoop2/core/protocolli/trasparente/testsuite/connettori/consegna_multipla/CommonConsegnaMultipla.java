@@ -25,10 +25,10 @@ import static org.junit.Assert.assertTrue;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_1;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_2;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_3;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.checkAll200;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,7 +39,6 @@ import java.util.Vector;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -372,6 +371,61 @@ public class CommonConsegnaMultipla {
 	public static void checkSchedulingConnettoreIniziato(List<HttpResponse> responses, Set<String> connettori) {
 		for (var r : responses) {
 			checkSchedulingConnettoreIniziato(r, connettori);
+		}
+	}
+
+	public static RequestAndExpectations buildRequestAndExpectationFiltered(HttpRequest request, int statusCode, Set<String> connettoriSuccesso, Set<String> connettoriFiltrati) {
+		connettoriFiltrati = new HashSet<>(connettoriFiltrati);
+		connettoriFiltrati.remove(Common.CONNETTORE_DISABILITATO);
+		connettoriSuccesso = setIntersection(connettoriSuccesso, connettoriFiltrati);
+		connettoriFiltrati.removeAll(connettoriSuccesso);
+		Set<String> connettoriFallimento = connettoriFiltrati;
+	
+		int esito;
+		
+		if ( ( statusCode < 200 || statusCode > 299) && !connettoriSuccesso.isEmpty()) {
+			esito = ESITO_CONSEGNA_MULTIPLA_FALLITA;
+		} else {
+			esito =  connettoriFallimento.isEmpty() ? ESITO_CONSEGNA_MULTIPLA_COMPLETATA : ESITO_CONSEGNA_MULTIPLA_IN_CORSO;
+		}
+		
+		return new RequestAndExpectations(request, connettoriSuccesso, connettoriFallimento, esito);
+	}
+
+	public static void checkResponses(Map<RequestAndExpectations, List<HttpResponse>> responsesByKind) {
+		// Tutte le richieste indipendentemente dal tipo devono essere state prese in consegna e lo scheduling inizia 
+		// su tutti i connettori abilitati e filtrati dalla consegna condizionale
+		assertTrue(!responsesByKind.isEmpty());
+		
+		// Controllo che le richieste siano state consegnate e le notifiche schedulate
+		for (var requestAndExpectation : responsesByKind.keySet() ) {
+			var responses = responsesByKind.get(requestAndExpectation);
+			assertTrue(!responses.isEmpty());
+			checkAll200(responses);
+			
+			// Deve essere la fusione dei connettoriOk e i connettoriErrore\conettoriScheduling Disabilitato
+			Set<String> connettoriCoinvoltii = setSum(requestAndExpectation.connettoriSuccesso, requestAndExpectation.connettoriFallimento);
+			
+			checkStatoConsegna(responses, ESITO_CONSEGNA_MULTIPLA, connettoriCoinvoltii.size());
+	
+			checkSchedulingConnettoreIniziato(responses, connettoriCoinvoltii);
+		}
+		
+		// Attendo la consegna
+		org.openspcoop2.utils.Utilities.sleep(2*intervalloControllo);
+		
+		for (var requestAndExpectation : responsesByKind.keySet()) {
+			for (var response : responsesByKind.get(requestAndExpectation)) {
+				checkRequestExpectations(requestAndExpectation, response);
+			}
+		}
+		
+		// Attendo l'intervallo di riconsegna e controllo che il contatore delle consegne sia almeno a 2
+		org.openspcoop2.utils.Utilities.sleep(2*intervalloControlloFallite);
+		for (var requestAndExpectation : responsesByKind.keySet()) {
+			for (var response : responsesByKind.get(requestAndExpectation)) {
+				checkRequestExpectationsFinal(requestAndExpectation, response);
+			}
 		}
 	}
 
