@@ -759,7 +759,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					FileTraceConfig.init(propertiesReader.getTransazioniFileTraceConfig(), true);
 				}
 			}catch(Exception e) {
-				this.logError("Riscontrato errore durante l'inizializzazione del FileTrace");
+				this.logError("Riscontrato errore durante l'inizializzazione del FileTrace",e);
 				return;
 			}
 

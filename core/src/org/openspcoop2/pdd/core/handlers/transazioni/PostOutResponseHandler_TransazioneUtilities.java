@@ -73,6 +73,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.IBustaBuilder;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
@@ -142,9 +143,12 @@ public class PostOutResponseHandler_TransazioneUtilities {
 		return connettoriMultipli;
 	}
 	public static String getConnettoriMultipli(PostOutResponseContext context) {
+		return getConnettoriMultipli(context.getPddContext());
+	}
+	public static String getConnettoriMultipli(Context context) {
 		String connettoriMultipli = null;
-		if(context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI_BY_ID)) {
-			Object oConnettori = context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI_BY_ID );
+		if(context.containsKey(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI_BY_ID)) {
+			Object oConnettori = context.getObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI_BY_ID );
 			if (oConnettori!=null && oConnettori instanceof List){
 				List<?> l = (List<?>) oConnettori;
 				if(!l.isEmpty()) {

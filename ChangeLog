@@ -2,6 +2,16 @@
 
 	* Rilasciata versione 3.3.6
 
+2022-02-06  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunte ulteriori informazioni, inerenti le configurazioni gestite dal gateway, che possono essere riversate nei file di log associati ai topic di file trace:
+	- proprietà associate all'erogazione o alla fruizione
+	- proprietà associate al soggetto fruitore o erogatore
+	- proprietà associate all'applicativo richiedente
+	- nome del connettore multiplo selezionato per la consegna verso il backend
+	- proprietà presenti nel contesto
+
 2022-02-03  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

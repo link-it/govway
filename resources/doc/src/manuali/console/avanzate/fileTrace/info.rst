@@ -160,7 +160,15 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 
 - organizationType: tipo del soggetto, di dominio interno, che ha gestito l'erogazione o la fruizione;
 
-- role: indica se la transazione rappresenta una 'erogazione' o 'fruizione'.
+- role: indica se la transazione rappresenta una 'erogazione' o 'fruizione';
+
+- contextPropertiesKeys: nomi delle proprietà definite nel contesto;
+
+- contextProperties: proprietà (nome=valore) definite nel contesto separate da uno spazio;
+
+- contextProperties(propertySeparator, valueSeparator): simile alla precedente opzione, consente di indicare i separatori utilizzati;
+
+- contextProperty(nomeProprietà): valore della proprietà indicata come parametro.
 
 **API**
 
@@ -177,6 +185,14 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 - apiInterface: identificativo dell'interfaccia implementata dall'erogazione o dalla fruizione (contiene nome, versione e soggetto referente);
 
 - apiInterfaceId: identificativo dell'interfaccia implementata dall'erogazione o dalla fruizione secondo il formato previsto dal profilo di interoperabilità;
+
+- apiPropertiesKeys: nomi delle proprietà definite sull'erogazione o sulla fruizione;
+
+- apiProperties: proprietà (nome=valore) definite sull'erogazione o sulla fruizione separate da uno spazio;
+
+- apiProperties(propertySeparator, valueSeparator): simile alla precedente opzione, consente di indicare i separatori utilizzati;
+
+- apiProperty(nomeProprietà): valore della proprietà indicata come parametro;
 
 - action: identificativo della risorsa (API Rest) o dell'azione (API Soap);
 
@@ -196,7 +212,9 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 
 - profileLabel: nome descrittivo del profilo di interoperabilità in cui è stata registrata l'API;
 
-- interface: identificativo dell'erogazione o della fruizione.
+- interface: identificativo dell'erogazione o della fruizione;
+
+- outConnectorName: nome del connettore multiplo selezionato per la consegna.
 
 **Soggetti**
 
@@ -210,6 +228,14 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 
 - providerURI: uri associata al soggetto erogatore;
 
+- providerPropertiesKeys: nomi delle proprietà definite sul soggetto fruitore;
+
+- providerProperties: proprietà (nome=valore) definite sul soggetto fruitore separate da uno spazio;
+
+- providerProperties(propertySeparator, valueSeparator): simile alla precedente opzione, consente di indicare i separatori utilizzati;
+
+- providerProperty(nomeProprietà): valore della proprietà indicata come parametro;
+
 - senderId: identificativo del soggetto fruitore, secondo il formato previsto dal profilo di interoperabilità;
 
 - sender: nome del soggetto fruitore;
@@ -218,11 +244,27 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 
 - senderDomain: identificativo del dominio fruitore;
 
-- senderURI: uri associata al soggetto fruitore.
+- senderURI: uri associata al soggetto fruitore;
+
+- senderPropertiesKeys: nomi delle proprietà definite sul soggetto fruitore;
+
+- senderProperties: proprietà (nome=valore) definite sul soggetto fruitore separate da uno spazio;
+
+- senderProperties(propertySeparator, valueSeparator): simile alla precedente opzione, consente di indicare i separatori utilizzati;
+
+- senderProperty(nomeProprietà): valore della proprietà indicata come parametro.
 
 **Mittente**
 	
 - application: identificativo dell'applicativo richiedente;
+
+- applicationPropertiesKeys: nomi delle proprietà definite sull'applicativo richiedente;
+
+- applicationProperties: proprietà (nome=valore) definite sull'applicativo separate da uno spazio;
+
+- applicationProperties(propertySeparator, valueSeparator): simile alla precedente opzione, consente di indicare i separatori utilizzati;
+
+- applicationProperty(nomeProprietà): valore della proprietà indicata come parametro;
 
 - credentials: credenziali presenti nella richiesta;
 

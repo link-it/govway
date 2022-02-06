@@ -78,6 +78,8 @@ public class Info {
 	private Messaggio rispostaIngresso;
 	private Messaggio rispostaUscita;
 	
+	private InfoConfigurazione infoConfigurazione;
+	
 	private Map<String, String> escape;
 	private String headersSeparator;
 	private String headerSeparator;
@@ -104,6 +106,7 @@ public class Info {
 			List<MsgDiagnostico> msgDiagnostici,
 			Messaggio richiestaIngresso, Messaggio richiestaUscita,
 			Messaggio rispostaIngresso, Messaggio rispostaUscita,
+			InfoConfigurazione infoConfigurazione,
 			FileTraceConfig config,
 			boolean base64) throws ProtocolException {
 		this.log = log;
@@ -118,6 +121,7 @@ public class Info {
 		this.richiestaUscita = richiestaUscita;
 		this.rispostaIngresso = rispostaIngresso;
 		this.rispostaUscita = rispostaUscita;
+		this.infoConfigurazione = infoConfigurazione;
 		this.escape = config.getEscape();
 		this.headersSeparator = config.getHeadersSeparator();
 		this.headerSeparator = config.getHeaderSeparator();
@@ -888,6 +892,33 @@ public class Info {
 		return correctValue(this.transazione.getIndirizzoSoggettoFruitore(), defaultValue);
 	}
 	
+	public java.lang.String getSenderProperty(String name) {
+		return getSenderProperty(name, null);
+	}
+	public java.lang.String getSenderProperty(String name, String defaultValue) {
+		return correctValue(this.infoConfigurazione.getSenderProperty(name),defaultValue);
+	}
+	public java.lang.String getSenderPropertiesKeys(){
+		return getSenderPropertiesKeys(null);
+	}
+	public java.lang.String getSenderPropertiesKeys(String defaultValue){
+		return getSenderPropertiesKeys(InfoConfigurazione.KEYS_SEPARATOR,defaultValue);
+	}
+	public java.lang.String getSenderPropertiesKeys(String separator, String defaultValue){
+		return correctValue(this.infoConfigurazione.getSenderPropertiesKeysAsString(separator),defaultValue);
+	}
+	public java.lang.String getSenderProperties(){
+		return getSenderProperties(null);
+	}
+	public java.lang.String getSenderProperties(String defaultValue){
+		return getSenderProperties(InfoConfigurazione.PROPERTY_SEPARATOR,InfoConfigurazione.VALUE_SEPARATOR,defaultValue);
+	}
+	public java.lang.String getSenderProperties(String propertySeparator, String valueSeparator){
+		return getSenderProperties(propertySeparator, valueSeparator, null);
+	}
+	public java.lang.String getSenderProperties(String propertySeparator, String valueSeparator, String defaultValue){
+		return correctValue(this.infoConfigurazione.getSenderPropertiesAsString(propertySeparator,valueSeparator),defaultValue);
+	}
 	
 	// soggetto destinatario
 	
@@ -926,6 +957,34 @@ public class Info {
 	}
 	public java.lang.String getProviderURI(String defaultValue) {
 		return correctValue(this.transazione.getIndirizzoSoggettoErogatore(), defaultValue);
+	}
+	
+	public java.lang.String getProviderProperty(String name) {
+		return getProviderProperty(name, null);
+	}
+	public java.lang.String getProviderProperty(String name, String defaultValue) {
+		return correctValue(this.infoConfigurazione.getProviderProperty(name),defaultValue);
+	}
+	public java.lang.String getProviderPropertiesKeys(){
+		return getProviderPropertiesKeys(null);
+	}
+	public java.lang.String getProviderPropertiesKeys(String defaultValue){
+		return getProviderPropertiesKeys(InfoConfigurazione.KEYS_SEPARATOR,defaultValue);
+	}
+	public java.lang.String getProviderPropertiesKeys(String separator, String defaultValue){
+		return correctValue(this.infoConfigurazione.getProviderPropertiesKeysAsString(separator),defaultValue);
+	}
+	public java.lang.String getProviderProperties(){
+		return getProviderProperties(null);
+	}
+	public java.lang.String getProviderProperties(String defaultValue){
+		return getProviderProperties(InfoConfigurazione.PROPERTY_SEPARATOR,InfoConfigurazione.VALUE_SEPARATOR,defaultValue);
+	}
+	public java.lang.String getProviderProperties(String propertySeparator, String valueSeparator){
+		return getProviderProperties(propertySeparator, valueSeparator, null);
+	}
+	public java.lang.String getProviderProperties(String propertySeparator, String valueSeparator, String defaultValue){
+		return correctValue(this.infoConfigurazione.getProviderPropertiesAsString(propertySeparator,valueSeparator),defaultValue);
 	}
 	
 	
@@ -1020,6 +1079,34 @@ public class Info {
 		return correctValue(nome, defaultValue);
 	}
 	
+	public java.lang.String getApiProperty(String name) {
+		return getApiProperty(name, null);
+	}
+	public java.lang.String getApiProperty(String name, String defaultValue) {
+		return correctValue(this.infoConfigurazione.getApiImplProperty(name),defaultValue);
+	}
+	public java.lang.String getApiPropertiesKeys(){
+		return getApiPropertiesKeys(null);
+	}
+	public java.lang.String getApiPropertiesKeys(String defaultValue){
+		return getApiPropertiesKeys(InfoConfigurazione.KEYS_SEPARATOR,defaultValue);
+	}
+	public java.lang.String getApiPropertiesKeys(String separator, String defaultValue){
+		return correctValue(this.infoConfigurazione.getApiImplPropertiesKeysAsString(separator),defaultValue);
+	}
+	public java.lang.String getApiProperties(){
+		return getApiProperties(null);
+	}
+	public java.lang.String getApiProperties(String defaultValue){
+		return getApiProperties(InfoConfigurazione.PROPERTY_SEPARATOR,InfoConfigurazione.VALUE_SEPARATOR,defaultValue);
+	}
+	public java.lang.String getApiProperties(String propertySeparator, String valueSeparator){
+		return getApiProperties(propertySeparator, valueSeparator, null);
+	}
+	public java.lang.String getApiProperties(String propertySeparator, String valueSeparator, String defaultValue){
+		return correctValue(this.infoConfigurazione.getApiImplPropertiesAsString(propertySeparator,valueSeparator),defaultValue);
+	}
+	
 	public java.lang.String getInterface() {
 		return getInterface(null);
 	}
@@ -1056,6 +1143,13 @@ public class Info {
 		return url;
 	}
 	
+	public java.lang.String getOutConnectorName() {
+		return getOutConnectorName(null);
+	}
+	public java.lang.String getOutConnectorName(String defaultValue) {
+		return correctValue(this.infoConfigurazione.getOutConnectorName(), defaultValue);
+	}
+	
 	public java.lang.String getInURL() {
 		return getInURL(null);
 	}
@@ -1089,6 +1183,34 @@ public class Info {
 	}
 	public java.lang.String getApplication(String defaultValue) {
 		return correctValue(this.transazione.getServizioApplicativoFruitore(), defaultValue);
+	}
+	
+	public java.lang.String getApplicationProperty(String name) {
+		return getApplicationProperty(name, null);
+	}
+	public java.lang.String getApplicationProperty(String name, String defaultValue) {
+		return correctValue(this.infoConfigurazione.getApplicationProperty(name),defaultValue);
+	}
+	public java.lang.String getApplicationPropertiesKeys(){
+		return getApplicationPropertiesKeys(null);
+	}
+	public java.lang.String getApplicationPropertiesKeys(String defaultValue){
+		return getApplicationPropertiesKeys(InfoConfigurazione.KEYS_SEPARATOR,defaultValue);
+	}
+	public java.lang.String getApplicationPropertiesKeys(String separator, String defaultValue){
+		return correctValue(this.infoConfigurazione.getApplicationPropertiesKeysAsString(separator),defaultValue);
+	}
+	public java.lang.String getApplicationProperties(){
+		return getApplicationProperties(null);
+	}
+	public java.lang.String getApplicationProperties(String defaultValue){
+		return getApplicationProperties(InfoConfigurazione.PROPERTY_SEPARATOR,InfoConfigurazione.VALUE_SEPARATOR,defaultValue);
+	}
+	public java.lang.String getApplicationProperties(String propertySeparator, String valueSeparator){
+		return getApplicationProperties(propertySeparator, valueSeparator, null);
+	}
+	public java.lang.String getApplicationProperties(String propertySeparator, String valueSeparator, String defaultValue){
+		return correctValue(this.infoConfigurazione.getApplicationPropertiesAsString(propertySeparator,valueSeparator),defaultValue);
 	}
 	
 	public java.lang.String getCredentials() {
@@ -1806,6 +1928,34 @@ public class Info {
 		else {
 			return correctValue(null, defaultValue);
 		}
+	}
+	
+	public java.lang.String getContextProperty(String name) {
+		return getContextProperty(name, null);
+	}
+	public java.lang.String getContextProperty(String name, String defaultValue) {
+		return correctValue(this.infoConfigurazione.getContextProperty(name),defaultValue);
+	}
+	public java.lang.String getContextPropertiesKeys(){
+		return getContextPropertiesKeys(null);
+	}
+	public java.lang.String getContextPropertiesKeys(String defaultValue){
+		return getContextPropertiesKeys(InfoConfigurazione.KEYS_SEPARATOR,defaultValue);
+	}
+	public java.lang.String getContextPropertiesKeys(String separator, String defaultValue){
+		return correctValue(this.infoConfigurazione.getContextPropertiesKeysAsString(separator),defaultValue);
+	}
+	public java.lang.String getContextProperties(){
+		return getContextProperties(null);
+	}
+	public java.lang.String getContextProperties(String defaultValue){
+		return getContextProperties(InfoConfigurazione.PROPERTY_SEPARATOR,InfoConfigurazione.VALUE_SEPARATOR,defaultValue);
+	}
+	public java.lang.String getContextProperties(String propertySeparator, String valueSeparator){
+		return getContextProperties(propertySeparator, valueSeparator, null);
+	}
+	public java.lang.String getContextProperties(String propertySeparator, String valueSeparator, String defaultValue){
+		return correctValue(this.infoConfigurazione.getContextPropertiesAsString(propertySeparator,valueSeparator),defaultValue);
 	}
 	
 

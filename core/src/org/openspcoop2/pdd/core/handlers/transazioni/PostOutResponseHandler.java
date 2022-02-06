@@ -661,7 +661,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 					}
 					FileTraceConfig config = FileTraceConfig.getConfig(fileTraceConfig, fileTraceConfigGlobal);
 					fileTraceManager = new FileTraceManager(this.log, config);
-					fileTraceManager.buildTransazioneInfo(transazioneDTO, transaction, informazioniAttributiNormalizzati);
+					fileTraceManager.buildTransazioneInfo(transazioneDTO, transaction, informazioniAttributiNormalizzati, context.getPddContext());
 					fileTraceManager.invoke(context.getTipoPorta(), context.getPddContext());
 				}catch (Throwable e) {
 					this.log.error("["+idTransazione+"] File trace fallito: "+e.getMessage(),e);

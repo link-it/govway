@@ -326,7 +326,7 @@ public class Test {
 		System.out.println("Messaggi presenti prima: "+transaction.sizeMessaggi());
 		
 		FileTraceManager manager = new FileTraceManager(log, config);
-		manager.buildTransazioneInfo(transazioneDTO, transaction, informazioniAttributi);
+		manager.buildTransazioneInfo(transazioneDTO, transaction, informazioniAttributi, null);
 		
 		boolean requestSended = true;
 		if(transazioneDTO.getEsito()!=0) {
