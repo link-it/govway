@@ -87,6 +87,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.cache.CacheResponse;
 import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
 
@@ -212,6 +213,17 @@ public class GestoreAutenticazione {
 			throw new AutenticazioneException("Cache non abilitata");
 		}
 	}
+	public static List<String> listKeysCache() throws AutenticazioneException{
+		if(GestoreAutenticazione.cacheAutenticazione!=null){
+			try{
+				return GestoreAutenticazione.cacheAutenticazione.keys();
+			}catch(Exception e){
+				throw new AutenticazioneException(e.getMessage(),e);
+			}
+		}else{
+			throw new AutenticazioneException("Cache non abilitata");
+		}
+	}
 	public static String getObjectCache(String key) throws AutenticazioneException{
 		if(GestoreAutenticazione.cacheAutenticazione!=null){
 			try{
@@ -220,6 +232,31 @@ public class GestoreAutenticazione {
 					return o.toString();
 				}else{
 					return "oggetto con chiave ["+key+"] non presente";
+				}
+			}catch(Exception e){
+				throw new AutenticazioneException(e.getMessage(),e);
+			}
+		}else{
+			throw new AutenticazioneException("Cache non abilitata");
+		}
+	}
+	public static Object getRawObjectCache(String key) throws AutenticazioneException{
+		if(GestoreAutenticazione.cacheAutenticazione!=null){
+			try{
+				Object o = GestoreAutenticazione.cacheAutenticazione.get(key);
+				if(o!=null){
+					if(o instanceof CacheResponse) {
+						CacheResponse cR = (CacheResponse) o;
+						if(cR.getObject()!=null) {
+							o = cR.getObject();
+						}
+						else if(cR.getException()!=null) {
+							o = cR.getException();
+						}
+					}
+					return o;
+				}else{
+					return null;
 				}
 			}catch(Exception e){
 				throw new AutenticazioneException(e.getMessage(),e);
@@ -344,9 +381,9 @@ public class GestoreAutenticazione {
 	/*----------------- CLEANER --------------------*/
 	
 	public static void removePortaApplicativa(IDPortaApplicativa idPA) throws Exception {
-		if(GestoreAutenticazione.cacheAutenticazione!=null) {
+		if(GestoreAutenticazione.isCacheAbilitata()) {
 			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreAutenticazione.cacheAutenticazione.keys();
+			List<String> keys = GestoreAutenticazione.listKeysCache();
 			if(keys!=null && !keys.isEmpty()) {
 				String match = IDPortaApplicativa.PORTA_APPLICATIVA_PREFIX+idPA.getNome()+IDPortaApplicativa.PORTA_APPLICATIVA_SUFFIX;
 				for (String key : keys) {
@@ -364,9 +401,9 @@ public class GestoreAutenticazione {
 	}
 	
 	public static void removePortaDelegata(IDPortaDelegata idPD) throws Exception {
-		if(GestoreAutenticazione.cacheAutenticazione!=null) {
+		if(GestoreAutenticazione.isCacheAbilitata()) {
 			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreAutenticazione.cacheAutenticazione.keys();
+			List<String> keys = GestoreAutenticazione.listKeysCache();
 			if(keys!=null && !keys.isEmpty()) {
 				String match = IDPortaDelegata.PORTA_DELEGATA_PREFIX+idPD.getNome()+IDPortaDelegata.PORTA_DELEGATA_SUFFIX;
 				for (String key : keys) {
@@ -384,13 +421,13 @@ public class GestoreAutenticazione {
 	}
 	
 	public static void removeSoggetto(IDSoggetto idSoggetto) throws Exception {
-		if(GestoreAutenticazione.cacheAutenticazione!=null) {
+		if(GestoreAutenticazione.isCacheAbilitata()) {
 			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreAutenticazione.cacheAutenticazione.keys();
+			List<String> keys = GestoreAutenticazione.listKeysCache();
 			if(keys!=null && !keys.isEmpty()) {
 				for (String key : keys) {
 					if(key!=null) {
-						Object o = GestoreAutenticazione.cacheAutenticazione.get(key);
+						Object o = GestoreAutenticazione.getRawObjectCache(key);
 						if(o!=null) {
 							if(o instanceof EsitoAutenticazionePortaApplicativa) {
 								EsitoAutenticazionePortaApplicativa esito = (EsitoAutenticazionePortaApplicativa) o;
@@ -411,13 +448,13 @@ public class GestoreAutenticazione {
 	}
 	
 	public static void removeApplicativo(IDServizioApplicativo idApplicativo) throws Exception {
-		if(GestoreAutenticazione.cacheAutenticazione!=null) {
+		if(GestoreAutenticazione.isCacheAbilitata()) {
 			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreAutenticazione.cacheAutenticazione.keys();
+			List<String> keys = GestoreAutenticazione.listKeysCache();
 			if(keys!=null && !keys.isEmpty()) {
 				for (String key : keys) {
 					if(key!=null) {
-						Object o = GestoreAutenticazione.cacheAutenticazione.get(key);
+						Object o = GestoreAutenticazione.getRawObjectCache(key);
 						if(o!=null) {
 							if(o instanceof EsitoAutenticazionePortaDelegata) {
 								EsitoAutenticazionePortaDelegata esito = (EsitoAutenticazionePortaDelegata) o;

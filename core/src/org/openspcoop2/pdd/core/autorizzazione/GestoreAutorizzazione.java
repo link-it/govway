@@ -66,6 +66,7 @@ import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.cache.CacheResponse;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.slf4j.Logger;
@@ -193,6 +194,17 @@ public class GestoreAutorizzazione {
 			throw new AutorizzazioneException("Cache non abilitata");
 		}
 	}
+	public static List<String> listKeysCache() throws AutorizzazioneException{
+		if(GestoreAutorizzazione.cacheAutorizzazione!=null){
+			try{
+				return GestoreAutorizzazione.cacheAutorizzazione.keys();
+			}catch(Exception e){
+				throw new AutorizzazioneException(e.getMessage(),e);
+			}
+		}else{
+			throw new AutorizzazioneException("Cache non abilitata");
+		}
+	}
 	public static String getObjectCache(String key) throws AutorizzazioneException{
 		if(GestoreAutorizzazione.cacheAutorizzazione!=null){
 			try{
@@ -201,6 +213,31 @@ public class GestoreAutorizzazione {
 					return o.toString();
 				}else{
 					return "oggetto con chiave ["+key+"] non presente";
+				}
+			}catch(Exception e){
+				throw new AutorizzazioneException(e.getMessage(),e);
+			}
+		}else{
+			throw new AutorizzazioneException("Cache non abilitata");
+		}
+	}
+	public static Object getRawObjectCache(String key) throws AutorizzazioneException{
+		if(GestoreAutorizzazione.cacheAutorizzazione!=null){
+			try{
+				Object o = GestoreAutorizzazione.cacheAutorizzazione.get(key);
+				if(o!=null){
+					if(o instanceof CacheResponse) {
+						CacheResponse cR = (CacheResponse) o;
+						if(cR.getObject()!=null) {
+							o = cR.getObject();
+						}
+						else if(cR.getException()!=null) {
+							o = cR.getException();
+						}
+					}
+					return o;
+				}else{
+					return null;
 				}
 			}catch(Exception e){
 				throw new AutorizzazioneException(e.getMessage(),e);
@@ -326,9 +363,9 @@ public class GestoreAutorizzazione {
 /*----------------- CLEANER --------------------*/
 	
 	public static void removePortaApplicativa(IDPortaApplicativa idPA) throws Exception {
-		if(GestoreAutorizzazione.cacheAutorizzazione!=null) {
+		if(GestoreAutorizzazione.isCacheAbilitata()) {
 			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreAutorizzazione.cacheAutorizzazione.keys();
+			List<String> keys = GestoreAutorizzazione.listKeysCache();
 			if(keys!=null && !keys.isEmpty()) {
 				String match = IDPortaApplicativa.PORTA_APPLICATIVA_PREFIX+idPA.getNome()+IDPortaApplicativa.PORTA_APPLICATIVA_SUFFIX;
 				for (String key : keys) {
@@ -346,9 +383,9 @@ public class GestoreAutorizzazione {
 	}
 	
 	public static void removePortaDelegata(IDPortaDelegata idPD) throws Exception {
-		if(GestoreAutorizzazione.cacheAutorizzazione!=null) {
+		if(GestoreAutorizzazione.isCacheAbilitata()) {
 			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreAutorizzazione.cacheAutorizzazione.keys();
+			List<String> keys = GestoreAutorizzazione.listKeysCache();
 			if(keys!=null && !keys.isEmpty()) {
 				String match = IDPortaDelegata.PORTA_DELEGATA_PREFIX+idPD.getNome()+IDPortaDelegata.PORTA_DELEGATA_SUFFIX;
 				for (String key : keys) {
@@ -366,9 +403,9 @@ public class GestoreAutorizzazione {
 	}
 	
 	public static void removeSoggetto(IDSoggetto idSoggetto) throws Exception {
-		if(GestoreAutorizzazione.cacheAutorizzazione!=null) {
+		if(GestoreAutorizzazione.isCacheAbilitata()) {
 			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreAutorizzazione.cacheAutorizzazione.keys();
+			List<String> keys = GestoreAutorizzazione.listKeysCache();
 			if(keys!=null && !keys.isEmpty()) {
 				String matchSoggettoFruitore = DatiInvocazionePortaApplicativa.SOGGETTO_FRUITORE_PREFIX+idSoggetto.toString()+DatiInvocazionePortaApplicativa.SOGGETTO_FRUITORE_SUFFIX;
 				for (String key : keys) {
@@ -386,9 +423,9 @@ public class GestoreAutorizzazione {
 	}
 	
 	public static void removeApplicativo(IDServizioApplicativo idApplicativo) throws Exception {
-		if(GestoreAutorizzazione.cacheAutorizzazione!=null) {
+		if(GestoreAutorizzazione.isCacheAbilitata()) {
 			List<String> keyForClean = new ArrayList<String>();
-			List<String> keys = GestoreAutorizzazione.cacheAutorizzazione.keys();
+			List<String> keys = GestoreAutorizzazione.listKeysCache();
 			if(keys!=null && !keys.isEmpty()) {
 				String matchApplicativoFruitore = DatiInvocazionePortaApplicativa.APPLICATIVO_FRUITORE_PREFIX+idApplicativo.toString()+DatiInvocazionePortaApplicativa.APPLICATIVO_FRUITORE_SUFFIX;
 				String matchApplicativo = DatiInvocazionePortaDelegata.APPLICATIVO_PREFIX+idApplicativo.toString()+DatiInvocazionePortaDelegata.APPLICATIVO_SUFFIX;

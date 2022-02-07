@@ -293,7 +293,7 @@ public class GestoreToken {
 	
 	public static void removeGenericProperties(IDGenericProperties idGP) throws Exception {
 		
-		if(GestoreToken.cacheToken!=null){
+		if(GestoreToken.isCacheAbilitata()){
 			
 			String prefixKeyValidazioneJwt = null;
 			String prefixKeyIntrospection = null;

@@ -159,7 +159,7 @@ public class GestoreCredenzialiEngine {
 			try{
 				org.openspcoop2.utils.certificate.CertificateUtils.validaPrincipal(subjectGateway, PrincipalType.subject);
 			}catch(Exception e){
-				throw new GestoreCredenzialiException("Richiesta autenticazione ssl del gestore delle credenziali, ma subject fornito non valido: "+e.getMessage());
+				throw new GestoreCredenzialiException("Richiesta autenticazione ssl del gestore delle credenziali, ma subject fornito ["+subjectGateway+"] non valido: "+e.getMessage());
 			}
 			if(credenzialiTrasporto.getSubject()==null){
 				throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_CREDENTIALS_NOT_FOUND, 
