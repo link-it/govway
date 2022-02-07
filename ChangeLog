@@ -2,6 +2,12 @@
 
 	* Rilasciata versione 3.3.6
 
+2022-02-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Differenziato diagnostico emesso in caso di consegna condizionale non applicabile e conseguente consegna a tutti i connettori registrati,
+	in modo da riconoscere il caso di estrazione della condizione fallita dal caso di individuazione non riuscita di un connettore tramite la condizione estratta dalla richiesta.
+
 2022-02-06  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
