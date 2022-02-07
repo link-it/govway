@@ -47,6 +47,8 @@ public class IdentificazioneFallitaTest extends ConfigLoader {
 	
 	public static final String CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_UTILIZZO_CONNETTORE_DEFAULT = "007047";
 	public static final String CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_UTILIZZO_TUTTI_CONNETTORI = "007051";
+	public static final String CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_TROVATO_UTILIZZO_TUTTI_CONNETTORI =  "007063";
+
 	public static final String CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_UTILIZZO_CONNETTORE_DEFAULT = "007061";
 	
 	public static final int DIAGNOSTICO_SEVERITA_INFO = 4;
@@ -57,8 +59,12 @@ public class IdentificazioneFallitaTest extends ConfigLoader {
 	public static final String MESSAGGIO_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA = "Identificazione 'HeaderBased' (Header HTTP: GovWay-TestSuite-Connettore) non è riuscita ad estrarre dalla richiesta l'informazione utile ad identificare il connettore da utilizzare: header non presente";
 	
 	public static final String MESSAGGIO_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_FALLBACK = "Per la consegna viene utilizzato il connettore 'Connettore0', configurato per essere utilizzato in caso di identificazione condizionale fallita";
+	
 	public static final String MESSAGGIO_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_FALLBACK_TUTTI_CONNETTORI = "Il messaggio di richiesta verrà notificato a tutti i connettori indiscriminatamente poichè l'identificazione condizionale è fallita";
+	
 	public static final String MESSAGGIO_DIAGNOSTICO_NESSUN_CONNETTORE_TROVATO_FALLBACK = "Per la consegna viene utilizzato il connettore 'Connettore0', configurato per essere utilizzato nel caso in cui la condizione estratta dalla richiesta non ha permesso di identificare alcun connettore";
+	
+	public static final String MESSAGGIO_DIAGNOSTICO_NESSUN_CONNETTORE_TROVATO_FALLBACK_TUTTI_CONNETTORI = "Il messaggio verrà consegnato a tutti i connettori indiscriminatamente poichè la condizione estratta dalla richiesta non ha permesso di identificare alcun connettore";
 	
 
 

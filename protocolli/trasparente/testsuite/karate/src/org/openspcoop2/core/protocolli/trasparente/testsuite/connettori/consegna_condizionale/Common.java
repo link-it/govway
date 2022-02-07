@@ -310,11 +310,16 @@ public class Common {
 	
 
 	public static void checkAll200(List<HttpResponse> responses) {
-		for (var resp : responses)
-			assertEquals(200, resp.getResultHTTPOperation());
+		checkResponsesStatus(responses, 200);
 	}
 	
 
+	public static void checkResponsesStatus(List<HttpResponse> responses, int status) {
+		for (var resp : responses) {
+			assertEquals(status, resp.getResultHTTPOperation());
+		}
+	}
+	
 	
 	public static void fermaRiconsegne(DbUtils dbUtils) {
 		String query = "UPDATE messaggi set proprietario='GestoreMessaggi'";

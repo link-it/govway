@@ -135,6 +135,13 @@ public class CommonConsegnaMultipla {
 	}
 	
 	
+	public static <T> Set<T> setDifference(Set<T> lhs, Set<T> rhs) {
+		Set<T> ret = new HashSet<T>(lhs);
+		ret.removeAll(rhs);
+		return ret;
+	}
+	
+	
 	private static EsitiProperties getEsitiProperties() {
 		try {
 			return EsitiProperties.getInstance(ConfigLoader.getLoggerCore(), CommonConsegnaMultipla.PROTOCOL_NAME);
@@ -275,7 +282,7 @@ public class CommonConsegnaMultipla {
 	 * @param response
 	 */
 	public static void checkRequestExpectations(RequestAndExpectations requestAndExpectation, HttpResponse response) {
-		for ( var connettore : requestAndExpectation.connettoriFallimento) {
+		for (var connettore : requestAndExpectation.connettoriFallimento) {
 			checkSchedulingConnettoreInCorso(response, connettore);
 		}
 		
@@ -304,16 +311,7 @@ public class CommonConsegnaMultipla {
 		checkStatoConsegna(response,requestAndExpectation.esito, requestAndExpectation.connettoriFallimento.size());
 	}
 
-	/**
-	 * @deprecated
 
-	 */
-	public static RequestAndExpectations buildRequestAndExpectations(String erogazione, int statusCode, Set<String> connettoriOk, String soapContentType) {		
-		var connettoriErrore = new HashSet<>(Common.setConnettoriAbilitati);
-		connettoriErrore.removeAll(connettoriOk);
-		return buildRequestAndExpectations(erogazione, statusCode, connettoriOk, connettoriOk, soapContentType);
-	}
-	
 	/**
 	 * Costruisce la richiesta e le condizioni attese sull'esito della richiesta.
 	 * 
@@ -406,31 +404,42 @@ public class CommonConsegnaMultipla {
 		// Controllo che le richieste siano state consegnate e le notifiche schedulate
 		for (var requestAndExpectation : responsesByKind.keySet() ) {
 			var responses = responsesByKind.get(requestAndExpectation);
-			assertTrue(!responses.isEmpty());
-			checkAll200(responses);
 			
-			// Deve essere la fusione dei connettoriOk e i connettoriErrore\conettoriScheduling Disabilitato
-			Set<String> connettoriCoinvoltii = setSum(requestAndExpectation.connettoriSuccesso, requestAndExpectation.connettoriFallimento);
-			
-			checkStatoConsegna(responses, ESITO_CONSEGNA_MULTIPLA, connettoriCoinvoltii.size());
-	
-			checkSchedulingConnettoreIniziato(responses, connettoriCoinvoltii);
+			if (requestAndExpectation.esitoPrincipale == 200) {
+				assertTrue(!responses.isEmpty());
+				checkAll200(responses);
+				
+				// Deve essere la fusione dei connettoriOk e i connettoriErrore\conettoriScheduling Disabilitato
+				Set<String> connettoriCoinvoltii = setSum(requestAndExpectation.connettoriSuccesso, requestAndExpectation.connettoriFallimento);
+				
+				checkStatoConsegna(responses, ESITO_CONSEGNA_MULTIPLA, connettoriCoinvoltii.size());
+		
+				checkSchedulingConnettoreIniziato(responses, connettoriCoinvoltii);
+			} else if (requestAndExpectation.esitoPrincipale == 500) {
+				Common.checkResponsesStatus(responses, 500);
+			} else {
+				throw new RuntimeException("Esito principale atteso non programmato: " + requestAndExpectation.esitoPrincipale);
+			}
 		}
 		
 		// Attendo la consegna
 		org.openspcoop2.utils.Utilities.sleep(2*intervalloControllo);
 		
 		for (var requestAndExpectation : responsesByKind.keySet()) {
-			for (var response : responsesByKind.get(requestAndExpectation)) {
-				checkRequestExpectations(requestAndExpectation, response);
+			if (requestAndExpectation.esitoPrincipale == 200) {
+				for (var response : responsesByKind.get(requestAndExpectation)) {
+					checkRequestExpectations(requestAndExpectation, response);
+				}
 			}
 		}
 		
 		// Attendo l'intervallo di riconsegna e controllo che il contatore delle consegne sia almeno a 2
 		org.openspcoop2.utils.Utilities.sleep(2*intervalloControlloFallite);
 		for (var requestAndExpectation : responsesByKind.keySet()) {
-			for (var response : responsesByKind.get(requestAndExpectation)) {
-				checkRequestExpectationsFinal(requestAndExpectation, response);
+			if (requestAndExpectation.esitoPrincipale == 200) {
+				for (var response : responsesByKind.get(requestAndExpectation)) {
+					checkRequestExpectationsFinal(requestAndExpectation, response);
+				}
 			}
 		}
 	}

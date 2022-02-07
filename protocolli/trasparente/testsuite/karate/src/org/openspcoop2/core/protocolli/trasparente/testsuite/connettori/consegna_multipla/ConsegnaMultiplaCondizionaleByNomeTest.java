@@ -48,27 +48,31 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 public class ConsegnaMultiplaCondizionaleByNomeTest extends ConfigLoader {
 
 	
-//	@Test
+	@Test
 	public void connettoreDisabilitato() {
-		// TODO: 
-		//					3 - Utilizzo connettore disabiltato
 		final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeHeaderHttp";
 		
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
-		//List<>
 
 		int i = 0;
 		
 		for (var entry : statusCodeVsConnettori.entrySet()) {
 			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
 			
-			final String filtro = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
+			String filtro = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
 
 			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
 			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
 			request.addHeader(Common.HEADER_ID_CONDIZIONE, filtro);
 			
 			var current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), Set.of(filtro));
+			requestsByKind.add(current);
+			
+			filtro = Common.CONNETTORE_DISABILITATO;
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.addHeader(Common.HEADER_ID_CONDIZIONE, filtro);
+			current = new RequestAndExpectations(request, Set.of(), Set.of(), entry.getKey(), 500);
 			requestsByKind.add(current);
 			
 			i++;
@@ -107,6 +111,13 @@ public class ConsegnaMultiplaCondizionaleByNomeTest extends ConfigLoader {
 		checkResponses(responsesByKind);
 
 	}
+	
+	@Test
+	public void parametroUrl() {
+		final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeParametroUrl";
+		parametroUrl_Impl(erogazione);
+	}
+
 	
 	@Test
 	public void template() {
@@ -333,17 +344,31 @@ public class ConsegnaMultiplaCondizionaleByNomeTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void parametroUrl() {
-		final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeParametroUrl";
-		parametroUrl_Impl(erogazione);
-	}
+	public void urlInvocazionePrefisso() {
+		final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeUrlInvocazionePrefisso";
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+		final String prefisso = "Connettore";
 
-	
-	@Test
-	public void urlInvocazione() {
-		// TODO: Fai UrlInvocazionePrefisso
-		final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeUrlInvocazione";
-		parametroUrl_Impl(erogazione);
+		int i = 0;
+		
+		for (var entry : statusCodeVsConnettori.entrySet()) {
+			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
+			final String connettore =Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size()); 
+			final String filtro = connettore.substring(prefisso.length());
+
+			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
+			
+			var current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), Set.of(connettore));
+			requestsByKind.add(current);
+			
+			i++;
+		}
+				
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+		
+		checkResponses(responsesByKind);
 	}
 	
 	
