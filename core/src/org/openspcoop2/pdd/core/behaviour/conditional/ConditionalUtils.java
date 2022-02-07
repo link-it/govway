@@ -497,7 +497,7 @@ public class ConditionalUtils  {
 					if(TipoBehaviour.CONSEGNA_MULTIPLA.equals(behaviourType)) {
 						
 						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
-								"connettoriMultipli.consegnaCondizionale.tuttiConnettori");
+								"connettoriMultipli.consegnaCondizionale.nessunConnettoreIdentificato.tuttiConnettori");
 						
 						result.setListServiziApplicativi(getAllEnabled(pa.getServizioApplicativoList()));
 						return result;
@@ -509,7 +509,7 @@ public class ConditionalUtils  {
 					else if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType)) {
 						
 						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
-								"connettoriMultipli.consegnaCondizionale.tuttiConnettori");
+								"connettoriMultipli.consegnaCondizionale.nessunConnettoreIdentificato.tuttiConnettoriNotifica");
 						
 						result.setListServiziApplicativi(getAllEnabled(pa.getServizioApplicativoList()));
 						return result;
