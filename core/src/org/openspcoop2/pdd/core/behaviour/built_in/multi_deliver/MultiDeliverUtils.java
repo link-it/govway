@@ -22,7 +22,9 @@ package org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativoConnettore;
 import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourPropertiesUtils;
 import org.slf4j.Logger;
@@ -84,7 +86,7 @@ public class MultiDeliverUtils  {
 	}
 	
 
-	public static void save(PortaApplicativa pa, ConfigurazioneMultiDeliver configurazione) throws BehaviourException {
+	public static void save(PortaApplicativa pa, ConfigurazioneMultiDeliver configurazione, boolean differenziazioneConsegnaDaNotifiche) throws BehaviourException {
 		
 		if(pa.getBehaviour()==null) {
 			throw new BehaviourException("Configurazione behaviour non abilitata");
@@ -95,6 +97,24 @@ public class MultiDeliverUtils  {
 		
 		if(StringUtils.isNotEmpty(configurazione.getTransazioneSincrona_nomeConnettore())) {
 			BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),Costanti.MULTI_DELIVER_CONNETTORE_API, configurazione.getTransazioneSincrona_nomeConnettore());
+			if(differenziazioneConsegnaDaNotifiche) {
+				if(pa!=null && pa.sizeServizioApplicativoList()>0) {
+					for (PortaApplicativaServizioApplicativo paSA : pa.getServizioApplicativoList()) {
+						if(paSA.getDatiConnettore()==null) {
+							paSA.setDatiConnettore(new PortaApplicativaServizioApplicativoConnettore());
+						}
+						if(paSA.getDatiConnettore().getNome()==null) {
+							paSA.getDatiConnettore().setNome(CostantiConfigurazione.NOME_CONNETTORE_DEFAULT);
+						}
+						if(configurazione.getTransazioneSincrona_nomeConnettore().equals(paSA.getDatiConnettore().getNome())) {
+							paSA.getDatiConnettore().setNotifica(false);
+						}
+						else {
+							paSA.getDatiConnettore().setNotifica(true);
+						}
+					}
+				}
+			}
 		}
 		
 		BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO, configurazione.isNotificheByEsito()+"");
