@@ -397,7 +397,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		HttpRequest requestSoapMessageContains = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1 );
 		requestSoapMessageContains.setUrl(requestSoapMessageContains.getUrl()+"&faultActor=12345&faultCode=2341&faultMessage=Container-MessageRispeditaContains-Container"); 
 	
-	/*	requestsByKind.add(new RequestAndExpectations(
+		requestsByKind.add(new RequestAndExpectations(
 				requestSoapFaultTuttiValorizzati,				
 				Set.of(CONNETTORE_1,CONNETTORE_2),
 				Set.of(CONNETTORE_0, CONNETTORE_3),
@@ -423,7 +423,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 				Set.of(CONNETTORE_0,CONNETTORE_1,CONNETTORE_3),
 				Set.of(CONNETTORE_2),
 				ESITO_CONSEGNA_MULTIPLA_FALLITA)
-			);*/
+			);
 		
 		requestSoapFaultTuttiValorizzati = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_2);
 		requestSoapFaultTuttiValorizzati.setUrl(requestSoapFaultTuttiValorizzati.getUrl()+"&faultActor=ActorRispedita&faultCode=CodeRispedita&faultMessage=MessageRispedita");	
@@ -445,7 +445,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 				ESITO_CONSEGNA_MULTIPLA_FALLITA)
 			);
 		
-	/*	requestsByKind.add(new RequestAndExpectations(
+		requestsByKind.add(new RequestAndExpectations(
 				requestSoapFaultTuttiRegex,
 				Set.of(CONNETTORE_0,CONNETTORE_2,CONNETTORE_3),
 				Set.of(CONNETTORE_1), 
@@ -465,7 +465,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 				Set.of(CONNETTORE_2),
 				ESITO_CONSEGNA_MULTIPLA_FALLITA)
 			);
-		*/
+		
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		
 		// Tutte le richieste indipendentemente dal tipo devono essere state prese in consegna e lo scheduling inizia su tutti i connettori abilitati

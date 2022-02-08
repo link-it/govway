@@ -22,10 +22,15 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegn
 
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_2;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_3;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.statusCodeVsConnettori;
 
 //import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.statusCodeVsConnettori;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.AfterClass;
@@ -35,8 +40,10 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.RequestBuilder;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectations;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
+import org.openspcoop2.utils.transport.http.HttpResponse;
 
 /**
  * 
@@ -106,7 +113,7 @@ public class ConsegnaConNotificheTest extends ConfigLoader {
 			// Per ogni richiesta controllo che la risposta sincrona corrisponda a quanto indicato nella richiesta TODO
 			
 			CommonConsegnaMultipla.checkPresaInConsegna(r);
-			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);
+			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
 		}
 	
 		// Attendo la consegna
@@ -123,7 +130,46 @@ public class ConsegnaConNotificheTest extends ConfigLoader {
 			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(response,  Common.setConnettoriAbilitati);
 		}
 		
+	}
+	
+	@Test
+	public void schemaConsegnaConNotifiche() {
+		final String erogazione ="";
 		
+		
+		// Il connettore di fallback è il 2
+
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+
+		int i = 0;
+		// Prima costruisco le richieste normalmente
+		for (var entry : CommonConsegnaMultipla.statusCodeVsConnettori.entrySet()) {
+			
+			String pool = Common.pools.get(i % Common.pools.size());
+			Set<String> connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
+			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
+
+			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaConNotifiche",   "test",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.addHeader(Common.HEADER_ID_CONDIZIONE, Common.filtriPools.get(pool).get(0));
+			
+			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
+			requestsByKind.add(current);
+			
+			// Request consegna sincrona fallita, per questa richiesta non deve essere schedulata la consegna
+			// sugli altri connettori
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaConNotifiche",   "test",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			//request.setCampiPerFarlaSbagliareDataLErogazione(); TODO
+			current = new RequestAndExpectations(request, Set.of(), Set.of(), entry.getKey(), 500);
+			requestsByKind.add(current);
+			
+			i++;
+		}
+				
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+		
+		CommonConsegnaMultipla.checkResponses(responsesByKind);
 	}
 
 }

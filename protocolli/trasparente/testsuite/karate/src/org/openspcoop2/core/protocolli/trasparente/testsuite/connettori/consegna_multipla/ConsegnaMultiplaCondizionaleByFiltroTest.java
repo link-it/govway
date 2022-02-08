@@ -81,6 +81,12 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 		Common.fermaRiconsegne(dbUtils);
 	}
 	
+	@org.junit.After
+	public void AfterEach() {
+		Common.fermaRiconsegne(dbUtils);		
+	}
+
+	
 	@Test
 	public void headerHttpICFDiagnosticoInfo() {
 		final String erogazione = "TestConsegnaMultiplaCondizionaleByFiltroHeaderHttpICFDiagnosticoInfo";

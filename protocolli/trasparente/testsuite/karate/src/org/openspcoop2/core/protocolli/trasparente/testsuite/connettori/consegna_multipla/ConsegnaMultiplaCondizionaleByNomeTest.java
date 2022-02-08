@@ -63,6 +63,11 @@ public class ConsegnaMultiplaCondizionaleByNomeTest extends ConfigLoader {
 	public static void After() {
 		Common.fermaRiconsegne(dbUtils);
 	}
+	
+	@org.junit.After
+	public void AfterEach() {
+		Common.fermaRiconsegne(dbUtils);		
+	}
 
 	
 	@Test
