@@ -320,7 +320,7 @@ public class GestoreErroreConnettore {
 
 		if(messageResponse!=null && (messageResponse instanceof OpenSPCoop2SoapMessage) ){
 			try{
-				messageResponse.getMessageType();
+				messageType = messageResponse.getMessageType();
 				if(messageResponse.castAsSoap().hasSOAPFault()) {
 					bodyConFault = messageResponse.castAsSoap().getSOAPBody();
 				}
