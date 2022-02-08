@@ -1,5 +1,11 @@
 2022-02-08  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	In caso di consegna condizionale dove veniva indicato un 'Connettore Implementa API' differente da quello iniziale, 
+	la maschera dei connettori non riportava correttamente il connettore "sincrono" alla prima posizione allo scopo di differenziare la gestione della consegna dalla gestione delle notifiche.
+
+2022-02-08  Andrea Poli <apoli@link.it>
+
 	* Rilasciata versione 3.3.6
 
 2022-02-07  Andrea Poli <apoli@link.it>

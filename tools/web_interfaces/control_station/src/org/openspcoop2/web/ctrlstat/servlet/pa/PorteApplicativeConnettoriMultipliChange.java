@@ -1457,7 +1457,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 										if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore().equals(oldNomeConnettore)) {
 											// modifica riferimento
 											configurazioneMultiDeliver.setTransazioneSincrona_nomeConnettore(nomeConnettore);
-											org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.save(pa, configurazioneMultiDeliver);
+											boolean differenziazioneConsegnaDaNotifiche = TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType);
+											org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.save(pa, configurazioneMultiDeliver, differenziazioneConsegnaDaNotifiche);
 										}
 									}
 								}

@@ -541,7 +541,8 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 					
 					// configurazione multideliver
 					org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = porteApplicativeHelper.toConfigurazioneMultiDeliver(connettoreImplementaAPI, notificheCondizionaliEsito, esitiTransazione);
-					org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.save(portaApplicativa, configurazioneMultiDeliver);
+					boolean differenziazioneConsegnaDaNotifiche = false;
+					org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.save(portaApplicativa, configurazioneMultiDeliver, differenziazioneConsegnaDaNotifiche);
 					
 					// configurazione condizionale
 					if(consegnaCondizionale) {
@@ -559,7 +560,8 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 					
 					// configurazione multideliver
 					org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = porteApplicativeHelper.toConfigurazioneMultiDeliver(connettoreImplementaAPI, notificheCondizionaliEsito, esitiTransazione);
-					org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.save(portaApplicativa, configurazioneMultiDeliver);
+					boolean differenziazioneConsegnaDaNotifiche = TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType);
+					org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.save(portaApplicativa, configurazioneMultiDeliver, differenziazioneConsegnaDaNotifiche);
 					
 					// configurazione condizionale
 					if(consegnaCondizionale) {
