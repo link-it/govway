@@ -30,12 +30,14 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.MESSAGGIO_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_FALLBACK_TUTTI_CONNETTORI;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.statusCodeVsConnettori;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -50,7 +52,7 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 /**
  * 
- * @author froggo
+ * @author Francesco Scarlato
  *
  * 
  * QUERY:
@@ -65,13 +67,19 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  */
 public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 	
-	// Prima di ogni test  fermo le attuali riconsegne in atto.	
 	@BeforeClass
 	public static void Before() {
 		Common.fermaRiconsegne(dbUtils);
-		// TODO: Pulisci la cartella delle richieste dei coinnettori file, ma fallo dentro Common.fermaRiconsegne
+		File cartellaRisposte = CommonConsegnaMultipla.connettoriFilePath.toFile();
+		if (!cartellaRisposte.isDirectory()|| !cartellaRisposte.canWrite()) {
+			throw new RuntimeException("E' necessario creare la cartella per scrivere le richieste dei connettori, indicata dalla poprietà: <connettori.consegna_multipla.connettore_file.path> ");
+		}
 	}
-
+	
+	@AfterClass
+	public static void After() {
+		Common.fermaRiconsegne(dbUtils);
+	}
 	
 	@Test
 	public void headerHttpICFDiagnosticoInfo() {

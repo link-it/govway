@@ -170,6 +170,13 @@
 	# i secondi minimi in cui riconsegnare un messaggio fallito
 		connettori.consegna_multipla.next_messages.consegna_fallita.intervallo_minimo_riconsegna=2
 
+- Abilitare i metodi jmx:
+	Nel file /etc/govway/govway_local.properties abilitare le seguenti proprietà:
+        org.openspcoop2.pdd.check.readJMXResources.enabled=true
+        org.openspcoop2.pdd.check.readJMXResources.username=admin
+        org.openspcoop2.pdd.check.readJMXResources.password=admin
+        org.openspcoop2.pdd.services.http.disableKeepAlive=true
+
 
 Per eseguire i test:
 	ant run_test

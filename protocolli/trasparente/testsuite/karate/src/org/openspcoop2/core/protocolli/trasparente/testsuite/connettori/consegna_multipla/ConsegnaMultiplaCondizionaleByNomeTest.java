@@ -24,12 +24,15 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkResponses;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.statusCodeVsConnettori;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common;
@@ -42,10 +45,24 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 /**
  * 
- * @author froggo
+ * @author Francesco Scarlato
  *
  */
 public class ConsegnaMultiplaCondizionaleByNomeTest extends ConfigLoader {
+	
+	@BeforeClass
+	public static void Before() {
+		Common.fermaRiconsegne(dbUtils);
+		File cartellaRisposte = CommonConsegnaMultipla.connettoriFilePath.toFile();
+		if (!cartellaRisposte.isDirectory()|| !cartellaRisposte.canWrite()) {
+			throw new RuntimeException("E' necessario creare la cartella per scrivere le richieste dei connettori, indicata dalla poprietà: <connettori.consegna_multipla.connettore_file.path> ");
+		}
+	}
+	
+	@AfterClass
+	public static void After() {
+		Common.fermaRiconsegne(dbUtils);
+	}
 
 	
 	@Test
