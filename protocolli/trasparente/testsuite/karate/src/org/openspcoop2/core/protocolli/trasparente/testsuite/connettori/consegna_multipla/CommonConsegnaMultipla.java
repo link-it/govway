@@ -27,8 +27,12 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_3;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.checkAll200;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -89,21 +93,21 @@ public class CommonConsegnaMultipla {
 			.get(System.getProperty("connettori.consegna_multipla.connettore_file.path"));
 	
 	
-	final static Map<Integer, Set<String>> statusCode2xxVsConnettori  = Map
+	public final static Map<Integer, Set<String>> statusCode2xxVsConnettori  = Map
 			.of(200, Set.of(CONNETTORE_1,CONNETTORE_2),
 				  201, Set.of(CONNETTORE_1, CONNETTORE_3),
 				  202, Set.of(CONNETTORE_1,CONNETTORE_2, CONNETTORE_3),
 				  206, Set.of(CONNETTORE_1),
 				  299, Set.of(CONNETTORE_1));
 	
-	final static Map<Integer, Set<String>> statusCode4xxVsConnettori  = Map
+	public final static Map<Integer, Set<String>> statusCode4xxVsConnettori  = Map
 			.of(400, Set.of(CONNETTORE_1,CONNETTORE_2),
 				  401, Set.of(CONNETTORE_1, CONNETTORE_3),
 				  402, Set.of(CONNETTORE_1,CONNETTORE_2, CONNETTORE_3),
 				  406, Set.of(CONNETTORE_1),
 				  499, Set.of(CONNETTORE_1));
 	
-	final static Map<Integer, Set<String>> statusCode5xxVsConnettori  = Map
+	public final static Map<Integer, Set<String>> statusCode5xxVsConnettori  = Map
 			.of(500, Set.of(CONNETTORE_1,CONNETTORE_2),
 				  501, Set.of(CONNETTORE_1, CONNETTORE_3),
 				  502, Set.of(CONNETTORE_1,CONNETTORE_2, CONNETTORE_3),
@@ -185,13 +189,21 @@ public class CommonConsegnaMultipla {
 	}
 
 	
-	
+	@Deprecated
 	public  static void checkPresaInConsegna(List<HttpResponse> responses) {
 		for (var r : responses) {
 			checkPresaInConsegna(r);
 		}
 	}
+	
+	public  static void checkPresaInConsegna(List<HttpResponse> responses, int numConnettori) {
+		for (var r : responses) {
+			checkPresaInConsegna(r, numConnettori);
+		}
+	}
 
+
+	@Deprecated
 	public static void checkPresaInConsegna(HttpResponse response) {
 		checkPresaInConsegna(response, 4);
 	}
@@ -216,7 +228,7 @@ public class CommonConsegnaMultipla {
 		// Questo mi crea una stringa del tipo ( ?, ?, ? )
 		String IN_CLAUSE = "( " + String.join(",", Collections.nCopies(responses.size(), "?")) + ") ";
 		
-		String query = "select count(*) from transazioni where id in "+IN_CLAUSE+" and esito = ? and esito_sincrono = 0 and consegne_multiple = ?";
+		String query = "select count(*) from transazioni where id in "+IN_CLAUSE+" and esito = ? and consegne_multiple = ?";
 		//String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
 		ConfigLoader.getLoggerCore().info("Checking stato consegna for transazioni:  " + IN_CLAUSE + " AND esito = " + esito + " AND consegne-rimanenti: " + consegneMultipleRimanenti);
 		Integer count = ConfigLoader.getDbUtils().readValueArray(query, Integer.class,  args);
@@ -227,21 +239,40 @@ public class CommonConsegnaMultipla {
 	 * Controlla che la transazione principale abbia un determinato esito e determinate consegne da fare
 	 */
 	public static void checkStatoConsegna(HttpResponse response, int esito, int consegneMultipleRimanenti) {
-		String query = "select count(*) from transazioni where id=? and esito = ? and esito_sincrono = 0 and consegne_multiple = ?";
+		String query = "select count(*) from transazioni where id=? and esito = ? and consegne_multiple = ?";
 		String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
 		ConfigLoader.getLoggerCore().info("Checking stato consegna for transazione:  " + id_transazione + " AND esito = " + esito + " AND consegne-rimanenti: " + consegneMultipleRimanenti);
 		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class,  id_transazione, esito, consegneMultipleRimanenti);
 		
 		// Uncoment for debug
-		/*String query2 = "select esito, esito_sincrono, consegne_multiple from transazioni where id = ?";
+		String query2 = "select esito, esito_sincrono, consegne_multiple from transazioni where id = ?";
 		List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, id_transazione);
 		for (var v : letto) {
 			ConfigLoader.getLoggerCore().info(v.toString());
-		}*/
+		}
 		
 		assertEquals(Integer.valueOf(1), count);
 	}
 
+	
+	public static void checkNessunaConsegna(HttpResponse response) {
+		String query = "select count(*) from transazioni where id=? and esito != 0 and esito_sincrono = 0 and consegne_multiple = 0";
+		String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+		ConfigLoader.getLoggerCore().info("Checking nessuna consegna for transazione:  " + id_transazione + " AND esito != 0 AND consegne-rimanenti: 0");
+		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class,  id_transazione);
+		assertEquals(Integer.valueOf(1), count);
+	}
+	
+	
+	public static void checkNessunoScheduling(HttpResponse response) {
+		String query = "select count(*) from transazioni_sa where id_transazione=?";
+		String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+		
+		ConfigLoader.getLoggerCore().info("Checking nessuno scheduling connettore in corso for transazione:  " + id_transazione);
+		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione);
+		assertEquals(Integer.valueOf(0), count);
+	}
+	
 	public static void checkSchedulingConnettoreInCorso(HttpResponse response, String connettore) {
 		String query = "select count(*) from transazioni_sa where id_transazione=? and connettore_nome = ?  and consegna_terminata = ? and numero_tentativi >=1";
 		String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
@@ -412,7 +443,7 @@ public class CommonConsegnaMultipla {
 		for (var requestAndExpectation : responsesByKind.keySet() ) {
 			var responses = responsesByKind.get(requestAndExpectation);
 			
-			if (requestAndExpectation.esitoPrincipale == 200) {
+			if (requestAndExpectation.statusCodePrincipale == 200) {
 				assertTrue(!responses.isEmpty());
 				checkAll200(responses);
 				
@@ -422,10 +453,10 @@ public class CommonConsegnaMultipla {
 				checkStatoConsegna(responses, ESITO_CONSEGNA_MULTIPLA, connettoriCoinvoltii.size());
 		
 				checkSchedulingConnettoreIniziato(responses, connettoriCoinvoltii);
-			} else if (requestAndExpectation.esitoPrincipale == 500) {
+			} else if (requestAndExpectation.statusCodePrincipale == 500) {
 				Common.checkResponsesStatus(responses, 500);
 			} else {
-				throw new RuntimeException("Esito principale atteso non programmato: " + requestAndExpectation.esitoPrincipale);
+				throw new RuntimeException("Esito principale atteso non programmato: " + requestAndExpectation.statusCodePrincipale);
 			}
 		}
 		
@@ -433,7 +464,7 @@ public class CommonConsegnaMultipla {
 		org.openspcoop2.utils.Utilities.sleep(2*intervalloControllo);
 		
 		for (var requestAndExpectation : responsesByKind.keySet()) {
-			if (requestAndExpectation.esitoPrincipale == 200) {
+			if (requestAndExpectation.statusCodePrincipale == 200) {
 				for (var response : responsesByKind.get(requestAndExpectation)) {
 					checkRequestExpectations(requestAndExpectation, response);
 				}
@@ -443,12 +474,58 @@ public class CommonConsegnaMultipla {
 		// Attendo l'intervallo di riconsegna e controllo che il contatore delle consegne sia almeno a 2
 		org.openspcoop2.utils.Utilities.sleep(2*intervalloControlloFallite);
 		for (var requestAndExpectation : responsesByKind.keySet()) {
-			if (requestAndExpectation.esitoPrincipale == 200) {
+			if (requestAndExpectation.statusCodePrincipale == 200) {
 				for (var response : responsesByKind.get(requestAndExpectation)) {
 					checkRequestExpectationsFinal(requestAndExpectation, response);
 				}
 			}
 		}
+	}
+
+	/** 
+	 * Controlla che la richiesta sia stata inoltrata su file dai set di connettori indicati.
+	 * 
+	 * @param request 				-	La richiesta iniziale
+	 * @param responseSync	-	La risposta di presa in carico
+	 * @param connettoriFile		-  I connettori dell'erogazione che vanno su file 
+	 *
+	 */
+	public static  void checkConsegnaConnettoreFile(HttpRequest request, HttpResponse responseSync, Set<String> connettoriFile) throws IOException {
+		String idTransazione = responseSync.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+		List<File> filesCreati = CommonConsegnaMultipla.getFilesCreati(idTransazione);
+		
+		
+		for (var connettore : connettoriFile) {
+			String requestFilename = connettore+":"+idTransazione+":request";
+			String requestHeadersFilename = connettore+":"+idTransazione+":request-headers";
+			
+			File requestFile = filesCreati.stream().filter
+					( f -> f.getName().equals(requestFilename)).findAny().get();
+			
+			File requestHeadersFile = filesCreati.stream().filter
+					( f -> f.getName().equals(requestHeadersFilename)).findAny().get();
+			
+			HttpRequest requestConsegna = new HttpRequest();
+			requestConsegna.setContent(Files.readAllBytes(requestFile.toPath()));
+			
+			List<String> content = Files.readAllLines(requestHeadersFile.toPath());
+			for (var line : content) {
+				String[] header = line.split("=");
+				requestConsegna.addHeader(header[0], header[1]);
+			}
+			
+			assertTrue(Arrays.equals(request.getContent(), requestConsegna.getContent()));
+			assertEquals(idTransazione, requestConsegna.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE));
+			
+			assertEquals(connettoriFile.size()*2, filesCreati.size());
+		}
+	}
+
+	public static  List<File> getFilesCreati(String idTransazione) throws IOException {
+		return Files.list(connettoriFilePath)
+				.filter( file -> !Files.isDirectory(file) && file.toFile().getName().contains(idTransazione) )
+				.map(Path::toFile)
+				.collect(Collectors.toList());
 	}
 
 	

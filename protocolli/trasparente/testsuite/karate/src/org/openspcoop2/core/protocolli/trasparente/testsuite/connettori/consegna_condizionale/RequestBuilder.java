@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.codec.binary.Base64;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
@@ -173,6 +174,8 @@ public class RequestBuilder {
 			
 			HttpRequest request = new HttpRequest();
 			request.addHeader(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, "\""+soapAction+"\"");
+			request.addHeader("Authorization", "Basic " + new String(Base64.encodeBase64("user:pass".getBytes())));
+			
 			request.setMethod(HttpRequestMethod.POST);
 			request.setContent(content.getBytes());
 			request.setContentType(contentTypeSoap);
@@ -192,7 +195,7 @@ public class RequestBuilder {
 			
 			HttpRequest request = new HttpRequest();
 			request.setMethod(HttpRequestMethod.POST);
-			
+			request.addHeader("Authorization", "Basic " + new String(Base64.encodeBase64("user:pass".getBytes())));
 			request.setContentType(contentTypeSoap + ";" + HttpConstants.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION+"=\""+soapAction+"\"");
 			request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/"+azione
 					+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);

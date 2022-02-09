@@ -20,7 +20,6 @@
 
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_0;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_1;
@@ -38,15 +37,11 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -236,11 +231,11 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		// Per i connettori di tipo file, controllo anche che la scrittura della richiesta di consegna multipla sia avvenuta.
 		Set<String> connettoriFile = Set.of(CONNETTORE_2, CONNETTORE_3);
 		for (var response : responses) {
-			checkConsegnaConnettoreFile(request1, response, connettoriFile);
+			CommonConsegnaMultipla.checkConsegnaConnettoreFile(request1, response, connettoriFile);
 			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(response,  Common.setConnettoriAbilitati);
 		}
 		for (var response : responses2) {
-			checkConsegnaConnettoreFile(request2, response, connettoriFile);
+			CommonConsegnaMultipla.checkConsegnaConnettoreFile(request2, response, connettoriFile);
 			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(response,  Common.setConnettoriAbilitati);
 		}
 	}
@@ -299,7 +294,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		
 		for (var requestAndExpectation : responsesByKind.keySet()) {
 			for (var response : responsesByKind.get(requestAndExpectation)) {
-				checkConsegnaConnettoreFile(requestAndExpectation.request, response, connettoriFile);
+				CommonConsegnaMultipla.checkConsegnaConnettoreFile(requestAndExpectation.request, response, connettoriFile);
 				CommonConsegnaMultipla.checkRequestExpectations(requestAndExpectation, response);
 			}
 		}
@@ -631,54 +626,6 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		for (var r : responses2) {
 			CommonConsegnaMultipla.checkStatoConsegna(r, ESITO_CONSEGNA_MULTIPLA_IN_CORSO, 1);
 		}
-	}
-	
-
-
-	/** 
-	 * Controlla che la richiesta sia stata inoltrata su file dai set di connettori indicati.
-	 * 
-	 * @param request 				-	La richiesta iniziale
-	 * @param responseSync	-	La risposta di presa in carico
-	 * @param connettoriFile		-  I connettori dell'erogazione che vanno su file 
-	 *
-	 */
-	private void checkConsegnaConnettoreFile(HttpRequest request, HttpResponse responseSync, Set<String> connettoriFile) throws IOException {
-		String idTransazione = responseSync.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
-		List<File> filesCreati = getFilesCreati(idTransazione);
-		
-		
-		for (var connettore : connettoriFile) {
-			String requestFilename = connettore+":"+idTransazione+":request";
-			String requestHeadersFilename = connettore+":"+idTransazione+":request-headers";
-			
-			File requestFile = filesCreati.stream().filter
-					( f -> f.getName().equals(requestFilename)).findAny().get();
-			
-			File requestHeadersFile = filesCreati.stream().filter
-					( f -> f.getName().equals(requestHeadersFilename)).findAny().get();
-			
-			HttpRequest requestConsegna = new HttpRequest();
-			requestConsegna.setContent(Files.readAllBytes(requestFile.toPath()));
-			
-			List<String> content = Files.readAllLines(requestHeadersFile.toPath());
-			for (var line : content) {
-				String[] header = line.split("=");
-				requestConsegna.addHeader(header[0], header[1]);
-			}
-			
-			assertTrue(Arrays.equals(request.getContent(), requestConsegna.getContent()));
-			assertEquals(idTransazione, requestConsegna.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE));
-			
-			assertEquals(connettoriFile.size()*2, filesCreati.size());
-		}
-	}
-	
-	private List<File> getFilesCreati(String idTransazione) throws IOException {
-		return Files.list(CommonConsegnaMultipla.connettoriFilePath)
-				.filter( file -> !Files.isDirectory(file) && file.toFile().getName().contains(idTransazione) )
-				.map(Path::toFile)
-				.collect(Collectors.toList());
 	}
 
 }
