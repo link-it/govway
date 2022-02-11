@@ -94,7 +94,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 	public void schedulingAbilitatoDisabilitato() throws UtilsException, HttpUtilsException {
 		final String erogazione = "TestSchedulingAbilitatoDisabilitato";
 		
-		jmxDisabilitaSchedulingConnettore(erogazione, Common.CONNETTORE_1);
+		CommonConsegnaMultipla.jmxDisabilitaSchedulingConnettore(erogazione, Common.CONNETTORE_1);
 		
 		HttpRequest request1 = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1);
 		HttpRequest request2 = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_2);
@@ -105,7 +105,6 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		Common.checkAll200(responses2);
 		
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
-		// TODO dopo metti anche il soap2
 		for (var r : responses) {
 			CommonConsegnaMultipla.checkPresaInConsegna(r);
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);
@@ -136,13 +135,12 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 			CommonConsegnaMultipla.checkStatoConsegna(response, ESITO_CONSEGNA_MULTIPLA_IN_CORSO,  1);
 		}
 				
-		jmxAbilitaSchedulingConnettore(erogazione, Common.CONNETTORE_1);
+		CommonConsegnaMultipla.jmxAbilitaSchedulingConnettore(erogazione, Common.CONNETTORE_1);
 		
 		// Attendo la consegna sul connettore appena abilitato
 		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
 		
 		for (var response : responses) {
-			// Sul connettore disabilitato non è avvenuto nulla ancora.
 			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_1);
 			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_0);
 			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_2);
@@ -151,7 +149,6 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		}
 		
 		for (var response : responses2) {
-			// Sul connettore disabilitato non è avvenuto nulla ancora.
 			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_1);
 			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_0);
 			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_2);
@@ -162,40 +159,6 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 	}
 
 	
-	private void jmxAbilitaSchedulingConnettore(String erogazione, String connettore) throws UtilsException, HttpUtilsException {
-	    	org.slf4j.Logger logger = getLoggerCore();
-	    	logger.debug("Abilito connettore: " + connettore+ " per erogazione: "+ erogazione);
-	    	
-	        String jmx_user = prop.getProperty("jmx_username");
-	        String jmx_pass = prop.getProperty("jmx_password"); 
-	    	
-            
-            String nomePorta = "gw_SoggettoInternoTest/gw_"+erogazione+"/v1";
-
-            String url = prop.getProperty("govway_base_path") + "/check?resourceName=ConfigurazionePdD&methodName=enableSchedulingConnettoreMultiplo&paramValue="+nomePorta+"&paramValue2="+connettore;
-            org.openspcoop2.utils.transport.http.HttpUtilities.check(url, jmx_user, jmx_pass);
-            
-            url = prop.getProperty("govway_base_path") + "/check?resourceName=ConfigurazionePdD&methodName=enableSchedulingConnettoreMultiploRuntimeRepository&paramValue="+nomePorta+"&paramValue2="+connettore;
-            org.openspcoop2.utils.transport.http.HttpUtilities.check(url, jmx_user, jmx_pass);
-	}
-
-	private void jmxDisabilitaSchedulingConnettore(String erogazione, String connettore) throws UtilsException, HttpUtilsException {
-    	org.slf4j.Logger logger = getLoggerCore();
-    	logger.debug("Disabilito connettore: " + connettore+ " per erogazione: "+ erogazione);
-
-        String jmx_user = prop.getProperty("jmx_username");
-        String jmx_pass = prop.getProperty("jmx_password");
-        
-        String nomePorta = "gw_SoggettoInternoTest/gw_"+erogazione+"/v1";
-        
-        String url = prop.getProperty("govway_base_path") + "/check?resourceName=ConfigurazionePdD&methodName=disableSchedulingConnettoreMultiplo&paramValue="+nomePorta+"&paramValue2="+connettore;
-        org.openspcoop2.utils.transport.http.HttpUtilities.check(url, jmx_user, jmx_pass);
-        
-        url = prop.getProperty("govway_base_path") + "/check?resourceName=ConfigurazionePdD&methodName=disableSchedulingConnettoreMultiploRuntimeRepository&paramValue="+nomePorta+"&paramValue2="+connettore;
-        org.openspcoop2.utils.transport.http.HttpUtilities.check(url, jmx_user, jmx_pass);
-		
-	}
-
 	@Test
 	public void consegnaMultiplaSemplice() throws IOException {
 		final String erogazione = "TestConsegnaMultipla";
@@ -621,10 +584,18 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		// in rispedizione
 		for (var r : responses) {
 			CommonConsegnaMultipla.checkStatoConsegna(r, ESITO_CONSEGNA_MULTIPLA_IN_CORSO, 1);
+			CommonConsegnaMultipla.checkSchedulingConnettoreInCorso(r, CONNETTORE_ROTTO);
+			for (var connettore : Common.setConnettoriAbilitati) {
+				CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(r, connettore);
+			}
 		}
 		
 		for (var r : responses2) {
 			CommonConsegnaMultipla.checkStatoConsegna(r, ESITO_CONSEGNA_MULTIPLA_IN_CORSO, 1);
+			CommonConsegnaMultipla.checkSchedulingConnettoreInCorso(r, CONNETTORE_ROTTO);
+			for (var connettore : Common.setConnettoriAbilitati) {
+				CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(r, connettore);
+			}
 		}
 	}
 

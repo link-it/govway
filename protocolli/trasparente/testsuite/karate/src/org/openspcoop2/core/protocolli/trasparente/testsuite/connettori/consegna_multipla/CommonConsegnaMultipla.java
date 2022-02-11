@@ -52,8 +52,10 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpResponse;
+import org.openspcoop2.utils.transport.http.HttpUtilsException;
 
 /**
  * 
@@ -165,7 +167,7 @@ public class CommonConsegnaMultipla {
 		Map<RequestAndExpectations,  List<HttpResponse>> responses = new HashMap<>();
 		
 		int nThreads = Common.sogliaRichiesteSimultanee; 
-		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nThreads);
+		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nThreads-2);
 	
 		for (var request : requests) {			
 			responses.put(request, new Vector<>());
@@ -173,6 +175,7 @@ public class CommonConsegnaMultipla {
 			for (int i = 0; i<requests_per_batch; i++) {
 				executor.execute( () -> {
 					responses.get(request).add(Utils.makeRequest(request.request));
+					org.openspcoop2.utils.Utilities.sleep(50);
 				});
 			}			
 		}
@@ -244,11 +247,11 @@ public class CommonConsegnaMultipla {
 		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class,  id_transazione, esito, consegneMultipleRimanenti);
 		
 		// Uncoment for debug
-		String query2 = "select esito, esito_sincrono, consegne_multiple from transazioni where id = ?";
+		/*String query2 = "select esito, esito_sincrono, consegne_multiple from transazioni where id = ?";
 		List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, id_transazione);
 		for (var v : letto) {
 			ConfigLoader.getLoggerCore().info(v.toString());
-		}
+		}*/
 		
 		assertEquals(Integer.valueOf(1), count);
 	}
@@ -531,6 +534,39 @@ public class CommonConsegnaMultipla {
 				.filter( file -> !Files.isDirectory(file) && file.toFile().getName().contains(idTransazione) )
 				.map(Path::toFile)
 				.collect(Collectors.toList());
+	}
+
+	public static void jmxAbilitaSchedulingConnettore(String erogazione, String connettore) throws UtilsException, HttpUtilsException {
+	    	org.slf4j.Logger logger = ConfigLoader.getLoggerCore();
+	    	logger.debug("Abilito connettore: " + connettore+ " per erogazione: "+ erogazione);
+	    	
+	        String jmx_user = System.getProperty("jmx_username");
+	        String jmx_pass = System.getProperty("jmx_password"); 
+	        
+	        String nomePorta = "gw_SoggettoInternoTest/gw_"+erogazione+"/v1";
+	
+	        String url =  System.getProperty("govway_base_path") + "/check?resourceName=ConfigurazionePdD&methodName=enableSchedulingConnettoreMultiplo&paramValue="+nomePorta+"&paramValue2="+connettore;
+	        org.openspcoop2.utils.transport.http.HttpUtilities.check(url, jmx_user, jmx_pass);
+	        
+	        url =  System.getProperty("govway_base_path") + "/check?resourceName=ConfigurazionePdD&methodName=enableSchedulingConnettoreMultiploRuntimeRepository&paramValue="+nomePorta+"&paramValue2="+connettore;
+	        org.openspcoop2.utils.transport.http.HttpUtilities.check(url, jmx_user, jmx_pass);
+	}
+
+	public static void jmxDisabilitaSchedulingConnettore(String erogazione, String connettore) throws UtilsException, HttpUtilsException {
+		org.slf4j.Logger logger = ConfigLoader.getLoggerCore();
+		logger.debug("Disabilito connettore: " + connettore+ " per erogazione: "+ erogazione);
+	
+	    String jmx_user = System.getProperty("jmx_username");
+	    String jmx_pass = System.getProperty("jmx_password"); 
+	    
+	    String nomePorta = "gw_SoggettoInternoTest/gw_"+erogazione+"/v1";
+	    
+	    String url =  System.getProperty("govway_base_path") + "/check?resourceName=ConfigurazionePdD&methodName=disableSchedulingConnettoreMultiplo&paramValue="+nomePorta+"&paramValue2="+connettore;
+	    org.openspcoop2.utils.transport.http.HttpUtilities.check(url, jmx_user, jmx_pass);
+	    
+	    url =  System.getProperty("govway_base_path") + "/check?resourceName=ConfigurazionePdD&methodName=disableSchedulingConnettoreMultiploRuntimeRepository&paramValue="+nomePorta+"&paramValue2="+connettore;
+	    org.openspcoop2.utils.transport.http.HttpUtilities.check(url, jmx_user, jmx_pass);
+		
 	}
 
 	
