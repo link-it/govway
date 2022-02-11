@@ -101,7 +101,7 @@ public class ConsegnaConNotificheSoapTest extends ConfigLoader {
 		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
 		
 		int esito;
-		// Se qualsiasi connettore accetta uno status code non OK, la consegna multipla va segnata come fallita.
+		// Se qualsiasi connettore accetta uno status code non 2xx, la consegna multipla va segnata come fallita.
 		if ( ( statusCode < 200 || statusCode > 299) && !connettoriOk.isEmpty()) {
 			esito = ESITO_CONSEGNA_MULTIPLA_FALLITA;
 		} else {
@@ -111,27 +111,16 @@ public class ConsegnaConNotificheSoapTest extends ConfigLoader {
 		return new RequestAndExpectations(request, connettoriOk, connettoriErrore, esito, statusCode);
 	}
 	
-	
-	@Test
-	public void notificheCondizionali1() {
-		// Notifiche avvengono se: Completate Con Successo, Fault Applicativo.
-	}
-	
-	@Test
-	public void notificheCondizionali2() {
-		// Notifiche condizionali: Errore di Consegna, Richieste Scartate
-	}
-	
-	
-	
+
+
 	@Test
 	public void consegnaConNotificheSemplice() throws IOException {
 
-		
 		// Il ConnettorePrincipale è quello sincrono, non subisce rispedizioni in caso di fallimento.
-		// La sua configurazione puntuale serve a indicare cosa scrivere nei diagnostici.		(TODOs Controlla)
-		//  La configurazione sugli esiti invece guarda all'esito della transazione principale e in base a quell'esito
-		//		partono le notifiche come per i test scritti per la consegna multipla
+		// La sua configurazione puntuale serve a indicare cosa scrivere nei diagnostici.		(TODOs Controllare i diagnostici?)
+		// Non controllo lo status code delle richieste sincrone perchè non coincide con quello inviato al server di echo, e.g.: un 401 viene trasformato in 500
+		// Controllo però che la logica delle rispedizioni segua quanto scelto nelle maschere di configurazione.
+		// Così per tutti i test.
 		
 		final String erogazione = "TestConsegnaConNotificheSoap";
 		HttpRequest request1 = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1);
@@ -141,6 +130,8 @@ public class ConsegnaConNotificheSoapTest extends ConfigLoader {
 		var responses2 = Common.makeParallelRequests(request2, 10);
 
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
+		// Non controllo la valorizzazione puntuale del campo esito_sincrono, perchè dovrei costruirmi un mapping e sapere
+		// dato ciascuno  status code in quale dei tanti esiti si va a finire.
 		for (var r : responses) {
 			assertEquals(200, r.getResultHTTPOperation());
 			
@@ -174,6 +165,93 @@ public class ConsegnaConNotificheSoapTest extends ConfigLoader {
 	
 	
 	@Test
+	public void consegnaConNotificheSemplice2() {
+		// Errore di Consegna, Richieste Scartate => Spedizione
+		// CompletateConSuccesso, FaultApplicativo => Errore
+		
+		final String erogazione = "TestConsegnaConNotifiche2Soap";
+
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+		
+		// 401, principale superata, scheduling fallito su tutti i connettori
+
+		Set<String> connettoriSuccesso = Set.of();
+		var connettoriErrore = Common.setConnettoriAbilitati;
+		var requestAndExpectation = buildRequestAndExpectations(erogazione, 401, connettoriSuccesso, connettoriErrore, HttpConstants.CONTENT_TYPE_SOAP_1_1);
+		//requestsByKind.add(requestAndExpectation);
+		
+		// Richiesta Scartata per mancata autorizzazione, principale superata, scheduling con successo
+		connettoriSuccesso = Common.setConnettoriAbilitati;
+		connettoriErrore = Set.of();
+		requestAndExpectation = buildRequestAndExpectations(erogazione, 200, connettoriSuccesso, connettoriErrore, HttpConstants.CONTENT_TYPE_SOAP_1_2);
+		requestAndExpectation.request.getHeadersValues().remove("Authorization");
+		requestAndExpectation.statusCodePrincipale = 500;
+		requestsByKind.add(requestAndExpectation);
+
+		// Fault applicativo, principale fallita, nessuno scheduling 
+		HttpRequest requestSoapFault = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla", "test", HttpConstants.CONTENT_TYPE_SOAP_1_1);
+		requestAndExpectation = new RequestAndExpectations(
+					requestSoapFault,
+					Set.of(CONNETTORE_0, CONNETTORE_2, CONNETTORE_3),
+					Set.of(CONNETTORE_1),  
+					0, 
+					500,
+					false);
+		//requestsByKind.add(requestAndExpectation);
+		
+		// 200, principale fallita, nessuno scheduling
+		requestAndExpectation = buildRequestAndExpectations(erogazione,200, Set.of(), Set.of(), HttpConstants.CONTENT_TYPE_SOAP_1_1);
+		requestAndExpectation.principaleSuperata = false;
+		//requestsByKind.add(requestAndExpectation);
+
+		
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+
+		// Le richieste per cui la transazione sincrona ha avuto successo devono essere schedulate
+		for (var requestExpectation : responsesByKind.keySet()) {
+			var responses = responsesByKind.get(requestExpectation);
+			
+			if (requestExpectation.principaleSuperata) {
+				CommonConsegnaMultipla.checkPresaInConsegna(responses, Common.setConnettoriAbilitati.size());
+				CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
+			} else {
+				for (var response : responses) {
+					CommonConsegnaMultipla.checkNessunaNotifica(response);
+					CommonConsegnaMultipla.checkNessunoScheduling(response);
+				}
+			}
+		}
+		
+		// Attendo la consegna
+		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
+		
+		for (var requestExpectation : responsesByKind.keySet()) {
+			var responses = responsesByKind.get(requestExpectation);
+			
+			if (requestExpectation.principaleSuperata) {
+				for (var response : responses) {
+					CommonConsegnaMultipla.checkRequestExpectations(requestExpectation, response);
+				}
+			}
+		}
+		
+		// Attendo l'intervallo di riconsegna e controllo che il contatore delle consegne sia almeno a 2
+		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControlloFallite);
+		for (var requestExpectation : responsesByKind.keySet()) {
+			var responses = responsesByKind.get(requestExpectation);
+
+			if (requestExpectation.principaleSuperata) {
+				for (var response : responses) {
+					CommonConsegnaMultipla.checkRequestExpectationsFinal(requestExpectation, response);
+				}
+			}
+		}
+		
+		
+	}
+	
+	
+	@Test
 	public void erroreTransazionePrincipale() {
 		/* In questo test conrollo che non avvenga la spedizione nel caso di errori sulla transazione principale */
 		
@@ -191,10 +269,9 @@ public class ConsegnaConNotificheSoapTest extends ConfigLoader {
 		var responses2 = Common.makeParallelRequests(request2, 10);
 		
 		for (var r : responses) {
-			// Le richieste che vedono fallita la transazione principale, ottengono un 500
-			// 29 = Esito4xx
+			// Le richieste che vedono fallita la transazione principale con un 401, ottengono un 500
 			assertEquals(500 , r.getResultHTTPOperation());
-			CommonConsegnaMultipla.checkNessunaConsegna(r);
+			CommonConsegnaMultipla.checkNessunaNotifica(r);
 			CommonConsegnaMultipla.checkNessunoScheduling(r);
 		}
 		
@@ -202,7 +279,7 @@ public class ConsegnaConNotificheSoapTest extends ConfigLoader {
 			// Le richieste che vedono fallita la transazione principale, ottengono un 500
 			// 29 = Esito4xx
 			assertEquals(500 , r.getResultHTTPOperation());
-			CommonConsegnaMultipla.checkNessunaConsegna(r);
+			CommonConsegnaMultipla.checkNessunaNotifica(r);
 			CommonConsegnaMultipla.checkNessunoScheduling(r);
 		}
 	}
@@ -210,7 +287,8 @@ public class ConsegnaConNotificheSoapTest extends ConfigLoader {
 	
 	@Test
 	public void varieCombinazioniDiRegole() {
-		// La consegna sincrona ha successo in caso di 200 o di soap fault
+		// La consegna sincrona ha successo in caso di 200 o di soap fault. In questo test alcune transazioni
+		// principali falliscono, altre no e per queste viene schedulata la consegna. Controllo che tale scheduling sia corretto.
 		final String erogazione = "TestConsegnaConNotificheSoapVarieCombinazioniDiRegole";
 		
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
@@ -223,11 +301,13 @@ public class ConsegnaConNotificheSoapTest extends ConfigLoader {
 			var connettoriErrore = setDifference(Common.setConnettoriAbilitati,connettoriSuccesso);
 			var requestExpectation = buildRequestAndExpectations(erogazione, statusCode, connettoriSuccesso, connettoriErrore, soapContentType);
 			
-			// In Soap un 500 senza soapFault è considerato Ok con anomialia, quindi mi aspetto un errore nella transazione principale
-			// solo in caso di 4xx e 5xx, con 5xx > 500
+		
 			if (statusCode >= 400 && statusCode <= 499) {
 				requestExpectation.principaleSuperata = false;
 			}
+			
+			// In Soap un 500 senza soapFault è considerato Ok con anomialia, quindi mi aspetto un errore nella transazione principale
+			// solo in caso di 4xx e 5xx, con 5xx > 500
 			if (statusCode > 500 && statusCode <= 599) {
 				requestExpectation.principaleSuperata = false;	
 			}
@@ -265,15 +345,12 @@ public class ConsegnaConNotificheSoapTest extends ConfigLoader {
 		for (var requestExpectation : responsesByKind.keySet()) {
 			var responses = responsesByKind.get(requestExpectation);
 			
-			// TODO: al client non viene restituito lo statusCode del server di echo, ma viene manipolato.
-			// A volte corrisponde, a volte no, come nel caso di un 401 che viene trasformato in 500 per cui questi controlli non so farli
-			// Puoi però analizzare sul db il return code della transazione se ti interessa.	
 			if (requestExpectation.principaleSuperata) {
 				CommonConsegnaMultipla.checkPresaInConsegna(responses, Common.setConnettoriAbilitati.size());
 				CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 			} else {
 				for (var response : responses) {
-					CommonConsegnaMultipla.checkNessunaConsegna(response);
+					CommonConsegnaMultipla.checkNessunaNotifica(response);
 					CommonConsegnaMultipla.checkNessunoScheduling(response);
 				}
 			}
@@ -305,98 +382,5 @@ public class ConsegnaConNotificheSoapTest extends ConfigLoader {
 		}
 		
 	}
-	
-	
-
-	
-	@Test
-	public void alcuniErroriTransazionePrincipale() throws IOException {
-		/**
-		 * In questo test riunisco le varie funzionalità. Alcune richieste sincrone avranno successo altre no.
-		 */
-		final String erogazione = "TestConsegnaConNotificheSoap";
 		
-		
-		String soapContentType = "";
-		//List.of("returnCode=200", "returnCode=401", "soap")
-		HttpRequest requestCompletataConSuccesso = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", soapContentType);
-		HttpRequest requestFaultApplicativo = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", soapContentType);
-		HttpRequest requestErroreDiConsegna =  RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", soapContentType);
-		requestErroreDiConsegna.setUrl(requestErroreDiConsegna.getUrl()+"&returnCode=401");
-		
-		// Questa richiesta non avrà l'autenticazione
-		HttpRequest requestScartata = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", soapContentType);
-		requestScartata.getHeadersValues().remove("Authorization");
-		
-		
-
-		
-		
-		for (int i=0;i<10;i++) {
-			soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
-			
-			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", soapContentType);
-
-		}
-		
-		HttpRequest request1 = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1);
-		request1.setUrl(request1.getUrl()+"&returnCode=401");
-		
-	}
-	
-	
-	
-	@Test
-	public void consegnaConNotificheErroriCompleta() throws IOException {
-		/**
-		 * In questo test riunisco le varie funzionalità. Alcune richieste sincrone avranno successo altre no.
-		 * Inoltre ci saranno anche errori di consegna per i connettori e verificherò le rispedizioni.
-		 *  
-		 */
-		
-		
-	}
-	
-	
-	@Test
-	public void schemaConsegnaConNotifiche() {
-		final String erogazione ="";
-		
-		
-		// Il connettore di fallback è il 2
-
-		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
-
-		int i = 0;
-		// Prima costruisco le richieste normalmente
-		for (var entry : CommonConsegnaMultipla.statusCodeVsConnettori.entrySet()) {
-			
-			String pool = Common.pools.get(i % Common.pools.size());
-			Set<String> connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
-			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
-
-			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
-			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-			request.addHeader(Common.HEADER_ID_CONDIZIONE, Common.filtriPools.get(pool).get(0));
-			
-			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
-			requestsByKind.add(current);
-			
-			// Request consegna sincrona fallita, per questa richiesta non deve essere schedulata la consegna
-			// sugli altri connettori
-			request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
-			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-			//request.setCampiPerFarlaSbagliareDataLErogazione(); TODO
-			current = new RequestAndExpectations(request, Set.of(), Set.of(), entry.getKey(), 500);
-			requestsByKind.add(current);
-			
-			i++;
-		}
-				
-		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
-		
-		// TODO: Riarrangia questo per controllare che le richieste sincrone non vedano scheduling
-		CommonConsegnaMultipla.checkResponses(responsesByKind);
-	}
-
 }

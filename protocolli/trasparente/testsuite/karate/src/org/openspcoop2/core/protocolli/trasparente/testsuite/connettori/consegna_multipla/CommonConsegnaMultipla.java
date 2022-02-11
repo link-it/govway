@@ -52,7 +52,6 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.EsitiProperties;
-import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 
@@ -255,10 +254,16 @@ public class CommonConsegnaMultipla {
 	}
 
 	
-	public static void checkNessunaConsegna(HttpResponse response) {
-		String query = "select count(*) from transazioni where id=? and esito != 0 and esito_sincrono = 0 and consegne_multiple = 0";
+	/**
+	 * Controlla che non sia partita nessuna consegna multipla, l'esito della transazione non deve essere uno delle
+	 * consegne asincrone e l'esito sincrono è fermo a zero.
+	 * @param response
+	 */
+	public static void checkNessunaNotifica(HttpResponse response) {
+		String esitiConsegnaMultipla = "( 38, 39, 40, 48 )";
+		String query = "select count(*) from transazioni where id=? and esito not in "+esitiConsegnaMultipla+" and esito_sincrono = 0 and consegne_multiple = 0";
 		String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
-		ConfigLoader.getLoggerCore().info("Checking nessuna consegna for transazione:  " + id_transazione + " AND esito != 0 AND consegne-rimanenti: 0");
+		ConfigLoader.getLoggerCore().info("Checking nessuna consegna for transazione:  " + id_transazione);
 		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class,  id_transazione);
 		assertEquals(Integer.valueOf(1), count);
 	}
