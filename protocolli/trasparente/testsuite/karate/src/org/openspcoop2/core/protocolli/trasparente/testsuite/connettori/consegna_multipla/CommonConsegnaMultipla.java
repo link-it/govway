@@ -59,7 +59,7 @@ import org.openspcoop2.utils.transport.http.HttpUtilsException;
 
 /**
  * 
- * @author froggo
+ * @author Francesco Scarlato
  *
  */
 public class CommonConsegnaMultipla {
@@ -456,11 +456,11 @@ public class CommonConsegnaMultipla {
 				checkAll200(responses);
 				
 				// Deve essere la fusione dei connettoriOk e i connettoriErrore\conettoriScheduling Disabilitato
-				Set<String> connettoriCoinvoltii = setSum(requestAndExpectation.connettoriSuccesso, requestAndExpectation.connettoriFallimento);
+				Set<String> connettoriCoinvolti = setSum(requestAndExpectation.connettoriSuccesso, requestAndExpectation.connettoriFallimento);
 				
-				checkStatoConsegna(responses, ESITO_CONSEGNA_MULTIPLA, connettoriCoinvoltii.size());
+				checkStatoConsegna(responses, ESITO_CONSEGNA_MULTIPLA, connettoriCoinvolti.size());
 		
-				checkSchedulingConnettoreIniziato(responses, connettoriCoinvoltii);
+				checkSchedulingConnettoreIniziato(responses, connettoriCoinvolti);
 			} else if (requestAndExpectation.statusCodePrincipale == 500) {
 				Common.checkResponsesStatus(responses, 500);
 			} else {

@@ -35,8 +35,6 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.getNumeroTentativiSchedulingConnettore;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.setDifference;
 
-//import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.statusCodeVsConnettori;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,7 +62,7 @@ import org.openspcoop2.utils.transport.http.HttpUtilsException;
 
 // Completate Con Successo -> 2xx
 // FaultApplicativo: fault=true&faultSoapVersion="+faultSoapVersion Oppure "problem=true" in REST
-// ErroreDiConsegna -> 4xx
+// ErroreDiConsegna -> 4xx e anche 5xx a quanto pare
 // Errore Di Processamento --> ??	 NON FARLO, TRALASCIALO
 // RichiesteScartate --> Errore Autenticazione
 
@@ -72,16 +70,6 @@ import org.openspcoop2.utils.transport.http.HttpUtilsException;
  * 
  * @author Francesco Scarlato
  *
- * 
- * QUERY:
- * 
- * TestContenuto: //Filtro/text()
- * Template: ${query:govway-testsuite-id_connettore_request}
- * Freemarker: ${query["govway-testsuite-id_connettore_request"]}
- * Velocity:		#if($query.containsKey("govway-testsuite-id_connettore_request"))
-							$query["govway-testsuite-id_connettore_request"]
-						#end
- * UrlInvocazione: .+govway-testsuite-id_connettore_request=([^&]*).*
  */
 public class ConsegnaConNotificheSoapTest extends ConfigLoader {
 
