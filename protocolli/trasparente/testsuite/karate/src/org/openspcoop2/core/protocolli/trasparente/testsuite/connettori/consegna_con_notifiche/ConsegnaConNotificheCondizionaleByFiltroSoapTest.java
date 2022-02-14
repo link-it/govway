@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -84,6 +85,16 @@ public class ConsegnaConNotificheCondizionaleByFiltroSoapTest extends ConfigLoad
 		if (!cartellaRisposte.isDirectory()|| !cartellaRisposte.canWrite()) {
 			throw new RuntimeException("E' necessario creare la cartella per scrivere le richieste dei connettori, indicata dalla poprietà: <connettori.consegna_multipla.connettore_file.path> ");
 		}
+	}
+	
+	@AfterClass
+	public static void After() {
+		Common.fermaRiconsegne(dbUtils);
+	}
+	
+	@org.junit.After
+	public void AfterEach() {
+		Common.fermaRiconsegne(dbUtils);		
 	}
 	
 	@Test
@@ -1092,7 +1103,7 @@ public class ConsegnaConNotificheCondizionaleByFiltroSoapTest extends ConfigLoad
 	}
 	
 	
-	private static void checkResponses(Map<RequestAndExpectations, List<HttpResponse>> responsesByKind) {
+	static void checkResponses(Map<RequestAndExpectations, List<HttpResponse>> responsesByKind) {
 		assertTrue(!responsesByKind.isEmpty());
 		
 		// Le richieste per cui la transazione sincrona ha avuto successo devono essere schedulate
