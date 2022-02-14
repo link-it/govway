@@ -30,6 +30,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -38,6 +39,7 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -95,6 +97,7 @@ public final class ErogazioniChange extends Action {
 			ricerca.clearFilter(Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI, Filtri.FILTRO_CONNETTORE_TOKEN_POLICY);
 			ricerca.clearFilter(Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI, Filtri.FILTRO_CONNETTORE_ENDPOINT);
 			ricerca.clearFilter(Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI, Filtri.FILTRO_CONNETTORE_KEYSTORE);
+			SearchUtils.clearFilter(ricerca, Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI, PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRO_HIDDEN_TAB_SELEZIONATO);
 			
 			
 			String resetElementoCacheS = apsHelper.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
