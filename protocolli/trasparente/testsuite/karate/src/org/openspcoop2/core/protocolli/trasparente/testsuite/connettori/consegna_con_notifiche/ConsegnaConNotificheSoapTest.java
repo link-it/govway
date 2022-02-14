@@ -56,15 +56,15 @@ import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilsException;
 
-// TODO: Test scelta connettore principale quello disabilitato. (Aspetta fix di andrea)
+// TODO: Test scelta connettore principale quello disabilitato. (Aspetta fix di andrea e poi rimuovi il test, tanto non deve essere possibile sceglierlo)
 // TODO:  rimuovi le chiamate depcreate da ConsegnaMultiplaTest.java
+// TODO:  Test errore di processamento facendo fallire la correlazione applicativa sulla risposta
 
 
 // Completate Con Successo -> 2xx
 // FaultApplicativo: fault=true&faultSoapVersion="+faultSoapVersion Oppure "problem=true" in REST
-// ErroreDiConsegna -> 4xx e anche 5xx a quanto pare
-// Errore Di Processamento --> ??	 NON FARLO, TRALASCIALO
-// RichiesteScartate --> Errore Autenticazione
+// ErroreDiConsegna -> 4xx e anche 5xx ( > 500 )
+// Errore Di Processamento --> Segui mail di andrea registrando una correlazione applicativa sulla risposta
 
 /**
  * 
@@ -337,7 +337,7 @@ public class ConsegnaConNotificheSoapTest extends ConfigLoader {
 	
 	@Test
 	public void consegnaConNotificheSemplice2() {
-		// Errore di Consegna, Richieste Scartate => Spedizione
+		// Errore di Consegna => Spedizione
 		// CompletateConSuccesso, FaultApplicativo => Errore
 		// TODO: Decommenta le richieste dopo il fix di andrea.
 		
@@ -352,14 +352,7 @@ public class ConsegnaConNotificheSoapTest extends ConfigLoader {
 		var requestAndExpectation = buildRequestAndExpectations(erogazione, 401, connettoriSuccesso, connettoriErrore, HttpConstants.CONTENT_TYPE_SOAP_1_1);
 		//requestsByKind.add(requestAndExpectation);
 		
-		// Richiesta Scartata per mancata autorizzazione, principale superata, scheduling con successo
-		connettoriSuccesso = Common.setConnettoriAbilitati;
-		connettoriErrore = Set.of();
-		requestAndExpectation = buildRequestAndExpectations(erogazione, 200, connettoriSuccesso, connettoriErrore, HttpConstants.CONTENT_TYPE_SOAP_1_2);
-		requestAndExpectation.request.getHeadersValues().remove("Authorization");
-		requestAndExpectation.statusCodePrincipale = 500;
-		requestsByKind.add(requestAndExpectation);
-
+		
 		// Fault applicativo, principale fallita, nessuno scheduling 
 		HttpRequest requestSoapFault = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla", "test", HttpConstants.CONTENT_TYPE_SOAP_1_1);
 		requestAndExpectation = new RequestAndExpectations(
@@ -478,13 +471,6 @@ public class ConsegnaConNotificheSoapTest extends ConfigLoader {
 			// solo in caso di 4xx e 5xx, con 5xx > 500
 			if (statusCode > 500 && statusCode <= 599) {
 				requestExpectation.principaleSuperata = false;	
-			}
-			
-			// Ogni 5 richieste ne faccio sbagliare una sull'autenticazione
-			if ( i % 5 == 0) {
-				requestExpectation.request.getHeadersValues().remove("Authorization");
-				requestExpectation.principaleSuperata = false;
-				requestExpectation.statusCodePrincipale = 500;
 			}
 			
 			requestsByKind.add(requestExpectation);

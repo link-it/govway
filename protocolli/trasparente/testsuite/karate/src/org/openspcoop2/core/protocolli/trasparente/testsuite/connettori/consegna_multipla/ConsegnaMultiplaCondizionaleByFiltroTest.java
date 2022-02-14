@@ -110,7 +110,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
 			requestsByKind.add(current);
 			
-			// Request identificazione fallita, in questo caso viene rediretta sul connettore0
+			// Request identificazione fallita, in questo caso viene rediretta sul connettore2
 			request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
 			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
 			request.addHeader(Common.HEADER_ID_CONDIZIONE+"-SBAGLIATO", Common.filtriPools.get(pool).get(0));
@@ -323,7 +323,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void ICFDiagnosticoInfoNCUDiagnosticoError() {
+	public void ICFDiagnosticoErrorNCUDiagnosticoInfo() {
 		final String erogazione = "TestConsegnaMultiplaCondizionaleICFDiagnosticoErrorNCUDiagnosticoInfo";
 		
 		// Per ICF i connettori di fallback sono tutti
@@ -375,7 +375,6 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 		
 		CommonConsegnaMultipla.checkResponses(responsesByKind);
 		
-
 		// Recupero tutte le risposte che devono aver fallito l'identificazione e controllo i diagnostici info
 		for (var toCheck: toCheckForDiagnosticiICF) {
 			for (var response : responsesByKind.get(toCheck) ) {
@@ -415,7 +414,6 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 						messaggioFallbackAtteso);
 			}
 		}
-		 
 		
 	}
 	
