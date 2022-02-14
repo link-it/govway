@@ -6572,7 +6572,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			TipoOperazione tipoOp, String accessoDaAPSParametro, String stato, String modalitaConsegna, String tipoCustom,
 			int numeroProprietaCustom, String servletProprietaCustom, List<Parameter> listaParametriServletProprietaCustom, boolean visualizzaLinkProprietaCustom,
 			String loadBalanceStrategia,boolean modificaStatoAbilitata,
-			boolean consegnaCondizionale, boolean isSoapOneWay, String connettoreImplementaAPI, List<String> connettoriImplementaAPIValues, List<String> connettoriImplementaAPILabels,
+			boolean consegnaCondizionale, boolean isSoapOneWay, String connettoreImplementaAPI, List<String> connettoriImplementaAPIValues, List<String> connettoriImplementaAPILabels, String connettorePrincipale,
 			boolean notificheCondizionaliEsito, String [] esitiTransazione, ServiceBinding serviceBinding, String selezioneConnettoreBy, String identificazioneCondizionale, String identificazioneCondizionalePattern,
 			String identificazioneCondizionalePrefisso, String identificazioneCondizionaleSuffisso, boolean visualizzaLinkRegolePerAzioni, String servletRegolePerAzioni,  List<Parameter> listaParametriServletRegolePerAzioni,
 			int numeroRegolePerAzioni, boolean condizioneNonIdentificataAbortTransaction, String condizioneNonIdentificataDiagnostico, String condizioneNonIdentificataConnettore,
@@ -6774,6 +6774,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setValues(connettoriImplementaAPIValues);
 				de.setLabels(connettoriImplementaAPILabels);
 				de.setSelected(connettoreImplementaAPI);
+				de.setPostBack(true);
 				dati.addElement(de);
 				
 			}
@@ -7274,12 +7275,22 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_CONNETTORE);
 						de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_CONNETTORE);
 						de.setType(DataElementType.SELECT);
-						 
+						
 						List<String> condizioneNonIdentificataConnettoriValues = new ArrayList<String>();
 						condizioneNonIdentificataConnettoriValues.addAll(connettoriImplementaAPIValues);
 						List<String> condizioneNonIdentificataConnettoriLabels = new ArrayList<String>();
 						condizioneNonIdentificataConnettoriLabels.addAll(connettoriImplementaAPILabels);
-						
+						if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna) && connettorePrincipale!=null) {
+							for (int i = 0; i < condizioneNonIdentificataConnettoriValues.size(); i++) {
+								String c = condizioneNonIdentificataConnettoriValues.get(i);
+								if(connettorePrincipale.equals(c)) {
+									condizioneNonIdentificataConnettoriValues.remove(i);
+									condizioneNonIdentificataConnettoriLabels.remove(i);
+									break;
+								}
+							}
+						}
+												
 						if(TipoBehaviour.CONSEGNA_MULTIPLA.getValue().equals(modalitaConsegna) || TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 							condizioneNonIdentificataConnettoriValues.add(0, CostantiControlStation.DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA);
 							condizioneNonIdentificataConnettoriLabels.add(0, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_IDENTIFICATO_QUALSIASI);
@@ -7378,6 +7389,16 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						connettoreNonTrovatoConnettoriValues.addAll(connettoriImplementaAPIValues);
 						List<String> connettoreNonTrovatoConnettoriLabels = new ArrayList<String>();
 						connettoreNonTrovatoConnettoriLabels.addAll(connettoriImplementaAPILabels);
+						if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna) && connettorePrincipale!=null) {
+							for (int i = 0; i < connettoreNonTrovatoConnettoriValues.size(); i++) {
+								String c = connettoreNonTrovatoConnettoriValues.get(i);
+								if(connettorePrincipale.equals(c)) {
+									connettoreNonTrovatoConnettoriValues.remove(i);
+									connettoreNonTrovatoConnettoriLabels.remove(i);
+									break;
+								}
+							}
+						}
 						
 						if(TipoBehaviour.CONSEGNA_MULTIPLA.getValue().equals(modalitaConsegna) || TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 							connettoreNonTrovatoConnettoriValues.add(0, CostantiControlStation.DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA);
