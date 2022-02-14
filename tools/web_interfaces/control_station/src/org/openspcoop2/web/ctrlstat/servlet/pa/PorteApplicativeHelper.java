@@ -8203,18 +8203,24 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				DataElement de = new DataElement();
 				
 				de.setWidthPx(10);
-				de.setType(DataElementType.CHECKBOX);
-				
-				de.setStatusToolTip(statoPA ? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO_TOOLTIP_NO_ACTION : PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO_TOOLTIP_NO_ACTION);
-				de.setStatusType(statoPA ? CheckboxStatusType.ABILITATO : CheckboxStatusType.DISABILITATO);
-				if(statoPA && showCambiaScheduling && !schedulingPA) {
-					de.setStatusType(CheckboxStatusType.WARNING_ONLY);
-					de.setStatusToolTip(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_DISABILITATO_TOOLTIP_NO_ACTION);
+				if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType) && this.isConnettoreDefault(paSA)) {
+					de.setType(DataElementType.TEXT);
+				}
+				else {
+					de.setType(DataElementType.CHECKBOX);
+
+					de.setStatusToolTip(statoPA ? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO_TOOLTIP_NO_ACTION : PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO_TOOLTIP_NO_ACTION);
+					de.setStatusType(statoPA ? CheckboxStatusType.ABILITATO : CheckboxStatusType.DISABILITATO);
+					if(statoPA && showCambiaScheduling && !schedulingPA) {
+						de.setStatusType(CheckboxStatusType.WARNING_ONLY);
+						de.setStatusToolTip(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_DISABILITATO_TOOLTIP_NO_ACTION);
+					}
+					
+					de.setStatusValue(nomeConnettore);
 				}
 				
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME);
 				de.setValue(nomeConnettore);
-				de.setStatusValue(nomeConnettore);
 				
 //					if(!connettoreDefault) { 
 				DataElementImage image = new DataElementImage();
@@ -8400,7 +8406,24 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					e.addElement(de);
 				}
 				
+				boolean showGestioneNotifiche = false;
 				if(behaviourType.equals(TipoBehaviour.CONSEGNA_MULTIPLA) || behaviourType.equals(TipoBehaviour.CONSEGNA_CON_NOTIFICHE)) {
+					showGestioneNotifiche = true;
+					if(is!=null && is.getGetMessage()!=null && StatoFunzionalita.ABILITATO.equals(is.getGetMessage())) {
+						if(connettore!=null && connettore.getTipo()!=null) {
+							String tipo = connettore.getTipo();
+							TipiConnettore tipoC = TipiConnettore.toEnumFromName(tipo);
+							if(TipiConnettore.DISABILITATO.equals(tipoC)) {
+								showGestioneNotifiche = false;
+							}
+						}
+						else {
+							showGestioneNotifiche = false;
+						}
+					}
+				}
+				if(showGestioneNotifiche) {
+					
 					// Proprieta
 					de = new DataElement();
 					de.setType(DataElementType.TEXT);
@@ -9811,8 +9834,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			esitiList.add(org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_ERRORI_CONSEGNA);
 		if(configurazioneMultiDeliver.isNotificheByEsito_erroriProcessamento())
 			esitiList.add(org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_ERRORI_PROCESSAMENTO);
-		if(configurazioneMultiDeliver.isNotificheByEsito_richiesteScartate())
-			esitiList.add(org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_RICHIESTA_SCARTATE);
+		// le richieste scartate non arrivano alla gestione della consegna in smistatore e quindi non potranno nemmeno essere notifiate
+		//if(configurazioneMultiDeliver.isNotificheByEsito_richiesteScartate())
+		//	esitiList.add(org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_RICHIESTA_SCARTATE);
 		
 		esitiTransazione = esitiList.toArray(new String[esitiList.size()]);
 		return esitiTransazione;
@@ -9859,7 +9883,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		configurazioneMultiDeliver.setNotificheByEsito_fault(esitiList.contains(org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_FAULT));
 		configurazioneMultiDeliver.setNotificheByEsito_erroriConsegna(esitiList.contains(org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_ERRORI_CONSEGNA));
 		configurazioneMultiDeliver.setNotificheByEsito_erroriProcessamento(esitiList.contains(org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_ERRORI_PROCESSAMENTO));
-		configurazioneMultiDeliver.setNotificheByEsito_richiesteScartate(esitiList.contains(org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_RICHIESTA_SCARTATE));
+		// le richieste scartate non arrivano alla gestione della consegna in smistatore e quindi non potranno nemmeno essere notifiate
+		//configurazioneMultiDeliver.setNotificheByEsito_richiesteScartate(esitiList.contains(org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_RICHIESTA_SCARTATE));
 		
 		return configurazioneMultiDeliver;
 	}

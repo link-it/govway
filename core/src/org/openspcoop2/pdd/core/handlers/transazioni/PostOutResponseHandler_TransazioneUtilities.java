@@ -259,9 +259,10 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					else if(isEsito(esitiProperties.getEsitiCodeErroriConsegna(), esitoSincrono)) {
 						schedulaNotificheDopoConsegnaSincrona = configurazione_consegnaMultipla_profiloSincrono.isNotificheByEsito_erroriConsegna();
 					}
-					else if(isEsito(esitiProperties.getEsitiCodeRichiestaScartate(), esitoSincrono)) {
-						schedulaNotificheDopoConsegnaSincrona = configurazione_consegnaMultipla_profiloSincrono.isNotificheByEsito_richiesteScartate();
-					}
+					// le richieste scartate non arrivano alla gestione della consegna in smistatore e quindi non potranno nemmeno essere notifiate
+					//else if(isEsito(esitiProperties.getEsitiCodeRichiestaScartate(), esitoSincrono)) {
+					//	schedulaNotificheDopoConsegnaSincrona = configurazione_consegnaMultipla_profiloSincrono.isNotificheByEsito_richiesteScartate();
+					//}
 					else {
 						schedulaNotificheDopoConsegnaSincrona = configurazione_consegnaMultipla_profiloSincrono.isNotificheByEsito_erroriProcessamento();
 					}
