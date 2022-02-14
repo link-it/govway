@@ -278,14 +278,26 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 			// select list della sezione notifiche
 			List<String> connettoriImplementaAPIValues = new ArrayList<>();
 			List<String> connettoriImplementaAPILabels = new ArrayList<>();
+			String connettorePrincipale = null;
 			List<PortaApplicativaServizioApplicativo> servizioApplicativoList = portaApplicativa.getServizioApplicativoList();
 			if(servizioApplicativoList != null) {
+				TipoBehaviour behaviourType = null;
+				if(portaApplicativa.getBehaviour()!=null) {
+					behaviourType = TipoBehaviour.toEnumConstant(portaApplicativa.getBehaviour().getNome());
+				}
 				for (PortaApplicativaServizioApplicativo paSA : servizioApplicativoList) {
 					String nomeConnettorePaSA = porteApplicativeHelper.getLabelNomePortaApplicativaServizioApplicativo(paSA);
 
 					connettoriImplementaAPIValues.add(nomeConnettorePaSA);
 					connettoriImplementaAPILabels.add(nomeConnettorePaSA);
+					
+					if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType) && porteApplicativeHelper.isConnettoreDefault(paSA)) {
+						connettorePrincipale=nomeConnettorePaSA;
+					}
 				}
+			}
+			if(connettoreImplementaAPI!=null && !"".equals(connettoreImplementaAPI)) {
+				connettorePrincipale=connettoreImplementaAPI; // posso averlo cambiato
 			}
 
 			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
@@ -467,7 +479,8 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 
 				dati = porteApplicativeHelper.addConnettoriMultipliConfigurazioneToDati(dati, TipoOperazione.OTHER, accessoDaAPSParametro, stato, modalitaConsegna, tipoCustom, 
 						numeroProprietaCustom, servletProprietaCustom, listaParametriServletProprietaCustom, visualizzaLinkProprietaCustom, loadBalanceStrategia, modificaStatoAbilitata, 
-						consegnaCondizionale, isSoapOneWay, connettoreImplementaAPI, connettoriImplementaAPIValues, connettoriImplementaAPILabels, notificheCondizionaliEsito, esitiTransazione,
+						consegnaCondizionale, isSoapOneWay, connettoreImplementaAPI, connettoriImplementaAPIValues, connettoriImplementaAPILabels, connettorePrincipale,
+						notificheCondizionaliEsito, esitiTransazione,
 						serviceBinding, selezioneConnettoreBy, identificazioneCondizionale, identificazioneCondizionalePattern,
 						identificazioneCondizionalePrefisso, identificazioneCondizionaleSuffisso, visualizzaLinkRegolePerAzioni, servletRegolePerAzioni, listaParametriServletRegolePerAzioni,
 						numeroRegolePerAzioni,  condizioneNonIdentificataAbortTransaction,  condizioneNonIdentificataDiagnostico, condizioneNonIdentificataConnettore,
@@ -498,7 +511,8 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 
 				dati = porteApplicativeHelper.addConnettoriMultipliConfigurazioneToDati(dati, TipoOperazione.OTHER, accessoDaAPSParametro, stato, modalitaConsegna, tipoCustom, 
 						numeroProprietaCustom, servletProprietaCustom, listaParametriServletProprietaCustom, visualizzaLinkProprietaCustom, loadBalanceStrategia, modificaStatoAbilitata,
-						consegnaCondizionale, isSoapOneWay, connettoreImplementaAPI, connettoriImplementaAPIValues, connettoriImplementaAPILabels, notificheCondizionaliEsito, esitiTransazione,
+						consegnaCondizionale, isSoapOneWay, connettoreImplementaAPI, connettoriImplementaAPIValues, connettoriImplementaAPILabels, connettorePrincipale,
+						notificheCondizionaliEsito, esitiTransazione,
 						serviceBinding, selezioneConnettoreBy, identificazioneCondizionale, identificazioneCondizionalePattern,
 						identificazioneCondizionalePrefisso, identificazioneCondizionaleSuffisso, visualizzaLinkRegolePerAzioni, servletRegolePerAzioni, listaParametriServletRegolePerAzioni,
 						numeroRegolePerAzioni,  condizioneNonIdentificataAbortTransaction,  condizioneNonIdentificataDiagnostico,  condizioneNonIdentificataConnettore,
@@ -715,12 +729,35 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 				}
 			}
 
+			// select list della sezione notifiche
+			connettoriImplementaAPIValues = new ArrayList<>();
+			connettoriImplementaAPILabels = new ArrayList<>();
+			connettorePrincipale = null;
+			servizioApplicativoList = portaApplicativa.getServizioApplicativoList();
+			if(servizioApplicativoList != null) {
+				TipoBehaviour behaviourType = null;
+				if(portaApplicativa.getBehaviour()!=null) {
+					behaviourType = TipoBehaviour.toEnumConstant(portaApplicativa.getBehaviour().getNome());
+				}
+				for (PortaApplicativaServizioApplicativo paSA : servizioApplicativoList) {
+					String nomeConnettorePaSA = porteApplicativeHelper.getLabelNomePortaApplicativaServizioApplicativo(paSA);
+
+					connettoriImplementaAPIValues.add(nomeConnettorePaSA);
+					connettoriImplementaAPILabels.add(nomeConnettorePaSA);
+					
+					if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType) && porteApplicativeHelper.isConnettoreDefault(paSA)) {
+						connettorePrincipale=nomeConnettorePaSA;
+					}
+				}
+			}
+			
 			// preparo i campi
 			Vector<DataElement> dati = new Vector<DataElement>();
 
 			dati = porteApplicativeHelper.addConnettoriMultipliConfigurazioneToDati(dati, TipoOperazione.OTHER, accessoDaAPSParametro, stato, modalitaConsegna, tipoCustom, 
 					numeroProprietaCustom, servletProprietaCustom, listaParametriServletProprietaCustom, visualizzaLinkProprietaCustom,loadBalanceStrategia, modificaStatoAbilitata,
-					consegnaCondizionale, isSoapOneWay, connettoreImplementaAPI, connettoriImplementaAPIValues, connettoriImplementaAPILabels, notificheCondizionaliEsito, esitiTransazione,
+					consegnaCondizionale, isSoapOneWay, connettoreImplementaAPI, connettoriImplementaAPIValues, connettoriImplementaAPILabels, connettorePrincipale,
+					notificheCondizionaliEsito, esitiTransazione,
 					serviceBinding, selezioneConnettoreBy, identificazioneCondizionale, identificazioneCondizionalePattern,
 					identificazioneCondizionalePrefisso, identificazioneCondizionaleSuffisso, visualizzaLinkRegolePerAzioni, servletRegolePerAzioni, listaParametriServletRegolePerAzioni,
 					numeroRegolePerAzioni,  condizioneNonIdentificataAbortTransaction,  condizioneNonIdentificataDiagnostico,  condizioneNonIdentificataConnettore,

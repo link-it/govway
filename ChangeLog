@@ -3,6 +3,7 @@
 	* [GovWayCore, GovWayConsole]
 	In caso di consegna con notifiche, il connettore indicato come 'Connettore Implementa API' presentava accanto al nome l'indicazione di uno stato (abilitato/disabilitato) che non aveva senso.
 	Inoltre nella gestione delle notifiche effettuate solamente se la transazione termina con uno degli esiti indicati, è stato eliminato il gruppo 'Richiesta Scartate' essendo richieste non ancora accettate in ingresso.
+	Infine tra i connettori selezionabili, in caso di identificazione della condizione fallita o di individuazione del connettore non riuscita, non viene adesso più presentato il connettore che implementa l'API.
 
 2022-02-08  Andrea Poli <apoli@link.it>
 
