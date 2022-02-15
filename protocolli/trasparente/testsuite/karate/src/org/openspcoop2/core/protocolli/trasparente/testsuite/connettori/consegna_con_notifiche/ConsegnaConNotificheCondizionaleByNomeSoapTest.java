@@ -21,7 +21,6 @@
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_con_notifiche;
 
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.buildRequestAndExpectationFiltered;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkResponses;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.statusCodeVsConnettori;
 
 import java.io.File;
@@ -29,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -38,14 +38,24 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.RequestBuilder;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectations;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpResponse;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 /**
  * 
  * @author Francesco Scarlato
  *
+ * QUERY:
+ * TestContenuto: //Filtro/text()
+ * Template: ${query:govway-testsuite-id_connettore_request}
+ * Freemarker: ${query["govway-testsuite-id_connettore_request"]}
+ * Velocity:		#if($query.containsKey("govway-testsuite-id_connettore_request"))
+							$query["govway-testsuite-id_connettore_request"]
+						#end
+ * UrlInvocazione: .+govway-testsuite-id_connettore_request=([^&]*).*
  */
 public class ConsegnaConNotificheCondizionaleByNomeSoapTest extends ConfigLoader {
 
@@ -100,7 +110,6 @@ public class ConsegnaConNotificheCondizionaleByNomeSoapTest extends ConfigLoader
 				current.principaleSuperata = false;	
 			}
 			requestsByKind.add(current);
-			
 			i++;
 		}
 				
@@ -124,18 +133,220 @@ public class ConsegnaConNotificheCondizionaleByNomeSoapTest extends ConfigLoader
 	
 	@Test
 	public void velocityTemplate() {
-		final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeVelocityTemplate";
+		final String erogazione = "TestConsegnaConNotificheCondizionaleByNomeVelocityTemplate";
 		parametroUrl_Impl(erogazione);		
 	}
 	
 	
 	@Test
 	public void freemarkerTemplate() {
-		final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeFreemarkerTemplate";
+		final String erogazione = "TestConsegnaConNotificheCondizionaleByNomeFreemarkerTemplate";
 		parametroUrl_Impl(erogazione);		
 	}
 	
+	
+	@Test
+	public void soapAction() {
+		// Notifiche Condizionali Quando:
+		//		CompletateConSuccesso
+		//		FaultApplicativo
+		//		Errori di consegna
+		final String erogazione = "TestConsegnaConNotificheCondizionaleByNomeSoapAction";
+		
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+		
+		var azioniBySoapAction = Map.of(
+				"Connettore0", "TestCondizionaleByNome0",
+				"Connettore1", "TestCondizionaleByNome1",
+				"Connettore2", "TestCondizionaleByNome2",
+				"Connettore3", "TestCondizionaleByNome3");
+		
+		int i = 0;
+		// Prima costruisco le richieste normalmente
+		for (var entry : statusCodeVsConnettori.entrySet()) {
+
+			int statusCode = entry.getKey();
+			Set<String> connettoriSuccesso = entry.getValue();
+			final String soapContentType = i % 2 == 0 ? HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
+			final String filtro = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
+			Set<String> connettoriPool = Set.of(filtro);
+
+			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, azioniBySoapAction.get(filtro),   filtro,  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, connettoriPool);
+
+			requestsByKind.add(current);
+			i++;
+		}
+		
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+
+		ConsegnaConNotificheCondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
+	}
+	
+	
+	@Test
+	public void clientIp() {
+		// Notifiche Condizionali Quando:
+		//		CompletateConSuccesso
+		//		FaultApplicativo
+		// Finiscono tutte sul primo connettore
+		
+		final String erogazione = "TestConsegnaConNotificheCondizionaleByNomeClientIp";
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+		int i = 0;
+
+		for (var entry : statusCodeVsConnettori.entrySet()) {
+			int statusCode = entry.getKey();
+			Set<String> connettoriSuccesso = entry.getValue();
+			Set<String> connettoriPool = Set.of("127.0.0.1");
+			final String soapContentType = i % 2 == 0 ? HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
+			
+			// Sostituisco Il Connettore0 con "127.0.0.1"
+			connettoriSuccesso = connettoriSuccesso.stream()
+					.map( c -> c.equals(Common.CONNETTORE_0) ? "127.0.0.1" : c)
+					.collect(Collectors.toSet());
+					
+			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, connettoriPool);
+			if (statusCode >= 400 && statusCode <= 499) {
+				current.principaleSuperata = false;
+			}			
+			if (statusCode > 500 && statusCode <= 599) {
+				current.principaleSuperata = false;	
+			}
+			requestsByKind.add(current);
+			
+			i++;
+		}
+				
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+		
+		ConsegnaConNotificheCondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
+	}
+	
+	
+	@Test
+	public void regole() throws UtilsException {
+		// Notifiche Condizionali Quando:
+		//		CompletateConSuccesso
+		//		FaultApplicativo
+		//		ErroreDiConsegna
+		
+		final String erogazione = "TestConsegnaConNotificheCondizionaleByNomeRegole";
+		final String CONNETTORE_LOCALHOST = "127.0.0.1";
+
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+		List<String> forwardingHeaders = HttpUtilities.getClientAddressHeaders();	
+		
+		int i = 0;
+		// Prima costruisco le richieste normalmente
+		for (var entry : statusCodeVsConnettori.entrySet()) {
+			final String filtro = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
+			var connettoriPool = Set.of(filtro);
+			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
+
+			// Filtro HeaderHttp
+			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaHeaderHttp",   "SA_TestRegolaHeaderHttp",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.addHeader(Common.HEADER_ID_CONDIZIONE, filtro);
+			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
+			requestsByKind.add(current);
+			
+			// Filtro ParametroUrl
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaParametroUrl",   "SA_TestRegolaParametroUrl",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
+			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
+			requestsByKind.add(current);
+			
+			// Filtro Regola Statica, vanno tutte sul  connettore0
+			Set<String> connettoriPoolStatica = Set.of(Common.CONNETTORE_0);
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaStatica",   "SA_TestRegolaStatica",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPoolStatica);
+			requestsByKind.add(current);
+			
+			// Filtro Regola ClientI Ip, vanno tutte sul Connettore a parte per il client ip
+			// Il connettore localhost ha la stessa configurazione del connettore0 ovvero passa solo con soapFault, per tutto il resto fallisce.
+			// Non è necessario perciò aggiungerlo alla map statusCodeVsConnettori, dato che sarà un connettore che vedrà solo rispedizioni.
+			// Per come è costruita la buildRequestAndExpectationFiltered, il connettore localhost va a finire direttamente nei connettori 
+			// da considerare falliti.
+			Set<String> connettoriPoolClientIp = Set.of(CONNETTORE_LOCALHOST);
+			
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaClientIp",   "SA_TestRegolaClientIp",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPoolClientIp);
+			requestsByKind.add(current);
+			
+			
+			// Filtro Regola Contenuto
+			String content = "<Filtro>"+filtro+"</Filtro>";
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaContenuto",   "SA_TestRegolaContenuto",  soapContentType, content);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
+			requestsByKind.add(current);
+			
+			// Filtro Regola FreemarkerTemplate
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaFreemarkerTemplate",   "SA_TestRegolaFreemarkerTemplate",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
+			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
+			requestsByKind.add(current);
+
+			// Filtro Regola Velocity Template
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaVelocityTemplate",   "SA_TestRegolaVelocityTemplate",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
+			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
+			requestsByKind.add(current);
+			
+			// Filtro Regola Template
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaTemplate",   "SA_TestRegolaTemplate",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
+			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
+			requestsByKind.add(current);
+			
+			// Filtro Regola SoapAction
+			// Esporta erogazione in zip
+			// Cancellala
+			// Fai una query: select * from connettori where nome_connettore like '%TestConsegnaConNotificheCondizionaleByNomeRegole%';
+		/*	request = RequestBuilder.buildSoapRequest(erogazione, "TestCondizionaleByNome0",   Common.CONNETTORE_0,  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), Set.of(Common.CONNETTORE_0));
+			requestsByKind.add(current);*/
+			
+			// Filtro Regola Url Invocazione
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaUrlInvocazione",   "SA_TestRegolaUrlInvocazione",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
+			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
+			requestsByKind.add(current);
+			
+			// Filtro Regola XForwardedFor
+			String header = forwardingHeaders.get(i%forwardingHeaders.size());
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaXForwardedFor",   "SA_TestRegolaXForwardedFor",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.addHeader(header, filtro);
+			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
+			requestsByKind.add(current);
+
+			i++;
+		}
+				
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+		
+		ConsegnaConNotificheCondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
+
+	}
+	
 	private static void parametroUrl_Impl(String erogazione) {
+		// Notifiche Condizionali Quando:
+		//		CompletateConSuccesso
+		//		FaultApplicativo
+		
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 
 		int i = 0;
