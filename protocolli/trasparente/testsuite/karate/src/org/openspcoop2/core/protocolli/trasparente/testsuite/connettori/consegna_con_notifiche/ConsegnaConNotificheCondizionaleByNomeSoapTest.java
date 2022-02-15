@@ -96,8 +96,6 @@ public class ConsegnaConNotificheCondizionaleByNomeSoapTest extends ConfigLoader
 			if (statusCode >= 400 && statusCode <= 499) {
 				current.principaleSuperata = false;
 			}			
-			// In Soap un 500 senza soapFault è considerato Ok con anomialia, quindi mi aspetto un errore nella transazione principale
-			// solo in caso di 4xx e 5xx, con 5xx > 500
 			if (statusCode > 500 && statusCode <= 599) {
 				current.principaleSuperata = false;	
 			}
@@ -117,6 +115,25 @@ public class ConsegnaConNotificheCondizionaleByNomeSoapTest extends ConfigLoader
 		parametroUrl_Impl(erogazione);
 	}
 	
+	
+	@Test
+	public void template() {
+		final String erogazione = "TestConsegnaConNotificheCondizionaleByNomeTemplate";
+		parametroUrl_Impl(erogazione);		
+	}
+	
+	@Test
+	public void velocityTemplate() {
+		final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeVelocityTemplate";
+		parametroUrl_Impl(erogazione);		
+	}
+	
+	
+	@Test
+	public void freemarkerTemplate() {
+		final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeFreemarkerTemplate";
+		parametroUrl_Impl(erogazione);		
+	}
 	
 	private static void parametroUrl_Impl(String erogazione) {
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
