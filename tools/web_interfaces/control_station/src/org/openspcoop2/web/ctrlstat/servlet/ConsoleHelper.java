@@ -18313,19 +18313,19 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		for (int i = 0; i < listaMappingErogazioneSize; i++) {
 			PortaApplicativaServizioApplicativo paSA = pa.getServizioApplicativo(i);
-			if(!this.isConnettoreDefault(paSA)) {
-				int idx = paSA.getNome().indexOf(ConnettoriCostanti.PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX);
-				if(idx > -1) {
-					String idxTmp = paSA.getNome().substring(idx + ConnettoriCostanti.PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX.length());
-					int idxMax = -1;
-					try {
-						idxMax = Integer.parseInt(idxTmp);
-					}catch(Exception e) {
-						idxMax = 0;
-					}
-					idxConfigurazione = Math.max(idxConfigurazione, idxMax);
+			//if(!this.isConnettoreDefault(paSA)) {
+			int idx = paSA.getNome().indexOf(ConnettoriCostanti.PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX);
+			if(idx > -1) {
+				String idxTmp = paSA.getNome().substring(idx + ConnettoriCostanti.PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX.length());
+				int idxMax = -1;
+				try {
+					idxMax = Integer.parseInt(idxTmp);
+				}catch(Exception e) {
+					idxMax = 0;
 				}
+				idxConfigurazione = Math.max(idxConfigurazione, idxMax);
 			}
+			//}
 		}
 				
 		return ( ++ idxConfigurazione);
