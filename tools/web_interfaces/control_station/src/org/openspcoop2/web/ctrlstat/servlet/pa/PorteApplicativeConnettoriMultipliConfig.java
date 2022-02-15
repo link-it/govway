@@ -216,6 +216,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 			boolean visualizzaLinkProprietaCustom = false;
 			boolean modificaStatoAbilitata = true;
 			boolean visualizzaLinkRegolePerAzioni = false;
+			org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneCondizionale configurazioneCondizionaleOld = null;
 			if(portaApplicativa.getBehaviour() != null) {
 				TipoBehaviour behaviourType = TipoBehaviour.toEnumConstant(portaApplicativa.getBehaviour().getNome());
 				visualizzaLinkProprietaCustom = behaviourType.equals(TipoBehaviour.CUSTOM);
@@ -224,8 +225,8 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 					modificaStatoAbilitata = false;
 				
 				if(org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(portaApplicativa, ControlStationCore.getLog())){
-					org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneCondizionale configurazioneCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.read(portaApplicativa, ControlStationCore.getLog());
-					numeroRegolePerAzioni = configurazioneCondizionale.getRegoleOrdinate().size();
+					configurazioneCondizionaleOld = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.read(portaApplicativa, ControlStationCore.getLog());
+					numeroRegolePerAzioni = configurazioneCondizionaleOld.getRegoleOrdinate().size();
 					visualizzaLinkRegolePerAzioni = true;
 				}
 			}
@@ -580,6 +581,9 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 					// configurazione condizionale
 					if(consegnaCondizionale) {
 						ConfigurazioneCondizionale configurazioneCondizionale = porteApplicativeHelper.toConfigurazioneCondizionale(consegnaCondizionale, selezioneConnettoreBy, identificazioneCondizionale, identificazioneCondizionalePattern, identificazioneCondizionalePrefisso, identificazioneCondizionaleSuffisso, condizioneNonIdentificataAbortTransaction, condizioneNonIdentificataDiagnostico, condizioneNonIdentificataConnettore, connettoreNonTrovatoAbortTransaction, connettoreNonTrovatoDiagnostico, connettoreNonTrovatoConnettore);
+						if(configurazioneCondizionaleOld!=null && configurazioneCondizionaleOld.sizeRegole()>0) {
+							configurazioneCondizionale.setRegolaList(configurazioneCondizionaleOld.getRegolaList());
+						}
 						org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.save(portaApplicativa, configurazioneCondizionale);
 					}
 				}

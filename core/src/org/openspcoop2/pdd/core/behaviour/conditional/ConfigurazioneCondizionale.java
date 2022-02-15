@@ -98,9 +98,17 @@ public class ConfigurazioneCondizionale {
 		
 		return this.regolaList.keySet();
 	}
-	
 	public void removeRegola(String nomeRegola){
 		this.regolaList.remove(nomeRegola);
+	}
+	public int sizeRegole() {
+		return this.regolaList.size();
+	}
+	public TreeMap<String, ConfigurazioneSelettoreCondizioneRegola> getRegolaList() {
+		return this.regolaList;
+	}
+	public void setRegolaList(TreeMap<String, ConfigurazioneSelettoreCondizioneRegola> regolaList) {
+		this.regolaList = regolaList;
 	}
 	
 	public IdentificazioneFallitaConfigurazione getCondizioneNonIdentificata() {
