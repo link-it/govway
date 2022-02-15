@@ -47,7 +47,7 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 /**
  * 
  * @author Francesco Scarlato
- *
+ * TODO: Chiedere ad andrea se è voluto che la consegna by filtro si comporti come quella by nome quando non ci sono filtri sui connettori
  * QUERY:
  * TestContenuto: //Filtro/text()
  * Template: ${query:govway-testsuite-id_connettore_request}
@@ -312,11 +312,10 @@ public class ConsegnaConNotificheCondizionaleByNomeSoapTest extends ConfigLoader
 			// Filtro Regola SoapAction
 			// Esporta erogazione in zip
 			// Cancellala
-			// Fai una query: select * from connettori where nome_connettore like '%TestConsegnaConNotificheCondizionaleByNomeRegole%';
-		/*	request = RequestBuilder.buildSoapRequest(erogazione, "TestCondizionaleByNome0",   Common.CONNETTORE_0,  soapContentType);
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestCondizionaleByNome0",   Common.CONNETTORE_0,  soapContentType);
 			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
 			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), Set.of(Common.CONNETTORE_0));
-			requestsByKind.add(current);*/
+			requestsByKind.add(current);
 			
 			// Filtro Regola Url Invocazione
 			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaUrlInvocazione",   "SA_TestRegolaUrlInvocazione",  soapContentType);
@@ -339,7 +338,131 @@ public class ConsegnaConNotificheCondizionaleByNomeSoapTest extends ConfigLoader
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		
 		ConsegnaConNotificheCondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
+	}
+	
+	
+	@Test
+	public void contenutoSuffisso() {
+		// Notifiche Condizionali Quando:
+		//		CompletateConSuccesso
+		//		FaultApplicativo
+		final String erogazione = "TestConsegnaConNotificheCondizionaleByNomeContenutoSuffisso";
+		
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+		int i = 0;
+		
+		for (var entry : statusCodeVsConnettori.entrySet()) {
+			int statusCode = entry.getKey();
+			// Aggiungo i suffissi ai connettori da testare
+			Set<String> connettoriSuccesso = entry.getValue().stream()
+					.map( c -> c + "-SuffissoTest")
+					.collect(Collectors.toSet());
+			
+			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
+			final String filtro = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
+			final String content = "<Filtro>"+filtro+"</Filtro>";
 
+			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType,content);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			
+			var current = buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, Set.of(filtro+"-SuffissoTest"));
+			if (statusCode >= 400 && statusCode <= 499) {
+				current.principaleSuperata = false;
+			}			
+			if (statusCode > 500 && statusCode <= 599) {
+				current.principaleSuperata = false;	
+			}
+			requestsByKind.add(current);
+			
+			i++;
+		}
+				
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+		
+		ConsegnaConNotificheCondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
+	}
+	
+	@Test
+	public void urlInvocazionePrefisso() {
+		// Notifiche Condizionali Quando:
+		//		CompletateConSuccesso
+		//		FaultApplicativo
+		final String erogazione = "TestConsegnaConNotificheCondizionaleByNomeUrlInvocazionePrefisso";
+		
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+		final String prefisso = "Connettore";
+
+		int i = 0;
+		
+		for (var entry : statusCodeVsConnettori.entrySet()) {
+			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
+			final String connettore =Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size()); 
+			final String filtro = connettore.substring(prefisso.length());
+			final int statusCode = entry.getKey();
+
+			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
+			
+			var current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), Set.of(connettore));
+			if (statusCode >= 400 && statusCode <= 499) {
+				current.principaleSuperata = false;
+			}			
+			if (statusCode > 500 && statusCode <= 599) {
+				current.principaleSuperata = false;	
+			}
+			requestsByKind.add(current);
+			
+			i++;
+		}
+				
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+		
+		ConsegnaConNotificheCondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
+	}
+	
+	
+	@Test
+	public void XForwardedForPrefissoESuffisso() throws UtilsException {
+		// Notifiche Condizionali Quando:
+		//		CompletateConSuccesso
+		//		FaultApplicativo
+		final String erogazione = "TestConsegnaConNotificheByNomeXForwardedForPrefissoESuffisso";
+
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+		List<String> forwardingHeaders = HttpUtilities.getClientAddressHeaders();
+		
+		int i = 0;
+		// Prima costruisco le richieste normalmente
+		for (var entry : statusCodeVsConnettori.entrySet()) {
+			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
+			final int statusCode = entry.getKey();
+			
+			// Aggiungo i suffissi ai connettori da testare
+			Set<String> connettoriSuccesso = entry.getValue().stream()
+					.map( c -> "PrefissoTest-" + c + "-SuffissoTest")
+					.collect(Collectors.toSet());
+			
+			String header = forwardingHeaders.get(i%forwardingHeaders.size());
+			String filtro = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
+
+			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.addHeader(header, filtro);
+			
+			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode,connettoriSuccesso, Set.of("PrefissoTest-"+filtro+"-SuffissoTest"));
+			if (statusCode >= 400 && statusCode <= 499) {
+				current.principaleSuperata = false;
+			}			
+			if (statusCode > 500 && statusCode <= 599) {
+				current.principaleSuperata = false;	
+			}
+			requestsByKind.add(current);
+			i++;
+		}
+				
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+		ConsegnaConNotificheCondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
 	}
 	
 	private static void parametroUrl_Impl(String erogazione) {
@@ -365,8 +488,6 @@ public class ConsegnaConNotificheCondizionaleByNomeSoapTest extends ConfigLoader
 			if (statusCode >= 400 && statusCode <= 499) {
 				current.principaleSuperata = false;
 			}			
-			// In Soap un 500 senza soapFault è considerato Ok con anomialia, quindi mi aspetto un errore nella transazione principale
-			// solo in caso di 4xx e 5xx, con 5xx > 500
 			if (statusCode > 500 && statusCode <= 599) {
 				current.principaleSuperata = false;	
 			}
