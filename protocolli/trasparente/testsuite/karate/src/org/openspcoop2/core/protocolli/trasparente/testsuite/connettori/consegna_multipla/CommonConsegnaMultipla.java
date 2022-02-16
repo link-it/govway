@@ -522,7 +522,9 @@ public class CommonConsegnaMultipla {
 				requestConsegna.addHeader(header[0], header[1]);
 			}
 			
-			assertTrue(Arrays.equals(request.getContent(), requestConsegna.getContent()));
+			if (request.getContent() != null) {
+				assertTrue(Arrays.equals(request.getContent(), requestConsegna.getContent()));
+			}
 			assertEquals(idTransazione, requestConsegna.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE));
 			
 			assertEquals(connettoriFile.size()*2, filesCreati.size());

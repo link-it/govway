@@ -57,9 +57,8 @@ import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilsException;
 
-// TODO: Test scelta connettore principale quello disabilitato. (Aspetta fix di andrea e poi rimuovi il test, tanto non deve essere possibile sceglierlo)
 // TODO:  rimuovi le chiamate depcreate da ConsegnaMultiplaTest.java
-// TODO:  Test errore di processamento facendo fallire la correlazione applicativa sulla risposta
+// TODO:  Test errore di processamento facendo fallire la correlazione applicativa sulla risposta, faccio prima rest e poi torno qui
 
 
 // Completate Con Successo -> 2xx
@@ -72,7 +71,7 @@ import org.openspcoop2.utils.transport.http.HttpUtilsException;
  * @author Francesco Scarlato
  *
  */
-public class ConsegnaConNotificheSoapTest extends ConfigLoader {
+public class SoapTest extends ConfigLoader {
 
 	@BeforeClass
 	public static void Before() {
@@ -302,7 +301,6 @@ public class ConsegnaConNotificheSoapTest extends ConfigLoader {
 	public void consegnaConNotificheSemplice2() {
 		// Errore di Consegna => Spedizione
 		// CompletateConSuccesso, FaultApplicativo => Errore
-		// TODO: Decommenta le richieste dopo il fix di andrea.
 		
 		final String erogazione = "TestConsegnaConNotifiche2Soap";
 
@@ -313,7 +311,7 @@ public class ConsegnaConNotificheSoapTest extends ConfigLoader {
 		Set<String> connettoriSuccesso = Set.of();
 		var connettoriErrore = Common.setConnettoriAbilitati;
 		var requestAndExpectation = buildRequestAndExpectations(erogazione, 401, connettoriSuccesso, connettoriErrore, HttpConstants.CONTENT_TYPE_SOAP_1_1);
-		//requestsByKind.add(requestAndExpectation);
+		requestsByKind.add(requestAndExpectation);
 		
 		
 		// Fault applicativo, principale fallita, nessuno scheduling 
@@ -325,12 +323,12 @@ public class ConsegnaConNotificheSoapTest extends ConfigLoader {
 					0, 
 					500,
 					false);
-		//requestsByKind.add(requestAndExpectation);
+		requestsByKind.add(requestAndExpectation);
 		
 		// 200, principale fallita, nessuno scheduling
 		requestAndExpectation = buildRequestAndExpectations(erogazione,200, Set.of(), Set.of(), HttpConstants.CONTENT_TYPE_SOAP_1_1);
 		requestAndExpectation.principaleSuperata = false;
-		//requestsByKind.add(requestAndExpectation);
+		requestsByKind.add(requestAndExpectation);
 
 		
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);

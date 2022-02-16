@@ -47,6 +47,25 @@ public class RequestBuilder {
 		
 		return request;
 	}
+	
+	
+	public static HttpRequest buildRestRequest(String erogazione) {
+		HttpRequest request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
+		
+		return request;
+	}
+	
+	public static HttpRequest buildRestRequestProblem(String erogazione) {
+		HttpRequest request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-header-http"
+				+ "?replyQueryParameter=id_connettore&problem=true&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
+		
+		return request;
+	}
 
 	public static HttpRequest buildRequest_UrlInvocazione(String connettore, String erogazione) {
 		// L'espressione regolare sull'erogazione matcha il parametro query govway-testsuite-id_connettore_request.		
@@ -154,6 +173,7 @@ public class RequestBuilder {
 		requestSoapFault.setUrl(requestSoapFault.getUrl() +"&fault=true&faultSoapVersion="+faultSoapVersion);
 		return requestSoapFault;
 	}
+
 	
 	public static HttpRequest buildSoapRequest(String erogazione, String azione, String soapAction, String contentTypeSoap) {
 		return buildSoapRequest(erogazione, azione, soapAction, contentTypeSoap, "");
