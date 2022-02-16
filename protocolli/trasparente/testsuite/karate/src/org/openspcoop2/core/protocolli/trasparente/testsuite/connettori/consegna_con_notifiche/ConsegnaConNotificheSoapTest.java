@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -82,10 +83,16 @@ public class ConsegnaConNotificheSoapTest extends ConfigLoader {
 		}
 	}
 	
-	/*@AfterClass
+	@AfterClass
 	public static void After() {
 		Common.fermaRiconsegne(dbUtils);
-	}*/
+	}
+
+	@org.junit.After
+	public void AfterEach() {
+		Common.fermaRiconsegne(dbUtils);
+	}
+	
 	
 	/**
 	 * Costruisce la richiesta e le condizioni attese sull'esito della richiesta.
@@ -160,51 +167,7 @@ public class ConsegnaConNotificheSoapTest extends ConfigLoader {
 
 	}
 	
-	
-	@Test
-	public void connettorePrincipaleDisabilitato() {
-				// 	Il ConnettorePrincipale è quello sincrono, ed è disabilitato				
-				final String erogazione = "TestConsegnaConNotificheConnettorePrincipaleDisabilitatoSoap";
-				
-				HttpRequest request1 = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1);
-				HttpRequest request2 = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_2);
 
-				var responses = Common.makeParallelRequests(request1, 10);
-				var responses2 = Common.makeParallelRequests(request2, 10);
-
-				// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
-				// Non controllo la valorizzazione puntuale del campo esito_sincrono, perchè dovrei costruirmi un mapping e sapere
-				// dato ciascuno  status code in quale dei tanti esiti si va a finire.
-				for (var r : responses) {
-					assertEquals(200, r.getResultHTTPOperation());
-					
-					CommonConsegnaMultipla.checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
-					CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
-				}
-				for (var r : responses2) {
-					assertEquals(200, r.getResultHTTPOperation());
-					
-					CommonConsegnaMultipla.checkPresaInConsegna(r, Common.setConnettoriAbilitati.size() );
-					CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
-				}
-			
-				// Attendo la consegna
-				org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
-
-				// Per i connettori di tipo file, controllo anche che la scrittura della richiesta di consegna multipla sia avvenuta.
-				Set<String> connettoriFile = Set.of(CONNETTORE_2, CONNETTORE_3); 	// TODO: Aspetta che ti risponda andrea sulla questione del connettore principale disabilitato
-				for (var response : responses) {
-					CommonConsegnaMultipla.checkConsegnaCompletata(response);
-					//CommonConsegnaMultipla.checkConsegnaConnettoreFile(request1, response, connettoriFile);
-					CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(response,  Common.setConnettoriAbilitati);
-				}
-				for (var response : responses2) {
-					CommonConsegnaMultipla.checkConsegnaCompletata(response);
-					//CommonConsegnaMultipla.checkConsegnaConnettoreFile(request2, response, connettoriFile);
-					CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(response,  Common.setConnettoriAbilitati);
-				}
-	}
-	
 	
 	@Test
 	public void schedulingAbilitatoDisabilitato() throws UtilsException, HttpUtilsException {

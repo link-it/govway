@@ -62,9 +62,6 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 /**
  * 
  * @author Francesco Scarlato
- * TODO: Ho visto anche che c'è UtilizzaConnettore: Nessuno in NCU, fai test.
- * TODO: Cambia una o due erogazioni e falle passare anche con errore di consegna
- * TODO: Riesco a controllare lo statusCode della transazione principale?
  * 
  * QUERY:
  * 
@@ -77,6 +74,9 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  * UrlInvocazione: .+govway-testsuite-id_connettore_request=([^&]*).*
  */
 public class ConsegnaConNotificheCondizionaleByFiltroSoapTest extends ConfigLoader {
+	
+	static String CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_INFO_2 = "007044";
+	static String CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_ERROR_2 = "007043";
 	
 	@BeforeClass
 	public static void Before() {
@@ -102,11 +102,10 @@ public class ConsegnaConNotificheCondizionaleByFiltroSoapTest extends ConfigLoad
 		// Notifiche Condizionali Quando:
 		//		CompletateConSuccesso
 		//		FaultApplicativo
+		// Il connettore di fallback è il 2
 		
 		final String erogazione = "TestConsegnaConNotificheCondizionaleByFiltroHeaderHttpICFDiagnosticoInfo";
 		
-		// Il connettore di fallback è il 2
-
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 		Set<RequestAndExpectations> toCheckForDiagnostici = new HashSet<>();
 
@@ -472,9 +471,6 @@ public class ConsegnaConNotificheCondizionaleByFiltroSoapTest extends ConfigLoad
 		checkResponses(responsesByKind);
 		
 		String messaggioAtteso = "Il messaggio verrà notificato a tutti i connettori indiscriminatamente poichè la condizione estratta dalla richiesta non ha permesso di identificare alcun connettore";
-		String CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_INFO_2 = "007044";
-		String CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_ERROR_2 = "007043";
-
 		
 		// Recupero tutte le risposte che devono aver fallito l'identificazione e controllo i diagnostici
 		for (var toCheck: toCheckForDiagnostici) {
@@ -565,7 +561,7 @@ public class ConsegnaConNotificheCondizionaleByFiltroSoapTest extends ConfigLoad
 		requestsByKind.add(current);
 		
 		pool = Common.POOL_0;
-		filtro = Common.filtriPools.get(pool).get(0);		
+		filtro = Common.filtriPools.get(pool).get(0);
 		requestSoapFault = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla", "test", HttpConstants.CONTENT_TYPE_SOAP_1_2);
 		requestSoapFault.setUrl(requestSoapFault.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
 		connettoriSuccesso = Set.of(CONNETTORE_0, CONNETTORE_2, CONNETTORE_3);
@@ -1103,13 +1099,31 @@ public class ConsegnaConNotificheCondizionaleByFiltroSoapTest extends ConfigLoad
 	}
 	
 	
+	static void checkResponsesStatus(HttpRequest request, List<HttpResponse> responses, int statusCodeEcho) {
+		Map<Integer,Integer> soapStatusCodeMapping = Map.of(
+				401, 500,
+				500, 200);		// Un 500 senza body è un OK con anomalia
+		
+		if (request.getUrl().contains("&fault=true")) {
+			// In caso di fault ci aspettiamo un 500
+			Common.checkResponsesStatus(responses, statusCodeEcho);
+			
+		} else 	if (soapStatusCodeMapping.containsKey(statusCodeEcho) ) {
+			Common.checkResponsesStatus(responses, soapStatusCodeMapping.get(statusCodeEcho));
+			
+		} else {
+			Common.checkResponsesStatus(responses, statusCodeEcho);
+		}
+	}
+	
+	
 	static void checkResponses(Map<RequestAndExpectations, List<HttpResponse>> responsesByKind) {
 		assertTrue(!responsesByKind.isEmpty());
 		
 		// Le richieste per cui la transazione sincrona ha avuto successo devono essere schedulate
 		for (var requestExpectation : responsesByKind.keySet()) {
 			var responses = responsesByKind.get(requestExpectation);
-
+			checkResponsesStatus(requestExpectation.request, responses, requestExpectation.statusCodePrincipale);
 			assertTrue(!responses.isEmpty());
 			
 			// Deve essere la fusione dei connettoriOk e i connettoriErrore\conettoriScheduling Disabilitato

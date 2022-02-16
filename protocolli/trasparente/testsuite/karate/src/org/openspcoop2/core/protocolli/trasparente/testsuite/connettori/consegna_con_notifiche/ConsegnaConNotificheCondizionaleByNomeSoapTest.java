@@ -20,11 +20,15 @@
 
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_con_notifiche;
 
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_ERROR;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_INFO;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.DIAGNOSTICO_SEVERITA_INFO;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.buildRequestAndExpectationFiltered;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.statusCodeVsConnettori;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,6 +39,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.RequestBuilder;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectations;
@@ -47,7 +52,7 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 /**
  * 
  * @author Francesco Scarlato
- * TODO: Chiedere ad andrea se è voluto che la consegna by filtro si comporti come quella by nome quando non ci sono filtri sui connettori
+ * 
  * QUERY:
  * TestContenuto: //Filtro/text()
  * Template: ${query:govway-testsuite-id_connettore_request}
@@ -117,6 +122,7 @@ public class ConsegnaConNotificheCondizionaleByNomeSoapTest extends ConfigLoader
 		
 		ConsegnaConNotificheCondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
 	}
+	
 	
 	@Test
 	public void parametroUrl() {
@@ -310,8 +316,6 @@ public class ConsegnaConNotificheCondizionaleByNomeSoapTest extends ConfigLoader
 			requestsByKind.add(current);
 			
 			// Filtro Regola SoapAction
-			// Esporta erogazione in zip
-			// Cancellala
 			request = RequestBuilder.buildSoapRequest(erogazione, "TestCondizionaleByNome0",   Common.CONNETTORE_0,  soapContentType);
 			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
 			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), Set.of(Common.CONNETTORE_0));
@@ -464,6 +468,147 @@ public class ConsegnaConNotificheCondizionaleByNomeSoapTest extends ConfigLoader
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		ConsegnaConNotificheCondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
 	}
+	
+	
+	@Test
+	public void parametroUrlNCUNessunConnettore() {
+		// Notifiche Condizionali Quando:
+		//		CompletateConSuccesso
+		//		FaultApplicativo
+		//	Nessun connettore notificato in caso di NCU
+
+		final String erogazione = "TestConsegnaConNotificheCondizionaleByNomeParametroUrlNCUNessunConnettore";
+		
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+		Set<RequestAndExpectations> toCheckForDiagnostici = new HashSet<>();
+
+		int i = 0;
+		// Prima costruisco le richieste normalmente
+		for (var entry : statusCodeVsConnettori.entrySet()) {
+			
+			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
+			final String filtro = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
+			final int statusCode = entry.getKey();
+			final Set<String> connettoriSuccesso = entry.getValue();
+			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
+			
+			request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
+			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode,connettoriSuccesso, Set.of(filtro));
+			if (statusCode >= 400 && statusCode <= 499) {
+				current.principaleSuperata = false;
+			}			
+			if (statusCode > 500 && statusCode <= 599) {
+				current.principaleSuperata = false;
+			}
+			requestsByKind.add(current);
+			
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request=FiltroInesistente");
+			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, Set.of());
+			current.principaleSuperata = false;
+			
+			requestsByKind.add(current);
+			toCheckForDiagnostici.add(current);
+			
+			i++;
+		}
+		
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+
+		ConsegnaConNotificheCondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
+
+		String CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_INFO_2 = "007044";
+		String CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_ERROR_2 = "007043";
+		
+		// Recupero tutte le risposte che devono aver fallito l'identificazione e controllo i diagnostici
+		for (var toCheck: toCheckForDiagnostici) {
+			for (var response : responsesByKind.get(toCheck) ) {
+				String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+				
+				IdentificazioneFallitaTest.checkAssenzaDiagnosticoTransazione(id_transazione, CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_INFO_2);
+				IdentificazioneFallitaTest.checkAssenzaDiagnosticoTransazione(id_transazione, CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_ERROR_2);
+				
+				IdentificazioneFallitaTest.checkDiagnosticoTransazione(
+						id_transazione, 
+						DIAGNOSTICO_SEVERITA_INFO,
+						"007050",
+						"Il messaggio di richiesta non verrà notificato ad alcun connettore poichè l'identificazione condizionale è fallita");
+			}
+		}
+		
+	}
+	
+	
+	@Test
+	public void parametroUrlICFNessunConnettore() {
+		// Notifiche Condizionali Quando:
+		//		CompletateConSuccesso
+		//		FaultApplicativo
+		//	Nessun connettore notificato in caso di ICF
+
+		final String erogazione = "TestConsegnaConNotificheCondizionaleByNomeParametroUrlICFNessunConnettore";
+		
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+		Set<RequestAndExpectations> toCheckForDiagnostici = new HashSet<>();
+
+		int i = 0;
+		// Prima costruisco le richieste normalmente
+		for (var entry : statusCodeVsConnettori.entrySet()) {
+			
+			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
+			final String filtro = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
+			final int statusCode = entry.getKey();
+			final Set<String> connettoriSuccesso = entry.getValue();
+			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
+			
+			request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
+			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode,connettoriSuccesso, Set.of(filtro));
+			if (statusCode >= 400 && statusCode <= 499) {
+				current.principaleSuperata = false;
+			}			
+			if (statusCode > 500 && statusCode <= 599) {
+				current.principaleSuperata = false;
+			}
+			requestsByKind.add(current);
+			
+			// Richiesta ICF
+			request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.setUrl(request.getUrl() + "&parametroSbagliato=FiltroInesistente");
+			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, Set.of());
+			current.principaleSuperata = false;
+			
+			requestsByKind.add(current);
+			toCheckForDiagnostici.add(current);
+			
+			i++;
+		}
+		
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+
+		ConsegnaConNotificheCondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
+		
+		// Recupero tutte le risposte che devono aver fallito l'identificazione e controllo i diagnostici
+		for (var toCheck: toCheckForDiagnostici) {
+			for (var response : responsesByKind.get(toCheck) ) {
+				String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+				
+				IdentificazioneFallitaTest.checkAssenzaDiagnosticoTransazione(id_transazione, CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_ERROR);
+				IdentificazioneFallitaTest.checkAssenzaDiagnosticoTransazione(id_transazione, CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_INFO);
+				
+				IdentificazioneFallitaTest.checkDiagnosticoTransazione(
+						id_transazione, 
+						DIAGNOSTICO_SEVERITA_INFO,
+						"007050",
+						"Il messaggio di richiesta non verrà notificato ad alcun connettore poichè l'identificazione condizionale è fallita");
+			}
+		}
+		
+	}
+	
 	
 	private static void parametroUrl_Impl(String erogazione) {
 		// Notifiche Condizionali Quando:

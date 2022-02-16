@@ -439,7 +439,7 @@ public class CommonConsegnaMultipla {
 			esito =  connettoriFallimento.isEmpty() ? ESITO_CONSEGNA_MULTIPLA_COMPLETATA : ESITO_CONSEGNA_MULTIPLA_IN_CORSO;
 		}
 		
-		return new RequestAndExpectations(request, connettoriSuccesso, connettoriFallimento, esito);
+		return new RequestAndExpectations(request, connettoriSuccesso, connettoriFallimento, esito, statusCode);
 	}
 
 	public static void checkResponses(Map<RequestAndExpectations, List<HttpResponse>> responsesByKind) {
