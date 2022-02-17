@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -73,7 +72,7 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 		}
 	}
 	
-	@AfterClass
+	/*@AfterClass
 	public static void After() {
 		Common.fermaRiconsegne(dbUtils);
 	}
@@ -81,7 +80,7 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 	@org.junit.After
 	public void AfterEach() {
 		Common.fermaRiconsegne(dbUtils);		
-	}
+	}*/
 	
 	
 	@Test
@@ -223,7 +222,7 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 			requestsByKind.add(current);
 			
 			/// Filtro Regola ClientI Ip, vanno tutte sul Connettore a parte per il client ip
-			// Il connettore localhost ha la stessa configurazione del connettore0 ovvero passa solo con soapFault, per tutto il resto fallisce.
+			// Il connettore localhost ha la stessa configurazione del connettore0 ovvero passa solo con problem, per tutto il resto fallisce.
 			// Non è necessario perciò aggiungerlo alla map statusCodeVsConnettori, dato che sarà un connettore che vedrà solo rispedizioni.
 			// Per come è costruita la buildRequestAndExpectationFiltered, il connettore localhost va a finire direttamente nei connettori 
 			// da considerare falliti.
@@ -513,7 +512,7 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 		
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 
-		CondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
+		CondizionaleByFiltroRestTest.checkResponses(responsesByKind);
 		
 		// Recupero tutte le risposte che devono aver fallito l'identificazione e controllo i diagnostici
 		for (var toCheck: toCheckForDiagnostici) {
@@ -564,6 +563,6 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 				
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		
-		CondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
+		CondizionaleByFiltroRestTest.checkResponses(responsesByKind);
 	}
 }

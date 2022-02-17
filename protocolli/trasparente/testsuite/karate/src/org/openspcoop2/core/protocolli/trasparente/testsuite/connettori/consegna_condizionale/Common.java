@@ -316,6 +316,7 @@ public class Common {
 
 	public static void checkResponsesStatus(List<HttpResponse> responses, int status) {
 		for (var resp : responses) {
+			ConfigLoader.getLoggerCore().debug("Checking response status code for transaction: " + resp.getHeaderFirstValue(HEADER_ID_TRANSAZIONE));
 			assertEquals(status, resp.getResultHTTPOperation());
 		}
 	}
