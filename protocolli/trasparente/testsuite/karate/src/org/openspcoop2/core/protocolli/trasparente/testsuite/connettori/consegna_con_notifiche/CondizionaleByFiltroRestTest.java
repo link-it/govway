@@ -839,7 +839,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 		// Notifiche Condizionali Quando:
 		//		CompletateConSuccesso
 		//		FaultApplicativo		
-		// 	ErroreDiConsegna
+		// 		ErroreDiConsegna
 		final String erogazione = "TestConsegnaConNotificheCondizionaleByRegoleRest";
 		
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();

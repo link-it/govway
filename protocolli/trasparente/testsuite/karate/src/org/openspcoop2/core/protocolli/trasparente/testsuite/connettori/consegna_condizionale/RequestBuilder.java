@@ -33,7 +33,7 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
 /**
  * 
- * @author froggo
+ * @author Francesco Scarlato
  *
  */
 public class RequestBuilder {

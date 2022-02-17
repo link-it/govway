@@ -994,7 +994,7 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 		// Notifiche Condizionali Quando:
 		//		CompletateConSuccesso
 		//		FaultApplicativo		
-		// 	ErroreDiConsegna
+		//		ErroreDiConsegna
 		final String erogazione = "TestConsegnaConNotificheCondizionaleByRegole";
 		
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
@@ -1087,7 +1087,6 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 			request.addHeader(header, filtro);
 			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
 			requestsByKind.add(current);
-	
 
 			i++;
 		}
