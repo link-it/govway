@@ -101,6 +101,14 @@ public class CommonConsegnaMultipla {
 				  206, Set.of(CONNETTORE_1),
 				  299, Set.of(CONNETTORE_1));
 	
+	
+	public final static Map<Integer, Set<String>> statusCode3xxVsConnettori  = Map
+			.of(300, Set.of(CONNETTORE_1,CONNETTORE_2),
+				  301, Set.of(CONNETTORE_1, CONNETTORE_3),
+				  302, Set.of(CONNETTORE_1,CONNETTORE_2, CONNETTORE_3),
+				  306, Set.of(CONNETTORE_1),
+				  399, Set.of(CONNETTORE_1));
+	
 	public final static Map<Integer, Set<String>> statusCode4xxVsConnettori  = Map
 			.of(400, Set.of(CONNETTORE_1,CONNETTORE_2),
 				  401, Set.of(CONNETTORE_1, CONNETTORE_3),
@@ -120,6 +128,14 @@ public class CommonConsegnaMultipla {
 		statusCodeVsConnettori.putAll(statusCode2xxVsConnettori);
 		statusCodeVsConnettori.putAll(statusCode4xxVsConnettori);
 		statusCodeVsConnettori.putAll(statusCode5xxVsConnettori);
+	}
+	
+	public final static Map<Integer,Set<String>> statusCodeRestVsConnettori = new HashMap<>();
+	static {
+		statusCodeRestVsConnettori.putAll(statusCode2xxVsConnettori);
+		statusCodeRestVsConnettori.putAll(statusCode3xxVsConnettori);
+		statusCodeRestVsConnettori.putAll(statusCode4xxVsConnettori);
+		statusCodeRestVsConnettori.putAll(statusCode5xxVsConnettori);
 	}
 
 	public static <T> Set<T> setIntersection(Set<T> lhs, Set<T> rhs) {

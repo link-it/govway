@@ -151,7 +151,7 @@ public class RestTest extends ConfigLoader{
 	public void consegnaConNotificheSemplice() throws IOException {
 
 		// Il ConnettorePrincipale è quello sincrono, non subisce rispedizioni in caso di fallimento.
-		// La sua configurazione puntuale serve a indicare cosa scrivere nei diagnostici.		(TODOs Controllare i diagnostici?)
+		// La sua configurazione puntuale serve a indicare cosa scrivere nei diagnostici.
 		// Non controllo lo status code delle richieste sincrone perchè non coincide con quello inviato al server di echo, e.g.: un 401 viene trasformato in 500
 		// Controllo però che la logica delle rispedizioni segua quanto scelto nelle maschere di configurazione.
 		// Così per tutti i test.
@@ -192,7 +192,7 @@ public class RestTest extends ConfigLoader{
 		
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 		
-		for (var entry : CommonConsegnaMultipla.statusCodeVsConnettori.entrySet()) {
+		for (var entry : CommonConsegnaMultipla.statusCodeRestVsConnettori.entrySet()) {
 			int statusCode = entry.getKey();
 			var connettoriSuccesso = entry.getValue();
 			var connettoriErrore = setDifference(Common.setConnettoriAbilitati,connettoriSuccesso);
@@ -337,13 +337,12 @@ public class RestTest extends ConfigLoader{
 	
 	@Test
 	public void varieCombinazioniDiRegole() {
-		// La consegna sincrona ha successo in caso di 200 o di soap fault. In questo test alcune transazioni
-		// principali falliscono, altre no e per queste viene schedulata la consegna. Controllo che tale scheduling sia corretto.
+		
 		final String erogazione = "TestConsegnaConNotificheRestVarieCombinazioniDiRegole";
 		
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 		
-		for (var entry : CommonConsegnaMultipla.statusCodeVsConnettori.entrySet()) {
+		for (var entry : CommonConsegnaMultipla.statusCodeRestVsConnettori.entrySet()) {
 			int statusCode = entry.getKey();
 			var connettoriSuccesso = entry.getValue();
 			var connettoriErrore = setDifference(Common.setConnettoriAbilitati,connettoriSuccesso);

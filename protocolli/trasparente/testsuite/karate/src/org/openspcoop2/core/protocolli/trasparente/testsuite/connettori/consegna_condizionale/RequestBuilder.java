@@ -48,6 +48,26 @@ public class RequestBuilder {
 		return request;
 	}
 	
+
+	public static HttpRequest buildRequest_Statica(String erogazione) {
+		HttpRequest request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-statica"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
+		
+		return request;
+	}
+	
+	
+	public static HttpRequest buildRequest_ClientIp(String erogazione) {
+		HttpRequest request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-client-ip"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
+		
+		return request;
+	}
+	
 	
 	public static HttpRequest buildRestRequest(String erogazione) {
 		HttpRequest request = new HttpRequest();
@@ -153,14 +173,20 @@ public class RequestBuilder {
 	}
 
 	public static HttpRequest buildRequest_ForwardedFor(String connettore, String erogazione) throws UtilsException {
+		return buildRequest_ForwardedFor(connettore, "X-Forwarded-For",  erogazione);
+	}
+	
+	
+	public static HttpRequest buildRequest_ForwardedFor(String connettore, String header,  String erogazione) throws UtilsException {
 		HttpRequest request = new HttpRequest();
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-xforwarded-for"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
-		request.addHeader("X-Forwarded-For", connettore);
+		request.addHeader(header, connettore);
 		
 		return request;
 	}
+	
 
 	public static HttpRequest buildSoapRequest_Semplice(String erogazione, String contentTypeSoap) {
 		String operazione = "operazioneSemplice";

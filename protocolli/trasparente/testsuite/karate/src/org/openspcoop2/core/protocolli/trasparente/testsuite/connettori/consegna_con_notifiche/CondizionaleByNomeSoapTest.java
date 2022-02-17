@@ -62,7 +62,7 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 						#end
  * UrlInvocazione: .+govway-testsuite-id_connettore_request=([^&]*).*
  */
-public class ConsegnaConNotificheCondizionaleByNomeSoapTest extends ConfigLoader {
+public class CondizionaleByNomeSoapTest extends ConfigLoader {
 
 	@BeforeClass
 	public static void Before() {
@@ -120,7 +120,7 @@ public class ConsegnaConNotificheCondizionaleByNomeSoapTest extends ConfigLoader
 				
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		
-		ConsegnaConNotificheCondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
+		CondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
 	}
 	
 	
@@ -187,7 +187,7 @@ public class ConsegnaConNotificheCondizionaleByNomeSoapTest extends ConfigLoader
 		
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 
-		ConsegnaConNotificheCondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
+		CondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
 	}
 	
 	
@@ -229,7 +229,7 @@ public class ConsegnaConNotificheCondizionaleByNomeSoapTest extends ConfigLoader
 				
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		
-		ConsegnaConNotificheCondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
+		CondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
 	}
 	
 	
@@ -341,7 +341,7 @@ public class ConsegnaConNotificheCondizionaleByNomeSoapTest extends ConfigLoader
 				
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		
-		ConsegnaConNotificheCondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
+		CondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
 	}
 	
 	
@@ -383,7 +383,7 @@ public class ConsegnaConNotificheCondizionaleByNomeSoapTest extends ConfigLoader
 				
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		
-		ConsegnaConNotificheCondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
+		CondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
 	}
 	
 	@Test
@@ -422,7 +422,7 @@ public class ConsegnaConNotificheCondizionaleByNomeSoapTest extends ConfigLoader
 				
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		
-		ConsegnaConNotificheCondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
+		CondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
 	}
 	
 	
@@ -466,7 +466,7 @@ public class ConsegnaConNotificheCondizionaleByNomeSoapTest extends ConfigLoader
 		}
 				
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
-		ConsegnaConNotificheCondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
+		CondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
 	}
 	
 	
@@ -517,7 +517,7 @@ public class ConsegnaConNotificheCondizionaleByNomeSoapTest extends ConfigLoader
 		
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 
-		ConsegnaConNotificheCondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
+		CondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
 
 		String CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_INFO_2 = "007044";
 		String CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_ERROR_2 = "007043";
@@ -589,7 +589,7 @@ public class ConsegnaConNotificheCondizionaleByNomeSoapTest extends ConfigLoader
 		
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 
-		ConsegnaConNotificheCondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
+		CondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
 		
 		// Recupero tutte le risposte che devono aver fallito l'identificazione e controllo i diagnostici
 		for (var toCheck: toCheckForDiagnostici) {
@@ -643,7 +643,7 @@ public class ConsegnaConNotificheCondizionaleByNomeSoapTest extends ConfigLoader
 				
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		
-		ConsegnaConNotificheCondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
+		CondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
 	}
 
 }

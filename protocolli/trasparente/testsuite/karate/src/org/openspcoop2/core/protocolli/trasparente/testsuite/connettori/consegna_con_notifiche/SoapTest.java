@@ -120,7 +120,6 @@ public class SoapTest extends ConfigLoader {
 	public void consegnaConNotificheSemplice() throws IOException {
 
 		// Il ConnettorePrincipale è quello sincrono, non subisce rispedizioni in caso di fallimento.
-		// La sua configurazione puntuale serve a indicare cosa scrivere nei diagnostici.		(TODOs Controllare i diagnostici?)
 		// Non controllo lo status code delle richieste sincrone perchè non coincide con quello inviato al server di echo, e.g.: un 401 viene trasformato in 500
 		// Controllo però che la logica delle rispedizioni segua quanto scelto nelle maschere di configurazione.
 		// Così per tutti i test.
