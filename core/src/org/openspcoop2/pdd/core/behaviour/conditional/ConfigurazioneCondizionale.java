@@ -95,9 +95,16 @@ public class ConfigurazioneCondizionale {
 				}
 				
 				if(!match) {
+					boolean exprRegular = false;
 					try {
-						match = RegularExpressionEngine.isMatch(operazione, config.getPatternOperazione());
-					}catch(RegExpNotFoundException notFound) {}
+						RegularExpressionEngine.validate(config.getPatternOperazione());
+						exprRegular = true;
+					}catch(Throwable e) {}
+					if(exprRegular) {
+						try {
+							match = RegularExpressionEngine.isMatch(operazione, config.getPatternOperazione());
+						}catch(RegExpNotFoundException notFound) {}
+					}
 				}
 				
 				if(match) {
