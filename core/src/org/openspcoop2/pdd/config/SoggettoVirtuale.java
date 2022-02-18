@@ -38,6 +38,7 @@ import org.openspcoop2.pdd.core.behaviour.IBehaviour;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.state.IState;
 
 
 
@@ -97,7 +98,7 @@ public class SoggettoVirtuale implements Serializable  {
 	}
 	
 	public List<String> getIdServiziApplicativi(boolean gestisciBehaviuorPerFiltri,GestoreMessaggi gestoreMessaggi,Busta busta, RequestInfo requestInfo,
-			PdDContext pddContext, IProtocolFactory<?> protocolFactory) throws Exception{
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory, IState state) throws Exception{
 		List<String> list = new ArrayList<String>();
 		for (SoggettoVirtualeServizioApplicativo sa : this.soggettoVirtuale_serviziApplicativi) {
 
@@ -108,7 +109,7 @@ public class SoggettoVirtuale implements Serializable  {
 				if(sa.getPortaApplicativa().getBehaviour()!=null && sa.getPortaApplicativa().getBehaviour().getNome()!=null){
 					
 					IBehaviour behaviourImpl = BehaviourLoader.newInstance(sa.getPortaApplicativa().getBehaviour(), null,
-							pddContext, protocolFactory);
+							pddContext, protocolFactory, state);
 					
 					Busta bustaConSoggettiReali = busta.clone();
 					// Inverto mitt-dest

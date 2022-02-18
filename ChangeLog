@@ -1,3 +1,10 @@
+2022-02-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Eliminata voce 'SOAPAction' nell'impostazione del filtro di una consegna condizionale per API di tipo REST.
+	Aggiunta la possibilità di individuare una risorsa REST anche per metodo e path oltre che per identificativo nelle regole specifiche di una consegna condizionale.
+	Differenziato diagnostico emesso in caso di consegna condizionale non applicabile e impostazione configurata per non inviare la notifica a nessun connettore registrato.
+
 2022-02-15  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

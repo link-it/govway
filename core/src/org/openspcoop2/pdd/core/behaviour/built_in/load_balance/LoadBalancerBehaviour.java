@@ -38,6 +38,7 @@ import org.openspcoop2.pdd.core.behaviour.IBehaviour;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.state.IState;
 
 /**
  * LoadBalancerBehaviour
@@ -48,6 +49,11 @@ import org.openspcoop2.protocol.sdk.Busta;
  */
 public class LoadBalancerBehaviour extends AbstractBehaviour implements IBehaviour {
 
+	private IState state;
+	public LoadBalancerBehaviour(IState state) {
+		this.state = state;
+	}
+	
 	@Override
 	public Behaviour behaviour(GestoreMessaggi gestoreMessaggioRichiesta, Busta busta,
 			PortaApplicativa pa, RequestInfo requestInfo) throws BehaviourException,BehaviourEmitDiagnosticException {
@@ -65,7 +71,7 @@ public class LoadBalancerBehaviour extends AbstractBehaviour implements IBehavio
 			
 			ConfigurazioneLoadBalancer config = ConfigurazioneLoadBalancer.read(pa, msg, busta, 
 					requestInfo, this.getPddContext(), 
-					this.msgDiag, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
+					this.msgDiag, OpenSPCoop2Logger.getLoggerOpenSPCoopCore(), this.state);
 			if(config.getPool().isEmpty()) {
 				throw new BehaviourException("Nessun connettore selezionabile");	
 			}

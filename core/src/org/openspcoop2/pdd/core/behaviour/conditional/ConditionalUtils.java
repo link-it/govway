@@ -34,12 +34,16 @@ import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoBehaviour;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.registry.Resource;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.Utilities;
 import org.openspcoop2.pdd.core.behaviour.BehaviourEmitDiagnosticException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourPropertiesUtils;
@@ -52,6 +56,7 @@ import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -72,7 +77,8 @@ public class ConditionalUtils  {
 	public static ConditionalFilterResult filter(PortaApplicativa pa, OpenSPCoop2Message message, Busta busta, 
 			RequestInfo requestInfo, PdDContext pddContext, 
 			MsgDiagnostico msgDiag, Logger log,
-			TipoBehaviour behaviourType) throws BehaviourException, BehaviourEmitDiagnosticException {
+			TipoBehaviour behaviourType,
+			IState state) throws BehaviourException, BehaviourEmitDiagnosticException {
 		
 		if(isConfigurazioneCondizionale(pa, log)==false) {
 			return null; // non vi è da fare alcun filtro condizionale
@@ -90,8 +96,25 @@ public class ConditionalUtils  {
 		String staticInfo = null;
 		if(busta.getAzione()!=null && !"".equals(busta.getAzione())) {
 			ConfigurazioneSelettoreCondizioneRegola regola = null;
+			
+			Resource restResource = null;
+			if(message!=null && ServiceBinding.REST.equals(message.getServiceBinding()) &&
+					StringUtils.isNotEmpty(busta.getTipoDestinatario()) && StringUtils.isNotEmpty(busta.getDestinatario()) &&
+					StringUtils.isNotEmpty(busta.getTipoServizio()) && StringUtils.isNotEmpty(busta.getServizio()) && busta.getVersioneServizio()!=null ) {
+				IDServizio idServizio = null;
+				try {
+					idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(busta.getTipoServizio(), busta.getServizio(), 
+							busta.getTipoDestinatario(), busta.getDestinatario(), 
+							busta.getVersioneServizio());
+					idServizio.setAzione(busta.getAzione());
+				}catch(Throwable t) {}
+				if(idServizio!=null) {
+					restResource = Utilities.getRestResource(log, state, idServizio);
+				}
+			}
+			
 			try {
-				regola = config.getRegolaByOperazione(busta.getAzione());
+				regola = config.getRegolaByOperazione(busta.getAzione(), restResource);
 			}catch(Exception e) {
 				throw new BehaviourException(e.getMessage(),e);
 			}
@@ -520,7 +543,7 @@ public class ConditionalUtils  {
 						Costanti.CONDITIONAL_NOME_CONNETTORE_VALORE_NESSUNO.equals(nomeConnettoreDaUsare)) {
 												
 					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
-							"connettoriMultipli.consegnaCondizionale.nessunConnettore");
+							"connettoriMultipli.consegnaCondizionale.nessunConnettoreIdentificato");
 					
 					result.setListServiziApplicativi(new ArrayList<>());
 					return result;

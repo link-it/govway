@@ -46,6 +46,7 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
@@ -390,13 +391,13 @@ public class GestoreLoadBalancerCaching {
 	public static LoadBalancerInstance getLoadBalancerInstance(PortaApplicativa pa, OpenSPCoop2Message message, Busta busta, 
 			RequestInfo requestInfo, PdDContext pddContext, 
 			MsgDiagnostico msgDiag, Logger log,
-			LoadBalancerType loadBalancerType) throws BehaviourException, BehaviourEmitDiagnosticException{
+			LoadBalancerType loadBalancerType, IState state) throws BehaviourException, BehaviourEmitDiagnosticException{
 		
 		LoadBalancerInstance instance = new LoadBalancerInstance();
 		
 		ConditionalFilterResult filterResult = 
 				ConditionalUtils.filter(pa, message, busta, requestInfo, pddContext, msgDiag, log, 
-						TipoBehaviour.CONSEGNA_LOAD_BALANCE);
+						TipoBehaviour.CONSEGNA_LOAD_BALANCE, state);
 		
 		String keyCache = getKeyCache(pa, message, busta, 
 				requestInfo, pddContext, 
