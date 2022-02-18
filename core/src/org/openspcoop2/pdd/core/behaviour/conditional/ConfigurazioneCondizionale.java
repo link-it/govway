@@ -80,9 +80,10 @@ public class ConfigurazioneCondizionale {
 				ConfigurazioneSelettoreCondizioneRegola config = this.regolaList.get(nomeRegola);
 				
 				boolean match = false;
-				try {
-					match = RegularExpressionEngine.isMatch(operazione, config.getPatternOperazione());
-				}catch(RegExpNotFoundException notFound) {}
+				
+				if(operazione.equals(config.getPatternOperazione())) {
+					match=true;
+				}
 				
 				if(!match && restResource!=null) {
 					if(config.getPatternOperazione()!=null && !"".equals(config.getPatternOperazione())) {
@@ -92,7 +93,13 @@ public class ConfigurazioneCondizionale {
 						}
 					}
 				}
-
+				
+				if(!match) {
+					try {
+						match = RegularExpressionEngine.isMatch(operazione, config.getPatternOperazione());
+					}catch(RegExpNotFoundException notFound) {}
+				}
+				
 				if(match) {
 					return config;
 				}
