@@ -7068,32 +7068,36 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setType(DataElementType.SELECT);
 				
 				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore tipoSelettoreS = org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.toEnumConstant(identificazioneCondizionale, true);
-								
-				String [] identificazioneCondizionale_values = {
-						org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.HEADER_BASED.getValue(),
-						org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.URLBASED.getValue(),
-						org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.FORM_BASED.getValue(),
-						org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.SOAPACTION_BASED.getValue(),
-						org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.CONTENT_BASED.getValue(),
-						org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.INDIRIZZO_IP.getValue(),
-						org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.INDIRIZZO_IP_FORWARDED.getValue(),
-						org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.TEMPLATE.getValue(),
-						org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.FREEMARKER_TEMPLATE.getValue(),
-						org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.VELOCITY_TEMPLATE.getValue()
-						};
+							
+				List<String> identificazioneCondizionale_values = new ArrayList<String>();
+				identificazioneCondizionale_values.add(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.HEADER_BASED.getValue());
+				identificazioneCondizionale_values.add(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.URLBASED.getValue());
+				identificazioneCondizionale_values.add(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.FORM_BASED.getValue());
+				if(ServiceBinding.SOAP.equals(serviceBinding)) {
+					identificazioneCondizionale_values.add(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.SOAPACTION_BASED.getValue());
+				}
+				identificazioneCondizionale_values.add(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.CONTENT_BASED.getValue());
+				identificazioneCondizionale_values.add(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.INDIRIZZO_IP.getValue());
+				identificazioneCondizionale_values.add(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.INDIRIZZO_IP_FORWARDED.getValue());
+				identificazioneCondizionale_values.add(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.TEMPLATE.getValue());
+				identificazioneCondizionale_values.add(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.FREEMARKER_TEMPLATE.getValue());
+				identificazioneCondizionale_values.add(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.VELOCITY_TEMPLATE.getValue());
 				
 				List<String> identificazioneCondizionale_labels = ModalitaIdentificazione.getLabels(
 						ModalitaIdentificazione.HEADER_BASED,
 						ModalitaIdentificazione.URL_BASED,
-						ModalitaIdentificazione.FORM_BASED,
-						ModalitaIdentificazione.SOAP_ACTION_BASED,
+						ModalitaIdentificazione.FORM_BASED);
+				if(ServiceBinding.SOAP.equals(serviceBinding)) {
+					identificazioneCondizionale_labels.addAll(ModalitaIdentificazione.getLabels(ModalitaIdentificazione.SOAP_ACTION_BASED));
+				}
+				identificazioneCondizionale_labels.addAll(ModalitaIdentificazione.getLabels(
 						ModalitaIdentificazione.CONTENT_BASED,
 						ModalitaIdentificazione.INDIRIZZO_IP_BASED,
 						ModalitaIdentificazione.X_FORWARD_FOR_BASED,
 						ModalitaIdentificazione.GOVWAY_TEMPLATE,
 						ModalitaIdentificazione.FREEMARKER_TEMPLATE,
 						ModalitaIdentificazione.VELOCITY_TEMPLATE
-					);
+					));
 				
 				de.setValues(identificazioneCondizionale_values);
 				de.setLabels(identificazioneCondizionale_labels);
@@ -10148,7 +10152,12 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de.setRequired(true);
 		DataElementInfo info = new DataElementInfo(this.getLabelAzione(serviceBinding));
 		info.setHeaderBody(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_HEADER);
-		info.setListBody(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_LIST);
+		if(ServiceBinding.REST.equals(serviceBinding)) {
+			info.setListBody(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_LIST_REST);
+		}
+		else {
+			info.setListBody(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_LIST_SOAP);
+		}
 		de.setInfo(info);
 		dati.addElement(de);
 		

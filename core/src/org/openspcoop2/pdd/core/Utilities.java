@@ -19,7 +19,13 @@
  */
 package org.openspcoop2.pdd.core;
 
+import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Resource;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageRole;
@@ -32,9 +38,12 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.Trasmissione;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.date.DateEngineType;
 import org.openspcoop2.utils.id.IDUtilities;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.rest.api.ApiOperation;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 
 /**
@@ -156,5 +165,90 @@ public class Utilities {
 		else {
 			return timeId + clusterIdSeparator + prefixS;
 		}
+	}
+	
+	
+	/* *********** INDIVIDUAZIONE RISORSA REST ************ */
+	
+	private final static String SPECIAL = "*";
+	
+	public static String [] parseResourceRest(String element) {
+		
+		String check = element.toLowerCase();
+		
+		String checkMethod = SPECIAL+" ";
+		if(check.startsWith(checkMethod) && check.length()>checkMethod.length()) {
+			String [] tmp = new String[2];
+			tmp[0] = SPECIAL;
+			tmp[1] = check.substring(checkMethod.length());
+			return tmp;
+		}
+		
+		HttpRequestMethod [] methods = HttpRequestMethod.values();
+		if(methods!=null && methods.length>0) {
+			for (HttpRequestMethod httpRequestMethod : methods) {
+				checkMethod = httpRequestMethod.name().toLowerCase()+" ";
+				if(check.startsWith(checkMethod) && check.length()>checkMethod.length()) {
+					String [] tmp = new String[2];
+					tmp[0] = httpRequestMethod.name();
+					tmp[1] = check.substring(checkMethod.length());
+					return tmp;
+				}
+			}
+		}
+		
+		return null;
+		
+	}
+	
+	public static boolean isRestResourceMatch(String [] parseResourceRest, Resource restResource) {
+		boolean isResourceRest = false;
+		String metodo = parseResourceRest[0];
+		String path = parseResourceRest[1];
+		if(SPECIAL.equals(metodo) || 
+				(restResource.getMethod()!=null && metodo.toLowerCase().equals(restResource.getMethod().name().toLowerCase())) || 
+				(restResource.getMethod()==null) // qualsiasi
+				) {
+			if(path.equals(SPECIAL)) {
+				isResourceRest = true;
+			}
+			else if(restResource.getPath()!=null){
+				String resourcePathNormalized = ApiOperation.normalizePath(restResource.getPath());
+				resourcePathNormalized = resourcePathNormalized.trim().toLowerCase();
+				path = ApiOperation.normalizePath(path);
+				path = path.trim().toLowerCase();
+				if(path.endsWith(SPECIAL)) {
+					String prefix = path.substring(0, path.length()-1);
+					if(resourcePathNormalized.startsWith(prefix)) {
+						isResourceRest = true;
+					}
+				}
+				else if(path.equals(resourcePathNormalized)) {
+					isResourceRest = true;
+				}
+			}					
+		}
+		return isResourceRest;
+	}
+	
+	public static Resource getRestResource(Logger log, IState state, IDServizio idServizio) {
+		if(idServizio!=null && idServizio.getAzione()!=null && !"".equals(idServizio.getAzione())) {
+			RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance(state);
+			try {
+				AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false);
+				if(asps.getAccordoServizioParteComune()!=null && !"".equals(asps.getAccordoServizioParteComune())) {
+					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+					AccordoServizioParteComune as = registroServiziManager.getAccordoServizioParteComune(idAccordo, null, false);
+					for (Resource resourceCheck : as.getResourceList()) {
+						if(resourceCheck.getNome().equals(idServizio.getAzione())){
+							return resourceCheck;
+						}
+					}
+				}
+			}catch(Throwable e) {
+				log.error(e.getMessage(),e);
+			}
+		}
+		return null;
 	}
 }

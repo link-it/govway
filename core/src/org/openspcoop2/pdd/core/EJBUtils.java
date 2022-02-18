@@ -1515,7 +1515,8 @@ public class EJBUtils {
 			if(pa!=null && pa.getBehaviour()!=null && pa.getBehaviour().getNome()!=null && !"".equals(pa.getBehaviour().getNome())){
 				
 				IBehaviour behaviourImpl = BehaviourLoader.newInstance(pa.getBehaviour(), this.msgDiag,
-						this.pddContext, this.protocolFactory);
+						this.pddContext, this.protocolFactory,
+						this.openSPCoopState!=null ? this.openSPCoopState.getStatoRichiesta() : null);
 				
 				gestoreMessaggi.setPortaDiTipoStateless(stateless);
 				behaviour = behaviourImpl.behaviour(gestoreMessaggi, busta, pa, requestInfo);
@@ -1710,7 +1711,8 @@ public class EJBUtils {
 					}
 					boolean GESTISCI_BEHAVIOUR = true;
 					List<String> idServiziApplicativiVirtuali = soggettiVirtuali.getIdServiziApplicativi(GESTISCI_BEHAVIOUR,gestoreMessaggi,busta, requestInfo,
-							this.pddContext, this.protocolFactory);
+							this.pddContext, this.protocolFactory,
+							this.openSPCoopState!=null ? this.openSPCoopState.getStatoRichiesta() : null);
 					if(idServiziApplicativiVirtuali.size()>0){
 						serviziApplicativiConfigurazione = idServiziApplicativiVirtuali.toArray(new String[1]);
 					}

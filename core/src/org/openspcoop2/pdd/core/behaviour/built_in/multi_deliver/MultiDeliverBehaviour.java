@@ -49,6 +49,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.slf4j.Logger;
 
 /**
@@ -61,8 +62,10 @@ import org.slf4j.Logger;
 public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehaviour {
 
 	private TipoBehaviour bt;
-	public MultiDeliverBehaviour(TipoBehaviour bt) {
+	private IState state;
+	public MultiDeliverBehaviour(TipoBehaviour bt, IState state) {
 		this.bt = bt;
+		this.state = state;
 	}
 	
 	
@@ -126,7 +129,7 @@ public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehavio
 				ConditionalFilterResult filterResult = ConditionalUtils.filter(pa, msg, busta, 
 						requestInfo, this.getPddContext(), 
 						this.msgDiag, log, 
-						this.bt);
+						this.bt, this.state);
 				
 				if(filterResult!=null) { 
 						// && !filterResult.getListServiziApplicativi().isEmpty()) { NOTA! la lista vuota viene appunto usata per far si che non siano utilizzati alcun applicativi
