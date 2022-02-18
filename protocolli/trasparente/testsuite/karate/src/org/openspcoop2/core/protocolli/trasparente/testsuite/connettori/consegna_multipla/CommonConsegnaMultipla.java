@@ -207,13 +207,6 @@ public class CommonConsegnaMultipla {
 	}
 
 	
-	@Deprecated
-	public  static void checkPresaInConsegna(List<HttpResponse> responses) {
-		for (var r : responses) {
-			checkPresaInConsegna(r);
-		}
-	}
-	
 	public  static void checkPresaInConsegna(List<HttpResponse> responses, int numConnettori) {
 		for (var r : responses) {
 			checkPresaInConsegna(r, numConnettori);

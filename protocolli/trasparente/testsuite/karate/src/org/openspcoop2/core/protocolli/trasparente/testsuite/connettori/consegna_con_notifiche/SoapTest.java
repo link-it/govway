@@ -57,8 +57,8 @@ import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilsException;
 
-// TODO:  rimuovi le chiamate depcreate da ConsegnaMultiplaTest.java
-// TODO:  Test errore di processamento facendo fallire la correlazione applicativa sulla risposta, faccio prima rest e poi torno qui
+// TODO:  Test errore di processamento facendo fallire la correlazione applicativa sulla risposta, faccio prima rest e poi torno qui, chiedi ad andrea se la correlazione applicativa 
+//		si attiva solo sull'azione scelta.
 
 
 // Completate Con Successo -> 2xx

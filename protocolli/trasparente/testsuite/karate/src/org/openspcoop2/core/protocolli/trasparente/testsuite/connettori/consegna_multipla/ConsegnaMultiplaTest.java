@@ -106,12 +106,12 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
 		for (var r : responses) {
-			CommonConsegnaMultipla.checkPresaInConsegna(r);
+			CommonConsegnaMultipla.checkPresaInConsegna(r,4);
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);
 		}
 		
 		for (var r : responses2) {
-			CommonConsegnaMultipla.checkPresaInConsegna(r);
+			CommonConsegnaMultipla.checkPresaInConsegna(r,4);
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);
 		}
 		
@@ -172,12 +172,12 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
 		for (var r : responses) {
-			CommonConsegnaMultipla.checkPresaInConsegna(r);
+			CommonConsegnaMultipla.checkPresaInConsegna(r,4);
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);
 		}
 		
 		for (var r : responses2) {
-			CommonConsegnaMultipla.checkPresaInConsegna(r);
+			CommonConsegnaMultipla.checkPresaInConsegna(r,4);
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);
 		}
 	
@@ -248,7 +248,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		// Tutte le richieste indipendentemente dal tipo devono essere state prese in consegna e lo scheduling inizia su tutti i connettori abilitati
 		for (var responses : responsesByKind.values()) {
 			Common.checkAll200(responses);
-			CommonConsegnaMultipla.checkPresaInConsegna(responses);
+			CommonConsegnaMultipla.checkPresaInConsegna(responses,4);
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 		}
 		
@@ -309,7 +309,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		// Tutte le richieste indipendentemente dal tipo devono essere state prese in consegna e lo scheduling inizia su tutti i connettori abilitati
 		for (var responses : responsesByKind.values()) {
 		   	Common.checkAll200(responses);
-			CommonConsegnaMultipla.checkPresaInConsegna(responses);
+			CommonConsegnaMultipla.checkPresaInConsegna(responses,4);
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 		}
 		
@@ -429,7 +429,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		// Tutte le richieste indipendentemente dal tipo devono essere state prese in consegna e lo scheduling inizia su tutti i connettori abilitati
 		for (var responses : responsesByKind.values()) {
 			Common.checkAll200(responses);
-			CommonConsegnaMultipla.checkPresaInConsegna(responses);
+			CommonConsegnaMultipla.checkPresaInConsegna(responses,4);
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 		}
 		
@@ -492,7 +492,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 			// Tutte le richieste indipendentemente dal tipo devono essere state prese in consegna e lo scheduling inizia su tutti i connettori abilitati
 			for (var responses : responsesByKind.values()) {
 			   	Common.checkAll200(responses);
-				CommonConsegnaMultipla.checkPresaInConsegna(responses);
+				CommonConsegnaMultipla.checkPresaInConsegna(responses,4);
 				CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 			}
 			

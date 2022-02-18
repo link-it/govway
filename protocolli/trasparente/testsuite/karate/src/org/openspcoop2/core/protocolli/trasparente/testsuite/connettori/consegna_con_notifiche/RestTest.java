@@ -57,7 +57,6 @@ import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilsException;
 
 /**
- * TODO: Consegna completata personalizzata e consegna fallita personalizzata
  * 
  * @author Francesco Scarlato
  *
@@ -184,6 +183,37 @@ public class RestTest extends ConfigLoader{
 
 	}
 	
+	
+	@Test
+	public void erroreDiProcessamento() {
+		final String erogazione = "TestConsegnaConNotificheErroreDiProcessamentoRest";
+		
+		HttpRequest request1 = RequestBuilder.buildRestRequest(erogazione);
+
+		var responses = Common.makeParallelRequests(request1, 10);
+
+		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
+		// Non controllo la valorizzazione puntuale del campo esito_sincrono, perchè dovrei costruirmi un mapping e sapere
+		// dato ciascuno  status code in quale dei tanti esiti si va a finire.
+		for (var r : responses) {
+			assertEquals(200, r.getResultHTTPOperation());
+			
+			CommonConsegnaMultipla.checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
+			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
+		}
+
+		// Attendo la consegna
+		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
+
+		// Per i connettori di tipo file, controllo anche che la scrittura della richiesta di consegna multipla sia avvenuta.
+		//Set<String> connettoriFile = Set.of(CONNETTORE_2, CONNETTORE_3);
+		for (var response : responses) {
+			CommonConsegnaMultipla.checkConsegnaCompletata(response);
+			//CommonConsegnaMultipla.checkConsegnaConnettoreFile(request1, response, connettoriFile);
+			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(response,  Common.setConnettoriAbilitati);
+		}
+		
+	}
 	
 	@Test
 	public void consegnaConNotificheNonCondizionale() {
