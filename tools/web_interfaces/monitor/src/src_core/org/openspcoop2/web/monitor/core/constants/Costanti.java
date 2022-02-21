@@ -83,6 +83,7 @@ public class Costanti {
 	public static final String ICONA_ID_APPLICATIVO = "apps";
 	public static final String ICONA_ID_MESSAGGIO = "message";
 	public static final String ICONA_ID_TRANSAZIONE = "swap_horiz";
+	public static final String ICONA_INFO_WHITE = "info_outline";
 
 	public final static String LABEL_OPENSPCOOP2_WEB = "https://govway.org";
 	

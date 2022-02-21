@@ -26,12 +26,12 @@
 		<managed-property>
 			<property-name>dataProvider</property-name>
 			<property-class>org.openspcoop2.web.monitor.allarmi.dao.IAllarmiService</property-class>
-			<value>#{allarmiService}</value>
+			<value>#{allarmiHistoryService}</value>
 		</managed-property>
 		<managed-property>
 			<property-name>allarmiBean</property-name>
 			<property-class>org.openspcoop2.web.monitor.allarmi.mbean.AllarmiBean</property-class>
-			<value>#{allarmiBean}</value>
+			<value>#{allarmiHistoryBean}</value>
 		</managed-property>
 	</managed-bean>
 	<navigation-rule>

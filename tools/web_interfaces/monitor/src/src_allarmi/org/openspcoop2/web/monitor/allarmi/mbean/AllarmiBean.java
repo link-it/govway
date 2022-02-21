@@ -68,7 +68,9 @@ import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.web.monitor.allarmi.bean.AllarmiContext;
+import org.openspcoop2.web.monitor.allarmi.constants.AllarmiCostanti;
 import org.openspcoop2.web.monitor.allarmi.dao.IAllarmiService;
+import org.openspcoop2.web.monitor.core.bean.DialogInfo;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsService;
@@ -76,6 +78,7 @@ import org.openspcoop2.web.monitor.core.dao.IService;
 import org.openspcoop2.web.monitor.core.dao.MBeanUtilsService;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
+import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.slf4j.Logger;
 
@@ -122,6 +125,8 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	private String selectedTab = null;
 	private boolean editMode = false;
 	private boolean ackMode = false;
+	
+	private DialogInfo criteriAckDialogInfo;
 	
 	public boolean isShowFilter() throws Exception {
 		if(this.allarme==null || this.allarme.getPlugin()==null){
@@ -495,6 +500,11 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 
 	public String dettaglioAllarme(){
 		return "allarme";
+	}
+	
+	public String history() {
+		this.search.filtra();
+		return "visualizzaHistoryAllarme";
 	}
 	
 	public String salva() {
@@ -1444,5 +1454,42 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 			return lastUpdate;
 		}
 		return null;
+	}
+
+	public DialogInfo getCriteriAckDialogInfo() {
+		if(this.criteriAckDialogInfo == null) {
+			if(this.allarme==null || this.allarme.getPlugin()==null){
+				return null;
+			}
+			
+			Context context = new AllarmiContext(this);
+			org.openspcoop2.monitor.sdk.plugins.DialogInfo info = null;
+			try {
+				info = ((IAllarmiService)this.service).getCriteriAckDialogInfo(this.allarme, context);
+			} catch (Exception e) {
+				AllarmiBean.log.error(e.getMessage(), e);
+			}
+			
+			if(info!=null) {
+			
+				this.criteriAckDialogInfo = new DialogInfo(MessageManager.getInstance().getMessage(AllarmiCostanti.CRITERI_ACKNOWLEDGE_LABEL_KEY));
+				if(info.getBody()!=null && !"".equals(info.getBody())) {
+					this.criteriAckDialogInfo.setHeaderBody(info.getBody()); // setHeaderBody per avere lo span
+				}
+				else {
+					this.criteriAckDialogInfo.setHeaderBody(info.getHeaderBody());
+					this.criteriAckDialogInfo.setListBody(info.getListBody());
+				}
+				this.criteriAckDialogInfo.setResizeable(true);
+				
+			}
+			
+		}
+		
+		return this.criteriAckDialogInfo;
+	}
+
+	public void setCriteriAckDialogInfo(DialogInfo criteriAckDialogInfo) {
+		this.criteriAckDialogInfo = criteriAckDialogInfo;
 	}
 }

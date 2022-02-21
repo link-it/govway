@@ -1,6 +1,18 @@
+2022-02-21  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Aggiunta funzionalità OPPT-832
+	Aggiunto supporto per le dialog info che consentono di mostrare informazioni sugli elementi di una form.
+	Nella form di ricerca degli Allarmi rinominata label 'Configurazione' con 'Globale' nella SelectList 'Tipologia'.
+	Risolti i seguenti bug:
+	- Ricerca Allarmi incosistente dopo che si visualizzava l'archivio stati di un allarme.
+	- Elementi del menù cambiavano dimensione al passaggio del mouse; problema che si presentava solo nella schermata summary.
+	- Il download dei report statistici come immagine non preservava il font visualizzato per le versioni di IE <12.
+
 2022-02-21  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
+	Aggiunta funzionalità OP-1330
 	Introdotta ottimizzazione nella gestione degli header SOAP.
 	Durante la gestione della richiesta o della risposta, se le funzionalità attivate richiedono solamente la gestione del SOAPHeader,
 	viene costruito in memoria la sola rappresentazione DOM dell'header e non dell'intero messaggio.

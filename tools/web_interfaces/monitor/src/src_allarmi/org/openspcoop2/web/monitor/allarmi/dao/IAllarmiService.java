@@ -35,6 +35,7 @@ import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.monitor.sdk.condition.Context;
 import org.openspcoop2.monitor.sdk.exceptions.AlarmException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
+import org.openspcoop2.monitor.sdk.plugins.DialogInfo;
 import org.openspcoop2.web.monitor.allarmi.bean.AllarmiSearchForm;
 import org.openspcoop2.web.monitor.core.dao.ISearchFormService;
 
@@ -59,6 +60,8 @@ public interface IAllarmiService extends
 	public boolean isUsableGroupBy(Allarme configurazioneAllarme, Context context) throws Exception;
 	
 	public String getParameterSectionTitle(Allarme configurazioneAllarme, Context context) throws Exception;
+	
+	public DialogInfo getCriteriAckDialogInfo(Allarme configurazioneAllarme, Context context) throws Exception;
 	
 	public ConfigurazioneAllarmeBean getAllarme(String nome) throws NotFoundException, ServiceException;
 

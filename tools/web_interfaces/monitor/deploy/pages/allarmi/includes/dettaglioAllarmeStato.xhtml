@@ -78,8 +78,8 @@
 			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
 			<a4j:outputPanel layout="block" styleClass="divNoEdit">
 				<a4j:form>
-					<a4j:htmlCommandLink id="history-iconLink" styleClass="icon-details" action="visualizzaHistoryAllarme" value="Archivio Stati">
-						<f:setPropertyActionListener value="#{allarmiBean.allarme}" target="#{allarmiBean.allarme}"/>
+					<a4j:htmlCommandLink id="history-iconLink" styleClass="icon-details" action="#{allarmiHistoryBean.history}" value="Archivio Stati">
+						<f:setPropertyActionListener value="#{allarmiBean.allarme}" target="#{allarmiHistoryBean.allarme}"/>
 					</a4j:htmlCommandLink>
 				</a4j:form>
 			</a4j:outputPanel>

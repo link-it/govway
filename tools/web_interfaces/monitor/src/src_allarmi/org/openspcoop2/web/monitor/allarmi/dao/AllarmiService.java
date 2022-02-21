@@ -92,6 +92,7 @@ import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.monitor.sdk.condition.Context;
 import org.openspcoop2.monitor.sdk.exceptions.AlarmException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
+import org.openspcoop2.monitor.sdk.plugins.DialogInfo;
 import org.openspcoop2.monitor.sdk.plugins.IAlarmProcessing;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
@@ -1389,6 +1390,25 @@ public class AllarmiService implements IAllarmiService {
 		}
 	}
 
+	
+	@Override
+	public DialogInfo getCriteriAckDialogInfo(Allarme configurazioneAllarme, Context context) throws Exception{
+		try {
+			IdPlugin idPlugin = new IdPlugin();
+			idPlugin.setTipoPlugin(TipoPlugin.ALLARME.getValue());
+			idPlugin.setTipo(configurazioneAllarme.getTipo());
+			
+			Plugin plugin = this.dynamicUtils.getPlugin(idPlugin);
+			
+			IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME, configurazioneAllarme.getTipo(), plugin.getClassName(), AllarmiService.log);
+			IAlarmProcessing alarmProcessing = (IAlarmProcessing) bl.newInstance();
+			return alarmProcessing.getDialogInfoAckCriteria(context);
+
+		} catch (Exception e) {
+			AllarmiService.log.error(e.getMessage(), e);
+			throw e;
+		}
+	}
 	
 
 	@Override

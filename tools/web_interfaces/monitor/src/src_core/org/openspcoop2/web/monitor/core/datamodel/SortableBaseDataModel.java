@@ -68,8 +68,7 @@ public abstract class SortableBaseDataModel<K, T, D, S extends AbstractCoreSearc
 	@Override
 	public void modify(List<FilterField> filterFields,
 			List<SortField2> sortFields) {
-		log.debug("AAAAAAAAAAA modify Numero Entries richieste: ["+this.rowsToDisplay+"] ID["+this.toString()+"]");
-		log.debug("L'utente ha modificato l'ordinamento dei risultati.");
+		log.trace("modify numero entries richieste: ["+this.rowsToDisplay+"] ID["+this.toString()+"]");
 		if (sortFields != null && !sortFields.isEmpty())
 	    {
 	        SortField2 sortField2 = sortFields.get(0);
@@ -128,8 +127,8 @@ public abstract class SortableBaseDataModel<K, T, D, S extends AbstractCoreSearc
 			if(this.dataProvider instanceof ISearchFormService) {
 				searchForm = ((ISearchFormService<T, K, AbstractCoreSearchForm>)this.dataProvider).getSearch();
 				
-				boolean usaBuffer = (searchForm.isDetached() || searchForm.getWrappedKeys() != null); // && isSortObjectNull;
-				log.debug("AAAAAAAAAAA walk Numero Entries richieste: ["+this.rowsToDisplay+"], usaBuffer ["+usaBuffer+"] ID["+this.toString()+"]");
+				boolean usaBuffer = (this.detached || this.wrappedKeys != null);
+				log.trace("walk numero entries richieste: ["+this.rowsToDisplay+"], usaBuffer ["+usaBuffer+"] ID["+this.toString()+"]");
 				
 				if (usaBuffer){
 					for (final Object key : searchForm.getWrappedKeys()) {
@@ -168,7 +167,7 @@ public abstract class SortableBaseDataModel<K, T, D, S extends AbstractCoreSearc
 					
 					this.wrappedKeys = new ArrayList<K>();
 					
-					log.debug("AAAAAAAAAAA walk Numero Entries richieste: ["+this.rowsToDisplay+"], Start ["+start+"]. Limit ["+limit+"] ID["+this.toString()+"]");
+					log.trace("walk numero entries richieste: ["+this.rowsToDisplay+"], Start ["+start+"]. Limit ["+limit+"] ID["+this.toString()+"]");
 					List<T> bufferList = findObjects(start, limit, this.getSortField(), this.getSortOrder());
 					this.currentSearchSize = bufferList != null ?  bufferList.size() : 0;
 					searchForm.setCurrentSearchSize(this.currentSearchSize);
@@ -182,7 +181,7 @@ public abstract class SortableBaseDataModel<K, T, D, S extends AbstractCoreSearc
 			} else {
 				
 				boolean usaBuffer = (this.detached || this.wrappedKeys != null); // && isSortObjectNull;
-				log.debug("AAAAAAAAAAA walk Numero Entries richieste: ["+this.rowsToDisplay+"], usaBuffer ["+usaBuffer+"] ID["+this.toString()+"]");
+				log.trace("walk numero entries richieste: ["+this.rowsToDisplay+"], usaBuffer ["+usaBuffer+"] ID["+this.toString()+"]");
 				
 				if (usaBuffer){
 					for (final K key : this.wrappedKeys) {

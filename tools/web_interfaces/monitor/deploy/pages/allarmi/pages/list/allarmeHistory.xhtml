@@ -11,21 +11,14 @@
     <f:loadBundle var="msg" basename="messages" />
     
 	<ui:define name="navbar">
-		<ul>
-			<li>
-				<h:outputText id="allarmi" value="Storia Allarme" styleClass="ultimo-path" />
-			</li>
-		</ul>
-	</ui:define>
-	<ui:define name="navbar">
 			<ul>
 				<li>
 					<h:commandLink action="allarmi" value="Allarmi" rendered="#{true}"/>
 				</li>
 				<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
 				<li>
-					<a4j:htmlCommandLink id="dettaglioAllarmeStato" action="#{allarmiBean.dettaglioAllarme}" value="Dettagli Allarme (#{allarmiBean.allarme.alias})" rendered="#{true}">
-						<f:setPropertyActionListener value="#{allarmiBean.allarme}" target="#{allarmiBean.allarme}"/>
+					<a4j:htmlCommandLink id="dettaglioAllarmeStato" action="#{allarmiBean.dettaglioAllarme}" value="Dettagli Allarme (#{allarmiHistoryBean.allarme.alias})" rendered="#{true}">
+						<f:setPropertyActionListener value="#{allarmiHistoryBean.allarme}" target="#{allarmiBean.allarme}"/>
 						<f:setPropertyActionListener value="stato" target="#{allarmiBean.selectedTab}"/>
 	                </a4j:htmlCommandLink>
 				</li>
@@ -35,14 +28,15 @@
 		</ui:define>
 	<ui:define name="body">
 		<a4j:keepAlive beanName="allarmiBean" />
+		<a4j:keepAlive beanName="allarmiHistoryBean" />
 		<div class="spacer"></div>
 		<a4j:outputPanel id="allarmiHistoryTbl" layout="block" styleClass="panelLista">
 			<h:form id="formAllarmi">
 				<link:dataTable value="#{allarmeHistoryDM}" id="tableAllarmeHistory"
 					headerText="Archivio Stati"
-					showSelectAll="false" mBean="#{allarmiBean}"
+					showSelectAll="false" mBean="#{allarmiHistoryBean}"
 					reRenderIds="allarmiHistoryTbl"
-					useCount="#{allarmiBean.search.useCount}">
+					useCount="#{allarmiHistoryBean.search.useCount}">
 
 					<rich:column id="colData">
 						<f:facet name="header">
@@ -89,11 +83,11 @@
 							<h:outputText value="Dettaglio" id="outDettaglio" />
 						</f:facet>
 						<h:panelGroup layout="block" style="width: 60px;">
-							<a4j:htmlCommandLink id="dettaglio-iconLink" value="" action="#{allarmiBean.dettaglioStatoAllarme}">
+							<a4j:htmlCommandLink id="dettaglio-iconLink" value="" action="#{allarmiHistoryBean.dettaglioStatoAllarme}">
 								<i class="material-icons md-18" id="iconaDettaglioOpen">&#xE8B6;</i>
 								<rich:toolTip id="dettaglioToolLink" for="dettaglio-iconLink" mode="client" value="Visualizza Dettaglio" />
-								<f:setPropertyActionListener value="#{item}" target="#{allarmiBean.allarmeHistory}" />
-								<f:setPropertyActionListener value="stato" target="#{allarmiBean.selectedTab}"/>
+								<f:setPropertyActionListener value="#{item}" target="#{allarmiHistoryBean.allarmeHistory}" />
+								<f:setPropertyActionListener value="stato" target="#{allarmiHistoryBean.selectedTab}"/>
 							</a4j:htmlCommandLink>
 						</h:panelGroup>
 					</rich:column>

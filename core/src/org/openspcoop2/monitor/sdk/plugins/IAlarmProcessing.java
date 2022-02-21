@@ -66,6 +66,9 @@ public interface IAlarmProcessing extends ISearchArguments {
 	public default String getDefaultManuallyAckCriteria(Context context) {
 		return null;
 	}
+	public default DialogInfo getDialogInfoAckCriteria(Context context) {
+		return null;
+	}
 	
 	public default String getParameterSectionTitle() {
 		return null;

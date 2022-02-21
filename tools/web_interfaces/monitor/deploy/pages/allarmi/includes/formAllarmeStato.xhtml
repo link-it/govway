@@ -20,7 +20,7 @@
 		</rich:panel>
 		
 		<div class="form-container noborder nopadding">
-			<a4j:form>
+			<a4j:form prependId="false">
 			
 				<link:fieldset legend="Stato" rendered="#{allarmiBean.editMode}" collapsible="false" closed="false">
 				
@@ -59,11 +59,11 @@
 					</a4j:outputPanel>
 		
 				</link:fieldset>
-				<link:fieldset legend="Criteri Acknowledge" rendered="#{allarmiBean.ackMode}" collapsible="false" closed="false">
+				<link:fieldset legend="#{msg['allarmi.criteriAcknowledge.label']}" rendered="#{allarmiBean.ackMode}" collapsible="false" closed="false">
 								
-					<link:prop label="Criteri">
+					<link:propWithInfo label="Criteri" id="txtA_criteri" dialogInfo="#{allarmiBean.criteriAckDialogInfo}">
 						<h:inputTextarea value="#{allarmiBean.modificaCriteriAck}" styleClass="inputTextAreaLong" rows="7" cols="80"/>
-					</link:prop>
+					</link:propWithInfo>
 												
 					<a4j:outputPanel id="idAcknowledge" layout="block" rendered="#{allarmiBean.visualizzaAck}">
 						<link:prop label="Acknowledge">

@@ -85,7 +85,7 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 		this.detached = false;
 		this.wrappedKeys = null;
 		
-		log.debug("AAAAAAAAAAA update Numero Entries richieste: ["+this.rowsToDisplay+"], detached ["+this.detached+"] wrappedKeys ["+this.wrappedKeys+"] ID["+this.toString()+"]");
+		log.trace("update numero entries richieste: ["+this.rowsToDisplay+"], detached ["+this.detached+"] wrappedKeys ["+this.wrappedKeys+"] ID["+this.toString()+"]");
 		
 		if(this.dataProvider != null) {
 			if(this.dataProvider instanceof ISearchFormService){
@@ -139,9 +139,9 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 			
 			if(this.dataProvider instanceof ISearchFormService) {
 				searchForm = ((ISearchFormService<T, K, AbstractCoreSearchForm>)this.dataProvider).getSearch();
-				boolean usaBuffer = (searchForm.isDetached() || searchForm.getWrappedKeys() != null); // && isSortObjectNull;
+				boolean usaBuffer = (this.detached || this.wrappedKeys != null); 
 				
-				log.debug("AAAAAAAAAAA walk Numero Entries richieste: ["+this.rowsToDisplay+"], usaBuffer ["+usaBuffer+"] ID["+this.toString()+"]");
+				log.trace("walk numero entries richieste: ["+this.rowsToDisplay+"], usaBuffer ["+usaBuffer+"] ID["+this.toString()+"]");
 				
 				if(usaBuffer) {
 					for (Object key : searchForm.getWrappedKeys()) {
@@ -168,8 +168,6 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 							limit = ((SequenceRange)range).getRows();
 						}
 
-						//				log.debug("Richiesti Record S["+start+"] L["+limit+"], FiltroPagina ["+searchForm.getCurrentPage()+"]"); 
-
 						searchForm.setStart(start);
 						searchForm.setLimit(limit); 
 					}else {
@@ -178,7 +176,7 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 						limit = searchForm.getLimit();
 					}
 					
-					log.debug("AAAAAAAAAAA walk Numero Entries richieste: ["+this.rowsToDisplay+"], Start ["+start+"]. Limit ["+limit+"]");
+					log.trace("walk numero entries richieste: ["+this.rowsToDisplay+"], Start ["+start+"]. Limit ["+limit+"] ID["+this.toString()+"]");
 					List<T> bufferList = this.findObjects(start, limit,null,null);
 					this.currentSearchSize = bufferList != null ?  bufferList.size() : 0;
 					searchForm.setCurrentSearchSize( this.currentSearchSize);
@@ -194,7 +192,7 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 				}
 			} else {
 				boolean usaBuffer = (this.detached || this.wrappedKeys != null); // && isSortObjectNull;
-				log.debug("AAAAAAAAAAA walk Numero Entries richieste: ["+this.rowsToDisplay+"], usaBuffer ["+usaBuffer+"] ID["+this.toString()+"]");
+				log.trace("walk numero entries richieste: ["+this.rowsToDisplay+"], usaBuffer ["+usaBuffer+"] ID["+this.toString()+"]");
 				
 				if(usaBuffer){
 					for (K key : this.wrappedKeys) {
@@ -222,176 +220,6 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 		}
 	}
 	
-	/*
-	 	@SuppressWarnings("unchecked")
-	@Override
-	public void walk(FacesContext context, DataVisitor visitor, Range range, Object argument) throws IOException {
-	 try{
-			this.checkDataProvider();
-			AbstractCoreSearchForm searchForm =  null;
-			
-			if(this.dataProvider instanceof ISearchFormService) {
-				searchForm = ((ISearchFormService<T, K, AbstractCoreSearchForm>)this.dataProvider).getSearch();
-				
-				log.debug("AAAAAAAAAAA walk Numero Entries richieste: ["+this.rowsToDisplay+"], detached ["+searchForm.isDetached()+"] ID["+this.toString()+"]");
-				
-				if(searchForm.isDetached()) {
-					for (Object key : searchForm.getWrappedKeys()) {
-						setRowKey(key);
-						visitor.process(context, key, argument);
-					}
-				} else {
-					int start = 0; int limit = 0;
-					if(searchForm.isUseCount()) {
-						// ripristino la ricerca.
-						if(searchForm.isRestoreSearch()){
-							start = searchForm.getStart();
-							limit = searchForm.getLimit();
-							searchForm.setRestoreSearch(false);
-
-							int pageIndex = (start / limit) + 1;
-							//					searchForm.setPageIndex(pageIndex);
-							searchForm.setCurrentPage(pageIndex);
-							// Aggiorno valori paginazione
-							range = new SequenceRange(start,limit);
-						}
-						else{
-							start = ((SequenceRange)range).getFirstRow();
-							limit = ((SequenceRange)range).getRows();
-						}
-
-						//				log.debug("Richiesti Record S["+start+"] L["+limit+"], FiltroPagina ["+searchForm.getCurrentPage()+"]"); 
-
-						searchForm.setStart(start);
-						searchForm.setLimit(limit); 
-					}else {
-						// se non uso la count allora start e limit sono gestiti dai tasti nella pagina
-						start = searchForm.getStart();
-						limit = searchForm.getLimit();
-					}
-					
-					log.debug("AAAAAAAAAAA walk Numero Entries richieste: ["+this.rowsToDisplay+"], Start ["+start+"]. Limit ["+limit+"]");
-					List<T> bufferList = this.findObjects(start, limit,null,null);
-					this.currentSearchSize = bufferList != null ?  bufferList.size() : 0;
-					searchForm.setCurrentSearchSize( this.currentSearchSize);
-					
-					this.wrappedKeys = new ArrayList<K>();
-					for (final T obj : bufferList) {
-						this.wrappedData.put(getId(obj), obj);
-						this.wrappedKeys.add(getId(obj));
-						visitor.process(context,getId(obj) , argument);
-					}
-					
-					searchForm.setWrappedKeys(this.wrappedKeys);
-				}
-			} else {
-				if(this.detached){
-					for (K key : this.wrappedKeys) {
-						setRowKey(key);
-						visitor.process(context, key, argument);
-					}
-				}else{
-					int start = 0; int limit = 0;
-					start = ((SequenceRange)range).getFirstRow();
-					limit = ((SequenceRange)range).getRows();
-					
-					List<T> bufferList = this.findObjects(start, limit,null,null);
-					this.currentSearchSize = bufferList != null ?  bufferList.size() : 0;
-					
-					this.wrappedKeys = new ArrayList<K>();
-					for (final T obj : bufferList) {
-						this.wrappedData.put(getId(obj), obj);
-						this.wrappedKeys.add(getId(obj));
-						visitor.process(context,getId(obj) , argument);
-					}
-				}
-			}
-		}catch (Exception e) {
-			log.error("Errore durante la walk: "+e.getMessage(),e); 
-		}
-		}
-		
-		@SuppressWarnings("unchecked")
-	@Override
-	public void walk(FacesContext context, DataVisitor visitor, Range range, Object argument) throws IOException {
-		try{
-			AbstractCoreSearchForm searchForm =  null;
-			boolean usaBuffer ;
-			if(this.dataProvider instanceof ISearchFormService) {
-				searchForm = ((ISearchFormService<T, K, AbstractCoreSearchForm>)this.dataProvider).getSearch();
-				usaBuffer = (searchForm.isDetached() || searchForm.getWrappedKeys() != null); // && isSortObjectNull;
-			} else {
-				usaBuffer = (this.detached || this.wrappedKeys != null); // && isSortObjectNull;
-			}
-			
-			log.debug("AAAAAAAAAAA walk Numero Entries richieste: ["+this.rowsToDisplay+"], detached ["+this.detached+"] Usabuffer["+usaBuffer+"] ID["+this.toString()+"]");
-			if(this.detached){
-				for (K key : this.wrappedKeys) {
-					setRowKey(key);
-					visitor.process(context, key, argument);
-				}
-			}else{
-				this.checkDataProvider();
-				int start = 0; int limit = 0;
-				
-				if(this.dataProvider instanceof ISearchFormService) {
-					searchForm = ((ISearchFormService<T, K, AbstractCoreSearchForm>)this.dataProvider).getSearch();
-
-					if(searchForm.isUseCount()) {
-						// ripristino la ricerca.
-						if(searchForm.isRestoreSearch()){
-							start = searchForm.getStart();
-							limit = searchForm.getLimit();
-							searchForm.setRestoreSearch(false);
-
-							int pageIndex = (start / limit) + 1;
-							//					searchForm.setPageIndex(pageIndex);
-							searchForm.setCurrentPage(pageIndex);
-							// Aggiorno valori paginazione
-							range = new SequenceRange(start,limit);
-						}
-						else{
-							start = ((SequenceRange)range).getFirstRow();
-							limit = ((SequenceRange)range).getRows();
-						}
-
-						//				log.debug("Richiesti Record S["+start+"] L["+limit+"], FiltroPagina ["+searchForm.getCurrentPage()+"]"); 
-
-						searchForm.setStart(start);
-						searchForm.setLimit(limit); 
-					}else {
-						// se non uso la count allora start e limit sono gestiti dai tasti nella pagina
-						start = searchForm.getStart();
-						limit = searchForm.getLimit();
-					}
-				}
-				if(this.dataProvider instanceof IServiceSearchWithId){
-					start = ((SequenceRange)range).getFirstRow();
-					limit = ((SequenceRange)range).getRows();
-				}
-
-				log.debug("AAAAAAAAAAA walk Numero Entries richieste: ["+this.rowsToDisplay+"], Start ["+start+"]. Limit ["+limit+"]");
-				List<T> bufferList = this.findObjects(start, limit,null,null);
-				this.currentSearchSize = bufferList != null ?  bufferList.size() : 0;
-				if(searchForm != null) {
-					searchForm.setCurrentSearchSize( this.currentSearchSize);
-				} 
-
-				this.wrappedKeys = new ArrayList<K>();
-				for (final T obj : bufferList) {
-					this.wrappedData.put(getId(obj), obj);
-					this.wrappedKeys.add(getId(obj));
-					visitor.process(context,getId(obj) , argument);
-				}
-
-			}
-		}catch (Exception e) {
-			//			log.error(e,e);
-		}
-
-	}
-	 * */
-
 	/**
 	 * This method must return actual data rows count from the Data Provider. It is used by pagination control
 	 * to determine total number of data items.
@@ -730,7 +558,7 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 	@SuppressWarnings("rawtypes")
 	public void setRowsToDisplay(Integer rowsToDisplay) {
 		this.rowsToDisplay = rowsToDisplay;
-		log.debug("AAAAAAAAAAA   setRowsToDisplay Numero Entries richieste: ["+this.rowsToDisplay+"] ID["+this.toString()+"]");
+		log.trace("setRowsToDisplay numero entries richieste: ["+this.rowsToDisplay+"] ID["+this.toString()+"]");
 		
 		if(this.dataProvider != null) {
 			if(this.dataProvider instanceof ISearchFormService){
@@ -745,7 +573,7 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 	}
 	
 	public void rowsToDisplaySelected(ActionEvent ae) {
-		log.debug("AAAAAAAAAAA   rowsToDisplaySelected Numero Entries richieste: ["+this.rowsToDisplay+"] ID["+this.toString()+"]");
+		log.trace("rowsToDisplaySelected numero entries richieste: ["+this.rowsToDisplay+"] ID["+this.toString()+"]");
 		firstPage();
 	}
 	
