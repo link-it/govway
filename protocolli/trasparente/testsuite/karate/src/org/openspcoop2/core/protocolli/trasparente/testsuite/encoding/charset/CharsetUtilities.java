@@ -66,6 +66,25 @@ public class CharsetUtilities {
 	public static final String caratteriNonUTF_JSON = "altro|!£$%&/()=?'^ìéè*+[]ç°§òàù@#<>;,._-fine";
 	public static final String caratteriNonUTF_XML = "altro|\\!\"£$%&amp;/()=?'^ìéè*+[]ç°§òàù@#&lt;&gt;;,:._-fine";
 	
+	public static String getSoapHeader(String namespace, boolean soap12, boolean compactSaaj, Charset charset, String operazione) {
+		String header = "";
+		if(compactSaaj) {
+			header = "<soap:Header xmlns:soap=\""+namespace+"\"><wsse:Security soapenv:mustUnderstand=\""+(soap12 ? "true" : "1")+"\" xmlns:soapenv=\""+namespace+"\" xmlns:wsse=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\"><wsse:BinarySecurityToken EncodingType=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary\" ValueType=\"wsst:TEST\" wsu:Id=\"SecurityToken-fe0d4f93-60d1-466c-bd8d-59412f553ae9\" xmlns:wsst=\"http://www.govway.org/test\" xmlns:wsu=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd\">XXXX-TOKEN-XXXX</wsse:BinarySecurityToken></wsse:Security><wsse:SecurityResponse soapenv:mustUnderstand=\""+(soap12 ? "true" : "1")+"\" xmlns:soapenv=\""+namespace+"\" xmlns:wsse=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\"><wsse:BinarySecurityToken EncodingType=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary\" ValueType=\"wsst:TEST\" wsu:Id=\"SecurityToken-fe0d4f93-60d1-466c-bd8d-59412f553ae9\" xmlns:wsst=\"http://www.govway.org/test\" xmlns:wsu=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd\">XXXX-TOKEN-XXXX</wsse:BinarySecurityToken></wsse:SecurityResponse></soap:Header>";
+		}
+		else {
+			header= "<soap:Header xmlns:soap=\""+namespace+"\"><wsse:Security xmlns:wsse=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\" xmlns:soapenv=\""+namespace+"\" soapenv:mustUnderstand=\""+(soap12 ? "true" : "1")+"\">\n"+
+				"			 <wsse:BinarySecurityToken xmlns:wsu=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd\" xmlns:wsst=\"http://www.govway.org/test\" EncodingType=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary\" ValueType=\"wsst:TEST\" wsu:Id=\"SecurityToken-fe0d4f93-60d1-466c-bd8d-59412f553ae9\">XXXX-TOKEN-XXXX</wsse:BinarySecurityToken>\n"+
+				"		      </wsse:Security><wsse:SecurityResponse xmlns:wsse=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\" xmlns:soapenv=\""+namespace+"\" soapenv:mustUnderstand=\""+(soap12 ? "true" : "1")+"\">\n"+
+				"			 <wsse:BinarySecurityToken xmlns:wsu=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd\" xmlns:wsst=\"http://www.govway.org/test\" EncodingType=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary\" ValueType=\"wsst:TEST\" wsu:Id=\"SecurityToken-fe0d4f93-60d1-466c-bd8d-59412f553ae9\">XXXX-TOKEN-XXXX</wsse:BinarySecurityToken>\n"+
+				"		      </wsse:SecurityResponse></soap:Header>";
+		}
+		if(operazione.startsWith("modify") ||
+				(Charset.UTF_16.equals(charset) || Charset.UTF_16BE.equals(charset) || Charset.UTF_16LE.equals(charset))) {
+			header = header.replace("<soap:Header xmlns:soap=\""+namespace+"\">", "<soap:Header>");
+		}
+		return header;
+	}
+	
 	public static String convertTo(Logger log, String content, Charset charset) throws Exception {
 		
 		// NOTA: log può essere null
@@ -79,7 +98,7 @@ public class CharsetUtilities {
 //		File fTmp = File.createTempFile("testCharset-in-"+charset.getValue()+"-", ".tmp");
 //		File fTmpDest = File.createTempFile("testCharset-out-"+charset.getValue()+"-", ".tmp");
 //		try {
-//			FileSystemUtilities.writeFile(fTmp, content.getBytes());
+//			org.openspcoop2.utils.resources.FileSystemUtilities.writeFile(fTmp, content.getBytes());
 //			ScriptInvoker scriptInvoker = new ScriptInvoker("iconv");
 //			//System.out.println("PARAMETRI ["-c"+"+" -f "+ " UTF-8 "+ " -t " + charset.getValue() + " -o " + fTmpDest.getAbsolutePath() + " " +fTmp.getAbsolutePath()+"]");
 //			scriptInvoker.run("-c", "-f", "UTF-8", "-t", charset.getValue(), "-o", fTmpDest.getAbsolutePath(), fTmp.getAbsolutePath());
@@ -92,7 +111,7 @@ public class CharsetUtilities {
 //					log.error("ERR: "+scriptInvoker.getErrorStream());
 //				}
 //			}
-//			return FileSystemUtilities.readFile(fTmpDest);
+//			return org.openspcoop2.utils.resources.FileSystemUtilities.readFile(fTmpDest);
 //		}finally {
 //			fTmp.delete();
 //			//fTmpDest.delete();
@@ -104,7 +123,7 @@ public class CharsetUtilities {
 	public static void _test(
 			Logger logCore,
 			String api, String operazione, 
-			String paramContentType, String paramContentS, byte[] contentBinary, Charset charset) throws Exception {
+			String paramContentType, String paramContentS, byte[] contentBinary, Charset charset, boolean addHeader) throws Exception {
 
 		String url = System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+api+"/v1/"+operazione;
 				
@@ -142,7 +161,7 @@ public class CharsetUtilities {
 		
 		
 		//File inviato = File.createTempFile("send", "tmp");
-		//FileSystemUtilities.writeFile(inviato, content);
+		//org.openspcoop2.utils.resources.FileSystemUtilities.writeFile(inviato, content);
 		request.setMethod(HttpRequestMethod.POST);
 		request.setContentType(contentTypeCharset);
 		request.setContent(content);
@@ -172,14 +191,35 @@ public class CharsetUtilities {
 		
 		if(operazione.startsWith("modify") || multipart) {
 			if(api.contains("SOAP")) {
-				verifyContentSingleValueSOAP(response, 20, contentTypeCharset, charset, logCore, operazione);
+				verifyContentSingleValueSOAP(response, 20, contentTypeCharset, charset, logCore, operazione, addHeader);
 			}
 			else {
 				verifyContentSingleValueREST(response, 20, contentTypeCharset, contentTypeCharset.startsWith(HttpConstants.CONTENT_TYPE_JSON), charset, logCore);
 			}
 		}
 		else {
-			verifyContentOk(response, 200, contentTypeCharset, contentCharset, content, charset, logCore);
+			
+			byte[] contentDaVerificare = content;
+			
+			if(api.contains("SOAP")) {
+				if(addHeader) {
+					String contentAsString = convertTo(logCore, paramContentS, charset);
+					
+					boolean soap12 = paramContentType.contains(HttpConstants.CONTENT_TYPE_SOAP_1_2);
+					String namespace = soap12 ? org.openspcoop2.message.constants.Costanti.SOAP12_ENVELOPE_NAMESPACE : org.openspcoop2.message.constants.Costanti.SOAP_ENVELOPE_NAMESPACE;
+					
+					contentAsString = contentAsString.replace("<soap:Body>", getSoapHeader(namespace, soap12, false, charset,operazione)+"<soap:Body>");
+					
+					if(Charset.UTF_16.equals(charset) || Charset.UTF_16BE.equals(charset) || Charset.UTF_16LE.equals(charset)) {
+						contentAsString = contentAsString.replace("?>\n<soap:Envelope", "?><soap:Envelope");
+					}
+					
+					contentDaVerificare = contentAsString.getBytes(charset.getValue());
+					//System.out.println("VERIFICA EQUALS!!!");
+				}
+			}
+			
+			verifyContentOk(response, 200, contentTypeCharset, contentCharset, contentDaVerificare, charset, logCore);
 		}
 		
 		DBVerifier.verify(idTransazione, esitoExpected, null);
@@ -274,13 +314,16 @@ public class CharsetUtilities {
 	public static void verifyContentOk(HttpResponse response, int code, String contentType, String contentS, byte[]content, Charset charset, Logger logCore) throws Exception {
 
 		//File ricevuto = File.createTempFile("received", "tmp");
-		//FileSystemUtilities.writeFile(ricevuto, response.getContent());
+		//org.openspcoop2.utils.resources.FileSystemUtilities.writeFile(ricevuto, response.getContent());
 		
 		String charsetCT = ContentTypeUtilities.readCharsetFromContentType(response.getContentType());
 		
 		if(!Arrays.equals(content, response.getContent())) {
 			String responseS = new String(response.getContent(), charsetCT);
 			//System.out.println("RESPONSE: "+responseS);
+			//org.openspcoop2.utils.resources.FileSystemUtilities.writeFile("/tmp/atteso_"+charset.getValue(), content);
+			//org.openspcoop2.utils.resources.FileSystemUtilities.writeFile("/tmp/ricevuto_"+charset.getValue(), response.getContent());
+			//System.out.println("DEBUG ATTIVO, scritto in /tmp");
 			System.out.println("charset ["+charsetCT+"] atteso ["+contentS.substring(0, 100)+"] ricevuto ["+responseS.substring(0, 100)+"]");
 			assertEquals(contentS, responseS); // per far loggare i due messagi
 		}
@@ -365,7 +408,7 @@ public class CharsetUtilities {
 		}
 	}
 	
-	public static void verifyContentSingleValueSOAP(HttpResponse response, int code, String contentType, Charset charset, Logger logCore, String operazione) throws Exception {
+	public static void verifyContentSingleValueSOAP(HttpResponse response, int code, String contentType, Charset charset, Logger logCore, String operazione, boolean addHeader) throws Exception {
 		
 		boolean multipart = false;
 		try {
@@ -401,15 +444,37 @@ public class CharsetUtilities {
 			
 			if(operazione.startsWith("modify")) {
 				
-				pattern = "//"+soapMsg.getSOAPPart().getEnvelope().getPrefix()+":Header/{http://govway.org/example/req}testSOAPHeaderRichiesta/text()";
+				pattern = "//"+soapMsg.getSOAPPart().getEnvelope().getPrefix()+":Body/*/{http://govway.org/example/req}testSOAPBodyRichiesta/text()";
 				v = AbstractXPathExpressionEngine.extractAndConvertResultAsString(soapMsg.getSOAPPart().getEnvelope(), dnc, new XPathExpressionEngine(), pattern, logCore);
 				assertEquals("REQ", v);
 				
-				pattern = "//"+soapMsg.getSOAPPart().getEnvelope().getPrefix()+":Header/{http://govway.org/example/res}testSOAPHeaderRisposta/text()";
+				pattern = "//"+soapMsg.getSOAPPart().getEnvelope().getPrefix()+":Body/*/{http://govway.org/example/res}testSOAPBodyRisposta/text()";
 				v = AbstractXPathExpressionEngine.extractAndConvertResultAsString(soapMsg.getSOAPPart().getEnvelope(), dnc, new XPathExpressionEngine(), pattern, logCore);
 				assertEquals("RES", v);
 				
 			}
+			
+			if(addHeader) {
+			
+				//System.out.println("VERIFICA ATTACH");
+				
+				boolean soap12 = contentType.contains(HttpConstants.CONTENT_TYPE_SOAP_1_2);
+				String namespace = soap12 ? org.openspcoop2.message.constants.Costanti.SOAP12_ENVELOPE_NAMESPACE : org.openspcoop2.message.constants.Costanti.SOAP_ENVELOPE_NAMESPACE;
+				
+				//String header = getSoapHeader(namespace, soap12).replaceAll("\n", "").replaceAll("\t", "").replaceAll("      ", "").replaceAll("> <", "><");
+				String header = getSoapHeader(namespace, soap12, true, charset,operazione);
+				String patternHeader = "//{"+namespace+"}Header";
+				String vHeader = AbstractXPathExpressionEngine.extractAndConvertResultAsString(soapMsg.getSOAPPart().getEnvelope(), dnc, new XPathExpressionEngine(), patternHeader, logCore);
+				
+				if(!header.equals(vHeader)) {
+					System.out.println("VERIFICA HEADER ATTESO ["+header+"]");
+					System.out.println("VERIFICA HEADER RICEVUTO ["+vHeader+"]");
+				}
+				
+				assertEquals(header, vHeader);
+				
+			}
+			
 		}
 		else {
 			
@@ -426,14 +491,37 @@ public class CharsetUtilities {
 				dnc.addNamespace("req", "http://govway.org/example/req");
 				dnc.addNamespace("res", "http://govway.org/example/res");
 				
-				pattern = "//req:testSOAPHeaderRichiesta/text()";
+				pattern = "//req:testSOAPBodyRichiesta/text()";
 				v = AbstractXPathExpressionEngine.extractAndConvertResultAsString(responseS, dnc, new XPathExpressionEngine(), pattern, logCore);
 				assertEquals("REQ", v);
 				
-				pattern = "//res:testSOAPHeaderRisposta/text()";
+				pattern = "//res:testSOAPBodyRisposta/text()";
 				v = AbstractXPathExpressionEngine.extractAndConvertResultAsString(responseS, dnc, new XPathExpressionEngine(), pattern, logCore);
 				assertEquals("RES", v);
 
+			}
+			
+			if(addHeader) {
+				
+				//System.out.println("VERIFICA MODIFY");
+				
+				boolean soap12 = contentType.contains(HttpConstants.CONTENT_TYPE_SOAP_1_2);
+				String namespace = soap12 ? org.openspcoop2.message.constants.Costanti.SOAP12_ENVELOPE_NAMESPACE : org.openspcoop2.message.constants.Costanti.SOAP_ENVELOPE_NAMESPACE;
+				
+				DynamicNamespaceContext dnc = new DynamicNamespaceContext();
+				dnc.addNamespace("soap", namespace);
+				
+				String header = getSoapHeader(namespace, soap12, true, charset,operazione);
+				String patternHeader = "//soap:Header";
+				String vHeader = AbstractXPathExpressionEngine.extractAndConvertResultAsString(responseS, dnc, new XPathExpressionEngine(), patternHeader, logCore);
+				
+				if(!header.equals(vHeader)) {
+					System.out.println("VERIFICA HEADER ATTESO ["+header+"]");
+					System.out.println("VERIFICA HEADER RICEVUTO ["+vHeader+"]");
+				}
+				
+				assertEquals(header, vHeader);
+				
 			}
 		}
 		

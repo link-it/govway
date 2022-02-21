@@ -201,6 +201,7 @@
 				<include name="freemarker-2.3.29.jar"/>
 				<include name="snakeyaml-1.28.jar"/>
 				<include name="rhino-1.7.13.jar"/>
+				<!-- NOTA: non includere mai nel runtime Saxon-HE-*.jar poiche' fa agganciare il suo Transformer sostituendosi a Xalan (al massimo vedere di levare la dichiarazione in META-INF) -->
 			</lib>
 			<lib dir="${required_lib}/jminix">
 				<include name="*.jar"/>

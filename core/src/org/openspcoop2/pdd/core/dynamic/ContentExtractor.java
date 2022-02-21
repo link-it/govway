@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.core.dynamic;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
+import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPHeader;
 
@@ -36,7 +37,11 @@ import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.message.utils.DumpMessaggio;
 import org.openspcoop2.message.utils.DumpMessaggioConfig;
+import org.openspcoop2.message.xml.XPathExpressionEngine;
+import org.openspcoop2.utils.xml.DynamicNamespaceContext;
+import org.openspcoop2.utils.xml.XPathReturnType;
 import org.slf4j.Logger;
+import org.w3c.dom.Node;
 
 /**
  * ContentExtractor
@@ -129,6 +134,62 @@ public class ContentExtractor {
 				SOAPElement soapElement = soapMsg.createSOAPElement(xml);
 				
 				header.addChildElement(soapElement);
+				
+			}catch(Throwable t) {
+				throw new DynamicException(t.getMessage(),t);
+			}
+			
+		}
+	}
+	
+	public void setSoapBody(String xml) throws DynamicException {
+		this.setSoapBody(xml.getBytes());
+	}
+	public void setSoapBody(byte[] xml) throws DynamicException {
+		if(this.message!=null && ServiceBinding.SOAP.equals(this.message.getServiceBinding())) {
+			
+			try {
+			
+				OpenSPCoop2SoapMessage soapMsg = this.message.castAsSoap();
+				
+				SOAPElement soapElement = soapMsg.createSOAPElement(xml);
+				
+				soapMsg.getSOAPBody().removeContents();
+				soapMsg.getSOAPBody().addChildElement(soapElement);
+				
+			}catch(Throwable t) {
+				throw new DynamicException(t.getMessage(),t);
+			}
+			
+		}
+	}
+	
+	public void addSoapBody(String xml, String xpath) throws DynamicException {
+		this.addSoapBody(xml.getBytes(), xpath);
+	}
+	public void addSoapBody(byte[] xml, String xpath) throws DynamicException {
+		if(this.message!=null && ServiceBinding.SOAP.equals(this.message.getServiceBinding())) {
+			
+			try {
+			
+				OpenSPCoop2SoapMessage soapMsg = this.message.castAsSoap();
+				
+				SOAPBody body = soapMsg.getSOAPBody();
+				XPathExpressionEngine xpathEngine = new XPathExpressionEngine(this.message.getFactory());
+				DynamicNamespaceContext dnc = new DynamicNamespaceContext();
+				dnc.findPrefixNamespace(body);
+				Node n = (Node) xpathEngine.getMatchPattern(body, dnc, xpath, XPathReturnType.NODE);
+				
+				SOAPElement soapElement = soapMsg.createSOAPElement(xml);
+				
+				if(n instanceof SOAPElement) {
+					SOAPElement s = (SOAPElement) n;
+					s.addChildElement(soapElement);
+				}
+				else {
+					Node nImported = body.getOwnerDocument().importNode(soapElement, true);
+					n.appendChild(nImported);
+				}
 				
 			}catch(Throwable t) {
 				throw new DynamicException(t.getMessage(),t);

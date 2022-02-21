@@ -84,6 +84,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory_impl;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazioneCoda;
@@ -797,6 +798,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				AbstractBaseOpenSPCoop2MessageDynamicContent.setSoapReader(soapReader);
 				OpenSPCoop2Startup.log.info("SOAPMessageReader set buffer threshold (kb): "+propertiesReader.getSoapMessageReaderBufferThresholdKb());
 				AbstractBaseOpenSPCoop2MessageDynamicContent.setSoapReaderBufferThresholdKb(propertiesReader.getSoapMessageReaderBufferThresholdKb());
+				if(soapReader) {
+					OpenSPCoop2Startup.log.info("SOAPMessageReader headerOptimization enabled="+propertiesReader.useSoapMessageReaderHeaderOptimization());
+					OpenSPCoop2MessageSoapStreamReader.SOAP_HEADER_OPTIMIZATION_ENABLED=propertiesReader.useSoapMessageReaderHeaderOptimization();
+				}
 				
 				// SoapPassthrough
 				boolean soapPassthroughImpl = propertiesReader.useSoapMessagePassthrough();

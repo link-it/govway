@@ -90,4 +90,11 @@ public class Costanti {
     public final static String ERRORE_GOVWAY_PREFIX_CODE = "ERRORE_GOVWAY_PREFIX_CODE";
     public final static String ERRORE_GOVWAY_CODE = "ERRORE_GOVWAY_CODE";
     public final static String ERRORE_GOVWAY_DETAILS = "ERRORE_GOVWAY_DETAILS";
+    
+    /** WRITE MODE */
+    public final static String WRITE_MODE_SERIALIZE_BUFFER_WITH_HEADER = "SERIALIZE-BUFFER-WITH-HEADER";
+    public final static String WRITE_MODE_SERIALIZE_BUFFER = "SERIALIZE-BUFFER";
+    public final static String WRITE_MODE_SERIALIZE_CONTENT = "SERIALIZE-CONTENT";
+    public final static String WRITE_MODE_SERIALIZE_STREAM_WITH_HEADER = "SERIALIZE-STREAM-WITH-HEADER";
+    public final static String WRITE_MODE_SERIALIZE_STREAM = "SERIALIZE-STREAM";
 }

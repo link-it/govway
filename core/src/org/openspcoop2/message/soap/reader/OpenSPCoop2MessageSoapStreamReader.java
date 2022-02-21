@@ -23,6 +23,7 @@ package org.openspcoop2.message.soap.reader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.SequenceInputStream;
 
 import javax.xml.parsers.SAXParser;
@@ -40,9 +41,11 @@ import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.soap.OpenSPCoop2Message_saaj_11_impl;
 import org.openspcoop2.message.soap.OpenSPCoop2Message_saaj_12_impl;
 import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.xml.TransformerConfig;
 import org.openspcoop2.utils.xml.XMLUtils;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -57,6 +60,8 @@ import org.xml.sax.XMLReader;
  */
 public class OpenSPCoop2MessageSoapStreamReader {
 
+	public static boolean SOAP_HEADER_OPTIMIZATION_ENABLED = true;
+	
 	@SuppressWarnings("unused")
 	private OpenSPCoop2MessageFactory msgFactory;
 	private InputStream is;
@@ -71,16 +76,27 @@ public class OpenSPCoop2MessageSoapStreamReader {
 	}
 
 	private String envelope;
+	private String prefixEnvelope = null;
+	private String namespace;
+	
 	private String header;
+	private String prefixHeader = null;
 	private OpenSPCoop2Message _headerMsgCompleto;
-	private SOAPHeader _header;
+	private boolean soapHeaderModified = false;
+	
+	private boolean soapHeaderOptimizable = false;
+	private long startHeaderOffset;
+	private long endHeaderOffset;
+	private long startBodyOffset;
+	private String isCharset;
+	
 	private String body;
 	private boolean bodyEmpty;
 	//private Element rootElement;
 	private String rootElementNamespace;
 	private String rootElementLocalName;
 	private String fault;
-	private String namespace;
+	
 	private int bufferSize;
 	
 	private boolean parsingComplete = false;
@@ -95,6 +111,9 @@ public class OpenSPCoop2MessageSoapStreamReader {
 	private InputStream bufferedInputStream = null;
 	public InputStream getBufferedInputStream() {
 		return this.bufferedInputStream;
+	}
+	public void releaseBufferedInputStream() {
+		this.bufferedInputStream = null;
 	}
 	public void read() throws MessageException {
 
@@ -115,9 +134,14 @@ public class OpenSPCoop2MessageSoapStreamReader {
 		try {
 			if(!multipart) {
 				charset = ContentTypeUtilities.readCharsetFromContentType(this.contentType);
+				this.isCharset = charset; 
 				if(Charset.UTF_8.getValue().equalsIgnoreCase(charset)) {
 					charset = null;
 				}
+			}
+			else {
+				String internalCT = ContentTypeUtilities.getInternalMultipartContentType(this.contentType);
+				this.isCharset = ContentTypeUtilities.readCharsetFromContentType(internalCT);
 			}
 		}catch(Throwable t) {}
 		
@@ -126,13 +150,15 @@ public class OpenSPCoop2MessageSoapStreamReader {
 			int lettiBuffer = 0;
 			
 			StringBuilder sbActual = null;
+			long sbActualOffsetStart = -1;
 			byte[] bufferRaw = new byte[1024];
+			long bLetti = 0;
+			int letturaPrecedente = 0;
 			int kbLetti = 0;
 			
 			boolean envelopeFound = false; 
-			String prefixEnvelope = null;
 			
-			StringBuilder header = null;
+			StringBuilder headerBuilder = null;
 			String headerClosure = null;
 			boolean headerCompletato = false;
 			
@@ -155,6 +181,10 @@ public class OpenSPCoop2MessageSoapStreamReader {
 				// bufferizzo (1024 byte = 1kb alla volta)
 				bufferReaded.write(bufferRaw, 0, lettiBuffer);
 				kbLetti++;
+				if(letturaPrecedente>0) {
+					bLetti = bLetti + letturaPrecedente;
+				}
+				letturaPrecedente = lettiBuffer;
 			
 				// In caso di charset differente, uso una stringa
 				String bufferString = null;
@@ -170,6 +200,11 @@ public class OpenSPCoop2MessageSoapStreamReader {
 				// analizzo
 				for (int i = 0; i < lettiBuffer; i++) {
 					char c = bufferString!=null ? bufferString.charAt(i) : (char) bufferRaw[i];
+					
+					if(headerCompletato && this.endHeaderOffset<=0) {
+						this.endHeaderOffset = sbActualOffsetStart;
+					}
+					
 					if( (c == '<' || (sbActual!=null && sbActual.toString().startsWith("&lt;"))) 
 							&& 
 							!cdataFound &&
@@ -181,6 +216,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 								// devo verificare se ho incontrato un cdata o sto continuando a leggere un header
 								String sPreClosure = sbActual.toString();
 								sbActual.delete(0, sbActual.length());
+								sbActualOffsetStart = i+bLetti;
 								
 								if(sPreClosure.startsWith("<![CDATA[")) {
 									//System.out.println("FOND CDATA! in sPreClosure");
@@ -193,10 +229,16 @@ public class OpenSPCoop2MessageSoapStreamReader {
 									}
 								}
 								
+								if(headerClosure!=null) {
+									//System.out.println("AGGIUNGO AD HEADER TESTO ["+sPreClosure+"]");
+									headerBuilder.append(sPreClosure);
+								}
+								
 							}
 						}
 						else {
 							sbActual = new StringBuilder();
+							sbActualOffsetStart = i+bLetti;
 						}
 					}
 					if(sbActual!=null) {
@@ -219,7 +261,12 @@ public class OpenSPCoop2MessageSoapStreamReader {
 						//System.out.println("S ["+s+"]");
 						
 						if(cdataFound) {
+							if(headerClosure!=null) {
+								//System.out.println("AGGIUNGO AD HEADER CDATA ["+sbActual.toString()+"]");
+								headerBuilder.append(sbActual.toString());
+							}
 							sbActual.delete(0, sbActual.length());
+							sbActualOffsetStart = i+bLetti;
 							//System.out.println("continuo perche CDATA... ");
 							if(s.endsWith("]]>")) {
 								cdataFound=false;
@@ -234,7 +281,12 @@ public class OpenSPCoop2MessageSoapStreamReader {
 						}
 						
 						if(commentFound) {
+							if(headerClosure!=null) {
+								//System.out.println("AGGIUNGO AD HEADER COMMENTO ["+sbActual.toString()+"]");
+								headerBuilder.append(sbActual.toString());
+							}
 							sbActual.delete(0, sbActual.length());
+							sbActualOffsetStart = i+bLetti;
 							//System.out.println("continuo perche COMMENTO... ");
 							if(s.endsWith("-->")) {
 								commentFound=false;
@@ -245,7 +297,12 @@ public class OpenSPCoop2MessageSoapStreamReader {
 						if(s.startsWith("<!--")) {
 							//System.out.println("FOUND <!-- COMMENTO: ["+s+"]");
 							if(s.endsWith("-->")){
+								if(headerClosure!=null) {
+									//System.out.println("AGGIUNGO AD HEADER COMMENTO ["+sbActual.toString()+"]");
+									headerBuilder.append(sbActual.toString());
+								}
 								sbActual.delete(0, sbActual.length());
+								sbActualOffsetStart = i+bLetti;
 							}
 							else {
 								commentFound=true;
@@ -259,23 +316,27 @@ public class OpenSPCoop2MessageSoapStreamReader {
 						
 						if(!envelopeFound && isOpenedElement(s,"<Envelope")) {
 							this.envelope = s;
+							//System.out.println("INIZIALIZZO ENVELOPE ["+s+"]");
 							if(!analizyEnvelopeNamespace(this.envelope)) {
+								//System.out.println("TERMINO");
 								analisiTerminata=true;
 								break;
 							}
 							envelopeFound = true;
-							prefixEnvelope = "";
+							this.prefixEnvelope = "";
 						}
 						else if(!envelopeFound && isOpenedElement(s,":Envelope")) {
 							String sPrefix = s.substring(0, s.indexOf(":Envelope"));
 							if(sPrefix.startsWith("<") && !sPrefix.contains(" ") && sPrefix.length()>1) {
 								this.envelope = s;
+								//System.out.println("INIZIALIZZO ENVELOPE ["+s+"]");
 								if(!analizyEnvelopeNamespace(this.envelope)) {
+									//System.out.println("TERMINO");
 									analisiTerminata=true;
 									break;
 								}
 								envelopeFound = true;
-								prefixEnvelope = sPrefix.substring(1)+":";
+								this.prefixEnvelope = sPrefix.substring(1)+":";
 							}
 							else {
 								analisiTerminata=true;
@@ -286,8 +347,9 @@ public class OpenSPCoop2MessageSoapStreamReader {
 						
 							if(headerClosure!=null) {
 								//System.out.println("AGGIUNGO AD HEADER ["+s+"]");
-								header.append(s);
+								headerBuilder.append(s);
 								sbActual.delete(0, sbActual.length());
+								sbActualOffsetStart = i+bLetti;
 								if(s.startsWith(headerClosure)) {
 									headerClosure=null;	
 									headerCompletato = true;
@@ -295,8 +357,10 @@ public class OpenSPCoop2MessageSoapStreamReader {
 								continue;
 							}
 							
-							if(header==null && isOpenedElement(s,"<Header")) {
-								header = new StringBuilder(s);
+							if(headerBuilder==null && isOpenedElement(s,"<Header")) {
+								//System.out.println("INIZIALIZZO HEADER ["+s+"]");
+								//headerBuilder = new StringBuilder(s);
+								headerBuilder = new StringBuilder();
 								if(!s.endsWith("/>")) {
 									headerClosure = "</Header";
 								}
@@ -304,17 +368,27 @@ public class OpenSPCoop2MessageSoapStreamReader {
 									analisiTerminata=true;
 									break;
 								}
+								else {
+									this.startHeaderOffset = sbActualOffsetStart;
+									this.prefixHeader = "";
+								}
 							}
-							else if(header==null && isOpenedElement(s,":Header")) {
+							else if(headerBuilder==null && isOpenedElement(s,":Header")) {
 								String sPrefix = s.substring(0, s.indexOf(":Header"));
 								if(sPrefix.startsWith("<") && !sPrefix.contains(" ") && sPrefix.length()>1) {
-									header = new StringBuilder(s);
+									//System.out.println("INIZIALIZZO HEADER ["+s+"]");
+									//headerBuilder = new StringBuilder(s);
+									headerBuilder = new StringBuilder();
 									if(!s.endsWith("/>")) {
 										headerClosure = "</"+sPrefix.substring(1)+":"+"Header";
 									}
 									if(bodyFound) {
 										analisiTerminata=true;
 										break;
+									}
+									else {
+										this.startHeaderOffset = sbActualOffsetStart;
+										this.prefixHeader = sPrefix.substring(1)+":";
 									}
 								}
 								else {
@@ -323,16 +397,26 @@ public class OpenSPCoop2MessageSoapStreamReader {
 								}
 							}
 							else if(!bodyFound && isOpenedElement(s,"<Body")) {
+								//System.out.println("INIZIALIZZO BODY ["+s+"]");
 								this.body = s;
 								bodyFound = true;
 								prefixBody = "";
+								if(this.startHeaderOffset<=0) {
+									this.startHeaderOffset = sbActualOffsetStart;
+								}
+								this.startBodyOffset=sbActualOffsetStart;
 							}
 							else if(!bodyFound && isOpenedElement(s,":Body")) {
 								String sPrefix = s.substring(0, s.indexOf(":Body"));
 								if(sPrefix.startsWith("<") && !sPrefix.contains(" ") && sPrefix.length()>1) {
+									//System.out.println("INIZIALIZZO BODY ["+s+"]");
 									this.body = s;
 									bodyFound = true;
 									prefixBody = sPrefix.substring(1)+":";
+									if(this.startHeaderOffset<=0) {
+										this.startHeaderOffset = sbActualOffsetStart;
+									}
+									this.startBodyOffset=sbActualOffsetStart;
 								}
 								else {
 									analisiTerminata=true;
@@ -341,18 +425,20 @@ public class OpenSPCoop2MessageSoapStreamReader {
 							}
 							else if(bodyFound) {
 								if(this.fault==null && isOpenedElement(s,"<Fault")) {
+									//System.out.println("INIZIALIZZO FAULT ["+s+"]");
 									this.fault = s;
 								}
 								else if(this.fault==null && isOpenedElement(s,":Fault")) {
 									String sPrefix = s.substring(0, s.indexOf(":Fault"));
 									if(sPrefix.startsWith("<") && !sPrefix.contains(" ")) {
+										//System.out.println("INIZIALIZZO FAULT ["+s+"]");
 										this.fault = s;
 									}
 								}
 								else {
 									
 									String closeBody = "</"+prefixBody+"Body";
-									String closeEnvelope = "</"+prefixEnvelope+"Envelope";
+									String closeEnvelope = "</"+this.prefixEnvelope+"Envelope";
 									if( isClosedElement(s,closeBody) || isClosedElement(s,closeEnvelope) ){
 										this.parsingComplete = true;
 									}
@@ -369,6 +455,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 							
 						}
 					}
+					
 				}
 				if(analisiTerminata) {
 					break;
@@ -408,11 +495,11 @@ public class OpenSPCoop2MessageSoapStreamReader {
 				throwException=true; // ho terminato di leggere la parte interessante del messaggio
 				this.parsingComplete = true;
 			}
-			
-			if(header!=null && header.length()>0) {
+
+			if(headerBuilder!=null && headerBuilder.length()>0) {
 				if(this.envelope.endsWith("/>")) {
 					if(throwException) {
-						throw new Exception("Invalid content; found 'Header' after envelope closure '/>': ("+header+")");
+						throw new Exception("Invalid content; found 'Header' after envelope closure '/>': ("+headerBuilder+")");
 					}
 					else{
 						return;
@@ -421,9 +508,9 @@ public class OpenSPCoop2MessageSoapStreamReader {
 				if(headerCompletato) {
 					StringBuilder sbHeaderAnalizer = new StringBuilder();
 					sbHeaderAnalizer.append(this.envelope);
-					sbHeaderAnalizer.append(header.toString());
-					sbHeaderAnalizer.append("<").append(prefixEnvelope).append("Body/>");
-					sbHeaderAnalizer.append("</").append(prefixEnvelope).append("Envelope>");
+					sbHeaderAnalizer.append(headerBuilder.toString());
+					sbHeaderAnalizer.append("<").append(this.prefixEnvelope).append("Body/>");
+					sbHeaderAnalizer.append("</").append(this.prefixEnvelope).append("Envelope>");
 					this.header = sbHeaderAnalizer.toString();
 				}
 			}
@@ -468,7 +555,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 					sbFaultAnalizer.append("</").append(sb.toString()).append(">");
 				}
 				sbFaultAnalizer.append("</").append(prefixBody).append("Body>");
-				sbFaultAnalizer.append("</").append(prefixEnvelope).append("Envelope>");
+				sbFaultAnalizer.append("</").append(this.prefixEnvelope).append("Envelope>");
 				//Element e = null;
 				String namespaceFaultTrovato = null;
 				try {
@@ -520,7 +607,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 					sbElementAnalizer.append("</").append(sb.toString()).append(">");
 				}
 				sbElementAnalizer.append("</").append(prefixBody).append("Body>");
-				sbElementAnalizer.append("</").append(prefixEnvelope).append("Envelope>");
+				sbElementAnalizer.append("</").append(this.prefixEnvelope).append("Envelope>");
 				//Element e = null;
 				SAXParser saxParser = null;
 				try {
@@ -565,6 +652,22 @@ public class OpenSPCoop2MessageSoapStreamReader {
 				}
 			}
 			
+			
+			//System.out.println("parsingComplete["+this.parsingComplete+"] charset["+charset+"] startHeaderOffset["+this.startHeaderOffset+"] < endHeaderOffset["+this.endHeaderOffset+"] < startBodyOffset["+this.startBodyOffset+"]");
+			if(this.parsingComplete) {
+				if(charset==null || !charset.startsWith("UTF-16")) {
+					if(this.startHeaderOffset>0 && this.startBodyOffset>=this.startHeaderOffset) {
+						this.soapHeaderOptimizable = true;
+						if(this.endHeaderOffset>0) {
+							if(this.endHeaderOffset<this.startHeaderOffset || this.endHeaderOffset>this.startBodyOffset) {
+								// inconsistenza
+								this.soapHeaderOptimizable = false;
+							}
+						}
+					}
+				}
+			}
+			
 		}catch(Throwable t) {
 			this.tBuffered = new MessageException(t.getMessage(),t);
 			throw this.tBuffered;
@@ -598,7 +701,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 			
 			//Element e = XMLUtils.getInstance().newElement(s.getBytes());
 			//this.namespace = e.getNamespaceURI();
-			//System.out.println("ENVELOPE ["+envelope+"]");
+			//System.out.println("ENVELOPE PARSE ["+envelope+"]");
 			SAXParser saxParser = null;
 			try {
 				saxParser = getParser();
@@ -610,6 +713,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 					xmlReader.parse(inputSource);
 				}
 				this.namespace = saxHandler.getNamespace();
+				//System.out.println("ENVELOPE PARSE ["+envelope+"], found namespace: "+this.namespace);
 			}
 			catch(Throwable t) {
 				throw new Exception("Invalid content ("+s+"): "+t.getMessage(),t);
@@ -665,37 +769,119 @@ public class OpenSPCoop2MessageSoapStreamReader {
 	}
 	
 	public OpenSPCoop2Message getHeader_OpenSPCoop2Message() throws MessageException {
-		return getHeader_OpenSPCoop2Message(true);
-	}
-	private OpenSPCoop2Message getHeader_OpenSPCoop2Message(boolean checkIsEmpty) throws MessageException {
-		_getHeader(checkIsEmpty);
-		return this._headerMsgCompleto;
+		boolean checkIsEmpty = true;
+		SOAPHeader s = _getHeader(checkIsEmpty, false); // perchè la struttura del soap header viene mantenuta anche vuota, per preservare i commenti.
+		if(s!=null) {
+			return this._headerMsgCompleto;
+		}
+		return null;
 	}
 	public SOAPHeader getHeader() throws MessageException {
-		return _getHeader(true);
+		return _getHeader(false, false);
 	}
-	private SOAPHeader _getHeader(boolean checkIsEmpty) throws MessageException {
-		if(this._header==null && this.header!=null) {
-			try {
-				//System.out.println("COSTRUISCO ["+this.header+"]");
-				this._headerMsgCompleto = buildOp2Message(this.header.getBytes(), this.getMessageType());
-				this._header = this._headerMsgCompleto.castAsSoap().getSOAPHeader();
-				
-				if(checkIsEmpty) {
-					Node n = SoapUtils.getFirstNotEmptyChildNode(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), this._header, false);
-					if(n==null) {
-						this._header = null;
-						this._headerMsgCompleto = null;
-					}
-				}
-				
-				//this._header = XMLUtils.getInstance().newElement(this.header.getBytes());
+	public SOAPHeader getModifiableHeader() throws MessageException {
+		this.soapHeaderModified = true;
+		return _getHeader(false, false);
+	}
+	public SOAPHeader addHeader() throws MessageException {
+		return _getHeader(false, true);
+	}
+	public boolean isSoapHeaderModified() {
+		return this.soapHeaderModified;
+	}
+	public void setSoapHeaderModified(boolean soapHeaderModified) {
+		this.soapHeaderModified = soapHeaderModified;
+	}
+	private SOAPHeader _getHeader(boolean checkIsEmpty, boolean buildIfEmpty) throws MessageException {
+		
+		SOAPHeader soapHeader = null;
+		
+		if(this._headerMsgCompleto!=null) {
+			try{
+				soapHeader = this._headerMsgCompleto.castAsSoap().getSOAPHeader();
 			}catch(Throwable t) {
-				throw SoapUtils.buildMessageException("Invalid header ("+this.header+"): "+t.getMessage(),t);
+				throw SoapUtils.buildMessageException("Error during access header: "+t.getMessage(),t);
 			}
 		}
-		return this._header;
+		else {
+			if(this._headerMsgCompleto==null && this.header!=null) {
+				try {
+					//System.out.println("COSTRUISCO ["+this.header+"]");
+					this._headerMsgCompleto = buildOp2Message(this.header.getBytes(), this.getMessageType());
+					soapHeader = this._headerMsgCompleto.castAsSoap().getSOAPHeader();
+										
+					if(soapHeader!=null) {
+						if("".equals(this.prefixEnvelope)) {
+							this._headerMsgCompleto.castAsSoap().getSOAPPart().getEnvelope().setPrefix("");
+						}
+						if("".equals(this.prefixHeader)) {
+							soapHeader.setPrefix("");
+						}
+						//System.out.println("HEADER COSTRUITO DA QUANTO LETTO CON SAAJ PREFIX ["+soapHeader.getPrefix()+"], LETTO: "+this.header);
+					}
+					
+					//this._header = XMLUtils.getInstance().newElement(this.header.getBytes());
+					
+					this.header = null; // libero memoria
+					
+				}catch(Throwable t) {
+					throw SoapUtils.buildMessageException("Invalid header ("+this.header+"): "+t.getMessage(),t);
+				}
+			}
+			
+			if(this._headerMsgCompleto==null && buildIfEmpty) {
+				try {
+					String xmlns = "";
+					if(this.prefixEnvelope!=null && !"".equals(this.prefixEnvelope)) {
+						xmlns=":"+this.prefixEnvelope;
+						if(xmlns.endsWith(":") && xmlns.length()>1) {
+							xmlns = xmlns.substring(0, xmlns.length()-1);
+						}
+					}
+					String envelope = "<"+this.prefixEnvelope+"Envelope xmlns"+xmlns+"=\""+this.namespace+"\"><"+this.prefixEnvelope+"Header/></"+this.prefixEnvelope+"Envelope>";
+					this._headerMsgCompleto = buildOp2Message(envelope.getBytes(), this.getMessageType());
+					soapHeader = this._headerMsgCompleto.castAsSoap().getSOAPHeader();
+					if("".equals(xmlns)) {
+						this._headerMsgCompleto.castAsSoap().getSOAPPart().getEnvelope().setPrefix("");
+						soapHeader.setPrefix("");
+					}
+					//System.out.println("HEADER CREATO CON SAAJ PREFIX ["+soapHeader.getPrefix()+"]");
+					this.soapHeaderModified = true;
+				}catch(Throwable t) {
+					throw SoapUtils.buildMessageException("Build header failed: "+t.getMessage(),t);
+				}
+			}
+		}
+		
+		if(soapHeader!=null && checkIsEmpty) {
+			Node n = SoapUtils.getFirstNotEmptyChildNode(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), soapHeader, false);
+			if(n==null) {
+				soapHeader = null;
+			}
+		}
+		
+		/*if(soapHeader!=null) {
+			try {
+				TransformerConfig xmlConfig = new TransformerConfig();
+				xmlConfig.setOmitXMLDeclaration(true);
+				xmlConfig.setCharset(this.isCharset);
+				System.out.println("COSTRUITO ["+org.openspcoop2.message.xml.XMLUtils.getInstance(OpenSPCoop2MessageFactory.getDefaultMessageFactory()).toString(soapHeader, xmlConfig)+"]");
+				org.w3c.dom.NodeList l = soapHeader.getChildNodes();
+				for (int i = 0; i < l.getLength(); i++) {
+					System.out.println("BEFORE ["+l.item(i).getClass().getName()+"] ["+l.item(i).getLocalName()+"]");
+				}
+			}catch(Throwable t) {
+				System.out.println("ERRORE");
+			}
+		}*/
+		
+		return soapHeader;
 	}
+	public void clearHeader() {
+		this._headerMsgCompleto=null;
+		this.soapHeaderOptimizable=false;
+	}
+
 
 //	public Element getRootElement() {
 //		return this.rootElement;
@@ -747,4 +933,116 @@ public class OpenSPCoop2MessageSoapStreamReader {
 		}
 		return msg;
     }
+    
+	public boolean isSoapHeaderOptimizable() {
+		return SOAP_HEADER_OPTIMIZATION_ENABLED && this.soapHeaderOptimizable;
+	}
+	
+	public void writeOptimizedHeaderTo(InputStream is, OutputStream osParam, boolean consumeHeader) throws Exception {
+		if(!this.soapHeaderOptimizable) {
+			throw new Exception("SOAPHeader not optimizable");
+		}
+		
+		if(this._headerMsgCompleto==null) {
+			throw new Exception("SOAPMessage Optimized undefined");
+		}
+		SOAPHeader soapHeader = this._headerMsgCompleto.castAsSoap().getSOAPHeader();
+		if(soapHeader==null) {
+			throw new Exception("SOAPHeader undefined");
+		}
+		
+		TransformerConfig xmlConfig = new TransformerConfig();
+		xmlConfig.setOmitXMLDeclaration(true);
+		xmlConfig.setCharset(this.isCharset);
+				
+		long indexBody = this.startBodyOffset;
+		if(this.endHeaderOffset>0) {
+			indexBody = this.endHeaderOffset+1;
+		}
+		
+		// first
+		byte[] buffer = new byte[Utilities.DIMENSIONE_BUFFER];
+		int letti = 0;
+		long index = 0;
+		boolean writeHeader = false;
+		
+		boolean debug = false;
+		OutputStream os = null;
+		if(debug) {
+			os = new ByteArrayOutputStream();
+		}
+		else {
+			os = osParam;
+		}
+		while( (letti=is.read(buffer, 0, Utilities.DIMENSIONE_BUFFER)) != -1 ){
+			
+			if(index<this.startHeaderOffset) {
+				for (int i=0; i < letti; i++) {
+					if(!writeHeader || index>=indexBody) {
+						os.write(buffer[i]);
+					}
+					index++;
+					
+					if(index==this.startHeaderOffset) {
+						if(debug) {
+							os.flush();
+							//System.out.println("SCRITTO FINO A HEADER ["+os.toString()+"]");
+						}
+						
+						//os.write(OpenSPCoop2MessageFactory.getAsByte(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), this._header, true));
+						os.write(org.openspcoop2.message.xml.XMLUtils.getInstance(OpenSPCoop2MessageFactory.getDefaultMessageFactory()).toByteArray(soapHeader, xmlConfig));
+						writeHeader = true;
+						if(debug) {
+							os.flush();
+							//System.out.println("SCRITTO HEADER ["+os.toString()+"]");
+						}
+					}
+				}
+			}
+			else {
+				if(!writeHeader) {
+					//os.write(OpenSPCoop2MessageFactory.getAsByte(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), this._header, true));
+					os.write(org.openspcoop2.message.xml.XMLUtils.getInstance(OpenSPCoop2MessageFactory.getDefaultMessageFactory()).toByteArray(soapHeader, xmlConfig));
+					writeHeader = true;
+					if(debug) {
+						os.flush();
+						//System.out.println("SCRITTO HEADER GIRO SUCCESSIVO ["+os.toString()+"]");
+					}
+				}
+				if(index>=indexBody) {
+					os.write(buffer, 0, letti);
+					index = index+letti;
+				}
+				else {
+					for (int i=0; i < letti; i++) {
+						if(index>=indexBody) {
+							os.write(buffer[i]);
+						}
+						index++;
+					}
+				}
+				if(debug) {
+					os.flush();
+					//System.out.println("SCRITTO PEZZO ["+os.toString()+"]");
+				}
+			}
+			
+		}
+				
+		if(debug) {
+			os.flush();
+			//System.out.println("SCRITTO TUTTO ["+os.toString()+"]");
+		}
+		
+		
+		// flush
+		os.flush();
+		
+		// ** rilascio memoria **
+		if(consumeHeader) {
+			this._headerMsgCompleto = null;
+			this.soapHeaderOptimizable=false;
+			this.bufferedInputStream = null;
+		}
+	}
 }

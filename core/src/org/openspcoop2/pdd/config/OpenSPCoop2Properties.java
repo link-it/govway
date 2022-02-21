@@ -398,8 +398,10 @@ public class OpenSPCoop2Properties {
 			this.isCondivisioneConfigurazioneRegistroDB();
 
 			// SoapBuffer
-			this.useSoapMessageReader();
-			this.getSoapMessageReaderBufferThresholdKb();
+			if(this.useSoapMessageReader()) {
+				this.getSoapMessageReaderBufferThresholdKb();
+				this.useSoapMessageReaderHeaderOptimization();
+			}
 			
 			this.useSoapMessagePassthrough();
 			
@@ -6355,6 +6357,28 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.soapMessageReaderBufferThresholdKb;
+	}
+	
+	private static Boolean useSoapMessageReaderHeaderOptimization = null;
+	public boolean useSoapMessageReaderHeaderOptimization() {	
+		if(OpenSPCoop2Properties.useSoapMessageReaderHeaderOptimization==null){
+			String pName = "org.openspcoop2.pdd.soapMessage.reader.headerOptimization";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.useSoapMessageReaderHeaderOptimization = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				OpenSPCoop2Properties.useSoapMessageReaderHeaderOptimization = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.useSoapMessageReaderHeaderOptimization;
 	}
 	
 	private static Boolean useSoapMessagePassthrough = null;

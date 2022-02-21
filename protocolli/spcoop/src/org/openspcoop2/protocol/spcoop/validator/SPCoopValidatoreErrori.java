@@ -66,7 +66,7 @@ public class SPCoopValidatoreErrori extends BasicStateComponentFactory implement
 		try{
 			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
 			
-			if(msg!=null && msg.getSOAPBody()!=null && msg.getSOAPBody().hasFault()){
+			if(msg!=null && msg.hasSOAPFault()){
 				SOAPFault soapFault = msg.getSOAPBody().getFault();
 				String faultS = soapFault.getFaultString();
 				if(faultS!=null)
@@ -116,7 +116,7 @@ public class SPCoopValidatoreErrori extends BasicStateComponentFactory implement
 		try{
 			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
 			
-			if(msg!=null && msg.getSOAPBody()!=null && msg.getSOAPBody().hasFault()){
+			if(msg!=null && msg.hasSOAPFault()){
 				SOAPFault soapFault = msg.getSOAPBody().getFault();
 				String faultS = soapFault.getFaultString();
 				if(faultS!=null)
@@ -143,7 +143,7 @@ public class SPCoopValidatoreErrori extends BasicStateComponentFactory implement
 		try{
 			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
 			
-			if(msg!=null && msg.getSOAPBody()!=null && msg.getSOAPBody().hasFault()){
+			if(msg!=null && msg.hasSOAPFault()){
 				SOAPFault soapFault = msg.getSOAPBody().getFault();
 				String faultS = soapFault.getFaultString();
 				if(faultS!=null)

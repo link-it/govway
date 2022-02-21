@@ -1,3 +1,11 @@
+2022-02-21  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Introdotta ottimizzazione nella gestione degli header SOAP.
+	Durante la gestione della richiesta o della risposta, se le funzionalità attivate richiedono solamente la gestione del SOAPHeader,
+	viene costruito in memoria la sola rappresentazione DOM dell'header e non dell'intero messaggio.
+	Il contenuto presente nel body viene trattato in modalità streaming.
+
 2022-02-18  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]

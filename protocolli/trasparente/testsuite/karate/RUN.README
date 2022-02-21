@@ -270,6 +270,10 @@ Di seguito vengono descritti i test del package 'encoding':
 - 'charset', verifica le comunicazioni in stream, con dump, la costruzione di oggetti in memoria read only e per trasformazioni, con charset UTF-8, UTF-16 e ISO-8859-1
    ant run_test -Ddelete=false -Dload=false -Dpackage=encoding.charset
 
+- 'entity_reference', verifica le comunicazioni in stream, con dump, e la costruzioni di header con richieste consistenti di xml entity reference (2MB) 
+   che se trattate come contenuto SAAJ fanno salire il carico per il lavoro richiesto al GC (G1 Humongous Allocation).
+   ant run_test -Ddelete=false -Dload=false -Dpackage=encoding.entity_reference
+
 Di seguito vengono descritti i test del package 'integrazione':
 
 - 'autenticazione', verifica  l'integrazione 'autenticazione' che consente di generare Header HTTP utilizzabili dal backend per autenticare l'API Gateway.

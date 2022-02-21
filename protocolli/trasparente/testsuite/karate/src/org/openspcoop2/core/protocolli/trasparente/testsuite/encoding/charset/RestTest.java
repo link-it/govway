@@ -142,13 +142,13 @@ public class RestTest extends ConfigLoader {
 		
 		CharsetUtilities._test(logCore, api, operazione, 
 				contentType, body, null,
-				charset);
+				charset, false);
 
 		if(!json) {
 			body = "<?xml version=\"1.0\" encoding=\""+charset.getValue()+"\"?>"+"\n"+body;
 			CharsetUtilities._test(logCore, api, operazione, 
 					contentType, body, null,
-					charset);
+					charset, false);
 		}
 	}
 	

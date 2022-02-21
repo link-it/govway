@@ -26,6 +26,7 @@ import java.io.OutputStream;
 
 import org.apache.commons.io.input.CountingInputStream;
 import org.apache.commons.io.output.CountingOutputStream;
+import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
@@ -156,6 +157,14 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 		return this.soapStreamReader;
 	}
 	
+	public void releaseSoapReader() {
+		if(this.soapStreamReader!=null) {
+			this.soapStreamReader.releaseBufferedInputStream();
+			this.soapStreamReader.clearHeader();
+			this.soapStreamReader = null;
+		}
+	}
+	
 	
 	/* Contenuto */
 	
@@ -210,12 +219,12 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 	}
 	public T getContent(boolean readOnly, String idTransazione) throws MessageException,MessageNotSupportedException{
 		if(this.hasContent){
-			if(this.content==null){
-				this.initializeContent(readOnly, idTransazione);
-			}
-			
 			if(!readOnly) {
 				this.contentUpdatable = true;
+			}
+			// nota l'assegnazione di contentUpdatable viene usata poi dentro l'inizializzaizone del contenuto per rilasciare le risorse
+			if(this.content==null){
+				this.initializeContent(readOnly, idTransazione);
 			}
 		}
 		return this.content; // può tornare null
@@ -317,6 +326,9 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 		this.writeTo(os, consume, false, null);
 	}
 	public void writeTo(OutputStream os, boolean consume, boolean readOnly, String idTransazione) throws MessageException{
+		writeTo(os, consume, readOnly, idTransazione, null);
+	}
+	public void writeTo(OutputStream os, boolean consume, boolean readOnly, String idTransazione, StringBuilder debug) throws MessageException{
 		try{
 			if(this.hasContent){
 				
@@ -326,17 +338,39 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 			
 				CountingOutputStream cos = new CountingOutputStream(os);
 				if(this.contentBuffer!=null && !this.contentUpdatable) {
-					//System.out.println("SERIALIZE BUFFER");
-					this.contentBuffer.writeTo(cos);
+					if(this.soapStreamReader!=null && this.soapStreamReader.isSoapHeaderModified() && this.contentType!=null) {
+						if(debug!=null) {
+							debug.append(Costanti.WRITE_MODE_SERIALIZE_BUFFER_WITH_HEADER);
+						}
+						this.soapStreamReader.writeOptimizedHeaderTo(this.contentBuffer.getInputStream(), cos, true);
+					}
+					else {
+						if(debug!=null) {
+							debug.append(Costanti.WRITE_MODE_SERIALIZE_BUFFER);
+						}
+						this.contentBuffer.writeTo(cos);
+					}
 				}
 				else if(this.content!=null){
-					//System.out.println("SERIALIZE CONTENT");
+					if(debug!=null) {
+						debug.append(Costanti.WRITE_MODE_SERIALIZE_CONTENT);
+					}
 					this.serializeContent(cos, consume);
 				}
 				else{
-					//System.out.println("SERIALIZE STREAM");
-					Utilities.copy(this.countingInputStream, cos);
-					this.countingInputStream.close();
+					if(this.soapStreamReader!=null && this.soapStreamReader.isSoapHeaderModified()) {
+						if(debug!=null) {
+							debug.append(Costanti.WRITE_MODE_SERIALIZE_STREAM_WITH_HEADER);
+						}
+						this.soapStreamReader.writeOptimizedHeaderTo(this.countingInputStream, cos, true);
+					}
+					else {
+						if(debug!=null) {
+							debug.append(Costanti.WRITE_MODE_SERIALIZE_STREAM);
+						}
+						Utilities.copy(this.countingInputStream, cos);
+						this.countingInputStream.close();
+					}
 				}
 				this.outgoingsize = cos.getByteCount();
 			}

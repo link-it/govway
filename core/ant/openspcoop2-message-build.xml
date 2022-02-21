@@ -51,6 +51,7 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.message.utils" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.message.xml" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.message.soap" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.message.soap.dynamic" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.message.soap.reader" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.message.soap.mtom" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.message.soap.wsaddressing" />

@@ -42,35 +42,254 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
  */
 public class TestReader {
 
-	private static final String HEADER_5K = "<soapenv:Header xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><xsd:skcotSyub xmlns:xsd=\"http://services.samples/xsd\"><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro></xsd:skcotSyub></soapenv:Header>";
-	private static final String HEADER_WSA = "<soapenv:Header xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:wsa=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\"><wsa:MessageID/><wsa:ReplyTo><wsa:Address/></wsa:ReplyTo><wsa:To/><wsa:Action/></soapenv:Header>";
-	private static final String HEADER_WSA_2 = "<soapenv:Header xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><wsa:MessageID xmlns:wsa=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\"/><wsa:ReplyTo xmlns:wsa=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\"><wsa:Address/></wsa:ReplyTo><wsa:To xmlns:wsa=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\"/><wsa:Action xmlns:wsa=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\"/></soapenv:Header>";
-	private static final String HEADER_MIME = "<soapenv:Header xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:prova=\"http://prova.openspcoop2.org\"><a:example1 xmlns:a=\"http://www.openspcoop2.org\" soapenv:actor=\"http://www.prova.it\" soapenv:mustUnderstand=\"0\"/><b:example2 xmlns:b=\"http://www.openspcoop2.org\" soapenv:actor=\"http://www.prova.it\" soapenv:mustUnderstand=\"0\"/></soapenv:Header>";
-	private static final String HEADER_XMLENTITY = "<soapenv:Header xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><xsd:skcotSyub xmlns:xsd=\"http://services.samples/xsd\">\n"+
-		"&lt;redro&gt;lobmys&gt;IBM&lt;/lobmys&gt;DIreyub&gt;asankha&lt;/DIreyub&gt;ecirp&gt;140.34&lt;/ecirp&gt;emulov&gt;2000&lt;/emulov&gt;/redro&gt;\n"+
-		"&lt;redro&gt;lobmys&gt;MSFT&lt;/lobmys&gt;DIreyub&gt;ruwan&lt;/DIreyub&gt;ecirp&gt;23.56&lt;/ecirp&gt;emulov&gt;8030&lt;/emulov&gt;/redro&gt;\n"+
-		"&lt;redro&gt;lobmys&gt;SUN&lt;/lobmys&gt;DIreyub&gt;indika&lt;/DIreyub&gt;ecirp&gt;14.56&lt;/ecirp&gt;emulov&gt;500&lt;/emulov&gt;/redro&gt;\n"+
-		"&lt;redro&gt;lobmys&gt;GOOG&lt;/lobmys&gt;DIreyub&gt;chathura&lt;/DIreyub&gt;ecirp&gt;60.24&lt;/ecirp&gt;emulov&gt;40000&lt;/emulov&gt;/redro&gt;\n"+
-		"&lt;redro&gt;lobmys&gt;IBM&lt;/lobmys&gt;DIreyub&gt;asankha&lt;/DIreyub&gt;ecirp&gt;140.34&lt;/ecirp&gt;emulov&gt;2000&lt;/emulov&gt;/redro&gt;\n"+
-		"&lt;redro&gt;lobmys&gt;MSFT&lt;/lobmys&gt;DIreyub&gt;ruwan&lt;/DIreyub&gt;ecirp&gt;23.56&lt;/ecirp&gt;emulov&gt;8030&lt;/emulov&gt;/redro&gt;\n"+
-		"&lt;redro&gt;lobmys&gt;SUN&lt;/lobmys&gt;DIreyub&gt;indika&lt;/DIreyub&gt;ecirp&gt;14.56&lt;/ecirp&gt;emulov&gt;500&lt;/emulov&gt;/redro&gt;\n"+
-		"&lt;redro&gt;lobmys&gt;GOOG&lt;/lobmys&gt;DIreyub&gt;chathura&lt;/DIreyub&gt;ecirp&gt;60.24&lt;/ecirp&gt;emulov&gt;40000&lt;/emulov&gt;/redro&gt;\n"+
-		"&lt;redro&gt;lobmys&gt;IBM&lt;/lobmys&gt;DIreyub&gt;asankha&lt;/DIreyub&gt;ecirp&gt;140.34&lt;/ecirp&gt;emulov&gt;2000&lt;/emulov&gt;/redro&gt;\n"+
-		"&lt;redro&gt;lobmys&gt;MSFT&lt;/lobmys&gt;DIreyub&gt;ruwan&lt;/DIreyub&gt;ecirp&gt;23.56&lt;/ecirp&gt;emulov&gt;8030&lt;/emulov&gt;/redro&gt;\n"+
-		"&lt;redro&gt;lobmys&gt;SUN&lt;/lobmys&gt;DIreyub&gt;indika&lt;/DIreyub&gt;ecirp&gt;14.56&lt;/ecirp&gt;emulov&gt;500&lt;/emulov&gt;/redro&gt;\n"+
-		"&lt;redro&gt;lobmys&gt;GOOG&lt;/lobmys&gt;DIreyub&gt;chathura&lt;/DIreyub&gt;ecirp&gt;60.24&lt;/ecirp&gt;emulov&gt;40000&lt;/emulov&gt;/redro&gt;\n"+
-		"&lt;redro&gt;lobmys&gt;IBM&lt;/lobmys&gt;DIreyub&gt;asankha&lt;/DIreyub&gt;ecirp&gt;140.34&lt;/ecirp&gt;emulov&gt;2000&lt;/emulov&gt;/redro&gt;\n"+
-		"&lt;redro&gt;lobmys&gt;MSFT&lt;/lobmys&gt;DIreyub&gt;ruwan&lt;/DIreyub&gt;ecirp&gt;23.56&lt;/ecirp&gt;emulov&gt;8030&lt;/emulov&gt;/redro&gt;\n"+
-		"&lt;redro&gt;lobmys&gt;SUN&lt;/lobmys&gt;DIreyub&gt;indika&lt;/DIreyub&gt;ecirp&gt;14.56&lt;/ecirp&gt;emulov&gt;500&lt;/emulov&gt;/redro&gt;\n"+
-		"&lt;redro&gt;lobmys&gt;GOOG&lt;/lobmys&gt;DIreyub&gt;chathura&lt;/DIreyub&gt;ecirp&gt;60.24&lt;/ecirp&gt;emulov&gt;40000&lt;/emulov&gt;/redro&gt;</xsd:skcotSyub></soapenv:Header>";
-	private static final String HEADER_CARATTERI_ACAPO_TAB = "<soapenv:Header xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns=\"AltroperTest\" xmlns:xsd=\"http://services.samples/xsd\" xmlns:xsd2=\"http://services.samples/xsd\"><xsd:skcotSyub><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro></xsd:skcotSyub></soapenv:Header>";
+	private static final String HEADER_5K = "<soapenv:Header xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"+
+		"    <!-- TEST -->\n"+
+		"<xsd:skcotSyub xmlns:xsd=\"http://services.samples/xsd\">\n"+
+		"<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>\n"+
+		"<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>8030</emulov></redro>\n"+
+		"<redro><lobmys>SUN</lobmys><DIreyub>indika</DIreyub><ecirp>14.56</ecirp><emulov>500</emulov></redro>\n"+
+		"<redro><lobmys>GOOG</lobmys><DIreyub>chathura</DIreyub><ecirp>60.24</ecirp><emulov>40000</emulov></redro>\n"+
+		"<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>\n"+
+		"<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>8030</emulov></redro>\n"+
+		"<redro><lobmys>SUN</lobmys><DIreyub>indika</DIreyub><ecirp>14.56</ecirp><emulov>500</emulov></redro>\n"+
+		"<redro><lobmys>GOOG</lobmys><DIreyub>chathura</DIreyub><ecirp>60.24</ecirp><emulov>40000</emulov></redro>\n"+
+		"<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>\n"+
+		"<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>8030</emulov></redro>\n"+
+		"<redro><lobmys>SUN</lobmys><DIreyub>indika</DIreyub><ecirp>14.56</ecirp><emulov>500</emulov></redro>\n"+
+		"<redro><lobmys>GOOG</lobmys><DIreyub>chathura</DIreyub><ecirp>60.24</ecirp><emulov>40000</emulov></redro>\n"+
+		"<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>\n"+
+		"<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>8030</emulov></redro>\n"+
+		"<redro><lobmys>SUN</lobmys><DIreyub>indika</DIreyub><ecirp>14.56</ecirp><emulov>500</emulov></redro>\n"+
+		"<redro><lobmys>GOOG</lobmys><DIreyub>chathura</DIreyub><ecirp>60.24</ecirp><emulov>40000</emulov></redro>\n"+
+		"<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>\n"+
+		"<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>8030</emulov></redro>\n"+
+		"<redro><lobmys>SUN</lobmys><DIreyub>indika</DIreyub><ecirp>14.56</ecirp><emulov>500</emulov></redro>\n"+
+		"<redro><lobmys>GOOG</lobmys><DIreyub>chathura</DIreyub><ecirp>60.24</ecirp><emulov>40000</emulov></redro>\n"+
+		"<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>\n"+
+		"<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>8030</emulov></redro>\n"+
+		"<redro><lobmys>SUN</lobmys><DIreyub>indika</DIreyub><ecirp>14.56</ecirp><emulov>500</emulov></redro>\n"+
+		"<redro><lobmys>GOOG</lobmys><DIreyub>chathura</DIreyub><ecirp>60.24</ecirp><emulov>40000</emulov></redro>\n"+
+		"<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>\n"+
+		"<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>8030</emulov></redro>\n"+
+		"<redro><lobmys>SUN</lobmys><DIreyub>indika</DIreyub><ecirp>14.56</ecirp><emulov>500</emulov></redro>\n"+
+		"<redro><lobmys>GOOG</lobmys><DIreyub>chathura</DIreyub><ecirp>60.24</ecirp><emulov>40000</emulov></redro>\n"+
+		"<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>\n"+
+		"<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>8030</emulov></redro>\n"+
+		"<redro><lobmys>SUN</lobmys><DIreyub>indika</DIreyub><ecirp>14.56</ecirp><emulov>500</emulov></redro>\n"+
+		"<redro><lobmys>GOOG</lobmys><DIreyub>chathura</DIreyub><ecirp>60.24</ecirp><emulov>40000</emulov></redro>\n"+
+		"<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>\n"+
+		"<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>8030</emulov></redro>\n"+
+		"<redro><lobmys>SUN</lobmys><DIreyub>indika</DIreyub><ecirp>14.56</ecirp><emulov>500</emulov></redro>\n"+
+		"<redro><lobmys>GOOG</lobmys><DIreyub>chathura</DIreyub><ecirp>60.24</ecirp><emulov>40000</emulov></redro>\n"+
+		"<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>\n"+
+		"<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>8030</emulov></redro>\n"+
+		"<redro><lobmys>SUN</lobmys><DIreyub>indika</DIreyub><ecirp>14.56</ecirp><emulov>500</emulov></redro>\n"+
+		"<redro><lobmys>GOOG</lobmys><DIreyub>chathura</DIreyub><ecirp>60.24</ecirp><emulov>40000</emulov></redro>\n"+
+		"<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>\n"+
+		"<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>8030</emulov></redro>\n"+
+		"<redro><lobmys>SUN</lobmys><DIreyub>indika</DIreyub><ecirp>14.56</ecirp><emulov>500</emulov></redro>\n"+
+		"<redro><lobmys>GOOG</lobmys><DIreyub>chathura</DIreyub><ecirp>60.24</ecirp><emulov>40000</emulov></redro>\n"+
+		"<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>\n"+
+		"<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>80300000000000000000000000000000000000</emulov></redro>\n"+
+		"<redro><lobmys>SUN</lobmys><DIreyub>indika</DIreyub><ecirp>14.56</ecirp><emulov>50000000000000000000000000000000000000</emulov></redro>\n"+
+		"</xsd:skcotSyub>\n"+
+		"</soapenv:Header>";
+	private static final String HEADER_5K_UNICA_RIGA =  HEADER_5K.replaceAll("\n", "").replace("    <!-- TEST -->", "");
+	
+	private static final String HEADER_WSA = "<soapenv:Header xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:wsa=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\">\n"+
+		"    <wsa:MessageID>\n"+
+		"      uuid:6B29FC40-CA47-1067-B31D-00DD010662DA\n"+
+		"    </wsa:MessageID>\n"+
+		"    <wsa:ReplyTo>\n"+
+		"      <wsa:Address>http://business456.example/client1</wsa:Address>\n"+
+		"    </wsa:ReplyTo>\n"+
+		"    <wsa:To>http://fabrikam123.example/Purchasing</wsa:To>\n"+
+		"    <wsa:Action>http://fabrikam123.example/SubmitPO</wsa:Action>\n"+
+		"   </soapenv:Header>";
+
+	private static final String HEADER_WSA_2 = "<soapenv:Header xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"+
+		"    <wsa:MessageID xmlns:wsa=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\">\n"+
+		"      uuid:6B29FC40-CA47-1067-B31D-00DD010662DA\n"+
+		"    </wsa:MessageID>\n"+
+		"    <wsa:ReplyTo xmlns:wsa=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\">\n"+
+		"      <wsa:Address>http://business456.example/client1</wsa:Address>\n"+
+		"    </wsa:ReplyTo>\n"+
+		"    <wsa:To xmlns:wsa=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\">http://fabrikam123.example/Purchasing</wsa:To>\n"+
+		"    <wsa:Action xmlns:wsa=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\">http://fabrikam123.example/SubmitPO</wsa:Action>\n"+
+		"   </soapenv:Header>";	
+	
+	private static final String HEADER_WSA_CDATA = "<soapenv:Header xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"+
+		"    <wsa:MessageID xmlns:wsa=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\">\n"+
+		"      uuid:6B29FC40-CA47-1067-B31D-00DD010662DA\n"+
+		"    </wsa:MessageID><![CDATA[\n"+
+		"<xsd:skcotSyub>\n"+
+		"<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>\n"+
+		"<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>8030</emulov></redro>\n"+
+		"\n"+
+		"</xsd:skcotSyub>]]>\n"+
+		"    <wsa:ReplyTo xmlns:wsa=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\">\n"+
+		"      <wsa:Address>http://business456.example/client1</wsa:Address>\n"+
+		"    </wsa:ReplyTo>\n"+
+		"    <wsa:To xmlns:wsa=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\">http://fabrikam123.example/Purchasing</wsa:To>\n"+
+		"    <wsa:Action xmlns:wsa=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\">http://fabrikam123.example/SubmitPO</wsa:Action><![CDATA[\n"+
+		"<xsd:skcotSyub>\n"+
+		"<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>\n"+
+		"<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>8030</emulov></redro>\n"+
+		"\n"+
+		"</xsd:skcotSyub>]]>\n"+
+		"   </soapenv:Header>";
+
+	private static final String HEADER_MIME = "<soapenv:Header xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:prova=\"http://prova.openspcoop2.org\">\n"+
+		"        <a:example1 xmlns:a=\"http://www.openspcoop2.org\" soapenv:actor=\"http://www.prova.it\" soapenv:mustUnderstand=\"0\">prova</a:example1>\n"+
+		"        <b:example2 xmlns:b=\"http://www.openspcoop2.org\" soapenv:actor=\"http://www.prova.it\" soapenv:mustUnderstand=\"0\">prova2</b:example2>\n"+
+		"        </soapenv:Header>";
+	
+	private static final String HEADER_XMLENTITY = "<soapenv:Header xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"+
+		"    <!-- TEST -->\n"+
+		"<xsd:skcotSyub xmlns:xsd=\"http://services.samples/xsd\">\n"+
+		"&lt;redro&gt;&lt;lobmys&gt;IBM&lt;/lobmys&gt;&lt;DIreyub&gt;asankha&lt;/DIreyub&gt;&lt;ecirp&gt;140.34&lt;/ecirp&gt;&lt;emulov&gt;2000&lt;/emulov&gt;&lt;/redro&gt;\n"+
+		"&lt;redro&gt;&lt;lobmys&gt;MSFT&lt;/lobmys&gt;&lt;DIreyub&gt;ruwan&lt;/DIreyub&gt;&lt;ecirp&gt;23.56&lt;/ecirp&gt;&lt;emulov&gt;8030&lt;/emulov&gt;&lt;/redro&gt;\n"+
+		"&lt;redro&gt;&lt;lobmys&gt;SUN&lt;/lobmys&gt;&lt;DIreyub&gt;indika&lt;/DIreyub&gt;&lt;ecirp&gt;14.56&lt;/ecirp&gt;&lt;emulov&gt;500&lt;/emulov&gt;&lt;/redro&gt;\n"+
+		"&lt;redro&gt;&lt;lobmys&gt;GOOG&lt;/lobmys&gt;&lt;DIreyub&gt;chathura&lt;/DIreyub&gt;&lt;ecirp&gt;60.24&lt;/ecirp&gt;&lt;emulov&gt;40000&lt;/emulov&gt;&lt;/redro&gt;\n"+
+		"&lt;redro&gt;&lt;lobmys&gt;IBM&lt;/lobmys&gt;&lt;DIreyub&gt;asankha&lt;/DIreyub&gt;&lt;ecirp&gt;140.34&lt;/ecirp&gt;&lt;emulov&gt;2000&lt;/emulov&gt;&lt;/redro&gt;\n"+
+		"&lt;redro&gt;&lt;lobmys&gt;MSFT&lt;/lobmys&gt;&lt;DIreyub&gt;ruwan&lt;/DIreyub&gt;&lt;ecirp&gt;23.56&lt;/ecirp&gt;&lt;emulov&gt;8030&lt;/emulov&gt;&lt;/redro&gt;\n"+
+		"&lt;redro&gt;&lt;lobmys&gt;SUN&lt;/lobmys&gt;&lt;DIreyub&gt;indika&lt;/DIreyub&gt;&lt;ecirp&gt;14.56&lt;/ecirp&gt;&lt;emulov&gt;500&lt;/emulov&gt;&lt;/redro&gt;\n"+
+		"&lt;redro&gt;&lt;lobmys&gt;GOOG&lt;/lobmys&gt;&lt;DIreyub&gt;chathura&lt;/DIreyub&gt;&lt;ecirp&gt;60.24&lt;/ecirp&gt;&lt;emulov&gt;40000&lt;/emulov&gt;&lt;/redro&gt;\n"+
+		"&lt;redro&gt;&lt;lobmys&gt;IBM&lt;/lobmys&gt;&lt;DIreyub&gt;asankha&lt;/DIreyub&gt;&lt;ecirp&gt;140.34&lt;/ecirp&gt;&lt;emulov&gt;2000&lt;/emulov&gt;&lt;/redro&gt;\n"+
+		"&lt;redro&gt;&lt;lobmys&gt;MSFT&lt;/lobmys&gt;&lt;DIreyub&gt;ruwan&lt;/DIreyub&gt;&lt;ecirp&gt;23.56&lt;/ecirp&gt;&lt;emulov&gt;8030&lt;/emulov&gt;&lt;/redro&gt;\n"+
+		"&lt;redro&gt;&lt;lobmys&gt;SUN&lt;/lobmys&gt;&lt;DIreyub&gt;indika&lt;/DIreyub&gt;&lt;ecirp&gt;14.56&lt;/ecirp&gt;&lt;emulov&gt;500&lt;/emulov&gt;&lt;/redro&gt;\n"+
+		"&lt;redro&gt;&lt;lobmys&gt;GOOG&lt;/lobmys&gt;&lt;DIreyub&gt;chathura&lt;/DIreyub&gt;&lt;ecirp&gt;60.24&lt;/ecirp&gt;&lt;emulov&gt;40000&lt;/emulov&gt;&lt;/redro&gt;\n"+
+		"&lt;redro&gt;&lt;lobmys&gt;IBM&lt;/lobmys&gt;&lt;DIreyub&gt;asankha&lt;/DIreyub&gt;&lt;ecirp&gt;140.34&lt;/ecirp&gt;&lt;emulov&gt;2000&lt;/emulov&gt;&lt;/redro&gt;\n"+
+		"&lt;redro&gt;&lt;lobmys&gt;MSFT&lt;/lobmys&gt;&lt;DIreyub&gt;ruwan&lt;/DIreyub&gt;&lt;ecirp&gt;23.56&lt;/ecirp&gt;&lt;emulov&gt;8030&lt;/emulov&gt;&lt;/redro&gt;\n"+
+		"&lt;redro&gt;&lt;lobmys&gt;SUN&lt;/lobmys&gt;&lt;DIreyub&gt;indika&lt;/DIreyub&gt;&lt;ecirp&gt;14.56&lt;/ecirp&gt;&lt;emulov&gt;500&lt;/emulov&gt;&lt;/redro&gt;\n"+
+		"&lt;redro&gt;&lt;lobmys&gt;GOOG&lt;/lobmys&gt;&lt;DIreyub&gt;chathura&lt;/DIreyub&gt;&lt;ecirp&gt;60.24&lt;/ecirp&gt;&lt;emulov&gt;40000&lt;/emulov&gt;&lt;/redro&gt;\n"+
+		"</xsd:skcotSyub>\n"+
+		"</soapenv:Header>";
+	
+	private static final String HEADER_CARATTERI_ACAPO_TAB = "<soapenv:Header xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns=\"AltroperTest\" xmlns:xsd=\"http://services.samples/xsd\" xmlns:xsd2=\"http://services.samples/xsd\">\n"+
+		"   <xsd:skcotSyub>\n"+
+		"<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>\n"+
+		"</xsd:skcotSyub>\n"+
+		"</soapenv:Header>";
+	
 	private static final QName ROOT_ELEMENT_SKCOT = new QName("http://services.samples/xsd", "skcotSyub");
 	private static final QName ROOT_ELEMENT_FAULT = new QName("http://services.samples/xsd", "Fault");
 	private static final QName ROOT_ELEMENT_BODY_NOPOLICY = new QName("http://services.samples/xsd", "BodyNoPolicy");
 	private static final QName ROOT_ELEMENT_BODY_EXACT = new QName("http://services.samples/xsd", "Body");
-	private static final String HEADER_NOPOLICY = "<soap:Header xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><ns2:HeaderNoPolicy xmlns:ns2=\"http://services.samples/xsd\"><xsd:skcotSyub xmlns:xsd=\"http://services.samples/xsd\"/></ns2:HeaderNoPolicy></soap:Header>";
-	private static final String HEADER_EXACT = "<soap:Header xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><ns2:Header xmlns:ns2=\"http://services.samples/xsd\"><xsd:skcotSyub xmlns:xsd=\"http://services.samples/xsd\"/></ns2:Header></soap:Header>";
-	private static final String HEADER_SENZA_COMMENTI = "<soapenv:Header xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><xsd:skcotSyub xmlns:xsd=\"http://services.samples/xsd\"><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro><redro><lobmys/><DIreyub/><ecirp/><emulov/></redro></xsd:skcotSyub></soapenv:Header>";	
+	
+	private static final String HEADER_NOPOLICY = "<soap:Header xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"+
+		"		        <ns2:HeaderNoPolicy xmlns:ns2=\"http://services.samples/xsd\">\n"+
+		"		        	<xsd:skcotSyub xmlns:xsd=\"http://services.samples/xsd\"/>\n"+
+		"                </ns2:HeaderNoPolicy>\n"+
+		"		</soap:Header>";
+	
+	private static final String HEADER_EXACT = "<soap:Header xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"+
+	    "		        <ns2:Header xmlns:ns2=\"http://services.samples/xsd\">\n"+
+	    "		        	<xsd:skcotSyub xmlns:xsd=\"http://services.samples/xsd\"/>\n"+
+	    "                </ns2:Header>\n"+
+		"		</soap:Header>";
+	
+	private static final String HEADER_VARI_COMMENTI = "<soapenv:Header xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"+
+		"   \n"+
+		"   <!-- Commento Iniziale -->\n"+
+		"\n"+
+		"<!--\n"+
+		"     <jejdkeke> Commento Iniziale \n"+
+		"     \n"+
+		"     dz<de>>>>>deded de\n"+
+		"     de- de-de d\n"+
+		"     -->\n"+
+		"   \n"+
+		"   \n"+
+		"    <!-- TEST -->\n"+
+		"<xsd:skcotSyub xmlns:xsd=\"http://services.samples/xsd\">\n"+
+		"<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>\n"+
+		"\n"+
+		"<!-- Commento Iniziale -->\n"+
+		"\n"+
+		"<!--\n"+
+		"     <jejdkeke> Commento Iniziale \n"+
+		"     \n"+
+		"     dz<de>>>>>deded de\n"+
+		"     de- de-de d\n"+
+		"     -->\n"+
+		"\n"+
+		"\n"+
+		"<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>8030</emulov></redro>\n"+
+		"\n"+
+		"\n"+
+		"<!-- Commento Iniziale -->\n"+
+		"\n"+
+		"<!--\n"+
+		"     <jejdkeke> Commento Iniziale \n"+
+		"     \n"+
+		"     dz<de>>>>>deded de\n"+
+		"     de- de-de d\n"+
+		"     -->\n"+
+		"\n"+
+		"\n"+
+		"</xsd:skcotSyub>\n"+
+		"\n"+
+		"<!-- Commento Iniziale -->\n"+
+		"\n"+
+		"<!--\n"+
+		"     <jejdkeke> Commento Iniziale \n"+
+		"     \n"+
+		"     dz<de>>>>>deded de\n"+
+		"     de- de-de d\n"+
+		"     -->\n"+
+		"\n"+
+		"\n"+
+		"</soapenv:Header>";
+	
+	private static final String HEADER_SOAP_VUOTO = "<soapenv:Header xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"+
+		"</soapenv:Header>";
+
+	private static final String HEADER_SOAP_VUOTO_CON_COMMENTI = "<soapenv:Header xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><!--  Qualche commento -->\n"+
+		"<!--  ulteriore -->\n"+
+		"</soapenv:Header>";
+	
+	private static final String HEADER_SOAP_VUOTO_CON_CDATA = "<soapenv:Header xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"+
+		"    <!-- TEST -->\n"+
+		"<![CDATA[<xsd:skcotSyub>\n"+
+		"<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>\n"+
+		"<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>8030</emulov></redro>\n"+
+		"<redro><lobmys>SUN</lobmys><DIreyub>indika</DIreyub><ecirp>14.56</ecirp><emulov>500</emulov></redro>\n"+
+		"<redro><lobmys>GOOG</lobmys><DIreyub>chathura</DIreyub><ecirp>60.24</ecirp><emulov>40000</emulov></redro>\n"+
+		"<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>\n"+
+		"<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>8030</emulov></redro>\n"+
+		"<redro><lobmys>SUN</lobmys><DIreyub>indika</DIreyub><ecirp>14.56</ecirp><emulov>500</emulov></redro>\n"+
+		"<redro><lobmys>GOOG</lobmys><DIreyub>chathura</DIreyub><ecirp>60.24</ecirp><emulov>40000</emulov></redro>\n"+
+		"<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>\n"+
+		"<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>8030</emulov></redro>\n"+
+		"<redro><lobmys>SUN</lobmys><DIreyub>indika</DIreyub><ecirp>14.56</ecirp><emulov>500</emulov></redro>\n"+
+		"<redro><lobmys>GOOG</lobmys><DIreyub>chathura</DIreyub><ecirp>60.24</ecirp><emulov>40000</emulov></redro>\n"+
+		"<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>\n"+
+		"<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>8030</emulov></redro>\n"+
+		"<redro><lobmys>SUN</lobmys><DIreyub>indika</DIreyub><ecirp>14.56</ecirp><emulov>500</emulov></redro>\n"+
+		"<redro><lobmys>GOOG</lobmys><DIreyub>chathura</DIreyub><ecirp>60.24</ecirp><emulov>40000</emulov></redro>\n"+
+		"<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>\n"+
+		"<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>8030</emulov></redro>\n"+
+		"<redro><lobmys>SUN</lobmys><DIreyub>indika</DIreyub><ecirp>14.56</ecirp><emulov>500</emulov></redro>\n"+
+		"<redro><lobmys>GOOG</lobmys><DIreyub>chathura</DIreyub><ecirp>60.24</ecirp><emulov>40000</emulov></redro>\n"+
+		"<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>\n"+
+		"<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>8030</emulov></redro>\n"+
+		"<redro><lobmys>SUN</lobmys><DIreyub>indika</DIreyub><ecirp>14.56</ecirp><emulov>500</emulov></redro>\n"+
+		"<redro><lobmys>GOOG</lobmys><DIreyub>chathura</DIreyub><ecirp>60.24</ecirp><emulov>40000</emulov></redro>\n"+
+		"<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>\n"+
+		"<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>8030</emulov></redro>\n"+
+		"<redro><lobmys>SUN</lobmys><DIreyub>indika</DIreyub><ecirp>14.56</ecirp><emulov>500</emulov></redro>\n"+
+		"<redro><lobmys>GOOG</lobmys><DIreyub>chathura</DIreyub><ecirp>60.24</ecirp><emulov>40000</emulov></redro>\n"+
+		"<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>\n"+
+		"<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>8030</emulov></redro>\n"+
+		"<redro><lobmys>SUN</lobmys><DIreyub>indika</DIreyub><ecirp>14.56</ecirp><emulov>500</emulov></redro>\n"+
+		"<redro><lobmys>GOOG</lobmys><DIreyub>chathura</DIreyub><ecirp>60.24</ecirp><emulov>40000</emulov></redro>\n"+
+		"<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>\n"+
+		"<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>8030</emulov></redro>\n"+
+		"<redro><lobmys>SUN</lobmys><DIreyub>indika</DIreyub><ecirp>14.56</ecirp><emulov>500</emulov></redro>\n"+
+		"\n"+
+		"</xsd:skcotSyub>]]>\n"+
+		"</soapenv:Header>";
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -101,6 +320,16 @@ public class TestReader {
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_NON_ATTESO);
 		
+		System.out.println("\n\n*** TEST SOAP 11 da 5K (unica riga) (buffer 1k) ***");
+		test("request5K_unicaRiga_soap11.xml", contentTypeSoap11, 1, expectedFullBuffer, 1024,
+				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_NON_ATTESO);
+		
+		System.out.println("\n\n*** TEST SOAP 12 da 5K (unica riga) (buffer 1k) ***");
+		test("request5K_unicaRiga_soap12.xml", contentTypeSoap12, 1, false, 1024,
+				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_NON_ATTESO);
+		
 		
 		System.out.println("\n\n*** TEST SOAP 11 con Header 5K (buffer 1k) ***");
 		test("requestHeader5K_soap11.xml", contentTypeSoap11, 1, expectedFullBuffer, 1024,
@@ -121,6 +350,26 @@ public class TestReader {
 		test("requestHeader5K_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 5405,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT,	HEADER_5K);
+		
+		System.out.println("\n\n*** TEST SOAP 11 con Header 5K (unica riga) (buffer 1k) ***");
+		test("requestHeader5K_unicaRiga_soap11.xml", contentTypeSoap11, 1, expectedFullBuffer, 1024,
+				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
+		
+		System.out.println("\n\n*** TEST SOAP 12 con Header 5K (unica riga) (buffer 1k) ***");
+		test("requestHeader5K_unicaRiga_soap12.xml", contentTypeSoap12, 1, expectedFullBuffer, 1024,
+				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso,
+				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
+		
+		System.out.println("\n\n*** TEST SOAP 11 con Header 5K (unica riga) (buffer "+buffer_dimensione_default+"k) ***");
+		test("requestHeader5K_unicaRiga_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 5120,
+				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_SKCOT,	HEADER_5K_UNICA_RIGA);
+		
+		System.out.println("\n\n*** TEST SOAP 12 con Header 5K (unica riga) (buffer "+buffer_dimensione_default+"k) ***");
+		test("requestHeader5K_unicaRiga_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 5120,
+				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_SKCOT,	HEADER_5K_UNICA_RIGA);
 
 		
 		System.out.println("\n\n*** TEST SOAP 11 con Header 5K e Body 5K (buffer 1k) ***");
@@ -143,6 +392,26 @@ public class TestReader {
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT, HEADER_5K);
 		
+		System.out.println("\n\n*** TEST SOAP 11 con Header 5K e Body 5K (unica riga) (buffer 1k) ***");
+		test("requestHeader5KBody5K_unicaRiga_soap11.xml", contentTypeSoap11, 1, expectedFullBuffer, 1024,
+				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
+		
+		System.out.println("\n\n*** TEST SOAP 12 con Header 5K e Body 5K (unica riga) (buffer 1k) ***");
+		test("requestHeader5KBody5K_unicaRiga_soap12.xml", contentTypeSoap12, 1, expectedFullBuffer, 1024,
+				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
+		
+		System.out.println("\n\n*** TEST SOAP 11 con Header 5K e Body 5K (unica riga) (buffer "+buffer_dimensione_default+"k) ***");
+		test("requestHeader5KBody5K_unicaRiga_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 5120,
+				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_SKCOT, HEADER_5K_UNICA_RIGA);
+		
+		System.out.println("\n\n*** TEST SOAP 12 con Header 5K e Body 5K (unica riga) (buffer "+buffer_dimensione_default+"k) ***");
+		test("requestHeader5KBody5K_unicaRiga_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 5120,
+				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_SKCOT, HEADER_5K_UNICA_RIGA);
+		
 		
 		System.out.println("\n\n*** TEST SOAP 11 con prefisso SOAP vuoto (buffer 1k) ***");
 		test("requestSoapPrefixEmpty_soap11.xml", contentTypeSoap11, 1, expectedFullBuffer, 1024,
@@ -157,12 +426,12 @@ public class TestReader {
 		System.out.println("\n\n*** TEST SOAP 11 con prefisso SOAP vuoto e Header (buffer 1k) ***");
 		test("requestSoapPrefixEmptyWithHeader_soap11.xml", contentTypeSoap11, 1, expectedFullBuffer, 1024,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
-				ROOT_ELEMENT_SKCOT,	HEADER_WSA.replaceAll("soapenv", "SOAP-ENV"));
+				ROOT_ELEMENT_SKCOT,	HEADER_WSA.replaceAll("soapenv:", "").replaceAll(":soapenv", ""));
 		
 		System.out.println("\n\n*** TEST SOAP 12 con prefisso SOAP vuoto e Header (buffer 1k) ***");
 		test("requestSoapPrefixEmptyWithHeader_soap12.xml", contentTypeSoap12, 1, expectedFullBuffer, 1024,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
-				ROOT_ELEMENT_SKCOT,	HEADER_WSA.replaceAll("soapenv", "env"));
+				ROOT_ELEMENT_SKCOT,	HEADER_WSA.replaceAll("soapenv:", "").replaceAll(":soapenv", ""));
 		
 		
 		System.out.println("\n\n*** TEST SOAP 11 con prefissi SOAP vari con Header (buffer "+buffer_dimensione_default+"k) ***");
@@ -173,19 +442,19 @@ public class TestReader {
 		System.out.println("\n\n*** TEST SOAP 12 con prefissi SOAP vari con Header (buffer "+buffer_dimensione_default+"k) ***");
 		test("requestMixedPrefix_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 1024,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
-				ROOT_ELEMENT_SKCOT,	HEADER_WSA_2.replaceAll("soapenv", "env"));
+				ROOT_ELEMENT_SKCOT,	HEADER_WSA_2.replaceAll("soapenv:", "").replaceAll(":soapenv", ""));
 		
 		
 		
 		System.out.println("\n\n*** TEST SOAP 11 tutto su una riga con soap body vuoto (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestSuUnaRigaSoapBodyVuoto_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 4115,
+		test("requestSuUnaRigaSoapBodyVuoto_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 5086,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, isBodyEmptyAtteso, !isFaultAtteso,
-				ROOT_ELEMENT_NON_ATTESO, HEADER_5K);
+				ROOT_ELEMENT_NON_ATTESO, HEADER_5K_UNICA_RIGA);
 		
 		System.out.println("\n\n*** TEST SOAP 12 tutto su una riga con soap body vuoto (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestSuUnaRigaSoapBodyVuoto_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 4113,
+		test("requestSuUnaRigaSoapBodyVuoto_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 5084,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, isBodyEmptyAtteso, !isFaultAtteso,
-				ROOT_ELEMENT_NON_ATTESO, HEADER_5K);
+				ROOT_ELEMENT_NON_ATTESO, HEADER_5K_UNICA_RIGA);
 		
 		System.out.println("\n\n*** TEST SOAP 11 soap body vuoto (caso1) (buffer "+buffer_dimensione_default+"k) ***");
 		test("requestEmpty1_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 151,
@@ -231,12 +500,12 @@ public class TestReader {
 		System.out.println("\n\n*** TEST SOAP 11 con request short con header vuoto (caso1) (buffer "+buffer_dimensione_default+"k) ***");
 		test("requestShortHeaderEmpty1_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 337,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
-				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_NON_ATTESO);
+				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_VUOTO);
 		
 		System.out.println("\n\n*** TEST SOAP 12 con request short con header vuoto (caso1) (buffer "+buffer_dimensione_default+"k) ***");
 		test("requestShortHeaderEmpty1_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 335,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
-				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_NON_ATTESO);
+				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_VUOTO);
 		
 		System.out.println("\n\n*** TEST SOAP 11 con request short con header vuoto (caso2) (buffer "+buffer_dimensione_default+"k) ***");
 		test("requestShortHeaderEmpty2_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 318,
@@ -251,12 +520,12 @@ public class TestReader {
 		System.out.println("\n\n*** TEST SOAP 11 con request short con header vuoto (caso3) (buffer "+buffer_dimensione_default+"k) ***");
 		test("requestShortHeaderEmpty3_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 383,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
-				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_NON_ATTESO);
+				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_VUOTO_CON_COMMENTI);
 		
 		System.out.println("\n\n*** TEST SOAP 12 con request short con header vuoto (caso3) (buffer "+buffer_dimensione_default+"k) ***");
 		test("requestShortHeaderEmpty3_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 381,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
-				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_NON_ATTESO);
+				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_VUOTO_CON_COMMENTI);
 		
 		
 		
@@ -272,12 +541,12 @@ public class TestReader {
 				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 11 soapFault con soap prefix empty (buffer "+buffer_dimensione_default+"k) ***");
-		test("soapFault_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 812,
+		test("soapFaultSoapPrefixEmpty_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 776,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, isFaultAtteso,
 				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SOAP 12 soapFault con soap prefix empty (buffer "+buffer_dimensione_default+"k) ***");
-		test("soapFault_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 1024,
+		test("soapFaultSoapPrefixEmpty_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 950,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, isFaultAtteso,
 				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
 		
@@ -314,24 +583,24 @@ public class TestReader {
 		
 		
 		System.out.println("\n\n*** TEST SOAP 11 CDATA (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestAllCDATAHeaderBodyEmpty_soap11.xml", contentTypeSoap11WithAttachments, buffer_dimensione_default, expectedFullBuffer, 7633,
+		test("requestAllCDATAHeaderBodyEmpty_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 7633,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, isBodyEmptyAtteso, !isFaultAtteso, 
-				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
+				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_VUOTO_CON_CDATA);
 		
 		System.out.println("\n\n*** TEST SOAP 12 CDATA (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestAllCDATAHeaderBodyEmpty_soap12.xml", contentTypeSoap12WithAttachments, buffer_dimensione_default, expectedFullBuffer, 7631,
+		test("requestAllCDATAHeaderBodyEmpty_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 7631,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, isBodyEmptyAtteso, !isFaultAtteso, 
-				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_NON_ATTESO);
+				ROOT_ELEMENT_NON_ATTESO, HEADER_SOAP_VUOTO_CON_CDATA);
 		
 		System.out.println("\n\n*** TEST SOAP 11 con prefissi SOAP vari con Header e CDATA (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestMixedPrefixAndCDATA_soap11.xml", contentTypeSoap11WithAttachments, buffer_dimensione_default, expectedFullBuffer, 2048,
+		test("requestMixedPrefixAndCDATA_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 2048,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
-				ROOT_ELEMENT_SKCOT,	HEADER_WSA_2.replaceAll("soapenv", "hdr"));
+				ROOT_ELEMENT_SKCOT,	HEADER_WSA_CDATA.replaceAll("soapenv", "hdr"));
 		
 		System.out.println("\n\n*** TEST SOAP 12 con prefissi SOAP vari con Header e CDATA (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestMixedPrefixAndCDATA_soap12.xml", contentTypeSoap12WithAttachments, buffer_dimensione_default, expectedFullBuffer, 2048,
+		test("requestMixedPrefixAndCDATA_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 2048,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
-				ROOT_ELEMENT_SKCOT,	HEADER_WSA_2.replaceAll("soapenv", "env"));
+				ROOT_ELEMENT_SKCOT,	HEADER_WSA_CDATA.replaceAll("soapenv:", "").replaceAll(":soapenv", ""));
 
 		
 		
@@ -404,7 +673,7 @@ public class TestReader {
 				ROOT_ELEMENT_NON_ATTESO, HEADER_MIME);
 		
 		System.out.println("\n\n*** TEST SOAP 12 con attachments (bodyEmpty) (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestSOAPMultipartRelatedMIMEbodyEmpty_soap12.bin", contentTypeSoap12WithAttachments, buffer_dimensione_default, expectedFullBuffer, 1923,
+		test("requestSOAPMultipartRelatedMIMEbodyEmpty_soap12.bin", contentTypeSoap12WithAttachments, buffer_dimensione_default, expectedFullBuffer, 1935,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_NON_ATTESO, HEADER_MIME);
 
@@ -541,7 +810,7 @@ public class TestReader {
 				ROOT_ELEMENT_BODY_NOPOLICY, HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SPECIAL CASE SOAP 12 con BodyChildName (buffer 1k) ***");
-		test("requestFirstChildNameBody_soap12.xml", contentTypeSoap11, 1, expectedFullBuffer, 238,
+		test("requestFirstChildNameBody_soap12.xml", contentTypeSoap12, 1, expectedFullBuffer, 238,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_BODY_NOPOLICY, HEADER_SOAP_NON_ATTESO);
 		
@@ -551,7 +820,7 @@ public class TestReader {
 				ROOT_ELEMENT_BODY_EXACT, HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST SPECIAL CASE SOAP 12 con BodyChildNameExact (buffer 1k) ***");
-		test("requestFirstChildNameExactBody_soap12.xml", contentTypeSoap11, 1, expectedFullBuffer, 222,
+		test("requestFirstChildNameExactBody_soap12.xml", contentTypeSoap12, 1, expectedFullBuffer, 222,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_BODY_EXACT, HEADER_SOAP_NON_ATTESO);
 		
@@ -561,7 +830,7 @@ public class TestReader {
 				ROOT_ELEMENT_SKCOT, HEADER_NOPOLICY);
 		
 		System.out.println("\n\n*** TEST SPECIAL CASE SOAP 12 con HeaderChildName (buffer 1k) ***");
-		test("requestFirstChildNameHeader_soap12.xml", contentTypeSoap11, 1, expectedFullBuffer, 442,
+		test("requestFirstChildNameHeader_soap12.xml", contentTypeSoap12, 1, expectedFullBuffer, 442,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT, HEADER_NOPOLICY);
 		
@@ -571,24 +840,19 @@ public class TestReader {
 				ROOT_ELEMENT_SKCOT, HEADER_EXACT);
 		
 		System.out.println("\n\n*** TEST SPECIAL CASE SOAP 12 con HeaderChildNameExact (buffer 1k) ***");
-		test("requestFirstChildNameExactHeader_soap12.xml", contentTypeSoap11, 1, expectedFullBuffer, 426,
+		test("requestFirstChildNameExactHeader_soap12.xml", contentTypeSoap12, 1, expectedFullBuffer, 426,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT, HEADER_EXACT);
 		
-		System.out.println("\n\n*** TEST SPECIAL CASE SOAP 11 con HeaderChildNameExact (buffer 1k) ***");
-		test("requestFirstChildNameExactHeader_soap11.xml", contentTypeSoap11, 1, expectedFullBuffer, 428,
-				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
-				ROOT_ELEMENT_SKCOT, HEADER_EXACT);
 		
 		
-		
-		System.out.println("\n\n*** TEST SPECIAL CASE SOAP 12 con XmlDeclaration a capo (buffer 1k) ***");
+		System.out.println("\n\n*** TEST SPECIAL CASE SOAP 11 con XmlDeclaration a capo (buffer 1k) ***");
 		test("requestXmlDeclarationACapo_soap11.xml", contentTypeSoap11, 1, expectedFullBuffer, 485,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT, HEADER_EXACT);
 		
 		System.out.println("\n\n*** TEST SPECIAL CASE SOAP 12 con XmlDeclaration a capo (buffer 1k) ***");
-		test("requestXmlDeclarationACapo_soap12.xml", contentTypeSoap11, 1, expectedFullBuffer, 483,
+		test("requestXmlDeclarationACapo_soap12.xml", contentTypeSoap12, 1, expectedFullBuffer, 483,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT, HEADER_EXACT);
 		
@@ -600,7 +864,7 @@ public class TestReader {
 				ROOT_ELEMENT_SKCOT, HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST DichiarazioneCommentata SOAP11 , e messaggio SOAP 12 (buffer 1k) ***");
-		test("requestSoap11Commentata_soap12.xml", contentTypeSoap11, 1, expectedFullBuffer, 314,
+		test("requestSoap11Commentata_soap12.xml", contentTypeSoap12, 1, expectedFullBuffer, 314,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT, HEADER_SOAP_NON_ATTESO);
 		
@@ -610,7 +874,7 @@ public class TestReader {
 				ROOT_ELEMENT_SKCOT, HEADER_SOAP_NON_ATTESO);
 		
 		System.out.println("\n\n*** TEST DichiarazioneCommentata SOAP11 (ACapo) , e messaggio SOAP 12 (buffer 1k) ***");
-		test("requestSoap11CommentataACapo_soap12.xml", contentTypeSoap11, 1, expectedFullBuffer, 327,
+		test("requestSoap11CommentataACapo_soap12.xml", contentTypeSoap12, 1, expectedFullBuffer, 327,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT, HEADER_SOAP_NON_ATTESO);
 	
@@ -619,12 +883,12 @@ public class TestReader {
 		System.out.println("\n\n*** TEST SOAP11 con vari commenti (buffer "+buffer_dimensione_default+"k) ***");
 		test("requestHeaderBodyVariCommenti_soap11.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 2048,
 				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
-				ROOT_ELEMENT_SKCOT, HEADER_SENZA_COMMENTI);
+				ROOT_ELEMENT_SKCOT, HEADER_VARI_COMMENTI);
 		
 		System.out.println("\n\n*** TEST SOAP12 con vari commenti (buffer "+buffer_dimensione_default+"k) ***");
-		test("requestHeaderBodyVariCommenti_soap12.xml", contentTypeSoap11, buffer_dimensione_default, expectedFullBuffer, 2048,
+		test("requestHeaderBodyVariCommenti_soap12.xml", contentTypeSoap12, buffer_dimensione_default, expectedFullBuffer, 2048,
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
-				ROOT_ELEMENT_SKCOT, HEADER_SENZA_COMMENTI);
+				ROOT_ELEMENT_SKCOT, HEADER_VARI_COMMENTI);
 				
 		System.out.println("\n\nTestsuite completata con successo");
 	}

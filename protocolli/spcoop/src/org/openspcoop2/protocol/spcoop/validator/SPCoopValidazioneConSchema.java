@@ -283,12 +283,14 @@ public class SPCoopValidazioneConSchema extends BasicStateComponentFactory imple
 
 		// Validazione ManifestAttachments
 		SOAPBody soapBody = null;
-		try{
-			soapBody = message.castAsSoap().getSOAPBody();
-		}catch(Exception e){
-			throw new ProtocolException(e.getMessage(),e);
+		if(validazioneManifestAttachments && isMessaggioConAttachments) {
+			try{
+				soapBody = message.castAsSoap().getSOAPBody();
+			}catch(Exception e){
+				throw new ProtocolException(e.getMessage(),e);
+			}
 		}
-		if(soapBody!=null && isMessaggioConAttachments && validazioneManifestAttachments){
+		if(soapBody!=null){
 			try {	
 				// Validazione
 				
