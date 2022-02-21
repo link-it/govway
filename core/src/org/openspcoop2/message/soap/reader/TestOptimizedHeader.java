@@ -485,7 +485,8 @@ public class TestOptimizedHeader {
 			else {
 				dimensioni.add(50);
 				dimensioni.add(500);
-				dimensioni.add(5000);
+				// su jenkins va in out of memory per via delle risorse limitate
+				//dimensioni.add(5000);
 			}
 			
 			for (Integer dimensione : dimensioni) {
