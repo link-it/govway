@@ -1460,10 +1460,9 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 		if(this.criteriAckDialogInfo == null) {
 			// TODO Poli
 			
-			this.criteriAckDialogInfo = new DialogInfo();
-			this.criteriAckDialogInfo.setTitolo(MessageManager.getInstance().getMessage(AllarmiCostanti.CRITERI_ACKNOWLEDGE_LABEL_KEY));
+			this.criteriAckDialogInfo = new DialogInfo(MessageManager.getInstance().getMessage(AllarmiCostanti.CRITERI_ACKNOWLEDGE_LABEL_KEY));
 //			this.criteriAckDialogInfo.setContenuto(this.getModificaCriteriAck());
-			this.criteriAckDialogInfo.setContenuto("<p><span>Espressione da applicare sul messaggio di richiesta; se si ha un match la regola di trasformazione verrà utilizzata.<br>I tipi di espressione utilizzabili sono:</span><br></p><ul><li><b>XPath</b>: utilizzabile con messaggi XML</li><li><b>JSONPath</b>: utilizzabile con messaggi JSON</li></ul><p></p>");
+			this.criteriAckDialogInfo.setBody("<p><span>Espressione da applicare sul messaggio di richiesta; se si ha un match la regola di trasformazione verrà utilizzata.<br>I tipi di espressione utilizzabili sono:</span><br></p><ul><li><b>XPath</b>: utilizzabile con messaggi XML</li><li><b>JSONPath</b>: utilizzabile con messaggi JSON</li></ul><p></p>");
 		}
 		
 		return this.criteriAckDialogInfo;

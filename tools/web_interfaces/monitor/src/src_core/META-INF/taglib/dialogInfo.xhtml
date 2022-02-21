@@ -20,11 +20,11 @@
 	</c:if>
 
 	<c:if test="#{empty titolo}">
-		<c:set var="titolo" value="#{dialogInfo.titolo}" />
+		<c:set var="titolo" value="#{dialogInfo.headerFinestraModale}" />
 	</c:if>
 
 	<c:if test="#{empty contenuto}">
-		<c:set var="contenuto" value="#{dialogInfo.contenuto}" />
+		<c:set var="contenuto" value="#{dialogInfo.body}" />
 	</c:if>
 	
 	<c:if test="#{empty moveable}">

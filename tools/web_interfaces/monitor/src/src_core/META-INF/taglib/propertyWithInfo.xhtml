@@ -12,9 +12,6 @@
 	<c:if test="#{empty noteEscape}">
 	 	<c:set var="noteEscape" value="true"/>
 	</c:if>
-	<c:if test="#{empty iconInfoBoxName}">
-	 	<c:set var="iconInfoBoxName" value="info_outline"/>
-	</c:if>
 	<c:if test="#{empty id}">
 		<c:set var="id" value="propWithInfo" />
 	</c:if>
@@ -39,21 +36,23 @@
 			</c:if>	
 			<div class="boxInfoDiv">
 				<ui:insert/>
-				<div class="iconInfoBox" id="#{id}_divIconInfo">
-			      	<span class="spanIconInfoBox" id="#{id}_spanIconInfo">
-						<i class="material-icons md-24" id="#{id}_icon">#{iconInfoBoxName}</i>
-					</span>
-					<script>
-						jQuery(document).ready(function() {
-							jQuery("##{id}_spanIconInfo").click(function(){
-								var body = jQuery("##{id}_dialogInfo_hiddenBody").val();
-								jQuery("##{id}_dialogInfo_ModalBody").html(body);
-								Richfaces.showModalPanel('#{id}_dialogInfo_Modal');
-			    			});
-						 });
-					</script>
-					<link:dialogInfo id="#{id}_dialogInfo" dialogInfo="#{dialogInfo}" />
-				</div>
+				<c:if test="#{not empty dialogInfo}">
+					<div class="iconInfoBox" id="#{id}_divIconInfo">
+				      	<span class="spanIconInfoBox" id="#{id}_spanIconInfo">
+							<i class="material-icons md-24" id="#{id}_icon">#{dialogInfo.buttonIcon}</i>
+						</span>
+						<script>
+							jQuery(document).ready(function() {
+								jQuery("##{id}_spanIconInfo").click(function(){
+									var body = jQuery("##{id}_dialogInfo_hiddenBody").val();
+									jQuery("##{id}_dialogInfo_ModalBody").html(body);
+									Richfaces.showModalPanel('#{id}_dialogInfo_Modal');
+				    			});
+							 });
+						</script>
+						<link:dialogInfo id="#{id}_dialogInfo" dialogInfo="#{dialogInfo}" />
+					</div>
+				</c:if>
 			</div>
 			<c:if test="#{not empty note}">
 				<p class="note">
