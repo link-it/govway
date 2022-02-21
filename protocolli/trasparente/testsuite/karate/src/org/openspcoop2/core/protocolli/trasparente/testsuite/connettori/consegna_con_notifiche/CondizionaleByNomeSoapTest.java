@@ -52,6 +52,7 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 /**
  * 
  * @author Francesco Scarlato
+ * TODO: Qui non uso mai il soapFault, mettenerne qualcuno.
  * 
  * QUERY:
  * TestContenuto: //Filtro/text()

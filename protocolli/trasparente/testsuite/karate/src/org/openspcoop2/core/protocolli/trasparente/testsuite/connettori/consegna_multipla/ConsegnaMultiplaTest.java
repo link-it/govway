@@ -29,6 +29,7 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_COMPLETATA;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_FALLITA;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_IN_CORSO;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_OK;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.buildRequestAndExpectations;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkSchedulingConnettoreCompletato;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkStatoConsegna;
@@ -49,6 +50,7 @@ import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.RequestBuilder;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectations.TipoFault;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
@@ -117,21 +119,23 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		
 		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
 		
+		String fault = "";
+		String formatoFault = "";
 		for (var response : responses) {
 			// Sul connettore disabilitato non è avvenuto nulla ancora.
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(response, Common.CONNETTORE_1);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_0);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_2);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_3);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_0, ESITO_OK, fault, formatoFault);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_2, ESITO_OK, fault, formatoFault);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_3, ESITO_OK, fault, formatoFault);
 			CommonConsegnaMultipla.checkStatoConsegna(response, ESITO_CONSEGNA_MULTIPLA_IN_CORSO,  1);
 		}
 		
 		for (var response : responses2) {
 			// Sul connettore disabilitato non è avvenuto nulla ancora.
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(response, Common.CONNETTORE_1);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_0);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_2);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_3);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_0, ESITO_OK, fault, formatoFault);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_2, ESITO_OK, fault, formatoFault);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_3, ESITO_OK, fault, formatoFault);
 			CommonConsegnaMultipla.checkStatoConsegna(response, ESITO_CONSEGNA_MULTIPLA_IN_CORSO,  1);
 		}
 				
@@ -141,18 +145,18 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
 		
 		for (var response : responses) {
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_1);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_0);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_2);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_3);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_1, ESITO_OK, fault, formatoFault);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_0, ESITO_OK, fault, formatoFault);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_2, ESITO_OK, fault, formatoFault);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_3, ESITO_OK, fault, formatoFault);
 			CommonConsegnaMultipla.checkConsegnaCompletata(response);
 		}
 		
 		for (var response : responses2) {
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_1);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_0);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_2);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_3);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_1, ESITO_OK, fault, formatoFault);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_0, ESITO_OK, fault, formatoFault);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_2, ESITO_OK, fault, formatoFault);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_3, ESITO_OK, fault, formatoFault);
 			CommonConsegnaMultipla.checkConsegnaCompletata(response);
 		}
 		
@@ -193,13 +197,15 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 
 		// Per i connettori di tipo file, controllo anche che la scrittura della richiesta di consegna multipla sia avvenuta.
 		Set<String> connettoriFile = Set.of(CONNETTORE_2, CONNETTORE_3);
+		String fault = "";
+		String formatoFault = "";
 		for (var response : responses) {
 			CommonConsegnaMultipla.checkConsegnaConnettoreFile(request1, response, connettoriFile);
-			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(response,  Common.setConnettoriAbilitati);
+			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(response,  Common.setConnettoriAbilitati, ESITO_OK, fault, formatoFault);
 		}
 		for (var response : responses2) {
 			CommonConsegnaMultipla.checkConsegnaConnettoreFile(request2, response, connettoriFile);
-			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(response,  Common.setConnettoriAbilitati);
+			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(response,  Common.setConnettoriAbilitati, ESITO_OK, fault, formatoFault);
 		}
 	}
 	
@@ -226,22 +232,32 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 			
 			HttpRequest request5xx = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", soapContentType );
 			request5xx.setUrl(request5xx.getUrl()+"&returnCode=" + (500+i));
-			requestsByKind.add(new RequestAndExpectations(request5xx, connettoriSuccessoRequest, connettoriFallimentoRequest, ESITO_CONSEGNA_MULTIPLA_IN_CORSO));
+			requestsByKind.add(new RequestAndExpectations(request5xx, connettoriSuccessoRequest, connettoriFallimentoRequest, ESITO_CONSEGNA_MULTIPLA_IN_CORSO, 500+i));
 			
-			HttpRequest request2xx = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", soapContentType );
+		/*TODO: Decommenta dopo osservazioni di andrea	
+		 * HttpRequest request2xx = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", soapContentType );
 			request2xx.setUrl(request2xx.getUrl()+"&returnCode=" + (200+i));
-			requestsByKind.add(new RequestAndExpectations(request2xx, Common.setConnettoriAbilitati, Set.of(), ESITO_CONSEGNA_MULTIPLA_COMPLETATA ));
+			requestsByKind.add(new RequestAndExpectations(request2xx, Common.setConnettoriAbilitati, Set.of(), ESITO_CONSEGNA_MULTIPLA_COMPLETATA, 200+i ));
 			
 			HttpRequest request4xx = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", soapContentType );
 			request4xx.setUrl(request4xx.getUrl()+"&returnCode=" + (400+i));
-			requestsByKind.add(new RequestAndExpectations(request4xx, connettoriSuccessoRequest, connettoriFallimentoRequest, ESITO_CONSEGNA_MULTIPLA_IN_CORSO));
+			requestsByKind.add(new RequestAndExpectations(request4xx, connettoriSuccessoRequest, connettoriFallimentoRequest, ESITO_CONSEGNA_MULTIPLA_IN_CORSO,400+i));*/
 		}		
 				
-		HttpRequest requestSoapFault =  RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1 );
-		requestsByKind.add(new RequestAndExpectations(requestSoapFault, Common.setConnettoriAbilitati, Set.of(),  ESITO_CONSEGNA_MULTIPLA_FALLITA ));
+		/* TODO: Decommenta dopo osservazioni di andrea
+		 * HttpRequest requestSoapFault =  RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1 );
+		requestsByKind.add(new RequestAndExpectations(
+				requestSoapFault, 
+				Common.setConnettoriAbilitati, 
+				Set.of(),
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, true, TipoFault.SOAP1_1 ));
 		
 		requestSoapFault =  RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_2 );
-		requestsByKind.add(new RequestAndExpectations(requestSoapFault, Common.setConnettoriAbilitati, Set.of(),  ESITO_CONSEGNA_MULTIPLA_FALLITA ));
+		requestsByKind.add(new RequestAndExpectations(
+				requestSoapFault, 
+				Common.setConnettoriAbilitati, 
+				Set.of(),  
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, true, TipoFault.SOAP1_2 ));*/
 		
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		
@@ -295,14 +311,14 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 				requestSoapFault,
 				Set.of(CONNETTORE_0, CONNETTORE_2, CONNETTORE_3),
 				Set.of(CONNETTORE_1),  
-				ESITO_CONSEGNA_MULTIPLA_FALLITA ));
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_1 ));
 		
 		requestSoapFault = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_2);
 		requestsByKind.add(new RequestAndExpectations(
 				requestSoapFault,
 				Set.of(CONNETTORE_0, CONNETTORE_2, CONNETTORE_3),
 				Set.of(CONNETTORE_1),  
-				ESITO_CONSEGNA_MULTIPLA_FALLITA ));
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_2 ));
 		
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		
@@ -359,28 +375,28 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 				requestSoapFaultTuttiValorizzati,				
 				Set.of(CONNETTORE_1,CONNETTORE_2),
 				Set.of(CONNETTORE_0, CONNETTORE_3),
-				ESITO_CONSEGNA_MULTIPLA_FALLITA)
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_1)
 			);
 		
 		requestsByKind.add(new RequestAndExpectations(
 				requestSoapFaultTuttiRegex,
 				Set.of(CONNETTORE_0,CONNETTORE_2,CONNETTORE_3),
 				Set.of(CONNETTORE_1), 
-				ESITO_CONSEGNA_MULTIPLA_FALLITA)
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_1)
 			);
 		
 		requestsByKind.add(new RequestAndExpectations(
 				requestSoapFaultSoloActor,
 				Set.of(CONNETTORE_0,CONNETTORE_1,CONNETTORE_2),
 				Set.of(CONNETTORE_3), 
-				ESITO_CONSEGNA_MULTIPLA_FALLITA)
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_1)
 			);
 
 		requestsByKind.add(new RequestAndExpectations(
 				requestSoapMessageContains,				
 				Set.of(CONNETTORE_0,CONNETTORE_1,CONNETTORE_3),
 				Set.of(CONNETTORE_2),
-				ESITO_CONSEGNA_MULTIPLA_FALLITA)
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_1)
 			);
 		
 		requestSoapFaultTuttiValorizzati = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_2);
@@ -400,28 +416,28 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 				requestSoapFaultTuttiValorizzati,				
 				Set.of(CONNETTORE_1,CONNETTORE_2),
 				Set.of(CONNETTORE_0, CONNETTORE_3),
-				ESITO_CONSEGNA_MULTIPLA_FALLITA)
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_2)
 			);
 		
 		requestsByKind.add(new RequestAndExpectations(
 				requestSoapFaultTuttiRegex,
 				Set.of(CONNETTORE_0,CONNETTORE_2,CONNETTORE_3),
 				Set.of(CONNETTORE_1), 
-				ESITO_CONSEGNA_MULTIPLA_FALLITA)
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_2)
 			);
 		
 		requestsByKind.add(new RequestAndExpectations(
 				requestSoapFaultSoloActor,
 				Set.of(CONNETTORE_0,CONNETTORE_1,CONNETTORE_2),
 				Set.of(CONNETTORE_3), 
-				ESITO_CONSEGNA_MULTIPLA_FALLITA)
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_2)
 			);
 
 		requestsByKind.add(new RequestAndExpectations(
 				requestSoapMessageContains,				
 				Set.of(CONNETTORE_0,CONNETTORE_1,CONNETTORE_3),
 				Set.of(CONNETTORE_2),
-				ESITO_CONSEGNA_MULTIPLA_FALLITA)
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_2)
 			);
 		
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
@@ -470,22 +486,22 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 				final String soapContentType = i % 2 == 0 ? HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
 				HttpRequest request5xx = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", soapContentType );
 				request5xx.setUrl(request5xx.getUrl()+"&returnCode=" + (500+i));
-				requestsByKind.add(new RequestAndExpectations(request5xx, connettoriSuccessoRequest, connettoriFallimentoRequest, ESITO_CONSEGNA_MULTIPLA_IN_CORSO));
+				requestsByKind.add(new RequestAndExpectations(request5xx, connettoriSuccessoRequest, connettoriFallimentoRequest, ESITO_CONSEGNA_MULTIPLA_IN_CORSO, 500+i));
 
 				HttpRequest request2xx = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", soapContentType );
 				request2xx.setUrl(request2xx.getUrl()+"&returnCode=" + (200+i));
-				requestsByKind.add(new RequestAndExpectations(request2xx, Common.setConnettoriAbilitati, Set.of(), ESITO_CONSEGNA_MULTIPLA_COMPLETATA ));
+				requestsByKind.add(new RequestAndExpectations(request2xx, Common.setConnettoriAbilitati, Set.of(), ESITO_CONSEGNA_MULTIPLA_COMPLETATA,200+i));
 
 				HttpRequest request4xx = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", soapContentType );
 				request4xx.setUrl(request4xx.getUrl()+"&returnCode=" + (400+i));
-				requestsByKind.add(new RequestAndExpectations(request4xx, connettoriSuccessoRequest, connettoriFallimentoRequest, ESITO_CONSEGNA_MULTIPLA_IN_CORSO));
+				requestsByKind.add(new RequestAndExpectations(request4xx, connettoriSuccessoRequest, connettoriFallimentoRequest, ESITO_CONSEGNA_MULTIPLA_IN_CORSO,400+i));
 			}
 			
 			HttpRequest requestSoapFault =  RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1);
-			requestsByKind.add(new RequestAndExpectations(requestSoapFault, Common.setConnettoriAbilitati, Set.of(),  ESITO_CONSEGNA_MULTIPLA_FALLITA));
+			requestsByKind.add(new RequestAndExpectations(requestSoapFault, Common.setConnettoriAbilitati, Set.of(),  ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_1));
 			
 			requestSoapFault =  RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_2);
-			requestsByKind.add(new RequestAndExpectations(requestSoapFault, Common.setConnettoriAbilitati, Set.of(),  ESITO_CONSEGNA_MULTIPLA_FALLITA));
+			requestsByKind.add(new RequestAndExpectations(requestSoapFault, Common.setConnettoriAbilitati, Set.of(),  ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_2));
 			
 			Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 			
@@ -518,11 +534,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 						}
 					}
 
-					for (var connettore : requestAndExpectation.connettoriSuccesso) {
-						checkSchedulingConnettoreCompletato(response, connettore);
-					}
-					
-					checkStatoConsegna(response, requestAndExpectation.esito, requestAndExpectation.connettoriFallimento.size());
+					checkStatoConsegna(response, requestAndExpectation.esitoPrincipale, requestAndExpectation.connettoriFallimento.size());
 				}
 			}
 			
@@ -539,11 +551,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 						}
 					}
 
-					for (var connettore : requestAndExpectation.connettoriSuccesso) {
-						checkSchedulingConnettoreCompletato(response, connettore);
-					}
-					
-					checkStatoConsegna(response, requestAndExpectation.esito, requestAndExpectation.connettoriFallimento.size());
+					checkStatoConsegna(response, requestAndExpectation.esitoPrincipale, requestAndExpectation.connettoriFallimento.size());
 				}
 			}	
 		}

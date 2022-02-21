@@ -53,6 +53,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.RequestBuilder;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectations;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectations.TipoFault;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpResponse;
@@ -143,8 +144,6 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 			if (statusCode >= 400 && statusCode <= 499) {
 				current.principaleSuperata = false;
 			}			
-			// In Soap un 500 senza soapFault è considerato Ok con anomialia, quindi mi aspetto un errore nella transazione principale
-			// solo in caso di 4xx e 5xx, con 5xx > 500
 			if (statusCode >= 500 && statusCode <= 599) {
 				current.principaleSuperata = false;	
 			}
@@ -237,6 +236,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 		HttpRequest requestRestProblem = RequestBuilder.buildRestRequestProblem(erogazione);
 		requestRestProblem.setUrl(requestRestProblem.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
 		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(requestRestProblem, 500, connettoriSuccesso, connettoriPool);
+		current.tipoFault = TipoFault.REST;
 		
 		requestsByKind.add(current);
 		
@@ -330,6 +330,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 		var connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
 		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(requestProblem, 500, connettoriSuccesso, connettoriPool);
 		current.principaleSuperata = false;
+		current.tipoFault = TipoFault.REST;
 		requestsByKind.add(current);
 
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
@@ -420,11 +421,12 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 		// Aggiungo richiesta Rest Problem
 		String pool = Common.POOL_0;
 		String filtro = Common.filtriPools.get(pool).get(0);
-		HttpRequest requestSoapFault = RequestBuilder.buildRestRequestProblem(erogazione);
-		requestSoapFault.setUrl(requestSoapFault.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
+		HttpRequest requestProblem = RequestBuilder.buildRestRequestProblem(erogazione);
+		requestProblem.setUrl(requestProblem.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
 		var connettoriSuccesso = Set.of(CONNETTORE_0, CONNETTORE_2, CONNETTORE_3);
 		var connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
-		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(requestSoapFault, 500, connettoriSuccesso, connettoriPool);
+		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(requestProblem, 500, connettoriSuccesso, connettoriPool);
+		current.tipoFault = TipoFault.REST;
 		requestsByKind.add(current);
 
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
@@ -478,8 +480,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 			request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
 			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
 			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode,connettoriSuccesso, connettoriPool);
-			// In Soap un 500 senza soapFault è considerato Ok con anomialia, quindi mi aspetto un errore nella transazione principale
-			// solo in caso di 4xx e 5xx, con 5xx > 500
+
 			if (statusCode >= 400 && statusCode <= 499) {
 				current.principaleSuperata = false;
 			}
@@ -517,6 +518,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 		var connettoriSuccesso = Set.of(CONNETTORE_0, CONNETTORE_2, CONNETTORE_3);
 		var connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
 		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(requestProblem, 500, connettoriSuccesso, connettoriPool);
+		current.tipoFault = TipoFault.REST;
 		requestsByKind.add(current);
 		
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);

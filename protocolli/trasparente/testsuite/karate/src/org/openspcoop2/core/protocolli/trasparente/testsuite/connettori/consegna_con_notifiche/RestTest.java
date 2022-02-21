@@ -30,8 +30,10 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_COMPLETATA;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_FALLITA;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_IN_CORSO;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkSchedulingConnettoreCompletato;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_ERRORE_INVOCAZIONE;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_OK;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkStatoConsegna;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.esitoConsegnaFromStatusCode;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.getNumeroTentativiSchedulingConnettore;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.setDifference;
 
@@ -51,12 +53,39 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.RequestBuilder;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectations;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectations.TipoFault;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilsException;
 
 /**
+ * TODO: Verifica tutti gli esiti puntuali delle transazioni_sa anche in SOAP
+ * Per tutti i test verifica anche che l'identificativo_messaggio sia valorizzato.
+ * 
+ * Sui test nei quale c'è una cadenza rispedizione testare anche che i campi
+ * data_uscita_richiesta          | 2022-02-15 19:20:34.684
+ *data_accettazione_risposta     | 2022-02-15 19:20:34.698
+ * data_ingresso_risposta         | 2022-02-15 19:20:34.698
+ *	Vengano aggiornati.
+ *
+ * Nei casi in cui venga restituito soap fault o problem detail devono essere valorizzate 
+ * fault                          | 
+ *	formato_fault
+ *
+ *  data_primo_tentativo           | 2022-02-15 19:20:34.684	Deve rimanere uguale
+
+ * data_ultimo_errore             | controlla solo questa e che gli altri siano e restino valorizzati 
+dettaglio_esito_ultimo_errore  | 0
+codice_risposta_ultimo_errore  | 
+ultimo_errore                  | 
+location_ultimo_errore         | 
+cluster_id_ultimo_errore       | 
+fault_ultimo_errore            | 
+formato_fault_ultimo_errore    | 
+
+Metti un delay nelle successive
+ * 
  * 
  * @author Francesco Scarlato
  *
@@ -95,7 +124,7 @@ public class RestTest extends ConfigLoader{
 			esito =  connettoriErrore.isEmpty() ? ESITO_CONSEGNA_MULTIPLA_COMPLETATA : ESITO_CONSEGNA_MULTIPLA_IN_CORSO;
 		}
 		
-		return new RequestAndExpectations(request, connettoriOk, connettoriErrore, esito, statusCode);
+		return new RequestAndExpectations(request, connettoriOk, connettoriErrore, esito, statusCode, true);
 	}
 	
 	
@@ -119,12 +148,14 @@ public class RestTest extends ConfigLoader{
 		
 		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
 		
+		String fault = "";
+		String formatoFault = "";
 		for (var response : responses) {
 			// Sul connettore disabilitato non è avvenuto nulla ancora.
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(response, Common.CONNETTORE_1);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_0);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_2);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_3);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_0, ESITO_OK, fault, formatoFault);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_2, ESITO_OK, fault, formatoFault);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_3, ESITO_OK, fault, formatoFault);
 			CommonConsegnaMultipla.checkStatoConsegna(response, ESITO_CONSEGNA_MULTIPLA_IN_CORSO,  1);
 		}
 				
@@ -134,10 +165,10 @@ public class RestTest extends ConfigLoader{
 		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
 		
 		for (var response : responses) {
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_1);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_0);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_2);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_3);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_1, ESITO_OK, fault, formatoFault);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_0, ESITO_OK, fault, formatoFault);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_2, ESITO_OK, fault, formatoFault);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_3, ESITO_OK, fault, formatoFault);
 			CommonConsegnaMultipla.checkConsegnaCompletata(response);
 		}
 		
@@ -178,7 +209,7 @@ public class RestTest extends ConfigLoader{
 		for (var response : responses) {
 			CommonConsegnaMultipla.checkConsegnaCompletata(response);
 			CommonConsegnaMultipla.checkConsegnaConnettoreFile(request1, response, connettoriFile);
-			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(response,  Common.setConnettoriAbilitati);
+			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(response,  Common.setConnettoriAbilitati, ESITO_OK, "", "");
 		}
 
 	}
@@ -192,6 +223,7 @@ public class RestTest extends ConfigLoader{
 
 		var responses = Common.makeParallelRequests(request1, 10);
 
+		// Ci vuole una regola in più che faccia passare, Risorsa vuota e ("accetta")
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
 		// Non controllo la valorizzazione puntuale del campo esito_sincrono, perchè dovrei costruirmi un mapping e sapere
 		// dato ciascuno  status code in quale dei tanti esiti si va a finire.
@@ -210,7 +242,7 @@ public class RestTest extends ConfigLoader{
 		for (var response : responses) {
 			CommonConsegnaMultipla.checkConsegnaCompletata(response);
 			//CommonConsegnaMultipla.checkConsegnaConnettoreFile(request1, response, connettoriFile);
-			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(response,  Common.setConnettoriAbilitati);
+			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(response,  Common.setConnettoriAbilitati, ESITO_OK,  "", "");
 		}
 		
 	}
@@ -234,14 +266,15 @@ public class RestTest extends ConfigLoader{
 				requestProblem,
 				Set.of(CONNETTORE_0, CONNETTORE_2, CONNETTORE_3),
 				Set.of(CONNETTORE_1),  
-				ESITO_CONSEGNA_MULTIPLA_FALLITA ));
-	
+				ESITO_CONSEGNA_MULTIPLA_FALLITA,
+				500,
+				true,
+				TipoFault.REST));
 		
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		
 		// Tutte le richieste indipendentemente dal tipo devono essere state prese in consegna e lo scheduling inizia su tutti i connettori abilitati
 		for (var responses : responsesByKind.values()) {
-		   	//Common.checkAll200(responses);
 			CommonConsegnaMultipla.checkPresaInConsegna(responses, Common.setConnettoriAbilitati.size());
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 		}
@@ -291,7 +324,8 @@ public class RestTest extends ConfigLoader{
 					Set.of(CONNETTORE_1),  
 					0, 
 					500,
-					false);
+					false,
+					TipoFault.REST);
 		requestsByKind.add(requestAndExpectation);
 		
 		// 200, principale fallita, nessuno scheduling
@@ -394,7 +428,7 @@ public class RestTest extends ConfigLoader{
 				requestProblem,
 				Set.of(CONNETTORE_0, CONNETTORE_2, CONNETTORE_3),
 				Set.of(CONNETTORE_1),  
-				ESITO_CONSEGNA_MULTIPLA_FALLITA ));
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, true, TipoFault.REST ));
 		
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 
@@ -471,29 +505,21 @@ public class RestTest extends ConfigLoader{
 				request4xx.setUrl(request4xx.getUrl()+"&returnCode=" + statusCode);
 				requestsByKind.add(new RequestAndExpectations(request4xx, connettoriSuccessoRequest, connettoriFallimentoRequest, ESITO_CONSEGNA_MULTIPLA_IN_CORSO, statusCode));
 			}
-			
-			HttpRequest requestProblem =  RequestBuilder.buildRestRequestProblem(erogazione);
-			requestsByKind.add(new RequestAndExpectations(requestProblem, Common.setConnettoriAbilitati, Set.of(),  ESITO_CONSEGNA_MULTIPLA_FALLITA));
-			
+									
 			// Configuro gli esiti per la richiesta sincrona
 			for (var requestExpectation : requestsByKind) {
 				int statusCode = requestExpectation.statusCodePrincipale;
-				
-				// Il 204 toglie il body dalla risposta, in soap non è ammesso uno status code ok senza body
-				/*if (statusCode == 204) {
-					requestExpectation.principaleSuperata = false;
-				}*/
 				
 				if (statusCode >= 400 && statusCode <= 499) {
 					requestExpectation.principaleSuperata = false;
 				}
 				
-				// In Soap un 500 senza soapFault è considerato Ok con anomialia, quindi mi aspetto un errore nella transazione principale
-				// solo in caso di 4xx e 5xx, con 5xx > 500
 				if (statusCode >= 500 && statusCode <= 599) {
 					requestExpectation.principaleSuperata = false;	
 				}
-			}
+			}			
+			HttpRequest requestProblem =  RequestBuilder.buildRestRequestProblem(erogazione);
+			requestsByKind.add(new RequestAndExpectations(requestProblem, Common.setConnettoriAbilitati, Set.of(),  ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, true, TipoFault.REST));
 			
 			Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 			
@@ -541,11 +567,7 @@ public class RestTest extends ConfigLoader{
 							}
 						}
 	
-						for (var connettore : requestAndExpectation.connettoriSuccesso) {
-							checkSchedulingConnettoreCompletato(response, connettore);
-						}
-						
-						checkStatoConsegna(response, requestAndExpectation.esito, requestAndExpectation.connettoriFallimento.size());
+						checkStatoConsegna(response, requestAndExpectation.esitoPrincipale, requestAndExpectation.connettoriFallimento.size());
 					}
 				}
 			}
@@ -564,11 +586,7 @@ public class RestTest extends ConfigLoader{
 							}
 						}
 	
-						for (var connettore : requestAndExpectation.connettoriSuccesso) {
-							checkSchedulingConnettoreCompletato(response, connettore);
-						}
-						
-						checkStatoConsegna(response, requestAndExpectation.esito, requestAndExpectation.connettoriFallimento.size());
+						checkStatoConsegna(response, requestAndExpectation.esitoPrincipale, requestAndExpectation.connettoriFallimento.size());
 					}
 				}
 			}
@@ -593,8 +611,6 @@ public class RestTest extends ConfigLoader{
    	   	connettoriSchedulati.add(CONNETTORE_ROTTO);
 
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
-		// Non controllo la valorizzazione puntuale del campo esito_sincrono, perchè dovrei costruirmi un mapping e sapere
-		// dato ciascuno  status code in quale dei tanti esiti si va a finire.
 		for (var r : responses) {
 			assertEquals(200, r.getResultHTTPOperation());
 			CommonConsegnaMultipla.checkPresaInConsegna(r, connettoriSchedulati.size());
@@ -606,11 +622,13 @@ public class RestTest extends ConfigLoader{
 	
 		// La consegna deve risultare ancora in corso per via dell'errore sul connettore rotto, con un connettore
 		// in rispedizione
+		String fault = "";
+		String formatoFault = "";
 		for (var r : responses) {
 			CommonConsegnaMultipla.checkStatoConsegna(r, ESITO_CONSEGNA_MULTIPLA_IN_CORSO, 1);
-			CommonConsegnaMultipla.checkSchedulingConnettoreInCorso(r, CONNETTORE_ROTTO);
-			for (var connettore : Common.setConnettoriAbilitati) {
-				CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(r, connettore);
+			CommonConsegnaMultipla.checkSchedulingConnettoreInCorso(r, CONNETTORE_ROTTO, ESITO_ERRORE_INVOCAZIONE, fault, formatoFault);
+			for (var connettore : Common.setConnettoriAbilitati) {				
+				CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(r, connettore, esitoConsegnaFromStatusCode(200), fault, formatoFault);
 			}
 		}
 		

@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -72,7 +73,7 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 		}
 	}
 	
-	/*@AfterClass
+	@AfterClass
 	public static void After() {
 		Common.fermaRiconsegne(dbUtils);
 	}
@@ -80,7 +81,7 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 	@org.junit.After
 	public void AfterEach() {
 		Common.fermaRiconsegne(dbUtils);		
-	}*/
+	}
 	
 	
 	@Test
@@ -458,8 +459,8 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 				IdentificazioneFallitaTest.checkDiagnosticoTransazione(
 						id_transazione, 
 						DIAGNOSTICO_SEVERITA_INFO,
-						"007050",
-						"Il messaggio di richiesta non verrà notificato ad alcun connettore poichè l'identificazione condizionale è fallita");
+						"007065",	// TODO: Constantizza questi valori	
+						"Il messaggio di richiesta non verrà notificato ad alcun connettore poichè la condizione estratta dalla richiesta non ha permesso di identificare alcun connettore");
 			}
 		}
 		

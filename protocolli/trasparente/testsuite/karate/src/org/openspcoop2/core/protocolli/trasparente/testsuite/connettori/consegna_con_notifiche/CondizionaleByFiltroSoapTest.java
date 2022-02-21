@@ -53,6 +53,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.RequestBuilder;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectations;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectations.TipoFault;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
@@ -238,6 +239,7 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 		HttpRequest requestSoapFault = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla", "test", HttpConstants.CONTENT_TYPE_SOAP_1_1);
 		requestSoapFault.setUrl(requestSoapFault.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
 		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(requestSoapFault, 500, connettoriSuccesso, connettoriPool);
+		current.tipoFault = TipoFault.SOAP1_1;
 		
 		requestsByKind.add(current);
 		
@@ -248,7 +250,7 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 		requestSoapFault = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla", "test", HttpConstants.CONTENT_TYPE_SOAP_1_2);
 		requestSoapFault.setUrl(requestSoapFault.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
 		current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(requestSoapFault, 500, connettoriSuccesso, connettoriPool);
-		
+		current.tipoFault = TipoFault.SOAP1_2;
 		requestsByKind.add(current);
 				
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
@@ -344,6 +346,7 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 		var connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
 		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(requestSoapFault, 500, connettoriSuccesso, connettoriPool);
 		current.principaleSuperata = false;
+		current.tipoFault = TipoFault.SOAP1_1;
 		requestsByKind.add(current);
 		
 		pool = Common.POOL_0;
@@ -355,6 +358,7 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 		
 		current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(requestSoapFault, 500, connettoriSuccesso, connettoriPool);
 		current.principaleSuperata = false;
+		current.tipoFault = TipoFault.SOAP1_2;
 		requestsByKind.add(current);
 
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
@@ -453,6 +457,7 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 		var connettoriSuccesso = Set.of(CONNETTORE_0, CONNETTORE_2, CONNETTORE_3);
 		var connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
 		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(requestSoapFault, 500, connettoriSuccesso, connettoriPool);
+		current.tipoFault = TipoFault.SOAP1_1;
 		requestsByKind.add(current);
 		
 		pool = Common.POOL_0;
@@ -463,6 +468,7 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 		connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
 		
 		current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(requestSoapFault, 500, connettoriSuccesso, connettoriPool);
+		current.tipoFault = TipoFault.SOAP1_2;
 		requestsByKind.add(current);
 
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
@@ -557,6 +563,7 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 		var connettoriSuccesso = Set.of(CONNETTORE_0, CONNETTORE_2, CONNETTORE_3);
 		var connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
 		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(requestSoapFault, 500, connettoriSuccesso, connettoriPool);
+		current.tipoFault = TipoFault.SOAP1_1;
 		requestsByKind.add(current);
 		
 		pool = Common.POOL_0;
@@ -567,6 +574,7 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 		connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
 		
 		current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(requestSoapFault, 500, connettoriSuccesso, connettoriPool);
+		current.tipoFault = TipoFault.SOAP1_2;
 		requestsByKind.add(current);
 
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
