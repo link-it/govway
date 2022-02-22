@@ -62,6 +62,9 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 							$query["govway-testsuite-id_connettore_request"]
 						#end
  * UrlInvocazione: .+govway-testsuite-id_connettore_request=([^&]*).*
+ * 
+http://localhost:8080/TestService/echo?id_connettore=ConnettorePrincipale
+
  */
 public class CondizionaleByNomeSoapTest extends ConfigLoader {
 

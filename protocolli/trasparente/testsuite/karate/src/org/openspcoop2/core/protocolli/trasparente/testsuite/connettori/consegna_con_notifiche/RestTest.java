@@ -56,6 +56,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectations.TipoFault;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpRequest;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilsException;
 
@@ -187,8 +188,6 @@ public class RestTest extends ConfigLoader{
 		var responses = Common.makeParallelRequests(request1, 10);
 
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
-		// Non controllo la valorizzazione puntuale del campo esito_sincrono, perchè dovrei costruirmi un mapping e sapere
-		// dato ciascuno  status code in quale dei tanti esiti si va a finire.
 		for (var r : responses) {
 			assertEquals(200, r.getResultHTTPOperation());
 			
@@ -211,32 +210,95 @@ public class RestTest extends ConfigLoader{
 	
 	
 	@Test
+	public void erroreDiProcessamentoOk() {
+		// In questo caso l'errore di processamento è configurato per passare e far avviare le notifiche.
+		final String erogazione = "TestConsegnaConNotificheErroreDiProcessamentoOKRest";
+		
+		// Questa va su test-regola-contenuto e la correlazione applicativa estrae dal contenuto l'id, per questa le notifiche vengono schedulate.
+		HttpRequest requestOk = RequestBuilder.buildRequest_Contenuto("valoreIdApplicativo", erogazione) ;
+		
+		 //  Questa va su test-regola-contenuto e la correlazione applicativa fallisce perchè è una get semplice e non vi trova il contenuto
+		// Per questa le notifiche saranno schedulate lo stesso
+ 		HttpRequest requestErroreProcessamentoOK = new HttpRequest(); 	
+		requestErroreProcessamentoOK.setMethod(HttpRequestMethod.GET);
+		requestErroreProcessamentoOK.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-contenuto"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
+
+		var responsesOk = Common.makeParallelRequests(requestOk, 10);
+		var responsesErroreProcessamentoOK = Common.makeParallelRequests(requestErroreProcessamentoOK, 10);
+
+		for (var r : responsesOk) {
+			assertEquals(200, r.getResultHTTPOperation());
+			CommonConsegnaMultipla.checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
+			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
+		}
+		
+		for (var r : responsesErroreProcessamentoOK) {
+			assertEquals(502, r.getResultHTTPOperation());
+			CommonConsegnaMultipla.checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
+			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);						
+		}
+
+		// Attendo la consegna
+		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
+		for (var r : responsesOk) {
+			CommonConsegnaMultipla.checkConsegnaCompletata(r);
+			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(r,  Common.setConnettoriAbilitati, ESITO_OK,  "", "");
+		}
+		for (var r : responsesErroreProcessamentoOK) {
+			CommonConsegnaMultipla.checkConsegnaCompletata(r);
+			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(r,  Common.setConnettoriAbilitati, ESITO_OK,  "", "");
+		}
+		
+	}
+	
+	
+	@Test
 	public void erroreDiProcessamento() {
 		final String erogazione = "TestConsegnaConNotificheErroreDiProcessamentoRest";
 		
-		HttpRequest request1 = RequestBuilder.buildRestRequest(erogazione);
+		HttpRequest requestStandard = RequestBuilder.buildRestRequest(erogazione);
+		HttpRequest requestOk = RequestBuilder.buildRequest_Contenuto("valoreIdApplicativo", erogazione) ;		// Questa va su test-regola-contenuto e la correlazione applicativa estrae dal contenuto l'id, per questa le notifiche vengono schedulate.
+		
+		 //  Questa va su test-regola-contenuto e la correlazione applicativa fallisce perchè è una get semplice e non vi trova il contenuto Per questa le notifiche non saranno schedulate
+ 		HttpRequest requestErroreProcessamento = new HttpRequest(); 	
+		requestErroreProcessamento.setMethod(HttpRequestMethod.GET);
+		requestErroreProcessamento.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-contenuto"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
 
-		var responses = Common.makeParallelRequests(request1, 10);
+		var responses 		= Common.makeParallelRequests(requestStandard, 10);
+		var responsesOk = Common.makeParallelRequests(requestOk, 10);
+		var responsesErroreProcessamento = Common.makeParallelRequests(requestErroreProcessamento, 10);
 
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
-		// Non controllo la valorizzazione puntuale del campo esito_sincrono, perchè dovrei costruirmi un mapping e sapere
-		// dato ciascuno  status code in quale dei tanti esiti si va a finire.
 		for (var r : responses) {
 			assertEquals(200, r.getResultHTTPOperation());
-			
 			CommonConsegnaMultipla.checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
+		}
+		
+		for (var r : responsesOk) {
+			assertEquals(200, r.getResultHTTPOperation());
+			CommonConsegnaMultipla.checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
+			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
+		}
+		
+		for (var r : responsesErroreProcessamento) {
+			assertEquals(502, r.getResultHTTPOperation());
+			CommonConsegnaMultipla.checkNessunaNotifica(r);
+			CommonConsegnaMultipla.checkNessunoScheduling(r);						
 		}
 
 		// Attendo la consegna
 		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
 
-		// Per i connettori di tipo file, controllo anche che la scrittura della richiesta di consegna multipla sia avvenuta.
-		//Set<String> connettoriFile = Set.of(CONNETTORE_2, CONNETTORE_3);
 		for (var response : responses) {
 			CommonConsegnaMultipla.checkConsegnaCompletata(response);
-			//CommonConsegnaMultipla.checkConsegnaConnettoreFile(request1, response, connettoriFile);
 			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(response,  Common.setConnettoriAbilitati, ESITO_OK,  "", "");
+		}
+		for (var r : responsesOk) {
+			CommonConsegnaMultipla.checkConsegnaCompletata(r);
+			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(r,  Common.setConnettoriAbilitati, ESITO_OK,  "", "");
 		}
 		
 	}

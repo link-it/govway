@@ -56,6 +56,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilsException;
 
@@ -134,8 +135,6 @@ public class SoapTest extends ConfigLoader {
 		var responses2 = Common.makeParallelRequests(request2, 10);
 
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
-		// Non controllo la valorizzazione puntuale del campo esito_sincrono, perchè dovrei costruirmi un mapping e sapere
-		// dato ciascuno  status code in quale dei tanti esiti si va a finire.
 		for (var r : responses) {
 			assertEquals(200, r.getResultHTTPOperation());
 			
@@ -165,6 +164,163 @@ public class SoapTest extends ConfigLoader {
 			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(response,  Common.setConnettoriAbilitati, ESITO_OK, "", "");
 		}
 
+	}
+	
+	@Test
+	public void erroreDiProcessamentoOk() {
+		final String erogazione = "TestConsegnaConNotificheErroreDiProcessamentoOKSoap";
+		var soapContentType = HttpConstants.CONTENT_TYPE_SOAP_1_1;
+		
+		final String content = "<Filtro>IdApplicativo</Filtro>";
+		HttpRequest requestOk = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaContenuto",   "SA_TestRegolaContenuto",  soapContentType,content);
+		requestOk.setUrl(requestOk.getUrl()+"&returnCode=200");
+		
+		 //  Questa va su test-regola-contenuto e la correlazione applicativa fallisce perchè non vi trova il contenuto.
+		//   Per questa transazione le notifiche saranno schedulate lo stesso perchè così è impostata la configurazione dell'erogazione
+ 		HttpRequest requestErroreProcessamentoOK =  RequestBuilder.buildSoapRequest(erogazione, "TestRegolaContenuto",   "SA_TestRegolaContenuto",  soapContentType); 	
+ 		requestErroreProcessamentoOK.setUrl(requestErroreProcessamentoOK.getUrl()+"&returnCode=200");
+
+		var responsesOk = Common.makeParallelRequests(requestOk, 10);
+		var responsesErroreProcessamentoOK = Common.makeParallelRequests(requestErroreProcessamentoOK, 10);
+
+		for (var r : responsesOk) {
+			assertEquals(200, r.getResultHTTPOperation());
+			CommonConsegnaMultipla.checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
+			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
+		}
+		
+		for (var r : responsesErroreProcessamentoOK) {
+			assertEquals(500, r.getResultHTTPOperation());
+			CommonConsegnaMultipla.checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
+			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
+		}
+
+		// Attendo la consegna
+		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
+
+		for (var r : responsesOk) {
+			CommonConsegnaMultipla.checkConsegnaCompletata(r);
+			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(r,  Common.setConnettoriAbilitati, ESITO_OK,  "", "");
+		}
+		for (var r : responsesErroreProcessamentoOK) {
+			CommonConsegnaMultipla.checkConsegnaCompletata(r);
+			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(r,  Common.setConnettoriAbilitati, ESITO_OK,  "", "");
+		}
+		
+		soapContentType = HttpConstants.CONTENT_TYPE_SOAP_1_2;
+		
+		requestOk = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaContenuto",   "SA_TestRegolaContenuto",  soapContentType,content);
+		requestOk.setUrl(requestOk.getUrl()+"&returnCode=200");
+		
+		 //  Questa va su test-regola-contenuto e la correlazione applicativa fallisce perchè non vi trova il contenuto.
+		//   Per questa transazione le notifiche saranno schedulate lo stesso perchè così è impostata la configurazione dell'erogazione
+ 		requestErroreProcessamentoOK =  RequestBuilder.buildSoapRequest(erogazione, "TestRegolaContenuto",   "SA_TestRegolaContenuto",  soapContentType); 	
+ 		requestErroreProcessamentoOK.setUrl(requestErroreProcessamentoOK.getUrl()+"&returnCode=200");
+
+		responsesOk = Common.makeParallelRequests(requestOk, 10);
+		responsesErroreProcessamentoOK = Common.makeParallelRequests(requestErroreProcessamentoOK, 10);
+
+		for (var r : responsesOk) {
+			assertEquals(200, r.getResultHTTPOperation());
+			CommonConsegnaMultipla.checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
+			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
+		}
+		
+		for (var r : responsesErroreProcessamentoOK) {
+			assertEquals(500, r.getResultHTTPOperation());
+			CommonConsegnaMultipla.checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
+			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
+		}
+
+		// Attendo la consegna
+		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
+
+		for (var r : responsesOk) {
+			CommonConsegnaMultipla.checkConsegnaCompletata(r);
+			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(r,  Common.setConnettoriAbilitati, ESITO_OK,  "", "");
+		}
+		for (var r : responsesErroreProcessamentoOK) {
+			CommonConsegnaMultipla.checkConsegnaCompletata(r);
+			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(r,  Common.setConnettoriAbilitati, ESITO_OK,  "", "");
+		}
+		
+		
+	}
+	
+	
+	@Test
+	public void erroreDiProcessamento() {
+		final String erogazione = "TestConsegnaConNotificheErroreDiProcessamentoSoap";
+		var soapContentType = HttpConstants.CONTENT_TYPE_SOAP_1_1;
+		
+		final String content = "<Filtro>IdApplicativo</Filtro>";
+		HttpRequest requestOk = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaContenuto",   "SA_TestRegolaContenuto",  soapContentType,content);
+		requestOk.setUrl(requestOk.getUrl()+"&returnCode=200");
+		
+		 //  Questa va su test-regola-contenuto e la correlazione applicativa fallisce perchè non vi trova il contenuto.
+		//   Per questa transazione le notifiche non saranno schedulate
+ 		HttpRequest requestErroreProcessamento =  RequestBuilder.buildSoapRequest(erogazione, "TestRegolaContenuto",   "SA_TestRegolaContenuto",  soapContentType); 	
+ 		requestErroreProcessamento.setUrl(requestErroreProcessamento.getUrl()+"&returnCode=200");
+
+		var responsesOk = Common.makeParallelRequests(requestOk, 10);
+		var responsesErroreProcessamento = Common.makeParallelRequests(requestErroreProcessamento, 10);
+
+		for (var r : responsesOk) {
+			assertEquals(200, r.getResultHTTPOperation());
+			
+			CommonConsegnaMultipla.checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
+			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
+		}
+		
+		for (var r : responsesErroreProcessamento) {
+			getLoggerCore().info("Checking status code for transaction: " + r.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE));
+			assertEquals(500, r.getResultHTTPOperation());
+			CommonConsegnaMultipla.checkNessunaNotifica(r);
+			CommonConsegnaMultipla.checkNessunoScheduling(r);
+		}
+
+		// Attendo la consegna
+		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
+
+		for (var r : responsesOk) {
+			CommonConsegnaMultipla.checkConsegnaCompletata(r);
+			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(r,  Common.setConnettoriAbilitati, ESITO_OK,  "", "");
+		}
+		
+		soapContentType = HttpConstants.CONTENT_TYPE_SOAP_1_2;
+		
+		requestOk = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaContenuto",   "SA_TestRegolaContenuto",  soapContentType,content);
+		requestOk.setUrl(requestOk.getUrl()+"&returnCode=200");
+		
+		 //  Questa va su test-regola-contenuto e la correlazione applicativa fallisce perchè non vi trova il contenuto.
+		//   Per questa transazione le notifiche non saranno schedulate
+ 		requestErroreProcessamento =  RequestBuilder.buildSoapRequest(erogazione, "TestRegolaContenuto",   "SA_TestRegolaContenuto",  soapContentType); 	
+ 		requestErroreProcessamento.setUrl(requestErroreProcessamento.getUrl()+"&returnCode=200");
+
+		responsesOk = Common.makeParallelRequests(requestOk, 10);
+		responsesErroreProcessamento = Common.makeParallelRequests(requestErroreProcessamento, 10);
+
+		for (var r : responsesOk) {
+			assertEquals(200, r.getResultHTTPOperation());
+			CommonConsegnaMultipla.checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
+			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
+		}
+		
+		for (var r : responsesErroreProcessamento) {
+			getLoggerCore().info("Checking status code for transaction: " + r.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE));
+			assertEquals(500, r.getResultHTTPOperation());
+			CommonConsegnaMultipla.checkNessunaNotifica(r);
+			CommonConsegnaMultipla.checkNessunoScheduling(r);
+		}
+
+		// Attendo la consegna
+		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
+
+		for (var r : responsesOk) {
+			CommonConsegnaMultipla.checkConsegnaCompletata(r);
+			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(r,  Common.setConnettoriAbilitati, ESITO_OK,  "", "");
+		}
+		
 	}
 	
 
@@ -653,8 +809,6 @@ public class SoapTest extends ConfigLoader {
    	   	connettoriSchedulati.add(CONNETTORE_ROTTO);
 
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
-		// Non controllo la valorizzazione puntuale del campo esito_sincrono, perchè dovrei costruirmi un mapping e sapere
-		// dato ciascuno  status code in quale dei tanti esiti si va a finire.
 		for (var r : responses) {
 			assertEquals(200, r.getResultHTTPOperation());
 			CommonConsegnaMultipla.checkPresaInConsegna(r, connettoriSchedulati.size());
