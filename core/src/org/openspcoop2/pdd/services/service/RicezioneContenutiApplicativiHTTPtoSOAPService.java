@@ -606,7 +606,8 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 							envelopingMessage(messageTypeReq, contentTypeForEnvelope, soapAction, 
 							requestInfo.getProtocolContext(), inputBody, notifierInputStreamParams, 
 							openSPCoopProperties.getAttachmentsProcessingMode(), 
-							openSPCoopProperties.isDeleteInstructionTargetMachineXml());
+							openSPCoopProperties.isDeleteInstructionTargetMachineXml(),
+							openSPCoopProperties.useSoapMessageReader(), openSPCoopProperties.getSoapMessageReaderBufferThresholdKb());
 					if(pr.getParseException()!=null){
 						pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
 					}

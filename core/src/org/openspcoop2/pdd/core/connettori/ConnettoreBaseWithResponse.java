@@ -529,7 +529,8 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 										envelopingMessage(this.messageTypeResponse, this.tipoRisposta, this.soapAction, responseContext, 
 												this.isResponse, this.notifierInputStreamParams, 
 												this.openspcoopProperties.getAttachmentsProcessingMode(),
-												true);
+												true,
+												this.openspcoopProperties.useSoapMessageReader(), this.openspcoopProperties.getSoapMessageReaderBufferThresholdKb());
 								if(pr.getParseException()!=null){
 									this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
 								}

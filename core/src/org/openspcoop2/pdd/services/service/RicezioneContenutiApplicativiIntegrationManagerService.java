@@ -629,7 +629,8 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 					if(msg.getImbustamento()){
 						pr = factory.envelopingMessage(messageType, MessageRole.REQUEST, contentType, soapAction, bin, 
 								notifierInputStreamParams, openSPCoopProperties.getAttachmentsProcessingMode(), 
-								openSPCoopProperties.isDeleteInstructionTargetMachineXml());
+								openSPCoopProperties.isDeleteInstructionTargetMachineXml(),
+								openSPCoopProperties.useSoapMessageReader(), openSPCoopProperties.getSoapMessageReaderBufferThresholdKb());
 					}
 					else{
 						pr = factory.createMessage(messageType, MessageRole.REQUEST, contentType, 

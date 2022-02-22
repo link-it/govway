@@ -30,15 +30,11 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
-import javax.xml.soap.SOAPPart;
 
 import org.apache.wss4j.dom.WSDataRef;
 import org.apache.wss4j.dom.message.token.Timestamp;
-import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
@@ -55,6 +51,7 @@ import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
 import org.openspcoop2.protocol.modipa.utils.ModITruststoreConfig;
 import org.openspcoop2.protocol.modipa.utils.ModIUtilities;
+import org.openspcoop2.protocol.modipa.utils.SOAPInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.Eccezione;
@@ -103,20 +100,12 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		}
 		
 		OpenSPCoop2SoapMessage soapMessage = msg.castAsSoap();
-		SOAPPart soapPart = MessageUtils.getSOAPPart(soapMessage, bufferMessage_readOnly, idTransazione);
-		SOAPEnvelope soapEnvelope = soapPart.getEnvelope();
-		SOAPHeader header = null;
-		SOAPBody body = null;
-		if(soapEnvelope!=null) {
-			header = soapEnvelope.getHeader();
-			body = soapEnvelope.getBody();
-		}
 		
 		String correlationIdName = this.modiProperties.getSoapCorrelationIdName();
-		String correlationId = ModIUtilities.getSOAPHeaderCorrelationIdValue(soapMessage.getMessageType(), header, body);
+		String correlationId = ModIUtilities.getSOAPHeaderCorrelationIdValue(soapMessage, bufferMessage_readOnly, idTransazione);
 		
 		String replyToName = this.modiProperties.getSoapReplyToName();
-		String replyToAddress = ModIUtilities.getSOAPHeaderReplyToValue(soapMessage.getMessageType(), header, body);
+		String replyToAddress = ModIUtilities.getSOAPHeaderReplyToValue(soapMessage, bufferMessage_readOnly, idTransazione);
 
 		
 		if(replyToAddress!=null) {
@@ -139,7 +128,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 							return;
 						}
 						if(this.modiProperties.isSoapSecurityTokenPushReplyToUpdateInErogazione()) {
-							ModIUtilities.addSOAPHeaderReplyTo(soapMessage, replyTo); // aggiorna il valore se già esistente
+							ModIUtilities.addSOAPHeaderReplyTo(soapMessage, bufferMessage_readOnly, idTransazione, replyTo); // aggiorna il valore se già esistente
 						}
 					}
 					else {
@@ -234,14 +223,9 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		}
 		
 		OpenSPCoop2SoapMessage soapMessage = msg.castAsSoap();
-		SOAPPart soapPart = MessageUtils.getSOAPPart(soapMessage, bufferMessage_readOnly, idTransazione);
-		SOAPEnvelope soapEnvelope = soapPart.getEnvelope();
-		SOAPHeader header = null;
-		SOAPBody body = null;
-		if(soapEnvelope!=null) {
-			header = soapEnvelope.getHeader();
-			body = soapEnvelope.getBody();
-		}
+		SOAPInfo soapInfo = new SOAPInfo();
+		boolean useSoapReader = false; // i riferimenti recuperati (header, requestDigestHeader, wsAddressing vengono salvati nel contesto per poi eliminarli successivamente)
+		soapInfo.read(useSoapReader, soapMessage, bufferMessage_readOnly, idTransazione, true, true, false);
 		
 		boolean filtroDuplicati = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02.equals(securityMessageProfile) || 
 				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile);
@@ -254,7 +238,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		
 		SOAPHeaderElement requestDigestHeader = null;
 		if(integrita && !request && includiRequestDigest) {
-			requestDigestHeader = ModIUtilities.getSOAPHeaderRequestDigest(soapMessage.getMessageType(), header, body);
+			requestDigestHeader = ModIUtilities.getSOAPHeaderRequestDigest(useSoapReader, soapMessage, bufferMessage_readOnly, idTransazione);
 		}
 		
 		
@@ -454,7 +438,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 					}
 					else if(wsDataRef.getName()!=null && 
 							"Body".equals(wsDataRef.getName().getLocalPart()) &&
-							soapEnvelope.getNamespaceURI().equals(wsDataRef.getName().getNamespaceURI())) {
+							soapInfo.getEnvelopeNamespace().equals(wsDataRef.getName().getNamespaceURI())) {
 						bodyRef = wsDataRef;
 					}
 					else if(requestDigestHeader!=null &&
@@ -669,7 +653,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		WSAddressingHeader wsAddressingHeader = null;
 		try {
 			WSAddressingUtilities wsaddressingUtilities = new WSAddressingUtilities(this.log);
-			wsAddressingHeader = wsaddressingUtilities.read(soapMessage, soapEnvelope.getHeader(), this.modiProperties.getSoapWSAddressingActor(), this.modiProperties.isSoapWSAddressingSchemaValidation());
+			wsAddressingHeader = wsaddressingUtilities.read(soapMessage, soapInfo.getHeader(), this.modiProperties.getSoapWSAddressingActor(), this.modiProperties.isSoapWSAddressingSchemaValidation());
 			if(wsAddressingHeader==null) {
 				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_PRESENTE, 
 						"Header WSAddressing non presenti"));

@@ -7749,6 +7749,7 @@ public class RicezioneBuste {
 						msgDiag.highDebug("Tipo Messaggio Risposta dopo l'imbustamento ["+responseMessage.getClass().getName()+"]");
 					}
 				}catch(Exception e){
+					
 					if(functionAsRouter && 
 							!( identitaPdD.getTipo().equals(bustaRisposta.getTipoMittente()) && identitaPdD.getNome().equals(bustaRisposta.getMittente()) ) 
 					){
@@ -7763,6 +7764,10 @@ public class RicezioneBuste {
 					parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.INTEROPERABILITY_PROFILE_ENVELOPING_RESPONSE_FAILED);
 					
 					OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+					
+					if(responseMessage!=null && responseMessage.getParseException()!=null){
+						errorOpenSPCoopMsg.setParseException(responseMessage.getParseException());
+					}
 					
 					// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
 					parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);

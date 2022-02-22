@@ -148,6 +148,7 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 	protected abstract String buildContentAsString() throws MessageException;
 	protected abstract byte[] buildContentAsByteArray() throws MessageException;
 	protected abstract void serializeContent(OutputStream os, boolean consume) throws MessageException;
+	protected void setUpdatableContent() throws MessageException{}
 	
 
 	
@@ -220,7 +221,16 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 	public T getContent(boolean readOnly, String idTransazione) throws MessageException,MessageNotSupportedException{
 		if(this.hasContent){
 			if(!readOnly) {
+				boolean aggiornaContenuto = false;
+				if(this.content!=null && !this.contentUpdatable) {
+					aggiornaContenuto = true;
+				}
 				this.contentUpdatable = true;
+				if(aggiornaContenuto) {
+					// contenuto precedentemente già creato in modalità read-only
+					// il metodo ha bisogno che contentUpdatable sia a true
+					setUpdatableContent();
+				}
 			}
 			// nota l'assegnazione di contentUpdatable viene usata poi dentro l'inizializzaizone del contenuto per rilasciare le risorse
 			if(this.content==null){
@@ -333,6 +343,9 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 			if(this.hasContent){
 				
 				if(!consume && this.content==null) {
+					if(!readOnly) {
+						this.contentUpdatable = true; // riverso soap header eventuale nel content che verrà costruito
+					}
 					this.initializeContent(readOnly, idTransazione); // per poi entrare nel ramo sotto serializeContent
 				}
 			

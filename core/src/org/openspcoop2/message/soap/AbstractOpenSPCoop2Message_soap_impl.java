@@ -124,7 +124,7 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 	
 	protected void addSoapHeaderModifiedIntoSoapReader(SOAPHeader hdr, SOAPEnvelope envelope) throws MessageException {
 		try {
-			if(this.getSoapReader()!=null && this.getSoapReader().isSoapHeaderModified()) {
+			if(this.contentUpdatable && this.getSoapReader()!=null && this.getSoapReader().isSoapHeaderModified()) {
 				SOAPHeader newHdr = this.getSoapReader().getHeader();
 				
 				//Node newHdrAdopted = envelope.getOwnerDocument().adoptNode(newHdr);
@@ -164,23 +164,41 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 				}
 				
 				// Rilascio memoria tanto verra usato sempre il DOM costruito
-				if(this.contentUpdatable) {
-					//System.out.println("ADD SOAP HEADER e RILASCIO RISORSE");
-					this.getSoapReader().clearHeader();
-					this.clearDynamicResources();
-				}
+				//if(this.contentUpdatable) {
+				//System.out.println("ADD SOAP HEADER e RILASCIO RISORSE");
+				this.getSoapReader().clearHeader();
+				this.clearDynamicResources();
+				//}
 				//else {
 				//	System.out.println("ADD SOAP HEADER SENZA RILASCIARE RISORSE");
 				//}
-			}
-			
-			// Rilascio SOAPReader tanto verra usato sempre il DOM costruito
-			if(this.contentUpdatable) {
+				
 				this.releaseSoapReader();
 			}
 			
+			// Rilascio SOAPReader tanto verra usato sempre il DOM costruito
+			//if(this.contentUpdatable) {
+			//this.releaseSoapReader();
+			//}
+			
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
+		}
+	}
+	@Override
+	protected void setUpdatableContent() throws MessageException{
+		try{
+			
+			if(
+					//this.contentUpdatable && 
+					this.getSoapReader()!=null && this.getSoapReader().isSoapHeaderModified()) {
+				SOAPHeader hdr = this.content.getSOAPHeader(); 
+				SOAPEnvelope envelope = this.content.getSOAPPart().getEnvelope();
+				this.addSoapHeaderModifiedIntoSoapReader(hdr, envelope);
+			}
+			
+		}catch(Throwable t){
+			throw SoapUtils.buildMessageException("Unable to update envelope header: ",t);
 		}
 	}
 	
@@ -277,6 +295,10 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 	public void updateContentType() throws MessageException {
 		if(this.isContentBuilded()) {
 			this.content.updateContentType();
+			if(!this.contentUpdatable) {
+				// aggiorno anche struttura leggera
+				super.updateContentType();
+			}
 		}
 		else {
 			super.updateContentType();
@@ -290,6 +312,10 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 				this.content.setContentType(type);
 			}catch(Exception eInternal){
 				throw new RuntimeException(eInternal.getMessage(),eInternal);
+			}
+			if(!this.contentUpdatable) {
+				// aggiorno anche struttura leggera
+				super.setContentType(type);
 			}
 		}
 		else {
@@ -323,6 +349,10 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 	public void saveChanges() throws MessageException{
 		if(this.isContentBuilded()) {
 			this.content.saveChanges();
+			if(!this.contentUpdatable) {
+				// aggiorno anche struttura leggera
+				super.saveChanges();
+			}
 		}
 		else {
 			super.saveChanges();
@@ -331,7 +361,10 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 	
 	@Override
 	public boolean saveRequired(){
-		if(this.isContentBuilded()) {
+		if(this.contentBuffer!=null && !this.contentUpdatable) {
+			return super.saveRequired();
+		}
+		else if(this.isContentBuilded()) {
 			return this.content.saveRequired();
 		}
 		else {

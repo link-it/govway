@@ -35,6 +35,7 @@ public class RootElementSaxContentHandler extends DefaultHandler {
 
 	private String localName;
 	private String namespace;
+	private String prefix;
 	
 	private String excludedNamespace;
 	
@@ -44,9 +45,18 @@ public class RootElementSaxContentHandler extends DefaultHandler {
 	
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+		
+		//System.out.println("--------- startElement uri["+uri+"] localName["+localName+"] qName["+qName+"]");
+		
 		if(!this.excludedNamespace.equals(uri)) {
 			this.localName = localName;
 			this.namespace = uri;
+			if(qName!=null && qName.contains(":") && !qName.startsWith(":")) {
+				this.prefix = qName.substring(0, qName.indexOf(":"));
+			}
+			else {
+				this.prefix = "";
+			}
 		}
 	}
 
@@ -56,5 +66,9 @@ public class RootElementSaxContentHandler extends DefaultHandler {
 
 	public String getNamespace() {
 		return this.namespace;
+	}
+	
+	public String getPrefix() {
+		return this.prefix;
 	}
 }

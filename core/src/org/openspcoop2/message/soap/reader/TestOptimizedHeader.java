@@ -415,6 +415,71 @@ public class TestOptimizedHeader {
 			
 			
 			
+			System.out.println("\n\n*** TEST SOAP 11 elemento body non corretto (buffer "+buffer_dimensione_default+"k) ***");
+			try {
+				test("requestBodyMalformed_soap11.xml", contentTypeSoap11, MessageType.SOAP_11, buffer_dimensione_default, true);
+				throw new Exception("Atteso errore");
+			}catch(Throwable e) {
+				if(e.getMessage().contains("Element type \"CONTENUTO_ERRATO\" must be followed by either attribute specifications, \">\" or \"/>\".")) {
+					System.out.println("Rilevato errore atteso: "+e.getMessage());
+				}
+				else {
+					throw e;
+				}
+			}
+			
+			System.out.println("\n\n*** TEST SOAP 12 elemento body non corretto (buffer "+buffer_dimensione_default+"k) ***");
+			try {
+				test("requestBodyMalformed_soap12.xml", contentTypeSoap12, MessageType.SOAP_12, buffer_dimensione_default, true);
+				throw new Exception("Atteso errore");
+			}catch(Throwable e) {
+				if(e.getMessage().contains("Element type \"CONTENUTO_ERRATO\" must be followed by either attribute specifications, \">\" or \"/>\".")) {
+					System.out.println("Rilevato errore atteso: "+e.getMessage());
+				}
+				else {
+					throw e;
+				}
+			}
+			
+			System.out.println("\n\n*** TEST SOAP 11 elemento body corretto (test2: chiusura senza apertura ammessa in xml) (buffer "+buffer_dimensione_default+"k) ***");
+			test("requestBodyMalformed2_soap11.xml", contentTypeSoap11, MessageType.SOAP_11, buffer_dimensione_default, true);
+
+			System.out.println("\n\n*** TEST SOAP 12 elemento body non corretto (test2: chiusura senza apertura ammessa in xml) (buffer "+buffer_dimensione_default+"k) ***");
+			test("requestBodyMalformed2_soap12.xml", contentTypeSoap12, MessageType.SOAP_12, buffer_dimensione_default, true);
+
+			System.out.println("\n\n*** TEST SOAP 11 elemento body non corretto (test3: /chiusura senza apertura ammessa in xml) (buffer "+buffer_dimensione_default+"k) ***");
+			test("requestBodyMalformed3_soap11.xml", contentTypeSoap11, MessageType.SOAP_11, buffer_dimensione_default, true);
+			
+			System.out.println("\n\n*** TEST SOAP 12 elemento body non corretto (test3: /chiusura senza apertura ammessa in xml) (buffer "+buffer_dimensione_default+"k) ***");
+			test("requestBodyMalformed3_soap12.xml", contentTypeSoap12, MessageType.SOAP_12, buffer_dimensione_default, true);
+			
+			System.out.println("\n\n*** TEST SOAP 11 elemento header non corretto (buffer "+buffer_dimensione_default+"k) ***");
+			try {
+				test("requestHeaderMalformed_soap11.xml", contentTypeSoap11, MessageType.SOAP_11, buffer_dimensione_default, true);
+				throw new Exception("Atteso errore");
+			}catch(Throwable e) {
+				if(e.getMessage().contains("Element type \"CONTENUTO_ERRATO\" must be followed by either attribute specifications, \">\" or \"/>\".")) {
+					System.out.println("Rilevato errore atteso: "+e.getMessage());
+				}
+				else {
+					throw e;
+				}
+			}
+			
+			System.out.println("\n\n*** TEST SOAP 12 elemento header non corretto (buffer "+buffer_dimensione_default+"k) ***");
+			try {
+				test("requestHeaderMalformed_soap12.xml", contentTypeSoap12, MessageType.SOAP_12, buffer_dimensione_default, true);
+				throw new Exception("Atteso errore");
+			}catch(Throwable e) {
+				if(e.getMessage().contains("Element type \"CONTENUTO_ERRATO\" must be followed by either attribute specifications, \">\" or \"/>\".")) {
+					System.out.println("Rilevato errore atteso: "+e.getMessage());
+				}
+				else {
+					throw e;
+				}
+			}
+			
+			
 			System.out.println("\n\n*** TEST SPECIAL CASE SOAP 11 con BodyChildName (buffer 1k) ***");
 			test("requestFirstChildNameBody_soap11.xml", contentTypeSoap11, MessageType.SOAP_11, 1, true);
 			
@@ -1558,6 +1623,14 @@ public class TestOptimizedHeader {
 				newString = newString.replace("?>\n"+
 					"\n"+
 					"<soap:Envelope","?><soap:Envelope");
+			}
+			else if(fileName.startsWith("requestBodyMalformed2")) {
+				newString = resourceAsString.replace("<soapenv:Body>", "<soapenv:Header>"+newHeader+"</soapenv:Header><soapenv:Body>");
+				newString = newString.replace("CONTENUTO_ERRATO>","CONTENUTO_ERRATO&gt;");
+			}
+			else if(fileName.startsWith("requestBodyMalformed3")) {
+				newString = resourceAsString.replace("<soapenv:Body>", "<soapenv:Header>"+newHeader+"</soapenv:Header><soapenv:Body>");
+				newString = newString.replace("CONTENUTO_ERRATO/>","CONTENUTO_ERRATO/&gt;");
 			}
 			else {
 				newString = resourceAsString.replace("<soapenv:Body>", "<soapenv:Header>"+newHeader+"</soapenv:Header><soapenv:Body>");

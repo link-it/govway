@@ -95,6 +95,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 	//private Element rootElement;
 	private String rootElementNamespace;
 	private String rootElementLocalName;
+	private String rootElementPrefix;
 	private String fault;
 	
 	private int bufferSize;
@@ -165,7 +166,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 			boolean bodyFound = false;
 			String prefixBody = null;
 			
-			String elementAfterBody = null;
+			StringBuilder elementAfterBodyBuilder = null;
 			
 			boolean cdataFound = false;
 			boolean commentFound = false;
@@ -232,6 +233,17 @@ public class OpenSPCoop2MessageSoapStreamReader {
 								if(headerClosure!=null) {
 									//System.out.println("AGGIUNGO AD HEADER TESTO ["+sPreClosure+"]");
 									headerBuilder.append(sPreClosure);
+								}
+								else if(bodyFound) {
+									if(!sPreClosure.startsWith("<![CDATA[") && !sPreClosure.startsWith("<!--")) {
+										//System.out.println("AGGIUNGO A BODY ["+sPreClosure+"]");
+										if(elementAfterBodyBuilder!=null) {
+											elementAfterBodyBuilder.append(sPreClosure);
+										}
+										else {
+											elementAfterBodyBuilder = new StringBuilder(sPreClosure);
+										}
+									}
 								}
 								
 							}
@@ -405,6 +417,8 @@ public class OpenSPCoop2MessageSoapStreamReader {
 									this.startHeaderOffset = sbActualOffsetStart;
 								}
 								this.startBodyOffset=sbActualOffsetStart;
+								sbActual.delete(0, sbActual.length());
+								sbActualOffsetStart = i+bLetti;
 							}
 							else if(!bodyFound && isOpenedElement(s,":Body")) {
 								String sPrefix = s.substring(0, s.indexOf(":Body"));
@@ -417,6 +431,8 @@ public class OpenSPCoop2MessageSoapStreamReader {
 										this.startHeaderOffset = sbActualOffsetStart;
 									}
 									this.startBodyOffset=sbActualOffsetStart;
+									sbActual.delete(0, sbActual.length());
+									sbActualOffsetStart = i+bLetti;
 								}
 								else {
 									analisiTerminata=true;
@@ -444,7 +460,14 @@ public class OpenSPCoop2MessageSoapStreamReader {
 									}
 									else {
 										if(!s.endsWith("&gt;")){
-											elementAfterBody = s;
+											if(elementAfterBodyBuilder!=null) {
+												//System.out.println("AGGIUNGO A BODY dentro ["+s+"]");
+												elementAfterBodyBuilder.append(s);
+											}
+											else {
+												//System.out.println("CREO A BODY ["+s+"]");
+												elementAfterBodyBuilder = new StringBuilder(s);
+											}
 										}
 									}
 									
@@ -491,6 +514,11 @@ public class OpenSPCoop2MessageSoapStreamReader {
 			
 			
 			boolean throwException = false;
+			String elementAfterBody = null;
+			//System.out.println("BODY ["+elementAfterBodyBuilder+"]");
+			if(elementAfterBodyBuilder!=null && elementAfterBodyBuilder.length()>0) {
+				elementAfterBody = elementAfterBodyBuilder.toString();
+			}
 			if(elementAfterBody!=null || this.fault!=null) {
 				throwException=true; // ho terminato di leggere la parte interessante del messaggio
 				this.parsingComplete = true;
@@ -543,9 +571,19 @@ public class OpenSPCoop2MessageSoapStreamReader {
 				sbFaultAnalizer.append(this.envelope);
 				sbFaultAnalizer.append(this.body);
 				sbFaultAnalizer.append(this.fault);
-				if(!this.fault.endsWith("/>")) {
+				if((this.fault.contains("<") && this.fault.contains(">")) && !this.fault.trim().endsWith("/>")) {
+					//System.out.println("CALCOLO!! ["+this.fault+"]");
+					int i = 0;
+					for (; i < this.fault.length(); i++) {
+						char c = this.fault.charAt(i);
+						if(c=='<') {
+							i++;
+							break;
+						}
+					}
+					//System.out.println("DOPO GIRO: "+i);
 					StringBuilder sb = new StringBuilder();
-					for (int i = 1; i < this.fault.length(); i++) {
+					for (; i < this.fault.length(); i++) {
 						char c = this.fault.charAt(i);
 						if(c==' ' || c=='>' || c=='\t' || c=='\r' || c=='\n') {
 							break;
@@ -553,7 +591,9 @@ public class OpenSPCoop2MessageSoapStreamReader {
 						sb.append(c);
 					}
 					sbFaultAnalizer.append("</").append(sb.toString()).append(">");
+					//System.out.println("TROVATO:["+sb.toString()+"]");
 				}
+				
 				sbFaultAnalizer.append("</").append(prefixBody).append("Body>");
 				sbFaultAnalizer.append("</").append(this.prefixEnvelope).append("Envelope>");
 				//Element e = null;
@@ -583,21 +623,24 @@ public class OpenSPCoop2MessageSoapStreamReader {
 			
 			if(this.fault==null && elementAfterBody!=null) {
 				//System.out.println("elementAfterBody ["+elementAfterBody+"]");
-				if(this.body.endsWith("/>")) {
-					if(throwException) {
-						throw new Exception("Invalid content; found element after body closure '/>': ("+elementAfterBody+")");
-					}
-					else{
-						return;
-					}
-				}
+
 				StringBuilder sbElementAnalizer = new StringBuilder();
 				sbElementAnalizer.append(this.envelope);
 				sbElementAnalizer.append(this.body);
 				sbElementAnalizer.append(elementAfterBody);
-				if(!elementAfterBody.endsWith("/>")) {
+				if((elementAfterBody.contains("<") && elementAfterBody.contains(">")) && !elementAfterBody.trim().endsWith("/>")) {
+					//System.out.println("CALCOLO!! ["+elementAfterBody+"]");
+					int i = 0;
+					for (; i < elementAfterBody.length(); i++) {
+						char c = elementAfterBody.charAt(i);
+						if(c=='<') {
+							i++;
+							break;
+						}
+					}
+					//System.out.println("DOPO GIRO: "+i);
 					StringBuilder sb = new StringBuilder();
-					for (int i = 1; i < elementAfterBody.length(); i++) {
+					for (; i < elementAfterBody.length(); i++) {
 						char c = elementAfterBody.charAt(i);
 						if(c==' ' || c=='>' || c=='\t' || c=='\r' || c=='\n') {
 							break;
@@ -605,44 +648,77 @@ public class OpenSPCoop2MessageSoapStreamReader {
 						sb.append(c);
 					}
 					sbElementAnalizer.append("</").append(sb.toString()).append(">");
+					//System.out.println("TROVATO:["+sb.toString()+"]");
 				}
-				sbElementAnalizer.append("</").append(prefixBody).append("Body>");
-				sbElementAnalizer.append("</").append(this.prefixEnvelope).append("Envelope>");
-				//Element e = null;
-				SAXParser saxParser = null;
-				try {
-					//e = XMLUtils.getInstance().newElement(sbElementAnalizer.toString().getBytes());
-					
-					saxParser = getParser();
-					XMLReader xmlReader = saxParser.getXMLReader();
-					RootElementSaxContentHandler saxHandler = new RootElementSaxContentHandler(this.namespace);
-					xmlReader.setContentHandler(saxHandler);
-					//System.out.println("ANALIZZO '"+sbElementAnalizer.toString()+"'");
-					try(ByteArrayInputStream bin = new ByteArrayInputStream(sbElementAnalizer.toString().getBytes())){
-						InputSource inputSource = new InputSource(bin);
-						xmlReader.parse(inputSource);
+				else {
+					//System.out.println("RIPULISCO");
+					boolean empty = true;
+					for (int i = 0; i < elementAfterBody.length(); i++) {
+						char c = elementAfterBody.charAt(i);
+						if(c!=' ' && c!='\t' && c!='\r' && c!='\n') {
+							empty = false;
+							break;
+						}
 					}
-					this.rootElementLocalName = saxHandler.getLocalName();
-					this.rootElementNamespace = saxHandler.getNamespace();					
-				}catch(Throwable t) {
-					if(throwException) {
-						throw new Exception("Invalid content '"+elementAfterBody+"' ("+sbElementAnalizer.toString()+"): "+t.getMessage(),t);
-					}
-					else{
-						return;
-					}
-				}finally {
-					if(saxParser!=null) {
-						returnParser(saxParser);
+					//System.out.println("RIPULISCO EMPTY: "+empty);
+					if(empty) {
+						this.bodyEmpty=true;
 					}
 				}
-//				Node body = SoapUtils.getFirstNotEmptyChildNode(this.msgFactory, e, false);
-//				if(body!=null) {
-//					Node element = SoapUtils.getFirstNotEmptyChildNode(this.msgFactory, body, false);
-//					if(element instanceof Element) {
-//						this.rootElement = (Element) element;
-//					}
-//				}
+				
+				//System.out.println("BODY ["+this.body+"]");
+				if(this.body!=null && this.body.endsWith("/>")) {
+					if(!this.bodyEmpty) {
+						if(throwException) {
+							throw new Exception("Invalid content; found element after body closure '/>': ("+elementAfterBody+")");
+						}
+						else{
+							return;
+						}
+					}
+				}
+				else {
+				
+					sbElementAnalizer.append("</").append(prefixBody).append("Body>");
+					sbElementAnalizer.append("</").append(this.prefixEnvelope).append("Envelope>");
+					//System.out.println("UTILIZZO:["+sbElementAnalizer.toString()+"]");
+					//Element e = null;
+					SAXParser saxParser = null;
+					try {
+						//e = XMLUtils.getInstance().newElement(sbElementAnalizer.toString().getBytes());
+						
+						saxParser = getParser();
+						XMLReader xmlReader = saxParser.getXMLReader();
+						RootElementSaxContentHandler saxHandler = new RootElementSaxContentHandler(this.namespace);
+						xmlReader.setContentHandler(saxHandler);
+						//System.out.println("ANALIZZO '"+sbElementAnalizer.toString()+"'");
+						try(ByteArrayInputStream bin = new ByteArrayInputStream(sbElementAnalizer.toString().getBytes())){
+							InputSource inputSource = new InputSource(bin);
+							xmlReader.parse(inputSource);
+						}
+						this.rootElementLocalName = saxHandler.getLocalName();
+						this.rootElementNamespace = saxHandler.getNamespace();	
+						this.rootElementPrefix = saxHandler.getPrefix();
+					}catch(Throwable t) {
+						if(throwException) {
+							throw new Exception("Invalid content '"+elementAfterBody+"' ("+sbElementAnalizer.toString()+"): "+t.getMessage(),t);
+						}
+						else{
+							return;
+						}
+					}finally {
+						if(saxParser!=null) {
+							returnParser(saxParser);
+						}
+					}
+	//				Node body = SoapUtils.getFirstNotEmptyChildNode(this.msgFactory, e, false);
+	//				if(body!=null) {
+	//					Node element = SoapUtils.getFirstNotEmptyChildNode(this.msgFactory, body, false);
+	//					if(element instanceof Element) {
+	//						this.rootElement = (Element) element;
+	//					}
+	//				}
+				}
 				
 			}
 			
@@ -792,7 +868,12 @@ public class OpenSPCoop2MessageSoapStreamReader {
 	public void setSoapHeaderModified(boolean soapHeaderModified) {
 		this.soapHeaderModified = soapHeaderModified;
 	}
+	private MessageException parseErrorHeader = null;
 	private SOAPHeader _getHeader(boolean checkIsEmpty, boolean buildIfEmpty) throws MessageException {
+		
+		if(this.parseErrorHeader!=null) {
+			throw this.parseErrorHeader;
+		}
 		
 		SOAPHeader soapHeader = null;
 		
@@ -809,6 +890,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 					//System.out.println("COSTRUISCO ["+this.header+"]");
 					this._headerMsgCompleto = buildOp2Message(this.header.getBytes(), this.getMessageType());
 					soapHeader = this._headerMsgCompleto.castAsSoap().getSOAPHeader();
+					//System.out.println("COSTRUITO ["+org.openspcoop2.message.xml.XMLUtils.getInstance(this.msgFactory).toString(soapHeader)+"]");
 										
 					if(soapHeader!=null) {
 						if("".equals(this.prefixEnvelope)) {
@@ -825,7 +907,9 @@ public class OpenSPCoop2MessageSoapStreamReader {
 					this.header = null; // libero memoria
 					
 				}catch(Throwable t) {
-					throw SoapUtils.buildMessageException("Invalid header ("+this.header+"): "+t.getMessage(),t);
+					//System.out.println("ECCEZIONE!");
+					this.parseErrorHeader = SoapUtils.buildMessageException("Invalid header ("+this.header+"): "+t.getMessage(),t);
+					throw this.parseErrorHeader;
 				}
 			}
 			
@@ -891,6 +975,9 @@ public class OpenSPCoop2MessageSoapStreamReader {
 	}
 	public String getRootElementLocalName() {
 		return this.rootElementLocalName;
+	}
+	public String getRootElementPrefix() {
+		return this.rootElementPrefix;
 	}
 	
     private static ThreadLocal<SAXParser> saxParserThreadLocal = 

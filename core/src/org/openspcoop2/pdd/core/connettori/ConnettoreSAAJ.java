@@ -40,6 +40,7 @@ import javax.xml.soap.SOAPMessage;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
+import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.Costanti;
@@ -182,7 +183,7 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 				throw new Exception("Connettore utilizzabile solamente per tipologia di servizio SOAP");
 			}
 			OpenSPCoop2SoapMessage soapRequestMessage = this.requestMsg.castAsSoap();
-			this.soapRequestMessage = soapRequestMessage.getSOAPMessage();
+			this.soapRequestMessage = MessageUtils.getSOAPMessage(soapRequestMessage, false, this.idTransazione);
 
 			// Collezione header di trasporto per dump
 			Map<String, List<String>> propertiesTrasportoDebug = null;

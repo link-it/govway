@@ -29,6 +29,7 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeaderElement;
 
+import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.soap.AbstractOpenSPCoop2Message_saaj_impl;
 import org.openspcoop2.message.soap.AbstractOpenSPCoop2Message_soap_impl;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
@@ -67,7 +68,6 @@ public class DynamicSOAPHeader<T extends AbstractOpenSPCoop2Message_saaj_impl> i
 				else {
 					hdr = soapReader.getHeader();
 				}
-				
 				if(hdr==null) {
 					hdr = soapReader.addHeader();
 				}
@@ -75,8 +75,9 @@ public class DynamicSOAPHeader<T extends AbstractOpenSPCoop2Message_saaj_impl> i
 			}
 			
 			return this.wrapped.getContent().getSOAPPart().getEnvelope().getHeader();
-		}catch(Exception e) {
-			throw new RuntimeException(e.getMessage(),e);
+		}catch(Throwable t) {
+			MessageUtils.registerParseException(this.wrapped, t, true);
+			throw new RuntimeException(t.getMessage(),t);
 		}
 	}
 

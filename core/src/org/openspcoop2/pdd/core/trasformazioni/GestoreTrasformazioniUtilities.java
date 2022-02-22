@@ -626,11 +626,13 @@ public class GestoreTrasformazioniUtilities {
 										OpenSPCoop2MessageParseResult pr = null;
 										if(transportRequestContext!=null) {
 											pr = messageFactory.envelopingMessage(messageType, contentTypeForEnvelope, 
-													soapAction, transportRequestContext, risultatoEnvelopeBody.getContenuto(), null, true);
+													soapAction, transportRequestContext, risultatoEnvelopeBody.getContenuto(), null, true,
+													op2Properties.useSoapMessageReader(), op2Properties.getSoapMessageReaderBufferThresholdKb());
 										}
 										else {
 											pr = messageFactory.envelopingMessage(messageType, contentTypeForEnvelope, 
-													soapAction, transportResponseContext, risultatoEnvelopeBody.getContenuto(), null, true);
+													soapAction, transportResponseContext, risultatoEnvelopeBody.getContenuto(), null, true,
+													op2Properties.useSoapMessageReader(), op2Properties.getSoapMessageReaderBufferThresholdKb());
 										}
 										messageSoap = pr.getMessage_throwParseThrowable();
 									}
@@ -696,11 +698,13 @@ public class GestoreTrasformazioniUtilities {
 								OpenSPCoop2MessageParseResult pr = null;
 								if(transportRequestContext!=null) {
 									pr = messageFactory.envelopingMessage(messageType, contentTypeForEnvelope, 
-											soapAction, transportRequestContext, risultato.getContenuto(), null, true);
+											soapAction, transportRequestContext, risultato.getContenuto(), null, true,
+											op2Properties.useSoapMessageReader(), op2Properties.getSoapMessageReaderBufferThresholdKb());
 								}
 								else {
 									pr = messageFactory.envelopingMessage(messageType, contentTypeForEnvelope, 
-											soapAction, transportResponseContext, risultato.getContenuto(), null, true);
+											soapAction, transportResponseContext, risultato.getContenuto(), null, true,
+											op2Properties.useSoapMessageReader(), op2Properties.getSoapMessageReaderBufferThresholdKb());
 								}
 								messageSoap = pr.getMessage_throwParseThrowable();
 							}

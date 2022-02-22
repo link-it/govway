@@ -434,7 +434,8 @@ public abstract class OpenSPCoop2MessageFactory {
 			Object context, 
 			Object msgParam, NotifierInputStreamParams notifierInputStreamParams, 
 			AttachmentsProcessingMode attachmentsProcessingMode,
-			boolean eraserXmlTag) {
+			boolean eraserXmlTag,
+			boolean useSoapMessageReader, int soapMessageReaderBufferThresholdKb ) {
 				
 		try{
 		
@@ -567,16 +568,31 @@ public abstract class OpenSPCoop2MessageFactory {
 				messageInput = new SequenceInputStream(startInput, binSoapClose);
 			}
 						
+			OpenSPCoop2MessageSoapStreamReader soapReader = null;
+			if(useSoapMessageReader) {
+				String contentType = contentTypeForEnvelope;
+				if(contentType!=null) {
+					soapReader = new OpenSPCoop2MessageSoapStreamReader(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), contentType, 
+							messageInput, soapMessageReaderBufferThresholdKb);
+					try {
+						soapReader.read();
+					}finally {
+						// anche in caso di eccezione devo cmq aggiornare is
+						messageInput = soapReader.getBufferedInputStream();
+					}
+				}
+			}
+			
 			OpenSPCoop2MessageParseResult result = null;
 			if(context==null){
-				result = _internalCreateMessage(messageType, messageRole, contentTypeForEnvelope, messageInput, notifierInputStreamParams, attachmentsProcessingMode, 0, null);
+				result = _internalCreateMessage(messageType, messageRole, contentTypeForEnvelope, messageInput, notifierInputStreamParams, attachmentsProcessingMode, 0, soapReader);
 			}
 			else if(context instanceof TransportRequestContext){
 				TransportRequestContext trc = (TransportRequestContext) context;
 				TransportUtils.removeObject(trc.getHeaders(), HttpConstants.CONTENT_TYPE);
 				TransportUtils.addHeader(trc.getHeaders(), HttpConstants.CONTENT_TYPE, contentTypeForEnvelope);
 				
-				result = _internalCreateMessage(messageType, messageRole, trc, messageInput, notifierInputStreamParams, attachmentsProcessingMode, 0, null);
+				result = _internalCreateMessage(messageType, messageRole, trc, messageInput, notifierInputStreamParams, attachmentsProcessingMode, 0, soapReader);
 				
 			}
 			else if(context instanceof TransportResponseContext){
@@ -584,7 +600,7 @@ public abstract class OpenSPCoop2MessageFactory {
 				TransportUtils.removeObject(trc.getHeaders(), HttpConstants.CONTENT_TYPE);
 				TransportUtils.addHeader(trc.getHeaders(), HttpConstants.CONTENT_TYPE, contentTypeForEnvelope);
 				
-				result = _internalCreateMessage(messageType, messageRole, trc, messageInput, notifierInputStreamParams, attachmentsProcessingMode, 0, null);
+				result = _internalCreateMessage(messageType, messageRole, trc, messageInput, notifierInputStreamParams, attachmentsProcessingMode, 0, soapReader);
 			}
 			else{
 				throw new MessageException("Unsupported Context ["+context.getClass().getName()+"]");
@@ -823,97 +839,121 @@ public abstract class OpenSPCoop2MessageFactory {
 	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, String contentTypeForEnvelope, String soapAction,
 			TransportRequestContext requestContext, 
 			InputStream messageInput,NotifierInputStreamParams notifierInputStreamParams, 
-			boolean eraserXmlTag) {
+			boolean eraserXmlTag,
+			boolean useSoapMessageReader, int soapMessageReaderBufferThresholdKb) {
 		return envelopingMessage(messageType, contentTypeForEnvelope, soapAction, requestContext,
-				messageInput, notifierInputStreamParams, AttachmentsProcessingMode.getMemoryCacheProcessingMode(), eraserXmlTag);
+				messageInput, notifierInputStreamParams, AttachmentsProcessingMode.getMemoryCacheProcessingMode(), eraserXmlTag,
+				useSoapMessageReader, soapMessageReaderBufferThresholdKb);
 	}
 	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, String contentTypeForEnvelope, String soapAction,
 			TransportRequestContext requestContext, 
 			InputStream messageInput,NotifierInputStreamParams notifierInputStreamParams, 
 			AttachmentsProcessingMode attachmentsProcessingMode,
-			boolean eraserXmlTag) {
+			boolean eraserXmlTag,
+			boolean useSoapMessageReader, int soapMessageReaderBufferThresholdKb) {
 		return this._internalEnvelopingMessage(messageType, MessageRole.REQUEST, contentTypeForEnvelope, soapAction, requestContext, 
-				messageInput, notifierInputStreamParams, attachmentsProcessingMode, eraserXmlTag);
+				messageInput, notifierInputStreamParams, attachmentsProcessingMode, eraserXmlTag,
+				useSoapMessageReader, soapMessageReaderBufferThresholdKb);
 	}
 	
 	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, String contentTypeForEnvelope, String soapAction,
 			TransportRequestContext requestContext, 
 			byte[] messageInput,NotifierInputStreamParams notifierInputStreamParams, 
-			boolean eraserXmlTag) {
+			boolean eraserXmlTag,
+			boolean useSoapMessageReader, int soapMessageReaderBufferThresholdKb) {
 		return envelopingMessage(messageType, contentTypeForEnvelope, soapAction, requestContext,
-				messageInput, notifierInputStreamParams, AttachmentsProcessingMode.getMemoryCacheProcessingMode(), eraserXmlTag);
+				messageInput, notifierInputStreamParams, AttachmentsProcessingMode.getMemoryCacheProcessingMode(), eraserXmlTag,
+				useSoapMessageReader, soapMessageReaderBufferThresholdKb);
 	}
 	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, String contentTypeForEnvelope, String soapAction,
 			TransportRequestContext requestContext, 
 			byte[] messageInput,NotifierInputStreamParams notifierInputStreamParams, 
 			AttachmentsProcessingMode attachmentsProcessingMode,
-			boolean eraserXmlTag) {
+			boolean eraserXmlTag,
+			boolean useSoapMessageReader, int soapMessageReaderBufferThresholdKb) {
 		return this._internalEnvelopingMessage(messageType, MessageRole.REQUEST, contentTypeForEnvelope, soapAction, requestContext, 
-				messageInput, notifierInputStreamParams, attachmentsProcessingMode, eraserXmlTag);
+				messageInput, notifierInputStreamParams, attachmentsProcessingMode, eraserXmlTag,
+				useSoapMessageReader, soapMessageReaderBufferThresholdKb);
 	}
 	
 	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, String contentTypeForEnvelope, String soapAction,
 			TransportResponseContext responseContext, 
 			InputStream messageInput,NotifierInputStreamParams notifierInputStreamParams, 
-			boolean eraserXmlTag) {
+			boolean eraserXmlTag,
+			boolean useSoapMessageReader, int soapMessageReaderBufferThresholdKb) {
 		return envelopingMessage(messageType, contentTypeForEnvelope, soapAction, responseContext,
-				messageInput, notifierInputStreamParams, AttachmentsProcessingMode.getMemoryCacheProcessingMode(), eraserXmlTag);
+				messageInput, notifierInputStreamParams, AttachmentsProcessingMode.getMemoryCacheProcessingMode(), eraserXmlTag,
+				useSoapMessageReader, soapMessageReaderBufferThresholdKb);
 	}
 	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, String contentTypeForEnvelope, String soapAction,
 			TransportResponseContext responseContext, 
 			InputStream messageInput,NotifierInputStreamParams notifierInputStreamParams, 
 			AttachmentsProcessingMode attachmentsProcessingMode,
-			boolean eraserXmlTag) {
+			boolean eraserXmlTag,
+			boolean useSoapMessageReader, int soapMessageReaderBufferThresholdKb) {
 		return this._internalEnvelopingMessage(messageType, MessageRole.RESPONSE, contentTypeForEnvelope, soapAction, responseContext, 
-				messageInput, notifierInputStreamParams, attachmentsProcessingMode, eraserXmlTag);
+				messageInput, notifierInputStreamParams, attachmentsProcessingMode, eraserXmlTag,
+				useSoapMessageReader, soapMessageReaderBufferThresholdKb);
 	}
 	
 	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, String contentTypeForEnvelope, String soapAction,
 			TransportResponseContext responseContext, 
 			byte[] messageInput,NotifierInputStreamParams notifierInputStreamParams, 
-			boolean eraserXmlTag) {
+			boolean eraserXmlTag,
+			boolean useSoapMessageReader, int soapMessageReaderBufferThresholdKb) {
 		return envelopingMessage(messageType, contentTypeForEnvelope, soapAction, responseContext,
-				messageInput, notifierInputStreamParams, AttachmentsProcessingMode.getMemoryCacheProcessingMode(), eraserXmlTag);
+				messageInput, notifierInputStreamParams, AttachmentsProcessingMode.getMemoryCacheProcessingMode(), eraserXmlTag,
+				useSoapMessageReader, soapMessageReaderBufferThresholdKb);
 	}
 	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, String contentTypeForEnvelope, String soapAction,
 			TransportResponseContext responseContext, 
 			byte[] messageInput,NotifierInputStreamParams notifierInputStreamParams, 
 			AttachmentsProcessingMode attachmentsProcessingMode,
-			boolean eraserXmlTag) {
+			boolean eraserXmlTag,
+			boolean useSoapMessageReader, int soapMessageReaderBufferThresholdKb) {
 		return this._internalEnvelopingMessage(messageType, MessageRole.RESPONSE, contentTypeForEnvelope, soapAction, responseContext, 
-				messageInput, notifierInputStreamParams, attachmentsProcessingMode, eraserXmlTag);
+				messageInput, notifierInputStreamParams, attachmentsProcessingMode, eraserXmlTag,
+				useSoapMessageReader, soapMessageReaderBufferThresholdKb);
 	}
 	
 	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, MessageRole messageRole, 
 			String contentTypeForEnvelope, String soapAction,
 			InputStream messageInput,NotifierInputStreamParams notifierInputStreamParams, 
-			boolean eraserXmlTag) {
+			boolean eraserXmlTag,
+			boolean useSoapMessageReader, int soapMessageReaderBufferThresholdKb) {
 		return envelopingMessage(messageType, messageRole, contentTypeForEnvelope, soapAction,
-				messageInput, notifierInputStreamParams, AttachmentsProcessingMode.getMemoryCacheProcessingMode(), eraserXmlTag);
+				messageInput, notifierInputStreamParams, AttachmentsProcessingMode.getMemoryCacheProcessingMode(), eraserXmlTag,
+				useSoapMessageReader, soapMessageReaderBufferThresholdKb);
 	}
 	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, MessageRole messageRole, 
 			String contentTypeForEnvelope, String soapAction,
 			InputStream messageInput,NotifierInputStreamParams notifierInputStreamParams, 
 			AttachmentsProcessingMode attachmentsProcessingMode,
-			boolean eraserXmlTag) {
+			boolean eraserXmlTag,
+			boolean useSoapMessageReader, int soapMessageReaderBufferThresholdKb) {
 		return this._internalEnvelopingMessage(messageType, messageRole, contentTypeForEnvelope, soapAction, null, 
-				messageInput, notifierInputStreamParams, attachmentsProcessingMode, eraserXmlTag);
+				messageInput, notifierInputStreamParams, attachmentsProcessingMode, eraserXmlTag,
+				useSoapMessageReader, soapMessageReaderBufferThresholdKb);
 	}
 	
 	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, MessageRole messageRole, 
 			String contentTypeForEnvelope, String soapAction,
 			byte[] messageInput,NotifierInputStreamParams notifierInputStreamParams, 
-			boolean eraserXmlTag) {
+			boolean eraserXmlTag,
+			boolean useSoapMessageReader, int soapMessageReaderBufferThresholdKb) {
 		return envelopingMessage(messageType, messageRole, contentTypeForEnvelope, soapAction,
-				messageInput, notifierInputStreamParams, AttachmentsProcessingMode.getMemoryCacheProcessingMode(), eraserXmlTag);
+				messageInput, notifierInputStreamParams, AttachmentsProcessingMode.getMemoryCacheProcessingMode(), eraserXmlTag,
+				useSoapMessageReader, soapMessageReaderBufferThresholdKb);
 	}
 	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, MessageRole messageRole, 
 			String contentTypeForEnvelope, String soapAction,
 			byte[] messageInput,NotifierInputStreamParams notifierInputStreamParams, 
 			AttachmentsProcessingMode attachmentsProcessingMode,
-			boolean eraserXmlTag) {
+			boolean eraserXmlTag,
+			boolean useSoapMessageReader, int soapMessageReaderBufferThresholdKb) {
 		return this._internalEnvelopingMessage(messageType, messageRole, contentTypeForEnvelope, soapAction, null, 
-				messageInput, notifierInputStreamParams, attachmentsProcessingMode, eraserXmlTag);
+				messageInput, notifierInputStreamParams, attachmentsProcessingMode, eraserXmlTag,
+				useSoapMessageReader, soapMessageReaderBufferThresholdKb);
 	}
 	
 	
