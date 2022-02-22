@@ -29,9 +29,12 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_COMPLETATA;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_FALLITA;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_IN_CORSO;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_ERRORE_APPLICATIVO;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_ERRORE_INVOCAZIONE;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_OK;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.FORMATO_FAULT_SOAP1_1;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.FORMATO_FAULT_SOAP1_2;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.buildRequestAndExpectations;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkSchedulingConnettoreCompletato;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkStatoConsegna;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.getNumeroTentativiSchedulingConnettore;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.setDifference;
@@ -234,18 +237,17 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 			request5xx.setUrl(request5xx.getUrl()+"&returnCode=" + (500+i));
 			requestsByKind.add(new RequestAndExpectations(request5xx, connettoriSuccessoRequest, connettoriFallimentoRequest, ESITO_CONSEGNA_MULTIPLA_IN_CORSO, 500+i));
 			
-		/*TODO: Decommenta dopo osservazioni di andrea	
-		 * HttpRequest request2xx = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", soapContentType );
+			
+		    HttpRequest request2xx = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", soapContentType );
 			request2xx.setUrl(request2xx.getUrl()+"&returnCode=" + (200+i));
 			requestsByKind.add(new RequestAndExpectations(request2xx, Common.setConnettoriAbilitati, Set.of(), ESITO_CONSEGNA_MULTIPLA_COMPLETATA, 200+i ));
 			
 			HttpRequest request4xx = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", soapContentType );
 			request4xx.setUrl(request4xx.getUrl()+"&returnCode=" + (400+i));
-			requestsByKind.add(new RequestAndExpectations(request4xx, connettoriSuccessoRequest, connettoriFallimentoRequest, ESITO_CONSEGNA_MULTIPLA_IN_CORSO,400+i));*/
+			requestsByKind.add(new RequestAndExpectations(request4xx, connettoriSuccessoRequest, connettoriFallimentoRequest, ESITO_CONSEGNA_MULTIPLA_IN_CORSO,400+i));
 		}		
-				
-		/* TODO: Decommenta dopo osservazioni di andrea
-		 * HttpRequest requestSoapFault =  RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1 );
+		
+		HttpRequest requestSoapFault =  RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1 );
 		requestsByKind.add(new RequestAndExpectations(
 				requestSoapFault, 
 				Common.setConnettoriAbilitati, 
@@ -257,7 +259,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 				requestSoapFault, 
 				Common.setConnettoriAbilitati, 
 				Set.of(),  
-				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, true, TipoFault.SOAP1_2 ));*/
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, true, TipoFault.SOAP1_2 ));
 		
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		
@@ -274,7 +276,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		for (var requestAndExpectation : responsesByKind.keySet()) {
 			for (var response : responsesByKind.get(requestAndExpectation)) {
 				CommonConsegnaMultipla.checkConsegnaConnettoreFile(requestAndExpectation.request, response, connettoriFile);
-				CommonConsegnaMultipla.checkRequestExpectations(requestAndExpectation, response);
+				CommonConsegnaMultipla.checkRequestExpectations(requestAndExpectation, response, connettoriFile);
 			}
 		}
 
@@ -283,7 +285,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		
 		for (var requestAndExpectation : responsesByKind.keySet()) {
 			for (var response : responsesByKind.get(requestAndExpectation)) {
-				CommonConsegnaMultipla.checkRequestExpectationsFinal(requestAndExpectation, response);
+				CommonConsegnaMultipla.checkRequestExpectationsFinal(requestAndExpectation, response, connettoriFile);
 			}
 		}
 
@@ -371,32 +373,51 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		HttpRequest requestSoapMessageContains = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1 );
 		requestSoapMessageContains.setUrl(requestSoapMessageContains.getUrl()+"&faultActor=12345&faultCode=2341&faultMessage=Container-MessageRispeditaContains-Container"); 
 	
-		requestsByKind.add(new RequestAndExpectations(
+		String  fault = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><SOAP-ENV:Fault>"
+				 +"<faultcode xmlns:ns0=\"http://www.openspcoop2.org/example\">ns0:CodeRispedita</faultcode><faultstring>MessageRispedita</faultstring>"
+				 + "<faultactor>ActorRispedita</faultactor></SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>";
+	
+		requestsByKind.add(new RequestAndExpectationsFault(
 				requestSoapFaultTuttiValorizzati,				
 				Set.of(CONNETTORE_1,CONNETTORE_2),
 				Set.of(CONNETTORE_0, CONNETTORE_3),
-				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_1)
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_1, fault, FORMATO_FAULT_SOAP1_1)
 			);
-		
-		requestsByKind.add(new RequestAndExpectations(
+	
+		 
+		 fault = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><SOAP-ENV:Fault>"
+				 +"<faultcode xmlns:ns0=\"http://www.openspcoop2.org/example\">ns0:CodeRispedita123</faultcode><faultstring>MessageRispedita123</faultstring>"
+				 + "<faultactor>ActorRispedita123</faultactor></SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>";
+		 
+		requestsByKind.add(new RequestAndExpectationsFault(
 				requestSoapFaultTuttiRegex,
 				Set.of(CONNETTORE_0,CONNETTORE_2,CONNETTORE_3),
 				Set.of(CONNETTORE_1), 
-				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_1)
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_1, fault, FORMATO_FAULT_SOAP1_1)
 			);
 		
-		requestsByKind.add(new RequestAndExpectations(
+		 fault = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><SOAP-ENV:Fault>"
+				 +"<faultcode xmlns:ns0=\"http://www.openspcoop2.org/example\">ns0:CodeNotImportant</faultcode><faultstring>MessageNotImportant</faultstring>"
+				 + "<faultactor>ActorRispedita</faultactor></SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>";
+					
+		 
+		requestsByKind.add(new RequestAndExpectationsFault(
 				requestSoapFaultSoloActor,
 				Set.of(CONNETTORE_0,CONNETTORE_1,CONNETTORE_2),
 				Set.of(CONNETTORE_3), 
-				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_1)
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_1, fault, FORMATO_FAULT_SOAP1_1)
 			);
-
-		requestsByKind.add(new RequestAndExpectations(
+		
+	
+		 fault = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><SOAP-ENV:Fault>"
+				 +"<faultcode xmlns:ns0=\"http://www.openspcoop2.org/example\">ns0:2341</faultcode><faultstring>Container-MessageRispeditaContains-Container</faultstring>"
+				 + "<faultactor>12345</faultactor></SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>";
+		 
+		requestsByKind.add(new RequestAndExpectationsFault(
 				requestSoapMessageContains,				
 				Set.of(CONNETTORE_0,CONNETTORE_1,CONNETTORE_3),
 				Set.of(CONNETTORE_2),
-				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_1)
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_1, fault, FORMATO_FAULT_SOAP1_1)
 			);
 		
 		requestSoapFaultTuttiValorizzati = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_2);
@@ -412,32 +433,48 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		requestSoapMessageContains = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_2);
 		requestSoapMessageContains.setUrl(requestSoapMessageContains.getUrl()+"&faultActor=12345&faultCode=2341&faultMessage=Container-MessageRispeditaContains-Container"); 
 	
-		requestsByKind.add(new RequestAndExpectations(
+		 fault = "<env:Envelope xmlns:env=\"http://www.w3.org/2003/05/soap-envelope\"><env:Header/><env:Body><env:Fault><env:Code><env:Value>env:Receiver</env:Value>"
+					+ "<env:Subcode><env:Value xmlns:ns1=\"http://www.openspcoop2.org/example\">ns1:CodeRispedita</env:Value></env:Subcode></env:Code><env:Reason>"
+					+"<env:Text xml:lang=\"en-US\">MessageRispedita</env:Text></env:Reason><env:Role>ActorRispedita</env:Role></env:Fault></env:Body></env:Envelope>";
+		 
+		requestsByKind.add(new RequestAndExpectationsFault(
 				requestSoapFaultTuttiValorizzati,				
 				Set.of(CONNETTORE_1,CONNETTORE_2),
 				Set.of(CONNETTORE_0, CONNETTORE_3),
-				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_2)
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_2, fault, FORMATO_FAULT_SOAP1_2)
 			);
 		
-		requestsByKind.add(new RequestAndExpectations(
+		 fault = "<env:Envelope xmlns:env=\"http://www.w3.org/2003/05/soap-envelope\"><env:Header/><env:Body><env:Fault><env:Code><env:Value>env:Receiver</env:Value>"
+					+ "<env:Subcode><env:Value xmlns:ns1=\"http://www.openspcoop2.org/example\">ns1:CodeRispedita123</env:Value></env:Subcode></env:Code><env:Reason>"
+					+"<env:Text xml:lang=\"en-US\">MessageRispedita123</env:Text></env:Reason><env:Role>ActorRispedita123</env:Role></env:Fault></env:Body></env:Envelope>";
+		 
+		requestsByKind.add(new RequestAndExpectationsFault(
 				requestSoapFaultTuttiRegex,
 				Set.of(CONNETTORE_0,CONNETTORE_2,CONNETTORE_3),
 				Set.of(CONNETTORE_1), 
-				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_2)
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_2, fault, FORMATO_FAULT_SOAP1_2)
 			);
 		
-		requestsByKind.add(new RequestAndExpectations(
+		 fault =  "<env:Envelope xmlns:env=\"http://www.w3.org/2003/05/soap-envelope\"><env:Header/><env:Body><env:Fault><env:Code><env:Value>env:Receiver</env:Value>"
+					+ "<env:Subcode><env:Value xmlns:ns1=\"http://www.openspcoop2.org/example\">ns1:CodeNotImportant</env:Value></env:Subcode></env:Code><env:Reason>"
+					+"<env:Text xml:lang=\"en-US\">MessageNotImportant</env:Text></env:Reason><env:Role>ActorRispedita</env:Role></env:Fault></env:Body></env:Envelope>";
+		 
+		requestsByKind.add(new RequestAndExpectationsFault(
 				requestSoapFaultSoloActor,
 				Set.of(CONNETTORE_0,CONNETTORE_1,CONNETTORE_2),
 				Set.of(CONNETTORE_3), 
-				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_2)
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_2, fault, FORMATO_FAULT_SOAP1_2)
 			);
 
-		requestsByKind.add(new RequestAndExpectations(
+		 fault = "<env:Envelope xmlns:env=\"http://www.w3.org/2003/05/soap-envelope\"><env:Header/><env:Body><env:Fault><env:Code><env:Value>env:Receiver</env:Value>"
+					+ "<env:Subcode><env:Value xmlns:ns1=\"http://www.openspcoop2.org/example\">ns1:2341</env:Value></env:Subcode></env:Code><env:Reason>"
+					+"<env:Text xml:lang=\"en-US\">Container-MessageRispeditaContains-Container</env:Text></env:Reason><env:Role>12345</env:Role></env:Fault></env:Body></env:Envelope>";
+		 
+		requestsByKind.add(new RequestAndExpectationsFault(
 				requestSoapMessageContains,				
 				Set.of(CONNETTORE_0,CONNETTORE_1,CONNETTORE_3),
 				Set.of(CONNETTORE_2),
-				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_2)
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, TipoFault.SOAP1_2, fault, FORMATO_FAULT_SOAP1_2)
 			);
 		
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
@@ -451,9 +488,22 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		
 		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
 		
-		for (var requestAndExpectation : responsesByKind.keySet()) {
+		for (var _requestAndExpectation : responsesByKind.keySet()) {
+			var requestAndExpectation = (RequestAndExpectationsFault) _requestAndExpectation;
+			
 			for (var response : responsesByKind.get(requestAndExpectation)) {
-				CommonConsegnaMultipla.checkRequestExpectations(requestAndExpectation, response);
+				//CommonConsegnaMultipla.checkRequestExpectations(requestAndExpectation, response);
+				
+				for (var connettore : requestAndExpectation.connettoriFallimento) {
+					int esitoNotifica = ESITO_ERRORE_APPLICATIVO;
+					CommonConsegnaMultipla.checkSchedulingConnettoreInCorso(response, connettore, esitoNotifica, requestAndExpectation.faultMessage, requestAndExpectation.faultType);
+				}
+				
+				for (var connettore : requestAndExpectation.connettoriSuccesso) {
+					int esitoNotifica = ESITO_ERRORE_APPLICATIVO;
+					CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, connettore, esitoNotifica, requestAndExpectation.faultMessage, requestAndExpectation.faultType);
+				}
+				
 			}
 		}
 		
@@ -461,7 +511,9 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControlloFallite);
 		for (var requestAndExpectation : responsesByKind.keySet()) {
 			for (var response : responsesByKind.get(requestAndExpectation)) {
-				CommonConsegnaMultipla.checkRequestExpectationsFinal(requestAndExpectation, response);
+				for ( var connettore : requestAndExpectation.connettoriFallimento) {
+					assertTrue( getNumeroTentativiSchedulingConnettore(response, connettore) >= 2);
+				}			
 			}
 		}	
 	}
@@ -590,19 +642,21 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 	
 		// La consegna deve risultare ancora in corso per via dell'errore sul connettore rotto, con un connettore
 		// in rispedizione
+		String fault = "";
+		String formatoFault = "";
 		for (var r : responses) {
 			CommonConsegnaMultipla.checkStatoConsegna(r, ESITO_CONSEGNA_MULTIPLA_IN_CORSO, 1);
-			CommonConsegnaMultipla.checkSchedulingConnettoreInCorso(r, CONNETTORE_ROTTO);
+			CommonConsegnaMultipla.checkSchedulingConnettoreInCorso(r, CONNETTORE_ROTTO,ESITO_ERRORE_INVOCAZIONE, fault, formatoFault);
 			for (var connettore : Common.setConnettoriAbilitati) {
-				CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(r, connettore);
+				CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(r, connettore, ESITO_OK, fault, formatoFault);
 			}
 		}
 		
 		for (var r : responses2) {
 			CommonConsegnaMultipla.checkStatoConsegna(r, ESITO_CONSEGNA_MULTIPLA_IN_CORSO, 1);
-			CommonConsegnaMultipla.checkSchedulingConnettoreInCorso(r, CONNETTORE_ROTTO);
+			CommonConsegnaMultipla.checkSchedulingConnettoreInCorso(r, CONNETTORE_ROTTO, ESITO_ERRORE_INVOCAZIONE, fault, formatoFault);
 			for (var connettore : Common.setConnettoriAbilitati) {
-				CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(r, connettore);
+				CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(r, connettore, ESITO_OK, fault, formatoFault);
 			}
 		}
 	}

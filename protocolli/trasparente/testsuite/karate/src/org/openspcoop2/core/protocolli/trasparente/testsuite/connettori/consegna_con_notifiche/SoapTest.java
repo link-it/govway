@@ -420,7 +420,7 @@ public class SoapTest extends ConfigLoader {
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 		
 		int i = 0;
-		for (var entry : CommonConsegnaMultipla.statusCodeVsConnettori.entrySet()) {
+		for (var entry : CommonConsegnaMultipla.statusCode5xxVsConnettori.entrySet()) {
 			final String soapContentType = i % 2 == 0 ? HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
 			int statusCode = entry.getKey();
 			var connettoriSuccesso = entry.getValue();
@@ -441,7 +441,7 @@ public class SoapTest extends ConfigLoader {
 		}
 		
 		// Le soap fault passano
-		HttpRequest requestSoapFault = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1);
+/*		HttpRequest requestSoapFault = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1);
 		requestsByKind.add(new RequestAndExpectations(
 				requestSoapFault,
 				Set.of(CONNETTORE_0, CONNETTORE_2, CONNETTORE_3),
@@ -453,7 +453,7 @@ public class SoapTest extends ConfigLoader {
 				requestSoapFault,
 				Set.of(CONNETTORE_0, CONNETTORE_2, CONNETTORE_3),
 				Set.of(CONNETTORE_1),  
-				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, true, TipoFault.SOAP1_2));
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, true, TipoFault.SOAP1_2));*/
 		
 		
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);

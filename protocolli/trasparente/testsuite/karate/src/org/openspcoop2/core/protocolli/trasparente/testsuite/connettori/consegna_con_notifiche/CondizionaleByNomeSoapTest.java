@@ -534,8 +534,8 @@ public class CondizionaleByNomeSoapTest extends ConfigLoader {
 				IdentificazioneFallitaTest.checkDiagnosticoTransazione(
 						id_transazione, 
 						DIAGNOSTICO_SEVERITA_INFO,
-						"007050",
-						"Il messaggio di richiesta non verrà notificato ad alcun connettore poichè l'identificazione condizionale è fallita");
+						"007065",	// TODO: Constantizza questi valori	
+						"Il messaggio di richiesta non verrà notificato ad alcun connettore poichè la condizione estratta dalla richiesta non ha permesso di identificare alcun connettore");
 			}
 		}
 		

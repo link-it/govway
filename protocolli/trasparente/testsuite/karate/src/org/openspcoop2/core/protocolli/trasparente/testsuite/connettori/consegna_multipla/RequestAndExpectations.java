@@ -13,15 +13,12 @@ public class RequestAndExpectations {
 	public  HttpRequest request;
 	public Set<String> connettoriSuccesso;
 	public Set<String> connettoriFallimento;
-	public int esitoPrincipale;
-	public int statusCodePrincipale; 
+	public int esitoPrincipale;										// E' l'esito della transazionePrincipale alla fine del test
+	public int statusCodePrincipale; 							// Nel caso della consegna multipla è lo status code delle consegne.
 	public boolean principaleSuperata;
 	public TipoFault tipoFault;
 	
-	/*public RequestAndExpectations(HttpRequest request, Set<String> connettoriSuccesso, Set<String> connettoriFallimento, int esito) {
-		this(request, connettoriSuccesso, connettoriFallimento, esito, 200);	
-	}*/
-	
+		
 	public RequestAndExpectations(HttpRequest request, Set<String> connettoriSuccesso, Set<String> connettoriFallimento, int esito, int statusCodePrincipale) {		
 		this(request, connettoriSuccesso, connettoriFallimento, esito, statusCodePrincipale, true);
 	}
@@ -30,7 +27,7 @@ public class RequestAndExpectations {
 	 * Per la consegna multipla non c'è la transazione sincrona, per cui la "principale" si considera sempre come superata
 	 */
 	public RequestAndExpectations(HttpRequest request, Set<String> connettoriSuccesso, Set<String> connettoriFallimento, int esito, int statusCodePrincipale, TipoFault tipoFault) {
-		this(request, connettoriSuccesso, connettoriFallimento, esito, statusCodePrincipale, true, TipoFault.NESSUNO);
+		this(request, connettoriSuccesso, connettoriFallimento, esito, statusCodePrincipale, true, tipoFault);
 	}
 	
 	public RequestAndExpectations(HttpRequest request, Set<String> connettoriSuccesso, Set<String> connettoriFallimento, int esito, int statusCodePrincipale, boolean principaleSuperata) {

@@ -59,7 +59,7 @@ public class ConsegnaMultiplaCondizionaleByNomeTest extends ConfigLoader {
 		}
 	}
 	
-	@AfterClass
+/*	@AfterClass
 	public static void After() {
 		Common.fermaRiconsegne(dbUtils);
 	}
@@ -68,7 +68,7 @@ public class ConsegnaMultiplaCondizionaleByNomeTest extends ConfigLoader {
 	public void AfterEach() {
 		Common.fermaRiconsegne(dbUtils);		
 	}
-
+*/
 	
 	@Test
 	public void connettoreDisabilitato() {
@@ -94,7 +94,7 @@ public class ConsegnaMultiplaCondizionaleByNomeTest extends ConfigLoader {
 			request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
 			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
 			request.addHeader(Common.HEADER_ID_CONDIZIONE, filtro);
-			current = new RequestAndExpectations(request, Set.of(), Set.of(), entry.getKey(), 500);
+			current = new RequestAndExpectations(request, Set.of(), Set.of(), CommonConsegnaMultipla.ESITO_ERRORE_PROCESSAMENTO_PDD_4XX, 500);
 			requestsByKind.add(current);
 			
 			i++;

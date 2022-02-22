@@ -76,7 +76,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 		}
 	}
 	
-	@AfterClass
+	/*@AfterClass
 	public static void After() {
 		Common.fermaRiconsegne(dbUtils);
 	}
@@ -85,7 +85,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 	public void AfterEach() {
 		Common.fermaRiconsegne(dbUtils);		
 	}
-
+*/
 	
 	@Test
 	public void headerHttpICFDiagnosticoInfo() {
@@ -246,7 +246,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaHeaderHttp",   "SA_TestRegolaHeaderHttp",  soapContentType);
 			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
 			request.addHeader("HEADER-SBAGLIATO", filtro);
-			current = new RequestAndExpectations(request, Set.of(), Set.of(), entry.getKey(), 500);
+			current = new RequestAndExpectations(request, Set.of(), Set.of(), CommonConsegnaMultipla.ESITO_ERRORE_PROCESSAMENTO_PDD_4XX, 500);
 			requestsByKind.add(current);			
 
 			i++;
@@ -618,7 +618,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 			// Questa fallisce l'identificazione
 			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaHeaderHttp",   "SA_TestRegolaHeaderHttp",  soapContentType);
 			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());			
-			current = new RequestAndExpectations(request, Set.of(), Set.of(), entry.getKey(), 500);
+			current = new RequestAndExpectations(request, Set.of(), Set.of(), CommonConsegnaMultipla.ESITO_ERRORE_PROCESSAMENTO_PDD_4XX, 500);
 			requestsByKind.add(current);	
 			i++;
 		}
@@ -666,7 +666,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 			// Questa fallisce l'identificazione
 			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaHeaderHttp",   "SA_TestRegolaHeaderHttp",  soapContentType);
 			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-			current = new RequestAndExpectations(request, Set.of(), Set.of(), entry.getKey(), 500);
+			current = new RequestAndExpectations(request, Set.of(), Set.of(), CommonConsegnaMultipla.ESITO_ERRORE_PROCESSAMENTO_PDD_4XX, 500);
 			requestsByKind.add(current);
 			
 			i++;
@@ -703,7 +703,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 			// Questa fallisce l'identificazione
 			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaHeaderHttp",   "SA_TestRegolaHeaderHttp",  soapContentType);
 			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-			current = new RequestAndExpectations(request, Set.of(), Set.of(), entry.getKey(), 500);
+			current = new RequestAndExpectations(request, Set.of(), Set.of(), CommonConsegnaMultipla.ESITO_ERRORE_PROCESSAMENTO_PDD_4XX, 500);
 			requestsByKind.add(current);
 			i++;
 		}

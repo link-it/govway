@@ -60,18 +60,13 @@ import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilsException;
 
 /**
- * TODO: Verifica tutti gli esiti puntuali delle transazioni_sa anche in SOAP
- * Per tutti i test verifica anche che l'identificativo_messaggio sia valorizzato.
  * 
+ * TODO: SOLO UN TEST.
  * Sui test nei quale c'è una cadenza rispedizione testare anche che i campi
  * data_uscita_richiesta          | 2022-02-15 19:20:34.684
  *data_accettazione_risposta     | 2022-02-15 19:20:34.698
  * data_ingresso_risposta         | 2022-02-15 19:20:34.698
  *	Vengano aggiornati.
- *
- * Nei casi in cui venga restituito soap fault o problem detail devono essere valorizzate 
- * fault                          | 
- *	formato_fault
  *
  *  data_primo_tentativo           | 2022-02-15 19:20:34.684	Deve rimanere uguale
 
@@ -223,7 +218,6 @@ public class RestTest extends ConfigLoader{
 
 		var responses = Common.makeParallelRequests(request1, 10);
 
-		// Ci vuole una regola in più che faccia passare, Risorsa vuota e ("accetta")
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
 		// Non controllo la valorizzazione puntuale del campo esito_sincrono, perchè dovrei costruirmi un mapping e sapere
 		// dato ciascuno  status code in quale dei tanti esiti si va a finire.
