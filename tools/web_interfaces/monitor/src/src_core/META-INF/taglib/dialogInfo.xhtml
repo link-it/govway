@@ -45,6 +45,44 @@
 			</a4j:outputPanel>
 		</f:facet> 
 		<h:inputHidden value="#{contenuto}" rendered="true" id="#{id}_hiddenBody"/>
-		<a4j:outputPanel id="#{id}_ModalBody" styleClass="contenutoModal" layout="block"></a4j:outputPanel>
+		<a4j:outputPanel id="#{id}_ModalBodyExt" styleClass="contenutoModal" layout="block">
+			<a4j:outputPanel id="#{id}_ModalBody" styleClass="contenutoModal" layout="block"></a4j:outputPanel>
+		</a4j:outputPanel>
+		<c:if test="#{not resizeable}">
+			<style>
+				##{id}_ModalContentDiv {
+					height: auto !important;
+				}
+				
+				##{id}_ModalBodyExt {
+					overflow: auto;
+					height: #{height}px;
+					width: #{width}px;
+				}
+				
+				##{id}_ModalBody {
+					padding: 0.5em 1em;
+				}
+				
+				##{id}_ModalContentTable td.rich-mpnl-body {
+					padding: 0px;
+				}
+			</style>
+		</c:if>
+		<c:if test="#{resizeable}">
+			<style>
+				##{id}_ModalBodyExt {
+					overflow: auto;
+				}
+				
+				##{id}_ModalBody {
+					padding: 0.5em 1em;
+				}
+				
+				##{id}_ModalContentTable td.rich-mpnl-body {
+					padding: 0px;
+				}
+			</style>
+		</c:if>
 	</rich:modalPanel>
 </ui:composition>
