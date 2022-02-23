@@ -18,6 +18,8 @@
  *
  */
 
+// OK con anomalia: Transazione andata bene ma è stato emesso un diagnostico error.
+
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_con_notifiche;
 
 import static org.junit.Assert.assertTrue;
@@ -100,6 +102,91 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 		Common.fermaRiconsegne(dbUtils);		
 	}
 	
+	@Test
+	public void headerHttpNCUDiagnosticoError() {
+		// Notifiche Condizionali Quando:
+		//		CompletateConSuccesso
+		//		FaultApplicativo
+		// Il connettore di fallback è il 2
+		final String erogazione = "TestConsegnaConNotificheCondizionaleByFiltroHeaderHttpNCUDiagnosticoErrorRest";
+		
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+		Set<RequestAndExpectations> toCheckForDiagnostici = new HashSet<>();
+
+		int i = 0;
+		// Prima costruisco le richieste normalmente
+		for (var entry : statusCodeRestVsConnettori.entrySet()) {
+			
+			String pool = Common.pools.get(i % Common.pools.size());
+			Set<String> connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
+			Set<String> connettoriSuccesso = entry.getValue();
+			final int statusCode = entry.getKey();
+			final String filtro =Common.filtriPools.get(pool).get(0); 
+
+			HttpRequest request = RequestBuilder.buildRestRequest(erogazione);
+			request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+			request.addHeader(Common.HEADER_ID_CONDIZIONE, filtro);
+			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode,connettoriSuccesso, connettoriPool);
+			if (statusCode >= 400 && statusCode <= 499) {
+				current.principaleSuperata = false;
+			}			
+			if (statusCode >= 500 && statusCode <= 599) {
+				current.principaleSuperata = false;	
+			}
+			
+			requestsByKind.add(current);
+			
+			// Request nessun connettore utilizzabile, in questo caso viene rediretta sul connettore2
+			request = RequestBuilder.buildRestRequest(erogazione);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.addHeader(Common.HEADER_ID_CONDIZIONE, "CONNETTORE_INESISTENTE");
+			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, Set.of(CONNETTORE_2));
+			if (statusCode >= 200 && statusCode <= 299) {
+				current.esitoSincrono = 12;		// OK con anomalie
+			} else {
+				current.esitoSincrono = CommonConsegnaMultipla.esitoConsegnaFromStatusCode(statusCode);
+			}
+			if (statusCode >= 400 && statusCode <= 499) {
+				current.principaleSuperata = false;
+			}
+			if (statusCode >= 500 && statusCode <= 599) {
+				current.principaleSuperata = false;	
+			}
+			requestsByKind.add(current);
+			
+			if (current.principaleSuperata) {
+				toCheckForDiagnostici.add(current);
+			}
+			i++;
+		}
+				
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+
+		checkResponses(responsesByKind);
+		
+		String messaggioFallbackAtteso = 	"Per la notifica viene utilizzato il connettore 'Connettore2', configurato per essere utilizzato nel caso in cui la condizione estratta dalla richiesta non ha permesso di identificare alcun connettore";
+		String messaggioDiagnostico = "Il valore estratto dalla richiesta 'CONNETTORE_INESISTENTE', ottenuto tramite identificazione 'HeaderBased' (Header HTTP: GovWay-TestSuite-Connettore), non consente di identificare alcun connettore da utilizzare";
+
+		String CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_ERROR_2 = "007043";
+		
+		// Recupero tutte le risposte che devono aver fallito l'identificazione e controllo i diagnostici
+		for (var toCheck: toCheckForDiagnostici) {
+			for (var response : responsesByKind.get(toCheck) ) {
+				String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+				
+				IdentificazioneFallitaTest.checkDiagnosticoTransazione(id_transazione, 
+						DIAGNOSTICO_SEVERITA_ERROR, 
+						CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_ERROR_2,
+						messaggioDiagnostico);
+				
+				IdentificazioneFallitaTest.checkDiagnosticoTransazione(id_transazione, 
+						DIAGNOSTICO_SEVERITA_INFO,
+						IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_CONSEGNA_NOTIFICHE_NESSUN_CONNETTORE_UTILIZZABILE_UTILIZZO_CONNETTORE_DEFAULT, 
+						messaggioFallbackAtteso);
+			}
+		}
+		
+	}
 	
 	@Test
 	public void headerHttpICFDiagnosticoInfo() {
@@ -307,6 +394,12 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 			request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
 			request.setUrl(request.getUrl() + "&govway-testsuite-id_SBAGLIATO_connettore_request=FiltroInesistente");
 			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso,Set.of(Common.CONNETTORE_0));
+
+			if (statusCode >= 200 && statusCode <= 299) {
+				current.esitoSincrono = 12;		// OK con anomalie
+			} else {
+				current.esitoSincrono = CommonConsegnaMultipla.esitoConsegnaFromStatusCode(statusCode);
+			}
 			if (statusCode >= 400 && statusCode <= 499) {
 				current.principaleSuperata = false;
 			}
@@ -583,6 +676,12 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
 			request.addHeader(Common.HEADER_ID_CONDIZIONE+"-SBAGLIATO", Common.filtriPools.get(pool).get(0));
 			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, connettoriRipiegoICF);
+			
+			if (statusCode >= 200 && statusCode <= 299) {
+				current.esitoSincrono = 12;		// OK con anomalie
+			} else {
+				current.esitoSincrono = CommonConsegnaMultipla.esitoConsegnaFromStatusCode(statusCode);
+			}
 			if (statusCode >= 400 && statusCode <= 499) {
 				current.principaleSuperata = false;
 			}
@@ -641,7 +740,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 		String messaggioFallbackAtteso = 	"Per la notifica viene utilizzato il connettore 'Connettore1', configurato per essere utilizzato nel caso in cui la condizione estratta dalla richiesta non ha permesso di identificare alcun connettore";
 		String messaggioDiagnostico = "Il valore estratto dalla richiesta 'CONNETTORE_INESISTENTE', ottenuto tramite identificazione 'HeaderBased' (Header HTTP: GovWay-TestSuite-Connettore), non consente di identificare alcun connettore da utilizzare";
 
-		String CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_ERROR_2 = "007044";
+		String CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_2 = "007044";
 		
 		// Recupero tutte le risposte che devono aver fallito l'identificazione e controllo i diagnostici
 		for (var toCheck: toCheckForDiagnosticiNCU) {
@@ -650,7 +749,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 				
 				IdentificazioneFallitaTest.checkDiagnosticoTransazione(id_transazione, 
 						DIAGNOSTICO_SEVERITA_INFO, 
-						CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_ERROR_2,
+						CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_2,
 						messaggioDiagnostico);
 				
 				IdentificazioneFallitaTest.checkDiagnosticoTransazione(id_transazione, 
@@ -940,7 +1039,16 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 			Set<String> connettoriCoinvolti = setSum(requestExpectation.connettoriSuccesso, requestExpectation.connettoriFallimento);
 						
 			if (requestExpectation.principaleSuperata) {
-				CommonConsegnaMultipla.checkPresaInConsegna(responses, connettoriCoinvolti.size());	
+				int esitoSincrono;
+				if (requestExpectation.esitoSincrono != -1) {
+					esitoSincrono = requestExpectation.esitoSincrono;
+				}
+				else if (requestExpectation.tipoFault != TipoFault.NESSUNO) {
+					esitoSincrono = CommonConsegnaMultipla.ESITO_ERRORE_APPLICATIVO;				
+				} else {
+					esitoSincrono = CommonConsegnaMultipla.esitoConsegnaFromStatusCode(requestExpectation.statusCodePrincipale);
+				}
+				CommonConsegnaMultipla.checkPresaInConsegnaNotifica(responses, connettoriCoinvolti.size(), esitoSincrono);	
 				CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(responses, connettoriCoinvolti);
 			} else {
 				for (var response : responses) {

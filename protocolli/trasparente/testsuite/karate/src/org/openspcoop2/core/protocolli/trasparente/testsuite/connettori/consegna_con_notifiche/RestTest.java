@@ -55,6 +55,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectations;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectations.TipoFault;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
@@ -62,25 +63,6 @@ import org.openspcoop2.utils.transport.http.HttpUtilsException;
 
 /**
  * 
- * TODO: SOLO UN TEST.
- * Sui test nei quale c'è una cadenza rispedizione testare anche che i campi
- * data_uscita_richiesta          | 2022-02-15 19:20:34.684
- *data_accettazione_risposta     | 2022-02-15 19:20:34.698
- * data_ingresso_risposta         | 2022-02-15 19:20:34.698
- *	Vengano aggiornati.
- *
- *  data_primo_tentativo           | 2022-02-15 19:20:34.684	Deve rimanere uguale
-
- * data_ultimo_errore             | controlla solo questa e che gli altri siano e restino valorizzati 
-dettaglio_esito_ultimo_errore  | 0
-codice_risposta_ultimo_errore  | 
-ultimo_errore                  | 
-location_ultimo_errore         | 
-cluster_id_ultimo_errore       | 
-fault_ultimo_errore            | 
-formato_fault_ultimo_errore    | 
-
-Metti un delay nelle successive
  * 
  * 
  * @author Francesco Scarlato
@@ -123,6 +105,99 @@ public class RestTest extends ConfigLoader{
 		return new RequestAndExpectations(request, connettoriOk, connettoriErrore, esito, statusCode, true);
 	}
 	
+	@Test
+	public void valorizzazioneCampi() throws IOException {
+
+		/**
+		 *  * TODO: SOLO UN TEST.
+ * Sui test nei quale c'è una cadenza rispedizione testare anche che i campi
+ * data_uscita_richiesta          | 2022-02-15 19:20:34.684
+ *data_accettazione_risposta     | 2022-02-15 19:20:34.698
+ * data_ingresso_risposta         | 2022-02-15 19:20:34.698
+ *	Vengano aggiornati.
+ *
+ *  data_primo_tentativo           | 2022-02-15 19:20:34.684	Deve rimanere uguale
+
+ * data_ultimo_errore             | controlla solo questa e che gli altri siano e restino valorizzati 
+dettaglio_esito_ultimo_errore  | 0
+codice_risposta_ultimo_errore  | 
+ultimo_errore                  | 
+location_ultimo_errore         | 
+cluster_id_ultimo_errore       | 
+fault_ultimo_errore            | 
+formato_fault_ultimo_errore    | 
+		 */
+		
+		final String erogazione = "TestConsegnaConNotificheRest";
+		HttpRequest request1 = RequestBuilder.buildRestRequest(erogazione);
+		
+		HttpRequest requestKo = RequestBuilder.buildRestRequest(erogazione);
+		requestKo.setUrl(requestKo.getUrl()+"&returnCode=402");
+
+		var responses = Common.makeParallelRequests(request1, 10);
+		var responsesKo = Common.makeParallelRequests(requestKo, 10);
+
+		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
+		for (var r : responses) {
+			assertEquals(200, r.getResultHTTPOperation());
+			
+			CommonConsegnaMultipla.checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
+			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);
+			
+			for (var connettore : Common.setConnettoriAbilitati) {
+				String query = "select count(*) from transazioni_sa where id_transazione=? and connettore_nome = ?  and consegna_terminata = ? and numero_tentativi = 0 and identificativo_messaggio is not null";
+				String id_transazione = r.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+				ConfigLoader.getLoggerCore().info("Checking scheduling connettore iniziato for transazione:  " + id_transazione + " AND connettore = " + connettore);
+				Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, false);
+				assertEquals(Integer.valueOf(1), count);
+			}
+			
+		}
+		
+		for (var r : responsesKo) {
+			assertEquals(402, r.getResultHTTPOperation());	
+			CommonConsegnaMultipla.checkNessunaNotifica(r);
+			CommonConsegnaMultipla.checkNessunoScheduling(r);
+		}
+
+		// Attendo la consegna
+		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
+
+		// Per i connettori di tipo file, controllo anche che la scrittura della richiesta di consegna multipla sia avvenuta.
+		Set<String> connettoriFile = Set.of(CONNETTORE_2, CONNETTORE_3);
+		for (var response : responses) {
+			CommonConsegnaMultipla.checkConsegnaCompletata(response);
+			CommonConsegnaMultipla.checkConsegnaConnettoreFile(request1, response, connettoriFile);
+			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(response,  Common.setConnettoriAbilitati, ESITO_OK, "", "");
+		}
+	}
+	
+	
+	@Test
+	public void regoleRispedizioneProblem() {
+		/**
+		 * Qui si testano le varie regole di rispedizione per i singoli connettori tenendo conto dei campi del Problem.
+		 * Connettore0, Connettore1:  Consegna Fallita Personalizzata
+		 * Connettore2, Connettore3: Consegna  Completata Personalizzata
+		 * TODO 
+		 */
+		final String erogazione = "TestConsegnaConNotificheRegoleProblem";
+		
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+		
+		HttpRequest requestSoapFaultTuttiValorizzati = RequestBuilder.buildRestRequestProblem(erogazione);
+		requestSoapFaultTuttiValorizzati.setUrl(requestSoapFaultTuttiValorizzati.getUrl()+"&faultActor=ActorRispedita&faultCode=CodeRispedita&faultMessage=MessageRispedita");	
+		
+		HttpRequest requestSoapFaultTuttiRegex = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1 );
+		requestSoapFaultTuttiRegex.setUrl(requestSoapFaultTuttiRegex.getUrl()+"&faultActor=ActorRispedita123&faultCode=CodeRispedita123&faultMessage=MessageRispedita123");
+		
+		HttpRequest requestSoapFaultSoloActor = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1 );
+		requestSoapFaultSoloActor.setUrl(requestSoapFaultSoloActor.getUrl()+"&faultActor=ActorRispedita&faultCode=CodeNotImportant&faultMessage=MessageNotImportant");
+
+		// Questa richiesta testa che sul campo message venga fatto il contains.
+		HttpRequest requestSoapMessageContains = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1 );
+		requestSoapMessageContains.setUrl(requestSoapMessageContains.getUrl()+"&faultActor=12345&faultCode=2341&faultMessage=Container-MessageRispeditaContains-Container"); 
+	}
 	
 	
 	@Test
@@ -167,8 +242,6 @@ public class RestTest extends ConfigLoader{
 			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_3, ESITO_OK, fault, formatoFault);
 			CommonConsegnaMultipla.checkConsegnaCompletata(response);
 		}
-		
-		
 	}
 	
 	

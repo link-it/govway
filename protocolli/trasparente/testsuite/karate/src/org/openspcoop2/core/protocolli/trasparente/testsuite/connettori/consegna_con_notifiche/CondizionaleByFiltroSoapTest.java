@@ -73,6 +73,8 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 							$query["govway-testsuite-id_connettore_request"]
 						#end
  * UrlInvocazione: .+govway-testsuite-id_connettore_request=([^&]*).*
+ * http://localhost:8080/TestService/echo?id_connettore=ConnettorePrincipale
+ *
  */
 public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 	
@@ -1136,7 +1138,18 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 			Set<String> connettoriCoinvolti = setSum(requestExpectation.connettoriSuccesso, requestExpectation.connettoriFallimento);
 						
 			if (requestExpectation.principaleSuperata) {
-				CommonConsegnaMultipla.checkPresaInConsegna(responses, connettoriCoinvolti.size());	
+				int esitoSincrono;
+				if (requestExpectation.esitoSincrono != -1) {
+					esitoSincrono = requestExpectation.esitoSincrono;
+				}
+				else if (requestExpectation.tipoFault != TipoFault.NESSUNO) {
+					esitoSincrono = CommonConsegnaMultipla.ESITO_ERRORE_APPLICATIVO;				
+				} else if (CommonConsegnaMultipla.isEsitoErrore(requestExpectation.statusCodePrincipale)) {			
+					esitoSincrono = CommonConsegnaMultipla.ESITO_ERRORE_INVOCAZIONE;
+				} else {
+					esitoSincrono = CommonConsegnaMultipla.esitoConsegnaFromStatusCode(requestExpectation.statusCodePrincipale);
+				}
+				CommonConsegnaMultipla.checkPresaInConsegnaNotifica(responses, connettoriCoinvolti.size(), esitoSincrono);	
 				CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(responses, connettoriCoinvolti);
 			} else {
 				for (var response : responses) {

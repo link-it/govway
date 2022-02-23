@@ -355,7 +355,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 	 * rispedita se non c'è match.
 	 */
 	@Test
-	public void  testRegoleSoapFault() {
+	public void  regoleSoapFault() {
 		final String erogazione = "TestConsegnaMultiplaRegoleSoapFault";
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 

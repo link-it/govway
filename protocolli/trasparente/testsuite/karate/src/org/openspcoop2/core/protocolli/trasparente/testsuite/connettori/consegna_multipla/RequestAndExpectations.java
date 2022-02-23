@@ -18,6 +18,8 @@ public class RequestAndExpectations {
 	public boolean principaleSuperata;
 	public TipoFault tipoFault;
 	
+	public int esitoSincrono = -1;								// Utilizzato in quei test in cui non dedurre l'esito sincrono a partire dallo statusCode principale e\o fault non è possibile
+	
 		
 	public RequestAndExpectations(HttpRequest request, Set<String> connettoriSuccesso, Set<String> connettoriFallimento, int esito, int statusCodePrincipale) {		
 		this(request, connettoriSuccesso, connettoriFallimento, esito, statusCodePrincipale, true);

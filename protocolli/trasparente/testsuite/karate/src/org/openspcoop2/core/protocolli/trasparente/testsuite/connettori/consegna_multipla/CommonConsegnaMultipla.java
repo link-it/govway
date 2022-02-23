@@ -85,6 +85,7 @@ public class CommonConsegnaMultipla {
 	public final static int ESITO_OK = 0;
 	public final static int ESITO_ERRORE_INVOCAZIONE = 10;
 	public final static int ESITO_ERRORE_APPLICATIVO = 2;
+	public final static int ESITO_OK_PRESENZA_ANOMALIE = 12;
 	
 	public final static String FAULT_REST = "{\"type\":\"https://httpstatuses.com/500\",\"title\":\"Internal Server Error\",\"detail\":\"Problem ritornato dalla servlet di trace, esempio di OpenSPCoop\"}";
 	public final static String FORMATO_FAULT_REST = "JSON";
@@ -235,12 +236,17 @@ public class CommonConsegnaMultipla {
 			checkPresaInConsegna(r, numConnettori);
 		}
 	}
-
-
-	@Deprecated
-	public static void checkPresaInConsegna(HttpResponse response) {
-		checkPresaInConsegna(response, 4);
+	
+	
+	/**
+	 * Qui controlliamo anche l'esito sincrono, è per la consegna con notifiche.
+	 */
+	public  static void checkPresaInConsegnaNotifica(List<HttpResponse> responses, int numConnettori, int esitoSincrono) {
+		for (var r : responses) {
+			checkStatoConsegnaSincrona(r, ESITO_CONSEGNA_MULTIPLA, esitoSincrono, numConnettori);
+		}
 	}
+
 	
 	public static void checkPresaInConsegna(HttpResponse response, int numConnettori) {
 		checkStatoConsegna(response, ESITO_CONSEGNA_MULTIPLA, numConnettori);
@@ -273,6 +279,28 @@ public class CommonConsegnaMultipla {
 		Integer count = ConfigLoader.getDbUtils().readValueArray(query, Integer.class,  args);
 		assertEquals(Integer.valueOf(responses.size()), count);
 	}
+	
+	
+/*	public static void checkStatoConsegna(HttpResponse response, int esitoPrincipale, int consegneMultipleRimanenti) {
+	
+	}*/
+	
+	public static void checkStatoConsegnaSincrona(HttpResponse response, int esito, int esitoSincrono, int consegneMultipleRimanenti) {
+		String query = "select count(*) from transazioni where id=? and esito = ?  and esito_sincrono = ? and consegne_multiple = ?";
+		String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+		ConfigLoader.getLoggerCore().info("Checking stato consegna for transazione:  " + id_transazione + " AND esito = " + esito + " AND consegne-rimanenti: " + consegneMultipleRimanenti + " AND esito-sincrono: " + esitoSincrono);
+		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class,  id_transazione, esito, esitoSincrono, consegneMultipleRimanenti);
+		
+		// Uncoment for debug
+		/*String query2 = "select esito, esito_sincrono, consegne_multiple from transazioni where id = ?";
+		List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, id_transazione);
+		for (var v : letto) {
+			ConfigLoader.getLoggerCore().info(v.toString());
+		}*/
+		
+		assertEquals(Integer.valueOf(1), count);
+	}
+	
 
 	/**
 	 * Controlla che la transazione principale abbia un determinato esito e determinate consegne da fare
@@ -325,18 +353,6 @@ public class CommonConsegnaMultipla {
 		ConfigLoader.getLoggerCore().info("Checking scheduling connettore iniziato for transazione:  " + id_transazione + " AND connettore = " + connettore);
 		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, false);
 		assertEquals(Integer.valueOf(1), count);
-	}
-	
-	
-	@Deprecated
-	public static void checkSchedulingConnettoreInCorso(HttpResponse response, String connettore) {
-		checkSchedulingConnettoreInCorso(response, connettore,0);
-	}
-
-
-	@Deprecated
-	public static void checkSchedulingConnettoreInCorso(HttpResponse response, String connettore, int esitoConsegna) {
-		checkSchedulingConnettoreInCorso(response, connettore, esitoConsegna, "", "");
 	}
 	
 	
