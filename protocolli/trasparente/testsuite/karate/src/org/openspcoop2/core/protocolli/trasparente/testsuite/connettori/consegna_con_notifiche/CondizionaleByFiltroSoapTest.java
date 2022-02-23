@@ -1193,9 +1193,7 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 					esitoSincrono = CommonConsegnaMultipla.ESITO_ERRORE_APPLICATIVO;				
 				} else if (requestExpectation.statusCodePrincipale == 500) { // 500 senza body è ok con anomalia
 					esitoSincrono = CommonConsegnaMultipla.ESITO_OK_PRESENZA_ANOMALIE;
-				} /*else if (CommonConsegnaMultipla.is4XX(requestExpectation.statusCodePrincipale)) {			
-					esitoSincrono = CommonConsegnaMultipla.ESITO_ERRORE_INVOCAZIONE;
-				}*/ else {
+				} else {
 					esitoSincrono = CommonConsegnaMultipla.esitoConsegnaFromStatusCode(requestExpectation.statusCodePrincipale);
 				}
 				
