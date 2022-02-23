@@ -1480,7 +1480,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 					this.criteriAckDialogInfo.setHeaderBody(info.getHeaderBody());
 					this.criteriAckDialogInfo.setListBody(info.getListBody());
 				}
-				this.criteriAckDialogInfo.setResizeable(true);
+				//this.criteriAckDialogInfo.setResizeable(true);
 				
 			}
 			
