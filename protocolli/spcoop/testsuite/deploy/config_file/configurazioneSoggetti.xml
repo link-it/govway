@@ -3677,11 +3677,25 @@
         <!-- Gestione dei messaggi SOAPWithAttachments (con gestione del manifest e-Gov)  e Tunnel SOAP-->
         
         <!-- gestione manifest eGov disabilitato -->
-        <porta-delegata gestione-manifest="disabilitato" nome="GestioneManifestDisabilitata" autenticazione="none" autorizzazione="none" 
+        <porta-delegata gestione-manifest="disabilitato" nome="GestioneManifestDisabilitataStreaming" autenticazione="none" autorizzazione="none" 
             integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
-            <azione nome="gestioneManifestDisabilitata" />
+            <azione nome="gestioneManifestDisabilitataStreaming" />
+        </porta-delegata>
+        <porta-delegata gestione-manifest="disabilitato" nome="GestioneManifestDisabilitataDOM" autenticazione="none" autorizzazione="none" 
+            integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="gestioneManifestDisabilitataDOM" />
+            <correlazione-applicativa>
+                <elemento 
+                    identificazione="contentBased" pattern="//attachInZIP1/@href" identificazione-fallita="blocca" />
+            </correlazione-applicativa>
+            <correlazione-applicativa-risposta>
+                <elemento 
+                    identificazione="contentBased" pattern="//attachInZIP1/@href" identificazione-fallita="blocca" />
+            </correlazione-applicativa-risposta>
         </porta-delegata>
         
         <!-- TestFunzionalita TunnelSOAP con profilo sincrono: XML --> 
@@ -7982,15 +7996,31 @@
         <!-- Gestione dei messaggi SOAPWithAttachments (con gestione del manifest e-Gov) -->
         
         <!-- Gestione manifest eGov disabilitato -->
-        <porta-applicativa autenticazione="none" gestione-manifest="disabilitato" nome="PA_GestioneManifestDisabilitata" >
+        <porta-applicativa autenticazione="none" gestione-manifest="disabilitato" nome="PA_GestioneManifestDisabilitataStreaming" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
-            <azione nome="gestioneManifestDisabilitata" />
+            <azione nome="gestioneManifestDisabilitataStreaming" />
             <servizio-applicativo nome="govwayTestSuite" />
 	    <soggetti>
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        
+        <porta-applicativa autenticazione="none" gestione-manifest="disabilitato" nome="PA_GestioneManifestDisabilitataDOM" >
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="gestioneManifestDisabilitataDOM" />
+            <servizio-applicativo nome="govwayTestSuite" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
+            <correlazione-applicativa>
+                <elemento 
+                    identificazione="contentBased" pattern="//attachInZIP1/@href" identificazione-fallita="blocca" />
+            </correlazione-applicativa>
+            <correlazione-applicativa-risposta>
+                <elemento 
+                    identificazione="contentBased" pattern="//attachInZIP1/@href" identificazione-fallita="blocca" />
+            </correlazione-applicativa-risposta>
+        </porta-applicativa>
+
         <!-- TestFunzionalita TunnelSOAP con profilo sincrono: XML --> 
         <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_TunnelSOAP">
             <servizio tipo="spc" nome="RichiestaBando" />

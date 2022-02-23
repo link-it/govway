@@ -666,7 +666,8 @@ public class CostantiTestSuite {
 	/** Porte Delegate per il test sul tunnel SOAP: NotificaTunnelSOAPWithAttachmentCustomMimeType */
 	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_TUNNEL_SOAP_CUSTOM_MIME_TYPE="NotificaTunnelSOAPWithAttachmentCustomMimeType";
 	/** Porte Delegate per il test sulla gestione manifest egov disabilitata */
-	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_GESTIONE_MANIFEST_DISABILITATA="GestioneManifestDisabilitata";
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_GESTIONE_MANIFEST_DISABILITATA_STREAMING="GestioneManifestDisabilitataStreaming";
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_GESTIONE_MANIFEST_DISABILITATA_DOM="GestioneManifestDisabilitataDOM";
 	/** Porte Delegate per il test sul tunnel SOAP: allega body */
 	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ALLEGA_BODY="TunnelSOAPAllegaBody";
 	/** Porte Delegate per il test sul tunnel SOAP: scarta body */
@@ -1454,7 +1455,8 @@ public class CostantiTestSuite {
     /** ENTITA SPCOOP: Nome Azione del Servizio OneWay con Integrazione PA */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_LATO_PA="testIntegrazionePA";
     /** ENTITA SPCOOP: Nome Azione del Servizio Sincrono con GestioneManifestDisabilitata */
-    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_GESTIONE_MANIFEST_DISABILITATA="gestioneManifestDisabilitata";
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_GESTIONE_MANIFEST_DISABILITATA_STREAMING="gestioneManifestDisabilitataStreaming";
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_GESTIONE_MANIFEST_DISABILITATA_DOM="gestioneManifestDisabilitataDOM";
     /** ENTITA SPCOOP: Nome Azione del Servizio Sincrono con https_with_client_auth */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_HTTPS_WITH_CLIENT_AUTH="https_with_client_auth";
     /** ENTITA SPCOOP: Nome Azione del Servizio Sincrono con https_with_client_auth_identita2 */

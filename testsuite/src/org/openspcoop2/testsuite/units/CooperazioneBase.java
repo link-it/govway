@@ -62,6 +62,8 @@ import org.testng.Reporter;
  */
 public class CooperazioneBase {
 
+	public static final  int SKIP_ATTACHMENTS_CHECK = -2;
+	
 	/** Tipo di gestione */
 	protected boolean soapWithAttachments;
 	protected MessageType messageType;
@@ -488,8 +490,11 @@ public class CooperazioneBase {
 		}else{
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedTrasmissione(id, this.mittente, null, this.destinatario, null));
 		}
-		checkCountAttachmentsRequest(data, id, null, manifestAbilitato, numeroAttachments);
-		checkAttachmentsRequest(data, id, null, msg);
+		boolean skipCheckAttachments = numeroAttachments!=null && numeroAttachments.intValue() == SKIP_ATTACHMENTS_CHECK;
+		if(!skipCheckAttachments) {
+			checkCountAttachmentsRequest(data, id, null, manifestAbilitato, numeroAttachments);
+			checkAttachmentsRequest(data, id, null, msg);
+		}
 		if(checkServizioApplicativo){
 			Reporter.log("["+this.tipoCooperazione+"] Numero messaggi arrivati al servizio applicativo: "+data.getVerificatoreTracciaRichiesta().isArrivedCount(id));
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isArrivedCount(id)==1);
@@ -529,7 +534,7 @@ public class CooperazioneBase {
 			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedTrasmissione(id, this.destinatario,null, this.mittente, null, true,tipoTempoAtteso,tipoTempoAttesoSdk));
 		}
 		
-		if(!this.responseIsFault)
+		if(!this.responseIsFault && !skipCheckAttachments)
 			checkCountAttachmentsResponse(data, id, null, manifestAbilitato,  numeroAttachments);
 	}
 

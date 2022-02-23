@@ -196,7 +196,8 @@
         <azione nome="testIntegrazioneWithWSAddressingHTTPCORE"/>
         <azione nome="testIntegrazionePA"/>
         <azione nome="BEGIN-ID_testIntegrazione_END-ID"/>
-        <azione nome="gestioneManifestDisabilitata"/>
+        <azione nome="gestioneManifestDisabilitataStreaming"/>
+	<azione nome="gestioneManifestDisabilitataDOM"/>
         <azione nome="https_with_client_auth"/>
         <azione nome="https_with_client_auth_identita2"/>
         <azione nome="https_with_client_auth_error"/>
