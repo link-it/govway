@@ -32,6 +32,8 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_IN_CORSO;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_ERRORE_INVOCAZIONE;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_OK;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.FORMATO_FAULT_REST;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.FORMATO_FAULT_SOAP1_1;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkStatoConsegna;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.esitoConsegnaFromStatusCode;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.getNumeroTentativiSchedulingConnettore;
@@ -53,6 +55,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.RequestBuilder;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectations;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectationsFault;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectations.TipoFault;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -179,28 +182,89 @@ formato_fault_ultimo_errore    |
 		 * Qui si testano le varie regole di rispedizione per i singoli connettori tenendo conto dei campi del Problem.
 		 * Connettore0, Connettore1:  Consegna Fallita Personalizzata
 		 * Connettore2, Connettore3: Consegna  Completata Personalizzata
-		 * TODO 
 		 */
 		final String erogazione = "TestConsegnaConNotificheRegoleProblem";
 		//  Per generare Problem Detail (REST):
         // problem=true
         //è possibile anche personalizzare aspetti del fault quali:
          //problemStatus, problemTitle, problemType, problemDetail e problemSerializationType (json/xml)
+		// claimCompletata=valoreClaimCompletata
+		// claimRispedizione=valoreClaimRispedizione
 
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 		
-		HttpRequest requestSoapFaultTuttiValorizzati = RequestBuilder.buildRestRequestProblem(erogazione);
-		requestSoapFaultTuttiValorizzati.setUrl(requestSoapFaultTuttiValorizzati.getUrl()+"&faultActor=ActorRispedita&faultCode=CodeRispedita&faultMessage=MessageRispedita");	
+		HttpRequest requestRispeditaTuttiValorizzati = new HttpRequest();
+		requestRispeditaTuttiValorizzati.setMethod(HttpRequestMethod.POST);
+		requestRispeditaTuttiValorizzati.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
+				+ "&problem=true&problemStatus=501&problemType=TypeRispedita");
 		
-		HttpRequest requestSoapFaultTuttiRegex = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1 );
-		requestSoapFaultTuttiRegex.setUrl(requestSoapFaultTuttiRegex.getUrl()+"&faultActor=ActorRispedita123&faultCode=CodeRispedita123&faultMessage=MessageRispedita123");
+		String content = "{ \"claimRispedizione\": \"valoreClaimRispedizione\"}";
+		requestRispeditaTuttiValorizzati.setContentType("application/json");
+		requestRispeditaTuttiValorizzati.setContent(content.getBytes());
 		
-		HttpRequest requestSoapFaultSoloActor = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1 );
-		requestSoapFaultSoloActor.setUrl(requestSoapFaultSoloActor.getUrl()+"&faultActor=ActorRispedita&faultCode=CodeNotImportant&faultMessage=MessageNotImportant");
-
-		// Questa richiesta testa che sul campo message venga fatto il contains.
-		HttpRequest requestSoapMessageContains = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1 );
-		requestSoapMessageContains.setUrl(requestSoapMessageContains.getUrl()+"&faultActor=12345&faultCode=2341&faultMessage=Container-MessageRispeditaContains-Container"); 
+		HttpRequest requestRispeditaRegex = new HttpRequest();
+		requestRispeditaRegex.setMethod(HttpRequestMethod.GET);
+		requestRispeditaRegex.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
+				+ "&problem=true&problemStatus=502&problemType=TypeRispedita123");
+		
+		HttpRequest requestCompletataTuttiValorizzati =  new HttpRequest();
+		requestCompletataTuttiValorizzati.setMethod(HttpRequestMethod.POST);
+		requestCompletataTuttiValorizzati.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
+				+ "&problem=true&problemStatus=501&problemType=TypeCompletata");
+		content = "{ \"claimCompletata\": \"valoreClaimCompletata\"}";
+		requestCompletataTuttiValorizzati.setContentType("application/json");
+		requestCompletataTuttiValorizzati.setContent(content.getBytes());
+		
+		HttpRequest requestCompletataRegex = new HttpRequest();
+		requestCompletataRegex.setMethod(HttpRequestMethod.GET);
+		requestCompletataRegex.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
+				+ "&problem=true&problemStatus=502&problemType=TypeCompletata123");
+		
+		String  fault = "{\"type\":\"TypeRispedita\",\"title\":\"Not Implemented\",\"status\":501,\"detail\":\"Problem ritornato dalla servlet di trace, esempio di OpenSPCoop\"}";
+		
+	/*	requestsByKind.add(new RequestAndExpectationsFault(
+				requestRispeditaTuttiValorizzati,	
+				Set.of(),
+				Set.of(CONNETTORE_0,CONNETTORE_2, CONNETTORE_3,CONNETTORE_1),
+				ESITO_CONSEGNA_MULTIPLA_IN_CORSO, 501, TipoFault.REST, fault, FORMATO_FAULT_REST)
+			);
+	
+		 
+		 fault = "{\"type\":\"TypeRispedita123\",\"title\":\"Bad Gateway\",\"status\":502,\"detail\":\"Problem ritornato dalla servlet di trace, esempio di OpenSPCoop\"}";
+		 
+		requestsByKind.add(new RequestAndExpectationsFault(
+				requestRispeditaRegex,
+				Set.of(),
+				Set.of(CONNETTORE_1,CONNETTORE_2,CONNETTORE_3, CONNETTORE_0), 
+				ESITO_CONSEGNA_MULTIPLA_IN_CORSO, 502, TipoFault.REST, fault, FORMATO_FAULT_REST)
+			);*/
+		
+		 fault = "{\"type\":\"TypeCompletata\",\"title\":\"Not Implemented\",\"status\":501,\"detail\":\"Problem ritornato dalla servlet di trace, esempio di OpenSPCoop\"}";
+		 
+		requestsByKind.add(new RequestAndExpectationsFault(
+				requestCompletataTuttiValorizzati,
+				Set.of(CONNETTORE_2),
+				Set.of(CONNETTORE_3, CONNETTORE_1, CONNETTORE_0), 
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 501, TipoFault.REST, fault, FORMATO_FAULT_REST)
+			);
+		
+	
+	/* fault = "{\"type\":\"TypeCompletata123\",\"title\":\"Bad Gateway\",\"status\":502,\"detail\":\"Problem ritornato dalla servlet di trace, esempio di OpenSPCoop\"}";
+		 
+		requestsByKind.add(new RequestAndExpectationsFault(
+				requestCompletataRegex,				
+				Set.of(CONNETTORE_3),
+				Set.of(CONNETTORE_2, CONNETTORE_0,CONNETTORE_1),
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 502, TipoFault.REST, fault, FORMATO_FAULT_REST)
+			);*/
+		
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+		
+		CondizionaleByFiltroRestTest.checkResponses(responsesByKind);
 	}
 	
 	

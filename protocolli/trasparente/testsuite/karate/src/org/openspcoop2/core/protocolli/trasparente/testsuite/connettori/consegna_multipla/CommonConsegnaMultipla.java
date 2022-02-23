@@ -451,22 +451,28 @@ public class CommonConsegnaMultipla {
 	public static void checkRequestExpectations(RequestAndExpectations requestAndExpectation, HttpResponse response, Set<String> connettoriFile) {
 		String fault = "";
 		String formatoFault = "";
-		
-		switch (requestAndExpectation.tipoFault) {
-		case REST:
-			fault = FAULT_REST;
-			formatoFault = FORMATO_FAULT_REST;
-		break;
-		case SOAP1_1:
-			fault = FAULT_SOAP1_1;
-			formatoFault = FORMATO_FAULT_SOAP1_1;
-		break;
-		case SOAP1_2:
-			fault = FAULT_SOAP1_2;
-			formatoFault = FORMATO_FAULT_SOAP1_2;
-		break;
-		default:
+
+		// Determino il formato e tipo fault, brutto, con un refactoring dei test si sistema
+		if (requestAndExpectation instanceof RequestAndExpectationsFault) {
+			fault = ((RequestAndExpectationsFault) requestAndExpectation).faultMessage;
+			formatoFault = ((RequestAndExpectationsFault) requestAndExpectation).faultType;
+		} else {
+			switch (requestAndExpectation.tipoFault) {
+			case REST:
+				fault = FAULT_REST;
+				formatoFault = FORMATO_FAULT_REST;
 			break;
+			case SOAP1_1:
+				fault = FAULT_SOAP1_1;
+				formatoFault = FORMATO_FAULT_SOAP1_1;
+			break;
+			case SOAP1_2:
+				fault = FAULT_SOAP1_2;
+				formatoFault = FORMATO_FAULT_SOAP1_2;
+			break;
+			default:
+				break;
+			}
 		}
 		
 		for (var connettore : requestAndExpectation.connettoriFallimento) {

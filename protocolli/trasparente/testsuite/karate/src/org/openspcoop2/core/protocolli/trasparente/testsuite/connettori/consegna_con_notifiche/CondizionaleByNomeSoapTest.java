@@ -173,9 +173,14 @@ public class CondizionaleByNomeSoapTest extends ConfigLoader {
 		
 		int i = 0;
 		// Prima costruisco le richieste normalmente
-		for (var entry : statusCodeVsConnettori.entrySet()) {
+		for (var entry : statusCodeVsConnettori.entrySet()) {			
 
 			int statusCode = entry.getKey();
+			
+			if (!CommonConsegnaMultipla.is4XX(statusCode)) {
+				continue;
+			}
+			
 			Set<String> connettoriSuccesso = entry.getValue();
 			final String soapContentType = i % 2 == 0 ? HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
 			final String filtro = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
