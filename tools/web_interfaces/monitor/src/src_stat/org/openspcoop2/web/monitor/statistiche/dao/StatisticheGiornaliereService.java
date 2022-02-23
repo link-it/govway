@@ -8767,7 +8767,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
 					if(StringUtils.isNotEmpty(risultato)) {
 						CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
-						return credenzialeMittente.getCredenziale();
+						return credenzialeMittente != null ? credenzialeMittente.getCredenziale() : risultato;
 					}
 				} 
 				else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP)) {
@@ -8775,20 +8775,25 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
 						
 						String credenziale = credenzialeMittente.getCredenziale();
-						StringBuilder bf = new StringBuilder();
-						if(CredenzialeClientAddress.isSocketAddressDBValue(credenziale)) {
-							bf.append(CredenzialeClientAddress.convertSocketDBValueToOriginal(credenziale));
-							if(CredenzialeClientAddress.isTransportAddressDBValue(credenziale)) {
-								bf.append(" (X-Forwarded-For: ");
-								bf.append(CredenzialeClientAddress.convertTransportDBValueToOriginal(credenziale));
-								bf.append(")");
+						if(credenziale!=null) {
+							StringBuilder bf = new StringBuilder();
+							if(CredenzialeClientAddress.isSocketAddressDBValue(credenziale)) {
+								bf.append(CredenzialeClientAddress.convertSocketDBValueToOriginal(credenziale));
+								if(CredenzialeClientAddress.isTransportAddressDBValue(credenziale)) {
+									bf.append(" (X-Forwarded-For: ");
+									bf.append(CredenzialeClientAddress.convertTransportDBValueToOriginal(credenziale));
+									bf.append(")");
+								}
+								
 							}
-							
+							else if(CredenzialeClientAddress.isTransportAddressDBValue(credenziale)) {
+								bf.append(CredenzialeClientAddress.convertTransportDBValueToOriginal(credenziale));
+							}
+							return bf.toString(); 
 						}
-						else if(CredenzialeClientAddress.isTransportAddressDBValue(credenziale)) {
-							bf.append(CredenzialeClientAddress.convertTransportDBValueToOriginal(credenziale));
+						else {
+							return risultato;
 						}
-						return bf.toString(); 
 					}
 				} 
 				else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)) {
@@ -8798,19 +8803,19 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					switch (tcm) {
 					case token_clientId:
 							credenzialeMittente  = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
-							return credenzialeMittente.getCredenziale();
+							return credenzialeMittente != null ? credenzialeMittente.getCredenziale() : risultato;
 					case token_eMail:
 							credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
-							return credenzialeMittente.getCredenziale();
+							return credenzialeMittente != null ? credenzialeMittente.getCredenziale() : risultato;
 					case token_issuer:
 							credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
-							return credenzialeMittente.getCredenziale();
+							return credenzialeMittente != null ? credenzialeMittente.getCredenziale() : risultato;
 					case token_subject:
 							credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
-							return credenzialeMittente.getCredenziale();
+							return credenzialeMittente != null ? credenzialeMittente.getCredenziale() : risultato;
 					case token_username:
 							credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
-							return credenzialeMittente.getCredenziale();
+							return credenzialeMittente != null ? credenzialeMittente.getCredenziale() : risultato;
 					case trasporto:
 					default:
 						// caso impossibile
@@ -8822,7 +8827,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			else if(!this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
 				if(StringUtils.isNotEmpty(risultato)) {
 					CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
-					return credenzialeMittente.getCredenziale();
+					return credenzialeMittente != null ? credenzialeMittente.getCredenziale() : risultato;
 				}
 			}
 		} catch (NumberFormatException | ServiceException | NotFoundException | MultipleResultException	| NotImplementedException e) {

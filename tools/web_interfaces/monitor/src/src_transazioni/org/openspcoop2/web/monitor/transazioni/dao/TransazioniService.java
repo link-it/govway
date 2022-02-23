@@ -1194,11 +1194,13 @@ public class TransazioniService implements ITransazioniService {
 			try {
 				MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, this.log);
 				CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(clientAddress));
-				String credenziale = credenzialeMittente.getCredenziale();
-				String socket = CredenzialeClientAddress.convertSocketDBValueToOriginal(credenziale);
-				String transport = CredenzialeClientAddress.convertTransportDBValueToOriginal(credenziale);
-				transazioneBean.setSocketClientAddressLabel(socket);
-				transazioneBean.setTransportClientAddressLabel(transport);
+				if(credenzialeMittente!=null) {
+					String credenziale = credenzialeMittente.getCredenziale();
+					String socket = CredenzialeClientAddress.convertSocketDBValueToOriginal(credenziale);
+					String transport = CredenzialeClientAddress.convertTransportDBValueToOriginal(credenziale);
+					transazioneBean.setSocketClientAddressLabel(socket);
+					transazioneBean.setTransportClientAddressLabel(transport);
+				}
 			} catch(NumberFormatException e) {
 				// informazione non valida
 				transazioneBean.setTrasportoMittenteLabel(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
@@ -1218,8 +1220,10 @@ public class TransazioniService implements ITransazioniService {
 			try {
 				MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, this.log);
 				CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(trasportoMittente));
-				transazioneBean.setTrasportoMittenteLabel(credenzialeMittente.getCredenziale()); 
-				transazioneBean.setTipoTrasportoMittenteLabel(credenzialeMittente.getTipo());
+				if(credenzialeMittente!=null) {
+					transazioneBean.setTrasportoMittenteLabel(credenzialeMittente.getCredenziale()); 
+					transazioneBean.setTipoTrasportoMittenteLabel(credenzialeMittente.getTipo());
+				}
 			} catch(NumberFormatException e) {
 				// informazione non valida
 				transazioneBean.setTrasportoMittenteLabel(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
@@ -1253,7 +1257,9 @@ public class TransazioniService implements ITransazioniService {
 			try {
 				MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, this.log);
 				CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(tokenIssuer));
-				transazioneBean.setTokenIssuerLabel(credenzialeMittente.getCredenziale()); 
+				if(credenzialeMittente!=null) {
+					transazioneBean.setTokenIssuerLabel(credenzialeMittente.getCredenziale());
+				}
 			} catch(NumberFormatException e) {
 				// informazione non valida
 				transazioneBean.setTokenIssuerLabel(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
@@ -1273,7 +1279,9 @@ public class TransazioniService implements ITransazioniService {
 			try {
 				MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, this.log);
 				CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(tokenClientID));
-				transazioneBean.setTokenClientIdLabel(credenzialeMittente.getCredenziale()); 
+				if(credenzialeMittente!=null) {
+					transazioneBean.setTokenClientIdLabel(credenzialeMittente.getCredenziale());
+				}
 			} catch(NumberFormatException e) {
 				// informazione non valida
 				transazioneBean.setTokenClientIdLabel(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
@@ -1293,7 +1301,9 @@ public class TransazioniService implements ITransazioniService {
 			try {
 				MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, this.log);
 				CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(tokenSubject));
-				transazioneBean.setTokenSubjectLabel(credenzialeMittente.getCredenziale()); 
+				if(credenzialeMittente!=null) {
+					transazioneBean.setTokenSubjectLabel(credenzialeMittente.getCredenziale());
+				}
 			} catch(NumberFormatException e) {
 				// informazione non valida
 				transazioneBean.setTokenSubjectLabel(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
@@ -1313,7 +1323,9 @@ public class TransazioniService implements ITransazioniService {
 			try {
 				MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, this.log);
 				CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(tokenUsername));
-				transazioneBean.setTokenUsernameLabel(credenzialeMittente.getCredenziale()); 
+				if(credenzialeMittente!=null) {
+					transazioneBean.setTokenUsernameLabel(credenzialeMittente.getCredenziale());
+				}
 			} catch(NumberFormatException e) {
 				// informazione non valida
 				transazioneBean.setTokenUsernameLabel(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
@@ -1333,7 +1345,9 @@ public class TransazioniService implements ITransazioniService {
 			try {
 				MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, this.log);
 				CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(tokenMail));
-				transazioneBean.setTokenMailLabel(credenzialeMittente.getCredenziale()); 
+				if(credenzialeMittente!=null) {
+					transazioneBean.setTokenMailLabel(credenzialeMittente.getCredenziale());
+				}
 			} catch(NumberFormatException e) {
 				// informazione non valida
 				transazioneBean.setTokenMailLabel(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
@@ -1353,8 +1367,10 @@ public class TransazioniService implements ITransazioniService {
 			try {
 				MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, this.log);
 				CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(eventi));
-				String valore = credenzialeMittente.getCredenziale();
-				transazioneBean.setEventiLabel(AbstractCredenzialeList.normalize(valore));
+				if(credenzialeMittente!=null) {
+					String valore = credenzialeMittente.getCredenziale();
+					transazioneBean.setEventiLabel(AbstractCredenzialeList.normalize(valore));
+				}
 				
 				if(normalizeHttpReturnCode) {
 					if(transazioneBean.getCodiceRispostaIngresso()==null || "".equals(transazioneBean.getCodiceRispostaIngresso())) {
@@ -1396,8 +1412,10 @@ public class TransazioniService implements ITransazioniService {
 			try {
 				MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, this.log);
 				CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(gruppi));
-				String valore = credenzialeMittente.getCredenziale();
-				transazioneBean.setGruppiLabel(AbstractCredenzialeList.normalize(valore)); 
+				if(credenzialeMittente!=null) {
+					String valore = credenzialeMittente.getCredenziale();
+					transazioneBean.setGruppiLabel(AbstractCredenzialeList.normalize(valore));
+				}
 			} catch(NumberFormatException e) {
 				// informazione non valida
 				transazioneBean.setGruppiLabel(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
@@ -1417,8 +1435,10 @@ public class TransazioniService implements ITransazioniService {
 				try {
 					MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, this.log);
 					CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(uriApi));
-					String valore = credenzialeMittente.getCredenziale();
-					transazioneBean.setUriAccordoServizio(valore);				
+					if(credenzialeMittente!=null) {
+						String valore = credenzialeMittente.getCredenziale();
+						transazioneBean.setUriAccordoServizio(valore);
+					}
 				} catch(NumberFormatException e) {
 					// informazione non valida
 					transazioneBean.setUriAccordoServizio(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
