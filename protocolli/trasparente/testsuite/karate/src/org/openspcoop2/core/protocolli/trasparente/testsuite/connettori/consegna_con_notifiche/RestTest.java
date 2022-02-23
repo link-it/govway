@@ -182,7 +182,11 @@ formato_fault_ultimo_errore    |
 		 * TODO 
 		 */
 		final String erogazione = "TestConsegnaConNotificheRegoleProblem";
-		
+		//  Per generare Problem Detail (REST):
+        // problem=true
+        //è possibile anche personalizzare aspetti del fault quali:
+         //problemStatus, problemTitle, problemType, problemDetail e problemSerializationType (json/xml)
+
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 		
 		HttpRequest requestSoapFaultTuttiValorizzati = RequestBuilder.buildRestRequestProblem(erogazione);
