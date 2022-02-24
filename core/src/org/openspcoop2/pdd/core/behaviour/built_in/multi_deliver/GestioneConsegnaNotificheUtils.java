@@ -472,8 +472,9 @@ public class GestioneConsegnaNotificheUtils  {
 				break;
 			case CONSEGNA_FALLITA:
 				break;
-			case CONSEGNA_COMPLETATA_PERSONALIZZATA:
 			case CONSEGNA_FALLITA_PERSONALIZZATA:
+				break;
+			case CONSEGNA_COMPLETATA_PERSONALIZZATA:
 				if(!first) {
 					bf.append(" o");
 				}
@@ -509,12 +510,18 @@ public class GestioneConsegnaNotificheUtils  {
 					}
 					tipoFaultCompletato = tipoFaultCompletato + label;
 				}
+				String prefix = "";
+				// Siamo costruendo una stringa che indica quando vi è una consegna completata.
+				// Se il fault ha un match ed è configurato per fallire, non vi è chiamarente una consegna completata.
+				// Se non si ha un fault con il match si passa ad analizzare il codice di trasporto, quindi non vale dire "non" contenente
+//				if(TipoGestioneNotificaFault.CONSEGNA_FALLITA_PERSONALIZZATA.equals(config.getFault())) {
+//					prefix = " non";
+//				}
 				if(tipoFaultCompletato!=null) {
-					String prefix = "";
-					if(TipoGestioneNotificaFault.CONSEGNA_FALLITA_PERSONALIZZATA.equals(config.getFault())) {
-						prefix = " non";
-					}
 					tipoFaultCompletato = prefix+" contenente le personalizzazioni definite per "+tipoFaultCompletato;
+				}
+				else {
+					tipoFaultCompletato = prefix+" contenente le personalizzazioni indicate"; // configurazione in corso
 				}
 				bf.append(tipoFaultCompletato);
 				
