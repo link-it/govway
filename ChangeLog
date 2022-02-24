@@ -1,5 +1,11 @@
 2022-02-24  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Risolto Bug
+	Il reset puntuale di una API non eliminava dalla cache la definizione dell'interfaccia OpenAPI o Wsdl.
+
+2022-02-24  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, GovWayConsole]
 	Aggiunti controlli sul content-type ricevuto nelle risposte.
 	Migliorata pagina di configurazione per la gestione delle notifiche.

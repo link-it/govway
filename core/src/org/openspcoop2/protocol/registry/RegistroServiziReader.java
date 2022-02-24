@@ -351,6 +351,13 @@ public class RegistroServiziReader {
 				RegistroServiziReader.removeObjectCache(keyIdAccordo);
 			}
 
+			List<IDServizio> serviziImplementati = null;
+			try {
+				FiltroRicercaServizi filtro = new FiltroRicercaServizi();
+				filtro.setIdAccordoServizioParteComune(idAccordo);
+				serviziImplementati = RegistroServiziManager.getInstance().getAllIdServizi(filtro, null);
+			}catch(Throwable t) {}
+			
 			List<String> keyForClean = new ArrayList<String>();
 			List<String> keys = RegistroServiziReader.keysCache();
 			if(keys!=null && !keys.isEmpty()) {
@@ -363,6 +370,10 @@ public class RegistroServiziReader {
 				String prefixGetAllId_azionePortType = RegistroServizi._toKey_getAllIdAzionePortType_method();
 				String prefixGetAllId_azione = RegistroServizi._toKey_getAllIdAzione_method();
 				String prefixGetAllId_resource = RegistroServizi._toKey_getAllIdResource_method();
+				
+				String wsdlAccordoServizioPrefix = RegistroServizi._toKey_getWsdlAccordoServizioPrefix();
+				
+				String restAccordoServizioPrefix = RegistroServizi._toKey_getRestAccordoServizioPrefix();
 				
 				for (String key : keys) {
 					if(key!=null) {
@@ -451,6 +462,22 @@ public class RegistroServiziReader {
 											}
 										}
 									}
+								}
+							}
+						}
+						else if(key.startsWith(wsdlAccordoServizioPrefix) && serviziImplementati!=null && !serviziImplementati.isEmpty()) {
+							for (IDServizio idServizio : serviziImplementati) {
+								String wsdlAccordoServizioService = RegistroServizi._toKey_getWsdlAccordoServizioService(idServizio);
+								if(key.contains(wsdlAccordoServizioService)) {
+									keyForClean.add(key);
+								}
+							}
+						}
+						else if(key.startsWith(restAccordoServizioPrefix)) {
+							for (IDServizio idServizio : serviziImplementati) {
+								String restAccordoServizioService = RegistroServizi._toKey_getRestAccordoServizioService(idServizio);
+								if(key.contains(restAccordoServizioService)) {
+									keyForClean.add(key);
 								}
 							}
 						}
