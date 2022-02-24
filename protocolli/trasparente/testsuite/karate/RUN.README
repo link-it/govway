@@ -246,6 +246,7 @@ Di seguito vengono descritti i test del package 'connettori':
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.timeout
 
 - 'errori', verifica che, su API SOAP, eventuali risposte di errore senza un payload o con un payload html vengano gestite correttamente. 
+   Vengono inoltre verificate risposte contenenti Content-Type non validi.
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.errori
 
 - 'applicativo_server', verifica il funzionamento degli applicativi di tipo server 

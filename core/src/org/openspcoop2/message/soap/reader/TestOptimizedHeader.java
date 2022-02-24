@@ -737,6 +737,9 @@ public class TestOptimizedHeader {
 		if(fileName.contains("Header5K") && !fileName.contains("requestHeader5KBody5K")){
 			rapporto_stream_reader = 2;
 		}
+		else if(fileName.contains("requestHeader5KBody5K")){
+			rapporto_max_saaj = 39;
+		}
 		else if(fileName.startsWith("requestMixedPrefixAndCDATA")) {
 			rapporto_max_dom = rapporto_max_dom*3;
 			rapporto_min = 2;
@@ -772,18 +775,21 @@ public class TestOptimizedHeader {
 			// come soap fault è praticamente vuoto, è solo testo.
 			rapporto_max_dom = rapporto_max_dom*6; 
 			rapporto_min_saaj = 2;
+			tolleranza_bytes = 1024*3; // 3 kb
 		}
 		else if (fileName.startsWith("requestAllCDATAHeaderBodyEmpty") ) {
 			// è praticamente vuoto, è solo testo.
 			rapporto_max_dom = rapporto_max_dom*6; 
 			rapporto_min_saaj = 2;
 			rapporto_stream_reader_after_header = 3;
+			tolleranza_bytes = 1024*3; // 3 kb
 		}
 		else if (fileName.startsWith("requestHeaderBodyXmlEntity")) {
 			// è molto testo come xml entity
 			rapporto_max_dom = rapporto_max_dom*6;
 			rapporto_stream_reader_after_header = 3;
 			rapporto_min_saaj = 3;
+			tolleranza_bytes = 1024*3; // 3 kb
 		}
 		else if(fileName.startsWith("requestSOAPMultipartRelatedMIME") || fileName.startsWith("contentIdMalformedSOAPMultipartRelatedMIME")){
 			rapporto_stream_reader = 2;
@@ -805,6 +811,7 @@ public class TestOptimizedHeader {
 			rapporto_min_after_header = 30;
 			rapporto_min_saaj = 20;
 			rapporto_max_saaj = 55;
+			tolleranza_bytes = 1024*3; // 3 kb
 		}
 		else if(fileName.contains("requestXmlDeclarationACapo_")) {
 			// essendo piccolo il messaggio, la sovrastruttura amplifica notevolmente come rapporto
@@ -813,6 +820,7 @@ public class TestOptimizedHeader {
 			rapporto_min_after_header = 25;
 			rapporto_min_saaj = 20;
 			rapporto_max_saaj = 45;
+			tolleranza_bytes = 1024*3; // 3 kb
 		}
 		else if(fileName.contains("requestSoap") && fileName.contains("Commentata")){
 			// essendo piccolo il messaggio, la sovrastruttura amplifica notevolmente come rapporto
@@ -821,6 +829,7 @@ public class TestOptimizedHeader {
 			rapporto_min_after_header = 25;
 			rapporto_min_saaj = 20;
 			rapporto_max_saaj = 45;
+			tolleranza_bytes = 1024*3; // 3 kb
 		}
 		else if(fileName.contains("requestHeaderBodyVariCommenti")) {
 			rapporto_max_dom = rapporto_max_dom * 4;
@@ -849,6 +858,7 @@ public class TestOptimizedHeader {
 			rapporto_stream_reader_after_header = 15;
 			rapporto_min_saaj = 20;
 			rapporto_max_saaj = 45;
+			tolleranza_bytes = 1024*3; // 3 kb
 		}
 		else if(fileName.startsWith("requestBodyMalformed")) {
 			rapporto_max_dom = rapporto_max_dom*20; 

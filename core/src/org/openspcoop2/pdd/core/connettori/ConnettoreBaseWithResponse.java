@@ -46,6 +46,7 @@ import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.TransportResponseContext;
+import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 
 /**
  * ConnettoreBaseWithResponse
@@ -203,33 +204,45 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			return; // gia' calcolato
 		}
 		
+		String msgErrore = null;
+		Exception exErrore = null;
+				
 		String contentTypeString = "N.D.";
 		if(this.tipoRisposta!=null && !"".equals(this.tipoRisposta)){
 			contentTypeString = this.tipoRisposta;
+			
+			// Verifico correttezza Content-Type
+			try {
+				ContentTypeUtilities.validateContentType(contentTypeString);
+			}catch(Exception error){
+				exErrore = error;
+				msgErrore = "Content-Type '"+contentTypeString+"' presente nella risposta non valido: "+error.getMessage();
+			}
 		}
 		
-		String msgErrore = null;
-		Exception exErrore = null;
-		try{
-			this.messageTypeResponse = this.requestInfo.getBindingConfig().getResponseMessageType(this.requestMsg.getServiceBinding(), 
-					this.requestMsg.getTransportRequestContext(),
-					this.tipoRisposta, 
-					this.codice>0?this.codice:null);				
-			if(this.messageTypeResponse==null){
-				String ctConosciuti = this.requestInfo.getBindingConfig().getContentTypesSupportedAsString(this.requestMsg.getServiceBinding(), MessageRole.RESPONSE, 
-						this.requestMsg.getTransportRequestContext());
-				if(this.tipoRisposta==null){
-					throw new Exception("Header Content-Type non risulta definito nell'http reply e non esiste una configurazione che supporti tale casistica. Content-Type conosciuti: "+ctConosciuti);
+		if(msgErrore==null) {
+			try{
+				this.messageTypeResponse = this.requestInfo.getBindingConfig().getResponseMessageType(this.requestMsg.getServiceBinding(), 
+						this.requestMsg.getTransportRequestContext(),
+						this.tipoRisposta, 
+						this.codice>0?this.codice:null);				
+				if(this.messageTypeResponse==null){
+					String ctConosciuti = this.requestInfo.getBindingConfig().getContentTypesSupportedAsString(this.requestMsg.getServiceBinding(), MessageRole.RESPONSE, 
+							this.requestMsg.getTransportRequestContext());
+					if(this.tipoRisposta==null){
+						throw new Exception("Header Content-Type non risulta definito nell'http reply e non esiste una configurazione che supporti tale casistica. Content-Type conosciuti: "+ctConosciuti);
+					}
+					else {
+						throw new Exception("Header Content-Type definito nell'http reply non è tra quelli conosciuti: "+ctConosciuti);
+					}
+					
 				}
-				else {
-					throw new Exception("Header Content-Type definito nell'http reply non è tra quelli conosciuti: "+ctConosciuti);
-				}
-				
+			}catch(Exception e){
+				exErrore = e;
+				msgErrore = "Non è stato possibile comprendere come trattare il messaggio ricevuto (Content-Type: "+contentTypeString+"): "+e.getMessage();
 			}
-		}catch(Exception e){
-			exErrore = e;
-			msgErrore = "Non è stato possibile comprendere come trattare il messaggio ricevuto (Content-Type: "+contentTypeString+"): "+e.getMessage();
 		}
+		
 		if(msgErrore!=null){
 			if(this.checkContentType){
 				if(exErrore!=null){
@@ -321,57 +334,69 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			
 			if(this.sbustamentoSoap==false){
 				
+				String msgErrore = null;
+				Exception exErrore = null;
+								
 				String contentTypeString = "N.D.";
 				if(this.tipoRisposta!=null && !"".equals(this.tipoRisposta)){
 					contentTypeString = this.tipoRisposta;
+					
+					// Verifico correttezza Content-Type
+					try {
+						ContentTypeUtilities.validateContentType(contentTypeString);
+					}catch(Exception error){
+						exErrore = error;
+						msgErrore = "Content-Type '"+contentTypeString+"' presente nella risposta non valido: "+error.getMessage();
+					}
 				}
 				
-				String msgErrore = null;
-				Exception exErrore = null;
-				try{
-				
-					if(this.tipoRisposta==null){
-						// obbligatorio in SOAP
-						msgErrore = "Header Content-Type non definito nell'http reply";
-					}
-					else{
-						if(this.requestInfo==null) {
-							throw new Exception("BindingConfig is null");
-						}
-						if(this.requestInfo.getBindingConfig()==null) {
-							throw new Exception("BindingConfig is null");
-						}
-						if(this.requestMsg==null) {
-							throw new Exception("RequestMsg is null");
-						}
-						this.messageTypeResponse = this.requestInfo.getBindingConfig().getResponseMessageType(this.requestMsg.getServiceBinding(), 
-								this.requestMsg.getTransportRequestContext(),
-								this.tipoRisposta, 
-								this.codice>0?this.codice:null);
-					}	
-				
-					if(this.messageTypeResponse==null){
-						
-						String ctConosciuti = this.requestInfo.getBindingConfig().getContentTypesSupportedAsString(this.requestMsg.getServiceBinding(), MessageRole.RESPONSE, 
-								this.requestMsg.getTransportRequestContext());
-						
+				if(msgErrore==null) {
+					try{
+					
 						if(this.tipoRisposta==null){
-							throw new Exception("Header Content-Type non risulta definito nell'http reply e non esiste una configurazione che supporti tale casistica. Content-Type conosciuti: "+ctConosciuti);
+							// obbligatorio in SOAP
+							msgErrore = "Header Content-Type non definito nell'http reply";
 						}
-						else {
-							throw new Exception("Header Content-Type definito nell'http reply non è tra quelli conosciuti: "+ctConosciuti);
+						else{
+							if(this.requestInfo==null) {
+								throw new Exception("BindingConfig is null");
+							}
+							if(this.requestInfo.getBindingConfig()==null) {
+								throw new Exception("BindingConfig is null");
+							}
+							if(this.requestMsg==null) {
+								throw new Exception("RequestMsg is null");
+							}
+							this.messageTypeResponse = this.requestInfo.getBindingConfig().getResponseMessageType(this.requestMsg.getServiceBinding(), 
+									this.requestMsg.getTransportRequestContext(),
+									this.tipoRisposta, 
+									this.codice>0?this.codice:null);
+						}	
+					
+						if(this.messageTypeResponse==null){
+							
+							String ctConosciuti = this.requestInfo.getBindingConfig().getContentTypesSupportedAsString(this.requestMsg.getServiceBinding(), MessageRole.RESPONSE, 
+									this.requestMsg.getTransportRequestContext());
+							
+							if(this.tipoRisposta==null){
+								throw new Exception("Header Content-Type non risulta definito nell'http reply e non esiste una configurazione che supporti tale casistica. Content-Type conosciuti: "+ctConosciuti);
+							}
+							else {
+								throw new Exception("Header Content-Type definito nell'http reply non è tra quelli conosciuti: "+ctConosciuti);
+							}
 						}
+						else{
+							if(this.requestMsg.getMessageType().equals(this.messageTypeResponse)==false){
+								msgErrore = "Header Content-Type definito nell'http reply associato ad un tipo ("+this.messageTypeResponse.name()
+											+") differente da quello associato al messaggio di richiesta ("+this.requestMsg.getMessageType().name()+")";
+							}
+						}
+					}catch(Exception e){
+						exErrore = e;
+						msgErrore = "Non è stato possibile comprendere come trattare il messaggio ricevuto (Content-Type: "+contentTypeString+"): "+e.getMessage();
 					}
-					else{
-						if(this.requestMsg.getMessageType().equals(this.messageTypeResponse)==false){
-							msgErrore = "Header Content-Type definito nell'http reply associato ad un tipo ("+this.messageTypeResponse.name()
-										+") differente da quello associato al messaggio di richiesta ("+this.requestMsg.getMessageType().name()+")";
-						}
-					}
-				}catch(Exception e){
-					exErrore = e;
-					msgErrore = "Non è stato possibile comprendere come trattare il messaggio ricevuto (Content-Type: "+contentTypeString+"): "+e.getMessage();
 				}
+				
 				if(msgErrore!=null){
 					if(this.checkContentType){
 						Exception e = null;

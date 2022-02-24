@@ -206,6 +206,34 @@ public class SoapTest extends ConfigLoader {
 	}
 	
 	
+	// invalidContentType (caso 1)
+	@Test
+	public void erogazione_invalidContentType_caso1() throws Exception {
+		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE).getBytes(),
+				"invalidContentType1", 
+				"Il contenuto applicativo della risposta ricevuta non è processabile: Content-Type ''\"text/xml\";charset=UTF-8'' presente nella risposta non valido: In Content-Type string <\"text/xml\";charset=UTF-8>, expected MIME type, got text/xml");
+	}
+	@Test
+	public void fruizione_invalidContentType_caso1() throws Exception {
+		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE).getBytes(),
+				"invalidContentType1", 
+				"Il contenuto applicativo della risposta ricevuta non è processabile: Content-Type ''\"text/xml\";charset=UTF-8'' presente nella risposta non valido: In Content-Type string <\"text/xml\";charset=UTF-8>, expected MIME type, got text/xml");
+	}
+	
+	// invalidContentType (caso 2)
+	@Test
+	public void erogazione_invalidContentType_caso2() throws Exception {
+		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE).getBytes(),
+				"invalidContentType2", 
+				"Il contenuto applicativo della risposta ricevuta non è processabile: Content-Type ''\"text/xml\"'' presente nella risposta non valido: In Content-Type string <\"text/xml\">, expected MIME type, got text/xml");
+	}
+	@Test
+	public void fruizione_invalidContentType_caso2() throws Exception {
+		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE).getBytes(),
+				"invalidContentType2", 
+				"Il contenuto applicativo della risposta ricevuta non è processabile: Content-Type ''\"text/xml\"'' presente nella risposta non valido: In Content-Type string <\"text/xml\">, expected MIME type, got text/xml");
+	}
+	
 	
 	private static HttpResponse _test(
 			TipoServizio tipoServizio, String contentType, byte[]content,
@@ -240,7 +268,16 @@ public class SoapTest extends ConfigLoader {
 		assertNotNull(idTransazione);
 		
 		long esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_INVOCAZIONE);
-		verifyKo(response, org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER, API_UNAVAILABLE, 503, API_UNAVAILABLE_MESSAGE);
+		if(operazione.startsWith("invalidContentType")) {
+			esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO);
+		}
+		
+		if(operazione.startsWith("invalidContentType")) {
+			verifyKo(response, org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER, INVALID_RESPONSE, 502, INVALID_RESPONSE_MESSAGE);
+		}
+		else {
+			verifyKo(response, org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER, API_UNAVAILABLE, 503, API_UNAVAILABLE_MESSAGE);
+		}
 		
 		DBVerifier.verify(idTransazione, esitoExpected, msgErrore);
 		
@@ -256,6 +293,9 @@ public class SoapTest extends ConfigLoader {
 	
 	public static final String REQUEST_TIMED_OUT = "RequestReadTimeout";
 	public static final String REQUEST_TIMED_OUT_MESSAGE = "Timeout reading the request payload";
+	
+	public static final String INVALID_RESPONSE = "InvalidResponse";
+	public static final String INVALID_RESPONSE_MESSAGE = "Invalid response received from the API Implementation";
 
 	public static void verifyKo(HttpResponse response, String soapPrefixError, String error, int code, String errorMsg) throws Exception {
 		
@@ -294,7 +334,9 @@ public class SoapTest extends ConfigLoader {
 			
 			assertEquals(error, response.getHeaderFirstValue(Headers.GovWayTransactionErrorType));
 			
-			assertNotNull(response.getHeaderFirstValue(HttpConstants.RETRY_AFTER));
+			if(!INVALID_RESPONSE.equals(error)) {
+				assertNotNull(response.getHeaderFirstValue(HttpConstants.RETRY_AFTER));
+			}
 
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
