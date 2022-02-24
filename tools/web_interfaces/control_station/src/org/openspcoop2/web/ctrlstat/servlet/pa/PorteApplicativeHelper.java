@@ -10552,22 +10552,19 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	) {
 		
 		DataElement de = new DataElement();
-		if(consegnaSincrona) {
-			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_REGOLE_CONSEGNA);
-		}
-		else {
-			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_REGOLE_CONSEGNA_NOTIFICA);
-		}
-		de.setType(DataElementType.TITLE);
-		dati.add(de);
-		
-		de = new DataElement();
 		de.setLabel("");
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME_SA);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(nomeSAConnettore);
 		dati.add(de);
 		
+		if(!consegnaSincrona) {
+			de = new DataElement();
+			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PRIORITA_CONSEGNA_NOTIFICA);
+			de.setType(DataElementType.TITLE);
+			dati.add(de);
+		}
+				
 		// Coda
 		de = new DataElement();
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODA);
@@ -10642,6 +10639,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de.setValue(priorita);
 		dati.add(de);
 		
+		
 		// Priorita Max
 		de = new DataElement();
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX);
@@ -10662,6 +10660,47 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		}
 		de.setValue(priorita);
 		dati.add(de);
+		
+		
+		
+		
+		de = new DataElement();
+		if(consegnaSincrona) {
+			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_REGOLE_CONSEGNA);
+		}
+		else {
+			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_REGOLE_CONSEGNA_NOTIFICA);
+		}
+		de.setType(DataElementType.TITLE);
+		dati.add(de);
+		
+		
+		
+		String consegnaNotificheLabel = "";
+		try{
+			ConfigurazioneGestioneConsegnaNotifiche nuovaConfigurazioneGestioneConsegnaNotifiche  = this.getConfigurazioneGestioneConsegnaNotifiche(serviceBinding, cadenzaRispedizione,
+					codiceRisposta2xx, codiceRisposta2xxValueMin, codiceRisposta2xxValueMax, codiceRisposta2xxValue,
+					codiceRisposta3xx, codiceRisposta3xxValueMin, codiceRisposta3xxValueMax, codiceRisposta3xxValue,
+					codiceRisposta4xx, codiceRisposta4xxValueMin, codiceRisposta4xxValueMax, codiceRisposta4xxValue, 
+					codiceRisposta5xx, codiceRisposta5xxValueMin, codiceRisposta5xxValueMax, codiceRisposta5xxValue,
+					gestioneFault, faultCode, faultActor, faultMessage);
+			if(nuovaConfigurazioneGestioneConsegnaNotifiche != null) {
+				consegnaNotificheLabel = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.GestioneConsegnaNotificheUtils.toString(nuovaConfigurazioneGestioneConsegnaNotifiche,
+						serviceBinding.equals(ServiceBinding.SOAP));
+			}
+		}catch(Exception e) {
+			// nel caso non siano forniti alcuni valori va in errore...
+			// lascio a debug e non verra' presentata la label
+			this.log.debug(e.getMessage(),e);	
+		}
+		if(StringUtils.isNotEmpty(consegnaNotificheLabel)) {
+			DataElement deLABEL = new DataElement();
+			deLABEL.setType(DataElementType.TEXT);
+			deLABEL.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_COMPORTAMENTO);
+			deLABEL.setValue(consegnaNotificheLabel);
+			dati.add(deLABEL);
+		}
+		
 				
 		
 		// subtitolo Codice Risposta HTTP
