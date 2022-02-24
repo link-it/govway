@@ -286,7 +286,7 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 				IdentificazioneFallitaTest.checkDiagnosticoTransazione(
 						id_transazione, 
 						DIAGNOSTICO_SEVERITA_INFO,
-						IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_CONSEGNA_NOTIFICHE_NESSUN_CONNETTORE_UTILIZZABILE_UTILIZZO_CONNETTORE_DEFAULT, 
+						IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_NOTIFICHE_NESSUN_CONNETTORE_UTILIZZABILE_UTILIZZO_CONNETTORE_DEFAULT, 
 						messaggioFallbackAtteso);
 			}
 		}
@@ -694,7 +694,7 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 				IdentificazioneFallitaTest.checkDiagnosticoTransazione(
 						id_transazione, 
 						DIAGNOSTICO_SEVERITA_INFO,
-						IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_CONSEGNA_NOTIFICHE_NESSUN_CONNETTORE_UTILIZZABILE_UTILIZZO_CONNETTORE_DEFAULT, 
+						IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_NOTIFICHE_NESSUN_CONNETTORE_UTILIZZABILE_UTILIZZO_CONNETTORE_DEFAULT, 
 						messaggioFallbackAtteso);
 			}
 		}
@@ -819,7 +819,7 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 				
 				IdentificazioneFallitaTest.checkDiagnosticoTransazione(id_transazione, 
 						DIAGNOSTICO_SEVERITA_INFO,
-						IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_CONSEGNA_NOTIFICHE_NESSUN_CONNETTORE_UTILIZZABILE_UTILIZZO_CONNETTORE_DEFAULT, 
+						IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_NOTIFICHE_NESSUN_CONNETTORE_UTILIZZABILE_UTILIZZO_CONNETTORE_DEFAULT, 
 						messaggioFallbackAtteso);
 			}
 		}

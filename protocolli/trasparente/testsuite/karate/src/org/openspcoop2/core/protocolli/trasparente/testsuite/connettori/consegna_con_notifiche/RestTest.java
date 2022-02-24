@@ -33,7 +33,6 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_ERRORE_INVOCAZIONE;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_OK;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.FORMATO_FAULT_REST;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.FORMATO_FAULT_SOAP1_1;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkStatoConsegna;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.esitoConsegnaFromStatusCode;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.getNumeroTentativiSchedulingConnettore;
@@ -55,10 +54,9 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.RequestBuilder;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectations;
-import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectationsFault;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectations.TipoFault;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectationsFault;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
@@ -108,7 +106,7 @@ public class RestTest extends ConfigLoader{
 		return new RequestAndExpectations(request, connettoriOk, connettoriErrore, esito, statusCode, true);
 	}
 	
-	@Test
+	
 	public void valorizzazioneCampi() throws IOException {
 
 		/**
@@ -184,24 +182,14 @@ formato_fault_ultimo_errore    |
 		 * Connettore2, Connettore3: Consegna  Completata Personalizzata
 		 */
 		final String erogazione = "TestConsegnaConNotificheRegoleProblem";
-		//  Per generare Problem Detail (REST):
-        // problem=true
-        //è possibile anche personalizzare aspetti del fault quali:
-         //problemStatus, problemTitle, problemType, problemDetail e problemSerializationType (json/xml)
-		// claimCompletata=valoreClaimCompletata
-		// claimRispedizione=valoreClaimRispedizione
 
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 		
 		HttpRequest requestRispeditaTuttiValorizzati = new HttpRequest();
-		requestRispeditaTuttiValorizzati.setMethod(HttpRequestMethod.POST);
+		requestRispeditaTuttiValorizzati.setMethod(HttpRequestMethod.GET);
 		requestRispeditaTuttiValorizzati.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
-				+ "&problem=true&problemStatus=501&problemType=TypeRispedita");
-		
-		String content = "{ \"claimRispedizione\": \"valoreClaimRispedizione\"}";
-		requestRispeditaTuttiValorizzati.setContentType("application/json");
-		requestRispeditaTuttiValorizzati.setContent(content.getBytes());
+				+ "&problem=true&problemStatus=501&problemType=TypeRispedita&problemDetail=detailRispedita");
 		
 		HttpRequest requestRispeditaRegex = new HttpRequest();
 		requestRispeditaRegex.setMethod(HttpRequestMethod.GET);
@@ -210,13 +198,10 @@ formato_fault_ultimo_errore    |
 				+ "&problem=true&problemStatus=502&problemType=TypeRispedita123");
 		
 		HttpRequest requestCompletataTuttiValorizzati =  new HttpRequest();
-		requestCompletataTuttiValorizzati.setMethod(HttpRequestMethod.POST);
+		requestCompletataTuttiValorizzati.setMethod(HttpRequestMethod.GET);
 		requestCompletataTuttiValorizzati.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
-				+ "&problem=true&problemStatus=501&problemType=TypeCompletata");
-		content = "{ \"claimCompletata\": \"valoreClaimCompletata\"}";
-		requestCompletataTuttiValorizzati.setContentType("application/json");
-		requestCompletataTuttiValorizzati.setContent(content.getBytes());
+				+ "&problem=true&problemStatus=501&problemType=TypeCompletata&problemDetail=detailCompletata");
 		
 		HttpRequest requestCompletataRegex = new HttpRequest();
 		requestCompletataRegex.setMethod(HttpRequestMethod.GET);
@@ -224,9 +209,9 @@ formato_fault_ultimo_errore    |
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX
 				+ "&problem=true&problemStatus=502&problemType=TypeCompletata123");
 		
-		String  fault = "{\"type\":\"TypeRispedita\",\"title\":\"Not Implemented\",\"status\":501,\"detail\":\"Problem ritornato dalla servlet di trace, esempio di OpenSPCoop\"}";
+		String  fault = "{\"type\":\"TypeRispedita\",\"title\":\"Not Implemented\",\"status\":501,\"detail\":\"detailRispedita\"}";
 		
-	/*	requestsByKind.add(new RequestAndExpectationsFault(
+		requestsByKind.add(new RequestAndExpectationsFault(
 				requestRispeditaTuttiValorizzati,	
 				Set.of(),
 				Set.of(CONNETTORE_0,CONNETTORE_2, CONNETTORE_3,CONNETTORE_1),
@@ -241,9 +226,9 @@ formato_fault_ultimo_errore    |
 				Set.of(),
 				Set.of(CONNETTORE_1,CONNETTORE_2,CONNETTORE_3, CONNETTORE_0), 
 				ESITO_CONSEGNA_MULTIPLA_IN_CORSO, 502, TipoFault.REST, fault, FORMATO_FAULT_REST)
-			);*/
+			);
 		
-		 fault = "{\"type\":\"TypeCompletata\",\"title\":\"Not Implemented\",\"status\":501,\"detail\":\"Problem ritornato dalla servlet di trace, esempio di OpenSPCoop\"}";
+		 fault = "{\"type\":\"TypeCompletata\",\"title\":\"Not Implemented\",\"status\":501,\"detail\":\"detailCompletata\"}";
 		 
 		requestsByKind.add(new RequestAndExpectationsFault(
 				requestCompletataTuttiValorizzati,
@@ -253,14 +238,14 @@ formato_fault_ultimo_errore    |
 			);
 		
 	
-	/* fault = "{\"type\":\"TypeCompletata123\",\"title\":\"Bad Gateway\",\"status\":502,\"detail\":\"Problem ritornato dalla servlet di trace, esempio di OpenSPCoop\"}";
+		fault = "{\"type\":\"TypeCompletata123\",\"title\":\"Bad Gateway\",\"status\":502,\"detail\":\"Problem ritornato dalla servlet di trace, esempio di OpenSPCoop\"}";
 		 
 		requestsByKind.add(new RequestAndExpectationsFault(
 				requestCompletataRegex,				
 				Set.of(CONNETTORE_3),
 				Set.of(CONNETTORE_2, CONNETTORE_0,CONNETTORE_1),
 				ESITO_CONSEGNA_MULTIPLA_FALLITA, 502, TipoFault.REST, fault, FORMATO_FAULT_REST)
-			);*/
+			);
 		
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		
@@ -270,6 +255,11 @@ formato_fault_ultimo_errore    |
 	
 	@Test
 	public void schedulingAbilitatoDisabilitato() throws UtilsException, HttpUtilsException {
+		/*
+		 * Prima si disabilita lo scheduling su di un connettore, si verifica lo stato sul db e poi si riattiva
+		 * lo scheduling.
+		 */
+		
 		final String erogazione = "TestConsegnaConNotificheSchedulingAbilitatoDisabilitatoRest";
 		
 		CommonConsegnaMultipla.jmxDisabilitaSchedulingConnettore(erogazione, Common.CONNETTORE_1);
@@ -292,9 +282,9 @@ formato_fault_ultimo_errore    |
 		for (var response : responses) {
 			// Sul connettore disabilitato non è avvenuto nulla ancora.
 			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(response, Common.CONNETTORE_1);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_0, ESITO_OK, fault, formatoFault);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_2, ESITO_OK, fault, formatoFault);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_3, ESITO_OK, fault, formatoFault);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_0, ESITO_OK, 200, fault, formatoFault);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_2, ESITO_OK, 200, fault, formatoFault);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_3, ESITO_OK, 200, fault, formatoFault);
 			CommonConsegnaMultipla.checkStatoConsegna(response, ESITO_CONSEGNA_MULTIPLA_IN_CORSO,  1);
 		}
 				
@@ -304,10 +294,10 @@ formato_fault_ultimo_errore    |
 		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
 		
 		for (var response : responses) {
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_1, ESITO_OK, fault, formatoFault);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_0, ESITO_OK, fault, formatoFault);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_2, ESITO_OK, fault, formatoFault);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_3, ESITO_OK, fault, formatoFault);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_1, ESITO_OK, 200, fault, formatoFault);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_0, ESITO_OK, 200, fault, formatoFault);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_2, ESITO_OK, 200, fault, formatoFault);
+			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_3, ESITO_OK, 200, fault, formatoFault);
 			CommonConsegnaMultipla.checkConsegnaCompletata(response);
 		}
 	}
@@ -316,12 +306,9 @@ formato_fault_ultimo_errore    |
 	
 	@Test
 	public void consegnaConNotificheSemplice() throws IOException {
-
-		// Il ConnettorePrincipale è quello sincrono, non subisce rispedizioni in caso di fallimento.
-		// La sua configurazione puntuale serve a indicare cosa scrivere nei diagnostici.
-		// Non controllo lo status code delle richieste sincrone perchè non coincide con quello inviato al server di echo, e.g.: un 401 viene trasformato in 500
-		// Controllo però che la logica delle rispedizioni segua quanto scelto nelle maschere di configurazione.
-		// Così per tutti i test.
+		/**
+		 * Si controlla lo stato sul db prima e dopo la consegna delle notifiche.
+		 */
 		
 		final String erogazione = "TestConsegnaConNotificheRest";
 		HttpRequest request1 = RequestBuilder.buildRestRequest(erogazione);
@@ -344,7 +331,7 @@ formato_fault_ultimo_errore    |
 		for (var response : responses) {
 			CommonConsegnaMultipla.checkConsegnaCompletata(response);
 			CommonConsegnaMultipla.checkConsegnaConnettoreFile(request1, response, connettoriFile);
-			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(response,  Common.setConnettoriAbilitati, ESITO_OK, "", "");
+			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(response,  Common.setConnettoriAbilitati, ESITO_OK, 200, "", "");
 		}
 
 	}
@@ -352,6 +339,10 @@ formato_fault_ultimo_errore    |
 	
 	@Test
 	public void erroreDiProcessamentoOk() {
+		/**
+		 *		Si testa la consegna di notifiche in caso di errore di processamento 
+		 */
+		
 		// In questo caso l'errore di processamento è configurato per passare e far avviare le notifiche.
 		final String erogazione = "TestConsegnaConNotificheErroreDiProcessamentoOKRest";
 		
@@ -384,11 +375,11 @@ formato_fault_ultimo_errore    |
 		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
 		for (var r : responsesOk) {
 			CommonConsegnaMultipla.checkConsegnaCompletata(r);
-			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(r,  Common.setConnettoriAbilitati, ESITO_OK,  "", "");
+			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(r,  Common.setConnettoriAbilitati, ESITO_OK, 200, "", "");
 		}
 		for (var r : responsesErroreProcessamentoOK) {
 			CommonConsegnaMultipla.checkConsegnaCompletata(r);
-			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(r,  Common.setConnettoriAbilitati, ESITO_OK,  "", "");
+			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(r,  Common.setConnettoriAbilitati,  ESITO_OK,200,  "", "");
 		}
 		
 	}
@@ -396,12 +387,17 @@ formato_fault_ultimo_errore    |
 	
 	@Test
 	public void erroreDiProcessamento() {
+		/**
+		 *		Si testa la riconsegna di notifiche in caso di errore di processamento 
+		 */
 		final String erogazione = "TestConsegnaConNotificheErroreDiProcessamentoRest";
 		
 		HttpRequest requestStandard = RequestBuilder.buildRestRequest(erogazione);
-		HttpRequest requestOk = RequestBuilder.buildRequest_Contenuto("valoreIdApplicativo", erogazione) ;		// Questa va su test-regola-contenuto e la correlazione applicativa estrae dal contenuto l'id, per questa le notifiche vengono schedulate.
+		// Questa va su test-regola-contenuto e la correlazione applicativa estrae dal contenuto l'id, per questa le notifiche vengono schedulate.
+		HttpRequest requestOk = RequestBuilder.buildRequest_Contenuto("valoreIdApplicativo", erogazione) ;		
 		
-		 //  Questa va su test-regola-contenuto e la correlazione applicativa fallisce perchè è una get semplice e non vi trova il contenuto Per questa le notifiche non saranno schedulate
+		// Questa va su test-regola-contenuto e la correlazione applicativa fallisce perchè non vi trova l'id applicativo. 
+		// Per questa richiesta le notifiche non saranno schedulate
  		HttpRequest requestErroreProcessamento = new HttpRequest(); 	
 		requestErroreProcessamento.setMethod(HttpRequestMethod.GET);
 		requestErroreProcessamento.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-contenuto"
@@ -435,11 +431,11 @@ formato_fault_ultimo_errore    |
 
 		for (var response : responses) {
 			CommonConsegnaMultipla.checkConsegnaCompletata(response);
-			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(response,  Common.setConnettoriAbilitati, ESITO_OK,  "", "");
+			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(response,  Common.setConnettoriAbilitati,  ESITO_OK, 200,  "", "");
 		}
 		for (var r : responsesOk) {
 			CommonConsegnaMultipla.checkConsegnaCompletata(r);
-			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(r,  Common.setConnettoriAbilitati, ESITO_OK,  "", "");
+			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(r,  Common.setConnettoriAbilitati,  ESITO_OK,  200, "", "");
 		}
 		
 	}
@@ -497,7 +493,12 @@ formato_fault_ultimo_errore    |
 	
 	
 	@Test
-	public void consegnaConNotificheSemplice2() {
+	public void consegnaConNotificheErrori() {
+		/**
+		 * Nel primo test verifico il funzionamento senza particolari condizioni: invio una richiesta
+		 * e verifico le consegne. Qui invece inizio facendo fallire qualche richiesta.
+		 * I connettori file non posso istruirli, quindi uso tutti connettori http.
+		 */
 		// Errore di Consegna => Spedizione
 		// CompletateConSuccesso, FaultApplicativo => Errore
 		
@@ -598,6 +599,10 @@ formato_fault_ultimo_errore    |
 	
 	@Test
 	public void varieCombinazioniDiRegole() {
+		/**
+		 * Qui si testa la corretta rispedizione di richieste diverse su connettori diversi.
+		 * Vengono testati tutte le regole. 
+		 */
 		
 		final String erogazione = "TestConsegnaConNotificheRestVarieCombinazioniDiRegole";
 		
@@ -619,7 +624,7 @@ formato_fault_ultimo_errore    |
 			requestsByKind.add(requestExpectation);
 		}
 		
-		// Le soap fault passano
+		// Le fault passano
 		HttpRequest requestProblem = RequestBuilder.buildRestRequestProblem(erogazione);
 		requestsByKind.add(new RequestAndExpectations(
 				requestProblem,
@@ -715,6 +720,7 @@ formato_fault_ultimo_errore    |
 					requestExpectation.principaleSuperata = false;	
 				}
 			}			
+			
 			HttpRequest requestProblem =  RequestBuilder.buildRestRequestProblem(erogazione);
 			requestsByKind.add(new RequestAndExpectations(requestProblem, Common.setConnettoriAbilitati, Set.of(),  ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, true, TipoFault.REST));
 			
@@ -823,9 +829,9 @@ formato_fault_ultimo_errore    |
 		String formatoFault = "";
 		for (var r : responses) {
 			CommonConsegnaMultipla.checkStatoConsegna(r, ESITO_CONSEGNA_MULTIPLA_IN_CORSO, 1);
-			CommonConsegnaMultipla.checkSchedulingConnettoreInCorso(r, CONNETTORE_ROTTO, ESITO_ERRORE_INVOCAZIONE, fault, formatoFault);
+			CommonConsegnaMultipla.checkSchedulingConnettoreInCorso(r, CONNETTORE_ROTTO, ESITO_ERRORE_INVOCAZIONE,0, fault, formatoFault);
 			for (var connettore : Common.setConnettoriAbilitati) {				
-				CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(r, connettore, esitoConsegnaFromStatusCode(200), fault, formatoFault);
+				CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(r, connettore, esitoConsegnaFromStatusCode(200), 200, fault, formatoFault);
 			}
 		}
 		

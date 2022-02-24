@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -688,21 +687,24 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 		int i = 0;
 		// Prima costruisco le richieste normalmente
 		for (var entry : statusCodeVsConnettori.entrySet()) {
-			String pool = Common.pools.get(i % Common.pools.size());
+			final String pool = Common.pools.get(i % Common.pools.size());
 			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
-			Set<String> connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
+			final Set<String> connettoriSuccesso = entry.getValue();
+			final Integer statusCode = entry.getKey();
+			final Set<String> connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
 			String filtro = Common.filtriPools.get(pool).get(0);
 			filtro = filtro.substring(0,prefisso.length());
 			
 			String content = "<Filtro>"+filtro+"</Filtro>";
 			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType, content);
-			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
+			
+			request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode,connettoriSuccesso, connettoriPool);
 			requestsByKind.add(current);
 			
 			// Questa fallisce l'identificazione
 			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaHeaderHttp",   "SA_TestRegolaHeaderHttp",  soapContentType);
-			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
 			current = new RequestAndExpectations(request, Set.of(), Set.of(), CommonConsegnaMultipla.ESITO_ERRORE_PROCESSAMENTO_PDD_4XX, 500);
 			requestsByKind.add(current);
 			i++;

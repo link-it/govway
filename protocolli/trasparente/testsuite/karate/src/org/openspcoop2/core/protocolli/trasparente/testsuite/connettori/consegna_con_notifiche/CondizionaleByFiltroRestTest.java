@@ -80,9 +80,6 @@ http://localhost:8080/TestService/echo?id_connettore=ConnettorePrincipale
  */
 public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 	
-	static String CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_INFO_2 = "007044";
-	static String CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_ERROR_2 = "007043";
-	
 	@BeforeClass
 	public static void Before() {
 		Common.fermaRiconsegne(dbUtils);
@@ -101,7 +98,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 	public void AfterEach() {
 		Common.fermaRiconsegne(dbUtils);		
 	}
-	
+		
 	@Test
 	public void headerHttpNCUDiagnosticoError() {
 		// Notifiche Condizionali Quando:
@@ -167,8 +164,6 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 		String messaggioFallbackAtteso = 	"Per la notifica viene utilizzato il connettore 'Connettore2', configurato per essere utilizzato nel caso in cui la condizione estratta dalla richiesta non ha permesso di identificare alcun connettore";
 		String messaggioDiagnostico = "Il valore estratto dalla richiesta 'CONNETTORE_INESISTENTE', ottenuto tramite identificazione 'HeaderBased' (Header HTTP: GovWay-TestSuite-Connettore), non consente di identificare alcun connettore da utilizzare";
 
-		String CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_ERROR_2 = "007043";
-		
 		// Recupero tutte le risposte che devono aver fallito l'identificazione e controllo i diagnostici
 		for (var toCheck: toCheckForDiagnostici) {
 			for (var response : responsesByKind.get(toCheck) ) {
@@ -176,12 +171,12 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 				
 				IdentificazioneFallitaTest.checkDiagnosticoTransazione(id_transazione, 
 						DIAGNOSTICO_SEVERITA_ERROR, 
-						CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_ERROR_2,
+						IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_ERROR_2,
 						messaggioDiagnostico);
 				
 				IdentificazioneFallitaTest.checkDiagnosticoTransazione(id_transazione, 
 						DIAGNOSTICO_SEVERITA_INFO,
-						IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_CONSEGNA_NOTIFICHE_NESSUN_CONNETTORE_UTILIZZABILE_UTILIZZO_CONNETTORE_DEFAULT, 
+						IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_NOTIFICHE_NESSUN_CONNETTORE_UTILIZZABILE_UTILIZZO_CONNETTORE_DEFAULT, 
 						messaggioFallbackAtteso);
 			}
 		}
@@ -268,7 +263,6 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 		
 	}
 	
-	
 	@Test
 	public void parametroUrlNCUDiagnosticoInfo() {
 		// Notifiche Condizionali Quando:
@@ -333,8 +327,6 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 		
 		String messaggioAtteso = "Il valore estratto dalla richiesta 'FiltroInesistente', ottenuto tramite identificazione 'FormBased' (Parametro URL: govway-testsuite-id_connettore_request), non consente di identificare alcun connettore da utilizzare";
 		String messaggioFallbackAtteso = 	"Per la notifica viene utilizzato il connettore 'Connettore3', configurato per essere utilizzato nel caso in cui la condizione estratta dalla richiesta non ha permesso di identificare alcun connettore";
-
-		String CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_INFO_2 = "007044";
 		
 		// Recupero tutte le risposte che devono aver fallito l'identificazione e controllo i diagnostici
 		for (var toCheck: toCheckForDiagnostici) {
@@ -343,13 +335,13 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 				
 				IdentificazioneFallitaTest.checkDiagnosticoTransazione(id_transazione, 
 						DIAGNOSTICO_SEVERITA_INFO, 
-						CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_INFO_2,
+						IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_NOTIFICA_NESSUN_CONNETTORE_UTILIZZABILE_INFO_2,
 						messaggioAtteso);
 				
 				IdentificazioneFallitaTest.checkDiagnosticoTransazione(
 						id_transazione, 
 						DIAGNOSTICO_SEVERITA_INFO,
-						IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_CONSEGNA_NOTIFICHE_NESSUN_CONNETTORE_UTILIZZABILE_UTILIZZO_CONNETTORE_DEFAULT, 
+						IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_NOTIFICHE_NESSUN_CONNETTORE_UTILIZZABILE_UTILIZZO_CONNETTORE_DEFAULT, 
 						messaggioFallbackAtteso);
 			}
 		}
@@ -532,13 +524,13 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 		for (var toCheck: toCheckForDiagnostici) {
 			for (var response : responsesByKind.get(toCheck) ) {
 				String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
-				IdentificazioneFallitaTest.checkAssenzaDiagnosticoTransazione(id_transazione, CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_INFO_2);
-				IdentificazioneFallitaTest.checkAssenzaDiagnosticoTransazione(id_transazione, CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_ERROR_2);
+				IdentificazioneFallitaTest.checkAssenzaDiagnosticoTransazione(id_transazione, IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_INFO_2);
+				IdentificazioneFallitaTest.checkAssenzaDiagnosticoTransazione(id_transazione, IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_NESSUN_CONNETTORE_UTILIZZABILE_ERROR_2);
 				
 				IdentificazioneFallitaTest.checkDiagnosticoTransazione(
 						id_transazione, 
 						DIAGNOSTICO_SEVERITA_INFO,
-						"007064",
+						IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_NOTIFICHE_NESSUN_CONNETTORE_TROVATO_UTILIZZO_TUTTI_CONNETTORI,
 						messaggioAtteso);
 			}
 		}
@@ -754,7 +746,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 				
 				IdentificazioneFallitaTest.checkDiagnosticoTransazione(id_transazione, 
 						DIAGNOSTICO_SEVERITA_INFO,
-						IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_CONSEGNA_NOTIFICHE_NESSUN_CONNETTORE_UTILIZZABILE_UTILIZZO_CONNETTORE_DEFAULT, 
+						IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_NOTIFICHE_NESSUN_CONNETTORE_UTILIZZABILE_UTILIZZO_CONNETTORE_DEFAULT, 
 						messaggioFallbackAtteso);
 			}
 		}

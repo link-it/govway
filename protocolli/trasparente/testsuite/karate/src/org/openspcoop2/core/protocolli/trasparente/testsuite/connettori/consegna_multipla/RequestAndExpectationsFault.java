@@ -11,8 +11,8 @@ public class RequestAndExpectationsFault extends RequestAndExpectations {
 	
 	public RequestAndExpectationsFault(HttpRequest request, Set<String> connettoriSuccesso, 
 			Set<String> connettoriFallimento, int esito, int statusCodePrincipale, TipoFault tipoFault, String faultMessage, String faultType) {
-		super(request, connettoriSuccesso, connettoriFallimento, esito, statusCodePrincipale, tipoFault);
 		
+		super(request, connettoriSuccesso, connettoriFallimento, esito, statusCodePrincipale, tipoFault);
 		this.faultMessage = faultMessage;
 		this.faultType = faultType;
 	}

@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.codec.binary.Base64;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
@@ -82,7 +81,7 @@ public class RequestBuilder {
 		HttpRequest request = new HttpRequest();
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-header-http"
-				+ "?replyQueryParameter=id_connettore&problem=true&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
+				+ "?&returnCode=500&replyQueryParameter=id_connettore&problem=true&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
 		
 		return request;
 	}
@@ -196,7 +195,7 @@ public class RequestBuilder {
 	public static HttpRequest buildSoapRequestFault(String erogazione, String azione, String soapAction, String soapContentType) {
 		String faultSoapVersion = soapContentType.equals(HttpConstants.CONTENT_TYPE_SOAP_1_1)  ?  "11" : "12";
 		var requestSoapFault  = buildSoapRequest(erogazione, azione, soapAction, soapContentType);
-		requestSoapFault.setUrl(requestSoapFault.getUrl() +"&fault=true&faultSoapVersion="+faultSoapVersion);
+		requestSoapFault.setUrl(requestSoapFault.getUrl() +"&returnCode=500&fault=true&faultSoapVersion="+faultSoapVersion);
 		return requestSoapFault;
 	}
 

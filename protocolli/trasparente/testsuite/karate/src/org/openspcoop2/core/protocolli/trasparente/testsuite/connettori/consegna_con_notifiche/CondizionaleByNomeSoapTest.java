@@ -580,7 +580,7 @@ public class CondizionaleByNomeSoapTest extends ConfigLoader {
 				IdentificazioneFallitaTest.checkDiagnosticoTransazione(
 						id_transazione, 
 						DIAGNOSTICO_SEVERITA_INFO,
-						"007065",	// TODO: Constantizza questi valori	
+						IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_NOTIFICHE_NESSUN_CONNETTORE_TROVATO_UTILIZZO_NESSUN_CONNETTORE,	
 						"Il messaggio di richiesta non verrà notificato ad alcun connettore poichè la condizione estratta dalla richiesta non ha permesso di identificare alcun connettore");
 			}
 		}

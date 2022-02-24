@@ -357,34 +357,25 @@ public class CommonConsegnaMultipla {
 	}
 	
 	
-	public static void checkSchedulingConnettoreInCorso(HttpResponse response, String connettore, int esitoConsegna, String fault, String formatoFault) {
-		String query = "select count(*) from transazioni_sa where id_transazione=? and connettore_nome = ?  and consegna_terminata = ? and numero_tentativi >=1 and dettaglio_esito = ? and identificativo_messaggio is not null";
+	public static void checkSchedulingConnettoreInCorso(HttpResponse response, String connettore, int esitoConsegna, int _statusCode, String fault, String formatoFault) {
 		String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
-	
+		String statusCode = String.valueOf(_statusCode);
+
 		ConfigLoader.getLoggerCore().info("Checking scheduling connettore in corso for transazione:  " + id_transazione
-				+ " AND connettore = " + connettore + " AND dettaglio_esito = " + esitoConsegna + " fault = " + fault + " AND formato_fault= " + formatoFault);
+				+ " AND connettore = " + connettore + " AND dettaglio_esito = " + esitoConsegna + " fault = " + fault + " AND formato_fault= " + formatoFault + " AND codice_risposta=" + statusCode);
+
+		String query = "select count(*) from transazioni_sa where id_transazione=? and connettore_nome = ?  and consegna_terminata = ? and numero_tentativi >=1 and dettaglio_esito = ? and codice_risposta = ? and identificativo_messaggio is not null";
 		
 		Integer count;
 		if (fault.isEmpty()) {
 			query += " and fault is null and formato_fault is null";
-			count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, false, esitoConsegna);
+			count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, false, esitoConsegna,statusCode);
 		} else {
 			query += " and fault = ? and formato_fault = ?";
-			count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, false, esitoConsegna, fault, formatoFault);
+			count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, false, esitoConsegna,statusCode, fault, formatoFault);
 		}
 		
 		assertEquals(Integer.valueOf(1), count);
-	}
-
-
-	@Deprecated
-	public static void checkSchedulingConnettoreCompletato(HttpResponse response, String connettore) {
-		checkSchedulingConnettoreCompletato(response, connettore, 0);
-	}
-
-	@Deprecated
-	public static void checkSchedulingConnettoreCompletato(HttpResponse response, String connettore, int esito) {
-		checkSchedulingConnettoreCompletato(response, connettore, esito, "", "");
 	}
 
 	
@@ -393,20 +384,22 @@ public class CommonConsegnaMultipla {
 	 * sempre al primo tentativo.
 	 * 
 	 */
-	public static void checkSchedulingConnettoreCompletato(HttpResponse response, String connettore, int esitoConsegna, String fault, String formatoFault) {
-			String query = "select count(*) from transazioni_sa where id_transazione=? and connettore_nome = ?  and consegna_terminata = ? and numero_tentativi = 1 and dettaglio_esito = ? and identificativo_messaggio is not null";
+	public static void checkSchedulingConnettoreCompletato(HttpResponse response, String connettore, int esitoConsegna, int _statusCode, String fault, String formatoFault) {
 			String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+			String statusCode = String.valueOf(_statusCode);
 			
 			ConfigLoader.getLoggerCore().info("Checking scheduling connettore completato for transazione:  "
-					+ id_transazione + " AND connettore = " + connettore + " AND dettaglio_esito = " + esitoConsegna+ " fault = " + fault + " AND formato_fault= " + formatoFault);
+					+ id_transazione + " AND connettore = " + connettore + " AND dettaglio_esito = " + esitoConsegna+ " fault = " + fault + " AND formato_fault= " + formatoFault + " AND codice_risposta=" + statusCode);
+			
+			String query = "select count(*) from transazioni_sa where id_transazione=? and connettore_nome = ?  and consegna_terminata = ? and numero_tentativi = 1 and dettaglio_esito = ? and codice_risposta = ? and identificativo_messaggio is not null";
 			
 			Integer count;
 			if (fault.isEmpty()) {
 				query += " and fault is null and formato_fault is null";
-				count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, true, esitoConsegna);
+				count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, true, esitoConsegna, statusCode);
 			} else {
 				query += " and fault = ? and formato_fault = ?";
-				count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, true, esitoConsegna, fault, formatoFault);
+				count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, true, esitoConsegna, statusCode, fault, formatoFault);
 			}
 			
 			assertEquals(Integer.valueOf(1), count);				
@@ -484,20 +477,20 @@ public class CommonConsegnaMultipla {
 			} else {
 				esitoNotifica = esitoConsegnaFromStatusCode(requestAndExpectation.statusCodePrincipale);
 			}
-			checkSchedulingConnettoreInCorso(response, connettore, esitoNotifica,fault, formatoFault);
+			checkSchedulingConnettoreInCorso(response, connettore, esitoNotifica,requestAndExpectation.statusCodePrincipale,fault, formatoFault);
 		}
 				
 		for (var connettore : requestAndExpectation.connettoriSuccesso) {
 			int esitoNotifica;
 			if (connettoriFile.contains(connettore)) {
 				esitoNotifica = ESITO_OK;
-				checkSchedulingConnettoreCompletato(response, connettore, esitoNotifica,"", "");
+				checkSchedulingConnettoreCompletato(response, connettore, esitoNotifica,200,"", "");
 			} else	if (requestAndExpectation.tipoFault != TipoFault.NESSUNO) {
 				esitoNotifica = ESITO_ERRORE_APPLICATIVO; 
-				checkSchedulingConnettoreCompletato(response, connettore, esitoNotifica, fault, formatoFault);
+				checkSchedulingConnettoreCompletato(response, connettore, esitoNotifica, requestAndExpectation.statusCodePrincipale,fault, formatoFault);
 			} else {
 				esitoNotifica =  esitoConsegnaFromStatusCode(requestAndExpectation.statusCodePrincipale);
-				checkSchedulingConnettoreCompletato(response, connettore, esitoNotifica, fault, formatoFault);
+				checkSchedulingConnettoreCompletato(response, connettore, esitoNotifica, requestAndExpectation.statusCodePrincipale,fault, formatoFault);
 			}
 		}
 		
@@ -517,21 +510,27 @@ public class CommonConsegnaMultipla {
 		String fault = "";
 		String formatoFault = "";
 		
-		switch (requestAndExpectation.tipoFault) {
-		case REST:
-			fault = FAULT_REST;
-			formatoFault = FORMATO_FAULT_REST;
-		break;
-		case SOAP1_1:
-			fault = FAULT_SOAP1_1;
-			formatoFault = FORMATO_FAULT_SOAP1_1;
-		break;
-		case SOAP1_2:
-			fault = FAULT_SOAP1_2;
-			formatoFault = FORMATO_FAULT_SOAP1_2;
-		break;
-		default:
+		// Determino il formato e tipo fault, brutto, con un refactoring dei test si sistema
+		if (requestAndExpectation instanceof RequestAndExpectationsFault) {
+			fault = ((RequestAndExpectationsFault) requestAndExpectation).faultMessage;
+			formatoFault = ((RequestAndExpectationsFault) requestAndExpectation).faultType;
+		} else {
+			switch (requestAndExpectation.tipoFault) {
+			case REST:
+				fault = FAULT_REST;
+				formatoFault = FORMATO_FAULT_REST;
 			break;
+			case SOAP1_1:
+				fault = FAULT_SOAP1_1;
+				formatoFault = FORMATO_FAULT_SOAP1_1;
+			break;
+			case SOAP1_2:
+				fault = FAULT_SOAP1_2;
+				formatoFault = FORMATO_FAULT_SOAP1_2;
+			break;
+			default:
+				break;
+			}
 		}
 		
 		for ( var connettore : requestAndExpectation.connettoriFallimento) {
@@ -542,13 +541,13 @@ public class CommonConsegnaMultipla {
 			int esitoNotifica;
 			if (connettoriFile.contains(connettore)) {
 				esitoNotifica = ESITO_OK;
-				checkSchedulingConnettoreCompletato(response, connettore, esitoNotifica, "", "");
+				checkSchedulingConnettoreCompletato(response, connettore, esitoNotifica, 200, "", "");
 			} else if (requestAndExpectation.tipoFault != TipoFault.NESSUNO) {
 				esitoNotifica = ESITO_ERRORE_APPLICATIVO;
-				checkSchedulingConnettoreCompletato(response, connettore, esitoNotifica, fault, formatoFault);
+				checkSchedulingConnettoreCompletato(response, connettore, esitoNotifica, requestAndExpectation.statusCodePrincipale, fault, formatoFault);
 			} else {
 				esitoNotifica = esitoConsegnaFromStatusCode(requestAndExpectation.statusCodePrincipale);
-				checkSchedulingConnettoreCompletato(response, connettore, esitoNotifica, fault, formatoFault);
+				checkSchedulingConnettoreCompletato(response, connettore, esitoNotifica, requestAndExpectation.statusCodePrincipale, fault, formatoFault);
 			}	
 		}
 		
@@ -603,10 +602,20 @@ public class CommonConsegnaMultipla {
 		checkSchedulingConnettoriCompletato(response,connettori,0, "", "");
 	}*/
 	
+	@Deprecated
+	public  static void checkSchedulingConnettoriCompletato(HttpResponse response, Set<String> connettori, int esitoNotifica, String fault, String formatoFault) {
+		throw new RuntimeException("NotImplemented");
+	}
 	
-	public  static void checkSchedulingConnettoriCompletato(HttpResponse response, Set<String> connettori, int esito, String fault, String formatoFault) {
+	@Deprecated
+	public  static void checkSchedulingConnettoreCompletato(HttpResponse response, String connettore, int esitoNotifica, String fault, String formatoFault) {
+		throw new RuntimeException("NotImplemented");
+	}
+	
+	
+	public  static void checkSchedulingConnettoriCompletato(HttpResponse response, Set<String> connettori, int esitoNotifica, int statusCode, String fault, String formatoFault) {
 		for (var connettore : connettori) {
-			checkSchedulingConnettoreCompletato(response, connettore,esito, fault, formatoFault);			
+			checkSchedulingConnettoreCompletato(response, connettore,esitoNotifica, statusCode, fault, formatoFault);			
 		}
 		
 		// Controllo che lo scheduling sia stato effettuato solo sui connettori indicati
