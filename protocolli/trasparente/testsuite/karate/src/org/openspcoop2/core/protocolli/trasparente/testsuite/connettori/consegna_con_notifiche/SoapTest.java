@@ -30,16 +30,21 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_COMPLETATA;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_FALLITA;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_IN_CORSO;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_ERRORE_APPLICATIVO;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_ERRORE_INVOCAZIONE;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_OK;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.FORMATO_FAULT_SOAP1_1;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.FORMATO_FAULT_SOAP1_2;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkStatoConsegna;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.esitoConsegnaFromStatusCode;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.getNumeroTentativiSchedulingConnettore;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.isEsitoErrore;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.setDifference;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -290,6 +295,235 @@ public class SoapTest extends ConfigLoader {
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		
 		CondizionaleByFiltroSoapTest.checkResponses(responsesByKind);
+		
+	}
+	
+	
+	@Test
+	public void valorizzazioneCampiAvanzata() throws IOException {
+		/* Qui vengono testati i vari campi e la rivalorizzazione delle date. 
+		 * data_primo_tentativo          
+ 			data_ultimo_errore              
+ 			dettaglio_esito_ultimo_errore   
+ 			codice_risposta_ultimo_errore  
+ 			ultimo_errore  
+ 			location_ultimo_errore  
+ 			fault_ultimo_errore        
+ 			formato_fault_ultimo_errore                    
+		 */
+
+		final String erogazione = "TestConsegnaConNotificheSoapVarieCombinazioniDiRegole";
+		
+		// seguo la statusCode2xxVsConnettori, mando solo 2xx così  la principale supera sempre e controllo
+		// i campi sulle notifiche
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+		
+		int i = 0;
+		for (var entry : CommonConsegnaMultipla.statusCode2xxVsConnettori.entrySet()) {
+			final String soapContentType = i % 2 == 0 ? HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
+			int statusCode = entry.getKey();
+			var connettoriSuccesso = entry.getValue();
+			var connettoriErrore = setDifference(Common.setConnettoriAbilitati,connettoriSuccesso);
+			var requestExpectation = buildRequestAndExpectations(erogazione, statusCode, connettoriSuccesso, connettoriErrore, soapContentType);
+		
+			requestsByKind.add(requestExpectation);
+			i++;
+		}
+		
+		// Le soap fault passano
+		HttpRequest requestSoapFault = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1);
+		requestsByKind.add(new RequestAndExpectations(
+				requestSoapFault,
+				Set.of(CONNETTORE_0, CONNETTORE_2, CONNETTORE_3),
+				Set.of(CONNETTORE_1),  
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, true, TipoFault.SOAP1_1));
+		
+		requestSoapFault = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_2);
+		requestsByKind.add(new RequestAndExpectations(
+				requestSoapFault,
+				Set.of(CONNETTORE_0, CONNETTORE_2, CONNETTORE_3),
+				Set.of(CONNETTORE_1),  
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, true, TipoFault.SOAP1_2));
+		
+		Timestamp dataRiferimentoTest = java.sql.Timestamp.from(Instant.now());
+		
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+		
+		// Le richieste per cui la transazione sincrona ha avuto successo devono essere schedulate
+		for (var requestExpectation : responsesByKind.keySet()) {
+			var responses = responsesByKind.get(requestExpectation);
+			
+			if (requestExpectation.principaleSuperata) {
+				CommonConsegnaMultipla.checkPresaInConsegna(responses, Common.setConnettoriAbilitati.size());
+				CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
+			} else {
+				for (var response : responses) {
+					CommonConsegnaMultipla.checkNessunaNotifica(response);
+					CommonConsegnaMultipla.checkNessunoScheduling(response);
+				}
+			}
+		}
+		
+		// Attendo la consegna
+		org.openspcoop2.utils.Utilities.sleep(2 * CommonConsegnaMultipla.intervalloControllo);
+
+		// TODOS Di ad andrea che cluster_id_ultimo_errore non viene valorizzato.
+		
+		for (var requestExpectation : responsesByKind.keySet()) {
+			var responses = responsesByKind.get(requestExpectation);
+
+			if (requestExpectation.principaleSuperata) {
+				for (var response : responses) {
+					CommonConsegnaMultipla.checkRequestExpectations(requestExpectation, response);
+
+					for (var connettore : requestExpectation.connettoriFallimento) {
+						String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+						
+						String query = "Select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ?"
+								+ " and data_uscita_richiesta > ? and data_registrazione > ? and data_ingresso_risposta >= data_uscita_richiesta"
+								+ " and data_ingresso_risposta >= data_accettazione_risposta and data_uscita_richiesta >= data_primo_tentativo";		// Qui metto un >= invece di = perchè le query a volte impiegano troppo  e avviene già la rispedizione
+						getLoggerCore().info("Checking date per connettori fallimento: " + id_transazione + " " + connettore + " " + dataRiferimentoTest.toString() );
+						Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione,	connettore, dataRiferimentoTest, dataRiferimentoTest);
+						assertEquals(Integer.valueOf(1), count);
+
+						query = "Select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ? and data_ultimo_errore > ? and dettaglio_esito_ultimo_errore = ? and codice_risposta_ultimo_errore = ? and ultimo_errore = ? and location_ultimo_errore = ?";
+						
+						String fault 		 = "";
+						String formatoFault = "";
+						String ultimoErrore;
+						String locationUltimoErrore; 
+
+						if (requestExpectation.tipoFault == TipoFault.SOAP1_1) {
+							fault 		 = CommonConsegnaMultipla.FAULT_SOAP1_1;
+							formatoFault = CommonConsegnaMultipla.FORMATO_FAULT_SOAP1_1;
+							ultimoErrore = "Consegna [http] con errore: errore applicativo, <SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><faultcode xmlns:ns0=\"http://www.openspcoop2.org/example\">ns0:Server.OpenSPCoopExa"
+									+ "mpleFault</faultcode><faultstring>Fault ritornato dalla servlet di trace, esempio di OpenSPCoop</faultstring><faultactor>OpenSPCoopTrace</faultactor></SOAP-ENV:Fault>";
+							locationUltimoErrore = "http://localhost:8080/TestService/echo?id_connettore="+connettore+"&returnCode="+requestExpectation.statusCodePrincipale+"&replyPrefixQueryParameter=GovWay-TestSuite-&fault=true&faultSoapVersion=11&replyQueryParameter=id_connettore";							
+						} else if (requestExpectation.tipoFault == TipoFault.SOAP1_2) {
+							fault 		 = CommonConsegnaMultipla.FAULT_SOAP1_2;
+							formatoFault = CommonConsegnaMultipla.FORMATO_FAULT_SOAP1_2;
+							ultimoErrore = "Consegna [http] con errore: errore applicativo, <env:Fault xmlns:env=\"http://www.w3.org/2003/05/soap-envelope\"><env:Code><env:Value>env:Receiver</env:Value><env:Subcode><env:Value xmlns:ns1=\"http://www.ope"
+									+ "nspcoop2.org/example\">ns1:Server.OpenSPCoopExampleFault</env:Value></env:Subcode></env:Code><env:Reason><env:Text xml:lang=\"en-US\">Fault ritornato dalla servlet di trace, esempio di OpenSPCoop</env:Text></env:Reason><env:Role>OpenSPCoopTr"
+									+ "ace</env:Role></env:Fault>";
+							locationUltimoErrore = "http://localhost:8080/TestService/echo?id_connettore="+connettore+"&returnCode="+requestExpectation.statusCodePrincipale+"&replyPrefixQueryParameter=GovWay-TestSuite-&fault=true&faultSoapVersion=12&replyQueryParameter=id_connettore";
+						} else {
+							ultimoErrore =  "Consegna [http] con errore: errore HTTP " + requestExpectation.statusCodePrincipale;
+							locationUltimoErrore = "http://localhost:8080/TestService/echo?id_connettore="+connettore+"&returnCode="+requestExpectation.statusCodePrincipale+"&replyPrefixQueryParameter=GovWay-TestSuite-&replyQueryParameter=id_connettore";
+						}
+						
+						int esitoNotifica;
+						if (requestExpectation.tipoFault != TipoFault.NESSUNO) {
+							esitoNotifica = ESITO_ERRORE_APPLICATIVO;				
+						} else if (isEsitoErrore(requestExpectation.statusCodePrincipale)) {			
+							esitoNotifica = ESITO_ERRORE_INVOCAZIONE;
+						} else {
+							esitoNotifica = esitoConsegnaFromStatusCode(requestExpectation.statusCodePrincipale);
+						}
+						String statusCode = String.valueOf(requestExpectation.statusCodePrincipale);
+						
+						getLoggerCore().info("Checking info errori date per connettori fallimento: " + id_transazione + " " + connettore + " " + dataRiferimentoTest.toString() + " " + esitoNotifica + " " + statusCode + " " + ultimoErrore + " " + locationUltimoErrore );
+						if (fault.isEmpty() ) {
+							query += " and fault_ultimo_errore is null and formato_fault_ultimo_errore is null";
+							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, ultimoErrore, locationUltimoErrore);
+							assertEquals(Integer.valueOf(1), count);
+						} else {
+							query += " and fault_ultimo_errore = ? and formato_fault_ultimo_errore = ?";
+							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, ultimoErrore, locationUltimoErrore, fault, formatoFault);
+							assertEquals(Integer.valueOf(1), count);
+						}
+					}
+
+					for (var connettore : requestExpectation.connettoriSuccesso) {
+						// data_ingresso_risposta >= data_accettazione_risposta possibile? TODOS
+						// a volte si ha data_accettazione_richiesta >= data_uscita_richiesta e a volte il contrario, possibile? TODOS
+						
+						String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+						String query = "Select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ?"
+								+ " and data_uscita_richiesta > ? and data_registrazione > ? and data_ingresso_risposta >= data_uscita_richiesta"
+								+ " and data_ingresso_risposta >= data_accettazione_risposta and data_uscita_richiesta = data_primo_tentativo"
+								+ " and data_ultimo_errore is null and dettaglio_esito_ultimo_errore = 0 and codice_risposta_ultimo_errore is null and ultimo_errore is null and location_ultimo_errore  is null";
+																																		
+						getLoggerCore().info("Checking date per connettori successo: " + id_transazione + " " + connettore + " " + dataRiferimentoTest.toString() );
+						Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione,	connettore, dataRiferimentoTest, dataRiferimentoTest);
+						assertEquals(Integer.valueOf(1), count);
+					}
+
+				}
+			}
+		}
+
+		dataRiferimentoTest = java.sql.Timestamp.from(Instant.now());
+		
+		// Attendo l'intervallo di riconsegna e controllo che il contatore delle
+		// consegne sia almeno a 2, e che le date vengano aggiornate
+		org.openspcoop2.utils.Utilities.sleep(2 * CommonConsegnaMultipla.intervalloControlloFallite);
+		for (var requestExpectation : responsesByKind.keySet()) {
+			var responses = responsesByKind.get(requestExpectation);
+
+			if (requestExpectation.principaleSuperata) {
+				for (var response : responses) {
+					CommonConsegnaMultipla.checkRequestExpectationsFinal(requestExpectation, response);
+					
+					for (var connettore : requestExpectation.connettoriFallimento) {
+						String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+						String query = "Select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ?"
+								+ " and data_uscita_richiesta > ? and data_ingresso_risposta >= data_uscita_richiesta"
+								+ " and data_ingresso_risposta >= data_accettazione_risposta and data_uscita_richiesta >= data_primo_tentativo";		// Qui metto un >= invece di = perchè le query a volte impiegano troppo  e avviene già la rispedizione
+						getLoggerCore().info("Checking date per connettori fallimento: " + id_transazione + " " + connettore + " " + dataRiferimentoTest.toString() );
+						Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione,	connettore, dataRiferimentoTest);
+						assertEquals(Integer.valueOf(1), count);
+						
+						query = "Select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ? and data_ultimo_errore > ? and dettaglio_esito_ultimo_errore = ? and codice_risposta_ultimo_errore = ? and ultimo_errore = ? and location_ultimo_errore = ?";
+
+						String fault 		 = "";
+						String formatoFault = "";
+						String ultimoErrore;
+						String locationUltimoErrore; 
+
+						if (requestExpectation.tipoFault == TipoFault.SOAP1_1) {
+							fault 		 = CommonConsegnaMultipla.FAULT_SOAP1_1;
+							formatoFault = CommonConsegnaMultipla.FORMATO_FAULT_SOAP1_1;
+							ultimoErrore = "Consegna [http] con errore: errore applicativo, <SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><faultcode xmlns:ns0=\"http://www.openspcoop2.org/example\">ns0:Server.OpenSPCoopExa"
+									+ "mpleFault</faultcode><faultstring>Fault ritornato dalla servlet di trace, esempio di OpenSPCoop</faultstring><faultactor>OpenSPCoopTrace</faultactor></SOAP-ENV:Fault>";
+							locationUltimoErrore = "http://localhost:8080/TestService/echo?id_connettore="+connettore+"&returnCode="+requestExpectation.statusCodePrincipale+"&replyPrefixQueryParameter=GovWay-TestSuite-&fault=true&faultSoapVersion=11&replyQueryParameter=id_connettore";							
+						} else if (requestExpectation.tipoFault == TipoFault.SOAP1_2) {
+							fault 		 = CommonConsegnaMultipla.FAULT_SOAP1_2;
+							formatoFault = CommonConsegnaMultipla.FORMATO_FAULT_SOAP1_2;
+							ultimoErrore = "Consegna [http] con errore: errore applicativo, <env:Fault xmlns:env=\"http://www.w3.org/2003/05/soap-envelope\"><env:Code><env:Value>env:Receiver</env:Value><env:Subcode><env:Value xmlns:ns1=\"http://www.ope"
+									+ "nspcoop2.org/example\">ns1:Server.OpenSPCoopExampleFault</env:Value></env:Subcode></env:Code><env:Reason><env:Text xml:lang=\"en-US\">Fault ritornato dalla servlet di trace, esempio di OpenSPCoop</env:Text></env:Reason><env:Role>OpenSPCoopTr"
+									+ "ace</env:Role></env:Fault>";
+							locationUltimoErrore = "http://localhost:8080/TestService/echo?id_connettore="+connettore+"&returnCode="+requestExpectation.statusCodePrincipale+"&replyPrefixQueryParameter=GovWay-TestSuite-&fault=true&faultSoapVersion=12&replyQueryParameter=id_connettore";
+						} else {
+							ultimoErrore =  "Consegna [http] con errore: errore HTTP " + requestExpectation.statusCodePrincipale;
+							locationUltimoErrore = "http://localhost:8080/TestService/echo?id_connettore="+connettore+"&returnCode="+requestExpectation.statusCodePrincipale+"&replyPrefixQueryParameter=GovWay-TestSuite-&replyQueryParameter=id_connettore";
+						}
+						
+						int esitoNotifica;
+						if (requestExpectation.tipoFault != TipoFault.NESSUNO) {
+							esitoNotifica = ESITO_ERRORE_APPLICATIVO;				
+						} else if (isEsitoErrore(requestExpectation.statusCodePrincipale)) {			
+							esitoNotifica = ESITO_ERRORE_INVOCAZIONE;
+						} else {
+							esitoNotifica = esitoConsegnaFromStatusCode(requestExpectation.statusCodePrincipale);
+						}
+						String statusCode = String.valueOf(requestExpectation.statusCodePrincipale);
+						
+						getLoggerCore().info("Checking info errori date per connettori fallimento: " + id_transazione + " " + connettore + " " + dataRiferimentoTest.toString() + " " + esitoNotifica + " " + statusCode + " " + ultimoErrore + " " + locationUltimoErrore );
+						if (fault.isEmpty() ) {
+							query += " and fault_ultimo_errore is null and formato_fault_ultimo_errore is null";
+							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, ultimoErrore, locationUltimoErrore);
+							assertEquals(Integer.valueOf(1), count);
+						} else {
+							query += " and fault_ultimo_errore = ? and formato_fault_ultimo_errore = ?";
+							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, ultimoErrore, locationUltimoErrore, fault, formatoFault);
+							assertEquals(Integer.valueOf(1), count);
+						}
+					}
+					
+					
+				}
+			}
+		}
 		
 	}
 	

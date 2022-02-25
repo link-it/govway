@@ -30,23 +30,26 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_COMPLETATA;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_FALLITA;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_IN_CORSO;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_ERRORE_APPLICATIVO;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_ERRORE_INVOCAZIONE;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_OK;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.FORMATO_FAULT_REST;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkStatoConsegna;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.esitoConsegnaFromStatusCode;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.getNumeroTentativiSchedulingConnettore;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.isEsitoErrore;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.setDifference;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -80,7 +83,7 @@ public class RestTest extends ConfigLoader{
 		}
 	}
 	
-	@AfterClass
+	/*@AfterClass
 	public static void After() {
 		Common.fermaRiconsegne(dbUtils);
 	}
@@ -88,7 +91,7 @@ public class RestTest extends ConfigLoader{
 	@org.junit.After
 	public void AfterEach() {
 		Common.fermaRiconsegne(dbUtils);
-	}
+	}*/
 	
 	
 	public static RequestAndExpectations buildRequestAndExpectations(String erogazione, int statusCode, Set<String> connettoriOk, Set<String> connettoriErrore) {
@@ -107,70 +110,203 @@ public class RestTest extends ConfigLoader{
 	}
 	
 	
-	public void valorizzazioneCampi() throws IOException {
-
-		/**
-		 *  * TODO: SOLO UN TEST.
- * Sui test nei quale c'è una cadenza rispedizione testare anche che i campi
- * data_uscita_richiesta          | 2022-02-15 19:20:34.684
- *data_accettazione_risposta     | 2022-02-15 19:20:34.698
- * data_ingresso_risposta         | 2022-02-15 19:20:34.698
- *	Vengano aggiornati.
- *
- *  data_primo_tentativo           | 2022-02-15 19:20:34.684	Deve rimanere uguale
-
- * data_ultimo_errore             | controlla solo questa e che gli altri siano e restino valorizzati 
-dettaglio_esito_ultimo_errore  | 0
-codice_risposta_ultimo_errore  | 
-ultimo_errore                  | 
-location_ultimo_errore         | 
-cluster_id_ultimo_errore       | 
-fault_ultimo_errore            | 
-formato_fault_ultimo_errore    | 
+	@Test
+	public void valorizzazioneCampiAvanzata() throws IOException {
+		/* Qui vengono testati i vari campi e la rivalorizzazione delle date. 
+		 * data_primo_tentativo          
+ 			data_ultimo_errore              
+ 			dettaglio_esito_ultimo_errore   
+ 			codice_risposta_ultimo_errore  
+ 			ultimo_errore  
+ 			location_ultimo_errore  
+ 			fault_ultimo_errore        
+ 			formato_fault_ultimo_errore                    
 		 */
-		
-		final String erogazione = "TestConsegnaConNotificheRest";
-		HttpRequest request1 = RequestBuilder.buildRestRequest(erogazione);
-		
-		HttpRequest requestKo = RequestBuilder.buildRestRequest(erogazione);
-		requestKo.setUrl(requestKo.getUrl()+"&returnCode=402");
 
-		var responses = Common.makeParallelRequests(request1, 10);
-		var responsesKo = Common.makeParallelRequests(requestKo, 10);
+		final String erogazione = "TestConsegnaConNotificheRestVarieCombinazioniDiRegole";
+		
+		// seguo la statusCode2xxVsConnettori, mando solo 2xx così  la principale supera sempre e controllo
+		// i campi sulle notifiche
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 
-		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
-		for (var r : responses) {
-			assertEquals(200, r.getResultHTTPOperation());
+		for (var entry : CommonConsegnaMultipla.statusCode2xxVsConnettori.entrySet()) {
+			int statusCode = entry.getKey();
+			var connettoriSuccesso = entry.getValue();
+			var connettoriErrore = setDifference(Common.setConnettoriAbilitati,connettoriSuccesso);
+			var requestExpectation = buildRequestAndExpectations(erogazione, statusCode, connettoriSuccesso, connettoriErrore);
 			
-			CommonConsegnaMultipla.checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
-			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);
+			requestsByKind.add(requestExpectation);
+		}
+		
+		HttpRequest requestProblem = RequestBuilder.buildRestRequestProblem(erogazione);
+		requestsByKind.add(new RequestAndExpectations(
+				requestProblem,
+				Set.of(CONNETTORE_0, CONNETTORE_2, CONNETTORE_3),
+				Set.of(CONNETTORE_1),  
+				ESITO_CONSEGNA_MULTIPLA_FALLITA, 500, true, TipoFault.REST ));
+		
+		Timestamp dataRiferimentoTest = java.sql.Timestamp.from(Instant.now());
+		
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+		
+		// Le richieste per cui la transazione sincrona ha avuto successo devono essere schedulate
+		for (var requestExpectation : responsesByKind.keySet()) {
+			var responses = responsesByKind.get(requestExpectation);
 			
-			for (var connettore : Common.setConnettoriAbilitati) {
-				String query = "select count(*) from transazioni_sa where id_transazione=? and connettore_nome = ?  and consegna_terminata = ? and numero_tentativi = 0 and identificativo_messaggio is not null";
-				String id_transazione = r.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
-				ConfigLoader.getLoggerCore().info("Checking scheduling connettore iniziato for transazione:  " + id_transazione + " AND connettore = " + connettore);
-				Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, false);
-				assertEquals(Integer.valueOf(1), count);
+			if (requestExpectation.principaleSuperata) {
+				CommonConsegnaMultipla.checkPresaInConsegna(responses, Common.setConnettoriAbilitati.size());
+				CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
+			} else {
+				for (var response : responses) {
+					CommonConsegnaMultipla.checkNessunaNotifica(response);
+					CommonConsegnaMultipla.checkNessunoScheduling(response);
+				}
 			}
-			
+		}
+				
+		// Attendo la consegna
+		org.openspcoop2.utils.Utilities.sleep(2 * CommonConsegnaMultipla.intervalloControllo);
+
+		// TODOS Di ad andrea che cluster_id_ultimo_errore non viene valorizzato.
+		
+		for (var requestExpectation : responsesByKind.keySet()) {
+			var responses = responsesByKind.get(requestExpectation);
+
+			if (requestExpectation.principaleSuperata) {
+				for (var response : responses) {
+					CommonConsegnaMultipla.checkRequestExpectations(requestExpectation, response);
+
+					for (var connettore : requestExpectation.connettoriFallimento) {
+						String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+
+						String query = "Select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ?"
+								+ " and data_uscita_richiesta > ? and data_registrazione > ? and data_ingresso_risposta >= data_uscita_richiesta"
+								+ " and data_ingresso_risposta >= data_accettazione_risposta and data_uscita_richiesta >= data_primo_tentativo";		// Qui metto un >= invece di = perchè le query a volte impiegano troppo  e avviene già la rispedizione
+						getLoggerCore().info("Checking date per connettori fallimento: " + id_transazione + " " + connettore + " " + dataRiferimentoTest.toString() );
+						Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione,	connettore, dataRiferimentoTest, dataRiferimentoTest);
+						assertEquals(Integer.valueOf(1), count);
+
+						query = "Select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ? and data_ultimo_errore > ? and dettaglio_esito_ultimo_errore = ? and codice_risposta_ultimo_errore = ? and ultimo_errore = ? and location_ultimo_errore = ?";
+
+						String fault 		 = "";
+						String formatoFault = "";
+						String ultimoErrore;
+						String locationUltimoErrore; 
+
+						if (requestExpectation.tipoFault == TipoFault.REST) {
+							fault 		 = CommonConsegnaMultipla.FAULT_REST;
+							formatoFault = CommonConsegnaMultipla.FORMATO_FAULT_REST;
+							ultimoErrore = "Consegna [http] con errore: errore applicativo, {\"type\":\"https://httpstatuses.com/500\",\"title\":\"Internal Server Error\",\"detail\":\"Problem ritornato dalla servlet di trace, esempio di OpenSPCoop\"}";
+							locationUltimoErrore = "http://localhost:8080/TestService/echo?returnCode="+requestExpectation.statusCodePrincipale+"&problem=true&replyPrefixQueryParameter=GovWay-TestSuite-&id_connettore="+connettore+"&replyQueryParameter=id_connettore";
+						} else {
+							ultimoErrore =  "Consegna [http] con errore: errore HTTP " + requestExpectation.statusCodePrincipale;
+							locationUltimoErrore = "http://localhost:8080/TestService/echo?returnCode="+requestExpectation.statusCodePrincipale+"&replyPrefixQueryParameter=GovWay-TestSuite-&id_connettore="+connettore+"&replyQueryParameter=id_connettore";
+						}
+						
+						int esitoNotifica;
+						if (requestExpectation.tipoFault != TipoFault.NESSUNO) {
+							esitoNotifica = ESITO_ERRORE_APPLICATIVO;				
+						} else if (isEsitoErrore(requestExpectation.statusCodePrincipale)) {			
+							esitoNotifica = ESITO_ERRORE_INVOCAZIONE;
+						} else {
+							esitoNotifica = esitoConsegnaFromStatusCode(requestExpectation.statusCodePrincipale);
+						}
+						String statusCode = String.valueOf(requestExpectation.statusCodePrincipale);
+						
+						getLoggerCore().info("Checking info errori date per connettori fallimento: " + id_transazione + " " + connettore + " " + dataRiferimentoTest.toString() + " " + esitoNotifica + " " + statusCode + " " + ultimoErrore + " " + locationUltimoErrore );
+						if (fault.isEmpty() ) {
+							query += " and fault_ultimo_errore is null and formato_fault_ultimo_errore is null";
+							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, ultimoErrore, locationUltimoErrore);
+							assertEquals(Integer.valueOf(1), count);
+						} else {
+							query += " and fault_ultimo_errore = ? and formato_fault_ultimo_errore = ?";
+							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, ultimoErrore, locationUltimoErrore, fault, formatoFault);
+							assertEquals(Integer.valueOf(1), count);
+						}
+					}
+
+					for (var connettore : requestExpectation.connettoriSuccesso) {
+						// data_ingresso_risposta >= data_accettazione_risposta possibile? TODOS
+						// a volte si ha data_accettazione_richiesta >= data_uscita_richiesta e a volte il contrario, possibile? TODOS
+						
+						String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+						String query = "Select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ?"
+								+ " and data_uscita_richiesta > ? and data_registrazione > ? and data_ingresso_risposta >= data_uscita_richiesta"
+								+ " and data_ingresso_risposta >= data_accettazione_risposta and data_uscita_richiesta = data_primo_tentativo"
+								+ " and data_ultimo_errore is null and dettaglio_esito_ultimo_errore = 0 and codice_risposta_ultimo_errore is null and ultimo_errore is null and location_ultimo_errore  is null";
+																																		
+						getLoggerCore().info("Checking date per connettori successo: " + id_transazione + " " + connettore + " " + dataRiferimentoTest.toString() );
+						Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione,	connettore, dataRiferimentoTest, dataRiferimentoTest);
+						assertEquals(Integer.valueOf(1), count);
+					}
+
+				}
+			}
+		}
+
+		dataRiferimentoTest = java.sql.Timestamp.from(Instant.now());
+		
+		// Attendo l'intervallo di riconsegna e controllo che il contatore delle
+		// consegne sia almeno a 2, e che le date vengano aggiornate
+		org.openspcoop2.utils.Utilities.sleep(2 * CommonConsegnaMultipla.intervalloControlloFallite);
+		for (var requestExpectation : responsesByKind.keySet()) {
+			var responses = responsesByKind.get(requestExpectation);
+
+			if (requestExpectation.principaleSuperata) {
+				for (var response : responses) {
+					CommonConsegnaMultipla.checkRequestExpectationsFinal(requestExpectation, response);
+					
+					for (var connettore : requestExpectation.connettoriFallimento) {
+						String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+						String query = "Select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ?"
+								+ " and data_uscita_richiesta > ? and data_ingresso_risposta >= data_uscita_richiesta"
+								+ " and data_ingresso_risposta >= data_accettazione_risposta and data_uscita_richiesta >= data_primo_tentativo";		// Qui metto un >= invece di = perchè le query a volte impiegano troppo  e avviene già la rispedizione
+						getLoggerCore().info("Checking date per connettori fallimento: " + id_transazione + " " + connettore + " " + dataRiferimentoTest.toString() );
+						Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione,	connettore, dataRiferimentoTest);
+						assertEquals(Integer.valueOf(1), count);
+
+						query = "Select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ? and data_ultimo_errore > ? and dettaglio_esito_ultimo_errore = ? and codice_risposta_ultimo_errore = ? and ultimo_errore = ? and location_ultimo_errore = ?";
+
+						String fault 		 = "";
+						String formatoFault = "";
+						String ultimoErrore;
+						String locationUltimoErrore; 
+
+						if (requestExpectation.tipoFault == TipoFault.REST) {
+							fault 		 = CommonConsegnaMultipla.FAULT_REST;
+							formatoFault = CommonConsegnaMultipla.FORMATO_FAULT_REST;
+							ultimoErrore = "Consegna [http] con errore: errore applicativo, {\"type\":\"https://httpstatuses.com/500\",\"title\":\"Internal Server Error\",\"detail\":\"Problem ritornato dalla servlet di trace, esempio di OpenSPCoop\"}";
+							locationUltimoErrore = "http://localhost:8080/TestService/echo?returnCode="+requestExpectation.statusCodePrincipale+"&problem=true&replyPrefixQueryParameter=GovWay-TestSuite-&id_connettore="+connettore+"&replyQueryParameter=id_connettore";
+						} else {
+							ultimoErrore =  "Consegna [http] con errore: errore HTTP " + requestExpectation.statusCodePrincipale;
+							locationUltimoErrore = "http://localhost:8080/TestService/echo?returnCode="+requestExpectation.statusCodePrincipale+"&replyPrefixQueryParameter=GovWay-TestSuite-&id_connettore="+connettore+"&replyQueryParameter=id_connettore";
+						}
+						
+						int esitoNotifica;
+						if (requestExpectation.tipoFault != TipoFault.NESSUNO) {
+							esitoNotifica = ESITO_ERRORE_APPLICATIVO;				
+						} else if (isEsitoErrore(requestExpectation.statusCodePrincipale)) {			
+							esitoNotifica = ESITO_ERRORE_INVOCAZIONE;
+						} else {
+							esitoNotifica = esitoConsegnaFromStatusCode(requestExpectation.statusCodePrincipale);
+						}
+						String statusCode = String.valueOf(requestExpectation.statusCodePrincipale);
+						
+						getLoggerCore().info("Checking info errori date per connettori fallimento: " + id_transazione + " " + connettore + " " + dataRiferimentoTest.toString() + " " + esitoNotifica + " " + statusCode + " " + ultimoErrore + " " + locationUltimoErrore );
+						if (fault.isEmpty() ) {
+							query += " and fault_ultimo_errore is null and formato_fault_ultimo_errore is null";
+							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, ultimoErrore, locationUltimoErrore);
+							assertEquals(Integer.valueOf(1), count);
+						} else {
+							query += " and fault_ultimo_errore = ? and formato_fault_ultimo_errore = ?";
+							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, ultimoErrore, locationUltimoErrore, fault, formatoFault);
+							assertEquals(Integer.valueOf(1), count);
+						}
+					}
+				}
+			}
 		}
 		
-		for (var r : responsesKo) {
-			assertEquals(402, r.getResultHTTPOperation());	
-			CommonConsegnaMultipla.checkNessunaNotifica(r);
-			CommonConsegnaMultipla.checkNessunoScheduling(r);
-		}
-
-		// Attendo la consegna
-		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
-
-		// Per i connettori di tipo file, controllo anche che la scrittura della richiesta di consegna multipla sia avvenuta.
-		Set<String> connettoriFile = Set.of(CONNETTORE_2, CONNETTORE_3);
-		for (var response : responses) {
-			CommonConsegnaMultipla.checkConsegnaCompletata(response);
-			CommonConsegnaMultipla.checkConsegnaConnettoreFile(request1, response, connettoriFile);
-			CommonConsegnaMultipla.checkSchedulingConnettoriCompletato(response,  Common.setConnettoriAbilitati, ESITO_OK, "", "");
-		}
 	}
 	
 	
