@@ -45,7 +45,8 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 /**
  * 
  * @author Francesco Scarlato
- *
+ * http://localhost:8080/TestService/echo?id_connettore=ConnettorePrincipale
+
  */
 public class ConsegnaMultiplaCondizionaleByNomeTest extends ConfigLoader {
 	

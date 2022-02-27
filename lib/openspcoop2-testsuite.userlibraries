@@ -25,4 +25,9 @@
         <archive path="/op2_3.3.dev/lib/testsuite/karate-junit4-0.9.6.jar"/>
     </library>
 
+    <library name="openspcoop2_3.3_lib_stub_im" systemlibrary="false">
+        <archive path="/op2_3.3.dev/lib/stub/cxf/openspcoop2_integrationManagerStub_messageBox_cxf.jar"/>
+        <archive path="/op2_3.3.dev/lib/stub/cxf/openspcoop2_integrationManagerStub_pd_cxf.jar"/>
+    </library>
+
 </eclipse-userlibraries>

@@ -633,7 +633,7 @@ public class CommonConsegnaMultipla {
 	}
 
 
-	private static void checkConnettoriRaggiuntiEsclusivamente(HttpResponse response, Set<String> connettori) {
+	public static void checkConnettoriRaggiuntiEsclusivamente(HttpResponse response, Set<String> connettori) {
 		String query = "select connettore_nome  from transazioni_sa where id_transazione=?";
 		String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
 	

@@ -113,7 +113,13 @@ public class RestTest extends ConfigLoader{
 	@Test
 	public void valorizzazioneCampiAvanzata() throws IOException {
 		/* Qui vengono testati i vari campi e la rivalorizzazione delle date. 
-		 * data_primo_tentativo          
+		 * 
+		 * data_registrazione
+		 * data_accettazione_richiesta     
+ 			data_uscita_richiesta           
+ 			data_accettazione_risposta      
+ 			data_ingresso_risposta         
+		    data_primo_tentativo          
  			data_ultimo_errore              
  			dettaglio_esito_ultimo_errore   
  			codice_risposta_ultimo_errore  

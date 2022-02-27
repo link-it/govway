@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -63,6 +64,8 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 							$query["govway-testsuite-id_connettore_request"]
 						#end
  * UrlInvocazione: .+govway-testsuite-id_connettore_request=([^&]*).*
+ * http://localhost:8080/TestService/echo?id_connettore=ConnettorePrincipale
+
  */
 public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 	
@@ -75,7 +78,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 		}
 	}
 	
-	/*@AfterClass
+	@AfterClass
 	public static void After() {
 		Common.fermaRiconsegne(dbUtils);
 	}
@@ -84,7 +87,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 	public void AfterEach() {
 		Common.fermaRiconsegne(dbUtils);		
 	}
-*/
+
 	
 	@Test
 	public void headerHttpICFDiagnosticoInfo() {

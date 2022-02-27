@@ -62,6 +62,8 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  * 
  * I test seguono lo schema per la consegna condizionale by nome, solo che ogni connettore
  * viene raggiunto da due filtri, invece che solo da uno.
+ * http://localhost:8080/TestService/echo?id_connettore=ConnettorePrincipale
+
  * 
  */
 public class ConsegnaCondizionaleByFiltroTest extends ConfigLoader {
