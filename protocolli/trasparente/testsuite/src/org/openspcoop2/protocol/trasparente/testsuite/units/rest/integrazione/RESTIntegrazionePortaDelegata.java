@@ -171,7 +171,7 @@ public class RESTIntegrazionePortaDelegata {
 				erroreAtteso = "In parameter list <; charsetutf-8=>, expected parameter value, got \"null\"";
 			}
 			
-			String diag = "Il contenuto applicativo della risposta ricevuta non è processabile: Non è stato possibile comprendere come trattare il messaggio ricevuto (Content-Type: "+contentType+"): "+erroreAtteso;
+			String diag = "Il contenuto applicativo della risposta ricevuta non è processabile: Content-Type '"+contentType+"' presente nella risposta non valido: "+erroreAtteso;
 			Reporter.log("Cerco diagnostico "+diag+" nei log ...");
 			Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(dataInizioTest, diag));		
 		}finally{

@@ -122,7 +122,23 @@ public class RestTest extends ConfigLoader {
 			verifyKo(response, org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_SERVER, API_UNAVAILABLE, 503, API_UNAVAILABLE_MESSAGE);
 		}
 		
-		DBVerifier.verify(idTransazione, esitoExpected, msgErrore);
+		try {
+			DBVerifier.verify(idTransazione, esitoExpected, msgErrore);
+		}catch(Throwable e) {
+			if(msgErrore.contains(";charset")) {
+				try {
+					// in tomcat viene aggiunto uno spazio
+					String msgTomcat = msgErrore.replaceAll(";charset", "; charset");
+					DBVerifier.verify(idTransazione, esitoExpected, msgTomcat);
+				}catch(Throwable e2) {
+					// in caso di nuovo errore, rilancio il primo errore
+					throw e;
+				}
+			}
+			else {
+				throw e;
+			}
+		}
 		
 		return response;
 		
