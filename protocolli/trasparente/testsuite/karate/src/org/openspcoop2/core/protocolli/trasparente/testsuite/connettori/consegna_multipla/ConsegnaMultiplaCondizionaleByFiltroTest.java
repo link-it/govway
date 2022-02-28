@@ -73,6 +73,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 	public static void Before() {
 		Common.fermaRiconsegne(dbUtils);
 		File cartellaRisposte = CommonConsegnaMultipla.connettoriFilePath.toFile();
+		cartellaRisposte.mkdir();
 		if (!cartellaRisposte.isDirectory()|| !cartellaRisposte.canWrite()) {
 			throw new RuntimeException("E' necessario creare la cartella per scrivere le richieste dei connettori, indicata dalla poprietà: <connettori.consegna_multipla.connettore_file.path> ");
 		}

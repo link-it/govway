@@ -64,7 +64,6 @@
 		</fileset>
 		<fileset dir="${required_lib}/stub/cxf">
 			<include name="openspcoop2_integrationManagerStub_messageBox_cxf.jar"/>
-			<include name="openspcoop2_integrationManagerStub_pd_cxf.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/cxf">
 			<include name="*.jar"/>

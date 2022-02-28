@@ -52,7 +52,6 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 /**
  * 
  * @author Francesco Scarlato
- * TODO: Qui non uso mai il soapFault, mettenerne qualcuno.
  * 
  * QUERY:
  * TestContenuto: //Filtro/text()
@@ -72,6 +71,7 @@ public class CondizionaleByNomeSoapTest extends ConfigLoader {
 	public static void Before() {
 		Common.fermaRiconsegne(dbUtils);
 		File cartellaRisposte = CommonConsegnaMultipla.connettoriFilePath.toFile();
+		cartellaRisposte.mkdir();
 		if (!cartellaRisposte.isDirectory() || !cartellaRisposte.canWrite()) {
 			throw new RuntimeException(
 					"E' necessario creare la cartella per scrivere le richieste dei connettori, indicata dalla poprietà: <connettori.consegna_multipla.connettore_file.path> ");

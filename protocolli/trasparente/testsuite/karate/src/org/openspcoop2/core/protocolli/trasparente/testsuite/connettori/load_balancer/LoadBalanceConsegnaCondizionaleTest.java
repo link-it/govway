@@ -345,7 +345,7 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 	}
 	
 	
-	//@Test TODO rimetti
+	//@Test 
 	public void soapAction1_2() {
 		final String erogazione = "LoadBalanceConsegnaCondizionaleSoapAction";
 		soapAction_Impl(erogazione, HttpConstants.CONTENT_TYPE_SOAP_1_2);

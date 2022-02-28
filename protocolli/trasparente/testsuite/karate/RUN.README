@@ -155,6 +155,11 @@
 		org.openspcoop2.pdd.connettori.inoltroBuste.returnCode.2xx.acceptOnly_202_200=false
 		org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.returnCode.2xx.acceptOnly_202_200=false
 
+	# prefigge l'id messaggio con la data
+	org.openspcoop2.pdd.integrationManager.idWithDate=true
+
+
+
 
 - Configurare gli stessi valori di sopra, in <testsuite.properties>
 

@@ -208,16 +208,30 @@ public class CommonConsegnaMultipla {
 		Map<RequestAndExpectations,  List<HttpResponse>> responses = new HashMap<>();
 		
 		int nThreads = Common.sogliaRichiesteSimultanee; 
-		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nThreads-2);
+		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nThreads);
+		
+		int count = nThreads;
 	
 		for (var request : requests) {			
 			responses.put(request, new Vector<>());
 			
 			for (int i = 0; i<requests_per_batch; i++) {
+				
 				executor.execute( () -> {
 					responses.get(request).add(Utils.makeRequest(request.request));
-					org.openspcoop2.utils.Utilities.sleep(50);
 				});
+	
+				count--;
+				if (count == 0) {
+					try {
+						executor.awaitTermination(20, TimeUnit.SECONDS);
+						org.openspcoop2.utils.Utilities.sleep(50);
+						count = nThreads;
+					} catch (InterruptedException e) {
+						ConfigLoader.getLoggerCore().error("Le richieste hanno impiegato più di venti secondi!");
+						throw new RuntimeException(e);
+					}
+				}
 			}			
 		}
 		try {

@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -54,12 +55,13 @@ public class ConsegnaMultiplaCondizionaleByNomeTest extends ConfigLoader {
 	public static void Before() {
 		Common.fermaRiconsegne(dbUtils);
 		File cartellaRisposte = CommonConsegnaMultipla.connettoriFilePath.toFile();
+		cartellaRisposte.mkdir();
 		if (!cartellaRisposte.isDirectory()|| !cartellaRisposte.canWrite()) {
 			throw new RuntimeException("E' necessario creare la cartella per scrivere le richieste dei connettori, indicata dalla poprietà: <connettori.consegna_multipla.connettore_file.path> ");
 		}
 	}
 	
-/*	@AfterClass
+	@AfterClass
 	public static void After() {
 		Common.fermaRiconsegne(dbUtils);
 	}
@@ -68,7 +70,7 @@ public class ConsegnaMultiplaCondizionaleByNomeTest extends ConfigLoader {
 	public void AfterEach() {
 		Common.fermaRiconsegne(dbUtils);		
 	}
-*/
+
 	
 	@Test
 	public void connettoreDisabilitato() {

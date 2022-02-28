@@ -373,8 +373,6 @@ public class SoapTest extends ConfigLoader {
 		// Attendo la consegna
 		org.openspcoop2.utils.Utilities.sleep(2 * CommonConsegnaMultipla.intervalloControllo);
 
-		// TODOS Di ad andrea che cluster_id_ultimo_errore non viene valorizzato.
-		
 		for (var requestExpectation : responsesByKind.keySet()) {
 			var responses = responsesByKind.get(requestExpectation);
 
@@ -387,7 +385,9 @@ public class SoapTest extends ConfigLoader {
 						
 						String query = "Select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ?"
 								+ " and data_uscita_richiesta > ? and data_registrazione > ? and data_ingresso_risposta >= data_uscita_richiesta"
-								+ " and data_ingresso_risposta >= data_accettazione_risposta and data_uscita_richiesta >= data_primo_tentativo";		// Qui metto un >= invece di = perchè le query a volte impiegano troppo  e avviene già la rispedizione
+								+ " and data_ingresso_risposta >= data_accettazione_risposta and data_uscita_richiesta >= data_primo_tentativo"		// Qui metto un >= invece di = perchè le query a volte impiegano troppo  e avviene già la rispedizione
+								+ " and cluster_id_in_coda = 'IDGW' and cluster_id_consegna = 'IDGW' ";
+						
 						getLoggerCore().info("Checking date per connettori fallimento: " + id_transazione + " " + connettore + " " + dataRiferimentoTest.toString() );
 						Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione,	connettore, dataRiferimentoTest, dataRiferimentoTest);
 						assertEquals(Integer.valueOf(1), count);
@@ -433,21 +433,20 @@ public class SoapTest extends ConfigLoader {
 							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, ultimoErrore, locationUltimoErrore);
 							assertEquals(Integer.valueOf(1), count);
 						} else {
-							query += " and fault_ultimo_errore = ? and formato_fault_ultimo_errore = ?";
+							query += " and fault_ultimo_errore = ? and formato_fault_ultimo_errore = ? and cluster_id_ultimo_errore = 'IDGW'";
 							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, ultimoErrore, locationUltimoErrore, fault, formatoFault);
 							assertEquals(Integer.valueOf(1), count);
 						}
 					}
 
 					for (var connettore : requestExpectation.connettoriSuccesso) {
-						// data_ingresso_risposta >= data_accettazione_risposta possibile? TODOS
-						// a volte si ha data_accettazione_richiesta >= data_uscita_richiesta e a volte il contrario, possibile? TODOS
 						
 						String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
 						String query = "Select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ?"
 								+ " and data_uscita_richiesta > ? and data_registrazione > ? and data_ingresso_risposta >= data_uscita_richiesta"
 								+ " and data_ingresso_risposta >= data_accettazione_risposta and data_uscita_richiesta = data_primo_tentativo"
-								+ " and data_ultimo_errore is null and dettaglio_esito_ultimo_errore = 0 and codice_risposta_ultimo_errore is null and ultimo_errore is null and location_ultimo_errore  is null";
+								+ " and data_ultimo_errore is null and dettaglio_esito_ultimo_errore = 0 and codice_risposta_ultimo_errore is null and ultimo_errore is null and location_ultimo_errore  is null"
+								+ " and data_uscita_richiesta >= data_accettazione_richiesta ";
 																																		
 						getLoggerCore().info("Checking date per connettori successo: " + id_transazione + " " + connettore + " " + dataRiferimentoTest.toString() );
 						Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione,	connettore, dataRiferimentoTest, dataRiferimentoTest);
