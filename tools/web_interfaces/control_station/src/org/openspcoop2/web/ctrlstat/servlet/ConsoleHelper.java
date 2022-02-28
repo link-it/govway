@@ -6186,7 +6186,8 @@ public class ConsoleHelper implements IConsoleHelper {
 					PortaApplicativa pa = (PortaApplicativa) oggetto;
 					PorteApplicativeServizioApplicativoAutorizzatoUtilities utilities = new PorteApplicativeServizioApplicativoAutorizzatoUtilities();
 					boolean escludiSAServer = this.porteApplicativeCore.isApplicativiServerEnabled(this);					
-					utilities.buildList(pa, profiloModi, protocollo, true,
+					boolean escludiSoggettoErogatore = false;
+					utilities.buildList(pa, profiloModi, protocollo, escludiSoggettoErogatore,
 							idSoggettoToAdd,
 							this.porteApplicativeCore, this, escludiSAServer);
 					
