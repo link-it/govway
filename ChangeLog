@@ -1,3 +1,8 @@
+2022-02-28  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Nel connettore associato all'implementazione dell'API non è adesso più possibile definire i criteri di consegna asincrona (con stati di accettazione)
+
 2022-02-24  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
