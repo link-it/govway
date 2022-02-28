@@ -755,7 +755,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			if(params[0]!=null && !"".equals(params[0])){
 				param1 = (String)params[0];
 			}
-			return this.getCertificatiConnettoreTokenPolicyValidazione(param1);
+			return this.getCertificatiConnettoreTokenPolicyNegoziazione(param1);
 		}
 		
 		if(actionName.equals(GET_CERTIFICATI_ATTRIBUTE_AUTHORITY)){

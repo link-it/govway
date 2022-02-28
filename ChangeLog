@@ -1,5 +1,10 @@
 2022-02-28  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore, GovWayConsole]
+	La funzionalità di download dei certificati server di una Token Policy di Negoziazione non funzionava
+
+2022-02-28  Andrea Poli <apoli@link.it>
+
 	* [GovWayConsole]
 	Nel connettore associato all'implementazione dell'API non è adesso più possibile definire i criteri di consegna asincrona (con stati di accettazione)
 
