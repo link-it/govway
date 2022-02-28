@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
@@ -83,7 +84,7 @@ public class RestTest extends ConfigLoader{
 		}
 	}
 	
-	/*@AfterClass
+	@AfterClass
 	public static void After() {
 		Common.fermaRiconsegne(dbUtils);
 	}
@@ -91,7 +92,7 @@ public class RestTest extends ConfigLoader{
 	@org.junit.After
 	public void AfterEach() {
 		Common.fermaRiconsegne(dbUtils);
-	}*/
+	}
 	
 	
 	public static RequestAndExpectations buildRequestAndExpectations(String erogazione, int statusCode, Set<String> connettoriOk, Set<String> connettoriErrore) {

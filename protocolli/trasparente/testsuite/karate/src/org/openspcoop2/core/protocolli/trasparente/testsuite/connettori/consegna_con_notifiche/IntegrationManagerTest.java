@@ -1,11 +1,14 @@
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_con_notifiche;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_OK;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 
@@ -72,7 +75,7 @@ public class IntegrationManagerTest extends ConfigLoader {
 		imProviderMessageBox.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
 
 		
-		/**
+		/**sato 
 		 * Si controlla lo stato sul db prima e dopo la consegna delle notifiche.
 		 */
 		
@@ -136,18 +139,40 @@ public class IntegrationManagerTest extends ConfigLoader {
 		// Recupero i messaggi
 		// ID messaggi
 		List<String> ids = imMessageBoxPort.getAllMessagesId();
+		assertFalse(ids.isEmpty());
 		
-		// Recupera messaggi
-		imMessageBoxPort.getMessage("");
-		// a questo punto sulla base dati dovresti verificare che sia incrementato il contatore dei prelievi e che la data di prelievo sia aggiornata
+		// Recupero il  messaggio, verifico che sia incrementato il contatore dei prelievi e che la data di prelievo sia aggiornata
+		String idMessaggio = ids.get(0);	// TODO: Parsalo
+		Timestamp dataRiferimentoTest = Timestamp.from(Instant.now());
+		imMessageBoxPort.getMessage(idMessaggio);
 		
+		String query = "Select data_primo_prelievo_im from transazioni_sa where identificativo_messaggio = ? and connettore_nome = ? and data_primo_prelievo_im >= ? and data_prelievo_im = data_primo_prelievo_im & numero_prelievi = 1 and data_eliminazione_im is null";
+		getLoggerCore().info("Checking stato per connettore messageBox: " + idMessaggio + " " + connettoreMessageBox + " " + dataRiferimentoTest.toString() );
+		Timestamp dataPrimoPrelievo = ConfigLoader.getDbUtils().readValue(query, Timestamp.class, idMessaggio,	connettoreMessageBox, dataRiferimentoTest); 
 		
 		// scarico nuovamente il singolo messaggio per verificare aggiornamenti dei contatori e delle data, verificando che sia mantenuta la data di primo prelievo
-		imMessageBoxPort.getMessage("");
+		imMessageBoxPort.getMessage(idMessaggio);
+		
+		query = "Select count(*) from transazioni_sa where identificativo_messaggio = ? and connettore_nome = ? and data_primo_prelievo_im = ? and data_prelievo_im >= ? & numero_prelievi = 2 and data_eliminazione_im is null";
+		
+		dataRiferimentoTest = Timestamp.from(Instant.now());
+		getLoggerCore().info("Checking secondo prelievo per connettore messageBox: " + idMessaggio + " " + connettoreMessageBox + " " + dataRiferimentoTest.toString() );
+		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, idMessaggio,	connettoreMessageBox, dataPrimoPrelievo, dataRiferimentoTest);
+		
+		assertEquals(Integer.valueOf(1), count);
+		
+		/*data_primo_prelievo_im TIMESTAMP,
+		data_prelievo_im TIMESTAMP,
+		numero_prelievi_im INT DEFAULT 0,
+		data_eliminazione_im TIMESTAMP,*/
 		
 		// elimino il messaggio
 		
-		 imMessageBoxPort.deleteMessage("");
+		dataRiferimentoTest = Timestamp.from(Instant.now());
+		imMessageBoxPort.deleteMessage(idMessaggio);
+		 
+		query = "Select count(*) from transazioni_sa where identificativo_messaggio = ? and connettore_nome = ? and data_primo_prelievo_im = ? and data_eliminazione >= ? & numero_prelievi = 2 and data_eliminazione_im = ?";
+
 
 		 // una volta eliminato verifichi che la data di eliminazione sia valorizzata e la consegna completata.
 	}
