@@ -351,8 +351,6 @@ public class RestTest extends ConfigLoader {
 		
 		logRateLimiting.info(Utils.getPolicy(idPolicy));
 		
-		// TODO: Adesso testare che una volta passato il degrado, con la sola 
-		//	congestione le richieste non vengono bloccate.
 	}
 	
 	private static void makeParallelRequests_and_checkFailedRequests(HttpRequest request, int windowSize, int maxRequests, HttpRequest congestionRequest) {
