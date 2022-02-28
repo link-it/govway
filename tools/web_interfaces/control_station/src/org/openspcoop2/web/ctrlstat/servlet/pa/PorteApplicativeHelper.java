@@ -8447,6 +8447,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						}
 					}
 				}
+				// FIX: la gestione sincrona della connessione e' completamente differente e non può essere gestita con le opzioni di consegna delle notifiche. (es. 3xx accettato su rest normalmente)
+				if(showGestioneNotifiche && behaviourType.equals(TipoBehaviour.CONSEGNA_CON_NOTIFICHE) && connettoreDefault) {
+					showGestioneNotifiche = false;
+				}
 				if(showGestioneNotifiche) {
 					
 					// Proprieta
