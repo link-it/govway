@@ -32,8 +32,13 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.DIAGNOSTICO_SEVERITA_INFO;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.MESSAGGIO_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.MESSAGGIO_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_FALLBACK_TUTTI_CONNETTORI;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkNessunaNotifica;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkNessunoScheduling;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkPresaInConsegnaNotifica;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkRequestExpectations;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkRequestExpectationsFinal;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkSchedulingConnettoreIniziato;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.esitoConsegnaFromStatusCode;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.setSum;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.statusCodeVsConnettori;
 
@@ -1195,15 +1200,15 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 				} else if (requestExpectation.statusCodePrincipale == 500) { // 500 senza body è ok con anomalia
 					esitoSincrono = CommonConsegnaMultipla.ESITO_OK_PRESENZA_ANOMALIE;
 				} else {
-					esitoSincrono = CommonConsegnaMultipla.esitoConsegnaFromStatusCode(requestExpectation.statusCodePrincipale);
+					esitoSincrono = esitoConsegnaFromStatusCode(requestExpectation.statusCodePrincipale);
 				}
 				
-				CommonConsegnaMultipla.checkPresaInConsegnaNotifica(responses, connettoriCoinvolti.size(), esitoSincrono);	
-				CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(responses, connettoriCoinvolti);
+				CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegnaNotifica(responses, connettoriCoinvolti.size(), esitoSincrono));	
+				checkSchedulingConnettoreIniziato(responses, connettoriCoinvolti);
 			} else {
 				for (var response : responses) {
-					CommonConsegnaMultipla.checkNessunaNotifica(response);
-					CommonConsegnaMultipla.checkNessunoScheduling(response);
+					CommonConsegnaMultipla.withBackoff( () -> checkNessunaNotifica(response));
+					checkNessunoScheduling(response);
 				}
 			}
 		}

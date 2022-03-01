@@ -27,6 +27,7 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_2;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_3;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.checkAll200;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.checkResponsesStatus;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,6 +66,7 @@ import org.openspcoop2.pdd.services.cxf.MessageBoxService;
 import org.openspcoop2.pdd.services.skeleton.IdentificativoIM;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpResponse;
@@ -116,6 +118,8 @@ public class CommonConsegnaMultipla {
 	
 	public final static String FORMATO_FAULT_SOAP1_1 = "SOAP_11";
 	public final static String FORMATO_FAULT_SOAP1_2 = "SOAP_12";
+	
+	public final static int thread_sleep_after_request = Integer.valueOf(System.getProperty("thread_sleep_after_request"));
 
 	public final static int intervalloControllo = Integer
 			.valueOf(System.getProperty("connettori.consegna_multipla.next_messages.intervallo_controllo")) * 1000;
@@ -126,11 +130,11 @@ public class CommonConsegnaMultipla {
 	// Sommo 500 ms per dare il tempo di eseguire le notifiche, visto che in rari casi fallisce
 	public final static int intervalloControlloFallite = Integer.valueOf(
 			System.getProperty("connettori.consegna_multipla.next_messages.consegna_fallita.intervallo_controllo"))
-			* 1000 + 500;
+			* 1000 + 600;
 	
 	public final static int intervalloMinimoRiconsegna = Integer.valueOf(System
 			.getProperty("connettori.consegna_multipla.next_messages.consegna_fallita.intervallo_minimo_riconsegna"))
-			* 1000 + 500;
+			* 1000 + 600;
 	
 	public final static Path connettoriFilePath = Paths
 			.get(System.getProperty("connettori.consegna_multipla.connettore_file.path"));
@@ -230,6 +234,16 @@ public class CommonConsegnaMultipla {
 		return imMessageBoxPort;
 	}
 	
+	
+	public static void withBackoff(Runnable r) {
+		int[] delays =  {100, 500, 2000, 5000};
+		for(int delay : delays) {
+			Utilities.sleep(delay);
+			try {
+				r.run(); return;
+			} catch (Throwable t) { }
+		}
+	}
 
 	/**
 	 * Esegue requests_per_batch richieste per ogni richiesta della lista.
@@ -242,28 +256,14 @@ public class CommonConsegnaMultipla {
 		int nThreads = Common.sogliaRichiesteSimultanee; 
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nThreads);
 		
-		int count = nThreads;
-	
 		for (var request : requests) {			
 			responses.put(request, new Vector<>());
 			
 			for (int i = 0; i<requests_per_batch; i++) {
-				
 				executor.execute( () -> {
 					responses.get(request).add(Utils.makeRequest(request.request));
+					org.openspcoop2.utils.Utilities.sleep(thread_sleep_after_request);
 				});
-	
-				count--;
-				if (count == 0) {
-					try {
-						executor.awaitTermination(20, TimeUnit.SECONDS);
-						org.openspcoop2.utils.Utilities.sleep(50);
-						count = nThreads;
-					} catch (InterruptedException e) {
-						ConfigLoader.getLoggerCore().error("Le richieste hanno impiegato più di venti secondi!");
-						throw new RuntimeException(e);
-					}
-				}
 			}			
 		}
 		try {
@@ -732,16 +732,15 @@ public class CommonConsegnaMultipla {
 				
 				if (requestAndExpectation.esitoPrincipale != ESITO_ERRORE_PROCESSAMENTO_PDD_4XX) {
 					if (requestAndExpectation.tipoFault != TipoFault.NESSUNO) {
-						Common.checkResponsesStatus(responses, 500);
+						checkResponsesStatus(responses, 500);
 					} else {
 						checkAll200(responses);
 					}
-					checkSchedulingConnettoreIniziato(responses, connettoriCoinvolti);
+					CommonConsegnaMultipla.withBackoff( () -> checkSchedulingConnettoreIniziato(responses, connettoriCoinvolti));
 					checkStatoConsegna(responses, ESITO_CONSEGNA_MULTIPLA, connettoriCoinvolti.size());
 				} else {
-					checkStatoConsegna(responses, ESITO_ERRORE_PROCESSAMENTO_PDD_4XX, 0);
+					CommonConsegnaMultipla.withBackoff( () -> checkStatoConsegna(responses, ESITO_ERRORE_PROCESSAMENTO_PDD_4XX, 0));
 				}
-
 		}
 		
 		// Attendo la consegna

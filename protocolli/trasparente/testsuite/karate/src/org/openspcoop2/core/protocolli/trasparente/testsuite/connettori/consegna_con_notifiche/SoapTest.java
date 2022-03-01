@@ -35,6 +35,10 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_OK;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.FORMATO_FAULT_SOAP1_1;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.FORMATO_FAULT_SOAP1_2;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkPresaInConsegna;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkSchedulingConnettoreCompletato;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkSchedulingConnettoreInCorso;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkSchedulingConnettoreIniziato;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkStatoConsegna;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.esitoConsegnaFromStatusCode;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.getNumeroTentativiSchedulingConnettore;
@@ -143,14 +147,14 @@ public class SoapTest extends ConfigLoader {
 		for (var r : responses) {
 			assertEquals(200, r.getResultHTTPOperation());
 			
-			CommonConsegnaMultipla.checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
-			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
+			CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(r, Common.setConnettoriAbilitati.size()));
+			checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
 		}
 		for (var r : responses2) {
 			assertEquals(200, r.getResultHTTPOperation());
 			
-			CommonConsegnaMultipla.checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
-			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
+			checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
+			checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
 		}
 	
 		// Attendo la consegna
@@ -363,8 +367,8 @@ public class SoapTest extends ConfigLoader {
 			var responses = responsesByKind.get(requestExpectation);
 			
 			if (requestExpectation.principaleSuperata) {
-				CommonConsegnaMultipla.checkPresaInConsegna(responses, Common.setConnettoriAbilitati.size());
-				CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
+				CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(responses, Common.setConnettoriAbilitati.size()));
+				checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 			} else {
 				for (var response : responses) {
 					CommonConsegnaMultipla.checkNessunaNotifica(response);
@@ -554,19 +558,19 @@ public class SoapTest extends ConfigLoader {
  		HttpRequest requestErroreProcessamentoOK =  RequestBuilder.buildSoapRequest(erogazione, "TestRegolaContenuto",   "SA_TestRegolaContenuto",  soapContentType); 	
  		requestErroreProcessamentoOK.setUrl(requestErroreProcessamentoOK.getUrl()+"&returnCode=200");
 
-		var responsesOk = Common.makeParallelRequests(requestOk, 10);
-		var responsesErroreProcessamentoOK = Common.makeParallelRequests(requestErroreProcessamentoOK, 10);
+		var responsesOk = Common.makeParallelRequests(requestOk, 5);
+		var responsesErroreProcessamentoOK = Common.makeParallelRequests(requestErroreProcessamentoOK, 5);
 
 		for (var r : responsesOk) {
 			assertEquals(200, r.getResultHTTPOperation());
-			CommonConsegnaMultipla.checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
-			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
+			CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(r, Common.setConnettoriAbilitati.size()));
+			checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
 		}
 		
 		for (var r : responsesErroreProcessamentoOK) {
 			assertEquals(500, r.getResultHTTPOperation());
-			CommonConsegnaMultipla.checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
-			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
+			checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
+			checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
 		}
 
 		// Attendo la consegna
@@ -596,14 +600,14 @@ public class SoapTest extends ConfigLoader {
 
 		for (var r : responsesOk) {
 			assertEquals(200, r.getResultHTTPOperation());
-			CommonConsegnaMultipla.checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
-			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
+			checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
+			checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
 		}
 		
 		for (var r : responsesErroreProcessamentoOK) {
 			assertEquals(500, r.getResultHTTPOperation());
-			CommonConsegnaMultipla.checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
-			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
+			checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
+			checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
 		}
 
 		// Attendo la consegna
@@ -640,14 +644,14 @@ public class SoapTest extends ConfigLoader {
  		HttpRequest requestErroreProcessamento =  RequestBuilder.buildSoapRequest(erogazione, "TestRegolaContenuto",   "SA_TestRegolaContenuto",  soapContentType); 	
  		requestErroreProcessamento.setUrl(requestErroreProcessamento.getUrl()+"&returnCode=200");
 
-		var responsesOk = Common.makeParallelRequests(requestOk, 10);
-		var responsesErroreProcessamento = Common.makeParallelRequests(requestErroreProcessamento, 10);
+		var responsesOk = Common.makeParallelRequests(requestOk, 5);
+		var responsesErroreProcessamento = Common.makeParallelRequests(requestErroreProcessamento, 5);
 
 		for (var r : responsesOk) {
 			assertEquals(200, r.getResultHTTPOperation());
 			
-			CommonConsegnaMultipla.checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
-			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
+			CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(r, Common.setConnettoriAbilitati.size()));
+			checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
 		}
 		
 		for (var r : responsesErroreProcessamento) {
@@ -680,8 +684,8 @@ public class SoapTest extends ConfigLoader {
 
 		for (var r : responsesOk) {
 			assertEquals(200, r.getResultHTTPOperation());
-			CommonConsegnaMultipla.checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
-			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
+			checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
+			checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);	
 		}
 		
 		for (var r : responsesErroreProcessamento) {
@@ -724,13 +728,13 @@ public class SoapTest extends ConfigLoader {
 		
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
 		for (var r : responses) {
-			CommonConsegnaMultipla.checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
-			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);
+			CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(r, Common.setConnettoriAbilitati.size()));
+			checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);
 		}
 		
 		for (var r : responses2) {
-			CommonConsegnaMultipla.checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
-			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);
+			checkPresaInConsegna(r, Common.setConnettoriAbilitati.size());
+			checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);
 		}
 		
 		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
@@ -739,20 +743,20 @@ public class SoapTest extends ConfigLoader {
 		String formatoFault = "";
 		for (var response : responses) {
 			// Sul connettore disabilitato non è avvenuto nulla ancora.
-			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(response, Common.CONNETTORE_1);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_0, ESITO_OK, 200, fault, formatoFault);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_2, ESITO_OK, 200, fault, formatoFault);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_3, ESITO_OK, 200, fault, formatoFault);
-			CommonConsegnaMultipla.checkStatoConsegna(response, ESITO_CONSEGNA_MULTIPLA_IN_CORSO,  1);
+			checkSchedulingConnettoreIniziato(response, Common.CONNETTORE_1);
+			checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_0, ESITO_OK, 200, fault, formatoFault);
+			checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_2, ESITO_OK, 200, fault, formatoFault);
+			checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_3, ESITO_OK, 200, fault, formatoFault);
+			checkStatoConsegna(response, ESITO_CONSEGNA_MULTIPLA_IN_CORSO,  1);
 		}
 		
 		for (var response : responses2) {
 			// Sul connettore disabilitato non è avvenuto nulla ancora.
-			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(response, Common.CONNETTORE_1);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_0,ESITO_OK, 200, fault, formatoFault);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_2, ESITO_OK, 200, fault, formatoFault);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_3, ESITO_OK, 200, fault, formatoFault);
-			CommonConsegnaMultipla.checkStatoConsegna(response, ESITO_CONSEGNA_MULTIPLA_IN_CORSO,  1);
+			checkSchedulingConnettoreIniziato(response, Common.CONNETTORE_1);
+			checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_0,ESITO_OK, 200, fault, formatoFault);
+			checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_2, ESITO_OK, 200, fault, formatoFault);
+			checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_3, ESITO_OK, 200, fault, formatoFault);
+			checkStatoConsegna(response, ESITO_CONSEGNA_MULTIPLA_IN_CORSO,  1);
 		}
 				
 		CommonConsegnaMultipla.jmxAbilitaSchedulingConnettore(erogazione, Common.CONNETTORE_1);
@@ -761,18 +765,18 @@ public class SoapTest extends ConfigLoader {
 		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
 		
 		for (var response : responses) {
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_1,ESITO_OK, 200, fault, formatoFault);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_0,ESITO_OK, 200, fault, formatoFault);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_2,ESITO_OK, 200, fault, formatoFault);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_3,ESITO_OK, 200, fault, formatoFault);
+			checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_1,ESITO_OK, 200, fault, formatoFault);
+			checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_0,ESITO_OK, 200, fault, formatoFault);
+			checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_2,ESITO_OK, 200, fault, formatoFault);
+			checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_3,ESITO_OK, 200, fault, formatoFault);
 			CommonConsegnaMultipla.checkConsegnaCompletata(response);
 		}
 		
 		for (var response : responses2) {
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_1,ESITO_OK, 200, fault, formatoFault);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_0,ESITO_OK, 200, fault, formatoFault);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_2,ESITO_OK, 200, fault, formatoFault);
-			CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_3,ESITO_OK, 200, fault, formatoFault);
+			checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_1,ESITO_OK, 200, fault, formatoFault);
+			checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_0,ESITO_OK, 200, fault, formatoFault);
+			checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_2,ESITO_OK, 200, fault, formatoFault);
+			checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_3,ESITO_OK, 200, fault, formatoFault);
 			CommonConsegnaMultipla.checkConsegnaCompletata(response);
 		}
 		
@@ -814,9 +818,8 @@ public class SoapTest extends ConfigLoader {
 		
 		// Tutte le richieste indipendentemente dal tipo devono essere state prese in consegna e lo scheduling inizia su tutti i connettori abilitati
 		for (var responses : responsesByKind.values()) {
-		   	//Common.checkAll200(responses);
-			CommonConsegnaMultipla.checkPresaInConsegna(responses, Common.setConnettoriAbilitati.size());
-			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
+			CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(responses, Common.setConnettoriAbilitati.size()));
+			checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 		}
 		
 		// Attendo la consegna
@@ -887,8 +890,8 @@ public class SoapTest extends ConfigLoader {
 			var responses = responsesByKind.get(requestExpectation);
 			
 			if (requestExpectation.principaleSuperata) {
-				CommonConsegnaMultipla.checkPresaInConsegna(responses, Common.setConnettoriAbilitati.size());
-				CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
+				CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(responses, Common.setConnettoriAbilitati.size()));
+				checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 			} else {
 				for (var response : responses) {
 					CommonConsegnaMultipla.checkNessunaNotifica(response);
@@ -943,7 +946,7 @@ public class SoapTest extends ConfigLoader {
 		for (var r : responses) {
 			// Le richieste che vedono fallita la transazione principale con un 401, ottengono un 500
 			assertEquals(500 , r.getResultHTTPOperation());
-			CommonConsegnaMultipla.checkNessunaNotifica(r);
+			CommonConsegnaMultipla.withBackoff( () -> CommonConsegnaMultipla.checkNessunaNotifica(r));
 			CommonConsegnaMultipla.checkNessunoScheduling(r);
 		}
 		
@@ -1008,8 +1011,8 @@ public class SoapTest extends ConfigLoader {
 			var responses = responsesByKind.get(requestExpectation);
 			
 			if (requestExpectation.principaleSuperata) {
-				CommonConsegnaMultipla.checkPresaInConsegna(responses, Common.setConnettoriAbilitati.size());
-				CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
+				CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(responses, Common.setConnettoriAbilitati.size()));
+				checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 			} else {
 				for (var response : responses) {
 					CommonConsegnaMultipla.checkNessunaNotifica(response);
@@ -1112,8 +1115,8 @@ public class SoapTest extends ConfigLoader {
 				var responses = responsesByKind.get(requestExpectation);
 				
 				if (requestExpectation.principaleSuperata) {
-					CommonConsegnaMultipla.checkPresaInConsegna(responses, Common.setConnettoriAbilitati.size());
-					CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
+					CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(responses, Common.setConnettoriAbilitati.size()));
+					checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 				} else {
 					for (var response : responses) {
 						CommonConsegnaMultipla.checkNessunaNotifica(response);
@@ -1187,8 +1190,8 @@ public class SoapTest extends ConfigLoader {
 		HttpRequest request1 = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1);
 		HttpRequest request2 = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_2);
 
-		var responses = Common.makeParallelRequests(request1, 10);
-		var responses2 = Common.makeParallelRequests(request2, 10);
+		var responses = Common.makeParallelRequests(request1, 5);
+		var responses2 = Common.makeParallelRequests(request2, 5);
 		
 		Common.checkAll200(responses);
 		Common.checkAll200(responses2);
@@ -1200,13 +1203,13 @@ public class SoapTest extends ConfigLoader {
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
 		for (var r : responses) {
 			assertEquals(200, r.getResultHTTPOperation());
-			CommonConsegnaMultipla.checkPresaInConsegna(r, connettoriSchedulati.size());
-			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, connettoriSchedulati);	
+			checkPresaInConsegna(r, connettoriSchedulati.size());
+			checkSchedulingConnettoreIniziato(r, connettoriSchedulati);	
 		}
 		for (var r : responses2) {
 			assertEquals(200, r.getResultHTTPOperation());
-			CommonConsegnaMultipla.checkPresaInConsegna(r, connettoriSchedulati.size());
-			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(r, connettoriSchedulati);	
+			checkPresaInConsegna(r, connettoriSchedulati.size());
+			checkSchedulingConnettoreIniziato(r, connettoriSchedulati);	
 		}
 	
 		// Attendo la consegna
@@ -1217,18 +1220,18 @@ public class SoapTest extends ConfigLoader {
 		String fault = "";
 		String formatoFault = "";
 		for (var r : responses) {
-			CommonConsegnaMultipla.checkStatoConsegna(r, ESITO_CONSEGNA_MULTIPLA_IN_CORSO, 1);
-			CommonConsegnaMultipla.checkSchedulingConnettoreInCorso(r, CONNETTORE_ROTTO, ESITO_ERRORE_INVOCAZIONE, 0, fault, formatoFault);
+			CommonConsegnaMultipla.withBackoff( () -> checkStatoConsegna(r, ESITO_CONSEGNA_MULTIPLA_IN_CORSO, 1));
+			checkSchedulingConnettoreInCorso(r, CONNETTORE_ROTTO, ESITO_ERRORE_INVOCAZIONE, 0, fault, formatoFault);
 			for (var connettore : Common.setConnettoriAbilitati) {
-				CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(r, connettore, ESITO_OK, 200, fault, formatoFault);
+				checkSchedulingConnettoreCompletato(r, connettore, ESITO_OK, 200, fault, formatoFault);
 			}
 		}
 		
 		for (var r : responses2) {
-			CommonConsegnaMultipla.checkStatoConsegna(r, ESITO_CONSEGNA_MULTIPLA_IN_CORSO, 1);
-			CommonConsegnaMultipla.checkSchedulingConnettoreInCorso(r, CONNETTORE_ROTTO, ESITO_ERRORE_INVOCAZIONE, 0, fault, formatoFault);
+			checkStatoConsegna(r, ESITO_CONSEGNA_MULTIPLA_IN_CORSO, 1);
+			checkSchedulingConnettoreInCorso(r, CONNETTORE_ROTTO, ESITO_ERRORE_INVOCAZIONE, 0, fault, formatoFault);
 			for (var connettore : Common.setConnettoriAbilitati) {
-				CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(r, connettore, ESITO_OK, 200, fault, formatoFault);
+				checkSchedulingConnettoreCompletato(r, connettore, ESITO_OK, 200, fault, formatoFault);
 			}
 		}
 	}
@@ -1256,8 +1259,8 @@ public class SoapTest extends ConfigLoader {
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
 		for (var response : responsesSoap1) {
 			assertEquals(200, response.getResultHTTPOperation());
-			CommonConsegnaMultipla.checkPresaInConsegna(response, Common.setConnettoriAbilitati.size());
-			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(response, Common.setConnettoriAbilitati);
+			CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(response, Common.setConnettoriAbilitati.size()));
+			checkSchedulingConnettoreIniziato(response, Common.setConnettoriAbilitati);
 			
 			// check consegna_im
 			String query = "select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ? and consegna_im = ? ";
@@ -1270,8 +1273,8 @@ public class SoapTest extends ConfigLoader {
 		// Ripeto per soap2
 		for (var response : responsesSoap2) {
 			assertEquals(200, response.getResultHTTPOperation());
-			CommonConsegnaMultipla.checkPresaInConsegna(response, Common.setConnettoriAbilitati.size());
-			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(response, Common.setConnettoriAbilitati);	
+			checkPresaInConsegna(response, Common.setConnettoriAbilitati.size());
+			checkSchedulingConnettoreIniziato(response, Common.setConnettoriAbilitati);	
 			
 			// check consegna_im
 			String query = "select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ? and consegna_im = ? ";
@@ -1286,9 +1289,9 @@ public class SoapTest extends ConfigLoader {
 
 		// Controllo che le notifiche siano completate sui connettori non message box
 		for (var response : responsesSoap1) {
-			CommonConsegnaMultipla.checkStatoConsegna(response, CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_IN_CORSO, 1);
+			checkStatoConsegna(response, CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_IN_CORSO, 1);
 			for (var connettore : connettoriSuccesso) {
-				CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, connettore,ESITO_OK, 200, "" , "");
+				checkSchedulingConnettoreCompletato(response, connettore,ESITO_OK, 200, "" , "");
 			}
 			// Controllo che lo scheduling sia stato effettuato solo sui connettori indicati, ci metto anche quello che fa da MessageBox
 			CommonConsegnaMultipla.checkConnettoriRaggiuntiEsclusivamente(response, Common.setConnettoriAbilitati);
@@ -1296,9 +1299,9 @@ public class SoapTest extends ConfigLoader {
 		
 		// ripeto per soap2
 		for (var response : responsesSoap2) {
-			CommonConsegnaMultipla.checkStatoConsegna(response, CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_IN_CORSO, 1);
+			checkStatoConsegna(response, CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_IN_CORSO, 1);
 			for (var connettore : connettoriSuccesso) {
-				CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, connettore,ESITO_OK, 200, "" , "");			
+				checkSchedulingConnettoreCompletato(response, connettore,ESITO_OK, 200, "" , "");			
 			}
 			// Controllo che lo scheduling sia stato effettuato solo sui connettori indicati, ci metto anche quello che fa da MessageBox
 			CommonConsegnaMultipla.checkConnettoriRaggiuntiEsclusivamente(response, Common.setConnettoriAbilitati);		
@@ -1314,11 +1317,11 @@ public class SoapTest extends ConfigLoader {
 		org.openspcoop2.utils.Utilities.sleep(CommonConsegnaMultipla.intervalloControllo);
 		
 		for (var response : responsesSoap1) {
-			CommonConsegnaMultipla.checkStatoConsegna(response, CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_COMPLETATA, 0);
+			checkStatoConsegna(response, CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_COMPLETATA, 0);
 			CommonConsegnaMultipla.checkConsegnaTerminataNoStatusCode(response, connettoreMessageBox);
 		}
 		for (var response : responsesSoap2) {
-			CommonConsegnaMultipla.checkStatoConsegna(response, CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_COMPLETATA, 0);
+			checkStatoConsegna(response, CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_COMPLETATA, 0);
 			CommonConsegnaMultipla.checkConsegnaTerminataNoStatusCode(response, connettoreMessageBox);
 		}
 
