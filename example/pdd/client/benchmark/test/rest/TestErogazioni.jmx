@@ -54,14 +54,14 @@
             <stringProp name="Argument.value">${__P(logDir,/opt/local/GIT_GOV/JMeter/INPS/log)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
-          <elementProp name="serverSleep" elementType="Argument">
-            <stringProp name="Argument.name">serverSleep</stringProp>
-            <stringProp name="Argument.value">${__P(serverDelay,200_1000)}</stringProp>
+          <elementProp name="sleepMin" elementType="Argument">
+            <stringProp name="Argument.name">sleepMin</stringProp>
+            <stringProp name="Argument.value">${__P(sleepMin,0)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
-          <elementProp name="serverSleep.valoriPossibili" elementType="Argument">
-            <stringProp name="Argument.name">serverSleep.valoriPossibili</stringProp>
-            <stringProp name="Argument.value">50_100 100_500 200_1000</stringProp>
+          <elementProp name="sleepMax" elementType="Argument">
+            <stringProp name="Argument.name">sleepMax</stringProp>
+            <stringProp name="Argument.value">${__P(sleepMax,1)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="dimensioneRichiesta" elementType="Argument">
@@ -204,6 +204,14 @@
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">${hdrAgidTokenName}</stringProp>
                 <stringProp name="Header.value">${hdrAgidTokenValue}</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">GovWay-StressTest-SleepMin</stringProp>
+                <stringProp name="Header.value">${sleepMin}</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">GovWay-StressTest-SleepMax</stringProp>
+                <stringProp name="Header.value">${sleepMax}</stringProp>
               </elementProp>
             </collectionProp>
           </HeaderManager>

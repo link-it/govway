@@ -52,8 +52,18 @@ tipiTest="Proxy"
 azione=test
 
 # ServerDelay
-#server="50_100 100_500 200_1000"
-server="50_100"
+# NO delay:
+sleepMin=0
+sleepMax=1
+# Intervallo 1
+#sleepMin=50
+#sleepMax=100
+# Intervallo 2
+#sleepMin=100
+#sleepMax=500
+# Intervallo 3
+#sleepMin=200
+#sleepMax=1000
 
 rm -rf ${resultDir}
 mkdir ${resultDir}
@@ -64,17 +74,14 @@ for threadNumber in $threads; do
 		echo "- $dimensione"
 		mkdir ${resultDir}/$threadNumber/$dimensione
 		for tipoTest in $tipiTest; do
-			profilo=1
-			echo "--- $tipoTest"
-			mkdir ${resultDir}/$threadNumber/$dimensione/${profilo}_${tipoTest}
-			for serverDelay in $server; do
-				echo "------- delay:${serverDelay}"
-				mkdir ${resultDir}/$threadNumber/$dimensione/${profilo}_${tipoTest}/${serverDelay}
-				echo "--------- test (profilo:${profilo} tipoTest:$tipoTest dimensione:$dimensione threads:$threadNumber) ..."
-				${binJMeter}/jmeter -n -t ${jmeterTestFile} -l ${resultDir}/OUTPUT.txt -JnodoRunIP=${nodoRunIP} -JnodoRunPort=${nodoRunPort} -JclientIP=${clientIP} -JtestFileDir=${testFileDir} -JlogDir=${logDir} -Jthreads=${threadNumber} -Jduration=${duration} -JthreadsRampUp=${threadsRampUp}  -Jdimensione=${dimensione} -Jprofilo=${profilo} -Jazione=${azione} -JtipoTest=${tipoTest} -Jsoggetto=${soggetto}  -JserverDelay=${serverDelay} -JproxyHost=${proxyHost} -JproxyPort=${proxyPort} -Jprotocollo=${protocollo} -JprofiloSicurezza=${profiloSicurezza}
-				mv ${resultDir}/OUTPUT.txt ${resultDir}/$threadNumber/$dimensione/${profilo}_${tipoTest}/${serverDelay}/
-				echo "--------- test (profilo:${profilo} tipoTest:${tipoTest} dimensione:$dimensione threads:$threadNumber) finished"
-			done
+			echo "--- ${profiloSicurezza}/$tipoTest"
+			mkdir ${resultDir}/$threadNumber/$dimensione/${profiloSicurezza}_${tipoTest}
+			echo "------- delay min:${sleepMin} max:${sleepMax}"
+			mkdir ${resultDir}/$threadNumber/$dimensione/${profiloSicurezza}_${tipoTest}/${sleepMin}_${sleepMax}
+			echo "--------- test (profiloSicurezza:${profiloSicurezza} tipoTest:$tipoTest dimensione:$dimensione threads:$threadNumber) ..."
+			${binJMeter}/jmeter -n -t ${jmeterTestFile} -l ${resultDir}/OUTPUT.txt -JnodoRunIP=${nodoRunIP} -JnodoRunPort=${nodoRunPort} -JclientIP=${clientIP} -JtestFileDir=${testFileDir} -JlogDir=${logDir} -Jthreads=${threadNumber} -Jduration=${duration} -JthreadsRampUp=${threadsRampUp}  -Jdimensione=${dimensione} -Jprofilo=${profilo} -Jazione=${azione} -JtipoTest=${tipoTest} -Jsoggetto=${soggetto}  -JsleepMin=${sleepMin} -JsleepMax=${sleepMax} -JproxyHost=${proxyHost} -JproxyPort=${proxyPort} -Jprotocollo=${protocollo} -JprofiloSicurezza=${profiloSicurezza}
+			mv ${resultDir}/OUTPUT.txt ${resultDir}/$threadNumber/$dimensione/${profiloSicurezza}_${tipoTest}/${sleepMin}_${sleepMax}/
+			echo "--------- test (profiloSicurezza:${profiloSicurezza} tipoTest:${tipoTest} dimensione:$dimensione threads:$threadNumber) finished"
 		done
 	done
 done
