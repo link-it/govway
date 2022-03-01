@@ -21,6 +21,7 @@
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_1;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_2;
@@ -29,9 +30,13 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,17 +51,25 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
+
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.RequestBuilder;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectations.TipoFault;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
+import org.openspcoop2.pdd.services.cxf.IntegrationManagerException_Exception;
+import org.openspcoop2.pdd.services.cxf.MessageBox;
+import org.openspcoop2.pdd.services.cxf.MessageBoxService;
+import org.openspcoop2.pdd.services.skeleton.IdentificativoIM;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilsException;
+import org.slf4j.Logger;
 
 /**
  * 
@@ -66,6 +79,8 @@ import org.openspcoop2.utils.transport.http.HttpUtilsException;
 public class CommonConsegnaMultipla {
 	
 	public final static EsitiProperties esitiProperties = getEsitiProperties();
+	
+	final static QName SERVICE_NAME_MessageBox = new QName("http://services.pdd.openspcoop2.org", "MessageBoxService");
 	
 	public final static String PROTOCOL_NAME = "trasparente";
 
@@ -78,6 +93,8 @@ public class CommonConsegnaMultipla {
 	public final static int ESITO_CONSEGNA_MULTIPLA_IN_CORSO = 48;
 	
 	public final static int ESITO_ERRORE_PROCESSAMENTO_PDD_4XX = 4;
+	
+	public final static int ESITO_MESSAGE_BOX = 47;
 	
 	public final static int ESITO_3XX = 28;
 	public final static int ESITO_4XX = 29;
@@ -198,6 +215,21 @@ public class CommonConsegnaMultipla {
 		}
 	}
 	
+	public static MessageBox getMessageBox(String username, String password) throws MalformedURLException {
+		String url 	= System.getProperty("connettori.message_box.url");
+
+		URL wsdlLocation							= new URL(url+ "?wsdl");
+		MessageBoxService imMessageBoxService	= new MessageBoxService(wsdlLocation, SERVICE_NAME_MessageBox);
+		MessageBox imMessageBoxPort 						= imMessageBoxService.getMessageBox();
+		BindingProvider imProviderMessageBox 		= (BindingProvider) imMessageBoxPort;
+		
+		imProviderMessageBox.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url);
+		imProviderMessageBox.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, username);
+		imProviderMessageBox.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
+		
+		return imMessageBoxPort;
+	}
+	
 
 	/**
 	 * Esegue requests_per_batch richieste per ogni richiesta della lista.
@@ -295,10 +327,6 @@ public class CommonConsegnaMultipla {
 		assertEquals(Integer.valueOf(responses.size()), count);
 	}
 	
-	
-/*	public static void checkStatoConsegna(HttpResponse response, int esitoPrincipale, int consegneMultipleRimanenti) {
-	
-	}*/
 	
 	public static void checkStatoConsegnaSincrona(HttpResponse response, int esito, int esitoSincrono, int consegneMultipleRimanenti) {
 		String query = "select count(*) from transazioni where id=? and esito = ?  and esito_sincrono = ? and consegne_multiple = ?";
@@ -737,6 +765,60 @@ public class CommonConsegnaMultipla {
 			}
 		}
 	}
+	
+	
+	public static void checkMessageBox(String connettoreMessageBox, MessageBox imMessageBoxPort)
+			throws IntegrationManagerException_Exception {
+		List<String> ids = imMessageBoxPort.getAllMessagesId();
+		assertFalse(ids.isEmpty());
+		Logger logger = ConfigLoader.getLoggerCore();
+		
+		// Recupero il  messaggio, verifico che sia incrementato il contatore dei prelievi e che la data di prelievo sia aggiornata
+		String query = "Select data_primo_prelievo_im from transazioni_sa where identificativo_messaggio = ? and connettore_nome = ? and data_primo_prelievo_im >= ? and data_registrazione >= ? and data_prelievo_im = data_primo_prelievo_im and numero_prelievi_im = 1 and data_eliminazione_im is null";
+		logger.info("Checking db for idMessaggio: " + ids.get(0));
+		IdentificativoIM idAndDate = org.openspcoop2.pdd.services.skeleton.IdentificativoIM.getIdentificativoIM(ids.get(0), logger);
+
+		String idMessaggio = idAndDate.getId();
+		Timestamp dataRegistrazioneMessageBox = Timestamp.from(idAndDate.getData().toInstant());
+		Timestamp dataRiferimentoTest = Timestamp.from(Instant.now());
+
+		imMessageBoxPort.getMessage(idMessaggio);
+
+		logger.info("Checking stato per connettore messageBox: " + idMessaggio + " " + connettoreMessageBox + " " + dataRiferimentoTest.toString() );
+		
+		Timestamp dataPrimoPrelievo = ConfigLoader.getDbUtils().readValue(query, Timestamp.class, idMessaggio,	connettoreMessageBox, dataRiferimentoTest, dataRegistrazioneMessageBox); 
+		
+		// scarico nuovamente il singolo messaggio per verificare aggiornamenti dei contatori e delle data, verificando che sia mantenuta la data di primo prelievo
+		query = "Select count(*) from transazioni_sa where identificativo_messaggio = ? and connettore_nome = ? and data_primo_prelievo_im = ? and data_prelievo_im >= ? and numero_prelievi_im = 2 and data_eliminazione_im is null";
+		dataRiferimentoTest = Timestamp.from(Instant.now());
+
+		imMessageBoxPort.getMessage(idMessaggio);
+
+		logger.info("Checking secondo prelievo per connettore messageBox: " + idMessaggio + " " + connettoreMessageBox + " " + dataRiferimentoTest.toString() );
+
+		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, idMessaggio,	connettoreMessageBox, dataPrimoPrelievo, dataRiferimentoTest);
+		assertEquals(Integer.valueOf(1), count);
+				
+		// elimino il messaggio, verifico che la data di eliminazione sia valorizzata e la consegna completata.
+
+		dataRiferimentoTest = Timestamp.from(Instant.now());
+		imMessageBoxPort.deleteMessage(idMessaggio);
+		 
+		query = "Select count(*) from transazioni_sa where identificativo_messaggio = ? and connettore_nome = ? and data_primo_prelievo_im = ? and data_eliminazione_im >= ? and  consegna_terminata = ? and numero_prelievi_im = 2";
+		count = ConfigLoader.getDbUtils().readValue(query, Integer.class, idMessaggio,connettoreMessageBox, dataPrimoPrelievo, dataRiferimentoTest,true);
+		assertEquals(Integer.valueOf(1), count);
+	}
+	
+	
+	public static void checkConsegnaTerminataNoStatusCode(HttpResponse response, String connettore) {
+		String idTransazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+		
+		String query = "select count(*) from transazioni_sa where id_transazione=? and connettore_nome = ?  and consegna_terminata = ? and dettaglio_esito = 0";
+		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, idTransazione, connettore, true);
+		assertEquals(Integer.valueOf(1), count);
+	}
+	
+	
 
 	/** 
 	 * Controlla che la richiesta sia stata inoltrata su file dai set di connettori indicati.

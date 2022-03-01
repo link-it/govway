@@ -20,6 +20,7 @@
 
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_0;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_1;
@@ -41,6 +42,7 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -54,6 +56,8 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.RequestBuilder;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectations.TipoFault;
+import org.openspcoop2.pdd.services.cxf.IntegrationManagerException_Exception;
+import org.openspcoop2.pdd.services.cxf.MessageBox;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
@@ -621,6 +625,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 			}	
 		}
 
+	
 	@Test
 	public void connettoreRotto() {
 		// Va come il primo test, ci si aspetta che funzionino tutti i connettori
@@ -673,6 +678,97 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 				CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(r, connettore, ESITO_OK, 200, fault, formatoFault);
 			}
 		}
+	}
+	
+	
+	@Test
+	public void integrationManager() throws MalformedURLException, IntegrationManagerException_Exception {
+		/**
+		 * Diversamente dalla consegna con notifiche, In questa erogazione la messageBox è fornita da un applicativo server.
+		 */
+		
+		String erogazione 							= "TestConsegnaMultiplaIntegrationManager";
+		String connettoreMessageBox 	= Common.CONNETTORE_0;
+		Set<String> connettoriSuccesso = Set.of(Common.CONNETTORE_1,Common.CONNETTORE_2,Common.CONNETTORE_3);
+		
+		String username	= "UtenteTestApplicativoMessageBox";
+		String password 	= "JzpvsjyUU63z5RB38#4F";
+		
+		MessageBox imMessageBoxPort = CommonConsegnaMultipla.getMessageBox(username, password);
+		
+		HttpRequest request1 = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1);
+		HttpRequest request2 = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_2);
+
+		var responsesSoap1 = Common.makeParallelRequests(request1, 10);
+		var responsesSoap2 = Common.makeParallelRequests(request2, 10);
+
+		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
+		for (var response : responsesSoap1) {
+			assertEquals(200, response.getResultHTTPOperation());
+			CommonConsegnaMultipla.checkPresaInConsegna(response, Common.setConnettoriAbilitati.size());
+			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(response, Common.setConnettoriAbilitati);
+			
+			// check consegna_im
+			String query = "select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ? and consegna_im = ? ";
+			
+			String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+			Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettoreMessageBox, true);
+			assertEquals(Integer.valueOf(1), count);
+		}
+		
+		// Ripeto per soap2
+		for (var response : responsesSoap2) {
+			assertEquals(200, response.getResultHTTPOperation());
+			CommonConsegnaMultipla.checkPresaInConsegna(response, Common.setConnettoriAbilitati.size());
+			CommonConsegnaMultipla.checkSchedulingConnettoreIniziato(response, Common.setConnettoriAbilitati);	
+			
+			// check consegna_im
+			String query = "select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ? and consegna_im = ? ";
+			
+			String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+			Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettoreMessageBox, true);
+			assertEquals(Integer.valueOf(1), count);
+		}
+	
+		// Attendo la consegna
+		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
+
+		// Controllo che le notifiche siano completate sui connettori non message box
+		for (var response : responsesSoap1) {
+			CommonConsegnaMultipla.checkStatoConsegna(response, CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_IN_CORSO, 1);
+			for (var connettore : connettoriSuccesso) {
+				CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, connettore,ESITO_OK, 200, "" , "");
+			}
+			// Controllo che lo scheduling sia stato effettuato solo sui connettori indicati, ci metto anche quello che fa da MessageBox
+			CommonConsegnaMultipla.checkConnettoriRaggiuntiEsclusivamente(response, Common.setConnettoriAbilitati);
+		}
+		
+		// ripeto per soap2
+		for (var response : responsesSoap2) {
+			CommonConsegnaMultipla.checkStatoConsegna(response, CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_IN_CORSO, 1);
+			for (var connettore : connettoriSuccesso) {
+				CommonConsegnaMultipla.checkSchedulingConnettoreCompletato(response, connettore,ESITO_OK, 200, "" , "");			
+			}
+			// Controllo che lo scheduling sia stato effettuato solo sui connettori indicati, ci metto anche quello che fa da MessageBox
+			CommonConsegnaMultipla.checkConnettoriRaggiuntiEsclusivamente(response, Common.setConnettoriAbilitati);		
+		}
+		
+		CommonConsegnaMultipla.checkMessageBox(connettoreMessageBox, imMessageBoxPort);
+		
+		// Adesso cancello tutti i messaggi in pancia in modo che la consegna risulti completata
+		imMessageBoxPort.deleteAllMessages();
+		
+		org.openspcoop2.utils.Utilities.sleep(CommonConsegnaMultipla.intervalloControllo);
+		
+		for (var response : responsesSoap1) {
+			CommonConsegnaMultipla.checkStatoConsegna(response, CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_COMPLETATA, 0);
+			CommonConsegnaMultipla.checkConsegnaTerminataNoStatusCode(response, connettoreMessageBox);
+		}
+		for (var response : responsesSoap2) {
+			CommonConsegnaMultipla.checkStatoConsegna(response, CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_COMPLETATA, 0);
+			CommonConsegnaMultipla.checkConsegnaTerminataNoStatusCode(response, connettoreMessageBox);
+		}
+		
 	}
 
 }
