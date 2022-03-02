@@ -449,8 +449,8 @@ public class SoapTest extends ConfigLoader {
 							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, ultimoErrore, locationUltimoErrore);
 							assertEquals(Integer.valueOf(1), count);
 						} else {
-							query += " and fault_ultimo_errore = ? and formato_fault_ultimo_errore = ? and cluster_id_ultimo_errore = 'IDGW'";
-							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, ultimoErrore, locationUltimoErrore, fault, formatoFault);
+							query += " and fault_ultimo_errore LIKE '"+fault+"' and formato_fault_ultimo_errore = ? and cluster_id_ultimo_errore = 'IDGW'";
+							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, ultimoErrore, locationUltimoErrore, formatoFault);
 							assertEquals(Integer.valueOf(1), count);
 						}
 					}
@@ -535,8 +535,8 @@ public class SoapTest extends ConfigLoader {
 							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, ultimoErrore, locationUltimoErrore);
 							assertEquals(Integer.valueOf(1), count);
 						} else {
-							query += " and fault_ultimo_errore = ? and formato_fault_ultimo_errore = ?";
-							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, ultimoErrore, locationUltimoErrore, fault, formatoFault);
+							query += " and fault_ultimo_errore LIKE '"+fault+"' and formato_fault_ultimo_errore = ?";
+							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, ultimoErrore, locationUltimoErrore, formatoFault);
 							assertEquals(Integer.valueOf(1), count);
 						}
 					}
@@ -1073,7 +1073,7 @@ public class SoapTest extends ConfigLoader {
 			
 			List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 			
-			for(int i=0; i<5;i++) {
+			for(int i=0; i<4;i++) {
 				final String soapContentType = i % 2 == 0 ? HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
 				int statusCode = 500+i;
 				HttpRequest request5xx = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", soapContentType);

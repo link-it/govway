@@ -239,8 +239,8 @@ public class RestTest extends ConfigLoader{
 							assertEquals(Integer.valueOf(1), count);
 						} else {
 							getLoggerCore().info("QUI");
-							query += " and fault_ultimo_errore = ? and formato_fault_ultimo_errore = ? and cluster_id_ultimo_errore = 'IDGW'";
-							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, ultimoErrore, locationUltimoErrore, fault, formatoFault);
+							query += " and fault_ultimo_errore LIKE '"+fault+"' and formato_fault_ultimo_errore = ? and cluster_id_ultimo_errore = 'IDGW'";
+							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, ultimoErrore, locationUltimoErrore, formatoFault);
 							assertEquals(Integer.valueOf(1), count);
 						}
 					}
@@ -317,8 +317,8 @@ public class RestTest extends ConfigLoader{
 							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, ultimoErrore, locationUltimoErrore);
 							assertEquals(Integer.valueOf(1), count);
 						} else {
-							query += " and fault_ultimo_errore = ? and formato_fault_ultimo_errore = ?";
-							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, ultimoErrore, locationUltimoErrore, fault, formatoFault);
+							query += " and fault_ultimo_errore LIKE '"+fault+"' and formato_fault_ultimo_errore = ?";
+							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, ultimoErrore, locationUltimoErrore, formatoFault);
 							assertEquals(Integer.valueOf(1), count);
 						}
 					}

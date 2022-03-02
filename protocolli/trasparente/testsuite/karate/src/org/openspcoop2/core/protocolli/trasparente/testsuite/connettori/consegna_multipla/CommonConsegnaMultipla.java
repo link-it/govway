@@ -354,11 +354,13 @@ public class CommonConsegnaMultipla {
 		ConfigLoader.getLoggerCore().info("Checking stato consegna for transazione:  " + id_transazione + " AND esito = " + esito + " AND consegne-rimanenti: " + consegneMultipleRimanenti + " AND esito-sincrono: " + esitoSincrono);
 		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class,  id_transazione, esito, esitoSincrono, consegneMultipleRimanenti);
 		
-		// Uncoment for debug
-		String query2 = "select esito, esito_sincrono, consegne_multiple from transazioni where id = ?";
-		List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, id_transazione);
-		for (var v : letto) {
-			ConfigLoader.getLoggerCore().info(v.toString());
+		// debug for error
+		if(count.intValue() != 1) {
+			String query2 = "select esito, esito_sincrono, consegne_multiple from transazioni where id = ?";
+			List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, id_transazione);
+			for (var v : letto) {
+				ConfigLoader.getLoggerCore().info(v.toString());
+			}
 		}
 		
 		assertEquals(Integer.valueOf(1), count);
@@ -374,12 +376,14 @@ public class CommonConsegnaMultipla {
 		ConfigLoader.getLoggerCore().info("Checking stato consegna for transazione:  " + id_transazione + " AND esito = " + esito + " AND consegne-rimanenti: " + consegneMultipleRimanenti);
 		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class,  id_transazione, esito, consegneMultipleRimanenti);
 		
-		// Uncoment for debug
-		/*String query2 = "select esito, esito_sincrono, consegne_multiple from transazioni where id = ?";
-		List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, id_transazione);
-		for (var v : letto) {
-			ConfigLoader.getLoggerCore().info(v.toString());
-		}*/
+		// debug for error
+		if(count.intValue() != 1) {
+			String query2 = "select esito, esito_sincrono, consegne_multiple from transazioni where id = ?";
+			List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, id_transazione);
+			for (var v : letto) {
+				ConfigLoader.getLoggerCore().info(v.toString());
+			}
+		}
 		
 		assertEquals(Integer.valueOf(1), count);
 	}
@@ -440,8 +444,8 @@ public class CommonConsegnaMultipla {
 			query += " and fault is null and formato_fault is null";
 			count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, false, esitoConsegna,statusCode);
 		} else {
-			query += " and fault = ? and formato_fault = ?";
-			count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, false, esitoConsegna,statusCode, fault, formatoFault);
+			query += " and fault LIKE '"+fault+"' and formato_fault = ?";
+			count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, false, esitoConsegna,statusCode, formatoFault);
 		}
 		
 		assertEquals(Integer.valueOf(1), count);
@@ -467,8 +471,8 @@ public class CommonConsegnaMultipla {
 				query += " and fault is null and formato_fault is null";
 				count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, true, esitoConsegna, statusCode);
 			} else {
-				query += " and fault = ? and formato_fault = ?";
-				count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, true, esitoConsegna, statusCode, fault, formatoFault);
+				query += " and fault LIKE '"+fault+"' and formato_fault = ?";
+				count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, true, esitoConsegna, statusCode, formatoFault);
 			}
 			
 			assertEquals(Integer.valueOf(1), count);				
