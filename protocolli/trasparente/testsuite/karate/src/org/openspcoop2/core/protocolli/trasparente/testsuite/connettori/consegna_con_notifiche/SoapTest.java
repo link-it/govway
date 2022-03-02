@@ -35,6 +35,7 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.ESITO_OK;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.FORMATO_FAULT_SOAP1_1;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.FORMATO_FAULT_SOAP1_2;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkNessunaNotifica;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkPresaInConsegna;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkSchedulingConnettoreCompletato;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkSchedulingConnettoreInCorso;
@@ -379,7 +380,7 @@ public class SoapTest extends ConfigLoader {
 				checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 			} else {
 				for (var response : responses) {
-					CommonConsegnaMultipla.checkNessunaNotifica(response);
+					checkNessunaNotifica(response);
 					CommonConsegnaMultipla.checkNessunoScheduling(response);
 				}
 			}
@@ -665,7 +666,7 @@ public class SoapTest extends ConfigLoader {
 		for (var r : responsesErroreProcessamento) {
 			getLoggerCore().info("Checking status code for transaction: " + r.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE));
 			assertEquals(500, r.getResultHTTPOperation());
-			CommonConsegnaMultipla.checkNessunaNotifica(r);
+			checkNessunaNotifica(r);
 			CommonConsegnaMultipla.checkNessunoScheduling(r);
 		}
 
@@ -699,7 +700,7 @@ public class SoapTest extends ConfigLoader {
 		for (var r : responsesErroreProcessamento) {
 			getLoggerCore().info("Checking status code for transaction: " + r.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE));
 			assertEquals(500, r.getResultHTTPOperation());
-			CommonConsegnaMultipla.checkNessunaNotifica(r);
+			checkNessunaNotifica(r);
 			CommonConsegnaMultipla.checkNessunoScheduling(r);
 		}
 
@@ -904,7 +905,7 @@ public class SoapTest extends ConfigLoader {
 				checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 			} else {
 				for (var response : responses) {
-					CommonConsegnaMultipla.checkNessunaNotifica(response);
+					CommonConsegnaMultipla.withBackoff( () -> checkNessunaNotifica(response));
 					CommonConsegnaMultipla.checkNessunoScheduling(response);
 				}
 			}
@@ -956,14 +957,14 @@ public class SoapTest extends ConfigLoader {
 		for (var r : responses) {
 			// Le richieste che vedono fallita la transazione principale con un 401, ottengono un 500
 			assertEquals(500 , r.getResultHTTPOperation());
-			CommonConsegnaMultipla.withBackoff( () -> CommonConsegnaMultipla.checkNessunaNotifica(r));
+			CommonConsegnaMultipla.withBackoff( () -> checkNessunaNotifica(r));
 			CommonConsegnaMultipla.checkNessunoScheduling(r);
 		}
 		
 		for (var r : responses2) {
 			// Le richieste che vedono fallita la transazione principale, ottengono un 500
 			assertEquals(500 , r.getResultHTTPOperation());
-			CommonConsegnaMultipla.checkNessunaNotifica(r);
+			checkNessunaNotifica(r);
 			CommonConsegnaMultipla.checkNessunoScheduling(r);
 		}
 	}
@@ -1024,7 +1025,7 @@ public class SoapTest extends ConfigLoader {
 				checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 			} else {
 				for (var response : responses) {
-					CommonConsegnaMultipla.checkNessunaNotifica(response);
+					CommonConsegnaMultipla.withBackoff( () -> checkNessunaNotifica(response));
 					CommonConsegnaMultipla.checkNessunoScheduling(response);
 				}
 			}
@@ -1128,7 +1129,7 @@ public class SoapTest extends ConfigLoader {
 					checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 				} else {
 					for (var response : responses) {
-						CommonConsegnaMultipla.checkNessunaNotifica(response);
+						CommonConsegnaMultipla.withBackoff( () -> checkNessunaNotifica(response));
 						CommonConsegnaMultipla.checkNessunoScheduling(response);
 					}
 				}
@@ -1212,7 +1213,7 @@ public class SoapTest extends ConfigLoader {
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
 		for (var r : responses) {
 			assertEquals(200, r.getResultHTTPOperation());
-			checkPresaInConsegna(r, connettoriSchedulati.size());
+			CommonConsegnaMultipla.withBackoff( () -> checkPresaInConsegna(r, connettoriSchedulati.size()));
 			checkSchedulingConnettoreIniziato(r, connettoriSchedulati);	
 		}
 		for (var r : responses2) {

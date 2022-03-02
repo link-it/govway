@@ -340,35 +340,38 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 			
 			// In "errore di consegna" rientrano tutti  i 4xx e tutti i 5xx da 501 in poi, 
 			// Quindi in questo test tutte le 2xx, 4xx e 5xx vengono notificate.					
-			
 			requestsByKind.add(current);
-			
-			request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
-			request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
-			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request=FiltroInesistente");
-			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode,connettoriSuccesso, Set.of(Common.CONNETTORE_3));
-			/*if (CommonConsegnaMultipla.isEsitoErrore(statusCode)) {
-				current.esitoSincrono = CommonConsegnaMultipla.ESITO_ERRORE_APPLICATIVO;
-			}*/
-			if (statusCode == 401) {
-				current.esitoSincrono = CommonConsegnaMultipla.ESITO_ERRORE_INVOCAZIONE; 
-			}
-			requestsByKind.add(current);
-			
-			if (current.principaleSuperata) {
-				toCheckForDiagnostici.add(current);
-			}
 			i++;
 		}
+		
+		// Richiesta NCU
+		HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  HttpConstants.CONTENT_TYPE_SOAP_1_1);
+		int statusCode = 201;
+		var connettoriSuccesso = CommonConsegnaMultipla.statusCode2xxVsConnettori.get(statusCode);
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request=FiltroInesistente");
+		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode,connettoriSuccesso, Set.of(Common.CONNETTORE_3));
+		requestsByKind.add(current);
+		toCheckForDiagnostici.add(current);
+		
+	
+		request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  HttpConstants.CONTENT_TYPE_SOAP_1_2);
+		statusCode = 202;
+		connettoriSuccesso = CommonConsegnaMultipla.statusCode2xxVsConnettori.get(statusCode);
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request=FiltroInesistente");
+		current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode,connettoriSuccesso, Set.of(Common.CONNETTORE_3));
+		requestsByKind.add(current);
+		toCheckForDiagnostici.add(current);
 		
 		// Aggiungo Due richieste SoapFault, che devono passare.
 		String pool = Common.POOL_0;
 		String filtro = Common.filtriPools.get(pool).get(0);
-		var connettoriSuccesso = Set.of(CONNETTORE_0, CONNETTORE_2, CONNETTORE_3);
+		connettoriSuccesso = Set.of(CONNETTORE_0, CONNETTORE_2, CONNETTORE_3);
 		var connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
 		HttpRequest requestSoapFault = RequestBuilder.buildSoapRequestFault(erogazione, "TestConsegnaMultipla", "test", HttpConstants.CONTENT_TYPE_SOAP_1_1);
 		requestSoapFault.setUrl(requestSoapFault.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
-		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(requestSoapFault, 500, connettoriSuccesso, connettoriPool);
+		current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(requestSoapFault, 500, connettoriSuccesso, connettoriPool);
 		current.tipoFault = TipoFault.SOAP1_1;
 		
 		requestsByKind.add(current);

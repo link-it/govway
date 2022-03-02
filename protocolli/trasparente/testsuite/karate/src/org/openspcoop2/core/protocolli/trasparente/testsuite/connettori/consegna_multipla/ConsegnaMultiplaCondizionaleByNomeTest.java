@@ -107,15 +107,24 @@ public class ConsegnaMultiplaCondizionaleByNomeTest extends ConfigLoader {
 			var current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), Set.of(filtro));
 			requestsByKind.add(current);
 			
-			filtro = Common.CONNETTORE_DISABILITATO;
-			request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
-			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-			request.addHeader(Common.HEADER_ID_CONDIZIONE, filtro);
-			current = new RequestAndExpectations(request, Set.of(), Set.of(), CommonConsegnaMultipla.ESITO_ERRORE_PROCESSAMENTO_PDD_4XX, 500);
-			requestsByKind.add(current);
-			
 			i++;
 		}
+		
+		String filtro = Common.CONNETTORE_DISABILITATO;
+		HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  HttpConstants.CONTENT_TYPE_SOAP_1_1);
+		int statusCode = 201;
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.addHeader(Common.HEADER_ID_CONDIZIONE, filtro);
+		var current = new RequestAndExpectations(request, Set.of(), Set.of(), CommonConsegnaMultipla.ESITO_ERRORE_PROCESSAMENTO_PDD_4XX, 500);
+		requestsByKind.add(current);
+		
+		filtro = Common.CONNETTORE_DISABILITATO;
+		request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  HttpConstants.CONTENT_TYPE_SOAP_1_2);
+		statusCode = 202;
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.addHeader(Common.HEADER_ID_CONDIZIONE, filtro);
+		current = new RequestAndExpectations(request, Set.of(), Set.of(), CommonConsegnaMultipla.ESITO_ERRORE_PROCESSAMENTO_PDD_4XX, 500);
+		requestsByKind.add(current);
 		
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		

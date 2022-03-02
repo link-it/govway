@@ -699,7 +699,7 @@ public class RestTest extends ConfigLoader{
 				checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 			} else {
 				for (var response : responses) {
-					checkNessunaNotifica(response);
+					CommonConsegnaMultipla.withBackoff( () -> checkNessunaNotifica(response));
 					checkNessunoScheduling(response);
 				}
 			}
@@ -754,7 +754,6 @@ public class RestTest extends ConfigLoader{
 	}
 	
 	
-	@Test
 	public void varieCombinazioniDiRegole(Map<Integer,Set<String>> statusCodeVsConnettori) {
 		/**
 		 * Qui si testa la corretta rispedizione di richieste diverse su connettori diversi.
@@ -800,7 +799,7 @@ public class RestTest extends ConfigLoader{
 				checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 			} else {
 				for (var response : responses) {
-					checkNessunaNotifica(response);
+					CommonConsegnaMultipla.withBackoff( () -> checkNessunaNotifica(response));
 					checkNessunoScheduling(response);
 				}
 			}
@@ -893,7 +892,7 @@ public class RestTest extends ConfigLoader{
 					checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 				} else {
 					for (var response : responses) {
-						checkNessunaNotifica(response);
+						CommonConsegnaMultipla.withBackoff( () -> checkNessunaNotifica(response));
 						checkNessunoScheduling(response);
 					}
 				}

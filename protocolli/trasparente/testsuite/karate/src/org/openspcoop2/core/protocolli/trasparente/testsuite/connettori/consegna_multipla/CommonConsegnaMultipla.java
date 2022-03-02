@@ -263,6 +263,7 @@ public class CommonConsegnaMultipla {
 				//ConfigLoader.getLoggerCore().debug("Errore che causa il prossimo delay: "+t.getMessage(),t);
 			}
 		}
+		throw new RuntimeException("Tentativi di backoff esauriti");
 	}
 
 	/**
