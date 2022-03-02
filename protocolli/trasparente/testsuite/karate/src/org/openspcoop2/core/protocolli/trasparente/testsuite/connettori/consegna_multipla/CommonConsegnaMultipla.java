@@ -237,11 +237,18 @@ public class CommonConsegnaMultipla {
 	
 	public static void withBackoff(Runnable r) {
 		int[] delays =  {100, 500, 2000, 5000};
-		for(int delay : delays) {
+		for (int i = 0; i < delays.length; i++) {
+			int delay = delays[i];
+			if(i>0) {
+				ConfigLoader.getLoggerCore().debug("Attivo delay a '"+delay+"'");
+			}
 			Utilities.sleep(delay);
 			try {
 				r.run(); return;
-			} catch (Throwable t) { }
+			} catch (Throwable t) {
+				ConfigLoader.getLoggerCore().debug("Errore che causa il prossimo delay: "+t.getMessage());
+				//ConfigLoader.getLoggerCore().debug("Errore che causa il prossimo delay: "+t.getMessage(),t);
+			}
 		}
 	}
 
@@ -256,15 +263,23 @@ public class CommonConsegnaMultipla {
 		int nThreads = Common.sogliaRichiesteSimultanee; 
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nThreads);
 		
+//		int req = 0;
+		
 		for (var request : requests) {			
 			responses.put(request, new Vector<>());
 			
 			for (int i = 0; i<requests_per_batch; i++) {
 				executor.execute( () -> {
 					responses.get(request).add(Utils.makeRequest(request.request));
-					org.openspcoop2.utils.Utilities.sleep(thread_sleep_after_request);
 				});
-			}			
+			}
+			
+			// TODO: ripulire la proprietà e anche thread_sleep_after_request se si vede che non serve piu'
+//			req++;
+//			if(req==15) {
+//				org.openspcoop2.utils.Utilities.sleep(thread_sleep_after_request);
+//				req=0;
+//			}
 		}
 		try {
 			executor.shutdown();
@@ -335,11 +350,11 @@ public class CommonConsegnaMultipla {
 		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class,  id_transazione, esito, esitoSincrono, consegneMultipleRimanenti);
 		
 		// Uncoment for debug
-		/*String query2 = "select esito, esito_sincrono, consegne_multiple from transazioni where id = ?";
+		String query2 = "select esito, esito_sincrono, consegne_multiple from transazioni where id = ?";
 		List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, id_transazione);
 		for (var v : letto) {
 			ConfigLoader.getLoggerCore().info(v.toString());
-		}*/
+		}
 		
 		assertEquals(Integer.valueOf(1), count);
 	}
@@ -395,6 +410,13 @@ public class CommonConsegnaMultipla {
 		String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
 		ConfigLoader.getLoggerCore().info("Checking scheduling connettore iniziato for transazione:  " + id_transazione + " AND connettore = " + connettore);
 		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, false);
+		if(count.intValue()!=1) {
+			String query2 = "select consegna_terminata,numero_tentativi,identificativo_messaggio from transazioni_sa where id_transazione=? and connettore_nome = ?";
+			List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, id_transazione, connettore);
+			for (var v : letto) {
+				ConfigLoader.getLoggerCore().info(v.toString());
+			}
+		}
 		assertEquals(Integer.valueOf(1), count);
 	}
 	
