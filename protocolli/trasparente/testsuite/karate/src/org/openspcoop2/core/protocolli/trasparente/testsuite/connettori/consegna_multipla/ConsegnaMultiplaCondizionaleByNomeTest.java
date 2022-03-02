@@ -227,6 +227,7 @@ public class ConsegnaMultiplaCondizionaleByNomeTest extends ConfigLoader {
 	
 	@Test
 	public void regole() throws UtilsException {
+		// TODO: Separa
 		final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeRegole";
 		final String CONNETTORE_LOCALHOST = "127.0.0.1";
 

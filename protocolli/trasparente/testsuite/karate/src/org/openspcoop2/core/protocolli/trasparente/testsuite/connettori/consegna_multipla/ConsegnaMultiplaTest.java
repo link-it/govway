@@ -102,7 +102,17 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 	public static void After() {
 		Common.fermaRiconsegne(dbUtils);
 	}
+	
+	@Test
+	public void varieCombinazioniDiRegole2xx_4xx() {
+		varieCombinazioniDiRegole(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void varieCombinazioniDiRegole5xx() {
+		varieCombinazioniDiRegole(CommonConsegnaMultipla.statusCode5xxVsConnettori);
+	}
 
+	
 	@Test
 	public void schedulingAbilitatoDisabilitato() throws UtilsException, HttpUtilsException {
 		/*
@@ -116,8 +126,8 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		HttpRequest request1 = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1);
 		HttpRequest request2 = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_2);
 		
-		var responses = Common.makeParallelRequests(request1, 10);
-		var responses2 = Common.makeParallelRequests(request2, 10);
+		var responses = Common.makeParallelRequests(request1, 5);
+		var responses2 = Common.makeParallelRequests(request2, 5);
 		Common.checkAll200(responses);
 		Common.checkAll200(responses2);
 		
@@ -187,8 +197,8 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		HttpRequest request1 = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1);
 		HttpRequest request2 = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_2);
 		
-		var responses = Common.makeParallelRequests(request1, 10);
-		var responses2 = Common.makeParallelRequests(request2, 10);
+		var responses = Common.makeParallelRequests(request1, 5);
+		var responses2 = Common.makeParallelRequests(request2, 5);
 		Common.checkAll200(responses);
 		Common.checkAll200(responses2);
 		
@@ -246,7 +256,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		Set<String> connettoriFallimentoRequest = Set.of(CONNETTORE_0, CONNETTORE_1);
 		
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
-		for(int i=0; i<10;i++) {
+		for(int i=0; i<4;i++) {
 			final String soapContentType = i % 2 == 0 ? HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
 			
 			HttpRequest request5xx = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", soapContentType );
@@ -308,8 +318,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 	}
 	
 	
-	@Test
-	public void varieCombinazioniDiRegole() {
+	public void varieCombinazioniDiRegole(Map<Integer,Set<String>> statusCodeVsConnettori) {
 		/**
 		 * Qui si testa la corretta rispedizione di richieste diverse su connettori diversi.
 		 * Vengono testati tutte le regole. 
@@ -319,7 +328,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 		
 		int i = 0;
-		for (var entry : CommonConsegnaMultipla.statusCodeVsConnettori.entrySet()) {
+		for (var entry : statusCodeVsConnettori.entrySet()) {
 			final String soapContentType = i % 2 == 0 ? HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
 			int statusCode = entry.getKey();
 			var connettoriSuccesso = entry.getValue();
@@ -554,7 +563,7 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 			
 			List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 			
-			for(int i=0; i<10;i++) {
+			for(int i=0; i<4;i++) {
 				final String soapContentType = i % 2 == 0 ? HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
 				HttpRequest request5xx = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", soapContentType );
 				request5xx.setUrl(request5xx.getUrl()+"&returnCode=" + (500+i));
@@ -639,8 +648,8 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		HttpRequest request1 = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1);
 		HttpRequest request2 = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_2);
 		
-		var responses = Common.makeParallelRequests(request1, 10);
-		var responses2 = Common.makeParallelRequests(request2, 10);
+		var responses = Common.makeParallelRequests(request1, 5);
+		var responses2 = Common.makeParallelRequests(request2, 5);
 		
 		Common.checkAll200(responses);
 		Common.checkAll200(responses2);
@@ -702,8 +711,8 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 		HttpRequest request1 = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1);
 		HttpRequest request2 = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_2);
 
-		var responsesSoap1 = Common.makeParallelRequests(request1, 10);
-		var responsesSoap2 = Common.makeParallelRequests(request2, 10);
+		var responsesSoap1 = Common.makeParallelRequests(request1, 5);
+		var responsesSoap2 = Common.makeParallelRequests(request2, 5);
 
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
 		for (var response : responsesSoap1) {

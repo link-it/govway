@@ -129,6 +129,14 @@ public class SoapTest extends ConfigLoader {
 	}
 	
 
+	@Test
+	public void varieCombinazioniDiRegole2xx_4xx() {
+		varieCombinazioniDiRegole(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void varieCombinazioniDiRegole5xx() {
+		varieCombinazioniDiRegole(CommonConsegnaMultipla.statusCode5xxVsConnettori);
+	}
 
 	@Test
 	public void consegnaConNotificheSemplice() throws IOException {
@@ -140,8 +148,8 @@ public class SoapTest extends ConfigLoader {
 		HttpRequest request1 = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1);
 		HttpRequest request2 = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_2);
 
-		var responses = Common.makeParallelRequests(request1, 10);
-		var responses2 = Common.makeParallelRequests(request2, 10);
+		var responses = Common.makeParallelRequests(request1, 5);
+		var responses2 = Common.makeParallelRequests(request2, 5);
 
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
 		for (var r : responses) {
@@ -595,8 +603,8 @@ public class SoapTest extends ConfigLoader {
  		requestErroreProcessamentoOK =  RequestBuilder.buildSoapRequest(erogazione, "TestRegolaContenuto",   "SA_TestRegolaContenuto",  soapContentType); 	
  		requestErroreProcessamentoOK.setUrl(requestErroreProcessamentoOK.getUrl()+"&returnCode=200");
 
-		responsesOk = Common.makeParallelRequests(requestOk, 10);
-		responsesErroreProcessamentoOK = Common.makeParallelRequests(requestErroreProcessamentoOK, 10);
+		responsesOk = Common.makeParallelRequests(requestOk, 5);
+		responsesErroreProcessamentoOK = Common.makeParallelRequests(requestErroreProcessamentoOK, 5);
 
 		for (var r : responsesOk) {
 			assertEquals(200, r.getResultHTTPOperation());
@@ -679,8 +687,8 @@ public class SoapTest extends ConfigLoader {
  		requestErroreProcessamento =  RequestBuilder.buildSoapRequest(erogazione, "TestRegolaContenuto",   "SA_TestRegolaContenuto",  soapContentType); 	
  		requestErroreProcessamento.setUrl(requestErroreProcessamento.getUrl()+"&returnCode=200");
 
-		responsesOk = Common.makeParallelRequests(requestOk, 10);
-		responsesErroreProcessamento = Common.makeParallelRequests(requestErroreProcessamento, 10);
+		responsesOk = Common.makeParallelRequests(requestOk, 5);
+		responsesErroreProcessamento = Common.makeParallelRequests(requestErroreProcessamento, 5);
 
 		for (var r : responsesOk) {
 			assertEquals(200, r.getResultHTTPOperation());
@@ -721,8 +729,8 @@ public class SoapTest extends ConfigLoader {
 		HttpRequest request1 = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1);
 		HttpRequest request2 = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_2);
 		
-		var responses = Common.makeParallelRequests(request1, 10);
-		var responses2 = Common.makeParallelRequests(request2, 10);
+		var responses = Common.makeParallelRequests(request1, 5);
+		var responses2 = Common.makeParallelRequests(request2, 5);
 		Common.checkAll200(responses);
 		Common.checkAll200(responses2);
 		
@@ -786,12 +794,14 @@ public class SoapTest extends ConfigLoader {
 	@Test
 	public void consegnaConNotificheNonCondizionale() {
 		// Non c'è la condizionalità sulla transazione sincrona, per cui si comporta come una consegna multipla classica
+		// Questa non la divido anche per i 3xx e 5xx visto che stiamo testando tutt'altra funzionalità
+
 		final String erogazione = "TestConsegnaConNotificheNonCondizionaleSoap";
 		
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 		
 		int i = 0;
-		for (var entry : CommonConsegnaMultipla.statusCodeVsConnettori.entrySet()) {
+		for (var entry : CommonConsegnaMultipla.statusCode2xx4xxVsConnettori.entrySet()) {
 			final String soapContentType = i % 2 == 0 ? HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
 			int statusCode = entry.getKey();
 			var connettoriSuccesso = entry.getValue();
@@ -940,8 +950,8 @@ public class SoapTest extends ConfigLoader {
 		HttpRequest request2 = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_2);
 		request2.setUrl(request2.getUrl()+"&returnCode=401");
 		
-		var responses = Common.makeParallelRequests(request1, 10);
-		var responses2 = Common.makeParallelRequests(request2, 10);
+		var responses = Common.makeParallelRequests(request1, 5);
+		var responses2 = Common.makeParallelRequests(request2, 5);
 		
 		for (var r : responses) {
 			// Le richieste che vedono fallita la transazione principale con un 401, ottengono un 500
@@ -959,8 +969,7 @@ public class SoapTest extends ConfigLoader {
 	}
 	
 	
-	@Test
-	public void varieCombinazioniDiRegole() {
+	public void varieCombinazioniDiRegole(Map<Integer, Set<String>> statusCodeVsConnettori) {
 		// La consegna sincrona ha successo in caso di 200 o di soap fault. In questo test alcune transazioni
 		// principali falliscono, altre no e per queste viene schedulata la consegna. Controllo che tale scheduling sia corretto.
 		final String erogazione = "TestConsegnaConNotificheSoapVarieCombinazioniDiRegole";
@@ -968,7 +977,7 @@ public class SoapTest extends ConfigLoader {
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 		
 		int i = 0;
-		for (var entry : CommonConsegnaMultipla.statusCode5xxVsConnettori.entrySet()) {
+		for (var entry : statusCodeVsConnettori.entrySet()) {
 			final String soapContentType = i % 2 == 0 ? HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
 			int statusCode = entry.getKey();
 			var connettoriSuccesso = entry.getValue();
@@ -1063,7 +1072,7 @@ public class SoapTest extends ConfigLoader {
 			
 			List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 			
-			for(int i=0; i<10;i++) {
+			for(int i=0; i<5;i++) {
 				final String soapContentType = i % 2 == 0 ? HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
 				int statusCode = 500+i;
 				HttpRequest request5xx = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", soapContentType);
@@ -1253,8 +1262,8 @@ public class SoapTest extends ConfigLoader {
 		HttpRequest request1 = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_1);
 		HttpRequest request2 = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test", HttpConstants.CONTENT_TYPE_SOAP_1_2);
 
-		var responsesSoap1 = Common.makeParallelRequests(request1, 10);
-		var responsesSoap2 = Common.makeParallelRequests(request2, 10);
+		var responsesSoap1 = Common.makeParallelRequests(request1, 5);
+		var responsesSoap2 = Common.makeParallelRequests(request2, 5);
 
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
 		for (var response : responsesSoap1) {

@@ -41,7 +41,6 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkRequestExpectationsFinal;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkSchedulingConnettoreIniziato;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.setSum;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.statusCodeRestVsConnettori;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -103,9 +102,117 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 	public void AfterEach() {
 		Common.fermaRiconsegne(dbUtils);		
 	}
-		
+	
+	
 	@Test
-	public void headerHttpNCUDiagnosticoError() {
+	public void headerHttpNCUDiagnosticoError_2xx_4xx() {
+		headerHttpNCUDiagnosticoError(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void headerHttpNCUDiagnosticoError_3xx_5xx() {
+		headerHttpNCUDiagnosticoError(CommonConsegnaMultipla.statusCode3xx5xxVsConnettori);
+	}
+	
+	@Test
+	public void headerHttpICFDiagnosticoInfo_2xx_4xx() {
+		headerHttpICFDiagnosticoInfo(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void headerHttpICFDiagnosticoInfo_3xx_5xx() {
+		headerHttpICFDiagnosticoInfo(CommonConsegnaMultipla.statusCode3xx5xxVsConnettori);
+	}
+	
+	@Test
+	public void XForwardedForPrefissoESuffisso_2xx_4xx() throws UtilsException {
+		XForwardedForPrefissoESuffisso(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void XForwardedForPrefissoESuffisso_3xx_4xx() throws UtilsException {
+		XForwardedForPrefissoESuffisso(CommonConsegnaMultipla.statusCode3xx5xxVsConnettori);
+	}
+	
+	
+	@Test
+	public void clientIp_2xx_4xx() {
+		clientIp(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void clientIp_3xx_5xx() {
+		clientIp(CommonConsegnaMultipla.statusCode3xx5xxVsConnettori);
+	}
+	
+
+	@Test
+	public void contenutoSuffisso2xx_4xx() {
+		contenutoSuffisso(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void contenutoSuffisso3xx_5xx() {
+		contenutoSuffisso(CommonConsegnaMultipla.statusCode3xx5xxVsConnettori);
+	}
+
+	
+	@Test
+	public void urlInvocazionePrefisso2xx_4xx() {
+		urlInvocazionePrefisso(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void urlInvocazionePrefisso3xx_5xx() {
+		urlInvocazionePrefisso(CommonConsegnaMultipla.statusCode3xx5xxVsConnettori);
+	}
+
+	
+	@Test
+	public void ICFDiagnosticoErrorNCUDiagnosticoInfo2xx_4xx() {
+		ICFDiagnosticoErrorNCUDiagnosticoInfo(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void ICFDiagnosticoErrorNCUDiagnosticoInfo3xx_5xx() {
+		ICFDiagnosticoErrorNCUDiagnosticoInfo(CommonConsegnaMultipla.statusCode3xx5xxVsConnettori);
+	}	
+
+	
+	@Test
+	public void freemarkerTemplateICFQualsiasiNoDiagnostico2xx_4xx() {
+		freemarkerTemplateICFQualsiasiNoDiagnostico(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void freemarkerTemplateICFQualsiasiNoDiagnostico3xx_5xx() {
+		freemarkerTemplateICFQualsiasiNoDiagnostico(CommonConsegnaMultipla.statusCode3xx5xxVsConnettori);
+	}
+	
+	
+	@Test
+	public void velocityTemplateNCUQualsiasiNoDiagnostico2xx_4xx() {
+		velocityTemplateNCUQualsiasiNoDiagnostico(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void velocityTemplateNCUQualsiasiNoDiagnostico3xx_5xx() {
+		velocityTemplateNCUQualsiasiNoDiagnostico(CommonConsegnaMultipla.statusCode3xx5xxVsConnettori);
+	}
+	
+	
+	@Test
+	public void templateICFDiagnosticoError2xx_4xx() {
+		templateICFDiagnosticoError(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void templateICFDiagnosticoError3xx_5xx() {
+		templateICFDiagnosticoError(CommonConsegnaMultipla.statusCode3xx5xxVsConnettori);
+	}
+	
+	
+	@Test
+	public void parametroUrlNCUDiagnosticoInfo2xx_4xx() {
+		parametroUrlNCUDiagnosticoInfo(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void parametroUrlNCUDiagnosticoInfo3xx_5xx() {
+		parametroUrlNCUDiagnosticoInfo(CommonConsegnaMultipla.statusCode3xx5xxVsConnettori);
+	}
+	
+	
+	public void headerHttpNCUDiagnosticoError(Map<Integer,Set<String>> statusCodeVsConnettori) {
 		// Notifiche Condizionali Quando:
 		//		CompletateConSuccesso
 		//		FaultApplicativo
@@ -117,7 +224,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 
 		int i = 0;
 		// Prima costruisco le richieste normalmente
-		for (var entry : statusCodeRestVsConnettori.entrySet()) {
+		for (var entry : statusCodeVsConnettori.entrySet()) {
 			
 			String pool = Common.pools.get(i % Common.pools.size());
 			Set<String> connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
@@ -138,29 +245,19 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 			
 			requestsByKind.add(current);
 			
-			// Request nessun connettore utilizzabile, in questo caso viene rediretta sul connettore2
-			request = RequestBuilder.buildRestRequest(erogazione);
-			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-			request.addHeader(Common.HEADER_ID_CONDIZIONE, "CONNETTORE_INESISTENTE");
-			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, Set.of(CONNETTORE_2));
-			if (statusCode >= 200 && statusCode <= 299) {
-				current.esitoSincrono = 12;		// OK con anomalie
-			} else {
-				current.esitoSincrono = CommonConsegnaMultipla.esitoConsegnaFromStatusCode(statusCode);
-			}
-			if (statusCode >= 400 && statusCode <= 499) {
-				current.principaleSuperata = false;
-			}
-			if (statusCode >= 500 && statusCode <= 599) {
-				current.principaleSuperata = false;	
-			}
-			requestsByKind.add(current);
-			
-			if (current.principaleSuperata) {
-				toCheckForDiagnostici.add(current);
-			}
 			i++;
 		}
+		
+		// Request nessun connettore utilizzabile, in questo caso viene rediretta sul connettore2
+		int statusCode = 201;
+		var connettoriSuccesso = CommonConsegnaMultipla.statusCode2xxVsConnettori.get(statusCode);
+		HttpRequest request = RequestBuilder.buildRestRequest(erogazione);
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.addHeader(Common.HEADER_ID_CONDIZIONE, "CONNETTORE_INESISTENTE");
+		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, Set.of(CONNETTORE_2));
+		current.esitoSincrono = CommonConsegnaMultipla.ESITO_OK_PRESENZA_ANOMALIE;
+		requestsByKind.add(current);
+		toCheckForDiagnostici.add(current);
 				
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 
@@ -188,8 +285,8 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 		
 	}
 	
-	@Test
-	public void headerHttpICFDiagnosticoInfo() {
+	
+	public void headerHttpICFDiagnosticoInfo(Map<Integer,Set<String>> statusCodeVsConnettori) {
 		// Notifiche Condizionali Quando:
 		//		CompletateConSuccesso
 		//		FaultApplicativo
@@ -202,7 +299,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 
 		int i = 0;
 		// Prima costruisco le richieste normalmente
-		for (var entry : statusCodeRestVsConnettori.entrySet()) {
+		for (var entry : statusCodeVsConnettori.entrySet()) {
 			
 			String pool = Common.pools.get(i % Common.pools.size());
 			Set<String> connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
@@ -222,25 +319,19 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 			}
 			
 			requestsByKind.add(current);
-			
-			// Request identificazione fallita, in questo caso viene rediretta sul connettore2
-			request = RequestBuilder.buildRestRequest(erogazione);
-			request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
-			request.addHeader(Common.HEADER_ID_CONDIZIONE+"-SBAGLIATO", Common.filtriPools.get(pool).get(0));
-			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso,Set.of(Common.CONNETTORE_2));
-			if (statusCode >= 400 && statusCode <= 499) {
-				current.principaleSuperata = false;
-			}			
-			if (statusCode >= 500 && statusCode <= 599) {
-				current.principaleSuperata = false;	
-			}
-			
-			requestsByKind.add(current);
-			if (current.principaleSuperata) {
-				toCheckForDiagnostici.add(current);
-			}
 			i++;
 		}
+		
+		// Request identificazione fallita, in questo caso viene rediretta sul connettore2
+		String pool = Common.POOL_0;
+		int statusCode = 201;
+		var connettoriSuccesso = CommonConsegnaMultipla.statusCode2xxVsConnettori.get(statusCode);
+		HttpRequest request = RequestBuilder.buildRestRequest(erogazione);
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.addHeader(Common.HEADER_ID_CONDIZIONE+"-SBAGLIATO", Common.filtriPools.get(pool).get(0));
+		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso,Set.of(Common.CONNETTORE_2));
+		requestsByKind.add(current);
+		toCheckForDiagnostici.add(current);
 				
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 
@@ -268,8 +359,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 		
 	}
 	
-	@Test
-	public void parametroUrlNCUDiagnosticoInfo() {
+	public void parametroUrlNCUDiagnosticoInfo(Map<Integer,Set<String>> statusCodeVsConnettori) {
 		// Notifiche Condizionali Quando:
 		//		CompletateConSuccesso
 		//		FaultApplicativo
@@ -284,7 +374,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 
 		int i = 0;
 		// Prima costruisco le richieste normalmente
-		for (var entry : statusCodeRestVsConnettori.entrySet()) {
+		for (var entry : statusCodeVsConnettori.entrySet()) {
 			
 			String pool = Common.pools.get(i % Common.pools.size());
 			Set<String> connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
@@ -302,26 +392,27 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 			
 			requestsByKind.add(current);
 			
-			request = RequestBuilder.buildRestRequest(erogazione);
-			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request=FiltroInesistente");
-			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), Set.of(Common.CONNETTORE_3));
-			requestsByKind.add(current);
-			
-			if (current.principaleSuperata) {
-				toCheckForDiagnostici.add(current);
-			}
 			i++;
 		}
+		
+		// richiesta ncu
+		int statusCode = 201;
+		var connettoriSuccesso = CommonConsegnaMultipla.statusCode2xxVsConnettori.get(statusCode);
+		HttpRequest request = RequestBuilder.buildRestRequest(erogazione);
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request=FiltroInesistente");
+		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, Set.of(Common.CONNETTORE_3));
+		requestsByKind.add(current);
+		toCheckForDiagnostici.add(current);
 		
 		// Aggiungo richiesta problem, che deve passare
 		String pool = Common.POOL_0;
 		String filtro = Common.filtriPools.get(pool).get(0);
-		var connettoriSuccesso = Set.of(CONNETTORE_0, CONNETTORE_2, CONNETTORE_3);
+		connettoriSuccesso = Set.of(CONNETTORE_0, CONNETTORE_2, CONNETTORE_3);
 		var connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
 		HttpRequest requestRestProblem = RequestBuilder.buildRestRequestProblem(erogazione);
 		requestRestProblem.setUrl(requestRestProblem.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
-		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(requestRestProblem, 500, connettoriSuccesso, connettoriPool);
+		current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(requestRestProblem, 500, connettoriSuccesso, connettoriPool);
 		current.tipoFault = TipoFault.REST;
 		
 		requestsByKind.add(current);
@@ -353,8 +444,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 	}
 	
 	
-	@Test
-	public void templateICFDiagnosticoError() {
+	public void templateICFDiagnosticoError(Map<Integer,Set<String>> statusCodeVsConnettori) {
 		// Notifiche Condizionali Quando:
 		//		CompletateConSuccesso
 		//
@@ -366,7 +456,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 
 		int i = 0;
 		// Prima costruisco le richieste normalmente
-		for (var entry : statusCodeRestVsConnettori.entrySet()) {
+		for (var entry : statusCodeVsConnettori.entrySet()) {
 			
 			String pool = Common.pools.get(i % Common.pools.size());
 			Set<String> connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
@@ -385,40 +475,28 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 				current.principaleSuperata = false;	
 			}					
 			requestsByKind.add(current);
-			
-			// Request identificazione fallita, in questo caso viene rediretta sul connettore0
-			request = RequestBuilder.buildRestRequest(erogazione);
-			request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
-			request.setUrl(request.getUrl() + "&govway-testsuite-id_SBAGLIATO_connettore_request=FiltroInesistente");
-			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso,Set.of(Common.CONNETTORE_0));
-
-			if (statusCode >= 200 && statusCode <= 299) {
-				current.esitoSincrono = 12;		// OK con anomalie
-			} else {
-				current.esitoSincrono = CommonConsegnaMultipla.esitoConsegnaFromStatusCode(statusCode);
-			}
-			if (statusCode >= 400 && statusCode <= 499) {
-				current.principaleSuperata = false;
-			}
-			if (statusCode >= 500 && statusCode <= 599) {
-				current.principaleSuperata = false;	
-			}					
-			requestsByKind.add(current);
-			
-			if (current.principaleSuperata) {
-				toCheckForDiagnostici.add(current);
-			}
 			i++;
 		}
+		
+		// Request identificazione fallita, in questo caso viene rediretta sul connettore0
+		int statusCode = 201;
+		HttpRequest request = RequestBuilder.buildRestRequest(erogazione);
+		var connettoriSuccesso = CommonConsegnaMultipla.statusCode2xxVsConnettori.get(statusCode);
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.setUrl(request.getUrl() + "&govway-testsuite-id_SBAGLIATO_connettore_request=FiltroInesistente");
+		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso,Set.of(Common.CONNETTORE_0));
+		current.esitoSincrono = CommonConsegnaMultipla.ESITO_OK_PRESENZA_ANOMALIE;
+		requestsByKind.add(current);
+		toCheckForDiagnostici.add(current);
 		
 		// Aggiungo Richiesta Problem
 		String pool = Common.POOL_0;
 		String filtro = Common.filtriPools.get(pool).get(0);
 		HttpRequest requestProblem = RequestBuilder.buildRestRequestProblem(erogazione);
 		requestProblem.setUrl(requestProblem.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
-		var connettoriSuccesso = Set.of(CONNETTORE_0, CONNETTORE_2, CONNETTORE_3);
+		connettoriSuccesso = Set.of(CONNETTORE_0, CONNETTORE_2, CONNETTORE_3);
 		var connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
-		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(requestProblem, 500, connettoriSuccesso, connettoriPool);
+		current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(requestProblem, 500, connettoriSuccesso, connettoriPool);
 		current.principaleSuperata = false;
 		current.tipoFault = TipoFault.REST;
 		requestsByKind.add(current);
@@ -454,8 +532,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 	}
 	
 	
-	@Test
-	public void velocityTemplateNCUQualsiasiNoDiagnostico() {
+	public void velocityTemplateNCUQualsiasiNoDiagnostico(Map<Integer,Set<String>> statusCodeVsConnettori) {
 		// Notifiche Condizionali Quando:
 		//		CompletateConSuccesso
 		//		FaultApplicativo
@@ -468,7 +545,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 
 		int i = 0;
 		// Prima costruisco le richieste normalmente
-		for (var entry : statusCodeRestVsConnettori.entrySet()) {
+		for (var entry : statusCodeVsConnettori.entrySet()) {
 			
 			String pool = Common.pools.get(i % Common.pools.size());
 			Set<String> connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
@@ -488,34 +565,27 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 			}
 			
 			requestsByKind.add(current);
-			
-			// Richiesta NCU
-			request = RequestBuilder.buildRestRequest(erogazione);
-			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request=FiltroInesistente");
-			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, connettoriRipiego);
-			if (statusCode >= 400 && statusCode <= 499) {
-				current.principaleSuperata = false;
-			}
-			if (statusCode >= 500 && statusCode <= 599) {
-				current.principaleSuperata = false;	
-			}
-			
-			requestsByKind.add(current);
-			if(current.principaleSuperata) {
-				toCheckForDiagnostici.add(current);
-			}
 			i++;
 		}
+		
+		// Richiesta NCU
+		int statusCode = 201;
+		var connettoriSuccesso = CommonConsegnaMultipla.statusCode2xxVsConnettori.get(statusCode);
+		HttpRequest request = RequestBuilder.buildRestRequest(erogazione);
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request=FiltroInesistente");
+		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, connettoriRipiego);
+		requestsByKind.add(current);
+		toCheckForDiagnostici.add(current);
 		
 		// Aggiungo richiesta Rest Problem
 		String pool = Common.POOL_0;
 		String filtro = Common.filtriPools.get(pool).get(0);
 		HttpRequest requestProblem = RequestBuilder.buildRestRequestProblem(erogazione);
 		requestProblem.setUrl(requestProblem.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
-		var connettoriSuccesso = Set.of(CONNETTORE_0, CONNETTORE_2, CONNETTORE_3);
+		connettoriSuccesso = Set.of(CONNETTORE_0, CONNETTORE_2, CONNETTORE_3);
 		var connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
-		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(requestProblem, 500, connettoriSuccesso, connettoriPool);
+		current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(requestProblem, 500, connettoriSuccesso, connettoriPool);
 		current.tipoFault = TipoFault.REST;
 		requestsByKind.add(current);
 
@@ -543,8 +613,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 	}
 	
 	
-	@Test
-	public void freemarkerTemplateICFQualsiasiNoDiagnostico() {		
+	public void freemarkerTemplateICFQualsiasiNoDiagnostico(Map<Integer,Set<String>> statusCodeVsConnettori) {		
 		// Notifiche Condizionali Quando:
 		//		CompletateConSuccesso
 		//		FaultApplicativo
@@ -558,7 +627,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 
 		int i = 0;
 		// Prima costruisco le richieste normalmente
-		for (var entry : statusCodeRestVsConnettori.entrySet()) {
+		for (var entry : statusCodeVsConnettori.entrySet()) {
 			
 			String pool = Common.pools.get(i % Common.pools.size());
 			Set<String> connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
@@ -579,35 +648,28 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 			}
 			
 			requestsByKind.add(current);
-
-			// Request identificazione fallita			
-			request = RequestBuilder.buildRestRequest(erogazione);
-			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-			request.setUrl(request.getUrl() + "&govway-testsuite-id_SBAGLIATO_connettore_request=FiltroInesistente");
-			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso,connettoriRipiego);
-			if (statusCode >= 400 && statusCode <= 499) {
-				current.principaleSuperata = false;
-			}
-			if (statusCode >= 500 && statusCode <= 599) {
-				current.principaleSuperata = false;	
-			}			
-			requestsByKind.add(current);
-			
-			if (current.principaleSuperata) {
-				toCheckForDiagnostici.add(current);
-			}
-			
 			i++;
 		}
+
+		// Request identificazione fallita
+		int statusCode = 201;
+		var connettoriSuccesso = CommonConsegnaMultipla.statusCode2xxVsConnettori.get(statusCode);
+		HttpRequest request = RequestBuilder.buildRestRequest(erogazione);
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.setUrl(request.getUrl() + "&govway-testsuite-id_SBAGLIATO_connettore_request=FiltroInesistente");
+		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso,connettoriRipiego);
+		requestsByKind.add(current);
+		toCheckForDiagnostici.add(current);
+		
 		
 		// Aggiungo Richiesta Problem
 		String pool = Common.POOL_0;
 		String filtro = Common.filtriPools.get(pool).get(0);
 		HttpRequest requestProblem = RequestBuilder.buildRestRequestProblem(erogazione);
 		requestProblem.setUrl(requestProblem.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
-		var connettoriSuccesso = Set.of(CONNETTORE_0, CONNETTORE_2, CONNETTORE_3);
+		connettoriSuccesso = Set.of(CONNETTORE_0, CONNETTORE_2, CONNETTORE_3);
 		var connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
-		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(requestProblem, 500, connettoriSuccesso, connettoriPool);
+		current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(requestProblem, 500, connettoriSuccesso, connettoriPool);
 		current.tipoFault = TipoFault.REST;
 		requestsByKind.add(current);
 		
@@ -633,8 +695,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 	}
 	
 	
-	@Test
-	public void ICFDiagnosticoErrorNCUDiagnosticoInfo() {
+	public void ICFDiagnosticoErrorNCUDiagnosticoInfo(Map<Integer,Set<String>> statusCodeVsConnettori) {
 		// Notifiche Condizionali Quando:
 		//		CompletateConSuccesso
 		//		FaultApplicativo
@@ -650,7 +711,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 		
 		int i = 0;
 		// Prima costruisco le richieste normalmente
-		for (var entry : statusCodeRestVsConnettori.entrySet()) {
+		for (var entry : statusCodeVsConnettori.entrySet()) {
 			String pool = Common.pools.get(i % Common.pools.size());
 			Set<String> connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
 			Set<String> connettoriSuccesso = entry.getValue();
@@ -668,28 +729,6 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 			}
 			requestsByKind.add(current);
 			
-			// Request identificazione fallita, in questo caso viene rediretta su tutti i connettori
-			request = RequestBuilder.buildRestRequest(erogazione);
-			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-			request.addHeader(Common.HEADER_ID_CONDIZIONE+"-SBAGLIATO", Common.filtriPools.get(pool).get(0));
-			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, connettoriRipiegoICF);
-			
-			if (statusCode >= 200 && statusCode <= 299) {
-				current.esitoSincrono = 12;		// OK con anomalie
-			} else {
-				current.esitoSincrono = CommonConsegnaMultipla.esitoConsegnaFromStatusCode(statusCode);
-			}
-			if (statusCode >= 400 && statusCode <= 499) {
-				current.principaleSuperata = false;
-			}
-			if (statusCode >= 500 && statusCode <= 599) {
-				current.principaleSuperata = false;	
-			}
-			requestsByKind.add(current);
-			
-			if(current.principaleSuperata) {
-				toCheckForDiagnosticiICF.add(current);
-			}
 			
 			// Request nessun connettore utilizzabile, in questo caso viene rediretta sul connettore1
 			request = RequestBuilder.buildRestRequest(erogazione);
@@ -710,6 +749,29 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 			
 			i++;
 		}
+		
+		// Request identificazione fallita, in questo caso viene rediretta su tutti i connettori
+		String pool = Common.POOL_0;
+		int statusCode = 201;
+		var connettoriSuccesso = CommonConsegnaMultipla.statusCode2xxVsConnettori.get(statusCode);
+		HttpRequest request = RequestBuilder.buildRestRequest(erogazione);
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.addHeader(Common.HEADER_ID_CONDIZIONE+"-SBAGLIATO", Common.filtriPools.get(pool).get(0));
+		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, connettoriRipiegoICF);
+		current.esitoSincrono = CommonConsegnaMultipla.ESITO_OK_PRESENZA_ANOMALIE;
+		requestsByKind.add(current);
+		toCheckForDiagnosticiICF.add(current);
+		
+		
+		// Request nessun connettore utilizzabile, in questo caso viene rediretta sul connettore1
+		statusCode = 202;
+		connettoriSuccesso = CommonConsegnaMultipla.statusCode2xxVsConnettori.get(statusCode);
+		request = RequestBuilder.buildRestRequest(erogazione);
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.addHeader(Common.HEADER_ID_CONDIZIONE, "CONNETTORE_INESISTENTE");
+		current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, connettoriRipiegoNCU);
+		requestsByKind.add(current);
+		toCheckForDiagnosticiNCU.add(current);
 				
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		
@@ -759,8 +821,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 	}
 	
 	
-	@Test
-	public void urlInvocazionePrefisso() {
+	public void urlInvocazionePrefisso(Map<Integer,Set<String>> statusCodeVsConnettori) {
 		/**
 		 * Questo test testa anche la funzionalità di prefisso, per cui i ai filtri inviati viene rimosso
 		 * il prefisso.  
@@ -775,7 +836,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 
 		int i = 0;
 		// Prima costruisco le richieste normalmente
-		for (var entry : statusCodeRestVsConnettori.entrySet()) {
+		for (var entry : statusCodeVsConnettori.entrySet()) {
 			String pool = Common.pools.get(i % Common.pools.size());
 			Set<String> connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
 			Set<String> connettoriSuccesso = entry.getValue();
@@ -806,8 +867,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 	}
 	
 	
-	@Test
-	public void contenutoSuffisso() {
+	public void contenutoSuffisso(Map<Integer,Set<String>> statusCodeVsConnettori) {
 		// Notifiche Condizionali Quando:
 		//		CompletateConSuccesso
 		//		FaultApplicativo
@@ -818,7 +878,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 
 		int i = 0;
 		// Prima costruisco le richieste normalmente
-		for (var entry : statusCodeRestVsConnettori.entrySet()) {
+		for (var entry : statusCodeVsConnettori.entrySet()) {
 			String pool = Common.pools.get(i % Common.pools.size());
 			Set<String> connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
 			Set<String> connettoriSuccesso = entry.getValue();
@@ -846,8 +906,8 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 	}
 	
 	
-	@Test
-	public void clientIp() {
+	
+	public void clientIp(Map<Integer,Set<String>> statusCodeVsConnettori) {
 		// Notifiche Condizionali Quando:
 		//		CompletateConSuccesso
 		//		FaultApplicativo
@@ -856,7 +916,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 		// Finiscono tutte sul primo connettore
-		for (var entry : statusCodeRestVsConnettori.entrySet()) {
+		for (var entry : statusCodeVsConnettori.entrySet()) {
 			Set<String> connettoriPool = Set.of(Common.CONNETTORE_0);
 			Set<String> connettoriSuccesso = entry.getValue();
 			final int statusCode = entry.getKey();
@@ -878,10 +938,9 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 		
 		checkResponses(responsesByKind);
 	}
+
 	
-	
-	@Test
-	public void XForwardedForPrefissoESuffisso() throws UtilsException {				
+	public void XForwardedForPrefissoESuffisso(Map<Integer,Set<String>> statusCodeVsConnettori) throws UtilsException {				
 		/**
 		 * L'erogazione aggiunge "Pool" "-Filtro0" come prefisso e suffisso, per cui mi basta inviare l'indice del 
 		 * connettore.
@@ -898,7 +957,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 
 		int i = 0;
 		// Prima costruisco le richieste normalmente
-		for (var entry : statusCodeRestVsConnettori.entrySet()) {
+		for (var entry : statusCodeVsConnettori.entrySet()) {
 			String pool = Common.pools.get(i % Common.pools.size());
 			Set<String> connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
 			Set<String> connettoriSuccesso = entry.getValue();
@@ -932,8 +991,9 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 	}
 	
 	
-	@Test
-	public void regole() throws UtilsException {
+	//@Test
+	public void regole(Map<Integer,Set<String>> statusCodeVsConnettori) throws UtilsException {
+		// TODO: Suddividerlo ulteriormente.
 		// Notifiche Condizionali Quando:
 		//		CompletateConSuccesso
 		//		FaultApplicativo		
@@ -945,7 +1005,7 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 
 		int i = 0;
 		// Prima costruisco le richieste normalmente
-		for (var entry : statusCodeRestVsConnettori.entrySet()) {
+		for (var entry : statusCodeVsConnettori.entrySet()) {
 			String pool = Common.pools.get(i % Common.pools.size());
 			Set<String> connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
 			final String filtro = Common.filtriPools.get(pool).get(0); 

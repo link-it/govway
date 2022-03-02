@@ -114,6 +114,15 @@ public class RestTest extends ConfigLoader{
 		return new RequestAndExpectations(request, connettoriOk, connettoriErrore, esito, statusCode, true);
 	}
 	
+	@Test
+	public void varieCombinazioniDiRegole2xx_4xx() {
+		varieCombinazioniDiRegole(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	
+	@Test
+	public void varieCombinazioniDiRegole3xx_5xx() {
+		varieCombinazioniDiRegole(CommonConsegnaMultipla.statusCode3xx5xxVsConnettori);
+	}
 	
 	@Test
 	public void valorizzazioneCampiAvanzata() throws IOException {
@@ -412,7 +421,7 @@ public class RestTest extends ConfigLoader{
 		
 		HttpRequest request1 = RequestBuilder.buildRestRequest(erogazione);
 		
-		var responses = Common.makeParallelRequests(request1, 10);
+		var responses = Common.makeParallelRequests(request1, 5);
 		Common.checkAll200(responses);
 		
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
@@ -459,7 +468,7 @@ public class RestTest extends ConfigLoader{
 		final String erogazione = "TestConsegnaConNotificheRest";
 		HttpRequest request1 = RequestBuilder.buildRestRequest(erogazione);
 
-		var responses = Common.makeParallelRequests(request1, 10);
+		var responses = Common.makeParallelRequests(request1, 5);
 
 		// Devono essere state create le tracce sul db ma non ancora fatta nessuna consegna
 		for (var r : responses) {
@@ -589,11 +598,12 @@ public class RestTest extends ConfigLoader{
 	@Test
 	public void consegnaConNotificheNonCondizionale() {
 		// Non c'è la condizionalità sulla transazione sincrona, per cui si comporta come una consegna multipla classica
+		// Questa non la divido anche per i 3xx e 5xx visto che stiamo testando tutt'altra funzionalità
 		final String erogazione = "TestConsegnaConNotificheNonCondizionaleRest";
 		
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 		
-		for (var entry : CommonConsegnaMultipla.statusCodeRestVsConnettori.entrySet()) {
+		for (var entry : CommonConsegnaMultipla.statusCode2xx4xxVsConnettori.entrySet()) {
 			int statusCode = entry.getKey();
 			var connettoriSuccesso = entry.getValue();
 			var connettoriErrore = setDifference(Common.setConnettoriAbilitati,connettoriSuccesso);
@@ -733,7 +743,7 @@ public class RestTest extends ConfigLoader{
 		HttpRequest request1 = RequestBuilder.buildRestRequest(erogazione);
 		request1.setUrl(request1.getUrl()+"&returnCode=401");
 		
-		var responses = Common.makeParallelRequests(request1, 10);
+		var responses = Common.makeParallelRequests(request1, 5);
 		
 		for (var r : responses) {
 			// Le richieste che vedono fallita la transazione principale con un 401, ottengono un 500
@@ -745,7 +755,7 @@ public class RestTest extends ConfigLoader{
 	
 	
 	@Test
-	public void varieCombinazioniDiRegole() {
+	public void varieCombinazioniDiRegole(Map<Integer,Set<String>> statusCodeVsConnettori) {
 		/**
 		 * Qui si testa la corretta rispedizione di richieste diverse su connettori diversi.
 		 * Vengono testati tutte le regole. 
@@ -755,7 +765,7 @@ public class RestTest extends ConfigLoader{
 		
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 		
-		for (var entry : CommonConsegnaMultipla.statusCodeRestVsConnettori.entrySet()) {
+		for (var entry : statusCodeVsConnettori.entrySet()) {
 			int statusCode = entry.getKey();
 			var connettoriSuccesso = entry.getValue();
 			var connettoriErrore = setDifference(Common.setConnettoriAbilitati,connettoriSuccesso);
@@ -838,7 +848,7 @@ public class RestTest extends ConfigLoader{
 			
 			List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 			
-			for(int i=0; i<10;i++) {
+			for(int i=0; i<5;i++) {
 				int statusCode = 500+i;
 				HttpRequest request5xx = RequestBuilder.buildRestRequest(erogazione);
 				request5xx.setUrl(request5xx.getUrl()+"&returnCode=" + statusCode);
@@ -952,7 +962,7 @@ public class RestTest extends ConfigLoader{
 		
 		HttpRequest request1 = RequestBuilder.buildRestRequest(erogazione);
 
-		var responses = Common.makeParallelRequests(request1, 10);
+		var responses = Common.makeParallelRequests(request1, 5);
 		
 		Common.checkAll200(responses);
 		

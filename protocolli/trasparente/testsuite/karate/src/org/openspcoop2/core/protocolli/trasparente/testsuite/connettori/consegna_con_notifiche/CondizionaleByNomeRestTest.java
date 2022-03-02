@@ -24,7 +24,6 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_INFO;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.DIAGNOSTICO_SEVERITA_INFO;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.buildRequestAndExpectationFiltered;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.statusCodeRestVsConnettori;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -86,7 +85,125 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 	
 	
 	@Test
-	public void headerHttp() {
+	public void headerHttp2xx_4xx() {
+		headerHttp(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void headerHttp3xx_5xx() {
+		headerHttp(CommonConsegnaMultipla.statusCode3xx5xxVsConnettori);
+	}
+	
+	
+	@Test
+	public void parametroUrl2xx_4xx() {
+		final String erogazione = "TestConsegnaConNotificheCondizionaleByNomeParametroUrlRest";
+		parametroUrl_Impl(erogazione, CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	
+	@Test
+	public void parametroUrl3xx_5xx() {
+		final String erogazione = "TestConsegnaConNotificheCondizionaleByNomeParametroUrlRest";
+		parametroUrl_Impl(erogazione, CommonConsegnaMultipla.statusCode3xx5xxVsConnettori);
+	}
+	
+	
+	@Test
+	public void template2xx_4xx() {
+		final String erogazione = "TestConsegnaConNotificheCondizionaleByNomeTemplateRest";
+		parametroUrl_Impl(erogazione, CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);		
+	}
+	@Test
+	public void template3xx_5xx() {
+		final String erogazione = "TestConsegnaConNotificheCondizionaleByNomeTemplateRest";
+		parametroUrl_Impl(erogazione, CommonConsegnaMultipla.statusCode3xx5xxVsConnettori);		
+	}
+	
+	
+	@Test
+	public void velocityTemplate2xx_4xx() {
+		final String erogazione = "TestConsegnaConNotificheCondizionaleByNomeVelocityTemplateRest";
+		parametroUrl_Impl(erogazione,CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);		
+	}
+	@Test
+	public void velocityTemplate3xx_5xx() {
+		final String erogazione = "TestConsegnaConNotificheCondizionaleByNomeVelocityTemplateRest";
+		parametroUrl_Impl(erogazione,CommonConsegnaMultipla.statusCode3xx5xxVsConnettori);		
+	}
+	
+	
+	@Test
+	public void freemarkerTemplate2xx_4xx() {
+		final String erogazione = "TestConsegnaConNotificheCondizionaleByNomeFreemarkerTemplateRest";
+		parametroUrl_Impl(erogazione,CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);		
+	}
+	@Test
+	public void freemarkerTemplate3xx_5xx() {
+		final String erogazione = "TestConsegnaConNotificheCondizionaleByNomeFreemarkerTemplateRest";
+		parametroUrl_Impl(erogazione,CommonConsegnaMultipla.statusCode3xx5xxVsConnettori);		
+	}
+	
+	
+	@Test
+	public void clientIp2xx_4xx() {
+		clientIp(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void clientIp3xx_5xx() {
+		clientIp(CommonConsegnaMultipla.statusCode3xx5xxVsConnettori);
+	}
+	
+	
+	@Test
+	public void contenutoSuffisso2xx_4xx() {
+		contenutoSuffisso(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void contenutoSuffisso3xx_5xx() {
+		contenutoSuffisso(CommonConsegnaMultipla.statusCode3xx5xxVsConnettori);
+	}
+	
+	
+	@Test
+	public void urlInvocazionePrefisso2xx_4xx() {
+		urlInvocazionePrefisso(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void urlInvocazionePrefisso3xx_5xx() {
+		urlInvocazionePrefisso(CommonConsegnaMultipla.statusCode3xx5xxVsConnettori);
+	}
+	
+	
+	@Test
+	public void XForwardedForPrefissoESuffisso2xx_4xx() throws UtilsException {
+		XForwardedForPrefissoESuffisso(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void XForwardedForPrefissoESuffisso3xx_5xx() throws UtilsException {
+		XForwardedForPrefissoESuffisso(CommonConsegnaMultipla.statusCode3xx5xxVsConnettori);
+	}
+	
+	
+	@Test
+	public void parametroUrlNCUNessunConnettore2xx_4xx() throws UtilsException {
+		parametroUrlNCUNessunConnettore(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void parametroUrlNCUNessunConnettore3xx_5xx() throws UtilsException {
+		parametroUrlNCUNessunConnettore(CommonConsegnaMultipla.statusCode3xx5xxVsConnettori);
+	}
+	
+	
+	@Test
+	public void parametroUrlICFNessunConnettore2xx_4xx() throws UtilsException {
+		parametroUrlICFNessunConnettore(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void parametroUrlICFNessunConnettore3xx_5xx() throws UtilsException {
+		parametroUrlICFNessunConnettore(CommonConsegnaMultipla.statusCode3xx5xxVsConnettori);
+	}
+	
+	
+	public void headerHttp(Map<Integer,Set<String>> statusCodeVsConnettori) {
 		// Notifiche Condizionali Quando:
 		//		CompletateConSuccesso
 		//		FaultApplicativo
@@ -97,7 +214,7 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 
 		int i = 0;
 		
-		for (var entry : statusCodeRestVsConnettori.entrySet()) {
+		for (var entry : statusCodeVsConnettori.entrySet()) {
 			final String filtro = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
 			final int statusCode = entry.getKey();
 			final Set<String> connettoriSuccesso = entry.getValue();
@@ -121,35 +238,8 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 	}
 
 	
-	@Test
-	public void parametroUrl() {
-		final String erogazione = "TestConsegnaConNotificheCondizionaleByNomeParametroUrlRest";
-		parametroUrl_Impl(erogazione);
-	}
 	
-	
-	@Test
-	public void template() {
-		final String erogazione = "TestConsegnaConNotificheCondizionaleByNomeTemplateRest";
-		parametroUrl_Impl(erogazione);		
-	}
-	
-	@Test
-	public void velocityTemplate() {
-		final String erogazione = "TestConsegnaConNotificheCondizionaleByNomeVelocityTemplateRest";
-		parametroUrl_Impl(erogazione);		
-	}
-	
-	
-	@Test
-	public void freemarkerTemplate() {
-		final String erogazione = "TestConsegnaConNotificheCondizionaleByNomeFreemarkerTemplateRest";
-		parametroUrl_Impl(erogazione);		
-	}
-	
-	
-	@Test
-	public void clientIp() {
+	public void clientIp(Map<Integer,Set<String>> statusCodeVsConnettori) {
 		// Notifiche Condizionali Quando:
 		//		CompletateConSuccesso
 		//		FaultApplicativo
@@ -158,7 +248,7 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 		final String erogazione = "TestConsegnaConNotificheCondizionaleByNomeClientIpRest";
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 
-		for (var entry : statusCodeRestVsConnettori.entrySet()) {
+		for (var entry : statusCodeVsConnettori.entrySet()) {
 			int statusCode = entry.getKey();
 			Set<String> connettoriSuccesso = entry.getValue();
 			Set<String> connettoriPool = Set.of("127.0.0.1");
@@ -185,8 +275,9 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 	}
 	
 	
-	@Test
-	public void regole() throws UtilsException {
+	public void regole(Map<Integer,Set<String>> statusCodeVsConnettori) throws UtilsException {
+		// TODO: Spezza in più parti
+		
 		// Notifiche Condizionali Quando:
 		//		CompletateConSuccesso
 		//		FaultApplicativo
@@ -200,7 +291,7 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 		
 		int i = 0;
 		// Prima costruisco le richieste normalmente
-		for (var entry : statusCodeRestVsConnettori.entrySet()) {
+		for (var entry : statusCodeVsConnettori.entrySet()) {
 			final String filtro = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
 			var connettoriPool = Set.of(filtro);
 			// Filtro HeaderHttp
@@ -280,8 +371,7 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 	}
 	
 	
-	@Test
-	public void contenutoSuffisso() {
+	public void contenutoSuffisso(Map<Integer,Set<String>> statusCodeVsConnettori) {
 		// Notifiche Condizionali Quando:
 		//		CompletateConSuccesso
 		//		FaultApplicativo
@@ -290,7 +380,7 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 		int i = 0;
 		
-		for (var entry : statusCodeRestVsConnettori.entrySet()) {
+		for (var entry : statusCodeVsConnettori.entrySet()) {
 			int statusCode = entry.getKey();
 			// Aggiungo i suffissi ai connettori da testare
 			Set<String> connettoriSuccesso = entry.getValue().stream()
@@ -319,8 +409,7 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 	}
 	
 	
-	@Test
-	public void urlInvocazionePrefisso() {
+	public void urlInvocazionePrefisso(Map<Integer,Set<String>> statusCodeVsConnettori) {
 		// Notifiche Condizionali Quando:
 		//		CompletateConSuccesso
 		//		FaultApplicativo
@@ -330,7 +419,7 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 		final String prefisso = "Connettore";
 
 		int i = 0;
-		for (var entry : statusCodeRestVsConnettori.entrySet()) {
+		for (var entry : statusCodeVsConnettori.entrySet()) {
 			final String connettore =Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size()); 
 			final String filtro = connettore.substring(prefisso.length());
 			final int statusCode = entry.getKey();
@@ -356,8 +445,7 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 	}
 	
 	
-	@Test
-	public void XForwardedForPrefissoESuffisso() throws UtilsException {
+	public void XForwardedForPrefissoESuffisso(Map<Integer,Set<String>> statusCodeVsConnettori) throws UtilsException {
 		// Notifiche Condizionali Quando:
 		//		CompletateConSuccesso
 		//		FaultApplicativo
@@ -368,7 +456,7 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 		
 		int i = 0;
 		// Prima costruisco le richieste normalmente
-		for (var entry : statusCodeRestVsConnettori.entrySet()) {
+		for (var entry : statusCodeVsConnettori.entrySet()) {
 			final int statusCode = entry.getKey();
 			
 			// Aggiungo i suffissi ai connettori da testare
@@ -399,8 +487,7 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 	}
 	
 	
-	@Test
-	public void parametroUrlNCUNessunConnettore() {
+	public void parametroUrlNCUNessunConnettore(Map<Integer,Set<String>> statusCodeVsConnettori) {
 		// Notifiche Condizionali Quando:
 		//		CompletateConSuccesso
 		//		FaultApplicativo
@@ -413,7 +500,7 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 
 		int i = 0;
 		// Prima costruisco le richieste normalmente
-		for (var entry : statusCodeRestVsConnettori.entrySet()) {
+		for (var entry : statusCodeVsConnettori.entrySet()) {
 			final String filtro = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
 			final int statusCode = entry.getKey();
 			final Set<String> connettoriSuccesso = entry.getValue();
@@ -430,17 +517,20 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 			}
 			requestsByKind.add(current);
 			
-			request = RequestBuilder.buildRestRequest(erogazione);
-			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request=FiltroInesistente");
-			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, Set.of());
-			current.principaleSuperata = false;
-			
-			requestsByKind.add(current);
-			toCheckForDiagnostici.add(current);
-			
 			i++;
 		}
+		
+		// richiesta ncu
+		int statusCode = 201;
+		var connettoriSuccesso = CommonConsegnaMultipla.statusCode2xxVsConnettori.get(statusCode);
+		HttpRequest request = RequestBuilder.buildRestRequest(erogazione);
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request=FiltroInesistente");
+		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, Set.of());
+		current.principaleSuperata = false;
+		
+		requestsByKind.add(current);
+		toCheckForDiagnostici.add(current);
 		
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 
@@ -468,8 +558,7 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 	}	
 	
 	
-	@Test
-	public void parametroUrlICFNessunConnettore() {
+	public void parametroUrlICFNessunConnettore(Map<Integer,Set<String>> statusCodeVsConnettori) {
 		// Notifiche Condizionali Quando:
 		//		CompletateConSuccesso
 		//		FaultApplicativo
@@ -482,7 +571,7 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 
 		int i = 0;
 		// Prima costruisco le richieste normalmente
-		for (var entry : statusCodeRestVsConnettori.entrySet()) {
+		for (var entry : statusCodeVsConnettori.entrySet()) {
 			final String filtro = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
 			final int statusCode = entry.getKey();
 			final Set<String> connettoriSuccesso = entry.getValue();
@@ -535,7 +624,7 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 	}
 	
 	
-	private static void parametroUrl_Impl(String erogazione) {
+	private static void parametroUrl_Impl(String erogazione, Map<Integer,Set<String>> statusCodeVsConnettori) {
 		// Notifiche Condizionali Quando:
 		//		CompletateConSuccesso
 		//		FaultApplicativo
@@ -544,7 +633,7 @@ public class CondizionaleByNomeRestTest extends ConfigLoader {
 
 		int i = 0;
 		
-		for (var entry : statusCodeRestVsConnettori.entrySet()) {
+		for (var entry : statusCodeVsConnettori.entrySet()) {
 			final String filtro = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
 			final int statusCode = entry.getKey();
 			final Set<String> connettoriSuccesso = entry.getValue();

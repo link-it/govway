@@ -169,6 +169,21 @@ public class CommonConsegnaMultipla {
 				  506, Set.of(CONNETTORE_1),
 			  	  599, Set.of(CONNETTORE_1));
 	
+
+	public final static Map<Integer,Set<String>> statusCode2xx4xxVsConnettori = new HashMap<>();
+	static {
+		statusCode2xx4xxVsConnettori.putAll(statusCode2xxVsConnettori);
+		statusCode2xx4xxVsConnettori.putAll(statusCode4xxVsConnettori);
+	}
+	
+	
+	public final static Map<Integer,Set<String>> statusCode3xx5xxVsConnettori = new HashMap<>();
+	static {
+		statusCode3xx5xxVsConnettori.putAll(statusCode3xxVsConnettori);
+		statusCode3xx5xxVsConnettori.putAll(statusCode5xxVsConnettori);
+	}
+	
+	
 	public final static Map<Integer,Set<String>> statusCodeVsConnettori = new HashMap<>();
 	static {
 		statusCodeVsConnettori.putAll(statusCode2xxVsConnettori);
