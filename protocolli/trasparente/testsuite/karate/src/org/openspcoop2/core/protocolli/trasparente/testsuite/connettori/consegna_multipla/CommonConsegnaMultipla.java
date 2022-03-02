@@ -119,8 +119,6 @@ public class CommonConsegnaMultipla {
 	public final static String FORMATO_FAULT_SOAP1_1 = "SOAP_11";
 	public final static String FORMATO_FAULT_SOAP1_2 = "SOAP_12";
 	
-	public final static int thread_sleep_after_request = Integer.valueOf(System.getProperty("thread_sleep_after_request"));
-
 	public final static int intervalloControllo = Integer
 			.valueOf(System.getProperty("connettori.consegna_multipla.next_messages.intervallo_controllo")) * 1000;
 	
@@ -278,23 +276,14 @@ public class CommonConsegnaMultipla {
 		int nThreads = Common.sogliaRichiesteSimultanee; 
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nThreads);
 		
-//		int req = 0;
-		
 		for (var request : requests) {			
 			responses.put(request, new Vector<>());
 			
-			for (int i = 0; i<requests_per_batch; i++) {
+			for (int i=0; i<requests_per_batch; i++) {
 				executor.execute( () -> {
 					responses.get(request).add(Utils.makeRequest(request.request));
 				});
 			}
-			
-			// TODO: ripulire la proprietà e anche thread_sleep_after_request se si vede che non serve piu'
-//			req++;
-//			if(req==15) {
-//				org.openspcoop2.utils.Utilities.sleep(thread_sleep_after_request);
-//				req=0;
-//			}
 		}
 		try {
 			executor.shutdown();

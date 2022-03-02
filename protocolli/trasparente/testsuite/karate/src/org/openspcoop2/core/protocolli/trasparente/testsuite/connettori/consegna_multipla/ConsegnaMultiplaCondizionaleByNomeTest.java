@@ -20,6 +20,9 @@
 
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla;
 
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_1;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_2;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_3;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.buildRequestAndExpectationFiltered;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkResponses;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.statusCodeVsConnettori;
@@ -71,6 +74,18 @@ public class ConsegnaMultiplaCondizionaleByNomeTest extends ConfigLoader {
 		Common.fermaRiconsegne(dbUtils);		
 	}
 
+	@Test
+	public void regole200() throws UtilsException {
+		final Map<Integer, Set<String>> statusCode200VsConnettori  = Map
+				.of(200, Set.of(CONNETTORE_1,CONNETTORE_2));
+		regole(statusCode200VsConnettori);
+	}
+	@Test 
+	public void regole501() throws UtilsException {
+		final Map<Integer, Set<String>> statusCode501VsConnettori  = Map
+				.of(501, Set.of(CONNETTORE_1, CONNETTORE_3));
+		regole(statusCode501VsConnettori);
+	}
 	
 	@Test
 	public void connettoreDisabilitato() {
@@ -225,9 +240,7 @@ public class ConsegnaMultiplaCondizionaleByNomeTest extends ConfigLoader {
 		CommonConsegnaMultipla.checkResponses(responsesByKind);
 	}
 	
-	@Test
-	public void regole() throws UtilsException {
-		// TODO: Separa
+	public void regole(Map<Integer,Set<String>> statusCodeVsConnettori ) throws UtilsException {
 		final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeRegole";
 		final String CONNETTORE_LOCALHOST = "127.0.0.1";
 

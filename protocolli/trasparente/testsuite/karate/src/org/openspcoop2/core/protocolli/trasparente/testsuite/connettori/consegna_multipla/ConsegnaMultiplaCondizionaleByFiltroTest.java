@@ -20,6 +20,9 @@
 
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla;
 
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_1;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_2;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_3;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_ERROR;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_INFO;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_UTILIZZO_CONNETTORE_DEFAULT;
@@ -28,7 +31,6 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.DIAGNOSTICO_SEVERITA_INFO;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.MESSAGGIO_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_FALLBACK;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.MESSAGGIO_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_FALLBACK_TUTTI_CONNETTORI;
-import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.statusCodeVsConnettori;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -88,10 +90,130 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 	public void AfterEach() {
 		Common.fermaRiconsegne(dbUtils);		
 	}
+	
+	@Test
+	public void headerHttpICFDiagnosticoInfo_2xx_4xx() {
+		headerHttpICFDiagnosticoInfo(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void headerHttpICFDiagnosticoInfo_5xx() {
+		headerHttpICFDiagnosticoInfo(CommonConsegnaMultipla.statusCode5xxVsConnettori);
+	}
+	
+	
+	@Test
+	public void XForwardedForPrefissoESuffisso_2xx_4xx() throws UtilsException {
+		XForwardedForPrefissoESuffisso(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void XForwardedForPrefissoESuffisso_3xx_4xx() throws UtilsException {
+		XForwardedForPrefissoESuffisso(CommonConsegnaMultipla.statusCode5xxVsConnettori);
+	}
+	
+	
+	@Test
+	public void clientIp_2xx_4xx() {
+		clientIp(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void clientIp_5xx() {
+		clientIp(CommonConsegnaMultipla.statusCode5xxVsConnettori);
+	}
+	
+
+	@Test
+	public void contenutoSuffisso2xx_4xx() {
+		contenutoSuffisso(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void contenutoSuffisso_5xx() {
+		contenutoSuffisso(CommonConsegnaMultipla.statusCode5xxVsConnettori);
+	}
 
 	
 	@Test
-	public void headerHttpICFDiagnosticoInfo() {
+	public void urlInvocazionePrefisso2xx_4xx() {
+		urlInvocazionePrefisso(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void urlInvocazionePrefisso_5xx() {
+		urlInvocazionePrefisso(CommonConsegnaMultipla.statusCode5xxVsConnettori);
+	}
+
+	
+	@Test
+	public void ICFDiagnosticoErrorNCUDiagnosticoInfo2xx_4xx() {
+		ICFDiagnosticoErrorNCUDiagnosticoInfo(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void ICFDiagnosticoErrorNCUDiagnosticoInfo_5xx() {
+		ICFDiagnosticoErrorNCUDiagnosticoInfo(CommonConsegnaMultipla.statusCode5xxVsConnettori);
+	}	
+
+	
+	@Test
+	public void freemarkerTemplateICFQualsiasiNoDiagnostico2xx_4xx() {
+		freemarkerTemplateICFQualsiasiNoDiagnostico(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void freemarkerTemplateICFQualsiasiNoDiagnostico_5xx() {
+		freemarkerTemplateICFQualsiasiNoDiagnostico(CommonConsegnaMultipla.statusCode5xxVsConnettori);
+	}
+	
+	
+	@Test
+	public void velocityTemplateNCUQualsiasiNoDiagnostico2xx_4xx() {
+		velocityTemplateNCUQualsiasiNoDiagnostico(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void velocityTemplateNCUQualsiasiNoDiagnostico_5xx() {
+		velocityTemplateNCUQualsiasiNoDiagnostico(CommonConsegnaMultipla.statusCode5xxVsConnettori);
+	}
+	
+	
+	@Test
+	public void templateICFDiagnosticoError2xx_4xx() {
+		templateICFDiagnosticoError(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void templateICFDiagnosticoError_5xx() {
+		templateICFDiagnosticoError(CommonConsegnaMultipla.statusCode5xxVsConnettori);
+	}
+	
+	
+	@Test
+	public void parametroUrlNCUDiagnosticoInfo2xx_4xx() {
+		parametroUrlNCUDiagnosticoInfo(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void parametroUrlNCUDiagnosticoInfo_5xx() {
+		parametroUrlNCUDiagnosticoInfo(CommonConsegnaMultipla.statusCode5xxVsConnettori);
+	}
+	
+	@Test
+	public void soapActionNCUDiagnosticoError2xx_4xx() {
+		soapActionNCUDiagnosticoError(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
+	}
+	@Test
+	public void soapActionNCUDiagnosticoError_5xx() {
+		soapActionNCUDiagnosticoError(CommonConsegnaMultipla.statusCode5xxVsConnettori);
+	}
+	
+	@Test
+	public void regole200() throws UtilsException {
+		final Map<Integer, Set<String>> statusCode200VsConnettori  = Map
+				.of(200, Set.of(CONNETTORE_1,CONNETTORE_2));
+		regole(statusCode200VsConnettori);
+	}
+	@Test 
+	public void regole501() throws UtilsException {
+		final Map<Integer, Set<String>> statusCode501VsConnettori  = Map
+				.of(501, Set.of(CONNETTORE_1, CONNETTORE_3));
+		regole(statusCode501VsConnettori);
+	}
+
+	
+	private void headerHttpICFDiagnosticoInfo(Map<Integer, Set<String>> statusCodeVsConnettori) {
 		final String erogazione = "TestConsegnaMultiplaCondizionaleByFiltroHeaderHttpICFDiagnosticoInfo";
 		
 		// Il connettore di fallback è il 2
@@ -104,7 +226,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 		for (var entry : statusCodeVsConnettori.entrySet()) {
 			String pool = Common.pools.get(i % Common.pools.size());
 			Set<String> connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
-			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
+			final String soapContentType = i % 2 == 0 ? HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
 
 			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
 			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
@@ -113,16 +235,28 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
 			requestsByKind.add(current);
 			
-			// Request identificazione fallita, in questo caso viene rediretta sul connettore2
-			request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
-			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-			request.addHeader(Common.HEADER_ID_CONDIZIONE+"-SBAGLIATO", Common.filtriPools.get(pool).get(0));
-			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), Set.of(Common.CONNETTORE_2));
-			requestsByKind.add(current);
-			
-			toCheckForDiagnostici.add(current);
 			i++;
 		}
+		
+		// Request identificazione fallita, in questo caso viene rediretta sul connettore2
+		String pool = Common.POOL_0;
+		int statusCode = 201;
+		var connettoriSuccesso = CommonConsegnaMultipla.statusCode2xxVsConnettori.get(statusCode);
+		HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  HttpConstants.CONTENT_TYPE_SOAP_1_1);
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.addHeader(Common.HEADER_ID_CONDIZIONE+"-SBAGLIATO", Common.filtriPools.get(pool).get(0));
+		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, Set.of(Common.CONNETTORE_2));
+		requestsByKind.add(current);
+		toCheckForDiagnostici.add(current);
+		
+		statusCode = 202;
+		connettoriSuccesso = CommonConsegnaMultipla.statusCode2xxVsConnettori.get(statusCode);
+		request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  HttpConstants.CONTENT_TYPE_SOAP_1_2);
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.addHeader(Common.HEADER_ID_CONDIZIONE+"-SBAGLIATO", Common.filtriPools.get(pool).get(0));
+		current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, Set.of(Common.CONNETTORE_2));
+		requestsByKind.add(current);
+		toCheckForDiagnostici.add(current);
 				
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		
@@ -150,8 +284,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 		
 	}
 	
-	@Test
-	public void regole() throws UtilsException {
+	public void regole(Map<Integer, Set<String>> statusCodeVsConnettori) throws UtilsException {
 		final String erogazione = "TestConsegnaMultiplaCondizionaleByRegole";
 		
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
@@ -260,8 +393,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 		CommonConsegnaMultipla.checkResponses(responsesByKind);
 	}
 	
-	@Test
-	public void parametroUrlNCUDiagnosticoInfo() {
+	public void parametroUrlNCUDiagnosticoInfo(Map<Integer, Set<String>> statusCodeVsConnettori) {
 		final String erogazione = "TestConsegnaMultiplaCondizionaleByFiltroParametroUrlNCUDiagnosticoInfo";
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 		Set<RequestAndExpectations> toCheckForDiagnostici = new HashSet<>();
@@ -283,17 +415,27 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(), entry.getValue(), connettoriPool);
 			requestsByKind.add(current);
 			
-			// Request Nessun connettore utilizzabile
-			request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
-			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request=FiltroInesistente");
-			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), Set.of(Common.CONNETTORE_3));
-			requestsByKind.add(current);
-			
-			toCheckForDiagnostici.add(current);
-			
 			i++;
 		}
+		
+		// Request Nessun connettore utilizzabile
+		int statusCode = 201;
+		var connettoriSuccesso = CommonConsegnaMultipla.statusCode2xxVsConnettori.get(statusCode);
+		HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  HttpConstants.CONTENT_TYPE_SOAP_1_1);
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request=FiltroInesistente");
+		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, Set.of(Common.CONNETTORE_3));
+		requestsByKind.add(current);
+		toCheckForDiagnostici.add(current);
+		
+		statusCode = 202;
+		connettoriSuccesso = CommonConsegnaMultipla.statusCode2xxVsConnettori.get(statusCode);
+		request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  HttpConstants.CONTENT_TYPE_SOAP_1_2);
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request=FiltroInesistente");
+		current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, Set.of(Common.CONNETTORE_3));
+		requestsByKind.add(current);
+		toCheckForDiagnostici.add(current);
 
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla
 				.makeRequestsByKind(requestsByKind, 1);
@@ -325,8 +467,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 		
 	}
 	
-	@Test
-	public void ICFDiagnosticoErrorNCUDiagnosticoInfo() {
+	public void ICFDiagnosticoErrorNCUDiagnosticoInfo(Map<Integer, Set<String>> statusCodeVsConnettori) {
 		final String erogazione = "TestConsegnaMultiplaCondizionaleICFDiagnosticoErrorNCUDiagnosticoInfo";
 		
 		// Per ICF i connettori di fallback sono tutti
@@ -353,26 +494,29 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
 			requestsByKind.add(current);
 			
-			// Request identificazione fallita, in questo caso viene rediretta su tutti i connettori
-			request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
-			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-			request.addHeader(Common.HEADER_ID_CONDIZIONE+"-SBAGLIATO", Common.filtriPools.get(pool).get(0));
-			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriRipiegoICF);
-			requestsByKind.add(current);
-			
-			toCheckForDiagnosticiICF.add(current);
-			
-			// Request nessun connettore utilizzabile, in questo caso viene rediretta sul connettore1
-			request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
-			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-			request.addHeader(Common.HEADER_ID_CONDIZIONE, "CONNETTORE_INESISTENTE");
-			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriRipiegoNCU);
-			requestsByKind.add(current);
-			
-			toCheckForDiagnosticiNCU.add(current);
-			
 			i++;
 		}
+		
+		// Request identificazione fallita, in questo caso viene rediretta su tutti i connettori
+		String pool = Common.POOL_0;
+		int statusCode = 201;
+		var connettoriSuccesso = CommonConsegnaMultipla.statusCode2xxVsConnettori.get(statusCode);
+		HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  HttpConstants.CONTENT_TYPE_SOAP_1_1);
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.addHeader(Common.HEADER_ID_CONDIZIONE+"-SBAGLIATO", Common.filtriPools.get(pool).get(0));
+		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, connettoriRipiegoICF);
+		requestsByKind.add(current);
+		toCheckForDiagnosticiICF.add(current);
+		
+		// Request nessun connettore utilizzabile, in questo caso viene rediretta sul connettore1
+		statusCode = 202;
+		request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  HttpConstants.CONTENT_TYPE_SOAP_1_2);
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.addHeader(Common.HEADER_ID_CONDIZIONE, "CONNETTORE_INESISTENTE");
+		current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, connettoriRipiegoNCU);
+		requestsByKind.add(current);
+		toCheckForDiagnosticiNCU.add(current);
+		
 				
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		
@@ -420,8 +564,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 		
 	}
 	
-	@Test
-	public void templateICFDiagnosticoError() {
+	public void templateICFDiagnosticoError(Map<Integer, Set<String>> statusCodeVsConnettori) {
 		final String erogazione = "TestConsegnaMultiplaCondizionaleByFiltroTemplateICFDiagnosticoError";
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
 		Set<RequestAndExpectations> toCheckForDiagnostici = new HashSet<>();
@@ -432,7 +575,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 		for (var entry : statusCodeVsConnettori.entrySet()) {
 			String pool = Common.pools.get(i % Common.pools.size());
 			Set<String> connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
-			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
+			final String soapContentType = i % 2 == 0 ? HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
 			
 			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
 			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
@@ -441,16 +584,27 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
 			requestsByKind.add(current);
 			
-			// Request identificazione fallita, in questo caso viene rediretta sul connettore0
-			request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
-			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-			request.setUrl(request.getUrl() + "&govway-testsuite-id_SBAGLIATO_connettore_request=FiltroInesistente");
-			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), Set.of(Common.CONNETTORE_0));
-			requestsByKind.add(current);
-			
-			toCheckForDiagnostici.add(current);
 			i++;
 		}
+		
+		// Request identificazione fallita, in questo caso viene rediretta sul connettore0
+		int statusCode = 201;
+		var connettoriSuccesso = CommonConsegnaMultipla.statusCode2xxVsConnettori.get(statusCode);
+		HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  HttpConstants.CONTENT_TYPE_SOAP_1_1);
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.setUrl(request.getUrl() + "&govway-testsuite-id_SBAGLIATO_connettore_request=FiltroInesistente");
+		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request,statusCode, connettoriSuccesso, Set.of(Common.CONNETTORE_0));
+		requestsByKind.add(current);
+		toCheckForDiagnostici.add(current);
+		
+		statusCode = 202;
+		connettoriSuccesso = CommonConsegnaMultipla.statusCode2xxVsConnettori.get(statusCode);
+		request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  HttpConstants.CONTENT_TYPE_SOAP_1_2);
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.setUrl(request.getUrl() + "&govway-testsuite-id_SBAGLIATO_connettore_request=FiltroInesistente");
+		current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request,statusCode, connettoriSuccesso, Set.of(Common.CONNETTORE_0));
+		requestsByKind.add(current);
+		toCheckForDiagnostici.add(current);
 				
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		
@@ -480,8 +634,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 	}
 	
 	
-	@Test
-	public void velocityTemplateNCUQualsiasiNoDiagnostico() {
+	public void velocityTemplateNCUQualsiasiNoDiagnostico(Map<Integer, Set<String>> statusCodeVsConnettori) {
 		final String erogazione = "TestConsegnaMultiplaCondizionaleByFiltroVelocityTemplateNCUQualsiasiNoDiagnostico";
 		
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
@@ -493,7 +646,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 		for (var entry : statusCodeVsConnettori.entrySet()) {
 			String pool = Common.pools.get(i % Common.pools.size());
 			Set<String> connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
-			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
+			final String soapContentType = i % 2 == 0 ? HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
 			
 			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
 			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
@@ -502,16 +655,27 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
 			requestsByKind.add(current);
 			
-			// Request nessun connettore utilizzabile			
-			request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
-			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request=FiltroInesistente");
-			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriRipiego);
-			requestsByKind.add(current);
-			
-			toCheckForDiagnostici.add(current);
 			i++;
 		}
+		
+		// Request nessun connettore utilizzabile	
+		int statusCode = 201;
+		var connettoriSuccesso = CommonConsegnaMultipla.statusCode2xxVsConnettori.get(statusCode);
+		HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  HttpConstants.CONTENT_TYPE_SOAP_1_1);
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request=FiltroInesistente");
+		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, connettoriRipiego);
+		requestsByKind.add(current);
+		toCheckForDiagnostici.add(current);
+		
+		statusCode = 202;
+		connettoriSuccesso = CommonConsegnaMultipla.statusCode2xxVsConnettori.get(statusCode);
+		request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  HttpConstants.CONTENT_TYPE_SOAP_1_2);
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request=FiltroInesistente");
+		current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, connettoriRipiego);
+		requestsByKind.add(current);
+		toCheckForDiagnostici.add(current);
 				
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		
@@ -534,8 +698,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 	}
 	
 	
-	@Test
-	public void freemarkerTemplateICFQualsiasiNoDiagnostico() {
+	public void freemarkerTemplateICFQualsiasiNoDiagnostico(Map<Integer, Set<String>> statusCodeVsConnettori) {
 		/**
 		 * Le richieste con identificazione fallita vengono redirette su tutti i connettori
 		 */
@@ -550,7 +713,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 		for (var entry : statusCodeVsConnettori.entrySet()) {
 			String pool = Common.pools.get(i % Common.pools.size());
 			Set<String> connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
-			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
+			final String soapContentType = i % 2 == 0 ? HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
 			
 			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
 			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
@@ -559,16 +722,27 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
 			requestsByKind.add(current);
 			
-			// Request identificazione fallita			
-			request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
-			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-			request.setUrl(request.getUrl() + "&govway-testsuite-id_SBAGLIATO_connettore_request=FiltroInesistente");
-			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriRipiego);
-			requestsByKind.add(current);
-			toCheckForDiagnostici.add(current);
-			
 			i++;
 		}
+		
+		// Request identificazione fallita			
+		int statusCode = 201;
+		var connettoriSuccesso = CommonConsegnaMultipla.statusCode2xxVsConnettori.get(statusCode);
+		HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  HttpConstants.CONTENT_TYPE_SOAP_1_1);
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.setUrl(request.getUrl() + "&govway-testsuite-id_SBAGLIATO_connettore_request=FiltroInesistente");
+		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, connettoriRipiego);
+		requestsByKind.add(current);
+		toCheckForDiagnostici.add(current);
+		
+		statusCode = 202;
+		connettoriSuccesso = CommonConsegnaMultipla.statusCode2xxVsConnettori.get(statusCode);
+		request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  HttpConstants.CONTENT_TYPE_SOAP_1_2);
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.setUrl(request.getUrl() + "&govway-testsuite-id_SBAGLIATO_connettore_request=FiltroInesistente");
+		current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, connettoriRipiego);
+		requestsByKind.add(current);
+		toCheckForDiagnostici.add(current);
 				
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 	
@@ -591,8 +765,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 		
 	}
 	
-	@Test
-	public void urlInvocazionePrefisso() {
+	public void urlInvocazionePrefisso(Map<Integer, Set<String>> statusCodeVsConnettori) {
 		/**
 		 * Questo test testa anche la funzionalità di prefisso, per cui i ai filtri inviati viene rimosso
 		 * il prefisso.  
@@ -633,8 +806,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 	}
 	
 	
-	@Test
-	public void XForwardedForPrefissoESuffisso() throws UtilsException {
+	public void XForwardedForPrefissoESuffisso(Map<Integer, Set<String>> statusCodeVsConnettori) throws UtilsException {
 		final String erogazione = "TestConsegnaMultiplaCondizionaleByFiltroXForwardedForPrefissoESuffisso";
 		
 		/**
@@ -681,8 +853,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 	}
 	
 	
-	@Test
-	public void contenutoSuffisso() {
+	public void contenutoSuffisso(Map<Integer, Set<String>> statusCodeVsConnettori) {
 		final String erogazione = "TestConsegnaMultiplaCondizionaleByFiltroContenutoSuffisso";
 
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
@@ -719,8 +890,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 	}
 
 	
-	@Test
-	public void soapActionNCUDiagnosticoError( ) {
+	public void soapActionNCUDiagnosticoError(Map<Integer, Set<String>> statusCodeVsConnettori) {
 		final String erogazione = "TestConsegnaMultiplaCondizionaleByFiltroSoapActionNCUDiagnosticoError";
 		
 		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
@@ -737,7 +907,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 		for (var entry : statusCodeVsConnettori.entrySet()) {
 			String pool = Common.pools.get(i % Common.pools.size());
 			Set<String> connettoriPool = new HashSet<>(Common.connettoriPools.get(pool));
-			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
+			final String soapContentType = i % 2 == 0 ? HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
 			
 			String filtro = Common.filtriPools.get(pool).get(0);
 
@@ -746,15 +916,25 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), connettoriPool);
 			requestsByKind.add(current);
 			
-			// Richiesta Nessun Connettore Utilizzabile, portata sul connettore 0
-			request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla", "test",    soapContentType);
-			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), Set.of(Common.CONNETTORE_0));
-			requestsByKind.add(current);
-			toCheckForDiagnostici.add(current);
-			
 			i++;
 		}
+		
+		// Richiesta Nessun Connettore Utilizzabile, portata sul connettore 0
+		int statusCode = 201;
+		var connettoriSuccesso = CommonConsegnaMultipla.statusCode2xxVsConnettori.get(statusCode);
+		HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla", "test", HttpConstants.CONTENT_TYPE_SOAP_1_1);
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, Set.of(Common.CONNETTORE_0));
+		requestsByKind.add(current);
+		toCheckForDiagnostici.add(current);
+		
+		statusCode = 202;
+		connettoriSuccesso = CommonConsegnaMultipla.statusCode2xxVsConnettori.get(statusCode);
+		request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla", "test", HttpConstants.CONTENT_TYPE_SOAP_1_2);
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, Set.of(Common.CONNETTORE_0));
+		requestsByKind.add(current);
+		toCheckForDiagnostici.add(current);
 				
 		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
 		
@@ -783,8 +963,7 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 	}
 	
 	
-	@Test
-	public void clientIp() {
+	public void clientIp(Map<Integer, Set<String>> statusCodeVsConnettori) {
 		final String erogazione = "TestConsegnaMultiplaCondizionaleByFiltroClientIp";
 
 		int i = 0;

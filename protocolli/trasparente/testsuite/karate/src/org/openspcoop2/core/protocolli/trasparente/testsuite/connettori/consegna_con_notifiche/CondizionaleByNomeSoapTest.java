@@ -20,6 +20,9 @@
 
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_con_notifiche;
 
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_1;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_2;
+import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common.CONNETTORE_3;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_ERROR;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.CODICE_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_INFO;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.DIAGNOSTICO_SEVERITA_INFO;
@@ -215,6 +218,18 @@ public class CondizionaleByNomeSoapTest extends ConfigLoader {
 		parametroUrlICFNessunConnettore(CommonConsegnaMultipla.statusCode5xxVsConnettori);
 	}
 
+	@Test
+	public void regole200() throws UtilsException {
+		final Map<Integer, Set<String>> statusCode200VsConnettori  = Map
+				.of(200, Set.of(CONNETTORE_1,CONNETTORE_2));
+		regole(statusCode200VsConnettori);
+	}
+	@Test 
+	public void regole501() throws UtilsException {
+		final Map<Integer, Set<String>> statusCode501VsConnettori  = Map
+				.of(501, Set.of(CONNETTORE_1, CONNETTORE_3));
+		regole(statusCode501VsConnettori);
+	}
 	
 	public void headerHttp(Map<Integer,Set<String>> statusCodeVsConnettori) {
 		// Notifiche Condizionali Quando:
@@ -338,7 +353,6 @@ public class CondizionaleByNomeSoapTest extends ConfigLoader {
 	
 	
 	public void regole(Map<Integer,Set<String>> statusCodeVsConnettori) throws UtilsException {
-		// TODO: Spezza
 		// Notifiche Condizionali Quando:
 		//		CompletateConSuccesso
 		//		FaultApplicativo

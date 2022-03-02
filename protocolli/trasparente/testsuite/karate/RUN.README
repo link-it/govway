@@ -175,8 +175,6 @@
 	# i secondi minimi in cui riconsegnare un messaggio fallito
 		connettori.consegna_multipla.next_messages.consegna_fallita.intervallo_minimo_riconsegna=2
 
-	# I millisecondi che un thread aspetta prima di terminare, in modo da dare il tempo a govway di aggiornare i contatori di rate limiting
-		thread_sleep_after_request = 50
 
 - Abilitare i metodi jmx:
 	Nel file /etc/govway/govway_local.properties abilitare le seguenti proprietà:
