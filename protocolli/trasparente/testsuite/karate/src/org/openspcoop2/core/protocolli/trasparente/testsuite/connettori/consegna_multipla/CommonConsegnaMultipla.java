@@ -125,14 +125,14 @@ public class CommonConsegnaMultipla {
 	public final static int scheduleNewAfter = Integer
 			.valueOf(System.getProperty("connettori.consegna_multipla.next_messages.schedule_new_after")) * 1000;
 	
-	// Sommo 500 ms per dare il tempo di eseguire le notifiche, visto che in rari casi fallisce
+	// Sommo un altro secondo rispetto a quello indicato in govway, perchè a quanto pare non basta.
 	public final static int intervalloControlloFallite = Integer.valueOf(
 			System.getProperty("connettori.consegna_multipla.next_messages.consegna_fallita.intervallo_controllo"))
-			* 1000 + 600;
+			* 1000 + 1000;
 	
 	public final static int intervalloMinimoRiconsegna = Integer.valueOf(System
 			.getProperty("connettori.consegna_multipla.next_messages.consegna_fallita.intervallo_minimo_riconsegna"))
-			* 1000 + 600;
+			* 1000 + 1000;
 	
 	public final static Path connettoriFilePath = Paths
 			.get(System.getProperty("connettori.consegna_multipla.connettore_file.path"));
