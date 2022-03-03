@@ -44,6 +44,9 @@
 				<i class="material-icons md-16" id="#{id}_Modal_header_close_icon">close</i>
 			</a4j:outputPanel>
 		</f:facet> 
+		<script>
+			var #{id}_hiddenBody_ctn;
+		</script>
 		<h:inputHidden value="#{contenuto}" rendered="true" id="#{id}_hiddenBody"/>
 		<a4j:outputPanel id="#{id}_ModalBodyExt" styleClass="contenutoModal" layout="block">
 			<a4j:outputPanel id="#{id}_ModalBody" styleClass="contenutoModal" layout="block"></a4j:outputPanel>

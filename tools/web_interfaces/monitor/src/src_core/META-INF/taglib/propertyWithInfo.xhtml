@@ -45,6 +45,13 @@
 							jQuery(document).ready(function() {
 								jQuery("##{id}_spanIconInfo").click(function(){
 									var body = jQuery("##{id}_dialogInfo_hiddenBody").val();
+									if(#{id}_dialogInfo_hiddenBody_ctn){
+										body = #{id}_dialogInfo_hiddenBody_ctn;
+									} else {
+										#{id}_dialogInfo_hiddenBody_ctn = body;
+										jQuery("##{id}_dialogInfo_hiddenBody").val('');
+									}
+									
 									jQuery("##{id}_dialogInfo_ModalBody").html(body);
 									Richfaces.showModalPanel('#{id}_dialogInfo_Modal');
 				    			});
