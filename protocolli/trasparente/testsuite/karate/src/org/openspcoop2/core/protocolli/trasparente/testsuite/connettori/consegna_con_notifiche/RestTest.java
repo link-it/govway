@@ -205,8 +205,6 @@ public class RestTest extends ConfigLoader{
 						Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione,	connettore, dataRiferimentoTest, dataRiferimentoTest);
 						assertEquals(Integer.valueOf(1), count);
 
-						query = "Select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ? and data_ultimo_errore > ? and dettaglio_esito_ultimo_errore = ? and codice_risposta_ultimo_errore = ? and ultimo_errore = ? and location_ultimo_errore = ?";
-
 						String fault 		 = "";
 						String formatoFault = "";
 						String ultimoErrore;
@@ -221,6 +219,8 @@ public class RestTest extends ConfigLoader{
 							ultimoErrore =  "Consegna [http] con errore: errore HTTP " + requestExpectation.statusCodePrincipale;
 							locationUltimoErrore = "http://localhost:8080/TestService/echo?returnCode="+requestExpectation.statusCodePrincipale+"&replyPrefixQueryParameter=GovWay-TestSuite-&id_connettore="+connettore+"&replyQueryParameter=id_connettore";
 						}
+
+						query = "Select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ? and data_ultimo_errore > ? and dettaglio_esito_ultimo_errore = ? and codice_risposta_ultimo_errore = ? and ultimo_errore LIKE '"+ultimoErrore+"' and location_ultimo_errore LIKE '"+locationUltimoErrore+"'";
 						
 						int esitoNotifica;
 						if (requestExpectation.tipoFault != TipoFault.NESSUNO) {
@@ -235,12 +235,12 @@ public class RestTest extends ConfigLoader{
 						getLoggerCore().info("Checking info errori date per connettori fallimento: " + id_transazione + " " + connettore + " " + dataRiferimentoTest.toString() + " " + esitoNotifica + " " + statusCode + " " + ultimoErrore + " " + locationUltimoErrore );
 						if (fault.isEmpty() ) {
 							query += " and fault_ultimo_errore is null and formato_fault_ultimo_errore is null";
-							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, ultimoErrore, locationUltimoErrore);
+							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode);
 							assertEquals(Integer.valueOf(1), count);
 						} else {
 							getLoggerCore().info("QUI");
 							query += " and fault_ultimo_errore LIKE '"+fault+"' and formato_fault_ultimo_errore = ? and cluster_id_ultimo_errore = 'IDGW'";
-							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, ultimoErrore, locationUltimoErrore, formatoFault);
+							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, formatoFault);
 							assertEquals(Integer.valueOf(1), count);
 						}
 					}
@@ -284,8 +284,6 @@ public class RestTest extends ConfigLoader{
 						Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione,	connettore, dataRiferimentoTest);
 						assertEquals(Integer.valueOf(1), count);
 
-						query = "Select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ? and data_ultimo_errore > ? and dettaglio_esito_ultimo_errore = ? and codice_risposta_ultimo_errore = ? and ultimo_errore = ? and location_ultimo_errore = ?";
-
 						String fault 		 = "";
 						String formatoFault = "";
 						String ultimoErrore;
@@ -300,6 +298,8 @@ public class RestTest extends ConfigLoader{
 							ultimoErrore =  "Consegna [http] con errore: errore HTTP " + requestExpectation.statusCodePrincipale;
 							locationUltimoErrore = "http://localhost:8080/TestService/echo?returnCode="+requestExpectation.statusCodePrincipale+"&replyPrefixQueryParameter=GovWay-TestSuite-&id_connettore="+connettore+"&replyQueryParameter=id_connettore";
 						}
+
+						query = "Select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ? and data_ultimo_errore > ? and dettaglio_esito_ultimo_errore = ? and codice_risposta_ultimo_errore = ? and ultimo_errore LIKE '"+ultimoErrore+"' and location_ultimo_errore LIKE '"+locationUltimoErrore+"'";
 						
 						int esitoNotifica;
 						if (requestExpectation.tipoFault != TipoFault.NESSUNO) {
@@ -314,11 +314,11 @@ public class RestTest extends ConfigLoader{
 						getLoggerCore().info("Checking info errori date per connettori fallimento: " + id_transazione + " " + connettore + " " + dataRiferimentoTest.toString() + " " + esitoNotifica + " " + statusCode + " " + ultimoErrore + " " + locationUltimoErrore );
 						if (fault.isEmpty() ) {
 							query += " and fault_ultimo_errore is null and formato_fault_ultimo_errore is null";
-							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, ultimoErrore, locationUltimoErrore);
+							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode);
 							assertEquals(Integer.valueOf(1), count);
 						} else {
 							query += " and fault_ultimo_errore LIKE '"+fault+"' and formato_fault_ultimo_errore = ?";
-							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, ultimoErrore, locationUltimoErrore, formatoFault);
+							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, formatoFault);
 							assertEquals(Integer.valueOf(1), count);
 						}
 					}
