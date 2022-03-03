@@ -1,3 +1,8 @@
+2022-03-03  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	In configurazione avanzata la possibilità di abilitare le funzionalità in fase di sviluppo riguardanti la consegna delle notifiche non generava degli artefatti corretti se l'application server selezionato era Tomcat.
+
 2022-03-03  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]

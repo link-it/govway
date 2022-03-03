@@ -198,65 +198,284 @@
 				</if>
 
 				<if>
-					<equals arg1="${antinstaller_timer_consegna}" arg2="true" />
+					<matches string="${antinstaller_as}" pattern="tomcat.*"/>
 					<then>
-						<copy file="${datasource_dir_ds_creati}/govway-ds.xml" tofile="${datasource_dir_ds_creati}/govway_runtime_consegnaAsincrona-ds.xml" />
-						<replace file="${datasource_dir_ds_creati}/govway_runtime_consegnaAsincrona-ds.xml" 
-							token="&lt;min-pool-size>10&lt;/min-pool-size>" 
-							value="&lt;min-pool-size>5&lt;/min-pool-size>"/>
-						<replace file="${datasource_dir_ds_creati}/govway_runtime_consegnaAsincrona-ds.xml" 
-							token="&lt;max-pool-size>50&lt;/max-pool-size>" 
-							value="&lt;max-pool-size>20&lt;/max-pool-size>"/>
-						<replace file="${datasource_dir_ds_creati}/govway_runtime_consegnaAsincrona-ds.xml" 
-							token="org.govway.datasource" 
-							value="org.govway.datasource.runtime.consegnaAsincrona"/>
+						<loadfile
+						    encoding="UTF-8"
+						    property="propDataSourceGovWayRuntimeFile"
+						    srcFile="${datasource_dir_ds_creati}/govway.xml" />
+						<propertyregex property="propDataSourceGovWayRuntimeFileSingleDataSource" 
+							override="true"
+							input="${propDataSourceGovWayRuntimeFile}"
+							regexp="[\sA-Za-z0-9 ]*Datasource per i dati di runtime di GovWay[\sA-Za-z0-9&lt;>\- ]*(&lt;Resource[\sA-Za-z0-9&lt;>\- &quot;=.\/:_@?;]*\/>).*"
+							select="\1"/>
+						
 						<if>
 							<equals arg1="${antinstaller_log_db}" arg2="log"/>
 							<then>
-								<copy file="${datasource_dir_ds_creati}/govway_tracciamento-ds.xml" tofile="${datasource_dir_ds_creati}/govway_tracciamento_consegnaAsincrona-ds.xml" />
-								<replace file="${datasource_dir_ds_creati}/govway_tracciamento_consegnaAsincrona-ds.xml" 
-									token="&lt;min-pool-size>10&lt;/min-pool-size>" 
-									value="&lt;min-pool-size>5&lt;/min-pool-size>"/>
-								<replace file="${datasource_dir_ds_creati}/govway_tracciamento_consegnaAsincrona-ds.xml" 
-									token="&lt;max-pool-size>50&lt;/max-pool-size>" 
-									value="&lt;max-pool-size>20&lt;/max-pool-size>"/>
-								<replace file="${datasource_dir_ds_creati}/govway_tracciamento_consegnaAsincrona-ds.xml" 
-									token="org.govway.datasource.tracciamento" 
-									value="org.govway.datasource.tracciamento.consegnaAsincrona"/>
+								<propertyregex property="propDataSourceGovWayTracciamentoFileSingleDataSource" 
+									override="true"
+									input="${propDataSourceGovWayRuntimeFile}"
+									regexp="[\sA-Za-z0-9 ]*Datasouce contenente le tracce di GovWay[\sA-Za-z0-9&lt;>\- ]*(&lt;Resource[\sA-Za-z0-9&lt;>\- &quot;=.\/:_@?;]*\/>).*"
+									select="\1"/>
 							</then>
 						</if>
+
+						<if>
+							<equals arg1="${antinstaller_timer_consegna}" arg2="true" />
+							<then>
+
+								<propertyregex property="propDataSourceGovWayRuntimeFileSingleDataSourceRuntimeConsegnaAsincrona"
+									       input="${propDataSourceGovWayRuntimeFileSingleDataSource}"
+									       regexp="datasource"
+									       replace="datasource.runtime.consegnaAsincrona"
+									       global="true" />
+								<propertyregex property="propDataSourceGovWayRuntimeFileSingleDataSourceRuntimeConsegnaAsincrona"
+									       override="true"
+										input="${propDataSourceGovWayRuntimeFileSingleDataSourceRuntimeConsegnaAsincrona}"
+									       regexp="&quot;10&quot;"
+									       replace="&quot;5&quot;"
+									       global="true" />
+								<propertyregex property="propDataSourceGovWayRuntimeFileSingleDataSourceRuntimeConsegnaAsincrona"
+									       override="true"
+										input="${propDataSourceGovWayRuntimeFileSingleDataSourceRuntimeConsegnaAsincrona}"
+									       regexp="&quot;50&quot;"
+									       replace="&quot;20&quot;"
+									       global="true" />
+								<antcall target="replace_token">
+								    <param name="file" value="${datasource_dir_ds_creati}/govway.xml"/>
+									<param name="token" value="&lt;/Context>"/>
+									<param name="value" value="HEADERDATASOURCE${propDataSourceGovWayRuntimeFileSingleDataSourceRuntimeConsegnaAsincrona}ACAPOACAPOACAPO&lt;/Context>"/>
+								</antcall>
+								<replace file="${datasource_dir_ds_creati}/govway.xml">
+									<replacetoken>HEADERDATASOURCE</replacetoken>
+									<replacevalue><![CDATA[
+
+	<!-- Datasource utilizzato dal Timer di consegna delle notifiche  -->
+
+	]]></replacevalue>
+								</replace>
+								<replace file="${datasource_dir_ds_creati}/govway.xml">
+									<replacetoken>ACAPOACAPOACAPO&lt;/Context></replacetoken>
+									<replacevalue><![CDATA[
+
+
+</Context>]]></replacevalue>
+								</replace>
+
+								<if>
+									<equals arg1="${antinstaller_log_db}" arg2="log"/>
+									<then>
+										<propertyregex property="propDataSourceGovWayRuntimeFileSingleDataSourceTracciamentoConsegnaAsincrona"
+											       input="${propDataSourceGovWayTracciamentoFileSingleDataSource}"
+											       regexp="datasource.tracciamento"
+											       replace="datasource.tracciamento.consegnaAsincrona"
+											       global="true" />
+										<propertyregex property="propDataSourceGovWayRuntimeFileSingleDataSourceTracciamentoConsegnaAsincrona"
+											       override="true"
+												input="${propDataSourceGovWayRuntimeFileSingleDataSourceTracciamentoConsegnaAsincrona}"
+											       regexp="&quot;10&quot;"
+									       	       replace="&quot;5&quot;"
+											       global="true" />
+										<propertyregex property="propDataSourceGovWayRuntimeFileSingleDataSourceTracciamentoConsegnaAsincrona"
+											       override="true"
+												input="${propDataSourceGovWayRuntimeFileSingleDataSourceTracciamentoConsegnaAsincrona}"
+											       regexp="&quot;50&quot;"
+										      	       replace="&quot;20&quot;"
+											       global="true" />
+										<antcall target="replace_token">
+										    <param name="file" value="${datasource_dir_ds_creati}/govway.xml"/>
+											<param name="token" value="&lt;/Context>"/>
+											<param name="value" value="HEADERDATASOURCE${propDataSourceGovWayRuntimeFileSingleDataSourceTracciamentoConsegnaAsincrona}ACAPOACAPOACAPO&lt;/Context>"/>
+										</antcall>
+										<replace file="${datasource_dir_ds_creati}/govway.xml">
+											<replacetoken>HEADERDATASOURCE</replacetoken>
+											<replacevalue><![CDATA[
+
+	<!-- Datasource utilizzato dal Timer di consegna delle notifiche per il tracciamento  -->
+
+	]]></replacevalue>
+										</replace>
+										<replace file="${datasource_dir_ds_creati}/govway.xml">
+											<replacetoken>ACAPOACAPOACAPO&lt;/Context></replacetoken>
+											<replacevalue><![CDATA[
+
+
+</Context>]]></replacevalue>
+										</replace>
+									</then>
+								</if>
+							</then>
+						</if>
+
+						<if>
+							<equals arg1="${antinstaller_integration_manager}" arg2="true" />
+							<then>
+								<propertyregex property="propDataSourceGovWayRuntimeFileSingleDataSourceRuntimeIntegrationManager"
+									       input="${propDataSourceGovWayRuntimeFileSingleDataSource}"
+									       regexp="datasource"
+									       replace="datasource.runtime.messageBoxIM"
+									       global="true" />
+								<propertyregex property="propDataSourceGovWayRuntimeFileSingleDataSourceRuntimeIntegrationManager"
+									       override="true"
+										input="${propDataSourceGovWayRuntimeFileSingleDataSourceRuntimeIntegrationManager}"
+									       regexp="&quot;10&quot;"
+							       	       replace="&quot;5&quot;"
+									       global="true" />
+								<propertyregex property="propDataSourceGovWayRuntimeFileSingleDataSourceRuntimeIntegrationManager"
+									       override="true"
+										input="${propDataSourceGovWayRuntimeFileSingleDataSourceRuntimeIntegrationManager}"
+									       regexp="&quot;50&quot;"
+									       replace="&quot;20&quot;"
+									       global="true" />
+								<antcall target="replace_token">
+								    <param name="file" value="${datasource_dir_ds_creati}/govway.xml"/>
+									<param name="token" value="&lt;/Context>"/>
+									<param name="value" value="HEADERDATASOURCE${propDataSourceGovWayRuntimeFileSingleDataSourceRuntimeIntegrationManager}ACAPOACAPOACAPO&lt;/Context>"/>
+								</antcall>
+								<replace file="${datasource_dir_ds_creati}/govway.xml">
+									<replacetoken>HEADERDATASOURCE</replacetoken>
+									<replacevalue><![CDATA[
+
+	<!-- Datasource utilizzato dal servizio MessageBox/IntegrationManager  -->
+
+	]]></replacevalue>
+								</replace>
+								<replace file="${datasource_dir_ds_creati}/govway.xml">
+									<replacetoken>ACAPOACAPOACAPO&lt;/Context></replacetoken>
+									<replacevalue><![CDATA[
+
+
+</Context>]]></replacevalue>
+								</replace>
+
+								<if>
+									<equals arg1="${antinstaller_log_db}" arg2="log"/>
+									<then>
+										<propertyregex property="propDataSourceGovWayRuntimeFileSingleDataSourceTracciamentoIntegrationManager"
+											       input="${propDataSourceGovWayTracciamentoFileSingleDataSource}"
+											       regexp="datasource.tracciamento"
+											       replace="datasource.tracciamento.messageBoxIM"
+											       global="true" />
+										<propertyregex property="propDataSourceGovWayRuntimeFileSingleDataSourceTracciamentoIntegrationManager"
+											       override="true"
+												input="${propDataSourceGovWayRuntimeFileSingleDataSourceTracciamentoIntegrationManager}"
+											       regexp="&quot;10&quot;"
+									       	       replace="&quot;5&quot;"
+											       global="true" />
+										<propertyregex property="propDataSourceGovWayRuntimeFileSingleDataSourceTracciamentoIntegrationManager"
+											       override="true"
+												input="${propDataSourceGovWayRuntimeFileSingleDataSourceTracciamentoIntegrationManager}"
+											       regexp="&quot;50&quot;"
+										      	       replace="&quot;20&quot;"
+											       global="true" />
+										<antcall target="replace_token">
+										    <param name="file" value="${datasource_dir_ds_creati}/govway.xml"/>
+											<param name="token" value="&lt;/Context>"/>
+											<param name="value" value="HEADERDATASOURCE${propDataSourceGovWayRuntimeFileSingleDataSourceTracciamentoIntegrationManager}ACAPOACAPOACAPO&lt;/Context>"/>
+										</antcall>
+										<replace file="${datasource_dir_ds_creati}/govway.xml">
+											<replacetoken>HEADERDATASOURCE</replacetoken>
+											<replacevalue><![CDATA[
+
+	<!-- Datasource utilizzato dal servizio MessageBox/IntegrationManager per il tracciamento  -->
+
+	]]></replacevalue>
+										</replace>
+										<replace file="${datasource_dir_ds_creati}/govway.xml">
+											<replacetoken>ACAPOACAPOACAPO&lt;/Context></replacetoken>
+											<replacevalue><![CDATA[
+
+
+</Context>]]></replacevalue>
+										</replace>
+									</then>
+								</if>
+							</then>
+						</if>
+
 					</then>
+					<else>
+						<if>
+							<equals arg1="${antinstaller_timer_consegna}" arg2="true" />
+							<then>
+								<copy file="${datasource_dir_ds_creati}/govway-ds.xml" tofile="${datasource_dir_ds_creati}/govway_runtime_consegnaAsincrona-ds.xml" />
+								<replace file="${datasource_dir_ds_creati}/govway_runtime_consegnaAsincrona-ds.xml" 
+									token="&lt;min-pool-size>10&lt;/min-pool-size>" 
+									value="&lt;min-pool-size>5&lt;/min-pool-size>"/>
+								<replace file="${datasource_dir_ds_creati}/govway_runtime_consegnaAsincrona-ds.xml" 
+									token="&lt;max-pool-size>50&lt;/max-pool-size>" 
+									value="&lt;max-pool-size>20&lt;/max-pool-size>"/>
+								<replace file="${datasource_dir_ds_creati}/govway_runtime_consegnaAsincrona-ds.xml" 
+									token="org.govway.datasource" 
+									value="org.govway.datasource.runtime.consegnaAsincrona"/>
+								<if>
+									<equals arg1="${antinstaller_log_db}" arg2="log"/>
+									<then>
+										<copy file="${datasource_dir_ds_creati}/govway_tracciamento-ds.xml" tofile="${datasource_dir_ds_creati}/govway_tracciamento_consegnaAsincrona-ds.xml" />
+										<replace file="${datasource_dir_ds_creati}/govway_tracciamento_consegnaAsincrona-ds.xml" 
+											token="&lt;min-pool-size>10&lt;/min-pool-size>" 
+											value="&lt;min-pool-size>5&lt;/min-pool-size>"/>
+										<replace file="${datasource_dir_ds_creati}/govway_tracciamento_consegnaAsincrona-ds.xml" 
+											token="&lt;max-pool-size>50&lt;/max-pool-size>" 
+											value="&lt;max-pool-size>20&lt;/max-pool-size>"/>
+										<replace file="${datasource_dir_ds_creati}/govway_tracciamento_consegnaAsincrona-ds.xml" 
+											token="org.govway.datasource.tracciamento" 
+											value="org.govway.datasource.tracciamento.consegnaAsincrona"/>
+									</then>
+								</if>
+							</then>
+						</if>
+						<if>
+							<equals arg1="${antinstaller_integration_manager}" arg2="true" />
+							<then>
+								<copy file="${datasource_dir_ds_creati}/govway-ds.xml" tofile="${datasource_dir_ds_creati}/govway_runtime_messageBoxIM-ds.xml" />
+								<replace file="${datasource_dir_ds_creati}/govway_runtime_messageBoxIM-ds.xml" 
+									token="&lt;min-pool-size>10&lt;/min-pool-size>" 
+									value="&lt;min-pool-size>5&lt;/min-pool-size>"/>
+								<replace file="${datasource_dir_ds_creati}/govway_runtime_messageBoxIM-ds.xml" 
+									token="&lt;max-pool-size>50&lt;/max-pool-size>" 
+									value="&lt;max-pool-size>20&lt;/max-pool-size>"/>
+								<replace file="${datasource_dir_ds_creati}/govway_runtime_messageBoxIM-ds.xml" 
+									token="org.govway.datasource" 
+									value="org.govway.datasource.runtime.messageBoxIM"/>
+								<if>
+									<equals arg1="${antinstaller_log_db}" arg2="log"/>
+									<then>
+										<copy file="${datasource_dir_ds_creati}/govway_tracciamento-ds.xml" tofile="${datasource_dir_ds_creati}/govway_tracciamento_messageBoxIM-ds.xml" />
+										<replace file="${datasource_dir_ds_creati}/govway_tracciamento_messageBoxIM-ds.xml" 
+											token="&lt;min-pool-size>10&lt;/min-pool-size>" 
+											value="&lt;min-pool-size>5&lt;/min-pool-size>"/>
+										<replace file="${datasource_dir_ds_creati}/govway_tracciamento_messageBoxIM-ds.xml" 
+											token="&lt;max-pool-size>50&lt;/max-pool-size>" 
+											value="&lt;max-pool-size>20&lt;/max-pool-size>"/>
+										<replace file="${datasource_dir_ds_creati}/govway_tracciamento_messageBoxIM-ds.xml" 
+											token="org.govway.datasource.tracciamento" 
+											value="org.govway.datasource.tracciamento.messageBoxIM"/>
+									</then>
+								</if>
+							</then>
+						</if>
+					</else>
 				</if>
+			</then>
+		</if>
+		<if>
+			<and>
+				<matches string="${build_for_as}" pattern="tomcat.*"/>
+				<istrue value="${build_openspcoop_sec_archive}" />
+			</and>
+			<then>
 				<if>
-					<equals arg1="${antinstaller_integration_manager}" arg2="true" />
+					<equals arg1="${antinstaller_console_env}" arg2="manager"/>
 					<then>
-						<copy file="${datasource_dir_ds_creati}/govway-ds.xml" tofile="${datasource_dir_ds_creati}/govway_runtime_messageBoxIM-ds.xml" />
-						<replace file="${datasource_dir_ds_creati}/govway_runtime_messageBoxIM-ds.xml" 
-							token="&lt;min-pool-size>10&lt;/min-pool-size>" 
-							value="&lt;min-pool-size>5&lt;/min-pool-size>"/>
-						<replace file="${datasource_dir_ds_creati}/govway_runtime_messageBoxIM-ds.xml" 
-							token="&lt;max-pool-size>50&lt;/max-pool-size>" 
-							value="&lt;max-pool-size>20&lt;/max-pool-size>"/>
-						<replace file="${datasource_dir_ds_creati}/govway_runtime_messageBoxIM-ds.xml" 
-							token="org.govway.datasource" 
-							value="org.govway.datasource.runtime.messageBoxIM"/>
-						<if>
-							<equals arg1="${antinstaller_log_db}" arg2="log"/>
-							<then>
-								<copy file="${datasource_dir_ds_creati}/govway_tracciamento-ds.xml" tofile="${datasource_dir_ds_creati}/govway_tracciamento_messageBoxIM-ds.xml" />
-								<replace file="${datasource_dir_ds_creati}/govway_tracciamento_messageBoxIM-ds.xml" 
-									token="&lt;min-pool-size>10&lt;/min-pool-size>" 
-									value="&lt;min-pool-size>5&lt;/min-pool-size>"/>
-								<replace file="${datasource_dir_ds_creati}/govway_tracciamento_messageBoxIM-ds.xml" 
-									token="&lt;max-pool-size>50&lt;/max-pool-size>" 
-									value="&lt;max-pool-size>20&lt;/max-pool-size>"/>
-								<replace file="${datasource_dir_ds_creati}/govway_tracciamento_messageBoxIM-ds.xml" 
-									token="org.govway.datasource.tracciamento" 
-									value="org.govway.datasource.tracciamento.messageBoxIM"/>
-							</then>
-						</if>
+						<var name="datasource_dir_ds_creati" value="${dist}/datasource/runtime"/>
 					</then>
+					<else>
+						<var name="datasource_dir_ds_creati" value="${dist}/datasource"/>
+					</else>
 				</if>
+				<copy file="${datasource_dir_ds_creati}/govway.xml" tofile="${datasource_dir_ds_creati}/govwaySec.xml"/>
 			</then>
 		</if>
 
@@ -940,6 +1159,7 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 				<move todir="${dist}/archivi/manager">
 					<fileset dir="${dist}/archivi">
 						<exclude name="govway.*ar"/>
+						<exclude name="govwaySec.war"/>
 						<exclude name="manager"/>
 						<exclude name="runtime"/>
 					</fileset>
@@ -947,6 +1167,7 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 				<move todir="${dist}/archivi/runtime">
 					<fileset dir="${dist}/archivi">
 						<include name="govway.*ar"/>
+						<include name="govwaySec.war"/>
 						<exclude name="manager"/>
 						<exclude name="runtime"/>
 					</fileset>

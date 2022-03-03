@@ -854,6 +854,10 @@
 						<antcall target="-create_tomcat_war">
 						    <param name="tomcat_war" value="${tmp_archivi}/govwaySec.war"/>
 						</antcall>
+						<!-- disabilito timer per via della doppia presenza degli archivi -->
+						<antcall target="pdd_govwaySec_properties_settings">
+						    <param name="file" value="${tmp_archivi}/govwaySec.war/WEB-INF/classes/govway.properties"/>
+						</antcall>
 						<!-- Ripristino jar -->
 						<antcall target="ripristina_jar">
 						    <param name="archiveFile" value="${tmp_archivi}/govwaySec.war"/>
@@ -1848,12 +1852,14 @@
 
 
 				<!-- govwaySec -->
+				<!-- spostato in distrib-build.xml 
 				<if>
 					<istrue value="${build_openspcoop_sec_archive}" />
 					<then>
 						<copy file="${tmp_ds}/govway.xml" tofile="${tmp_ds}/govwaySec.xml"/>
 					</then>
 				</if>
+				-->
 
 
 				<!-- govwayLoader -->

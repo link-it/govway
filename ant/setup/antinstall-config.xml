@@ -611,8 +611,7 @@
 
 	<comment displayText="Attenzione: la scelta dell'Application Server Tomcat"/>
 	<comment displayText="   impedisce l'utilizzo della funzionalità 'Presa in carico' con attivazione tramite broker JMS."/>
-	<comment displayText="Tornare al pannello precedente e scegliere un Application Server differente"/>
-	<comment displayText="   o procedere con la funzionalità disabilitata"/>
+	<comment displayText="Tornare al pannello precedente e scegliere un A.S. differente o procedere con la funzionalità disabilitata"/>
 
 	<comment bold="true" displayText="Presa in carico"/>
 	<checkbox defaultValue="false" property="antinstaller_stateful" force="true" displayText="Attivazione tramite broker JMS"/>
