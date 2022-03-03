@@ -1,3 +1,11 @@
+2022-03-03  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1336
+	L'aggiornamento della configurazione ModI di una erogazione o fruizione andava in errore su InternetExplorer 11.
+	Il motivo risiede nella presenza di elementi contenenti caratteri che mandavano in confusione il visualizzatore di IE.
+	Tali elementi erano frutto degli elementi Hidden generati per le dialog info che non necessitavano di essere inviati al server in caso di postback o submit della form.
+
 2022-02-28  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]
