@@ -66,9 +66,9 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectations;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectations.TipoFault;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectationsFault;
 import org.openspcoop2.pdd.services.cxf.IntegrationManagerException_Exception;
 import org.openspcoop2.pdd.services.cxf.MessageBox;
-import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.RequestAndExpectationsFault;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
@@ -167,7 +167,12 @@ public class SoapTest extends ConfigLoader {
 		}
 	
 		// Attendo la consegna
-		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
+		List<HttpResponse> responsesCheck = new ArrayList<HttpResponse>();
+		responsesCheck.addAll(responses);
+		responsesCheck.addAll(responses2);
+		List<String> connettoriCheck = new ArrayList<String>();
+		connettoriCheck.addAll(Common.setConnettoriAbilitati);
+		CommonConsegnaMultipla.waitConsegna(responsesCheck, connettoriCheck);
 
 		// Per i connettori di tipo file, controllo anche che la scrittura della richiesta di consegna multipla sia avvenuta.
 		Set<String> connettoriFile = Set.of(CONNETTORE_2, CONNETTORE_3);
@@ -386,9 +391,9 @@ public class SoapTest extends ConfigLoader {
 			}
 		}
 		
-		// Attendo la consegna
-		org.openspcoop2.utils.Utilities.sleep(2 * CommonConsegnaMultipla.intervalloControllo);
-
+		// Attendo la prima consegna
+		Map<String, java.sql.Timestamp> primaConsegna = CommonConsegnaMultipla.waitPrimaConsegna(responsesByKind);
+				
 		for (var requestExpectation : responsesByKind.keySet()) {
 			var responses = responsesByKind.get(requestExpectation);
 
@@ -401,13 +406,24 @@ public class SoapTest extends ConfigLoader {
 						
 						String query = "Select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ?"
 								+ " and data_uscita_richiesta > ? and data_registrazione > ? and data_ingresso_risposta >= data_uscita_richiesta"
-								+ " and data_ingresso_risposta >= data_accettazione_risposta and data_uscita_richiesta >= data_primo_tentativo"		// Qui metto un >= invece di = perchè le query a volte impiegano troppo  e avviene già la rispedizione
+								+ " and data_ingresso_risposta >= data_accettazione_risposta and data_uscita_richiesta = data_primo_tentativo"
 								+ " and cluster_id_in_coda = 'IDGW' and cluster_id_consegna = 'IDGW' ";
 						
 						getLoggerCore().info("Checking date per connettori fallimento: " + id_transazione + " " + connettore + " " + dataRiferimentoTest.toString() );
 						Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione,	connettore, dataRiferimentoTest, dataRiferimentoTest);
+						
+						// debug for error
+						if(count.intValue() != 1) {
+							ConfigLoader.getLoggerCore().error("configurazione differente da quella attesa (dataRiferimentoTest:"+dataRiferimentoTest+"):");
+							String query2 = "select data_uscita_richiesta, data_registrazione, data_ingresso_risposta, data_accettazione_risposta, data_primo_tentativo,cluster_id_in_coda,cluster_id_consegna from transazioni_sa where id_transazione = ? and connettore_nome = ?";
+							List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, id_transazione, connettore);
+							for (var v : letto) {
+								ConfigLoader.getLoggerCore().error(v.toString());
+							}
+						}
+						
 						assertEquals(Integer.valueOf(1), count);
-
+						
 						String fault 		 = "";
 						String formatoFault = "";
 						String ultimoErrore;
@@ -447,12 +463,22 @@ public class SoapTest extends ConfigLoader {
 						if (fault.isEmpty() ) {
 							query += " and fault_ultimo_errore is null and formato_fault_ultimo_errore is null";
 							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode);
-							assertEquals(Integer.valueOf(1), count);
 						} else {
 							query += " and fault_ultimo_errore LIKE '"+fault+"' and formato_fault_ultimo_errore = ? and cluster_id_ultimo_errore = 'IDGW'";
 							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, formatoFault);
-							assertEquals(Integer.valueOf(1), count);
 						}
+						
+						// debug for error
+						if(count.intValue() != 1) {
+							ConfigLoader.getLoggerCore().error("configurazione differente da quella attesa:");
+							String query2 = "select data_ultimo_errore, dettaglio_esito_ultimo_errore, codice_risposta_ultimo_errore, ultimo_errore, location_ultimo_errore,fault_ultimo_errore,formato_fault_ultimo_errore,cluster_id_ultimo_errore from transazioni_sa where id_transazione = ? and connettore_nome = ?";
+							List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, id_transazione, connettore);
+							for (var v : letto) {
+								ConfigLoader.getLoggerCore().error(v.toString());
+							}
+						}
+						
+						assertEquals(Integer.valueOf(1), count);
 					}
 
 					for (var connettore : requestExpectation.connettoriSuccesso) {
@@ -466,6 +492,17 @@ public class SoapTest extends ConfigLoader {
 																																		
 						getLoggerCore().info("Checking date per connettori successo: " + id_transazione + " " + connettore + " " + dataRiferimentoTest.toString() );
 						Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione,	connettore, dataRiferimentoTest, dataRiferimentoTest);
+						
+						// debug for error
+						if(count.intValue() != 1) {
+							ConfigLoader.getLoggerCore().error("configurazione differente da quella attesa (dataRiferimentoTest:"+dataRiferimentoTest+"):");
+							String query2 = "select data_accettazione_richiesta, data_uscita_richiesta, data_registrazione, data_ingresso_risposta, data_accettazione_risposta, data_primo_tentativo, data_ultimo_errore, dettaglio_esito_ultimo_errore, codice_risposta_ultimo_errore, ultimo_errore, location_ultimo_errore from transazioni_sa where id_transazione = ? and connettore_nome = ?";
+							List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, id_transazione, connettore);
+							for (var v : letto) {
+								ConfigLoader.getLoggerCore().error(v.toString());
+							}
+						}
+						
 						assertEquals(Integer.valueOf(1), count);
 					}
 
@@ -473,11 +510,9 @@ public class SoapTest extends ConfigLoader {
 			}
 		}
 
-		dataRiferimentoTest = java.sql.Timestamp.from(Instant.now());
+		// Attendo l'intervallo di riconsegna e controllo che le date vengano aggiornate
+		CommonConsegnaMultipla.waitProssimaConsegna(responsesByKind,primaConsegna);
 		
-		// Attendo l'intervallo di riconsegna e controllo che il contatore delle
-		// consegne sia almeno a 2, e che le date vengano aggiornate
-		org.openspcoop2.utils.Utilities.sleep(2 * CommonConsegnaMultipla.intervalloControlloFallite);
 		for (var requestExpectation : responsesByKind.keySet()) {
 			var responses = responsesByKind.get(requestExpectation);
 
@@ -486,12 +521,27 @@ public class SoapTest extends ConfigLoader {
 					CommonConsegnaMultipla.checkRequestExpectationsFinal(requestExpectation, response);
 					
 					for (var connettore : requestExpectation.connettoriFallimento) {
+						
 						String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+						String key = CommonConsegnaMultipla.buildKey(response, connettore, id_transazione);
+						dataRiferimentoTest = primaConsegna.get(key);					
+						
 						String query = "Select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ?"
 								+ " and data_uscita_richiesta > ? and data_ingresso_risposta >= data_uscita_richiesta"
-								+ " and data_ingresso_risposta >= data_accettazione_risposta and data_uscita_richiesta >= data_primo_tentativo";		// Qui metto un >= invece di = perchè le query a volte impiegano troppo  e avviene già la rispedizione
+								+ " and data_ingresso_risposta >= data_accettazione_risposta and data_uscita_richiesta > data_primo_tentativo";
 						getLoggerCore().info("Checking date per connettori fallimento: " + id_transazione + " " + connettore + " " + dataRiferimentoTest.toString() );
 						Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione,	connettore, dataRiferimentoTest);
+						
+						// debug for error
+						if(count.intValue() != 1) {
+							ConfigLoader.getLoggerCore().error("configurazione differente da quella attesa (dataRiferimentoTest:"+dataRiferimentoTest+"):");
+							String query2 = "select data_uscita_richiesta, data_ingresso_risposta, data_accettazione_risposta, data_primo_tentativo from transazioni_sa where id_transazione = ? and connettore_nome = ?";
+							List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, id_transazione, connettore);
+							for (var v : letto) {
+								ConfigLoader.getLoggerCore().error(v.toString());
+							}
+						}
+						
 						assertEquals(Integer.valueOf(1), count);
 						
 						String fault 		 = "";
@@ -583,7 +633,12 @@ public class SoapTest extends ConfigLoader {
 		}
 
 		// Attendo la consegna
-		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
+		List<HttpResponse> responsesCheck = new ArrayList<HttpResponse>();
+		responsesCheck.addAll(responsesOk);
+		responsesCheck.addAll(responsesErroreProcessamentoOK);
+		List<String> connettoriCheck = new ArrayList<String>();
+		connettoriCheck.addAll(Common.setConnettoriAbilitati);
+		CommonConsegnaMultipla.waitConsegna(responsesCheck, connettoriCheck);	
 
 		for (var r : responsesOk) {
 			CommonConsegnaMultipla.checkConsegnaCompletata(r);
@@ -620,7 +675,10 @@ public class SoapTest extends ConfigLoader {
 		}
 
 		// Attendo la consegna
-		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
+		responsesCheck = new ArrayList<HttpResponse>();
+		responsesCheck.addAll(responsesOk);
+		responsesCheck.addAll(responsesErroreProcessamentoOK);
+		CommonConsegnaMultipla.waitConsegna(responsesCheck, connettoriCheck);	
 
 		for (var r : responsesOk) {
 			CommonConsegnaMultipla.checkConsegnaCompletata(r);
@@ -671,7 +729,12 @@ public class SoapTest extends ConfigLoader {
 		}
 
 		// Attendo la consegna
-		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
+		List<HttpResponse> responsesCheck = new ArrayList<HttpResponse>();
+		responsesCheck.addAll(responsesOk);
+		//responsesCheck.addAll(responsesErroreProcessamento);
+		List<String> connettoriCheck = new ArrayList<String>();
+		connettoriCheck.addAll(Common.setConnettoriAbilitati);
+		CommonConsegnaMultipla.waitConsegna(responsesCheck, connettoriCheck);
 
 		for (var r : responsesOk) {
 			CommonConsegnaMultipla.checkConsegnaCompletata(r);
@@ -705,7 +768,10 @@ public class SoapTest extends ConfigLoader {
 		}
 
 		// Attendo la consegna
-		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
+		responsesCheck = new ArrayList<HttpResponse>();
+		responsesCheck.addAll(responsesOk);
+		//responsesCheck.addAll(responsesErroreProcessamento);
+		CommonConsegnaMultipla.waitConsegna(responsesCheck, connettoriCheck);
 
 		for (var r : responsesOk) {
 			CommonConsegnaMultipla.checkConsegnaCompletata(r);
@@ -746,7 +812,11 @@ public class SoapTest extends ConfigLoader {
 			checkSchedulingConnettoreIniziato(r, Common.setConnettoriAbilitati);
 		}
 		
-		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
+		List<String> connettori = new ArrayList<String>();
+		connettori.add(Common.CONNETTORE_0);
+		connettori.add(Common.CONNETTORE_2);
+		connettori.add(Common.CONNETTORE_3);
+		CommonConsegnaMultipla.waitConsegna(responses, connettori);
 		
 		String fault = "";
 		String formatoFault = "";
@@ -771,7 +841,10 @@ public class SoapTest extends ConfigLoader {
 		CommonConsegnaMultipla.jmxAbilitaSchedulingConnettore(erogazione, Common.CONNETTORE_1);
 		
 		// Attendo la consegna sul connettore appena abilitato
-		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
+		
+		connettori = new ArrayList<String>();
+		connettori.add(Common.CONNETTORE_1);
+		CommonConsegnaMultipla.waitConsegna(responses, connettori);
 		
 		for (var response : responses) {
 			checkSchedulingConnettoreCompletato(response, Common.CONNETTORE_1,ESITO_OK, 200, fault, formatoFault);
@@ -833,8 +906,8 @@ public class SoapTest extends ConfigLoader {
 			checkSchedulingConnettoreIniziato(responses, Common.setConnettoriAbilitati);
 		}
 		
-		// Attendo la consegna
-		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
+		// Attendo la prima consegna
+		Map<String, java.sql.Timestamp> primaConsegna = CommonConsegnaMultipla.waitPrimaConsegna(responsesByKind);
 		
 		for (var requestAndExpectation : responsesByKind.keySet()) {
 			for (var response : responsesByKind.get(requestAndExpectation)) {
@@ -843,7 +916,8 @@ public class SoapTest extends ConfigLoader {
 		}
 		
 		// Attendo l'intervallo di riconsegna e controllo che il contatore delle consegne sia almeno a 2
-		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControlloFallite);
+		CommonConsegnaMultipla.waitProssimaConsegna(responsesByKind,primaConsegna);
+		
 		for (var requestAndExpectation : responsesByKind.keySet()) {
 			for (var response : responsesByKind.get(requestAndExpectation)) {
 				CommonConsegnaMultipla.checkRequestExpectationsFinal(requestAndExpectation, response);
@@ -911,8 +985,8 @@ public class SoapTest extends ConfigLoader {
 			}
 		}
 		
-		// Attendo la consegna
-		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
+		// Attendo la prima consegna
+		Map<String, java.sql.Timestamp> primaConsegna = CommonConsegnaMultipla.waitPrimaConsegna(responsesByKind);
 		
 		for (var requestExpectation : responsesByKind.keySet()) {
 			var responses = responsesByKind.get(requestExpectation);
@@ -925,7 +999,8 @@ public class SoapTest extends ConfigLoader {
 		}
 		
 		// Attendo l'intervallo di riconsegna e controllo che il contatore delle consegne sia almeno a 2
-		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControlloFallite);
+		CommonConsegnaMultipla.waitProssimaConsegna(responsesByKind,primaConsegna);
+				
 		for (var requestExpectation : responsesByKind.keySet()) {
 			var responses = responsesByKind.get(requestExpectation);
 
@@ -1031,8 +1106,8 @@ public class SoapTest extends ConfigLoader {
 			}
 		}
 		
-		// Attendo la consegna
-		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
+		// Attendo la prima consegna
+		Map<String, java.sql.Timestamp> primaConsegna = CommonConsegnaMultipla.waitPrimaConsegna(responsesByKind);
 		
 		for (var requestExpectation : responsesByKind.keySet()) {
 			var responses = responsesByKind.get(requestExpectation);
@@ -1045,7 +1120,8 @@ public class SoapTest extends ConfigLoader {
 		}
 		
 		// Attendo l'intervallo di riconsegna e controllo che il contatore delle consegne sia almeno a 2
-		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControlloFallite);
+		CommonConsegnaMultipla.waitProssimaConsegna(responsesByKind,primaConsegna);
+				
 		for (var requestExpectation : responsesByKind.keySet()) {
 			var responses = responsesByKind.get(requestExpectation);
 
@@ -1134,8 +1210,9 @@ public class SoapTest extends ConfigLoader {
 					}
 				}
 			}
-			// Attendo la consegna
-			org.openspcoop2.utils.Utilities.sleep(2 * CommonConsegnaMultipla.intervalloControllo);
+			
+			// Attendo la prima consegna
+			Map<String, java.sql.Timestamp> primaConsegna = CommonConsegnaMultipla.waitPrimaConsegna(responsesByKind);
 
 			// Adesso devono essere state effettuate le consegne
 			for (var requestExpectation : responsesByKind.keySet()) {
@@ -1148,8 +1225,9 @@ public class SoapTest extends ConfigLoader {
 				}
 			}
 			
-			// Attendo una riconsegna, per ogni richiesta andata male, solo il connettore0 non deve avere effettuato rispedizioni			
-			org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControlloFallite);			
+			// Attendo l'intervallo di riconsegna e controllo che il contatore delle consegne sia almeno a 2
+			CommonConsegnaMultipla.waitProssimaConsegna(responsesByKind,primaConsegna,CONNETTORE_0);
+			
 			for (var requestAndExpectation : responsesByKind.keySet()) {
 				if (requestAndExpectation.principaleSuperata) {
 
@@ -1170,7 +1248,10 @@ public class SoapTest extends ConfigLoader {
 			}
 			
 			// Attendo un minuto, anche il connettore 0 ora deve avere una rispedizione in più
+			ConfigLoader.getLoggerCore().info("@CadenzaRispedizione test in corso, attendo 1 minuto ...");
 			org.openspcoop2.utils.Utilities.sleep(1000*60);
+			org.openspcoop2.utils.Utilities.sleep(CommonConsegnaMultipla.intervalloControllo);
+			
 			for (var requestAndExpectation : responsesByKind.keySet()) {
 				if (requestAndExpectation.principaleSuperata) {
 					for (var response : responsesByKind.get(requestAndExpectation)) {
@@ -1223,7 +1304,12 @@ public class SoapTest extends ConfigLoader {
 		}
 	
 		// Attendo la consegna
-		org.openspcoop2.utils.Utilities.sleep(3*CommonConsegnaMultipla.intervalloControllo);
+		List<HttpResponse> responsesCheck = new ArrayList<HttpResponse>();
+		responsesCheck.addAll(responses);
+		responsesCheck.addAll(responses2);
+		List<String> connettoriCheck = new ArrayList<String>();
+		connettoriCheck.addAll(connettoriSchedulati);
+		CommonConsegnaMultipla.waitConsegna(responsesCheck, connettoriCheck);
 	
 		// La consegna deve risultare ancora in corso per via dell'errore sul connettore rotto, con un connettore
 		// in rispedizione
@@ -1295,7 +1381,12 @@ public class SoapTest extends ConfigLoader {
 		}
 	
 		// Attendo la consegna
-		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
+		List<HttpResponse> responsesCheck = new ArrayList<HttpResponse>();
+		responsesCheck.addAll(responsesSoap1);
+		responsesCheck.addAll(responsesSoap2);
+		List<String> connettoriCheck = new ArrayList<String>();
+		connettoriCheck.addAll(connettoriSuccesso);
+		CommonConsegnaMultipla.waitConsegna(responsesCheck, connettoriCheck);
 
 		// Controllo che le notifiche siano completate sui connettori non message box
 		for (var response : responsesSoap1) {
@@ -1324,7 +1415,10 @@ public class SoapTest extends ConfigLoader {
 		// Adesso cancello tutti i messaggi in pancia in modo che la consegna risulti completata
 		imMessageBoxPort.deleteAllMessages();
 		
-		org.openspcoop2.utils.Utilities.sleep(CommonConsegnaMultipla.intervalloControllo);
+		responsesCheck = new ArrayList<HttpResponse>();
+		responsesCheck.addAll(responsesSoap1);
+		responsesCheck.addAll(responsesSoap2);
+		CommonConsegnaMultipla.waitConsegna(responsesCheck, connettoriCheck);
 		
 		for (var response : responsesSoap1) {
 			checkStatoConsegna(response, CommonConsegnaMultipla.ESITO_CONSEGNA_MULTIPLA_COMPLETATA, 0);

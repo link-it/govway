@@ -1129,8 +1129,8 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 			}
 		}
 		
-		// Attendo la consegna
-		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControllo);
+		// Attendo la prima consegna
+		Map<String, java.sql.Timestamp> primaConsegna = CommonConsegnaMultipla.waitPrimaConsegna(responsesByKind);
 		
 		for (var requestExpectation : responsesByKind.keySet()) {
 			var responses = responsesByKind.get(requestExpectation);
@@ -1142,8 +1142,9 @@ public class CondizionaleByFiltroRestTest  extends ConfigLoader {
 			}
 		}
 		
-		// Attendo l'intervallo di riconsegna e controllo che il contatore delle consegne sia almeno a 2
-		org.openspcoop2.utils.Utilities.sleep(2*CommonConsegnaMultipla.intervalloControlloFallite);
+		// Attendo l'intervallo di riconsegna e controllo le date vengano aggiornate
+		CommonConsegnaMultipla.waitProssimaConsegna(responsesByKind,primaConsegna);
+				
 		for (var requestExpectation : responsesByKind.keySet()) {
 			var responses = responsesByKind.get(requestExpectation);
 

@@ -119,6 +119,11 @@ public class CommonConsegnaMultipla {
 	public final static String FORMATO_FAULT_SOAP1_1 = "SOAP_11";
 	public final static String FORMATO_FAULT_SOAP1_2 = "SOAP_12";
 	
+	public final static boolean attesaAttivaDebugLogger = Boolean
+			.valueOf(System.getProperty("connettori.consegna_multipla.attesaAttiva.log"));
+	public final static boolean attesaAttivaDebugSystemOut = Boolean
+			.valueOf(System.getProperty("connettori.consegna_multipla.attesaAttiva.systemOut"));
+	
 	public final static int intervalloControllo = Integer
 			.valueOf(System.getProperty("connettori.consegna_multipla.next_messages.intervallo_controllo")) * 1000;
 	
@@ -126,13 +131,29 @@ public class CommonConsegnaMultipla {
 			.valueOf(System.getProperty("connettori.consegna_multipla.next_messages.schedule_new_after")) * 1000;
 	
 	// Sommo un altro secondo rispetto a quello indicato in govway, perchè a quanto pare non basta.
-	public final static int intervalloControlloFallite = Integer.valueOf(
+	public final static int _intervalloControlloFallite = Integer.valueOf(
 			System.getProperty("connettori.consegna_multipla.next_messages.consegna_fallita.intervallo_controllo"))
-			* 1000 + 1000;
+			* 1000;
 	
-	public final static int intervalloMinimoRiconsegna = Integer.valueOf(System
+	public final static int _intervalloMinimoRiconsegna = Integer.valueOf(System
 			.getProperty("connettori.consegna_multipla.next_messages.consegna_fallita.intervallo_minimo_riconsegna"))
-			* 1000 + 1000;
+			* 1000;
+	
+	public static int getIntervalloControlloFallite() {
+		// devo tornare il max
+		if(_intervalloControlloFallite<intervalloControllo) {
+			return intervalloControllo;
+		}
+		return _intervalloControlloFallite;
+	}
+	
+	public static int getIntervalloMinimoRiconsegna() {
+		// devo tornare il max
+		if(_intervalloMinimoRiconsegna<getIntervalloControlloFallite()) {
+			return getIntervalloControlloFallite();
+		}
+		return _intervalloMinimoRiconsegna;
+	}
 	
 	public final static Path connettoriFilePath = Paths
 			.get(System.getProperty("connettori.consegna_multipla.connettore_file.path"));
@@ -344,6 +365,23 @@ public class CommonConsegnaMultipla {
 		ConfigLoader.getLoggerCore().info("Checking stato consegna for transazioni:  " + debug_clause + " AND esito = " + esito + " AND consegne-rimanenti: " + consegneMultipleRimanenti);
 		ConfigLoader.getLoggerCore().info("Query: " + query);
 		Integer count = ConfigLoader.getDbUtils().readValueArray(query, Integer.class,  args);
+		
+		// debug for error
+		if(count.intValue() != responses.size()) {
+			ConfigLoader.getLoggerCore().error("configurazione differente da quella attesa:");
+			String query2 = "select esito, consegne_multiple from transazioni where id in "+IN_CLAUSE+"";
+			Object [] argsDebug = new Object[responses.size()];
+			int i = 0;
+			for (HttpResponse r : responses) {
+				argsDebug[i] = r.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+				i++;
+			}
+			List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, argsDebug);
+			for (var v : letto) {
+				ConfigLoader.getLoggerCore().error(v.toString());
+			}
+		}
+		
 		assertEquals(Integer.valueOf(responses.size()), count);
 	}
 	
@@ -356,10 +394,11 @@ public class CommonConsegnaMultipla {
 		
 		// debug for error
 		if(count.intValue() != 1) {
+			ConfigLoader.getLoggerCore().error("configurazione differente da quella attesa:");
 			String query2 = "select esito, esito_sincrono, consegne_multiple from transazioni where id = ?";
 			List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, id_transazione);
 			for (var v : letto) {
-				ConfigLoader.getLoggerCore().info(v.toString());
+				ConfigLoader.getLoggerCore().error(v.toString());
 			}
 		}
 		
@@ -378,10 +417,11 @@ public class CommonConsegnaMultipla {
 		
 		// debug for error
 		if(count.intValue() != 1) {
+			ConfigLoader.getLoggerCore().error("configurazione differente da quella attesa:");
 			String query2 = "select esito, esito_sincrono, consegne_multiple from transazioni where id = ?";
 			List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, id_transazione);
 			for (var v : letto) {
-				ConfigLoader.getLoggerCore().info(v.toString());
+				ConfigLoader.getLoggerCore().error(v.toString());
 			}
 		}
 		
@@ -400,6 +440,17 @@ public class CommonConsegnaMultipla {
 		String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
 		ConfigLoader.getLoggerCore().info("Checking nessuna consegna for transazione:  " + id_transazione);
 		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class,  id_transazione);
+		
+		// debug for error
+		if(count.intValue() != 1) {
+			ConfigLoader.getLoggerCore().error("configurazione differente da quella attesa:");
+			String query2 = "select esito, esito_sincrono, consegne_multiple from transazioni where id = ?";
+			List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, id_transazione);
+			for (var v : letto) {
+				ConfigLoader.getLoggerCore().error(v.toString());
+			}
+		}
+		
 		assertEquals(Integer.valueOf(1), count);
 	}
 	
@@ -410,6 +461,17 @@ public class CommonConsegnaMultipla {
 		
 		ConfigLoader.getLoggerCore().info("Checking nessuno scheduling connettore in corso for transazione:  " + id_transazione);
 		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione);
+		
+		// debug for error
+		if(count.intValue() != 0) {
+			ConfigLoader.getLoggerCore().error("configurazione differente da quella attesa:");
+			String query2 = "select connettore_nome from transazioni_sa where id_transazione = ?";
+			List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, id_transazione);
+			for (var v : letto) {
+				ConfigLoader.getLoggerCore().error(v.toString());
+			}
+		}
+		
 		assertEquals(Integer.valueOf(0), count);
 	}
 
@@ -419,13 +481,17 @@ public class CommonConsegnaMultipla {
 		String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
 		ConfigLoader.getLoggerCore().info("Checking scheduling connettore iniziato for transazione:  " + id_transazione + " AND connettore = " + connettore);
 		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, false);
+		
+		// debug for error
 		if(count.intValue()!=1) {
+			ConfigLoader.getLoggerCore().error("configurazione differente da quella attesa:");
 			String query2 = "select consegna_terminata,numero_tentativi,identificativo_messaggio from transazioni_sa where id_transazione=? and connettore_nome = ?";
 			List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, id_transazione, connettore);
 			for (var v : letto) {
-				ConfigLoader.getLoggerCore().info(v.toString());
+				ConfigLoader.getLoggerCore().error(v.toString());
 			}
 		}
+		
 		assertEquals(Integer.valueOf(1), count);
 	}
 	
@@ -448,6 +514,16 @@ public class CommonConsegnaMultipla {
 			count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, false, esitoConsegna,statusCode, formatoFault);
 		}
 		
+		// debug for error
+		if(count.intValue()!=1) {
+			ConfigLoader.getLoggerCore().error("configurazione differente da quella attesa:");
+			String query2 = "select consegna_terminata,numero_tentativi,dettaglio_esito,codice_risposta,identificativo_messaggio,fault,formato_fault from transazioni_sa where id_transazione=? and connettore_nome = ?";
+			List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, id_transazione, connettore);
+			for (var v : letto) {
+				ConfigLoader.getLoggerCore().error(v.toString());
+			}
+		}
+		
 		assertEquals(Integer.valueOf(1), count);
 	}
 
@@ -458,24 +534,35 @@ public class CommonConsegnaMultipla {
 	 * 
 	 */
 	public static void checkSchedulingConnettoreCompletato(HttpResponse response, String connettore, int esitoConsegna, int _statusCode, String fault, String formatoFault) {
-			String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
-			String statusCode = String.valueOf(_statusCode);
-			
-			ConfigLoader.getLoggerCore().info("Checking scheduling connettore completato for transazione:  "
-					+ id_transazione + " AND connettore = " + connettore + " AND dettaglio_esito = " + esitoConsegna+ " fault = " + fault + " AND formato_fault= " + formatoFault + " AND codice_risposta=" + statusCode);
-			
-			String query = "select count(*) from transazioni_sa where id_transazione=? and connettore_nome = ?  and consegna_terminata = ? and numero_tentativi = 1 and dettaglio_esito = ? and codice_risposta = ? and identificativo_messaggio is not null";
-			
-			Integer count;
-			if (fault.isEmpty()) {
-				query += " and fault is null and formato_fault is null";
-				count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, true, esitoConsegna, statusCode);
-			} else {
-				query += " and fault LIKE '"+fault+"' and formato_fault = ?";
-				count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, true, esitoConsegna, statusCode, formatoFault);
+		String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+		String statusCode = String.valueOf(_statusCode);
+		
+		ConfigLoader.getLoggerCore().info("Checking scheduling connettore completato for transazione:  "
+				+ id_transazione + " AND connettore = " + connettore + " AND dettaglio_esito = " + esitoConsegna+ " fault = " + fault + " AND formato_fault= " + formatoFault + " AND codice_risposta=" + statusCode);
+		
+		String query = "select count(*) from transazioni_sa where id_transazione=? and connettore_nome = ?  and consegna_terminata = ? and numero_tentativi = 1 and dettaglio_esito = ? and codice_risposta = ? and identificativo_messaggio is not null";
+		
+		Integer count;
+		if (fault.isEmpty()) {
+			query += " and fault is null and formato_fault is null";
+			count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, true, esitoConsegna, statusCode);
+		} else {
+			query += " and fault LIKE '"+fault+"' and formato_fault = ?";
+			count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, true, esitoConsegna, statusCode, formatoFault);
+		}
+		
+		// debug for error
+		if(count.intValue()!=1) {
+			ConfigLoader.getLoggerCore().error("configurazione differente da quella attesa:");
+			String query2 = "select consegna_terminata,numero_tentativi,dettaglio_esito,codice_risposta,identificativo_messaggio,fault,formato_fault from transazioni_sa where id_transazione=? and connettore_nome = ?";
+			List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, id_transazione, connettore);
+			for (var v : letto) {
+				ConfigLoader.getLoggerCore().error(v.toString());
 			}
-			
-			assertEquals(Integer.valueOf(1), count);				
+		}
+		
+		assertEquals(Integer.valueOf(1), count);	
+		
 	}
 
 	
@@ -774,8 +861,8 @@ public class CommonConsegnaMultipla {
 				}
 		}
 		
-		// Attendo la consegna
-		org.openspcoop2.utils.Utilities.sleep(2*intervalloControllo);
+		// Attendo la prima consegna
+		Map<String, java.sql.Timestamp> primaConsegna = CommonConsegnaMultipla.waitPrimaConsegna(responsesByKind);
 		
 		for (var requestAndExpectation : responsesByKind.keySet()) {
 			if (requestAndExpectation.statusCodePrincipale == 200) {
@@ -785,8 +872,9 @@ public class CommonConsegnaMultipla {
 			}
 		}
 		
-		// Attendo l'intervallo di riconsegna e controllo che il contatore delle consegne sia almeno a 2
-		org.openspcoop2.utils.Utilities.sleep(2*intervalloControlloFallite);
+		// Attendo l'intervallo di riconsegna e controllo le date vengano aggiornate
+		CommonConsegnaMultipla.waitProssimaConsegna(responsesByKind,primaConsegna);
+		
 		for (var requestAndExpectation : responsesByKind.keySet()) {
 			if (requestAndExpectation.statusCodePrincipale == 200) {
 				for (var response : responsesByKind.get(requestAndExpectation)) {
@@ -931,6 +1019,330 @@ public class CommonConsegnaMultipla {
 		
 	}
 
+	public static Map<String,java.sql.Timestamp> waitPrimaConsegna(Map<RequestAndExpectations, List<HttpResponse>> responsesByKind) {
+		// Attendo la prima consegna di tutti i connettori
+		
+		printAttesaAttiva("@waitPrimaConsegna ENTRO");
+		
+		Map<String,java.sql.Timestamp> map = new HashMap<String, Timestamp>();
+		
+		int connettoriDaVerificare = 0;
+		for (var requestExpectation : responsesByKind.keySet()) {
+			var responses = responsesByKind.get(requestExpectation);
+			if (requestExpectation.principaleSuperata) {
+				for (@SuppressWarnings("unused") var response : responses) {
+					for (@SuppressWarnings("unused") var connettore : CommonConsegnaMultipla.setSum(requestExpectation.connettoriFallimento,requestExpectation.connettoriSuccesso)) {
+						connettoriDaVerificare++;
+						String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+						printAttesaAttiva("@waitPrimaConsegna TROVATO connettore["+connettore+"] response["+response.getResultHTTPOperation()+"] ["+id_transazione+"]");
+					}
+				}
+			}
+		}
+		printAttesaAttiva("@waitPrimaConsegna WAIT CONNETTORI ["+connettoriDaVerificare+"]");
+		
+		int LIMITE = (3 * CommonConsegnaMultipla.scheduleNewAfter);
+		
+		int index = 0;
+		while(index<LIMITE) {
+			
+			boolean sleep = false;
+			
+			printAttesaAttiva("@waitPrimaConsegna ITERO ["+connettoriDaVerificare+"] ["+index+"]<["+LIMITE+"]");
+			
+			for (var requestExpectation : responsesByKind.keySet()) {
+				var responses = responsesByKind.get(requestExpectation);
 	
+				if (requestExpectation.principaleSuperata) {
+					for (var response : responses) {
+						for (var connettore : CommonConsegnaMultipla.setSum(requestExpectation.connettoriFallimento,requestExpectation.connettoriSuccesso)) {
+							String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+							String queryData = "select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ? AND data_uscita_richiesta is not null AND numero_tentativi>0";
+							String key = buildKey(response, connettore, id_transazione);
+							
+							Integer count = ConfigLoader.getDbUtils().readValue(queryData, Integer.class, id_transazione, connettore);
+							org.openspcoop2.utils.Utilities.sleep(50);
+							if(count!=null && count.intValue() == 1) {
+								queryData = "select data_uscita_richiesta from transazioni_sa where id_transazione = ? and connettore_nome = ? AND data_uscita_richiesta is not null AND numero_tentativi>0";
+								//getLoggerCore().info("Verifico data");
+								java.sql.Timestamp t = ConfigLoader.getDbUtils().readValue(queryData, java.sql.Timestamp.class, id_transazione, connettore);
+								
+								map.put(key, t);
+								printAttesaAttiva("@waitPrimaConsegna SIZE ["+map.size()+"] ["+map.keySet()+"]");
+								if(map.size()==connettoriDaVerificare) {
+									printAttesaAttiva("@waitPrimaConsegna RETURN");
+									return map;
+								}
+							}
+							else {
+								if(attesaAttivaDebugLogger || attesaAttivaDebugSystemOut) {
+									String queryDataTest = "select data_uscita_richiesta,numero_tentativi from transazioni_sa where id_transazione = ? and connettore_nome = ?";
+									List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(queryDataTest, id_transazione, connettore);
+									for (var v : letto) {
+										printAttesaAttiva("@waitPrimaConsegna Analisi ["+key+"]");
+										printAttesaAttiva("@waitPrimaConsegna risultato: "+v.toString());
+									}
+								}
+								
+								sleep = true;
+								org.openspcoop2.utils.Utilities.sleep(1000);
+								index=index+1000;
+								break;
+							}
+						}
+						if(sleep) {
+							break;
+						}
+					}
+					if(sleep) {
+						break;
+					}
+				}
+				if(sleep) {
+					break;
+				}
+			}
+			
+			if(!sleep) {
+				index=index+1000;
+			}
+		}
+		
+		printAttesaAttivaError("@waitPrimaConsegna ESCO SENZA TROVARE NULLA");
+		throw new RuntimeException("Dopo il tempo di attesa indicato, non ho riscontrato la prima consegna per tutti i "+connettoriDaVerificare+" connettori attesi; riscontrati solamente "+map.size()+" connettori map["+map.keySet()+"]");
+	}
 	
+	public static Map<String,java.sql.Timestamp> waitProssimaConsegna(Map<RequestAndExpectations, List<HttpResponse>> responsesByKind, Map<String,java.sql.Timestamp> precedenteConsegnaMap,
+			String ... connettoriEsclusiControllo) {
+		// Attendo la prossima consegna su tutti i connettori
+
+		printAttesaAttiva("@waitProssimaConsegna ENTRO ");
+		
+		Map<String,java.sql.Timestamp> map = new HashMap<String, Timestamp>();
+		
+		int connettoriDaVerificare = 0;
+		for (var requestExpectation : responsesByKind.keySet()) {
+			var responses = responsesByKind.get(requestExpectation);
+			if (requestExpectation.principaleSuperata) {
+				for (@SuppressWarnings("unused") var response : responses) {
+					for (var connettore : requestExpectation.connettoriFallimento) {
+						if(connettoriEsclusiControllo!=null && connettoriEsclusiControllo.length>0) {
+							boolean find = false;
+							for (String c : connettoriEsclusiControllo) {
+								if(c.equals(connettore)) {
+									find = true;
+									break;
+								}
+							}
+							if(find) {
+								printAttesaAttiva("@waitProssimaConsegna SKIP connettore["+connettore+"]");
+								continue;
+							}
+						}
+						connettoriDaVerificare++;
+						String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+						printAttesaAttiva("@waitProssimaConsegna TROVATO connettore["+connettore+"] response["+response.getResultHTTPOperation()+"] ["+id_transazione+"]");
+					}
+				}
+			}
+		}
+		printAttesaAttiva("@waitProssimaConsegna WAIT CONNETTORI ["+connettoriDaVerificare+"]");
+		if(connettoriDaVerificare==0) {
+			printAttesaAttiva("@waitProssimaConsegna nessun connettore da rispedire rilevato, e quindi non è necessaria alcuna attesa");
+			return null;
+		}
+		
+		int LIMITE = (3 * CommonConsegnaMultipla.getIntervalloControlloFallite());
+		
+		int index = 0;
+		while(index<LIMITE) {
+
+			boolean sleep = false;
+			
+			printAttesaAttiva("@waitProssimaConsegna ITERO ["+connettoriDaVerificare+"] ["+index+"]<["+LIMITE+"]");
+			
+			for (var requestExpectation : responsesByKind.keySet()) {
+				var responses = responsesByKind.get(requestExpectation);
+	
+				if (requestExpectation.principaleSuperata) {
+					for (var response : responses) {
+						for (var connettore : requestExpectation.connettoriFallimento) {
+							
+							if(connettoriEsclusiControllo!=null && connettoriEsclusiControllo.length>0) {
+								boolean find = false;
+								for (String c : connettoriEsclusiControllo) {
+									if(c.equals(connettore)) {
+										find = true;
+										break;
+									}
+								}
+								if(find) {
+									printAttesaAttiva("SKIP connettore["+connettore+"]");
+									continue;
+								}
+							}
+							
+							
+							String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+							String queryData = "select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ? AND data_uscita_richiesta>? AND numero_tentativi>1";
+							
+							String key = buildKey(response, connettore, id_transazione);
+							
+							java.sql.Timestamp precedenteConsegna = precedenteConsegnaMap.get(key); 
+							Integer count = ConfigLoader.getDbUtils().readValue(queryData, Integer.class, id_transazione, connettore, precedenteConsegna);
+							org.openspcoop2.utils.Utilities.sleep(50);
+							if(count!=null && count.intValue() == 1) {
+								queryData = "select data_uscita_richiesta from transazioni_sa where id_transazione = ? and connettore_nome = ? AND data_uscita_richiesta>? AND numero_tentativi>1";
+								//getLoggerCore().info("Verifico data");
+								java.sql.Timestamp t = ConfigLoader.getDbUtils().readValue(queryData, java.sql.Timestamp.class, id_transazione, connettore, precedenteConsegna);
+
+								map.put(key, t);
+								printAttesaAttiva("@waitProssimaConsegna SIZE ["+map.size()+"] ["+map.keySet()+"]");
+								if(map.size()==connettoriDaVerificare) {
+									printAttesaAttiva("@waitProssimaConsegna RETURN");
+									return map;
+								}
+							}
+							else {
+								
+								if(attesaAttivaDebugLogger || attesaAttivaDebugSystemOut) {
+									String queryDataTest = "select data_uscita_richiesta,numero_tentativi from transazioni_sa where id_transazione = ? and connettore_nome = ?";
+									List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(queryDataTest, id_transazione, connettore);
+									for (var v : letto) {
+										printAttesaAttiva("@waitProssimaConsegna Analisi ["+key+"]");
+										printAttesaAttiva("@waitProssimaConsegna risultato: "+v.toString());
+									}
+								}
+								
+								sleep = true;
+								org.openspcoop2.utils.Utilities.sleep(1000);
+								index=index+1000;
+								break;
+							}
+						}
+						if(sleep) {
+							break;
+						}
+					}
+					if(sleep) {
+						break;
+					}
+				}
+				if(sleep) {
+					break;
+				}
+			}
+			
+			if(!sleep) {
+				index=index+1000;
+			}
+		}
+		
+		printAttesaAttivaError("@waitProssimaConsegna ESCO SENZA TROVARE NULLA");
+		throw new RuntimeException("Dopo il tempo di attesa indicato, non ho riscontrato la prossima consegna per tutti i "+connettoriDaVerificare+" connettori attesi; riscontrati solamente "+map.size()+" connettori map["+map.keySet()+"]");
+	}
+
+	public static Map<String,java.sql.Timestamp> waitConsegna(List<HttpResponse> responses, List<String> connettori) {
+		// Attendo la prima consegna di tutti i connettori
+		
+		printAttesaAttiva("@waitConsegna ENTRO");
+		
+		Map<String,java.sql.Timestamp> map = new HashMap<String, Timestamp>();
+		
+		int connettoriDaVerificare = 0;
+		for (int i = 0; i < responses.size(); i++) {
+			HttpResponse response = responses.get(i);
+			for (int j = 0; j < connettori.size(); j++) {
+				String connettore = connettori.get(j);
+				connettoriDaVerificare++;
+				String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+				printAttesaAttiva("@waitConsegna TROVATO connettore["+connettore+"] response["+response.getResultHTTPOperation()+"] ["+id_transazione+"]");
+			}
+		}
+		printAttesaAttiva("@waitConsegna WAIT CONNETTORI ["+connettoriDaVerificare+"]");
+		
+		int LIMITE = (3 * CommonConsegnaMultipla.intervalloControllo);
+		
+		int index = 0;
+		while(index<(3 * CommonConsegnaMultipla.intervalloControllo)) {
+			
+			boolean sleep = false;
+			
+			printAttesaAttiva("@waitConsegna ITERO ["+connettoriDaVerificare+"] ["+index+"]<["+LIMITE+"]");
+			
+			for (int i = 0; i < responses.size(); i++) {
+				HttpResponse response = responses.get(i);
+				for (int j = 0; j < connettori.size(); j++) {
+					String connettore = connettori.get(j);
+					String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+					String key = buildKey(response, connettore, id_transazione);					
+					
+					String queryData = "select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ? AND data_uscita_richiesta is not null AND numero_tentativi>0";
+					Integer count = ConfigLoader.getDbUtils().readValue(queryData, Integer.class, id_transazione, connettore);
+					org.openspcoop2.utils.Utilities.sleep(50);
+					if(count!=null && count.intValue() == 1) {
+						queryData = "select data_uscita_richiesta from transazioni_sa where id_transazione = ? and connettore_nome = ? AND data_uscita_richiesta is not null AND numero_tentativi>0";
+						//getLoggerCore().info("Verifico data");
+						java.sql.Timestamp t = ConfigLoader.getDbUtils().readValue(queryData, java.sql.Timestamp.class, id_transazione, connettore);
+						
+						map.put(key, t);
+						printAttesaAttiva("@waitConsegna SIZE ["+map.size()+"] ["+map.keySet()+"]");
+						if(map.size()==connettoriDaVerificare) {
+							printAttesaAttiva("@waitConsegna RETURN");
+							org.openspcoop2.utils.Utilities.sleep(1000); // 1 ulteriore
+							return map;
+						}
+					}
+					else {
+						
+						if(attesaAttivaDebugLogger || attesaAttivaDebugSystemOut) {
+							String queryDataTest = "select data_uscita_richiesta,numero_tentativi from transazioni_sa where id_transazione = ? and connettore_nome = ?";
+							List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(queryDataTest, id_transazione, connettore);
+							for (var v : letto) {
+								printAttesaAttiva("@waitConsegna Analisi ["+key+"]");
+								printAttesaAttiva("@waitConsegna risultato: "+v.toString());
+							}
+						}
+						
+						sleep = true;
+						org.openspcoop2.utils.Utilities.sleep(1000);
+						index=index+1000;
+						break;
+					}
+				}
+				if(sleep) {
+					break;
+				}
+			}
+			
+			if(!sleep) {
+				index=index+1000;
+			}
+		}
+		
+		printAttesaAttivaError("@waitConsegna ESCO SENZA TROVARE NULLA");
+		throw new RuntimeException("Dopo il tempo di attesa indicato, non ho riscontrato la consegna per tutti i "+connettoriDaVerificare+" connettori attesi; riscontrati solamente "+map.size()+" connettori map["+map.keySet()+"]");
+	}
+	
+	public static String buildKey(org.openspcoop2.utils.transport.http.HttpResponse response, String connettore, String id_transazione) {
+		String key = response.getResultHTTPOperation()+"_"+connettore+"_"+id_transazione;
+		return key;
+	}
+	
+	private static void printAttesaAttiva(String msg) {
+		if(attesaAttivaDebugSystemOut) { 
+			System.out.println(msg);
+		}
+		if(attesaAttivaDebugLogger) {
+			ConfigLoader.getLoggerCore().debug(msg);	
+		}
+	}
+	private static void printAttesaAttivaError(String msg) {
+		if(attesaAttivaDebugSystemOut) { 
+			System.err.println(msg);
+		}
+		if(attesaAttivaDebugLogger) {
+			ConfigLoader.getLoggerCore().error(msg);	
+		}
+	}
 }

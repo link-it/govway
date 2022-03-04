@@ -61,8 +61,6 @@ public class IntegrationManagerTest extends ConfigLoader {
 		// Adesso cancello tutti i messaggi in pancia in modo che la consegna risulti completata
 		imMessageBoxPort.deleteAllMessages();
 		
-		org.openspcoop2.utils.Utilities.sleep(CommonConsegnaMultipla.intervalloControllo);
-		
 		for (var response : responsesSoap1) {
 			CommonConsegnaMultipla.checkStatoConsegna(response, CommonConsegnaMultipla.ESITO_MESSAGE_BOX, 0);
 			CommonConsegnaMultipla.checkConsegnaTerminataNoStatusCode(response, connettoreMessageBox);
