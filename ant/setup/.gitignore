@@ -16,3 +16,7 @@ dist
 .ant-targets-build.xml
 # Except this file
 !.gitignore
+
+# build configs
+arch.dodeploy
+cfg.dodeploy
