@@ -166,7 +166,7 @@
 				<!-- <value value="INTROSPECTION_RESPONSE_RFC_7662" label="RFC 7662 - Introspection"/> -->
 				<value value="OIDC_ID_TOKEN" label="OpenID Connect - ID Token"/>
 				<value value="GOOGLE" label="Google - ID Token"/>
-				<value value="MAPPING_MANUALE" label="Personalizzato"/>
+				<value value="MAPPING" label="Personalizzato"/>
 				<value value="CUSTOM" label="Plugin"/>
 			</values>
 			<property name="policy.validazioneJWT.claimsParser" />
@@ -184,7 +184,7 @@
 		<item type="text" name="validazioneJwtIssuer" label="Issuer" required="true" default="iss">
 			<conditions>
 				<condition and="true">
-					<equals name="validazioneJWTParserType" value="MAPPING_MANUALE"/>
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
 				</condition>
 			</conditions>
 	      		<property name="token.parser.issuer" properties="validazioneJwtTokenParserPropRefId" />
@@ -192,7 +192,7 @@
 		<item type="text" name="validazioneJwtSubject" label="Subject" required="true" default="sub">
 			<conditions>
 				<condition and="true">
-					<equals name="validazioneJWTParserType" value="MAPPING_MANUALE"/>
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
 				</condition>
 			</conditions>
 	      		<property name="token.parser.subject" properties="validazioneJwtTokenParserPropRefId" />
@@ -200,7 +200,7 @@
 		<item type="text" name="validazioneJwtAudience" label="Audience" required="true" default="aud">
 			<conditions>
 				<condition and="true">
-					<equals name="validazioneJWTParserType" value="MAPPING_MANUALE"/>
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
 				</condition>
 			</conditions>
 	      		<property name="token.parser.audience" properties="validazioneJwtTokenParserPropRefId" />
@@ -208,7 +208,7 @@
 		<item type="text" name="validazioneJwtExpire" label="Expire" required="true" default="exp">
 			<conditions>
 				<condition and="true">
-					<equals name="validazioneJWTParserType" value="MAPPING_MANUALE"/>
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
 				</condition>
 			</conditions>
 	      		<property name="token.parser.expire" properties="validazioneJwtTokenParserPropRefId" />
@@ -216,7 +216,7 @@
 		<item type="text" name="validazioneJwtIssuedAt" label="IssuedAt" required="true" default="iat">
 			<conditions>
 				<condition and="true">
-					<equals name="validazioneJWTParserType" value="MAPPING_MANUALE"/>
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
 				</condition>
 			</conditions>
 	      		<property name="token.parser.issuedAt" properties="validazioneJwtTokenParserPropRefId" />
@@ -224,7 +224,7 @@
 		<item type="text" name="validazioneJwtNotToBeUsedBefore" label="NotToBeUsedBefore" required="true" default="nbf">
 			<conditions>
 				<condition and="true">
-					<equals name="validazioneJWTParserType" value="MAPPING_MANUALE"/>
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
 				</condition>
 			</conditions>
 	      		<property name="token.parser.notToBeUsedBefore" properties="validazioneJwtTokenParserPropRefId" />
@@ -232,7 +232,7 @@
 		<item type="text" name="validazioneJwtIdentifier" label="Identifier" required="true" default="jti">
 			<conditions>
 				<condition and="true">
-					<equals name="validazioneJWTParserType" value="MAPPING_MANUALE"/>
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
 				</condition>
 			</conditions>
 	      		<property name="token.parser.jwtIdentifier" properties="validazioneJwtTokenParserPropRefId" />
@@ -240,7 +240,7 @@
 		<item type="text" name="validazioneJwtClientId" label="ClientId" required="true" default="azp,client_id">
 			<conditions>
 				<condition and="true">
-					<equals name="validazioneJWTParserType" value="MAPPING_MANUALE"/>
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
 				</condition>
 			</conditions>
 	      		<property name="token.parser.clientId" properties="validazioneJwtTokenParserPropRefId" />
@@ -248,7 +248,7 @@
 		<item type="text" name="validazioneJwtUsername" label="Username" required="true" default="preferred_username,username,name">
 			<conditions>
 				<condition and="true">
-					<equals name="validazioneJWTParserType" value="MAPPING_MANUALE"/>
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
 				</condition>
 			</conditions>
 	      		<property name="token.parser.username" properties="validazioneJwtTokenParserPropRefId" />
@@ -256,7 +256,7 @@
 		<item type="text" name="validazioneJwtScope" label="Scope" required="true" default="scope">
 			<conditions>
 				<condition and="true">
-					<equals name="validazioneJWTParserType" value="MAPPING_MANUALE"/>
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
 				</condition>
 			</conditions>
 	      		<property name="token.parser.scope" properties="validazioneJwtTokenParserPropRefId" />
@@ -264,7 +264,7 @@
 		<item type="text" name="validazioneJwtRole" label="Role" required="true" default="role">
 			<conditions>
 				<condition and="true">
-					<equals name="validazioneJWTParserType" value="MAPPING_MANUALE"/>
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
 				</condition>
 			</conditions>
 	      		<property name="token.parser.role" properties="validazioneJwtTokenParserPropRefId" />
@@ -272,7 +272,7 @@
 		<item type="text" name="validazioneJwtFullName" label="User - Full name" required="true" default="name">
 			<conditions>
 				<condition and="true">
-					<equals name="validazioneJWTParserType" value="MAPPING_MANUALE"/>
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
 				</condition>
 			</conditions>
 	      		<property name="token.parser.user.fullName" properties="validazioneJwtTokenParserPropRefId" />
@@ -280,7 +280,7 @@
 		<item type="text" name="validazioneJwtFirstName" label="User - First name" required="true" default="given_name">
 			<conditions>
 				<condition and="true">
-					<equals name="validazioneJWTParserType" value="MAPPING_MANUALE"/>
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
 				</condition>
 			</conditions>
 	      		<property name="token.parser.user.firstName" properties="validazioneJwtTokenParserPropRefId" />
@@ -288,7 +288,7 @@
 		<item type="text" name="validazioneJwtMiddleName" label="User - Middle name" required="true" default="middle_name">
 			<conditions>
 				<condition and="true">
-					<equals name="validazioneJWTParserType" value="MAPPING_MANUALE"/>
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
 				</condition>
 			</conditions>
 	      		<property name="token.parser.user.middleName" properties="validazioneJwtTokenParserPropRefId" />
@@ -296,7 +296,7 @@
 		<item type="text" name="validazioneJwtFamilyName" label="User - Family name" required="true" default="family_name,last_name">
 			<conditions>
 				<condition and="true">
-					<equals name="validazioneJWTParserType" value="MAPPING_MANUALE"/>
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
 				</condition>
 			</conditions>
 	      		<property name="token.parser.user.familyName" properties="validazioneJwtTokenParserPropRefId" />
@@ -304,7 +304,7 @@
 		<item type="text" name="validazioneJwtEMail" label="User - eMail" required="true" default="email,e-mail,e_mail,mail" note="Per ogni campo possono essere indicati più claims, separandoli con la virgola.&lt;BR/>Nel token verranno cercati nell'ordine in cui sono definiti.&lt;BR/>L'indicazione di un nome non è vincolante rispetto alla presenza all'interno del token.">
 			<conditions>
 				<condition and="true">
-					<equals name="validazioneJWTParserType" value="MAPPING_MANUALE"/>
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
 				</condition>
 			</conditions>
 	      		<property name="token.parser.user.eMail" properties="validazioneJwtTokenParserPropRefId" />
@@ -643,13 +643,13 @@
 				</condition>
 			</conditions>
 
-			<item type="select" name="introspectionParserType" label="Tipo" default="MAPPING_MANUALE" reloadOnChange="true">
+			<item type="select" name="introspectionParserType" label="Tipo" default="MAPPING" reloadOnChange="true">
 				<values>
 					<!--  <value value="JSON_WEB_TOKEN_RFC_7519" label="RFC 7519 - JSON Web Token "/> -->
 					<value value="INTROSPECTION_RESPONSE_RFC_7662" label="RFC 7662 - Introspection"/>
 					<!--  <value value="OIDC_ID_TOKEN" label="OpenID Connect - ID Token"/> -->
 					<value value="GOOGLE" label="Google - TokenInfo"/>
-					<value value="MAPPING_MANUALE" label="Personalizzato"/>
+					<value value="MAPPING" label="Personalizzato"/>
 					<value value="CUSTOM" label="Plugin"/>
 				</values>
 				<property name="policy.introspection.claimsParser" />
@@ -667,7 +667,7 @@
 			<item type="text" name="introspectionIssuer" label="Issuer" required="true" default="iss">
 				<conditions>
 					<condition and="true">
-						<equals name="introspectionParserType" value="MAPPING_MANUALE"/>
+						<equals name="introspectionParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.issuer" properties="introspectionTokenParserPropRefId" />
@@ -675,7 +675,7 @@
 			<item type="text" name="introspectionSubject" label="Subject" required="true" default="sub">
 				<conditions>
 					<condition and="true">
-						<equals name="introspectionParserType" value="MAPPING_MANUALE"/>
+						<equals name="introspectionParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.subject" properties="introspectionTokenParserPropRefId" />
@@ -683,7 +683,7 @@
 			<item type="text" name="introspectionAudience" label="Audience" required="true" default="aud">
 				<conditions>
 					<condition and="true">
-						<equals name="introspectionParserType" value="MAPPING_MANUALE"/>
+						<equals name="introspectionParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.audience" properties="introspectionTokenParserPropRefId" />
@@ -691,7 +691,7 @@
 			<item type="text" name="introspectionExpire" label="Expire" required="true" default="exp">
 				<conditions>
 					<condition and="true">
-						<equals name="introspectionParserType" value="MAPPING_MANUALE"/>
+						<equals name="introspectionParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.expire" properties="introspectionTokenParserPropRefId" />
@@ -699,7 +699,7 @@
 			<item type="text" name="introspectionIssuedAt" label="IssuedAt" required="true" default="iat">
 				<conditions>
 					<condition and="true">
-						<equals name="introspectionParserType" value="MAPPING_MANUALE"/>
+						<equals name="introspectionParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.issuedAt" properties="introspectionTokenParserPropRefId" />
@@ -707,7 +707,7 @@
 			<item type="text" name="introspectionNotToBeUsedBefore" label="NotToBeUsedBefore" required="true" default="nbf">
 				<conditions>
 					<condition and="true">
-						<equals name="introspectionParserType" value="MAPPING_MANUALE"/>
+						<equals name="introspectionParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.notToBeUsedBefore" properties="introspectionTokenParserPropRefId" />
@@ -715,7 +715,7 @@
 			<item type="text" name="introspectionIdentifier" label="Identifier" required="true" default="jti">
 				<conditions>
 					<condition and="true">
-						<equals name="introspectionParserType" value="MAPPING_MANUALE"/>
+						<equals name="introspectionParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.jwtIdentifier" properties="introspectionTokenParserPropRefId" />
@@ -723,7 +723,7 @@
 			<item type="text" name="introspectionClientId" label="ClientId" required="true" default="client_id,azp">
 				<conditions>
 					<condition and="true">
-						<equals name="introspectionParserType" value="MAPPING_MANUALE"/>
+						<equals name="introspectionParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.clientId" properties="introspectionTokenParserPropRefId" />
@@ -731,7 +731,7 @@
 			<item type="text" name="introspectionUsername" label="Username" required="true" default="preferred_username,username,name">
 				<conditions>
 					<condition and="true">
-						<equals name="introspectionParserType" value="MAPPING_MANUALE"/>
+						<equals name="introspectionParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.username" properties="introspectionTokenParserPropRefId" />
@@ -739,7 +739,7 @@
 			<item type="text" name="introspectionScope" label="Scope" required="true" default="scope">
 				<conditions>
 					<condition and="true">
-						<equals name="introspectionParserType" value="MAPPING_MANUALE"/>
+						<equals name="introspectionParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.scope" properties="introspectionTokenParserPropRefId" />
@@ -747,7 +747,7 @@
 			<item type="text" name="introspectionRole" label="Role" required="true" default="role">
 				<conditions>
 					<condition and="true">
-						<equals name="introspectionParserType" value="MAPPING_MANUALE"/>
+						<equals name="introspectionParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.role" properties="introspectionTokenParserPropRefId" />
@@ -755,7 +755,7 @@
 			<item type="text" name="introspectionFullName" label="User - Full name" required="true" default="name">
 				<conditions>
 					<condition and="true">
-						<equals name="introspectionParserType" value="MAPPING_MANUALE"/>
+						<equals name="introspectionParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.user.fullName" properties="introspectionTokenParserPropRefId" />
@@ -763,7 +763,7 @@
 			<item type="text" name="introspectionFirstName" label="User - First name" required="true" default="given_name">
 				<conditions>
 					<condition and="true">
-						<equals name="introspectionParserType" value="MAPPING_MANUALE"/>
+						<equals name="introspectionParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.user.firstName" properties="introspectionTokenParserPropRefId" />
@@ -771,7 +771,7 @@
 			<item type="text" name="introspectionMiddleName" label="User - Middle name" required="true" default="middle_name">
 				<conditions>
 					<condition and="true">
-						<equals name="introspectionParserType" value="MAPPING_MANUALE"/>
+						<equals name="introspectionParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.user.middleName" properties="introspectionTokenParserPropRefId" />
@@ -779,7 +779,7 @@
 			<item type="text" name="introspectionFamilyName" label="User - Family name" required="true" default="family_name,last_name">
 				<conditions>
 					<condition and="true">
-						<equals name="introspectionParserType" value="MAPPING_MANUALE"/>
+						<equals name="introspectionParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.user.familyName" properties="introspectionTokenParserPropRefId" />
@@ -787,7 +787,7 @@
 			<item type="text" name="introspectionEMail" label="User - eMail" required="true" default="email,e-mail,e_mail,mail" note="Per ogni campo possono essere indicati più claims, separandoli con la virgola.&lt;BR/>Nel token verranno cercati nell'ordine in cui sono definiti.&lt;BR/>L'indicazione di un nome non è vincolante rispetto alla presenza all'interno del token.">
 				<conditions>
 					<condition and="true">
-						<equals name="introspectionParserType" value="MAPPING_MANUALE"/>
+						<equals name="introspectionParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.user.eMail" properties="introspectionTokenParserPropRefId" />
@@ -1022,12 +1022,12 @@
 				</condition>
 			</conditions>
 
-			<item type="select" name="userInfoParserType" label="Tipo" default="MAPPING_MANUALE" reloadOnChange="true">
+			<item type="select" name="userInfoParserType" label="Tipo" default="MAPPING" reloadOnChange="true">
 				<values>
 					<!--  <value value="JSON_WEB_TOKEN_RFC_7519" label="RFC 7519 - JSON Web Token "/> 
 					<value value="INTROSPECTION_RESPONSE_RFC_7662" label="RFC 7662 - Introspection"/> -->
 					<value value="OIDC_ID_TOKEN" label="OpenID Connect"/> 
-					<value value="MAPPING_MANUALE" label="Personalizzato"/>
+					<value value="MAPPING" label="Personalizzato"/>
 					<value value="CUSTOM" label="Plugin"/>
 				</values>
 				<property name="policy.userInfo.claimsParser" />
@@ -1045,7 +1045,7 @@
 			<item type="text" name="userInfoIssuer" label="Issuer" required="true" default="iss">
 				<conditions>
 					<condition and="true">
-						<equals name="userInfoParserType" value="MAPPING_MANUALE"/>
+						<equals name="userInfoParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.issuer" properties="userInfoTokenParserPropRefId" />
@@ -1053,7 +1053,7 @@
 			<item type="text" name="userInfoSubject" label="Subject" required="true" default="sub">
 				<conditions>
 					<condition and="true">
-						<equals name="userInfoParserType" value="MAPPING_MANUALE"/>
+						<equals name="userInfoParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.subject" properties="userInfoTokenParserPropRefId" />
@@ -1061,7 +1061,7 @@
 			<item type="text" name="userInfoAudience" label="Audience" required="true" default="aud">
 				<conditions>
 					<condition and="true">
-						<equals name="userInfoParserType" value="MAPPING_MANUALE"/>
+						<equals name="userInfoParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.audience" properties="userInfoTokenParserPropRefId" />
@@ -1069,7 +1069,7 @@
 			<item type="text" name="userInfoExpire" label="Expire" required="true" default="exp">
 				<conditions>
 					<condition and="true">
-						<equals name="userInfoParserType" value="MAPPING_MANUALE"/>
+						<equals name="userInfoParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.expire" properties="userInfoTokenParserPropRefId" />
@@ -1077,7 +1077,7 @@
 			<item type="text" name="userInfoIssuedAt" label="IssuedAt" required="true" default="iat">
 				<conditions>
 					<condition and="true">
-						<equals name="userInfoParserType" value="MAPPING_MANUALE"/>
+						<equals name="userInfoParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.issuedAt" properties="userInfoTokenParserPropRefId" />
@@ -1085,7 +1085,7 @@
 			<item type="text" name="userInfoNotToBeUsedBefore" label="NotToBeUsedBefore" required="true" default="nbf">
 				<conditions>
 					<condition and="true">
-						<equals name="userInfoParserType" value="MAPPING_MANUALE"/>
+						<equals name="userInfoParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.notToBeUsedBefore" properties="userInfoTokenParserPropRefId" />
@@ -1093,7 +1093,7 @@
 			<item type="text" name="userInfoIdentifier" label="Identifier" required="true" default="jti">
 				<conditions>
 					<condition and="true">
-						<equals name="userInfoParserType" value="MAPPING_MANUALE"/>
+						<equals name="userInfoParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.jwtIdentifier" properties="userInfoTokenParserPropRefId" />
@@ -1101,7 +1101,7 @@
 			<item type="text" name="userInfoClientId" label="ClientId" required="true" default="azp,client_id">
 				<conditions>
 					<condition and="true">
-						<equals name="userInfoParserType" value="MAPPING_MANUALE"/>
+						<equals name="userInfoParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.clientId" properties="userInfoTokenParserPropRefId" />
@@ -1109,7 +1109,7 @@
 			<item type="text" name="userInfoUsername" label="Username" required="true" default="preferred_username,username,name">
 				<conditions>
 					<condition and="true">
-						<equals name="userInfoParserType" value="MAPPING_MANUALE"/>
+						<equals name="userInfoParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.username" properties="userInfoTokenParserPropRefId" />
@@ -1117,7 +1117,7 @@
 			<item type="text" name="userInfoScope" label="Scope" required="true" default="scope">
 				<conditions>
 					<condition and="true">
-						<equals name="userInfoParserType" value="MAPPING_MANUALE"/>
+						<equals name="userInfoParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.scope" properties="userInfoTokenParserPropRefId" />
@@ -1125,7 +1125,7 @@
 			<item type="text" name="userInfoRole" label="Role" required="true" default="role">
 				<conditions>
 					<condition and="true">
-						<equals name="userInfoParserType" value="MAPPING_MANUALE"/>
+						<equals name="userInfoParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.role" properties="userInfoTokenParserPropRefId" />
@@ -1133,7 +1133,7 @@
 			<item type="text" name="userInfoFullName" label="User - Full name" required="true" default="name">
 				<conditions>
 					<condition and="true">
-						<equals name="userInfoParserType" value="MAPPING_MANUALE"/>
+						<equals name="userInfoParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.user.fullName" properties="userInfoTokenParserPropRefId" />
@@ -1141,7 +1141,7 @@
 			<item type="text" name="userInfoFirstName" label="User - First name" required="true" default="given_name">
 				<conditions>
 					<condition and="true">
-						<equals name="userInfoParserType" value="MAPPING_MANUALE"/>
+						<equals name="userInfoParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.user.firstName" properties="userInfoTokenParserPropRefId" />
@@ -1149,7 +1149,7 @@
 			<item type="text" name="userInfoMiddleName" label="User - Middle name" required="true" default="middle_name">
 				<conditions>
 					<condition and="true">
-						<equals name="userInfoParserType" value="MAPPING_MANUALE"/>
+						<equals name="userInfoParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.user.middleName" properties="userInfoTokenParserPropRefId" />
@@ -1157,7 +1157,7 @@
 			<item type="text" name="userInfoFamilyName" label="User - Family name" required="true" default="family_name,last_name">
 				<conditions>
 					<condition and="true">
-						<equals name="userInfoParserType" value="MAPPING_MANUALE"/>
+						<equals name="userInfoParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.user.familyName" properties="userInfoTokenParserPropRefId" />
@@ -1165,7 +1165,7 @@
 			<item type="text" name="userInfoEMail" label="User - eMail" required="true" default="email,e-mail,e_mail,mail" note="Per ogni campo possono essere indicati più claims, separandoli con la virgola.&lt;BR/>Nel token verranno cercati nell'ordine in cui sono definiti.&lt;BR/>L'indicazione di un nome non è vincolante rispetto alla presenza all'interno del token.">
 				<conditions>
 					<condition and="true">
-						<equals name="userInfoParserType" value="MAPPING_MANUALE"/>
+						<equals name="userInfoParserType" value="MAPPING"/>
 					</condition>
 				</conditions>
 		      		<property name="token.parser.user.eMail" properties="userInfoTokenParserPropRefId" />

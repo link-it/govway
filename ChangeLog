@@ -1,5 +1,10 @@
 2022-03-07  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	La serializzazione di un token malformato causava la mancata scrittura della transazione su database. Il problema è stato risolto.
+
+2022-03-07  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, GovWayConsole]
 	Aggiunta funzionalità OP-1334
 	Nella negoziazione di un Token tramite JWT Signed è adesso possibile definire i parametri da inserire nell'header non firmato (kid, x5c, x5t ...). 

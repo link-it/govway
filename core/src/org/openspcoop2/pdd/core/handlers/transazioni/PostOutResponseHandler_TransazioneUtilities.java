@@ -1191,14 +1191,22 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					informazioniAttributi = transaction.getInformazioniToken().getAa();
 					transaction.getInformazioniToken().setAa(null);
 				}
-				transactionDTO.setTokenInfo(transaction.getInformazioniToken().toJson());
+				try {
+					transactionDTO.setTokenInfo(transaction.getInformazioniToken().toJson());
+				}catch(Throwable t) {
+					this.logger.error("Serializzazione informazioni token non riuscita: "+t.getMessage(),t);
+				}
 				if(informazioniAttributi!=null) {
 					transaction.getInformazioniToken().setAa(informazioniAttributi);
 				}
 			}
 			if(transactionDTO.getTokenInfo()==null && this.transazioniRegistrazioneAttributiInformazioniNormalizzate &&
 					transaction.getInformazioniAttributi()!=null) {
-				transactionDTO.setTokenInfo(transaction.getInformazioniAttributi().toJson());
+				try {
+					transactionDTO.setTokenInfo(transaction.getInformazioniAttributi().toJson());
+				}catch(Throwable t) {
+					this.logger.error("Serializzazione informazioni attributi non riuscita: "+t.getMessage(),t);
+				}
 			}
 			
 			if(times!=null) {
