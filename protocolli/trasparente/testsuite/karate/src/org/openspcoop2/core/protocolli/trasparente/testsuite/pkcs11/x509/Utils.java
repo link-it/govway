@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNotNull;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Date;
-import java.util.Map;
 import java.util.Properties;
 
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
@@ -45,7 +44,6 @@ import org.openspcoop2.utils.security.JWEOptions;
 import org.openspcoop2.utils.security.JWSOptions;
 import org.openspcoop2.utils.security.JsonEncrypt;
 import org.openspcoop2.utils.security.JsonSignature;
-import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -443,27 +441,5 @@ public class Utils {
 			}
 		}
 	}
-	
-	@SuppressWarnings("deprecation")
-	private static String buildUrl(Map<String,String> propertiesURLBased, String urlBase) {
-		return TransportUtils.buildLocationWithURLBasedParameter(propertiesURLBased, urlBase);
-	}
-	public static void resetCacheToken(Logger log) {
-		Map<String,String> queryParams = Map.of(
-				"resourceName", "GestioneToken",
-				"methodName", "resetCache"
-				//,
-				//"paramValue", idPolicy
-			);
-		String jmxUrl = buildUrl(queryParams, System.getProperty("govway_base_path") + "/check");
-		log.info("Resetto la policy di rate limiting sulla url: " + jmxUrl );
-		
-		try {
-			String resp = new String(HttpUtilities.getHTTPResponse(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password")).getContent());
-			log.info(resp);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-		//HttpUtilities.check(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password"));
-	}
+
 }

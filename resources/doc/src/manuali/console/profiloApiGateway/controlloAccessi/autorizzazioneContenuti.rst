@@ -30,6 +30,7 @@ Per identificare una risorsa sono utilizzabili le seguenti espressioni dinamiche
 Ogni valore atteso per una risorsa può essere fornito in una delle seguenti modalità:
 
 - ${anyValue} : indica qualsiasi valore non nullo
+- ${undefined} : la risorsa indicata non deve esistere o non deve essere valorizzata
 - ${regExpMatch:EXPR} : la regola è soddisfatta se il valore della risorsa ha un match completo rispetto all'espressione regolare EXPR indicata
 - ${regExpFind:EXPR} : simile alla precedente regola, il match dell'espressione regolare può avvenire anche su una sottostringa del valore della risorsa
 - valore : indica esattamente il valore (case sensitive) che deve possedere la risorsa; il valore può essere definito come costante o contenere parti dinamiche risolte a runtime dal Gateway nella forma descritta precedentemente per le risorse

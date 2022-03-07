@@ -34,6 +34,7 @@ public class CostantiAutorizzazione {
 	public static final String AUTORIZZAZIONE_CONTENUTO_BUILT_IN = CostantiConfigurazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN;
 	
 	public static final String AUTHZ_ANY_VALUE = "${anyValue}";
+	public static final String AUTHZ_UNDEFINED = "${undefined}";
 	public static final String AUTHZ_REGEXP_MATCH_PREFIX = "${regExpMatch:";
 	public static final String AUTHZ_REGEXP_FIND_PREFIX = "${regExpFind:";
 	public static final String AUTHZ_REGEXP_SUFFIX = "}";

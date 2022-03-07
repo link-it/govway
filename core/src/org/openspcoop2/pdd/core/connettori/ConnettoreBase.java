@@ -40,6 +40,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -591,6 +592,8 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 					this.logger.debug("Negoziazione token '"+this.policyNegoziazioneToken.getName()+"' ...");
 				}
 				EsitoNegoziazioneToken esitoNegoziazione = GestoreToken.endpointToken(this.debug, this.logger.getLogger(), this.policyNegoziazioneToken, 
+						this.busta, this.requestInfo, 
+						ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo) ? TipoPdD.APPLICATIVA : TipoPdD.DELEGATA,
 						this.getPddContext(), this.getProtocolFactory());
 				if(this.debug) {
 					this.logger.debug("Negoziazione token '"+this.policyNegoziazioneToken.getName()+"' terminata");

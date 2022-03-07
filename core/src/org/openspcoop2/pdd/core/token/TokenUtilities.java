@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneToken;
@@ -49,6 +50,32 @@ public class TokenUtilities {
 
 	public static Properties getDefaultProperties(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
 		return MultiPropertiesUtilities.getDefaultProperties(mapProperties);
+	}
+	public static Properties getValidazioneJwtClaimsMappingProperties(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
+		return mapProperties.get(Costanti.VALIDAZIONE_JWT_TOKEN_PARSER_COLLECTION_ID);
+	}
+	public static Properties getIntrospectionClaimsMappingProperties(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
+		return mapProperties.get(Costanti.INTROSPECTION_TOKEN_PARSER_COLLECTION_ID);
+	}
+	public static Properties getUserInfoClaimsMappingProperties(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
+		return mapProperties.get(Costanti.USERINFO_TOKEN_PARSER_COLLECTION_ID);
+	}
+	
+	public static List<String> getClaims(Properties p, String name) {
+		String v = p.getProperty(name);
+		List<String> l = new ArrayList<String>();
+		if(v.contains(",")) {
+			String [] tmp = v.split(",");
+			for (String s : tmp) {
+				if(StringUtils.isNotEmpty(s.trim())) {
+					l.add(s.trim());
+				}
+			}
+		}
+		else {
+			l.add(v.trim());
+		}
+		return l;
 	}
 	
 	public static Map<String, Properties> getMultiProperties(GenericProperties gp) throws ProviderException, ProviderValidationException {
@@ -366,6 +393,24 @@ public class TokenUtilities {
 		return l;
 	}
 	
+	public static String getFirstClaimAsString(Map<String, Object> claims, List<String> names) {
+		for (String name : names) {
+			String claim = getClaimAsString(claims, name);
+			if(claim!=null) {
+				return claim;
+			}
+		}
+		return null;
+	}
+	public static List<String> getFirstClaimAsList(Map<String, Object> claims, List<String> names) {
+		for (String name : names) {
+			List<String> l = getClaimAsList(claims, name);
+			if(l!=null && !l.isEmpty()) {
+				return l;
+			}
+		}
+		return null;
+	}
 	
 	public static KeystoreParams getSignedJwtKeystoreParams(GenericProperties gp) throws Exception {
 		PolicyNegoziazioneToken policy = TokenUtilities.convertTo(gp);

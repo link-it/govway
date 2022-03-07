@@ -1,6 +1,6 @@
 .. _tokenNegoziazionePolicy:
 
-Token Negoziazione Policy
+Token Policy Negoziazione 
 -------------------------
 
 Per poter definire politiche che consentono di spedire un Bearer Token verso l'endpoint associato ad un connettore è necessario creare delle Token Policy da riferire nelle configurazioni degli specifici servizi. La gestione delle Token Policy
@@ -49,37 +49,11 @@ sezione *Token Endpoint* si specifica il tipo di negoziazione e i vari parametri
 -  *Proxy*: Parametri di configurazione nel caso in cui il server di
    negoziazione token richieda l'uso di un proxy per l'accesso.
 
-Successivamente devono essere forniti i dati di configurazione specifici
-dell'autenticazione utente, se il tipo di negoziazione selezionato è 'Resource Owner Password Credentials':
-
--  *Username* e *Password*: Dovranno essere forniti Username e Password dell'utente per cui verrà effettuata la negoziazione del token.
-
-Successivamente devono essere forniti i dati di configurazione specifici dell'autenticazione client in caso di modalità di negoziazione che non prevedono un JWT firmato:
-
--  *Autenticazione Http Basic*: flag da attivare nel caso in cui il servizio di negoziazione richieda autenticazione di tipo HTTP-BASIC. In questo caso dovranno essere forniti Client-ID e Client-Secret nei campi successivi.
-
--  *Autenticazione Bearer*: flag da attivare nel caso in cui il servizio di negoziazione richieda autenticazione tramite un bearer token. Il token dovrà essere indicato nel campo successivo fornito.
-
--  *Autenticazione Https*: flag da attivare nel caso in cui il servizio di negoziazione richieda autenticazione di tipo Https. In questo caso dovranno essere forniti tutti i dati di configurazione nei campi presenti nella sezione 'https'.
-
 Nel caso sia attivato il flag relativo ad un Proxy o una configurazione Https saranno presentate delle sezioni omonime dove poter inserire i dati di configurazione richiesti.
 
-Se invece è previsto un JWT firmato saranno richiesti i parametri da inserire nel JWT (claims) e l'algoritmo di firma da utilizzare:
+I parametri di configurazioni relativi al tipo di negoziazione del token configurato vengono descritti nelle sezioni ':ref:`tokenNegoziazionePolicy_notJwt`' e ':ref:`tokenNegoziazionePolicy_jwt`'.
 
--  *Signature Algorithm*: algoritmo utilizzato per firmare l'asserzione jwt;
-
--  *Client ID*: identificativo del client censito sull'AuthorizationServer che verrà indicato nel claim 'sub' dell'asserzione JWT;
-
--  *Audience*: identifica l'authorization server come destinario dell'asserzione JWT (claim 'aud');
-
--  *Issuer*: identità del firmatario dell'asserzione JWT;
-
--  *Time to Live*: indica la validità temporale, in secondi, a partire dalla data di creazione dell'asserzione.
-
-Se il tipo di negoziazione selezionato è 'Signed JWT with Client Secret', oltre al Client-ID viene richiesto anche il secret, concordato con l'authorization server, da utilizzare per firmare l'asserzione JWT. Nel caso invece sia stato selezionato il tipo 'Signed JWT' vengono richiesti i parametri di accesso al keystore per individuare la chiave privata da utilizzare per firmare l'asserzione.
-
-
-Nella sezione 'Configurazione' potranno invece essere definiti ulteriori criteri che riguardano la richiesta di un token:
+Nella sezione 'Dati Richiesta' potranno invece essere definiti ulteriori criteri che riguardano la richiesta di un token:
 
 -  *Scope*: Elenco di scope utente richiesti.
 
@@ -94,3 +68,12 @@ Infine nella sezione 'Token Forward' si può configurare la modalità di inoltro
 -  *Header HTTP*: Il token viene inoltrato al destinatario utilizzando un header HTTP il cui nome deve essere specificato nel campo seguente.
 
 -  *Parametro URL*: Il token viene inoltrato al destinatario utilizzando un parametro della Query String il cui nome deve essere specificato nel campo seguente.
+
+
+Nelle sezioni successive vengono forniti i dettagli relativi alle modalità di negoziazione di un token nel caso sia previsto un jwt firmato o meno.
+
+.. toctree::
+        :maxdepth: 2
+
+        tokenNegoziazione_notJwt
+	tokenNegoziazione_jwt

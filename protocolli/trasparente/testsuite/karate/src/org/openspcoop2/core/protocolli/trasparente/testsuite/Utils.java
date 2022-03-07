@@ -469,4 +469,23 @@ public class Utils {
 		log.info("Aspetto " + to_wait/1000 + " secondi affinchè le statistiche vengano generate...");
 		org.openspcoop2.utils.Utilities.sleep(to_wait);
 	}
+	
+	public static void resetCacheToken(Logger log) {
+		Map<String,String> queryParams = Map.of(
+				"resourceName", "GestioneToken",
+				"methodName", "resetCache"
+				//,
+				//"paramValue", idPolicy
+			);
+		String jmxUrl = buildUrl(queryParams, System.getProperty("govway_base_path") + "/check");
+		log.info("Resetto la policy di rate limiting sulla url: " + jmxUrl );
+		
+		try {
+			String resp = new String(HttpUtilities.getHTTPResponse(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password")).getContent());
+			log.info(resp);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		//HttpUtilities.check(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password"));
+	}
 }

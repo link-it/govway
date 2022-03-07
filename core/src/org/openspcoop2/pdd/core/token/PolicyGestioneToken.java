@@ -255,7 +255,7 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 			parser = (ITokenParser) ClassLoaderUtilities.newInstance(className);
 		}
 		else{
-			parser = new BasicTokenParser(tipologiaClaims);
+			parser = new BasicTokenParser(tipologiaClaims, TokenUtilities.getValidazioneJwtClaimsMappingProperties(this.properties));
 		}
 		return parser;
 	}
@@ -292,7 +292,7 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 			parser = (ITokenParser) ClassLoaderUtilities.newInstance(className);
 		}
 		else{
-			parser = new BasicTokenParser(tipologiaClaims);
+			parser = new BasicTokenParser(tipologiaClaims, TokenUtilities.getIntrospectionClaimsMappingProperties(this.properties));
 		}
 		return parser;
 	}
@@ -347,7 +347,7 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 			parser = (ITokenParser) ClassLoaderUtilities.newInstance(className);
 		}
 		else{
-			parser = new BasicTokenParser(tipologiaClaims);
+			parser = new BasicTokenParser(tipologiaClaims, TokenUtilities.getUserInfoClaimsMappingProperties(this.properties));
 		}
 		return parser;
 	}

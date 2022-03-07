@@ -44,6 +44,7 @@ public class TestTokenParser {
 				{TipologiaClaims.INTROSPECTION_RESPONSE_RFC_7662.name()},
 				{TipologiaClaims.JSON_WEB_TOKEN_RFC_7519.name()},
 				{TipologiaClaims.OIDC_ID_TOKEN.name()},
+				{TipologiaClaims.MAPPING.name()},
 		};
 	}
 	

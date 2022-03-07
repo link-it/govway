@@ -24,8 +24,7 @@ per il servizio UserInfo, che sono:
 -  *Tipo*: Si seleziona il tipo di servizio UserInfo riferito. I valori
    possibili sono:
 
-   -  *OpenID Connect - UserInfo*: servizio di UserInfo standard OpenID
-      Connect.
+   -  *OpenID Connect - UserInfo*: servizio di UserInfo conforme allo standard OpenID Connect 'https://openid.net/specs/openid-connect-core-1_0.html#UserInfo';
 
    -  *Google - UserInfo*: servizio UserInfo di Google. La URL di
       default del servizio viene inserita automaticamente.

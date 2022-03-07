@@ -31,7 +31,9 @@ import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.mvc.properties.Item;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
+import org.openspcoop2.core.mvc.properties.provider.ProviderInfo;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
+import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
@@ -385,6 +387,49 @@ public class NegoziazioneTokenProvider implements IProvider {
 		return null;
 	}
 
+	@Override
+	public ProviderInfo getProviderInfo(String id) throws ProviderException{
+		if(Costanti.ID_RETRIEVE_ENDPOINT_URL.equals(id) ||
+				Costanti.ID_RETRIEVE_AUTENTICAZIONE_USERNAME.equals(id) ||
+				Costanti.ID_RETRIEVE_CLIENT_ID.equals(id) ||
+				Costanti.ID_RETRIEVE_JWT_KID_VALUE.equals(id) ||
+				Costanti.ID_RETRIEVE_JWT_CLAIMS.equals(id) ||
+				Costanti.ID_RETRIEVE_SCOPE.equals(id) ||
+				Costanti.ID_RETRIEVE_AUDIENCE.equals(id) ||
+				Costanti.ID_RETRIEVE_JWT_X5U.equals(id)
+				) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI);
+			return pInfo;
+		}
+		else if(Costanti.ID_RETRIEVE_JWT_ISSUER.equals(id)
+				) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_ISSUER);
+			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI_CON_OPZIONE_VALORE_NON_DEFINITO);
+			return pInfo;
+		}
+		else if(Costanti.ID_RETRIEVE_JWT_SUBJECT.equals(id)
+				) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_SUBJECT);
+			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI_CON_OPZIONE_VALORE_NON_DEFINITO);
+			return pInfo;
+		}
+		else if(Costanti.ID_RETRIEVE_JWT_CLIENT_ID.equals(id) ||
+				Costanti.ID_RETRIEVE_JWT_AUDIENCE.equals(id) 
+				) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI_CON_OPZIONE_VALORE_NON_DEFINITO);
+			return pInfo;
+		}
+		
+		
+		return null;
+	}
+	
 	@Override
 	public String dynamicUpdate(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
 	

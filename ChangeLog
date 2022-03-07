@@ -1,3 +1,12 @@
+2022-03-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1334
+	Nella negoziazione di un Token tramite JWT Signed è adesso possibile definire i parametri da inserire nell'header non firmato (kid, x5c, x5t ...). 
+	Inoltre è adesso possibile personalizzare le parti inserire nel payload firmato tramite parti dinamiche che verranno risolte a runtime dal Gateway.
+	Nella validazione di un Token è invece adesso possibile configurare un formato di token definito tramite un mapping puntuale tra il nome di un claim e l'informazione che GovWay cerca di estrarre dal token.
+	Infine nel controllo degli accessi, in una autorizzazione per contenuti o per token claims è adesso possibile utilizzare la costante '${undefined}' per indicare che una risorsa non deve esistere o non deve essere valorizzata.
+
 2022-03-03  Andrea Poli <apoli@link.it>
 
 	* [InstallerVersioneBinaria]

@@ -37,7 +37,7 @@ public class AuthorizationServerNegoziazioneTest extends ConfigLoader {
 	@Test
 	public void trustAll_noAlias() throws Exception {
 		
-		Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		
 		Utils.testJson(logCore, api_negoziazione, "TLS-TrustAll-ClientNoAlias", 
 				null, null, 
@@ -47,7 +47,7 @@ public class AuthorizationServerNegoziazioneTest extends ConfigLoader {
 	@Test
 	public void trust_alias() throws Exception {
 		
-		Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		
 		Utils.testJson(logCore, api_negoziazione, "TLS-Trust-ServerAlias", 
 				null, null, 
@@ -57,7 +57,7 @@ public class AuthorizationServerNegoziazioneTest extends ConfigLoader {
 	@Test
 	public void signedJWT() throws Exception {
 		
-		Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		
 		Utils.testJson(logCore, api_negoziazione, "NegoziazioneSignedJWT", 
 				null, null, 

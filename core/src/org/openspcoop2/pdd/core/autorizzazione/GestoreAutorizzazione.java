@@ -965,6 +965,7 @@ public class GestoreAutorizzazione {
 		    		Enumeration<?> en = properties.keys();
 		    		while (en.hasMoreElements()) {
 						String key = (String) en.nextElement();
+						String expectedValue = properties.getProperty(key);
 						
 						String attributeAuthorityName = null;
 						String attributeName = null;
@@ -1028,6 +1029,9 @@ public class GestoreAutorizzazione {
 							}
 							
 							if(!findAttribute) {
+								if(CostantiAutorizzazione.AUTHZ_UNDEFINED.equalsIgnoreCase(expectedValue)) {
+									continue;
+								}
 								autorizzato = false;
 								if(attributeName!=null) {
 									errorMessage = "Token without attribute '"+key+"'";
@@ -1049,6 +1053,9 @@ public class GestoreAutorizzazione {
 						}
 						String nomeClaimAttribute = (attributeName!=null) ? attributeName : key;
 						if(lClaimValues==null || lClaimValues.isEmpty()) {
+							if(CostantiAutorizzazione.AUTHZ_UNDEFINED.equalsIgnoreCase(expectedValue)) {
+								continue;
+							}
 							autorizzato = false;
 							if(attributeName!=null) {
 								errorMessage = "Token with attribute '"+nomeClaimAttribute+"' without value";
@@ -1061,7 +1068,6 @@ public class GestoreAutorizzazione {
 						
 						// verifica valore atteso per il claim
 						String object = (attributeName!=null) ? "Attribute" : "Claim";
-						String expectedValue = properties.getProperty(key);
 						log.debug("Verifico valore '"+expectedValue+"' per "+object.toLowerCase()+" '"+nomeClaimAttribute+"' nel token ...");
 						if(expectedValue==null) {
 							throw new Exception(object+" '"+nomeClaimAttribute+"' without expected value");
@@ -1087,6 +1093,27 @@ public class GestoreAutorizzazione {
 								errorMessage = "Token "+object.toLowerCase()+" '"+nomeClaimAttribute+"' with unexpected empty value";
 								break;
 							}
+						}
+						else if(CostantiAutorizzazione.AUTHZ_UNDEFINED.equalsIgnoreCase(expectedValue)) { 
+							
+							/** NOT PRESENT */
+							
+							log.debug("Verifico valore "+object.toLowerCase()+" '"+nomeClaimAttribute+"' sia null o sia vuoto ...");
+							
+							// basta che abbia un valore
+							boolean ok = false;
+							for (String v : lClaimValues) {
+								if(v!=null && !"".equals(v)) {
+									ok = true;
+									break;
+								}
+							}
+							if(ok) {
+								autorizzato = false;
+								errorMessage = "Token unexpected "+object.toLowerCase()+" '"+nomeClaimAttribute+"'";
+								break;
+							}
+							
 						}
 						else if(
 								(

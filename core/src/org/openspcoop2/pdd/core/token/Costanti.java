@@ -52,6 +52,30 @@ public class Costanti {
 	public final static String MSG_CONTEXT_TOKEN_FORWARD = "TOKEN_FORWARD"; // per salvarlo con il messaggio
 	
 	
+	// Token Parser id
+	
+	public final static String VALIDAZIONE_JWT_TOKEN_PARSER_COLLECTION_ID = "validazioneJwtTokenParserPropRefId";
+	public final static String INTROSPECTION_TOKEN_PARSER_COLLECTION_ID = "introspectionTokenParserPropRefId";
+	public final static String USERINFO_TOKEN_PARSER_COLLECTION_ID = "userInfoTokenParserPropRefId";
+	
+	public final static String TOKEN_PARSER_ISSUER = "token.parser.issuer";
+	public final static String TOKEN_PARSER_SUBJECT = "token.parser.subject";
+	public final static String TOKEN_PARSER_AUDIENCE = "token.parser.audience";
+	public final static String TOKEN_PARSER_EXPIRE = "token.parser.expire";
+	public final static String TOKEN_PARSER_ISSUED_AT = "token.parser.issuedAt";
+	public final static String TOKEN_PARSER_NOT_TO_BE_USED_BEFORE = "token.parser.notToBeUsedBefore";
+	public final static String TOKEN_PARSER_JWT_IDENTIFIER = "token.parser.jwtIdentifier";
+	public final static String TOKEN_PARSER_CLIENT_ID = "token.parser.clientId";
+	public final static String TOKEN_PARSER_USERNAME = "token.parser.username";
+	public final static String TOKEN_PARSER_SCOPE = "token.parser.scope";
+	public final static String TOKEN_PARSER_ROLE = "token.parser.role";
+	public final static String TOKEN_PARSER_USER_FULL_NAME = "token.parser.user.fullName";
+	public final static String TOKEN_PARSER_USER_FIRST_NAME = "token.parser.user.firstName";
+	public final static String TOKEN_PARSER_USER_MIDDLE_NAME = "token.parser.user.middleName";
+	public final static String TOKEN_PARSER_USER_FAMILY_NAME = "token.parser.user.familyName";
+	public final static String TOKEN_PARSER_USER_EMAIL = "token.parser.user.eMail";
+	
+	
 	// Policy id
 	
 	public final static String GESTIONE_TOKEN_VALIDATION_ACTION_NONE = "NessunaValidazione";
@@ -220,10 +244,26 @@ public class Costanti {
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_CLIENT_ID= "policy.retrieveToken.jwt.clientId";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_CLIENT_SECRET= "policy.retrieveToken.jwt.clientSecret";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_ISSUER= "policy.retrieveToken.jwt.issuer";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SUBJECT= "policy.retrieveToken.jwt.subject";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_AUDIENCE= "policy.retrieveToken.jwt.audience";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_EXPIRED_TTL_SECONDS= "policy.retrieveToken.jwt.expired";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_EXPIRED_TTL_SECONDS_DEFAULT_VALUE = "300";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_CLAIMS = "policy.retrieveToken.jwt.claims";
+	
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_ALGORITHM= "policy.retrieveToken.jwt.signature.algorithm";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID = "policy.retrieveToken.jwt.signature.include.key.id";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_NOT_PRESENT = "false"; // per backward compatibility
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_ALIAS = "true"; // per backward compatibility
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_CLIENT_ID = "client_id";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_CUSTOM = "custom";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_VALUE = "policy.retrieveToken.jwt.signature.include.key.id.value";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_X509_CERT = "policy.retrieveToken.jwt.signature.include.cert";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_X509_URL = "policy.retrieveToken.jwt.signature.include.x509url";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_X509_SHA1 = "policy.retrieveToken.jwt.signature.include.cert.sha1";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_X509_SHA256 = "policy.retrieveToken.jwt.signature.include.cert.sha256";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_JOSE_CONTENT_TYPE = "policy.retrieveToken.jwt.signature.joseContentType";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_JOSE_TYPE = "policy.retrieveToken.jwt.signature.joseType";
+	
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_TYPE= "policy.retrieveToken.jwt.signature.keystoreType";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_FILE= "policy.retrieveToken.jwt.signature.keystoreFile";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_PASSWORD= "policy.retrieveToken.jwt.signature.keystorePassword";
@@ -239,12 +279,32 @@ public class Costanti {
 	public final static String POLICY_RETRIEVE_TOKEN_FORWARD_MODE_CUSTOM_URL_PARAMETER_NAME = "policy.tokenForward.mode.queryParameter";
 
 	
+	// VALORE VUOTO
+	
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED = "${undefined}";
+	
 	
 	
 	// STANDARD
 	
 	public final static String RFC6750_URI_QUERY_PARAMETER_ACCESS_TOKEN = "access_token";
 	public final static String RFC6750_FORM_PARAMETER_ACCESS_TOKEN = "access_token";
+	
+	// ELEMENTI ID 
+	
+	public final static String ID_RETRIEVE_ENDPOINT_URL = "endpointURL";
+	public final static String ID_RETRIEVE_AUTENTICAZIONE_USERNAME = "autenticazioneUsername";
+	public final static String ID_RETRIEVE_CLIENT_ID = "autenticazioneEndpointBasicUsername";
+	public final static String ID_RETRIEVE_JWT_KID_VALUE = "jwtSignatureKidValue";
+	public final static String ID_RETRIEVE_JWT_X5U = "jwtSignatureIncludeCertModeX5U";
+	public final static String ID_RETRIEVE_JWT_CLIENT_ID = "jwtClientId";
+	public final static String ID_RETRIEVE_JWT_AUDIENCE = "jwtAudience";
+	public final static String ID_RETRIEVE_JWT_ISSUER = "jwtIssuer";
+	public final static String ID_RETRIEVE_JWT_SUBJECT = "jwtSubject";
+	public final static String ID_RETRIEVE_JWT_CLAIMS = "jwtRichiestaJwsPayloadClaims";
+	public final static String ID_RETRIEVE_SCOPE = "scope";
+	public final static String ID_RETRIEVE_AUDIENCE = "audience";
+	
 	
 	// ELEMENTI SELECT
 	

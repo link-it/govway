@@ -10,6 +10,7 @@ L'autorizzazione per token claims permette di effettuare dei semplici controlli 
 La configurazione viene effettuata inserendo nel campo di testo un claim da verificare per ogni riga, facendo seguire dopo l'uguale un valore fornito in una delle seguenti modalità:
 
 - ${anyValue} : indica qualsiasi valore non nullo
+- ${undefined} : la risorsa indicata non deve esistere o non deve essere valorizzata
 - ${regExpMatch:EXPR} : la regola è soddisfatta se l'intero valore del claim ha un match rispetto all'espressione regolare EXPR indicata
 - ${regExpFind:EXPR} : simile alla precedente regola, il match dell'espressione regolare può avvenire anche su una sottostringa del valore del claim
 - valore : indica esattamente il valore (case sensitive) che deve possedere il claim; il valore può essere definito come costante o contenere parti dinamiche risolte a runtime dal Gateway descritte di seguito

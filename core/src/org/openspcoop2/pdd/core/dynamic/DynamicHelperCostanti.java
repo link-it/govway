@@ -489,6 +489,7 @@ public class DynamicHelperCostanti {
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SUFFIX =
 			"Ogni valore può essere fornito in una delle seguenti modalità:<br/>"+
 			"- <b>"+CostantiAutorizzazione.AUTHZ_ANY_VALUE+"</b> : indica qualsiasi valore non nullo<br/>"+
+			"- <b>"+CostantiAutorizzazione.AUTHZ_UNDEFINED+"</b> : la risorsa indicata non deve esistere o non deve essere valorizzata<br/>"+
 			"- <b>"+CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX+"EXPR"+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX+"</b> : la regola è soddisfatta se l'intero valore del claim ha un match rispetto all'espressione regolare EXPR indicata<br/>"+
 			"- <b>"+CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX+"EXPR"+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX+"</b> : simile alla precedente regola, il match dell'espressione regolare può avvenire anche su una sottostringa del valore del claim<br/>"+
 			"- <b>valore</b> : indica esattamente il valore (case sensitive) che deve possedere il claim; il valore può essere definito come costante o contenere parti dinamiche risolte a runtime dal Gateway descritte di seguito<br/>"+
@@ -576,6 +577,7 @@ public class DynamicHelperCostanti {
 			"Per identificare una risorsa sono utilizzabili le espressioni dinamiche descritte nell'ultima parte di questo box informazioni.<br/><br/>"+
 			"Ogni valore può essere fornito in una delle seguenti modalità:<br/>"+
 			"- <b>"+CostantiAutorizzazione.AUTHZ_ANY_VALUE+"</b> : indica qualsiasi valore non nullo<br/>"+
+			"- <b>"+CostantiAutorizzazione.AUTHZ_UNDEFINED+"</b> : la risorsa indicata non deve esistere o non deve essere valorizzata<br/>"+
 			"- <b>"+CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX+"EXPR"+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX+"</b> : la regola è soddisfatta se il valore della risorsa ha un match completo rispetto all'espressione regolare EXPR indicata<br/>"+
 			"- <b>"+CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX+"EXPR"+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX+"</b> : simile alla precedente regola, il match dell'espressione regolare può avvenire anche su una sottostringa del valore della risorsa<br/>"+
 			"- <b>valore</b> : indica esattamente il valore (case sensitive) che deve possedere la risorsa; il valore può essere definito come costante o contenere parti dinamiche risolte a runtime dal Gateway descritte di seguito<br/>"+
@@ -675,7 +677,7 @@ public class DynamicHelperCostanti {
 	
 	public final static List<String> LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_INFO_VALORI = new ArrayList<>();
 	static {
-		LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_INFO_VALORI.addAll(LABEL_CONFIGURAZIONE_INFO_ALL_VALORI);
+		LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_INFO_VALORI.addAll(LABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI);
 		deleteField(LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_INFO_VALORI, LABEL_CONFIGURAZIONE_INFO_TRASPORTO_XPATH_SOAP); // elimino xpath su soap
 		deleteField(LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_INFO_VALORI, LABEL_CONFIGURAZIONE_INFO_TRASPORTO_ATTRIBUTES); // elimino attributes 
 	}
@@ -686,6 +688,28 @@ public class DynamicHelperCostanti {
 		LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_INFO_VALORI_CON_REQUIRED_ATTRIBUTES.addAll(LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_INFO_VALORI);
 	}
 	
+	
+	
+	
+	
+	
+	// ******* NEGOZIAZIONE TOKEN
+	
+	public final static String LABEL_CONFIGURAZIONE_NEGOZIAZIONE_ISSUER = LABEL_CONFIGURAZIONE_INFO_TRASPORTO.replace(":", " indicate di seguito.")+"<BR/>Se non viene fornito un valore il claim 'iss' verrà valorizzato con il nome del soggetto associato al dominio di gestione della richiesta";
+	public final static String LABEL_CONFIGURAZIONE_NEGOZIAZIONE_SUBJECT = LABEL_CONFIGURAZIONE_INFO_TRASPORTO.replace(":", " indicate di seguito.")+"<BR/>Se non viene fornito un valore il claim 'sub' verrà valorizzato con il medesimo valore associato al Client ID";
+	
+	public final static String LABEL_CONFIGURAZIONE_NEGOZIAZIONE_VALORE_NON_DEFINITO = "<b>"+org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED+"</b>: indica di non generare il claim";
+	
+	public final static List<String> LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI = new ArrayList<>();
+	static {
+		LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI.addAll(LABEL_CONFIGURAZIONE_INFO_ALL_VALORI);
+	}
+	
+	public final static List<String> LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI_CON_OPZIONE_VALORE_NON_DEFINITO = new ArrayList<>();
+	static {
+		LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI_CON_OPZIONE_VALORE_NON_DEFINITO.add(LABEL_CONFIGURAZIONE_NEGOZIAZIONE_VALORE_NON_DEFINITO);
+		LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI_CON_OPZIONE_VALORE_NON_DEFINITO.addAll(LABEL_CONFIGURAZIONE_INFO_ALL_VALORI);
+	}
 	
 	
 	

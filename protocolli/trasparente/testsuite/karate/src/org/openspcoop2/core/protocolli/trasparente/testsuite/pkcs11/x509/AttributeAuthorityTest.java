@@ -37,7 +37,7 @@ public class AttributeAuthorityTest extends ConfigLoader {
 	@Test
 	public void trustAll_noAlias() throws Exception {
 		
-		Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		
 		Utils.testJson(logCore, api, "TLS-TrustAll-ClientNoAlias", 
 				null, null, 
@@ -54,7 +54,7 @@ public class AttributeAuthorityTest extends ConfigLoader {
 	@Test
 	public void jwsRequest() throws Exception {
 		
-		Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		
 		Utils.testJson(logCore, api, "JWSRequest", 
 				null, null, 
@@ -64,7 +64,7 @@ public class AttributeAuthorityTest extends ConfigLoader {
 	@Test
 	public void jwsResponse() throws Exception {
 		
-		Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		
 		Utils.testJson(logCore, api, "JWSResponse", 
 				null, null, 
