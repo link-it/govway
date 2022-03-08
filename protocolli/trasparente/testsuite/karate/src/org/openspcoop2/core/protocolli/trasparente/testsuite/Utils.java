@@ -488,4 +488,42 @@ public class Utils {
 		}
 		//HttpUtilities.check(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password"));
 	}
+	
+	public static void resetCacheAutenticazione(Logger log) {
+		Map<String,String> queryParams = Map.of(
+				"resourceName", "DatiAutenticazione",
+				"methodName", "resetCache"
+				//,
+				//"paramValue", idPolicy
+			);
+		String jmxUrl = buildUrl(queryParams, System.getProperty("govway_base_path") + "/check");
+		log.info("Resetto la policy di rate limiting sulla url: " + jmxUrl );
+		
+		try {
+			String resp = new String(HttpUtilities.getHTTPResponse(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password")).getContent());
+			log.info(resp);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		//HttpUtilities.check(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password"));
+	}
+	
+	public static void resetCacheAutorizzazione(Logger log) {
+		Map<String,String> queryParams = Map.of(
+				"resourceName", "DatiAutorizzazione",
+				"methodName", "resetCache"
+				//,
+				//"paramValue", idPolicy
+			);
+		String jmxUrl = buildUrl(queryParams, System.getProperty("govway_base_path") + "/check");
+		log.info("Resetto la policy di rate limiting sulla url: " + jmxUrl );
+		
+		try {
+			String resp = new String(HttpUtilities.getHTTPResponse(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password")).getContent());
+			log.info(resp);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		//HttpUtilities.check(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password"));
+	}
 }

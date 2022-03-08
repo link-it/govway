@@ -83,6 +83,7 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 		this.iat = tokenParser.getIssuedAt();
 		this.nbf = tokenParser.getNotToBeUsedBefore();
 		this.clientId = tokenParser.getClientId();
+		this.jti = tokenParser.getJWTIdentifier();
 		List<String> r = tokenParser.getRoles();
 		if(r!=null && r.size()>0) {
 			if(this.roles == null) {
@@ -169,6 +170,11 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 			Object clientId = getValue("clientId", informazioniTokens); 
 			if(clientId!=null && clientId instanceof String) {
 				this.clientId = (String) clientId;
+			}
+			
+			Object jti = getValue("jti", informazioniTokens); 
+			if(jti!=null && jti instanceof String) {
+				this.jti = (String) jti;
 			}
 			
 			Object roles = getValue("roles", informazioniTokens); 
@@ -277,6 +283,9 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	// Per un ID_TOKEN, If present, it MUST contain the OAuth 2.0 Client ID of this party.
 	private String clientId; // in oidc e' azp
 	
+	//  The "jti" (JWT ID) claim provides a unique identifier for the JWT.
+	private String jti;
+	
 	// Ruoli di un utente
 	private List<String> roles;
 	
@@ -376,6 +385,13 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 		this.clientId = clientId;
 	}
 
+	public String getJti() {
+		return this.jti;
+	}
+	public void setJti(String jti) {
+		this.jti = jti;
+	}
+	
 	public List<String> getRoles() {
 		return this.roles;
 	}

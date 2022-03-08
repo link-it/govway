@@ -889,35 +889,35 @@ public class GestoreAutenticazione {
 	    		}
 	    	
 	    		if(issuer) {
-	    			if(informazioniTokenNormalizzate.getIss()==null || "".equals(informazioniTokenNormalizzate.getIss())) {
+	    			if(informazioniTokenNormalizzate==null || informazioniTokenNormalizzate.getIss()==null || "".equals(informazioniTokenNormalizzate.getIss())) {
 	    				autenticato = false;
 		    			errorMessage = "Token without issuer claim";
 	    			}
 	    		}
 	    		
 	    		if(clientId) {
-	    			if(informazioniTokenNormalizzate.getClientId()==null || "".equals(informazioniTokenNormalizzate.getClientId())) {
+	    			if(informazioniTokenNormalizzate==null || informazioniTokenNormalizzate.getClientId()==null || "".equals(informazioniTokenNormalizzate.getClientId())) {
 	    				autenticato = false;
 		    			errorMessage = "Token without clientId claim";
 	    			}
 	    		}
 	    		
 	    		if(subject) {
-	    			if(informazioniTokenNormalizzate.getSub()==null || "".equals(informazioniTokenNormalizzate.getSub())) {
+	    			if(informazioniTokenNormalizzate==null || informazioniTokenNormalizzate.getSub()==null || "".equals(informazioniTokenNormalizzate.getSub())) {
 	    				autenticato = false;
 		    			errorMessage = "Token without subject claim";
 	    			}
 	    		}
 	    		
 	    		if(username) {
-	    			if(informazioniTokenNormalizzate.getUsername()==null || "".equals(informazioniTokenNormalizzate.getUsername())) {
+	    			if(informazioniTokenNormalizzate==null || informazioniTokenNormalizzate.getUsername()==null || "".equals(informazioniTokenNormalizzate.getUsername())) {
 	    				autenticato = false;
 		    			errorMessage = "Token without username claim";
 	    			}
 	    		}
 	    		
 	    		if(email) {
-	    			if(informazioniTokenNormalizzate.getUserInfo()==null || 
+	    			if(informazioniTokenNormalizzate==null || informazioniTokenNormalizzate.getUserInfo()==null || 
 	    					informazioniTokenNormalizzate.getUserInfo().getEMail()==null || 
 	    					"".equals(informazioniTokenNormalizzate.getUserInfo().getEMail())) {
 	    				autenticato = false;

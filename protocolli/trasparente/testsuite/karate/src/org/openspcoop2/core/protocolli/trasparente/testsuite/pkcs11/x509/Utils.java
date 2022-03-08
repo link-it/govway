@@ -1,16 +1,3 @@
-package org.openspcoop2.core.protocolli.trasparente.testsuite.pkcs11.x509;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.Date;
-import java.util.Properties;
-
-import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
-import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Headers;
 /*
  * GovWay - A customizable API Gateway 
  * https://govway.org
@@ -30,6 +17,20 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Heade
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+package org.openspcoop2.core.protocolli.trasparente.testsuite.pkcs11.x509;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Date;
+import java.util.Properties;
+
+import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Headers;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;

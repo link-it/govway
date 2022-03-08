@@ -65,8 +65,6 @@
 	org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.timer.intervalloSecondi=8
 	org.openspcoop2.pdd.statistiche.generazione.baseMensile.timer.intervalloSecondi=8
 
-
-	
 	Questo per consentire di controllare in un tempo accettabile le metriche dipendenti da statistiche,
 	in particolare quando si abilitano in presenza di degrado prestazionale. 
 
@@ -128,6 +126,10 @@
 	# Indicazione se nella Consegna Condizionale è possibile associare lo stesso filtro a differenti connettori (per test)
 	connettoriMultipli.consegnaCondizionale.stessoFiltro=true
    In modo che la console consenta di assegnare più volte lo stesso filtro a connettori diversi in una consegna condizionale e rilevare l'errore a runtime durante una richiesta.
+
+- Impostare in govway_local.properties la seguente proprietà per poter effettuare il test sul claim iat
+	
+	org.openspcoop2.pdd.gestioneToken.iat=120
 
 - Per modificare i tempi e il numero di operazioni effettuate per i connettori multipli agire sul <testsuite.properties>:
 	+ connettori.load_balancer.numero_richieste_random=500
@@ -268,6 +270,9 @@ Di seguito vengono descritti i test del package 'token':
 
 - 'negoziazione', verifica le funzionalità di negoziazione dei token con un AttributeAuthority
    ant run_test -Ddelete=false -Dload=false -Dpackage=token.negoziazione
+
+- 'validazione', verifica le funzionalità di validazione di un access token
+   ant run_test -Ddelete=false -Dload=false -Dpackage=token.validazione
 
 Di seguito vengono descritti i test del package 'encoding':
 

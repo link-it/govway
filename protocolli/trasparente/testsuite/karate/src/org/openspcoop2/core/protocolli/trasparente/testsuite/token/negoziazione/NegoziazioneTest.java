@@ -251,18 +251,6 @@ public class NegoziazioneTest extends ConfigLoader {
 	}
 	
 	
-	/*
-	I TEST STANNO FUNZIONADO
-	MANCHEREBBE IL TEST 3 di clientSecret che serve a verificare la NON generazione di qualche campo.
-	
-	poi agganciare uguale i 3 test per signedJWT: dovrebbero venire facili facili
-	
-	NOTA: realizzare nuova funzionalità su controllo contenuti che verifica la NON presenza di un claim e agganciarlo alle verifiche sopra, in modo da essere sicuri quando viene generata una info e quando non viene
-	
-	Infine fare qualche test anche per la validazione dei token.... prendere spunto anche per quelli dai test di PKCS
-	
-	Per i test di fra integrarli senza ancora agganciarli a jenkins. Poi farli girare su jenkins per vedere se ci sono problematiche relative ai nomi degli header case sensitive!!!!
-	*/
 	
 	private static HttpResponse _test(Logger logCore, String api, String operazione,
 			Map<String, String> headers) throws Exception {
