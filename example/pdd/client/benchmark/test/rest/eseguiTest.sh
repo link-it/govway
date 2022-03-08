@@ -13,7 +13,7 @@ duration=2
 
 # Threads
 #threads="20 50 100"
-threads="3"
+threads="100 200"
 threadsRampUp=5
 
 # Dimensione dei test
@@ -77,10 +77,30 @@ for threadNumber in $threads; do
 			echo "------- delay min:${sleepMin} max:${sleepMax}"
 			mkdir ${resultDir}/$threadNumber/$dimensione/${profiloSicurezza}_${tipoTest}/${sleepMin}_${sleepMax}
 			echo "--------- test (profiloSicurezza:${profiloSicurezza} tipoTest:$tipoTest dimensione:$dimensione threads:$threadNumber) ..."
-			${binJMeter}/jmeter -n -t ${jmeterTestFile} -l ${resultDir}/OUTPUT.txt -JnodoRunIP=${nodoRunIP} -JnodoRunPort=${nodoRunPort} -JclientIP=${clientIP} -JtestFileDir=${testFileDir} -JlogDir=${logDir} -Jthreads=${threadNumber} -Jduration=${duration} -JthreadsRampUp=${threadsRampUp}  -Jdimensione=${dimensione} -Jprofilo=${profilo} -Jazione=${azione} -JtipoTest=${tipoTest} -Jsoggetto=${soggetto}  -JsleepMin=${sleepMin} -JsleepMax=${sleepMax} -JproxyHost=${proxyHost} -JproxyPort=${proxyPort} -Jprotocollo=${protocollo} -JprofiloSicurezza=${profiloSicurezza}
+			${binJMeter}/jmeter -n -t ${jmeterTestFile} -l ${resultDir}/OUTPUT.txt -JnodoRunIP=${nodoRunIP} -JnodoRunPort=${nodoRunPort} -JclientIP=${clientIP} -JtestFileDir=${testFileDir} -JlogDir=${logDir} -Jthreads=${threadNumber} -Jduration=${duration} -JthreadsRampUp=${threadsRampUp}  -Jdimensione=${dimensione} -Jprofilo=${profilo} -Jazione=${azione} -JtipoTest=${tipoTest} -Jsoggetto=${soggetto}  -JsleepMin=${sleepMin} -JsleepMax=${sleepMax} -JproxyHost=${proxyHost} -JproxyPort=${proxyPort} -Jprotocollo=${protocollo} -JprofiloSicurezza=${profiloSicurezza} -JdirResult=${resultDir} -j ${logDir}/jmeter.log
 			mv ${resultDir}/OUTPUT.txt ${resultDir}/$threadNumber/$dimensione/${profiloSicurezza}_${tipoTest}/${sleepMin}_${sleepMax}/
 			echo "--------- test (profiloSicurezza:${profiloSicurezza} tipoTest:${tipoTest} dimensione:$dimensione threads:$threadNumber) finished"
 		done
 	done
 done
 
+# Alla fine del test concatena i risultati e produce le statistiche e la dashboard
+
+# TODO: Non so perchè questo non funziona, mi da un solo csv.
+#	ricorro al for per prendere tutti i filenames
+#	outputs=(${resultDir}/*.csv)
+#	echo "OUTPUTS: " $outputs
+
+
+# TODO Accertati che questa cosa funzioni anche su altre bash, perchè in questo caso mi da solo un csv?
+someoutput=(${resultDir}/*.csv)
+headers=`head -1 $someoutput`
+files=""
+for output in ${resultDir}/*.csv; do
+	files="${files} ${output}"
+done
+
+echo "Files: $files"
+
+echo $headers > ${resultDir}/result.csv
+tail -q -n +2 $files >> ${resultDir}/result.csv
