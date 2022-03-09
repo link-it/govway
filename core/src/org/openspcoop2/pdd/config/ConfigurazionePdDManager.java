@@ -80,6 +80,7 @@ import org.openspcoop2.core.controllo_traffico.ElencoIdPolicyAttive;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDConnettore;
+import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -1595,11 +1596,11 @@ public class ConfigurazionePdDManager {
 	public boolean isForwardProxyEnabled() {
 		return this.configurazionePdDReader.isForwardProxyEnabled();
 	}
-	public ForwardProxy getForwardProxyConfigFruizione(IDSoggetto dominio, IDServizio idServizio) throws DriverConfigurazioneException{
-		return this.configurazionePdDReader.getForwardProxyConfigFruizione(dominio, idServizio);
+	public ForwardProxy getForwardProxyConfigFruizione(IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getForwardProxyConfigFruizione(dominio, idServizio, policy);
 	}
-	public ForwardProxy getForwardProxyConfigErogazione(IDSoggetto dominio, IDServizio idServizio) throws DriverConfigurazioneException{
-		return this.configurazionePdDReader.getForwardProxyConfigErogazione(dominio, idServizio);
+	public ForwardProxy getForwardProxyConfigErogazione(IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getForwardProxyConfigErogazione(dominio, idServizio, policy);
 	}
 	
 	/* ********  GENERIC FILE  ******** */

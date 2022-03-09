@@ -22,6 +22,10 @@
 
 package org.openspcoop2.pdd.core.token.pd;
 
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.token.AbstractDatiInvocazione;
 import org.openspcoop2.pdd.core.token.EsitoGestioneToken;
@@ -73,7 +77,7 @@ public class GestioneToken {
     	
     }
     
-    public EsitoGestioneTokenPortaDelegata validazioneJWTToken(AbstractDatiInvocazione datiInvocazione, String token) throws TokenException { 	
+    public EsitoGestioneTokenPortaDelegata validazioneJWTToken(DatiInvocazionePortaDelegata datiInvocazione, String token) throws TokenException { 	
     	try {
     	
     		EsitoGestioneTokenPortaDelegata esito = (EsitoGestioneTokenPortaDelegata) GestoreToken.validazioneJWTToken(this.log, datiInvocazione, 
@@ -97,12 +101,13 @@ public class GestioneToken {
     	}  	
     }
     
-    public EsitoGestioneTokenPortaDelegata introspectionToken(AbstractDatiInvocazione datiInvocazione, String token) throws TokenException {
+    public EsitoGestioneTokenPortaDelegata introspectionToken(DatiInvocazionePortaDelegata datiInvocazione, String token) throws TokenException {
     	try {
         	
     		EsitoGestioneTokenPortaDelegata esito = (EsitoGestioneTokenPortaDelegata) GestoreToken.introspectionToken(this.log, datiInvocazione, 
     				this.pddContext, this.protocolFactory,
-    				token, GestoreToken.PORTA_DELEGATA);
+    				token, GestoreToken.PORTA_DELEGATA,
+    				getDominio(datiInvocazione), getServizio(datiInvocazione));
     		
     		if(esito.getEccezioneProcessamento()!=null) {
         		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -121,12 +126,13 @@ public class GestioneToken {
     	}
 	}
 	
-	public EsitoGestioneTokenPortaDelegata userInfoToken(AbstractDatiInvocazione datiInvocazione, String token) throws TokenException {
+	public EsitoGestioneTokenPortaDelegata userInfoToken(DatiInvocazionePortaDelegata datiInvocazione, String token) throws TokenException {
 		try {
         	
 			EsitoGestioneTokenPortaDelegata esito = (EsitoGestioneTokenPortaDelegata) GestoreToken.userInfoToken(this.log, datiInvocazione, 
 					this.pddContext, this.protocolFactory,
-    				token, GestoreToken.PORTA_DELEGATA);
+    				token, GestoreToken.PORTA_DELEGATA,
+    				getDominio(datiInvocazione), getServizio(datiInvocazione));
     		
 			if(esito.getEccezioneProcessamento()!=null) {
         		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -159,6 +165,23 @@ public class GestioneToken {
     	}catch(Exception e) {
     		throw new TokenException(e.getMessage(),e); // errore di processamento
     	}
+	}
+	
+	private IDSoggetto getDominio(DatiInvocazionePortaDelegata datiInvocazione) {
+		IDSoggetto soggetto = null;
+		if(datiInvocazione.getPd()!=null) {
+			soggetto = new IDSoggetto(datiInvocazione.getPd().getTipoSoggettoProprietario(), datiInvocazione.getPd().getNomeSoggettoProprietario());
+		}
+		return soggetto;
+	}
+	private IDServizio getServizio(DatiInvocazionePortaDelegata datiInvocazione) throws DriverRegistroServiziException {
+		IDServizio servizio = null;
+		if(datiInvocazione.getPd()!=null) {
+			servizio = IDServizioFactory.getInstance().getIDServizioFromValues(datiInvocazione.getPd().getServizio().getTipo(), datiInvocazione.getPd().getServizio().getNome(), 
+					datiInvocazione.getPd().getSoggettoErogatore().getTipo(), datiInvocazione.getPd().getSoggettoErogatore().getNome(), 
+					datiInvocazione.getPd().getServizio().getVersione());
+		}
+		return servizio;
 	}
   
 }

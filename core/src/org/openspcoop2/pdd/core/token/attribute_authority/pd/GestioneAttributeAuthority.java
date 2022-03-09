@@ -22,9 +22,12 @@
 
 package org.openspcoop2.pdd.core.token.attribute_authority.pd;
 
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.token.GestoreToken;
-import org.openspcoop2.pdd.core.token.attribute_authority.AbstractDatiInvocazione;
 import org.openspcoop2.pdd.core.token.attribute_authority.AttributeAuthorityException;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.slf4j.Logger;
@@ -52,13 +55,14 @@ public class GestioneAttributeAuthority {
 		this.protocolFactory = protocolFactory;
 	}
 	
-    public EsitoRecuperoAttributiPortaDelegata readAttributes(AbstractDatiInvocazione datiInvocazione) throws AttributeAuthorityException{
+    public EsitoRecuperoAttributiPortaDelegata readAttributes(DatiInvocazionePortaDelegata datiInvocazione) throws AttributeAuthorityException{
 
     	try {
         	
     		EsitoRecuperoAttributiPortaDelegata esito = (EsitoRecuperoAttributiPortaDelegata) GestoreToken.readAttributes(this.log, datiInvocazione, 
     				this.pddContext, this.protocolFactory,
-    				GestoreToken.PORTA_DELEGATA);
+    				GestoreToken.PORTA_DELEGATA,
+    				getDominio(datiInvocazione), getServizio(datiInvocazione));
         	return esito;
     		
     	}catch(Throwable e) {
@@ -66,5 +70,21 @@ public class GestioneAttributeAuthority {
     	}
 	}
 	
+	private IDSoggetto getDominio(DatiInvocazionePortaDelegata datiInvocazione) {
+		IDSoggetto soggetto = null;
+		if(datiInvocazione.getPd()!=null) {
+			soggetto = new IDSoggetto(datiInvocazione.getPd().getTipoSoggettoProprietario(), datiInvocazione.getPd().getNomeSoggettoProprietario());
+		}
+		return soggetto;
+	}
+	private IDServizio getServizio(DatiInvocazionePortaDelegata datiInvocazione) throws DriverRegistroServiziException {
+		IDServizio servizio = null;
+		if(datiInvocazione.getPd()!=null) {
+			servizio = IDServizioFactory.getInstance().getIDServizioFromValues(datiInvocazione.getPd().getServizio().getTipo(), datiInvocazione.getPd().getServizio().getNome(), 
+					datiInvocazione.getPd().getSoggettoErogatore().getTipo(), datiInvocazione.getPd().getSoggettoErogatore().getNome(), 
+					datiInvocazione.getPd().getServizio().getVersione());
+		}
+		return servizio;
+	}
 }
 

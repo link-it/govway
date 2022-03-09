@@ -78,6 +78,7 @@ import org.openspcoop2.core.controllo_traffico.IdPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.UniqueIdentifierUtilities;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.id.IDConnettore;
+import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -5124,31 +5125,38 @@ public class ConfigurazionePdD  {
 	
 	
 	
-	public ForwardProxy getForwardProxyConfigFruizione(IDSoggetto dominio, IDServizio idServizio) throws DriverConfigurazioneException{
-		return getForwardProxyConfig(true, dominio, idServizio);
+	public ForwardProxy getForwardProxyConfigFruizione(IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
+		return getForwardProxyConfig(true, dominio, idServizio, policy);
 	}
-	public ForwardProxy getForwardProxyConfigErogazione(IDSoggetto dominio, IDServizio idServizio) throws DriverConfigurazioneException{
-		return getForwardProxyConfig(false, dominio, idServizio);
+	public ForwardProxy getForwardProxyConfigErogazione(IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
+		return getForwardProxyConfig(false, dominio, idServizio, policy);
 	}
 	
+	protected static String PREFIX_FORWARD_PROXY = "ForwardProxy_";
 	protected static String _toKey_ForwardProxyConfigPrefix(boolean fruizione) {
-		return "ForwardProxy_"+(fruizione?"Fruizione":"Erogazione");
+		return PREFIX_FORWARD_PROXY+(fruizione?"Fruizione":"Erogazione");
 	}
 	protected static String _toKey_ForwardProxyConfigSuffix(IDServizio idServizio) {
 		return idServizio.toString(false);
 	}
-	public static String _getKey_ForwardProxyConfig(boolean fruizione, IDSoggetto dominio, IDServizio idServizio){ 
+	protected static String _toKey_ForwardProxyConfigSuffix(IDGenericProperties policy) {
+		return "policy_"+policy.getTipologia()+"_"+policy.getNome();
+	}
+	public static String _getKey_ForwardProxyConfig(boolean fruizione, IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy){ 
 		String key = _toKey_ForwardProxyConfigPrefix(fruizione);
 		key = key +"_"+dominio.toString();
 		key = key +"_"+_toKey_ForwardProxyConfigSuffix(idServizio);
+		if(policy!=null) {
+			key = key +"_"+_toKey_ForwardProxyConfigSuffix(policy);
+		}
 		return key;
 	}
-	private ForwardProxy getForwardProxyConfig(boolean fruizione, IDSoggetto dominio, IDServizio idServizio) throws DriverConfigurazioneException{
+	private ForwardProxy getForwardProxyConfig(boolean fruizione, IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
 		
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = _getKey_ForwardProxyConfig(fruizione, dominio, idServizio);
+			key = _getKey_ForwardProxyConfig(fruizione, dominio, idServizio, policy);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -5163,9 +5171,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		ForwardProxy config = null;
 		if(this.cache!=null){
-			config = getForwardProxyConfigCache(key, fruizione, dominio, idServizio);
+			config = getForwardProxyConfigCache(key, fruizione, dominio, idServizio, policy);
 		}else{
-			config = getForwardProxyConfigEngine(fruizione, dominio, idServizio);
+			config = getForwardProxyConfigEngine(fruizione, dominio, idServizio, policy);
 		}
 
 		return config;
@@ -5173,7 +5181,7 @@ public class ConfigurazionePdD  {
 	} 
 	
 	private static org.openspcoop2.utils.Semaphore semaphore_getForwardProxyConfigCache = new org.openspcoop2.utils.Semaphore("ConfigurazionePdD_ForwardProxyConfig");
-	private ForwardProxy getForwardProxyConfigCache(String keyCache,boolean fruizione, IDSoggetto dominio, IDServizio idServizio) throws DriverConfigurazioneException{
+	private ForwardProxy getForwardProxyConfigCache(String keyCache,boolean fruizione, IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
 
 		semaphore_getForwardProxyConfigCache.acquireThrowRuntime("getForwardProxyConfigCache");
 		ForwardProxy obj = null;
@@ -5207,7 +5215,7 @@ public class ConfigurazionePdD  {
 
 			// Effettuo le query nella mia gerarchia di registri.
 			this.log.debug("oggetto con chiave ["+keyCache+"] (methodo:"+methodName+") ricerco nella configurazione...");
-			obj = getForwardProxyConfigEngine(fruizione, dominio, idServizio);
+			obj = getForwardProxyConfigEngine(fruizione, dominio, idServizio, policy);
 
 			// Aggiungo la risposta in cache (se esiste una cache)	
 			// Se ho una eccezione aggiungo in cache solo una not found
@@ -5237,10 +5245,10 @@ public class ConfigurazionePdD  {
 		return obj;
 	}
 	
-	private ForwardProxy getForwardProxyConfigEngine(boolean fruizione, IDSoggetto dominio, IDServizio idServizio) throws DriverConfigurazioneException{
+	private ForwardProxy getForwardProxyConfigEngine(boolean fruizione, IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
 		
 		try {
-			return ForwardProxy.getProxyConfigurazione(fruizione, dominio, idServizio);
+			return ForwardProxy.getProxyConfigurazione(fruizione, dominio, idServizio, policy);
 		}catch(Exception e){
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}

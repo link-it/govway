@@ -47,8 +47,11 @@ import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDGenericProperties;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
@@ -56,6 +59,8 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.utils.WWWAuthenticateErrorCode;
 import org.openspcoop2.message.utils.WWWAuthenticateGenerator;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -89,6 +94,7 @@ import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.security.keystore.JWKSetStore;
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
@@ -316,8 +322,11 @@ public class GestoreToken {
 			}
 			else if(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE.equals(idGP.getTipologia())) {
 				
-				String keyNegoziazione = buildCacheKeyNegoziazione(idGP.getNome(), RETRIEVE_FUNCTION);
-				removeObjectCache(keyNegoziazione);
+				String keyNegoziazionePD = buildCacheKeyNegoziazione(idGP.getNome(), RETRIEVE_FUNCTION, true);
+				removeObjectCache(keyNegoziazionePD);
+				
+				String keyNegoziazionePA = buildCacheKeyNegoziazione(idGP.getNome(), RETRIEVE_FUNCTION, false);
+				removeObjectCache(keyNegoziazionePA);
 				
 			}
 			else if(CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY.equals(idGP.getTipologia())) {
@@ -915,13 +924,15 @@ public class GestoreToken {
 	
 	public static EsitoGestioneToken introspectionToken(Logger log, AbstractDatiInvocazione datiInvocazione, 
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
-			String token, boolean portaDelegata) throws Exception {
+			String token, boolean portaDelegata,
+			IDSoggetto idDominio, IDServizio idServizio) throws Exception {
 		EsitoGestioneToken esitoGestioneToken = null;
 		
 		if(GestoreToken.cacheToken==null){
 			esitoGestioneToken = _introspectionToken(log, datiInvocazione, 
 					pddContext, protocolFactory,
-					token, portaDelegata);
+					token, portaDelegata,
+					idDominio, idServizio);
 		}
     	else{
     		String funzione = INTROSPECTION_FUNCTION;
@@ -969,7 +980,8 @@ public class GestoreToken {
 					GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
 					esitoGestioneToken = _introspectionToken(log, datiInvocazione, 
 							pddContext, protocolFactory,
-							token, portaDelegata);
+							token, portaDelegata,
+							idDominio, idServizio);
 						
 					// Aggiungo la risposta in cache (se esiste una cache)	
 					// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
@@ -1007,7 +1019,8 @@ public class GestoreToken {
 	
 	private static EsitoGestioneToken _introspectionToken(Logger log, AbstractDatiInvocazione datiInvocazione, 
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
-			String token, boolean portaDelegata) {
+			String token, boolean portaDelegata,
+			IDSoggetto idDominio, IDServizio idServizio) {
 		EsitoGestioneToken esitoGestioneToken = null;
 		if(portaDelegata) {
 			esitoGestioneToken = new EsitoGestioneTokenPortaDelegata();
@@ -1033,7 +1046,9 @@ public class GestoreToken {
 			byte[] risposta = null;
 			try {
 				httpResponse = http(log, policyGestioneToken, INTROSPECTION, token,
-						pddContext, protocolFactory);
+						pddContext, protocolFactory,
+						datiInvocazione.getState(), portaDelegata,
+						idDominio, idServizio);
 				risposta = httpResponse.getContent();
 				httpResponseCode = httpResponse.getResultHTTPOperation();
 			}catch(Exception e) {
@@ -1100,13 +1115,15 @@ public class GestoreToken {
 	
 	public static EsitoGestioneToken userInfoToken(Logger log, AbstractDatiInvocazione datiInvocazione, 
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
-			String token, boolean portaDelegata) throws Exception {
+			String token, boolean portaDelegata,
+			IDSoggetto idDominio, IDServizio idServizio) throws Exception {
 		EsitoGestioneToken esitoGestioneToken = null;
 		
 		if(GestoreToken.cacheToken==null){
 			esitoGestioneToken = _userInfoToken(log, datiInvocazione, 
 					pddContext, protocolFactory,
-					token, portaDelegata);
+					token, portaDelegata,
+					idDominio, idServizio);
 		}
     	else{
     		String funzione = USERINFO_FUNCTION;
@@ -1154,7 +1171,8 @@ public class GestoreToken {
 					GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
 					esitoGestioneToken = _userInfoToken(log, datiInvocazione, 
 							pddContext, protocolFactory,
-							token, portaDelegata);
+							token, portaDelegata,
+							idDominio, idServizio);
 						
 					// Aggiungo la risposta in cache (se esiste una cache)	
 					// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
@@ -1193,7 +1211,8 @@ public class GestoreToken {
 	
 	private static EsitoGestioneToken _userInfoToken(Logger log, AbstractDatiInvocazione datiInvocazione, 
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
-			String token, boolean portaDelegata) {
+			String token, boolean portaDelegata,
+			IDSoggetto idDominio, IDServizio idServizio) {
 		EsitoGestioneToken esitoGestioneToken = null;
 		if(portaDelegata) {
 			esitoGestioneToken = new EsitoGestioneTokenPortaDelegata();
@@ -1219,7 +1238,9 @@ public class GestoreToken {
 			byte[] risposta = null;
 			try {
 				httpResponse = http(log, policyGestioneToken, USER_INFO, token,
-						pddContext, protocolFactory);
+						pddContext, protocolFactory,
+						datiInvocazione.getState(), portaDelegata,
+						idDominio, idServizio);
 				risposta = httpResponse.getContent();
 				httpResponseCode = httpResponse.getResultHTTPOperation();
 			}catch(Exception e) {
@@ -2189,7 +2210,9 @@ public class GestoreToken {
 	private static final boolean INTROSPECTION = true;
 	private static final boolean USER_INFO = false;
 	private static HttpResponse http(Logger log, PolicyGestioneToken policyGestioneToken, boolean introspection, String token,
-			PdDContext pddContext, IProtocolFactory<?> protocolFactory) throws Exception {
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory, 
+			IState state, boolean delegata,
+			IDSoggetto idDominio, IDServizio idServizio) throws Exception {
 		
 		// *** Raccola Parametri ***
 		
@@ -2324,6 +2347,33 @@ public class GestoreToken {
 			connettoreMsg.setTipoConnettore(TipiConnettore.HTTP.getNome());
 			connettore = new ConnettoreHTTP();
 		}
+		
+		ForwardProxy forwardProxy = null;
+		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
+		if(configurazionePdDManager.isForwardProxyEnabled()) {
+			try {
+				IDGenericProperties policy = new IDGenericProperties();
+				policy.setTipologia(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION);
+				policy.setNome(policyGestioneToken.getName());
+				if(delegata) {
+					forwardProxy = configurazionePdDManager.getForwardProxyConfigFruizione(idDominio, idServizio, policy);
+				}
+				else {
+					forwardProxy = configurazionePdDManager.getForwardProxyConfigErogazione(idDominio, idServizio, policy);
+				}
+			}catch(Exception e) {
+				throw new Exception("Configurazione errata per la funzionalità govway-proxy; "+e.getMessage(),e);
+			}
+		}
+		if(forwardProxy!=null && forwardProxy.isEnabled() && forwardProxy.getConfigToken()!=null) {
+			if(introspection && forwardProxy.getConfigToken().isTokenIntrospectionEnabled()) {
+				connettoreMsg.setForwardProxy(forwardProxy);
+			}
+			else if(!introspection && forwardProxy.getConfigToken().isTokenUserInfoEnabled()) {
+				connettoreMsg.setForwardProxy(forwardProxy);
+			}
+		}
+		
 		connettore.setForceDisable_rest_proxyPassReverse(true);
 		connettore.init(pddContext, protocolFactory);
 		connettore.setRegisterSendIntoContext(false);
@@ -2491,10 +2541,35 @@ public class GestoreToken {
 		EsitoNegoziazioneToken esitoNegoziazioneToken = null;
 		boolean riavviaNegoziazione = false;
 		
+		IState state = null;
+		boolean delegata = TipoPdD.DELEGATA.equals(tipoPdD);
+		IDSoggetto idDominio = null;
+		IDServizio idServizio = null;
+		if(busta!=null) {
+			if(delegata) {
+				if(busta.getTipoMittente()!=null && busta.getMittente()!=null) {
+					idDominio = new IDSoggetto(busta.getTipoMittente(), busta.getMittente());
+				}
+			}
+			else {
+				if(busta.getTipoDestinatario()!=null && busta.getDestinatario()!=null) {
+					idDominio = new IDSoggetto(busta.getTipoDestinatario(), busta.getDestinatario());
+				}
+			}
+			if(busta.getTipoDestinatario()!=null && busta.getDestinatario()!=null && 
+					busta.getTipoServizio()!=null && busta.getServizio()!=null && busta.getVersioneServizio()!=null) {
+				idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(busta.getTipoServizio(), busta.getServizio(), 
+						busta.getTipoDestinatario(), busta.getDestinatario(), 
+						busta.getVersioneServizio());	
+			}
+		}
+		
 		if(GestoreToken.cacheToken==null){
 			esitoNegoziazioneToken = _endpointToken(debug, log, policyNegoziazioneToken, 
 					busta, requestInfo, tipoPdD,
-					pddContext, protocolFactory);
+					pddContext, protocolFactory,
+					state, delegata,
+					idDominio, idServizio);
 			
 			if(esitoNegoziazioneToken!=null && esitoNegoziazioneToken.isValido()) {
 				// ricontrollo tutte le date (l'ho appena preso, dovrebbero essere buone) 
@@ -2505,7 +2580,7 @@ public class GestoreToken {
 		}
     	else{
     		String funzione = RETRIEVE_FUNCTION;
-    		String keyCache = buildCacheKeyNegoziazione(policyNegoziazioneToken.getName(), funzione);
+    		String keyCache = buildCacheKeyNegoziazione(policyNegoziazioneToken.getName(), funzione, delegata);
 
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
     		
@@ -2549,7 +2624,9 @@ public class GestoreToken {
 					GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
 					esitoNegoziazioneToken = _endpointToken(debug, log, policyNegoziazioneToken, 
 							busta, requestInfo, tipoPdD,
-							pddContext, protocolFactory);
+							pddContext, protocolFactory,
+							state, delegata,
+							idDominio, idServizio);
 						
 					// Aggiungo la risposta in cache (se esiste una cache)	
 					// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
@@ -2610,7 +2687,9 @@ public class GestoreToken {
 	
 	private static EsitoNegoziazioneToken _endpointToken(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken,
 			Busta busta, RequestInfo requestInfo, TipoPdD tipoPdD,
-			PdDContext pddContext, IProtocolFactory<?> protocolFactory) {
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
+			IState state, boolean delegata,
+			IDSoggetto idDominio, IDServizio idServizio) {
 		EsitoNegoziazioneToken esitoNegoziazioneToken = new EsitoNegoziazioneToken();
 		
 		esitoNegoziazioneToken.setTokenInternalError();
@@ -2628,7 +2707,9 @@ public class GestoreToken {
 			try {
 				httpResponse = http(debug, log, policyNegoziazioneToken,
 						busta, requestInfo, tipoPdD,
-						pddContext, protocolFactory);
+						pddContext, protocolFactory,
+						state, delegata,
+						idDominio, idServizio);
 				risposta = httpResponse.getContent();
 				httpResponseCode = httpResponse.getResultHTTPOperation();
 			}catch(Exception e) {
@@ -2683,13 +2764,24 @@ public class GestoreToken {
 	
 	// ********* [NEGOZIAZIONE-TOKEN]  UTILITIES INTERNE ****************** */
 	
-	private static String buildCacheKeyNegoziazione(String nomePolicy, String funzione) {
-    	StringBuilder bf = new StringBuilder(funzione);
+	private static String buildPrefixCacheKeyNegoziazione(String policy, String funzione) {
+		StringBuilder bf = new StringBuilder(funzione);
     	bf.append("_");
-    	bf.append(nomePolicy);
+    	bf.append(policy);
+    	bf.append("_");
     	return bf.toString();
-    }
-	
+	}
+	private static String buildCacheKeyNegoziazione(String policy, String funzione, boolean portaDelegata) {
+    	StringBuilder bf = new StringBuilder();
+    	bf.append(buildPrefixCacheKeyNegoziazione(policy, funzione));
+    	if(portaDelegata){ // serve per non aver classcast exception nei risultati
+    		bf.append("PD");
+    	}
+    	else {
+    		bf.append("PA");
+    	}
+    	return bf.toString();
+    }	
 	private static void _validazioneInformazioniNegoziazioneToken(EsitoNegoziazioneToken esitoNegoziazioneToken, PolicyNegoziazioneToken policyNegoziazioneToken, boolean saveErrorInCache) throws Exception {
 		
 		Date now = DateManager.getDate();
@@ -2762,7 +2854,9 @@ public class GestoreToken {
 	
 	public static HttpResponse http(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken,
 			Busta busta, RequestInfo requestInfo, TipoPdD tipoPdD,
-			PdDContext pddContext, IProtocolFactory<?> protocolFactory) throws Exception {
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
+			IState state, boolean delegata,
+			IDSoggetto idDominio, IDServizio idServizio) throws Exception {
 		
 		Map<String, Object> dynamicMap = buildDynamicNegoziazioneTokenMap(busta, requestInfo, pddContext, log, policyNegoziazioneToken.getName());
 		
@@ -2824,6 +2918,28 @@ public class GestoreToken {
 			connettoreMsg.setTipoConnettore(TipiConnettore.HTTP.getNome());
 			connettore = new ConnettoreHTTP();
 		}
+		
+		ForwardProxy forwardProxy = null;
+		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
+		if(configurazionePdDManager.isForwardProxyEnabled()) {
+			try {
+				IDGenericProperties policy = new IDGenericProperties();
+				policy.setTipologia(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE);
+				policy.setNome(policyNegoziazioneToken.getName());
+				if(delegata) {
+					forwardProxy = configurazionePdDManager.getForwardProxyConfigFruizione(idDominio, idServizio, policy);
+				}
+				else {
+					forwardProxy = configurazionePdDManager.getForwardProxyConfigErogazione(idDominio, idServizio, policy);
+				}
+			}catch(Exception e) {
+				throw new Exception("Configurazione errata per la funzionalità govway-proxy; "+e.getMessage(),e);
+			}
+		}
+		if(forwardProxy!=null && forwardProxy.isEnabled() && forwardProxy.getConfigToken()!=null && forwardProxy.getConfigToken().isTokenRetrieveEnabled()) {
+			connettoreMsg.setForwardProxy(forwardProxy);
+		}
+		
 		connettore.setForceDisable_rest_proxyPassReverse(true);
 		connettore.init(pddContext, protocolFactory);
 		connettore.setRegisterSendIntoContext(false);
@@ -3264,7 +3380,8 @@ public class GestoreToken {
 	
 	public static EsitoRecuperoAttributi readAttributes(Logger log, org.openspcoop2.pdd.core.token.attribute_authority.AbstractDatiInvocazione datiInvocazione,
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
-			boolean portaDelegata) throws Exception {
+			boolean portaDelegata,
+			IDSoggetto idDominio, IDServizio idServizio) throws Exception {
 		EsitoRecuperoAttributi esitoRecuperoAttributi = null;
 		boolean riavviaNegoziazione = false;
 			
@@ -3284,7 +3401,9 @@ public class GestoreToken {
 			esitoRecuperoAttributi = _readAttributes(log, policyAttributeAuthority, 
 					pddContext, protocolFactory,
 					dynamicMap,
-					request, portaDelegata);
+					request, portaDelegata,
+					datiInvocazione.getState(),
+					idDominio, idServizio);
 			
 			if(esitoRecuperoAttributi!=null && esitoRecuperoAttributi.isValido()) {
 				// ricontrollo tutte le date (l'ho appena preso, dovrebbero essere buone) 
@@ -3303,7 +3422,7 @@ public class GestoreToken {
     		
     		boolean addIdAndDate = true;
     		String requestKeyCache = buildDynamicAARequest(message, busta, requestInfo, pddContext, log, policyAttributeAuthority, dynamicMap, !addIdAndDate);
-    		String keyCache = buildCacheKeyRecuperoAttributi(policyAttributeAuthority.getName(), funzione, requestKeyCache);
+    		String keyCache = buildCacheKeyRecuperoAttributi(policyAttributeAuthority.getName(), funzione, portaDelegata, requestKeyCache);
 
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
     		
@@ -3357,7 +3476,9 @@ public class GestoreToken {
 					esitoRecuperoAttributi = _readAttributes(log, policyAttributeAuthority, 
 							pddContext, protocolFactory,
 							dynamicMap,
-							request, portaDelegata);
+							request, portaDelegata,
+							datiInvocazione.getState(),
+							idDominio, idServizio);
 						
 					// Aggiungo la risposta in cache (se esiste una cache)	
 					// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
@@ -3413,7 +3534,8 @@ public class GestoreToken {
     	}
 		
 		if(riavviaNegoziazione) {
-			return readAttributes(log, datiInvocazione, pddContext, protocolFactory, portaDelegata);
+			return readAttributes(log, datiInvocazione, pddContext, protocolFactory, portaDelegata,
+					idDominio, idServizio);
 		}
 		return esitoRecuperoAttributi;
 	}
@@ -3421,7 +3543,9 @@ public class GestoreToken {
 	private static EsitoRecuperoAttributi _readAttributes(Logger log, PolicyAttributeAuthority policyAttributeAuthority,
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
 			Map<String, Object> dynamicMap,
-			String request, boolean portaDelegata) {
+			String request, boolean portaDelegata,
+			IState state,
+			IDSoggetto idDominio, IDServizio idServizio) {
 		EsitoRecuperoAttributi esitoRecuperoAttributi = null;
 		if(portaDelegata) {
 			esitoRecuperoAttributi = new EsitoRecuperoAttributiPortaDelegata();
@@ -3446,7 +3570,9 @@ public class GestoreToken {
 				httpResponse = http(log, policyAttributeAuthority,
 						pddContext, protocolFactory,
 						dynamicMap,
-						request);
+						request,
+						state, portaDelegata,
+						idDominio, idServizio);
 				risposta = httpResponse.getContent();
 				httpResponseCode = httpResponse.getResultHTTPOperation();
 			}catch(Exception e) {
@@ -3559,13 +3685,21 @@ public class GestoreToken {
     	bf.append("_");
     	return bf.toString();
 	}
-	private static String buildCacheKeyRecuperoAttributi(String nomePolicy, String funzione,
+	private static String buildCacheKeyRecuperoAttributi(String nomePolicy, String funzione, boolean portaDelegata,
 			String request) {
     	StringBuilder bf = new StringBuilder();
     	bf.append(buildCacheKeyRecuperoAttributiPrefix(nomePolicy, funzione));
+    	if(portaDelegata){ // serve per non aver classcast exception nei risultati
+    		bf.append("PD");
+    	}
+    	else {
+    		bf.append("PA");
+    	}
+    	bf.append("_");
     	bf.append(Base64Utilities.encodeAsString(request.getBytes())); // codifico in base64 la richiesta
     	return bf.toString();
     }
+	
 	
 	private static Map<String, Object> buildDynamicAAMap(OpenSPCoop2Message message, Busta busta, 
 			RequestInfo requestInfo, PdDContext pddContext, Logger log,
@@ -3922,7 +4056,9 @@ public class GestoreToken {
 	public static HttpResponse http(Logger log, PolicyAttributeAuthority policyAttributeAuthority,
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
 			Map<String, Object> dynamicMap,
-			String request) throws Exception {
+			String request,
+			IState state, boolean delegata,
+			IDSoggetto idDominio, IDServizio idServizio) throws Exception {
 		
 		// *** Raccola Parametri ***
 		
@@ -3982,6 +4118,28 @@ public class GestoreToken {
 			connettoreMsg.setTipoConnettore(TipiConnettore.HTTP.getNome());
 			connettore = new ConnettoreHTTP();
 		}
+		
+		ForwardProxy forwardProxy = null;
+		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
+		if(configurazionePdDManager.isForwardProxyEnabled()) {
+			try {
+				IDGenericProperties policy = new IDGenericProperties();
+				policy.setTipologia(CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY);
+				policy.setNome(policyAttributeAuthority.getName());
+				if(delegata) {
+					forwardProxy = configurazionePdDManager.getForwardProxyConfigFruizione(idDominio, idServizio, policy);
+				}
+				else {
+					forwardProxy = configurazionePdDManager.getForwardProxyConfigErogazione(idDominio, idServizio, policy);
+				}
+			}catch(Exception e) {
+				throw new Exception("Configurazione errata per la funzionalità govway-proxy; "+e.getMessage(),e);
+			}
+		}
+		if(forwardProxy!=null && forwardProxy.isEnabled() && forwardProxy.getConfigToken()!=null && forwardProxy.getConfigToken().isAttributeAuthorityEnabled()) {
+			connettoreMsg.setForwardProxy(forwardProxy);
+		}
+		
 		connettore.setForceDisable_rest_proxyPassReverse(true);
 		connettore.init(pddContext, protocolFactory);
 		connettore.setRegisterSendIntoContext(false);

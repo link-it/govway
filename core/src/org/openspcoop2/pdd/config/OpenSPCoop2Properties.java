@@ -1868,6 +1868,7 @@ public class OpenSPCoop2Properties {
 			// Forward Proxy
 			this.isForwardProxyEnable();
 			this.getForwardProxyConfigurazioneDefault();
+			this.getForwardProxyConfigurazioneTokenDefault();
 			
 			// Trasporto REST / SOAP
 			
@@ -20146,6 +20147,106 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isForwardProxyQueryParameterBase64;
 	}
 	
+	private static Boolean isForwardProxyTokenIntrospectionEnabled = null;
+	private boolean isForwardProxyTokenIntrospectionEnabled(){
+
+		String pName = "org.openspcoop2.pdd.connettori.govwayProxy.tokenIntrospection.enable";
+		if(OpenSPCoop2Properties.isForwardProxyTokenIntrospectionEnabled==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isForwardProxyTokenIntrospectionEnabled = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+ForwardProxy.DEFAULT_GOVWAY_PROXY_TOKEN_INTROSPECTION);
+					OpenSPCoop2Properties.isForwardProxyTokenIntrospectionEnabled = ForwardProxy.DEFAULT_GOVWAY_PROXY_TOKEN_INTROSPECTION;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+ForwardProxy.DEFAULT_GOVWAY_PROXY_TOKEN_INTROSPECTION+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isForwardProxyTokenIntrospectionEnabled = ForwardProxy.DEFAULT_GOVWAY_PROXY_TOKEN_INTROSPECTION;
+			}
+		}
+
+		return OpenSPCoop2Properties.isForwardProxyTokenIntrospectionEnabled;
+	}
+	
+	private static Boolean isForwardProxyTokenUserInfoEnabled = null;
+	private boolean isForwardProxyTokenUserInfoEnabled(){
+
+		String pName = "org.openspcoop2.pdd.connettori.govwayProxy.tokenUserInfo.enable";
+		if(OpenSPCoop2Properties.isForwardProxyTokenUserInfoEnabled==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isForwardProxyTokenUserInfoEnabled = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+ForwardProxy.DEFAULT_GOVWAY_PROXY_TOKEN_USERINFO);
+					OpenSPCoop2Properties.isForwardProxyTokenUserInfoEnabled = ForwardProxy.DEFAULT_GOVWAY_PROXY_TOKEN_USERINFO;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+ForwardProxy.DEFAULT_GOVWAY_PROXY_TOKEN_USERINFO+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isForwardProxyTokenUserInfoEnabled = ForwardProxy.DEFAULT_GOVWAY_PROXY_TOKEN_USERINFO;
+			}
+		}
+
+		return OpenSPCoop2Properties.isForwardProxyTokenUserInfoEnabled;
+	}
+	
+	private static Boolean isForwardProxyTokenRetrieveEnabled = null;
+	private boolean isForwardProxyTokenRetrieveEnabled(){
+
+		String pName = "org.openspcoop2.pdd.connettori.govwayProxy.tokenRetrieve.enable";
+		if(OpenSPCoop2Properties.isForwardProxyTokenRetrieveEnabled==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isForwardProxyTokenRetrieveEnabled = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+ForwardProxy.DEFAULT_GOVWAY_PROXY_TOKEN_RETRIEVE);
+					OpenSPCoop2Properties.isForwardProxyTokenRetrieveEnabled = ForwardProxy.DEFAULT_GOVWAY_PROXY_TOKEN_RETRIEVE;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+ForwardProxy.DEFAULT_GOVWAY_PROXY_TOKEN_RETRIEVE+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isForwardProxyTokenRetrieveEnabled = ForwardProxy.DEFAULT_GOVWAY_PROXY_TOKEN_RETRIEVE;
+			}
+		}
+
+		return OpenSPCoop2Properties.isForwardProxyTokenRetrieveEnabled;
+	}
+	
+	private static Boolean isForwardProxyAttributeAuthorityEnabled = null;
+	private boolean isForwardProxyAttributeAuthorityEnabled(){
+
+		String pName = "org.openspcoop2.pdd.connettori.govwayProxy.attributeAuthority.enable";
+		if(OpenSPCoop2Properties.isForwardProxyAttributeAuthorityEnabled==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isForwardProxyAttributeAuthorityEnabled = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+ForwardProxy.DEFAULT_GOVWAY_PROXY_ATTRIBUTE_AUTHORITY);
+					OpenSPCoop2Properties.isForwardProxyAttributeAuthorityEnabled = ForwardProxy.DEFAULT_GOVWAY_PROXY_ATTRIBUTE_AUTHORITY;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+ForwardProxy.DEFAULT_GOVWAY_PROXY_ATTRIBUTE_AUTHORITY+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isForwardProxyAttributeAuthorityEnabled = ForwardProxy.DEFAULT_GOVWAY_PROXY_ATTRIBUTE_AUTHORITY;
+			}
+		}
+
+		return OpenSPCoop2Properties.isForwardProxyAttributeAuthorityEnabled;
+	}
+	
 	public ForwardProxyConfigurazione getForwardProxyConfigurazioneDefault() {
 		ForwardProxyConfigurazione config = new ForwardProxyConfigurazione();
 		if(this.isForwardProxyHeaderEnable()) {
@@ -20156,6 +20257,15 @@ public class OpenSPCoop2Properties {
 			config.setQuery(this.getForwardProxyQueryParameterName());
 			config.setQueryBase64(this.isForwardProxyQueryParameterBase64());
 		}
+		return config;
+	}
+	
+	public ForwardProxyConfigurazioneToken getForwardProxyConfigurazioneTokenDefault() {
+		ForwardProxyConfigurazioneToken config = new ForwardProxyConfigurazioneToken();
+		config.setTokenIntrospectionEnabled(this.isForwardProxyTokenIntrospectionEnabled());
+		config.setTokenUserInfoEnabled(this.isForwardProxyTokenUserInfoEnabled());
+		config.setTokenRetrieveEnabled(this.isForwardProxyTokenRetrieveEnabled());
+		config.setAttributeAuthorityEnabled(this.isForwardProxyAttributeAuthorityEnabled());
 		return config;
 	}
 

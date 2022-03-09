@@ -1,3 +1,8 @@
+2022-03-09  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	La funzionalità di proxy applicativo è adesso attivabile anche nelle comunicazioni verso gli authorization server indicati nelle token policy di negoziazione e validazione e nelle attribute authorities.
+
 2022-03-07  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

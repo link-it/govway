@@ -1226,7 +1226,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		ForwardProxy forwardProxy = null;
 		if(configurazionePdDManager.isForwardProxyEnabled()) {
 			try {
-				forwardProxy = configurazionePdDManager.getForwardProxyConfigErogazione(identitaPdD, idServizio);
+				forwardProxy = configurazionePdDManager.getForwardProxyConfigErogazione(identitaPdD, idServizio, null);
 			}catch(Exception e) {
 				msgDiag.logErroreGenerico(e, "Configurazione ForwardProxy (sa:"+servizioApplicativo+")");
 				ejbUtils.rollbackMessage("Configurazione del connettore errata per la funzionalità govway-proxy; sa ["+servizioApplicativo+"]",servizioApplicativo, esito);

@@ -137,7 +137,7 @@ import org.openspcoop2.pdd.core.token.PolicyGestioneToken;
 import org.openspcoop2.pdd.core.token.attribute_authority.EsitoRecuperoAttributi;
 import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.core.token.attribute_authority.PolicyAttributeAuthority;
-import org.openspcoop2.pdd.core.token.attribute_authority.pd.GestioneAttributeAuthority;
+import org.openspcoop2.pdd.core.token.attribute_authority.pa.GestioneAttributeAuthority;
 import org.openspcoop2.pdd.core.token.pa.EsitoGestioneTokenPortaApplicativa;
 import org.openspcoop2.pdd.core.token.pa.EsitoPresenzaTokenPortaApplicativa;
 import org.openspcoop2.pdd.core.token.pa.GestioneToken;

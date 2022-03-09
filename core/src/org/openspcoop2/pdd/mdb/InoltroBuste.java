@@ -875,7 +875,7 @@ public class InoltroBuste extends GenericLib{
 		ForwardProxy forwardProxy = null;
 		if(functionAsRouter==false && configurazionePdDManager.isForwardProxyEnabled()) {
 			try {
-				forwardProxy = configurazionePdDManager.getForwardProxyConfigFruizione(identitaPdD, idServizio);
+				forwardProxy = configurazionePdDManager.getForwardProxyConfigFruizione(identitaPdD, idServizio, null);
 			}catch(Exception e) {
 				msgDiag.logErroreGenerico(e, "Configurazione del connettore errata per la funzionalità govway-proxy"); 
 				openspcoopstate.releaseResource();

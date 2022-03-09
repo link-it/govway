@@ -962,6 +962,26 @@ public class ConfigurazionePdDReader {
 			String keyGPTipologia = ConfigurazionePdD._getKey_getGenericProperties(idGP.getTipologia());
 			ConfigurazionePdDReader.removeObjectCache(keyGPTipologia);
 			
+			String prefixForwardProxy = ConfigurazionePdD.PREFIX_FORWARD_PROXY;
+			String forwardProxyGP = ConfigurazionePdD._toKey_ForwardProxyConfigSuffix(idGP);
+			
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = ConfigurazionePdDReader.keysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				for (String key : keys) {
+					if(key!=null) {
+						if(forwardProxyGP!=null && key.startsWith(prefixForwardProxy)&& key.contains(forwardProxyGP)) {
+							keyForClean.add(key);
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+			
 		}
 	}
 	
@@ -7867,11 +7887,11 @@ public class ConfigurazionePdDReader {
 	public boolean isForwardProxyEnabled() {
 		return this.configurazionePdD.isForwardProxyEnabled();
 	}
-	public ForwardProxy getForwardProxyConfigFruizione(IDSoggetto dominio, IDServizio idServizio) throws DriverConfigurazioneException{
-		return this.configurazionePdD.getForwardProxyConfigFruizione(dominio, idServizio);
+	public ForwardProxy getForwardProxyConfigFruizione(IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
+		return this.configurazionePdD.getForwardProxyConfigFruizione(dominio, idServizio, policy);
 	}
-	public ForwardProxy getForwardProxyConfigErogazione(IDSoggetto dominio, IDServizio idServizio ) throws DriverConfigurazioneException{
-		return this.configurazionePdD.getForwardProxyConfigErogazione(dominio, idServizio);
+	public ForwardProxy getForwardProxyConfigErogazione(IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy ) throws DriverConfigurazioneException{
+		return this.configurazionePdD.getForwardProxyConfigErogazione(dominio, idServizio, policy);
 	}
 	
 	

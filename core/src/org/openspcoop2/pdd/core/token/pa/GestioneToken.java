@@ -22,6 +22,10 @@
 
 package org.openspcoop2.pdd.core.token.pa;
 
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.token.AbstractDatiInvocazione;
 import org.openspcoop2.pdd.core.token.EsitoGestioneToken;
@@ -71,7 +75,7 @@ public class GestioneToken {
     	
     }
     
-    public EsitoGestioneTokenPortaApplicativa validazioneJWTToken(AbstractDatiInvocazione datiInvocazione, String token) throws TokenException {   	
+    public EsitoGestioneTokenPortaApplicativa validazioneJWTToken(DatiInvocazionePortaApplicativa datiInvocazione, String token) throws TokenException {   	
     	try {
     	
     		EsitoGestioneTokenPortaApplicativa esito = (EsitoGestioneTokenPortaApplicativa) GestoreToken.validazioneJWTToken(this.log, datiInvocazione, 
@@ -94,12 +98,13 @@ public class GestioneToken {
     	} 	
     }
     
-    public EsitoGestioneTokenPortaApplicativa introspectionToken(AbstractDatiInvocazione datiInvocazione, String token) throws TokenException {
+    public EsitoGestioneTokenPortaApplicativa introspectionToken(DatiInvocazionePortaApplicativa datiInvocazione, String token) throws TokenException {
     	try {
         	
     		EsitoGestioneTokenPortaApplicativa esito = (EsitoGestioneTokenPortaApplicativa) GestoreToken.introspectionToken(this.log, datiInvocazione, 
     				this.pddContext, this.protocolFactory,
-    				token, GestoreToken.PORTA_APPLICATIVA);
+    				token, GestoreToken.PORTA_APPLICATIVA,
+    				getDominio(datiInvocazione), getServizio(datiInvocazione));
     		
         	if(esito.getEccezioneProcessamento()!=null) {
         		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
@@ -117,12 +122,13 @@ public class GestioneToken {
     	}
 	}
 	
-	public EsitoGestioneTokenPortaApplicativa userInfoToken(AbstractDatiInvocazione datiInvocazione, String token) throws TokenException {
+	public EsitoGestioneTokenPortaApplicativa userInfoToken(DatiInvocazionePortaApplicativa datiInvocazione, String token) throws TokenException {
 		try {
         	
     		EsitoGestioneTokenPortaApplicativa esito = (EsitoGestioneTokenPortaApplicativa) GestoreToken.userInfoToken(this.log, datiInvocazione, 
     				this.pddContext, this.protocolFactory,
-    				token, GestoreToken.PORTA_APPLICATIVA);
+    				token, GestoreToken.PORTA_APPLICATIVA,
+    				getDominio(datiInvocazione), getServizio(datiInvocazione));
     		
         	if(esito.getEccezioneProcessamento()!=null) {
         		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
@@ -154,6 +160,31 @@ public class GestioneToken {
     	}catch(Exception e) {
     		throw new TokenException(e.getMessage(),e); // errore di processamento
     	}
+	}
+	
+	private IDSoggetto getDominio(DatiInvocazionePortaApplicativa datiInvocazione) {
+		IDSoggetto soggetto = null;
+		if(datiInvocazione.getPa()!=null) {
+			soggetto = new IDSoggetto(datiInvocazione.getPa().getTipoSoggettoProprietario(), datiInvocazione.getPa().getNomeSoggettoProprietario());
+		}
+		else if(datiInvocazione.getPd()!=null) {
+			soggetto = new IDSoggetto(datiInvocazione.getPd().getTipoSoggettoProprietario(), datiInvocazione.getPd().getNomeSoggettoProprietario());
+		}
+		return soggetto;
+	}
+	private IDServizio getServizio(DatiInvocazionePortaApplicativa datiInvocazione) throws DriverRegistroServiziException {
+		IDServizio servizio = null;
+		if(datiInvocazione.getPa()!=null) {
+			servizio = IDServizioFactory.getInstance().getIDServizioFromValues(datiInvocazione.getPa().getServizio().getTipo(), datiInvocazione.getPa().getServizio().getNome(), 
+					datiInvocazione.getPa().getTipoSoggettoProprietario(), datiInvocazione.getPa().getNomeSoggettoProprietario(), 
+					datiInvocazione.getPa().getServizio().getVersione());
+		}
+		else if(datiInvocazione.getPd()!=null) {
+			servizio = IDServizioFactory.getInstance().getIDServizioFromValues(datiInvocazione.getPd().getServizio().getTipo(), datiInvocazione.getPd().getServizio().getNome(), 
+					datiInvocazione.getPd().getSoggettoErogatore().getTipo(), datiInvocazione.getPd().getSoggettoErogatore().getNome(), 
+					datiInvocazione.getPd().getServizio().getVersione());
+		}
+		return servizio;
 	}
 }
 
