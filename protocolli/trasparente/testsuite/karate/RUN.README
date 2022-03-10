@@ -124,31 +124,70 @@
 
 - Impostare in <console_local.properties>:
 	# Indicazione se nella Consegna Condizionale è possibile associare lo stesso filtro a differenti connettori (per test)
-	connettoriMultipli.consegnaCondizionale.stessoFiltro=true
+        connettoriMultipli.consegnaCondizionale.stessoFiltro=true
    In modo che la console consenta di assegnare più volte lo stesso filtro a connettori diversi in una consegna condizionale e rilevare l'errore a runtime durante una richiesta.
 
 - Impostare in govway_local.properties la seguente proprietà per poter effettuare il test sul claim iat
 	
 	org.openspcoop2.pdd.gestioneToken.iat=120
 
+- Impostare in govway_local.properties se seguenti proprietà richieste da vari test (tra cui i connettori asincroni)
+
+	# Identificativo univoco della macchina, indicare IDGW come identificativo:
+	org.openspcoop2.pdd.cluster_id=IDGW
+
+	# Abilitazione metodi jmx
+        org.openspcoop2.pdd.check.readJMXResources.enabled=true
+        org.openspcoop2.pdd.check.readJMXResources.username=admin
+        org.openspcoop2.pdd.check.readJMXResources.password=admin
+
+- Impostare in govway_local.properties le seguenti proprietà richieste dai test sui connettori asincroni
+
+	# opzione valida solamente per tipologia 'soap', consente il passaggio di statusCode diversi da 202 e 200
+	org.openspcoop2.pdd.connettori.inoltroBuste.returnCode.2xx.acceptOnly_202_200=false
+	org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.returnCode.2xx.acceptOnly_202_200=false
+
+	# prefigge l'id messaggio con la data
+	org.openspcoop2.pdd.integrationManager.idWithDate=true
+
+	# ogni quanti secondi verifica se ci sono NUOVI messaggi da consegnare più vecchi di X secondi (proprietà successiva)
+	org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.nextMessages.intervalloControllo=5
+	# età minima, in secondi, in cui vengono considerati i nuovi messaggi
+	org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.nextMessages.scheduleNewMessageAfter=6
+	# ogni quanti secondi verifica se ci sono messaggi precedentemente falliti in consegna
+	org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.nextMessages.consegnaFallita.intervalloControllo=2
+	# i secondi minimi in cui riconsegnare un messaggio fallito
+	org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.consegnaFallita.intervalloMinimoRiconsegna=2
+	org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.debug=true
+
 - Per modificare i tempi e il numero di operazioni effettuate per i connettori multipli agire sul <testsuite.properties>:
-	+ connettori.load_balancer.numero_richieste_random=500
-	 Per far si che venga generata una distribuzione casuale accettabile dei connettori scelti dalle politiche casuali
 
-	+ connettori.load_balancer.sessione_sticky.max_age=4
-	Numero di secondi per cui un id sessione viene legato ad uno specifico connettore nella sessione sticky
-	
-	+ connettori.load_balancer.health_check.intervallo_esclusione=4
-	Numero di secondi per cui un connettore viene escluso dal pool dal momento in cui genera un errore di connessione
+	Le opzioni seguenti consentono di tonificare i test sul load balancer:
 
-	+connettori.load_balancer.least_connections.durata_bloccante_lunga=4000
-	Millisecondi necessari a tenere bloccato un connettore dall'inizio alla fine dei test di least_connections
+	# Quanti millisecondi tenere bloccato un connettore durante i test di least_connections
+	connettori.load_balancer.least_connections.durata_bloccante=1000
+	# Millisecondi necessari a tenere bloccato un connettore dall'inizio alla fine dei test di least_connections
+	connettori.load_balancer.least_connections.durata_bloccante_lunga=4000
+	# Attesa tra una richiesta e l'altra per attendere che venga contata e presa in carico dalla strategia least_connections
+	connettori.load_balancer.least_connections.delay_richieste_background=300
+	# Numero di richieste da eseguire nei test che verificano le strategie random
+	# Per far si che venga generata una distribuzione casuale accettabile dei connettori scelti dalle politiche casuali
+	connettori.load_balancer.numero_richieste_random=500
+	# Numero di secondi per cui un id sessione viene legato ad uno specifico connettore nella sessione sticky
+	connettori.load_balancer.sessione_sticky.max_age=4
+	# Numero di secondi per cui un connettore viene escluso dal pool dal momento in cui genera un errore di connessione
+	connettori.load_balancer.health_check.intervallo_esclusione=4
 
-	+ connettori.load_balancer.least_connections.durata_bloccante=1000
-	 Quanti millisecondi tenere bloccato un connettore durante i test di least_connections
+	Le opzioni seguenti consentono di tonificare i test sulle consegne asincrone:
 
-	+ connettori.load_balancer.least_connections.delay_richieste_background=300
-	Attesa tra una richiesta e l'altra per attendere che venga contata e presa in carico dalla strategia least_connections
+	NOTA: per quanto concerne i 4 parametri seguenti devono corrispondere ai valori omonimi indicati in org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.* nel file govway_local.properties
+	connettori.consegna_multipla.next_messages.intervallo_controllo=5
+	connettori.consegna_multipla.next_messages.schedule_new_after=6
+	connettori.consegna_multipla.next_messages.consegna_fallita.intervallo_controllo=2
+	connettori.consegna_multipla.next_messages.consegna_fallita.intervallo_minimo_riconsegna=2
+
+- Creare la cartella /tmp/govway-testsuite dove l'application server deve avere i permessi di scrittura
+
 
 Per eseguire i test:
 	ant run_test
@@ -262,6 +301,12 @@ Di seguito vengono descritti i test del package 'connettori':
 
 - 'load_balancer', verifica la funzionalità dei connettori multipli con tipo 'Load Balancer'
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.load_balancer
+
+- 'consegna_multipla', verifica la funzionalità dei connettori multipli con tipo 'Consegna Multipla'
+   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.consegna_multipla
+
+- 'consegna_con_notifiche', verifica la funzionalità dei connettori multipli con tipo 'Consegna con Notifiche'
+   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.consegna_con_notifiche
 
 Di seguito vengono descritti i test del package 'token':
 

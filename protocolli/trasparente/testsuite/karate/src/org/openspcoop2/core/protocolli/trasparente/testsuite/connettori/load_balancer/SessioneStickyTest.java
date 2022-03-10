@@ -76,7 +76,7 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  *  Query Template: ${query:govway-testsuite-id_sessione_request}
  *	Query Velocity Template: 
 				#if($query.containsKey("govway-testsuite-id_sessione_request"))
-				$query["govway-testsuite-id_connettore_request"]
+				$query["govway-testsuite-id_sessione_request"]
 				#end
  *	Query UrlInvocazione: .+govway-testsuite-id_sessione_request=([^&]*).*
  *	Query contenuto: $.id_sessione_request

@@ -38,6 +38,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.DbUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -79,6 +80,7 @@ public class Common {
 	
 	public static final String HEADER_ID_CONDIZIONE = ID_CONNETTORE_REPLY_PREFIX+"Connettore";
 
+	public static final String HEADER_ID_TRANSAZIONE = "GovWay-Transaction-ID";
 
 	public static final int durataBloccante = Integer
 			.valueOf(System.getProperty("connettori.load_balancer.least_connections.durata_bloccante"));
@@ -310,9 +312,27 @@ public class Common {
 	
 
 	public static void checkAll200(List<HttpResponse> responses) {
-		for (var resp : responses)
-			assertEquals(200, resp.getResultHTTPOperation());
+		checkResponsesStatus(responses, 200);
 	}
+	
 
+	public static void checkResponsesStatus(List<HttpResponse> responses, int status) {
+		for (var resp : responses) {
+			ConfigLoader.getLoggerCore().debug("Checking response status code for transaction: " + resp.getHeaderFirstValue(HEADER_ID_TRANSAZIONE));
+			assertEquals(status, resp.getResultHTTPOperation());
+		}
+	}
+	
+	
+	public static void fermaRiconsegne(DbUtils dbUtils) {
+		String query = "UPDATE messaggi set proprietario='GestoreMessaggi'";
+		dbUtils.update(query);
+		
+	}
+	
+	public static void fermaRiconsegne(DbUtils dbUtils, String transazione) {
+		String query = "UPDATE messaggi set proprietario='GestoreMessaggi' WHERE id_transazione='"+transazione+"'";
+		dbUtils.update(query);		
+	}
 	
 }

@@ -32,7 +32,7 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
 /**
  * RequestBuilder
- *
+ * 
  * @author Francesco Scarlato (scarlato@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
@@ -45,6 +45,45 @@ public class RequestBuilder {
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-header-http"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
 		request.addHeader(Common.HEADER_ID_CONDIZIONE, connettore);
+		
+		return request;
+	}
+	
+
+	public static HttpRequest buildRequest_Statica(String erogazione) {
+		HttpRequest request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-statica"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
+		
+		return request;
+	}
+	
+	
+	public static HttpRequest buildRequest_ClientIp(String erogazione) {
+		HttpRequest request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-client-ip"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
+		
+		return request;
+	}
+	
+	
+	public static HttpRequest buildRestRequest(String erogazione) {
+		HttpRequest request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test"
+				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
+		
+		return request;
+	}
+	
+	public static HttpRequest buildRestRequestProblem(String erogazione) {
+		HttpRequest request = new HttpRequest();
+		request.setMethod(HttpRequestMethod.GET);
+		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-header-http"
+				+ "?&returnCode=500&replyQueryParameter=id_connettore&problem=true&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
 		
 		return request;
 	}
@@ -135,22 +174,39 @@ public class RequestBuilder {
 	}
 
 	public static HttpRequest buildRequest_ForwardedFor(String connettore, String erogazione) throws UtilsException {
+		return buildRequest_ForwardedFor(connettore, "X-Forwarded-For",  erogazione);
+	}
+	
+	
+	public static HttpRequest buildRequest_ForwardedFor(String connettore, String header,  String erogazione) throws UtilsException {
 		HttpRequest request = new HttpRequest();
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/test-regola-xforwarded-for"
 				+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
-		request.addHeader("X-Forwarded-For", connettore);
+		request.addHeader(header, connettore);
 		
 		return request;
 	}
+	
 
 	public static HttpRequest buildSoapRequest_Semplice(String erogazione, String contentTypeSoap) {
 		String operazione = "operazioneSemplice";
-		return RequestBuilder.buildSoapRequest(operazione, operazione, erogazione, contentTypeSoap);
+		return RequestBuilder.buildSoapRequest(erogazione, operazione, operazione,  contentTypeSoap);
+	}
 	
+	public static HttpRequest buildSoapRequestFault(String erogazione, String azione, String soapAction, String soapContentType) {
+		String faultSoapVersion = soapContentType.equals(HttpConstants.CONTENT_TYPE_SOAP_1_1)  ?  "11" : "12";
+		var requestSoapFault  = buildSoapRequest(erogazione, azione, soapAction, soapContentType);
+		requestSoapFault.setUrl(requestSoapFault.getUrl() +"&returnCode=500&fault=true&faultSoapVersion="+faultSoapVersion);
+		return requestSoapFault;
 	}
 
-	public static HttpRequest buildSoapRequest(String filtro, String azione, String erogazione, String contentTypeSoap) {
+	
+	public static HttpRequest buildSoapRequest(String erogazione, String azione, String soapAction, String contentTypeSoap) {
+		return buildSoapRequest(erogazione, azione, soapAction, contentTypeSoap, "");
+	}
+
+	public static HttpRequest buildSoapRequest(String erogazione, String azione, String soapAction, String contentTypeSoap, String body) {
 		// nel soap 1.1 l'azione è specifica nello header SOAPAction
 		// versioneSoap =[ HttpConstants.CONTENT_TYPE_SOAP_1_1; |  HttpConstants.CONTENT_TYPE_SOAP_1_2 ]
 				
@@ -158,13 +214,14 @@ public class RequestBuilder {
 			String content = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +  
 					"    <soap:Body>\n" + 
 					"        <ns2:BodySoap1_1 xmlns:ns2=\"http://amministrazioneesempio.it/nomeinterfacciaservizio\">\n" +
-								 
+					body +
 					"        </ns2:BodySoap1_1>\n" + 
 					"    </soap:Body>\n" + 
 					"</soap:Envelope>";
 			
 			HttpRequest request = new HttpRequest();
-			request.addHeader(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, "\""+filtro+"\"");
+			request.addHeader(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, "\""+soapAction+"\"");
+			
 			request.setMethod(HttpRequestMethod.POST);
 			request.setContent(content.getBytes());
 			request.setContentType(contentTypeSoap);
@@ -177,15 +234,14 @@ public class RequestBuilder {
 			String content = "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">\n" +  
 					"    <soap:Body>\n" + 
 					"        <ns2:BodySoap1_2 xmlns:ns2=\"http://amministrazioneesempio.it/nomeinterfacciaservizio\">\n" +
-								 
+					body +
 					"        </ns2:BodySoap1_2>\n" + 
 					"    </soap:Body>\n" + 
 					"</soap:Envelope>";
 			
 			HttpRequest request = new HttpRequest();
 			request.setMethod(HttpRequestMethod.POST);
-			
-			request.setContentType(contentTypeSoap + ";" + HttpConstants.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION+"=\""+filtro+"\"");
+			request.setContentType(contentTypeSoap + ";" + HttpConstants.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION+"=\""+soapAction+"\"");
 			request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/" + erogazione + "/v1/"+azione
 					+ "?replyQueryParameter=id_connettore&replyPrefixQueryParameter="+Common.ID_CONNETTORE_REPLY_PREFIX);
 			request.setContent(content.getBytes());
@@ -198,7 +254,7 @@ public class RequestBuilder {
 
 	public static List<HttpRequest> buildSoapRequests(List<String> filtri, String erogazione, String contentTypeSoap) {
 		return filtri.stream()
-				.map( filtro -> buildSoapRequest(filtro, filtro, erogazione, contentTypeSoap))
+				.map( filtro -> buildSoapRequest(erogazione, filtro, filtro,  contentTypeSoap))
 				.collect(Collectors.toList());
 	}
 
