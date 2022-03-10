@@ -55,9 +55,11 @@ I parametri di configurazioni relativi al tipo di negoziazione del token configu
 
 Nella sezione 'Dati Richiesta' potranno invece essere definiti ulteriori criteri che riguardano la richiesta di un token:
 
--  *Scope*: Elenco di scope utente richiesti.
+-  *Scope*: elenco di scope utente richiesti;
 
--  *Audience*: Audience per il quale si vorrebbe ottenere il token.
+-  *Audience*: audience per il quale si vorrebbe ottenere il token;
+
+-  *Parametri*: consentene di indicare per riga ulteriori parametri (nome=valore) da inserire nella richiesta.
 
 Infine nella sezione 'Token Forward' si può configurare la modalità di inoltro del token verso l'endpoint del connettore a cui verrà associata la policy che stiamo definendo:
 
@@ -77,3 +79,4 @@ Nelle sezioni successive vengono forniti i dettagli relativi alle modalità di n
 
         tokenNegoziazione_notJwt
 	tokenNegoziazione_jwt
+	tokenNegoziazione_jwt_pdnd

@@ -469,4 +469,35 @@ public class TokenUtilities {
 		return policy;
 
 	}
+	
+	public static void checkClaims(String oggetto, Properties claims, String elemento, List<String> denyClaims, boolean checkSpazi) throws ProviderValidationException {
+		if(claims!=null && !claims.isEmpty()) {
+			for (Object oClaim : claims.keySet()) {
+				if(oClaim !=null && oClaim instanceof String) {
+					String claim = (String) oClaim;
+					String value = claims.getProperty(claim);
+					
+					if(denyClaims.contains(claim) || denyClaims.contains(claim.toLowerCase())) {
+						throw new ProviderValidationException("Il "+oggetto+" '"+claim+"', indicato nel campo '"+elemento+"', non può essere configurato");
+					}
+					if(value==null || StringUtils.isEmpty(value)) {
+						throw new ProviderValidationException("Il "+oggetto+" '"+claim+"', indicato nel campo '"+elemento+"', non è valorizzato");
+					}
+					if(checkSpazi) {
+						if(value.contains(" ")) {
+							throw new ProviderValidationException("Non indicare spazi nel "+oggetto+" '"+claim+"', indicato nel campo '"+elemento+"'");
+						}
+					}
+					else {
+						if(value.startsWith(" ")) {
+							throw new ProviderValidationException("Il valore del "+oggetto+" '"+claim+"', indicato nel campo '"+elemento+"', non deve iniziare con uno spazio");
+						}
+						if(value.endsWith(" ")) {
+							throw new ProviderValidationException("Il valore del "+oggetto+" '"+claim+"', indicato nel campo '"+elemento+"', non deve terminare con uno spazio");
+						}
+					}
+				}
+			}
+		}
+	}
 }

@@ -2992,10 +2992,12 @@ public class GestoreToken {
 		else {
 			throw new Exception("Nessuna modalità definita");
 		}
+		
 		if(basic && !basicAsAuthorizationHeader){
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_ID, username);
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_SECRET, password);
 		}
+		
 		if(policyNegoziazioneToken.isUsernamePasswordGrant()) {
 			String usernamePasswordGrant = policyNegoziazioneToken.getUsernamePasswordGrant_username();
 			if(usernamePasswordGrant!=null && !"".equals(usernamePasswordGrant)) {
@@ -3004,6 +3006,7 @@ public class GestoreToken {
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_USERNAME, usernamePasswordGrant);
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_PASSWORD, policyNegoziazioneToken.getUsernamePasswordGrant_password());
 		}
+		
 		if(policyNegoziazioneToken.isRfc7523_x509_Grant() || policyNegoziazioneToken.isRfc7523_clientSecret_Grant()) {
 			String jwt = buildJwt(policyNegoziazioneToken,
 					busta, tipoPdD,
@@ -3011,6 +3014,7 @@ public class GestoreToken {
 			String signedJwt = signJwt(policyNegoziazioneToken, jwt, contentType, dynamicMap, pddContext);
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_ASSERTION, signedJwt);
 		}
+		
 		List<String> scopes = policyNegoziazioneToken.getScopes(dynamicMap, pddContext);
 		if(scopes!=null && !scopes.isEmpty()) {
 			StringBuilder bf = new StringBuilder();
@@ -3024,6 +3028,7 @@ public class GestoreToken {
 				TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_SCOPE, bf.toString());
 			}
 		}
+		
 		String aud = policyNegoziazioneToken.getAudience();
 		if(aud!=null && !"".equals(aud)) {
 			aud = DynamicUtils.convertDynamicPropertyValue("aud.gwt", aud, dynamicMap, pddContext, true);	
@@ -3031,6 +3036,38 @@ public class GestoreToken {
 		if(aud!=null && !"".equals(aud)) {
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_AUDIENCE, aud);
 		}
+		
+		if(policyNegoziazioneToken.isPDND()) {
+			String formClientId = policyNegoziazioneToken.getFormClientId();
+			if(formClientId==null || "".equals(formClientId)) {
+				formClientId = policyNegoziazioneToken.getJwtClientId();
+			}
+			if(formClientId!=null && !"".equals(formClientId) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(formClientId)) {
+				formClientId = DynamicUtils.convertDynamicPropertyValue("formClientId.gwt", formClientId, dynamicMap, pddContext, true);	
+			}
+			if(formClientId!=null && !"".equals(formClientId) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(formClientId)) {
+				TransportUtils.setParameter(pContent,Costanti.PDND_OAUTH2_RFC_6749_REQUEST_CLIENT_ID, formClientId);
+			}
+		}
+		
+		String parameters = policyNegoziazioneToken.getFormParameters();
+		if(parameters!=null && !"".equals(parameters)) {
+			parameters = DynamicUtils.convertDynamicPropertyValue("parameters.gwt", parameters, dynamicMap, pddContext, true);	
+		}
+		if(parameters!=null && !"".equals(parameters)) {
+			Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(parameters);
+			if(convertTextToProperties!=null && !convertTextToProperties.isEmpty()) {
+				Enumeration<Object> keys = convertTextToProperties.keys();
+				while (keys.hasMoreElements()) {
+					String nome = (String) keys.nextElement();
+					String valore = convertTextToProperties.getProperty(nome);
+					if(nome!=null && !"".equals(nome) && valore!=null) {
+						TransportUtils.setParameter(pContent, nome, valore);
+					}
+				}
+			}
+		}
+		
 		String prefixUrl = "PREFIX?";
 		String contentString = TransportUtils.buildUrlWithParameters(pContent, prefixUrl , log);
 		contentString = contentString.substring(prefixUrl.length());
@@ -3201,6 +3238,56 @@ public class GestoreToken {
 			throw new Exception("Invalid JWT-TimeToLive value: "+e.getMessage(),e);
 		}
 		jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID, uuid);
+		
+		if(policyNegoziazioneToken.isPDND()) {
+			
+			// purposeId
+			String jwtPurposeId = policyNegoziazioneToken.getJwtPurposeId();
+			if(jwtPurposeId!=null && !"".equals(jwtPurposeId)) {
+				jwtPurposeId = DynamicUtils.convertDynamicPropertyValue("jwtPurposeId.gwt", jwtPurposeId, dynamicMap, pddContext, true);	
+			}
+			if(jwtPurposeId==null) {
+				throw new Exception("JWT-PurposeId undefined");
+			}
+			jwtPayload.put(Costanti.PDND_PURPOSE_ID, jwtPurposeId);
+			
+			// sessionInfo
+			String sessionInfo = policyNegoziazioneToken.getJwtSessionInfo();
+			if(sessionInfo!=null && !"".equals(sessionInfo)) {
+				sessionInfo = DynamicUtils.convertDynamicPropertyValue("sessionInfo.gwt", sessionInfo, dynamicMap, pddContext, true);	
+			}
+			if(sessionInfo!=null && !"".equals(sessionInfo)) {
+				Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(sessionInfo);
+				ObjectNode sessionInfoPayload = null;
+				if(convertTextToProperties!=null && !convertTextToProperties.isEmpty()) {
+					Enumeration<Object> keys = convertTextToProperties.keys();
+					while (keys.hasMoreElements()) {
+						String nome = (String) keys.nextElement();
+						String valore = convertTextToProperties.getProperty(nome);
+						if(nome!=null && !"".equals(nome) && valore!=null) {
+							if(sessionInfoPayload ==null) {
+								sessionInfoPayload = jsonUtils.newObjectNode();
+							}
+							
+							if(valore.trim().startsWith("[") && valore.trim().endsWith("]")) {
+								JsonNode node = jsonUtils.getAsNode(valore);
+								sessionInfoPayload.set(nome, node);
+							}
+							else if(valore.trim().startsWith("{") && valore.trim().endsWith("}")) {
+								JsonNode node = jsonUtils.getAsNode(valore);
+								sessionInfoPayload.set(nome, node);
+							}
+							else {
+								sessionInfoPayload.put(nome, valore);
+							}
+						}
+					}
+				}
+				if(sessionInfoPayload!=null) {
+					jwtPayload.set(Costanti.PDND_SESSION_INFO, sessionInfoPayload);
+				}
+			}
+		}
 		
 		// claims
 		String claims = policyNegoziazioneToken.getJwtClaims();

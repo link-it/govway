@@ -697,6 +697,10 @@ public class DynamicHelperCostanti {
 	
 	public final static String LABEL_CONFIGURAZIONE_NEGOZIAZIONE_ISSUER = LABEL_CONFIGURAZIONE_INFO_TRASPORTO.replace(":", " indicate di seguito.")+"<BR/>Se non viene fornito un valore il claim 'iss' verrà valorizzato con il nome del soggetto associato al dominio di gestione della richiesta";
 	public final static String LABEL_CONFIGURAZIONE_NEGOZIAZIONE_SUBJECT = LABEL_CONFIGURAZIONE_INFO_TRASPORTO.replace(":", " indicate di seguito.")+"<BR/>Se non viene fornito un valore il claim 'sub' verrà valorizzato con il medesimo valore associato al Client ID";
+	public final static String LABEL_CONFIGURAZIONE_NEGOZIAZIONE_FORM_PARAMETRO_CLIENT_ID = LABEL_CONFIGURAZIONE_INFO_TRASPORTO.replace(":", " indicate di seguito.")+"<BR/>Se non viene fornito un valore il parametro verrà valorizzato con il medesimo valore associato al Client ID definito nel payload del JWT";
+	public final static String LABEL_CONFIGURAZIONE_NEGOZIAZIONE_CLAIMS = LABEL_CONFIGURAZIONE_INFO_TRASPORTO.replace(":", " indicate di seguito.")+
+			"<BR/><BR/>"+StringEscapeUtils.escapeHtml("Fornendo un valore che inizia e termina con le parentesi graffe si definisce un oggetto json, come ad esempio:<BR/> claimTest={\"prova\":\"valoreProva\", \"prova2\":\"${header:X-Example}\"}")+
+			"<BR/><BR/>"+StringEscapeUtils.escapeHtml("Se il valore inizia e termina con le parentesi quadre si definisce invece un array json, come ad esempio:<BR/> claimTest=[\"valoreProva\", \"valoreProva2\", \"${header:X-Example}\"]");
 	
 	public final static String LABEL_CONFIGURAZIONE_NEGOZIAZIONE_VALORE_NON_DEFINITO = "<b>"+org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED+"</b>: indica di non generare il claim";
 	

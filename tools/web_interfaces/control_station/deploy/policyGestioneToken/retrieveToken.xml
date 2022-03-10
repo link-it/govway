@@ -23,6 +23,15 @@
 			<property name="policy.retrieveToken.mode" />
 		</item>
 
+		<item type="checkbox" name="jwtPDND" label="PDND" defaultSelected="false" reloadOnChange="true">
+			<conditions>
+				<condition and="false">
+					<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+				</condition>
+			</conditions>
+			<property name="policy.retrieveToken.jwt.pdnd" />
+		</item>
+
 		<item type="textarea" name="endpointURL" label="URL" required="true" default="http://">
 			<property name="policy.retrieveToken.endpoint.url" />
 		</item>
@@ -336,7 +345,25 @@
 				<property name="policy.retrieveToken.jwt.expired" />
 			</item>
 
-			<item type="textarea" name="jwtRichiestaJwsPayloadClaims" label="Claims" required="false"
+			<item type="text" name="jwtPurposeID" label="Purpose ID" required="true">
+				<conditions>
+					<condition and="false">
+						<selected name="jwtPDND"/>
+					</condition>	
+				</conditions>
+				<property name="policy.retrieveToken.jwt.purposeId" />
+			</item>
+			<item type="textarea" name="jwtSessionInfo" label="Informazioni Sessione" required="false"
+				note="Indicare per riga i claims (nome=valore) da aggiungere nell'oggetto 'sessionInfo'">
+				<conditions>
+					<condition and="false">
+						<selected name="jwtPDND"/>
+					</condition>	
+				</conditions>
+				<property name="policy.retrieveToken.jwt.sessionInfo" />
+			</item>
+
+			<item type="textarea" name="jwtPayloadClaims" label="Claims" required="false"
 				note="Indicare per riga gli ulteriori claims (nome=valore)">
 				<property name="policy.retrieveToken.jwt.claims" />
 			</item>
@@ -351,6 +378,20 @@
 
 			<item type="text" name="audience" label="Audience" required="false">
 			    <property name="policy.retrieveToken.audience" />
+			</item>
+
+			<item type="text" name="formClientId" label="Client ID" required="false">
+				<conditions>
+					<condition and="false">
+						<selected name="jwtPDND"/>
+					</condition>	
+				</conditions>
+				<property name="policy.retrieveToken.formClientId" />
+			</item>
+
+			<item type="textarea" name="formParameters" label="Parametri" required="false"
+				note="Indicare per riga gli ulteriori parametri (nome=valore)">
+				<property name="policy.retrieveToken.formParameters" />
 			</item>
 			
 		</subsection>

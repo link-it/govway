@@ -67,6 +67,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		headers.put("test-user", "ClientIDVerificaNegoziazioneConSecret2");
 		headers.put("test-scope", "testNegoziazioneScope2");
 		headers.put("test-audience", "testNegoziazioneAudience");
+		headers.put("test-p2", "testNegoziazioneP2");
 		
 		_test(logCore, api_negoziazione, "clientid_clientsecret2", headers);
 	}
@@ -131,6 +132,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		headers.put("test-azione", "signedJWT_clientSecret2");
 		headers.put("test-suffix", "DYNAMIC");
 		headers.put("test-decode-position", "0");
+		headers.put("test-p2", "testNegoziazioneP2");
 		
 		_test(logCore, api_negoziazione, "signedJWT_clientSecret2", headers);
 		
@@ -142,6 +144,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		headers.put("test-azione", "signedJWT_clientSecret2");
 		headers.put("test-suffix", "DYNAMIC");
 		headers.put("test-decode-position", "1");
+		headers.put("test-p2", "testNegoziazioneP2");
 		
 		_test(logCore, api_negoziazione, "signedJWT_clientSecret2", headers);
 	}
@@ -209,6 +212,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		headers.put("test-azione", "signedJWT2");
 		headers.put("test-suffix", "DYNAMIC");
 		headers.put("test-decode-position", "0");
+		headers.put("test-p2", "testNegoziazioneP2");
 		
 		_test(logCore, api_negoziazione, "signedJWT2", headers);
 		
@@ -220,6 +224,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		headers.put("test-azione", "signedJWT2");
 		headers.put("test-suffix", "DYNAMIC");
 		headers.put("test-decode-position", "1");
+		headers.put("test-p2", "testNegoziazioneP2");
 		
 		_test(logCore, api_negoziazione, "signedJWT2", headers);
 	}
@@ -250,6 +255,33 @@ public class NegoziazioneTest extends ConfigLoader {
 		_test(logCore, api_negoziazione, "signedJWT3", headers);
 	}
 	
+	@Test
+	public void signedJWT_PDND() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+	
+		// Test HDR
+		
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("test-azione", "signedJWT-PDND");
+		headers.put("test-suffix", "DYNAMIC");
+		headers.put("test-decode-position", "0");
+		headers.put("test-p2", "testNegoziazioneP2");
+		
+		_test(logCore, api_negoziazione, "signedJWT-PDND", headers);
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		
+		// Test PAYLOAD
+		
+		headers = new HashMap<String, String>();
+		headers.put("test-azione", "signedJWT-PDND");
+		headers.put("test-suffix", "DYNAMIC");
+		headers.put("test-decode-position", "1");
+		headers.put("test-p2", "testNegoziazioneP2");
+		
+		_test(logCore, api_negoziazione, "signedJWT-PDND", headers);
+	}
 	
 	
 	private static HttpResponse _test(Logger logCore, String api, String operazione,

@@ -128,6 +128,10 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 		}
 		return "Non definita";
 	} 
+	public boolean isPDND() throws ProviderException, ProviderValidationException{
+		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_MODE_PDND);
+		return "true".equalsIgnoreCase(mode);
+	}
 	
 	public String getUsernamePasswordGrant_username() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_USERNAME);
@@ -157,6 +161,12 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 	}
 	public String getAudience() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AUDIENCE);
+	}
+	public String getFormClientId() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORM_CLIENT_ID);
+	}
+	public String getFormParameters() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORM_PARAMETERS);
 	}
 	
 	public boolean isSaveErrorInCache() throws ProviderException, ProviderValidationException{
@@ -195,6 +205,12 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 			ttl = Costanti.POLICY_RETRIEVE_TOKEN_JWT_EXPIRED_TTL_SECONDS_DEFAULT_VALUE;
 		}
 		return Integer.valueOf(ttl);
+	}
+	public String getJwtPurposeId() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_PURPOSE_ID);
+	}
+	public String getJwtSessionInfo() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SESSION_INFO);
 	}
 	public String getJwtClaims() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIMS);
