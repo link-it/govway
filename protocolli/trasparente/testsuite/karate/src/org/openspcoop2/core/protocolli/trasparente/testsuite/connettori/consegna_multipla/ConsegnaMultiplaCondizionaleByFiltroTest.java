@@ -94,250 +94,126 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 		Common.fermaRiconsegne(dbUtils);		
 	}
 	
-	static {
-		org.openspcoop2.utils.Semaphore.setTIMEOUT_MS(-1);
-	}
-	private static final org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("ConsegnaMultiplaCondizionaleByFiltroTest");
-	
+
 	@Test
 	public void headerHttpICFDiagnosticoInfo_2xx_4xx() {
-		semaphore.acquireThrowRuntime("headerHttpICFDiagnosticoInfo_2xx_4xx");
-		try {
-			headerHttpICFDiagnosticoInfo(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
-		}finally {
-			semaphore.release("headerHttpICFDiagnosticoInfo_2xx_4xx");
-		}
+		headerHttpICFDiagnosticoInfo(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
 	}
 	@Test
 	public void headerHttpICFDiagnosticoInfo_5xx() {
-		semaphore.acquireThrowRuntime("headerHttpICFDiagnosticoInfo_5xx");
-		try {
-			headerHttpICFDiagnosticoInfo(CommonConsegnaMultipla.statusCode5xxVsConnettori);
-		}finally {
-			semaphore.release("headerHttpICFDiagnosticoInfo_5xx");
-		}
+		headerHttpICFDiagnosticoInfo(CommonConsegnaMultipla.statusCode5xxVsConnettori);
 	}
 	
 	
 	@Test
 	public void XForwardedForPrefissoESuffisso_2xx_4xx() throws UtilsException {
-		semaphore.acquireThrowRuntime("XForwardedForPrefissoESuffisso_2xx_4xx");
-		try {
-			XForwardedForPrefissoESuffisso(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
-		}finally {
-			semaphore.release("XForwardedForPrefissoESuffisso_2xx_4xx");
-		}
+		XForwardedForPrefissoESuffisso(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
 	}
 	@Test
-	public void XForwardedForPrefissoESuffisso_3xx_4xx() throws UtilsException {
-		semaphore.acquireThrowRuntime("XForwardedForPrefissoESuffisso_3xx_4xx");
-		try {
-			XForwardedForPrefissoESuffisso(CommonConsegnaMultipla.statusCode5xxVsConnettori);
-		}finally {
-			semaphore.release("XForwardedForPrefissoESuffisso_3xx_4xx");
-		}
+	public void XForwardedForPrefissoESuffisso_5xx() throws UtilsException {
+		XForwardedForPrefissoESuffisso(CommonConsegnaMultipla.statusCode5xxVsConnettori);
 	}
 	
 	
 	@Test
 	public void clientIp_2xx_4xx() {
-		semaphore.acquireThrowRuntime("clientIp_2xx_4xx");
-		try {
-			clientIp(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
-		}finally {
-			semaphore.release("clientIp_2xx_4xx");
-		}
+		clientIp(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
 	}
 	@Test
 	public void clientIp_5xx() {
-		semaphore.acquireThrowRuntime("clientIp_5xx");
-		try {
-			clientIp(CommonConsegnaMultipla.statusCode5xxVsConnettori);
-		}finally {
-			semaphore.release("clientIp_5xx");
-		}
+		clientIp(CommonConsegnaMultipla.statusCode5xxVsConnettori);
 	}
 	
 
 	@Test
 	public void contenutoSuffisso2xx_4xx() {
-		semaphore.acquireThrowRuntime("contenutoSuffisso2xx_4xx");
-		try {
-			contenutoSuffisso(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
-		}finally {
-			semaphore.release("contenutoSuffisso2xx_4xx");
-		}
+		contenutoSuffisso(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
 	}
 	@Test
 	public void contenutoSuffisso_5xx() {
-		semaphore.acquireThrowRuntime("contenutoSuffisso_5xx");
-		try {
-			contenutoSuffisso(CommonConsegnaMultipla.statusCode5xxVsConnettori);
-		}finally {
-			semaphore.release("contenutoSuffisso_5xx");
-		}
+		contenutoSuffisso(CommonConsegnaMultipla.statusCode5xxVsConnettori);
 	}
 
 	
 	@Test
 	public void urlInvocazionePrefisso2xx_4xx() {
-		semaphore.acquireThrowRuntime("urlInvocazionePrefisso2xx_4xx");
-		try {
-			urlInvocazionePrefisso(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
-		}finally {
-			semaphore.release("urlInvocazionePrefisso2xx_4xx");
-		}
+		urlInvocazionePrefisso(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
 	}
 	@Test
 	public void urlInvocazionePrefisso_5xx() {
-		semaphore.acquireThrowRuntime("urlInvocazionePrefisso_5xx");
-		try {
-			urlInvocazionePrefisso(CommonConsegnaMultipla.statusCode5xxVsConnettori);
-		}finally {
-			semaphore.release("urlInvocazionePrefisso_5xx");
-		}
+		urlInvocazionePrefisso(CommonConsegnaMultipla.statusCode5xxVsConnettori);
 	}
 
 	
 	@Test
 	public void ICFDiagnosticoErrorNCUDiagnosticoInfo2xx_4xx() {
-		semaphore.acquireThrowRuntime("ICFDiagnosticoErrorNCUDiagnosticoInfo2xx_4xx");
-		try {
-			ICFDiagnosticoErrorNCUDiagnosticoInfo(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
-		}finally {
-			semaphore.release("ICFDiagnosticoErrorNCUDiagnosticoInfo2xx_4xx");
-		}
+		ICFDiagnosticoErrorNCUDiagnosticoInfo(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
 	}
 	@Test
 	public void ICFDiagnosticoErrorNCUDiagnosticoInfo_5xx() {
-		semaphore.acquireThrowRuntime("ICFDiagnosticoErrorNCUDiagnosticoInfo_5xx");
-		try {
-			ICFDiagnosticoErrorNCUDiagnosticoInfo(CommonConsegnaMultipla.statusCode5xxVsConnettori);
-		}finally {
-			semaphore.release("ICFDiagnosticoErrorNCUDiagnosticoInfo_5xx");
-		}
+		ICFDiagnosticoErrorNCUDiagnosticoInfo(CommonConsegnaMultipla.statusCode5xxVsConnettori);
 	}	
 
 	
 	@Test
 	public void freemarkerTemplateICFQualsiasiNoDiagnostico2xx_4xx() {
-		semaphore.acquireThrowRuntime("freemarkerTemplateICFQualsiasiNoDiagnostico2xx_4xx");
-		try {
-			freemarkerTemplateICFQualsiasiNoDiagnostico(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
-		}finally {
-			semaphore.release("freemarkerTemplateICFQualsiasiNoDiagnostico2xx_4xx");
-		}
+		freemarkerTemplateICFQualsiasiNoDiagnostico(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
 	}
 	@Test
 	public void freemarkerTemplateICFQualsiasiNoDiagnostico_5xx() {
-		semaphore.acquireThrowRuntime("freemarkerTemplateICFQualsiasiNoDiagnostico_5xx");
-		try {
-			freemarkerTemplateICFQualsiasiNoDiagnostico(CommonConsegnaMultipla.statusCode5xxVsConnettori);
-		}finally {
-			semaphore.release("freemarkerTemplateICFQualsiasiNoDiagnostico_5xx");
-		}
+		freemarkerTemplateICFQualsiasiNoDiagnostico(CommonConsegnaMultipla.statusCode5xxVsConnettori);
 	}
 	
 	
 	@Test
 	public void velocityTemplateNCUQualsiasiNoDiagnostico2xx_4xx() {
-		semaphore.acquireThrowRuntime("velocityTemplateNCUQualsiasiNoDiagnostico2xx_4xx");
-		try {
-			velocityTemplateNCUQualsiasiNoDiagnostico(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
-		}finally {
-			semaphore.release("velocityTemplateNCUQualsiasiNoDiagnostico2xx_4xx");
-		}
+		velocityTemplateNCUQualsiasiNoDiagnostico(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
 	}
 	@Test
 	public void velocityTemplateNCUQualsiasiNoDiagnostico_5xx() {
-		semaphore.acquireThrowRuntime("velocityTemplateNCUQualsiasiNoDiagnostico_5xx");
-		try {
-			velocityTemplateNCUQualsiasiNoDiagnostico(CommonConsegnaMultipla.statusCode5xxVsConnettori);
-		}finally {
-			semaphore.release("velocityTemplateNCUQualsiasiNoDiagnostico_5xx");
-		}
+		velocityTemplateNCUQualsiasiNoDiagnostico(CommonConsegnaMultipla.statusCode5xxVsConnettori);
 	}
 	
 	
 	@Test
 	public void templateICFDiagnosticoError2xx_4xx() {
-		semaphore.acquireThrowRuntime("templateICFDiagnosticoError2xx_4xx");
-		try {
-			templateICFDiagnosticoError(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
-		}finally {
-			semaphore.release("templateICFDiagnosticoError2xx_4xx");
-		}
+		templateICFDiagnosticoError(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
 	}
 	@Test
 	public void templateICFDiagnosticoError_5xx() {
-		semaphore.acquireThrowRuntime("templateICFDiagnosticoError_5xx");
-		try {
-			templateICFDiagnosticoError(CommonConsegnaMultipla.statusCode5xxVsConnettori);
-		}finally {
-			semaphore.release("templateICFDiagnosticoError_5xx");
-		}
+		templateICFDiagnosticoError(CommonConsegnaMultipla.statusCode5xxVsConnettori);
 	}
 	
 	
 	@Test
 	public void parametroUrlNCUDiagnosticoInfo2xx_4xx() {
-		semaphore.acquireThrowRuntime("parametroUrlNCUDiagnosticoInfo2xx_4xx");
-		try {
-			parametroUrlNCUDiagnosticoInfo(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
-		}finally {
-			semaphore.release("parametroUrlNCUDiagnosticoInfo2xx_4xx");
-		}
+		parametroUrlNCUDiagnosticoInfo(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
 	}
 	@Test
 	public void parametroUrlNCUDiagnosticoInfo_5xx() {
-		semaphore.acquireThrowRuntime("parametroUrlNCUDiagnosticoInfo_5xx");
-		try {
-			parametroUrlNCUDiagnosticoInfo(CommonConsegnaMultipla.statusCode5xxVsConnettori);
-		}finally {
-			semaphore.release("parametroUrlNCUDiagnosticoInfo_5xx");
-		}
+		parametroUrlNCUDiagnosticoInfo(CommonConsegnaMultipla.statusCode5xxVsConnettori);
 	}
 	
 	@Test
 	public void soapActionNCUDiagnosticoError2xx_4xx() {
-		semaphore.acquireThrowRuntime("soapActionNCUDiagnosticoError2xx_4xx");
-		try {
-			soapActionNCUDiagnosticoError(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
-		}finally {
-			semaphore.release("soapActionNCUDiagnosticoError2xx_4xx");
-		}
+		soapActionNCUDiagnosticoError(CommonConsegnaMultipla.statusCode2xx4xxVsConnettori);
 	}
 	@Test
 	public void soapActionNCUDiagnosticoError_5xx() {
-		semaphore.acquireThrowRuntime("soapActionNCUDiagnosticoError_5xx");
-		try {
-			soapActionNCUDiagnosticoError(CommonConsegnaMultipla.statusCode5xxVsConnettori);
-		}finally {
-			semaphore.release("soapActionNCUDiagnosticoError_5xx");
-		}
+		soapActionNCUDiagnosticoError(CommonConsegnaMultipla.statusCode5xxVsConnettori);
 	}
 	
 	@Test
 	public void regole200() throws UtilsException {
-		semaphore.acquireThrowRuntime("regole200");
-		try {
-			final Map<Integer, Set<String>> statusCode200VsConnettori  = Map
-					.of(200, Set.of(CONNETTORE_1,CONNETTORE_2));
-			regole(statusCode200VsConnettori);
-		}finally {
-			semaphore.release("regole200");
-		}			
+		final Map<Integer, Set<String>> statusCode200VsConnettori  = Map
+				.of(200, Set.of(CONNETTORE_1,CONNETTORE_2));
+		regole(statusCode200VsConnettori);			
 	}
 	@Test 
 	public void regole501() throws UtilsException {
-		semaphore.acquireThrowRuntime("regole501");
-		try {
-			final Map<Integer, Set<String>> statusCode501VsConnettori  = Map
-					.of(501, Set.of(CONNETTORE_1, CONNETTORE_3));
-			regole(statusCode501VsConnettori);
-		}finally {
-			semaphore.release("regole501");
-		}
+		final Map<Integer, Set<String>> statusCode501VsConnettori  = Map
+				.of(501, Set.of(CONNETTORE_1, CONNETTORE_3));
+		regole(statusCode501VsConnettori);
 	}
 
 	

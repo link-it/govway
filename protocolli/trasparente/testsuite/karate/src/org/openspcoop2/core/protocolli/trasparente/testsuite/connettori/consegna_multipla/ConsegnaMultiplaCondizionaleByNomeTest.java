@@ -74,242 +74,186 @@ public class ConsegnaMultiplaCondizionaleByNomeTest extends ConfigLoader {
 		Common.fermaRiconsegne(dbUtils);		
 	}
 
-	static {
-		org.openspcoop2.utils.Semaphore.setTIMEOUT_MS(-1);
-	}
-	private static final org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("ConsegnaMultiplaCondizionaleByNomeTest");
-	
+
 	@Test
 	public void regole200() throws UtilsException {
-		semaphore.acquireThrowRuntime("regole200");
-		try {
-			final Map<Integer, Set<String>> statusCode200VsConnettori  = Map
-					.of(200, Set.of(CONNETTORE_1,CONNETTORE_2));
-			regole(statusCode200VsConnettori);
-		}finally {
-			semaphore.release("regole200");
-		}
+		final Map<Integer, Set<String>> statusCode200VsConnettori  = Map
+				.of(200, Set.of(CONNETTORE_1,CONNETTORE_2));
+		regole(statusCode200VsConnettori);
 	}
 	@Test 
 	public void regole501() throws UtilsException {
-		semaphore.acquireThrowRuntime("regole501");
-		try {
-			final Map<Integer, Set<String>> statusCode501VsConnettori  = Map
-					.of(501, Set.of(CONNETTORE_1, CONNETTORE_3));
-			regole(statusCode501VsConnettori);
-		}finally {
-			semaphore.release("regole501");
-		}
+		final Map<Integer, Set<String>> statusCode501VsConnettori  = Map
+				.of(501, Set.of(CONNETTORE_1, CONNETTORE_3));
+		regole(statusCode501VsConnettori);
 	}
 	
 	@Test
 	public void connettoreDisabilitato() {
-		semaphore.acquireThrowRuntime("connettoreDisabilitato");
-		try {
 	
-			final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeHeaderHttp";
+		final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeHeaderHttp";
+		
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+
+		int i = 0;
+		
+		for (var entry : statusCodeVsConnettori.entrySet()) {
+			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
 			
-			List<RequestAndExpectations> requestsByKind = new ArrayList<>();
-	
-			int i = 0;
-			
-			for (var entry : statusCodeVsConnettori.entrySet()) {
-				final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
-				
-				String filtro = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
-	
-				HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
-				request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-				request.addHeader(Common.HEADER_ID_CONDIZIONE, filtro);
-				
-				var current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), Set.of(filtro));
-				requestsByKind.add(current);
-				
-				i++;
-			}
-			
-			String filtro = Common.CONNETTORE_DISABILITATO;
-			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  HttpConstants.CONTENT_TYPE_SOAP_1_1);
-			int statusCode = 201;
-			request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+			String filtro = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
+
+			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
 			request.addHeader(Common.HEADER_ID_CONDIZIONE, filtro);
-			var current = new RequestAndExpectations(request, Set.of(), Set.of(), CommonConsegnaMultipla.ESITO_ERRORE_PROCESSAMENTO_PDD_4XX, 500);
+			
+			var current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), Set.of(filtro));
 			requestsByKind.add(current);
 			
-			filtro = Common.CONNETTORE_DISABILITATO;
-			request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  HttpConstants.CONTENT_TYPE_SOAP_1_2);
-			statusCode = 202;
-			request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
-			request.addHeader(Common.HEADER_ID_CONDIZIONE, filtro);
-			current = new RequestAndExpectations(request, Set.of(), Set.of(), CommonConsegnaMultipla.ESITO_ERRORE_PROCESSAMENTO_PDD_4XX, 500);
-			requestsByKind.add(current);
-			
-			Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
-			
-			checkResponses(responsesByKind);
-			
-		}finally {
-			semaphore.release("connettoreDisabilitato");
+			i++;
 		}
+		
+		String filtro = Common.CONNETTORE_DISABILITATO;
+		HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  HttpConstants.CONTENT_TYPE_SOAP_1_1);
+		int statusCode = 201;
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.addHeader(Common.HEADER_ID_CONDIZIONE, filtro);
+		var current = new RequestAndExpectations(request, Set.of(), Set.of(), CommonConsegnaMultipla.ESITO_ERRORE_PROCESSAMENTO_PDD_4XX, 500);
+		requestsByKind.add(current);
+		
+		filtro = Common.CONNETTORE_DISABILITATO;
+		request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  HttpConstants.CONTENT_TYPE_SOAP_1_2);
+		statusCode = 202;
+		request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
+		request.addHeader(Common.HEADER_ID_CONDIZIONE, filtro);
+		current = new RequestAndExpectations(request, Set.of(), Set.of(), CommonConsegnaMultipla.ESITO_ERRORE_PROCESSAMENTO_PDD_4XX, 500);
+		requestsByKind.add(current);
+		
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+		
+		checkResponses(responsesByKind);
+		
 	}
 	
 	@Test
 	public void headerHttp() {
-		semaphore.acquireThrowRuntime("headerHttp");
-		try {
 	
-			final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeHeaderHttp";
+		final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeHeaderHttp";
+		
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+
+		int i = 0;
+		
+		for (var entry : statusCodeVsConnettori.entrySet()) {
+			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
 			
-			List<RequestAndExpectations> requestsByKind = new ArrayList<>();
-	
-			int i = 0;
+			final String filtro = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
+
+			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.addHeader(Common.HEADER_ID_CONDIZIONE, filtro);
 			
-			for (var entry : statusCodeVsConnettori.entrySet()) {
-				final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
-				
-				final String filtro = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
-	
-				HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
-				request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-				request.addHeader(Common.HEADER_ID_CONDIZIONE, filtro);
-				
-				var current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), Set.of(filtro));
-				requestsByKind.add(current);
-				
-				i++;
-			}
-					
-			Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+			var current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), Set.of(filtro));
+			requestsByKind.add(current);
 			
-			checkResponses(responsesByKind);
-			
-		}finally {
-			semaphore.release("headerHttp");
+			i++;
 		}
+				
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+		
+		checkResponses(responsesByKind);
 
 	}
 	
 	@Test
 	public void parametroUrl() {
-		semaphore.acquireThrowRuntime("parametroUrl");
-		try {
-			final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeParametroUrl";
-			parametroUrl_Impl(erogazione);
-		}finally {
-			semaphore.release("parametroUrl");
-		}
+		final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeParametroUrl";
+		parametroUrl_Impl(erogazione);
 	}
 
 	
 	@Test
 	public void template() {
-		semaphore.acquireThrowRuntime("template");
-		try {
-			final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeTemplate";
-			parametroUrl_Impl(erogazione);
-		}finally {
-			semaphore.release("template");
-		}
+		final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeTemplate";
+		parametroUrl_Impl(erogazione);
 	}
 	
 	@Test
 	public void velocityTemplate() {
-		semaphore.acquireThrowRuntime("velocityTemplate");
-		try {
-			final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeVelocityTemplate";
-			parametroUrl_Impl(erogazione);
-		}finally {
-			semaphore.release("velocityTemplate");
-		}
+		final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeVelocityTemplate";
+		parametroUrl_Impl(erogazione);
 	}
 	
 	@Test
 	public void freemarkerTemplate() {
-		semaphore.acquireThrowRuntime("freemarkerTemplate");
-		try {
-			final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeFreemarkerTemplate";
-			parametroUrl_Impl(erogazione);
-		}finally {
-			semaphore.release("freemarkerTemplate");
-		}
+		final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeFreemarkerTemplate";
+		parametroUrl_Impl(erogazione);
 	}
 	
 	@Test
 	public void soapAction() {
-		semaphore.acquireThrowRuntime("soapAction");
-		try {
 	
-			final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeSoapAction";
+		final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeSoapAction";
+		
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+		
+		var azioniBySoapAction = Map.of(
+				"Connettore0", "TestCondizionaleByNome0",
+				"Connettore1", "TestCondizionaleByNome1",
+				"Connettore2", "TestCondizionaleByNome2",
+				"Connettore3", "TestCondizionaleByNome3");
+
+		int i = 0;
+		// Prima costruisco le richieste normalmente
+		for (var entry : statusCodeVsConnettori.entrySet()) {
 			
-			List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
 			
-			var azioniBySoapAction = Map.of(
-					"Connettore0", "TestCondizionaleByNome0",
-					"Connettore1", "TestCondizionaleByNome1",
-					"Connettore2", "TestCondizionaleByNome2",
-					"Connettore3", "TestCondizionaleByNome3");
-	
-			int i = 0;
-			// Prima costruisco le richieste normalmente
-			for (var entry : statusCodeVsConnettori.entrySet()) {
-				
-				final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
-				
-				final String filtro = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
-	
-				HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, azioniBySoapAction.get(filtro),   filtro,  soapContentType);
-				request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-				var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), Set.of(filtro));
-				requestsByKind.add(current);
-				
-				i++;
-			}
+			final String filtro = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
+
+			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, azioniBySoapAction.get(filtro),   filtro,  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), Set.of(filtro));
+			requestsByKind.add(current);
 			
-			Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
-			
-			CommonConsegnaMultipla.checkResponses(responsesByKind);
-			
-		}finally {
-			semaphore.release("soapAction");
+			i++;
 		}
+		
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+		
+		CommonConsegnaMultipla.checkResponses(responsesByKind);
 		
 	}
 	
 	@Test
 	public void clientIp() {
-		semaphore.acquireThrowRuntime("clientIp");
-		try {
 	
-			final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeClientIp";
-	
-			List<RequestAndExpectations> requestsByKind = new ArrayList<>();
-			int i = 0;
-			// Finiscono tutte sul primo connettore
-			for (var entry : statusCodeVsConnettori.entrySet()) {
-				Set<String> connettoriPool = Set.of("127.0.0.1");
-				final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
-				
-				// Sostituisco Il Connettore0 con "127.0.0.1"
-				Set<String> connettoriSuccesso = entry.getValue();
-				connettoriSuccesso = connettoriSuccesso.stream()
-						.map( c -> c.equals(Common.CONNETTORE_0) ? "127.0.0.1" : c)
-						.collect(Collectors.toSet());
-						
-				HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
-				request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-				var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),connettoriSuccesso, connettoriPool);
-				requestsByKind.add(current);
-				
-				i++;
-			}
+		final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeClientIp";
+
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+		int i = 0;
+		// Finiscono tutte sul primo connettore
+		for (var entry : statusCodeVsConnettori.entrySet()) {
+			Set<String> connettoriPool = Set.of("127.0.0.1");
+			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
+			
+			// Sostituisco Il Connettore0 con "127.0.0.1"
+			Set<String> connettoriSuccesso = entry.getValue();
+			connettoriSuccesso = connettoriSuccesso.stream()
+					.map( c -> c.equals(Common.CONNETTORE_0) ? "127.0.0.1" : c)
+					.collect(Collectors.toSet());
 					
-			Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, entry.getKey(),connettoriSuccesso, connettoriPool);
+			requestsByKind.add(current);
 			
-			CommonConsegnaMultipla.checkResponses(responsesByKind);
-			
-		}finally {
-			semaphore.release("clientIp");
+			i++;
 		}
+				
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+		
+		CommonConsegnaMultipla.checkResponses(responsesByKind);
+		
 	}
 	
 	public void regole(Map<Integer,Set<String>> statusCodeVsConnettori ) throws UtilsException {
@@ -421,120 +365,105 @@ public class ConsegnaMultiplaCondizionaleByNomeTest extends ConfigLoader {
 	
 	@Test
 	public void contenutoSuffisso() {
-		semaphore.acquireThrowRuntime("contenutoSuffisso");
-		try {
 	
-			final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeContenutoSuffisso";
+		final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeContenutoSuffisso";
+		
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+
+		int i = 0;
+		
+		for (var entry : statusCodeVsConnettori.entrySet()) {
+			int statusCode = entry.getKey();
+			// Aggiungo i suffissi ai connettori da testare
+			Set<String> connettoriSuccesso = entry.getValue().stream()
+					.map( c -> c + "-SuffissoTest")
+					.collect(Collectors.toSet());
 			
-			List<RequestAndExpectations> requestsByKind = new ArrayList<>();
-	
-			int i = 0;
+			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
 			
-			for (var entry : statusCodeVsConnettori.entrySet()) {
-				int statusCode = entry.getKey();
-				// Aggiungo i suffissi ai connettori da testare
-				Set<String> connettoriSuccesso = entry.getValue().stream()
-						.map( c -> c + "-SuffissoTest")
-						.collect(Collectors.toSet());
-				
-				final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
-				
-				final String filtro = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
-				final String content = "<Filtro>"+filtro+"</Filtro>";
-	
-				HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType,content);
-				request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-				
-				var current = buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, Set.of(filtro+"-SuffissoTest"));
-				requestsByKind.add(current);
-				
-				i++;
-			}
-					
-			Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+			final String filtro = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
+			final String content = "<Filtro>"+filtro+"</Filtro>";
+
+			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType,content);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
 			
-			checkResponses(responsesByKind);
+			var current = buildRequestAndExpectationFiltered(request, statusCode, connettoriSuccesso, Set.of(filtro+"-SuffissoTest"));
+			requestsByKind.add(current);
 			
-		}finally {
-			semaphore.release("contenutoSuffisso");
+			i++;
 		}
+				
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+		
+		checkResponses(responsesByKind);
+		
 	}
 	
 	@Test
 	public void urlInvocazionePrefisso() {
-		semaphore.acquireThrowRuntime("urlInvocazionePrefisso");
-		try {
-	
-			final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeUrlInvocazionePrefisso";
-			List<RequestAndExpectations> requestsByKind = new ArrayList<>();
-			final String prefisso = "Connettore";
-	
-			int i = 0;
+
+		final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeUrlInvocazionePrefisso";
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+		final String prefisso = "Connettore";
+
+		int i = 0;
+		
+		for (var entry : statusCodeVsConnettori.entrySet()) {
+			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
+			final String connettore =Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size()); 
+			final String filtro = connettore.substring(prefisso.length());
+
+			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
 			
-			for (var entry : statusCodeVsConnettori.entrySet()) {
-				final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
-				final String connettore =Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size()); 
-				final String filtro = connettore.substring(prefisso.length());
-	
-				HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
-				request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-				request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
-				
-				var current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), Set.of(connettore));
-				requestsByKind.add(current);
-				
-				i++;
-			}
-					
-			Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+			var current = buildRequestAndExpectationFiltered(request, entry.getKey(),entry.getValue(), Set.of(connettore));
+			requestsByKind.add(current);
 			
-			checkResponses(responsesByKind);
-			
-		}finally {
-			semaphore.release("urlInvocazionePrefisso");
+			i++;
 		}
+				
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+		
+		checkResponses(responsesByKind);
+		
 	}
 	
 	
 	@Test
 	public void XForwardedForPrefissoESuffisso() throws UtilsException {
-		semaphore.acquireThrowRuntime("XForwardedForPrefissoESuffisso");
-		try {
 			
-			final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeXForwardedForPrefissoESuffisso";
-	
-			List<RequestAndExpectations> requestsByKind = new ArrayList<>();
-			List<String> forwardingHeaders = HttpUtilities.getClientAddressHeaders();
+		final String erogazione = "TestConsegnaMultiplaCondizionaleByNomeXForwardedForPrefissoESuffisso";
+
+		List<RequestAndExpectations> requestsByKind = new ArrayList<>();
+		List<String> forwardingHeaders = HttpUtilities.getClientAddressHeaders();
+		
+		int i = 0;
+		// Prima costruisco le richieste normalmente
+		for (var entry : statusCodeVsConnettori.entrySet()) {
+			final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
+			final int statusCode = entry.getKey();
 			
-			int i = 0;
-			// Prima costruisco le richieste normalmente
-			for (var entry : statusCodeVsConnettori.entrySet()) {
-				final String soapContentType = i % 2 == 0 ?HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
-				final int statusCode = entry.getKey();
-				
-				// Aggiungo i suffissi ai connettori da testare
-				Set<String> connettoriSuccesso = entry.getValue().stream()
-						.map( c -> "PrefissoTest-" + c + "-SuffissoTest")
-						.collect(Collectors.toSet());
-				
-				String header = forwardingHeaders.get(i%forwardingHeaders.size());
-				String filtro = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
-	
-				HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
-				request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
-				request.addHeader(header, filtro);
-				
-				var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode,connettoriSuccesso, Set.of("PrefissoTest-"+filtro+"-SuffissoTest"));
-				requestsByKind.add(current);
-				i++;
-			}
-					
-			Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
-			CommonConsegnaMultipla.checkResponses(responsesByKind);
+			// Aggiungo i suffissi ai connettori da testare
+			Set<String> connettoriSuccesso = entry.getValue().stream()
+					.map( c -> "PrefissoTest-" + c + "-SuffissoTest")
+					.collect(Collectors.toSet());
 			
-		}finally {
-			semaphore.release("XForwardedForPrefissoESuffisso");
+			String header = forwardingHeaders.get(i%forwardingHeaders.size());
+			String filtro = Common.connettoriAbilitati.get(i % Common.connettoriAbilitati.size());
+
+			HttpRequest request = RequestBuilder.buildSoapRequest(erogazione, "TestConsegnaMultipla",   "test",  soapContentType);
+			request.setUrl(request.getUrl()+"&returnCode=" + entry.getKey());
+			request.addHeader(header, filtro);
+			
+			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode,connettoriSuccesso, Set.of("PrefissoTest-"+filtro+"-SuffissoTest"));
+			requestsByKind.add(current);
+			i++;
 		}
+				
+		Map<RequestAndExpectations, List<HttpResponse>> responsesByKind = CommonConsegnaMultipla.makeRequestsByKind(requestsByKind, 1);
+		CommonConsegnaMultipla.checkResponses(responsesByKind);
+		
 	}
 	
 	
