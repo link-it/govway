@@ -366,25 +366,28 @@ public class Utilities extends ConfigLoader {
 			}
 		}
 		
-		String iatS = "\""+prefix+"iat\":\""+(iat.getTime()/1000)+"\""; 
+		String iatJson = "\""+prefix+"iat\":"+(iat.getTime()/1000)+""; 
+		String iatDB = "\""+prefix+"iat\":\""+(iat.getTime()/1000)+"\""; 
 		jsonInput = jsonInput +
-				iatS + " , ";
+				iatJson + " , ";
 		if(mapExpectedTokenInfo!=null) {
-			mapExpectedTokenInfo.add(iatS);
+			mapExpectedTokenInfo.add(iatDB);
 		}
 		
-		String nbfS = "\""+prefix+"nbf\":\""+(nbf.getTime()/1000)+"\"";
+		String nbfJson = "\""+prefix+"nbf\":"+(nbf.getTime()/1000)+"";
+		String nbfDB = "\""+prefix+"nbf\":\""+(nbf.getTime()/1000)+"\"";
 		jsonInput = jsonInput +
-				nbfS+ " , ";
+				nbfJson+ " , ";
 		if(mapExpectedTokenInfo!=null) {
-			mapExpectedTokenInfo.add(nbfS);
+			mapExpectedTokenInfo.add(nbfDB);
 		}
 		
-		String expS = "\""+prefix+"exp\":\""+(exp.getTime()/1000)+"\"";
+		String expJson = "\""+prefix+"exp\":"+(exp.getTime()/1000)+"";
+		String expDB = "\""+prefix+"exp\":\""+(exp.getTime()/1000)+"\"";
 		jsonInput = jsonInput +
-				expS + " ,  ";
+				expJson + " ,  ";
 		if(mapExpectedTokenInfo!=null) {
-			mapExpectedTokenInfo.add(expS);
+			mapExpectedTokenInfo.add(expDB);
 		}
 		
 		if(invalidClaimCheNonDeveEsistere) {
