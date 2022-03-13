@@ -61,6 +61,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.Utils;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.RequestBuilder;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla;
@@ -428,20 +429,32 @@ public class SoapTest extends ConfigLoader {
 						String formatoFault = "";
 						String ultimoErrore;
 						String locationUltimoErrore; 
-
+						
 						if (requestExpectation.tipoFault == TipoFault.SOAP1_1) {
 							fault 		 = CommonConsegnaMultipla.FAULT_SOAP1_1;
 							formatoFault = CommonConsegnaMultipla.FORMATO_FAULT_SOAP1_1;
 							ultimoErrore = "Consegna [http] con errore: errore applicativo, <SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><faultcode xmlns:ns0=\"http://www.openspcoop2.org/example\">ns0:Server.OpenSPCoopExa"
 									+ "mpleFault</faultcode><faultstring>Fault ritornato dalla servlet di trace, esempio di OpenSPCoop</faultstring><faultactor>OpenSPCoopTrace</faultactor></SOAP-ENV:Fault>";
-							locationUltimoErrore = "http://localhost:8080/TestService/echo?id_connettore="+connettore+"&returnCode="+requestExpectation.statusCodePrincipale+"&replyPrefixQueryParameter=GovWay-TestSuite-&fault=true&faultSoapVersion=11&replyQueryParameter=id_connettore";							
+							locationUltimoErrore = "http://localhost:8080/TestService/echo?id_connettore="+connettore+"&returnCode="+requestExpectation.statusCodePrincipale+"&replyPrefixQueryParameter=GovWay-TestSuite-&fault=true";							
+							if(Utils.isJenkins()) {
+								locationUltimoErrore = locationUltimoErrore + "&replyQueryParameter=id_connettore&faultSoapVersion=11";	
+							}
+							else {
+								locationUltimoErrore = locationUltimoErrore + "&faultSoapVersion=11&replyQueryParameter=id_connettore";	
+							}
 						} else if (requestExpectation.tipoFault == TipoFault.SOAP1_2) {
 							fault 		 = CommonConsegnaMultipla.FAULT_SOAP1_2;
 							formatoFault = CommonConsegnaMultipla.FORMATO_FAULT_SOAP1_2;
 							ultimoErrore = "Consegna [http] con errore: errore applicativo, <env:Fault xmlns:env=\"http://www.w3.org/2003/05/soap-envelope\"><env:Code><env:Value>env:Receiver</env:Value><env:Subcode><env:Value xmlns:ns1=\"http://www.ope"
 									+ "nspcoop2.org/example\">ns1:Server.OpenSPCoopExampleFault</env:Value></env:Subcode></env:Code><env:Reason><env:Text xml:lang=\"en-US\">Fault ritornato dalla servlet di trace, esempio di OpenSPCoop</env:Text></env:Reason><env:Role>OpenSPCoopTr"
 									+ "ace</env:Role></env:Fault>";
-							locationUltimoErrore = "http://localhost:8080/TestService/echo?id_connettore="+connettore+"&returnCode="+requestExpectation.statusCodePrincipale+"&replyPrefixQueryParameter=GovWay-TestSuite-&fault=true&faultSoapVersion=12&replyQueryParameter=id_connettore";
+							locationUltimoErrore = "http://localhost:8080/TestService/echo?id_connettore="+connettore+"&returnCode="+requestExpectation.statusCodePrincipale+"&replyPrefixQueryParameter=GovWay-TestSuite-&fault=true";
+							if(Utils.isJenkins()) {
+								locationUltimoErrore = locationUltimoErrore + "&replyQueryParameter=id_connettore&faultSoapVersion=12";
+							}
+							else {
+								locationUltimoErrore = locationUltimoErrore + "&faultSoapVersion=12&replyQueryParameter=id_connettore";
+							}
 						} else {
 							ultimoErrore =  "Consegna [http] con errore: errore HTTP " + requestExpectation.statusCodePrincipale;
 							locationUltimoErrore = "http://localhost:8080/TestService/echo?id_connettore="+connettore+"&returnCode="+requestExpectation.statusCodePrincipale+"&replyPrefixQueryParameter=GovWay-TestSuite-&replyQueryParameter=id_connettore";
@@ -554,14 +567,26 @@ public class SoapTest extends ConfigLoader {
 							formatoFault = CommonConsegnaMultipla.FORMATO_FAULT_SOAP1_1;
 							ultimoErrore = "Consegna [http] con errore: errore applicativo, <SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><faultcode xmlns:ns0=\"http://www.openspcoop2.org/example\">ns0:Server.OpenSPCoopExa"
 									+ "mpleFault</faultcode><faultstring>Fault ritornato dalla servlet di trace, esempio di OpenSPCoop</faultstring><faultactor>OpenSPCoopTrace</faultactor></SOAP-ENV:Fault>";
-							locationUltimoErrore = "http://localhost:8080/TestService/echo?id_connettore="+connettore+"&returnCode="+requestExpectation.statusCodePrincipale+"&replyPrefixQueryParameter=GovWay-TestSuite-&fault=true&faultSoapVersion=11&replyQueryParameter=id_connettore";							
+							locationUltimoErrore = "http://localhost:8080/TestService/echo?id_connettore="+connettore+"&returnCode="+requestExpectation.statusCodePrincipale+"&replyPrefixQueryParameter=GovWay-TestSuite-&fault=true";							
+							if(Utils.isJenkins()) {
+								locationUltimoErrore = locationUltimoErrore + "&replyQueryParameter=id_connettore&faultSoapVersion=11";	
+							}
+							else {
+								locationUltimoErrore = locationUltimoErrore + "&faultSoapVersion=11&replyQueryParameter=id_connettore";	
+							}
 						} else if (requestExpectation.tipoFault == TipoFault.SOAP1_2) {
 							fault 		 = CommonConsegnaMultipla.FAULT_SOAP1_2;
 							formatoFault = CommonConsegnaMultipla.FORMATO_FAULT_SOAP1_2;
 							ultimoErrore = "Consegna [http] con errore: errore applicativo, <env:Fault xmlns:env=\"http://www.w3.org/2003/05/soap-envelope\"><env:Code><env:Value>env:Receiver</env:Value><env:Subcode><env:Value xmlns:ns1=\"http://www.ope"
 									+ "nspcoop2.org/example\">ns1:Server.OpenSPCoopExampleFault</env:Value></env:Subcode></env:Code><env:Reason><env:Text xml:lang=\"en-US\">Fault ritornato dalla servlet di trace, esempio di OpenSPCoop</env:Text></env:Reason><env:Role>OpenSPCoopTr"
 									+ "ace</env:Role></env:Fault>";
-							locationUltimoErrore = "http://localhost:8080/TestService/echo?id_connettore="+connettore+"&returnCode="+requestExpectation.statusCodePrincipale+"&replyPrefixQueryParameter=GovWay-TestSuite-&fault=true&faultSoapVersion=12&replyQueryParameter=id_connettore";
+							locationUltimoErrore = "http://localhost:8080/TestService/echo?id_connettore="+connettore+"&returnCode="+requestExpectation.statusCodePrincipale+"&replyPrefixQueryParameter=GovWay-TestSuite-&fault=true";
+							if(Utils.isJenkins()) {
+								locationUltimoErrore = locationUltimoErrore + "&replyQueryParameter=id_connettore&faultSoapVersion=12";
+							}
+							else {
+								locationUltimoErrore = locationUltimoErrore + "&faultSoapVersion=12&replyQueryParameter=id_connettore";
+							}
 						} else {
 							ultimoErrore =  "Consegna [http] con errore: errore HTTP " + requestExpectation.statusCodePrincipale;
 							locationUltimoErrore = "http://localhost:8080/TestService/echo?id_connettore="+connettore+"&returnCode="+requestExpectation.statusCodePrincipale+"&replyPrefixQueryParameter=GovWay-TestSuite-&replyQueryParameter=id_connettore";
@@ -583,12 +608,23 @@ public class SoapTest extends ConfigLoader {
 						if (fault.isEmpty() ) {
 							query += " and fault_ultimo_errore is null and formato_fault_ultimo_errore is null";
 							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode);
-							assertEquals(Integer.valueOf(1), count);
 						} else {
 							query += " and fault_ultimo_errore LIKE '"+fault+"' and formato_fault_ultimo_errore = ?";
 							count = ConfigLoader.getDbUtils().readValue(query, Integer.class, id_transazione, connettore, dataRiferimentoTest, esitoNotifica, statusCode, formatoFault);
-							assertEquals(Integer.valueOf(1), count);
 						}
+						
+						// debug for error
+						if(count.intValue() != 1) {
+							ConfigLoader.getLoggerCore().error("configurazione differente da quella attesa (dataRiferimentoTest:"+dataRiferimentoTest+"):");
+							String query2 = "select data_ultimo_errore, dettaglio_esito_ultimo_errore, codice_risposta_ultimo_errore, ultimo_errore, location_ultimo_errore, fault_ultimo_errore, formato_fault_ultimo_errore from transazioni_sa where id_transazione = ? and connettore_nome = ?";
+							List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, id_transazione, connettore);
+							for (var v : letto) {
+								ConfigLoader.getLoggerCore().error(v.toString());
+							}
+						}
+						
+						assertEquals(Integer.valueOf(1), count);
+						
 					}
 					
 					
