@@ -259,6 +259,29 @@ public class FileSystemUtilities {
 	}
 
 
+	public static boolean emptyDir(String dir) {
+		File d = new File(dir);
+		if(d.exists()==false){
+			return true;
+		}
+		return FileSystemUtilities.emptyDir(d);
+	}
+	
+    public static boolean emptyDir(File dir) {
+
+        if (dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i=0; i<children.length; i++) {
+                boolean success = FileSystemUtilities.deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+    
 	public static boolean deleteDir(String dir) {
 		File d = new File(dir);
 		if(d.exists()==false){
@@ -269,14 +292,8 @@ public class FileSystemUtilities {
 	
     public static boolean deleteDir(File dir) {
 
-        if (dir.isDirectory()) {
-            String[] children = dir.list();
-            for (int i=0; i<children.length; i++) {
-                boolean success = FileSystemUtilities.deleteDir(new File(dir, children[i]));
-                if (!success) {
-                    return false;
-                }
-            }
+        if (!emptyDir(dir)) {
+        	return false;
         }
 
         // The directory is now empty so now it can be smoked

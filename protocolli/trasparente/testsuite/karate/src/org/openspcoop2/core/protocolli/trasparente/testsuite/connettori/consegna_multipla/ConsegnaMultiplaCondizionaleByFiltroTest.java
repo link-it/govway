@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -32,7 +32,6 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.MESSAGGIO_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_FALLBACK;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.IdentificazioneFallitaTest.MESSAGGIO_DIAGNOSTICO_IDENTIFICAZIONE_FALLITA_FALLBACK_TUTTI_CONNETTORI;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -55,8 +54,11 @@ import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 /**
+ * ConsegnaMultiplaCondizionaleByFiltroTest
  * 
  * @author Francesco Scarlato
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  * 
  * QUERY:
@@ -77,11 +79,6 @@ public class ConsegnaMultiplaCondizionaleByFiltroTest extends ConfigLoader {
 	@BeforeClass
 	public static void Before() {
 		Common.fermaRiconsegne(dbUtils);
-		File cartellaRisposte = CommonConsegnaMultipla.connettoriFilePath.toFile();
-		cartellaRisposte.mkdir();
-		if (!cartellaRisposte.isDirectory()|| !cartellaRisposte.canWrite()) {
-			throw new RuntimeException("E' necessario creare la cartella per scrivere le richieste dei connettori, indicata dalla poprietà: <connettori.consegna_multipla.connettore_file.path> ");
-		}
 	}
 	
 	@AfterClass

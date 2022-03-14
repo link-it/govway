@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -27,7 +27,6 @@ import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.c
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.checkResponses;
 import static org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla.statusCodeVsConnettori;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -47,21 +46,18 @@ import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 /**
+ * ConsegnaMultiplaCondizionaleByNomeTest
  * 
  * @author Francesco Scarlato
- * http://localhost:8080/TestService/echo?id_connettore=ConnettorePrincipale
-
+ * @author $Author$
+ * @version $Rev$, $Date$
+ * 
  */
 public class ConsegnaMultiplaCondizionaleByNomeTest extends ConfigLoader {
 	
 	@BeforeClass
 	public static void Before() {
 		Common.fermaRiconsegne(dbUtils);
-		File cartellaRisposte = CommonConsegnaMultipla.connettoriFilePath.toFile();
-		cartellaRisposte.mkdir();
-		if (!cartellaRisposte.isDirectory()|| !cartellaRisposte.canWrite()) {
-			throw new RuntimeException("E' necessario creare la cartella per scrivere le richieste dei connettori, indicata dalla poprietà: <connettori.consegna_multipla.connettore_file.path> ");
-		}
 	}
 	
 	@AfterClass

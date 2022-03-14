@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -62,6 +62,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna
 import org.openspcoop2.pdd.services.cxf.IntegrationManagerException_Exception;
 import org.openspcoop2.pdd.services.cxf.MessageBox;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpResponse;
@@ -73,15 +74,16 @@ import org.openspcoop2.utils.transport.http.HttpUtilsException;
 
 
 /**
+ * ConsegnaMultiplaTest
  * 
  * @author Francesco Scarlato
+ * @author $Author$
+ * @version $Rev$, $Date$
  * 
  * Connettore0: http
  * Connettore1: http
  * Connettore2: file
  * Connettore3: file
- * 
- *  
  * 
  */
 public class ConsegnaMultiplaTest  extends ConfigLoader {
@@ -92,7 +94,9 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 	public static void Before() {
 		Common.fermaRiconsegne(dbUtils);
 		File cartellaRisposte = CommonConsegnaMultipla.connettoriFilePath.toFile();
-		cartellaRisposte.mkdir();
+		if(!cartellaRisposte.exists()) {
+			cartellaRisposte.mkdir();
+		}
 		if (!cartellaRisposte.isDirectory()|| !cartellaRisposte.canWrite()) {
 			throw new RuntimeException("E' necessario creare la cartella per scrivere le richieste dei connettori, indicata dalla poprietà: <connettori.consegna_multipla.connettore_file.path> ");
 		}
@@ -101,6 +105,10 @@ public class ConsegnaMultiplaTest  extends ConfigLoader {
 	@AfterClass
 	public static void After() {
 		Common.fermaRiconsegne(dbUtils);
+		File cartellaRisposte = CommonConsegnaMultipla.connettoriFilePath.toFile();
+		if(cartellaRisposte.exists() && cartellaRisposte.isDirectory() && cartellaRisposte.canWrite()) {
+			FileSystemUtilities.emptyDir(cartellaRisposte);
+		}
 	}
 	
 	@Test

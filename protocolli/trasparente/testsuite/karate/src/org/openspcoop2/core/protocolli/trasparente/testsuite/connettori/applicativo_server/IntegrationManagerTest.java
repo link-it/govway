@@ -1,6 +1,24 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * https://govway.org
+ * 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.applicativo_server;
 
-import java.io.File;
 import java.net.MalformedURLException;
 
 import org.junit.BeforeClass;
@@ -14,16 +32,18 @@ import org.openspcoop2.pdd.services.cxf.MessageBox;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 
+/**
+* IntegrationManagerTest
+*
+* @author Francesco Scarlato (scarlato@link.it)
+* @author $Author$
+* @version $Rev$, $Date$
+*/
 public class IntegrationManagerTest extends ConfigLoader {
 
 	@BeforeClass
 	public static void Before() {
 		Common.fermaRiconsegne(dbUtils);
-		File cartellaRisposte = CommonConsegnaMultipla.connettoriFilePath.toFile();
-		cartellaRisposte.mkdir();
-		if (!cartellaRisposte.isDirectory()|| !cartellaRisposte.canWrite()) {
-			throw new RuntimeException("E' necessario creare la cartella per scrivere le richieste dei connettori, indicata dalla poprietà: <connettori.consegna_multipla.connettore_file.path> ");
-		}
 	}
 	
 	
