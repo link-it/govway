@@ -270,6 +270,33 @@
         <stringProp name="filename">${dirResult}/${threads}_${dimensioneRichiesta}_${profiloSicurezza}_${tipoTest}_${sleepMin}_${sleepMax}.csv</stringProp>
       </ResultCollector>
       <hashTree/>
+      <kg.apc.jmeter.listener.GraphsGeneratorListener guiclass="TestBeanGUI" testclass="kg.apc.jmeter.listener.GraphsGeneratorListener" testname="jp@gc - Graphs Generator" enabled="false">
+        <boolProp name="aggregateRows">false</boolProp>
+        <boolProp name="autoScaleRows">true</boolProp>
+        <stringProp name="endOffset"></stringProp>
+        <stringProp name="excludeLabels"></stringProp>
+        <boolProp name="excludeSamplesWithRegex">false</boolProp>
+        <intProp name="exportMode">2</intProp>
+        <stringProp name="filePrefix"></stringProp>
+        <stringProp name="forceY"></stringProp>
+        <stringProp name="granulation">60000</stringProp>
+        <intProp name="graphHeight">1080</intProp>
+        <intProp name="graphWidth">1920</intProp>
+        <stringProp name="includeLabels"></stringProp>
+        <boolProp name="includeSamplesWithRegex">false</boolProp>
+        <stringProp name="limitRows">150</stringProp>
+        <stringProp name="lineWeight"></stringProp>
+        <stringProp name="lowCountLimit"></stringProp>
+        <stringProp name="outputBaseFolder">${dirResult}/graph-generator</stringProp>
+        <boolProp name="paintGradient">true</boolProp>
+        <boolProp name="paintZeroing">true</boolProp>
+        <boolProp name="preventOutliers">false</boolProp>
+        <boolProp name="relativeTimes">false</boolProp>
+        <stringProp name="resultsFileName">${dirResult}/${threads}_${dimensioneRichiesta}_${profiloSicurezza}_${tipoTest}_${sleepMin}_${sleepMax}.csv</stringProp>
+        <stringProp name="startOffset"></stringProp>
+        <stringProp name="successFilter"></stringProp>
+      </kg.apc.jmeter.listener.GraphsGeneratorListener>
+      <hashTree/>
     </hashTree>
   </hashTree>
 </jmeterTestPlan>

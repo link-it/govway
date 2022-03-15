@@ -6,18 +6,20 @@ fi
 source ../../config.properties
 
 jmeterTestFile=${BENCHMARK_HOME}/test/rest/TestErogazioni.jmx
+jmeterGraphFile=${BENCHMARK_HOME}/test/rest/GraphsGenerator.jmx
 
 # Secondi
 #duration=20
 duration=2
 
 # Threads
+threads="20 50"
 #threads="20 50 100"
-threads="100 200"
+#threads="100 200"
 threadsRampUp=5
 
 # Dimensione dei test
-dimensioni="1024 51200"
+dimensioni=1024
 #dimensioni="1024 51200 409600"
 
 # Soggetto
@@ -113,12 +115,19 @@ echo $headers > ${resultDir}/${joinedCsv}
 tail -q -n +2 $files >> ${resultDir}/${joinedCsv}
 
 # Produco dashboard e statistiche di jmeter
+set -x
 ${binJMeter}/jmeter -g ${resultDir}/${joinedCsv} -o ${resultDir}/dashboard
+set +x
 echo "JMeter Report: ${resultDir}/dashboard/index.html"
 
 # Produco statistiche aggregate in csv
+set -x
 ${binJMeter}/JMeterPluginsCMD.sh --generate-csv ${resultDir}/aggregatiConPlugin.csv --input-jtl ${resultDir}/${joinedCsv} --plugin-type AggregateReport
+set +x
 echo "Aggregate Statistics: ${resultDir}/aggregatiConPlugin.csv"
+
+echo "========================"
+echo "Arricchisco il file ${resultDir}/aggregatiConPlugin.csv con i dati di input.."
 
 # Arricchisto il file aggregatiConPlugin.csv con i valori di input dei test
 # Per l'occasione creo un nuovo file.
@@ -128,24 +137,22 @@ echo $headers > ${resultDir}/aggregatiConPluginExtended.csv
 
 # Leggo le linee dal file e le arrichisco
 while read -r line; do
-    echo "LINEA: $line"
 	label=`cut -f 1 -d "," <<< $line`
-	echo "LABEL: $label"
 
 	if [ "$label" = "TOTAL" ]; then
-		echo "Skipping label $label"
+		#echo "Skipping label $label"
 		continue
 	fi
 
 	# Leggo la seconda riga ed estraggo gli ultimi cinque valori
 	csvfile=${resultDir}/${label}.csv
-	echo "CSV FILE: $csvfile"
+	#echo "CSV FILE: $csvfile"
 
 	riga=`sed -n '2{p;q}' $csvfile`
-	echo "Seconda Riga: $riga"
+	#echo "Seconda Riga: $riga"
 
 	IFS=, read -r -a test_input_values <<< "$riga"
-	echo "ARRAY: $test_input_values"
+	#echo "ARRAY: $test_input_values"
 
 	ramp_up=${test_input_values[-1]}
 	threads=${test_input_values[-2]}
@@ -155,10 +162,15 @@ while read -r line; do
 	dimensione=${test_input_values[-6]}
 
 	new_line="$line,$dimensione,$tipo_test,$azione,$soggetto,$threads,$ramp_up"
-	echo "New Line: $new_line"
+	#echo "New Line: $new_line"
 
 	echo $new_line >> ${resultDir}/aggregatiConPluginExtended.csv
 
-	echo "==================="
+	#echo "==================="
 done < <(tail -n "+2" ${resultDir}/aggregatiConPlugin.csv)
 
+
+# Adesso eseguiamo il test "Dummy" che porterà poi alla generazione dei grafici
+set -x
+${binJMeter}/jmeter -n -t ${jmeterGraphFile} -JlogDir=${logDir}  -j ${logDir}/jmeter.log -JoutputFolder=${resultDir}/graphs -JjoinedResults=${resultDir}/${joinedCsv}
+set +x
