@@ -162,7 +162,7 @@
           <stringProp name="shareMode">shareMode.all</stringProp>
         </CSVDataSet>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="${threads}_${dimensioneRichiesta}_${profiloSicurezza}_${tipoTest}_${sleepMin}_${sleepMax}" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="${threads}_${dimensioneRichiesta}_${profiloSicurezza}_${tipoTest}_${sleepMin}_${sleepMax}_${azione}" enabled="true">
           <elementProp name="HTTPsampler.Files" elementType="HTTPFileArgs">
             <collectionProp name="HTTPFileArgs.files">
               <elementProp name="${dirFile}/rest/messaggi/${dimensioneRichiesta}B.json" elementType="HTTPFileArg">
@@ -267,7 +267,7 @@
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">${dirResult}/${threads}_${dimensioneRichiesta}_${profiloSicurezza}_${tipoTest}_${sleepMin}_${sleepMax}.csv</stringProp>
+        <stringProp name="filename">${dirResult}/${threads}_${dimensioneRichiesta}_${profiloSicurezza}_${tipoTest}_${sleepMin}_${sleepMax}_${azione}.csv</stringProp>
       </ResultCollector>
       <hashTree/>
       <kg.apc.jmeter.listener.GraphsGeneratorListener guiclass="TestBeanGUI" testclass="kg.apc.jmeter.listener.GraphsGeneratorListener" testname="jp@gc - Graphs Generator" enabled="false">
