@@ -8,25 +8,46 @@ source ../../config.properties
 jmeterTestFile=${BENCHMARK_HOME}/test/rest/TestErogazioni.jmx
 jmeterGraphFile=${BENCHMARK_HOME}/test/rest/GraphsGenerator.jmx
 
+elencoTest="trasparente  trasparenteNoRegistrazione  trasparenteValidazione  trasparenteNoRegistrazioneValidazione  modiDoppioHeaderRichiesta  modiDoppioHeaderRichiestaRispostaDigestRichiesta  modiDoppioHeaderRichiestaFiltroDuplicati  modiHeaderAgidOAuthRichiesta  modiHeaderAgidOAuthRichiestaRispostaDigestRichiesta  modiHeaderAgidOAuthRichiestaFiltroDuplicati"
 
-# Secondi
-# TODO: fare 2 giri da 60 secondi l'uno per ogni test
-# se hai bisogno che venga fuori un nome differente puoi fare 60 e 75 secondi
-
-#duration=20
-#duration=60
-#duration="60 75"
-duration=2
+# Configurazione
+duration="2"
 
 # Threads
-threads="20 50"
-#threads="20 50 100"
-#threads="100 200"
+threads="50 100 200"	#; threads=50
 threadsRampUp=5
 
 # Dimensione dei test
-dimensioni=1024
-#dimensioni="1024 51200 409600"
+dimensioni=1024			#; dimensioni="1024 51200 409600"
+iterazioni=1
+doAllTests=false
+riscaldamento=false
+
+# ServerDelay
+declare -A minMaxSleeps
+minMaxSleeps[0]=1		# No Delay
+#minMaxSleeps[50]=100	# Intervallo 1
+#minMaxSleeps[100]=500	# Intervallo 2
+#minMaxSleeps[200]=1000 # Intervallo 3
+
+function usage() {
+	echo -e ""
+	echo -e "UTILIZZO"
+	echo -e "	./eseguiTest.sh [-r] [-a] [-n X] test\n"
+	echo -e " 		-r: Esegui il riscaldamento"
+	echo -e "		-a: Esegui tutti i test"
+	echo -e "		-n: Esegue tutta la batteria di test X volte\n"
+	echo -e "		test = [ $elencoTest ]\n"
+}
+
+
+
+# Aggiungere due opzioni per ogni test:
+# TODO: Fare un test che fa tutto. Le dashboard comunque separate per funzioni. Alla fine csv unico, ordinato per nome sample
+
+
+# I seguenti valori identificano un test e vengono configurati dalle funzioni
+# di test di sotto.
 
 # Soggetto
 soggetto=ENTE
@@ -57,21 +78,7 @@ tipiTest="Proxy"
 # test6: LineeGuida con header Agid e header OAuth nella sola richiesta + filtroDuplicati
 azione=test
 
-# ServerDelay
-# NO delay:
-sleepMin=0
-sleepMax=1
-# Intervallo 1
-#sleepMin=50
-#sleepMax=100
-# Intervallo 2
-#sleepMin=100
-#sleepMax=500
-# Intervallo 3
-#sleepMin=200
-#sleepMax=1000
-
-function testTrasparente() {
+function trasparente() {
 	profiloSicurezza=none
 	protocollo=api
 	tipiTest=Proxy
@@ -80,7 +87,7 @@ function testTrasparente() {
 }
 
 
-function testTrasparenteNoRegistrazione() {
+function trasparenteNoRegistrazione() {
 	profiloSicurezza=none
 	protocollo=api
 	tipiTest=Proxy
@@ -89,7 +96,7 @@ function testTrasparenteNoRegistrazione() {
 }
 
 
-function testTrasparenteValidazione() {
+function trasparenteValidazione() {
 	profiloSicurezza=none
 	protocollo=api
 	tipiTest=Validazione
@@ -98,7 +105,7 @@ function testTrasparenteValidazione() {
 }
 
 
-function testTrasparenteNoRegistrazioneValidazione() {
+function trasparenteNoRegistrazioneValidazione() {
 	profiloSicurezza=none
 	protocollo=api
 	tipiTest=Validazione
@@ -106,122 +113,278 @@ function testTrasparenteNoRegistrazioneValidazione() {
 	outputDir=${resultDir}/${FUNCNAME[0]}
 }
 
-function testModi() {
+
+function modiDoppioHeaderRichiesta() {
 	profiloSicurezza=digest
 	protocollo=rest
 	tipiTest=Proxy
-	azione=$1
+	azione=test
 	outputDir=${resultDir}/${FUNCNAME[0]}
 }
 
-testTrasparenteNoRegistrazione
 
-rm -rf ${resultDir}
-mkdir ${resultDir}
-for threadNumber in $threads; do
-	echo "$threadNumber"
-	mkdir ${resultDir}/$threadNumber
-	for dimensione in $dimensioni; do
-		echo "- $dimensione"
-		mkdir ${resultDir}/$threadNumber/$dimensione
-		for tipoTest in $tipiTest; do
-			echo "--- ${profiloSicurezza}/$tipoTest"
-			mkdir ${resultDir}/$threadNumber/$dimensione/${profiloSicurezza}_${tipoTest}
-			echo "------- delay min:${sleepMin} max:${sleepMax}"
-			mkdir ${resultDir}/$threadNumber/$dimensione/${profiloSicurezza}_${tipoTest}/${sleepMin}_${sleepMax}
-			echo "--------- test (profiloSicurezza:${profiloSicurezza} tipoTest:$tipoTest dimensione:$dimensione threads:$threadNumber azione:$azione) ..."
-			${binJMeter}/jmeter -n -t ${jmeterTestFile} -l ${resultDir}/OUTPUT.txt -JnodoRunIP=${nodoRunIP} -JnodoRunPort=${nodoRunPort} -JclientIP=${clientIP} -JtestFileDir=${testFileDir} -JlogDir=${logDir} -Jthreads=${threadNumber} -Jduration=${duration} -JthreadsRampUp=${threadsRampUp}  -Jdimensione=${dimensione} -Jprofilo=${profilo} -Jazione=${azione} -JtipoTest=${tipoTest} -Jsoggetto=${soggetto}  -JsleepMin=${sleepMin} -JsleepMax=${sleepMax} -JproxyHost=${proxyHost} -JproxyPort=${proxyPort} -Jprotocollo=${protocollo} -JprofiloSicurezza=${profiloSicurezza} -JdirResult=${resultDir} -j ${logDir}/jmeter.log
-			mv ${resultDir}/OUTPUT.txt ${resultDir}/$threadNumber/$dimensione/${profiloSicurezza}_${tipoTest}/${sleepMin}_${sleepMax}/
-			echo "--------- test (profiloSicurezza:${profiloSicurezza} tipoTest:${tipoTest} dimensione:$dimensione threads:$threadNumber azione:$azione) finished"
+function modiDoppioHeaderRichiestaRispostaDigestRichiesta() {
+	profiloSicurezza=digest
+	protocollo=rest
+	tipiTest=Proxy
+	azione=test2
+	outputDir=${resultDir}/${FUNCNAME[0]}
+}
+
+
+function modiDoppioHeaderRichiestaFiltroDuplicati() {
+	profiloSicurezza=digest
+	protocollo=rest
+	tipiTest=Proxy
+	azione=test3
+	outputDir=${resultDir}/${FUNCNAME[0]}
+}
+
+
+function modiHeaderAgidOAuthRichiesta() {
+	profiloSicurezza=digest
+	protocollo=rest
+	tipiTest=Proxy
+	azione=test4
+	outputDir=${resultDir}/${FUNCNAME[0]}
+}
+
+
+function modiHeaderAgidOAuthRichiestaRispostaDigestRichiesta() {
+	profiloSicurezza=digest
+	protocollo=rest
+	tipiTest=Proxy
+	azione=test5
+	outputDir=${resultDir}/${FUNCNAME[0]}
+}
+
+
+function modiHeaderAgidOAuthRichiestaFiltroDuplicati() {
+	profiloSicurezza=digest
+	protocollo=rest
+	tipiTest=Proxy
+	azione=test6
+	outputDir=${resultDir}/${FUNCNAME[0]}
+}
+
+declare -A testDescriptions
+testDescriptions[trasparente]="Vengono registrate le transazioni"
+testDescriptions[trasparenteNoRegistrazione]="Non vengono registrate le transazioni"
+testDescriptions[trasparenteValidazione]="Vengono registrate le transazioni"
+testDescriptions[trasparenteNoRegistrazioneValidazione]="Non vengono registrate le transazioni"
+testDescriptions[modiDoppioHeaderRichiesta]="LineeGuida con doppio header nella sola richiesta"
+testDescriptions[modiDoppioHeaderRichiestaRispostaDigestRichiesta]="LineeGuida con dobbio header anche nella risposta + digestRichiesta"
+testDescriptions[modiDoppioHeaderRichiestaFiltroDuplicati]="LineeGuida con doppio header nella sola richiesta + filtroDuplicati"
+testDescriptions[modiHeaderAgidOAuthRichiesta]="LineeGuida con header Agid e header OAuth nella sola richiesta"
+testDescriptions[modiHeaderAgidOAuthRichiestaRispostaDigestRichiesta]="LineeGuida con header Agid e header OAuth anche nella risposta + digestRichiesta"
+testDescriptions[modiHeaderAgidOAuthRichiestaFiltroDuplicati]="LineeGuida con header Agid e header OAuth nella sola richiesta + filtroDuplicati"
+
+
+function run_jmx_test() {
+	rm -rf ${outputDir}
+	mkdir -p ${outputDir}
+	for threadNumber in $threads; do
+		echo "$threadNumber"
+		for dimensione in $dimensioni; do
+			echo "- $dimensione"
+			for tipoTest in $tipiTest; do
+				for sleepMin in "${!minMaxSleeps[@]}"; do
+					sleepMax=${minMaxSleeps[$sleepMin]}
+
+					echo "--- ${profiloSicurezza}/$tipoTest"
+					echo "------- delay min:${sleepMin} max:${sleepMax}"
+					echo "--------- test (protocollo:${protocollo} profiloSicurezza:${profiloSicurezza} tipoTest:$tipoTest dimensione:$dimensione threads:$threadNumber azione:$azione sleepMin:$sleepMin sleepMax:$sleepMax) ..."
+					echo ""
+					command="${binJMeter}/jmeter -n -t ${jmeterTestFile} -l ${resultDir}/OUTPUT.txt -JnodoRunIP=${nodoRunIP} -JnodoRunPort=${nodoRunPort} -JclientIP=${clientIP} -JtestFileDir=${testFileDir} -JlogDir=${logDir} -Jthreads=${threadNumber} -Jduration=${duration} -JthreadsRampUp=${threadsRampUp}  -Jdimensione=${dimensione} -Jprofilo=${profilo} -Jazione=${azione} -JtipoTest=${tipoTest} -Jsoggetto=${soggetto}  -JsleepMin=${sleepMin} -JsleepMax=${sleepMax} -JproxyHost=${proxyHost} -JproxyPort=${proxyPort} -Jprotocollo=${protocollo} -JprofiloSicurezza=${profiloSicurezza} -JdirResult=${outputDir} -j ${logDir}/jmeter.log"
+
+					if $riscaldamento; then
+						echo ""
+						echo -e "====================="
+						echo -e "Fase di Riscaldamento"
+						echo -e "====================="
+						echo ""
+						echo "+ $command"
+						eval $command
+						rm ${resultDir}/OUTPUT.txt
+					fi
+					echo "+ $command"
+					eval $command
+					rm ${resultDir}/OUTPUT.txt
+
+					echo ""
+					echo "--------- test (protocollo:${protocollo} profiloSicurezza:${profiloSicurezza} tipoTest:${tipoTest} dimensione:$dimensione threads:$threadNumber azione:$azione sleepMin:$sleepMin sleepMax:$sleepMax) finished"
+				done
+			done
 		done
 	done
+}
+
+# TODO: Aggiungere alle sample_variables una descrizione del test. (Certo verrà ripetuta ogni riga ma almeno ce la troviamo alla fine...)
+# TODO: Rivedere l'uso delle sample_variables, utilizzare semmai solo la label ed estrarre le info per i csv derivati dalla label.
+function aggregate_report() {	
+	echo ""
+	echo "==================================="
+	echo "GENERAZIONE DATI AGGREGATI E REPORT"
+	echo "==================================="
+	echo ""
+
+	joinedCsv="joined-results.csv"
+
+	# prendo un csv qualunque per pescare gli headers
+	# TODO Accertati che questa cosa funzioni anche su altre bash, perchè in questo caso mi da solo un csv?
+	someoutput=(${outputDir}/*.csv) 	
+	headers=`head -1 $someoutput`
+
+	# Pesco tutti i csv prodotti
+	files=""
+	for output in ${outputDir}/*.csv; do
+		files="${files} ${output}"
+	done
+
+	# Scrivo headers e concateno tutti i csv prodotti
+	echo $headers > ${outputDir}/${joinedCsv}
+	tail -q -n +2 $files >> ${outputDir}/${joinedCsv}
+
+	# Produco dashboard e statistiche di jmeter
+	set -x
+	${binJMeter}/jmeter -g ${outputDir}/${joinedCsv} -o ${outputDir}/dashboard -Jjmeter.reportgenerator.report_title="$1 - ${testDescriptions[$1]}"
+	set +x
+
+	echo -e "\n========================"
+	echo -e "JMeter Report: ${outputDir}/dashboard/index.html"
+	echo -e "========================\n"
+	# Produco statistiche aggregate in csv
+
+	set -x
+	${binJMeter}/JMeterPluginsCMD.sh --generate-csv ${outputDir}/aggregatiConPlugin.csv --input-jtl ${outputDir}/${joinedCsv} --plugin-type AggregateReport
+	set +x
+
+	echo -e "\n========================"
+	echo -e "Aggregate Statistics: ${outputDir}/aggregatiConPlugin.csv"
+	echo -e "========================\n"
+
+	echo -e "\n========================"
+	echo -e "Arricchisco il file ${outputDir}/aggregatiConPlugin.csv con i dati di input.."
+	echo -e "========================\n"
+
+	# Arricchisco il file aggregatiConPlugin.csv con i valori di input dei test
+	# Per l'occasione creo un nuovo file.
+	headers=`sed -n '1{p;q}' ${outputDir}/aggregatiConPlugin.csv`
+	headers="$headers,profiloSicurezza,sleepMax,sleepMin,protocollo,dimensione,tipoTest,azione,soggetto,threads,threads.ramp-up"
+	echo $headers > ${outputDir}/aggregatiConPluginExtended.csv
+
+	# Leggo le linee dal file e le arrichisco
+	while read -r line; do
+		label=`cut -f 1 -d "," <<< $line`
+
+		if [ "$label" = "TOTAL" ]; then
+			#echo "Skipping label $label"
+			continue
+		fi
+
+		# Leggo la seconda riga ed estraggo gli ultimi cinque valori
+		csvfile=${outputDir}/${label}.csv
+		#echo "CSV FILE: $csvfile"
+
+		riga=`sed -n '2{p;q}' $csvfile`
+		#echo "Seconda Riga: $riga"
+
+		IFS=, read -r -a test_input_values <<< "$riga"
+
+		_ramp_up=${test_input_values[-1]}
+		_threads=${test_input_values[-2]}
+		_soggetto=${test_input_values[-3]}
+		_azione=${test_input_values[-4]}
+		_tipo_test=${test_input_values[-5]}
+		_dimensione=${test_input_values[-6]}
+		_protocollo=${test_input_values[-7]}
+		_sleepMin=${test_input_values[-8]}
+		_sleepMax=${test_input_values[-9]}
+		_profiloSicurezza=${test_input_values[-10]}
+
+		new_line="$line,$_profiloSicurezza,$_sleepMax,$_sleepMin,$_protocollo,$_dimensione,$_tipo_test,$_azione,$_soggetto,$_threads,$_ramp_up"
+		
+		echo $new_line >> ${outputDir}/aggregatiConPluginExtended.csv
+
+		#echo "==================="
+	done < <(tail -n "+2" ${outputDir}/aggregatiConPlugin.csv)
+
+
+	# Adesso eseguiamo il test "Dummy" che porterà poi alla generazione dei grafici
+	set -x
+	${binJMeter}/jmeter -n -t ${jmeterGraphFile} -JlogDir=${logDir}  -j ${logDir}/jmeter.log -JoutputFolder=${outputDir}/graphs -JjoinedResults=${outputDir}/${joinedCsv}
+	set +x
+
+	# Pulizia
+	rm ${outputDir}/aggregatiConPlugin.csv
+	rm ${outputDir}/joined-results.csv
+	mv ${outputDir}/aggregatiConPluginExtended.csv ${outputDir}/result-aggregate.csv
+}
+
+
+# ====================================
+#				MAIN
+# ====================================
+
+if [ $# = 0 ]; then
+	usage
+	exit
+fi
+
+# TODO: Dare la possibilità di rieseguire un test puntuale specificando dimensioni, min\MaxSleep, ramp_up, duration e nthreads
+
+while getopts 'hran:' opt; do
+  case "$opt" in
+    r)
+		riscaldamento=true
+      	;;
+
+    a)
+		doAllTests=true
+      	;;
+
+    n)
+		if (( $OPTARG - 0 <= 0 )); then
+			echo "Numero di iterazioni non valido, inserire un valore positivo"
+			exit 1
+		fi
+		iterazioni=$OPTARG
+      	;;
+   
+    ?|h)
+		usage
+		exit 1
+      	;;
+  esac	
 done
+shift "$(($OPTIND -1))"
 
-# Alla fine del test concatena i risultati e produce le statistiche e la dashboard
+if $doAllTests; then
+	testToRun=$elencoTest
+else
+	testToRun=$@
+fi
 
-# TODO: Non so perchè questo non funziona, mi da un solo csv.
-#	ricorro al for per prendere tutti i filenames
-#	outputs=(${resultDir}/*.csv)
-#	echo "OUTPUTS: " $outputs
+rm -r ${resultDir}
+mkdir -p ${resultDir}
 
+for testConfigurator in $testToRun; do
+	echo -e "\n==================================="
+	echo -e "Esecuzione del test $testConfigurator"
+	echo -e "===================================\n"
 
-echo "==================================="
-echo "GENERAZIONE DATI AGGREGATI E REPORT"
-echo "==================================="
-
-
-# prendo un csv qualunque per pescare gli headers
-joinedCsv="joined-results.csv"
-someoutput=(${resultDir}/*.csv) # TODO Accertati che questa cosa funzioni anche su altre bash, perchè in questo caso mi da solo un csv?
-headers=`head -1 $someoutput`
-
-# Pesco tutti i csv prodotti
-files=""
-for output in ${resultDir}/*.csv; do
-	files="${files} ${output}"
-done
-
-# Scrivo headers e concateno tutti i csv prodotti
-echo $headers > ${resultDir}/${joinedCsv}
-tail -q -n +2 $files >> ${resultDir}/${joinedCsv}
-
-# Produco dashboard e statistiche di jmeter
-set -x
-${binJMeter}/jmeter -g ${resultDir}/${joinedCsv} -o ${resultDir}/dashboard
-set +x
-echo "JMeter Report: ${resultDir}/dashboard/index.html"
-
-# Produco statistiche aggregate in csv
-set -x
-${binJMeter}/JMeterPluginsCMD.sh --generate-csv ${resultDir}/aggregatiConPlugin.csv --input-jtl ${resultDir}/${joinedCsv} --plugin-type AggregateReport
-set +x
-echo "Aggregate Statistics: ${resultDir}/aggregatiConPlugin.csv"
-
-echo "========================"
-echo "Arricchisco il file ${resultDir}/aggregatiConPlugin.csv con i dati di input.."
-
-# Arricchisto il file aggregatiConPlugin.csv con i valori di input dei test
-# Per l'occasione creo un nuovo file.
-headers=`sed -n '1{p;q}' ${resultDir}/aggregatiConPlugin.csv`
-headers="$headers,dimensione,tipoTest,azione,soggetto,threads,threads.ramp-up"
-echo $headers > ${resultDir}/aggregatiConPluginExtended.csv
-
-# Leggo le linee dal file e le arrichisco
-while read -r line; do
-	label=`cut -f 1 -d "," <<< $line`
-
-	if [ "$label" = "TOTAL" ]; then
-		#echo "Skipping label $label"
-		continue
+	if [[ $elencoTest =~ $testConfigurator ]]; then
+		# Chiamo la funzione di test che configura l'ambiente.
+		for i in $(seq 1 $iterazioni); do
+			$testConfigurator
+			outputDir=${outputDir}/ITERAZIONE$i
+			# Eseguo il test jmx
+			run_jmx_test
+			# Aggrego i risultati e produco grafici e dashboard
+			aggregate_report $testConfigurator
+		done
+	else
+		echo "ERRORE: Test $testConfigurator inesistente."
 	fi
+done
 
-	# Leggo la seconda riga ed estraggo gli ultimi cinque valori
-	csvfile=${resultDir}/${label}.csv
-	#echo "CSV FILE: $csvfile"
-
-	riga=`sed -n '2{p;q}' $csvfile`
-	#echo "Seconda Riga: $riga"
-
-	IFS=, read -r -a test_input_values <<< "$riga"
-	#echo "ARRAY: $test_input_values"
-
-	ramp_up=${test_input_values[-1]}
-	threads=${test_input_values[-2]}
-	soggetto=${test_input_values[-3]}
-	azione=${test_input_values[-4]}
-	tipo_test=${test_input_values[-5]}
-	dimensione=${test_input_values[-6]}
-
-	new_line="$line,$dimensione,$tipo_test,$azione,$soggetto,$threads,$ramp_up"
-	#echo "New Line: $new_line"
-
-	echo $new_line >> ${resultDir}/aggregatiConPluginExtended.csv
-
-	#echo "==================="
-done < <(tail -n "+2" ${resultDir}/aggregatiConPlugin.csv)
-
-
-# Adesso eseguiamo il test "Dummy" che porterà poi alla generazione dei grafici
-set -x
-${binJMeter}/jmeter -n -t ${jmeterGraphFile} -JlogDir=${logDir}  -j ${logDir}/jmeter.log -JoutputFolder=${resultDir}/graphs -JjoinedResults=${resultDir}/${joinedCsv}
-set +x
