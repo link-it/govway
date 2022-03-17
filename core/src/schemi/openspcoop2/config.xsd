@@ -1302,7 +1302,7 @@
 		<xsd:attribute name="conversione" type="xsd:boolean" default="false"/>
 		<xsd:attribute name="conversione-tipo" type="xsd:string" />
 		<xsd:attribute name="content-type" type="xsd:string" />
-		<xsd:attribute name="return-code" type="xsd:unsignedInt" />
+		<xsd:attribute name="return-code" type="xsd:string" /> <!-- per poter avere dinamicita -->
 	</xsd:complexType>
 	<xsd:complexType name="trasformazione-regola-applicabilita-risposta">
 		<xsd:sequence>

@@ -951,7 +951,8 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 							replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE,
 									eccezioneProtocollo.getSoggettoProduceEccezione().getTipo()+
 									eccezioneProtocollo.getSoggettoProduceEccezione().getNome());
-						if(eccezioneProtocollo.getEccezioneProtocollo().getDescrizione(this.protocolFactory).indexOf(msgPortaDiDominioNonDisponibile)==-1)
+						String descrizioneErrore = eccezioneProtocollo.getEccezioneProtocollo().getDescrizione(this.protocolFactory);
+						if(descrizioneErrore!=null && descrizioneErrore.indexOf(msgPortaDiDominioNonDisponibile)==-1)
 							eccezioneProtocollo.getEccezioneProtocollo().
 							setDescrizione(eccezioneProtocollo.getSoggettoProduceEccezione().toString() +" ha rilevato le seguenti eccezioni:\n"+eccezioneProtocollo.getEccezioneProtocollo().getDescrizione(this.protocolFactory));
 						

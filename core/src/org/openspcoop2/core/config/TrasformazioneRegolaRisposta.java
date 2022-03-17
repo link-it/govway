@@ -48,7 +48,7 @@ import java.util.List;
  * 		&lt;attribute name="conversione" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
  * 		&lt;attribute name="conversione-tipo" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * 		&lt;attribute name="content-type" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
- * 		&lt;attribute name="return-code" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" use="optional"/&gt;
+ * 		&lt;attribute name="return-code" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * &lt;/complexType&gt;
  * </pre>
  * 
@@ -180,11 +180,11 @@ public class TrasformazioneRegolaRisposta extends org.openspcoop2.utils.beans.Ba
     this.contentType = contentType;
   }
 
-  public java.lang.Integer getReturnCode() {
+  public java.lang.String getReturnCode() {
     return this.returnCode;
   }
 
-  public void setReturnCode(java.lang.Integer returnCode) {
+  public void setReturnCode(java.lang.String returnCode) {
     this.returnCode = returnCode;
   }
 
@@ -255,8 +255,8 @@ public class TrasformazioneRegolaRisposta extends org.openspcoop2.utils.beans.Ba
   @XmlAttribute(name="content-type",required=false)
   protected java.lang.String contentType;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="return-code",required=false)
-  protected java.lang.Integer returnCode;
+  protected java.lang.String returnCode;
 
 }

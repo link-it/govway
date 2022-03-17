@@ -4606,13 +4606,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			}
 			
 			if(pattern != null) {
-				sqlQueryObject.addWhereCondition(nomeTabellaRisposta+".applicabilita_pattern = ?");
+				sqlQueryObject.addWhereLikeCondition(nomeTabellaRisposta+".applicabilita_pattern", pattern, false, false);
 			} else {
 				sqlQueryObject.addWhereIsNullCondition(nomeTabellaRisposta+".applicabilita_pattern");
 			}
 			
 			if(contentType != null) {
-				sqlQueryObject.addWhereCondition(nomeTabellaRisposta+".applicabilita_ct = ?");
+				sqlQueryObject.addWhereLikeCondition(nomeTabellaRisposta+".applicabilita_ct", contentType, false, false);
 			} else {
 				sqlQueryObject.addWhereIsNullCondition(nomeTabellaRisposta+".applicabilita_ct");
 			}
@@ -4627,10 +4627,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				stmt.setInt(parameterIndex ++, statusMin);
 			if(statusMax != null)
 				stmt.setInt(parameterIndex ++, statusMax);
-			if(pattern != null)
-				stmt.setString(parameterIndex ++, pattern);
-			if(contentType != null)
-				stmt.setString(parameterIndex ++, contentType);
 			
 			rs = stmt.executeQuery();
 			if (rs.next()) {
@@ -4849,10 +4845,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDB);
 		risposta.setConversioneTemplate(jdbcAdapter.getBinaryData(rs, "conversione_template"));
 		risposta.setContentType(rs.getString("content_type"));
-		int return_code = rs.getInt("return_code");
-		if(return_code>0) {
-			risposta.setReturnCode(return_code);
-		}
+		risposta.setReturnCode(rs.getString("return_code"));
 		
 		int trasformazione_rest = rs.getInt("rest_transformation");
 		if(CostantiDB.TRUE == trasformazione_rest) {

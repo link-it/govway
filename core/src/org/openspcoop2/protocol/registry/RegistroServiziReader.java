@@ -56,6 +56,7 @@ import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
+import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortaDominio;
@@ -67,6 +68,9 @@ import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
+import org.openspcoop2.core.registry.constants.TipiDocumentoLivelloServizio;
+import org.openspcoop2.core.registry.constants.TipiDocumentoSemiformale;
+import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziAzioneNotFound;
@@ -375,6 +379,8 @@ public class RegistroServiziReader {
 				
 				String restAccordoServizioPrefix = RegistroServizi._toKey_getRestAccordoServizioPrefix();
 				
+				String documentoPrefix = RegistroServizi._toKey_prefixGetAllegatoAccordoServizioParteComune(idAccordo);
+				
 				for (String key : keys) {
 					if(key!=null) {
 						if(key.startsWith(prefixServizioCorrelatoPrefix) && key.contains(servizioCorrelato)) {
@@ -481,6 +487,9 @@ public class RegistroServiziReader {
 								}
 							}
 						}
+						else if(key.startsWith(documentoPrefix)) {
+							keyForClean.add(key);
+						}
 					}
 				}
 			}
@@ -536,6 +545,8 @@ public class RegistroServiziReader {
 				String restAccordoServizioPrefix = RegistroServizi._toKey_getRestAccordoServizioPrefix();
 				String restAccordoServizioService = RegistroServizi._toKey_getRestAccordoServizioService(idServizio);
 				
+				String documentoPrefix = RegistroServizi._toKey_prefixGetAllegatoAccordoServizioParteSpecifica(idServizio);
+				
 				for (String key : keys) {
 					if(key!=null) {
 						if(key.startsWith(prefixAccordo)) {
@@ -579,6 +590,9 @@ public class RegistroServiziReader {
 							keyForClean.add(key);
 						}
 						else if(key.startsWith(restAccordoServizioPrefix) && key.contains(restAccordoServizioService)) {
+							keyForClean.add(key);
+						}
+						else if(key.startsWith(documentoPrefix)) {
 							keyForClean.add(key);
 						}
 					}
@@ -2333,7 +2347,7 @@ public class RegistroServiziReader {
 	
 	
 	
-	protected  Allegati getAllegati(Connection connectionPdD, IDServizio idASPS)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	protected Allegati getAllegati(Connection connectionPdD, IDServizio idASPS)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 	
 		Allegati allegati = new Allegati();
 		
@@ -2349,6 +2363,26 @@ public class RegistroServiziReader {
 		
 		return allegati;
 		
+	}
+	
+	protected Documento getAllegato(Connection connectionPdD, IDAccordo idAccordo, String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServizi.getAllegato(connectionPdD, null, idAccordo, nome);
+	}
+	protected Documento getSpecificaSemiformale(Connection connectionPdD, IDAccordo idAccordo, TipiDocumentoSemiformale tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServizi.getSpecificaSemiformale(connectionPdD, null, idAccordo, tipo, nome);
+	}
+	
+	protected Documento getAllegato(Connection connectionPdD, IDServizio idASPS, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServizi.getAllegato(connectionPdD, null, idASPS, nome);
+	}
+	protected Documento getSpecificaSemiformale(Connection connectionPdD, IDServizio idASPS, TipiDocumentoSemiformale tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServizi.getSpecificaSemiformale(connectionPdD, null, idASPS, tipo, nome);
+	}
+	protected Documento getSpecificaSicurezza(Connection connectionPdD, IDServizio idASPS, TipiDocumentoSicurezza tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServizi.getSpecificaSicurezza(connectionPdD, null, idASPS, tipo, nome);
+	}
+	protected Documento getSpecificaLivelloServizio(Connection connectionPdD, IDServizio idASPS, TipiDocumentoLivelloServizio tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServizi.getSpecificaLivelloServizio(connectionPdD, null, idASPS, tipo, nome);
 	}
 	
 

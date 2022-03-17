@@ -50,6 +50,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
+import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
@@ -62,7 +63,11 @@ import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
+import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
+import org.openspcoop2.core.registry.constants.TipiDocumentoLivelloServizio;
+import org.openspcoop2.core.registry.constants.TipiDocumentoSemiformale;
+import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
@@ -2668,6 +2673,181 @@ public class RegistroServizi  {
 			throw new DriverRegistroServiziNotFound("["+nomeMetodo+"] Elementi non trovati");
 	}
 	
+	
+	
+	
+	
+	/* ********  R I C E R C A  D O C U M E N T I  ******** */
+	
+	protected static String _toKey_prefixGetAllegatoAccordoServizioParteComune(IDAccordo idAccordo){
+		return "getAllegatoAccordoServizioParteComune_"+idAccordo.toString()+"_";
+	}
+	protected static String getKeyGetAllegatoAccordoServizioParteComune(IDAccordo idAccordo, RuoliDocumento ruolo, Object tipo, String nome){
+		StringBuilder key = new StringBuilder(_toKey_prefixGetAllegatoAccordoServizioParteComune(idAccordo));
+		key.append(ruolo.toString());
+		if(tipo!=null) {
+			key.append("_").append(tipo.toString());
+		}
+		key.append("_").append(nome);
+		return key.toString();
+	}
+	
+	protected Documento getAllegato(Connection connectionPdD, String nomeRegistro, IDAccordo idAccordo, String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return _getAllegatoAccordoServizioParteComune(connectionPdD, nomeRegistro, "getAllegato", 
+				idAccordo,
+				RuoliDocumento.allegato, null, nome);
+	}
+	protected Documento getSpecificaSemiformale(Connection connectionPdD, String nomeRegistro, IDAccordo idAccordo, TipiDocumentoSemiformale tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return _getAllegatoAccordoServizioParteComune(connectionPdD, nomeRegistro, "getSpecificaSemiformale", 
+				idAccordo,
+				RuoliDocumento.specificaSemiformale, tipo, nome);
+	}
+	
+	private Documento _getAllegatoAccordoServizioParteComune(Connection connectionPdD, String nomeRegistro, String nomeMetodo, 
+			IDAccordo idAccordo,
+			RuoliDocumento ruolo, Object tipo, String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		
+		// Raccolta dati
+		if(idAccordo == null || ruolo==null || nome == null)
+			throw new DriverRegistroServiziException("["+nomeMetodo+"]: Parametri non definito");
+		if(!RuoliDocumento.allegato.equals(ruolo)) {
+			if(tipo==null) {
+				throw new DriverRegistroServiziException("["+nomeMetodo+"]: Tipo documento definito");
+			}
+		}
+
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = getKeyGetAllegatoAccordoServizioParteComune(idAccordo, ruolo, tipo, nome);   
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverRegistroServiziNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverRegistroServiziNotFound) response.getException();
+					else
+						throw (DriverRegistroServiziException) response.getException();
+				}else{
+					return ((Documento) response.getObject());
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		Documento documento = null;
+		if(RuoliDocumento.allegato.equals(ruolo)) {
+			if(this.cache!=null){
+				documento = (Documento) this.getObjectCache(key,nomeMetodo,nomeRegistro,null,connectionPdD, idAccordo, nome);
+			}else{
+				documento = (Documento) this.getObject(nomeMetodo,nomeRegistro,null,connectionPdD, idAccordo, nome);
+			}
+		}
+		else {
+			if(this.cache!=null){
+				documento = (Documento) this.getObjectCache(key,nomeMetodo,nomeRegistro,null,connectionPdD, idAccordo, tipo, nome);
+			}else{
+				documento = (Documento) this.getObject(nomeMetodo,nomeRegistro,null,connectionPdD, idAccordo, tipo, nome);
+			}
+		}
+
+		if(documento!=null)
+			return documento;
+		else
+			throw new DriverRegistroServiziNotFound("["+nomeMetodo+"] Documento non trovato");
+		
+	}
+	
+	
+	
+	protected static String _toKey_prefixGetAllegatoAccordoServizioParteSpecifica(IDServizio idServizio){
+		return "getAllegatoAccordoServizioParteSpecifica_"+idServizio.toString(false)+"_";
+	}
+	protected static String getKeyGetAllegatoAccordoServizioParteSpecifica(IDServizio idServizio, RuoliDocumento ruolo, Object tipo, String nome){
+		StringBuilder key = new StringBuilder(_toKey_prefixGetAllegatoAccordoServizioParteSpecifica(idServizio));
+		key.append(ruolo.toString());
+		if(tipo!=null) {
+			key.append("_").append(tipo.toString());
+		}
+		key.append("_").append(nome);
+		return key.toString();
+	}
+	
+	protected Documento getAllegato(Connection connectionPdD, String nomeRegistro, IDServizio idServizio, String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return _getAllegatoAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, "getAllegato", 
+				idServizio,
+				RuoliDocumento.allegato, null, nome);
+	}
+	protected Documento getSpecificaSemiformale(Connection connectionPdD, String nomeRegistro, IDServizio idServizio, TipiDocumentoSemiformale tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return _getAllegatoAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, "getSpecificaSemiformale", 
+				idServizio,
+				RuoliDocumento.specificaSemiformale, tipo, nome);
+	}
+	protected Documento getSpecificaSicurezza(Connection connectionPdD, String nomeRegistro,  IDServizio idServizio, TipiDocumentoSicurezza tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return _getAllegatoAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, "getSpecificaSicurezza", 
+				idServizio,
+				RuoliDocumento.specificaSicurezza, tipo, nome);
+	}
+	protected Documento getSpecificaLivelloServizio(Connection connectionPdD, String nomeRegistro,  IDServizio idServizio, TipiDocumentoLivelloServizio tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return _getAllegatoAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, "getSpecificaLivelloServizio", 
+				idServizio,
+				RuoliDocumento.specificaSicurezza, tipo, nome);
+	}
+	
+	private Documento _getAllegatoAccordoServizioParteSpecifica(Connection connectionPdD, String nomeRegistro, String nomeMetodo, 
+			IDServizio idServizio,
+			RuoliDocumento ruolo, Object tipo, String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		
+		// Raccolta dati
+		if(idServizio == null || ruolo==null || nome == null)
+			throw new DriverRegistroServiziException("["+nomeMetodo+"]: Parametri non definito");
+		if(!RuoliDocumento.allegato.equals(ruolo)) {
+			if(tipo==null) {
+				throw new DriverRegistroServiziException("["+nomeMetodo+"]: Tipo documento definito");
+			}
+		}
+
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = getKeyGetAllegatoAccordoServizioParteSpecifica(idServizio, ruolo, tipo, nome);   
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverRegistroServiziNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverRegistroServiziNotFound) response.getException();
+					else
+						throw (DriverRegistroServiziException) response.getException();
+				}else{
+					return ((Documento) response.getObject());
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		Documento documento = null;
+		if(RuoliDocumento.allegato.equals(ruolo)) {
+			if(this.cache!=null){
+				documento = (Documento) this.getObjectCache(key,nomeMetodo,nomeRegistro,null,connectionPdD, idServizio, nome);
+			}else{
+				documento = (Documento) this.getObject(nomeMetodo,nomeRegistro,null,connectionPdD, idServizio, nome);
+			}
+		}
+		else {
+			if(this.cache!=null){
+				documento = (Documento) this.getObjectCache(key,nomeMetodo,nomeRegistro,null,connectionPdD, idServizio, tipo, nome);
+			}else{
+				documento = (Documento) this.getObject(nomeMetodo,nomeRegistro,null,connectionPdD, idServizio, tipo, nome);
+			}
+		}
+
+		if(documento!=null)
+			return documento;
+		else
+			throw new DriverRegistroServiziNotFound("["+nomeMetodo+"] Documento non trovato");
+		
+	}
 	
 	
 	

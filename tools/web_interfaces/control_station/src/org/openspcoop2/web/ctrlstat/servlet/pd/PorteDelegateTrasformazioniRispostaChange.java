@@ -489,7 +489,7 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 				rispostaDaAggiornare.getApplicabilita().getContentTypeList().addAll(Arrays.asList(contentType.split(",")));
 			}
 			
-			rispostaDaAggiornare.setReturnCode(StringUtils.isNotEmpty(trasformazioneContenutoRispostaReturnCode) ? Integer.parseInt(trasformazioneContenutoRispostaReturnCode) : null);
+			rispostaDaAggiornare.setReturnCode(StringUtils.isNotEmpty(trasformazioneContenutoRispostaReturnCode) ? trasformazioneContenutoRispostaReturnCode : null);
 			
 			rispostaDaAggiornare.setConversione(trasformazioneContenutoRispostaAbilitato);
 			

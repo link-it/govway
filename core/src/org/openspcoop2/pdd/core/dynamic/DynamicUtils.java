@@ -230,6 +230,10 @@ public class DynamicUtils {
 						dynamicMap.put(Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT, requestInfo.getProtocolContext());
 						dynamicMap.put(Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT.toLowerCase(), requestInfo.getProtocolContext());
 					}
+					if(requestInfo.getIdServizio()!=null) {
+						AttachmentsReader aReader = new AttachmentsReader(requestInfo.getIdServizio());
+						dynamicMap.put(Costanti.MAP_ATTACHMENTS_OBJECT, aReader);
+					}
 				}
 			}
 			if(dynamicMap.containsKey(Costanti.MAP_TOKEN_INFO)==false) {

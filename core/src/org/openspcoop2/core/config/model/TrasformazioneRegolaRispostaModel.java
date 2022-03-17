@@ -49,7 +49,7 @@ public class TrasformazioneRegolaRispostaModel extends AbstractModel<Trasformazi
 		this.CONVERSIONE = new Field("conversione",boolean.class,"trasformazione-regola-risposta",TrasformazioneRegolaRisposta.class);
 		this.CONVERSIONE_TIPO = new Field("conversione-tipo",java.lang.String.class,"trasformazione-regola-risposta",TrasformazioneRegolaRisposta.class);
 		this.CONTENT_TYPE = new Field("content-type",java.lang.String.class,"trasformazione-regola-risposta",TrasformazioneRegolaRisposta.class);
-		this.RETURN_CODE = new Field("return-code",java.lang.Integer.class,"trasformazione-regola-risposta",TrasformazioneRegolaRisposta.class);
+		this.RETURN_CODE = new Field("return-code",java.lang.String.class,"trasformazione-regola-risposta",TrasformazioneRegolaRisposta.class);
 	
 	}
 	
@@ -66,7 +66,7 @@ public class TrasformazioneRegolaRispostaModel extends AbstractModel<Trasformazi
 		this.CONVERSIONE = new ComplexField(father,"conversione",boolean.class,"trasformazione-regola-risposta",TrasformazioneRegolaRisposta.class);
 		this.CONVERSIONE_TIPO = new ComplexField(father,"conversione-tipo",java.lang.String.class,"trasformazione-regola-risposta",TrasformazioneRegolaRisposta.class);
 		this.CONTENT_TYPE = new ComplexField(father,"content-type",java.lang.String.class,"trasformazione-regola-risposta",TrasformazioneRegolaRisposta.class);
-		this.RETURN_CODE = new ComplexField(father,"return-code",java.lang.Integer.class,"trasformazione-regola-risposta",TrasformazioneRegolaRisposta.class);
+		this.RETURN_CODE = new ComplexField(father,"return-code",java.lang.String.class,"trasformazione-regola-risposta",TrasformazioneRegolaRisposta.class);
 	
 	}
 	

@@ -11997,9 +11997,7 @@ public class DriverConfigurazioneDB_LIB {
 							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("conversione_enabled", regolaRisposta.getConversione() ? CostantiDB.TRUE : CostantiDB.FALSE , InsertAndGeneratedKeyJDBCType.INT) );
 							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("conversione_tipo", regolaRisposta.getConversioneTipo() , InsertAndGeneratedKeyJDBCType.STRING) );
 							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("content_type", regolaRisposta.getContentType() , InsertAndGeneratedKeyJDBCType.STRING) );
-							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("return_code", 
-									(regolaRisposta.getReturnCode()!=null && 
-									regolaRisposta.getReturnCode().intValue()>0) ? regolaRisposta.getReturnCode().intValue() : null , InsertAndGeneratedKeyJDBCType.INT) );
+							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("return_code", regolaRisposta.getReturnCode(), InsertAndGeneratedKeyJDBCType.STRING) );
 							if(regolaRisposta.getTrasformazioneSoap()!=null) {
 								listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("soap_envelope", (regolaRisposta.getTrasformazioneSoap().getEnvelope() ? CostantiDB.TRUE : CostantiDB.FALSE) , InsertAndGeneratedKeyJDBCType.INT) );
 								listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("soap_envelope_as_attach", (regolaRisposta.getTrasformazioneSoap().getEnvelopeAsAttachment() ? CostantiDB.TRUE : CostantiDB.FALSE) , InsertAndGeneratedKeyJDBCType.INT) );
@@ -12637,10 +12635,7 @@ public class DriverConfigurazioneDB_LIB {
 					IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(tipoDB);
 					risposta.setConversioneTemplate(jdbcAdapter.getBinaryData(rs, "conversione_template"));
 					risposta.setContentType(rs.getString("content_type"));
-					int return_code = rs.getInt("return_code");
-					if(return_code>0) {
-						risposta.setReturnCode(return_code);
-					}
+					risposta.setReturnCode(rs.getString("return_code"));
 					
 					if(regola.getRichiesta().getTrasformazioneRest()!=null) { // La risposta deve essere ritrasformata in soap
 					

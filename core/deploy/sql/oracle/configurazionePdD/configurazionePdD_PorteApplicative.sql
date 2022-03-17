@@ -968,7 +968,7 @@ CREATE TABLE pa_transform_risp
 	conversione_tipo VARCHAR2(255),
 	conversione_template BLOB,
 	content_type VARCHAR2(255),
-	return_code NUMBER,
+	return_code VARCHAR2(255),
 	soap_envelope NUMBER NOT NULL,
 	soap_envelope_as_attach NUMBER NOT NULL,
 	soap_envelope_tipo VARCHAR2(255),

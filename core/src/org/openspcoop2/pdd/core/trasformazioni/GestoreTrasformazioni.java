@@ -487,20 +487,28 @@ public class GestoreTrasformazioni {
 		}
 		
 		try {	
+			// contentTypeRisposta
+			String forceContentTypeRichiesta = null;
+			if(richiesta.getContentType()!=null && StringUtils.isNotEmpty(richiesta.getContentType())) {
+				forceContentTypeRichiesta = richiesta.getContentType();
+				forceContentTypeRichiesta = DynamicUtils.convertDynamicPropertyValue("forceContentTypeRichiesta", forceContentTypeRichiesta, dynamicMap, this.pddContext, true);
+			}
+			
 			// conversione header
 			Map<String, List<String>> trasporto = parametriTrasporto;
 			Map<String, List<String>> forceAddTrasporto = new HashMap<String, List<String>>();
 			GestoreTrasformazioniUtilities.trasformazione(this.log, richiesta.getHeaderList(), trasporto, forceAddTrasporto, "Header", dynamicMap, this.pddContext);
-			if(richiesta.getContentType()!=null) {
+			if(forceContentTypeRichiesta!=null && StringUtils.isNotEmpty(forceContentTypeRichiesta)) {
 				TransportUtils.removeRawObject(trasporto, HttpConstants.CONTENT_TYPE);
-				TransportUtils.setHeader(trasporto,HttpConstants.CONTENT_TYPE, richiesta.getContentType());
+				TransportUtils.setHeader(trasporto,HttpConstants.CONTENT_TYPE, forceContentTypeRichiesta);
 			}
 			
 			// conversione url
 			Map<String, List<String>> url = parametriUrl;
 			Map<String, List<String>> forceAddUrl = new HashMap<String, List<String>>();
 			GestoreTrasformazioniUtilities.trasformazione(this.log, richiesta.getParametroUrlList(), url, forceAddUrl, "QueryParameter", dynamicMap, this.pddContext);
-			
+						
+			// trasformazione contenuto non richiesta
 			if(!trasformazioneContenuto) {
 				GestoreTrasformazioniUtilities.addTransportInfo(forceAddTrasporto, forceAddUrl, null, message);
 				
@@ -520,6 +528,7 @@ public class GestoreTrasformazioni {
 				return message;
 			}
 			
+			// trasformazione contenuto
 			boolean trasformazioneRest = false;
 			String trasformazioneRest_method = null;
 			String trasformazioneRest_path = null;
@@ -551,7 +560,7 @@ public class GestoreTrasformazioni {
 					trasporto, forceAddTrasporto,
 					url, forceAddUrl,
 					-1, 
-					richiesta.getContentType(), null, 
+					forceContentTypeRichiesta, null, 
 					risultato, 
 					trasformazioneRest, 
 					trasformazioneRest_method, trasformazioneRest_path,
@@ -827,23 +836,40 @@ public class GestoreTrasformazioni {
 		
 		try {
 			
+			// contentTypeRisposta
+			String forceContentTypeRisposta = null;
+			if(trasformazioneRisposta.getContentType()!=null && StringUtils.isNotEmpty(trasformazioneRisposta.getContentType())) {
+				forceContentTypeRisposta = trasformazioneRisposta.getContentType();
+				forceContentTypeRisposta = DynamicUtils.convertDynamicPropertyValue("forceContentTypeRisposta", forceContentTypeRisposta, dynamicMap, this.pddContext, true);
+			}
+			
 			// conversione header
 			Map<String, List<String>> trasporto = parametriTrasporto!=null ? parametriTrasporto : new HashMap<String, List<String>>();
 			Map<String, List<String>> forceAddTrasporto = new HashMap<String, List<String>>();
 			GestoreTrasformazioniUtilities.trasformazione(this.log, trasformazioneRisposta.getHeaderList(), trasporto, forceAddTrasporto, "Header", dynamicMap, this.pddContext);
-			if(trasformazioneRisposta.getContentType()!=null) {
+			if(forceContentTypeRisposta!=null && StringUtils.isNotEmpty(forceContentTypeRisposta)) {
 				TransportUtils.removeRawObject(trasporto, HttpConstants.CONTENT_TYPE);
-				TransportUtils.setHeader(trasporto,HttpConstants.CONTENT_TYPE, trasformazioneRisposta.getContentType());
+				TransportUtils.setHeader(trasporto,HttpConstants.CONTENT_TYPE, forceContentTypeRisposta);
 			}
 			
-			if(!trasformazioneContenuto) {
-				Integer forceResponseStatus = null;
-				if(trasformazioneRisposta.getReturnCode()!=null) {
-					forceResponseStatus = trasformazioneRisposta.getReturnCode();
+			// returnCode
+			String forceResponseStatus = null;
+			if(trasformazioneRisposta.getReturnCode()!=null && StringUtils.isNotEmpty(trasformazioneRisposta.getReturnCode())) {
+				forceResponseStatus = trasformazioneRisposta.getReturnCode();
+				forceResponseStatus = DynamicUtils.convertDynamicPropertyValue("forceResponseStatus", forceResponseStatus, dynamicMap, this.pddContext, true);
+				if(forceResponseStatus!=null && StringUtils.isNotEmpty(forceResponseStatus)) {
+					GestoreTrasformazioniUtilities.checkReturnCode(forceResponseStatus);
 				}
 				else {
-					forceResponseStatus = httpStatus;
+					forceResponseStatus = httpStatus+"";
 				}
+			}
+			else {
+				forceResponseStatus = httpStatus+"";
+			}
+						
+			// trasformazione contenuto non richiesta
+			if(!trasformazioneContenuto) {
 				GestoreTrasformazioniUtilities.addTransportInfo(forceAddTrasporto, null, forceResponseStatus, message);
 				
 				this.msgDiag.logPersonalizzato("trasformazione.processamentoRispostaEffettuato");
@@ -851,6 +877,7 @@ public class GestoreTrasformazioni {
 				return message;
 			}
 			
+			// trasformazione contenuto
 			boolean trasformazioneRest = false;
 			if(this.regolaTrasformazione.getRichiesta().getTrasformazioneSoap()!=null) {
 				trasformazioneRest = true; // devo tornare rest
@@ -895,7 +922,7 @@ public class GestoreTrasformazioni {
 					trasporto, forceAddTrasporto, 
 					null, null,
 					httpStatus, 
-					trasformazioneRisposta.getContentType(), trasformazioneRisposta.getReturnCode(), 
+					forceContentTypeRisposta, forceResponseStatus, 
 					risultato, 
 					trasformazioneRest, 
 					null, null,

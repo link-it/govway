@@ -373,7 +373,7 @@ public class GestoreTrasformazioniUtilities {
 			Map<String, List<String>> trasporto, Map<String, List<String>> forceAddTrasporto, 
 			Map<String, List<String>> url, Map<String, List<String>> forceAddUrl,
 			int status,
-			String contentTypeInput, Integer returnCodeInput,
+			String contentTypeInput, String returnCodeInput, // nota: contentTypeInput e returnCodeInput e' già convertito nei template prima della chiamata del metodo
 			RisultatoTrasformazioneContenuto risultato,
 			boolean trasformazioneRest, 
 			String trasformazioneRest_method, String trasformazioneRest_path,
@@ -387,7 +387,7 @@ public class GestoreTrasformazioniUtilities {
 			OpenSPCoop2MessageFactory messageFactory = message.getFactory();
 			
 			// TransportRequest
-			Integer forceResponseStatus = null;
+			String forceResponseStatus = null;
 			TransportRequestContext transportRequestContext = null;
 			TransportResponseContext transportResponseContext = null;
 			if(MessageRole.REQUEST.equals(message.getMessageRole())) {
@@ -398,13 +398,14 @@ public class GestoreTrasformazioniUtilities {
 			else {
 				transportResponseContext = new TransportResponseContext(log);
 				transportResponseContext.setHeaders(trasporto);
-				if(returnCodeInput!=null) {
-					transportResponseContext.setCodiceTrasporto(returnCodeInput.intValue()+"");
+				if(returnCodeInput!=null && StringUtils.isNotEmpty(returnCodeInput)) {
+					// nota: returnCodeInput e' già convertito nei template prima della chiamata del metodo
+					transportResponseContext.setCodiceTrasporto(returnCodeInput);
 					forceResponseStatus = returnCodeInput;
 				}
 				else {
 					transportResponseContext.setCodiceTrasporto(status+"");
-					forceResponseStatus = status;
+					forceResponseStatus = status+"";
 				}
 			}
 			
@@ -870,7 +871,7 @@ public class GestoreTrasformazioniUtilities {
 		}
 	}
 	
-	public static void addTransportInfo(Map<String, List<String>> forceAddTrasporto, Map<String, List<String>> forceAddUrl, Integer forceResponseStatus, OpenSPCoop2Message msg) {
+	public static void addTransportInfo(Map<String, List<String>> forceAddTrasporto, Map<String, List<String>> forceAddUrl, String forceResponseStatus, OpenSPCoop2Message msg) {
 		if(forceAddTrasporto!=null && !forceAddTrasporto.isEmpty()) {
 			Iterator<String> keys = forceAddTrasporto.keySet().iterator();
 			while (keys.hasNext()) {
@@ -887,8 +888,20 @@ public class GestoreTrasformazioniUtilities {
 				msg.forceUrlProperty(key, values);	
 			}
 		}
-		if(forceResponseStatus!=null && forceResponseStatus.intValue()>0) {
-			msg.setForcedResponseCode(forceResponseStatus.intValue()+"");
+		if(forceResponseStatus!=null && StringUtils.isNotEmpty(forceResponseStatus)) {
+			msg.setForcedResponseCode(forceResponseStatus);
+		}
+	}
+	
+	public static void checkReturnCode(String forceResponseStatus) throws Exception {
+		int r = -1;
+		try {
+			r = Integer.valueOf(forceResponseStatus);
+		}catch(Exception e) {
+			throw new Exception("Codice HTTP di risposta deve essere un intero compreso tra 200 e 599, trovato: '"+forceResponseStatus+"'");
+		}
+		if(r<200 || r>599) {
+			throw new Exception("Codice HTTP di risposta deve essere un intero compreso tra 200 e 599, trovato: "+forceResponseStatus+"");
 		}
 	}
 	
@@ -980,7 +993,7 @@ public class GestoreTrasformazioniUtilities {
 			}
 			bf.append(TIPO_TRASFORMAZIONE_CONVERSIONE_HEADERS);	
 		}
-		if(trasformazioneRisposta.getReturnCode()!=null && trasformazioneRisposta.getReturnCode()>0) {
+		if(trasformazioneRisposta.getReturnCode()!=null && StringUtils.isNotEmpty(trasformazioneRisposta.getReturnCode())) {
 			if(bf.length()>0) {
 				bf.append(TIPO_TRASFORMAZIONE_SEPARATOR);	
 			}

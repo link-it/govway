@@ -1,3 +1,9 @@
+2022-03-16  Andrea Poli <apoli@link.it>
+
+	Modificato tipo della colonna per le trasformazioni delle risposte, per quanto concerne il return code:
+	ALTER TABLE pa_transform_risp ALTER COLUMN return_code TYPE VARCHAR(255);
+	ALTER TABLE pd_transform_risp ALTER COLUMN return_code TYPE VARCHAR(255);
+
 2022-01-12  Andrea Poli <apoli@link.it>
 
 	Aggiunta colonna per gestione scheduling di un connettore

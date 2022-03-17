@@ -131,6 +131,9 @@ public class Costanti {
     public final static String MAP_URL_PROTOCOL_CONTEXT_OBJECT = "transportContext";
     public final static String TYPE_MAP_URL_PROTOCOL_CONTEXT_OBJECT = org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext.class.getName();
     
+    public final static String MAP_ATTACHMENTS_OBJECT = "attachments";
+    public final static String TYPE_ATTACHMENTS_OBJECT = org.openspcoop2.pdd.core.dynamic.AttachmentsReader.class.getName();
+    
     public final static String MAP_TOKEN_INFO = "tokenInfo";
     public final static String TYPE_MAP_TOKEN_INFO = org.openspcoop2.pdd.core.token.InformazioniToken.class.getName();
     
