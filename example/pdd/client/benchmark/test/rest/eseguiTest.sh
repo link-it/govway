@@ -179,7 +179,10 @@ testDescriptions[modiHeaderAgidOAuthRichiesta]="LineeGuida con header Agid e hea
 testDescriptions[modiHeaderAgidOAuthRichiestaRispostaDigestRichiesta]="LineeGuida con header Agid e header OAuth anche nella risposta + digestRichiesta"
 testDescriptions[modiHeaderAgidOAuthRichiestaFiltroDuplicati]="LineeGuida con header Agid e header OAuth nella sola richiesta + filtroDuplicati"
 
+function build_jmx_command() {
+	echo "${binJMeter}/jmeter -n -t ${jmeterTestFile} -l ${resultDir}/OUTPUT.txt -JnodoRunIP=${nodoRunIP} -JnodoRunPort=${nodoRunPort} -JclientIP=${clientIP} -JtestFileDir=${testFileDir} -JlogDir=${logDir} -Jthreads=${threadNumber} -Jduration=${duration} -JthreadsRampUp=${threadsRampUp}  -Jdimensione=${dimensione} -Jprofilo=${profilo} -Jazione=${azione} -JtipoTest=${tipoTest} -Jsoggetto=${soggetto}  -JsleepMin=${sleepMin} -JsleepMax=${sleepMax} -JproxyHost=${proxyHost} -JproxyPort=${proxyPort} -Jprotocollo=${protocollo} -JprofiloSicurezza=${profiloSicurezza} -JdirResult=${outputDir} -j ${logDir}/jmeter.log -Jiterazione=$it"
 
+}
 function run_jmx_test() {
 	rm -rf ${outputDir}
 	mkdir -p ${outputDir}
@@ -195,8 +198,9 @@ function run_jmx_test() {
 					echo "------- delay min:${sleepMin} max:${sleepMax}"
 					echo "--------- test (protocollo:${protocollo} profiloSicurezza:${profiloSicurezza} tipoTest:$tipoTest dimensione:$dimensione threads:$threadNumber azione:$azione sleepMin:$sleepMin sleepMax:$sleepMax) ..."
 					echo ""
-					command="${binJMeter}/jmeter -n -t ${jmeterTestFile} -l ${resultDir}/OUTPUT.txt -JnodoRunIP=${nodoRunIP} -JnodoRunPort=${nodoRunPort} -JclientIP=${clientIP} -JtestFileDir=${testFileDir} -JlogDir=${logDir} -Jthreads=${threadNumber} -Jduration=${duration} -JthreadsRampUp=${threadsRampUp}  -Jdimensione=${dimensione} -Jprofilo=${profilo} -Jazione=${azione} -JtipoTest=${tipoTest} -Jsoggetto=${soggetto}  -JsleepMin=${sleepMin} -JsleepMax=${sleepMax} -JproxyHost=${proxyHost} -JproxyPort=${proxyPort} -Jprotocollo=${protocollo} -JprofiloSicurezza=${profiloSicurezza} -JdirResult=${outputDir} -j ${logDir}/jmeter.log"
 
+					it=1
+					command=$(build_jmx_command)
 					if $riscaldamento; then
 						echo ""
 						echo -e "====================="
@@ -207,9 +211,13 @@ function run_jmx_test() {
 						eval $command
 						rm ${resultDir}/OUTPUT.txt
 					fi
-					echo "+ $command"
-					eval $command
-					rm ${resultDir}/OUTPUT.txt
+
+					for it in $(seq 1 $iterazioni); do
+						command=$(build_jmx_command)
+						echo "+ $command"
+						eval $command
+						rm ${resultDir}/OUTPUT.txt
+					done
 
 					echo ""
 					echo "--------- test (protocollo:${protocollo} profiloSicurezza:${profiloSicurezza} tipoTest:${tipoTest} dimensione:$dimensione threads:$threadNumber azione:$azione sleepMin:$sleepMin sleepMax:$sleepMax) finished"
@@ -270,7 +278,7 @@ function aggregate_report() {
 	# Arricchisco il file aggregatiConPlugin.csv con i valori di input dei test
 	# Per l'occasione creo un nuovo file.
 	headers=`sed -n '1{p;q}' ${outputDir}/aggregatiConPlugin.csv`
-	headers="$headers,profiloSicurezza,sleepMax,sleepMin,protocollo,dimensione,tipoTest,azione,soggetto,threads,threads.ramp-up"
+	headers="$headers,iterazione,profiloSicurezza,sleepMax,sleepMin,protocollo,dimensione,tipoTest,azione,soggetto,threads,threads.ramp-up"
 	echo $headers > ${outputDir}/aggregatiConPluginExtended.csv
 
 	# Leggo le linee dal file e le arrichisco
@@ -301,8 +309,9 @@ function aggregate_report() {
 		_sleepMin=${test_input_values[-8]}
 		_sleepMax=${test_input_values[-9]}
 		_profiloSicurezza=${test_input_values[-10]}
+		_iterazione=${test_input_values[-11]}
 
-		new_line="$line,$_profiloSicurezza,$_sleepMax,$_sleepMin,$_protocollo,$_dimensione,$_tipo_test,$_azione,$_soggetto,$_threads,$_ramp_up"
+		new_line="$line,$_iterazione,$_profiloSicurezza,$_sleepMax,$_sleepMin,$_protocollo,$_dimensione,$_tipo_test,$_azione,$_soggetto,$_threads,$_ramp_up"
 		
 		echo $new_line >> ${outputDir}/aggregatiConPluginExtended.csv
 
@@ -375,14 +384,11 @@ for testConfigurator in $testToRun; do
 
 	if [[ $elencoTest =~ $testConfigurator ]]; then
 		# Chiamo la funzione di test che configura l'ambiente.
-		for i in $(seq 1 $iterazioni); do
-			$testConfigurator
-			outputDir=${outputDir}/ITERAZIONE$i
-			# Eseguo il test jmx
-			run_jmx_test
-			# Aggrego i risultati e produco grafici e dashboard
-			aggregate_report $testConfigurator
-		done
+		$testConfigurator
+		# Eseguo il test jmx
+		run_jmx_test
+		# Aggrego i risultati e produco grafici e dashboard
+		aggregate_report $testConfigurator
 	else
 		echo "ERRORE: Test $testConfigurator inesistente."
 	fi
