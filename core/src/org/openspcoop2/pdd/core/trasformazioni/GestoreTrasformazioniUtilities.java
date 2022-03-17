@@ -59,6 +59,7 @@ import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.utils.dch.InputStreamDataSource;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.io.ArchiveType;
+import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -202,8 +203,34 @@ public class GestoreTrasformazioniUtilities {
 		}
 	}
 	
+	private static String readCharset(Logger log, OpenSPCoop2Message msg, String forceContentType) throws Exception {
+		String contentType = forceContentType;
+		if(contentType==null || StringUtils.isEmpty(contentType)) {
+			if(msg!=null) {
+				contentType = msg.getContentType();
+			}
+		}
+		String charset = null;
+		if(contentType!=null) {
+			try {
+				boolean multipart = ContentTypeUtilities.isMultipartType(contentType);
+				if(!multipart) {
+					charset = ContentTypeUtilities.readCharsetFromContentType(contentType);
+				}
+				else {
+					String internalCT = ContentTypeUtilities.getInternalMultipartContentType(contentType);
+					charset = ContentTypeUtilities.readCharsetFromContentType(internalCT);
+				}
+			}catch(Throwable t) {
+				log.error("Lettura charset non riuscita: "+t.getMessage(),t);
+			}
+		}
+		return charset;
+	}
+	
 	public static RisultatoTrasformazioneContenuto trasformazioneContenuto(Logger log, String tipoConversioneContenuto, 
-			byte[] contenuto, String oggetto, Map<String, Object> dynamicMap, OpenSPCoop2Message msg, MessageContent messageContent, PdDContext pddContext) throws Exception {
+			byte[] contenuto, String oggetto, Map<String, Object> dynamicMap, OpenSPCoop2Message msg, MessageContent messageContent, PdDContext pddContext,
+			String forceContentType, boolean readCharset) throws Exception {
 		TipoTrasformazione tipoTrasformazione = null;
 		if(tipoConversioneContenuto!=null) {
 			tipoTrasformazione = TipoTrasformazione.toEnumConstant(tipoConversioneContenuto, true);
@@ -213,6 +240,15 @@ public class GestoreTrasformazioniUtilities {
 		}
 		
 		log.debug("Trasformazione "+oggetto+" ["+tipoConversioneContenuto+"] ...");
+		
+		
+		String charset = null;
+		if(readCharset) {
+			charset = readCharset(log, msg, forceContentType);
+			if(charset==null) {
+				charset = Charset.UTF_8.getValue();
+			}
+		}
 		
 		RisultatoTrasformazioneContenuto risultato = new RisultatoTrasformazioneContenuto();
 		risultato.setTipoTrasformazione(tipoTrasformazione);
@@ -259,10 +295,10 @@ public class GestoreTrasformazioniUtilities {
 			log.debug("trasformazione "+oggetto+" ["+tipoTrasformazione+"], risoluzione template ...");
 			bout = new ByteArrayOutputStream();
 			if(TipoTrasformazione.FREEMARKER_TEMPLATE.equals(tipoTrasformazione) || TipoTrasformazione.CONTEXT_FREEMARKER_TEMPLATE.equals(tipoTrasformazione)) {
-				DynamicUtils.convertFreeMarkerTemplate("template.ftl", contenuto, dynamicMap, bout);
+				DynamicUtils.convertFreeMarkerTemplate("template.ftl", contenuto, dynamicMap, bout, charset);
 			}
 			else {
-				DynamicUtils.convertZipFreeMarkerTemplate("template.ftl.zip", contenuto, dynamicMap, bout);
+				DynamicUtils.convertZipFreeMarkerTemplate("template.ftl.zip", contenuto, dynamicMap, bout, charset);
 			}
 			bout.flush();
 			bout.close();
@@ -271,7 +307,8 @@ public class GestoreTrasformazioniUtilities {
 				risultato.setEmpty(true);
 			}
 			else {
-				risultato.setContenuto(bout.toByteArray(), bout.toString());
+				risultato.setContenuto(bout.toByteArray(), 
+						charset!=null ? bout.toString(charset) : bout.toString());
 			}
 			
 			break;
@@ -286,10 +323,10 @@ public class GestoreTrasformazioniUtilities {
 			log.debug("trasformazione "+oggetto+" ["+tipoTrasformazione+"], risoluzione template ...");
 			bout = new ByteArrayOutputStream();
 			if(TipoTrasformazione.VELOCITY_TEMPLATE.equals(tipoTrasformazione) || TipoTrasformazione.CONTEXT_VELOCITY_TEMPLATE.equals(tipoTrasformazione)) {
-				DynamicUtils.convertVelocityTemplate("template.vm", contenuto, dynamicMap, bout);
+				DynamicUtils.convertVelocityTemplate("template.vm", contenuto, dynamicMap, bout, charset);
 			}
 			else {
-				DynamicUtils.convertZipVelocityTemplate("template.vm.zip", contenuto, dynamicMap, bout);	
+				DynamicUtils.convertZipVelocityTemplate("template.vm.zip", contenuto, dynamicMap, bout, charset);	
 			}
 			bout.flush();
 			bout.close();
@@ -298,7 +335,8 @@ public class GestoreTrasformazioniUtilities {
 				risultato.setEmpty(true);
 			}
 			else {
-				risultato.setContenuto(bout.toByteArray(), bout.toString());
+				risultato.setContenuto(bout.toByteArray(), 
+						charset!=null ? bout.toString(charset) : bout.toString());
 			}
 			
 			break;
@@ -610,7 +648,8 @@ public class GestoreTrasformazioniUtilities {
 									GestoreTrasformazioniUtilities.trasformazioneContenuto(log, 
 											trasformazioneSoap_tipoConversione, 
 											trasformazioneSoap_templateConversione, 
-											"envelope-body", dynamicMap, message, messageContent, pddContext);
+											"envelope-body", dynamicMap, message, messageContent, pddContext, 
+											null, false);
 							try {
 								if(risultatoEnvelopeBody.isEmpty()) {
 									if(transportRequestContext!=null) {

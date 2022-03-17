@@ -1870,6 +1870,9 @@ public class OpenSPCoop2Properties {
 			this.getForwardProxyConfigurazioneDefault();
 			this.getForwardProxyConfigurazioneTokenDefault();
 			
+			// Trasformazioni
+			this.isTrasformazioni_readCharsetFromContentType();
+			
 			// Trasporto REST / SOAP
 			
 			this.getSOAPServicesUrlParametersForwardConfig();
@@ -20269,6 +20272,43 @@ public class OpenSPCoop2Properties {
 		return config;
 	}
 
+	
+	
+	
+	
+	
+	
+	/* ------------- Trasformazioni ---------------------*/
+	
+	private static Boolean isTrasformazioni_readCharsetFromContentType = null;
+	public boolean isTrasformazioni_readCharsetFromContentType(){
+
+		String pName = "org.openspcoop2.pdd.trasformazioni.readCharsetFromContentType.enable";
+		if(OpenSPCoop2Properties.isTrasformazioni_readCharsetFromContentType==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isTrasformazioni_readCharsetFromContentType = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+false);
+					OpenSPCoop2Properties.isTrasformazioni_readCharsetFromContentType = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+false+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isTrasformazioni_readCharsetFromContentType = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isTrasformazioni_readCharsetFromContentType;
+	}
+	
+	
+	
+	
+	
 	
 	/* ------------- SOAP (Trasporto - URLParameters) ---------------------*/
 	

@@ -448,15 +448,23 @@ public class GestoreTrasformazioni {
 		
 		boolean trasformazioneContenuto = richiesta.getConversione();
 		RisultatoTrasformazioneContenuto risultato = null;
+		String forceContentTypeRichiesta = null;
 		try {
-									
+			// contentTypeRichiesta
+			if(richiesta.getContentType()!=null && StringUtils.isNotEmpty(richiesta.getContentType())) {
+				forceContentTypeRichiesta = richiesta.getContentType();
+				forceContentTypeRichiesta = DynamicUtils.convertDynamicPropertyValue("forceContentTypeRichiesta", forceContentTypeRichiesta, dynamicMap, this.pddContext, true);
+			}
+			
 			if(!trasformazioneContenuto) {
 				this.log.debug("Trasformazione contenuto della richiesta disabilitato");
 			}
 			else {
 				risultato = 
 						GestoreTrasformazioniUtilities.trasformazioneContenuto(this.log, 
-								richiesta.getConversioneTipo(), richiesta.getConversioneTemplate(), "richiesta", dynamicMap, message, messageContent, this.pddContext);
+								richiesta.getConversioneTipo(), richiesta.getConversioneTemplate(), "richiesta", 
+								dynamicMap, message, messageContent, this.pddContext, forceContentTypeRichiesta,
+								this.op2Properties.isTrasformazioni_readCharsetFromContentType());
 				if (risultato != null && risultato.getTipoTrasformazione() != null && risultato.getTipoTrasformazione().isContextInjection()) {
 					trasformazioneContenuto = false;
 					this.log.debug("Trasformazione contenuto della richiesta disabilitato (Context Injection)");
@@ -486,14 +494,7 @@ public class GestoreTrasformazioni {
 			}
 		}
 		
-		try {	
-			// contentTypeRisposta
-			String forceContentTypeRichiesta = null;
-			if(richiesta.getContentType()!=null && StringUtils.isNotEmpty(richiesta.getContentType())) {
-				forceContentTypeRichiesta = richiesta.getContentType();
-				forceContentTypeRichiesta = DynamicUtils.convertDynamicPropertyValue("forceContentTypeRichiesta", forceContentTypeRichiesta, dynamicMap, this.pddContext, true);
-			}
-			
+		try {				
 			// conversione header
 			Map<String, List<String>> trasporto = parametriTrasporto;
 			Map<String, List<String>> forceAddTrasporto = new HashMap<String, List<String>>();
@@ -796,7 +797,13 @@ public class GestoreTrasformazioni {
 		
 		boolean trasformazioneContenuto = trasformazioneRisposta.getConversione();
 		RisultatoTrasformazioneContenuto risultato = null;
+		String forceContentTypeRisposta = null;
 		try {
+			// contentTypeRisposta
+			if(trasformazioneRisposta.getContentType()!=null && StringUtils.isNotEmpty(trasformazioneRisposta.getContentType())) {
+				forceContentTypeRisposta = trasformazioneRisposta.getContentType();
+				forceContentTypeRisposta = DynamicUtils.convertDynamicPropertyValue("forceContentTypeRisposta", forceContentTypeRisposta, dynamicMap, this.pddContext, true);
+			}
 			
 			if(!trasformazioneContenuto) {
 				this.log.debug("Trasformazione contenuto della richiesta disabilitato");
@@ -804,7 +811,9 @@ public class GestoreTrasformazioni {
 			else {
 				risultato = 
 						GestoreTrasformazioniUtilities.trasformazioneContenuto(this.log, 
-								trasformazioneRisposta.getConversioneTipo(), trasformazioneRisposta.getConversioneTemplate(), "risposta", dynamicMap, message, messageContent, this.pddContext);
+								trasformazioneRisposta.getConversioneTipo(), trasformazioneRisposta.getConversioneTemplate(), "risposta", 
+								dynamicMap, message, messageContent, this.pddContext, forceContentTypeRisposta,
+								this.op2Properties.isTrasformazioni_readCharsetFromContentType());
 				if (risultato != null && risultato.getTipoTrasformazione() != null && risultato.getTipoTrasformazione().isContextInjection()) {
 					trasformazioneContenuto = false;
 					this.log.debug("Trasformazione contenuto della risposta disabilitato (Context Injection)");
@@ -835,14 +844,7 @@ public class GestoreTrasformazioni {
 		}
 		
 		try {
-			
-			// contentTypeRisposta
-			String forceContentTypeRisposta = null;
-			if(trasformazioneRisposta.getContentType()!=null && StringUtils.isNotEmpty(trasformazioneRisposta.getContentType())) {
-				forceContentTypeRisposta = trasformazioneRisposta.getContentType();
-				forceContentTypeRisposta = DynamicUtils.convertDynamicPropertyValue("forceContentTypeRisposta", forceContentTypeRisposta, dynamicMap, this.pddContext, true);
-			}
-			
+						
 			// conversione header
 			Map<String, List<String>> trasporto = parametriTrasporto!=null ? parametriTrasporto : new HashMap<String, List<String>>();
 			Map<String, List<String>> forceAddTrasporto = new HashMap<String, List<String>>();
