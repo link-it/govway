@@ -10,41 +10,40 @@ jmeterGraphFile=${BENCHMARK_HOME}/test/rest/GraphsGenerator.jmx
 
 elencoTest="trasparente  trasparenteNoRegistrazione  trasparenteValidazione  trasparenteNoRegistrazioneValidazione  modiDoppioHeaderRichiesta  modiDoppioHeaderRichiestaRispostaDigestRichiesta  modiDoppioHeaderRichiestaFiltroDuplicati  modiHeaderAgidOAuthRichiesta  modiHeaderAgidOAuthRichiestaRispostaDigestRichiesta  modiHeaderAgidOAuthRichiestaFiltroDuplicati"
 
-# Configurazione
-duration="2"
 
-# Threads
-threads="50 100 200"	#; threads=50
+duration="60"
+threads="50 100 200"
 threadsRampUp=5
-
-# Dimensione dei test
-dimensioni=1024			#; dimensioni="1024 51200 409600"
+dimensioni="1024 51200 409600"
 iterazioni=1
-doAllTests=false
 riscaldamento=false
+keep=false
 
 # ServerDelay
 declare -A minMaxSleeps
 minMaxSleeps[0]=1		# No Delay
-#minMaxSleeps[50]=100	# Intervallo 1
-#minMaxSleeps[100]=500	# Intervallo 2
-#minMaxSleeps[200]=1000 # Intervallo 3
+minMaxSleeps[50]=100	# Intervallo 1
+minMaxSleeps[100]=500	# Intervallo 2
+minMaxSleeps[200]=1000  # Intervallo 3
 
 function usage() {
 	echo -e ""
 	echo -e "UTILIZZO"
-	echo -e "	./eseguiTest.sh [-r] [-a] [-n X] test\n"
-	echo -e " 		-r: Esegui il riscaldamento"
-	echo -e "		-a: Esegui tutti i test"
-	echo -e "		-n: Esegue tutta la batteria di test X volte\n"
+	echo -e "	NOTA: Tutte le opzioni vanno specificate prima dell'elenco dei test, altrimenti saranno ignorate!\n"
+	echo -e "	./eseguiTest.sh [-r] [-i X] [-k] [-d X] [-s X] [-n X] [-u X] [-t X] test\n"
+	echo -e " 		-r: Esegui il riscaldamento                   (Riscaldamento)"
+	echo -e "		-i: Esege tutta la batteria di test X volte   (Iterazioni)"
+	echo -e "		-k: Mantiene i csv intermedi                  (Keep)\n"
 	echo -e "		test = [ $elencoTest ]\n"
+	echo -e "		Opzioni per iniziare una sola istanza di un test\n"
+	echo -e "		-d: Specifica una delle possibili dimensioni  (Dimensione)"
+	echo -e " 			1024, 51200, 409600"
+	echo -e "		-s: Specifica il minSleep,determinando il max (Sleep)"
+	echo -e "			0->1, 50->100, 100->500, 200->1000"
+	echo -e "		-n: Numero di threads                         (Nthreads)"
+	echo -e "		-u: Ramp-up                                   (ramp-Up)"
+	echo -e "		-t: Durata in secondi                         (Time duration)\n"
 }
-
-
-
-# Aggiungere due opzioni per ogni test:
-# TODO: Fare un test che fa tutto. Le dashboard comunque separate per funzioni. Alla fine csv unico, ordinato per nome sample
-
 
 # I seguenti valori identificano un test e vengono configurati dalle funzioni
 # di test di sotto.
@@ -181,8 +180,9 @@ testDescriptions[modiHeaderAgidOAuthRichiestaFiltroDuplicati]="LineeGuida con he
 
 function build_jmx_command() {
 	echo "${binJMeter}/jmeter -n -t ${jmeterTestFile} -l ${resultDir}/OUTPUT.txt -JnodoRunIP=${nodoRunIP} -JnodoRunPort=${nodoRunPort} -JclientIP=${clientIP} -JtestFileDir=${testFileDir} -JlogDir=${logDir} -Jthreads=${threadNumber} -Jduration=${duration} -JthreadsRampUp=${threadsRampUp}  -Jdimensione=${dimensione} -Jprofilo=${profilo} -Jazione=${azione} -JtipoTest=${tipoTest} -Jsoggetto=${soggetto}  -JsleepMin=${sleepMin} -JsleepMax=${sleepMax} -JproxyHost=${proxyHost} -JproxyPort=${proxyPort} -Jprotocollo=${protocollo} -JprofiloSicurezza=${profiloSicurezza} -JdirResult=${outputDir} -j ${logDir}/jmeter.log -Jiterazione=$it"
-
 }
+
+
 function run_jmx_test() {
 	rm -rf ${outputDir}
 	mkdir -p ${outputDir}
@@ -227,8 +227,6 @@ function run_jmx_test() {
 	done
 }
 
-# TODO: Aggiungere alle sample_variables una descrizione del test. (Certo verrà ripetuta ogni riga ma almeno ce la troviamo alla fine...)
-# TODO: Rivedere l'uso delle sample_variables, utilizzare semmai solo la label ed estrarre le info per i csv derivati dalla label.
 function aggregate_report() {	
 	echo ""
 	echo "==================================="
@@ -278,7 +276,7 @@ function aggregate_report() {
 	# Arricchisco il file aggregatiConPlugin.csv con i valori di input dei test
 	# Per l'occasione creo un nuovo file.
 	headers=`sed -n '1{p;q}' ${outputDir}/aggregatiConPlugin.csv`
-	headers="$headers,iterazione,profiloSicurezza,sleepMax,sleepMin,protocollo,dimensione,tipoTest,azione,soggetto,threads,threads.ramp-up"
+	headers="$headers,riscaldamento,iterazione,profiloSicurezza,sleepMax,sleepMin,protocollo,dimensione,tipoTest,azione,soggetto,threads,threads.ramp-up"
 	echo $headers > ${outputDir}/aggregatiConPluginExtended.csv
 
 	# Leggo le linee dal file e le arrichisco
@@ -310,14 +308,14 @@ function aggregate_report() {
 		_sleepMax=${test_input_values[-9]}
 		_profiloSicurezza=${test_input_values[-10]}
 		_iterazione=${test_input_values[-11]}
+		_riscaldamento=$riscaldamento
 
-		new_line="$line,$_iterazione,$_profiloSicurezza,$_sleepMax,$_sleepMin,$_protocollo,$_dimensione,$_tipo_test,$_azione,$_soggetto,$_threads,$_ramp_up"
-		
+		new_line="$line,$_riscaldamento,$_iterazione,$_profiloSicurezza,$_sleepMax,$_sleepMin,$_protocollo,$_dimensione,$_tipo_test,$_azione,$_soggetto,$_threads,$_ramp_up"
+
 		echo $new_line >> ${outputDir}/aggregatiConPluginExtended.csv
 
 		#echo "==================="
 	done < <(tail -n "+2" ${outputDir}/aggregatiConPlugin.csv)
-
 
 	# Adesso eseguiamo il test "Dummy" che porterà poi alla generazione dei grafici
 	set -x
@@ -325,6 +323,14 @@ function aggregate_report() {
 	set +x
 
 	# Pulizia
+	if [[ $keep == "false" ]]; then
+		echo "============================"
+		echo "Cancello risultati Intermedi"
+		echo "============================"
+		echo "$files"
+		rm -rf $files
+	fi
+
 	rm ${outputDir}/aggregatiConPlugin.csv
 	rm ${outputDir}/joined-results.csv
 	mv ${outputDir}/aggregatiConPluginExtended.csv ${outputDir}/result-aggregate.csv
@@ -335,44 +341,84 @@ function aggregate_report() {
 #				MAIN
 # ====================================
 
-if [ $# = 0 ]; then
-	usage
-	exit
-fi
 
-# TODO: Dare la possibilità di rieseguire un test puntuale specificando dimensioni, min\MaxSleep, ramp_up, duration e nthreads
+while getopts 'hri:kd:s:n:u:t:' opt; do
+	case "$opt" in
+		r)
+			riscaldamento=true
+			;;
 
-while getopts 'hran:' opt; do
-  case "$opt" in
-    r)
-		riscaldamento=true
-      	;;
+		i)
+			if (( $OPTARG - 0 <= 0 )); then
+				echo "Numero di iterazioni non valido, inserire un valore positivo"
+				exit 1
+			fi
+			iterazioni=$OPTARG
+			;;
+		k)
+			keep=true
+			;;
+		d)
+			if [[ ! $dimensioni =~ $OPTARG ]]; then
+				echo "Argomento -d errato, le dimensioni possibili sono: $dimensioni"
+				exit 1
+			fi
+			dimensioni=$OPTARG
+			;;
+		s)
+			max=${minMaxSleeps[$OPTARG]}
+			if [[ -z $max ]]; then
+				echo "Argomento -s errato, le dimensioni possibili sono ${!minMaxSleeps[@]}"
+				exit 1
+			fi
+			unset minMaxSleeps
+			declare -A minMaxSleeps=( [$OPTARG]=$max )
+			;;
+		n)
+			if (( $OPTARG - 0 <= 0 )); then
+				echo "Argomento -n errato, inserire un valore positivo per il numero dei threads"
+				exit 1
+			fi
+			threads=$OPTARG
+			;;
+		u)
+			if (( $OPTARG - 0 <= 0 )); then
+				echo "Argomento -u errato, inserire un valore positivo per il ramp-up"
+				exit 1
+			fi
+			threadsRampUp=$OPTARG
+			;;
+		t)
+			if (( $OPTARG - 0 <= 0 )); then
+				echo "Argomento -t errato, inserire un valore positivo per la durata"
+				exit 1
+			fi
+			duration=$OPTARG
+			;;
 
-    a)
-		doAllTests=true
-      	;;
-
-    n)
-		if (( $OPTARG - 0 <= 0 )); then
-			echo "Numero di iterazioni non valido, inserire un valore positivo"
+		?|h)
+			usage
 			exit 1
-		fi
-		iterazioni=$OPTARG
-      	;;
-   
-    ?|h)
-		usage
-		exit 1
-      	;;
-  esac	
+			;;
+	esac	
 done
 shift "$(($OPTIND -1))"
 
-if $doAllTests; then
+if [[ "$@" = "" ]]; then
 	testToRun=$elencoTest
 else
 	testToRun=$@
+	for t in $testToRun; do
+		if [[ ! $elencoTest =~ $t ]]; then
+			echo "ERRORE: Test $t inesistente."
+			exit 1
+		fi
+	done
 fi
+
+echo -e "\n==================================="
+echo -e "Esecuzione batteria di test: $testToRun"
+echo -e "===================================\n"
 
 rm -r ${resultDir}
 mkdir -p ${resultDir}
@@ -382,15 +428,36 @@ for testConfigurator in $testToRun; do
 	echo -e "Esecuzione del test $testConfigurator"
 	echo -e "===================================\n"
 
-	if [[ $elencoTest =~ $testConfigurator ]]; then
-		# Chiamo la funzione di test che configura l'ambiente.
-		$testConfigurator
-		# Eseguo il test jmx
-		run_jmx_test
-		# Aggrego i risultati e produco grafici e dashboard
-		aggregate_report $testConfigurator
-	else
-		echo "ERRORE: Test $testConfigurator inesistente."
-	fi
+	# Chiamo la funzione di test che configura l'ambiente.
+	$testConfigurator
+	# Eseguo il test jmx
+	run_jmx_test
+	# Aggrego i risultati e produco grafici e dashboard
+	aggregate_report $testConfigurator
 done
+
+
+# Alla fine concateno tutti i risultati aggregati, ordinandoli per label
+# Ad essere ordinati devono essere i singoli csv con i dati aggregati da concatenare poi in quello finale.
+# In questo modo nel csv finale abbiamo righe contigue che identificano lo stesso test e che sono ordinate per label
+# I csv aggregati sono già ordinati, per cui è sufficiente concatenarli
+
+# Prendo un csv qualunque per pescare gli headers
+
+someoutput=(${resultDir}/*/result-aggregate.csv)
+headers=`head -1 $someoutput`
+
+# Pesco tutti i csv prodotti
+files=""
+for output in ${resultDir}/*/result-aggregate.csv; do
+	files="${files} ${output}"
+done
+
+# Scrivo headers e concateno tutti i csv prodotti
+echo $headers > ${resultDir}/allResults.csv
+tail -q -n +2 $files >> ${resultDir}/allResults.csv
+
+tar -czf results.tar.gz -C ${resultDir} .
+
+
 
