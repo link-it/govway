@@ -115,32 +115,126 @@ public class ModISOAPSecurity {
 				
 				if(this.wsAddressingHeader!=null) {
 					if(this.wsAddressingHeader.getTo()!=null) {
-						header.removeChild(this.wsAddressingHeader.getTo());
+						removeHeader(header, this.wsAddressingHeader.getTo());
 					}
 					if(this.wsAddressingHeader.getFrom()!=null) {
-						header.removeChild(this.wsAddressingHeader.getFrom());
+						removeHeader(header, this.wsAddressingHeader.getFrom());
 					}
 					if(this.wsAddressingHeader.getAction()!=null) {
-						header.removeChild(this.wsAddressingHeader.getAction());
+						removeHeader(header, this.wsAddressingHeader.getAction());
 					}
 					if(this.wsAddressingHeader.getId()!=null) {
-						header.removeChild(this.wsAddressingHeader.getId());
+						removeHeader(header, this.wsAddressingHeader.getId());
 					}
 					if(this.wsAddressingHeader.getRelatesTo()!=null) {
-						header.removeChild(this.wsAddressingHeader.getRelatesTo());
+						removeHeader(header, this.wsAddressingHeader.getRelatesTo());
 					}
 					if(this.wsAddressingHeader.getReplyTo()!=null) {
-						header.removeChild(this.wsAddressingHeader.getReplyTo());
+						removeHeader(header, this.wsAddressingHeader.getReplyTo());
 					}
 					if(this.wsAddressingHeader.getFaultTo()!=null) {
-						header.removeChild(this.wsAddressingHeader.getFaultTo());
+						removeHeader(header, this.wsAddressingHeader.getFaultTo());
 					}
 				}
 				
 				if(this.requestDigestHeader!=null) {
-					header.removeChild(this.requestDigestHeader);
+					removeHeader(header, this.requestDigestHeader);
 				}
 			}
+		}
+	}
+	private void removeHeader(SOAPHeader hdr, SOAPHeaderElement soapHeader) {
+
+		//hdr.removeChild(soapHeader);
+		// FIX: NOT_FOUND_ERR: An attempt is made to reference a node in a context where it does not exist.
+		// Succede in determinate condizione di utilizzo dell'header ottimizzato e della bufferizzazione read only
+		
+		// cerco la busta per il namespace
+		java.util.Iterator<?> it = hdr.examineAllHeaderElements();
+		while( it.hasNext()  ){
+
+			// Test Header Element
+			SOAPHeaderElement headerElementCheck = (SOAPHeaderElement) it.next();
+
+//			// Controllo Actor
+//			if(soapHeader.getActor()!=null) {
+//				if(headerElementCheck.getActor()==null) {
+//					continue;
+//				}
+//				if(!soapHeader.getActor().equals(headerElementCheck.getActor())) {
+//					continue;
+//				}
+//			}
+//			else {
+//				if(headerElementCheck.getActor()!=null) {
+//					continue;
+//				}
+//			}
+//			// Controllo role
+//			if(soapHeader.getRole()!=null) {
+//				if(headerElementCheck.getRole()==null) {
+//					continue;
+//				}
+//				if(!soapHeader.getRole().equals(headerElementCheck.getRole())) {
+//					continue;
+//				}
+//			}
+//			else {
+//				if(headerElementCheck.getRole()!=null) {
+//					continue;
+//				}
+//			}
+			
+			//Controllo Namespace
+			if(soapHeader.getNamespaceURI()!=null) {
+				if(headerElementCheck.getNamespaceURI()==null) {
+					continue;
+				}
+				if(!soapHeader.getNamespaceURI().equals(headerElementCheck.getNamespaceURI())) {
+					continue;
+				}
+			}
+			else {
+				if(headerElementCheck.getNamespaceURI()!=null) {
+					continue;
+				}
+			}
+			
+			//Controllo LocalName
+			if(soapHeader.getLocalName()!=null) {
+				if(headerElementCheck.getLocalName()==null) {
+					continue;
+				}
+				if(!soapHeader.getLocalName().equals(headerElementCheck.getLocalName())) {
+					continue;
+				}
+			}
+			else {
+				if(headerElementCheck.getLocalName()!=null) {
+					continue;
+				}
+			}
+			
+			//Controllo Prefix
+			if(soapHeader.getPrefix()!=null) {
+				if(headerElementCheck.getPrefix()==null) {
+					continue;
+				}
+				if(!soapHeader.getPrefix().equals(headerElementCheck.getPrefix())) {
+					continue;
+				}
+			}
+			else {
+				if(headerElementCheck.getPrefix()!=null) {
+					continue;
+				}
+			}
+			
+			
+			// found
+			hdr.removeChild(headerElementCheck);
+			
+			break;
 		}
 	}
 	

@@ -59,6 +59,7 @@ import org.openspcoop2.message.soap.reference.Reference;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Implementazione dell'OpenSPCoop2Message utilizzabile per messaggi soap
@@ -128,7 +129,6 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 				SOAPHeader newHdr = this.getSoapReader().getHeader();
 				
 				//Node newHdrAdopted = envelope.getOwnerDocument().adoptNode(newHdr);
-				Node newHdrAdopted = envelope.getOwnerDocument().importNode(newHdr, true);
 				if(hdr!=null) {
 					/*org.w3c.dom.NodeList l = envelope.getChildNodes();
 					for (int i = 0; i < l.getLength(); i++) {
@@ -137,12 +137,30 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 					
 					//envelope.replaceChild(hdr, newHdrAdopted);
 					// devo preservare i commenti, cdata ...
+					
+					/*
+					In questa maniera creo un nuovo header e chi ha preso il riferimento se lo perde (es. sbustamento Modi, wsaddressing)
+					Node newHdrAdopted = envelope.getOwnerDocument().importNode(newHdr, true);
 					if((hdr.getPrefix()==null && newHdrAdopted.getPrefix()!=null) || (!hdr.getPrefix().equals(newHdrAdopted.getPrefix()))) {
 						//System.out.println("ALLINEAO AD HEADER PREFIX ["+hdr.getPrefix()+"]");
 						newHdrAdopted.setPrefix(hdr.getPrefix()); // allineo alla costruzione del DOM
 					}
 					envelope.insertBefore(newHdrAdopted, hdr);
 					envelope.removeChild(hdr);
+					*/
+					
+					// rimpiazzo i figli
+					hdr.removeContents();
+					NodeList list = newHdr.getChildNodes();
+					//System.out.println("LIST["+list.getLength()+"] ["+org.openspcoop2.utils.xml.XMLUtils.getInstance().toString(newHdr)+"]");
+					if(list!=null && list.getLength()>0) {
+						for (int i = 0; i < list.getLength(); i++) {
+							Node n = list.item(i);
+							//System.out.println("i["+i+"] ["+n.getClass().getName()+"] ["+n.getLocalName()+"]");
+							Node newNodeAdopted = envelope.getOwnerDocument().importNode(n, true);
+							hdr.appendChild(newNodeAdopted);
+						}
+					}
 					
 					/*l = envelope.getChildNodes();
 					for (int i = 0; i < l.getLength(); i++) {
@@ -150,6 +168,7 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 					}*/
 				}
 				else {
+					Node newHdrAdopted = envelope.getOwnerDocument().importNode(newHdr, true);
 					if((envelope.getPrefix()==null && newHdrAdopted.getPrefix()!=null) || (!envelope.getPrefix().equals(newHdrAdopted.getPrefix()))) {
 						//System.out.println("ALLINEAO AD ENVELOPE PREFIX ["+envelope.getPrefix()+"]");
 						newHdrAdopted.setPrefix(envelope.getPrefix()); // allineo alla costruzione del DOM

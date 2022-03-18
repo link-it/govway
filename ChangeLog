@@ -1,6 +1,15 @@
-2022-03-18  Andrea Poli <apoli@link.it>
+2022-03-21  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.6.p1
+
+2022-03-18  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Risolto problema che si verificava in fase di sbustamento degli header di sicurezza ModI, quando veniva modificato l'header soap tramite altri meccanismi (es. trasformazione).
+	L'errore che si manifestava era il seguente:
+	Caused by: org.w3c.dom.DOMException: NOT_FOUND_ERR: An attempt is made to reference a node in a context where it does not exist.
+		at org.apache.xerces.dom.ParentNode.internalRemoveChild ...
+		at org.openspcoop2.protocol.modipa.validator.ModISOAPSecurity.clean(ModISOAPSecurity.java)
 
 2022-03-17  Andrea Poli <apoli@link.it>
 

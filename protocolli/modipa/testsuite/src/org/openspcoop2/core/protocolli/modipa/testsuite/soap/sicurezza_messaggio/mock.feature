@@ -37,6 +37,17 @@ Scenario: isTest('connettivita-base') || isTest('connettivita-base-default-trust
     * def responseStatus = 200
     * def response = read('classpath:test/soap/sicurezza-messaggio/response.xml')
 
+Scenario: isTest('connettivita-base-idas02-richiesta-con-header')
+    
+    * match bodyPath('/Envelope/Header') == '<soap:Header><t:elementoTest xmlns:t="http://test">PROVA</t:elementoTest></soap:Header>'
+    * def responseStatus = 200
+    * def response = read('classpath:test/soap/sicurezza-messaggio/responseConHeader.xml')
+
+Scenario: isTest('connettivita-base-idas02-richiesta-con-header-e-trasformazione')
+    
+    * match bodyPath('/Envelope/Header') == '<soap:Header><t:elementoTest xmlns:t="http://test">PROVA</t:elementoTest><t2:elementoTest2 xmlns:t2="http://test">PROVA2</t2:elementoTest2></soap:Header>'
+    * def responseStatus = 200
+    * def response = read('classpath:test/soap/sicurezza-messaggio/responseConHeader.xml')
 
 Scenario: isTest('connettivita-base-no-sbustamento')
     
