@@ -1,5 +1,11 @@
 2022-03-21  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore, GovWayConsole, ApiRsConfigurazione]
+	Aggiunta funzionalità
+	Nel connettore di tipo 'file' è stata aggiunta la possibilità di definire i permessi (rwx) dei file creati in cui viene serializzato il contenuto della richiesta (payload e header).
+
+2022-03-21  Andrea Poli <apoli@link.it>
+
 	* Rilasciata versione 3.3.6.p1
 
 2022-03-18  Andrea Poli <apoli@link.it>

@@ -125,6 +125,7 @@ Examples:
 |connettore_applicativo_server_file_response_delete.json|
 |connettore_applicativo_server_file_response_headers.json|
 |connettore_applicativo_server_file_response_wait.json|
+|connettore_applicativo_server_file_response_permissions.json|
 |connettore_applicativo_server_jms.json|
 |connettore_applicativo_server_jms_jndi_init_ctx.json|
 |connettore_applicativo_server_jms_jndi_provider_url.json|

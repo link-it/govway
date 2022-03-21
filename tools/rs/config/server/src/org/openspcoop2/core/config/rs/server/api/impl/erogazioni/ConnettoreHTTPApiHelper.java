@@ -148,7 +148,9 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 				"", 	// this.redirect_mode, 
 				"", 	// this.redirect_max_hop,
 				null,	// this.requestOutputFileName,
+				null,   // this.requestOutputFileName_permissions
 				null,	// this.requestOutputFileNameHeaders,
+				null,   // this.requestOutputFileNameHeaders_permissions
 				null,	// this.requestOutputParentDirCreateIfNotExists,
 				null,	// this.requestOutputOverwriteIfExists,
 				null,	// this.responseInputMode, 
@@ -250,7 +252,9 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 				"", 	// this.redirect_mode, 
 				"", 	// this.redirect_max_hop,
 				null,	// this.requestOutputFileName,
+				null,   // this.requestOutputFileName_permissions
 				null,	// this.requestOutputFileNameHeaders,
+				null,   // this.requestOutputFileNameHeaders_permissions
 				null,	// this.requestOutputParentDirCreateIfNotExists,
 				null,	// this.requestOutputOverwriteIfExists,
 				null,	// this.responseInputMode, 
@@ -352,7 +356,9 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 				"", 	// this.redirect_mode, 
 				"", 	// this.redirect_max_hop,
 				null,	// this.requestOutputFileName,
+				null,   // this.requestOutputFileName_permissions
 				null,	// this.requestOutputFileNameHeaders,
+				null,   // this.requestOutputFileNameHeaders_permissions
 				null,	// this.requestOutputParentDirCreateIfNotExists,
 				null,	// this.requestOutputOverwriteIfExists,
 				null,	// this.responseInputMode, 

@@ -8878,8 +8878,14 @@ components:
         file:
           maxLength: 4000
           type: "string"
+        file_permissions:
+          maxLength: 255
+          type: "string"
         file_headers:
           maxLength: 4000
+          type: "string"
+        file_headers_permissions:
+          maxLength: 255
           type: "string"
         create_parent_dir:
           type: "boolean"

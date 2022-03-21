@@ -476,7 +476,9 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			String transfer_mode = null, transfer_mode_chunk_size = null, redirect_mode = null, redirect_max_hop = null, opzioniAvanzate = null;
 			// file
 			String requestOutputFileName = null;
+			String requestOutputFileName_permissions = null;
 			String requestOutputFileNameHeaders = null;
+			String requestOutputFileNameHeaders_permissions = null;
 			String requestOutputParentDirCreateIfNotExists = null;
 			String requestOutputOverwriteIfExists = null;
 			String responseInputMode = null;
@@ -714,7 +716,9 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 				if(responseInputMode==null && props!=null){
 					
 					requestOutputFileName = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE);	
+					requestOutputFileName_permissions = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_PERMISSIONS);	
 					requestOutputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS);	
+					requestOutputFileNameHeaders_permissions = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS_PERMISSIONS);
 					String v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
 					if(v!=null && !"".equals(v)){
 						if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
@@ -849,7 +853,8 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+					requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					autenticazioneToken, token_policy,
 					listExtendedConnettore, false,

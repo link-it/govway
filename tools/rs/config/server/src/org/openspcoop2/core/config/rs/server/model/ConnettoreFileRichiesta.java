@@ -31,7 +31,13 @@ public class ConnettoreFileRichiesta  {
   private String file = null;
   
   @Schema(description = "")
+  private String filePermissions = null;
+  
+  @Schema(description = "")
   private String fileHeaders = null;
+  
+  @Schema(description = "")
+  private String fileHeadersPermissions = null;
   
   @Schema(description = "")
   private Boolean createParentDir = false;
@@ -59,6 +65,25 @@ public class ConnettoreFileRichiesta  {
   }
 
  /**
+   * Get filePermissions
+   * @return filePermissions
+  **/
+  @JsonProperty("file_permissions")
+  @Valid
+ @Size(max=255)  public String getFilePermissions() {
+    return this.filePermissions;
+  }
+
+  public void setFilePermissions(String filePermissions) {
+    this.filePermissions = filePermissions;
+  }
+
+  public ConnettoreFileRichiesta filePermissions(String filePermissions) {
+    this.filePermissions = filePermissions;
+    return this;
+  }
+
+ /**
    * Get fileHeaders
    * @return fileHeaders
   **/
@@ -74,6 +99,25 @@ public class ConnettoreFileRichiesta  {
 
   public ConnettoreFileRichiesta fileHeaders(String fileHeaders) {
     this.fileHeaders = fileHeaders;
+    return this;
+  }
+
+ /**
+   * Get fileHeadersPermissions
+   * @return fileHeadersPermissions
+  **/
+  @JsonProperty("file_headers_permissions")
+  @Valid
+ @Size(max=255)  public String getFileHeadersPermissions() {
+    return this.fileHeadersPermissions;
+  }
+
+  public void setFileHeadersPermissions(String fileHeadersPermissions) {
+    this.fileHeadersPermissions = fileHeadersPermissions;
+  }
+
+  public ConnettoreFileRichiesta fileHeadersPermissions(String fileHeadersPermissions) {
+    this.fileHeadersPermissions = fileHeadersPermissions;
     return this;
   }
 
@@ -122,7 +166,9 @@ public class ConnettoreFileRichiesta  {
     sb.append("class ConnettoreFileRichiesta {\n");
     
     sb.append("    file: ").append(ConnettoreFileRichiesta.toIndentedString(this.file)).append("\n");
+    sb.append("    filePermissions: ").append(ConnettoreFileRichiesta.toIndentedString(this.filePermissions)).append("\n");
     sb.append("    fileHeaders: ").append(ConnettoreFileRichiesta.toIndentedString(this.fileHeaders)).append("\n");
+    sb.append("    fileHeadersPermissions: ").append(ConnettoreFileRichiesta.toIndentedString(this.fileHeadersPermissions)).append("\n");
     sb.append("    createParentDir: ").append(ConnettoreFileRichiesta.toIndentedString(this.createParentDir)).append("\n");
     sb.append("    overwriteIfExists: ").append(ConnettoreFileRichiesta.toIndentedString(this.overwriteIfExists)).append("\n");
     sb.append("}");

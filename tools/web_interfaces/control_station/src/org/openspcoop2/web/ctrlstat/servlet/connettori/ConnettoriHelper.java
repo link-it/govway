@@ -60,6 +60,8 @@ import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.pdd.core.autenticazione.ApiKeyUtilities;
+import org.openspcoop2.pdd.core.connettori.ConnettoreFILE;
+import org.openspcoop2.pdd.core.connettori.ConnettoreFile_outputConfig;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
@@ -672,7 +674,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
 			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
-			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
+			String requestOutputFileName, String requestOutputFileName_permissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeaders_permissions,
+			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
 			boolean autenticazioneToken, String tokenPolicy,
 			List<ExtendedConnettore> listExtendedConnettore, boolean forceEnabled,
@@ -692,7 +695,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 				proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
 				tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 				opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-				requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+				requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+				requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 				responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 				autenticazioneToken, tokenPolicy,
 				listExtendedConnettore, forceEnabled,
@@ -2140,7 +2144,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
 			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
-			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
+			String requestOutputFileName, String requestOutputFileName_permissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeaders_permissions,
+			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
 			boolean autenticazioneToken, String tokenPolicy,
 			List<ExtendedConnettore> listExtendedConnettore, boolean forceEnabled,
@@ -2227,7 +2232,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 						proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword, 
 						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta, 
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop, 
-						requestOutputFileName, requestOutputFileNameHeaders, requestOutputParentDirCreateIfNotExists, requestOutputOverwriteIfExists, 
+						requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+						requestOutputParentDirCreateIfNotExists, requestOutputOverwriteIfExists, 
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken, tokenPolicy);
 			}
@@ -2968,8 +2974,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				// FileSystem
 				if (endpointtype.equals(TipiConnettore.FILE.toString())) {
-					ConnettoreFileUtils.addFileDati(dati, this.getSize(),
-							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+					ConnettoreFileUtils.addFileDati(dati, this.getSize(),this,
+							requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime
 							);
 				}
@@ -3037,7 +3044,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
 			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
-			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
+			String requestOutputFileName, String requestOutputFileName_permissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeaders_permissions,
+			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
 			boolean autenticazioneToken, String tokenPolicy) {
 
@@ -3231,7 +3239,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 		if (endpointtype.equals(TipiConnettore.FILE.toString())) {
 			ConnettoreFileUtils.addFileDatiAsHidden(dati, 
-					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+					requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime);
 			
 			
@@ -3364,7 +3373,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 			
 			// file
 			String requestOutputFileName = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
+			String requestOutputFileName_permissions = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
 			String requestOutputFileNameHeaders = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
+			String requestOutputFileNameHeaders_permissions = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
 			String requestOutputParentDirCreateIfNotExists = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
 			String requestOutputOverwriteIfExists = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME);
 			String responseInputMode = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE);
@@ -3390,7 +3401,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 					proxy_enabled,proxy_hostname,proxy_port,proxy_username,proxy_password,
 					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+					requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					autenticazioneToken, token_policy,
 					listExtendedConnettore,servizioApplicativoServerEnabled, servizioApplicativoServer);
@@ -3417,7 +3429,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String proxy_enabled, String proxy_hostname, String proxy_port, String proxy_username, String proxy_password,
 			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
-			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
+			String requestOutputFileName, String requestOutputFileName_permissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeaders_permissions,
+			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
 			boolean autenticazioneToken, String tokenPolicy,
 			List<ExtendedConnettore> listExtendedConnettore,boolean servizioApplicativoServerEnabled, String servizioApplicativoServer)
@@ -3504,8 +3517,12 @@ public class ConnettoriHelper extends ConsoleHelper {
 					redirect_max_hop = "";			
 				if (requestOutputFileName == null)
 					requestOutputFileName = "";
+				if (requestOutputFileName_permissions == null)
+					requestOutputFileName_permissions = "";
 				if (requestOutputFileNameHeaders == null)
 					requestOutputFileNameHeaders = "";
+				if (requestOutputFileNameHeaders_permissions == null)
+					requestOutputFileNameHeaders_permissions = "";
 				if (responseInputFileName == null)
 					responseInputFileName = "";
 				if (responseInputFileNameHeaders == null)
@@ -3546,6 +3563,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 						(redirect_max_hop.indexOf(" ") != -1) ||
 						(requestOutputFileName.indexOf(" ") != -1) ||
 						(requestOutputFileNameHeaders.indexOf(" ") != -1) ||
+						(requestOutputFileName_permissions.indexOf(" ") != -1) ||
+						(requestOutputFileNameHeaders_permissions.indexOf(" ") != -1) ||
 						(responseInputFileName.indexOf(" ") != -1) ||
 						(responseInputFileNameHeaders.indexOf(" ") != -1) ||
 						(responseInputWaitTime.indexOf(" ") != -1) 
@@ -4068,8 +4087,22 @@ public class ConnettoriHelper extends ConsoleHelper {
 							return false;
 						}
 					}
-					if(this.checkLength255(requestOutputFileName, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME)==false) {
+					if(this.checkLength4000(requestOutputFileName, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME)==false) {
 						return false;
+					}
+					
+					if(StringUtils.isNotEmpty(requestOutputFileName_permissions)) {
+						try {
+							ConnettoreFILE.validatePermission(requestOutputFileName_permissions, new ConnettoreFile_outputConfig());
+						}catch(Exception e) {
+							this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS+"' ("+
+									ConnettoriCostanti.LABEL_CONNETTORE_REQUEST_OUTPUT+") non risulta corretto: "+e.getMessage());
+							return false;
+						}
+						
+						if(this.checkLength255(requestOutputFileName_permissions, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS)==false) {
+							return false;
+						}
 					}
 					
 					if(requestOutputFileNameHeaders!=null && !"".equals(requestOutputFileNameHeaders)){
@@ -4080,7 +4113,28 @@ public class ConnettoriHelper extends ConsoleHelper {
 									ConnettoriCostanti.LABEL_CONNETTORE_REQUEST_OUTPUT+") non risulta corretto: "+e.getMessage());
 							return false;
 						}
-						if(this.checkLength255(requestOutputFileNameHeaders, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS)==false) {
+						if(this.checkLength4000(requestOutputFileNameHeaders, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS)==false) {
+							return false;
+						}						
+					}
+					
+					if(StringUtils.isNotEmpty(requestOutputFileNameHeaders_permissions)) {
+						if(requestOutputFileNameHeaders!=null && !"".equals(requestOutputFileNameHeaders)){
+							try {
+								ConnettoreFILE.validatePermission(requestOutputFileNameHeaders_permissions, new ConnettoreFile_outputConfig());
+							}catch(Exception e) {
+								this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS+"' ("+
+										ConnettoriCostanti.LABEL_CONNETTORE_REQUEST_OUTPUT+") non risulta corretto: "+e.getMessage());
+								return false;
+							}
+							if(this.checkLength255(requestOutputFileNameHeaders_permissions, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS)==false) {
+								return false;
+							}
+						}
+						else {
+							this.pd.setMessage("Non è possibile configurare il parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS
+									+"' senza configurare anche il parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS+"' ("+
+									ConnettoriCostanti.LABEL_CONNETTORE_REQUEST_OUTPUT+")");
 							return false;
 						}
 					}
@@ -4100,7 +4154,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 								return false;
 							}
 						}
-						if(this.checkLength255(responseInputFileName, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME)==false) {
+						if(this.checkLength4000(responseInputFileName, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME)==false) {
 							return false;
 						}
 						
@@ -4112,7 +4166,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 										ConnettoriCostanti.LABEL_CONNETTORE_RESPONSE_INPUT+") non risulta corretto: "+e.getMessage());
 								return false;
 							}
-							if(this.checkLength255(responseInputFileNameHeaders, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS)==false) {
+							if(this.checkLength4000(responseInputFileNameHeaders, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS)==false) {
 								return false;
 							}
 						}
@@ -4178,7 +4232,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
 			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
-			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
+			String requestOutputFileName, String requestOutputFileName_permissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeaders_permissions,
+			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
 			String tokenPolicy,
 			List<ExtendedConnettore> listExtendedConnettore)
@@ -4261,7 +4316,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 						user, pwd);
 			} else if (tipoConnettore.equals(TipiConnettore.FILE.getNome())) {
 				ConnettoreFileUtils.fillConnettoreRegistry(connettore, 
-						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+						requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime);
 			} else if (tipoConnettore.equals(TipiConnettore.CUSTOM.toString())) {
 				connettore.setCustom(true);
@@ -4419,7 +4475,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
 			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
-			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
+			String requestOutputFileName, String requestOutputFileName_permissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeaders_permissions,
+			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
 			String tokenPolicy,
 			List<ExtendedConnettore> listExtendedConnettore)
@@ -4487,7 +4544,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 						httpsKeyAlias, httpsTrustStoreCRLs);
 			} else if (tipoConnettore.equals(TipiConnettore.FILE.getNome())) {
 				ConnettoreFileUtils.fillConnettoreConfig(connettore, 
-						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+						requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime);
 			} else if (tipoConnettore.equals(TipiConnettore.CUSTOM.toString())) {
 				connettore.setCustom(true);

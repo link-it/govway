@@ -39,11 +39,15 @@ il significato dei parametri:
       creare dei path dinamici (per ulteriori dettagli vedi sezione
       'Informazioni Dinamiche').
 
+   -  **File (Permessi)**: consente di impostare i permessi del file, indicato nel campo precedente, tramite il formato '[o/a]+/-rwx'.
+
    -  **File Headers** (opzionale): indirizzo su file-system (path) dove
       verranno serializzati gli header di trasporto associati alla
       richiesta. È possibile fornire delle macro per creare dei path
       dinamici (per ulteriori dettagli vedi sezione 'Informazioni
       Dinamiche').
+
+   -  **File Headers (Permessi)**: consente di impostare i permessi del file, indicato nel campo precedente, tramite il formato '[o/a]+/-rwx'.
 
    -  **Overwrite If Exists** (true/false): abilita l'eventuale
       sovrascrittura del file, se risulta già esistere.

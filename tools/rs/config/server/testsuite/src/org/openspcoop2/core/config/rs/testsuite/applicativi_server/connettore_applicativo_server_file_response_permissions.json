@@ -1,0 +1,19 @@
+{
+	"connettore": {
+		"tipo": "file",
+		"richiesta": {
+			"file": "/tmp/abc.txt",
+			"file_permissions": "o-rwx",
+			"file_headers": "/tmp/abc_headers.txt",
+			"file_headers_permissions": "-x",
+			"create_parent_dir": true
+		},
+		"risposta": {
+			"file": "/tmp/response.txt",
+			"wait_if_not_exists_ms": 200
+		}
+	}
+}
+
+
+

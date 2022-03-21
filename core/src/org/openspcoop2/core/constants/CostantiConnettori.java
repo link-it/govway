@@ -123,7 +123,9 @@ public class CostantiConnettori {
     /** FILE PROPERTIES */
     
 	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_FILE = "outputFile";
+	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_FILE_PERMISSIONS = "outputFilePermissions";
 	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS = "outputFileHeaders";
+	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS_PERMISSIONS = "outputFileHeadersPermissions";
 	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR = "outputFileAutoCreateParentDirectory";
 	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE = "outputFileOverwriteIfExists";
 	public final static String CONNETTORE_FILE_RESPONSE_INPUT_MODE = "response";

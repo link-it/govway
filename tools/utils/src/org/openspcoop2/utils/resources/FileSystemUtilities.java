@@ -335,7 +335,25 @@ public class FileSystemUtilities {
    public static void mkdirParentDirectory(File file) throws Exception {
 	   FileSystemUtilities.mkdirParentDirectory(file.getAbsolutePath());
    }
+   public static void mkdirParentDirectory(File file,
+		   Boolean readable, Boolean readableOwnerOnly,
+		   Boolean writable, Boolean writableOwnerOnly,
+		   Boolean executable, Boolean executableOwnerOnly) throws Exception {
+	   FileSystemUtilities.mkdirParentDirectory(file.getAbsolutePath(),
+			   readable, readableOwnerOnly,
+			   writable, writableOwnerOnly,
+			   executable, executableOwnerOnly);
+   }
    public static void mkdirParentDirectory(String file) throws Exception {
+	   mkdirParentDirectory(file,
+			   null, null,
+			   null, null,
+			   null, null);
+   }
+   public static void mkdirParentDirectory(String file,
+		   Boolean readable, Boolean readableOwnerOnly,
+		   Boolean writable, Boolean writableOwnerOnly,
+		   Boolean executable, Boolean executableOwnerOnly) throws Exception {
 		try{
 			File p = new File(file);
 			if(p.getParentFile()==null){
@@ -348,6 +366,32 @@ public class FileSystemUtilities {
 			if(p.getParentFile().mkdir()==false){
 				throw new Exception("Directory ["+p.getParentFile().getAbsolutePath()+"] non esistente e creazione non riuscita");
 			}
+			else {
+				if(readable!=null) {
+					if(readableOwnerOnly!=null) {
+						p.getParentFile().setReadable(readable, readableOwnerOnly);
+					}
+					else {
+						p.getParentFile().setReadable(readable);
+					}
+				}
+				if(writable!=null) {
+					if(writableOwnerOnly!=null) {
+						p.getParentFile().setWritable(writable, writableOwnerOnly);
+					}
+					else {
+						p.getParentFile().setWritable(writable);
+					}
+				}
+				if(executable!=null) {
+					if(executableOwnerOnly!=null) {
+						p.getParentFile().setExecutable(executable, executableOwnerOnly);
+					}
+					else {
+						p.getParentFile().setExecutable(executable);
+					}
+				}
+			}
 		}catch(Exception e){
 			throw new Exception("mkdirParentDirectory non riuscito: "+e.getMessage(),e);
 		}
@@ -356,14 +400,52 @@ public class FileSystemUtilities {
    public static void mkdir(String f) throws Exception{
 	   mkdir(f, new FileSystemMkdirConfig());
    }
+   public static void mkdir(String f,
+		   Boolean readable, Boolean readableOwnerOnly,
+		   Boolean writable, Boolean writableOwnerOnly,
+		   Boolean executable, Boolean executableOwnerOnly) throws Exception{
+	   mkdir(f, new FileSystemMkdirConfig(),
+			   readable, readableOwnerOnly,
+			   writable, writableOwnerOnly,
+			   executable, executableOwnerOnly);
+   }
    public static void mkdir(String f, FileSystemMkdirConfig config) throws Exception{
 	   File dir = new File(f);
 	   mkdir(dir, config);
    }
+   public static void mkdir(String f, FileSystemMkdirConfig config,
+		   Boolean readable, Boolean readableOwnerOnly,
+		   Boolean writable, Boolean writableOwnerOnly,
+		   Boolean executable, Boolean executableOwnerOnly) throws Exception{
+	   File dir = new File(f);
+	   mkdir(dir, config,
+			   readable, readableOwnerOnly,
+			   writable, writableOwnerOnly,
+			   executable, executableOwnerOnly);
+   }
+   
    public static void mkdir(File dir) throws Exception{
 	   mkdir(dir, new FileSystemMkdirConfig());
    }
+   public static void mkdir(File dir,
+		   Boolean readable, Boolean readableOwnerOnly,
+		   Boolean writable, Boolean writableOwnerOnly,
+		   Boolean executable, Boolean executableOwnerOnly) throws Exception{
+	   mkdir(dir, new FileSystemMkdirConfig(),
+			   readable, readableOwnerOnly,
+			   writable, writableOwnerOnly,
+			   executable, executableOwnerOnly);
+   }
    public static void mkdir(File dir, FileSystemMkdirConfig config) throws Exception{
+	   mkdir(dir, config,
+			   null, null,
+			   null, null,
+			   null, null);
+   }
+   public static void mkdir(File dir, FileSystemMkdirConfig config,
+		   Boolean readable, Boolean readableOwnerOnly,
+		   Boolean writable, Boolean writableOwnerOnly,
+		   Boolean executable, Boolean executableOwnerOnly) throws Exception{
 	   if(dir.exists()){
 			if(dir.isDirectory()==false){
 				throw new Exception("File ["+dir.getAbsolutePath()+"] is not directory");
@@ -389,12 +471,41 @@ public class FileSystemUtilities {
 				File parent = dir.getParentFile();
 				if(parent.exists()==false) {
 					if(config.crateParentIfNotExists) {
-						mkdirParentDirectory(dir);
+						mkdirParentDirectory(dir,
+								   readable, readableOwnerOnly,
+								   writable, writableOwnerOnly,
+								   executable, executableOwnerOnly);
 					}
 				}
 			}
 			if(dir.mkdir()==false){
 				throw new Exception("Creazione directory ["+dir.getAbsolutePath()+"] non riuscita");
+			}
+			else {
+				if(readable!=null) {
+					if(readableOwnerOnly!=null) {
+						dir.setReadable(readable, readableOwnerOnly);
+					}
+					else {
+						dir.setReadable(readable);
+					}
+				}
+				if(writable!=null) {
+					if(writableOwnerOnly!=null) {
+						dir.setWritable(writable, writableOwnerOnly);
+					}
+					else {
+						dir.setWritable(writable);
+					}
+				}
+				if(executable!=null) {
+					if(executableOwnerOnly!=null) {
+						dir.setExecutable(executable, executableOwnerOnly);
+					}
+					else {
+						dir.setExecutable(executable);
+					}
+				}
 			}
 		}
 	}
