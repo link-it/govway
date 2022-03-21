@@ -1,0 +1,9 @@
+Lanciare tutta la test-suite con
+	./eseguiTest.sh
+
+
+Lanciare l'help per mostrare come eseguire i singoli test 
+	./eseguiTest.sh -h
+
+Come leggere l'etichetta dei test:
+	${protocollo}_${threads}_${dimensioneRichiesta}_${profiloSicurezza}_${tipoTest}_${sleepMin}_${sleepMax}_${azione}_${iterazione}

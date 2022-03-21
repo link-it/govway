@@ -1,12 +1,12 @@
-if [ ! -f ../../config.properties ]
+if [ ! -f ../config.properties ]
 then
         echo "File config.properties not exists"
         exit 10
 fi
-source ../../config.properties
+source ../config.properties
 
-jmeterRestTestFile=${BENCHMARK_HOME}/test/rest/TestErogazioni.jmx
-jmeterSoapTestFile=${BENCHMARK_HOME}/test/soap/TestErogazioni.jmx
+jmeterRestTestFile=${BENCHMARK_HOME}/test/TestErogazioniRest.jmx
+jmeterSoapTestFile=${BENCHMARK_HOME}/test/TestErogazioniSoap.jmx
 
 elencoTestRest="trasparente  trasparenteNoRegistrazione  trasparenteValidazione  trasparenteNoRegistrazioneValidazione  modiDoppioHeaderRichiesta  modiDoppioHeaderRichiestaRispostaDigestRichiesta  modiDoppioHeaderRichiestaFiltroDuplicati  modiHeaderAgidOAuthRichiesta  modiHeaderAgidOAuthRichiestaRispostaDigestRichiesta  modiHeaderAgidOAuthRichiestaFiltroDuplicati"
 
@@ -397,8 +397,8 @@ function aggregate_report() {
 	echo -e "\n========================"
 	echo -e "JMeter Report: ${outputDir}/dashboard/index.html"
 	echo -e "========================\n"
-	# Produco statistiche aggregate in csv
 
+	# Produco statistiche aggregate in csv
 	set -x
 	${binJMeter}/JMeterPluginsCMD.sh --generate-csv ${outputDir}/aggregatiConPlugin.csv --input-jtl ${outputDir}/${joinedCsv} --plugin-type AggregateReport
 	set +x
@@ -572,30 +572,32 @@ for testConfigurator in $testToRun; do
 	run_jmx_test
 	# Aggrego i risultati e produco grafici e dashboard
 	aggregate_report $testConfigurator
+
+	# In maniera incrementale concateno tutti i risultati aggregati, ordinandoli per label.
+	# Ad essere ordinati devono essere i singoli csv con i dati aggregati da concatenare
+	# e poi in quello finale. In questo modo nel csv finale abbiamo righe contigue che 
+	# identificano lo stesso test e che sono ordinate per label.
+	# I csv aggregati sono già ordinati, per cui è sufficiente concatenarli
+
+	# Prendo un csv qualunque per pescare gli headers
+	someoutput=(${resultDir}/*/result-aggregate.csv)
+	headers=`head -1 $someoutput`
+
+	# Pesco tutti i csv prodotti
+	files=""
+	for output in ${resultDir}/*/result-aggregate.csv; do
+		files="${files} ${output}"
+	done
+
+	# Scrivo headers e concateno tutti i csv prodotti
+	echo $headers > ${resultDir}/allResults.csv
+	tail -q -n +2 $files >> ${resultDir}/allResults.csv
+
 done
 
 
-# Alla fine concateno tutti i risultati aggregati, ordinandoli per label
-# Ad essere ordinati devono essere i singoli csv con i dati aggregati da concatenare poi in quello finale.
-# In questo modo nel csv finale abbiamo righe contigue che identificano lo stesso test e che sono ordinate per label
-# I csv aggregati sono già ordinati, per cui è sufficiente concatenarli
 
-# Prendo un csv qualunque per pescare gli headers
-
-someoutput=(${resultDir}/*/result-aggregate.csv)
-headers=`head -1 $someoutput`
-
-# Pesco tutti i csv prodotti
-files=""
-for output in ${resultDir}/*/result-aggregate.csv; do
-	files="${files} ${output}"
-done
-
-# Scrivo headers e concateno tutti i csv prodotti
-echo $headers > ${resultDir}/allResults.csv
-tail -q -n +2 $files >> ${resultDir}/allResults.csv
-
-tar -czf results.tar.gz -C ${resultDir} .
+tar -czf ${resultDir}/results.tar.gz -C ${resultDir} .
 
 
 
