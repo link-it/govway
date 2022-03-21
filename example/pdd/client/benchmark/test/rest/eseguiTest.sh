@@ -5,12 +5,16 @@ then
 fi
 source ../../config.properties
 
-jmeterTestFile=${BENCHMARK_HOME}/test/rest/TestErogazioni.jmx
-jmeterGraphFile=${BENCHMARK_HOME}/test/rest/GraphsGenerator.jmx
+jmeterRestTestFile=${BENCHMARK_HOME}/test/rest/TestErogazioni.jmx
+jmeterSoapTestFile=${BENCHMARK_HOME}/test/soap/TestErogazioni.jmx
 
-elencoTest="trasparente  trasparenteNoRegistrazione  trasparenteValidazione  trasparenteNoRegistrazioneValidazione  modiDoppioHeaderRichiesta  modiDoppioHeaderRichiestaRispostaDigestRichiesta  modiDoppioHeaderRichiestaFiltroDuplicati  modiHeaderAgidOAuthRichiesta  modiHeaderAgidOAuthRichiestaRispostaDigestRichiesta  modiHeaderAgidOAuthRichiestaFiltroDuplicati"
+elencoTestRest="trasparente  trasparenteNoRegistrazione  trasparenteValidazione  trasparenteNoRegistrazioneValidazione  modiDoppioHeaderRichiesta  modiDoppioHeaderRichiestaRispostaDigestRichiesta  modiDoppioHeaderRichiestaFiltroDuplicati  modiHeaderAgidOAuthRichiesta  modiHeaderAgidOAuthRichiestaRispostaDigestRichiesta  modiHeaderAgidOAuthRichiestaFiltroDuplicati"
 
+elencoTestSoap="soapTrasparente  soapTrasparenteNoRegistrazione  soapTrasparenteValidazione  soapTrasparenteNoRegistrazioneValidazione  soapModiIntegritaPayloadRichiesta  soapModiIntegritaPayloadRichiestaRispostaDigestRichiesta  soapModiIntegritaPayloadRichiestaFiltroDuplicati  soapModiIDAuthRichiesta  soapModiIDAuthRichiestaRisposta  soapModiIDAuthRichiestaFiltroDuplicati"
 
+elencoTest="$elencoTestRest $elencoTestSoap"
+
+soggetto=ENTE
 duration="60"
 threads="50 100 200"
 threadsRampUp=5
@@ -34,7 +38,6 @@ function usage() {
 	echo -e " 		-r: Esegui il riscaldamento                   (Riscaldamento)"
 	echo -e "		-i: Esege tutta la batteria di test X volte   (Iterazioni)"
 	echo -e "		-k: Mantiene i csv intermedi                  (Keep)\n"
-	echo -e "		test = [ $elencoTest ]\n"
 	echo -e "		Opzioni per iniziare una sola istanza di un test\n"
 	echo -e "		-d: Specifica una delle possibili dimensioni  (Dimensione)"
 	echo -e " 			1024, 51200, 409600"
@@ -43,41 +46,59 @@ function usage() {
 	echo -e "		-n: Numero di threads                         (Nthreads)"
 	echo -e "		-u: Ramp-up                                   (ramp-Up)"
 	echo -e "		-t: Durata in secondi                         (Time duration)\n"
+	echo -e "		Test REST = [ $elencoTestRest ]\n"
+	echo -e "		Test SOAP = [ $elencoTestSoap ]\n"
 }
 
 # I seguenti valori identificano un test e vengono configurati dalle funzioni
 # di test di sotto.
 
-# Soggetto
-soggetto=ENTE
-
-# Protocollo (api: ProfiloAPIGateway, rest: ModI)
-#protocollo=api
-protocollo=rest
-
-# ProfiloSicurezza
-# none: nessun profilo di sicurezza
-# digest: profilo con integrità del payload
-profiloSicurezza=digest
-
+# 		REST
 # --- API Gateway --
-#tipiTest="Proxy Validazione"
-# [profiloSicurezza=none]
-# test: vengono registrate le transazioni
-# test2: non vegono registrate le transazioni
-#azione="test"
+# protocollo=api
+# tipiTest="Proxy Validazione"
+# Azioni [profiloSicurezza=none] - nessun profilo di sicurezza
+# 	test: vengono registrate le transazioni
+# 	test2: non vegono registrate le transazioni
+
 # -- ModI --
-tipiTest="Proxy"
-# [profiloSicurezza=digest]
-# test: LineeGuida con doppio header nella sola richiesta
-# test2: LineeGuida con dobbio header anche nella risposta + digestRichiesta
-# test3: LineeGuida con doppio header nella sola richiesta + filtroDuplicati
-# test4: LineeGuida con header Agid e header OAuth nella sola richiesta
-# test5: LineeGuida con header Agid e header OAuth anche nella risposta + digestRichiesta
-# test6: LineeGuida con header Agid e header OAuth nella sola richiesta + filtroDuplicati
-azione=test
+# protocollo=rest
+# tipiTest="Proxy"
 
+# Azioni [profiloSicurezza=digest] - digest: profilo con integrità del payload
+#	  test: LineeGuida con doppio header nella sola richiesta
+#	  test2: LineeGuida con dobbio header anche nella risposta + digestRichiesta
+#	  test3: LineeGuida con doppio header nella sola richiesta + filtroDuplicati
+#	  test4: LineeGuida con header Agid e header OAuth nella sola richiesta
+#	  test5: LineeGuida con header Agid e header OAuth anche nella risposta + digestRichiesta
+#	  test6: LineeGuida con header Agid e header OAuth nella sola richiesta + filtroDuplicati
+
+#		SOAP
+# --- API Gateway --
+# protocollo=api
+# tipiTest="Proxy Validazione"
+# Azioni [profiloSicurezza=none]
+#	  test: vengono registrate le transazioni
+#	  test2: non vegono registrate le transazioni
+# -- ModI --
+# protocollo=soap
+# tipiTest="Proxy"
+# Azioni [profiloSicurezza=digest]
+#	  test: LineeGuida con integrità del payload nella sola richiesta
+#	  test2: LineeGuida con integrità del payload anche nella risposta + digestRichiesta
+#	  test3: LineeGuida con integrità del payload nella sola richiesta + filtroDuplicati
+# Azioni [profiloSicurezza=auth]
+#	  test4: LineeGuida con IDAuth nella sola richiesta
+#	  test5: LineeGuida con IDAuth anche nella risposta
+#	  test6: LineeGuida con IDAuth nella sola richiesta + filtroDuplicati
+
+
+# Questo array associativo contiene la descrizioni dei test da riportare nella dashboard
+declare -A testDescriptions
+
+testDescriptions[trasparente]="Vengono registrate le transazioni"
 function trasparente() {
+	jmeterTestFile=${jmeterRestTestFile}
 	profiloSicurezza=none
 	protocollo=api
 	tipiTest=Proxy
@@ -86,7 +107,9 @@ function trasparente() {
 }
 
 
+testDescriptions[trasparenteNoRegistrazione]="Non vengono registrate le transazioni"
 function trasparenteNoRegistrazione() {
+	jmeterTestFile=${jmeterRestTestFile}
 	profiloSicurezza=none
 	protocollo=api
 	tipiTest=Proxy
@@ -95,7 +118,9 @@ function trasparenteNoRegistrazione() {
 }
 
 
+testDescriptions[trasparenteValidazione]="Vengono registrate le transazioni"
 function trasparenteValidazione() {
+	jmeterTestFile=${jmeterRestTestFile}
 	profiloSicurezza=none
 	protocollo=api
 	tipiTest=Validazione
@@ -104,7 +129,9 @@ function trasparenteValidazione() {
 }
 
 
+testDescriptions[trasparenteNoRegistrazioneValidazione]="Non vengono registrate le transazioni"
 function trasparenteNoRegistrazioneValidazione() {
+	jmeterTestFile=${jmeterRestTestFile}
 	profiloSicurezza=none
 	protocollo=api
 	tipiTest=Validazione
@@ -113,7 +140,9 @@ function trasparenteNoRegistrazioneValidazione() {
 }
 
 
+testDescriptions[modiDoppioHeaderRichiesta]="LineeGuida con doppio header nella sola richiesta"
 function modiDoppioHeaderRichiesta() {
+	jmeterTestFile=${jmeterRestTestFile}
 	profiloSicurezza=digest
 	protocollo=rest
 	tipiTest=Proxy
@@ -122,7 +151,9 @@ function modiDoppioHeaderRichiesta() {
 }
 
 
+testDescriptions[modiDoppioHeaderRichiestaRispostaDigestRichiesta]="LineeGuida con dobbio header anche nella risposta + digestRichiesta"
 function modiDoppioHeaderRichiestaRispostaDigestRichiesta() {
+	jmeterTestFile=${jmeterRestTestFile}
 	profiloSicurezza=digest
 	protocollo=rest
 	tipiTest=Proxy
@@ -131,7 +162,9 @@ function modiDoppioHeaderRichiestaRispostaDigestRichiesta() {
 }
 
 
+testDescriptions[modiDoppioHeaderRichiestaFiltroDuplicati]="LineeGuida con doppio header nella sola richiesta + filtroDuplicati"
 function modiDoppioHeaderRichiestaFiltroDuplicati() {
+	jmeterTestFile=${jmeterRestTestFile}
 	profiloSicurezza=digest
 	protocollo=rest
 	tipiTest=Proxy
@@ -140,7 +173,9 @@ function modiDoppioHeaderRichiestaFiltroDuplicati() {
 }
 
 
+testDescriptions[modiHeaderAgidOAuthRichiesta]="LineeGuida con header Agid e header OAuth nella sola richiesta"
 function modiHeaderAgidOAuthRichiesta() {
+	jmeterTestFile=${jmeterRestTestFile}
 	profiloSicurezza=digest
 	protocollo=rest
 	tipiTest=Proxy
@@ -149,7 +184,9 @@ function modiHeaderAgidOAuthRichiesta() {
 }
 
 
+testDescriptions[modiHeaderAgidOAuthRichiestaRispostaDigestRichiesta]="LineeGuida con header Agid e header OAuth anche nella risposta + digestRichiesta"
 function modiHeaderAgidOAuthRichiestaRispostaDigestRichiesta() {
+	jmeterTestFile=${jmeterRestTestFile}
 	profiloSicurezza=digest
 	protocollo=rest
 	tipiTest=Proxy
@@ -158,7 +195,9 @@ function modiHeaderAgidOAuthRichiestaRispostaDigestRichiesta() {
 }
 
 
+testDescriptions[modiHeaderAgidOAuthRichiestaFiltroDuplicati]="LineeGuida con header Agid e header OAuth nella sola richiesta + filtroDuplicati"
 function modiHeaderAgidOAuthRichiestaFiltroDuplicati() {
+	jmeterTestFile=${jmeterRestTestFile}
 	profiloSicurezza=digest
 	protocollo=rest
 	tipiTest=Proxy
@@ -166,17 +205,116 @@ function modiHeaderAgidOAuthRichiestaFiltroDuplicati() {
 	outputDir=${resultDir}/${FUNCNAME[0]}
 }
 
-declare -A testDescriptions
-testDescriptions[trasparente]="Vengono registrate le transazioni"
-testDescriptions[trasparenteNoRegistrazione]="Non vengono registrate le transazioni"
-testDescriptions[trasparenteValidazione]="Vengono registrate le transazioni"
-testDescriptions[trasparenteNoRegistrazioneValidazione]="Non vengono registrate le transazioni"
-testDescriptions[modiDoppioHeaderRichiesta]="LineeGuida con doppio header nella sola richiesta"
-testDescriptions[modiDoppioHeaderRichiestaRispostaDigestRichiesta]="LineeGuida con dobbio header anche nella risposta + digestRichiesta"
-testDescriptions[modiDoppioHeaderRichiestaFiltroDuplicati]="LineeGuida con doppio header nella sola richiesta + filtroDuplicati"
-testDescriptions[modiHeaderAgidOAuthRichiesta]="LineeGuida con header Agid e header OAuth nella sola richiesta"
-testDescriptions[modiHeaderAgidOAuthRichiestaRispostaDigestRichiesta]="LineeGuida con header Agid e header OAuth anche nella risposta + digestRichiesta"
-testDescriptions[modiHeaderAgidOAuthRichiestaFiltroDuplicati]="LineeGuida con header Agid e header OAuth nella sola richiesta + filtroDuplicati"
+
+testDescriptions[soapTrasparente]="Vengono registrate le transazioni"
+function soapTrasparente() {
+	jmeterTestFile=${jmeterSoapTestFile}
+	profiloSicurezza=none
+	protocollo=api
+	tipiTest=Proxy
+	azione=test
+	outputDir=${resultDir}/${FUNCNAME[0]}
+}
+
+
+testDescriptions[soapTrasparenteNoRegistrazione]="Non vengono registrate le transazioni"
+function soapTrasparenteNoRegistrazione() {
+	jmeterTestFile=${jmeterSoapTestFile}
+	profiloSicurezza=none
+	protocollo=api
+	tipiTest=Proxy
+	azione=test2
+	outputDir=${resultDir}/${FUNCNAME[0]}
+}
+
+
+testDescriptions[soapTrasparenteValidazione]="Vengono registrate le transazioni"
+function soapTrasparenteValidazione() {
+	jmeterTestFile=${jmeterSoapTestFile}
+	profiloSicurezza=none
+	protocollo=api
+	tipiTest=Validazione
+	azione=test
+	outputDir=${resultDir}/${FUNCNAME[0]}
+}
+
+
+testDescriptions[soapTrasparenteNoRegistrazioneValidazione]="Non vengono registrate le transazioni"
+function soapTrasparenteNoRegistrazioneValidazione() {
+	jmeterTestFile=${jmeterSoapTestFile}
+	profiloSicurezza=none
+	protocollo=api
+	tipiTest=Validazione
+	azione=test2
+	outputDir=${resultDir}/${FUNCNAME[0]}
+}
+
+
+testDescriptions[soapModiIntegritaPayloadRichiesta]="LineeGuida con integrità del payload nella sola richiesta"
+function soapModiIntegritaPayloadRichiesta() {
+	jmeterTestFile=${jmeterSoapTestFile}
+	profiloSicurezza=digest
+	protocollo=soap
+	tipiTest=Proxy
+	azione=test
+	outputDir=${resultDir}/${FUNCNAME[0]}
+}
+
+
+testDescriptions[soapModiIntegritaPayloadRichiestaRispostaDigestRichiesta]="LineeGuida con integrità del payload anche nella risposta + digestRichiesta"
+function soapModiIntegritaPayloadRichiestaRispostaDigestRichiesta() {
+	jmeterTestFile=${jmeterSoapTestFile}
+	profiloSicurezza=digest
+	protocollo=soap
+	tipiTest=Proxy
+	azione=test2
+	outputDir=${resultDir}/${FUNCNAME[0]}
+}
+
+
+testDescriptions[soapModiIntegritaPayloadRichiestaFiltroDuplicati]="LineeGuida con integrità del payload nella sola richiesta + filtroDuplicati"
+function soapModiIntegritaPayloadRichiestaFiltroDuplicati() {
+	jmeterTestFile=${jmeterSoapTestFile}
+	profiloSicurezza=digest
+	protocollo=soap
+	tipiTest=Proxy
+	azione=test3
+	outputDir=${resultDir}/${FUNCNAME[0]}
+}
+
+
+testDescriptions[soapModiIDAuthRichiesta]="LineeGuida con IDAuth nella sola richiesta"
+function soapModiIDAuthRichiesta() {
+	jmeterTestFile=${jmeterSoapTestFile}
+	profiloSicurezza=auth
+	protocollo=soap
+	tipiTest=Proxy
+	azione=test4
+	outputDir=${resultDir}/${FUNCNAME[0]}
+}
+
+
+testDescriptions[soapModiIDAuthRichiestaRisposta]="LineeGuida con IDAuth anche nella risposta"
+function soapModiIDAuthRichiestaRisposta() {
+	jmeterTestFile=${jmeterSoapTestFile}
+	profiloSicurezza=auth
+	protocollo=soap
+	tipiTest=Proxy
+	azione=test5
+	outputDir=${resultDir}/${FUNCNAME[0]}
+}
+
+
+testDescriptions[soapModiIDAuthRichiestaFiltroDuplicati]="LineeGuida con IDAuth nella sola richiesta + filtroDuplicati"
+function soapModiIDAuthRichiestaFiltroDuplicati() {
+	jmeterTestFile=${jmeterSoapTestFile}
+	profiloSicurezza=auth
+	protocollo=soap
+	tipiTest=Proxy
+	azione=test6
+	outputDir=${resultDir}/${FUNCNAME[0]}
+}
+
 
 function build_jmx_command() {
 	echo "${binJMeter}/jmeter -n -t ${jmeterTestFile} -l ${resultDir}/OUTPUT.txt -JnodoRunIP=${nodoRunIP} -JnodoRunPort=${nodoRunPort} -JclientIP=${clientIP} -JtestFileDir=${testFileDir} -JlogDir=${logDir} -Jthreads=${threadNumber} -Jduration=${duration} -JthreadsRampUp=${threadsRampUp}  -Jdimensione=${dimensione} -Jprofilo=${profilo} -Jazione=${azione} -JtipoTest=${tipoTest} -Jsoggetto=${soggetto}  -JsleepMin=${sleepMin} -JsleepMax=${sleepMax} -JproxyHost=${proxyHost} -JproxyPort=${proxyPort} -Jprotocollo=${protocollo} -JprofiloSicurezza=${profiloSicurezza} -JdirResult=${outputDir} -j ${logDir}/jmeter.log -Jiterazione=$it"
