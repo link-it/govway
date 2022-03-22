@@ -40,6 +40,10 @@
 		<fileset dir="${required_lib}/spring">
 			<include name="*.jar"/>
 		</fileset>
+		<fileset dir="${required_lib}/swagger">
+			<include name="swagger-models-2*.jar"/>
+			<include name="swagger-core-2*.jar"/>
+		</fileset>
 		<fileset dir="${required_lib}/shared">
 			<include name="snakeyaml-1.28.jar"/>
 			<include name="xercesImpl-*.jar"/>

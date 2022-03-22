@@ -1,0 +1,35 @@
+{
+  "codiceComunicazione": "1300411300005000",
+  "dataInvio": "2019-03-29T12:59:07.000+01:00",
+  "direzione": "RICHIESTA",
+ "mittente": "NAZIONALE",
+"destinatario": "SoggettoInternoTest",
+  "servizio": "NotificaComunicazioneObbligatoria",
+  "profiloCollaborazione": "SERVIZIO_SINCRONO",
+  "identificatore": "PIEMONTE_PDDPIEMONTE_7309665_2021-09-30_12:21",
+  "modello":    {
+      "payload":       {
+         "codiceComunicazione": "1300411300005000",
+         "dataInizioRapporto": "2019-03-29",
+         "dataInvio": "2019-03-29T12:59:07.000+01:00",
+         "datoreLavoro":          {
+            "codiceFiscale": "06208861002",
+            "denominazione": "Unpa S.r.l"
+         },
+         "emailDelegato": "utente.test@anpal.it",
+         "lavoratore":          {
+            "codiceFiscale": "PPRPLN70A01H501S",
+            "cognome": "PAPERINO",
+            "nome": "PAOLINO"
+         },
+         "motivoUrgenza": "richiesta odierna del cliente",
+         "protocollo": "00781308",
+         "tipoComunicazione": "01",
+         "versione": "CO130131"
+      },
+      "tipoModello": "UNIURG"
+   },
+   "profiloCollaborazione": "SERVIZIO_SINCRONO",
+   "servizio": "InviaComunicazioneObbligatoria",
+	"riferimentoMessaggio": "IDRICHIESTA"
+}

@@ -107,6 +107,8 @@
 	- src/org/openspcoop2/core/protocolli/trasparente/testsuite/integrazione/template/IntegrazioneTemplateTrasformazione.ftl
 	- src/org/openspcoop2/core/protocolli/trasparente/testsuite/integrazione/template/IntegrazioneTemplateTrasformazioneRisposta.ftl
 
+- Per i test sulle trasformazioni di protocollo rest to soap e viceversa copiare la directory test_trasformazioni/ in /etc/govway
+
 - Per i test sulle credenziali aggiungere in govway_local.properties la configurazione che si trova in 'src/org/openspcoop2/core/protocolli/trasparente/testsuite/autenticazione/gestore_credenziali/govway_local.properties.adjunct'.
 
 - Configurare l'application server in modo tale da supportare connessioni ssl sulla porta 8444 e 8445 utilizzando le configurazioni presenti nella directory config_https:
@@ -272,6 +274,9 @@ Di seguito vengono descritti i test del package 'trasformazione':
 
 - 'soap_action', verifica la trasformazione utilizzata per adeguare la soapAction su messaggi soap
   ant run_test -Ddelete=false -Dload=false -Dpackage=trasformazione.soap_action
+
+- 'protocollo', verifica la trasformazione utilizzata per effettuare trasformazioni di protocollo rest->soap e viceversa
+  ant run_test -Ddelete=false -Dload=false -Dpackage=trasformazione.protocollo
 
 Di seguito vengono descritti i test del package 'registrazione_messaggi':
 

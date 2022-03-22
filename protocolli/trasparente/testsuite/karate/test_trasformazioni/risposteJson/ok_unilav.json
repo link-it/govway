@@ -1,0 +1,18 @@
+{
+   "codiceComunicazione": "1300411399909000",
+   "dataInvio": "2021-11-16T16:51:07.548",
+   "destinatario": "SoggettoInternoTest",
+   "direzione": "RISPOSTA",
+   "identificatore": "NAZIONALE_NAZIONALESPCoopIT_9204277_2021-11-16_16:51",
+   "mittente": "NAZIONALE",
+   "modello":    {
+      "payload":       {
+         "descrEsito": "Invio effettuato correttamente.",
+         "tipoRisposta": "OK"
+      },
+      "tipoModello": "UNILAV"
+   },
+   "profiloCollaborazione": "SERVIZIO_SINCRONO",
+   "riferimentoMessaggio": "ENTE_ENTESPCoopIT_7347600_2021-11-16_16:51",
+   "servizio": "InviaComunicazioneObbligatoria"
+}

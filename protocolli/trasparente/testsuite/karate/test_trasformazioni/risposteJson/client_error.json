@@ -1,0 +1,11 @@
+{
+   "dataInvio": "2021-11-16T16:51:06.328",
+   "direzione": "RISPOSTA",
+   "mittente": "NAZIONALE",
+   "modello": {"payload":    {
+      "faultcode": "soapenv:Client",
+      "faultstring": "EGOV_IT_101 - Identificativo della parte Mittente sconosciuto"
+   }},
+   "profiloCollaborazione": "SERVIZIO_SINCRONO",
+   "servizio": "InviaComunicazioneObbligatoria"
+}

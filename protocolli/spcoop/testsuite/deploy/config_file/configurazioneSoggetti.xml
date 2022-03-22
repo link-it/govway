@@ -8915,14 +8915,14 @@
 	<servizio-applicativo nome="serializeAndReturnDynamicFile" > 
             <invocazione-servizio>
                 <connettore tipo="file" nome="serializeAndReturnDynamicFile">
-                    <property nome="outputFile" valore="/var/tmp/TEST/SINCRONO/{date:yyyyMMdd_hhmmssSSS}/REQ_{transaction:id}_{context:PROTOCOL_NAME}.xml" />
-		    <property nome="outputFileHeaders" valore="/var/tmp/TEST/SINCRONO/{date:yyyyMMdd_hhmmssSSS}/REQ_{busta:tipoMittente}{busta:busta.mittente.identificativo.base}.meta" />
+                    <property nome="outputFile" valore="/var/tmp/TEST/SINCRONO/{date:yyyyMMdd_hhmmss}/REQ_{transaction:id}_{context:PROTOCOL_NAME}.xml" />
+		    <property nome="outputFileHeaders" valore="/var/tmp/TEST/SINCRONO/{date:yyyyMMdd_hhmmss}/REQ_{busta:tipoMittente}{busta:busta.mittente.identificativo.base}.meta" />
 		    <property nome="outputFileAutoCreateParentDirectory" valore="abilitato" />
 		    <property nome="outputFileOverwriteIfExists" valore="abilitato" />
 		    <property nome="response" valore="abilitato" />
 		    <!-- echo -->
-		    <property nome="inputFile" valore="/var/tmp/TEST/SINCRONO/{date:yyyyMMdd_hhmmssSSS}/REQ_{transaction:id}_{context:PROTOCOL_NAME}.xml" />
-		    <property nome="inputFileHeaders" valore="/var/tmp/TEST/SINCRONO/{date:yyyyMMdd_hhmmssSSS}/REQ_{busta:tipoMittente}{busta:busta.mittente.identificativo.base}.meta" />
+		    <property nome="inputFile" valore="/var/tmp/TEST/SINCRONO/{date:yyyyMMdd_hhmmss}/REQ_{transaction:id}_{context:PROTOCOL_NAME}.xml" />
+		    <property nome="inputFileHeaders" valore="/var/tmp/TEST/SINCRONO/{date:yyyyMMdd_hhmmss}/REQ_{busta:tipoMittente}{busta:busta.mittente.identificativo.base}.meta" />
 		    <property nome="inputFileWaitTimeIfNotExists" valore="10000" />
                 </connettore>
             </invocazione-servizio>  
