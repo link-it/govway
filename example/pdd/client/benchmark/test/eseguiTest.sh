@@ -5,8 +5,12 @@ then
 fi
 source ../config.properties
 
+# TODO: Rimettere l'opzione -a 
+
 jmeterRestTestFile=${BENCHMARK_HOME}/test/TestErogazioniRest.jmx
 jmeterSoapTestFile=${BENCHMARK_HOME}/test/TestErogazioniSoap.jmx
+jmeterGraphFile=${BENCHMARK_HOME}/test/GraphsGenerator.jmx
+
 
 elencoTestRest="trasparente  trasparenteNoRegistrazione  trasparenteValidazione  trasparenteNoRegistrazioneValidazione  modiDoppioHeaderRichiesta  modiDoppioHeaderRichiestaRispostaDigestRichiesta  modiDoppioHeaderRichiestaFiltroDuplicati  modiHeaderAgidOAuthRichiesta  modiHeaderAgidOAuthRichiestaRispostaDigestRichiesta  modiHeaderAgidOAuthRichiestaFiltroDuplicati"
 
