@@ -1,3 +1,13 @@
+2022-03-24  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Risolto Bug OP-1341
+	La validazione di un'interfaccia OpenAPI era troppo stringente per quanto concerne i valori di default associati i tipi primitivi (integer, number o boolena) definiti con gli apici (es. '65' invece di 65).
+	Il validatore segnalava il seguente errore:
+		Caused by: org.openspcoop2.utils.rest.ProcessingException: OpenAPI3 not valid: Validation error(s) :
+		paths./pets1.patch.parameters.schema.default: Value '65' is incompatible with schema type 'integer' (code: 138)
+		From: paths./pets1.patch.parameters.schema.default
+	
 2022-03-21  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, ApiRsConfigurazione]

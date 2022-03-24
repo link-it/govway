@@ -1,0 +1,203 @@
+openapi: 3.0.3
+servers:
+  - url: http://petstore.swagger.io/api
+    description: esempio
+
+info:
+  x-api-id: https://esempioId
+  title: Document Retrieve
+  x-summary: Servizio demo che consente di comprendere le varie modalità di scambio degli allegati
+  description: Servizio demo che consente di comprendere le varie modalità di scambio degli allegati
+  version: "0.1"
+  contact:
+    email: info@link.it
+  license:
+    name: GPL v3.0
+    url: 'https://www.gnu.org/licenses/gpl-3.0.txt'
+
+tags:
+  - name: default
+    description: test su default  
+    
+paths:
+   
+  /pets1/{pathLong}/{pathLongDouble}:
+    patch:
+      tags:
+       - default
+      parameters:
+
+        - name: pathLong
+          in: path
+          required: true
+          schema:
+            format: int64
+            default: '3147483647'
+            type: integer
+        - name: pathLongDouble
+          in: path
+          required: true
+          schema:
+            format: double
+            default: '2.3'
+            type: number
+
+        - name: pInteger
+          in: query
+          schema:
+            default: 1
+            type: integer
+        - name: pInt
+          in: query
+          schema:
+            format: int32
+            default: 32
+            type: integer
+        - name: pLong
+          in: query
+          schema:
+            format: int64
+            default: 3147483647
+            type: integer
+
+        - name: pIntegerAsString
+          in: query
+          schema:
+            default: '1'
+            type: integer
+        - name: pIntAsString
+          in: query
+          schema:
+            format: int32
+            default: '32'
+            type: integer
+        - name: pLongAsString
+          in: query
+          schema:
+            format: int64
+            default: '3147483647'
+            type: integer
+
+        - name: pNumber
+          in: query
+          schema:
+            default: 1.2
+            type: number
+        - name: pFloat
+          in: query
+          schema:
+            format: float
+            default: 2.3
+            type: number
+        - name: pDouble
+          in: query
+          schema:
+            format: double
+            default: 2.3
+            type: number
+
+        - name: pNumberAsString
+          in: query
+          schema:
+            default: '1.2'
+            type: number
+        - name: pFloatAsString
+          in: query
+          schema:
+            format: float
+            default: '2.3'
+            type: number
+        - name: pDoubleAsString
+          in: query
+          schema:
+            format: double
+            default: '2.3'
+            type: number
+
+        - name: pBoolean
+          in: query
+          schema:
+            default: true
+            type: boolean
+        - name: pBooleanAsString
+          in: query
+          schema:
+            default: 'true'
+            type: boolean
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cat'
+      responses:
+        '200':
+          description: Updated
+          
+components:
+        
+  schemas:
+
+    Cat:
+      type: object
+      required:
+         - altro
+         - pet
+      properties:
+        altro:
+          type: string
+        pet:
+          type: string
+
+        pInteger:
+          default: 1
+          type: integer
+        pInt:
+          format: int32
+          default: 32
+          type: integer
+        pLong:
+          format: int64
+          default: 3147483647
+          type: integer
+        pIntegerAsString:
+          default: '1'
+          type: integer
+        pIntAsString:
+          format: int32
+          default: '32'
+          type: integer
+        pLongAsString:
+          format: int64
+          default: '3147483647'
+          type: integer
+
+        pNumber:
+          default: 1.2
+          type: number
+        pFloat:
+          format: float
+          default: 2.3
+          type: number
+        pDouble:
+          format: double
+          default: 2.3
+          type: number
+        pNumberAsString:
+          default: '1.2'
+          type: number
+        pFloatAsString:
+          format: float
+          default: '2.3'
+          type: number
+        pDoubleAsString:
+          format: double
+          default: '2.3'
+          type: number
+
+        pBoolean:
+          default: true
+          type: boolean
+        pBooleanAsString:
+          default: 'true'
+          type: boolean
