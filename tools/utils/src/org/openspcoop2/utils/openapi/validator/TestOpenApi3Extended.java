@@ -201,51 +201,57 @@ public class TestOpenApi3Extended {
 				try {
 					apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), apiOpenApi, configO);
 				}catch(Exception e) {
-					throw new Exception("Errore non atteso: "+e.getMessage(),e);
+					throw new Exception("Errore non atteso (org.openapi4j.parser.validation.ValidationContext.convertDefaultStringValueInPrimitiveType="+org.openapi4j.parser.validation.ValidationContext.convertDefaultStringValueInPrimitiveType+"): "+e.getMessage(),e);
 				}
 				
 				// disabilito patch
 				org.openapi4j.parser.validation.ValidationContext.convertDefaultStringValueInPrimitiveType=false;
-				
-				apiReaderOpenApi = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
-				apiReaderOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), new File(url.toURI()), configOpenApi);
-				apiOpenApi = apiReaderOpenApi.read();
-				
-				apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 				try {
-					apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), apiOpenApi, configO);
-					throw new Exception("Atteso errore");
-				}catch(Exception e) {
+				
+					apiReaderOpenApi = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+					apiReaderOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), new File(url.toURI()), configOpenApi);
+					apiOpenApi = apiReaderOpenApi.read();
 					
-					String erroreInteger1 = "default: Value '1' is incompatible with schema type 'integer' (code: 138)";
-					String erroreInteger2 = "default: Value '32' is incompatible with schema type 'integer' (code: 138)";
-					String erroreInteger3 = "default: Value '3147483647' is incompatible with schema type 'integer' (code: 138)";
+					apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+					try {
+						apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), apiOpenApi, configO);
+						throw new Exception("Atteso errore");
+					}catch(Exception e) {
+						
+						String erroreInteger1 = "default: Value '1' is incompatible with schema type 'integer' (code: 138)";
+						String erroreInteger2 = "default: Value '32' is incompatible with schema type 'integer' (code: 138)";
+						String erroreInteger3 = "default: Value '3147483647' is incompatible with schema type 'integer' (code: 138)";
+						
+						String erroreNumber1 = "default: Value '1.2' is incompatible with schema type 'number' (code: 138)";
+						String erroreNumber2 = "default: Value '2.3' is incompatible with schema type 'number' (code: 138)";
+						
+						String erroreBoolean = "default: Value 'true' is incompatible with schema type 'boolean' (code: 138)";
+											
+						if(!e.getMessage().contains(erroreInteger1)) {
+							throw new Exception("Errore atteso '"+erroreInteger1+"' non rilevato in :"+e.getMessage(),e);
+						}
+						if(!e.getMessage().contains(erroreInteger2)) {
+							throw new Exception("Errore atteso '"+erroreInteger2+"' non rilevato in :"+e.getMessage(),e);
+						}
+						if(!e.getMessage().contains(erroreInteger3)) {
+							throw new Exception("Errore atteso '"+erroreInteger3+"' non rilevato in :"+e.getMessage(),e);
+						}
+						
+						if(!e.getMessage().contains(erroreNumber1)) {
+							throw new Exception("Errore atteso '"+erroreNumber1+"' non rilevato in :"+e.getMessage(),e);
+						}
+						if(!e.getMessage().contains(erroreNumber2)) {
+							throw new Exception("Errore atteso '"+erroreNumber2+"' non rilevato in :"+e.getMessage(),e);
+						}
+						
+						if(!e.getMessage().contains(erroreBoolean)) {
+							throw new Exception("Errore atteso '"+erroreBoolean+"' non rilevato in :"+e.getMessage(),e);
+						}
+					}
 					
-					String erroreNumber1 = "default: Value '1.2' is incompatible with schema type 'number' (code: 138)";
-					String erroreNumber2 = "default: Value '2.3' is incompatible with schema type 'number' (code: 138)";
-					
-					String erroreBoolean = "default: Value 'true' is incompatible with schema type 'boolean' (code: 138)";
-										
-					if(!e.getMessage().contains(erroreInteger1)) {
-						throw new Exception("Errore atteso '"+erroreInteger1+"' non rilevato in :"+e.getMessage(),e);
-					}
-					if(!e.getMessage().contains(erroreInteger2)) {
-						throw new Exception("Errore atteso '"+erroreInteger2+"' non rilevato in :"+e.getMessage(),e);
-					}
-					if(!e.getMessage().contains(erroreInteger3)) {
-						throw new Exception("Errore atteso '"+erroreInteger3+"' non rilevato in :"+e.getMessage(),e);
-					}
-					
-					if(!e.getMessage().contains(erroreNumber1)) {
-						throw new Exception("Errore atteso '"+erroreNumber1+"' non rilevato in :"+e.getMessage(),e);
-					}
-					if(!e.getMessage().contains(erroreNumber2)) {
-						throw new Exception("Errore atteso '"+erroreNumber2+"' non rilevato in :"+e.getMessage(),e);
-					}
-					
-					if(!e.getMessage().contains(erroreBoolean)) {
-						throw new Exception("Errore atteso '"+erroreBoolean+"' non rilevato in :"+e.getMessage(),e);
-					}
+				}finally {
+					// riabilito patch
+					org.openapi4j.parser.validation.ValidationContext.convertDefaultStringValueInPrimitiveType=true;
 				}
 				
 			}else {

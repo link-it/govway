@@ -1,3 +1,9 @@
+2022-03-25  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1345
+	La registrazione nei file di log associati ai topic di file trace, non avveniva se veniva disabilitata la registrazione delle transazioni su database.
+
 2022-03-24  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]
