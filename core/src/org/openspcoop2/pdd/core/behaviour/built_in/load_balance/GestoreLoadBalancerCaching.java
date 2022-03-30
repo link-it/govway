@@ -51,6 +51,7 @@ import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.slf4j.Logger;
@@ -104,7 +105,7 @@ public class GestoreLoadBalancerCaching {
 			if(cache!=null)
 				throw new Exception("Cache gia' abilitata");
 			else{
-				cache = new Cache(LOAD_BALANCER_CACHE_NAME);
+				cache = new Cache(CacheType.JCS, LOAD_BALANCER_CACHE_NAME);  // lascio JCS come default abilitato via jmx
 			}
 		}catch(Exception e){
 			throw new Exception("Abilitazione cache per i dati contenenti i dati di bilanciamento del carico non riuscita: "+e.getMessage(),e);
@@ -119,7 +120,7 @@ public class GestoreLoadBalancerCaching {
 				if(dimensioneCache!=null){
 					dimensione = dimensioneCache.intValue();
 				}
-				initCache(dimensione, algoritmoCacheLRU, itemIdleTime, itemLifeSecond, log);
+				initCache(CacheType.JCS, dimensione, algoritmoCacheLRU, itemIdleTime, itemLifeSecond, log);  // lascio JCS come default abilitato via jmx
 			}
 		}catch(Exception e){
 			throw new Exception("Abilitazione cache per i dati contenenti i dati di bilanciamento del carico non riuscita: "+e.getMessage(),e);
@@ -262,29 +263,29 @@ public class GestoreLoadBalancerCaching {
 	/*----------------- INIZIALIZZAZIONE --------------------*/
 
 	public static void initialize(Logger log) throws Exception{
-		GestoreLoadBalancerCaching.initialize(false, -1,null,-1l,-1l, log);
+		GestoreLoadBalancerCaching.initialize(null, false, -1,null,-1l,-1l, log);
 	}
-	public static void initialize(int dimensioneCache,String algoritmoCache,
+	public static void initialize(CacheType cacheType, int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws Exception{
-		GestoreLoadBalancerCaching.initialize(true, dimensioneCache,algoritmoCache,idleTime,itemLifeSecond, log);
+		GestoreLoadBalancerCaching.initialize(cacheType, true, dimensioneCache,algoritmoCache,idleTime,itemLifeSecond, log);
 	}
 
-	private static void initialize(boolean cacheAbilitata,int dimensioneCache,String algoritmoCache,
+	private static void initialize(CacheType cacheType, boolean cacheAbilitata,int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws Exception{
 
 		// Inizializzazione Cache
 		if(cacheAbilitata){
-			GestoreLoadBalancerCaching.initCache(dimensioneCache, algoritmoCache, idleTime, itemLifeSecond, log);
+			GestoreLoadBalancerCaching.initCache(cacheType, dimensioneCache, algoritmoCache, idleTime, itemLifeSecond, log);
 		}
 
 	}
-	private static void initCache(Integer dimensioneCache,String algoritmoCache,Long itemIdleTime,Long itemLifeSecond,Logger alog) throws Exception{
-		initCache(dimensioneCache, CostantiConfigurazione.CACHE_LRU.toString().equalsIgnoreCase(algoritmoCache), itemIdleTime, itemLifeSecond, alog);
+	private static void initCache(CacheType cacheType, Integer dimensioneCache,String algoritmoCache,Long itemIdleTime,Long itemLifeSecond,Logger alog) throws Exception{
+		initCache(cacheType, dimensioneCache, CostantiConfigurazione.CACHE_LRU.toString().equalsIgnoreCase(algoritmoCache), itemIdleTime, itemLifeSecond, alog);
 	}
 	
-	private static void initCache(Integer dimensioneCache,boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond,Logger alog) throws Exception{
+	private static void initCache(CacheType cacheType, Integer dimensioneCache,boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond,Logger alog) throws Exception{
 		
-		cache = new Cache(LOAD_BALANCER_CACHE_NAME);
+		cache = new Cache(cacheType, LOAD_BALANCER_CACHE_NAME);
 	
 		// dimensione
 		if(dimensioneCache!=null && dimensioneCache>0){
@@ -339,6 +340,7 @@ public class GestoreLoadBalancerCaching {
 			throw new Exception(msg,error);
 		}
 		
+		cache.build();
 	}
 	
 	@SuppressWarnings("deprecation")

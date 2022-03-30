@@ -46,6 +46,7 @@ public abstract class AbstractMediaTypeCollection implements Serializable {
 	
 	private static final int STATUS_DEFAULT = 0;
 	private static final String SEPARATORE = "__@@@__";
+	private static final int SEPARATORE_LEN = SEPARATORE.length();
 	private String buildKey(String mediaType, Integer status) {
 		if(status==null) {
 			status = STATUS_DEFAULT;
@@ -53,10 +54,14 @@ public abstract class AbstractMediaTypeCollection implements Serializable {
 		return status+SEPARATORE+mediaType;
 	}
 	private String extractMediaTypeFromKey(String key) {
-		return key.split(SEPARATORE)[1];
+		int charIx =  key.indexOf( SEPARATORE );
+		return key.substring(charIx + SEPARATORE_LEN );
+//		return key.split(SEPARATORE)[1];
 	}
 	private int extractStatusFromKey(String key) {
-		return Integer.parseInt(key.split(SEPARATORE)[0]);
+		int charIx =  key.indexOf( SEPARATORE );
+		return Integer.parseInt( key.substring(0, charIx) );
+//		return Integer.parseInt(key.split(SEPARATORE)[0]);
 	}
 	
 	// Vengono utilizzate due liste per preservare l'ordine di inserimento che si perde in una hashtable,

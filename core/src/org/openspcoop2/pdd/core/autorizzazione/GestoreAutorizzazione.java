@@ -66,6 +66,7 @@ import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.cache.CacheResponse;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
@@ -126,7 +127,7 @@ public class GestoreAutorizzazione {
 			throw new AutorizzazioneException("Cache gia' abilitata");
 		else{
 			try{
-				GestoreAutorizzazione.cacheAutorizzazione = new Cache(GestoreAutorizzazione.AUTORIZZAZIONE_CACHE_NAME);
+				GestoreAutorizzazione.cacheAutorizzazione = new Cache(CacheType.JCS, GestoreAutorizzazione.AUTORIZZAZIONE_CACHE_NAME); // lascio JCS come default abilitato via jmx
 			}catch(Exception e){
 				throw new AutorizzazioneException(e.getMessage(),e);
 			}
@@ -162,7 +163,7 @@ public class GestoreAutorizzazione {
 					itemLifeSecondLong = itemLifeSecond;
 				}
 				
-				GestoreAutorizzazione.initCacheAutorizzazione(dimensioneCacheInt, algoritmoCache, itemIdleTimeLong, itemLifeSecondLong, null);
+				GestoreAutorizzazione.initCacheAutorizzazione(CacheType.JCS, dimensioneCacheInt, algoritmoCache, itemIdleTimeLong, itemLifeSecondLong, null); // lascio JCS come default abilitato via jmx
 			}catch(Exception e){
 				throw new AutorizzazioneException(e.getMessage(),e);
 			}
@@ -262,14 +263,14 @@ public class GestoreAutorizzazione {
 
 	/*----------------- INIZIALIZZAZIONE --------------------*/
 	public static void initialize(Logger log) throws Exception{
-		GestoreAutorizzazione.initialize(false, -1,null,-1l,-1l, log);
+		GestoreAutorizzazione.initialize(null, false, -1,null,-1l,-1l, log);
 	}
-	public static void initialize(int dimensioneCache,String algoritmoCache,
+	public static void initialize(CacheType cacheType, int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws Exception{
-		GestoreAutorizzazione.initialize(true, dimensioneCache,algoritmoCache,idleTime,itemLifeSecond, log);
+		GestoreAutorizzazione.initialize(cacheType, true, dimensioneCache,algoritmoCache,idleTime,itemLifeSecond, log);
 	}
 
-	private static void initialize(boolean cacheAbilitata,int dimensioneCache,String algoritmoCache,
+	private static void initialize(CacheType cacheType, boolean cacheAbilitata,int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws Exception{
 
 		// Inizializzo log
@@ -277,19 +278,19 @@ public class GestoreAutorizzazione {
 		
 		// Inizializzazione Cache
 		if(cacheAbilitata){
-			GestoreAutorizzazione.initCacheAutorizzazione(dimensioneCache, algoritmoCache, idleTime, itemLifeSecond, log);
+			GestoreAutorizzazione.initCacheAutorizzazione(cacheType, dimensioneCache, algoritmoCache, idleTime, itemLifeSecond, log);
 		}
 
 	}
 
 
-	public static void initCacheAutorizzazione(int dimensioneCache,String algoritmoCache,
+	public static void initCacheAutorizzazione(CacheType cacheType, int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws Exception {
 		
 		if(log!=null)
 			log.info("Inizializzazione cache Autorizzazione");
 
-		GestoreAutorizzazione.cacheAutorizzazione = new Cache(GestoreAutorizzazione.AUTORIZZAZIONE_CACHE_NAME);
+		GestoreAutorizzazione.cacheAutorizzazione = new Cache(cacheType, GestoreAutorizzazione.AUTORIZZAZIONE_CACHE_NAME);
 
 		if( (dimensioneCache>0) ||
 				(algoritmoCache != null) ){
@@ -338,6 +339,8 @@ public class GestoreAutorizzazione {
 		}catch(Exception error){
 			throw new AutorizzazioneException("Parametro errato per l'attributo 'MaxLifeSecond' (Gestore Messaggi): "+error.getMessage(),error);
 		}
+		
+		GestoreAutorizzazione.cacheAutorizzazione.build();
 
 	}
 	

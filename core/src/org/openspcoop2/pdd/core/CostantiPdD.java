@@ -26,6 +26,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.controllo_traffico.beans.JMXConstants;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.utils.Costanti;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.jmx.CostantiJMX;
 
 
@@ -309,7 +310,9 @@ public class CostantiPdD {
     public static final int CONNETTORE_HTTP_URL_HTTPS_CACHE_SIZE = 10000;
    
     /** Pool Size Applicative Threads */
-    public static final int CONNETTORE_NIO_ASYNC_SERVER_POOL_SIZE = 100;
+    public static final int CONNETTORE_NIO_ASYNC_REQUEST_POOL_SIZE = 100;
+    /** Pool Size Applicative Threads */
+    public static final int CONNETTORE_NIO_ASYNC_RESPONSE_POOL_SIZE = 100;
     /** Maximum limit of connection on a per route basis */
     public static final int CONNETTORE_NIO_ASYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE = 100;
     /** Maximum limit of connection on total */
@@ -323,7 +326,7 @@ public class CostantiPdD {
     /** Controllo effettuato ogni X secondi */
     public static final int CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_IDLE_CONNECTION_CHECK_INTERVAL_SECONDS = 60;
     /** NIO Streaming buffer size */
-    public static final int CONNETTORE_NIO_ASYNC_BUFFER_SIZE = 61140;
+    public static final int CONNETTORE_NIO_ASYNC_BUFFER_SIZE = Utilities.DIMENSIONE_BUFFER;
     
     /** Configurazione default per refresh cluster dinamico */
     public static final int CLUSTER_DINAMICO_REFRESH_SECONDS = 60;

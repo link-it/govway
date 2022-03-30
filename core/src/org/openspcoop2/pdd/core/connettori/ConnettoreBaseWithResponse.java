@@ -61,6 +61,9 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 
 	/** InputStream Risposta */
 	protected InputStream isResponse = null;
+	public InputStream getIsResponse() {
+		return this.isResponse;
+	}
 	public void setInputStreamResponse(InputStream isResponse) {
 		this.isResponse = isResponse;
 	}

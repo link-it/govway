@@ -19,12 +19,17 @@
  */
 package org.openspcoop2.pdd.services.connector.messages;
 
+import java.io.IOException;
 import java.io.OutputStream;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import javax.servlet.AsyncContext;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.pdd.services.connector.AsyncResponseCallbackClientEvent;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.protocol.engine.constants.IDService;
@@ -41,6 +46,8 @@ import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 public class HttpServletConnectorAsyncOutMessage extends HttpServletConnectorOutMessage {
 
 	protected AsyncContext _ac;	
+	private CompletableFuture<Boolean> asyncWriteTask = null;
+	private boolean flowStream = false;
 	
 	public HttpServletConnectorAsyncOutMessage(IProtocolFactory<?> protocolFactory, AsyncContext ac,
 			IDService idModuloAsIDService, String idModulo) throws ConnectorException{
@@ -71,8 +78,44 @@ public class HttpServletConnectorAsyncOutMessage extends HttpServletConnectorOut
 	
 	@Override
 	protected void responseWrite(OpenSPCoop2Message msg, OutputStream os, boolean consume) throws ConnectorException {
+		try {
+			this.asyncWriteTask = new CompletableFuture<Boolean>();
+			if ( this.flowStream ) {
+				this.getHttpServletResponse().getOutputStream().setWriteListener( new WriteListener() {
+					
+					@Override
+					public void onWritePossible() throws IOException {
+						try {
+							msg.writeTo( os, consume );
+							HttpServletConnectorAsyncOutMessage.this.asyncWriteTask.complete( true );
+						} catch ( MessageException e ) {
+							// TBK
+							e.printStackTrace();
+							throw new IOException( e );
+						}
+					}
+					
+					@Override
+					public void onError( Throwable t ) {
+						HttpServletConnectorAsyncOutMessage.this.asyncWriteTask.complete( false );
+						// TBK
+						t.printStackTrace();
+//				        log.error( "Errore durante la consegna della risposta asincrona: " + t.getMessage(), t );
+				        HttpServletConnectorAsyncOutMessage.this._ac.complete();
+					}
+				});
+			} else {
+				super.responseWrite(msg, os, consume);
+				this.asyncWriteTask.complete( true );
+			}
+		} catch (IOException e) {
+			// TBK
+			e.printStackTrace();
+			throw new ConnectorException( e );
+		}
+
 		//if(!this.bufferingResponse || !(os instanceof  javax.servlet.ServletOutputStream) ) {
-		super.responseWrite(msg, os, consume);
+//		super.responseWrite(msg, os, consume);
 		/*}
 		else {
 			try{
@@ -113,7 +156,19 @@ public class HttpServletConnectorAsyncOutMessage extends HttpServletConnectorOut
 	
 	@Override
 	public void flush(boolean throwException) throws ConnectorException {
-	
+		try {
+			if ( this.asyncWriteTask != null ) {
+				boolean taskRes = this.asyncWriteTask.get();
+				this.asyncWriteTask = null;
+				if(!taskRes && throwException) {
+					throw new ConnectorException("Response write uncomplete (flush)?");
+				}
+			}
+		} catch (InterruptedException | ExecutionException e) {
+			if(throwException) {
+				throw new ConnectorException(e.getMessage(),e);
+			}
+		}
 		if(this.nioException!=null && throwException) {
 			throw new ConnectorException(this.nioException.getMessage(),this.nioException);
 		}
@@ -127,6 +182,14 @@ public class HttpServletConnectorAsyncOutMessage extends HttpServletConnectorOut
 		super.close(clientEvent, throwException);
 		
 		try{
+			if ( this.asyncWriteTask != null ) {
+				boolean taskRes = this.asyncWriteTask.get();
+				this.asyncWriteTask = null;
+				if(!taskRes && throwException) {
+					throw new ConnectorException("Response write uncomplete (close)?");
+				}
+			}
+			
 			//if(this._ac!=null && !this.bufferingResponse){
 			if(this._ac!=null) {
 				try{

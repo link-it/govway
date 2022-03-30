@@ -102,6 +102,7 @@ import org.openspcoop2.security.message.jose.JOSEUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
@@ -187,7 +188,7 @@ public class GestoreToken {
 			throw new TokenException("Cache gia' abilitata");
 		else{
 			try{
-				GestoreToken.cacheToken = new Cache(GestoreToken.TOKEN_CACHE_NAME);
+				GestoreToken.cacheToken = new Cache(CacheType.JCS, GestoreToken.TOKEN_CACHE_NAME); // lascio JCS come default abilitato via jmx
 			}catch(Exception e){
 				throw new TokenException(e.getMessage(),e);
 			}
@@ -223,7 +224,7 @@ public class GestoreToken {
 					itemLifeSecondLong = itemLifeSecond;
 				}
 				
-				GestoreToken.initCacheToken(dimensioneCacheInt, algoritmoCache, itemIdleTimeLong, itemLifeSecondLong, null);
+				GestoreToken.initCacheToken(CacheType.JCS, dimensioneCacheInt, algoritmoCache, itemIdleTimeLong, itemLifeSecondLong, null); // lascio JCS come default abilitato via jmx
 			}catch(Exception e){
 				throw new TokenException(e.getMessage(),e);
 			}
@@ -376,14 +377,16 @@ public class GestoreToken {
 
 	/*----------------- INIZIALIZZAZIONE --------------------*/
 	public static void initialize(Logger log) throws Exception{
-		GestoreToken.initialize(false, -1,null,-1l,-1l, log);
+		GestoreToken.initialize(null, false, -1,null,-1l,-1l, log);
 	}
-	public static void initialize(int dimensioneCache,String algoritmoCache,
+	public static void initialize(CacheType cacheType,
+			int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws Exception{
-		GestoreToken.initialize(true, dimensioneCache,algoritmoCache,idleTime,itemLifeSecond, log);
+		GestoreToken.initialize(cacheType, true, dimensioneCache,algoritmoCache,idleTime,itemLifeSecond, log);
 	}
 
-	private static void initialize(boolean cacheAbilitata,int dimensioneCache,String algoritmoCache,
+	private static void initialize(CacheType cacheType,
+			boolean cacheAbilitata,int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws Exception{
 
 		// Inizializzo log
@@ -391,19 +394,19 @@ public class GestoreToken {
 				
 		// Inizializzazione Cache
 		if(cacheAbilitata){
-			GestoreToken.initCacheToken(dimensioneCache, algoritmoCache, idleTime, itemLifeSecond, log);
+			GestoreToken.initCacheToken(cacheType, dimensioneCache, algoritmoCache, idleTime, itemLifeSecond, log);
 		}
 
 	}
 
 
-	public static void initCacheToken(int dimensioneCache,String algoritmoCache,
+	public static void initCacheToken(CacheType cacheType, int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws Exception {
 		
 		if(log!=null)
 			log.info("Inizializzazione cache Token");
 
-		GestoreToken.cacheToken = new Cache(GestoreToken.TOKEN_CACHE_NAME);
+		GestoreToken.cacheToken = new Cache(cacheType, GestoreToken.TOKEN_CACHE_NAME);
 
 		if( (dimensioneCache>0) ||
 				(algoritmoCache != null) ){
@@ -453,6 +456,7 @@ public class GestoreToken {
 			throw new TokenException("Parametro errato per l'attributo 'MaxLifeSecond' (Gestore Messaggi): "+error.getMessage(),error);
 		}
 
+		GestoreToken.cacheToken.build();
 	}
 	
 	

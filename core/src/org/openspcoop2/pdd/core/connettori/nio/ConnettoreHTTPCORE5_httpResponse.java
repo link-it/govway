@@ -34,6 +34,7 @@ public class ConnettoreHTTPCORE5_httpResponse {
 
 	private HttpEntity entity;
 	private HttpResponse httpResponse;
+	private long count = 0;
 
 	public ConnettoreHTTPCORE5_httpResponse(HttpResponse httpResponse) {
 		this.httpResponse = httpResponse;
@@ -53,5 +54,13 @@ public class ConnettoreHTTPCORE5_httpResponse {
 
 	public void setHttpResponse(HttpResponse httpResponse) {
 		this.httpResponse = httpResponse;
+	}
+	
+	public long getCount() {
+		return this.count;
+	}
+
+	public void setCount(long count) {
+		this.count = count;
 	}
 }

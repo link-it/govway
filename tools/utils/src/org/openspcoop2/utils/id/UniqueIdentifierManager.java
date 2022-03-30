@@ -54,6 +54,7 @@ public class UniqueIdentifierManager {
         };
 	
 	private static IUniqueIdentifierGenerator uniqueIdentifierGenerator_staticInstance;
+	private static boolean bufferSupported_staticInstance;
 	
 	/** Generazione UID Disabiltiata */
 	private static boolean generazioneUIDDisabilitata = false;
@@ -86,6 +87,13 @@ public class UniqueIdentifierManager {
 			if(UniqueIdentifierManager.className_threadLocal==null || forceInitManager){
 				UniqueIdentifierManager.className_threadLocal=className;
 				UniqueIdentifierManager.args_threadLocal=o;
+				
+				try{
+            		IUniqueIdentifierGenerator uniqueIdentifierGenerator = (IUniqueIdentifierGenerator) Loader.getInstance().newInstance(className);
+            		UniqueIdentifierManager.bufferSupported_staticInstance = uniqueIdentifierGenerator.isBufferSupperted();
+    			}catch(Exception e){
+    				throw new RuntimeException("Riscontrato errore durante il caricamento del manager specificato [class:"+className_threadLocal+"]: "+e.getMessage(),e);
+    			}
 			}
 		}
 		else {
@@ -93,12 +101,17 @@ public class UniqueIdentifierManager {
 				try{
 					UniqueIdentifierManager.uniqueIdentifierGenerator_staticInstance = (IUniqueIdentifierGenerator) Loader.getInstance().newInstance(className);
 					UniqueIdentifierManager.uniqueIdentifierGenerator_staticInstance.init(o);
+					UniqueIdentifierManager.bufferSupported_staticInstance = UniqueIdentifierManager.uniqueIdentifierGenerator_staticInstance.isBufferSupperted();
 				}catch(Exception e){
 					throw new UniqueIdentifierException("Riscontrato errore durante il caricamento del manager specificato [class:"+className+"]: "+e.getMessage(),e);
 				}
 			}
 		}
 		
+	}
+	
+	public static boolean isBufferSupported() {
+		return UniqueIdentifierManager.bufferSupported_staticInstance;
 	}
 	
 	public static IUniqueIdentifier newUniqueIdentifier() throws UniqueIdentifierException{
@@ -119,6 +132,27 @@ public class UniqueIdentifierManager {
 			}
 		}catch(Exception e){
 			throw new UniqueIdentifierException("UniqueIdentifierManager.newID() non riuscita",e);		
+		}
+	}
+	
+	public static IUniqueIdentifier newUniqueIdentifier(boolean useBuffer) throws UniqueIdentifierException{
+		if(UniqueIdentifierManager.generazioneUIDDisabilitata){
+			return null;
+		}
+		try{
+			if(useThreadLocal) {
+				return UniqueIdentifierManager.uniqueIdentifierGenerator_threadLocal.get().newID(useBuffer);
+			}
+			else {
+				if(UniqueIdentifierManager.uniqueIdentifierGenerator_staticInstance==null){
+					Logger log = LoggerWrapperFactory.getLogger(UniqueIdentifierManager.class);
+					log.error("UniqueIdentifierManager non inizializzato");
+					UniqueIdentifierManager.inizializzaUniqueIdentifierManager(false, "org.openspcoop.utils.id.ClusterIdentifier");
+				}
+				return UniqueIdentifierManager.uniqueIdentifierGenerator_staticInstance.newID(useBuffer);
+			}
+		}catch(Exception e){
+			throw new UniqueIdentifierException("UniqueIdentifierManager.newID(useBuffer) non riuscita",e);		
 		}
 	}
 	

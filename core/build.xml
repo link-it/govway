@@ -68,6 +68,7 @@
 			<include name="jax/jaxb*"/>
 			<include name="jax/jaxws*"/>
 			<include name="javax/*"/>
+                        <include name="jetty-client/*"/>
 			<include name="jminix/*"/>
 			<include name="json/*"/>
 			<include name="log/*"/>

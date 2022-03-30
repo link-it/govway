@@ -32,6 +32,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.transport.http.SSLConfig;
 import org.slf4j.Logger;
 
@@ -105,7 +106,7 @@ public class GestoreKeystoreCaching {
 			if(cache!=null)
 				throw new Exception("Cache gia' abilitata");
 			else{
-				cache = new Cache(KEYSTORE_CACHE_NAME);
+				cache = new Cache(CacheType.JCS, KEYSTORE_CACHE_NAME); // lascio JCS come default abilitato via jmx
 			}
 		}catch(Exception e){
 			throw new Exception("Abilitazione cache per i dati contenenti i keystore non riuscita: "+e.getMessage(),e);
@@ -118,9 +119,9 @@ public class GestoreKeystoreCaching {
 			else{
 				int dimensione = -1;
 				if(dimensioneCache!=null){
-					dimensione = dimensioneCache.intValue();
+					dimensione = dimensioneCache.intValue(); // lascio JCS come default abilitato via jmx
 				}
-				initCache(dimensione, algoritmoCacheLRU, itemIdleTime, itemLifeSecond, log);
+				initCache(CacheType.JCS, dimensione, algoritmoCacheLRU, itemIdleTime, itemLifeSecond, log);
 			}
 		}catch(Exception e){
 			throw new Exception("Abilitazione cache per i dati contenenti i keystore non riuscita: "+e.getMessage(),e);
@@ -195,29 +196,29 @@ public class GestoreKeystoreCaching {
 	/*----------------- INIZIALIZZAZIONE --------------------*/
 
 	public static void initialize(Logger log) throws Exception{
-		GestoreKeystoreCaching.initialize(false, -1,null,-1l,-1l, log);
+		GestoreKeystoreCaching.initialize(null, false, -1,null,-1l,-1l, log);
 	}
-	public static void initialize(int dimensioneCache,String algoritmoCache,
+	public static void initialize(CacheType cacheType, int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws Exception{
-		GestoreKeystoreCaching.initialize(true, dimensioneCache,algoritmoCache,idleTime,itemLifeSecond, log);
+		GestoreKeystoreCaching.initialize(cacheType, true, dimensioneCache,algoritmoCache,idleTime,itemLifeSecond, log);
 	}
 
-	private static void initialize(boolean cacheAbilitata,int dimensioneCache,String algoritmoCache,
+	private static void initialize(CacheType cacheType, boolean cacheAbilitata,int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws Exception{
 
 		// Inizializzazione Cache
 		if(cacheAbilitata){
-			GestoreKeystoreCaching.initCache(dimensioneCache, algoritmoCache, idleTime, itemLifeSecond, log);
+			GestoreKeystoreCaching.initCache(cacheType, dimensioneCache, algoritmoCache, idleTime, itemLifeSecond, log);
 		}
 
 	}
-	private static void initCache(Integer dimensioneCache,String algoritmoCache,Long itemIdleTime,Long itemLifeSecond,Logger alog) throws Exception{
-		initCache(dimensioneCache, CostantiConfigurazione.CACHE_LRU.toString().equalsIgnoreCase(algoritmoCache), itemIdleTime, itemLifeSecond, alog);
+	private static void initCache(CacheType cacheType, Integer dimensioneCache,String algoritmoCache,Long itemIdleTime,Long itemLifeSecond,Logger alog) throws Exception{
+		initCache(cacheType, dimensioneCache, CostantiConfigurazione.CACHE_LRU.toString().equalsIgnoreCase(algoritmoCache), itemIdleTime, itemLifeSecond, alog);
 	}
 	
-	private static void initCache(Integer dimensioneCache,boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond,Logger alog) throws Exception{
+	private static void initCache(CacheType cacheType, Integer dimensioneCache,boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond,Logger alog) throws Exception{
 		
-		cache = new Cache(KEYSTORE_CACHE_NAME);
+		cache = new Cache(cacheType, KEYSTORE_CACHE_NAME);
 	
 		// dimensione
 		if(dimensioneCache!=null && dimensioneCache>0){
@@ -272,6 +273,7 @@ public class GestoreKeystoreCaching {
 			throw new Exception(msg,error);
 		}
 		
+		cache.build();
 		
 		// impostazione di JCS nel gestore delle cache dei keystore 
 		

@@ -7334,7 +7334,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 			
 		}
 
-		if(this.asyncResponseCallback==null) {
+		if(this.asyncResponseCallback==null || this.terminataGestioneStatelessErrorBeforeAsyncrConnettore) {
 			this._statelessComplete(false);
 		}
 
@@ -8383,6 +8383,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 	}
 	private EsitoLib esitoStatelessAfterSendRequest;
 	private boolean terminataGestioneStateless = false;
+	private boolean terminataGestioneStatelessErrorBeforeAsyncrConnettore = false;
 	private boolean _comportamentoStateless(boolean gestioneRichiesta, boolean invokedFromAsyncConnector) {
 		
 		boolean esitoReturn = true;
@@ -8477,6 +8478,10 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 						((OpenSPCoopStateless)this.openspcoopstate).setUseConnection(false);
 					}
 
+					if(libreriaSbustamento) {
+						this.terminataGestioneStatelessErrorBeforeAsyncrConnettore = true;
+					}
+					
 					this.terminataGestioneStateless = true;
 					
 					break;

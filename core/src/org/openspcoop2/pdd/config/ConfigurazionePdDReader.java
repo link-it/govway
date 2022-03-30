@@ -187,6 +187,7 @@ import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.NameValue;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.crypt.CryptConfig;
@@ -1004,12 +1005,14 @@ public class ConfigurazionePdDReader {
 	public static boolean initialize(AccessoConfigurazionePdD accessoConfigurazione,Logger aLog,Logger aLogconsole,Properties localProperties, 
 			String jndiNameDatasourcePdD, boolean forceDisableCache,
 			boolean useOp2UtilsDatasource, boolean bindJMX, 
-			boolean prefillCache, CryptConfig configApplicativi){
+			boolean prefillCache, CryptConfig configApplicativi,
+			CacheType cacheType){
 
 		try {
 			ConfigurazionePdDReader.configurazionePdDReader = new ConfigurazionePdDReader(accessoConfigurazione,aLog,aLogconsole,localProperties,jndiNameDatasourcePdD, 
 					forceDisableCache, useOp2UtilsDatasource, bindJMX, 
-					prefillCache, configApplicativi);	
+					prefillCache, configApplicativi,
+					cacheType);	
 			return ConfigurazionePdDReader.initialize;
 		}
 		catch(Exception e) {
@@ -1065,7 +1068,8 @@ public class ConfigurazionePdDReader {
 	public ConfigurazionePdDReader(AccessoConfigurazionePdD accessoConfigurazione,Logger aLog,Logger aLogconsole,Properties localProperties, 
 			String jndiNameDatasourcePdD, boolean forceDisableCache,
 			boolean useOp2UtilsDatasource, boolean bindJMX, 
-			boolean prefillCache, CryptConfig configApplicativi)throws DriverConfigurazioneException{
+			boolean prefillCache, CryptConfig configApplicativi,
+			CacheType cacheType)throws DriverConfigurazioneException{
 		try{
 			if(aLog!=null)
 				this.log = aLog;
@@ -1073,7 +1077,8 @@ public class ConfigurazionePdDReader {
 				this.log = LoggerWrapperFactory.getLogger(ConfigurazionePdDReader.class);
 			this.configurazionePdD = new ConfigurazionePdD(accessoConfigurazione,this.log,aLogconsole,localProperties,jndiNameDatasourcePdD, forceDisableCache,
 					useOp2UtilsDatasource, bindJMX, 
-					prefillCache, configApplicativi);
+					prefillCache, configApplicativi,
+					cacheType);
 
 			// OpenSPCoop Properties
 			this.openspcoopProperties = OpenSPCoop2Properties.getInstance();

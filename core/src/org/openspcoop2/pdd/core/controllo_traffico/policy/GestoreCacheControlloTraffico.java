@@ -41,6 +41,7 @@ import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.date.DateUtils;
 import org.slf4j.Logger;
 
@@ -99,7 +100,7 @@ public class GestoreCacheControlloTraffico {
 			if(cache!=null)
 				throw new Exception("Cache gia' abilitata");
 			else{
-				cache = new Cache(CONTROLLO_TRAFFICO_CACHE_NAME);
+				cache = new Cache(CacheType.JCS, CONTROLLO_TRAFFICO_CACHE_NAME); // lascio JCS come default abilitato via jmx
 			}
 		}catch(Exception e){
 			throw new Exception("Abilitazione cache per i dati sul controllo del traffico non riuscita: "+e.getMessage(),e);
@@ -114,7 +115,7 @@ public class GestoreCacheControlloTraffico {
 				if(dimensioneCache!=null){
 					dimensione = dimensioneCache.intValue();
 				}
-				initCache(dimensione, algoritmoCacheLRU, itemIdleTime, itemLifeSecond, log);
+				initCache(CacheType.JCS, dimensione, algoritmoCacheLRU, itemIdleTime, itemLifeSecond, log); // lascio JCS come default abilitato via jmx
 			}
 		}catch(Exception e){
 			throw new Exception("Abilitazione cache per i dati sul controllo del traffico non riuscita: "+e.getMessage(),e);
@@ -187,11 +188,17 @@ public class GestoreCacheControlloTraffico {
 	
 	
 
+	public static void initializeCache(CacheType cacheType, Long dimensioneCache,Boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond, Logger log) throws Exception{
+		int dimensione = -1;
+		if(dimensioneCache!=null){
+			dimensione = dimensioneCache.intValue();
+		}
+		initCache(cacheType, dimensione, algoritmoCacheLRU, itemIdleTime, itemLifeSecond, log);
+	}
 	
-	
-	private static void initCache(Integer dimensioneCache,boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond,Logger alog) throws Exception{
+	private static void initCache(CacheType cacheType, Integer dimensioneCache,boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond,Logger alog) throws Exception{
 		
-		cache = new Cache(CONTROLLO_TRAFFICO_CACHE_NAME);
+		cache = new Cache(cacheType, CONTROLLO_TRAFFICO_CACHE_NAME);
 	
 		// dimensione
 		if(dimensioneCache!=null && dimensioneCache>0){
@@ -245,6 +252,8 @@ public class GestoreCacheControlloTraffico {
 			alog.error(msg);
 			throw new Exception(msg,error);
 		}
+		
+		cache.build();
 		
 	}
 	

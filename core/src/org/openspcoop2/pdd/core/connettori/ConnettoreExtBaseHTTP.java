@@ -80,7 +80,20 @@ public abstract class ConnettoreExtBaseHTTP extends ConnettoreBaseHTTP {
 		return this.maxNumberRedirects;
 	}
 	protected String redirectLocation = null;
+	public void setRedirectLocation(String redirectLocation) {
+		this.redirectLocation = redirectLocation;
+	}
+	public String getRedirectLocation() {
+		return this.redirectLocation;
+	}
 	protected String originalAbsolutePrefixForRelativeRedirectLocation = null;
+	public void setOriginalAbsolutePrefixForRelativeRedirectLocation(
+			String originalAbsolutePrefixForRelativeRedirectLocation) {
+		this.originalAbsolutePrefixForRelativeRedirectLocation = originalAbsolutePrefixForRelativeRedirectLocation;
+	}
+	public String getOriginalAbsolutePrefixForRelativeRedirectLocation() {
+		return this.originalAbsolutePrefixForRelativeRedirectLocation;
+	}
 	
 	/** TransferMode */
 	protected TransferLengthModes tlm = null;

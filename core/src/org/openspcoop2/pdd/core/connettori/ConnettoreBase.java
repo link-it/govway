@@ -182,6 +182,9 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	
 	/** Messaggio di risposta */
 	protected OpenSPCoop2Message responseMsg = null;
+	public void setResponseMsg(OpenSPCoop2Message responseMsg) {
+		this.responseMsg = responseMsg;
+	}
 	
 	/** Codice Operazione Effettuata */
 	protected int codice;

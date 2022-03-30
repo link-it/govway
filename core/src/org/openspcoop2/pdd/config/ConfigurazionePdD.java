@@ -103,6 +103,7 @@ import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.cache.CacheResponse;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
@@ -204,7 +205,7 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneException("Cache gia' abilitata");
 		else{
 			try{
-				this.cache = new Cache(CostantiConfigurazione.CACHE_CONFIGURAZIONE_PDD);
+				this.cache = new Cache(CacheType.JCS, CostantiConfigurazione.CACHE_CONFIGURAZIONE_PDD); // lascio JCS come default abilitato via jmx
 			}catch(Exception e){
 				throw new DriverConfigurazioneException(e.getMessage(),e);
 			}
@@ -231,7 +232,7 @@ public class ConfigurazionePdD  {
 				if(itemLifeSecond!=null){
 					configurazioneCache.setItemLifeSecond(itemLifeSecond+"");
 				}
-				initCacheConfigurazione(configurazioneCache, null, false, config);
+				initCacheConfigurazione(CacheType.JCS, configurazioneCache, null, false, config); // lascio JCS come default abilitato via jmx
 			}catch(Exception e){
 				throw new DriverConfigurazioneException(e.getMessage(),e);
 			}
@@ -341,7 +342,8 @@ public class ConfigurazionePdD  {
 	 */
 	public ConfigurazionePdD(AccessoConfigurazionePdD accessoConfigurazione,Logger alog,Logger alogConsole,Properties localProperties, 
 			String jndiNameDatasourcePdD, boolean forceDisableCache, boolean useOp2UtilsDatasource, boolean bindJMX, 
-			boolean prefillCache, CryptConfig configApplicativi)throws DriverConfigurazioneException{
+			boolean prefillCache, CryptConfig configApplicativi,
+			CacheType cacheType)throws DriverConfigurazioneException{
 
 		try{ 
 			// Inizializzo OpenSPCoopProperties
@@ -417,7 +419,7 @@ public class ConfigurazionePdD  {
 			}catch(DriverConfigurazioneNotFound notFound){}
 			if(accessoDatiConfigurazione!=null && accessoDatiConfigurazione.getCache()!=null){
 				if(forceDisableCache==false){
-					initCacheConfigurazione(accessoDatiConfigurazione.getCache(),alogConsole, 
+					initCacheConfigurazione(cacheType, accessoDatiConfigurazione.getCache(),alogConsole, 
 							prefillCache, configApplicativi);
 				}
 			}
@@ -431,9 +433,9 @@ public class ConfigurazionePdD  {
 		}
 	}
 
-	private void initCacheConfigurazione(org.openspcoop2.core.config.Cache configurazioneCache,Logger alogConsole, 
+	private void initCacheConfigurazione(CacheType cacheType, org.openspcoop2.core.config.Cache configurazioneCache,Logger alogConsole, 
 			boolean prefillCache, CryptConfig configApplicativi)throws Exception{
-		this.cache = new Cache(CostantiConfigurazione.CACHE_CONFIGURAZIONE_PDD);
+		this.cache = new Cache(cacheType, CostantiConfigurazione.CACHE_CONFIGURAZIONE_PDD);
 
 		String msg = null;
 		if( (configurazioneCache.getDimensione()!=null) ||
@@ -588,6 +590,8 @@ public class ConfigurazionePdD  {
 			}
 
 		}
+		
+		this.cache.build();
 		
 		if(prefillCache){
 			this.prefillCache(null,alogConsole, configApplicativi);

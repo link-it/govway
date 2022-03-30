@@ -372,6 +372,9 @@ public class MsgDiagnostico {
 			this.state = this._configurazionePdDReader.getState();
 			this.responseState = this._configurazionePdDReader.getResponseState();
 		}
+		else {
+			this._configurazionePdDReader = ConfigurazionePdDManager.getInstance();
+		}
 	}
 	
 	private Connection getConnectionFromState(){
@@ -537,8 +540,6 @@ public class MsgDiagnostico {
 			String tmpValue = value;
 			if(tmpValue == null)
 				tmpValue = "";
-			if(this.keywordLogPersonalizzati.containsKey(key))
-				this.keywordLogPersonalizzati.remove(key);
 			this.keywordLogPersonalizzati.put(key, tmpValue);
 		}
 	}
@@ -2305,9 +2306,7 @@ public class MsgDiagnostico {
 		}
 		
 		if(this.properties!=null){
-			for (String key : this.properties.keySet()) {
-				msgDiagnostico.addProperty(key, this.properties.get(key));
-			}
+			this.properties.forEach( (k,v) -> msgDiagnostico.addProperty(k, v) );
 		}
 		
 		return msgDiagnostico;

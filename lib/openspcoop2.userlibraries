@@ -114,6 +114,13 @@
         <archive path="/op2_3.4.dev/lib/jax/jaxb-impl-2.3.4.jar"/>
         <archive path="/op2_3.4.dev/lib/jax/jaxb-api-2.3.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/jax/jaxb-core-2.3.0.1.jar"/>
+	<!-- jetty-client -->
+	<archive path="/op2_3.4.dev/lib/jetty-client/jetty-alpn-client-11.0.7.jar"/>
+	<archive path="/op2_3.4.dev/lib/jetty-client/jetty-client-11.0.7.jar"/>
+	<archive path="/op2_3.4.dev/lib/jetty-client/jetty-http-11.0.7.jar"/>
+	<archive path="/op2_3.4.dev/lib/jetty-client/jetty-io-11.0.7.jar"/>
+	<archive path="/op2_3.4.dev/lib/jetty-client/jetty-jmx-11.0.7.jar"/>
+	<archive path="/op2_3.4.dev/lib/jetty-client/jetty-util-11.0.7.jar"/>
 	<!-- jminix -->
 	<archive path="/op2_3.4.dev/lib/jminix/jminix-1.2.0-gov4j-1.jar"/>
 	<archive path="/op2_3.4.dev/lib/jminix/jminix-standalone-1.2.0-gov4j-1.jar"/>
@@ -230,6 +237,7 @@
 	<archive path="/op2_3.4.dev/lib/shared/reactive-streams-1.0.3.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/reflections-0.9.12.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/javassist-3.28.0-GA.jar"/>
+	<archive path="/op2_3.4.dev/lib/shared/ehcache-3.9.7.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/rhino-1.7.13.jar"/>
 	<!-- soapbox -->
         <archive path="/op2_3.4.dev/lib/soapbox/ultraesb-core-1.7.1.jar"/>

@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
@@ -57,7 +58,8 @@ import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.utils.TimeoutIOException;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
-import org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedStream;
+import org.openspcoop2.utils.io.notifier.unblocked.IPipedUnblockedStream;
+import org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedStreamFactory;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 
@@ -138,10 +140,22 @@ public abstract class AbstractRicezioneConnectorAsync {
 		}
 		
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
-		boolean stream = op2Properties.isNIOConfig_asyncServer_doStream();
-		int dimensione_buffer =  op2Properties.getNIOConfig_asyncServer_buffer();
+		boolean stream = op2Properties.isNIOConfig_asyncRequest_doStream();
+		int dimensione_buffer =  op2Properties.getNIOConfig_asyncRequest_buffer();
 		long timeout = getTimeout();
-		boolean applicativeThreadPool = op2Properties.isNIOConfig_asyncServer_applicativeThreadPoolEnabled();
+		
+		
+		// TEST_SENZA_LISTENER
+		/*
+		try{
+			IRicezioneService ricezioneService = newRicezioneService(generatoreErrore);
+			ricezioneService.process(httpIn, httpOut, dataAccettazioneRichiesta, ConnectorCostanti.ASYNC);
+			return;
+		}catch(Throwable e){
+			System.out.println("ERRORE TEST_SENZA_LISTENER");
+			e.printStackTrace(System.out);
+		}
+		*/
 		
 		req.getInputStream().setReadListener( (new ReadListener() {
 			private ServletInputStream is = null;
@@ -150,26 +164,31 @@ public abstract class AbstractRicezioneConnectorAsync {
 			private HttpServletConnectorAsyncInMessage httpIn;
 			private HttpServletConnectorAsyncOutMessage httpOut;
 			
-			private boolean applicativeThreadPool;
-			
 			private boolean stream;
 			private ByteArrayOutputStream os = null; // soluzione che bufferizza tutta la richiesta
-			private PipedUnblockedStream pipe; // soluzione stream
+			private IPipedUnblockedStream pipe; // soluzione stream
 			
 			public ReadListener init(Logger log, ServletInputStream is, boolean stream, int sizeBuffer,
-					boolean applicativeThreadPool,
 					AbstractErrorGenerator generatoreErrore, 
-					HttpServletConnectorAsyncInMessage httpIn, HttpServletConnectorAsyncOutMessage httpOut ) {
+					HttpServletConnectorAsyncInMessage httpIn, HttpServletConnectorAsyncOutMessage httpOut ) throws ServletException {
 				this.is = is;
 				this.log = log;
-				this.applicativeThreadPool = applicativeThreadPool;
 				this.generatoreErrore = generatoreErrore;
 				this.httpIn = httpIn;
 				this.httpOut = httpOut;
 				
 				this.stream = stream;
 				if(stream) {
-					this.pipe = new PipedUnblockedStream(log, sizeBuffer);
+					try {
+						this.pipe = PipedUnblockedStreamFactory.newPipedUnblockedStream(logCore, sizeBuffer, 
+								IDService.PORTA_APPLICATIVA.equals(getIdService()) || IDService.PORTA_APPLICATIVA_NIO.equals(getIdService()) ?
+										CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_CONSEGNA_CONTENUTI_APPLICATIVI :
+										CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE, // verra' poi aggiornato dentro  HttpServletConnectorAsyncInMessage
+								"Request");
+					}catch(Throwable t) {
+						this.log.error("Istanziazione PipedStream fallita: "+t.getMessage(),t);
+						throw new ServletException(t.getMessage(),t);
+					}
 					this.httpIn.updateInputStream(this.pipe);
 				}
 				else {
@@ -198,7 +217,7 @@ public abstract class AbstractRicezioneConnectorAsync {
 			@Override
 			public void onDataAvailable() throws IOException {
 		        int len = -1;
-		        byte b[] = new byte[1024];
+		        byte b[] = new byte[Utilities.DIMENSIONE_BUFFER];
 		        while ( this.is.isReady() && (len = this.is.read(b)) != -1) {
 		        	if(this.stream) {
 		        		this.pipe.write(b, 0, len);
@@ -223,47 +242,16 @@ public abstract class AbstractRicezioneConnectorAsync {
 					// Avvio un thread su cui poi chiamare un wait / notify in fase di consegna NIO.
 					IRicezioneService ricezioneService = newRicezioneService(this.generatoreErrore);
 					this.httpIn.updateInputStream(new ByteArrayInputStream(this.os.toByteArray()));	
-					if(this.applicativeThreadPool) {
-						Runnable runnable = new Runnable() {
-							
-							private IRicezioneService ricezioneService;
-							private HttpServletConnectorInMessage httpIn;
-							private HttpServletConnectorAsyncOutMessage httpOut;
-							
-							public Runnable init(IRicezioneService ricezioneService,
-									HttpServletConnectorInMessage httpIn,
-									HttpServletConnectorAsyncOutMessage httpOut) {
-								this.ricezioneService = ricezioneService;
-								this.httpIn = httpIn;
-								this.httpOut = httpOut;
-								return this;
-							}
-							
-							@Override
-							public void run() {
-								try{
-									this.ricezioneService.process(this.httpIn, this.httpOut, dataAccettazioneRichiesta, ConnectorCostanti.ASYNC);
-								}catch(Throwable e){
-									ConnectorUtils.getErrorLog().error(getIdService().getValue()+".process error: "+e.getMessage(),e);
-								}
-								
-							}
-						}.init(ricezioneService, this.httpIn, this.httpOut);
-						AsyncThreadPool.execute(runnable);
-					}
-					else {
-						try{
-							ricezioneService.process(this.httpIn, this.httpOut, dataAccettazioneRichiesta, ConnectorCostanti.ASYNC);
-						}catch(Throwable e){
-							ConnectorUtils.getErrorLog().error(getIdService().getValue()+".process error: "+e.getMessage(),e);
-							throw new IOException(getIdService().getValue()+".process error: "+e.getMessage(),e);
-						}
+					try{
+						ricezioneService.process(this.httpIn, this.httpOut, dataAccettazioneRichiesta, ConnectorCostanti.ASYNC);
+					}catch(Throwable e){
+						ConnectorUtils.getErrorLog().error(getIdService().getValue()+".process error: "+e.getMessage(),e);
+						throw new IOException(getIdService().getValue()+".process error: "+e.getMessage(),e);
 					}
 				}
 				
 			}
 		}).init(logCore, req.getInputStream(), stream, dimensione_buffer, 
-				applicativeThreadPool,
 				generatoreErrore,
 				httpIn, httpOut) );
 
@@ -312,47 +300,32 @@ public abstract class AbstractRicezioneConnectorAsync {
 			
 		if(stream) {
 			IRicezioneService ricezioneService = newRicezioneService(generatoreErrore);
-			if(applicativeThreadPool) {
-				Runnable runnable = new Runnable() {
+			Runnable runnable = new Runnable() {
+			
+				private IRicezioneService ricezioneService;
+				private HttpServletConnectorInMessage httpIn;
+				private HttpServletConnectorAsyncOutMessage httpOut;
 				
-					private IRicezioneService ricezioneService;
-					private HttpServletConnectorInMessage httpIn;
-					private HttpServletConnectorAsyncOutMessage httpOut;
-					
-					public Runnable init(IRicezioneService ricezioneService,
-							HttpServletConnectorInMessage httpIn,
-							HttpServletConnectorAsyncOutMessage httpOut) {
-						this.ricezioneService = ricezioneService;
-						this.httpIn = httpIn;
-						this.httpOut = httpOut;
-						return this;
-					}
-					
-					@Override
-					public void run() {
-						try{
-							this.ricezioneService.process(this.httpIn, this.httpOut, dataAccettazioneRichiesta, ConnectorCostanti.ASYNC);
-						}catch(Throwable e){
-							ConnectorUtils.getErrorLog().error("NIO RicezioneBuste.process error: "+e.getMessage(),e);
-						}
-						
-					}
-				}.init(ricezioneService, httpIn, httpOut);
-				AsyncThreadPool.execute(runnable);
-			}
-			else {
-				try{
-					ricezioneService.process(httpIn, httpOut, dataAccettazioneRichiesta, ConnectorCostanti.ASYNC);
-				}catch(Throwable e){
-					String msg = "Inizializzazione Generatore Errore fallita: "+Utilities.readFirstErrorValidMessageFromException(e);
-					logCore.error(msg,e);
-					doError(requestInfo, generatoreErrore, // il metodo doError gestisce il generatoreErrore a null
-							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO), 
-							IntegrationFunctionError.INTERNAL_REQUEST_ERROR, e, res, logCore);
-					return;
+				public Runnable init(IRicezioneService ricezioneService,
+						HttpServletConnectorInMessage httpIn,
+						HttpServletConnectorAsyncOutMessage httpOut) {
+					this.ricezioneService = ricezioneService;
+					this.httpIn = httpIn;
+					this.httpOut = httpOut;
+					return this;
 				}
-			}
+				
+				@Override
+				public void run() {
+					try{
+						this.ricezioneService.process(this.httpIn, this.httpOut, dataAccettazioneRichiesta, ConnectorCostanti.ASYNC);
+					}catch(Throwable e){
+						ConnectorUtils.getErrorLog().error("NIO RicezioneBuste.process error: "+e.getMessage(),e);
+					}
+					
+				}
+			}.init(ricezioneService, httpIn, httpOut);
+			AsyncThreadPool.executeInRequestPool(runnable);
 		}
 			
 	}

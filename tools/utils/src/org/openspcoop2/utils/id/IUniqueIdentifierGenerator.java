@@ -35,6 +35,13 @@ public interface IUniqueIdentifierGenerator {
 	public abstract void init(Object ... o) throws UniqueIdentifierException;
 	
 	public abstract IUniqueIdentifier newID() throws UniqueIdentifierException;
+	public default IUniqueIdentifier newID(boolean useBuffer) throws UniqueIdentifierException{
+		return newID();
+	}
 	
 	public abstract IUniqueIdentifier convertFromString(String value) throws UniqueIdentifierException;
+	
+	public default boolean isBufferSupperted() {
+		return false;
+	}
 }

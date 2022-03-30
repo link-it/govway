@@ -93,9 +93,8 @@ public class ConnettoreHTTPCORE5 extends ConnettoreExtBaseHTTP {
 		return this.httpConnectionConfig;
 	}
 
-	private boolean stream = OpenSPCoop2Properties.getInstance().isNIOConfig_asyncClient_doStream();
-	private int dimensione_buffer = OpenSPCoop2Properties.getInstance().getNIOConfig_asyncClient_buffer();
-
+	protected URL url;
+	
 	
 	/* Costruttori */
 	public ConnettoreHTTPCORE5(){
@@ -127,7 +126,7 @@ public class ConnettoreHTTPCORE5 extends ConnettoreExtBaseHTTP {
 			this.buildLocation();		
 			if(this.debug)
 				this.logger.debug("Creazione URL ["+this.location+"]...");
-			URL url = new URL( this.location );	
+			this.url = new URL( this.location );	
 
 			
 			// Collezione header di trasporto per dump
@@ -193,33 +192,33 @@ public class ConnettoreHTTPCORE5 extends ConnettoreExtBaseHTTP {
 			}
 			switch (this.httpMethod) {
 				case GET:
-					this.httpRequest = new HttpGet(url.toString());
+					this.httpRequest = new HttpGet(this.url.toString());
 					break;
 				case DELETE:
-					this.httpRequest = new HttpDelete(url.toString());
+					this.httpRequest = new HttpDelete(this.url.toString());
 					break;
 				case HEAD:
-					this.httpRequest = new HttpHead(url.toString());
+					this.httpRequest = new HttpHead(this.url.toString());
 					break;
 				case POST:
-					this.httpRequest = new HttpPost(url.toString());
+					this.httpRequest = new HttpPost(this.url.toString());
 					break;
 				case PUT:
-					this.httpRequest = new HttpPost(url.toString());
+					this.httpRequest = new HttpPost(this.url.toString());
 					break;
 				case OPTIONS:
-					this.httpRequest = new HttpOptions(url.toString());
+					this.httpRequest = new HttpOptions(this.url.toString());
 					break;
 				case TRACE:
-					this.httpRequest = new HttpTrace(url.toString());
+					this.httpRequest = new HttpTrace(this.url.toString());
 					break;
 				case PATCH:
-					this.httpRequest = new HttpPatch(url.toString());
+					this.httpRequest = new HttpPatch(this.url.toString());
 					break;	
 				case LINK:
 				case UNLINK:
 				default:
-					this.httpRequest = new CustomHttpCore5Entity(this.httpMethod, url.toString());
+					this.httpRequest = new CustomHttpCore5Entity(this.httpMethod, this.url.toString());
 			}
 			if(this.httpRequest==null){
 				throw new Exception("HttpRequest non definito ?");
@@ -499,43 +498,18 @@ public class ConnettoreHTTPCORE5 extends ConnettoreExtBaseHTTP {
 			//System.out.println("CLIENT ["+httpClient.getHttpclient().getClass().getName()+"]");
 			AsyncRequestProducer requestProducer = new BasicRequestProducer(this.httpRequest, entityProducer);
 			//SimpleHttpRequest s = new 
-			AsyncResponseConsumer<ConnettoreHTTPCORE5_httpResponse> responseConsumer = new ConnettoreHTTPCORE5_inputStreamEntityConsumer();
+			AsyncResponseConsumer<ConnettoreHTTPCORE5_httpResponse> responseConsumer = null;
+			boolean stream = OpenSPCoop2Properties.getInstance().isNIOConfig_asyncResponse_doStream();
+			int dimensione_buffer = OpenSPCoop2Properties.getInstance().getNIOConfig_asyncResponse_buffer();
+			if(stream) {
+				responseConsumer = new ConnettoreHTTPCORE5_inputStreamEntityConsumer(this.logger, dimensione_buffer, readConnectionTimeout);	
+			}
+			else {
+				responseConsumer = new ConnettoreHTTPCORE5_extendAbstractBinResponseConsumer();
+			}
+			//System.out.println("CLIENT ["+httpClient.getHttpclient().getClass().getName()+"]");
 			httpClient.getHttpclient().execute(requestProducer, responseConsumer, HttpClientContext.create(), responseCallback);
-			
-			// CAPIRE SE SERVE E SEMMAI BUTTARE VIA LE PROPERTIES AGGIUNTE!
-//			
-//			if(this.stream && streamOut!=null) {
-//				if(this.isSoap && this.sbustamentoSoap){
-//					if(this.debug)
-//						this.logger.debug("Sbustamento...");
-//					TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,streamOut);
-//				}else{
-//					this.requestMsg.writeTo(streamOut, consumeRequestMessage);
-//				}
-//			}
-			
-//			try {
-//				if(this.debug) {
-//					this.logger.debug("NIO - Sync Wait ...");
-//				}
-//				synchronized (this.httpRequest) {
-//					if(this.callbackResponseFinished) { // questo controllo serve per evitare che si vada in wait sleep dopo che la callback e' già terminata (e quindi ha già fatto il notify)
-//						// la callback associata alla chiamata precedente 'getHttpclient().execute' è già terminata. Non serve dormire.
-//						if(this.debug) {
-//							this.logger.debug("NIO - Sync Wait non necessario, callback gia' terminata");
-//						}
-//					}
-//					else {
-//						if(this.debug) {
-//							this.logger.debug("NIO - Wait ...");
-//						}
-//						this.httpRequest.wait(readConnectionTimeout); // sincronizzo sulla richiesta
-//					}
-//				}
-//			}catch(Throwable t) {
-//				throw new Exception("Read Timeout expired ("+readConnectionTimeout+")",t);
-//			}
-			
+						
 			if(this.debug) {
 				this.logger.debug("NIO - Terminata gestione richiesta");
 			}

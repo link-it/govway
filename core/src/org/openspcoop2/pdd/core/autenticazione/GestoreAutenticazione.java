@@ -87,6 +87,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.cache.CacheResponse;
 import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
@@ -145,7 +146,7 @@ public class GestoreAutenticazione {
 			throw new AutenticazioneException("Cache gia' abilitata");
 		else{
 			try{
-				GestoreAutenticazione.cacheAutenticazione = new Cache(GestoreAutenticazione.AUTENTICAZIONE_CACHE_NAME);
+				GestoreAutenticazione.cacheAutenticazione = new Cache(CacheType.JCS, GestoreAutenticazione.AUTENTICAZIONE_CACHE_NAME); // lascio JCS come default abilitato via jmx
 			}catch(Exception e){
 				throw new AutenticazioneException(e.getMessage(),e);
 			}
@@ -181,7 +182,7 @@ public class GestoreAutenticazione {
 					itemLifeSecondLong = itemLifeSecond;
 				}
 				
-				GestoreAutenticazione.initCacheAutenticazione(dimensioneCacheInt, algoritmoCache, itemIdleTimeLong, itemLifeSecondLong, null);
+				GestoreAutenticazione.initCacheAutenticazione(CacheType.JCS, dimensioneCacheInt, algoritmoCache, itemIdleTimeLong, itemLifeSecondLong, null); // lascio JCS come default abilitato via jmx
 			}catch(Exception e){
 				throw new AutenticazioneException(e.getMessage(),e);
 			}
@@ -281,14 +282,14 @@ public class GestoreAutenticazione {
 
 	/*----------------- INIZIALIZZAZIONE --------------------*/
 	public static void initialize(Logger log) throws Exception{
-		GestoreAutenticazione.initialize(false, -1,null,-1l,-1l, log);
+		GestoreAutenticazione.initialize(null, false, -1,null,-1l,-1l, log);
 	}
-	public static void initialize(int dimensioneCache,String algoritmoCache,
+	public static void initialize(CacheType cacheType, int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws Exception{
-		GestoreAutenticazione.initialize(true, dimensioneCache,algoritmoCache,idleTime,itemLifeSecond, log);
+		GestoreAutenticazione.initialize(cacheType, true, dimensioneCache,algoritmoCache,idleTime,itemLifeSecond, log);
 	}
 
-	private static void initialize(boolean cacheAbilitata,int dimensioneCache,String algoritmoCache,
+	private static void initialize(CacheType cacheType, boolean cacheAbilitata,int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws Exception{
 
 		// Inizializzo log
@@ -296,19 +297,19 @@ public class GestoreAutenticazione {
 		
 		// Inizializzazione Cache
 		if(cacheAbilitata){
-			GestoreAutenticazione.initCacheAutenticazione(dimensioneCache, algoritmoCache, idleTime, itemLifeSecond, log);
+			GestoreAutenticazione.initCacheAutenticazione(cacheType, dimensioneCache, algoritmoCache, idleTime, itemLifeSecond, log);
 		}
 
 	}
 
 
-	public static void initCacheAutenticazione(int dimensioneCache,String algoritmoCache,
+	public static void initCacheAutenticazione(CacheType cacheType, int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws Exception {
 		
 		if(log!=null)
 			log.info("Inizializzazione cache Autenticazione");
 
-		GestoreAutenticazione.cacheAutenticazione = new Cache(GestoreAutenticazione.AUTENTICAZIONE_CACHE_NAME);
+		GestoreAutenticazione.cacheAutenticazione = new Cache(cacheType, GestoreAutenticazione.AUTENTICAZIONE_CACHE_NAME);
 
 		if( (dimensioneCache>0) ||
 				(algoritmoCache != null) ){
@@ -359,6 +360,7 @@ public class GestoreAutenticazione {
 			throw new AutenticazioneException("Parametro errato per l'attributo 'MaxLifeSecond' (Gestore Messaggi): "+error.getMessage(),error);
 		}
 
+		GestoreAutenticazione.cacheAutenticazione.build();
 	}
 	
 	@SuppressWarnings("deprecation")
