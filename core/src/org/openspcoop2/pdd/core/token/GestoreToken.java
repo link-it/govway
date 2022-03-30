@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -36,6 +36,7 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
@@ -43,9 +44,14 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.constants.TransferLengthModes;
+import org.openspcoop2.core.id.IDGenericProperties;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
@@ -53,6 +59,8 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.utils.WWWAuthenticateErrorCode;
 import org.openspcoop2.message.utils.WWWAuthenticateGenerator;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -86,6 +94,8 @@ import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.security.keystore.JWKSetStore;
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.message.jose.JOSEUtils;
@@ -245,6 +255,17 @@ public class GestoreToken {
 			throw new TokenException("Cache non abilitata");
 		}
 	}
+	public static List<String> keysCache() throws TokenException{
+		if(GestoreToken.cacheToken!=null){
+			try{
+				return GestoreToken.cacheToken.keys();
+			}catch(Exception e){
+				throw new TokenException(e.getMessage(),e);
+			}
+		}else{
+			throw new TokenException("Cache non abilitata");
+		}
+	}
 	public static String getObjectCache(String key) throws TokenException{
 		if(GestoreToken.cacheToken!=null){
 			try{
@@ -272,6 +293,84 @@ public class GestoreToken {
 			throw new TokenException("Cache non abilitata");
 		}
 	}
+	
+	
+	
+	
+	
+	/*----------------- CLEANER --------------------*/
+	
+	public static void removeGenericProperties(IDGenericProperties idGP) throws Exception {
+		
+		if(GestoreToken.isCacheAbilitata()){
+			
+			String prefixKeyValidazioneJwt = null;
+			String prefixKeyIntrospection = null;
+			String prefixKeyUserInfo = null;
+			
+			String prefixKeyAA = null;
+			
+			boolean checkKeys = false;
+			
+			if(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION.equals(idGP.getTipologia())) {
+				
+				prefixKeyValidazioneJwt = buildPrefixCacheKeyValidazione(idGP.getNome(), VALIDAZIONE_JWT_FUNCTION);
+				prefixKeyIntrospection = buildPrefixCacheKeyValidazione(idGP.getNome(), INTROSPECTION_FUNCTION);
+				prefixKeyUserInfo = buildPrefixCacheKeyValidazione(idGP.getNome(), USERINFO_FUNCTION);
+				
+				checkKeys = true;
+			}
+			else if(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE.equals(idGP.getTipologia())) {
+				
+				String keyNegoziazionePD = buildCacheKeyNegoziazione(idGP.getNome(), RETRIEVE_FUNCTION, true);
+				removeObjectCache(keyNegoziazionePD);
+				
+				String keyNegoziazionePA = buildCacheKeyNegoziazione(idGP.getNome(), RETRIEVE_FUNCTION, false);
+				removeObjectCache(keyNegoziazionePA);
+				
+			}
+			else if(CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY.equals(idGP.getTipologia())) {
+				
+				prefixKeyAA = buildCacheKeyRecuperoAttributiPrefix(idGP.getNome(), ATTRIBUTE_AUTHORITY_FUNCTION);
+				
+				checkKeys = true;
+			}
+			
+			if(checkKeys) {
+				List<String> keyForClean = new ArrayList<String>();
+				List<String> keys = GestoreToken.keysCache();
+				if(keys!=null && !keys.isEmpty()) {
+					for (String key : keys) {
+						if(key!=null) {
+							if(prefixKeyValidazioneJwt!=null && key.startsWith(prefixKeyValidazioneJwt)) {
+								keyForClean.add(key);
+							}
+							else if(prefixKeyIntrospection!=null && key.startsWith(prefixKeyIntrospection)) {
+								keyForClean.add(key);
+							}
+							else if(prefixKeyUserInfo!=null && key.startsWith(prefixKeyUserInfo)) {
+								keyForClean.add(key);
+							}
+							else if(prefixKeyAA!=null && key.startsWith(prefixKeyAA)) {
+								keyForClean.add(key);
+							}
+						}
+					}
+				}
+				if(keyForClean!=null && !keyForClean.isEmpty()) {
+					for (String key : keyForClean) {
+						removeObjectCache(key);
+					}
+				}
+			}
+				
+		}
+		
+	}
+	
+	
+	
+	
 	
 
 
@@ -629,6 +728,8 @@ public class GestoreToken {
 	
 	// ********* [VALIDAZIONE-TOKEN] VALIDAZIONE JWT TOKEN ****************** */
 	
+	public static final String VALIDAZIONE_JWT_FUNCTION = "ValidazioneJWT";
+		
 	public static EsitoGestioneToken validazioneJWTToken(Logger log, AbstractDatiInvocazione datiInvocazione, 
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
 			String token, boolean portaDelegata) throws Exception {
@@ -639,8 +740,8 @@ public class GestoreToken {
 			esitoGestioneToken = _validazioneJWTToken(log, datiInvocazione, token, portaDelegata);
 		}
     	else{
-    		String funzione = "ValidazioneJWT";
-    		String keyCache = buildCacheKey(funzione, portaDelegata, token);
+    		String funzione = VALIDAZIONE_JWT_FUNCTION;
+    		String keyCache = buildCacheKeyValidazione(datiInvocazione.getPolicyGestioneToken().getName(), funzione, portaDelegata, token);
 
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
     		
@@ -823,19 +924,23 @@ public class GestoreToken {
 	
 	// ********* [VALIDAZIONE-TOKEN] INTROSPECTION TOKEN ****************** */
 	
+	public static final String INTROSPECTION_FUNCTION = "Introspection";
+	
 	public static EsitoGestioneToken introspectionToken(Logger log, AbstractDatiInvocazione datiInvocazione, 
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
-			String token, boolean portaDelegata) throws Exception {
+			String token, boolean portaDelegata,
+			IDSoggetto idDominio, IDServizio idServizio) throws Exception {
 		EsitoGestioneToken esitoGestioneToken = null;
 		
 		if(GestoreToken.cacheToken==null){
 			esitoGestioneToken = _introspectionToken(log, datiInvocazione, 
 					pddContext, protocolFactory,
-					token, portaDelegata);
+					token, portaDelegata,
+					idDominio, idServizio);
 		}
     	else{
-    		String funzione = "Introspection";
-    		String keyCache = buildCacheKey(funzione, portaDelegata, token);
+    		String funzione = INTROSPECTION_FUNCTION;
+    		String keyCache = buildCacheKeyValidazione(datiInvocazione.getPolicyGestioneToken().getName(), funzione, portaDelegata, token);
 
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
     		
@@ -879,7 +984,8 @@ public class GestoreToken {
 					GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
 					esitoGestioneToken = _introspectionToken(log, datiInvocazione, 
 							pddContext, protocolFactory,
-							token, portaDelegata);
+							token, portaDelegata,
+							idDominio, idServizio);
 						
 					// Aggiungo la risposta in cache (se esiste una cache)	
 					// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
@@ -917,7 +1023,8 @@ public class GestoreToken {
 	
 	private static EsitoGestioneToken _introspectionToken(Logger log, AbstractDatiInvocazione datiInvocazione, 
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
-			String token, boolean portaDelegata) {
+			String token, boolean portaDelegata,
+			IDSoggetto idDominio, IDServizio idServizio) {
 		EsitoGestioneToken esitoGestioneToken = null;
 		if(portaDelegata) {
 			esitoGestioneToken = new EsitoGestioneTokenPortaDelegata();
@@ -943,7 +1050,9 @@ public class GestoreToken {
 			byte[] risposta = null;
 			try {
 				httpResponse = http(log, policyGestioneToken, INTROSPECTION, token,
-						pddContext, protocolFactory);
+						pddContext, protocolFactory,
+						datiInvocazione.getState(), portaDelegata,
+						idDominio, idServizio);
 				risposta = httpResponse.getContent();
 				httpResponseCode = httpResponse.getResultHTTPOperation();
 			}catch(Exception e) {
@@ -1006,19 +1115,23 @@ public class GestoreToken {
 	
 	// ********* [VALIDAZIONE-TOKEN] USER INFO TOKEN ****************** */
 	
+	public static final String USERINFO_FUNCTION = "UserInfo";
+	
 	public static EsitoGestioneToken userInfoToken(Logger log, AbstractDatiInvocazione datiInvocazione, 
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
-			String token, boolean portaDelegata) throws Exception {
+			String token, boolean portaDelegata,
+			IDSoggetto idDominio, IDServizio idServizio) throws Exception {
 		EsitoGestioneToken esitoGestioneToken = null;
 		
 		if(GestoreToken.cacheToken==null){
 			esitoGestioneToken = _userInfoToken(log, datiInvocazione, 
 					pddContext, protocolFactory,
-					token, portaDelegata);
+					token, portaDelegata,
+					idDominio, idServizio);
 		}
     	else{
-    		String funzione = "UserInfo";
-    		String keyCache = buildCacheKey(funzione, portaDelegata, token);
+    		String funzione = USERINFO_FUNCTION;
+    		String keyCache = buildCacheKeyValidazione(datiInvocazione.getPolicyGestioneToken().getName(), funzione, portaDelegata, token);
 
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
     		
@@ -1062,7 +1175,8 @@ public class GestoreToken {
 					GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
 					esitoGestioneToken = _userInfoToken(log, datiInvocazione, 
 							pddContext, protocolFactory,
-							token, portaDelegata);
+							token, portaDelegata,
+							idDominio, idServizio);
 						
 					// Aggiungo la risposta in cache (se esiste una cache)	
 					// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
@@ -1101,7 +1215,8 @@ public class GestoreToken {
 	
 	private static EsitoGestioneToken _userInfoToken(Logger log, AbstractDatiInvocazione datiInvocazione, 
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
-			String token, boolean portaDelegata) {
+			String token, boolean portaDelegata,
+			IDSoggetto idDominio, IDServizio idServizio) {
 		EsitoGestioneToken esitoGestioneToken = null;
 		if(portaDelegata) {
 			esitoGestioneToken = new EsitoGestioneTokenPortaDelegata();
@@ -1127,7 +1242,9 @@ public class GestoreToken {
 			byte[] risposta = null;
 			try {
 				httpResponse = http(log, policyGestioneToken, USER_INFO, token,
-						pddContext, protocolFactory);
+						pddContext, protocolFactory,
+						datiInvocazione.getState(), portaDelegata,
+						idDominio, idServizio);
 				risposta = httpResponse.getContent();
 				httpResponseCode = httpResponse.getResultHTTPOperation();
 			}catch(Exception e) {
@@ -2073,9 +2190,16 @@ public class GestoreToken {
 		}
 	}
 	
-	private static String buildCacheKey(String funzione, boolean portaDelegata, String token) {
-    	StringBuilder bf = new StringBuilder(funzione);
+	private static String buildPrefixCacheKeyValidazione(String policy, String funzione) {
+		StringBuilder bf = new StringBuilder(funzione);
     	bf.append("_");
+    	bf.append(policy);
+    	bf.append("_");
+    	return bf.toString();
+	}
+	private static String buildCacheKeyValidazione(String policy, String funzione, boolean portaDelegata, String token) {
+    	StringBuilder bf = new StringBuilder();
+    	bf.append(buildPrefixCacheKeyValidazione(policy, funzione));
     	if(portaDelegata){
     		bf.append("PD");
     	}
@@ -2090,7 +2214,9 @@ public class GestoreToken {
 	private static final boolean INTROSPECTION = true;
 	private static final boolean USER_INFO = false;
 	private static HttpResponse http(Logger log, PolicyGestioneToken policyGestioneToken, boolean introspection, String token,
-			PdDContext pddContext, IProtocolFactory<?> protocolFactory) throws Exception {
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory, 
+			IState state, boolean delegata,
+			IDSoggetto idDominio, IDServizio idServizio) throws Exception {
 		
 		// *** Raccola Parametri ***
 		
@@ -2225,6 +2351,33 @@ public class GestoreToken {
 			connettoreMsg.setTipoConnettore(TipiConnettore.HTTP.getNome());
 			connettore = new ConnettoreHTTP();
 		}
+		
+		ForwardProxy forwardProxy = null;
+		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
+		if(configurazionePdDManager.isForwardProxyEnabled()) {
+			try {
+				IDGenericProperties policy = new IDGenericProperties();
+				policy.setTipologia(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION);
+				policy.setNome(policyGestioneToken.getName());
+				if(delegata) {
+					forwardProxy = configurazionePdDManager.getForwardProxyConfigFruizione(idDominio, idServizio, policy);
+				}
+				else {
+					forwardProxy = configurazionePdDManager.getForwardProxyConfigErogazione(idDominio, idServizio, policy);
+				}
+			}catch(Exception e) {
+				throw new Exception("Configurazione errata per la funzionalità govway-proxy; "+e.getMessage(),e);
+			}
+		}
+		if(forwardProxy!=null && forwardProxy.isEnabled() && forwardProxy.getConfigToken()!=null) {
+			if(introspection && forwardProxy.getConfigToken().isTokenIntrospectionEnabled()) {
+				connettoreMsg.setForwardProxy(forwardProxy);
+			}
+			else if(!introspection && forwardProxy.getConfigToken().isTokenUserInfoEnabled()) {
+				connettoreMsg.setForwardProxy(forwardProxy);
+			}
+		}
+		
 		connettore.setForceDisable_rest_proxyPassReverse(true);
 		connettore.init(pddContext, protocolFactory);
 		connettore.setRegisterSendIntoContext(false);
@@ -2384,14 +2537,43 @@ public class GestoreToken {
 	
 	// ********* [NEGOZIAZIONE-TOKEN] ENDPOINT TOKEN ****************** */
 	
+	public static final String RETRIEVE_FUNCTION = "Negoziazione";
+		
 	public static EsitoNegoziazioneToken endpointToken(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken, 
+			Busta busta, RequestInfo requestInfo, TipoPdD tipoPdD,
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory) throws Exception {
 		EsitoNegoziazioneToken esitoNegoziazioneToken = null;
 		boolean riavviaNegoziazione = false;
 		
+		IState state = null;
+		boolean delegata = TipoPdD.DELEGATA.equals(tipoPdD);
+		IDSoggetto idDominio = null;
+		IDServizio idServizio = null;
+		if(busta!=null) {
+			if(delegata) {
+				if(busta.getTipoMittente()!=null && busta.getMittente()!=null) {
+					idDominio = new IDSoggetto(busta.getTipoMittente(), busta.getMittente());
+				}
+			}
+			else {
+				if(busta.getTipoDestinatario()!=null && busta.getDestinatario()!=null) {
+					idDominio = new IDSoggetto(busta.getTipoDestinatario(), busta.getDestinatario());
+				}
+			}
+			if(busta.getTipoDestinatario()!=null && busta.getDestinatario()!=null && 
+					busta.getTipoServizio()!=null && busta.getServizio()!=null && busta.getVersioneServizio()!=null) {
+				idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(busta.getTipoServizio(), busta.getServizio(), 
+						busta.getTipoDestinatario(), busta.getDestinatario(), 
+						busta.getVersioneServizio());	
+			}
+		}
+		
 		if(GestoreToken.cacheToken==null){
 			esitoNegoziazioneToken = _endpointToken(debug, log, policyNegoziazioneToken, 
-					pddContext, protocolFactory);
+					busta, requestInfo, tipoPdD,
+					pddContext, protocolFactory,
+					state, delegata,
+					idDominio, idServizio);
 			
 			if(esitoNegoziazioneToken!=null && esitoNegoziazioneToken.isValido()) {
 				// ricontrollo tutte le date (l'ho appena preso, dovrebbero essere buone) 
@@ -2401,8 +2583,8 @@ public class GestoreToken {
 			
 		}
     	else{
-    		String funzione = "Negoziazione";
-    		String keyCache = buildCacheKeyNegoziazione(funzione, policyNegoziazioneToken.getName());
+    		String funzione = RETRIEVE_FUNCTION;
+    		String keyCache = buildCacheKeyNegoziazione(policyNegoziazioneToken.getName(), funzione, delegata);
 
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
     		
@@ -2445,7 +2627,10 @@ public class GestoreToken {
 					// Effettuo la query
 					GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
 					esitoNegoziazioneToken = _endpointToken(debug, log, policyNegoziazioneToken, 
-							pddContext, protocolFactory);
+							busta, requestInfo, tipoPdD,
+							pddContext, protocolFactory,
+							state, delegata,
+							idDominio, idServizio);
 						
 					// Aggiungo la risposta in cache (se esiste una cache)	
 					// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
@@ -2497,13 +2682,18 @@ public class GestoreToken {
     	}
 		
 		if(riavviaNegoziazione) {
-			return endpointToken(debug, log, policyNegoziazioneToken, pddContext, protocolFactory);
+			return endpointToken(debug, log, policyNegoziazioneToken, 
+					busta, requestInfo, tipoPdD,
+					pddContext, protocolFactory);
 		}
 		return esitoNegoziazioneToken;
 	}
 	
 	private static EsitoNegoziazioneToken _endpointToken(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken,
-			PdDContext pddContext, IProtocolFactory<?> protocolFactory) {
+			Busta busta, RequestInfo requestInfo, TipoPdD tipoPdD,
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
+			IState state, boolean delegata,
+			IDSoggetto idDominio, IDServizio idServizio) {
 		EsitoNegoziazioneToken esitoNegoziazioneToken = new EsitoNegoziazioneToken();
 		
 		esitoNegoziazioneToken.setTokenInternalError();
@@ -2520,7 +2710,10 @@ public class GestoreToken {
 			byte[] risposta = null;
 			try {
 				httpResponse = http(debug, log, policyNegoziazioneToken,
-						pddContext, protocolFactory);
+						busta, requestInfo, tipoPdD,
+						pddContext, protocolFactory,
+						state, delegata,
+						idDominio, idServizio);
 				risposta = httpResponse.getContent();
 				httpResponseCode = httpResponse.getResultHTTPOperation();
 			}catch(Exception e) {
@@ -2575,13 +2768,24 @@ public class GestoreToken {
 	
 	// ********* [NEGOZIAZIONE-TOKEN]  UTILITIES INTERNE ****************** */
 	
-	private static String buildCacheKeyNegoziazione(String funzione, String nomePolicy) {
-    	StringBuilder bf = new StringBuilder(funzione);
+	private static String buildPrefixCacheKeyNegoziazione(String policy, String funzione) {
+		StringBuilder bf = new StringBuilder(funzione);
     	bf.append("_");
-    	bf.append(nomePolicy);
+    	bf.append(policy);
+    	bf.append("_");
     	return bf.toString();
-    }
-	
+	}
+	private static String buildCacheKeyNegoziazione(String policy, String funzione, boolean portaDelegata) {
+    	StringBuilder bf = new StringBuilder();
+    	bf.append(buildPrefixCacheKeyNegoziazione(policy, funzione));
+    	if(portaDelegata){ // serve per non aver classcast exception nei risultati
+    		bf.append("PD");
+    	}
+    	else {
+    		bf.append("PA");
+    	}
+    	return bf.toString();
+    }	
 	private static void _validazioneInformazioniNegoziazioneToken(EsitoNegoziazioneToken esitoNegoziazioneToken, PolicyNegoziazioneToken policyNegoziazioneToken, boolean saveErrorInCache) throws Exception {
 		
 		Date now = DateManager.getDate();
@@ -2612,12 +2816,62 @@ public class GestoreToken {
 		}
 	}
 	
+	private static Map<String, Object> buildDynamicNegoziazioneTokenMap(Busta busta, 
+			RequestInfo requestInfo, PdDContext pddContext, Logger log,
+			String nomeTokenPolicy) throws Exception {
+	
+		Map<String, Object> dynamicMap = new HashMap<String, Object>();
+		
+		Map<String, List<String>> pTrasporto = null;
+		String urlInvocazione = null;
+		Map<String, List<String>> pQuery = null;
+		Map<String, List<String>> pForm = null;
+		if(requestInfo!=null && requestInfo.getProtocolContext()!=null) {
+			pTrasporto = requestInfo.getProtocolContext().getHeaders();
+			urlInvocazione = requestInfo.getProtocolContext().getUrlInvocazione_formBased();
+			pQuery = requestInfo.getProtocolContext().getParameters();
+			if(requestInfo.getProtocolContext() instanceof HttpServletTransportRequestContext) {
+				HttpServletTransportRequestContext httpServletContext = (HttpServletTransportRequestContext) requestInfo.getProtocolContext();
+				HttpServletRequest httpServletRequest = httpServletContext.getHttpServletRequest();
+				if(httpServletRequest!=null && httpServletRequest instanceof FormUrlEncodedHttpServletRequest) {
+					FormUrlEncodedHttpServletRequest formServlet = (FormUrlEncodedHttpServletRequest) httpServletRequest;
+					if(formServlet.getFormUrlEncodedParametersValues()!=null &&
+							!formServlet.getFormUrlEncodedParametersValues().isEmpty()) {
+						pForm = formServlet.getFormUrlEncodedParametersValues();
+					}
+				}
+			}
+		}
+				
+		ErrorHandler errorHandler = new ErrorHandler();
+		DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione,
+				null,
+				null, 
+				busta, 
+				pTrasporto, 
+				pQuery,
+				pForm,
+				errorHandler);
+		
+		return dynamicMap;
+	}
+	
 	public static HttpResponse http(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken,
-			PdDContext pddContext, IProtocolFactory<?> protocolFactory) throws Exception {
+			Busta busta, RequestInfo requestInfo, TipoPdD tipoPdD,
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
+			IState state, boolean delegata,
+			IDSoggetto idDominio, IDServizio idServizio) throws Exception {
+		
+		Map<String, Object> dynamicMap = buildDynamicNegoziazioneTokenMap(busta, requestInfo, pddContext, log, policyNegoziazioneToken.getName());
+		
+		
 		
 		// *** Raccola Parametri ***
 		
 		String endpoint = policyNegoziazioneToken.getEndpoint();
+		if(endpoint!=null && !"".equals(endpoint)) {
+			endpoint = DynamicUtils.convertDynamicPropertyValue("endpoint.gwt", endpoint, dynamicMap, pddContext, true);	
+		}
 				
 		HttpRequestMethod httpMethod = HttpRequestMethod.POST;	
 		
@@ -2642,6 +2896,9 @@ public class GestoreToken {
 		String password = null;
 		if(basic) {
 			username = policyNegoziazioneToken.getBasicAuthentication_username();
+			if(username!=null && !"".equals(username)) {
+				username = DynamicUtils.convertDynamicPropertyValue("username.gwt", username, dynamicMap, pddContext, true);	
+			}
 			password = policyNegoziazioneToken.getBasicAuthentication_password();
 		}
 		
@@ -2665,6 +2922,28 @@ public class GestoreToken {
 			connettoreMsg.setTipoConnettore(TipiConnettore.HTTP.getNome());
 			connettore = new ConnettoreHTTP();
 		}
+		
+		ForwardProxy forwardProxy = null;
+		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
+		if(configurazionePdDManager.isForwardProxyEnabled()) {
+			try {
+				IDGenericProperties policy = new IDGenericProperties();
+				policy.setTipologia(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE);
+				policy.setNome(policyNegoziazioneToken.getName());
+				if(delegata) {
+					forwardProxy = configurazionePdDManager.getForwardProxyConfigFruizione(idDominio, idServizio, policy);
+				}
+				else {
+					forwardProxy = configurazionePdDManager.getForwardProxyConfigErogazione(idDominio, idServizio, policy);
+				}
+			}catch(Exception e) {
+				throw new Exception("Configurazione errata per la funzionalità govway-proxy; "+e.getMessage(),e);
+			}
+		}
+		if(forwardProxy!=null && forwardProxy.isEnabled() && forwardProxy.getConfigToken()!=null && forwardProxy.getConfigToken().isTokenRetrieveEnabled()) {
+			connettoreMsg.setForwardProxy(forwardProxy);
+		}
+		
 		connettore.setForceDisable_rest_proxyPassReverse(true);
 		connettore.init(pddContext, protocolFactory);
 		connettore.setRegisterSendIntoContext(false);
@@ -2700,7 +2979,8 @@ public class GestoreToken {
 			TransportUtils.setHeader(transportRequestContext.getHeaders(),HttpConstants.AUTHORIZATION, authorizationHeader);
 		}
 		transportRequestContext.removeHeader(HttpConstants.CONTENT_TYPE);
-		TransportUtils.setHeader(transportRequestContext.getHeaders(),HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_X_WWW_FORM_URLENCODED);
+		String contentType = HttpConstants.CONTENT_TYPE_X_WWW_FORM_URLENCODED;
+		TransportUtils.setHeader(transportRequestContext.getHeaders(),HttpConstants.CONTENT_TYPE, contentType);
 		
 		Map<String, List<String>> pContent = new HashMap<String, List<String>>();
 		if(policyNegoziazioneToken.isClientCredentialsGrant()) {
@@ -2716,20 +2996,30 @@ public class GestoreToken {
 		else {
 			throw new Exception("Nessuna modalità definita");
 		}
+		
 		if(basic && !basicAsAuthorizationHeader){
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_ID, username);
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_SECRET, password);
 		}
+		
 		if(policyNegoziazioneToken.isUsernamePasswordGrant()) {
-			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_USERNAME, policyNegoziazioneToken.getUsernamePasswordGrant_username());
+			String usernamePasswordGrant = policyNegoziazioneToken.getUsernamePasswordGrant_username();
+			if(usernamePasswordGrant!=null && !"".equals(usernamePasswordGrant)) {
+				usernamePasswordGrant = DynamicUtils.convertDynamicPropertyValue("usernamePasswordGrant.gwt", usernamePasswordGrant, dynamicMap, pddContext, true);	
+			}
+			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_USERNAME, usernamePasswordGrant);
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_PASSWORD, policyNegoziazioneToken.getUsernamePasswordGrant_password());
 		}
+		
 		if(policyNegoziazioneToken.isRfc7523_x509_Grant() || policyNegoziazioneToken.isRfc7523_clientSecret_Grant()) {
-			String jwt = buildJwt(policyNegoziazioneToken);
-			String signedJwt = signJwt(policyNegoziazioneToken, jwt);
+			String jwt = buildJwt(policyNegoziazioneToken,
+					busta, tipoPdD,
+					dynamicMap, pddContext);
+			String signedJwt = signJwt(policyNegoziazioneToken, jwt, contentType, dynamicMap, pddContext);
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_ASSERTION, signedJwt);
 		}
-		List<String> scopes = policyNegoziazioneToken.getScopes();
+		
+		List<String> scopes = policyNegoziazioneToken.getScopes(dynamicMap, pddContext);
 		if(scopes!=null && !scopes.isEmpty()) {
 			StringBuilder bf = new StringBuilder();
 			for (String scope : scopes) {
@@ -2742,10 +3032,46 @@ public class GestoreToken {
 				TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_SCOPE, bf.toString());
 			}
 		}
+		
 		String aud = policyNegoziazioneToken.getAudience();
+		if(aud!=null && !"".equals(aud)) {
+			aud = DynamicUtils.convertDynamicPropertyValue("aud.gwt", aud, dynamicMap, pddContext, true);	
+		}
 		if(aud!=null && !"".equals(aud)) {
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_AUDIENCE, aud);
 		}
+		
+		if(policyNegoziazioneToken.isPDND()) {
+			String formClientId = policyNegoziazioneToken.getFormClientId();
+			if(formClientId==null || "".equals(formClientId)) {
+				formClientId = policyNegoziazioneToken.getJwtClientId();
+			}
+			if(formClientId!=null && !"".equals(formClientId) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(formClientId)) {
+				formClientId = DynamicUtils.convertDynamicPropertyValue("formClientId.gwt", formClientId, dynamicMap, pddContext, true);	
+			}
+			if(formClientId!=null && !"".equals(formClientId) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(formClientId)) {
+				TransportUtils.setParameter(pContent,Costanti.PDND_OAUTH2_RFC_6749_REQUEST_CLIENT_ID, formClientId);
+			}
+		}
+		
+		String parameters = policyNegoziazioneToken.getFormParameters();
+		if(parameters!=null && !"".equals(parameters)) {
+			parameters = DynamicUtils.convertDynamicPropertyValue("parameters.gwt", parameters, dynamicMap, pddContext, true);	
+		}
+		if(parameters!=null && !"".equals(parameters)) {
+			Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(parameters);
+			if(convertTextToProperties!=null && !convertTextToProperties.isEmpty()) {
+				Enumeration<Object> keys = convertTextToProperties.keys();
+				while (keys.hasMoreElements()) {
+					String nome = (String) keys.nextElement();
+					String valore = convertTextToProperties.getProperty(nome);
+					if(nome!=null && !"".equals(nome) && valore!=null) {
+						TransportUtils.setParameter(pContent, nome, valore);
+					}
+				}
+			}
+		}
+		
 		String prefixUrl = "PREFIX?";
 		String contentString = TransportUtils.buildUrlWithParameters(pContent, prefixUrl , log);
 		contentString = contentString.substring(prefixUrl.length());
@@ -2819,7 +3145,9 @@ public class GestoreToken {
 		
 	}
 	
-	private static String buildJwt(PolicyNegoziazioneToken policyNegoziazioneToken) throws Exception {
+	private static String buildJwt(PolicyNegoziazioneToken policyNegoziazioneToken,
+			Busta busta, TipoPdD tipoPdD,
+			Map<String, Object> dynamicMap, PdDContext pddContext) throws Exception {
 		
 		// https://datatracker.ietf.org/doc/html/rfc7523
 		
@@ -2833,25 +3161,62 @@ public class GestoreToken {
 		long nowSeconds = nowMs/1000;
 		
 		String issuer = policyNegoziazioneToken.getJwtIssuer();
-		if(issuer==null) {
-			issuer = op2Properties.getIdentitaPortaDefault(null).getNome();
+		if(issuer!=null && !"".equals(issuer) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(issuer)) {
+			issuer = DynamicUtils.convertDynamicPropertyValue("issuer.gwt", issuer, dynamicMap, pddContext, true);	
 		}
-		jwtPayload.put(Claims.OIDC_ID_TOKEN_ISSUER, issuer);
+		if(issuer==null) {
+			if(TipoPdD.APPLICATIVA.equals(tipoPdD) && busta!=null && busta.getDestinatario()!=null) {
+				issuer = busta.getDestinatario();
+			}
+			else if(TipoPdD.DELEGATA.equals(tipoPdD) && busta!=null && busta.getMittente()!=null) {
+				issuer = busta.getMittente();
+			}
+			else {
+				issuer = op2Properties.getIdentitaPortaDefault(null).getNome();
+			}
+		}
+		if(!Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(issuer)) {
+			jwtPayload.put(Claims.OIDC_ID_TOKEN_ISSUER, issuer);
+		}
 		
 		// For client authentication, the subject MUST be the "client_id" of the OAuth client.
 		String clientId = policyNegoziazioneToken.getJwtClientId();
+		if(clientId!=null && !"".equals(clientId) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(clientId)) {
+			clientId = DynamicUtils.convertDynamicPropertyValue("clientId.gwt", clientId, dynamicMap, pddContext, true);	
+		}
 		if(clientId==null) {
 			throw new Exception("ClientID undefined");
 		}
-		jwtPayload.put(Claims.OIDC_ID_TOKEN_SUBJECT, clientId);
-		jwtPayload.put(Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID, clientId);
+		if(!Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(clientId)) {
+			jwtPayload.put(Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID, clientId);
+		}
+		
+		String subject = policyNegoziazioneToken.getJwtSubject();
+		if(subject!=null && !"".equals(subject) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(subject)) {
+			subject = DynamicUtils.convertDynamicPropertyValue("subject.gwt", subject, dynamicMap, pddContext, true);	
+		}
+		if(StringUtils.isNotEmpty(subject)) {
+			if(!Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(subject)) {
+				jwtPayload.put(Claims.OIDC_ID_TOKEN_SUBJECT, subject);
+			}
+		}
+		else {
+			if(!Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(clientId)) {
+				jwtPayload.put(Claims.OIDC_ID_TOKEN_SUBJECT, clientId);
+			}
+		}
 		
 		// The JWT MUST contain an "aud" (audience) claim containing a value that identifies the authorization server as an intended audience. 
 		String jwtAudience = policyNegoziazioneToken.getJwtAudience();
+		if(jwtAudience!=null && !"".equals(jwtAudience) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(jwtAudience)) {
+			jwtAudience = DynamicUtils.convertDynamicPropertyValue("jwtAudience.gwt", jwtAudience, dynamicMap, pddContext, true);	
+		}
 		if(jwtAudience==null) {
 			throw new Exception("JWT-Audience undefined");
 		}
-		jwtPayload.put(Claims.OIDC_ID_TOKEN_AUDIENCE, jwtAudience);
+		if(!Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(jwtAudience)) {
+			jwtPayload.put(Claims.OIDC_ID_TOKEN_AUDIENCE, jwtAudience);
+		}
 		
 		// The JWT MAY contain an "iat" (issued at) claim that identifies the time at which the JWT was issued. 
 		jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT, nowSeconds);
@@ -2878,29 +3243,101 @@ public class GestoreToken {
 		}
 		jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID, uuid);
 		
+		if(policyNegoziazioneToken.isPDND()) {
+			
+			// purposeId
+			String jwtPurposeId = policyNegoziazioneToken.getJwtPurposeId();
+			if(jwtPurposeId!=null && !"".equals(jwtPurposeId)) {
+				jwtPurposeId = DynamicUtils.convertDynamicPropertyValue("jwtPurposeId.gwt", jwtPurposeId, dynamicMap, pddContext, true);	
+			}
+			if(jwtPurposeId==null) {
+				throw new Exception("JWT-PurposeId undefined");
+			}
+			jwtPayload.put(Costanti.PDND_PURPOSE_ID, jwtPurposeId);
+			
+			// sessionInfo
+			String sessionInfo = policyNegoziazioneToken.getJwtSessionInfo();
+			if(sessionInfo!=null && !"".equals(sessionInfo)) {
+				sessionInfo = DynamicUtils.convertDynamicPropertyValue("sessionInfo.gwt", sessionInfo, dynamicMap, pddContext, true);	
+			}
+			if(sessionInfo!=null && !"".equals(sessionInfo)) {
+				Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(sessionInfo);
+				ObjectNode sessionInfoPayload = null;
+				if(convertTextToProperties!=null && !convertTextToProperties.isEmpty()) {
+					Enumeration<Object> keys = convertTextToProperties.keys();
+					while (keys.hasMoreElements()) {
+						String nome = (String) keys.nextElement();
+						String valore = convertTextToProperties.getProperty(nome);
+						if(nome!=null && !"".equals(nome) && valore!=null) {
+							if(sessionInfoPayload ==null) {
+								sessionInfoPayload = jsonUtils.newObjectNode();
+							}
+							
+							if(valore.trim().startsWith("[") && valore.trim().endsWith("]")) {
+								JsonNode node = jsonUtils.getAsNode(valore);
+								sessionInfoPayload.set(nome, node);
+							}
+							else if(valore.trim().startsWith("{") && valore.trim().endsWith("}")) {
+								JsonNode node = jsonUtils.getAsNode(valore);
+								sessionInfoPayload.set(nome, node);
+							}
+							else {
+								sessionInfoPayload.put(nome, valore);
+							}
+						}
+					}
+				}
+				if(sessionInfoPayload!=null) {
+					jwtPayload.set(Costanti.PDND_SESSION_INFO, sessionInfoPayload);
+				}
+			}
+		}
+		
+		// claims
+		String claims = policyNegoziazioneToken.getJwtClaims();
+		if(claims!=null && !"".equals(claims)) {
+			claims = DynamicUtils.convertDynamicPropertyValue("claims.gwt", claims, dynamicMap, pddContext, true);	
+		}
+		if(claims!=null && !"".equals(claims)) {
+			Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(claims);
+			if(convertTextToProperties!=null && !convertTextToProperties.isEmpty()) {
+				Enumeration<Object> keys = convertTextToProperties.keys();
+				while (keys.hasMoreElements()) {
+					String nome = (String) keys.nextElement();
+					String valore = convertTextToProperties.getProperty(nome);
+					if(nome!=null && !"".equals(nome) && valore!=null) {
+						if(valore.trim().startsWith("[") && valore.trim().endsWith("]")) {
+							JsonNode node = jsonUtils.getAsNode(valore);
+							jwtPayload.set(nome, node);
+						}
+						else if(valore.trim().startsWith("{") && valore.trim().endsWith("}")) {
+							JsonNode node = jsonUtils.getAsNode(valore);
+							jwtPayload.set(nome, node);
+						}
+						else {
+							jwtPayload.put(nome, valore);
+						}
+					}
+				}
+			}
+		}
+		
 		return jsonUtils.toString(jwtPayload);
 	}
 	
-	private static String signJwt(PolicyNegoziazioneToken policyNegoziazioneToken, String payload) throws Exception {
+	private static String signJwt(PolicyNegoziazioneToken policyNegoziazioneToken, String payload, String contentType,
+			Map<String, Object> dynamicMap, PdDContext pddContext) throws Exception {
 		
 		String signAlgo = policyNegoziazioneToken.getJwtSignAlgorithm();
 		if(signAlgo==null) {
 			throw new Exception("SignAlgorithm undefined");
 		}
 		
-		JWSOptions options = new JWSOptions(JOSESerialization.COMPACT);
-		
-		if(policyNegoziazioneToken.isRfc7523_clientSecret_Grant()) {
-		
-			String clientSecret = policyNegoziazioneToken.getJwtClientSecret();
-			if(clientSecret==null) {
-				throw new Exception("ClientSecret undefined");
-			}
-			
-			JsonSignature jsonSignature = new JsonSignature(clientSecret, signAlgo, options);
-			return jsonSignature.sign(payload);
-		}
-		else if(policyNegoziazioneToken.isRfc7523_x509_Grant()) {
+		KeyStore ks = null;
+		JWKSetStore jwtStore = null;
+		String keyAlias = null;
+		String keyPassword = null;
+		if(policyNegoziazioneToken.isRfc7523_x509_Grant()) {
 			
 			String keystoreType = policyNegoziazioneToken.getJwtSignKeystoreType();
 			if(keystoreType==null) {
@@ -2914,23 +3351,96 @@ public class GestoreToken {
 			if(keystorePassword==null) {
 				throw new Exception("JWT Signature keystore password undefined");
 			}
-			String keyAlias = policyNegoziazioneToken.getJwtSignKeyAlias();
+			keyAlias = policyNegoziazioneToken.getJwtSignKeyAlias();
 			if(keyAlias==null) {
 				throw new Exception("JWT Signature key alias undefined");
 			}
-			String keyPassword = policyNegoziazioneToken.getJwtSignKeyPassword();
+			keyPassword = policyNegoziazioneToken.getJwtSignKeyPassword();
 			if(keyPassword==null) {
 				throw new Exception("JWT Signature key password undefined");
 			}
-						
 			
-			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keystoreFile, keystoreType, keystorePassword);
-			if(merlinKs==null) {
-				throw new Exception("Accesso al keystore '"+keystoreFile+"' non riuscito");
+			if("jwk".equalsIgnoreCase(keystoreType)) {
+				jwtStore = GestoreKeystoreCache.getJwkSetStore(keystoreFile);
 			}
-			KeyStore ks = merlinKs.getKeyStore();
+			else {
+				MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keystoreFile, keystoreType, keystorePassword);
+				if(merlinKs==null) {
+					throw new Exception("Accesso al keystore '"+keystoreFile+"' non riuscito");
+				}
+				ks = merlinKs.getKeyStore();
+			}
+		}
+		
+		JWSOptions options = new JWSOptions(JOSESerialization.COMPACT);
+		
+		JwtHeaders jwtHeaders = new JwtHeaders();
+		if(policyNegoziazioneToken.isJwtSignIncludeKeyIdWithKeyAlias()) {
+			jwtHeaders.setKid(keyAlias);
+		}
+		else if(policyNegoziazioneToken.isJwtSignIncludeKeyIdWithClientId()) {
+			String clientId = policyNegoziazioneToken.getJwtClientId();
+			if(clientId!=null && !"".equals(clientId)) {
+				clientId = DynamicUtils.convertDynamicPropertyValue("kid.clientId.gwt", clientId, dynamicMap, pddContext, true);	
+			}
+			jwtHeaders.setKid(clientId);
+		}
+		else if(policyNegoziazioneToken.isJwtSignIncludeKeyIdCustom()) {
+			String customId = policyNegoziazioneToken.getJwtSignIncludeKeyIdCustom();
+			if(customId!=null && !"".equals(customId)) {
+				customId = DynamicUtils.convertDynamicPropertyValue("kid.customId.gwt", customId, dynamicMap, pddContext, true);	
+			}
+			jwtHeaders.setKid(customId);
+		}
+		if(policyNegoziazioneToken.isJwtSignIncludeX509Cert()) {
+			jwtHeaders.setAddX5C(true);
+		}
+		String url = policyNegoziazioneToken.getJwtSignIncludeX509URL();
+		if(url!=null && !"".equals(url)) {
+			url = DynamicUtils.convertDynamicPropertyValue("url.gwt", url, dynamicMap, pddContext, true);	
+			jwtHeaders.setX509Url(new URI(url));
+		}
+		if(policyNegoziazioneToken.isJwtSignIncludeX509CertSha1()) {
+			jwtHeaders.setX509IncludeCertSha1(true);
+		}
+		if(policyNegoziazioneToken.isJwtSignIncludeX509CertSha256()) {
+			jwtHeaders.setX509IncludeCertSha256(true);
+		}
+		if(policyNegoziazioneToken.isJwtSignJoseContentType()) {
+			if(contentType!=null && !"".equals(contentType)) {
+				jwtHeaders.setContentType(contentType);
+			}
+		}
+		String type = policyNegoziazioneToken.getJwtSignJoseType();
+		if(type!=null && !"".equals(type) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(type)) { // funzionalita' undefined undocumented
+			jwtHeaders.setType(type);
+		}
+		if(ks!=null) {
+			Certificate cert = ks.getCertificate(keyAlias);
+			if(cert!=null && cert instanceof X509Certificate) {
+				jwtHeaders.addX509cert((X509Certificate)cert);
+			}
+		}
+		
+		if(policyNegoziazioneToken.isRfc7523_clientSecret_Grant()) {
+		
+			String clientSecret = policyNegoziazioneToken.getJwtClientSecret();
+			if(clientSecret==null) {
+				throw new Exception("ClientSecret undefined");
+			}
 			
-			JsonSignature jsonSignature = new JsonSignature(ks, false, keyAlias,  keyPassword, signAlgo, null, options);
+			JsonSignature jsonSignature = new JsonSignature(clientSecret, signAlgo, jwtHeaders, options);
+			return jsonSignature.sign(payload);
+		}
+		else if(policyNegoziazioneToken.isRfc7523_x509_Grant()) {
+						
+			JsonSignature jsonSignature = null;
+			if(jwtStore!=null) {
+				jsonSignature = new JsonSignature(jwtStore.getJwkSet().getJsonWebKeys(), false, keyAlias, signAlgo, jwtHeaders, options);
+			}
+			else {
+				jsonSignature = new JsonSignature(ks, false, keyAlias,  keyPassword, signAlgo, jwtHeaders, options);
+			}
 			return jsonSignature.sign(payload);
 		}
 		else {
@@ -2957,9 +3467,12 @@ public class GestoreToken {
 	
 	// ********* [ATTRIBUTE AUTHORITY] ENDPOINT TOKEN ****************** */
 	
+	public static final String ATTRIBUTE_AUTHORITY_FUNCTION = "Negoziazione";
+	
 	public static EsitoRecuperoAttributi readAttributes(Logger log, org.openspcoop2.pdd.core.token.attribute_authority.AbstractDatiInvocazione datiInvocazione,
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
-			boolean portaDelegata) throws Exception {
+			boolean portaDelegata,
+			IDSoggetto idDominio, IDServizio idServizio) throws Exception {
 		EsitoRecuperoAttributi esitoRecuperoAttributi = null;
 		boolean riavviaNegoziazione = false;
 			
@@ -2979,7 +3492,9 @@ public class GestoreToken {
 			esitoRecuperoAttributi = _readAttributes(log, policyAttributeAuthority, 
 					pddContext, protocolFactory,
 					dynamicMap,
-					request, portaDelegata);
+					request, portaDelegata,
+					datiInvocazione.getState(),
+					idDominio, idServizio);
 			
 			if(esitoRecuperoAttributi!=null && esitoRecuperoAttributi.isValido()) {
 				// ricontrollo tutte le date (l'ho appena preso, dovrebbero essere buone) 
@@ -2991,14 +3506,14 @@ public class GestoreToken {
 			
 		}
     	else{
-    		String funzione = "Negoziazione";
+    		String funzione = ATTRIBUTE_AUTHORITY_FUNCTION;
     		
     		Map<String, Object> dynamicMap = buildDynamicAAMap(message, busta, requestInfo, pddContext, log,
 					policyAttributeAuthority.getName(), datiInvocazione);
     		
     		boolean addIdAndDate = true;
     		String requestKeyCache = buildDynamicAARequest(message, busta, requestInfo, pddContext, log, policyAttributeAuthority, dynamicMap, !addIdAndDate);
-    		String keyCache = buildCacheKeyRecuperoAttributi(funzione, policyAttributeAuthority.getName(), requestKeyCache);
+    		String keyCache = buildCacheKeyRecuperoAttributi(policyAttributeAuthority.getName(), funzione, portaDelegata, requestKeyCache);
 
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
     		
@@ -3052,7 +3567,9 @@ public class GestoreToken {
 					esitoRecuperoAttributi = _readAttributes(log, policyAttributeAuthority, 
 							pddContext, protocolFactory,
 							dynamicMap,
-							request, portaDelegata);
+							request, portaDelegata,
+							datiInvocazione.getState(),
+							idDominio, idServizio);
 						
 					// Aggiungo la risposta in cache (se esiste una cache)	
 					// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
@@ -3108,7 +3625,8 @@ public class GestoreToken {
     	}
 		
 		if(riavviaNegoziazione) {
-			return readAttributes(log, datiInvocazione, pddContext, protocolFactory, portaDelegata);
+			return readAttributes(log, datiInvocazione, pddContext, protocolFactory, portaDelegata,
+					idDominio, idServizio);
 		}
 		return esitoRecuperoAttributi;
 	}
@@ -3116,7 +3634,9 @@ public class GestoreToken {
 	private static EsitoRecuperoAttributi _readAttributes(Logger log, PolicyAttributeAuthority policyAttributeAuthority,
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
 			Map<String, Object> dynamicMap,
-			String request, boolean portaDelegata) {
+			String request, boolean portaDelegata,
+			IState state,
+			IDSoggetto idDominio, IDServizio idServizio) {
 		EsitoRecuperoAttributi esitoRecuperoAttributi = null;
 		if(portaDelegata) {
 			esitoRecuperoAttributi = new EsitoRecuperoAttributiPortaDelegata();
@@ -3141,7 +3661,9 @@ public class GestoreToken {
 				httpResponse = http(log, policyAttributeAuthority,
 						pddContext, protocolFactory,
 						dynamicMap,
-						request);
+						request,
+						state, portaDelegata,
+						idDominio, idServizio);
 				risposta = httpResponse.getContent();
 				httpResponseCode = httpResponse.getResultHTTPOperation();
 			}catch(Exception e) {
@@ -3247,15 +3769,28 @@ public class GestoreToken {
 		}
 	}
 	
-	private static String buildCacheKeyRecuperoAttributi(String funzione, String nomePolicy,
-			String request) {
+	private static String buildCacheKeyRecuperoAttributiPrefix(String nomePolicy, String funzione) {
     	StringBuilder bf = new StringBuilder("AttributeAuthority_"+funzione);
     	bf.append("_");
     	bf.append(nomePolicy);
     	bf.append("_");
+    	return bf.toString();
+	}
+	private static String buildCacheKeyRecuperoAttributi(String nomePolicy, String funzione, boolean portaDelegata,
+			String request) {
+    	StringBuilder bf = new StringBuilder();
+    	bf.append(buildCacheKeyRecuperoAttributiPrefix(nomePolicy, funzione));
+    	if(portaDelegata){ // serve per non aver classcast exception nei risultati
+    		bf.append("PD");
+    	}
+    	else {
+    		bf.append("PA");
+    	}
+    	bf.append("_");
     	bf.append(Base64Utilities.encodeAsString(request.getBytes())); // codifico in base64 la richiesta
     	return bf.toString();
     }
+	
 	
 	private static Map<String, Object> buildDynamicAAMap(OpenSPCoop2Message message, Busta busta, 
 			RequestInfo requestInfo, PdDContext pddContext, Logger log,
@@ -3612,7 +4147,9 @@ public class GestoreToken {
 	public static HttpResponse http(Logger log, PolicyAttributeAuthority policyAttributeAuthority,
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
 			Map<String, Object> dynamicMap,
-			String request) throws Exception {
+			String request,
+			IState state, boolean delegata,
+			IDSoggetto idDominio, IDServizio idServizio) throws Exception {
 		
 		// *** Raccola Parametri ***
 		
@@ -3672,6 +4209,28 @@ public class GestoreToken {
 			connettoreMsg.setTipoConnettore(TipiConnettore.HTTP.getNome());
 			connettore = new ConnettoreHTTP();
 		}
+		
+		ForwardProxy forwardProxy = null;
+		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
+		if(configurazionePdDManager.isForwardProxyEnabled()) {
+			try {
+				IDGenericProperties policy = new IDGenericProperties();
+				policy.setTipologia(CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY);
+				policy.setNome(policyAttributeAuthority.getName());
+				if(delegata) {
+					forwardProxy = configurazionePdDManager.getForwardProxyConfigFruizione(idDominio, idServizio, policy);
+				}
+				else {
+					forwardProxy = configurazionePdDManager.getForwardProxyConfigErogazione(idDominio, idServizio, policy);
+				}
+			}catch(Exception e) {
+				throw new Exception("Configurazione errata per la funzionalità govway-proxy; "+e.getMessage(),e);
+			}
+		}
+		if(forwardProxy!=null && forwardProxy.isEnabled() && forwardProxy.getConfigToken()!=null && forwardProxy.getConfigToken().isAttributeAuthorityEnabled()) {
+			connettoreMsg.setForwardProxy(forwardProxy);
+		}
+		
 		connettore.setForceDisable_rest_proxyPassReverse(true);
 		connettore.init(pddContext, protocolFactory);
 		connettore.setRegisterSendIntoContext(false);
@@ -3719,7 +4278,7 @@ public class GestoreToken {
 		
 		String requestPayload = request;
 		if(policyAttributeAuthority.isRequestJws()) {
-			requestPayload = signAAJwt(policyAttributeAuthority, request);
+			requestPayload = signAAJwt(policyAttributeAuthority, request, contentType);
 		}
 		if(policyAttributeAuthority.isRequestPositionBearer()) {
 			if(transportRequestContext.getHeaders()==null) {
@@ -3812,7 +4371,7 @@ public class GestoreToken {
 		
 	}
 	
-	private static String signAAJwt(PolicyAttributeAuthority policyAttributeAuthority, String payload) throws Exception {
+	private static String signAAJwt(PolicyAttributeAuthority policyAttributeAuthority, String payload, String contentType) throws Exception {
 		
 		String signAlgo = policyAttributeAuthority.getRequestJwtSignAlgorithm();
 		if(signAlgo==null) {
@@ -3841,24 +4400,33 @@ public class GestoreToken {
 		if(keyPassword==null) {
 			throw new Exception("JWT Signature key password undefined");
 		}
-					
-		
-		MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keystoreFile, keystoreType, keystorePassword);
-		if(merlinKs==null) {
-			throw new Exception("Accesso al keystore '"+keystoreFile+"' non riuscito");
+				
+		KeyStore ks = null;
+		JWKSetStore jwtStore = null;
+		if("jwk".equalsIgnoreCase(keystoreType)) {
+			jwtStore = GestoreKeystoreCache.getJwkSetStore(keystoreFile);
 		}
-		KeyStore ks = merlinKs.getKeyStore();
+		else {
+			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keystoreFile, keystoreType, keystorePassword);
+			if(merlinKs==null) {
+				throw new Exception("Accesso al keystore '"+keystoreFile+"' non riuscito");
+			}
+			ks = merlinKs.getKeyStore();
+		}
 		
 		JwtHeaders jwtHeaders = new JwtHeaders();
-		if(policyAttributeAuthority.isRequestJwtSignIncludeKeyId()) {
+		if(policyAttributeAuthority.isRequestJwtSignIncludeKeyIdWithKeyAlias()) {
 			jwtHeaders.setKid(keyAlias);
+		}
+		else if(policyAttributeAuthority.isRequestJwtSignIncludeKeyIdCustom()) {
+			jwtHeaders.setKid(policyAttributeAuthority.getRequestJwtSignIncludeKeyIdCustom());
 		}
 		if(policyAttributeAuthority.isRequestJwtSignIncludeX509Cert()) {
 			jwtHeaders.setAddX5C(true);
 		}
 		String url = policyAttributeAuthority.getRequestJwtSignIncludeX509URL();
 		if(url!=null && !"".equals(url)) {
-			jwtHeaders.setJwkUrl(new URI(url));
+			jwtHeaders.setX509Url(new URI(url));
 		}
 		if(policyAttributeAuthority.isRequestJwtSignIncludeX509CertSha1()) {
 			jwtHeaders.setX509IncludeCertSha1(true);
@@ -3866,20 +4434,30 @@ public class GestoreToken {
 		if(policyAttributeAuthority.isRequestJwtSignIncludeX509CertSha256()) {
 			jwtHeaders.setX509IncludeCertSha256(true);
 		}
-		String ct = policyAttributeAuthority.getRequestJwtSignJoseContentType();
-		if(ct!=null && !"".equals(ct)) {
-			jwtHeaders.setContentType(ct);
+		if(policyAttributeAuthority.isRequestJwtSignJoseContentType()) {
+			if(contentType!=null && !"".equals(contentType)) {
+				jwtHeaders.setContentType(contentType);
+			}
 		}
 		String type = policyAttributeAuthority.getRequestJwtSignJoseType();
-		if(type!=null && !"".equals(type)) {
+		if(type!=null && !"".equals(type) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(type)) { // funzionalita' undefined undocumented
 			jwtHeaders.setType(type);
 		}
-		Certificate cert = ks.getCertificate(keyAlias);
-		if(cert!=null && cert instanceof X509Certificate) {
-			jwtHeaders.addX509cert((X509Certificate)cert);
+		if(ks!=null) {
+			Certificate cert = ks.getCertificate(keyAlias);
+			if(cert!=null && cert instanceof X509Certificate) {
+				jwtHeaders.addX509cert((X509Certificate)cert);
+			}
 		}
 		
-		JsonSignature jsonSignature = new JsonSignature(ks, false, keyAlias,  keyPassword, signAlgo, jwtHeaders, options);
+		JsonSignature jsonSignature = null;
+		if(jwtStore!=null) {
+			jsonSignature = new JsonSignature(jwtStore.getJwkSet().getJsonWebKeys(), false, keyAlias, signAlgo, jwtHeaders, options);
+		}
+		else {
+			jsonSignature = new JsonSignature(ks, false, keyAlias,  keyPassword, signAlgo, jwtHeaders, options);
+		}
+		
 		return jsonSignature.sign(payload);
 		
 	}

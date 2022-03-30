@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -106,7 +106,7 @@ public final class ScopeAdd extends Action {
 
 
 				dati = scopeHelper.addScopeToDati(TipoOperazione.ADD, null, nome != null ? nome : "", descrizione != null ? descrizione : "",
-						tipologia, nomeEsterno, contesto, dati);
+						tipologia, nomeEsterno, contesto, dati, null);
 
 				pd.setDati(dati);
 
@@ -129,7 +129,7 @@ public final class ScopeAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = scopeHelper.addScopeToDati(TipoOperazione.ADD, null, nome, descrizione, tipologia, nomeEsterno, contesto, dati);
+				dati = scopeHelper.addScopeToDati(TipoOperazione.ADD, null, nome, descrizione, tipologia, nomeEsterno, contesto, dati, null);
 
 				pd.setDati(dati);
 

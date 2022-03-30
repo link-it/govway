@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -40,6 +40,7 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
 import org.openspcoop2.core.id.IDServizio;
@@ -878,7 +879,7 @@ public class EJBUtils {
 				msgResponse.registraDestinatarioMessaggio(richiestaDelegata.getServizioApplicativo(),
 						sbustamentoSoap,sbustamentoInformazioniProtocollo,getMessageAbilitato,tipoConsegna,oraRegistrazioneMessaggio,
 						nomePorta, false, false,
-						null, null);
+						null, null, false);
 
 			} // end Gestione Risposta
 
@@ -1128,7 +1129,7 @@ public class EJBUtils {
 				msgResponse.registraDestinatarioMessaggio(richiestaDelegata.getServizioApplicativo(),
 						sbustamentoSoap,sbustamentoInformazioniProtocollo,getMessageAbilitato,tipoConsegna,oraRegistrazioneMessaggio,
 						nomePorta, false, false,
-						null, null);
+						null, null, false);
 			} // end Gestione Risposta
 
 
@@ -1381,7 +1382,7 @@ public class EJBUtils {
 			gestoreMessaggi.registraDestinatarioMessaggio(richiestaDelegata.getServizioApplicativo(),
 					sbustamentoSoap,sbustamentoInformazioniProtocollo,getMessageAbilitato,tipoConsegna,oraRegistrazioneMessaggio,
 					nomePorta, false, false,
-					null, null);
+					null, null, false);
 
 			// Aggiungo costante servizio applicativo
 			this.msgDiag.addKeyword(CostantiPdD.KEY_SA_EROGATORE, richiestaDelegata.getServizioApplicativo());
@@ -1514,7 +1515,8 @@ public class EJBUtils {
 			if(pa!=null && pa.getBehaviour()!=null && pa.getBehaviour().getNome()!=null && !"".equals(pa.getBehaviour().getNome())){
 				
 				IBehaviour behaviourImpl = BehaviourLoader.newInstance(pa.getBehaviour(), this.msgDiag,
-						this.pddContext, this.protocolFactory);
+						this.pddContext, this.protocolFactory,
+						this.openSPCoopState!=null ? this.openSPCoopState.getStatoRichiesta() : null);
 				
 				gestoreMessaggi.setPortaDiTipoStateless(stateless);
 				behaviour = behaviourImpl.behaviour(gestoreMessaggi, busta, pa, requestInfo);
@@ -1709,7 +1711,8 @@ public class EJBUtils {
 					}
 					boolean GESTISCI_BEHAVIOUR = true;
 					List<String> idServiziApplicativiVirtuali = soggettiVirtuali.getIdServiziApplicativi(GESTISCI_BEHAVIOUR,gestoreMessaggi,busta, requestInfo,
-							this.pddContext, this.protocolFactory);
+							this.pddContext, this.protocolFactory,
+							this.openSPCoopState!=null ? this.openSPCoopState.getStatoRichiesta() : null);
 					if(idServiziApplicativiVirtuali.size()>0){
 						serviziApplicativiConfigurazione = idServiziApplicativiVirtuali.toArray(new String[1]);
 					}
@@ -1781,6 +1784,12 @@ public class EJBUtils {
 
 			/* ----- Registro destinatari messaggi e spedizione messaggi ----- */
 			if(behaviour_idSA_SyncResponder==null && (behaviour==null || !registraNuoviMessaggiViaBehaviour)){
+				
+				List<String> serviziApplicativiAbilitatiById = DriverConfigurazioneDB.normalizeConnettoriMultpliById(serviziApplicativiAbilitati, pa);
+				if(serviziApplicativiAbilitatiById!=null && !serviziApplicativiAbilitatiById.isEmpty()) {
+					this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI_BY_ID, serviziApplicativiAbilitatiById);
+				}
+				
 				_sendMessageToServiziApplicativi(serviziApplicativiAbilitati, soggettiRealiMappatiInUnSoggettoVirtuale, 
 						richiestaApplicativa, localForwardRichiestaDelegata, gestoreMessaggi, busta, pa, repositoryBuste,
 						null,null,stateless,this.openSPCoopState,false,
@@ -1833,6 +1842,10 @@ public class EJBUtils {
 						throw new EJBUtilsConsegnaException(this.msgDiag,MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI,"behaviour.servizioApplicativoNonDefinito");
 					}
 					
+					List<String> serviziApplicativiAbilitatiForwardToNormalizedById = DriverConfigurazioneDB.normalizeConnettoriMultpliById(serviziApplicativiAbilitatiForwardTo, pa);
+					if(serviziApplicativiAbilitatiForwardToNormalizedById!=null && !serviziApplicativiAbilitatiForwardToNormalizedById.isEmpty()) {
+						this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI_BY_ID, serviziApplicativiAbilitatiForwardToNormalizedById);
+					}
 					this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI, serviziApplicativiAbilitatiForwardTo.size());
 										
 					String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
@@ -2006,6 +2019,7 @@ public class EJBUtils {
 			
 			String coda = null;
 			String priorita = null;
+			boolean schedulingNonAttivo = false;
 			if(presaInCarico) {
 				coda = CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_CODA_DEFAULT;
 				priorita = CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRIORITA_DEFAULT;
@@ -2031,6 +2045,9 @@ public class EJBUtils {
 									}
 									if(pasa.getDatiConnettore().getPriorita()!=null) {
 										priorita = pasa.getDatiConnettore().getPriorita();
+									}
+									if(org.openspcoop2.core.config.constants.StatoFunzionalita.DISABILITATO.equals(pasa.getDatiConnettore().getScheduling())) {
+										schedulingNonAttivo = true;
 									}
 								}
 							}
@@ -2167,7 +2184,7 @@ public class EJBUtils {
 					sbustamento_soap,sbustamento_informazioni_protocollo,
 					getMessageAbilitato,tipoConsegna,oraRegistrazioneMessaggio, nomePorta,
 					attendiEsitoTransazioneSincronaPrimaDiSpedire, (servizioApplicativoConConnettore && !spedizioneConsegnaContenuti),
-					coda, priorita);
+					coda, priorita, schedulingNonAttivo);
 			
 			mapServizioApplicativoConConnettore.put(servizioApplicativo, servizioApplicativoConConnettore);
 			mapSbustamentoSoap.put(servizioApplicativo, sbustamento_soap);
@@ -2428,7 +2445,7 @@ public class EJBUtils {
 							sbustamento_soap,sbustamento_informazioni_protocollo,
 							getMessageAbilitato,tipoConsegna,oraRegistrazioneMessaggio,
 							nomePorta, false, false,
-							null, null);
+							null, null, false);
 					gestoreMessaggi.setOneWayVersione11(false);
 				}
 

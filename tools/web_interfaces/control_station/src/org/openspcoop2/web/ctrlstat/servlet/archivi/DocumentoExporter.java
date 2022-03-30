@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -25,7 +25,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -78,6 +80,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
@@ -965,6 +968,10 @@ public class DocumentoExporter extends HttpServlet {
 					
 					String idConnettore = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_ID_CONNETTORE);
 					
+					String tokenTipologia = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_TOKEN_TIPOLOGIA);
+					String tokenNome= archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_TOKEN_NOME);
+					String tokenConnettoreTipo = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_TOKEN_TIPO);
+					
 					String nameConnettore = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_NOME_CONNETTORE);
 					
 					fileName = nameConnettore + ".pem";
@@ -977,11 +984,41 @@ public class DocumentoExporter extends HttpServlet {
 						risorsa = archiviCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(aliasForVerificaConnettore);
 					}
 					
+					String metodo = null;
+					List<Object> parameters = new ArrayList<Object>();
+					if(idConnettore!=null) {
+						metodo = archiviCore.getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById(aliasForVerificaConnettore);
+						parameters.add(idConnettore+"");
+					}
+					else if(tokenTipologia!=null) {
+						if(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN.equals(tokenTipologia)) {
+							metodo = archiviCore.getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyValidazione(aliasForVerificaConnettore);
+							parameters.add(tokenNome);
+							if(tokenConnettoreTipo!=null && StringUtils.isNotEmpty(tokenConnettoreTipo)) {
+								parameters.add(tokenConnettoreTipo);
+							}
+						}
+						else if(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN.equals(tokenTipologia)) {
+							metodo = archiviCore.getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreTokenPolicyNegoziazione(aliasForVerificaConnettore);
+							parameters.add(tokenNome);
+						}
+						else if(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_ATTRIBUTE_AUTHORITY.equals(tokenTipologia)) {
+							metodo = archiviCore.getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreAttributeAuthority(aliasForVerificaConnettore);
+							parameters.add(tokenNome);
+						}
+						else {
+							throw new Exception("Tipologia '"+tokenTipologia+"' da utilizzare per l'export dei certificati server non supportata");
+						}
+					}
+					else {
+						throw new Exception("Nessuna risorsa definita da cui effettuare l'export dei certificati server");
+					}
+					
 					try{
-						String stato = archiviCore.invokeJMXMethod(archiviCore.getGestoreRisorseJMX(aliasForVerificaConnettore), aliasForVerificaConnettore, archiviCore.getJmxPdD_configurazioneSistema_type(aliasForVerificaConnettore),
+						String stato = archiviCore.getInvoker().invokeJMXMethod(aliasForVerificaConnettore, archiviCore.getJmxPdD_configurazioneSistema_type(aliasForVerificaConnettore),
 								risorsa, 
-								archiviCore.getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById(aliasForVerificaConnettore), 
-								idConnettore+"");
+								metodo, 
+								parameters.toArray());
 						if(stato==null) {
 							throw new ServletException("Recupero certificati server fallito");
 						}
@@ -992,7 +1029,7 @@ public class DocumentoExporter extends HttpServlet {
 							docBytes = stato.getBytes();
 						}
 					}catch(Exception e){
-						String msgErrore = "Errore durante il recupero dei certificati server del "+labelConnettore+" con id '"+idConnettore+"' (jmxResource '"+risorsa+"') (node:"+aliasForVerificaConnettore+"): "+e.getMessage();
+						String msgErrore = "Errore durante il recupero dei certificati server del "+labelConnettore+" con parametri '"+parameters+"' (jmxResource '"+risorsa+"') (node:"+aliasForVerificaConnettore+"): "+e.getMessage();
 						ControlStationCore.logError(msgErrore, e);
 						//throw new ServletException(msgErrore);
 						// se lancio una eccezione ho il crash dell'interfaccia. Ritorno anzi un file errato.

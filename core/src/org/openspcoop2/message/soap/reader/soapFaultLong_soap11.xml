@@ -4,8 +4,8 @@
     <env:Fault>
       <faultcode>env:Server</faultcode>
       <faultstring>Failed to invoke end component com.pierre.ws.PierreWS (POJO), operation=generateFault1
--> Failed to invoke method
--> ciao1
+-&gt; Failed to invoke method
+-&gt; ciao1
 </faultstring>
       <detail>
         <ex1_fault:stacktrace xmlns:ex1_fault="http://exampl1/webservice/fault/1.0.0">java.lang.Exception: 

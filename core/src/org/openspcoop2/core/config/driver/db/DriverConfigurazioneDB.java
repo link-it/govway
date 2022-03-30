@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -29,6 +29,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -4605,13 +4606,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			}
 			
 			if(pattern != null) {
-				sqlQueryObject.addWhereCondition(nomeTabellaRisposta+".applicabilita_pattern = ?");
+				sqlQueryObject.addWhereLikeCondition(nomeTabellaRisposta+".applicabilita_pattern", pattern, false, false);
 			} else {
 				sqlQueryObject.addWhereIsNullCondition(nomeTabellaRisposta+".applicabilita_pattern");
 			}
 			
 			if(contentType != null) {
-				sqlQueryObject.addWhereCondition(nomeTabellaRisposta+".applicabilita_ct = ?");
+				sqlQueryObject.addWhereLikeCondition(nomeTabellaRisposta+".applicabilita_ct", contentType, false, false);
 			} else {
 				sqlQueryObject.addWhereIsNullCondition(nomeTabellaRisposta+".applicabilita_ct");
 			}
@@ -4626,10 +4627,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				stmt.setInt(parameterIndex ++, statusMin);
 			if(statusMax != null)
 				stmt.setInt(parameterIndex ++, statusMax);
-			if(pattern != null)
-				stmt.setString(parameterIndex ++, pattern);
-			if(contentType != null)
-				stmt.setString(parameterIndex ++, contentType);
 			
 			rs = stmt.executeQuery();
 			if (rs.next()) {
@@ -4848,10 +4845,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDB);
 		risposta.setConversioneTemplate(jdbcAdapter.getBinaryData(rs, "conversione_template"));
 		risposta.setContentType(rs.getString("content_type"));
-		int return_code = rs.getInt("return_code");
-		if(return_code>0) {
-			risposta.setReturnCode(return_code);
-		}
+		risposta.setReturnCode(rs.getString("return_code"));
 		
 		int trasformazione_rest = rs.getInt("rest_transformation");
 		if(CostantiDB.TRUE == trasformazione_rest) {
@@ -23271,6 +23265,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					int notificaConnettore = rs.getInt("connettore_notifica");
 					String descrizioneConnettore = rs.getString("connettore_descrizione");
 					String statoConnettore = rs.getString("connettore_stato");
+					String schedulingConnettore = rs.getString("connettore_scheduling");
 					String filtriConnettore = rs.getString("connettore_filtri");
 					String codaConnettore = rs.getString("connettore_coda");
 					String prioritaConnettore = rs.getString("connettore_priorita");
@@ -23302,7 +23297,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 								servizioApplicativo.getDatiConnettore().setNome(nomeConnettore);
 								servizioApplicativo.getDatiConnettore().setNotifica(notificaConnettore == CostantiDB.TRUE);
 								servizioApplicativo.getDatiConnettore().setDescrizione(descrizioneConnettore);
-								servizioApplicativo.getDatiConnettore().setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(statoConnettore));
+								if(statoConnettore!=null) {
+									// prende il default
+									servizioApplicativo.getDatiConnettore().setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(statoConnettore));
+								}
+								if(schedulingConnettore!=null) {
+									// prende il default
+									servizioApplicativo.getDatiConnettore().setScheduling(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(schedulingConnettore));
+								}
 								servizioApplicativo.getDatiConnettore().setCoda(codaConnettore);
 								servizioApplicativo.getDatiConnettore().setPriorita(prioritaConnettore);
 								servizioApplicativo.getDatiConnettore().setPrioritaMax(maxPrioritaConnettore == CostantiDB.TRUE);
@@ -32952,5 +32954,178 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}
 		
 		return query;
+	}
+	
+	
+	public IDServizio getLabelNomeServizioApplicativo(String nomeServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		// viene inserito come azione dell'IDServizio
+		
+		Connection con = null;
+		ResultSet rs = null;
+		PreparedStatement stm = null;
+		
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("findAllAllarmi");
+
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::findAllAllarmi] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+			sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI + ".id");
+			sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI + ".tipo");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addWhereCondition("nome=?");
+
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+
+			stm = con.prepareStatement(sqlQuery);
+			stm.setString(1, nomeServizioApplicativo);
+
+			this.log.debug("eseguo query: " + sqlQuery);
+			
+			long idSA = -1;
+			String tipo = null;
+			rs = stm.executeQuery();
+			if(rs.next()) {
+				idSA = rs.getLong("id");
+				tipo = rs.getString("tipo");
+			}
+			rs.close(); rs=null;
+			stm.close(); stm = null;
+
+			if(idSA>0) {
+
+				if(CostantiConfigurazione.SERVER.equals(tipo)){
+					return null; // non serve normalizzazione, si puo' usare il nome stesso
+				}
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SA);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE + ".behaviour");
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE_SA + ".connettore_nome");
+				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".tipo_soggetto");
+				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".nome_soggetto");
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE + ".tipo_servizio");
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE + ".servizio");
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE + ".versione_servizio");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE + ".id="+CostantiDB.PORTE_APPLICATIVE_SA + ".id_porta");
+				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI + ".id="+CostantiDB.PORTE_APPLICATIVE + ".id_soggetto");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_SA + ".id_servizio_applicativo=?");
+
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idSA);
+
+				this.log.debug("eseguo query: " + sqlQuery);
+				
+				List<IDServizio> nomiConnettore = new ArrayList<IDServizio>();
+				rs = stm.executeQuery();
+				while(rs.next()) {
+					
+					String behaviour = rs.getString("behaviour");
+					String nomeConnettore = rs.getString("connettore_nome");
+					
+					String tipo_soggetto = rs.getString("tipo_soggetto");
+					String nome_soggetto = rs.getString("nome_soggetto");
+					String tipo_servizio = rs.getString("tipo_servizio");
+					String servizio = rs.getString("servizio");
+					int versione_servizio = rs.getInt("versione_servizio");
+					
+					IDServizio idServizio = IDServizioUtils.buildIDServizio(tipo_servizio, servizio,
+							new IDSoggetto(tipo_soggetto, nome_soggetto),
+							versione_servizio);
+					
+					if(nomeConnettore!=null && !"".equals(nomeConnettore)) {
+						idServizio.setAzione(nomeConnettore);
+					}
+					else {
+						if(behaviour!=null && !"".equals(behaviour)) {
+							idServizio.setAzione(CostantiConfigurazione.NOME_CONNETTORE_DEFAULT);
+						}
+					}
+
+					nomiConnettore.add(idServizio);
+				}
+				rs.close(); rs=null;
+				stm.close(); stm = null;
+				
+				if(!nomiConnettore.isEmpty() && nomiConnettore.size()==1) {
+					return nomiConnettore.get(0);
+				}
+				// else esistono più associazione e non e' di tipo server ???
+			}
+			
+			return null; // normalizzazione non riuscita, si puo' usare il nome stesso
+			
+		} catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::findAllAllarmi] Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+	}
+	
+	
+	public static List<String> normalizeConnettoriMultpliById(List<String> sa, PortaApplicativa pa){
+		
+		if(pa==null || pa.getBehaviour()==null || pa.sizeServizioApplicativoList()<=0) {
+			return null;
+		}
+		
+		List<String> lId = new ArrayList<String>();
+		Map<String, String> m = new HashMap<String, String>();
+		for (String s : sa) {
+			for (PortaApplicativaServizioApplicativo pasa : pa.getServizioApplicativoList()) {
+				if(pasa.getNome().equals(s)) {
+					if(pasa.getId()==null || pasa.getId()<=0) {
+						return null;
+					}
+					long id = pasa.getId();
+					String nomeConnettore = CostantiConfigurazione.NOME_CONNETTORE_DEFAULT;
+					if(pasa!=null && pasa.getDatiConnettore()!=null && pasa.getDatiConnettore().getNome()!=null) {
+						nomeConnettore = pasa.getDatiConnettore().getNome();
+					}
+					lId.add(id+"");
+					m.put(id+"",nomeConnettore);
+					break;
+				}
+			}
+		}
+		
+		List<String> sorted = new ArrayList<String>();
+		Collections.sort(lId);
+		for (String sId : lId) {
+			sorted.add(m.get(sId));
+		}
+		
+		return sorted;
 	}
 }

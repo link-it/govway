@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -35,8 +35,9 @@ import java.util.ArrayList;
  */
 public enum MonitorMethods {
 
+	STATO_CONSEGNE_ASINCRONE("Stato"),
 	LISTA_RICHIESTE_PENDENTI("Lista"), 
-	STATO_RICHIESTE("Stato"),
+	STATO_RICHIESTE("Stato Generale"),
 	RICONSEGNA_IMMEDIATA_RICHIESTE_PENDENTI(MonitorCostanti.LABEL_ACTION_RICONSEGNA_IMMEDIATA),
 	ELIMINAZIONE_RICHIESTE_PENDENTI("Eliminazione");
 

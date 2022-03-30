@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -47,6 +47,8 @@ public class ServiziApplicativiCostanti {
 	public final static String OBJECT_NAME_SERVIZI_APPLICATIVI_RUOLI = "serviziApplicativiRuoli";
 	public final static String OBJECT_NAME_SERVIZI_APPLICATIVI_CREDENZIALI = "serviziApplicativiCredenziali";
 	public final static String OBJECT_NAME_SERVIZI_APPLICATIVI_PROPRIETA = "serviziApplicativiProprieta";
+	
+	public final static String OBJECT_NAME_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI = "serviziApplicativiVerificaCertificati";
 	
 	/* SERVLET NAME */
 	
@@ -100,6 +102,7 @@ public class ServiziApplicativiCostanti {
 		SERVLET_SERVIZI_APPLICATIVI_PROPRIETA.add(SERVLET_NAME_SERVIZI_APPLICATIVI_PROPRIETA_LIST);
 	}
 
+	public final static String SERVLET_NAME_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI = OBJECT_NAME_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI+".do";
 	
 	/* NOME VISTA CUSTOM */
 	public final static String SERVIZI_APPLICATIVI_NOME_VISTA_CUSTOM_LISTA = "applicativi";
@@ -133,6 +136,10 @@ public class ServiziApplicativiCostanti {
 	public final static String LABEL_SERVIZI_APPLICATIVI_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.SERVIZIO_APPLICATIVO.name()+"')";
 	public final static String LABEL_APPLICATIVI_MENU_VISUALE_AGGREGATA = "Applicativi";
 	public final static String LABEL_SA_MENU_VISUALE_AGGREGATA = "Servizi Applicativi";
+	public final static String LABEL_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI = CostantiControlStation.LABEL_VERIFICA_CERTIFICATI;
+	public final static String LABEL_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI_DI = CostantiControlStation.LABEL_VERIFICA_CERTIFICATI_DI;
+	public final static String LABEL_SERVIZI_APPLICATIVI_VERIFICA_CONNETTIVITA = CostantiControlStation.LABEL_VERIFICA_CONNETTIVITA;
+	public final static String LABEL_SERVIZI_APPLICATIVI_VERIFICA_CONNETTIVITA_DI = CostantiControlStation.LABEL_VERIFICA_CONNETTIVITA_DI;
 	
 	/* PARAMETRI */
 	

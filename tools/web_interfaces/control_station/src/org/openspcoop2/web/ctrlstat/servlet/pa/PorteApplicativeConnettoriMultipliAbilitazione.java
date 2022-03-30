@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -25,6 +25,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -44,6 +45,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -88,6 +90,8 @@ public final class PorteApplicativeConnettoriMultipliAbilitazione extends Action
 		try {
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
 			String changeAbilitato = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ABILITA);
+			String schedulingP = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SCHEDULING);
+			boolean scheduling = "true".equalsIgnoreCase(schedulingP);
 			String nomePorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA);
 			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			String nomeSAConnettore = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME_SA);
@@ -147,35 +151,39 @@ public final class PorteApplicativeConnettoriMultipliAbilitazione extends Action
 					boolean connettoreUtilizzatiConfig = porteApplicativeHelper.isConnettoreMultiploInUso(numeroElementiDaControllare,
 							nomeSAConnettore, pa, asps, apc, serviceBinding, messaggiSezioniConnettore);
 					
-					if(connettoreUtilizzatiConfig) {
-						sbErrore.append(PorteApplicativeCostanti.MESSAGGIO_IMPOSSIBILE_DISABILITARE_IL_CONNETTORE_UTILIZZATI_IN_CONFIGURAZIONE);
-						sbErrore.append(":").append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
-						for (String s : messaggiSezioniConnettore) {
-							sbErrore.append(s);
-						}
-
-						eseguiOperazione = false;
-					}
+					if(!scheduling) {
 					
-					
-					if(!connettoreUtilizzatiConfig) {
-						// controllare che almeno un connettore rimanga abilitato
-						int numeroAbilitati = 0;
-						for (PortaApplicativaServizioApplicativo paSATmp : pa.getServizioApplicativoList()) {
-							if(!paSATmp.getNome().equals(nomeSAConnettore)) { // controllo che tutti gli altri non siano disabilitati
-								boolean abilitato = paSATmp.getDatiConnettore()	!= null ? 	paSATmp.getDatiConnettore().getStato().equals(StatoFunzionalita.ABILITATO) : true;
+						if(connettoreUtilizzatiConfig) {
+							sbErrore.append(PorteApplicativeCostanti.MESSAGGIO_IMPOSSIBILE_DISABILITARE_IL_CONNETTORE_UTILIZZATI_IN_CONFIGURAZIONE);
+							sbErrore.append(":").append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+							for (String s : messaggiSezioniConnettore) {
+								sbErrore.append(s);
+							}
 	
-								if(abilitato)
-									numeroAbilitati ++;
+							eseguiOperazione = false;
+						}
+						
+						
+						if(!connettoreUtilizzatiConfig) {
+							// controllare che almeno un connettore rimanga abilitato
+							int numeroAbilitati = 0;
+							for (PortaApplicativaServizioApplicativo paSATmp : pa.getServizioApplicativoList()) {
+								if(!paSATmp.getNome().equals(nomeSAConnettore)) { // controllo che tutti gli altri non siano disabilitati
+									boolean abilitato = paSATmp.getDatiConnettore()	!= null ? 	paSATmp.getDatiConnettore().getStato().equals(StatoFunzionalita.ABILITATO) : true;
+		
+									if(abilitato)
+										numeroAbilitati ++;
+								}
+							}
+							
+							
+							if(numeroAbilitati < 1) {
+								eseguiOperazione = false;
+								sbErrore.append(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_IMPOSSIBILE_DISABILITARE_IL_CONNETTORE_0_DEVE_RIMANARE_ALMENTO_UN_CONNETTORE_ABILITATO,
+										porteApplicativeHelper.getLabelNomePortaApplicativaServizioApplicativo(oldPaSA)));
 							}
 						}
 						
-						
-						if(numeroAbilitati < 1) {
-							eseguiOperazione = false;
-							sbErrore.append(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_IMPOSSIBILE_DISABILITARE_IL_CONNETTORE_0_DEVE_RIMANARE_ALMENTO_UN_CONNETTORE_ABILITATO,
-									porteApplicativeHelper.getLabelNomePortaApplicativaServizioApplicativo(oldPaSA)));
-						}
 					}
 				}
 
@@ -183,7 +191,7 @@ public final class PorteApplicativeConnettoriMultipliAbilitazione extends Action
 				String title = null;
 				
 				if(eseguiOperazione) {
-					messaggio = porteApplicativeHelper.getMessaggioConfermaModificaRegolaStatoConnettoreMultiplo(fromApi, oldPaSA, ServletUtils.isCheckBoxEnabled(changeAbilitato), true,true);
+					messaggio = porteApplicativeHelper.getMessaggioConfermaModificaRegolaStatoConnettoreMultiplo(fromApi, oldPaSA, ServletUtils.isCheckBoxEnabled(changeAbilitato), true,true,scheduling);
 					String[][] bottoni = { 
 							{ Costanti.LABEL_MONITOR_BUTTON_ANNULLA, 
 								Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_PREFIX +
@@ -227,6 +235,7 @@ public final class PorteApplicativeConnettoriMultipliAbilitazione extends Action
 					datiConnettore = new PortaApplicativaServizioApplicativoConnettore();
 					datiConnettore.setNome(CostantiConfigurazione.NOME_CONNETTORE_DEFAULT);
 				}
+				String nomeConnettore = datiConnettore.getNome();
 
 				paSA.setDatiConnettore(datiConnettore);
 
@@ -238,15 +247,100 @@ public final class PorteApplicativeConnettoriMultipliAbilitazione extends Action
 
 
 				// cambio solo la modalita'
-				if(ServletUtils.isCheckBoxEnabled(changeAbilitato)) {
-					datiConnettore.setStato(StatoFunzionalita.ABILITATO);
+				if(scheduling) {
+					if(ServletUtils.isCheckBoxEnabled(changeAbilitato)) {
+						datiConnettore.setScheduling(StatoFunzionalita.ABILITATO);
+					}
+					else{
+						datiConnettore.setScheduling(StatoFunzionalita.DISABILITATO);
+					}
 				}
-				else{
-					datiConnettore.setStato(StatoFunzionalita.DISABILITATO);
+				else {
+					if(ServletUtils.isCheckBoxEnabled(changeAbilitato)) {
+						datiConnettore.setStato(StatoFunzionalita.ABILITATO);
+					}
+					else{
+						datiConnettore.setStato(StatoFunzionalita.DISABILITATO);
+					}
 				}
 
 				String userLogin = ServletUtils.getUserLoginFromSession(session);
 				porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
+				
+				List<String> aliasJmx = porteApplicativeCore.getJmxPdD_aliases();
+				if(aliasJmx!=null && !aliasJmx.isEmpty()) {
+					
+					boolean repositoryUpdated = false;
+					
+					for (String alias : aliasJmx) {
+						
+						// config
+						boolean success = false;
+						String metodo = null;
+						if(scheduling) {
+							metodo = StatoFunzionalita.ABILITATO.equals(datiConnettore.getScheduling()) ? 
+									porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiplo(alias) :
+									porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiplo(alias);
+						}
+						else {
+							metodo = StatoFunzionalita.ABILITATO.equals(datiConnettore.getStato()) ? 
+									porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeMetodo_enableConnettoreMultiplo(alias) :
+									porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeMetodo_disableConnettoreMultiplo(alias);
+						}
+						try{
+							String stato = porteApplicativeCore.getInvoker().invokeJMXMethod(alias, 
+									porteApplicativeCore.getJmxPdD_configurazioneSistema_type(alias),
+									porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+									metodo, 
+									pa.getNome(),
+									nomeConnettore);
+							if(stato==null) {
+								throw new ServletException("Aggiornamento fallito");
+							}
+							if(!JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO.equals(stato)) {
+								throw new ServletException(stato);
+							}
+							else {
+								success = true;
+							}
+						}catch(Exception e){
+							String msgErrore = "Errore durante l'aggiornamento dello "+(scheduling ? "scheduling" : "stato")+" del connettore "+nomeConnettore+" della PortaApplicativa '"+pa.getNome()+"' via jmx (jmxMethod '"+metodo+"') (node:"+alias+"): "+e.getMessage();
+							ControlStationCore.logError(msgErrore, e);
+						}
+						
+						if(scheduling && !repositoryUpdated && success) {
+							// repository
+							metodo = StatoFunzionalita.ABILITATO.equals(datiConnettore.getScheduling()) ? 
+									porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeMetodo_enableSchedulingConnettoreMultiploRuntimeRepository(alias) :
+									porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeMetodo_disableSchedulingConnettoreMultiploRuntimeRepository(alias);
+							try{
+								boolean slowOperation = true;
+								String stato = porteApplicativeCore.getInvoker().invokeJMXMethod(alias, 
+										porteApplicativeCore.getJmxPdD_configurazioneSistema_type(alias),
+										porteApplicativeCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+										metodo, 
+										slowOperation,
+										pa.getNome(),
+										nomeConnettore);
+								if(stato==null) {
+									throw new ServletException("Aggiornamento fallito");
+								}
+								if(!stato.startsWith(JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO)) {
+									throw new ServletException(stato);
+								}
+								else {
+									repositoryUpdated = true;
+									ControlStationCore.logDebug("Aggiornato scheduling del connettore: "+stato);
+								}
+							}catch(Exception e){
+								String msgErrore = "Errore durante l'aggiornamento dello scheduling del connettore "+nomeConnettore+" della PortaApplicativa '"+pa.getNome()+"' via jmx (jmxMethod '"+metodo+"') (node:"+alias+"): "+e.getMessage();
+								ControlStationCore.logError(msgErrore, e);
+							}
+						}
+					}
+				}
+				
+				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI);
 			}
 
 			// Preparo la lista
@@ -260,7 +354,27 @@ public final class PorteApplicativeConnettoriMultipliAbilitazione extends Action
 			IDSoggetto idSoggettoProprietario = new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario());
 			List<PortaApplicativaServizioApplicativo> listaFiltrata = porteApplicativeHelper.applicaFiltriRicercaConnettoriMultipli(ricerca, idLista, pa.getServizioApplicativoList(), idSoggettoProprietario);
 						
-			porteApplicativeHelper.preparePorteAppConnettoriMultipliList(nomePorta, ricerca, listaFiltrata, portaApplicativa);
+			PortaApplicativaServizioApplicativo paSA = null;
+			for (PortaApplicativaServizioApplicativo paSATmp : pa.getServizioApplicativoList()) {
+				if(paSATmp.getNome().equals(nomeSAConnettore)) {
+					paSA = paSATmp;					
+				}
+			}
+
+			PortaApplicativaServizioApplicativoConnettore datiConnettore = paSA.getDatiConnettore();
+
+			if(datiConnettore == null) { // succede solo se e' la prima volta che modifico la configurazione di default
+				datiConnettore = new PortaApplicativaServizioApplicativoConnettore();
+				datiConnettore.setNome(CostantiConfigurazione.NOME_CONNETTORE_DEFAULT);
+			}
+			
+			String nomeConnettoreChangeList = datiConnettore.getNome();
+			if(nomeConnettoreChangeList==null) {
+				nomeConnettoreChangeList = CostantiConfigurazione.NOME_CONNETTORE_DEFAULT;
+			}
+			
+			porteApplicativeHelper.preparePorteAppConnettoriMultipliList_fromChangeConnettore(nomePorta, ricerca, listaFiltrata, portaApplicativa,
+					nomeConnettoreChangeList);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

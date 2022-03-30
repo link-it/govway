@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -21,6 +21,7 @@
 
 package org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.raggruppamento;
 
+import java.util.Date;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.concurrent.Executors;
@@ -35,6 +36,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoS
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils.PolicyAlias;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWSOptions;
 import org.openspcoop2.utils.security.JsonSignature;
@@ -53,7 +55,7 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 public class SoapTest extends ConfigLoader {
 	
 	private static final String basePath = System.getProperty("govway_base_path");
-	private static final String testIdHeader = "GovWay-TestSuite-RL-Grouping";	// TODO: Mettilo globale
+	private static final String testIdHeader = "GovWay-TestSuite-RL-Grouping";
 	
 	@Test
 	public void perRichiedenteFruizione() {
@@ -379,6 +381,10 @@ public class SoapTest extends ConfigLoader {
 		signatureProps.put("rs.security.signature.include.cert.sha1","false");
 		signatureProps.put("rs.security.signature.include.cert.sha256","false");
 		
+		Date now = DateManager.getDate();
+		Date campione = new Date( (now.getTime()/1000)*1000);
+		Date iat = new Date(campione.getTime());
+		
 		JsonSignature jsonSignature = null;
 		jsonSignature = new JsonSignature(signatureProps, options);
 		
@@ -387,7 +393,7 @@ public class SoapTest extends ConfigLoader {
 		  "\"iss\": \"example.org\",\n"+
 		  "\"preferred_username\": \"John Doe\",\n"+
 		  "\"azp\": \"clientTest\",\n"+
-		  "\"iat\": 1516239022\n"+
+		  "\"iat\": "+(iat.getTime()/1000)+"\n"+
 		"}";
 		String token1Signed = jsonSignature.sign(token1);
 		
@@ -402,7 +408,7 @@ public class SoapTest extends ConfigLoader {
 				  "\"iss\": \"example.org\",\n"+
 				  "\"preferred_username\": \"John Doe\",\n"+
 				  "\"azp\": \"clientTest\",\n"+
-				  "\"iat\": 1516239022\n"+
+				  "\"iat\": "+(iat.getTime()/1000)+"\n"+
 				"}";
 				
 		String token2Signed = jsonSignature.sign(token2);
@@ -418,7 +424,7 @@ public class SoapTest extends ConfigLoader {
 				  "\"iss\": \"example.org\",\n"+
 				  "\"preferred_username\": \"John Doe\",\n"+
 				  "\"azp\": \"clientTest\",\n"+
-				  "\"iat\": 1516239022\n"+
+				  "\"iat\": "+(iat.getTime()/1000)+"\n"+
 				"}";
 				
 		String token3Signed = jsonSignature.sign(token3);

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -31,6 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang.ObjectUtils.Null;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.utils.transport.http.SSLConfig;
 
 /**     
  * ConnettoreHTTP_urlHttps_keystoreRepository
@@ -41,7 +42,7 @@ import org.openspcoop2.protocol.sdk.Busta;
  */
 public class ConnettoreHTTP_urlHttps_keystoreRepository {
 
-	protected static ConnettoreHTTPSProperties readSSLContext(boolean debug, ConnettoreLogger logger, Busta busta, boolean fruizioni) throws Exception {
+	protected static SSLConfig readSSLContext(boolean debug, ConnettoreLogger logger, Busta busta, boolean fruizioni) throws Exception {
 		
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 		
@@ -169,7 +170,7 @@ public class ConnettoreHTTP_urlHttps_keystoreRepository {
 				mapConnettoreHTTPSProperties.clear();
 			}
 			
-			ConnettoreHTTPSProperties https = getConnettoreHTTPSPropertiesFromRepository(fileRepository, tipoNomeSoggetto, debug, logger, fruizioni);
+			SSLConfig https = getConnettoreHTTPSPropertiesFromRepository(fileRepository, tipoNomeSoggetto, debug, logger, fruizioni);
 			if(https==null){
 				if(debug){
 					logger.debug("Indicazione configurazione https ("+debugRole+") non presente per soggetto "+tipoNomeSoggetto+" aggiunta in cache");
@@ -225,7 +226,7 @@ public class ConnettoreHTTP_urlHttps_keystoreRepository {
 		}
 	}
 	
-	private static ConnettoreHTTPSProperties getConnettoreHTTPSPropertiesFromRepository(File fileRepository, String tipoNomeSoggetto, 
+	private static SSLConfig getConnettoreHTTPSPropertiesFromRepository(File fileRepository, String tipoNomeSoggetto, 
 			boolean debug, ConnettoreLogger logger, boolean fruizioni) throws Exception{
 		
 		String debugRole = (fruizioni? "fruizione" : "erogazione");

@@ -162,7 +162,7 @@
 						<xsd:appinfo>
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
-								<linkit:sql-column-mapping name="stato_dettaglio" text="true"/>
+								<linkit:sql-column-mapping name="stato_dettaglio" long-text="true"/>
 								<linkit:sql-ddl-column-comment><![CDATA[Dettaglio dello stato dell'allarme]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
@@ -214,6 +214,17 @@
 								xmlns:linkit="http://www.link.it/project_generator">
 								<linkit:sql-column-mapping name="acknowledged"/>
 								<linkit:sql-ddl-column-comment><![CDATA[Indicazione se l'allarme è stato acknowledged (0=false/1=true)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="dettaglio-acknowledged" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="dettaglio_acknowledged" long-text="true"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Indicazione di dettaglio sullo stato acknowledged dell'allarme]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.utils.WWWAuthenticateErrorCode;
 import org.openspcoop2.message.utils.WWWAuthenticateGenerator;
@@ -91,98 +92,41 @@ public class GestoreCredenzialiEngine {
 
 	
 	public Credenziali elaborazioneCredenziali(
+			IDSoggetto idSoggetto,
 			InfoConnettoreIngresso infoConnettoreIngresso, OpenSPCoop2Message messaggio)
 			throws GestoreCredenzialiException,
 			GestoreCredenzialiConfigurationException {
-		
-		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 		
 		Map<String, List<String>> headerTrasporto = infoConnettoreIngresso.getUrlProtocolContext().getHeaders();
 		
 		Credenziali credenzialiTrasporto = infoConnettoreIngresso.getCredenziali();
 		
+		GestoreCredenzialiConfigurazione configurazione = GestoreCredenzialiConfigurazione.getConfigurazione(!this.portaApplicativa, idSoggetto);
+		
 		// Abilitato ?
-		boolean enabled = false;
-		if(this.portaApplicativa) {
-			enabled = op2Properties.isGestoreCredenzialiPortaApplicativaEnabled();
-		}
-		else {
-			enabled = op2Properties.isGestoreCredenzialiPortaDelegataEnabled();
-		}
+		boolean enabled = (configurazione!=null) && configurazione.isEnabled();
 		if(!enabled) {
 			return credenzialiTrasporto; // credenziali originali
 		}
 		
 		// Identita' Gateway
-		try {
-			if(this.portaApplicativa)
-				this.identita = op2Properties.getGestoreCredenzialiPortaApplicativaNome();
-			else
-				this.identita = op2Properties.getGestoreCredenzialiPortaDelegataNome();
-		}catch(Exception e) {
-			// non dovrebbe succedere eccezioni, la validazione dei metodi viene fatta allo startup della PdD
-			throw new GestoreCredenzialiException(e.getMessage(),e);
-		}
-		if(this.identita==null){
-			throw new GestoreCredenzialiException("Nome del gestore delle credenziali non definito");
-		}
+		this.identita=configurazione.getNome();
 		
 		// Realm
 		
-		String realm = null;
-		String authType = null;
-		try {
-			if(this.portaApplicativa){
-				realm = op2Properties.getGestoreCredenzialiPortaApplicativaRealm();
-				if(realm!=null) {
-					authType = op2Properties.getGestoreCredenzialiPortaApplicativaAuthType();
-				}
-			}else{
-				realm = op2Properties.getGestoreCredenzialiPortaDelegataRealm();
-				if(realm!=null) {
-					authType = op2Properties.getGestoreCredenzialiPortaDelegataAuthType();
-				}
-			}
-		}catch(Exception e) {
-			// non dovrebbe succedere eccezioni, la validazione dei metodi viene fatta allo startup della PdD
-			throw new GestoreCredenzialiException(e.getMessage(),e);
-		}
+		String realm = configurazione.getRealm();
+		String authType = configurazione.getAuthType();
 		
 		
 		// AutenticazioneGateway
 
-		TipoAutenticazioneGestoreCredenziali autenticazioneGateway = null;
-		try {
-			if(this.portaApplicativa){
-				autenticazioneGateway = op2Properties.getGestoreCredenzialiPortaApplicativaTipoAutenticazioneCanale();
-			}else{
-				autenticazioneGateway = op2Properties.getGestoreCredenzialiPortaDelegataTipoAutenticazioneCanale();
-			}
-		}catch(Exception e) {
-			// non dovrebbe succedere eccezioni, la validazione dei metodi viene fatta allo startup della PdD
-			throw new GestoreCredenzialiException(e.getMessage(),e);
-		}
+		TipoAutenticazioneGestoreCredenziali autenticazioneGateway = configurazione.getTipoAutenticazioneCanale();
 		if(autenticazioneGateway==null){
 			throw new GestoreCredenzialiException("Tipo di autenticazione per il gestore delle credenziali non definito");
 		}
 		if(TipoAutenticazioneGestoreCredenziali.BASIC.equals(autenticazioneGateway)){
-			String usernameGateway = null;
-			String passwordGateway = null;
-			try {
-				if(this.portaApplicativa){
-					usernameGateway = op2Properties.getGestoreCredenzialiPortaApplicativaAutenticazioneCanaleBasicUsername();
-				}else{
-					usernameGateway = op2Properties.getGestoreCredenzialiPortaDelegataAutenticazioneCanaleBasicUsername();
-				}
-				if(this.portaApplicativa){
-					passwordGateway = op2Properties.getGestoreCredenzialiPortaApplicativaAutenticazioneCanaleBasicPassword();
-				}else{
-					passwordGateway = op2Properties.getGestoreCredenzialiPortaDelegataAutenticazioneCanaleBasicPassword();
-				}
-			}catch(Exception e) {
-				// non dovrebbe succedere eccezioni, la validazione dei metodi viene fatta allo startup della PdD
-				throw new GestoreCredenzialiException(e.getMessage(),e);
-			}
+			String usernameGateway = configurazione.getAutenticazioneCanaleBasicUsername();
+			String passwordGateway = configurazione.getAutenticazioneCanaleBasicPassword();
 			if(usernameGateway == null){
 				throw new GestoreCredenzialiException("Richiesta autenticazione basic del gestore delle credenziali, ma username non definito");
 			}
@@ -208,24 +152,14 @@ public class GestoreCredenzialiEngine {
 			}
 		}
 		else if(TipoAutenticazioneGestoreCredenziali.SSL.equals(autenticazioneGateway)){
-			String subjectGateway = null;
-			try {
-				if(this.portaApplicativa){
-					subjectGateway = op2Properties.getGestoreCredenzialiPortaApplicativaAutenticazioneCanaleSslSubject();
-				}else{
-					subjectGateway = op2Properties.getGestoreCredenzialiPortaDelegataAutenticazioneCanaleSslSubject();
-				}
-				if(subjectGateway == null){
-					throw new GestoreCredenzialiException("Richiesta autenticazione ssl del gestore delle credenziali, ma subject non definito");
-				}
-			}catch(Exception e) {
-				// non dovrebbe succedere eccezioni, la validazione dei metodi viene fatta allo startup della PdD
-				throw new GestoreCredenzialiException(e.getMessage(),e);
+			String subjectGateway = configurazione.getAutenticazioneCanaleSslSubject();
+			if(subjectGateway == null){
+				throw new GestoreCredenzialiException("Richiesta autenticazione ssl del gestore delle credenziali, ma subject non definito");
 			}
 			try{
 				org.openspcoop2.utils.certificate.CertificateUtils.validaPrincipal(subjectGateway, PrincipalType.subject);
 			}catch(Exception e){
-				throw new GestoreCredenzialiException("Richiesta autenticazione ssl del gestore delle credenziali, ma subject fornito non valido: "+e.getMessage());
+				throw new GestoreCredenzialiException("Richiesta autenticazione ssl del gestore delle credenziali, ma subject fornito ["+subjectGateway+"] non valido: "+e.getMessage());
 			}
 			if(credenzialiTrasporto.getSubject()==null){
 				throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_CREDENTIALS_NOT_FOUND, 
@@ -254,24 +188,14 @@ public class GestoreCredenzialiEngine {
 			}
 		}
 		else if(TipoAutenticazioneGestoreCredenziali.PRINCIPAL.equals(autenticazioneGateway)){
-			String principalGateway = null;
-			try {
-				if(this.portaApplicativa){
-					principalGateway = op2Properties.getGestoreCredenzialiPortaApplicativaAutenticazioneCanalePrincipal();
-				}else{
-					principalGateway = op2Properties.getGestoreCredenzialiPortaDelegataAutenticazioneCanalePrincipal();
-				}
-			}catch(Exception e) {
-				// non dovrebbe succedere eccezioni, la validazione dei metodi viene fatta allo startup della PdD
-				throw new GestoreCredenzialiException(e.getMessage(),e);
-			}
+			String principalGateway = configurazione.getAutenticazioneCanalePrincipal();
 			if(principalGateway == null){
 				throw new GestoreCredenzialiException("Richiesta autenticazione principal del gestore delle credenziali, ma principal non definito");
 			}
 			if(credenzialiTrasporto.getPrincipal()==null){
 				throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_CREDENTIALS_NOT_FOUND, 
 						buildWWWProxyAuthPrincipal(authType, realm, true),
-						"Autenticazione principal del Gestore delle Credenziali '"+this.identita+ "' fallita, nessun tipo di credenziali ssl riscontrata nel trasporto");
+						"Autenticazione principal del Gestore delle Credenziali '"+this.identita+ "' fallita, nessun tipo di credenziale principal riscontrata nel trasporto");
 			}
 			if( ! ( principalGateway.equals(credenzialiTrasporto.getPrincipal()) ) ){
 				String credenzialiPresenti = credenzialiTrasporto.toString();
@@ -290,22 +214,10 @@ public class GestoreCredenzialiEngine {
 		
 		// Modalità di gestione
 		
-		ModalitaAutenticazioneGestoreCredenziali modalita = null;
+		ModalitaAutenticazioneGestoreCredenziali modalita = configurazione.getModalitaAutenticazioneCanale();
 		String modalitaAtLeastOne_errorDescription = null;
-		try {
-			if(this.portaApplicativa){
-				modalita = op2Properties.getGestoreCredenzialiPortaApplicativaModalitaAutenticazioneCanale();
-			}else{
-				modalita = op2Properties.getGestoreCredenzialiPortaDelegataModalitaAutenticazioneCanale();
-			}
-			if(ModalitaAutenticazioneGestoreCredenziali.AT_LEAST_ONE.equals(modalita)) {
-				modalitaAtLeastOne_errorDescription = this.portaApplicativa ? op2Properties.getGestoreCredenzialiPortaApplicativaModalitaAutenticazioneCanaleAtLeastOne_error_description() : 
-					op2Properties.getGestoreCredenzialiPortaDelegataModalitaAutenticazioneCanaleAtLeastOne_error_description();
-			}
-			
-		}catch(Exception e) {
-			// non dovrebbe succedere eccezioni, la validazione dei metodi viene fatta allo startup della PdD
-			throw new GestoreCredenzialiException(e.getMessage(),e);
+		if(ModalitaAutenticazioneGestoreCredenziali.AT_LEAST_ONE.equals(modalita)) {
+			modalitaAtLeastOne_errorDescription = configurazione.getModalitaAutenticazioneCanaleAtLeastOne_error_description();
 		}
 		
 		
@@ -313,101 +225,33 @@ public class GestoreCredenzialiEngine {
 		
 		Credenziali c = new Credenziali();	
 		
-		String headerNameBasicUsername = null;
-		String headerNameBasicPassword = null;
-		boolean verificaIdentitaBasic = false;
-		try {
-			if(this.portaApplicativa){
-				headerNameBasicUsername = op2Properties.getGestoreCredenzialiPortaApplicativaHeaderBasicUsername();
-			}else{
-				headerNameBasicUsername = op2Properties.getGestoreCredenzialiPortaDelegataHeaderBasicUsername();
-			}
-			if(this.portaApplicativa){
-				headerNameBasicPassword = op2Properties.getGestoreCredenzialiPortaApplicativaHeaderBasicPassword();
-			}else{
-				headerNameBasicPassword = op2Properties.getGestoreCredenzialiPortaDelegataHeaderBasicPassword();
-			}
-			verificaIdentitaBasic = headerNameBasicUsername!=null && headerNameBasicPassword!=null;
-		}catch(Exception e) {
-			// non dovrebbe succedere eccezioni, la validazione dei metodi viene fatta allo startup della PdD
-			throw new GestoreCredenzialiException(e.getMessage(),e);
-		}
+		String headerNameBasicUsername = configurazione.getHeaderBasicUsername();
+		String headerNameBasicPassword = configurazione.getHeaderBasicPassword();
+		boolean verificaIdentitaBasic = headerNameBasicUsername!=null && headerNameBasicPassword!=null;
 		
-		String headerNameSSLSubject = null;
-		String headerNameSSLIssuer = null;
-		String headerNameSSLCertificate = null;
+		String headerNameSSLSubject = configurazione.getHeaderSslSubject();
+		String headerNameSSLIssuer = configurazione.getHeaderSslIssuer();
+		String headerNameSSLCertificate = configurazione.getHeaderSslCertificate();
 		boolean sslCertificate_urlDecode = false;
 		boolean sslCertificate_base64Decode = false;
 		boolean sslCertificate_enrich_BEGIN_END = false;
 		boolean sslCertificate_replace = false;
-		String sslCertificate_replaceSource= null;
+		String sslCertificate_replaceSource = null;
 		String sslCertificate_replaceDest = null;
-		boolean verificaIdentitaSSL = false;
-		try {
-			if(this.portaApplicativa){
-				headerNameSSLSubject = op2Properties.getGestoreCredenzialiPortaApplicativaHeaderSslSubject();
-			}else{
-				headerNameSSLSubject = op2Properties.getGestoreCredenzialiPortaDelegataHeaderSslSubject();
+		if(headerNameSSLCertificate!=null) {
+			sslCertificate_urlDecode = configurazione.isHeaderSslCertificateUrlDecode();
+			sslCertificate_base64Decode = configurazione.isHeaderSslCertificateBase64Decode();
+			sslCertificate_enrich_BEGIN_END = configurazione.isHeaderSslCertificateEnrich_BEGIN_END();
+			sslCertificate_replace = configurazione.isHeaderSslCertificateReplaceCharacters();
+			if(sslCertificate_replace) {
+				sslCertificate_replaceSource = configurazione.getHeaderSslCertificateReplaceCharacters_source();
+				sslCertificate_replaceDest = configurazione.getHeaderSslCertificateReplaceCharacters_dest();
 			}
-			if(this.portaApplicativa){
-				headerNameSSLIssuer = op2Properties.getGestoreCredenzialiPortaApplicativaHeaderSslIssuer();
-			}else{
-				headerNameSSLIssuer = op2Properties.getGestoreCredenzialiPortaDelegataHeaderSslIssuer();
-			}
-			if(this.portaApplicativa){
-				headerNameSSLCertificate = op2Properties.getGestoreCredenzialiPortaApplicativaHeaderSslCertificate();
-			}else{
-				headerNameSSLCertificate = op2Properties.getGestoreCredenzialiPortaDelegataHeaderSslCertificate();
-			}
-			if(headerNameSSLCertificate!=null) {
-				if(this.portaApplicativa){
-					sslCertificate_urlDecode = op2Properties.isGestoreCredenzialiPortaApplicativaHeaderSslCertificateUrlDecode();
-				}else{
-					sslCertificate_urlDecode = op2Properties.isGestoreCredenzialiPortaDelegataHeaderSslCertificateUrlDecode();
-				} 
-				if(this.portaApplicativa){
-					sslCertificate_base64Decode = op2Properties.isGestoreCredenzialiPortaApplicativaHeaderSslCertificateBase64Decode();
-				}else{
-					sslCertificate_base64Decode = op2Properties.isGestoreCredenzialiPortaDelegataHeaderSslCertificateBase64Decode();
-				} 
-				if(this.portaApplicativa){
-					sslCertificate_enrich_BEGIN_END = op2Properties.isGestoreCredenzialiPortaApplicativaHeaderSslCertificateEnrich_BEGIN_END();
-				}else{
-					sslCertificate_enrich_BEGIN_END = op2Properties.isGestoreCredenzialiPortaDelegataHeaderSslCertificateEnrich_BEGIN_END();
-				} 
-				if(this.portaApplicativa){
-					sslCertificate_replace = op2Properties.isGestoreCredenzialiPortaApplicativaHeaderSslCertificateReplaceCharacters();
-					if(sslCertificate_replace) {
-						sslCertificate_replaceSource = op2Properties.getGestoreCredenzialiPortaApplicativaHeaderSslCertificateReplaceCharacters_source();
-						sslCertificate_replaceDest = op2Properties.getGestoreCredenzialiPortaApplicativaHeaderSslCertificateReplaceCharacters_dest();
-					}
-				}else{
-					sslCertificate_replace = op2Properties.isGestoreCredenzialiPortaDelegataHeaderSslCertificateReplaceCharacters();
-					if(sslCertificate_replace) {
-						sslCertificate_replaceSource = op2Properties.getGestoreCredenzialiPortaDelegataHeaderSslCertificateReplaceCharacters_source();
-						sslCertificate_replaceDest = op2Properties.getGestoreCredenzialiPortaDelegataHeaderSslCertificateReplaceCharacters_dest();
-					}
-				} 
-			}
-			verificaIdentitaSSL = headerNameSSLSubject!=null || headerNameSSLCertificate!=null;
-		}catch(Exception e) {
-			// non dovrebbe succedere eccezioni, la validazione dei metodi viene fatta allo startup della PdD
-			throw new GestoreCredenzialiException(e.getMessage(),e);
 		}
+		boolean verificaIdentitaSSL = headerNameSSLSubject!=null || headerNameSSLCertificate!=null;
 		
-		String headerNamePrincipal = null;
-		boolean verificaIdentitaPrincipal = false;
-		try {
-			if(this.portaApplicativa){
-				headerNamePrincipal = op2Properties.getGestoreCredenzialiPortaApplicativaHeaderPrincipal();
-			}else{
-				headerNamePrincipal = op2Properties.getGestoreCredenzialiPortaDelegataHeaderPrincipal();
-			}
-			verificaIdentitaPrincipal = headerNamePrincipal!=null;
-		}catch(Exception e) {
-			// non dovrebbe succedere eccezioni, la validazione dei metodi viene fatta allo startup della PdD
-			throw new GestoreCredenzialiException(e.getMessage(),e);
-		}
+		String headerNamePrincipal = configurazione.getHeaderPrincipal();
+		boolean verificaIdentitaPrincipal = headerNamePrincipal!=null;
 		
 		if(!verificaIdentitaBasic && !verificaIdentitaSSL && !verificaIdentitaPrincipal){
 			return credenzialiTrasporto; // credenziali originali
@@ -495,15 +339,26 @@ public class GestoreCredenzialiEngine {
 			if(!verificaIdentitaSSL){
 				throw new GestoreCredenzialiException("Configurazione del Gestore delle Credenziali non valida, con la modalità '"+modalita.getValore()+"' deve essere definito almeno un header http su cui veicolare le credenziali ssl");
 			}
-			if( headerNameSSLSubject!=null && !existsHeader_sslSubject) {
-				throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
-						buildWWWAuthSSL(),
-						"Header HTTP '"+headerNameSSLSubject+"' non presente");
+			if(headerNameSSLSubject!=null && headerNameSSLCertificate!=null) {
+				if(!existsHeader_sslSubject && !existsHeader_sslCertificate) {
+					throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
+							buildWWWAuthSSL(),
+							"Header HTTP '"+headerNameSSLSubject+"' o '"+headerNameSSLCertificate+"' non presente");
+				}
 			}
-			if( headerNameSSLCertificate!=null && !existsHeader_sslCertificate) {
-				throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
-						buildWWWAuthSSL(),
-						"Header HTTP '"+headerNameSSLCertificate+"' non presente");
+			else if( headerNameSSLSubject!=null) {
+				if(!existsHeader_sslSubject) {
+					throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
+							buildWWWAuthSSL(),
+							"Header HTTP '"+headerNameSSLSubject+"' non presente");
+				}
+			}
+			else { // per forza questo caso if( headerNameSSLCertificate!=null
+				if( !existsHeader_sslCertificate) {
+					throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
+							buildWWWAuthSSL(),
+							"Header HTTP '"+headerNameSSLCertificate+"' non presente");
+				}
 			}
 			// il controllo che il valore presente negli header non sia vuoto e/o corretto viene fatto dopo.
 			break;

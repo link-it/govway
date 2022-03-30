@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/postgresql/monitoraggio/2021-12-27-patch.sql

@@ -1,0 +1,6 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+        <soap:Body>
+                <ns2:BodyNoPolicy xmlns:ns2="http://services.samples/xsd">
+                </ns2:BodyNoPolicy>
+        </soap:Body>
+</soap:Envelope>

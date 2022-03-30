@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -40,6 +40,7 @@ import javax.xml.soap.SOAPMessage;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
+import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.Costanti;
@@ -73,6 +74,11 @@ import org.openspcoop2.utils.transport.http.RFC2047Utilities;
 
 public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 
+    @Override
+	public String getProtocollo() {
+    	return "HTTP";
+    }
+	
 	public static final String ENDPOINT_TYPE = "saaj";
 	
 
@@ -177,7 +183,7 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 				throw new Exception("Connettore utilizzabile solamente per tipologia di servizio SOAP");
 			}
 			OpenSPCoop2SoapMessage soapRequestMessage = this.requestMsg.castAsSoap();
-			this.soapRequestMessage = soapRequestMessage.getSOAPMessage();
+			this.soapRequestMessage = MessageUtils.getSOAPMessage(soapRequestMessage, false, this.idTransazione);
 
 			// Collezione header di trasporto per dump
 			Map<String, List<String>> propertiesTrasportoDebug = null;

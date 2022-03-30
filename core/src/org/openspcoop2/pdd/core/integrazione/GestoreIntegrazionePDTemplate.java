@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -61,7 +61,7 @@ public class GestoreIntegrazionePDTemplate extends AbstractCore implements IGest
 		if(this.transformRequest) {
 			UtilitiesTemplate utilities = new UtilitiesTemplate("template-request", integrazione, outRequestPDMessage, 
 					this.getPddContext(), OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
-			utilities.process();
+			utilities.process(true);
 		}
 	}
 	
@@ -81,7 +81,7 @@ public class GestoreIntegrazionePDTemplate extends AbstractCore implements IGest
 		if(this.transformResponse) {
 			UtilitiesTemplate utilities = new UtilitiesTemplate("template-response", integrazione, outResponsePDMessage, 
 					this.getPddContext(), OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
-			utilities.process();
+			utilities.process(false);
 		}
 	}
 }

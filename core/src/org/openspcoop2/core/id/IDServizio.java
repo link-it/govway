@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -141,16 +141,20 @@ public class IDServizio implements java.io.Serializable {
 
 
 	
-	
-	
 	@Override
 	public boolean equals(Object servizio){
+		
 		if(servizio==null)
 			return false;
 		if(servizio.getClass().getName().equals(this.getClass().getName()) == false)
 			return false;
 		IDServizio id = (IDServizio) servizio;
-
+		
+		return this.equals(id, true);
+	}
+	
+	public boolean equals(IDServizio id, boolean checkAzione){
+		
 		// TIPO
 		if(this.getTipo()==null){
 			if(id.getTipo()!=null)
@@ -173,12 +177,14 @@ public class IDServizio implements java.io.Serializable {
 		}
 		
 		// AZIONE
-		if(this.getAzione()==null){
-			if(id.getAzione()!=null)
-				return false;
-		}else{
-			if(this.getAzione().equals(id.getAzione())==false)
-				return false;
+		if(checkAzione) {
+			if(this.getAzione()==null){
+				if(id.getAzione()!=null)
+					return false;
+			}else{
+				if(this.getAzione().equals(id.getAzione())==false)
+					return false;
+			}
 		}
 		
 		// Soggetto EROGATORE

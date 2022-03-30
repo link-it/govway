@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -95,6 +95,7 @@ public class Costanti {
 	public final static String CONSEGNA_MULTIPLA_SINCRONA_CONFIGURAZIONE = "CONSEGNA_MULTIPLA_SINCRONA_CONFIGURAZIONE";
 	public final static String CONSEGNA_MULTIPLA_SINCRONA = "CONSEGNA_MULTIPLA_SINCRONA";
 	public final static String CONSEGNA_MULTIPLA_CONNETTORI = "CONSEGNA_MULTIPLA_CONNETTORI";
+	public final static String CONSEGNA_MULTIPLA_CONNETTORI_BY_ID = "CONSEGNA_MULTIPLA_CONNETTORI_BY_ID";
 	
 	public final static String LIMITED_STREAM = "LIMITED_STREAM";
 	

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -49,6 +49,7 @@ import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzio
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneApplicativo;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneApplicativoRegistrato;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneAzione;
+import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneErrori;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneEsiti;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneSoggettoLocale;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneSoggettoRemoto;
@@ -539,6 +540,111 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
 	}
+
+    
+    /**
+     * Genera un report statistico distribuito per esiti di errore utilizzando una ricerca articolata
+     *
+     * Questa operazione consente di generare un report statistico raggruppato distribuito per esiti di errore ed esportandolo nei formati più comuni 
+     *
+     */
+	@Override
+    public byte[] getReportDistribuzioneErroriByFullSearch(RicercaStatisticaDistribuzioneErrori body, ProfiloEnum profilo, String soggetto) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			BaseHelper.throwIfNull(body);
+			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
+			byte[] ret = ReportisticaHelper.getReportDistribuzioneErrori(body, env);
+        
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+    
+    /**
+     * Genera un report statistico organizzato per esiti di errore utilizzando una ricerca semplice
+     *
+     * Questa operazione consente di generare per mezzo di una ricerca semplice, un report statistico per esiti di errore esportandolo nei formati più comuni
+     *
+     */
+	@Override
+    public byte[] getReportDistribuzioneErroriBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto, String idCluster, String soggettoRemoto, String soggettoErogatore, String tag, String uriApiImplementata, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
+			RicercaStatisticaDistribuzioneErrori ricerca = new RicercaStatisticaDistribuzioneErrori();
+			ricerca.setTipo(tipo);
+			ricerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,soggettoErogatore,
+					env, uriApiImplementata));
+			ricerca.setAzione(azione);
+			
+			FiltroTemporale intervallo = new FiltroTemporale();
+			intervallo.setDataInizio(dataInizio);
+			intervallo.setDataFine(dataFine);
+
+			ricerca.setIntervalloTemporale(intervallo);
+			ricerca.setUnitaTempo(unitaTempo);
+			ricerca.setTipo(tipo);
+			ricerca.setIdCluster(idCluster);
+
+			OpzioniGenerazioneReport opzioni = new OpzioniGenerazioneReport();
+			opzioni.setFormato(formatoReport);
+			opzioni.setTipo(tipoReport);
+			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport);		
+			ricerca.setReport(opzioni);
+
+			ricerca.setTag(tag);
+			
+			if (esito != null || escludiScartate!=null) {
+				FiltroEsito filtro_esito = new FiltroEsito();
+				if(esito!=null) {
+					EsitoTransazioneFullSearchEnum esitoT = EsitoTransazioneFullSearchEnum.valueOf(esito.name());
+					filtro_esito.setTipo(esitoT);
+				}
+				else {
+					filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.FALLITE_E_FAULT);
+				}
+				if(escludiScartate!=null) {
+					filtro_esito.setEscludiScartate(escludiScartate);
+				}
+				ricerca.setEsito(filtro_esito);
+			}
+
+			byte[] ret = ReportisticaHelper.getReportDistribuzioneErrori(ricerca, env);
+			context.getLogger().info("Invocazione completata con successo");
+
+			return ret;
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+    
 
 	/**
 	 * Genera un report statistico per andamento esiti per mezzo di una ricerca

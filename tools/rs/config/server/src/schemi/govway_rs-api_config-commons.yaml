@@ -873,9 +873,15 @@ components:
         file:
           type: string
           maxLength: 4000
+        file_permissions:
+          type: string
+          maxLength: 255
         file_headers:
           type: string
           maxLength: 4000
+        file_headers_permissions:
+          type: string
+          maxLength: 255
         create_parent_dir:
           type: boolean
           default: false
@@ -3397,11 +3403,11 @@ components:
     ConnettoreJmsTipoEnum:
       type: string
       enum: ['queue', 'topic']
-      example: 'ok'
+      example: 'queue'
     ConnettoreJmsSendAsEnum:
       type: string
       enum: ['text', 'bytes']
-      example: 'ok'      
+      example: 'text'      
     
     # ModI: Enumeration
     ModISicurezzaCanaleEnum:

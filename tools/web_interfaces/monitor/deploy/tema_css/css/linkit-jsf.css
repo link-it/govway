@@ -142,6 +142,10 @@
 	font-weight: bold;
 }
 
+.rich-panel-reversed {
+	background-color: ${panel.header.background.color};
+}
+
 .icon-search-box {
 	margin-right: 16px;
 }
@@ -205,6 +209,8 @@
 .rich-pmenu-item {
 	border: none;
     font-size: 16px;
+    margin: 0px;
+    padding: 0px;
 }
 
 .rich-pmenu-hovered-element td.rich-pmenu-item-label {
@@ -245,9 +251,10 @@
 
 .rich-pmenu-item-label {
     padding-left: 32px;
-    padding-top: 6px;
-    padding-bottom: 6px;
+    padding-top: 8px;
+    padding-bottom: 8px;
     font-size: 16px;
+    line-height: 19px;
 }
 .rich-pmenu-top-group-self-label {
 	padding-left: 16px;
@@ -1020,6 +1027,7 @@ span.soggettoImg {
 	background-image: none;
 	background-color: ${panel.header.background.color};
 	font-size: 14px; 
+	font-family: 'Roboto';
 	font-weight: bold;
 	color: ${panel.header.color};
 	padding: 8px;
@@ -1029,6 +1037,10 @@ span.soggettoImg {
 
 .rich-mpnl-header span {
 	font-size: 16px;
+	font-family: 'Roboto';
+}
+
+.rich-mpnl-text {
 	font-family: 'Roboto';
 }
 

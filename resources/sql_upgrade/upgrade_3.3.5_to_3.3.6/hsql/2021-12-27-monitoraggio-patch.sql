@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/hsql/monitoraggio/2021-12-27-patch.sql

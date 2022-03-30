@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -25,6 +25,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPHeader;
 
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.exception.MessageException;
@@ -98,9 +100,11 @@ public class OpenSPCoop2Message_soap11_impl extends AbstractOpenSPCoop2Message_s
 			// Verifica struttura (in AbstractBaseOpenSPCoop2MessageDynamicContent verrà collezionato l'errore di parsing)
 			// Servono tutti e 3 i comandi per far leggere tutto lo stream
 			// Se si levano alcuni test falliscono
-			msg.getSOAPHeader(); 
-			msg.getSOAPPart().getEnvelope();
+			SOAPHeader hdr = msg.getSOAPHeader(); 
+			SOAPEnvelope envelope = msg.getSOAPPart().getEnvelope();
 			msg.countAttachments();
+			
+			this.addSoapHeaderModifiedIntoSoapReader(hdr, envelope);
 			
 			return msg;
 		}catch(Throwable t){

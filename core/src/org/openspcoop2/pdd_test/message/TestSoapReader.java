@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -36,11 +36,20 @@ public class TestSoapReader {
 	private static final String ID_TEST = "SoapReader";
 	
 	@Test(groups={Costanti.GRUPPO_PDD,Costanti.GRUPPO_PDD+"."+ID_TEST})
-	public void testMTOM() throws Exception{
+	public void testReader() throws Exception{
 		
-		TestLogger.info("Run test '"+ID_TEST+"' ...");
+		TestLogger.info("Run test '"+ID_TEST+"'.testReader ...");
 		org.openspcoop2.message.soap.reader.TestReader.main(null);
-		TestLogger.info("Run test '"+ID_TEST+"' ok");
+		TestLogger.info("Run test '"+ID_TEST+"'.testReader ok");
+		
+	}
+	
+	@Test(groups={Costanti.GRUPPO_PDD,Costanti.GRUPPO_PDD+"."+ID_TEST})
+	public void testOptimizedHeader() throws Exception{
+		
+		TestLogger.info("Run test '"+ID_TEST+"'.testOptimizedHeader ...");
+		org.openspcoop2.message.soap.reader.TestOptimizedHeader.main(null);
+		TestLogger.info("Run test '"+ID_TEST+"'.testOptimizedHeader ok");
 		
 	}
 	

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -150,6 +150,8 @@ public class ContentAuthorizationCostanti {
 		"/stat/pages/form/distribSoggettoGrafico.jsf",
 		"/stat/pages/form/distribAzione.jsf",
 		"/stat/pages/form/distribAzioneGrafico.jsf",
+		"/stat/pages/form/distribErrori.jsf",
+		"/stat/pages/form/distribErroriGrafico.jsf",
 		"/stat/pages/form/statsPersonalizzate.jsf",
 		"/stat/pages/form/statsPersonalizzateGrafico.jsf",
 		"/stat/pages/list/configurazioniGenerali.jsf",
@@ -226,6 +228,8 @@ public class ContentAuthorizationCostanti {
 		{"/stat/pages/form/distribSoggettoGrafico.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
 		{"/stat/pages/form/distribAzione.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
 		{"/stat/pages/form/distribAzioneGrafico.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
+		{"/stat/pages/form/distribErrori.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
+		{"/stat/pages/form/distribErroriGrafico.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
 		// Statistiche personalizzate
 		{"/stat/pages/form/statsPersonalizzate.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE},
 		{"/stat/pages/form/statsPersonalizzateGrafico.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE},
@@ -246,6 +250,7 @@ public class ContentAuthorizationCostanti {
 			"/stat/pages/form/distribServizioGrafico.jsf",
 			"/stat/pages/form/distribSoggettoGrafico.jsf",
 			"/stat/pages/form/distribAzioneGrafico.jsf",
+			"/stat/pages/form/distribErroriGrafico.jsf",
 			"/stat/pages/form/statsPersonalizzateGrafico.jsf",
 			// Esiti Live
 			"/transazioni/pages/form/esitiLive.jsf",

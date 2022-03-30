@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -96,7 +96,9 @@ public class FiltroRicercaPorteApplicative extends FiltroRicercaBase implements 
 	/** Trova tutte le porte associate a quella indicata nel parametro con funzione DelegatedBy */
 	private String nomePortaDelegante;
 	
-
+	public static final String PREFIX_PORTA_DELEGANTE = " [nomePortaDelegante:";
+	public static final String SUFFIX_PORTA_DELEGANTE = "]";
+	
 	@Override
 	public String toString(){
 		StringBuilder bf = new StringBuilder();
@@ -132,7 +134,7 @@ public class FiltroRicercaPorteApplicative extends FiltroRicercaBase implements 
 		if(this.stato!=null)
 			bf.append(" [stato:"+this.stato+"]");
 		if(this.nomePortaDelegante!=null)
-			bf.append(" [nomePortaDelegante:"+this.nomePortaDelegante+"]");
+			bf.append(PREFIX_PORTA_DELEGANTE+this.nomePortaDelegante+SUFFIX_PORTA_DELEGANTE);
 		if(bf.length()=="Filtro:".length())
 			bf.append(" nessun filtro presente");
 		return bf.toString();

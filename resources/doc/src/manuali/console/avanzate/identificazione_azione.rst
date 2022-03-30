@@ -28,7 +28,7 @@ selezionare una tra le seguenti opzioni:
 
 -  *Url di Invocazione* (Soap): il dato viene ricavato dinamicamente dalla url di
    invocazione utilizzando come criterio l'espressione regolare inserita
-   nel campo *Espressione Regolare* sottostante.
+   nel campo *Espressione Regolare* sottostante (l'espressione deve avere un match con l'intera url).
 
 -  *SOAPAction* (Soap): Questa opzione consente di ricavare il
    dato dal campo *SOAPAction* presente nell'header di trasporto delle

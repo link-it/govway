@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -143,8 +143,12 @@ Dialog finestraDialog = (Dialog) request.getAttribute(idFinestraModale);
                       				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
                       				<%
 	     						String taNoEdit = " readonly ";
+                      			String taNoResize = " txtA_propDialogInfoUsoNoResize ";
+                      			if (de.isResizable()){
+                      				taNoResize = " txtA_propDialogInfoUsoResize ";
+                      			}
 	     						%><div class="txtA_div_propDialogInfoUso">
-	     							<textarea id="<%= idFinestraModale %>_<%=inputId %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='' name="<%= deName  %>" class="<%= classInput %> txtA_propDialogInfoUsoNoResize"><%= de.getValue() %></textarea>
+	     							<textarea id="<%= idFinestraModale %>_<%=inputId %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='' name="<%= deName  %>" class="<%= classInput %> <%= taNoResize %>"><%= de.getValue() %></textarea>
 	     							<% 
 							      		if(visualizzaIconCopia){
 							      			String idDivIconInfo = "divIconInfo_"+i;
@@ -178,11 +182,12 @@ Dialog finestraDialog = (Dialog) request.getAttribute(idFinestraModale);
 var idModal = '#'+ '<%= idFinestraModale %>';
 if($( idModal ).length > 0){
 		$( idModal ).dialog({
-	      resizable: false,
+	      resizable: <%= finestraDialog.isResizable() %>,
+	      draggable: <%= finestraDialog.isDraggable() %>,
 // 	     dialogClass: "no-close",
 	     autoOpen: false,
-	     height: "auto",
-	     width: "660px",
+	     height: "<%= finestraDialog.getHeight() %>",
+	     width: "<%= finestraDialog.getWidth() %>",
 	     modal: true
  	    });
  	}

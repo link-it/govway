@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -82,10 +82,15 @@ public class PageData {
 	private boolean showAjaxStatusBottoneFiltra = true;
 	private boolean showAjaxStatusBottoneRipulisci = true;
 	
+	private List<DataElement> comandiAzioneBarraTitoloDettaglioElemento;
+	
+	
 	Dialog dialog = null;
 
 	boolean postBackResult=false;
 	boolean includiMenuLateraleSx = true;
+	
+	private boolean paginazione = true;
 		
 	public PageData() {
 		this.pageDescription = "";
@@ -120,6 +125,8 @@ public class PageData {
 		this.labelBottoneRipulsci = Costanti.LABEL_MONITOR_BUTTON_RIPULISCI;
 		this.postBackResult=false;
 		this.includiMenuLateraleSx = true;
+		this.paginazione = true;
+		this.comandiAzioneBarraTitoloDettaglioElemento = new ArrayList<DataElement>();
 	}
 
 	public void setPageDescription(String s) {
@@ -875,5 +882,101 @@ public class PageData {
 		}
 		
 		return deValue;
+	}
+	
+	public boolean isPaginazione() {
+		return this.paginazione;
+	}
+
+	public void setPaginazione(boolean paginazione) {
+		this.paginazione = paginazione;
+	}
+
+	public List<DataElement> getComandiAzioneBarraTitoloDettaglioElemento() {
+		return this.comandiAzioneBarraTitoloDettaglioElemento;
+	}
+	
+	public void addComandoResetCacheElementoButton(String servletName, List<Parameter> parameters) {
+		if(parameters == null) {
+			parameters = new ArrayList<Parameter>();
+		}
+		// aggiungo parametri postback (come si fa in postback.js)
+		parameters.add(new Parameter(Costanti.POSTBACK_ELEMENT_NAME, Costanti.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE));
+		parameters.add(new Parameter(Costanti.PARAMETRO_IS_POSTBACK, "true"));
+		parameters.add(new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME, Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_IN_PROGRESS_POSTBACK));
+		
+		this.addAzioneBarraTitoloDettaglioElemento(this.getComandiAzioneBarraTitoloDettaglioElemento(), 
+				DataElementType.IMAGE, Costanti.ICONA_RESET_CACHE_ELEMENTO_TOOLTIP, Costanti.ICONA_RESET_CACHE_ELEMENTO, servletName,parameters);
+	}
+	
+	public void addComandoVerificaCertificatiElementoButton(String servletName, List<Parameter> parameters) {
+		if(parameters == null) {
+			parameters = new ArrayList<Parameter>();
+		}
+		// aggiungo parametri postback (come si fa in postback.js)
+		parameters.add(new Parameter(Costanti.PARAMETRO_IS_POSTBACK, "true"));
+		parameters.add(new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME, Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_IN_PROGRESS_POSTBACK));
+		
+		this.addAzioneBarraTitoloDettaglioElemento(this.getComandiAzioneBarraTitoloDettaglioElemento(), 
+				DataElementType.IMAGE, Costanti.ICONA_VERIFICA_CERTIFICATI_TOOLTIP, Costanti.ICONA_VERIFICA_CERTIFICATI, servletName,parameters);
+	}
+	
+	public void addComandoVerificaConnettivitaElementoButton(String servletName, List<Parameter> parameters) {
+		if(parameters == null) {
+			parameters = new ArrayList<Parameter>();
+		}
+		// aggiungo parametri postback (come si fa in postback.js)
+		parameters.add(new Parameter(Costanti.PARAMETRO_IS_POSTBACK, "true"));
+		parameters.add(new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME, Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_IN_PROGRESS_POSTBACK));
+		
+		this.addAzioneBarraTitoloDettaglioElemento(this.getComandiAzioneBarraTitoloDettaglioElemento(), 
+				DataElementType.IMAGE, Costanti.ICONA_VERIFICA_CONNETTIVITA_TOOLTIP, Costanti.ICONA_VERIFICA, servletName,parameters);
+	}
+	
+	public void addComandoVisualizzaRuntimeElementoButton(String servletName, List<Parameter> parameters) {
+		if(parameters == null) {
+			parameters = new ArrayList<Parameter>();
+		}
+		// aggiungo parametri postback (come si fa in postback.js)
+		parameters.add(new Parameter(Costanti.PARAMETRO_IS_POSTBACK, "true"));
+		parameters.add(new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME, Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_IN_PROGRESS_POSTBACK));
+		
+		this.addAzioneBarraTitoloDettaglioElemento(this.getComandiAzioneBarraTitoloDettaglioElemento(), 
+				DataElementType.IMAGE, Costanti.ICONA_VISUALIZZA_RUNTIME_ALLARME_TOOLTIP, Costanti.ICONA_VISUALIZZA_RUNTIME_ALLARME, servletName,parameters);
+	}
+	
+	public void addComandoInUsoElementoButton(String servletName, 
+			String titolo, String id, String inUsoType,
+			String tooltip, String icon, String headerRiga1, 
+			Boolean resizable, Boolean draggable) {			
+		ServletUtils.addInUsoButton(servletName, this.getComandiAzioneBarraTitoloDettaglioElemento(), DataElementType.IMAGE, titolo, id, inUsoType,
+				tooltip, icon, headerRiga1, 
+				resizable, draggable);
+	}
+
+	public void addComandoAggiornaRicercaButton(String servletName, List<Parameter> parameters) {
+		if(parameters == null) {
+			parameters = new ArrayList<Parameter>();
+		}
+		// aggiungo parametri postback (come si fa in postback.js)
+		parameters.add(new Parameter(Costanti.POSTBACK_ELEMENT_NAME, Costanti.PARAMETRO_AGGIORNA_RICERCA));
+		parameters.add(new Parameter(Costanti.PARAMETRO_IS_POSTBACK, "true"));
+		parameters.add(new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME, Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_IN_PROGRESS_POSTBACK));
+		
+		this.addAzioneBarraTitoloDettaglioElemento(this.getComandiAzioneBarraTitoloDettaglioElemento(), DataElementType.IMAGE, Costanti.ICONA_AGGIORNA_RICERCA_TOOLTIP, Costanti.ICONA_AGGIORNA_RICERCA, servletName,parameters);
+	}
+	
+	private void addAzioneBarraTitoloDettaglioElemento(List<DataElement> e, DataElementType deType, String tooltip, String icon, String servletName, List<Parameter> parameters) {
+		DataElement de = new DataElement();
+		de.setType(deType);
+		de.setToolTip(tooltip);
+		if(parameters != null && parameters.size() >0) {
+			de.setUrl(servletName, parameters.toArray(new Parameter[parameters.size()]));
+		} else {
+			de.setUrl(servletName);
+		}
+		de.setIcon(icon);
+		
+		e.add(de);
 	}
 }

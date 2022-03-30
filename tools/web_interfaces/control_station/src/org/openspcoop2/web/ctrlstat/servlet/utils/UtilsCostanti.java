@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -19,6 +19,8 @@
  */
 
 package org.openspcoop2.web.ctrlstat.servlet.utils;
+
+import org.openspcoop2.web.lib.mvc.Costanti;
 
 /**
  * UtilsCostanti
@@ -37,14 +39,14 @@ public class UtilsCostanti {
 	
 	/* PARAMETRI */
 	
-	public final static String PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_URL = "url";
-	public final static String PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_ID_OGGETTO = "idOggetto";
-	public final static String PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_OGGETTO = "tipoOggetto";
-	public final static String PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA = "tipoRisposta";
+	public final static String PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_URL = Costanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_URL;
+	public final static String PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_ID_OGGETTO = Costanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_ID_OGGETTO;
+	public final static String PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_OGGETTO = Costanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_OGGETTO;
+	public final static String PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA = Costanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA;
 	
 	
-	public final static String VALUE_PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA_TEXT= "text";
-	public final static String VALUE_PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA_JSON = "json";
+	public final static String VALUE_PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA_TEXT= Costanti.VALUE_PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA_TEXT;
+	public final static String VALUE_PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA_JSON = Costanti.VALUE_PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA_JSON;
 	
 	public final static String KEY_JSON_RISPOSTA_USO = "uso";
 }

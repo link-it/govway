@@ -40,6 +40,62 @@ And match response == read("response.xml")
 * call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02' })
 
 
+@connettivita-base-richiesta-con-header
+Scenario: Test connettività base in cui la richiesta possiede un header SOAP
+
+* def soap_url = govway_base_path + '/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SoapBlockingIDAS02/v1'
+
+Given url soap_url
+And request read("requestConHeader.xml")
+And header Content-Type = 'application/soap+xml'
+And header action = soap_url
+And header GovWay-TestSuite-Test-ID = 'connettivita-base-idas02-richiesta-con-header'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 200
+And match response == read("responseConHeader.xml")
+
+* def karateCache = Java.type('org.openspcoop2.core.protocolli.modipa.testsuite.KarateCache')
+* xml client_request = karateCache.get("Client-Request")
+* xml server_response = karateCache.get("Server-Response")
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: client_x509_sub, profilo_sicurezza: 'IDAS02' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: client_x509_sub, profilo_sicurezza: 'IDAS02' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02' })
+
+
+@connettivita-base-richiesta-con-header-e-trasformazione
+Scenario: Test connettività base in cui la richiesta possiede un header SOAP e viene generato un nuovo header tramite trasformazione
+
+* def soap_url = govway_base_path + '/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SoapBlockingIDAS02ConAggiuntaHeader/v1'
+
+Given url soap_url
+And request read("requestConHeader.xml")
+And header Content-Type = 'application/soap+xml'
+And header action = soap_url
+And header GovWay-TestSuite-Test-ID = 'connettivita-base-idas02-richiesta-con-header-e-trasformazione'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 200
+And match response == read("responseConHeader.xml")
+
+* def karateCache = Java.type('org.openspcoop2.core.protocolli.modipa.testsuite.KarateCache')
+* xml client_request = karateCache.get("Client-Request")
+* xml server_response = karateCache.get("Server-Response")
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: client_x509_sub, profilo_sicurezza: 'IDAS02' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia ({tid: tid, tipo: 'Richiesta', body: client_request, x509sub: client_x509_sub, profilo_sicurezza: 'IDAS02' })
+* call check_traccia ({tid: tid, tipo: 'Risposta', body: server_response, x509sub: server_x509_sub, profilo_sicurezza: 'IDAS02' })
+
+
 @riutilizzo-token
 Scenario: Il token viene riutilizzato, fruizione ed erogazione devono arrabbiarsi
 

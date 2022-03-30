@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -403,6 +403,23 @@ public class ConfigurazioneAllarmiAdd extends Action {
 			allarme.setStatoPrecedente(AllarmiConverterUtils.toIntegerValue(StatoAllarme.OK));
 			allarme.setLasttimestampCreate(new Date());
 			allarme.setAcknowledged(Integer.valueOf(0));
+			
+			// imposto il dettaglio dell'ack
+			if(allarme.getPlugin() != null) {
+				try{
+					IDynamicLoader dl = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME, allarme.getPlugin().getTipo(), allarme.getPlugin().getClassName(), ControlStationCore.getLog());
+					IAlarmProcessing alarm = (IAlarmProcessing) dl.newInstance();
+					if(alarm.isManuallyAckCriteria()) {
+						Context context = confHelper.createAlarmContext(allarme, parameters);
+						String ackCriteria = alarm.getDefaultManuallyAckCriteria(context);
+						if(ackCriteria!=null) {
+							allarme.setDettaglioAcknowledged(ackCriteria);
+						}
+					}
+				}catch(Exception e){
+					ControlStationCore.getLog().error(e.getMessage(), e);
+				}
+			}
 			
 			// insert sul db
 			confCore.performCreateOperation(userLogin, confHelper.smista(), allarme);

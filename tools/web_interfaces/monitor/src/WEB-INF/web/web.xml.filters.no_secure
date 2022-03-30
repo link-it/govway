@@ -11,6 +11,15 @@
 	</filter-mapping>
 	
 	<filter>
+   		<filter-name>utf8Filter</filter-name>
+   		<filter-class>org.openspcoop2.utils.transport.UTF8Filter</filter-class>
+	</filter>
+	<filter-mapping>
+   		<filter-name>utf8Filter</filter-name>
+   		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<filter>
    		<filter-name>linkMultipartFilter</filter-name>
    		<filter-class>org.openspcoop2.web.monitor.core.filters.MultipartFilter</filter-class>
 	</filter>

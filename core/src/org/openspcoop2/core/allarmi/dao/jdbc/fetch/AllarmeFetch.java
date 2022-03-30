@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -103,6 +103,8 @@ public class AllarmeFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "enabled", Allarme.model().ENABLED.getFieldType()));
 				setParameter(object, "setAcknowledged", Allarme.model().ACKNOWLEDGED.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "acknowledged", Allarme.model().ACKNOWLEDGED.getFieldType()));
+				setParameter(object, "setDettaglioAcknowledged", Allarme.model().DETTAGLIO_ACKNOWLEDGED.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "dettaglio_acknowledged", Allarme.model().DETTAGLIO_ACKNOWLEDGED.getFieldType()));
 				setParameter(object, "setTipoPeriodo", Allarme.model().TIPO_PERIODO.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "periodo_tipo", Allarme.model().TIPO_PERIODO.getFieldType()));
 				setParameter(object, "setPeriodo", Allarme.model().PERIODO.getFieldType(),
@@ -237,6 +239,8 @@ public class AllarmeFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"enabled"));
 				setParameter(object, "setAcknowledged", Allarme.model().ACKNOWLEDGED.getFieldType(),
 					this.getObjectFromMap(map,"acknowledged"));
+				setParameter(object, "setDettaglioAcknowledged", Allarme.model().DETTAGLIO_ACKNOWLEDGED.getFieldType(),
+					this.getObjectFromMap(map,"dettaglio-acknowledged"));
 				setParameter(object, "setTipoPeriodo", Allarme.model().TIPO_PERIODO.getFieldType(),
 					this.getObjectFromMap(map,"tipo-periodo"));
 				setParameter(object, "setPeriodo", Allarme.model().PERIODO.getFieldType(),

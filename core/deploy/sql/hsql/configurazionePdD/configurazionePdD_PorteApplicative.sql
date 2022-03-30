@@ -157,6 +157,7 @@ CREATE TABLE porte_applicative_sa
 	connettore_notifica INT,
 	connettore_descrizione VARCHAR(4000),
 	connettore_stato VARCHAR(255),
+	connettore_scheduling VARCHAR(255),
 	connettore_filtri VARCHAR(65535),
 	connettore_coda VARCHAR(10),
 	connettore_priorita VARCHAR(10),
@@ -761,7 +762,7 @@ CREATE TABLE pa_transform_risp
 	-- In hsql 2.x usare il tipo BLOB al posto di VARBINARY
 	conversione_template VARBINARY(1073741823),
 	content_type VARCHAR(255),
-	return_code INT,
+	return_code VARCHAR(255),
 	soap_envelope INT NOT NULL,
 	soap_envelope_as_attach INT NOT NULL,
 	soap_envelope_tipo VARCHAR(255),

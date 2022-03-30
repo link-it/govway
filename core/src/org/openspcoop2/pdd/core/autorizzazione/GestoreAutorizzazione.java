@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -22,6 +22,7 @@
 
 package org.openspcoop2.pdd.core.autorizzazione;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Scope;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.ScopeTipoMatch;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -64,6 +66,7 @@ import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.cache.CacheResponse;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.slf4j.Logger;
@@ -191,6 +194,17 @@ public class GestoreAutorizzazione {
 			throw new AutorizzazioneException("Cache non abilitata");
 		}
 	}
+	public static List<String> listKeysCache() throws AutorizzazioneException{
+		if(GestoreAutorizzazione.cacheAutorizzazione!=null){
+			try{
+				return GestoreAutorizzazione.cacheAutorizzazione.keys();
+			}catch(Exception e){
+				throw new AutorizzazioneException(e.getMessage(),e);
+			}
+		}else{
+			throw new AutorizzazioneException("Cache non abilitata");
+		}
+	}
 	public static String getObjectCache(String key) throws AutorizzazioneException{
 		if(GestoreAutorizzazione.cacheAutorizzazione!=null){
 			try{
@@ -199,6 +213,31 @@ public class GestoreAutorizzazione {
 					return o.toString();
 				}else{
 					return "oggetto con chiave ["+key+"] non presente";
+				}
+			}catch(Exception e){
+				throw new AutorizzazioneException(e.getMessage(),e);
+			}
+		}else{
+			throw new AutorizzazioneException("Cache non abilitata");
+		}
+	}
+	public static Object getRawObjectCache(String key) throws AutorizzazioneException{
+		if(GestoreAutorizzazione.cacheAutorizzazione!=null){
+			try{
+				Object o = GestoreAutorizzazione.cacheAutorizzazione.get(key);
+				if(o!=null){
+					if(o instanceof CacheResponse) {
+						CacheResponse cR = (CacheResponse) o;
+						if(cR.getObject()!=null) {
+							o = cR.getObject();
+						}
+						else if(cR.getException()!=null) {
+							o = cR.getException();
+						}
+					}
+					return o;
+				}else{
+					return null;
 				}
 			}catch(Exception e){
 				throw new AutorizzazioneException(e.getMessage(),e);
@@ -318,6 +357,94 @@ public class GestoreAutorizzazione {
 			throw new UtilsException("Cache disabled");
 		}
 		return GestoreAutorizzazione.cacheAutorizzazione.isDisableSyncronizedGet();
+	}
+	
+	
+	
+	
+	
+	
+/*----------------- CLEANER --------------------*/
+	
+	public static void removePortaApplicativa(IDPortaApplicativa idPA) throws Exception {
+		if(GestoreAutorizzazione.isCacheAbilitata()) {
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = GestoreAutorizzazione.listKeysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				String match = IDPortaApplicativa.PORTA_APPLICATIVA_PREFIX+idPA.getNome()+IDPortaApplicativa.PORTA_APPLICATIVA_SUFFIX;
+				for (String key : keys) {
+					if(key!=null && key.contains(match)) {
+						keyForClean.add(key);
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	public static void removePortaDelegata(IDPortaDelegata idPD) throws Exception {
+		if(GestoreAutorizzazione.isCacheAbilitata()) {
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = GestoreAutorizzazione.listKeysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				String match = IDPortaDelegata.PORTA_DELEGATA_PREFIX+idPD.getNome()+IDPortaDelegata.PORTA_DELEGATA_SUFFIX;
+				for (String key : keys) {
+					if(key!=null && key.contains(match)) {
+						keyForClean.add(key);
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	public static void removeSoggetto(IDSoggetto idSoggetto) throws Exception {
+		if(GestoreAutorizzazione.isCacheAbilitata()) {
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = GestoreAutorizzazione.listKeysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				String matchSoggettoFruitore = DatiInvocazionePortaApplicativa.SOGGETTO_FRUITORE_PREFIX+idSoggetto.toString()+DatiInvocazionePortaApplicativa.SOGGETTO_FRUITORE_SUFFIX;
+				for (String key : keys) {
+					if(key!=null && key.contains(matchSoggettoFruitore)) {
+						keyForClean.add(key);
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	public static void removeApplicativo(IDServizioApplicativo idApplicativo) throws Exception {
+		if(GestoreAutorizzazione.isCacheAbilitata()) {
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = GestoreAutorizzazione.listKeysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				String matchApplicativoFruitore = DatiInvocazionePortaApplicativa.APPLICATIVO_FRUITORE_PREFIX+idApplicativo.toString()+DatiInvocazionePortaApplicativa.APPLICATIVO_FRUITORE_SUFFIX;
+				String matchApplicativo = DatiInvocazionePortaDelegata.APPLICATIVO_PREFIX+idApplicativo.toString()+DatiInvocazionePortaDelegata.APPLICATIVO_SUFFIX;
+				for (String key : keys) {
+					if(key!=null && (key.contains(matchApplicativoFruitore) || key.contains(matchApplicativo))) {
+						keyForClean.add(key);
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
 	}
 	
 	
@@ -842,6 +969,7 @@ public class GestoreAutorizzazione {
 		    		Enumeration<?> en = properties.keys();
 		    		while (en.hasMoreElements()) {
 						String key = (String) en.nextElement();
+						String expectedValue = properties.getProperty(key);
 						
 						String attributeAuthorityName = null;
 						String attributeName = null;
@@ -905,6 +1033,9 @@ public class GestoreAutorizzazione {
 							}
 							
 							if(!findAttribute) {
+								if(CostantiAutorizzazione.AUTHZ_UNDEFINED.equalsIgnoreCase(expectedValue)) {
+									continue;
+								}
 								autorizzato = false;
 								if(attributeName!=null) {
 									errorMessage = "Token without attribute '"+key+"'";
@@ -926,6 +1057,9 @@ public class GestoreAutorizzazione {
 						}
 						String nomeClaimAttribute = (attributeName!=null) ? attributeName : key;
 						if(lClaimValues==null || lClaimValues.isEmpty()) {
+							if(CostantiAutorizzazione.AUTHZ_UNDEFINED.equalsIgnoreCase(expectedValue)) {
+								continue;
+							}
 							autorizzato = false;
 							if(attributeName!=null) {
 								errorMessage = "Token with attribute '"+nomeClaimAttribute+"' without value";
@@ -938,7 +1072,6 @@ public class GestoreAutorizzazione {
 						
 						// verifica valore atteso per il claim
 						String object = (attributeName!=null) ? "Attribute" : "Claim";
-						String expectedValue = properties.getProperty(key);
 						log.debug("Verifico valore '"+expectedValue+"' per "+object.toLowerCase()+" '"+nomeClaimAttribute+"' nel token ...");
 						if(expectedValue==null) {
 							throw new Exception(object+" '"+nomeClaimAttribute+"' without expected value");
@@ -964,6 +1097,27 @@ public class GestoreAutorizzazione {
 								errorMessage = "Token "+object.toLowerCase()+" '"+nomeClaimAttribute+"' with unexpected empty value";
 								break;
 							}
+						}
+						else if(CostantiAutorizzazione.AUTHZ_UNDEFINED.equalsIgnoreCase(expectedValue)) { 
+							
+							/** NOT PRESENT */
+							
+							log.debug("Verifico valore "+object.toLowerCase()+" '"+nomeClaimAttribute+"' sia null o sia vuoto ...");
+							
+							// basta che abbia un valore
+							boolean ok = false;
+							for (String v : lClaimValues) {
+								if(v!=null && !"".equals(v)) {
+									ok = true;
+									break;
+								}
+							}
+							if(ok) {
+								autorizzato = false;
+								errorMessage = "Token unexpected "+object.toLowerCase()+" '"+nomeClaimAttribute+"'";
+								break;
+							}
+							
 						}
 						else if(
 								(

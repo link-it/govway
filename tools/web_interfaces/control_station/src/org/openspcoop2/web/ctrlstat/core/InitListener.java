@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -43,6 +43,8 @@ import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
 import org.openspcoop2.monitor.engine.alarm.AlarmManager;
 import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
 import org.openspcoop2.monitor.engine.dynamic.PluginLoader;
+import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
+import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntimeProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
@@ -340,6 +342,19 @@ public class InitListener implements ServletContextListener {
 				}
 			}
 			
+			// inizializza nodi runtime
+			try {
+				ConfigurazioneNodiRuntimeProperties backwardCompatibility = new ConfigurazioneNodiRuntimeProperties(consoleProperties.getJmxPdD_backwardCompatibilityPrefix(), 
+						consoleProperties.getJmxPdD_backwardCompatibilityProperties());
+				ConfigurazioneNodiRuntime.initialize(consoleProperties.getJmxPdD_externalConfiguration(), backwardCompatibility);
+			} catch (Exception e) {
+				String msgErrore = "Errore durante l'inizializzazione del gestore dei nodi run: " + e.getMessage();
+				InitListener.log.error(
+						//					throw new ServletException(
+						msgErrore,e);
+				throw new RuntimeException(msgErrore,e);
+			}
+				
 			// inizializza il repository dei plugin
 			try {
 				if(consoleProperties.isConfigurazionePluginsEnabled()) {

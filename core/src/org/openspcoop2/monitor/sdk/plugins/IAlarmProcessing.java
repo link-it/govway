@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -42,10 +42,33 @@ public interface IAlarmProcessing extends ISearchArguments {
 	public String getAutomaticSuffixName(Context context);
 	
 	// Per comprendere se l'allarme è configurabile con criteri di filtro o raggruppamento
-	public boolean isUsableFilter();
-	public boolean isUsableGroupBy();
+	public default boolean isUsableFilter() {
+		return false;
+	}
+	public default boolean isUsableFilter(Context context) {
+		return isUsableFilter();
+	}
+	public default FiltersConfiguration getFiltersConfiguration(Context context) {
+		return null;
+	}
+	public default boolean isUsableGroupBy() {
+		return false;
+	}
+	public default boolean isUsableGroupBy(Context context) {
+		return isUsableGroupBy();
+	}
+	public default GroupByConfiguration getGroupByConfiguration(Context context) {
+		return null;
+	}
 	
 	public boolean isManuallyUpdateState();
+	public boolean isManuallyAckCriteria();
+	public default String getDefaultManuallyAckCriteria(Context context) {
+		return null;
+	}
+	public default DialogInfo getDialogInfoAckCriteria(Context context) {
+		return null;
+	}
 	
 	public default String getParameterSectionTitle() {
 		return null;

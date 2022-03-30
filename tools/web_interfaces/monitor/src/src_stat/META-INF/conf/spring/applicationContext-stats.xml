@@ -15,6 +15,12 @@
 		<property name="action" value="andamentoTemporaleGrafico"/>
 	</bean>
 	
+	<!-- Distribuzione Errori Search Form -->
+	<bean id="distribuzioneErroriSearchForm" class="org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm" scope="session">
+		<property name="_value_tipoStatistica" value="distribuzioneErrori"/>
+		<property name="action" value="distribErroriGrafico"/>
+	</bean>
+
 	<!-- Distribuzione Soggetto Search Form -->
 	<bean id="distribuzioneSoggettoSearchForm" class="org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm" scope="session">
 		<property name="_value_tipoStatistica" value="distribuzioneSoggetto"/>
@@ -48,6 +54,7 @@
 	<!-- Service Statistiche -->
 	<bean id="statisticheGiornaliereService" class="org.openspcoop2.web.monitor.statistiche.dao.StatisticheGiornaliereService" scope="request">
 		<property name="andamentoTemporaleSearch" ref="andamentoTemporaleSearchForm" />
+		<property name="distribErroriSearch" ref="distribuzioneErroriSearchForm" />
 		<property name="distribSoggettoSearch" ref="distribuzioneSoggettoSearchForm" />
 		<property name="distribServizioSearch" ref="distribuzioneServizioSearchForm" />
 		<property name="distribAzioneSearch" ref="distribuzioneAzioneSearchForm" />

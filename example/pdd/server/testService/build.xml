@@ -114,7 +114,7 @@
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
-			<var name="xerces_jar" value="xercesImpl-2.12.1.jar"/>
+			<var name="xerces_jar" value="xercesImpl-2.12.2.jar"/>
 			<var name="xml_apis_jar" value="xml-apis-1.4.01.jar"/>
 		</then>
 	</if>
@@ -167,6 +167,7 @@
 						<matches string="${as}" pattern="wildfly23"/>
 						<matches string="${as}" pattern="wildfly24"/>
 						<matches string="${as}" pattern="wildfly25"/>
+						<matches string="${as}" pattern="wildfly26"/>
 					</or>
 					<then>
 						<copy file="${src}/WEB-INF/${jboss_deployment_structure}.wildfly2" 

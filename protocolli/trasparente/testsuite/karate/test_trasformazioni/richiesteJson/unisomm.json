@@ -1,0 +1,107 @@
+{
+   "codiceComunicazione": "1300111300004000",
+   "dataInvio": "2019-03-29T12:59:07.000+01:00",
+   "direzione": "RICHIESTA",
+   "mittente": "NAZIONALE",
+"destinatario": "SoggettoInternoTest",
+   "servizio": "NotificaComunicazioneObbligatoria",
+   "profiloCollaborazione": "SERVIZIO_SINCRONO",
+   "identificatore": "PIEMONTE_PDDPIEMONTE_5415469_2021-09-30_12:21",
+   "modello":    {
+      "payload":       {
+         "agenziaSomministrazione":          {
+            "agenziaEstera": "NO",
+            "codiceFiscale": "03405730270",
+            "denominazione": "Unpa S.p.A",
+            "sedeLavoro":             {
+               "cap": "10036",
+               "comune": "I703",
+               "indirizzo": "V. ROMA 12",
+               "telefono": "011 8008556"
+            },
+            "sedeLegale":             {
+               "cap": "30039",
+               "comune": "I965",
+               "indirizzo": "PIAZZA MARCONI 48",
+               "telefono": "049 9802355"
+            },
+            "numeroIscrizioneAlbo": "000000344113/02/2008",
+            "rapportoAgenziaSomm":             {
+               "codiceEntePrevidenziale": "8811157579",
+               "dataFineSomm": "2011-05-16",
+               "dataInizioSomm": "2010-03-23",
+               "entePrevidenziale": "01",
+               "lavInMobilita": "NO",
+               "numeroAgenziaSomm": "305801",
+               "numeroMatricola": "5437",
+               "tipologiaContrattuale": "A.02.00"
+            }
+         },
+         "codiceComunicazione": "1300111300004000",
+         "dataInvio": "2011-04-19T00:00:00.000+01:00",
+         "dittaUtilizzatrice":          {
+            "codiceFiscale": "10181531004",
+            "denominazione": "Mensa S.r.l",
+            "sedeLavoro":             {
+               "cap": "10100",
+               "comune": "L219",
+               "indirizzo": " CORSO BRUNELLESCHI ",
+               "telefono": "011-0202850"
+            },
+            "sedeLegale":             {
+               "cap": "10100",
+               "comune": "L219",
+               "indirizzo": " CORSO BRUNELLESCHI ",
+               "telefono": "011-0202850"
+            },
+            "dataFineContrattoSomm": "2011-10-14",
+            "dataInizioContrattoSomm": "2008-04-14",
+            "inizioContratto": {"inizio":             {
+               "assunzioneObbligatoria": "NO",
+               "ccnl": "0010",
+               "dataFineMissione": "2011-03-23",
+               "dataInizioMissione": "2010-03-23",
+               "descrizioneAttivita": "AAAAAA",
+               "lavoroInAgricoltura": "NO",
+               "livelloInquadramento": "000031",
+               "patINAIL": "11111000",
+               "qualificaProfessionale": "8.2.2.1.0.0",
+               "retribuzioneCompenso": "1000",
+               "rischioAsbestosiSilicosi": "NO",
+               "tipoOrario": {"codice": "F"},
+               "voceTariffa1": "dsaa"
+            }},
+            "numeroContrattoSomm": "000000010",
+            "pubblicaAmministrazione": "NO",
+            "settore": "86.23.00"
+         },
+         "emailDelegato": "pippo.pom@pippo.it",
+         "lavoratore":          {
+            "anagraficaCompleta":             {
+               "cittadinanza": "000",
+               "codiceFiscale": "PPRPLN70A01H501S",
+               "cognome": "PAPERINO",
+               "nome": "PAOLINO",
+               "nascita":                {
+                  "comune": "H501",
+                  "data": "1970-01-01"
+               },
+               "sesso": "M"
+            },
+            "indirizzoLavoratore":             {
+               "cap": "10095",
+               "comune": "H501",
+               "indirizzo": "VIA COLETTI 9"
+            },
+            "livelloIstruzione": "40"
+         },
+         "protocollo": "00000143",
+         "tipoComunicazione": "01",
+         "versione": "CO190701R1"
+      },
+      "tipoModello": "UNISOMM"
+   },
+   "profiloCollaborazione": "SERVIZIO_SINCRONO",
+   "servizio": "InviaComunicazioneObbligatoria",
+	"riferimentoMessaggio": "IDRICHIESTA"
+}

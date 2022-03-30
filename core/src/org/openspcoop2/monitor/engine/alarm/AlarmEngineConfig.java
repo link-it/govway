@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -86,6 +86,8 @@ public class AlarmEngineConfig implements Serializable {
 	
 	private boolean optionsUpdateStateActiveAlarm;
 	private boolean optionsUpdateStatePassiveAlarm;
+	private boolean optionsUpdateAckCriteriaActiveAlarm;
+	private boolean optionsUpdateAckCriteriaPassiveAlarm;
 	private boolean optionsAcknowledgedStatusAssociation;
 	private boolean optionsGroupByApi;
 	private boolean optionsFilterApi;
@@ -387,6 +389,22 @@ public class AlarmEngineConfig implements Serializable {
 	public void setOptionsUpdateStatePassiveAlarm(boolean optionsUpdateState) {
 		this.optionsUpdateStatePassiveAlarm = optionsUpdateState;
 	}
+	
+	public boolean isOptionsUpdateAckCriteriaActiveAlarm() {
+		return this.optionsUpdateAckCriteriaActiveAlarm;
+	}
+
+	public void setOptionsUpdateAckCriteriaActiveAlarm(boolean optionsUpdateAckCriteria) {
+		this.optionsUpdateAckCriteriaActiveAlarm = optionsUpdateAckCriteria;
+	}
+	
+	public boolean isOptionsUpdateAckCriteriaPassiveAlarm() {
+		return this.optionsUpdateAckCriteriaPassiveAlarm;
+	}
+
+	public void setOptionsUpdateAckCriteriaPassiveAlarm(boolean optionsUpdateAckCriteria) {
+		this.optionsUpdateAckCriteriaPassiveAlarm = optionsUpdateAckCriteria;
+	}
 
 	public boolean isOptionsAcknowledgedStatusAssociation() {
 		return this.optionsAcknowledgedStatusAssociation;
@@ -546,7 +564,24 @@ public class AlarmEngineConfig implements Serializable {
 		
 		config.setOptionsUpdateStateActiveAlarm(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ADVANCED_OPTIONS_UPDATE_STATE_ACTIVE_ALARM, true, true)));
 		config.setOptionsUpdateStatePassiveAlarm(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ADVANCED_OPTIONS_UPDATE_STATE_PASSIVE_ALARM, true, true)));
+		
 		config.setOptionsAcknowledgedStatusAssociation(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ADVANCED_OPTIONS_ACK_STATUS_ASSOCIATION, true, true)));
+		
+		String s = alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ADVANCED_OPTIONS_UPDATE_ACK_CRITERIA_ACTIVE_ALARM, false, true);
+		if(StringUtils.isNotEmpty(s)) {
+			config.setOptionsUpdateAckCriteriaActiveAlarm(Boolean.parseBoolean(s));
+		}
+		else {
+			config.setOptionsUpdateAckCriteriaActiveAlarm(true);
+		}
+		s = alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ADVANCED_OPTIONS_UPDATE_ACK_CRITERIA_PASSIVE_ALARM, false, true);
+		if(StringUtils.isNotEmpty(s)) {
+			config.setOptionsUpdateAckCriteriaPassiveAlarm(Boolean.parseBoolean(s));
+		}
+		else {
+			config.setOptionsUpdateAckCriteriaPassiveAlarm(false);
+		}
+		
 		config.setOptionsGroupByApi(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ADVANCED_OPTIONS_GROUP_BY_API, true, true)));
 		config.setOptionsFilterApi(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ADVANCED_OPTIONS_FILTER_API, true, true)));
 		config.setOptionsFilterApiOrganization(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ADVANCED_OPTIONS_FILTER_API_ORGANIZATION, true, true)));

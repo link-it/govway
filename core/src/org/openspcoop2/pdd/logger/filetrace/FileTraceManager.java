@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -60,7 +60,7 @@ public class FileTraceManager {
 		this.log = log;
 	}
 	
-	public void buildTransazioneInfo(Transazione transazioneDTO, Transaction transaction, InformazioniAttributi informazioniAttributi) throws ProtocolException {
+	public void buildTransazioneInfo(Transazione transazioneDTO, Transaction transaction, InformazioniAttributi informazioniAttributi, Context context) throws ProtocolException {
 		
 		Messaggio richiestaIngresso = null;
 		Messaggio richiestaUscita = null;
@@ -91,6 +91,8 @@ public class FileTraceManager {
 		
 		CredenzialiMittente credenzialiMittente = transaction.getCredenzialiMittente();
 		
+		InfoConfigurazione infoConfigurazione = new InfoConfigurazione(transazioneDTO, context);
+		
 		boolean base64 = true;
 		
 		this.t = new Info(this.log, transazioneDTO, credenzialiMittente, informazioniAttributi,
@@ -98,12 +100,14 @@ public class FileTraceManager {
 				transaction.getMsgDiagnostici(),
 				richiestaIngresso, richiestaUscita,
 				rispostaIngresso, rispostaUscita,
+				infoConfigurazione,
 				this.config, !base64);
 		this.tBase64 = new Info(this.log, transazioneDTO, credenzialiMittente, informazioniAttributi,
 				transaction.getTracciaRichiesta(), transaction.getTracciaRisposta(),
 				transaction.getMsgDiagnostici(),
 				richiestaIngresso, richiestaUscita,
 				rispostaIngresso, rispostaUscita,
+				infoConfigurazione,
 				this.config, base64);
 		
 		this.dynamicMap.put("log", this.t);

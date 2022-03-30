@@ -51,35 +51,35 @@
 			<rich:tabPanel switchType="ajax" selectedTab="#{dettagliBean.selectedTab}">
 				<rich:tab name="infoGenerali">
 					<f:facet name="label">
-						<h:outputText id="outTitleTabInfoGen" value="Informazioni Generali" />
+						<h:outputText id="outTitleTabInfoGen" value="#{msg['transazioni.dettaglio.tab.informazioniGenerali.titoloTab']}" />
 				    </f:facet>
 				    <ui:include src="/transazioni/includes/dettaglioMessaggioInformazioniGenerali.xhtml" >
 				    </ui:include>
 			    </rich:tab>
 			    <rich:tab name="infoMittente">
 					<f:facet name="label">
-						<h:outputText id="outTitleTabInfoMittente" value="Informazioni Mittente" />
+						<h:outputText id="outTitleTabInfoMittente" value="#{msg['transazioni.dettaglio.tab.informazioniMittente.titoloTab']}" />
 				    </f:facet>
 				    <ui:include src="/transazioni/includes/dettaglioMessaggioInformazioniMittente.xhtml" >
 				    </ui:include>
 			    </rich:tab>
 			    <rich:tab name="dettagliMessaggio">
 					<f:facet name="label">
-						<h:outputText id="outTitleDettRich" value="Dettagli Messaggio" />
+						<h:outputText id="outTitleDettRich" value="#{msg['transazioni.dettaglio.tab.dettagliMessaggio.titoloTab']}" />
 				    </f:facet>
 				    <ui:include src="/transazioni/includes/dettaglioMessaggioDettagliMessaggio.xhtml" >
 				    </ui:include>
 			    </rich:tab>
 			    <rich:tab name="diagnostici">
 					<f:facet name="label">
-						<h:outputText id="outTitleDettRisp" value="Diagnostici" />
+						<h:outputText id="outTitleDettRisp" value="#{msg['transazioni.dettaglio.tab.messaggiDiagnostici.titoloTab']}" />
 				    </f:facet>
 				    <ui:include src="/transazioni/includes/dettaglioMessaggioMessaggiDiagnostici.xhtml" >
 				    </ui:include>
 			    </rich:tab>
 			    <rich:tab rendered="#{dettagliBean.dettaglio.consegnaMultipla == true or dettagliBean.dettaglio.savedInMessageBox == true}" name="consegneMultiple">
 					<f:facet name="label">
-						<h:outputText id="outTitleInfoServer" value="#{dettagliBean.dettaglio.consegnaMultipla ? 'Consegne Multiple' : 'IntegrationManager/MessageBox'}" />
+						<h:outputText id="outTitleInfoServer" value="#{dettagliBean.dettaglio.consegnaMultipla ? msg['transazioni.dettaglio.tab.consegneMultiple.titoloTab'] : msg['transazioni.dettaglio.tab.consegneIM.titoloTab'] }" />
 				    </f:facet>
 				    <ui:include src="/transazioni/includes/dettaglioMessaggioInformazioniServer.xhtml" >
 				    	<ui:param value="consegneMultiple" name="nomeTab" />
@@ -87,14 +87,14 @@
 			    </rich:tab>
 			    <rich:tab name="infoAvanzate">
 					<f:facet name="label">
-						<h:outputText id="outTitleInfoAvanz" value="Informazioni Avanzate" />
+						<h:outputText id="outTitleInfoAvanz" value="#{msg['transazioni.dettaglio.tab.infoAvanzate.titoloTab']}" />
 				    </f:facet>
 				    <ui:include src="/transazioni/includes/dettaglioMessaggioInformazioniAvanzate.xhtml" >
 				    </ui:include>
 			    </rich:tab>
 			    <rich:tab rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject}" name="tempiElaborazione">
 					<f:facet name="label">
-						<h:outputText id="outTitleTempiElab" value="Tempi di Elaborazione" />
+						<h:outputText id="outTitleTempiElab" value="#{msg['transazioni.dettaglio.tab.tempiElaborazione.titoloTab']}" />
 				    </f:facet>
 				    <ui:include src="/transazioni/includes/dettaglioMessaggioTempiElaborazione.xhtml" >
 				    </ui:include>

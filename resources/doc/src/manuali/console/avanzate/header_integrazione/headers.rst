@@ -12,18 +12,14 @@ alla govwayConsole in modalità *avanzata* (Sezione :ref:`modalitaAvanzata`).
 
 A partire dall'erogazione o fruizione di una API, accedendo alla sezione Configurazione, descritta nella sezione :ref:`configSpecifica`, in modalità avanzata compare
 una sezione precedentemente non documentata denominata *Opzioni Avanzate*. All'interno di tale sezione è possibile agire sulla
-configurazione della voce *Metadati* nella sezione *Integrazione*. In
-tale campo, per default non impostato, è possibile attivare gli header
-di integrazione desiderati utilizzando le seguenti keyword separate da
-virgola:
+configurazione della voce *Metadati* nella sezione *Integrazione* per attivare gli header di integrazione desiderati :
 
 .. note::
-    Per ogni tipo di header di integrazione descritto di seguito, esiste una modalità normale ed una estesa (suffisso 'Ext'). Le due modalità si differenziano poichè nella modalità non estesa non vengono generati gli header nella richiesta inoltrata al server in una fruizione e quelli generati nella risposta ritornata al client in una erogazione.
+    Per ogni tipo di header di integrazione descritto di seguito è possibile indicare, tramite una voce di configurazione dedicata, se deve essere generato solamente nei messaggi inoltrati al dominio interno (richiesta inoltrata al server nelle erogazioni o risposta restituita al client nelle fruizioni) o anche verso il dominio esterno.
 
--  *trasporto* o *trasportoExt*: header di trasporto descritti nelle
-   precedenti sezioni.
+-  *Header HTTP*: vengono generati gli header di trasporto descritti nelle precedenti sezioni.
 
--  *urlBased* o *urlBasedExt*: le informazioni precedentemente descritte
+-  *Parametri della Url*: le informazioni precedentemente descritte
    vengono aggiunte alla url tramite i parametri descritti nella :numref:`headerGw2SrvUrlTab`.
 
    .. table:: Informazioni generate dal gateway nella url della richiesta inoltrata al server
@@ -49,10 +45,7 @@ virgola:
       govway_application                  Identificativo dell'applicativo
       ==================================  =========================================================
 
-   .. note::
-      Esiste una terza versione *urlBasedOnlyRead* che permette di attivare la lettura delle informazioni impostate dall'applicativo client ma non genera header verso l'applicativo server.
-
--  *soap* o *soapExt*: le informazioni precedentemente descritte vengono
+-  *Header SOAP GovWay*: le informazioni precedentemente descritte vengono
    incluse come attributi in uno specifico header SOAP proprietario di
    GovWay che possiede il nome *integration* associato al namespace
    *http://govway.org/integration*. Di seguito un esempio di tale
@@ -96,7 +89,7 @@ virgola:
    .. note::
       Utilizzabile solamente con API di tipologia SOAP
 
--  *wsa* o *wsaExt*: all'interno del messaggio Soap vengono generati gli
+-  *WS-Addressing*: all'interno del messaggio Soap vengono generati gli
    header *To*, *From*, *Action*, *MessageID* e *RelatesTo* associati al
    namespace *http://www.w3.org/2005/08/addressing*. I valori utilizzati
    per i vari header sono i seguenti:
@@ -140,19 +133,16 @@ virgola:
    .. note::
       Utilizzabile solamente con API di tipologia SOAP
 
--  *template*, *template-request*, *template-response*: consentono di definire tramite un template freemaker o velocity come le informazioni siano inserite nel messaggio.
+-  *Template*: consente di definire tramite un template freemaker o velocity come le informazioni siano inserite nel messaggio di richiesta, di risposta o in entrambi.
    Il tipo di template (freemarker/velocity) e il path del file template possono essere specifici per singole API indicandoli nelle proprietà 'integrazione.template.richiesta/risposta.tipo' e 'integrazione.template.richiesta/risposta.file'.
-   In alternativa è possibile definire il tipo e il file template a livello globale agendo sul file locale di configurazione *govway_local.properties* tramite la definizione delle proprietà 'org.openspcoop2.pdd.integrazione.template.<pd/pa>.<request/response>.tipo' e 'org.openspcoop2.pdd.integrazione.template.<pd/pa>.<request/response>.file'. 
+   In alternativa è possibile definire il tipo e il file template a livello globale agendo sul file locale di configurazione *govway_local.properties* tramite la definizione delle proprietà 'org.openspcoop2.pdd.integrazione.template.<pd/pa>.<request/response>.tipo' e 'org.openspcoop2.pdd.integrazione.template.<pd/pa>.<request/response>.file'.  
 
-   - template: il template viene applicato sia alla richiesta che alla risposta
-   - template-request: il template viene applicato solamente alla richiesta
-   - template-response: il template viene applicato solamente alla risposta
+-  *Header HTTP di Autenticazione*: consente di generare Header HTTP utilizzabili dal backend per autenticare l'API Gateway. I nomi degli header generati ed i loro valori possono essere specifici per singole API indicandoli nelle proprietà 'integrazione.autenticazione.headers' e 'integrazione.autenticazione.header.<NOME_HEADER>'.
+   In alternativa è possibile definire gli header a livello globale agendo sul file locale di configurazione *govway_local.properties* tramite la definizione delle proprietà 'org.openspcoop2.pdd.integrazione.autenticazione.<pd/pa>.request.headers' e 'org.openspcoop2.pdd.integrazione.autenticazione.<pd/pa>.request.header.<NOME_HEADER>'.  
 
--  *openspcoop2-<tipo>* o *openspcoop1-<tipo>*: sono disponibili header di integrazione compatibili con le versioni di OpenSPCoop 2.x e 1.x:
+-  *OpenSPCoop 2.x* o *OpenSPCoop2 1.x*: sono disponibili header di integrazione compatibili con le versioni di OpenSPCoop 2.x e 1.x:
 
-   - openspcoop2-trasporto o openspcoop1-trasporto: le informazioni sono veicolate all'interno di header HTTP senza prefisso 'X-'
-   - openspcoop2-x-trasporto o openspcoop1-x-trasporto: le informazioni sono veicolate all'interno di header HTTP con prefisso 'X-'
-   - openspcoop2-urlBased o openspcoop1-urlBased: le informazioni sono veicolate come parametri della url
-   - openspcoop2-soap o openspcoop1-soap: le informazioni sono incluse in uno specifico header SOAP proprietario di OpenSPCoop 2.x o 1.x
-   - openspcoop2-<tipo>Ext: rispetto alla descrizione fornita precedentemente, le informazioni vengono veicolate anche fuori dal dominio di gestione
+   - Header HTTP: le informazioni sono veicolate all'interno di header HTTP. È possibile indicare se i nomi degli header debbano possere o meno il prefisso 'X-';
+   - Parametri Url: le informazioni sono veicolate come parametri della url
+   - Header SOAP: le informazioni sono incluse in uno specifico header SOAP proprietario di OpenSPCoop 2.x o 1.x
 

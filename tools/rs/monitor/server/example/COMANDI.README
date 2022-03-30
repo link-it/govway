@@ -57,6 +57,8 @@ curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwa
 
 curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-esiti?data_inizio=2012-07-21T17:32:28Z&data_fine=2022-07-21T17:32:28Z&tipo=erogazione&formato_report=csv"
 
+curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-errori?data_inizio=2012-07-21T17:32:28Z&data_fine=2022-07-21T17:32:28Z&tipo=erogazione&formato_report=csv"
+
 curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-soggetto-remoto?data_inizio=2012-07-21T17:32:28Z&data_fine=2022-07-21T17:32:28Z&tipo=erogazione&formato_report=csv"
 
 curl -v --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/reportistica/analisi-statistica/distribuzione-soggetto-locale?data_inizio=2012-07-21T17:32:28Z&data_fine=2022-07-21T17:32:28Z&tipo=erogazione&formato_report=csv"

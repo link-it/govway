@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -41,6 +41,7 @@ public enum EsitoTransazioneName implements Serializable{
 	CONTROLLO_TRAFFICO_MAX_THREADS_WARNING_ONLY,
 	HTTP_3xx,
 	CONSEGNA_MULTIPLA,
+	CONSEGNA_MULTIPLA_IN_CORSO,
 	CONSEGNA_MULTIPLA_COMPLETATA,
 	
 	ERRORE_APPLICATIVO,
@@ -109,7 +110,9 @@ public enum EsitoTransazioneName implements Serializable{
 		return false;
 	}
 	public static  boolean isStatiConsegnaMultipla(EsitoTransazioneName esitoTransactionName){
-		if(EsitoTransazioneName.CONSEGNA_MULTIPLA_COMPLETATA.equals(esitoTransactionName) || 
+		// Stati successivi al primo stato
+		if(EsitoTransazioneName.CONSEGNA_MULTIPLA_IN_CORSO.equals(esitoTransactionName) || 
+				EsitoTransazioneName.CONSEGNA_MULTIPLA_COMPLETATA.equals(esitoTransactionName) || 
 				EsitoTransazioneName.CONSEGNA_MULTIPLA_FALLITA.equals(esitoTransactionName) 
 				){
 			return true;
@@ -118,6 +121,7 @@ public enum EsitoTransazioneName implements Serializable{
 	}
 	public static boolean isConsegnaMultipla(EsitoTransazioneName esitoTransactionName){
 		if(EsitoTransazioneName.CONSEGNA_MULTIPLA.equals(esitoTransactionName) || 
+				EsitoTransazioneName.CONSEGNA_MULTIPLA_IN_CORSO.equals(esitoTransactionName) || 
 				EsitoTransazioneName.CONSEGNA_MULTIPLA_COMPLETATA.equals(esitoTransactionName) || 
 				EsitoTransazioneName.CONSEGNA_MULTIPLA_FALLITA.equals(esitoTransactionName) 
 				){

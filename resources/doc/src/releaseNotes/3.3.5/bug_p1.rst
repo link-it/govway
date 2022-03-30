@@ -13,11 +13,11 @@ Sono stati effettuati i seguenti interventi migliorativi degli aspetti prestazio
 
 - il recupero dell'identificativo della PrimaryKey di una nuova entry, avviene adesso, anche su postgresql, utilizzando la funzionalità 'getGeneratedKeys' fornita dai driver jdbc postgresql con versione superiore alla 9.4;
 
-- il provider 'Bouncy Castle' viene adesso utilizzato per gestire i certificati (java.security.cert.CertificateFactory e java.security.cert.CertPathValidator) e per calcolare il digest di un messaggio (java.security.MessageDigest);
-
-- libreria 'lo4j2' aggiornata alla versione '2.15.0' per risolvere la vulnerabilità 'CVE-2021-44228'.
+- il provider 'Bouncy Castle' viene adesso utilizzato per gestire i certificati (java.security.cert.CertificateFactory e java.security.cert.CertPathValidator) e per calcolare il digest di un messaggio (java.security.MessageDigest).
 
 Sono stati risolti i seguenti bug:
+
+- libreria 'log4j2' aggiornata alla versione '2.15.0' per risolvere la vulnerabilità 'CVE-2021-44228';
 
 - nel profilo di interoperabilità 'ModI' con API REST configurata con pattern 'Integrity', la validazione degli header firmati non rilevava, in presenza di molteplici header HTTP con lo stesso nome, l'esistenza di un valore ulteriore rispetto a tutti quelli definiti all'interno del claim 'signed_headers';
 

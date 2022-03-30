@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -249,10 +249,22 @@ public class RestTest extends ConfigLoader {
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste_completate_con_successo.RestTest.checkFailedRequests(filtrateResponsesBlocked, windowSize, maxRequests);
 		
-		// Faccio altre n richieste che non devono essere conteggiate (TODO: Usa un applicativo che ha un ruolo non filtrato)
+		// Faccio altre n richieste che non devono essere conteggiate
 		
 		requestNonFiltrata.setUsername(Credenziali.nonFiltrateSoggetto.username);
 		requestNonFiltrata.setPassword(Credenziali.nonFiltrateSoggetto.password);
+		
+		nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests);
+		
+		assertEquals(maxRequests, nonFiltrateResponses.stream().filter(r -> r.getResultHTTPOperation() == 200).count());
+		
+		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, maxRequests);
+		
+		
+		// Faccio altre n richieste che non devono essere conteggiate (Usa un applicativo che ha un ruolo non filtrato)
+		
+		requestNonFiltrata.setUsername(Credenziali.nonFiltrateApplicativo.username);
+		requestNonFiltrata.setPassword(Credenziali.nonFiltrateApplicativo.password);
 		
 		nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests);
 		

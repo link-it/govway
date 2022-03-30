@@ -9,8 +9,8 @@ Content-Id: <56D2051AED8F9598BB61721D8C95BA6F>
         <a:example1 xmlns:a="http://www.openspcoop2.org" soapenv:actor="http://www.prova.it" soapenv:mustUnderstand="0" >prova</a:example1>
         <b:example2 xmlns:b="http://www.openspcoop2.org" soapenv:actor="http://www.prova.it" soapenv:mustUnderstand="0" >prova2</b:example2>
         </soapenv:Header>
-        <soapenv:Body/>
-</soapenv:Body></soapenv:Envelope>
+        
+<soapenv:Body/></soapenv:Envelope>
 ------=_Part_0_6330713.1171639717331
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: binary

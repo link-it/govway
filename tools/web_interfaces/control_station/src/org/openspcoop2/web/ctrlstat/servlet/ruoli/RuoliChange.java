@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -21,6 +21,7 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.ruoli;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -33,13 +34,16 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -85,6 +89,8 @@ public final class RuoliChange extends Action {
 			String tipologia = ruoliHelper.getParameter(RuoliCostanti.PARAMETRO_RUOLO_TIPOLOGIA);
 			String nomeEsterno = ruoliHelper.getParameter(RuoliCostanti.PARAMETRO_RUOLO_NOME_ESTERNO);
 			String contesto = ruoliHelper.getParameter(RuoliCostanti.PARAMETRO_RUOLO_CONTESTO);
+			String resetElementoCacheS = ruoliHelper.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
+			boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);
 			
 			RuoliCore ruoliCore = new RuoliCore();
 
@@ -93,6 +99,78 @@ public final class RuoliChange extends Action {
 
 			// Prendo il ruolo
 			Ruolo ruolo  = ruoliCore.getRuolo(ruoloId);
+			
+			// reset elemento dalla cache
+			if(resetElementoCache) {
+				
+				// Uso lo stessoAlias
+				List<String> aliases = ruoliCore.getJmxPdD_aliases();
+				String alias = null;
+				if(aliases!=null && !aliases.isEmpty()) {
+					alias = aliases.get(0);
+				}
+				String labelRuolo = ruolo.getNome();
+				ruoliCore.invokeJmxMethodAllNodesAndSetResult(pd, ruoliCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+						ruoliCore.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheRuolo(alias),
+						MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_SUCCESSO,labelRuolo),
+						MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_FALLITO_PREFIX,labelRuolo),
+						ruolo.getId());				
+				
+				String resetFromLista = ruoliHelper.getParameter(CostantiControlStation.PARAMETRO_RESET_CACHE_FROM_LISTA);
+				boolean arrivoDaLista = "true".equalsIgnoreCase(resetFromLista);
+				
+				if(arrivoDaLista) {
+					
+					// preparo lista
+					
+					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+
+					int idLista = Liste.RUOLI;
+					
+					// poiche' esistono filtri che hanno necessita di postback salvo in sessione
+					List<Ruolo> lista = null;
+					if(!ServletUtils.isSearchDone(ruoliHelper)) {
+						lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista,  Ruolo.class);
+					}
+
+					ricerca = ruoliHelper.checkSearchParameters(idLista, ricerca);
+					
+					ruoliHelper.clearFiltroSoggettoByPostBackProtocollo(RuoliHelper.POSIZIONE_FILTRO_PROTOCOLLO, ricerca, idLista);
+					
+					if(lista==null) {
+						boolean filtroSoggetto = false;
+						String filterApiContesto = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_API_CONTESTO);
+						if(!Filtri.FILTRO_API_CONTESTO_VALUE_SOGGETTI.equals(filterApiContesto) && ruoliHelper.isSoggettoMultitenantSelezionato()) {
+							List<String> protocolli = ruoliCore.getProtocolli(session,false);
+							if(protocolli!=null && protocolli.size()==1) { // dovrebbe essere l'unico caso in cui un soggetto multitenant è selezionato
+								filtroSoggetto = true;
+							}
+						}
+						if(filtroSoggetto) {
+							ricerca.addFilter(idLista, Filtri.FILTRO_SOGGETTO, ruoliHelper.getSoggettoMultitenantSelezionato());
+						}
+						
+						if(ruoliCore.isVisioneOggettiGlobale(userLogin)){
+							lista = ruoliCore.ruoliList(null, ricerca);
+						}else{
+							lista = ruoliCore.ruoliList(userLogin, ricerca);
+						}
+					}
+					
+					if(!ruoliHelper.isPostBackFilterElement()) {
+						ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+					}
+					
+					ruoliHelper.prepareRuoliList(ricerca, lista);
+					
+					// salvo l'oggetto ricerca nella sessione
+					ServletUtils.setSearchObjectIntoSession(session, ricerca);
+					
+					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+
+					return ServletUtils.getStrutsForwardEditModeFinished(mapping, RuoliCostanti.OBJECT_NAME_RUOLI, ForwardParams.CHANGE());
+				}
+			}
 			
 			// Se nomehid = null, devo visualizzare la pagina per la
 			// modifica dati
@@ -123,7 +201,7 @@ public final class RuoliChange extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = ruoliHelper.addRuoloToDati(TipoOperazione.CHANGE, ruoloId, nome, descrizione, tipologia, nomeEsterno, contesto, dati);
+				dati = ruoliHelper.addRuoloToDati(TipoOperazione.CHANGE, ruoloId, nome, descrizione, tipologia, nomeEsterno, contesto, dati, ruolo.getNome());
 
 				pd.setDati(dati);
 
@@ -147,7 +225,7 @@ public final class RuoliChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = ruoliHelper.addRuoloToDati(TipoOperazione.CHANGE, ruoloId, nome, descrizione, tipologia, nomeEsterno, contesto, dati);
+				dati = ruoliHelper.addRuoloToDati(TipoOperazione.CHANGE, ruoloId, nome, descrizione, tipologia, nomeEsterno, contesto, dati, ruolo.getNome());
 
 				pd.setDati(dati);
 

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -87,7 +87,15 @@ public class GestoreAutorizzazioneContenutiBuiltIn {
 			try {
 				valoreRisorsa = DynamicUtils.convertDynamicPropertyValue(risorsa, risorsa, dynamicMap, pddContext, true);
 			}catch(Exception e) {
-				throw new Exception("Conversione valore della risorsa '"+risorsa+"' non riuscita: "+e.getMessage(),e);
+				String msgError = "Conversione valore della risorsa '"+risorsa+"' non riuscita: "+e.getMessage();
+				if(CostantiAutorizzazione.AUTHZ_UNDEFINED.equalsIgnoreCase(expectedValue)) {
+					if(!e.getMessage().contains("not exists as key in map")) {
+						
+					}
+				}
+				else {
+					throw new Exception(msgError,e);
+				}
 			}
 			
 
@@ -104,6 +112,20 @@ public class GestoreAutorizzazioneContenutiBuiltIn {
 					this.errorMessage = "Resource '"+risorsa+"' with unexpected empty value";
 					break;
 				}
+			}
+			else if(CostantiAutorizzazione.AUTHZ_UNDEFINED.equalsIgnoreCase(expectedValue)) {
+				
+				/** NOT PRESENT */
+				
+				log.debug("Verifico valore della risorsa '"+risorsa+"' sia null o sia vuoto ...");
+				
+				// basta che abbia un valore
+				if(valoreRisorsa!=null && !"".equals(valoreRisorsa)) {
+					this.autorizzato = false;
+					this.errorMessage = "Unexpected resource '"+risorsa+"'";
+					break;
+				}
+				
 			}
 			else if(
 					(

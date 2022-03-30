@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -22,6 +22,8 @@ package org.openspcoop2.pdd.core.behaviour.conditional;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.openspcoop2.core.registry.Resource;
+import org.openspcoop2.pdd.core.Utilities;
 import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.utils.regexp.RegExpException;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
@@ -72,14 +74,39 @@ public class ConfigurazioneCondizionale {
 		this.regolaList.put(config.getRegola(), config);
 	}
 	
-	public ConfigurazioneSelettoreCondizioneRegola getRegolaByOperazione(String operazione) throws RegExpException {
+	public ConfigurazioneSelettoreCondizioneRegola getRegolaByOperazione(String operazione, Resource restResource) throws RegExpException {
 		if(!this.regolaList.isEmpty()) {
 			for (String nomeRegola: getRegoleOrdinate()) {
 				ConfigurazioneSelettoreCondizioneRegola config = this.regolaList.get(nomeRegola);
+				
 				boolean match = false;
-				try {
-					match = RegularExpressionEngine.isMatch(operazione, config.getPatternOperazione());
-				}catch(RegExpNotFoundException notFound) {}
+				
+				if(operazione.equals(config.getPatternOperazione())) {
+					match=true;
+				}
+				
+				if(!match && restResource!=null) {
+					if(config.getPatternOperazione()!=null && !"".equals(config.getPatternOperazione())) {
+						String [] parseResourceRest = Utilities.parseResourceRest(config.getPatternOperazione());
+						if(parseResourceRest!=null) {
+							match = Utilities.isRestResourceMatch(parseResourceRest, restResource);
+						}
+					}
+				}
+				
+				if(!match) {
+					boolean exprRegular = false;
+					try {
+						RegularExpressionEngine.validate(config.getPatternOperazione());
+						exprRegular = true;
+					}catch(Throwable e) {}
+					if(exprRegular) {
+						try {
+							match = RegularExpressionEngine.isMatch(operazione, config.getPatternOperazione());
+						}catch(RegExpNotFoundException notFound) {}
+					}
+				}
+				
 				if(match) {
 					return config;
 				}
@@ -87,8 +114,9 @@ public class ConfigurazioneCondizionale {
 		}
 		return null;
 	}
-	public String getNomeRegolaByOperazione(String operazione) throws RegExpException {
-		ConfigurazioneSelettoreCondizioneRegola c = this.getRegolaByOperazione(operazione);
+
+	public String getNomeRegolaByOperazione(String operazione, Resource restResource) throws RegExpException {
+		ConfigurazioneSelettoreCondizioneRegola c = this.getRegolaByOperazione(operazione, restResource);
 		return c!=null ? c.getRegola() : null;
 	}
 	public ConfigurazioneSelettoreCondizioneRegola getRegola(String nomeRegola) {
@@ -98,9 +126,17 @@ public class ConfigurazioneCondizionale {
 		
 		return this.regolaList.keySet();
 	}
-	
 	public void removeRegola(String nomeRegola){
 		this.regolaList.remove(nomeRegola);
+	}
+	public int sizeRegole() {
+		return this.regolaList.size();
+	}
+	public TreeMap<String, ConfigurazioneSelettoreCondizioneRegola> getRegolaList() {
+		return this.regolaList;
+	}
+	public void setRegolaList(TreeMap<String, ConfigurazioneSelettoreCondizioneRegola> regolaList) {
+		this.regolaList = regolaList;
 	}
 	
 	public IdentificazioneFallitaConfigurazione getCondizioneNonIdentificata() {

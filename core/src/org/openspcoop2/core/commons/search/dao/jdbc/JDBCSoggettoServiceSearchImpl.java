@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -19,42 +19,38 @@
  */
 package org.openspcoop2.core.commons.search.dao.jdbc;
 
-import java.util.List;
+import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-import java.sql.Connection;
-
-import org.slf4j.Logger;
-
-import org.openspcoop2.utils.sql.ISQLQueryObject;
-
-import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
+import org.openspcoop2.core.commons.search.IdSoggetto;
+import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.core.commons.search.SoggettoRuolo;
+import org.openspcoop2.core.commons.search.dao.jdbc.converter.SoggettoFieldConverter;
+import org.openspcoop2.core.commons.search.dao.jdbc.fetch.SoggettoFetch;
+import org.openspcoop2.generic_project.beans.CustomField;
+import org.openspcoop2.generic_project.beans.FunctionField;
+import org.openspcoop2.generic_project.beans.IField;
+import org.openspcoop2.generic_project.beans.InUse;
+import org.openspcoop2.generic_project.beans.NonNegativeNumber;
+import org.openspcoop2.generic_project.beans.Union;
+import org.openspcoop2.generic_project.beans.UnionExpression;
+import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceSearchWithId;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.generic_project.dao.jdbc.utils.IJDBCFetch;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
-import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceSearchWithId;
-import org.openspcoop2.core.commons.search.IdSoggetto;
-import org.openspcoop2.generic_project.utils.UtilsTemplate;
-import org.openspcoop2.generic_project.beans.CustomField;
-import org.openspcoop2.generic_project.beans.InUse;
-import org.openspcoop2.generic_project.beans.IField;
-import org.openspcoop2.generic_project.beans.NonNegativeNumber;
-import org.openspcoop2.generic_project.beans.UnionExpression;
-import org.openspcoop2.generic_project.beans.Union;
-import org.openspcoop2.generic_project.beans.FunctionField;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
-import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
-import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
-
-import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
-import org.openspcoop2.core.commons.search.dao.jdbc.converter.SoggettoFieldConverter;
-import org.openspcoop2.core.commons.search.dao.jdbc.fetch.SoggettoFetch;
-import org.openspcoop2.core.commons.search.Soggetto;
-import org.openspcoop2.core.commons.search.SoggettoRuolo;
+import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
+import org.openspcoop2.generic_project.utils.UtilsTemplate;
+import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.slf4j.Logger;
 
 /**     
  * JDBCSoggettoServiceSearchImpl
@@ -624,6 +620,12 @@ public class JDBCSoggettoServiceSearchImpl implements IJDBCServiceSearchWithId<S
 			tableName1 = this.getSoggettoFieldConverter().toAliasTable(Soggetto.model().SOGGETTO_RUOLO.ID_RUOLO);
 			tableName2 = this.getSoggettoFieldConverter().toAliasTable(Soggetto.model().SOGGETTO_RUOLO);
 			sqlQueryObject.addWhereCondition(tableName1+".id="+tableName2+".id_ruolo");
+			
+			if(expression.inUseModel(Soggetto.model().SOGGETTO_RUOLO.ID_RUOLO,false)){
+				if(expression.inUseModel(Soggetto.model().SOGGETTO_RUOLO,false)==false){
+					sqlQueryObject.addFromTable(this.getSoggettoFieldConverter().toTable(Soggetto.model().SOGGETTO_RUOLO));
+				}
+			}
 		}
 		
         

@@ -38,6 +38,7 @@
 				<!-- Informazioni generali -->
 				<xsd:element name="enabled" type="xsd:integer"/>
 				<xsd:element name="acknowledged" type="xsd:integer"/>
+				<xsd:element name="dettaglio-acknowledged" type="xsd:string" minOccurs="0"/>
 				<xsd:element name="tipo-periodo" type="xsd:string" minOccurs="0"/>
 				<xsd:element name="periodo" type="xsd:integer" minOccurs="0"/>
 

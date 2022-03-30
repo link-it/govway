@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -468,6 +468,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 			this.transazioneApplicativoServer.setProtocollo(protocol);
 			this.transazioneApplicativoServer.setDataAccettazioneRichiesta(DateManager.getDate());
 			this.transazioneApplicativoServer.setIdentificativoMessaggio(this.consegnaContenutiApplicativiMsg.getBusta().getID());
+			this.transazioneApplicativoServer.setConsegnaTrasparente(true);
 			
 			this.msgDiag.setTransazioneApplicativoServer(this.transazioneApplicativoServer, idApplicativa);
 			
@@ -491,7 +492,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 					this.log.error(prefix+"Errore durante il salvataggio delle informazioni di load balancer: "+t.getMessage(),t);
 				}
 			}
-			esitoLib = this.engine_onMessage();
+			esitoLib = this.engine_onMessage(this.openspcoopstate, this.dbManagerSource,
+					this.registroServiziManager, this.configurazionePdDManager, this.msgDiag, this.transazioneApplicativoServer, this.oraRegistrazione);
 		}finally {
 			if(loadBalancer!=null) {
 				try {
@@ -554,7 +556,11 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 		return esitoLib;
 	}
 	
-	private EsitoLib engine_onMessage() throws OpenSPCoopStateException {
+	private EsitoLib engine_onMessage(IOpenSPCoopState openspcoopstate, OpenSPCoopStateDBManager dbManagerSource,
+			RegistroServiziManager registroServiziManager,ConfigurazionePdDManager configurazionePdDManager, 
+			MsgDiagnostico msgDiag,
+			TransazioneApplicativoServer transazioneApplicativoServer,
+			Date oraRegistrazione) throws OpenSPCoopStateException {
 
 		this.dataConsegna = DateManager.getDate();
 		
@@ -1331,7 +1337,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 		ForwardProxy forwardProxy = null;
 		if(this.configurazionePdDManager.isForwardProxyEnabled()) {
 			try {
-				forwardProxy = this.configurazionePdDManager.getForwardProxyConfigErogazione(this.identitaPdD, this.idServizio);
+				forwardProxy = this.configurazionePdDManager.getForwardProxyConfigErogazione(this.identitaPdD, this.idServizio, null);
 			}catch(Exception e) {
 				this.msgDiag.logErroreGenerico(e, "Configurazione ForwardProxy (sa:"+this.servizioApplicativo+")");
 				this.ejbUtils.rollbackMessage("Configurazione del connettore errata per la funzionalità govway-proxy; sa ["+this.servizioApplicativo+"]",this.servizioApplicativo, esito);
@@ -2262,7 +2268,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 					}
 					//	interpretazione esito consegna
 					GestoreErroreConnettore gestoreErrore = new GestoreErroreConnettore();
-					this.errorConsegna = !gestoreErrore.verificaConsegna(this.gestioneConsegnaConnettore,this.motivoErroreConsegna,this.eccezioneProcessamentoConnettore,this.connectorSender.getCodiceTrasporto(),this.connectorSender.getResponse());
+					this.errorConsegna = !gestoreErrore.verificaConsegna(this.gestioneConsegnaConnettore,this.motivoErroreConsegna,this.eccezioneProcessamentoConnettore,this.connectorSender);
 					if(this.errorConsegna){
 						this.motivoErroreConsegna = gestoreErrore.getErrore();
 						this.riconsegna = gestoreErrore.isRiconsegna();

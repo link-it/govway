@@ -1,6 +1,6 @@
 .. _tokenValidazionePolicy:
 
-Token Validazione Policy
+Token Policy Validazione
 ------------------------
 
 Per poter definire politiche di controllo degli accessi basate sui
@@ -110,3 +110,4 @@ Le sezioni successive dettagliano questi elementi.
 	introspection
 	userInfo
 	tokenForward
+        mappingToken

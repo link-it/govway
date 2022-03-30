@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -19,6 +19,7 @@
 
 
 
+<%@page import="org.openspcoop2.web.lib.mvc.Dialog.BodyElement"%>
 <%@ page session="true" import="java.util.*, org.openspcoop2.web.lib.mvc.*" %>
 
 <%
@@ -137,6 +138,158 @@ for (int j = 0; j < riga.size(); j++) {
 					<% } %>
 				</div>
 			<% } %>
+			
+			<% if(vectorImmagini.size() > 0){
+				String iconaComandiMenu = Costanti.ICONA_MENU_AZIONI_BUTTON;
+				String tipComandiMenu = " title=\"" + Costanti.ICONA_MENU_AZIONI_BUTTON_TOOLTIP + "\"" ;
+				String idDivIconMenu = "divIconMenu_"+numeroEntry;
+				String idIconMenu = "iconMenu_"+numeroEntry; 
+				String idSpanMenu = "spanIconMenu_"+numeroEntry;
+				String idContextMenu = "contextMenu_"+numeroEntry;
+				
+				%>
+				<div id="titolo_<%=numeroEntryS %>_info" class="titoloInfo">
+				
+					<div class="iconInfoBoxList" id="<%=idDivIconMenu %>" <%=tipComandiMenu %> >
+    						<span class="icon-box" id="<%=idSpanMenu %>">
+								<i class="material-icons md-18" id="<%=idIconMenu %>"><%= iconaComandiMenu %></i>
+							</span>
+   					</div>
+   					
+   					<% 
+					// creazione elementi hidden necessari per visualizzare le modali
+					for(int idxLink =0; idxLink < vectorImmagini.size() ; idxLink ++ ){
+						DataElement de = (DataElement) vectorImmagini.elementAt(idxLink);
+						String deTip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
+						String classLink = "";
+						
+						// gestione link che visualizzano la finestra modale
+						if(de.getInfo() != null || de.getDialog() != null){
+							if(de.getInfo() != null) {
+								DataElementInfo deInfo = de.getInfo();
+								String idDivIconInfo = "divIconInfo_"+numeroEntry;
+								String idIconInfo = "iconInfo_"+numeroEntry; 
+								String idSpanInfo = "spanIconInfoBoxList_"+numeroEntry;
+						%>
+						<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
+	   					<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
+                
+		                <%						
+							}
+							
+							if(de.getDialog() != null) {
+								Dialog dialog = de.getDialog();
+								String idDivIconUso = "divIconUso_"+numeroEntry;
+								String idIconUso = "iconUso_"+numeroEntry; 
+								String idSpanUso = "spanIconUsoBoxList_"+numeroEntry;
+								
+								BodyElement urlElement = dialog.getBody().remove(0);
+								
+								request.setAttribute("idFinestraModale_"+numeroEntry, de.getDialog());
+								
+								String identificativoFinestraModale = "idFinestraModale_" + numeroEntry;
+							%>
+							<input type="hidden" name="__i_hidden_title_<%= idIconUso %>" id="hidden_title_<%= idIconUso %>"  value="<%= urlElement.getUrl() %>"/>
+							<jsp:include page="/jsplib/info-uso-modal.jsp" flush="true">
+								<jsp:param name="idFinestraModale" value="<%=identificativoFinestraModale %>"/>
+							</jsp:include>
+							
+							<%	
+							}
+						} else { // link classico non sono necessarie risorse
+						}
+					}
+	                %>
+   					
+				<script type="text/javascript">
+					if($("#<%=idSpanMenu %>").length>0){
+						// create context menu
+			            var contextMenu_<%=numeroEntry %> = $('#<%=idSpanMenu %>').contextMenu();
+						
+			         	// set context menu button
+			            contextMenu_<%=numeroEntry %>.button = mouseButton.LEFT;
+						<% 
+							for(int idxLink =0; idxLink < vectorImmagini.size() ; idxLink ++ ){
+								DataElement de = (DataElement) vectorImmagini.elementAt(idxLink);
+								String deTip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
+								String classLink = "";
+								
+								
+								if(de.getInfo() != null || de.getDialog() != null){
+									
+									%>
+									// add third item with function
+						            contextMenu_<%=numeroEntry %>.menu().addItem('<%=de.getToolTip()%>', function () {
+							            <%
+										
+										if(de.getInfo() != null) {
+											%>
+						    				var labelM_<%=numeroEntry %> = $("#hidden_title_iconInfo_"+ <%= numeroEntry %>).val();
+											var bodyM_<%=numeroEntry %> = $("#hidden_body_iconInfo_"+ <%= numeroEntry %>).val();
+											mostraDataElementInfoModal(labelM_<%=numeroEntry %>,bodyM_<%=numeroEntry %>);
+							    			<%
+										}
+										
+										if(de.getDialog() != null) {
+											Dialog dialog = de.getDialog();
+											request.setAttribute("idFinestraModale_"+numeroEntry, de.getDialog());
+											
+											%>
+											var urlD_<%= numeroEntry %> = $("#hidden_title_iconUso_"+ <%= numeroEntry %>).val();
+						    				// chiamata al servizio
+						    				<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
+						    				
+						    				$.ajax({
+					    							url : urlD_<%= numeroEntry %>,
+					    							method: 'GET',
+					    							async : false,
+					    							success: function(data, textStatus, jqXHR){
+					    								// inserimento del valore nella text area
+									    				$("textarea[id^='idFinestraModale_<%=numeroEntryS %>_txtA']").val(data);
+									    				
+									    				<%=Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>
+									    				// apertura modale
+									    				var idToOpen = '#' + 'idFinestraModale_<%= numeroEntry %>';
+									    				$(idToOpen).dialog("open");
+					    							},
+					    							error: function(data, textStatus, jqXHR){
+					    								<%=Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>
+					    							}
+					    						}
+					    					);
+							    			<%
+						                }
+										
+										%>
+						            });
+									<%
+									
+								} else {
+									
+									String deVisualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+									%>
+									contextMenu_<%=numeroEntry %>.menu().addItem('<%=de.getToolTip()%>', function () {
+										
+										<%= deVisualizzaAjaxStatus %>
+										
+										document.location = '<%= de.getUrl() %>';
+											
+									 });	
+									<%
+								}
+								
+							}
+						%>				                
+			             // generate context menu
+		             	contextMenu_<%=numeroEntry %>.init();	
+				                
+		                $("#<%=idSpanMenu %>").click(function(e){       
+			            	e.stopPropagation();
+						});
+					}
+				</script>
+			</div> <% 
+			}%>
 		</div>
 		<% 
 			DataElement deMetadati = (DataElement) vectorRiepilogo.elementAt(1);
@@ -147,33 +300,4 @@ for (int j = 0; j < riga.size(); j++) {
 		</div>
 	</div>
 </td>
-<% if(vectorImmagini.size() > 0){ %>
-	<td>
-		<div id="funzionalita_<%=numeroEntryS %>" class="funzionalitaFruizione">
-			<% 
-			
-			for (int j = 0; j < vectorImmagini.size(); j++) {
-			    DataElement de = (DataElement) vectorImmagini.elementAt(j);
-			 	String deValue = de.getValue();
-			    String deName = !de.getName().equals("") ? de.getName() : "de_name_"+j;
-				int wCount = deValue.split(" ") != null ? deValue.split(" ").length : 1;
-				String spanClass= wCount == 1 ? "configurazioneFruizioneSpanOneLine" : "configurazioneFruizioneSpan";			
-			  	%>
-			  		<div id="configurazione_<%=j %>" class="configurazioneFruizione" title="<%=deValue %>">
-			  			<div class="configurazioneFruizioneIcon">
-				  			<span class="configurazioneFruizioneIcon" id="iconConfigurazione_<%=j %>">
-								<i class="material-icons md-18 md-light">&#xE5CA;</i>
-							</span>
-						</div>
-						<div class="<%=spanClass %>">
-			  				<span class="<%=spanClass %>" ><%=deValue %></span>
-		  				</div>
-			  		</div>
-		  		<%
-			  	
-			} // for
-			%>
-		</div>
-	</td>
-<% } %>
 

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -21,9 +21,12 @@ package org.openspcoop2.web.ctrlstat.servlet.connettori;
 
 import java.util.Vector;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.pdd.core.connettori.ConnettoreFILE;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementInfo;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -39,7 +42,8 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
 public class ConnettoreFileUtils {
 
 	public static void fillConnettoreConfig(org.openspcoop2.core.config.Connettore connettore,
-			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
+			String requestOutputFileName, String requestOutputFileName_permissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeaders_permissions,
+			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime){
 		
 		connettore.setCustom(true);
@@ -49,10 +53,24 @@ public class ConnettoreFileUtils {
 		prop.setValore(requestOutputFileName);
 		connettore.addProperty(prop);
 		
+		if(requestOutputFileName_permissions!=null && !"".equals(requestOutputFileName_permissions)){
+			prop = new org.openspcoop2.core.config.Property();
+			prop.setNome(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_PERMISSIONS);
+			prop.setValore(requestOutputFileName_permissions);
+			connettore.addProperty(prop);
+		}
+		
 		if(requestOutputFileNameHeaders!=null && !"".equals(requestOutputFileNameHeaders)){
 			prop = new org.openspcoop2.core.config.Property();
 			prop.setNome(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS);
 			prop.setValore(requestOutputFileNameHeaders);
+			connettore.addProperty(prop);
+		}
+		
+		if(requestOutputFileNameHeaders_permissions!=null && !"".equals(requestOutputFileNameHeaders_permissions)){
+			prop = new org.openspcoop2.core.config.Property();
+			prop.setNome(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS_PERMISSIONS);
+			prop.setValore(requestOutputFileNameHeaders_permissions);
 			connettore.addProperty(prop);
 		}
 
@@ -117,7 +135,8 @@ public class ConnettoreFileUtils {
 	}
 	
 	public static void fillConnettoreRegistry(org.openspcoop2.core.registry.Connettore connettore,
-			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
+			String requestOutputFileName, String requestOutputFileName_permissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeaders_permissions,
+			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime){
 		
 		connettore.setCustom(true);
@@ -126,11 +145,25 @@ public class ConnettoreFileUtils {
 		prop.setNome(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE);
 		prop.setValore(requestOutputFileName);
 		connettore.addProperty(prop);
+		
+		if(requestOutputFileName_permissions!=null && !"".equals(requestOutputFileName_permissions)){
+			prop = new org.openspcoop2.core.registry.Property();
+			prop.setNome(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_PERMISSIONS);
+			prop.setValore(requestOutputFileName_permissions);
+			connettore.addProperty(prop);
+		}
 
 		if(requestOutputFileNameHeaders!=null && !"".equals(requestOutputFileNameHeaders)){
 			prop = new org.openspcoop2.core.registry.Property();
 			prop.setNome(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS);
 			prop.setValore(requestOutputFileNameHeaders);
+			connettore.addProperty(prop);
+		}
+		
+		if(requestOutputFileNameHeaders_permissions!=null && !"".equals(requestOutputFileNameHeaders_permissions)){
+			prop = new org.openspcoop2.core.registry.Property();
+			prop.setNome(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS_PERMISSIONS);
+			prop.setValore(requestOutputFileNameHeaders_permissions);
 			connettore.addProperty(prop);
 		}
 		
@@ -194,8 +227,9 @@ public class ConnettoreFileUtils {
 		}
 	}
 	
-	public static void addFileDati(Vector<DataElement> dati,int pageSize,
-			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
+	public static void addFileDati(Vector<DataElement> dati,int pageSize, ConsoleHelper consoleHelper,
+			String requestOutputFileName, String requestOutputFileName_permissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeaders_permissions,
+			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime){
 
 		DataElement de = new DataElement();
@@ -218,6 +252,36 @@ public class ConnettoreFileUtils {
 		dati.addElement(de);
 		
 		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
+		de.setValue(requestOutputFileName_permissions);
+		if(!consoleHelper.isModalitaStandard() || StringUtils.isNotEmpty(requestOutputFileName_permissions)) {
+			de.setType(DataElementType.TEXT_AREA);
+			int rows = ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_SIZE_PERMISSIONS;
+			try {
+				if(StringUtils.isNotEmpty(requestOutputFileName_permissions)) {
+					rows = ConnettoreFILE.getNumPermission(requestOutputFileName_permissions);
+				}
+				if(rows<=0) {
+					rows = ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_SIZE_PERMISSIONS;
+				}
+				else if(rows>3) {
+					rows = ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_SIZE_PERMISSIONS_MAX;
+				}
+			}catch(Throwable t) {
+				rows = ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_SIZE_PERMISSIONS;
+			}
+			de.setRows(rows);
+			de.setInfo(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS_INFO);
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+		}
+		de.setRequired(false);	
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
+		de.setSize(pageSize);
+		dati.addElement(de);
+		
+		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
 		de.setValue(requestOutputFileNameHeaders);
 		de.setType(DataElementType.TEXT_AREA);
@@ -229,6 +293,36 @@ public class ConnettoreFileUtils {
 		dInfoPatternFileNameHdr.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 		dInfoPatternFileNameHdr.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI);
 		de.setInfo(dInfoPatternFileNameHdr);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
+		de.setValue(requestOutputFileNameHeaders_permissions);
+		if(!consoleHelper.isModalitaStandard() || StringUtils.isNotEmpty(requestOutputFileNameHeaders_permissions)) {
+			de.setType(DataElementType.TEXT_AREA);
+			int rows = ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_SIZE_PERMISSIONS;
+			try {
+				if(StringUtils.isNotEmpty(requestOutputFileNameHeaders_permissions)) {
+					rows = ConnettoreFILE.getNumPermission(requestOutputFileNameHeaders_permissions);
+				}
+				if(rows<=0) {
+					rows = ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_SIZE_PERMISSIONS;
+				}
+				else if(rows>3) {
+					rows = ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_SIZE_PERMISSIONS_MAX;
+				}
+			}catch(Throwable t) {
+				rows = ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_SIZE_PERMISSIONS;
+			}
+			de.setRows(rows);
+			de.setInfo(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS_INFO);
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+		}
+		de.setRequired(false);	
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
+		de.setSize(pageSize);
 		dati.addElement(de);
 		
 		de = new DataElement();
@@ -334,7 +428,8 @@ public class ConnettoreFileUtils {
 	}
 	
 	public static void addFileDatiAsHidden(Vector<DataElement> dati,
-			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
+			String requestOutputFileName, String requestOutputFileName_permissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeaders_permissions,
+			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime){
 		
 		DataElement de = new DataElement();
@@ -345,10 +440,24 @@ public class ConnettoreFileUtils {
 		dati.addElement(de);
 		
 		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
+		de.setValue(requestOutputFileName_permissions);
+		de.setType(DataElementType.HIDDEN);	
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
+		dati.addElement(de);
+		
+		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
 		de.setValue(requestOutputFileNameHeaders);
 		de.setType(DataElementType.HIDDEN);	
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
+		de.setValue(requestOutputFileNameHeaders_permissions);
+		de.setType(DataElementType.HIDDEN);	
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
 		dati.addElement(de);
 		
 		de = new DataElement();

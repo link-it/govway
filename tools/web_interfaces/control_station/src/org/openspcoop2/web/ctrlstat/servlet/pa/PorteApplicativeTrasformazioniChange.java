@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -47,6 +47,7 @@ import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -184,6 +185,7 @@ public class PorteApplicativeTrasformazioniChange extends Action {
 
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
 			AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
+			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(apc.getServiceBinding());
 			Map<String,String> azioniAccordo = porteApplicativeCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<String>());
 			
 			if(azioniAccordo!=null && azioniAccordo.size()>0) {
@@ -306,7 +308,8 @@ public class PorteApplicativeTrasformazioniChange extends Action {
 					applicabilitaSoggetti, applicabilitaApplicativi, true);
 			TrasformazioneRegola trasformazioneDBCheck_nome = porteApplicativeCore.getTrasformazione(Long.parseLong(idPorta), nome);
 			
-			boolean isOk = porteApplicativeHelper.trasformazioniCheckData(TipoOperazione.CHANGE, Long.parseLong(idPorta), nome, trasformazioneDBCheck_criteri, trasformazioneDBCheck_nome, oldRegola);
+			boolean isOk = porteApplicativeHelper.trasformazioniCheckData(TipoOperazione.CHANGE, Long.parseLong(idPorta), nome, trasformazioneDBCheck_criteri, trasformazioneDBCheck_nome, oldRegola,
+					serviceBinding);
 			if (!isOk) {
 
 				// preparo i campi

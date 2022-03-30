@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -22,6 +22,8 @@ package org.openspcoop2.web.monitor.core.status;
 import java.util.List;
 import java.util.Properties;
 
+import org.openspcoop2.monitor.engine.status.IStatus;
+import org.openspcoop2.monitor.engine.status.SondaStatus;
 import org.slf4j.Logger;
 
 /**

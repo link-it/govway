@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -171,7 +171,7 @@ public class RESTIntegrazionePortaApplicativa {
 				erroreAtteso = "In parameter list <; charsetutf-8=>, expected parameter value, got \"null\"";
 			}
 			
-			String diag = "Il contenuto applicativo della risposta ricevuta non è processabile: Non è stato possibile comprendere come trattare il messaggio ricevuto (Content-Type: "+contentType+"): "+erroreAtteso;
+			String diag = "Il contenuto applicativo della risposta ricevuta non è processabile: Content-Type '"+contentType+"' presente nella risposta non valido: "+erroreAtteso;
 			Reporter.log("Cerco diagnostico "+diag+" nei log ...");
 			Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(dataInizioTest, diag));		
 		}finally{

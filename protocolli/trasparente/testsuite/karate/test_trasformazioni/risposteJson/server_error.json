@@ -1,0 +1,10 @@
+{
+   "direzione": "RISPOSTA",
+   "mittente": "NAZIONALE",
+   "modello": {"payload":    {
+      "faultcode": "soapenv:Server",
+      "faultstring": "EGOV_IT_300 - Errore nel processamento del Messaggio SPCoop"
+   }},
+   "profiloCollaborazione": "SERVIZIO_SINCRONO",
+   "servizio": "InviaComunicazioneObbligatoria"
+}

@@ -1,3 +1,401 @@
+2022-03-25  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1345
+	La registrazione nei file di log associati ai topic di file trace, non avveniva se veniva disabilitata la registrazione delle transazioni su database.
+
+2022-03-24  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Risolto Bug OP-1341
+	La validazione di un'interfaccia OpenAPI era troppo stringente per quanto concerne i valori di default associati i tipi primitivi (integer, number o boolena) definiti con gli apici (es. '65' invece di 65).
+	Il validatore segnalava il seguente errore:
+		Caused by: org.openspcoop2.utils.rest.ProcessingException: OpenAPI3 not valid: Validation error(s) :
+		paths./pets1.patch.parameters.schema.default: Value '65' is incompatible with schema type 'integer' (code: 138)
+		From: paths./pets1.patch.parameters.schema.default
+	
+2022-03-21  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, ApiRsConfigurazione]
+	Aggiunta funzionalità
+	Nel connettore di tipo 'file' è stata aggiunta la possibilità di definire i permessi (rwx) dei file creati in cui viene serializzato il contenuto della richiesta (payload e header).
+
+2022-03-21  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 3.3.6.p1
+
+2022-03-18  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Risolto problema che si verificava in fase di sbustamento degli header di sicurezza ModI, quando veniva modificato l'header soap tramite altri meccanismi (es. trasformazione).
+	L'errore che si manifestava era il seguente:
+	Caused by: org.w3c.dom.DOMException: NOT_FOUND_ERR: An attempt is made to reference a node in a context where it does not exist.
+		at org.apache.xerces.dom.ParentNode.internalRemoveChild ...
+		at org.openspcoop2.protocol.modipa.validator.ModISOAPSecurity.clean(ModISOAPSecurity.java)
+
+2022-03-17  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, Utils]
+	Aggiunta funzionalità OP-1338
+	Migliorate utility per la conversione da xml a json e viceversa, utilizzabili all'interno delle trasformazioni di protocollo SOAP->REST e REST->SOAP.
+	Nelle trasformazioni è adesso possibile:
+	- accedere agli allegati caricati nelle erogazioni/fruizioni e nelle API;
+	- indicare valori dinamici, contenenti parti che vengono risolte a runtime, per quanto concerne il codice http di risposta e i content-type utilizzati nelle richieste e nelle risposte.
+
+2022-03-10  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1334
+	Nella negoziazione di un Token tramite JWT Signed è adesso possibile gestire anche i parametri ulteriori richiesti dalla PDND.
+
+2022-03-09  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	La funzionalità di proxy applicativo è adesso attivabile anche nelle comunicazioni verso gli authorization server indicati nelle token policy di negoziazione e validazione e nelle attribute authorities.
+
+2022-03-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	La serializzazione di un token malformato causava la mancata scrittura della transazione su database. Il problema è stato risolto.
+
+2022-03-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1334
+	Nella negoziazione di un Token tramite JWT Signed è adesso possibile definire i parametri da inserire nell'header non firmato (kid, x5c, x5t ...). 
+	Inoltre è adesso possibile personalizzare le parti inserire nel payload firmato tramite parti dinamiche che verranno risolte a runtime dal Gateway.
+	Nella validazione di un Token è invece adesso possibile configurare un formato di token definito tramite un mapping puntuale tra il nome di un claim e l'informazione che GovWay cerca di estrarre dal token.
+	Infine nel controllo degli accessi, in una autorizzazione per contenuti o per token claims è adesso possibile utilizzare la costante '${undefined}' per indicare che una risorsa non deve esistere o non deve essere valorizzata.
+
+2022-03-03  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	In configurazione avanzata la possibilità di abilitare le funzionalità in fase di sviluppo riguardanti la consegna delle notifiche non generava degli artefatti corretti se l'application server selezionato era Tomcat.
+
+2022-03-03  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1336
+	L'aggiornamento della configurazione ModI di una erogazione o fruizione andava in errore su InternetExplorer 11.
+	Il motivo risiede nella presenza di elementi contenenti caratteri che mandavano in confusione il visualizzatore di IE.
+	Tali elementi erano frutto degli elementi Hidden generati per le dialog info che non necessitavano di essere inviati al server in caso di postback o submit della form.
+
+2022-02-28  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	La funzionalità di download dei certificati server di una Token Policy di Negoziazione non funzionava
+
+2022-02-28  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Nel connettore associato all'implementazione dell'API non è adesso più possibile definire i criteri di consegna asincrona (con stati di accettazione)
+
+2022-02-24  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug
+	Il reset puntuale di una API non eliminava dalla cache la definizione dell'interfaccia OpenAPI o Wsdl.
+
+2022-02-24  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunti controlli sul content-type ricevuto nelle risposte.
+	Migliorata pagina di configurazione per la gestione delle notifiche.
+
+2022-02-21  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Aggiunta funzionalità OPPT-832
+	Aggiunto supporto per le dialog info che consentono di mostrare informazioni sugli elementi di una form.
+	Nella form di ricerca degli Allarmi rinominata label 'Configurazione' con 'Globale' nella SelectList 'Tipologia'.
+	Risolti i seguenti bug:
+	- Ricerca Allarmi incosistente dopo che si visualizzava l'archivio stati di un allarme.
+	- Elementi del menù cambiavano dimensione al passaggio del mouse; problema che si presentava solo nella schermata summary.
+	- Il download dei report statistici come immagine non preservava il font visualizzato per le versioni di IE <12.
+
+2022-02-21  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1330
+	Introdotta ottimizzazione nella gestione degli header SOAP.
+	Durante la gestione della richiesta o della risposta, se le funzionalità attivate richiedono solamente la gestione del SOAPHeader,
+	viene costruito in memoria la sola rappresentazione DOM dell'header e non dell'intero messaggio.
+	Il contenuto presente nel body viene trattato in modalità streaming.
+
+2022-02-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Eliminata voce 'SOAPAction' nell'impostazione del filtro di una consegna condizionale per API di tipo REST.
+	Aggiunta la possibilità di individuare una risorsa REST anche per metodo e path oltre che per identificativo nelle regole specifiche di una consegna condizionale.
+	Differenziato diagnostico emesso in caso di consegna condizionale non applicabile e impostazione configurata per non inviare la notifica a nessun connettore registrato.
+
+2022-02-15  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	In caso di consegna con notifiche in cui fossero stato configurate regole di condizionalità specifica per determinate azioni, 
+	una qualsiasi modifica della configurazione generale del connettore multiplo provocava la perdita delle regole precedentemente configurate.
+
+2022-02-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	In caso di consegna con notifiche, il connettore indicato come 'Connettore Implementa API' presentava accanto al nome l'indicazione di uno stato (abilitato/disabilitato) che non aveva senso.
+	Inoltre nella gestione delle notifiche effettuate solamente se la transazione termina con uno degli esiti indicati, è stato eliminato il gruppo 'Richiesta Scartate' essendo richieste non ancora accettate in ingresso.
+	Infine tra i connettori selezionabili, in caso di identificazione della condizione fallita o di individuazione del connettore non riuscita, non viene adesso più presentato il connettore che implementa l'API.
+
+2022-02-08  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	In caso di consegna condizionale dove veniva indicato un 'Connettore Implementa API' differente da quello iniziale, 
+	la maschera dei connettori non riportava correttamente il connettore "sincrono" alla prima posizione allo scopo di differenziare la gestione della consegna dalla gestione delle notifiche.
+
+2022-02-08  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 3.3.6
+
+2022-02-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Differenziato diagnostico emesso in caso di consegna condizionale non applicabile e conseguente consegna a tutti i connettori registrati,
+	in modo da riconoscere il caso di estrazione della condizione fallita dal caso di individuazione non riuscita di un connettore tramite la condizione estratta dalla richiesta.
+
+2022-02-06  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunte ulteriori informazioni, inerenti le configurazioni gestite dal gateway, che possono essere riversate nei file di log associati ai topic di file trace:
+	- proprietà associate all'erogazione o alla fruizione
+	- proprietà associate al soggetto fruitore o erogatore
+	- proprietà associate all'applicativo richiedente
+	- nome del connettore multiplo selezionato per la consegna verso il backend
+	- proprietà presenti nel contesto
+
+2022-02-03  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1308
+	Aggiunto supporto per wildfly 26.
+
+2022-02-02  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1327
+	Introdotto un nuovo header di integrazione che consentire di generare Header HTTP utilizzabili dal backend per autenticare l’API Gateway.
+
+2022-02-01  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Durante la consegna asincrona, la personalizzazione della consegna fallita per SoapFaultCode non considerava il subFaultCode in Soap1.2.
+	È stata inoltre aggiunta la possibilità di personalizzare una consegna completata per i SoapFault e i ProblemDetail.
+
+2022-02-01  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1325
+	È stata aggiunta la possibilità di personalizzare la configurazione che riguarda la gestione delle credenziali client ricevute tramite header HTTP 
+	dal webServer nel quale viene effettuato il processo di autenticazione.
+	La personalizzazione è attuabile in funzione del profilo di interoperabilità o per puntualmente sul soggetto associato ad ogni dominio gestito.
+
+2022-01-28  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Risolto Bug OP-1323
+	Durante la consegna asincrona, se tutti i connettori multipli fallivano, l'esito delle transazione rimaneva 'in coda'.
+	Eliminata inoltre l'opzione '3xx' tra i parametri di riconsegna in caso di API SOAP.
+
+2022-01-27  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole, GovWayMonitor]
+	Aggiunta funzionalità OP-1303
+	In ogni oggetto del registro, sia dall'elenco che dal dettaglio, è adesso possibile intraprendere le seguenti azioni:
+	- rimuovere dalla cache i dati relativi all'oggetto;
+	- visualizzare i riferimenti di dove un oggetto viene utilizzato;
+	- verificare i certificati associati o inclusi nei keystore riferiti;
+	- per le token policy è inoltre adesso possibile verificare la connettività agli endpoint configurati.
+	È stato inoltre effettuato un restyling dell'elenco delle Token Policy e degli Attribute Authority.
+	L'intervento include la risoluzione dei seguenti problemi:
+	- il download dei report statistici come immagine, non preservava il font visualizzato nella console di monitoraggio;
+	- nel menù della console di gestione è adesso possibile utilizzare il tasto destro su tutta la voce e non solo sul testo.
+	Nella documentazione il visualizzatore delle API di configurazione e monitoraggio è stato modificato da 'generator.swagger.io' a 'redocly.github.io'.
+
+2022-01-21  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolte anomalie presenti nella gestione dei connettori multipli:
+	- nella consegna con notifiche, se si imposta una configurazione delle risposte accettate con "Consegna Completata" su tutti i codici http e "Consegna Fallita" nel fault, 
+	  si ottiene una segnalazione errata di configurazione non valida;
+	- con la seguente combinazione di operazioni si provocava una visualizzazione errata della configurazione:
+	  . disattivare lo scheduling o lo stato di un connettore multiplo;
+	  . andare dentro una sottomaschera qualunque del connettore, e.g. "Descrizione";
+	  . dalla sottomaschera usare la breadcump "Connettori Multipli" per tornare all'elenco dei connettori;
+	  . lo stato visualizzato del connettore non riporta la modifica precedentemente attuata.
+	- nell'elenco dei connettori, dopo aver modificato un connettore, 
+	  se si accede alla sottomaschera di un connettore differente e si ritorna all'elenco grazie alla breadcump "Connettori Multipli" viene visualizzato il precedente connettore modificato e non l'ultimo acceduto;
+	- aggiunta la possibilità di aggiungere un connettore con stato abilitato e scheduling disabilitato.
+
+2021-01-18  Francesco Scarlato <scarlato@link.it>
+
+	* [TestsuiteProtocolloTrasparente]
+	Aggiunti test che verificano la funzionalità di LoadBalancer e ConsegnaCondizionale dei ConnettoriMultipli
+
+2022-01-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	La funzionalità di verifica connettività riportava un errore non corretto di 'Read timed out',
+	invece di 'connect timed out', quando veniva verificato un endpoint non raggiungibile ad esempio per problematiche di firewall.
+	L'anomalia è stata risolta aumentando il tempo di atteso dello stato di verifica connettività recuperato dalla console interrogando i nodi run, 
+	portando l'attesa da 5 secondi a 60 secondi per default per questo tipo di operazione.
+
+2022-01-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1321
+	Risolte anomalie presenti nella classe 'OpenSPCoop2MessageSoapStreamReader' utilizzata per leggere le informazioni SOAP in streaming:
+	- i messaggi che contenevano prima della definizione dell'elemento Envelope un commento xml (<!-- ... -->) contenente una definizione Envelope con versione soap differente,
+	  venivano interpretati erroneamente con la versione SOAP indicata nella dichiarazione commentata;
+	- i messaggi che contenevano come rootElement del Body un child element vuoto con nome che iniziava con 'Body' venivano erroneamente interpretati come messaggi SOAP con body vuoto.
+
+2022-01-15  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor]
+	Risolta anomalia presente in tutte le distribuzioni statistiche eccetto quella temporale e per esiti.
+	Quando si selezionava un periodo 'personalizzato' compariva la scelta dell''unità di tempo' che non avesa senso per il tipo di distribuzione.
+
+2022-01-15  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolta anomalia presente nella maschera di configurazione di un connettore di tipo 'LoadBalancer' dove è stata configurata una Sessione Sticky.
+	Modificando la strategia in 'Source IP hash', sparisce la possibilità di abilitare la sessione sticky poichè non supportata dalla strategia, però rimane erroneamente la sezione precedentemente configurata.
+
+2022-01-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayMonitor]
+	Aggiunta funzionalità OP-1319
+	In caso di consegna multipla è stata aggiunta alla transazione l'informazione riguardante i nomi dei connettori selezionati.
+	Tale informazione è ricercabile tramite la console di monitoraggio utilizzando la casella 'Eventi'.
+
+2022-01-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Differenziato diagnostico emesso in caso di consegna condizionale configurata per utilizzare un connettore di default 
+	sia nel caso di estrazione della condizione fallita che in caso di individuazione di un connettore tramite la condizione estratta dalla richiesta.
+
+2022-01-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor, ApiRsMonitoraggio]
+	Aggiunta funzionalità OP-1317
+	Aggiunto tra i report statistici una distribuzione per errori.
+	È stato inoltre corretto l'OpenAPI dell'Api di Monitoraggio creato al momento del primo startup del Gateway:
+	- aggiunta enumeration 'ModI' tra i profili utilizzabili;
+	- modificato tipo associato ad un identificativo di un documento da NCName a string.
+
+2022-01-13  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovwayConsole]
+	Risolto Bug
+	Risolte le seguenti anomalie:
+	- in caso di utilizzo della funzionalità Load Balancer con algoritmo 'SourceIpHash', 
+	  la transazione terminava in errore in presenza di indirizzi ip per cui il calcolo 'hashCode' produceva un numero negativo.
+	- nella maschera di modifica di un connettore in cui veniva abilitata la funzionalità 'IntegrationManager/MessageBox' veniva erroneamente riportato il checkbox 'Modifica Password'.
+
+2022-01-13  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovwayConsole, GovWayMonitor]
+	Aggiunta funzionalità OP-1315
+	Effettuati i seguenti miglioramenti nella gestione e nel monitoraggio dei connettori multipli (consegne asincrone):
+	- aggiunto la possibilità di disabilitare lo scheduling delle consegne di un connettore, consentento l'acquisizione dei messaggi senza consegnarli fino a che non avviene la riabilitazione;
+	- l'identificativo di una consegna condizionale o l'id di sessione ottenuto tramite un template viene adesso normalizzato per eliminare spazi o ritorni a capo presenti nella parte iniziale o finale;
+	- nella funzionalità 'Coda Messaggi' è adesso possibile avere una informazione sintetica sulle consegne in corso;
+	- aggiunto uno stato della transazione, per i connettori multipli, di "attesa consegna" che consente di differenziare rispetto alla "consegna in corso", perchè la seconda ha già tentato una consegna, la prima no.
+
+2022-01-13  Giuliano Pintori <pintori@link.it>
+
+	* [GovwayConsole, GovWayMonitor]
+	Aggiunta funzionalità OP-1303
+	Aggiornate icone e font MaterialIcons alla versione 4.
+	Restyling della pagina che riporta lo stato degli allarmi nella console di monitoraggio.
+
+2022-01-12  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1313
+	Il diagnostico "errore di trasporto, codice XXX" poteva far pensare a problematiche interenti il trasporto.
+	Il testo è stato modificato in "errore HTTP XXX".
+	Inoltre è stata corretta un'anomalia che si presentava durante una consegna di una notifica asincrona (connettori multipli) se il backend restituiva un HTTP Redirect 3XX con header 'Location'.
+	L'errore che veniva riportato nel diagnostico era simile al seguente:
+	"Errore durante l'aggiornamento dell'header 'Location' attraverso la funzione di proxy pass reverse: [getAccordoServizioParteComune]: Parametro non definito"
+
+2022-01-11  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor]
+	Risolto Bug OP-1311
+	In caso di registrazione dei contenuti abilitati, se veniva salvata una richiesta contenente un Content-Type Multipart senza però possedere effettivamente degli attachments, 
+	la successiva consultazione tramite la console di monitoraggio per visualizzare i contenuti multipart produceva un errore non atteso e una pagina bianca. 
+	Anche la funzionalità di export dei contenuti multipart generava un errore.
+
+2022-01-11  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovwayConsole]
+	Aggiunta funzionalità OP-1301
+	Aggiunta validazione delle espressioni regolari, xpath e jsonPath utilizzabili nelle varie funzionalità del gateway.
+	Effettuati inoltre i seguenti miglioramenti nella gestione dei connettori multipli:
+	- rivista gestione in modo che successivamente ad un'operazione di aggiunta o modifica (nome, descrizione, weight ...)
+	  si venga riposizionati nella lista dei connettori e sia selezionato il connettore oggetto della precedente operazione;
+	- nella maschera di creazione di una regola specifica per azione/risorsa veniva riportata erroneamente la dicitura 'Container' invece di 'Contenuto';
+	- aggiunto controllo di assegnazione univoca di un filtro ad un connettore, nel caso di consegna condizionale;
+	- eliminata la possibilità di associare filtri al connettore di default, nel caso di consegna condizionale;
+	- l'utilizzo di una consegna condizionale basata su template non era utilizzabile su richieste senza payload (es. HTTP GET)
+	  dove si ottevena un errore simile al seguente: "Selettore 'Template' non supportato per il message-type 'BINARY'".
+	  È stato aggiunto il supporto.
+
+2022-01-10  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Libreria 'lo4j2' aggiornata alla versione '2.17.1' per risolvere la vulnerabilità 'CVE-2021-44832'.
+
+2021-12-30  Andrea Poli <apoli@link.it>
+
+	* [GovwayConsole]
+	Corretto bug che non consentiva di variare la modalità di caricamento di una credenziale ssl di un applicativo.
+
+2021-12-29  Andrea Poli <apoli@link.it>
+
+	* [GovwayConsole, GovWayMonitor, GovWayCore]
+	Aggiunti criteri di acknowledged alla funzionalità degli allarmi.
+
+2021-12-23  Andrea Poli <apoli@link.it>
+
+	* [GovwayConsole, GovWayMonitor]
+	Aggiunta funzionalità OP-1299
+	Uniformata la gestione dei nodi runtime in un unico file govway.nodirun.properties. 
+	Inoltre, in una configurazione con cluster dinamico, è stata aggiunta la possibilità di configurare lo schema utilizzato (https/http), 
+	la porta e i parametri di utilizzo del connettore https per il servizio proxy quando deve effettuare il forward della chiamata al servizio check dei nodi.
+
+2021-12-22  Andrea Poli <apoli@link.it>
+
+	* [GovwayConsole]
+	Aggiunta funzionalità OP-1296
+	Direttamente dall'elenco delle erogazioni e delle fruizioni è adesso possibile ottenere una informativa generale della configurazione senza entrare nella maschera di dettaglio.
+	L'informativa generale è ottenibile cliccando sull'icona 'i' visualizzata sulla parte destra nell'elenco delle erogazioni o delle fruizioni.
+
+2021-12-20  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Libreria 'lo4j2' aggiornata alla versione '2.17.0' per risolvere la vulnerabilità 'CVE-2021-45105'.
+
+2021-12-18  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 3.3.5.p2
+
+2021-12-17  Andrea Poli <apoli@link.it>
+
+	* [GovwayConsole]
+	Nella console di gestione, se configurata in Load Balancing per gestire molteplici nodi, 
+	l'accesso alla sezione 'Runtime' causava delle invocazioni verso i nodi gestiti ancor prima di averne selezionato qualcuno o aver richiesto operazioni di gestione (es. svuota cache).
+
+2021-12-17  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Libreria 'lo4j2' aggiornata alla versione '2.16.0' per risolvere la vulnerabilità 'CVE-2021-45046'.
+
 2021-12-14  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.5.p1

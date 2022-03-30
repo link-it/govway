@@ -642,7 +642,7 @@ CREATE TABLE pd_transform_risp
 	-- In hsql 2.x usare il tipo BLOB al posto di VARBINARY
 	conversione_template VARBINARY(1073741823),
 	content_type VARCHAR(255),
-	return_code INT,
+	return_code VARCHAR(255),
 	soap_envelope INT NOT NULL,
 	soap_envelope_as_attach INT NOT NULL,
 	soap_envelope_tipo VARCHAR(255),

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -31,6 +31,7 @@ import org.openspcoop2.pdd.core.behaviour.BehaviourPropertiesUtils;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.slf4j.Logger;
 
 /**
@@ -75,7 +76,7 @@ public class ConfigurazioneLoadBalancer  {
 	
 	public static ConfigurazioneLoadBalancer read(PortaApplicativa pa, OpenSPCoop2Message message, Busta busta, 
 			RequestInfo requestInfo, PdDContext pddContext, 
-			MsgDiagnostico msgDiag, Logger log) throws BehaviourException, BehaviourEmitDiagnosticException {
+			MsgDiagnostico msgDiag, Logger log, IState state) throws BehaviourException, BehaviourEmitDiagnosticException {
 		ConfigurazioneLoadBalancer config = new ConfigurazioneLoadBalancer();
 		if(pa.getBehaviour()==null || pa.getBehaviour().sizeProprietaList()<=0) {
 			throw new BehaviourException("Load Balancer type undefined");
@@ -98,7 +99,7 @@ public class ConfigurazioneLoadBalancer  {
 		LoadBalancerInstance lbInstance = GestoreLoadBalancerCaching.getLoadBalancerInstance(pa, message, busta, 
 				requestInfo, pddContext, 
 				msgDiag, log,
-				enumType);
+				enumType, state);
 		
 		config.setPool(lbInstance.getLoadBalancerPool());
 

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -50,6 +50,30 @@ public class Costanti {
 	public final static String PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE = "TOKEN_INFORMAZIONI_NORMALIZZATE";
 	public final static String PDD_CONTEXT_ATTRIBUTI_INFORMAZIONI_NORMALIZZATE = "ATTRIBUTI_INFORMAZIONI_NORMALIZZATE";
 	public final static String MSG_CONTEXT_TOKEN_FORWARD = "TOKEN_FORWARD"; // per salvarlo con il messaggio
+	
+	
+	// Token Parser id
+	
+	public final static String VALIDAZIONE_JWT_TOKEN_PARSER_COLLECTION_ID = "validazioneJwtTokenParserPropRefId";
+	public final static String INTROSPECTION_TOKEN_PARSER_COLLECTION_ID = "introspectionTokenParserPropRefId";
+	public final static String USERINFO_TOKEN_PARSER_COLLECTION_ID = "userInfoTokenParserPropRefId";
+	
+	public final static String TOKEN_PARSER_ISSUER = "token.parser.issuer";
+	public final static String TOKEN_PARSER_SUBJECT = "token.parser.subject";
+	public final static String TOKEN_PARSER_AUDIENCE = "token.parser.audience";
+	public final static String TOKEN_PARSER_EXPIRE = "token.parser.expire";
+	public final static String TOKEN_PARSER_ISSUED_AT = "token.parser.issuedAt";
+	public final static String TOKEN_PARSER_NOT_TO_BE_USED_BEFORE = "token.parser.notToBeUsedBefore";
+	public final static String TOKEN_PARSER_JWT_IDENTIFIER = "token.parser.jwtIdentifier";
+	public final static String TOKEN_PARSER_CLIENT_ID = "token.parser.clientId";
+	public final static String TOKEN_PARSER_USERNAME = "token.parser.username";
+	public final static String TOKEN_PARSER_SCOPE = "token.parser.scope";
+	public final static String TOKEN_PARSER_ROLE = "token.parser.role";
+	public final static String TOKEN_PARSER_USER_FULL_NAME = "token.parser.user.fullName";
+	public final static String TOKEN_PARSER_USER_FIRST_NAME = "token.parser.user.firstName";
+	public final static String TOKEN_PARSER_USER_MIDDLE_NAME = "token.parser.user.middleName";
+	public final static String TOKEN_PARSER_USER_FAMILY_NAME = "token.parser.user.familyName";
+	public final static String TOKEN_PARSER_USER_EMAIL = "token.parser.user.eMail";
 	
 	
 	// Policy id
@@ -160,9 +184,14 @@ public class Costanti {
 	public final static String POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_RFC6750_URL = "RFC6750_url";
 	public final static String POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER = "CUSTOM_header";
 	public final static String POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL = "CUSTOM_url";
+	public final static String LABEL_POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_AS_RECEIVED = "Come è stato ricevuto";
+	public final static String LABEL_POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_AS_RECEIVED_ORIGINALE = "Token Originale";
+	public final static String LABEL_POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_RFC6750_HEADER = "Header HTTP 'Authorization Bearer'";
+	public final static String LABEL_POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_RFC6750_URL = "Parametro URL 'access_token'";
+	public final static String LABEL_POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER = "Header HTTP ''{0}''";
+	public final static String LABEL_POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL = "Parametro URL ''{0}''";
 	public final static String POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER_NAME = "policy.tokenForward.trasparente.mode.header";
 	public final static String POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL_PARAMETER_NAME = "policy.tokenForward.trasparente.mode.queryParameter";
-	
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_STATO = "policy.tokenForward.infoRaccolte.stato";
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE = "policy.tokenForward.infoRaccolte.mode";
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_HEADERS = "op2header";
@@ -171,6 +200,12 @@ public class Costanti {
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWS = "jws";
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE = "jwe";
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JSON = "json";
+	public final static String LABEL_POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_HEADERS = "GovWay Headers";
+	public final static String LABEL_POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JSON = "GovWay JSON";
+	public final static String LABEL_POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JWS = "GovWay JWS";
+	public final static String LABEL_POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWS = "JWS";
+	public final static String LABEL_POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE = "JWE";
+	public final static String LABEL_POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JSON = "JSON";
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_ENCODE_BASE64 = "policy.tokenForward.infoRaccolte.base64";
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_HEADER = "CUSTOM_header";
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_URL = "CUSTOM_url";
@@ -192,6 +227,7 @@ public class Costanti {
 	public final static String POLICY_RETRIEVE_TOKEN_PARSER_TYPE = "policy.retrieveToken.claimsParser";
 	public final static String POLICY_RETRIEVE_TOKEN_PARSER_CLASS_NAME = "policy.retrieveToken.claimsParser.className";
 	public final static String POLICY_RETRIEVE_TOKEN_MODE = "policy.retrieveToken.mode";
+	public final static String POLICY_RETRIEVE_TOKEN_MODE_PDND = "policy.retrieveToken.jwt.pdnd";
 	public final static String POLICY_RETRIEVE_TOKEN_URL = "policy.retrieveToken.endpoint.url";
 	public final static String POLICY_RETRIEVE_TOKEN_RESPONSE_TYPE = "policy.retrieveToken.responseType";
 	public final static String POLICY_RETRIEVE_TOKEN_AUTH_BASIC_STATO = "policy.retrieveToken.endpoint.basic.stato";
@@ -205,14 +241,34 @@ public class Costanti {
 	public final static String POLICY_RETRIEVE_TOKEN_PASSWORD = "policy.retrieveToken.password";
 	public final static String POLICY_RETRIEVE_TOKEN_SCOPES = "policy.retrieveToken.scope";
 	public final static String POLICY_RETRIEVE_TOKEN_AUDIENCE = "policy.retrieveToken.audience";
+	public final static String POLICY_RETRIEVE_TOKEN_FORM_CLIENT_ID = "policy.retrieveToken.formClientId";
+	public final static String POLICY_RETRIEVE_TOKEN_FORM_PARAMETERS = "policy.retrieveToken.formParameters";
 	public final static String POLICY_RETRIEVE_TOKEN_SAVE_ERROR_IN_CACHE = "policy.retrieveToken.saveErrorInCache";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_CLIENT_ID= "policy.retrieveToken.jwt.clientId";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_CLIENT_SECRET= "policy.retrieveToken.jwt.clientSecret";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_ISSUER= "policy.retrieveToken.jwt.issuer";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SUBJECT= "policy.retrieveToken.jwt.subject";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_AUDIENCE= "policy.retrieveToken.jwt.audience";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_EXPIRED_TTL_SECONDS= "policy.retrieveToken.jwt.expired";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_EXPIRED_TTL_SECONDS_DEFAULT_VALUE = "300";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_CLAIMS = "policy.retrieveToken.jwt.claims";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_PURPOSE_ID = "policy.retrieveToken.jwt.purposeId";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SESSION_INFO = "policy.retrieveToken.jwt.sessionInfo";
+	
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_ALGORITHM= "policy.retrieveToken.jwt.signature.algorithm";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID = "policy.retrieveToken.jwt.signature.include.key.id";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_NOT_PRESENT = "false"; // per backward compatibility
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_ALIAS = "true"; // per backward compatibility
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_CLIENT_ID = "client_id";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_CUSTOM = "custom";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_VALUE = "policy.retrieveToken.jwt.signature.include.key.id.value";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_X509_CERT = "policy.retrieveToken.jwt.signature.include.cert";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_X509_URL = "policy.retrieveToken.jwt.signature.include.x509url";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_X509_SHA1 = "policy.retrieveToken.jwt.signature.include.cert.sha1";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_X509_SHA256 = "policy.retrieveToken.jwt.signature.include.cert.sha256";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_JOSE_CONTENT_TYPE = "policy.retrieveToken.jwt.signature.joseContentType";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_JOSE_TYPE = "policy.retrieveToken.jwt.signature.joseType";
+	
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_TYPE= "policy.retrieveToken.jwt.signature.keystoreType";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_FILE= "policy.retrieveToken.jwt.signature.keystoreFile";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_PASSWORD= "policy.retrieveToken.jwt.signature.keystorePassword";
@@ -228,12 +284,43 @@ public class Costanti {
 	public final static String POLICY_RETRIEVE_TOKEN_FORWARD_MODE_CUSTOM_URL_PARAMETER_NAME = "policy.tokenForward.mode.queryParameter";
 
 	
+	// VALORE VUOTO
+	
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED = "${undefined}";
+	
+	
+	// CLAIMS PDND
+	
+	public final static String PDND_PURPOSE_ID = "purposeId";
+	public final static String PDND_SESSION_INFO = "sessionInfo";
+	
+	public final static String PDND_OAUTH2_RFC_6749_REQUEST_CLIENT_ID = "client_id";
 	
 	
 	// STANDARD
 	
 	public final static String RFC6750_URI_QUERY_PARAMETER_ACCESS_TOKEN = "access_token";
 	public final static String RFC6750_FORM_PARAMETER_ACCESS_TOKEN = "access_token";
+	
+	// ELEMENTI ID 
+	
+	public final static String ID_RETRIEVE_ENDPOINT_URL = "endpointURL";
+	public final static String ID_RETRIEVE_AUTENTICAZIONE_USERNAME = "autenticazioneUsername";
+	public final static String ID_RETRIEVE_CLIENT_ID = "autenticazioneEndpointBasicUsername";
+	public final static String ID_RETRIEVE_JWT_KID_VALUE = "jwtSignatureKidValue";
+	public final static String ID_RETRIEVE_JWT_X5U = "jwtSignatureIncludeCertModeX5U";
+	public final static String ID_RETRIEVE_JWT_CLIENT_ID = "jwtClientId";
+	public final static String ID_RETRIEVE_JWT_AUDIENCE = "jwtAudience";
+	public final static String ID_RETRIEVE_JWT_ISSUER = "jwtIssuer";
+	public final static String ID_RETRIEVE_JWT_SUBJECT = "jwtSubject";
+	public final static String ID_RETRIEVE_JWT_CLAIMS = "jwtPayloadClaims";
+	public final static String ID_RETRIEVE_JWT_PURPOSE_ID = "jwtPurposeID";
+	public final static String ID_RETRIEVE_JWT_SESSION_INFO = "jwtSessionInfo";
+	public final static String ID_RETRIEVE_SCOPE = "scope";
+	public final static String ID_RETRIEVE_AUDIENCE = "audience";
+	public final static String ID_RETRIEVE_FORM_CLIENT_ID = "formClientId";
+	public final static String ID_RETRIEVE_FORM_PARAMETERS = "formParameters";
+	
 	
 	// ELEMENTI SELECT
 	

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -64,6 +64,7 @@ import org.openspcoop2.web.monitor.statistiche.dao.ConfigurazioniGeneraliService
 import org.openspcoop2.web.monitor.statistiche.mbean.AndamentoTemporaleBean;
 import org.openspcoop2.web.monitor.statistiche.mbean.BaseStatsMBean;
 import org.openspcoop2.web.monitor.statistiche.mbean.DistribuzionePerAzioneBean;
+import org.openspcoop2.web.monitor.statistiche.mbean.DistribuzionePerErroriBean;
 import org.openspcoop2.web.monitor.statistiche.mbean.DistribuzionePerSABean;
 import org.openspcoop2.web.monitor.statistiche.mbean.DistribuzionePerServizioBean;
 import org.openspcoop2.web.monitor.statistiche.mbean.DistribuzionePerSoggettoBean;
@@ -376,6 +377,15 @@ public class ReportExporter extends HttpServlet{
 				((AndamentoTemporaleBean) bean).setStatisticheGiornaliereService(service);
 				((AndamentoTemporaleBean) bean).setSearch(statSearchForm);
 				((AndamentoTemporaleBean) bean).initSearchListenerDistribuzionePerEsiti(null); 
+			}
+			else if(CostantiExporter.TIPO_DISTRIBUZIONE_ERRORI.equals(tipoDistribuzioneReport)){
+				statSearchForm.setTipoStatistica(TipoStatistica.DISTRIBUZIONE_ERRORI);
+				service.setDistribErroriSearch(statSearchForm);
+				bean = new DistribuzionePerErroriBean<>(service.getUtilsServiceManager(), service.getPluginsServiceManager(),
+						service.getDriverRegistroServiziDB(), service.getDriverConfigurazioneDB());
+				((DistribuzionePerErroriBean<?>) bean).setStatisticheGiornaliereService(service);
+				((DistribuzionePerErroriBean<?>) bean).setSearch(statSearchForm);
+				((DistribuzionePerErroriBean<?>) bean).getSearch().initSearchListener(null);
 			}
 			else if(CostantiExporter.TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO.equals(tipoDistribuzioneReport)){
 				statSearchForm.setTipoStatistica(TipoStatistica.DISTRIBUZIONE_SOGGETTO);

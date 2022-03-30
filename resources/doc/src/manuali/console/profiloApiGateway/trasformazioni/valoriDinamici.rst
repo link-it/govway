@@ -8,7 +8,7 @@ Le regole di trasformazione possono avvalersi di un contesto di risorse, con val
 -   *header:NAME* : valore dell'header http, corrispondente all'identificativo NAME, della richiesta.
 -   *query:NAME* : valore di un parametro della url di invocazione, corrispondente all'identificativo NAME.
 -   *form:NAME* : valore di un parametro della form, corrispondente all'identificativo NAME.
--   *urlRegExp:EXPR* : applicazione di un’espressione regolare, rappresentata dal valore EXPR, alla url di invocazione.
+-   *urlRegExp:EXPR* : applicazione di un’espressione regolare, rappresentata dal valore EXPR, alla url di invocazione (l'espressione deve avere un match con l'intera url).
 -   *xPath:EXPR* : applicazione di un'espressione XPath, rappresentata dal valore EXPR, alla richiesta xml (o soap).
 -   *jsonPath:EXPR* : applicazione di un'espressione jsonPath, rappresentata dal valore EXPR, alla richiesta json.
 -   *transaction:id* : l'identificativo UUID della transazione corrente.
@@ -95,6 +95,7 @@ Nel caso di utilizzo di template 'Freemarker' o 'Velocity' sono disponibili i se
 
 - transportContext (org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext); permette di accedere ai dati della richiesta http (servlet request, principal ...)
 - request/response: permette di accedere al contenuto della richiesta/risposta (org.openspcoop2.pdd.core.dynamic.ContentExtractor)
+- attachments (org.openspcoop2.pdd.core.dynamic.AttachmentsReader); consente di ottenere gli allegati registrati sull'API
 - context (java.util.Map<String, Object>); permette di accedere al contesto della richiesta.
 - errorHandler (org.openspcoop2.pdd.core.dynamic.ErrorHandler); permette di generare risposte personalizzate che segnalano l'impossibilità di proseguire la trasformazione.
 

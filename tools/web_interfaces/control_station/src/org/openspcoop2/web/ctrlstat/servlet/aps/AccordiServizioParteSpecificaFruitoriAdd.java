@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -159,7 +159,9 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 	
 	// file
 	private String requestOutputFileName = null;
+	private String requestOutputFileName_permissions = null;
 	private String requestOutputFileNameHeaders = null;
+	private String requestOutputFileNameHeaders_permissions = null;
 	private String requestOutputParentDirCreateIfNotExists = null;
 	private String requestOutputOverwriteIfExists = null;
 	private String responseInputMode = null;
@@ -333,7 +335,9 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			
 			// file
 			this.requestOutputFileName = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
+			this.requestOutputFileName_permissions = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
 			this.requestOutputFileNameHeaders = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
+			this.requestOutputFileNameHeaders_permissions = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
 			this.requestOutputParentDirCreateIfNotExists = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
 			this.requestOutputOverwriteIfExists = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME);
 			this.responseInputMode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE);
@@ -811,7 +815,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
 								this.tempiRisposta_enabled, this.tempiRisposta_connectionTimeout, this.tempiRisposta_readTimeout, this.tempiRisposta_tempoMedioRisposta,
 								this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
-								this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
+								this.requestOutputFileName, this.requestOutputFileName_permissions, this.requestOutputFileNameHeaders, this.requestOutputFileNameHeaders_permissions,
+								this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 								this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 								this.autenticazioneToken,this.token_policy,
 								listExtendedConnettore, false,
@@ -851,7 +856,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
 					this.tempiRisposta_enabled, this.tempiRisposta_connectionTimeout, this.tempiRisposta_readTimeout, this.tempiRisposta_tempoMedioRisposta,
 					this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
-					this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
+					this.requestOutputFileName, this.requestOutputFileName_permissions, this.requestOutputFileNameHeaders, this.requestOutputFileNameHeaders_permissions,
+					this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 					this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 					this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutenticazionePrincipal, this.fruizioneAutenticazioneParametroList, this.fruizioneAutorizzazione,
 					this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
@@ -955,7 +961,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
 							this.tempiRisposta_enabled, this.tempiRisposta_connectionTimeout, this.tempiRisposta_readTimeout, this.tempiRisposta_tempoMedioRisposta,
 							this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
-							this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
+							this.requestOutputFileName, this.requestOutputFileName_permissions, this.requestOutputFileNameHeaders, this.requestOutputFileNameHeaders_permissions,
+							this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 							this.autenticazioneToken,this.token_policy,
 							listExtendedConnettore, false,
@@ -1010,7 +1017,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
 						this.tempiRisposta_enabled, this.tempiRisposta_connectionTimeout, this.tempiRisposta_readTimeout, this.tempiRisposta_tempoMedioRisposta,
 						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
-						this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
+						this.requestOutputFileName, this.requestOutputFileName_permissions, this.requestOutputFileNameHeaders, this.requestOutputFileNameHeaders_permissions,
+						this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 						this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 						this.token_policy,
 						listExtendedConnettore);
@@ -1117,7 +1125,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
 								this.tempiRisposta_enabled, this.tempiRisposta_connectionTimeout, this.tempiRisposta_readTimeout, this.tempiRisposta_tempoMedioRisposta,
 								this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
-								this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
+								this.requestOutputFileName, this.requestOutputFileName_permissions, this.requestOutputFileNameHeaders, this.requestOutputFileNameHeaders_permissions,
+								this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 								this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 								this.autenticazioneToken,this.token_policy,
 								listExtendedConnettore, false,

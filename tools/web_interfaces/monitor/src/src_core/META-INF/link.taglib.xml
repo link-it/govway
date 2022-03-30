@@ -35,6 +35,14 @@
    		<tag-name>simpleDataTable</tag-name>
    		<source>taglib/SimpleDataTable.xhtml</source>
    	</tag>
+   	<tag>
+   		<tag-name>propWithInfo</tag-name>
+   		<source>taglib/propertyWithInfo.xhtml</source>
+   	</tag>
+   	<tag>
+   		<tag-name>dialogInfo</tag-name>
+   		<source>taglib/dialogInfo.xhtml</source>
+   	</tag>
    <function>
       <function-name>concat</function-name>
       <function-class>org.openspcoop2.web.monitor.core.taglib.Utils</function-class>

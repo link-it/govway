@@ -80,8 +80,49 @@ Per abilitare il processamento degli header inoltrati dal frontend è necessario
       # Modalità di autenticazione da parte di GovWay del webServer (none/ssl/basic/principal)
       org.openspcoop2.pdd.services.pd.gestoreCredenziali.autenticazioneCanale=none
       # Credenziali attese da GovWay (a seconda della modalità di autenticazione indicata) che identificano il webServer
-      #org.openspcoop2.pdd.services.pd.gestoreCredenziali.autenticazioneCanale.basic.username=Username
-      #org.openspcoop2.pdd.services.pd.gestoreCredenziali.autenticazioneCanale.basic.password=Password
-      #org.openspcoop2.pdd.services.pd.gestoreCredenziali.autenticazioneCanale.ssl.subject=Subject
-      #org.openspcoop2.pdd.services.pd.gestoreCredenziali.autenticazioneCanale.principal=Principal
-                              
+      #org.openspcoop2.pdd.services.pa.gestoreCredenziali.autenticazioneCanale.basic.username=Username
+      #org.openspcoop2.pdd.services.pa.gestoreCredenziali.autenticazioneCanale.basic.password=Password
+      #org.openspcoop2.pdd.services.pa.gestoreCredenziali.autenticazioneCanale.ssl.subject=Subject
+      #org.openspcoop2.pdd.services.pa.gestoreCredenziali.autenticazioneCanale.principal=Principal
+
+Ogni parametro di configurazione descritto nei precedenti punti è personalizzabile in funzione del profilo di interoperabilità e del soggetto associato ad ogni dominio gestito. Di seguito vengono definite le varie modalità di ridefinizione nell'ordine dalla più generica alla più specifica, agendo dopo il prefisso 'org.openspcoop2.pdd.services.pa.gestoreCredenziali.' e prima del nome della proprietà:
+
+- *org.openspcoop2.pdd.services.pa.gestoreCredenziali.<profilo>.PROPRIETA*
+
+  consente di restringere la configurazione ad un determinato Profilo di Interoperabilità; '<profilo>' può assumere i valori 'trasparente' (Profilo API Gateway), 'modipa' (Profilo ModI), 'spcoop' (Profilo SPCoop), 'as4' (Profilo eDelivery), 'sdi' (Profilo Fatturazione Elettronica). Esempio:
+
+   ::
+
+      org.openspcoop2.pdd.services.pa.gestoreCredenziali.spcoop.nome=WebServerAutenticazioneSPCoop
+
+- *org.openspcoop2.pdd.services.pa.gestoreCredenziali.<nomeSoggetto>.PROPRIETA*
+
+  la configurazione indicata verrà utilizzata solamente per il soggetto interno indicato in '<nomeSoggetto>'. Esempio:
+
+   ::
+
+      org.openspcoop2.pdd.services.pa.gestoreCredenziali.EnteDominioInternoEsempio.nome=WebServerAutenticazioneSPCoop
+
+- *org.openspcoop2.pdd.services.pa.gestoreCredenziali.<profilo>-<nomeSoggetto>.PROPRIETA*
+
+  configurazione che consente di indicare il profilo di interoperabilità a cui appartiene il soggetto indicato, visto che un soggetto con lo stesso nome può essere registrato su profili differenti.  Esempio:
+
+   ::
+
+      org.openspcoop2.pdd.services.pa.gestoreCredenziali.spcoop-EnteDominioInternoEsempio.nome=WebServerAutenticazioneSPCoop
+
+- *org.openspcoop2.pdd.services.pa.gestoreCredenziali.<tipoSoggetto>-<nomeSoggetto>.PROPRIETA*
+ 
+  rispetto alle precedenti due proprietà è possibile indicare per il soggetto interno, indicato in '<nomeSoggetto>', anche il tipo (tipoSoggetto>. Questa opzione è utile nei profili di interoperabilità dove ai soggetti è possibile associare più tipi, come ad es. in SPCoop dove sono utilizzabili i tipi 'spc', 'aoo', 'test'. Esempio:
+
+   ::
+
+      org.openspcoop2.pdd.services.pa.gestoreCredenziali.aoo-EnteDominioInternoEsempio.nome=WebServerAutenticazioneSPCoop
+
+- *org.openspcoop2.pdd.services.pa.gestoreCredenziali.<profilo>-<tipoSoggetto>-<nomeSoggetto>.PROPRIETA*
+
+  rappresenta la configurazione più specifica possibile dove viene combinato sia il profilo di interoperabilità che il tipo e il nome del soggetto interno. Esempio:
+
+   ::
+
+      org.openspcoop2.pdd.services.pa.gestoreCredenziali.spcoop-aoo-EnteDominioInternoEsempio.nome=WebServerAutenticazioneSPCoop

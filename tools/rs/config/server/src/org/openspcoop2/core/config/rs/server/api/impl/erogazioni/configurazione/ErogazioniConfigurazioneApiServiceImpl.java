@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -137,6 +137,7 @@ import org.openspcoop2.core.registry.constants.ScopeContesto;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
 import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
@@ -688,12 +689,19 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			final Long idPorta = pa.getId();
 			
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env),
+					"Accordo Servizio Parte Specifica");
+			final AccordoServizioParteComuneSintetico apc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
+			ServiceBinding serviceBinding = env.apcCore.toMessageServiceBinding(apc.getServiceBinding());
+						
 			StringBuilder existsMessage = new StringBuilder();
 			if ( ConsoleUtilities.alreadyExistsCorrelazioneApplicativaRichiesta(env.paCore, idPorta, body.getElemento(), 0, existsMessage)) {
 				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(existsMessage.toString()));
 			}
 			
-			if ( !correlazioneApplicativaRichiestaCheckData(TipoOperazione.ADD, env.requestWrapper, env.paHelper, false, body, idPorta, null) ) {
+			if ( !correlazioneApplicativaRichiestaCheckData(TipoOperazione.ADD, env.requestWrapper, env.paHelper, false, body, idPorta, null,
+					serviceBinding) ) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 									
@@ -746,13 +754,19 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			final Long idPorta = pa.getId();
 			
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env),
+					"Accordo Servizio Parte Specifica");
+			final AccordoServizioParteComuneSintetico apc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
+			ServiceBinding serviceBinding = env.apcCore.toMessageServiceBinding(apc.getServiceBinding());
 			
 			StringBuilder existsMessage = new StringBuilder();
 			if ( ConsoleUtilities.alreadyExistsCorrelazioneApplicativaRisposta(env.paCore, idPorta, body.getElemento(), 0, existsMessage)) {
 				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(existsMessage.toString()));
 			}
 			
-			if ( !correlazioneApplicativaRispostaCheckData(TipoOperazione.ADD, env.requestWrapper, env.pdHelper, false, body, idPorta, null)) {
+			if ( !correlazioneApplicativaRispostaCheckData(TipoOperazione.ADD, env.requestWrapper, env.pdHelper, false, body, idPorta, null,
+					serviceBinding)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
                        			
@@ -2932,6 +2946,12 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			final Long idPorta = pa.getId();
 			
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env),
+					"Accordo Servizio Parte Specifica");
+			final AccordoServizioParteComuneSintetico apc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
+			ServiceBinding serviceBinding = env.apcCore.toMessageServiceBinding(apc.getServiceBinding());
+			
 			if (pa.getCorrelazioneApplicativa() == null)
 				pa.setCorrelazioneApplicativa(new org.openspcoop2.core.config.CorrelazioneApplicativa());
 			
@@ -2941,7 +2961,8 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			if ( oldElem == null ) 
 				throw FaultCode.NOT_FOUND.toException("Correlazione Applicativa Richiesta per l'elemento " + elemento + " non trovata ");
 			
-			if ( !correlazioneApplicativaRichiestaCheckData(TipoOperazione.CHANGE, env.requestWrapper, env.pdHelper, false, body, idPorta, oldElem.getId())) {
+			if ( !correlazioneApplicativaRichiestaCheckData(TipoOperazione.CHANGE, env.requestWrapper, env.pdHelper, false, body, idPorta, oldElem.getId(),
+					serviceBinding)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			
@@ -2992,6 +3013,12 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			final Long idPorta = pa.getId();
 			
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env),
+					"Accordo Servizio Parte Specifica");
+			final AccordoServizioParteComuneSintetico apc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
+			ServiceBinding serviceBinding = env.apcCore.toMessageServiceBinding(apc.getServiceBinding());
+			
 			if (pa.getCorrelazioneApplicativaRisposta() == null)
 				pa.setCorrelazioneApplicativaRisposta(new org.openspcoop2.core.config.CorrelazioneApplicativaRisposta());
 			
@@ -3001,7 +3028,8 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			if ( oldElem == null ) 
 				throw FaultCode.NOT_FOUND.toException("Correlazione Applicativa Risposta per l'elemento " + elemento + " non trovata ");
 			
-			if ( !correlazioneApplicativaRispostaCheckData(TipoOperazione.CHANGE, env.requestWrapper, env.pdHelper, false, body, idPorta, oldElem.getId())) {
+			if ( !correlazioneApplicativaRispostaCheckData(TipoOperazione.CHANGE, env.requestWrapper, env.pdHelper, false, body, idPorta, oldElem.getId(),
+					serviceBinding)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			

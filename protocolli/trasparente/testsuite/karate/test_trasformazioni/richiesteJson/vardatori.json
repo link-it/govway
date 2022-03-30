@@ -1,0 +1,140 @@
+{
+   "codiceComunicazione": "1300111300006000",
+   "dataInvio": "2019-03-29T12:59:07.000+01:00",
+   "direzione": "RICHIESTA",
+   "mittente": "NAZIONALE",
+"destinatario": "SoggettoInternoTest",
+   "servizio": "NotificaComunicazioneObbligatoria",
+   "profiloCollaborazione": "SERVIZIO_SINCRONO",
+   "identificatore": "PIEMONTE_PDDPIEMONTE_1561295_2021-09-30_12:21",
+   "modello":    {
+      "payload":       {
+         "codiceComunicazione": "1300111300006000",
+         "dataInvio": "2010-03-18T17:29:38.000+01:00",
+         "datoreAttuale":          {
+            "codiceFiscale": "10000000009",
+            "denominazione": "prova standard",
+            "pubblicaAmministrazione": "SI",
+            "sede":             {
+               "cap": "35031",
+               "comune": "A496",
+               "indirizzo": "via",
+               "telefono": "987987879"
+            },
+            "settore": "01.13.10"
+         },
+         "emailDelegato": "utente.test@anpal.it",
+         "protocollo": "00000152",
+         "tipoComunicazione": "01",
+         "trasferimentoAzienda":          {
+            "codiceTrasferimento": "02",
+            "dataFineAffittoRamo": "2011-03-17",
+            "dataInizio": "2010-03-17",
+            "datorePrecedente":             {
+               "codiceFiscale": "50000000005",
+               "denominazione": "q",
+               "sede":                {
+                  "cap": "51021",
+                  "comune": "A496",
+                  "indirizzo": "1",
+                  "telefono": "11111111"
+               },
+               "settore": "01.13.10"
+            },
+            "sedeLavoro":             [
+                              {
+                  "cap": "64010",
+                  "comune": "A496",
+                  "indirizzo": "1",
+                  "telefono": "2222222",
+                  "lavoratori":                   [
+                                          {
+                        "contratto":                         {
+                           "assunzioneObbligatoria": "NO",
+                           "ccnl": "003",
+                           "dataFine": "2010-03-27",
+                           "dataInizio": "2010-03-10",
+                           "entePrevidenziale": "01",
+                           "ggLavorativePreviste": "1234",
+                           "lavInMobilita": "NO",
+                           "lavoroInAgricoltura": "NO",
+                           "lavoroStagionale": "NO",
+                           "livelloInquadramento": "1",
+                           "patINAIL": "1234567890",
+                           "qualificaProfessionale": "1.1.1.1.0.0",
+                           "retribuzioneCompenso": "1000",
+                           "tipologiaContrattuale": "A.01.00"
+                        },
+                        "datiLavoratore":                         {
+                           "codiceFiscale": "02914260787",
+                           "cognome": "CLARA",
+                           "comuneDomicilio": "A005",
+                           "nome": "MARIA"
+                        }
+                     },
+                                          {
+                        "contratto":                         {
+                           "assunzioneObbligatoria": "NO",
+                           "ccnl": "003",
+                           "dataFine": "2010-03-27",
+                           "dataInizio": "2010-03-10",
+                           "entePrevidenziale": "01",
+                           "ggLavorativePreviste": "1234",
+                           "lavInMobilita": "NO",
+                           "lavoroInAgricoltura": "NO",
+                           "lavoroStagionale": "NO",
+                           "livelloInquadramento": "1",
+                           "patINAIL": "1234567890",
+                           "qualificaProfessionale": "1.1.1.1.0.0",
+                           "retribuzioneCompenso": "1000",
+                           "tipologiaContrattuale": "A.01.00"
+                        },
+                        "datiLavoratore":                         {
+                           "codiceFiscale": "50000000005",
+                           "cognome": "q",
+                           "comuneDomicilio": "A005",
+                           "nome": "tip"
+                        }
+                     }
+                  ]
+               },
+                              {
+                  "cap": "64010",
+                  "comune": "A496",
+                  "indirizzo": "1",
+                  "telefono": "333333",
+                  "lavoratori": [                  {
+                     "contratto":                      {
+                        "assunzioneObbligatoria": "NO",
+                        "ccnl": "003",
+                        "dataFine": "2010-03-27",
+                        "dataInizio": "2010-03-10",
+                        "entePrevidenziale": "01",
+                        "ggLavorativePreviste": "1234",
+                        "lavInMobilita": "NO",
+                        "lavoroInAgricoltura": "NO",
+                        "lavoroStagionale": "NO",
+                        "livelloInquadramento": "1",
+                        "patINAIL": "1234567890",
+                        "qualificaProfessionale": "1.1.1.1.0.0",
+                        "retribuzioneCompenso": "1000",
+                        "tipologiaContrattuale": "A.01.00"
+                     },
+                     "datiLavoratore":                      {
+                        "codiceFiscale": "50000000005",
+                        "cognome": "q",
+                        "comuneDomicilio": "A005",
+                        "nome": "tip"
+                     }
+                  }]
+               }
+            ]
+         },
+         "versione": "CO190701R1"
+      },
+      "tipoModello": "VARDATORI"
+   },
+   "profiloCollaborazione": "SERVIZIO_SINCRONO",
+   "servizio": "InviaComunicazioneObbligatoria",
+	"riferimentoMessaggio": "IDRICHIESTA"
+}

@@ -60,7 +60,7 @@ indicare i seguenti dati:
    -  *Url di Invocazione*: il valore viene preso dalla url utilizzata dal
       servizio applicativo per l'invocazione. La regola per l'estrazione
       dalla url viene specificata tramite un'espressione regolare
-      inserita nel campo pattern.
+      inserita nel campo pattern (l'espressione deve avere un match con l'intera url).
 
    -  *Contenuto*: Il valore viene estratto direttamente dal
       messaggio applicativo. La regola per l'estrazione dal messaggio è

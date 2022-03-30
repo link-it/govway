@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -59,6 +59,7 @@ import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.utils.dch.InputStreamDataSource;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.io.ArchiveType;
+import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -202,8 +203,34 @@ public class GestoreTrasformazioniUtilities {
 		}
 	}
 	
+	private static String readCharset(Logger log, OpenSPCoop2Message msg, String forceContentType) throws Exception {
+		String contentType = forceContentType;
+		if(contentType==null || StringUtils.isEmpty(contentType)) {
+			if(msg!=null) {
+				contentType = msg.getContentType();
+			}
+		}
+		String charset = null;
+		if(contentType!=null) {
+			try {
+				boolean multipart = ContentTypeUtilities.isMultipartType(contentType);
+				if(!multipart) {
+					charset = ContentTypeUtilities.readCharsetFromContentType(contentType);
+				}
+				else {
+					String internalCT = ContentTypeUtilities.getInternalMultipartContentType(contentType);
+					charset = ContentTypeUtilities.readCharsetFromContentType(internalCT);
+				}
+			}catch(Throwable t) {
+				log.error("Lettura charset non riuscita: "+t.getMessage(),t);
+			}
+		}
+		return charset;
+	}
+	
 	public static RisultatoTrasformazioneContenuto trasformazioneContenuto(Logger log, String tipoConversioneContenuto, 
-			byte[] contenuto, String oggetto, Map<String, Object> dynamicMap, OpenSPCoop2Message msg, MessageContent messageContent, PdDContext pddContext) throws Exception {
+			byte[] contenuto, String oggetto, Map<String, Object> dynamicMap, OpenSPCoop2Message msg, MessageContent messageContent, PdDContext pddContext,
+			String forceContentType, boolean readCharset) throws Exception {
 		TipoTrasformazione tipoTrasformazione = null;
 		if(tipoConversioneContenuto!=null) {
 			tipoTrasformazione = TipoTrasformazione.toEnumConstant(tipoConversioneContenuto, true);
@@ -213,6 +240,15 @@ public class GestoreTrasformazioniUtilities {
 		}
 		
 		log.debug("Trasformazione "+oggetto+" ["+tipoConversioneContenuto+"] ...");
+		
+		
+		String charset = null;
+		if(readCharset) {
+			charset = readCharset(log, msg, forceContentType);
+			if(charset==null) {
+				charset = Charset.UTF_8.getValue();
+			}
+		}
 		
 		RisultatoTrasformazioneContenuto risultato = new RisultatoTrasformazioneContenuto();
 		risultato.setTipoTrasformazione(tipoTrasformazione);
@@ -259,10 +295,10 @@ public class GestoreTrasformazioniUtilities {
 			log.debug("trasformazione "+oggetto+" ["+tipoTrasformazione+"], risoluzione template ...");
 			bout = new ByteArrayOutputStream();
 			if(TipoTrasformazione.FREEMARKER_TEMPLATE.equals(tipoTrasformazione) || TipoTrasformazione.CONTEXT_FREEMARKER_TEMPLATE.equals(tipoTrasformazione)) {
-				DynamicUtils.convertFreeMarkerTemplate("template.ftl", contenuto, dynamicMap, bout);
+				DynamicUtils.convertFreeMarkerTemplate("template.ftl", contenuto, dynamicMap, bout, charset);
 			}
 			else {
-				DynamicUtils.convertZipFreeMarkerTemplate("template.ftl.zip", contenuto, dynamicMap, bout);
+				DynamicUtils.convertZipFreeMarkerTemplate("template.ftl.zip", contenuto, dynamicMap, bout, charset);
 			}
 			bout.flush();
 			bout.close();
@@ -271,7 +307,8 @@ public class GestoreTrasformazioniUtilities {
 				risultato.setEmpty(true);
 			}
 			else {
-				risultato.setContenuto(bout.toByteArray(), bout.toString());
+				risultato.setContenuto(bout.toByteArray(), 
+						charset!=null ? bout.toString(charset) : bout.toString());
 			}
 			
 			break;
@@ -286,10 +323,10 @@ public class GestoreTrasformazioniUtilities {
 			log.debug("trasformazione "+oggetto+" ["+tipoTrasformazione+"], risoluzione template ...");
 			bout = new ByteArrayOutputStream();
 			if(TipoTrasformazione.VELOCITY_TEMPLATE.equals(tipoTrasformazione) || TipoTrasformazione.CONTEXT_VELOCITY_TEMPLATE.equals(tipoTrasformazione)) {
-				DynamicUtils.convertVelocityTemplate("template.vm", contenuto, dynamicMap, bout);
+				DynamicUtils.convertVelocityTemplate("template.vm", contenuto, dynamicMap, bout, charset);
 			}
 			else {
-				DynamicUtils.convertZipVelocityTemplate("template.vm.zip", contenuto, dynamicMap, bout);	
+				DynamicUtils.convertZipVelocityTemplate("template.vm.zip", contenuto, dynamicMap, bout, charset);	
 			}
 			bout.flush();
 			bout.close();
@@ -298,7 +335,8 @@ public class GestoreTrasformazioniUtilities {
 				risultato.setEmpty(true);
 			}
 			else {
-				risultato.setContenuto(bout.toByteArray(), bout.toString());
+				risultato.setContenuto(bout.toByteArray(), 
+						charset!=null ? bout.toString(charset) : bout.toString());
 			}
 			
 			break;
@@ -373,7 +411,7 @@ public class GestoreTrasformazioniUtilities {
 			Map<String, List<String>> trasporto, Map<String, List<String>> forceAddTrasporto, 
 			Map<String, List<String>> url, Map<String, List<String>> forceAddUrl,
 			int status,
-			String contentTypeInput, Integer returnCodeInput,
+			String contentTypeInput, String returnCodeInput, // nota: contentTypeInput e returnCodeInput e' già convertito nei template prima della chiamata del metodo
 			RisultatoTrasformazioneContenuto risultato,
 			boolean trasformazioneRest, 
 			String trasformazioneRest_method, String trasformazioneRest_path,
@@ -387,7 +425,7 @@ public class GestoreTrasformazioniUtilities {
 			OpenSPCoop2MessageFactory messageFactory = message.getFactory();
 			
 			// TransportRequest
-			Integer forceResponseStatus = null;
+			String forceResponseStatus = null;
 			TransportRequestContext transportRequestContext = null;
 			TransportResponseContext transportResponseContext = null;
 			if(MessageRole.REQUEST.equals(message.getMessageRole())) {
@@ -398,13 +436,14 @@ public class GestoreTrasformazioniUtilities {
 			else {
 				transportResponseContext = new TransportResponseContext(log);
 				transportResponseContext.setHeaders(trasporto);
-				if(returnCodeInput!=null) {
-					transportResponseContext.setCodiceTrasporto(returnCodeInput.intValue()+"");
+				if(returnCodeInput!=null && StringUtils.isNotEmpty(returnCodeInput)) {
+					// nota: returnCodeInput e' già convertito nei template prima della chiamata del metodo
+					transportResponseContext.setCodiceTrasporto(returnCodeInput);
 					forceResponseStatus = returnCodeInput;
 				}
 				else {
 					transportResponseContext.setCodiceTrasporto(status+"");
-					forceResponseStatus = status;
+					forceResponseStatus = status+"";
 				}
 			}
 			
@@ -609,7 +648,8 @@ public class GestoreTrasformazioniUtilities {
 									GestoreTrasformazioniUtilities.trasformazioneContenuto(log, 
 											trasformazioneSoap_tipoConversione, 
 											trasformazioneSoap_templateConversione, 
-											"envelope-body", dynamicMap, message, messageContent, pddContext);
+											"envelope-body", dynamicMap, message, messageContent, pddContext, 
+											null, false);
 							try {
 								if(risultatoEnvelopeBody.isEmpty()) {
 									if(transportRequestContext!=null) {
@@ -626,11 +666,13 @@ public class GestoreTrasformazioniUtilities {
 										OpenSPCoop2MessageParseResult pr = null;
 										if(transportRequestContext!=null) {
 											pr = messageFactory.envelopingMessage(messageType, contentTypeForEnvelope, 
-													soapAction, transportRequestContext, risultatoEnvelopeBody.getContenuto(), null, true);
+													soapAction, transportRequestContext, risultatoEnvelopeBody.getContenuto(), null, true,
+													op2Properties.useSoapMessageReader(), op2Properties.getSoapMessageReaderBufferThresholdKb());
 										}
 										else {
 											pr = messageFactory.envelopingMessage(messageType, contentTypeForEnvelope, 
-													soapAction, transportResponseContext, risultatoEnvelopeBody.getContenuto(), null, true);
+													soapAction, transportResponseContext, risultatoEnvelopeBody.getContenuto(), null, true,
+													op2Properties.useSoapMessageReader(), op2Properties.getSoapMessageReaderBufferThresholdKb());
 										}
 										messageSoap = pr.getMessage_throwParseThrowable();
 									}
@@ -696,11 +738,13 @@ public class GestoreTrasformazioniUtilities {
 								OpenSPCoop2MessageParseResult pr = null;
 								if(transportRequestContext!=null) {
 									pr = messageFactory.envelopingMessage(messageType, contentTypeForEnvelope, 
-											soapAction, transportRequestContext, risultato.getContenuto(), null, true);
+											soapAction, transportRequestContext, risultato.getContenuto(), null, true,
+											op2Properties.useSoapMessageReader(), op2Properties.getSoapMessageReaderBufferThresholdKb());
 								}
 								else {
 									pr = messageFactory.envelopingMessage(messageType, contentTypeForEnvelope, 
-											soapAction, transportResponseContext, risultato.getContenuto(), null, true);
+											soapAction, transportResponseContext, risultato.getContenuto(), null, true,
+											op2Properties.useSoapMessageReader(), op2Properties.getSoapMessageReaderBufferThresholdKb());
 								}
 								messageSoap = pr.getMessage_throwParseThrowable();
 							}
@@ -866,7 +910,7 @@ public class GestoreTrasformazioniUtilities {
 		}
 	}
 	
-	public static void addTransportInfo(Map<String, List<String>> forceAddTrasporto, Map<String, List<String>> forceAddUrl, Integer forceResponseStatus, OpenSPCoop2Message msg) {
+	public static void addTransportInfo(Map<String, List<String>> forceAddTrasporto, Map<String, List<String>> forceAddUrl, String forceResponseStatus, OpenSPCoop2Message msg) {
 		if(forceAddTrasporto!=null && !forceAddTrasporto.isEmpty()) {
 			Iterator<String> keys = forceAddTrasporto.keySet().iterator();
 			while (keys.hasNext()) {
@@ -883,8 +927,20 @@ public class GestoreTrasformazioniUtilities {
 				msg.forceUrlProperty(key, values);	
 			}
 		}
-		if(forceResponseStatus!=null && forceResponseStatus.intValue()>0) {
-			msg.setForcedResponseCode(forceResponseStatus.intValue()+"");
+		if(forceResponseStatus!=null && StringUtils.isNotEmpty(forceResponseStatus)) {
+			msg.setForcedResponseCode(forceResponseStatus);
+		}
+	}
+	
+	public static void checkReturnCode(String forceResponseStatus) throws Exception {
+		int r = -1;
+		try {
+			r = Integer.valueOf(forceResponseStatus);
+		}catch(Exception e) {
+			throw new Exception("Codice HTTP di risposta deve essere un intero compreso tra 200 e 599, trovato: '"+forceResponseStatus+"'");
+		}
+		if(r<200 || r>599) {
+			throw new Exception("Codice HTTP di risposta deve essere un intero compreso tra 200 e 599, trovato: "+forceResponseStatus+"");
 		}
 	}
 	
@@ -976,7 +1032,7 @@ public class GestoreTrasformazioniUtilities {
 			}
 			bf.append(TIPO_TRASFORMAZIONE_CONVERSIONE_HEADERS);	
 		}
-		if(trasformazioneRisposta.getReturnCode()!=null && trasformazioneRisposta.getReturnCode()>0) {
+		if(trasformazioneRisposta.getReturnCode()!=null && StringUtils.isNotEmpty(trasformazioneRisposta.getReturnCode())) {
 			if(bf.length()>0) {
 				bf.append(TIPO_TRASFORMAZIONE_SEPARATOR);	
 			}

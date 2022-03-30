@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -54,6 +54,8 @@ public enum TipoIntegrazione {
 	TEMPLATE ("template", "Abilitato su richiesta e risposta", GruppoIntegrazione.TEMPLATE),
 	TEMPLATE_REQUEST ("template-request", "Abilitato solo sulla richiesta", GruppoIntegrazione.TEMPLATE),
 	TEMPLATE_RESPONSE ("template-response", "Abilitato solo sulla risposta", GruppoIntegrazione.TEMPLATE),
+	
+	AUTENTICAZIONE ("autenticazione", "Abilitato su richiesta e risposta", GruppoIntegrazione.AUTENTICAZIONE),
 	
 	OPENSPCOOP2_TRASPORTO_EXT ("openspcoop2-trasportoExt", "Abilitato verso dominio interno e esterno senza prefisso 'X-'", GruppoIntegrazione.BACKWARD_COMPATIBILITY_OPENSPCOOP2_HTTP),
 	OPENSPCOOP2_TRASPORTO ("openspcoop2-trasporto", "Abilitato solo verso dominio interno senza prefisso 'X-'", GruppoIntegrazione.BACKWARD_COMPATIBILITY_OPENSPCOOP2_HTTP),

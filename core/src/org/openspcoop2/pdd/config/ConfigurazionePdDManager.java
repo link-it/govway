@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -80,6 +80,7 @@ import org.openspcoop2.core.controllo_traffico.ElencoIdPolicyAttive;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDConnettore;
+import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -115,6 +116,7 @@ import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.mapping.IdentificazioneDinamicaException;
+import org.openspcoop2.protocol.registry.CertificateCheck;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -789,6 +791,14 @@ public class ConfigurazionePdDManager {
 		this.configurazionePdDReader.updateStatoPortaApplicativa(this.getConnection(), idPA, stato);
 	}
 	
+	public String updateStatoConnettoreMultiplo(IDPortaApplicativa idPA, String nomeConnettore, StatoFunzionalita stato) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.updateStatoConnettoreMultiplo(this.getConnection(), idPA, nomeConnettore, stato);
+	}
+	
+	public String updateSchedulingConnettoreMultiplo(IDPortaApplicativa idPA, String nomeConnettore, StatoFunzionalita stato) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.updateSchedulingConnettoreMultiplo(this.getConnection(), idPA, nomeConnettore, stato);
+	}
+	
 	public Map<String, String> getProprietaConfigurazione(PortaApplicativa pa) throws DriverConfigurazioneException {
 		return this.configurazionePdDReader.getProprietaConfigurazione(pa);
 	}
@@ -1153,6 +1163,112 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.consegnaRispostaAsincronaRispostaPerRiferimento(sa);
 	}
 
+	public CertificateCheck checkCertificatoApplicativoWithoutCache(long idSA, int sogliaWarningGiorni,  
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatoApplicativo(null, false,
+				idSA, sogliaWarningGiorni,  
+				addCertificateDetails, separator, newLine);
+	}
+
+	public CertificateCheck checkCertificatoApplicativoWithoutCache(IDServizioApplicativo idSA, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatoApplicativo(null, false,
+				idSA, sogliaWarningGiorni,  
+				addCertificateDetails, separator, newLine);
+	}
+	
+	public CertificateCheck checkCertificatoModiApplicativoWithoutCache(long idSA, int sogliaWarningGiorni,  
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatoModiApplicativo(null, false,
+				idSA, sogliaWarningGiorni,  
+				addCertificateDetails, separator, newLine);
+	}
+
+	public CertificateCheck checkCertificatoModiApplicativoWithoutCache(IDServizioApplicativo idSA, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatoModiApplicativo(null, false,
+				idSA, sogliaWarningGiorni,  
+				addCertificateDetails, separator, newLine);
+	}
+	
+	public CertificateCheck checkCertificatiConnettoreHttpsByIdWithoutCache(long idConnettore, int sogliaWarningGiorni,  
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatiConnettoreHttpsById(null, false,
+				idConnettore, sogliaWarningGiorni,  
+				addCertificateDetails, separator, newLine);
+	}
+	
+	public CertificateCheck checkCertificatiJvm(int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException {
+		return this.configurazionePdDReader.checkCertificatiJvm(sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine);
+	}
+
+	public CertificateCheck checkCertificatiConnettoreHttpsTokenPolicyValidazione(String nomePolicy, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatiConnettoreHttpsTokenPolicyValidazione(null, false,
+				nomePolicy, null, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine);
+	}
+	public CertificateCheck checkCertificatiConnettoreHttpsTokenPolicyValidazione(String nomePolicy, String tipo, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatiConnettoreHttpsTokenPolicyValidazione(null, false,
+				nomePolicy, tipo, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine);
+	}
+	
+	public CertificateCheck checkCertificatiValidazioneJwtTokenPolicyValidazione(String nomePolicy, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatiValidazioneJwtTokenPolicyValidazione(null, false,
+				nomePolicy, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine);
+	}
+	
+	public CertificateCheck checkCertificatiForwardToJwtTokenPolicyValidazione(String nomePolicy, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatiForwardToJwtTokenPolicyValidazione(null, false,
+				nomePolicy, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine);
+	}
+	
+	public CertificateCheck checkCertificatiConnettoreHttpsTokenPolicyNegoziazione(String nomePolicy, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatiConnettoreHttpsTokenPolicyNegoziazione(null, false,
+				nomePolicy, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine);
+	}
+	
+	public CertificateCheck checkCertificatiSignedJwtTokenPolicyNegoziazione(String nomePolicy, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatiSignedJwtTokenPolicyNegoziazione(null, false,
+				nomePolicy, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine);
+	}
+	
+	public CertificateCheck checkCertificatiConnettoreHttpsAttributeAuthority(String nomePolicy, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatiConnettoreHttpsAttributeAuthority(null, false,
+				nomePolicy, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine);
+	}
+	
+	public CertificateCheck checkCertificatiAttributeAuthorityJwtRichiesta(String nomePolicy, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatiAttributeAuthorityJwtRichiesta(null, false,
+				nomePolicy, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine);
+	}
+	
+	public CertificateCheck checkCertificatiAttributeAuthorityJwtRisposta(String nomePolicy, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this.configurazionePdDReader.checkCertificatiAttributeAuthorityJwtRisposta(null, false,
+				nomePolicy, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine);
+	}
+	
+	
+
+	
 
 	/* ********  CONFIGURAZIONE  ******** */
 
@@ -1564,11 +1680,11 @@ public class ConfigurazionePdDManager {
 	public boolean isForwardProxyEnabled() {
 		return this.configurazionePdDReader.isForwardProxyEnabled();
 	}
-	public ForwardProxy getForwardProxyConfigFruizione(IDSoggetto dominio, IDServizio idServizio) throws DriverConfigurazioneException{
-		return this.configurazionePdDReader.getForwardProxyConfigFruizione(dominio, idServizio);
+	public ForwardProxy getForwardProxyConfigFruizione(IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getForwardProxyConfigFruizione(dominio, idServizio, policy);
 	}
-	public ForwardProxy getForwardProxyConfigErogazione(IDSoggetto dominio, IDServizio idServizio) throws DriverConfigurazioneException{
-		return this.configurazionePdDReader.getForwardProxyConfigErogazione(dominio, idServizio);
+	public ForwardProxy getForwardProxyConfigErogazione(IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getForwardProxyConfigErogazione(dominio, idServizio, policy);
 	}
 	
 	/* ********  GENERIC FILE  ******** */

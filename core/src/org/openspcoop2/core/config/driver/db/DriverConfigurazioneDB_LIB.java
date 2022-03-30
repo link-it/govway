@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -5581,6 +5581,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("connettore_notifica", "?");
 				sqlQueryObject.addInsertField("connettore_descrizione", "?");
 				sqlQueryObject.addInsertField("connettore_stato", "?");
+				sqlQueryObject.addInsertField("connettore_scheduling", "?");
 				sqlQueryObject.addInsertField("connettore_filtri", "?");
 				sqlQueryObject.addInsertField("connettore_coda", "?");
 				sqlQueryObject.addInsertField("connettore_priorita", "?");
@@ -5616,6 +5617,7 @@ public class DriverConfigurazioneDB_LIB {
 					stm.setInt(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? (servizioApplicativo.getDatiConnettore().isNotifica() ? CostantiDB.TRUE : CostantiDB.FALSE) : CostantiDB.FALSE);
 					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? servizioApplicativo.getDatiConnettore().getDescrizione() : null);
 					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? getValue(servizioApplicativo.getDatiConnettore().getStato()) : null);
+					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? getValue(servizioApplicativo.getDatiConnettore().getScheduling()) : null);
 					
 					String filtri = null; 
 					if(servizioApplicativo.getDatiConnettore()!=null) {
@@ -5696,6 +5698,10 @@ public class DriverConfigurazioneDB_LIB {
 						for ( ; j < servizioApplicativo.getDatiConnettore().sizeProprietaList(); j++) {
 							
 							Proprieta p = servizioApplicativo.getDatiConnettore().getProprieta(j);
+							
+							if(p.getValore()==null || "".equals(p.getValore())) {
+								continue; // non devo serializzare valori vuoti o null (DB oracle non lo permette)
+							}
 							
 							stm.setLong(1, idPA_SA);
 							stm.setString(2, p.getNome());
@@ -6703,6 +6709,7 @@ public class DriverConfigurazioneDB_LIB {
 					sqlQueryObject.addInsertField("connettore_notifica", "?");
 					sqlQueryObject.addInsertField("connettore_descrizione", "?");
 					sqlQueryObject.addInsertField("connettore_stato", "?");
+					sqlQueryObject.addInsertField("connettore_scheduling", "?");
 					sqlQueryObject.addInsertField("connettore_filtri", "?");
 					sqlQueryObject.addInsertField("connettore_coda", "?");
 					sqlQueryObject.addInsertField("connettore_priorita", "?");
@@ -6717,6 +6724,7 @@ public class DriverConfigurazioneDB_LIB {
 					stm.setInt(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? (servizioApplicativo.getDatiConnettore().isNotifica() ? CostantiDB.TRUE : CostantiDB.FALSE) : CostantiDB.FALSE);
 					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? servizioApplicativo.getDatiConnettore().getDescrizione() : null);
 					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? getValue(servizioApplicativo.getDatiConnettore().getStato()) : null);
+					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? getValue(servizioApplicativo.getDatiConnettore().getScheduling()) : null);
 					
 					String filtri = null; 
 					if(servizioApplicativo.getDatiConnettore()!=null) {
@@ -6799,6 +6807,10 @@ public class DriverConfigurazioneDB_LIB {
 						for ( ; j < servizioApplicativo.getDatiConnettore().sizeProprietaList(); j++) {
 							
 							Proprieta p = servizioApplicativo.getDatiConnettore().getProprieta(j);
+							
+							if(p.getValore()==null || "".equals(p.getValore())) {
+								continue; // non devo serializzare valori vuoti o null (DB oracle non lo permette)
+							}
 							
 							stm.setLong(1, idPA_SA);
 							stm.setString(2, p.getNome());
@@ -11985,9 +11997,7 @@ public class DriverConfigurazioneDB_LIB {
 							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("conversione_enabled", regolaRisposta.getConversione() ? CostantiDB.TRUE : CostantiDB.FALSE , InsertAndGeneratedKeyJDBCType.INT) );
 							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("conversione_tipo", regolaRisposta.getConversioneTipo() , InsertAndGeneratedKeyJDBCType.STRING) );
 							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("content_type", regolaRisposta.getContentType() , InsertAndGeneratedKeyJDBCType.STRING) );
-							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("return_code", 
-									(regolaRisposta.getReturnCode()!=null && 
-									regolaRisposta.getReturnCode().intValue()>0) ? regolaRisposta.getReturnCode().intValue() : null , InsertAndGeneratedKeyJDBCType.INT) );
+							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("return_code", regolaRisposta.getReturnCode(), InsertAndGeneratedKeyJDBCType.STRING) );
 							if(regolaRisposta.getTrasformazioneSoap()!=null) {
 								listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("soap_envelope", (regolaRisposta.getTrasformazioneSoap().getEnvelope() ? CostantiDB.TRUE : CostantiDB.FALSE) , InsertAndGeneratedKeyJDBCType.INT) );
 								listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("soap_envelope_as_attach", (regolaRisposta.getTrasformazioneSoap().getEnvelopeAsAttachment() ? CostantiDB.TRUE : CostantiDB.FALSE) , InsertAndGeneratedKeyJDBCType.INT) );
@@ -12625,10 +12635,7 @@ public class DriverConfigurazioneDB_LIB {
 					IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(tipoDB);
 					risposta.setConversioneTemplate(jdbcAdapter.getBinaryData(rs, "conversione_template"));
 					risposta.setContentType(rs.getString("content_type"));
-					int return_code = rs.getInt("return_code");
-					if(return_code>0) {
-						risposta.setReturnCode(return_code);
-					}
+					risposta.setReturnCode(rs.getString("return_code"));
 					
 					if(regola.getRichiesta().getTrasformazioneRest()!=null) { // La risposta deve essere ritrasformata in soap
 					

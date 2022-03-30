@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -36,7 +36,8 @@ public class Costanti  {
 	public static final String MULTI_DELIVER_NOTIFICHE_BY_ESITO_FAULT = "md_notifiche_by_esito_fault"; // true/false
 	public static final String MULTI_DELIVER_NOTIFICHE_BY_ESITO_ERRORI_CONSEGNA = "md_notifiche_by_esito_errori_consegna"; // true/false
 	public static final String MULTI_DELIVER_NOTIFICHE_BY_ESITO_ERRORI_PROCESSAMENTO = "md_notifiche_by_esito_processamento"; // true/false
-	public static final String MULTI_DELIVER_NOTIFICHE_BY_ESITO_RICHIESTA_SCARTATE = "md_notifiche_by_esito_scartate"; // true/false
+	// le richieste scartate non arrivano alla gestione della consegna in smistatore e quindi non potranno nemmeno essere notifiate
+	//public static final String MULTI_DELIVER_NOTIFICHE_BY_ESITO_RICHIESTA_SCARTATE = "md_notifiche_by_esito_scartate"; // true/false
 	
 	public static final String MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_CADENZA = "md_notifiche_err_cadenza"; // integer
 	
@@ -64,7 +65,8 @@ public class Costanti  {
 	
 	public static final String MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_FAULT_VALUE_CONSEGNA_COMPLETATA = "ok";
 	public static final String MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_FAULT_VALUE_CONSEGNA_FALLITA = "ko";
-	public static final String MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_FAULT_VALUE_CODICI_CONSEGNA_COMPLETATA = "custom";
+	public static final String MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_FAULT_VALUE_CONSEGNA_FALLITA_PERSONALIZZATA = "custom";
+	public static final String MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_FAULT_VALUE_CONSEGNA_COMPLETATA_PERSONALIZZATA = "customOk";
 	
 	public static final String MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_FAULT = "md_notifiche_err_fault";
 	public static final String MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_FAULT_CODE = "md_notifiche_err_fault_code"; // status in problem

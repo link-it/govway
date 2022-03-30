@@ -482,6 +482,7 @@
 				<if>
 					<or>
 						<matches string="${as}" pattern="wildfly25"/>
+						<matches string="${as}" pattern="wildfly26"/>
 					</or>
 					<then>
 						<antcall target="set_property">
@@ -541,6 +542,7 @@
 				<matches string="${as}" pattern="wildfly23"/>
 				<matches string="${as}" pattern="wildfly24"/>
 				<matches string="${as}" pattern="wildfly25"/>
+				<matches string="${as}" pattern="wildfly26"/>
 			</or>
 			<then>
 				<unzip src="${required_lib}/shared/mailapi-1.6.7.jar" dest="${build}/tmp/mailapi"/>
@@ -591,7 +593,7 @@
 				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
-				<var name="xerces_jar" value="xercesImpl-2.12.1.jar"/>
+				<var name="xerces_jar" value="xercesImpl-2.12.2.jar"/>
 				<var name="xml_apis_jar" value="xml-apis-1.4.01.jar"/>
 			</then>
 		</if>
@@ -674,6 +676,7 @@
 								<matches string="${as}" pattern="wildfly23"/>
 								<matches string="${as}" pattern="wildfly24"/>
 								<matches string="${as}" pattern="wildfly25"/>
+								<matches string="${as}" pattern="wildfly26"/>
 							</or>
 							<then>
 								<copy file="${src}/META-INF/jboss-deployment-structure.xml.wildfly2" tofile="${build}/tmp/jboss-deployment-structure.xml" />
@@ -851,6 +854,7 @@
 				<include name="freemarker-2.3.31.jar"/>
 				<include name="snakeyaml-1.29.jar"/>
 				<include name="rhino-1.7.13.jar"/>
+				<!-- NOTA: non includere mai nel runtime Saxon-HE-*.jar poiche' fa agganciare il suo Transformer sostituendosi a Xalan (al massimo vedere di levare la dichiarazione in META-INF) -->
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/log">
 				<include name="slf4j-api-1.7.30-gov4j-1.jar"/>

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -22,6 +22,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.sa;
 
 import java.net.URLEncoder;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -149,6 +150,8 @@ public final class ServiziApplicativiChange extends Action {
 		try {
 			Boolean contaListe = ServletUtils.getContaListeFromSession(session);
 
+			String userLogin = ServletUtils.getUserLoginFromSession(session);
+			
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
 			
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
@@ -374,7 +377,9 @@ public final class ServiziApplicativiChange extends Action {
 			
 			// file
 			String requestOutputFileName = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
+			String requestOutputFileName_permissions = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
 			String requestOutputFileNameHeaders = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
+			String requestOutputFileNameHeaders_permissions = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
 			String requestOutputParentDirCreateIfNotExists = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
 			String requestOutputOverwriteIfExists = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME);
 			String responseInputMode = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE);
@@ -382,6 +387,9 @@ public final class ServiziApplicativiChange extends Action {
 			String responseInputFileNameHeaders = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS);
 			String responseInputDeleteAfterRead = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
 			String responseInputWaitTime = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
+			
+			String resetElementoCacheS = saHelper.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
+			boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);
 			
 			boolean integrationManagerEnabled = !saHelper.isModalitaStandard() && saCore.isIntegrationManagerEnabled();
 						
@@ -473,7 +481,6 @@ public final class ServiziApplicativiChange extends Action {
 			String nomeProtocollo = null;
 			String tipoENomeSoggetto = null;
 			String nomePdd = null;
-			@SuppressWarnings("unused")
 			IDSoggetto idSoggetto = null;
 			if(saCore.isRegistroServiziLocale()){
 				org.openspcoop2.core.registry.Soggetto soggetto = soggettiCore.getSoggettoRegistro(idProv);
@@ -665,6 +672,96 @@ public final class ServiziApplicativiChange extends Action {
 				if(postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS)) {
 					appId = null;
 					apiKey = null;
+				}
+				
+			}
+			
+			// reset elemento dalla cache
+			if(resetElementoCache) {
+				
+				// Uso lo stessoAlias
+				List<String> aliases = soggettiCore.getJmxPdD_aliases();
+				String alias = null;
+				if(aliases!=null && !aliases.isEmpty()) {
+					alias = aliases.get(0);
+				}
+				String labelApplicativo = (saHelper.isSoggettoMultitenantSelezionato() ? sa.getNome() : saHelper.getLabelServizioApplicativoConDominioSoggetto(oldIdServizioApplicativo));
+				saCore.invokeJmxMethodAllNodesAndSetResult(pd, soggettiCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+						soggettiCore.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheApplicativo(alias),
+						MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_SUCCESSO,labelApplicativo),
+						MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_FALLITO_PREFIX,labelApplicativo),
+						idServizioApplicativo);				
+				
+				String resetFromLista = saHelper.getParameter(CostantiControlStation.PARAMETRO_RESET_CACHE_FROM_LISTA);
+				boolean arrivoDaLista = "true".equalsIgnoreCase(resetFromLista);
+				
+				if(arrivoDaLista) {
+					
+					parentSA = useIdSogg ? ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO : ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
+					
+					// salvo il punto di ingresso
+					ServletUtils.setObjectIntoSession(session, parentSA, ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT);
+					
+					// preparo lista
+					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+					
+					int idLista = -1;
+					if(!useIdSogg){
+						idLista = Liste.SERVIZIO_APPLICATIVO;
+					}
+					else {
+						idLista = Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO;
+					}
+	
+					List<ServizioApplicativo> lista = null;
+										
+					// poiche' esistono filtri che hanno necessita di postback salvo in sessione
+					if(!ServletUtils.isSearchDone(saHelper)) {
+						lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista,  ServizioApplicativo.class);
+					}
+					
+					ricerca = saHelper.checkSearchParameters(idLista, ricerca);
+					
+					saHelper.clearFiltroSoggettoByPostBackProtocollo(0, ricerca, idLista);
+					
+					if(!useIdSogg){
+						boolean filtroSoggetto = false;
+						if(saHelper.isSoggettoMultitenantSelezionato()) {
+							List<String> protocolli = saCore.getProtocolli(session,false);
+							if(protocolli!=null && protocolli.size()==1) { // dovrebbe essere l'unico caso in cui un soggetto multitenant è selezionato
+								String protocollo = protocolli.get(0);
+								filtroSoggetto = !saHelper.isProfiloModIPA(protocollo);  // in modipa devono essere fatti vedere anche quelli
+							}
+						}
+						if(filtroSoggetto) {
+							ricerca.addFilter(idLista, Filtri.FILTRO_SOGGETTO, saHelper.getSoggettoMultitenantSelezionato());
+						}
+
+						if(lista==null) {
+							if(saCore.isVisioneOggettiGlobale(userLogin)){
+								lista = saCore.soggettiServizioApplicativoList(null, ricerca);
+							}else{
+								lista = saCore.soggettiServizioApplicativoList(userLogin, ricerca);
+							}
+						}
+					}else {
+						ricerca = saHelper.checkSearchParameters(idLista, ricerca);
+						
+						lista = saCore.soggettiServizioApplicativoList(ricerca,soggLong);
+					}
+					
+					if(!saHelper.isPostBackFilterElement()) {
+						ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+					}
+	
+					saHelper.prepareServizioApplicativoList(ricerca, lista, useIdSogg, false);
+					
+					ServletUtils.setSearchObjectIntoSession(session, ricerca);
+					
+					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+	
+					return ServletUtils.getStrutsForwardEditModeFinished(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, ForwardParams.CHANGE());
+					
 				}
 			}
 			
@@ -1270,7 +1367,9 @@ public final class ServiziApplicativiChange extends Action {
 				if(responseInputMode==null && props!=null){
 					
 					requestOutputFileName = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE);	
-					requestOutputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS);	
+					requestOutputFileName_permissions = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_PERMISSIONS);	
+					requestOutputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS);
+					requestOutputFileNameHeaders_permissions = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS_PERMISSIONS);	
 					String v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
 					if(v!=null && !"".equals(v)){
 						if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
@@ -1317,7 +1416,7 @@ public final class ServiziApplicativiChange extends Action {
 				this.consoleDynamicConfiguration.updateDynamicConfigServizioApplicativo(this.consoleConfiguration, this.consoleOperationType, saHelper, this.protocolProperties, 
 						this.registryReader, this.configRegistryReader, oldIdServizioApplicativo); 
 				
-				dati = saHelper.addServizioApplicativoToDati(dati, nomeParameter, tipoENomeSoggetto, fault, 
+				dati = saHelper.addServizioApplicativoToDati(dati, oldNome, nomeParameter, tipoENomeSoggetto, fault, 
 						TipoOperazione.CHANGE, idServizioApplicativo, contaListe,null,null,provider,dominio,
 						utenteSA,passwordSA,subjectSA,principalSA,tipoauthSA,faultactor,genericfault,prefixfault,invrifRisposta,
 						sbustamentoInformazioniProtocolloRisposta,
@@ -1340,7 +1439,8 @@ public final class ServiziApplicativiChange extends Action {
 						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+						requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						nomeProtocollo, null, listExtendedConnettore,tipoCredenzialiSSLSorgente, tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato, tipoCredenzialiSSLFileCertificatoPassword, listaAliasEstrattiCertificato, 
 						tipoCredenzialiSSLAliasCertificato, tipoCredenzialiSSLAliasCertificatoSubject, tipoCredenzialiSSLAliasCertificatoIssuer,
@@ -1426,7 +1526,7 @@ public final class ServiziApplicativiChange extends Action {
 				this.consoleDynamicConfiguration.updateDynamicConfigServizioApplicativo(this.consoleConfiguration, this.consoleOperationType, saHelper, this.protocolProperties, 
 						this.registryReader, this.configRegistryReader, oldIdServizioApplicativo); 
 				
-				dati = saHelper.addServizioApplicativoToDati(dati, nomeParameter, tipoENomeSoggetto, fault, 
+				dati = saHelper.addServizioApplicativoToDati(dati, oldNome, nomeParameter, tipoENomeSoggetto, fault, 
 						TipoOperazione.CHANGE, idServizioApplicativo, contaListe,null,null,provider,dominio,
 						utenteSA,passwordSA,subjectSA,principalSA,tipoauthSA,faultactor,genericfault,prefixfault,invrifRisposta,
 						sbustamentoInformazioniProtocolloRisposta,
@@ -1449,7 +1549,8 @@ public final class ServiziApplicativiChange extends Action {
 						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+						requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						nomeProtocollo, null, listExtendedConnettore,tipoCredenzialiSSLSorgente, tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato, tipoCredenzialiSSLFileCertificatoPassword, listaAliasEstrattiCertificato, 
 						tipoCredenzialiSSLAliasCertificato, tipoCredenzialiSSLAliasCertificatoSubject, tipoCredenzialiSSLAliasCertificatoIssuer,
@@ -1604,6 +1705,10 @@ public final class ServiziApplicativiChange extends Action {
 						credenziali.setCnSubject(cSelezionato.getCertificate().getSubject().getCN()); 
 						credenziali.setCertificate(cSelezionato.getCertificate().getCertificate().getEncoded());
 						credenziali.setCertificateStrictVerification(ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLVerificaTuttiICampi));
+						
+						credenziali.setSubject(null);
+						credenziali.setIssuer(null);
+						
 					} else { // configurazione manuale
 						credenziali.setSubject(subjectSA);
 						if(ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLConfigurazioneManualeSelfSigned)) {
@@ -1611,6 +1716,11 @@ public final class ServiziApplicativiChange extends Action {
 						} else {
 							credenziali.setIssuer(issuerSA);
 						}
+						
+						credenziali.setCnIssuer(null);
+						credenziali.setCnSubject(null);
+						credenziali.setCertificate(null);
+						credenziali.setCertificateStrictVerification(false);
 					}
 				}
 				else if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL)) {
@@ -1845,7 +1955,8 @@ public final class ServiziApplicativiChange extends Action {
 						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+						requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						token_policy,
 						listExtendedConnettore);
@@ -1866,8 +1977,6 @@ public final class ServiziApplicativiChange extends Action {
 			
 			//imposto properties custom
 			sa.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesConfig(this.protocolProperties, this.consoleOperationType, oldProtocolPropertyList)); 
-			
-			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			
 			// eseguo l'aggiornamento
 			List<Object> listOggettiDaAggiornare = ServiziApplicativiUtilities.getOggettiDaAggiornare(saCore, oldIdServizioApplicativo, sa);

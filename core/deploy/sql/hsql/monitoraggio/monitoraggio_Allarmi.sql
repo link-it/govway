@@ -13,13 +13,14 @@ CREATE TABLE allarmi
 	-- Stato allarme (0=OK, 1=Warning, 2=Allarme)
 	stato_precedente INT NOT NULL,
 	stato INT NOT NULL,
-	stato_dettaglio VARCHAR(65535),
+	stato_dettaglio LONGVARCHAR,
 	-- Tempi di creazione/esecuzione allarmi
 	lasttimestamp_create TIMESTAMP NOT NULL,
 	lasttimestamp_update TIMESTAMP,
 	-- Informazioni generali (0=false/1=true)
 	enabled INT NOT NULL,
 	acknowledged INT NOT NULL,
+	dettaglio_acknowledged LONGVARCHAR,
 	periodo_tipo VARCHAR(255),
 	periodo INT,
 	mail_invia INT,

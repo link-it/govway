@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -113,6 +113,7 @@ public class DynamicHelperCostanti {
 	public static final String LABEL_CONFIGURAZIONE_INFO_OBJECT_APPLICATIVO_PROPERTY_CONFIG = "<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_APPLICATIVO_CONFIG_PROPERTY+"</b>: permette di accedere alle proprietà configurate nell'applicativo client ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_APPLICATIVO_CONFIG_PROPERTY_HTML_ESCAPED+")";
 	public static final String LABEL_CONFIGURAZIONE_INFO_OBJECT_SOGGETTO_FRUITORE_PROPERTY_CONFIG = "<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SOGGETTO_FRUITORE_CONFIG_PROPERTY+"</b>: permette di accedere alle proprietà configurate nel soggetto fruitore("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_SOGGETTO_FRUITORE_CONFIG_PROPERTY_HTML_ESCAPED+")";
 	public static final String LABEL_CONFIGURAZIONE_INFO_OBJECT_SOGGETTO_EROGATORE_PROPERTY_CONFIG = "<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SOGGETTO_EROGATORE_CONFIG_PROPERTY+"</b>: permette di accedere alle proprietà configurate nel soggetto erogatore ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_SOGGETTO_EROGATORE_CONFIG_PROPERTY_HTML_ESCAPED+")";
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_ATTACHMENTS = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ATTACHMENTS_OBJECT+"</b>: consente di ottenere gli allegati registrati sull'API ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_ATTACHMENTS_OBJECT+")");
 	public static final String LABEL_CONFIGURAZIONE_INFO_OBJECT_SYSTEM = "<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SYSTEM_PROPERTY+"</b>: permette di accedere alle proprietà di sistema indicate nella configurazione generale ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_SYSTEM_PROPERTY+")";
 	public static final String LABEL_CONFIGURAZIONE_INFO_OBJECT_ENV = "<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ENV_PROPERTY+"</b>: permette di accedere alle variabili di sistema ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_ENV_PROPERTY+")";
 	public static final String LABEL_CONFIGURAZIONE_INFO_OBJECT_JAVA = "<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_JAVA_PROPERTY+"</b>: permette di accedere alle variabili della jvm ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_JAVA_PROPERTY+")";
@@ -152,6 +153,7 @@ public class DynamicHelperCostanti {
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_APPLICATIVO_PROPERTY_CONFIG);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_SOGGETTO_FRUITORE_PROPERTY_CONFIG);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_SOGGETTO_EROGATORE_PROPERTY_CONFIG);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_ATTACHMENTS);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_REQUEST);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_ERROR_HANDLER);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_HEADER_VALUES);
@@ -223,6 +225,7 @@ public class DynamicHelperCostanti {
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_APPLICATIVO_PROPERTY_CONFIG);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_SOGGETTO_FRUITORE_PROPERTY_CONFIG);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_SOGGETTO_EROGATORE_PROPERTY_CONFIG);
+		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_ATTACHMENTS);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_RESPONSE);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_ERROR_HANDLER);
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_ALL_VALORI_CON_RISPOSTE.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_HEADER_VALUES);
@@ -489,6 +492,7 @@ public class DynamicHelperCostanti {
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SUFFIX =
 			"Ogni valore può essere fornito in una delle seguenti modalità:<br/>"+
 			"- <b>"+CostantiAutorizzazione.AUTHZ_ANY_VALUE+"</b> : indica qualsiasi valore non nullo<br/>"+
+			"- <b>"+CostantiAutorizzazione.AUTHZ_UNDEFINED+"</b> : la risorsa indicata non deve esistere o non deve essere valorizzata<br/>"+
 			"- <b>"+CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX+"EXPR"+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX+"</b> : la regola è soddisfatta se l'intero valore del claim ha un match rispetto all'espressione regolare EXPR indicata<br/>"+
 			"- <b>"+CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX+"EXPR"+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX+"</b> : simile alla precedente regola, il match dell'espressione regolare può avvenire anche su una sottostringa del valore del claim<br/>"+
 			"- <b>valore</b> : indica esattamente il valore (case sensitive) che deve possedere il claim; il valore può essere definito come costante o contenere parti dinamiche risolte a runtime dal Gateway descritte di seguito<br/>"+
@@ -576,6 +580,7 @@ public class DynamicHelperCostanti {
 			"Per identificare una risorsa sono utilizzabili le espressioni dinamiche descritte nell'ultima parte di questo box informazioni.<br/><br/>"+
 			"Ogni valore può essere fornito in una delle seguenti modalità:<br/>"+
 			"- <b>"+CostantiAutorizzazione.AUTHZ_ANY_VALUE+"</b> : indica qualsiasi valore non nullo<br/>"+
+			"- <b>"+CostantiAutorizzazione.AUTHZ_UNDEFINED+"</b> : la risorsa indicata non deve esistere o non deve essere valorizzata<br/>"+
 			"- <b>"+CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX+"EXPR"+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX+"</b> : la regola è soddisfatta se il valore della risorsa ha un match completo rispetto all'espressione regolare EXPR indicata<br/>"+
 			"- <b>"+CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX+"EXPR"+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX+"</b> : simile alla precedente regola, il match dell'espressione regolare può avvenire anche su una sottostringa del valore della risorsa<br/>"+
 			"- <b>valore</b> : indica esattamente il valore (case sensitive) che deve possedere la risorsa; il valore può essere definito come costante o contenere parti dinamiche risolte a runtime dal Gateway descritte di seguito<br/>"+
@@ -675,7 +680,7 @@ public class DynamicHelperCostanti {
 	
 	public final static List<String> LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_INFO_VALORI = new ArrayList<>();
 	static {
-		LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_INFO_VALORI.addAll(LABEL_CONFIGURAZIONE_INFO_ALL_VALORI);
+		LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_INFO_VALORI.addAll(LABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI);
 		deleteField(LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_INFO_VALORI, LABEL_CONFIGURAZIONE_INFO_TRASPORTO_XPATH_SOAP); // elimino xpath su soap
 		deleteField(LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_INFO_VALORI, LABEL_CONFIGURAZIONE_INFO_TRASPORTO_ATTRIBUTES); // elimino attributes 
 	}
@@ -686,6 +691,32 @@ public class DynamicHelperCostanti {
 		LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_INFO_VALORI_CON_REQUIRED_ATTRIBUTES.addAll(LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_INFO_VALORI);
 	}
 	
+	
+	
+	
+	
+	
+	// ******* NEGOZIAZIONE TOKEN
+	
+	public final static String LABEL_CONFIGURAZIONE_NEGOZIAZIONE_ISSUER = LABEL_CONFIGURAZIONE_INFO_TRASPORTO.replace(":", " indicate di seguito.")+"<BR/>Se non viene fornito un valore il claim 'iss' verrà valorizzato con il nome del soggetto associato al dominio di gestione della richiesta";
+	public final static String LABEL_CONFIGURAZIONE_NEGOZIAZIONE_SUBJECT = LABEL_CONFIGURAZIONE_INFO_TRASPORTO.replace(":", " indicate di seguito.")+"<BR/>Se non viene fornito un valore il claim 'sub' verrà valorizzato con il medesimo valore associato al Client ID";
+	public final static String LABEL_CONFIGURAZIONE_NEGOZIAZIONE_FORM_PARAMETRO_CLIENT_ID = LABEL_CONFIGURAZIONE_INFO_TRASPORTO.replace(":", " indicate di seguito.")+"<BR/>Se non viene fornito un valore il parametro verrà valorizzato con il medesimo valore associato al Client ID definito nel payload del JWT";
+	public final static String LABEL_CONFIGURAZIONE_NEGOZIAZIONE_CLAIMS = LABEL_CONFIGURAZIONE_INFO_TRASPORTO.replace(":", " indicate di seguito.")+
+			"<BR/><BR/>"+StringEscapeUtils.escapeHtml("Fornendo un valore che inizia e termina con le parentesi graffe si definisce un oggetto json, come ad esempio:<BR/> claimTest={\"prova\":\"valoreProva\", \"prova2\":\"${header:X-Example}\"}")+
+			"<BR/><BR/>"+StringEscapeUtils.escapeHtml("Se il valore inizia e termina con le parentesi quadre si definisce invece un array json, come ad esempio:<BR/> claimTest=[\"valoreProva\", \"valoreProva2\", \"${header:X-Example}\"]");
+	
+	public final static String LABEL_CONFIGURAZIONE_NEGOZIAZIONE_VALORE_NON_DEFINITO = "<b>"+org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED+"</b>: indica di non generare il claim";
+	
+	public final static List<String> LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI = new ArrayList<>();
+	static {
+		LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI.addAll(LABEL_CONFIGURAZIONE_INFO_ALL_VALORI);
+	}
+	
+	public final static List<String> LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI_CON_OPZIONE_VALORE_NON_DEFINITO = new ArrayList<>();
+	static {
+		LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI_CON_OPZIONE_VALORE_NON_DEFINITO.add(LABEL_CONFIGURAZIONE_NEGOZIAZIONE_VALORE_NON_DEFINITO);
+		LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI_CON_OPZIONE_VALORE_NON_DEFINITO.addAll(LABEL_CONFIGURAZIONE_INFO_ALL_VALORI);
+	}
 	
 	
 	

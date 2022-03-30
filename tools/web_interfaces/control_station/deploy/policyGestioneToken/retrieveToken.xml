@@ -11,7 +11,6 @@
 	
 	<section label="Token Endpoint">
 		
-		<!-- TODO se serve rendere impostabile il parser -->
 		<item type="hidden" name="tokenParserType" value="OAUTH2_RFC_6749">
 			<property name="policy.retrieveToken.claimsParser" />
 		</item>
@@ -22,6 +21,15 @@
 
 		<item type="select" name="retrieveTokenMethod" label="Tipo" reloadOnChange="true">
 			<property name="policy.retrieveToken.mode" />
+		</item>
+
+		<item type="checkbox" name="jwtPDND" label="PDND" defaultSelected="false" reloadOnChange="true">
+			<conditions>
+				<condition and="false">
+					<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+				</condition>
+			</conditions>
+			<property name="policy.retrieveToken.jwt.pdnd" />
 		</item>
 
 		<item type="textarea" name="endpointURL" label="URL" required="true" default="http://">
@@ -124,7 +132,37 @@
 	
 		</subsection>
 
-		<subsection label="JWT Claims">
+		<subsection label="JWT KeyStore">
+			<conditions>
+				<condition and="false">
+					<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+				</condition>
+			</conditions>
+
+			<item type="select" name="jwtKeystoreType" label="Tipo" default="jks" reloadOnChange="true">
+				<property name="policy.retrieveToken.jwt.signature.keystoreType" />
+			</item>
+			<item type="textarea" name="jwtKeystoreFile" label="File" required="true">
+				<property name="policy.retrieveToken.jwt.signature.keystoreFile" />
+			</item>
+			<item type="text" name="jwtKeystorePassword" label="Password" required="true">
+				<conditions and="true">
+					<condition not="true" and="false">
+						<equals name="jwtKeystoreType" value="jwk"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.jwt.signature.keystorePassword" />
+			</item>
+			<item type="text" name="jwtAliasChiavePrivata" label="Alias Chiave Privata" required="true">
+				<property name="policy.retrieveToken.jwt.signature.keyAlias" />
+			</item>
+			<item type="text" name="jwtPasswordChiavePrivata" label="Password Chiave Privata" required="true">
+				<property name="policy.retrieveToken.jwt.signature.keyPassword" />
+			</item>
+
+		</subsection>
+
+		<subsection label="JWT Signature">
 			<conditions>
 				<condition and="false">
 					<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
@@ -149,9 +187,6 @@
 			      	<property name="policy.retrieveToken.jwt.signature.algorithm"/>
 			</item>
 
-			<item type="text" name="jwtClientId" label="Client ID" required="true">
-			      	<property name="policy.retrieveToken.jwt.clientId" />
-			</item>
 			<item type="text" name="jwtSecret" label="Client Secret" required="true">
 				<conditions>
 					<condition and="false">
@@ -160,45 +195,182 @@
 				</conditions>
 			      	<property name="policy.retrieveToken.jwt.clientSecret" />
 			</item>
+		</subsection>
+
+		<subsection label="JWT Header">
+			<conditions>
+				<condition and="false">
+					<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					<equals name="retrieveTokenMethod" value="rfc7523_clientSecret"/>
+				</condition>
+			</conditions>
+
+			<item type="select" name="jwtSymmetricSignatureKid" label="Key Id (kid)" reloadOnChange="true" >
+				<conditions>
+					<condition and="false">
+						<equals name="retrieveTokenMethod" value="rfc7523_clientSecret"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="false" label="-"/>
+					<value value="client_id" label="Client ID"/>
+					<value value="custom" label="Personalizzato"/>
+				</values>
+			      	<property name="policy.retrieveToken.jwt.signature.include.key.id"/>
+			</item>
+			<item type="select" name="jwtAsymmetricSignatureKid" label="Key Id (kid)" reloadOnChange="true" >
+				<conditions>
+					<condition and="false">
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="false" label="-"/>
+					<value value="true" label="Alias Chiave Privata"/>
+					<value value="client_id" label="Client ID"/>
+					<value value="custom" label="Personalizzato"/>
+				</values>
+			      	<property name="policy.retrieveToken.jwt.signature.include.key.id"/>
+			</item>
+			<item type="text" name="jwtSignatureKidValue" label="" required="true">
+				<conditions and="false">
+					<condition and="true">
+						<equals name="retrieveTokenMethod" value="rfc7523_clientSecret"/>
+						<equals name="jwtSymmetricSignatureKid" value="custom"/>
+					</condition>
+					<condition and="true">
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+						<equals name="jwtAsymmetricSignatureKid" value="custom"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.retrieveToken.jwt.signature.include.key.id.value" />
+			</item>
+			<item type="select" name="jwtSignatureIncludeCertMode" label="X.509 Certificate" default="-" reloadOnChange="true" >
+				<conditions and="true">
+					<condition and="false">
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					</condition>
+					<condition not="true" and="false">
+						<equals name="jwtKeystoreType" value="jwk"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="-" label="-"/>
+					<value value="x5c" label="Include (x5c)"/>
+					<value value="x5u" label="URL (x5u)"/>
+				</values>
+				<property name="jwtSignatureIncludeCertMode" />
+			</item>
+			<item type="hidden" name="jwtSignatureIncludeCertModeX5C" value="true">
+				<conditions>
+					<condition>
+						<equals name="jwtSignatureIncludeCertMode" value="x5c"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.jwt.signature.include.cert" />
+			</item>
+			<item type="textarea" name="jwtSignatureIncludeCertModeX5U" label="URL" required="true">
+				<conditions>
+					<condition>
+						<equals name="jwtSignatureIncludeCertMode" value="x5u"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.jwt.signature.include.x509url" />
+			</item>
+			<item type="select" name="jwtSignatureIncludeCertShaMode" label="Digest X.509 Certificate" default="-" reloadOnChange="true" >
+				<conditions and="true">
+					<condition and="false">
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					</condition>
+					<condition not="true" and="false">
+						<equals name="jwtKeystoreType" value="jwk"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="-" label="-"/>
+					<value value="sha1" label="SHA-1 (x5t)"/>
+					<value value="sha256" label="SHA-256 (x5t#S256)"/>
+				</values>
+				<property name="jwtSignatureIncludeCertShaMode" />
+			</item>
+			<item type="hidden" name="jwtSignatureIncludeCertShaModeSHA1" value="true">
+				<conditions>
+					<condition>
+						<equals name="jwtSignatureIncludeCertShaMode" value="sha1"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.jwt.signature.include.cert.sha1" />
+			</item>
+			<item type="hidden" name="jwtSignatureIncludeCertShaModeSHA256" value="true">
+				<conditions>
+					<condition>
+						<equals name="jwtSignatureIncludeCertShaMode" value="sha256"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.jwt.signature.include.cert.sha256"/>
+			</item>
+
+			<item type="text" name="jwtIncludeType" label="Type (typ)" required="true" default="JWT">
+				<property name="policy.retrieveToken.jwt.signature.joseType" />
+			</item>
+			<item type="checkbox" name="jwtIncludeContentType" label="Content Type (cty)" defaultSelected="false">
+				<property name="policy.retrieveToken.jwt.signature.joseContentType"/>
+			</item>
+
+		</subsection>
+
+		<subsection label="JWT Payload">
+			<conditions>
+				<condition and="false">
+					<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					<equals name="retrieveTokenMethod" value="rfc7523_clientSecret"/>
+				</condition>
+			</conditions>
+
+			<item type="text" name="jwtClientId" label="Client ID" required="true">
+			      	<property name="policy.retrieveToken.jwt.clientId" />
+			</item>
 
 			<item type="text" name="jwtAudience" label="Audience" required="true">
 			    <property name="policy.retrieveToken.jwt.audience" />
 			</item>
 			<item type="text" name="jwtIssuer" label="Issuer" required="false">
 			    <property name="policy.retrieveToken.jwt.issuer" />
+			</item>
+			<item type="text" name="jwtSubject" label="Subject" required="false">
+			      	<property name="policy.retrieveToken.jwt.subject" />
 			</item>			
 			<item type="number" name="jwtExpTtl" label="Time to Live (secondi)" required="true"
 				note="Indica la validità temporale, in secondi, a partire dalla data di creazione dell'asserzione">
 				<property name="policy.retrieveToken.jwt.expired" />
 			</item>
-		</subsection>
 
-		<subsection label="JWT Signature KeyStore">
-			<conditions>
-				<condition and="false">
-					<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
-				</condition>
-			</conditions>
+			<item type="text" name="jwtPurposeID" label="Purpose ID" required="true">
+				<conditions>
+					<condition and="false">
+						<selected name="jwtPDND"/>
+					</condition>	
+				</conditions>
+				<property name="policy.retrieveToken.jwt.purposeId" />
+			</item>
+			<item type="textarea" name="jwtSessionInfo" label="Informazioni Sessione" required="false"
+				note="Indicare per riga i claims (nome=valore) da aggiungere nell'oggetto 'sessionInfo'">
+				<conditions>
+					<condition and="false">
+						<selected name="jwtPDND"/>
+					</condition>	
+				</conditions>
+				<property name="policy.retrieveToken.jwt.sessionInfo" />
+			</item>
 
-			<item type="select" name="jwtKeystoreType" label="Tipo" default="jks" reloadOnChange="true">
-				<property name="policy.retrieveToken.jwt.signature.keystoreType" />
-			</item>
-			<item type="textarea" name="jwtKeystoreFile" label="File" required="true">
-				<property name="policy.retrieveToken.jwt.signature.keystoreFile" />
-			</item>
-			<item type="text" name="jwtKeystorePassword" label="Password" required="true">
-				<property name="policy.retrieveToken.jwt.signature.keystorePassword" />
-			</item>
-			<item type="text" name="jwtAliasChiavePrivata" label="Alias Chiave Privata" required="true">
-				<property name="policy.retrieveToken.jwt.signature.keyAlias" />
-			</item>
-			<item type="text" name="jwtPasswordChiavePrivata" label="Password Chiave Privata" required="true">
-				<property name="policy.retrieveToken.jwt.signature.keyPassword" />
+			<item type="textarea" name="jwtPayloadClaims" label="Claims" required="false"
+				note="Indicare per riga gli ulteriori claims (nome=valore)">
+				<property name="policy.retrieveToken.jwt.claims" />
 			</item>
 
 		</subsection>
 	
-		<subsection label="Configurazione">
+		<subsection label="Dati Richiesta">
 
 			<item type="text" name="scope" label="Scope" required="false" note="Elencare più scope separandoli con la virgola">
 			    <property name="policy.retrieveToken.scope" />
@@ -206,6 +378,20 @@
 
 			<item type="text" name="audience" label="Audience" required="false">
 			    <property name="policy.retrieveToken.audience" />
+			</item>
+
+			<item type="text" name="formClientId" label="Client ID" required="false">
+				<conditions>
+					<condition and="false">
+						<selected name="jwtPDND"/>
+					</condition>	
+				</conditions>
+				<property name="policy.retrieveToken.formClientId" />
+			</item>
+
+			<item type="textarea" name="formParameters" label="Parametri" required="false"
+				note="Indicare per riga gli ulteriori parametri (nome=valore)">
+				<property name="policy.retrieveToken.formParameters" />
 			</item>
 			
 		</subsection>

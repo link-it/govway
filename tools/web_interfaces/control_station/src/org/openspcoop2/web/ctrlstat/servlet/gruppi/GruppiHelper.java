@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.gruppi;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -36,7 +37,6 @@ import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
@@ -69,6 +69,15 @@ public class GruppiHelper extends ConsoleHelper{
 	}
 
 	public Vector<DataElement> addGruppoToDati(TipoOperazione tipoOP, Long gruppoId, String nome, String descrizione, String serviceBinding, Vector<DataElement> dati) {
+		
+		if(TipoOperazione.CHANGE.equals(tipoOP)){
+			
+			// In Uso Button
+			this.addComandoInUsoButton(dati, nome,
+					nome,
+					InUsoType.GRUPPO);
+						
+		}
 		
 		DataElement de = new DataElement();
 		de.setLabel(GruppiCostanti.LABEL_GRUPPO);
@@ -233,6 +242,8 @@ public class GruppiHelper extends ConsoleHelper{
 			throws Exception {
 		try {
 			ServletUtils.addListElementIntoSession(this.session, GruppiCostanti.OBJECT_NAME_GRUPPI);
+			
+			this.pd.setCustomListViewName(GruppiCostanti.GRUPPI_NOME_VISTA_CUSTOM_LISTA);
 
 			int idLista = Liste.GRUPPI;
 			int limit = ricerca.getPageSize(idLista);
@@ -265,11 +276,16 @@ public class GruppiHelper extends ConsoleHelper{
 			}
 
 			// setto le label delle colonne
+//			String[] labels = {
+//					GruppiCostanti.LABEL_PARAMETRO_GRUPPO_NOME,
+//					GruppiCostanti.LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING,
+//					CostantiControlStation.LABEL_IN_USO_COLONNA_HEADER // inuso
+//			};
+			
 			String[] labels = {
-					GruppiCostanti.LABEL_PARAMETRO_GRUPPO_NOME,
-					GruppiCostanti.LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING,
-					CostantiControlStation.LABEL_IN_USO_COLONNA_HEADER // inuso
+					GruppiCostanti.LABEL_GRUPPI
 			};
+			
 			this.pd.setLabels(labels);
 
 			// preparo i dati
@@ -278,35 +294,7 @@ public class GruppiHelper extends ConsoleHelper{
 			if (lista != null) {
 				Iterator<Gruppo> it = lista.iterator();
 				while (it.hasNext()) {
-					Gruppo gruppo = it.next();
-
-					Vector<DataElement> e = new Vector<DataElement>();
-
-					DataElement de = new DataElement();
-					Parameter pId = new Parameter(GruppiCostanti.PARAMETRO_GRUPPO_ID, gruppo.getId()+"");
-					de.setUrl(GruppiCostanti.SERVLET_NAME_GRUPPI_CHANGE , pId);
-					de.setToolTip(gruppo.getDescrizione());
-					de.setValue(gruppo.getNome());
-					de.setIdToRemove(gruppo.getNome());
-					de.setToolTip(gruppo.getDescrizione());
-					e.addElement(de);
-
-					de = new DataElement();
-					if(gruppo.getServiceBinding() == null) {
-						de.setValue(GruppiCostanti.LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING_QUALSIASI);
-					} else {
-						switch (gruppo.getServiceBinding()) {
-						case REST:
-							de.setValue(GruppiCostanti.LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING_REST);
-							break;
-						case SOAP:
-							de.setValue(GruppiCostanti.LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING_SOAP);
-							break;
-						}
-					}
-					e.addElement(de);
-
-					this.addInUsoButtonVisualizzazioneClassica(e, gruppo.getNome(), gruppo.getNome(), InUsoType.GRUPPO);
+					Vector<DataElement> e = creaEntryGruppoCustom(it);
 					
 					dati.addElement(e);
 				}
@@ -345,5 +333,76 @@ public class GruppiHelper extends ConsoleHelper{
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
+	}
+	
+	public Vector<DataElement> creaEntryGruppo(Iterator<Gruppo> it) {
+		Gruppo gruppo = it.next();
+
+		Vector<DataElement> e = new Vector<DataElement>();
+
+		DataElement de = new DataElement();
+		Parameter pId = new Parameter(GruppiCostanti.PARAMETRO_GRUPPO_ID, gruppo.getId()+"");
+		de.setUrl(GruppiCostanti.SERVLET_NAME_GRUPPI_CHANGE , pId);
+		de.setToolTip(gruppo.getDescrizione());
+		de.setValue(gruppo.getNome());
+		de.setIdToRemove(gruppo.getNome());
+		de.setToolTip(gruppo.getDescrizione());
+		e.addElement(de);
+
+		de = new DataElement();
+		if(gruppo.getServiceBinding() == null) {
+			de.setValue(GruppiCostanti.LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING_QUALSIASI);
+		} else {
+			switch (gruppo.getServiceBinding()) {
+			case REST:
+				de.setValue(GruppiCostanti.LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING_REST);
+				break;
+			case SOAP:
+				de.setValue(GruppiCostanti.LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING_SOAP);
+				break;
+			}
+		}
+		e.addElement(de);
+
+		this.addInUsoButtonVisualizzazioneClassica(e, gruppo.getNome(), gruppo.getNome(), InUsoType.GRUPPO);
+		return e;
+	}
+	
+	private Vector<DataElement> creaEntryGruppoCustom(Iterator<Gruppo> it) {
+		Gruppo gruppo = it.next();
+
+		Vector<DataElement> e = new Vector<DataElement>();
+		
+		// Titolo (nome)
+		DataElement de = new DataElement();
+		Parameter pId = new Parameter(GruppiCostanti.PARAMETRO_GRUPPO_ID, gruppo.getId()+"");
+		de.setUrl(GruppiCostanti.SERVLET_NAME_GRUPPI_CHANGE , pId);
+		de.setValue(gruppo.getNome());
+		de.setIdToRemove(gruppo.getNome());
+		de.setToolTip(gruppo.getDescrizione());
+		de.setType(DataElementType.TITLE);
+		e.addElement(de);
+		
+		
+		de = new DataElement();
+		if(gruppo.getServiceBinding() == null) {
+			de.setValue(MessageFormat.format(GruppiCostanti.MESSAGE_METADATI_GRUPPO_TIPO, GruppiCostanti.LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING_QUALSIASI));
+		} else {
+			switch (gruppo.getServiceBinding()) {
+			case REST:
+				de.setValue(MessageFormat.format(GruppiCostanti.MESSAGE_METADATI_GRUPPO_TIPO, GruppiCostanti.LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING_REST));
+				break;
+			case SOAP:
+				de.setValue(MessageFormat.format(GruppiCostanti.MESSAGE_METADATI_GRUPPO_TIPO, GruppiCostanti.LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING_SOAP));
+				break;
+			}
+		}
+		
+		de.setType(DataElementType.SUBTITLE);
+		e.addElement(de);
+
+		this.addInUsoButton(e, gruppo.getNome(), gruppo.getNome(), InUsoType.GRUPPO);
+		
+		return e;
 	}
 }

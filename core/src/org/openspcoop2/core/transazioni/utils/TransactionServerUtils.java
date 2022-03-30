@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -394,8 +394,8 @@ public class TransactionServerUtils {
 			String tipoDatabase, Logger logCore,
 			IDAOFactory daoFactory, Logger logFactory, ServiceManagerProperties smpFactory,
 			boolean debug,
-			int esitoConsegnaMultipla, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
-			int esitoIntegrationManagerSingolo, boolean possibileTerminazioneSingleIntegrationManagerMessage,
+			int esitoConsegnaMultipla, int esitoConsegnaMultiplaInCorso, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
+			int esitoIntegrationManagerSingolo, boolean possibileTerminazioneSingleIntegrationManagerMessage, boolean consegnaInErrore,
 			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval,
 			List<String> timeDetails) {
 		
@@ -405,8 +405,8 @@ public class TransactionServerUtils {
 					tipoDatabase, logCore,
 					daoFactory, logFactory, smpFactory,
 					debug,
-					esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
-					esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage,
+					esitoConsegnaMultipla, esitoConsegnaMultiplaInCorso, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
+					esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage, consegnaInErrore,
 					gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval,
 					timeDetails);
 		}catch(Throwable e){
@@ -420,14 +420,20 @@ public class TransactionServerUtils {
 			String tipoDatabase, Logger logCore,
 			IDAOFactory daoFactory, Logger logFactory, ServiceManagerProperties smpFactory,
 			boolean debug,
-			int esitoConsegnaMultipla, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
-			int esitoIntegrationManagerSingolo, boolean possibileTerminazioneSingleIntegrationManagerMessage,
+			int esitoConsegnaMultipla, int esitoConsegnaMultiplaInCorso, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
+			int esitoIntegrationManagerSingolo, boolean possibileTerminazioneSingleIntegrationManagerMessage, boolean consegnaInErrore,
 			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval,
 			List<String> timeDetails) throws CoreException {
 		
-		if(possibileTerminazioneSingleIntegrationManagerMessage) {
+		boolean consegnaInErrore_rilevatoEsitoTransazioneConsegnaInCoda = false;
+		
+		if(possibileTerminazioneSingleIntegrationManagerMessage || consegnaInErrore) {
+			// possibileTerminazioneSingleIntegrationManagerMessage
 			// Devo comprendere se l'eliminazione del messaggio, effettuata via I.M o tramite scadenza, riguarda la configurazione su connettori multipli o configurazione standard con unico connettore.
 			// Se e' su configurazione standard con unico connettore non devo aggiornare le informazioni sulla consegna terminata
+			
+			// possibilePrimaConsegnaNonAndataABuonFine
+			// Devo comprendere se si tratta di una prima consegna, non completata. Serve per aggiornare lo stato della transazione da "In coda" a "In corso"
 			
 			int i = 0;
 			if(transazioneApplicativoServer.getDataRegistrazione()==null) {
@@ -475,9 +481,20 @@ public class TransactionServerUtils {
 				
 				if(esitoTransazione>=0) {
 					// transazione trovata
-					if(esitoIntegrationManagerSingolo == esitoTransazione) {
-						//System.out.println("TROVATA IM; termino aggiornamento");
-						return true; // non devo gestire l'update previsto nei connettori multipli gestito dopo
+					if(possibileTerminazioneSingleIntegrationManagerMessage) {
+						if(esitoIntegrationManagerSingolo == esitoTransazione) {
+							//System.out.println("TROVATA IM; termino aggiornamento");
+							return true; // non devo gestire l'update previsto nei connettori multipli gestito dopo
+						}
+					}
+					if(consegnaInErrore) {
+						if(esitoConsegnaMultipla == esitoTransazione) {
+							consegnaInErrore_rilevatoEsitoTransazioneConsegnaInCoda = true;
+						}
+						else {
+							//System.out.println("TROVATA TRANSAZIONE CON ESITO "+esitoTransazione+" non "in coda"; termino aggiornamento");
+							return true; // non devo gestire l'update previsto nei connettori multipli gestito dopo
+						}
 					}
 					//else {
 					//	System.out.println("ESCO e procedo con update normale ["+i+"]");
@@ -502,7 +519,8 @@ public class TransactionServerUtils {
 				tipoDatabase, logCore,
 				daoFactory, logFactory, smpFactory,
 				debug,
-				esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
+				esitoConsegnaMultipla, esitoConsegnaMultiplaInCorso, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
+				consegnaInErrore_rilevatoEsitoTransazioneConsegnaInCoda,
 				gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval,
 				timeDetails);
 	}
@@ -510,7 +528,8 @@ public class TransactionServerUtils {
 			String tipoDatabase, Logger logCore,
 			IDAOFactory daoFactory, Logger logFactory, ServiceManagerProperties smpFactory,
 			boolean debug,
-			int esitoConsegnaMultipla, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
+			int esitoConsegnaMultipla, int esitoConsegnaMultiplaInCorso, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
+			boolean consegnaInErrore_rilevatoEsitoTransazioneConsegnaInCoda,
 			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval,
 			List<String> timeDetails) throws CoreException {
 		
@@ -521,6 +540,7 @@ public class TransactionServerUtils {
 					daoFactory, logFactory, smpFactory,
 					debug,
 					esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
+					consegnaInErrore_rilevatoEsitoTransazioneConsegnaInCoda,
 					gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval);
 			return true; // non gestisco l'informazione ritornata essendo il metodo deprecato
 		}
@@ -564,7 +584,8 @@ public class TransactionServerUtils {
 						tipoDatabase, logCore,
 						daoFactory, logFactory, smpFactory,
 						debug,
-						esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
+						esitoConsegnaMultipla, esitoConsegnaMultiplaInCorso, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
+						consegnaInErrore_rilevatoEsitoTransazioneConsegnaInCoda,
 						leftValue, rightValue,
 						USE_SERIALIZABLE,
 						gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval,
@@ -605,7 +626,8 @@ public class TransactionServerUtils {
 			String tipoDatabase, Logger logCore,
 			IDAOFactory daoFactory, Logger logFactory, ServiceManagerProperties smpFactory,
 			boolean debug,
-			int esitoConsegnaMultipla, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
+			int esitoConsegnaMultipla, int esitoConsegnaMultiplaInCorso, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
+			boolean consegnaInErrore_rilevatoEsitoTransazioneConsegnaInCoda,
 			Timestamp leftValue, Timestamp rightValue,
 			boolean serializable,
 			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval,
@@ -644,7 +666,8 @@ public class TransactionServerUtils {
 							tipoDatabase, logCore,
 							daoFactory, logFactory, smpFactory,
 							debug,
-							esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
+							esitoConsegnaMultipla, esitoConsegnaMultiplaInCorso, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
+							consegnaInErrore_rilevatoEsitoTransazioneConsegnaInCoda,
 							leftValue, rightValue);
 
 					updateEffettuato = true;
@@ -701,7 +724,8 @@ public class TransactionServerUtils {
 					tipoDatabase, logCore,
 					daoFactory, logFactory, smpFactory,
 					debug,
-					esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
+					esitoConsegnaMultipla, esitoConsegnaMultiplaInCorso, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
+					consegnaInErrore_rilevatoEsitoTransazioneConsegnaInCoda,
 					leftValue, rightValue);
 			
 		}
@@ -711,7 +735,8 @@ public class TransactionServerUtils {
 			String tipoDatabase, Logger logCore,
 			IDAOFactory daoFactory, Logger logFactory, ServiceManagerProperties smpFactory,
 			boolean debug,
-			int esitoConsegnaMultipla, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
+			int esitoConsegnaMultipla, int esitoConsegnaMultiplaInCorso, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
+			boolean consegnaInErrore_rilevatoEsitoTransazioneConsegnaInCoda,
 			Timestamp leftValue, Timestamp rightValue) throws CoreException {
 	
 		PreparedStatement pstmt = null;
@@ -727,28 +752,41 @@ public class TransactionServerUtils {
 			
 			sqlQueryObject.addUpdateTable(CostantiDB.TRANSAZIONI);
 			
-			sqlQueryObject.addUpdateField(consegneMultipleInCorsoColumn, consegneMultipleInCorsoColumn+"-1");
-			
-			if(ok != transazioneApplicativoServer.getDettaglioEsito() || transazioneApplicativoServer.getDataMessaggioScaduto()!=null) {
+			if(consegnaInErrore_rilevatoEsitoTransazioneConsegnaInCoda) {
 				/* UPDATE transazioni 
-				 * 		SET consegne_multiple=consegne_multiple-1, 
-				 * 		    esito=esitoConsegnaMultiplaFallita  
-				 * WHERE (ESITO=esitoConsegnaMultipla OR ESITO=esitoConsegnaMultiplaFallita)
+				 * 		SET esito=esitoConsegnaMultiplaInCorso  
+				 * WHERE (ESITO=esitoConsegnaMultipla)
 				 */
 				sqlQueryObject.addUpdateField(esitoColumn,"?");   
 			}
 			else {
-				 /*	UPDATE transazioni 
-				 * 		SET consegne_multiple=consegne_multiple-1, 
-				 *			esito = ( CASE
-				 *					  WHEN (consegne_multiple=1 AND esito=esitoConsegnaMultipla) THEN esitoConsegnaMultiplaCompletata 
-				 *					  ELSE  (ESITO)
-				 *					END )
-				 * WHERE (ESITO=esitoConsegnaMultipla OR ESITO=esitoConsegnaMultiplaFallita)
-				 */
-				Case caseValue = new Case(CastColumnType.INT, esitoColumn); 
-				caseValue.addCase(consegneMultipleInCorsoColumn+"<=? AND "+esitoColumn+"=?", "?");
-				sqlQueryObject.addUpdateField(esitoColumn, caseValue);
+			
+				sqlQueryObject.addUpdateField(consegneMultipleInCorsoColumn, consegneMultipleInCorsoColumn+"-1");
+				
+				if(ok != transazioneApplicativoServer.getDettaglioEsito() || transazioneApplicativoServer.getDataMessaggioScaduto()!=null) {
+					/* UPDATE transazioni 
+					 * 		SET consegne_multiple=consegne_multiple-1, 
+					 * 		    esito=esitoConsegnaMultiplaFallita  
+					 * WHERE (ESITO=esitoConsegnaMultipla OR ESITO=esitoConsegnaMultiplaInCorso OR ESITO=esitoConsegnaMultiplaFallita)
+					 */
+					sqlQueryObject.addUpdateField(esitoColumn,"?");   
+				}
+				else {
+					 /*	UPDATE transazioni 
+					 * 		SET consegne_multiple=consegne_multiple-1, 
+					 *			esito = ( CASE
+					 *					  WHEN (consegne_multiple<=1 AND (esito=esitoConsegnaMultipla OR esito=esitoConsegnaMultiplaInCorso)) THEN esitoConsegnaMultiplaCompletata 
+					 *					  WHEN (consegne_multiple>1 AND esito=esitoConsegnaMultipla) THEN esitoConsegnaMultiplaInCorso 
+					 *					  ELSE  (ESITO)
+					 *					END )
+					 * WHERE (ESITO=esitoConsegnaMultipla OR ESITO=esitoConsegnaMultiplaInCorso OR ESITO=esitoConsegnaMultiplaFallita)
+					 */
+					Case caseValue = new Case(CastColumnType.INT, esitoColumn); 
+					caseValue.addCase(consegneMultipleInCorsoColumn+"<=? AND ("+esitoColumn+"=? OR "+esitoColumn+"=?)", "?");
+					caseValue.addCase(consegneMultipleInCorsoColumn+">? AND "+esitoColumn+"=?", "?");
+					sqlQueryObject.addUpdateField(esitoColumn, caseValue);
+				}
+				
 			}
 			
 			sqlQueryObject.setANDLogicOperator(true);
@@ -759,9 +797,15 @@ public class TransactionServerUtils {
 			
 			sqlQueryObject.addWhereCondition(idTransazioneColumn+"=?");
 			
-			sqlQueryObject.addWhereCondition(false, 
-					esitoColumn+"=?",
-					esitoColumn+"=?");
+			if(consegnaInErrore_rilevatoEsitoTransazioneConsegnaInCoda) {
+				sqlQueryObject.addWhereCondition(esitoColumn+"=?");
+			}
+			else {
+				sqlQueryObject.addWhereCondition(false, 
+						esitoColumn+"=?",
+						esitoColumn+"=?",
+						esitoColumn+"=?");
+			}
 			
 			String updateCommand = sqlQueryObject.createSQLUpdate();
 			//System.out.println("QUERY '"+updateCommand+"'");
@@ -770,17 +814,33 @@ public class TransactionServerUtils {
 			int index = 1;
 			List<Object> params = new ArrayList<Object>();
 			
-			if(ok != transazioneApplicativoServer.getDettaglioEsito() || transazioneApplicativoServer.getDataMessaggioScaduto()!=null) {
-				pstmt.setInt(index++, esitoConsegnaMultiplaFallita);
-				params.add(esitoConsegnaMultiplaFallita);
+			if(consegnaInErrore_rilevatoEsitoTransazioneConsegnaInCoda) {
+				pstmt.setInt(index++, esitoConsegnaMultiplaInCorso);
+				params.add(esitoConsegnaMultiplaInCorso);
 			}
 			else {
-				pstmt.setInt(index++, 1); // il decremento nell'unico comando di update funziona transazionalmente; quindi quando lo porto a 0, il valore nella condizione è 1(lascio il <= per stare tranquillo)
-				params.add(1);
-				pstmt.setInt(index++, esitoConsegnaMultipla);
-				params.add(esitoConsegnaMultipla);
-				pstmt.setInt(index++, esitoConsegnaMultiplaCompletata);
-				params.add(esitoConsegnaMultiplaCompletata);
+				if(ok != transazioneApplicativoServer.getDettaglioEsito() || transazioneApplicativoServer.getDataMessaggioScaduto()!=null) {
+					pstmt.setInt(index++, esitoConsegnaMultiplaFallita);
+					params.add(esitoConsegnaMultiplaFallita);
+				}
+				else {
+					// primo case
+					pstmt.setInt(index++, 1); // il decremento nell'unico comando di update funziona transazionalmente; quindi quando lo porto a 0, il valore nella condizione è 1(lascio il <= per stare tranquillo)
+					params.add(1);
+					pstmt.setInt(index++, esitoConsegnaMultipla);
+					params.add(esitoConsegnaMultipla);
+					pstmt.setInt(index++, esitoConsegnaMultiplaInCorso);
+					params.add(esitoConsegnaMultiplaInCorso);
+					pstmt.setInt(index++, esitoConsegnaMultiplaCompletata);
+					params.add(esitoConsegnaMultiplaCompletata);
+					// secondo case
+					pstmt.setInt(index++, 1);
+					params.add(1);
+					pstmt.setInt(index++, esitoConsegnaMultipla);
+					params.add(esitoConsegnaMultipla);
+					pstmt.setInt(index++, esitoConsegnaMultiplaInCorso);
+					params.add(esitoConsegnaMultiplaInCorso);
+				}
 			}
 			
 			if(leftValue!=null && rightValue!=null) {
@@ -793,10 +853,18 @@ public class TransactionServerUtils {
 			pstmt.setString(index++, transazioneApplicativoServer.getIdTransazione());
 			params.add(transazioneApplicativoServer.getIdTransazione());
 			
-			pstmt.setInt(index++, esitoConsegnaMultipla);
-			params.add(esitoConsegnaMultipla);
-			pstmt.setInt(index++, esitoConsegnaMultiplaFallita);
-			params.add(esitoConsegnaMultiplaFallita);
+			if(consegnaInErrore_rilevatoEsitoTransazioneConsegnaInCoda) {
+				pstmt.setInt(index++, esitoConsegnaMultipla);
+				params.add(esitoConsegnaMultipla);
+			}
+			else {
+				pstmt.setInt(index++, esitoConsegnaMultipla);
+				params.add(esitoConsegnaMultipla);
+				pstmt.setInt(index++, esitoConsegnaMultiplaInCorso);
+				params.add(esitoConsegnaMultiplaInCorso);
+				pstmt.setInt(index++, esitoConsegnaMultiplaFallita);
+				params.add(esitoConsegnaMultiplaFallita);
+			}
 			
 			int row = pstmt.executeUpdate();
 			if(row!=1) {
@@ -811,7 +879,7 @@ public class TransactionServerUtils {
 				}
 			}
 			
-			//String comandoSql = formatSQLString(updateCommand, params.toArray());
+			//String comandoSql = DBUtils.formatSQLString(updateCommand, params.toArray());
 			//System.out.println("ROW: "+row+" (app:"+transazioneApplicativoServer.getConnettoreNome()+" id:"+transazioneApplicativoServer.getIdTransazione()+") sql:"+comandoSql);
 			
 			pstmt.close();
@@ -1043,6 +1111,7 @@ public class TransactionServerUtils {
 			IDAOFactory daoFactory, Logger logFactory, ServiceManagerProperties smpFactory,
 			boolean debug,
 			int esitoConsegnaMultipla, int esitoConsegnaMultiplaFallita, int esitoConsegnaMultiplaCompletata, int ok,
+			boolean consegnaInErrore_rilevatoEsitoTransazioneConsegnaInCoda,
 			long gestioneSerializableDB_AttesaAttiva, int gestioneSerializableDB_CheckInterval) throws CoreException {
 		
 		/*

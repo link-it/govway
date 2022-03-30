@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -29,6 +29,7 @@ import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerBeha
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverBehaviour;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.state.IState;
 
 /**
  * Behaviour
@@ -40,7 +41,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 public class BehaviourLoader {
 
 	public static IBehaviour newInstance(PortaApplicativaBehaviour behaviour, MsgDiagnostico msgDiag,
-			PdDContext pddContext, IProtocolFactory<?> protocolFactory) throws CoreException{
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory, IState state) throws CoreException{
 		
 		if(behaviour==null || behaviour.getNome()==null || "".equals(behaviour.getNome())) {
 			throw new CoreException("Behaviour undefined");
@@ -55,7 +56,7 @@ public class BehaviourLoader {
 			case CONSEGNA_CONDIZIONALE:
 			case CONSEGNA_CON_NOTIFICHE:
 				
-				behaviourImpl = new MultiDeliverBehaviour(bt);
+				behaviourImpl = new MultiDeliverBehaviour(bt, state);
 				
 				tipoDiagBehaviour = bt.getLabel();
 				
@@ -63,7 +64,7 @@ public class BehaviourLoader {
 				
 			case CONSEGNA_LOAD_BALANCE:
 				
-				behaviourImpl = new LoadBalancerBehaviour();
+				behaviourImpl = new LoadBalancerBehaviour(state);
 				
 				tipoDiagBehaviour = bt.getLabel();
 				

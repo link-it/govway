@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -42,7 +42,8 @@ public class ConfigurazioneMultiDeliver {
 	private boolean notificheByEsito_fault = true;
 	private boolean notificheByEsito_erroriConsegna = false;
 	private boolean notificheByEsito_erroriProcessamento = false;
-	private boolean notificheByEsito_richiesteScartate = false;
+	// le richieste scartate non arrivano alla gestione della consegna in smistatore e quindi non potranno nemmeno essere notifiate
+	//private boolean notificheByEsito_richiesteScartate = false;
 	private List<Integer> initTransazioneSincrona_esitiPerSpedireNotifiche;
 	
 	public List<Integer> getTransazioneSincrona_esitiPerSpedireNotifiche(EsitiProperties esitiProperties) throws ProtocolException {
@@ -67,13 +68,15 @@ public class ConfigurazioneMultiDeliver {
 				if(this.notificheByEsito_erroriConsegna) {
 					this.initTransazioneSincrona_esitiPerSpedireNotifiche.addAll(esitiProperties.getEsitiCodeErroriConsegna());
 				}
-				if(this.notificheByEsito_richiesteScartate) {
-					this.initTransazioneSincrona_esitiPerSpedireNotifiche.addAll(esitiProperties.getEsitiCodeRichiestaScartate());
-				}
+				// le richieste scartate non arrivano alla gestione della consegna in smistatore e quindi non potranno nemmeno essere notifiate
+//				if(this.notificheByEsito_richiesteScartate) {
+//					this.initTransazioneSincrona_esitiPerSpedireNotifiche.addAll(esitiProperties.getEsitiCodeRichiestaScartate());
+//				}
 				if(this.notificheByEsito_erroriProcessamento) {
 					List<Integer> esitiFallite = esitiProperties.getEsitiCodeKo();
 					List<Integer> esitiConsegna = esitiProperties.getEsitiCodeErroriConsegna();
-					List<Integer> richiesteScartate = esitiProperties.getEsitiCodeRichiestaScartate();
+					// le richieste scartate non arrivano alla gestione della consegna in smistatore e quindi non potranno nemmeno essere notifiate
+					//List<Integer> richiesteScartate = esitiProperties.getEsitiCodeRichiestaScartate();
 					for (Integer e : esitiFallite) {
 						boolean foundInConsegna = false;
 						for (Integer eConsegna : esitiConsegna) {
@@ -85,7 +88,8 @@ public class ConfigurazioneMultiDeliver {
 						if(foundInConsegna) {
 							continue;
 						}
-						boolean foundInRichiesteScartate = false;
+						// le richieste scartate non arrivano alla gestione della consegna in smistatore e quindi non potranno nemmeno essere notifiate
+						/*boolean foundInRichiesteScartate = false;
 						for (Integer eRichiestaScartata : richiesteScartate) {
 							if(eRichiestaScartata.intValue() == e.intValue()) {
 								foundInRichiesteScartate = true;
@@ -94,7 +98,7 @@ public class ConfigurazioneMultiDeliver {
 						}
 						if(foundInRichiesteScartate) {
 							continue;
-						}
+						}*/
 						this.initTransazioneSincrona_esitiPerSpedireNotifiche.add(e);
 					}
 				}
@@ -151,11 +155,11 @@ public class ConfigurazioneMultiDeliver {
 		this.notificheByEsito_erroriProcessamento = notificheByEsito_erroriProcessamento;
 	}
 
-	public boolean isNotificheByEsito_richiesteScartate() {
+	/*public boolean isNotificheByEsito_richiesteScartate() {
 		return this.notificheByEsito_richiesteScartate;
 	}
 
 	public void setNotificheByEsito_richiesteScartate(boolean notificheByEsito_richiesteScartate) {
 		this.notificheByEsito_richiesteScartate = notificheByEsito_richiesteScartate;
-	}
+	}*/
 }

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -1321,6 +1321,17 @@ public class StatsUtils {
 		
 		
 		switch (tipoStatistica) {
+		case DISTRIBUZIONE_ERRORI:
+			if(form.isUseGraficiSVG()) {
+				String labelTooltipDistribuzioneErroriSvgPattern = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_ERRORI_TOOLTIP_SVG_PATTERN_KEY);
+				sb.append(MessageFormat.format(labelTooltipDistribuzioneErroriSvgPattern, labelValore,valore,risultato,parent.get("0")));
+			} else {
+				String tooltipSectionErrori = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_ERRORI_PATTERN_KEY);
+				String tooltipSectionErroriDescrizione = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOOLTIP_NOSVG_ERRORI_DESCRIZIONE_PATTERN_KEY);
+				sb.append(labelValore).append(": ").append(valore).append(tooltipSectionErrori).append(risultato).append(tooltipSectionErroriDescrizione).append(parent.get("0"));
+			}
+			
+			break;
 		case DISTRIBUZIONE_SERVIZIO:
 			if(form.isUseGraficiSVG()) {
 				String labelTooltipDistribuzioneServizioSvgPattern = MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SERVIZIO_TOOLTIP_SVG_PATTERN_KEY);

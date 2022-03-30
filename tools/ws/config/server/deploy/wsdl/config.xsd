@@ -368,6 +368,7 @@
 		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
 		<xsd:attribute name="notifica" type="xsd:boolean" use="optional"/>
 		<xsd:attribute default="abilitato" name="stato" type="StatoFunzionalita"/>
+		<xsd:attribute default="abilitato" name="scheduling" type="StatoFunzionalita"/>
 		<xsd:attribute name="coda" type="xsd:string" use="optional"/>
 		<xsd:attribute name="priorita" type="xsd:string" use="optional"/>
 		<xsd:attribute default="false" name="priorita-max" type="xsd:boolean" use="optional"/>
@@ -662,7 +663,7 @@
 		<xsd:attribute default="false" name="conversione" type="xsd:boolean"/>
 		<xsd:attribute name="conversione-tipo" type="xsd:string"/>
 		<xsd:attribute name="content-type" type="xsd:string"/>
-		<xsd:attribute name="return-code" type="xsd:unsignedInt"/>
+		<xsd:attribute name="return-code" type="xsd:string"/> <!-- per poter avere dinamicita -->
 	</xsd:complexType>
 	<xsd:complexType name="trasformazione-regola-applicabilita-risposta">
 		<xsd:sequence>

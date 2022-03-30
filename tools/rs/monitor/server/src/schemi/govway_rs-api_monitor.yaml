@@ -14,7 +14,7 @@ info:
   x-summary: Servizi per il monitoraggio di GovWay
   description: Servizi per il monitoraggio di GovWay
   termsOfService: https://govway.org/documentazione/api/index.html
-  version: "3.3.5.p1"
+  version: "3.3.6.p1"
   contact:
     email: info@link.it
   license:
@@ -570,6 +570,87 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/RicercaStatisticaDistribuzioneEsiti'
+      responses:
+        "200":
+          $ref: '#/components/responses/200ReportStatistico'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+
+  /reportistica/analisi-statistica/distribuzione-errori:
+    parameters:
+      - $ref: 'govway_core.yaml#/components/parameters/profilo'
+      - $ref: 'govway_core.yaml#/components/parameters/soggetto'
+    get:
+      tags:
+        - Reportistica
+      summary: Genera un report statistico organizzato per esiti di errore utilizzando una ricerca semplice
+      operationId: getReportDistribuzioneErroriBySimpleSearch
+      description: >-
+        Questa operazione consente di generare per mezzo di una ricerca semplice, un report statistico
+        per esiti di errore esportandolo nei formati più comuni
+      parameters:
+        - $ref: "govway_core.yaml#/components/parameters/data_inizio"
+        - $ref: "govway_core.yaml#/components/parameters/data_fine"  
+        - $ref: '#/components/parameters/tipo_transazione'
+        - $ref: '#/components/parameters/id_cluster'
+        - $ref: '#/components/parameters/soggetto_remoto'
+        - $ref: '#/components/parameters/soggetto_erogatore'
+        - $ref: 'govway_core.yaml#/components/parameters/tag'
+        - $ref: '#/components/parameters/uri_api_implementata'
+        - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
+        - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'                     
+        - $ref: 'govway_core.yaml#/components/parameters/azione'
+        - $ref: '#/components/parameters/esito_transazione'
+        - $ref: '#/components/parameters/escludi_scartate'                     
+        - $ref: "#/components/parameters/formato_report"
+        - $ref: "#/components/parameters/unita_tempo_report"
+        - $ref: "#/components/parameters/tipo_report"
+        - $ref: '#/components/parameters/tipo_informazione_report'
+      responses:
+        "200":
+          $ref: '#/components/responses/200ReportStatistico'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    
+    post:
+      tags:
+        - Reportistica
+      summary: Genera un report statistico distribuito per esiti di errore utilizzando una ricerca articolata
+      operationId: getReportDistribuzioneErroriByFullSearch
+      description: >-
+        Questa operazione consente di generare un report statistico
+        raggruppato distribuito per esiti di errore ed esportandolo nei formati più comuni 
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RicercaStatisticaDistribuzioneErrori'
       responses:
         "200":
           $ref: '#/components/responses/200ReportStatistico'
@@ -2213,6 +2294,40 @@ components:
                 - $ref: '#/components/schemas/FiltroMittenteTokenClaim' 
                 - $ref: '#/components/schemas/FiltroMittenteTokenClaimSoggetto'
                 - $ref: '#/components/schemas/FiltroMittenteIndirizzoIP'
+
+    RicercaStatisticaDistribuzioneErrori:
+       type: object
+       allOf:
+        - $ref: '#/components/schemas/RicercaBaseStatisticaSoggetti'
+        - type: object
+          required:
+          - report
+          properties:
+            report:
+              $ref: '#/components/schemas/OpzioniGenerazioneReport'
+            azione:
+              $ref: 'govway_core.yaml#/components/schemas/NCName'
+            mittente:
+              discriminator:
+                propertyName: identificazione
+                mapping:
+                  erogazione_soggetto:  '#/components/schemas/FiltroMittenteErogazioneSoggetto' # utilizzabile solamente in filtri con tipologia transazioni 'erogazioni'
+                  fruizione_applicativo:  '#/components/schemas/FiltroMittenteFruizioneApplicativo' # utilizzabile solamente in filtri con tipologia transazioni 'fruizioni'
+                  erogazione_applicativo:  '#/components/schemas/FiltroMittenteErogazioneApplicativo' # utilizzabile solamente in filtri con tipologia transazioni 'erogazioni'
+                  identificativo_autenticato: '#/components/schemas/FiltroMittenteIdAutenticato'        
+                  erogazione_token_info: '#/components/schemas/FiltroMittenteTokenClaimSoggetto' # utilizzabile solamente in filtri con tipologia transazioni 'erogazioni'
+                  token_info: '#/components/schemas/FiltroMittenteTokenClaim'
+                  indirizzo_ip:  '#/components/schemas/FiltroMittenteIndirizzoIP'           
+              oneOf:
+                - $ref: '#/components/schemas/FiltroMittenteErogazioneSoggetto' 
+                - $ref: '#/components/schemas/FiltroMittenteFruizioneApplicativo'
+                - $ref: '#/components/schemas/FiltroMittenteErogazioneApplicativo'
+                - $ref: '#/components/schemas/FiltroMittenteIdAutenticato'
+                - $ref: '#/components/schemas/FiltroMittenteTokenClaim' 
+                - $ref: '#/components/schemas/FiltroMittenteTokenClaimSoggetto'
+                - $ref: '#/components/schemas/FiltroMittenteIndirizzoIP'
+            esito:
+              $ref: '#/components/schemas/FiltroEsito'
 
     RicercaStatisticaDistribuzioneSoggettoRemoto:
        type: object

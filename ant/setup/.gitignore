@@ -14,5 +14,7 @@ deploy/sql/sql_upgrade
 deploy/sw
 dist
 .ant-targets-build.xml
+arch.dodeploy
+cfg.dodeploy
 # Except this file
 !.gitignore

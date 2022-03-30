@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -21,6 +21,7 @@
 
 package org.openspcoop2.pdd.core.jmx;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -42,11 +43,21 @@ import javax.management.ReflectionException;
 
 import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.OpenspcoopAppender;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.Tracciamento;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
+import org.openspcoop2.pdd.config.DBManager;
+import org.openspcoop2.pdd.config.Resource;
+import org.openspcoop2.pdd.core.GestoreMessaggi;
+import org.openspcoop2.pdd.core.cache.GestoreCacheCleaner;
 import org.openspcoop2.pdd.core.connettori.ConnettoreCheck;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -71,6 +82,7 @@ import org.openspcoop2.pdd.timers.TimerStatisticheLib;
 import org.openspcoop2.pdd.timers.TimerStatisticheThread;
 import org.openspcoop2.pdd.timers.TimerThresholdThread;
 import org.openspcoop2.protocol.basic.Costanti;
+import org.openspcoop2.protocol.registry.CertificateCheck;
 import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
@@ -132,12 +144,51 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	/** Nomi metodi' */
 	public final static String CHECK_CONNETTORE_BY_ID = "checkConnettoreById";
 	public final static String CHECK_CONNETTORE_BY_NOME = "checkConnettoreByNome";
+	public final static String CHECK_CONNETTORE_TOKEN_POLICY_VALIDATION = "checkConnettoreTokenPolicyValidazione";
+	public final static String CHECK_CONNETTORE_TOKEN_POLICY_RETRIEVE = "checkConnettoreTokenPolicyNegoziazione";
+	public final static String CHECK_CONNETTORE_ATTRIBUTE_AUTHORITY = "checkConnettoreAttributeAuthority";
 	public final static String GET_CERTIFICATI_CONNETTORE_BY_ID = "getCertificatiConnettoreById";
 	public final static String GET_CERTIFICATI_CONNETTORE_BY_NOME = "getCertificatiConnettoreByNome";
+	public final static String GET_CERTIFICATI_TOKEN_POLICY_VALIDATION = "getCertificatiConnettoreTokenPolicyValidazione";
+	public final static String GET_CERTIFICATI_TOKEN_POLICY_RETRIEVE = "getCertificatiConnettoreTokenPolicyNegoziazione";
+	public final static String GET_CERTIFICATI_ATTRIBUTE_AUTHORITY = "getCertificatiConnettoreAttributeAuthority";
+	public final static String CHECK_CERTIFICATI_CONNETTORE_HTTPS_BY_ID = "checkCertificatiConnettoreHttpsById";
+	public final static String CHECK_CERTIFICATO_SERVIZIO_APPLICATIVO_BY_ID = "checkCertificatoApplicativoById";
+	public final static String CHECK_CERTIFICATO_SERVIZIO_APPLICATIVO_BY_NOME = "checkCertificatoApplicativoByNome";
+	public final static String CHECK_CERTIFICATO_MODI_SERVIZIO_APPLICATIVO_BY_ID = "checkCertificatoModIApplicativoById";
+	public final static String CHECK_CERTIFICATO_MODI_SERVIZIO_APPLICATIVO_BY_NOME = "checkCertificatoModIApplicativoByNome";
+	public final static String CHECK_CERTIFICATI_CONFIGURAZIONE_JVM = "checkCertificatiJvm";
+	public final static String CHECK_CERTIFICATI_CONNETTORE_HTTPS_TOKEN_POLICY_VALIDAZIONE = "checkCertificatiConnettoreHttpsTokenPolicyValidazione";
+	public final static String CHECK_CERTIFICATI_VALIDAZIONE_JWT_TOKEN_POLICY_VALIDAZIONE = "checkCertificatiValidazioneJwtTokenPolicyValidazione";
+	public final static String CHECK_CERTIFICATI_FORWARD_TO_JWT_TOKEN_POLICY_VALIDAZIONE = "checkCertificatiForwardToJwtTokenPolicyValidazione";
+	public final static String CHECK_CERTIFICATI_CONNETTORE_HTTPS_TOKEN_POLICY_NEGOZIAZIONE = "checkCertificatiConnettoreHttpsTokenPolicyNegoziazione";
+	public final static String CHECK_CERTIFICATI_SIGNED_JWT_TOKEN_POLICY_NEGOZIAZIONE = "checkCertificatiSignedJwtTokenPolicyNegoziazione";
+	public final static String CHECK_CERTIFICATI_CONNETTORE_HTTPS_ATTRIBUTE_AUTHORITY = "checkCertificatiConnettoreHttpsAttributeAuthority";
+	public final static String CHECK_CERTIFICATI_ATTRIBUTE_AUTHORITY_JWT_RICHIESTA = "checkCertificatiAttributeAuthorityJwtRichiesta";
+	public final static String CHECK_CERTIFICATI_ATTRIBUTE_AUTHORITY_JWT_RISPOSTA = "checkCertificatiAttributeAuthorityJwtRisposta";
+	public final static String CHECK_PROXY_CONFIGURAZIONE_JVM = "checkProxyJvm";
 	public final static String ABILITA_PORTA_DELEGATA = "enablePortaDelegata";
 	public final static String DISABILITA_PORTA_DELEGATA = "disablePortaDelegata";
 	public final static String ABILITA_PORTA_APPLICATIVA = "enablePortaApplicativa";
 	public final static String DISABILITA_PORTA_APPLICATIVA = "disablePortaApplicativa";
+	public final static String ABILITA_CONNETTORE_MULTIPLO = "enableConnettoreMultiplo";
+	public final static String DISABILITA_CONNETTORE_MULTIPLO = "disableConnettoreMultiplo";
+	public final static String ABILITA_SCHEDULING_CONNETTORE_MULTIPLO = "enableSchedulingConnettoreMultiplo";
+	public final static String DISABILITA_SCHEDULING_CONNETTORE_MULTIPLO = "disableSchedulingConnettoreMultiplo";
+	public final static String ABILITA_SCHEDULING_CONNETTORE_MULTIPLO_RUNTIME = "enableSchedulingConnettoreMultiploRuntimeRepository";
+	public final static String DISABILITA_SCHEDULING_CONNETTORE_MULTIPLO_RUNTIME = "disableSchedulingConnettoreMultiploRuntimeRepository";
+	public final static String RIPULISCI_RIFERIMENTI_CACHE_ACCORDO_COOPERAZIONE = "ripulisciRiferimentiCacheAccordoCooperazione";
+	public final static String RIPULISCI_RIFERIMENTI_CACHE_API = "ripulisciRiferimentiCacheApi";
+	public final static String RIPULISCI_RIFERIMENTI_CACHE_EROGAZIONE = "ripulisciRiferimentiCacheErogazione";
+	public final static String RIPULISCI_RIFERIMENTI_CACHE_FRUIZIONE = "ripulisciRiferimentiCacheFruizione";
+	public final static String RIPULISCI_RIFERIMENTI_CACHE_SOGGETTO = "ripulisciRiferimentiCacheSoggetto";
+	public final static String RIPULISCI_RIFERIMENTI_CACHE_APPLICATIVO = "ripulisciRiferimentiCacheApplicativo";
+	public final static String RIPULISCI_RIFERIMENTI_CACHE_RUOLO = "ripulisciRiferimentiCacheRuolo";
+	public final static String RIPULISCI_RIFERIMENTI_CACHE_SCOPE = "ripulisciRiferimentiCacheScope";
+	public final static String RIPULISCI_RIFERIMENTI_CACHE_TOKEN_POLICY_VALIDAZIONE = "ripulisciRiferimentiCacheTokenPolicyValidazione";
+	public final static String RIPULISCI_RIFERIMENTI_CACHE_TOKEN_POLICY_NEGOZIAZIONE = "ripulisciRiferimentiCacheTokenPolicyNegoziazione";
+	public final static String RIPULISCI_RIFERIMENTI_CACHE_ATTRIBUTE_AUTHORITY = "ripulisciRiferimentiCacheAttributeAuthority";
+	
 	
 	/** Attributi */
 	private boolean cacheAbilitata = false;
@@ -602,6 +653,48 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			return this.checkConnettoreByNome(param1);
 		}
 		
+		if(actionName.equals(CHECK_CONNETTORE_TOKEN_POLICY_VALIDATION)){
+			if(params.length != 1 && params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CONNETTORE_TOKEN_POLICY_VALIDATION+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			if(params.length==1) {
+				return this.checkConnettoreTokenPolicyValidazione(param1);
+			}
+			else {
+				String param2 = null;
+				if(params[1]!=null && !"".equals(params[1])){
+					param2 = (String)params[1];
+				}
+				return this.checkConnettoreTokenPolicyValidazione(param1,param2);
+			}
+		}
+		
+		if(actionName.equals(CHECK_CONNETTORE_TOKEN_POLICY_RETRIEVE)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+CHECK_CONNETTORE_TOKEN_POLICY_RETRIEVE+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			return this.checkConnettoreTokenPolicyNegoziazione(param1);
+		}
+		
+		if(actionName.equals(CHECK_CONNETTORE_ATTRIBUTE_AUTHORITY)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+CHECK_CONNETTORE_ATTRIBUTE_AUTHORITY+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			return this.checkConnettoreAttributeAuthority(param1);
+		}
+		
 		if(actionName.equals(GET_CERTIFICATI_CONNETTORE_BY_ID)){
 			if(params.length != 1)
 				throw new MBeanException(new Exception("["+GET_CERTIFICATI_CONNETTORE_BY_ID+"] Lunghezza parametri non corretta: "+params.length));
@@ -630,6 +723,367 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				param1 = (String)params[0];
 			}
 			return this.getCertificatiConnettoreByNome(param1);
+		}
+		
+		if(actionName.equals(GET_CERTIFICATI_TOKEN_POLICY_VALIDATION)){
+			if(params.length != 1 && params.length != 2)
+				throw new MBeanException(new Exception("["+GET_CERTIFICATI_TOKEN_POLICY_VALIDATION+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			if(params.length==1) {
+				return this.getCertificatiConnettoreTokenPolicyValidazione(param1);
+			}
+			else {
+				String param2 = null;
+				if(params[1]!=null && !"".equals(params[1])){
+					param2 = (String)params[1];
+				}
+				return this.getCertificatiConnettoreTokenPolicyValidazione(param1,param2);
+			}
+			
+		}
+		
+		if(actionName.equals(GET_CERTIFICATI_TOKEN_POLICY_RETRIEVE)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+GET_CERTIFICATI_TOKEN_POLICY_RETRIEVE+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			return this.getCertificatiConnettoreTokenPolicyNegoziazione(param1);
+		}
+		
+		if(actionName.equals(GET_CERTIFICATI_ATTRIBUTE_AUTHORITY)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+GET_CERTIFICATI_ATTRIBUTE_AUTHORITY+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			return this.getCertificatiConnettoreAttributeAuthority(param1);
+		}
+		
+		if(actionName.equals(CHECK_CERTIFICATI_CONNETTORE_HTTPS_BY_ID)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_CONNETTORE_HTTPS_BY_ID+"] Lunghezza parametri non corretta: "+params.length));
+			
+			Long param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				if(params[0] instanceof Long) {
+					param1 = (Long)params[0];
+				}
+				else {
+					param1 = Long.valueOf(params[0].toString());
+				}
+				if(param1<0){
+					param1 = null;
+				}
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatiConnettoreHttpsById(param1, soglia);
+		}
+		
+		if(actionName.equals(CHECK_CERTIFICATO_SERVIZIO_APPLICATIVO_BY_ID)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATO_SERVIZIO_APPLICATIVO_BY_ID+"] Lunghezza parametri non corretta: "+params.length));
+			
+			Long param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				if(params[0] instanceof Long) {
+					param1 = (Long)params[0];
+				}
+				else {
+					param1 = Long.valueOf(params[0].toString());
+				}
+				if(param1<0){
+					param1 = null;
+				}
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatoApplicativoById(param1, soglia);
+		}
+		if(actionName.equals(CHECK_CERTIFICATO_SERVIZIO_APPLICATIVO_BY_NOME)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATO_SERVIZIO_APPLICATIVO_BY_NOME+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatoApplicativoByNome(param1, soglia);
+		}
+		
+		if(actionName.equals(CHECK_CERTIFICATO_MODI_SERVIZIO_APPLICATIVO_BY_ID)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATO_MODI_SERVIZIO_APPLICATIVO_BY_ID+"] Lunghezza parametri non corretta: "+params.length));
+			
+			Long param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				if(params[0] instanceof Long) {
+					param1 = (Long)params[0];
+				}
+				else {
+					param1 = Long.valueOf(params[0].toString());
+				}
+				if(param1<0){
+					param1 = null;
+				}
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatoModiApplicativoById(param1, soglia);
+		}
+		if(actionName.equals(CHECK_CERTIFICATO_MODI_SERVIZIO_APPLICATIVO_BY_NOME)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATO_MODI_SERVIZIO_APPLICATIVO_BY_NOME+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatoModiApplicativoByNome(param1, soglia);
+		}
+		
+		if(actionName.equals(CHECK_CERTIFICATI_CONFIGURAZIONE_JVM)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_CONFIGURAZIONE_JVM+"] Lunghezza parametri non corretta: "+params.length));
+			
+			int soglia = -1;
+			if(params[0] instanceof Integer) {
+				soglia = (Integer)params[0];
+			}
+			else {
+				soglia = Integer.valueOf(params[0].toString());
+			}
+			
+			return this.checkCertificatiJvm(soglia);
+		}
+		if(actionName.equals(CHECK_PROXY_CONFIGURAZIONE_JVM)){
+			return this.checkProxyJvm();
+		}
+		
+		if(actionName.equals(CHECK_CERTIFICATI_CONNETTORE_HTTPS_TOKEN_POLICY_VALIDAZIONE)){
+			if(params.length != 2 && params.length != 3)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_CONNETTORE_HTTPS_TOKEN_POLICY_VALIDAZIONE+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			String tipo = null;
+			if(params.length == 3) {
+				if(params[1]!=null && !"".equals(params[1])){
+					tipo = (String)params[1];
+				}
+			}
+			
+			int soglia = -1;
+			if(params.length == 2) {
+				if(params[1] instanceof Integer) {
+					soglia = (Integer)params[1];
+				}
+				else {
+					soglia = Integer.valueOf(params[1].toString());
+				}
+			}
+			else {
+				if(params[2] instanceof Integer) {
+					soglia = (Integer)params[2];
+				}
+				else {
+					soglia = Integer.valueOf(params[2].toString());
+				}
+			}
+			
+			if(params.length == 3) {
+				return this.checkCertificatiConnettoreHttpsTokenPolicyValidazione(param1, tipo, soglia);
+			}
+			else {
+				return this.checkCertificatiConnettoreHttpsTokenPolicyValidazione(param1, soglia);
+			}
+		}
+		if(actionName.equals(CHECK_CERTIFICATI_VALIDAZIONE_JWT_TOKEN_POLICY_VALIDAZIONE)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_VALIDAZIONE_JWT_TOKEN_POLICY_VALIDAZIONE+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatiValidazioneJwtTokenPolicyValidazione(param1, soglia);
+		}
+		if(actionName.equals(CHECK_CERTIFICATI_FORWARD_TO_JWT_TOKEN_POLICY_VALIDAZIONE)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_FORWARD_TO_JWT_TOKEN_POLICY_VALIDAZIONE+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatiForwardToJwtTokenPolicyValidazione(param1, soglia);
+		}
+		
+		if(actionName.equals(CHECK_CERTIFICATI_CONNETTORE_HTTPS_TOKEN_POLICY_NEGOZIAZIONE)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_CONNETTORE_HTTPS_TOKEN_POLICY_NEGOZIAZIONE+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatiConnettoreHttpsTokenPolicyNegoziazione(param1, soglia);
+		}
+		if(actionName.equals(CHECK_CERTIFICATI_SIGNED_JWT_TOKEN_POLICY_NEGOZIAZIONE)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_SIGNED_JWT_TOKEN_POLICY_NEGOZIAZIONE+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatiSignedJwtTokenPolicyNegoziazione(param1, soglia);
+		}
+		
+		if(actionName.equals(CHECK_CERTIFICATI_CONNETTORE_HTTPS_ATTRIBUTE_AUTHORITY)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_CONNETTORE_HTTPS_ATTRIBUTE_AUTHORITY+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatiConnettoreHttpsAttributeAuthority(param1, soglia);
+		}
+		if(actionName.equals(CHECK_CERTIFICATI_ATTRIBUTE_AUTHORITY_JWT_RICHIESTA)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_ATTRIBUTE_AUTHORITY_JWT_RICHIESTA+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatiAttributeAuthorityJwtRichiesta(param1, soglia);
+		}
+		if(actionName.equals(CHECK_CERTIFICATI_ATTRIBUTE_AUTHORITY_JWT_RISPOSTA)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_ATTRIBUTE_AUTHORITY_JWT_RISPOSTA+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			int soglia = -1;
+			if(params[1] instanceof Integer) {
+				soglia = (Integer)params[1];
+			}
+			else {
+				soglia = Integer.valueOf(params[1].toString());
+			}
+			
+			return this.checkCertificatiAttributeAuthorityJwtRisposta(param1, soglia);
 		}
 		
 		if(actionName.equals(ABILITA_PORTA_DELEGATA)){
@@ -680,6 +1134,317 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			return this.updateStatoPortaApplicativa(param1, false);
 		}
 		
+		if(actionName.equals(ABILITA_CONNETTORE_MULTIPLO)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+ABILITA_CONNETTORE_MULTIPLO+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			String param2 = null;
+			if(params[1]!=null && !"".equals(params[1])){
+				param2 = (String)params[1];
+			}
+			
+			return this.updateStatoConnettoreMultiplo(param1, param2, true);
+		}
+		
+		if(actionName.equals(DISABILITA_CONNETTORE_MULTIPLO)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+DISABILITA_CONNETTORE_MULTIPLO+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			String param2 = null;
+			if(params[1]!=null && !"".equals(params[1])){
+				param2 = (String)params[1];
+			}
+			
+			return this.updateStatoConnettoreMultiplo(param1, param2, false);
+		}
+		
+		if(actionName.equals(ABILITA_SCHEDULING_CONNETTORE_MULTIPLO)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+ABILITA_SCHEDULING_CONNETTORE_MULTIPLO+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			String param2 = null;
+			if(params[1]!=null && !"".equals(params[1])){
+				param2 = (String)params[1];
+			}
+			
+			return this.updateSchedulingConnettoreMultiplo(param1, param2, true);
+		}
+		
+		if(actionName.equals(DISABILITA_SCHEDULING_CONNETTORE_MULTIPLO)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+DISABILITA_SCHEDULING_CONNETTORE_MULTIPLO+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			String param2 = null;
+			if(params[1]!=null && !"".equals(params[1])){
+				param2 = (String)params[1];
+			}
+			
+			return this.updateSchedulingConnettoreMultiplo(param1, param2, false);
+		}
+		
+		if(actionName.equals(ABILITA_SCHEDULING_CONNETTORE_MULTIPLO_RUNTIME)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+ABILITA_SCHEDULING_CONNETTORE_MULTIPLO_RUNTIME+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			String param2 = null;
+			if(params[1]!=null && !"".equals(params[1])){
+				param2 = (String)params[1];
+			}
+			
+			return this.updateSchedulingConnettoreMultiploMessaggiPresiInCarico(param1, param2, true);
+		}
+		
+		if(actionName.equals(DISABILITA_SCHEDULING_CONNETTORE_MULTIPLO_RUNTIME)){
+			if(params.length != 2)
+				throw new MBeanException(new Exception("["+DISABILITA_SCHEDULING_CONNETTORE_MULTIPLO_RUNTIME+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			
+			String param2 = null;
+			if(params[1]!=null && !"".equals(params[1])){
+				param2 = (String)params[1];
+			}
+			
+			return this.updateSchedulingConnettoreMultiploMessaggiPresiInCarico(param1, param2, false);
+		}
+		
+		if(actionName.equals(RIPULISCI_RIFERIMENTI_CACHE_ACCORDO_COOPERAZIONE)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_ACCORDO_COOPERAZIONE+"] Lunghezza parametri non corretta: "+params.length));
+			
+			Long param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				if(params[0] instanceof Long) {
+					param1 = (Long)params[0];
+				}
+				else {
+					param1 = Long.valueOf(params[0].toString());
+				}
+				if(param1<0){
+					param1 = null;
+				}
+			}
+			return this.ripulisciRiferimentiCacheAccordoCooperazione(param1);
+		}
+		
+		if(actionName.equals(RIPULISCI_RIFERIMENTI_CACHE_API)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_API+"] Lunghezza parametri non corretta: "+params.length));
+			
+			Long param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				if(params[0] instanceof Long) {
+					param1 = (Long)params[0];
+				}
+				else {
+					param1 = Long.valueOf(params[0].toString());
+				}
+				if(param1<0){
+					param1 = null;
+				}
+			}
+			return this.ripulisciRiferimentiCacheApi(param1);
+		}
+		
+		if(actionName.equals(RIPULISCI_RIFERIMENTI_CACHE_EROGAZIONE)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_EROGAZIONE+"] Lunghezza parametri non corretta: "+params.length));
+			
+			Long param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				if(params[0] instanceof Long) {
+					param1 = (Long)params[0];
+				}
+				else {
+					param1 = Long.valueOf(params[0].toString());
+				}
+				if(param1<0){
+					param1 = null;
+				}
+			}
+			return this.ripulisciRiferimentiCacheErogazione(param1);
+		}
+		
+		if(actionName.equals(RIPULISCI_RIFERIMENTI_CACHE_FRUIZIONE)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_FRUIZIONE+"] Lunghezza parametri non corretta: "+params.length));
+			
+			Long param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				if(params[0] instanceof Long) {
+					param1 = (Long)params[0];
+				}
+				else {
+					param1 = Long.valueOf(params[0].toString());
+				}
+				if(param1<0){
+					param1 = null;
+				}
+			}
+			return this.ripulisciRiferimentiCacheFruizione(param1);
+		}
+		
+		if(actionName.equals(RIPULISCI_RIFERIMENTI_CACHE_SOGGETTO)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_SOGGETTO+"] Lunghezza parametri non corretta: "+params.length));
+			
+			Long param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				if(params[0] instanceof Long) {
+					param1 = (Long)params[0];
+				}
+				else {
+					param1 = Long.valueOf(params[0].toString());
+				}
+				if(param1<0){
+					param1 = null;
+				}
+			}
+			return this.ripulisciRiferimentiCacheSoggetto(param1);
+		}
+		
+		if(actionName.equals(RIPULISCI_RIFERIMENTI_CACHE_APPLICATIVO)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_APPLICATIVO+"] Lunghezza parametri non corretta: "+params.length));
+			
+			Long param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				if(params[0] instanceof Long) {
+					param1 = (Long)params[0];
+				}
+				else {
+					param1 = Long.valueOf(params[0].toString());
+				}
+				if(param1<0){
+					param1 = null;
+				}
+			}
+			return this.ripulisciRiferimentiCacheApplicativo(param1);
+		}
+		
+		if(actionName.equals(RIPULISCI_RIFERIMENTI_CACHE_RUOLO)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_RUOLO+"] Lunghezza parametri non corretta: "+params.length));
+			
+			Long param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				if(params[0] instanceof Long) {
+					param1 = (Long)params[0];
+				}
+				else {
+					param1 = Long.valueOf(params[0].toString());
+				}
+				if(param1<0){
+					param1 = null;
+				}
+			}
+			return this.ripulisciRiferimentiCacheRuolo(param1);
+		}
+		
+		if(actionName.equals(RIPULISCI_RIFERIMENTI_CACHE_SCOPE)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_SCOPE+"] Lunghezza parametri non corretta: "+params.length));
+			
+			Long param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				if(params[0] instanceof Long) {
+					param1 = (Long)params[0];
+				}
+				else {
+					param1 = Long.valueOf(params[0].toString());
+				}
+				if(param1<0){
+					param1 = null;
+				}
+			}
+			return this.ripulisciRiferimentiCacheScope(param1);
+		}
+		
+		if(actionName.equals(RIPULISCI_RIFERIMENTI_CACHE_TOKEN_POLICY_VALIDAZIONE)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_TOKEN_POLICY_VALIDAZIONE+"] Lunghezza parametri non corretta: "+params.length));
+			
+			Long param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				if(params[0] instanceof Long) {
+					param1 = (Long)params[0];
+				}
+				else {
+					param1 = Long.valueOf(params[0].toString());
+				}
+				if(param1<0){
+					param1 = null;
+				}
+			}
+			return this.ripulisciRiferimentiCacheTokenPolicyValidazione(param1);
+		}
+		
+		if(actionName.equals(RIPULISCI_RIFERIMENTI_CACHE_TOKEN_POLICY_NEGOZIAZIONE)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_TOKEN_POLICY_NEGOZIAZIONE+"] Lunghezza parametri non corretta: "+params.length));
+			
+			Long param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				if(params[0] instanceof Long) {
+					param1 = (Long)params[0];
+				}
+				else {
+					param1 = Long.valueOf(params[0].toString());
+				}
+				if(param1<0){
+					param1 = null;
+				}
+			}
+			return this.ripulisciRiferimentiCacheTokenPolicyNegoziazione(param1);
+		}
+		
+		if(actionName.equals(RIPULISCI_RIFERIMENTI_CACHE_ATTRIBUTE_AUTHORITY)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_ATTRIBUTE_AUTHORITY+"] Lunghezza parametri non corretta: "+params.length));
+			
+			Long param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				if(params[0] instanceof Long) {
+					param1 = (Long)params[0];
+				}
+				else {
+					param1 = Long.valueOf(params[0].toString());
+				}
+				if(param1<0){
+					param1 = null;
+				}
+			}
+			return this.ripulisciRiferimentiCacheAttributeAuthority(param1);
+		}
+
 		throw new UnsupportedOperationException("Operazione "+actionName+" sconosciuta");
 	}
 	
@@ -981,7 +1746,42 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			},
 			String.class.getName(),
 			MBeanOperationInfo.ACTION);
-			
+		
+		// MetaData per l'operazione checkConnettoreTokenPolicyValidazione
+		MBeanOperationInfo checkConnettoreTokenPolicyValidazione 
+		= new MBeanOperationInfo(CHECK_CONNETTORE_BY_NOME,"Verifica la raggiungibilità dei connettori definiti nella Token Policy di validazione con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome della Token Policy di Validazione"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		MBeanOperationInfo checkConnettoreTokenPolicyValidazione_2
+		= new MBeanOperationInfo(CHECK_CONNETTORE_BY_NOME,"Verifica la raggiungibilità dei connettori definiti nella Token Policy di validazione con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome della Token Policy di Validazione"),
+				new MBeanParameterInfo("tipoConnettore",String.class.getName(),"Tipo del connettore da verificare ["+ConnettoreCheck.POLICY_TIPO_ENDPOINT_INTROSPECTION+","+ConnettoreCheck.POLICY_TIPO_ENDPOINT_USERINFO+"]"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkConnettoreTokenPolicyNegoziazione
+		MBeanOperationInfo checkConnettoreTokenPolicyNegoziazione 
+		= new MBeanOperationInfo(CHECK_CONNETTORE_BY_NOME,"Verifica la raggiungibilità del connettore definito nella Token Policy di negoziazione con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome della Token Policy di Negoziazione"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkConnettoreAttributeAuthority
+		MBeanOperationInfo checkConnettoreAttributeAuthority 
+		= new MBeanOperationInfo(CHECK_CONNETTORE_BY_NOME,"Verifica la raggiungibilità del connettore definito nell'AttributeAuthority con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome dell'AttributeAuthority"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+
 		// MetaData per l'operazione getCertificatiConnettoreById
 		MBeanOperationInfo getCertificatiConnettoreById 
 		= new MBeanOperationInfo(GET_CERTIFICATI_CONNETTORE_BY_ID,"Recupera i certificati server del connettore con id fornito come parametro",
@@ -1000,6 +1800,199 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			String.class.getName(),
 			MBeanOperationInfo.ACTION);
 		
+		// MetaData per l'operazione getCertificatiConnettoreTokenPolicyValidazione
+		MBeanOperationInfo getCertificatiConnettoreTokenPolicyValidazione 
+		= new MBeanOperationInfo(GET_CERTIFICATI_TOKEN_POLICY_VALIDATION,"Recupera i certificati server dell'endpoit definito nella token policy di validazione con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+					new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome della Token Policy di Validazione"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione getCertificatiConnettoreTokenPolicyValidazione_2
+		MBeanOperationInfo getCertificatiConnettoreTokenPolicyValidazione_2
+		= new MBeanOperationInfo(GET_CERTIFICATI_TOKEN_POLICY_VALIDATION,"Recupera i certificati server dell'endpoit definito nella token policy di validazione con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+					new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome della Token Policy di Validazione"),
+					new MBeanParameterInfo("tipoConnettore",String.class.getName(),"Tipo del connettore da verificare ["+ConnettoreCheck.POLICY_TIPO_ENDPOINT_INTROSPECTION+","+ConnettoreCheck.POLICY_TIPO_ENDPOINT_USERINFO+"]"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione getCertificatiConnettoreTokenPolicyNegoziazione
+		MBeanOperationInfo getCertificatiConnettoreTokenPolicyNegoziazione 
+		= new MBeanOperationInfo(GET_CERTIFICATI_TOKEN_POLICY_VALIDATION,"Recupera i certificati server dell'endpoit definito nella token policy di negoziazione con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+					new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome della Token Policy di Negoziazione"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione getCertificatiConnettoreAttributeAuthority
+		MBeanOperationInfo getCertificatiConnettoreAttributeAuthority 
+		= new MBeanOperationInfo(GET_CERTIFICATI_TOKEN_POLICY_VALIDATION,"Recupera i certificati server dell'endpoit definito nell'AttributeAuthority con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+					new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome dell'AttributeAuthority"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+			
+		// MetaData per l'operazione checkCertificatiConnettoreHttpsById
+		MBeanOperationInfo checkCertificatiConnettoreHttpsById 
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_CONNETTORE_HTTPS_BY_ID,"Verifica i certificati presenti nei keystore e truststore del connettore https che possiede l'id fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("idConnettore",long.class.getName(),"Identificativo del connettore"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkCertificatoApplicativoById
+		MBeanOperationInfo checkCertificatoApplicativoById 
+		= new MBeanOperationInfo(CHECK_CERTIFICATO_SERVIZIO_APPLICATIVO_BY_ID,"Verifica i certificati client associati all'applicativo che possiede l'id fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("idApplicativo",long.class.getName(),"Identificativo dell'applicativo"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkCertificatoApplicativoByNome
+		MBeanOperationInfo checkCertificatoApplicativoByNome 
+		= new MBeanOperationInfo(CHECK_CERTIFICATO_SERVIZIO_APPLICATIVO_BY_NOME,"Verifica i certificati client associati all'applicativo che possiede l'id fornito come parametro (formato: nomeApplicativo@tipoSoggetto/nomeSoggetto)",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("idApplicativo",String.class.getName(),"Identificativo dell'applicativo"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkCertificatoModIApplicativoById
+		MBeanOperationInfo checkCertificatoModIApplicativoById 
+		= new MBeanOperationInfo(CHECK_CERTIFICATO_MODI_SERVIZIO_APPLICATIVO_BY_ID,"Verifica il keystore ModI associato all'applicativo che possiede l'id fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("idApplicativo",long.class.getName(),"Identificativo dell'applicativo"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkCertificatoModIApplicativoByNome
+		MBeanOperationInfo checkCertificatoModIApplicativoByNome 
+		= new MBeanOperationInfo(CHECK_CERTIFICATO_SERVIZIO_APPLICATIVO_BY_NOME,"Verifica il keystore ModI associato all'applicativo che possiede l'id fornito come parametro (formato: nomeApplicativo@tipoSoggetto/nomeSoggetto)",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("idApplicativo",String.class.getName(),"Identificativo dell'applicativo"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkCertificatiJvm
+		MBeanOperationInfo checkCertificatiJvm 
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_CONFIGURAZIONE_JVM,"Verifica il keystore e truststore associato alla jvm",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkProxyJvm
+		MBeanOperationInfo checkProxyJvm 
+		= new MBeanOperationInfo(CHECK_PROXY_CONFIGURAZIONE_JVM,"Verifica l'eventuale proxy associato alla jvm",
+			null,
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkCertificatiConnettoreHttpsTokenPolicyValidazione
+		MBeanOperationInfo checkCertificatiConnettoreHttpsTokenPolicyValidazione
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_CONNETTORE_HTTPS_TOKEN_POLICY_VALIDAZIONE,"Verifica i certificati del connettore https definito nella Token Policy di validazione con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome della Token Policy di Validazione"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		MBeanOperationInfo checkCertificatiConnettoreHttpsTokenPolicyValidazione_2
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_CONNETTORE_HTTPS_TOKEN_POLICY_VALIDAZIONE,"Verifica i certificati del connettore https definito nella Token Policy di validazione con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome della Token Policy di Validazione"),
+				new MBeanParameterInfo("tipoConnettore",String.class.getName(),"Tipo del connettore da verificare ["+ConnettoreCheck.POLICY_TIPO_ENDPOINT_INTROSPECTION+","+ConnettoreCheck.POLICY_TIPO_ENDPOINT_USERINFO+"]"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkCertificatiValidazioneJwtTokenPolicyValidazione
+		MBeanOperationInfo checkCertificatiValidazioneJwtTokenPolicyValidazione
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_VALIDAZIONE_JWT_TOKEN_POLICY_VALIDAZIONE,"Verifica i certificati utilizzati per la validazione JWT del Token definito nella Token Policy di validazione con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome della Token Policy di Validazione"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkCertificatiForwardToJwtTokenPolicyValidazione
+		MBeanOperationInfo checkCertificatiForwardToJwtTokenPolicyValidazione
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_FORWARD_TO_JWT_TOKEN_POLICY_VALIDAZIONE,"Verifica i certificati utilizzati per firmare il JWT contenente le informazioni del Token definito nella Token Policy di validazione con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome della Token Policy di Validazione"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		
+		// MetaData per l'operazione checkCertificatiConnettoreHttpsTokenPolicyNegoziazione
+		MBeanOperationInfo checkCertificatiConnettoreHttpsTokenPolicyNegoziazione
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_CONNETTORE_HTTPS_TOKEN_POLICY_NEGOZIAZIONE,"Verifica i certificati del connettore https definito nella Token Policy di negoziazione con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome della Token Policy di Negoziazione"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkCertificatiSignedJwtTokenPolicyNegoziazione
+		MBeanOperationInfo checkCertificatiSignedJwtTokenPolicyNegoziazione
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_SIGNED_JWT_TOKEN_POLICY_NEGOZIAZIONE,"Verifica i certificati utilizzati per firmare l'asserzione JWT definita nella Token Policy di negoziazione con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome della Token Policy di Negoziazione"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkCertificatiConnettoreHttpsAttributeAuthority
+		MBeanOperationInfo checkCertificatiConnettoreHttpsAttributeAuthority
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_CONNETTORE_HTTPS_ATTRIBUTE_AUTHORITY,"Verifica i certificati del connettore https definito nell'AttributeAuthority con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome dell'AttributeAuthority"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkCertificatiAttributeAuthorityJwtRichiesta
+		MBeanOperationInfo checkCertificatiAttributeAuthorityJwtRichiesta
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_ATTRIBUTE_AUTHORITY_JWT_RICHIESTA,"Verifica i certificati utilizzati per firmare il JWT della richiesta definito nell'AttributeAuthority con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome dell'AttributeAuthority"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione checkCertificatiAttributeAuthorityJwtRisposta
+		MBeanOperationInfo checkCertificatiAttributeAuthorityJwtRisposta
+		= new MBeanOperationInfo(CHECK_CERTIFICATI_ATTRIBUTE_AUTHORITY_JWT_RISPOSTA,"Verifica i certificati utilizzati per firmare il JWT della richiesta definito nell'AttributeAuthority con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePolicy",String.class.getName(),"Nome dell'AttributeAuthority"),
+				new MBeanParameterInfo("warningThreshold",int.class.getName(),"Soglia di warning (giorni)"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+				
 		// MetaData per l'operazione enablePortaDelegata
 		MBeanOperationInfo enablePortaDelegata 
 		= new MBeanOperationInfo(ABILITA_PORTA_DELEGATA,"Abilita lo stato della porta con nome fornito come parametro",
@@ -1036,6 +2029,165 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			String.class.getName(),
 			MBeanOperationInfo.ACTION);
 		
+		// MetaData per l'operazione enableConnettoreMultiplo
+		MBeanOperationInfo enableConnettoreMultiplo 
+		= new MBeanOperationInfo(ABILITA_PORTA_APPLICATIVA,"Abilita lo stato del connettore della porta identificato dai parametri",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePorta",String.class.getName(),"Nome della Porta"),
+				new MBeanParameterInfo("nomeConnettore",String.class.getName(),"Nome del Connettore"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione disableConnettoreMultiplo
+		MBeanOperationInfo disableConnettoreMultiplo
+		= new MBeanOperationInfo(DISABILITA_PORTA_APPLICATIVA,"Disabilita lo stato del connettore della porta identificato dai parametri",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePorta",String.class.getName(),"Nome della Porta"),
+				new MBeanParameterInfo("nomeConnettore",String.class.getName(),"Nome del Connettore"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione enableSchedulingConnettoreMultiplo
+		MBeanOperationInfo enableSchedulingConnettoreMultiplo 
+		= new MBeanOperationInfo(ABILITA_PORTA_APPLICATIVA,"Abilita lo scheduling del connettore della porta identificato dai parametri",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePorta",String.class.getName(),"Nome della Porta"),
+				new MBeanParameterInfo("nomeConnettore",String.class.getName(),"Nome del Connettore"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione disableSchedulingConnettoreMultiplo
+		MBeanOperationInfo disableSchedulingConnettoreMultiplo
+		= new MBeanOperationInfo(DISABILITA_PORTA_APPLICATIVA,"Disabilita lo scheduling del connettore della porta identificato dai parametri",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePorta",String.class.getName(),"Nome della Porta"),
+				new MBeanParameterInfo("nomeConnettore",String.class.getName(),"Nome del Connettore"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione enableSchedulingConnettoreMultiploRuntimeRepository
+		MBeanOperationInfo enableSchedulingConnettoreMultiploRuntimeRepository
+		= new MBeanOperationInfo(ABILITA_PORTA_APPLICATIVA,"Abilita lo scheduling del connettore della porta identificato dai parametri nel RuntimeRepository",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePorta",String.class.getName(),"Nome della Porta"),
+				new MBeanParameterInfo("nomeConnettore",String.class.getName(),"Nome del Connettore"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione disableSchedulingConnettoreMultiploRuntimeRepository
+		MBeanOperationInfo disableSchedulingConnettoreMultiploRuntimeRepository
+		= new MBeanOperationInfo(DISABILITA_PORTA_APPLICATIVA,"Disabilita lo scheduling del connettore della porta identificato dai parametri nel RuntimeRepository",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomePorta",String.class.getName(),"Nome della Porta"),
+				new MBeanParameterInfo("nomeConnettore",String.class.getName(),"Nome del Connettore"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione ripulisciRiferimentiCacheAccordoCooperazione
+		MBeanOperationInfo ripulisciRiferimentiCacheAccordoCooperazione 
+		= new MBeanOperationInfo(RIPULISCI_RIFERIMENTI_CACHE_ACCORDO_COOPERAZIONE,"Ripulisce i riferimenti in cache dell'accordo di cooperazione identificato dal parametro id",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("id",long.class.getName(),"Identificativo dell'accordo"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione ripulisciRiferimentiCacheApi
+		MBeanOperationInfo ripulisciRiferimentiCacheApi 
+		= new MBeanOperationInfo(RIPULISCI_RIFERIMENTI_CACHE_API,"Ripulisce i riferimenti in cache dell'accordo identificato dal parametro id",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("id",long.class.getName(),"Identificativo dell'accordo"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione ripulisciRiferimentiCacheErogazione
+		MBeanOperationInfo ripulisciRiferimentiCacheErogazione 
+		= new MBeanOperationInfo(RIPULISCI_RIFERIMENTI_CACHE_EROGAZIONE,"Ripulisce i riferimenti in cache dell'erogazione identificata dal parametro id",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("id",long.class.getName(),"Identificativo dell'erogazione"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione ripulisciRiferimentiCacheFruizione
+		MBeanOperationInfo ripulisciRiferimentiCacheFruizione 
+		= new MBeanOperationInfo(RIPULISCI_RIFERIMENTI_CACHE_FRUIZIONE,"Ripulisce i riferimenti in cache della fruizione identificata dal parametro id",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("id",long.class.getName(),"Identificativo della fruizione"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione ripulisciRiferimentiCacheSoggetto
+		MBeanOperationInfo ripulisciRiferimentiCacheSoggetto 
+		= new MBeanOperationInfo(RIPULISCI_RIFERIMENTI_CACHE_SOGGETTO,"Ripulisce i riferimenti in cache del soggetto identificato dal parametro id",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("id",long.class.getName(),"Identificativo del soggetto"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione ripulisciRiferimentiCacheApplicativo
+		MBeanOperationInfo ripulisciRiferimentiCacheApplicativo 
+		= new MBeanOperationInfo(RIPULISCI_RIFERIMENTI_CACHE_APPLICATIVO,"Ripulisce i riferimenti in cache dell'applicativo identificato dal parametro id",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("id",long.class.getName(),"Identificativo dell'applicativo"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione ripulisciRiferimentiCacheRuolo
+		MBeanOperationInfo ripulisciRiferimentiCacheRuolo 
+		= new MBeanOperationInfo(RIPULISCI_RIFERIMENTI_CACHE_RUOLO,"Ripulisce i riferimenti in cache del ruolo identificato dal parametro id",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("id",long.class.getName(),"Identificativo del ruolo"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione ripulisciRiferimentiCacheScope
+		MBeanOperationInfo ripulisciRiferimentiCacheScope 
+		= new MBeanOperationInfo(RIPULISCI_RIFERIMENTI_CACHE_SCOPE,"Ripulisce i riferimenti in cache dello scope identificato dal parametro id",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("id",long.class.getName(),"Identificativo dello scope"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione ripulisciRiferimentiCacheTokenPolicyValidazione
+		MBeanOperationInfo ripulisciRiferimentiCacheTokenPolicyValidazione 
+		= new MBeanOperationInfo(RIPULISCI_RIFERIMENTI_CACHE_TOKEN_POLICY_VALIDAZIONE,"Ripulisce i riferimenti in cache della token policy identificata dal parametro id",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("id",long.class.getName(),"Identificativo della policy"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione ripulisciRiferimentiCacheTokenPolicyNegoziazione
+		MBeanOperationInfo ripulisciRiferimentiCacheTokenPolicyNegoziazione 
+		= new MBeanOperationInfo(RIPULISCI_RIFERIMENTI_CACHE_TOKEN_POLICY_NEGOZIAZIONE,"Ripulisce i riferimenti in cache della token policy identificata dal parametro id",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("id",long.class.getName(),"Identificativo della policy"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione ripulisciRiferimentiCacheAttributeAuthority
+		MBeanOperationInfo ripulisciRiferimentiCacheAttributeAuthority 
+		= new MBeanOperationInfo(RIPULISCI_RIFERIMENTI_CACHE_ATTRIBUTE_AUTHORITY,"Ripulisce i riferimenti in cache dell'Attribute Authority identificata dal parametro id",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("id",long.class.getName(),"Identificativo dell'Authority"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+
 		// Mbean costruttore
 		MBeanConstructorInfo defaultConstructor = new MBeanConstructorInfo("Default Constructor","Crea e inizializza una nuova istanza del MBean",null);
 
@@ -1080,12 +2232,53 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		listOperation.add(removeObjectCacheOP);
 		listOperation.add(checkConnettoreById);
 		listOperation.add(checkConnettoreByNome);
+		listOperation.add(checkConnettoreTokenPolicyValidazione);
+		listOperation.add(checkConnettoreTokenPolicyValidazione_2);
+		listOperation.add(checkConnettoreTokenPolicyNegoziazione);
+		listOperation.add(checkConnettoreAttributeAuthority);
 		listOperation.add(getCertificatiConnettoreById);
 		listOperation.add(getCertificatiConnettoreByNome);
+		listOperation.add(getCertificatiConnettoreTokenPolicyValidazione);
+		listOperation.add(getCertificatiConnettoreTokenPolicyValidazione_2);
+		listOperation.add(getCertificatiConnettoreTokenPolicyNegoziazione);
+		listOperation.add(getCertificatiConnettoreAttributeAuthority);
+		listOperation.add(checkCertificatiConnettoreHttpsById);
+		listOperation.add(checkCertificatoApplicativoById);
+		listOperation.add(checkCertificatoApplicativoByNome);
+		listOperation.add(checkCertificatoModIApplicativoById);
+		listOperation.add(checkCertificatoModIApplicativoByNome);
+		listOperation.add(checkCertificatiJvm);
+		listOperation.add(checkProxyJvm);
+		listOperation.add(checkCertificatiConnettoreHttpsTokenPolicyValidazione);
+		listOperation.add(checkCertificatiConnettoreHttpsTokenPolicyValidazione_2);
+		listOperation.add(checkCertificatiValidazioneJwtTokenPolicyValidazione);
+		listOperation.add(checkCertificatiForwardToJwtTokenPolicyValidazione);
+		listOperation.add(checkCertificatiConnettoreHttpsTokenPolicyNegoziazione);
+		listOperation.add(checkCertificatiSignedJwtTokenPolicyNegoziazione);
+		listOperation.add(checkCertificatiConnettoreHttpsAttributeAuthority);
+		listOperation.add(checkCertificatiAttributeAuthorityJwtRichiesta);
+		listOperation.add(checkCertificatiAttributeAuthorityJwtRisposta);
 		listOperation.add(enablePortaDelegata);
 		listOperation.add(disablePortaDelegata);
 		listOperation.add(enablePortaApplicativa);
 		listOperation.add(disablePortaApplicativa);
+		listOperation.add(enableConnettoreMultiplo);
+		listOperation.add(disableConnettoreMultiplo);
+		listOperation.add(enableSchedulingConnettoreMultiplo);
+		listOperation.add(disableSchedulingConnettoreMultiplo);
+		listOperation.add(enableSchedulingConnettoreMultiploRuntimeRepository);
+		listOperation.add(disableSchedulingConnettoreMultiploRuntimeRepository);
+		listOperation.add(ripulisciRiferimentiCacheAccordoCooperazione);
+		listOperation.add(ripulisciRiferimentiCacheApi);
+		listOperation.add(ripulisciRiferimentiCacheErogazione);
+		listOperation.add(ripulisciRiferimentiCacheFruizione);
+		listOperation.add(ripulisciRiferimentiCacheSoggetto);
+		listOperation.add(ripulisciRiferimentiCacheApplicativo);
+		listOperation.add(ripulisciRiferimentiCacheRuolo);
+		listOperation.add(ripulisciRiferimentiCacheScope);
+		listOperation.add(ripulisciRiferimentiCacheTokenPolicyValidazione);
+		listOperation.add(ripulisciRiferimentiCacheTokenPolicyNegoziazione);
+		listOperation.add(ripulisciRiferimentiCacheAttributeAuthority);
 		MBeanOperationInfo[] operations = listOperation.toArray(new MBeanOperationInfo[1]);
 		
 		return new MBeanInfo(className,description,attributes,constructors,operations,null);
@@ -1383,6 +2576,45 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		}
 	}
 	
+	public String checkConnettoreTokenPolicyValidazione(String nomePolicy) {
+		try{
+			ConnettoreCheck.checkTokenPolicyValidazione(nomePolicy, this.logConnettori);
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	public String checkConnettoreTokenPolicyValidazione(String nomePolicy, String tipoConnettore) {
+		try{
+			ConnettoreCheck.checkTokenPolicyValidazione(nomePolicy, tipoConnettore, this.logConnettori);
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkConnettoreTokenPolicyNegoziazione(String nomePolicy) {
+		try{
+			ConnettoreCheck.checkTokenPolicyNegoziazione(nomePolicy, this.logConnettori);
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkConnettoreAttributeAuthority(String nomePolicy) {
+		try{
+			ConnettoreCheck.checkAttributeAuthority(nomePolicy, this.logConnettori);
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
 	public String getCertificatiConnettoreById(long idConnettore) {
 		try{
 			return ConnettoreCheck.getCertificati(idConnettore, true);
@@ -1395,6 +2627,315 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public String getCertificatiConnettoreByNome(String nomeConnettore) {
 		try{
 			return ConnettoreCheck.getCertificati(nomeConnettore, true);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String getCertificatiConnettoreTokenPolicyValidazione(String nomePolicy) {
+		try{
+			return ConnettoreCheck.getCertificatiTokenPolicyValidazione(nomePolicy, this.logConnettori);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	public String getCertificatiConnettoreTokenPolicyValidazione(String nomePolicy, String tipoConnettore) {
+		try{
+			return ConnettoreCheck.getCertificatiTokenPolicyValidazione(nomePolicy, tipoConnettore, this.logConnettori);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String getCertificatiConnettoreTokenPolicyNegoziazione(String nomePolicy) {
+		try{
+			return ConnettoreCheck.getCertificatiTokenPolicyNegoziazione(nomePolicy, this.logConnettori);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String getCertificatiConnettoreAttributeAuthority(String nomePolicy) {
+		try{
+			return ConnettoreCheck.getCertificatiAttributeAuthority(nomePolicy, this.logConnettori);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatiConnettoreHttpsById(long idConnettore, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiConnettoreHttpsByIdWithoutCache(idConnettore, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatoApplicativoById(long idApplicativo, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatoApplicativoWithoutCache(idApplicativo, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatoApplicativoByNome(String idApplicativo, int sogliaWarningGiorni) {
+		try{
+			if(!idApplicativo.contains("@") || !idApplicativo.contains("/")) {
+				throw new Exception("Formato non valido (nome@tipoSoggetto/nomeSoggetto)");
+			}
+			String [] tmp = idApplicativo.split("@");
+			if(tmp==null || tmp.length!=2 || tmp[0]==null || tmp[1]==null) {
+				throw new Exception("Formato non valido (nome@tipoSoggetto/nomeSoggetto)");
+			}
+			else {
+				String nome = tmp[0];
+				if(!tmp[1].contains("/")) {
+					throw new Exception("Formato non valido (nome@tipoSoggetto/nomeSoggetto)");
+				}
+				else {
+					String [] tmp2 = tmp[1].split("/");
+					if(tmp2==null || tmp2.length!=2 || tmp2[0]==null || tmp2[1]==null) {
+						throw new Exception("Formato non valido (nome@tipoSoggetto/nomeSoggetto)");
+					}
+					else {
+						String tipoSoggetto = tmp2[0];
+						String nomeSoggetto = tmp2[1];
+						IDServizioApplicativo idSA = new IDServizioApplicativo();
+						idSA.setNome(nome);
+						idSA.setIdSoggettoProprietario(new IDSoggetto(tipoSoggetto, nomeSoggetto));
+						
+						boolean addCertificateDetails = true;
+						String separator = ": ";
+						String newLine = "\n";
+						CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatoApplicativoWithoutCache(idSA, sogliaWarningGiorni, 
+								addCertificateDetails, separator, newLine);
+						return statoCheck.toString(newLine);
+					}
+				}
+			}
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatoModiApplicativoById(long idApplicativo, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatoModiApplicativoWithoutCache(idApplicativo, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatoModiApplicativoByNome(String idApplicativo, int sogliaWarningGiorni) {
+		try{
+			if(!idApplicativo.contains("@") || !idApplicativo.contains("/")) {
+				throw new Exception("Formato non valido (nome@tipoSoggetto/nomeSoggetto)");
+			}
+			String [] tmp = idApplicativo.split("@");
+			if(tmp==null || tmp.length!=2 || tmp[0]==null || tmp[1]==null) {
+				throw new Exception("Formato non valido (nome@tipoSoggetto/nomeSoggetto)");
+			}
+			else {
+				String nome = tmp[0];
+				if(!tmp[1].contains("/")) {
+					throw new Exception("Formato non valido (nome@tipoSoggetto/nomeSoggetto)");
+				}
+				else {
+					String [] tmp2 = tmp[1].split("/");
+					if(tmp2==null || tmp2.length!=2 || tmp2[0]==null || tmp2[1]==null) {
+						throw new Exception("Formato non valido (nome@tipoSoggetto/nomeSoggetto)");
+					}
+					else {
+						String tipoSoggetto = tmp2[0];
+						String nomeSoggetto = tmp2[1];
+						IDServizioApplicativo idSA = new IDServizioApplicativo();
+						idSA.setNome(nome);
+						idSA.setIdSoggettoProprietario(new IDSoggetto(tipoSoggetto, nomeSoggetto));
+						
+						boolean addCertificateDetails = true;
+						String separator = ": ";
+						String newLine = "\n";
+						CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatoModiApplicativoWithoutCache(idSA, sogliaWarningGiorni, 
+								addCertificateDetails, separator, newLine);
+						return statoCheck.toString(newLine);
+					}
+				}
+			}
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatiJvm(int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiJvm(sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkProxyJvm() {
+		try{
+			ConnettoreCheck.checkProxyJvm(this.logConnettori);
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatiConnettoreHttpsTokenPolicyValidazione(String nomePolicy, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiConnettoreHttpsTokenPolicyValidazione(nomePolicy, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	public String checkCertificatiConnettoreHttpsTokenPolicyValidazione(String nomePolicy, String tipo, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiConnettoreHttpsTokenPolicyValidazione(nomePolicy, tipo, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+
+	public String checkCertificatiValidazioneJwtTokenPolicyValidazione(String nomePolicy, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiValidazioneJwtTokenPolicyValidazione(nomePolicy, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatiForwardToJwtTokenPolicyValidazione(String nomePolicy, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiForwardToJwtTokenPolicyValidazione(nomePolicy, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatiConnettoreHttpsTokenPolicyNegoziazione(String nomePolicy, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiConnettoreHttpsTokenPolicyNegoziazione(nomePolicy, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatiSignedJwtTokenPolicyNegoziazione(String nomePolicy, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiSignedJwtTokenPolicyNegoziazione(nomePolicy, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatiConnettoreHttpsAttributeAuthority(String nomePolicy, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiConnettoreHttpsAttributeAuthority(nomePolicy, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String checkCertificatiAttributeAuthorityJwtRichiesta(String nomePolicy, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiAttributeAuthorityJwtRichiesta(nomePolicy, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	
+	public String checkCertificatiAttributeAuthorityJwtRisposta(String nomePolicy, int sogliaWarningGiorni) {
+		try{
+			boolean addCertificateDetails = true;
+			String separator = ": ";
+			String newLine = "\n";
+			CertificateCheck statoCheck = ConfigurazionePdDManager.getInstance().checkCertificatiAttributeAuthorityJwtRisposta(nomePolicy, sogliaWarningGiorni, 
+					addCertificateDetails, separator, newLine);
+			return statoCheck.toString(newLine);
 		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
@@ -1425,4 +2966,200 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		}
 	}
 	
+	public String updateStatoConnettoreMultiplo(String nomePorta, String nomeConnettore, boolean enable) {
+		try{
+			IDPortaApplicativa idPA = new IDPortaApplicativa();
+			idPA.setNome(nomePorta);
+			String nomeServizioApplicativo = this.configReader.updateStatoConnettoreMultiplo(idPA, nomeConnettore, enable ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+			if(nomeServizioApplicativo==null) {
+				throw new Exception("Connettore '"+nomeConnettore+"' non trovato nella porta '"+nomePorta+"'");
+			}
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String updateSchedulingConnettoreMultiplo(String nomePorta, String nomeConnettore, boolean enable) {
+		try{
+			IDPortaApplicativa idPA = new IDPortaApplicativa();
+			idPA.setNome(nomePorta);
+			String nomeServizioApplicativo = this.configReader.updateSchedulingConnettoreMultiplo(idPA, nomeConnettore, enable ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+			if(nomeServizioApplicativo==null) {
+				throw new Exception("Connettore '"+nomeConnettore+"' non trovato nella porta '"+nomePorta+"'");
+			}
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String updateSchedulingConnettoreMultiploMessaggiPresiInCarico(String nomePorta, String nomeConnettore, boolean enable) {
+		try{
+			IDPortaApplicativa idPA = new IDPortaApplicativa();
+			idPA.setNome(nomePorta);
+			PortaApplicativa pa = this.configReader.getPortaApplicativa(idPA);
+			String nomeServizioApplicativo = null;
+			if(pa.sizeServizioApplicativoList()>0) {
+				for (PortaApplicativaServizioApplicativo paSA : pa.getServizioApplicativoList()) {
+					String nomePaSA = paSA.getDatiConnettore()!= null ? paSA.getDatiConnettore().getNome() : CostantiConfigurazione.NOME_CONNETTORE_DEFAULT;
+					if(nomeConnettore.equals(nomePaSA)) {
+						nomeServizioApplicativo = paSA.getNome();
+						break;
+					}
+				}
+			}
+			if(nomeServizioApplicativo==null) {
+				throw new Exception("Connettore '"+nomeConnettore+"' non trovato nella porta '"+nomePorta+"'");
+			}
+			
+			DBManager dbManager = DBManager.getInstance();
+			Resource resource = null;
+			IDSoggetto dominio = this.openspcoopProperties.getIdentitaPortaDefault(null);
+			String modulo = this.getClass().getName()+".schedulingConnettoreMultiplo";
+			try {
+				resource = dbManager.getResource(dominio, modulo, null);
+				Connection c = (Connection) resource.getResource();
+				boolean debug = this.openspcoopProperties.isTimerConsegnaContenutiApplicativiSchedulingDebug();
+				boolean checkEliminazioneLogica = this.openspcoopProperties.isTimerConsegnaContenutiApplicativiSchedulingCheckEliminazioneLogica();
+				int row = -1;
+				String op = "";
+				if(enable) {
+					op = "abilitato";
+					row = GestoreMessaggi.abilitaSchedulingMessaggiDaRiconsegnareIntoBox(nomeServizioApplicativo, checkEliminazioneLogica,
+							OpenSPCoop2Logger.getLoggerOpenSPCoopConsegnaContenutiSql(debug), c,  debug);
+				}else {
+					op = "disabilitato";
+					row = GestoreMessaggi.disabilitaSchedulingMessaggiDaRiconsegnareIntoBox(nomeServizioApplicativo, checkEliminazioneLogica,
+							OpenSPCoop2Logger.getLoggerOpenSPCoopConsegnaContenutiSql(debug), c,  debug);
+				}
+				if(row>=0) {
+					return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO+"; "+op+" scheduling in "+row+" messagg"+(row==1 ? "io" : "i");
+				}
+			}finally {
+				try{
+					if(dbManager!=null)
+						dbManager.releaseResource(dominio, modulo, resource);
+				}catch(Exception eClose){}
+			}
+			
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String ripulisciRiferimentiCacheAccordoCooperazione(long id) {
+		try{
+			GestoreCacheCleaner.removeAccordoCooperazione(id);
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String ripulisciRiferimentiCacheApi(long id) {
+		try{
+			GestoreCacheCleaner.removeAccordoServizioParteComune(id);
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String ripulisciRiferimentiCacheErogazione(long id) {
+		try{
+			GestoreCacheCleaner.removeErogazione(id);
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String ripulisciRiferimentiCacheFruizione(long id) {
+		try{
+			GestoreCacheCleaner.removeFruizione(id);
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String ripulisciRiferimentiCacheSoggetto(long id) {
+		try{
+			GestoreCacheCleaner.removeSoggetto(id);
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String ripulisciRiferimentiCacheApplicativo(long id) {
+		try{
+			GestoreCacheCleaner.removeApplicativo(id);
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String ripulisciRiferimentiCacheRuolo(long id) {
+		try{
+			GestoreCacheCleaner.removeRuolo(id);
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String ripulisciRiferimentiCacheScope(long id) {
+		try{
+			GestoreCacheCleaner.removeScope(id);
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String ripulisciRiferimentiCacheTokenPolicyValidazione(long id) {
+		try{
+			GestoreCacheCleaner.removeGenericProperties(id);
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String ripulisciRiferimentiCacheTokenPolicyNegoziazione(long id) {
+		try{
+			GestoreCacheCleaner.removeGenericProperties(id);
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String ripulisciRiferimentiCacheAttributeAuthority(long id) {
+		try{
+			GestoreCacheCleaner.removeGenericProperties(id);
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+
 }

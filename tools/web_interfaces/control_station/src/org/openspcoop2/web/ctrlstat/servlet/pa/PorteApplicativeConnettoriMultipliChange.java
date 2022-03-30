@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -255,7 +255,9 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 			// file
 			String requestOutputFileName = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
+			String requestOutputFileName_permissions = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS);
 			String requestOutputFileNameHeaders = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
+			String requestOutputFileNameHeaders_permissions = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS);
 			String requestOutputParentDirCreateIfNotExists = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
 			String requestOutputOverwriteIfExists = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME);
 			String responseInputMode = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE);
@@ -489,7 +491,9 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 	
 								// file
 								requestOutputFileName = null;
+								requestOutputFileName_permissions = null;
 								requestOutputFileNameHeaders = null;
+								requestOutputFileNameHeaders_permissions = null;
 								requestOutputParentDirCreateIfNotExists = null;
 								requestOutputOverwriteIfExists = null;
 								responseInputMode = null;
@@ -601,6 +605,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps);
 			String idTabP = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
 			Parameter pIdTab = new Parameter(CostantiControlStation.PARAMETRO_ID_TAB, idTabP != null ? idTabP : "");
+			Parameter pIdConnTab = new Parameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB, idConnTab != null ? idConnTab : "");
 			Parameter pAccessoDaAPS = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro != null ? accessoDaAPSParametro : "");
 			String connettoreAccessoGruppi = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI);
 			String connettoreRegistro = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO);
@@ -611,22 +616,6 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			String idConnTabP = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB);
 			Parameter pIdConTab = new Parameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB, idConnTabP != null ? idConnTabP : "");
 			
-			listParametersConfigutazioneConnettoriMultipli.add(pIdSogg);
-			listParametersConfigutazioneConnettoriMultipli.add(pIdPorta);
-			listParametersConfigutazioneConnettoriMultipli.add(pNomePorta);
-			listParametersConfigutazioneConnettoriMultipli.add(pIdAsps);
-			listParametersConfigutazioneConnettoriMultipli.add(pIdTab);
-			listParametersConfigutazioneConnettoriMultipli.add(pAccessoDaAPS);
-			listParametersConfigutazioneConnettoriMultipli.add(pConnettoreAccessoDaGruppi);
-			listParametersConfigutazioneConnettoriMultipli.add(pConnettoreAccesso);
-
-			lstParam.add(new Parameter(labelPerPorta,  PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LIST, listParametersConfigutazioneConnettoriMultipli.toArray(new Parameter[1])));
-
-			// Label diversa in base all'operazione
-			String oldNomeConnettore = porteApplicativeHelper.getLabelNomePortaApplicativaServizioApplicativo(oldPaSA);
-			String labelPagina = oldNomeConnettore;
-
-
 			String visualizzaDatiGenerali = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_DATI_GENERALI);
 			String visualizzaDescrizione = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_DESCRIZIONE);
 			String visualizzaConnettore = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_CONNETTORE);
@@ -635,6 +624,51 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			boolean visualizzaSezioneDescrizione = ServletUtils.isCheckBoxEnabled(visualizzaDescrizione);
 			boolean visualizzaSezioneConnettore = ServletUtils.isCheckBoxEnabled(visualizzaConnettore);
 			boolean visualizzaSezioneFiltri = ServletUtils.isCheckBoxEnabled(visualizzaFiltri);
+			
+			String nomeConnettoreChangeListBreadcump = null;
+			if(visualizzaSezioneDatiGenerali) {
+				nomeConnettoreChangeListBreadcump = nomeConnettore;
+			}
+			else {
+				
+				// valora iniziale della configurazione
+				PortaApplicativaServizioApplicativo paSA = null;
+				for (PortaApplicativaServizioApplicativo paSATmp : pa.getServizioApplicativoList()) {
+					if(paSATmp.getNome().equals(nomeSAConnettore)) {
+						paSA = paSATmp;					
+					}
+				}
+
+				PortaApplicativaServizioApplicativoConnettore datiConnettore = paSA.getDatiConnettore();
+				
+				if(datiConnettore!=null) {
+					nomeConnettoreChangeListBreadcump = datiConnettore.getNome();
+				}
+				if(nomeConnettoreChangeListBreadcump==null) {
+					nomeConnettoreChangeListBreadcump = CostantiConfigurazione.NOME_CONNETTORE_DEFAULT;
+				}
+			}
+			Parameter pChangeNomeConnettoreBreadcump = new Parameter(CostantiControlStation.PARAMETRO_FROM_BREADCUMP_CHANGE_NOME_CONNETTORE, nomeConnettoreChangeListBreadcump);
+						
+			listParametersConfigutazioneConnettoriMultipli.add(pIdSogg);
+			listParametersConfigutazioneConnettoriMultipli.add(pIdPorta);
+			listParametersConfigutazioneConnettoriMultipli.add(pNomePorta);
+			listParametersConfigutazioneConnettoriMultipli.add(pIdAsps);
+			listParametersConfigutazioneConnettoriMultipli.add(pIdTab);
+			listParametersConfigutazioneConnettoriMultipli.add(pIdConnTab);
+			listParametersConfigutazioneConnettoriMultipli.add(pAccessoDaAPS);
+			listParametersConfigutazioneConnettoriMultipli.add(pConnettoreAccessoDaGruppi);
+			listParametersConfigutazioneConnettoriMultipli.add(pConnettoreAccesso);
+			listParametersConfigutazioneConnettoriMultipli.add(pChangeNomeConnettoreBreadcump);
+
+			lstParam.add(new Parameter(labelPerPorta,  PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LIST, listParametersConfigutazioneConnettoriMultipli.toArray(new Parameter[1])));
+
+			// Label diversa in base all'operazione
+			String oldNomeConnettore = porteApplicativeHelper.getLabelNomePortaApplicativaServizioApplicativo(oldPaSA);
+			String labelPagina = oldNomeConnettore;
+
+
+
 
 			lstParam.add(new Parameter(labelPagina, null));
 
@@ -1075,7 +1109,9 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 					if(responseInputMode==null && props!=null){
 
 						requestOutputFileName = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE);	
+						requestOutputFileName_permissions = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_PERMISSIONS);	
 						requestOutputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS);	
+						requestOutputFileNameHeaders_permissions = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS_PERMISSIONS);	
 						String v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
 						if(v!=null && !"".equals(v)){
 							if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
@@ -1137,16 +1173,17 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addConnettoriMultipliToDati(dati, TipoOperazione.CHANGE, beaBehaviourType, nomeSAConnettore,
-						nomeConnettore, descrizioneConnettore, statoConnettore, behaviourConFiltri, filtriConnettore, visualizzaDatiGenerali, visualizzaDescrizione, visualizzaFiltri, visualizzaConnettore);
+						nomeConnettore, descrizioneConnettore, statoConnettore, behaviourConFiltri, filtriConnettore, visualizzaDatiGenerali, visualizzaDescrizione, visualizzaFiltri, visualizzaConnettore,
+						oldPaSA);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idsogg, idPorta,idAsps, dati);
 
-				dati = porteApplicativeHelper.addInformazioniGruppiAsHiddenToDati(TipoOperazione.CHANGE, dati, idTabP, null, accessoDaAPSParametro != null ? accessoDaAPSParametro : "", 
+				dati = porteApplicativeHelper.addInformazioniGruppiAsHiddenToDati(TipoOperazione.CHANGE, dati, idTabP, idConnTab, accessoDaAPSParametro != null ? accessoDaAPSParametro : "", 
 						connettoreAccessoGruppi, connettoreRegistro, connettoreAccessoListaConnettori);
 
 				if(visualizzaSezioneConnettore) {
 
-					porteApplicativeHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
+					porteApplicativeHelper.addEndPointToDati(dati,(idsil!=null ? idsil : oldSA.getId()+""),nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 							getmsg,getmsgUsername,getmsgPassword,true,
 							invrifRichiesta,risprif,nomeProtocollo,true,true, true,
 							parentPA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled,
@@ -1182,7 +1219,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+							requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 							autenticazioneToken,token_policy,
 							listExtendedConnettore, forceEnableConnettore,
@@ -1190,7 +1228,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							erogazioneServizioApplicativoServer, ServiziApplicativiHelper.toArray(listaIdSAServer));
 				} else {
 
-					porteApplicativeHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
+					porteApplicativeHelper.addEndPointToDati(dati,(idsil!=null ? idsil : oldSA.getId()+""),nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 							getmsg,getmsgUsername,getmsgPassword,true,
 							invrifRichiesta,risprif,nomeProtocollo,true,true, true,
 							parentPA,serviceBinding, accessoDaAPSParametro, true,
@@ -1224,7 +1262,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+							requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 							autenticazioneToken,token_policy);
 				}
@@ -1256,7 +1295,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+						requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken,token_policy,
 						listExtendedConnettore,erogazioneServizioApplicativoServerEnabled,	erogazioneServizioApplicativoServer);
@@ -1272,16 +1312,17 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addConnettoriMultipliToDati(dati, TipoOperazione.CHANGE, beaBehaviourType, nomeSAConnettore,
-						nomeConnettore, descrizioneConnettore, statoConnettore, behaviourConFiltri, filtriConnettore,  visualizzaDatiGenerali, visualizzaDescrizione, visualizzaFiltri, visualizzaConnettore);
+						nomeConnettore, descrizioneConnettore, statoConnettore, behaviourConFiltri, filtriConnettore,  visualizzaDatiGenerali, visualizzaDescrizione, visualizzaFiltri, visualizzaConnettore,
+						oldPaSA);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idsogg, idPorta, idAsps, dati);
 
-				dati = porteApplicativeHelper.addInformazioniGruppiAsHiddenToDati(TipoOperazione.CHANGE, dati, idTabP, null, accessoDaAPSParametro != null ? accessoDaAPSParametro : "", 
+				dati = porteApplicativeHelper.addInformazioniGruppiAsHiddenToDati(TipoOperazione.CHANGE, dati, idTabP, idConnTab, accessoDaAPSParametro != null ? accessoDaAPSParametro : "", 
 						connettoreAccessoGruppi, connettoreRegistro, connettoreAccessoListaConnettori);	
 
 				if(visualizzaSezioneConnettore) {
 
-					porteApplicativeHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
+					porteApplicativeHelper.addEndPointToDati(dati,(idsil!=null ? idsil : oldSA.getId()+""),nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 							getmsg,getmsgUsername,getmsgPassword,true,
 							invrifRichiesta,risprif,nomeProtocollo,true,true, true,
 							parentPA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled,
@@ -1317,7 +1358,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+							requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 							autenticazioneToken,token_policy,
 							listExtendedConnettore, forceEnableConnettore,
@@ -1325,7 +1367,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							erogazioneServizioApplicativoServer, ServiziApplicativiHelper.toArray(listaIdSAServer));
 				} else {
 
-					porteApplicativeHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
+					porteApplicativeHelper.addEndPointToDati(dati,(idsil!=null ? idsil : oldSA.getId()+""),nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 							getmsg,getmsgUsername,getmsgPassword,true,
 							invrifRichiesta,risprif,nomeProtocollo,true,true, true,
 							parentPA,serviceBinding, accessoDaAPSParametro, true,
@@ -1359,7 +1401,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+							requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 							autenticazioneToken,token_policy);
 				}
@@ -1396,10 +1439,15 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 			boolean isDefault = datiConnettore != null ? !datiConnettore.isNotifica() : true;
 
+			String nomeConnettoreChangeList = null;
+			
 			if(visualizzaSezioneDatiGenerali) {
 				datiConnettore.setNome(nomeConnettore);
 
+				nomeConnettoreChangeList = nomeConnettore;
+				
 				if(!nomeConnettore.equals(oldNomeConnettore)) {
+					
 					if(pa.getBehaviour() != null) {
 
 						TipoBehaviour behaviourType = TipoBehaviour.toEnumConstant(pa.getBehaviour().getNome());
@@ -1420,7 +1468,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 										if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore().equals(oldNomeConnettore)) {
 											// modifica riferimento
 											configurazioneMultiDeliver.setTransazioneSincrona_nomeConnettore(nomeConnettore);
-											org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.save(pa, configurazioneMultiDeliver);
+											boolean differenziazioneConsegnaDaNotifiche = TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType);
+											org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.save(pa, configurazioneMultiDeliver, differenziazioneConsegnaDaNotifiche);
 										}
 									}
 								}
@@ -1470,6 +1519,12 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							}
 						}
 					}
+				}
+			}
+			else {
+				nomeConnettoreChangeList = datiConnettore.getNome();
+				if(nomeConnettoreChangeList==null) {
+					nomeConnettoreChangeList = CostantiConfigurazione.NOME_CONNETTORE_DEFAULT;
 				}
 			}
 
@@ -1664,7 +1719,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 								proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 								tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+								requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 								token_policy,
 								listExtendedConnettore);
@@ -1788,7 +1844,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 								proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 								tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+								requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 								token_policy, listExtendedConnettore);
 
@@ -1903,7 +1960,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			IDSoggetto idSoggettoProprietario = new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario());
 			List<PortaApplicativaServizioApplicativo> listaFiltrata = porteApplicativeHelper.applicaFiltriRicercaConnettoriMultipli(ricerca, idLista, pa.getServizioApplicativoList(), idSoggettoProprietario);
 			
-			porteApplicativeHelper.preparePorteAppConnettoriMultipliList(pa.getNome(), ricerca, listaFiltrata, pa);
+			porteApplicativeHelper.preparePorteAppConnettoriMultipliList_fromChangeConnettore(pa.getNome(), ricerca, listaFiltrata, pa, 
+					nomeConnettoreChangeList);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI

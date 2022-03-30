@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -46,6 +46,7 @@ import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativoConnettore;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.RoutingTable;
@@ -77,6 +78,7 @@ import org.openspcoop2.core.controllo_traffico.IdPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.UniqueIdentifierUtilities;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.id.IDConnettore;
+import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -101,6 +103,7 @@ import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.cache.CacheResponse;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.CertificateInfo;
@@ -257,6 +260,17 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneException("Cache non abilitata");
 		}
 	}
+	public List<String> keysCache() throws DriverConfigurazioneException{
+		if(this.cache!=null){
+			try{
+				return this.cache.keys();
+			}catch(Exception e){
+				throw new DriverConfigurazioneException(e.getMessage(),e);
+			}
+		}else{
+			throw new DriverConfigurazioneException("Cache non abilitata");
+		}
+	}
 	public String getObjectCache(String key) throws DriverConfigurazioneException{
 		if(this.cache!=null){
 			try{
@@ -265,6 +279,31 @@ public class ConfigurazionePdD  {
 					return o.toString();
 				}else{
 					return "oggetto con chiave ["+key+"] non presente";
+				}
+			}catch(Exception e){
+				throw new DriverConfigurazioneException(e.getMessage(),e);
+			}
+		}else{
+			throw new DriverConfigurazioneException("Cache non abilitata");
+		}
+	}
+	public Object getRawObjectCache(String key) throws DriverConfigurazioneException{
+		if(this.cache!=null){
+			try{
+				Object o = this.cache.get(key);
+				if(o!=null){
+					if(o instanceof CacheResponse) {
+						CacheResponse cR = (CacheResponse) o;
+						if(cR.getObject()!=null) {
+							o = cR.getObject();
+						}
+						else if(cR.getException()!=null) {
+							o = cR.getException();
+						}
+					}
+					return o;
+				}else{
+					return null;
 				}
 			}catch(Exception e){
 				throw new DriverConfigurazioneException(e.getMessage(),e);
@@ -792,7 +831,7 @@ public class ConfigurazionePdD  {
 								pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario(),
 								pd.getServizio().getVersione());
 						
-						this.cache.remove(_getKey_MappingFruizionePortaDelegataList(idSoggettoProprietario, idServizio));
+						this.cache.remove(_getKey_MappingFruizionePortaDelegataList(idSoggettoProprietario, idServizio, true));
 						this.getMappingFruizionePortaDelegataList(idSoggettoProprietario, idServizio, connectionPdD);
 					}
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
@@ -822,7 +861,7 @@ public class ConfigurazionePdD  {
 		}
 		
 		try{
-			this.cache.remove(this._getKey_getRouter());
+			this.cache.remove(_getKey_getRouter());
 			this.getRouter(connectionPdD);
 		}
 		catch(DriverConfigurazioneNotFound notFound){}
@@ -935,7 +974,7 @@ public class ConfigurazionePdD  {
 									idSoggettoProprietario,
 									pa.getServizio().getVersione());
 							
-							this.cache.remove(_getKey_MappingErogazionePortaApplicativaList(idServizio));
+							this.cache.remove(_getKey_MappingErogazionePortaApplicativaList(idServizio, true));
 							this.getMappingErogazionePortaApplicativaList(idServizio, connectionPdD);
 						}
 						catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
@@ -2145,7 +2184,7 @@ public class ConfigurazionePdD  {
 
 	// SOGGETTO 
 
-	private String _getKey_getSoggettoByID(IDSoggetto aSoggetto){
+	protected static String _getKey_getSoggettoByID(IDSoggetto aSoggetto){
 		return "getSoggetto_" + aSoggetto.getTipo() + aSoggetto.getNome();
 	}
 	public Soggetto getSoggetto(Connection connectionPdD,IDSoggetto aSoggetto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
@@ -2156,7 +2195,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = this._getKey_getSoggettoByID(aSoggetto);
+			key = _getKey_getSoggettoByID(aSoggetto);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -2185,7 +2224,7 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneNotFound("[getSoggetto] Soggetto non trovato");
 	}
 
-	private String _getKey_getRouter(){
+	protected static String _getKey_getRouter(){
 		return "getRouter";
 	}
 	public Soggetto getRouter(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
@@ -2193,7 +2232,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = this._getKey_getRouter();
+			key = _getKey_getRouter();
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -2222,7 +2261,7 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneNotFound("[getRouter] Soggetto non trovato");
 	}
 
-	private String _getKey_getSoggettiVirtuali(){
+	protected static String _getKey_getSoggettiVirtuali(){
 		return "getSoggettiVirtuali";
 	}
 	@SuppressWarnings(value = "unchecked")
@@ -2231,7 +2270,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = this._getKey_getSoggettiVirtuali();
+			key = _getKey_getSoggettiVirtuali();
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -2260,7 +2299,7 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneNotFound("[getSoggettiVirtuali] Lista Soggetti Virtuali non costruita");
 	}
 
-	private String _getKey_getServizi_SoggettiVirtuali(){
+	protected static String _getKey_getServizi_SoggettiVirtuali(){
 		return "getServizi_SoggettiVirtuali";
 	}
 	@SuppressWarnings(value = "unchecked")
@@ -2269,7 +2308,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			 key = this._getKey_getServizi_SoggettiVirtuali();
+			 key = _getKey_getServizi_SoggettiVirtuali();
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -2305,7 +2344,7 @@ public class ConfigurazionePdD  {
 
 	// PORTA DELEGATA
 
-	private String _getKey_getIDPortaDelegata(String nome){
+	protected static String _getKey_getIDPortaDelegata(String nome){
 		 return "getIDPortaDelegata_" + nome;
 	}
 	public IDPortaDelegata getIDPortaDelegata(Connection connectionPdD,String nome) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
@@ -2317,7 +2356,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = this._getKey_getIDPortaDelegata(nome);
+			key = _getKey_getIDPortaDelegata(nome);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -2346,7 +2385,7 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneNotFound("Porta Delegata ["+nome+"] non esistente");
 	} 
 	
-	private String _getKey_getPortaDelegata(IDPortaDelegata idPD){
+	protected static String _getKey_getPortaDelegata(IDPortaDelegata idPD){
 		 return "getPortaDelegata_" + idPD.getNome();
 	}
 	public PortaDelegata getPortaDelegata(Connection connectionPdD,IDPortaDelegata idPD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
@@ -2360,7 +2399,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = this._getKey_getPortaDelegata(idPD);
+			key = _getKey_getPortaDelegata(idPD);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -2402,7 +2441,7 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneException("[updateStatoPortaDelegataInCache]: Parametro non definito (nome)");
 
 		// se e' attiva una cache provo ad utilizzarla
-		String key = this._getKey_getPortaDelegata(idPD);
+		String key = _getKey_getPortaDelegata(idPD);
 		org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 		if(response != null){
@@ -2430,7 +2469,7 @@ public class ConfigurazionePdD  {
 	
 	// PORTA APPLICATIVA
 	
-	private String _getKey_getIDPortaApplicativa(String nome){
+	protected static String _getKey_getIDPortaApplicativa(String nome){
 		 return "getIDPortaApplicativa_" + nome;
 	}
 	public IDPortaApplicativa getIDPortaApplicativa(Connection connectionPdD,String nome) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
@@ -2442,7 +2481,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = this._getKey_getIDPortaApplicativa(nome);
+			key = _getKey_getIDPortaApplicativa(nome);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -2471,7 +2510,7 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneNotFound("Porta Applicativa ["+nome+"] non esistente");
 	} 
 	
-	private String _getKey_getPortaApplicativa(IDPortaApplicativa idPA){
+	protected static String _getKey_getPortaApplicativa(IDPortaApplicativa idPA){
 		 return "getPortaApplicativa_" + idPA.getNome();
 	}
 	public PortaApplicativa getPortaApplicativa(Connection connectionPdD,IDPortaApplicativa idPA) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
@@ -2485,7 +2524,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = this._getKey_getPortaApplicativa(idPA);
+			key = _getKey_getPortaApplicativa(idPA);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -2532,7 +2571,7 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneException("[updateStatoPortaApplicativa]: Parametro non definito (nome)");
 
 		// se e' attiva una cache provo ad utilizzarla
-		String key = this._getKey_getPortaApplicativa(idPA);
+		String key = _getKey_getPortaApplicativa(idPA);
 		org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 		if(response != null){
@@ -2557,10 +2596,103 @@ public class ConfigurazionePdD  {
 		}
 	}
 	
-	private String _getKey_getPorteApplicative(IDServizio idServizio, boolean ricercaPuntuale){
+	public String updateStatoConnettoreMultiplo(Connection connectionPdD,IDPortaApplicativa idPA, String nomeConnettore, StatoFunzionalita stato) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return _updateStatoConnettoreMultiplo(connectionPdD,idPA, nomeConnettore, stato, false);
+	}
+	public String updateSchedulingConnettoreMultiplo(Connection connectionPdD,IDPortaApplicativa idPA, String nomeConnettore, StatoFunzionalita stato) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return _updateStatoConnettoreMultiplo(connectionPdD,idPA, nomeConnettore, stato, true);
+	}
+	public String _updateStatoConnettoreMultiplo(Connection connectionPdD,IDPortaApplicativa idPA, String nomeConnettore, StatoFunzionalita stato, boolean scheduling) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+			
+		if(this.cache==null){
+			return null;
+		}
+		
+		// Raccolta dati
+		if(idPA==null)
+			throw new DriverConfigurazioneException("[updateStatoPortaApplicativa]: Parametro non definito (idPA)");
+		if(idPA.getNome()==null)
+			throw new DriverConfigurazioneException("[updateStatoPortaApplicativa]: Parametro non definito (nome)");
+		if(nomeConnettore==null)
+			throw new DriverConfigurazioneException("[updateStatoPortaApplicativa]: Parametro non definito (nomeConnettore)");
+
+		// se e' attiva una cache provo ad utilizzarla
+		String key = _getKey_getPortaApplicativa(idPA);
+		org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+		if(response != null){
+			if(response.getException()==null && response.getObject()!=null){
+				PortaApplicativa pa = (PortaApplicativa)  response.getObject();
+				if(pa.sizeServizioApplicativoList()>0) {
+					for (PortaApplicativaServizioApplicativo paSA : pa.getServizioApplicativoList()) {
+						String nomePaSA = paSA.getDatiConnettore()!= null ? paSA.getDatiConnettore().getNome() : CostantiConfigurazione.NOME_CONNETTORE_DEFAULT;
+						if(nomeConnettore.equals(nomePaSA)) {
+							if(paSA.getDatiConnettore()==null) {
+								paSA.setDatiConnettore(new PortaApplicativaServizioApplicativoConnettore());
+							}
+							if(scheduling) {
+								paSA.getDatiConnettore().setScheduling(stato);
+							}
+							else {
+								paSA.getDatiConnettore().setStato(stato);
+							}
+							break;
+						}
+					}
+				}
+			}
+		}
+		
+		
+		PortaApplicativa pa = (PortaApplicativa) this.getObject("getPortaApplicativa",connectionPdD,ConfigurazionePdDType.config,idPA);
+		boolean update = false;
+		String nomeSA = null;
+		if(pa.sizeServizioApplicativoList()>0) {
+			for (PortaApplicativaServizioApplicativo paSA : pa.getServizioApplicativoList()) {
+				String nomePaSA = paSA.getDatiConnettore()!= null ? paSA.getDatiConnettore().getNome() : CostantiConfigurazione.NOME_CONNETTORE_DEFAULT;
+				if(nomeConnettore.equals(nomePaSA)) {
+					nomeSA = paSA.getNome();
+					StatoFunzionalita check = null;
+					if(paSA.getDatiConnettore()!=null) {
+						check = paSA.getDatiConnettore().getStato();
+					}
+					if(!stato.equals(check)) {
+						update = true;
+						if(paSA.getDatiConnettore()==null) {
+							paSA.setDatiConnettore(new PortaApplicativaServizioApplicativoConnettore());
+						}
+						if(scheduling) {
+							paSA.getDatiConnettore().setScheduling(stato);
+						}
+						else {
+							paSA.getDatiConnettore().setStato(stato);
+						}
+					}
+					break;
+				}
+			}
+		}
+		if(update) {
+			org.openspcoop2.core.config.driver.IDriverConfigurazioneGet driver = getDriver(connectionPdD);
+			if(driver instanceof DriverConfigurazioneDB) {
+				DriverConfigurazioneDB db = (DriverConfigurazioneDB) driver;
+				IDPortaApplicativa oldIDPortaApplicativaForUpdate = new IDPortaApplicativa();
+				oldIDPortaApplicativaForUpdate.setNome(idPA.getNome());
+				pa.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
+				db.updatePortaApplicativa(pa);
+			}
+		}
+		return nomeSA;
+	}
+	
+	protected static String _toKey_getPorteApplicativePrefix(IDServizio idServizio, boolean ricercaPuntuale){
 		String key = "getPorteApplicative_ricercaPuntuale("+ricercaPuntuale+")_" + 
 				idServizio.getSoggettoErogatore().getTipo()+idServizio.getSoggettoErogatore().getNome() + "_" + 
 				idServizio.getTipo() + idServizio.getNome()+ ":" + idServizio.getVersione();
+		return key;
+	}
+	private String _getKey_getPorteApplicative(IDServizio idServizio, boolean ricercaPuntuale){
+		String key = _toKey_getPorteApplicativePrefix(idServizio, ricercaPuntuale);
 		if(idServizio.getAzione()!=null)
 			key = key + "_" + idServizio.getAzione();
 		return key;
@@ -2577,7 +2709,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = this._getKey_getPorteApplicative(idServizio, ricercaPuntuale);
+			key = _getKey_getPorteApplicative(idServizio, ricercaPuntuale);
 			
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
@@ -2615,11 +2747,21 @@ public class ConfigurazionePdD  {
 		}
 	} 
 	
-	private String _getKey_getPorteApplicativeVirtuali(IDSoggetto soggettoVirtuale,IDServizio idServizio, boolean ricercaPuntuale){
-		String key = "getPorteApplicativeVirtuali_ricercaPuntuale("+ricercaPuntuale+")_" + 
-				soggettoVirtuale.getTipo()+soggettoVirtuale.getNome()+"_"+
-				idServizio.getSoggettoErogatore().getTipo()+idServizio.getSoggettoErogatore().getNome() + "_" + 
+	protected static String _toKey_getPorteApplicativeVirtualiPrefix(boolean ricercaPuntuale) {
+		return "getPorteApplicativeVirtuali_ricercaPuntuale("+ricercaPuntuale+")_";
+	}
+	protected static String _toKey_getPorteApplicativeVirtuali_idSoggettoVirtuale(IDSoggetto soggettoVirtuale) {
+		return soggettoVirtuale.getTipo()+soggettoVirtuale.getNome();
+	}
+	protected static String _toKey_getPorteApplicativeVirtuali_idServizio(IDServizio idServizio) {
+		return idServizio.getSoggettoErogatore().getTipo()+idServizio.getSoggettoErogatore().getNome() + "_" + 
 				idServizio.getTipo() + idServizio.getNome()+":"+idServizio.getVersione();
+	}
+	private String _getKey_getPorteApplicativeVirtuali(IDSoggetto soggettoVirtuale,IDServizio idServizio, boolean ricercaPuntuale){
+		String key = _toKey_getPorteApplicativeVirtualiPrefix(ricercaPuntuale) + 
+				_toKey_getPorteApplicativeVirtuali_idSoggettoVirtuale(soggettoVirtuale)+
+				"_"+
+				_toKey_getPorteApplicativeVirtuali_idServizio(idServizio);
 		if(idServizio.getAzione()!=null)
 			key = key + "_" + idServizio.getAzione();
 		return key;
@@ -2677,9 +2819,13 @@ public class ConfigurazionePdD  {
 		}
 	} 
 	
-	private String _getKey_getPorteApplicative_SoggettiVirtuali(IDServizio idServizio){
+	protected static String _toKey_getPorteApplicative_SoggettiVirtualiPrefix(IDServizio idServizio){
 		String key = "getPorteApplicative_SoggettiVirtuali_" + idServizio.getSoggettoErogatore().getTipo()+idServizio.getSoggettoErogatore().getNome() + "_" + 
 				idServizio.getTipo() + idServizio.getNome()+":"+idServizio.getVersione();
+		return key;
+	}
+	private String _getKey_getPorteApplicative_SoggettiVirtuali(IDServizio idServizio){
+		String key = _toKey_getPorteApplicative_SoggettiVirtualiPrefix(idServizio);
 		if(idServizio.getAzione()!=null)
 			key = key + "_" + idServizio.getAzione();
 		return key;
@@ -2898,7 +3044,7 @@ public class ConfigurazionePdD  {
 	
 	// SERVIZIO APPLICATIVO
 	
-	private String _getKey_getServizioApplicativo(IDServizioApplicativo idServizioApplicativo){
+	protected static String _getKey_getServizioApplicativo(IDServizioApplicativo idServizioApplicativo){
 		String key = "getServizioApplicativo_" + idServizioApplicativo.getIdSoggettoProprietario().getTipo() + idServizioApplicativo.getIdSoggettoProprietario().getNome()+"_"+
 				idServizioApplicativo.getNome();
 		return key;
@@ -2916,7 +3062,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = this._getKey_getServizioApplicativo(idServizioApplicativo);
+			key = _getKey_getServizioApplicativo(idServizioApplicativo);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -2945,8 +3091,11 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneNotFound("Servizio Applicativo non trovato");
 	} 
 	
+	protected static String _toKey_getServizioApplicativoByCredenzialiBasicPrefix(){
+		return "getServizioApplicativoByCredenzialiBasic";
+	}
 	private String _getKey_getServizioApplicativoByCredenzialiBasic(String aUser,String aPassword){
-		String key = "getServizioApplicativoByCredenzialiBasic";
+		String key = _toKey_getServizioApplicativoByCredenzialiBasicPrefix();
 		key = key +"_"+aUser+"_"+aPassword;
 		return key;
 	}
@@ -2990,8 +3139,11 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneNotFound("Servizio Applicativo non trovato");
 	} 
 	
+	protected static String _toKey_getServizioApplicativoByCredenzialiApiKeyPrefix(boolean appId){
+		return (appId ? "getServizioApplicativoByCredenzialiMultipleApiKey_" : "getServizioApplicativoByCredenzialiApiKey_");
+	}
 	private String _getKey_getServizioApplicativoByCredenzialiApiKey(String aUser,String aPassword, boolean appId){
-		String key = (appId ? "getServizioApplicativoByCredenzialiMultipleApiKey_" : "getServizioApplicativoByCredenzialiApiKey_");
+		String key = _toKey_getServizioApplicativoByCredenzialiApiKeyPrefix(appId);
 		key = key +"_"+aUser+"_"+aPassword;
 		return key;
 	}
@@ -3035,8 +3187,11 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneNotFound("Servizio Applicativo non trovato");
 	} 
 	
+	protected static String _toKey_getServizioApplicativoByCredenzialiSslPrefix(boolean separator){
+		return "getServizioApplicativoByCredenzialiSsl"+(separator?"_":"");
+	}
 	private String _getKey_getServizioApplicativoByCredenzialiSsl(String aSubject, String Issuer){
-		String key = "getServizioApplicativoByCredenzialiSsl";
+		String key = _toKey_getServizioApplicativoByCredenzialiSslPrefix(false);
 		key = key +"_subject:"+aSubject;
 		if(Issuer!=null) {
 			key = key +"_issuer:"+Issuer;
@@ -3086,9 +3241,12 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneNotFound("Servizio Applicativo non trovato");
 	} 
 	
+	protected static String _toKey_getServizioApplicativoByCredenzialiSslCertPrefix(boolean separator){
+		return "getServizioApplicativoByCredenzialiSslCert"+(separator?"_":"");
+	}
 	private String _getKey_getServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier) throws DriverConfigurazioneException{
 		try {
-			String key = "getServizioApplicativoByCredenzialiSslCert";
+			String key = _toKey_getServizioApplicativoByCredenzialiSslCertPrefix(false);
 			key = key +"_cert:"+certificate.digestBase64Encoded();
 			key = key +"_strictVerifier:"+strictVerifier;
 			return key;
@@ -3136,8 +3294,11 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneNotFound("Servizio Applicativo non trovato");
 	}
 	
+	protected static String _toKey_getServizioApplicativoByCredenzialiPrincipalPrefix(){
+		return "getServizioApplicativoByCredenzialiPrincipal";
+	}
 	private String _getKey_getServizioApplicativoByCredenzialiPrincipal(String principal){
-		String key = "getServizioApplicativoByCredenzialiPrincipal";
+		String key = _toKey_getServizioApplicativoByCredenzialiPrincipalPrefix();
 		key = key +"_"+principal;
 		return key;
 	}
@@ -3784,7 +3945,7 @@ public class ConfigurazionePdD  {
 	} 
 	
 	
-	private String _getKey_getGenericProperties(String tipologia, String nome){
+	protected static String _getKey_getGenericProperties(String tipologia, String nome){
 		String key = "getGenericProperties";
 		key = key + "_"+tipologia;
 		key = key + "_"+nome;
@@ -3798,7 +3959,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(!forceNoCache && this.cache!=null){
-			key = this._getKey_getGenericProperties(tipologia, nome);
+			key = _getKey_getGenericProperties(tipologia, nome);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -3833,7 +3994,7 @@ public class ConfigurazionePdD  {
 		}
 	} 
 	
-	private String _getKey_getGenericProperties(String tipologia){
+	protected static String _getKey_getGenericProperties(String tipologia){
 		String key = "getGenericPropertiesList";
 		key = key + "_"+tipologia;
 		return key;
@@ -3847,7 +4008,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(!forceNoCache && this.cache!=null){
-			key = this._getKey_getGenericProperties(tipologia);
+			key = _getKey_getGenericProperties(tipologia);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -3968,19 +4129,28 @@ public class ConfigurazionePdD  {
 	
 	/* ********  R I C E R C A  I D   E L E M E N T I   P R I M I T I V I  ******** */
 	
+	protected static String _toKey_getAllIdPorteDelegate_method(){
+		return "getAllIdPorteDelegate";
+	}
 	@SuppressWarnings("unchecked")
 	public List<IDPortaDelegata> getAllIdPorteDelegate(FiltroRicercaPorteDelegate filtroRicerca,Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		return (List<IDPortaDelegata>) _getAllIdEngine(connectionPdD, filtroRicerca, "getAllIdPorteDelegate");
+		return (List<IDPortaDelegata>) _getAllIdEngine(connectionPdD, filtroRicerca, _toKey_getAllIdPorteDelegate_method());
 	}
 	
+	protected static String _toKey_getAllIdPorteApplicative_method(){
+		return "getAllIdPorteApplicative";
+	}
 	@SuppressWarnings("unchecked")
 	public List<IDPortaApplicativa> getAllIdPorteApplicative(FiltroRicercaPorteApplicative filtroRicerca,Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		return (List<IDPortaApplicativa>) _getAllIdEngine(connectionPdD, filtroRicerca, "getAllIdPorteApplicative");
+		return (List<IDPortaApplicativa>) _getAllIdEngine(connectionPdD, filtroRicerca, _toKey_getAllIdPorteApplicative_method());
 	}
 	
+	protected static String _toKey_getAllIdServiziApplicativi_method(){
+		return "getAllIdServiziApplicativi";
+	}
 	@SuppressWarnings("unchecked")
 	public List<IDServizioApplicativo> getAllIdServiziApplicativi(FiltroRicercaServiziApplicativi filtroRicerca,Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		return (List<IDServizioApplicativo>) _getAllIdEngine(connectionPdD, filtroRicerca, "getAllIdServiziApplicativi");
+		return (List<IDServizioApplicativo>) _getAllIdEngine(connectionPdD, filtroRicerca, _toKey_getAllIdServiziApplicativi_method());
 	}
 	
 	private List<?> _getAllIdEngine(Connection connectionPdD,Object filtroRicerca,String nomeMetodo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
@@ -4176,8 +4346,11 @@ public class ConfigurazionePdD  {
 	}
 	
 	
+	protected static String _toKey_AttivazionePolicyPrefix() {
+		return "AttivazionePolicy_";
+	}
 	public static String _getKey_AttivazionePolicy(String id){ // usato anche per resettare la cache puntualmente via jmx, tramite la govwayConsole
-		return "AttivazionePolicy_"+id;
+		return _toKey_AttivazionePolicyPrefix()+id;
 	}
 	public AttivazionePolicy getAttivazionePolicy(Connection connectionPdD, boolean useCache, String id) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
@@ -4583,8 +4756,8 @@ public class ConfigurazionePdD  {
 	
 	/* ******** MAPPING ******** */
 	
-	public static String _getKey_MappingErogazionePortaApplicativaList(IDServizio idServizio){ 
-		return "MappingErogazionePA_"+idServizio.toString();
+	public static String _getKey_MappingErogazionePortaApplicativaList(IDServizio idServizio, boolean includiAzione){ 
+		return "MappingErogazionePA_"+idServizio.toString(includiAzione);
 	}
 	@SuppressWarnings("unchecked")
 	public List<MappingErogazionePortaApplicativa> getMappingErogazionePortaApplicativaList(IDServizio idServizio,Connection connectionPdD) throws DriverConfigurazioneException{
@@ -4592,7 +4765,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = _getKey_MappingErogazionePortaApplicativaList(idServizio);
+			key = _getKey_MappingErogazionePortaApplicativaList(idServizio, true);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -4709,8 +4882,8 @@ public class ConfigurazionePdD  {
 	
 	
 	
-	public static String _getKey_MappingFruizionePortaDelegataList(IDSoggetto idFruitore, IDServizio idServizio){ 
-		return "MappingFruizionePD_"+idFruitore.toString()+"_"+idServizio.toString();
+	public static String _getKey_MappingFruizionePortaDelegataList(IDSoggetto idFruitore, IDServizio idServizio, boolean includiAzione){ 
+		return "MappingFruizionePD_"+idFruitore.toString()+"_"+idServizio.toString(includiAzione);
 	}
 	@SuppressWarnings("unchecked")
 	public List<MappingFruizionePortaDelegata> getMappingFruizionePortaDelegataList(IDSoggetto idFruitore, IDServizio idServizio,Connection connectionPdD) throws DriverConfigurazioneException{
@@ -4718,7 +4891,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = _getKey_MappingFruizionePortaDelegataList(idFruitore, idServizio);
+			key = _getKey_MappingFruizionePortaDelegataList(idFruitore, idServizio, true);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -4956,25 +5129,38 @@ public class ConfigurazionePdD  {
 	
 	
 	
-	public ForwardProxy getForwardProxyConfigFruizione(IDSoggetto dominio, IDServizio idServizio) throws DriverConfigurazioneException{
-		return getForwardProxyConfig(true, dominio, idServizio);
+	public ForwardProxy getForwardProxyConfigFruizione(IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
+		return getForwardProxyConfig(true, dominio, idServizio, policy);
 	}
-	public ForwardProxy getForwardProxyConfigErogazione(IDSoggetto dominio, IDServizio idServizio) throws DriverConfigurazioneException{
-		return getForwardProxyConfig(false, dominio, idServizio);
+	public ForwardProxy getForwardProxyConfigErogazione(IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
+		return getForwardProxyConfig(false, dominio, idServizio, policy);
 	}
 	
-	public static String _getKey_ForwardProxyConfig(boolean fruizione, IDSoggetto dominio, IDServizio idServizio){ 
-		String key = "ForwardProxy_"+(fruizione?"Fruizione":"Erogazione");
+	protected static String PREFIX_FORWARD_PROXY = "ForwardProxy_";
+	protected static String _toKey_ForwardProxyConfigPrefix(boolean fruizione) {
+		return PREFIX_FORWARD_PROXY+(fruizione?"Fruizione":"Erogazione");
+	}
+	protected static String _toKey_ForwardProxyConfigSuffix(IDServizio idServizio) {
+		return idServizio.toString(false);
+	}
+	protected static String _toKey_ForwardProxyConfigSuffix(IDGenericProperties policy) {
+		return "policy_"+policy.getTipologia()+"_"+policy.getNome();
+	}
+	public static String _getKey_ForwardProxyConfig(boolean fruizione, IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy){ 
+		String key = _toKey_ForwardProxyConfigPrefix(fruizione);
 		key = key +"_"+dominio.toString();
-		key = key +"_"+idServizio.toString(false);
+		key = key +"_"+_toKey_ForwardProxyConfigSuffix(idServizio);
+		if(policy!=null) {
+			key = key +"_"+_toKey_ForwardProxyConfigSuffix(policy);
+		}
 		return key;
 	}
-	private ForwardProxy getForwardProxyConfig(boolean fruizione, IDSoggetto dominio, IDServizio idServizio) throws DriverConfigurazioneException{
+	private ForwardProxy getForwardProxyConfig(boolean fruizione, IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
 		
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = _getKey_ForwardProxyConfig(fruizione, dominio, idServizio);
+			key = _getKey_ForwardProxyConfig(fruizione, dominio, idServizio, policy);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -4989,9 +5175,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		ForwardProxy config = null;
 		if(this.cache!=null){
-			config = getForwardProxyConfigCache(key, fruizione, dominio, idServizio);
+			config = getForwardProxyConfigCache(key, fruizione, dominio, idServizio, policy);
 		}else{
-			config = getForwardProxyConfigEngine(fruizione, dominio, idServizio);
+			config = getForwardProxyConfigEngine(fruizione, dominio, idServizio, policy);
 		}
 
 		return config;
@@ -4999,7 +5185,7 @@ public class ConfigurazionePdD  {
 	} 
 	
 	private static org.openspcoop2.utils.Semaphore semaphore_getForwardProxyConfigCache = new org.openspcoop2.utils.Semaphore("ConfigurazionePdD_ForwardProxyConfig");
-	private ForwardProxy getForwardProxyConfigCache(String keyCache,boolean fruizione, IDSoggetto dominio, IDServizio idServizio) throws DriverConfigurazioneException{
+	private ForwardProxy getForwardProxyConfigCache(String keyCache,boolean fruizione, IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
 
 		semaphore_getForwardProxyConfigCache.acquireThrowRuntime("getForwardProxyConfigCache");
 		ForwardProxy obj = null;
@@ -5033,7 +5219,7 @@ public class ConfigurazionePdD  {
 
 			// Effettuo le query nella mia gerarchia di registri.
 			this.log.debug("oggetto con chiave ["+keyCache+"] (methodo:"+methodName+") ricerco nella configurazione...");
-			obj = getForwardProxyConfigEngine(fruizione, dominio, idServizio);
+			obj = getForwardProxyConfigEngine(fruizione, dominio, idServizio, policy);
 
 			// Aggiungo la risposta in cache (se esiste una cache)	
 			// Se ho una eccezione aggiungo in cache solo una not found
@@ -5063,10 +5249,10 @@ public class ConfigurazionePdD  {
 		return obj;
 	}
 	
-	private ForwardProxy getForwardProxyConfigEngine(boolean fruizione, IDSoggetto dominio, IDServizio idServizio) throws DriverConfigurazioneException{
+	private ForwardProxy getForwardProxyConfigEngine(boolean fruizione, IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
 		
 		try {
-			return ForwardProxy.getProxyConfigurazione(fruizione, dominio, idServizio);
+			return ForwardProxy.getProxyConfigurazione(fruizione, dominio, idServizio, policy);
 		}catch(Exception e){
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}

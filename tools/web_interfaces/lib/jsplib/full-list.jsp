@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -88,6 +88,8 @@ if (hidden!=null && !hidden.isEmpty()) {
 					    	index++;
 						}
 						String dataScrollerTopLabel = "Visualizzati record ["+index+"-"+(v.size()+pd.getIndex())+"] su " + pd.getNumEntries();
+						
+						if (pd.isPaginazione()){
 						%>
 					
 						<!-- data scroller top -->
@@ -141,6 +143,9 @@ if (hidden!=null && !hidden.isEmpty()) {
 								</div>
 							</td>
 						</tr>
+						<%
+						}
+						%>
 					
 						<tr class="tableHeader">
 							<%
@@ -512,7 +517,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 					//fine entries
 					
 					//navigazione tra la pagine visualizzata se il numero di entries > 20
-					if (pd.getNumEntries() > 20){
+					if (pd.isPaginazione() && pd.getNumEntries() > 20){
 						%>
 						<tr>
 							<td colspan="<%= labelLength + 1 %>">

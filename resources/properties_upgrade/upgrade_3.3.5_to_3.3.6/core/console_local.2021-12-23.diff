@@ -1,0 +1,41 @@
+diff --git ant/setup/deploy/resources/core/console_local.properties ant/setup/deploy/resources/core/console_local.properties
+index ce824285c..73b3e9a63 100644
+--- ant/setup/deploy/resources/core/console_local.properties
++++ ant/setup/deploy/resources/core/console_local.properties
+@@ -1,36 +1,3 @@
+-# ================================================
+-# Configurazione PdD in Load Balancing
+-#risorseJmxPdd.tipoAccesso=openspcoop
+-#risorseJmxPdd.aliases=IDGW1,..,IDGWN
+-
+-# Configurazione IDGW1
+-#IDGW1.risorseJmxPdd.descrizione=DESCRIZIONE GW1
+-#IDGW1.risorseJmxPdd.remoteAccess.url=http://HOSTGW1:PORTGW1/govway/check
+-#IDGW1.risorseJmxPdd.remoteAccess.username=USERNAMEGW1
+-#IDGW1.risorseJmxPdd.remoteAccess.password=PASSWORDGW1
+-#...
+-#IDGWN.risorseJmxPdd.descrizione=DESCRIZIONE GWN
+-#IDGWN.risorseJmxPdd.remoteAccess.url=http://HOSTGWN:PORTGWN/govway/check
+-#IDGWN.risorseJmxPdd.remoteAccess.username=USERNAMEGWN
+-#IDGWN.risorseJmxPdd.remoteAccess.password=PASSWORDGWN
+-
+-# Esempio per nodo IDGW1 di un accesso tramite connettore https
+-#IDGW1.risorseJmxPdd.remoteAccess.https=true
+-#IDGW1.risorseJmxPdd.remoteAccess.https.verificaHostName=true
+-#IDGW1.risorseJmxPdd.remoteAccess.https.autenticazioneServer=true
+-#IDGW1.risorseJmxPdd.remoteAccess.https.autenticazioneServer.truststorePath=PATH
+-#IDGW1.risorseJmxPdd.remoteAccess.https.autenticazioneServer.truststoreType=jks
+-#IDGW1.risorseJmxPdd.remoteAccess.https.autenticazioneServer.truststorePassword=PASSWORD
+-
+-# Esempio per nodo IDGW1 per personalizzare i timeout (ms)
+-#IDGW1.risorseJmxPdd.remoteAccess.readConnectionTimeout=5000
+-#IDGW1.risorseJmxPdd.remoteAccess.connectionTimeout=5000
+-
+-# Classificazione dei nodi in gruppi
+-#risorseJmxPdd.aliases.<idGruppo1>=<IDGW1>,<IDGW2>
+-#risorseJmxPdd.aliases.<idGruppo2>=<IDGW2>,<IDGWN>
+-# ================================================
+-
+ # ================================================
+ # Intestazione della console
+ #console.nome.esteso=GovWay - Gestione <Collaudo/Produzione>

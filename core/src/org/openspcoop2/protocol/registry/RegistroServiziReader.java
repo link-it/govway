@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -24,16 +24,20 @@ package org.openspcoop2.protocol.registry;
 
 import java.io.Serializable;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.core.commons.ConnettoreHTTPSProperties;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
-import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.constants.CostantiLabel;
+import org.openspcoop2.core.constants.StatoCheck;
+import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
@@ -50,6 +54,10 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
+import org.openspcoop2.core.registry.Connettore;
+import org.openspcoop2.core.registry.CredenzialiSoggetto;
+import org.openspcoop2.core.registry.Documento;
+import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Proprieta;
@@ -60,6 +68,9 @@ import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
+import org.openspcoop2.core.registry.constants.TipiDocumentoLivelloServizio;
+import org.openspcoop2.core.registry.constants.TipiDocumentoSemiformale;
+import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziAzioneNotFound;
@@ -79,6 +90,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
+import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
@@ -91,12 +103,15 @@ import org.openspcoop2.protocol.sdk.Servizio;
 import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.CertificateUtils;
+import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.transport.http.SSLConfig;
 import org.slf4j.Logger;
 
 /**
@@ -124,6 +139,17 @@ public class RegistroServiziReader {
 	private IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 
 	/* --------------- Reset Cache --------------------*/
+	public static boolean isCacheAbilitata() throws DriverRegistroServiziException{
+		try{
+			RegistroServiziReader registroServiziReader = org.openspcoop2.protocol.registry.RegistroServiziReader.getInstance();
+			if(registroServiziReader!=null && registroServiziReader.registroServizi!=null){
+				return registroServiziReader.registroServizi.isCacheAbilitata();
+			}
+			return false;
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("IsCacheAbilitata, recupero informazione della cache del registri dei servizi non riuscita: "+e.getMessage(),e);
+		}
+	}
 	public static void resetCache() throws DriverRegistroServiziException{
 		try{
 			RegistroServiziReader registroServiziReader = org.openspcoop2.protocol.registry.RegistroServiziReader.getInstance();
@@ -200,6 +226,19 @@ public class RegistroServiziReader {
 			throw new DriverRegistroServiziException("Visualizzazione chiavi presenti nella cache del RegistroServizi non riuscita: "+e.getMessage(),e);
 		}
 	}
+	public static List<String> keysCache() throws DriverRegistroServiziException{
+		try{
+			RegistroServiziReader registroServiziReader = org.openspcoop2.protocol.registry.RegistroServiziReader.getInstance();
+			if(registroServiziReader!=null && registroServiziReader.registroServizi!=null){
+				return registroServiziReader.registroServizi.keysCache();
+			}
+			else{
+				throw new Exception("RegistroServizi Non disponibile");
+			}
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("Visualizzazione chiavi presenti nella cache del RegistroServizi non riuscita: "+e.getMessage(),e);
+		}
+	}
 	
 	public static String getObjectCache(String key) throws DriverRegistroServiziException{
 		try{
@@ -209,6 +248,20 @@ public class RegistroServiziReader {
 			}
 			else{
 				throw new Exception("RegistroServizi Non disponibile");
+			}
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("Visualizzazione oggetto presente nella cache del RegistroServizi non riuscita: "+e.getMessage(),e);
+		}
+	}
+	
+	public static Object getRawObjectCache(String key) throws DriverRegistroServiziException{
+		try{
+			RegistroServiziReader registroServiziReader = org.openspcoop2.protocol.registry.RegistroServiziReader.getInstance();
+			if(registroServiziReader!=null && registroServiziReader.registroServizi!=null){
+				return registroServiziReader.registroServizi.getRawObjectCache(key);
+			}
+			else{
+				throw new Exception("ConfigurazionePdD Non disponibile");
 			}
 		}catch(Exception e){
 			throw new DriverRegistroServiziException("Visualizzazione oggetto presente nella cache del RegistroServizi non riuscita: "+e.getMessage(),e);
@@ -228,6 +281,528 @@ public class RegistroServiziReader {
 			throw new DriverRegistroServiziException("Rimozione oggetto presente nella cache del RegistroServizi non riuscita: "+e.getMessage(),e);
 		}
 	}
+	
+	
+	
+	
+	
+	
+	/*----------------- CLEANER --------------------*/
+
+	public static void removeAccordoCooperazione(IDAccordoCooperazione idAccordo) throws Exception {
+		if(RegistroServiziReader.isCacheAbilitata()) {
+			
+			for (int i = 0; i < 3; i++) {
+				Boolean readContenutiAllegati = null;
+				if(i==1) {
+					readContenutiAllegati = true;
+				}
+				else if(i==2) {
+					readContenutiAllegati = false;
+				}
+				String keyIdAccordo = RegistroServizi._getKey_getAccordoCooperazione(IDAccordoCooperazioneFactory.getInstance(), idAccordo,readContenutiAllegati);
+				RegistroServiziReader.removeObjectCache(keyIdAccordo);
+			}
+			
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = RegistroServiziReader.keysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				
+				String prefixGetAllId = RegistroServizi._toKey_getAllIdAccordiCooperazione_method();
+				
+				for (String key : keys) {
+					if(key!=null) {
+						if(key.startsWith(prefixGetAllId)) {
+							Object oCode = RegistroServiziReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof List<?>) {
+								List<?> l = (List<?>) oCode;
+								if(l!=null && !l.isEmpty()) {
+									for (Object object : l) {
+										if(object!=null && object instanceof IDAccordoCooperazione) {
+											IDAccordoCooperazione idCheck = (IDAccordoCooperazione) object;
+											if(idCheck.equals(idAccordo)) {
+												keyForClean.add(key);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	public static void removeApi(IDAccordo idAccordo) throws Exception {
+		if(RegistroServiziReader.isCacheAbilitata()) {
+			
+			for (int i = 0; i < 3; i++) {
+				Boolean readContenutiAllegati = null;
+				if(i==1) {
+					readContenutiAllegati = true;
+				}
+				else if(i==2) {
+					readContenutiAllegati = false;
+				}
+				String keyIdAccordo = RegistroServizi._getKey_getAccordoServizioParteComune(IDAccordoFactory.getInstance(), idAccordo,readContenutiAllegati);
+				RegistroServiziReader.removeObjectCache(keyIdAccordo);
+			}
+
+			List<IDServizio> serviziImplementati = null;
+			try {
+				FiltroRicercaServizi filtro = new FiltroRicercaServizi();
+				filtro.setIdAccordoServizioParteComune(idAccordo);
+				serviziImplementati = RegistroServiziManager.getInstance().getAllIdServizi(filtro, null);
+			}catch(Throwable t) {}
+			
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = RegistroServiziReader.keysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				
+				String prefixServizioCorrelatoPrefix = RegistroServizi._toKey_getAccordoServizioParteSpecifica_ServizioCorrelato_prefix();
+				String servizioCorrelato = RegistroServizi._toKey_getAccordoServizioParteSpecifica_ServizioCorrelato(IDAccordoFactory.getInstance(), idAccordo);
+				
+				String prefixGetAllId = RegistroServizi._toKey_getAllIdAccordiServizioParteComune_method();
+				String prefixGetAllId_portTypes = RegistroServizi._toKey_getAllIdPortType_method();
+				String prefixGetAllId_azionePortType = RegistroServizi._toKey_getAllIdAzionePortType_method();
+				String prefixGetAllId_azione = RegistroServizi._toKey_getAllIdAzione_method();
+				String prefixGetAllId_resource = RegistroServizi._toKey_getAllIdResource_method();
+				
+				String wsdlAccordoServizioPrefix = RegistroServizi._toKey_getWsdlAccordoServizioPrefix();
+				
+				String restAccordoServizioPrefix = RegistroServizi._toKey_getRestAccordoServizioPrefix();
+				
+				String documentoPrefix = RegistroServizi._toKey_prefixGetAllegatoAccordoServizioParteComune(idAccordo);
+				
+				for (String key : keys) {
+					if(key!=null) {
+						if(key.startsWith(prefixServizioCorrelatoPrefix) && key.contains(servizioCorrelato)) {
+							keyForClean.add(key);
+						}
+						else if(key.startsWith(prefixGetAllId)) {
+							Object oCode = RegistroServiziReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof List<?>) {
+								List<?> l = (List<?>) oCode;
+								if(l!=null && !l.isEmpty()) {
+									for (Object object : l) {
+										if(object!=null && object instanceof IDAccordo) {
+											IDAccordo idCheck = (IDAccordo) object;
+											if(idCheck.equals(idAccordo)) {
+												keyForClean.add(key);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+						else if(key.startsWith(prefixGetAllId_portTypes)) {
+							Object oCode = RegistroServiziReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof List<?>) {
+								List<?> l = (List<?>) oCode;
+								if(l!=null && !l.isEmpty()) {
+									for (Object object : l) {
+										if(object!=null && object instanceof IDPortType) {
+											IDPortType idCheck = (IDPortType) object;
+											if(idCheck.getIdAccordo().equals(idAccordo)) {
+												keyForClean.add(key);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+						else if(key.startsWith(prefixGetAllId_azionePortType)) {
+							Object oCode = RegistroServiziReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof List<?>) {
+								List<?> l = (List<?>) oCode;
+								if(l!=null && !l.isEmpty()) {
+									for (Object object : l) {
+										if(object!=null && object instanceof IDPortTypeAzione) {
+											IDPortTypeAzione idCheck = (IDPortTypeAzione) object;
+											if(idCheck.getIdPortType().getIdAccordo().equals(idAccordo)) {
+												keyForClean.add(key);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+						else if(key.startsWith(prefixGetAllId_azione)) {
+							Object oCode = RegistroServiziReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof List<?>) {
+								List<?> l = (List<?>) oCode;
+								if(l!=null && !l.isEmpty()) {
+									for (Object object : l) {
+										if(object!=null && object instanceof IDAccordoAzione) {
+											IDAccordoAzione idCheck = (IDAccordoAzione) object;
+											if(idCheck.getIdAccordo().equals(idAccordo)) {
+												keyForClean.add(key);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+						else if(key.startsWith(prefixGetAllId_resource)) {
+							Object oCode = RegistroServiziReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof List<?>) {
+								List<?> l = (List<?>) oCode;
+								if(l!=null && !l.isEmpty()) {
+									for (Object object : l) {
+										if(object!=null && object instanceof IDResource) {
+											IDResource idCheck = (IDResource) object;
+											if(idCheck.getIdAccordo().equals(idAccordo)) {
+												keyForClean.add(key);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+						else if(key.startsWith(wsdlAccordoServizioPrefix) && serviziImplementati!=null && !serviziImplementati.isEmpty()) {
+							for (IDServizio idServizio : serviziImplementati) {
+								String wsdlAccordoServizioService = RegistroServizi._toKey_getWsdlAccordoServizioService(idServizio);
+								if(key.contains(wsdlAccordoServizioService)) {
+									keyForClean.add(key);
+								}
+							}
+						}
+						else if(key.startsWith(restAccordoServizioPrefix)) {
+							for (IDServizio idServizio : serviziImplementati) {
+								String restAccordoServizioService = RegistroServizi._toKey_getRestAccordoServizioService(idServizio);
+								if(key.contains(restAccordoServizioService)) {
+									keyForClean.add(key);
+								}
+							}
+						}
+						else if(key.startsWith(documentoPrefix)) {
+							keyForClean.add(key);
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+			
+		}
+	}
+	
+	public static void removeErogazione(IDServizio idServizio) throws Exception {
+		removeApiImpl(null, idServizio, true);
+	}
+	public static void removeFruizione(IDSoggetto fruitore, IDServizio idServizio) throws Exception {
+		removeApiImpl(fruitore, idServizio, false);
+	}
+	private static void removeApiImpl(IDSoggetto idFruitore, IDServizio idServizio, boolean erogazione) throws Exception {
+		if(RegistroServiziReader.isCacheAbilitata()) {
+			
+			// non funziona, viene anche inserita l'azione nella chiave della cache
+//			for (int i = 0; i < 3; i++) {
+//				Boolean readContenutiAllegati = null;
+//				if(i==1) {
+//					readContenutiAllegati = true;
+//				}
+//				else if(i==2) {
+//					readContenutiAllegati = false;
+//				}
+//				String keyIdAccordo = RegistroServizi._getKey_getAccordoServizioParteSpecifica(idServizio,readContenutiAllegati);
+//				RegistroServiziReader.removeObjectCache(keyIdAccordo);
+//			}
+			
+			String keyServiceBinding = RegistroServizi._getKey_getServiceBinding(idServizio);
+			RegistroServiziReader.removeObjectCache(keyServiceBinding);
+			
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = RegistroServiziReader.keysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				
+				String prefixAccordo = RegistroServizi._toKey_getAccordoServizioParteSpecificaPrefix(idServizio);
+				
+				String prefixGetAllId = RegistroServizi._toKey_getAllIdServizi_method();
+				String prefixGetAllIdFruizione = null;
+				if(!erogazione) {
+					prefixGetAllIdFruizione = RegistroServizi._toKey_getAllIdFruizioniServizio_method();
+				}
+				
+				String wsdlAccordoServizioPrefix = RegistroServizi._toKey_getWsdlAccordoServizioPrefix();
+				String wsdlAccordoServizioService = RegistroServizi._toKey_getWsdlAccordoServizioService(idServizio);
+				
+				String restAccordoServizioPrefix = RegistroServizi._toKey_getRestAccordoServizioPrefix();
+				String restAccordoServizioService = RegistroServizi._toKey_getRestAccordoServizioService(idServizio);
+				
+				String documentoPrefix = RegistroServizi._toKey_prefixGetAllegatoAccordoServizioParteSpecifica(idServizio);
+				
+				for (String key : keys) {
+					if(key!=null) {
+						if(key.startsWith(prefixAccordo)) {
+							keyForClean.add(key);
+						}
+						else if(key.startsWith(prefixGetAllId)) {
+							Object oCode = RegistroServiziReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof List<?>) {
+								List<?> l = (List<?>) oCode;
+								if(l!=null && !l.isEmpty()) {
+									for (Object object : l) {
+										if(object!=null && object instanceof IDServizio) {
+											IDServizio idCheck = (IDServizio) object;
+											if(idCheck.equals(idServizio, false)) {
+												keyForClean.add(key);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+						else if(!erogazione && key.startsWith(prefixGetAllIdFruizione)) {
+							Object oCode = RegistroServiziReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof List<?>) {
+								List<?> l = (List<?>) oCode;
+								if(l!=null && !l.isEmpty()) {
+									for (Object object : l) {
+										if(object!=null && object instanceof IDFruizione) {
+											IDFruizione idCheck = (IDFruizione) object;
+											if(idCheck.getIdFruitore().equals(idFruitore) && idCheck.getIdServizio().equals(idServizio, false)) {
+												keyForClean.add(key);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+						else if(key.startsWith(wsdlAccordoServizioPrefix) && key.contains(wsdlAccordoServizioService)) {
+							keyForClean.add(key);
+						}
+						else if(key.startsWith(restAccordoServizioPrefix) && key.contains(restAccordoServizioService)) {
+							keyForClean.add(key);
+						}
+						else if(key.startsWith(documentoPrefix)) {
+							keyForClean.add(key);
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+			
+		}
+	}
+	
+	public static void removePdd(String portaDominio) throws Exception {
+		if(RegistroServiziReader.isCacheAbilitata()) {
+			
+			String keyPdd = RegistroServizi._getKey_getPortaDominio(portaDominio);
+			RegistroServiziReader.removeObjectCache(keyPdd);
+			
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = RegistroServiziReader.keysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				
+				String prefixGetAllId = RegistroServizi._toKey_getAllIdPorteDominio_method();
+				
+				for (String key : keys) {
+					if(key!=null) {
+						if(key.startsWith(prefixGetAllId)) {
+							Object oCode = RegistroServiziReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof List<?>) {
+								List<?> l = (List<?>) oCode;
+								if(l!=null && !l.isEmpty()) {
+									for (Object object : l) {
+										if(object!=null && object instanceof String) {
+											String idCheck = (String) object;
+											if(idCheck.equals(portaDominio)) {
+												keyForClean.add(key);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+			
+		}
+	}
+	public static void removeSoggetto(IDSoggetto idSoggetto) throws Exception {
+		if(RegistroServiziReader.isCacheAbilitata()) {
+			
+			String keySoggetto = RegistroServizi._getKey_getSoggetto(idSoggetto);
+			RegistroServiziReader.removeObjectCache(keySoggetto);
+			
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = RegistroServiziReader.keysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				
+				String prefixCredenzialiBasic = RegistroServizi._toKey_getSoggettoByCredenzialiBasicPrefix();
+				String prefixCredenzialiApiKey = RegistroServizi._toKey_getSoggettoByCredenzialiApiKeyPrefix(false);
+				String prefixCredenzialiApiKeyAppId = RegistroServizi._toKey_getSoggettoByCredenzialiApiKeyPrefix(true);
+				String prefixCredenzialiSsl = RegistroServizi._toKey_getSoggettoByCredenzialiSslPrefix(true);
+				String prefixCredenzialiSslCert = RegistroServizi._toKey_getSoggettoByCredenzialiSslCertPrefix(true);
+				String prefixCredenzialiPrincipal = RegistroServizi._toKey_getSoggettoByCredenzialiPrincipalPrefix();
+				
+				String prefixGetAllId = RegistroServizi._toKey_getAllIdSoggetti_method();
+				
+				for (String key : keys) {
+					if(key!=null) {
+						if(key.startsWith(prefixCredenzialiBasic) ||
+								key.startsWith(prefixCredenzialiApiKey) || 
+								key.startsWith(prefixCredenzialiApiKeyAppId) || 
+								key.startsWith(prefixCredenzialiSsl) || 
+								key.startsWith(prefixCredenzialiSslCert) || 
+								key.startsWith(prefixCredenzialiPrincipal)) {
+							
+							Object o = RegistroServiziReader.getRawObjectCache(key);
+							if(o!=null && o instanceof Soggetto) {
+								Soggetto soggetto = (Soggetto) o;
+								if(soggetto.getTipo().equals(idSoggetto.getTipo()) &&
+										soggetto.getNome().equals(idSoggetto.getNome())) {
+									keyForClean.add(key);
+								}
+							}
+							
+						}
+						else if(key.startsWith(prefixGetAllId)) {
+							Object oCode = RegistroServiziReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof List<?>) {
+								List<?> l = (List<?>) oCode;
+								if(l!=null && !l.isEmpty()) {
+									for (Object object : l) {
+										if(object!=null && object instanceof IDSoggetto) {
+											IDSoggetto idCheck = (IDSoggetto) object;
+											if(idCheck.equals(idSoggetto)) {
+												keyForClean.add(key);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	public static void removeRuolo(IDRuolo idRuolo) throws Exception {
+		if(RegistroServiziReader.isCacheAbilitata()) {
+			
+			String keyRuolo = RegistroServizi._getKey_getRuolo(idRuolo.getNome());
+			RegistroServiziReader.removeObjectCache(keyRuolo);
+			
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = RegistroServiziReader.keysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				
+				String prefixGetAllId = RegistroServizi._toKey_getAllIdRuoli_method();
+				
+				for (String key : keys) {
+					if(key!=null) {
+						if(key.startsWith(prefixGetAllId)) {
+							Object oCode = RegistroServiziReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof List<?>) {
+								List<?> l = (List<?>) oCode;
+								if(l!=null && !l.isEmpty()) {
+									for (Object object : l) {
+										if(object!=null && object instanceof IDRuolo) {
+											IDRuolo idCheck = (IDRuolo) object;
+											if(idCheck.equals(idRuolo)) {
+												keyForClean.add(key);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	public static void removeScope(IDScope idScope) throws Exception {
+		if(RegistroServiziReader.isCacheAbilitata()) {
+			
+			String keyScope = RegistroServizi._getKey_getScope(idScope.getNome());
+			RegistroServiziReader.removeObjectCache(keyScope);
+			
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = RegistroServiziReader.keysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				
+				String prefixGetAllId = RegistroServizi._toKey_getAllIdScope_method();
+				
+				for (String key : keys) {
+					if(key!=null) {
+						if(key.startsWith(prefixGetAllId)) {
+							Object oCode = RegistroServiziReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof List<?>) {
+								List<?> l = (List<?>) oCode;
+								if(l!=null && !l.isEmpty()) {
+									for (Object object : l) {
+										if(object!=null && object instanceof IDScope) {
+											IDScope idCheck = (IDScope) object;
+											if(idCheck.equals(idScope)) {
+												keyForClean.add(key);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	
+	
+	
+	
 
 
 	/*   -------------- Metodi di inizializzazione -----------------  */
@@ -1772,7 +2347,7 @@ public class RegistroServiziReader {
 	
 	
 	
-	protected  Allegati getAllegati(Connection connectionPdD, IDServizio idASPS)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	protected Allegati getAllegati(Connection connectionPdD, IDServizio idASPS)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 	
 		Allegati allegati = new Allegati();
 		
@@ -1788,6 +2363,26 @@ public class RegistroServiziReader {
 		
 		return allegati;
 		
+	}
+	
+	protected Documento getAllegato(Connection connectionPdD, IDAccordo idAccordo, String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServizi.getAllegato(connectionPdD, null, idAccordo, nome);
+	}
+	protected Documento getSpecificaSemiformale(Connection connectionPdD, IDAccordo idAccordo, TipiDocumentoSemiformale tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServizi.getSpecificaSemiformale(connectionPdD, null, idAccordo, tipo, nome);
+	}
+	
+	protected Documento getAllegato(Connection connectionPdD, IDServizio idASPS, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServizi.getAllegato(connectionPdD, null, idASPS, nome);
+	}
+	protected Documento getSpecificaSemiformale(Connection connectionPdD, IDServizio idASPS, TipiDocumentoSemiformale tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServizi.getSpecificaSemiformale(connectionPdD, null, idASPS, tipo, nome);
+	}
+	protected Documento getSpecificaSicurezza(Connection connectionPdD, IDServizio idASPS, TipiDocumentoSicurezza tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServizi.getSpecificaSicurezza(connectionPdD, null, idASPS, tipo, nome);
+	}
+	protected Documento getSpecificaLivelloServizio(Connection connectionPdD, IDServizio idASPS, TipiDocumentoLivelloServizio tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServizi.getSpecificaLivelloServizio(connectionPdD, null, idASPS, tipo, nome);
 	}
 	
 
@@ -2641,9 +3236,9 @@ public class RegistroServiziReader {
 	
 	/* ********  P R O P R I E T A  ******** */
 	
-	public Map<String, String> getProprietaConfigurazione(Soggetto soggetto) throws DriverConfigurazioneException {
+	public Map<String, String> getProprietaConfigurazione(Soggetto soggetto) throws DriverRegistroServiziException {
 		if (soggetto == null) {
-			throw new DriverConfigurazioneException("Soggetto non fornito");
+			throw new DriverRegistroServiziException("Soggetto non fornito");
 		} else if (soggetto.sizeProprietaList() <= 0) {
 			return null;
 		} else {
@@ -2660,6 +3255,370 @@ public class RegistroServiziReader {
 	
 	
 	
+	
+	
+	/* ********  C E R T I F I C A T I  ******** */
+	
+	protected CertificateCheck checkCertificatoSoggetto(Connection connectionPdD,boolean useCache,
+			long idSoggetto, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		
+		if(useCache) {
+			throw new DriverRegistroServiziException("Not Implemented");
+		}
+		
+		Soggetto soggetto = null;
+		for (IDriverRegistroServiziGet driver : this.registroServizi.getDriverRegistroServizi().values()) {
+			if(driver instanceof DriverRegistroServiziDB) {
+				DriverRegistroServiziDB driverDB = (DriverRegistroServiziDB) driver;
+				soggetto = driverDB.getSoggetto(idSoggetto);
+				break;
+			}
+			else {
+				throw new DriverRegistroServiziException("Not Implemented with driver '"+driver.getClass().getName()+"'");
+			}
+		}
+		
+		return checkCertificatoSoggetto(soggetto,sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	protected CertificateCheck checkCertificatoSoggetto(Connection connectionPdD,boolean useCache,
+			IDSoggetto idSoggetto, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		
+		Soggetto soggetto = null;
+		if(useCache) {
+			this.registroServizi.getSoggetto(connectionPdD, null, idSoggetto);
+		}
+		else {
+			for (IDriverRegistroServiziGet driver : this.registroServizi.getDriverRegistroServizi().values()) {
+				soggetto = driver.getSoggetto(idSoggetto);		
+			}
+		}
+		return checkCertificatoSoggetto(soggetto, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	public static CertificateCheck checkCertificatoSoggetto(Soggetto soggetto, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		
+		if(soggetto.sizeCredenzialiList()<=0) {
+			throw new DriverRegistroServiziException("Nessuna credenziale risulta associata al soggetto");
+		}
+		List<byte[]> certs = new ArrayList<byte[]>();
+		List<Boolean> strictValidation = new ArrayList<Boolean>();
+		for (int i = 0; i < soggetto.sizeCredenzialiList(); i++) {
+			CredenzialiSoggetto c = soggetto.getCredenziali(i);
+			if(!org.openspcoop2.core.registry.constants.CredenzialeTipo.SSL.equals(c.getTipo())) {
+				throw new DriverRegistroServiziException("La credenziale ("+c.getTipo()+") associata al soggetto non è un certificato x509");
+			}
+			if(c.getCertificate()!=null) {
+				certs.add(c.getCertificate());
+				strictValidation.add(c.isCertificateStrictVerification());
+			}
+		}
+		if(certs.isEmpty()) {
+			throw new DriverRegistroServiziException("Nessun certificato risulta associata al soggetto");
+		}
+		else {
+			try {
+				return org.openspcoop2.protocol.registry.CertificateUtils.checkCertificateClient(certs, strictValidation, sogliaWarningGiorni,  
+						addCertificateDetails, separator, newLine,
+						log);
+			}catch(Throwable t) {
+				throw new DriverRegistroServiziException(t.getMessage(),t);
+			}
+		}
+
+	}
+	
+	protected CertificateCheck checkCertificatiConnettoreHttpsById(Connection connectionPdD,boolean useCache,
+			long idConnettore, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		
+		if(useCache) {
+			throw new DriverRegistroServiziException("Not Implemented");
+		}
+		
+		Connettore connettore = null;
+		for (IDriverRegistroServiziGet driver : this.registroServizi.getDriverRegistroServizi().values()) {
+			if(driver instanceof DriverRegistroServiziDB) {
+				DriverRegistroServiziDB driverDB = (DriverRegistroServiziDB) driver;
+				connettore = driverDB.getConnettore(idConnettore);
+				break;
+			}
+			else {
+				throw new DriverRegistroServiziException("Not Implemented with driver '"+driver.getClass().getName()+"'");
+			}
+		}
+		
+		return checkCertificatiConnettoreHttpsById(connettore,sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	public static final String ID_CONFIGURAZIONE_CONNETTORE_HTTPS = "Configurazione connettore https";
+	public static CertificateCheck checkCertificatiConnettoreHttpsById(Connettore connettore, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		
+		TipiConnettore tipo = TipiConnettore.toEnumFromName(connettore.getTipo());
+		if( !TipiConnettore.HTTPS.equals(tipo)) {
+			throw new DriverRegistroServiziException("Il connettore indicato non è di tipo https");
+		}
+		
+		SSLConfig httpsProp = null;
+		try {
+			httpsProp = ConnettoreHTTPSProperties.readProperties(connettore.getProperties());
+		}catch(Throwable t) {
+			throw new DriverRegistroServiziException(t.getMessage(),t);
+		}
+		CertificateCheck check = null;
+		boolean classpathSupported = false;
+				
+		String storeDetails = null; // per evitare duplicazione
+		
+		if(httpsProp.getKeyStoreLocation()!=null) {
+			try {
+				check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(httpsProp.getKeyStoreLocation(), classpathSupported, httpsProp.getKeyStoreType(), 
+						httpsProp.getKeyStorePassword(), httpsProp.getKeyAlias(),
+						sogliaWarningGiorni, 
+						false, //addCertificateDetails, 
+						separator, newLine,
+						log);
+				
+				if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+					storeDetails = org.openspcoop2.protocol.registry.CertificateUtils.toStringKeyStore(httpsProp.getKeyStoreLocation(), httpsProp.getKeyStoreType(),
+							httpsProp.getKeyAlias(), 
+							separator, newLine);
+				}
+			}catch(Throwable t) {
+				throw new DriverRegistroServiziException(t.getMessage(),t);
+			}
+		}
+		
+		if(check==null || StatoCheck.OK.equals(check.getStatoCheck())) {
+			if(!httpsProp.isTrustAllCerts() && httpsProp.getTrustStoreLocation()!=null) {
+				try {
+					check = org.openspcoop2.protocol.registry.CertificateUtils.checkTrustStore(httpsProp.getTrustStoreLocation(), classpathSupported, httpsProp.getTrustStoreType(), 
+							httpsProp.getTrustStorePassword(), httpsProp.getTrustStoreCRLsLocation(),
+							sogliaWarningGiorni, 
+							false, //addCertificateDetails, 
+							separator, newLine,
+							log);
+					
+					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+						storeDetails = org.openspcoop2.protocol.registry.CertificateUtils.toStringTrustStore(httpsProp.getTrustStoreLocation(), httpsProp.getTrustStoreType(),
+								httpsProp.getTrustStoreCRLsLocation(), 
+								separator, newLine);
+					}
+				}catch(Throwable t) {
+					throw new DriverRegistroServiziException(t.getMessage(),t);
+				}
+			}
+		}
+		
+		if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+			String id = ID_CONFIGURAZIONE_CONNETTORE_HTTPS;
+			if(addCertificateDetails && storeDetails!=null) {
+				id = id + newLine + storeDetails;
+			}
+			check.setConfigurationId(id);	
+		}	
+		
+		if(check==null) {
+			// connettore https con truststore 'all' senza client autentication
+			check = new CertificateCheck();
+			check.setStatoCheck(StatoCheck.OK);
+		}
+		
+		return check;
+	}
+	
+	protected CertificateCheck checkCertificatiModIErogazioneById(Connection connectionPdD,boolean useCache,
+			long idAsps, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		
+		if(useCache) {
+			throw new DriverRegistroServiziException("Not Implemented");
+		}
+		
+		AccordoServizioParteSpecifica asps = null;
+		for (IDriverRegistroServiziGet driver : this.registroServizi.getDriverRegistroServizi().values()) {
+			if(driver instanceof DriverRegistroServiziDB) {
+				DriverRegistroServiziDB driverDB = (DriverRegistroServiziDB) driver;
+				asps = driverDB.getAccordoServizioParteSpecifica(idAsps);
+				break;
+			}
+			else {
+				throw new DriverRegistroServiziException("Not Implemented with driver '"+driver.getClass().getName()+"'");
+			}
+		}
+		
+		return checkCertificatiModIErogazioneById(asps,sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	public static CertificateCheck checkCertificatiModIErogazioneById(AccordoServizioParteSpecifica asps, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		
+		boolean modi = asps.getTipoSoggettoErogatore().equals(CostantiLabel.MODIPA_PROTOCOL_NAME);
+		if(!modi) {
+			throw new DriverRegistroServiziException("Il profilo di interoperabilità non è "+CostantiLabel.MODIPA_PROTOCOL_LABEL);
+		}
+		
+		KeystoreParams keystoreParams = ModIUtils.getKeyStoreParams(asps.getProtocolPropertyList());
+		KeystoreParams truststoreParams = ModIUtils.getTrustStoreParams(asps.getProtocolPropertyList());
+		KeystoreParams truststoreSslParams = ModIUtils.getTrustStoreSSLParams(asps.getProtocolPropertyList());
+
+		return _checkStore(keystoreParams, 
+				truststoreParams,
+				truststoreSslParams, 
+				sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				log);
+	}
+	
+	protected CertificateCheck checkCertificatiModIFruizioneById(Connection connectionPdD,boolean useCache,
+			long idFruitore, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		
+		if(useCache) {
+			throw new DriverRegistroServiziException("Not Implemented");
+		}
+		
+		Fruitore fruitore = null;
+		for (IDriverRegistroServiziGet driver : this.registroServizi.getDriverRegistroServizi().values()) {
+			if(driver instanceof DriverRegistroServiziDB) {
+				DriverRegistroServiziDB driverDB = (DriverRegistroServiziDB) driver;
+				fruitore = driverDB.getServizioFruitore(idFruitore);
+				break;
+			}
+			else {
+				throw new DriverRegistroServiziException("Not Implemented with driver '"+driver.getClass().getName()+"'");
+			}
+		}
+		if(fruitore==null) {
+			throw new DriverRegistroServiziNotFound("Fruitore con id '"+idFruitore+"' non trovato");
+		}
+		
+		return checkCertificatiModIFruizioneById(fruitore,sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	public static CertificateCheck checkCertificatiModIFruizioneById(Fruitore fruitore, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		
+		boolean modi = fruitore.getTipo().equals(CostantiLabel.MODIPA_PROTOCOL_NAME);
+		if(!modi) {
+			throw new DriverRegistroServiziException("Il profilo di interoperabilità non è "+CostantiLabel.MODIPA_PROTOCOL_LABEL);
+		}
+		
+		KeystoreParams keystoreParams = ModIUtils.getKeyStoreParams(fruitore.getProtocolPropertyList());
+		KeystoreParams truststoreParams = ModIUtils.getTrustStoreParams(fruitore.getProtocolPropertyList());
+		KeystoreParams truststoreSslParams = ModIUtils.getTrustStoreSSLParams(fruitore.getProtocolPropertyList());
+		
+		return _checkStore(keystoreParams, 
+				truststoreParams,
+				truststoreSslParams, 
+				sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				log);
+	}
+	
+	public static final String ID_CONFIGURAZIONE_FIRMA_MODI = "Configurazione della firma "+CostantiLabel.MODIPA_PROTOCOL_LABEL;
+	private static CertificateCheck _checkStore(KeystoreParams keystoreParams, 
+			KeystoreParams truststoreParams,
+			KeystoreParams truststoreSslParams, 
+			int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverRegistroServiziException {
+		
+		if(keystoreParams==null && truststoreParams==null && truststoreSslParams==null) {
+			throw new DriverRegistroServiziException("Non risulta alcun keystore ridefinito, da utilizzare per la gestione della firma "+CostantiLabel.MODIPA_PROTOCOL_LABEL);
+		}
+		
+		CertificateCheck check = null;		
+		boolean classpathSupported = false;
+		
+		String storeDetails = null; // per evitare duplicazione
+		
+		if(keystoreParams!=null) {
+			try {
+				if(keystoreParams.getStore()!=null) {
+					check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(keystoreParams.getStore(), keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(),
+							sogliaWarningGiorni, 
+							false, //addCertificateDetails, 
+							separator, newLine,
+							log);
+				}
+				else {
+					check = org.openspcoop2.protocol.registry.CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(),
+							sogliaWarningGiorni, 
+							false, //addCertificateDetails, 
+							separator, newLine,
+							log);
+				}
+				
+				if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+					storeDetails = org.openspcoop2.protocol.registry.CertificateUtils.toStringKeyStore(keystoreParams, separator, newLine);
+				}
+			}catch(Throwable t) {
+				throw new DriverRegistroServiziException(t.getMessage(),t);
+			}
+		}
+		
+		if(check==null || StatoCheck.OK.equals(check.getStatoCheck())) {
+			if(truststoreParams!=null) {
+				try {
+					check = org.openspcoop2.protocol.registry.CertificateUtils.checkTrustStore(truststoreParams.getPath(), classpathSupported, truststoreParams.getType(), 
+							truststoreParams.getPassword(), truststoreParams.getCrls(),
+							sogliaWarningGiorni, 
+							false, //addCertificateDetails, 
+							separator, newLine,
+							log);
+					
+					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+						storeDetails = org.openspcoop2.protocol.registry.CertificateUtils.toStringTrustStore(truststoreParams, separator, newLine);
+					}
+				}catch(Throwable t) {
+					throw new DriverRegistroServiziException(t.getMessage(),t);
+				}
+			}
+		}
+		
+		if(check==null || StatoCheck.OK.equals(check.getStatoCheck())) {
+			if(truststoreSslParams!=null) {
+				try {
+					check = org.openspcoop2.protocol.registry.CertificateUtils.checkTrustStore(truststoreSslParams.getPath(), classpathSupported, truststoreSslParams.getType(), 
+							truststoreSslParams.getPassword(), truststoreSslParams.getCrls(),
+							sogliaWarningGiorni, 
+							false, //addCertificateDetails, 
+							separator, newLine,
+							log);
+					
+					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+						storeDetails = org.openspcoop2.protocol.registry.CertificateUtils.toStringTrustStore(truststoreSslParams, separator, newLine);
+					}
+				}catch(Throwable t) {
+					throw new DriverRegistroServiziException(t.getMessage(),t);
+				}
+			}
+		}
+		
+		if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+			String id = ID_CONFIGURAZIONE_FIRMA_MODI;
+			if(addCertificateDetails && storeDetails!=null) {
+				id = id + newLine + storeDetails;
+			}
+			check.setConfigurationId(id);	
+		}
+		
+		return check;
+	}
 	
 	
 	

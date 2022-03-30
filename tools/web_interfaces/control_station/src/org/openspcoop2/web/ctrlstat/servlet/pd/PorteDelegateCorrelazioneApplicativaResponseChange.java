@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -40,6 +40,7 @@ import org.openspcoop2.core.config.constants.CorrelazioneApplicativaGestioneIden
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaRispostaIdentificazione;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -121,6 +122,7 @@ public final class PorteDelegateCorrelazioneApplicativaResponseChange extends Ac
 			PortaDelegata pde = porteDelegateCore.getPortaDelegata(idInt);
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
 			AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
+			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(apc.getServiceBinding());
 			String nomePorta = pde.getNome();
 
 			// Prendo il nome originario della correlazione applicativa
@@ -207,7 +209,8 @@ public final class PorteDelegateCorrelazioneApplicativaResponseChange extends Ac
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = porteDelegateHelper.correlazioneApplicativaRispostaCheckData(TipoOperazione.CHANGE,true);
+			boolean isOk = porteDelegateHelper.correlazioneApplicativaRispostaCheckData(TipoOperazione.CHANGE,true,
+					serviceBinding);
 			if (!isOk) {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam);

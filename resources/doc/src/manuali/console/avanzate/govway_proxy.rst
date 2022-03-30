@@ -31,14 +31,21 @@ Per abilitare e configurare la funzionalità 'govway-proxy' si deve agire a live
 
 Una volta abilitata la funzionalità la configurazione è attuabile tramite le seguenti proprietà:
 
-- govway-proxy: endpoint a cui verranno inoltrate le richieste. L'endpoint può contenere parti dinamiche che verranno risolte dal Gateway (per ulteriori dettagli fare riferimento alla sezione :ref:`valoriDinamici`).
-- govway-proxy-header: se configurato verrà utilizzato un header http, con il nome indicato, per inoltrare al proxy l'indirizzo remoto.
-- govway-proxy-header-base64: nel caso sia stato configurato un header http, l'indirizzo remoto sarà codificato in base64 se viene abilitata la seguente proprietà.
-- govway-proxy-query: se configurato verrà utilizzato un parametro della url, con il nome indicato, per inoltrare al proxy l'indirizzo remoto.
+- govway-proxy: endpoint a cui verranno inoltrate le richieste. L'endpoint può contenere parti dinamiche che verranno risolte dal Gateway (per ulteriori dettagli fare riferimento alla sezione :ref:`valoriDinamici`);
+- govway-proxy-header: se configurato verrà utilizzato un header http, con il nome indicato, per inoltrare al proxy l'indirizzo remoto;
+- govway-proxy-header-base64: nel caso sia stato configurato un header http, l'indirizzo remoto sarà codificato in base64 se viene abilitata la seguente proprietà;
+- govway-proxy-query: se configurato verrà utilizzato un parametro della url, con il nome indicato, per inoltrare al proxy l'indirizzo remoto;
 - govway-proxy-query-base64: nel caso sia stato configurato un parametro della url, l'indirizzo remoto sarà codificato in base64 se viene abilitata la seguente proprietà.
 
+È inoltre configurabile l'indicazione (true/false) se la funzionalità proxy deve essere attivata anche verso gli endpoint registrati nelle token policy e nelle attribute authority, tramite le seguenti proprietà:
+
+- govway-proxy-token-introspection: servizio 'introspection' definito in una :ref:`tokenValidazionePolicy`;
+- govway-proxy-token-userinfo: servizio 'user-info' definito in una :ref:`tokenValidazionePolicy`;
+- govway-proxy-token-retrieve: :ref:`tokenNegoziazionePolicy`;
+- govway-proxy-attribute-authority: :ref:`aa` da cui vengono recuperati gli attributi.
+
 .. note::
-      La configurazione dei parametri che riguardano l'header http o il parametro della url non sono obbligatori e se non presenti viene utilizzata la configurazione di default (header http 'GovWay-APIAddress' non codificato in base64) ridefinibile nel file di configurazione locale '/etc/govway/govway_local.properties' tramite una configurazione come quella riportata di seguito (assumendo sia /etc/govway la directory di configurazione indicata in fase di installazione):
+      La configurazione dei parametri che riguardano l'header http o il parametro della url non sono obbligatori e se non presenti viene utilizzata la configurazione di default (header http 'GovWay-APIAddress' non codificato in base64) ridefinibile nel file di configurazione locale '/etc/govway/govway_local.properties' tramite una configurazione come quella riportata di seguito (assumendo sia /etc/govway la directory di configurazione indicata in fase di installazione). Analogo discorso vale per l'attivazione della funzionalità proxy verso gli endpoint registrati nelle token policy e nelle attribute authority, la quale è per default disabilitata.
 
 
    ::
@@ -54,10 +61,16 @@ Una volta abilitata la funzionalità la configurazione è attuabile tramite le s
       org.openspcoop2.pdd.connettori.govwayProxy.header.nome=GovWay-APIAddress
       org.openspcoop2.pdd.connettori.govwayProxy.header.base64=false
       #
-      # Default configurazion (query URL)
+      # Default configuration (query URL)
       org.openspcoop2.pdd.connettori.govwayProxy.urlParameter.enable=false
       org.openspcoop2.pdd.connettori.govwayProxy.urlParameter.nome=govway_api_address
       org.openspcoop2.pdd.connettori.govwayProxy.urlParameter.base64=false
+      #
+      # Default configuration (Token e Attributes)
+      org.openspcoop2.pdd.connettori.govwayProxy.tokenIntrospection.enable=false
+      org.openspcoop2.pdd.connettori.govwayProxy.tokenUserInfo.enable=false
+      org.openspcoop2.pdd.connettori.govwayProxy.tokenRetrieve.enable=false
+      org.openspcoop2.pdd.connettori.govwayProxy.attributeAuthority.enable=false
       # ================================================
 
 .. note::
@@ -72,7 +85,7 @@ L'endpoint utilizzato per il proxy, indicato nella proprietà 'govway-proxy', pu
 - dominio-<tipoSoggetto>-<nomeSoggetto>-govway-proxy o dominio-<tipoSoggetto>-<nomeSoggetto>-govway-<ruolo>-proxy: rispetto alle precedenti due proprietà è possibile restringere l'utilizzo dell'endpoint per il soggetto interno indicato in '<nomeSoggetto>' relativamente al solo tipo indicato in '<tipoSoggetto>'. Questa opzione è utile nei profili di interoperabilità dove ai soggetti è possibile associare più tipi, come ad es. in SPCoop dove sono utilizzabili i tipi 'spc', 'aoo', 'test'.
 - tag-<nomeTag>-govway-proxy o tag-<nomeTag>-govway-<ruolo>-proxy: l'endpoint indicato verrà utilizzato solamente se l'API appartiene al tag indicato in '<nomeTag>'.
 
-Anche i parametri di configurazione relativamente all'utilizzo dell'header e del parametro della url possono essere ridefiniti, quando viene ridefinito un endpoint, con lo stesso criterio.
+Anche i parametri di configurazione relativamente all'utilizzo dell'header, al parametro della url possono essere ridefiniti, quando viene ridefinito un endpoint, con lo stesso criterio. Analogo discorso vale per l'attivazione della funzionalità proxy verso gli endpoint registrati nelle token policy e nelle attribute authority.
 
 Nella figura :numref:`GovWayProxyEsempio1` viene fornito un esempio di configurazione di un proxy relativamente alle sole fruizioni. L'endpoint del proxy è lo stesso per tutti i soggetti interni gestiti (dove è stato abilitato il multi-tenant) con la sola differenza che nel contesto della url è presente il nome del soggetto interno. In questo esempio l'endpoint remoto viene inserito nell'header HTTP GovWay-APIAddress codificato in base64.
 

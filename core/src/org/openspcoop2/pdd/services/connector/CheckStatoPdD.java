@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -23,6 +23,8 @@
 package org.openspcoop2.pdd.services.connector;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -160,12 +162,22 @@ public class CheckStatoPdD extends HttpServlet {
 			}
 			else if(methodName!=null){
 				
-				String paramValue = req.getParameter(CostantiPdD.CHECK_STATO_PDD_PARAM_VALUE);
 				Object [] params = null;
 				String [] signatures = null;
-				if(paramValue!=null && !"".equals(paramValue)){
-					params = new Object[] {paramValue};
-					signatures = new String[] {String.class.getName()};
+				try {
+					List<Object> paramsL = new ArrayList<Object>();
+					List<String> signaturesL = new ArrayList<String>();
+					addParameter(paramsL, signaturesL, req);
+					if(!paramsL.isEmpty() && !signaturesL.isEmpty()) {
+						params = paramsL.toArray(new Object[1]);
+						signatures = signaturesL.toArray(new String[1]);
+					}
+				}catch(Throwable e) {
+					String msg = "Invocazione metodo ["+methodName+"] della risorsa ["+resourceName+"] non riuscita: "+e.getMessage();
+					log.error("[GovWayCheck] "+msg,e);
+					res.setStatus(500);
+					res.getOutputStream().write(msg.getBytes());
+					return;
 				}
 				
 				try{
@@ -240,5 +252,95 @@ public class CheckStatoPdD extends HttpServlet {
 
 	}
 
-
+	private void addParameter(List<Object> params, List<String> signatures, HttpServletRequest req) throws Exception {
+		
+		boolean add = addParameter(params, signatures, req,
+				CostantiPdD.CHECK_STATO_PDD_PARAM_VALUE,
+				CostantiPdD.CHECK_STATO_PDD_PARAM_INT_VALUE, 
+				CostantiPdD.CHECK_STATO_PDD_PARAM_LONG_VALUE,
+				CostantiPdD.CHECK_STATO_PDD_PARAM_BOOLEAN_VALUE);
+		if(!add) {
+			return;
+		}
+		
+		add = addParameter(params, signatures, req,
+				CostantiPdD.CHECK_STATO_PDD_PARAM_VALUE_2,
+				CostantiPdD.CHECK_STATO_PDD_PARAM_INT_VALUE_2, 
+				CostantiPdD.CHECK_STATO_PDD_PARAM_LONG_VALUE_2,
+				CostantiPdD.CHECK_STATO_PDD_PARAM_BOOLEAN_VALUE_2);
+		if(!add) {
+			return;
+		}
+		
+		add = addParameter(params, signatures, req,
+				CostantiPdD.CHECK_STATO_PDD_PARAM_VALUE_3,
+				CostantiPdD.CHECK_STATO_PDD_PARAM_INT_VALUE_3, 
+				CostantiPdD.CHECK_STATO_PDD_PARAM_LONG_VALUE_3,
+				CostantiPdD.CHECK_STATO_PDD_PARAM_BOOLEAN_VALUE_3);
+		if(!add) {
+			return;
+		}
+			
+	}
+	
+	private boolean addParameter(List<Object> params, List<String> signatures, HttpServletRequest req,
+			String stringNameParameter, String intNameParameter, String longNameParameter, String booleanNameParameter) throws Exception {
+		
+		int count = 0;
+		List<String> pFound = new ArrayList<String>();
+		
+		String paramStringValue = req.getParameter(stringNameParameter);
+		boolean paramStringDefined = paramStringValue!=null && !"".equals(paramStringValue);
+		if(paramStringDefined) {
+			count++;
+			pFound.add(stringNameParameter);
+		}
+		
+		String paramIntValue = req.getParameter(intNameParameter);
+		boolean paramIntDefined = paramIntValue!=null && !"".equals(paramIntValue);
+		if(paramIntDefined) {
+			count++;
+			pFound.add(intNameParameter);
+		}
+		
+		String paramLongValue = req.getParameter(longNameParameter);
+		boolean paramLongDefined = paramLongValue!=null && !"".equals(paramLongValue);
+		if(paramLongDefined) {
+			count++;
+			pFound.add(longNameParameter);
+		}
+		
+		String paramBooleanValue = req.getParameter(booleanNameParameter);
+		boolean paramBooleanDefined = paramBooleanValue!=null && !"".equals(paramBooleanValue);
+		if(paramBooleanDefined) {
+			count++;
+			pFound.add(booleanNameParameter);
+		}
+		
+		if(count==0) {
+			return false;
+		}
+		if(count>1) {
+			throw new Exception("È stato fornito più di un tipo di parametro per la stessa posizione: "+pFound);
+		}
+		
+		if(paramStringDefined){
+			params.add(paramStringValue);
+			signatures.add(String.class.getName());
+		}
+		else if(paramIntDefined){
+			params.add(Integer.valueOf(paramIntValue));
+			signatures.add(Integer.class.getName());
+		}
+		else if(paramLongDefined){
+			params.add(Long.valueOf(paramLongValue));
+			signatures.add(Long.class.getName());
+		}
+		else if(paramBooleanDefined){
+			params.add(Boolean.valueOf(paramBooleanValue));
+			signatures.add(Boolean.class.getName());
+		}
+		return true;
+		
+	}
 }

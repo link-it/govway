@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -184,6 +184,7 @@ public class CostantiConfigurazioni {
 	public static final String LABEL_CONNETTORE_ENDPOINT = "Connettore (Endpoint)";
 	public static final String LABEL_CONNETTORE_DEBUG = "Connettore (Debug)";
 	public static final String LABEL_CONNETTORE_USERNAME = "Connettore (Username)";
+	public static final String LABEL_CONNETTORE_TOKEN = "Connettore (Token)";
 	public static final String LABEL_CONNETTORE_PROXY_ENDPOINT = "Connettore (Proxy Endpoint)";
 	public static final String LABEL_CONNETTORE_SSL_TYPE = "Connettore (SSL Type)";
 	public static final String LABEL_CONNETTORE_ALTRE_CONFIGURAZIONI = "Connettore (Altre Configurazioni)";

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -1296,7 +1296,7 @@ public class SingleFileExporter implements IExporter{
 			
 			//header trasporto
 			List<DumpHeaderTrasporto> headers = service.getHeaderTrasporto(dumpDB.getIdTransazione(), dumpDB.getServizioApplicativoErogatore(), dumpDB.getDataConsegnaErogatore(), dumpDB.getTipoMessaggio(), dumpDB.getId());
-			if(headers.size()>0){
+			if(headers!=null && headers.size()>0){
 				try{
 					String name = "headers.";
 					if(headersAsProperties) {
@@ -1320,7 +1320,7 @@ public class SingleFileExporter implements IExporter{
 			
 			//allegati
 			List<DumpAttachment> attachments = dumpMessaggio.getAttachments();
-			if(attachments.size()>0){
+			if(attachments!=null && attachments.size()>0){
 				try{
 					for (int i = 0; i < attachments.size(); i++) {
 						DumpAttachment dumpAttachment = attachments.get(i);

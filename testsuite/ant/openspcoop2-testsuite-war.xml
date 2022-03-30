@@ -76,6 +76,7 @@
 						<matches string="${as}" pattern="wildfly23"/>
 						<matches string="${as}" pattern="wildfly24"/>
 						<matches string="${as}" pattern="wildfly25"/>
+						<matches string="${as}" pattern="wildfly26"/>
 					</or>
 					<then>
 						<copy file="${src_testsuite}/WEB-INF/jboss-deployment-structure.xml.wildfly2" tofile="${build_testsuite}/tmp/jboss-deployment-structure.xml" />

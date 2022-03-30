@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -830,7 +830,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
 			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
-			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
+			String requestOutputFileName, String requestOutputFileName_permissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeaders_permissions,
+			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
 			String erogazioneSoggetto,String erogazioneRuolo,String erogazioneAutenticazione,String erogazioneAutenticazioneOpzionale, TipoAutenticazionePrincipal erogazioneAutenticazionePrincipal, List<String> erogazioneAutenticazioneParametroList, String erogazioneAutorizzazione,
 			String erogazioneAutorizzazioneAutenticati,String erogazioneAutorizzazioneRuoli, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch,boolean isSupportatoAutenticazione,
@@ -1102,7 +1103,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
 						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+						requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken, tokenPolicy,
 						listExtendedConnettore,erogazioneServizioApplicativoServerEnabled,erogazioneServizioApplicativoServer)) {
@@ -1483,7 +1485,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
 			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
-			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
+			String requestOutputFileName, String requestOutputFileName_permissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeaders_permissions,
+			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
 			String fruizioneServizioApplicativo,String fruizioneRuolo,String fruizioneAutenticazione,String fruizioneAutenticazioneOpzionale, TipoAutenticazionePrincipal fruizioneAutenticazionePrincipal, List<String> fruizioneAutenticazioneParametroList, String fruizioneAutorizzazione,
 			String fruizioneAutorizzazioneAutenticati,String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch,BinaryParameter allegatoXacmlPolicy,
@@ -1630,7 +1633,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
 						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+						requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
+						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken, tokenPolicy,
 						listExtendedConnettore,servizioApplicativoServerEnabled,servizioApplicativoServer)) {
@@ -2607,7 +2611,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							
 							if(!mapping.isDefault()) {
 								PortaApplicativaServizioApplicativo portaApplicativaAssociataServizioApplicativo = paAssociata.getServizioApplicativoList().get(0);
-								boolean connettoreConfigurazioneRidefinito = this.isConnettoreRidefinito(paDefault, paSADefault, paAssociata, portaApplicativaAssociataServizioApplicativo);
+								boolean connettoreConfigurazioneRidefinito = this.isConnettoreRidefinito(paDefault, paSADefault, paAssociata, portaApplicativaAssociataServizioApplicativo, paAssociata.getServizioApplicativoList());
 								if(connettoreConfigurazioneRidefinito) {
 									visualizzaConnettore = false;
 									break;
@@ -3901,7 +3905,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							
 						}else {
 							// Connettore e' ridefinito se
-							connettoreRidefinito = isConnettoreRidefinito(paAssociataDefault, portaApplicativaServizioApplicativoDefault, paAssociata, portaApplicativaServizioApplicativo);
+							connettoreRidefinito = isConnettoreRidefinito(paAssociataDefault, portaApplicativaServizioApplicativoDefault, paAssociata, portaApplicativaServizioApplicativo, paAssociata.getServizioApplicativoList());
 							
 							if(!connettoreRidefinito) { 
 								servletConnettore = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORE_DEFAULT;
@@ -4546,27 +4550,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
-	}
-	public boolean isConnettoreRidefinito(PortaApplicativa paDefault,	PortaApplicativaServizioApplicativo paSADefault,
-			PortaApplicativa paCurrent, PortaApplicativaServizioApplicativo paSACurrent) {
-		boolean connettoreRidefinito = (
-				(
-					paDefault.getServizioApplicativoDefault() == null && (paCurrent.getServizioApplicativoDefault() != null || paSACurrent.getNome().equals(paCurrent.getNome()))
-				) || (
-					paDefault.getServizioApplicativoDefault() != null && 
-						(
-							paCurrent.getServizioApplicativoDefault() == null 
-							|| 
-							!paDefault.getServizioApplicativoDefault().equals(paCurrent.getServizioApplicativoDefault())
-							||
-							paDefault.sizeServizioApplicativoList()!=paCurrent.sizeServizioApplicativoList()
-							||
-							(paDefault.sizeServizioApplicativoList()==1 && paCurrent.sizeServizioApplicativoList()==1 && !paDefault.getServizioApplicativo(0).getNome().equals(paCurrent.getServizioApplicativo(0).getNome()))
-						)
-					//!paSADefault.getNome().equals(paSACurrent.getNome()))
-				)
-			);
-		return connettoreRidefinito;
 	}
 
 

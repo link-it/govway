@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -230,6 +230,16 @@ function Search(form) {
 
   // imposto la destinazione
   document.form.action = nomeServletList;
+  
+//evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
+  for (var k=0; k<document.form.elements.length; k++) {
+		var nome = document.form.elements[k].name;
+		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
+
+		if(hiddenInfo > -1) {
+			document.form.elements[k].value = '';
+		}
+  }
       
   // form submit
   document.form.submit();
@@ -283,6 +293,16 @@ function Reset(form) {
 	  
 	   // imposto la destinazione
 	   document.form.action = nomeServletList;
+	   
+	 //evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
+	   for (var k=0; k<document.form.elements.length; k++) {
+	 		var nome = document.form.elements[k].name;
+	 		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
+
+	 		if(hiddenInfo > -1) {
+	 			document.form.elements[k].value = '';
+	 		}
+	   }
 	   
 	  // form submit
 	  document.form.submit();
@@ -367,6 +387,16 @@ function Change(form,dataElementName,fromFilters) {
 	       var pair = pairs[i].split('=');
 	       addHidden(form, pair[0] , pair[1]);
 	   }
+     }
+     
+   //evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
+     for (var k=0; k<document.form.elements.length; k++) {
+   		var nome = document.form.elements[k].name;
+   		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
+
+   		if(hiddenInfo > -1) {
+   			document.form.elements[k].value = '';
+   		}
      }
         
     // form submit

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -24,39 +24,22 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste.NumeroRichiestePolicyInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicException;
-import org.openspcoop2.pdd.core.dynamic.PatternExtractor;
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
-import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.xml.XMLUtils;
 import org.openspcoop2.utils.xml.XPathExpressionEngine;
 import org.slf4j.Logger;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
 
 import net.minidev.json.JSONObject;
 
@@ -69,11 +52,6 @@ import net.minidev.json.JSONObject;
 * 
 */
 public class Utils {
-	
-	@SuppressWarnings("deprecation")
-	private static String buildUrl(Map<String,String> propertiesURLBased, String urlBase) {
-		return TransportUtils.buildLocationWithURLBasedParameter(propertiesURLBased, urlBase);
-	}
 	
 	public enum PolicyAlias {
 		RICHIESTE_SIMULTANEE("RichiesteSimultanee"), 
@@ -102,109 +80,26 @@ public class Utils {
 		}
 	}
 	
-	private static final DocumentBuilder docBuilder;
-	static {
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		try {
-			docBuilder = dbf.newDocumentBuilder();
-			
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		}
-	}
+
 	
 	public static Logger logRateLimiting = ConfigLoader.getLoggerRateLimiting();
-
+	 
 	
-	/**
-	 * Esege `count` richieste `request` parallele 
-	 * 
-	 */
 	public static Vector<HttpResponse> makeParallelRequests(HttpRequest request, int count) {
-		logRateLimiting = ConfigLoader.getLoggerRateLimiting();
-
-		final Vector<HttpResponse> responses = new Vector<>();
-		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(count);
-
-		for (int i = 0; i < count; i++) {
-			executor.execute(() -> {
-				try {
-					logRateLimiting.info(request.getMethod() + " " + request.getUrl());
-					responses.add(HttpUtilities.httpInvoke(request));
-					logRateLimiting.info("Richiesta effettuata..");
-				} catch (UtilsException e) {
-					e.printStackTrace();
-					throw new RuntimeException(e);
-				}
-			});
-		}
-		
-		try {
-			executor.shutdown();
-			executor.awaitTermination(20, TimeUnit.SECONDS);
-		} catch (InterruptedException e) {
-			logRateLimiting.error("Le richieste hanno impiegato più di venti secondi!");
-			throw new RuntimeException(e);
-		}
-		
-		logRateLimiting.info("RESPONSES: ");
-		responses.forEach(r -> {
-			logRateLimiting.info("statusCode: " + r.getResultHTTPOperation());
-			logRateLimiting.info("headers: " + r.getHeadersValues());
-		});
-
-		return responses;
+		return org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeParallelRequests(request, count, logRateLimiting);
 	}
-	
 	
 	public static HttpResponse makeRequest(HttpRequest request) {
-		
-		try {
-			logRateLimiting.info(request.getMethod() + " " + request.getUrl());
-			HttpResponse ret = HttpUtilities.httpInvoke(request);
-			logRateLimiting.info("statusCode: " + ret.getResultHTTPOperation());
-			logRateLimiting.info("headers: " + ret.getHeadersValues());
-			return ret;
-		} catch (UtilsException e) {
-			throw new RuntimeException(e);
-		}
+		return org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeRequest(request, logRateLimiting);
 	}
-	
-	
-	public static Vector<HttpResponse> makeSequentialRequests(HttpRequest request, int count) {
-		final Vector<HttpResponse> responses = new Vector<>();
 
-		for(int i=0; i<count;i++) {
-			logRateLimiting.info(request.getMethod() + " " + request.getUrl());
-			try {
-				responses.add(HttpUtilities.httpInvoke(request));
-				logRateLimiting.info("Richiesta effettuata..");
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}		
-		}
-		
-		logRateLimiting.info("RESPONSES: ");
-		responses.forEach(r -> {
-			logRateLimiting.info("statusCode: " + r.getResultHTTPOperation());
-			logRateLimiting.info("headers: " + r.getHeadersValues());
-		});
-		
-		return responses;		
+	public static Vector<HttpResponse> makeSequentialRequests(HttpRequest request, int count) {
+		return org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeSequentialRequests(request, count, logRateLimiting);
 	}
 	
-	public static Element buildXmlElement(byte[] content) {
-		InputStream is = new ByteArrayInputStream(content);
-		Document doc;
-		try {
-			doc = docBuilder.parse(is);
-			return doc.getDocumentElement();
-		} catch (SAXException | IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
+
+
+
 	public static void matchLimitExceededRest(JSONObject jsonResp) throws Exception {
 		JsonPathExpressionEngine jsonPath = new JsonPathExpressionEngine();
 		assertEquals("https://govway.org/handling-errors/429/LimitExceeded.html", jsonPath.getStringMatchPattern(jsonResp, "$.type").get(0));
@@ -215,18 +110,7 @@ public class Utils {
 		
 	}
 	
-	/**
-	 * Testa la risposta del server di echo quando passo il parametro query problem=true
-	 * @param jsonResp
-	 * @throws Exception
-	 */
-	public static void matchEchoFaultResponseRest(JSONObject jsonResp) throws Exception {
-		JsonPathExpressionEngine jsonPath = new JsonPathExpressionEngine();
 
-		assertEquals("https://httpstatuses.com/500", jsonPath.getStringMatchPattern(jsonResp, "$.type").get(0));
-		assertEquals("Internal Server Error", jsonPath.getStringMatchPattern(jsonResp, "$.title").get(0));
-		assertEquals("Problem ritornato dalla servlet di trace, esempio di OpenSPCoop", jsonPath.getStringMatchPattern(jsonResp, "$.detail").get(0));
-	}
 
 
 	
@@ -298,29 +182,17 @@ public class Utils {
 	}
 	
 	
-	public static void matchApiUnavaliableSoap(String idTransazione, Element element) throws DynamicException {
-		PatternExtractor matcher = PatternExtractor.getXmlPatternExtractor(element, logRateLimiting, false, null); 
-		String prefix = "env:";
-		assertEquals("idTransazione:"+idTransazione, prefix+"Receiver", matcher.read("/"+prefix+"Envelope/"+prefix+"Body/"+prefix+"Fault/"+prefix+"Code/"+prefix+"Value/text()"));
-		assertEquals("idTransazione:"+idTransazione, "integration:APIUnavailable", matcher.read("/"+prefix+"Envelope/"+prefix+"Body/"+prefix+"Fault/"+prefix+"Code/"+prefix+"Subcode/"+prefix+"Value/text()"));
-		assertEquals("idTransazione:"+idTransazione, "The API Implementation is temporary unavailable", matcher.read("/"+prefix+"Envelope/"+prefix+"Body/"+prefix+"Fault/"+prefix+"Reason/"+prefix+"Text/text()"));
-		assertEquals("idTransazione:"+idTransazione, "http://govway.org/integration", matcher.read("/"+prefix+"Envelope/"+prefix+"Body/"+prefix+"Fault/"+prefix+"Role/text()"));	
+	
+	public static void matchEchoFaultResponseRest(JSONObject jsonResp) throws Exception {
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.matchEchoFaultResponseRest(jsonResp, logRateLimiting);
 	}
 	
+	public static void matchApiUnavaliableSoap(String idTransazione, Element element) throws DynamicException {
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.matchApiUnavaliableSoap(idTransazione, element, logRateLimiting);
+	}
 	
-	/**
-	 * Testa la risposta del server di echo quando passo il parametro query fault=true
-	 * 
-	 * @param element
-	 * @throws DynamicException
-	 */
 	public static void matchEchoFaultResponseSoap(String idTransazione, Element element) throws DynamicException {
-		PatternExtractor matcher = PatternExtractor.getXmlPatternExtractor(element, logRateLimiting, false, null); 
-		String prefix = "env:";
-		assertEquals("idTransazione:"+idTransazione, prefix+"Receiver", matcher.read("/"+prefix+"Envelope/"+prefix+"Body/"+prefix+"Fault/"+prefix+"Code/"+prefix+"Value/text()"));
-		assertEquals("idTransazione:"+idTransazione, "ns1:Server.OpenSPCoopExampleFault", matcher.read("/"+prefix+"Envelope/"+prefix+"Body/"+prefix+"Fault/"+prefix+"Code/"+prefix+"Subcode/"+prefix+"Value/text()"));
-		assertEquals("idTransazione:"+idTransazione, "Fault ritornato dalla servlet di trace, esempio di OpenSPCoop", matcher.read("/"+prefix+"Envelope/"+prefix+"Body/"+prefix+"Fault/"+prefix+"Reason/"+prefix+"Text/text()"));
-		assertEquals("idTransazione:"+idTransazione, "OpenSPCoopTrace", matcher.read("/"+prefix+"Envelope/"+prefix+"Body/"+prefix+"Fault/"+prefix+"Role/text()"));
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.matchEchoFaultResponseSoap(idTransazione, element, logRateLimiting);
 	}
 	
 	
@@ -330,7 +202,7 @@ public class Utils {
 				"methodName", "resetPolicyCounters",
 				"paramValue", idPolicy
 			);
-		String jmxUrl = buildUrl(queryParams, System.getProperty("govway_base_path") + "/check");
+		String jmxUrl = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.buildUrl(queryParams, System.getProperty("govway_base_path") + "/check");
 		logRateLimiting.info("Resetto la policy di rate limiting sulla url: " + jmxUrl );
 		
 		try {
@@ -349,7 +221,7 @@ public class Utils {
 				"methodName", "getPolicy",
 				"paramValue", idPolicy
 			);
-		String jmxUrl = buildUrl(queryParams, System.getProperty("govway_base_path") + "/check");
+		String jmxUrl = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.buildUrl(queryParams, System.getProperty("govway_base_path") + "/check");
 		logRateLimiting.info("Ottengo le informazioni sullo stato della policy: " + jmxUrl );
 		try {
 			return new String(HttpUtilities.getHTTPResponse(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password")).getContent());
@@ -358,45 +230,7 @@ public class Utils {
 		}
 	}
 	
-	
-	public static void toggleErrorDisclosure(boolean enabled) {
-	
-		String value = "false";
-		if (enabled) {
-			value = "true";
-		}
-		
-		List<Map<String, String>> requestsParams = List.of(
-				Map.of(
-						"resourceName", "ConfigurazionePdD",
-						"attributeName", "transactionErrorForceSpecificTypeInternalResponseError",
-						"attributeBooleanValue", value
-					),
-				Map.of(
-						"resourceName", "ConfigurazionePdD",
-						"attributeName", "transactionErrorForceSpecificTypeBadResponse",
-						"attributeBooleanValue", value
-					),
-				Map.of(
-						"resourceName", "ConfigurazionePdD",
-						"attributeName", "transactionErrorForceSpecificDetails",
-						"attributeBooleanValue", value
-					)
-				);
-				
-		requestsParams.forEach( queryParams -> {
-			String jmxUrl = buildUrl(queryParams, System.getProperty("govway_base_path") + "/check");
-			logRateLimiting.info("Imposto la error disclosure: " + jmxUrl );
-				
-			try {
-				HttpUtilities.check(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password"));
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		});
-	}
-		
-	
+
 	public static Integer getThreadsAttiviGovWay() {
 		
 		Map<String,String> queryParams = Map.of(
@@ -404,7 +238,7 @@ public class Utils {
 				"attributeName", "threadsAttivi"
 			);
 		
-		String jmxUrl = buildUrl(queryParams, System.getProperty("govway_base_path") + "/check");
+		String jmxUrl = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.buildUrl(queryParams, System.getProperty("govway_base_path") + "/check");
 		logRateLimiting.info("Ottengo le informazioni sul numero dei threads attivi: " + jmxUrl );
 		try {
 			return Integer.valueOf(
@@ -444,82 +278,16 @@ public class Utils {
 	}	
 	
 	
-	/**
-	 * Sospende il thread corrente finchè non è scoccato il prossimo minuto
-	 * 
-	 * @throws InterruptedException
-	 */
+	
 	public static void waitForNewMinute() {
-		if ("false".equals(System.getProperty("wait"))) {
-			return;
-		}
-		
-		final int threshold = Integer.valueOf(System.getProperty("threshold_minute"));
-	
-		Calendar now = Calendar.getInstance();
-		int remaining = 60 - now.get(Calendar.SECOND);
-		if (remaining <= threshold) {
-
-			int to_wait = (remaining+2) * 1000;
-			logRateLimiting.info("Aspetto " + to_wait/1000 + " secondi per lo scoccare del minuto..");
-			org.openspcoop2.utils.Utilities.sleep(to_wait);
-		}
-		
-
-				
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.waitForNewMinute(logRateLimiting);
 	}
-	
-	/**
-	 * Sospende il thread corrente finchè non è scoccata la prossima ora.
-	 * NOTA: il timer viene attivato solo se mancano meno di due minuti allo scoccare dell'ora.
-	 * 
-	 * @throws InterruptedException
-	 */
 	public static void waitForNewHour() {
-		if ("false".equals(System.getProperty("wait"))) {
-			return;
-		}
-		
-		int threshold = Integer.valueOf(System.getProperty("threshold_hour"));
-		
-		Calendar now = Calendar.getInstance();
-		int remaining_min = 60 - now.get(Calendar.MINUTE);
-		int remaining_sec = 60 - now.get(Calendar.SECOND);
-		int remaining = (remaining_min - 1)*60 + remaining_sec;
-		
-		if (remaining <= threshold) {
-			int to_wait = (remaining+1) * 1000;
-			logRateLimiting.info("Aspetto " + to_wait/1000 + " secondi per lo scoccare dell'ora..");
-			org.openspcoop2.utils.Utilities.sleep(to_wait);
-		}					
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.waitForNewHour(logRateLimiting);
 	}
-	
-	/**
-	 * Sospende il thread corrente finchè non è scoccata il prossimo giorno
-	 * NOTA: il timer viene attivato solo se mancano meno di due minuti allo scoccare del giorno
-	 * 
-	 * @throws InterruptedException
-	 */
 	public static void waitForNewDay() {
-		if ("false".equals(System.getProperty("wait"))) {
-			return;
-		}
-
-		int threshold = Integer.valueOf(System.getProperty("threshold_day"));
-
-		Calendar now = Calendar.getInstance();
-		if (now.get(Calendar.HOUR_OF_DAY) == 23) {
-			int remaining_min = 60 - now.get(Calendar.MINUTE);
-			int remaining_sec = 60 - now.get(Calendar.SECOND);
-			int remaining = (remaining_min - 1)*60 + remaining_sec;
-		if (remaining <= threshold) {
-				int to_wait = (remaining+1) * 1000;
-				logRateLimiting.info("Aspetto " + to_wait/1000 + " secondi per lo scoccare del nuovo giorno..");
-				org.openspcoop2.utils.Utilities.sleep(to_wait);
-			}							
-		}			
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.waitForNewDay(logRateLimiting);
 	}
-
 
 	
 	public static void waitForZeroGovWayThreads() {
@@ -545,9 +313,7 @@ public class Utils {
 	
 	
 	public static void waitForDbStats() {
-		int to_wait = Integer.valueOf(System.getProperty("statistiche_delay"));
-		logRateLimiting.info("Aspetto " + to_wait/1000 + " secondi affinchè le statistiche vengano generate...");
-		org.openspcoop2.utils.Utilities.sleep(to_wait);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.waitForDbStats(logRateLimiting);
 	}
 
 	public static void checkConditionsNumeroRichieste(String idPolicy, Integer attive, Integer conteggiate, Integer bloccate) {

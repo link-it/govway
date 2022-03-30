@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -96,24 +96,24 @@ public class DBMappingUtils {
 	
 	public static List<MappingErogazionePortaApplicativa> mappingErogazionePortaApplicativaList(Connection con,	String tipoDB, 
 			IDServizio idServizio, 
-			ISearch ricerca,
+			ISearch ricerca,boolean ricerca_useOffsetLimit,
 			boolean orderByDescrizione) throws CoreException{
 		return _mappingErogazionePortaApplicativaList(con, tipoDB, 
 				idServizio, DBUtils.getIdServizio(idServizio.getNome(), idServizio.getTipo(), idServizio.getVersione(), 
 						idServizio.getSoggettoErogatore().getNome(), idServizio.getSoggettoErogatore().getTipo(), 
 						con, tipoDB), 
-				ricerca,CostantiDB.SOGGETTI,
+				ricerca, ricerca_useOffsetLimit,CostantiDB.SOGGETTI,
 				orderByDescrizione);
 	}
 	public static List<MappingErogazionePortaApplicativa> mappingErogazionePortaApplicativaList(Connection con,	String tipoDB, 
 			IDServizio idServizio, 
-			ISearch ricerca,String tabellaSoggetti,
+			ISearch ricerca,boolean ricerca_useOffsetLimit,String tabellaSoggetti,
 			boolean orderByDescrizione) throws CoreException{
 		return _mappingErogazionePortaApplicativaList(con, tipoDB, 
 				idServizio, DBUtils.getIdServizio(idServizio.getNome(), idServizio.getTipo(), idServizio.getVersione(), 
 						idServizio.getSoggettoErogatore().getNome(), idServizio.getSoggettoErogatore().getTipo(), 
 						con, tipoDB), 
-				ricerca,tabellaSoggetti,
+				ricerca, ricerca_useOffsetLimit,tabellaSoggetti,
 				orderByDescrizione);
 	}
 	
@@ -124,7 +124,7 @@ public class DBMappingUtils {
 				idServizio, DBUtils.getIdServizio(idServizio.getNome(), idServizio.getTipo(), idServizio.getVersione(), 
 						idServizio.getSoggettoErogatore().getNome(), idServizio.getSoggettoErogatore().getTipo(), 
 						con, tipoDB), 
-				null,CostantiDB.SOGGETTI,
+				null,false,CostantiDB.SOGGETTI,
 				orderByDescrizione);
 	}
 	public static List<MappingErogazionePortaApplicativa> mappingErogazionePortaApplicativaList(Connection con,	String tipoDB, 
@@ -135,26 +135,26 @@ public class DBMappingUtils {
 				idServizio, DBUtils.getIdServizio(idServizio.getNome(), idServizio.getTipo(), idServizio.getVersione(), 
 						idServizio.getSoggettoErogatore().getNome(), idServizio.getSoggettoErogatore().getTipo(), 
 						con, tipoDB), 
-				null,tabellaSoggetti,
+				null,false,tabellaSoggetti,
 				orderByDescrizione);
 	}
 	
 	public static List<MappingErogazionePortaApplicativa> mappingErogazionePortaApplicativaList(Connection con,	String tipoDB, 
 			IDServizio idServizio, long idServizioAsLong, 
-			ISearch ricerca,
+			ISearch ricerca,boolean ricerca_useOffsetLimit,
 			boolean orderByDescrizione) throws CoreException{
 		return _mappingErogazionePortaApplicativaList(con, tipoDB, 
 				idServizio, idServizioAsLong, 
-				ricerca,CostantiDB.SOGGETTI,
+				ricerca, ricerca_useOffsetLimit,CostantiDB.SOGGETTI,
 				orderByDescrizione);
 	}
 	public static List<MappingErogazionePortaApplicativa> mappingErogazionePortaApplicativaList(Connection con,	String tipoDB, 
 			IDServizio idServizio, long idServizioAsLong, 
-			ISearch ricerca,String tabellaSoggetti,
+			ISearch ricerca,boolean ricerca_useOffsetLimit,String tabellaSoggetti,
 			boolean orderByDescrizione) throws CoreException{
 		return _mappingErogazionePortaApplicativaList(con, tipoDB, 
 				idServizio, idServizioAsLong, 
-				ricerca,tabellaSoggetti,
+				ricerca, ricerca_useOffsetLimit,tabellaSoggetti,
 				orderByDescrizione);
 	}
 	
@@ -163,7 +163,7 @@ public class DBMappingUtils {
 			boolean orderByDescrizione) throws CoreException{
 		return _mappingErogazionePortaApplicativaList(con, tipoDB, 
 				idServizio, idServizioAsLong, 
-				null,CostantiDB.SOGGETTI,
+				null,false,CostantiDB.SOGGETTI,
 				orderByDescrizione);
 	}
 	public static List<MappingErogazionePortaApplicativa> mappingErogazionePortaApplicativaList(Connection con,	String tipoDB, 
@@ -172,13 +172,13 @@ public class DBMappingUtils {
 			boolean orderByDescrizione) throws CoreException{
 		return _mappingErogazionePortaApplicativaList(con, tipoDB, 
 				idServizio, idServizioAsLong, 
-				null,tabellaSoggetti,
+				null,false,tabellaSoggetti,
 				orderByDescrizione);
 	}
 	
 	private static List<MappingErogazionePortaApplicativa> _mappingErogazionePortaApplicativaList(Connection con, String tipoDB, 
 			IDServizio idServizio, long idServizioAsLong, 
-			ISearch ricerca,String tabellaSoggetti,
+			ISearch ricerca,boolean ricerca_useOffsetLimit,String tabellaSoggetti,
 			boolean orderByDescrizione) throws CoreException{
 		int idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
 		int offset = 0;
@@ -187,8 +187,10 @@ public class DBMappingUtils {
 		String queryString;
 
 		if(ricerca != null) {
-			limit = ricerca.getPageSize(idLista);
-			offset = ricerca.getIndexIniziale(idLista);
+			if(ricerca_useOffsetLimit) {
+				limit = ricerca.getPageSize(idLista);
+				offset = ricerca.getIndexIniziale(idLista);
+			}
 			search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 		}
 		
@@ -1077,26 +1079,26 @@ public class DBMappingUtils {
 			long idFruizione, 
 			IDSoggetto idSoggettoFruitore,
 			IDServizio idServizio,
-			ISearch ricerca,
+			ISearch ricerca,boolean ricerca_useOffsetLimit,
 			boolean orderByDescrizione) throws CoreException {
 		return _mappingFruizionePortaDelegataList(con, tipoDB, 
 				idFruizione, 
 				idSoggettoFruitore, 
 				idServizio,
-				ricerca, CostantiDB.SOGGETTI,
+				ricerca, ricerca_useOffsetLimit, CostantiDB.SOGGETTI,
 				orderByDescrizione); 
 	}
 	public static List<MappingFruizionePortaDelegata> mappingFruizionePortaDelegataList(Connection con, String tipoDB, 
 			long idFruizione, 
 			IDSoggetto idSoggettoFruitore, 
 			IDServizio idServizio,
-			ISearch ricerca,String tabellaSoggetti,
+			ISearch ricerca,boolean ricerca_useOffsetLimit,String tabellaSoggetti,
 			boolean orderByDescrizione) throws CoreException {
 		return _mappingFruizionePortaDelegataList(con, tipoDB, 
 				idFruizione, 
 				idSoggettoFruitore, 
 				idServizio,
-				ricerca, tabellaSoggetti,
+				ricerca, ricerca_useOffsetLimit, tabellaSoggetti,
 				orderByDescrizione); 
 	}
 	
@@ -1109,7 +1111,7 @@ public class DBMappingUtils {
 				idFruizione, 
 				idSoggettoFruitore, 
 				idServizio,
-				null, CostantiDB.SOGGETTI,
+				null, false, CostantiDB.SOGGETTI,
 				orderByDescrizione); 
 	}
 	public static List<MappingFruizionePortaDelegata> mappingFruizionePortaDelegataList(Connection con, String tipoDB, 
@@ -1122,32 +1124,32 @@ public class DBMappingUtils {
 				idFruizione, 
 				idSoggettoFruitore, 
 				idServizio,
-				null, tabellaSoggetti,
+				null, false, tabellaSoggetti,
 				orderByDescrizione); 
 	}
 	
 	public static List<MappingFruizionePortaDelegata> mappingFruizionePortaDelegataList(Connection con, String tipoDB, 
 			IDSoggetto idSoggettoFruitore,
 			IDServizio idServizio,
-			ISearch ricerca,
+			ISearch ricerca,boolean ricerca_useOffsetLimit,
 			boolean orderByDescrizione) throws CoreException {
 		return _mappingFruizionePortaDelegataList(con, tipoDB, 
 				DBUtils.getIdFruizioneServizio(idServizio, idSoggettoFruitore, con, tipoDB), 
 				idSoggettoFruitore, 
 				idServizio,
-				ricerca, CostantiDB.SOGGETTI,
+				ricerca, ricerca_useOffsetLimit, CostantiDB.SOGGETTI,
 				orderByDescrizione); 
 	}
 	public static List<MappingFruizionePortaDelegata> mappingFruizionePortaDelegataList(Connection con, String tipoDB, 
 			IDSoggetto idSoggettoFruitore, 
 			IDServizio idServizio,
-			ISearch ricerca,String tabellaSoggetti,
+			ISearch ricerca,boolean ricerca_useOffsetLimit,String tabellaSoggetti,
 			boolean orderByDescrizione) throws CoreException {
 		return _mappingFruizionePortaDelegataList(con, tipoDB, 
 				DBUtils.getIdFruizioneServizio(idServizio, idSoggettoFruitore, con, tipoDB), 
 				idSoggettoFruitore, 
 				idServizio,
-				ricerca, tabellaSoggetti,
+				ricerca, ricerca_useOffsetLimit, tabellaSoggetti,
 				orderByDescrizione); 
 	}
 	
@@ -1159,7 +1161,7 @@ public class DBMappingUtils {
 				DBUtils.getIdFruizioneServizio(idServizio, idSoggettoFruitore, con, tipoDB), 
 				idSoggettoFruitore, 
 				idServizio,
-				null, CostantiDB.SOGGETTI,
+				null, false, CostantiDB.SOGGETTI,
 				orderByDescrizione); 
 	}
 	public static List<MappingFruizionePortaDelegata> mappingFruizionePortaDelegataList(Connection con, String tipoDB, 
@@ -1171,7 +1173,7 @@ public class DBMappingUtils {
 				DBUtils.getIdFruizioneServizio(idServizio, idSoggettoFruitore, con, tipoDB), 
 				idSoggettoFruitore, 
 				idServizio,
-				null, tabellaSoggetti,
+				null, false, tabellaSoggetti,
 				orderByDescrizione); 
 	}
 	
@@ -1179,7 +1181,7 @@ public class DBMappingUtils {
 			long idFruizione,
 			IDSoggetto idSoggettoFruitore, 
 			IDServizio idServizio,
-			ISearch ricerca,String tabellaSoggetti,
+			ISearch ricerca,boolean ricerca_useOffsetLimit,String tabellaSoggetti,
 			boolean orderByDescrizione) throws CoreException {
 		int idLista = Liste.CONFIGURAZIONE_FRUIZIONE;
 		int offset = 0;
@@ -1188,8 +1190,10 @@ public class DBMappingUtils {
 		String queryString;
 
 		if(ricerca != null) {
-			limit = ricerca.getPageSize(idLista);
-			offset = ricerca.getIndexIniziale(idLista);
+			if(ricerca_useOffsetLimit) {
+				limit = ricerca.getPageSize(idLista);
+				offset = ricerca.getIndexIniziale(idLista);
+			}
 			search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 		}
 		

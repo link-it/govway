@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -23,13 +23,18 @@
 package org.openspcoop2.pdd.core.connettori;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
+import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPFault;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.GestioneErroreCodiceTrasporto;
 import org.openspcoop2.core.config.GestioneErroreSoapFault;
@@ -38,6 +43,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.pdd.core.GestoreMessaggiException;
@@ -244,13 +250,16 @@ public class GestoreErroreConnettore {
 	 * 
 	 * @param gestioneErrore Gestione Errore
 	 * @param msgErroreConnettore Messaggio di errore fornito con il connettore
-	 * @param codiceTrasporto Codice Trasporto fornito dal connettore
-	 * @param messageResponse Messaggio di risposta fornito dal connettore
+	 * @param connectorSender connettore
 	 * @return true se la consegna e' stata effettuata con successo, false altrimenti.
 	 */
 	public boolean verificaConsegna(GestioneErrore gestioneErrore,String msgErroreConnettore,Exception eccezioneErroreConnettore,
-			long codiceTrasporto,OpenSPCoop2Message messageResponse) throws GestoreMessaggiException,javax.xml.soap.SOAPException,UtilsException{	
+			IConnettore connectorSender) throws GestoreMessaggiException,javax.xml.soap.SOAPException,UtilsException{	
 
+		long codiceTrasporto = connectorSender.getCodiceTrasporto();
+		OpenSPCoop2Message messageResponse = connectorSender.getResponse();
+		String protocolloConnettore = connectorSender.getProtocollo();
+		
 		// ESITO CONNETTORE:
 		// Se ho un errore sul connettore:
 		// - la consegna non e' andata a buon fine (return false)
@@ -307,9 +316,11 @@ public class GestoreErroreConnettore {
 
 		// ESITO SOAP FAULT:
 		SOAPBody bodyConFault = null;
+		MessageType messageType = null;
 
 		if(messageResponse!=null && (messageResponse instanceof OpenSPCoop2SoapMessage) ){
 			try{
+				messageType = messageResponse.getMessageType();
 				if(messageResponse.castAsSoap().hasSOAPFault()) {
 					bodyConFault = messageResponse.castAsSoap().getSOAPBody();
 				}
@@ -334,6 +345,22 @@ public class GestoreErroreConnettore {
 					else{
 						codice = this.fault.getFaultCode();
 					}
+					
+					List<String> subCodice_soap12 = new ArrayList<String>();
+					List<String> subCodiceNamespace_soap12 = new ArrayList<String>();
+					if(MessageType.SOAP_12.equals(messageType)) {
+						if(this.fault.getFaultSubcodes()!=null) {
+							Iterator<QName> it = this.fault.getFaultSubcodes();
+							while (it.hasNext()) {
+								QName qName = (QName) it.next();
+								if(qName.getLocalPart()!=null) {
+									subCodice_soap12.add(qName.getLocalPart());
+									subCodiceNamespace_soap12.add(qName.getNamespaceURI()!=null ? qName.getNamespaceURI() : "");
+								}
+							}
+						}
+					}
+							
 
 					if( gestore.getFaultCode().equalsIgnoreCase(codice) == false) {
 
@@ -348,7 +375,33 @@ public class GestoreErroreConnettore {
 						}
 
 						if(!matchRegExpr) {
-							match = false; // non ha il codice definito
+							
+							boolean matchSoap12 = false;
+							if(!subCodice_soap12.isEmpty()) {
+								for (String code12 : subCodice_soap12) {
+									if( gestore.getFaultCode().equalsIgnoreCase(code12) ) {
+										matchSoap12 = true;
+										break;
+									}
+									else {
+										boolean matchRegExprSoap12 = false;
+										try {
+											matchRegExprSoap12 = RegularExpressionEngine.isMatch(code12, gestore.getFaultCode());
+										}catch(RegExpNotFoundException notFound) {}
+										catch(Exception e)	{
+											GestoreErroreConnettore.log.error("Verifica espressione regolare '"+gestore.getFaultCode()+"' per fault subcode 1.2 '"+code12+"' fallita: "+e.getMessage());
+										}
+										if(matchRegExprSoap12) {
+											matchSoap12 = true;
+											break;
+										}
+									}
+								}
+							}
+							
+							if(!matchSoap12) {
+								match = false; // non ha il codice definito
+							}
 						}
 					}
 
@@ -730,7 +783,8 @@ public class GestoreErroreConnettore {
 
 				// match
 				if(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG.equals(gestore.getComportamento())){
-					this.errore = "errore di trasporto, codice "+codiceTrasporto;
+					//this.errore = "errore di trasporto, codice "+codiceTrasporto;
+					this.errore = "errore "+formatProtocolloConnettore(protocolloConnettore)+codiceTrasporto;
 					if(this.fault!=null){
 						try{
 							this.errore = this.errore + " (" +SoapUtils.safe_toString(messageResponse.getFactory(), this.fault, GestoreErroreConnettore.log)+ ")";
@@ -766,7 +820,8 @@ public class GestoreErroreConnettore {
 
 		// Match non trovato, assumo comportamento di default
 		if(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG.equals(gestioneErrore.getComportamento())){
-			this.errore = "errore di trasporto, codice "+codiceTrasporto;
+			//this.errore = "errore di trasporto, codice "+codiceTrasporto;
+			this.errore = "errore "+formatProtocolloConnettore(protocolloConnettore)+codiceTrasporto;
 			if(this.fault!=null){
 				try{
 					this.errore = this.errore + " (" +SoapUtils.safe_toString(messageResponse.getFactory(), this.fault, GestoreErroreConnettore.log)+ ")";
@@ -834,5 +889,10 @@ public class GestoreErroreConnettore {
 	}
 
 
-
+	public static String formatProtocolloConnettore(String protocollo) {
+		if(protocollo==null || StringUtils.isEmpty(protocollo)) {
+			return "";
+		}
+		return protocollo+" ";
+	}
 }

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -70,6 +70,7 @@ String customListViewName = pd.getCustomListViewName();
 <link rel="stylesheet" href="css/ui.core.css" type="text/css">
 <link rel="stylesheet" href="css/ui.theme.css" type="text/css">
 <link rel="stylesheet" href="css/ui.dialog.css" type="text/css">
+<link rel="stylesheet" href="css/ui.resizable.css" type="text/css">
 <link rel="stylesheet" href="css/bootstrap-tagsinput.css" type="text/css">
 <script type="text/javascript" src="js/webapps.js"></script>
 
@@ -283,6 +284,16 @@ function Search(form) {
 
   // imposto la destinazione
   document.form.action = nomeServletList;
+  
+  //evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
+  for (var k=0; k<document.form.elements.length; k++) {
+		var nome = document.form.elements[k].name;
+		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
+
+		if(hiddenInfo > -1) {
+			document.form.elements[k].value = '';
+		}
+  }
       
   // form submit
   document.form.submit();
@@ -336,6 +347,16 @@ function Reset(form) {
 	  
 	   // imposto la destinazione
 	   document.form.action = nomeServletList;
+	   
+	   // evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
+	   for (var k=0; k<document.form.elements.length; k++) {
+	 		var nome = document.form.elements[k].name;
+	 		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
+
+	 		if(hiddenInfo > -1) {
+	 			document.form.elements[k].value = '';
+	 		}
+	   }
 	   
 	  // form submit
 	  document.form.submit();
@@ -438,6 +459,16 @@ function Change(form,dataElementName,fromFilters) {
 	       addHidden(form, pair[0] , pair[1]);
 	   }
      }
+     
+     // evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
+     for (var k=0; k<document.form.elements.length; k++) {
+   		var nome = document.form.elements[k].name;
+   		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
+
+   		if(hiddenInfo > -1) {
+   			document.form.elements[k].value = '';
+   		}
+     }
         
     // form submit
     document.form.submit();
@@ -447,6 +478,9 @@ function isModificaUrlRicerca(formAction, urlToCheck){
 	// hack hash documento impostato, la parte di url che contiene la # bisogna eliminarla dal check
 	if(formAction.indexOf('#') > 0) {
 		formAction = formAction.substring(0, formAction.indexOf('#'));
+	}
+	if(formAction.indexOf('?') > 0) {
+		formAction = formAction.substring(0, formAction.indexOf('?'));
 	}
 	
 	return ieEndsWith(formAction, urlToCheck);
@@ -492,6 +526,8 @@ if (
 <!--Funzioni di utilita -->
 <script type="text/javascript" src="js/ui.core.js"></script>
 <script type="text/javascript" src="js/ui.dialog.js"></script>
+<script type="text/javascript" src="js/ui.resizable.js"></script>
+<script type="text/javascript" src="js/ui.draggable.js"></script>
 <script type="text/javascript">
 function togglePanelListaRicerca(panelListaRicercaOpen){
 	if(panelListaRicercaOpen) {
@@ -577,6 +613,7 @@ function mostraDataElementInfoModal(title,body){
 <script type="text/javascript" src="js/utils.js"></script>
 <script type="text/javascript" src="js/jquery-on.js"></script>
 <script type="text/javascript" src="js/jquery.searchabledropdown-1.0.8.min.js"></script>
+<script type="text/javascript" src="js/jquery.context-menu.min.js"></script>
 <jsp:include page="/jsplib/menuUtente.jsp" flush="true" />
 <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
 </head>

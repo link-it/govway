@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -159,7 +159,7 @@ public class TestOpenApi3Extended {
 			
 			System.out.println("Test Schema#2 (allegati.yaml) [Discriminator non presente o non required Step 1/2] ok");
 			
-			System.out.println("Test Schema#2 (allegati.yaml) [Discriminator non presente o non required Step 2/2] ...");
+			System.out.println("Test Schema#3 (parser2.yaml) [Discriminator non presente o non required Step 2/2] ...");
 			
 			if( openAPILibrary == OpenAPILibrary.openapi4j ){
 			
@@ -184,7 +184,85 @@ public class TestOpenApi3Extended {
 				System.out.println("Skipped test per libreria "+openAPILibrary);
 			}
 			
-			System.out.println("Test Schema#2 (allegati.yaml) [Discriminator non presente o non required Step 1/2] ok");
+			System.out.println("Test Schema#3 (parser2.yaml) [Discriminator non presente o non required Step 2/2] ok");
+			
+			
+			System.out.println("Test Schema#4 (default.yaml) [Valori default non coerenti con il tipo] ...");
+			
+			if( openAPILibrary == OpenAPILibrary.openapi4j ){
+			
+				url = TestOpenApi3Extended.class.getResource("/org/openspcoop2/utils/openapi/default.yaml");
+				
+				apiReaderOpenApi = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+				apiReaderOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), new File(url.toURI()), configOpenApi);
+				apiOpenApi = apiReaderOpenApi.read();
+				
+				apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+				try {
+					apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), apiOpenApi, configO);
+				}catch(Exception e) {
+					throw new Exception("Errore non atteso (org.openapi4j.parser.validation.ValidationContext.convertDefaultStringValueInPrimitiveType="+org.openapi4j.parser.validation.ValidationContext.convertDefaultStringValueInPrimitiveType+"): "+e.getMessage(),e);
+				}
+				
+				// disabilito patch
+				org.openapi4j.parser.validation.ValidationContext.convertDefaultStringValueInPrimitiveType=false;
+				try {
+				
+					apiReaderOpenApi = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+					apiReaderOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), new File(url.toURI()), configOpenApi);
+					apiOpenApi = apiReaderOpenApi.read();
+					
+					apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+					try {
+						apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), apiOpenApi, configO);
+						throw new Exception("Atteso errore");
+					}catch(Exception e) {
+						
+						String erroreInteger1 = "default: Value '1' is incompatible with schema type 'integer' (code: 138)";
+						String erroreInteger2 = "default: Value '32' is incompatible with schema type 'integer/int32' (code: 138)";
+						String erroreInteger3 = "default: Value '3147483647' is incompatible with schema type 'integer/int64' (code: 138)";
+						
+						String erroreNumber1 = "default: Value '1.2' is incompatible with schema type 'number' (code: 138)";
+						String erroreNumber2 = "default: Value '2.3' is incompatible with schema type 'number/double' (code: 138)";
+						String erroreNumber3 = "default: Value '2.3' is incompatible with schema type 'number/float' (code: 138)";
+						
+						String erroreBoolean = "default: Value 'true' is incompatible with schema type 'boolean' (code: 138)";
+											
+						if(!e.getMessage().contains(erroreInteger1)) {
+							throw new Exception("Errore atteso '"+erroreInteger1+"' non rilevato in :"+e.getMessage(),e);
+						}
+						if(!e.getMessage().contains(erroreInteger2)) {
+							throw new Exception("Errore atteso '"+erroreInteger2+"' non rilevato in :"+e.getMessage(),e);
+						}
+						if(!e.getMessage().contains(erroreInteger3)) {
+							throw new Exception("Errore atteso '"+erroreInteger3+"' non rilevato in :"+e.getMessage(),e);
+						}
+						
+						if(!e.getMessage().contains(erroreNumber1)) {
+							throw new Exception("Errore atteso '"+erroreNumber1+"' non rilevato in :"+e.getMessage(),e);
+						}
+						if(!e.getMessage().contains(erroreNumber2)) {
+							throw new Exception("Errore atteso '"+erroreNumber2+"' non rilevato in :"+e.getMessage(),e);
+						}
+						if(!e.getMessage().contains(erroreNumber3)) {
+							throw new Exception("Errore atteso '"+erroreNumber3+"' non rilevato in :"+e.getMessage(),e);
+						}
+						
+						if(!e.getMessage().contains(erroreBoolean)) {
+							throw new Exception("Errore atteso '"+erroreBoolean+"' non rilevato in :"+e.getMessage(),e);
+						}
+					}
+					
+				}finally {
+					// riabilito patch
+					org.openapi4j.parser.validation.ValidationContext.convertDefaultStringValueInPrimitiveType=true;
+				}
+				
+			}else {
+				System.out.println("Skipped test per libreria "+openAPILibrary);
+			}
+			
+			System.out.println("Test Schema#4 (default.yaml) [Valori default non coerenti con il tipo] ok");
 			
 		} 
 			

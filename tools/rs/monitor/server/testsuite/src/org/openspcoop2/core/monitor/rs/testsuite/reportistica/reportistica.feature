@@ -371,6 +371,47 @@ Scenario:  Statistiche Per Distribuzione Azione
     Then status 200
 
 
+@DistribuzioneErrori
+Scenario:  Statistiche Per Distribuzione per Errori
+    * def filtro = read('classpath:bodies/reportistica-distribuzione-errori.json')
+    * set filtro.intervallo_temporale = intervallo_temporale
+
+    Given path 'distribuzione-errori'
+    And request filtro
+    When method post
+    Then status 200    
+
+    * def query =
+    """
+    ({
+        data_inizio: filtro.intervallo_temporale.data_inizio,
+        data_fine: filtro.intervallo_temporale.data_fine,
+        tipo: filtro.tipo,
+        formato_report: filtro.report.formato,
+        unita_tempo: filtro.unita_tempo,
+        tipo_report: filtro.report.tipo,
+        tipo_informazione_report: filtro.report.tipo_informazione.tipo,
+        esito: 'fallite_e_fault'
+    })
+    """    
+    Given path 'distribuzione-azione'
+    And params query
+    When method get
+    Then status 200
+
+    * set filtro.tipo = 'fruizione'
+    Given path 'distribuzione-errori'
+    And request filtro
+    When method post
+    Then status 200    
+
+    * set query.tipo = 'fruizione'
+    Given path 'distribuzione-errori'
+    And params query
+    When method get
+    Then status 200
+
+
 @DistribuzioneApplicativo
 Scenario: Statistiche Per Distribuzione Applicativo
     * def filtro = read('classpath:bodies/reportistica-distribuzione-applicativo.json')

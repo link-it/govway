@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -44,15 +44,14 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
-import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.utils.RegistroServiziUtils;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.protocol.basic.properties.BasicDynamicConfiguration;
@@ -2608,78 +2607,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		return false;
 	}
 	private List<String> _getPropertySicurezzaMessaggio(String propertyName, AccordoServizioParteComune api, String portType, boolean booleanValue) {
-		
-		List<String> apiValues = new ArrayList<String>();
-		
-		for (ProtocolProperty pp : api.getProtocolPropertyList()) {
-			if(propertyName.equals(pp.getName())) {
-				String apiValue = booleanValue ? (pp.getBooleanValue()!=null ? pp.getBooleanValue().toString() : "false") : pp.getValue();
-				if(apiValue!=null && !apiValues.contains(apiValue)) {
-					apiValues.add(apiValue);
-				}
-				break;
-			}
-		} 
-		
-		if(ServiceBinding.REST.equals(api.getServiceBinding())) {
-			for (Resource resource : api.getResourceList()) {
-				if(resource.sizeProtocolPropertyList()>0) {
-					boolean ridefinito = false;					
-					for (ProtocolProperty pp : resource.getProtocolPropertyList()) {
-						if(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE_ID.equals(pp.getName())) {
-							String v = pp.getValue(); 
-							ridefinito = ModIConsoleCostanti.MODIPA_PROFILO_MODE_VALUE_RIDEFINISCI.equals(v);
-							break;
-						}
-					}
-					if(ridefinito) {
-						for (ProtocolProperty pp : resource.getProtocolPropertyList()) {
-							if(propertyName.equals(pp.getName())) {
-								String apiValue = booleanValue ? (pp.getBooleanValue()!=null ? pp.getBooleanValue().toString() : "false") : pp.getValue();
-								if(apiValue!=null && !apiValues.contains(apiValue)) {
-									apiValues.add(apiValue);
-								}
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
-		else {
-			for (PortType pt : api.getPortTypeList()) {
-				if(pt.getNome().equals(portType)) {
-					
-					for (Operation op : pt.getAzioneList()) {
-						if(op.sizeProtocolPropertyList()>0) {
-							boolean ridefinito = false;					
-							for (ProtocolProperty pp : op.getProtocolPropertyList()) {
-								if(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE_ID.equals(pp.getName())) {
-									String v = pp.getValue(); 
-									ridefinito = ModIConsoleCostanti.MODIPA_PROFILO_MODE_VALUE_RIDEFINISCI.equals(v);
-									break;
-								}
-							}
-							if(ridefinito) {
-								for (ProtocolProperty pp : op.getProtocolPropertyList()) {
-									if(propertyName.equals(pp.getName())) {
-										String apiValue = booleanValue ? (pp.getBooleanValue()!=null ? pp.getBooleanValue().toString() : "false") : pp.getValue();
-										if(apiValue!=null && !apiValues.contains(apiValue)) {
-											apiValues.add(apiValue);
-										}
-										break;
-									}
-								}
-							}
-						}
-					}
-					
-					break;
-				}
-			}
-		}
-		
-		return apiValues;
+		return RegistroServiziUtils.fillPropertyProtocollo(propertyName, api, portType, booleanValue);
 	}
 	
 	private boolean isSicurezzaMessaggioRequired(AccordoServizioParteComune api, String portType) {
@@ -3513,7 +3441,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 					ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
 					ConsoleItemType.SELECT,
 					rifX509Id, 
-					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_RIFERIMENTO_X509_LABEL);
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RIFERIMENTO_X509_LABEL);
 			profiloSicurezzaMessaggioRifX509Item.addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RIFERIMENTO_X509_LABEL_BINARY_SECURITY_TOKEN,
 					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RIFERIMENTO_X509_VALUE_BINARY_SECURITY_TOKEN);
 			profiloSicurezzaMessaggioRifX509Item.addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RIFERIMENTO_X509_LABEL_SECURITY_TOKEN_REFERENCE,

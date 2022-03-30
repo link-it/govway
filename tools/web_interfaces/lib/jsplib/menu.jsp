@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -74,7 +74,9 @@ PageData pd = (PageData) session.getAttribute(pdString);
 										window.location = val;
 							       });
 						   </script>	
-		      				<a class='<%= cssClass %>' title='<%= entries[j][0] %>' href='<%= entries[j][1] %>'><%= entries[j][0] %></a>
+		      				<a class='<%= cssClass %>' title='<%= entries[j][0] %>' href='<%= entries[j][1] %>'>
+		      					<p class='<%= cssClass %>'><%= entries[j][0] %></p>
+		      					</a>
 			      			</div>
 			      		<%
 			    		} else if (entries[j].length == 3) {
@@ -88,7 +90,9 @@ PageData pd = (PageData) session.getAttribute(pdString);
 										window.location = val;
 							       });
 						   </script>
-			      			<a class='<%= cssClass %>' target='<%= entries[j][2] %>' title='<%= entries[j][0] %>' href='<%= entries[j][1] %>'><%= entries[j][0] %></a>
+			      			<a class='<%= cssClass %>' target='<%= entries[j][2] %>' title='<%= entries[j][0] %>' href='<%= entries[j][1] %>'>
+			      				<p class='<%= cssClass %>'><%= entries[j][0] %></p>
+			      			</a>
 			      			</div>
 			      		<%
 			    		}

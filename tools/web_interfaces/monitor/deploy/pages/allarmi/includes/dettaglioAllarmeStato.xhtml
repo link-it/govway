@@ -38,9 +38,28 @@
 				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}"/>
 			</h:outputText>
 			
-			<h:outputLabel styleClass="outputFieldLabel" id="outLabelAcknowledgde" value="Acknowledge" rendered="#{allarmiBean.visualizzaAck}"/>
-			<h:outputText id="outAcknowledgde" value="#{allarmiBean.allarme.acknowledged == 1 ? 'Si' : 'No'}" rendered="#{allarmiBean.visualizzaAck}"/>
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelAcknowledgde" value="Acknowledge" rendered="#{allarmiBean.visualizzaAck and empty allarmiBean.allarme.dettaglioAcknowledged}"/>
+			<h:outputText id="outAcknowledgde" value="#{allarmiBean.allarme.acknowledged == 1 ? 'Si' : 'No'}" rendered="#{allarmiBean.visualizzaAck and empty allarmiBean.allarme.dettaglioAcknowledged}"/>
 						
+		</h:panelGrid>
+		
+		<h:panelGrid id="panelGridAckStatoAllarme" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataTopDxFixedWidth130,valueAllineataSx"
+					 rendered="#{not empty allarmiBean.allarme.dettaglioAcknowledged}">
+		
+			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+			<h:outputText value="&#160;&#160;" rendered="#{true}" />
+		
+			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+ 			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
+				<h:outputText value="Criteri Acknowledge" styleClass="subtitle-nopaddingleft-nomarginleft"/>
+			</h:panelGroup>
+						
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelCriteri" value="Criteri" rendered="#{not empty allarmiBean.allarme.dettaglioAcknowledged}"/>
+			<h:inputTextarea value="#{allarmiBean.allarme.dettaglioAcknowledged}" readonly="#{true}" rendered="#{not empty allarmiBean.allarme.dettaglioAcknowledged}" styleClass="inputTextAreaLong" rows="7" cols="80"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelAcknowledgde2" value="Acknowledge" rendered="#{allarmiBean.visualizzaAck}"/>
+			<h:outputText id="outAcknowledgde2" value="#{allarmiBean.allarme.acknowledged == 1 ? 'Si' : 'No'}" rendered="#{allarmiBean.visualizzaAck}"/>
+			
 		</h:panelGrid>
 		
 		<h:panelGrid id="panelGridStoricoStatiAllarme" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataTopDxFixedWidth130,valueAllineataSx">
@@ -59,8 +78,8 @@
 			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
 			<a4j:outputPanel layout="block" styleClass="divNoEdit">
 				<a4j:form>
-					<a4j:htmlCommandLink id="history-iconLink" styleClass="icon-details" action="visualizzaHistoryAllarme" value="Archivio Stati">
-						<f:setPropertyActionListener value="#{allarmiBean.allarme}" target="#{allarmiBean.allarme}"/>
+					<a4j:htmlCommandLink id="history-iconLink" styleClass="icon-details" action="#{allarmiHistoryBean.history}" value="Archivio Stati">
+						<f:setPropertyActionListener value="#{allarmiBean.allarme}" target="#{allarmiHistoryBean.allarme}"/>
 					</a4j:htmlCommandLink>
 				</a4j:form>
 			</a4j:outputPanel>

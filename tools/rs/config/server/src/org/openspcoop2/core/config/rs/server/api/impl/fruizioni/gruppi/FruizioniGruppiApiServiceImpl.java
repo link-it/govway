@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -285,7 +285,9 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 					null,							// redirect_mode, 
 					null,							// redirect_max_hop,
 					null,							// requestOutputFileName,
+					null,							// requestOutputFileName_permissions,
 					null,							// requestOutputFileNameHeaders,
+					null,							// requestOutputFileNameHeaders_permissions,
 					null,							// requestOutputParentDirCreateIfNotExists,
 					null,							// requestOutputOverwriteIfExists,
 					null,							// responseInputMode,

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -57,6 +57,7 @@ import org.openspcoop2.utils.io.CompressorUtilities;
 import org.openspcoop2.utils.io.Entry;
 import org.openspcoop2.utils.io.ZipUtilities;
 import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -73,6 +74,12 @@ import com.fasterxml.jackson.databind.JsonNode;
  */
 public class Test {
 	
+	public static final String caratteri_element_name = "caratteri";
+	public static final String caratteriNonUTF_JSON_VALUE = "altro|!£$%&/()=?'^ìéè*+[]ç°§òàù@#<>;,._-fine";
+	public static final String caratteriParticolari_JSON_ELEMENT = "\""+caratteri_element_name+"\":\""+caratteriNonUTF_JSON_VALUE+"\",\n";
+	public static final String caratteriNonUTF_XML_VALUE = "altro|\\!\"£$%&amp;/()=?'^ìéè*+[]ç°§òàù@#&lt;&gt;;,:._-fine";
+	public static final String caratteriParticolari_XML_ELEMENT = "<"+caratteri_element_name+">"+caratteriNonUTF_XML_VALUE+"</"+caratteri_element_name+">\n";
+		
 	private static final String DATA = "DATA";
 	private static final String DATA_RISPOSTA = "DATA_RISPOSTA";
 	private static final String DATA_INCLUDE_1 = "DATA_INCLUDE_1";
@@ -194,8 +201,8 @@ public class Test {
 			"xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><soapenv:Body>";
 	private static final String XML_END = 
 			"<prova>test</prova><prova2>test2</prova2><list>v1</list><list>v2</list><list>v3</list></soapenv:Body></soapenv:Envelope>";
-	private static final String XML_REQUEST = XML_PREFIX + XML_REQUEST_CONTENT + XML_END;
-	private static final String XML_RESPONSE = XML_PREFIX + XML_RESPONSE_CONTENT + XML_END;
+	private static final String XML_REQUEST = XML_PREFIX + XML_REQUEST_CONTENT + caratteriParticolari_XML_ELEMENT + XML_END;
+	private static final String XML_RESPONSE = XML_PREFIX + XML_RESPONSE_CONTENT + caratteriParticolari_XML_ELEMENT + XML_END;
 		
 	private static final String JSON_REQUEST_CONTENT = 
 	            "\""+PATH1+"\": \""+PATH1_VALORE+"\",\n"+
@@ -207,6 +214,7 @@ public class Test {
 		"{\n"+	   
             "\"SortAs\": \"SGML\",\n"+
             "\"GlossTerm\": \"Standard Generalized Markup Language\",\n"+
+            caratteriParticolari_JSON_ELEMENT+
             "\"Acronym\": \"SGML\",\n";
 	private static final String JSON_END = 
 	            "\"Abbrev\": \"ISO 8879:1986\",\n"+
@@ -252,6 +260,7 @@ public class Test {
             "\""+PATH1+"\": \"${xpath://"+PATH1+"/text()}\",\n"+
             "\""+PATH2+"\": \"${xPath://"+PATH2+"/text()}\",\n"+
             "\"GlossTerm\": \"Standard Generalized Markup Language\",\n"+
+            "\""+caratteri_element_name+"\": \"${xPath://"+caratteri_element_name+"/text()}\",\n"+
             "\"Acronym\": \"${xPath://{http://schemas.xmlsoap.org/soap/envelope/}:Envelope/{http://schemas.xmlsoap.org/soap/envelope/}:Body/prova2/text()}\",\n"+
             "\""+TRANSACTION_ID+"\": \"${transaction:id}\",\n"+
             "\"Enabled\": true,\n"+
@@ -304,7 +313,8 @@ public class Test {
 			"<"+CONFIG1_SOGGETTO_EROGATORE+">"+"${providerorganizationconfig:"+CONFIG1_SOGGETTO_EROGATORE+"}"+"</"+CONFIG1_SOGGETTO_EROGATORE+">\n"+
 			"<"+SYSTEM_CONFIG1+">"+"${system:"+SYSTEM_CONFIG1+"}"+"</"+SYSTEM_CONFIG1+">\n"+
 			"<"+ENV_CONFIG1+">"+"${env:"+ENV_CONFIG1+"}"+"</"+ENV_CONFIG1+">\n"+
-			"<"+JAVA_CONFIG1+">"+"${java:"+JAVA_CONFIG1+"}"+"</"+JAVA_CONFIG1+">\n";
+			"<"+JAVA_CONFIG1+">"+"${java:"+JAVA_CONFIG1+"}"+"</"+JAVA_CONFIG1+">\n"+
+			"<"+caratteri_element_name+">"+"${jsonPath:$."+caratteri_element_name+"}"+"</"+caratteri_element_name+">\n";
 	private static final String XML_TEMPLATE_BODY_RESPONSE =
 			"<"+DATA_RISPOSTA+">"+"${dateResponse:yyyyMMdd_HHmmssSSS}"+"</"+DATA_RISPOSTA+">\n"+
 			"<"+HEADER1_RISPOSTA+">"+"${headerResponse:"+HEADER1_RISPOSTA+"}"+"</"+HEADER1_RISPOSTA+">\n"+
@@ -344,6 +354,7 @@ public class Test {
             "\""+PATH2+"boolean\": \"${xPath.match(\"//"+PATH2+"/text()\")?string('yes', 'no')}\",\n"+
             "<#list xpath.readList(\"//"+PATH1+"/text()\") as item>${item}</#list>\n"+
             "\"GlossTerm\": \"Standard Generalized Markup Language\",\n"+
+            "\""+caratteri_element_name+"\": \"${xpath.read(\"//"+caratteri_element_name+"/text()\")}\",\n"+
             "\"Acronym\": \"${xPath.read(\"//{http://schemas.xmlsoap.org/soap/envelope/}:Envelope/{http://schemas.xmlsoap.org/soap/envelope/}:Body/prova2/text()\")}\",\n"+
             "\""+TRANSACTION_ID+"\": \"${transactionId}\",\n"+
             "\"Enabled\": true,\n"+
@@ -428,7 +439,8 @@ public class Test {
 			"<"+CONFIG1_SOGGETTO_EROGATORE+">"+"${providerorganizationconfig[\""+CONFIG1_SOGGETTO_EROGATORE+"\"]}"+"</"+CONFIG1_SOGGETTO_EROGATORE+">\n"+
 			"<"+SYSTEM_CONFIG1+">"+"${system.read(\""+SYSTEM_CONFIG1+"\")}"+"</"+SYSTEM_CONFIG1+">\n"+
 			"<"+ENV_CONFIG1+">"+"${env.read(\""+ENV_CONFIG1+"\")}"+"</"+ENV_CONFIG1+">\n"+
-			"<"+JAVA_CONFIG1+">"+"${java.read(\""+JAVA_CONFIG1+"\")}"+"</"+JAVA_CONFIG1+">\n";	
+			"<"+JAVA_CONFIG1+">"+"${java.read(\""+JAVA_CONFIG1+"\")}"+"</"+JAVA_CONFIG1+">\n"+
+			"<"+caratteri_element_name+">"+"${jsonpath.read(\"$."+caratteri_element_name+"\")}"+"</"+caratteri_element_name+">\n";
 	private static final String XML_TEMPLATE_FREEMARKER_BODY_RESPONSE =
 			"<"+DATA_RISPOSTA+">"+"${dateResponse?string('dd.MM.yyyy HH:mm:ss')}"+"</"+DATA_RISPOSTA+">\n"+
 			"<"+HEADER1_RISPOSTA+">"+"<#if headerResponse[\""+HEADER1_RISPOSTA+"\"]??>${headerResponse[\""+HEADER1_RISPOSTA+"\"]}<#else>${headerResponse[\""+HEADER1_RISPOSTA+"\"?lower_case]}</#if>"+"</"+HEADER1_RISPOSTA+">\n"+
@@ -500,6 +512,7 @@ public class Test {
             "\""+PATH2+"boolean\": \"${xPath.match(\"//"+PATH2+"/text()\")}\",\n"+
             "<#list xpath.readList(\"//"+PATH1+"/text()\") as item>${item}</#list>\n"+
             "\"GlossTerm\": \"Standard Generalized Markup Language\",\n"+
+            "\""+caratteri_element_name+"\": \"${xpath.read(\"//"+caratteri_element_name+"/text()\")}\",\n"+
             "\"Acronym\": \"${xPath.read(\"//{http://schemas.xmlsoap.org/soap/envelope/}:Envelope/{http://schemas.xmlsoap.org/soap/envelope/}:Body/prova2/text()\")}\",\n"+
             "\""+TRANSACTION_ID+"\": \"${transactionId}\",\n"+
             "\"Enabled\": true,\n"+
@@ -583,7 +596,8 @@ public class Test {
 			"<"+CONFIG1_SOGGETTO_EROGATORE+">"+"${providerorganizationconfig[\""+CONFIG1_SOGGETTO_EROGATORE+"\"]}"+"</"+CONFIG1_SOGGETTO_EROGATORE+">\n"+
 			"<"+SYSTEM_CONFIG1+">"+"${system.read(\""+SYSTEM_CONFIG1+"\")}"+"</"+SYSTEM_CONFIG1+">\n"+
 			"<"+ENV_CONFIG1+">"+"${env.read(\""+ENV_CONFIG1+"\")}"+"</"+ENV_CONFIG1+">\n"+
-			"<"+JAVA_CONFIG1+">"+"${java.read(\""+JAVA_CONFIG1+"\")}"+"</"+JAVA_CONFIG1+">\n";
+			"<"+JAVA_CONFIG1+">"+"${java.read(\""+JAVA_CONFIG1+"\")}"+"</"+JAVA_CONFIG1+">\n"+
+			"<"+caratteri_element_name+">"+"${jsonpath.read(\"$."+caratteri_element_name+"\")}"+"</"+caratteri_element_name+">\n";
 	private static final String XML_TEMPLATE_VELOCITY_BODY_RESPONSE =
 			"<"+DATA_RISPOSTA+">"+"${dateResponse}"+"</"+DATA_RISPOSTA+">\n"+
 			"<"+HEADER1_RISPOSTA+">"+"#if ($headerResponse[\""+HEADER1_RISPOSTA+"\"])${headerResponse[\""+HEADER1_RISPOSTA+"\"]}#else#set($tmp = \""+HEADER1_RISPOSTA_CASE_INSENTIVE+"\")${headerResponse[$tmp.toLowerCase()]}#end"+"</"+HEADER1_RISPOSTA+">\n"+
@@ -748,8 +762,27 @@ public class Test {
 			"     </configurazione>\n"+
 			"</openspcoop2>";
 	
+	private static byte[] convert(String content, Charset charset) throws Exception {
+		if(charset!=null) {
+			byte[] b = content.getBytes(charset.getValue());
+			return new String(b,charset.getValue()).getBytes(charset.getValue());
+		}
+		else {
+			return content.getBytes();
+		}
+	}
 	
 	public static void main(String [] args) throws Exception{
+		
+		invoke(args, null);
+		
+		invoke(args, Charset.UTF_8);
+		
+		invoke(args, Charset.ISO_8859_1);
+		
+	}
+	
+	public static void invoke(String [] args, Charset charset) throws Exception{
 		
 		File fTmpConfig = File.createTempFile("configTest", ".xml"); 
 		File fTmpOp2Properties = File.createTempFile("govway", ".properties"); 
@@ -856,23 +889,32 @@ public class Test {
 //		Element elementRequest = XMLUtils.getInstance(messageFactory).newElement(XML_REQUEST.getBytes());
 //		Element elementResponse = XMLUtils.getInstance(messageFactory).newElement(XML_RESPONSE.getBytes());
 		
+		String contentTypeJson = HttpConstants.CONTENT_TYPE_JSON;
+		String contentTypeSoap11 = HttpConstants.CONTENT_TYPE_SOAP_1_1;
+		String contentTypeXml = HttpConstants.CONTENT_TYPE_SOAP_1_1;
+		if(charset!=null) {
+			contentTypeJson+="; charset="+charset.getValue();
+			contentTypeSoap11+="; charset="+charset.getValue();
+			contentTypeXml+="; charset="+charset.getValue();
+		}
+		
 		OpenSPCoop2Message jsonMessageRequest = messageFactory.createMessage(MessageType.JSON, MessageRole.REQUEST, 
-				HttpConstants.CONTENT_TYPE_JSON, JSON_REQUEST.getBytes()).getMessage();
+				contentTypeJson, convert(JSON_REQUEST,charset)).getMessage();
 		MessageContent messageContentJsonRequest = new MessageContent(jsonMessageRequest.castAsRestJson(),
 				bufferMessage_readOnly, pddContext);
 		
 		OpenSPCoop2Message jsonMessageResponse = messageFactory.createMessage(MessageType.JSON, MessageRole.RESPONSE, 
-				HttpConstants.CONTENT_TYPE_JSON, JSON_RESPONSE.getBytes()).getMessage();
+				contentTypeJson, convert(JSON_RESPONSE,charset)).getMessage();
 		MessageContent messageContentJsonResponse = new MessageContent(jsonMessageResponse.castAsRestJson(),
 				bufferMessage_readOnly, pddContext);
 		
 		OpenSPCoop2Message jsonMessageTestAlterazioni = messageFactory.createMessage(MessageType.JSON, MessageRole.REQUEST, 
-				HttpConstants.CONTENT_TYPE_JSON, JSON_REQUEST.getBytes()).getMessage();
+				contentTypeJson, convert(JSON_REQUEST,charset)).getMessage();
 		MessageContent messageContentJsonTestAlterazioni = new MessageContent(jsonMessageTestAlterazioni.castAsRestJson(),
 				bufferMessage_readOnly, pddContext);
 		
 		OpenSPCoop2Message xmlMessageRequest = messageFactory.createMessage(MessageType.SOAP_11, MessageRole.REQUEST, 
-				HttpConstants.CONTENT_TYPE_SOAP_1_1, XML_REQUEST.getBytes()).getMessage();
+				contentTypeSoap11, convert(XML_REQUEST,charset)).getMessage();
 		MessageContent messageContentRequest = new MessageContent(xmlMessageRequest.castAsSoap(),
 				bufferMessage_readOnly, pddContext);
 		AttachmentPart ap1 = xmlMessageRequest.castAsSoap().createAttachmentPart();
@@ -883,7 +925,7 @@ public class Test {
 		xmlMessageRequest.castAsSoap().addAttachmentPart(ap2);
 		
 		OpenSPCoop2Message xmlMessageResponse = messageFactory.createMessage(MessageType.SOAP_11, MessageRole.RESPONSE, 
-				HttpConstants.CONTENT_TYPE_SOAP_1_1, XML_RESPONSE.getBytes()).getMessage();
+				contentTypeSoap11, convert(XML_RESPONSE,charset)).getMessage();
 		MessageContent messageContentResponse = new MessageContent(xmlMessageResponse.castAsSoap(),
 				bufferMessage_readOnly, pddContext);
 		ap1 = xmlMessageResponse.castAsSoap().createAttachmentPart();
@@ -948,11 +990,13 @@ public class Test {
 		
 			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.TEMPLATE) , "xml", pddContext, 
 					dynamicMapXmlRequest, null, JSON_TEMPLATE_REQUEST.getBytes(), 
-					dynamicMapXmlResponse, null, JSON_TEMPLATE_RESPONSE.getBytes());
+					dynamicMapXmlResponse, null, JSON_TEMPLATE_RESPONSE.getBytes(),
+					charset, contentTypeJson);
 			
 			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.TEMPLATE) , "json", pddContext, 
 					dynamicMapJsonRequest, null, XML_TEMPLATE_REQUEST.getBytes(), 
-					dynamicMapJsonResponse, null,  XML_TEMPLATE_RESPONSE.getBytes());
+					dynamicMapJsonResponse, null, XML_TEMPLATE_RESPONSE.getBytes(),
+					charset, contentTypeSoap11);
 			
 		}
 		
@@ -960,11 +1004,13 @@ public class Test {
 			
 			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.FREEMARKER_TEMPLATE) , "xml", pddContext, 
 					dynamicMapXmlRequest, null,  JSON_TEMPLATE_FREEMARKER_REQUEST.getBytes(), 
-					dynamicMapXmlResponse, null,  JSON_TEMPLATE_FREEMARKER_RESPONSE.getBytes());
+					dynamicMapXmlResponse, null,  JSON_TEMPLATE_FREEMARKER_RESPONSE.getBytes(),
+					charset, contentTypeJson);
 			
 			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.FREEMARKER_TEMPLATE) , "json", pddContext, 
 					dynamicMapJsonRequest, null,  XML_TEMPLATE_FREEMARKER_REQUEST.getBytes(), 
-					dynamicMapJsonResponse, null,  XML_TEMPLATE_FREEMARKER_RESPONSE.getBytes());
+					dynamicMapJsonResponse, null,  XML_TEMPLATE_FREEMARKER_RESPONSE.getBytes(),
+					charset, contentTypeSoap11);
 			
 		}
 		
@@ -972,7 +1018,8 @@ public class Test {
 			
 			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.CONTEXT_FREEMARKER_TEMPLATE) , "contextVerifica", pddContext, 
 					dynamicMapJsonRequest, null,  XML_TEMPLATE_FREEMARKER_REQUEST_CONTEXT.getBytes(), 
-					dynamicMapJsonResponse, null,  XML_TEMPLATE_FREEMARKER_RESPONSE_CONTEXT.getBytes());
+					dynamicMapJsonResponse, null,  XML_TEMPLATE_FREEMARKER_RESPONSE_CONTEXT.getBytes(),
+					charset, contentTypeSoap11);
 			
 			elaborazioniJson(log, dynamicMapJsonTestAlterazioni,
 					bufferMessage_readOnly, pddContext);
@@ -992,7 +1039,8 @@ public class Test {
 			byte [] zipJsonResponse = ZipUtilities.zip(zipEntriesFreeMarkerJsonResponse);		
 			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP) , "xml", pddContext, 
 					dynamicMapXmlRequest, null,  zipJsonRequest, 
-					dynamicMapXmlResponse, null,  zipJsonResponse);
+					dynamicMapXmlResponse, null,  zipJsonResponse,
+					charset, contentTypeJson);
 			
 			List<Entry> zipEntriesFreeMarkerXmlRequest = new ArrayList<>();
 			zipEntriesFreeMarkerXmlRequest.add(new Entry(Costanti.ZIP_INDEX_ENTRY_FREEMARKER, XML_TEMPLATE_FREEMARKER_REQUEST_INCLUDE.getBytes()));
@@ -1006,7 +1054,8 @@ public class Test {
 			byte [] zipXmlResponse = ZipUtilities.zip(zipEntriesFreeMarkerXmlResponse);		
 			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP) , "json", pddContext, 
 					dynamicMapJsonRequest, null,  zipXmlRequest, 
-					dynamicMapJsonResponse, null, zipXmlResponse);
+					dynamicMapJsonResponse, null, zipXmlResponse,
+					charset, contentTypeSoap11);
 			
 		}
 		
@@ -1014,11 +1063,13 @@ public class Test {
 			
 			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.VELOCITY_TEMPLATE) , "xml", pddContext, 
 					dynamicMapXmlRequest, null,  JSON_TEMPLATE_VELOCITY_REQUEST.getBytes(), 
-					dynamicMapXmlResponse, null,  JSON_TEMPLATE_VELOCITY_RESPONSE.getBytes());
+					dynamicMapXmlResponse, null,  JSON_TEMPLATE_VELOCITY_RESPONSE.getBytes(),
+					charset, contentTypeJson);
 			
 			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.VELOCITY_TEMPLATE) , "json", pddContext, 
 					dynamicMapJsonRequest, null,  XML_TEMPLATE_VELOCITY_REQUEST.getBytes(), 
-					dynamicMapJsonResponse, null,  XML_TEMPLATE_VELOCITY_RESPONSE.getBytes());
+					dynamicMapJsonResponse, null,  XML_TEMPLATE_VELOCITY_RESPONSE.getBytes(),
+					charset, contentTypeSoap11);
 			
 		}
 		
@@ -1026,7 +1077,8 @@ public class Test {
 			
 			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.CONTEXT_VELOCITY_TEMPLATE) , "contextVerifica", pddContext, 
 					dynamicMapJsonRequest, null,  XML_TEMPLATE_VELOCITY_REQUEST_CONTEXT.getBytes(), 
-					dynamicMapJsonResponse, null,  XML_TEMPLATE_VELOCITY_RESPONSE_CONTEXT.getBytes());
+					dynamicMapJsonResponse, null,  XML_TEMPLATE_VELOCITY_RESPONSE_CONTEXT.getBytes(),
+					charset, contentTypeSoap11);
 			
 			elaborazioniJson(log, dynamicMapJsonTestAlterazioni,
 					bufferMessage_readOnly, pddContext);
@@ -1047,7 +1099,8 @@ public class Test {
 			byte [] zipJsonResponse = ZipUtilities.zip(zipEntriesVelocityJsonResponse);		
 			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.VELOCITY_TEMPLATE_ZIP) , "xml", pddContext, 
 					dynamicMapXmlRequest, null,  zipJsonRequest, 
-					dynamicMapXmlResponse, null,  zipJsonResponse);
+					dynamicMapXmlResponse, null,  zipJsonResponse,
+					charset, contentTypeJson);
 			
 			List<Entry> zipEntriesVelocityXmlRequest = new ArrayList<>();
 			zipEntriesVelocityXmlRequest.add(new Entry(Costanti.ZIP_INDEX_ENTRY_VELOCITY, XML_TEMPLATE_VELOCITY_REQUEST_INCLUDE.getBytes()));
@@ -1061,7 +1114,8 @@ public class Test {
 			byte [] zipXmlResponse = ZipUtilities.zip(zipEntriesVelocityXmlResponse);		
 			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.VELOCITY_TEMPLATE_ZIP) , "json", pddContext, 
 					dynamicMapJsonRequest, null,  zipXmlRequest, 
-					dynamicMapJsonResponse, null,  zipXmlResponse);
+					dynamicMapJsonResponse, null,  zipXmlResponse,
+					charset, contentTypeSoap11);
 			
 		}
 		
@@ -1079,7 +1133,8 @@ public class Test {
 			
 			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.XSLT) , "xml", pddContext, 
 					null, messageContentXsltElementRequest,  XSLT_PREFIX_REPLACE_ALL.getBytes(), 
-					null, messageContentXsltElementResponse,  XSLT_PREFIX_REPLACE_ONLY_PREFIX.getBytes());
+					null, messageContentXsltElementResponse,  XSLT_PREFIX_REPLACE_ONLY_PREFIX.getBytes(),
+					charset, contentTypeXml);
 			
 		}
 		
@@ -1087,11 +1142,13 @@ public class Test {
 			
 			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.ZIP) , "soap", pddContext, 
 					dynamicMapXmlRequest, null,  COMPRESS_SOAP_TEMPLATE_REQUEST.getBytes(), 
-					dynamicMapXmlResponse, null,  COMPRESS_SOAP_TEMPLATE_RESPONSE.getBytes());
+					dynamicMapXmlResponse, null,  COMPRESS_SOAP_TEMPLATE_RESPONSE.getBytes(),
+					charset, contentTypeSoap11);
 			
 			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.ZIP) , "json", pddContext, 
 					dynamicMapJsonRequest, null,  COMPRESS_REST_TEMPLATE_REQUEST.getBytes(), 
-					dynamicMapJsonResponse, null,  COMPRESS_REST_TEMPLATE_RESPONSE.getBytes());
+					dynamicMapJsonResponse, null,  COMPRESS_REST_TEMPLATE_RESPONSE.getBytes(),
+					charset, contentTypeJson);
 			
 		}
 		
@@ -1099,11 +1156,13 @@ public class Test {
 			
 			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.TGZ) , "soap", pddContext, 
 					dynamicMapXmlRequest, null,  COMPRESS_SOAP_TEMPLATE_REQUEST.getBytes(), 
-					dynamicMapXmlResponse, null,  COMPRESS_SOAP_TEMPLATE_RESPONSE.getBytes());
+					dynamicMapXmlResponse, null,  COMPRESS_SOAP_TEMPLATE_RESPONSE.getBytes(),
+					charset, contentTypeSoap11);
 			
 			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.TGZ) , "json", pddContext, 
 					dynamicMapJsonRequest, null,  COMPRESS_REST_TEMPLATE_REQUEST.getBytes(), 
-					dynamicMapJsonResponse, null,  COMPRESS_REST_TEMPLATE_RESPONSE.getBytes());
+					dynamicMapJsonResponse, null,  COMPRESS_REST_TEMPLATE_RESPONSE.getBytes(),
+					charset, contentTypeJson);
 			
 		}
 		
@@ -1111,11 +1170,13 @@ public class Test {
 			
 			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.TAR) , "soap", pddContext, 
 					dynamicMapXmlRequest, null,  COMPRESS_SOAP_TEMPLATE_REQUEST.getBytes(), 
-					dynamicMapXmlResponse, null,  COMPRESS_SOAP_TEMPLATE_RESPONSE.getBytes());
+					dynamicMapXmlResponse, null,  COMPRESS_SOAP_TEMPLATE_RESPONSE.getBytes(),
+					charset, contentTypeSoap11);
 			
 			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.TAR) , "json", pddContext, 
 					dynamicMapJsonRequest, null,  COMPRESS_REST_TEMPLATE_REQUEST.getBytes(), 
-					dynamicMapJsonResponse, null,  COMPRESS_REST_TEMPLATE_RESPONSE.getBytes());
+					dynamicMapJsonResponse, null,  COMPRESS_REST_TEMPLATE_RESPONSE.getBytes(),
+					charset, contentTypeJson);
 			
 		}
 	
@@ -1132,15 +1193,18 @@ public class Test {
 	private static void test(Logger log, OpenSPCoop2MessageFactory messageFactory, TipoTrasformazione tipoTest, String prefix,
 			PdDContext pddContext,
 			Map<String, Object> dynamicMapRequest, MessageContent messageContentRequest, byte[] templateRequest, 
-			Map<String, Object> dynamicMapResponse, MessageContent messageContentResponse, byte[] templateResponse) throws Exception {
+			Map<String, Object> dynamicMapResponse, MessageContent messageContentResponse, byte[] templateResponse,
+			Charset charset, String contentType) throws Exception {
 		
-		System.out.println("Test ["+tipoTest+"-"+prefix+"] in corso ...");
+		boolean readCharset = charset!=null;
+		
+		System.out.println("Test ["+tipoTest+"-"+prefix+"] (charset: "+charset+") in corso ...");
 		
 		System.out.println("\trequest ...");
 		RisultatoTrasformazioneContenuto risultato = null;
 		try {
 			risultato = GestoreTrasformazioniUtilities.trasformazioneContenuto(log, 
-					tipoTest.getValue(), templateRequest, "richiesta", dynamicMapRequest, null, messageContentRequest, pddContext);
+					tipoTest.getValue(), templateRequest, "richiesta", dynamicMapRequest, null, messageContentRequest, pddContext, contentType, readCharset);
 		}catch(Throwable e) {
 			System.out.println("\tTemplate:\n "+new String(templateRequest));
 			Utilities.sleep(1000);
@@ -1152,7 +1216,7 @@ public class Test {
 				TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP.equals(tipoTest) ||
 				TipoTrasformazione.VELOCITY_TEMPLATE.equals(tipoTest) ) {
 			try {
-				checkRequest(contenuto, pddContext);
+				checkRequest(contenuto, pddContext, prefix);
 				if(TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP.equals(tipoTest) ||
 						TipoTrasformazione.VELOCITY_TEMPLATE_ZIP.equals(tipoTest)) {
 					checkInclude(contenuto, pddContext);
@@ -1283,7 +1347,7 @@ public class Test {
 		risultato = null;
 		try {
 			risultato = GestoreTrasformazioniUtilities.trasformazioneContenuto(log, 
-					tipoTest.getValue(), templateResponse, "risposta", dynamicMapResponse, null, messageContentResponse, pddContext);
+					tipoTest.getValue(), templateResponse, "risposta", dynamicMapResponse, null, messageContentResponse, pddContext, contentType, readCharset);
 		}catch(Throwable e) {
 			System.out.println("\tTemplate:\n "+new String(templateResponse));
 			Utilities.sleep(1000);
@@ -1295,8 +1359,8 @@ public class Test {
 				TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP.equals(tipoTest) ||
 				TipoTrasformazione.VELOCITY_TEMPLATE.equals(tipoTest)) {
 			try{
-				checkRequest(contenuto, pddContext);
-				checkResponse(contenuto);
+				checkRequest(contenuto, pddContext, prefix);
+				checkResponse(contenuto, prefix);
 				if(TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP.equals(tipoTest) ||
 						TipoTrasformazione.VELOCITY_TEMPLATE_ZIP.equals(tipoTest)) {
 					checkInclude(contenuto, pddContext);
@@ -1430,10 +1494,10 @@ public class Test {
 		}
 		System.out.println("\tresponse ok");
 		
-		System.out.println("Test ["+tipoTest+"-"+prefix+"] completato con successo");
+		System.out.println("Test ["+tipoTest+"-"+prefix+"] (charset: "+charset+") completato con successo");
 	}
 	
-	private static void checkRequest(String contenuto, PdDContext pddContext) throws Exception {
+	private static void checkRequest(String contenuto, PdDContext pddContext, String prefix) throws Exception {
 		// verifiche
 		if(!contenuto.contains(DATA)) {
 			throw new Exception("Nome '"+DATA+"' non trovato");
@@ -1583,9 +1647,23 @@ public class Test {
 			throw new Exception("Valore '"+ENV_CONFIG1_VALORE+"' per field '"+ENV_CONFIG1+"' non trovato");
 		}
 
+		if(!contenuto.contains(caratteri_element_name)) {
+			throw new Exception("Configurazione '"+caratteri_element_name+"' non trovata");
+		}
+		if("xml".equals(prefix)) { 
+			if(!contenuto.contains(caratteriNonUTF_XML_VALUE)) {
+				throw new Exception("Valore '"+caratteriNonUTF_XML_VALUE+"' per field '"+caratteri_element_name+"' non trovato");
+			}
+		}
+		else {
+			if(!contenuto.contains(caratteriNonUTF_JSON_VALUE)) {
+				throw new Exception("Valore '"+caratteriNonUTF_JSON_VALUE+"' per field '"+caratteri_element_name+"' non trovato");
+			}
+		}
+		
 	}
 	
-	private static void checkResponse(String contenuto) throws Exception {
+	private static void checkResponse(String contenuto, String prefix) throws Exception {
 		// verifiche
 		if(!contenuto.contains(DATA_RISPOSTA)) {
 			throw new Exception("Nome '"+DATA_RISPOSTA+"' non trovato");
@@ -1618,6 +1696,17 @@ public class Test {
 		}
 		if(!contenuto.contains(PATH2_VALORE_RISPOSTA)) {
 			throw new Exception("Valore '"+PATH2_VALORE_RISPOSTA+"' per field '"+PATH2_RISPOSTA+"' non trovato");
+		}
+		
+		if("xml".equals(prefix)) { 
+			if(!contenuto.contains(caratteriNonUTF_XML_VALUE)) {
+				throw new Exception("Valore '"+caratteriNonUTF_XML_VALUE+"' per field '"+caratteri_element_name+"' non trovato");
+			}
+		}
+		else {
+			if(!contenuto.contains(caratteriNonUTF_JSON_VALUE)) {
+				throw new Exception("Valore '"+caratteriNonUTF_JSON_VALUE+"' per field '"+caratteri_element_name+"' non trovato");
+			}
 		}
 	}
 	

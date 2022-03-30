@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -44,6 +44,11 @@ public interface IStatisticheGiornaliere extends IService<ResBase, Integer>,ILiv
 	public List<Res> findAllAndamentoTemporale() throws ServiceException;
 	public List<Res> findAllAndamentoTemporale(int start, int limit) throws ServiceException;
 	public int countAllAndamentoTemporale() throws ServiceException;
+	
+	//Distribuzione Per Errori
+	public List<ResDistribuzione> findAllDistribuzioneErrori() throws ServiceException;
+	public List<ResDistribuzione> findAllDistribuzioneErrori(int start, int limit) throws ServiceException;
+	public int countAllDistribuzioneErrori() throws ServiceException;
 	
 	//Distribuzione Per Soggetto
 	public List<ResDistribuzione> findAllDistribuzioneSoggetto() throws ServiceException;

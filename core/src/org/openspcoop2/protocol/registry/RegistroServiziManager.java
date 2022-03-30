@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.commons.CoreException;
-import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
@@ -41,10 +40,14 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.constants.TipiDocumentoLivelloServizio;
+import org.openspcoop2.core.registry.constants.TipiDocumentoSemiformale;
+import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziAzioneNotFound;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziCorrelatoNotFound;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -267,6 +270,26 @@ public class RegistroServiziManager {
 		return this.registroServiziReader.getAllegati(this.getConnection(), idASPS);
 	}
 	
+	public Documento getAllegato(IDAccordo idAccordo, String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getAllegato(this.getConnection(), idAccordo, nome);
+	}
+	public Documento getSpecificaSemiformale(IDAccordo idAccordo, TipiDocumentoSemiformale tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getSpecificaSemiformale(this.getConnection(), idAccordo, tipo, nome);
+	}
+	
+	public Documento getAllegato(IDServizio idASPS, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getAllegato(this.getConnection(), idASPS, nome);
+	}
+	public Documento getSpecificaSemiformale(IDServizio idASPS, TipiDocumentoSemiformale tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getSpecificaSemiformale(this.getConnection(), idASPS, tipo, nome);
+	}
+	public Documento getSpecificaSicurezza(IDServizio idASPS, TipiDocumentoSicurezza tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getSpecificaSicurezza(this.getConnection(), idASPS, tipo, nome);
+	}
+	public Documento getSpecificaLivelloServizio(IDServizio idASPS, TipiDocumentoLivelloServizio tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getSpecificaLivelloServizio(this.getConnection(), idASPS, tipo, nome);
+	}
+	
 	public org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper getWsdlAccordoServizio(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD)
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return this.registroServiziReader.getWsdlAccordoServizio(this.getConnection(), idService, infoWsdlSource,buildSchemaXSD);
@@ -369,8 +392,47 @@ public class RegistroServiziManager {
 	
 	/* ********  P R O P R I E T A  ******** */
 	
-	public Map<String, String> getProprietaConfigurazione(Soggetto soggetto) throws DriverConfigurazioneException {
+	public Map<String, String> getProprietaConfigurazione(Soggetto soggetto) throws DriverRegistroServiziException {
 		return this.registroServiziReader.getProprietaConfigurazione(soggetto);
+	}
+	
+	
+	
+	/* ********  C E R T I F I C A T I  ******** */
+	
+	public CertificateCheck checkCertificatoSoggettoWithoutCache(long idSoggetto, int sogliaWarningGiorni,  
+			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		return this.registroServiziReader.checkCertificatoSoggetto(null, false,
+				idSoggetto, sogliaWarningGiorni,  
+				addCertificateDetails, separator, newLine);
+	}
+
+	public CertificateCheck checkCertificatoSoggettoWithoutCache(IDSoggetto idSoggetto, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		return this.registroServiziReader.checkCertificatoSoggetto(null, false,
+				idSoggetto, sogliaWarningGiorni,  
+				addCertificateDetails, separator, newLine);
+	}
+	
+	public CertificateCheck checkCertificatiConnettoreHttpsByIdWithoutCache(long idConnettore, int sogliaWarningGiorni,  
+			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		return this.registroServiziReader.checkCertificatiConnettoreHttpsById(null, false,
+				idConnettore, sogliaWarningGiorni,  
+				addCertificateDetails, separator, newLine);
+	}
+	
+	public CertificateCheck checkCertificatiModIErogazioneByIdWithoutCache(long idErogazione, int sogliaWarningGiorni,  
+			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		return this.registroServiziReader.checkCertificatiModIErogazioneById(null, false,
+				idErogazione, sogliaWarningGiorni,  
+				addCertificateDetails, separator, newLine);
+	}
+	
+	public CertificateCheck checkCertificatiModIFruizioneByIdWithoutCache(long idFruizione, int sogliaWarningGiorni,  
+			boolean addCertificateDetails, String separator, String newLine) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		return this.registroServiziReader.checkCertificatiModIFruizioneById(null, false,
+				idFruizione, sogliaWarningGiorni,  
+				addCertificateDetails, separator, newLine);
 	}
 	
 	

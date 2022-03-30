@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -229,6 +229,10 @@ public class DynamicUtils {
 					if(requestInfo.getProtocolContext()!=null) {
 						dynamicMap.put(Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT, requestInfo.getProtocolContext());
 						dynamicMap.put(Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT.toLowerCase(), requestInfo.getProtocolContext());
+					}
+					if(requestInfo.getIdServizio()!=null) {
+						AttachmentsReader aReader = new AttachmentsReader(requestInfo.getIdServizio());
+						dynamicMap.put(Costanti.MAP_ATTACHMENTS_OBJECT, aReader);
 					}
 				}
 			}
@@ -534,7 +538,9 @@ public class DynamicUtils {
 				}
 				urlInvocazione = message.getTransportRequestContext().getUrlInvocazione_formBased();
 			}
-			else if(message.getTransportResponseContext()!=null) {
+			//else
+			// se c'e' la risposta devo usare quello come parametri della risposta
+				if(message.getTransportResponseContext()!=null) {
 				if(message.getTransportResponseContext().getHeaders()!=null &&
 						!message.getTransportResponseContext().getHeaders().isEmpty()) {
 					parametriTrasporto = message.getTransportResponseContext().getHeaders();
@@ -599,12 +605,12 @@ public class DynamicUtils {
 	}
 	
 	public static String convertDynamicPropertyValue(String name,String tmpParam,Map<String,Object> dynamicMap,Context pddContext, boolean forceStartWithDollaro) throws DynamicException{
-		
+
 		String tmp = initTemplateValue(tmpParam, forceStartWithDollaro, pddContext);
 				
 		boolean onlyValidate = false;
 		tmp = processTemplateValue_url_xpath_jsonpath(tmp, onlyValidate, dynamicMap, forceStartWithDollaro);
-				
+		
 		try{
 			tmp = DynamicStringReplace.replace(tmp, dynamicMap, forceStartWithDollaro);
 		}catch(Exception e){
@@ -827,15 +833,35 @@ public class DynamicUtils {
 	public static void convertFreeMarkerTemplate(String name, 
 			byte[] template,
 			Map<String,Object> dynamicMap, OutputStream out) throws DynamicException {
+		convertFreeMarkerTemplate(name, 
+				template,
+				dynamicMap, out, null);
+	}
+	public static void convertFreeMarkerTemplate(String name, 
+			byte[] template,
+			Map<String,Object> dynamicMap, OutputStream out, String charset) throws DynamicException {
 		convertFreeMarkerTemplate(name,
 				template, null,
-				dynamicMap,out);
+				dynamicMap,out, charset);
 	}
 	public static void convertFreeMarkerTemplate(String name, 
 			byte[] template, Map<String, byte[]> templateIncludes, 
 			Map<String,Object> dynamicMap, OutputStream out) throws DynamicException {
+		convertFreeMarkerTemplate(name, 
+				template, templateIncludes, 
+				dynamicMap, out, null);
+	}
+	public static void convertFreeMarkerTemplate(String name, 
+			byte[] template, Map<String, byte[]> templateIncludes, 
+			Map<String,Object> dynamicMap, OutputStream out, String charset) throws DynamicException {
 		try {			
-			OutputStreamWriter oow = new OutputStreamWriter(out);
+			OutputStreamWriter oow = null;
+			if(charset!=null) {
+				oow = new OutputStreamWriter(out, charset);
+			}
+			else {
+				oow = new OutputStreamWriter(out);
+			}
 			_convertFreeMarkerTemplate(name, 
 					template, templateIncludes, 
 					dynamicMap, oow);
@@ -864,8 +890,21 @@ public class DynamicUtils {
 	public static void convertZipFreeMarkerTemplate(String name, 
 			byte[] zip,
 			Map<String,Object> dynamicMap, OutputStream out) throws DynamicException {
+		convertZipFreeMarkerTemplate(name, 
+				zip,
+				dynamicMap, out, null);
+	}
+	public static void convertZipFreeMarkerTemplate(String name, 
+			byte[] zip,
+			Map<String,Object> dynamicMap, OutputStream out, String charset) throws DynamicException {
 		try {			
-			OutputStreamWriter oow = new OutputStreamWriter(out);
+			OutputStreamWriter oow = null;
+			if(charset!=null) {
+				oow = new OutputStreamWriter(out, charset);
+			}
+			else {
+				oow = new OutputStreamWriter(out);
+			}
 			convertZipFreeMarkerTemplate(name, 
 					zip,  
 					dynamicMap, oow);
@@ -950,14 +989,34 @@ public class DynamicUtils {
 			byte[] template, 
 			Map<String,Object> dynamicMap, OutputStream out) throws DynamicException {
 		convertVelocityTemplate(name, 
+				template, 
+				dynamicMap, out, null);
+	}
+	public static void convertVelocityTemplate(String name, 
+			byte[] template, 
+			Map<String,Object> dynamicMap, OutputStream out, String charset) throws DynamicException {
+		convertVelocityTemplate(name, 
 				template, null, 
-				dynamicMap, out);
+				dynamicMap, out, charset);
 	}
 	public static void convertVelocityTemplate(String name, 
 			byte[] template, Map<String, byte[]> templateIncludes,
 			Map<String,Object> dynamicMap, OutputStream out) throws DynamicException {
+		convertVelocityTemplate(name, 
+				template, templateIncludes,
+				dynamicMap, out, null);
+	}
+	public static void convertVelocityTemplate(String name, 
+			byte[] template, Map<String, byte[]> templateIncludes,
+			Map<String,Object> dynamicMap, OutputStream out, String charset) throws DynamicException {
 		try {
-			OutputStreamWriter oow = new OutputStreamWriter(out);
+			OutputStreamWriter oow = null;
+			if(charset!=null) {
+				oow = new OutputStreamWriter(out, charset);
+			}
+			else {
+				oow = new OutputStreamWriter(out);
+			}
 			_convertVelocityTemplate(name, 
 					template, templateIncludes, 
 					dynamicMap, oow);
@@ -984,8 +1043,21 @@ public class DynamicUtils {
 	public static void convertZipVelocityTemplate(String name, 
 			byte[] zip,
 			Map<String,Object> dynamicMap, OutputStream out) throws DynamicException {
+		convertZipVelocityTemplate(name, 
+				zip,
+				dynamicMap, out, null);
+	}
+	public static void convertZipVelocityTemplate(String name, 
+			byte[] zip,
+			Map<String,Object> dynamicMap, OutputStream out, String charset) throws DynamicException {
 		try {			
-			OutputStreamWriter oow = new OutputStreamWriter(out);
+			OutputStreamWriter oow = null;
+			if(charset!=null) {
+				oow = new OutputStreamWriter(out, charset);
+			}
+			else {
+				oow = new OutputStreamWriter(out);
+			}
 			convertZipVelocityTemplate(name, 
 					zip,  
 					dynamicMap, oow);

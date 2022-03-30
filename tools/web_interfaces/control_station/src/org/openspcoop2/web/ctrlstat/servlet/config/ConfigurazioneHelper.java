@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -62,8 +62,10 @@ import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneHandler;
 import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
+import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.Dump;
 import org.openspcoop2.core.config.GenericProperties;
+import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.core.config.OpenspcoopSorgenteDati;
@@ -85,6 +87,7 @@ import org.openspcoop2.core.config.constants.PluginCostanti;
 import org.openspcoop2.core.config.constants.PluginSorgenteArchivio;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB_LIB;
@@ -154,10 +157,17 @@ import org.openspcoop2.monitor.engine.dynamic.IDynamicValidator;
 import org.openspcoop2.monitor.sdk.condition.Context;
 import org.openspcoop2.monitor.sdk.constants.ParameterType;
 import org.openspcoop2.monitor.sdk.exceptions.ValidationException;
+import org.openspcoop2.monitor.sdk.plugins.FiltersConfiguration;
+import org.openspcoop2.monitor.sdk.plugins.GroupByConfiguration;
 import org.openspcoop2.pdd.config.ConfigurazionePdD;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.connettori.ConnettoreCheck;
 import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
+import org.openspcoop2.pdd.core.token.PolicyGestioneToken;
+import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
+import org.openspcoop2.pdd.core.token.TokenUtilities;
+import org.openspcoop2.pdd.core.token.attribute_authority.TipologiaResponseAttributeAuthority;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceGovWayState;
 import org.openspcoop2.pdd.timers.TimerState;
@@ -169,6 +179,7 @@ import org.openspcoop2.protocol.sdk.archive.ExportMode;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.resources.MapReader;
@@ -1528,7 +1539,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			for (String alias : aliases) {
 				String stato = null;
 				try{
-					stato = this.confCore.invokeJMXMethod(this.confCore.getGestoreRisorseJMX(alias), alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					stato = this.confCore.getInvoker().invokeJMXMethod(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 							this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD(alias),
 							this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration(alias));
 					if(this.isErroreHttp(stato, "refresh System Properties")){
@@ -4622,42 +4633,45 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 				
 		boolean resetAllCaches = false;
-		for (String alias : this.confCore.getJmxPdD_aliases()) {
-			
-			Object gestoreRisorseJMX = this.confCore.getGestoreRisorseJMX(alias);
-			
-			List<String> caches = this.confCore.getJmxPdD_caches(alias);
-			if(caches!=null && caches.size()>0){
-				for (String cache : caches) {
+		if(this.confCore.isVisualizzaLinkClearAllCaches_remoteCheckCacheStatus()) {
+			for (String alias : this.confCore.getJmxPdD_aliases()) {
 				
-					String stato = null;
-					try{
-						stato = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-								cache,
-								this.confCore.getJmxPdD_cache_nomeAttributo_cacheAbilitata(alias));
-						if(stato.equalsIgnoreCase("true")){
-							stato = "abilitata";
-						}
-						else if(stato.equalsIgnoreCase("false")){
-							stato = "disabilitata";
-						}
-						else{
-							throw new Exception("Stato ["+stato+"] sconosciuto");
-						}
-					}catch(Exception e){
-						this.log.error("Errore durante la lettura dello stato della cache ["+cache+"](jmxResourcePdD): "+e.getMessage(),e);
-						stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
-					}
+				List<String> caches = this.confCore.getJmxPdD_caches(alias);
+				if(caches!=null && caches.size()>0){
+					for (String cache : caches) {
 					
-					if("abilitata".equals(stato)){
-						resetAllCaches = true;
-						break;
+						String stato = null;
+						try{
+							stato = this.confCore.getInvoker().readJMXAttribute(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+									cache,
+									this.confCore.getJmxPdD_cache_nomeAttributo_cacheAbilitata(alias));
+							if(stato.equalsIgnoreCase("true")){
+								stato = "abilitata";
+							}
+							else if(stato.equalsIgnoreCase("false")){
+								stato = "disabilitata";
+							}
+							else{
+								throw new Exception("Stato ["+stato+"] sconosciuto");
+							}
+						}catch(Exception e){
+							this.log.error("Errore durante la lettura dello stato della cache ["+cache+"](jmxResourcePdD): "+e.getMessage(),e);
+							stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+						}
+						
+						if("abilitata".equals(stato)){
+							resetAllCaches = true;
+							break;
+						}
 					}
 				}
+				if(resetAllCaches) {
+					break;
+				}
 			}
-			if(resetAllCaches) {
-				break;
-			}
+		}
+		else {
+			resetAllCaches = true;
 		}
 		if(resetAllCaches){
 			de = new DataElement();
@@ -4749,9 +4763,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public Vector<DataElement> addConfigurazioneSistema(Vector<DataElement> dati, String alias) throws Exception {
 	
 		
-		Object gestoreRisorseJMX = this.confCore.getGestoreRisorseJMX(alias);
-		
-		
 		
 		DataElement de = newDataElementStyleRuntime();
 		de.setType(DataElementType.TITLE);
@@ -4783,7 +4794,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 				String stato = null;
 				try{
-					stato = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					stato = this.confCore.getInvoker().readJMXAttribute(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 							cache,
 							this.confCore.getJmxPdD_cache_nomeAttributo_cacheAbilitata(alias));
 					if(stato.equalsIgnoreCase("true")){
@@ -4829,7 +4840,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String versionePdD = null;
 		try{
-			versionePdD = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			versionePdD = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_versionePdD(alias));
 			if(this.isErroreHttp(versionePdD, "versione della PdD")){
@@ -4854,7 +4865,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String versioneBaseDati = null;
 		try{
-			versioneBaseDati = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			versioneBaseDati = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_versioneBaseDati(alias));
 			if(this.isErroreHttp(versioneBaseDati, "versione della base dati")){
@@ -4881,7 +4892,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String confDir = null;
 		try{
-			confDir = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			confDir = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione(alias));
 			if(this.isErroreHttp(confDir, "directory di configurazione")){
@@ -4908,7 +4919,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String vendorJava = null;
 		try{
-			vendorJava = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			vendorJava = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_vendorJava(alias));
 			if(this.isErroreHttp(vendorJava, "vendor di java")){
@@ -4933,7 +4944,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String versioneJava = null;
 		try{
-			versioneJava = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			versioneJava = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_versioneJava(alias));
 			if(this.isErroreHttp(versioneJava, "versione di java")){
@@ -4960,7 +4971,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String messageFactory = null;
 		try{
-			messageFactory = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			messageFactory = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_messageFactory(alias));
 			if(this.isErroreHttp(messageFactory, "message factory")){
@@ -4993,7 +5004,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 		
 		try{
-			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata(alias));
 			boolean enable = CostantiConfigurazione.ABILITATO.getValue().equals(value);
@@ -5015,7 +5026,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		try{
-			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativa(alias));
 			boolean enable = CostantiConfigurazione.ABILITATO.getValue().equals(value);
@@ -5037,7 +5048,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 			
 		try{
-			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioIntegrationManager(alias));
 			boolean enable = CostantiConfigurazione.ABILITATO.getValue().equals(value);
@@ -5068,7 +5079,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 
 		try{
-			String livelloSeverita = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String livelloSeverita = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnostici(alias));
 			
@@ -5091,7 +5102,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		try{
-			String livelloSeverita = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String livelloSeverita = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnosticiLog4j(alias));
 			
@@ -5120,7 +5131,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		try{
-			String log4j_diagnostica = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String log4j_diagnostica = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_diagnostica(alias));
 			boolean enable = "true".equals(log4j_diagnostica);
@@ -5140,7 +5151,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		try{
-			String log4j_openspcoop = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String log4j_openspcoop = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_openspcoop(alias));
 			boolean enable = "true".equals(log4j_openspcoop);
@@ -5160,7 +5171,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		try{
-			String log4j_integrationManager = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String log4j_integrationManager = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_integrationManager(alias));
 			boolean enable = "true".equals(log4j_integrationManager);
@@ -5190,7 +5201,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 
 		try{
-			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_tracciamento(alias));
 			boolean enable = "true".equals(value);
@@ -5224,7 +5235,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 			
 		try{
-			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_dumpPA(alias));
 			boolean enable = "true".equals(value);
@@ -5247,7 +5258,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		try{
-			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_dumpPD(alias));
 			boolean enable = "true".equals(value);
@@ -5270,7 +5281,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 					
 		try{
-			String log4j_tracciamento = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String log4j_tracciamento = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento(alias));
 			boolean enable = "true".equals(log4j_tracciamento);
@@ -5290,7 +5301,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		try{
-			String log4j_dump = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String log4j_dump = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_dump(alias));
 			boolean enable = "true".equals(log4j_dump);
@@ -5310,7 +5321,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		try{
-			String fileTraceGovWayState = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias),
+			String fileTraceGovWayState = this.confCore.getInvoker().invokeJMXMethod(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias),
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getFileTrace(alias));
 			FileTraceGovWayState state = FileTraceGovWayState.toConfig(fileTraceGovWayState);
@@ -5379,7 +5390,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 		
 		try{
-			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalRequestError(alias));
 			boolean enable = "true".equals(value);
@@ -5406,10 +5417,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		try{
-			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeBadResponse(alias));
-			String value2 = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String value2 = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalResponseError(alias));
 			boolean enable = "true".equals(value) && "true".equals(value2);
@@ -5436,7 +5447,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		try{
-			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalError(alias));
 			boolean enable = "true".equals(value);
@@ -5468,7 +5479,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 		
 		try{
-			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorStatusCode(alias));
 			boolean enable = "true".equals(value);
@@ -5492,7 +5503,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		try{
-			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorUseStatusCodeAsFaultCode(alias));
 			boolean enable = "true".equals(value);
@@ -5521,7 +5532,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 		
 		try{
-			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorDetails(alias));
 			boolean enable = "true".equals(value);
@@ -5550,7 +5561,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 		
 		try{
-			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorInstanceId(alias));
 			boolean enable = "true".equals(value);
@@ -5579,7 +5590,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 		
 		try{
-			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String value = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode(alias));
 			boolean enable = "true".equals(value);
@@ -5612,7 +5623,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String [] infoDatabase = null;
 		try{
-			String tmp = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase(alias));
 			if(this.isErroreHttp(tmp, "informazioni sul database")){
@@ -5658,7 +5669,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		try{
 			int numeroDatasource = 0;
 			try{
-				String stato = this.confCore.readJMXAttribute(gestoreRisorseJMX,alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+				String stato = this.confCore.getInvoker().readJMXAttribute(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 						this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias),
 						this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_numeroDatasourceGW(alias));
 				if(stato!=null && !"".equals(stato)) {
@@ -5672,7 +5683,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				ControlStationCore.logDebug("Numero di datasource attivi non ottenibili: "+e.getMessage());
 			}
 			if(numeroDatasource>0) {
-				String nomiDatasource = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+				String nomiDatasource = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 						this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias),
 						this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getDatasourcesGW(alias));
 				if(nomiDatasource!=null && !"".equals(nomiDatasource)) {
@@ -5701,7 +5712,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 										int indexOf_paramIdentificazioneDataSource = tmp[2].indexOf(":");
 										String paramIdentificazioneDataSource = tmp[2].substring(indexOf_paramIdentificazioneDataSource+1, tmp[2].length());
 										
-										String statoInfo = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+										String statoInfo = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 												this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias),
 												this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW(alias),
 												paramIdentificazioneDataSource);
@@ -5710,7 +5721,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 										}
 										infoConnessioneAltriDB.put(nomeDS,statoInfo);
 										
-										String statoDB = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+										String statoDB = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 												this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias),
 												this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getUsedConnectionsDatasourcesGW(alias),
 												paramIdentificazioneDataSource);
@@ -5814,7 +5825,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String [] infoSSL = null;
 		try{
-			String tmp = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniSSL(alias));
 			if(this.isErroreHttp(tmp, "informazioni SSL")){
@@ -5866,7 +5877,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			String [] infoCryptoKeyLength = null;
 			try{
-				String tmp = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+				String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 						this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 						this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength(alias));
 				if(this.isErroreHttp(tmp, "informazioni CryptographyKeyLength")){
@@ -5925,7 +5936,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String [] infoCharset = null;
 		try{
-			String tmp = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCharset(alias));
 			if(this.isErroreHttp(tmp, "informazioni Charset")){
@@ -5987,7 +5998,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String [] infoInternazionalizzazione = null;
 		try{
-			String tmp = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione(alias));
 			if(this.isErroreHttp(tmp, "informazioni Internazionalizzazione")){
@@ -6047,7 +6058,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String [] infoTimezone = null;
 		try{
-			String tmp = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone(alias));
 			if(this.isErroreHttp(tmp, "informazioni Internazionalizzazione")){
@@ -6104,7 +6115,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String [] infoJavaNet = null;
 		try{
-			String tmp = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaNetworking(alias));
 			if(this.isErroreHttp(tmp, "informazioni Java Networking")){
@@ -6174,7 +6185,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String [] infoProtocolli = null;
 		try{
-			String tmp = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols(alias));
 			infoProtocolli = tmp.split("\n");
@@ -6264,7 +6275,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				String stato = null;
 				try{
-					stato = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					stato = this.confCore.getInvoker().readJMXAttribute(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 							cache,
 							this.confCore.getJmxPdD_cache_nomeAttributo_cacheAbilitata(alias));
 					if(stato.equalsIgnoreCase("true")){
@@ -6323,7 +6334,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					
 					String [] params = null;
 					try{
-						String tmp = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_cache_type(alias), 
+						String tmp = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_cache_type(alias), 
 								cache,
 								this.confCore.getJmxPdD_cache_nomeMetodo_statoCache(alias));
 						params = tmp.split("\n");
@@ -6399,7 +6410,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String stato = null;
 		try{
-			stato = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			stato = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniDB(alias));
 			if(this.isErroreHttp(stato, "stato delle connessioni al database")){
@@ -6463,7 +6474,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		stato = null;
 		try{
-			stato = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			stato = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS(alias));
 			if(this.isErroreHttp(stato, "stato delle connessioni JMS")){
@@ -6505,7 +6516,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		stato = null;
 		try{
-			stato = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			stato = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_idTransazioniAttive(alias));
 			if(this.isErroreHttp(stato, "identificativi delle transazioni attive")){
@@ -6538,7 +6549,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		stato = null;
 		try{
-			stato = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			stato = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_idProtocolloTransazioniAttive(alias));
 			if(this.isErroreHttp(stato, "identificativi di protocollo delle transazioni attive")){
@@ -6574,7 +6585,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 				
-		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiVerificaConnessioniAttive(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiVerificaConnessioniAttive(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_VERIFICA_CONNESSIONI_ATTIVE, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_VERIFICA_CONNESSIONI_ATTIVE);
 		
@@ -6585,7 +6596,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		stato = null;
 		try{
-			stato = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			stato = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPD(alias));
 			if(this.isErroreHttp(stato, "stato delle connessioni http verso le PD")){
@@ -6620,7 +6631,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		stato = null;
 		try{
-			stato = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			stato = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
 					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPA(alias));
 			if(this.isErroreHttp(stato, "stato delle connessioni http verso le PA")){
@@ -6672,7 +6683,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		dati.addElement(de);
 		
-		boolean timerAttivo = addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerConsegnaContenutiApplicativi(alias), 
+		boolean timerAttivo = addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerConsegnaContenutiApplicativi(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CONSEGNA_CONTENUTI_APPLICATIVI, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONSEGNA_CONTENUTI_APPLICATIVI);
 				
@@ -6690,7 +6701,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				stato = null;
 				try{
-					stato = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					stato = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 							this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
 							this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus(alias),
 							coda);
@@ -6719,7 +6730,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				String configurazioneCoda = null;
 				try{
-					configurazioneCoda = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					configurazioneCoda = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 							this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
 							this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getQueueConfig(alias),
 							coda);
@@ -6748,7 +6759,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				String connettoriPrioritari = null;
 				try{
-					connettoriPrioritari = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					connettoriPrioritari = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 							this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
 							this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getConnettoriPrioritari(alias),
 							coda);
@@ -6811,19 +6822,19 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 
-		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheOrarie(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheOrarie(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_ORARIE, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_ORARIE);
 		
-		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheGiornaliere(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheGiornaliere(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_GIORNALIERE, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_GIORNALIERE);
 		
-		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheSettimanali(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheSettimanali(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_SETTIMANALI, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_SETTIMANALI);
 		
-		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheMensili(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheMensili(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_MENSILI, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_MENSILI);
 		
@@ -6833,28 +6844,28 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 
-		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiEliminati(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiEliminati(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_ELIMINATI, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_ELIMINATI);
 		
-		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiScaduti(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiScaduti(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_SCADUTI, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_SCADUTI);
 		
-		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreRepositoryBuste(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreRepositoryBuste(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_REPOSITORY_BUSTE, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_REPOSITORY_BUSTE);
 		
-		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaCorrelazioneApplicativa(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaCorrelazioneApplicativa(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_CORRELAZIONE_APPLICATIVA, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_CORRELAZIONE_APPLICATIVA);
 		
 		
-		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiNonGestiti(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiNonGestiti(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_NON_GESTITI, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_NON_GESTITI);
 		
-		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestorePuliziaMessaggiAnomali(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestorePuliziaMessaggiAnomali(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_PULIZIA_MESSAGGI_ANOMALI, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_PULIZIA_MESSAGGI_ANOMALI);
 		
@@ -6864,11 +6875,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 
-		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerMonitoraggioRisorseThread(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerMonitoraggioRisorseThread(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_MONITORAGGIO_RISORSE_THREAD, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_MONITORAGGIO_RISORSE_THREAD);
 		
-		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_THRESHOLD_THREAD, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_THRESHOLD_THREAD);
 		
@@ -6878,23 +6889,23 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 
-		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerEventi(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerEventi(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_EVENTI, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_EVENTI);
 		
-		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerFileSystemRecovery(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerFileSystemRecovery(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_FILE_SYSTEM_RECOVERY, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_FILE_SYSTEM_RECOVERY);
 		
-		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteOnewayNonRiscontrate(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteOnewayNonRiscontrate(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_BUSTE_ONEWAY_NON_RISCONTRATE, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_BUSTE_ONEWAY_NON_RISCONTRATE);
 		
-		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteAsincroneNonRiscontrate(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteAsincroneNonRiscontrate(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_BUSTE_ASINCRONE_NON_RISCONTRATE, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_BUSTE_ASINCRONE_NON_RISCONTRATE);
 		
-		addTimerState(dati, gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerRepositoryStatefulThread(alias), 
+		addTimerState(dati, alias, this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerRepositoryStatefulThread(alias), 
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_REPOSITORY_STATEFUL_THREAD, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_REPOSITORY_STATEFUL_THREAD);
 
@@ -6978,9 +6989,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return dati;
 	}
 
-	private boolean addTimerState(Vector<DataElement> dati, Object gestoreRisorseJMX, String alias, String nomeAttributo, String nomeParametro, String labelParametro) {
+	private boolean addTimerState(Vector<DataElement> dati, String alias, String nomeAttributo, String nomeParametro, String labelParametro) {
 		try{
-			String stato = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			String stato = this.confCore.getInvoker().readJMXAttribute(alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					nomeAttributo);
 			
@@ -7377,7 +7388,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			String threadsAttivi = null;
 			try{
-				threadsAttivi = this.getCore().readJMXAttribute(this.getCore().getGestoreRisorseJMX(alias), alias, JMXConstants.JMX_TYPE, 
+				threadsAttivi = this.getCore().getInvoker().readJMXAttribute(alias, JMXConstants.JMX_TYPE, 
 						JMXConstants.JMX_NAME, JMXConstants.CC_ATTRIBUTE_ACTIVE_THREADS);
 			}catch(Exception e){
 				String errorMessage = "Errore durante il recupero dell'attributo ["+JMXConstants.CC_ATTRIBUTE_ACTIVE_THREADS+"] sulla risorsa ["+JMXConstants.JMX_NAME+"]: "+e.getMessage();
@@ -7394,7 +7405,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			String pddCongestionata = null;
 			try{
-				pddCongestionata = this.getCore().readJMXAttribute(this.getCore().getGestoreRisorseJMX(alias), alias, JMXConstants.JMX_TYPE, 
+				pddCongestionata = this.getCore().getInvoker().readJMXAttribute(alias, JMXConstants.JMX_TYPE, 
 						JMXConstants.JMX_NAME, JMXConstants.CC_ATTRIBUTE_PDD_CONGESTIONATA);
 			}catch(Exception e){
 				String errorMessage = "Errore durante il recupero dell'attributo ["+JMXConstants.CC_ATTRIBUTE_PDD_CONGESTIONATA+"] sulla risorsa ["+JMXConstants.JMX_NAME+"]: "+e.getMessage();
@@ -13506,7 +13517,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					String uniqueIdMap = null;
 					try{
 						uniqueIdMap = UniqueIdentifierUtilities.getUniqueId(policy);
-						resultReset = this.core.invokeJMXMethod(this.core.getGestoreRisorseJMX(alias),alias,JMXConstants.JMX_TYPE, 
+						resultReset = this.core.getInvoker().invokeJMXMethod(alias,JMXConstants.JMX_TYPE, 
 								JMXConstants.JMX_NAME,
 								JMXConstants.CC_METHOD_NAME_RESET_POLICY_COUNTERS,
 								uniqueIdMap);
@@ -13550,7 +13561,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				String uniqueIdMap = null;
 				try{
 					uniqueIdMap = UniqueIdentifierUtilities.getUniqueId(policy);
-					result = this.core.invokeJMXMethod(this.core.getGestoreRisorseJMX(alias),alias,JMXConstants.JMX_TYPE, 
+					result = this.core.getInvoker().invokeJMXMethod(alias,JMXConstants.JMX_TYPE, 
 							JMXConstants.JMX_NAME,
 							JMXConstants.CC_METHOD_NAME_GET_STATO_POLICY,
 							uniqueIdMap);
@@ -15661,7 +15672,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return false;
 		}
 		
-		boolean check = this.checkAttivazionePolicy(configurazioneControlloTraffico,policy,infoPolicy);
+		boolean check = this.checkAttivazionePolicy(configurazioneControlloTraffico,policy,infoPolicy,
+				serviceBinding);
 		if(!check) {
 			return false;
 		}
@@ -15680,7 +15692,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return true;
 	}
 	
-	public boolean checkAttivazionePolicy(ConfigurazioneGenerale c,AttivazionePolicy policy,InfoPolicy infoPolicy) throws Exception{
+	public boolean checkAttivazionePolicy(ConfigurazioneGenerale c,AttivazionePolicy policy,InfoPolicy infoPolicy,
+			ServiceBinding serviceBinding) throws Exception{
 		
 		// IdPolicy
 		if(policy.getIdPolicy()==null || "".equals(policy.getIdPolicy()) || "-".equals(policy.getIdPolicy())){
@@ -15807,6 +15820,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(!TipoFiltroApplicativo.SOAPACTION_BASED.equals(tipo) &&
 						!TipoFiltroApplicativo.INDIRIZZO_IP.equals(tipo) &&
 						!TipoFiltroApplicativo.INDIRIZZO_IP_FORWARDED.equals(tipo)){
+					
+					String label = "'"+
+							ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED
+							+" - "+getLabelTipoInformazioneApplicativaFiltro(policy.getFiltro().getInformazioneApplicativaTipo())+"'";
+					
 					if(policy.getFiltro().getInformazioneApplicativaNome()==null || 
 							CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED.equals(policy.getFiltro().getInformazioneApplicativaNome())){
 						String messaggio = null;
@@ -15814,12 +15832,28 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							messaggio = ConfigurazioneCostanti.MESSAGGIO_ERRORE_RATE_LIMITING_PLUGIN_FILTRO_NON_SELEZIONATO;
 						}
 						else {
-							messaggio = "Deve essere indicato un valore in '"+
-								ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED
-								+" - "+getLabelTipoInformazioneApplicativaFiltro(policy.getFiltro().getInformazioneApplicativaTipo())+"'";
+							messaggio = "Deve essere indicato un valore in "+label;
 						}
 						this.pd.setMessage(messaggio);
 						return false;
+					}
+					
+					if (TipoFiltroApplicativo.URLBASED.equals(tipo)) {
+						if(this.checkRegexp(policy.getFiltro().getInformazioneApplicativaNome(),label)==false){
+							return false;
+						}
+					}
+					if (TipoFiltroApplicativo.CONTENT_BASED.equals(tipo)) {
+						if(ServiceBinding.SOAP.equals(serviceBinding)) {
+							if(this.checkXPath(policy.getFiltro().getInformazioneApplicativaNome(),label)==false){
+								return false;
+							}
+						}
+						else {
+							if(this.checkXPathOrJsonPath(policy.getFiltro().getInformazioneApplicativaNome(),label)==false){
+								return false;
+							}
+						}
 					}
 				}
 							
@@ -16105,7 +16139,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					else {
 						idAllPolicy = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveGlobali();
 					}
-					resultReset = this.core.invokeJMXMethod(this.core.getGestoreRisorseJMX(alias),alias,JMXConstants.JMX_TYPE, CostantiPdD.JMX_CONFIGURAZIONE_PDD, JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT, idAllPolicy);
+					resultReset = this.core.getInvoker().invokeJMXMethod(alias,JMXConstants.JMX_TYPE, CostantiPdD.JMX_CONFIGURAZIONE_PDD, JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT, idAllPolicy);
 					this.log.debug("reset["+idAllPolicy+"] "+resultReset);
 				}catch(Exception e){
 					String errorMessage = "Errore durante l'invocazione dell'operazione ["+JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT+"] sulla risorsa ["+
@@ -16121,7 +16155,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					else {
 						idAllPolicy = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveGlobali_dimensioneMessaggio();
 					}
-					resultReset = this.core.invokeJMXMethod(this.core.getGestoreRisorseJMX(alias),alias,JMXConstants.JMX_TYPE, CostantiPdD.JMX_CONFIGURAZIONE_PDD, JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT, idAllPolicy);
+					resultReset = this.core.getInvoker().invokeJMXMethod(alias,JMXConstants.JMX_TYPE, CostantiPdD.JMX_CONFIGURAZIONE_PDD, JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT, idAllPolicy);
 					this.log.debug("reset["+idAllPolicy+"] "+resultReset);
 				}catch(Exception e){
 					String errorMessage = "Errore durante l'invocazione dell'operazione ["+JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT+"] sulla risorsa ["+
@@ -16137,7 +16171,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					String tmpIdPolicy = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID);
 					try{
 						idPolicy = ConfigurazionePdD._getKey_AttivazionePolicy(tmpIdPolicy);
-						resultReset = this.core.invokeJMXMethod(this.core.getGestoreRisorseJMX(alias),alias,JMXConstants.JMX_TYPE, CostantiPdD.JMX_CONFIGURAZIONE_PDD, JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT, idPolicy);
+						resultReset = this.core.getInvoker().invokeJMXMethod(alias,JMXConstants.JMX_TYPE, CostantiPdD.JMX_CONFIGURAZIONE_PDD, JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT, idPolicy);
 						this.log.debug("reset["+idPolicy+"] "+resultReset);
 					}catch(Exception e){
 						String errorMessage = "Errore durante l'invocazione dell'operazione ["+JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT+"] sulla risorsa ["+
@@ -16165,6 +16199,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			Parameter pInfoType = new Parameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE, infoType); 
 			boolean attributeAuthority = ConfigurazioneCostanti.isConfigurazioneAttributeAuthority(infoType);
+			
+			// decido la vista custom da mostrare
+			if(attributeAuthority) {
+				this.pd.setCustomListViewName(ConfigurazioneCostanti.CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_NOME_VISTA_CUSTOM_LISTA_ATTRIBUTE_AUTHORITY);
+			} else {
+				this.pd.setCustomListViewName(ConfigurazioneCostanti.CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_NOME_VISTA_CUSTOM_LISTA_TOKEN_POLICIY);
+			}
 			
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
@@ -16211,15 +16252,18 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			List<String> lstLabels = new ArrayList<>();
-			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME);
-			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_DESCRIZIONE);
+			
+//			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME);
+//			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_DESCRIZIONE);
 			boolean forceId = attributeAuthority ?
 					this.core.isAttributeAuthorityForceIdEnabled() :
 					this.core.isTokenPolicyForceIdEnabled();
-			if(!forceId) {
-				lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
-			}
-			lstLabels.add(CostantiControlStation.LABEL_IN_USO_COLONNA_HEADER); // inuso
+//			if(!forceId) {
+//				lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
+//			}
+//			lstLabels.add(CostantiControlStation.LABEL_IN_USO_COLONNA_HEADER); // inuso
+			
+			lstLabels.add(label);
 			
 			// setto le label delle colonne
 			String[] labels = lstLabels.toArray(new String[lstLabels.size()]);
@@ -16231,45 +16275,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			if (lista != null) {
 				for (int i = 0; i < lista.size(); i++) {
-					Vector<DataElement> e = new Vector<DataElement>();
-					GenericProperties policy = lista.get(i);
-					
-					Parameter pPolicyId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID, policy.getId() + ""); 
-
-					DataElement de = new DataElement();
-					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_CHANGE, pInfoType, pPolicyId);
-					de.setValue(policy.getNome());
-					de.setIdToRemove(""+policy.getId());
-					e.addElement(de);
-					
-					de = new DataElement();
-					de.setValue(policy.getDescrizione());
-					e.addElement(de);
-					
-					if(!forceId) {
-						de = new DataElement();
-						if(nomiConfigurazioniPolicyGestioneToken!=null && nomiConfigurazioniPolicyGestioneToken.contains(policy.getTipo())) {
-							boolean found = false;
-							for (int j = 0; j < nomiConfigurazioniPolicyGestioneToken.size(); j++) {
-								String nome = nomiConfigurazioniPolicyGestioneToken.get(j);
-								if(nome.equals(policy.getTipo())) {
-									de.setValue(labelConfigurazioniPolicyGestioneToken.get(j));
-									found = true;
-									break;
-								}
-							}
-							if(!found) {
-								de.setValue(policy.getTipo());
-							}
-						}
-						else {
-							de.setValue(policy.getTipo());
-						}
-						e.addElement(de);
-					}
-					
-					InUsoType inUsoType = attributeAuthority ? InUsoType.ATTRIBUTE_AUTHORITY : InUsoType.TOKEN_POLICY;
-					this.addInUsoButtonVisualizzazioneClassica(e, policy.getNome(), policy.getId()+"", inUsoType);
+					Vector<DataElement> e = creaEntryTokenPolicyCustom(lista, pInfoType, attributeAuthority,
+							nomiConfigurazioniPolicyGestioneToken, labelConfigurazioniPolicyGestioneToken, forceId, i);
 					
 					dati.addElement(e);
 				}
@@ -16318,9 +16325,310 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			throw new Exception(e);
 		}
 	}
+	
+	public Vector<DataElement> creaEntryTokenPolicy(List<GenericProperties> lista, Parameter pInfoType,
+			boolean attributeAuthority, List<String> nomiConfigurazioniPolicyGestioneToken,
+			List<String> labelConfigurazioniPolicyGestioneToken, boolean forceId, int i) {
+		Vector<DataElement> e = new Vector<DataElement>();
+		GenericProperties policy = lista.get(i);
+		
+		Parameter pPolicyId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID, policy.getId() + ""); 
+
+		DataElement de = new DataElement();
+		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_CHANGE, pInfoType, pPolicyId);
+		de.setValue(policy.getNome());
+		de.setIdToRemove(""+policy.getId());
+		e.addElement(de);
+		
+		de = new DataElement();
+		de.setValue(policy.getDescrizione());
+		e.addElement(de);
+		
+		if(!forceId) {
+			de = new DataElement();
+			if(nomiConfigurazioniPolicyGestioneToken!=null && nomiConfigurazioniPolicyGestioneToken.contains(policy.getTipo())) {
+				boolean found = false;
+				for (int j = 0; j < nomiConfigurazioniPolicyGestioneToken.size(); j++) {
+					String nome = nomiConfigurazioniPolicyGestioneToken.get(j);
+					if(nome.equals(policy.getTipo())) {
+						de.setValue(labelConfigurazioniPolicyGestioneToken.get(j));
+						found = true;
+						break;
+					}
+				}
+				if(!found) {
+					de.setValue(policy.getTipo());
+				}
+			}
+			else {
+				de.setValue(policy.getTipo());
+			}
+			e.addElement(de);
+		}
+		
+		InUsoType inUsoType = attributeAuthority ? InUsoType.ATTRIBUTE_AUTHORITY : InUsoType.TOKEN_POLICY;
+		this.addInUsoButtonVisualizzazioneClassica(e, policy.getNome(), policy.getId()+"", inUsoType);
+		return e;
+	}
+	
+	private Vector<DataElement> creaEntryTokenPolicyCustom(List<GenericProperties> lista, Parameter pInfoType,
+			boolean attributeAuthority, List<String> nomiConfigurazioniPolicyGestioneToken,
+			List<String> labelConfigurazioniPolicyGestioneToken, boolean forceId, int i) {
+		Vector<DataElement> e = new Vector<DataElement>();
+		GenericProperties policy = lista.get(i);
+		
+		Parameter pPolicyId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID, policy.getId() + "");
+		
+		List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+		listaParametriChange.add(pInfoType);
+		listaParametriChange.add(pPolicyId);
+		
+		// TITOLO nome
+		DataElement de = new DataElement();
+		de.setValue(policy.getNome());
+		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_CHANGE, pInfoType, pPolicyId);
+		de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
+		de.setIdToRemove(""+policy.getId());
+		de.setType(DataElementType.TITLE);
+		e.addElement(de);
+		
+		// seconda riga
+		boolean visualizzaSecondaRiga = StringUtils.isNotBlank(policy.getDescrizione()) || !forceId || attributeAuthority;
+		
+		boolean verificaConnettivita = true;
+		
+		if(visualizzaSecondaRiga) {
+			de = new DataElement();
+			de.setValue(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_DESCRIZIONE, policy.getDescrizione()));
+			
+			if(!forceId) {
+				
+				boolean validazione = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN.equals(policy.getTipologia());
+				boolean negoziazione = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN.equals(policy.getTipologia());
+				
+				String labelTipo = policy.getTipo();
+				if(nomiConfigurazioniPolicyGestioneToken!=null && nomiConfigurazioniPolicyGestioneToken.contains(policy.getTipo())) {
+					boolean found = false;
+					for (int j = 0; j < nomiConfigurazioniPolicyGestioneToken.size(); j++) {
+						String nome = nomiConfigurazioniPolicyGestioneToken.get(j);
+						if(nome.equals(policy.getTipo())) {
+							labelTipo = labelConfigurazioniPolicyGestioneToken.get(j);
+							found = true;
+							break;
+						}
+					}
+					if(!found) {
+						labelTipo = policy.getTipo();
+					}
+				}
+				else {
+					 labelTipo = policy.getTipo();
+				}
+				
+				StringBuilder sb = new StringBuilder();
+				sb.append(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_TOKEN_POLICY_TIPO, labelTipo));
+				if(validazione) {
+					
+					GestioneToken gestioneToken = new GestioneToken();
+					gestioneToken.setIntrospection(StatoFunzionalitaConWarning.ABILITATO);
+					gestioneToken.setUserInfo(StatoFunzionalitaConWarning.ABILITATO);
+					gestioneToken.setValidazione(StatoFunzionalitaConWarning.ABILITATO);
+					gestioneToken.setForward(StatoFunzionalita.ABILITATO);
+					try {
+						PolicyGestioneToken policyGestioneToken = TokenUtilities.convertTo(policy, gestioneToken);
+	
+						String labelToken = policyGestioneToken.getLabelTipoToken();
+						sb.append(ConfigurazioneCostanti.MESSAGE_METADATI_SEPARATORE);
+						sb.append(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_TOKEN_POLICY_TOKEN, labelToken));
+						
+						String labelValidazione = policyGestioneToken.getAzioniGestioneToken();
+						labelValidazione = labelValidazione.replace("JWT", "ValidazioneJWT");
+						labelValidazione = labelValidazione.replaceAll(",", " - ").trim();
+						
+						sb.append(ConfigurazioneCostanti.MESSAGE_METADATI_SEPARATORE);
+						sb.append(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_TOKEN_POLICY_MODALITA, labelValidazione));
+					
+						String labelForward = policyGestioneToken.getAzioniForwardToken();
+						labelForward = labelForward.replaceAll(",", " - ").trim();
+						sb.append(ConfigurazioneCostanti.MESSAGE_METADATI_SEPARATORE);
+						sb.append(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_TOKEN_POLICY_FORWARD, labelForward));
+						
+						if(!policyGestioneToken.isIntrospection() && !policyGestioneToken.isUserInfo()) {
+							verificaConnettivita = false;
+						}
+						
+					}catch(Throwable t) {
+						this.log.error(t.getMessage(),t);
+					}
+				
+					if(StringUtils.isNotBlank(policy.getDescrizione())) {
+						sb.append(ConfigurazioneCostanti.MESSAGE_METADATI_SEPARATORE);
+						sb.append(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_TOKEN_POLICY_DESCRIZIONE, labelTipo, policy.getDescrizione()));
+					}
+				}
+				else if(negoziazione) {
+				
+					try {
+						PolicyNegoziazioneToken policyNegoziazione = TokenUtilities.convertTo(policy);
+						
+						String labelModalita = policyNegoziazione.getLabelGrant();
+						sb.append(ConfigurazioneCostanti.MESSAGE_METADATI_SEPARATORE);
+						sb.append(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_TOKEN_POLICY_MODALITA, labelModalita));
+					}catch(Throwable t) {
+						this.log.error(t.getMessage(),t);
+					}
+					
+					if(StringUtils.isNotBlank(policy.getDescrizione())) {
+						sb.append(ConfigurazioneCostanti.MESSAGE_METADATI_SEPARATORE);
+						sb.append(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_TOKEN_POLICY_DESCRIZIONE, labelTipo, policy.getDescrizione()));
+					}
+				}
+				else {
+					if(StringUtils.isNotBlank(policy.getDescrizione())) {
+						sb.append(ConfigurazioneCostanti.MESSAGE_METADATI_SEPARATORE);
+						sb.append(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_TOKEN_POLICY_DESCRIZIONE, labelTipo, policy.getDescrizione()));
+					}
+				}
+				
+				de.setValue(sb.toString());
+
+			}
+			else {
+				if(attributeAuthority) {
+					String tipoRisposta = null;
+					String attributi = null;
+					for (Property p : policy.getPropertyList()) {
+						if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_RESPONSE_TYPE.equals(p.getNome())){
+							tipoRisposta = p.getValore();
+						}
+						else if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_RESPONSE_ATTRIBUTES.equals(p.getNome())){
+							attributi = p.getValore();
+						}
+					}
+					TipologiaResponseAttributeAuthority tipologiaResponse = null;
+					if(tipoRisposta!=null) {
+						tipologiaResponse = TipologiaResponseAttributeAuthority.valueOf(tipoRisposta);
+					}
+					if(!TipologiaResponseAttributeAuthority.custom.equals(tipologiaResponse)) {
+						if(attributi==null || StringUtils.isBlank(attributi)) {
+							attributi = "qualsiasi";
+						}
+					}
+					if(StringUtils.isNotBlank(policy.getDescrizione()) && StringUtils.isNotBlank(attributi)) {
+						de.setValue(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_ATTRIBUTE_AUTHORITY_ATTRIBUTI_E_DESCRIZIONE, attributi, policy.getDescrizione()));
+					}
+					else if(StringUtils.isNotBlank(attributi)) {
+						de.setValue(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_ATTRIBUTE_AUTHORITY_SOLO_ATTRIBUTI, attributi));
+					}
+					else if(StringUtils.isNotBlank(policy.getDescrizione())) {
+						de.setValue(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_DESCRIZIONE, policy.getDescrizione()));
+					}
+					else {
+						visualizzaSecondaRiga = false;
+					}
+				}
+			}
+			
+			if(visualizzaSecondaRiga) {
+				de.setType(DataElementType.SUBTITLE);
+				e.addElement(de);
+			}
+		}
+		
+		listaParametriChange.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CERTIFICATI_FROM_LISTA, "true"));
+		listaParametriChange.add(new Parameter(CostantiControlStation.PARAMETRO_RESET_CACHE_FROM_LISTA, "true"));
+		
+		// in uso
+		InUsoType inUsoType = attributeAuthority ? InUsoType.ATTRIBUTE_AUTHORITY : InUsoType.TOKEN_POLICY;
+		this.addInUsoButton(e, policy.getNome(), policy.getId()+"", inUsoType);
+				
+		// validazione certificati
+		boolean visualizzaValidazioneCertificati = attributeAuthority ? this.core.isAttributeAuthorityVerificaCertificati() : this.core.isPolicyGestioneTokenVerificaCertificati();
+		if(visualizzaValidazioneCertificati) {
+			this.addVerificaCertificatiButton(e, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI, listaParametriChange);
+		}
+		
+		// verifica connettivita
+		if(verificaConnettivita) {
+			List<Parameter> listaParametriVerificaConnettivitaChange = new ArrayList<Parameter>();
+			listaParametriVerificaConnettivitaChange.addAll(listaParametriChange);
+			listaParametriVerificaConnettivitaChange.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTIVITA, "true"));
+			this.addVerificaConnettivitaButton(e, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI, listaParametriVerificaConnettivitaChange);
+		}
+				
+		// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
+		if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
+			this.addComandoResetCacheButton(e,policy.getNome(), ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_CHANGE, listaParametriChange);
+		}
+		
+		return e;
+		
+	}
 
 	public Vector<DataElement> addPolicyGestioneTokenToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String id, String nome, String descrizione, String tipo, String[] propConfigPolicyGestioneTokenLabelList, String[] propConfigPolicyGestioneTokenList,
-			boolean attributeAuthority) throws Exception {
+			boolean attributeAuthority, GenericProperties genericProperties) throws Exception {
+		
+		if(TipoOperazione.CHANGE.equals(tipoOperazione)){
+			
+			Parameter pPolicyId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID, id);
+			
+			String infoType = this.getParameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+			if(infoType==null) {
+				infoType = ServletUtils.getObjectFromSession(this.session, String.class, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+			}
+			Parameter pInfoType = new Parameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE, infoType); 
+			
+			List<Parameter> listaParametriChange = new ArrayList<Parameter>();
+			listaParametriChange.add(pInfoType);
+			listaParametriChange.add(pPolicyId);
+			
+			boolean verificaConnettivita = true;
+			boolean validazione = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN.equals(genericProperties.getTipologia());
+			if(validazione) {
+				GestioneToken gestioneToken = new GestioneToken();
+				gestioneToken.setIntrospection(StatoFunzionalitaConWarning.ABILITATO);
+				gestioneToken.setUserInfo(StatoFunzionalitaConWarning.ABILITATO);
+				gestioneToken.setValidazione(StatoFunzionalitaConWarning.ABILITATO);
+				gestioneToken.setForward(StatoFunzionalita.ABILITATO);
+				try {
+					PolicyGestioneToken policyGestioneToken = TokenUtilities.convertTo(genericProperties, gestioneToken);
+					if(!policyGestioneToken.isIntrospection() && !policyGestioneToken.isUserInfo()) {
+						verificaConnettivita = false;
+					}
+				}catch(Throwable t) {
+					this.log.error(t.getMessage(),t);
+				}
+			}
+			
+			// In Uso Button
+			InUsoType inUsoType = attributeAuthority ? InUsoType.ATTRIBUTE_AUTHORITY : InUsoType.TOKEN_POLICY;
+			this.addComandoInUsoButton(dati, nome,
+					id,
+					inUsoType);
+			
+			// Verifica Certificati
+			boolean visualizzaValidazioneCertificati = attributeAuthority ? this.core.isAttributeAuthorityVerificaCertificati() : this.core.isPolicyGestioneTokenVerificaCertificati();
+			if(visualizzaValidazioneCertificati) {
+				this.pd.addComandoVerificaCertificatiElementoButton(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI, listaParametriChange);
+			}
+			
+			// verifica connettivita
+			if(verificaConnettivita) {
+				List<Parameter> listaParametriVerificaConnettivitaChange = new ArrayList<Parameter>();
+				listaParametriVerificaConnettivitaChange.addAll(listaParametriChange);
+				listaParametriVerificaConnettivitaChange.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTIVITA, "true"));
+				this.pd.addComandoVerificaConnettivitaElementoButton(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI, listaParametriVerificaConnettivitaChange);
+			}
+				
+			// se e' abilitata l'opzione reset cache per elemento, visualizzo il comando nell'elenco dei comandi disponibili nella lista
+			if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
+				listaParametriChange.add(new Parameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE, "true"));
+				this.pd.addComandoResetCacheElementoButton(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_CHANGE, listaParametriChange);
+			}
+		}
+		
+
+		
 		
 		boolean forceIdEnabled = attributeAuthority ? 
 				this.confCore.isAttributeAuthorityForceIdEnabled() :
@@ -18406,6 +18714,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 			
+			this.pd.setCustomListViewName(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARMI_NOME_VISTA_CUSTOM_LISTA);
+			
 			
 			List<Parameter> lstParamPorta = null;
 			if(ruoloPorta!=null) {
@@ -18449,12 +18759,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// setto le label delle colonne	
 			List<String> lstLabels = new ArrayList<>();
 			//lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO);
-			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STATO);
-			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA);
+//			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STATO);
+//			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA);
 			//lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPO);
-			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ALIAS);
-			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESCRIZIONE);
-			lstLabels.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME);
+//			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ALIAS);
+//			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESCRIZIONE);
+//			lstLabels.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME);
+			
+			// label vista custom
+			lstLabels.add("");//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STATO); // colonna stato
+			lstLabels.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI);
+			
 			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
 
 			// preparo i dati
@@ -18463,131 +18778,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if (lista != null) {
 				Iterator<ConfigurazioneAllarmeBean> it = lista.iterator();
 				while (it.hasNext()) {
-					ConfigurazioneAllarmeBean allarme = it.next();
-					
-					Parameter pId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME, allarme.getId() + "");
-					List<Parameter> lstParamEntry = new ArrayList<Parameter>();
-					lstParamEntry.add(pId);
-					if(lstParamSession.size() > 0) {
-						lstParamEntry.addAll(lstParamSession);
-					}
-					
-					Vector<DataElement> e = new Vector<DataElement>();
-					
-					// Abilitato
-					DataElement de = new DataElement();
-					de.setWidthPx(10);
-					de.setType(DataElementType.CHECKBOX);
-					if(allarme.getEnabled() == 1){
-						if(this.confCore.isShowAllarmiElenchiStatiAllarmi()) {
-							if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK) {
-								de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
-								de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
-								de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
-							} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_ERROR) {
-								de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
-								de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
-								de.setSelected(CheckboxStatusType.CONFIG_ERROR);
-							} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_WARNING) {
-								de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
-								de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
-								de.setSelected(CheckboxStatusType.CONFIG_WARNING);
-							}
-						}
-						else {
-							de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
-							de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
-							de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
-						}
-					}
-					else{
-						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
-						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
-						de.setSelected(CheckboxStatusType.CONFIG_DISABLE);
-					}
-					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntry.toArray(new Parameter[lstParamEntry.size()]));
-					e.addElement(de);
-					
-					// Stato
-//					de = new DataElement();
-//					
-//					if(allarme.getEnabled() == 1) {
-//						if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK) {
-//							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
-//							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
-//						} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_ERROR) {
-//							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
-//							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
-//						} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_WARNING) {
-//							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
-//							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
-//						}
-//					} else {
-//						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
-//						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
-//					}
-//					
-//					e.addElement(de);
-					
-//					// Tipo
-//					de = new DataElement();
-//					de.setValue(allarme.getTipo());
-//					e.addElement(de);
-					
-					// TipoAllarme
-					
-					de = new DataElement();
-					de.setWidthPx(24);
-					de.setType(DataElementType.IMAGE);
-					DataElementImage imageUp = new DataElementImage();
-					String mode = TipoAllarme.ATTIVO.equals(allarme.getTipoAllarme()) ? ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_ATTIVA : ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_PASSIVA;
-					if(TipoAllarme.ATTIVO.equals(allarme.getTipoAllarme())) {
-						imageUp.setImage(CostantiControlStation.ICONA_ALARM_ACTIVE);
-						imageUp.setToolTip(mode);
-					}
-					else {
-						imageUp.setImage(CostantiControlStation.ICONA_ALARM_PASSIVE);
-						imageUp.setToolTip(mode);
-					}
-					de.addImage(imageUp);
-					de.allineaTdAlCentro();
-					de.setValue(mode);
-					e.addElement(de);
-					
-					// Nome 
-					de = new DataElement();
-					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntry.toArray(new Parameter[lstParamEntry.size()]));
-					de.setValue(allarme.getAlias());
-					de.setIdToRemove(""+allarme.getId());
-					//de.setToolTip(allarme.getNome());
-					de.setToolTip(allarme.getAlias());
-					e.addElement(de);
-					
-					// Descrizione
-					de = new DataElement();
-					de.setValue(allarme.getDescrizioneAbbr());
-					de.setToolTip(allarme.getDescrizione()); 
-					e.addElement(de);
-					
-					// Runtime
-					boolean isActive = allarme.getEnabled() == 1 && TipoAllarme.ATTIVO.equals(allarme.getTipoAllarme());
-					de = new DataElement();
-					if(isActive){
-						de.setValue("Visualizza");
-					}
-					else{
-						de.setValue("-");
-					}
-					de.allineaTdAlCentro();
-					de.setWidthPx(60);
-					if(isActive){
-						Parameter pState = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE, true+"");
-						List<Parameter> lstParamEntryState = new ArrayList<Parameter>();
-						lstParamEntryState.addAll(lstParamEntry);
-						lstParamEntryState.add(pState);
-						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntryState.toArray(new Parameter[lstParamEntryState.size()]));
-					}
-					e.addElement(de);
+					Vector<DataElement> e = creaEntryAllarmeCustom(lstParamSession, it);
 										
 					dati.addElement(e);
 				}
@@ -18626,6 +18817,210 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
+	}
+	
+	public Vector<DataElement> creaEntryAllarme(List<Parameter> lstParamSession, Iterator<ConfigurazioneAllarmeBean> it)
+			throws UtilsException {
+		ConfigurazioneAllarmeBean allarme = it.next();
+		
+		Parameter pId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME, allarme.getId() + "");
+		List<Parameter> lstParamEntry = new ArrayList<Parameter>();
+		lstParamEntry.add(pId);
+		if(lstParamSession.size() > 0) {
+			lstParamEntry.addAll(lstParamSession);
+		}
+		
+		Vector<DataElement> e = new Vector<DataElement>();
+		
+		// Abilitato
+		DataElement de = new DataElement();
+		de.setWidthPx(10);
+		de.setType(DataElementType.CHECKBOX);
+		if(allarme.getEnabled() == 1){
+			if(this.confCore.isShowAllarmiElenchiStatiAllarmi()) {
+				if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK) {
+					de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
+					de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
+					de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
+				} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_ERROR) {
+					de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
+					de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
+					de.setSelected(CheckboxStatusType.CONFIG_ERROR);
+				} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_WARNING) {
+					de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
+					de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
+					de.setSelected(CheckboxStatusType.CONFIG_WARNING);
+				}
+			}
+			else {
+				de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
+				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
+				de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
+			}
+		}
+		else{
+			de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+			de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+			de.setSelected(CheckboxStatusType.CONFIG_DISABLE);
+		}
+		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntry.toArray(new Parameter[lstParamEntry.size()]));
+		e.addElement(de);
+		
+		// Stato
+//					de = new DataElement();
+//					
+//					if(allarme.getEnabled() == 1) {
+//						if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK) {
+//							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
+//							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
+//						} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_ERROR) {
+//							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
+//							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
+//						} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_WARNING) {
+//							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
+//							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
+//						}
+//					} else {
+//						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+//						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+//					}
+//					
+//					e.addElement(de);
+		
+//					// Tipo
+//					de = new DataElement();
+//					de.setValue(allarme.getTipo());
+//					e.addElement(de);
+		
+		// TipoAllarme
+		
+		de = new DataElement();
+		de.setWidthPx(24);
+		de.setType(DataElementType.IMAGE);
+		DataElementImage imageUp = new DataElementImage();
+		String mode = TipoAllarme.ATTIVO.equals(allarme.getTipoAllarme()) ? ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_ATTIVA : ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_PASSIVA;
+		if(TipoAllarme.ATTIVO.equals(allarme.getTipoAllarme())) {
+			imageUp.setImage(CostantiControlStation.ICONA_ALARM_ACTIVE);
+			imageUp.setToolTip(mode);
+		}
+		else {
+			imageUp.setImage(CostantiControlStation.ICONA_ALARM_PASSIVE);
+			imageUp.setToolTip(mode);
+		}
+		de.addImage(imageUp);
+		de.allineaTdAlCentro();
+		de.setValue(mode);
+		e.addElement(de);
+		
+		// Nome 
+		de = new DataElement();
+		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntry.toArray(new Parameter[lstParamEntry.size()]));
+		de.setValue(allarme.getAlias());
+		de.setIdToRemove(""+allarme.getId());
+		//de.setToolTip(allarme.getNome());
+		de.setToolTip(allarme.getAlias());
+		e.addElement(de);
+		
+		// Descrizione
+		de = new DataElement();
+		de.setValue(allarme.getDescrizioneAbbr());
+		de.setToolTip(allarme.getDescrizione()); 
+		e.addElement(de);
+		
+		// Runtime
+		boolean isActive = allarme.getEnabled() == 1 && TipoAllarme.ATTIVO.equals(allarme.getTipoAllarme());
+		de = new DataElement();
+		if(isActive){
+			de.setValue("Visualizza");
+		}
+		else{
+			de.setValue("-");
+		}
+		de.allineaTdAlCentro();
+		de.setWidthPx(60);
+		if(isActive){
+			Parameter pState = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE, true+"");
+			List<Parameter> lstParamEntryState = new ArrayList<Parameter>();
+			lstParamEntryState.addAll(lstParamEntry);
+			lstParamEntryState.add(pState);
+			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntryState.toArray(new Parameter[lstParamEntryState.size()]));
+		}
+		e.addElement(de);
+		return e;
+	}
+	
+	private Vector<DataElement> creaEntryAllarmeCustom(List<Parameter> lstParamSession, Iterator<ConfigurazioneAllarmeBean> it) throws UtilsException {
+		ConfigurazioneAllarmeBean allarme = it.next();
+		
+		Parameter pId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME, allarme.getId() + "");
+		List<Parameter> lstParamEntry = new ArrayList<Parameter>();
+		lstParamEntry.add(pId);
+		if(lstParamSession.size() > 0) {
+			lstParamEntry.addAll(lstParamSession);
+		}
+		
+		Vector<DataElement> e = new Vector<DataElement>();
+		
+		// Riga 1 Titolo
+		DataElement de = new DataElement();
+		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntry.toArray(new Parameter[lstParamEntry.size()]));
+		de.setValue(allarme.getAlias());
+		de.setIdToRemove(""+allarme.getId());
+		de.setType(DataElementType.TITLE);
+		e.addElement(de);
+		
+		// Riga2 : Modalita' + descrizione
+		de = new DataElement();
+		String mode = TipoAllarme.ATTIVO.equals(allarme.getTipoAllarme()) ? ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_ATTIVA : ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_PASSIVA;
+		String descrAbbr = allarme.getDescrizioneAbbr();
+		if(StringUtils.isNotBlank(descrAbbr)) {
+			de.setValue(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_ALLARMI_LIST_MODALITA_DESCRIZIONE, mode, descrAbbr));
+		} else {
+			de.setValue(MessageFormat.format(ConfigurazioneCostanti.MESSAGE_METADATI_ALLARMI_LIST_MODALITA, mode));
+		}
+		de.setType(DataElementType.SUBTITLE);
+		e.addElement(de);
+		
+		// Abilitato
+		de = new DataElement();
+		de.setWidthPx(16);
+		de.setType(DataElementType.CHECKBOX);
+		if(allarme.getEnabled() == 1){
+			if(this.confCore.isShowAllarmiElenchiStatiAllarmi()) {
+				if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK) {
+					de.setStatusType(CheckboxStatusType.CONFIG_ENABLE);
+					de.setStatusToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
+				} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_ERROR) {
+					de.setStatusType(CheckboxStatusType.CONFIG_ERROR);
+					de.setStatusToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
+				} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_WARNING) {
+					de.setStatusType(CheckboxStatusType.CONFIG_WARNING);
+					de.setStatusToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
+				}
+			}
+			else {
+				de.setStatusType(CheckboxStatusType.CONFIG_ENABLE);
+				de.setStatusToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
+			}
+		}
+		else{
+			de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
+			de.setStatusToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+		}
+		e.addElement(de);
+		
+		// Runtime
+		boolean isActive = allarme.getEnabled() == 1 && TipoAllarme.ATTIVO.equals(allarme.getTipoAllarme());
+		de = new DataElement();
+		if(isActive){
+			Parameter pState = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE, true+"");
+			List<Parameter> lstParamEntryState = new ArrayList<Parameter>();
+			lstParamEntryState.addAll(lstParamEntry);
+			lstParamEntryState.add(pState);
+			this.addVisualizzaRuntimeButton(e, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntryState);
+		}
+		
+		return e;
 	}
 	
 	public List<Parameter> getTitleListAllarmi(RuoloPorta ruoloPorta, String nomePorta, ServiceBinding serviceBinding, String nomeOggetto) throws Exception{
@@ -18705,6 +19100,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		return lstParamPorta;
 	}
+	
+	
 	
 	public boolean allarmeCheckData(StringBuilder sbParsingError, TipoOperazione tipoOp, ConfigurazioneAllarmeBean oldAllarme, ConfigurazioneAllarmeBean allarme, int numeroPluginRegistrati
 			, List<org.openspcoop2.monitor.sdk.parameters.Parameter<?>> parameters) throws Exception {
@@ -19058,7 +19455,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				String tipoPeriodoS = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPO_PERIODO);
 				
 				if(StringUtils.isNotBlank(periodoS)) {
-					allarme.setPeriodo(Integer.parseInt(periodoS));
+					try {
+						allarme.setPeriodo(Integer.parseInt(periodoS));
+					}catch(Throwable t) {
+						this.log.error("Periodo indicato non è un intero ["+periodoS+"]: "+t.getMessage(),t);
+					}
 				}
 				
 				if(StringUtils.isNotBlank(tipoPeriodoS)) {
@@ -19576,6 +19977,53 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			List<org.openspcoop2.monitor.sdk.parameters.Parameter<?>> parameters, RuoloPorta ruoloPorta, String nomePorta, ServiceBinding serviceBinding
 			) throws Exception { 
 		
+		String stateParam = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE);
+		boolean state = stateParam!=null && "true".equals(stateParam);
+		
+		if(TipoOperazione.CHANGE.equals(tipoOperazione)){
+			
+			// Runtime
+			if(!state) {
+				boolean isActive = allarme.getEnabled() == 1 && TipoAllarme.ATTIVO.equals(allarme.getTipoAllarme());
+				if(isActive){
+					List<Parameter> lstParamSession = new ArrayList<Parameter>();
+	
+					Parameter parRuoloPorta = null;
+					if(ruoloPorta!=null) {
+						parRuoloPorta = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_RUOLO_PORTA, ruoloPorta.getValue());
+						lstParamSession.add(parRuoloPorta);
+					}
+					Parameter parNomePorta = null;
+					if(nomePorta!=null) {
+						parNomePorta = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME_PORTA, nomePorta);
+						lstParamSession.add(parNomePorta);
+					}
+					Parameter parServiceBinding = null;
+					if(serviceBinding!=null) {
+						parServiceBinding = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_SERVICE_BINDING, serviceBinding.name());
+						lstParamSession.add(parServiceBinding);
+					}
+					
+					Parameter pState = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE, true+"");
+					
+					Parameter pId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME, allarme.getId() + "");
+					List<Parameter> lstParamEntry = new ArrayList<Parameter>();
+					lstParamEntry.add(pId);
+					if(lstParamSession.size() > 0) {
+						lstParamEntry.addAll(lstParamSession);
+					}
+					
+					List<Parameter> lstParamEntryState = new ArrayList<Parameter>();
+					lstParamEntryState.addAll(lstParamEntry);
+					lstParamEntryState.add(pState);
+					
+					this.pd.addComandoVisualizzaRuntimeElementoButton(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntryState);
+					
+				}
+			}
+			
+		}
+		
 		boolean allarmeAttivo = allarme.getTipoAllarme() != null && (allarme.getTipoAllarme().equals(TipoAllarme.ATTIVO));
 		
 		boolean first = this.isFirstTimeFromHttpParameters(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FIRST_TIME);
@@ -19613,10 +20061,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.HIDDEN);
 			dati.addElement(de);
 		}
-		
-		String stateParam = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE);
-		boolean state = stateParam!=null && "true".equals(stateParam);
-		
+				
 		if(state) {
 			
 			String refreshParam = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_REFRESH);
@@ -19654,7 +20099,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					// Dormo qualche secondo per dare il tempo di fare il recheck o stop/start dell'allarme
 					Utilities.sleep(3000);
 					
-					this.pd.setMessage(label+" effettuato con successo", MessageType.INFO);
+					if(refresh) {
+						this.pd.setMessage(label+" avviato con successo", MessageType.INFO);
+					}
+					else {
+						this.pd.setMessage(label+" effettuato con successo", MessageType.INFO);
+					}
 					
 				} catch(Exception e) {
 					String errorMsg = "Richiesta di aggiornamento dello stato dell'allarme '"+allarme.getAlias()+"' fallita: "+e.getMessage();
@@ -20207,7 +20657,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 		}
 
-		boolean groupByAllarme = this.isShowGroupBy(allarme);
+		Context context = this.createAlarmContext(allarme, parameters);
+		boolean groupByAllarme = this.isShowGroupBy(allarme, context);
 		
 		if( (parameters != null && parameters.size() > 0) || groupByAllarme) {
 			de = new DataElement();
@@ -20244,13 +20695,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		// sezione group by
 		if(groupByAllarme) {
-			this.addToDatiAllarmeGroupBy(dati, tipoOperazione, allarme, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_RAGGRUPPAMENTO,
+			this.addToDatiAllarmeGroupBy(dati, tipoOperazione, allarme, context,
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_RAGGRUPPAMENTO,
 					ruoloPorta, nomePorta, serviceBinding, tokenAbilitato);
 		}
 		
 		// Sezione filtro
-		if(this.isShowFilter(allarme)) {
-			this.addToDatiAllarmeFiltro(dati, tipoOperazione, allarme, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO,
+		if(this.isShowFilter(allarme, context)) {
+			this.addToDatiAllarmeFiltro(dati, tipoOperazione, allarme, context,
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO,
 					ruoloPorta, nomePorta, serviceBinding, idSoggettoProprietario, tokenAbilitato , tipoAutenticazione, 
 					appId, pddTipologiaSoggettoAutenticati, gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore);
 		}
@@ -20423,21 +20876,35 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 	}
 	
-	public boolean isShowFilter(ConfigurazioneAllarmeBean allarme) throws Exception {
+	public boolean isShowFilter(ConfigurazioneAllarmeBean allarme, Context context) throws Exception {
 		if(allarme==null || allarme.getPlugin() == null){
 			return false; // all'inizio deve prima essere scelto il plugin
 		}
 		
-		return this.confCore.isUsableFilter(allarme);
+		return this.confCore.isUsableFilter(allarme, context);
+	}
+	
+	public FiltersConfiguration getFiltersConfiguration(ConfigurazioneAllarmeBean allarme, Context context) throws Exception {
+		if(allarme==null || allarme.getPlugin() == null){
+			return null;
+		}
+		return this.confCore.getFiltersConfiguration(allarme, context);
 	}
 	
 	
-	public boolean isShowGroupBy(ConfigurazioneAllarmeBean allarme) throws Exception {
+	public boolean isShowGroupBy(ConfigurazioneAllarmeBean allarme, Context context) throws Exception {
 		if(allarme==null || allarme.getPlugin() == null){
 			return false; // all'inizio deve prima essere scelto il plugin
 		}
 		
-		return this.confCore.isUsableGroupBy(allarme);
+		return this.confCore.isUsableGroupBy(allarme, context);
+	}
+	
+	public GroupByConfiguration getGroupByConfiguration(ConfigurazioneAllarmeBean allarme, Context context) throws Exception {
+		if(allarme==null || allarme.getPlugin() == null){
+			return null;
+		}
+		return this.confCore.getGroupByConfiguration(allarme, context);
 	}
 	
 	public String getParameterSectionTitle(ConfigurazioneAllarmeBean allarme, boolean groupByAllarme) throws Exception {
@@ -20447,7 +20914,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return this.confCore.getParameterSectionTitle(allarme, groupByAllarme);
 	}
 	
-	private void addToDatiAllarmeFiltro(Vector<DataElement> dati, TipoOperazione tipoOperazione, ConfigurazioneAllarmeBean allarme, String nomeSezione,
+	private void addToDatiAllarmeFiltro(Vector<DataElement> dati, TipoOperazione tipoOperazione, ConfigurazioneAllarmeBean allarme, Context context, String nomeSezione,
 			RuoloPorta ruoloPorta, String nomePorta, ServiceBinding serviceBinding,
 			IDSoggetto idSoggettoProprietario, boolean tokenAbilitato, 
 			CredenzialeTipo tipoAutenticazione, Boolean appId, 
@@ -20473,6 +20940,23 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		boolean multitenant = this.confCore.isMultitenant();
 		
+		FiltersConfiguration filterConfig = this.confCore.getFiltersConfiguration(allarme, context);
+		
+		// Ruolo Gateway
+		RuoloPorta ruoloPortaFiltro = null;
+		if(allarme!=null && allarme.getFiltro()!=null) {
+			ruoloPortaFiltro = allarme.getFiltro().getRuoloPorta();
+		}
+		if(configurazione && filterConfig!=null && !filterConfig.isHideGatewayRole() &&
+				(filterConfig.isForceInGatewayRole() || filterConfig.isForceOutGatewayRole())) {
+			if(filterConfig.isForceInGatewayRole()) {
+				ruoloPortaFiltro = RuoloPorta.APPLICATIVA;
+			}
+			else if(filterConfig.isForceOutGatewayRole()) {
+				ruoloPortaFiltro = RuoloPorta.DELEGATA;
+			}
+		}
+
 		
 		// Elaboro valori con dipendenze
 		
@@ -20612,11 +21096,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					List<IDSoggetto> listErogatori = new ArrayList<>();
 
 					List<IDSoggetto> listSoggettiPreFilterMultitenant = this.confCore.getSoggettiErogatori(protocolloSelezionatoValue, protocolliValue);
-					if(allarme.getFiltro().getRuoloPorta()!=null && !RuoloPorta.ENTRAMBI.equals(allarme.getFiltro().getRuoloPorta())) {
+					if(ruoloPortaFiltro!=null && !RuoloPorta.ENTRAMBI.equals(ruoloPortaFiltro)) {
 						for (IDSoggetto idSoggetto : listSoggettiPreFilterMultitenant) {
 							Soggetto s = this.soggettiCore.getSoggettoRegistro(idSoggetto);
 							boolean isPddEsterna = this.pddCore.isPddEsterna(s.getPortaDominio());
-							if(RuoloPorta.DELEGATA.equals(allarme.getFiltro().getRuoloPorta())) {
+							if(RuoloPorta.DELEGATA.equals(ruoloPortaFiltro)) {
 								if(isPddEsterna) {
 									listErogatori.add(idSoggetto);
 								}	
@@ -20945,9 +21429,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 //			// servizi applicativi erogatore
 //			if(configurazione) {
-//				if(allarme.getFiltro().getRuoloPorta()==null ||
-//						RuoloPorta.ENTRAMBI.equals(allarme.getFiltro().getRuoloPorta()) || 
-//						RuoloPorta.APPLICATIVA.equals(allarme.getFiltro().getRuoloPorta())){
+//				if(ruoloPortaFiltro==null ||
+//						RuoloPorta.ENTRAMBI.equals(ruoloPortaFiltro) || 
+//						RuoloPorta.APPLICATIVA.equals(ruoloPortaFiltro)){
 //					if(protocolloAssociatoFiltroNonSelezionatoUtente) {
 //						if(allarme.getFiltro().getServizioApplicativoErogatore()!=null){
 //							servizioApplicativoErogatoreSelezionatoValue = allarme.getFiltro().getServizioApplicativoErogatore();
@@ -21019,11 +21503,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					List<IDSoggetto> listSoggetti = new ArrayList<>();
 					if(configurazione) {
 						List<IDSoggetto> listSoggettiPreFilterMultitenant = this.confCore.getSoggetti(protocolloSelezionatoValue, protocolliValue);
-						if(allarme.getFiltro().getRuoloPorta()!=null && !RuoloPorta.ENTRAMBI.equals(allarme.getFiltro().getRuoloPorta())) {
+						if(ruoloPortaFiltro!=null && !RuoloPorta.ENTRAMBI.equals(ruoloPortaFiltro)) {
 							for (IDSoggetto idSoggetto : listSoggettiPreFilterMultitenant) {
 								Soggetto s = this.soggettiCore.getSoggettoRegistro(idSoggetto);
 								boolean isPddEsterna = this.pddCore.isPddEsterna(s.getPortaDominio());
-								if(RuoloPorta.APPLICATIVA.equals(allarme.getFiltro().getRuoloPorta())) {
+								if(RuoloPorta.APPLICATIVA.equals(ruoloPortaFiltro)) {
 									if(isPddEsterna) {
 										listSoggetti.add(idSoggetto);
 									}	
@@ -21290,10 +21774,19 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_PDD);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_PDD);
-			if(allarme.getFiltro().getRuoloPorta()!=null){
-				de.setValue(allarme.getFiltro().getRuoloPorta().getValue());
+			if(ruoloPortaFiltro!=null){
+				de.setValue(ruoloPortaFiltro.getValue());
 			}
-			if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
+			if(filterConfig!=null && filterConfig.isHideGatewayRole()) {
+				de.setType(DataElementType.HIDDEN);
+				dati.addElement(de);
+			}
+			else if(configurazione && filterConfig!=null && 
+					(filterConfig.isForceInGatewayRole() || filterConfig.isForceOutGatewayRole())) {
+				de.setType(DataElementType.HIDDEN);
+				dati.addElement(de);
+			}
+			else if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
 				de.setType(DataElementType.HIDDEN);
 				dati.addElement(de);
 				
@@ -21301,8 +21794,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_PDD+"___LABEL");
 					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_PDD);
-					if(allarme.getFiltro().getRuoloPorta()!=null){
-						de.setValue(allarme.getFiltro().getRuoloPorta().getValue());
+					if(ruoloPortaFiltro!=null){
+						de.setValue(ruoloPortaFiltro.getValue());
 					}
 					else {
 						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI);
@@ -21313,8 +21806,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			else {
 				de.setValues(ConfigurazioneCostanti.TIPI_RUOLO_PDD);
 				de.setLabels(ConfigurazioneCostanti.LABEL_TIPI_RUOLO_PDD);
-				if(allarme.getFiltro().getRuoloPorta()!=null){
-					de.setSelected(allarme.getFiltro().getRuoloPorta().getValue());
+				if(ruoloPortaFiltro!=null){
+					de.setSelected(ruoloPortaFiltro.getValue());
 				}
 				de.setType(DataElementType.SELECT);
 				de.setPostBack_viaPOST(true);
@@ -21327,7 +21820,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_PROTOCOLLO);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_PROTOCOLLO);
 			de.setValue(protocolloSelezionatoValue); // un protocollo e' sempre selezionato 
-			if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
+			if(filterConfig!=null && filterConfig.isHideProtocol()) {
+				de.setType(DataElementType.HIDDEN);
+				dati.addElement(de);
+			}
+			else if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
 				de.setType(DataElementType.HIDDEN);
 				dati.addElement(de);
 				
@@ -21365,7 +21862,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_EROGATORE);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_EROGATORE);
-			if(datiIdentificativiErogatoreSelezionatoValue!=null) {
+			if(filterConfig!=null && filterConfig.isHideProviderRole()) {
+				de.setType(DataElementType.HIDDEN);
+			}
+			else if(datiIdentificativiErogatoreSelezionatoValue!=null) {
 				de.setType(DataElementType.HIDDEN);
 			}
 			else {
@@ -21396,7 +21896,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_EROGATORE);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_EROGATORE);
-			if(ruoloErogatoreSelezionatoValue!=null) {
+			if(filterConfig!=null && filterConfig.isHideProvider()) {
+				de.setType(DataElementType.HIDDEN);
+			}
+			else if(ruoloErogatoreSelezionatoValue!=null) {
 				de.setType(DataElementType.HIDDEN);
 			}
 			else {
@@ -21429,7 +21932,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_TAG);
 			de.setValue(datiIdentificativiTagSelezionatoValue);
 			boolean allarmiFiltroApi = this.core.getAllarmiConfig().isOptionsFilterApi();
-			if(!configurazione) {
+			if(filterConfig!=null && filterConfig.isHideTag()) {
+				de.setType(DataElementType.HIDDEN);
+				dati.addElement(de);
+			}
+			else if(!configurazione) {
 				de.setType(DataElementType.HIDDEN);
 				dati.addElement(de);
 			}
@@ -21453,7 +21960,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_SERVIZIO);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_SERVIZIO);
 			de.setValue(datiIdentificativiServizioSelezionatoValue);
-			if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
+			if(filterConfig!=null && filterConfig.isHideService()) {
+				de.setType(DataElementType.HIDDEN);
+				dati.addElement(de);
+			}
+			else if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
 				de.setType(DataElementType.HIDDEN);
 				dati.addElement(de);
 				
@@ -21488,7 +21999,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// Azione
 			boolean showAzione = true;
 			if(configurazione) {
-				if(datiIdentificativiServizioSelezionatoValue==null) {
+				if(filterConfig!=null && filterConfig.isHideAction()) {
+					showAzione = false;
+				}
+				else if(datiIdentificativiServizioSelezionatoValue==null) {
+					showAzione = false;
+				}
+			}
+			else {
+				if(filterConfig!=null && filterConfig.isHideAction()) {
 					showAzione = false;
 				}
 			}
@@ -21649,7 +22168,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //			else {
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_RICHIEDENTE);
 			//}
-			if((datiIdentificativiFruitoreSelezionatoValue!=null && !delegata) || servizioApplicativoFruitoreSelezionatoValue!=null || !showRuoloRichiedente) {
+			if(filterConfig!=null && filterConfig.isHideSubscriberRole()) {
+				de.setType(DataElementType.HIDDEN);
+			}
+			else if((datiIdentificativiFruitoreSelezionatoValue!=null && !delegata) || servizioApplicativoFruitoreSelezionatoValue!=null || !showRuoloRichiedente) {
 				de.setType(DataElementType.HIDDEN);
 			}
 			else {
@@ -21686,7 +22208,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_FRUITORE);
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_FRUITORE);
-				if(ruoloFruitoreSelezionatoValue!=null) {
+				if(filterConfig!=null && filterConfig.isHideSubscriber()) {
+					de.setType(DataElementType.HIDDEN);
+				}
+				else if(ruoloFruitoreSelezionatoValue!=null) {
 					de.setType(DataElementType.HIDDEN);
 				}
 				else {
@@ -21719,7 +22244,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_SA_FRUITORE);
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_SA_FRUITORE);
-				if(ruoloFruitoreSelezionatoValue!=null) {
+				if(filterConfig!=null && filterConfig.isHideApplication()) {
+					de.setType(DataElementType.HIDDEN);
+				}
+				else if(ruoloFruitoreSelezionatoValue!=null) {
 					de.setType(DataElementType.HIDDEN);
 				}
 				else {
@@ -21749,7 +22277,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 	}
 	
-	private void addToDatiAllarmeGroupBy(Vector<DataElement> dati, TipoOperazione tipoOperazione,ConfigurazioneAllarmeBean allarme, String nomeSezione,	
+	private void addToDatiAllarmeGroupBy(Vector<DataElement> dati, TipoOperazione tipoOperazione,ConfigurazioneAllarmeBean allarme, Context context, String nomeSezione,	
 			RuoloPorta ruoloPorta, String nomePorta, ServiceBinding serviceBinding,
 			boolean tokenAbilitato) throws Exception {
 	
@@ -21818,24 +22346,55 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		if(allarme.getGroupBy().isEnabled()){
 		
+			GroupByConfiguration groupByConfig = this.confCore.getGroupByConfiguration(allarme, context);
+			
 			
 			// --- GENERALI ---
 			
 			if(configurazione) {
 				
-				boolean showRuoloPdD = allarme.getFiltro()==null || 
-						allarme.getFiltro().isEnabled()==false || 
-						allarme.getFiltro().getRuoloPorta()==null ||
-						RuoloPorta.ENTRAMBI.equals(allarme.getFiltro().getRuoloPorta());
+				// Ruolo Gateway
+				FiltersConfiguration filterConfig = this.confCore.getFiltersConfiguration(allarme, context);
+				RuoloPorta ruoloPortaFiltro = null;
+				if(allarme!=null && allarme.getFiltro()!=null && allarme.getFiltro().isEnabled()) {
+					ruoloPortaFiltro = allarme.getFiltro().getRuoloPorta();
+				}
+				if(filterConfig!=null && !filterConfig.isHideGatewayRole() &&
+						(filterConfig.isForceInGatewayRole() || filterConfig.isForceOutGatewayRole())) {
+					if(filterConfig.isForceInGatewayRole()) {
+						ruoloPortaFiltro = RuoloPorta.APPLICATIVA;
+					}
+					else if(filterConfig.isForceOutGatewayRole()) {
+						ruoloPortaFiltro = RuoloPorta.DELEGATA;
+					}
+				}
+				
+				boolean showRuoloPdD = ruoloPortaFiltro==null || 
+						RuoloPorta.ENTRAMBI.equals(ruoloPortaFiltro);
+				if(showRuoloPdD) {
+					if(groupByConfig!=null && groupByConfig.isHideGatewayRole()) {
+						showRuoloPdD = false;
+					}
+				}
 				
 				boolean showProtocollo = protocolli.size()>1 && (allarme.getFiltro()==null || 
 						allarme.getFiltro().isEnabled()==false || 
 						allarme.getFiltro().getProtocollo()==null);
+				if(showProtocollo) {
+					if(groupByConfig!=null && groupByConfig.isHideProtocol()) {
+						showProtocollo = false;
+					}
+				}
 				
 				boolean showErogatore = allarme.getFiltro()==null || 
 						allarme.getFiltro().isEnabled()==false || 
 						allarme.getFiltro().getTipoErogatore()==null ||
 						allarme.getFiltro().getNomeErogatore()==null;
+				if(showErogatore) {
+					if(groupByConfig!=null && groupByConfig.isHideProvider()) {
+						showErogatore = false;
+					}
+				}
 				
 				if(showRuoloPdD || showProtocollo || showErogatore) {
 //					de = new DataElement();
@@ -21896,6 +22455,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					allarme.getFiltro().getAzione()==null ||
 					"".equals(allarme.getFiltro().getAzione()) ||
 					allarme.getFiltro().getAzione().contains(",");
+			if(showAzione) {
+				if(groupByConfig!=null && groupByConfig.isHideAction()) {
+					showAzione = false;
+				}
+			}
 			
 //			boolean showSAErogatore = false;
 			
@@ -21906,10 +22470,20 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							allarme.getFiltro().isEnabled()==false || 
 							allarme.getFiltro().getTipoServizio()==null ||
 							allarme.getFiltro().getNomeServizio()==null;
+					if(showServizio) {
+						if(groupByConfig!=null && groupByConfig.isHideService()) {
+							showServizio = false;
+						}
+					}
 				}
 
 				if(showAzione) {
 					showAzione = showServizio && allarme.getGroupBy().isServizio(); // l'azione la scelgo se ho prima selezionato una API
+					if(showAzione) {
+						if(groupByConfig!=null && groupByConfig.isHideAction()) {
+							showAzione = false;
+						}
+					}
 				}
 				
 //				showSAErogatore = allarme.getFiltro()==null || 
@@ -21998,6 +22572,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						allarme.getFiltro().isEnabled()==false || 
 						allarme.getFiltro().getTipoFruitore()==null ||
 						allarme.getFiltro().getNomeFruitore()==null;
+				if(showFruitore) {
+					if(groupByConfig!=null && groupByConfig.isHideSubscriber()) {
+						showFruitore = false;
+					}
+				}
 				
 				// Fruitore
 				if( showFruitore ){
@@ -22015,6 +22594,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						allarme.getFiltro().isEnabled()==false || 
 						allarme.getFiltro().getRuoloPorta()==null ||
 						allarme.getFiltro().getServizioApplicativoFruitore()==null;
+				if(showRichiedenteApplicativo) {
+					if(groupByConfig!=null && groupByConfig.isHideApplication()) {
+						showRichiedenteApplicativo = false;
+					}
+				}
 				
 				// Applicativo Fruitore
 				if( showRichiedenteApplicativo ){
@@ -22030,14 +22614,23 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			else {
 			
+				boolean showRichiedente = true;
+				if(showRichiedente) {
+					if(groupByConfig!=null && groupByConfig.isHideSenderIdentity()) {
+						showRichiedente = false;
+					}
+				}
+				
 				// Richiedente API (Significa SoggettoMittente per le erogazioni, Applicativo e Identificativo Autenticato sia per le erogazioni che per le fruizioni)
-				de = new DataElement();
-				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_RICHIEDENTE);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_RICHIEDENTE);
-				de.setType(DataElementType.CHECKBOX);
-				de.setSelected(allarme.getGroupBy().isIdentificativoAutenticato()); // uso isIdentificativoAutenticato come informazione equivalente a isServizioApplicativoFruitore e isSoggettoFruitore
-				de.setValue(allarme.getGroupBy().isIdentificativoAutenticato()+"");
-				dati.addElement(de);
+				if(showRichiedente) {
+					de = new DataElement();
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_RICHIEDENTE);
+					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_RICHIEDENTE);
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(allarme.getGroupBy().isIdentificativoAutenticato()); // uso isIdentificativoAutenticato come informazione equivalente a isServizioApplicativoFruitore e isSoggettoFruitore
+					de.setValue(allarme.getGroupBy().isIdentificativoAutenticato()+"");
+					dati.addElement(de);
+				}
 			
 			}
 			
@@ -22074,26 +22667,42 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					groupByToken = ServletUtils.isCheckBoxEnabled(token);
 				}
 				
-				de = new DataElement();
-				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_TOKEN);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_TOKEN);
-				de.setType(DataElementType.CHECKBOX);
-				de.setSelected(groupByToken); // uso isIdentificativoAutenticato come informazione equivalente a isServizioApplicativoFruitore e isSoggettoFruitore
-				de.setValue(groupByToken+"");
-				de.setPostBack_viaPOST(true);
-				dati.addElement(de);
+				boolean showToken = true;
+				if(showToken) {
+					if(groupByConfig!=null && groupByConfig.isHideToken()) {
+						showToken = false;
+					}
+				}
 				
-				if(groupByToken) {
+				if(showToken) {
 					de = new DataElement();
-					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_TOKEN_CLAIMS);
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_TOKEN_CLAIMS);
-					de.setValues(CostantiControlStation.TOKEN_VALUES_WITHOUT_ISSUER);
-					de.setLabels(CostantiControlStation.LABEL_TOKEN_VALUES_WITHOUT_ISSUER);
-					de.setSelezionati(tokenSelezionatiSenzaIssuer);
-					de.setType(DataElementType.MULTI_SELECT);
-					de.setRows(4); 
-					de.setRequired(true);
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_TOKEN);
+					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_TOKEN);
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(groupByToken); // uso isIdentificativoAutenticato come informazione equivalente a isServizioApplicativoFruitore e isSoggettoFruitore
+					de.setValue(groupByToken+"");
+					de.setPostBack_viaPOST(true);
 					dati.addElement(de);
+					
+					boolean showTokenClaims = true;
+					if(showTokenClaims) {
+						if(groupByConfig!=null && groupByConfig.isHideTokenClaims()) {
+							showTokenClaims = false;
+						}
+					}
+					
+					if(showTokenClaims && groupByToken) {
+						de = new DataElement();
+						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_TOKEN_CLAIMS);
+						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_TOKEN_CLAIMS);
+						de.setValues(CostantiControlStation.TOKEN_VALUES_WITHOUT_ISSUER);
+						de.setLabels(CostantiControlStation.LABEL_TOKEN_VALUES_WITHOUT_ISSUER);
+						de.setSelezionati(tokenSelezionatiSenzaIssuer);
+						de.setType(DataElementType.MULTI_SELECT);
+						de.setRows(4); 
+						de.setRequired(true);
+						dati.addElement(de);
+					}
 				}
 				
 			}
@@ -23069,5 +23678,54 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		handlerDestinazione.setStato(handlerSorgente.getStato());
 		handlerDestinazione.setTipo(handlerSorgente.getTipo());
 		//handlerDestinazione.setId(handlerSorgente.getId());
+	}
+	
+	public void addDescrizioneVerificaConnettivitaToDati(Vector<DataElement> dati, GenericProperties genericProperties,
+			String server, boolean registro, String aliasConnettore) throws Exception {
+		
+		List<Connettore> l = ConnettoreCheck.convertPolicyToConnettore(genericProperties, this.log);
+		if(l!=null && !l.isEmpty()) {
+			for (Connettore connettore : l) {
+				
+				String tipo = ConnettoreCheck.getPropertyValue(connettore, ConnettoreCheck.POLICY_TIPO_ENDPOINT);
+								
+				List<Parameter> downloadCertServerParameters = new ArrayList<Parameter>();
+				
+				downloadCertServerParameters.add(new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_TOKEN_NOME, genericProperties.getNome()));
+				downloadCertServerParameters.add(new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_TOKEN_TIPOLOGIA, genericProperties.getTipologia()));
+				downloadCertServerParameters.add(new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_TOKEN_TIPO, tipo!=null ? tipo : ""));
+				
+				this.addDescrizioneVerificaConnettivitaToDati(dati, connettore,
+						server, registro, aliasConnettore,
+						downloadCertServerParameters,
+						true, true);
+								
+			}
+		}
+		
+	}
+	public Vector<DataElement> addTokenPolicyHiddenToDati(Vector<DataElement> dati, String id, String infoType) {
+		
+		DataElement de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID);
+		de.setValue(id);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+		de.setValue(infoType);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+		dati.addElement(de);
+		
+		return dati;
+	}
+	
+	public void addVisualizzaRuntimeButton(Vector<DataElement> e, String servletName, List<Parameter> parameters) {
+		this.addAzioneButton(e, DataElementType.IMAGE, 
+				ConfigurazioneCostanti.ICONA_VISUALIZZA_RUNTIME_ALLARME_TOOLTIP,
+				ConfigurazioneCostanti.ICONA_VISUALIZZA_RUNTIME_ALLARME, servletName,parameters);
 	}
 }

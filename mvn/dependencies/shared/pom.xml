@@ -41,7 +41,7 @@
 		<velocity-tools.version>3.1</velocity-tools.version>
 		<wsdl4j.version>1.6.3</wsdl4j.version>
 		<xalan.version>2.7.2</xalan.version>
-		<xercesImpl.version>2.12.1</xercesImpl.version>
+		<xercesImpl.version>2.12.2</xercesImpl.version>
 		<xml-apis.version>1.4.01</xml-apis.version>
 		<xmlunit.version>1.6</xmlunit.version>
 		<xom.version>1.2.11</xom.version>

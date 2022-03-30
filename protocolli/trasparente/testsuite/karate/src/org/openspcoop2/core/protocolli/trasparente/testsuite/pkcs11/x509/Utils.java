@@ -1,22 +1,8 @@
-package org.openspcoop2.core.protocolli.trasparente.testsuite.pkcs11.x509;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.Date;
-import java.util.Map;
-import java.util.Properties;
-
-import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
-import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Headers;
 /*
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -31,6 +17,20 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Heade
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+package org.openspcoop2.core.protocolli.trasparente.testsuite.pkcs11.x509;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Date;
+import java.util.Properties;
+
+import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Headers;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
@@ -45,7 +45,6 @@ import org.openspcoop2.utils.security.JWEOptions;
 import org.openspcoop2.utils.security.JWSOptions;
 import org.openspcoop2.utils.security.JsonEncrypt;
 import org.openspcoop2.utils.security.JsonSignature;
-import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -443,27 +442,5 @@ public class Utils {
 			}
 		}
 	}
-	
-	@SuppressWarnings("deprecation")
-	private static String buildUrl(Map<String,String> propertiesURLBased, String urlBase) {
-		return TransportUtils.buildLocationWithURLBasedParameter(propertiesURLBased, urlBase);
-	}
-	public static void resetCacheToken(Logger log) {
-		Map<String,String> queryParams = Map.of(
-				"resourceName", "GestioneToken",
-				"methodName", "resetCache"
-				//,
-				//"paramValue", idPolicy
-			);
-		String jmxUrl = buildUrl(queryParams, System.getProperty("govway_base_path") + "/check");
-		log.info("Resetto la policy di rate limiting sulla url: " + jmxUrl );
-		
-		try {
-			String resp = new String(HttpUtilities.getHTTPResponse(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password")).getContent());
-			log.info(resp);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-		//HttpUtilities.check(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password"));
-	}
+
 }

@@ -8,14 +8,14 @@
 # -- Project information -----------------------------------------------------
 
 project = 'GovWay'
-copyright = 'Copyright (c) 2005-2021 Link.it srl (https://link.it).'
+copyright = 'Copyright (c) 2005-2022 Link.it srl (https://link.it).'
 author = 'Link.it'
 numfig = True
 
 # The short X.Y version
-version = '3.3.5.p1'
+version = '3.3.6.p1'
 # The full version, including alpha/beta/rc tags
-release = '3.3.5.p1'
+release = '3.3.6.p1'
 
 
 # -- General configuration ---------------------------------------------------

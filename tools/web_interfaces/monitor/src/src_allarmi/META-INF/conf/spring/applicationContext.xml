@@ -18,4 +18,15 @@
 		<property name="search" ref="searchFormAllarmi"/>
 	</bean>
 	
+	<bean id="searchFormAllarmiHistory" class="org.openspcoop2.web.monitor.allarmi.bean.AllarmiSearchForm" scope="session"/>
+	
+	<bean id="allarmiHistoryService" class="org.openspcoop2.web.monitor.allarmi.dao.AllarmiService" scope="request">
+		<property name="search" ref="searchFormAllarmiHistory"/>
+	</bean>
+	
+	<bean id="allarmiHistoryBean" class="org.openspcoop2.web.monitor.allarmi.mbean.AllarmiBean" scope="request">
+		<property name="service" ref="allarmiHistoryService"/>
+		<property name="search" ref="searchFormAllarmiHistory"/>
+	</bean>
+	
 </beans>

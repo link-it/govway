@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -30,11 +30,13 @@ import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.Key;
 import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.Provider;
 import java.security.cert.CertStore;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -42,9 +44,11 @@ import java.util.Map;
 import javax.net.ssl.CertPathTrustManagerParameters;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509KeyManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -1013,6 +1017,7 @@ public class HttpUtilities {
 		
 		InputStream is = null;
 		ByteArrayOutputStream outResponse = null;
+		InputStream finKeyStore = null;
 		InputStream finTrustStore = null;
 		try {
 			SSLContext sslContext = null;
@@ -1021,6 +1026,129 @@ public class HttpUtilities {
 				KeyManager[] km = null;
 				TrustManager[] tm = null;
 								
+				// Autenticazione CLIENT
+				if(request.getKeyStore()!=null || request.getKeyStorePath()!=null){
+					String location = null;
+					try {
+						location = request.getKeyStorePath(); // per debug
+					
+						boolean hsmKeystore = false;
+						HSMManager hsmManager = HSMManager.getInstance();
+						String hsmType = null;
+						if(hsmManager!=null) {
+							if(request.getKeyStore()!=null) {
+								hsmType = request.getKeyStore().getType();
+							}
+							else {
+								hsmType = request.getKeyStoreType();
+							}
+							if(hsmType!=null) {
+								hsmKeystore = hsmManager.existsKeystoreType(hsmType);
+								if(!hsmKeystore) {
+									hsmType = null;
+								}
+							}
+						}
+						
+						KeyStore keystore = null;
+						KeyStore keystoreParam = null;
+						@SuppressWarnings("unused")
+						Provider keystoreProvider = null;
+						if(request.getKeyStore()!=null) {
+							keystoreParam = request.getKeyStore();
+							if(hsmKeystore) {
+								keystoreProvider = keystoreParam.getProvider();
+							}
+						}
+						else {
+							if(hsmKeystore) {
+								org.openspcoop2.utils.certificate.KeyStore ks = hsmManager.getKeystore(hsmType);
+								if(ks==null) {
+									throw new Exception("Keystore not found");
+								}
+								keystoreParam = ks.getKeystore();
+								keystoreProvider = keystoreParam.getProvider();
+							}
+							else {
+								keystoreParam = KeyStore.getInstance(request.getKeyStoreType()!=null ? request.getKeyStoreType() : "JKS"); // JKS,PKCS12,jceks,bks,uber,gkr
+								File file = new File(location);
+								if(file.exists()) {
+									finKeyStore = new FileInputStream(file);
+								}
+								else {
+									finKeyStore = SSLUtilities.class.getResourceAsStream(location);
+								}
+								if(finKeyStore == null) {
+									throw new Exception("Keystore not found");
+								}
+								keystoreParam.load(finKeyStore, request.getKeyStorePassword().toCharArray());
+							}
+						}
+						
+						boolean oldMethodKeyAlias = false; // Questo metodo non funzirequestonava con PKCS11
+						if(oldMethodKeyAlias && request.getKeyAlias()!=null) {
+							Key key = keystoreParam.getKey(request.getKeyAlias(), request.getKeyPassword().toCharArray());
+							if(key==null) {
+								throw new Exception("Key with alias '"+request.getKeyAlias()+"' not found");
+							}
+							if(hsmKeystore) {
+								// uso un JKS come tmp
+								keystore = KeyStore.getInstance("JKS");
+							}
+							else {
+								keystore = KeyStore.getInstance(request.getKeyStoreType());
+							}
+							keystore.load(null); // inizializza il keystore
+							keystore.setKeyEntry(request.getKeyAlias(), key, 
+									request.getKeyPassword().toCharArray(), keystoreParam.getCertificateChain(request.getKeyAlias()));
+						}
+						else {
+							keystore = keystoreParam;
+						}
+						
+						KeyManagerFactory keyManagerFactory = null;
+						// NO: no such algorithm: SunX509 for provider SunPKCS11-xxx
+						//if(keystoreProvider!=null) {
+						//	keyManagerFactory = KeyManagerFactory.getInstance(sslConfig.getKeyManagementAlgorithm(), keystoreProvider);
+						//}
+						//else {
+						keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
+						//}
+						
+						keyManagerFactory.init(keystore, request.getKeyPassword().toCharArray());
+						km = keyManagerFactory.getKeyManagers();
+						if(!oldMethodKeyAlias && request.getKeyAlias()!=null) {
+							if(km!=null && km.length>0 && km[0]!=null && km[0] instanceof X509KeyManager) {
+								
+								String alias = request.getKeyAlias();
+								
+								// Fix case insensitive
+								Enumeration<String> enAliases = keystore.aliases();
+								if(enAliases!=null) {
+									while (enAliases.hasMoreElements()) {
+										String a = (String) enAliases.nextElement();
+										if(a.equalsIgnoreCase(alias)) {
+											alias = a; // uso quello presente nel keystore
+											break;
+										}
+									}
+								}
+								
+								X509KeyManager wrapperX509KeyManager = new SSLX509ManagerForcedClientAlias(alias, (X509KeyManager)km[0] );
+								km[0] = wrapperX509KeyManager;
+							}
+						}
+					}catch(Throwable e) {
+						if(location!=null) {
+							throw new UtilsException("["+location+"] "+e.getMessage(),e);
+						}
+						else {
+							throw new UtilsException(e.getMessage(),e);
+						}
+					}
+				}
+				
+				// Autenticazione Server
 				KeyStore truststore = null;
 				if(request.isTrustAllCerts()) {
 					tm = SSLUtilities.getTrustAllCertsManager();
@@ -1279,6 +1407,11 @@ public class HttpUtilities {
 			throw new UtilsException(e.getMessage(),e);
 		}
 		finally{
+			try{
+				if(finKeyStore!=null){
+					finKeyStore.close();
+				}
+			}catch(Exception e){}
 			try{
 				if(finTrustStore!=null){
 					finTrustStore.close();

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -92,6 +92,7 @@ import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.monitor.sdk.condition.Context;
 import org.openspcoop2.monitor.sdk.exceptions.AlarmException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
+import org.openspcoop2.monitor.sdk.plugins.DialogInfo;
 import org.openspcoop2.monitor.sdk.plugins.IAlarmProcessing;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
@@ -501,6 +502,7 @@ public class AllarmiService implements IAllarmiService {
 				List<ConfigurazioneAllarmeBean> toRet = new ArrayList<ConfigurazioneAllarmeBean>();
 
 				boolean existsAlmostOneManuallyUpdateState = false;
+				boolean existsAlmostOneManuallyAckCriteria = false;
 				
 				for (Allarme al : findAll) {
 					IdPlugin idPlugin = new IdPlugin();
@@ -512,11 +514,15 @@ public class AllarmiService implements IAllarmiService {
 					if(allarmeBean.isManuallyUpdateState()) {
 						existsAlmostOneManuallyUpdateState = true;
 					}
+					if(allarmeBean.isManuallyAckCriteria()) {
+						existsAlmostOneManuallyAckCriteria = true;
+					}
 					toRet.add(allarmeBean);
 				}
 				
 				for (ConfigurazioneAllarmeBean allarmeBean : toRet) {
 					allarmeBean.setExistsAlmostOneManuallyUpdateState(existsAlmostOneManuallyUpdateState);
+					allarmeBean.setExistsAlmostOneManuallyAckCriteria(existsAlmostOneManuallyAckCriteria);
 				}
 
 				return toRet;
@@ -1327,14 +1333,14 @@ public class AllarmiService implements IAllarmiService {
 	}
 
 	@Override
-	public boolean isUsableFilter(Allarme configurazioneAllarme) throws Exception{
-		return _isUsable(configurazioneAllarme, true);
+	public boolean isUsableFilter(Allarme configurazioneAllarme, Context context) throws Exception{
+		return _isUsable(configurazioneAllarme, context, true);
 	}
 	@Override
-	public boolean isUsableGroupBy(Allarme configurazioneAllarme) throws Exception{
-		return _isUsable(configurazioneAllarme, false);
+	public boolean isUsableGroupBy(Allarme configurazioneAllarme, Context context) throws Exception{
+		return _isUsable(configurazioneAllarme, context, false);
 	}
-	public boolean _isUsable(Allarme configurazioneAllarme, boolean filter) throws Exception{
+	public boolean _isUsable(Allarme configurazioneAllarme, Context context, boolean filter) throws Exception{
 		
 		try {
 			IdPlugin idPlugin = new IdPlugin();
@@ -1345,7 +1351,7 @@ public class AllarmiService implements IAllarmiService {
 			
 			IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME, configurazioneAllarme.getTipo(), plugin.getClassName(), AllarmiService.log);
 			IAlarmProcessing alarmProcessing = (IAlarmProcessing) bl.newInstance();
-			return filter ? alarmProcessing.isUsableFilter() : alarmProcessing.isUsableGroupBy();
+			return filter ? alarmProcessing.isUsableFilter(context) : alarmProcessing.isUsableGroupBy(context);
 
 		} catch (Exception e) {
 			AllarmiService.log.error(e.getMessage(), e);
@@ -1354,7 +1360,7 @@ public class AllarmiService implements IAllarmiService {
 	}
 	
 	@Override
-	public String getParameterSectionTitle(Allarme configurazioneAllarme) throws Exception{
+	public String getParameterSectionTitle(Allarme configurazioneAllarme, Context context) throws Exception{
 		try {
 			IdPlugin idPlugin = new IdPlugin();
 			idPlugin.setTipoPlugin(TipoPlugin.ALLARME.getValue());
@@ -1365,7 +1371,7 @@ public class AllarmiService implements IAllarmiService {
 			IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME, configurazioneAllarme.getTipo(), plugin.getClassName(), AllarmiService.log);
 			IAlarmProcessing alarmProcessing = (IAlarmProcessing) bl.newInstance();
 			
-			boolean groupBy = alarmProcessing.isUsableGroupBy();
+			boolean groupBy = alarmProcessing.isUsableGroupBy(context);
 			
 			String s = alarmProcessing.getParameterSectionTitle();
 			if(s==null || StringUtils.isEmpty(s)) {
@@ -1384,6 +1390,25 @@ public class AllarmiService implements IAllarmiService {
 		}
 	}
 
+	
+	@Override
+	public DialogInfo getCriteriAckDialogInfo(Allarme configurazioneAllarme, Context context) throws Exception{
+		try {
+			IdPlugin idPlugin = new IdPlugin();
+			idPlugin.setTipoPlugin(TipoPlugin.ALLARME.getValue());
+			idPlugin.setTipo(configurazioneAllarme.getTipo());
+			
+			Plugin plugin = this.dynamicUtils.getPlugin(idPlugin);
+			
+			IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME, configurazioneAllarme.getTipo(), plugin.getClassName(), AllarmiService.log);
+			IAlarmProcessing alarmProcessing = (IAlarmProcessing) bl.newInstance();
+			return alarmProcessing.getDialogInfoAckCriteria(context);
+
+		} catch (Exception e) {
+			AllarmiService.log.error(e.getMessage(), e);
+			throw e;
+		}
+	}
 	
 
 	@Override

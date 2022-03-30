@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -94,6 +94,9 @@ public class ModIImbustamentoSoap {
 		
 		OpenSPCoop2SoapMessage soapMessage = msg.castAsSoap();
 		
+		boolean bufferMessage_readOnly = true;
+		String idTransazione = soapMessage.getTransactionId();
+		
 		if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)) {
 			
 			// Flusso di Richiesta
@@ -101,14 +104,14 @@ public class ModIImbustamentoSoap {
 			if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PUSH.equals(asyncInteractionType)) {
 			
 				if(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA.equals(asyncInteractionRole)) {
-				
+									
 					if(this.modiProperties.isSoapSecurityTokenPushReplyToUpdateOrCreateInFruizione()) {
 						
-						ModIUtilities.addSOAPHeaderReplyTo(soapMessage, replyTo); // aggiorna il valore se già esistente
+						ModIUtilities.addSOAPHeaderReplyTo(soapMessage, !bufferMessage_readOnly, idTransazione, replyTo); // aggiorna il valore se già esistente
 						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_REPLY_TO, replyTo);
 					}
 					else {
-						String replyToFound = ModIUtilities.getSOAPHeaderReplyToValue(soapMessage.getMessageType(), soapMessage.getSOAPHeader(), soapMessage.getSOAPBody());
+						String replyToFound = ModIUtilities.getSOAPHeaderReplyToValue(soapMessage, bufferMessage_readOnly, idTransazione);
 						if(replyToFound!=null && !"".equals(replyToFound)) {
 							busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_REPLY_TO, replyToFound);
 						}
@@ -152,8 +155,7 @@ public class ModIImbustamentoSoap {
 					if(!foundCorrelationId) {
 					
 						if(this.modiProperties.isSoapSecurityTokenPushCorrelationIdUseTransactionIdIfNotExists()) {
-							String idTransazione = msg.getTransactionId();
-							ModIUtilities.addSOAPHeaderCorrelationId(soapMessage, idTransazione); 
+							ModIUtilities.addSOAPHeaderCorrelationId(soapMessage, !bufferMessage_readOnly, idTransazione, idTransazione); 
 							busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE, idTransazione);
 							busta.setCollaborazione(idTransazione);
 						}
@@ -178,8 +180,7 @@ public class ModIImbustamentoSoap {
 					if(!foundCorrelationId) {
 					
 						if(this.modiProperties.isSoapSecurityTokenPullCorrelationIdUseTransactionIdIfNotExists()) {
-							String idTransazione = msg.getTransactionId();
-							ModIUtilities.addSOAPHeaderCorrelationId(soapMessage, idTransazione); 
+							ModIUtilities.addSOAPHeaderCorrelationId(soapMessage, !bufferMessage_readOnly, idTransazione, idTransazione); 
 							busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE, idTransazione);
 							busta.setCollaborazione(idTransazione);
 						}
@@ -198,7 +199,11 @@ public class ModIImbustamentoSoap {
 	}
 	
 	private boolean processCorrelationId(OpenSPCoop2SoapMessage soapMessage, Busta busta, boolean notFoundException, String profilo, boolean useAlternativeMethod) throws Exception {
-		String correlationIdFound = ModIUtilities.getSOAPHeaderCorrelationIdValue(soapMessage.getMessageType(), soapMessage.getSOAPHeader(), soapMessage.getSOAPBody()); 
+		
+		boolean bufferMessage_readOnly = true;
+		String idTransazione = soapMessage.getTransactionId();
+		
+		String correlationIdFound = ModIUtilities.getSOAPHeaderCorrelationIdValue(soapMessage, bufferMessage_readOnly, idTransazione); 
 		if(correlationIdFound!=null && !"".equals(correlationIdFound)) {
 			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE, correlationIdFound);
 			if(correlationIdFound.length()<=255) {
@@ -223,18 +228,18 @@ public class ModIImbustamentoSoap {
 				if(correlationIdFoundHttp.length()<=255) {
 					busta.setCollaborazione(correlationIdFoundHttp);
 				}
-				ModIUtilities.addSOAPHeaderCorrelationId(soapMessage, correlationIdFoundHttp); 
+				ModIUtilities.addSOAPHeaderCorrelationId(soapMessage, !bufferMessage_readOnly, idTransazione, correlationIdFoundHttp); 
 				return true;
 			}
 			else if(busta.getCollaborazione()!=null) {
 				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE, busta.getCollaborazione());
-				ModIUtilities.addSOAPHeaderCorrelationId(soapMessage, busta.getCollaborazione()); 
+				ModIUtilities.addSOAPHeaderCorrelationId(soapMessage, !bufferMessage_readOnly, idTransazione, busta.getCollaborazione()); 
 				return true;
 			}
 			else if(busta.getRiferimentoMessaggio()!=null) {
 				busta.setCollaborazione(busta.getRiferimentoMessaggio());
 				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE, busta.getRiferimentoMessaggio());
-				ModIUtilities.addSOAPHeaderCorrelationId(soapMessage, busta.getRiferimentoMessaggio());
+				ModIUtilities.addSOAPHeaderCorrelationId(soapMessage, !bufferMessage_readOnly, idTransazione, busta.getRiferimentoMessaggio());
 				return true;
 			}
 			
@@ -262,6 +267,8 @@ public class ModIImbustamentoSoap {
 		
 		OpenSPCoop2SoapMessage soapMessage = msg.castAsSoap();
 		SOAPEnvelope soapEnvelope = soapMessage.getSOAPPart().getEnvelope();
+		boolean bufferMessage_readOnly = true;
+		String idTransazione = soapMessage.getTransactionId();
 		
 		boolean integrita = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile) || 
 				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile);
@@ -275,7 +282,7 @@ public class ModIImbustamentoSoap {
 			if(context.containsKey(ModICostanti.MODIPA_CONTEXT_REQUEST_DIGEST)) {
 				Object o = context.getObject(ModICostanti.MODIPA_CONTEXT_REQUEST_DIGEST);
 				NodeList nodeList = (NodeList) o;
-				requestDigest = ModIUtilities.addSOAPHeaderRequestDigest(soapMessage, nodeList); 
+				requestDigest = ModIUtilities.addSOAPHeaderRequestDigest(soapMessage, !bufferMessage_readOnly, idTransazione, nodeList); 
 			}
 		}
 		

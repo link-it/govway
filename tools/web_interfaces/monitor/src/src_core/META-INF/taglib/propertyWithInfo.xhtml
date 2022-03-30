@@ -1,0 +1,71 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://java.sun.com/jsf/facelets"
+                 xmlns:h="http://java.sun.com/jsf/html"
+                 xmlns:f="http://java.sun.com/jsf/core"
+                 xmlns:c="http://java.sun.com/jstl/core"
+                 xmlns:a4j="http://richfaces.org/a4j"
+                 xmlns:link="http://www.link.it">
+                 <a4j:loadScript src="resource://jquery.js"/>
+	<c:if test="#{empty required}">
+	 	<c:set var="required" value="false"/>
+	</c:if>
+	<c:if test="#{empty noteEscape}">
+	 	<c:set var="noteEscape" value="true"/>
+	</c:if>
+	<c:if test="#{empty id}">
+		<c:set var="id" value="propWithInfo" />
+	</c:if>
+		
+    <a4j:outputPanel rendered="#{not empty rendered ? rendered : true}" layout="block" id="#{id}_prop_pnl">
+    	<div class="prop">
+    		<c:if test="#{not empty labelId}">
+				<label id="#{labelId}" class="#{not empty styleClass ? styleClass : ''}">
+					<h:outputText value="#{label}" />
+					<c:if test="#{required}">
+						<em>*</em>
+					</c:if>
+				</label>
+			</c:if>
+			<c:if test="#{empty labelId}">
+				<label class="#{not empty styleClass ? styleClass : ''}">
+					<h:outputText value="#{label}" />
+					<c:if test="#{required}">
+						<em>*</em>
+					</c:if>
+				</label>
+			</c:if>	
+			<div class="boxInfoDiv">
+				<ui:insert/>
+				<c:if test="#{not empty dialogInfo}">
+					<div class="iconInfoBox" id="#{id}_divIconInfo">
+				      	<span class="spanIconInfoBox" id="#{id}_spanIconInfo">
+							<i class="material-icons md-24" id="#{id}_icon">#{dialogInfo.buttonIcon}</i>
+						</span>
+						<script>
+							jQuery(document).ready(function() {
+								jQuery("##{id}_spanIconInfo").click(function(){
+									var body = jQuery("##{id}_dialogInfo_hiddenBody").val();
+									if(#{id}_dialogInfo_hiddenBody_ctn){
+										body = #{id}_dialogInfo_hiddenBody_ctn;
+									} else {
+										#{id}_dialogInfo_hiddenBody_ctn = body;
+										jQuery("##{id}_dialogInfo_hiddenBody").val('');
+									}
+									
+									jQuery("##{id}_dialogInfo_ModalBody").html(body);
+									Richfaces.showModalPanel('#{id}_dialogInfo_Modal');
+				    			});
+							 });
+						</script>
+						<link:dialogInfo id="#{id}_dialogInfo" dialogInfo="#{dialogInfo}" />
+					</div>
+				</c:if>
+			</div>
+			<c:if test="#{not empty note}">
+				<p class="note">
+					<h:outputText value="#{note}" escape="#{noteEscape}"/>
+				</p>
+			</c:if>
+		</div>
+    </a4j:outputPanel>
+</ui:composition>

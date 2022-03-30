@@ -1,0 +1,91 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+	<f:loadBundle var="msg" basename="messages" />
+
+	<c:if test="#{empty id}">
+		<c:set var="id" value="dialogInfo" />
+	</c:if>
+
+	<c:if test="#{empty width}">
+		<c:set var="width" value="#{dialogInfo.width}" />
+	</c:if>
+
+	<c:if test="#{empty height}">
+		<c:set var="height" value="#{dialogInfo.height}" />
+	</c:if>
+
+	<c:if test="#{empty titolo}">
+		<c:set var="titolo" value="#{dialogInfo.headerFinestraModale}" />
+	</c:if>
+
+	<c:if test="#{empty contenuto}">
+		<c:set var="contenuto" value="#{dialogInfo.body}" />
+	</c:if>
+	
+	<c:if test="#{empty moveable}">
+		<c:set var="moveable" value="#{dialogInfo.moveable}" />
+	</c:if>
+	
+	<c:if test="#{empty resizeable}">
+		<c:set var="resizeable" value="#{dialogInfo.resizeable}" />
+	</c:if>
+
+	<rich:modalPanel id="#{id}_Modal" width="#{width}" height="#{height}" moveable="#{moveable}" resizeable="#{resizeable}">
+		<f:facet name="header">
+			<h:outputText value="#{titolo}" />
+		</f:facet>
+		<f:facet name="controls">
+			<a4j:outputPanel layout="inline" styleClass="comandoChiudiModale" onclick="Richfaces.hideModalPanel('#{id}_Modal');return false" title="Chiudi">
+				<i class="material-icons md-16" id="#{id}_Modal_header_close_icon">close</i>
+			</a4j:outputPanel>
+		</f:facet> 
+		<script>
+			var #{id}_hiddenBody_ctn;
+		</script>
+		<h:inputHidden value="#{contenuto}" rendered="true" id="#{id}_hiddenBody"/>
+		<a4j:outputPanel id="#{id}_ModalBodyExt" styleClass="contenutoModal" layout="block">
+			<a4j:outputPanel id="#{id}_ModalBody" styleClass="contenutoModal" layout="block"></a4j:outputPanel>
+		</a4j:outputPanel>
+		<c:if test="#{not resizeable}">
+			<style>
+				##{id}_ModalContentDiv {
+					height: auto !important;
+				}
+				
+				##{id}_ModalBodyExt {
+					overflow: auto;
+					height: #{height}px;
+					width: #{width}px;
+				}
+				
+				##{id}_ModalBody {
+					padding: 0.5em 1em;
+				}
+				
+				##{id}_ModalContentTable td.rich-mpnl-body {
+					padding: 0px;
+				}
+			</style>
+		</c:if>
+		<c:if test="#{resizeable}">
+			<style>
+				##{id}_ModalBodyExt {
+					overflow: auto;
+				}
+				
+				##{id}_ModalBody {
+					padding: 0.5em 1em;
+				}
+				
+				##{id}_ModalContentTable td.rich-mpnl-body {
+					padding: 0px;
+				}
+			</style>
+		</c:if>
+	</rich:modalPanel>
+</ui:composition>

@@ -21,10 +21,10 @@ package org.openspcoop2.pdd.core.connettori.nio;
 
 import javax.net.ssl.SSLContext;
 
-import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPSProperties;
 import org.openspcoop2.pdd.core.connettori.ConnettoreLogger;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.transport.http.SSLConfig;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 
 /**
@@ -36,7 +36,7 @@ import org.openspcoop2.utils.transport.http.SSLUtilities;
  */
 public class TlsContextBuilder {
 
-	public static SSLContext buildSSLContext(ConnettoreHTTPSProperties httpsProperties, ConnettoreLogger logger, StringBuilder sb) throws UtilsException {
+	public static SSLContext buildSSLContext(SSLConfig httpsProperties, ConnettoreLogger logger, StringBuilder sb) throws UtilsException {
 		// provo a leggere i keystore dalla cache
 		if(httpsProperties.getKeyStore()==null) {
 			if(httpsProperties.getKeyStoreLocation()!=null) {

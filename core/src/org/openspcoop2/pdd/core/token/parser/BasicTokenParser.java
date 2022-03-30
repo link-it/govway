@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -23,7 +23,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
+import org.openspcoop2.pdd.core.token.Costanti;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
 
 /**     
@@ -39,11 +41,16 @@ public class BasicTokenParser implements ITokenParser {
 	protected String raw;
 	protected Map<String, Object> claims;
 	protected TipologiaClaims parser;
+	protected Properties parserConfig;
 	protected ITokenUserInfoParser userInfoParser;
 	
 	public BasicTokenParser(TipologiaClaims parser) {
+		this(parser, null);
+	}
+	public BasicTokenParser(TipologiaClaims parser, Properties parserConfig) {
 		this.parser = parser;
-		this.userInfoParser = new BasicTokenUserInfoParser(parser);
+		this.parserConfig = parserConfig;
+		this.userInfoParser = new BasicTokenUserInfoParser(parser, this.parserConfig);
 	}
 	
 	@Override
@@ -60,6 +67,7 @@ public class BasicTokenParser implements ITokenParser {
 		case INTROSPECTION_RESPONSE_RFC_7662:
 		case JSON_WEB_TOKEN_RFC_7519:
 		case OIDC_ID_TOKEN:
+		case MAPPING:
 		case CUSTOM:
 			if(this.httpResponseCode!=null && 
 				(this.httpResponseCode.intValue() < 200 || this.httpResponseCode.intValue()>299)) {
@@ -103,6 +111,7 @@ public class BasicTokenParser implements ITokenParser {
 			return Boolean.valueOf(claim);
 		case JSON_WEB_TOKEN_RFC_7519:
 		case OIDC_ID_TOKEN:
+		case MAPPING:
 		case CUSTOM:
 			return true;
 		case GOOGLE:
@@ -135,6 +144,9 @@ public class BasicTokenParser implements ITokenParser {
 			return TokenUtilities.getClaimAsString(this.claims,Claims.OIDC_ID_TOKEN_ISSUER);
 		case GOOGLE:
 			return TokenUtilities.getClaimAsString(this.claims,Claims.GOOGLE_CLAIMS_ISSUER);
+		case MAPPING:
+			List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.TOKEN_PARSER_ISSUER);
+			return TokenUtilities.getFirstClaimAsString(this.claims, claimNames);
 		case CUSTOM:
 			return null;
 		}
@@ -152,6 +164,9 @@ public class BasicTokenParser implements ITokenParser {
 			return TokenUtilities.getClaimAsString(this.claims,Claims.OIDC_ID_TOKEN_SUBJECT);
 		case GOOGLE:
 			return TokenUtilities.getClaimAsString(this.claims,Claims.GOOGLE_CLAIMS_SUBJECT);
+		case MAPPING:
+			List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.TOKEN_PARSER_SUBJECT);
+			return TokenUtilities.getFirstClaimAsString(this.claims, claimNames);
 		case CUSTOM:
 			return null;
 		}
@@ -181,6 +196,9 @@ public class BasicTokenParser implements ITokenParser {
 				return this.getUserInfoParser().getFullName();
 			}
 			return null;
+		case MAPPING:
+			List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.TOKEN_PARSER_USERNAME);
+			return TokenUtilities.getFirstClaimAsString(this.claims, claimNames);
 		case CUSTOM:
 			return null;
 		}
@@ -198,6 +216,9 @@ public class BasicTokenParser implements ITokenParser {
 			return TokenUtilities.getClaimAsList(this.claims,Claims.OIDC_ID_TOKEN_AUDIENCE);
 		case GOOGLE:
 			return TokenUtilities.getClaimAsList(this.claims,Claims.GOOGLE_CLAIMS_AUDIENCE);
+		case MAPPING:
+			List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.TOKEN_PARSER_AUDIENCE);
+			return TokenUtilities.getFirstClaimAsList(this.claims, claimNames);
 		case CUSTOM:
 			return null;
 		}
@@ -219,6 +240,10 @@ public class BasicTokenParser implements ITokenParser {
 			break;
 		case GOOGLE:
 			tmp =  TokenUtilities.getClaimAsString(this.claims,Claims.GOOGLE_CLAIMS_EXPIRED);
+			break;
+		case MAPPING:
+			List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.TOKEN_PARSER_EXPIRE);
+			tmp = TokenUtilities.getFirstClaimAsString(this.claims, claimNames);
 			break;
 		case CUSTOM:
 			return null;
@@ -245,6 +270,10 @@ public class BasicTokenParser implements ITokenParser {
 		case GOOGLE:
 			tmp =  TokenUtilities.getClaimAsString(this.claims,Claims.GOOGLE_CLAIMS_ISSUED_AT);
 			break;
+		case MAPPING:
+			List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.TOKEN_PARSER_ISSUED_AT);
+			tmp = TokenUtilities.getFirstClaimAsString(this.claims, claimNames);
+			break;
 		case CUSTOM:
 			return null;
 		}
@@ -267,6 +296,10 @@ public class BasicTokenParser implements ITokenParser {
 		case OIDC_ID_TOKEN:
 		case GOOGLE:
 			return null; // unsupported
+		case MAPPING:
+			List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.TOKEN_PARSER_NOT_TO_BE_USED_BEFORE);
+			tmp = TokenUtilities.getFirstClaimAsString(this.claims, claimNames);
+			break;
 		case CUSTOM:
 			return null;
 		}
@@ -286,6 +319,9 @@ public class BasicTokenParser implements ITokenParser {
 		case OIDC_ID_TOKEN:
 		case GOOGLE:
 			return null; // unsupported
+		case MAPPING:
+			List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.TOKEN_PARSER_JWT_IDENTIFIER);
+			return TokenUtilities.getFirstClaimAsString(this.claims, claimNames);
 		case CUSTOM:
 			return null;
 		}
@@ -303,6 +339,9 @@ public class BasicTokenParser implements ITokenParser {
 			return TokenUtilities.getClaimAsString(this.claims,Claims.OIDC_ID_TOKEN_AZP);
 		case GOOGLE:
 			return TokenUtilities.getClaimAsString(this.claims,Claims.GOOGLE_CLAIMS_AZP);
+		case MAPPING:
+			List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.TOKEN_PARSER_CLIENT_ID);
+			return TokenUtilities.getFirstClaimAsString(this.claims, claimNames);
 		case CUSTOM:
 			return null;
 		}
@@ -311,6 +350,17 @@ public class BasicTokenParser implements ITokenParser {
 
 	@Override
 	public List<String> getRoles() {
+		switch (this.parser) {
+		case MAPPING:
+			List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.TOKEN_PARSER_ROLE);
+			return TokenUtilities.getFirstClaimAsList(this.claims, claimNames);
+		case JSON_WEB_TOKEN_RFC_7519:
+		case INTROSPECTION_RESPONSE_RFC_7662:
+		case OIDC_ID_TOKEN:
+		case GOOGLE:
+		case CUSTOM:
+			return null;
+		}
 		return null;
 	}
 
@@ -326,6 +376,32 @@ public class BasicTokenParser implements ITokenParser {
 		else if(TipologiaClaims.GOOGLE.equals(this.parser)) {
 			tmpScopes = TokenUtilities.getClaimAsString(this.claims,Claims.GOOGLE_CLAIMS_SCOPE);
 		}
+		else if(TipologiaClaims.MAPPING.equals(this.parser)) {
+			List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.TOKEN_PARSER_SCOPE);
+			List<String> tmpScopes_list = TokenUtilities.getFirstClaimAsList(this.claims, claimNames);
+			if(tmpScopes_list!=null && !tmpScopes_list.isEmpty()) {
+				List<String> scopes = new ArrayList<>();
+				for (String s : tmpScopes_list) {
+					List<String> tmp = readScope(s);
+					if(tmp!=null && !tmp.isEmpty()) {
+						for (String sTmp : tmp) {
+							if(!scopes.contains(sTmp)) {
+								scopes.add(sTmp);
+							}
+						}
+					}
+				}
+				return scopes;
+			}
+			else {
+				return null;
+			}
+		}
+		
+		return readScope(tmpScopes);
+		
+	}
+	private List<String> readScope(String tmpScopes) {
 		if(tmpScopes!=null) {
 			String [] tmpArray = tmpScopes.split(" ");
 			if(tmpArray!=null && tmpArray.length>0) {

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -147,6 +147,10 @@ public class ArchiviCostanti {
 	public final static String PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_ALIAS_CONNETTORE = "aliasConn";
 	public final static String PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_ID_CONNETTORE = "idConn";
 	public final static String PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_NOME_CONNETTORE = "nomeConn";
+	
+	public final static String PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_TOKEN_NOME = "tokNome";
+	public final static String PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_TOKEN_TIPOLOGIA = "tokTlg";
+	public final static String PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_TOKEN_TIPO = "tokTipo";
 			
 	public final static String PARAMETRO_ARCHIVI_JAR_NOME_ARCHVIO = "nomeJar";
 	public final static String PARAMETRO_ARCHIVI_JAR_NOME_PLUGIN = "nomePlugin";

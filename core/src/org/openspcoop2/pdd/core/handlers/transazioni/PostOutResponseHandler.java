@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -608,6 +608,8 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 						PostOutResponseHandler_GestioneControlloTraffico outHandler = new PostOutResponseHandler_GestioneControlloTraffico();
 						outHandler.process(controlloCongestioneMaxRequestThreadRegistrato, this.log, idTransazione, transazioneDTO, context,
 								( (times!=null && this.openspcoopProperties.isTransazioniRegistrazioneSlowLogRateLimitingDetails()) ? times : null));
+					}catch (Throwable e) {
+						this.log.error("["+idTransazione+"] Errore durante la registrazione di terminazione del thread: "+e.getMessage(),e);
 					}finally {
 						if(times!=null) {
 							long timeEnd =  DateManager.getTimeMillis();
@@ -616,6 +618,15 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 						}
 					}
 				}
+				
+				// ### FileTrace ###
+				if(fileTraceEnabled) {
+					logWithFileTrace(fileTraceConfig, fileTraceConfigGlobal,
+							times,
+							transazioneDTO, transaction, informazioniAttributiNormalizzati, context,
+							idTransazione); // anche qua vi e' un try catch con Throwable
+				}
+				
 				if(he!=null) {
 					throw he;
 				}
@@ -650,40 +661,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 			
 			
 			
-			
-			// ### FileTrace ###
-			
-			if(fileTraceEnabled) {
-				FileTraceManager fileTraceManager = null;
-				try {
-					if(times!=null) {
-						timeStart = DateManager.getTimeMillis();
-					}
-					FileTraceConfig config = FileTraceConfig.getConfig(fileTraceConfig, fileTraceConfigGlobal);
-					fileTraceManager = new FileTraceManager(this.log, config);
-					fileTraceManager.buildTransazioneInfo(transazioneDTO, transaction, informazioniAttributiNormalizzati);
-					fileTraceManager.invoke(context.getTipoPorta(), context.getPddContext());
-				}catch (Throwable e) {
-					this.log.error("["+idTransazione+"] File trace fallito: "+e.getMessage(),e);
-				}finally {
-					try {
-						if(fileTraceManager!=null) {
-							fileTraceManager.cleanResourcesForOnlyFileTrace(transaction);
-						}
-					}catch(Throwable eClean) {
-						this.log.error("["+idTransazione+"] File trace 'clean' fallito: "+eClean.getMessage(),eClean);
-					}
-					if(times!=null) {
-						long timeEnd =  DateManager.getTimeMillis();
-						long timeProcess = timeEnd-timeStart;
-						times.fileTrace = timeProcess;
-					}
-				}
-			}
-
-			
-			
-			
+	
 			
 			
 			// ### Gestione Transazione ###
@@ -1150,6 +1128,37 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 		
 	}
 	
+	private void logWithFileTrace(File fileTraceConfig, boolean fileTraceConfigGlobal,
+			TransazioniProcessTimes times,
+			Transazione transazioneDTO, Transaction transaction, InformazioniAttributi informazioniAttributiNormalizzati, PostOutResponseContext context,
+			String idTransazione) {
+		FileTraceManager fileTraceManager = null;
+		long timeStart = -1;
+		try {
+			if(times!=null) {
+				timeStart = DateManager.getTimeMillis();
+			}
+			FileTraceConfig config = FileTraceConfig.getConfig(fileTraceConfig, fileTraceConfigGlobal);
+			fileTraceManager = new FileTraceManager(this.log, config);
+			fileTraceManager.buildTransazioneInfo(transazioneDTO, transaction, informazioniAttributiNormalizzati, context.getPddContext());
+			fileTraceManager.invoke(context.getTipoPorta(), context.getPddContext());
+		}catch (Throwable e) {
+			this.log.error("["+idTransazione+"] File trace fallito: "+e.getMessage(),e);
+		}finally {
+			try {
+				if(fileTraceManager!=null) {
+					fileTraceManager.cleanResourcesForOnlyFileTrace(transaction);
+				}
+			}catch(Throwable eClean) {
+				this.log.error("["+idTransazione+"] File trace 'clean' fallito: "+eClean.getMessage(),eClean);
+			}
+			if(times!=null) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				times.fileTrace = timeProcess;
+			}
+		}
+	}
 	
 }
 

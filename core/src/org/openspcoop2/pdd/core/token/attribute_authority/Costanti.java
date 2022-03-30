@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -74,6 +74,10 @@ public class Costanti {
 	
 	public final static String AA_REQUEST_JWT_SIGN_ALGORITHM = "policy.attributeAuthority.request.jws.signature.algorithm";
 	public final static String AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID = "policy.attributeAuthority.request.jws.signature.include.key.id";
+	public final static String AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID_MODE_NOT_PRESENT = "false"; // per backward compatibility
+	public final static String AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID_MODE_ALIAS = "true"; // per backward compatibility
+	public final static String AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID_MODE_CUSTOM = "custom";
+	public final static String AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID_VALUE = "policy.attributeAuthority.request.jws.signature.include.key.id.value";
 	public final static String AA_REQUEST_JWT_SIGN_INCLUDE_X509_CERT = "policy.attributeAuthority.request.jws.signature.include.cert";
 	public final static String AA_REQUEST_JWT_SIGN_INCLUDE_X509_URL = "policy.attributeAuthority.request.jws.signature.include.x509url";
 	public final static String AA_REQUEST_JWT_SIGN_INCLUDE_X509_SHA1 = "policy.attributeAuthority.request.jws.signature.include.cert.sha1";

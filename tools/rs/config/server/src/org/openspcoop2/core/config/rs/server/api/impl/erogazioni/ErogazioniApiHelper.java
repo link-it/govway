@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -54,6 +54,7 @@ import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAzione;
 import org.openspcoop2.core.config.Proprieta;
@@ -720,7 +721,9 @@ public class ErogazioniApiHelper {
         		"",		// redirect_mode, 
         		"",		// redirect_max_hop, 
         		null,	// requestOutputFileName,
+        		null,	// requestOutputFileName_permissions,
         		null,	// requestOutputFileNameHeaders, 
+        		null,	// requestOutputFileNameHeaders_permissions, 
         		null,	// requestOutputParentDirCreateIfNotExists, 
         		null,	// requestOutputOverwriteIfExists,
         		null,	// responseInputMode,
@@ -1497,7 +1500,9 @@ public class ErogazioniApiHelper {
         		"",		// redirect_mode, 
         		"",		// redirect_max_hop, 
         		null,	// requestOutputFileName,
+        		null,	// requestOutputFileName_permissions,
         		null,	// requestOutputFileNameHeaders, 
+        		null,	// requestOutputFileNameHeaders_permissions, 
         		null,	// requestOutputParentDirCreateIfNotExists, 
         		null,	// requestOutputOverwriteIfExists,
         		null,	// responseInputMode,
@@ -1648,7 +1653,9 @@ public class ErogazioniApiHelper {
 				"", 	// this.redirect_mode, 
 				"", 	// this.redirect_max_hop,
 				null,	// this.requestOutputFileName,
+				null,	// this.requestOutputFileName_permissions,
 				null,	// this.requestOutputFileNameHeaders,
+				null,	// this.requestOutputFileNameHeaders_permissions,
 				null,	// this.requestOutputParentDirCreateIfNotExists,
 				null,	// this.requestOutputOverwriteIfExists,
 				null,	// this.responseInputMode, 
@@ -2317,6 +2324,7 @@ public class ErogazioniApiHelper {
 
 			int numeroAbilitate = 0;
 			int numeroConfigurazioni = listaMappingErogazionePortaApplicativa.size();
+			int numeroConfigurazioniSchedulingDisabilitato = -1;
 			boolean allActionRedefined = false;
 						
 			if(listaMappingErogazionePortaApplicativa.size()>1) {
@@ -2335,14 +2343,28 @@ public class ErogazioniApiHelper {
 						numeroAbilitate ++;
 					}
 				}
+				
+				if(allActionRedefined && paAssociata.getNome().equals(nomePortaDefault)) {
+					// se tutte le azioni sono state ridefinite non devo controllare la porta di default
+					continue;
+				}
 
-				if(!paAssociata.getNome().equals(nomePortaDefault) && env.apsHelper.isConnettoreRidefinito(paDefault, paDefault.getServizioApplicativoList().get(0), paAssociata, paAssociata.getServizioApplicativoList().get(0))) {
+				if(!paAssociata.getNome().equals(nomePortaDefault) && env.apsHelper.isConnettoreRidefinito(paDefault, paDefault.getServizioApplicativoList().get(0), paAssociata, 
+						paAssociata.getServizioApplicativoList().get(0), paAssociata.getServizioApplicativoList())) {
 					isRidefinito = true;
 				}
 				
+				if(paAssociata.getBehaviour()!=null && paAssociata.sizeServizioApplicativoList()>0) {
+					for (PortaApplicativaServizioApplicativo paSA : paAssociata.getServizioApplicativoList()) {
+						if(paSA!=null && paSA.getDatiConnettore()!=null && 
+								StatoFunzionalita.DISABILITATO.equals(paSA.getDatiConnettore().getScheduling())) {
+							numeroConfigurazioniSchedulingDisabilitato++;
+						}
+					}
+				}
 			}
 			
-			StatoDescrizione stato = getStatoDescrizione(numeroAbilitate, allActionRedefined, numeroConfigurazioni );
+			StatoDescrizione stato = getStatoDescrizione(numeroAbilitate, allActionRedefined, numeroConfigurazioni, numeroConfigurazioniSchedulingDisabilitato );
 			
 			ApiCanale canale = ErogazioniApiHelper.toApiCanale(env, paDefault, apc, false);
 			
@@ -2366,7 +2388,7 @@ public class ErogazioniApiHelper {
 			
 	}
 	
-	public static final StatoDescrizione getStatoDescrizione(int numeroAbilitate, boolean allActionRedefined, int numeroConfigurazioni ) {
+	public static final StatoDescrizione getStatoDescrizione(int numeroAbilitate, boolean allActionRedefined, int numeroConfigurazioni, int numeroConfigurazioniSchedulingDisabilitato ) {
 		String stato_descrizione;
 		StatoApiEnum statoApi;
 		
@@ -2380,8 +2402,14 @@ public class ErogazioniApiHelper {
 				||
 				(allActionRedefined && numeroAbilitate == (numeroConfigurazioni-1)) // escludo la regola che non viene usata poiche' tutte le azioni sono ridefinite 
 				) {
-			statoApi = StatoApiEnum.OK;
-			stato_descrizione = ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_ABILITATE_TOOLTIP; 
+			if(numeroConfigurazioniSchedulingDisabilitato>0) {
+				statoApi = StatoApiEnum.WARN;
+				stato_descrizione = ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_CONNETTORI_MULTIPLI_SCHEDULING_DISABILITATO_TOOLTIP;
+			}
+			else {
+				statoApi = StatoApiEnum.OK;
+				stato_descrizione = ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_ABILITATE_TOOLTIP; 
+			}
 		} else  {
 			statoApi = StatoApiEnum.WARN;
 			stato_descrizione = ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_PARZIALMENTE_ABILITATE_TOOLTIP;
@@ -2454,9 +2482,16 @@ public class ErogazioniApiHelper {
 					numeroAbilitate ++;
 				}
 			}
+			
+			if(allActionRedefined && pdAssociata.getNome().equals(nomePortaDefault)) {
+				// se tutte le azioni sono state ridefinite non devo controllare la porta di default
+				continue;
+			}
+			
+			// aggiungere qua eventuali altri check
 		}
 		
-		StatoDescrizione stato = getStatoDescrizione(numeroAbilitate, allActionRedefined, numeroConfigurazioni );		
+		StatoDescrizione stato = getStatoDescrizione(numeroAbilitate, allActionRedefined, numeroConfigurazioni, -1);		
 		
 		IDPortaDelegata idPDdefault = new IDPortaDelegata();
 		idPDdefault.setNome(nomePortaDefault);
@@ -2672,7 +2707,8 @@ public class ErogazioniApiHelper {
 		
 		final ServizioApplicativo sa;
 		
-		if(gruppo != null && env.apsHelper.isConnettoreRidefinito(paDefault, paDefault.getServizioApplicativoList().get(0), pa, pa.getServizioApplicativoList().get(0))) {
+		if(gruppo != null && env.apsHelper.isConnettoreRidefinito(paDefault, paDefault.getServizioApplicativoList().get(0), pa, 
+				pa.getServizioApplicativoList().get(0), pa.getServizioApplicativoList())) {
 			sa = env.saCore.getServizioApplicativo(env.saCore.getIdServizioApplicativo(idServizio.getSoggettoErogatore(), pa.getServizioApplicativoList().get(0).getNome()));
 		} else {
 			sa = env.saCore.getServizioApplicativo(env.saCore.getIdServizioApplicativo(idServizio.getSoggettoErogatore(), paDefault.getServizioApplicativoList().get(0).getNome()));
@@ -4904,7 +4940,8 @@ public class ErogazioniApiHelper {
 			boolean isDelegata,
 			CorrelazioneApplicativaRichiesta body,
 			Long idPorta,
-			Long idCorrelazione
+			Long idCorrelazione,
+			org.openspcoop2.message.constants.ServiceBinding serviceBinding
 			
 		) throws Exception {
 		
@@ -4921,7 +4958,8 @@ public class ErogazioniApiHelper {
 		
 		wrap.overrideParameter( CostantiControlStation.PARAMETRO_ID_CORRELAZIONE, evalnull( () -> idCorrelazione.toString() ) );					// Questo va impostato nella update.
 		
-		return paHelper.correlazioneApplicativaRichiestaCheckData(tipoOp,isDelegata);
+		return paHelper.correlazioneApplicativaRichiestaCheckData(tipoOp,isDelegata,
+				serviceBinding);
 		
 	}
 	
@@ -4980,7 +5018,8 @@ public class ErogazioniApiHelper {
 			boolean isDelegata,
 			CorrelazioneApplicativaRisposta body,
 			Long idPorta,
-			Long idCorrelazione 
+			Long idCorrelazione,
+			org.openspcoop2.message.constants.ServiceBinding serviceBinding
 		) throws Exception {
 		
 		wrap.overrideParameter( CostantiControlStation.PARAMETRO_ID, idPorta.toString() );
@@ -4997,7 +5036,8 @@ public class ErogazioniApiHelper {
 		wrap.overrideParameter( CostantiControlStation.PARAMETRO_ID_CORRELAZIONE, evalnull( () -> idCorrelazione.toString() ));
 	
 		
-		return paHelper.correlazioneApplicativaRichiestaCheckData(TipoOperazione.ADD,isDelegata);
+		return paHelper.correlazioneApplicativaRichiestaCheckData(TipoOperazione.ADD,isDelegata,
+				serviceBinding);
 		
 	}
 

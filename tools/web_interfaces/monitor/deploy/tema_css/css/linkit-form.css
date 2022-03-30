@@ -477,3 +477,38 @@ input[type="submit"]:hover, input[type="button"]:hover, .buttonrow a:hover, .but
     text-decoration: none;
     margin-top: 12px;
 }
+
+
+.iconInfoBox{
+    padding-left: 8px;
+    display: inline;
+    cursor: pointer;
+    position: absolute;
+}
+
+.comandoChiudiModale{
+	 cursor: pointer;
+	 color: ${panel.header.color};
+}
+
+.contenutoModal {
+	color: ${body.color};
+}
+
+.contenutoModal p {
+	color: ${body.color};
+}
+
+.contenutoModal ul {
+	margin-left: 32px;
+	color: ${body.color};
+}
+
+.contenutoModal ul li{
+	 padding: 4px 4px 4px 0px;
+	 list-style-type: disc;
+	 line-height: inherit;
+	 color: ${body.color};
+}
+
+

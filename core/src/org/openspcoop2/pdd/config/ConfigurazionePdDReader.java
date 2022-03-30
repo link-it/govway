@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -63,10 +63,12 @@ import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.CorsConfigurazione;
+import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.Dump;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
+import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.InvocazionePortaGestioneErrore;
 import org.openspcoop2.core.config.InvocazioneServizio;
@@ -109,8 +111,12 @@ import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
 import org.openspcoop2.core.config.driver.ValidazioneSemantica;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.config.driver.xml.DriverConfigurazioneXML;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.constants.CostantiLabel;
+import org.openspcoop2.core.constants.StatoCheck;
+import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
@@ -118,9 +124,11 @@ import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ElencoIdPolicy;
 import org.openspcoop2.core.controllo_traffico.ElencoIdPolicyAttive;
 import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDConnettore;
+import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -143,6 +151,8 @@ import org.openspcoop2.monitor.sdk.alarm.AlarmStatus;
 import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
+import org.openspcoop2.pdd.core.connettori.ConnettoreCheck;
+import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPSProperties;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.GestoreErroreConnettore;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
@@ -150,6 +160,7 @@ import org.openspcoop2.pdd.core.controllo_traffico.DimensioneMessaggiConfigurati
 import org.openspcoop2.pdd.core.controllo_traffico.SoglieDimensioneMessaggi;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.InterceptorPolicyUtilities;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
+import org.openspcoop2.pdd.core.token.Costanti;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.PolicyGestioneToken;
 import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
@@ -163,17 +174,24 @@ import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.mapping.IdentificazioneDinamicaException;
 import org.openspcoop2.protocol.engine.mapping.ModalitaIdentificazioneAzione;
 import org.openspcoop2.protocol.engine.mapping.OperationFinder;
+import org.openspcoop2.protocol.registry.CertificateCheck;
+import org.openspcoop2.protocol.registry.CertificateUtils;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
+import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.utils.ModIUtils;
+import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.SSLConfig;
 import org.slf4j.Logger;
 
 
@@ -300,12 +318,39 @@ public class ConfigurazionePdDReader {
 			throw new DriverConfigurazioneException("Visualizzazione chiavi presenti nella cache della Configurazione non riuscita: "+e.getMessage(),e);
 		}
 	}
+	public static List<String> keysCache() throws DriverConfigurazioneException{
+		try{
+			ConfigurazionePdDReader configurazionePdDReader = org.openspcoop2.pdd.config.ConfigurazionePdDReader.getInstance();
+			if(configurazionePdDReader!=null && configurazionePdDReader.configurazionePdD!=null){
+				return configurazionePdDReader.configurazionePdD.keysCache();
+			}
+			else{
+				throw new Exception("ConfigurazionePdD Non disponibile");
+			}
+		}catch(Exception e){
+			throw new DriverConfigurazioneException("Visualizzazione chiavi presenti nella cache della Configurazione non riuscita: "+e.getMessage(),e);
+		}
+	}
 
 	public static String getObjectCache(String key) throws DriverConfigurazioneException{
 		try{
 			ConfigurazionePdDReader configurazionePdDReader = org.openspcoop2.pdd.config.ConfigurazionePdDReader.getInstance();
 			if(configurazionePdDReader!=null && configurazionePdDReader.configurazionePdD!=null){
 				return configurazionePdDReader.configurazionePdD.getObjectCache(key);
+			}
+			else{
+				throw new Exception("ConfigurazionePdD Non disponibile");
+			}
+		}catch(Exception e){
+			throw new DriverConfigurazioneException("Visualizzazione oggetto presente nella cache della Configurazione non riuscita: "+e.getMessage(),e);
+		}
+	}
+	
+	public static Object getRawObjectCache(String key) throws DriverConfigurazioneException{
+		try{
+			ConfigurazionePdDReader configurazionePdDReader = org.openspcoop2.pdd.config.ConfigurazionePdDReader.getInstance();
+			if(configurazionePdDReader!=null && configurazionePdDReader.configurazionePdD!=null){
+				return configurazionePdDReader.configurazionePdD.getRawObjectCache(key);
 			}
 			else{
 				throw new Exception("ConfigurazionePdD Non disponibile");
@@ -328,6 +373,619 @@ public class ConfigurazionePdDReader {
 			throw new DriverConfigurazioneException("Rimozione oggetto presente nella cache della Configurazione non riuscita: "+e.getMessage(),e);
 		}
 	}
+	
+	
+	
+	
+	
+	/*----------------- CLEANER --------------------*/
+	
+	public static void removeErogazione(IDServizio idServizio) throws Exception {
+		removeApiImpl(null, idServizio, true);
+	}
+	public static void removeFruizione(IDSoggetto fruitore, IDServizio idServizio) throws Exception {
+		removeApiImpl(fruitore, idServizio, false);
+	}
+	private static void removeApiImpl(IDSoggetto idFruitore, IDServizio idServizio, boolean erogazione) throws Exception {
+		if(ConfigurazionePdDReader.isCacheAbilitata()) {
+			
+			boolean soggettiVirtuali = OpenSPCoop2Properties.getInstance().isSoggettiVirtualiEnabled();
+			
+			if(soggettiVirtuali) {
+				String keyServizi_SoggettiVirtuali = ConfigurazionePdD._getKey_getServizi_SoggettiVirtuali();
+				Object oServizi_SoggettiVirtuali = ConfigurazionePdDReader.getRawObjectCache(keyServizi_SoggettiVirtuali);
+				if(oServizi_SoggettiVirtuali!=null && oServizi_SoggettiVirtuali instanceof List<?>) {
+					List<?> l = (List<?>) oServizi_SoggettiVirtuali;
+					if(l!=null && !l.isEmpty()) {
+						boolean checkAzione = true;
+						for (Object object : l) {
+							if(object!=null && object instanceof IDServizio) {
+								IDServizio idS = (IDServizio) object;
+								if(idS.equals(idServizio, !checkAzione)) {
+									ConfigurazionePdDReader.removeObjectCache(keyServizi_SoggettiVirtuali);
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = ConfigurazionePdDReader.keysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				
+				String prefixPorta = null;
+				if(erogazione) {
+					prefixPorta = ConfigurazionePdD._getKey_MappingErogazionePortaApplicativaList(idServizio, false);
+				}
+				else {
+					prefixPorta = ConfigurazionePdD._getKey_MappingFruizionePortaDelegataList(idFruitore, idServizio, false);
+				}
+				
+				String prefixForwardProxy = ConfigurazionePdD._toKey_ForwardProxyConfigPrefix(!erogazione);
+				String suffixForwardProxy = ConfigurazionePdD._toKey_ForwardProxyConfigSuffix(idServizio);
+				
+				String prefixPorteApplicativeRicercaPuntuale = null;
+				String prefixPorteApplicativeRicercaNonPuntuale = null;
+				if(erogazione) {
+					prefixPorteApplicativeRicercaPuntuale = ConfigurazionePdD._toKey_getPorteApplicativePrefix(idServizio, true);
+					prefixPorteApplicativeRicercaNonPuntuale = ConfigurazionePdD._toKey_getPorteApplicativePrefix(idServizio, false);
+				}
+				
+				String prefixPorteApplicativeVirtualiRicercaPuntuale = null;
+				String prefixPorteApplicativeVirtualiRicercaNonPuntuale = null;
+				String porteApplicativeVirtualiIdServizio = null;
+				if(soggettiVirtuali) {
+					prefixPorteApplicativeVirtualiRicercaPuntuale = ConfigurazionePdD._toKey_getPorteApplicativeVirtualiPrefix(true);
+					prefixPorteApplicativeVirtualiRicercaNonPuntuale = ConfigurazionePdD._toKey_getPorteApplicativeVirtualiPrefix(false);
+					porteApplicativeVirtualiIdServizio = ConfigurazionePdD._toKey_getPorteApplicativeVirtuali_idServizio(idServizio);
+				}
+				
+				String prefixPorteApplicativeSoggettiVirtuali = null;
+				if(soggettiVirtuali) {
+					prefixPorteApplicativeSoggettiVirtuali = ConfigurazionePdD._toKey_getPorteApplicative_SoggettiVirtualiPrefix(idServizio);
+				}
+				
+				for (String key : keys) {
+					if(key!=null) {
+						if(key.startsWith(prefixPorta) ) {
+							keyForClean.add(key);
+						}
+						else if(key.startsWith(prefixForwardProxy) && key.endsWith(suffixForwardProxy) ) {
+							keyForClean.add(key);
+						}
+						else if(erogazione &&
+								(key.startsWith(prefixPorteApplicativeRicercaPuntuale) || key.startsWith(prefixPorteApplicativeRicercaNonPuntuale)) ) {
+							keyForClean.add(key);
+						}
+						else if( soggettiVirtuali &&
+							((key.startsWith(prefixPorteApplicativeVirtualiRicercaPuntuale)) || (key.startsWith(prefixPorteApplicativeVirtualiRicercaNonPuntuale)))
+							&&
+							key.contains(porteApplicativeVirtualiIdServizio)) {
+							keyForClean.add(key);
+						}
+						else if( soggettiVirtuali &&
+								key.startsWith(prefixPorteApplicativeSoggettiVirtuali)) {
+							keyForClean.add(key);
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+			
+		}
+	}
+	
+	public static void removePortaDelegata(IDPortaDelegata idPD) throws Exception {
+		if(ConfigurazionePdDReader.isCacheAbilitata()) {
+			
+			boolean removeControlloTraffico = true; 
+			
+			IProtocolFactory<?> protocolFactory = null;
+			PorteNamingUtils namingUtils = null;
+			try {
+				ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
+				String protocol = protocolFactoryManager.getProtocolByOrganizationType(idPD.getIdentificativiFruizione().getSoggettoFruitore().getTipo());
+				protocolFactory = protocolFactoryManager.getProtocolFactoryByName(protocol);
+				namingUtils = new PorteNamingUtils(protocolFactory);
+			}catch(Throwable t) {
+				OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Errore durante la comprensione del protocol factory della PD ["+idPD+"]");
+			}
+						
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = ConfigurazionePdDReader.keysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				
+				String nomePorta = idPD.getNome(); 
+				String nomePorta_normalized = null; 
+				if(namingUtils!=null) {
+					nomePorta_normalized = namingUtils.normalizePD(nomePorta);
+				}
+				
+				String prefixKeyIdPD = ConfigurazionePdD._getKey_getIDPortaDelegata(nomePorta);
+				String prefixKeyIdPD_normalized = null; 
+				if(nomePorta_normalized!=null) {
+					prefixKeyIdPD_normalized = ConfigurazionePdD._getKey_getIDPortaDelegata(nomePorta_normalized);
+				}
+				
+				String prefixKeyPD = ConfigurazionePdD._getKey_getPortaDelegata(idPD);
+				
+				String prefixCT = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI(TipoPdD.DELEGATA, nomePorta);
+				String prefixCT_normalized = null; 
+				if(nomePorta_normalized!=null) {
+					prefixCT_normalized  = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI(TipoPdD.DELEGATA, nomePorta_normalized);
+				}
+				
+				String prefixCT_dimensioneMessaggio = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI_dimensioneMessaggio(TipoPdD.DELEGATA, nomePorta);
+				String prefixCT_dimensioneMessaggio_normalized = null; 
+				if(nomePorta_normalized!=null) {
+					prefixCT_dimensioneMessaggio_normalized  = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI_dimensioneMessaggio(TipoPdD.DELEGATA, nomePorta_normalized);
+				}
+				
+				String prefixGetAllId = ConfigurazionePdD._toKey_getAllIdPorteDelegate_method();
+				
+				String prefixAttivazionePolicy = ConfigurazionePdD._toKey_AttivazionePolicyPrefix();
+				
+				for (String key : keys) {
+					if(key!=null) {
+						if(key.startsWith(prefixKeyIdPD)) {
+							keyForClean.add(key);
+						}
+						else if(prefixKeyIdPD_normalized!=null && key.startsWith(prefixKeyIdPD_normalized)) {
+							keyForClean.add(key);
+						}
+						else if(key.startsWith(prefixKeyPD)) {
+							keyForClean.add(key);
+						}
+						if(removeControlloTraffico && key.startsWith(prefixCT)) {
+							keyForClean.add(key);
+						}
+						else if(removeControlloTraffico && prefixCT_normalized!=null && key.startsWith(prefixCT_normalized)) {
+							keyForClean.add(key);
+						}
+						if(removeControlloTraffico && key.startsWith(prefixCT_dimensioneMessaggio)) {
+							keyForClean.add(key);
+						}
+						else if(removeControlloTraffico && prefixCT_dimensioneMessaggio_normalized!=null && key.startsWith(prefixCT_dimensioneMessaggio_normalized)) {
+							keyForClean.add(key);
+						}
+						else if(key.startsWith(prefixGetAllId)) {
+							Object oCode = ConfigurazionePdDReader.getRawObjectCache(key);
+							if(oCode!=null) {
+								if(oCode instanceof List<?>) {
+									List<?> l = (List<?>) oCode;
+									if(l!=null && !l.isEmpty()) {
+										for (Object object : l) {
+											if(object!=null && object instanceof IDPortaDelegata) {
+												IDPortaDelegata idPDcheck = (IDPortaDelegata) object;
+												if(idPDcheck.getNome().equals(nomePorta)) {
+													keyForClean.add(key);
+													break;
+												}
+												else if(nomePorta_normalized!=null && idPDcheck.getNome().equals(nomePorta_normalized)) {
+													keyForClean.add(key);
+													break;
+												}
+											}
+										}
+									}
+								}
+								else if(oCode instanceof Exception) {
+									Exception t = (Exception) oCode;
+									String msg = t.getMessage();
+									if(msg!=null) {
+										String check = FiltroRicercaPorteDelegate.PREFIX_PORTA_DELEGANTE + nomePorta + FiltroRicercaPorteDelegate.SUFFIX_PORTA_DELEGANTE;
+										if(msg.contains(check)){
+											keyForClean.add(key);
+											break;
+										}
+										else {
+											if(nomePorta_normalized!=null) {
+												String check_normalized = FiltroRicercaPorteDelegate.PREFIX_PORTA_DELEGANTE + nomePorta_normalized + FiltroRicercaPorteDelegate.SUFFIX_PORTA_DELEGANTE;
+												if(msg.contains(check_normalized)){
+													keyForClean.add(key);
+													break;
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+						else if(removeControlloTraffico && key.startsWith(prefixAttivazionePolicy)) {
+							Object oCode = ConfigurazionePdDReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof AttivazionePolicy) {
+								AttivazionePolicy aPolicy = (AttivazionePolicy) oCode;
+								if(aPolicy.getFiltro()!=null && aPolicy.getFiltro().isEnabled() && 
+										RuoloPolicy.DELEGATA.equals(aPolicy.getFiltro().getRuoloPorta())){
+									if(nomePorta.equals(aPolicy.getFiltro().getNomePorta())) {
+										keyForClean.add(key);
+									}
+									else if(nomePorta_normalized!=null && nomePorta_normalized.equals(aPolicy.getFiltro().getNomePorta())) {
+										keyForClean.add(key);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	public static void removePortaApplicativa(IDPortaApplicativa idPA) throws Exception {
+		if(ConfigurazionePdDReader.isCacheAbilitata()) {
+			
+			boolean removeControlloTraffico = true; 
+			
+			IProtocolFactory<?> protocolFactory = null;
+			PorteNamingUtils namingUtils = null;
+			try {
+				ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
+				String protocol = protocolFactoryManager.getProtocolByOrganizationType(idPA.getIdentificativiErogazione().getIdServizio().getSoggettoErogatore().getTipo());
+				protocolFactory = protocolFactoryManager.getProtocolFactoryByName(protocol);
+				namingUtils = new PorteNamingUtils(protocolFactory);
+			}catch(Throwable t) {
+				OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Errore durante la comprensione del protocol factory della PA ["+idPA+"]");
+			}
+							
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = ConfigurazionePdDReader.keysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				
+				String nomePorta = idPA.getNome(); 
+				String nomePorta_normalized = null; 
+				if(namingUtils!=null) {
+					nomePorta_normalized = namingUtils.normalizePA(nomePorta);
+				}
+				
+				String prefixKeyIdPA = ConfigurazionePdD._getKey_getIDPortaApplicativa(nomePorta);
+				String prefixKeyIdPA_normalized = null; 
+				if(nomePorta_normalized!=null) {
+					prefixKeyIdPA_normalized = ConfigurazionePdD._getKey_getIDPortaApplicativa(nomePorta_normalized);
+				}
+				
+				String prefixKeyPA = ConfigurazionePdD._getKey_getPortaApplicativa(idPA);
+				
+				String prefixCT = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI(TipoPdD.APPLICATIVA, nomePorta);
+				String prefixCT_normalized = null; 
+				if(nomePorta_normalized!=null) {
+					prefixCT_normalized  = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI(TipoPdD.APPLICATIVA, nomePorta_normalized);
+				}
+				
+				String prefixCT_dimensioneMessaggio = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI_dimensioneMessaggio(TipoPdD.APPLICATIVA, nomePorta);
+				String prefixCT_dimensioneMessaggio_normalized = null; 
+				if(nomePorta_normalized!=null) {
+					prefixCT_dimensioneMessaggio_normalized  = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI_dimensioneMessaggio(TipoPdD.APPLICATIVA, nomePorta_normalized);
+				}
+				
+				String prefixGetAllId = ConfigurazionePdD._toKey_getAllIdPorteApplicative_method();
+				
+				String prefixAttivazionePolicy = ConfigurazionePdD._toKey_AttivazionePolicyPrefix();
+				
+				for (String key : keys) {
+					if(key!=null) {
+						if(key.startsWith(prefixKeyIdPA)) {
+							keyForClean.add(key);
+						}
+						else if(prefixKeyIdPA_normalized!=null && key.startsWith(prefixKeyIdPA_normalized)) {
+							keyForClean.add(key);
+						}
+						else if(key.startsWith(prefixKeyPA)) {
+							keyForClean.add(key);
+						}
+						if(removeControlloTraffico && key.startsWith(prefixCT)) {
+							keyForClean.add(key);
+						}
+						else if(removeControlloTraffico && prefixCT_normalized!=null && key.startsWith(prefixCT_normalized)) {
+							keyForClean.add(key);
+						}
+						if(removeControlloTraffico && key.startsWith(prefixCT_dimensioneMessaggio)) {
+							keyForClean.add(key);
+						}
+						else if(removeControlloTraffico && prefixCT_dimensioneMessaggio_normalized!=null && key.startsWith(prefixCT_dimensioneMessaggio_normalized)) {
+							keyForClean.add(key);
+						}
+						else if(key.startsWith(prefixGetAllId)) {
+							Object oCode = ConfigurazionePdDReader.getRawObjectCache(key);
+							if(oCode!=null) {								
+								if(oCode instanceof List<?>) {
+									List<?> l = (List<?>) oCode;
+									if(l!=null && !l.isEmpty()) {
+										for (Object object : l) {
+											if(object!=null && object instanceof IDPortaApplicativa) {
+												IDPortaApplicativa idPAcheck = (IDPortaApplicativa) object;
+												if(idPAcheck.getNome().equals(nomePorta)) {
+													keyForClean.add(key);
+													break;
+												}
+												else if(nomePorta_normalized!=null && idPAcheck.getNome().equals(nomePorta_normalized)) {
+													keyForClean.add(key);
+													break;
+												}
+											}
+										}
+									}
+								}
+								else if(oCode instanceof Exception) {
+									Exception t = (Exception) oCode;
+									String msg = t.getMessage();
+									if(msg!=null) {
+										String check = FiltroRicercaPorteApplicative.PREFIX_PORTA_DELEGANTE + nomePorta + FiltroRicercaPorteApplicative.SUFFIX_PORTA_DELEGANTE;
+										if(msg.contains(check)){
+											keyForClean.add(key);
+											break;
+										}
+										else {
+											if(nomePorta_normalized!=null) {
+												String check_normalized = FiltroRicercaPorteApplicative.PREFIX_PORTA_DELEGANTE + nomePorta_normalized + FiltroRicercaPorteApplicative.SUFFIX_PORTA_DELEGANTE;
+												if(msg.contains(check_normalized)){
+													keyForClean.add(key);
+													break;
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+						else if(removeControlloTraffico && key.startsWith(prefixAttivazionePolicy)) {
+							Object oCode = ConfigurazionePdDReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof AttivazionePolicy) {
+								AttivazionePolicy aPolicy = (AttivazionePolicy) oCode;
+								if(aPolicy.getFiltro()!=null && aPolicy.getFiltro().isEnabled() && 
+										RuoloPolicy.APPLICATIVA.equals(aPolicy.getFiltro().getRuoloPorta())){
+									if(nomePorta.equals(aPolicy.getFiltro().getNomePorta())) {
+										keyForClean.add(key);
+									}
+									else if(nomePorta_normalized!=null && nomePorta_normalized.equals(aPolicy.getFiltro().getNomePorta())) {
+										keyForClean.add(key);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	public static void removeConnettore(IDConnettore idConnettore) throws Exception {
+		if(ConfigurazionePdDReader.isCacheAbilitata()) {
+			
+			OpenSPCoop2Properties openSPCoop2Properties = OpenSPCoop2Properties.getInstance();
+			
+			if(openSPCoop2Properties.isTimerConsegnaContenutiApplicativiAbilitato()) {
+				List<String> code = openSPCoop2Properties.getTimerConsegnaContenutiApplicativiCode();
+				for (String coda : code) {
+					String key = ConfigurazionePdD.getKey_getConnettoriConsegnaNotifichePrioritarie(coda);
+					Object oCode = ConfigurazionePdDReader.getRawObjectCache(key);
+					if(oCode!=null && oCode instanceof List<?>) {
+						List<?> l = (List<?>) oCode;
+						if(l!=null && !l.isEmpty()) {
+							for (Object object : l) {
+								if(object!=null && object instanceof IDConnettore) {
+									IDConnettore idC = (IDConnettore) object;
+									if(idC.equals(idConnettore)) {
+										ConfigurazionePdDReader.removeObjectCache(key);
+										break;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+					
+		}
+	}
+	
+	public static void removeSoggetto(IDSoggetto idSoggetto) throws Exception {
+		if(ConfigurazionePdDReader.isCacheAbilitata()) {
+			
+			boolean soggettiVirtuali = OpenSPCoop2Properties.getInstance().isSoggettiVirtualiEnabled();
+			
+			String keySoggetto = ConfigurazionePdD._getKey_getSoggettoByID(idSoggetto);
+			ConfigurazionePdDReader.removeObjectCache(keySoggetto);
+			
+			String keyRouter = ConfigurazionePdD._getKey_getRouter();
+			Object oRouter = ConfigurazionePdDReader.getRawObjectCache(keyRouter);
+			if(oRouter!=null && oRouter instanceof Soggetto) {
+				Soggetto s = (Soggetto) oRouter;
+				if(s.getTipo().equals(idSoggetto.getTipo()) 
+						&&
+					s.getNome().equals(idSoggetto.getNome()) ) {
+					ConfigurazionePdDReader.removeObjectCache(keyRouter);
+				}
+			}
+			
+			if(soggettiVirtuali) {
+				String keySoggettiVirtuali = ConfigurazionePdD._getKey_getSoggettiVirtuali();
+				Object oSoggettiVirtuali = ConfigurazionePdDReader.getRawObjectCache(keySoggettiVirtuali);
+				if(oSoggettiVirtuali!=null && oSoggettiVirtuali instanceof List<?>) {
+					List<?> l = (List<?>) oSoggettiVirtuali;
+					if(l!=null && !l.isEmpty()) {
+						for (Object object : l) {
+							if(object!=null && object instanceof IDSoggetto) {
+								IDSoggetto idS = (IDSoggetto) object;
+								if(idS.equals(idSoggetto)) {
+									ConfigurazionePdDReader.removeObjectCache(keySoggettiVirtuali);
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			if(soggettiVirtuali) {
+				List<String> keyForClean = new ArrayList<String>();
+				List<String> keys = ConfigurazionePdDReader.keysCache();
+				if(keys!=null && !keys.isEmpty()) {
+					String prefixPorteApplicativeVirtualiRicercaPuntuale = ConfigurazionePdD._toKey_getPorteApplicativeVirtualiPrefix(true);
+					String prefixPorteApplicativeVirtualiRicercaNonPuntuale = ConfigurazionePdD._toKey_getPorteApplicativeVirtualiPrefix(false);
+					String porteApplicativeVirtualiIdSoggetto = ConfigurazionePdD._toKey_getPorteApplicativeVirtuali_idSoggettoVirtuale(idSoggetto);
+					for (String key : keys) {
+						if(key!=null) {
+							if( 
+								((key.startsWith(prefixPorteApplicativeVirtualiRicercaPuntuale)) || (key.startsWith(prefixPorteApplicativeVirtualiRicercaNonPuntuale)))
+								&&
+								key.contains(porteApplicativeVirtualiIdSoggetto)) {
+								keyForClean.add(key);
+							}
+						}
+					}
+				}
+				if(keyForClean!=null && !keyForClean.isEmpty()) {
+					for (String key : keyForClean) {
+						removeObjectCache(key);
+					}
+				}
+			}
+
+		}
+	}
+	
+	public static void removeApplicativo(IDServizioApplicativo idApplicativo) throws Exception {
+		if(ConfigurazionePdDReader.isCacheAbilitata()) {
+			
+			String keyApplicativo = ConfigurazionePdD._getKey_getServizioApplicativo(idApplicativo);
+			ConfigurazionePdDReader.removeObjectCache(keyApplicativo);
+			
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = ConfigurazionePdDReader.keysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				
+				String prefixCredenzialiBasic = ConfigurazionePdD._toKey_getServizioApplicativoByCredenzialiBasicPrefix();
+				String prefixCredenzialiApiKey = ConfigurazionePdD._toKey_getServizioApplicativoByCredenzialiApiKeyPrefix(false);
+				String prefixCredenzialiApiKeyAppId = ConfigurazionePdD._toKey_getServizioApplicativoByCredenzialiApiKeyPrefix(true);
+				String prefixCredenzialiSsl = ConfigurazionePdD._toKey_getServizioApplicativoByCredenzialiSslPrefix(true);
+				String prefixCredenzialiSslCert = ConfigurazionePdD._toKey_getServizioApplicativoByCredenzialiSslCertPrefix(true);
+				String prefixCredenzialiPrincipal = ConfigurazionePdD._toKey_getServizioApplicativoByCredenzialiPrincipalPrefix();
+				
+				String prefixGetAllId = ConfigurazionePdD._toKey_getAllIdServiziApplicativi_method();
+								
+				for (String key : keys) {
+					if(key!=null) {
+						if(key.startsWith(prefixCredenzialiBasic) ||
+								key.startsWith(prefixCredenzialiApiKey) || 
+								key.startsWith(prefixCredenzialiApiKeyAppId) || 
+								key.startsWith(prefixCredenzialiSsl) || 
+								key.startsWith(prefixCredenzialiSslCert) || 
+								key.startsWith(prefixCredenzialiPrincipal)) {
+							
+							Object o = ConfigurazionePdDReader.getRawObjectCache(key);
+							if(o!=null && o instanceof ServizioApplicativo) {
+								ServizioApplicativo sa = (ServizioApplicativo) o;
+								if(idApplicativo.getNome().equals(idApplicativo.getNome()) &&
+										idApplicativo.getIdSoggettoProprietario().getTipo().equals(sa.getTipoSoggettoProprietario()) &&
+										idApplicativo.getIdSoggettoProprietario().getNome().equals(sa.getNomeSoggettoProprietario())) {
+									keyForClean.add(key);
+								}
+							}
+							
+						}
+						else if(key.startsWith(prefixGetAllId)) {
+							Object oCode = ConfigurazionePdDReader.getRawObjectCache(key);
+							if(oCode!=null && oCode instanceof List<?>) {
+								List<?> l = (List<?>) oCode;
+								if(l!=null && !l.isEmpty()) {
+									for (Object object : l) {
+										if(object!=null && object instanceof IDServizioApplicativo) {
+											IDServizioApplicativo idSAcheck = (IDServizioApplicativo) object;
+											if(idSAcheck.equals(idApplicativo)) {
+												keyForClean.add(key);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+			
+			OpenSPCoop2Properties openSPCoop2Properties = OpenSPCoop2Properties.getInstance();
+			
+			if(openSPCoop2Properties.isTimerConsegnaContenutiApplicativiAbilitato()) {
+				List<String> code = openSPCoop2Properties.getTimerConsegnaContenutiApplicativiCode();
+				for (String coda : code) {
+					String key = ConfigurazionePdD.getKey_getConnettoriConsegnaNotifichePrioritarie(coda);
+					Object oCode = ConfigurazionePdDReader.getRawObjectCache(key);
+					if(oCode!=null && oCode instanceof List<?>) {
+						List<?> l = (List<?>) oCode;
+						if(l!=null && !l.isEmpty()) {
+							for (Object object : l) {
+								if(object!=null && object instanceof IDConnettore) {
+									IDConnettore idC = (IDConnettore) object;
+									if(idC.getNome().equals(idApplicativo.getNome()) &&
+											idC.getIdSoggettoProprietario().equals(idApplicativo.getIdSoggettoProprietario())) {
+										ConfigurazionePdDReader.removeObjectCache(key);
+										break;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	public static void removeGenericProperties(IDGenericProperties idGP) throws Exception {
+		if(ConfigurazionePdDReader.isCacheAbilitata()) {
+			
+			String keyGP = ConfigurazionePdD._getKey_getGenericProperties(idGP.getTipologia(), idGP.getNome());
+			ConfigurazionePdDReader.removeObjectCache(keyGP);
+			
+			String keyGPTipologia = ConfigurazionePdD._getKey_getGenericProperties(idGP.getTipologia());
+			ConfigurazionePdDReader.removeObjectCache(keyGPTipologia);
+			
+			String prefixForwardProxy = ConfigurazionePdD.PREFIX_FORWARD_PROXY;
+			String forwardProxyGP = ConfigurazionePdD._toKey_ForwardProxyConfigSuffix(idGP);
+			
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = ConfigurazionePdDReader.keysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				for (String key : keys) {
+					if(key!=null) {
+						if(forwardProxyGP!=null && key.startsWith(prefixForwardProxy)&& key.contains(forwardProxyGP)) {
+							keyForClean.add(key);
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+			
+		}
+	}
+	
+	
 
 
 	/*   -------------- Metodi di inizializzazione -----------------  */
@@ -2098,6 +2756,14 @@ public class ConfigurazionePdDReader {
 
 	protected void updateStatoPortaApplicativa(Connection connectionPdD,IDPortaApplicativa idPA, StatoFunzionalita stato) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		this.configurazionePdD.updateStatoPortaApplicativa(connectionPdD, idPA, stato);
+	}
+	
+	protected String updateStatoConnettoreMultiplo(Connection connectionPdD,IDPortaApplicativa idPA, String nomeConnettore, StatoFunzionalita stato) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.updateStatoConnettoreMultiplo(connectionPdD, idPA, nomeConnettore, stato);
+	}
+	
+	protected String updateSchedulingConnettoreMultiplo(Connection connectionPdD,IDPortaApplicativa idPA, String nomeConnettore, StatoFunzionalita stato) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.updateSchedulingConnettoreMultiplo(connectionPdD, idPA, nomeConnettore, stato);
 	}
 	
 	public Map<String, String> getProprietaConfigurazione(PortaApplicativa pa) throws DriverConfigurazioneException {
@@ -3918,20 +4584,1058 @@ public class ConfigurazionePdDReader {
 
 
 
+	// CHECK CERTIFICATI
+	
+	protected CertificateCheck checkCertificatoApplicativo(Connection connectionPdD,boolean useCache,
+			long idSA, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		if(useCache) {
+			throw new DriverConfigurazioneException("Not Implemented");
+		}
+		
+		ServizioApplicativo sa = null;
+		IDriverConfigurazioneGet driver = this.configurazionePdD.getDriverConfigurazionePdD();
+		if(driver instanceof DriverConfigurazioneDB) {
+			DriverConfigurazioneDB driverDB = (DriverConfigurazioneDB) driver;
+			sa = driverDB.getServizioApplicativo(idSA);
+		}
+		else {
+			throw new DriverConfigurazioneException("Not Implemented with driver '"+driver.getClass().getName()+"'");
+		}
+		return checkCertificatoApplicativo(sa,sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	protected CertificateCheck checkCertificatoApplicativo(Connection connectionPdD,boolean useCache,
+			IDServizioApplicativo idSA, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		ServizioApplicativo sa = null;
+		if(useCache) {
+			this.configurazionePdD.getServizioApplicativo(connectionPdD, idSA);
+		}
+		else {
+			sa = this.configurazionePdD.getDriverConfigurazionePdD().getServizioApplicativo(idSA);
+		}
+		return checkCertificatoApplicativo(sa, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	public static CertificateCheck checkCertificatoApplicativo(ServizioApplicativo sa, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		if(sa.getInvocazionePorta()==null || sa.getInvocazionePorta().sizeCredenzialiList()<=0) {
+			throw new DriverConfigurazioneException("Nessuna credenziale risulta associata all'applicativo");
+		}
+		List<byte[]> certs = new ArrayList<byte[]>();
+		List<Boolean> strictValidation = new ArrayList<Boolean>();
+		for (int i = 0; i < sa.getInvocazionePorta().sizeCredenzialiList(); i++) {
+			Credenziali c = sa.getInvocazionePorta().getCredenziali(i);
+			if(!org.openspcoop2.core.config.constants.CredenzialeTipo.SSL.equals(c.getTipo())) {
+				throw new DriverConfigurazioneException("La credenziale ("+c.getTipo()+") associata all'applicativo non è un certificato x509");
+			}
+			if(c.getCertificate()!=null) {
+				certs.add(c.getCertificate());
+				strictValidation.add(c.isCertificateStrictVerification());
+			}
+		}
+		if(certs.isEmpty()) {
+			throw new DriverConfigurazioneException("Nessun certificato risulta associata all'applicativo");
+		}
+		else {
+			try {
+				return CertificateUtils.checkCertificateClient(certs, strictValidation, sogliaWarningGiorni,  
+						addCertificateDetails, separator, newLine,
+						log);
+			}catch(Throwable t) {
+				throw new DriverConfigurazioneException(t.getMessage(),t);
+			}
+		}
+
+	}
+
+	protected CertificateCheck checkCertificatoModiApplicativo(Connection connectionPdD,boolean useCache,
+			long idSA, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		if(useCache) {
+			throw new DriverConfigurazioneException("Not Implemented");
+		}
+		
+		ServizioApplicativo sa = null;
+		IDriverConfigurazioneGet driver = this.configurazionePdD.getDriverConfigurazionePdD();
+		if(driver instanceof DriverConfigurazioneDB) {
+			DriverConfigurazioneDB driverDB = (DriverConfigurazioneDB) driver;
+			sa = driverDB.getServizioApplicativo(idSA);
+		}
+		else {
+			throw new DriverConfigurazioneException("Not Implemented with driver '"+driver.getClass().getName()+"'");
+		}
+		return checkCertificatoModiApplicativo(sa,sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	protected CertificateCheck checkCertificatoModiApplicativo(Connection connectionPdD,boolean useCache,
+			IDServizioApplicativo idSA, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		ServizioApplicativo sa = null;
+		if(useCache) {
+			this.configurazionePdD.getServizioApplicativo(connectionPdD, idSA);
+		}
+		else {
+			sa = this.configurazionePdD.getDriverConfigurazionePdD().getServizioApplicativo(idSA);
+		}
+		return checkCertificatoModiApplicativo(sa, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	public static CertificateCheck checkCertificatoModiApplicativo(ServizioApplicativo sa, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		String protocollo = null;
+		try {
+			protocollo = ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(sa.getTipoSoggettoProprietario());
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+		boolean modi = CostantiLabel.MODIPA_PROTOCOL_NAME.equals(protocollo);
+		if(!modi) {
+			throw new DriverConfigurazioneException("Il profilo di interoperabilità dell'applicativo non è "+CostantiLabel.MODIPA_PROTOCOL_LABEL);
+		}
+		
+		KeystoreParams keystoreParams = ModIUtils.getApplicativoKeystoreParams(sa.getProtocolPropertyList());
+		if(keystoreParams==null) {
+			throw new DriverConfigurazioneException("Non risulta alcun keystore, da utilizzare per la firma "+CostantiLabel.MODIPA_PROTOCOL_LABEL+", associato all'applicativo");
+		}
+		
+		CertificateCheck check = null;
+		boolean classpathSupported = false;
+		try {
+			if(keystoreParams.getStore()!=null) {
+				check = CertificateUtils.checkKeyStore(keystoreParams.getStore(), keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(),
+						sogliaWarningGiorni, 
+						addCertificateDetails, separator, newLine,
+						log);
+			}
+			else {
+				check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(), keystoreParams.getPassword(), keystoreParams.getKeyAlias(),
+						sogliaWarningGiorni, 
+						addCertificateDetails, separator, newLine,
+						log);
+			}
+		}catch(Throwable t) {
+			throw new DriverConfigurazioneException(t.getMessage(),t);
+		}
+
+		if(check==null || StatoCheck.OK.equals(check.getStatoCheck())) {
+			byte[] cert = ModIUtils.getApplicativoKeystoreCertificate(sa.getProtocolPropertyList());
+			if(cert!=null && cert.length>0) {
+				try {
+					CertificateCheck checkSingleCertificate = CertificateUtils.checkSingleCertificate("Certificato associato al keystore ModI", cert, 
+							sogliaWarningGiorni, 
+							addCertificateDetails, separator, newLine,
+							log);
+					return checkSingleCertificate;
+				}catch(Throwable t) {
+					throw new DriverConfigurazioneException(t.getMessage(),t);
+				}
+			}
+		}
+		
+		return check;
+	}
+
+	
+	protected CertificateCheck checkCertificatiConnettoreHttpsById(Connection connectionPdD,boolean useCache,
+			long idConnettore, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		if(useCache) {
+			throw new DriverConfigurazioneException("Not Implemented");
+		}
+		
+		Connettore connettore = null;
+		IDriverConfigurazioneGet driver = this.configurazionePdD.getDriverConfigurazionePdD();
+		if(driver instanceof DriverConfigurazioneDB) {
+			DriverConfigurazioneDB driverDB = (DriverConfigurazioneDB) driver;
+			connettore = driverDB.getConnettore(idConnettore);
+		}
+		else {
+			throw new DriverConfigurazioneException("Not Implemented with driver '"+driver.getClass().getName()+"'");
+		}
+		return checkCertificatiConnettoreHttpsById(connettore,sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	public static CertificateCheck checkCertificatiConnettoreHttpsById(Connettore connettore, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		TipiConnettore tipo = TipiConnettore.toEnumFromName(connettore.getTipo());
+		if( !TipiConnettore.HTTPS.equals(tipo)) {
+			throw new DriverConfigurazioneException("Il connettore indicato non è di tipo https");
+		}
+		
+		SSLConfig httpsProp = null;
+		try {
+			httpsProp = ConnettoreHTTPSProperties.readProperties(connettore.getProperties());
+		}catch(Throwable t) {
+			throw new DriverConfigurazioneException(t.getMessage(),t);
+		}
+		CertificateCheck check = null;
+		boolean classpathSupported = false;
+				
+		String storeDetails = null; // per evitare duplicazione
+		
+		if(httpsProp.getKeyStoreLocation()!=null) {
+			try {
+				check = CertificateUtils.checkKeyStore(httpsProp.getKeyStoreLocation(), classpathSupported, httpsProp.getKeyStoreType(), 
+						httpsProp.getKeyStorePassword(), httpsProp.getKeyAlias(),
+						sogliaWarningGiorni, 
+						false, //addCertificateDetails,  
+						separator, newLine,
+						log);
+				
+				if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+					storeDetails = CertificateUtils.toStringKeyStore(httpsProp.getKeyStoreLocation(), httpsProp.getKeyStoreType(),
+							httpsProp.getKeyAlias(), 
+							separator, newLine);
+				}
+			}catch(Throwable t) {
+				throw new DriverConfigurazioneException(t.getMessage(),t);
+			}
+		}
+		
+		if(check==null || StatoCheck.OK.equals(check.getStatoCheck())) {
+			if(!httpsProp.isTrustAllCerts() && httpsProp.getTrustStoreLocation()!=null) {
+				try {
+					check = CertificateUtils.checkTrustStore(httpsProp.getTrustStoreLocation(), classpathSupported, httpsProp.getTrustStoreType(), 
+							httpsProp.getTrustStorePassword(), httpsProp.getTrustStoreCRLsLocation(),
+							sogliaWarningGiorni, 
+							false, //addCertificateDetails, 
+							separator, newLine,
+							log);
+					
+					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+						storeDetails = CertificateUtils.toStringTrustStore(httpsProp.getTrustStoreLocation(), httpsProp.getTrustStoreType(),
+								httpsProp.getTrustStoreCRLsLocation(), 
+								separator, newLine);
+					}
+				}catch(Throwable t) {
+					throw new DriverConfigurazioneException(t.getMessage(),t);
+				}
+			}
+		}
+		
+		if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+			String id = RegistroServiziReader.ID_CONFIGURAZIONE_CONNETTORE_HTTPS;
+			if(addCertificateDetails && storeDetails!=null) {
+				id = id + newLine + storeDetails;
+			}
+			check.setConfigurationId(id);	
+		}	
+		
+		if(check==null) {
+			// connettore https con truststore 'all' senza client autentication
+			check = new CertificateCheck();
+			check.setStatoCheck(StatoCheck.OK);
+		}
+		
+		return check;
+	}
+
+	public CertificateCheck checkCertificatiJvm(int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException{
+		return checkCertificatiJvm(sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	
+	public static CertificateCheck checkCertificatiJvm(int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverConfigurazioneException {
+		
+		CertificateCheck check = null;
+		boolean classpathSupported = false;
+		
+		String storeDetails = null; // per evitare duplicazione
+		
+		KeystoreParams keystoreParams = CertificateUtils.readKeyStoreParamsJVM();
+		KeystoreParams truststoreParams = CertificateUtils.readTrustStoreParamsJVM();
+		
+		if(keystoreParams!=null) {
+			try {
+				check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(),
+						keystoreParams.getPassword(), keystoreParams.getKeyAlias(),
+						sogliaWarningGiorni, 
+						false, //addCertificateDetails,  
+						separator, newLine,
+						log);
+				
+				if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+					storeDetails = CertificateUtils.toStringKeyStore(keystoreParams, 
+							separator, newLine);
+				}
+			}catch(Throwable t) {
+				throw new DriverConfigurazioneException(t.getMessage(),t);
+			}
+		}
+		
+		if(check==null || StatoCheck.OK.equals(check.getStatoCheck())) {
+			if(truststoreParams!=null) {
+				try {
+					check = CertificateUtils.checkTrustStore(truststoreParams.getPath(), classpathSupported, truststoreParams.getType(), 
+							truststoreParams.getPassword(), truststoreParams.getCrls(),
+							sogliaWarningGiorni, 
+							false, //addCertificateDetails, 
+							separator, newLine,
+							log);
+					
+					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+						storeDetails = CertificateUtils.toStringTrustStore(truststoreParams,
+								separator, newLine);
+					}
+				}catch(Throwable t) {
+					throw new DriverConfigurazioneException(t.getMessage(),t);
+				}
+			}
+		}
+		
+		if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+			//String id = "Configurazione https della JVM";
+			String id = "";
+			if(addCertificateDetails && storeDetails!=null) {
+				id = id + newLine + storeDetails;
+			}
+			check.setConfigurationId(id);	
+		}	
+		
+		if(check==null) {
+			// connettore https con truststore 'all' senza client autentication
+			check = new CertificateCheck();
+			check.setStatoCheck(StatoCheck.OK);
+		}
+		
+		return check;
+	}
+	
+	protected CertificateCheck checkCertificatiConnettoreHttpsTokenPolicyValidazione(Connection connectionPdD,boolean useCache,
+			String nome, String tipo, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		if(useCache) {
+			throw new DriverConfigurazioneException("Not Implemented");
+		}
+		
+		GenericProperties gp = null;
+		IDriverConfigurazioneGet driver = this.configurazionePdD.getDriverConfigurazionePdD();
+		if(driver instanceof DriverConfigurazioneDB) {
+			DriverConfigurazioneDB driverDB = (DriverConfigurazioneDB) driver;
+			gp = driverDB.getGenericProperties(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA, nome);
+		}
+		else {
+			throw new DriverConfigurazioneException("Not Implemented with driver '"+driver.getClass().getName()+"'");
+		}
+		return checkCertificatiConnettoreHttpsTokenPolicyValidazione(gp, tipo, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	public static CertificateCheck checkCertificatiConnettoreHttpsTokenPolicyValidazione(GenericProperties gp, String tipo, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		GestioneToken gestioneToken = new GestioneToken();
+		List<org.openspcoop2.core.config.Connettore> listConnettori = null;
+		try {
+			PolicyGestioneToken policy = TokenUtilities.convertTo(gp, gestioneToken);
+			
+			if( !policy.isEndpointHttps() ) {
+				throw new DriverConfigurazioneException("La configurazione della policy "+gp.getNome()+" non utilizza un connettore di tipo https");
+			}
+			
+			listConnettori = ConnettoreCheck.convertTokenPolicyValidazioneToConnettore(gp, log);
+		}catch(Throwable t) {
+			throw new DriverConfigurazioneException(t.getMessage(),t);
+		}
+		
+		CertificateCheck check = _checkConnettori(listConnettori, tipo, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				log);
+		if(check!=null) {
+			return check;
+		}
+		
+		throw new DriverConfigurazioneException("Nella policy "+gp.getNome()+" non risulta configurato un connettore per la funzionalità '"+tipo+"'");
+		
+	}
+	
+	protected CertificateCheck checkCertificatiValidazioneJwtTokenPolicyValidazione(Connection connectionPdD,boolean useCache,
+			String nome, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		if(useCache) {
+			throw new DriverConfigurazioneException("Not Implemented");
+		}
+		
+		GenericProperties gp = null;
+		IDriverConfigurazioneGet driver = this.configurazionePdD.getDriverConfigurazionePdD();
+		if(driver instanceof DriverConfigurazioneDB) {
+			DriverConfigurazioneDB driverDB = (DriverConfigurazioneDB) driver;
+			gp = driverDB.getGenericProperties(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA, nome);
+		}
+		else {
+			throw new DriverConfigurazioneException("Not Implemented with driver '"+driver.getClass().getName()+"'");
+		}
+		return checkCertificatiValidazioneJwtTokenPolicyValidazione(gp, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	public static final String ID_CONFIGURAZIONE_TOKEN_VALIDAZIONE_JWT = "Configurazione Validazione JWT";
+	public static CertificateCheck checkCertificatiValidazioneJwtTokenPolicyValidazione(GenericProperties gp, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		GestioneToken gestioneToken = new GestioneToken();
+		KeystoreParams keystoreParams = null;
+		KeystoreParams truststoreParams = null;
+		try {
+			PolicyGestioneToken policy = TokenUtilities.convertTo(gp, gestioneToken);
+			if(!TokenUtilities.isValidazioneEnabled(gp)) {
+				throw new DriverConfigurazioneException("La configurazione nella policy "+gp.getNome()+" non utilizza la funzionalità di validazione JWT");
+			}
+			String tokenType = policy.getTipoToken();
+			if(org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_TYPE_JWS.equals(tokenType)) {
+    			// JWS Compact   			
+				truststoreParams = TokenUtilities.getValidazioneJwtKeystoreParams(policy);
+			}
+    		else if(org.openspcoop2.pdd.core.token.Costanti.POLICY_TOKEN_TYPE_JWE.equals(tokenType)) {
+    			// JWE Compact
+    			keystoreParams = TokenUtilities.getValidazioneJwtKeystoreParams(policy);
+    		}
+		}catch(Throwable t) {
+			throw new DriverConfigurazioneException(t.getMessage(),t);
+		}
+		
+		CertificateCheck check = null;
+		boolean classpathSupported = true;
+				
+		String storeDetails = null; // per evitare duplicazione
+		
+		if(keystoreParams!=null) {
+			try {
+				if("jwk".equalsIgnoreCase(keystoreParams.getType())) {
+					throw new DriverConfigurazioneException("Nella configurazione della policy "+gp.getNome()+" la funzionalità di validazione JWT utilizza un keystore jwk non compatibile con il criterio di validazione dei certificati");
+				}
+				
+				check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(),
+						keystoreParams.getPassword(), keystoreParams.getKeyAlias(),
+						sogliaWarningGiorni, 
+						false, //addCertificateDetails,  
+						separator, newLine,
+						log);
+				
+				if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+					storeDetails = CertificateUtils.toStringKeyStore(keystoreParams, 
+							separator, newLine);
+				}
+			}catch(Throwable t) {
+				throw new DriverConfigurazioneException(t.getMessage(),t);
+			}
+		}
+		
+		if(check==null || StatoCheck.OK.equals(check.getStatoCheck())) {
+			if(truststoreParams!=null) {
+				try {
+					if("jwk".equalsIgnoreCase(truststoreParams.getType())) {
+						throw new DriverConfigurazioneException("Nella configurazione della policy "+gp.getNome()+" la funzionalità di validazione JWT utilizza un keystore jwk non compatibile con il criterio di validazione dei certificati");
+					}
+					
+					check = CertificateUtils.checkTrustStore(truststoreParams.getPath(), classpathSupported, truststoreParams.getType(), 
+							truststoreParams.getPassword(), truststoreParams.getCrls(),
+							truststoreParams.getKeyAlias(),
+							sogliaWarningGiorni, 
+							false, //addCertificateDetails, 
+							separator, newLine,
+							log);
+					
+					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+						storeDetails = CertificateUtils.toStringTrustStore(truststoreParams,
+								separator, newLine);
+					}
+				}catch(Throwable t) {
+					throw new DriverConfigurazioneException(t.getMessage(),t);
+				}
+			}
+		}
+		
+		if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+			String id = ID_CONFIGURAZIONE_TOKEN_VALIDAZIONE_JWT;
+			if(addCertificateDetails && storeDetails!=null) {
+				id = id + newLine + storeDetails;
+			}
+			check.setConfigurationId(id);	
+		}	
+		
+		if(check==null) {
+			// connettore https con truststore 'all' senza client autentication
+			check = new CertificateCheck();
+			check.setStatoCheck(StatoCheck.OK);
+		}
+		
+		return check;
+	}
+	
+	
+	protected CertificateCheck checkCertificatiForwardToJwtTokenPolicyValidazione(Connection connectionPdD,boolean useCache,
+			String nome, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		if(useCache) {
+			throw new DriverConfigurazioneException("Not Implemented");
+		}
+		
+		GenericProperties gp = null;
+		IDriverConfigurazioneGet driver = this.configurazionePdD.getDriverConfigurazionePdD();
+		if(driver instanceof DriverConfigurazioneDB) {
+			DriverConfigurazioneDB driverDB = (DriverConfigurazioneDB) driver;
+			gp = driverDB.getGenericProperties(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA, nome);
+		}
+		else {
+			throw new DriverConfigurazioneException("Not Implemented with driver '"+driver.getClass().getName()+"'");
+		}
+		return checkCertificatiForwardToJwtTokenPolicyValidazione(gp, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	public static final String ID_CONFIGURAZIONE_TOKEN_VALIDAZIONE_FORWARD_TO_JWT = "Configurazione ForwardTo JWT";
+	public static CertificateCheck checkCertificatiForwardToJwtTokenPolicyValidazione(GenericProperties gp, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		GestioneToken gestioneToken = new GestioneToken();
+		KeystoreParams keystoreParams = null;
+		KeystoreParams truststoreParams = null;
+		try {
+			PolicyGestioneToken policy = TokenUtilities.convertTo(gp, gestioneToken);
+			if(!TokenUtilities.isTokenForwardEnabled(gp) || !policy.isForwardToken_informazioniRaccolte()) {
+				throw new DriverConfigurazioneException("La configurazione nella policy "+gp.getNome()+" non utilizza la funzionalità di forward delle informazioni raccolte del token");
+			}
+			String forwardInformazioniRaccolteMode = policy.getForwardToken_informazioniRaccolteMode();
+			
+			if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JWS.equals(forwardInformazioniRaccolteMode) ||
+					Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWS.equals(forwardInformazioniRaccolteMode)) {
+    			// JWS Compact   			
+				keystoreParams = TokenUtilities.getForwardToJwtKeystoreParams(policy);
+			}
+			else if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE.equals(forwardInformazioniRaccolteMode)) {
+    			// JWE Compact
+    			truststoreParams = TokenUtilities.getForwardToJwtKeystoreParams(policy);
+    		}
+		}catch(Throwable t) {
+			throw new DriverConfigurazioneException(t.getMessage(),t);
+		}
+		
+		CertificateCheck check = null;
+		boolean classpathSupported = true;
+		
+		String storeDetails = null; // per evitare duplicazione
+		
+		if(keystoreParams!=null) {
+			try {
+				if("jwk".equalsIgnoreCase(keystoreParams.getType())) {
+					throw new DriverConfigurazioneException("Nella configurazione della policy "+gp.getNome()+" la funzionalità di forward delle informazioni raccolte come JWT utilizza un keystore jwk non compatibile con il criterio di validazione dei certificati");
+				}
+				
+				check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(),
+						keystoreParams.getPassword(), keystoreParams.getKeyAlias(),
+						sogliaWarningGiorni, 
+						false, //addCertificateDetails,  
+						separator, newLine,
+						log);
+				
+				if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+					storeDetails = CertificateUtils.toStringKeyStore(keystoreParams, 
+							separator, newLine);
+				}
+			}catch(Throwable t) {
+				throw new DriverConfigurazioneException(t.getMessage(),t);
+			}
+		}
+		
+		if(check==null || StatoCheck.OK.equals(check.getStatoCheck())) {
+			if(truststoreParams!=null) {
+				try {
+					if("jwk".equalsIgnoreCase(truststoreParams.getType())) {
+						throw new DriverConfigurazioneException("Nella configurazione della policy "+gp.getNome()+" la funzionalità di forward delle informazioni raccolte come JWT utilizza un keystore jwk non compatibile con il criterio di validazione dei certificati");
+					}
+					
+					check = CertificateUtils.checkTrustStore(truststoreParams.getPath(), classpathSupported, truststoreParams.getType(), 
+							truststoreParams.getPassword(), truststoreParams.getCrls(),
+							truststoreParams.getKeyAlias(),
+							sogliaWarningGiorni, 
+							false, //addCertificateDetails, 
+							separator, newLine,
+							log);
+					
+					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+						storeDetails = CertificateUtils.toStringTrustStore(truststoreParams,
+								separator, newLine);
+					}
+				}catch(Throwable t) {
+					throw new DriverConfigurazioneException(t.getMessage(),t);
+				}
+			}
+		}
+		
+		if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+			String id = ID_CONFIGURAZIONE_TOKEN_VALIDAZIONE_FORWARD_TO_JWT;
+			if(addCertificateDetails && storeDetails!=null) {
+				id = id + newLine + storeDetails;
+			}
+			check.setConfigurationId(id);	
+		}	
+		
+		if(check==null) {
+			// connettore https con truststore 'all' senza client autentication
+			check = new CertificateCheck();
+			check.setStatoCheck(StatoCheck.OK);
+		}
+		
+		return check;
+	}
 
 
+	protected CertificateCheck checkCertificatiConnettoreHttpsTokenPolicyNegoziazione(Connection connectionPdD,boolean useCache,
+			String nome, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		if(useCache) {
+			throw new DriverConfigurazioneException("Not Implemented");
+		}
+		
+		GenericProperties gp = null;
+		IDriverConfigurazioneGet driver = this.configurazionePdD.getDriverConfigurazionePdD();
+		if(driver instanceof DriverConfigurazioneDB) {
+			DriverConfigurazioneDB driverDB = (DriverConfigurazioneDB) driver;
+			gp = driverDB.getGenericProperties(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA_RETRIEVE, nome);
+		}
+		else {
+			throw new DriverConfigurazioneException("Not Implemented with driver '"+driver.getClass().getName()+"'");
+		}
+		return checkCertificatiConnettoreHttpsTokenPolicyNegoziazione(gp, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	public static CertificateCheck checkCertificatiConnettoreHttpsTokenPolicyNegoziazione(GenericProperties gp, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		List<org.openspcoop2.core.config.Connettore> listConnettori = null;
+		try {
+			PolicyNegoziazioneToken policy = TokenUtilities.convertTo(gp);
+			
+			if( !policy.isEndpointHttps() ) {
+				throw new DriverConfigurazioneException("La configurazione della policy "+gp.getNome()+" non utilizza un connettore di tipo https");
+			}
+			
+			listConnettori = ConnettoreCheck.convertTokenPolicyNegoziazioneToConnettore(gp, log); // sarà solo uno
+		}catch(Throwable t) {
+			throw new DriverConfigurazioneException(t.getMessage(),t);
+		}
+		
+		CertificateCheck check = _checkConnettori(listConnettori, null, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				log);
+		if(check!=null) {
+			return check;
+		}
+		throw new DriverConfigurazioneException("Nella policy "+gp.getNome()+" non risulta configurato un connettore https");
+		
+	}
+	
+	protected CertificateCheck checkCertificatiSignedJwtTokenPolicyNegoziazione(Connection connectionPdD,boolean useCache,
+			String nome, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		if(useCache) {
+			throw new DriverConfigurazioneException("Not Implemented");
+		}
+		
+		GenericProperties gp = null;
+		IDriverConfigurazioneGet driver = this.configurazionePdD.getDriverConfigurazionePdD();
+		if(driver instanceof DriverConfigurazioneDB) {
+			DriverConfigurazioneDB driverDB = (DriverConfigurazioneDB) driver;
+			gp = driverDB.getGenericProperties(org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA_RETRIEVE, nome);
+		}
+		else {
+			throw new DriverConfigurazioneException("Not Implemented with driver '"+driver.getClass().getName()+"'");
+		}
+		return checkCertificatiSignedJwtTokenPolicyNegoziazione(gp, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	public static final String ID_CONFIGURAZIONE_TOKEN_NEGOZIAZIONE_SIGNED_JWT = "Configurazione SignedJWT";
+	public static CertificateCheck checkCertificatiSignedJwtTokenPolicyNegoziazione(GenericProperties gp, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		KeystoreParams keystoreParams = null;
+		try {
+			PolicyNegoziazioneToken policy = TokenUtilities.convertTo(gp);
+			if(!policy.isRfc7523_x509_Grant()) {
+				throw new DriverConfigurazioneException("La configurazione nella policy "+gp.getNome()+" non utilizza la funzionalità SignedJWT (RFC 7523)");
+			}
+			// JWS Compact   			
+			keystoreParams = TokenUtilities.getSignedJwtKeystoreParams(policy);
+		}catch(Throwable t) {
+			throw new DriverConfigurazioneException(t.getMessage(),t);
+		}
+		
+		CertificateCheck check = null;
+		boolean classpathSupported = true;
+		
+		String storeDetails = null; // per evitare duplicazione
+		
+		if(keystoreParams!=null) {
+			try {
+				if("jwk".equalsIgnoreCase(keystoreParams.getType())) {
+					throw new DriverConfigurazioneException("Nella configurazione della policy "+gp.getNome()+" la funzionalità di SignedJWT utilizza un keystore jwk non compatibile con il criterio di validazione dei certificati");
+				}
+				
+				check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(),
+						keystoreParams.getPassword(), keystoreParams.getKeyAlias(),
+						sogliaWarningGiorni, 
+						false, //addCertificateDetails,  
+						separator, newLine,
+						log);
+				
+				if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+					storeDetails = CertificateUtils.toStringKeyStore(keystoreParams, 
+							separator, newLine);
+				}
+			}catch(Throwable t) {
+				throw new DriverConfigurazioneException(t.getMessage(),t);
+			}
+		}
+		
+		if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+			String id = ID_CONFIGURAZIONE_TOKEN_NEGOZIAZIONE_SIGNED_JWT;
+			if(addCertificateDetails && storeDetails!=null) {
+				id = id + newLine + storeDetails;
+			}
+			check.setConfigurationId(id);	
+		}	
+		
+		if(check==null) {
+			// connettore https con truststore 'all' senza client autentication
+			check = new CertificateCheck();
+			check.setStatoCheck(StatoCheck.OK);
+		}
+		
+		return check;
+	}
 
 
+	protected CertificateCheck checkCertificatiConnettoreHttpsAttributeAuthority(Connection connectionPdD,boolean useCache,
+			String nome, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		if(useCache) {
+			throw new DriverConfigurazioneException("Not Implemented");
+		}
+		
+		GenericProperties gp = null;
+		IDriverConfigurazioneGet driver = this.configurazionePdD.getDriverConfigurazionePdD();
+		if(driver instanceof DriverConfigurazioneDB) {
+			DriverConfigurazioneDB driverDB = (DriverConfigurazioneDB) driver;
+			gp = driverDB.getGenericProperties(org.openspcoop2.pdd.core.token.Costanti.ATTRIBUTE_AUTHORITY, nome);
+		}
+		else {
+			throw new DriverConfigurazioneException("Not Implemented with driver '"+driver.getClass().getName()+"'");
+		}
+		return checkCertificatiConnettoreHttpsAttributeAuthority(gp, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	public static CertificateCheck checkCertificatiConnettoreHttpsAttributeAuthority(GenericProperties gp, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		List<org.openspcoop2.core.config.Connettore> listConnettori = null;
+		try {
+			PolicyAttributeAuthority policy = AttributeAuthorityUtilities.convertTo(gp);
+			
+			if( !policy.isEndpointHttps() ) {
+				throw new DriverConfigurazioneException("La configurazione della policy "+gp.getNome()+" non utilizza un connettore di tipo https");
+			}
+			
+			listConnettori = ConnettoreCheck.convertAttributeAuthorityToConnettore(gp, log); // sarà solo uno
+		}catch(Throwable t) {
+			throw new DriverConfigurazioneException(t.getMessage(),t);
+		}
+		
+		CertificateCheck check = _checkConnettori(listConnettori, null, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				log);
+		if(check!=null) {
+			return check;
+		}
+		throw new DriverConfigurazioneException("Nell'AttributeAuthority "+gp.getNome()+" non risulta configurato un connettore https");
+		
+	}
+		
+	protected CertificateCheck checkCertificatiAttributeAuthorityJwtRichiesta(Connection connectionPdD,boolean useCache,
+			String nome, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		if(useCache) {
+			throw new DriverConfigurazioneException("Not Implemented");
+		}
+		
+		GenericProperties gp = null;
+		IDriverConfigurazioneGet driver = this.configurazionePdD.getDriverConfigurazionePdD();
+		if(driver instanceof DriverConfigurazioneDB) {
+			DriverConfigurazioneDB driverDB = (DriverConfigurazioneDB) driver;
+			gp = driverDB.getGenericProperties(org.openspcoop2.pdd.core.token.Costanti.ATTRIBUTE_AUTHORITY, nome);
+		}
+		else {
+			throw new DriverConfigurazioneException("Not Implemented with driver '"+driver.getClass().getName()+"'");
+		}
+		return checkCertificatiAttributeAuthorityJwtRichiesta(gp, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	public static final String ID_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_JWT_RICHIESTA = "Configurazione JWS Richiesta";
+	public static CertificateCheck checkCertificatiAttributeAuthorityJwtRichiesta(GenericProperties gp, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		KeystoreParams keystoreParams = null;
+		try {
+			PolicyAttributeAuthority policy = AttributeAuthorityUtilities.convertTo(gp);
+			if(!policy.isRequestJws()) {
+				throw new DriverConfigurazioneException("La configurazione nell'AttributeAuthority "+gp.getNome()+" non definisce il tipo di richiesta come JWS");
+			}
+			// JWS Compact   			
+			keystoreParams = AttributeAuthorityUtilities.getRequestJwsKeystoreParams(policy);
+		}catch(Throwable t) {
+			throw new DriverConfigurazioneException(t.getMessage(),t);
+		}
+		
+		CertificateCheck check = null;
+		boolean classpathSupported = true;
+		
+		String storeDetails = null; // per evitare duplicazione
+		
+		if(keystoreParams!=null) {
+			try {
+				if("jwk".equalsIgnoreCase(keystoreParams.getType())) {
+					throw new DriverConfigurazioneException("Nella policy "+gp.getNome()+" la configurazione della richiesta JWS utilizza un keystore jwk non compatibile con il criterio di validazione dei certificati");
+				}
+				
+				check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(),
+						keystoreParams.getPassword(), keystoreParams.getKeyAlias(),
+						sogliaWarningGiorni, 
+						false, //addCertificateDetails,  
+						separator, newLine,
+						log);
+				
+				if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+					storeDetails = CertificateUtils.toStringKeyStore(keystoreParams, 
+							separator, newLine);
+				}
+			}catch(Throwable t) {
+				throw new DriverConfigurazioneException(t.getMessage(),t);
+			}
+		}
+		
+		if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+			String id = ID_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_JWT_RICHIESTA;
+			if(addCertificateDetails && storeDetails!=null) {
+				id = id + newLine + storeDetails;
+			}
+			check.setConfigurationId(id);	
+		}	
+		
+		if(check==null) {
+			// connettore https con truststore 'all' senza client autentication
+			check = new CertificateCheck();
+			check.setStatoCheck(StatoCheck.OK);
+		}
+		
+		return check;
+	}
+	
+	public static final String ID_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_JWT_RISPOSTA = "Configurazione JWS Risposta";
+	protected CertificateCheck checkCertificatiAttributeAuthorityJwtRisposta(Connection connectionPdD,boolean useCache,
+			String nome, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		if(useCache) {
+			throw new DriverConfigurazioneException("Not Implemented");
+		}
+		
+		GenericProperties gp = null;
+		IDriverConfigurazioneGet driver = this.configurazionePdD.getDriverConfigurazionePdD();
+		if(driver instanceof DriverConfigurazioneDB) {
+			DriverConfigurazioneDB driverDB = (DriverConfigurazioneDB) driver;
+			gp = driverDB.getGenericProperties(org.openspcoop2.pdd.core.token.Costanti.ATTRIBUTE_AUTHORITY, nome);
+		}
+		else {
+			throw new DriverConfigurazioneException("Not Implemented with driver '"+driver.getClass().getName()+"'");
+		}
+		return checkCertificatiAttributeAuthorityJwtRisposta(gp, sogliaWarningGiorni, 
+				addCertificateDetails, separator, newLine,
+				this.log);
+	}
+	public static CertificateCheck checkCertificatiAttributeAuthorityJwtRisposta(GenericProperties gp, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		KeystoreParams keystoreParams = null;
+		try {
+			PolicyAttributeAuthority policy = AttributeAuthorityUtilities.convertTo(gp);
+			if(!policy.isResponseJws()) {
+				throw new DriverConfigurazioneException("La configurazione nell'AttributeAuthority "+gp.getNome()+" non definisce il tipo di risposta come JWS");
+			}
+			// JWS Compact   			
+			keystoreParams = AttributeAuthorityUtilities.getResponseJwsKeystoreParams(policy);
+		}catch(Throwable t) {
+			throw new DriverConfigurazioneException(t.getMessage(),t);
+		}
+		
+		CertificateCheck check = null;
+		boolean classpathSupported = true;
+		
+		String storeDetails = null; // per evitare duplicazione
+		
+		if(keystoreParams!=null) {
+			try {
+				if("jwk".equalsIgnoreCase(keystoreParams.getType())) {
+					throw new DriverConfigurazioneException("Nella policy "+gp.getNome()+" la configurazione della risposta JWS utilizza un keystore jwk non compatibile con il criterio di validazione dei certificati");
+				}
+				
+				check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(),
+						keystoreParams.getPassword(), keystoreParams.getKeyAlias(),
+						sogliaWarningGiorni, 
+						false, //addCertificateDetails,  
+						separator, newLine,
+						log);
+				
+				if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+					storeDetails = CertificateUtils.toStringKeyStore(keystoreParams, 
+							separator, newLine);
+				}
+			}catch(Throwable t) {
+				throw new DriverConfigurazioneException(t.getMessage(),t);
+			}
+		}
+		
+		if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+			String id = ID_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_JWT_RISPOSTA;
+			if(addCertificateDetails && storeDetails!=null) {
+				id = id + newLine + storeDetails;
+			}
+			check.setConfigurationId(id);	
+		}	
+		
+		if(check==null) {
+			// connettore https con truststore 'all' senza client autentication
+			check = new CertificateCheck();
+			check.setStatoCheck(StatoCheck.OK);
+		}
+		
+		return check;
+	}
 
+	
+	private static CertificateCheck _checkConnettori(List<org.openspcoop2.core.config.Connettore> listConnettori, String tipo, int sogliaWarningGiorni, 
+			boolean addCertificateDetails, String separator, String newLine,
+			Logger log) throws DriverConfigurazioneException {
 
-
-
-
-
-
-
-
-
+		boolean classpathSupported = true;
+		
+		if(listConnettori!=null && !listConnettori.isEmpty()) {
+			for (org.openspcoop2.core.config.Connettore connettore : listConnettori) {
+					
+				String tipoC = ConnettoreCheck.getPropertyValue(connettore, ConnettoreCheck.POLICY_TIPO_ENDPOINT);
+				if(tipo==null || tipo.equalsIgnoreCase(tipoC)) {
+				
+					SSLConfig httpsProp = null;
+					try {
+						httpsProp = ConnettoreHTTPSProperties.readProperties(connettore.getProperties());
+					}catch(Throwable t) {
+						throw new DriverConfigurazioneException(t.getMessage(),t);
+					}
+					CertificateCheck check = null;
+							
+					String storeDetails = null; // per evitare duplicazione
+					
+					if(httpsProp.getKeyStoreLocation()!=null) {
+						try {
+							check = CertificateUtils.checkKeyStore(httpsProp.getKeyStoreLocation(), classpathSupported, httpsProp.getKeyStoreType(), 
+									httpsProp.getKeyStorePassword(), httpsProp.getKeyAlias(),
+									sogliaWarningGiorni, 
+									false, //addCertificateDetails,  
+									separator, newLine,
+									log);
+							
+							if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+								storeDetails = CertificateUtils.toStringKeyStore(httpsProp.getKeyStoreLocation(), httpsProp.getKeyStoreType(),
+										httpsProp.getKeyAlias(), 
+										separator, newLine);
+							}
+						}catch(Throwable t) {
+							throw new DriverConfigurazioneException(t.getMessage(),t);
+						}
+					}
+					
+					if(check==null || StatoCheck.OK.equals(check.getStatoCheck())) {
+						if(!httpsProp.isTrustAllCerts() && httpsProp.getTrustStoreLocation()!=null) {
+							try {
+								check = CertificateUtils.checkTrustStore(httpsProp.getTrustStoreLocation(), classpathSupported, httpsProp.getTrustStoreType(), 
+										httpsProp.getTrustStorePassword(), httpsProp.getTrustStoreCRLsLocation(),
+										sogliaWarningGiorni, 
+										false, //addCertificateDetails, 
+										separator, newLine,
+										log);
+								
+								if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+									storeDetails = CertificateUtils.toStringTrustStore(httpsProp.getTrustStoreLocation(), httpsProp.getTrustStoreType(),
+											httpsProp.getTrustStoreCRLsLocation(), 
+											separator, newLine);
+								}
+							}catch(Throwable t) {
+								throw new DriverConfigurazioneException(t.getMessage(),t);
+							}
+						}
+					}
+					
+					if(check!=null && !StatoCheck.OK.equals(check.getStatoCheck())) {
+						String id = RegistroServiziReader.ID_CONFIGURAZIONE_CONNETTORE_HTTPS;
+						if(addCertificateDetails && storeDetails!=null) {
+							id = id + newLine + storeDetails;
+						}
+						check.setConfigurationId(id);	
+					}	
+					
+					if(check==null) {
+						// connettore https con truststore 'all' senza client autentication
+						check = new CertificateCheck();
+						check.setStatoCheck(StatoCheck.OK);
+					}
+					
+					return check;
+				}
+					
+			}
+		}
+		return null;
+	}
 
 
 
@@ -6183,11 +7887,11 @@ public class ConfigurazionePdDReader {
 	public boolean isForwardProxyEnabled() {
 		return this.configurazionePdD.isForwardProxyEnabled();
 	}
-	public ForwardProxy getForwardProxyConfigFruizione(IDSoggetto dominio, IDServizio idServizio) throws DriverConfigurazioneException{
-		return this.configurazionePdD.getForwardProxyConfigFruizione(dominio, idServizio);
+	public ForwardProxy getForwardProxyConfigFruizione(IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
+		return this.configurazionePdD.getForwardProxyConfigFruizione(dominio, idServizio, policy);
 	}
-	public ForwardProxy getForwardProxyConfigErogazione(IDSoggetto dominio, IDServizio idServizio ) throws DriverConfigurazioneException{
-		return this.configurazionePdD.getForwardProxyConfigErogazione(dominio, idServizio);
+	public ForwardProxy getForwardProxyConfigErogazione(IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy ) throws DriverConfigurazioneException{
+		return this.configurazionePdD.getForwardProxyConfigErogazione(dominio, idServizio, policy);
 	}
 	
 	

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -68,7 +68,9 @@ import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.web.monitor.allarmi.bean.AllarmiContext;
+import org.openspcoop2.web.monitor.allarmi.constants.AllarmiCostanti;
 import org.openspcoop2.web.monitor.allarmi.dao.IAllarmiService;
+import org.openspcoop2.web.monitor.core.bean.DialogInfo;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsService;
@@ -76,6 +78,7 @@ import org.openspcoop2.web.monitor.core.dao.IService;
 import org.openspcoop2.web.monitor.core.dao.MBeanUtilsService;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
+import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.slf4j.Logger;
 
@@ -121,13 +124,17 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	
 	private String selectedTab = null;
 	private boolean editMode = false;
+	private boolean ackMode = false;
+	
+	private DialogInfo criteriAckDialogInfo;
 	
 	public boolean isShowFilter() throws Exception {
 		if(this.allarme==null || this.allarme.getPlugin()==null){
 			return false; // all'inizio deve prima essere scelto il plugin
 		}
 		
-		this.showFilter = ((IAllarmiService)this.service).isUsableFilter(this.allarme);
+		Context context = new AllarmiContext(this);
+		this.showFilter = ((IAllarmiService)this.service).isUsableFilter(this.allarme, context);
 		
 		return this.showFilter;
 	}
@@ -141,7 +148,8 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 			return false; // all'inizio deve prima essere scelto il plugin
 		}
 		
-		this.showGroupBy = ((IAllarmiService)this.service).isUsableGroupBy(this.allarme);
+		Context context = new AllarmiContext(this);
+		this.showGroupBy = ((IAllarmiService)this.service).isUsableGroupBy(this.allarme, context);
 		
 		return this.showGroupBy;
 	}
@@ -154,7 +162,8 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 		if(this.allarme==null || this.allarme.getPlugin()==null){
 			return org.openspcoop2.monitor.engine.constants.Costanti.LABEL_ALLARMI_PARAMETRI; // all'inizio deve prima essere scelto il plugin
 		}
-		return ((IAllarmiService)this.service).getParameterSectionTitle(this.allarme);
+		Context context = new AllarmiContext(this);
+		return ((IAllarmiService)this.service).getParameterSectionTitle(this.allarme, context);
 	}
 	
 	public boolean isShowParameters() throws Exception {
@@ -214,6 +223,13 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	}
 	public boolean isAllarmiConsultazioneModificaStatoAbilitataAllarmePassivo() {
 		return this.alarmEngineConfig.isOptionsUpdateStatePassiveAlarm();
+	}
+	
+	public boolean isAllarmiConsultazioneModificaAckCriteriaAllarmeAttivo() {
+		return this.alarmEngineConfig.isOptionsUpdateAckCriteriaActiveAlarm();
+	}
+	public boolean isAllarmiConsultazioneModificaAckCriteriaAllarmePassivo() {
+		return this.alarmEngineConfig.isOptionsUpdateAckCriteriaPassiveAlarm();
 	}
 		
 	public boolean isAllarmiAssociazioneAcknowledgedStatoAllarme() {
@@ -282,6 +298,13 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 			return this.allarme.getDettaglioStato();
 		}
 		return null;
+	}
+	
+	public void setModificaCriteriAck(String nuovoDettaglio){
+		this.allarme.setDettaglioAcknowledged(nuovoDettaglio);
+	}
+	public String getModificaCriteriAck(){
+		return this.allarme.getDettaglioAcknowledged();
 	}
 	
 	public void setModificaAcknowledged(int nuovoAck){
@@ -479,6 +502,11 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 		return "allarme";
 	}
 	
+	public String history() {
+		this.search.filtra();
+		return "visualizzaHistoryAllarme";
+	}
+	
 	public String salva() {
 		try {
 				
@@ -543,6 +571,15 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 			} catch (Exception e) {
 				MessageUtils.addErrorMsg("Allarme salvato con successo, ma invio notifica terminato con errore: " + e.getMessage());
 			}
+			
+			/* ******** RIPULISCO RICERCA *************** */
+			if(this.ackMode) {
+				// per far si che venga visto il nuovo stato dell'allarme, ripulisco la ricerca
+				// per adesso come workaround
+				// Altrimenti quando si entra immediatamente nel dettaglio dell'allarme, non viene visualizzata l'ultima immagine
+				this.search.ripulisci();
+			}
+			
 		} catch (Exception e) {
 			MessageUtils.addErrorMsg("Si e' verificato un errore. Riprovare.");
 			AllarmiBean.log.error(e.getMessage(), e);
@@ -974,7 +1011,9 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 //					showRuoloRichiedente = true;
 //				}
 //			}
-			
+			else {
+				showRuoloRichiedente = true; // comunque viene visualizzato solo se definito
+			}
 			
 			if((this.allarme.getFiltro().getTipoFruitore()!=null && this.allarme.getFiltro().getNomeFruitore()!=null) ||
 					this.allarme.getFiltro().getServizioApplicativoFruitore() != null || !showRuoloRichiedente) {
@@ -1343,6 +1382,14 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	public void setEditMode(boolean editMode) {
 		this.editMode = editMode;
 	}
+	
+	public boolean isAckMode() {
+		return this.ackMode;
+	}
+
+	public void setAckMode(boolean ackMode) {
+		this.ackMode = ackMode;
+	}
 
 	public boolean isVisualizzaParametri() {
 		return this.getParameters() != null && !this.getParameters().isEmpty();
@@ -1407,5 +1454,42 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 			return lastUpdate;
 		}
 		return null;
+	}
+
+	public DialogInfo getCriteriAckDialogInfo() {
+		if(this.criteriAckDialogInfo == null) {
+			if(this.allarme==null || this.allarme.getPlugin()==null){
+				return null;
+			}
+			
+			Context context = new AllarmiContext(this);
+			org.openspcoop2.monitor.sdk.plugins.DialogInfo info = null;
+			try {
+				info = ((IAllarmiService)this.service).getCriteriAckDialogInfo(this.allarme, context);
+			} catch (Exception e) {
+				AllarmiBean.log.error(e.getMessage(), e);
+			}
+			
+			if(info!=null) {
+			
+				this.criteriAckDialogInfo = new DialogInfo(MessageManager.getInstance().getMessage(AllarmiCostanti.CRITERI_ACKNOWLEDGE_LABEL_KEY));
+				if(info.getBody()!=null && !"".equals(info.getBody())) {
+					this.criteriAckDialogInfo.setHeaderBody(info.getBody()); // setHeaderBody per avere lo span
+				}
+				else {
+					this.criteriAckDialogInfo.setHeaderBody(info.getHeaderBody());
+					this.criteriAckDialogInfo.setListBody(info.getListBody());
+				}
+				//this.criteriAckDialogInfo.setResizeable(true);
+				
+			}
+			
+		}
+		
+		return this.criteriAckDialogInfo;
+	}
+
+	public void setCriteriAckDialogInfo(DialogInfo criteriAckDialogInfo) {
+		this.criteriAckDialogInfo = criteriAckDialogInfo;
 	}
 }

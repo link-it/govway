@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -39,6 +39,8 @@ import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.behaviour.BehaviourEmitDiagnosticException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourPropertiesUtils;
+import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
+import org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.core.dynamic.MessageContent;
@@ -115,7 +117,11 @@ public class StickyUtils  {
 						messageContent = new MessageContent(message.castAsRestJson(), bufferMessage_readOnly, pddContext);
 					}
 					else{
-						throw new Exception("Selettore '"+tipoSelettore.getValue()+"' non supportato per il message-type '"+message.getMessageType()+"'");
+						if(TipoSelettore.CONTENT_BASED.equals(tipoSelettore) 
+								// Nei template potrei utilizzare gli header o altre informazioni che non entrano nel merito del contenuto //|| tipoSelettore.isTemplate()
+								) {
+							throw new Exception("Selettore '"+tipoSelettore.getValue()+"' non supportato per il message-type '"+message.getMessageType()+"'");
+						}
 					}
 				}
 			}
@@ -237,6 +243,9 @@ public class StickyUtils  {
 						pForm,
 						errorHandler);
 				condition = DynamicUtils.convertDynamicPropertyValue("ConditionalConfig.gwt", patternSelettore, dynamicMap, pddContext, true);
+				if(condition!=null) {
+					condition = ConditionalUtils.normalizeTemplateResult(condition);
+				}
 				break;
 				
 			case FREEMARKER_TEMPLATE:
@@ -262,6 +271,9 @@ public class StickyUtils  {
 				bout.flush();
 				bout.close();
 				condition = bout.toString();
+				if(condition!=null) {
+					condition = ConditionalUtils.normalizeTemplateResult(condition);
+				}
 				break;
 				
 			case VELOCITY_TEMPLATE:
@@ -287,6 +299,9 @@ public class StickyUtils  {
 				bout.flush();
 				bout.close();
 				condition = bout.toString();
+				if(condition!=null) {
+					condition = ConditionalUtils.normalizeTemplateResult(condition);
+				}
 				break;
 			}
 		

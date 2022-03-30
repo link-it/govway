@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -530,6 +530,7 @@ public class JDBCAllarmeServiceSearchImpl implements IJDBCServiceSearchWithId<Al
 		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().LASTTIMESTAMP_UPDATE,true));
 		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().ENABLED,true));
 		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().ACKNOWLEDGED,true));
+		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().DETTAGLIO_ACKNOWLEDGED,true));
 		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().TIPO_PERIODO,true));
 		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().PERIODO,true));
 		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().FILTRO.ENABLED,true));

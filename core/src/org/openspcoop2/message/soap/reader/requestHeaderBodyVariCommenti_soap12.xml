@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Commento Iniziale -->
+
+<!--
+     <jejdkeke> Commento Iniziale 
+     
+     dz<de>>>>>deded de
+     de- de-de d
+     -->
+
+
+   <soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope" xmlns:xsd="http://services.samples/xsd">
+
+<!-- Commento Iniziale -->
+
+<!--
+     <jejdkeke> Commento Iniziale 
+     
+     dz<de>>>>>deded de
+     de- de-de d
+     -->
+
+
+   <soapenv:Header>
+   
+   <!-- Commento Iniziale -->
+
+<!--
+     <jejdkeke> Commento Iniziale 
+     
+     dz<de>>>>>deded de
+     de- de-de d
+     -->
+   
+   
+    <!-- TEST -->
+<xsd:skcotSyub>
+<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>
+
+<!-- Commento Iniziale -->
+
+<!--
+     <jejdkeke> Commento Iniziale 
+     
+     dz<de>>>>>deded de
+     de- de-de d
+     -->
+
+
+<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>8030</emulov></redro>
+
+
+<!-- Commento Iniziale -->
+
+<!--
+     <jejdkeke> Commento Iniziale 
+     
+     dz<de>>>>>deded de
+     de- de-de d
+     -->
+
+
+</xsd:skcotSyub>
+
+<!-- Commento Iniziale -->
+
+<!--
+     <jejdkeke> Commento Iniziale 
+     
+     dz<de>>>>>deded de
+     de- de-de d
+     -->
+
+
+</soapenv:Header>     
+    
+    <!-- Commento Iniziale -->
+
+<!--
+     <jejdkeke> Commento Iniziale 
+     
+     dz<de>>>>>deded de
+     de- de-de d
+     -->
+
+    
+<soapenv:Body>
+    <!-- TEST -->
+    
+    <!-- Commento Iniziale -->
+
+<!--
+     <jejdkeke> Commento Iniziale 
+     
+     dz<de>>>>>deded de
+     de- de-de d
+     -->
+    
+    
+<xsd:skcotSyub>
+<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>
+
+<!-- Commento Iniziale -->
+
+<!--
+     <jejdkeke> Commento Iniziale 
+     
+     dz<de>>>>>deded de
+     de- de-de d
+     -->
+
+
+</xsd:skcotSyub>
+
+<!-- Commento Iniziale -->
+
+<!--
+     <jejdkeke> Commento Iniziale 
+     
+     dz<de>>>>>deded de
+     de- de-de d
+     -->
+
+
+</soapenv:Body>
+
+<!-- Commento Iniziale -->
+
+<!--
+     <jejdkeke> Commento Iniziale 
+     
+     dz<de>>>>>deded de
+     de- de-de d
+     -->
+
+</soapenv:Envelope>
