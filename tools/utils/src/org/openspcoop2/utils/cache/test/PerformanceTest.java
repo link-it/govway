@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -189,10 +189,13 @@ public class PerformanceTest
             System.out.println( e );
         }
 
+        System.out.println("\n");
+        Cache.printStatistics(System.out, "\n", "\n===========\n");
+        
         long putAvJCS = putTotalJCS / loops;
         long getAvJCS = getTotalJCS / loops;
-        long putAvHashtable = putTotalEHCache / loops;
-        long getAvHashtable = getTotalEHCache / loops;
+        long putAvEH = putTotalEHCache / loops;
+        long getAvEH = getTotalEHCache / loops;
         long putAvLimited = putTotalLimitedCache / loops;
         long getAvLimited = getTotalLimitedCache / loops;
 
@@ -200,24 +203,45 @@ public class PerformanceTest
 
         System.out.println( "\n" );
         System.out.println( "Put average for " + jcsDisplayName + "  = " + putAvJCS );
-        System.out.println( "Put average for " + ehCacheDisplayName + " = " + putAvHashtable );
+        System.out.println( "Put average for " + ehCacheDisplayName + " = " + putAvEH );
         System.out.println( "Put average for " + limitedCacheDisplayName + " = " + putAvLimited );
-//        ratioPut = Float.intBitsToFloat( (int) putAvJCS ) / Float.intBitsToFloat( (int) putAvHashtable );
-//        System.out.println( jcsDisplayName + " puts took " + ratioPut + " times the " + ehCacheDisplayName
-//            + ", the goal is <" + target + "x" );
-//        System.out.println( jcsDisplayName + " puts took " + ratioPut + " times the " + ehCacheDisplayName
-//                + ", the goal is <" + target + "x" );
+        float ratioPut = Float.intBitsToFloat( (int) putAvLimited ) / Float.intBitsToFloat( (int) putAvJCS );
+        float targetPut = 0.75f;
+        String msg = limitedCacheDisplayName + " puts took " + ratioPut + " times the " + jcsDisplayName
+            + ", the goal is <" + targetPut + "x";
+        System.out.println( msg );
+        if(ratioPut>targetPut) {
+        	throw new Exception(msg);
+        }
+        ratioPut = Float.intBitsToFloat( (int) putAvLimited ) / Float.intBitsToFloat( (int) putAvEH );
+        msg = limitedCacheDisplayName + " puts took " + ratioPut + " times the " + ehCacheDisplayName
+                + ", the goal is <" + targetPut + "x" ;
+        System.out.println( msg );
+        if(ratioPut>targetPut) {
+        	throw new Exception(msg);
+        }
 
         System.out.println( "\n" );
         System.out.println( "Get average for  " + jcsDisplayName + "  = " + getAvJCS );
-        System.out.println( "Get average for " + ehCacheDisplayName + " = " + getAvHashtable );
+        System.out.println( "Get average for " + ehCacheDisplayName + " = " + getAvEH );
         System.out.println( "Get average for " + limitedCacheDisplayName + " = " + getAvLimited );
-//        ratioGet = Float.intBitsToFloat( (int) getAvJCS ) / Float.intBitsToFloat( (int) getAvHashtable );
-//        System.out.println( jcsDisplayName + " gets took " + ratioGet + " times the " + ehCacheDisplayName
-//            + ", the goal is <" + target + "x" );
+        float ratioGet = Float.intBitsToFloat( (int) getAvLimited ) / Float.intBitsToFloat( (int) getAvJCS );
+        float targetGet = 0.75f;
+        msg = limitedCacheDisplayName + " gets took " + ratioGet + " times the " + jcsDisplayName
+            + ", the goal is <" + targetGet + "x";
+        System.out.println( msg );
+        if(ratioGet>targetGet) {
+        	throw new Exception(msg);
+        }
+        ratioGet = Float.intBitsToFloat( (int) getAvLimited ) / Float.intBitsToFloat( (int) getAvEH );
+        msg = limitedCacheDisplayName + " gets took " + ratioGet + " times the " + ehCacheDisplayName
+                + ", the goal is <" + targetGet + "x" ;
+        System.out.println( msg );
+        if(ratioGet>targetGet) {
+        	throw new Exception(msg);
+        }
 
-        System.out.println("\n");
-        Cache.printStatistics(System.out, "\n", "\n===========\n");
+
     }
 
 }

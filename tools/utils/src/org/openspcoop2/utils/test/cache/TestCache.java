@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -18,21 +18,30 @@
  *
  */
 
+package org.openspcoop2.utils.test.cache;
 
-package org.openspcoop2.pdd.core.connettori.nio;
+import org.openspcoop2.utils.test.Costanti;
+import org.openspcoop2.utils.test.TestLogger;
+import org.testng.annotations.Test;
 
 /**
- * ConnettoreHTTPSCORE5
- *
- *
- * @author Poli Andrea (apoli@link.it)
+ * TestCertificate
+ * 
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ConnettoreHTTPSCORE5 extends ConnettoreHTTPCORE5 {
+public class TestCache {
 
+	private static final String ID_TEST = "Cache";
 	
-	public ConnettoreHTTPSCORE5(){
-		super(true);
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".performance"})
+	public void testJKS() throws Exception{
+		
+		TestLogger.info("Run test '"+ID_TEST+".performance' ...");
+		org.openspcoop2.utils.cache.test.PerformanceTest.main(null);
+		TestLogger.info("Run test '"+ID_TEST+".performance' ok");
+		
 	}
+
 }
