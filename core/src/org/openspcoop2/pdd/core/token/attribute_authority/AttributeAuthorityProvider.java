@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -36,9 +36,11 @@ import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.pdd.core.token.Costanti;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
+import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
+import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 
@@ -205,50 +207,19 @@ public class AttributeAuthorityProvider implements IProvider {
 			}
 		}
 		
-//		String scopes = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_SCOPES);
-//		if(scopes!=null && !"".equals(scopes)) {
-//			if(scopes.contains(" ")) {
-//				throw new ProviderValidationException("Non indicare spazi tra gli scope forniti");
-//			}
-//		}
-//		
-//		String audience = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AUDIENCE);
-//		if(audience!=null && !"".equals(audience)) {
-//			if(audience.contains(" ")) {
-//				throw new ProviderValidationException("Non indicare spazi nel valore dell'audience");
-//			}
-//		}
-//		
-//		String mode = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_MODE);
-//		if(mode==null) {
-//			throw new ProviderValidationException("Nessuna modalità di forward indicata");
-//		}
-//		if(!Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_MODE_RFC6750_HEADER.equals(mode) &&
-//				!Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_MODE_RFC6750_URL.equals(mode) &&
-//				!Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_MODE_CUSTOM_HEADER.equals(mode) &&
-//				!Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_MODE_CUSTOM_URL.equals(mode)
-//				) {
-//			throw new ProviderValidationException("La modalità di forward indicata '"+mode+"' non è supportata");	
-//		}
-//		if(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_MODE_CUSTOM_HEADER.equals(mode)) {
-//			String hdr = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_MODE_CUSTOM_HEADER_NAME);
-//			if(hdr==null || "".equals(hdr)) {
-//				throw new ProviderValidationException("La modalità di forward indicata prevede l'indicazione del nome di un header http");
-//			}
-//			if(hdr.contains(" ")) {
-//				throw new ProviderValidationException("Non indicare spazi nel nome dell'header HTTP indicato per la modalità di forward");
-//			}
-//		}
-//		else if(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_MODE_CUSTOM_URL.equals(mode)) {
-//			String urlP = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_MODE_CUSTOM_URL_PARAMETER_NAME);
-//			if(urlP==null || "".equals(urlP)) {
-//				throw new ProviderValidationException("La modalità di forward indicata prevede l'indicazione del nome di una proprietà della url");
-//			}
-//			if(urlP.contains(" ")) {
-//				throw new ProviderValidationException("Non indicare spazi nel nome della proprietà della url indicata per la modalità di forward");
-//			}
-//		}
-//		
+		String claims = pDefault.getProperty(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_REQUEST_JWT_CLAIMS);
+		if(claims!=null && !"".equals(claims)) {
+			Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(claims);
+			List<String> deny = new ArrayList<String>();
+			deny.add(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUER);
+			deny.add(Claims.JSON_WEB_TOKEN_RFC_7519_SUBJECT);
+			deny.add(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE);
+			deny.add(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT);
+			deny.add(Claims.JSON_WEB_TOKEN_RFC_7519_NOT_TO_BE_USED_BEFORE);
+			deny.add(Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED);
+			deny.add(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID);
+			TokenUtilities.checkClaims("claim", convertTextToProperties, "Claims", deny, false);
+		}
 	}
 
 	@Override
@@ -378,11 +349,17 @@ public class AttributeAuthorityProvider implements IProvider {
 			return pInfo;
 		}
 		else if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RICHIESTA_JWS_PAYLOAD_TEMPLATE.equals(id) ||
-				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RICHIESTA_JWS_PAYLOAD_CLAIMS.equals(id) ||
 				org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RICHIESTA_PAYLOAD_TEMPLATE.equals(id)
 				) {
 			ProviderInfo pInfo = new ProviderInfo();
 			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_INFO_VALORI_CON_REQUIRED_ATTRIBUTES);
+			return pInfo;
+		}
+		else if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.ID_AA_RICHIESTA_JWS_PAYLOAD_CLAIMS.equals(id)
+			) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_CLAIMS);
 			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_INFO_VALORI_CON_REQUIRED_ATTRIBUTES);
 			return pInfo;
 		}

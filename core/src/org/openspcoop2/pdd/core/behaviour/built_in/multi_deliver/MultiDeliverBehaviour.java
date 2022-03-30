@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -49,6 +49,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.slf4j.Logger;
 
 /**
@@ -61,8 +62,10 @@ import org.slf4j.Logger;
 public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehaviour {
 
 	private TipoBehaviour bt;
-	public MultiDeliverBehaviour(TipoBehaviour bt) {
+	private IState state;
+	public MultiDeliverBehaviour(TipoBehaviour bt, IState state) {
 		this.bt = bt;
+		this.state = state;
 	}
 	
 	
@@ -126,7 +129,7 @@ public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehavio
 				ConditionalFilterResult filterResult = ConditionalUtils.filter(pa, msg, busta, 
 						requestInfo, this.getPddContext(), 
 						this.msgDiag, log, 
-						this.bt);
+						this.bt, this.state);
 				
 				if(filterResult!=null) { 
 						// && !filterResult.getListServiziApplicativi().isEmpty()) { NOTA! la lista vuota viene appunto usata per far si che non siano utilizzati alcun applicativi
@@ -221,7 +224,12 @@ public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehavio
 					saveMessage = listaServiziApplicativi_consegnaSenzaRisposta.size()>0;
 				}
 				else {
-					saveMessage = listaServiziApplicativi_consegnaSenzaRisposta.size()>1;
+					if(TipoBehaviour.CONSEGNA_MULTIPLA.equals(this.bt)) {
+						saveMessage = listaServiziApplicativi_consegnaSenzaRisposta.size()>0; // comunque prendo in carico !
+					}
+					else {
+						saveMessage = listaServiziApplicativi_consegnaSenzaRisposta.size()>1;
+					}
 				}
 			}
 			if(saveMessage) {

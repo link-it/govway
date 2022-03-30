@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -22,6 +22,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.soggetti;
 
 import java.net.URLEncoder;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -124,7 +125,8 @@ public final class SoggettiChange extends Action {
 	
 	private String modificaOperativo = null;
 	
-	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
+	protected static final String CERTIFICATE_FORMAT = "dd/MM/yyyy HH:mm:SS";
+	private SimpleDateFormat sdf = new SimpleDateFormat(CERTIFICATE_FORMAT);
 	
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -149,7 +151,7 @@ public final class SoggettiChange extends Action {
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
 			
 			this.id = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
-			int idSogg = Integer.parseInt(this.id);
+			long idSogg = Long.parseLong(this.id);
 			this.nomeprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
 			this.tipoprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
 			this.portadom = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_PORTA);
@@ -237,6 +239,9 @@ public final class SoggettiChange extends Action {
 			String servletCredenzialiAdd = SoggettiCostanti.SERVLET_NAME_SOGGETTI_CREDENZIALI_ADD;
 			
 			this.modificaOperativo = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_MODIFICA_OPERATIVO);
+			
+			String resetElementoCacheS = soggettiHelper.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
+			boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);
 	
 			// Preparo il menu
 			soggettiHelper.makeMenu();
@@ -579,6 +584,91 @@ public final class SoggettiChange extends Action {
 				if(postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS)) {
 					appId = null;
 					apiKey = null;
+				}
+			}
+			
+			// reset elemento dalla cache
+			if(resetElementoCache) {
+				
+				// Uso lo stessoAlias
+				List<String> aliases = soggettiCore.getJmxPdD_aliases();
+				String alias = null;
+				if(aliases!=null && !aliases.isEmpty()) {
+					alias = aliases.get(0);
+				}
+				String labelSoggetto = soggettiHelper.getLabelNomeSoggetto(this.protocollo, oldtipoprov , oldnomeprov);
+				soggettiCore.invokeJmxMethodAllNodesAndSetResult(pd, soggettiCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+						soggettiCore.getJmxPdD_configurazioneSistema_nomeMetodo_ripulisciRiferimentiCacheSoggetto(alias),
+						MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_SUCCESSO,labelSoggetto),
+						MessageFormat.format(CostantiControlStation.LABEL_ELIMINATO_CACHE_FALLITO_PREFIX,labelSoggetto),
+						idSogg);				
+				
+				String resetFromLista = soggettiHelper.getParameter(CostantiControlStation.PARAMETRO_RESET_CACHE_FROM_LISTA);
+				boolean arrivoDaLista = "true".equalsIgnoreCase(resetFromLista);
+				
+				if(arrivoDaLista) {
+					
+					// preparo lista
+					
+					String filterDominioInterno = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_FILTER_DOMINIO_INTERNO);
+					boolean forceFilterDominioInterno = false;
+					if("true".equalsIgnoreCase(filterDominioInterno)) {
+						forceFilterDominioInterno = true;
+					}
+					
+					boolean multiTenant = soggettiCore.isMultitenant();
+					
+					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+					
+					int idLista = Liste.SOGGETTI;
+					
+					// poiche' esistono filtri che hanno necessita di postback salvo in sessione
+					List<Soggetto> lista = null;
+					if(soggettiCore.isRegistroServiziLocale()){
+						if(!ServletUtils.isSearchDone(soggettiHelper)) {
+							lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista,  Soggetto.class);
+						}
+					}
+					
+					ricerca = soggettiHelper.checkSearchParameters(idLista, ricerca);
+					
+					if(forceFilterDominioInterno) {
+						ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE);
+					}
+					else if(!multiTenant && !soggettiHelper.isModalitaCompleta()) {
+						ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE);
+					}
+					
+					if(soggettiCore.isRegistroServiziLocale()){
+						if(lista==null) {
+							if(soggettiCore.isVisioneOggettiGlobale(userLogin)){
+								lista = soggettiCore.soggettiRegistroList(null, ricerca);
+							}else{
+								lista = soggettiCore.soggettiRegistroList(userLogin, ricerca);
+							}
+						}
+						
+						if(!soggettiHelper.isPostBackFilterElement()) {
+							ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+						}
+						
+						soggettiHelper.prepareSoggettiList(lista, ricerca);
+					}
+					else{
+						List<org.openspcoop2.core.config.Soggetto> listaSoggetti = null;
+						if(soggettiCore.isVisioneOggettiGlobale(userLogin)){
+							listaSoggetti = soggettiCore.soggettiList(null, ricerca);
+						}else{
+							listaSoggetti = soggettiCore.soggettiList(userLogin, ricerca);
+						}
+						soggettiHelper.prepareSoggettiConfigList(listaSoggetti, ricerca);
+					}
+						
+					ServletUtils.setSearchObjectIntoSession(session, ricerca);
+					
+					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+
+					return ServletUtils.getStrutsForwardEditModeFinished(mapping, SoggettiCostanti.OBJECT_NAME_SOGGETTI, ForwardParams.CHANGE());
 				}
 			}
 			

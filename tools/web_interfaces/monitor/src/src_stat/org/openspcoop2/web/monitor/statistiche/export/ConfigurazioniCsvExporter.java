@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -289,6 +289,7 @@ public class ConfigurazioniCsvExporter {
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_ENDPOINT);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_DEBUG);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_USERNAME);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_TOKEN);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_PROXY_ENDPOINT);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_PROXY_USERNAME);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_SSL_TYPE);
@@ -483,6 +484,7 @@ public class ConfigurazioniCsvExporter {
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_ENDPOINT);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_DEBUG);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_USERNAME);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_TOKEN);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_PROXY_ENDPOINT);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_PROXY_USERNAME);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_SSL_TYPE);
@@ -1188,21 +1190,21 @@ public class ConfigurazioniCsvExporter {
 					Connettore connettore = saOp2.getInvocazioneServizio().getConnettore();
 					oneLine.addAll(this.printConnettore(connettore, CostantiConfigurazioni.LABEL_TIPO, saOp2.getInvocazioneServizio().getCredenziali()));
 				} else {
-					// 14 colonne vuote
-					for (int i = 0; i < 14; i++) {
+					// 15 colonne vuote
+					for (int i = 0; i < 15; i++) {
 						oneLine.add("");
 					}
 				}
 			} else {
-				// 17 colonne vuote
-				for (int i = 0; i < 17; i++) {
+				// 18 colonne vuote
+				for (int i = 0; i < 18; i++) {
 					oneLine.add("");
 				}
 			}
 
 		} else {
-			// 18 colonne vuote
-			for (int i = 0; i < 18; i++) {
+			// 19 colonne vuote
+			for (int i = 0; i < 19; i++) {
 				oneLine.add("");
 			}
 		}
@@ -1801,8 +1803,8 @@ public class ConfigurazioniCsvExporter {
 			Connettore connettore = dettaglioPD.getConnettore();
 			oneLine.addAll(this.printConnettore(connettore, CostantiConfigurazioni.LABEL_MODALITA_INOLTRO, null));
 		} else {
-			// 14 colonne vuote
-			for (int i = 0; i < 14; i++) {
+			// 15 colonne vuote
+			for (int i = 0; i < 15; i++) {
 				oneLine.add("");
 			}
 		}
@@ -1822,16 +1824,17 @@ public class ConfigurazioniCsvExporter {
 	    2 Connettore (EndPoint)
 	    3 Connettore (Debug)
 	    4 Connettore (Username)
-    	5 CONNETTORE_PROXY_ENDPOINT
-		6 CONNETTORE_PROXY_USERNAME
-		7 CONNETTORE_SSL_TYPE
-		8 CONNETTORE_HOSTNAME_VERIFIER
-		9 CONNETTORE_KEY_STORE
-		10 CONNETTORE_TRUST_STORE
-		11 CONNETTORE_HTTPS_KEY_STORE_LOCATION
-		12 CONNETTORE_HTTPS_TRUST_STORE_LOCATION
-		13 CONNETTORE_CLIENT_CERTIFICATE
-		14 CONNETTORE_ALTRE_CONFIGURAZIONI
+	    5 Connettore (Token)
+    	6 CONNETTORE_PROXY_ENDPOINT
+		7 CONNETTORE_PROXY_USERNAME
+		8 CONNETTORE_SSL_TYPE
+		9 CONNETTORE_HOSTNAME_VERIFIER
+		10 CONNETTORE_KEY_STORE
+		11 CONNETTORE_TRUST_STORE
+		12 CONNETTORE_HTTPS_KEY_STORE_LOCATION
+		13 CONNETTORE_HTTPS_TRUST_STORE_LOCATION
+		14 CONNETTORE_CLIENT_CERTIFICATE
+		15 CONNETTORE_ALTRE_CONFIGURAZIONI
 	 * */
 	public  List<Object> printConnettore(Connettore connettore,String labelTipoConnettore ,InvocazioneCredenziali invCredenziali){
 		List<Object> oneLine = new ArrayList<Object>();
@@ -1852,17 +1855,22 @@ public class ConfigurazioniCsvExporter {
 				}
 			}
 
-			//	7 CONNETTORE_SSL_TYPE
-			//	8 CONNETTORE_HOSTNAME_VERIFIER
-			//	9 CONNETTORE_KEY_STORE
-			//	10 CONNETTORE_TRUST_STORE
-			//	11 CONNETTORE_HTTPS_KEY_STORE_LOCATION
-			//	12 CONNETTORE_HTTPS_TRUST_STORE_LOCATION
-			//	13 CONNETTORE_CLIENT_CERTIFICATE
+			String token = ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_TOKEN_POLICY, connettore.getPropertyList());
+			if(token!=null){
+				mapProperties.put(5, token);
+			}
+			
+			//	8 CONNETTORE_SSL_TYPE
+			//	9 CONNETTORE_HOSTNAME_VERIFIER
+			//	10 CONNETTORE_KEY_STORE
+			//	11 CONNETTORE_TRUST_STORE
+			//	12 CONNETTORE_HTTPS_KEY_STORE_LOCATION
+			//	13 CONNETTORE_HTTPS_TRUST_STORE_LOCATION
+			//	14 CONNETTORE_CLIENT_CERTIFICATE
 			if(TipiConnettore.HTTPS.getNome().equals(connettore.getTipo())){
-				mapProperties.put(7, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTPS_SSL_TYPE, connettore.getPropertyList()));
-				mapProperties.put(8, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTPS_HOSTNAME_VERIFIER, connettore.getPropertyList()));
-				mapProperties.put(10, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_TYPE, connettore.getPropertyList()));
+				mapProperties.put(8, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTPS_SSL_TYPE, connettore.getPropertyList()));
+				mapProperties.put(9, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTPS_HOSTNAME_VERIFIER, connettore.getPropertyList()));
+				mapProperties.put(11, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_TYPE, connettore.getPropertyList()));
 				
 				boolean trustAllCerts = false;
 				if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_TRUST_ALL_CERTS)) {
@@ -1872,21 +1880,21 @@ public class ConfigurazioniCsvExporter {
 					}
 				}
 				if(trustAllCerts) {
-					mapProperties.put(12, "Trust all certificates");
+					mapProperties.put(13, "Trust all certificates");
 				}
 				else {
-					mapProperties.put(12, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION, connettore.getPropertyList()));
+					mapProperties.put(13, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION, connettore.getPropertyList()));
 				}
 
 
 				boolean invioCertificatoClient = false;
 				String cert = ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION, connettore.getPropertyList());
 				if(cert!=null){
-					mapProperties.put(11, cert); // 11 CONNETTORE_HTTPS_KEY_STORE_LOCATION
+					mapProperties.put(12, cert); // 12 CONNETTORE_HTTPS_KEY_STORE_LOCATION
 					invioCertificatoClient = true;
 				}
-				if(invioCertificatoClient){ //	9 CONNETTORE_KEY_STORE
-					mapProperties.put(9, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_TYPE, connettore.getPropertyList()));
+				if(invioCertificatoClient){ //	10 CONNETTORE_KEY_STORE
+					mapProperties.put(10, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_TYPE, connettore.getPropertyList()));
 				}
 			
 				String invioCertificatoClientLabel = invioCertificatoClient +"";
@@ -1896,19 +1904,19 @@ public class ConfigurazioniCsvExporter {
 						invioCertificatoClientLabel = certAlias;
 					}
 				}
-				mapProperties.put(13, invioCertificatoClientLabel); // 13 CONNETTORE_CLIENT_CERTIFICATE
+				mapProperties.put(14, invioCertificatoClientLabel); // 14 CONNETTORE_CLIENT_CERTIFICATE
 			}
 
 			String proxy = ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_TYPE, connettore.getPropertyList());
-			// 5 CONNETTORE_PROXY_ENDPOINT
-			// 6 CONNETTORE_PROXY_USERNAME
+			// 6 CONNETTORE_PROXY_ENDPOINT
+			// 7 CONNETTORE_PROXY_USERNAME
 			if(proxy!=null){
-				mapProperties.put(5, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME, connettore.getPropertyList())+CostantiConfigurazioni.LABEL_DOTS+
+				mapProperties.put(6, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME, connettore.getPropertyList())+CostantiConfigurazioni.LABEL_DOTS+
 						ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT, connettore.getPropertyList()));
 
 				String username = ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_USERNAME, connettore.getPropertyList());
 				if(username!=null){
-					mapProperties.put(6, username);
+					mapProperties.put(7, username);
 				}
 			}
 		}
@@ -1919,7 +1927,7 @@ public class ConfigurazioniCsvExporter {
 			sb.append(CostantiConfigurazioni.LABEL_TIPO_CODA_JMS).append(": ").append(ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_JMS_TIPO, connettore.getPropertyList())).append("\n");
 			sb.append(CostantiConfigurazioni.LABEL_CONNECTION_FACTORY).append(": ").append(ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_JMS_CONNECTION_FACTORY, connettore.getPropertyList())).append("\n");
 			sb.append(CostantiConfigurazioni.LABEL_SEND_AS).append(": ").append(ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_JMS_SEND_AS, connettore.getPropertyList()));
-			mapProperties.put(14, sb.toString()); //14 CONNETTORE_ALTRE_CONFIGURAZIONI
+			mapProperties.put(15, sb.toString()); //15 CONNETTORE_ALTRE_CONFIGURAZIONI
 
 			if(invCredenziali!=null){
 				mapProperties.put(4, invCredenziali.getUser());
@@ -1941,7 +1949,7 @@ public class ConfigurazioniCsvExporter {
 				sb.append(CostantiConfigurazioni.LABEL_INPUT_FILE_HEADER).append(": ").append(ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS, connettore.getPropertyList()));
 			}
 
-			mapProperties.put(14, sb.toString()); //14 CONNETTORE_ALTRE_CONFIGURAZIONI
+			mapProperties.put(15, sb.toString()); //15 CONNETTORE_ALTRE_CONFIGURAZIONI
 		}
 		else if(TipiConnettore.NULL.getNome().equals(connettore.getTipo())){
 			mapProperties.put(2, ConnettoreNULL.LOCATION);
@@ -1961,7 +1969,7 @@ public class ConfigurazioniCsvExporter {
 					sb.append(property.getNome()).append(": ").append(property.getValore());
 				}
 
-				mapProperties.put(14, sb.toString()); //14 CONNETTORE_ALTRE_CONFIGURAZIONI
+				mapProperties.put(15, sb.toString()); //15 CONNETTORE_ALTRE_CONFIGURAZIONI
 			}
 		}
 		String debug = "false";
@@ -1970,8 +1978,8 @@ public class ConfigurazioniCsvExporter {
 		}
 		mapProperties.put(3, debug);
 
-		// aggiungo le 14 proprieta previste
-		for (int i = 1; i < 15; i++) {
+		// aggiungo le 15 proprieta previste
+		for (int i = 1; i < 16; i++) {
 			String valoreProprieta = mapProperties.get(i);
 
 			if(StringUtils.isNotEmpty(valoreProprieta))

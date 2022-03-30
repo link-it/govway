@@ -34,7 +34,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -125,7 +125,7 @@ public class ProcessSignedMessage implements Processor {
         // NOTA:
         // Vi sono fondamentalmente due versioni di XMLSignature con classi correlate.
         // - com.sun.org.apache.xml.internal.security.signature: presente nel runtime di java
-        // - org.apache.xml.security.signature: presente in xmlsec-2.1.2.jar
+        // - org.apache.xml.security.signature: presente in xmlsec-2.1.7.jar
         //
         // A seconda della versione utilizzata devono essere implementate delle classi a corredo:
         // - com.sun.org.apache.xml.internal.security.transforms.TransformSpi implementato tramite org.openspcoop2.security.message.signature.SunAttachmentContentTransform

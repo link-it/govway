@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -1006,7 +1006,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 		ForwardProxy forwardProxy = null;
 		if(this.functionAsRouter==false && this.configurazionePdDManager.isForwardProxyEnabled()) {
 			try {
-				forwardProxy = this.configurazionePdDManager.getForwardProxyConfigFruizione(this.identitaPdD, this.idServizio);
+				forwardProxy = this.configurazionePdDManager.getForwardProxyConfigFruizione(this.identitaPdD, this.idServizio, null);
 			}catch(Exception e) {
 				this.msgDiag.logErroreGenerico(e, "Configurazione del connettore errata per la funzionalità govway-proxy"); 
 				this.openspcoopstate.releaseResource();
@@ -2453,7 +2453,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 					//	interpretazione esito consegna
 					this.gestioneConsegnaConnettore =this.configurazionePdDManager.getGestioneErroreConnettoreComponenteCooperazione(this.protocolFactory, this.requestMessageTrasformato.getServiceBinding());
 					GestoreErroreConnettore gestoreErrore = new GestoreErroreConnettore();
-					this.errorConsegna = !gestoreErrore.verificaConsegna(this.gestioneConsegnaConnettore,this.motivoErroreConsegna,this.eccezioneProcessamentoConnettore,this.connectorSender.getCodiceTrasporto(),this.connectorSender.getResponse());
+					this.errorConsegna = !gestoreErrore.verificaConsegna(this.gestioneConsegnaConnettore,this.motivoErroreConsegna,this.eccezioneProcessamentoConnettore,this.connectorSender);
 					if(this.errorConsegna){
 						this.motivoErroreConsegna = gestoreErrore.getErrore();
 						this.riconsegna = gestoreErrore.isRiconsegna();

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -52,6 +52,7 @@ import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
+import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.IdAccordoCooperazione;
 import org.openspcoop2.core.registry.IdAccordoServizioParteComune;
 import org.openspcoop2.core.registry.IdAccordoServizioParteSpecifica;
@@ -68,6 +69,9 @@ import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
+import org.openspcoop2.core.registry.constants.TipiDocumentoLivelloServizio;
+import org.openspcoop2.core.registry.constants.TipiDocumentoSemiformale;
+import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -1234,6 +1238,15 @@ public class DriverRegistroServiziWS extends BeanUtilities
 		
 	}
 	
+	@Override
+	public Documento getAllegato(IDAccordo idAccordo, String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		throw new DriverRegistroServiziException("Not Implemented");
+	}
+	@Override
+	public Documento getSpecificaSemiformale(IDAccordo idAccordo, TipiDocumentoSemiformale tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		throw new DriverRegistroServiziException("Not Implemented");
+	}
+	
 	
 	
 	
@@ -1458,6 +1471,22 @@ public class DriverRegistroServiziWS extends BeanUtilities
 		
 	}
 
-
+	
+	@Override
+	public Documento getAllegato(IDServizio idASPS, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		throw new DriverRegistroServiziException("Not Implemented");
+	}
+	@Override
+	public Documento getSpecificaSemiformale(IDServizio idASPS, TipiDocumentoSemiformale tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		throw new DriverRegistroServiziException("Not Implemented");
+	}
+	@Override
+	public Documento getSpecificaSicurezza(IDServizio idASPS, TipiDocumentoSicurezza tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		throw new DriverRegistroServiziException("Not Implemented");
+	}
+	@Override
+	public Documento getSpecificaLivelloServizio(IDServizio idASPS, TipiDocumentoLivelloServizio tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		throw new DriverRegistroServiziException("Not Implemented");
+	}
 }
 

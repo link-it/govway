@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -102,6 +102,8 @@ public class DumpUtils {
 		
 		if(!rest) {
 			if(HttpConstants.CONTENT_TYPE_SOAP_1_2.equals(content)) {
+				// NOTA: lo metto nella url per tenere, ma non e' corretto, andrebbe nel content-type
+				// per questi test di dump non e' comunque una informazione importante
 				url=url+"?"+HttpConstants.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION+"=test";
 			}
 			else {

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+   <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://services.samples/xsd">
+    
+<soapenv:Header>
+<CONTENUTO_ERRATO
+</soapenv:Header>
+    
+    <!-- TEST -->
+    
+<soapenv:Body/>
+</soapenv:Envelope>

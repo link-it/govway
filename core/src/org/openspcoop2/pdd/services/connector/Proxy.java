@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.pdd.config.DynamicClusterManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -48,9 +49,12 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.datasource.JmxDataSource;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpRequest;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpServletCredential;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -112,14 +116,38 @@ public class Proxy extends HttpServlet {
 		}
 		
 		// Costruisco nuova url
-		String protocol = req.getProtocol().trim().toLowerCase().startsWith("htts") ? "https://" : "http://";
+		String protocolSchema = properties.getProxyReadJMXResourcesSchema();
+		if(protocolSchema==null || StringUtils.isEmpty(protocolSchema)) {
+			protocolSchema = req.getScheme();
+		}
+		String protocol = (protocolSchema!=null && protocolSchema.trim().toLowerCase().startsWith("https")) ? "https://" : "http://";
 		int port = req.getLocalPort();
+		if(properties.getProxyReadJMXResourcesPort()!=null && properties.getProxyReadJMXResourcesPort().intValue()>0) {
+			port = properties.getProxyReadJMXResourcesPort().intValue();
+		}
 		String context = req.getContextPath();
 		if(!context.endsWith("/")) {
 			context = context + "/";
 		}
 		context = context + URLProtocolContext.Check_FUNCTION;
 		Map<String, List<String>> parameters = buildParameters(req);
+		// Https
+		boolean https = properties.isProxyReadJMXResourcesHttpsEnabled();
+		boolean verificaHostname = false;
+		boolean autenticazioneServer = false;
+		String autenticazioneServer_path = null;
+		String autenticazioneServer_type = null;
+		String autenticazioneServer_password = null;
+		if(https) {
+			verificaHostname = properties.isProxyReadJMXResourcesHttpsEnabled_verificaHostName();
+			autenticazioneServer = properties.isProxyReadJMXResourcesHttpsEnabled_autenticazioneServer();
+			if(autenticazioneServer) {
+				autenticazioneServer_path = properties.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePath();
+				autenticazioneServer_type = properties.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststoreType();
+				autenticazioneServer_password = properties.getProxyReadJMXResourcesHttpsEnabled_autenticazioneServer_truststorePassword();
+			}
+		}
+		// Timeout
 		int readTimeout = properties.getProxyReadJMXResourcesReadTimeout();
 		int connectTimeout = properties.getProxyReadJMXResourcesConnectionTimeout();
 		// Vengono utilizzate le credenziali del servizio check che dovranno essere uguali su tutti i nodi
@@ -165,13 +193,13 @@ public class Proxy extends HttpServlet {
 			String attributeValue = req.getParameter(CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_VALUE);
 			String attributeBooleanValue = req.getParameter(CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_BOOLEAN_VALUE);
 			String methodName = req.getParameter(CostantiPdD.CHECK_STATO_PDD_METHOD_NAME);
-			String paramValue = req.getParameter(CostantiPdD.CHECK_STATO_PDD_PARAM_VALUE);
+			String parameterValues = formatParameters(req);
 			log.debug("==============");
 			if(attributeName!=null){
 				log.debug("resourceName["+resourceName+"] attributeName["+attributeName+"] attributeValue["+attributeValue+"] attributeBooleanValue["+attributeBooleanValue+"] ...");
 			}
 			else {
-				log.debug("resourceName["+resourceName+"] methodName["+methodName+"] paramValue["+paramValue+"] ...");
+				log.debug("resourceName["+resourceName+"] methodName["+methodName+"]"+parameterValues+" ...");
 			}
 			boolean invokeAllNodes = false;
 			boolean aggregate = false;
@@ -277,7 +305,11 @@ public class Proxy extends HttpServlet {
 //						System.out.println("DEBUG");
 						
 						url = buildUrl(log, protocol, hostname, port, context, parameters);
-						HttpResponse httpResponse = HttpUtilities.getHTTPResponse(url, readTimeout, connectTimeout, usernameCheck, passwordCheck);
+						HttpResponse httpResponse = invokeHttp(url, 
+								readTimeout, connectTimeout, 
+								usernameCheck, passwordCheck,
+								https, verificaHostname, autenticazioneServer,
+								autenticazioneServer_path, autenticazioneServer_type,  autenticazioneServer_password);
 						String sResponse = null;
 						if(httpResponse.getContent()!=null) {
 							sResponse = new String(httpResponse.getContent());
@@ -345,7 +377,11 @@ public class Proxy extends HttpServlet {
 				String url = null;
 				try {
 					url = buildUrl(log, protocol, list.get(0), port, context, parameters);
-					HttpResponse httpResponse = HttpUtilities.getHTTPResponse(url, readTimeout, connectTimeout, usernameCheck, passwordCheck);
+					HttpResponse httpResponse = invokeHttp(url, 
+							readTimeout, connectTimeout, 
+							usernameCheck, passwordCheck,
+							https, verificaHostname, autenticazioneServer,
+							autenticazioneServer_path, autenticazioneServer_type,  autenticazioneServer_password);
 					writeResponse(httpResponse, res);
 				}catch(Throwable e) {
 					String msg = "Servizio non disponibile";
@@ -366,7 +402,11 @@ public class Proxy extends HttpServlet {
 			String url = null;
 			try {
 				url = buildUrl(log, protocol, list.get(0), port, context, parameters);
-				HttpResponse httpResponse = HttpUtilities.getHTTPResponse(url, readTimeout, connectTimeout, usernameCheck, passwordCheck);
+				HttpResponse httpResponse = invokeHttp(url, 
+								readTimeout, connectTimeout, 
+								usernameCheck, passwordCheck,
+								https, verificaHostname, autenticazioneServer,
+								autenticazioneServer_path, autenticazioneServer_type,  autenticazioneServer_password);
 				writeResponse(httpResponse, res);
 			}catch(Throwable e) {
 				String msg = "Servizio non disponibile";
@@ -379,6 +419,39 @@ public class Proxy extends HttpServlet {
 		
 		return;
 
+	}
+	
+	private HttpResponse invokeHttp(String url, 
+			int readTimeout, int connectTimeout, 
+			String usernameCheck, String passwordCheck,
+			boolean https, boolean verificaHostname, boolean autenticazioneServer,
+			String autenticazioneServer_path, String autenticazioneServer_type, String autenticazioneServer_password) throws UtilsException {
+		HttpResponse response = null;
+		if(https) {
+			HttpRequest httpRequest = new HttpRequest();
+			httpRequest.setUrl(url);
+			httpRequest.setConnectTimeout(connectTimeout);
+			httpRequest.setReadTimeout(readTimeout);
+			httpRequest.setUsername(usernameCheck);
+			httpRequest.setPassword(passwordCheck);
+			httpRequest.setMethod(HttpRequestMethod.GET);
+			httpRequest.setHostnameVerifier(verificaHostname);
+			if(autenticazioneServer) {
+				httpRequest.setTrustStorePath(autenticazioneServer_path);
+				httpRequest.setTrustStoreType(autenticazioneServer_type);
+				httpRequest.setTrustStorePassword(autenticazioneServer_password);
+			}
+			else {
+				httpRequest.setTrustAllCerts(true);
+			}
+			response = HttpUtilities.httpInvoke(httpRequest);
+		}
+		else {
+			response = HttpUtilities.getHTTPResponse(url,
+					readTimeout, connectTimeout,
+					usernameCheck, passwordCheck);
+		}
+		return response;
 	}
 
 	private void writeResponse(HttpResponse httpResponse, HttpServletResponse res) throws IOException {
@@ -423,7 +496,63 @@ public class Proxy extends HttpServlet {
 		}
 		return parameters;
 	}
-
+	
+	private static String formatParameters(HttpServletRequest req) {
+		StringBuilder sb = new StringBuilder("");
+		
+		String paramValue = req.getParameter(CostantiPdD.CHECK_STATO_PDD_PARAM_VALUE);
+		if(paramValue!=null) {
+			sb.append(" ").append("paramValue[").append(paramValue).append("]");
+		}
+		paramValue = req.getParameter(CostantiPdD.CHECK_STATO_PDD_PARAM_INT_VALUE);
+		if(paramValue!=null) {
+			sb.append(" ").append("paramIntValue[").append(paramValue).append("]");
+		}
+		paramValue = req.getParameter(CostantiPdD.CHECK_STATO_PDD_PARAM_LONG_VALUE);
+		if(paramValue!=null) {
+			sb.append(" ").append("paramLongValue[").append(paramValue).append("]");
+		}
+		paramValue = req.getParameter(CostantiPdD.CHECK_STATO_PDD_PARAM_BOOLEAN_VALUE);
+		if(paramValue!=null) {
+			sb.append(" ").append("paramBooleanValue[").append(paramValue).append("]");
+		}
+		
+		paramValue = req.getParameter(CostantiPdD.CHECK_STATO_PDD_PARAM_VALUE_2);
+		if(paramValue!=null) {
+			sb.append(" ").append("paramValue2[").append(paramValue).append("]");
+		}
+		paramValue = req.getParameter(CostantiPdD.CHECK_STATO_PDD_PARAM_INT_VALUE_2);
+		if(paramValue!=null) {
+			sb.append(" ").append("paramIntValue2[").append(paramValue).append("]");
+		}
+		paramValue = req.getParameter(CostantiPdD.CHECK_STATO_PDD_PARAM_LONG_VALUE_2);
+		if(paramValue!=null) {
+			sb.append(" ").append("paramLongValue2[").append(paramValue).append("]");
+		}
+		paramValue = req.getParameter(CostantiPdD.CHECK_STATO_PDD_PARAM_BOOLEAN_VALUE_2);
+		if(paramValue!=null) {
+			sb.append(" ").append("paramBooleanValue2[").append(paramValue).append("]");
+		}
+		
+		paramValue = req.getParameter(CostantiPdD.CHECK_STATO_PDD_PARAM_VALUE_3);
+		if(paramValue!=null) {
+			sb.append(" ").append("paramValue3[").append(paramValue).append("]");
+		}
+		paramValue = req.getParameter(CostantiPdD.CHECK_STATO_PDD_PARAM_INT_VALUE_3);
+		if(paramValue!=null) {
+			sb.append(" ").append("paramIntValue3[").append(paramValue).append("]");
+		}
+		paramValue = req.getParameter(CostantiPdD.CHECK_STATO_PDD_PARAM_LONG_VALUE_3);
+		if(paramValue!=null) {
+			sb.append(" ").append("paramLongValue3[").append(paramValue).append("]");
+		}
+		paramValue = req.getParameter(CostantiPdD.CHECK_STATO_PDD_PARAM_BOOLEAN_VALUE_3);
+		if(paramValue!=null) {
+			sb.append(" ").append("paramBooleanValue3[").append(paramValue).append("]");
+		}
+		
+		return sb.toString();
+	}
 }
 
 class ResultAggregate {
@@ -592,5 +721,5 @@ class ResultAggregate {
 		}
 		return httpResponse;
 	}
-	
+
 }

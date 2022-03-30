@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -38,6 +38,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 public class ErogazioniCostanti extends AccordiServizioParteSpecificaCostanti {
 	
 	public final static String OBJECT_NAME_ASPS_EROGAZIONI = "aspsErogazioni";
+	public final static String OBJECT_NAME_ASPS_EROGAZIONI_VERIFICA_CERTIFICATI = "aspsErogazioniVerificaCertificati";
 	
 	public final static String SERVLET_NAME_ASPS_EROGAZIONI_ADD = OBJECT_NAME_ASPS_EROGAZIONI+"Add.do";
 	public final static String SERVLET_NAME_ASPS_EROGAZIONI_CHANGE = OBJECT_NAME_ASPS_EROGAZIONI+"Change.do";
@@ -51,6 +52,8 @@ public class ErogazioniCostanti extends AccordiServizioParteSpecificaCostanti {
 		SERVLET_ASPS_EROGAZIONI.add(SERVLET_NAME_ASPS_EROGAZIONI_LIST);
 		SERVLET_ASPS_EROGAZIONI.add(SERVLET_NAME_ASPS_EROGAZIONI_DEL);
 	}
+	
+	public final static String SERVLET_NAME_ASPS_EROGAZIONI_VERIFICA_CERTIFICATI = OBJECT_NAME_ASPS_EROGAZIONI_VERIFICA_CERTIFICATI+".do";
 	
 	public final static String LABEL_ASPS_EROGAZIONI = "Erogazioni";
 	public final static String LABEL_ASPS_EROGAZIONE = "Erogazione";
@@ -66,6 +69,8 @@ public class ErogazioniCostanti extends AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_ASPS_GESTIONE_CONFIGURAZIONI = "Configurazione";
 	public final static String LABEL_ASPS_GESTIONE_CONFIGURAZIONI_CONFIGURA = "Configura";
 	public final static String LABEL_ASPS_GESTIONE_GRUPPI_CON_PARAMETRO = "Gruppi"; // il codice è già agganciato, riscommentare il seguente codice per avere risorse/azioni:  "Gruppi {0}";
+	public final static String LABEL_ASPS_VERIFICA_CERTIFICATI = CostantiControlStation.LABEL_VERIFICA_CERTIFICATI;
+	public final static String LABEL_ASPS_VERIFICA_CERTIFICATI_DI = CostantiControlStation.LABEL_VERIFICA_CERTIFICATI_DI;
 	
 	public final static String ASPS_EROGAZIONI_PARAMETRO_NUMERO_CONFIGURAZIONI_ATTIVE = "nConfAttive";
 	public final static String ASPS_EROGAZIONI_PARAMETRO_NUMERO_CONFIGURAZIONI_DISPONIBILI = "nConfDisponibili";
@@ -108,6 +113,10 @@ public class ErogazioniCostanti extends AccordiServizioParteSpecificaCostanti {
 	public final static String ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE_TOOLTIP = CostantiControlStation.ICONA_VERIFICA_TOOLTIP;
 	public final static String ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO = CostantiControlStation.ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO;
 	
+	public final static String ASPS_EROGAZIONI_ICONA_VERIFICA_CERTIFICATI = CostantiControlStation.ICONA_VERIFICA_CERTIFICATI;
+	public final static String ASPS_EROGAZIONI_ICONA_VERIFICA_CERTIFICATI_TOOLTIP = CostantiControlStation.ICONA_VERIFICA_CERTIFICATI_TOOLTIP;
+	public final static String ASPS_EROGAZIONI_ICONA_VERIFICA_CERTIFICATI_TOOLTIP_CON_PARAMETRO = CostantiControlStation.ICONA_VERIFICA_CERTIFICATI_TOOLTIP_CON_PARAMETRO;
+	
 	public final static String ASPS_EROGAZIONI_ICONA_CONFIGURAZIONE_CONNETTORI_MULTIPLI = CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_CONNETTORI_MULTIPLI;
 	public final static String ASPS_EROGAZIONI_ICONA_CONFIGURAZIONE_CONNETTORI_MULTIPLI_TOOLTIP = CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_CONNETTORI_MULTIPLI_TOOLTIP;
 	public final static String ASPS_EROGAZIONI_ICONA_CONFIGURAZIONE_CONNETTORI_MULTIPLI_TOOLTIP_CON_PARAMETRO = CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_CONNETTORI_MULTIPLI_TOOLTIP_CON_PARAMETRO;
@@ -122,6 +131,7 @@ public class ErogazioniCostanti extends AccordiServizioParteSpecificaCostanti {
 		
 	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_ABILITATE_TOOLTIP = "API attiva";
 	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_PARZIALMENTE_ABILITATE_TOOLTIP = "Alcuni gruppi dell'API sono disabilitati";
+	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_CONNETTORI_MULTIPLI_SCHEDULING_DISABILITATO_TOOLTIP= "Rilevati connettori multipli dell'API in cui è stato disabilitato lo scheduling della consegna";
 	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_DISABILITATE_TOOLTIP = "API disabilitata";
 	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_CONTROLLO_ACCESSO_PUNTUALE_NO_FRUITORI = "Rilevato 'Controllo degli Accessi', con autorizzazione per richiedente, senza alcun fruitore registrato";
 	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_CONTROLLO_ACCESSO_PUNTUALE_NO_RUOLI = "Rilevato 'Controllo degli Accessi', con autorizzazione per ruoli, senza alcun ruolo registrato";

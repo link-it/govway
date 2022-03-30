@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -38,6 +38,7 @@ public class CostantiConnettori {
 	public final static String CONNETTORE_DEBUG = "debug";
     public static final String CONNETTORE_USERNAME = "user";
     public static final String CONNETTORE_PASSWORD = "password";
+    public static final String CONNETTORE_BEARER_TOKEN = "bearerToken";
     public static final String CONNETTORE_CONNECTION_TIMEOUT = "connectionTimeout";
     public static final String CONNETTORE_READ_CONNECTION_TIMEOUT = "readConnectionTimeout";
     public static final String CONNETTORE_TEMPO_MEDIO_RISPOSTA = "avgResponseTime";
@@ -122,7 +123,9 @@ public class CostantiConnettori {
     /** FILE PROPERTIES */
     
 	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_FILE = "outputFile";
+	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_FILE_PERMISSIONS = "outputFilePermissions";
 	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS = "outputFileHeaders";
+	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS_PERMISSIONS = "outputFileHeadersPermissions";
 	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR = "outputFileAutoCreateParentDirectory";
 	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE = "outputFileOverwriteIfExists";
 	public final static String CONNETTORE_FILE_RESPONSE_INPUT_MODE = "response";

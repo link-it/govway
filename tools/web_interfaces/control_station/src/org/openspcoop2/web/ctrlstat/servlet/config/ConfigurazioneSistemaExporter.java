@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -126,11 +126,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		InformazioniStatoPorta infoStatoPorta = new InformazioniStatoPorta();
 		
-		Object gestoreRisorseJMX = confCore.getGestoreRisorseJMX(alias);
-		
 		String versionePdD = null;
 		try{
-			versionePdD = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			versionePdD = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_versionePdD(alias));
 		}catch(Exception e){
@@ -140,7 +138,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String versioneBaseDati = null;
 		try{
-			versioneBaseDati = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			versioneBaseDati = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_versioneBaseDati(alias));
 		}catch(Exception e){
@@ -150,7 +148,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String confDir = null;
 		try{
-			confDir = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			confDir = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione(alias));
 		}catch(Exception e){
@@ -160,7 +158,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String versioneJava = null;
 		try{
-			versioneJava = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			versioneJava = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_versioneJava(alias));
 		}catch(Exception e){
@@ -170,7 +168,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String vendorJava = null;
 		try{
-			vendorJava = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			vendorJava = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_vendorJava(alias));
 		}catch(Exception e){
@@ -180,7 +178,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String messageFactory = null;
 		try{
-			messageFactory = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			messageFactory = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_messageFactory(alias));
 		}catch(Exception e){
@@ -190,7 +188,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoServizioPD = null;
 		try{
-			statoServizioPD = confCore.readJMXAttribute(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoServizioPD = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias),
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata(alias));
 		}catch(Exception e){
@@ -200,7 +198,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoServizioPD_abilitazioni = null;
 		try{
-			statoServizioPD_abilitazioni = confCore.readJMXAttribute(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoServizioPD_abilitazioni = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias),
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataAbilitazioniPuntuali(alias));
 		}catch(Exception e){
@@ -210,7 +208,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoServizioPD_disabilitazioni = null;
 		try{
-			statoServizioPD_disabilitazioni = confCore.readJMXAttribute(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoServizioPD_disabilitazioni = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias),
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataDisabilitazioniPuntuali(alias));
 		}catch(Exception e){
@@ -220,7 +218,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoServizioPA = null;
 		try{
-			statoServizioPA = confCore.readJMXAttribute(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoServizioPA = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias),
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativa(alias));
 		}catch(Exception e){
@@ -230,7 +228,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoServizioPA_abilitazioni = null;
 		try{
-			statoServizioPA_abilitazioni = confCore.readJMXAttribute(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoServizioPA_abilitazioni = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias),
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaAbilitazioniPuntuali(alias));
 		}catch(Exception e){
@@ -240,7 +238,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoServizioPA_disabilitazioni = null;
 		try{
-			statoServizioPA_disabilitazioni = confCore.readJMXAttribute(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoServizioPA_disabilitazioni = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias),
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaDisabilitazioniPuntuali(alias));
 		}catch(Exception e){
@@ -250,7 +248,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoServizioIM = null;
 		try{
-			statoServizioIM = confCore.readJMXAttribute(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoServizioIM = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias),
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativa(alias));
 		}catch(Exception e){
@@ -260,7 +258,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String livelloSeveritaDiagnostici = null;
 		try{
-			livelloSeveritaDiagnostici = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			livelloSeveritaDiagnostici = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnostici(alias));
 		}catch(Exception e){
@@ -270,7 +268,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String livelloSeveritaDiagnosticiLog4j = null;
 		try{
-			livelloSeveritaDiagnosticiLog4j = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			livelloSeveritaDiagnosticiLog4j = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnosticiLog4j(alias));
 		}catch(Exception e){
@@ -280,7 +278,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String log4j_diagnostica = null;
 		try{
-			log4j_diagnostica = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			log4j_diagnostica = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_diagnostica(alias));
 		}catch(Exception e){
@@ -290,7 +288,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String log4j_openspcoop = null;
 		try{
-			log4j_openspcoop = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			log4j_openspcoop = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_openspcoop(alias));
 		}catch(Exception e){
@@ -300,7 +298,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String log4j_integrationManager = null;
 		try{
-			log4j_integrationManager = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			log4j_integrationManager = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_integrationManager(alias));
 		}catch(Exception e){
@@ -310,7 +308,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String tracciamento = null;
 		try{
-			tracciamento = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			tracciamento = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_tracciamento(alias));
 		}catch(Exception e){
@@ -320,7 +318,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String dumpPD = null;
 		try{
-			dumpPD = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			dumpPD = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_dumpPD(alias));
 		}catch(Exception e){
@@ -330,7 +328,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String dumpPA = null;
 		try{
-			dumpPA = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			dumpPA = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_dumpPA(alias));
 		}catch(Exception e){
@@ -340,7 +338,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String log4j_tracciamento = null;
 		try{
-			log4j_tracciamento = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			log4j_tracciamento = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento(alias));
 		}catch(Exception e){
@@ -350,7 +348,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String log4j_dump = null;
 		try{
-			log4j_dump = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			log4j_dump = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_dump(alias));
 		}catch(Exception e){
@@ -360,7 +358,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String fileTraceGovWayState = null;
 		try{
-			fileTraceGovWayState = confCore.invokeJMXMethod(gestoreRisorseJMX, alias, confCore.getJmxPdD_configurazioneSistema_type(alias),
+			fileTraceGovWayState = confCore.getInvoker().invokeJMXMethod(alias, confCore.getJmxPdD_configurazioneSistema_type(alias),
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getFileTrace(alias));
 		}catch(Exception e){
@@ -371,7 +369,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String errorSpecificTypeProcessRequest = null;
 		try{
-			errorSpecificTypeProcessRequest = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			errorSpecificTypeProcessRequest = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalRequestError(alias));
 		}catch(Exception e){
@@ -383,7 +381,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String errorSpecificTypeProcessResponse_1 = null;
 		try{
-			errorSpecificTypeProcessResponse_1 = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			errorSpecificTypeProcessResponse_1 = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeBadResponse(alias));
 		}catch(Exception e){
@@ -394,7 +392,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		}
 		String errorSpecificTypeProcessResponse_2 = null;
 		try{
-			errorSpecificTypeProcessResponse_2 = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			errorSpecificTypeProcessResponse_2 = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalResponseError(alias));
 		}catch(Exception e){
@@ -416,7 +414,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String errorSpecificTypeInternalError = null;
 		try{
-			errorSpecificTypeInternalError = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			errorSpecificTypeInternalError = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorTypeInternalError(alias));
 		}catch(Exception e){
@@ -428,7 +426,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String errorStatus = null;
 		try{
-			errorStatus = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			errorStatus = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorStatusCode(alias));
 		}catch(Exception e){
@@ -440,7 +438,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String errorStatusInSoapFaultCode = null;
 		try{
-			errorStatusInSoapFaultCode = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			errorStatusInSoapFaultCode = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorUseStatusCodeAsFaultCode(alias));
 		}catch(Exception e){
@@ -452,7 +450,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String errorSpecificDetails = null;
 		try{
-			errorSpecificDetails = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			errorSpecificDetails = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionSpecificErrorDetails(alias));
 		}catch(Exception e){
@@ -464,7 +462,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String errorInstanceId = null;
 		try{
-			errorInstanceId = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			errorInstanceId = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorInstanceId(alias));
 		}catch(Exception e){
@@ -476,7 +474,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String errorGenerateHttpErrorCodeInSoap = null;
 		try{
-			errorGenerateHttpErrorCodeInSoap = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			errorGenerateHttpErrorCodeInSoap = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_transactionErrorGenerateHttpHeaderGovWayCode(alias));
 		}catch(Exception e){
@@ -488,7 +486,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 
 		String infoDatabase = null;
 		try{
-			infoDatabase = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			infoDatabase = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase(alias));
 		}catch(Exception e){
@@ -501,7 +499,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		try{
 			int numeroDatasource = 0;
 			try{
-				String stato = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+				String stato = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 						confCore.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias),
 						confCore.getJmxPdD_configurazioneSistema_nomeAttributo_numeroDatasourceGW(alias));
 				if(stato!=null && !"".equals(stato)) {
@@ -511,7 +509,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 				ControlStationCore.logDebug("Numero di datasource attivi non ottenibili: "+e.getMessage());
 			}
 			if(numeroDatasource>0) {
-				String nomiDatasource = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+				String nomiDatasource = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 						confCore.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias),
 						confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getDatasourcesGW(alias));
 				if(nomiDatasource!=null && !"".equals(nomiDatasource)) {
@@ -531,7 +529,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 									try{
 										String idDS = tmp[1].split(":")[1];
 										
-										String statoInfo = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+										String statoInfo = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 												confCore.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias),
 												confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW(alias),
 												idDS);
@@ -540,7 +538,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 										}
 										infoConnessioneAltriDB.put(nomeDS,statoInfo);
 										
-										String statoConnessioni = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+										String statoConnessioni = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 												confCore.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias),
 												confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getUsedConnectionsDatasourcesGW(alias),
 												idDS);
@@ -586,7 +584,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String infoSSL = null;
 		try{
-			infoSSL = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			infoSSL = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL(alias));
 		}catch(Exception e){
@@ -596,7 +594,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String infoCryptographyKeyLength = null;
 		try{
-			infoCryptographyKeyLength = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			infoCryptographyKeyLength = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength(alias));
 		}catch(Exception e){
@@ -606,7 +604,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String infoCharset = null;
 		try{
-			infoCharset = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			infoCharset = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCharset(alias));
 		}catch(Exception e){
@@ -616,7 +614,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String infoInternazionalizzazione = null;
 		try{
-			infoInternazionalizzazione = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			infoInternazionalizzazione = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione(alias));
 		}catch(Exception e){
@@ -626,7 +624,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String infoTimeZone = null;
 		try{
-			infoTimeZone = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			infoTimeZone = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone(alias));
 		}catch(Exception e){
@@ -636,7 +634,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String infoProprietaJavaNetworking = null;
 		try{
-			infoProprietaJavaNetworking = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			infoProprietaJavaNetworking = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteProprietaJavaNetworking(alias));
 		}catch(Exception e){
@@ -646,7 +644,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String infoProprietaJavaAltro = null;
 		try{
-			infoProprietaJavaAltro = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			infoProprietaJavaAltro = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaAltro(alias));
 		}catch(Exception e){
@@ -656,7 +654,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String infoProprietaSistema = null;
 		try{
-			infoProprietaSistema = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			infoProprietaSistema = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaSistema(alias));
 		}catch(Exception e){
@@ -666,7 +664,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String infoProtocolli = null;
 		try{
-			infoProtocolli = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			infoProtocolli = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols(alias));
 		}catch(Exception e){
@@ -685,7 +683,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 				
 				boolean enabled = false;
 				try{
-					String stato = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					String stato = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 							cacheName,
 							confCore.getJmxPdD_cache_nomeAttributo_cacheAbilitata(alias));
 					if(stato.equalsIgnoreCase("true")){
@@ -700,7 +698,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 				if(enabled){
 					String params = null;
 					try{
-						params = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_cache_type(alias), 
+						params = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_cache_type(alias), 
 								cacheName,
 								confCore.getJmxPdD_cache_nomeMetodo_statoCache(alias));
 					}catch(Exception e){
@@ -716,7 +714,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoConnessioniDB = null;
 		try{
-			statoConnessioniDB = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoConnessioniDB = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
 					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniDB(alias));
 		}catch(Exception e){
@@ -728,7 +726,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 				
 		String statoConnessioniJMS = null;
 		try{
-			statoConnessioniJMS = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoConnessioniJMS = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
 					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS(alias));
 		}catch(Exception e){
@@ -738,7 +736,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTransazioniId = null;
 		try{
-			statoTransazioniId = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoTransazioniId = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
 					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_idTransazioniAttive(alias));
 		}catch(Exception e){
@@ -748,7 +746,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTransazioniIdProtocollo = null;
 		try{
-			statoTransazioniIdProtocollo = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoTransazioniIdProtocollo = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
 					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_idProtocolloTransazioniAttive(alias));
 		}catch(Exception e){
@@ -758,7 +756,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerVerificaConnessioni = null;
 		try{
-			statoTimerVerificaConnessioni = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoTimerVerificaConnessioni = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiVerificaConnessioniAttive(alias));
 		}catch(Exception e){
@@ -770,7 +768,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoConnessioniPD = null;
 		try{
-			statoConnessioniPD = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoConnessioniPD = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
 					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPD(alias));
 		}catch(Exception e){
@@ -780,7 +778,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoConnessioniPA = null;
 		try{
-			statoConnessioniPA = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoConnessioniPA = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
 					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPA(alias));
 		}catch(Exception e){
@@ -790,7 +788,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerConsegnaAsincrona = null;
 		try{
-			statoTimerConsegnaAsincrona = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoTimerConsegnaAsincrona = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerConsegnaContenutiApplicativi(alias));
 		}catch(Exception e){
@@ -815,7 +813,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			
 				String stato = null;
 				try{
-					stato = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					stato = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 							confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
 							confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus(alias),
 							coda);
@@ -826,7 +824,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 				
 				String configurazione = null;
 				try{
-					configurazione = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					configurazione = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 							confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
 							confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getQueueConfig(alias),
 							coda);
@@ -837,7 +835,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 				
 				String connettoriPrioritari = null;
 				try{
-					connettoriPrioritari = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					connettoriPrioritari = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 							confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
 							confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getConnettoriPrioritari(alias),
 							coda);
@@ -848,7 +846,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 				
 				String applicativiPrioritari = null;
 				try{
-					applicativiPrioritari = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					applicativiPrioritari = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 							confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
 							confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getApplicativiPrioritari(alias),
 							coda);
@@ -865,7 +863,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerGenerazioneStatisticheOrarie = null;
 		try{
-			statoTimerGenerazioneStatisticheOrarie = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoTimerGenerazioneStatisticheOrarie = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheOrarie(alias));
 		}catch(Exception e){
@@ -877,7 +875,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerGenerazioneStatisticheGiornaliere = null;
 		try{
-			statoTimerGenerazioneStatisticheGiornaliere = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoTimerGenerazioneStatisticheGiornaliere = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheGiornaliere(alias));
 		}catch(Exception e){
@@ -889,7 +887,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerGenerazioneStatisticheSettimanali = null;
 		try{
-			statoTimerGenerazioneStatisticheSettimanali = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoTimerGenerazioneStatisticheSettimanali = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheSettimanali(alias));
 		}catch(Exception e){
@@ -901,7 +899,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerGenerazioneStatisticheMensili = null;
 		try{
-			statoTimerGenerazioneStatisticheMensili = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoTimerGenerazioneStatisticheMensili = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerStatisticheMensili(alias));
 		}catch(Exception e){
@@ -913,7 +911,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerMessaggiEliminati = null;
 		try{
-			statoTimerMessaggiEliminati = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoTimerMessaggiEliminati = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiEliminati(alias));
 		}catch(Exception e){
@@ -925,7 +923,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerMessaggiScaduti = null;
 		try{
-			statoTimerMessaggiScaduti = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoTimerMessaggiScaduti = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiScaduti(alias));
 		}catch(Exception e){
@@ -937,7 +935,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerBuste = null;
 		try{
-			statoTimerBuste = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoTimerBuste = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreRepositoryBuste(alias));
 		}catch(Exception e){
@@ -949,7 +947,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerCorrelazioneApplicativa = null;
 		try{
-			statoTimerCorrelazioneApplicativa = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoTimerCorrelazioneApplicativa = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaCorrelazioneApplicativa(alias));
 		}catch(Exception e){
@@ -961,7 +959,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerMessaggiNonGestiti = null;
 		try{
-			statoTimerMessaggiNonGestiti = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoTimerMessaggiNonGestiti = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreMessaggiPuliziaMessaggiNonGestiti(alias));
 		}catch(Exception e){
@@ -973,7 +971,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerMessaggiAnomali = null;
 		try{
-			statoTimerMessaggiAnomali = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoTimerMessaggiAnomali = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestorePuliziaMessaggiAnomali(alias));
 		}catch(Exception e){
@@ -985,7 +983,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerMonitoraggioRisorse = null;
 		try{
-			statoTimerMonitoraggioRisorse = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoTimerMonitoraggioRisorse = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerMonitoraggioRisorseThread(alias));
 		}catch(Exception e){
@@ -997,7 +995,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerThreshold = null;
 		try{
-			statoTimerThreshold = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoTimerThreshold = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerThresholdThread(alias));
 		}catch(Exception e){
@@ -1009,7 +1007,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerEventi = null;
 		try{
-			statoTimerEventi = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoTimerEventi = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerEventi(alias));
 		}catch(Exception e){
@@ -1021,7 +1019,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerFileSystemRecovery = null;
 		try{
-			statoTimerFileSystemRecovery = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoTimerFileSystemRecovery = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerFileSystemRecovery(alias));
 		}catch(Exception e){
@@ -1033,7 +1031,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerBusteOneway = null;
 		try{
-			statoTimerBusteOneway = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoTimerBusteOneway = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteOnewayNonRiscontrate(alias));
 		}catch(Exception e){
@@ -1045,7 +1043,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerBusteAsincrone = null;
 		try{
-			statoTimerBusteAsincrone = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoTimerBusteAsincrone = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerGestoreBusteAsincroneNonRiscontrate(alias));
 		}catch(Exception e){
@@ -1057,7 +1055,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		
 		String statoTimerRepositoryStateful = null;
 		try{
-			statoTimerRepositoryStateful = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			statoTimerRepositoryStateful = confCore.getInvoker().readJMXAttribute(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_timerRepositoryStatefulThread(alias));
 		}catch(Exception e){
@@ -1069,7 +1067,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 
 		String infoInstallazione = null;
 		try{
-			infoInstallazione = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+			infoInstallazione = confCore.getInvoker().invokeJMXMethod(alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniInstallazione(alias));
 		}catch(Exception e){

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -79,6 +79,7 @@ public class FSRecoveryTransazioniApplicativoServerConsegnaTerminataImpl extends
 		TransazioneApplicativoServer transazioneApplicativoServer = deserializer.readTransazioneApplicativoServer(file);
 			
 		int esitoConsegnaMultipla = -1;
+		int esitoConsegnaMultiplaInCorso = -1;
 		int esitoConsegnaMultiplaFallita = -1;
 		int esitoConsegnaMultiplaCompletata = -1;
 		int ok = -1;
@@ -87,6 +88,7 @@ public class FSRecoveryTransazioniApplicativoServerConsegnaTerminataImpl extends
 		try {
 			EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log, transazioneApplicativoServer.getProtocollo());
 			esitoConsegnaMultipla = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA);
+			esitoConsegnaMultiplaInCorso = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_IN_CORSO);
 			esitoConsegnaMultiplaFallita = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_FALLITA);
 			esitoConsegnaMultiplaCompletata = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_COMPLETATA);
 			ok = esitiProperties.convertoToCode(EsitoTransazioneName.OK);
@@ -106,6 +108,7 @@ public class FSRecoveryTransazioniApplicativoServerConsegnaTerminataImpl extends
 				connection.setAutoCommit(autoCommit);
 				
 				boolean possibileTerminazioneSingleIntegrationManagerMessage = false;
+				boolean consegnaInErrore = false;
 				// consegna terminata
 				if(transazioneApplicativoServer.isConsegnaTerminata()) {
 					// nop
@@ -116,13 +119,17 @@ public class FSRecoveryTransazioniApplicativoServerConsegnaTerminataImpl extends
 				else if(transazioneApplicativoServer.getDataMessaggioScaduto()!=null) {
 					possibileTerminazioneSingleIntegrationManagerMessage = true;
 				}
+				else if(transazioneApplicativoServer.isConsegnaTrasparente() && transazioneApplicativoServer.getNumeroTentativi()>0) {
+					// !transazioneApplicativoServer.isConsegnaTerminata() altrimenti entrava nel primo if
+					consegnaInErrore = true;
+				}
 				
 				TransactionServerUtils.safe_aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, connection, 
 						this.daoFactoryServiceManagerProperties.getDatabaseType(), this.log,
 						this.daoFactory,this.daoFactoryLogger,this.daoFactoryServiceManagerProperties,
 						this.debug,
-						esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
-						esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage,
+						esitoConsegnaMultipla, esitoConsegnaMultiplaInCorso, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
+						esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage, consegnaInErrore,
 						this.gestioneSerializableDB_AttesaAttiva,this.gestioneSerializableDB_CheckInterval,
 						null);
 				

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -29,10 +29,12 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.web.monitor.allarmi.constants.AllarmiCostanti;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.slf4j.Logger;
 
 /**
@@ -68,6 +70,12 @@ public class AllarmiSearchForm extends BaseSearchForm implements Cloneable {
 		}catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
+	}
+	
+	@Override
+	protected String eseguiFiltra() {
+		this.setAggiornamentoDatiAbilitato(true); // abilito aggiornamento
+		return super.eseguiFiltra();
 	}
 	
 	@Override
@@ -145,9 +153,9 @@ public class AllarmiSearchForm extends BaseSearchForm implements Cloneable {
 		List<SelectItem> listaTipologie = new ArrayList<SelectItem>();
 		
 		if(Utility.isAmministratore())
-			listaTipologie.add(new SelectItem(TIPOLOGIA_CONFIGURAZIONE,"Configurazione"));
-		listaTipologie.add(new SelectItem(TIPOLOGIA_APPLICATIVA,"Erogazione"));
-		listaTipologie.add(new SelectItem(TIPOLOGIA_DELEGATA,"Fruizione"));
+			listaTipologie.add(new SelectItem(TIPOLOGIA_CONFIGURAZIONE, MessageManager.getInstance().getMessage(AllarmiCostanti.SEARCH_TIPOLOGIA_CONFIGURAZIONE_LABEL_KEY)));
+		listaTipologie.add(new SelectItem(TIPOLOGIA_APPLICATIVA, MessageManager.getInstance().getMessage(AllarmiCostanti.SEARCH_TIPOLOGIA_EROGAZIONE_LABEL_KEY)));
+		listaTipologie.add(new SelectItem(TIPOLOGIA_DELEGATA, MessageManager.getInstance().getMessage(AllarmiCostanti.SEARCH_TIPOLOGIA_FRUIZIONE_LABEL_KEY)));
 		
 		return listaTipologie;
 	}

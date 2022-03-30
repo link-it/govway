@@ -18,6 +18,7 @@ CREATE TABLE allarmi
 	-- Informazioni generali (0=false/1=true)
 	enabled INT NOT NULL,
 	acknowledged INT NOT NULL,
+	dettaglio_acknowledged VARCHAR(max),
 	periodo_tipo VARCHAR(255),
 	periodo INT,
 	mail_invia INT,

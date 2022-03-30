@@ -7,8 +7,8 @@ Le API di Govway, basate sul protocollo REST, permettono ad esempio di realizzar
 
 Le interfacce delle API sono descritte in formato OpenAPI e sono consultabili ai seguenti indirizzi:
 
-    + `API di Configurazione <https://generator.swagger.io/?url=https://raw.githubusercontent.com/link-it/govway/master/tools/rs/config/server/src/schemi/merge/govway_rs-api_config.yaml>`_: consentono di effettuare le operazioni di configurazione del registro di Govway disponibili anche tramite la console 'govwayConsole'.
-    + `API di Monitoraggio <https://generator.swagger.io/?url=https://raw.githubusercontent.com/link-it/govway/master/tools/rs/monitor/server/src/schemi/merge/govway_rs-api_monitor.yaml>`_: consente di accedere a tutte le funzionalità di monitoraggio e statistica accedibili anche tramite console 'govwayMonitor'.
+    + `API di Configurazione <https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/link-it/govway/master/tools/rs/config/server/src/schemi/merge/govway_rs-api_config.yaml>`_: consentono di effettuare le operazioni di configurazione del registro di Govway disponibili anche tramite la console 'govwayConsole'.
+    + `API di Monitoraggio <https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/link-it/govway/master/tools/rs/monitor/server/src/schemi/merge/govway_rs-api_monitor.yaml>`_: consente di accedere a tutte le funzionalità di monitoraggio e statistica accedibili anche tramite console 'govwayMonitor'.
 
 L'utilizzo di tali API è abilitato se in fase di installazione di Govway è stata effettuata una scelta in tal senso (vedi :ref:`inst_installer_nuova`). Nel caso siano state installate le API, i relativi servizi saranno accessibili tramite protocollo REST, le cui interfacce OpenAPI 3 sono consultabili seguendo i link riportati in seguito.
 

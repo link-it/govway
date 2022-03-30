@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -1669,7 +1669,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 
 	// Controlla i dati della porta delegata
-	public boolean porteDelegateCheckData(TipoOperazione tipoOp, String oldNomePD, boolean datiAltroPorta)
+	public boolean porteDelegateCheckData(TipoOperazione tipoOp, String oldNomePD, boolean datiAltroPorta,
+			ServiceBinding serviceBinding)
 			throws Exception {
 		try {
 			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
@@ -1731,6 +1732,24 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED)) && (azione==null || azione.equals(""))) {
 				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_PATTERN_AZIONE);
 				return false;
+			}
+			
+			if (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED)) {
+				if(this.checkRegexp(azione,PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ESPRESSIONE_REGOLARE)==false){
+					return false;
+				}
+			}
+			if (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED)) {
+				if(ServiceBinding.SOAP.equals(serviceBinding)) {
+					if(this.checkXPath(azione,PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTENT_PATTERN)==false){
+						return false;
+					}
+				}
+				else {
+					if(this.checkXPathOrJsonPath(azione,PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTENT_PATTERN)==false){
+						return false;
+					}
+				}
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo

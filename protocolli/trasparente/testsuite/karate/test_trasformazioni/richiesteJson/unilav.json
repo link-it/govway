@@ -1,0 +1,93 @@
+{
+	"mittente": "NAZIONALE",
+	"destinatario": "SoggettoInternoTest",
+	"profiloCollaborazione": "SERVIZIO_SINCRONO",
+	"servizio": "NotificaComunicazioneObbligatoria",
+	"identificatore": "NAZIONALE_NAZIONALESPCoopIT_6325611_2022-01-12_16:03",
+	"dataInvio": "2020-11-06T00:00:00.000+01:00",
+	"codiceComunicazione": "1300411399909000",
+	"modello": {
+		"payload": {
+			"assunzioneForzaMaggiore": "SI",
+			"codiceComunicazione": "1300411399909000",
+			"dataInvio": "2020-11-06T00:00:00.000+01:00",
+			"datoreLavoro": {
+				"codiceFiscale": "03286280049",
+				"denominazione": "Unpa S.r.l",
+				"sedeLavoro": {
+					"cap": "38100",
+					"comune": "L378",
+					"indirizzo": "VIA ROMA 130",
+					"telefono": "0123/012312"
+				},
+				"sedeLegale": {
+					"cap": "38100",
+					"comune": "L378",
+					"indirizzo": "VIA ROMA 130",
+					"telefono": "0123/012312"
+				},
+				"pubblicaAmministrazione": "NO",
+				"settore": "96.02.01"
+			},
+			"descrizioneForzaMaggiore": "testo di test",
+			"emailDelegato": "paolino.paperino@paperopoli.it",
+			"inizioRapporto": {
+				"assunzioneObbligatoria": "NO",
+				"ccnl": "ND",
+				"dataFine": "2012-09-01",
+				"dataInizio": "2010-09-01",
+				"entePrevidenziale": "01",
+				"lavInMobilita": "NO",
+				"lavoroInAgricoltura": "NO",
+				"lavoroStagionale": "NO",
+				"livelloInquadramento": "nd",
+				"patINAIL": "20696286",
+				"qualificaProfessionale": "8.2.2.1.0.0",
+				"retribuzioneCompenso": "10",
+				"socioLavoratore": "NO",
+				"tipoOrario": {
+					"codice": "F"
+				},
+				"tipologiaContrattuale": "C.01.00"
+			},
+			"lavoratore": {
+				"anagraficaCompleta": {
+					"cittadinanza": "000",
+					"codiceFiscale": "PPRPLN70A01H501S",
+					"cognome": "PAPERINO",
+					"nome": "PAOLINO",
+					"nascita": {
+						"comune": "H501",
+						"data": "1970-01-01"
+					},
+					"sesso": "M"
+				},
+				"extraCE": {
+					"dataScadenzaPS": "2012-09-01",
+					"motivoPermesso": "ASIL2",
+					"questura": "001",
+					"tipoDocumento": "7"
+				},
+				"indirizzoLavoratore": {
+					"cap": "38100",
+					"comune": "L378",
+					"indirizzo": "REG.PIANA 2"
+				},
+				"livelloIstruzione": "30"
+			},
+			"protocollo": "00001111",
+			"tipoComunicazione": "01",
+			"tirocinio": {
+				"categoriaTirocinante": "01",
+				"cfSoggettoPromotore": "MLSLVR39R48G736L",
+				"denominazione": "prr",
+				"tipologiaEntePromotore": "01",
+				"tipologieTirocinio": "A"
+			},
+			"versione": "CO190701R1"
+		},
+		"tipoModello": "UNILAV"
+	},
+	"direzione": "RICHIESTA",
+	"riferimentoMessaggio": "IDRICHIESTA"
+}

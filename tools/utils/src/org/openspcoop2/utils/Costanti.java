@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -35,7 +35,7 @@ public class Costanti {
 	public final static String OPENSPCOOP2_LOOKUP = "GOVWAY_LOOKUP";
 	 
     /** Versione beta, es: "b1" */
-    public static final String OPENSPCOOP2_BETA = ".5.p1"; //".0.rc1";
+    public static final String OPENSPCOOP2_BETA = ".6.p1"; //".0.rc1";
     /** Versione di OpenSPCoop */
     public static final String OPENSPCOOP2_VERSION = "3.3"+Costanti.OPENSPCOOP2_BETA;
     /** Versione di OpenSPCoop */
@@ -45,7 +45,7 @@ public class Costanti {
     /** Details */
     public static final String OPENSPCOOP2_DETAILS = "www.govway.org";
     /** Copyright */
-	public final static String OPENSPCOOP2_COPYRIGHT = "2005-2021 Link.it srl";
+	public final static String OPENSPCOOP2_COPYRIGHT = "2005-2022 Link.it srl";
 	 /** License */
 	public final static String OPENSPCOOP2_LICENSE = "This program is free software: you can redistribute it and/or modify\n"+
 	"it under the terms of the GNU General Public License version 3, as published by\n"+

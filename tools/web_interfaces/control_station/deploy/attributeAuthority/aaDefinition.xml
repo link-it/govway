@@ -384,8 +384,21 @@
 			      	<property name="policy.attributeAuthority.request.jws.signature.algorithm" />
 			</item>
 
-			<item type="checkbox" name="aaSignatureIncludeKid" label="Key Id (kid)" defaultSelected="false">
-				<property name="policy.attributeAuthority.request.jws.signature.include.key.id" />
+			<item type="select" name="aaSignatureIncludeKid" label="Key Id (kid)" reloadOnChange="true" >
+				<values>
+					<value value="false" label="-"/>
+					<value value="true" label="Alias Chiave Privata"/>
+					<value value="custom" label="Personalizzato"/>
+				</values>
+			      	<property name="policy.attributeAuthority.request.jws.signature.include.key.id"/>
+			</item>
+			<item type="text" name="aaSignatureKidValue" label="" required="true">
+				<conditions and="false">
+					<condition and="false">
+						<equals name="aaSignatureIncludeKid" value="custom"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.attributeAuthority.request.jws.signature.include.key.id.value" />
 			</item>
 
 			<item type="select" name="aaSignatureIncludeCertMode" label="X.509 Certificate" default="-" reloadOnChange="true" >

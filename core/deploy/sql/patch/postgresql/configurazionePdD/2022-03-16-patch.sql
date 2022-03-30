@@ -1,0 +1,3 @@
+ALTER TABLE pa_transform_risp ALTER COLUMN return_code TYPE VARCHAR(255);
+ALTER TABLE pd_transform_risp ALTER COLUMN return_code TYPE VARCHAR(255);
+

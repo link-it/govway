@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -29,6 +29,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
@@ -70,6 +71,20 @@ public class ApiChange extends Action {
 			
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 			AccordoServizioParteComune as = apcCore.getAccordoServizioFull(idInt);
+			
+			String resetElementoCacheS = apiHelper.getParameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
+			boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);
+			
+			boolean resetElementoCacheDettaglio = false;
+			String postBackElementName = apiHelper.getPostBackElementName();
+			if(postBackElementName != null && postBackElementName.equals(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE)) {
+				resetElementoCacheDettaglio = true;
+			}
+			
+			if(resetElementoCache || resetElementoCacheDettaglio) {
+				// reset elemento dalla cache
+				return apiHelper.prepareApiResetCache(mapping, gd, tipoOp, as);
+			}
 			
 			apiHelper.prepareApiChange(tipoOp, as);
 			

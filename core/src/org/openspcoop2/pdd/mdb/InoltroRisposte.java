@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -1129,7 +1129,7 @@ public class InoltroRisposte extends GenericLib{
 				//	interpretazione esito consegna
 				GestioneErrore gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettoreComponenteCooperazione(protocolFactory, responseMessage.getServiceBinding());
 				GestoreErroreConnettore  gestoreErrore = new GestoreErroreConnettore();
-				errorConsegna = !gestoreErrore.verificaConsegna(gestioneConsegnaConnettore,motivoErroreConsegna,eccezioneProcessamentoConnettore,connectorSender.getCodiceTrasporto(),connectorSender.getResponse());
+				errorConsegna = !gestoreErrore.verificaConsegna(gestioneConsegnaConnettore,motivoErroreConsegna,eccezioneProcessamentoConnettore,connectorSender);
 				if(errorConsegna){
 					motivoErroreConsegna = gestoreErrore.getErrore();
 					riconsegna = gestoreErrore.isRiconsegna();

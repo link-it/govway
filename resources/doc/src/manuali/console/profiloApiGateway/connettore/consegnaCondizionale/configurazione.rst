@@ -26,7 +26,7 @@ Il valore del filtro (utilizzato per identificare il connettore di consegna) o i
 
 - *Header HTTP*: nome di un header http;
 
-- *Url di Invocazione*: espressione regolare applicata sulla url di invocazione;
+- *Url di Invocazione*: espressione regolare applicata sulla url di invocazione (l'espressione deve avere un match con l'intera url);
 
 - *Parametro della Url*: nome del parametro presente nella url di invocazione;
 
@@ -57,12 +57,17 @@ Tramite le checkbox 'Termina con Errore' è infine possibile configurare l'eroga
 
 Le regole per la selezione del connettore sopra descritte possono essere ridefinite per singole o gruppi di operazioni attraverso la definizione di regole specifiche, accedendo al link 'regole' presente nella maschera di configurazione.
 
-La creazione di una regola specifica deve innanzitutto identificare le operazioni dell'API a cui la regola è riferita tramite il campo 'Risorsa' o 'Azione'. È possibile specifica l'operazione in diverse modalità:
+La creazione di una regola specifica deve innanzitutto identificare le operazioni dell'API a cui la regola è riferita tramite il campo 'Risorsa' o 'Azione' attraverso una delle seguenti modalità:
 
-- nome dell'operazione
-- metodoHTTP.nomeOperazione (solo per API REST)
-- metodoHTTP.* (solo per API REST)
-- espressioneRegolare
+   -  *Nome Azione o Risorsa*: il nome esatto dell'azione o della
+      risorsa su cui verrà applicativa la regola; può in alternativa essere utilizzata un'espressione regolare (es. ^(?:POST\.operazione1|GET\.operazione2)$)
+
+   - *HttpMethod e Path* (utilizzabile solo su API REST): metodo http e path di una risorsa dell'API; è possibile indicare qualsiasi metodo o qualsiasi path con il carattere speciale '\*'. È inoltre possibile definire solamente la parte iniziale di un path attraverso lo '\*'. Alcuni esempi:
+
+	- 'POST /resource'
+	- '\* /resource'
+	- 'POST \*'
+	- '\* /resource/\*'
 
 Nella figura :numref:`ConsegnaCondizionaleRegolaSpecifica` viene visualizzata la maschera di creazione di una regola specifica. Le modalità di identificazione del nome del connettore o del valore del filtro sono le medesime descritte in precedenza.
 

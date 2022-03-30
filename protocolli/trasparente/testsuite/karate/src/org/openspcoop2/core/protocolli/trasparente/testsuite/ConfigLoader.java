@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -163,11 +163,18 @@ public class ConfigLoader {
         
         org.openspcoop2.utils.resources.ScriptInvoker scriptInvoker = new org.openspcoop2.utils.resources.ScriptInvoker(scriptPath);
         scriptInvoker.run(new File(configLoaderPath), trasparenteBundle);
-
+        
         // Dopo aver caricato lo script, resetto le cache
+        resetCache();
+    }
+    
+    public static void resetCache() throws Exception {
+        
+    	org.slf4j.Logger logger = LoggerWrapperFactory.getLogger("com.intuit.karate");
+    	
         String jmx_user = prop.getProperty("jmx_username");
         String jmx_pass = prop.getProperty("jmx_password"); 
-        
+    	
         String[] govwayCaches = prop.getProperty("jmx_cache_resources").split(",");
         for (String resource : govwayCaches) {
             logger.debug("Resetto cache: " + resource);

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -20,10 +20,13 @@
 
 package org.openspcoop2.utils.io;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
@@ -412,6 +415,24 @@ public class DumpByteArrayOutputStream extends ByteArrayOutputStream {
 		}
 		else {
 			super.flush();
+		}
+	}
+	
+	public InputStream getInputStream() {
+		try {
+			this.close();
+		}catch(Throwable e) {
+			throw new RuntimeException(e.getMessage(),e);
+		}
+		if(this.f!=null) {
+			try {
+				return new FileInputStream(this.f);
+			}catch(Throwable e) {
+				throw new RuntimeException(e.getMessage(),e);
+			}
+		}
+		else {
+			return new ByteArrayInputStream(super.toByteArray());
 		}
 	}
 }

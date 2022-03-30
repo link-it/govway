@@ -20,7 +20,7 @@
 
 package org.openspcoop2.pdd.core.connettori.nio;
 
-import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPSProperties;
+import org.openspcoop2.utils.transport.http.SSLConfig;
 
 /**
  * ConnettoreNIO_connectionConfig
@@ -40,7 +40,7 @@ public class ConnectionConfiguration {
 	private boolean followRedirect = false;
 	private int maxNumberRedirects = 5;
 	
-	private ConnettoreHTTPSProperties sslContextProperties;
+	private SSLConfig sslContextProperties;
 	
 	private boolean debug;
 	
@@ -101,10 +101,10 @@ public class ConnectionConfiguration {
 	public void setReadTimeout(Integer readTimeout) {
 		this.readTimeout = readTimeout;
 	}
-	public ConnettoreHTTPSProperties getSslContextProperties() {
+	public SSLConfig getSslContextProperties() {
 		return this.sslContextProperties;
 	}
-	public void setSslContextProperties(ConnettoreHTTPSProperties sslConfig) {
+	public void setSslContextProperties(SSLConfig sslConfig) {
 		this.sslContextProperties = sslConfig;
 	}
 	public boolean isFollowRedirect() {

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -160,7 +160,7 @@ public class AutenticazionePortaDelegataPrincipal extends GestioneViaJmx {
 		Date dataInizioTest = DateManager.getDate();
 		
 		if(this.expected401_wildfly_security_domain) {
-			if(credenzialiInvocazione!=null && TipoAutenticazione.BASIC.equals(credenzialiInvocazione.getAutenticazione())) {
+			if(credenzialiInvocazione!=null && TipoAutenticazione.BASIC.equals(credenzialiInvocazione.getAutenticazione()) && !"esempioFruitoreTrasparentePrincipal1".equals(credenzialiInvocazione.getUsername())) {
 				System.out.println("Force 401 per security-domain wildfly>=25");
 				returnCodeAtteso = 401;
 				codiceErrore = -1;
@@ -195,7 +195,7 @@ public class AutenticazionePortaDelegataPrincipal extends GestioneViaJmx {
 		}
 		
 		if(this.expected401_wildfly_security_domain) {
-			if(credenzialiInvocazione!=null && TipoAutenticazione.BASIC.equals(credenzialiInvocazione.getAutenticazione())) {
+			if(credenzialiInvocazione!=null && TipoAutenticazione.BASIC.equals(credenzialiInvocazione.getAutenticazione()) && !"esempioFruitoreTrasparentePrincipal1".equals(credenzialiInvocazione.getUsername())) {
 				System.out.println("Force 401 per security-domain wildfly>=25");
 				stato = 401;
 				codiceErrore = -1;
@@ -246,7 +246,7 @@ public class AutenticazionePortaDelegataPrincipal extends GestioneViaJmx {
 		Date dataInizioTest = DateManager.getDate();
 		
 		if(this.expected401_wildfly_security_domain) {
-			if(credenzialiInvocazione!=null && TipoAutenticazione.BASIC.equals(credenzialiInvocazione.getAutenticazione())) {
+			if(credenzialiInvocazione!=null && TipoAutenticazione.BASIC.equals(credenzialiInvocazione.getAutenticazione()) && !"esempioFruitoreTrasparentePrincipal1".equals(credenzialiInvocazione.getUsername())) {
 				System.out.println("Force 401 per security-domain wildfly>=25");
 				returnCodeAtteso = 401;
 				codiceErrore = -1;
@@ -311,7 +311,7 @@ public class AutenticazionePortaDelegataPrincipal extends GestioneViaJmx {
 		Date dataInizioTest = DateManager.getDate();
 		
 		if(this.expected401_wildfly_security_domain) {
-			if(credenzialiInvocazione!=null && TipoAutenticazione.BASIC.equals(credenzialiInvocazione.getAutenticazione())) {
+			if(credenzialiInvocazione!=null && TipoAutenticazione.BASIC.equals(credenzialiInvocazione.getAutenticazione()) && !"esempioFruitoreTrasparentePrincipal1".equals(credenzialiInvocazione.getUsername())) {
 				System.out.println("Force 401 per security-domain wildfly>=25");
 				returnCodeAtteso = 401;
 				codiceErrore = -1;
@@ -356,7 +356,7 @@ public class AutenticazionePortaDelegataPrincipal extends GestioneViaJmx {
 		boolean genericCode = false; // il dettaglio finisce nel diagnostico
 		
 		if(this.expected401_wildfly_security_domain) {
-			if(credenzialiInvocazione!=null && TipoAutenticazione.BASIC.equals(credenzialiInvocazione.getAutenticazione())) {
+			if(credenzialiInvocazione!=null && TipoAutenticazione.BASIC.equals(credenzialiInvocazione.getAutenticazione()) && !"esempioFruitoreTrasparentePrincipal1".equals(credenzialiInvocazione.getUsername())) {
 				System.out.println("Force 401 per security-domain wildfly>=25");
 				stato = 401;
 				codiceErrore = -1;
@@ -412,7 +412,7 @@ public class AutenticazionePortaDelegataPrincipal extends GestioneViaJmx {
 		Date dataInizioTest = DateManager.getDate();
 		
 		if(this.expected401_wildfly_security_domain) {
-			if(credenzialiInvocazione!=null && TipoAutenticazione.BASIC.equals(credenzialiInvocazione.getAutenticazione())) {
+			if(credenzialiInvocazione!=null && TipoAutenticazione.BASIC.equals(credenzialiInvocazione.getAutenticazione()) && !"esempioFruitoreTrasparentePrincipal1".equals(credenzialiInvocazione.getUsername())) {
 				System.out.println("Force 401 per security-domain wildfly>=25");
 				returnCodeAtteso = 401;
 				codiceErrore = -1;
@@ -477,7 +477,7 @@ public class AutenticazionePortaDelegataPrincipal extends GestioneViaJmx {
 		Date dataInizioTest = DateManager.getDate();
 
 		if(this.expected401_wildfly_security_domain) {
-			if(credenzialiInvocazione!=null && TipoAutenticazione.BASIC.equals(credenzialiInvocazione.getAutenticazione())) {
+			if(credenzialiInvocazione!=null && TipoAutenticazione.BASIC.equals(credenzialiInvocazione.getAutenticazione()) && !"esempioFruitoreTrasparentePrincipal1".equals(credenzialiInvocazione.getUsername())) {
 				System.out.println("Force 401 per security-domain wildfly>=25");
 				returnCodeAtteso = 401;
 				codiceErrore = -1;
@@ -522,7 +522,7 @@ public class AutenticazionePortaDelegataPrincipal extends GestioneViaJmx {
 		boolean genericCode = false; // il dettaglio finisce nel diagnostico
 		
 		if(this.expected401_wildfly_security_domain) {
-			if(credenzialiInvocazione!=null && TipoAutenticazione.BASIC.equals(credenzialiInvocazione.getAutenticazione())) {
+			if(credenzialiInvocazione!=null && TipoAutenticazione.BASIC.equals(credenzialiInvocazione.getAutenticazione()) && !"esempioFruitoreTrasparentePrincipal1".equals(credenzialiInvocazione.getUsername())) {
 				System.out.println("Force 401 per security-domain wildfly>=25");
 				stato = 401;
 				codiceErrore = -1;
@@ -578,7 +578,7 @@ public class AutenticazionePortaDelegataPrincipal extends GestioneViaJmx {
 		Date dataInizioTest = DateManager.getDate();
 		
 		if(this.expected401_wildfly_security_domain) {
-			if(credenzialiInvocazione!=null && TipoAutenticazione.BASIC.equals(credenzialiInvocazione.getAutenticazione())) {
+			if(credenzialiInvocazione!=null && TipoAutenticazione.BASIC.equals(credenzialiInvocazione.getAutenticazione()) && !"esempioFruitoreTrasparentePrincipal1".equals(credenzialiInvocazione.getUsername())) {
 				System.out.println("Force 401 per security-domain wildfly>=25");
 				returnCodeAtteso = 401;
 				codiceErrore = -1;
@@ -623,7 +623,7 @@ public class AutenticazionePortaDelegataPrincipal extends GestioneViaJmx {
 		boolean genericCode = false; // il dettaglio finisce nel diagnostico		
 		
 		if(this.expected401_wildfly_security_domain) {
-			if(credenzialiInvocazione!=null && TipoAutenticazione.BASIC.equals(credenzialiInvocazione.getAutenticazione())) {
+			if(credenzialiInvocazione!=null && TipoAutenticazione.BASIC.equals(credenzialiInvocazione.getAutenticazione()) && !"esempioFruitoreTrasparentePrincipal1".equals(credenzialiInvocazione.getUsername())) {
 				System.out.println("Force 401 per security-domain wildfly>=25");
 				stato = 401;
 				codiceErrore = -1;
@@ -697,7 +697,7 @@ public class AutenticazionePortaDelegataPrincipal extends GestioneViaJmx {
 			Date dataInizioTest = DateManager.getDate();
 			
 			if(this.expected401_wildfly_security_domain) {
-				if(credenzialiInvocazione!=null && TipoAutenticazione.BASIC.equals(credenzialiInvocazione.getAutenticazione())) {
+				if(credenzialiInvocazione!=null && TipoAutenticazione.BASIC.equals(credenzialiInvocazione.getAutenticazione()) && !"esempioFruitoreTrasparentePrincipal1".equals(credenzialiInvocazione.getUsername())) {
 					System.out.println("Force 401 per security-domain wildfly>=25");
 					returnCodeAtteso = 401;
 					codiceErrore = -1;
@@ -745,7 +745,7 @@ public class AutenticazionePortaDelegataPrincipal extends GestioneViaJmx {
 		boolean genericCode = false; // il dettaglio finisce nel diagnostico		
 		
 		if(this.expected401_wildfly_security_domain) {
-			if(credenzialiInvocazione!=null && TipoAutenticazione.BASIC.equals(credenzialiInvocazione.getAutenticazione())) {
+			if(credenzialiInvocazione!=null && TipoAutenticazione.BASIC.equals(credenzialiInvocazione.getAutenticazione()) && !"esempioFruitoreTrasparentePrincipal1".equals(credenzialiInvocazione.getUsername())) {
 				System.out.println("Force 401 per security-domain wildfly>=25");
 				stato = 401;
 				codiceErrore = -1;

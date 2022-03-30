@@ -11,6 +11,9 @@
 		<collection name="endpointConfig"/>
 		<collection name="sslConfig"/>
 		<collection name="sslClientConfig"/>
+		<collection name="validazioneJwtTokenParserPropRefId"/>
+		<collection name="introspectionTokenParserPropRefId"/>
+		<collection name="userInfoTokenParserPropRefId"/>
 	</properties>
 	
 	<section label="Informazioni Generali">
@@ -157,16 +160,18 @@
 			</condition>
 		</conditions>
 		
-		<item type="select" name="validazioneJWTParserType" label="Claims Parser" default="OIDC_ID_TOKEN" reloadOnChange="true">
+		<item type="select" name="validazioneJWTParserType" label="Formato Token" default="OIDC_ID_TOKEN" reloadOnChange="true">
 			<values>
 				<value value="JSON_WEB_TOKEN_RFC_7519" label="RFC 7519 - JSON Web Token "/>
 				<!-- <value value="INTROSPECTION_RESPONSE_RFC_7662" label="RFC 7662 - Introspection"/> -->
 				<value value="OIDC_ID_TOKEN" label="OpenID Connect - ID Token"/>
 				<value value="GOOGLE" label="Google - ID Token"/>
-				<value value="CUSTOM" label="Personalizzato"/>
+				<value value="MAPPING" label="Personalizzato"/>
+				<value value="CUSTOM" label="Plugin"/>
 			</values>
 			<property name="policy.validazioneJWT.claimsParser" />
 		</item>
+
 		<item type="text" name="validazioneJwtParserCustom" label="ClassName" required="true">
 			<conditions>
 				<condition and="true">
@@ -174,6 +179,135 @@
 				</condition>
 			</conditions>
 		   	<property name="policy.validazioneJWT.claimsParser.className" />
+		</item>
+
+		<item type="text" name="validazioneJwtIssuer" label="Issuer" required="true" default="iss">
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
+				</condition>
+			</conditions>
+	      		<property name="token.parser.issuer" properties="validazioneJwtTokenParserPropRefId" />
+		</item>
+		<item type="text" name="validazioneJwtSubject" label="Subject" required="true" default="sub">
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
+				</condition>
+			</conditions>
+	      		<property name="token.parser.subject" properties="validazioneJwtTokenParserPropRefId" />
+		</item>
+		<item type="text" name="validazioneJwtAudience" label="Audience" required="true" default="aud">
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
+				</condition>
+			</conditions>
+	      		<property name="token.parser.audience" properties="validazioneJwtTokenParserPropRefId" />
+		</item>
+		<item type="text" name="validazioneJwtExpire" label="Expire" required="true" default="exp">
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
+				</condition>
+			</conditions>
+	      		<property name="token.parser.expire" properties="validazioneJwtTokenParserPropRefId" />
+		</item>
+		<item type="text" name="validazioneJwtIssuedAt" label="IssuedAt" required="true" default="iat">
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
+				</condition>
+			</conditions>
+	      		<property name="token.parser.issuedAt" properties="validazioneJwtTokenParserPropRefId" />
+		</item>
+		<item type="text" name="validazioneJwtNotToBeUsedBefore" label="NotToBeUsedBefore" required="true" default="nbf">
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
+				</condition>
+			</conditions>
+	      		<property name="token.parser.notToBeUsedBefore" properties="validazioneJwtTokenParserPropRefId" />
+		</item>
+		<item type="text" name="validazioneJwtIdentifier" label="Identifier" required="true" default="jti">
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
+				</condition>
+			</conditions>
+	      		<property name="token.parser.jwtIdentifier" properties="validazioneJwtTokenParserPropRefId" />
+		</item>
+		<item type="text" name="validazioneJwtClientId" label="ClientId" required="true" default="azp,client_id">
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
+				</condition>
+			</conditions>
+	      		<property name="token.parser.clientId" properties="validazioneJwtTokenParserPropRefId" />
+		</item>
+		<item type="text" name="validazioneJwtUsername" label="Username" required="true" default="preferred_username,username,name">
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
+				</condition>
+			</conditions>
+	      		<property name="token.parser.username" properties="validazioneJwtTokenParserPropRefId" />
+		</item>
+		<item type="text" name="validazioneJwtScope" label="Scope" required="true" default="scope">
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
+				</condition>
+			</conditions>
+	      		<property name="token.parser.scope" properties="validazioneJwtTokenParserPropRefId" />
+		</item>
+		<item type="text" name="validazioneJwtRole" label="Role" required="true" default="role">
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
+				</condition>
+			</conditions>
+	      		<property name="token.parser.role" properties="validazioneJwtTokenParserPropRefId" />
+		</item>
+		<item type="text" name="validazioneJwtFullName" label="User - Full name" required="true" default="name">
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
+				</condition>
+			</conditions>
+	      		<property name="token.parser.user.fullName" properties="validazioneJwtTokenParserPropRefId" />
+		</item>
+		<item type="text" name="validazioneJwtFirstName" label="User - First name" required="true" default="given_name">
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
+				</condition>
+			</conditions>
+	      		<property name="token.parser.user.firstName" properties="validazioneJwtTokenParserPropRefId" />
+		</item>
+		<item type="text" name="validazioneJwtMiddleName" label="User - Middle name" required="true" default="middle_name">
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
+				</condition>
+			</conditions>
+	      		<property name="token.parser.user.middleName" properties="validazioneJwtTokenParserPropRefId" />
+		</item>
+		<item type="text" name="validazioneJwtFamilyName" label="User - Family name" required="true" default="family_name,last_name">
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
+				</condition>
+			</conditions>
+	      		<property name="token.parser.user.familyName" properties="validazioneJwtTokenParserPropRefId" />
+		</item>
+		<item type="text" name="validazioneJwtEMail" label="User - eMail" required="true" default="email,e-mail,e_mail,mail" note="Per ogni campo possono essere indicati più claims, separandoli con la virgola.&lt;BR/>Nel token verranno cercati nell'ordine in cui sono definiti.&lt;BR/>L'indicazione di un nome non è vincolante rispetto alla presenza all'interno del token.">
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneJWTParserType" value="MAPPING"/>
+				</condition>
+			</conditions>
+	      		<property name="token.parser.user.eMail" properties="validazioneJwtTokenParserPropRefId" />
 		</item>
 		
 		<subsection label="TrustStore">
@@ -309,163 +443,7 @@
 			</conditions>
 			<property name="policy.introspection.endpoint.url" />
 		</item>
-		
-		<item type="hidden" name="introspectionHttpMethodRFC7662" value="POST">
-			<conditions>
-				<condition and="true">
-					<equals name="introspectionType" value="INTROSPECTION_RFC_7662"/>
-				</condition>
-			</conditions>
-			<property name="policy.introspection.httpMethod" />
-		</item>
-		<item type="hidden" name="introspectionHttpMethodGoogle" value="GET">
-			<conditions>
-				<condition and="true">
-					<equals name="introspectionType" value="GOOGLE"/>
-				</condition>
-			</conditions>
-			<property name="policy.introspection.httpMethod" />
-		</item>
-		<item type="select" name="introspectionHttpMethod" label="Http Method" reloadOnChange="true">
-			<conditions>
-				<condition and="true">
-					<equals name="introspectionType" value="CUSTOM"/>
-				</condition>
-			</conditions>
-			<property name="policy.introspection.httpMethod" />
-		</item>
-		
-		<item type="hidden" name="introspectionRequestPositionTokenRFC7662" value="form">
-			<conditions>
-				<condition and="true">
-					<equals name="introspectionType" value="INTROSPECTION_RFC_7662"/>
-				</condition>
-			</conditions>
-			<property name="policy.introspection.requestTokenPosition" />
-		</item>
-		<item type="hidden" name="introspectionRequestPositionTokenFormParameterRFC7662" value="token">
-			<conditions>
-				<condition and="true">
-					<equals name="introspectionType" value="INTROSPECTION_RFC_7662"/>
-				</condition>
-			</conditions>
-			<property name="policy.introspection.requestTokenPosition.formParameter" />
-		</item>
-		<item type="hidden" name="introspectionRequestPositionTokenGoogle" value="url">
-			<conditions>
-				<condition and="true">
-					<equals name="introspectionType" value="GOOGLE"/>
-				</condition>
-			</conditions>
-			<property name="policy.introspection.requestTokenPosition" />
-		</item>
-		<item type="hidden" name="introspectionRequestPositionTokenUrlParameterGoogle" value="access_token">
-			<conditions>
-				<condition and="true">
-					<equals name="introspectionType" value="GOOGLE"/>
-				</condition>
-			</conditions>
-			<property name="policy.introspection.requestTokenPosition.queryParameter" />
-		</item>
-		<item type="select" name="introspectionRequestPositionToken" label="Posizione Token" default="url" reloadOnChange="true">
-			<conditions>
-				<condition and="true">
-					<equals name="introspectionType" value="CUSTOM"/>
-				</condition>
-			</conditions>
-			<values>
-				<value value="authorization" label="HTTP Authorization Bearer"/>
-				<value value="header" label="Header HTTP"/>
-				<value value="url" label="Parametro URL"/>
-				<value value="form" label="Parametro Form-Encoded Body"/>
-			</values>
-			<property name="policy.introspection.requestTokenPosition" />
-		</item>
-		<item type="text" name="introspectionRequestPositionTokenHeader" label="Nome Header HTTP" required="true">
-			<conditions>
-				<condition>
-					<equals name="introspectionRequestPositionToken" value="header"/>
-				</condition>
-			</conditions>
-		    <property name="policy.introspection.requestTokenPosition.header" />
-		</item>
-		<item type="text" name="introspectionRequestPositionTokenQueryParameter" label="Nome Parametro URL" required="true">
-			<conditions>
-				<condition>
-					<equals name="introspectionRequestPositionToken" value="url"/>
-				</condition>
-			</conditions>
-		    <property name="policy.introspection.requestTokenPosition.queryParameter" />
-		</item>
-		<item type="text" name="introspectionRequestPositionTokenFormParameter" label="Nome Parametro Form" required="true">
-			<conditions>
-				<condition>
-					<equals name="introspectionRequestPositionToken" value="form"/>
-				</condition>
-			</conditions>
-		    <property name="policy.introspection.requestTokenPosition.formParameter" />
-		</item>
-		
-		<item type="text" name="introspectionContentType" label="Content Type" required="true">
-			<conditions and="true">
-				<condition and="true">
-					<equals name="introspectionType" value="CUSTOM"/>
-				</condition>
-				<condition and="false">
-					<equals name="introspectionHttpMethod" value="POST"/>
-					<equals name="introspectionHttpMethod" value="PUT"/>
-					<equals name="introspectionHttpMethod" value="PATCH"/>
-					<equals name="introspectionHttpMethod" value="LINK"/>
-					<equals name="introspectionHttpMethod" value="UNLINK"/>
-				</condition>
-				<condition not="true" and="true">
-					<equals name="introspectionRequestPositionToken" value="form"/>
-				</condition>
-			</conditions>
-		    <property name="policy.introspection.contentType" />
-		</item>
-		
-		<item type="hidden" name="introspectionParserTypeRFC7662" value="INTROSPECTION_RESPONSE_RFC_7662">
-			<conditions>
-				<condition and="true">
-					<equals name="introspectionType" value="INTROSPECTION_RFC_7662"/>
-				</condition>
-			</conditions>
-			<property name="policy.introspection.claimsParser" />
-		</item>
-		<item type="hidden" name="introspectionParserTypeGoogle" value="GOOGLE">
-			<conditions>
-				<condition and="true">
-					<equals name="introspectionType" value="GOOGLE"/>
-				</condition>
-			</conditions>
-			<property name="policy.introspection.claimsParser" />
-		</item>
-		<item type="select" name="introspectionParserType" label="Claims Parser" default="CUSTOM" reloadOnChange="true">
-			<conditions>
-				<condition and="true">
-					<equals name="introspectionType" value="CUSTOM"/>
-				</condition>
-			</conditions>
-			<values>
-				<!--  <value value="JSON_WEB_TOKEN_RFC_7519" label="RFC 7519 - JSON Web Token "/> -->
-				<value value="INTROSPECTION_RESPONSE_RFC_7662" label="RFC 7662 - Introspection"/>
-				<!--  <value value="OIDC_ID_TOKEN" label="OpenID Connect - ID Token"/> -->
-				<value value="GOOGLE" label="Google - TokenInfo"/>
-				<value value="CUSTOM" label="Personalizzato"/>
-			</values>
-			<property name="policy.introspection.claimsParser" />
-		</item>
-		<item type="text" name="introspectionParserCustom" label="ClassName" required="true">
-			<conditions>
-				<condition and="true">
-					<equals name="introspectionParserType" value="CUSTOM"/>
-				</condition>
-			</conditions>
-		   	<property name="policy.introspection.claimsParser.className" />
-		</item>
-		
-		
+
 		<item type="checkbox" name="introspectionEndpointBasic" label="Autenticazione Http Basic" defaultSelected="false" reloadOnChange="true">
 			<!--  non si puo' verificare una condizione successiva. Comunque selezionando basic, sparisce bearer.
 			<conditions>
@@ -503,7 +481,74 @@
 			</conditions>
 			<property name="policy.introspection.endpoint.https.stato" />
 		</item>
-		
+				
+		<item type="hidden" name="introspectionHttpMethodRFC7662" value="POST">
+			<conditions>
+				<condition and="true">
+					<equals name="introspectionType" value="INTROSPECTION_RFC_7662"/>
+				</condition>
+			</conditions>
+			<property name="policy.introspection.httpMethod" />
+		</item>
+		<item type="hidden" name="introspectionHttpMethodGoogle" value="GET">
+			<conditions>
+				<condition and="true">
+					<equals name="introspectionType" value="GOOGLE"/>
+				</condition>
+			</conditions>
+			<property name="policy.introspection.httpMethod" />
+		</item>
+
+		<item type="hidden" name="introspectionRequestPositionTokenRFC7662" value="form">
+			<conditions>
+				<condition and="true">
+					<equals name="introspectionType" value="INTROSPECTION_RFC_7662"/>
+				</condition>
+			</conditions>
+			<property name="policy.introspection.requestTokenPosition" />
+		</item>
+		<item type="hidden" name="introspectionRequestPositionTokenFormParameterRFC7662" value="token">
+			<conditions>
+				<condition and="true">
+					<equals name="introspectionType" value="INTROSPECTION_RFC_7662"/>
+				</condition>
+			</conditions>
+			<property name="policy.introspection.requestTokenPosition.formParameter" />
+		</item>
+		<item type="hidden" name="introspectionRequestPositionTokenGoogle" value="url">
+			<conditions>
+				<condition and="true">
+					<equals name="introspectionType" value="GOOGLE"/>
+				</condition>
+			</conditions>
+			<property name="policy.introspection.requestTokenPosition" />
+		</item>
+		<item type="hidden" name="introspectionRequestPositionTokenUrlParameterGoogle" value="access_token">
+			<conditions>
+				<condition and="true">
+					<equals name="introspectionType" value="GOOGLE"/>
+				</condition>
+			</conditions>
+			<property name="policy.introspection.requestTokenPosition.queryParameter" />
+		</item>
+
+		<item type="hidden" name="introspectionParserTypeRFC7662" value="INTROSPECTION_RESPONSE_RFC_7662">
+			<conditions>
+				<condition and="true">
+					<equals name="introspectionType" value="INTROSPECTION_RFC_7662"/>
+				</condition>
+			</conditions>
+			<property name="policy.introspection.claimsParser" />
+		</item>
+		<item type="hidden" name="introspectionParserTypeGoogle" value="GOOGLE">
+			<conditions>
+				<condition and="true">
+					<equals name="introspectionType" value="GOOGLE"/>
+				</condition>
+			</conditions>
+			<property name="policy.introspection.claimsParser" />
+		</item>
+
 		<subsection label="Autenticazione Http Basic">
 			<conditions>
 				<condition and="true">
@@ -529,6 +574,226 @@
 			</item>
 		</subsection>
 
+		<subsection label="Configurazione Richiesta">
+			<conditions>
+				<condition and="true">
+					<equals name="introspectionType" value="CUSTOM"/>
+				</condition>
+			</conditions>
+
+			<item type="select" name="introspectionHttpMethod" label="Http Method" reloadOnChange="true">
+				<property name="policy.introspection.httpMethod" />
+			</item>
+		
+			<item type="select" name="introspectionRequestPositionToken" label="Posizione Token" default="url" reloadOnChange="true">
+				<values>
+					<value value="authorization" label="HTTP Authorization Bearer"/>
+					<value value="header" label="Header HTTP"/>
+					<value value="url" label="Parametro URL"/>
+					<value value="form" label="Parametro Form-Encoded Body"/>
+				</values>
+				<property name="policy.introspection.requestTokenPosition" />
+			</item>
+			<item type="text" name="introspectionRequestPositionTokenHeader" label="Nome Header HTTP" required="true">
+				<conditions>
+					<condition>
+						<equals name="introspectionRequestPositionToken" value="header"/>
+					</condition>
+				</conditions>
+			    <property name="policy.introspection.requestTokenPosition.header" />
+			</item>
+			<item type="text" name="introspectionRequestPositionTokenQueryParameter" label="Nome Parametro URL" required="true">
+				<conditions>
+					<condition>
+						<equals name="introspectionRequestPositionToken" value="url"/>
+					</condition>
+				</conditions>
+			    <property name="policy.introspection.requestTokenPosition.queryParameter" />
+			</item>
+			<item type="text" name="introspectionRequestPositionTokenFormParameter" label="Nome Parametro Form" required="true">
+				<conditions>
+					<condition>
+						<equals name="introspectionRequestPositionToken" value="form"/>
+					</condition>
+				</conditions>
+			    <property name="policy.introspection.requestTokenPosition.formParameter" />
+			</item>
+		
+			<item type="text" name="introspectionContentType" label="Content Type" required="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="introspectionHttpMethod" value="POST"/>
+						<equals name="introspectionHttpMethod" value="PUT"/>
+						<equals name="introspectionHttpMethod" value="PATCH"/>
+						<equals name="introspectionHttpMethod" value="LINK"/>
+						<equals name="introspectionHttpMethod" value="UNLINK"/>
+					</condition>
+					<condition not="true" and="true">
+						<equals name="introspectionRequestPositionToken" value="form"/>
+					</condition>
+				</conditions>
+			    <property name="policy.introspection.contentType" />
+			</item>
+		</subsection>
+
+		<subsection label="Formato Risposta">
+			<conditions>
+				<condition and="true">
+					<equals name="introspectionType" value="CUSTOM"/>
+				</condition>
+			</conditions>
+
+			<item type="select" name="introspectionParserType" label="Tipo" default="MAPPING" reloadOnChange="true">
+				<values>
+					<!--  <value value="JSON_WEB_TOKEN_RFC_7519" label="RFC 7519 - JSON Web Token "/> -->
+					<value value="INTROSPECTION_RESPONSE_RFC_7662" label="RFC 7662 - Introspection"/>
+					<!--  <value value="OIDC_ID_TOKEN" label="OpenID Connect - ID Token"/> -->
+					<value value="GOOGLE" label="Google - TokenInfo"/>
+					<value value="MAPPING" label="Personalizzato"/>
+					<value value="CUSTOM" label="Plugin"/>
+				</values>
+				<property name="policy.introspection.claimsParser" />
+			</item>
+
+			<item type="text" name="introspectionParserCustom" label="ClassName" required="true">
+				<conditions>
+					<condition and="true">
+						<equals name="introspectionParserType" value="CUSTOM"/>
+					</condition>
+				</conditions>
+			   	<property name="policy.introspection.claimsParser.className" />
+			</item>
+
+			<item type="text" name="introspectionIssuer" label="Issuer" required="true" default="iss">
+				<conditions>
+					<condition and="true">
+						<equals name="introspectionParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.issuer" properties="introspectionTokenParserPropRefId" />
+			</item>
+			<item type="text" name="introspectionSubject" label="Subject" required="true" default="sub">
+				<conditions>
+					<condition and="true">
+						<equals name="introspectionParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.subject" properties="introspectionTokenParserPropRefId" />
+			</item>
+			<item type="text" name="introspectionAudience" label="Audience" required="true" default="aud">
+				<conditions>
+					<condition and="true">
+						<equals name="introspectionParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.audience" properties="introspectionTokenParserPropRefId" />
+			</item>
+			<item type="text" name="introspectionExpire" label="Expire" required="true" default="exp">
+				<conditions>
+					<condition and="true">
+						<equals name="introspectionParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.expire" properties="introspectionTokenParserPropRefId" />
+			</item>
+			<item type="text" name="introspectionIssuedAt" label="IssuedAt" required="true" default="iat">
+				<conditions>
+					<condition and="true">
+						<equals name="introspectionParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.issuedAt" properties="introspectionTokenParserPropRefId" />
+			</item>
+			<item type="text" name="introspectionNotToBeUsedBefore" label="NotToBeUsedBefore" required="true" default="nbf">
+				<conditions>
+					<condition and="true">
+						<equals name="introspectionParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.notToBeUsedBefore" properties="introspectionTokenParserPropRefId" />
+			</item>
+			<item type="text" name="introspectionIdentifier" label="Identifier" required="true" default="jti">
+				<conditions>
+					<condition and="true">
+						<equals name="introspectionParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.jwtIdentifier" properties="introspectionTokenParserPropRefId" />
+			</item>
+			<item type="text" name="introspectionClientId" label="ClientId" required="true" default="client_id,azp">
+				<conditions>
+					<condition and="true">
+						<equals name="introspectionParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.clientId" properties="introspectionTokenParserPropRefId" />
+			</item>
+			<item type="text" name="introspectionUsername" label="Username" required="true" default="preferred_username,username,name">
+				<conditions>
+					<condition and="true">
+						<equals name="introspectionParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.username" properties="introspectionTokenParserPropRefId" />
+			</item>
+			<item type="text" name="introspectionScope" label="Scope" required="true" default="scope">
+				<conditions>
+					<condition and="true">
+						<equals name="introspectionParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.scope" properties="introspectionTokenParserPropRefId" />
+			</item>
+			<item type="text" name="introspectionRole" label="Role" required="true" default="role">
+				<conditions>
+					<condition and="true">
+						<equals name="introspectionParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.role" properties="introspectionTokenParserPropRefId" />
+			</item>
+			<item type="text" name="introspectionFullName" label="User - Full name" required="true" default="name">
+				<conditions>
+					<condition and="true">
+						<equals name="introspectionParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.user.fullName" properties="introspectionTokenParserPropRefId" />
+			</item>
+			<item type="text" name="introspectionFirstName" label="User - First name" required="true" default="given_name">
+				<conditions>
+					<condition and="true">
+						<equals name="introspectionParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.user.firstName" properties="introspectionTokenParserPropRefId" />
+			</item>
+			<item type="text" name="introspectionMiddleName" label="User - Middle name" required="true" default="middle_name">
+				<conditions>
+					<condition and="true">
+						<equals name="introspectionParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.user.middleName" properties="introspectionTokenParserPropRefId" />
+			</item>
+			<item type="text" name="introspectionFamilyName" label="User - Family name" required="true" default="family_name,last_name">
+				<conditions>
+					<condition and="true">
+						<equals name="introspectionParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.user.familyName" properties="introspectionTokenParserPropRefId" />
+			</item>
+			<item type="text" name="introspectionEMail" label="User - eMail" required="true" default="email,e-mail,e_mail,mail" note="Per ogni campo possono essere indicati più claims, separandoli con la virgola.&lt;BR/>Nel token verranno cercati nell'ordine in cui sono definiti.&lt;BR/>L'indicazione di un nome non è vincolante rispetto alla presenza all'interno del token.">
+				<conditions>
+					<condition and="true">
+						<equals name="introspectionParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.user.eMail" properties="introspectionTokenParserPropRefId" />
+			</item>
+		</subsection>
+		
 	</section>
 	
 	<section label="OIDC - UserInfo">
@@ -565,153 +830,7 @@
 			</conditions>
 		    <property name="policy.userInfo.endpoint.url" />
 		</item>
-		
-		<item type="hidden" name="userInfoHttpMethodOIDCUserInfo" value="GET">
-			<conditions>
-				<condition and="true">
-					<equals name="userInfoType" value="OIDC_USER_INFO"/>
-				</condition>
-			</conditions>
-			<property name="policy.userInfo.httpMethod" />
-		</item>
-				<item type="hidden" name="userInfoHttpMethodGoogle" value="GET">
-			<conditions>
-				<condition and="true">
-					<equals name="userInfoType" value="GOOGLE"/>
-				</condition>
-			</conditions>
-			<property name="policy.userInfo.httpMethod" />
-		</item>
-		<item type="select" name="userInfoHttpMethod" label="Http Method" reloadOnChange="true">
-			<conditions>
-				<condition and="true">
-					<equals name="userInfoType" value="CUSTOM"/>
-				</condition>
-			</conditions>
-			<property name="policy.userInfo.httpMethod" />
-		</item>
-		
-		<item type="hidden" name="userInfoRequestPositionTokenOIDCUserInfo" value="authorization">
-			<conditions>
-				<condition and="true">
-					<equals name="userInfoType" value="OIDC_USER_INFO"/>
-				</condition>
-			</conditions>
-			<property name="policy.userInfo.requestTokenPosition" />
-		</item>
-		<item type="hidden" name="userInfoRequestPositionTokenGoogle" value="url">
-			<conditions>
-				<condition and="true">
-					<equals name="userInfoType" value="GOOGLE"/>
-				</condition>
-			</conditions>
-			<property name="policy.userInfo.requestTokenPosition" />
-		</item>
-		<item type="hidden" name="userInfoRequestPositionTokenQueryParameterGoogle" value="access_token">
-			<conditions>
-				<condition and="true">
-					<equals name="userInfoType" value="GOOGLE"/>
-				</condition>
-			</conditions>
-			<property name="policy.userInfo.requestTokenPosition.queryParameter" />
-		</item>
-		<item type="select" name="userInfoRequestPositionToken" label="Posizione Token" default="url" reloadOnChange="true">
-			<conditions>
-				<condition and="true">
-					<equals name="userInfoType" value="CUSTOM"/>
-				</condition>
-			</conditions>
-			<values>
-				<value value="authorization" label="HTTP Authorization Bearer"/>
-				<value value="header" label="Header HTTP"/>
-				<value value="url" label="Parametro URL"/>
-				<value value="form" label="Parametro Form-Encoded Body"/>
-			</values>
-			<property name="policy.userInfo.requestTokenPosition" />
-		</item>
-		<item type="text" name="userInfoRequestPositionTokenHeader" label="Nome Header HTTP" required="true">
-			<conditions>
-				<condition>
-					<equals name="userInfoRequestPositionToken" value="header"/>
-				</condition>
-			</conditions>
-		    <property name="policy.userInfo.requestTokenPosition.header" />
-		</item>
-		<item type="text" name="userInfoRequestPositionTokenQueryParameter" label="Nome Parametro URL" required="true">
-			<conditions>
-				<condition>
-					<equals name="userInfoRequestPositionToken" value="url"/>
-				</condition>
-			</conditions>
-		    <property name="policy.userInfo.requestTokenPosition.queryParameter" />
-		</item>
-		<item type="text" name="userInfoRequestPositionTokenFormParameter" label="Nome Parametro Form" required="true">
-			<conditions>
-				<condition>
-					<equals name="userInfoRequestPositionToken" value="form"/>
-				</condition>
-			</conditions>
-		    <property name="policy.userInfo.requestTokenPosition.formParameter" />
-		</item>
-		
-		<item type="text" name="userInfoContentType" label="Content Type" required="true">
-			<conditions and="true">
-				<condition and="true">
-					<equals name="userInfoType" value="CUSTOM"/>
-				</condition>
-				<condition and="false">
-					<equals name="userInfoHttpMethod" value="POST"/>
-					<equals name="userInfoHttpMethod" value="PUT"/>
-					<equals name="userInfoHttpMethod" value="PATCH"/>
-					<equals name="userInfoHttpMethod" value="LINK"/>
-					<equals name="userInfoHttpMethod" value="UNLINK"/>
-				</condition>
-				<condition not="true" and="true">
-					<equals name="userInfoRequestPositionToken" value="form"/>
-				</condition>
-			</conditions>
-		    <property name="policy.userInfo.contentType" />
-		</item>
-	
-		<item type="hidden" name="userInfoParserTypeOIDCUserInfo" value="OIDC_ID_TOKEN">
-			<conditions>
-				<condition and="true">
-					<equals name="userInfoType" value="OIDC_USER_INFO"/>
-				</condition>
-			</conditions>
-			<property name="policy.userInfo.claimsParser" />
-		</item>
-		<item type="hidden" name="userInfoParserTypeGoogle" value="GOOGLE">
-			<conditions>
-				<condition and="true">
-					<equals name="userInfoType" value="GOOGLE"/>
-				</condition>
-			</conditions>
-			<property name="policy.userInfo.claimsParser" />
-		</item>
-		<item type="select" name="userInfoParserType" label="Claims Parser" default="CUSTOM" reloadOnChange="true">
-			<conditions>
-				<condition and="true">
-					<equals name="userInfoType" value="CUSTOM"/>
-				</condition>
-			</conditions>
-			<values>
-				<!--  <value value="JSON_WEB_TOKEN_RFC_7519" label="RFC 7519 - JSON Web Token "/> 
-				<value value="INTROSPECTION_RESPONSE_RFC_7662" label="RFC 7662 - Introspection"/> -->
-				<value value="OIDC_ID_TOKEN" label="OpenID Connect"/> 
-				<value value="CUSTOM" label="Personalizzato"/>
-			</values>
-			<property name="policy.userInfo.claimsParser" />
-		</item>
-		<item type="text" name="userInfoParserCustom" label="ClassName" required="true">
-			<conditions>
-				<condition and="true">
-					<equals name="userInfoParserType" value="CUSTOM"/>
-				</condition>
-			</conditions>
-		   	<property name="policy.userInfo.claimsParser.className" />
-		</item>
-	
+
 		<item type="checkbox" name="userInfoEndpointBasic" label="Autenticazione Http" defaultSelected="false" reloadOnChange="true">
 			<!--  non si puo' verificare una condizione successiva. Comunque selezionando basic, sparisce bearer.
 			<conditions>
@@ -746,7 +865,66 @@
 			</conditions>
 			<property name="policy.userInfo.endpoint.https.stato" />
 		</item>
-		
+				
+		<item type="hidden" name="userInfoHttpMethodOIDCUserInfo" value="GET">
+			<conditions>
+				<condition and="true">
+					<equals name="userInfoType" value="OIDC_USER_INFO"/>
+				</condition>
+			</conditions>
+			<property name="policy.userInfo.httpMethod" />
+		</item>
+		<item type="hidden" name="userInfoHttpMethodGoogle" value="GET">
+			<conditions>
+				<condition and="true">
+					<equals name="userInfoType" value="GOOGLE"/>
+				</condition>
+			</conditions>
+			<property name="policy.userInfo.httpMethod" />
+		</item>
+
+		<item type="hidden" name="userInfoRequestPositionTokenOIDCUserInfo" value="authorization">
+			<conditions>
+				<condition and="true">
+					<equals name="userInfoType" value="OIDC_USER_INFO"/>
+				</condition>
+			</conditions>
+			<property name="policy.userInfo.requestTokenPosition" />
+		</item>
+		<item type="hidden" name="userInfoRequestPositionTokenGoogle" value="url">
+			<conditions>
+				<condition and="true">
+					<equals name="userInfoType" value="GOOGLE"/>
+				</condition>
+			</conditions>
+			<property name="policy.userInfo.requestTokenPosition" />
+		</item>
+		<item type="hidden" name="userInfoRequestPositionTokenQueryParameterGoogle" value="access_token">
+			<conditions>
+				<condition and="true">
+					<equals name="userInfoType" value="GOOGLE"/>
+				</condition>
+			</conditions>
+			<property name="policy.userInfo.requestTokenPosition.queryParameter" />
+		</item>
+
+		<item type="hidden" name="userInfoParserTypeOIDCUserInfo" value="OIDC_ID_TOKEN">
+			<conditions>
+				<condition and="true">
+					<equals name="userInfoType" value="OIDC_USER_INFO"/>
+				</condition>
+			</conditions>
+			<property name="policy.userInfo.claimsParser" />
+		</item>
+		<item type="hidden" name="userInfoParserTypeGoogle" value="GOOGLE">
+			<conditions>
+				<condition and="true">
+					<equals name="userInfoType" value="GOOGLE"/>
+				</condition>
+			</conditions>
+			<property name="policy.userInfo.claimsParser" />
+		</item>
+
 		<subsection label="Autenticazione Http">
 			<conditions>
 				<condition and="true">
@@ -775,6 +953,225 @@
 			</item>
 		</subsection>
 
+		<subsection label="Configurazione Richiesta">
+			<conditions>
+				<condition and="true">
+					<equals name="userInfoType" value="CUSTOM"/>
+				</condition>
+			</conditions>
+
+			<item type="select" name="userInfoHttpMethod" label="Http Method" reloadOnChange="true">
+				<property name="policy.userInfo.httpMethod" />
+			</item>
+		
+			<item type="select" name="userInfoRequestPositionToken" label="Posizione Token" default="url" reloadOnChange="true">
+				<values>
+					<value value="authorization" label="HTTP Authorization Bearer"/>
+					<value value="header" label="Header HTTP"/>
+					<value value="url" label="Parametro URL"/>
+					<value value="form" label="Parametro Form-Encoded Body"/>
+				</values>
+				<property name="policy.userInfo.requestTokenPosition" />
+			</item>
+			<item type="text" name="userInfoRequestPositionTokenHeader" label="Nome Header HTTP" required="true">
+				<conditions>
+					<condition>
+						<equals name="userInfoRequestPositionToken" value="header"/>
+					</condition>
+				</conditions>
+			    <property name="policy.userInfo.requestTokenPosition.header" />
+			</item>
+			<item type="text" name="userInfoRequestPositionTokenQueryParameter" label="Nome Parametro URL" required="true">
+				<conditions>
+					<condition>
+						<equals name="userInfoRequestPositionToken" value="url"/>
+					</condition>
+				</conditions>
+			    <property name="policy.userInfo.requestTokenPosition.queryParameter" />
+			</item>
+			<item type="text" name="userInfoRequestPositionTokenFormParameter" label="Nome Parametro Form" required="true">
+				<conditions>
+					<condition>
+						<equals name="userInfoRequestPositionToken" value="form"/>
+					</condition>
+				</conditions>
+			    <property name="policy.userInfo.requestTokenPosition.formParameter" />
+			</item>
+		
+			<item type="text" name="userInfoContentType" label="Content Type" required="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="userInfoHttpMethod" value="POST"/>
+						<equals name="userInfoHttpMethod" value="PUT"/>
+						<equals name="userInfoHttpMethod" value="PATCH"/>
+						<equals name="userInfoHttpMethod" value="LINK"/>
+						<equals name="userInfoHttpMethod" value="UNLINK"/>
+					</condition>
+					<condition not="true" and="true">
+						<equals name="userInfoRequestPositionToken" value="form"/>
+					</condition>
+				</conditions>
+			    <property name="policy.userInfo.contentType" />
+			</item>
+		</subsection>
+	
+		<subsection label="Formato Risposta">
+			<conditions>
+				<condition and="true">
+					<equals name="userInfoType" value="CUSTOM"/>
+				</condition>
+			</conditions>
+
+			<item type="select" name="userInfoParserType" label="Tipo" default="MAPPING" reloadOnChange="true">
+				<values>
+					<!--  <value value="JSON_WEB_TOKEN_RFC_7519" label="RFC 7519 - JSON Web Token "/> 
+					<value value="INTROSPECTION_RESPONSE_RFC_7662" label="RFC 7662 - Introspection"/> -->
+					<value value="OIDC_ID_TOKEN" label="OpenID Connect"/> 
+					<value value="MAPPING" label="Personalizzato"/>
+					<value value="CUSTOM" label="Plugin"/>
+				</values>
+				<property name="policy.userInfo.claimsParser" />
+			</item>
+
+			<item type="text" name="userInfoParserCustom" label="ClassName" required="true">
+				<conditions>
+					<condition and="true">
+						<equals name="userInfoParserType" value="CUSTOM"/>
+					</condition>
+				</conditions>
+			   	<property name="policy.userInfo.claimsParser.className" />
+			</item>
+
+			<item type="text" name="userInfoIssuer" label="Issuer" required="true" default="iss">
+				<conditions>
+					<condition and="true">
+						<equals name="userInfoParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.issuer" properties="userInfoTokenParserPropRefId" />
+			</item>
+			<item type="text" name="userInfoSubject" label="Subject" required="true" default="sub">
+				<conditions>
+					<condition and="true">
+						<equals name="userInfoParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.subject" properties="userInfoTokenParserPropRefId" />
+			</item>
+			<item type="text" name="userInfoAudience" label="Audience" required="true" default="aud">
+				<conditions>
+					<condition and="true">
+						<equals name="userInfoParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.audience" properties="userInfoTokenParserPropRefId" />
+			</item>
+			<item type="text" name="userInfoExpire" label="Expire" required="true" default="exp">
+				<conditions>
+					<condition and="true">
+						<equals name="userInfoParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.expire" properties="userInfoTokenParserPropRefId" />
+			</item>
+			<item type="text" name="userInfoIssuedAt" label="IssuedAt" required="true" default="iat">
+				<conditions>
+					<condition and="true">
+						<equals name="userInfoParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.issuedAt" properties="userInfoTokenParserPropRefId" />
+			</item>
+			<item type="text" name="userInfoNotToBeUsedBefore" label="NotToBeUsedBefore" required="true" default="nbf">
+				<conditions>
+					<condition and="true">
+						<equals name="userInfoParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.notToBeUsedBefore" properties="userInfoTokenParserPropRefId" />
+			</item>
+			<item type="text" name="userInfoIdentifier" label="Identifier" required="true" default="jti">
+				<conditions>
+					<condition and="true">
+						<equals name="userInfoParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.jwtIdentifier" properties="userInfoTokenParserPropRefId" />
+			</item>
+			<item type="text" name="userInfoClientId" label="ClientId" required="true" default="azp,client_id">
+				<conditions>
+					<condition and="true">
+						<equals name="userInfoParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.clientId" properties="userInfoTokenParserPropRefId" />
+			</item>
+			<item type="text" name="userInfoUsername" label="Username" required="true" default="preferred_username,username,name">
+				<conditions>
+					<condition and="true">
+						<equals name="userInfoParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.username" properties="userInfoTokenParserPropRefId" />
+			</item>
+			<item type="text" name="userInfoScope" label="Scope" required="true" default="scope">
+				<conditions>
+					<condition and="true">
+						<equals name="userInfoParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.scope" properties="userInfoTokenParserPropRefId" />
+			</item>
+			<item type="text" name="userInfoRole" label="Role" required="true" default="role">
+				<conditions>
+					<condition and="true">
+						<equals name="userInfoParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.role" properties="userInfoTokenParserPropRefId" />
+			</item>
+			<item type="text" name="userInfoFullName" label="User - Full name" required="true" default="name">
+				<conditions>
+					<condition and="true">
+						<equals name="userInfoParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.user.fullName" properties="userInfoTokenParserPropRefId" />
+			</item>
+			<item type="text" name="userInfoFirstName" label="User - First name" required="true" default="given_name">
+				<conditions>
+					<condition and="true">
+						<equals name="userInfoParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.user.firstName" properties="userInfoTokenParserPropRefId" />
+			</item>
+			<item type="text" name="userInfoMiddleName" label="User - Middle name" required="true" default="middle_name">
+				<conditions>
+					<condition and="true">
+						<equals name="userInfoParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.user.middleName" properties="userInfoTokenParserPropRefId" />
+			</item>
+			<item type="text" name="userInfoFamilyName" label="User - Family name" required="true" default="family_name,last_name">
+				<conditions>
+					<condition and="true">
+						<equals name="userInfoParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.user.familyName" properties="userInfoTokenParserPropRefId" />
+			</item>
+			<item type="text" name="userInfoEMail" label="User - eMail" required="true" default="email,e-mail,e_mail,mail" note="Per ogni campo possono essere indicati più claims, separandoli con la virgola.&lt;BR/>Nel token verranno cercati nell'ordine in cui sono definiti.&lt;BR/>L'indicazione di un nome non è vincolante rispetto alla presenza all'interno del token.">
+				<conditions>
+					<condition and="true">
+						<equals name="userInfoParserType" value="MAPPING"/>
+					</condition>
+				</conditions>
+		      		<property name="token.parser.user.eMail" properties="userInfoTokenParserPropRefId" />
+			</item>
+		</subsection>
+	
 	</section>
 	
 	<section label="Https">

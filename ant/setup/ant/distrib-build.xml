@@ -7,6 +7,9 @@
 
 	<import file="../../commons/utils.xml" />
 	
+	<!-- per mantenere vecchio codice, se si disabilita -->
+	<var name="use_govway_nodirun_properties" value="true"/>
+
 	<target name="make-distrib">
 		
 		<!-- Installazione GovWay -->
@@ -81,7 +84,7 @@
 								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_WILDFLY_v8_v9" tofile="${dist}/INSTALL.txt" />
 							</then>
 							<else>
-								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_WILDFLY_v10-v25" tofile="${dist}/INSTALL.txt" />
+								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_WILDFLY_v10-v26" tofile="${dist}/INSTALL.txt" />
 							</else>
 						</if>
 						<mkdir dir="${dist}/jms" />
@@ -195,65 +198,284 @@
 				</if>
 
 				<if>
-					<equals arg1="${antinstaller_timer_consegna}" arg2="true" />
+					<matches string="${antinstaller_as}" pattern="tomcat.*"/>
 					<then>
-						<copy file="${datasource_dir_ds_creati}/govway-ds.xml" tofile="${datasource_dir_ds_creati}/govway_runtime_consegnaAsincrona-ds.xml" />
-						<replace file="${datasource_dir_ds_creati}/govway_runtime_consegnaAsincrona-ds.xml" 
-							token="&lt;min-pool-size>10&lt;/min-pool-size>" 
-							value="&lt;min-pool-size>5&lt;/min-pool-size>"/>
-						<replace file="${datasource_dir_ds_creati}/govway_runtime_consegnaAsincrona-ds.xml" 
-							token="&lt;max-pool-size>50&lt;/max-pool-size>" 
-							value="&lt;max-pool-size>20&lt;/max-pool-size>"/>
-						<replace file="${datasource_dir_ds_creati}/govway_runtime_consegnaAsincrona-ds.xml" 
-							token="org.govway.datasource" 
-							value="org.govway.datasource.runtime.consegnaAsincrona"/>
+						<loadfile
+						    encoding="UTF-8"
+						    property="propDataSourceGovWayRuntimeFile"
+						    srcFile="${datasource_dir_ds_creati}/govway.xml" />
+						<propertyregex property="propDataSourceGovWayRuntimeFileSingleDataSource" 
+							override="true"
+							input="${propDataSourceGovWayRuntimeFile}"
+							regexp="[\sA-Za-z0-9 ]*Datasource per i dati di runtime di GovWay[\sA-Za-z0-9&lt;>\- ]*(&lt;Resource[\sA-Za-z0-9&lt;>\- &quot;=.\/:_@?;]*\/>).*"
+							select="\1"/>
+						
 						<if>
 							<equals arg1="${antinstaller_log_db}" arg2="log"/>
 							<then>
-								<copy file="${datasource_dir_ds_creati}/govway_tracciamento-ds.xml" tofile="${datasource_dir_ds_creati}/govway_tracciamento_consegnaAsincrona-ds.xml" />
-								<replace file="${datasource_dir_ds_creati}/govway_tracciamento_consegnaAsincrona-ds.xml" 
-									token="&lt;min-pool-size>10&lt;/min-pool-size>" 
-									value="&lt;min-pool-size>5&lt;/min-pool-size>"/>
-								<replace file="${datasource_dir_ds_creati}/govway_tracciamento_consegnaAsincrona-ds.xml" 
-									token="&lt;max-pool-size>50&lt;/max-pool-size>" 
-									value="&lt;max-pool-size>20&lt;/max-pool-size>"/>
-								<replace file="${datasource_dir_ds_creati}/govway_tracciamento_consegnaAsincrona-ds.xml" 
-									token="org.govway.datasource.tracciamento" 
-									value="org.govway.datasource.tracciamento.consegnaAsincrona"/>
+								<propertyregex property="propDataSourceGovWayTracciamentoFileSingleDataSource" 
+									override="true"
+									input="${propDataSourceGovWayRuntimeFile}"
+									regexp="[\sA-Za-z0-9 ]*Datasouce contenente le tracce di GovWay[\sA-Za-z0-9&lt;>\- ]*(&lt;Resource[\sA-Za-z0-9&lt;>\- &quot;=.\/:_@?;]*\/>).*"
+									select="\1"/>
 							</then>
 						</if>
+
+						<if>
+							<equals arg1="${antinstaller_timer_consegna}" arg2="true" />
+							<then>
+
+								<propertyregex property="propDataSourceGovWayRuntimeFileSingleDataSourceRuntimeConsegnaAsincrona"
+									       input="${propDataSourceGovWayRuntimeFileSingleDataSource}"
+									       regexp="datasource"
+									       replace="datasource.runtime.consegnaAsincrona"
+									       global="true" />
+								<propertyregex property="propDataSourceGovWayRuntimeFileSingleDataSourceRuntimeConsegnaAsincrona"
+									       override="true"
+										input="${propDataSourceGovWayRuntimeFileSingleDataSourceRuntimeConsegnaAsincrona}"
+									       regexp="&quot;10&quot;"
+									       replace="&quot;5&quot;"
+									       global="true" />
+								<propertyregex property="propDataSourceGovWayRuntimeFileSingleDataSourceRuntimeConsegnaAsincrona"
+									       override="true"
+										input="${propDataSourceGovWayRuntimeFileSingleDataSourceRuntimeConsegnaAsincrona}"
+									       regexp="&quot;50&quot;"
+									       replace="&quot;20&quot;"
+									       global="true" />
+								<antcall target="replace_token">
+								    <param name="file" value="${datasource_dir_ds_creati}/govway.xml"/>
+									<param name="token" value="&lt;/Context>"/>
+									<param name="value" value="HEADERDATASOURCE${propDataSourceGovWayRuntimeFileSingleDataSourceRuntimeConsegnaAsincrona}ACAPOACAPOACAPO&lt;/Context>"/>
+								</antcall>
+								<replace file="${datasource_dir_ds_creati}/govway.xml">
+									<replacetoken>HEADERDATASOURCE</replacetoken>
+									<replacevalue><![CDATA[
+
+	<!-- Datasource utilizzato dal Timer di consegna delle notifiche  -->
+
+	]]></replacevalue>
+								</replace>
+								<replace file="${datasource_dir_ds_creati}/govway.xml">
+									<replacetoken>ACAPOACAPOACAPO&lt;/Context></replacetoken>
+									<replacevalue><![CDATA[
+
+
+</Context>]]></replacevalue>
+								</replace>
+
+								<if>
+									<equals arg1="${antinstaller_log_db}" arg2="log"/>
+									<then>
+										<propertyregex property="propDataSourceGovWayRuntimeFileSingleDataSourceTracciamentoConsegnaAsincrona"
+											       input="${propDataSourceGovWayTracciamentoFileSingleDataSource}"
+											       regexp="datasource.tracciamento"
+											       replace="datasource.tracciamento.consegnaAsincrona"
+											       global="true" />
+										<propertyregex property="propDataSourceGovWayRuntimeFileSingleDataSourceTracciamentoConsegnaAsincrona"
+											       override="true"
+												input="${propDataSourceGovWayRuntimeFileSingleDataSourceTracciamentoConsegnaAsincrona}"
+											       regexp="&quot;10&quot;"
+									       	       replace="&quot;5&quot;"
+											       global="true" />
+										<propertyregex property="propDataSourceGovWayRuntimeFileSingleDataSourceTracciamentoConsegnaAsincrona"
+											       override="true"
+												input="${propDataSourceGovWayRuntimeFileSingleDataSourceTracciamentoConsegnaAsincrona}"
+											       regexp="&quot;50&quot;"
+										      	       replace="&quot;20&quot;"
+											       global="true" />
+										<antcall target="replace_token">
+										    <param name="file" value="${datasource_dir_ds_creati}/govway.xml"/>
+											<param name="token" value="&lt;/Context>"/>
+											<param name="value" value="HEADERDATASOURCE${propDataSourceGovWayRuntimeFileSingleDataSourceTracciamentoConsegnaAsincrona}ACAPOACAPOACAPO&lt;/Context>"/>
+										</antcall>
+										<replace file="${datasource_dir_ds_creati}/govway.xml">
+											<replacetoken>HEADERDATASOURCE</replacetoken>
+											<replacevalue><![CDATA[
+
+	<!-- Datasource utilizzato dal Timer di consegna delle notifiche per il tracciamento  -->
+
+	]]></replacevalue>
+										</replace>
+										<replace file="${datasource_dir_ds_creati}/govway.xml">
+											<replacetoken>ACAPOACAPOACAPO&lt;/Context></replacetoken>
+											<replacevalue><![CDATA[
+
+
+</Context>]]></replacevalue>
+										</replace>
+									</then>
+								</if>
+							</then>
+						</if>
+
+						<if>
+							<equals arg1="${antinstaller_integration_manager}" arg2="true" />
+							<then>
+								<propertyregex property="propDataSourceGovWayRuntimeFileSingleDataSourceRuntimeIntegrationManager"
+									       input="${propDataSourceGovWayRuntimeFileSingleDataSource}"
+									       regexp="datasource"
+									       replace="datasource.runtime.messageBoxIM"
+									       global="true" />
+								<propertyregex property="propDataSourceGovWayRuntimeFileSingleDataSourceRuntimeIntegrationManager"
+									       override="true"
+										input="${propDataSourceGovWayRuntimeFileSingleDataSourceRuntimeIntegrationManager}"
+									       regexp="&quot;10&quot;"
+							       	       replace="&quot;5&quot;"
+									       global="true" />
+								<propertyregex property="propDataSourceGovWayRuntimeFileSingleDataSourceRuntimeIntegrationManager"
+									       override="true"
+										input="${propDataSourceGovWayRuntimeFileSingleDataSourceRuntimeIntegrationManager}"
+									       regexp="&quot;50&quot;"
+									       replace="&quot;20&quot;"
+									       global="true" />
+								<antcall target="replace_token">
+								    <param name="file" value="${datasource_dir_ds_creati}/govway.xml"/>
+									<param name="token" value="&lt;/Context>"/>
+									<param name="value" value="HEADERDATASOURCE${propDataSourceGovWayRuntimeFileSingleDataSourceRuntimeIntegrationManager}ACAPOACAPOACAPO&lt;/Context>"/>
+								</antcall>
+								<replace file="${datasource_dir_ds_creati}/govway.xml">
+									<replacetoken>HEADERDATASOURCE</replacetoken>
+									<replacevalue><![CDATA[
+
+	<!-- Datasource utilizzato dal servizio MessageBox/IntegrationManager  -->
+
+	]]></replacevalue>
+								</replace>
+								<replace file="${datasource_dir_ds_creati}/govway.xml">
+									<replacetoken>ACAPOACAPOACAPO&lt;/Context></replacetoken>
+									<replacevalue><![CDATA[
+
+
+</Context>]]></replacevalue>
+								</replace>
+
+								<if>
+									<equals arg1="${antinstaller_log_db}" arg2="log"/>
+									<then>
+										<propertyregex property="propDataSourceGovWayRuntimeFileSingleDataSourceTracciamentoIntegrationManager"
+											       input="${propDataSourceGovWayTracciamentoFileSingleDataSource}"
+											       regexp="datasource.tracciamento"
+											       replace="datasource.tracciamento.messageBoxIM"
+											       global="true" />
+										<propertyregex property="propDataSourceGovWayRuntimeFileSingleDataSourceTracciamentoIntegrationManager"
+											       override="true"
+												input="${propDataSourceGovWayRuntimeFileSingleDataSourceTracciamentoIntegrationManager}"
+											       regexp="&quot;10&quot;"
+									       	       replace="&quot;5&quot;"
+											       global="true" />
+										<propertyregex property="propDataSourceGovWayRuntimeFileSingleDataSourceTracciamentoIntegrationManager"
+											       override="true"
+												input="${propDataSourceGovWayRuntimeFileSingleDataSourceTracciamentoIntegrationManager}"
+											       regexp="&quot;50&quot;"
+										      	       replace="&quot;20&quot;"
+											       global="true" />
+										<antcall target="replace_token">
+										    <param name="file" value="${datasource_dir_ds_creati}/govway.xml"/>
+											<param name="token" value="&lt;/Context>"/>
+											<param name="value" value="HEADERDATASOURCE${propDataSourceGovWayRuntimeFileSingleDataSourceTracciamentoIntegrationManager}ACAPOACAPOACAPO&lt;/Context>"/>
+										</antcall>
+										<replace file="${datasource_dir_ds_creati}/govway.xml">
+											<replacetoken>HEADERDATASOURCE</replacetoken>
+											<replacevalue><![CDATA[
+
+	<!-- Datasource utilizzato dal servizio MessageBox/IntegrationManager per il tracciamento  -->
+
+	]]></replacevalue>
+										</replace>
+										<replace file="${datasource_dir_ds_creati}/govway.xml">
+											<replacetoken>ACAPOACAPOACAPO&lt;/Context></replacetoken>
+											<replacevalue><![CDATA[
+
+
+</Context>]]></replacevalue>
+										</replace>
+									</then>
+								</if>
+							</then>
+						</if>
+
 					</then>
+					<else>
+						<if>
+							<equals arg1="${antinstaller_timer_consegna}" arg2="true" />
+							<then>
+								<copy file="${datasource_dir_ds_creati}/govway-ds.xml" tofile="${datasource_dir_ds_creati}/govway_runtime_consegnaAsincrona-ds.xml" />
+								<replace file="${datasource_dir_ds_creati}/govway_runtime_consegnaAsincrona-ds.xml" 
+									token="&lt;min-pool-size>10&lt;/min-pool-size>" 
+									value="&lt;min-pool-size>5&lt;/min-pool-size>"/>
+								<replace file="${datasource_dir_ds_creati}/govway_runtime_consegnaAsincrona-ds.xml" 
+									token="&lt;max-pool-size>50&lt;/max-pool-size>" 
+									value="&lt;max-pool-size>20&lt;/max-pool-size>"/>
+								<replace file="${datasource_dir_ds_creati}/govway_runtime_consegnaAsincrona-ds.xml" 
+									token="org.govway.datasource" 
+									value="org.govway.datasource.runtime.consegnaAsincrona"/>
+								<if>
+									<equals arg1="${antinstaller_log_db}" arg2="log"/>
+									<then>
+										<copy file="${datasource_dir_ds_creati}/govway_tracciamento-ds.xml" tofile="${datasource_dir_ds_creati}/govway_tracciamento_consegnaAsincrona-ds.xml" />
+										<replace file="${datasource_dir_ds_creati}/govway_tracciamento_consegnaAsincrona-ds.xml" 
+											token="&lt;min-pool-size>10&lt;/min-pool-size>" 
+											value="&lt;min-pool-size>5&lt;/min-pool-size>"/>
+										<replace file="${datasource_dir_ds_creati}/govway_tracciamento_consegnaAsincrona-ds.xml" 
+											token="&lt;max-pool-size>50&lt;/max-pool-size>" 
+											value="&lt;max-pool-size>20&lt;/max-pool-size>"/>
+										<replace file="${datasource_dir_ds_creati}/govway_tracciamento_consegnaAsincrona-ds.xml" 
+											token="org.govway.datasource.tracciamento" 
+											value="org.govway.datasource.tracciamento.consegnaAsincrona"/>
+									</then>
+								</if>
+							</then>
+						</if>
+						<if>
+							<equals arg1="${antinstaller_integration_manager}" arg2="true" />
+							<then>
+								<copy file="${datasource_dir_ds_creati}/govway-ds.xml" tofile="${datasource_dir_ds_creati}/govway_runtime_messageBoxIM-ds.xml" />
+								<replace file="${datasource_dir_ds_creati}/govway_runtime_messageBoxIM-ds.xml" 
+									token="&lt;min-pool-size>10&lt;/min-pool-size>" 
+									value="&lt;min-pool-size>5&lt;/min-pool-size>"/>
+								<replace file="${datasource_dir_ds_creati}/govway_runtime_messageBoxIM-ds.xml" 
+									token="&lt;max-pool-size>50&lt;/max-pool-size>" 
+									value="&lt;max-pool-size>20&lt;/max-pool-size>"/>
+								<replace file="${datasource_dir_ds_creati}/govway_runtime_messageBoxIM-ds.xml" 
+									token="org.govway.datasource" 
+									value="org.govway.datasource.runtime.messageBoxIM"/>
+								<if>
+									<equals arg1="${antinstaller_log_db}" arg2="log"/>
+									<then>
+										<copy file="${datasource_dir_ds_creati}/govway_tracciamento-ds.xml" tofile="${datasource_dir_ds_creati}/govway_tracciamento_messageBoxIM-ds.xml" />
+										<replace file="${datasource_dir_ds_creati}/govway_tracciamento_messageBoxIM-ds.xml" 
+											token="&lt;min-pool-size>10&lt;/min-pool-size>" 
+											value="&lt;min-pool-size>5&lt;/min-pool-size>"/>
+										<replace file="${datasource_dir_ds_creati}/govway_tracciamento_messageBoxIM-ds.xml" 
+											token="&lt;max-pool-size>50&lt;/max-pool-size>" 
+											value="&lt;max-pool-size>20&lt;/max-pool-size>"/>
+										<replace file="${datasource_dir_ds_creati}/govway_tracciamento_messageBoxIM-ds.xml" 
+											token="org.govway.datasource.tracciamento" 
+											value="org.govway.datasource.tracciamento.messageBoxIM"/>
+									</then>
+								</if>
+							</then>
+						</if>
+					</else>
 				</if>
+			</then>
+		</if>
+		<if>
+			<and>
+				<matches string="${build_for_as}" pattern="tomcat.*"/>
+				<istrue value="${build_openspcoop_sec_archive}" />
+			</and>
+			<then>
 				<if>
-					<equals arg1="${antinstaller_integration_manager}" arg2="true" />
+					<equals arg1="${antinstaller_console_env}" arg2="manager"/>
 					<then>
-						<copy file="${datasource_dir_ds_creati}/govway-ds.xml" tofile="${datasource_dir_ds_creati}/govway_runtime_messageBoxIM-ds.xml" />
-						<replace file="${datasource_dir_ds_creati}/govway_runtime_messageBoxIM-ds.xml" 
-							token="&lt;min-pool-size>10&lt;/min-pool-size>" 
-							value="&lt;min-pool-size>5&lt;/min-pool-size>"/>
-						<replace file="${datasource_dir_ds_creati}/govway_runtime_messageBoxIM-ds.xml" 
-							token="&lt;max-pool-size>50&lt;/max-pool-size>" 
-							value="&lt;max-pool-size>20&lt;/max-pool-size>"/>
-						<replace file="${datasource_dir_ds_creati}/govway_runtime_messageBoxIM-ds.xml" 
-							token="org.govway.datasource" 
-							value="org.govway.datasource.runtime.messageBoxIM"/>
-						<if>
-							<equals arg1="${antinstaller_log_db}" arg2="log"/>
-							<then>
-								<copy file="${datasource_dir_ds_creati}/govway_tracciamento-ds.xml" tofile="${datasource_dir_ds_creati}/govway_tracciamento_messageBoxIM-ds.xml" />
-								<replace file="${datasource_dir_ds_creati}/govway_tracciamento_messageBoxIM-ds.xml" 
-									token="&lt;min-pool-size>10&lt;/min-pool-size>" 
-									value="&lt;min-pool-size>5&lt;/min-pool-size>"/>
-								<replace file="${datasource_dir_ds_creati}/govway_tracciamento_messageBoxIM-ds.xml" 
-									token="&lt;max-pool-size>50&lt;/max-pool-size>" 
-									value="&lt;max-pool-size>20&lt;/max-pool-size>"/>
-								<replace file="${datasource_dir_ds_creati}/govway_tracciamento_messageBoxIM-ds.xml" 
-									token="org.govway.datasource.tracciamento" 
-									value="org.govway.datasource.tracciamento.messageBoxIM"/>
-							</then>
-						</if>
+						<var name="datasource_dir_ds_creati" value="${dist}/datasource/runtime"/>
 					</then>
+					<else>
+						<var name="datasource_dir_ds_creati" value="${dist}/datasource"/>
+					</else>
 				</if>
+				<copy file="${datasource_dir_ds_creati}/govway.xml" tofile="${datasource_dir_ds_creati}/govwaySec.xml"/>
 			</then>
 		</if>
 
@@ -476,7 +698,10 @@ org.openspcoop2.pdd.proxyJMXResources.password=PROXYPASSWORD
 			</then>
 		</if>
 		<if>
-			<equals arg1="${antinstaller_gestione_nodi}" arg2="dynamic"/>
+			<and>
+				<equals arg1="${antinstaller_gestione_nodi}" arg2="dynamic"/>
+				<equals arg1="${use_govway_nodirun_properties}" arg2="false"/>
+			</and>
 			<then>
 				<antcall target="replace_token">
 				    <param name="file" value="${dist}/cfg/${console_local_properties_name}"/>
@@ -550,7 +775,10 @@ IDENTIFICATIVOGRUPPO.risorseJmxPdd.remoteAccess.password=PASSWORDSERVIZIOPROXY]]
 			</then>
 		</if>
 		<if>
-			<equals arg1="${antinstaller_gestione_nodi}" arg2="dynamic"/>
+			<and>
+				<equals arg1="${antinstaller_gestione_nodi}" arg2="dynamic"/>
+				<equals arg1="${use_govway_nodirun_properties}" arg2="false"/>
+			</and>
 			<then>
 				<replaceregexp file="${dist}/cfg/${monitor_local_properties_name}"
 					       match=".*\s# Configurazione in Singola Istanza\s.*\s.*\s.*\s.*\s.*\s# Configurazione in Load Balancing"
@@ -626,6 +854,97 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 					<param name="token" value="IDGW1"/>
 					<param name="value" value="${antinstaller_gestione_nodi_group_id}"/>
 				</antcall>
+			</then>
+		</if>
+
+		<var name="govway_nodirun_properties_name" value="govway.nodirun.properties"/>
+		<if>
+			<equals arg1="${antinstaller_modalita_installazione}" arg2="aggiornamento"/>
+			<then>
+				<var name="govway_nodirun_properties_name" value="govway.nodirun.properties.new"/>
+			</then>
+		</if>
+		<if>
+			<and>
+				<equals arg1="${antinstaller_gestione_nodi}" arg2="dynamic"/>
+				<equals arg1="${use_govway_nodirun_properties}" arg2="true"/>
+			</and>
+			<then>
+				<replaceregexp file="${dist}/cfg/${govway_nodirun_properties_name}"
+					       match=".*\s# Configurazione in Singola Istanza\s.*\s.*\s.*\s.*\s.*\s# Configurazione in Load Balancing"
+					       replace="CLUSTERDINAMICO"
+					       byline="false"/>
+				<replace file="${dist}/cfg/${govway_nodirun_properties_name}">
+					<replacetoken>CLUSTERDINAMICO</replacetoken>
+					<replacevalue><![CDATA[# ================================================
+# Configurazione Cluster Dinamico]]></replacevalue>
+				</replace>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${govway_nodirun_properties_name}"/>
+					<param name="token" value="#tipoAccesso=govway"/>
+					<param name="value" value="CLUSTERDINAMICO"/>
+				</antcall>
+				<replace file="${dist}/cfg/${govway_nodirun_properties_name}">
+					<replacetoken>CLUSTERDINAMICO</replacetoken>
+					<replacevalue><![CDATA[clusterDinamico=true
+tipoAccesso=govway]]></replacevalue>
+				</replace>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${govway_nodirun_properties_name}"/>
+					<param name="token" value="#aliases=IDGW1,..,IDGWN"/>
+					<param name="value" value="aliases=${antinstaller_gestione_nodi_group_id}"/>
+				</antcall>
+				<replaceregexp file="${dist}/cfg/${govway_nodirun_properties_name}"
+					       match="# Configurazione IDGW1\s.*\s.*\s.*\s.*\s.*\s.*\s.*\s.*\s.*PASSWORDGWN"
+					       replace="COMMENTOCLUSTERDINAMICO"
+					       byline="false"/>
+				<replace file="${dist}/cfg/${govway_nodirun_properties_name}">
+					<replacetoken>COMMENTOCLUSTERDINAMICO</replacetoken>
+					<replacevalue><![CDATA[IDENTIFICATIVOGRUPPO.descrizione=IDENTIFICATIVOGRUPPO
+
+# Servizio 'proxy'
+IDENTIFICATIVOGRUPPO.remoteAccess.url=URLSERVIZIOPROXY
+IDENTIFICATIVOGRUPPO.remoteAccess.username=USERNAMESERVIZIOPROXY
+IDENTIFICATIVOGRUPPO.remoteAccess.password=PASSWORDSERVIZIOPROXY
+
+# Servizio 'check'
+IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replacevalue>
+				</replace>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${govway_nodirun_properties_name}"/>
+					<param name="token" value="IDENTIFICATIVOGRUPPO"/>
+					<param name="value" value="${antinstaller_gestione_nodi_group_id}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${govway_nodirun_properties_name}"/>
+					<param name="token" value="URLSERVIZIOPROXY"/>
+					<param name="value" value="${antinstaller_gestione_nodi_proxy_url}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${govway_nodirun_properties_name}"/>
+					<param name="token" value="USERNAMESERVIZIOPROXY"/>
+					<param name="value" value="${antinstaller_gestione_nodi_proxy_username}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${govway_nodirun_properties_name}"/>
+					<param name="token" value="PASSWORDSERVIZIOPROXY"/>
+					<param name="value" value="${antinstaller_gestione_nodi_proxy_password_final}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${govway_nodirun_properties_name}"/>
+					<param name="token" value="URLSERVIZIOCHECK"/>
+					<param name="value" value="${antinstaller_gestione_nodi_check_url}"/>
+				</antcall>
+				<replaceregexp file="${dist}/cfg/${govway_nodirun_properties_name}"
+					       match="\s# Classificazione dei nodi in gruppi\s.*\s.*"
+					       replace=""
+					       byline="false"/>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${govway_nodirun_properties_name}"/>
+					<param name="token" value="IDGW1"/>
+					<param name="value" value="${antinstaller_gestione_nodi_group_id}"/>
+				</antcall>
+
 			</then>
 		</if>
 
@@ -840,6 +1159,7 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 				<move todir="${dist}/archivi/manager">
 					<fileset dir="${dist}/archivi">
 						<exclude name="govway.*ar"/>
+						<exclude name="govwaySec.war"/>
 						<exclude name="manager"/>
 						<exclude name="runtime"/>
 					</fileset>
@@ -847,6 +1167,7 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 				<move todir="${dist}/archivi/runtime">
 					<fileset dir="${dist}/archivi">
 						<include name="govway.*ar"/>
+						<include name="govwaySec.war"/>
 						<exclude name="manager"/>
 						<exclude name="runtime"/>
 					</fileset>
@@ -1417,6 +1738,7 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 								<matches string="${as}" pattern="wildfly23"/>
 								<matches string="${as}" pattern="wildfly24"/>
 								<matches string="${as}" pattern="wildfly25"/>
+								<matches string="${as}" pattern="wildfly26"/>
 							</or>
 							<then>
 								<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
@@ -1469,6 +1791,7 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 								<matches string="${as}" pattern="wildfly23"/>
 								<matches string="${as}" pattern="wildfly24"/>
 								<matches string="${as}" pattern="wildfly25"/>
+								<matches string="${as}" pattern="wildfly26"/>
 							</or>
 							<then>
 								<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
@@ -1524,6 +1847,7 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 								<matches string="${as}" pattern="wildfly23"/>
 								<matches string="${as}" pattern="wildfly24"/>
 								<matches string="${as}" pattern="wildfly25"/>
+								<matches string="${as}" pattern="wildfly26"/>
 							</or>
 							<then>
 								<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">

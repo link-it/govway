@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -67,7 +67,6 @@ public class SoapTest extends ConfigLoader {
 	 *
 	 * Controllo che gli headers remaining abbiano il conteggio giusto.
 	 * Per il tempo medio invece, non avendo uno header -Remaining, controllo i contatori sulla policy
-	 * TODO: Potrei controllare che lo header -Limit abbia la finestra adatta?
 	 * @param tipoServizio
 	 */
 	public static void customPolicy(TipoServizio tipoServizio) {

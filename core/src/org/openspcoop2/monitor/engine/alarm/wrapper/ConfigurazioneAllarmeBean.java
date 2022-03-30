@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -78,6 +78,8 @@ public class ConfigurazioneAllarmeBean extends Allarme{
 		metodiEsclusi.add(new BlackListElement("setDettaglioErogatore",
 				String.class));
 		metodiEsclusi.add(new BlackListElement("setExistsAlmostOneManuallyUpdateState",
+				boolean.class));
+		metodiEsclusi.add(new BlackListElement("setExistsAlmostOneManuallyAckCriteria",
 				boolean.class));
 		
 		BeanUtils.copy(this, allarme, metodiEsclusi);
@@ -205,6 +207,22 @@ public class ConfigurazioneAllarmeBean extends Allarme{
 		return this.manuallyUpdateState;
 	}
 	
+	private Boolean manuallyAckCriteria = null;
+	public boolean isManuallyAckCriteria() {
+		if(this.manuallyAckCriteria == null) {
+			Logger log = LoggerWrapperFactory.getLogger(ConfigurazioneAllarmeBean.class);
+			try {
+				IDynamicLoader dl = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME, this.plugin.getTipo(), this.plugin.getClassName(), log);
+				IAlarmProcessing alarm = (IAlarmProcessing) dl.newInstance();
+				this.manuallyAckCriteria = alarm.isManuallyAckCriteria();
+			}catch(Throwable t) {
+				log.error(t.getMessage(),t);
+				this.manuallyAckCriteria = false;
+			}
+		}
+		return this.manuallyAckCriteria;
+	}
+	
 	// Informazione necessaria per la visualizzazione nella lista della console di monitoraggio
 	private boolean existsAlmostOneManuallyUpdateState = true;
 	public void setExistsAlmostOneManuallyUpdateState(boolean existsAlmostOneManuallyUpdateState) {
@@ -212,6 +230,14 @@ public class ConfigurazioneAllarmeBean extends Allarme{
 	}
 	public boolean isExistsAlmostOneManuallyUpdateState() {
 		return this.existsAlmostOneManuallyUpdateState;
+	}
+	
+	private boolean existsAlmostOneManuallyAckCriteria = true;
+	public void setExistsAlmostOneManuallyAckCriteria(boolean existsAlmostOneManuallyAckCriteria) {
+		this.existsAlmostOneManuallyAckCriteria = existsAlmostOneManuallyAckCriteria;
+	}
+	public boolean isExistsAlmostOneManuallyAckCriteria() {
+		return this.existsAlmostOneManuallyAckCriteria;
 	}
 	
  }

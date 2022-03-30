@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -920,7 +920,8 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 				idPa = BaseHelper.supplyOrNonValida( () -> ErogazioniApiHelper.getIDGruppoPA(gruppo, idAsps, env.apsCore), "Gruppo per l'erogazione scelta");
 				pa = env.paCore.getPortaApplicativa(idPa);
 
-				creaNuovoConnettore = !env.apsHelper.isConnettoreRidefinito(paDefault, paDefault.getServizioApplicativoList().get(0), pa, pa.getServizioApplicativoList().get(0));
+				creaNuovoConnettore = !env.apsHelper.isConnettoreRidefinito(paDefault, paDefault.getServizioApplicativoList().get(0), pa, 
+						pa.getServizioApplicativoList().get(0), pa.getServizioApplicativoList());
 			} else {
 				idPa = idPaDefault;
 				pa = paDefault;
@@ -1483,7 +1484,9 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			}
 
 			final String oldNomePA = pa.getNome();
-			if (!env.paHelper.porteAppCheckData(TipoOperazione.CHANGE, oldNomePA, env.isSupportatoAutenticazioneSoggetti, false)) {
+			org.openspcoop2.message.constants.ServiceBinding serviceBinding = org.openspcoop2.message.constants.ServiceBinding.valueOf(apc.getServiceBinding().name());
+			if (!env.paHelper.porteAppCheckData(TipoOperazione.CHANGE, oldNomePA, env.isSupportatoAutenticazioneSoggetti, false,
+					serviceBinding)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 

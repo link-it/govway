@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -202,9 +202,16 @@ public class PolicyAttributeAuthority extends AbstractPolicyToken implements Ser
 	public String getRequestJwtSignAlgorithm() {
 		return this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_ALGORITHM);
 	}
-	public boolean isRequestJwtSignIncludeKeyId() {
+	public boolean isRequestJwtSignIncludeKeyIdWithKeyAlias() {
 		String tmp = this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID);
-		return tmp!=null ? Boolean.valueOf(tmp) : false;
+		return tmp!=null ? Costanti.AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID_MODE_ALIAS.equals(tmp) : false;
+	}
+	public boolean isRequestJwtSignIncludeKeyIdCustom() {
+		String tmp = this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID);
+		return tmp!=null ? Costanti.AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID_MODE_CUSTOM.equals(tmp) : false;
+	}
+	public String getRequestJwtSignIncludeKeyIdCustom() {
+		return this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_INCLUDE_KEY_ID_VALUE);
 	}
 	public boolean isRequestJwtSignIncludeX509Cert() {
 		String tmp = this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_INCLUDE_X509_CERT);
@@ -221,8 +228,9 @@ public class PolicyAttributeAuthority extends AbstractPolicyToken implements Ser
 		String tmp = this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_INCLUDE_X509_SHA256);
 		return tmp!=null ? Boolean.valueOf(tmp) : false;
 	}
-	public String getRequestJwtSignJoseContentType() {
-		return this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_JOSE_CONTENT_TYPE);
+	public boolean isRequestJwtSignJoseContentType() {
+		String tmp = this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_JOSE_CONTENT_TYPE);
+		return tmp!=null ? Boolean.valueOf(tmp) : false;
 	}
 	public String getRequestJwtSignJoseType() {
 		return this.defaultProperties.getProperty(Costanti.AA_REQUEST_JWT_SIGN_JOSE_TYPE);

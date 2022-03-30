@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -49,7 +49,10 @@ public class IntegrazioneUtils {
 			{"application/","In Content-Type string <application/>, expected MIME subtype, got null"},
 			{"/xml","In Content-Type string </xml>, expected MIME type, got /"},
 			{"text/xml, charset=UTF-8","In parameter list <, charset=UTF-8>, expected ';', got \",\""},
-			{"text/xml;charsetUTF-8","In parameter list <;charsetUTF-8>, expected '=', got \"null\""}
+			{"text/xml;charsetUTF-8","In parameter list <;charsetUTF-8>, expected '=', got \"null\""},
+			// non e' ammissibile usare "" per contornare il tipe/subtype
+			{"\"text/xml\"","In Content-Type string <\"text/xml\">, expected MIME type, got text/xml"},
+			{"\"text/xml\";charset=\"UTF-8\"","In Content-Type string <\"text/xml\";charset=\"UTF-8\">, expected MIME type, got text/xml"}
 		};	
 	}
 	

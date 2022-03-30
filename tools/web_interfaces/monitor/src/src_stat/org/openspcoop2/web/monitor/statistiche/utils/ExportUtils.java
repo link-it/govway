@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -59,6 +59,7 @@ import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.constant.HorizontalTextAlignment;
 import net.sf.dynamicreports.report.datasource.DRDataSource;
 import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.type.TextAdjustEnum;
 
 /**
  * ExportUtils
@@ -138,6 +139,11 @@ public class ExportUtils {
 		}
 		else{
 			switch (tipoStatistica) {
+			case DISTRIBUZIONE_ERRORI:
+				headerValueCategory = "parent_0";
+				headerValueLabel =  MessageManager.getInstance().getMessage(Costanti.DESCRIZIONE_LABEL_KEY);
+				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()));
+				break;
 			case DISTRIBUZIONE_AZIONE:
 				headerValueCategory = "parent_0";
 				headerValueLabel =  MessageManager.getInstance().getMessage(Costanti.API_LABEL_KEY);
@@ -272,6 +278,11 @@ public class ExportUtils {
 		}
 		else{
 			switch (tipoStatistica) {
+			case DISTRIBUZIONE_ERRORI:
+				headerValueCategory = "parent_0";
+				headerValueLabel =  MessageManager.getInstance().getMessage(Costanti.DESCRIZIONE_LABEL_KEY);
+				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));	
+				break;
 			case DISTRIBUZIONE_AZIONE:
 				headerValueCategory = "parent_0";
 				headerValueLabel =  MessageManager.getInstance().getMessage(Costanti.API_LABEL_KEY);
@@ -426,6 +437,12 @@ public class ExportUtils {
 		}
 		else{
 			switch (tipoStatistica) {
+			case DISTRIBUZIONE_ERRORI:
+				headerValueCategory = "parent_0";
+				headerValueLabel =  MessageManager.getInstance().getMessage(Costanti.DESCRIZIONE_LABEL_KEY);
+				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setStretchWithOverflow(false) // TODO: .setTextAdjust(TextAdjustEnum.CUT_TEXT)
+						.addProperty(JasperProperty.PRINT_KEEP_FULL_TEXT, "true"));
+				break;
 			case DISTRIBUZIONE_AZIONE:
 				headerValueCategory = "parent_0";
 				headerValueLabel =  MessageManager.getInstance().getMessage(Costanti.API_LABEL_KEY);
@@ -1194,6 +1211,9 @@ public class ExportUtils {
 		header.add("nome");
 
 		switch (tipoStatistica) {
+		case DISTRIBUZIONE_ERRORI:
+			header.add("parent_0");
+			break;
 		case DISTRIBUZIONE_AZIONE:
 			header.add("parent_0");
 			header.add("parent_1");

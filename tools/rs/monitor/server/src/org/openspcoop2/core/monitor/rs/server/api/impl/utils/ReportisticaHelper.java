@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -59,6 +59,7 @@ import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzio
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneApplicativo;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneApplicativoRegistrato;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneAzione;
+import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneErrori;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneEsiti;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneSoggettoLocale;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneSoggettoRemoto;
@@ -964,6 +965,47 @@ public class ReportisticaHelper {
 				break;
 			}
 		}
+
+		return ReportisticaHelper.generateReport(wrap, env.context);
+	}
+	
+	public static final byte[] getReportDistribuzioneErrori(RicercaStatisticaDistribuzioneErrori body,MonitoraggioEnv env) throws Exception {
+		SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
+		HttpRequestWrapper wrap = searchFormUtilities.getHttpRequestWrapper(env.context, env.profilo,
+				env.nomeSoggettoLocale, body.getTipo(), body.getReport().getFormato(), TipoReport.errori);
+
+		if(body.getEsito()==null) {
+			body.setEsito(new FiltroEsito());
+		}
+		if(body.getEsito().getTipo()==null) {
+			body.getEsito().setTipo(EsitoTransazioneFullSearchEnum.FALLITE_E_FAULT);
+		}
+		
+		if(EsitoTransazioneFullSearchEnum.QUALSIASI.equals(body.getEsito().getTipo())) {
+			body.getEsito().setTipo(EsitoTransazioneFullSearchEnum.FALLITE_E_FAULT); // forzo fallite
+		}
+		else if(EsitoTransazioneFullSearchEnum.OK.equals(body.getEsito().getTipo())) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Esito 'OK' non utilizzabile con questo tipo di report");
+		}
+		
+		ReportisticaHelper.overrideRicercaBaseStatisticaSoggetti(body, wrap, env);
+		ReportisticaHelper.overrideFiltroEsito(body.getEsito(), wrap, env);
+		ReportisticaHelper.overrideOpzioniGenerazioneReport(body.getReport(), wrap, env);
+
+		if(body.getMittente()!=null && body.getMittente().getIdentificazione()!=null) {
+			switch (body.getTipo()) {
+			case EROGAZIONE:
+				ReportisticaHelper.overrideFiltroMittenteErogazione(body.getMittente().getIdentificazione(), body.getMittente(), false, wrap, env);
+				break;
+			case FRUIZIONE:
+				ReportisticaHelper.overrideFiltroMittenteFruizione(body.getMittente().getIdentificazione(), body.getMittente(), false, wrap, env);
+				break;
+			case QUALSIASI:
+				ReportisticaHelper.overrideFiltroMittenteQualsiasi(body.getMittente().getIdentificazione(), body.getMittente(), false, wrap, env);
+				break;
+			}
+		}
+		wrap.overrideParameter(CostantiExporter.AZIONE, body.getAzione());
 
 		return ReportisticaHelper.generateReport(wrap, env.context);
 	}

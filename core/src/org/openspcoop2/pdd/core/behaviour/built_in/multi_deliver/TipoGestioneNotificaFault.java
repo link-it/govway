@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -36,7 +36,8 @@ public enum TipoGestioneNotificaFault implements IEnumeration , Serializable , C
 
 	CONSEGNA_COMPLETATA (Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_FAULT_VALUE_CONSEGNA_COMPLETATA ,"Consegna Completata"),
 	CONSEGNA_FALLITA (Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_FAULT_VALUE_CONSEGNA_FALLITA ,"Consegna Fallita"),
-	CUSTOM (Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_FAULT_VALUE_CODICI_CONSEGNA_COMPLETATA ,"Gestione Personalizzata");
+	CONSEGNA_FALLITA_PERSONALIZZATA (Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_FAULT_VALUE_CONSEGNA_FALLITA_PERSONALIZZATA ,"Consegna Fallita Personalizzata"),
+	CONSEGNA_COMPLETATA_PERSONALIZZATA (Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_FAULT_VALUE_CONSEGNA_COMPLETATA_PERSONALIZZATA ,"Consegna Completata Personalizzata");
 	
 	
 	/** Value */

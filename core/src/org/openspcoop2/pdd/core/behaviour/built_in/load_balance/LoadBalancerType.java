@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -47,7 +47,7 @@ public enum LoadBalancerType implements IEnumeration , Serializable , Cloneable 
 			"Il connettore viene selezionato tra quelli definiti casualmente, tenendo conto della quantità relativa di richieste che è il backend in grado di elaborare.\nNon si tiene conto delle connessioni attive.",
 			true),
 	IP_HASH (Costanti.IP_HASH ,"Source IP hash",
-			"Combina l'indirizzo IP del client e l'eventuale indirizzo IP portato in un header 'Forwarded-For' per generare una chiave hash che viene designata per un connettore specifico.",
+			"Combina l'indirizzo IP del client e l'eventuale indirizzo IP portato in un header 'Forwarded-For' o 'Client-IP' per generare una chiave hash che viene designata per un connettore specifico.",
 			false),
 	LEAST_CONNECTIONS(Costanti.LEAST_CONNECTIONS, "Least Connections",
 			"Il connettore selezionato è quello che ha il numero minimo di connessioni attive.",

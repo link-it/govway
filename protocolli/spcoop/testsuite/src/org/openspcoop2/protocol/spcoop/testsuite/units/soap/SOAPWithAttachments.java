@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -1242,30 +1242,31 @@ public class SOAPWithAttachments {
 	
 	
 	/***
-	 * Test per il profilo di collaborazione Sincrono con gestione manifest attachments disabilitato
+	 * Test per il profilo di collaborazione Sincrono con gestione manifest attachments disabilitato in streaming (non vengono tracciati gli allegati)
 	 */
-	Repository repositorySincronoManifestAttachmentsDisabilitato=new Repository();
-	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".SINCRONO_MANIFEST_DISABILITATO"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void sincronoManifestAttachmentsDisabilitato() throws TestSuiteException, IOException, SOAPException{
-		this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoManifestAttachmentsDisabilitato,
-				CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_GESTIONE_MANIFEST_DISABILITATA,addIDUnivoco);
+	Repository repositorySincronoManifestAttachmentsDisabilitatoStreaming=new Repository();
+	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".SINCRONO_MANIFEST_DISABILITATO_STREAMING"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoManifestAttachmentsDisabilitatoStreaming() throws TestSuiteException, IOException, SOAPException{
+		this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoManifestAttachmentsDisabilitatoStreaming,
+				CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_GESTIONE_MANIFEST_DISABILITATA_STREAMING,addIDUnivoco);
 	}
-	@DataProvider (name="SincronoManifestAttachmentsDisabilitato")
-	public Object[][]testSincronoManifestAttachmentsDisabilitato()throws Exception{
-		String id=this.repositorySincronoManifestAttachmentsDisabilitato.getNext();
+	@DataProvider (name="SincronoManifestAttachmentsDisabilitatoStreaming")
+	public Object[][]testSincronoManifestAttachmentsDisabilitatoStreaming()throws Exception{
+		String id=this.repositorySincronoManifestAttachmentsDisabilitatoStreaming.getNext();
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".SINCRONO_MANIFEST_DISABILITATO"},
-			dataProvider="SincronoManifestAttachmentsDisabilitato",dependsOnMethods={"sincronoManifestAttachmentsDisabilitato"})
-	public void testSincronoManifestAttachmentsDisabilitato(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".SINCRONO_MANIFEST_DISABILITATO_STREAMING"},
+			dataProvider="SincronoManifestAttachmentsDisabilitatoStreaming",dependsOnMethods={"sincronoManifestAttachmentsDisabilitatoStreaming"})
+	public void testSincronoManifestAttachmentsDisabilitatoStreaming(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
+			int attachmentsRegistratiAttesi = CooperazioneBase.SKIP_ATTACHMENTS_CHECK; // streaming non vengono registrati
 			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_GESTIONE_MANIFEST_DISABILITATA
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_GESTIONE_MANIFEST_DISABILITATA_STREAMING
 					, checkServizioApplicativo,null, 
-					SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,false);
+					SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,false, attachmentsRegistratiAttesi, null);
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -1274,6 +1275,40 @@ public class SOAPWithAttachments {
 	}
 	
 	
+	
+	
+	
+	/***
+	 * Test per il profilo di collaborazione Sincrono con gestione manifest attachments disabilitato con costruzione DOM (vengono tracciati gli allegati)
+	 */
+	Repository repositorySincronoManifestAttachmentsDisabilitatoDOM=new Repository();
+	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".SINCRONO_MANIFEST_DISABILITATO_DOM"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoManifestAttachmentsDisabilitatoDOM() throws TestSuiteException, IOException, SOAPException{
+		this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoManifestAttachmentsDisabilitatoDOM,
+				CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_GESTIONE_MANIFEST_DISABILITATA_DOM,addIDUnivoco);
+	}
+	@DataProvider (name="SincronoManifestAttachmentsDisabilitatoDOM")
+	public Object[][]testSincronoManifestAttachmentsDisabilitatoDOM()throws Exception{
+		String id=this.repositorySincronoManifestAttachmentsDisabilitatoDOM.getNext();
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
+		};
+	}
+	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".SINCRONO_MANIFEST_DISABILITATO_DOM"},
+			dataProvider="SincronoManifestAttachmentsDisabilitatoDOM",dependsOnMethods={"sincronoManifestAttachmentsDisabilitatoDOM"})
+	public void testSincronoManifestAttachmentsDisabilitatoDOM(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_GESTIONE_MANIFEST_DISABILITATA_DOM
+					, checkServizioApplicativo,null, 
+					SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,false);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
 	
 	
 	

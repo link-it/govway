@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -474,6 +474,13 @@ public abstract class AbstractXMLUtils {
 		bout.close();
 		return bout.toByteArray();
 	}
+	public byte[] toByteArray(Document doc,TransformerConfig config) throws TransformerException,IOException, XMLException{
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		this.writeTo(doc,bout,config);
+		bout.close();
+		return bout.toByteArray();
+	}
+	
 	public byte[] toByteArray(Element element) throws TransformerException,IOException, XMLException{
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		this.writeTo(element,bout);
@@ -486,6 +493,13 @@ public abstract class AbstractXMLUtils {
 		bout.close();
 		return bout.toByteArray();
 	}
+	public byte[] toByteArray(Element element,TransformerConfig config) throws TransformerException,IOException, XMLException{
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		this.writeTo(element,bout,config);
+		bout.close();
+		return bout.toByteArray();
+	}
+	
 	public byte[] toByteArray(Node node) throws TransformerException,IOException, XMLException{
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		this.writeTo(node,bout);
@@ -495,6 +509,12 @@ public abstract class AbstractXMLUtils {
 	public byte[] toByteArray(Node node,boolean omitXMLDeclaration) throws TransformerException,IOException, XMLException{
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		this.writeTo(node,bout,omitXMLDeclaration);
+		bout.close();
+		return bout.toByteArray();
+	}
+	public byte[] toByteArray(Node node,TransformerConfig config) throws TransformerException,IOException, XMLException{
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		this.writeTo(node,bout,config);
 		bout.close();
 		return bout.toByteArray();
 	}
@@ -514,6 +534,13 @@ public abstract class AbstractXMLUtils {
 		bout.close();
 		return bout.toString();
 	}
+	public String toString(Document doc,TransformerConfig config) throws TransformerException,IOException, XMLException{
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		this.writeTo(doc,bout,config);
+		bout.close();
+		return bout.toString();
+	}
+	
 	public String toString(Element element) throws TransformerException,IOException, XMLException{
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		this.writeTo(element,bout);
@@ -526,6 +553,13 @@ public abstract class AbstractXMLUtils {
 		bout.close();
 		return bout.toString();
 	}
+	public String toString(Element element,TransformerConfig config) throws TransformerException,IOException, XMLException{
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		this.writeTo(element,bout,config);
+		bout.close();
+		return bout.toString();
+	}
+	
 	public String toString(Node node) throws TransformerException,IOException, XMLException{
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		this.writeTo(node,bout);
@@ -538,270 +572,375 @@ public abstract class AbstractXMLUtils {
 		bout.close();
 		return bout.toString();
 	}
+	public String toString(Node node,TransformerConfig config) throws TransformerException,IOException, XMLException{
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		this.writeTo(node,bout,config);
+		bout.close();
+		return bout.toString();
+	}
 
 
 	// WRITE TO
 
 	public void writeTo(Document doc,OutputStream os)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(doc, os, new XMLErrorListener(),false, null);
+		this.writeNodeTo(doc, os, new XMLErrorListener(),false, null, false);
 	}
 	public void writeTo(Document doc,OutputStream os,ErrorListener errorListener)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(doc, os,errorListener,false, null);
+		this.writeNodeTo(doc, os,errorListener,false, null, false);
 	}
 	public void writeTo(Document doc,OutputStream os,boolean omitXMLDeclaration)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(doc, os, new XMLErrorListener(),omitXMLDeclaration, null);
+		this.writeNodeTo(doc, os, new XMLErrorListener(),omitXMLDeclaration, null, false);
 	}
 	public void writeTo(Document doc,OutputStream os,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(doc, os,errorListener,omitXMLDeclaration, null);
+		this.writeNodeTo(doc, os,errorListener,omitXMLDeclaration, null, false);
 	}
 	public void writeTo(Document doc,OutputStream os, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(doc, os, new XMLErrorListener(),false,  charset);
+		this.writeNodeTo(doc, os, new XMLErrorListener(),false,  charset, false);
 	}
 	public void writeTo(Document doc,OutputStream os,ErrorListener errorListener, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(doc, os,errorListener,false,  charset);
+		this.writeNodeTo(doc, os,errorListener,false,  charset, false);
 	}
 	public void writeTo(Document doc,OutputStream os,boolean omitXMLDeclaration, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(doc, os, new XMLErrorListener(),omitXMLDeclaration,  charset);
+		this.writeNodeTo(doc, os, new XMLErrorListener(),omitXMLDeclaration,  charset, false);
 	}
 	public void writeTo(Document doc,OutputStream os,ErrorListener errorListener,boolean omitXMLDeclaration, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(doc, os,errorListener,omitXMLDeclaration,  charset);
+		this.writeNodeTo(doc, os,errorListener,omitXMLDeclaration,  charset, false);
+	}
+	public void writeTo(Document doc,OutputStream os,boolean omitXMLDeclaration, String charset, boolean indent)throws TransformerException,IOException, XMLException{
+		this.writeNodeTo(doc, os, new XMLErrorListener(),omitXMLDeclaration,  charset, indent);
+	}
+	public void writeTo(Document doc,OutputStream os,ErrorListener errorListener,boolean omitXMLDeclaration, String charset, boolean indent)throws TransformerException,IOException, XMLException{
+		this.writeNodeTo(doc, os,errorListener,omitXMLDeclaration,  charset, indent);
 	}
 
 	public void writeTo(Document doc,Writer writer)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(doc, writer, new XMLErrorListener(),false, null);
+		this.writeNodeTo(doc, writer, new XMLErrorListener(),false, null, false);
 	}
 	public void writeTo(Document doc,Writer writer,ErrorListener errorListener)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(doc, writer,errorListener,false, null);
+		this.writeNodeTo(doc, writer,errorListener,false, null, false);
 	}
 	public void writeTo(Document doc,Writer writer,boolean omitXMLDeclaration)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(doc, writer, new XMLErrorListener(), omitXMLDeclaration, null);
+		this.writeNodeTo(doc, writer, new XMLErrorListener(), omitXMLDeclaration, null, false);
 	}
 	public void writeTo(Document doc,Writer writer,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(doc, writer,errorListener, omitXMLDeclaration, null);
+		this.writeNodeTo(doc, writer,errorListener, omitXMLDeclaration, null, false);
 	}
 	public void writeTo(Document doc,Writer writer, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(doc, writer, new XMLErrorListener(),false, charset);
+		this.writeNodeTo(doc, writer, new XMLErrorListener(),false, charset, false);
 	}
 	public void writeTo(Document doc,Writer writer,ErrorListener errorListener, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(doc, writer,errorListener,false, charset);
+		this.writeNodeTo(doc, writer,errorListener,false, charset, false);
 	}
 	public void writeTo(Document doc,Writer writer,boolean omitXMLDeclaration, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(doc, writer, new XMLErrorListener(), omitXMLDeclaration, charset);
+		this.writeNodeTo(doc, writer, new XMLErrorListener(), omitXMLDeclaration, charset, false);
 	}
 	public void writeTo(Document doc,Writer writer,ErrorListener errorListener,boolean omitXMLDeclaration, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(doc, writer,errorListener, omitXMLDeclaration, charset);
+		this.writeNodeTo(doc, writer,errorListener, omitXMLDeclaration, charset, false);
+	}
+	public void writeTo(Document doc,Writer writer,boolean omitXMLDeclaration, String charset, boolean indent)throws TransformerException,IOException, XMLException{
+		this.writeNodeTo(doc, writer, new XMLErrorListener(), omitXMLDeclaration, charset, indent);
+	}
+	public void writeTo(Document doc,Writer writer,ErrorListener errorListener,boolean omitXMLDeclaration, String charset, boolean indent)throws TransformerException,IOException, XMLException{
+		this.writeNodeTo(doc, writer,errorListener, omitXMLDeclaration, charset, indent);
 	}
 
 	public void writeTo(Document doc,File file)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(doc, file, new XMLErrorListener(),false, null);
+		this.writeNodeTo(doc, file, new XMLErrorListener(),false, null, false);
 	}
 	public void writeTo(Document doc,File file,ErrorListener errorListener)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(doc, file,errorListener,false, null);
+		this.writeNodeTo(doc, file,errorListener,false, null, false);
 	}
 	public void writeTo(Document doc,File file,boolean omitXMLDeclaration)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(doc, file, new XMLErrorListener(),omitXMLDeclaration, null);
+		this.writeNodeTo(doc, file, new XMLErrorListener(),omitXMLDeclaration, null, false);
 	}
 	public void writeTo(Document doc,File file,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(doc, file,errorListener,omitXMLDeclaration, null);
+		this.writeNodeTo(doc, file,errorListener,omitXMLDeclaration, null, false);
 	}
 	public void writeTo(Document doc,File file, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(doc, file, new XMLErrorListener(),false, charset);
+		this.writeNodeTo(doc, file, new XMLErrorListener(),false, charset, false);
 	}
 	public void writeTo(Document doc,File file,ErrorListener errorListener, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(doc, file,errorListener,false, charset);
+		this.writeNodeTo(doc, file,errorListener,false, charset, false);
 	}
 	public void writeTo(Document doc,File file,boolean omitXMLDeclaration, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(doc, file, new XMLErrorListener(),omitXMLDeclaration, charset);
+		this.writeNodeTo(doc, file, new XMLErrorListener(),omitXMLDeclaration, charset, false);
 	}
 	public void writeTo(Document doc,File file,ErrorListener errorListener,boolean omitXMLDeclaration, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(doc, file,errorListener,omitXMLDeclaration, charset);
+		this.writeNodeTo(doc, file,errorListener,omitXMLDeclaration, charset, false);
+	}
+	public void writeTo(Document doc,File file,boolean omitXMLDeclaration, String charset, boolean indent)throws TransformerException,IOException, XMLException{
+		this.writeNodeTo(doc, file, new XMLErrorListener(),omitXMLDeclaration, charset, indent);
+	}
+	public void writeTo(Document doc,File file,ErrorListener errorListener,boolean omitXMLDeclaration, String charset, boolean indent)throws TransformerException,IOException, XMLException{
+		this.writeNodeTo(doc, file,errorListener,omitXMLDeclaration, charset, indent);
 	}
 
 	public void writeTo(Element element,OutputStream os)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(element, os, new XMLErrorListener(),false, null);
+		this.writeNodeTo(element, os, new XMLErrorListener(),false, null, false);
 	}
 	public void writeTo(Element element,OutputStream os,ErrorListener errorListener)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(element, os,errorListener,false, null);
+		this.writeNodeTo(element, os,errorListener,false, null, false);
 	}
 	public void writeTo(Element element,OutputStream os,boolean omitXMLDeclaration)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(element, os, new XMLErrorListener(),omitXMLDeclaration, null);
+		this.writeNodeTo(element, os, new XMLErrorListener(),omitXMLDeclaration, null, false);
 	}
 	public void writeTo(Element element,OutputStream os,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(element, os,errorListener,omitXMLDeclaration, null);
+		this.writeNodeTo(element, os,errorListener,omitXMLDeclaration, null, false);
 	}
 	public void writeTo(Element element,OutputStream os, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(element, os, new XMLErrorListener(),false, charset);
+		this.writeNodeTo(element, os, new XMLErrorListener(),false, charset, false);
 	}
 	public void writeTo(Element element,OutputStream os,ErrorListener errorListener, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(element, os,errorListener,false, charset);
+		this.writeNodeTo(element, os,errorListener,false, charset, false);
 	}
 	public void writeTo(Element element,OutputStream os,boolean omitXMLDeclaration, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(element, os, new XMLErrorListener(),omitXMLDeclaration, charset);
+		this.writeNodeTo(element, os, new XMLErrorListener(),omitXMLDeclaration, charset, false);
 	}
 	public void writeTo(Element element,OutputStream os,ErrorListener errorListener,boolean omitXMLDeclaration, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(element, os,errorListener,omitXMLDeclaration, charset);
+		this.writeNodeTo(element, os,errorListener,omitXMLDeclaration, charset, false);
+	}
+	public void writeTo(Element element,OutputStream os,boolean omitXMLDeclaration, String charset, boolean indent)throws TransformerException,IOException, XMLException{
+		this.writeNodeTo(element, os, new XMLErrorListener(),omitXMLDeclaration, charset, indent);
+	}
+	public void writeTo(Element element,OutputStream os,ErrorListener errorListener,boolean omitXMLDeclaration, String charset, boolean indent)throws TransformerException,IOException, XMLException{
+		this.writeNodeTo(element, os,errorListener,omitXMLDeclaration, charset, indent);
 	}
 
 	public void writeTo(Element element,Writer writer)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(element, writer, new XMLErrorListener(),false, null);
+		this.writeNodeTo(element, writer, new XMLErrorListener(),false, null, false);
 	}
 	public void writeTo(Element element,Writer writer,ErrorListener errorListener)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(element, writer,errorListener,false, null);
+		this.writeNodeTo(element, writer,errorListener,false, null, false);
 	}
 	public void writeTo(Element element,Writer writer,boolean omitXMLDeclaration)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(element, writer, new XMLErrorListener(), omitXMLDeclaration, null);
+		this.writeNodeTo(element, writer, new XMLErrorListener(), omitXMLDeclaration, null, false);
 	}
 	public void writeTo(Element element,Writer writer,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(element, writer,errorListener, omitXMLDeclaration, null);
+		this.writeNodeTo(element, writer,errorListener, omitXMLDeclaration, null, false);
 	}
 	public void writeTo(Element element,Writer writer, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(element, writer, new XMLErrorListener(),false, charset);
+		this.writeNodeTo(element, writer, new XMLErrorListener(),false, charset, false);
 	}
 	public void writeTo(Element element,Writer writer,ErrorListener errorListener, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(element, writer,errorListener,false, charset);
+		this.writeNodeTo(element, writer,errorListener,false, charset, false);
 	}
 	public void writeTo(Element element,Writer writer,boolean omitXMLDeclaration, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(element, writer, new XMLErrorListener(), omitXMLDeclaration, charset);
+		this.writeNodeTo(element, writer, new XMLErrorListener(), omitXMLDeclaration, charset, false);
 	}
 	public void writeTo(Element element,Writer writer,ErrorListener errorListener,boolean omitXMLDeclaration, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(element, writer,errorListener, omitXMLDeclaration, charset);
+		this.writeNodeTo(element, writer,errorListener, omitXMLDeclaration, charset, false);
+	}
+	public void writeTo(Element element,Writer writer,boolean omitXMLDeclaration, String charset, boolean indent)throws TransformerException,IOException, XMLException{
+		this.writeNodeTo(element, writer, new XMLErrorListener(), omitXMLDeclaration, charset, indent);
+	}
+	public void writeTo(Element element,Writer writer,ErrorListener errorListener,boolean omitXMLDeclaration, String charset, boolean indent)throws TransformerException,IOException, XMLException{
+		this.writeNodeTo(element, writer,errorListener, omitXMLDeclaration, charset, indent);
 	}
 
 	public void writeTo(Element element,File file)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(element, file, new XMLErrorListener(),false, null);
+		this.writeNodeTo(element, file, new XMLErrorListener(),false, null, false);
 	}
 	public void writeTo(Element element,File file,ErrorListener errorListener)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(element, file,errorListener,false, null);
+		this.writeNodeTo(element, file,errorListener,false, null, false);
 	}
 	public void writeTo(Element element,File file,boolean omitXMLDeclaration)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(element, file, new XMLErrorListener(),omitXMLDeclaration, null);
+		this.writeNodeTo(element, file, new XMLErrorListener(),omitXMLDeclaration, null, false);
 	}
 	public void writeTo(Element element,File file,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(element, file,errorListener,omitXMLDeclaration, null);
+		this.writeNodeTo(element, file,errorListener,omitXMLDeclaration, null, false);
 	}
 	public void writeTo(Element element,File file, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(element, file, new XMLErrorListener(),false, charset);
+		this.writeNodeTo(element, file, new XMLErrorListener(),false, charset, false);
 	}
 	public void writeTo(Element element,File file,ErrorListener errorListener, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(element, file,errorListener,false, charset);
+		this.writeNodeTo(element, file,errorListener,false, charset, false);
 	}
 	public void writeTo(Element element,File file,boolean omitXMLDeclaration, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(element, file, new XMLErrorListener(),omitXMLDeclaration, charset);
+		this.writeNodeTo(element, file, new XMLErrorListener(),omitXMLDeclaration, charset, false);
 	}
 	public void writeTo(Element element,File file,ErrorListener errorListener,boolean omitXMLDeclaration, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(element, file,errorListener,omitXMLDeclaration, charset);
+		this.writeNodeTo(element, file,errorListener,omitXMLDeclaration, charset, false);
+	}
+	public void writeTo(Element element,File file,boolean omitXMLDeclaration, String charset, boolean indent)throws TransformerException,IOException, XMLException{
+		this.writeNodeTo(element, file, new XMLErrorListener(),omitXMLDeclaration, charset, indent);
+	}
+	public void writeTo(Element element,File file,ErrorListener errorListener,boolean omitXMLDeclaration, String charset, boolean indent)throws TransformerException,IOException, XMLException{
+		this.writeNodeTo(element, file,errorListener,omitXMLDeclaration, charset, indent);
 	}
 
 	public void writeTo(Node node,OutputStream os)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(node,os, new XMLErrorListener(),false, null);
+		this.writeNodeTo(node,os, new XMLErrorListener(),false, null, false);
 	}
 	public void writeTo(Node node,OutputStream os,ErrorListener errorListener)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(node,os,errorListener,false, null);
+		this.writeNodeTo(node,os,errorListener,false, null, false);
 	}
 	public void writeTo(Node node,OutputStream os,boolean omitXMLDeclaration)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(node,os, new XMLErrorListener(),omitXMLDeclaration, null);
+		this.writeNodeTo(node,os, new XMLErrorListener(),omitXMLDeclaration, null, false);
 	}
 	public void writeTo(Node node,OutputStream os,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(node,os,errorListener,omitXMLDeclaration, null);
+		this.writeNodeTo(node,os,errorListener,omitXMLDeclaration, null, false);
 	}
 	public void writeTo(Node node,OutputStream os, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(node,os, new XMLErrorListener(),false, charset);
+		this.writeNodeTo(node,os, new XMLErrorListener(),false, charset, false);
 	}
 	public void writeTo(Node node,OutputStream os,ErrorListener errorListener, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(node,os,errorListener,false, charset);
+		this.writeNodeTo(node,os,errorListener,false, charset, false);
 	}
 	public void writeTo(Node node,OutputStream os,boolean omitXMLDeclaration, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(node,os, new XMLErrorListener(),omitXMLDeclaration, charset);
+		this.writeNodeTo(node,os, new XMLErrorListener(),omitXMLDeclaration, charset, false);
 	}
 	public void writeTo(Node node,OutputStream os,ErrorListener errorListener,boolean omitXMLDeclaration, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(node,os,errorListener,omitXMLDeclaration, charset);
+		this.writeNodeTo(node,os,errorListener,omitXMLDeclaration, charset, false);
+	}
+	public void writeTo(Node node,OutputStream os,boolean omitXMLDeclaration, String charset, boolean indent)throws TransformerException,IOException, XMLException{
+		this.writeNodeTo(node,os, new XMLErrorListener(),omitXMLDeclaration, charset, indent);
+	}
+	public void writeTo(Node node,OutputStream os,ErrorListener errorListener,boolean omitXMLDeclaration, String charset, boolean indent)throws TransformerException,IOException, XMLException{
+		this.writeNodeTo(node,os,errorListener,omitXMLDeclaration, charset, indent);
+	}
+	private void writeNodeTo(Node node,OutputStream os,ErrorListener errorListener,boolean omitXMLDeclaration, String charset, boolean indent)throws TransformerException,IOException, XMLException, XMLException{
+		TransformerConfig config = new TransformerConfig();
+		config.setOmitXMLDeclaration(omitXMLDeclaration);
+		config.setCharset(charset);
+		config.setIndent(indent);
+		writeTo(node,os,errorListener,config);
 	}
 
+
 	public void writeTo(Node node,Writer writer)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(node,writer, new XMLErrorListener(),false, null);
+		this.writeNodeTo(node,writer, new XMLErrorListener(),false, null, false);
 	}
 	public void writeTo(Node node,Writer writer,ErrorListener errorListener)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(node,writer,errorListener,false, null);
+		this.writeNodeTo(node,writer,errorListener,false, null, false);
 	}
 	public void writeTo(Node node,Writer writer,boolean omitXMLDeclaration)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(node,writer, new XMLErrorListener(),omitXMLDeclaration, null);
+		this.writeNodeTo(node,writer, new XMLErrorListener(),omitXMLDeclaration, null, false);
 	}
 	public void writeTo(Node node,Writer writer,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(node,writer,errorListener,omitXMLDeclaration, null);
+		this.writeNodeTo(node,writer,errorListener,omitXMLDeclaration, null, false);
 	}
 	public void writeTo(Node node,Writer writer, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(node,writer, new XMLErrorListener(),false, charset);
+		this.writeNodeTo(node,writer, new XMLErrorListener(),false, charset, false);
 	}
 	public void writeTo(Node node,Writer writer,ErrorListener errorListener, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(node,writer,errorListener,false, charset);
+		this.writeNodeTo(node,writer,errorListener,false, charset, false);
 	}
 	public void writeTo(Node node,Writer writer,boolean omitXMLDeclaration, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(node,writer, new XMLErrorListener(),omitXMLDeclaration, charset);
+		this.writeNodeTo(node,writer, new XMLErrorListener(),omitXMLDeclaration, charset, false);
 	}
 	public void writeTo(Node node,Writer writer,ErrorListener errorListener,boolean omitXMLDeclaration, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(node,writer,errorListener,omitXMLDeclaration, charset);
+		this.writeNodeTo(node,writer,errorListener,omitXMLDeclaration, charset, false);
+	}
+	public void writeTo(Node node,Writer writer,boolean omitXMLDeclaration, String charset, boolean indent)throws TransformerException,IOException, XMLException{
+		this.writeNodeTo(node,writer, new XMLErrorListener(),omitXMLDeclaration, charset, indent);
+	}
+	public void writeTo(Node node,Writer writer,ErrorListener errorListener,boolean omitXMLDeclaration, String charset, boolean indent)throws TransformerException,IOException, XMLException{
+		this.writeNodeTo(node,writer,errorListener,omitXMLDeclaration, charset, indent);
+	}
+	private void writeNodeTo(Node node,Writer writer,ErrorListener errorListener,boolean omitXMLDeclaration, String charset, boolean indent)throws TransformerException,IOException, XMLException{
+		TransformerConfig config = new TransformerConfig();
+		config.setOmitXMLDeclaration(omitXMLDeclaration);
+		config.setCharset(charset);
+		config.setIndent(indent);
+		writeTo(node,writer,errorListener,config);
 	}
 
 	public void writeTo(Node node,File file)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(node,file, new XMLErrorListener(),false, null);
+		this.writeNodeTo(node,file, new XMLErrorListener(),false, null, false);
 	}
 	public void writeTo(Node node,File file,ErrorListener errorListener)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(node,file,errorListener,false, null);
+		this.writeNodeTo(node,file,errorListener,false, null, false);
 	}
 	public void writeTo(Node node,File file,boolean omitXMLDeclaration)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(node,file, new XMLErrorListener(),omitXMLDeclaration, null);
+		this.writeNodeTo(node,file, new XMLErrorListener(),omitXMLDeclaration, null, false);
 	}
 	public void writeTo(Node node,File file,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(node,file,errorListener,omitXMLDeclaration, null);
+		this.writeNodeTo(node,file,errorListener,omitXMLDeclaration, null, false);
 	}
 	public void writeTo(Node node,File file, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(node,file, new XMLErrorListener(),false, charset);
+		this.writeNodeTo(node,file, new XMLErrorListener(),false, charset, false);
 	}
 	public void writeTo(Node node,File file,ErrorListener errorListener, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(node,file,errorListener,false, charset);
+		this.writeNodeTo(node,file,errorListener,false, charset, false);
 	}
 	public void writeTo(Node node,File file,boolean omitXMLDeclaration, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(node,file, new XMLErrorListener(),omitXMLDeclaration, charset);
+		this.writeNodeTo(node,file, new XMLErrorListener(),omitXMLDeclaration, charset, false);
 	}
 	public void writeTo(Node node,File file,ErrorListener errorListener,boolean omitXMLDeclaration, String charset)throws TransformerException,IOException, XMLException{
-		this.writeNodeTo(node,file,errorListener,omitXMLDeclaration, charset);
+		this.writeNodeTo(node,file,errorListener,omitXMLDeclaration, charset, false);
 	}
-
+	public void writeTo(Node node,File file,boolean omitXMLDeclaration, String charset, boolean indent)throws TransformerException,IOException, XMLException{
+		this.writeNodeTo(node,file, new XMLErrorListener(),omitXMLDeclaration, charset, indent);
+	}
+	public void writeTo(Node node,File file,ErrorListener errorListener,boolean omitXMLDeclaration, String charset, boolean indent)throws TransformerException,IOException, XMLException{
+		this.writeNodeTo(node,file,errorListener,omitXMLDeclaration, charset, indent);
+	}
+	private void writeNodeTo(Node node,File file,ErrorListener errorListener,boolean omitXMLDeclaration, String charset, boolean indent)throws TransformerException,IOException, XMLException{
+		TransformerConfig config = new TransformerConfig();
+		config.setOmitXMLDeclaration(omitXMLDeclaration);
+		config.setCharset(charset);
+		config.setIndent(indent);
+		writeTo(node,file,errorListener,config);
+	}
 	
-	private void writeNodeTo(Node node,OutputStream os,ErrorListener errorListener,boolean omitXMLDeclaration, String charset)throws TransformerException,IOException, XMLException, XMLException{
+	public void writeTo(Node node,OutputStream os,TransformerConfig config)throws TransformerException,IOException, XMLException, XMLException{
+		writeTo(node,os,new XMLErrorListener(),config);
+	}
+	public void writeTo(Node node,OutputStream os,ErrorListener errorListener,TransformerConfig config)throws TransformerException,IOException, XMLException, XMLException{
 		Source source = new DOMSourceFix(node);
 		StreamResult result = new StreamResult(os);
 		Transformer transformer = getTransformerFactory().newTransformer();
-		if(omitXMLDeclaration)
+		if(config!=null && config.isOmitXMLDeclaration()) {
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,"yes");
-		if(charset!=null) {
-			transformer.setOutputProperty(OutputKeys.ENCODING, charset);
 		}
+		if(config!=null && config.getCharset()!=null) {
+			transformer.setOutputProperty(OutputKeys.ENCODING, config.getCharset());
+		}
+		if(config!=null && config.isIndent()) {
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		}
+		transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 		transformer.setErrorListener(errorListener);
 		transformer.transform(source, result);
 		os.flush();
 	}
-	private void writeNodeTo(Node node,Writer writer,ErrorListener errorListener,boolean omitXMLDeclaration, String charset)throws TransformerException,IOException, XMLException{
+	
+	public void writeTo(Node node,Writer writer,TransformerConfig config)throws TransformerException,IOException, XMLException{
+		writeTo(node,writer,new XMLErrorListener(),config);
+	}
+	public void writeTo(Node node,Writer writer,ErrorListener errorListener,TransformerConfig config)throws TransformerException,IOException, XMLException{
 		Source source = new DOMSourceFix(node);
 		StreamResult result = new StreamResult(writer);
 		Transformer transformer = getTransformerFactory().newTransformer();
-		if(omitXMLDeclaration)
+		if(config!=null && config.isOmitXMLDeclaration()) {
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,"yes");
-		if(charset!=null) {
-			transformer.setOutputProperty(OutputKeys.ENCODING, charset);
+		}
+		if(config!=null && config.getCharset()!=null) {
+			transformer.setOutputProperty(OutputKeys.ENCODING, config.getCharset());
+		}
+		if(config!=null && config.isIndent()) {
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 		}
 		transformer.setErrorListener(errorListener);
 		transformer.transform(source, result);
 		writer.flush();
 	}
-	private void writeNodeTo(Node node,File file,ErrorListener errorListener,boolean omitXMLDeclaration, String charset)throws TransformerException,IOException, XMLException{
+	
+	public void writeTo(Node node,File file,TransformerConfig config)throws TransformerException,IOException, XMLException{
+		writeTo(node,file,new XMLErrorListener(),config);
+	}
+	public void writeTo(Node node,File file,ErrorListener errorListener,TransformerConfig config)throws TransformerException,IOException, XMLException{
 		Source source = new DOMSourceFix(node);
 		StreamResult result = new StreamResult(file);
 		Transformer transformer = getTransformerFactory().newTransformer();
-		if(omitXMLDeclaration)
+		if(config!=null && config.isOmitXMLDeclaration()) {
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,"yes");
-		if(charset!=null) {
-			transformer.setOutputProperty(OutputKeys.ENCODING, charset);
+		}
+		if(config!=null && config.getCharset()!=null) {
+			transformer.setOutputProperty(OutputKeys.ENCODING, config.getCharset());
+		}
+		if(config!=null && config.isIndent()) {
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 		}
 		transformer.setErrorListener(errorListener);
 		transformer.transform(source, result);

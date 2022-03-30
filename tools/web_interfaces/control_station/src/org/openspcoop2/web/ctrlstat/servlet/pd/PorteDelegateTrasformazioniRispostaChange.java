@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -398,7 +398,8 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 			}
 			
 				
-			boolean isOk = porteDelegateHelper.trasformazioniRispostaCheckData(TipoOperazione.CHANGE, oldRegola, oldRisposta);
+			boolean isOk = porteDelegateHelper.trasformazioniRispostaCheckData(TipoOperazione.CHANGE, oldRegola, oldRisposta,
+					serviceBindingMessage);
 			
 			if(isOk) {
 				// quando un parametro viene inviato come vuoto, sul db viene messo null, gestisco il caso
@@ -488,7 +489,7 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 				rispostaDaAggiornare.getApplicabilita().getContentTypeList().addAll(Arrays.asList(contentType.split(",")));
 			}
 			
-			rispostaDaAggiornare.setReturnCode(StringUtils.isNotEmpty(trasformazioneContenutoRispostaReturnCode) ? Integer.parseInt(trasformazioneContenutoRispostaReturnCode) : null);
+			rispostaDaAggiornare.setReturnCode(StringUtils.isNotEmpty(trasformazioneContenutoRispostaReturnCode) ? trasformazioneContenutoRispostaReturnCode : null);
 			
 			rispostaDaAggiornare.setConversione(trasformazioneContenutoRispostaAbilitato);
 			

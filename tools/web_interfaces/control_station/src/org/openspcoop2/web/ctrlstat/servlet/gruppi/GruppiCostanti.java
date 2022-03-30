@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -48,7 +48,8 @@ public class GruppiCostanti {
 		SERVLET_GRUPPI.add(SERVLET_NAME_GRUPPI_LIST);
 	}
 	
-	
+	/* NOME VISTA CUSTOM */
+	public final static String GRUPPI_NOME_VISTA_CUSTOM_LISTA = "gruppi";
 	
 	
 	public final static String LABEL_GRUPPO = "Tag";
@@ -87,4 +88,6 @@ public class GruppiCostanti {
 	public final static String[] LABELS_SELECT_PARAMETRO_GRUPPO_SERVICE_BINDING = {  LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING_QUALSIASI, LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING_SOAP, LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING_REST  };
 	
 	public final static String LABEL_IN_USO_BODY_HEADER_NESSUN_RISULTATO = "Il tag non risulta utilizzato in alcuna configurazione";	
+	
+	public final static String MESSAGE_METADATI_GRUPPO_TIPO = GruppiCostanti.LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING +": {0}";
 }

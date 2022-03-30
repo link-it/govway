@@ -78,6 +78,7 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.engine.exceptions" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.engine.fs_recovery" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.engine.statistic" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.engine.status" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.engine.transaction" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.engine.utils" />
 				<antcall target="compile_src_openspcoop2">

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -83,6 +83,7 @@ public class Costanti {
 	public static final String ICONA_ID_APPLICATIVO = "apps";
 	public static final String ICONA_ID_MESSAGGIO = "message";
 	public static final String ICONA_ID_TRANSAZIONE = "swap_horiz";
+	public static final String ICONA_INFO_WHITE = "info_outline";
 
 	public final static String LABEL_OPENSPCOOP2_WEB = "https://govway.org";
 	
@@ -106,6 +107,8 @@ public class Costanti {
 	/* costanti properties file messages_it.properties*/ 
 	
 	public static final String DATA_LABEL_KEY = "commons.data.label";
+	public static final String ESITO_LABEL_KEY = "commons.esito.label";
+	public static final String DESCRIZIONE_LABEL_KEY = "commons.descrizione.label";
 	public static final String AZIONE_LABEL_KEY = "commons.azione.label";
 	public static final String SERVIZIO_APPLICATIVO_LABEL_KEY = "commons.applicativo.label";
 	public static final String API_LABEL_KEY = "commons.api.label";

@@ -10,6 +10,7 @@ L'autorizzazione per token claims permette di effettuare dei semplici controlli 
 La configurazione viene effettuata inserendo nel campo di testo un claim da verificare per ogni riga, facendo seguire dopo l'uguale un valore fornito in una delle seguenti modalità:
 
 - ${anyValue} : indica qualsiasi valore non nullo
+- ${undefined} : la risorsa indicata non deve esistere o non deve essere valorizzata
 - ${regExpMatch:EXPR} : la regola è soddisfatta se l'intero valore del claim ha un match rispetto all'espressione regolare EXPR indicata
 - ${regExpFind:EXPR} : simile alla precedente regola, il match dell'espressione regolare può avvenire anche su una sottostringa del valore del claim
 - valore : indica esattamente il valore (case sensitive) che deve possedere il claim; il valore può essere definito come costante o contenere parti dinamiche risolte a runtime dal Gateway descritte di seguito
@@ -19,7 +20,7 @@ Le espressioni utilizzabili come parti dinamiche, risolte a runtime dal gateway,
 
 - ${header:NAME}: valore presente nell'header http che possiede il nome 'NAME'
 - ${query:NAME}: valore associato al parametro della url con nome 'NAME'
-- ${urlRegExp:EXPR}: espressione regolare applicata sulla url di invocazione
+- ${urlRegExp:EXPR}: espressione regolare applicata sulla url di invocazione (l'espressione deve avere un match con l'intera url)
 - ${xPath:EXPR}: espressione XPath applicata su un messaggio XML
 - ${jsonPath:EXPR}: espressione JSONPath applicata su un messaggio JSON
 - ${transportContext:FIELD}: permette di accedere ai dati della richiesta http; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext' (es. per il principal usare ${transportContext:credential.principal})

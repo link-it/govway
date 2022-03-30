@@ -3705,11 +3705,25 @@
         <!-- Gestione dei messaggi SOAPWithAttachments (con gestione del manifest e-Gov)  e Tunnel SOAP-->
         
         <!-- gestione manifest eGov disabilitato -->
-        <porta-delegata gestione-manifest="disabilitato" nome="GestioneManifestDisabilitata" autenticazione="none" autorizzazione="none" 
+        <porta-delegata gestione-manifest="disabilitato" nome="GestioneManifestDisabilitataStreaming" autenticazione="none" autorizzazione="none" 
             integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
-            <azione nome="gestioneManifestDisabilitata" />
+            <azione nome="gestioneManifestDisabilitataStreaming" />
+        </porta-delegata>
+        <porta-delegata gestione-manifest="disabilitato" nome="GestioneManifestDisabilitataDOM" autenticazione="none" autorizzazione="none" 
+            integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="gestioneManifestDisabilitataDOM" />
+            <correlazione-applicativa>
+                <elemento 
+                    identificazione="contentBased" pattern="//attachInZIP1/@href" identificazione-fallita="blocca" />
+            </correlazione-applicativa>
+            <correlazione-applicativa-risposta>
+                <elemento 
+                    identificazione="contentBased" pattern="//attachInZIP1/@href" identificazione-fallita="blocca" />
+            </correlazione-applicativa-risposta>
         </porta-delegata>
         
         <!-- TestFunzionalita TunnelSOAP con profilo sincrono: XML --> 
@@ -8062,15 +8076,31 @@
         <!-- Gestione dei messaggi SOAPWithAttachments (con gestione del manifest e-Gov) -->
         
         <!-- Gestione manifest eGov disabilitato -->
-        <porta-applicativa autenticazione="none" gestione-manifest="disabilitato" nome="PA_GestioneManifestDisabilitata" >
+        <porta-applicativa autenticazione="none" gestione-manifest="disabilitato" nome="PA_GestioneManifestDisabilitataStreaming" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
-            <azione nome="gestioneManifestDisabilitata" />
+            <azione nome="gestioneManifestDisabilitataStreaming" />
             <servizio-applicativo nome="govwayTestSuite" />
 	    <soggetti>
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        
+        <porta-applicativa autenticazione="none" gestione-manifest="disabilitato" nome="PA_GestioneManifestDisabilitataDOM" >
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="gestioneManifestDisabilitataDOM" />
+            <servizio-applicativo nome="govwayTestSuite" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
+            <correlazione-applicativa>
+                <elemento 
+                    identificazione="contentBased" pattern="//attachInZIP1/@href" identificazione-fallita="blocca" />
+            </correlazione-applicativa>
+            <correlazione-applicativa-risposta>
+                <elemento 
+                    identificazione="contentBased" pattern="//attachInZIP1/@href" identificazione-fallita="blocca" />
+            </correlazione-applicativa-risposta>
+        </porta-applicativa>
+
         <!-- TestFunzionalita TunnelSOAP con profilo sincrono: XML --> 
         <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_TunnelSOAP">
             <servizio tipo="spc" nome="RichiestaBando" />
@@ -8999,14 +9029,14 @@
 	<servizio-applicativo nome="serializeAndReturnDynamicFile" > 
             <invocazione-servizio>
                 <connettore tipo="file" nome="serializeAndReturnDynamicFile">
-                    <property nome="outputFile" valore="/var/tmp/TEST/SINCRONO/{date:yyyyMMdd_hhmmssSSS}/REQ_{transaction:id}_{context:PROTOCOL_NAME}.xml" />
-		    <property nome="outputFileHeaders" valore="/var/tmp/TEST/SINCRONO/{date:yyyyMMdd_hhmmssSSS}/REQ_{busta:tipoMittente}{busta:busta.mittente.identificativo.base}.meta" />
+                    <property nome="outputFile" valore="/var/tmp/TEST/SINCRONO/{date:yyyyMMdd_hhmmss}/REQ_{transaction:id}_{context:PROTOCOL_NAME}.xml" />
+		    <property nome="outputFileHeaders" valore="/var/tmp/TEST/SINCRONO/{date:yyyyMMdd_hhmmss}/REQ_{busta:tipoMittente}{busta:busta.mittente.identificativo.base}.meta" />
 		    <property nome="outputFileAutoCreateParentDirectory" valore="abilitato" />
 		    <property nome="outputFileOverwriteIfExists" valore="abilitato" />
 		    <property nome="response" valore="abilitato" />
 		    <!-- echo -->
-		    <property nome="inputFile" valore="/var/tmp/TEST/SINCRONO/{date:yyyyMMdd_hhmmssSSS}/REQ_{transaction:id}_{context:PROTOCOL_NAME}.xml" />
-		    <property nome="inputFileHeaders" valore="/var/tmp/TEST/SINCRONO/{date:yyyyMMdd_hhmmssSSS}/REQ_{busta:tipoMittente}{busta:busta.mittente.identificativo.base}.meta" />
+		    <property nome="inputFile" valore="/var/tmp/TEST/SINCRONO/{date:yyyyMMdd_hhmmss}/REQ_{transaction:id}_{context:PROTOCOL_NAME}.xml" />
+		    <property nome="inputFileHeaders" valore="/var/tmp/TEST/SINCRONO/{date:yyyyMMdd_hhmmss}/REQ_{busta:tipoMittente}{busta:busta.mittente.identificativo.base}.meta" />
 		    <property nome="inputFileWaitTimeIfNotExists" valore="10000" />
                 </connettore>
             </invocazione-servizio>  

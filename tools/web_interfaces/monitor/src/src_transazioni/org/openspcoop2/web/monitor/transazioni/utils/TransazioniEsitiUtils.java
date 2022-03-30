@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -74,13 +74,16 @@ public class TransazioniEsitiUtils {
 					esitoLabel = "HTTP " +httpStatusCode.intValue()+" (Limite Richieste)";
 				}
 				else if(esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA) == esito.intValue()) {
-					esitoLabel = "HTTP " +httpStatusCode.intValue()+" (Consegna Multipla in Corso)";
+					esitoLabel = "HTTP " +httpStatusCode.intValue()+" (Consegna Asincrona in Coda)";
+				}
+				else if(esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_IN_CORSO) == esito.intValue()) {
+					esitoLabel = "HTTP " +httpStatusCode.intValue()+" (Consegna Asincrona in Corso)";
 				}
 				else if(esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_COMPLETATA) == esito.intValue()) {
-					esitoLabel = "HTTP " +httpStatusCode.intValue()+" (Consegna Multipla)";
+					esitoLabel = "HTTP " +httpStatusCode.intValue()+" (Consegna Asincrona)";
 				}
 				else if(esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_FALLITA) == esito.intValue()) {
-					esitoLabel = "HTTP " +httpStatusCode.intValue()+" (Consegna Multipla Fallita)";
+					esitoLabel = "HTTP " +httpStatusCode.intValue()+" (Consegna Asincrona Fallita)";
 				}
 				else if(esitiProperties.convertoToCode(EsitoTransazioneName.HTTP_3xx) == esito.intValue()) {
 					esitoLabel = esitoLabel.replace("Risposta ", "").replace("3xx", httpStatusCode.intValue()+"");

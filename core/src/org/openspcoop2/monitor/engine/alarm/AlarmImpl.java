@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -55,6 +55,7 @@ public class AlarmImpl implements IAlarm {
 	private String threadName;
 	private String username;
 	private AlarmLogger alarmLogger;
+	private AlarmThreadStatus alarmThreadStatus;
 	
 	public AlarmImpl(Allarme configAllarme,Logger log, DAOFactory daoFactory) {
 		this.id = configAllarme.getNome();
@@ -63,12 +64,21 @@ public class AlarmImpl implements IAlarm {
 		this._logger = log;
 		this.daoFactory = daoFactory;
 		this.threadName = "SDK";
-		this.alarmLogger = new AlarmLogger(this.nome, this.id, this.threadName, this._logger);
+		this.alarmLogger = new AlarmLogger(this.nome, this.id, this.threadName, this._logger,
+				daoFactory!=null && daoFactory.getLog()!=null ? daoFactory.getLog() : this._logger);
 	}
 	
 	protected void setThreadName(String threadName) {
 		this.threadName = threadName;
 		this.alarmLogger.setThreadName(this.threadName);
+	}
+	
+	@Override
+	public AlarmThreadStatus getActiveThreadStatus() {
+		return this.alarmThreadStatus;
+	}
+	protected void setAlarmThreadStatus(AlarmThreadStatus alarmThreadStatus) {
+		this.alarmThreadStatus = alarmThreadStatus;
 	}
 	
 	public void setUsername(String username) {
@@ -92,6 +102,12 @@ public class AlarmImpl implements IAlarm {
 	
 	@Override
 	public void changeStatus(AlarmStatus nuovoStatoAllarme) throws AlarmException, AlarmNotifyException {
+		
+		if(this.alarmThreadStatus!=null && !this.alarmThreadStatus.isRunning()) {
+			this.alarmLogger.info("Cambio di stato non effettuato, poichè è stato rilevato uno shutdown in corso");
+			return;
+		}
+		
 		this._changeStatus(null, null, null, nuovoStatoAllarme);
 	}
 	
@@ -221,6 +237,15 @@ public class AlarmImpl implements IAlarm {
 	public void setManuallyUpdateState(boolean manuallyUpdateState) {
 		this.manuallyUpdateState = manuallyUpdateState;
 	}
+	
+	@Override
+	public boolean isManuallyAckCriteria() {
+		return this.manuallyAckCriteria;
+	}
+	
+	public void setManuallyAckCriteria(boolean manuallyAckCriteria) {
+		this.manuallyAckCriteria = manuallyAckCriteria;
+	}
 
 	private String id = null;
 	private String nome = null;
@@ -229,4 +254,5 @@ public class AlarmImpl implements IAlarm {
 	private AlarmStatus status = null;
 	private String pluginClassName = null;
 	private boolean manuallyUpdateState = false;
+	private boolean manuallyAckCriteria = false;
 }

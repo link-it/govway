@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -40,6 +40,8 @@ public class MonitorFormBean {
 	private String pdd;
 	private String sorgenteDati;
 	
+	private String orderByConsegnaAsincrona;
+	
 	private String idMessaggio;
 	private String messagePattern;
 	private BustaSoggetto mittente;
@@ -68,6 +70,14 @@ public class MonitorFormBean {
 
 	public void setSorgenteDati(String sorgenteDati) {
 		this.sorgenteDati = sorgenteDati;
+	}
+	
+	public String getOrderByConsegnaAsincrona() {
+		return this.orderByConsegnaAsincrona;
+	}
+
+	public void setOrderByConsegnaAsincrona(String orderByConsegnaAsincrona) {
+		this.orderByConsegnaAsincrona = orderByConsegnaAsincrona;
 	}
 	
 	public String getTipo() {

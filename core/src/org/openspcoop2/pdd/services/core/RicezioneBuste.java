@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -137,7 +137,7 @@ import org.openspcoop2.pdd.core.token.PolicyGestioneToken;
 import org.openspcoop2.pdd.core.token.attribute_authority.EsitoRecuperoAttributi;
 import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.core.token.attribute_authority.PolicyAttributeAuthority;
-import org.openspcoop2.pdd.core.token.attribute_authority.pd.GestioneAttributeAuthority;
+import org.openspcoop2.pdd.core.token.attribute_authority.pa.GestioneAttributeAuthority;
 import org.openspcoop2.pdd.core.token.pa.EsitoGestioneTokenPortaApplicativa;
 import org.openspcoop2.pdd.core.token.pa.EsitoPresenzaTokenPortaApplicativa;
 import org.openspcoop2.pdd.core.token.pa.GestioneToken;
@@ -2777,7 +2777,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 					}
 					
 					if (gestore != null) {
-						Credenziali credenzialiRitornate = gestore.elaborazioneCredenziali(this.inRequestContext.getConnettore(), this.requestMessage);
+						Credenziali credenzialiRitornate = gestore.elaborazioneCredenziali(this.identitaPdD, this.inRequestContext.getConnettore(), this.requestMessage);
 						if(credenzialiRitornate==null){
 							throw new Exception("Credenziali non ritornate");
 						}
@@ -7831,6 +7831,10 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 					this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.INTEROPERABILITY_PROFILE_ENVELOPING_RESPONSE_FAILED);
 					
 					OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
+					
+					if(responseMessage!=null && responseMessage.getParseException()!=null){
+						errorOpenSPCoopMsg.setParseException(responseMessage.getParseException());
+					}
 					
 					// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
 					this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);

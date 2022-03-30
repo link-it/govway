@@ -210,7 +210,7 @@
 											<h:outputLabel value="Numero Risultati" styleClass="labelSpinnerGraficiSolo" />
 											<rich:inputNumberSpinner value="#{distribuzionePerServizioBean.slice}" minValue="#{distribuzionePerServizioBean.minCategorie}"
 												maxValue="#{distribuzionePerServizioBean.maxCategorie}" cycled="false" styleClass="spinnerNumeroRisultatiGrafici">
-												<a4j:support event="onchange" actionListener="#{distribuzionePerAzioneBean.updateChartNumeroRisultati}" reRender="scriptPieChartPanel,gridComandi"/>
+												<a4j:support event="onchange" actionListener="#{distribuzionePerServizioBean.updateChartNumeroRisultati}" reRender="scriptPieChartPanel,gridComandi"/>
 											</rich:inputNumberSpinner>
 										</h:panelGrid>
 									</a4j:form>

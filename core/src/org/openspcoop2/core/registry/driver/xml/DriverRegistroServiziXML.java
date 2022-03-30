@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -51,6 +51,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
+import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.core.registry.GruppoAccordo;
@@ -65,6 +66,9 @@ import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.constants.ScopeContesto;
+import org.openspcoop2.core.registry.constants.TipiDocumentoLivelloServizio;
+import org.openspcoop2.core.registry.constants.TipiDocumentoSemiformale;
+import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -916,7 +920,37 @@ public class DriverRegistroServiziXML extends BeanUtilities
 		}
 	}
 
-
+	
+	@Override
+	public Documento getAllegato(IDAccordo idAccordo, String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		org.openspcoop2.core.registry.AccordoServizioParteComune aspc = getAccordoServizioParteComune(idAccordo);
+		if(aspc.sizeAllegatoList()>0) {
+			for (Documento doc : aspc.getAllegatoList()) {
+				File f = new File(doc.getFile());
+				if(nome.equals(doc.getFile()) || nome.equals(f.getName())) {
+					return doc;
+				}
+			}
+		}
+		throw new DriverRegistroServiziNotFound("Documento '"+nome+"' non trovato");
+	}
+	@Override
+	public Documento getSpecificaSemiformale(IDAccordo idAccordo, TipiDocumentoSemiformale tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		org.openspcoop2.core.registry.AccordoServizioParteComune aspc = getAccordoServizioParteComune(idAccordo);
+		if(aspc.sizeSpecificaSemiformaleList()>0) {
+			for (Documento doc : aspc.getSpecificaSemiformaleList()) {
+				File f = new File(doc.getFile());
+				if(nome.equals(doc.getFile()) || nome.equals(f.getName())) {
+					if(tipo.equals(doc.getTipo())) {
+						return doc;
+					}
+				}
+			}
+		}
+		throw new DriverRegistroServiziNotFound("Documento '"+nome+"' non trovato");
+	}
+	
+	
 	
 	
 	/* Porte di Dominio */
@@ -2101,7 +2135,65 @@ public class DriverRegistroServiziXML extends BeanUtilities
 		}
 	}
 
-
+	@Override
+	public Documento getAllegato(IDServizio idASPS, String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		org.openspcoop2.core.registry.AccordoServizioParteSpecifica asps = getAccordoServizioParteSpecifica(idASPS);
+		if(asps.sizeAllegatoList()>0) {
+			for (Documento doc : asps.getAllegatoList()) {
+				File f = new File(doc.getFile());
+				if(nome.equals(doc.getFile()) || nome.equals(f.getName())) {
+					return doc;
+				}
+			}
+		}
+		throw new DriverRegistroServiziNotFound("Documento '"+nome+"' non trovato");
+	}
+	@Override
+	public Documento getSpecificaSemiformale(IDServizio idASPS, TipiDocumentoSemiformale tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		org.openspcoop2.core.registry.AccordoServizioParteSpecifica asps = getAccordoServizioParteSpecifica(idASPS);
+		if(asps.sizeSpecificaSemiformaleList()>0) {
+			for (Documento doc : asps.getSpecificaSemiformaleList()) {
+				File f = new File(doc.getFile());
+				if(nome.equals(doc.getFile()) || nome.equals(f.getName())) {
+					if(tipo.equals(doc.getTipo())) {
+						return doc;
+					}
+				}
+			}
+		}
+		throw new DriverRegistroServiziNotFound("Documento '"+nome+"' non trovato");
+	}
+	
+	@Override
+	public Documento getSpecificaSicurezza(IDServizio idASPS, TipiDocumentoSicurezza tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		org.openspcoop2.core.registry.AccordoServizioParteSpecifica asps = getAccordoServizioParteSpecifica(idASPS);
+		if(asps.sizeSpecificaSicurezzaList()>0) {
+			for (Documento doc : asps.getSpecificaSicurezzaList()) {
+				File f = new File(doc.getFile());
+				if(nome.equals(doc.getFile()) || nome.equals(f.getName())) {
+					if(tipo.equals(doc.getTipo())) {
+						return doc;
+					}
+				}
+			}
+		}
+		throw new DriverRegistroServiziNotFound("Documento '"+nome+"' non trovato");
+	}
+	@Override
+	public Documento getSpecificaLivelloServizio(IDServizio idASPS, TipiDocumentoLivelloServizio tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		org.openspcoop2.core.registry.AccordoServizioParteSpecifica asps = getAccordoServizioParteSpecifica(idASPS);
+		if(asps.sizeSpecificaLivelloServizioList()>0) {
+			for (Documento doc : asps.getSpecificaLivelloServizioList()) {
+				File f = new File(doc.getFile());
+				if(nome.equals(doc.getFile()) || nome.equals(f.getName())) {
+					if(tipo.equals(doc.getTipo())) {
+						return doc;
+					}
+				}
+			}
+		}
+		throw new DriverRegistroServiziNotFound("Documento '"+nome+"' non trovato");
+	}
 	
 
 

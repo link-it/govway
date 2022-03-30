@@ -10,7 +10,7 @@ TRUNK_VERSION=3.3
 TAG_PDD_VERSION_PRODUCT="3"
 TAG_PDD_VERSION_MAJOR="3"
 TAG_PDD_MAJOR_VERSION="${TAG_PDD_VERSION_PRODUCT}.${TAG_PDD_VERSION_MAJOR}"
-TAG_PDD_MINOR_VERSION=5
+TAG_PDD_MINOR_VERSION=6
 TAG_PDD_PATCHLEVEL=p1
 ramo=tags # tags / branches
 GIT_URL=https://github.com/link-it/govway.git
@@ -199,7 +199,7 @@ if [ $# -eq 0 ] ; then
 	    infoPrintln "Verifiche (GPL/JavaDoc/StringBuffer) sui sorgenti ..."
 	    pushd ${WORKING_COPY} >> ${LOG_FILE} 2>&1
 	    ERROROUTPUT=
-	    for check in GPLCheck JavaDocCheck StringBufferCheck #XSDCheck
+	    for check in GPLCheck JavaDocCheck StringBufferCheck HashtableCheck VectorCheck #XSDCheck
 	    do
 		    [ $check == "XSDCheck" ] && PARAM=core/src/schemi/
 		    [ $check == "JavaDocCheck" ] && PARAM=true
@@ -388,7 +388,7 @@ mkdir -p ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/installer/lib/
 /bin/cp -rf ${WORKING_COPY}/lib/antinstaller/ ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/installer/lib/
 
 mkdir -p ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/installer/lib/shared
-/bin/cp -rf ${WORKING_COPY}/lib/shared/xercesImpl-2.12.1.jar ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/installer/lib/shared
+/bin/cp -rf ${WORKING_COPY}/lib/shared/xercesImpl-2.12.2.jar ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/installer/lib/shared
 /bin/cp -rf ${WORKING_COPY}/lib/shared/xml-apis-1.4.01.jar ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/installer/lib/shared
 
 mkdir -p ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/installer/commons 

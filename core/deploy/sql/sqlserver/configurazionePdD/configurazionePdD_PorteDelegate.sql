@@ -543,7 +543,7 @@ CREATE TABLE pd_transform_risp
 	conversione_tipo VARCHAR(255),
 	conversione_template VARBINARY(MAX),
 	content_type VARCHAR(255),
-	return_code INT,
+	return_code VARCHAR(255),
 	soap_envelope INT NOT NULL DEFAULT 0,
 	soap_envelope_as_attach INT NOT NULL DEFAULT 0,
 	soap_envelope_tipo VARCHAR(255),

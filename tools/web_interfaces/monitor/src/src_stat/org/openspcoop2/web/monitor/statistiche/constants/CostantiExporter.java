@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -51,6 +51,7 @@ public class CostantiExporter {
 	public final static String TIPO_DISTRIBUZIONE = "distribuzione";
 	public static final String TIPO_DISTRIBUZIONE_TEMPORALE = "temporale";
 	public static final String TIPO_DISTRIBUZIONE_ESITI = "esiti";
+	public static final String TIPO_DISTRIBUZIONE_ERRORI = "errori";
 	public static final String TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO = "soggetto_remoto";
 	public static final String TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE = "soggetto_locale";
 	public static final String TIPO_DISTRIBUZIONE_SERVIZIO = "servizio";
@@ -64,6 +65,7 @@ public class CostantiExporter {
 	static{
 		TIPI_DISTRIBUZIONE.add(TIPO_DISTRIBUZIONE_TEMPORALE);
 		TIPI_DISTRIBUZIONE.add(TIPO_DISTRIBUZIONE_ESITI);
+		TIPI_DISTRIBUZIONE.add(TIPO_DISTRIBUZIONE_ERRORI);
 		TIPI_DISTRIBUZIONE.add(TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO);
 		TIPI_DISTRIBUZIONE.add(TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE);
 		TIPI_DISTRIBUZIONE.add(TIPO_DISTRIBUZIONE_SERVIZIO);

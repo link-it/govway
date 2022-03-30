@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -34,6 +34,7 @@ import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TrasformazioneIdentificazioneRisorsaFallita;
 import org.openspcoop2.core.config.constants.TrasformazioneRegolaParametroTipoAzione;
 import org.openspcoop2.core.config.constants.VersioneSOAP;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
@@ -42,6 +43,7 @@ import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
 import org.openspcoop2.pdd.core.integrazione.TipoIntegrazione;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.web.lib.mvc.Costanti;
+import org.openspcoop2.web.lib.mvc.ForwardParams;
 
 /**
  * CostantiControlStation
@@ -123,6 +125,10 @@ public class CostantiControlStation {
 	public final static String SESSION_PARAMETRO_TIPO_DB = "tipoDB";
 	public final static String SESSION_PARAMETRO_OLD_CONFIGURAZIONE_PROPERTIES_PREFIX = Costanti.SESSION_PARAMETRO_OLD_CONFIGURAZIONE_PROPERTIES_PREFIX;
 	
+	/** STRUTS FORWARD */
+	public final static ForwardParams TIPO_OPERAZIONE_RESET_CACHE_ELEMENTO = ForwardParams.OTHER("ResetCacheElemento");
+	public final static ForwardParams TIPO_OPERAZIONE_VERIFICA_CERTIFICATI = ForwardParams.OTHER("VerificaCertificati");
+	
 	
 	/** LABEL GENERALI */
 	
@@ -197,6 +203,7 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CONTROLLI_AUTORIZZAZIONE = "Autorizzazione Contenuti - controlli richiesti";
 	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CONTROLLI_AUTORIZZAZIONE_CUSTOM = "Autorizzazione Contenuti - controlli custom";
 	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_GESTIONE_TOKEN = "Autenticazione Token"; //"Gestione Token";
+	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_MODALITA_GESTIONE_TOKEN = "Gestione Token";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE = "Stato";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM = "Tipo Personalizzato";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_BASIC_FORWARD = "Forward Authorization";
@@ -309,6 +316,11 @@ public class CostantiControlStation {
 	public final static String LABEL_INTEGRAZIONE = "Integrazione";
 	public final static String LABEL_INTEGRAZIONE_STATO = "Stato";
 	public final static String LABEL_METADATI = "Metadati";
+	public final static String LABEL_VERIFICA_CERTIFICATI = "Verifica Certificati";
+	public final static String LABEL_VERIFICA_CERTIFICATI_DI = "Verifica Certificati di ";
+	public final static String LABEL_CERTIFICATI = "Certificati";
+	public final static String LABEL_VERIFICA_CONNETTIVITA = "Verifica Connettività";
+	public final static String LABEL_VERIFICA_CONNETTIVITA_DI = "Verifica Connettività di ";
 	
 	public final static String LABEL_METADATI_INFO = "Per consentire lo scambio di informazioni, funzionali all’integrazione tra applicativi e gateway, sono previste differenti strutture dati, indicate con il termine Header di Integrazione, che possono essere attivate puntualmente su una API.<BR/>"+
 			"Il Gateway dispone di una sua configurazione di default per la generazione degli header. Tramite il campo '"+CostantiControlStation.LABEL_METADATI+"' è possibile ridefinire tale comportamento o disabilitare la generazione degli header di integrazione.";
@@ -319,10 +331,14 @@ public class CostantiControlStation {
 	public final static String LABEL_METADATI_RIDEFINITI_INFO_HEADER_SOAP =
 			"- <b>"+GruppoIntegrazione.SOAP.getCompactLabel()+"</b>: le informazioni sono incluse in uno specifico header SOAP proprietario di GovWay;<BR/>"+
 			"- <b>"+GruppoIntegrazione.WSA.getCompactLabel()+"</b>: le informazioni sono incluse in un header SOAP secondo il formato standard WS-Addressing;<BR/>";
-	public final static String LABEL_METADATI_RIDEFINITI_INFO_TEMPLATE_PLUGIN_BACKWARD =
+	public final static String LABEL_METADATI_RIDEFINITI_INFO_TEMPLATE_AUTENTICAZIONE_PLUGIN_BACKWARD =
 			org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
 			"- <b>"+GruppoIntegrazione.TEMPLATE.getCompactLabel()+"</b>: modalità che consente di definire tramite un template freemaker o velocity (definito a livello globale) come le informazioni siano inserite nel messaggio.<BR/>"+
 			"Il tipo di template (freemarker/velocity) e il path del file template possono essere specifici per API indicandoli nelle proprietà 'integrazione.template.richiesta/risposta.tipo' e 'integrazione.template.richiesta/risposta.file'.<BR/>"+
+			org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
+			"- <b>"+GruppoIntegrazione.AUTENTICAZIONE.getCompactLabel()+"</b>: modalità che consente di generare Header HTTP utilizzabili dal backend per autenticare l'API Gateway.<BR/>"+
+			"I nomi degli header generati ed i loro valori sono definiti a livello globale ma possono anche essere ridefiniti sull'API tramite la proprietà 'integrazione.autenticazione.headers'.<BR/>"+
+			"Per ridefinire un valore di un header è invece possibile utilizzare la proprietà 'integrazione.autenticazione.header.NOME_HEADER'.<BR/>"+
 			org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
 			"- <b>"+GruppoIntegrazione.PLUGIN.getCompactLabel()+"</b>: consente di selezionare un plugin personalizzato;<BR/>"+
 			org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
@@ -341,12 +357,12 @@ public class CostantiControlStation {
 	public final static String LABEL_METADATI_RIDEFINITI_INFO_SOAP = 
 			LABEL_METADATI_RIDEFINITI_INFO_START+
 			LABEL_METADATI_RIDEFINITI_INFO_HEADER_SOAP+
-			LABEL_METADATI_RIDEFINITI_INFO_TEMPLATE_PLUGIN_BACKWARD+
+			LABEL_METADATI_RIDEFINITI_INFO_TEMPLATE_AUTENTICAZIONE_PLUGIN_BACKWARD+
 			LABEL_METADATI_RIDEFINITI_INFO_BACKWARD_SOAP;
 
 	public final static String LABEL_METADATI_RIDEFINITI_INFO_REST = 
 			LABEL_METADATI_RIDEFINITI_INFO_START+
-			LABEL_METADATI_RIDEFINITI_INFO_TEMPLATE_PLUGIN_BACKWARD;
+			LABEL_METADATI_RIDEFINITI_INFO_TEMPLATE_AUTENTICAZIONE_PLUGIN_BACKWARD;
 	
 	public final static String LABEL_METADATI_BACKWARD_COMPATIBILITY_OPENSPCOOP_2 = "Backward Compatibility OpenSPCoop 2.x";
 	public final static String LABEL_METADATI_BACKWARD_COMPATIBILITY_OPENSPCOOP_1 = "Backward Compatibility OpenSPCoop 1.x";
@@ -411,6 +427,7 @@ public class CostantiControlStation {
 	public final static String LABEL_CONFIGURAZIONE_MTOM_INCOMPLETA = "Configurazione incompleta";
 	public final static String LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN = "Stato";
 	public final static String LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY = "Policy";
+	public final static String LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY_LABEL_COMPLETA = "Token Policy";
 	public final static String LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_OPZIONALE = "Token Opzionale";
 	public final static String LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT = "Validazione JWT";
 	public final static String LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION = "Introspection";
@@ -510,13 +527,14 @@ public class CostantiControlStation {
 	public final static String LABEL_CONFIGURAZIONE_CANALE_DI = "Canale di ";
 	
 	
+	public final static String LABEL_CONFIGURAZIONE_ENDPOINT = "Endpoint";
 	public final static String LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_BOTTONE = "Verifica";
 	public final static String LABEL_CONFIGURAZIONE_CONNETTIVITA = "Connettività";
 	public final static String LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_TITLE = "Verifica Connettività";
 	public final static String LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE = "Verifica Connettività Connettore";
 	public final static String LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_DI = LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE+" di ";
-	public final static String LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_EFFETTUATO_CON_SUCCESSO = "Test di connettività effettuato con successo";
-	public final static String LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_FALLITA = "Test di connettività fallito: ";
+	public final static String LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_EFFETTUATO_CON_SUCCESSO = CostantiLabel.LABEL_VERIFICA_CONNETTORE_EFFETTUATO_CON_SUCCESSO;
+	public final static String LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_FALLITA = CostantiLabel.LABEL_VERIFICA_CONNETTORE_FALLITA;
 	public final static String LABEL_VERIFICA_CONNETTORE_VALORE_LINK = "verifica";
 	public final static String LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI = "Verifica su tutti i nodi";
 	public final static String LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI = "Configurazione Connettori Multipli";
@@ -789,8 +807,10 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_ID_APPLICATIVO_SERVER = "Applicativo";
 	
 	public final static String LABEL_IN_USO_COLONNA_HEADER = "Uso";
-	public final static String LABEL_IN_USO_TOOLTIP = "Riferimenti";
+	public final static String LABEL_IN_USO_TOOLTIP = "Visualizza riferimenti";
 	public final static String LABEL_IN_USO_BODY_HEADER_RISULTATI = "Risultati della ricerca";
+	public final static String LABEL_IN_USO_INFORMAZIONI_TOOLTIP = "Visualizza dettagli della configurazione";
+	public final static String LABEL_IN_USO_BODY_HEADER_INFORMAZIONI = "Dettagli della configurazione";
 	
 	public final static String LABEL_CONFIGURAZIONE_CANALE_DEFAULT = "Configurazione di default del Gateway";
 	public final static String LABEL_CONFIGURAZIONE_CANALE_DEFAULT_API = "Configurazione di default dell'API";
@@ -943,6 +963,9 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_ABILITA_USO_APPLICATIVO_SERVER = "saServerEnabled";
 	public final static String PARAMETRO_ID_APPLICATIVO_SERVER = "saServer";
 	public final static String PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO_TITLE = "authContenutiStatoTitle";
+	public final static String PARAMETRO_VERIFICA_CERTIFICATI_FROM_LISTA = "certVerFromLista";
+	public final static String PARAMETRO_RESET_CACHE_FROM_LISTA = "resetFromLista";
+	public final static String PARAMETRO_VERIFICA_CONNETTIVITA = "tokenVerConn";
 	
 	public final static String PARAMETRO_RESET_SEARCH = "resetSearch";
 	
@@ -1026,6 +1049,7 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_RESET_ID_TAB = "rIdTab";
 	public final static String PARAMETRO_ID_CONN_TAB = "idConnTab";
 	public final static String PARAMETRO_RESET_ID_CONN_TAB = "rIdConnTab";
+	public final static String PARAMETRO_FROM_BREADCUMP_CHANGE_NOME_CONNETTORE = "fromChangeNomeCon";
 	
 	public final static String PARAMETRO_API_PAGE_INFO = "fromApiPageInfo";
 	
@@ -1148,6 +1172,9 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_PORTE_INTEGRAZIONE = "integrazione";
 	public final static String PARAMETRO_PORTE_METADATI_GRUPPO = "metadatiGruppo";
 	public final static String PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO = "mdG_";
+	
+	
+	public final static String PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE = Costanti.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE;
 	
 	/** PARAMETRI MESSAGE PAGE **/
 	
@@ -1448,8 +1475,6 @@ public class CostantiControlStation {
 	public final static String JS_DIR = "js";
 	public final static String FONTS_DIR = "fonts";
 	public final static String OPERATIONS_DELIMITER = "\n--------------------------------------------\n\n";
-	public final static String RESOURCE_JMX_PDD_TIPOLOGIA_ACCESSO_JMX = "jmx";
-	public final static String RESOURCE_JMX_PDD_TIPOLOGIA_ACCESSO_OPENSPCOOP = "openspcoop";
 	
 	/** ICONE */
 	public final static String ICONA_FRECCIA_SU = "&#xE316;";
@@ -1461,6 +1486,9 @@ public class CostantiControlStation {
 
 	public final static String ICONA_ALARM_ACTIVE = "&#xe855;";
 	public final static String ICONA_ALARM_PASSIVE = "&#xe857;";
+	
+	public final static String ICONA_SCHEDULE_ACTIVE = "&#xe889;";
+	public final static String ICONA_SCHEDULE_PASSIVE = "&#xf17d;";
 	
 	/** COSTANTI FILE TEMPORANEI */
 	public final static String TEMP_FILE_PREFIX = "__pddconsole__";
@@ -1490,12 +1518,24 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_FORCE_INTERFACE_BASED_LEFT = "Identificazione tramite API";
 	public final static String LABEL_PARAMETRO_FORCE_INTERFACE_BASED_RIGHT = "Modalità alternativa utilizzata se l'identificazione indicata fallisce";
 	
+	public final static String LABEL_ELIMINATO_CACHE_SUCCESSO = "{0} eliminato dalla cache";
+	public final static String LABEL_ELIMINATO_CACHE_FALLITO_PREFIX = "Eliminazione {0} dalla cache non riuscita: ";
+	
+	public final static String LABEL_VERIFICA_CERTIFICATI_NON_PRESENTI = "Non sono state rilevate configurazioni che utilizzano certificati";
+	public final static String LABEL_VERIFICA_CERTIFICATI_PRESENTE_SOLO_CONFIGURAZIONE_MANUALE = LABEL_VERIFICA_CERTIFICATI_NON_PRESENTI+"."+org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+"È presente una configurazione manuale del Subject e dell'Issuer";
+	public final static String LABEL_VERIFICA_CERTIFICATI_SUCCESSO = "Tutti i certificati riferiti risultano validi";
+	public final static String LABEL_VERIFICA_CERTIFICATI_WARNING_PREFIX = "Rilevati certificati prossimi alla scadenza in ";
+	public final static String LABEL_VERIFICA_CERTIFICATI_WARNING_ANCHE_SCADUTI_PREFIX = "Rilevati certificati prossimi alla scadenza o scaduti in ";
+	public final static String LABEL_VERIFICA_CERTIFICATI_ERROR_PREFIX = "Rilevati certificati non validi in ";
+	
 	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA = "Espressione applicata sul messaggio; se si ha un match la regola di correlazione verrà utilizzata.<br/>I tipi di espressione utilizzabili sono:";
 	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_SOAP = "<b>Path</b>: espressione XPath";
 	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_XPATH = "<b>XPath</b>: espressione XPath utilizzabile con messaggi XML";
 	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_JSONPATH = "<b>JSONPath</b>: espressione JsonPath utilizzabile con messaggi JSON";
-	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_ACTION_SOAP = "<b>Azione</b>: identificativo di un azione dell'API";
+	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_ACTION_SOAP = "<b>Azione</b>: identificativo di un'azione dell'API";
+	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_ACTION_SOAP_BY_EXPR_REGULAR = "<b>Azione</b>: identificativo di un'azione dell'API; può essere fornito puntualmente o tramite una espressione regolare (es. ^(?:operazione1|operazione2)$)";
 	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_ACTION_REST = "<b>Risorsa</b>: identificativo di una risorsa dell'API";
+	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_ACTION_REST_BY_EXPR_REGULAR = "<b>Risorsa</b>: identificativo di una risorsa dell'API; può essere fornito puntualmente o tramite una espressione regolare (es. ^(?:POST\\.operazione1|GET\\.operazione2)$)";
 	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_ACTION_REST_METHOD_PATH = "<b>HttpMethod Path</b>: metodo http e path di una risorsa dell'API; è possibile indicare qualsiasi metodo o qualsiasi path con il carattere speciale '*'. È inoltre possibile definire solamente la parte iniziale di un path attraverso lo '*'. Alcuni esempi: <BR/>- 'POST /resource'<BR/>- '* /resource'<BR/>- 'POST *'<BR/>- '* /resource/*'";
 	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_LOCAL_NAME_REST = "<b>LocalName</b>: localName (senza prefisso e namespace) dell'elemento radice di un messaggio XML";
 	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_LOCAL_NAME_SOAP = "<b>LocalName</b>: localName (senza prefisso e namespace) del primo elemento interno al SOAPBody ";
@@ -1733,9 +1773,13 @@ public class CostantiControlStation {
 	public final static String ICONA_VISUALIZZA_TOOLTIP = "Visualizza";
 	public final static String ICONA_VISUALIZZA_TOOLTIP_CON_PARAMETRO = "Visualizza {0}";
 	
-	public final static String ICONA_VERIFICA = "&#xE8BE;";
-	public final static String ICONA_VERIFICA_TOOLTIP = "Verifica";
-	public final static String ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO = "Verifica {0}";
+	public final static String ICONA_VERIFICA = Costanti.ICONA_VERIFICA;
+	public final static String ICONA_VERIFICA_TOOLTIP = Costanti.ICONA_VERIFICA_TOOLTIP;
+	public final static String ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO = Costanti.ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO;
+	
+	public final static String ICONA_VERIFICA_CERTIFICATI = Costanti.ICONA_VERIFICA_CERTIFICATI;
+	public final static String ICONA_VERIFICA_CERTIFICATI_TOOLTIP = Costanti.ICONA_VERIFICA_CERTIFICATI_TOOLTIP;
+	public final static String ICONA_VERIFICA_CERTIFICATI_TOOLTIP_CON_PARAMETRO = Costanti.ICONA_VERIFICA_CERTIFICATI_TOOLTIP_CON_PARAMETRO;
 	
 	public final static String ICONA_MODIFICA_CONFIGURAZIONE_CONNETTORI_MULTIPLI = "&#xE8B8;";
 	public final static String ICONA_MODIFICA_CONFIGURAZIONE_CONNETTORI_MULTIPLI_TOOLTIP = "Configurazione Connettori Multipli";
@@ -1751,6 +1795,10 @@ public class CostantiControlStation {
 	
 	public final static String ICONA_MODIFICA_TOGGLE_ON = "toggle_on";
 	public final static String ICONA_MODIFICA_TOGGLE_OFF = "toggle_off";
+	
+	public final static String ICONA_RESET_CACHE_ELEMENTO = Costanti.ICONA_RESET_CACHE_ELEMENTO;
+	public final static String ICONA_RESET_CACHE_ELEMENTO_TOOLTIP = Costanti.ICONA_RESET_CACHE_ELEMENTO_TOOLTIP;
+	public final static String ICONA_RESET_CACHE_ELEMENTO_TOOLTIP_CON_PARAMETRO = Costanti.ICONA_RESET_CACHE_ELEMENTO_TOOLTIP_CON_PARAMETRO;
 	
 	// Indica il numero delle possibili classi CSS per i tag dei gruppi, modificare questo valore se si vuole modificare il numero delle classi disponibili
 	public final static Integer NUMERO_GRUPPI_CSS = Costanti.NUMERO_GRUPPI_CSS;

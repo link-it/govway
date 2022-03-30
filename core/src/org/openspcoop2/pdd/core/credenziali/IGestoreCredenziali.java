@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -20,6 +20,7 @@
 
 package org.openspcoop2.pdd.core.credenziali;
 
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.ICore;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
@@ -34,7 +35,8 @@ import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 
 public interface IGestoreCredenziali extends ICore {
 
-	public Credenziali elaborazioneCredenziali(InfoConnettoreIngresso infoConnettoreIngresso, 
+	public Credenziali elaborazioneCredenziali(IDSoggetto idSoggetto,
+			InfoConnettoreIngresso infoConnettoreIngresso, 
 			OpenSPCoop2Message messaggio) throws GestoreCredenzialiException,GestoreCredenzialiConfigurationException;
 	
 	public String getIdentitaGestoreCredenziali();

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -66,7 +66,7 @@ public class SPCoopValidatoreErrori extends BasicStateComponentFactory implement
 		try{
 			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
 			
-			if(msg!=null && msg.getSOAPBody()!=null && msg.getSOAPBody().hasFault()){
+			if(msg!=null && msg.hasSOAPFault()){
 				SOAPFault soapFault = msg.getSOAPBody().getFault();
 				String faultS = soapFault.getFaultString();
 				if(faultS!=null)
@@ -116,7 +116,7 @@ public class SPCoopValidatoreErrori extends BasicStateComponentFactory implement
 		try{
 			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
 			
-			if(msg!=null && msg.getSOAPBody()!=null && msg.getSOAPBody().hasFault()){
+			if(msg!=null && msg.hasSOAPFault()){
 				SOAPFault soapFault = msg.getSOAPBody().getFault();
 				String faultS = soapFault.getFaultString();
 				if(faultS!=null)
@@ -143,7 +143,7 @@ public class SPCoopValidatoreErrori extends BasicStateComponentFactory implement
 		try{
 			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
 			
-			if(msg!=null && msg.getSOAPBody()!=null && msg.getSOAPBody().hasFault()){
+			if(msg!=null && msg.hasSOAPFault()){
 				SOAPFault soapFault = msg.getSOAPBody().getFault();
 				String faultS = soapFault.getFaultString();
 				if(faultS!=null)

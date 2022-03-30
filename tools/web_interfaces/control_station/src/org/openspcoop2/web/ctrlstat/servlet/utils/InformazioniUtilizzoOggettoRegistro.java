@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -45,9 +45,11 @@ import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDScope;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.plugins.IdPlugin;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -55,6 +57,7 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniDetailsUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
@@ -227,6 +230,26 @@ public class InformazioniUtilizzoOggettoRegistro extends HttpServlet{
 					risultatiRicerca.add(confCore.getDettagliPluginClasseInUso(idPlugin));
 				}
 				break;
+			case EROGAZIONE_INFO:{
+				String uriAPS_erogata = identificativoOggetto;
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromUri(uriAPS_erogata);
+				risultatiRicerca.add(ErogazioniDetailsUtilities.getDetailsErogazione(idServizio, soggettiCore, registroHelper));
+				break;
+			}
+			case FRUIZIONE_INFO:{
+				String uriAPS_fruita = identificativoOggetto;
+				if(uriAPS_fruita.contains("@")) {
+					String tipoNomeFruitore = uriAPS_fruita.split("@")[1];
+					uriAPS_fruita = uriAPS_fruita.split("@")[0];
+					IDSoggetto idSoggettoFruitore = new IDSoggetto(tipoNomeFruitore.split("/")[0], tipoNomeFruitore.split("/")[1]);
+					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromUri(uriAPS_fruita);
+					risultatiRicerca.add(ErogazioniDetailsUtilities.getDetailsFruizione(idServizio, idSoggettoFruitore, soggettiCore, registroHelper));
+				}
+				else {
+					risultatiRicerca.add("Internal Error: informazione fruitore non presente");
+				}
+				break;
+			}
 			case ACCORDO_COOPERAZIONE:
 			case ACCORDO_SERVIZIO_COMPOSTO:
 			case ACCORDO_SERVIZIO_PARTE_SPECIFICA:

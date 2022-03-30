@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -20,6 +20,7 @@
 
 package org.openspcoop2.security.message.constants;
 
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
@@ -31,12 +32,12 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  */
 public enum SignatureC14NAlgorithm {
 	
-	INCLUSIVE_C14N_10_OMITS_COMMENTS("http://www.w3.org/TR/2001/REC-xml-c14n-20010315","Inclusive XML Canonicalization 1.0 (omits comments)"),
-	INCLUSIVE_C14N_10_WITH_COMMENTS("http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments","Inclusive XML Canonicalization 1.0 (with comments)"),
-	INCLUSIVE_C14N_11_OMITS_COMMENTS("http://www.w3.org/2006/12/xml-c14n11","Inclusive XML Canonicalization 1.1 (omits comments)"),
-	INCLUSIVE_C14N_11_WITH_COMMENTS("http://www.w3.org/2006/12/xml-c14n11#WithComments","Inclusive XML Canonicalization 1.1 (with comments)"),
-	EXCLUSIVE_C14N_10_OMITS_COMMENTS("http://www.w3.org/2001/10/xml-exc-c14n#","Exclusive XML Canonicalization 1.0 (omits comments)"),
-	EXCLUSIVE_C14N_10_WITH_COMMENTS("http://www.w3.org/2001/10/xml-exc-c14n#WithComments","Exclusive XML Canonicalization 1.0 (with comments)");
+	INCLUSIVE_C14N_10_OMITS_COMMENTS(CostantiDB.INCLUSIVE_C14N_10_OMITS_COMMENTS_URI,"Inclusive XML Canonicalization 1.0 (omits comments)"),
+	INCLUSIVE_C14N_10_WITH_COMMENTS(CostantiDB.INCLUSIVE_C14N_10_WITH_COMMENTS_URI,"Inclusive XML Canonicalization 1.0 (with comments)"),
+	INCLUSIVE_C14N_11_OMITS_COMMENTS(CostantiDB.INCLUSIVE_C14N_11_OMITS_COMMENTS_URI,"Inclusive XML Canonicalization 1.1 (omits comments)"),
+	INCLUSIVE_C14N_11_WITH_COMMENTS(CostantiDB.INCLUSIVE_C14N_11_WITH_COMMENTS_URI,"Inclusive XML Canonicalization 1.1 (with comments)"),
+	EXCLUSIVE_C14N_10_OMITS_COMMENTS(CostantiDB.EXCLUSIVE_C14N_10_OMITS_COMMENTS_URI,"Exclusive XML Canonicalization 1.0 (omits comments)"),
+	EXCLUSIVE_C14N_10_WITH_COMMENTS(CostantiDB.EXCLUSIVE_C14N_10_WITH_COMMENTS_URI,"Exclusive XML Canonicalization 1.0 (with comments)");
 	
 	private String uri;
 	private String label;

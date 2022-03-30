@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -34,6 +34,7 @@ import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzio
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneApplicativo;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneApplicativoRegistrato;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneAzione;
+import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneErrori;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneEsiti;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneSoggettoLocale;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneSoggettoRemoto;
@@ -255,6 +256,49 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public byte[] getReportDistribuzioneAzioneBySimpleSearch(@QueryParam("data_inizio") @NotNull DateTime dataInizio, @QueryParam("data_fine") @NotNull DateTime dataFine, @QueryParam("tipo") @NotNull FiltroRicercaRuoloTransazioneEnum tipo, @QueryParam("formato_report") @NotNull FormatoReportEnum formatoReport, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("id_cluster") String idCluster, @QueryParam("soggetto_remoto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoRemoto, @QueryParam("soggetto_erogatore") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoErogatore, @QueryParam("tag") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String tag, @QueryParam("uri_api_implementata") @Pattern(regexp="^[a-z]{2,20}/[0-9A-Za-z]+:[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$|^[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$") String uriApiImplementata, @QueryParam("nome_servizio") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nomeServizio, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("versione_servizio") @Min(1) @DefaultValue("1") Integer versioneServizio, @QueryParam("esito") EsitoTransazioneSimpleSearchEnum esito, @QueryParam("escludi_scartate") @DefaultValue("false") Boolean escludiScartate, @QueryParam("unita_tempo") UnitaTempoReportEnum unitaTempo, @QueryParam("tipo_report") TipoReportEnum tipoReport, @QueryParam("tipo_informazione_report") TipoInformazioneReportEnum tipoInformazioneReport);
+
+    /**
+     * Genera un report statistico distribuito per esiti di errore utilizzando una ricerca articolata
+     *
+     * Questa operazione consente di generare un report statistico raggruppato distribuito per esiti di errore ed esportandolo nei formati più comuni 
+     *
+     */
+    @POST
+    @Path("/reportistica/analisi-statistica/distribuzione-errori")
+    @Consumes({ "application/json" })
+    @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
+    @Operation(summary = "Genera un report statistico distribuito per esiti di errore utilizzando una ricerca articolata", tags={ "Reportistica" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = File.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public byte[] getReportDistribuzioneErroriByFullSearch(@Valid RicercaStatisticaDistribuzioneErrori body, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto);
+
+    /**
+     * Genera un report statistico organizzato per esiti di errore utilizzando una ricerca semplice
+     *
+     * Questa operazione consente di generare per mezzo di una ricerca semplice, un report statistico per esiti di errore esportandolo nei formati più comuni
+     *
+     */
+    @GET
+    @Path("/reportistica/analisi-statistica/distribuzione-errori")
+    @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
+    @Operation(summary = "Genera un report statistico organizzato per esiti di errore utilizzando una ricerca semplice", tags={ "Reportistica" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = File.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public byte[] getReportDistribuzioneErroriBySimpleSearch(@QueryParam("data_inizio") @NotNull DateTime dataInizio, @QueryParam("data_fine") @NotNull DateTime dataFine, @QueryParam("tipo") @NotNull FiltroRicercaRuoloTransazioneEnum tipo, @QueryParam("formato_report") @NotNull FormatoReportEnum formatoReport, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("id_cluster") String idCluster, @QueryParam("soggetto_remoto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoRemoto, @QueryParam("soggetto_erogatore") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoErogatore, @QueryParam("tag") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String tag, @QueryParam("uri_api_implementata") @Pattern(regexp="^[a-z]{2,20}/[0-9A-Za-z]+:[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$|^[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$") String uriApiImplementata, @QueryParam("nome_servizio") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nomeServizio, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("versione_servizio") @Min(1) @DefaultValue("1") Integer versioneServizio, @QueryParam("azione") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String azione, @QueryParam("esito") EsitoTransazioneSimpleSearchEnum esito, @QueryParam("escludi_scartate") @DefaultValue("false") Boolean escludiScartate, @QueryParam("unita_tempo") UnitaTempoReportEnum unitaTempo, @QueryParam("tipo_report") TipoReportEnum tipoReport, @QueryParam("tipo_informazione_report") TipoInformazioneReportEnum tipoInformazioneReport);
 
     /**
      * Genera un report statistico per andamento esiti per mezzo di una ricerca articolata

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -84,6 +84,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory_impl;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazioneCoda;
@@ -113,6 +114,7 @@ import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.GestoreLoadBalan
 import org.openspcoop2.pdd.core.connettori.nio.ConnettoreHTTPCORE5_connectionManager;
 import org.openspcoop2.pdd.core.connettori.nio.ConnettoreHTTPCORE_connectionManager;
 import org.openspcoop2.pdd.core.connettori.nio.ConnettoreHTTPJava_connectionManager;
+import org.openspcoop2.pdd.core.cache.GestoreCacheCleaner;
 import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.GestoreControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.INotify;
@@ -584,8 +586,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	        			
 			/* ------------ 
 			 * Inizializzazione Resource Bundle:
-			 * - org/apache/xml/security/resource/xmlsecurity_en.properties (xmlsec-2.1.2.jar)
-			 * - org/apache/xml/security/resource/xmlsecurity_de.properties (xmlsec-2.1.2.jar)
+			 * - org/apache/xml/security/resource/xmlsecurity_en.properties (xmlsec-2.2.2.jar)
+			 * - org/apache/xml/security/resource/xmlsecurity_de.properties (xmlsec-2.2.2.jar)
 			 * - messages/wss4j_errors.properties (wss4j-ws-security-common-2.2.2.jar)
 			 * 
 			 * L'inizializzazione di questa classe DEVE essere all'inizio altrimenti si puo' incorrere in errori tipo il seguente:
@@ -596,7 +598,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			 * per risolvere l'id. Tale classe utilizza normalmente il properties 'org/apache/xml/security/resource/xmlsecurity_en.properties'
 			 * Mentre l'id 'noUserCertsFound' e' dentro il properties 'messages/wss4j_errors.properties'
 			 * Pero' xmlsec permette di inizializzare il resource bundle da usare anche grazie ad un metodo dove viene fornito l'intero resource bundle.
-			 * Questo avviene in xmlsec-2.0.7/src/main/java/org/apache/xml/security/utils/I18n.java metodo init(ResourceBundle resourceBundle)
+			 * Questo avviene in xmlsec-2.2.2/src/main/java/org/apache/xml/security/utils/I18n.java metodo init(ResourceBundle resourceBundle)
 			 * L'inizializzazione avviene pero' solamente una volta. Quindi se qualche altra libreria l'inizializza prima, poi il metodo init diventa una nop.
 			 * Tale init viene quindi richiamata dalla classe org.apache.wss4j.dom.engine.WSSConfig.init che prepara un resource bundle
 			 * contenente sia il contenuto originale del properties 'org/apache/xml/security/resource/xmlsecurity_en.properties' che 
@@ -767,7 +769,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					FileTraceConfig.init(propertiesReader.getTransazioniFileTraceConfig(), true);
 				}
 			}catch(Exception e) {
-				this.logError("Riscontrato errore durante l'inizializzazione del FileTrace");
+				this.logError("Riscontrato errore durante l'inizializzazione del FileTrace",e);
 				return;
 			}
 
@@ -805,6 +807,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				AbstractBaseOpenSPCoop2MessageDynamicContent.setSoapReader(soapReader);
 				OpenSPCoop2Startup.log.info("SOAPMessageReader set buffer threshold (kb): "+propertiesReader.getSoapMessageReaderBufferThresholdKb());
 				AbstractBaseOpenSPCoop2MessageDynamicContent.setSoapReaderBufferThresholdKb(propertiesReader.getSoapMessageReaderBufferThresholdKb());
+				if(soapReader) {
+					OpenSPCoop2Startup.log.info("SOAPMessageReader headerOptimization enabled="+propertiesReader.useSoapMessageReaderHeaderOptimization());
+					OpenSPCoop2MessageSoapStreamReader.SOAP_HEADER_OPTIMIZATION_ENABLED=propertiesReader.useSoapMessageReaderHeaderOptimization();
+				}
 				
 				// SoapPassthrough
 				boolean soapPassthroughImpl = propertiesReader.useSoapMessagePassthrough();
@@ -3381,6 +3387,16 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				return;
 			}
 			
+			
+			
+			
+			/* ----------- Inizializzazione Cache Cleaner ------------ */
+			try{
+				GestoreCacheCleaner.initialize();
+			}catch(Exception e){
+				this.logError("Riscontrato errore durante l'inizializzazione del ripulitore delle cache: "+e.getMessage(),e);
+				return;
+			}
 			
 			
 			

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -38,6 +38,7 @@ import org.openspcoop2.pdd.core.behaviour.IBehaviour;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.state.IState;
 
 /**
  * LoadBalancerBehaviour
@@ -48,6 +49,11 @@ import org.openspcoop2.protocol.sdk.Busta;
  */
 public class LoadBalancerBehaviour extends AbstractBehaviour implements IBehaviour {
 
+	private IState state;
+	public LoadBalancerBehaviour(IState state) {
+		this.state = state;
+	}
+	
 	@Override
 	public Behaviour behaviour(GestoreMessaggi gestoreMessaggioRichiesta, Busta busta,
 			PortaApplicativa pa, RequestInfo requestInfo) throws BehaviourException,BehaviourEmitDiagnosticException {
@@ -65,7 +71,7 @@ public class LoadBalancerBehaviour extends AbstractBehaviour implements IBehavio
 			
 			ConfigurazioneLoadBalancer config = ConfigurazioneLoadBalancer.read(pa, msg, busta, 
 					requestInfo, this.getPddContext(), 
-					this.msgDiag, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
+					this.msgDiag, OpenSPCoop2Logger.getLoggerOpenSPCoopCore(), this.state);
 			if(config.getPool().isEmpty()) {
 				throw new BehaviourException("Nessun connettore selezionabile");	
 			}

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -96,9 +96,19 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 			console.log('Esegui ' + document.form.elements['actionConfirm'].value);
 			params = generaUrl();
 			
-			if(document.form.elements['actionConfirm'])
+			if(document.form.elements['actionConfirm']) {
+				// evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
+				  for (var k=0; k<document.form.elements.length; k++) {
+						var nome = document.form.elements[k].name;
+						var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
+
+						if(hiddenInfo > -1) {
+							document.form.elements[k].value = '';
+						}
+				  }
+				
 				document.form.submit();
-			else
+			} else
 		    	document.location='<%=request.getContextPath()%>/'+nomeServlet_Custom_Ok +params;
 		};
 		
@@ -106,9 +116,19 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 			console.log('Annulla ' + document.form.elements['actionConfirm'].value);
 			params = generaUrl();
 			
-			if(document.form.elements['actionConfirm'])
+			if(document.form.elements['actionConfirm']) {
+				// evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
+				  for (var k=0; k<document.form.elements.length; k++) {
+						var nome = document.form.elements[k].name;
+						var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
+
+						if(hiddenInfo > -1) {
+							document.form.elements[k].value = '';
+						}
+				  }
+				
 				document.form.submit();
-			else
+			} else
 		    	document.location='<%=request.getContextPath()%>/'+nomeServlet_Custom_No +params;
 		};
 		

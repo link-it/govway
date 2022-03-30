@@ -343,7 +343,7 @@ Scenario: isTest('certificato-server-revocato')
 #       IDAS02
 ######################
 
-Scenario: isTest('connettivita-base-idas02')
+Scenario: isTest('connettivita-base-idas02') || isTest('connettivita-base-idas02-richiesta-con-header')
 
     * xmlstring client_request = bodyPath('/')
     * eval karateCache.add("Client-Request", client_request)
@@ -353,6 +353,20 @@ Scenario: isTest('connettivita-base-idas02')
     * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS02/v1')
 
     * call check_server_token ({ from: "SoapBlockingIDAS02/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
+
+    * xmlstring server_response = response
+    * eval karateCache.add("Server-Response", server_response)
+
+Scenario: isTest('connettivita-base-idas02-richiesta-con-header-e-trasformazione')
+
+    * xmlstring client_request = bodyPath('/')
+    * eval karateCache.add("Client-Request", client_request)
+
+    * call check_client_token ({ address: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", to: "testsuite" })
+
+    * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS02ConAggiuntaHeader/v1')
+
+    * call check_server_token ({ from: "SoapBlockingIDAS02ConAggiuntaHeader/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
 
     * xmlstring server_response = response
     * eval karateCache.add("Server-Response", server_response)

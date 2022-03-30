@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -36,13 +36,9 @@ import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
-import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.registry.AccordoServizioParteComune;
-import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Resource;
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
@@ -52,7 +48,6 @@ import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
-import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
@@ -63,10 +58,8 @@ import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
-import org.openspcoop2.utils.rest.api.ApiOperation;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
-import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.openspcoop2.utils.xml2json.JsonXmlPathExpressionEngine;
 import org.slf4j.Logger;
@@ -1029,66 +1022,14 @@ public class GestoreCorrelazioneApplicativa {
 	
 	/* *********** INDIVIDUAZIONE RISORSA REST ************ */
 	
-	private final static String SPECIAL = "*";
-	
-	private String [] parseResourceRest(String element) {
-		
-		String check = element.toLowerCase();
-		
-		String checkMethod = SPECIAL+" ";
-		if(check.startsWith(checkMethod) && check.length()>checkMethod.length()) {
-			String [] tmp = new String[2];
-			tmp[0] = SPECIAL;
-			tmp[1] = check.substring(checkMethod.length());
-			return tmp;
-		}
-		
-		HttpRequestMethod [] methods = HttpRequestMethod.values();
-		if(methods!=null && methods.length>0) {
-			for (HttpRequestMethod httpRequestMethod : methods) {
-				checkMethod = httpRequestMethod.name().toLowerCase()+" ";
-				if(check.startsWith(checkMethod) && check.length()>checkMethod.length()) {
-					String [] tmp = new String[2];
-					tmp[0] = httpRequestMethod.name();
-					tmp[1] = check.substring(checkMethod.length());
-					return tmp;
-				}
-			}
-		}
-		
-		return null;
-		
-	}
-
 	private boolean isMatchResourceRest(String elemento) {
 		boolean isResourceRest = false;
 		if(elemento!=null && !"".equals(elemento)) {
-			String [] parseResourceRest = parseResourceRest(elemento);
+			String [] parseResourceRest = Utilities.parseResourceRest(elemento);
 			if(parseResourceRest!=null) {
 				this.initRestResource();
 				if(this.restResource!=null) {
-					String metodo = parseResourceRest[0];
-					String path = parseResourceRest[1];
-					if(SPECIAL.equals(metodo) || (this.restResource.getMethod()!=null && metodo.toLowerCase().equals(this.restResource.getMethod().name().toLowerCase()))) {
-						if(path.equals(SPECIAL)) {
-							isResourceRest = true;
-						}
-						else if(this.restResource.getPath()!=null){
-							String resourcePathNormalized = ApiOperation.normalizePath(this.restResource.getPath());
-							resourcePathNormalized = resourcePathNormalized.trim().toLowerCase();
-							path = ApiOperation.normalizePath(path);
-							path = path.trim().toLowerCase();
-							if(path.endsWith(SPECIAL)) {
-								String prefix = path.substring(0, path.length()-1);
-								if(resourcePathNormalized.startsWith(prefix)) {
-									isResourceRest = true;
-								}
-							}
-							else if(path.equals(resourcePathNormalized)) {
-								isResourceRest = true;
-							}
-						}					
-					}
+					isResourceRest = Utilities.isRestResourceMatch(parseResourceRest, this.restResource);
 				}
 			}
 		}
@@ -1099,24 +1040,7 @@ public class GestoreCorrelazioneApplicativa {
 		if(this.restResource!=null) {
 			return;
 		}
-		if(this.idServizio!=null && this.idServizio.getAzione()!=null && !"".equals(this.idServizio.getAzione())) {
-			RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance(this.state);
-			try {
-				AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(this.idServizio, null, false);
-				if(asps.getAccordoServizioParteComune()!=null && !"".equals(asps.getAccordoServizioParteComune())) {
-					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
-					AccordoServizioParteComune as = registroServiziManager.getAccordoServizioParteComune(idAccordo, null, false);
-					for (Resource resourceCheck : as.getResourceList()) {
-						if(resourceCheck.getNome().equals(this.idServizio.getAzione())){
-							this.restResource = resourceCheck;
-							break;
-						}
-					}
-				}
-			}catch(Throwable e) {
-				this.log.error(e.getMessage(),e);
-			}
-		}
+		this.restResource = Utilities.getRestResource(this.log, this.state, this.idServizio);
 	}
 	
 	

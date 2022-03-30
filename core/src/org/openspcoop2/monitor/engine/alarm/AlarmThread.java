@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -51,7 +51,7 @@ public class AlarmThread implements Runnable {
 	@SuppressWarnings("unused")
 	private AlarmEngineConfig alarmEngineConfig;
 	private String threadName;
-	private boolean stop = false;
+	private AlarmThreadStatus threadStatus = null;
 	private boolean terminated = false;
 	private boolean forceNewCheck = false;
 	
@@ -62,7 +62,7 @@ public class AlarmThread implements Runnable {
 	}
 
 	public void setStop(boolean stop) {
-		this.stop = stop;
+		this.threadStatus.setStop(stop);
 	}
 	
 	public void forceNewCheck() {
@@ -87,6 +87,8 @@ public class AlarmThread implements Runnable {
 		this.alarmEngineConfig = alarmEngineConfig;
 		this.threadName = "T_"+IDUtilities.getUniqueSerialNumber("newAlarmThread")+"_"+DateManager.getTimeMillis();
 		((AlarmImpl)this.alarm).setThreadName(this.threadName);
+		this.threadStatus = new AlarmThreadStatus();
+		((AlarmImpl)this.alarm).setAlarmThreadStatus(this.threadStatus);
 		
 		this.alarmLogger = (AlarmLogger) alarm.getLogger();
 	}
@@ -137,7 +139,7 @@ public class AlarmThread implements Runnable {
 		
 			this.alarmLogger.debug("Thread avviato ...");
 			
-			while (this.stop == false) {
+			while (this.threadStatus.isStop() == false) {
 				try {
 					
 					this.alarmLogger.info("Verifica stato in corso ...");
@@ -171,7 +173,7 @@ public class AlarmThread implements Runnable {
 				int sleep = 0;
 				int timeSleep = 500;
 				this.alarmLogger.debug("Sleep "+this.periodMillis+"ms ...");
-				while(sleep<this.periodMillis && this.stop==false){
+				while(sleep<this.periodMillis && this.threadStatus.isStop()==false){
 					Utilities.sleep(timeSleep);
 					sleep = sleep+timeSleep;
 					if(this.forceNewCheck) {

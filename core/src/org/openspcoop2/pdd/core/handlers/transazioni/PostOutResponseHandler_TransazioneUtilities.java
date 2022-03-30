@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -74,6 +74,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.IBustaBuilder;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
@@ -138,6 +139,34 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			Object oConnettori = context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI );
 			if (oConnettori!=null && oConnettori instanceof Integer){
 				connettoriMultipli = (Integer) oConnettori;
+			}
+		}
+		return connettoriMultipli;
+	}
+	public static String getConnettoriMultipli(PostOutResponseContext context) {
+		return getConnettoriMultipli(context.getPddContext());
+	}
+	public static String getConnettoriMultipli(Context context) {
+		String connettoriMultipli = null;
+		if(context.containsKey(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI_BY_ID)) {
+			Object oConnettori = context.getObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI_BY_ID );
+			if (oConnettori!=null && oConnettori instanceof List){
+				List<?> l = (List<?>) oConnettori;
+				if(!l.isEmpty()) {
+					StringBuilder sb = new StringBuilder();
+					for (Object object : l) {
+						if(object!=null && object instanceof String) {
+							String s = (String) object;
+							if(sb.length()>0) {
+								sb.append(",");
+							}
+							sb.append(s);
+						}
+					}
+					if(sb.length()>0) {
+						return sb.toString();
+					}
+				}
 			}
 		}
 		return connettoriMultipli;
@@ -235,9 +264,10 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					else if(isEsito(esitiProperties.getEsitiCodeErroriConsegna(), esitoSincrono)) {
 						schedulaNotificheDopoConsegnaSincrona = configurazione_consegnaMultipla_profiloSincrono.isNotificheByEsito_erroriConsegna();
 					}
-					else if(isEsito(esitiProperties.getEsitiCodeRichiestaScartate(), esitoSincrono)) {
-						schedulaNotificheDopoConsegnaSincrona = configurazione_consegnaMultipla_profiloSincrono.isNotificheByEsito_richiesteScartate();
-					}
+					// le richieste scartate non arrivano alla gestione della consegna in smistatore e quindi non potranno nemmeno essere notifiate
+					//else if(isEsito(esitiProperties.getEsitiCodeRichiestaScartate(), esitoSincrono)) {
+					//	schedulaNotificheDopoConsegnaSincrona = configurazione_consegnaMultipla_profiloSincrono.isNotificheByEsito_richiesteScartate();
+					//}
 					else {
 						schedulaNotificheDopoConsegnaSincrona = configurazione_consegnaMultipla_profiloSincrono.isNotificheByEsito_erroriProcessamento();
 					}
@@ -1162,14 +1192,30 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					informazioniAttributi = transaction.getInformazioniToken().getAa();
 					transaction.getInformazioniToken().setAa(null);
 				}
-				transactionDTO.setTokenInfo(transaction.getInformazioniToken().toJson());
+				try {
+					transactionDTO.setTokenInfo(transaction.getInformazioniToken().toJson());
+				}catch(Throwable t) {
+					this.logger.error("Serializzazione informazioni token non riuscita: "+t.getMessage(),t);
+				}
 				if(informazioniAttributi!=null) {
 					transaction.getInformazioniToken().setAa(informazioniAttributi);
 				}
 			}
 			if(transactionDTO.getTokenInfo()==null && this.transazioniRegistrazioneAttributiInformazioniNormalizzate &&
 					transaction.getInformazioniAttributi()!=null) {
-				transactionDTO.setTokenInfo(transaction.getInformazioniAttributi().toJson());
+				try {
+					transactionDTO.setTokenInfo(transaction.getInformazioniAttributi().toJson());
+				}catch(Throwable t) {
+					this.logger.error("Serializzazione informazioni attributi non riuscita: "+t.getMessage(),t);
+				}
+			}
+			
+			if(times!=null) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				times.fillTransaction_details.add("token:"+timeProcess);
+				
+				timeStart = DateManager.getTimeMillis();
 			}
 			
 			if(times!=null) {
@@ -1281,6 +1327,18 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			}
 			if(op2Properties.isTransazioniTipoApiAsEvent() && transactionDTO.getTipoApi()>0) {
 				String evento = CostantiPdD.PREFIX_API+transactionDTO.getTipoApi();
+				String dbValue = AbstractCredenzialeList.getDBValue(evento);
+				if(count+dbValue.length()<maxLengthCredenziali) {
+					eventiGestione.add( evento );
+					count = count+dbValue.length();
+				}
+				else {
+					// tronco gli eventi ai primi trovati. Sono troppi eventi successi sulla transazione.
+				}
+			}
+			String consegneMultipleById = getConnettoriMultipli(context);
+			if(op2Properties.isTransazioniConnettoriMultipliAsEvent() && consegneMultipleById!=null) {
+				String evento = CostantiPdD.PREFIX_CONNETTORI_MULTIPLI+consegneMultipleById;
 				String dbValue = AbstractCredenzialeList.getDBValue(evento);
 				if(count+dbValue.length()<maxLengthCredenziali) {
 					eventiGestione.add( evento );

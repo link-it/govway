@@ -1,0 +1,18 @@
+{
+   "codiceComunicazione": "1300411399909000",
+   "dataInvio": "2021-11-16T16:51:07.600",
+   "destinatario": "ENTE",
+   "direzione": "RISPOSTA",
+   "identificatore": "NAZIONALE_NAZIONALESPCoopIT_6978530_2021-11-16_16:51",
+   "mittente": "NAZIONALE",
+   "modello":    {
+      "payload":       {
+         "descrEsito": "{\"listaAnomalie\":[{\"codiceAnomalia\":\"0000\",\"descrizioneAnomalia\":\"Errore generico:cvc-pattern-valid: Value 'paolino.paperinopaperopoli.it' is not facet-valid with respect to pattern '([A-Za-z0-9!#-'\\\\*\\\\+\\\\-/=\\\\?\\\\^_`\\\\{-~]+(\\\\.[A-Za-z0-9!#-'\\\\*\\\\+\\\\-/=\\\\?\\\\^_`\\\\{-~]+)*@[A-Za-z0-9!#-'\\\\*\\\\+\\\\-/=\\\\?\\\\^_`\\\\{-~]+(\\\\.[A-Za-z0-9!#-'\\\\*\\\\+\\\\-/=\\\\?\\\\^_`\\\\{-~]+)*)?' for type 'EMail'..\",\"eccezione\":\"cvc-pattern-valid: Value 'paolino.paperinopaperopoli.it' is not facet-valid with respect to pattern '([A-Za-z0-9!#-'\\\\*\\\\+\\\\-/=\\\\?\\\\^_`\\\\{-~]+(\\\\.[A-Za-z0-9!#-'\\\\*\\\\+\\\\-/=\\\\?\\\\^_`\\\\{-~]+)*@[A-Za-z0-9!#-'\\\\*\\\\+\\\\-/=\\\\?\\\\^_`\\\\{-~]+(\\\\.[A-Za-z0-9!#-'\\\\*\\\\+\\\\-/=\\\\?\\\\^_`\\\\{-~]+)*)?' for type 'EMail'.\"}]}",
+         "tipoRisposta": "KO"
+      },
+      "tipoModello": "UNILAV"
+   },
+   "profiloCollaborazione": "SERVIZIO_SINCRONO",
+   "riferimentoMessaggio": "ENTE_ENTE_5319020_2021-11-16_16:51",
+   "servizio": "InviaComunicazioneObbligatoria"
+}

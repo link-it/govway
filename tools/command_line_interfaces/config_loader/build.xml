@@ -155,7 +155,7 @@
 			<fileset dir="${openspcoop2.lib}/jax" includes="jaxb-*.jar"/>
 			<fileset dir="${openspcoop2.lib}/json" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/security" includes="*.jar"/>
-			<fileset dir="${openspcoop2.lib}/shared" includes="xercesImpl-2.12.1.jar"/>
+			<fileset dir="${openspcoop2.lib}/shared" includes="xercesImpl-2.12.2.jar"/>
 			<fileset dir="${openspcoop2.lib}/shared" includes="jakarta.activation-1.2.2.jar"/>
 			<fileset dir="${openspcoop2.lib}/shared" includes="joda-time-2.10.10.jar"/>
 			<fileset dir="${openspcoop2.lib}/shared" includes="wsdl4j-1.6.3.jar"/>

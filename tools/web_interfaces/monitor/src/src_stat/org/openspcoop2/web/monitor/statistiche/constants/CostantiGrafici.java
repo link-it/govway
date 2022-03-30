@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -112,6 +112,7 @@ public class CostantiGrafici {
 	public static final String PREV = "prev";
 
 	public static final String DATA_LABEL = "Data";
+	public static final String ESITO_LABEL = "Esito";
 	public static final String AZIONE_LABEL = "Azione";
 	public static final String SERVIZIO_APPLICATIVO_LABEL = "Applicativo";
 	public static final String SOGGETTO_LABEL = "Soggetto";
@@ -144,6 +145,7 @@ public class CostantiGrafici {
 	
 	public static final String DISTRIBUZIONE_TEMPORALE_FILE_NAME = "distribuzione_temporale";
 	public static final String DISTRIBUZIONE_ESITI_FILE_NAME = "distribuzione_esiti";
+	public static final String DISTRIBUZIONE_ERRORI_FILE_NAME = "distribuzione_errori";
 	public static final String DISTRIBUZIONE_AZIONE_FILE_NAME = "distribuzione_operazione";
 	public static final String DISTRIBUZIONE_SA_APPLICATIVO_FILE_NAME = "distribuzione_applicativo";
 	public static final String DISTRIBUZIONE_SERVIZIO_APPLICATIVO_FILE_NAME = "distribuzione_servizio_applicativo";
@@ -248,6 +250,7 @@ public class CostantiGrafici {
 	
 	public static final String TIPO_DISTRIBUZIONE_TEMPORALE = "temporale";
 	public static final String TIPO_DISTRIBUZIONE_ESITI = "esiti";
+	public static final String TIPO_DISTRIBUZIONE_ERRORI = "errori";
 	public static final String TIPO_DISTRIBUZIONE_AZIONE = "azione";
 	public static final String TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO = "servizio_applicativo";
 	public static final String TIPO_DISTRIBUZIONE_SERVIZIO = "servizio";
@@ -257,6 +260,7 @@ public class CostantiGrafici {
 	
 	public static final String MBEAN_DISTRIBUZIONE_TEMPORALE = "andamentoTemporaleBean";
 	public static final String MBEAN_DISTRIBUZIONE_ESITI = "andamentoTemporaleBean";
+	public static final String MBEAN_DISTRIBUZIONE_ERRORI = "distribuzionePerErroriBean";
 	public static final String MBEAN_DISTRIBUZIONE_AZIONE = "distribuzionePerAzioneBean";
 	public static final String MBEAN_DISTRIBUZIONE_SERVIZIO_APPLICATIVO = "distribuzionePerSABean";
 	public static final String MBEAN_DISTRIBUZIONE_SERVIZIO = "distribuzionePerServizioBean";
@@ -266,6 +270,7 @@ public class CostantiGrafici {
 	
 	public static final String SEARCH_DISTRIBUZIONE_TEMPORALE = "andamentoTemporaleSearchForm";
 	public static final String SEARCH_DISTRIBUZIONE_ESITI = "andamentoTemporaleSearchForm";
+	public static final String SEARCH_DISTRIBUZIONE_ERRORI = "distribuzioneErroriSearchForm";
 	public static final String SEARCH_DISTRIBUZIONE_AZIONE = "distribuzioneAzioneSearchForm";
 	public static final String SEARCH_DISTRIBUZIONE_SERVIZIO_APPLICATIVO = "distribuzioneSASearchForm";
 	public static final String SEARCH_DISTRIBUZIONE_SERVIZIO = "distribuzioneServizioSearchForm";

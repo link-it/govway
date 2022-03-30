@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -34,6 +34,7 @@ import org.openspcoop2.generic_project.beans.IEnumeration;
 public enum TipoStatistica  implements IEnumeration , Serializable , Cloneable{
 
 	ANDAMENTO_TEMPORALE ("andamentoTemporale"), 
+	DISTRIBUZIONE_ERRORI ("distribuzioneErrori"),
 	DISTRIBUZIONE_SOGGETTO ("distribuzioneSoggetto"),
 	DISTRIBUZIONE_SERVIZIO ("distribuzioneServizio"), 
 	DISTRIBUZIONE_AZIONE ("distribuzioneAzione"),
@@ -110,6 +111,8 @@ public enum TipoStatistica  implements IEnumeration , Serializable , Cloneable{
 		TipoStatistica res = null;
 		if(TipoStatistica.ANDAMENTO_TEMPORALE.getValue().equals(value)){
 			res = TipoStatistica.ANDAMENTO_TEMPORALE;
+		}else if(TipoStatistica.DISTRIBUZIONE_ERRORI.getValue().equals(value)){
+			res = TipoStatistica.DISTRIBUZIONE_ERRORI;
 		}else if(TipoStatistica.DISTRIBUZIONE_SERVIZIO.getValue().equals(value)){
 			res = TipoStatistica.DISTRIBUZIONE_SERVIZIO;
 		}else if(TipoStatistica.DISTRIBUZIONE_SOGGETTO.getValue().equals(value)){
@@ -129,7 +132,9 @@ public enum TipoStatistica  implements IEnumeration , Serializable , Cloneable{
 		TipoStatistica res = null;
 		if(TipoStatistica.ANDAMENTO_TEMPORALE.toString().equals(value)){
 			res = TipoStatistica.ANDAMENTO_TEMPORALE;
-		}else if(TipoStatistica.DISTRIBUZIONE_SERVIZIO.toString().equals(value)){
+		} else if(TipoStatistica.DISTRIBUZIONE_ERRORI.toString().equals(value)){
+			res = TipoStatistica.DISTRIBUZIONE_ERRORI;
+		} else if(TipoStatistica.DISTRIBUZIONE_SERVIZIO.toString().equals(value)){
 			res = TipoStatistica.DISTRIBUZIONE_SERVIZIO;
 		}else if(TipoStatistica.DISTRIBUZIONE_SOGGETTO.toString().equals(value)){
 			res = TipoStatistica.DISTRIBUZIONE_SOGGETTO;

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -80,6 +80,7 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 		if(ripristinato) {
 			
 			int esitoConsegnaMultipla = -1;
+			int esitoConsegnaMultiplaInCorso = -1;
 			int esitoConsegnaMultiplaFallita = -1;
 			int esitoConsegnaMultiplaCompletata = -1;
 			int ok = -1;
@@ -88,6 +89,7 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 			try {
 				EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log, transazioneApplicativoServer.getProtocollo());
 				esitoConsegnaMultipla = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA);
+				esitoConsegnaMultiplaInCorso = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_IN_CORSO);
 				esitoConsegnaMultiplaFallita = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_FALLITA);
 				esitoConsegnaMultiplaCompletata = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_COMPLETATA);
 				ok = esitiProperties.convertoToCode(EsitoTransazioneName.OK);
@@ -106,10 +108,11 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 					boolean autoCommit = false;
 					connection.setAutoCommit(autoCommit);
 					
-					// consegna terminata
 					@SuppressWarnings("unused")
 					boolean isMessaggioConsegnato = false;
 					boolean possibileTerminazioneSingleIntegrationManagerMessage = false;
+					boolean consegnaInErrore = false;
+					// consegna terminata
 					if(transazioneApplicativoServer.isConsegnaTerminata()) {
 						isMessaggioConsegnato = true;
 					}
@@ -121,6 +124,10 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 						isMessaggioConsegnato = true;
 						possibileTerminazioneSingleIntegrationManagerMessage = true;
 					}
+					else if(transazioneApplicativoServer.isConsegnaTrasparente() && transazioneApplicativoServer.getNumeroTentativi()>0) {
+						// !transazioneApplicativoServer.isConsegnaTerminata() altrimenti entrava nel primo if
+						consegnaInErrore = true;
+					}
 					
 					// Grazie all'istruzione sopra 'boolean ripristinato = TransactionServerUtils.recover' entro nell'if solo se la consegna e' quella terminata
 					//if(isMessaggioConsegnato) { 
@@ -128,8 +135,8 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 							this.daoFactoryServiceManagerProperties.getDatabaseType(), this.log,
 							this.daoFactory,this.daoFactoryLogger,this.daoFactoryServiceManagerProperties,
 							this.debug,
-							esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
-							esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage,
+							esitoConsegnaMultipla, esitoConsegnaMultiplaInCorso, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
+							esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage, consegnaInErrore,
 							this.gestioneSerializableDB_AttesaAttiva,this.gestioneSerializableDB_CheckInterval,
 							null);
 					//}

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -24,10 +24,14 @@ package org.openspcoop2.pdd.core.token;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
+import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.dynamic.DynamicException;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.token.parser.BasicNegoziazioneTokenParser;
 import org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser;
 import org.openspcoop2.pdd.core.token.parser.TipologiaClaims;
@@ -109,6 +113,25 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_MODE);
 		return Costanti.ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD.equals(mode);
 	}
+	public String getLabelGrant() throws ProviderException, ProviderValidationException {
+		if(this.isClientCredentialsGrant()) {
+			return Costanti.ID_RETRIEVE_TOKEN_METHOD_CLIENT_CREDENTIAL_LABEL;
+		}
+		else if(this.isUsernamePasswordGrant()) {
+			return Costanti.ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD_LABEL;
+		}
+		else if(this.isRfc7523_x509_Grant()) {
+			return Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509_LABEL;
+		}
+		else if(this.isRfc7523_clientSecret_Grant()) {
+			return Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET_LABEL;
+		}
+		return "Non definita";
+	} 
+	public boolean isPDND() throws ProviderException, ProviderValidationException{
+		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_MODE_PDND);
+		return "true".equalsIgnoreCase(mode);
+	}
 	
 	public String getUsernamePasswordGrant_username() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_USERNAME);
@@ -117,9 +140,12 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PASSWORD);
 	}
 	
-	public List<String> getScopes(){
+	public List<String> getScopes(Map<String, Object> dynamicMap, PdDContext pddContext) throws DynamicException{
 		List<String> l = new ArrayList<>();
 		String scopes = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_SCOPES);
+		if(scopes!=null && !"".equals(scopes)) {
+			scopes = DynamicUtils.convertDynamicPropertyValue("scopes.gwt", scopes, dynamicMap, pddContext, true);	
+		}
 		if(scopes!=null) {
 			if(scopes.contains(",")) {
 				String [] tmp = scopes.split(",");
@@ -135,6 +161,12 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 	}
 	public String getAudience() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AUDIENCE);
+	}
+	public String getFormClientId() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORM_CLIENT_ID);
+	}
+	public String getFormParameters() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORM_PARAMETERS);
 	}
 	
 	public boolean isSaveErrorInCache() throws ProviderException, ProviderValidationException{
@@ -161,6 +193,9 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 	public String getJwtIssuer() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_ISSUER);
 	}
+	public String getJwtSubject() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SUBJECT);
+	}
 	public String getJwtAudience() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_AUDIENCE);
 	}
@@ -171,10 +206,55 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 		}
 		return Integer.valueOf(ttl);
 	}
+	public String getJwtPurposeId() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_PURPOSE_ID);
+	}
+	public String getJwtSessionInfo() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SESSION_INFO);
+	}
+	public String getJwtClaims() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIMS);
+	}
 	public String getJwtSignAlgorithm() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_ALGORITHM);
 	}
-	
+	public boolean isJwtSignIncludeKeyIdWithKeyAlias() {
+		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID);
+		return tmp!=null ? Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_ALIAS.equals(tmp) : false;
+	}
+	public boolean isJwtSignIncludeKeyIdWithClientId() {
+		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID);
+		return tmp!=null ? Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_CLIENT_ID.equals(tmp) : false;
+	}
+	public boolean isJwtSignIncludeKeyIdCustom() {
+		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID);
+		return tmp!=null ? Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_CUSTOM.equals(tmp) : false;
+	}
+	public String getJwtSignIncludeKeyIdCustom() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_VALUE);
+	}
+	public boolean isJwtSignIncludeX509Cert() {
+		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_X509_CERT);
+		return tmp!=null ? Boolean.valueOf(tmp) : false;
+	}
+	public String getJwtSignIncludeX509URL() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_X509_URL);
+	}
+	public boolean isJwtSignIncludeX509CertSha1() {
+		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_X509_SHA1);
+		return tmp!=null ? Boolean.valueOf(tmp) : false;
+	}
+	public boolean isJwtSignIncludeX509CertSha256() {
+		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_X509_SHA256);
+		return tmp!=null ? Boolean.valueOf(tmp) : false;
+	}
+	public boolean isJwtSignJoseContentType() {
+		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_JOSE_CONTENT_TYPE);
+		return tmp!=null ? Boolean.valueOf(tmp) : false;
+	}
+	public String getJwtSignJoseType() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_JOSE_TYPE);
+	}
 	public String getJwtSignKeystoreType() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_TYPE);
 	}

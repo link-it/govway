@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -1163,7 +1163,8 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			// prendo una connessione
 			con = ControlStationCore.dbM.getConnection();
 			boolean orderByDescrizione = true;
-			return DBMappingUtils.mappingErogazionePortaApplicativaList(con,this.tipoDB,idAccordoServizioParteSpecifica,idServizio, ricerca, orderByDescrizione);
+			boolean ricerca_useOffsetLimit = false; // non esiste paginazione per adesso
+			return DBMappingUtils.mappingErogazionePortaApplicativaList(con,this.tipoDB,idAccordoServizioParteSpecifica,idServizio, ricerca, ricerca_useOffsetLimit, orderByDescrizione);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
@@ -1363,9 +1364,10 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			// prendo una connessione
 			con = ControlStationCore.dbM.getConnection();
 			boolean orderByDescrizione = true;
+			boolean ricerca_useOffsetLimit = false; // non esiste paginazione per adesso
 			return DBMappingUtils.mappingFruizionePortaDelegataList(con,this.tipoDB,idFru,idSoggettoFruitore,  
 					idAccordoServizio, 
-					ricerca,
+					ricerca, ricerca_useOffsetLimit,
 					orderByDescrizione);
 
 		} catch (Exception e) {
@@ -1385,9 +1387,10 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			// prendo una connessione
 			con = ControlStationCore.dbM.getConnection();
 			boolean orderByDescrizione = true;
+			boolean ricerca_useOffsetLimit = false; // non esiste paginazione per adesso
 			return DBMappingUtils.mappingFruizionePortaDelegataList(con,this.tipoDB,idSoggettoFruitore,  
 					idAccordoServizio, 
-					ricerca,
+					ricerca, ricerca_useOffsetLimit,
 					orderByDescrizione);
 
 		} catch (Exception e) {

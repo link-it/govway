@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -1384,6 +1384,7 @@ public abstract class AbstractStatistiche {
 		if(stat.getDestinatario()!=null && stat.getDestinatario().getTipo()!=null) {
 			EsitiProperties esitiProperties = null;
 			int esitoConsegnaMultipla = -1;
+			int esitoConsegnaMultiplaInCorso = -1;
 			int esitoConsegnaMultiplaFallita = -1;
 			int esitoConsegnaMultiplaCompletata = -1;
 			try {
@@ -1405,9 +1406,12 @@ public abstract class AbstractStatistiche {
 				}
 				esitiProperties = EsitiProperties.getInstance(this.logger, protocollo);
 				esitoConsegnaMultipla = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA);
+				esitoConsegnaMultiplaInCorso = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_IN_CORSO);
 				esitoConsegnaMultiplaFallita = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_FALLITA);
 				esitoConsegnaMultiplaCompletata = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_COMPLETATA);
-				if(stat.getEsito().intValue() == esitoConsegnaMultiplaFallita || stat.getEsito().intValue() == esitoConsegnaMultiplaCompletata) {
+				if(stat.getEsito().intValue() == esitoConsegnaMultiplaInCorso || 
+						stat.getEsito().intValue() == esitoConsegnaMultiplaFallita || 
+						stat.getEsito().intValue() == esitoConsegnaMultiplaCompletata) {
 					statisticaBase.setEsito(esitoConsegnaMultipla);
 				}
 				else {

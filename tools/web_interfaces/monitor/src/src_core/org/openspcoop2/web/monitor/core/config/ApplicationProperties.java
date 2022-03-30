@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -226,6 +226,34 @@ public class ApplicationProperties {
 			}
 		}
 		return null;
+	}
+	
+	public String getJmxPdD_externalConfiguration() throws Exception{
+		return this.getProperty("configurazioni.risorseJmxPdd.configurazioneNodiRun",false,true);
+	}
+	
+	public String getJmxPdD_backwardCompatibilityPrefix() {
+		return "configurazioni.risorseJmxPdd.";
+	}
+	
+	public Properties getJmxPdD_backwardCompatibilityProperties() throws Exception{
+		
+		String prefix = getJmxPdD_backwardCompatibilityPrefix();
+		
+		Properties p = new Properties();
+		Enumeration<?> en = this.reader.propertyNames();
+		while (en.hasMoreElements()) {
+			Object object = (Object) en.nextElement();
+			if(object !=null && object instanceof String) {
+				String key = (String) object;
+				if(key.contains(prefix)) {
+					String newKey = key.replace(prefix, "");
+					p.put(newKey, this.reader.getValue_convertEnvProperties(key));
+				}
+			}
+		}
+		return p;
+		
 	}
 	
 	

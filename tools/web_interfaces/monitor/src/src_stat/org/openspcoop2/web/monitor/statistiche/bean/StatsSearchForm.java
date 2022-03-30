@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -36,8 +36,10 @@ import org.openspcoop2.core.statistiche.constants.TipoReport;
 import org.openspcoop2.core.statistiche.constants.TipoStatistica;
 import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
 import org.openspcoop2.generic_project.expression.SortOrder;
+import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.web.monitor.core.bean.AbstractDateSearchForm;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
@@ -101,6 +103,7 @@ public class StatsSearchForm extends BaseSearchForm{
 	private boolean andamentoTemporalePerEsiti = false; 
 
 	private boolean isMostraUnitaTempoDistribuzioneNonTemporale = false;
+	private boolean isMostraUnitaTempoDistribuzioneNonTemporale_periodoPersonalizzato = false;
 	
 	private boolean distribuzionePerImplementazioneApi = true;
 	
@@ -145,6 +148,9 @@ public class StatsSearchForm extends BaseSearchForm{
 			initIdClusterAndCanali(govwayMonitorProperties);
 			
 			this.isMostraUnitaTempoDistribuzioneNonTemporale = govwayMonitorProperties.isMostraUnitaTempoDistribuzioneNonTemporale();
+			if(!this.isMostraUnitaTempoDistribuzioneNonTemporale) {
+				this.isMostraUnitaTempoDistribuzioneNonTemporale_periodoPersonalizzato = govwayMonitorProperties.isMostraUnitaTempoDistribuzioneNonTemporale_periodoPersonalizzato();
+			}
 		} catch (Exception e) {
 			StatsSearchForm.log.error("Errore il calcolo della proprieta' 'useDistribuzioneStatisticaGiornalieraPerElaborazioneSettimanaleMensile': " + e.getMessage(),e);
 		}
@@ -165,8 +171,72 @@ public class StatsSearchForm extends BaseSearchForm{
 		return this.dataFineDellaRicerca;
 	}
 
+	
+	@Override
+	public List<SelectItem> getEsitiGruppo() {
+		if(this.tipoStatistica!=null && this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_ERRORI)) {
+		
+			ArrayList<SelectItem> list = new ArrayList<SelectItem>();
+			try{
+				EsitoUtils esitoUtils = new EsitoUtils(StatsSearchForm.log, getSafeProtocol());
+				//list.add(new SelectItem(EsitoUtils.ALL_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_VALUE,false)));
+				list.add(new SelectItem(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE,false)));
+				list.add(new SelectItem(EsitoUtils.ALL_ERROR_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_ERROR_VALUE,false)));
+				list.add(new SelectItem(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE,false)));
+				list.add(new SelectItem(EsitoUtils.ALL_ERROR_CONSEGNA_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_ERROR_CONSEGNA_VALUE,false)));
+				list.add(new SelectItem(EsitoUtils.ALL_ERROR_RICHIESTE_SCARTATE_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_ERROR_RICHIESTE_SCARTATE_VALUE,false)));
+				//list.add(new SelectItem(EsitoUtils.ALL_OK_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_OK_VALUE,false)));
+				list.add(new SelectItem(EsitoUtils.ALL_PERSONALIZZATO_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_PERSONALIZZATO_VALUE,false)));
+		
+				return list;
+			}catch(Exception e){
+				StatsSearchForm.log.error("Errore durante il recupero della lista dei gruppi di esito "+e.getMessage(),e);
+				throw new RuntimeException(e.getMessage(),e);
+			}
+			
+		}
+		else {
+			return super.getEsitiGruppo();
+		}
+	}
+	
 	public List<SelectItem> getEsitiDettaglio() {
+		if(this.tipoStatistica!=null && this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_ERRORI)) {
+			if(EsitoUtils.ALL_VALUE == this.getEsitoGruppo() || EsitoUtils.ALL_OK_VALUE == this.getEsitoGruppo()){
+				this.setEsitoGruppo(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE);
+			}
+		}
+		
 		return super.getEsitiDettaglio(true);
+	}
+	
+	@Override
+	protected List<Integer> getEsitiOrderLabel() throws Exception {
+		if(this.tipoStatistica!=null && this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_ERRORI)) {
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(StatsSearchForm.log, getSafeProtocol());
+			List<Integer> esiti = esitiProperties.getEsitiCodeOrderLabel(); // mantengo l'ordine
+			List<Integer> esitiOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
+			if(esiti!=null && !esiti.isEmpty()) {
+				List<Integer> esitiErrori = new ArrayList<Integer>();
+				for (Integer esito : esiti) {
+					boolean found = false;
+					for (Integer esitoOk : esitiOk) {
+						if(esito.intValue() == esitoOk.intValue()) {
+							found = true;
+							break;
+						}
+					}
+					if(!found) {
+						esitiErrori.add(esito);
+					}
+				}
+				return esitiErrori;
+			}
+			return esiti;
+		}
+		else {
+			return super.getEsitiOrderLabel();
+		}
 	}
 	
 	public List<SelectItem> getEsitiDettagliPersonalizzati() {
@@ -914,6 +984,11 @@ public class StatsSearchForm extends BaseSearchForm{
 				// Fix: l'impostazione dei minuti non ha senso nelle statistiche poichè non esiste un campionamento sui minuti. La soluzione è di impostare l'intervallo più esterno '00' in data inizio e '59' in data fine.
 				return "yyyy-MM-dd HH:mm";
 			default:
+				if(!TipoStatistica.ANDAMENTO_TEMPORALE.equals(this.tipoStatistica) &&
+						!this.isMostraUnitaTempoDistribuzioneNonTemporale &&
+						!this.isMostraUnitaTempoDistribuzioneNonTemporale_periodoPersonalizzato) {
+					return "yyyy-MM-dd HH:mm"; // i minuti servono sempre per le distribuzioni statistiche se non visualizzo l'unita di tempo nel periodo personalizzato
+				}
 				return "yyyy-MM-dd";
 			}
 		}
@@ -929,6 +1004,10 @@ public class StatsSearchForm extends BaseSearchForm{
 		return TipoStatistica.ANDAMENTO_TEMPORALE.equals(this.tipoStatistica) || this.isMostraUnitaTempoDistribuzioneNonTemporale;
 	}
 	public boolean isShowUnitaTempoPersonalizzato() {
-		return !this.isShowUnitaTempo() && this.isPeriodoPersonalizzato();
+		return !this.isShowUnitaTempo() && this.isPeriodoPersonalizzato() && this.isMostraUnitaTempoDistribuzioneNonTemporale_periodoPersonalizzato;
 	}
+	public boolean isShowUnitaTempoPersonalizzato_periodoPersonalizzato() {
+		return this.isMostraUnitaTempoDistribuzioneNonTemporale_periodoPersonalizzato;
+	}
+
 }

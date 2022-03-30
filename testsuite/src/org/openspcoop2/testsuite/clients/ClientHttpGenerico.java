@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -67,6 +67,7 @@ import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
 import org.openspcoop2.utils.rest.problem.XmlDeserializer;
 import org.openspcoop2.utils.rest.problem.XmlSerializer;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.SSLConfig;
 import org.openspcoop2.utils.transport.http.SSLHostNameVerifierDisabled;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
@@ -119,7 +120,7 @@ public class ClientHttpGenerico extends ClientCore{
 	
 	/** SSL Configuration */
 	private boolean https = false;
-	private ConnettoreHTTPSProperties sslContextProperties;
+	private SSLConfig sslContextProperties;
 	
 	
 	

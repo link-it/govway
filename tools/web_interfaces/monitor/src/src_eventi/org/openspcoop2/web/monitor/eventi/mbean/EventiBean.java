@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -20,6 +20,7 @@
 package org.openspcoop2.web.monitor.eventi.mbean;
 
 import org.openspcoop2.core.eventi.constants.TipoSeverita;
+import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.IService;
@@ -68,6 +69,7 @@ public class EventiBean extends PdDBaseBean<EventoBean, Long, IService<EventoBea
 	private boolean visualizzaIdCluster = false;
 	private boolean visualizzaIdClusterAsSelectList = false;
 	private List<String> listIdCluster;
+	private List<String> listLabelIdCluster;
 	
 	private boolean visualizzaCanali = false;
 	private List<String> listCanali;
@@ -85,6 +87,16 @@ public class EventiBean extends PdDBaseBean<EventoBean, Long, IService<EventoBea
 				this.listIdCluster = new ArrayList<String>();
 				this.listIdCluster.add("--");
 				this.listIdCluster.addAll(govwayMonitorare);
+				
+				this.listLabelIdCluster = new ArrayList<String>();
+				ConfigurazioneNodiRuntime config = govwayMonitorProperties.getConfigurazioneNodiRuntime();
+				for (String nodoRun : this.listIdCluster) {
+					String descrizione = null;
+					if(config.containsNode(nodoRun)) {
+						descrizione = config.getDescrizione(nodoRun);
+					}
+					this.listLabelIdCluster.add(descrizione!=null ? descrizione : nodoRun);
+				}
 			}
 			
 			
@@ -195,11 +207,13 @@ public class EventiBean extends PdDBaseBean<EventoBean, Long, IService<EventoBea
 	public List<SelectItem> getListIdCluster() {
 		ArrayList<SelectItem> list = new ArrayList<SelectItem>();
 		if(this.listIdCluster!=null && this.listIdCluster.size()>0){
-			for (String id : this.listIdCluster) {
+			for (int i = 0; i < this.listIdCluster.size(); i++) {
+				String id = this.listIdCluster.get(i);
 				if("--".equals(id)) {
 					list.add(new SelectItem(id));
 					continue;
 				}
+				String label = this.listLabelIdCluster.get(i);
 				if(this.search!=null && this.search.getCanale()!=null && !"".equals(this.search.getCanale()) && !"--".equals(this.search.getCanale()) &&
 						this.visualizzaCanali && this.mapCanaleToNodi!=null) {
 					List<String> nodi = this.mapCanaleToNodi.get(this.search.getCanale());
@@ -207,7 +221,7 @@ public class EventiBean extends PdDBaseBean<EventoBean, Long, IService<EventoBea
 						continue;
 					}
 				}
-				list.add(new SelectItem(id));
+				list.add(new SelectItem(id,label));
 			}
 		}
 		return list;

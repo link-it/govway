@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -81,6 +81,7 @@ var path = '<%= request.getContextPath()%>';
 <script type="text/javascript" src="js/typeahead.bundle.js"></script>
 <script type="text/javascript" src="js/bootstrap-tagsinput.js"></script>
 <script type="text/javascript" src="js/jquery.searchabledropdown-1.0.8.min.js"></script>
+<script type="text/javascript" src="js/jquery.context-menu.min.js"></script>
 <script>
 var nr = 0;
 function CheckDati() {
@@ -90,6 +91,17 @@ function CheckDati() {
 
   //I controlli si fanno direttamente nei .java
   nr = 1;
+
+  // evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
+  for (var k=0; k<document.form.elements.length; k++) {
+		var nome = document.form.elements[k].name;
+		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
+
+		if(hiddenInfo > -1) {
+			document.form.elements[k].value = '';
+		}
+  }
+
   document.form.submit();
 };
 

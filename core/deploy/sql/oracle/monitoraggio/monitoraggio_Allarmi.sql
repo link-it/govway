@@ -20,6 +20,7 @@ CREATE TABLE allarmi
 	-- Informazioni generali (0=false/1=true)
 	enabled NUMBER NOT NULL,
 	acknowledged NUMBER NOT NULL,
+	dettaglio_acknowledged CLOB,
 	periodo_tipo VARCHAR2(255),
 	periodo NUMBER,
 	mail_invia NUMBER,

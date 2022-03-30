@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -216,6 +216,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 			boolean visualizzaLinkProprietaCustom = false;
 			boolean modificaStatoAbilitata = true;
 			boolean visualizzaLinkRegolePerAzioni = false;
+			org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneCondizionale configurazioneCondizionaleOld = null;
 			if(portaApplicativa.getBehaviour() != null) {
 				TipoBehaviour behaviourType = TipoBehaviour.toEnumConstant(portaApplicativa.getBehaviour().getNome());
 				visualizzaLinkProprietaCustom = behaviourType.equals(TipoBehaviour.CUSTOM);
@@ -224,8 +225,8 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 					modificaStatoAbilitata = false;
 				
 				if(org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(portaApplicativa, ControlStationCore.getLog())){
-					org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneCondizionale configurazioneCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.read(portaApplicativa, ControlStationCore.getLog());
-					numeroRegolePerAzioni = configurazioneCondizionale.getRegoleOrdinate().size();
+					configurazioneCondizionaleOld = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.read(portaApplicativa, ControlStationCore.getLog());
+					numeroRegolePerAzioni = configurazioneCondizionaleOld.getRegoleOrdinate().size();
 					visualizzaLinkRegolePerAzioni = true;
 				}
 			}
@@ -278,14 +279,26 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 			// select list della sezione notifiche
 			List<String> connettoriImplementaAPIValues = new ArrayList<>();
 			List<String> connettoriImplementaAPILabels = new ArrayList<>();
+			String connettorePrincipale = null;
 			List<PortaApplicativaServizioApplicativo> servizioApplicativoList = portaApplicativa.getServizioApplicativoList();
 			if(servizioApplicativoList != null) {
+				TipoBehaviour behaviourType = null;
+				if(portaApplicativa.getBehaviour()!=null) {
+					behaviourType = TipoBehaviour.toEnumConstant(portaApplicativa.getBehaviour().getNome());
+				}
 				for (PortaApplicativaServizioApplicativo paSA : servizioApplicativoList) {
 					String nomeConnettorePaSA = porteApplicativeHelper.getLabelNomePortaApplicativaServizioApplicativo(paSA);
 
 					connettoriImplementaAPIValues.add(nomeConnettorePaSA);
 					connettoriImplementaAPILabels.add(nomeConnettorePaSA);
+					
+					if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType) && porteApplicativeHelper.isConnettoreDefault(paSA)) {
+						connettorePrincipale=nomeConnettorePaSA;
+					}
 				}
+			}
+			if(connettoreImplementaAPI!=null && !"".equals(connettoreImplementaAPI)) {
+				connettorePrincipale=connettoreImplementaAPI; // posso averlo cambiato
 			}
 
 			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
@@ -467,7 +480,8 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 
 				dati = porteApplicativeHelper.addConnettoriMultipliConfigurazioneToDati(dati, TipoOperazione.OTHER, accessoDaAPSParametro, stato, modalitaConsegna, tipoCustom, 
 						numeroProprietaCustom, servletProprietaCustom, listaParametriServletProprietaCustom, visualizzaLinkProprietaCustom, loadBalanceStrategia, modificaStatoAbilitata, 
-						consegnaCondizionale, isSoapOneWay, connettoreImplementaAPI, connettoriImplementaAPIValues, connettoriImplementaAPILabels, notificheCondizionaliEsito, esitiTransazione,
+						consegnaCondizionale, isSoapOneWay, connettoreImplementaAPI, connettoriImplementaAPIValues, connettoriImplementaAPILabels, connettorePrincipale,
+						notificheCondizionaliEsito, esitiTransazione,
 						serviceBinding, selezioneConnettoreBy, identificazioneCondizionale, identificazioneCondizionalePattern,
 						identificazioneCondizionalePrefisso, identificazioneCondizionaleSuffisso, visualizzaLinkRegolePerAzioni, servletRegolePerAzioni, listaParametriServletRegolePerAzioni,
 						numeroRegolePerAzioni,  condizioneNonIdentificataAbortTransaction,  condizioneNonIdentificataDiagnostico, condizioneNonIdentificataConnettore,
@@ -487,7 +501,8 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 			// Controlli sui campi immessi
 			boolean isOk = porteApplicativeHelper.connettoriMultipliConfigurazioneCheckData(TipoOperazione.OTHER, stato, modalitaConsegna, tipoCustom, loadBalanceStrategia, isSoapOneWay,
 					sticky, stickyTipoSelettore, stickyTipoSelettorePattern, stickyMaxAge,
-					passiveHealthCheck, passiveHealthCheck_excludeForSeconds);
+					passiveHealthCheck, passiveHealthCheck_excludeForSeconds,
+					serviceBinding);
 
 			if(!isOk) {
 				// preparo i campi
@@ -497,7 +512,8 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 
 				dati = porteApplicativeHelper.addConnettoriMultipliConfigurazioneToDati(dati, TipoOperazione.OTHER, accessoDaAPSParametro, stato, modalitaConsegna, tipoCustom, 
 						numeroProprietaCustom, servletProprietaCustom, listaParametriServletProprietaCustom, visualizzaLinkProprietaCustom, loadBalanceStrategia, modificaStatoAbilitata,
-						consegnaCondizionale, isSoapOneWay, connettoreImplementaAPI, connettoriImplementaAPIValues, connettoriImplementaAPILabels, notificheCondizionaliEsito, esitiTransazione,
+						consegnaCondizionale, isSoapOneWay, connettoreImplementaAPI, connettoriImplementaAPIValues, connettoriImplementaAPILabels, connettorePrincipale,
+						notificheCondizionaliEsito, esitiTransazione,
 						serviceBinding, selezioneConnettoreBy, identificazioneCondizionale, identificazioneCondizionalePattern,
 						identificazioneCondizionalePrefisso, identificazioneCondizionaleSuffisso, visualizzaLinkRegolePerAzioni, servletRegolePerAzioni, listaParametriServletRegolePerAzioni,
 						numeroRegolePerAzioni,  condizioneNonIdentificataAbortTransaction,  condizioneNonIdentificataDiagnostico,  condizioneNonIdentificataConnettore,
@@ -540,7 +556,8 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 					
 					// configurazione multideliver
 					org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = porteApplicativeHelper.toConfigurazioneMultiDeliver(connettoreImplementaAPI, notificheCondizionaliEsito, esitiTransazione);
-					org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.save(portaApplicativa, configurazioneMultiDeliver);
+					boolean differenziazioneConsegnaDaNotifiche = false;
+					org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.save(portaApplicativa, configurazioneMultiDeliver, differenziazioneConsegnaDaNotifiche);
 					
 					// configurazione condizionale
 					if(consegnaCondizionale) {
@@ -558,11 +575,15 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 					
 					// configurazione multideliver
 					org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = porteApplicativeHelper.toConfigurazioneMultiDeliver(connettoreImplementaAPI, notificheCondizionaliEsito, esitiTransazione);
-					org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.save(portaApplicativa, configurazioneMultiDeliver);
+					boolean differenziazioneConsegnaDaNotifiche = TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType);
+					org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.save(portaApplicativa, configurazioneMultiDeliver, differenziazioneConsegnaDaNotifiche);
 					
 					// configurazione condizionale
 					if(consegnaCondizionale) {
 						ConfigurazioneCondizionale configurazioneCondizionale = porteApplicativeHelper.toConfigurazioneCondizionale(consegnaCondizionale, selezioneConnettoreBy, identificazioneCondizionale, identificazioneCondizionalePattern, identificazioneCondizionalePrefisso, identificazioneCondizionaleSuffisso, condizioneNonIdentificataAbortTransaction, condizioneNonIdentificataDiagnostico, condizioneNonIdentificataConnettore, connettoreNonTrovatoAbortTransaction, connettoreNonTrovatoDiagnostico, connettoreNonTrovatoConnettore);
+						if(configurazioneCondizionaleOld!=null && configurazioneCondizionaleOld.sizeRegole()>0) {
+							configurazioneCondizionale.setRegolaList(configurazioneCondizionaleOld.getRegolaList());
+						}
 						org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.save(portaApplicativa, configurazioneCondizionale);
 					}
 				}
@@ -712,12 +733,35 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 				}
 			}
 
+			// select list della sezione notifiche
+			connettoriImplementaAPIValues = new ArrayList<>();
+			connettoriImplementaAPILabels = new ArrayList<>();
+			connettorePrincipale = null;
+			servizioApplicativoList = portaApplicativa.getServizioApplicativoList();
+			if(servizioApplicativoList != null) {
+				TipoBehaviour behaviourType = null;
+				if(portaApplicativa.getBehaviour()!=null) {
+					behaviourType = TipoBehaviour.toEnumConstant(portaApplicativa.getBehaviour().getNome());
+				}
+				for (PortaApplicativaServizioApplicativo paSA : servizioApplicativoList) {
+					String nomeConnettorePaSA = porteApplicativeHelper.getLabelNomePortaApplicativaServizioApplicativo(paSA);
+
+					connettoriImplementaAPIValues.add(nomeConnettorePaSA);
+					connettoriImplementaAPILabels.add(nomeConnettorePaSA);
+					
+					if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType) && porteApplicativeHelper.isConnettoreDefault(paSA)) {
+						connettorePrincipale=nomeConnettorePaSA;
+					}
+				}
+			}
+			
 			// preparo i campi
 			Vector<DataElement> dati = new Vector<DataElement>();
 
 			dati = porteApplicativeHelper.addConnettoriMultipliConfigurazioneToDati(dati, TipoOperazione.OTHER, accessoDaAPSParametro, stato, modalitaConsegna, tipoCustom, 
 					numeroProprietaCustom, servletProprietaCustom, listaParametriServletProprietaCustom, visualizzaLinkProprietaCustom,loadBalanceStrategia, modificaStatoAbilitata,
-					consegnaCondizionale, isSoapOneWay, connettoreImplementaAPI, connettoriImplementaAPIValues, connettoriImplementaAPILabels, notificheCondizionaliEsito, esitiTransazione,
+					consegnaCondizionale, isSoapOneWay, connettoreImplementaAPI, connettoriImplementaAPIValues, connettoriImplementaAPILabels, connettorePrincipale,
+					notificheCondizionaliEsito, esitiTransazione,
 					serviceBinding, selezioneConnettoreBy, identificazioneCondizionale, identificazioneCondizionalePattern,
 					identificazioneCondizionalePrefisso, identificazioneCondizionaleSuffisso, visualizzaLinkRegolePerAzioni, servletRegolePerAzioni, listaParametriServletRegolePerAzioni,
 					numeroRegolePerAzioni,  condizioneNonIdentificataAbortTransaction,  condizioneNonIdentificataDiagnostico,  condizioneNonIdentificataConnettore,

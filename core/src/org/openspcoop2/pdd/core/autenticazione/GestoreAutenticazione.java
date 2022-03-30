@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -23,6 +23,7 @@
 package org.openspcoop2.pdd.core.autenticazione;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,7 +33,9 @@ import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.IdCredenzialeMittente;
@@ -85,6 +88,7 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
 import org.openspcoop2.utils.cache.CacheType;
+import org.openspcoop2.utils.cache.CacheResponse;
 import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
 
@@ -210,6 +214,17 @@ public class GestoreAutenticazione {
 			throw new AutenticazioneException("Cache non abilitata");
 		}
 	}
+	public static List<String> listKeysCache() throws AutenticazioneException{
+		if(GestoreAutenticazione.cacheAutenticazione!=null){
+			try{
+				return GestoreAutenticazione.cacheAutenticazione.keys();
+			}catch(Exception e){
+				throw new AutenticazioneException(e.getMessage(),e);
+			}
+		}else{
+			throw new AutenticazioneException("Cache non abilitata");
+		}
+	}
 	public static String getObjectCache(String key) throws AutenticazioneException{
 		if(GestoreAutenticazione.cacheAutenticazione!=null){
 			try{
@@ -218,6 +233,31 @@ public class GestoreAutenticazione {
 					return o.toString();
 				}else{
 					return "oggetto con chiave ["+key+"] non presente";
+				}
+			}catch(Exception e){
+				throw new AutenticazioneException(e.getMessage(),e);
+			}
+		}else{
+			throw new AutenticazioneException("Cache non abilitata");
+		}
+	}
+	public static Object getRawObjectCache(String key) throws AutenticazioneException{
+		if(GestoreAutenticazione.cacheAutenticazione!=null){
+			try{
+				Object o = GestoreAutenticazione.cacheAutenticazione.get(key);
+				if(o!=null){
+					if(o instanceof CacheResponse) {
+						CacheResponse cR = (CacheResponse) o;
+						if(cR.getObject()!=null) {
+							o = cR.getObject();
+						}
+						else if(cR.getException()!=null) {
+							o = cR.getException();
+						}
+					}
+					return o;
+				}else{
+					return null;
 				}
 			}catch(Exception e){
 				throw new AutenticazioneException(e.getMessage(),e);
@@ -341,6 +381,117 @@ public class GestoreAutenticazione {
 	}
 	
 
+	
+	
+	
+	/*----------------- CLEANER --------------------*/
+	
+	public static void removePortaApplicativa(IDPortaApplicativa idPA) throws Exception {
+		if(GestoreAutenticazione.isCacheAbilitata()) {
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = GestoreAutenticazione.listKeysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				String match = IDPortaApplicativa.PORTA_APPLICATIVA_PREFIX+idPA.getNome()+IDPortaApplicativa.PORTA_APPLICATIVA_SUFFIX;
+				for (String key : keys) {
+					if(key!=null && key.contains(match)) {
+						keyForClean.add(key);
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	public static void removePortaDelegata(IDPortaDelegata idPD) throws Exception {
+		if(GestoreAutenticazione.isCacheAbilitata()) {
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = GestoreAutenticazione.listKeysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				String match = IDPortaDelegata.PORTA_DELEGATA_PREFIX+idPD.getNome()+IDPortaDelegata.PORTA_DELEGATA_SUFFIX;
+				for (String key : keys) {
+					if(key!=null && key.contains(match)) {
+						keyForClean.add(key);
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	public static void removeSoggetto(IDSoggetto idSoggetto) throws Exception {
+		if(GestoreAutenticazione.isCacheAbilitata()) {
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = GestoreAutenticazione.listKeysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				for (String key : keys) {
+					if(key!=null) {
+						Object o = GestoreAutenticazione.getRawObjectCache(key);
+						if(o!=null) {
+							if(o instanceof EsitoAutenticazionePortaApplicativa) {
+								EsitoAutenticazionePortaApplicativa esito = (EsitoAutenticazionePortaApplicativa) o;
+								if(esito.getIdSoggetto()!=null && esito.getIdSoggetto().equals(idSoggetto)) {
+									keyForClean.add(key);
+								}
+							}
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	public static void removeApplicativo(IDServizioApplicativo idApplicativo) throws Exception {
+		if(GestoreAutenticazione.isCacheAbilitata()) {
+			List<String> keyForClean = new ArrayList<String>();
+			List<String> keys = GestoreAutenticazione.listKeysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				for (String key : keys) {
+					if(key!=null) {
+						Object o = GestoreAutenticazione.getRawObjectCache(key);
+						if(o!=null) {
+							if(o instanceof EsitoAutenticazionePortaDelegata) {
+								EsitoAutenticazionePortaDelegata esito = (EsitoAutenticazionePortaDelegata) o;
+								if(esito.getIdServizioApplicativo()!=null && esito.getIdServizioApplicativo().equals(idApplicativo)) {
+									keyForClean.add(key);
+								}
+							}
+							else if(o instanceof EsitoAutenticazionePortaApplicativa) {
+								EsitoAutenticazionePortaApplicativa esito = (EsitoAutenticazionePortaApplicativa) o;
+								if(esito.getIdServizioApplicativo()!=null && esito.getIdServizioApplicativo().equals(idApplicativo)) {
+									keyForClean.add(key);
+								}
+							}
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	
+	
+	
+	
+	/*----------------- AUTENTICAZIONE --------------------*/
+	
     public static EsitoAutenticazionePortaDelegata verificaAutenticazionePortaDelegata(String tipoAutenticazione, 
     		DatiInvocazionePortaDelegata datiInvocazione, ParametriAutenticazione parametriAutenticazione,
  		  PdDContext pddContext,IProtocolFactory<?> protocolFactory, OpenSPCoop2Message msg) throws Exception{
@@ -744,35 +895,35 @@ public class GestoreAutenticazione {
 	    		}
 	    	
 	    		if(issuer) {
-	    			if(informazioniTokenNormalizzate.getIss()==null || "".equals(informazioniTokenNormalizzate.getIss())) {
+	    			if(informazioniTokenNormalizzate==null || informazioniTokenNormalizzate.getIss()==null || "".equals(informazioniTokenNormalizzate.getIss())) {
 	    				autenticato = false;
 		    			errorMessage = "Token without issuer claim";
 	    			}
 	    		}
 	    		
 	    		if(clientId) {
-	    			if(informazioniTokenNormalizzate.getClientId()==null || "".equals(informazioniTokenNormalizzate.getClientId())) {
+	    			if(informazioniTokenNormalizzate==null || informazioniTokenNormalizzate.getClientId()==null || "".equals(informazioniTokenNormalizzate.getClientId())) {
 	    				autenticato = false;
 		    			errorMessage = "Token without clientId claim";
 	    			}
 	    		}
 	    		
 	    		if(subject) {
-	    			if(informazioniTokenNormalizzate.getSub()==null || "".equals(informazioniTokenNormalizzate.getSub())) {
+	    			if(informazioniTokenNormalizzate==null || informazioniTokenNormalizzate.getSub()==null || "".equals(informazioniTokenNormalizzate.getSub())) {
 	    				autenticato = false;
 		    			errorMessage = "Token without subject claim";
 	    			}
 	    		}
 	    		
 	    		if(username) {
-	    			if(informazioniTokenNormalizzate.getUsername()==null || "".equals(informazioniTokenNormalizzate.getUsername())) {
+	    			if(informazioniTokenNormalizzate==null || informazioniTokenNormalizzate.getUsername()==null || "".equals(informazioniTokenNormalizzate.getUsername())) {
 	    				autenticato = false;
 		    			errorMessage = "Token without username claim";
 	    			}
 	    		}
 	    		
 	    		if(email) {
-	    			if(informazioniTokenNormalizzate.getUserInfo()==null || 
+	    			if(informazioniTokenNormalizzate==null || informazioniTokenNormalizzate.getUserInfo()==null || 
 	    					informazioniTokenNormalizzate.getUserInfo().getEMail()==null || 
 	    					"".equals(informazioniTokenNormalizzate.getUserInfo().getEMail())) {
 	    				autenticato = false;

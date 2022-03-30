@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -418,6 +418,7 @@ public class GestoreConsegnaMultipla {
 		Connection con = null;
 		boolean isMessaggioConsegnato = false;
 		boolean possibileTerminazioneSingleIntegrationManagerMessage = false;
+		boolean consegnaInErrore = false;
 		TransazioneApplicativoServer transazioneApplicativoServer = null;
 		boolean useConnectionRuntime = false;
 		try{
@@ -522,6 +523,10 @@ public class GestoreConsegnaMultipla {
 					else if(transazioneApplicativoServer.getDataMessaggioScaduto()!=null) {
 						isMessaggioConsegnato = true;
 						possibileTerminazioneSingleIntegrationManagerMessage = true;
+					}
+					else if(transazioneApplicativoServer.isConsegnaTrasparente() && transazioneApplicativoServer.getDataUscitaRichiesta()!=null) {
+						// !transazioneApplicativoServer.isConsegnaTerminata() altrimenti entrava nel primo if
+						consegnaInErrore = true;
 					}
 	
 					boolean useSelectForUpdate = true;
@@ -723,7 +728,7 @@ public class GestoreConsegnaMultipla {
 
 		}finally{
 			
-			if(isMessaggioConsegnato) {
+			if(isMessaggioConsegnato || consegnaInErrore) {
 
 				long timeStart = -1;
 				try{
@@ -737,7 +742,7 @@ public class GestoreConsegnaMultipla {
 					}
 				
 					// aggiorno esito transazione (non viene sollevata alcuna eccezione)
-					boolean transazioneAggiornata = _safe_aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, con, esitiProperties, possibileTerminazioneSingleIntegrationManagerMessage, timeDetails);
+					boolean transazioneAggiornata = _safe_aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, con, esitiProperties, possibileTerminazioneSingleIntegrationManagerMessage, consegnaInErrore, timeDetails);
 					if(!transazioneAggiornata) {
 						
 						String prefix = "[id:"+transazioneApplicativoServer.getIdTransazione()+"][sa:"+transazioneApplicativoServer.getServizioApplicativoErogatore()+"]["+transazioneApplicativoServer.getConnettoreNome()+"] 'gestisciErroreAggiornamentoInformazioneConsegnaTerminata'";
@@ -868,7 +873,7 @@ public class GestoreConsegnaMultipla {
 	}
 
 	private boolean _safe_aggiornaInformazioneConsegnaTerminata(TransazioneApplicativoServer transazioneApplicativoServer, Connection con, EsitiProperties esitiProperties,
-			 boolean possibileTerminazioneSingleIntegrationManagerMessage,
+			 boolean possibileTerminazioneSingleIntegrationManagerMessage,boolean consegnaInErrore,
 			 List<String> timeDetails) {
 		
 		boolean debug = this.debug;
@@ -879,6 +884,7 @@ public class GestoreConsegnaMultipla {
 		ServiceManagerProperties smp = debug ? daoFactoryServiceManagerPropertiesTransazioni : daoFactoryDevNullServiceManagerPropertiesTransazioni;
 		
 		int esitoConsegnaMultipla = -1;
+		int esitoConsegnaMultiplaInCorso = -1;
 		int esitoConsegnaMultiplaFallita = -1;
 		int esitoConsegnaMultiplaCompletata = -1;
 		int ok = -1;
@@ -886,6 +892,7 @@ public class GestoreConsegnaMultipla {
 		boolean esitiLetti = false;
 		try {
 			esitoConsegnaMultipla = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA);
+			esitoConsegnaMultiplaInCorso = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_IN_CORSO);
 			esitoConsegnaMultiplaFallita = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_FALLITA);
 			esitoConsegnaMultiplaCompletata = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_COMPLETATA);
 			ok = esitiProperties.convertoToCode(EsitoTransazioneName.OK);
@@ -902,8 +909,8 @@ public class GestoreConsegnaMultipla {
 					this.tipoDatabase, this.log,
 					daoF,logFactory,smp,
 					this.debug,
-					esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
-					esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage,
+					esitoConsegnaMultipla, esitoConsegnaMultiplaInCorso, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
+					esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage, consegnaInErrore,
 					openspcoopProperties.getGestioneSerializableDB_AttesaAttiva(),openspcoopProperties.getGestioneSerializableDB_CheckInterval(),
 					timeDetails);
 		}

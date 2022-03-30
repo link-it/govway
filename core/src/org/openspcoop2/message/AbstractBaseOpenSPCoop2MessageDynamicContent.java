@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -26,6 +26,7 @@ import java.io.OutputStream;
 
 import org.apache.commons.io.input.CountingInputStream;
 import org.apache.commons.io.output.CountingOutputStream;
+import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
@@ -147,6 +148,7 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 	protected abstract String buildContentAsString() throws MessageException;
 	protected abstract byte[] buildContentAsByteArray() throws MessageException;
 	protected abstract void serializeContent(OutputStream os, boolean consume) throws MessageException;
+	protected void setUpdatableContent() throws MessageException{}
 	
 
 	
@@ -154,6 +156,14 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 	
 	public OpenSPCoop2MessageSoapStreamReader getSoapReader() {
 		return this.soapStreamReader;
+	}
+	
+	public void releaseSoapReader() {
+		if(this.soapStreamReader!=null) {
+			this.soapStreamReader.releaseBufferedInputStream();
+			this.soapStreamReader.clearHeader();
+			this.soapStreamReader = null;
+		}
 	}
 	
 	
@@ -210,12 +220,21 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 	}
 	public T getContent(boolean readOnly, String idTransazione) throws MessageException,MessageNotSupportedException{
 		if(this.hasContent){
+			if(!readOnly) {
+				boolean aggiornaContenuto = false;
+				if(this.content!=null && !this.contentUpdatable) {
+					aggiornaContenuto = true;
+				}
+				this.contentUpdatable = true;
+				if(aggiornaContenuto) {
+					// contenuto precedentemente già creato in modalità read-only
+					// il metodo ha bisogno che contentUpdatable sia a true
+					setUpdatableContent();
+				}
+			}
+			// nota l'assegnazione di contentUpdatable viene usata poi dentro l'inizializzaizone del contenuto per rilasciare le risorse
 			if(this.content==null){
 				this.initializeContent(readOnly, idTransazione);
-			}
-			
-			if(!readOnly) {
-				this.contentUpdatable = true;
 			}
 		}
 		return this.content; // può tornare null
@@ -317,26 +336,54 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 		this.writeTo(os, consume, false, null);
 	}
 	public void writeTo(OutputStream os, boolean consume, boolean readOnly, String idTransazione) throws MessageException{
+		writeTo(os, consume, readOnly, idTransazione, null);
+	}
+	public void writeTo(OutputStream os, boolean consume, boolean readOnly, String idTransazione, StringBuilder debug) throws MessageException{
 		try{
 			if(this.hasContent){
 				
 				if(!consume && this.content==null) {
+					if(!readOnly) {
+						this.contentUpdatable = true; // riverso soap header eventuale nel content che verrà costruito
+					}
 					this.initializeContent(readOnly, idTransazione); // per poi entrare nel ramo sotto serializeContent
 				}
 			
 				CountingOutputStream cos = new CountingOutputStream(os);
 				if(this.contentBuffer!=null && !this.contentUpdatable) {
-					//System.out.println("SERIALIZE BUFFER");
-					this.contentBuffer.writeTo(cos);
+					if(this.soapStreamReader!=null && this.soapStreamReader.isSoapHeaderModified() && this.contentType!=null) {
+						if(debug!=null) {
+							debug.append(Costanti.WRITE_MODE_SERIALIZE_BUFFER_WITH_HEADER);
+						}
+						this.soapStreamReader.writeOptimizedHeaderTo(this.contentBuffer.getInputStream(), cos, true);
+					}
+					else {
+						if(debug!=null) {
+							debug.append(Costanti.WRITE_MODE_SERIALIZE_BUFFER);
+						}
+						this.contentBuffer.writeTo(cos);
+					}
 				}
 				else if(this.content!=null){
-					//System.out.println("SERIALIZE CONTENT");
+					if(debug!=null) {
+						debug.append(Costanti.WRITE_MODE_SERIALIZE_CONTENT);
+					}
 					this.serializeContent(cos, consume);
 				}
 				else{
-					//System.out.println("SERIALIZE STREAM");
-					Utilities.copy(this.countingInputStream, cos);
-					this.countingInputStream.close();
+					if(this.soapStreamReader!=null && this.soapStreamReader.isSoapHeaderModified()) {
+						if(debug!=null) {
+							debug.append(Costanti.WRITE_MODE_SERIALIZE_STREAM_WITH_HEADER);
+						}
+						this.soapStreamReader.writeOptimizedHeaderTo(this.countingInputStream, cos, true);
+					}
+					else {
+						if(debug!=null) {
+							debug.append(Costanti.WRITE_MODE_SERIALIZE_STREAM);
+						}
+						Utilities.copy(this.countingInputStream, cos);
+						this.countingInputStream.close();
+					}
 				}
 				this.outgoingsize = cos.getByteCount();
 			}

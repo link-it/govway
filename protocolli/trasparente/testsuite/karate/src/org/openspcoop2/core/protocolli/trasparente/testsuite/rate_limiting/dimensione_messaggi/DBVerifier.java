@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -216,8 +216,13 @@ public class DBVerifier {
 		
 		Utilities.sleep(100); 
 		try {
-			List<Map<String, Object>> events = EventiUtils.getNotificheEventi(dataSpedizione);		
-			log().info(events.toString());
+			List<Map<String, Object>> events = EventiUtils.getNotificheEventi(dataSpedizione);
+			if(events!=null) {
+				log().info(events.toString());
+			}
+			else {
+				log().info("events empty");
+			}
 
 			assertEquals(true, EventiUtils.findEventRLViolato(events, nomePolicy, idServizio, Optional.empty(), log, policyApi));
 			assertEquals(true, EventiUtils.findEventRLViolazioneRisolta(events, nomePolicy, idServizio, Optional.empty(), log, policyApi));	
@@ -225,7 +230,12 @@ public class DBVerifier {
 			Utilities.sleep(500);
 			try {
 				List<Map<String, Object>> events = EventiUtils.getNotificheEventi(dataSpedizione);		
-				log().info(events.toString());
+				if(events!=null) {
+					log().info(events.toString());
+				}
+				else {
+					log().info("events empty");
+				}
 
 				assertEquals(true, EventiUtils.findEventRLViolato(events, nomePolicy, idServizio, Optional.empty(), log, policyApi));
 				assertEquals(true, EventiUtils.findEventRLViolazioneRisolta(events, nomePolicy, idServizio, Optional.empty(), log, policyApi));	
@@ -233,14 +243,24 @@ public class DBVerifier {
 				Utilities.sleep(2000);
 				try {
 					List<Map<String, Object>> events = EventiUtils.getNotificheEventi(dataSpedizione);		
-					log().info(events.toString());
+					if(events!=null) {
+						log().info(events.toString());
+					}
+					else {
+						log().info("events empty");
+					}
 
 					assertEquals(true, EventiUtils.findEventRLViolato(events, nomePolicy, idServizio, Optional.empty(), log, policyApi));
 					assertEquals(true, EventiUtils.findEventRLViolazioneRisolta(events, nomePolicy, idServizio, Optional.empty(), log, policyApi));	
 				}catch(Throwable t3) {
 					Utilities.sleep(10000);
 					List<Map<String, Object>> events = EventiUtils.getNotificheEventi(dataSpedizione);		
-					log().info(events.toString());
+					if(events!=null) {
+						log().info(events.toString());
+					}
+					else {
+						log().info("events empty");
+					}
 
 					assertEquals(true, EventiUtils.findEventRLViolato(events, nomePolicy, idServizio, Optional.empty(), log, policyApi));
 					assertEquals(true, EventiUtils.findEventRLViolazioneRisolta(events, nomePolicy, idServizio, Optional.empty(), log, policyApi));	

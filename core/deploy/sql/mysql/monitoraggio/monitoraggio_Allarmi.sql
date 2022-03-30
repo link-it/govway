@@ -11,7 +11,7 @@ CREATE TABLE allarmi
 	-- Stato allarme (0=OK, 1=Warning, 2=Allarme)
 	stato_precedente INT NOT NULL,
 	stato INT NOT NULL,
-	stato_dettaglio TEXT,
+	stato_dettaglio LONGTEXT,
 	-- Tempi di creazione/esecuzione allarmi
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	lasttimestamp_create TIMESTAMP(3) NOT NULL DEFAULT 0,
@@ -20,6 +20,7 @@ CREATE TABLE allarmi
 	-- Informazioni generali (0=false/1=true)
 	enabled INT NOT NULL,
 	acknowledged INT NOT NULL,
+	dettaglio_acknowledged LONGTEXT,
 	periodo_tipo VARCHAR(255),
 	periodo INT,
 	mail_invia INT,

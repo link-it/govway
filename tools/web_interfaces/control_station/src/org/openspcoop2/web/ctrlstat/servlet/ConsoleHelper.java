@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -94,6 +94,7 @@ import org.openspcoop2.core.config.ResponseCachingConfigurazioneControl;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
+import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaRichiesta;
@@ -185,6 +186,9 @@ import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLo
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerType;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyUtils;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
+import org.openspcoop2.pdd.core.connettori.ConnettoreCheck;
+import org.openspcoop2.pdd.core.connettori.ConnettoreNULL;
+import org.openspcoop2.pdd.core.connettori.ConnettoreNULLEcho;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
@@ -224,6 +228,7 @@ import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.regexp.RegExpException;
@@ -231,6 +236,8 @@ import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
+import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
+import org.openspcoop2.utils.xml.XPathExpressionEngine;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.Connettori;
@@ -2714,6 +2721,66 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
+	public boolean checkRegexp(String pattern, String object) throws Exception{
+		try {
+			RegularExpressionEngine.validate(pattern);
+		}catch(Exception e) {
+			this.pd.setMessage("Il campo '"+object+"' non contiene un'espressione regolare valida: "+e.getMessage());
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean checkXPath(String pattern, String object) throws Exception{
+		try {
+			AbstractXPathExpressionEngine engine = new XPathExpressionEngine();
+			engine.validate(pattern);
+		}catch(Exception e) {
+			this.pd.setMessage("Il campo '"+object+"' non contiene un'espressione xpath valida: "+e.getMessage());
+			return false;
+		}
+		return true;
+	}
+	public boolean checkJsonPath(String pattern, String object) throws Exception{
+		try {
+			JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
+			engine.validate(pattern);
+		}catch(Exception e) {
+			this.pd.setMessage("Il campo '"+object+"' non contiene un'espressione json-path valida: "+e.getMessage());
+			return false;
+		}
+		return true;
+	}
+	public boolean checkXPathOrJsonPath(String pattern, String object) throws Exception{
+		StringBuilder sb = new StringBuilder();
+		try {
+			AbstractXPathExpressionEngine engine = new XPathExpressionEngine();
+			engine.validate(pattern);
+			return true;
+		}catch(Exception e) {
+			if(sb.length()>0) {
+				sb.append("<BR/>");
+			}
+			sb.append("XPath: "+e.getMessage());
+		}
+		try {
+			JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
+			engine.validate(pattern);
+			return true;
+		}catch(Exception e) {
+			if(sb.length()>0) {
+				sb.append("<BR/>");
+			}
+			sb.append("JsonPath: "+e.getMessage());
+		}
+		if(sb.length()>0) {
+			this.pd.setMessage("Il campo '"+object+"' non contiene un'espressione valida:"+"<BR/>"+sb.toString());
+			return false;
+		}
+		return true;
+	}
+	
+	
 	// *** Utilities condivise tra Porte Delegate e Porte Applicative ***
 	
 	public Vector<DataElement> addPorteServizioApplicativoToDati(TipoOperazione tipoOp, Vector<DataElement> dati, 
@@ -3323,7 +3390,8 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 
 	// Controlla i dati della correlazione applicativa richiesta della porta delegata
-	public boolean correlazioneApplicativaRichiestaCheckData(TipoOperazione tipoOp,boolean portaDelegata) throws Exception {
+	public boolean correlazioneApplicativaRichiestaCheckData(TipoOperazione tipoOp,boolean portaDelegata,
+			ServiceBinding serviceBinding) throws Exception {
 		try {
 			String id = this.getParameter(CostantiControlStation.PARAMETRO_ID);
 			int idInt = Integer.parseInt(id);
@@ -3376,6 +3444,24 @@ public class ConsoleHelper implements IConsoleHelper {
 				return false;
 			}
 
+			if (mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED)) {
+				if(this.checkRegexp(pattern,ModalitaIdentificazione.URL_BASED.getLabelParametro())==false){
+					return false;
+				}
+			}
+			if (mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED)) {
+				if(ServiceBinding.SOAP.equals(serviceBinding)) {
+					if(this.checkXPath(pattern,ModalitaIdentificazione.CONTENT_BASED.getLabelParametro())==false){
+						return false;
+					}
+				}
+				else {
+					if(this.checkXPathOrJsonPath(pattern,ModalitaIdentificazione.CONTENT_BASED.getLabelParametro())==false){
+						return false;
+					}
+				}
+			}
+			
 			// Controllo che non esistano altre correlazioni applicative con gli
 			// stessi dati
 			boolean giaRegistrato = false;
@@ -3403,7 +3489,8 @@ public class ConsoleHelper implements IConsoleHelper {
 
 
 	// Controlla i dati della correlazione applicativa della porta delegata
-	public boolean correlazioneApplicativaRispostaCheckData(TipoOperazione tipoOp,boolean portaDelegata) throws Exception {
+	public boolean correlazioneApplicativaRispostaCheckData(TipoOperazione tipoOp,boolean portaDelegata,
+			ServiceBinding serviceBinding) throws Exception {
 		try {
 			String id = this.getParameter(CostantiControlStation.PARAMETRO_ID);
 			int idInt = Integer.parseInt(id);
@@ -3456,6 +3543,24 @@ public class ConsoleHelper implements IConsoleHelper {
 				return false;
 			}
 
+			if (mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED)) {
+				if(this.checkRegexp(pattern,ModalitaIdentificazione.URL_BASED.getLabelParametro())==false){
+					return false;
+				}
+			}
+			if (mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED)) {
+				if(ServiceBinding.SOAP.equals(serviceBinding)) {
+					if(this.checkXPath(pattern,ModalitaIdentificazione.CONTENT_BASED.getLabelParametro())==false){
+						return false;
+					}
+				}
+				else {
+					if(this.checkXPathOrJsonPath(pattern,ModalitaIdentificazione.CONTENT_BASED.getLabelParametro())==false){
+						return false;
+					}
+				}
+			}
+			
 			// Controllo che non esistano altre correlazioni applicative con gli
 			// stessi dati
 			boolean giaRegistrato = false;
@@ -6081,7 +6186,8 @@ public class ConsoleHelper implements IConsoleHelper {
 					PortaApplicativa pa = (PortaApplicativa) oggetto;
 					PorteApplicativeServizioApplicativoAutorizzatoUtilities utilities = new PorteApplicativeServizioApplicativoAutorizzatoUtilities();
 					boolean escludiSAServer = this.porteApplicativeCore.isApplicativiServerEnabled(this);					
-					utilities.buildList(pa, profiloModi, protocollo, true,
+					boolean escludiSoggettoErogatore = false;
+					utilities.buildList(pa, profiloModi, protocollo, escludiSoggettoErogatore,
 							idSoggettoToAdd,
 							this.porteApplicativeCore, this, escludiSAServer);
 					
@@ -6264,6 +6370,11 @@ public class ConsoleHelper implements IConsoleHelper {
 						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_ESPRESSIONE));
 						return false;
 					}
+					
+					if(this.checkRegexp(autenticazioneParametroList.get(0),ModalitaIdentificazione.URL_BASED.getLabelParametro())==false){
+						return false;
+					}
+					
 					break;
 				case TOKEN:
 					if(autenticazioneParametroList==null || autenticazioneParametroList.isEmpty() || StringUtils.isEmpty(autenticazioneParametroList.get(0))){
@@ -6364,8 +6475,9 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			// tipo autenticazione custom
+			String autenticazioneCustom = null;
 			if(autenticazione != null && autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM)) {
-				String autenticazioneCustom = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM );
+				autenticazioneCustom = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM );
 				
 				if(StringUtils.isEmpty(autenticazioneCustom) || CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED.equals(autenticazioneCustom)){
 					if(this.confCore.isConfigurazionePluginsEnabled()) {
@@ -6640,6 +6752,9 @@ public class ConsoleHelper implements IConsoleHelper {
 						String prefix = "";
 						
 						boolean modificataAutenticazione = !pd.getAutenticazione().equals(autenticazione);
+						if(autenticazioneCustom!=null && !"".equals(autenticazioneCustom)) {
+							modificataAutenticazione = !pd.getAutenticazione().equals(autenticazioneCustom);
+						}
 						if(!modificataAutenticazione) {
 							if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY.equals(autenticazione)) {
 								// verifico che non sia stato cambiato 'AppId'
@@ -8156,6 +8271,9 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public void setStatoRateLimiting(DataElement de, List<AttivazionePolicy> listaPolicy) throws DriverControlStationException, DriverControlStationNotFound {
+		setStatoRateLimiting(de, listaPolicy, true);
+	}
+	public void setStatoRateLimiting(DataElement de, List<AttivazionePolicy> listaPolicy, boolean upperFirstChar) throws DriverControlStationException, DriverControlStationNotFound {
 		de.setType(DataElementType.CHECKBOX);
 		if(listaPolicy!=null && listaPolicy.size()>0) {
 			Map<String, Integer> mapActive = new HashMap<>();
@@ -8215,12 +8333,13 @@ public class ConsoleHelper implements IConsoleHelper {
 							bf.append("(").append(count).append(")");
 						}
 					}
+					String vAbilitato = upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO) : CostantiControlStation.DEFAULT_VALUE_ABILITATO;
 					if(bf.length()>0 && bf.length()<CostantiControlStation.MAX_LENGTH_VALORE_STATO_RATE_LIMITING) {
-						String value = this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO)+" [ "+bf.toString()+" ]";
+						String value = vAbilitato+" [ "+bf.toString()+" ]";
 						de.addStatus(value, CheckboxStatusType.CONFIG_ENABLE);
 					}
 					else {
-						String value = this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO);
+						String value = vAbilitato;
 						de.addStatus(bf.toString(), value, CheckboxStatusType.CONFIG_ENABLE);
 					}
 				} 
@@ -8237,12 +8356,13 @@ public class ConsoleHelper implements IConsoleHelper {
 							bf.append("(").append(count).append(")");
 						}
 					}
+					String vWarningOnly = upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_WARNING_ONLY) : CostantiControlStation.DEFAULT_VALUE_WARNING_ONLY;
 					if(bf.length()>0 && bf.length()<CostantiControlStation.MAX_LENGTH_VALORE_STATO_RATE_LIMITING) {
-						String value = this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_WARNING_ONLY)+" [ "+bf.toString()+" ]";
+						String value = vWarningOnly+" [ "+bf.toString()+" ]";
 						de.addStatus(value, CheckboxStatusType.CONFIG_WARNING);
 					}
 					else {
-						String value = this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_WARNING_ONLY);
+						String value = vWarningOnly;
 						de.addStatus(bf.toString(), value, CheckboxStatusType.CONFIG_WARNING);
 					}
 				} 
@@ -8250,14 +8370,16 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			else {
 				de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
-				de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));
+				String vDisable = upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO) :  CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
+				de.setStatusValue(vDisable);
 				de.setStatusToolTip("Sull'API sono registrate "+listaPolicy.size()+" politiche di Rate Limiting tutte con stato disabilitato");
 			}
 			
 		}
 		else {
 			de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
-			de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));
+			String vDisable = upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO) :  CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
+			de.setStatusValue(vDisable);
 		}
 	}
 	
@@ -8636,6 +8758,11 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	public void setStatoSicurezzaMessaggio(DataElement de, MessageSecurity securityPorta, 
 			ConfigManager configManager, PropertiesSourceConfiguration propertiesSourceConfiguration) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		setStatoSicurezzaMessaggio(de, securityPorta, 
+				configManager, propertiesSourceConfiguration, true);
+	}
+	public void setStatoSicurezzaMessaggio(DataElement de, MessageSecurity securityPorta, 
+			ConfigManager configManager, PropertiesSourceConfiguration propertiesSourceConfiguration, boolean upperFirstChar) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		
 		boolean request = (
 				securityPorta!=null &&
@@ -8656,7 +8783,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		if (securityPorta == null || (!request && !response) ) {
 			de.setType(DataElementType.CHECKBOX);
 			de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
-			de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));		
+			String value = upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO) : CostantiControlStation.DEFAULT_VALUE_DISABILITATO; 
+			de.setStatusValue(value);		
 		} else {
 			
 			de.setType(DataElementType.MULTI_SELECT);
@@ -8674,7 +8802,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					List<String> labelConfigurazione = configManager.convertToLabel(propertiesSourceConfiguration, nome);
 					label = labelConfigurazione.get(0);
 				}
-				String value = CostantiControlStation.LABEL_PARAMETRO_RICHIESTA+" [ "+label+" ]";
+				String value = (upperFirstChar ? CostantiControlStation.LABEL_PARAMETRO_RICHIESTA : CostantiControlStation.LABEL_PARAMETRO_RICHIESTA.toLowerCase())+" [ "+label+" ]";
 				de.addStatus(tooltip, value, type);
 			}
 			
@@ -8691,7 +8819,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					List<String> labelConfigurazione = configManager.convertToLabel(propertiesSourceConfiguration, nome);
 					label = labelConfigurazione.get(0);
 				}
-				String value = CostantiControlStation.LABEL_PARAMETRO_RISPOSTA+" [ "+label+" ]";
+				String value = (upperFirstChar ? CostantiControlStation.LABEL_PARAMETRO_RISPOSTA : CostantiControlStation.LABEL_PARAMETRO_RISPOSTA.toLowerCase())+" [ "+label+" ]";
 				de.addStatus(tooltip, value, type);
 			}
 		}
@@ -8699,6 +8827,9 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public void setStatoMTOM(DataElement de, MtomProcessor mtomPorta) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		setStatoMTOM(de, mtomPorta, true);
+	}
+	public void setStatoMTOM(DataElement de, MtomProcessor mtomPorta, boolean upperFirstChar) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		
 		boolean request = false;
 		boolean response= false;
@@ -8723,7 +8854,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		if (mtomPorta == null || (!request && !response) ) {
 			de.setType(DataElementType.CHECKBOX);
 			de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
-			de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));		
+			String vUpper = upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO) :  CostantiControlStation.DEFAULT_VALUE_DISABILITATO; 
+			de.setStatusValue(vUpper);		
 		} else {
 			
 			de.setType(DataElementType.MULTI_SELECT);
@@ -8742,7 +8874,8 @@ public class ConsoleHelper implements IConsoleHelper {
 					type = CheckboxStatusType.CONFIG_ENABLE;
 					break;
 				}
-				String value = CostantiControlStation.LABEL_PARAMETRO_RICHIESTA+" [ "+this.getUpperFirstChar(mtomPorta.getRequestFlow().getMode().getValue())+" ]";
+				String v = mtomPorta.getRequestFlow().getMode().getValue();
+				String value = (upperFirstChar ? CostantiControlStation.LABEL_PARAMETRO_RICHIESTA : CostantiControlStation.LABEL_PARAMETRO_RICHIESTA.toLowerCase())+" [ "+this.getUpperFirstChar(v)+" ]";
 				de.addStatus(tooltip, value, type);
 			}
 			
@@ -8760,7 +8893,8 @@ public class ConsoleHelper implements IConsoleHelper {
 					type = CheckboxStatusType.CONFIG_ENABLE;
 					break;
 				}
-				String value = CostantiControlStation.LABEL_PARAMETRO_RISPOSTA+" [ "+this.getUpperFirstChar(mtomPorta.getResponseFlow().getMode().getValue())+" ]";
+				String v = mtomPorta.getResponseFlow().getMode().getValue();
+				String value = (upperFirstChar ? CostantiControlStation.LABEL_PARAMETRO_RISPOSTA : CostantiControlStation.LABEL_PARAMETRO_RISPOSTA.toLowerCase())+" [ "+this.getUpperFirstChar(v)+" ]";
 				de.addStatus(tooltip, value, type);
 			}
 			
@@ -8769,6 +8903,9 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public void setStatoTrasformazioni(DataElement de, Trasformazioni trasformazioni, ServiceBinding serviceBindingMessage) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		setStatoTrasformazioni(de, trasformazioni, serviceBindingMessage, true);
+	}
+	public void setStatoTrasformazioni(DataElement de, Trasformazioni trasformazioni, ServiceBinding serviceBindingMessage, boolean upperFirstChar) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		
 		de.setType(DataElementType.CHECKBOX);
 		
@@ -8778,7 +8915,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		if(listaTrasformazioni==null || listaTrasformazioni.size()<=0) {
 			de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
-			de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));		
+			String vDisabilitato = upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO) :  CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
+			de.setStatusValue(vDisabilitato);		
 		}
 		else {
 			StringBuilder bfToolTip = new StringBuilder();
@@ -8822,7 +8960,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						if(trasformazioneRegolaRisposta!=null) {
 							rispostaDefinita = trasformazioneRegolaRisposta.isConversione() || 
 									trasformazioneRegolaRisposta.sizeHeaderList()>0 ||
-									(trasformazioneRegolaRisposta.getReturnCode()!=null && trasformazioneRegolaRisposta.getReturnCode()>199);
+									(trasformazioneRegolaRisposta.getReturnCode()!=null && StringUtils.isNotEmpty(trasformazioneRegolaRisposta.getReturnCode()));
 						}
 						if(!rispostaDefinita) {
 							type = CheckboxStatusType.CONFIG_ERROR;
@@ -8846,7 +8984,8 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			if(regoleAbilitate==0) {
 				de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
-				de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));	
+				String vDisabilitato = upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO) :  CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
+				de.setStatusValue(vDisabilitato);	
 				if(regoleDisabilitate>0) {
 					de.setStatusToolTip("Sono registrate, con stato disabilitato, "+regoleDisabilitate+" regole di trasformazione dei messaggi");
 				}
@@ -8857,7 +8996,8 @@ public class ConsoleHelper implements IConsoleHelper {
 					type = CheckboxStatusType.CONFIG_ENABLE;
 				}
 				de.setStatusType(type);
-				de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO));
+				String vAbilitato = upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO) :  CostantiControlStation.DEFAULT_VALUE_ABILITATO;
+				de.setStatusValue(vAbilitato);
 				if(bfToolTip.length()>0) {
 					de.setStatusToolTip(bfToolTip.toString());
 				}
@@ -8941,6 +9081,9 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public void setStatoDump(DataElement de, DumpConfigurazione dumpConfigurazionePorta, Configurazione configurazioneGenerale, boolean portaApplicativa) {
+		setStatoDump(de, dumpConfigurazionePorta, configurazioneGenerale, portaApplicativa, true);
+	}
+	public void setStatoDump(DataElement de, DumpConfigurazione dumpConfigurazionePorta, Configurazione configurazioneGenerale, boolean portaApplicativa, boolean upperFirstChar) {
 		
 		de.setType(DataElementType.MULTI_SELECT);
 		
@@ -9147,20 +9290,20 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			if(bfRichiesta.length()>0) {
 				de.addStatus(tooltip+"\n"+bfRichiesta.toString(), 
-						CostantiControlStation.LABEL_PARAMETRO_RICHIESTA+" [ "+bfRichiestaOptions.toString()+" ]", 
+						(upperFirstChar ? CostantiControlStation.LABEL_PARAMETRO_RICHIESTA : CostantiControlStation.LABEL_PARAMETRO_RICHIESTA.toLowerCase())+" [ "+bfRichiestaOptions.toString()+" ]", 
 						CheckboxStatusType.CONFIG_ENABLE);
 			}
 			
 			if(bfRisposta.length()>0) {
 				de.addStatus(tooltip+"\n"+bfRisposta.toString(), 
-						CostantiControlStation.LABEL_PARAMETRO_RISPOSTA+" [ "+bfRispostaOptions.toString()+" ]", 
+						(upperFirstChar ? CostantiControlStation.LABEL_PARAMETRO_RISPOSTA : CostantiControlStation.LABEL_PARAMETRO_RISPOSTA.toLowerCase())+" [ "+bfRispostaOptions.toString()+" ]", 
 						CheckboxStatusType.CONFIG_ENABLE);
 			}
 			
 		}
 		else {
 			de.addStatus(tooltip, 
-					this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO), 
+					(upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO) : CostantiControlStation.DEFAULT_VALUE_DISABILITATO), 
 					CheckboxStatusType.CONFIG_DISABLE);
 		}
 	}
@@ -9188,6 +9331,21 @@ public class ConsoleHelper implements IConsoleHelper {
 			StatoFunzionalita stateless, PortaDelegataLocalForward localForward,
 			StatoFunzionalita ricevutaAsincronaSimmetrica, StatoFunzionalita ricevutaAsincronaAsimmetrica,
 			StatoFunzionalita gestioneManifest, ConfigurazionePortaHandler configPortaHandler) throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverConfigurazioneException {
+		setStatoOpzioniAvanzate(de, 
+				protocollo, serviceBinding,
+				allegaBody, scartaBody, 
+				integrazione, behaviour,
+				stateless, localForward,
+				ricevutaAsincronaSimmetrica, ricevutaAsincronaAsimmetrica,
+				gestioneManifest, configPortaHandler, true);
+	}
+	public void setStatoOpzioniAvanzate(DataElement de, 
+			String protocollo, ServiceBinding serviceBinding,
+			StatoFunzionalita allegaBody, StatoFunzionalita scartaBody, 
+			String integrazione, String behaviour,
+			StatoFunzionalita stateless, PortaDelegataLocalForward localForward,
+			StatoFunzionalita ricevutaAsincronaSimmetrica, StatoFunzionalita ricevutaAsincronaAsimmetrica,
+			StatoFunzionalita gestioneManifest, ConfigurazionePortaHandler configPortaHandler, boolean upperFirstChar) throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverConfigurazioneException {
 		
 		boolean supportoAsincroni = this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding);
 		boolean supportoGestioneManifest = isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.MANIFEST_ATTACHMENTS);
@@ -9456,27 +9614,33 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		if(bf.length()>0) {
 			de.setStatusType(CheckboxStatusType.CONFIG_ENABLE);
-			de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO)+" [ "+bf.toString()+" ]");
+			String vAbilitato = upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO) : CostantiControlStation.DEFAULT_VALUE_ABILITATO; 
+			de.setStatusValue(vAbilitato+" [ "+bf.toString()+" ]");
 			de.setStatusToolTip(bfTooltips.toString());
 		}
 		else {
 			de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
-			de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));
+			String vDisabilitato = upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO) : CostantiControlStation.DEFAULT_VALUE_DISABILITATO; 
+			de.setStatusValue(vDisabilitato);
 		}
 		
 	}
 	
 	public void setStatoExtendedList(DataElement de, int size, String stato, String statoTooltip) {
+		setStatoExtendedList(de, size, stato, statoTooltip, true);
+	}
+	public void setStatoExtendedList(DataElement de, int size, String stato, String statoTooltip, boolean upperFirstChar) {
 		
 		de.setType(DataElementType.CHECKBOX);
 		
 		if(size>0) {
 			de.setStatusType(CheckboxStatusType.CONFIG_ENABLE);
+			String vAbilitato = upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO) : CostantiControlStation.DEFAULT_VALUE_ABILITATO; 
 			if(stato!=null) {
-				de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO)+" [" +stato+ " ]");
+				de.setStatusValue(vAbilitato+" [" +stato+ " ]");
 			}
 			else {
-				de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO));
+				de.setStatusValue(vAbilitato);
 			}
 			if(statoTooltip!=null) {
 				de.setStatusToolTip(statoTooltip);
@@ -9487,7 +9651,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		else {
 			de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
-			de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));
+			String vDisabilitato = upperFirstChar ? this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO) : CostantiControlStation.DEFAULT_VALUE_DISABILITATO; 
+			de.setStatusValue(vDisabilitato);
 		}
 		
 	}
@@ -14316,233 +14481,14 @@ public class ConsoleHelper implements IConsoleHelper {
 	public void addDescrizioneVerificaConnettoreToDati(Vector<DataElement> dati, String server, String labelConnettore, 
 			Connettore connettore, boolean registro, String aliasConnettore) throws Exception {
 		
-		if(server!=null && !"".equals(server)) {
-			DataElement de = new DataElement();
-			de.setType(DataElementType.TEXT);
-			de.setLabel(ConnettoriCostanti.LABEL_SERVER);
-			de.setValue(server);
-			dati.add(de);
-		}
+		List<Parameter> downloadCertServerParameters = new ArrayList<Parameter>();
 		
-		DataElement de = new DataElement();
-		de.setType(DataElementType.TEXT);
-		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE);
-		de.setValue(labelConnettore);
-		dati.add(de);
+		downloadCertServerParameters.add(new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_ID_CONNETTORE, connettore.getId().longValue()+""));
 		
-		if(aliasConnettore!=null && !"".equals(aliasConnettore) &&
-				(TipiConnettore.HTTP.getNome().equalsIgnoreCase(connettore.getTipo()) ||
-				TipiConnettore.HTTPS.getNome().equalsIgnoreCase(connettore.getTipo()))
-				){
-			Map<String,String> properties = connettore.getProperties();
-			String location = properties!=null ? properties.get(CostantiConnettori.CONNETTORE_LOCATION) : null;	
-			if(location!=null && !"".equals(location) && location.toLowerCase().startsWith("https")) {
-				String nomeConnettore = null;
-				try {
-					URL url = new URL( location );
-					String host = url.getHost();
-					if(host==null || "".equals(host)) {
-						throw new Exception("L'endpoint '"+host+"' non contiene un host");
-					}
-					nomeConnettore = host;
-					int port = url.getPort();
-					if(port>0 && port!=443) {
-						nomeConnettore=nomeConnettore+"_"+port;
-					}
-					
-					de = new DataElement();
-					de.setType(DataElementType.LINK);
-					de.setValue(ConnettoriCostanti.LABEL_DOWNLOAD_CERTIFICATI_SERVER);
-					de.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, 
-							new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_CONNETTORE_CERTIFICATO_SERVER),
-							new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_CONNETTORE_CERTIFICATO_SERVER),
-							new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_ID_CONNETTORE, connettore.getId().longValue()+""),
-							new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_TIPO_CONNETTORE_REGISTRO, registro ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED),
-							new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_ALIAS_CONNETTORE, aliasConnettore),
-							new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_NOME_CONNETTORE, nomeConnettore));
-					dati.add(de);
-					
-				}catch(Exception e) {
-					this.log.error("Errore durante l'identificazione dell'endpoint: "+e.getMessage(),e);
-				}
-			}
-		}
-		
-		if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)) {
-			
-			de = new DataElement();
-			de.setType(DataElementType.TEXT);
-			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_CONNECTION_TIMEOUT);
-			de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT));
-			dati.add(de);
-			
-		}
-		
-		if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_USERNAME)) {
-			
-			de = new DataElement();
-			de.setType(DataElementType.SUBTITLE);
-			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP);
-			de.setValue(labelConnettore);
-			dati.add(de);
-		
-			de = new DataElement();
-			de.setType(DataElementType.TEXT);
-			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP_USERNAME);
-			de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_USERNAME));
-			dati.add(de);
-			
-			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_PASSWORD)) {
-				
-				de = new DataElement();
-				de.setType(DataElementType.TEXT);
-				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP_PASSWORD);
-				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_PASSWORD));
-				dati.add(de);
-				
-			}
-			
-		}
-		
-		if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
-			
-			de = new DataElement();
-			de.setType(DataElementType.SUBTITLE);
-			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_TOKEN);
-			de.setValue(labelConnettore);
-			dati.add(de);
-		
-			de = new DataElement();
-			de.setType(DataElementType.TEXT);
-			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TOKEN_POLICY);
-			de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY));
-			dati.add(de);
-			
-		}
-		
-		boolean trustAllCerts = false;
-		if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_TRUST_ALL_CERTS)) {
-			String v = connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_ALL_CERTS);
-			if("true".equalsIgnoreCase(v)) {
-				trustAllCerts = true;
-			}
-		}
-		
-		if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION) || 
-				trustAllCerts) {
-		
-			de = new DataElement();
-			de.setType(DataElementType.SUBTITLE);
-			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS);
-			de.setValue(labelConnettore);
-			dati.add(de);
-		
-			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_SSL_TYPE)) {
-				
-				de = new DataElement();
-				de.setType(DataElementType.TEXT);
-				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_SSL_TYPE);
-				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_SSL_TYPE));
-				dati.add(de);
-				
-			}
-			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_HOSTNAME_VERIFIER)) {
-				
-				de = new DataElement();
-				de.setType(DataElementType.TEXT);
-				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_HOSTNAME_VERIFIER);
-				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_HOSTNAME_VERIFIER));
-				dati.add(de);
-				
-			}
-				
-			de = new DataElement();
-			de.setType(DataElementType.TEXT);
-			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE);
-			if(trustAllCerts) {
-				de.setValue(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUST_ALL_CERTS);
-			}
-			else {
-				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION));
-			}
-			dati.add(de);
-				
-			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs)) {
-				
-				de = new DataElement();
-				de.setType(DataElementType.TEXT);
-				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_CRLs);
-				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs));
-				dati.add(de);
-				
-			}
-			
-			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION)) {
-				
-				de = new DataElement();
-				de.setType(DataElementType.TEXT);
-				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEYSTORE);
-				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION));
-				dati.add(de);
-				
-				if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_KEY_ALIAS)) {
-					
-					de = new DataElement();
-					de.setType(DataElementType.TEXT);
-					de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEY_ALIAS);
-					de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_KEY_ALIAS));
-					dati.add(de);
-					
-				}
-				
-			}
-		}
-		
-		if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME)) {
-			
-			de = new DataElement();
-			de.setType(DataElementType.SUBTITLE);
-			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY);
-			de.setValue(labelConnettore);
-			dati.add(de);
-		
-			de = new DataElement();
-			de.setType(DataElementType.TEXT);
-			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_HOSTNAME);
-			de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME));
-			dati.add(de);
-			
-			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT)) {
-				
-				de = new DataElement();
-				de.setType(DataElementType.TEXT);
-				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_PORT);
-				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT));
-				dati.add(de);
-				
-			}
-			
-			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTP_PROXY_USERNAME)) {
-				
-				de = new DataElement();
-				de.setType(DataElementType.TEXT);
-				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_USERNAME);
-				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTP_PROXY_USERNAME));
-				dati.add(de);
-				
-			}
-
-			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD)) {
-				
-				de = new DataElement();
-				de.setType(DataElementType.TEXT);
-				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_PASSWORD);
-				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD));
-				dati.add(de);
-				
-			}
-			
-		}
+		this.addDescrizioneVerificaConnettivitaToDati(dati, connettore,
+				server, false, aliasConnettore,
+				downloadCertServerParameters,
+				false, false);
 		
 	}
 	
@@ -14614,6 +14560,166 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setValue(connettoreRegistro+"");
 		dati.addElement(de);
 		
+	}
+	
+	public boolean isConnettoreRidefinito(PortaApplicativa paDefault,	PortaApplicativaServizioApplicativo paSADefault,
+			PortaApplicativa paCurrent, PortaApplicativaServizioApplicativo paSACurrent,
+			List<PortaApplicativaServizioApplicativo> list_paSACurrent) {
+		boolean connettoreRidefinito = (
+				(
+					paDefault.getServizioApplicativoDefault() == null && (paCurrent.getServizioApplicativoDefault() != null || paSACurrent.getNome().equals(paCurrent.getNome()))
+				) || (
+					paDefault.getServizioApplicativoDefault() != null && 
+						(
+							paCurrent.getServizioApplicativoDefault() == null 
+							|| 
+							!paDefault.getServizioApplicativoDefault().equals(paCurrent.getServizioApplicativoDefault())
+							||
+							paDefault.sizeServizioApplicativoList()!=paCurrent.sizeServizioApplicativoList()
+							||
+							(paDefault.sizeServizioApplicativoList()==1 && paCurrent.sizeServizioApplicativoList()==1 && !paDefault.getServizioApplicativo(0).getNome().equals(paCurrent.getServizioApplicativo(0).getNome()))
+						)
+					//!paSADefault.getNome().equals(paSACurrent.getNome()))
+				)
+			);
+		if(!connettoreRidefinito) {
+			boolean connettoreMultiploEnabled = paCurrent.getBehaviour() != null;
+			if(connettoreMultiploEnabled && paDefault.getServizioApplicativoDefault() == null && paCurrent.getServizioApplicativoDefault() == null) {
+				if(list_paSACurrent!=null && !list_paSACurrent.isEmpty() && list_paSACurrent.size()>1) { // se uguale a 1 si rientra nel primo caso sopra, altrimenti l'ordine potrebbe cambiare e non essere alla posizione 0 quello di default
+					for (PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo : list_paSACurrent) {
+						if(portaApplicativaServizioApplicativo.getNome().equals(paCurrent.getNome())){
+							connettoreRidefinito = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+		return connettoreRidefinito;
+	}
+	
+	public String getTooltipConnettore(ServizioApplicativo sa, org.openspcoop2.core.config.InvocazioneServizio is, boolean addExtInfo) {
+		StringBuilder sbCon = new StringBuilder();
+		if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
+			sbCon.append(ConnettoriCostanti.LABEL_SERVER);
+			sbCon.append(": ");
+			sbCon.append(sa.getNome());
+			sbCon.append(CostantiControlStation.TOOLTIP_BREAK_LINE);
+		}
+		sbCon.append(this.getLabelConnettore(is, addExtInfo, true));
+		return sbCon.toString();
+	}
+	
+	public String getLabelConnettore(ServizioApplicativo sa, org.openspcoop2.core.config.InvocazioneServizio is, boolean addExtInfo) {
+		StringBuilder sbCon = new StringBuilder();
+		if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
+			//sbCon.append(sa.getNome());
+			//sbCon.append(" ");
+		}
+		sbCon.append(this.getLabelConnettore(is, addExtInfo, false));
+		return sbCon.toString();
+	}
+	
+	public String getLabelConnettore(org.openspcoop2.core.config.InvocazioneServizio is, boolean addExtInfo, boolean tooltip) {
+		String urlConnettore = this.getLabelConnettore(is.getConnettore(), addExtInfo, tooltip);
+		
+		if(is.getGetMessage()!=null && StatoFunzionalita.ABILITATO.equals(is.getGetMessage())) {
+			urlConnettore = urlConnettore + " [MessageBox]";
+		}
+		
+		return urlConnettore;
+	}
+	public String getLabelConnettore(org.openspcoop2.core.registry.Connettore connettore, boolean addExtInfo, boolean tooltip) {
+		return this.getLabelConnettore(connettore.mappingIntoConnettoreConfigurazione(), addExtInfo, tooltip);
+	}
+	public String getLabelConnettore(org.openspcoop2.core.config.Connettore connettore, boolean addExtInfo, boolean tooltip) {
+		String urlConnettore = "";
+		
+		List<org.openspcoop2.core.config.Property> cp = connettore.getPropertyList();
+		
+		//TipiConnettore.HTTP.getNome() e anche TipiConnettore.HTTPS.getNome() -> location
+		//TipiConnettore.DISABILITATO.getNome() ci scrivi "disabilitato"
+		//TipiConnettore.FILE.getNome() CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE
+		//TipiConnettore.JMS.compareTo() CostantiConnettori.CONNETTORE_LOCATION
+//			TipiConnettore.NULL 
+//			TipiConnettore.CUSTOM -> connettore custom
+		String tipo = connettore.getTipo();
+		
+		TipiConnettore tipoC = TipiConnettore.toEnumFromName(connettore.getTipo());
+		String labelC = connettore.getTipo();
+		if(tipoC!=null) {
+			labelC = tipoC.getLabel();
+		}
+		String tipoLabel = "[" + labelC + "] ";
+		if ((connettore.getCustom()!=null && connettore.getCustom()) && 
+				!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS) && 
+				!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE)) {
+			tipo = ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM;
+		}  
+
+		if(tipo.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM)) {
+			if(this.connettoriCore.isConfigurazionePluginsEnabled()) {
+				tipoLabel = "[" + TipiConnettore.CUSTOM.getLabel() + "] ";
+				Plugin plugin = null;
+				try {
+					plugin = this.confCore.getPlugin(TipoPlugin.CONNETTORE,connettore.getTipo(), false);
+				}catch(Throwable e) {}
+				if(plugin!=null) {
+					urlConnettore = tipoLabel + plugin.getLabel();
+				}
+				else {
+					// backward compatibility
+					urlConnettore = tipoLabel + connettore.getTipo();
+				}
+			}
+			else {
+				urlConnettore = tipoLabel + ConnettoriCostanti.LABEL_CONNETTORE_CUSTOM;
+			}
+		} else	if(tipo.equals(TipiConnettore.DISABILITATO.getNome())) {
+			urlConnettore = CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
+		} else if(tipo.equals(TipiConnettore.NULL.getNome())) {
+			urlConnettore = tipoLabel + ConnettoreNULL.LOCATION;
+		} else if(tipo.equals(TipiConnettore.NULLECHO.getNome())) {
+			urlConnettore = tipoLabel + ConnettoreNULLEcho.LOCATION;
+		} else {  
+			String propertyName = CostantiConnettori.CONNETTORE_LOCATION;
+			if(tipo.equals(TipiConnettore.FILE.getNome()))
+				propertyName = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE;
+		
+			// Prefix token
+			String token = "";
+			if(addExtInfo) {
+				if(tipo.equals(TipiConnettore.HTTP.getNome()) || tipo.equals(TipiConnettore.HTTPS.getNome())) {
+					for (int i = 0; i < connettore.sizePropertyList(); i++) {
+						org.openspcoop2.core.config.Property singlecp = cp.get(i);
+						if (singlecp.getNome().equals(CostantiConnettori.CONNETTORE_TOKEN_POLICY) && 
+								singlecp.getValore()!=null && StringUtils.isNotEmpty(singlecp.getValore())) {
+							if(tooltip) {
+								token = "[token: "+singlecp.getValore()+"]\n";
+							}
+							else {
+								token = "[token] ";
+							}
+						}
+					}
+				}
+			}
+			
+			for (int i = 0; i < connettore.sizePropertyList(); i++) {
+				org.openspcoop2.core.config.Property singlecp = cp.get(i);
+				if (singlecp.getNome().equals(propertyName)) {
+					if(!tipo.equals(TipiConnettore.HTTP.getNome()) && !tipo.equals(TipiConnettore.HTTPS.getNome())) {
+						urlConnettore = tipoLabel + singlecp.getValore();
+					}
+					else {
+						urlConnettore = token + singlecp.getValore();
+					}
+					
+					break;
+				}
+			}
+		}
+		return urlConnettore;
 	}
 	
 	public void addConfigurazioneResponseCachingPorteToDati(TipoOperazione tipoOperazione,Vector<DataElement> dati, boolean showStato, String statoResponseCachingPorta, boolean responseCachingEnabled, int responseCachingSeconds,
@@ -15289,6 +15395,15 @@ public class ConsoleHelper implements IConsoleHelper {
 			infoServiceBinding = org.openspcoop2.core.registry.constants.ServiceBinding.SOAP;
 		}
 		
+		DataElementInfo dInfoPatternTrasporto = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE);
+		dInfoPatternTrasporto.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+		if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(infoServiceBinding)) {
+			dInfoPatternTrasporto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI);
+		}
+		else {
+			dInfoPatternTrasporto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI);
+		}
+		
 		DataElement de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_TRASFORMAZIONE);
 		de.setType(DataElementType.TITLE);
@@ -15416,9 +15531,19 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			// Return Code e Header Risposta
 			
+			/*
 			de = this.getHttpReturnCodeDataElement(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE, 
 					CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE, 
 					trasformazioneContenutoRispostaReturnCode, false);
+					*/
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE);
+			de.setValue(trasformazioneContenutoRispostaReturnCode);
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE);
+			de.setSize(getSize());
+			de.setInfo(dInfoPatternTrasporto);
+			de.setRequired(false); 
 			dati.addElement(de);
 			
 			de = new DataElement();
@@ -15544,6 +15669,9 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setType(DataElementType.HIDDEN);
 						de.setValue("");
 					}   
+					else {
+						de.setInfo(dInfoPatternTrasporto);
+					}
 					dati.addElement(de);
 				}
 								
@@ -15586,6 +15714,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE);
 						de.setType(DataElementType.TEXT_EDIT);
 						de.setValue(trasformazioneContenutoRispostaContentType);
+						de.setInfo(dInfoPatternTrasporto);
 						de.setRequired(true);
 						dati.addElement(de);
 						
@@ -15678,7 +15807,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		return dati;
 	}
 	
-	public boolean trasformazioniCheckData(TipoOperazione tipoOp, long idPorta, String nome, TrasformazioneRegola regolaDBCheck_criteri, TrasformazioneRegola trasformazioneDBCheck_nome,  TrasformazioneRegola oldRegola) throws Exception {
+	public boolean trasformazioniCheckData(TipoOperazione tipoOp, long idPorta, String nome, TrasformazioneRegola regolaDBCheck_criteri, TrasformazioneRegola trasformazioneDBCheck_nome,  TrasformazioneRegola oldRegola,
+			ServiceBinding serviceBinding) throws Exception {
 		try{
 //			String [] azioni = this.getParameterValues(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_AZIONI);
 //			String pattern = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_PATTERN);
@@ -15712,6 +15842,21 @@ public class ConsoleHelper implements IConsoleHelper {
 				else if (trasformazioneDBCheck_nome != null && trasformazioneDBCheck_nome.getId().longValue() != oldRegola.getId().longValue()) {
 					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_NOME);
 					return false;
+				}
+			}
+			
+			
+			String pattern = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_PATTERN);
+			if(pattern!=null && StringUtils.isNotEmpty(pattern)) {
+				if(ServiceBinding.SOAP.equals(serviceBinding)) {
+					if(this.checkXPath(pattern,CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_PATTERN)==false){
+						return false;
+					}
+				}
+				else {
+					if(this.checkXPathOrJsonPath(pattern,CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_PATTERN)==false){
+						return false;
+					}
 				}
 			}
 			
@@ -15892,7 +16037,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	public boolean trasformazioniRispostaCheckData(TipoOperazione tipoOp, TrasformazioneRegola regolaRichiesta, TrasformazioneRegolaRisposta oldRegolaRisposta) throws Exception {
+	public boolean trasformazioniRispostaCheckData(TipoOperazione tipoOp, TrasformazioneRegola regolaRichiesta, TrasformazioneRegolaRisposta oldRegolaRisposta,
+			ServiceBinding serviceBinding) throws Exception {
 		try{
 
 			String nome = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_NOME);
@@ -15907,12 +16053,26 @@ public class ConsoleHelper implements IConsoleHelper {
 			String returnCode = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS);
 			String statusMinS = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN);
 			String statusMaxS = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MAX);
-			
+		
 			if(_checkReturnCode(returnCode, statusMinS, statusMaxS, 
 					CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS, 
 					CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MIN, 
 					CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS_MAX)==false) {
 				return false;
+			}
+			
+			String pattern = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_PATTERN);
+			if(pattern!=null && StringUtils.isNotEmpty(pattern)) {
+				if(ServiceBinding.SOAP.equals(serviceBinding)) {
+					if(this.checkXPath(pattern,CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_PATTERN)==false){
+						return false;
+					}
+				}
+				else {
+					if(this.checkXPathOrJsonPath(pattern,CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_PATTERN)==false){
+						return false;
+					}
+				}
 			}
 			
 			// Se tipoOp = add, controllo che la trasformazione risposta non sia gia' stato registrata
@@ -15956,16 +16116,16 @@ public class ConsoleHelper implements IConsoleHelper {
 					
 					String trasformazioneRispostaReturnCode = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE);
 					
-					if(StringUtils.isNotEmpty(trasformazioneRispostaReturnCode)) {
+					if(trasformazioneRispostaReturnCode!=null && StringUtils.isNotEmpty(trasformazioneRispostaReturnCode) && !trasformazioneRispostaReturnCode.contains("${")) { // altrimenti vi è una risoluzione dinamica
 						try {
 							int returnCodeEsatto = Integer.parseInt(trasformazioneRispostaReturnCode);
 							
-							if(returnCodeEsatto < 1) {
-								this.pd.setMessage("Il valore inserito nel campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
+							if(returnCodeEsatto < 200) {
+								this.pd.setMessage("Il valore inserito nel campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE + " non &egrave; valido, sono ammessi valori compresi tra 200 e 599.");
 								return false;
 							}
-							if(returnCodeEsatto > 999) {
-								this.pd.setMessage("Il valore inserito nel campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
+							if(returnCodeEsatto > 599) {
+								this.pd.setMessage("Il valore inserito nel campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE + " non &egrave; valido, sono ammessi valori compresi tra 200 e 599.");
 								return false;
 							}
 						}catch(Exception e) {
@@ -16833,8 +16993,12 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setType(DataElementType.HIDDEN);
 						de.setValue("");
 					}
+					else {
+						de.setInfo(dInfoPatternTrasporto);
+					}
 					break;
 				case SOAP:
+					de.setInfo(dInfoPatternTrasporto);
 					if(trasformazioneRestAbilitato) {
 						de.setRequired(true);
 					}
@@ -16905,6 +17069,7 @@ public class ConsoleHelper implements IConsoleHelper {
 								de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE);
 								de.setType(DataElementType.TEXT_EDIT);
 								de.setValue(trasformazioneRichiestaContentType);
+								de.setInfo(dInfoPatternTrasporto);
 								de.setRequired(true);
 								dati.addElement(de);
 								
@@ -18177,19 +18342,19 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		for (int i = 0; i < listaMappingErogazioneSize; i++) {
 			PortaApplicativaServizioApplicativo paSA = pa.getServizioApplicativo(i);
-			if(!this.isConnettoreDefault(paSA)) {
-				int idx = paSA.getNome().indexOf(ConnettoriCostanti.PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX);
-				if(idx > -1) {
-					String idxTmp = paSA.getNome().substring(idx + ConnettoriCostanti.PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX.length());
-					int idxMax = -1;
-					try {
-						idxMax = Integer.parseInt(idxTmp);
-					}catch(Exception e) {
-						idxMax = 0;
-					}
-					idxConfigurazione = Math.max(idxConfigurazione, idxMax);
+			//if(!this.isConnettoreDefault(paSA)) {
+			int idx = paSA.getNome().indexOf(ConnettoriCostanti.PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX);
+			if(idx > -1) {
+				String idxTmp = paSA.getNome().substring(idx + ConnettoriCostanti.PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX.length());
+				int idxMax = -1;
+				try {
+					idxMax = Integer.parseInt(idxTmp);
+				}catch(Exception e) {
+					idxMax = 0;
 				}
+				idxConfigurazione = Math.max(idxConfigurazione, idxMax);
 			}
+			//}
 		}
 				
 		return ( ++ idxConfigurazione);
@@ -18397,42 +18562,103 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public void addInUsoButtonVisualizzazioneClassica(Vector<DataElement> e, String titolo, String id, InUsoType inUsoType) {
-		this.addInUsoButton(e, DataElementType.BUTTON, titolo, id, inUsoType);
+		this.addInUsoButton(e, DataElementType.BUTTON, titolo, id, inUsoType,
+				CostantiControlStation.LABEL_IN_USO_TOOLTIP, Costanti.ICON_USO,
+				CostantiControlStation.LABEL_IN_USO_BODY_HEADER_RISULTATI,
+				true, true);
 	}
 	
 	public void addInUsoButton(Vector<DataElement> e, String titolo, String id, InUsoType inUsoType) {
-		this.addInUsoButton(e, DataElementType.IMAGE, titolo, id, inUsoType);
+		this.addInUsoButton(e, DataElementType.IMAGE, titolo, id, inUsoType,
+				CostantiControlStation.LABEL_IN_USO_TOOLTIP, Costanti.ICON_USO,
+				CostantiControlStation.LABEL_IN_USO_BODY_HEADER_RISULTATI,
+				true, true);
 	}
 	
-	private void addInUsoButton(Vector<DataElement> e, DataElementType deType, String titolo, String id, InUsoType inUsoType) {
+	public void addInUsoInfoButton(Vector<DataElement> e, String titolo, String id, InUsoType inUsoType) {
+		this.addInUsoButton(e, DataElementType.IMAGE, titolo, id, inUsoType,
+				CostantiControlStation.LABEL_IN_USO_INFORMAZIONI_TOOLTIP, Costanti.ICON_USO_INFO,
+				CostantiControlStation.LABEL_IN_USO_BODY_HEADER_INFORMAZIONI, 
+				true, true);
+	}
+	
+	private void addInUsoButton(Vector<DataElement> e, DataElementType deType, String titolo, String id, InUsoType inUsoType,
+			String tooltip, String icon, String headerRiga1, 
+			Boolean resizable, Boolean draggable) {
+		
+		ServletUtils.addInUsoButton(UtilsCostanti.SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO, e, deType, titolo, id, inUsoType.toString(),
+				tooltip, icon, headerRiga1, 
+				resizable, draggable);
+		
+	}
+	
+	
+	public void addComandoInUsoButton(Vector<DataElement> e, String titolo, String id, InUsoType inUsoType) {
+		 addComandoInUsoElementoButton(titolo, id, inUsoType,
+				 CostantiControlStation.LABEL_IN_USO_TOOLTIP, Costanti.ICON_USO,
+					CostantiControlStation.LABEL_IN_USO_BODY_HEADER_RISULTATI,
+					true, true);
+	}
+	public void addComandoInUsoInfoButton(Vector<DataElement> e, String titolo, String id, InUsoType inUsoType) {
+		 addComandoInUsoElementoButton(titolo, id, inUsoType,
+				 CostantiControlStation.LABEL_IN_USO_INFORMAZIONI_TOOLTIP, Costanti.ICON_USO_INFO,
+					CostantiControlStation.LABEL_IN_USO_BODY_HEADER_INFORMAZIONI, 
+					true, true);
+	}
+	private void addComandoInUsoElementoButton(String titolo, String id, InUsoType inUsoType,
+			String tooltip, String icon, String headerRiga1, 
+			Boolean resizable, Boolean draggable) {
+		this.pd.addComandoInUsoElementoButton(UtilsCostanti.SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO,
+				titolo, id, inUsoType.toString(),
+				tooltip, icon, headerRiga1, 
+				resizable, draggable);
+	}
+	
+	public void addComandoVerificaCertificatiButton(Vector<DataElement> e, String nomeElementoSuCuiEffettuareLaVerifica, String servletName, List<Parameter> parameters) {
+		if(parameters == null) {
+			parameters = new ArrayList<Parameter>();
+		}
+
+		this.addAzioneButton(e, DataElementType.IMAGE,  CostantiControlStation.ICONA_VERIFICA_CERTIFICATI_TOOLTIP,
+//				MessageFormat.format(Costanti.ICONA_RESET_CACHE_ELEMENTO_TOOLTIP_CON_PARAMETRO, nomeElementoSuCuiEffettuareLaVerifica),
+				CostantiControlStation.ICONA_VERIFICA_CERTIFICATI, servletName,parameters);
+	}
+	
+	public void addComandoResetCacheButton(Vector<DataElement> e, String nomeElementoSuCuiEffettuareIlReset, String servletName, List<Parameter> parameters) {
+		if(parameters == null) {
+			parameters = new ArrayList<Parameter>();
+		}
+		
+		parameters.add(new Parameter(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE, "true"));
+		
+		this.addAzioneButton(e, DataElementType.IMAGE,  Costanti.ICONA_RESET_CACHE_ELEMENTO_TOOLTIP,
+//				MessageFormat.format(Costanti.ICONA_RESET_CACHE_ELEMENTO_TOOLTIP_CON_PARAMETRO, nomeElementoSuCuiEffettuareIlReset),
+				Costanti.ICONA_RESET_CACHE_ELEMENTO, servletName,parameters);
+	}
+	
+	public void addVerificaCertificatiButton(Vector<DataElement> e, String servletName, List<Parameter> parameters) {
+		this.addAzioneButton(e, DataElementType.IMAGE, 
+				MessageFormat.format(CostantiControlStation.ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO, CostantiControlStation.LABEL_CERTIFICATI.toLowerCase()),
+				CostantiControlStation.ICONA_VERIFICA_CERTIFICATI, servletName,parameters);
+	}
+	
+	public void addVerificaConnettivitaButton(Vector<DataElement> e, String servletName, List<Parameter> parameters) {
+		this.addAzioneButton(e, DataElementType.IMAGE, 
+				MessageFormat.format(CostantiControlStation.ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO, CostantiControlStation.LABEL_CONFIGURAZIONE_CONNETTIVITA.toLowerCase()),
+				CostantiControlStation.ICONA_VERIFICA, servletName,parameters);
+	}
+	
+	protected void addAzioneButton(Vector<DataElement> e, DataElementType deType, String tooltip, String icon, String servletName, List<Parameter> parameters) {
 		DataElement de = new DataElement();
 		de.setType(deType);
-		de.setToolTip(CostantiControlStation.LABEL_IN_USO_TOOLTIP);
-		de.setWidthPx(15);	
-		Dialog deDialog = new Dialog();
-		deDialog.setIcona(Costanti.ICON_USO);
-		deDialog.setTitolo(titolo);
-		deDialog.setHeaderRiga1(CostantiControlStation.LABEL_IN_USO_BODY_HEADER_RISULTATI);
+		de.setToolTip(tooltip);
+		if(parameters != null && parameters.size() >0) {
+			de.setUrl(servletName, parameters.toArray(new Parameter[parameters.size()]));
+		} else {
+			de.setUrl(servletName);
+		}
+		de.setIcon(icon);
 		
-		// Inserire sempre la url come primo elemento del body
-		BodyElement bodyElementURL = new Dialog().new BodyElement();
-		bodyElementURL.setType(DataElementType.HIDDEN);
-		bodyElementURL.setName(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_URL);
-		Parameter pIdOggetto = new Parameter(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_ID_OGGETTO, id);
-		Parameter pTipoOggetto = new Parameter(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_OGGETTO, inUsoType.toString());
-		Parameter pTipoRisposta = new Parameter(UtilsCostanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA, UtilsCostanti.VALUE_PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA_TEXT);
-		bodyElementURL.setUrl(UtilsCostanti.SERVLET_NAME_INFORMAZIONI_UTILIZZO_OGGETTO, pIdOggetto,pTipoOggetto,pTipoRisposta);
-		deDialog.addBodyElement(bodyElementURL);
-		
-		// TextArea
-		BodyElement bodyElement = new Dialog().new BodyElement();
-		bodyElement.setType(DataElementType.TEXT_AREA);
-		bodyElement.setLabel("");
-		bodyElement.setValue("");
-		bodyElement.setRows(15);
-		deDialog.addBodyElement(bodyElement );
-		
-		de.setDialog(deDialog );
 		e.addElement(de);
 	}
 	
@@ -18963,17 +19189,37 @@ public class ConsoleHelper implements IConsoleHelper {
 						
 						de.setName(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO+group.getValue());
 						
-						if(group.isMulti()) {
-							de.setType(DataElementType.MULTI_SELECT);
-							de.setSelezionati(valoriMulti);
-						} else {
-							de.setType(DataElementType.SELECT);
-							de.setSelected(valoreSingolo);
+						if(!group.isConfig()) {
+							de.setType(DataElementType.HIDDEN);
+//							if(group.isMulti()) {
+//								de.setValue(Arrays.asList(valoriMulti).toString());
+//							}
+//							else {
+							if(valoreSingolo==null || "".equals(valoreSingolo)) {
+								String [] tipo = TipoIntegrazione.toValues(group); // in questo caso con config a false, dovrebbe esisterne uno solo
+								if(tipo!=null && tipo.length==1 && tipo[0]!=null) {
+									de.setValue(tipo[0]);
+								}
+							}
+							else {
+								de.setValue(valoreSingolo);
+							}
+//							}
 						}
-						de.setValues(TipoIntegrazione.toValues(group));
-						de.setLabels(TipoIntegrazione.toLabels(group));
-						de.setRequired(true);
+						else {
+							if(group.isMulti()) {
+								de.setType(DataElementType.MULTI_SELECT);
+								de.setSelezionati(valoriMulti);
+							} else {
+								de.setType(DataElementType.SELECT);
+								de.setSelected(valoreSingolo);
+							}
+							de.setValues(TipoIntegrazione.toValues(group));
+							de.setLabels(TipoIntegrazione.toLabels(group));
+							de.setRequired(true);
+						}
 						deIntegrazione.addElement(de);
+						
 					} else {
 						if(group.isMulti()) {
 							this.addMultiSelectCustomField(TipoPlugin.INTEGRAZIONE, ruoloConfigurazione, null, 
@@ -19363,5 +19609,279 @@ public class ConsoleHelper implements IConsoleHelper {
 		else {
 			return info;
 		}
+	}
+	
+	public void addVerificaCertificatoSceltaAlias(List<String> aliases,Vector<DataElement> dati) throws Exception {
+		
+		DataElement de = new DataElement();
+		de.setType(DataElementType.SELECT);
+		List<String> values = new ArrayList<String>();
+		List<String> labels = new ArrayList<String>();
+		values.add(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI);
+		labels.add(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI);
+		values.addAll(this.confCore.getJmxPdD_aliases());
+		for (String alias : this.confCore.getJmxPdD_aliases()) {
+			labels.add(this.confCore.getJmxPdD_descrizione(alias));
+		}
+		de.setValues(values);
+		de.setLabels(labels);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
+		de.setSize(this.getSize());
+		//de.setPostBack(true);
+		dati.addElement(de);
+		
+	}
+	
+	public void addDescrizioneVerificaConnettivitaToDati(Vector<DataElement> dati, Connettore connettore,
+			String server, boolean registro, String aliasConnettore,
+			List<Parameter> downloadCertServerParameters,
+			boolean setTitle, boolean useLabelEndpoint) throws Exception {
+		
+		String tipo = ConnettoreCheck.getPropertyValue(connettore, ConnettoreCheck.POLICY_TIPO_ENDPOINT);
+			
+		if(setTitle) {
+			DataElement de = new DataElement();
+			de.setType(DataElementType.TITLE);
+			String label = ConnettoriCostanti.LABEL_CONNETTORE+(tipo!=null ? " "+tipo : "");
+			de.setLabel(label);
+			de.setValue(label);
+			dati.add(de);
+		}
+		
+		if(server!=null && !"".equals(server)) {
+			DataElement de = new DataElement();
+			de.setType(DataElementType.TEXT);
+			de.setLabel(ConnettoriCostanti.LABEL_SERVER);
+			de.setValue(server);
+			dati.add(de);
+		}
+		
+		Map<String,String> properties = connettore.getProperties();
+		String location = properties!=null ? properties.get(CostantiConnettori.CONNETTORE_LOCATION) : null;	
+						
+		DataElement de = new DataElement();
+		de.setType(DataElementType.TEXT);
+		if(useLabelEndpoint) {		
+			de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_ENDPOINT);
+		}
+		else {
+			de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE);
+		}
+		de.setValue(location);
+		dati.add(de);
+		
+		if(aliasConnettore!=null && !"".equals(aliasConnettore) &&
+				(TipiConnettore.HTTP.getNome().equalsIgnoreCase(connettore.getTipo()) ||
+				TipiConnettore.HTTPS.getNome().equalsIgnoreCase(connettore.getTipo()))
+				){
+			if(location!=null && !"".equals(location) && location.toLowerCase().startsWith("https")) {
+				String nomeConnettore = null;
+				try {
+					URL url = new URL( location );
+					String host = url.getHost();
+					if(host==null || "".equals(host)) {
+						throw new Exception("L'endpoint '"+host+"' non contiene un host");
+					}
+					nomeConnettore = host;
+					int port = url.getPort();
+					if(port>0 && port!=443) {
+						nomeConnettore=nomeConnettore+"_"+port;
+					}
+					
+					de = new DataElement();
+					de.setType(DataElementType.LINK);
+					de.setValue(ConnettoriCostanti.LABEL_DOWNLOAD_CERTIFICATI_SERVER);
+					
+					downloadCertServerParameters.add(new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_CONNETTORE_CERTIFICATO_SERVER));
+					downloadCertServerParameters.add(new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_CONNETTORE_CERTIFICATO_SERVER));
+					downloadCertServerParameters.add(new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_TIPO_CONNETTORE_REGISTRO, registro ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED));
+					downloadCertServerParameters.add(new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_ALIAS_CONNETTORE, aliasConnettore));
+					downloadCertServerParameters.add(new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_NOME_CONNETTORE, nomeConnettore));
+					de.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, 
+							downloadCertServerParameters.toArray(new Parameter[1]));
+					dati.add(de);
+					
+				}catch(Exception e) {
+					this.log.error("Errore durante l'identificazione dell'endpoint: "+e.getMessage(),e);
+				}
+			}
+		}
+		
+		if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)) {
+			
+			de = new DataElement();
+			de.setType(DataElementType.TEXT);
+			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_CONNECTION_TIMEOUT);
+			de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT));
+			dati.add(de);
+			
+		}
+		
+		if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_USERNAME)) {
+			
+			de = new DataElement();
+			de.setType(DataElementType.SUBTITLE);
+			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP);
+			de.setValue(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP);
+			dati.add(de);
+		
+			de = new DataElement();
+			de.setType(DataElementType.TEXT);
+			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP_USERNAME);
+			de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_USERNAME));
+			dati.add(de);
+			
+			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_PASSWORD)) {
+				
+				de = new DataElement();
+				de.setType(DataElementType.TEXT);
+				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP_PASSWORD);
+				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_PASSWORD));
+				dati.add(de);
+				
+			}
+			
+		}
+		
+		if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
+			
+			de = new DataElement();
+			de.setType(DataElementType.SUBTITLE);
+			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_TOKEN);
+			de.setValue(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_TOKEN);
+			dati.add(de);
+		
+			de = new DataElement();
+			de.setType(DataElementType.TEXT);
+			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TOKEN_POLICY);
+			de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY));
+			dati.add(de);
+			
+		}
+		
+		boolean trustAllCerts = false;
+		if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_TRUST_ALL_CERTS)) {
+			String v = connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_ALL_CERTS);
+			if("true".equalsIgnoreCase(v)) {
+				trustAllCerts = true;
+			}
+		}
+		
+		if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION) || 
+				trustAllCerts) {
+		
+			de = new DataElement();
+			de.setType(DataElementType.SUBTITLE);
+			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS);
+			de.setValue(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS);
+			dati.add(de);
+		
+			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_SSL_TYPE)) {
+				
+				de = new DataElement();
+				de.setType(DataElementType.TEXT);
+				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_SSL_TYPE);
+				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_SSL_TYPE));
+				dati.add(de);
+				
+			}
+			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_HOSTNAME_VERIFIER)) {
+				
+				de = new DataElement();
+				de.setType(DataElementType.TEXT);
+				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_HOSTNAME_VERIFIER);
+				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_HOSTNAME_VERIFIER));
+				dati.add(de);
+				
+			}
+				
+			de = new DataElement();
+			de.setType(DataElementType.TEXT);
+			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE);
+			if(trustAllCerts) {
+				de.setValue(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUST_ALL_CERTS);
+			}
+			else {
+				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION));
+			}
+			dati.add(de);
+				
+			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs)) {
+				
+				de = new DataElement();
+				de.setType(DataElementType.TEXT);
+				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_CRLs);
+				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs));
+				dati.add(de);
+				
+			}
+			
+			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION)) {
+				
+				de = new DataElement();
+				de.setType(DataElementType.TEXT);
+				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEYSTORE);
+				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION));
+				dati.add(de);
+				
+				if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTPS_KEY_ALIAS)) {
+					
+					de = new DataElement();
+					de.setType(DataElementType.TEXT);
+					de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEY_ALIAS);
+					de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_KEY_ALIAS));
+					dati.add(de);
+					
+				}
+				
+			}
+		}
+		
+		if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME)) {
+			
+			de = new DataElement();
+			de.setType(DataElementType.SUBTITLE);
+			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY);
+			de.setValue(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY);
+			dati.add(de);
+		
+			de = new DataElement();
+			de.setType(DataElementType.TEXT);
+			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_HOSTNAME);
+			de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME));
+			dati.add(de);
+			
+			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT)) {
+				
+				de = new DataElement();
+				de.setType(DataElementType.TEXT);
+				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_PORT);
+				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT));
+				dati.add(de);
+				
+			}
+			
+			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTP_PROXY_USERNAME)) {
+				
+				de = new DataElement();
+				de.setType(DataElementType.TEXT);
+				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_USERNAME);
+				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTP_PROXY_USERNAME));
+				dati.add(de);
+				
+			}
+
+			if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD)) {
+				
+				de = new DataElement();
+				de.setType(DataElementType.TEXT);
+				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_PASSWORD);
+				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD));
+				dati.add(de);
+				
+			}
+		}
+		
 	}
 }

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -87,6 +87,15 @@ public class Costanti {
 	public final static String POSTBACK_FUNCTION_WITH_PARAMETER_END = "')";
 	public final static String POSTBACK_VIA_POST_FUNCTION_PREFIX = "postVersion_";
 	
+	/** IN USO FUNCTION */
+	
+	public final static String PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_URL = "url";
+	public final static String PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_ID_OGGETTO = "idOggetto";
+	public final static String PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_OGGETTO = "tipoOggetto";
+	public final static String PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA = "tipoRisposta";
+	
+	public final static String VALUE_PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA_TEXT= "text";
+	public final static String VALUE_PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA_JSON = "json";
 	
 	/** FILTER */
 	
@@ -194,6 +203,9 @@ public class Costanti {
 	/** FUNZIONE ESEGUI / ANNULLA  CONFERMA **/
 	
 	public final static String PARAMETRO_ACTION_CONFIRM = "actionConfirm";
+	public final static String PARAMETRO_IS_POSTBACK = "isPostback";
+	public final static String PARAMETRO_AGGIORNA_RICERCA = "aggiornaRicerca";
+	public final static String PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE = "rmElFromCache";
 	
 	public final static String LABEL_MONITOR_BUTTON_OK = "Ok";
 	public final static String LABEL_MONITOR_BUTTON_CONFERMA = "Conferma";
@@ -247,6 +259,8 @@ public class Costanti {
 	public final static MessageType MESSAGE_TYPE_INFO = MessageType.INFO;
 	public final static MessageType MESSAGE_TYPE_INFO_SINTETICO = MessageType.INFO_SINTETICO;
 	public final static MessageType MESSAGE_TYPE_CONFIRM = MessageType.CONFIRM;
+	public final static MessageType MESSAGE_TYPE_WARN = MessageType.WARN;
+	public final static MessageType MESSAGE_TYPE_WARN_SINTETICO = MessageType.WARN_SINTETICO;
 	
 	public final static String MESSAGE_TYPE_ERROR_TITLE = "Messaggio di Errore";
 	public final static String MESSAGE_TYPE_WARN_TITLE = "Attenzione";
@@ -292,6 +306,31 @@ public class Costanti {
 	public final static String ICON_DIALOG_HEADER = "&#xE8B2;";
 	public final static String ICON_COPY = "file_copy";
 	public final static String ICON_USO = "find_in_page";//"location_searching";
+	public final static String ICON_USO_INFO = INFO_BUTTON_ICON; //"info";
+	
+	public final static String ICONA_RESET_CACHE_ELEMENTO = "&#xE863;";
+	public final static String ICONA_RESET_CACHE_ELEMENTO_TOOLTIP = "Rimuovi dalla cache";
+	public final static String ICONA_RESET_CACHE_ELEMENTO_TOOLTIP_CON_PARAMETRO = "Rimuovi {0} dalla cache";
+	
+	public final static String ICONA_VERIFICA = "&#xE8BE;";
+	public final static String ICONA_VERIFICA_TOOLTIP = "Verifica";
+	public final static String ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO = "Verifica {0}";
+
+	public final static String ICONA_VERIFICA_CONNETTIVITA_TOOLTIP = "Verifica connettività";
+	public final static String ICONA_VERIFICA_CONNETTIVITA_TOOLTIP_CON_PARAMETRO = "Verifica connettività {0}";
+	
+	public final static String ICONA_VERIFICA_CERTIFICATI = "&#xEA17;";
+	public final static String ICONA_VERIFICA_CERTIFICATI_TOOLTIP = "Verifica certificati";
+	public final static String ICONA_VERIFICA_CERTIFICATI_TOOLTIP_CON_PARAMETRO = "Verifica certificati {0}";
+	
+	public final static String ICONA_VISUALIZZA_RUNTIME_ALLARME = Costanti.ICON_USO;
+	public final static String ICONA_VISUALIZZA_RUNTIME_ALLARME_TOOLTIP = "Visualizza runtime";
+	
+	public final static String ICONA_AGGIORNA_RICERCA = "&#xE863;";
+	public final static String ICONA_AGGIORNA_RICERCA_TOOLTIP = "Aggiorna Ricerca";
+	
+	public final static String ICONA_MENU_AZIONI_BUTTON = "&#xE5D4;";
+	public final static String ICONA_MENU_AZIONI_BUTTON_TOOLTIP = ""; // "Visualizza azioni disponibili";
 	
 	public static final int LUNGHEZZA_LABEL_TABS = 30;
 	public static final int LUNGHEZZA_RIGA_TESTO_TABELLA = 150;

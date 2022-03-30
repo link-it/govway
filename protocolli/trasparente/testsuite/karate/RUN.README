@@ -39,7 +39,7 @@
 		# Consentono di far passare i parametri url dal client al backend della erogazione
 		org.openspcoop2.pdd.soap.urlParameters.forward.enable=true
 		org.openspcoop2.pdd.soap.urlParameters.blackList.internal=*
-		org.openspcoop2.pdd.soap.urlParameters.whiteList=fault*,returnCode,sleep
+		org.openspcoop2.pdd.soap.urlParameters.whiteList=fault*,returnCode,sleep,reply*,GovWay-TestSuite-*
 
 - Abilitare la congestione del traffico impostando una soglia del 55% in modo
   che il sistema venga considerato congestionato con 8 richieste simultanee.
@@ -65,8 +65,6 @@
 	org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.timer.intervalloSecondi=8
 	org.openspcoop2.pdd.statistiche.generazione.baseMensile.timer.intervalloSecondi=8
 
-
-	
 	Questo per consentire di controllare in un tempo accettabile le metriche dipendenti da statistiche,
 	in particolare quando si abilitano in presenza di degrado prestazionale. 
 
@@ -104,6 +102,94 @@
 	
 - HSM per TLS Keystore. Seguire le indicazioni descritte in PKCS11.README
   Poi 'cp tools/utils/src/org/openspcoop2/utils/certificate/test/govway_test_hsm.properties  /etc/govway/hsm.properties'
+
+- Per i test sulle integrazione 'template' copiare i seguenti file in /etc/govway/
+	- src/org/openspcoop2/core/protocolli/trasparente/testsuite/integrazione/template/IntegrazioneTemplateTrasformazione.ftl
+	- src/org/openspcoop2/core/protocolli/trasparente/testsuite/integrazione/template/IntegrazioneTemplateTrasformazioneRisposta.ftl
+
+- Per i test sulle trasformazioni di protocollo rest to soap e viceversa copiare la directory test_trasformazioni/ in /etc/govway
+
+- Per i test sulle credenziali aggiungere in govway_local.properties la configurazione che si trova in 'src/org/openspcoop2/core/protocolli/trasparente/testsuite/autenticazione/gestore_credenziali/govway_local.properties.adjunct'.
+
+- Configurare l'application server in modo tale da supportare connessioni ssl sulla porta 8444 e 8445 utilizzando le configurazioni presenti nella directory config_https:
+  a) un connettore HTTPS che esegue autenticazione client (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8444)
+        Esempio in config_https/ConnettoreHTTPS_withClientAuth.xml
+        La configurazione del connettore assume che il keystore config_https/jks/erogatore.jks sia stato copiato in /etc/govway/keys
+  b) un connettore HTTPS senza autenticazione client (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8445)
+        Esempio in config_https/ConnettoreHTTPS_noClientAuth.xml
+        La configurazione del connettore assume che il keystore config_https/jks/erogatore.jks sia stato copiato in /etc/govway/keys
+  c) Configurazione della JVM dell'A.S. in modo che utilizzi il truststore config_https/jks/erogatore.jks
+       Indicazioni descritte per JBoss in config_https/configurazioneTrustStoreJBOSS.txt
+
+- Configurare nuove utenze nel container per poter gestire l'autenticazione tramite principal.
+  Seguire le indicazioni presenti in Esempio in ./protocolli/trasparente/testsuite/deploy/principal/README.txt
+
+- Impostare in <console_local.properties>:
+	# Indicazione se nella Consegna Condizionale è possibile associare lo stesso filtro a differenti connettori (per test)
+        connettoriMultipli.consegnaCondizionale.stessoFiltro=true
+   In modo che la console consenta di assegnare più volte lo stesso filtro a connettori diversi in una consegna condizionale e rilevare l'errore a runtime durante una richiesta.
+
+- Impostare in govway_local.properties la seguente proprietà per poter effettuare il test sul claim iat
+	
+	org.openspcoop2.pdd.gestioneToken.iat=120
+
+- Impostare in govway_local.properties se seguenti proprietà richieste da vari test (tra cui i connettori asincroni)
+
+	# Identificativo univoco della macchina, indicare IDGW come identificativo:
+	org.openspcoop2.pdd.cluster_id=IDGW
+
+	# Abilitazione metodi jmx
+        org.openspcoop2.pdd.check.readJMXResources.enabled=true
+        org.openspcoop2.pdd.check.readJMXResources.username=admin
+        org.openspcoop2.pdd.check.readJMXResources.password=admin
+
+- Impostare in govway_local.properties le seguenti proprietà richieste dai test sui connettori asincroni
+
+	# opzione valida solamente per tipologia 'soap', consente il passaggio di statusCode diversi da 202 e 200
+	org.openspcoop2.pdd.connettori.inoltroBuste.returnCode.2xx.acceptOnly_202_200=false
+	org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.returnCode.2xx.acceptOnly_202_200=false
+
+	# prefigge l'id messaggio con la data
+	org.openspcoop2.pdd.integrationManager.idWithDate=true
+
+	# ogni quanti secondi verifica se ci sono NUOVI messaggi da consegnare più vecchi di X secondi (proprietà successiva)
+	org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.nextMessages.intervalloControllo=5
+	# età minima, in secondi, in cui vengono considerati i nuovi messaggi
+	org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.nextMessages.scheduleNewMessageAfter=6
+	# ogni quanti secondi verifica se ci sono messaggi precedentemente falliti in consegna
+	org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.nextMessages.consegnaFallita.intervalloControllo=2
+	# i secondi minimi in cui riconsegnare un messaggio fallito
+	org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.consegnaFallita.intervalloMinimoRiconsegna=2
+	org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.debug=true
+
+- Per modificare i tempi e il numero di operazioni effettuate per i connettori multipli agire sul <testsuite.properties>:
+
+	Le opzioni seguenti consentono di tonificare i test sul load balancer:
+
+	# Quanti millisecondi tenere bloccato un connettore durante i test di least_connections
+	connettori.load_balancer.least_connections.durata_bloccante=1000
+	# Millisecondi necessari a tenere bloccato un connettore dall'inizio alla fine dei test di least_connections
+	connettori.load_balancer.least_connections.durata_bloccante_lunga=4000
+	# Attesa tra una richiesta e l'altra per attendere che venga contata e presa in carico dalla strategia least_connections
+	connettori.load_balancer.least_connections.delay_richieste_background=300
+	# Numero di richieste da eseguire nei test che verificano le strategie random
+	# Per far si che venga generata una distribuzione casuale accettabile dei connettori scelti dalle politiche casuali
+	connettori.load_balancer.numero_richieste_random=500
+	# Numero di secondi per cui un id sessione viene legato ad uno specifico connettore nella sessione sticky
+	connettori.load_balancer.sessione_sticky.max_age=4
+	# Numero di secondi per cui un connettore viene escluso dal pool dal momento in cui genera un errore di connessione
+	connettori.load_balancer.health_check.intervallo_esclusione=4
+
+	Le opzioni seguenti consentono di tonificare i test sulle consegne asincrone:
+
+	NOTA: per quanto concerne i 4 parametri seguenti devono corrispondere ai valori omonimi indicati in org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.coda.DEFAULT.* nel file govway_local.properties
+	connettori.consegna_multipla.next_messages.intervallo_controllo=5
+	connettori.consegna_multipla.next_messages.schedule_new_after=6
+	connettori.consegna_multipla.next_messages.consegna_fallita.intervallo_controllo=2
+	connettori.consegna_multipla.next_messages.consegna_fallita.intervallo_minimo_riconsegna=2
+
+- Creare la cartella /tmp/govway-testsuite dove l'application server deve avere i permessi di scrittura
+
 
 Per eseguire i test:
 	ant run_test
@@ -189,6 +275,9 @@ Di seguito vengono descritti i test del package 'trasformazione':
 - 'soap_action', verifica la trasformazione utilizzata per adeguare la soapAction su messaggi soap
   ant run_test -Ddelete=false -Dload=false -Dpackage=trasformazione.soap_action
 
+- 'protocollo', verifica la trasformazione utilizzata per effettuare trasformazioni di protocollo rest->soap e viceversa
+  ant run_test -Ddelete=false -Dload=false -Dpackage=trasformazione.protocollo
+
 Di seguito vengono descritti i test del package 'registrazione_messaggi':
 
 - 'dump_binario', verifica la registrazione dei messaggi in modalità 'binaria'
@@ -203,6 +292,7 @@ Di seguito vengono descritti i test del package 'connettori':
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.timeout
 
 - 'errori', verifica che, su API SOAP, eventuali risposte di errore senza un payload o con un payload html vengano gestite correttamente. 
+   Vengono inoltre verificate risposte contenenti Content-Type non validi.
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.errori
 
 - 'applicativo_server', verifica il funzionamento degli applicativi di tipo server 
@@ -211,15 +301,54 @@ Di seguito vengono descritti i test del package 'connettori':
 - 'redirect', verifica il funzionamento delle funzionalità di follow redirect e renaming dell'header Location 
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.redirect
 
+- 'consegna_condizionale', verifica la funzionalità dei connettori multipli con tipo 'Consegna Condizionale'
+   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.consegna_condizionale
+
+- 'load_balancer', verifica la funzionalità dei connettori multipli con tipo 'Load Balancer'
+   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.load_balancer
+
+- 'consegna_multipla', verifica la funzionalità dei connettori multipli con tipo 'Consegna Multipla'
+   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.consegna_multipla
+
+- 'consegna_con_notifiche', verifica la funzionalità dei connettori multipli con tipo 'Consegna con Notifiche'
+   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.consegna_con_notifiche
+
 Di seguito vengono descritti i test del package 'token':
 
 - 'attribute_authority', verifica l'interazione con le AttributeAuthority
    ant run_test -Ddelete=false -Dload=false -Dpackage=token.attribute_authority
 
+- 'negoziazione', verifica le funzionalità di negoziazione dei token con un AttributeAuthority
+   ant run_test -Ddelete=false -Dload=false -Dpackage=token.negoziazione
+
+- 'validazione', verifica le funzionalità di validazione di un access token
+   ant run_test -Ddelete=false -Dload=false -Dpackage=token.validazione
+
 Di seguito vengono descritti i test del package 'encoding':
 
 - 'charset', verifica le comunicazioni in stream, con dump, la costruzione di oggetti in memoria read only e per trasformazioni, con charset UTF-8, UTF-16 e ISO-8859-1
    ant run_test -Ddelete=false -Dload=false -Dpackage=encoding.charset
+
+- 'entity_reference', verifica le comunicazioni in stream, con dump, e la costruzioni di header con richieste consistenti di xml entity reference (2MB) 
+   che se trattate come contenuto SAAJ fanno salire il carico per il lavoro richiesto al GC (G1 Humongous Allocation).
+   ant run_test -Ddelete=false -Dload=false -Dpackage=encoding.entity_reference
+
+Di seguito vengono descritti i test del package 'integrazione':
+
+- 'autenticazione', verifica  l'integrazione 'autenticazione' che consente di generare Header HTTP utilizzabili dal backend per autenticare l'API Gateway.
+   ant run_test -Ddelete=false -Dload=false -Dpackage=integrazione.autenticazione
+
+- 'template', verifica  l'integrazione 'template' che consente di applicare una trasformazione al messaggio.
+   ant run_test -Ddelete=false -Dload=false -Dpackage=integrazione.template
+
+Di seguito vengono descritti i test del package 'autenticazione':
+
+- 'gestore_credenziali', verifica la gestione di credenziali inoltrate da un frontend che si occupa del processo di autenticazione tramite header HTTP.
+   ant run_test -Ddelete=false -Dload=false -Dpackage=autenticazione.gestore_credenziali
+
+- 'gestore_credenziali_principal', si tratta di un test simile a quelli effettuati nel gruppo precedente, dove però il frontend web viene autenticato tramite container principal.
+   NOTA: su wildfly25 o superiore è necessario abilitare il l'application-security-domain 'other' prima di eseguire il test
+   ant run_test -Ddelete=false -Dload=false -Dpackage=autenticazione.gestore_credenziali_principal
 
 Di seguito vengono descritti i test del package 'pkcs11':
 

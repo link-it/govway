@@ -20,13 +20,13 @@
 # -- Project information -----------------------------------------------------
 
 project = u'Release Notes'
-copyright = u'Copyright (c) 2005-2021 Link.it srl (https://link.it).'
+copyright = u'Copyright (c) 2005-2022 Link.it srl (https://link.it).'
 author = u'Link.it'
 
 # The short X.Y version
-version = u'3.3.5.p1'
+version = u'3.3.6.p1'
 # The full version, including alpha/beta/rc tags
-release = u'3.3.5.p1'
+release = u'3.3.6.p1'
 
 
 # -- General configuration ---------------------------------------------------

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -141,7 +141,9 @@ public class ConnettoreFileApiHelper extends AbstractConnettoreApiHelper<Connett
 				"", 	// this.redirect_mode, 
 				"", 	// this.redirect_max_hop,
 				conn.getRichiesta().getFile(),	// this.requestOutputFileName,
+				conn.getRichiesta().getFilePermissions(),   // this.requestOutputFileName_permissions
 				conn.getRichiesta().getFileHeaders(),	// this.requestOutputFileNameHeaders,
+				conn.getRichiesta().getFileHeadersPermissions(),   // this.requestOutputFileNameHeaders_permissions
 				createParentDir,
 				overwriteIfExists,
 				responseInputMode,	// this.responseInputMode, 
@@ -238,7 +240,9 @@ public class ConnettoreFileApiHelper extends AbstractConnettoreApiHelper<Connett
 				"", 	// this.redirect_mode, 
 				"", 	// this.redirect_max_hop,
 				conn.getRichiesta().getFile(),	// this.requestOutputFileName,
+				conn.getRichiesta().getFilePermissions(),   // this.requestOutputFileName_permissions
 				conn.getRichiesta().getFileHeaders(),	// this.requestOutputFileNameHeaders,
+				conn.getRichiesta().getFileHeadersPermissions(),   // this.requestOutputFileNameHeaders_permissions
 				createParentDir,	// this.requestOutputParentDirCreateIfNotExists,
 				overwriteIfExists,	// this.requestOutputOverwriteIfExists,
 				responseInputMode,	// this.responseInputMode, 
@@ -331,7 +335,9 @@ public class ConnettoreFileApiHelper extends AbstractConnettoreApiHelper<Connett
 				"", 	// this.redirect_mode, 
 				"", 	// this.redirect_max_hop,
 				conn.getRichiesta().getFile(),	// this.requestOutputFileName,
+				conn.getRichiesta().getFilePermissions(),   // this.requestOutputFileName_permissions
 				conn.getRichiesta().getFileHeaders(),	// this.requestOutputFileNameHeaders,
+				conn.getRichiesta().getFileHeadersPermissions(),   // this.requestOutputFileNameHeaders_permissions
 				createParentDir,	// this.requestOutputParentDirCreateIfNotExists,
 				overwriteIfExists,	// this.requestOutputOverwriteIfExists,
 				responseInputMode,	// this.responseInputMode, 
@@ -356,7 +362,9 @@ public class ConnettoreFileApiHelper extends AbstractConnettoreApiHelper<Connett
 		richiesta.setFile(props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE));
 		richiesta.setFileHeaders(props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS));
 		String requestOutputFileName = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE);	
+		String requestOutputFileName_permissions = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_PERMISSIONS);	
 		String requestOutputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS);	
+		String requestOutputFileNameHeaders_permissions = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS_PERMISSIONS);	
 		String v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
 		boolean requestOutputParentDirCreateIfNotExists = false;		
 		if(v!=null && !"".equals(v)){
@@ -381,7 +389,9 @@ public class ConnettoreFileApiHelper extends AbstractConnettoreApiHelper<Connett
 		}
 
 		richiesta.setFile(requestOutputFileName);
+		richiesta.setFilePermissions(requestOutputFileName_permissions);
 		richiesta.setFileHeaders(requestOutputFileNameHeaders);
+		richiesta.setFileHeadersPermissions(requestOutputFileNameHeaders_permissions);
 		richiesta.setCreateParentDir(requestOutputParentDirCreateIfNotExists);
 		richiesta.setOverwriteIfExists(requestOutputOverwriteIfExists);
 

@@ -116,16 +116,16 @@ Prerequisiti:
 	bash updateCertificatiConfigurazione.sh <NOME_SOGGETTO>
 
 + Eseguire i test con
-	ant run_test
+	ant run_test -Dload=false -Ddelete=false
 
   Per eseguire una sola feature
-	ant run_test -Dkarate.options=test/rest/bloccante/idac02.feature
+	ant run_test -Dload=false -Ddelete=false -Dkarate.options=test/rest/bloccante/idac02.feature
 
   Conviene specificare anche la classe di test con l'opzione <-Dtest> sotto la quale è presente la feature, es:
-	ant build run_test -Dtest=NonBloccanteRestTest -Dkarate.options=test/rest/non-bloccante/pull-proxy.feature
+	ant run_test -Dload=false -Ddelete=false -Dtest=NonBloccanteRestTest -Dkarate.options=test/rest/non-bloccante/pull/pull.feature
   
   Per eseguire uno specifico scenario con un determinato tag usare fra le karate.options, l'opzione <--tags>, es:
-	ant run_test -Dtest=NonBloccanteRestTest -Dkarate.options='test/rest/non-bloccante/pull-proxy.feature --tags @no-location-from-status'
+	ant run_test -Dload=false -Ddelete=false -Dtest=NonBloccanteRestTest -Dkarate.options='test/rest/non-bloccante/pull/pull.feature --tags @test-ok'
 
   Per evitare la creazione e la cancellazione della configurazione di govway passare i parametri <-Dload=false> e <-Ddelete=false>
 

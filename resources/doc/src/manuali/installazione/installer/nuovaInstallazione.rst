@@ -33,8 +33,7 @@ come si sviluppa il processo di installazione:
    -  *DBMS*: il tipo di database scelto tra quelli supportati:
       PostgreSQL, MySQL, Oracle, HyperSQL, SQLServer.
 
-   -  *Application Server*: Application server utilizzato selezionato
-      tra: WildFly (versione 18, 19, 20, 21, 22, 23, 24 o 25) e Apache Tomcat (versione 9).
+   -  *Application Server*: il tipo di application server tra quelli supportati: WildFly (deve essere selezionata la voce che comprende la versione utilizzata tra: 18-21, 22-24 o 25-26) e Apache Tomcat (versione 9).
 
 #. Al passo successivo si dovranno inserire tutti i dati per l'accesso
    al database ed in particolare:

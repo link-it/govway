@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -635,7 +635,8 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 							envelopingMessage(messageTypeReq, contentTypeForEnvelope, soapAction, 
 							this.requestInfo.getProtocolContext(), this.inputBody, notifierInputStreamParams, 
 							this.openSPCoopProperties.getAttachmentsProcessingMode(), 
-							this.openSPCoopProperties.isDeleteInstructionTargetMachineXml());
+							this.openSPCoopProperties.isDeleteInstructionTargetMachineXml(),
+							this.openSPCoopProperties.useSoapMessageReader(), this.openSPCoopProperties.getSoapMessageReaderBufferThresholdKb());
 					if(pr.getParseException()!=null){
 						this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
 					}

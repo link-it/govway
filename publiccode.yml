@@ -129,15 +129,15 @@ maintenance:
       name: Andrea Poli
   contractors:
     - name: Link.it
-      until: '2021-12-31'
+      until: '2022-12-31'
       website: 'https://www.link.it'
   type: community
 name: GovWay
 platforms:
   - web
-releaseDate: '2021-10-22'
+releaseDate: '2022-03-21'
 softwareType: standalone/web
-softwareVersion: 3.3.5
+softwareVersion: 3.3.6.p1
 url: 'https://github.com/link-it/govway'
 usedBy:
   - MISE - Ministero dello Sviluppo Economico

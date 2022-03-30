@@ -36,7 +36,7 @@ del servizio di Token Introspection:
 -  *Tipo*: tipologia del servizio. A scelta tra i seguenti valori:
 
    -  *RFC 7662 - Introspection*: Servizio di introspection conforme
-      allo standard RFC 7662. Richiede che vengano forniti i seguenti
+      allo standard RFC 7662 'https://datatracker.ietf.org/doc/html/rfc7662'. Richiede che vengano forniti i seguenti
       dati:
 
       -  *URL*: endpoint del servizio di introspection.
@@ -61,7 +61,25 @@ del servizio di Token Introspection:
       *https://www.googleapis.com/oauth2/v3/tokeninfo*.
 
    -  *Personalizzato*: Questa opzione consente di configurare un
-      servizio di Token Introspection personalizzato (:numref:`tokenIntrospectionCustom`).
+      servizio di Token Introspection personalizzato (:numref:`tokenIntrospectionCustom`) attraverso i seguenti dati:
+
+      -  *URL*: la URL del servizio di introspection;
+
+      -  *Autenticazione*: consente di configurare, selezionando il flag opportuno, il tipo di autenticazione richiesta dal servizio di introspection personalizzato;
+
+      -  *Http Method*: il metodo HTTP che deve essere utilizzato per la chiamata al servizio di introspection;
+
+      -  *Posizione Token*: il metodo di passaggio del token al servizio di introspection. Sono supportati i classici metodi: HTTP Authorization Bearer, Header HTTP, Parametro URL e Parametro Form-Encoded Body. Negli ultimi tre casi sarà necessario fornire il nome dell'header o del parametro.
+
+      -  *Formato Risposta - Tipo*: indica il formato atteso della risposta. Maggiori dettagli sul mapping vengono forniti in ':ref:`configMappingToken`'. I valori possibili sono:
+
+	   -  *RFC 7662 - Introspection*: claims attesi definiti nel RFC 'https://datatracker.ietf.org/doc/html/rfc7662#section-2.2';
+
+	   -  *Google - TokenInfo*: claims definiti in 'https://developers.google.com/identity/sign-in/web/backend-auth#calling-the-tokeninfo-endpoint';
+
+	   -  *Personalizzato*: consente di definire un mapping puntuale tra il nome di un claim e l'informazione che GovWay cerca di estrarre dal token (:numref:`validazioneJWTpersonalizzato`);
+
+	   -  *Plugin*: consente di indicare il nome di una classe che implementa una logica di parsing personalizzata (deve implementare l'interfaccia 'org.openspcoop2.pdd.core.token.parser.ITokenParser').
 
    .. figure:: ../../_figure_console/TokenIntrospectionCustom.png
     :scale: 100%
@@ -70,28 +88,3 @@ del servizio di Token Introspection:
 
     Configurazione personalizzata del servizio di Token Instrospection
 
-I dati da fornire sono:
-
--  *URL*: la URL del servizio di introspection.
-
--  *Http Method*: Il metodo HTTP che deve essere utilizzato per la
-   chiamata al servizio di introspection.
-
--  *Posizione Token*: Il metodo di passaggio del token al servizio
-   di introspection. Sono supportati i classici metodi: HTTP
-   Authorization Bearer, Header HTTP, Parametro URL e Parametro
-   Form-Encoded Body. Negli ultimi tre casi sarà necessario
-   fornire il nome dell'header o del parametro.
-
--  *Claims Parser*: Il metodo di parsing dei claims che vengono
-   restituiti dal servizio di introspection. I valori possibili
-   sono: RFC 7662 - Introspection, Google - TokenInfo e
-   Personalizzato. In quest'ultimo caso si dovrà fornire il
-   ClassName della classe contenente la logica di parsing.
-
--  *Autenticazione*: Analogamente a quanto visto in precedenza è
-   necessario indicare con il flag opportuno il tipo di
-   autenticazione richiesta dal servizio di introspection
-   personalizzato.
-
-Nel caso sia attivato il flag relativo ad un Proxy o una configurazione Https saranno presentate delle sezioni omonime dove poter inserire i dati di configurazione richiesti.

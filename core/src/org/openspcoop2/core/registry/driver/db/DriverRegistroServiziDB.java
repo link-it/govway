@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -128,6 +128,9 @@ import org.openspcoop2.core.registry.constants.ScopeContesto;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
+import org.openspcoop2.core.registry.constants.TipiDocumentoLivelloServizio;
+import org.openspcoop2.core.registry.constants.TipiDocumentoSemiformale;
+import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.ConnettorePropertiesUtilities;
@@ -19138,6 +19141,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("server");
 				sqlQueryObject.addSelectField("id_connettore");
 				sqlQueryObject.addSelectField("codice_ipa");
+				sqlQueryObject.addSelectField("tipoauth");
+				
 				if(filterSoggettoDefault) {
 					sqlQueryObject.addWhereCondition("is_default = ?");
 				}
@@ -19214,6 +19219,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("server");
 				sqlQueryObject.addSelectField("id_connettore");
 				sqlQueryObject.addSelectField("codice_ipa");
+				sqlQueryObject.addSelectField("tipoauth");
+				
 				if(filterSoggettoDefault) {
 					sqlQueryObject.addWhereCondition("is_default = ?");
 				}
@@ -19327,6 +19334,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 				long idConnettore = risultato.getLong("id_connettore");
 				sog.setConnettore(getConnettore(idConnettore, con));
 
+				String tipoAuth = risultato.getString("tipoauth");
+				if(tipoAuth != null && !tipoAuth.equals("")){
+					CredenzialiSoggetto credenziali = new CredenzialiSoggetto();
+					credenziali.setTipo(DriverRegistroServiziDB_LIB.getEnumCredenzialeTipo(tipoAuth));
+					sog.addCredenziali( credenziali );
+				}
+				
 				lista.add(sog);
 
 			}
@@ -26175,8 +26189,200 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 	}
 
+	@Override
+	public Documento getAllegato(IDServizio idASPS, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return _getDocumento(idASPS, RuoliDocumento.allegato.toString(), null, nome);
+	}
+	@Override
+	public Documento getSpecificaSemiformale(IDServizio idASPS, TipiDocumentoSemiformale tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return _getDocumento(idASPS, RuoliDocumento.specificaSemiformale.toString(), tipo.toString(), nome);
+	}
+	@Override
+	public Documento getSpecificaSicurezza(IDServizio idASPS, TipiDocumentoSicurezza tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return _getDocumento(idASPS, RuoliDocumento.specificaSicurezza.toString(), tipo.toString(), nome);
+	}
+	@Override
+	public Documento getSpecificaLivelloServizio(IDServizio idASPS, TipiDocumentoLivelloServizio tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return _getDocumento(idASPS, RuoliDocumento.specificaLivelloServizio.toString(), tipo.toString(), nome);
+	}
+	private Documento _getDocumento(IDServizio idASPS, String ruolo, String tipo, String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		String nomeMetodo = "getDocumento";
+		String queryString;
+		
+		Connection con = null;
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
 
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("serviziAllegatiList");
 
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		try {
+
+			long idServizio = DBUtils.getIdAccordoServizioParteSpecifica(idASPS, con, this.tipoDB);
+			if(idServizio<=0) {
+				throw new DriverRegistroServiziNotFound("ApiImpl '"+idASPS+"' undefined");
+			}	
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.DOCUMENTI);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addWhereCondition("id_proprietario = ?");
+			sqlQueryObject.addWhereCondition("tipo_proprietario = ?");
+			sqlQueryObject.addWhereCondition("ruolo = ?");
+			if(tipo!=null) {
+				sqlQueryObject.addWhereCondition("tipo = ?");
+			}
+			sqlQueryObject.addWhereCondition("nome = ?");
+			
+			sqlQueryObject.setANDLogicOperator(true);
+			queryString = sqlQueryObject.createSQLQuery();
+
+			stmt = con.prepareStatement(queryString);
+			int index = 1;
+			stmt.setLong(index++, idServizio);
+			stmt.setString(index++, ProprietariDocumento.servizio.toString());
+			stmt.setString(index++, ruolo);
+			if(tipo!=null) {
+				stmt.setString(index++, tipo);
+			}
+			stmt.setString(index++, nome);
+			risultato = stmt.executeQuery();
+
+			if(risultato.next()){
+				Documento doc = DriverRegistroServiziDB_LIB.getDocumento(risultato.getLong("id"),true, con, this.tipoDB); 
+				return doc;
+			}
+
+			String tipoS = (tipo!=null) ? ("tipo:"+tipo+" ") : "";
+			throw new DriverRegistroServiziNotFound("Documento (ruolo:"+ruolo+" "+tipoS+"nome:"+nome+") non trovato");
+
+		} catch(DriverRegistroServiziNotFound notFound) {
+			throw notFound;
+		}
+		catch (Exception se) {
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+
+	
+	@Override
+	public Documento getAllegato(IDAccordo idAccordo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return _getDocumento(idAccordo, RuoliDocumento.allegato.toString(), null, nome);
+	}
+	@Override
+	public Documento getSpecificaSemiformale(IDAccordo idAccordo, TipiDocumentoSemiformale tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return _getDocumento(idAccordo, RuoliDocumento.specificaSemiformale.toString(), tipo.toString(), nome);
+	}
+	private Documento _getDocumento(IDAccordo idAccordo, String ruolo, String tipo, String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		String nomeMetodo = "getDocumento";
+		String queryString;
+		
+		Connection con = null;
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("serviziAllegatiList");
+
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		try {
+
+			long idAccordoLong = DBUtils.getIdAccordoServizioParteComune(idAccordo, con, this.tipoDB);
+			if(idAccordoLong<=0) {
+				throw new DriverRegistroServiziNotFound("Api '"+idAccordo+"' undefined");
+			}	
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.DOCUMENTI);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addWhereCondition("id_proprietario = ?");
+			sqlQueryObject.addWhereCondition("tipo_proprietario = ?");
+			sqlQueryObject.addWhereCondition("ruolo = ?");
+			if(tipo!=null) {
+				sqlQueryObject.addWhereCondition("tipo = ?");
+			}
+			sqlQueryObject.addWhereCondition("nome = ?");
+			
+			sqlQueryObject.setANDLogicOperator(true);
+			queryString = sqlQueryObject.createSQLQuery();
+
+			stmt = con.prepareStatement(queryString);
+			int index = 1;
+			stmt.setLong(index++, idAccordoLong);
+			stmt.setString(index++, ProprietariDocumento.accordoServizio.toString());
+			stmt.setString(index++, ruolo);
+			if(tipo!=null) {
+				stmt.setString(index++, tipo);
+			}
+			stmt.setString(index++, nome);
+			risultato = stmt.executeQuery();
+
+			if(risultato.next()){
+				Documento doc = DriverRegistroServiziDB_LIB.getDocumento(risultato.getLong("id"),true, con, this.tipoDB); 
+				return doc;
+			}
+
+			String tipoS = (tipo!=null) ? ("tipo:"+tipo+" ") : "";
+			throw new DriverRegistroServiziNotFound("Documento (ruolo:"+ruolo+" "+tipoS+"nome:"+nome+") non trovato");
+
+		} catch(DriverRegistroServiziNotFound notFound) {
+			throw notFound;
+		}
+		catch (Exception se) {
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
 
 	public void validaStatoAccordoServizio(AccordoServizioParteComune as,boolean utilizzoAzioniDiretteInAccordoAbilitato) throws ValidazioneStatoPackageException{
 

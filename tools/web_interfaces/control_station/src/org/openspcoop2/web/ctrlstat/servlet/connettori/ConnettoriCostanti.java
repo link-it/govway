@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -26,7 +26,9 @@ import java.util.Vector;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.Costanti;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TransferLengthModes;
+import org.openspcoop2.pdd.core.connettori.ConnettoreFILE;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
@@ -65,7 +67,7 @@ public class ConnettoriCostanti {
 	
 	/* LABEL GENERALI */
 
-	public final static String LABEL_SERVER = "Applicativo Server";
+	public final static String LABEL_SERVER = CostantiLabel.LABEL_SERVER;
 	public final static String LABEL_CONNETTORE = "Connettore";
 	public final static String LABEL_DOWNLOAD_CERTIFICATI_SERVER = "Download Certificati Server";
 	public final static String LABEL_CONNETTORE_ABILITATO = "Abilitato";
@@ -193,7 +195,9 @@ public class ConnettoriCostanti {
 	public final static String PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM = "httpsalgoritmokey";
 	
 	public final static String PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME = "requestOutputFileName";
+	public final static String PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS = "requestOutputFileNameP";
 	public final static String PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS = "requestOutputFileNameHeaders";
+	public final static String PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS = "requestOutputFileNameHeadersP";
 	public final static String PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR = "requestOutputDirectoryAutoCreate";
 	public final static String PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME = "requestOutputOverwriteFileName";
 	public final static String PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE = "responseInputMode";
@@ -250,16 +254,16 @@ public class ConnettoriCostanti {
 	public final static String LABEL_AUTENTICAZIONE_TIPO_PRINCIPAL = CostantiConfigurazione.LABEL_CREDENZIALE_PRINCIPAL;
 	public final static String DEFAULT_AUTENTICAZIONE_TIPO = AUTENTICAZIONE_TIPO_NESSUNA;
 	
-	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME = "Utente";
-	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD = "Password";
-	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT = "Subject";
-	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER = "Issuer";
-	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS_DESCR = "Multiple API Keys";
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME = CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_USERNAME;
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD = CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_PASSWORD;
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT = CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_SUBJECT;
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER = CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_ISSUER;
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS_DESCR = CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS_DESCR;
 	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS = "App ID";
 	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID_EMPTY_LABEL = ""; //"App ID";
-	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID = "App ID";
-	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY = "Api Key";
-	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL = "UserId";
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID = CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_APP_ID;
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY = CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_API_KEY;
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL = CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL;
 
 	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_NUOVA_PASSWORD = "Nuova "+LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD;
 	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_NUOVA_API_KEY = "Nuova "+LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY;
@@ -274,8 +278,8 @@ public class ConnettoriCostanti {
 	public final static String LABEL_PARAMETRO_CONNETTORE_PROXY_PASSWORD = "Password";
 	
 	public final static String LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE = "Ridefinisci Tempi Risposta";
-	public final static String LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT = "Connection Timeout";
-	public final static String LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT = "Read Timeout";
+	public final static String LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT = CostantiLabel.LABEL_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT;
+	public final static String LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT = CostantiLabel.LABEL_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT;
 	public final static String LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA = "Tempo Medio di Risposta";
 	public final static String LABEL_PARAMETRO_CONNETTORE_TEMPI_MILLISECONDI_NOTE = "Indicazione in millisecondi (ms)";
 	
@@ -285,11 +289,11 @@ public class ConnettoriCostanti {
 	public final static String LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE = "Gestione Redirect";
 	public final static String LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP = "Max Numero di Redirect";
 	
-	public final static String LABEL_PARAMETRO_CONNETTORE_TOKEN_POLICY = "Policy";
+	public final static String LABEL_PARAMETRO_CONNETTORE_TOKEN_POLICY = CostantiLabel.LABEL_CONNETTORE_TOKEN_POLICY;
 	
-	public final static String LABEL_PARAMETRO_CONNETTORE_JMS_NOME_CODA = "Nome";
+	public final static String LABEL_PARAMETRO_CONNETTORE_JMS_NOME_CODA = CostantiLabel.LABEL_CONNETTORE_JMS_NOME_CODA;
 	public final static String LABEL_PARAMETRO_CONNETTORE_JMS_TIPO_CODA = "Tipo";
-	public final static String LABEL_PARAMETRO_CONNETTORE_JMS_USERNAME = "Utente";
+	public final static String LABEL_PARAMETRO_CONNETTORE_JMS_USERNAME = CostantiLabel.LABEL_CONNETTORE_JMS_USERNAME;
 	public final static String LABEL_PARAMETRO_CONNETTORE_JMS_PASSWORD = "Password";
 	public final static String LABEL_PARAMETRO_CONNETTORE_JMS_INIT_CTX = "Initial Context Factory";
 	public final static String LABEL_PARAMETRO_CONNETTORE_JMS_URL_PKG = "Url Pgk Prefixes";
@@ -300,7 +304,7 @@ public class ConnettoriCostanti {
 	public final static String LABEL_PARAMETRO_CONNETTORE_HTTPS_URL = "Endpoint";
 	public final static String LABEL_PARAMETRO_CONNETTORE_HTTPS_CLIENT_AUTH = "Client-Auth";
 	public final static String LABEL_PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE = "Tipologia";
-	public final static String LABEL_PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY = "Verifica Hostname";
+	public final static String LABEL_PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY = CostantiLabel.LABEL_CONNETTORE_HTTPS_HOST_VERIFY;
 	public final static String LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS = "Verifica";
 	public final static String LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION = "Path";
 	public final static int LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION_SIZE = LABEL_PARAMETRO_CONNETTORE_TEXT_AREA_SIZE;
@@ -323,8 +327,15 @@ public class ConnettoriCostanti {
 	
 	public final static String LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME = "File";
 	public final static int LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_SIZE = LABEL_PARAMETRO_CONNETTORE_TEXT_AREA_SIZE;
+	public final static String LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS = "File (Permessi)";
+	public final static String LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_PERMISSIONS_INFO = "Consente di impostare i permessi del file tramite il seguente formato:<BR>- "+ConnettoreFILE.PERMESSI_FORMATO;
+	public final static int LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_SIZE_PERMISSIONS = 1;
+	public final static int LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_SIZE_PERMISSIONS_MAX = 3;
 	public final static String LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS = "File Headers";
 	public final static int LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_SIZE = LABEL_PARAMETRO_CONNETTORE_TEXT_AREA_SIZE;
+	public final static String LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_PERMISSIONS = "File Headers (Permessi)";
+	public final static int LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_SIZE_PERMISSIONS = LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_SIZE_PERMISSIONS;
+	public final static int LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_SIZE_PERMISSIONS_MAX = LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_SIZE_PERMISSIONS_MAX;
 	public final static String LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR = "AutoCreate Parent Dir";
 	public final static String LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME = "Overwrite If Exists";
 	public final static String LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE = "Generazione";
@@ -335,6 +346,11 @@ public class ConnettoriCostanti {
 	public final static String LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ = "Delete After Read";
 	public final static String LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME = "WaitTime ifNotExists (ms)";
 		
+	public static final String LABEL_INPUT_FILE_HEADER = CostantiLabel.LABEL_INPUT_FILE_HEADER;
+	public static final String LABEL_INPUT_FILE = CostantiLabel.LABEL_INPUT_FILE;
+	public static final String LABEL_OUTPUT_FILE_HEADER = CostantiLabel.LABEL_OUTPUT_FILE_HEADER;
+	public static final String LABEL_OUTPUT_FILE = CostantiLabel.LABEL_OUTPUT_FILE;
+	
 	public final static String LABEL_SEZIONE_CONNETTORE_CUSTOM_PROPRIETA = "Proprietà";
 	
 	public final static String LABEL_PARAMETRO_CONNETTORE_CUSTOM_NOME = "Nome";
@@ -393,23 +409,24 @@ public class ConnettoriCostanti {
 	public final static String LABEL_BUTTON_INVIA_CARICA_CERTIFICATO = "Carica Certificato";
 	
 	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_CONNECTION_TIMEOUT = LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT;
+	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_READ_TIMEOUT = LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT;
 	
-	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP = "Autenticazione Http";
+	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP = CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP;
 	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP_USERNAME = LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME;
 	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP_PASSWORD = LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD;
 	
-	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_TOKEN = "Autenticazione Token";
+	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_TOKEN = CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_TOKEN;
 	
-	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS = "Autenticazione Https";
+	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS = CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS;
 	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_SSL_TYPE = LABEL_PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE;
 	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_HOSTNAME_VERIFIER = LABEL_PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY;
-	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUST_ALL_CERTS = "Trust all certificates";
-	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE = "Auth Server - TrustStore";
-	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_CRLs = "Auth Server - CRLs";
-	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEYSTORE = "Auth Client - KeyStore";
-	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEY_ALIAS = "Auth Client - Key Alias";
+	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUST_ALL_CERTS = CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUST_ALL_CERTS;
+	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE = CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE;
+	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_CRLs = CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_CRLs;
+	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEYSTORE = CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEYSTORE;
+	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEY_ALIAS = CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEY_ALIAS;
 	
-	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY = "Proxy";
+	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY = CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY;
 	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_HOSTNAME = LABEL_PARAMETRO_CONNETTORE_PROXY_HOSTNAME;
 	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_PORT = LABEL_PARAMETRO_CONNETTORE_PROXY_PORT;
 	public final static String LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_USERNAME = LABEL_PARAMETRO_CONNETTORE_PROXY_USERNAME;
@@ -516,10 +533,10 @@ public class ConnettoriCostanti {
 	/* LABEL FILTRI RICERCA */
 	public final static String LABEL_SUBTITLE_DATI_CONNETTORE = "Dati Connettore";
 	public final static String NAME_SUBTITLE_DATI_CONNETTORE = "subtDatiConn";
-	public final static String LABEL_FILTRO_TIPO_CONNETTORE = "Tipo";
+	public final static String LABEL_FILTRO_TIPO_CONNETTORE = CostantiLabel.LABEL_TIPO_CONNETTORE;
 	public final static String LABEL_FILTRO_TIPO_CONNETTORE_IM = "im-message-box";
 	public final static String LABEL_FILTRO_CONNETTORE_TOKEN_POLICY = "Token Policy";
-	public final static String LABEL_FILTRO_CONNETTORE_ENDPOINT = "Endpoint";
+	public final static String LABEL_FILTRO_CONNETTORE_ENDPOINT = CostantiLabel.LABEL_CONNETTORE_ENDPOINT;
 	public final static String LABEL_FILTRO_CONNETTORE_ENDPOINT_FILE = "File";
 	public final static String LABEL_FILTRO_CONNETTORE_ENDPOINT_JMS = "Parametri Jms";
 	public final static String LABEL_FILTRO_CONNETTORE_KEYSTORE = "Keystore";

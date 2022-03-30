@@ -187,7 +187,7 @@
 				<include name="commons-jcs3-core-3.0-gov4j-1.jar"/>
 				<include name="wsdl4j-1.6.3.jar"/>
 				<include name="uddi4j-2.0.5.jar"/>
-				<include name="xercesImpl-2.12.1.jar"/>
+				<include name="xercesImpl-2.12.2.jar"/>
 				<include name="xml-apis-1.4.01.jar"/>
 				<include name="xalan-2.7.2.jar"/>
 				<include name="serializer-2.7.2.jar"/> 
@@ -202,6 +202,7 @@
 				<include name="snakeyaml-1.29.jar"/>
 				<include name="rhino-1.7.13.jar"/>
 				<include name="ehcache-3.9.7.jar"/>
+				<!-- NOTA: non includere mai nel runtime Saxon-HE-*.jar poiche' fa agganciare il suo Transformer sostituendosi a Xalan (al massimo vedere di levare la dichiarazione in META-INF) -->
 			</lib>
 			<lib dir="${required_lib}/jminix">
 				<include name="*.jar"/>

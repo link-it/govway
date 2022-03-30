@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -54,6 +54,7 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.transport.http.RFC2047Encoding;
 import org.openspcoop2.utils.transport.http.RFC2047Utilities;
+import org.openspcoop2.utils.transport.http.SSLConfig;
 
 /**
  * ConnettoreBaseHTTP
@@ -65,6 +66,11 @@ import org.openspcoop2.utils.transport.http.RFC2047Utilities;
  */
 
 public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
+	
+    @Override
+	public String getProtocollo() {
+    	return "HTTP";
+    }
 	
 	/** httpMethod */
 	protected HttpRequestMethod httpMethod = null;
@@ -92,7 +98,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	
 	/** SSL Configuration */
 	protected boolean connettoreHttps = false;
-	protected ConnettoreHTTPSProperties sslContextProperties;
+	protected SSLConfig sslContextProperties;
 	
 	/** InputStream Risposta */
 	protected String resultHTTPMessage;

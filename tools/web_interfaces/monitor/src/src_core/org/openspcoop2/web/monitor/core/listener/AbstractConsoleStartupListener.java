@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -32,6 +32,8 @@ import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.transazioni.utils.DumpUtils;
 import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
 import org.openspcoop2.monitor.engine.dynamic.PluginLoader;
+import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
+import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntimeProperties;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
@@ -444,6 +446,19 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 			throw new RuntimeException(msgErrore,e);
 		}
 		
+		
+		// inizializza nodi runtime
+		try {
+			ConfigurazioneNodiRuntimeProperties backwardCompatibility = new ConfigurazioneNodiRuntimeProperties(appProperties.getJmxPdD_backwardCompatibilityPrefix(), 
+					appProperties.getJmxPdD_backwardCompatibilityProperties());
+			ConfigurazioneNodiRuntime.initialize(appProperties.getJmxPdD_externalConfiguration(), backwardCompatibility);
+		} catch (Exception e) {
+			String msgErrore = "Errore durante l'inizializzazione del gestore dei nodi run: " + e.getMessage();
+			AbstractConsoleStartupListener.log.error(
+					//					throw new ServletException(
+					msgErrore,e);
+			throw new RuntimeException(msgErrore,e);
+		}
 		
 		
 		// inizializza il repository dei plugin

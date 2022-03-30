@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -28,6 +28,8 @@ import javax.xml.ws.BindingProvider;
 import org.openspcoop2.pdd.monitor.Messaggio;
 import org.openspcoop2.pdd.monitor.StatoPdd;
 import org.openspcoop2.pdd.monitor.driver.FilterSearch;
+import org.openspcoop2.pdd.monitor.driver.FiltroStatoConsegnaAsincrona;
+import org.openspcoop2.pdd.monitor.driver.StatoConsegneAsincrone;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 
@@ -87,6 +89,14 @@ public class MonitorUtilities {
 		}
 	}
 	
+	public static StatoConsegneAsincrone getStatoConsegneAsincrone(FiltroStatoConsegnaAsincrona filtro, String sorgenteDati) throws Exception{
+		if(Monitor.singlePdD){
+			return Monitor.driverMonitoraggioLocale.get(sorgenteDati).getStatoConsegneAsincrone(filtro);
+		}
+		else{
+			throw new Exception("Non supportato");
+		}
+	}
 	
 	private static String getWSUrl(String pddName, boolean statoPdD) throws Exception{
 		String ipPdd = null;

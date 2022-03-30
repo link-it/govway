@@ -15,18 +15,17 @@ opzione attiva la validazione basata su tale standard (:numref:`validazioneJWT`)
 
 I dati da inserire sono:
 
--  *Claims Parser*: indica il tipo di parser che deve essere utilizzato
-   per la validazione del token JWT. I valori possibili sono:
+-  *Formato Token*: indica il formato atteso del payload contenuto nel token JWT. Maggiori dettagli sul mapping vengono forniti in ':ref:`configMappingToken`'. I valori possibili sono:
 
-   -  *RFC 7519 - JSON Web Token*
+   -  *RFC 7519 - JSON Web Token*: claims attesi definiti nel RFC 'https://datatracker.ietf.org/doc/html/rfc7519#section-4';
 
-   -  *OpenID Connect - ID Token*
+   -  *OpenID Connect - ID Token*: definiti nel RFC 'https://openid.net/specs/openid-connect-core-1_0.html#IDToken'; 
 
-   -  *Google - ID Token*
+   -  *Google - ID Token*: claims definiti in 'https://developers.google.com/identity/protocols/oauth2/openid-connect#obtainuserinfo';
 
-   -  *Personalizzato*: nel caso del parser personalizzato occorre
-      fornire il relativo ClassName della classe con la logica di
-      parsing.
+   -  *Personalizzato*: consente di definire un mapping puntuale tra il nome di un claim e l'informazione che GovWay cerca di estrarre dal token (:numref:`validazioneJWTpersonalizzato`);
+
+   -  *Plugin*: consente di indicare il nome di una classe che implementa una logica di parsing personalizzata (deve implementare l'interfaccia 'org.openspcoop2.pdd.core.token.parser.ITokenParser').
 
 -  *KeyStore*: I parametri di configurazione del keystore da utilizzare
    per il servizio di validazione.

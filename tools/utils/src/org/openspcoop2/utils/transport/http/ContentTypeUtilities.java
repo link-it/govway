@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -345,8 +345,14 @@ public class ContentTypeUtilities {
 	
 	public static String buildMultipartContentType(byte [] message, String type) throws UtilsException{
 		if(MultipartUtils.messageWithAttachment(message)){
-						
 			String IDfirst  = MultipartUtils.firstContentID(message);
+			return buildMultipartContentType(message, type, IDfirst);
+		}
+		throw new UtilsException("Messaggio non contiene una struttura mime");
+	}
+	public static String buildMultipartContentType(byte [] message, String type, String ID) throws UtilsException{
+		if(MultipartUtils.messageWithAttachment(message)){
+						
 			String boundary = MultipartUtils.findBoundary(message);
 			if(boundary==null){
 				throw new UtilsException("Errore avvenuto durante la lettura del boundary associato al multipart message.");
@@ -356,8 +362,8 @@ public class ContentTypeUtilities {
 			if(type!=null){
 				bf.append("; ").append(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_TYPE).append("=\"").append(type).append("\"");
 			}
-			if(IDfirst!=null){
-				bf.append("; ").append(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_START).append("=\"").append(IDfirst).append("\"");
+			if(ID!=null){
+				bf.append("; ").append(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_START).append("=\"").append(ID).append("\"");
 			}
 			bf.append("; ").append(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_BOUNDARY).append("=\"").append(boundary.substring(2,boundary.length())).append("\"");
 			
@@ -455,5 +461,18 @@ public class ContentTypeUtilities {
 		}
 	}
 
+
 	
+	public static String readMultipartBoundaryFromContentType(String cType) throws UtilsException {
+		try{
+			ContentType contentType = new ContentType(cType);
+			String boundaryParam = contentType.getParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_BOUNDARY); 
+			if (boundaryParam != null) {
+				return boundaryParam.trim();
+			}
+			return null;
+		} catch (Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
 }

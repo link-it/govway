@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -492,6 +492,25 @@ public final class CostantiDB {
     public static final String CONFIG_GENERIC_PROPERTY_COLUMN_ID_PROPS = "id_props";
     public static final String CONFIG_GENERIC_PROPERTY_COLUMN_NOME = "nome";
     public static final String CONFIG_GENERIC_PROPERTY_COLUMN_VALORE = "valore";
+
+    /**
+     * PROPRIETA SICUREZZA
+     */
+
+    public static final String KEY_IDENTIFIER_BST_DIRECT_REFERENCE = "DirectReference";
+    public static final String KEY_IDENTIFIER_ISSUER_SERIAL = "IssuerSerial";
+    public static final String KEY_IDENTIFIER_X509 = "X509KeyIdentifier";
+    public static final String KEY_IDENTIFIER_SKI = "SKIKeyIdentifier";
+    public static final String KEY_IDENTIFIER_EMBEDDED_KEY_NAME = "EmbeddedKeyName";
+    public static final String KEY_IDENTIFIER_THUMBPRINT = "Thumbprint";
+    public static final String KEY_IDENTIFIER_ENCRYPTED_KEY_SHA1 = "EncryptedKeySHA1";
+    
+    public static final String INCLUSIVE_C14N_10_OMITS_COMMENTS_URI = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
+    public static final String INCLUSIVE_C14N_10_WITH_COMMENTS_URI = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments";
+    public static final String INCLUSIVE_C14N_11_OMITS_COMMENTS_URI = "http://www.w3.org/2006/12/xml-c14n11";
+    public static final String INCLUSIVE_C14N_11_WITH_COMMENTS_URI = "http://www.w3.org/2006/12/xml-c14n11#WithComments";
+    public static final String EXCLUSIVE_C14N_10_OMITS_COMMENTS_URI = "http://www.w3.org/2001/10/xml-exc-c14n#";
+    public static final String EXCLUSIVE_C14N_10_WITH_COMMENTS_URI = "http://www.w3.org/2001/10/xml-exc-c14n#WithComments";
     
     
     /**
@@ -557,7 +576,9 @@ public final class CostantiDB {
     public static final String CONNETTORE_HTTPS_SECURE_RANDOM_ALGORITHM = CostantiConnettori.CONNETTORE_HTTPS_SECURE_RANDOM_ALGORITHM;
     
 	public static final String CONNETTORE_FILE_REQUEST_OUTPUT_FILE = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE;
+	public static final String CONNETTORE_FILE_REQUEST_OUTPUT_FILE_PERMISSIONS = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_PERMISSIONS;
 	public static final String CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS;
+	public static final String CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS_PERMISSIONS = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS_PERMISSIONS;
 	public static final String CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR;
 	public static final String CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE;
 	public static final String CONNETTORE_FILE_RESPONSE_INPUT_MODE = CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_MODE;
@@ -596,6 +617,17 @@ public final class CostantiDB {
     public static final String MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC02 = "idac02";
     
 	public static final String MODIPA_SICUREZZA_MESSAGGIO = "modipaSecurityMessage";
+	
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE = "modipaSecurityMessageProfileActionMode";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE = "modipaSecurityMessageConfig";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE_VALUE_ENTRAMBI = "entrambi";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE_VALUE_RICHIESTA = "richiesta";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE_VALUE_RISPOSTA = "risposta";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE_VALUE_ENTRAMBI_CON_ATTACHMENTS = "entrambi_attachments";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE_VALUE_RICHIESTA_CON_ATTACHMENTS = "richiesta_attachments";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE_VALUE_RISPOSTA_CON_ATTACHMENTS = "risposta_attachments";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE_VALUE_PERSONALIZZATO = "custom";
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO = "modipaSecurityMessageProfile";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01 = "idam01";
@@ -603,16 +635,45 @@ public final class CostantiDB {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301 = "idam0301";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302 = "idam0302";
     
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER = "modipaSecurityMessageHeaderName";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_MODIPA = "modipa";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION = "authorization";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA_AUTH_IN_RESPONSE = "authorization_modipa";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA = "autonlyreq_modipa";
+    
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA = "modipaSecurityMessageCorniceSicurezza";
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST = "modipaSecurityMessageRequestDigest";
 
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_ALG = "modipaSecurityMessageRestRequestAlg";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_ALG = "modipaSecurityMessageRestResponseAlg";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RICHIESTA_ALG = "modipaSecurityMessageSoapRequestAlg";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RISPOSTA_ALG = "modipaSecurityMessageSoapResponseAlg";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RICHIESTA_CANONICALIZATION_ALG = "modipaSecurityMessageSoapRequestCanonicalizationAlg";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RISPOSTA_CANONICALIZATION_ALG = "modipaSecurityMessageSoapResponseCanonicalizationAlg";
+    
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE = "modipaKeystoreCertMode";
+    
     public static final String MODIPA_KEYSTORE_MODE = "modipaKeystoreMode";
+    public static final String MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE = "archive";
+    public static final String MODIPA_KEYSTORE_MODE_VALUE_PATH = "path";
+    public static final String MODIPA_KEYSTORE_MODE_VALUE_HSM = "hsm";
+    
     public static final String MODIPA_KEYSTORE_TYPE = "modipaKeystoreType";
+    public static final String MODIPA_KEYSTORE_TYPE_VALUE_JKS = "jks";
+    public static final String MODIPA_KEYSTORE_TYPE_VALUE_PKCS12 = "pkcs12";
+    
     public static final String MODIPA_KEYSTORE_PATH = "modipaKeystorePath";
     
+    public static final String MODIPA_KEYSTORE_PASSWORD = "modipaKeystorePassword";
+    
+    public static final String MODIPA_KEYSTORE_ARCHIVE = "modipaKeystoreArchive";
+    public static final String MODIPA_KEYSTORE_CERTIFICATE = "modipaKeystoreCertificate";
+    
     public static final String MODIPA_KEY_ALIAS = "modipaKeyAlias";
+    public static final String MODIPA_KEY_PASSWORD = "modipaKeyPassword";
     
     public static final String MODIPA_KEY_CN_SUBJECT = "modipaKeyCNSubject";
     public static final String MODIPA_KEY_CN_ISSUER = "modipaKeyCNIssuer";
@@ -621,11 +682,22 @@ public final class CostantiDB {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE = "modipaTruststoreType";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH = "modipaTruststorePath";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS = "modipaTruststoreCRLs";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD = "modipaTruststorePassword";
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_MODE = "modipaSslTruststoreMode";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE = "modipaSslTruststoreType";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PATH = "modipaSslTruststorePath";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_CRLS = "modipaSslTruststoreCRLs";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PASSWORD = "modipaSslTruststorePassword";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_IAT = "modipaSecurityMessageRequestIatMode";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_IAT = "modipaSecurityMessageResponseIatMode";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_IAT_SECONDS = "modipaSecurityMessageRequestIatTtl";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_IAT_SECONDS = "modipaSecurityMessageResponseIatTtl";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_EXPIRED = "modipaSecurityMessageRequestExp";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_EXPIRED = "modipaSecurityMessageResponseExp";
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE = "modipaSecurityMessageRequestAud";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE = "modipaSecurityMessageResponseAud";
@@ -663,6 +735,28 @@ public final class CostantiDB {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_DOPPI_HEADER_FILTRO_DUPLICATI = "modipaSecurityMessageResponseDuplicateJti";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_FILTRO_DUPLICATI_VALUE_AUTHORIZATION = "auth";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_FILTRO_DUPLICATI_VALUE_MODI = "modi";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST = "modipaSecurityMessageHttpHeaders";
+
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_HEADERS_SOAP = "modipaSecurityMessageSoapHeaders";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509 = "modipaSecurityMessageRestRequestX509Cert";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509 = "modipaSecurityMessageRestResponseX509Cert";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RIFERIMENTO_X509_VALUE_X5U = "x5u";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RIFERIMENTO_X509_VALUE_X5C = "x5c";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RIFERIMENTO_X509_VALUE_X5T = "x5t";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RICHIESTA_RIFERIMENTO_X509 = "modipaSecurityMessageSoapRequestX509Cert";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RISPOSTA_RIFERIMENTO_X509 = "modipaSecurityMessageSoapResponseX509Cert";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509_X5C_USE_CERTIFICATE_CHAIN = "modipaSecurityMessageRestRequestX509CertUseCertificateChain";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_X5C_USE_CERTIFICATE_CHAIN = "modipaSecurityMessageRestResponseX509CertUseCertificateChain";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RICHIESTA_RIFERIMENTO_X509_BINARY_SECURITY_TOKEN_USE_CERTIFICATE_CHAIN = "modipaSecurityMessageSoapRequestX509CertUseCertificateChain";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RISPOSTA_RIFERIMENTO_X509_BINARY_SECURITY_TOKEN_USE_CERTIFICATE_CHAIN = "modipaSecurityMessageSoapResponseX509CertUseCertificateChain";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RICHIESTA_RIFERIMENTO_X509_BINARY_SECURITY_TOKEN_INCLUDE_SIGNATURE_TOKEN = "modipaSecurityMessageSoapRequestX509CertIncludeSignatureToken";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RISPOSTA_RIFERIMENTO_X509_BINARY_SECURITY_TOKEN_INCLUDE_SIGNATURE_TOKEN = "modipaSecurityMessageSoapResponseX509CertIncludeSignatureToken";
     
     public static final String MODIPA_PROFILO_DEFAULT = "default";
     public static final String MODIPA_PROFILO_RIDEFINISCI = "ridefinisci";

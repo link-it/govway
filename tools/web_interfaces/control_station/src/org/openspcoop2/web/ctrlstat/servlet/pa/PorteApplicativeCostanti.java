@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -28,7 +28,9 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerType;
+import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.GestioneConsegnaNotificheUtils;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
@@ -588,6 +590,7 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_AZIONE_ID = "azid";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_SERVICE_BINDING = CostantiControlStation.PARAMETRO_SERVICE_BINDING;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_ABILITA = CostantiControlStation.PARAMETRO_ABILITA;
+	public final static String PARAMETRO_PORTE_APPLICATIVE_SCHEDULING = "cmScheduling";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE = ConnettoriCostanti.PARAMETRO_CONNETTORE_MODALITA;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_LIST_AZIONI_READ_ONLY = "listAzioniReadOnly";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_NOME_PROP = "nomeProp";
@@ -784,7 +787,7 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTENT_PATTERN = ModalitaIdentificazione.CONTENT_BASED.getLabelParametro();
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO = "Applicativo Erogatore";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI = "Applicativi Erogatori";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE = "Connettore";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE = CostantiLabel.LABEL_CONNETTORE;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI = "Connettori";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_VERIFICA_CONNETTORE = CostantiControlStation.LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI = CostantiControlStation.LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI;
@@ -1074,6 +1077,7 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE_LABEL = "";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODA = "Coda";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA = "Priorita";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_COMPORTAMENTO = "";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_LABEL = "LABEL";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_PERCENTUALE = "PERCENTUALE";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_INFO_NESSUNA_PRIORITA = "<b>"+LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_LABEL+"</b>: nessuna risorsa garantita per la consegna della notifica";
@@ -1084,6 +1088,7 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX_INFO = "Da utilizzare solamente in situazioni di emergenza, permette di associare l'intero pool di threads dedicato alla consegna delle notifiche per questo connettore bypassando il sistema di priorità.";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_REGOLE_CONSEGNA = "Regole di Consegna";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_REGOLE_CONSEGNA_NOTIFICA = "Regole di Consegna della Notifica";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PRIORITA_CONSEGNA_NOTIFICA = "Priorità di Consegna della Notifica";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP = "Codice Risposta HTTP";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_SOAP_FAULT = "SOAP Fault";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PROBLEM_DETAIL = "Problem Detail";
@@ -1095,12 +1100,12 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_5XX = "5xx";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_GESTIONE = "Gestione";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_GESTIONE_CUSTOM_NOTE = "Indicare almeno uno tra: {0}";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODE = "Code";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_ACTOR = "Actor";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_MESSAGE = "Message";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_TYPE = "Type";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_STATUS = "Status";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CLAIMS = "Claims";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODE = GestioneConsegnaNotificheUtils.LABEL_CODE;
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_ACTOR = GestioneConsegnaNotificheUtils.LABEL_ACTOR;
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_MESSAGE = GestioneConsegnaNotificheUtils.LABEL_MESSAGE;
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_TYPE = GestioneConsegnaNotificheUtils.LABEL_TYPE;
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_STATUS = GestioneConsegnaNotificheUtils.LABEL_STATUS;
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CLAIMS = GestioneConsegnaNotificheUtils.LABEL_CLAIMS;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CLAIMS_NOTE  = "Indicare per riga i claims richiesti (nome=valore)";//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_NOTE;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CONSEGNA_FALLITA = "Consegna Notifica Fallita";
 	
@@ -1185,15 +1190,15 @@ public class PorteApplicativeCostanti {
 	
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_NOME_FORM = "Nome Regola";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_NOME_LIST = "Nome";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_HEADER = "Indicare una espressione regolare che individui una o più operazioni. Ad esempio:";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_EXAMPLE_1 = "operazione1";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_EXAMPLE_2 = "POST.*";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_EXAMPLE_3 = "^(?:POST.operazione1|GET\\.operazione2)$";
-	public final static List<String> LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_LIST = new ArrayList<>();
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_HEADER = "Indicare una espressione regolare che individui una o più operazioni.<br/>I tipi di espressione utilizzabili sono:";
+	public final static List<String> LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_LIST_REST = new ArrayList<>();
 	static {
-		LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_LIST.add(LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_EXAMPLE_1);
-		LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_LIST.add(LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_EXAMPLE_2);
-		LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_LIST.add(LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_EXAMPLE_3);
+		LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_LIST_REST.add(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_ACTION_REST_METHOD_PATH);
+		LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_LIST_REST.add(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_ACTION_REST_BY_EXPR_REGULAR);
+	}
+	public final static List<String> LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_LIST_SOAP = new ArrayList<>();
+	static {
+		LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_LIST_SOAP.add(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_ACTION_SOAP_BY_EXPR_REGULAR);
 	}
 	
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE = "Identificazione Condizione";
@@ -1210,6 +1215,13 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO_TOOLTIP_NO_ACTION = "Connettore disabilitato";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_CONFERMA_ABILITAZIONE_CONFIG_DI = "Conferma abilitazione di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_CONFERMA_DISABILITAZIONE_CONFIG_DI = "Conferma disabilitazione di ";
+	
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_ABILITATO_TOOLTIP = "Scheduling consegna abilitata (Clicca per disabilitare)";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_DISABILITATO_TOOLTIP = "Scheduling consegna disabilitata (Clicca per abilitare)";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_ABILITATO_TOOLTIP_NO_ACTION = "Scheduling consegna abilitata";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_DISABILITATO_TOOLTIP_NO_ACTION = "Scheduling consegna disabilitata";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_CONFERMA_ABILITAZIONE_CONFIG_DI = "Conferma abilitazione di ";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SCHEDULING_CONFERMA_DISABILITAZIONE_CONFIG_DI = "Conferma disabilitazione di ";
 	
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SAX_PREFIX = ConnettoriCostanti.PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX;
 	
@@ -1321,7 +1333,7 @@ public class PorteApplicativeCostanti {
 		VALUES_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE.add(org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_FAULT);
 		VALUES_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE.add(org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_ERRORI_CONSEGNA);
 		VALUES_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE.add(org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_ERRORI_PROCESSAMENTO);
-		VALUES_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE.add(org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_RICHIESTA_SCARTATE);
+		//VALUES_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ESITI_TRANSAZIONE.add(org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_RICHIESTA_SCARTATE);
 	}
 	
 	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SELEZIONE_CONNETTORE_BY_FILTRO = "Filtro";
@@ -1340,6 +1352,9 @@ public class PorteApplicativeCostanti {
 	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_STATIC_INFO = "staticInfo";
 	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_2XX_CARATTERI_CONSENTITI = ",0123456789";
 	
+	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO_MA_NON_SCHEDULATO = "NotScheduling";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO_MA_NON_SCHEDULATO = "abilitato - scheduling disabilitato";
+	
 	/* MESSAGGI */
 	
 	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA ="Si sta abilitando la configurazione relativa alle azioni:{0}Procedere?"; 
@@ -1349,6 +1364,8 @@ public class PorteApplicativeCostanti {
 	
 	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_CONNETTORE ="Procedere con l''abilitazione del connettore ''{0}''?"; 
 	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_CONNETTORE ="Procedere con la disabilitazione del connettore ''{0}''?"; 
+	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_SCHEDULING_CONNETTORE ="Procedere con l''abilitazione dello scheduling delle consegne verso il connettore ''{0}''?"; 
+	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_SCHEDULING_CONNETTORE ="Procedere con la disabilitazione dello scheduling delle consegne verso il connettore ''{0}''?"; 
 	
 	public static final String MESSAGGIO_IMPOSSIBILE_DISABILITARE_IL_CONNETTORE_0_DEVE_RIMANARE_ALMENTO_UN_CONNETTORE_ABILITATO = "Impossibile disabilitare il connettore ''{0}'', deve rimanare almento un connettore abilitato";
 	public static final String MESSAGGIO_IMPOSSIBILE_DISABILITARE_IL_CONNETTORE_UTILIZZATI_IN_CONFIGURAZIONE = "Impossibile disabilitare il connettore selezionato.<br/>&Egrave; utilizzato all'interno della sezione '"+PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG+"'";
@@ -1395,10 +1412,15 @@ public class PorteApplicativeCostanti {
 	public static final String MESSAGGIO_ERRORE_ESISTE_GIA_UNA_REGOLA_XX = "Esiste gi&agrave; una Regola con Nome ''{0}''";
 	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_ALMENO_UNO_TRA_XX = "Dati incompleti. &Egrave; necessario indicare almeno uno tra: {0}";
 	public static final String MESSAGGIO_ERRORE_CODICI_NON_VALIDI_NEL_CAMPO_XX = "Inserire solo codici numerici validi separati da '','' nel campo ''{0}''";
+	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_ALMENO_UNA_CONSEGNA_COMPLETATA_XX = "Dati incompleti. &Egrave; necessario indicare almeno un criterio di consegna completata tra: {0}";
 
 	public static final String MESSAGGIO_ERRORE_BEHAVIOUR_CUSTOM_NON_INDICATA = "Non è stato selezionato nessun plugin da utilizzare come modalità di consegna";
 	
 	public static final String MESSAGGIO_ERRORE_RICERCA_CONNETTORI_MULTIPLI_NO_RISULTATI = "Non &egrave; stato trovato nessun connettore che corrisponde ai criteri di ricerca indicati.";
 	public static final String MESSAGGIO_ERRORE_ELIMINATI_CONNETTORI_MULTIPLI_CORRISPONDENTI_AL_FILTRO_RICERCA = "Attenzione, sono stati eliminati tutti i connettori corrispondenti ai criteri di ricerca indicati.";
+	
+	public static final String MESSAGGIO_ERRORE_CONNETTORI_MULTIPLI_NOME_GIA_UTILIZZATO = "&Egrave; gi&agrave; presente un Connettore con nome ''{0}''.";
+	public static final String MESSAGGIO_ERRORE_CONNETTORI_MULTIPLI_APPLICATIVO_SERVER_GIA_UTILIZZATO = "L''Applicativo ''{0}'' &egrave; gi&agrave; utilizzato nel connettore ''{1}''.";
+	public static final String MESSAGGIO_ERRORE_CONNETTORI_MULTIPLI_FILTRO_GIA_UTILIZZATO = "Il filtro ''{0}'' &egrave; gi&agrave; utilizzato nel connettore ''{1}''.";
 	
 }

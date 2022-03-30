@@ -1,0 +1,18 @@
+{
+   "codiceComunicazione": "1300411399909000",
+   "dataInvio": "2021-11-16T16:51:08.005",
+   "destinatario": "SoggettoInternoTest",
+   "direzione": "RISPOSTA",
+   "identificatore": "NAZIONALE_NAZIONALESPCoopIT_8520073_2021-11-16_16:51",
+   "mittente": "NAZIONALE",
+   "modello":    {
+      "payload":       {
+         "descrEsito": "{\"listaAnomalie\":[{\"campiInErrore\":\"InizioRapporto.QualificaProfessionale\",\"codiceAnomalia\":\"0083\",\"descrizioneAnomalia\":\"Codice Classificazione non presente in base dati per attributo 9.2.2.1.0.0\"},{\"campiInErrore\":\"InizioRapporto.QualificaProfessionale\",\"codiceAnomalia\":\"0001\",\"descrizioneAnomalia\":\"La Qualifica Professionale '9.2.2.1.0.0' non e' riconosciuta dalla corrispondente tabella di classificazione.\"}]}",
+         "tipoRisposta": "KO"
+      },
+      "tipoModello": "VARDATORI"
+   },
+   "profiloCollaborazione": "SERVIZIO_SINCRONO",
+   "riferimentoMessaggio": "ENTE_ENTESPCoopIT_8619958_2021-11-16_16:51",
+   "servizio": "InviaComunicazioneObbligatoria"
+}

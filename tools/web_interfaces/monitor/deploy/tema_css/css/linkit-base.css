@@ -367,6 +367,17 @@ a.titleLinkRight:hover {
 	font-weight: bold;
 }
 
+.outputFieldLabelReversed {
+	color: ${paginacorrente.background.color};
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.outputTextNumeroAllarmiReversed{
+	color: ${paginacorrente.background.color};
+	font-weight: bold;
+}
+
 .labelAllineataDx {
 	text-align: right;
 	padding: 0px 10px;
@@ -625,7 +636,6 @@ span.iconLinkie{
 .entryRuoloConsegna {
     padding: 0px 16px 0px 16px;
 }
-
 
 .icona-allarme-error {
 	color: #FF2D39 !important;

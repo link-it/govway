@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -65,6 +65,9 @@ import org.openspcoop2.pdd.monitor.StatoPdd;
 import org.openspcoop2.pdd.monitor.constants.StatoMessaggio;
 import org.openspcoop2.pdd.monitor.driver.DriverMonitoraggio;
 import org.openspcoop2.pdd.monitor.driver.FilterSearch;
+import org.openspcoop2.pdd.monitor.driver.FiltroStatoConsegnaAsincrona;
+import org.openspcoop2.pdd.monitor.driver.StatoConsegnaAsincrona;
+import org.openspcoop2.pdd.monitor.driver.StatoConsegneAsincrone;
 import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativiThread;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateUtils;
@@ -479,7 +482,20 @@ public final class Monitor extends Action {
 
 			// richiedo l'azione al ws
 			FilterSearch filter = new FilterSearch();
+			FiltroStatoConsegnaAsincrona filterConsegnaAsincrona = new FiltroStatoConsegnaAsincrona();
 
+			if(formBean.getOrderByConsegnaAsincrona()!=null) {
+				if(MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_CODA.equals(formBean.getOrderByConsegnaAsincrona())) {
+					filterConsegnaAsincrona.setOrderByInCoda(true);
+				}
+				else if(MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_RICONSEGNA.equals(formBean.getOrderByConsegnaAsincrona())) {
+					filterConsegnaAsincrona.setOrderByInRiconsegna(true);
+				}
+				else if(MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_MESSAGE_BOX.equals(formBean.getOrderByConsegnaAsincrona())) {
+					filterConsegnaAsincrona.setOrderByInMessageBox(true);
+				}
+			}
+			
 			BustaSoggetto mittente = formBean.getMittente();
 			BustaSoggetto destinatario = formBean.getDestinatario();
 			BustaServizio servizio = formBean.getServizio();
@@ -538,6 +554,59 @@ public final class Monitor extends Action {
 				return ServletUtils.getStrutsForwardEditModeFinished(mapping, MonitorCostanti.OBJECT_NAME_MONITOR, 
 						MonitorCostanti.TIPO_OPERAZIONE_MONITOR_STATO_PDD);
 
+			} else if (formBean.getMethod().equals(MonitorMethods.STATO_CONSEGNE_ASINCRONE.getNome())) {
+
+				// Criteri di visualizzazione/ricerca
+				Search ricerca = new Search();
+
+				String newSearch = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_NEW_SEARCH);
+				if ((newSearch != null) && newSearch.equals(MonitorCostanti.DEFAULT_VALUE_FALSE)) {
+					Object oldfilter = session.getAttribute(MonitorCostanti.SESSION_ATTRIBUTE_FILTER_SEARCH);
+					if (oldfilter != null && oldfilter instanceof FiltroStatoConsegnaAsincrona) {
+						filterConsegnaAsincrona = (FiltroStatoConsegnaAsincrona) oldfilter;
+					}
+
+					ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+				}
+
+				int idLista = Liste.MONITOR_MSG;
+				ricerca = monitorHelper.checkSearchParameters(idLista, ricerca);
+				ServletUtils.addListElementIntoSession(session, MonitorCostanti.OBJECT_NAME_MONITOR);
+				// per i criteri di
+				// ricerca dalla jsp
+				filter.setLimit(ricerca.getPageSize(idLista));
+				filter.setOffset(ricerca.getIndexIniziale(idLista));
+				
+				StatoConsegneAsincrone statoConsegneAsincrone = MonitorUtilities.getStatoConsegneAsincrone(filterConsegnaAsincrona, formBean.getSorgenteDati());
+
+				this.showStatoConsegneAsincrone(pd, monitorHelper, statoConsegneAsincrone, MonitorMethods.STATO_CONSEGNE_ASINCRONE.getNome(), formBean);
+
+				// imposto i parametri per l'eventuale richiesta di nextPage
+				Parameter pMethod = new Parameter(MonitorCostanti.PARAMETRO_MONITOR_METHOD, MonitorMethods.STATO_CONSEGNE_ASINCRONE.getNome());
+				Parameter pNewSearch = new Parameter(MonitorCostanti.PARAMETRO_MONITOR_NEW_SEARCH, MonitorCostanti.DEFAULT_VALUE_FALSE);
+				Parameter pSorgente = new Parameter(MonitorCostanti.PARAMETRO_MONITOR_SORGENTE, formBean.getSorgenteDati());
+				
+				// salvo l'oggetto ricerca nella sessione
+				ServletUtils.setSearchObjectIntoSession(session, ricerca);
+				// conservo il form bean nella session per eventuali richieste
+				// successive (nextPage)
+				session.setAttribute(MonitorCostanti.SESSION_ATTRIBUTE_FORM_BEAN, formBean);
+				session.setAttribute(MonitorCostanti.SESSION_ATTRIBUTE_FILTER_SEARCH, filterConsegnaAsincrona);
+				
+				// refresh ricerca
+				List<Parameter> listRefresh = new ArrayList<Parameter>();
+				listRefresh.add(pMethod);
+				listRefresh.add(pNewSearch);
+				listRefresh.add(pSorgente);
+				pd.addComandoAggiornaRicercaButton(MonitorCostanti.SERVLET_NAME_MONITOR, listRefresh);
+				
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+
+				return ServletUtils.getStrutsForwardEditModeFinished(mapping, MonitorCostanti.OBJECT_NAME_MONITOR, 
+						MonitorCostanti.TIPO_OPERAZIONE_MONITOR);
+
+				//				return mapping.findForward("MessaggiOk");
+
 			} else if (formBean.getMethod().equals(MonitorMethods.LISTA_RICHIESTE_PENDENTI.getNome())) {
 
 				// Criteri di visualizzazione/ricerca
@@ -545,9 +614,9 @@ public final class Monitor extends Action {
 
 				String newSearch = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_NEW_SEARCH);
 				if ((newSearch != null) && newSearch.equals(MonitorCostanti.DEFAULT_VALUE_FALSE)) {
-					FilterSearch oldfilter = (FilterSearch) session.getAttribute(MonitorCostanti.SESSION_ATTRIBUTE_FILTER_SEARCH);
-					if (oldfilter != null) {
-						filter = oldfilter;
+					Object oldfilter = session.getAttribute(MonitorCostanti.SESSION_ATTRIBUTE_FILTER_SEARCH);
+					if (oldfilter != null && oldfilter instanceof FilterSearch) {
+						filter = (FilterSearch) oldfilter;
 					}
 
 					ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
@@ -587,6 +656,12 @@ public final class Monitor extends Action {
 					request.setAttribute(Costanti.REQUEST_ATTIBUTE_PARAMS, ServletUtils.getParametersAsString(false, pMethod, pNewSearch, pPdd));
 				}
 
+				// refresh ricerca
+				List<Parameter> listRefresh = new ArrayList<Parameter>();
+				listRefresh.add(pMethod);
+				listRefresh.add(pNewSearch);
+				listRefresh.add(pSorgente);
+				pd.addComandoAggiornaRicercaButton(MonitorCostanti.SERVLET_NAME_MONITOR, listRefresh);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
@@ -846,6 +921,11 @@ public final class Monitor extends Action {
 
 			form.setMethod(method);
 
+			String orderByConsegnaAsincrona = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_ORDER_BY_CONSEGNA_ASINCRONA);
+			if ((orderByConsegnaAsincrona != null) && !orderByConsegnaAsincrona.equals("")) {
+				form.setOrderByConsegnaAsincrona(orderByConsegnaAsincrona);
+			}
+			
 			String idMessaggio = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_ID_MESSAGGIO);
 			if ((idMessaggio != null) && !idMessaggio.equals("")) {
 				form.setIdMessaggio(idMessaggio);
@@ -1102,6 +1182,7 @@ public final class Monitor extends Action {
 			de.setName(MonitorCostanti.PARAMETRO_MONITOR_METHOD);
 			de.setSelected(mb != null ? mb.getMethod() : "");
 			de.setValues(metodiMonitor);
+			de.setPostBack(true);
 			dati.addElement(de);
 			
 			if(singlePdD){
@@ -1141,279 +1222,304 @@ public final class Monitor extends Action {
                 dati.addElement(de);
 			}
 			
-
-			// Titolo Filter
-			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_MONITOR_FILTRO_RICERCA);
-			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
-
-			// CorrelazioneApplicativa
-			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_CORRELAZIONE_APPLICATIVA);
-			de.setName(MonitorCostanti.PARAMETRO_MONITOR_CORRELAZIONE_APPLICATIVA);
-			de.setType(DataElementType.TEXT_EDIT);
-			de.setValue(mb != null ? mb.getCorrelazioneApplicativa() : "");
-			de.setSize(monitorHelper.getSize());
-			dati.addElement(de);
-
-			// Message Pattern
-//			de = new DataElement();
-//			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_PATTERN);
-//			de.setName(MonitorCostanti.PARAMETRO_MONITOR_PATTERN);
-//			de.setType(DataElementType.TEXT_EDIT);
-//			de.setValue(mb != null ? mb.getMessagePattern() : "");
-//			de.setSize(monitorHelper.getSize());
-//			dati.addElement(de);
-
-			// Soglia
-			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_SOGLIA_LABEL);
-			de.setNote(MonitorCostanti.LABEL_PARAMETRO_MONITOR_SOGLIA_NOTE);
-			de.setType(DataElementType.TEXT_EDIT);
-			de.setSize(monitorHelper.getSize());
-			de.setName(MonitorCostanti.PARAMETRO_MONITOR_SOGLIA);
-			de.setValue(mb != null ? "" + mb.getSoglia() : soglia);
-			dati.addElement(de);
-
-			// Stato
-			if(monitorCore.isShowJ2eeOptions()) {
-				String stati[] = MonitorCostanti.DEFAULT_VALUES_PARAMETRO_STATO;
-				de = new DataElement();
-				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_STATO);
-				de.setType(DataElementType.SELECT);
-				de.setValues(stati);
-				de.setSelected(mb != null ? mb.getStato() : MonitorCostanti.DEFAULT_VALUE_PARAMETRO_STATO_NONE);
-				de.setName(MonitorCostanti.PARAMETRO_MONITOR_STATO);
-				dati.add(de);
-			}
+			boolean showFilterConsegnaAsincrona = (mb==null || mb.getMethod()==null || mb.getMethod().equals(MonitorMethods.STATO_CONSEGNE_ASINCRONE.getNome())); 
+					
+			if(showFilterConsegnaAsincrona) {
 				
-			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_MONITOR_INFORMAZIONI_PROTOCOLLO);
-			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
-
-			// ID Messaggio
-			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_ID_MESSAGGIO);
-			de.setName(MonitorCostanti.PARAMETRO_MONITOR_ID_MESSAGGIO);
-			de.setType(DataElementType.TEXT_EDIT);
-			de.setValue(mb != null ? mb.getIdMessaggio() : "");
-			de.setSize(monitorHelper.getSize());
-			dati.addElement(de);
-
-			// Profilo Collaborazione
-			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_PROFILO_COLLABORAZIONE);
-			de.setType(DataElementType.SELECT);
-			de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_PROFILO_COLLABORAZIONE);
-			de.setValues(profiliCollaborazione);
-			String profcoll = mb != null ? mb.getProfiloCollaborazione() : "";
-			if ((profcoll == null) || profcoll.equals("") || profcoll.equals(MonitorCostanti.DEFAULT_VALUE_PARAMETRO_TIPO_PROFILO_COLLABORAZIONE_ANY)) {
-				de.setSelected(MonitorCostanti.LABEL_MONITOR_PROFILO_COLLABORAZIONE_NONE);
-			} else if (profcoll.equals(MonitorCostanti.LABEL_MONITOR_PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO)) {
-				de.setSelected(MonitorCostanti.DEFAULT_VALUE_PARAMETRO_TIPO_PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO);
-			} else if (profcoll.equals(MonitorCostanti.LABEL_MONITOR_PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO)) {
-				de.setSelected(MonitorCostanti.DEFAULT_VALUE_PARAMETRO_TIPO_PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO);
-			} else if (profcoll.equals(MonitorCostanti.LABEL_MONITOR_PROFILO_COLLABORAZIONE_SINCRONO)) {
-				de.setSelected(MonitorCostanti.DEFAULT_VALUE_PARAMETRO_TIPO_PROFILO_COLLABORAZIONE_SINCRONO);
-			} else if (profcoll.equals(MonitorCostanti.LABEL_MONITOR_PROFILO_COLLABORAZIONE_SINGOLO_ONEWAY)) {
-				de.setSelected(MonitorCostanti.DEFAULT_VALUE_PARAMETRO_TIPO_PROFILO_COLLABORAZIONE_ONEWAY);
+				List<String> values = new ArrayList<String>();
+				values.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_CODA);
+				values.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_RICONSEGNA);
+				values.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_MESSAGE_BOX);
+				
+				de = new DataElement();
+                de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_PARAMETRO_MONITOR_ORDER_BY_CONSEGNA_ASINCRONA);
+                de.setType(DataElementType.SELECT);
+                de.setName(MonitorCostanti.PARAMETRO_MONITOR_ORDER_BY_CONSEGNA_ASINCRONA);
+                de.setValues(values);
+                de.setSelected(mb != null && mb.getOrderByConsegnaAsincrona()!=null ? mb.getOrderByConsegnaAsincrona() : MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_CODA);
+                dati.addElement(de);
+                
 			}
-
-			dati.addElement(de);
-
-			// riscontro
-			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_RISCONTRO);
-			de.setType(DataElementType.CHECKBOX);
-			de.setValue(mb != null ? "" + mb.isRiscontro() : "");
-			de.setName(MonitorCostanti.PARAMETRO_MONITOR_RISCONTRO);
-			dati.add(de);
-
-			// Mittente
-			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_MONITOR_SOGGETTO_MITTENTE);
-			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
-
-			// Tipo Mittente
-//			if (InterfaceType.STANDARD.equals(user.getInterfaceType())) {
-//				de = new DataElement();
-//				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_MITTENTE);
-//				de.setType(DataElementType.HIDDEN);
-//				de.setSize(monitorHelper.getSize());
-//				de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_MITTENTE);
-//				de.setValue("");
-//				dati.addElement(de);
-//			} else {
 			
-			SoggettiCore soggettiCore = new SoggettiCore(monitorCore);
-			List<String> tipiSoggetti = new ArrayList<String>();
-			List<String> tipiSoggetti_label = new ArrayList<String>();
-			tipiSoggetti.add("");
-			tipiSoggetti_label.add("-");
-			tipiSoggetti.addAll(soggettiCore.getTipiSoggettiGestiti());
-			tipiSoggetti_label.addAll(soggettiCore.getTipiSoggettiGestiti());
 			
-			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_MITTENTE);
-			de.setType(DataElementType.SELECT);
-			de.setSize(monitorHelper.getSize());
-			de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_MITTENTE);
-			de.setSelected(mb != null ? (mb.getMittente() != null ? mb.getMittente().getTipo() : "") : "");
-			de.setValues(tipiSoggetti);
-			de.setLabels(tipiSoggetti_label);
-			dati.addElement(de);
+			boolean showFilter = (mb!=null && mb.getMethod()!=null && !mb.getMethod().equals(MonitorMethods.STATO_CONSEGNE_ASINCRONE.getNome()));
 			
-//			de = new DataElement();
-//			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_MITTENTE);
-//			de.setType(DataElementType.TEXT_EDIT);
-//			de.setSize(monitorHelper.getSize());
-//			de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_MITTENTE);
-//			de.setValue(mb != null ? (mb.getMittente() != null ? mb.getMittente().getTipoSoggetto() : "") : "");
-//			dati.addElement(de);
-			//}
-
-			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOME_MITTENTE );
-			de.setType(DataElementType.TEXT_EDIT);
-			de.setSize(monitorHelper.getSize());
-			de.setName(MonitorCostanti.PARAMETRO_MONITOR_NOME_MITTENTE);
-			de.setValue(mb != null ? (mb.getMittente() != null ? mb.getMittente().getNome() : "") : "");
-			dati.addElement(de);
-
-			// Destinatario
-			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_MONITOR_SOGGETTO_DESTINATARIO);
-			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
-			
-			// Destinatario
-//			if (InterfaceType.STANDARD.equals(user.getInterfaceType())) {
-//				de = new DataElement();
-//				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_DESTINATARIO );
-//				de.setType(DataElementType.HIDDEN);
-//				de.setSize(monitorHelper.getSize());
-//				de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_DESTINATARIO);
-//				de.setValue("");
-//				dati.addElement(de);
-//			} else {
-//			de = new DataElement();
-//			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_DESTINATARIO);
-//			de.setType(DataElementType.TEXT_EDIT);
-//			de.setSize(monitorHelper.getSize());
-//			de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_DESTINATARIO);
-//			de.setValue(mb != null ? (mb.getDestinatario() != null ? mb.getDestinatario().getTipoSoggetto() : "") : "");
-//			dati.addElement(de);
-			//}
-
-			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_DESTINATARIO);
-			de.setType(DataElementType.SELECT);
-			de.setSize(monitorHelper.getSize());
-			de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_DESTINATARIO);
-			de.setSelected(mb != null ? (mb.getDestinatario() != null ? mb.getDestinatario().getTipo() : "") : "");
-			de.setValues(tipiSoggetti);
-			de.setLabels(tipiSoggetti_label);
-			dati.addElement(de);
-			
-			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOME_DESTINATARIO );
-			de.setType(DataElementType.TEXT_EDIT);
-			de.setSize(monitorHelper.getSize());
-			de.setName(MonitorCostanti.PARAMETRO_MONITOR_NOME_DESTINATARIO);
-			de.setValue(mb != null ? (mb.getDestinatario() != null ? mb.getDestinatario().getNome() : "") : "");
-			dati.addElement(de);
-
-			// Servizio
-			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_MONITOR_SERVIZIO);
-			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
-			
-			// Servizio
-//			if (InterfaceType.STANDARD.equals(user.getInterfaceType())) {
-//				de = new DataElement();
-//				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_SERVIZIO );
-//				de.setType(DataElementType.HIDDEN);
-//				de.setSize(monitorHelper.getSize());
-//				de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_SERVIZIO);
-//				de.setValue("");
-//				dati.addElement(de);
-//			} else {
-//			de = new DataElement();
-//			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_SERVIZIO);
-//			de.setType(DataElementType.TEXT_EDIT);
-//			de.setSize(monitorHelper.getSize());
-//			de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_SERVIZIO);
-//			de.setValue(mb != null ? (mb.getServizio() != null ? mb.getServizio().getTipo() : "") : "");
-//			dati.addElement(de);
-			
-			AccordiServizioParteSpecificaCore aspsCore = new AccordiServizioParteSpecificaCore(monitorCore);
-			List<String> tipiServizi = new ArrayList<String>();
-			List<String> tipiServizi_label = new ArrayList<String>();
-			tipiServizi.add("");
-			tipiServizi_label.add("-");
-			List<String> list = monitorCore.getProtocolli(session);
-			for (String protocolloL : list) {
-				tipiServizi.addAll(aspsCore.getTipiServiziGestitiProtocollo(protocolloL,ServiceBinding.SOAP));
-				tipiServizi_label.addAll(aspsCore.getTipiServiziGestitiProtocollo(protocolloL,ServiceBinding.SOAP));
-				List<String> l = aspsCore.getTipiServiziGestitiProtocollo(protocolloL,ServiceBinding.REST);
-				if(l!=null && !l.isEmpty()) {
-					for (String tipo : list) {
-						if(!tipiServizi.contains(tipo)) {
-							tipiServizi.add(tipo);
-							tipiServizi_label.add(tipo);
+			if(showFilter) {
+				
+				// Titolo Filter
+				de = new DataElement();
+				de.setLabel(MonitorCostanti.LABEL_MONITOR_FILTRO_RICERCA);
+				de.setType(DataElementType.TITLE);
+				dati.addElement(de);
+	
+				// CorrelazioneApplicativa
+				de = new DataElement();
+				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_CORRELAZIONE_APPLICATIVA);
+				de.setName(MonitorCostanti.PARAMETRO_MONITOR_CORRELAZIONE_APPLICATIVA);
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setValue(mb != null ? mb.getCorrelazioneApplicativa() : "");
+				de.setSize(monitorHelper.getSize());
+				dati.addElement(de);
+	
+				// Message Pattern
+	//			de = new DataElement();
+	//			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_PATTERN);
+	//			de.setName(MonitorCostanti.PARAMETRO_MONITOR_PATTERN);
+	//			de.setType(DataElementType.TEXT_EDIT);
+	//			de.setValue(mb != null ? mb.getMessagePattern() : "");
+	//			de.setSize(monitorHelper.getSize());
+	//			dati.addElement(de);
+	
+				// Soglia
+				de = new DataElement();
+				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_SOGLIA_LABEL);
+				de.setNote(MonitorCostanti.LABEL_PARAMETRO_MONITOR_SOGLIA_NOTE);
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setSize(monitorHelper.getSize());
+				de.setName(MonitorCostanti.PARAMETRO_MONITOR_SOGLIA);
+				de.setValue(mb != null ? "" + mb.getSoglia() : soglia);
+				dati.addElement(de);
+	
+				// Stato
+				if(monitorCore.isShowJ2eeOptions()) {
+					String stati[] = MonitorCostanti.DEFAULT_VALUES_PARAMETRO_STATO;
+					de = new DataElement();
+					de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_STATO);
+					de.setType(DataElementType.SELECT);
+					de.setValues(stati);
+					de.setSelected(mb != null ? mb.getStato() : MonitorCostanti.DEFAULT_VALUE_PARAMETRO_STATO_NONE);
+					de.setName(MonitorCostanti.PARAMETRO_MONITOR_STATO);
+					dati.add(de);
+				}
+					
+				de = new DataElement();
+				de.setLabel(MonitorCostanti.LABEL_MONITOR_INFORMAZIONI_PROTOCOLLO);
+				de.setType(DataElementType.TITLE);
+				dati.addElement(de);
+	
+				// ID Messaggio
+				de = new DataElement();
+				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_ID_MESSAGGIO);
+				de.setName(MonitorCostanti.PARAMETRO_MONITOR_ID_MESSAGGIO);
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setValue(mb != null ? mb.getIdMessaggio() : "");
+				de.setSize(monitorHelper.getSize());
+				dati.addElement(de);
+	
+				// Profilo Collaborazione
+				de = new DataElement();
+				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_PROFILO_COLLABORAZIONE);
+				de.setType(DataElementType.SELECT);
+				de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_PROFILO_COLLABORAZIONE);
+				de.setValues(profiliCollaborazione);
+				String profcoll = mb != null ? mb.getProfiloCollaborazione() : "";
+				if ((profcoll == null) || profcoll.equals("") || profcoll.equals(MonitorCostanti.DEFAULT_VALUE_PARAMETRO_TIPO_PROFILO_COLLABORAZIONE_ANY)) {
+					de.setSelected(MonitorCostanti.LABEL_MONITOR_PROFILO_COLLABORAZIONE_NONE);
+				} else if (profcoll.equals(MonitorCostanti.LABEL_MONITOR_PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO)) {
+					de.setSelected(MonitorCostanti.DEFAULT_VALUE_PARAMETRO_TIPO_PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO);
+				} else if (profcoll.equals(MonitorCostanti.LABEL_MONITOR_PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO)) {
+					de.setSelected(MonitorCostanti.DEFAULT_VALUE_PARAMETRO_TIPO_PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO);
+				} else if (profcoll.equals(MonitorCostanti.LABEL_MONITOR_PROFILO_COLLABORAZIONE_SINCRONO)) {
+					de.setSelected(MonitorCostanti.DEFAULT_VALUE_PARAMETRO_TIPO_PROFILO_COLLABORAZIONE_SINCRONO);
+				} else if (profcoll.equals(MonitorCostanti.LABEL_MONITOR_PROFILO_COLLABORAZIONE_SINGOLO_ONEWAY)) {
+					de.setSelected(MonitorCostanti.DEFAULT_VALUE_PARAMETRO_TIPO_PROFILO_COLLABORAZIONE_ONEWAY);
+				}
+	
+				dati.addElement(de);
+	
+				// riscontro
+				de = new DataElement();
+				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_RISCONTRO);
+				de.setType(DataElementType.CHECKBOX);
+				de.setValue(mb != null ? "" + mb.isRiscontro() : "");
+				de.setName(MonitorCostanti.PARAMETRO_MONITOR_RISCONTRO);
+				dati.add(de);
+	
+				// Mittente
+				de = new DataElement();
+				de.setLabel(MonitorCostanti.LABEL_MONITOR_SOGGETTO_MITTENTE);
+				de.setType(DataElementType.TITLE);
+				dati.addElement(de);
+	
+				// Tipo Mittente
+	//			if (InterfaceType.STANDARD.equals(user.getInterfaceType())) {
+	//				de = new DataElement();
+	//				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_MITTENTE);
+	//				de.setType(DataElementType.HIDDEN);
+	//				de.setSize(monitorHelper.getSize());
+	//				de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_MITTENTE);
+	//				de.setValue("");
+	//				dati.addElement(de);
+	//			} else {
+				
+				SoggettiCore soggettiCore = new SoggettiCore(monitorCore);
+				List<String> tipiSoggetti = new ArrayList<String>();
+				List<String> tipiSoggetti_label = new ArrayList<String>();
+				tipiSoggetti.add("");
+				tipiSoggetti_label.add("-");
+				tipiSoggetti.addAll(soggettiCore.getTipiSoggettiGestiti());
+				tipiSoggetti_label.addAll(soggettiCore.getTipiSoggettiGestiti());
+				
+				de = new DataElement();
+				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_MITTENTE);
+				de.setType(DataElementType.SELECT);
+				de.setSize(monitorHelper.getSize());
+				de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_MITTENTE);
+				de.setSelected(mb != null ? (mb.getMittente() != null ? mb.getMittente().getTipo() : "") : "");
+				de.setValues(tipiSoggetti);
+				de.setLabels(tipiSoggetti_label);
+				dati.addElement(de);
+				
+	//			de = new DataElement();
+	//			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_MITTENTE);
+	//			de.setType(DataElementType.TEXT_EDIT);
+	//			de.setSize(monitorHelper.getSize());
+	//			de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_MITTENTE);
+	//			de.setValue(mb != null ? (mb.getMittente() != null ? mb.getMittente().getTipoSoggetto() : "") : "");
+	//			dati.addElement(de);
+				//}
+	
+				de = new DataElement();
+				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOME_MITTENTE );
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setSize(monitorHelper.getSize());
+				de.setName(MonitorCostanti.PARAMETRO_MONITOR_NOME_MITTENTE);
+				de.setValue(mb != null ? (mb.getMittente() != null ? mb.getMittente().getNome() : "") : "");
+				dati.addElement(de);
+	
+				// Destinatario
+				de = new DataElement();
+				de.setLabel(MonitorCostanti.LABEL_MONITOR_SOGGETTO_DESTINATARIO);
+				de.setType(DataElementType.TITLE);
+				dati.addElement(de);
+				
+				// Destinatario
+	//			if (InterfaceType.STANDARD.equals(user.getInterfaceType())) {
+	//				de = new DataElement();
+	//				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_DESTINATARIO );
+	//				de.setType(DataElementType.HIDDEN);
+	//				de.setSize(monitorHelper.getSize());
+	//				de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_DESTINATARIO);
+	//				de.setValue("");
+	//				dati.addElement(de);
+	//			} else {
+	//			de = new DataElement();
+	//			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_DESTINATARIO);
+	//			de.setType(DataElementType.TEXT_EDIT);
+	//			de.setSize(monitorHelper.getSize());
+	//			de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_DESTINATARIO);
+	//			de.setValue(mb != null ? (mb.getDestinatario() != null ? mb.getDestinatario().getTipoSoggetto() : "") : "");
+	//			dati.addElement(de);
+				//}
+	
+				de = new DataElement();
+				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_DESTINATARIO);
+				de.setType(DataElementType.SELECT);
+				de.setSize(monitorHelper.getSize());
+				de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_DESTINATARIO);
+				de.setSelected(mb != null ? (mb.getDestinatario() != null ? mb.getDestinatario().getTipo() : "") : "");
+				de.setValues(tipiSoggetti);
+				de.setLabels(tipiSoggetti_label);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOME_DESTINATARIO );
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setSize(monitorHelper.getSize());
+				de.setName(MonitorCostanti.PARAMETRO_MONITOR_NOME_DESTINATARIO);
+				de.setValue(mb != null ? (mb.getDestinatario() != null ? mb.getDestinatario().getNome() : "") : "");
+				dati.addElement(de);
+	
+				// Servizio
+				de = new DataElement();
+				de.setLabel(MonitorCostanti.LABEL_MONITOR_SERVIZIO);
+				de.setType(DataElementType.TITLE);
+				dati.addElement(de);
+				
+				// Servizio
+	//			if (InterfaceType.STANDARD.equals(user.getInterfaceType())) {
+	//				de = new DataElement();
+	//				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_SERVIZIO );
+	//				de.setType(DataElementType.HIDDEN);
+	//				de.setSize(monitorHelper.getSize());
+	//				de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_SERVIZIO);
+	//				de.setValue("");
+	//				dati.addElement(de);
+	//			} else {
+	//			de = new DataElement();
+	//			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_SERVIZIO);
+	//			de.setType(DataElementType.TEXT_EDIT);
+	//			de.setSize(monitorHelper.getSize());
+	//			de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_SERVIZIO);
+	//			de.setValue(mb != null ? (mb.getServizio() != null ? mb.getServizio().getTipo() : "") : "");
+	//			dati.addElement(de);
+				
+				AccordiServizioParteSpecificaCore aspsCore = new AccordiServizioParteSpecificaCore(monitorCore);
+				List<String> tipiServizi = new ArrayList<String>();
+				List<String> tipiServizi_label = new ArrayList<String>();
+				tipiServizi.add("");
+				tipiServizi_label.add("-");
+				List<String> list = monitorCore.getProtocolli(session);
+				for (String protocolloL : list) {
+					tipiServizi.addAll(aspsCore.getTipiServiziGestitiProtocollo(protocolloL,ServiceBinding.SOAP));
+					tipiServizi_label.addAll(aspsCore.getTipiServiziGestitiProtocollo(protocolloL,ServiceBinding.SOAP));
+					List<String> l = aspsCore.getTipiServiziGestitiProtocollo(protocolloL,ServiceBinding.REST);
+					if(l!=null && !l.isEmpty()) {
+						for (String tipo : list) {
+							if(!tipiServizi.contains(tipo)) {
+								tipiServizi.add(tipo);
+								tipiServizi_label.add(tipo);
+							}
 						}
-					}
-				}	
+					}	
+				}
+				
+				de = new DataElement();
+				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_SERVIZIO);
+				de.setType(DataElementType.SELECT);
+				de.setSize(monitorHelper.getSize());
+				de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_SERVIZIO);
+				de.setSelected(mb != null ? (mb.getServizio() != null ? mb.getServizio().getTipo() : "") : "");
+				de.setValues(tipiServizi);
+				de.setLabels(tipiServizi_label);
+				dati.addElement(de);
+				//}
+	
+				de = new DataElement();
+				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOME_SERVIZIO);
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setSize(monitorHelper.getSize());
+				de.setName(MonitorCostanti.PARAMETRO_MONITOR_NOME_SERVIZIO);
+				de.setValue(mb != null ? (mb.getServizio() != null ? mb.getServizio().getNome() : "") : "");
+				dati.addElement(de);
+	
+				String versione = null;
+				if(mb!=null && mb.getServizio()!=null && mb.getServizio().getVersione()!=null) {
+					versione = mb.getServizio().getVersione().intValue()+"";
+				}
+				//String versioneSelezionata = ((versione==null || "".equals(versione)) ? "1" : versione);
+				de = monitorHelper.getVersionDataElement(MonitorCostanti.LABEL_PARAMETRO_MONITOR_VERSIONE_SERVIZIO, 
+						MonitorCostanti.PARAMETRO_MONITOR_VERSIONE_SERVIZIO, 
+						versione, false);
+				dati.addElement(de);
+	
+				
+				// Azione
+				
+				de = new DataElement();
+				de.setLabel(MonitorCostanti.LABEL_MONITOR_AZIONE);
+				de.setType(DataElementType.TITLE);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_AZIONE);
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setSize(monitorHelper.getSize());
+				de.setName(MonitorCostanti.PARAMETRO_MONITOR_AZIONE);
+				de.setValue(mb != null ? mb.getAzione() : azione);
+				dati.addElement(de);
+				
 			}
-			
-			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_SERVIZIO);
-			de.setType(DataElementType.SELECT);
-			de.setSize(monitorHelper.getSize());
-			de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_SERVIZIO);
-			de.setSelected(mb != null ? (mb.getServizio() != null ? mb.getServizio().getTipo() : "") : "");
-			de.setValues(tipiServizi);
-			de.setLabels(tipiServizi_label);
-			dati.addElement(de);
-			//}
-
-			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOME_SERVIZIO);
-			de.setType(DataElementType.TEXT_EDIT);
-			de.setSize(monitorHelper.getSize());
-			de.setName(MonitorCostanti.PARAMETRO_MONITOR_NOME_SERVIZIO);
-			de.setValue(mb != null ? (mb.getServizio() != null ? mb.getServizio().getNome() : "") : "");
-			dati.addElement(de);
-
-			String versione = null;
-			if(mb!=null && mb.getServizio()!=null && mb.getServizio().getVersione()!=null) {
-				versione = mb.getServizio().getVersione().intValue()+"";
-			}
-			//String versioneSelezionata = ((versione==null || "".equals(versione)) ? "1" : versione);
-			de = monitorHelper.getVersionDataElement(MonitorCostanti.LABEL_PARAMETRO_MONITOR_VERSIONE_SERVIZIO, 
-					MonitorCostanti.PARAMETRO_MONITOR_VERSIONE_SERVIZIO, 
-					versione, false);
-			dati.addElement(de);
-
-			
-			// Azione
-			
-			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_MONITOR_AZIONE);
-			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
-			
-			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_AZIONE);
-			de.setType(DataElementType.TEXT_EDIT);
-			de.setSize(monitorHelper.getSize());
-			de.setName(MonitorCostanti.PARAMETRO_MONITOR_AZIONE);
-			de.setValue(mb != null ? mb.getAzione() : azione);
-			dati.addElement(de);
 
 			pd.setDati(dati);
 			
@@ -2005,6 +2111,169 @@ public final class Monitor extends Action {
 		}
 	}
 
+	private void showStatoConsegneAsincrone(PageData pd, MonitorHelper monitorHelper, StatoConsegneAsincrone statoConsegneAsincrone, 
+			String methodName, MonitorFormBean monitorFormBean)
+			throws Exception {
+		try {
+			
+			pd.setPaginazione(false);
+			pd.setSearch("off");
+
+			// setto la barra del titolo
+			List<Parameter> lstParam = new ArrayList<Parameter>();
+
+			lstParam.add(new Parameter(MonitorCostanti.LABEL_MONITOR, MonitorCostanti.SERVLET_NAME_MONITOR,
+					this.createSearchString(monitorFormBean).toArray(new Parameter[lstParam.size()])));
+			lstParam.add(new Parameter(methodName, null));
+
+			ServletUtils.setPageDataTitle(pd, lstParam);
+
+			monitorHelper.makeMenu();
+
+			
+			List<String> labels = new ArrayList<String>();
+//			labels.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOW);
+			labels.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_SERVIZIO_APPLICATIVO);
+			labels.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_CODA);
+			labels.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_RICONSEGNA);
+			labels.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_MESSAGE_BOX);
+//			labels.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_CODA_VECCHIO);
+//			labels.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_CODA_RECENTE);
+//			labels.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_RICONSEGNA_VECCHIO);
+//			labels.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_RICONSEGNA_RECENTE);
+//			labels.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_MESSAGE_BOX_VECCHIO);
+//			labels.add(MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_MESSAGE_BOX_RECENTE);
+			pd.setLabels(labels.toArray(new String[1]));
+			
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (statoConsegneAsincrone != null && statoConsegneAsincrone.size()>0) {
+				// aggiungo i messaggi
+				DataElement de = null;
+				// Dichiaro il formatter per la data
+				SimpleDateFormat formatter = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd HH:mm");
+				
+				SoggettiCore soggettiCore = new SoggettiCore(monitorCore);
+				
+				List<String> servizi = statoConsegneAsincrone.getServiziApplicativi();
+				for (String servizioApplicativo : servizi) {
+					
+					Vector<DataElement> e = new Vector<DataElement>();
+					
+					StatoConsegnaAsincrona stato = statoConsegneAsincrone.getStato(servizioApplicativo);
+					
+//					de = new DataElement();
+//					de.setValue(formatter.format(stato.getNow()));
+//					e.addElement(de);
+					
+					de = new DataElement();
+					IDServizio idServizio = monitorCore.getLabelNomeServizioApplicativo(stato.getServizioApplicativo());
+					if(idServizio==null) {
+						de.setValue(stato.getServizioApplicativo());
+					}
+					else {
+						String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(idServizio.getSoggettoErogatore().getTipo());
+						String nomeErogazione = monitorHelper.getLabelServizioErogazione(protocollo, idServizio);
+						if(idServizio.getAzione()!=null) {
+							de.setValue(idServizio.getAzione()+" di "+nomeErogazione);
+						}
+						else {
+							de.setValue(nomeErogazione);
+						}
+					}
+					de.setToolTip(MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOW+": "+formatter.format(stato.getNow()));
+					e.addElement(de);
+					
+					de = new DataElement();
+					if(stato.getInCoda()>0) {
+						StringBuilder sb = new StringBuilder();
+						sb.append("<b>").append(stato.getInCoda()).append("</b> ");
+						if(stato.getVecchioInCoda()!=null) {
+							sb.append(" ("). //append("<BR/>").
+								//append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_VECCHIO).
+								append(formatter.format(stato.getVecchioInCoda()));
+						}
+						if(stato.getRecenteInCoda()!=null) {
+							if(stato.getVecchioInCoda()!=null) {
+								sb.append(" -");
+							}
+							sb.append(" "). //.append("<BR/>").
+								//append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_RECENTE).
+								append(formatter.format(stato.getRecenteInCoda())).
+								append(")");
+						}
+						de.setValue(sb.toString());
+					}
+					else {
+						de.setValue(stato.getInCoda()+"");
+					}
+					e.addElement(de);
+					
+					de = new DataElement();
+					if(stato.getInRiconsegna()>0) {
+						StringBuilder sb = new StringBuilder();
+						sb.append("<b>").append(stato.getInRiconsegna()).append("</b> ");
+						if(stato.getVecchioInRiconsegna()!=null) {
+							sb.append(" ("). //append("<BR/>").
+								//append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_VECCHIO).
+								append(formatter.format(stato.getVecchioInRiconsegna()));
+						}
+						if(stato.getRecenteInRiconsegna()!=null) {
+							if(stato.getVecchioInRiconsegna()!=null) {
+								sb.append(" -");
+							}
+							sb.append(" "). //.append("<BR/>").
+								//append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_RECENTE).
+								append(formatter.format(stato.getRecenteInRiconsegna())).
+								append(")");
+						}
+						de.setValue(sb.toString());
+					}
+					else {
+						de.setValue(stato.getInRiconsegna()+"");
+					}
+					e.addElement(de);
+					
+					de = new DataElement();
+					if(stato.getInMessageBox()>0) {
+						StringBuilder sb = new StringBuilder();
+						sb.append("<b>").append(stato.getInMessageBox()).append("</b> ");
+						if(stato.getVecchioInMessageBox()!=null) {
+							sb.append(" ("). //append("<BR/>").
+								//append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_VECCHIO).
+								append(formatter.format(stato.getVecchioInMessageBox()));
+						}
+						if(stato.getRecenteInMessageBox()!=null) {
+							if(stato.getVecchioInMessageBox()!=null) {
+								sb.append(" -");
+							}
+							sb.append(" "). //.append("<BR/>").
+								//append(MonitorCostanti.LABEL_PARAMETRO_MONITOR_RECENTE).
+								append(formatter.format(stato.getRecenteInMessageBox())).
+								append(")");
+						}
+						de.setValue(sb.toString());
+					}
+					else {
+						de.setValue(stato.getInMessageBox()+"");
+					}
+					e.addElement(de);
+					
+					
+					dati.addElement(e);
+				}
+			}
+
+			pd.setSelect(false);
+			pd.setRemoveButton(false);
+			pd.setAddButton(false);
+			
+			pd.setDati(dati);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+	}
+	
 	private void showMessaggi(PageData pd, MonitorHelper monitorHelper, long countMessaggi,  List<Messaggio> listaMessaggi, 
 			String methodName, Search ricerca, FilterSearch filterSearch, MonitorFormBean monitorFormBean)
 			throws Exception {

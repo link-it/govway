@@ -72,7 +72,7 @@ Si compilano i campi seguenti:
              indicato nella proprietà "Nome".
 
           -  *Url di Invocazione*: La chiave è presente nella URL ricavabile tramite
-             l'espressione regolare fornita nell'elemento seguente.
+             l'espressione regolare fornita nell'elemento seguente (l'espressione deve avere un match con l'intera url).
 
           -  *Parametro della Url*: La chiave viene fornita in modalità Form Encoded
              con il parametro indicato nell'elemento "Nome".

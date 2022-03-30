@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -35,7 +35,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Scanner;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
@@ -66,14 +68,18 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 
+    @Override
+	public String getProtocollo() {
+    	return "FILE";
+    }
 	
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
 	public ByteArrayOutputStream outByte = new ByteArrayOutputStream();
 
 	/** File */
-	private File outputFile = null;
-	private File outputFileHeaders = null;
+	private ConnettoreFile_outputConfig outputFile = null;
+	private ConnettoreFile_outputConfig outputFileHeaders = null;
 	private boolean outputFileAutoCreateParentDirectory = false;
 	private boolean outputFileOverwriteIfExists = false;
 	private boolean generateResponse = false;
@@ -161,22 +167,22 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			// analsi i parametri specifici per il connettore
 			
 			// OutputFile
-			String tmp = this.getDynamicProperty(request.getTipoConnettore(), true, CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE, dynamicMap);
-			if(tmp==null){
+			this.outputFile = readOutputConfig(request.getTipoConnettore(), true, 
+					CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE, 
+					CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_PERMISSIONS);
+			if(this.outputFile==null || this.outputFile.getOutputFile()==null){
 				return false;
 			}
-			this.outputFile = new File(tmp);
 			
 			// OutputFileHeader
-			tmp = this.getDynamicProperty(request.getTipoConnettore(), false, CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS, dynamicMap);
-			if(tmp!=null){
-				this.outputFileHeaders = new File(tmp);
-			}
+			this.outputFileHeaders = readOutputConfig(request.getTipoConnettore(), false, 
+					CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS, 
+					CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS_PERMISSIONS);
 
 			// Location
-			this.location = this.outputFile.getAbsolutePath();
+			this.location = this.outputFile.getOutputFile().getAbsolutePath();
 			if(this.outputFileHeaders!=null){
-				this.location = this.location + " [headers: "+this.outputFileHeaders.getAbsolutePath()+"]";
+				this.location = this.location + " [headers: "+this.outputFileHeaders.getOutputFile().getAbsolutePath()+"]";
 			}
 			
 			// AutoCreateDir
@@ -191,7 +197,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			if(this.generateResponse){
 				
 				// InputFile
-				tmp = this.getDynamicProperty(request.getTipoConnettore(), true, CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_FILE, dynamicMap);
+				String tmp = this.getDynamicProperty(request.getTipoConnettore(), true, CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_FILE, dynamicMap);
 				if(tmp==null){
 					return false;
 				}
@@ -362,8 +368,8 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			// Spedizione byte
 			boolean consumeRequestMessage = true;
 			if(this.debug)
-				this.logger.debug("Serializzazione ["+this.outputFile.getAbsolutePath()+"] (consume-request-message:"+consumeRequestMessage+")...");
-			OutputStream out = new FileOutputStream(this.outputFile);
+				this.logger.debug("Serializzazione ["+this.outputFile.getOutputFile().getAbsolutePath()+"] (consume-request-message:"+consumeRequestMessage+")...");
+			OutputStream out = new FileOutputStream(this.outputFile.getOutputFile());
 			if(this.isDumpBinarioRichiesta()) {
 				DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
 						TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
@@ -406,7 +412,15 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			out.flush();
 			out.close();
 			if(this.debug)
-				this.logger.debug("Serializzazione ["+this.outputFile.getAbsolutePath()+"] effettuata");
+				this.logger.debug("Serializzazione ["+this.outputFile.getOutputFile().getAbsolutePath()+"] effettuata");
+			
+			if(this.outputFile.isPermission()) {
+				if(this.debug)
+					this.logger.debug("Modifica diritti del file ["+this.outputFile.getOutputFile().getAbsolutePath()+"] ("+this.outputFile.getPermissionAsString()+") ...");
+				setPermission(this.outputFile);
+				if(this.debug)
+					this.logger.debug("Modifica diritti del file ["+this.outputFile.getOutputFile().getAbsolutePath()+"] ("+this.outputFile.getPermissionAsString()+") effettuata");
+			}
 			
 			
 			// Spedizione File Headers
@@ -414,8 +428,8 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			this.boutFileOutputHeaders.close();
 			if(this.outputFileHeaders!=null){
 				if(this.debug)
-					this.logger.debug("Serializzazione File Output Headers ["+this.outputFileHeaders.getAbsolutePath()+"]...");
-				out = new FileOutputStream(this.outputFileHeaders);
+					this.logger.debug("Serializzazione File Output Headers ["+this.outputFileHeaders.getOutputFile().getAbsolutePath()+"]...");
+				out = new FileOutputStream(this.outputFileHeaders.getOutputFile());
 				if(this.debug){
 					ByteArrayOutputStream bout = new ByteArrayOutputStream();
 					bout.write(this.boutFileOutputHeaders.toByteArray());
@@ -429,7 +443,15 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 				out.flush();
 				out.close();
 				if(this.debug)
-					this.logger.debug("Serializzazione File Output Headers ["+this.outputFileHeaders.getAbsolutePath()+"] effettuata");
+					this.logger.debug("Serializzazione File Output Headers ["+this.outputFileHeaders.getOutputFile().getAbsolutePath()+"] effettuata");
+				
+				if(this.outputFileHeaders.isPermission()) {
+					if(this.debug)
+						this.logger.debug("Modifica diritti del file ["+this.outputFileHeaders.getOutputFile().getAbsolutePath()+"] ("+this.outputFileHeaders.getPermissionAsString()+") ...");
+					setPermission(this.outputFileHeaders);
+					if(this.debug)
+						this.logger.debug("Modifica diritti del file ["+this.outputFileHeaders.getOutputFile().getAbsolutePath()+"] ("+this.outputFileHeaders.getPermissionAsString()+") effettuata");
+				}
 			}
 			
 
@@ -694,7 +716,8 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
     }
     
     
-    private void checkOutputFile(File file, String tipo) throws Exception{
+    private void checkOutputFile(ConnettoreFile_outputConfig fileConfig, String tipo) throws Exception{
+    	File file = fileConfig.getOutputFile();
     	if(this.debug){
 			this.logger.debug("Check file output ("+tipo+") ["+file.getAbsolutePath()+"]...");
 		}
@@ -725,7 +748,10 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 				if(this.outputFileAutoCreateParentDirectory==false){
 					throw new Exception("Parent Directory Output File ("+tipo+") ["+file.getParentFile().getAbsolutePath()+"] not exists (auto create not permitted)");
 				}
-				FileSystemUtilities.mkdirParentDirectory(file);
+				FileSystemUtilities.mkdirParentDirectory(file,
+						fileConfig.getReadable(), fileConfig.getReadable_ownerOnly(),
+						fileConfig.getWritable(), fileConfig.getWritable_ownerOnly(),
+						fileConfig.getExecutable(), fileConfig.getExecutable_ownerOnly());
 			}
 			else{
 				if(this.debug){
@@ -809,7 +835,162 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			}
 		}
     }
-        
+
+    private ConnettoreFile_outputConfig readOutputConfig(String tipoConnettore,boolean required, String file, String permission) throws ConnettoreException {
+    	String tmp = this.getDynamicProperty(tipoConnettore, required, file, this.dynamicMap);
+    	if(tmp==null){
+			return null;
+		}
+    	ConnettoreFile_outputConfig c = new ConnettoreFile_outputConfig();
+    	c.setOutputFile(new File(tmp));
+    	
+    	String p = this.getDynamicProperty(tipoConnettore, false, permission, this.dynamicMap);
+    	if(p!=null) {
+    		 validatePermission(p, c);
+    	}
+    	return c;
+    }
+    
+    public static void validatePermission(String p, ConnettoreFile_outputConfig c) throws ConnettoreException {
+    	Scanner scanner = new Scanner(p);
+		try {
+			while (scanner.hasNextLine()) {
+				String line = scanner.nextLine();
+				if(line==null || line.trim().equals("") || line.trim().startsWith("#")) {
+					continue;
+				}
+				_validateSinglePermission(line,c);
+			}
+		}finally {
+			scanner.close();
+		}
+    }
+    
+    public static int getNumPermission(String p) throws ConnettoreException {
+    	Scanner scanner = new Scanner(p);
+		int num = 0;
+    	try {
+			while (scanner.hasNextLine()) {
+				String line = scanner.nextLine();
+				if(line==null || line.trim().equals("") || line.trim().startsWith("#")) {
+					continue;
+				}
+				num++;
+			}
+			return num;
+		}finally {
+			scanner.close();
+		}
+    }
+    
+    public final static String PERMESSI_FORMATO = "[o/a]+/-rwx";
+    private static void _validateSinglePermission(String p, ConnettoreFile_outputConfig config) throws ConnettoreException {
+    	String errorMsg = "Wrong permission format ("+p+"); expected "+PERMESSI_FORMATO;
+    	if(p==null || StringUtils.isEmpty(p) || (!p.contains("+") && !p.contains("-")) || p.length()<=1) {
+    		throw new ConnettoreException(errorMsg);
+    	}
+    	
+    	String permission = null;
+    	boolean add = false;
+    	Boolean owner = null;
+    	if(p.startsWith("+")) {
+    		permission = p.substring(1);
+    		add = true;
+    	}
+    	else if(p.startsWith("-")) {
+    		permission = p.substring(1);
+    		add = false;
+    	}
+    	else if(p.contains("+")) {
+    		add = true;
+    		int indexOf = p.indexOf("+");
+    		String ownerS = p.substring(0, indexOf);
+    		if(!"o".equals(ownerS) && !"a".equals(ownerS)) {
+    			throw new ConnettoreException(errorMsg);
+    		}
+    		if("o".equals(ownerS)) {
+    			owner = true;
+    		}
+    		else if("a".equals(ownerS)) {
+    			owner = false;
+    		}
+    		if(indexOf == (p.length()-1)) {
+    			throw new ConnettoreException(errorMsg);
+    		}
+    		permission = p.substring(indexOf+1, p.length());
+    	}
+    	else if(p.contains("-")) {
+    		add = false;
+    		int indexOf = p.indexOf("-");
+    		String ownerS = p.substring(0, indexOf);
+    		if(!"o".equals(ownerS) && !"a".equals(ownerS)) {
+    			throw new ConnettoreException(errorMsg);
+    		}
+    		if("o".equals(ownerS)) {
+    			owner = true;
+    		}
+    		else if("a".equals(ownerS)) {
+    			owner = false;
+    		}
+    		if(indexOf == (p.length()-1)) {
+    			throw new ConnettoreException(errorMsg);
+    		}
+    		permission = p.substring(indexOf+1, p.length());
+    	}
+    	
+    	for (int i = 0; i < permission.length(); i++) {
+			char c = permission.charAt(i);
+			if(c == 'r' || c == 'R') {
+				config.setReadable(add);
+				if(owner!=null) {
+					config.setReadable_ownerOnly(owner);
+				}
+			}
+			else if(c == 'w' || c == 'W') {
+				config.setWritable(add);
+				if(owner!=null) {
+					config.setWritable_ownerOnly(owner);
+				}
+			}
+			else if(c == 'x' || c == 'X') {
+				config.setExecutable(add);
+				if(owner!=null) {
+					config.setExecutable_ownerOnly(owner);
+				}
+			}
+			else {
+				throw new ConnettoreException(errorMsg);
+			}
+		}
+    	
+    }
+    
+    private void setPermission(ConnettoreFile_outputConfig config) throws ConnettoreException {
+    	if(config.getReadable()!=null) {
+			if(config.getReadable_ownerOnly()!=null) {
+				config.getOutputFile().setReadable(config.getReadable(), config.getReadable_ownerOnly());
+			}
+			else {
+				config.getOutputFile().setReadable(config.getReadable());
+			}
+		}
+		if(config.getWritable()!=null) {
+			if(config.getWritable_ownerOnly()!=null) {
+				config.getOutputFile().setWritable(config.getWritable(), config.getWritable_ownerOnly());
+			}
+			else {
+				config.getOutputFile().setWritable(config.getWritable());
+			}
+		}
+		if(config.getExecutable()!=null) {
+			if(config.getExecutable_ownerOnly()!=null) {
+				config.getOutputFile().setExecutable(config.getExecutable(), config.getExecutable_ownerOnly());
+			}
+			else {
+				config.getOutputFile().setExecutable(config.getExecutable());
+			}
+		}
+    }
 }
 
 

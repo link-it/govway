@@ -278,6 +278,15 @@ div.txtA_div {
     font-weight: bold;
 }
 
+.titoloSezioneDiv {
+	display: inline-flex;
+}
+
+.titoloSezioneAzioneLink {
+/* 	padding: 0px 0px 0px 6px; */
+	color: ${panel.header.color} !important;
+}
+
 .panelDettaglioNoForm,
 .panelDettaglioForm {
     border: none;
@@ -309,6 +318,12 @@ div.txtA_div {
 	padding-left: 6px;
     font-size: 20px;
     font-weight: bold;
+}
+
+.panelDettaglioTitoloAzioneLink {
+/* 	float: right; */
+/* 	padding: 0px 0px 0px 8px; */
+	color: ${panel.header.color} !important;
 }
 
 /* Componenti del layout generale */
@@ -443,12 +458,20 @@ div.voceMenu:hover {
 	color: ${menu.header.hover.color};
 	text-decoration: none;
 	font-size: 16px;
+	padding: 0px;
 }
 
 .voceMenu a:hover{
 	font-weight: 600;
 	color: ${menu.element.hover.color};
 	text-decoration: none;
+}
+
+.voceMenu p{
+	margin: 0px;
+	font-size: 16px;
+	padding-top: 0px;
+	padding-bottom: 0px;
 }
 
 .spazioSottoTitolo {
@@ -1673,7 +1696,11 @@ div.txtA_div_propDialog {
 .entryApplicativi,
 .entrySoggetti,
 .entryRuoli,
-.entryScope {
+.entryScope,
+.entryTokenPolicy,
+.entryAttributeAuthority,
+.entryAllarmi,
+.entryGruppi {
 	cursor: pointer;
 	padding: 16px;
 }
@@ -1684,7 +1711,11 @@ div.txtA_div_propDialog {
 .entryApplicativi .titoloEntry,
 .entrySoggetti .titoloEntry,
 .entryRuoli .titoloEntry,
-.entryScope .titoloEntry {
+.entryScope .titoloEntry,
+.entryTokenPolicy .titoloEntry,
+.entryAttributeAuthority .titoloEntry,
+.entryAllarmi .titoloEntry,
+.entryGruppi .titoloEntry {
 	padding: 4px 4px 4px 0px;
     font-weight: bold;
     font-size: 16px;
@@ -1696,21 +1727,29 @@ div.txtA_div_propDialog {
 .entryApplicativi .metadatiEntry,
 .entrySoggetti .metadatiEntry,
 .entryRuoli .metadatiEntry,
-.entryScope .metadatiEntry {
+.entryScope .metadatiEntry,
+.entryTokenPolicy .metadatiEntry,
+.entryAttributeAuthority .metadatiEntry,
+.entryAllarmi .metadatiEntry,
+.entryGruppi .metadatiEntry {
 	padding: 4px 4px 4px 0px;
 	color: ${body.secondary.color};
 }
 
 .entryErogazione .titoloTags,
 .entryFruizione .titoloTags,
-.entryApi .titoloTags {
+.entryApi .titoloTags,
+.entryAllarmi .titoloTags,
+.entryGruppi .titoloTags {
 	display: inline-flex;
 }
 
 .entryApplicativi .titoloRuoli,
 .entrySoggetti .titoloRuoli,
 .entryRuoli .titoloRuoli,
-.entryScope .titoloRuoli {
+.entryScope .titoloRuoli,
+.entryAllarmi .titoloRuoli,
+.entryGruppi .titoloRuoli {
 	display: inline-flex;
 	vertical-align: middle;
 }
@@ -1719,7 +1758,13 @@ div.txtA_div_propDialog {
 .entryApplicativi .titoloInfo,
 .entrySoggetti .titoloInfo,
 .entryRuoli .titoloInfo,
-.entryScope .titoloInfo {
+.entryScope .titoloInfo,
+.entryErogazione .titoloInfo,
+.entryFruizione .titoloInfo,
+.entryTokenPolicy .titoloInfo,
+.entryAttributeAuthority .titoloInfo,
+.entryAllarmi .titoloInfo,
+.entryGruppi .titoloInfo {
 	display: inline-flex;
 	vertical-align: middle;
 	float: right;
@@ -2292,6 +2337,10 @@ div.txtA_div_propDialogInfoUso {
 	width: 99% !important;
 }
 
+.txtA_propDialogInfoUsoResize{
+	width: 99% !important;
+}
+
 .text-action-link {
 	padding: 0px 0px 0px 8px;
 }
@@ -2299,4 +2348,91 @@ div.txtA_div_propDialogInfoUso {
 .text-action-link span.icon-box {
 	vertical-align: middle;
 }
+
+.context-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  user-select: none;
+  overflow-y: auto;
+/*   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; */
+  font-weight: 400;
+  box-shadow: 0px 4px 8px rgba(44, 62, 80, 0.4);
+  background-color: ${paginacorrente.background.color};
+  color: ${body.color};
+  margin: 4px;
+  padding: 12px 0px;
+  min-width: 140px;
+  max-width: 400px;
+  max-height: 480px;
+  border: none;
+  border-radius: 3px;
+}
+.context-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.context-menu ul li {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+.context-menu ul li a {
+  text-decoration: none;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0px;
+  padding: 8px 18px;
+  cursor: pointer;
+  background-color: ${paginacorrente.background.color};
+  color: ${body.color};
+  transition: none;
+}
+.context-menu ul li a:hover {
+	background-color: ${table.row.hover.background.color};
+	font-weight: bold;
+	padding-right: 16px;
+/*   background-color: rgba(0, 0, 0, 0.05); */
+/*   color: #2c3e50; */
+}
+.context-menu ul li a .material-icons {
+  line-height: 0;
+  display: inline-flex;
+  vertical-align: middle;
+  font-size: 22px;
+  margin-top: -4px;
+  margin-right: 6px;
+}
+.context-menu ul li a .material-icons:hover {
+	background-color: ${table.row.hover.background.color};
+	font-weight: bold;
+	padding-right: 16px;
+/*   background-color: rgba(0, 0, 0, 0.05); */
+/*   color: #2c3e50; */
+}
+.context-menu ul li a [class^=fa] {
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
+  font-size: 22px;
+  width: 22px;
+  margin-right: 6px;
+}
+.context-menu ul li a [class^=fa]:hover {
+  background-color: ${table.row.hover.background.color};
+  font-weight: bold;
+  padding-right: 16px;
+/*   background-color: rgba(0, 0, 0, 0.05); */
+/*   color: #2c3e50; */
+}
+
+.context-menu-trigger .context-menu-content {
+  display: none;
+}
+
+
+
 

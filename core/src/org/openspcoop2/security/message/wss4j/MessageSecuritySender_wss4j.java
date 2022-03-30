@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -38,6 +38,7 @@ import org.apache.cxf.phase.PhaseInterceptor;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.dom.handler.WSHandlerConstants;
+import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.Costanti;
@@ -84,7 +85,8 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 	        msgCtx.setVersion(MessageType.SOAP_12.equals(message.getMessageType()) ? org.apache.cxf.binding.soap.Soap12.getInstance() : org.apache.cxf.binding.soap.Soap11.getInstance());
 			Exchange ex = new ExchangeImpl();
 	        ex.setInMessage(msgCtx);
-	        msgCtx.setContent(SOAPMessage.class, message.getSOAPMessage());
+	        SOAPMessage soapMessage = MessageUtils.getSOAPMessage(message, false, message.getTransactionId());
+	        msgCtx.setContent(SOAPMessage.class, soapMessage);
 	        List<?> results = new ArrayList<Object>();
 	        msgCtx.put(WSHandlerConstants.RECV_RESULTS, results);
 	        

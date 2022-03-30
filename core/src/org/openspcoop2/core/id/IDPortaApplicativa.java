@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -63,16 +63,17 @@ public class IDPortaApplicativa implements java.io.Serializable{
 		this.identificativiErogazione = identificativiErogazione;
 	}
 	
-
+	public static final String PORTA_APPLICATIVA_PREFIX = "PA:";
+	public static final String PORTA_APPLICATIVA_SUFFIX = " ";
 	
 	@Override
 	public String toString(){
 		StringBuilder bf = new StringBuilder();
 		if(this.nome!=null)
-			bf.append("PA:"+this.nome);
+			bf.append(PORTA_APPLICATIVA_PREFIX+this.nome);
 		else
-			bf.append("PA:NonDefinita");
-		bf.append(" ");
+			bf.append(PORTA_APPLICATIVA_PREFIX+"NonDefinita");
+		bf.append(PORTA_APPLICATIVA_SUFFIX);
 		if(this.identificativiErogazione!=null)
 			bf.append("Erogazione:"+this.identificativiErogazione.toString());
 		else

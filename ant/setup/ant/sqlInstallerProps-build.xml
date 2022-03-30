@@ -572,7 +572,7 @@ INSERT INTO generic_properties (nome, descrizione, tipologia, tipo) VALUES ('@ID
 				<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_integration_manager}"/>
 
 
-				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '011-004:Contesto 'govwaySec':antinstaller_sec_container', '@VALORE@');
+				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '011-004:Contesto govwaySec:antinstaller_sec_container', '@VALORE@');
 </concat>
 				<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_sec_container}"/>
 

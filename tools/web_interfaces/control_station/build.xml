@@ -104,7 +104,7 @@
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
-			<var name="xerces_jar" value="xercesImpl-2.12.1.jar"/>
+			<var name="xerces_jar" value="xercesImpl-2.12.2.jar"/>
 			<var name="xml_apis_jar" value="xml-apis-1.4.01.jar"/>
 		</then>
 	</if>
@@ -273,6 +273,7 @@
 
 	<!-- Compilazione della PddConsole-->
 	<target name="compile_govwayConsole" depends="init_compile_govwayConsole,compile_dipendenze,compile_openspcoop2_govwayConsole" description="compila govwayConsole"/>
+	<target name="build_only_govwayConsole" depends="compile_openspcoop2_govwayConsole" description="compila solo il jar della govwayConsole"/>
 
 
 	<!-- Creazione del modulo .WAR -->

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -87,15 +87,15 @@ public class TestInterfaceBigger {
 			switch (openAPILibrary) {
 			case json_schema:
 			case openapi4j:
-				maxAtteso = 1000; // 1 secondo
+				maxAtteso = 2000; // 2 secondi (jenkins)
 				break;
 			case swagger_request_validator:
-				maxAtteso = 1000; // 1 secondo
+				maxAtteso = 2000; // 2 secondi (jenkins)
 				break;
 			}	
 			System.out.println("\tReader time:"+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
 			if(time>maxAtteso) {
-				throw new Exception("Atteso un tempo inferiore a '"+maxAtteso+"'ms");
+				throw new Exception("Atteso un tempo inferiore a '"+maxAtteso+"'ms, trovato '"+time+"'ms");
 			}
 			
 			initT = DateManager.getTimeMillis();

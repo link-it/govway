@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -437,6 +437,9 @@ public class TransazioneBean extends Transazione{
 		String tmp = this.getEventiGestione();
 		if(tmp!=null){
 			tmp = tmp.trim();
+			if(tmp.contains(CostantiPdD.PREFIX_CONNETTORI_MULTIPLI)) {
+				tmp = tmp.replace(CostantiPdD.PREFIX_CONNETTORI_MULTIPLI, "");
+			}
 			if(tmp.contains(",")){
 				String [] split = tmp.split(",");
 				if(split!=null && split.length>0){

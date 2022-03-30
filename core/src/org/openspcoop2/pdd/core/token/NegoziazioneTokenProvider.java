@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -31,10 +31,15 @@ import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.mvc.properties.Item;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
+import org.openspcoop2.core.mvc.properties.provider.ProviderInfo;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
+import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
+import org.openspcoop2.pdd.core.token.parser.Claims;
+import org.openspcoop2.pdd.core.token.parser.ClaimsNegoziazione;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.utils.AbstractSecurityProvider;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
+import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 
 /**     
@@ -116,6 +121,8 @@ public class NegoziazioneTokenProvider implements IProvider {
 			}
 		}
 		
+		boolean pdnd = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_RETRIEVE_TOKEN_MODE_PDND);
+			
 					
 		boolean basic = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_RETRIEVE_TOKEN_AUTH_BASIC_STATO);
 		if(basic) {
@@ -199,6 +206,134 @@ public class NegoziazioneTokenProvider implements IProvider {
 			}
 		}
 		
+		if(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509.equals(retMode) ||
+				Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET.equals(retMode)) {
+			
+			if(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509.equals(retMode)) {
+			
+				String file = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_FILE);
+				if(file!=null && file.contains(" ")) {
+					throw new ProviderValidationException("Non indicare spazi nel campo 'JWT KeyStore - File'");
+				}
+				
+				// NOTA: i controlli seguenti di inizio e fine, vengono fatti gia' in automatico dal framework
+				String p = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_PASSWORD);
+				if(p!=null) {
+					if(p.startsWith(" ")) {
+						throw new ProviderValidationException("Il valore indicato nel campo 'JWT KeyStore - Password', non deve iniziare con uno spazio");
+					}
+					if(p.endsWith(" ")) {
+						throw new ProviderValidationException("Il valore indicato nel campo 'JWT KeyStore - Password', non deve terminare con uno spazio");
+					}
+				}
+				
+				p = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_ALIAS);
+				if(p!=null) {
+					if(p.startsWith(" ")) {
+						throw new ProviderValidationException("Il valore indicato nel campo 'JWT KeyStore - Alias Chiave Privata', non deve iniziare con uno spazio");
+					}
+					if(p.endsWith(" ")) {
+						throw new ProviderValidationException("Il valore indicato nel campo 'JWT KeyStore - Alias Chiave Privata', non deve terminare con uno spazio");
+					}
+				}
+				
+				p = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_PASSWORD);
+				if(p!=null) {
+					if(p.startsWith(" ")) {
+						throw new ProviderValidationException("Il valore indicato nel campo 'JWT KeyStore - Password Chiave Privata', non deve iniziare con uno spazio");
+					}
+					if(p.endsWith(" ")) {
+						throw new ProviderValidationException("Il valore indicato nel campo 'JWT KeyStore - Password Chiave Privata', non deve terminare con uno spazio");
+					}
+				}
+				
+			}
+			else {
+					// Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET.equals(retMode)) {
+			
+				// Una password può contenere gli spazi, i controlli di inizio e fine vengono gia' fatti dal framework
+//				String clientSecret = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLIENT_SECRET);
+//				if(clientSecret!=null && clientSecret.contains(" ")) {
+//					throw new ProviderValidationException("Non indicare spazi nel campo 'Client Secret'");
+//				}
+				
+			}
+			
+			// NOTA: i controlli seguenti di inizio e fine, vengono fatti gia' in automatico dal framework
+			String kidMode = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID);
+			if(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_CUSTOM.equals(kidMode)) {
+				String kidValue = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_VALUE);
+				if(kidValue!=null) {
+					if(kidValue.startsWith(" ")) {
+						throw new ProviderValidationException("Il valore indicato nel campo 'JWT Header - Key Id (kid)', non deve iniziare con uno spazio");
+					}
+					if(kidValue.endsWith(" ")) {
+						throw new ProviderValidationException("Il valore indicato nel campo 'JWT Header - Key Id (kid)', non deve terminare con uno spazio");
+					}
+				}
+			}
+			
+			String type = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_JOSE_TYPE);
+			if(type!=null && type.contains(" ")) {
+				throw new ProviderValidationException("Non indicare spazi nel campo 'JWT Header - Type (typ)'");
+			}
+						
+			String clientId = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLIENT_ID);
+			if(clientId!=null && clientId.contains(" ")) {
+				throw new ProviderValidationException("Non indicare spazi nel campo 'JWT Payload - Client ID'");
+			}
+			
+			String audience = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_AUDIENCE);
+			if(audience!=null && audience.contains(" ")) {
+				throw new ProviderValidationException("Non indicare spazi nel campo 'JWT Payload - Audience'");
+			}
+			
+			String issuer = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_ISSUER);
+			if(issuer!=null && issuer.contains(" ")) {
+				throw new ProviderValidationException("Non indicare spazi nel campo 'JWT Payload - Issuer'");
+			}
+			
+			String subject = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SUBJECT);
+			if(subject!=null && subject.contains(" ")) {
+				throw new ProviderValidationException("Non indicare spazi nel campo 'JWT Payload - Subject'");
+			}
+			
+			if(pdnd) {
+				
+				String purposeId = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_PURPOSE_ID);
+				if(purposeId!=null && purposeId.contains(" ")) {
+					throw new ProviderValidationException("Non indicare spazi nel campo 'JWT Payload - Purpose ID'");
+				}
+				
+				String session = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SESSION_INFO);
+				if(session!=null && !"".equals(session)) {
+					Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(session);
+					List<String> deny = new ArrayList<String>();
+					TokenUtilities.checkClaims("claim", convertTextToProperties, "Informazioni Sessione", deny, false);
+				}
+			}
+			
+			String claims = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIMS);
+			if(claims!=null && !"".equals(claims)) {
+				Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(claims);
+				List<String> deny = new ArrayList<String>();
+				deny.add(Claims.OIDC_ID_TOKEN_ISSUER);
+				deny.add(Claims.OIDC_ID_TOKEN_SUBJECT);
+				deny.add(Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID);
+				deny.add(Claims.OIDC_ID_TOKEN_AUDIENCE);
+				deny.add(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT);
+				deny.add(Claims.JSON_WEB_TOKEN_RFC_7519_NOT_TO_BE_USED_BEFORE);
+				deny.add(Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED);
+				deny.add(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID);
+				if(pdnd) {
+					deny.add(Costanti.PDND_PURPOSE_ID);
+					deny.add(Costanti.PDND_SESSION_INFO);
+				}
+				TokenUtilities.checkClaims("claim", convertTextToProperties, "Claims", deny, false);
+			}
+			
+		}
+		
 		String scopes = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_SCOPES);
 		if(scopes!=null && !"".equals(scopes)) {
 			if(scopes.contains(" ")) {
@@ -211,6 +346,28 @@ public class NegoziazioneTokenProvider implements IProvider {
 			if(audience.contains(" ")) {
 				throw new ProviderValidationException("Non indicare spazi nel valore dell'audience");
 			}
+		}
+		
+		if(pdnd) {
+			String clientId = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORM_CLIENT_ID);
+			if(clientId!=null && clientId.contains(" ")) {
+				throw new ProviderValidationException("Non indicare spazi nel campo 'Client ID'");
+			}
+		}
+		
+		String parameters = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORM_PARAMETERS);
+		if(parameters!=null && !"".equals(parameters)) {
+			Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(parameters);
+			List<String> deny = new ArrayList<String>();
+			deny.add(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE);
+			deny.add(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_ASSERTION_TYPE);
+			deny.add(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_ASSERTION);
+			deny.add(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_SCOPE);
+			deny.add(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_AUDIENCE);
+			if(pdnd) {
+				deny.add(Costanti.PDND_OAUTH2_RFC_6749_REQUEST_CLIENT_ID);
+			}
+			TokenUtilities.checkClaims("parametro", convertTextToProperties, "Parametri", deny, false);
 		}
 		
 		String mode = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_MODE);
@@ -244,6 +401,8 @@ public class NegoziazioneTokenProvider implements IProvider {
 		}
 		
 	}
+	
+	
 
 	@Override
 	public List<String> getValues(String id) throws ProviderException {
@@ -385,6 +544,64 @@ public class NegoziazioneTokenProvider implements IProvider {
 		return null;
 	}
 
+	@Override
+	public ProviderInfo getProviderInfo(String id) throws ProviderException{
+		if(Costanti.ID_RETRIEVE_ENDPOINT_URL.equals(id) ||
+				Costanti.ID_RETRIEVE_AUTENTICAZIONE_USERNAME.equals(id) ||
+				Costanti.ID_RETRIEVE_CLIENT_ID.equals(id) ||
+				Costanti.ID_RETRIEVE_JWT_X5U.equals(id) ||
+				Costanti.ID_RETRIEVE_JWT_KID_VALUE.equals(id) ||
+				Costanti.ID_RETRIEVE_JWT_PURPOSE_ID.equals(id) ||
+				Costanti.ID_RETRIEVE_SCOPE.equals(id) ||
+				Costanti.ID_RETRIEVE_AUDIENCE.equals(id) ||
+				Costanti.ID_RETRIEVE_FORM_PARAMETERS.equals(id)
+				) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI);
+			return pInfo;
+		}
+		else if(Costanti.ID_RETRIEVE_JWT_ISSUER.equals(id)
+				) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_ISSUER);
+			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI_CON_OPZIONE_VALORE_NON_DEFINITO);
+			return pInfo;
+		}
+		else if(Costanti.ID_RETRIEVE_JWT_SUBJECT.equals(id)
+				) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_SUBJECT);
+			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI_CON_OPZIONE_VALORE_NON_DEFINITO);
+			return pInfo;
+		}
+		else if(Costanti.ID_RETRIEVE_JWT_CLIENT_ID.equals(id) ||
+				Costanti.ID_RETRIEVE_JWT_AUDIENCE.equals(id)
+				) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI_CON_OPZIONE_VALORE_NON_DEFINITO);
+			return pInfo;
+		}
+		else if(Costanti.ID_RETRIEVE_FORM_CLIENT_ID.equals(id)
+				) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_FORM_PARAMETRO_CLIENT_ID);
+			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI_CON_OPZIONE_VALORE_NON_DEFINITO);
+			return pInfo;
+		}
+		else if(Costanti.ID_RETRIEVE_JWT_CLAIMS.equals(id) ||
+				Costanti.ID_RETRIEVE_JWT_SESSION_INFO.equals(id)
+				) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_CLAIMS);
+			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI);
+			return pInfo;
+		}
+		
+		return null;
+	}
+	
 	@Override
 	public String dynamicUpdate(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
 	

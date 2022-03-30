@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2021 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -38,6 +38,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.context.MessageContext;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
@@ -74,6 +75,8 @@ public class SavedMessage implements java.io.Serializable {
 	/** Logger utilizzato per debug. */
 	private Logger log = null;
 
+	private static final String REST_CONTENT_TYPE_EMPTY = "____EMPTY____";
+	
 	private static final String MSG_BYTES = "_bytes.bin";
 	private static final String MSG_CONTEXT = "_context.bin";
 
@@ -354,7 +357,26 @@ public class SavedMessage implements java.io.Serializable {
 				}
 
 				// Set del contentType nella query
-				pstmt.setString(3,msg.getContentType());
+				String contentType = msg.getContentType();
+				if(contentType==null || "".equals(contentType)){
+					if(ServiceBinding.REST.equals(msg.getServiceBinding())){
+						if(MessageType.BINARY.equals(msg.getMessageType())) {
+							if(msg.castAsRest().hasContent()) {
+								throw new Exception("Rilevata una richiesta "+msg.getServiceBinding()+" "+msg.getMessageType()+" con payload per la quale non è stato fornito un ContentType"); // sul DB e' required la colonna
+							}
+							else {
+								contentType = REST_CONTENT_TYPE_EMPTY;
+							}
+						}
+						else {
+							throw new Exception("Rilevata una richiesta "+msg.getServiceBinding()+" "+msg.getMessageType()+" per la quale non è stato fornito un ContentType"); // sul DB e' required la colonna
+						}
+					}
+					else {
+						throw new Exception("Rilevata una richiesta "+msg.getServiceBinding()+" per la quale non è stato fornito un ContentType"); // sul DB e' required la colonna
+					}
+				}
+				pstmt.setString(3,contentType);
 				
 				// Set Ora Registrazione
 				pstmt.setTimestamp(4,oraRegistrazione);
@@ -497,28 +519,20 @@ public class SavedMessage implements java.io.Serializable {
 					throw new UtilsException(errorMsg);
 				}
 
-				// ContentType
-				String contentType = rs.getString("CONTENT_TYPE");
-
+				String saveDir = null;
 				if(this.saveOnFS){
 					// READ FROM FILE SYSTEM
 					
-					String saveDir = getBaseDir();
+					saveDir = getBaseDir();
 					if(saveDir==null){
 						String errorMsg = "WorkDir non correttamente inizializzata";		
 						throw new UtilsException(errorMsg);
 					}
-					
-					// read bytes
-					String pathBytes = saveDir + this.keyMsgBytes;
-					File fileCheckBytes = new File(pathBytes);
-					if(fileCheckBytes.exists() == false){
-						String errorMsg = "Il messaggio non risulta gia' registrato ("+pathBytes+").";		
-						throw new UtilsException(errorMsg);
-					}	   
-					isBytes = new FileInputStream(pathBytes);
-					
-					// read msgContext
+				}
+				
+				// Lettura Message Context
+				if(this.saveOnFS){
+					// READ FROM FILE SYSTEM
 					String pathContext = saveDir + this.keyMsgContext;
 					File fileCheckContext = new File(pathContext);
 					if(fileCheckContext.exists() == false){
@@ -528,15 +542,9 @@ public class SavedMessage implements java.io.Serializable {
 					isContext = new FileInputStream(pathContext);
 				}else{
 					// READ FROM DB
-					
-					// read bytes
-					isBytes = new java.io.ByteArrayInputStream(this.adapter.getBinaryData(rs,2));
-					
-					// read msgContext
 					isContext = new java.io.ByteArrayInputStream(this.adapter.getBinaryData(rs,3));
 				}
 				
-				// Lettura Message Context
 				org.openspcoop2.message.context.utils.serializer.JaxbDeserializer jaxbDeserializer  = 
 						new org.openspcoop2.message.context.utils.serializer.JaxbDeserializer();
 				MessageContext msgContext = jaxbDeserializer.readMessageContext(isContext);
@@ -557,6 +565,31 @@ public class SavedMessage implements java.io.Serializable {
 					throw new Exception("MessageRole ["+msgContext.getMessageRole()+"] unknown");
 				}
 				
+				// ContentType
+				String contentType = rs.getString("CONTENT_TYPE");
+				if(MessageType.BINARY.equals(mt)) {
+					if(REST_CONTENT_TYPE_EMPTY.equals(contentType)) {
+						contentType = null;
+					}
+				}
+				
+				// Lettura Message Bytes
+				if(contentType!=null && !"".equals(contentType)) {
+					if(this.saveOnFS){
+						// READ FROM FILE SYSTEM
+						String pathBytes = saveDir + this.keyMsgBytes;
+						File fileCheckBytes = new File(pathBytes);
+						if(fileCheckBytes.exists() == false){
+							String errorMsg = "Il messaggio non risulta gia' registrato ("+pathBytes+").";		
+							throw new UtilsException(errorMsg);
+						}	   
+						isBytes = new FileInputStream(pathBytes);
+					}else{
+						// READ FROM DB
+						isBytes = new java.io.ByteArrayInputStream(this.adapter.getBinaryData(rs,2));
+					}
+				}
+					
 				// CostruzioneMessaggio
 				OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 				NotifierInputStreamParams notifierInputStreamParams = null; // Non dovrebbe servire, un eventuale handler attaccato, dovrebbe gia aver ricevuto tutto il contenuto una volta serializzato il messaggio su database.
