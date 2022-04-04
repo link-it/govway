@@ -109,7 +109,7 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 				fromList = true;
 			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session, request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			
 			// Preparo il menu

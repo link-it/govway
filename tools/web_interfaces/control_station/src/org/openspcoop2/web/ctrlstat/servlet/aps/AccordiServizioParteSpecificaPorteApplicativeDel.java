@@ -136,7 +136,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeDel extends Acti
 			
 			// reset posizione tab
 			if(!apsHelper.isModalitaCompleta())
-				ServletUtils.setObjectIntoSession(session, "0", CostantiControlStation.PARAMETRO_ID_TAB);
+				ServletUtils.setObjectIntoSession(request, session, "0", CostantiControlStation.PARAMETRO_ID_TAB);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			

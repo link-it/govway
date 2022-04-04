@@ -950,7 +950,7 @@ public final class SoggettiAdd extends Action {
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
 			if(soggettiCore.isSetSearchAfterAdd()) {
-				soggettiCore.setSearchAfterAdd(Liste.SOGGETTI, soggettoConfig.getNome(), session, ricerca);
+				soggettiCore.setSearchAfterAdd(Liste.SOGGETTI, soggettoConfig.getNome(), request, session, ricerca);
 			}
 			
 			// la lista dei soggetti del registro e' un sovrainsieme

@@ -140,12 +140,15 @@ public class Costanti {
 	
 	/** SESSION */
 	
+	public static final String SESSION_ATTRIBUTE_TAB_KEY_PREFIX = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_ATTRIBUTO_TAB_SESSION_KEY_PREFIX;
+	public static final String SESSION_ATTRIBUTE_TAB_KEYS_MAP ="_tabKeysMap_";
+	
 	protected final static String SESSION_ATTRIBUTE_LOGIN = "Login";
 	protected final static String SESSION_ATTRIBUTE_USER = "User";
 	protected final static String SESSION_ATTRIBUTE_GENERAL_DATA = "GeneralData";
 	protected final static String SESSION_ATTRIBUTE_PAGE_DATA = "PageData";
 	public final static String SESSION_ATTRIBUTE_RICERCA = "Ricerca";
-	protected final static String SESSION_ATTRIBUTE_RISULTATI_LISTA = "RisultatiLista";
+	protected final static String SESSION_ATTRIBUTE_RISULTATI_LISTA = SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "RisultatiLista";
 	protected final static String SESSION_ATTRIBUTE_CONTA_LISTE = "contaListe";
 	protected final static String SESSION_ATTRIBUTE_LIST_ELEMENT ="ListElement";
 	protected final static String SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED = org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED;
@@ -153,6 +156,8 @@ public class Costanti {
 	protected final static String SESSION_ATTRIBUTE_GESTIONE_WSBL ="GestioneWSBL";
 	protected final static String SESSION_ATTRIBUTE_CONFIGURAZIONI_PERSONALIZZATE ="ConfigurazioniPersonalizzate";
 	public final static String SESSION_PARAMETRO_OLD_CONFIGURAZIONE_PROPERTIES_PREFIX = "oldConfProp_";
+	
+	
 	
 	/** COOKIES **/
 	
@@ -251,6 +256,11 @@ public class Costanti {
 	public static final String PARAMETER_MESSAGE_TITLE ="mpTitle";
 	public static final String PARAMETER_MESSAGE_TYPE ="mpType";
 	public static final String PARAMETER_MESSAGE_BREADCRUMB ="mpBC";
+	
+	/** PARAMETRI TAB_ID **/
+	
+	public static final String PARAMETER_TAB_KEY ="__tabKey__";
+	public static final String PARAMETER_PREV_TAB_KEY ="__prevTabKey__";
 	
 	/** PAGE DATA TITLE */
 	

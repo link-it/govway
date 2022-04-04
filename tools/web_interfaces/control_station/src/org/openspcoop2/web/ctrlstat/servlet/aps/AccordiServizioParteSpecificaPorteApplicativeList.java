@@ -90,18 +90,18 @@ public final class AccordiServizioParteSpecificaPorteApplicativeList extends Act
 			String paramGestioneGruppi = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_GRUPPI);
 			if(paramGestioneGruppi!=null && !"".equals(paramGestioneGruppi)) {
 				boolean gestioneGruppi = Boolean.valueOf(paramGestioneGruppi);
-				ServletUtils.setObjectIntoSession(session, gestioneGruppi+"", AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_GRUPPI);
+				ServletUtils.setObjectIntoSession(request, session, gestioneGruppi+"", AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_GRUPPI);
 			}
 			
 			String paramGestioneConfigurazioni = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_CONFIGURAZIONI);
 			if(paramGestioneConfigurazioni!=null && !"".equals(paramGestioneConfigurazioni)) {
 				boolean gestioneConfigurazioni = Boolean.valueOf(paramGestioneConfigurazioni);
-				ServletUtils.setObjectIntoSession(session, gestioneConfigurazioni+"", AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_CONFIGURAZIONI);
+				ServletUtils.setObjectIntoSession(request, session, gestioneConfigurazioni+"", AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_CONFIGURAZIONI);
 			}
 			
 			String idTab = apsHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
 			if(!apsHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
-				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
+				ServletUtils.setObjectIntoSession(request, session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
 			
 			// Preparo il menu

@@ -57,6 +57,9 @@ function postBack(dataElementName) {
 		}
     }
     
+    // addTabID
+	location = addTabIdParam(location,true);
+    
     if(navigationAnchor!=null){
     	location += navigationAnchor;
     }
@@ -138,6 +141,12 @@ function postVersion_postBack(dataElementName) {
 			document.form.elements[k].value = '';
 		}
 	}
+	
+	// aggiungo parametro idTab
+  if(tabValue != ''){
+  	addHidden(document.form, tabSessionKey , tabValue);
+  	addHidden(document.form, prevTabSessionKey , tabValue);
+  }
 	
     // form submit
     document.form.submit();

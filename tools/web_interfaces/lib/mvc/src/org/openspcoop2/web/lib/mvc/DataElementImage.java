@@ -57,6 +57,9 @@ public class DataElementImage {
 	public void setUrl(String servletName,Parameter ... parameter) {
 		this.url = DataElement._getUrlValue(servletName, parameter);
 	}
+	public void addParameter(Parameter ... parameter) {
+		this.url = DataElement._getUrlValue(this.url, parameter);
+    }
 	public String getTarget() {
 		return DataElement.checkNull(this.target);
 	}

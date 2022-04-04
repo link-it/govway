@@ -41,6 +41,7 @@ GeneralData gd = (GeneralData) session.getAttribute(gdString);
 PageData pd = (PageData) session.getAttribute(pdString);
 String customListViewName = pd.getCustomListViewName();
 boolean includiMenuLateraleSx = pd.isIncludiMenuLateraleSx();
+String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 %>
 
 <head>
@@ -100,6 +101,12 @@ function CheckDati() {
 		if(hiddenInfo > -1) {
 			document.form.elements[k].value = '';
 		}
+  }
+  
+  // aggiungo parametro idTab
+  if(tabValue != ''){
+  	addHidden(document.form, tabSessionKey , tabValue);
+  	addHidden(document.form, prevTabSessionKey , tabValue);
   }
 
   document.form.submit();

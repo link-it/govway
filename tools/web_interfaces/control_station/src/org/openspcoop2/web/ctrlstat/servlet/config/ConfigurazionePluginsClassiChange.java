@@ -209,7 +209,7 @@ public final class ConfigurazionePluginsClassiChange extends Action {
 					||
 				(!tipoPluginS.equals(oldIdPlugin.getTipoPlugin())) 
 				){
-				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.CONFIGURAZIONE_PLUGINS_CLASSI);
+				ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.CONFIGURAZIONE_PLUGINS_CLASSI);
 			}
 			
 			// Preparo la lista

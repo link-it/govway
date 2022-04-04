@@ -82,14 +82,13 @@ public class PorteApplicativeGestioneCanale extends Action {
 
 		String userLogin = ServletUtils.getUserLoginFromSession(session);	
 
-
-		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, session);
-		if(parentPA == null) parentPA = PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE;
-
 		try {
 
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte applicative
+			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, session, request);
+			if(parentPA == null) parentPA = PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE;
+			
 			String id = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			int idInt = Integer.parseInt(id);
 			String idsogg = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
@@ -210,7 +209,7 @@ public class PorteApplicativeGestioneCanale extends Action {
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
 			
 			// Faccio ricalcolare la lista dei servizi, poichè il canale può essere cambiato
-			ServletUtils.removeRisultatiRicercaFromSession(session, Liste.SERVIZI);
+			ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.SERVIZI);
 			
 			// Preparo la lista
 			pd.setMessage(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE_CANALE_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);

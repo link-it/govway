@@ -83,12 +83,11 @@ public class PorteDelegateGestioneCanale extends Action {
 
 		String userLogin = ServletUtils.getUserLoginFromSession(session);	
 
-		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
-		if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
-
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session, request);
+			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			String id = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			int idInt = Integer.parseInt(id);
 			String idSoggFruitore = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
@@ -214,7 +213,7 @@ public class PorteDelegateGestioneCanale extends Action {
 			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), portaDelegata);
 		
 			// Faccio ricalcolare la lista dei servizi, poichè il canale può essere cambiato
-			ServletUtils.removeRisultatiRicercaFromSession(session, Liste.SERVIZI);
+			ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.SERVIZI);
 			
 			// Preparo la lista
 			pd.setMessage(PorteDelegateCostanti.LABEL_PORTE_DELEGATE_CANALE_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);

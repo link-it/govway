@@ -83,7 +83,7 @@ public final class ScopeList extends Action {
 			// poiche' esistono filtri che hanno necessita di postback salvo in sessione
 			List<Scope> lista = null;
 			if(!ServletUtils.isSearchDone(scopeHelper)) {
-				lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista, Scope.class);
+				lista = ServletUtils.getRisultatiRicercaFromSession(request, session, idLista, Scope.class);
 			}
 			
 			ricerca = scopeHelper.checkSearchParameters(idLista, ricerca);
@@ -109,7 +109,7 @@ public final class ScopeList extends Action {
 			}
 			
 			if(!scopeHelper.isPostBackFilterElement()) {
-				ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+				ServletUtils.setRisultatiRicercaIntoSession(request, session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
 			}
 			
 			scopeHelper.prepareScopeList(ricerca, lista);

@@ -86,12 +86,12 @@ public final class AccordiServizioParteComuneAllegatiAdd extends Action {
 		String userLogin = (String) ServletUtils.getUserLoginFromSession(session);
 
 		try {
+			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
+			ArchiviHelper archiviHelper = new ArchiviHelper(request, pd, session);
+			
 			Boolean isShowAccordiCooperazione = (Boolean)session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_COOPERAZIONE);
 			
 //			FileUploadForm fileUpload = (FileUploadForm) form;
-			
-			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
-			ArchiviHelper archiviHelper = new ArchiviHelper(request, pd, session);
 
 			String idAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			int idAccordoInt = Integer.parseInt(idAccordo);
@@ -157,7 +157,7 @@ public final class AccordiServizioParteComuneAllegatiAdd extends Action {
 			Parameter pNomeAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, uri);
 			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByOrganizationType(as.getSoggettoReferente().getTipo());
 			
-			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, false);
+			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false);
 			List<Parameter> listaParams = apcHelper.getTitoloApc(TipoOperazione.ADD, as, tipoAccordo, labelASTitle, null, false);
 			
 			String labelAllegati = isModalitaVistaApiCustom ? AccordiServizioParteComuneCostanti.LABEL_ALLEGATI : AccordiServizioParteComuneCostanti.LABEL_ALLEGATI + " di " + labelASTitle;

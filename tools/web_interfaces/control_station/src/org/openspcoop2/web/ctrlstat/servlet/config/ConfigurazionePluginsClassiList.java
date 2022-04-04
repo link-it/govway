@@ -83,7 +83,7 @@ public final class ConfigurazionePluginsClassiList extends Action {
 			// poiche' esistono filtri che hanno necessita di postback salvo in sessione
 			List<Plugin> lista = null;
 			if(!ServletUtils.isSearchDone(confHelper)) {
-				lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista, Plugin.class);
+				lista = ServletUtils.getRisultatiRicercaFromSession(request, session, idLista, Plugin.class);
 			}
 			
 			ricerca = confHelper.checkSearchParameters(idLista, ricerca);
@@ -95,7 +95,7 @@ public final class ConfigurazionePluginsClassiList extends Action {
 			}
 			
 			if(!confHelper.isPostBackFilterElement()) {
-				ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+				ServletUtils.setRisultatiRicercaIntoSession(request, session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
 			}
 			
 			confHelper.preparePluginsClassiList(ricerca, lista); 

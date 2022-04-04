@@ -48,7 +48,7 @@ String pageDescription = pd.getPageDescription();
 String messageTitle = pd.getMessageTitle();
 boolean mostraLinkHome = pd.isMostraLinkHome();
 Vector<GeneralLink> titlelist = pd.getTitleList();
-
+String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 %>
 <table style="width:100%;">
 	<tbody>
@@ -67,6 +67,7 @@ Vector<GeneralLink> titlelist = pd.getTitleList();
 						    if (!l.getLabel().equals("")) {
 						    	if (i != titlelist.size()-1) {
 					        		if (!l.getUrl().equals("")) {
+					        		  l.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
 							          //non ultimo con url
 							          %>
 							         	<li><a href="<%= l.getUrl() %>" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;"><span><%= l.getLabel() %></span></a></li>

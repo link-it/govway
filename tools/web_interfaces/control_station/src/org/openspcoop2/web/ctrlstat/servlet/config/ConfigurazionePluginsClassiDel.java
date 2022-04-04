@@ -97,7 +97,7 @@ public final class ConfigurazionePluginsClassiDel extends Action {
 			}
 			
 			if(deleteAlmostOnePlugin) {
-				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.CONFIGURAZIONE_PLUGINS_CLASSI);
+				ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.CONFIGURAZIONE_PLUGINS_CLASSI);
 			}
 			
 			if (inUsoMessage.length()>0) {

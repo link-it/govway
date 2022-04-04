@@ -411,7 +411,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			List<CanaleConfigurazione> canaleList = gestioneCanali != null ? gestioneCanali.getCanaleList() : new ArrayList<>();
 			boolean gestioneCanaliEnabled = gestioneCanali != null && org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(gestioneCanali.getStato());
 			
-			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
 			boolean gestioneErogatori = false;
 			if(tipologia!=null) {
@@ -913,7 +913,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						
 			// setto la barra del titolo
 			List<Parameter> lstParm = apsHelper.getTitoloAps(TipoOperazione.CHANGE, asps, gestioneFruitori, tmpTitle, null, true, tipoSoggettoFruitore, nomeSoggettoFruitore); 
-			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request);
 			
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
@@ -2085,7 +2085,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			String newUri = IDServizioFactory.getInstance().getUriFromAccordo(asps);
 			String oldUri = IDServizioFactory.getInstance().getUriFromIDServizio(asps.getOldIDServizioForUpdate());
 			if (!newUri.equals(oldUri) || cambiaAPI) {
-				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.SERVIZI);
+				ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.SERVIZI);
 			}
 			
 			List<AccordoServizioParteSpecifica> listaServizi = null;

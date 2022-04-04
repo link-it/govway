@@ -91,7 +91,7 @@ public class PageData {
 	boolean includiMenuLateraleSx = true;
 	
 	private boolean paginazione = true;
-		
+	
 	public PageData() {
 		this.pageDescription = "";
 		this.search = "auto";

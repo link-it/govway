@@ -142,7 +142,7 @@ public class LoginHelper extends ConsoleHelper {
 					StringBuilder bfMotivazioneErrore = new StringBuilder(); 
 					if(passwordVerifier.isPasswordExpire(u.getLastUpdatePassword(), bfMotivazioneErrore)) {
 						// imposto attributo che abilita il cambio della password
-						ServletUtils.setObjectIntoSession(this.session, login, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
+						ServletUtils.setObjectIntoSession(this.request, this.session, login, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
 						ServletUtils.removeUserFromSession(this.session);
 						this.pd.setMessage(bfMotivazioneErrore.toString(),MessageType.ERROR_SINTETICO);
 						return false;

@@ -257,7 +257,7 @@ public class ArchiviExporter extends HttpServlet {
 			case EROGAZIONE:
 			case FRUIZIONE:
 				
-				String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+				String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 				boolean gestioneFruitori = false;
 				if(tipologia!=null) {
 					if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
@@ -266,7 +266,7 @@ public class ArchiviExporter extends HttpServlet {
 				}
 				
 				identificativi = exporterUtils.getIdsAccordiServizioParteSpecifica(objToExport, gestioneFruitori);
-				Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
+				Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request);
 				if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 					redirect = ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST;
 				}

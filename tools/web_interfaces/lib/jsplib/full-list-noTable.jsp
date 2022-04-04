@@ -41,6 +41,7 @@ GeneralData gd = (GeneralData) session.getAttribute(gdString);
 PageData pd = (PageData) session.getAttribute(pdString);
 
 String customListViewName = pd.getCustomListViewName();
+String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 %>
 
 <td valign="top" class="td2PageBody">

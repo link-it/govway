@@ -96,7 +96,7 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 			PddCore pddCore = new PddCore(apsCore);
 			ConfigurazioneCore confCore = new ConfigurazioneCore(apsCore);
 			
-			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
 			boolean gestioneErogatori = false;
 			if(tipologia!=null) {
@@ -108,7 +108,7 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 				}
 			}
 						
-			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request);
 			
 			//User utente = ServletUtils.getUserFromSession(session);
 			
@@ -168,7 +168,7 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 			}// chiudo for
 
 			if(deleteAlmostOneApi) {
-				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.SERVIZI);
+				ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.SERVIZI);
 			}
 			
 			// se ci sono messaggio di errore li presento
@@ -185,9 +185,9 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 			permessi[1] = pu.isAccordiCooperazione();
 			List<AccordoServizioParteSpecifica> lista = null;
 			if(apsCore.isVisioneOggettiGlobale(superUser)){
-				lista = apsCore.soggettiServizioList(null, ricerca,permessi, session);
+				lista = apsCore.soggettiServizioList(null, ricerca,permessi, session, request);
 			}else{
-				lista = apsCore.soggettiServizioList(superUser, ricerca, permessi, session);
+				lista = apsCore.soggettiServizioList(superUser, ricerca, permessi, session, request);
 			}
 
 			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {

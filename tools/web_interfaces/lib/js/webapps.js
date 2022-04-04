@@ -60,6 +60,8 @@ function nascondiAjaxStatus(){
 
 function goToLocation(location){
 	if(location) {
+		//addTabID
+		location = addTabIdParam(location,true);
 		document.location = location;
 	}
 }

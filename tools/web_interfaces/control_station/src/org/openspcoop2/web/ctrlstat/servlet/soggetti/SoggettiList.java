@@ -94,7 +94,7 @@ public final class SoggettiList extends Action {
 			List<Soggetto> lista = null;
 			if(soggettiCore.isRegistroServiziLocale()){
 				if(!ServletUtils.isSearchDone(soggettiHelper)) {
-					lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista,  Soggetto.class);
+					lista = ServletUtils.getRisultatiRicercaFromSession(request, session, idLista,  Soggetto.class);
 				}
 			}
 			
@@ -118,7 +118,7 @@ public final class SoggettiList extends Action {
 				}
 				
 				if(!soggettiHelper.isPostBackFilterElement()) {
-					ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+					ServletUtils.setRisultatiRicercaIntoSession(request, session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
 				}
 				
 				soggettiHelper.prepareSoggettiList(lista, ricerca);

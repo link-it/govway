@@ -229,7 +229,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		String tmpValidazioneDocumenti = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VALIDAZIONE_DOCUMENTI);
 
 		String apiGestioneParziale = apcHelper.getParameter(ApiCostanti.PARAMETRO_APC_API_GESTIONE_PARZIALE);
-		Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, false);
+		Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false);
 		
 		boolean chiediConferma = true;
 		
@@ -1147,11 +1147,11 @@ public final class AccordiServizioParteComuneChange extends Action {
 
 			if(gestioneInformazioniGenerali) {
 				if(idNEW.equals(idAccordoOLD)==false){
-					ServletUtils.removeRisultatiRicercaFromSession(session, Liste.ACCORDI);
+					ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.ACCORDI);
 				}
 			}
 			else if(gestioneGruppi || gestioneCanale) {
-				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.ACCORDI);
+				ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.ACCORDI);
 			}
 			
 			// preparo lista

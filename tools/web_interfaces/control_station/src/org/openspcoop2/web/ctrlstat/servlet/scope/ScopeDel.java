@@ -97,7 +97,7 @@ public final class ScopeDel extends Action {
 			}// chiudo for
 			
 			if(deleteAlmostOneScope) {
-				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.SCOPE);
+				ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.SCOPE);
 			}
 			
 			if (inUsoMessage.length()>0) {

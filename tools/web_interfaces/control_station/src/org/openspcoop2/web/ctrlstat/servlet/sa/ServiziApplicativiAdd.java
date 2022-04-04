@@ -148,7 +148,7 @@ public final class ServiziApplicativiAdd extends Action {
 			boolean isApplicativiServerEnabled = saCore.isApplicativiServerEnabled(saHelper);
 			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
-			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session);
+			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session, request);
 			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
 			Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
 			
@@ -1299,7 +1299,7 @@ public final class ServiziApplicativiAdd extends Action {
 				ricerca = saHelper.checkSearchParameters(idLista, ricerca);
 				
 				if(saCore.isSetSearchAfterAdd()) {
-					saCore.setSearchAfterAdd(idLista, sa.getNome(), session, ricerca);
+					saCore.setSearchAfterAdd(idLista, sa.getNome(), request, session, ricerca);
 				}
 				
 				boolean filtroSoggetto = false;

@@ -69,10 +69,10 @@ public final class ErogazioniList extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		try {
-			ServletUtils.setObjectIntoSession(session, Boolean.valueOf(true), ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI); 
-			
 			// ctrlstatHelper ch = new ctrlstatHelper (request, pd, con, session);
 			ErogazioniHelper erogazioniHelper = new ErogazioniHelper(request, pd, session);
+			
+			ServletUtils.setObjectIntoSession(request, session, Boolean.valueOf(true), ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI); 
 			// Preparo il menu
 			erogazioniHelper.makeMenu();
 			
@@ -85,7 +85,7 @@ public final class ErogazioniList extends Action {
 			// poiche' esistono filtri che hanno necessita di postback salvo in sessione
 			List<AccordoServizioParteSpecifica> lista = null;
 			if(!ServletUtils.isSearchDone(erogazioniHelper)) {
-				lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista,  AccordoServizioParteSpecifica.class);
+				lista = ServletUtils.getRisultatiRicercaFromSession(request, session, idLista,  AccordoServizioParteSpecifica.class);
 			}
 			
 			ricerca = erogazioniHelper.checkSearchParameters(idLista, ricerca);
@@ -97,7 +97,7 @@ public final class ErogazioniList extends Action {
 			if(tipologia==null) {
 				// guardo se sto entrando da altri link fuori dal menu di sinistra
 				// in tal caso e' gia' impostato
-				tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+				tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			}
 			boolean gestioneFruitori = false;
 			boolean gestioneErogatori = false;
@@ -110,7 +110,7 @@ public final class ErogazioniList extends Action {
 				}
 			}
 			
-			erogazioniHelper.checkGestione(session, ricerca, idLista, tipologiaParameterName,true);
+			erogazioniHelper.checkGestione(request, session, ricerca, idLista, tipologiaParameterName,true);
 			
 			String superUser   = ServletUtils.getUserLoginFromSession(session);
 			PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
@@ -131,7 +131,7 @@ public final class ErogazioniList extends Action {
 //			System.out.println("READ: "+org.openspcoop2.utils.Utilities.convertSystemTimeIntoString_millisecondi((after-before), true));
 
 			if(!erogazioniHelper.isPostBackFilterElement()) {
-				ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+				ServletUtils.setRisultatiRicercaIntoSession(request, session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
 			}
 			
 //			before = org.openspcoop2.utils.date.DateManager.getTimeMillis();

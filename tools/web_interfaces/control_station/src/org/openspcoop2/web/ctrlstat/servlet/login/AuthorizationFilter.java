@@ -225,7 +225,7 @@ public final class AuthorizationFilter implements Filter {
 								if(ServletUtils.isCheckBoxEnabled(resetSearch) && (postBackElement==null || "".equals(postBackElement))) {
 									
 									for (int i = 0; i < Liste.getTotaleListe(); i++) {
-										ServletUtils.removeRisultatiRicercaFromSession(session, i);
+										ServletUtils.removeRisultatiRicercaFromSession(request, session, i);
 									}
 									
 									boolean existsRicerca = ServletUtils.existsSearchObjectFromSession(session);
@@ -452,7 +452,7 @@ public final class AuthorizationFilter implements Filter {
 								if(ServletUtils.isCheckBoxEnabled(resetSearch) && (postBackElement==null || "".equals(postBackElement))) {
 									
 									for (int i = 0; i < Liste.getTotaleListe(); i++) {
-										ServletUtils.removeRisultatiRicercaFromSession(session, i);
+										ServletUtils.removeRisultatiRicercaFromSession(request, session, i);
 									}
 									
 									boolean existsRicerca = ServletUtils.existsSearchObjectFromSession(session);
@@ -535,7 +535,7 @@ public final class AuthorizationFilter implements Filter {
 	private boolean isRisorsaProtetta(HttpServletRequest request){
 		String urlRichiesta = request.getRequestURI();
 		HttpSession session = request.getSession(true); 
-		String changePwd = ServletUtils.getObjectFromSession(session, String.class, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
+		String changePwd = ServletUtils.getObjectFromSession(request, session, String.class, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
 		if(changePwd != null && (urlRichiesta.indexOf("/"+UtentiCostanti.SERVLET_NAME_UTENTE_PASSWORD_CHANGE) > -1)) {
 			return false;
 		}

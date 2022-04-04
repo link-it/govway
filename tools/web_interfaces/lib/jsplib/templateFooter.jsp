@@ -47,3 +47,41 @@ GeneralData gd = (GeneralData) session.getAttribute(gdString);
 		<jsp:include page="/jsplib/status.jsp" flush="true" />
 	</td>
 </tr>
+<script>
+
+$(document).ready(function(){
+				
+	$("a").mousedown(function(e) {
+		
+		var urlDest = $(this).attr('href');
+		
+	    if(e.which == 3) {
+	    	// console.log("right click: " + urlDest);
+	    } else 
+	    if(e.which == 2) {
+	    	// console.log("center click: " + urlDest);
+	    } else 
+	    if(e.which == 1) {
+	    	// aggiungi tab id a tutti i link cliccati col tasto sinistro
+	    	if(urlDest) {
+		    	// console.log("left click: " + urlDest);
+		    	
+		    	var targetDest = $(this).attr('target');
+		    	
+		    	if(targetDest && targetDest == '_blank') {
+		    		return;
+		    	}
+		    	
+		    	var newUrlDest = addTabIdParam(urlDest);
+		    	$(this).attr('href',newUrlDest);
+	    	} else {
+	    		// console.log("href non trovato per l'elemento di tipo: " + $(this));
+	    	}
+	    } else {
+	    	console.log("click non riconosciuto: " + urlDest);
+	    }
+	});
+	
+	
+});
+</script>

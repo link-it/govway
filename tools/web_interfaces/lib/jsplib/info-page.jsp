@@ -57,6 +57,7 @@ boolean visualizzaPanelLista =((bottoni != null) && (bottoni.length > 0));
 
 String classDivPanelLista = visualizzaPanelLista  ? "panelLista" : "";
 String classTabellaPanelLista = visualizzaPanelLista  ? "tabella" : "";
+String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 %>
 <td valign="top" class="td2PageBody">
 	<form name="form"  <%=hFormMethod  %> >
@@ -83,6 +84,11 @@ String classTabellaPanelLista = visualizzaPanelLista  ? "tabella" : "";
 												if(type.equals("hidden")){
 													%><input type="hidden" name="<%= de.getName()  %>" value="<%= de.getValue()  %>"/><%
 												}
+											}
+											
+											if(!tabSessionKey.equals("")) {
+												%><input type="hidden" name="<%=Costanti.PARAMETER_TAB_KEY %>" value="<%= tabSessionKey  %>"/><%
+												%><input type="hidden" name="<%=Costanti.PARAMETER_PREV_TAB_KEY %>" value="<%= tabSessionKey %>"/><%
 											}
 										}
 										

@@ -39,6 +39,7 @@ else
   iddati = "notdefined";
 GeneralData gd = (GeneralData) session.getAttribute(gdString);
 PageData pd = (PageData) session.getAttribute(pdString);
+String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 %>
 <td valign="top" class="td2PageBody">
 	<form name="form" onSubmit ='return false;'>

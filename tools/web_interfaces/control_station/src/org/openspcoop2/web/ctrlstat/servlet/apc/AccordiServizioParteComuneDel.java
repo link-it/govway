@@ -73,8 +73,8 @@ public final class AccordiServizioParteComuneDel extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		try {
-			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, false);
 			ApiHelper apcHelper = new ApiHelper(request, pd, session);
+			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false);
 			
 			String objToRemove = apcHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
@@ -106,7 +106,7 @@ public final class AccordiServizioParteComuneDel extends Action {
 			}// chiudo for
 			
 			if(deleteAlmostOneApi) {
-				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.ACCORDI);
+				ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.ACCORDI);
 			}
 
 			if (inUsoMessage.length()>0) {

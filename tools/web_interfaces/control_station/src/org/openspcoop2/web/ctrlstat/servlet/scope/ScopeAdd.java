@@ -160,7 +160,7 @@ public final class ScopeAdd extends Action {
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
 			if(scopeCore.isSetSearchAfterAdd()) {
-				scopeCore.setSearchAfterAdd(Liste.SCOPE, scope.getNome(), session, ricerca);
+				scopeCore.setSearchAfterAdd(Liste.SCOPE, scope.getNome(), request, session, ricerca);
 			}
 			
 			List<Scope> lista = null;

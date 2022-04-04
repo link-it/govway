@@ -86,7 +86,7 @@ public class ApiList  extends Action {
 			List<AccordoServizioParteComuneSintetico> lista = null;
 			if(apcCore.isRegistroServiziLocale()){
 				if(!ServletUtils.isSearchDone(apiHelper)) {
-					lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista,  AccordoServizioParteComuneSintetico.class);
+					lista = ServletUtils.getRisultatiRicercaFromSession(request, session, idLista,  AccordoServizioParteComuneSintetico.class);
 				}
 			}
 
@@ -101,7 +101,7 @@ public class ApiList  extends Action {
 //			System.out.println("READ: "+org.openspcoop2.utils.Utilities.convertSystemTimeIntoString_millisecondi((after-before), true));
 
 			if(!apiHelper.isPostBackFilterElement()) {
-				ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+				ServletUtils.setRisultatiRicercaIntoSession(request, session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
 			}
 			
 //			before = org.openspcoop2.utils.date.DateManager.getTimeMillis();

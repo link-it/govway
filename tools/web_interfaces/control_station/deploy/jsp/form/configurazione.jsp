@@ -62,6 +62,7 @@
 	String classDivNoEdit="divNoEdit";
 	
 	int colSpanLength = 1;
+	String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 %>
 <SCRIPT>
 var nomeServletAdd_Custom = '<%= nomeServletAdd %>';
@@ -141,10 +142,15 @@ function RemoveEntries() {
 //   }
   if (!isHidden && elemToRemove != '') {
     nr = 1;
+    var destinazione;
     if (formatPar != null && formatPar != "")
-        document.location='<%= request.getContextPath() %>/'+nomeServletDel+'?'+formatPar+'&obj='+elemToRemove+'&iddati='+iddati+params;
+        destinazione='<%= request.getContextPath() %>/'+nomeServletDel+'?'+formatPar+'&obj='+elemToRemove+'&iddati='+iddati+params;
       else
-        document.location='<%= request.getContextPath() %>/'+nomeServletDel+'?obj='+elemToRemove+'&iddati='+iddati+params;
+        destinazione='<%= request.getContextPath() %>/'+nomeServletDel+'?obj='+elemToRemove+'&iddati='+iddati+params;
+
+	//addTabID
+	destinazione = addTabIdParam(destinazione,true);
+	document.location = destinazione;
   }
 };
 
@@ -153,10 +159,15 @@ function AddEntry() {
     return false;
   }
   nr = 1;
+  var destinazione;
   if (formatPar != null && formatPar != "")
- 	  document.location='<%= request.getContextPath() %>/'+nomeServletAdd+'?'+formatPar+'&iddati='+iddati+params;
+	  destinazione='<%= request.getContextPath() %>/'+nomeServletAdd+'?'+formatPar+'&iddati='+iddati+params;
   else
-	  document.location='<%= request.getContextPath() %>/'+nomeServletAdd+'?iddati='+iddati+params;
+	  destinazione='<%= request.getContextPath() %>/'+nomeServletAdd+'?iddati='+iddati+params;
+	  
+	//addTabID
+	destinazione = addTabIdParam(destinazione,true);
+	document.location = destinazione;
 };
 
 function CambiaVisualizzazione(newPageSize) {
@@ -167,10 +178,15 @@ function CambiaVisualizzazione(newPageSize) {
   if (newPageSize == '0') {
     index = 0; 
   }
+  var destinazione;
   if (formatPar != null && formatPar != "")
-    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+newPageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+newPageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
   else
-    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+newPageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+newPageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+    
+//addTabID
+	destinazione = addTabIdParam(destinazione,true);
+	document.location = destinazione;
 };
 
 function NextPage() {
@@ -179,10 +195,15 @@ function NextPage() {
   }
   nr = 1;
   index += pageSize;
+  var destinazione;
   if (formatPar != null && formatPar != "")
-    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
   else
-    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+    
+//addTabID
+	destinazione = addTabIdParam(destinazione,true);
+	document.location = destinazione;
 };
 
 function PrevPage(pageSize) {
@@ -194,10 +215,15 @@ function PrevPage(pageSize) {
   if (index < 0) {
     index = 0;
   }
+  var destinazione;
   if (formatPar != null && formatPar != "")
-    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
   else
-    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+    
+//addTabID
+	destinazione = addTabIdParam(destinazione,true);
+	document.location = destinazione;
 };
 
 function Search(form) {
@@ -231,7 +257,7 @@ function Search(form) {
   // imposto la destinazione
   document.form.action = nomeServletList;
   
-//evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
+  //evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
   for (var k=0; k<document.form.elements.length; k++) {
 		var nome = document.form.elements[k].name;
 		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
@@ -241,6 +267,11 @@ function Search(form) {
 		}
   }
       
+  // aggiungo parametro idTab
+  if(tabValue != ''){
+  	addHidden(document.form, tabSessionKey , tabValue);
+  	addHidden(document.form, prevTabSessionKey , tabValue);
+  }
   // form submit
   document.form.submit();
  
@@ -294,7 +325,7 @@ function Reset(form) {
 	   // imposto la destinazione
 	   document.form.action = nomeServletList;
 	   
-	 //evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
+	   // evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
 	   for (var k=0; k<document.form.elements.length; k++) {
 	 		var nome = document.form.elements[k].name;
 	 		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
@@ -304,13 +335,21 @@ function Reset(form) {
 	 		}
 	   }
 	   
+	   // aggiungo parametro idTab
+	   if(tabValue != ''){
+	   	addHidden(document.form, tabSessionKey , tabValue);
+	   	addHidden(document.form, prevTabSessionKey , tabValue);
+	   }
 	  // form submit
 	  document.form.submit();
 	 
 	};
 
 function Export(url){
-	document.location='<%= request.getContextPath() %>/'+url
+	var destinazione='<%= request.getContextPath() %>/'+url;
+	//addTabID
+	destinazione = addTabIdParam(destinazione,true);
+	document.location = destinazione;
 };
 
 function Esporta(tipo) {
@@ -331,10 +370,14 @@ function Esporta(tipo) {
 	    	elemToExport +=document.form.selectcheckbox.value;
 	  }
 
-	
+
 	if(elemToExport !== '') {
 		<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
-		document.location = "<%= request.getContextPath() %>/export.do?tipoExport="+tipo+"&obj="+elemToExport; 
+		var destinazione = "<%= request.getContextPath() %>/export.do?tipoExport="+tipo+"&obj="+elemToExport; 
+			
+			//addTabID
+			destinazione = addTabIdParam(destinazione,true);
+			document.location = destinazione;
 	} else {
 		$( "#selezioneRichiestaModal" ).dialog( "open" );
 	}
@@ -389,7 +432,7 @@ function Change(form,dataElementName,fromFilters) {
 	   }
      }
      
-   //evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
+     // evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
      for (var k=0; k<document.form.elements.length; k++) {
    		var nome = document.form.elements[k].name;
    		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
@@ -399,6 +442,11 @@ function Change(form,dataElementName,fromFilters) {
    		}
      }
         
+  // aggiungo parametro idTab
+  	  if(tabValue != ''){
+  	  	addHidden(document.form, tabSessionKey , tabValue);
+  	    addHidden(document.form, prevTabSessionKey , tabValue);
+  	  }
     // form submit
     document.form.submit();
 }
@@ -408,6 +456,9 @@ function isModificaUrlRicerca(formAction, urlToCheck){
 	if(formAction.indexOf('#') > 0) {
 		formAction = formAction.substring(0, formAction.indexOf('#'));
 	}
+	if(formAction.indexOf('?') > 0) {
+		formAction = formAction.substring(0, formAction.indexOf('?'));
+	}
 	
 	return ieEndsWith(formAction, urlToCheck);
 }
@@ -415,6 +466,7 @@ function isModificaUrlRicerca(formAction, urlToCheck){
 function ieEndsWith(str, suffix){
 	return str.indexOf(suffix, str.length - suffix.length) !== -1;
 }
+
 
 function addHidden(theForm, name, value) {
     // Create a hidden input element, and append it to the form:
@@ -523,7 +575,7 @@ function inizializzaSelectFiltro(){
 			<div class="spacer">
 				<%
 					
-					String tabSelezionatoS = ServletUtils.getObjectFromSession(session, String.class, CostantiControlStation.PARAMETRO_ID_TAB);
+					String tabSelezionatoS = ServletUtils.getObjectFromSession(request, session, String.class, CostantiControlStation.PARAMETRO_ID_TAB);
 					int tabSelezionato = 0;
 					
 					if(StringUtils.isNotEmpty(tabSelezionatoS)) {
@@ -701,6 +753,10 @@ function inizializzaSelectFiltro(){
 																			  		if (!image.getTarget().equals("")) {
 																			  			deTarget = " target=\""+ image.getTarget() +"\"";
 																			  		}
+																			  		
+																			  		if (!image.getUrl().equals("")) {
+																						image.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+																					}
 																		  			
 																			  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 											                					%>
@@ -786,6 +842,10 @@ function inizializzaSelectFiltro(){
 																						  		if (!image.getTarget().equals("")) {
 																						  			deTarget = " target=\""+ image.getTarget() +"\"";
 																						  		}
+																						  		
+																						  		if (!image.getUrl().equals("")) {
+																									image.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+																								}
 																					  			
 																						  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 														                					%>
@@ -877,6 +937,10 @@ function inizializzaSelectFiltro(){
 																							  		if (!image.getTarget().equals("")) {
 																							  			deTarget = " target=\""+ image.getTarget() +"\"";
 																							  		}
+																							  		
+																							  		if (!image.getUrl().equals("")) {
+																										image.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+																									}
 																							  		
 																							  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 															                					%>

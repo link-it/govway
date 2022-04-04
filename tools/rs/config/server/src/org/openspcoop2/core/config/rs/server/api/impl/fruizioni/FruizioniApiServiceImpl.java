@@ -182,7 +182,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 				asps = env.apsCore.getServizio(idAps);
 
 			
-			ServletUtils.setObjectIntoSession(context.getServletRequest().getSession(),
+			ServletUtils.setObjectIntoSession(context.getServletRequest(), context.getServletRequest().getSession(),
 					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE,
 					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			ErogazioniApiHelper.serviziCheckData(TipoOperazione.ADD, env, as, asps, Optional.of(env.idSoggetto), body);

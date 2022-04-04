@@ -40,6 +40,7 @@ else {
 }
 GeneralData gd = (GeneralData) session.getAttribute(gdString);
 PageData pd = (PageData) session.getAttribute(pdString);
+
 %>
 
 <td class="td1PageBody" valign='top'>
@@ -71,6 +72,8 @@ PageData pd = (PageData) session.getAttribute(pdString);
 							   .click(function() {
 								   		<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %> 
 										var val = $(this).children('input[id=url_entry_<%=j %>]').val();
+										// addTabID
+										val = addTabIdParam(val);
 										window.location = val;
 							       });
 						   </script>	
@@ -87,6 +90,8 @@ PageData pd = (PageData) session.getAttribute(pdString);
 							   .click(function() {
 								   		<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
 										var val = $(this).children('input[id=url_entry_<%=j %>]').val();
+										// addTabID
+										val = addTabIdParam(val);
 										window.location = val;
 							       });
 						   </script>

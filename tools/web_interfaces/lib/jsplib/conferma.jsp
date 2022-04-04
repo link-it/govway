@@ -31,7 +31,7 @@ String message = pd.getMessage();
 String messageType = pd.getMessageType();
 String [][] bottoni = pd.getBottoni();
 String messageTitle = pd.getMessageTitle();
-
+String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 // messaggio in cima alla pagina solo se non e' un messaggio di conferma o una copykey
 if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 %>
@@ -107,9 +107,19 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 						}
 				  }
 				
+				// aggiungo parametro idTab
+			  if(tabValue != ''){
+			  	addHidden(document.form, tabSessionKey , tabValue);
+			  	addHidden(document.form, prevTabSessionKey , tabValue);
+			  }
+				
 				document.form.submit();
-			} else
-		    	document.location='<%=request.getContextPath()%>/'+nomeServlet_Custom_Ok +params;
+			} else {
+				var destinazione = '<%=request.getContextPath()%>/'+nomeServlet_Custom_Ok +params;
+				//addTabID
+				destinazione = addTabIdParam(destinazione,true);
+				document.location = destinazione;
+			}
 		};
 		
 		function Annulla() {
@@ -127,9 +137,19 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 						}
 				  }
 				
+				// aggiungo parametro idTab
+				  if(tabValue != ''){
+				  	addHidden(document.form, tabSessionKey , tabValue);
+				  	addHidden(document.form, prevTabSessionKey , tabValue);
+				  }
+				
 				document.form.submit();
-			} else
-		    	document.location='<%=request.getContextPath()%>/'+nomeServlet_Custom_No +params;
+			} else {
+				var destinazione = '<%=request.getContextPath()%>/'+nomeServlet_Custom_No +params;
+				//addTabID
+				destinazione = addTabIdParam(destinazione,true);
+				document.location = destinazione;
+			}
 		};
 		
 	</SCRIPT>

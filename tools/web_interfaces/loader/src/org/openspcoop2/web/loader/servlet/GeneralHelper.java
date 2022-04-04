@@ -80,22 +80,22 @@ public class GeneralHelper {
 
 	public GeneralData initGeneralData(HttpServletRequest request){
 		String baseUrl = request.getRequestURI();
-		return this.initGeneralData_engine(baseUrl);
+		return this.initGeneralData_engine(request, baseUrl);
 	}
-	public GeneralData initGeneralData(HttpServletRequest request,String servletName){
+	public GeneralData initGeneralData(HttpServletRequest request, String servletName){
 		String baseUrl = request.getContextPath();
 		if(servletName.startsWith("/")){
 			baseUrl = baseUrl + servletName;
 		}else{
 			baseUrl = baseUrl + "/" + servletName;
 		}
-		return this.initGeneralData_engine(baseUrl);
+		return this.initGeneralData_engine(request, baseUrl);
 	}
-	@Deprecated
-	public GeneralData initGeneralData(String baseUrl) {
-		return this.initGeneralData_engine(baseUrl);
-	}
-	private GeneralData initGeneralData_engine(String baseUrl) {
+//	@Deprecated
+//	public GeneralData initGeneralData(String baseUrl) {
+//		return this.initGeneralData_engine(baseUrl);
+//	}
+	private GeneralData initGeneralData_engine(HttpServletRequest request, String baseUrl) {
 		String userLogin = ServletUtils.getUserLoginFromSession(this.session);
 		String css = this.loaderCore.getLoaderCSS();
 
@@ -114,7 +114,7 @@ public class GeneralHelper {
 		GeneralData gd = new GeneralData(Costanti.LABEL_LINKIT_WEB);
 		gd.setProduct(this.loaderCore.getLoaderNomeSintesi());
 		gd.setLanguage(this.loaderCore.getLoaderLanguage());
-		gd.setTitle(StringEscapeUtils.escapeHtml(this.loaderCore.getLoaderNomeEsteso(this.session)));
+		gd.setTitle(StringEscapeUtils.escapeHtml(this.loaderCore.getLoaderNomeEsteso(request, this.session)));
 		gd.setUrl(baseUrl);
 		gd.setCss(css);
 		gd.setLogoHeaderImage(this.loaderCore.getLogoHeaderImage());

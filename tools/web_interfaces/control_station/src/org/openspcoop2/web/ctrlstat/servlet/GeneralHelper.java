@@ -103,7 +103,7 @@ public class GeneralHelper {
 
 	public GeneralData initGeneralData(HttpServletRequest request){
 		String baseUrl = request.getRequestURI();
-		return this.initGeneralData_engine(baseUrl);
+		return this.initGeneralData_engine(request, baseUrl);
 	}
 	public GeneralData initGeneralData(HttpServletRequest request,String servletName){
 		String baseUrl = request.getContextPath();
@@ -112,13 +112,13 @@ public class GeneralHelper {
 		}else{
 			baseUrl = baseUrl + "/" + servletName;
 		}
-		return this.initGeneralData_engine(baseUrl);
+		return this.initGeneralData_engine(request, baseUrl);
 	}
-	@Deprecated
-	public GeneralData initGeneralData(String baseUrl) {
-		return this.initGeneralData_engine(baseUrl);
-	}
-	private GeneralData initGeneralData_engine(String baseUrl) {
+//	@Deprecated
+//	public GeneralData initGeneralData(String baseUrl) {
+//		return this.initGeneralData_engine(baseUrl);
+//	}
+	private GeneralData initGeneralData_engine(HttpServletRequest request, String baseUrl) {
 		String userLogin = ServletUtils.getUserLoginFromSession(this.session);
 		String css = this.core.getConsoleCSS();
 
@@ -147,7 +147,7 @@ public class GeneralHelper {
 		GeneralData gd = new GeneralData(CostantiControlStation.LABEL_LINKIT_WEB);
 		gd.setProduct(this.core.getConsoleNomeSintesi());
 		gd.setLanguage(this.core.getConsoleLanguage());
-		gd.setTitle(StringEscapeUtils.escapeHtml(this.core.getConsoleNomeEsteso(this.session)));
+		gd.setTitle(StringEscapeUtils.escapeHtml(this.core.getConsoleNomeEsteso(request, this.session)));
 		gd.setLogoHeaderImage(this.core.getLogoHeaderImage());
 		gd.setLogoHeaderLink(this.core.getLogoHeaderLink());
 		gd.setLogoHeaderTitolo(this.core.getLogoHeaderTitolo()); 
@@ -184,6 +184,8 @@ public class GeneralHelper {
 								new Parameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_GUI, InterfaceType.AVANZATA.toString()),
 								new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),
 								new Parameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_GUI,Costanti.CHECK_BOX_ENABLED)
+//								,
+//								new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, request.ge)
 								);
 	
 					} else {

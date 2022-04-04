@@ -104,6 +104,7 @@ boolean mostraComandiHeader = listaComandi != null && listaComandi.size() > 0;
 int colFormHeader = (mostraComandiHeader ? 2 : 1);
 String classPanelTitolo = "panelDettaglioNoForm";
 String numeroEntry = "dettaglio";
+String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 %>
 
 
@@ -213,6 +214,10 @@ String numeroEntry = "dettaglio";
 																
 																%>
 																var urlD_<%= numeroEntry %> = $("#hidden_title_iconUso_<%= numeroEntry %>").val();
+																
+																// addTabID
+																urlD_<%= numeroEntry %> = addTabIdParam(urlD_<%= numeroEntry %>,true);
+
 											    				// chiamata al servizio
 											    				<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
 											    				
@@ -249,7 +254,11 @@ String numeroEntry = "dettaglio";
 															
 															<%= deVisualizzaAjaxStatus %>
 															
-															document.location = '<%= de.getUrl() %>';
+												             var val = '<%= de.getUrl() %>';
+												             // addTabID
+										                     val = addTabIdParam(val,true);
+										                     document.location = val;
+
 																
 														 });	
 														<%
@@ -603,6 +612,10 @@ for (int i = 0; i < dati.size(); i++) {
 							if (!de.getTarget().equals("")) {
 					  			deTarget = " target=\""+ de.getTarget() +"\"";
 					  		}
+							
+							if (!de.getUrl().equals("")) {
+								de.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+							}
 	        				%>
 	            			<div class="prop prop-link">
 	            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabelLink %></label>
@@ -655,6 +668,10 @@ for (int i = 0; i < dati.size(); i++) {
 											  		if (!image.getOnClick().equals("")) {
 											  			onClick = " onClick=\"" + visualizzaAjaxStatus  + "postVersion_" + image.getOnClick() + "\"";
 													  }
+											  		
+											  		if (!image.getUrl().equals("")) {
+											  			image.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+													}
 			                					%>
 			                					<a class="text-action-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" <%=onClick %> >
 			                						<span class="icon-box">

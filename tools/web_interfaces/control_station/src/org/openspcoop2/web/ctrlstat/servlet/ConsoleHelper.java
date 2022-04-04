@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.UUID;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
@@ -632,6 +633,9 @@ public class ConsoleHelper implements IConsoleHelper {
 			}catch(Exception e) {
 				this.size = 50;
 			}
+			
+			// inizializzo l'id tab
+			this.getTabId(); 
 		} catch (Exception e) {
 			this.log.error("Exception ctrlstatHelper: " + e.getMessage(), e);
 			this.errorInit = true;
@@ -640,6 +644,30 @@ public class ConsoleHelper implements IConsoleHelper {
 		this.idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
 		this.idAccordoFactory = IDAccordoFactory.getInstance();
 		this.idServizioFactory = IDServizioFactory.getInstance();
+	}
+	
+	public String getTabId() throws Exception {
+		Object idTabObj = this.request.getAttribute(Costanti.PARAMETER_TAB_KEY);
+		
+		if(idTabObj == null) {
+			this.log.debug("CHECKTABID: non trovato come attributo");
+			String idTab = this.getParameter(Costanti.PARAMETER_TAB_KEY);
+			
+			if(idTab == null) { // nuovoTab o nuova finestra o primo accesso
+				this.log.debug("CHECKTABID: non trovato come parametro");
+				idTab = UUID.randomUUID().toString().replace("-", "");
+				this.request.setAttribute(Costanti.PARAMETER_TAB_KEY, idTab);
+				this.log.debug("CHECKTABID: generato nuovo id: ["+idTab+"]");
+				return idTab;
+			}
+			
+			this.request.setAttribute(Costanti.PARAMETER_TAB_KEY, idTab);
+			this.log.debug("CHECKTABID: trovato come parametro: ["+idTab+"]");
+			return idTab;
+		}
+		
+		this.log.debug("CHECKTABID: trovato come attributo: ["+((String)idTabObj)+"]");
+		return (String) idTabObj;
 	}
 	
 //	public boolean isUseIdSogg() {
@@ -2380,6 +2408,17 @@ public class ConsoleHelper implements IConsoleHelper {
 							newUrl = newUrl + CostantiControlStation.PARAMETRO_RESET_SEARCH;
 							newUrl = newUrl + "=";
 							newUrl = newUrl + Costanti.CHECK_BOX_ENABLED;
+							
+							
+							
+							// aggiungo l'identificativo del tab
+							if(this.getTabId() != null) {
+								newUrl = newUrl + "&";
+								newUrl = newUrl + Costanti.PARAMETER_PREV_TAB_KEY;
+								newUrl = newUrl + "=";
+								newUrl = newUrl + this.getTabId();
+							}
+							
 							voce[1] = newUrl;
 						}
 					}

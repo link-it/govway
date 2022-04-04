@@ -96,9 +96,9 @@ public class About extends Action{
 			if(doUpdate) {
 				if(infoP.getValue()!=null) {
 					try {
-						aHelper.getCore().updateInfoVersion(session, new String(infoP.getValue()));
+						aHelper.getCore().updateInfoVersion(request, session, new String(infoP.getValue()));
 						aggiornamentoEffettuato = "Aggiornamento completato con successo";
-						gd.setTitle(StringEscapeUtils.escapeHtml(aHelper.getCore().getConsoleNomeEsteso(session)));
+						gd.setTitle(StringEscapeUtils.escapeHtml(aHelper.getCore().getConsoleNomeEsteso(request, session)));
 					}catch(Exception e) {
 						aggiornamentoNonRiuscito = "Aggiornamento fallito: "+e.getMessage();
 					}

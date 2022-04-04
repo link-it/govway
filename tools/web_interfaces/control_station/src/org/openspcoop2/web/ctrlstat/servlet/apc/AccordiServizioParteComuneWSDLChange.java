@@ -186,7 +186,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 				session.removeAttribute(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CHANGE_TMP);
 			}else {
 				// se passo da qui sto tornando dalla maschera di conferma ripristino il wsdl dalla sessione 
-					this.wsdl = ServletUtils.getObjectFromSession(session, String.class, 
+					this.wsdl = ServletUtils.getObjectFromSession(request, session, String.class, 
 							AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CHANGE_TMP);
 					session.removeAttribute(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CHANGE_TMP);
 			}
@@ -358,7 +358,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 			boolean used = true;
 			
-			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, false);
+			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false);
 			if(!isModalitaVistaApiCustom) {
 				label = MessageFormat.format("{0} di {1}", label, labelASTitle);
 			}
@@ -454,7 +454,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 						if(as.sizePortTypeList() > 0 || as.sizeResourceList()>0 ){
 							
 							// salvo il wsdl che ha inviato l'utente
-							ServletUtils.setObjectIntoSession(session, this.wsdl, AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CHANGE_TMP);
+							ServletUtils.setObjectIntoSession(request, session, this.wsdl, AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CHANGE_TMP);
 
 							// setto la barra del titolo
 							ServletUtils.setPageDataTitle(pd, listaParams);

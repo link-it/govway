@@ -295,6 +295,10 @@ public class DataElement {
 		return urValue;
 	}
 	
+	public void addParameter(Parameter ... parameter) {
+		this.url = _getUrlValue(this.url, parameter);
+    }
+	
 	public String getUrl() {
 		return DataElement.checkNull(this.url);
 	}

@@ -2032,7 +2032,7 @@ public class UtentiHelper extends ConsoleHelper {
 			String confpw = this.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CONFERMA_NUOVA_PASSWORD);
 
 			// String cpwd = this.procToCall.cryptPw(oldpw);
-			String userToUpdate = ServletUtils.getObjectFromSession(this.session, String.class, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
+			String userToUpdate = ServletUtils.getObjectFromSession(this.request, this.session, String.class, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
 			
 			User user = this.utentiCore.getUser(userToUpdate);
 

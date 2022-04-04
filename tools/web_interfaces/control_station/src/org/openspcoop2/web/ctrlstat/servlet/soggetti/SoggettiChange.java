@@ -626,7 +626,7 @@ public final class SoggettiChange extends Action {
 					List<Soggetto> lista = null;
 					if(soggettiCore.isRegistroServiziLocale()){
 						if(!ServletUtils.isSearchDone(soggettiHelper)) {
-							lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista,  Soggetto.class);
+							lista = ServletUtils.getRisultatiRicercaFromSession(request, session, idLista,  Soggetto.class);
 						}
 					}
 					
@@ -649,7 +649,7 @@ public final class SoggettiChange extends Action {
 						}
 						
 						if(!soggettiHelper.isPostBackFilterElement()) {
-							ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+							ServletUtils.setRisultatiRicercaIntoSession(request, session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
 						}
 						
 						soggettiHelper.prepareSoggettiList(lista, ricerca);
@@ -1351,7 +1351,7 @@ public final class SoggettiChange extends Action {
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 						
 			if (!oldnomeprov.equals(this.nomeprov) || !oldtipoprov.equals(this.tipoprov)) {
-				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.SOGGETTI);
+				ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.SOGGETTI);
 				
 				User user = ServletUtils.getUserFromSession(session);
 				String oldSog = oldtipoprov+"/"+oldnomeprov;

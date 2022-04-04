@@ -71,6 +71,7 @@ boolean mostraComandiHeader = mostraFormHeader || (listaComandi != null && lista
 
 int colFormHeader = (mostraComandiHeader ? 2 : 1);
 String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRicercaNoForm";
+String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 %>
 
 <tr>
@@ -94,6 +95,10 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 									  		if (!de.getTarget().equals("")) {
 									  			deTarget = " target=\""+ de.getTarget() +"\"";
 									  		}
+									  		
+									  		if (!de.getUrl().equals("")) {
+												de.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+											}
 									  		
 									  		String deVisualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 											

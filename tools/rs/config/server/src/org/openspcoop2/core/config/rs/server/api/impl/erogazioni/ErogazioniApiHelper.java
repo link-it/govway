@@ -579,7 +579,7 @@ public class ErogazioniApiHelper {
 		
 		if ( isErogazione ) {
 			
-			ServletUtils.setObjectIntoSession(env.requestWrapper.getSession(),
+			ServletUtils.setObjectIntoSession(env.requestWrapper, env.requestWrapper.getSession(),
 					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE,
 					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			
@@ -606,7 +606,7 @@ public class ErogazioniApiHelper {
 			canale = pa.getCanale();
 		} else {
 			
-			ServletUtils.setObjectIntoSession(env.requestWrapper.getSession(),
+			ServletUtils.setObjectIntoSession(env.requestWrapper, env.requestWrapper.getSession(),
 					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE,
 					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			

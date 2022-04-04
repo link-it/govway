@@ -1000,14 +1000,14 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 			String id, String nome, String idProprietario, String nomeProprietario, String nomeParentProprietario, String urlChange,String tipoAccordo, boolean updateUrlChange) throws Exception{
 		AccordiServizioParteComuneHelper apcHelper = null;
 		AccordiServizioParteSpecificaHelper apsHelper = null;
-		Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, this.session, false);
+		Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, this.session, this.request, false);
 		List<Parameter> lstParam = new ArrayList<Parameter>();
 		String labelProprietario = nomeProprietario;
 		String tipoProtocollo = null;
 		IDAccordo idAccordoParteComune = null;
 		try{
 			String urlDecode = URLDecoder.decode(urlChange,"UTF-8");
-			String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			String tipologia = ServletUtils.getObjectFromSession(this.request, this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
 			if(tipologia!=null) {
 				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
@@ -1123,7 +1123,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					}
 					
 					// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-					Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+					Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 					if(parentPD == null) 
 						parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 					
@@ -1235,7 +1235,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 				case SERVIZIO_APPLICATIVO:
 					ServizioApplicativo servizioApplicativo = (ServizioApplicativo) proprietario;
 					
-					Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, this.session);
+					Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, this.session, this.request);
 					if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
 					Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
 					

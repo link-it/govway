@@ -195,7 +195,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			}
 
 
-			ServletUtils.setObjectIntoSession(context.getServletRequest().getSession(),
+			ServletUtils.setObjectIntoSession(context.getServletRequest(), context.getServletRequest().getSession(),
 					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE,
 					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 

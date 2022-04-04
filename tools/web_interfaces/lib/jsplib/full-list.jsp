@@ -40,6 +40,7 @@ else
   iddati = "notdefined";
 GeneralData gd = (GeneralData) session.getAttribute(gdString);
 PageData pd = (PageData) session.getAttribute(pdString);
+String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 %>
 
 <td valign="top" class="td2PageBody">
@@ -255,6 +256,10 @@ if (hidden!=null && !hidden.isEmpty()) {
 								  			deTip = " title=\"" + tip + "\"";
 								  		}
 								  		
+								  		if (!de.getUrl().equals("")) {
+											de.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+										}
+								  		
 								  		if(de.isVisualizzaLinkApriNuovaFinestra()) { // stringa senza link e icona sulla dx
 								  			String deIconName = de.getIcon(); 
 								  			if(de.getToolTip()!=null && !"".equals(de.getToolTip())){
@@ -314,6 +319,9 @@ if (hidden!=null && !hidden.isEmpty()) {
 											  			deTarget = " target=\""+ image.getTarget() +"\"";
 											  		}
 										  			
+											  		if (!image.getUrl().equals("")) {
+											  			image.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+													}
 											  		String deUrl = !image.getUrl().equals("") ? image.getUrl() : "";
 											  		String deOnClick = !image.getOnClick().equals("") ? image.getOnClick() : "";
 											  		
@@ -389,6 +397,8 @@ if (hidden!=null && !hidden.isEmpty()) {
 									  				String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 									  				// tipo link
 										      		if (!de.getUrl().equals("")) { 
+									      				de.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+										      			
 										      			String deTarget = " ";
 												  		if (!de.getTarget().equals("")) {
 												  			deTarget = " target=\""+ de.getTarget() +"\"";
@@ -470,6 +480,9 @@ if (hidden!=null && !hidden.isEmpty()) {
 													    			console.log(idx);
 													    			if(idx) {
 													    				var url = $("#hidden_title_iconUso_"+ idx).val();
+													    				
+													    				//addTabID
+													    				url = addTabIdParam(url,true);
 													    				// chiamata al servizio
 													    				<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
 													    				

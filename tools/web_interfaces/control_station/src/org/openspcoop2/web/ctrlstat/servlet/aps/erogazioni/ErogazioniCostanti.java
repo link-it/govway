@@ -25,6 +25,7 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
+import org.openspcoop2.web.lib.mvc.Costanti;
 
 /**
  * ErogazioniCostanti
@@ -77,7 +78,7 @@ public class ErogazioniCostanti extends AccordiServizioParteSpecificaCostanti {
 	public final static String ASPS_EROGAZIONI_PARAMETRO_NUOVA_CONFIGURAZIONE = "nuovaConf";
 	public final static String ASPS_EROGAZIONI_PARAMETRO_STATO_CONFIGURAZIONI = "statoConf";
 	
-	public final static String ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI = "vistaErogazioni";
+	public final static String ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI = Costanti.SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "vistaErogazioni";
 	
 	public final static String LABEL_ASPS_LISTA_EROGAZIONI_COLONNA_SERVIZIO = "Servizio";
 	public final static String LABEL_ASPS_LISTA_EROGAZIONI_COLONNA_CONFIGURAZIONE = "Configurazione";

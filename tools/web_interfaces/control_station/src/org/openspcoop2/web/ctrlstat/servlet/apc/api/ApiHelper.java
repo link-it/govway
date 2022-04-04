@@ -97,7 +97,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			ServletUtils.addListElementIntoSession(this.session, ApiCostanti.OBJECT_NAME_APC_API,
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO, tipoAccordo));
 			
-			ServletUtils.setObjectIntoSession(this.session, Boolean.valueOf(true), ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API);
+			ServletUtils.setObjectIntoSession(this.request, this.session, Boolean.valueOf(true), ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API);
 			
 			this.pd.setCustomListViewName(ApiCostanti.APC_API_NOME_VISTA_CUSTOM_LISTA_API);
 			
@@ -471,7 +471,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		String tipoProtocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
 		String labelASTitle = this.getLabelIdAccordo(tipoProtocollo, idAccordoOLD);
 		
-		ServletUtils.setObjectIntoSession(this.session, Boolean.valueOf(true), ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API);
+		ServletUtils.setObjectIntoSession(this.request, this.session, Boolean.valueOf(true), ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API);
 		
 		// setto la barra del titolo
 		List<Parameter> lstParm = new ArrayList<Parameter>();
@@ -508,7 +508,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		String tipoProtocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
 		String labelASTitle = this.getLabelIdAccordo(tipoProtocollo, idAccordoOLD);
 		
-		ServletUtils.setObjectIntoSession(this.session, Boolean.valueOf(true), ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API);
+		ServletUtils.setObjectIntoSession(this.request, this.session, Boolean.valueOf(true), ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API);
 		
 		String userLogin = ServletUtils.getUserLoginFromSession(this.session);	
 		
@@ -550,7 +550,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			List<AccordoServizioParteComuneSintetico> lista = null;
 			if(this.apcCore.isRegistroServiziLocale()){
 				if(!ServletUtils.isSearchDone(this)) {
-					lista = ServletUtils.getRisultatiRicercaFromSession(this.session, idLista,  AccordoServizioParteComuneSintetico.class);
+					lista = ServletUtils.getRisultatiRicercaFromSession(this.request, this.session, idLista,  AccordoServizioParteComuneSintetico.class);
 				}
 			}
 
@@ -561,7 +561,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			}
 
 			if(!this.isPostBackFilterElement()) {
-				ServletUtils.setRisultatiRicercaIntoSession(this.session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+				ServletUtils.setRisultatiRicercaIntoSession(this.request, this.session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
 			}
 			
 			this.prepareApiList(lista, ricerca, tipoAccordo);

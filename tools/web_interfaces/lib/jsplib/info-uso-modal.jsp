@@ -45,6 +45,7 @@ Dialog finestraDialog = (Dialog) request.getAttribute(idFinestraModale);
 	
 	String classSpanNoEdit="spanNoEdit";
 	String classDivNoEdit="divNoEdit";
+	String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 %>
 <div id="<%= idFinestraModale %>" title="<%= titolo %>">
 	<% if(!"".equals(icona) || !"".equals(header1) || !"".equals(header2)) { %>

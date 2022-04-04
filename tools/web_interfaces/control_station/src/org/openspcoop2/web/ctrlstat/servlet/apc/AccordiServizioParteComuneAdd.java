@@ -164,8 +164,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 		TipoOperazione tipoOp = TipoOperazione.ADD; 
 
 		try {
-			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, false);
 			ApiHelper apcHelper = new ApiHelper(request, pd, session);
+			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false);
 			
 			this.editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			this.nome = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME);
@@ -1013,7 +1013,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 			if(incomplete || apcCore.isSetSearchAfterAdd()) {
-				apcCore.setSearchAfterAdd(Liste.ACCORDI, as.getNome(), session, ricerca);
+				apcCore.setSearchAfterAdd(Liste.ACCORDI, as.getNome(), request, session, ricerca);
 			}
 			
 			List<AccordoServizioParteComuneSintetico> lista = AccordiServizioParteComuneUtilities.accordiList(apcCore, userLogin, ricerca, this.tipoAccordo);

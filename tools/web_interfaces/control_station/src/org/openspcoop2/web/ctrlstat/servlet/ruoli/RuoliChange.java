@@ -130,7 +130,7 @@ public final class RuoliChange extends Action {
 					// poiche' esistono filtri che hanno necessita di postback salvo in sessione
 					List<Ruolo> lista = null;
 					if(!ServletUtils.isSearchDone(ruoliHelper)) {
-						lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista,  Ruolo.class);
+						lista = ServletUtils.getRisultatiRicercaFromSession(request, session, idLista,  Ruolo.class);
 					}
 
 					ricerca = ruoliHelper.checkSearchParameters(idLista, ricerca);
@@ -158,7 +158,7 @@ public final class RuoliChange extends Action {
 					}
 					
 					if(!ruoliHelper.isPostBackFilterElement()) {
-						ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+						ServletUtils.setRisultatiRicercaIntoSession(request, session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
 					}
 					
 					ruoliHelper.prepareRuoliList(ricerca, lista);
@@ -271,7 +271,7 @@ public final class RuoliChange extends Action {
 			ruoliCore.performUpdateOperation(userLogin, ruoliHelper.smista(), listOggettiDaAggiornare.toArray());
 
 			if(ruolo.getNome().equals(nome)==false){
-				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.RUOLI);
+				ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.RUOLI);
 			}
 			
 			// Preparo la lista

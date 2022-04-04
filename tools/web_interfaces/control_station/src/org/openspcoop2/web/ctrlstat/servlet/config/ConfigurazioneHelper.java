@@ -8265,7 +8265,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String labelPerPorta = null;
 			if(RuoloPolicy.DELEGATA.equals(ruoloPorta)) {
 				// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-				Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+				Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 				if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 				
 				IDPortaDelegata idPortaDelegata = new IDPortaDelegata();
@@ -8293,7 +8293,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 			}
 			else {
-				Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session);
+				Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session, this.request);
 				
 				IDPortaApplicativa idPortaApplicativa = new IDPortaApplicativa();
 				idPortaApplicativa.setNome(nomePorta);
@@ -16195,7 +16195,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			String infoType = this.getParameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
 			if(infoType==null) {
-				infoType = ServletUtils.getObjectFromSession(this.session, String.class, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+				infoType = ServletUtils.getObjectFromSession(this.request, this.session, String.class, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
 			}
 			Parameter pInfoType = new Parameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE, infoType); 
 			boolean attributeAuthority = ConfigurazioneCostanti.isConfigurazioneAttributeAuthority(infoType);
@@ -16574,7 +16574,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			String infoType = this.getParameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
 			if(infoType==null) {
-				infoType = ServletUtils.getObjectFromSession(this.session, String.class, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+				infoType = ServletUtils.getObjectFromSession(this.request, this.session, String.class, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
 			}
 			Parameter pInfoType = new Parameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE, infoType); 
 			
@@ -19029,7 +19029,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String labelPerPorta = null;
 			if(RuoloPorta.DELEGATA.equals(ruoloPorta)) {
 				// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-				Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+				Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 				if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 				
 				IDPortaDelegata idPortaDelegata = new IDPortaDelegata();
@@ -19057,7 +19057,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 			}
 			else {
-				Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session);
+				Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session, this.request);
 				
 				IDPortaApplicativa idPortaApplicativa = new IDPortaApplicativa();
 				idPortaApplicativa.setNome(nomePorta);
@@ -23375,7 +23375,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String labelPerPorta = null;
 			if(TipoPdD.DELEGATA.equals(ruoloPorta)) {
 				// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-				Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+				Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 				if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 				
 				PortaDelegata myPD = this.porteDelegateCore.getPortaDelegata(idPorta);
@@ -23413,7 +23413,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				labelPerPorta = labelHandler;
 			}
 			else {
-				Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session);
+				Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session, this.request);
 				
 				PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(idPorta);
 				String idporta = myPA.getNome();

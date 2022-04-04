@@ -446,7 +446,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			List<CanaleConfigurazione> canaleList = gestioneCanali != null ? gestioneCanali.getCanaleList() : new ArrayList<>();
 			boolean gestioneCanaliEnabled = gestioneCanali != null && org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(gestioneCanali.getStato());
 
-			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
 			boolean gestioneErogatori = false;
 			if(tipologia!=null) {
@@ -1237,7 +1237,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			String servletList = null;
 			String labelList = null;
 			
-			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request);
 			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 				servletList = ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST;
 				if(gestioneFruitori) {
@@ -2218,7 +2218,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 			
 			if(apsCore.isSetSearchAfterAdd()) {
-				apsCore.setSearchAfterAdd(Liste.SERVIZI, asps.getNome(), session, ricerca);
+				apsCore.setSearchAfterAdd(Liste.SERVIZI, asps.getNome(), request, session, ricerca);
 			}
 			
 			boolean [] permessi = AccordiServizioParteSpecificaUtilities.getPermessiUtente(apsHelper);

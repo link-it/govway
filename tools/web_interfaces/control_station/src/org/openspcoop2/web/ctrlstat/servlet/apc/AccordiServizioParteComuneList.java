@@ -70,9 +70,9 @@ public final class AccordiServizioParteComuneList extends Action {
 
 	
 		try {
-			ServletUtils.removeObjectFromSession(session, ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API);
-			
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
+			
+			ServletUtils.removeObjectFromSession(session, ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API);
 
 			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))

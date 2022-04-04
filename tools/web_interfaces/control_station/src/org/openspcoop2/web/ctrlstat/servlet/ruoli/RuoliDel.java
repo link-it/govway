@@ -97,7 +97,7 @@ public final class RuoliDel extends Action {
 			}// chiudo for
 
 			if(deleteAlmostOneRole) {
-				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.RUOLI);
+				ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.RUOLI);
 			}
 			
 			if (inUsoMessage.length()>0) {

@@ -156,7 +156,7 @@ public class ErogazioniVerificaCertificati  extends Action {
 			
 			String alias = apsHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
 			
-			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
 			boolean gestioneErogatori = false;
 			if(tipologia!=null) {
@@ -960,14 +960,14 @@ public class ErogazioniVerificaCertificati  extends Action {
 					// poiche' esistono filtri che hanno necessita di postback salvo in sessione
 					List<AccordoServizioParteSpecifica> lista = null;
 					if(!ServletUtils.isSearchDone(apsHelper)) {
-						lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista,  AccordoServizioParteSpecifica.class);
+						lista = ServletUtils.getRisultatiRicercaFromSession(request, session, idLista,  AccordoServizioParteSpecifica.class);
 					}
 					
 					ricerca = apsHelper.checkSearchParameters(idLista, ricerca);
 					
 					apsHelper.clearFiltroSoggettoByPostBackProtocollo(0, ricerca, idLista);
 										
-					apsHelper.checkGestione(session, ricerca, idLista, tipologia,true);
+					apsHelper.checkGestione(request, session, ricerca, idLista, tipologia,true);
 					
 					// preparo lista
 					boolean [] permessi = AccordiServizioParteSpecificaUtilities.getPermessiUtente(apsHelper);
@@ -982,7 +982,7 @@ public class ErogazioniVerificaCertificati  extends Action {
 
 					
 					if(!apsHelper.isPostBackFilterElement()) {
-						ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+						ServletUtils.setRisultatiRicercaIntoSession(request, session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
 					}
 					
 					apsHelper.prepareErogazioniList(ricerca, lista);

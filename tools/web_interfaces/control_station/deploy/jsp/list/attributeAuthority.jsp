@@ -82,6 +82,8 @@ visualizzaMetadati = vectorRiepilogo.size() > 1;
 					   .click(function() {
 						   		<%= visualizzaAjaxStatus %>
 								var val = $(this).children('input[id=url_entry_<%=numeroEntryS %>]').val();
+								// addTabID
+								val = addTabIdParam(val,true);
 								window.location = val;
 					       });
 				   </script>
@@ -187,6 +189,9 @@ visualizzaMetadati = vectorRiepilogo.size() > 1;
 											
 											%>
 											var urlD_<%= numeroEntry %> = $("#hidden_title_iconUso_"+ <%= numeroEntry %>).val();
+											
+											// addTabID
+											urlD_<%= numeroEntry %> = addTabIdParam(urlD_<%= numeroEntry %>,true);
 						    				// chiamata al servizio
 						    				<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
 						    				
@@ -223,7 +228,10 @@ visualizzaMetadati = vectorRiepilogo.size() > 1;
 										
 										<%= deVisualizzaAjaxStatus %>
 										
-										document.location = '<%= de.getUrl() %>';
+										var val = '<%= de.getUrl() %>';
+						    			// addTabID
+										val = addTabIdParam(val,true);
+										document.location = val;
 											
 									 });	
 									<%

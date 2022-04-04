@@ -85,7 +85,7 @@ public final class UtentePasswordChange extends Action {
 			
 			UtentiCore utentiCore = new UtentiCore();
 			
-			String userToUpdate = ServletUtils.getObjectFromSession(session, String.class, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
+			String userToUpdate = ServletUtils.getObjectFromSession(request, session, String.class, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
 			
 			User user = utentiCore.getUser(userToUpdate);
 			

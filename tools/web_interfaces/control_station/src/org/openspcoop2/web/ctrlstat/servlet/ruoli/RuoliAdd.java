@@ -160,7 +160,7 @@ public final class RuoliAdd extends Action {
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
 			if(ruoliCore.isSetSearchAfterAdd()) {
-				ruoliCore.setSearchAfterAdd(Liste.RUOLI, ruolo.getNome(), session, ricerca);
+				ruoliCore.setSearchAfterAdd(Liste.RUOLI, ruolo.getNome(), request, session, ricerca);
 			}
 			
 			List<Ruolo> lista = null;

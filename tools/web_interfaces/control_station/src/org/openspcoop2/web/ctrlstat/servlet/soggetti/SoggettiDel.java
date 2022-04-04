@@ -125,7 +125,7 @@ public final class SoggettiDel extends Action {
 			}// chiudo for
 
 			if(deleteAlmostOne) {
-				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.SOGGETTI);
+				ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.SOGGETTI);
 			}
 			
 			if (inUsoMessage.length()>0) {

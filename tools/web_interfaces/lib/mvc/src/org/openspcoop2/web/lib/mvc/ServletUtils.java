@@ -21,7 +21,9 @@
 package org.openspcoop2.web.lib.mvc;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.http.Cookie;
@@ -300,11 +302,19 @@ public class ServletUtils {
 			de.setValue(customLabel);
 		}
 	}
+	
+	
+	public static String getTabIdFromRequestAttribute(HttpServletRequest request)  {
+		Object idTabObj = request.getAttribute(Costanti.PARAMETER_TAB_KEY);
+			
+		if(idTabObj != null)
+			return (String) idTabObj;
+		
+		return null;
+	}
 
-
-
-
-	/* ------ SESION ---- */
+	
+	/* ------ SESSION ---- */
 	
 	public static void addListElementIntoSession(HttpSession session,String objectName, List<Parameter> parameters){
 		Parameter[] parameter = parameters != null ? parameters.toArray(new Parameter[parameters.size()]) : null;
@@ -383,21 +393,27 @@ public class ServletUtils {
 	private static String getKeyRisultatiRicerca(int idLista) {
 		return Costanti.SESSION_ATTRIBUTE_RISULTATI_LISTA+"_"+idLista;
 	}
-	public static void setRisultatiRicercaIntoSession(HttpSession session, int idLista, List<?> risultatiRicerca){
-		session.setAttribute(getKeyRisultatiRicerca(idLista), risultatiRicerca);
+	public static void setRisultatiRicercaIntoSession(HttpServletRequest request, HttpSession session, int idLista, List<?> risultatiRicerca){
+		setObjectIntoSession(request, session, risultatiRicerca, getKeyRisultatiRicerca(idLista));
+		
+//		session.setAttribute(getKeyRisultatiRicerca(idLista), risultatiRicerca);
 	}
 	@SuppressWarnings("unchecked")
-	public static <T> List<T> getRisultatiRicercaFromSession(HttpSession session, int idLista, Class<T> classType){
-		Object o = session.getAttribute(getKeyRisultatiRicerca(idLista));
-		if(o!=null) {
-			return (List<T>) o;
-		}
-		return null;
+	public static <T> List<T> getRisultatiRicercaFromSession(HttpServletRequest request, HttpSession session, int idLista, Class<T> classType){
+		return getObjectFromSession(request, session, List.class, getKeyRisultatiRicerca(idLista));
+		
+//		Object o = session.getAttribute(getKeyRisultatiRicerca(idLista));
+//		if(o!=null) {
+//			return (List<T>) o;
+//		}
+//		return null;
 	}
-	public static List<?> removeRisultatiRicercaFromSession(HttpSession session, int idLista){
-		Object o = session.getAttribute(getKeyRisultatiRicerca(idLista));
+	public static List<?> removeRisultatiRicercaFromSession(HttpServletRequest request, HttpSession session, int idLista){
+		Object o = removeObjectFromSession(request, session, List.class, getKeyRisultatiRicerca(idLista));
+		
+//		Object o = session.getAttribute(getKeyRisultatiRicerca(idLista));
 		if(o!=null) {
-			session.removeAttribute(getKeyRisultatiRicerca(idLista));
+//			session.removeAttribute(getKeyRisultatiRicerca(idLista));
 			return (List<?>) o;
 		}
 		return null;
@@ -441,11 +457,12 @@ public class ServletUtils {
 		return(Boolean) session.getAttribute(Costanti.SESSION_ATTRIBUTE_CONFIGURAZIONI_PERSONALIZZATE);
 	}
 
-	public static Boolean getBooleanAttributeFromSession(String attributeName, HttpSession session) {
-		return getBooleanAttributeFromSession(attributeName,session,null);
+	public static Boolean getBooleanAttributeFromSession(String attributeName, HttpSession session, HttpServletRequest request) {
+		return getBooleanAttributeFromSession(attributeName,session,request,null);
 	}
-	public static Boolean getBooleanAttributeFromSession(String attributeName, HttpSession session, Boolean defaultValue) {
-		Object obj = session.getAttribute(attributeName);
+	public static Boolean getBooleanAttributeFromSession(String attributeName, HttpSession session, HttpServletRequest request, Boolean defaultValue) {
+		Boolean obj = getObjectFromSession(request, session, Boolean.class, attributeName);
+//		Object obj = session.getAttribute(attributeName);
 
 		if(obj == null) {
 			if(defaultValue==null) {
@@ -456,10 +473,39 @@ public class ServletUtils {
 			}
 		}
 
-		return(Boolean) obj;
+		return obj;
 	}
 
-	public static void setObjectIntoSession(HttpSession session,Object obj, String objectName){
+	@SuppressWarnings("unchecked")
+	public static void setObjectIntoSession(HttpServletRequest request, HttpSession session,Object obj, String objectName){
+		if(objectName.startsWith(Costanti.SESSION_ATTRIBUTE_TAB_KEY_PREFIX)) {
+			// lettura dalla sessione associata all'id del tab
+			String tabId = (String) request.getAttribute(Costanti.PARAMETER_TAB_KEY);
+			
+			String prevTabId = request.getParameter(Costanti.PARAMETER_PREV_TAB_KEY);
+			
+			Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
+			
+			if(sessionMap != null) {
+				Map<String, Object> mapTabId = null;
+				if(sessionMap.containsKey(tabId)) {
+					mapTabId = sessionMap.get(tabId);
+					
+				} else {
+					// primo accesso copio le informazioni dalla mappa relativa al tab precedente
+					copiaAttributiSessioneTab(session, prevTabId, tabId);
+					mapTabId = sessionMap.get(tabId);
+				}
+				
+				mapTabId.put(objectName, obj);
+			} else {
+				sessionMap = new HashMap<String, Map<String,Object>>(); 
+			}
+			
+			session.setAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP,sessionMap);
+			return;
+		}
+		
 		session.setAttribute(objectName,obj);
 	}
 
@@ -467,7 +513,45 @@ public class ServletUtils {
 		session.removeAttribute(objectName);
 	}
 	
-	public static <T> T getObjectFromSession(HttpSession session,Class<T> objectClass, String objectName){
+	@SuppressWarnings("unchecked")
+	public static <T> T getObjectFromSession(HttpServletRequest request, HttpSession session,Class<T> objectClass, String objectName){
+		if(objectName.startsWith(Costanti.SESSION_ATTRIBUTE_TAB_KEY_PREFIX)) {
+		
+			// lettura dalla sessione associata all'id del tab
+			String tabId = (String) request.getAttribute(Costanti.PARAMETER_TAB_KEY);
+			
+			String prevTabId = request.getParameter(Costanti.PARAMETER_PREV_TAB_KEY);
+			
+			Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
+			
+			if(sessionMap != null) {
+				Map<String, Object> mapTabId = null;
+				if(sessionMap.containsKey(tabId)) {
+					mapTabId = sessionMap.get(tabId);
+					
+				} else {
+					// primo accesso copio le informazioni dalla mappa relativa al tab precedente
+					copiaAttributiSessioneTab(session, prevTabId, tabId);
+					mapTabId = sessionMap.get(tabId);
+				}
+				
+				if(mapTabId.containsKey(objectName))
+					return objectClass.cast(mapTabId.get(objectName));
+			} else {
+				sessionMap = new HashMap<String, Map<String,Object>>(); 
+			}
+			
+			// leggi dall request
+//			if(request != null) {
+//				String parameterValue = request.getParameter(objectName);
+//				
+//				if(parameterValue != null) {
+//					return objectClass.cast(parameterValue);
+//				}
+//			}
+		}
+		
+		// comportamento normale
 		Object obj = session.getAttribute(objectName);
 
 		if(obj == null)
@@ -476,12 +560,75 @@ public class ServletUtils {
 		return objectClass.cast(obj);
 	}
 	
-	public static String getStringAttributeFromSession(String attributeName, HttpSession session) {
-		return getObjectFromSession(session, String.class, attributeName);
+	public static String getStringAttributeFromSession(String attributeName, HttpSession session, HttpServletRequest request) {
+		return getObjectFromSession(request, session, String.class, attributeName);
 	}
 	
-	public static Integer getIntegerAttributeFromSession(String attributeName, HttpSession session) {
-		return getObjectFromSession(session, Integer.class, attributeName);
+	public static Integer getIntegerAttributeFromSession(String attributeName, HttpSession session, HttpServletRequest request) {
+		return getObjectFromSession(request, session, Integer.class, attributeName);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static void copiaAttributiSessioneTab(HttpSession session, String idSessioneTabSrc, String idSessioneTabDest) {
+		Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
+		
+		if(sessionMap == null) {
+			sessionMap = new HashMap<String, Map<String,Object>>();
+		}
+		
+		Map<String, Object> mapDest = null;
+		if(sessionMap.containsKey(idSessioneTabSrc)) {
+			Map<String, Object> mapSrc = sessionMap.get(idSessioneTabSrc);
+			mapDest = new HashMap<String, Object>();
+			
+			mapDest.putAll(mapSrc);
+		} else {
+			mapDest = new HashMap<String, Object>();
+		}
+		
+		sessionMap.put(idSessioneTabDest, mapDest);
+		
+		session.setAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP, sessionMap);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T> T removeObjectFromSession(HttpServletRequest request, HttpSession session,Class<T> objectClass, String objectName){
+		if(objectName.startsWith(Costanti.SESSION_ATTRIBUTE_TAB_KEY_PREFIX)) {
+		
+			// lettura dalla sessione associata all'id del tab
+			String tabId = (String) request.getAttribute(Costanti.PARAMETER_TAB_KEY);
+			
+			String prevTabId = request.getParameter(Costanti.PARAMETER_PREV_TAB_KEY);
+			
+			Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
+			
+			if(sessionMap != null) {
+				Map<String, Object> mapTabId = null;
+				if(sessionMap.containsKey(tabId)) {
+					mapTabId = sessionMap.get(tabId);
+					
+				} else {
+					// primo accesso copio le informazioni dalla mappa relativa al tab precedente
+					copiaAttributiSessioneTab(session, prevTabId, tabId);
+					mapTabId = sessionMap.get(tabId);
+				}
+				
+				if(mapTabId.containsKey(objectName))
+					return objectClass.cast(mapTabId.remove(objectName));
+			} else {
+				sessionMap = new HashMap<String, Map<String,Object>>(); 
+			}
+		}
+		
+		// comportamento normale
+		Object obj = session.getAttribute(objectName);
+
+		if(obj == null)
+			return null;
+		
+		session.removeAttribute(objectName);
+
+		return objectClass.cast(obj);
 	}
 
 	public static String getParametersAsString(boolean createFirstParameter, Parameter ... parameter ) {
