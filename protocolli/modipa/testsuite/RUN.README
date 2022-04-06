@@ -75,7 +75,7 @@ Prerequisiti:
 		# ================================================
 		# -------- TrustStore --------
 
-		# TrustStore, di default, utilizzato per validare i certificati firmatari dei token di sicurezza
+		# TrustStore di default utilizzato per validare i certificati firmatari dei token di sicurezza
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.trustStore.path=/etc/govway/keys/xca/trustStore_certificati.jks
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.trustStore.tipo=jks
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.trustStore.password=123456
@@ -84,7 +84,7 @@ Prerequisiti:
 		# ================================================
 		# -------- KeyStore -------- 
 
-		# KeyStore, di default, utilizzato per firmare i token di sicurezza delle risposte
+		# KeyStore di default utilizzato per firmare i token di sicurezza delle risposte
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.keyStore.path=/etc/govway/keys/xca/ExampleServer.p12
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.keyStore.tipo=pkcs12
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.keyStore.password=123456

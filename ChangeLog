@@ -1,3 +1,9 @@
+2022-04-06  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto OP-1347
+	La configurazione di default, descritta nel file govway.properties, riguardante la funzionalità 'GovWayProxy' per Token Policy e A.A. veniva ignorata.
+
 2022-03-25  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

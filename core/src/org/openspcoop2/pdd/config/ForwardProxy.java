@@ -185,8 +185,8 @@ public class ForwardProxy implements Serializable {
 			}
 			
 			// Configurazione di default
-			if(defaultConfig==null) {
-				defaultConfig = OpenSPCoop2Properties.getInstance().getForwardProxyConfigurazioneDefault();
+			if(defaultConfigToken==null) {
+				defaultConfigToken = OpenSPCoop2Properties.getInstance().getForwardProxyConfigurazioneTokenDefault();
 			}
 					
 			
