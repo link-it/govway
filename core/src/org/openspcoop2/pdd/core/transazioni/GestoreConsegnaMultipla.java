@@ -360,6 +360,7 @@ public class GestoreConsegnaMultipla {
 			String codeAsString = code+"";
 			if(esitiDaRegistrare!=null && !esitiDaRegistrare.isEmpty() && esitiDaRegistrare.contains(codeAsString)==false){
 				this.log.debug("Non devo registrare l'informazione, poichè la transazione capostipite non è stata salvata");
+				return;
 			}
 			
 		}catch(Throwable e) {

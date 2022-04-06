@@ -1,7 +1,13 @@
 2022-04-06  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
-	Risolto OP-1347
+	Risolto Bug
+	Con la funzionaltà di consegna asincrona, se veniva disabilitato il tracciamento delle transazioni, la gestione asincrona produceva un errore durante il tentativo di registrazione delle tracce e dei diagnostici.
+
+2022-04-06  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1347
 	La configurazione di default, descritta nel file govway.properties, riguardante la funzionalità 'GovWayProxy' per Token Policy e A.A. veniva ignorata.
 
 2022-03-25  Andrea Poli <apoli@link.it>
