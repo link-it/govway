@@ -23,6 +23,7 @@
 package org.openspcoop2.pools.pdd.db;
 
 import java.sql.Connection;
+import java.time.Duration;
 import java.util.HashSet;
 
 import org.apache.commons.dbcp2.cpdsadapter.DriverAdapterCPDS;
@@ -125,13 +126,13 @@ public class DBPool {
 				// - timeBetweenEvictionRunsMillis,  indicates how long the eviction thread should sleep before 
 				// "runs" of examining idle objects. 
 				//   When non-positive, no eviction thread will be launched.
-				commonsPoolDataSource.setTimeBetweenEvictionRunsMillis(configuration.getIdle_timeBetweenEvictionRuns()); //Default: -1L
+				commonsPoolDataSource.setDurationBetweenEvictionRuns(Duration.ofMillis(configuration.getIdle_timeBetweenEvictionRuns()));
 				// - numTestsPerEvictionRun, The default number of objects to examine per run in the idle object evictor.
 				commonsPoolDataSource.setNumTestsPerEvictionRun(configuration.getIdle_numTestsPerEvictionRun()); //Default: 3
 				// - minEvictableIdleTimeMillis,  specifies the minimum amount of time that an object may sit idle in the pool 
 				// before it is eligable for eviction due to idle time. 
 				// When non-positive, no object will be dropped from the pool due to idle time alone.
-				commonsPoolDataSource.setMinEvictableIdleTimeMillis(configuration.getIdle_idleObjectTimeout()); //Default: 1800000L
+				commonsPoolDataSource.setMinEvictableIdleDuration(Duration.ofMillis(configuration.getIdle_idleObjectTimeout())); //Default: 1800000L
 			}
 			
 			return commonsPoolDataSource;
@@ -253,7 +254,7 @@ public class DBPool {
 		// public static final byte 	WHEN_EXHAUSTED_GROW 	2
 			 */
 			if(configuration.getWhen_exhausted_blockingTimeout()>0)
-				ds.setDefaultMaxWaitMillis(configuration.getWhen_exhausted_blockingTimeout()); //Default: -1L
+				ds.setDefaultMaxWait(Duration.ofMillis(configuration.getWhen_exhausted_blockingTimeout())); //Default: -1L
 			
 			// When testOnBorrow is set, the pool will attempt to validate each object before it is returned from the borrowObject() method. 
 			// (Using the provided factory's PoolableObjectFactory.validateObject(java.lang.Object) method.) 

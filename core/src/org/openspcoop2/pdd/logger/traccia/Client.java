@@ -140,6 +140,7 @@ public class Client {
 			
 		}
 		
+		System.out.println("================ ("+tipo+" extended:"+extended+") terminato =================");
 	}
 	
 	private static TransazioneBase newTransazione(boolean extended, Logger log, boolean init) throws Exception {

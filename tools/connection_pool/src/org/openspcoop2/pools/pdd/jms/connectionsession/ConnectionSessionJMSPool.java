@@ -275,7 +275,7 @@ public class ConnectionSessionJMSPool implements java.io.Serializable  {
 			configPool.setBlockWhenExhausted(true);
 		}
 		if(configuration.getWhen_exhausted_blockingTimeout()>0){
-			configPool.setMaxWaitMillis(configuration.getWhen_exhausted_blockingTimeout()); //Default: -1L
+			configPool.setMaxWait(Duration.ofMillis(configuration.getWhen_exhausted_blockingTimeout())); //Default: -1L
 		}
 
 		// When testOnBorrow is set, the pool will attempt to validate each object before it is returned from the borrowObject() method. 
