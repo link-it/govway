@@ -28,9 +28,9 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-io-2.11.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-lang-2.6.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-net-3.8.0.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-core-3.4.4-gov4j-1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-bindings-soap-3.4.4.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-ws-security-3.4.4.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-core-3.5.2-gov4j-1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-bindings-soap-3.5.2.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-ws-security-3.5.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-api-2.3.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-core-2.3.0.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-impl-2.3.4.jar"/>
@@ -74,7 +74,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/uddi4j-2.0.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xalan-2.7.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xml-resolver-1.2.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlschema-core-2.2.5.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlschema-core-2.3.0.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlsec-2.2.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cryptacular-1.2.4.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jasypt-1.9.3.jar"/>
@@ -86,7 +86,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-dom-2.3.2.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-policy-stax-2.3.2.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-stax-2.3.2.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/woodstox-core-6.2.6.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/woodstox-core-6.2.8.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/joda-time-2.10.10.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/guava-30.1.1-jre.jar"/>	
 		<var name="manifest.classpath.3parti" value="${tmp}" />

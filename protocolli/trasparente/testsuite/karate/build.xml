@@ -59,9 +59,9 @@
 			<include name="cxf-core-*.jar"/>
 			<include name="cxf-rt-rs-json-basic-*.jar"/>
 			<include name="cxf-rt-rs-security-jose-*.jar"/>
-			<include name="asm-9.1.jar"/>
-			<include name="woodstox-core-6.2.6.jar"/>
-			<include name="xmlschema-core-2.2.5.jar"/>
+			<include name="asm-9.3.jar"/>
+			<include name="woodstox-core-6.2.8.jar"/>
+			<include name="xmlschema-core-2.3.0.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/security">
 			<include name="neethi-3.1.1.jar"/>

@@ -117,10 +117,10 @@
 				<include name="${jaxp_ri_jar}" />
 			</lib>
 			<lib dir="${required_lib_loaderConsole}/cxf">
-				<include name="cxf-rt-rs-security-jose-3.4.4-gov4j-1.jar" />
-				<include name="cxf-rt-rs-json-basic-3.4.4.jar" />
-				<include name="cxf-rt-security-3.4.4.jar" />
-				<include name="cxf-core-3.4.4-gov4j-1.jar" />
+				<include name="cxf-rt-rs-security-jose-3.5.2-gov4j-1.jar" />
+				<include name="cxf-rt-rs-json-basic-3.5.2.jar" />
+				<include name="cxf-rt-security-3.5.2.jar" />
+				<include name="cxf-core-3.5.2-gov4j-1.jar" />
 			</lib>
 			<lib dir="${required_lib_loaderConsole}/jackson" >
 				<include name="*.jar" />
