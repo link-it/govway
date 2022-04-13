@@ -70,14 +70,14 @@ abstract class AbstractAutorizzazioneRoles extends AbstractAutorizzazioneBase {
     		
     		ServizioApplicativo sa = null;
     		if(idSA!=null && idSA.getNome()!=null) {
-    			sa = configurazionePdDManager.getServizioApplicativo(idSA);
+    			sa = configurazionePdDManager.getServizioApplicativo(idSA, datiInvocazione.getRequestInfo());
     		}
     		
     		StringBuilder detailsBuffer = new StringBuilder();
     		if(configurazionePdDManager.
     				autorizzazioneRoles(datiInvocazione.getPa(), datiInvocazione.getSoggettoFruitore(), sa,
     						datiInvocazione.getInfoConnettoreIngresso(), 
-    						this.getPddContext(),
+    						this.getPddContext(), datiInvocazione.getRequestInfo(),
     						this.checkRuoloRegistro, this.checkRuoloEsterno,
     						detailsBuffer)==false){
     			esito.setErroreCooperazione(IntegrationFunctionError.AUTHORIZATION_MISSING_ROLE, ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));

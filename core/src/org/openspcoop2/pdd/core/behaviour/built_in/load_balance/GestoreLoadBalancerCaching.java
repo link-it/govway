@@ -43,10 +43,10 @@ import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
@@ -106,6 +106,7 @@ public class GestoreLoadBalancerCaching {
 				throw new Exception("Cache gia' abilitata");
 			else{
 				cache = new Cache(CacheType.JCS, LOAD_BALANCER_CACHE_NAME);  // lascio JCS come default abilitato via jmx
+				cache.build();
 			}
 		}catch(Exception e){
 			throw new Exception("Abilitazione cache per i dati contenenti i dati di bilanciamento del carico non riuscita: "+e.getMessage(),e);

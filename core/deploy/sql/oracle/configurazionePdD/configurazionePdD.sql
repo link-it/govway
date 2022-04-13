@@ -224,6 +224,12 @@ CREATE TABLE configurazione
 	consegna_lifecache VARCHAR2(255),
 	-- Gestione CORS
 	canali_stato VARCHAR2(255),
+	-- Cache per la gestione delle richieste
+	dati_richieste_statocache VARCHAR2(255),
+	dati_richieste_dimensionecache VARCHAR2(255),
+	dati_richieste_algoritmocache VARCHAR2(255),
+	dati_richieste_idlecache VARCHAR2(255),
+	dati_richieste_lifecache VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints

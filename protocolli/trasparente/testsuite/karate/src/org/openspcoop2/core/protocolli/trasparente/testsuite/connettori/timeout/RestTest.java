@@ -374,31 +374,31 @@ public class RestTest extends ConfigLoader {
 		String idTransazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		assertNotNull(idTransazione);
 		
-		long esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_INVOCAZIONE);
+		long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_INVOCAZIONE);
 		if(connectTimeout) {
 			verifyKo(response, API_UNAVAILABLE, 503, API_UNAVAILABLE_MESSAGE);
 		}
 		else {
 			if(operazione.equals("sendCorrelazioneApplicativa")) {
 				if(throttlingSend) {
-					esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO);
+					esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO);
 					verifyKo(response, REQUEST_TIMED_OUT, 400, REQUEST_TIMED_OUT_MESSAGE);
 				}
 				else {
-					esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO);	
+					esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO);	
 					verifyKo(response, ENDPOINT_READ_TIMEOUT, 504, ENDPOINT_READ_TIMEOUT_MESSAGE);
 				}
 			}
 			else if(throttlingSend && operazione.contains("SendSlow") ) {
-				esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO);
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO);
 				verifyKo(response, REQUEST_TIMED_OUT, 400, REQUEST_TIMED_OUT_MESSAGE);
 			}
 			else if("sendRegistrazioneDisabilitata".equals(operazione) && "echoSendResponseSlow".equals(tipoTest)) {
-				esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_CONNESSIONE_CLIENT_NON_DISPONIBILE);
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_CONNESSIONE_CLIENT_NON_DISPONIBILE);
 				verifyOk(response, 200); // il codice http e' gia' stato impostato
 			}
 			else if("connessioneClientInterrotta".equals(operazione)) {
-				esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_CONNESSIONE_CLIENT_NON_DISPONIBILE);
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_CONNESSIONE_CLIENT_NON_DISPONIBILE);
 				verifyOk(response, 200); // il codice http e' gia' stato impostato
 			}
 			else {

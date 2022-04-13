@@ -1404,7 +1404,7 @@ public abstract class AbstractStatistiche {
 				else {
 					protocollo = ProtocolFactoryManager.getInstance().getDefaultProtocolFactory().getProtocol();
 				}
-				esitiProperties = EsitiProperties.getInstance(this.logger, protocollo);
+				esitiProperties = EsitiProperties.getInstanceFromProtocolName(this.logger, protocollo);
 				esitoConsegnaMultipla = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA);
 				esitoConsegnaMultiplaInCorso = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_IN_CORSO);
 				esitoConsegnaMultiplaFallita = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_FALLITA);

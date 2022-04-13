@@ -48,6 +48,7 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.slf4j.Logger;
 
@@ -82,6 +83,11 @@ public class ValidatoreMessaggiApplicativi {
 	private boolean validateSoapAction = true;
 	/** Buffer */
 	private boolean bufferMessage_readOnly = true;
+	
+	/** PddContext */
+	private PdDContext pddContext;
+	/** RequestInfo */
+	private RequestInfo requestInfo;
 	
 	
 	
@@ -179,12 +185,18 @@ public class ValidatoreMessaggiApplicativi {
 		
 		this.logger = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance(this.message.getFactory());
+
+		this.pddContext = pddContext;
+		
+		if(this.pddContext!=null && this.pddContext.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+			this.requestInfo = (RequestInfo) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+		}
 		
 		try{
 			if(readWSDLAccordoServizio){
-				this.accordoServizioWrapper = this.registroServiziManager.getWsdlAccordoServizio(idServizio,InformationApiSource.SPECIFIC,true);
+				this.accordoServizioWrapper = this.registroServiziManager.getWsdlAccordoServizio(idServizio,InformationApiSource.SPECIFIC,true, this.requestInfo);
 			}else{
-				this.accordoServizioWrapper = this.registroServiziManager.getWsdlAccordoServizio(idServizio,InformationApiSource.REGISTRY,true);
+				this.accordoServizioWrapper = this.registroServiziManager.getWsdlAccordoServizio(idServizio,InformationApiSource.REGISTRY,true, this.requestInfo);
 			}
 		}catch(DriverRegistroServiziNotFound e){
 			this.logger.error("Riscontrato errore durante la ricerca dei wsdl/xsd che definiscono l'accordo di servizio: "+e.getMessage(),e);
@@ -219,8 +231,8 @@ public class ValidatoreMessaggiApplicativi {
 		
 		try{
 			String idTransazione = null;
-			if(pddContext!=null) {
-				idTransazione = (String)pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+			if(this.pddContext!=null) {
+				idTransazione = (String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 			}
 			boolean addPrefixError = false; // utilizzo il prefisso indicato in error.properties
 			this.wsdlValidator = new WSDLValidator(this.message, this.xmlUtils, this.accordoServizioWrapper, this.logger, 

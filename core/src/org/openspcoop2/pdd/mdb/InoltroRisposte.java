@@ -77,7 +77,6 @@ import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.Tracciamento;
 import org.openspcoop2.pdd.services.core.FlowProperties;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
@@ -99,6 +98,7 @@ import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.StatefulMessage;
 import org.openspcoop2.protocol.sdk.tracciamento.EsitoElaborazioneMessaggioTracciato;
 import org.openspcoop2.protocol.sdk.validator.IValidatoreErrori;
@@ -248,7 +248,7 @@ public class InoltroRisposte extends GenericLib{
 		msgDiag.mediumDebug("Esamina modalita' di ricezione (PdD/Router)...");
 		boolean existsSoggetto = false;
 		try{
-			existsSoggetto = configurazionePdDManager.existsSoggetto(soggettoMittente);
+			existsSoggetto = configurazionePdDManager.existsSoggetto(soggettoMittente, requestInfo);
 		}catch(Exception e){
 			msgDiag.logErroreGenerico(e, "existsSoggetto("+soggettoMittente.toString()+")");  
 			openspcoopstate.releaseResource();
@@ -402,17 +402,13 @@ public class InoltroRisposte extends GenericLib{
 			String erroreRicercaConnettore = null;
 			if(functionAsRouter){
 				// Un router puo' inoltrare solo verso il connettore del soggetto destinatario
-				msgDiag.logPersonalizzato("(Router) "+msgDiag.getMessaggio("routingTable.esaminaInCorso"), 
-						msgDiag.getLivello("routingTable.esaminaInCorso"),
-						msgDiag.getCodice("routingTable.esaminaInCorso"));
+				msgDiag.logPersonalizzato_prefix("(Router) ","routingTable.esaminaInCorso");
 				try{
-					connettore = configurazionePdDManager.getForwardRoute(soggettoDestinatario,functionAsRouter);
+					connettore = configurazionePdDManager.getForwardRoute(soggettoDestinatario,functionAsRouter, requestInfo);
 				}catch(Exception e){
 					erroreRicercaConnettore = e.getMessage();
 				}
-				msgDiag.logPersonalizzato("(Router) "+msgDiag.getMessaggio("routingTable.esaminaEffettuata"), 
-						msgDiag.getLivello("routingTable.esaminaEffettuata"),
-						msgDiag.getCodice("routingTable.esaminaEffettuata"));			
+				msgDiag.logPersonalizzato_prefix("(Router) ","routingTable.esaminaEffettuata");			
 			}else{
 				if(configurazionePdDManager.isUtilizzoIndirizzoTelematico() && busta.getIndirizzoDestinatario()!=null){
 					msgDiag.logPersonalizzato("routingTable.utilizzoIndirizzoTelematico");
@@ -428,21 +424,21 @@ public class InoltroRisposte extends GenericLib{
 						try{
 							// provo a cercare un connettore specializzato
 							//log.info("Cerco busta per Mittente["+soggettoMittente.toString()+"] Destinatario["+soggettoDestinatario.toString()+"] Servizio["+busta.getTipoServizio()+busta.getServizio()+"] Azione["+busta.getAzione()+"]");
-							connettore = configurazionePdDManager.getForwardRoute(soggettoMittente,idServizio,functionAsRouter);
+							connettore = configurazionePdDManager.getForwardRoute(soggettoMittente,idServizio,functionAsRouter, requestInfo);
 						}catch(Exception e){
 							erroreRicercaConnettore = "RicercaConnettoreSpecializzato, "+e.getMessage();
 						}
 						// provo ad inviarlo solo al soggetto
 						if(connettore==null){
 							try{
-								connettore = configurazionePdDManager.getForwardRoute(soggettoDestinatario,functionAsRouter);
+								connettore = configurazionePdDManager.getForwardRoute(soggettoDestinatario,functionAsRouter, requestInfo);
 							}catch(Exception e){
 								erroreRicercaConnettore = "\nRicercaConnettore, "+e.getMessage();
 							}
 						}
 					}else{
 						try{
-							connettore = configurazionePdDManager.getForwardRoute(soggettoDestinatario,functionAsRouter);
+							connettore = configurazionePdDManager.getForwardRoute(soggettoDestinatario,functionAsRouter, requestInfo);
 						}catch(Exception e){
 							erroreRicercaConnettore = e.getMessage();
 						}
@@ -681,7 +677,7 @@ public class InoltroRisposte extends GenericLib{
 				
 				try{
 					flowProperties = this.getFlowProperties(busta,configurazionePdDManager,openspcoopstate.getStatoRisposta(),
-							msgDiag,protocolFactory,pa);
+							msgDiag,protocolFactory,pa, requestInfo);
 				}catch(Exception e){
 					msgDiag.logErroreGenerico(e, "RaccoltaFlowParameter_MTOM_Security");
 					ejbUtils.rollbackMessage("RaccoltaFlowParameter_MTOM_Security non riuscita:"+e.getMessage(), esito);
@@ -749,11 +745,11 @@ public class InoltroRisposte extends GenericLib{
 						contextParameters.setRemoveAllWsuIdRef(this.propertiesReader.isRemoveAllWsuIdRef());
 						contextParameters.setIdFruitore(soggettoMittente);
 						contextParameters.setIdServizio(idServizio);
-						contextParameters.setPddFruitore(registroServiziManager.getIdPortaDominio(soggettoMittente, null));
-						contextParameters.setPddErogatore(registroServiziManager.getIdPortaDominio(idServizio.getSoggettoErogatore(), null));
+						contextParameters.setPddFruitore(registroServiziManager.getIdPortaDominio(soggettoMittente, null, requestInfo));
+						contextParameters.setPddErogatore(registroServiziManager.getIdPortaDominio(idServizio.getSoggettoErogatore(), null, requestInfo));
 						messageSecurityContext = new MessageSecurityFactory().getMessageSecurityContext(contextParameters);
 						messageSecurityContext.setOutgoingProperties(securityConfig.getFlowParameters());
-						if(messageSecurityContext.processOutgoing(responseMessage,pddContext.getContext(),
+						if(messageSecurityContext.processOutgoing(responseMessage,pddContext,
 								transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null) == false){
 							msgDiag.logErroreGenerico(messageSecurityContext.getMsgErrore(), "Costruzione header MessageSecurity");
 							String motivazioneErrore = "Applicazione MessageSecurity non riuscita:"+messageSecurityContext.getMsgErrore();
@@ -953,7 +949,7 @@ public class InoltroRisposte extends GenericLib{
 					esitoHandler = protocolFactory.createEsitoBuilder().getEsito(null,
 							200, requestInfo.getProtocolServiceBinding(),
 							responseMessage, null, 
-							(pddContext!=null ? pddContext.getContext() : null));			
+							pddContext);			
 					
 				}
 			}
@@ -1003,7 +999,7 @@ public class InoltroRisposte extends GenericLib{
 			connettoreMsg.setProtocolFactory(protocolFactory);
 			connettoreMsg.setMsgDiagnostico(msgDiag);
 			connettoreMsg.setState(openspcoopstate.getStatoRichiesta());
-			connettoreMsg.initPolicyGestioneToken(configurazionePdDManager);
+			connettoreMsg.initPolicyGestioneToken(configurazionePdDManager, requestInfo);
 			
 			// Risposte del connettore
 			int codiceRitornato = -1;
@@ -1404,9 +1400,7 @@ public class InoltroRisposte extends GenericLib{
 							String proprietarioMessaggio = msgConnectionReply.getProprietario(InoltroRisposte.ID_MODULO);
 							if(TimerGestoreMessaggi.ID_MODULO.equals(proprietarioMessaggio)){
 								msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_RISPOSTA, bustaConnectionReply.getID());
-								msgDiag.logPersonalizzato("(http reply)"+msgDiag.getMessaggio("ricezioneSoapMessage.msgGiaPresente"), 
-										msgDiag.getLivello("ricezioneSoapMessage.msgGiaPresente"),
-										msgDiag.getCodice("ricezioneSoapMessage.msgGiaPresente"));
+								msgDiag.logPersonalizzato_prefix("(http reply) ","ricezioneSoapMessage.msgGiaPresente");
 								String msg = "(http reply)" + msgDiag.getMessaggio_replaceKeywords("ricezioneSoapMessage.msgGiaPresente");
 								if(this.propertiesReader.isMsgGiaInProcessamento_useLock()) {
 									msgConnectionReply._deleteMessageWithLock(msg,this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(),
@@ -1607,7 +1601,8 @@ public class InoltroRisposte extends GenericLib{
 			ConfigurazionePdDManager configurazionePdDManager, IState state,
 			MsgDiagnostico msgDiag, 
 			org.openspcoop2.protocol.sdk.IProtocolFactory<?> protocolFactory,
-			PortaApplicativa paFind)throws DriverConfigurazioneException{
+			PortaApplicativa paFind,
+			RequestInfo requestInfo)throws DriverConfigurazioneException{
 
 		//	Proprieta' Message-Security relative alla spedizione della busta
 
@@ -1690,7 +1685,7 @@ public class InoltroRisposte extends GenericLib{
 					Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRisposta.getRiferimentoMsgBustaRichiedenteServizio());
 					IDPortaDelegata idPD = new IDPortaDelegata();
 					idPD.setNome(integrazione.getNomePorta());
-					PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD);
+					PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD, requestInfo);
 					flowProperties.messageSecurity = configurazionePdDManager.getPD_MessageSecurityForSender(pd);
 					flowProperties.mtom = configurazionePdDManager.getPD_MTOMProcessorForSender(pd);
 

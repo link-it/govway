@@ -39,10 +39,10 @@ import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalE
 import org.openspcoop2.pdd.services.service.IRicezioneService;
 import org.openspcoop2.pdd.services.service.RicezioneContenutiApplicativiHTTPtoSOAPService;
 import org.openspcoop2.pdd.services.service.RicezioneContenutiApplicativiServiceUtils;
-import org.openspcoop2.protocol.engine.RequestInfo;
-import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IDService;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 

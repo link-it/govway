@@ -73,7 +73,7 @@ public abstract class MessageSecuritySender {
     	return this.codiceErrore;
     }
     
-    protected abstract boolean process(OpenSPCoop2Message message);
+    protected abstract boolean process(OpenSPCoop2Message message, org.openspcoop2.utils.Map<Object> ctx);
 }
 
 

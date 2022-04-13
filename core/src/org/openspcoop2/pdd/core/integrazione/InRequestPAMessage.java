@@ -24,8 +24,8 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.core.id.IDServizio;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 
 /**
  * InRequestPAMessage

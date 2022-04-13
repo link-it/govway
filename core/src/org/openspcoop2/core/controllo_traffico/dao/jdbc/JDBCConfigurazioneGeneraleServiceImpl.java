@@ -172,15 +172,15 @@ public class JDBCConfigurazioneGeneraleServiceImpl extends JDBCConfigurazioneGen
 		lstObjects.add(new JDBCObject(configurazioneGenerale_rateLimiting.getTipoErroreIncludiDescrizione(), ConfigurazioneGenerale.model().RATE_LIMITING.TIPO_ERRORE_INCLUDI_DESCRIZIONE.getFieldType()));
 		Cache configurazioneGenerale_cache = configurazioneGenerale.getCache();
 		sqlQueryObjectUpdate.addUpdateField(this.getConfigurazioneGeneraleFieldConverter().toColumn(ConfigurazioneGenerale.model().CACHE.CACHE,false), "?");
-		lstObjects.add(new JDBCObject(configurazioneGenerale_cache.getCache(), ConfigurazioneGenerale.model().CACHE.CACHE.getFieldType()));
+		lstObjects.add(new JDBCObject(configurazioneGenerale_cache!=null ? configurazioneGenerale_cache.getCache() : false, ConfigurazioneGenerale.model().CACHE.CACHE.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getConfigurazioneGeneraleFieldConverter().toColumn(ConfigurazioneGenerale.model().CACHE.SIZE,false), "?");
-		lstObjects.add(new JDBCObject(configurazioneGenerale_cache.getSize(), ConfigurazioneGenerale.model().CACHE.SIZE.getFieldType()));
+		lstObjects.add(new JDBCObject(configurazioneGenerale_cache!=null ? configurazioneGenerale_cache.getSize() : null, ConfigurazioneGenerale.model().CACHE.SIZE.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getConfigurazioneGeneraleFieldConverter().toColumn(ConfigurazioneGenerale.model().CACHE.ALGORITHM,false), "?");
-		lstObjects.add(new JDBCObject(configurazioneGenerale_cache.getAlgorithm(), ConfigurazioneGenerale.model().CACHE.ALGORITHM.getFieldType()));
+		lstObjects.add(new JDBCObject(configurazioneGenerale_cache!=null ? configurazioneGenerale_cache.getAlgorithm() : null, ConfigurazioneGenerale.model().CACHE.ALGORITHM.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getConfigurazioneGeneraleFieldConverter().toColumn(ConfigurazioneGenerale.model().CACHE.IDLE_TIME,false), "?");
-		lstObjects.add(new JDBCObject(configurazioneGenerale_cache.getIdleTime(), ConfigurazioneGenerale.model().CACHE.IDLE_TIME.getFieldType()));
+		lstObjects.add(new JDBCObject(configurazioneGenerale_cache!=null ? configurazioneGenerale_cache.getIdleTime() : null, ConfigurazioneGenerale.model().CACHE.IDLE_TIME.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getConfigurazioneGeneraleFieldConverter().toColumn(ConfigurazioneGenerale.model().CACHE.LIFE_TIME,false), "?");
-		lstObjects.add(new JDBCObject(configurazioneGenerale_cache.getLifeTime(), ConfigurazioneGenerale.model().CACHE.LIFE_TIME.getFieldType()));
+		lstObjects.add(new JDBCObject(configurazioneGenerale_cache!=null ? configurazioneGenerale_cache.getLifeTime() : null, ConfigurazioneGenerale.model().CACHE.LIFE_TIME.getFieldType()));
 
 		if(isUpdate) {
 			// Update configurazioneGenerale

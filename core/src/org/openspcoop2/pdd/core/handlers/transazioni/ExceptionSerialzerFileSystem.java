@@ -68,7 +68,7 @@ public class ExceptionSerialzerFileSystem {
 		if(registraTracciaRichiesta && transaction.getTracciaRichiesta()!=null){
 			// Registro tracce non registrate su database su file system
 			try{
-				transaction.getTracciaRichiesta().addPropertyInBusta(Costanti.ID_TRANSAZIONE, idTransazione);
+				transaction.getTracciaRichiesta().addPropertyInBusta(Costanti.ID_TRANSAZIONE.getValue(), idTransazione);
 				org.openspcoop2.core.tracciamento.Traccia tr = transaction.getTracciaRichiesta().getTraccia();
 				ByteArrayOutputStream bout = new ByteArrayOutputStream();
 				tr.writeTo(bout, WriteToSerializerType.XML_JAXB);
@@ -84,7 +84,7 @@ public class ExceptionSerialzerFileSystem {
 		if(registraTracciaRisposta && transaction.getTracciaRisposta()!=null){
 			// Registro tracce non registrate su database su file system
 			try{
-				transaction.getTracciaRisposta().addPropertyInBusta(Costanti.ID_TRANSAZIONE, idTransazione);
+				transaction.getTracciaRisposta().addPropertyInBusta(Costanti.ID_TRANSAZIONE.getValue(), idTransazione);
 				org.openspcoop2.core.tracciamento.Traccia tr = transaction.getTracciaRisposta().getTraccia();
 				ByteArrayOutputStream bout = new ByteArrayOutputStream();
 				tr.writeTo(bout, WriteToSerializerType.XML_JAXB);

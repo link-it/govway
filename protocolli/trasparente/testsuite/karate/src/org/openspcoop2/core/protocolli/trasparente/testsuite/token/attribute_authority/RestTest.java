@@ -937,35 +937,35 @@ public class RestTest extends ConfigLoader {
 		String idTransazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		assertNotNull(idTransazione);
 		
-		long esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
+		long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
 		if(msgErrore!=null) {
 			int code = -1;
 			String error = null;
 			String msg = null;
 			if(tipoTest.contains("authzContenuti")) {
-				esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE);
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE);
 				code = 403;
 				error = AUTHORIZATION_CONTENT_DENY;
 				msg = AUTHORIZATION_CONTENT_DENY_MESSAGE;
 			}
 			else if(tipoTest.contains("authzTokenClaims")) {
-				esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE);
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE);
 				code = 403;
 				error = AUTHORIZATION_TOKEN_DENY;
 				msg = AUTHORIZATION_TOKEN_DENY_MESSAGE;
 			}
 			else if(tipoTest.contains("authzXacmlPolicy")) {
-				esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE);
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE);
 				code = 403;
 				error = AUTHORIZATION_POLICY_DENY;
 				msg = AUTHORIZATION_POLICY_DENY_MESSAGE;
 			}
 			else if(tipoTest.contains("trasformazione")) {
-				esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.HTTP_5xx);
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.HTTP_5xx);
 				code = 500;
 			}
 			else if(tipoTest.contains("connettoriMultipli")) {
-				esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_4XX);
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_4XX);
 				code = 400;
 				error = BAD_REQUEST;
 				msg = BAD_REQUEST_MESSAGE;

@@ -162,7 +162,7 @@ public class Utilities extends ConfigLoader {
 		String idTransazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		assertNotNull(idTransazione);
 		
-		long esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
+		long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
 		
 		if(tipoErrore!=null) {
 			
@@ -171,37 +171,37 @@ public class Utilities extends ConfigLoader {
 			String msg = null;
 			
 			if(CREDENZIALI_NON_CORRETTE.equals(tipoErrore)) {
-				esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTENTICAZIONE);
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTENTICAZIONE);
 				code = 401;
 				error = AUTHENTICATION_FAILED;
 				msg = AUTHENTICATION_FAILED_MESSAGE;
 			}
 			else if(CREDENZIALI_NON_FORNITE.equals(tipoErrore)) {
-				esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTENTICAZIONE);
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTENTICAZIONE);
 				code = 401;
 				error = AUTHENTICATION_REQUIRED;
 				msg = AUTHENTICATION_REQUIRED_MESSAGE;
 			}
 			else if(AUTORIZZAZIONE_NEGATA.equals(tipoErrore)) {
-				esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE);
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE);
 				code = 403;
 				error = AUTHORIZATION_DENY;
 				msg = AUTHORIZATION_DENY_MESSAGE;
 			}
 			else if(CREDENZIALI_PROXY_NON_FORNITE.equals(tipoErrore)) {
-				esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTENTICAZIONE);
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTENTICAZIONE);
 				code = 401;
 				error = PROXY_AUTHENTICATION_REQUIRED;
 				msg = PROXY_AUTHENTICATION_REQUIRED_MESSAGE;
 			}
 			else if(CREDENZIALI_PROXY_NON_CORRETTE.equals(tipoErrore)) {
-				esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTENTICAZIONE);
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTENTICAZIONE);
 				code = 401;
 				error = PROXY_AUTHENTICATION_FAILED;
 				msg = PROXY_AUTHENTICATION_FAILED_MESSAGE;
 			}
 			else if(CREDENZIALI_PROXY_FORNITE_NON_CONFORMI.equals(tipoErrore)) {
-				esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTENTICAZIONE);
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTENTICAZIONE);
 				code = 401;
 				error = FORWARD_PROXY_AUTHENTICATION_REQUIRED;
 				msg = FORWARD_PROXY_AUTHENTICATION_REQUIRED_MESSAGE;

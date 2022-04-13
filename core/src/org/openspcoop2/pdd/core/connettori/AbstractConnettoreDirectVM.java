@@ -37,8 +37,8 @@ import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.messages.DirectVMConnectorInMessage;
 import org.openspcoop2.pdd.services.connector.messages.DirectVMConnectorOutMessage;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.constants.IDService;
 import org.openspcoop2.utils.date.DateManager;
 
 /**

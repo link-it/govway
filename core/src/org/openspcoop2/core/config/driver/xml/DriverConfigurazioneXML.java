@@ -41,6 +41,7 @@ import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi;
 import org.openspcoop2.core.config.AccessoDatiGestioneToken;
 import org.openspcoop2.core.config.AccessoDatiKeystore;
+import org.openspcoop2.core.config.AccessoDatiRichieste;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.Configurazione;
@@ -2109,6 +2110,24 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 			throw new DriverConfigurazioneNotFound("[getAccessoDatiKeystore] Informazioni di accesso ai dati per la gestione dei keystore non trovati");
 		
 		return this.openspcoop.getConfigurazione().getAccessoDatiKeystore();
+		
+	}
+	
+	/**
+	 * Restituisce l'accesso ai dati per la gestione delle richieste
+	 *
+	 * @return AccessoDatiRichieste
+	 * 
+	 */
+	@Override
+	public AccessoDatiRichieste getAccessoDatiRichieste() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+	
+		refreshConfigurazioneXML();
+
+		if(this.openspcoop.getConfigurazione().getAccessoDatiRichieste()==null)
+			throw new DriverConfigurazioneNotFound("[getAccessoDatiRichieste] Informazioni di accesso ai dati per la gestione delle richieste non trovati");
+		
+		return this.openspcoop.getConfigurazione().getAccessoDatiRichieste();
 		
 	}
 	

@@ -24,6 +24,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 
 /**
  * AbstractDatiInvocazione
@@ -37,6 +38,8 @@ public abstract class AbstractDatiInvocazione {
 	private PdDContext pddContext;
 	
 	private InfoConnettoreIngresso infoConnettoreIngresso;
+	
+	private RequestInfo requestInfo;
 	
 	private IDServizio idServizio;
 	
@@ -78,6 +81,13 @@ public abstract class AbstractDatiInvocazione {
 	}
 	public void setState(IState state) {
 		this.state = state;
+	}
+	
+	public RequestInfo getRequestInfo() {
+		return this.requestInfo;
+	}
+	public void setRequestInfo(RequestInfo requestInfo) {
+		this.requestInfo = requestInfo;
 	}
 	
 	public String getKeyCache(){

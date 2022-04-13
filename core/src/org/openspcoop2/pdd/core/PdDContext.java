@@ -24,6 +24,7 @@ package org.openspcoop2.pdd.core;
 import java.io.Serializable;
 
 import org.openspcoop2.protocol.sdk.Context;
+import org.openspcoop2.utils.MapKey;
 
 /**
  * PdDContext
@@ -44,7 +45,7 @@ public class PdDContext extends Context implements Serializable {
 	 */
 	private static final long serialVersionUID = -2577197242840238762L;
 	
-	public static String getValue(String key,PdDContext pddContext){
+	public static String getValue(MapKey<String> key,PdDContext pddContext){
 		String value = null;
 		if(pddContext!=null){
 			Object o = pddContext.getObject(key);
@@ -59,7 +60,7 @@ public class PdDContext extends Context implements Serializable {
 	public Object clone() {
 		PdDContext newPdDContext = new PdDContext();
 		if(!this.isEmpty()) {
-			for (String key : this.ctx.keySet()) {
+			for (MapKey<String> key : this.keySet()) {
 				Object o = this.getObject(key);
 				newPdDContext.addObject(key, o);
 			}

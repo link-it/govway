@@ -179,7 +179,7 @@ public class ConnettoreHTTPCORE5 extends ConnettoreExtBaseHTTP {
 
 			// Creazione Connessione
 			StringBuilder bfDebug =new StringBuilder();
-			ConnettoreHTTPCORE5_connection httpClient = ConnettoreHTTPCORE5_connectionManager.getConnettoreNIO(this.httpConnectionConfig, this.loader, this.logger, bfDebug);
+			ConnettoreHTTPCORE5_connection httpClient = ConnettoreHTTPCORE5_connectionManager.getConnettoreNIO(this.httpConnectionConfig, this.loader, this.logger, bfDebug, this.requestInfo);
 			if(this.debug) {
 				this.logger.debug("Creazione Connessione ...");
 				this.logger.debug(bfDebug.toString());

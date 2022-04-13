@@ -20,6 +20,8 @@
 
 package org.openspcoop2.protocol.sdk.constants;
 
+import org.openspcoop2.utils.Map;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.TipiDatabase;
 
 /**
@@ -56,8 +58,8 @@ public class CostantiProtocollo {
     public static final String FAULT_CODE_VERSION_MISMATCH = "VersionMismatch";
      
     /** Definisce le costanti che contengono informazioni per retro-compatibilita' */
-	public final static String BACKWARD_COMPATIBILITY_ACTOR = "BACKWARD_COMPATIBILITY_ACTOR";
-	public final static String BACKWARD_COMPATIBILITY_PREFIX_FAULT_CODE = "BACKWARD_COMPATIBILITY_PREFIX_FAULT_CODE";
+	public final static MapKey<String> BACKWARD_COMPATIBILITY_ACTOR = Map.newMapKey("BACKWARD_COMPATIBILITY_ACTOR");
+	public final static MapKey<String> BACKWARD_COMPATIBILITY_PREFIX_FAULT_CODE = Map.newMapKey("BACKWARD_COMPATIBILITY_PREFIX_FAULT_CODE");
     
     /** String che rappresenta il messaggio per un qualsiasi errore di processamento: SistemaNonDisponibile*/
     public final static String SISTEMA_NON_DISPONIBILE = "Sistema non disponibile";

@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/oracle/configurazionePdD/2022-04-11-patch.sql

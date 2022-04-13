@@ -450,7 +450,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 								java.security.cert.Certificate certificatoCheck = null;
 								try {
 									ServizioApplicativo sa = configIntegrationReader.getServizioApplicativo(idServizioApplicativoSubjectIssuerCheck);
-									certificatoCheck = AbstractModIValidazioneSintatticaCommons.readServizioApplicativoByCertificate(sa);
+									certificatoCheck = AbstractModIValidazioneSintatticaCommons.readServizioApplicativoByCertificate(sa, null);
 								}catch(Throwable t) {
 									throw new ProtocolException("Errore non atteso durante la verfica del certificato caricato in "+ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL+": "+t.getMessage(),t);
 								}

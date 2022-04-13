@@ -83,6 +83,7 @@ public class GestoreCacheResponseCaching {
 				throw new Exception("Cache gia' abilitata");
 			else{
 				cache = new Cache(CacheType.JCS, RESPONSE_CACHING_CACHE_NAME);  // lascio JCS come default abilitato via jmx
+				cache.build();
 			}
 		}catch(Exception e){
 			throw new Exception("Abilitazione cache per i dati contenenti le risposte salvate non riuscita: "+e.getMessage(),e);

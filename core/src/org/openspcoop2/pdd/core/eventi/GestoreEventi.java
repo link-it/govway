@@ -111,7 +111,7 @@ public class GestoreEventi {
     	String modulo = ID_MODULO+"."+evento.getTipo()+"."+evento.getCodice();
 		try{
 			dbManager = DBTransazioniManager.getInstance();
-			r = dbManager.getResource(this.properties.getIdentitaPortaDefault(null), modulo, evento.getIdTransazione(), logError);
+			r = dbManager.getResource(this.properties.getIdentitaPortaDefaultWithoutProtocol(), modulo, evento.getIdTransazione(), logError);
 			if(r==null){
 				throw new Exception("Risorsa al database non disponibile");
 			}
@@ -123,7 +123,7 @@ public class GestoreEventi {
 		}finally{
 			try{
 				if(r!=null)
-					dbManager.releaseResource(this.properties.getIdentitaPortaDefault(null), modulo, r, logError);
+					dbManager.releaseResource(this.properties.getIdentitaPortaDefaultWithoutProtocol(), modulo, r, logError);
 			}catch(Exception e){}
 		}
     }

@@ -22,17 +22,20 @@ package org.openspcoop2.protocol.utils;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Map;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.resources.MapReader;
 import org.slf4j.Logger;
@@ -51,7 +54,7 @@ public class EsitiProperties {
 
 
 	/** Copia Statica */
-	private static ConcurrentHashMap<String, EsitiProperties> esitiPropertiesMap = null;
+	private static Map<EsitiProperties> esitiPropertiesMap = null;
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
@@ -81,7 +84,7 @@ public class EsitiProperties {
 	@SuppressWarnings("unused")
 	private String protocollo = null;
 	
-	protected final static String NO_PROTOCOL_CONFIG = "NO_PROTOCOL_CONFIG"; 
+	protected final static MapKey<String> NO_PROTOCOL_CONFIG = CostantiLabel.NO_PROTOCOL_MAP_KEY; 
 	
 	/**
 	 * Viene chiamato in causa per istanziare il properties reader
@@ -146,13 +149,13 @@ public class EsitiProperties {
 
 		if(EsitiProperties.esitiPropertiesMap==null){
 			
-			EsitiProperties.esitiPropertiesMap = new ConcurrentHashMap<>();
+			EsitiProperties.esitiPropertiesMap = new Map<EsitiProperties>();
 			
 			// Aggiungo configurazione speciale usato dal metodo org.openspcoop2.protocol.utils.EsitiConfigUtils
 			// e usata anche per validare il file di properties esiti.properties
 			EsitiProperties esitiProperties = new EsitiProperties(confDir,log,null);
 			esitiProperties.validaConfigurazione(loader);
-			EsitiProperties.esitiPropertiesMap.put(NO_PROTOCOL_CONFIG, esitiProperties);
+			EsitiProperties.esitiPropertiesMap.put(CostantiLabel.NO_PROTOCOL_MAP_KEY, esitiProperties);
 			
 			Enumeration<String> enP = protocols.keys();
 			while (enP.hasMoreElements()) {
@@ -160,14 +163,68 @@ public class EsitiProperties {
 				IProtocolFactory<?> pf = protocols.get(protocol);
 				
 				EsitiProperties esitiPropertiesByProtocol = new EsitiProperties(confDir,log,pf);
-				EsitiProperties.esitiPropertiesMap.put(protocol, esitiPropertiesByProtocol);
+				
+				// init reader
+				
+				esitiPropertiesByProtocol.initEsitiCodeSenzaFiltri();
+				esitiPropertiesByProtocol.initEsitiCode();
+				esitiPropertiesByProtocol.initEsitiCodeOk();
+				esitiPropertiesByProtocol.initEsitiCodeOk_senzaFaultApplicativo();
+				esitiPropertiesByProtocol.initEsitiCodeKo();
+				esitiPropertiesByProtocol.initEsitiCodeKo_senzaFaultApplicativo();
+				esitiPropertiesByProtocol.initEsitiCodeFaultApplicativo();
+				
+				esitiPropertiesByProtocol.initEsitiCodeRichiestaScartate();
+				esitiPropertiesByProtocol.initEsitiCodeErroriConsegna();
+				esitiPropertiesByProtocol.initEsitiCodeForSoapFaultIdentificationMode();
+				esitiPropertiesByProtocol.initEsitiCodeForContextPropertyIdentificationMode();
+				esitiPropertiesByProtocol.initEsitiCodeOrderLabel();
+				esitiPropertiesByProtocol.initEsitiOrderLabel();
+				
+				esitiPropertiesByProtocol.initEsitoName();
+				esitiPropertiesByProtocol.initEsitoDescription();
+				esitiPropertiesByProtocol.initEsitoLabel();
+				esitiPropertiesByProtocol.initEsitoLabelSyntetic();
+				esitiPropertiesByProtocol.initEsitoIdentificationMode();
+				esitiPropertiesByProtocol.initEsitoIdentificationModeSoapFaultList();
+				esitiPropertiesByProtocol.initEsitoIdentificationModeContextPropertyList();
+				
+				EsitoTransazioneName[] esiti = EsitoTransazioneName.values();
+				for (EsitoTransazioneName esitoTransazioneName : esiti) {
+					
+					if(EsitoTransazioneName.ERRORE_PROTOCOLLO.equals(esitoTransazioneName) && !esitiPropertiesByProtocol.erroreProtocollo){
+						continue;
+					}
+					else if(EsitoTransazioneName.ERRORE_SERVER.equals(esitoTransazioneName) && !esitiPropertiesByProtocol.faultEsterno){
+						continue;
+					}
+					else if(EsitoTransazioneName.CUSTOM.equals(esitoTransazioneName)) {
+						continue;
+					}
+					
+					int code = esitiPropertiesByProtocol.convertoToCode(esitoTransazioneName);
+					esitiPropertiesByProtocol.initMapEsitoTransazione(esitoTransazioneName, code, CostantiProtocollo.ESITO_TRANSACTION_CONTEXT_STANDARD);	
+				}
+				
+				esitiPropertiesByProtocol.initEsitiTransactionContextCode();
+				esitiPropertiesByProtocol.initEsitiTransactionContextCodeOrderLabel();
+				esitiPropertiesByProtocol.initEsitiTransactionContextOrderLabel();
+				esitiPropertiesByProtocol.initEsitoTransactionContextLabel();
+				esitiPropertiesByProtocol.initEsitoTransactionContextDefault();
+				esitiPropertiesByProtocol.initEsitoTransactionContextHeaderTrasportoName();
+				esitiPropertiesByProtocol.initEsitoTransactionContextFormBasedPropertyName();
+				esitiPropertiesByProtocol.initEsitoTransactionContextHeaderTrasportoDynamicIdentification();
+				esitiPropertiesByProtocol.initEsitoTransactionContextHeaderFormBasedDynamicIdentification();
+				
+				// init mappa delle protocol factory
+				EsitiProperties.esitiPropertiesMap.put(ProtocolUtils.protocolToMapKey(protocol), esitiPropertiesByProtocol);
 			}
 						
 		}
 
 	}
 
-	public static boolean isInitializedProtocol(String protocol) {
+	public static boolean isInitializedProtocol(MapKey<String> protocol) {
 		return EsitiProperties.esitiPropertiesMap!=null && EsitiProperties.esitiPropertiesMap.containsKey(protocol);
 	}
 	
@@ -178,7 +235,13 @@ public class EsitiProperties {
 	 * @throws Exception 
 	 * 
 	 */
-	public static EsitiProperties getInstance(Logger log,String protocol) throws ProtocolException{
+	public static EsitiProperties getInstanceFromProtocolName(Logger log,String protocol) throws ProtocolException{
+		return getInstance(log,ProtocolUtils.protocolToMapKey(protocol));
+	}
+	public static EsitiProperties getInstance(Logger log,IProtocolFactory<?> protocol) throws ProtocolException{
+		return getInstance(log,protocol.getProtocolMapKey());
+	}
+	public static EsitiProperties getInstance(Logger log,MapKey<String> protocol) throws ProtocolException{
 
 		if(EsitiProperties.esitiPropertiesMap==null)
 			throw new ProtocolException("EsitiProperties not initialized (use init method in factory)");
@@ -340,10 +403,45 @@ public class EsitiProperties {
 		EsitoTransazioneName nameEnum = EsitoTransazioneName.convertoTo(name);
 		return convertToEsitoTransazione(nameEnum, code, tipoContext);
 	}
+	private Map<EsitoTransazione> mapEsitoTransazione = new Map<EsitoTransazione>();
+	private synchronized void initMapEsitoTransazione(EsitoTransazioneName esito,Integer code, String tipoContext) throws ProtocolException {
+		if(!this.mapEsitoTransazione.containsKey(esito.getMapKey())) {
+			EsitoTransazione et = _convertToEsitoTransazione(esito,code, tipoContext);
+			this.mapEsitoTransazione.put(esito.getMapKey(), et);
+		}
+	}
 	public  EsitoTransazione convertToEsitoTransazione(EsitoTransazioneName esito, String tipoContext) throws ProtocolException{
-		return convertToEsitoTransazione(esito, this.convertoToCode(esito), tipoContext);
+		if( (!EsitoTransazioneName.CUSTOM.equals(esito))
+				&&
+				(this.isSingleTransactionContextCode() || CostantiProtocollo.ESITO_TRANSACTION_CONTEXT_STANDARD.equals(tipoContext)) 
+			) {
+			if(!this.mapEsitoTransazione.containsKey(esito.getMapKey())) {
+				initMapEsitoTransazione(esito, this.convertoToCode(esito), tipoContext);
+			}
+			return this.mapEsitoTransazione.get(esito.getMapKey());
+		}
+		else {
+			return _convertToEsitoTransazione(esito, tipoContext);
+		}
 	}
 	public  EsitoTransazione convertToEsitoTransazione(EsitoTransazioneName esito,Integer code, String tipoContext) throws ProtocolException{
+		if( (!EsitoTransazioneName.CUSTOM.equals(esito))
+				&&
+				(this.isSingleTransactionContextCode() || CostantiProtocollo.ESITO_TRANSACTION_CONTEXT_STANDARD.equals(tipoContext)) 
+			) {
+			if(!this.mapEsitoTransazione.containsKey(esito.getMapKey())) {
+				initMapEsitoTransazione(esito, code, tipoContext);
+			}
+			return this.mapEsitoTransazione.get(esito.getMapKey());
+		}
+		else {
+			return _convertToEsitoTransazione(esito, code, tipoContext);
+		}
+	}
+	private  EsitoTransazione _convertToEsitoTransazione(EsitoTransazioneName esito, String tipoContext) throws ProtocolException{
+		return convertToEsitoTransazione(esito, this.convertoToCode(esito), tipoContext);
+	}
+	private  EsitoTransazione _convertToEsitoTransazione(EsitoTransazioneName esito,Integer code, String tipoContext) throws ProtocolException{
 		
 		if(esito==null){
 			throw new ProtocolException("EsitoTransazioneName ["+code+"] undefined");
@@ -377,7 +475,7 @@ public class EsitiProperties {
 			}
 		}
 		if(code==null){
-			throw new ProtocolException("Code ["+code+"] undefined");
+			throw new ProtocolException("Code ["+esito+"] undefined");
 		}
 		return code;
 	}
@@ -712,7 +810,7 @@ public class EsitiProperties {
 		}
 	}
 	
-	private ConcurrentHashMap<String,String> esitoName= null;
+	private java.util.Map<String,String> esitoName= null;
 	public String getEsitoName(Integer codeEsito) throws ProtocolException {
 		if(this.esitoName == null){
 			this.initEsitoName();
@@ -724,7 +822,7 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoName() throws ProtocolException {
 		if(this.esitoName == null){
-			ConcurrentHashMap<String,String> esitoName = new ConcurrentHashMap<String, String>();
+			java.util.Map<String,String> esitoName = new HashMap<String, String>();
 			List<Integer> codes = getEsitiCodeSenzaFiltri();
 			for (Integer code : codes) {
 				esitoName.put(code+"", getProperty("esito."+code+".name"));
@@ -733,7 +831,7 @@ public class EsitiProperties {
 		}
 	}
 	
-	private ConcurrentHashMap<String,String> esitoDescription= null;
+	private java.util.Map<String,String> esitoDescription= null;
 	public String getEsitoDescription(Integer codeEsito) throws ProtocolException {
 		if(this.esitoDescription == null){
 			this.initEsitoDescription();
@@ -745,7 +843,7 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoDescription() throws ProtocolException {
 		if(this.esitoDescription == null){
-			ConcurrentHashMap<String, String> esitoDescription = new ConcurrentHashMap<String, String>();
+			java.util.Map<String, String> esitoDescription = new HashMap<String, String>();
 			List<Integer> codes = getEsitiCode();
 			for (Integer code : codes) {
 				esitoDescription.put(code+"", getProperty("esito."+code+".description"));
@@ -754,7 +852,7 @@ public class EsitiProperties {
 		}
 	}
 	
-	private ConcurrentHashMap<String,String> esitoLabel= null;
+	private java.util.Map<String,String> esitoLabel= null;
 	public String getEsitoLabel(Integer codeEsito) throws ProtocolException {
 		if(this.esitoLabel == null){
 			this.initEsitoLabel(); 
@@ -766,7 +864,7 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoLabel() throws ProtocolException {
 		if(this.esitoLabel == null){
-			ConcurrentHashMap<String, String> esitoLabel = new ConcurrentHashMap<String, String>();
+			java.util.Map<String, String> esitoLabel = new HashMap<String, String>();
 			List<Integer> codes = getEsitiCode();
 			for (Integer code : codes) {
 				String label = getProperty("esito."+code+".label");
@@ -777,7 +875,7 @@ public class EsitiProperties {
 		}
 	}
 	
-	private ConcurrentHashMap<String,String> esitoLabelSyntetic= null;
+	private java.util.Map<String,String> esitoLabelSyntetic= null;
 	public String getEsitoLabelSyntetic(Integer codeEsito) throws ProtocolException {
 		if(this.esitoLabelSyntetic == null){
 			this.initEsitoLabelSyntetic(); 
@@ -789,7 +887,7 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoLabelSyntetic() throws ProtocolException {
 		if(this.esitoLabelSyntetic == null){
-			ConcurrentHashMap<String, String> esitoLabelSyntetic = new ConcurrentHashMap<String, String>();
+			java.util.Map<String, String> esitoLabelSyntetic = new HashMap<String, String>();
 			List<Integer> codes = getEsitiCode();
 			for (Integer code : codes) {
 				String label = getProperty("esito."+code+".label.syntetic");
@@ -800,7 +898,7 @@ public class EsitiProperties {
 		}
 	}
 	
-	private ConcurrentHashMap<String,EsitoIdentificationMode> esitoIdentificationMode= null;
+	private java.util.Map<String,EsitoIdentificationMode> esitoIdentificationMode= null;
 	public EsitoIdentificationMode getEsitoIdentificationMode(Integer codeEsito) throws ProtocolException {
 		if(this.esitoIdentificationMode == null){
 			this.initEsitoIdentificationMode();  
@@ -812,7 +910,7 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoIdentificationMode() throws ProtocolException {
 		if(this.esitoIdentificationMode == null){
-			ConcurrentHashMap<String, EsitoIdentificationMode> esitoIdentificationMode = new ConcurrentHashMap<String, EsitoIdentificationMode>();
+			java.util.Map<String, EsitoIdentificationMode> esitoIdentificationMode = new HashMap<String, EsitoIdentificationMode>();
 			List<Integer> codes = getEsitiCode();
 			for (Integer code : codes) {
 				String prop = "esito."+code+".mode";
@@ -833,7 +931,7 @@ public class EsitiProperties {
 		}
 	}
 	
-	private ConcurrentHashMap<String,List<EsitoIdentificationModeSoapFault>> esitoIdentificationModeSoapFaultList= null;
+	private java.util.Map<String,List<EsitoIdentificationModeSoapFault>> esitoIdentificationModeSoapFaultList= null;
 	public List<EsitoIdentificationModeSoapFault> getEsitoIdentificationModeSoapFaultList(Integer codeEsito) throws ProtocolException {
 		if(this.esitoIdentificationModeSoapFaultList==null){
 			this.initEsitoIdentificationModeSoapFaultList();
@@ -842,7 +940,7 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoIdentificationModeSoapFaultList() throws ProtocolException {
 		if(this.esitoIdentificationModeSoapFaultList==null){
-			ConcurrentHashMap<String, List<EsitoIdentificationModeSoapFault>> esitoIdentificationModeSoapFaultList = new ConcurrentHashMap<String, List<EsitoIdentificationModeSoapFault>>();
+			java.util.Map<String, List<EsitoIdentificationModeSoapFault>> esitoIdentificationModeSoapFaultList = new HashMap<String, List<EsitoIdentificationModeSoapFault>>();
 			List<Integer> codes = getEsitiCode();
 			for (Integer code : codes) {
 				try{
@@ -909,7 +1007,7 @@ public class EsitiProperties {
 	
 	
 	
-	private ConcurrentHashMap<String,List<EsitoIdentificationModeContextProperty>> esitoIdentificationModeContextPropertyList= null;
+	private java.util.Map<String,List<EsitoIdentificationModeContextProperty>> esitoIdentificationModeContextPropertyList= null;
 	public List<EsitoIdentificationModeContextProperty> getEsitoIdentificationModeContextPropertyList(Integer codeEsito) throws ProtocolException {
 		if(this.esitoIdentificationModeContextPropertyList==null){
 			this.initEsitoIdentificationModeContextPropertyList();
@@ -918,7 +1016,7 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoIdentificationModeContextPropertyList() throws ProtocolException {
 		if(this.esitoIdentificationModeContextPropertyList==null){
-			ConcurrentHashMap<String, List<EsitoIdentificationModeContextProperty>> esitoIdentificationModeContextPropertyList = new ConcurrentHashMap<String, List<EsitoIdentificationModeContextProperty>>();
+			java.util.Map<String, List<EsitoIdentificationModeContextProperty>> esitoIdentificationModeContextPropertyList = new HashMap<String, List<EsitoIdentificationModeContextProperty>>();
 			List<Integer> codes = getEsitiCode();
 			for (Integer code : codes) {
 				try{
@@ -944,7 +1042,16 @@ public class EsitiProperties {
 			
 			EsitoIdentificationModeContextProperty esito = new EsitoIdentificationModeContextProperty();
 			
+			EsitoTransazioneName esitoTransazioneName = null;
+			try {
+				esitoTransazioneName = getEsitoTransazioneName(codeEsito);
+				esito.setEsito(esitoTransazioneName);
+			}catch(Throwable t) {}
+			
 			esito.setName(this.getOptionalProperty(prefix+index+".name"));
+			if(esito.getName()!=null) {
+				esito.setMapKey(Map.newMapKey(esito.getName()));
+			}
 			
 			esito.setValue(this.getOptionalProperty(prefix+index+".value"));
 
@@ -974,12 +1081,20 @@ public class EsitiProperties {
 	
 	
 	private List<String> esitiTransactionContextCode = null;
+	private Boolean isSingleTransactionContextCode = null;
 	public List<String> getEsitiTransactionContextCode() throws ProtocolException {
 		if(this.esitiTransactionContextCode == null){
 			this.initEsitiTransactionContextCode();
 		}
 
 		return this.esitiTransactionContextCode;
+	}
+	public boolean isSingleTransactionContextCode() throws ProtocolException {
+		if(this.isSingleTransactionContextCode == null){
+			this.initEsitiTransactionContextCode();
+		}
+
+		return this.isSingleTransactionContextCode;
 	}
 	private synchronized void initEsitiTransactionContextCode() throws ProtocolException {
 		if(this.esitiTransactionContextCode == null){
@@ -989,6 +1104,7 @@ public class EsitiProperties {
 					throw new ProtocolException("Context id ["+context+"] length must be less then 255 characters");
 				}
 			}
+			this.isSingleTransactionContextCode = this.esitiTransactionContextCode.size()<=1;
 		}
 	}
 	
@@ -1025,7 +1141,7 @@ public class EsitiProperties {
 		}
 	}
 
-	private ConcurrentHashMap<String,String> esitoTransactionContextLabel= null;
+	private java.util.Map<String,String> esitoTransactionContextLabel= null;
 	public String getEsitoTransactionContextLabel(String tipo) throws ProtocolException {
 		if(this.esitoTransactionContextLabel == null){
 			this.initEsitoTransactionContextLabel();
@@ -1037,7 +1153,7 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoTransactionContextLabel() throws ProtocolException {
 		if(this.esitoTransactionContextLabel == null){
-			ConcurrentHashMap<String, String> esitoTransactionContextLabel = new ConcurrentHashMap<String, String>();
+			java.util.Map<String, String> esitoTransactionContextLabel = new HashMap<String, String>();
 			List<String> codes = getEsitiTransactionContextCode();
 			for (String code : codes) {
 				esitoTransactionContextLabel.put(code, getProperty("esiti.transactionContext."+code+".label"));

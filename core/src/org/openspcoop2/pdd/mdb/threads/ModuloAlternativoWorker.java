@@ -294,7 +294,7 @@ public abstract class ModuloAlternativoWorker implements IWorker {
 		protected Resource initResource() throws Exception{
 			Resource resourceDB = null;
 			try{
-				resourceDB = this.dbManager.getResource(this.oSPCpropertiesReader.getIdentitaPortaDefault(null), this.ID_MODULO, null);
+				resourceDB = this.dbManager.getResource(this.oSPCpropertiesReader.getIdentitaPortaDefaultWithoutProtocol(), this.ID_MODULO, null);
 			}catch(Exception e){
 				throw new Exception("Impossibile ottenere una Risorsa dal DBManager",e);
 			}
@@ -319,7 +319,7 @@ public abstract class ModuloAlternativoWorker implements IWorker {
 		/** rilascia la risorsa che rappresenta la connessione al db */
 		protected void releaseResource(Resource resourceDB) {
 			if(resourceDB != null)
-				this.dbManager.releaseResource(this.oSPCpropertiesReader.getIdentitaPortaDefault(null), this.ID_MODULO, resourceDB);
+				this.dbManager.releaseResource(this.oSPCpropertiesReader.getIdentitaPortaDefaultWithoutProtocol(), this.ID_MODULO, resourceDB);
 		}
 		
 		

@@ -32,6 +32,7 @@ import javax.security.auth.callback.CallbackHandler;
 import org.apache.wss4j.common.crypto.PasswordEncryptor;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.common.ext.WSSecurityException.ErrorCode;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 
 /**
@@ -87,6 +88,16 @@ public class Merlin extends org.apache.wss4j.common.crypto.Merlin {
 			}
 		}
 
+		
+		//
+		// Load the RequestInfo
+		//
+		RequestInfo requestInfo = null;
+		Object requestInfoObject = properties.get(KeystoreConstants.PROPERTY_REQUEST_INFO);
+		if(requestInfoObject!=null && requestInfoObject instanceof RequestInfo) {
+			requestInfo = (RequestInfo) requestInfo;
+		}
+		
 
 		//
 		// Load the KeyStore
@@ -127,7 +138,7 @@ public class Merlin extends org.apache.wss4j.common.crypto.Merlin {
 			keyStoreLocation = keyStoreLocation.trim();
 
 			try {
-				MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keyStoreLocation, keyStoreType, 
+				MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(requestInfo, keyStoreLocation, keyStoreType, 
 						keyStorePassword);
 				if(merlinKs==null) {
 					throw new Exception("Accesso al keystore '"+keyStoreLocation+"' non riuscito");
@@ -144,7 +155,7 @@ public class Merlin extends org.apache.wss4j.common.crypto.Merlin {
 		}
 		else if (keyStoreArchive != null) {
 			try {
-				MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keyStoreArchive, keyStoreType, 
+				MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(requestInfo, keyStoreArchive, keyStoreType, 
 						keyStorePassword);
 				if(merlinKs==null) {
 					throw new Exception("Accesso al keystore non riuscito");
@@ -192,7 +203,7 @@ public class Merlin extends org.apache.wss4j.common.crypto.Merlin {
 			trustStoreLocation = trustStoreLocation.trim();
 
 			try {
-				MerlinTruststore merlinTs = GestoreKeystoreCache.getMerlinTruststore(trustStoreLocation, trustStoreType, 
+				MerlinTruststore merlinTs = GestoreKeystoreCache.getMerlinTruststore(requestInfo, trustStoreLocation, trustStoreType, 
 						trustStorePassword);
 				if(merlinTs==null) {
 					throw new Exception("Accesso al truststore '"+trustStoreLocation+"' non riuscito");
@@ -209,7 +220,7 @@ public class Merlin extends org.apache.wss4j.common.crypto.Merlin {
 		}
 		else if (trustStoreArchive != null) {
 			try {
-				MerlinTruststore merlinTs = GestoreKeystoreCache.getMerlinTruststore(trustStoreArchive, trustStoreType, 
+				MerlinTruststore merlinTs = GestoreKeystoreCache.getMerlinTruststore(requestInfo, trustStoreArchive, trustStoreType, 
 						trustStorePassword);
 				if(merlinTs==null) {
 					throw new Exception("Accesso al truststore non riuscito");
@@ -245,7 +256,7 @@ public class Merlin extends org.apache.wss4j.common.crypto.Merlin {
 			this.properties.remove(prefix + X509_CRL_FILE);
 			
 			try {
-				CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(crlLocations);
+				CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(requestInfo, crlLocations);
 				if(crlCertstore==null) {
 					throw new Exception("Accesso alle crl '"+crlLocations+"' non riuscito");
 				}

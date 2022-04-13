@@ -50,6 +50,12 @@ public class KeystoreConstants {
 
 	public static final String PROPERTY_CRL = Merlin.OLD_PREFIX+Merlin.X509_CRL_FILE;
 
+	
+	// Proprietà che permette di fornire la request info di govway
+
+	public static final String PROPERTY_REQUEST_INFO = "requestInfo";
+	
+	
 
 	// *** Merlin Keystore Properties ***
 

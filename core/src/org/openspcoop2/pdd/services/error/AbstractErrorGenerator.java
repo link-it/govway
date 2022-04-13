@@ -38,11 +38,11 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.slf4j.Logger;
 

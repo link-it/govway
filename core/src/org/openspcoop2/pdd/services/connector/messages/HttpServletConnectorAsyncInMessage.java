@@ -24,8 +24,8 @@ import java.io.InputStream;
 import javax.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.pdd.services.connector.ConnectorException;
-import org.openspcoop2.protocol.engine.RequestInfo;
-import org.openspcoop2.protocol.engine.constants.IDService;
+import org.openspcoop2.protocol.sdk.constants.IDService;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.io.notifier.unblocked.IPipedUnblockedStream;
 
 /**

@@ -59,7 +59,6 @@ import org.openspcoop2.pdd.mdb.SbustamentoRisposte;
 import org.openspcoop2.pdd.services.error.AbstractErrorGenerator;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Eccezione;
@@ -74,6 +73,7 @@ import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneSemantica;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.MessageSecurityContextParameters;
@@ -186,12 +186,12 @@ public class LocalForwardEngine {
 				this.busta.setID(this.localForwardParameter.getIdRequest());
 			}
 			
-			this.pd = this.localForwardParameter.getConfigurazionePdDReader().getPortaDelegata(this.richiestaDelegata.getIdPortaDelegata());	
+			this.pd = this.localForwardParameter.getConfigurazionePdDReader().getPortaDelegata(this.richiestaDelegata.getIdPortaDelegata(), this.requestInfo);	
 			try{
 				IDServizioApplicativo idSA = new IDServizioApplicativo();
 				idSA.setNome(this.richiestaDelegata.getServizioApplicativo());
 				idSA.setIdSoggettoProprietario(this.richiestaDelegata.getIdSoggettoFruitore());
-				this.sa = this.localForwardParameter.getConfigurazionePdDReader().getServizioApplicativo(idSA);
+				this.sa = this.localForwardParameter.getConfigurazionePdDReader().getServizioApplicativo(idSA, this.requestInfo);
 			}catch(DriverConfigurazioneNotFound e){
 				if(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(this.richiestaDelegata.getServizioApplicativo())==false)
 					throw e;
@@ -227,7 +227,7 @@ public class LocalForwardEngine {
 			
 			this.ejbUtils.setGeneratoreErrorePortaApplicativa(this.generatoreErrorePortaApplicativa);
 			
-			this.pa = this.localForwardParameter.getConfigurazionePdDReader().getPortaApplicativa(this.idPA);
+			this.pa = this.localForwardParameter.getConfigurazionePdDReader().getPortaApplicativa(this.idPA, this.requestInfo);
 			
 			
 			
@@ -377,7 +377,7 @@ public class LocalForwardEngine {
 						String tipoSicurezza = SecurityConstants.convertActionToString(messageSecurityContext.getOutgoingProperties());
 						this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
 						this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE,"messageSecurity.processamentoRichiestaInCorso");					
-						if(messageSecurityContext.processOutgoing(requestMessage,this.localForwardParameter.getPddContext().getContext(),
+						if(messageSecurityContext.processOutgoing(requestMessage,this.localForwardParameter.getPddContext(),
 								getTransactionNullable()!=null ? getTransactionNullable().getTempiElaborazione() : null) == false){
 							msgErrore = messageSecurityContext.getMsgErrore();
 							codiceErroreCooperazione = messageSecurityContext.getCodiceErrore();
@@ -621,7 +621,7 @@ public class LocalForwardEngine {
 					String tipoSicurezza = SecurityConstants.convertActionToString(messageSecurityContext.getIncomingProperties());
 					this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
 					this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"messageSecurity.processamentoRichiestaInCorso");					
-					if(messageSecurityContext.processIncoming(requestMessage,this.busta,this.localForwardParameter.getPddContext().getContext(),
+					if(messageSecurityContext.processIncoming(requestMessage,this.busta,this.localForwardParameter.getPddContext(),
 							getTransactionNullable()!=null ? getTransactionNullable().getTempiElaborazione() : null) == false){  
 						if(messageSecurityContext.getListaSubCodiceErrore()!=null && messageSecurityContext.getListaSubCodiceErrore().size()>0){
 							List<SubErrorCodeSecurity> subCodiciErrore = messageSecurityContext.getListaSubCodiceErrore();
@@ -930,7 +930,7 @@ public class LocalForwardEngine {
 					this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
 					this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"messageSecurity.processamentoRispostaInCorso");					
 					messageSecurityApply = true;
-					if(messageSecurityContext.processOutgoing(responseMessage,this.localForwardParameter.getPddContext().getContext(),
+					if(messageSecurityContext.processOutgoing(responseMessage,this.localForwardParameter.getPddContext(),
 							getTransactionNullable()!=null ? getTransactionNullable().getTempiElaborazione() : null) == false){
 						msgErrore = messageSecurityContext.getMsgErrore();
 						codiceErroreCooperazione = messageSecurityContext.getCodiceErrore();
@@ -1111,7 +1111,7 @@ public class LocalForwardEngine {
 						String tipoSicurezza = SecurityConstants.convertActionToString(messageSecurityContext.getIncomingProperties());
 						this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
 						this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE,"messageSecurity.processamentoRispostaInCorso");					
-						if(messageSecurityContext.processIncoming(responseMessage,this.busta,this.localForwardParameter.getPddContext().getContext(),
+						if(messageSecurityContext.processIncoming(responseMessage,this.busta,this.localForwardParameter.getPddContext(),
 								getTransactionNullable()!=null ? getTransactionNullable().getTempiElaborazione() : null) == false){
 							msgErrore = messageSecurityContext.getMsgErrore();
 							codiceErroreCooperazione = messageSecurityContext.getCodiceErrore();

@@ -122,6 +122,7 @@ import org.openspcoop2.core.config.ResponseCachingConfigurazioneControl;
 import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.InvocazionePortaGestioneErrore;
+import org.openspcoop2.core.config.AccessoDatiRichieste;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.ConfigurazioneGestioneErrore;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
@@ -6526,6 +6527,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public InvocazionePortaGestioneErrore readInvocazionePortaGestioneErroreFromString(String in) throws DeserializerException {
 		return (InvocazionePortaGestioneErrore) this.xmlToObj(in.getBytes(), InvocazionePortaGestioneErrore.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: accesso-dati-richieste
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.AccessoDatiRichieste}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoDatiRichieste}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoDatiRichieste}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoDatiRichieste readAccessoDatiRichieste(String fileName) throws DeserializerException {
+		return (AccessoDatiRichieste) this.xmlToObj(fileName, AccessoDatiRichieste.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.AccessoDatiRichieste}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoDatiRichieste}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoDatiRichieste}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoDatiRichieste readAccessoDatiRichieste(File file) throws DeserializerException {
+		return (AccessoDatiRichieste) this.xmlToObj(file, AccessoDatiRichieste.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.AccessoDatiRichieste}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoDatiRichieste}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoDatiRichieste}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoDatiRichieste readAccessoDatiRichieste(InputStream in) throws DeserializerException {
+		return (AccessoDatiRichieste) this.xmlToObj(in, AccessoDatiRichieste.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.AccessoDatiRichieste}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoDatiRichieste}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoDatiRichieste}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoDatiRichieste readAccessoDatiRichieste(byte[] in) throws DeserializerException {
+		return (AccessoDatiRichieste) this.xmlToObj(in, AccessoDatiRichieste.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.AccessoDatiRichieste}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoDatiRichieste}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoDatiRichieste}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoDatiRichieste readAccessoDatiRichiesteFromString(String in) throws DeserializerException {
+		return (AccessoDatiRichieste) this.xmlToObj(in.getBytes(), AccessoDatiRichieste.class);
 	}	
 	
 	

@@ -67,7 +67,7 @@ abstract class AbstractAutorizzazioneRoles extends AbstractAutorizzazioneBase {
     		if( ConfigurazionePdDManager.getInstance(datiInvocazione.getState()).
     				autorizzazioneRoles(datiInvocazione.getPd(), datiInvocazione.getServizioApplicativo(), 
     						datiInvocazione.getInfoConnettoreIngresso(), 
-    						this.getPddContext(),
+    						this.getPddContext(), datiInvocazione.getRequestInfo(),
     						this.checkRuoloRegistro, this.checkRuoloEsterno,
     						detailsBuffer)==false){
     			if(servizioApplicativo!=null){

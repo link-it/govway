@@ -30,6 +30,7 @@ import javax.xml.soap.AttachmentPart;
 
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.driver.xml.DriverConfigurazioneXML;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageRole;
@@ -50,6 +51,7 @@ import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalE
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.id.UUIDUtilsGenerator;
@@ -165,17 +167,17 @@ public class Test {
 	private static final String ENV_CONFIG1 = "HOSTNAME";
 	private static final String ENV_CONFIG1_VALORE = System.getenv(ENV_CONFIG1);
 	
-	private static final String PDDCONTEXT_1 = "PDDCONTEXT_1";
+	private static final MapKey<String> PDDCONTEXT_1 = org.openspcoop2.utils.Map.newMapKey("PDDCONTEXT_1");
 	private static final String PDDCONTEXT_1_VALORE = "PDDCONTEXT_Valore1";
-	private static final String PDDCONTEXT_2 = "PDDCONTEXT_2";
+	private static final MapKey<String> PDDCONTEXT_2 = org.openspcoop2.utils.Map.newMapKey("PDDCONTEXT_2");
 	private static final String PDDCONTEXT_2_VALORE = "PDDCONTEXT_Valore2";
-	private static final String PDDCONTEXT_3 = "PDDCONTEXT_3";
+	private static final MapKey<String> PDDCONTEXT_3 = org.openspcoop2.utils.Map.newMapKey("PDDCONTEXT_3");
 	private static final String PDDCONTEXT_3_VALORE = "PDDCONTEXT_Valore3";
-	private static final String PDDCONTEXT_4 = "PDDCONTEXT_4";
+	private static final MapKey<String> PDDCONTEXT_4 = org.openspcoop2.utils.Map.newMapKey("PDDCONTEXT_4");
 	private static final String PDDCONTEXT_4_VALORE = "PDDCONTEXT_Valore4";
 	
-	private static final String PDDCONTEXT_CONFIG_REQ = "PDDCONTEXT_CONFIG_REQ";
-	private static final String PDDCONTEXT_CONFIG_RES = "PDDCONTEXT_CONFIG_RES";
+	private static final MapKey<String> PDDCONTEXT_CONFIG_REQ = org.openspcoop2.utils.Map.newMapKey("PDDCONTEXT_CONFIG_REQ");
+	private static final MapKey<String> PDDCONTEXT_CONFIG_RES = org.openspcoop2.utils.Map.newMapKey("PDDCONTEXT_CONFIG_RES");
 	
 	private static final String PATH1 = "elementoPath1";
 	private static final String PATH1_VALORE = "elementoPathValore1";
@@ -812,7 +814,7 @@ public class Test {
 				QUERY3+"="+QUERY3_VALORE+"&"+
 				QUERY4+"="+QUERY4_VALORE;
 		
-		Busta busta = new Busta("trasparente");
+		Busta busta = new Busta(CostantiLabel.TRASPARENTE_PROTOCOL_NAME);
 		busta.setMittente(BUSTA_MITTENTE_VALORE);
 		busta.addProperty(BUSTA_PROPERTY, BUSTA_PROPERTY_VALORE);
 		

@@ -24,6 +24,7 @@ package org.openspcoop2.pdd.core.integrazione.backward_compatibility;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +50,7 @@ import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazioneBusta;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazioneException;
 import org.openspcoop2.pdd.core.integrazione.UtilitiesIntegrazione;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.xml.XSDResourceResolver;
@@ -368,23 +370,23 @@ public class UtilitiesIntegrazioneBC {
 	
 	// ***** INSTANCE *****
 
-	private List<String> keywordsIntegrazione = null;
+	private List<MapKey<String>> keywordsIntegrazione = null;
 	
-	private java.util.concurrent.ConcurrentHashMap<String, String> keyValueIntegrazioneTrasporto = null;
-	private java.util.concurrent.ConcurrentHashMap<String, Boolean> keySetEnabled_HeaderIntegrazioneTrasporto = null;
-	private java.util.concurrent.ConcurrentHashMap<String, Boolean> keyReadEnabled_HeaderIntegrazioneTrasporto = null;
+	private Map<MapKey<String>, String> keyValueIntegrazioneTrasporto = null;
+	private Map<MapKey<String>, Boolean> keySetEnabled_HeaderIntegrazioneTrasporto = null;
+	private Map<MapKey<String>, Boolean> keyReadEnabled_HeaderIntegrazioneTrasporto = null;
 	
-	private java.util.concurrent.ConcurrentHashMap<String, String> keyValueIntegrazioneUrlBased = null;
-	private java.util.concurrent.ConcurrentHashMap<String, Boolean> keySetEnabled_HeaderIntegrazioneUrlBased = null;
-	private java.util.concurrent.ConcurrentHashMap<String, Boolean> keyReadEnabled_HeaderIntegrazioneUrlBased = null;
+	private Map<MapKey<String>, String> keyValueIntegrazioneUrlBased = null;
+	private Map<MapKey<String>, Boolean> keySetEnabled_HeaderIntegrazioneUrlBased = null;
+	private Map<MapKey<String>, Boolean> keyReadEnabled_HeaderIntegrazioneUrlBased = null;
 	
-	private java.util.concurrent.ConcurrentHashMap<String, String> keyValueIntegrazioneSoap = null;
-	private java.util.concurrent.ConcurrentHashMap<String, Boolean> keySetEnabled_HeaderIntegrazioneSoap = null;
-	private java.util.concurrent.ConcurrentHashMap<String, Boolean> keyReadEnabled_HeaderIntegrazioneSoap = null;
+	private Map<MapKey<String>, String> keyValueIntegrazioneSoap = null;
+	private Map<MapKey<String>, Boolean> keySetEnabled_HeaderIntegrazioneSoap = null;
+	private Map<MapKey<String>, Boolean> keyReadEnabled_HeaderIntegrazioneSoap = null;
 	
 	private OpenSPCoop2Properties openspcoopProperties = null;
-	private java.util.concurrent.ConcurrentHashMap<String, ValidatoreXSD> validatoreXSD_soap11_map = new java.util.concurrent.ConcurrentHashMap<String, ValidatoreXSD>();
-	private java.util.concurrent.ConcurrentHashMap<String, ValidatoreXSD> validatoreXSD_soap12_map = new java.util.concurrent.ConcurrentHashMap<String, ValidatoreXSD>();
+	private Map<String, ValidatoreXSD> validatoreXSD_soap11_map = new HashMap<String, ValidatoreXSD>();
+	private Map<String, ValidatoreXSD> validatoreXSD_soap12_map = new HashMap<String, ValidatoreXSD>();
 	
 	private boolean request;
 	private boolean openspcoop2;
@@ -563,7 +565,7 @@ public class UtilitiesIntegrazioneBC {
 					
 					if(key!=null){
 						
-						for (String keywordIntegrazione : this.keywordsIntegrazione) {
+						for (MapKey<String> keywordIntegrazione : this.keywordsIntegrazione) {
 							String header = normalizeX_((String)this.keyValueIntegrazioneTrasporto.get(keywordIntegrazione));
 							if(key.equalsIgnoreCase(header)) {
 								
@@ -646,7 +648,7 @@ public class UtilitiesIntegrazioneBC {
 
 					if(key!=null){
 						
-						for (String keywordIntegrazione : this.keywordsIntegrazione) {
+						for (MapKey<String> keywordIntegrazione : this.keywordsIntegrazione) {
 							if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneUrlBased.get(keywordIntegrazione))) {
 								
 								if(this.keyReadEnabled_HeaderIntegrazioneUrlBased.get(keywordIntegrazione)) {

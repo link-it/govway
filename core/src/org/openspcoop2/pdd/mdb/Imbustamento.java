@@ -48,7 +48,6 @@ import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.ConsegnaInOrdine;
 import org.openspcoop2.protocol.engine.driver.ProfiloDiCollaborazione;
@@ -72,6 +71,7 @@ import org.openspcoop2.protocol.sdk.constants.InitialIdConversationType;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.StatelessMessage;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
@@ -147,7 +147,7 @@ public class Imbustamento extends GenericLib{
 		msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_RICHIESTA, idMessageRequest);
 		if(msgDiag.getPorta()==null) {
 			if(richiestaDelegata!=null && richiestaDelegata.getIdPortaDelegata()!=null) {
-				msgDiag.updatePorta(tipoPdD, richiestaDelegata.getIdPortaDelegata().getNome());
+				msgDiag.updatePorta(tipoPdD, richiestaDelegata.getIdPortaDelegata().getNome(), requestInfo);
 			}
 		}
 		msgDiag.setFruitore(richiestaDelegata.getIdSoggettoFruitore());
@@ -388,12 +388,12 @@ public class Imbustamento extends GenericLib{
 						
 
 			/* ----------- Lettura PortaDelegata e Servizio Applicativo ------------- */
-			pd = configurazionePdDManager.getPortaDelegata(richiestaDelegata.getIdPortaDelegata());
+			pd = configurazionePdDManager.getPortaDelegata(richiestaDelegata.getIdPortaDelegata(), requestInfo);
 			try{
 				IDServizioApplicativo idSA = new IDServizioApplicativo();
 				idSA.setNome(richiestaDelegata.getServizioApplicativo());
 				idSA.setIdSoggettoProprietario(richiestaDelegata.getIdSoggettoFruitore());
-				sa = configurazionePdDManager.getServizioApplicativo(idSA);
+				sa = configurazionePdDManager.getServizioApplicativo(idSA, requestInfo);
 			}catch(DriverConfigurazioneNotFound e){
 				if(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(richiestaDelegata.getServizioApplicativo())==false)
 					throw e;

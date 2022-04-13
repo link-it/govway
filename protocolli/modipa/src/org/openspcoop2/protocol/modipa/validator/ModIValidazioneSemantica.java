@@ -44,6 +44,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazione;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneSemanticaResult;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneUtils;
@@ -104,6 +105,11 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 
 	private void valida(OpenSPCoop2Message msg,Busta busta, RuoloBusta tipoBusta, IProtocolFactory<?> factory, IState state) throws ProtocolException{
 		try{
+			
+			RequestInfo requestInfo = null;
+			if(this.context!=null && this.context.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+				requestInfo = (RequestInfo) this.context.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+			}
 			
 			boolean isRichiesta = RuoloBusta.RICHIESTA.equals(tipoBusta);
 			
@@ -201,7 +207,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 					}
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					idPA.setNome(msg.getTransportRequestContext().getInterfaceName());
-					PortaApplicativa pa = factory.getCachedConfigIntegrationReader(state).getPortaApplicativa(idPA);
+					PortaApplicativa pa = factory.getCachedConfigIntegrationReader(state, requestInfo).getPortaApplicativa(idPA);
 					boolean autorizzazioneModIPAAbilitata = false;
 					if(pa.getServiziApplicativiAutorizzati()!=null) {
 						autorizzazioneModIPAAbilitata = pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0;

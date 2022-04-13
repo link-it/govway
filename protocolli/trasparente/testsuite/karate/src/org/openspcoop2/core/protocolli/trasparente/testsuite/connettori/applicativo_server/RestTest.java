@@ -126,7 +126,7 @@ public class RestTest extends ConfigLoader {
 			String idTransazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
 			assertNotNull(idTransazione);
 			
-			long esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
+			long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
 			verifyOk(response, 200); // il codice http e' gia' stato impostato
 			DBVerifier.verify(idTransazione, esitoExpected, diagnostico);
 			

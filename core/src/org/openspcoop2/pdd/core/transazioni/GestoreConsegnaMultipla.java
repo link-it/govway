@@ -54,6 +54,7 @@ import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
@@ -225,22 +226,22 @@ public class GestoreConsegnaMultipla {
 
 	// *** SAFE ***
 
-	public void safeCreate(TransazioneApplicativoServer transazioneApplicativoServer, IDPortaApplicativa idPA, IOpenSPCoopState state) {
+	public void safeCreate(TransazioneApplicativoServer transazioneApplicativoServer, IDPortaApplicativa idPA, IOpenSPCoopState state, RequestInfo requestInfo) {
 
 		// cluster id
 		transazioneApplicativoServer.setClusterIdPresaInCarico(openspcoopProperties.getClusterId(false));
 		
-		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), false, false, idPA, state, null, "create",
+		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), false, false, idPA, state, null, requestInfo, "create",
 				OpenSPCoopStateDBManager.runtime);
 
 	}
 	
-	public void safeUpdateConsegna(TransazioneApplicativoServer transazioneApplicativoServer, IDPortaApplicativa idPA, IOpenSPCoopState state) {
+	public void safeUpdateConsegna(TransazioneApplicativoServer transazioneApplicativoServer, IDPortaApplicativa idPA, IOpenSPCoopState state, RequestInfo requestInfo) {
 
 		// cluster id
 		transazioneApplicativoServer.setClusterIdConsegna(openspcoopProperties.getClusterId(false));
 		
-		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), true, true, idPA, state, null, "updateDeliveredMessage",
+		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), true, true, idPA, state, null, requestInfo, "updateDeliveredMessage",
 				OpenSPCoopStateDBManager.consegnePreseInCarico); // l'informazione dovrebbe esistere!
 
 	}
@@ -250,7 +251,7 @@ public class GestoreConsegnaMultipla {
 		// cluster id
 		transazioneApplicativoServer.setClusterIdPrelievoIm(openspcoopProperties.getClusterId(false));
 		
-		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), true, false, idPA, state, null, "updateRetrieveMessageByMessageBox",
+		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), true, false, idPA, state, null, null, "updateRetrieveMessageByMessageBox",
 				OpenSPCoopStateDBManager.messageBox);
 
 	}
@@ -260,36 +261,36 @@ public class GestoreConsegnaMultipla {
 		// cluster id
 		transazioneApplicativoServer.setClusterIdEliminazioneIm(openspcoopProperties.getClusterId(false));
 		
-		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), true, false, idPA, state, null, "updateDeletedMessageByMessageBox",
+		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), true, false, idPA, state, null, null, "updateDeletedMessageByMessageBox",
 				OpenSPCoopStateDBManager.messageBox);
 
 	}
 	
 	public void safeUpdateMessaggioScaduto(TransazioneApplicativoServer transazioneApplicativoServer, IDPortaApplicativa idPA, IOpenSPCoopState state) {
 
-		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), true, false, idPA, state, null, "updateExpiredMessage",
+		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), true, false, idPA, state, null, null, "updateExpiredMessage",
 				OpenSPCoopStateDBManager.runtime);
 
 	}
 
 	
-	public void safeSave(org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico diagnostico, IDPortaApplicativa idPA, IState state) {
+	public void safeSave(org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico diagnostico, IDPortaApplicativa idPA, IState state, RequestInfo requestInfo) {
 
-		getConnectionAndSave(diagnostico, diagnostico.getProtocollo(), false, false, idPA, null, state, "saveDiagnostic",
+		getConnectionAndSave(diagnostico, diagnostico.getProtocollo(), false, false, idPA, null, state, requestInfo, "saveDiagnostic",
 				OpenSPCoopStateDBManager.consegnePreseInCarico);
 
 	}
 
-	public void safeSave(Messaggio dumpMessaggio, IDPortaApplicativa idPA, IState state) {
+	public void safeSave(Messaggio dumpMessaggio, IDPortaApplicativa idPA, IState state, RequestInfo requestInfo) {
 
-		getConnectionAndSave(dumpMessaggio, dumpMessaggio.getProtocollo(), false, false, idPA, null, state, "saveContent",
+		getConnectionAndSave(dumpMessaggio, dumpMessaggio.getProtocollo(), false, false, idPA, null, state, requestInfo, "saveContent",
 				OpenSPCoopStateDBManager.consegnePreseInCarico);
 
 	}
 
 	@SuppressWarnings("resource")
 	private void getConnectionAndSave(Object o, String protocol, boolean update, boolean throwNotFoundIfNotExists, IDPortaApplicativa idPA, 
-			IOpenSPCoopState openspcoopState, IState state,
+			IOpenSPCoopState openspcoopState, IState state, RequestInfo requestInfo,
 			String tipoOperazione,
 			OpenSPCoopStateDBManager dbManagerSource) {
 		TransazioniSAProcessTimes times = null;
@@ -304,7 +305,7 @@ public class GestoreConsegnaMultipla {
 		}
 		try {
 			getConnectionAndSave(o, protocol, update, throwNotFoundIfNotExists, idPA, 
-					openspcoopState, state,
+					openspcoopState, state, requestInfo,
 					tipoOperazione, times, buildDetailsSA,  buildDetailsUpdateTransaction,
 					dbManagerSource);
 		}finally {
@@ -329,13 +330,18 @@ public class GestoreConsegnaMultipla {
 	}
 	@SuppressWarnings("resource")
 	private void getConnectionAndSave(Object o, String protocol, boolean update, boolean throwNotFoundIfNotExists, IDPortaApplicativa idPA, 
-			IOpenSPCoopState openspcoopState, IState state,
+			IOpenSPCoopState openspcoopState, IState state, RequestInfo requestInfo,
 			String tipoOperazione, TransazioniSAProcessTimes times, boolean buildDetailsSA, boolean buildDetailsUpdateTransaction,
 			OpenSPCoopStateDBManager dbManagerSource) {
 
 		EsitiProperties esitiProperties = null;
 		try {
-			esitiProperties = EsitiProperties.getInstance(this.log, protocol);
+			if(requestInfo!=null && requestInfo.getProtocolFactory()!=null) {
+				esitiProperties = EsitiProperties.getInstance(this.log, requestInfo.getProtocolFactory());
+			}
+			else {
+				esitiProperties = EsitiProperties.getInstanceFromProtocolName(this.log, protocol);
+			}
 		}catch(Throwable e) {
 			this.log.error("Errore avvenuto durante la lettura del gestore degli esiti: "+e.getMessage() ,e);
 		}
@@ -349,7 +355,7 @@ public class GestoreConsegnaMultipla {
 			StringBuilder bf = new StringBuilder();
 			String esitiConfig = configTracciamento!=null ? configTracciamento.getEsiti() : null;
 			if(idPA!=null) {
-				PortaApplicativa pa = configPdDManager.getPortaApplicativa_SafeMethod(idPA);
+				PortaApplicativa pa = configPdDManager.getPortaApplicativa_SafeMethod(idPA, requestInfo);
 				if(pa!=null && pa.getTracciamento()!=null && pa.getTracciamento().getEsiti()!=null) {
 					esitiConfig = pa.getTracciamento().getEsiti();
 				}
@@ -413,7 +419,7 @@ public class GestoreConsegnaMultipla {
 		else {
 			dbManager_transazioni = DBTransazioniManager.getInstance();
 		}
-		IDSoggetto idDominio = openspcoopProperties.getIdentitaPortaDefault(protocol);
+		IDSoggetto idDominio = openspcoopProperties.getIdentitaPortaDefault(protocol, requestInfo);
 		ExceptionSerialzerFileSystem exceptionSerializerFileSystem = new ExceptionSerialzerFileSystem(this.log);
 		Connection con = null;
 		boolean isMessaggioConsegnato = false;

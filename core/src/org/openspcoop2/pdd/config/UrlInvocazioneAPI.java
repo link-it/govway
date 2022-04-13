@@ -34,6 +34,7 @@ import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.constants.Costanti;
@@ -505,7 +506,7 @@ public class UrlInvocazioneAPI implements Serializable {
 						CostantiConfigurazione.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePa(contextWithoutBinding);
 			}
 			
-			if("trasparente".equalsIgnoreCase(protocolFactory.getProtocol())) {
+			if(CostantiLabel.TRASPARENTE_PROTOCOL_NAME.equalsIgnoreCase(protocolFactory.getProtocol())) {
 				if(RuoloContesto.PORTA_APPLICATIVA.equals(ruolo)) {
 					if(contestoEsterno.endsWith("in/")) {
 						contestoEsterno = contestoEsterno.substring(0, contestoEsterno.length()-"in/".length());
@@ -515,7 +516,7 @@ public class UrlInvocazioneAPI implements Serializable {
 					}
 				}
 			}
-			else if("sdi".equalsIgnoreCase(protocolFactory.getProtocol())) {
+			else if(CostantiLabel.SDI_PROTOCOL_NAME.equalsIgnoreCase(protocolFactory.getProtocol())) {
 				if(RuoloContesto.PORTA_DELEGATA.equals(ruolo)) {
 					if(contestoEsterno.endsWith("out/")) {
 						contestoEsterno = contestoEsterno + "xml2soap/";

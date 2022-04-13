@@ -21,6 +21,7 @@
 package org.openspcoop2.pdd.core.handlers.statistics;
 
 import org.openspcoop2.core.constants.TipoPdD;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 
 /**
@@ -33,7 +34,7 @@ import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 public class Statistic {
 
 	private TipoPdD tipoPdD;
-	private String protocollo;
+	private IProtocolFactory<?> protocollo;
 	
 	private EsitoTransazione esito;
 	
@@ -53,10 +54,10 @@ public class Statistic {
 	public void setTipoPdD(TipoPdD tipoPdD) {
 		this.tipoPdD = tipoPdD;
 	}
-	public String getProtocollo() {
+	public IProtocolFactory<?> getProtocollo() {
 		return this.protocollo;
 	}
-	public void setProtocollo(String protocollo) {
+	public void setProtocollo(IProtocolFactory<?> protocollo) {
 		this.protocollo = protocollo;
 	}
 	public EsitoTransazione getEsito() {

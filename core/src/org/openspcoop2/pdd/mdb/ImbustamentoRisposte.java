@@ -41,7 +41,6 @@ import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
@@ -54,6 +53,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 
 /**
  * Contiene la libreria ImbustamentoRisposte
@@ -120,10 +120,10 @@ public class ImbustamentoRisposte extends GenericLib {
 		TipoPdD tipoPdD = TipoPdD.APPLICATIVA;
 		if(msgDiag.getPorta()==null) {
 			if(richiestaApplicativa!=null && richiestaApplicativa.getIdPortaApplicativa()!=null) {
-				msgDiag.updatePorta(tipoPdD, richiestaApplicativa.getIdPortaApplicativa().getNome());
+				msgDiag.updatePorta(tipoPdD, richiestaApplicativa.getIdPortaApplicativa().getNome(), requestInfo);
 			}
 			else if(richiestaDelegata!=null && richiestaDelegata.getIdPortaDelegata()!=null) {
-				msgDiag.updatePorta(TipoPdD.DELEGATA, richiestaDelegata.getIdPortaDelegata().getNome());
+				msgDiag.updatePorta(TipoPdD.DELEGATA, richiestaDelegata.getIdPortaDelegata().getNome(), requestInfo);
 			}
 		}
 		

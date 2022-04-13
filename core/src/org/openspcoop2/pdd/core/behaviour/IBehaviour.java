@@ -22,8 +22,8 @@ package org.openspcoop2.pdd.core.behaviour;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.ICore;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 
 /**
  * IBehaviour

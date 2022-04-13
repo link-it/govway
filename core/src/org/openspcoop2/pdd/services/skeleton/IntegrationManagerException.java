@@ -314,7 +314,7 @@ public class IntegrationManagerException extends Exception implements java.io.Se
 		if(servizioApplicativo!=null){
 			try{
 				ConfigurazionePdDManager configPdDReader = ConfigurazionePdDManager.getInstance();
-				ServizioApplicativo sa = configPdDReader.getServizioApplicativo(servizioApplicativo);
+				ServizioApplicativo sa = configPdDReader.getServizioApplicativo(servizioApplicativo, null);
 				configPdDReader.aggiornaProprietaGestioneErrorePD(this.proprietaErroreAppl,sa);
 			}catch(Exception e){
 				//OpenSPCoopLogger.getLoggerOpenSPCoopCore().error("Aggiornamento gestione errore PD servizio applicativo in IntegrationManagerException.init dell'IntegrationManager  SA["+servizioApplicativo+"] non riuscito");
@@ -324,7 +324,7 @@ public class IntegrationManagerException extends Exception implements java.io.Se
 		if(protocolFactory!=null){
 			protocol = protocolFactory.getProtocol();
 		}
-		this.identificativoPorta = openspcoopProperties.getIdentificativoPortaDefault(protocol);
+		this.identificativoPorta = openspcoopProperties.getIdentificativoPortaDefault(protocol, null);
 	}
 
 	@XmlTransient

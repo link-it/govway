@@ -82,9 +82,11 @@ import org.openspcoop2.protocol.engine.driver.repository.IGestoreRepository;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.sdk.state.StatefulMessage;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
@@ -244,6 +246,7 @@ public class GestoreMessaggi  {
 		else{
 			try{
 				GestoreMessaggi.cacheMappingGestoreMessaggi = new Cache(CacheType.JCS, GestoreMessaggi.GESTORE_MESSAGGI_CACHE_NAME); // lascio JCS come default abilitato via jmx
+				GestoreMessaggi.cacheMappingGestoreMessaggi.build();
 			}catch(Exception e){
 				throw new GestoreMessaggiException(e.getMessage(),e);
 			}
@@ -1076,7 +1079,8 @@ public class GestoreMessaggi  {
 					if(contextSerializerParameters!=null && contextSerializerParameters.size()>0){
 						for (String keyword : contextSerializerParameters.keySet()) {
 
-							Object o = this.pddContext.getObject(keyword);
+							MapKey<String> mapKey = org.openspcoop2.utils.Map.newMapKey(keyword);
+							Object o = this.pddContext.getObject(mapKey);
 							if(o==null){
 								continue; // un oggetto puo' essere opzionale in un context
 							}
@@ -1200,7 +1204,8 @@ public class GestoreMessaggi  {
 				if(contextSerializerParameters!=null && contextSerializerParameters.size()>0){
 					for (String keyword : contextSerializerParameters.keySet()) {
 
-						Object o = this.pddContext.getObject(keyword);
+						MapKey<String> mapKey = org.openspcoop2.utils.Map.newMapKey(keyword);
+						Object o = this.pddContext.getObject(mapKey);
 						if(o==null){
 							continue; // un oggetto puo' essere opzionale in un context
 						}
@@ -3128,7 +3133,7 @@ public class GestoreMessaggi  {
 				if(fieldNamesPdDContext_db.length() != 0) 
 					fieldNamesPdDContext_db.append(" , ");
 				fieldNamesPdDContext_db.append("PROTOCOLLO");
-				mapping.put("PROTOCOLLO", org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME);
+				mapping.put("PROTOCOLLO", org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME.getValue());
 				PdDContext pddContext = new PdDContext();
 				if(mapping.size()<=0){
 					return pddContext;
@@ -3147,7 +3152,9 @@ public class GestoreMessaggi  {
 
 					for (String keyDB : mapping.keySet()) {
 						Object object = rs.getObject(keyDB);
-						pddContext.addObject(mapping.get(keyDB), object);
+						String key = mapping.get(keyDB);
+						MapKey<String> mapKey = org.openspcoop2.utils.Map.newMapKey(key);
+						pddContext.addObject(mapKey, object);
 					}
 					
 					String idTransazione = rs.getString("id_transazione");
@@ -7805,7 +7812,7 @@ public class GestoreMessaggi  {
 	 *
 	 * 
 	 */
-	public boolean forcedDeleteMessage() throws GestoreMessaggiException{
+	public boolean forcedDeleteMessage(RequestInfo requestInfo) throws GestoreMessaggiException{
 
 		if(this.openspcoopstate instanceof OpenSPCoopStateful) {
 			StatefulMessage stateful = (this.isRichiesta) ? ((StatefulMessage)this.openspcoopstate.getStatoRichiesta()) 
@@ -7826,7 +7833,7 @@ public class GestoreMessaggi  {
 					String protocol = null;
 					if(this.protocolFactory!=null)
 						protocol = this.protocolFactory.getProtocol();
-					receiverJMS = new JMSReceiver(this.propertiesReader.getIdentitaPortaDefault(protocol),"ForcedDeleteMessage",this.propertiesReader.singleConnection_NodeReceiver(),this.log,idT);
+					receiverJMS = new JMSReceiver(this.propertiesReader.getIdentitaPortaDefault(protocol, requestInfo),"ForcedDeleteMessage",this.propertiesReader.singleConnection_NodeReceiver(),this.log,idT);
 				}
 				if(Costanti.INBOX.equals(this.tipo)){
 					//	rollback messaggio (eventuale profilo + accesso_pdd)

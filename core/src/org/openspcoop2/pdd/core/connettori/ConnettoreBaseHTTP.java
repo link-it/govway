@@ -251,7 +251,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 					sbDebug = new StringBuilder();
 					this.sslContextProperties.setSbDebug(sbDebug);
 				}
-				return GestoreKeystoreCaching.getSSLSocketFactory(this.sslContextProperties).getSslSocketFactory();
+				return GestoreKeystoreCaching.getSSLSocketFactory(this.requestInfo, this.sslContextProperties).getSslSocketFactory(this.requestInfo);
 			}catch(Exception e) {
 				this.logger.error("Lettura SSLSocketFactory '"+this.sslContextProperties.toString()+"' dalla cache fallita: "+e.getMessage(),e);
 				throw new UtilsException(e.getMessage(),e);
@@ -471,7 +471,8 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 										     this.requestMsg!=null ? this.requestMsg.getServiceBinding() : null,
 										     interfaceName,
 										     this.requestInfo!=null ? this.requestInfo.getIdentitaPdD() : null,
-										     this.getIdAccordo());		 
+										     this.getIdAccordo(),
+										     this.requestInfo);		 
 									 prefixGatewayUrl = urlInvocazioneApi.getBaseUrl();
 									 contesto = urlInvocazioneApi.getContext();
 								 }

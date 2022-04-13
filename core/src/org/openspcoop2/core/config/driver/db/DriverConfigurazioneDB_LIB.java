@@ -9638,6 +9638,7 @@ public class DriverConfigurazioneDB_LIB {
 		AccessoDatiAutenticazione aDatiAuthn = config.getAccessoDatiAutenticazione();
 		AccessoDatiGestioneToken aDatiGestioneToken = config.getAccessoDatiGestioneToken();
 		AccessoDatiKeystore aDatiKeystore = config.getAccessoDatiKeystore();
+		AccessoDatiRichieste aDatiRichieste = config.getAccessoDatiRichieste();
 		Attachments att = config.getAttachments();
 
 		ConfigurazioneMultitenant multitenant = config.getMultitenant();
@@ -9948,6 +9949,23 @@ public class DriverConfigurazioneDB_LIB {
 			keystore_idleCache = keystore_cache.getItemIdleTime();
 			keystore_lifeCache = keystore_cache.getItemLifeSecond();
 		}
+		
+		Cache dati_richieste_cache = null;
+		String dati_richieste_dimensioneCache = null;
+		String dati_richieste_algoritmoCache = null;
+		String dati_richieste_idleCache = null;
+		String dati_richieste_lifeCache = null;
+		String dati_richieste_statoCache = null;
+		if(aDatiRichieste !=null){
+			dati_richieste_cache = aDatiRichieste.getCache();
+		}
+		dati_richieste_statoCache = (dati_richieste_cache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
+		if (dati_richieste_statoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
+			dati_richieste_dimensioneCache = dati_richieste_cache.getDimensione();
+			dati_richieste_algoritmoCache = DriverConfigurazioneDB_LIB.getValue(dati_richieste_cache.getAlgoritmo());
+			dati_richieste_idleCache = dati_richieste_cache.getItemIdleTime();
+			dati_richieste_lifeCache = dati_richieste_cache.getItemLifeSecond();
+		}
 
 		Tracciamento t = config.getTracciamento();
 		String tracciamentoBuste = null;
@@ -10129,6 +10147,12 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("consegna_lifecache", "?");
 				// canali
 				sqlQueryObject.addInsertField("canali_stato", "?");
+				// dati richieste cache
+				sqlQueryObject.addInsertField("dati_richieste_statocache", "?");
+				sqlQueryObject.addInsertField("dati_richieste_dimensionecache", "?");
+				sqlQueryObject.addInsertField("dati_richieste_algoritmocache", "?");
+				sqlQueryObject.addInsertField("dati_richieste_idlecache", "?");
+				sqlQueryObject.addInsertField("dati_richieste_lifecache", "?");
 
 				updateQuery = sqlQueryObject.createSQLInsert();
 				updateStmt = con.prepareStatement(updateQuery);
@@ -10253,6 +10277,12 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setString(index++, consegna_lifeCache);
 				// canali
 				updateStmt.setString(index++, configurazioneCanali_stato);
+				// dati richieste cache
+				updateStmt.setString(index++, dati_richieste_statoCache);
+				updateStmt.setString(index++, dati_richieste_dimensioneCache);
+				updateStmt.setString(index++, dati_richieste_algoritmoCache);
+				updateStmt.setString(index++, dati_richieste_idleCache);
+				updateStmt.setString(index++, dati_richieste_lifeCache);
 
 				DriverConfigurazioneDB_LIB.log.debug("eseguo query :" + 
 						DBUtils.formatSQLString(updateQuery, 
@@ -10283,7 +10313,8 @@ public class DriverConfigurazioneDB_LIB {
 								response_cache_hash_url, response_cache_hash_query, response_cache_hash_query_list, response_cache_hash_headers, response_cache_hash_headers_list, response_cache_hash_payload,
 								responseCaching_statoCache, responseCaching_dimensioneCache, responseCaching_algoritmoCache, responseCaching_idleCache, responseCaching_lifeCache,
 								consegna_statoCache, consegna_dimensioneCache, consegna_algoritmoCache, consegna_idleCache, consegna_lifeCache,
-								configurazioneCanali_stato
+								configurazioneCanali_stato,
+								dati_richieste_statoCache, dati_richieste_dimensioneCache, dati_richieste_algoritmoCache, dati_richieste_idleCache, dati_richieste_lifeCache
 								));
 
 				n = updateStmt.executeUpdate();
@@ -10772,6 +10803,12 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("consegna_lifecache", "?");
 				// canali
 				sqlQueryObject.addUpdateField("canali_stato", "?");
+				// dati richieste cache
+				sqlQueryObject.addUpdateField("dati_richieste_statocache", "?");
+				sqlQueryObject.addUpdateField("dati_richieste_dimensionecache", "?");
+				sqlQueryObject.addUpdateField("dati_richieste_algoritmocache", "?");
+				sqlQueryObject.addUpdateField("dati_richieste_idlecache", "?");
+				sqlQueryObject.addUpdateField("dati_richieste_lifecache", "?");
 
 				updateQuery = sqlQueryObject.createSQLUpdate();
 				updateStmt = con.prepareStatement(updateQuery);
@@ -10896,6 +10933,12 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setString(index++, consegna_lifeCache);
 				// canali
 				updateStmt.setString(index++, configurazioneCanali_stato);
+				// dati richieste cache
+				updateStmt.setString(index++, dati_richieste_statoCache);
+				updateStmt.setString(index++, dati_richieste_dimensioneCache);
+				updateStmt.setString(index++, dati_richieste_algoritmoCache);
+				updateStmt.setString(index++, dati_richieste_idleCache);
+				updateStmt.setString(index++, dati_richieste_lifeCache);
 				
 				DriverConfigurazioneDB_LIB.log.debug("eseguo query :" + 
 						DBUtils.formatSQLString(updateQuery, 
@@ -10924,7 +10967,8 @@ public class DriverConfigurazioneDB_LIB {
 								response_cache_hash_url, response_cache_hash_query, response_cache_hash_query_list, response_cache_hash_headers, response_cache_hash_headers_list, response_cache_hash_payload,
 								responseCaching_statoCache, responseCaching_dimensioneCache, responseCaching_algoritmoCache, responseCaching_idleCache, responseCaching_lifeCache,
 								consegna_statoCache, consegna_dimensioneCache, consegna_algoritmoCache, consegna_idleCache, consegna_lifeCache,
-								configurazioneCanali_stato
+								configurazioneCanali_stato,
+								dati_richieste_statoCache, dati_richieste_dimensioneCache, dati_richieste_algoritmoCache, dati_richieste_idleCache, dati_richieste_lifeCache
 								));
 
 				n = updateStmt.executeUpdate();

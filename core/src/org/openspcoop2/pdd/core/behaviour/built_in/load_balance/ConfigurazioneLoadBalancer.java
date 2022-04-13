@@ -29,9 +29,9 @@ import org.openspcoop2.pdd.core.behaviour.BehaviourEmitDiagnosticException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourPropertiesUtils;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.slf4j.Logger;
 
 /**

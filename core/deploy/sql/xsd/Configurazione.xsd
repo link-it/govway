@@ -1417,6 +1417,62 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+		<xsd:element name="gestore-richieste-statocache" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="dati_richieste_statocache"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se i dati di gestione delle richieste vengono mantenuti in una cache (abilitato/disabilitato)</linkit:sql-ddl-column-comment>                             
+                                <linkit:sql-column-comment><![CDATA[Cache per la gestione delle richieste]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="gestore-richieste-dimensionecache" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="dati_richieste_dimensionecache"/>
+                                <linkit:sql-ddl-column-comment>Numero massimo di elementi che risiedono nella cache dei dati di gestione delle richieste</linkit:sql-ddl-column-comment>                             
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="gestore-richieste-algoritmocache" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="dati_richieste_algoritmocache"/>
+                                <linkit:sql-ddl-column-comment>Algoritmo di svecchiamento degli elementi che risiedono nella cache di gestione delle richieste (LRU/MRU)</linkit:sql-ddl-column-comment>                             
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="gestore-richieste-idlecache" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="dati_richieste_idlecache"/>
+                                <linkit:sql-ddl-column-comment>Massimo tempo di inutilizzo (in minuti) degli elementi che risiedono nella cache di gestione delle richieste</linkit:sql-ddl-column-comment>                             
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="gestore-richieste-lifecache" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="dati_richieste_lifecache"/>
+                                <linkit:sql-ddl-column-comment>Tempo di vita (in minuti) degli elementi che risiedono nella cache di gestione delle richieste</linkit:sql-ddl-column-comment>                             
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>

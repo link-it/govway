@@ -42,6 +42,7 @@ import org.openspcoop2.protocol.sdk.constants.FaseImbustamento;
 import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 
 /**
  * Classe che implementa, in base al protocollo ModI, l'interfaccia {@link org.openspcoop2.protocol.sdk.builder.IBustaBuilder} 
@@ -72,6 +73,11 @@ public class ModIBustaBuilder extends BustaBuilder<AbstractModISecurityToken<?>>
 			return protocolMessage;
 		}
 		
+		RequestInfo requestInfo = null;
+		if(context!=null && context.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+			requestInfo = (RequestInfo) context.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+		}
+		
 		ProtocolMessage protocolMessage = super.imbustamento(msg, context,
 				busta, bustaRichiesta,
 				ruoloMessaggio, proprietaManifestAttachments, faseImbustamento);
@@ -95,8 +101,8 @@ public class ModIBustaBuilder extends BustaBuilder<AbstractModISecurityToken<?>>
 			ModIImbustamento imbustamento = new ModIImbustamento(this.getLog());
 			protocolMessage = imbustamento.buildMessage(msg, context, busta, bustaRichiesta,
 					ruoloMessaggio, proprietaManifestAttachments, 
-					this.getProtocolFactory().getCachedRegistryReader(this.state), 
-					this.getProtocolFactory().getCachedConfigIntegrationReader(this.state),
+					this.getProtocolFactory().getCachedRegistryReader(this.state, requestInfo), 
+					this.getProtocolFactory().getCachedConfigIntegrationReader(this.state, requestInfo),
 					this.getProtocolFactory(), this.state);
 		}
 			

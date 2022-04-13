@@ -22,7 +22,6 @@ package org.openspcoop2.utils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Map;
 
 /**
  * TimeoutInputStrem
@@ -39,10 +38,10 @@ public class TimeoutInputStreamEngine extends InputStream {
 	private int timeoutMs;
 	private InputStream isWrapped = null;
 	private String prefixError = "";
-	private Map<String, Object> ctx;
+	private Map<Object> ctx;
 	private boolean checkDisabled = false;
 	
-	protected TimeoutInputStreamEngine(InputStream is, int timeoutMs, String prefixError, Map<String, Object> ctx) throws IOException {
+	protected TimeoutInputStreamEngine(InputStream is, int timeoutMs, String prefixError, Map<Object> ctx) throws IOException {
 		this.createDateMs = System.currentTimeMillis();
 		this.timeoutMs = timeoutMs;
 		this.isWrapped = is;
@@ -68,7 +67,7 @@ public class TimeoutInputStreamEngine extends InputStream {
 		}
 		this.timeoutMs = timeoutMs;
 	}
-	protected void updateContext(Map<String, Object> ctx) {
+	protected void updateContext(Map<Object> ctx) {
 		this.ctx = ctx;
 	}
 	

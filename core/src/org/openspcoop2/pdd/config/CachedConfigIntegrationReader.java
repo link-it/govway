@@ -36,16 +36,17 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.mapping.IdentificazioneDinamicaException;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPorteDelegate;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPorteApplicative;
+import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPorteDelegate;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.slf4j.Logger;
@@ -64,20 +65,23 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	private ConfigurazionePdDManager configurazionePdDMangager;
 	@SuppressWarnings("unused")
 	private IProtocolFactory<?> protocolFactory;
+	private RequestInfo requestInfo;
 	/*public CachedConfigIntegrationReader(Logger log,IProtocolFactory<?> protocolFactory) throws Exception{
 		this.log = log;
 		this.protocolFactory = protocolFactory;
 		this.configurazionePdDMangager = ConfigurazionePdDManager.getInstance();
 	}*/
-	public CachedConfigIntegrationReader(Logger log,IProtocolFactory<?> protocolFactory, IState state) throws Exception{
+	public CachedConfigIntegrationReader(Logger log,IProtocolFactory<?> protocolFactory, IState state, RequestInfo requestInfo) throws Exception{
 		this.log = log;
 		this.protocolFactory = protocolFactory;
 		this.configurazionePdDMangager = ConfigurazionePdDManager.getInstance(state);
+		this.requestInfo = requestInfo;
 	}
-	public CachedConfigIntegrationReader(Logger log,IProtocolFactory<?> protocolFactory, ConfigurazionePdDManager configurazionePdDManager) throws Exception{
+	public CachedConfigIntegrationReader(Logger log,IProtocolFactory<?> protocolFactory, ConfigurazionePdDManager configurazionePdDManager, RequestInfo requestInfo) throws Exception{
 		this.log = log;
 		this.protocolFactory = protocolFactory;
 		this.configurazionePdDMangager = configurazionePdDManager;
+		this.requestInfo = requestInfo;
 	}
 
 	
@@ -87,7 +91,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public boolean existsServizioApplicativo(IDServizioApplicativo idServizioApplicativo) {
 		try{
-			return this.configurazionePdDMangager.getServizioApplicativo(idServizioApplicativo)!=null;
+			return this.configurazionePdDMangager.getServizioApplicativo(idServizioApplicativo, this.requestInfo)!=null;
 		} catch(Exception e){
 			return false;
 		}
@@ -106,7 +110,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String username, String password, CryptConfig config) throws RegistryNotFound,RegistryException{
 		try{
 			IDServizioApplicativo idSA = this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiBasic(username, password, config);
-			return this.configurazionePdDMangager.getServizioApplicativo(idSA);
+			return this.configurazionePdDMangager.getServizioApplicativo(idSA, this.requestInfo);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -127,7 +131,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String subject, String aIssuer) throws RegistryNotFound,RegistryException{
 		try{
 			IDServizioApplicativo idSA = this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiSsl(subject,aIssuer);
-			return this.configurazionePdDMangager.getServizioApplicativo(idSA);
+			return this.configurazionePdDMangager.getServizioApplicativo(idSA, this.requestInfo);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -148,7 +152,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(CertificateInfo certificate, boolean strictVerifier) throws RegistryNotFound,RegistryException{
 		try{
 			IDServizioApplicativo idSA = this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiSsl(certificate,strictVerifier);
-			return this.configurazionePdDMangager.getServizioApplicativo(idSA);
+			return this.configurazionePdDMangager.getServizioApplicativo(idSA, this.requestInfo);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -169,7 +173,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	public ServizioApplicativo getServizioApplicativoByCredenzialiPrincipal(String principal) throws RegistryNotFound,RegistryException{
 		try{
 			IDServizioApplicativo idSA = this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiPrincipal(principal);
-			return this.configurazionePdDMangager.getServizioApplicativo(idSA);
+			return this.configurazionePdDMangager.getServizioApplicativo(idSA, this.requestInfo);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -180,7 +184,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public ServizioApplicativo getServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws RegistryNotFound,RegistryException{
 		try{
-			return this.configurazionePdDMangager.getServizioApplicativo(idServizioApplicativo);
+			return this.configurazionePdDMangager.getServizioApplicativo(idServizioApplicativo, this.requestInfo);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -216,7 +220,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public IDPortaDelegata getIdPortaDelegata(String nome, IProtocolFactory<?> protocolFactory) throws RegistryNotFound,RegistryException{
 		try{
-			return this.configurazionePdDMangager.getIDPortaDelegata(nome,protocolFactory);
+			return this.configurazionePdDMangager.getIDPortaDelegata(nome,this.requestInfo,protocolFactory);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -227,7 +231,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public boolean existsPortaDelegata(IDPortaDelegata idPortaDelegata){
 		try{
-			return this.configurazionePdDMangager.getPortaDelegata(idPortaDelegata)!=null;
+			return this.configurazionePdDMangager.getPortaDelegata(idPortaDelegata, this.requestInfo)!=null;
 		} catch (DriverConfigurazioneNotFound de) {
 			return false;
 		}catch(Exception e){
@@ -238,16 +242,16 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public PortaDelegata getPortaDelegata(IDPortaDelegata idPortaDelegata) throws RegistryNotFound,RegistryException{
 		try{
-			return this.configurazionePdDMangager.getPortaDelegata(idPortaDelegata);
+			return this.configurazionePdDMangager.getPortaDelegata(idPortaDelegata, this.requestInfo);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
 			throw new RegistryException(e.getMessage(),e);
 		}
 	}
-	public String getAzione(PortaDelegata pd,URLProtocolContext transportContext, IProtocolFactory<?> protocolFactory,
+	public String getAzione(PortaDelegata pd,URLProtocolContext transportContext, RequestInfo requestInfo, IProtocolFactory<?> protocolFactory,
 			OpenSPCoop2MessageSoapStreamReader soapStreamReader) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, IdentificazioneDinamicaException{
-		return this.configurazionePdDMangager.getAzione(pd, transportContext, null, soapStreamReader, null, false, protocolFactory);
+		return this.configurazionePdDMangager.getAzione(pd, transportContext, requestInfo, null, soapStreamReader, null, false, protocolFactory);
 	}
 	
 	@Override
@@ -277,7 +281,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public IDPortaApplicativa getIdPortaApplicativa(String nome, IProtocolFactory<?> protocolFactory) throws RegistryNotFound,RegistryException{
 		try{
-			return this.configurazionePdDMangager.getIDPortaApplicativa(nome,protocolFactory);
+			return this.configurazionePdDMangager.getIDPortaApplicativa(nome, this.requestInfo, protocolFactory);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -287,7 +291,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public boolean existsPortaApplicativa(IDPortaApplicativa idPortaApplicativa){
 		try{
-			return this.configurazionePdDMangager.getPortaApplicativa(idPortaApplicativa)!=null;
+			return this.configurazionePdDMangager.getPortaApplicativa(idPortaApplicativa, this.requestInfo)!=null;
 		} catch (DriverConfigurazioneNotFound de) {
 			return false;
 		}catch(Exception e){
@@ -297,16 +301,16 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@Override
 	public PortaApplicativa getPortaApplicativa(IDPortaApplicativa idPortaApplicativa) throws RegistryNotFound,RegistryException{
 		try{
-			return this.configurazionePdDMangager.getPortaApplicativa(idPortaApplicativa);
+			return this.configurazionePdDMangager.getPortaApplicativa(idPortaApplicativa, this.requestInfo);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
 			throw new RegistryException(e.getMessage(),e);
 		}
 	}
-	public String getAzione(PortaApplicativa pa,URLProtocolContext transportContext, IProtocolFactory<?> protocolFactory,
+	public String getAzione(PortaApplicativa pa,URLProtocolContext transportContext, RequestInfo requestInfo, IProtocolFactory<?> protocolFactory,
 			OpenSPCoop2Message message, OpenSPCoop2MessageSoapStreamReader soapStreamReader) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, IdentificazioneDinamicaException{
-		return this.configurazionePdDMangager.getAzione(pa, transportContext, message, soapStreamReader, null, false, protocolFactory);
+		return this.configurazionePdDMangager.getAzione(pa, transportContext, requestInfo, message, soapStreamReader, null, false, protocolFactory);
 	}
 	
 	@Override

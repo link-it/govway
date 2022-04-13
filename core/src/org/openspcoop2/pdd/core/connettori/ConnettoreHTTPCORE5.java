@@ -74,6 +74,7 @@ import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.UtilsException;
@@ -133,10 +134,13 @@ public class ConnettoreHTTPCORE5 extends ConnettoreExtBaseHTTP {
 			else {
 				cm = new PoolingHttpClientConnectionManager();
 			}
+			
+			OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+			
 			// Increase max total connection to 200
-			cm.setMaxTotal(200);
+			cm.setMaxTotal(op2Properties.getBIOConfig_syncClient_maxTotal());
 			// Increase default max connection per route to 20
-			cm.setDefaultMaxPerRoute(5);
+			cm.setDefaultMaxPerRoute(op2Properties.getBIOConfig_syncClient_maxPerRoute());
 			// Increase max connections for localhost:80 to 50
 			//HttpHost localhost = new HttpHost("locahost", 80);
 			//cm.setMaxPerRoute(new HttpRoute(localhost), 50);

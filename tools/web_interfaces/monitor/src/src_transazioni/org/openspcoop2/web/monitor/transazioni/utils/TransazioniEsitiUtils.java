@@ -58,7 +58,7 @@ public class TransazioniEsitiUtils {
 	
 	public static java.lang.String getEsitoLabelSyntetic(Integer esito, String protocollo, Integer httpStatusCode, int tipoApi) {
 		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),protocollo);
+			EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(LoggerManager.getPddMonitorCoreLogger(),protocollo);
 			String esitoLabel = esitiProperties.getEsitoLabelSyntetic(esito);
 			if(httpStatusCode!=null && httpStatusCode>0) {
 				if(esitiProperties.convertoToCode(EsitoTransazioneName.OK) == esito.intValue()) {
@@ -125,7 +125,7 @@ public class TransazioniEsitiUtils {
 	
 	public static java.lang.String getEsitoLabelDescription(Integer esito, String protocollo, Integer httpOutStatusCode, Integer httpInStatusCode, int tipoApi) {
 		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),protocollo);
+			EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(LoggerManager.getPddMonitorCoreLogger(),protocollo);
 			String esitoLabel = getEsitoLabel(esito, protocollo);
 			String esitoRispostaIngresso = "";
 			String esitoDescription = esitiProperties.getEsitoDescription(esito);
@@ -176,7 +176,7 @@ public class TransazioniEsitiUtils {
 	public static String getEsitoStyleClass(Integer esito, String protocollo){
 
 		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),protocollo);
+			EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(LoggerManager.getPddMonitorCoreLogger(),protocollo);
 			String name = esitiProperties.getEsitoName(esito);
 			EsitoTransazioneName esitoName = EsitoTransazioneName.convertoTo(name);
 			boolean casoSuccesso = esitiProperties.getEsitiCodeOk().contains(esito);

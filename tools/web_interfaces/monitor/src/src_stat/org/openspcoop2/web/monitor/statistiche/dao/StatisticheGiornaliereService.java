@@ -1111,7 +1111,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						}
 					}
 					
-					EsitiProperties esitiProperties = EsitiProperties.getInstance(StatisticheGiornaliereService.log, this.andamentoTemporaleSearch.getProtocollo());
+					EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(StatisticheGiornaliereService.log, this.andamentoTemporaleSearch.getProtocollo());
 					List<Integer> esitiOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
 					List<Integer> esitiKo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
 					List<Integer> esitiFault = esitiProperties.getEsitiCodeFaultApplicativo();
@@ -2119,7 +2119,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				protocolloP = protocolloSelected;
 			}
 			
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(StatisticheGiornaliereService.log, protocolloP);
+			EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(StatisticheGiornaliereService.log, protocolloP);
 			EsitoUtils esitoUtils = new EsitoUtils(StatisticheGiornaliereService.log, protocolloP);
 			List<Integer> esitiOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
 			List<Integer> esitiKo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
@@ -2875,7 +2875,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				EsitiProperties esitiProperties = null;
 				try {
-					esitiProperties = EsitiProperties.getInstance(StatisticheGiornaliereService.log, this.distribErroriSearch.getProtocollo());
+					esitiProperties = EsitiProperties.getInstanceFromProtocolName(StatisticheGiornaliereService.log, this.distribErroriSearch.getProtocollo());
 				}catch(Throwable t) {
 					StatisticheGiornaliereService.log.error("EsitiProperties reader non disponibile: "+t.getMessage(), t);
 				}

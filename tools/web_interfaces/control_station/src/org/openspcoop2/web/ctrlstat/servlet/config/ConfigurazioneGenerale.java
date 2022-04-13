@@ -41,6 +41,7 @@ import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi;
 import org.openspcoop2.core.config.AccessoDatiGestioneToken;
 import org.openspcoop2.core.config.AccessoDatiKeystore;
+import org.openspcoop2.core.config.AccessoDatiRichieste;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Attachments;
 import org.openspcoop2.core.config.Cache;
@@ -212,6 +213,12 @@ public final class ConfigurazioneGenerale extends Action {
 			String algoritmocache_consegna = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_CONSEGNA);
 			String idlecache_consegna = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_CONSEGNA);
 			String lifecache_consegna = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_CONSEGNA);
+			
+			String statocache_datiRichieste = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_DATI_RICHIESTE);
+			String dimensionecache_datiRichieste = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_DATI_RICHIESTE);
+			String algoritmocache_datiRichieste = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_DATI_RICHIESTE);
+			String idlecache_datiRichieste = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_DATI_RICHIESTE);
+			String lifecache_datiRichieste = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_DATI_RICHIESTE);
 			
 			String multitenantStatoTmp = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_STATO);
 			boolean multitenantEnabled = CostantiConfigurazione.ABILITATO.getValue().equals(multitenantStatoTmp);
@@ -404,6 +411,14 @@ public final class ConfigurazioneGenerale extends Action {
 							canaliEnabled, numeroCanali, numeroNodi, canaliNome, canaliDescrizione, canaleList, canaliDefault,
 							numeroArchiviPlugins, numeroClassiPlugins);
 
+					confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_DATI_RICHIESTE,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_DATI_RICHIESTE,statocache_datiRichieste,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_DATI_RICHIESTE,dimensionecache_datiRichieste,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_DATI_RICHIESTE,algoritmocache_datiRichieste,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_DATI_RICHIESTE,idlecache_datiRichieste,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_DATI_RICHIESTE,lifecache_datiRichieste,
+							isAllHiddenCache);
+					
 					confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_REGISTRY,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_REGISTRY,statocache_registry,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_REGISTRY,dimensionecache_registry,
@@ -480,7 +495,7 @@ public final class ConfigurazioneGenerale extends Action {
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_CONSEGNA,idlecache_consegna,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_CONSEGNA,lifecache_consegna,
 							isAllHiddenCache);
-
+					
 					if(extendedBeanList!=null && extendedBeanList.size()>0){
 						for (ExtendedInfo ei : extendedBeanList) {
 							if(ei.extended){
@@ -726,6 +741,20 @@ public final class ConfigurazioneGenerale extends Action {
 				else{
 					newConfigurazione.getAccessoDatiConsegnaApplicativi().setCache(null);
 				}
+				
+				if(newConfigurazione.getAccessoDatiRichieste()==null){
+					newConfigurazione.setAccessoDatiRichieste(new AccessoDatiRichieste());
+				}
+				if(statocache_datiRichieste.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO)){
+					newConfigurazione.getAccessoDatiRichieste().setCache(new Cache());
+					newConfigurazione.getAccessoDatiRichieste().getCache().setDimensione(dimensionecache_datiRichieste);
+					newConfigurazione.getAccessoDatiRichieste().getCache().setAlgoritmo(AlgoritmoCache.toEnumConstant(algoritmocache_datiRichieste));
+					newConfigurazione.getAccessoDatiRichieste().getCache().setItemIdleTime(idlecache_datiRichieste);
+					newConfigurazione.getAccessoDatiRichieste().getCache().setItemLifeSecond(confHelper.convertLifeCacheValue(lifecache_datiRichieste));
+				}
+				else{
+					newConfigurazione.getAccessoDatiRichieste().setCache(null);
+				}
 
 				newConfigurazione.setMultitenant(new ConfigurazioneMultitenant());
 				newConfigurazione.getMultitenant().setStato(multitenantEnabled ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
@@ -865,6 +894,14 @@ public final class ConfigurazioneGenerale extends Action {
 						canaliEnabled, numeroCanali, numeroNodi, canaliNome, canaliDescrizione, canaleList, canaliDefault,
 						numeroArchiviPlugins, numeroClassiPlugins);
 
+				confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_DATI_RICHIESTE,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_DATI_RICHIESTE,statocache_datiRichieste,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_DATI_RICHIESTE,dimensionecache_datiRichieste,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_DATI_RICHIESTE,algoritmocache_datiRichieste,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_DATI_RICHIESTE,idlecache_datiRichieste,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_DATI_RICHIESTE,lifecache_datiRichieste,
+						isAllHiddenCache);
+				
 				confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_REGISTRY,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_REGISTRY,statocache_registry,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_REGISTRY,dimensionecache_registry,
@@ -941,7 +978,7 @@ public final class ConfigurazioneGenerale extends Action {
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_CONSEGNA,idlecache_consegna,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_CONSEGNA,lifecache_consegna,
 						isAllHiddenCache);
-
+				
 				if(extendedBeanList!=null && extendedBeanList.size()>0){
 					for (ExtendedInfo ei : extendedBeanList) {
 						if(ei.extended){
@@ -1261,6 +1298,18 @@ public final class ConfigurazioneGenerale extends Action {
 				else{
 					statocache_consegna = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
 				}
+				if(configurazione.getAccessoDatiRichieste()!=null && configurazione.getAccessoDatiRichieste().getCache()!=null) {
+					statocache_datiRichieste = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+					dimensionecache_datiRichieste = configurazione.getAccessoDatiRichieste().getCache().getDimensione();
+					if(configurazione.getAccessoDatiRichieste().getCache().getAlgoritmo()!=null){
+						algoritmocache_datiRichieste = configurazione.getAccessoDatiRichieste().getCache().getAlgoritmo().getValue();
+					}
+					idlecache_datiRichieste = configurazione.getAccessoDatiRichieste().getCache().getItemIdleTime();
+					lifecache_datiRichieste = configurazione.getAccessoDatiRichieste().getCache().getItemLifeSecond();
+				}
+				else{
+					statocache_datiRichieste = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
+				}
 				if(configurazione.getMultitenant()!=null) {
 					if(configurazione.getMultitenant().getStato()!=null) {
 						multitenantEnabled = StatoFunzionalita.ABILITATO.equals(configurazione.getMultitenant().getStato());
@@ -1452,6 +1501,14 @@ public final class ConfigurazioneGenerale extends Action {
 					canaliEnabled, numeroCanali, numeroNodi, canaliNome, canaliDescrizione, canaleList, canaliDefault,
 					numeroArchiviPlugins, numeroClassiPlugins);
 
+			confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_DATI_RICHIESTE,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_DATI_RICHIESTE,statocache_datiRichieste,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_DATI_RICHIESTE,dimensionecache_datiRichieste,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_DATI_RICHIESTE,algoritmocache_datiRichieste,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_DATI_RICHIESTE,idlecache_datiRichieste,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_DATI_RICHIESTE,lifecache_datiRichieste,
+					isAllHiddenCache);
+			
 			confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_REGISTRY,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_REGISTRY,statocache_registry,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_REGISTRY,dimensionecache_registry,
@@ -1528,7 +1585,7 @@ public final class ConfigurazioneGenerale extends Action {
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_CONSEGNA,idlecache_consegna,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_CONSEGNA,lifecache_consegna,
 					isAllHiddenCache);
-			
+						
 			if(extendedBeanList!=null && extendedBeanList.size()>0){
 				for (ExtendedInfo ei : extendedBeanList) {
 					if(ei.extended){

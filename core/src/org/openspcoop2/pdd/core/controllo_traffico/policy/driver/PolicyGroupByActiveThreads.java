@@ -33,6 +33,7 @@ import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
 import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreads;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
@@ -173,7 +174,16 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 	}
 	
 	@Override
-	public void registerStopRequest(Logger log, String idTransazione,IDUnivocoGroupByPolicy datiGroupBy, MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata) throws PolicyException,PolicyNotFoundException{
+	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Object oProtocolFactory, MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata) throws PolicyException,PolicyNotFoundException{
+		
+		IProtocolFactory<?> protocolFactory = null;
+		if(oProtocolFactory!=null && oProtocolFactory instanceof IProtocolFactory<?>) {
+			protocolFactory = (IProtocolFactory<?>) oProtocolFactory;
+		}
+		else {
+			throw new PolicyException("Uncurrect protocolFactory parameter");
+		}
+		
 		//System.out.println("<"+idTransazione+">registerStopRequest ...");
 		//synchronized (this.semaphore) {
 		this.lock.acquireThrowRuntime("registerStopRequest", idTransazione);
@@ -196,9 +206,9 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 					List<Integer> esitiCodeKo_senzaFaultApplicativo = null;
 					List<Integer> esitiCodeFaultApplicativo = null;
 					try {
-						esitiCodeOk = EsitiProperties.getInstance(log,dati.getProtocollo()).getEsitiCodeOk_senzaFaultApplicativo();
-						esitiCodeKo_senzaFaultApplicativo = EsitiProperties.getInstance(log,dati.getProtocollo()).getEsitiCodeKo_senzaFaultApplicativo();
-						esitiCodeFaultApplicativo = EsitiProperties.getInstance(log,dati.getProtocollo()).getEsitiCodeFaultApplicativo();
+						esitiCodeOk = EsitiProperties.getInstance(log,protocolFactory).getEsitiCodeOk_senzaFaultApplicativo();
+						esitiCodeKo_senzaFaultApplicativo = EsitiProperties.getInstance(log,protocolFactory).getEsitiCodeKo_senzaFaultApplicativo();
+						esitiCodeFaultApplicativo = EsitiProperties.getInstance(log,protocolFactory).getEsitiCodeFaultApplicativo();
 					}catch(Exception e) {
 						throw new PolicyException(e.getMessage(),e);
 					}

@@ -85,7 +85,7 @@ public class IntegrazioneUtils {
 		}
 		
 		String ID_TRANSAZIONE = org.openspcoop2.testsuite.core.TestSuiteProperties.getInstance().getIDTransazioneTrasporto();
-		EsitiProperties esitiProperties = EsitiProperties.getInstance(TrasparenteTestsuiteLogger.getInstance(), CostantiTestSuite.PROTOCOL_NAME);
+		EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(TrasparenteTestsuiteLogger.getInstance(), CostantiTestSuite.PROTOCOL_NAME);
 		
 		HttpRequestMethod httpMethod = HttpRequestMethod.valueOf(metodo);
 				

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.protocol.engine.constants;
+package org.openspcoop2.protocol.sdk.constants;
 
 import java.io.Serializable;
 import java.net.ProtocolException;

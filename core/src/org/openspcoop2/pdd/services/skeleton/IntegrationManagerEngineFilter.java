@@ -31,7 +31,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.pdd.services.connector.ConnectorUtils;
-import org.openspcoop2.protocol.engine.constants.IDService;
+import org.openspcoop2.protocol.sdk.constants.IDService;
 
 /**
  * IntegrationManagerEngineFilter

@@ -56,6 +56,7 @@ import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.message.utils.TransportUtilities;
 import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.openspcoop2.utils.io.notifier.NotifierInputStream;
 import org.openspcoop2.utils.serialization.JavaDeserializer;
@@ -93,7 +94,8 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 	public ForcedResponseMessage forcedResponse;
 	
 	/* Context */	
-	public Map<String, Object> context = new HashMap<String, Object>();
+	//public Map<MapKey<String>, Object> context = new HashMap<MapKey<String>, Object>();
+	public org.openspcoop2.utils.Map<Object> context = new org.openspcoop2.utils.Map<Object>();
 	private String transactionId;
 	
 	/* ContentType */
@@ -216,9 +218,9 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 				newInstance.setForcedResponseCode(this.forcedResponseCode);
 			}
 			if(this.context.size()>0){
-				Iterator<String> it = this.context.keySet().iterator();
+				Iterator<MapKey<String>> it = this.context.keySet().iterator();
 				while (it.hasNext()) {
-					String contextKey = (String) it.next();
+					MapKey<String> contextKey = (MapKey<String>) it.next();
 					newInstance.addContextProperty(contextKey, this.context.get(contextKey));
 				}
 			}	
@@ -319,17 +321,17 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 			/* Context */	
 			if(this.context!=null && this.context.size()>0) {
 				SerializedContext serializedContext = null;
-				Iterator<String> it = this.context.keySet().iterator();
+				Iterator<MapKey<String>> it = this.context.keySet().iterator();
 				JavaSerializer jSerializer = new JavaSerializer();
 				while (it.hasNext()) {
-					String key = (String) it.next();
+					MapKey<String> key = (MapKey<String>) it.next();
 					Object o = this.context.get(key);
 					if(o instanceof Serializable) {
 						if(serializedContext==null) {
 							serializedContext = new SerializedContext();
 						}
 						SerializedParameter p = new SerializedParameter();
-						p.setNome(key);
+						p.setNome(key.getValue());
 						p.setClasse(o.getClass().getName());
 						ByteArrayOutputStream bout = new ByteArrayOutputStream();
 						jSerializer.writeObject(o, bout);
@@ -523,7 +525,7 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 				JavaDeserializer jDeserializer = new JavaDeserializer();
 				for (SerializedParameter p : messageContext.getSerializedContext().getPropertyList()) {
 					Object o = jDeserializer.readObject(new ByteArrayInputStream(p.getBase()), Class.forName(p.getClasse()));
-					this.context.put(p.getNome(), o);
+					this.context.addObject(org.openspcoop2.utils.Map.newMapKey(p.getNome()), o);
 				}
 			}
 			
@@ -845,19 +847,19 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 	/* Context */
 	
 	@Override
-	public void addContextProperty(String property, Object value){
+	public void addContextProperty(MapKey<String> property, Object value){
 		this.context.put(property, value);
 	}
 	@Override
-	public Iterator<String> keysContextProperty(){
+	public Iterator<MapKey<String>> keysContextProperty(){
 		return this.context.keySet().iterator();
 	}
 	@Override
-	public Object getContextProperty(String property){
+	public Object getContextProperty(MapKey<String> property){
 		return this.context.get(property);
 	}
 	@Override
-	public Object removeContextProperty(String property){
+	public Object removeContextProperty(MapKey<String> property){
 		return this.context.remove(property);
 	}
 	

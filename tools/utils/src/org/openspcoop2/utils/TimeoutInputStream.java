@@ -22,7 +22,6 @@ package org.openspcoop2.utils;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 
 /**
  * TimeoutInputStrem
@@ -34,17 +33,17 @@ import java.util.Map;
  */
 public class TimeoutInputStream extends FilterInputStream {
 
-	public final static String EXCEPTION_KEY = "TimeoutIOException";
-	public final static String ERROR_MSG_KEY = "TimeoutInputStream";
+	public final static MapKey<String> EXCEPTION_KEY = Map.newMapKey("TimeoutIOException");
+	public final static MapKey<String> ERROR_MSG_KEY = Map.newMapKey("TimeoutInputStream");
 	public final static String ERROR_MSG = "Read timed out";
 	
 	public TimeoutInputStream(InputStream is, int timeoutMs) throws IOException {
 		this(is, timeoutMs, null, null);
 	}
-	public TimeoutInputStream(InputStream is, int timeoutMs, Map<String, Object> ctx) throws IOException {
+	public TimeoutInputStream(InputStream is, int timeoutMs, Map<Object> ctx) throws IOException {
 		this(is, timeoutMs, null, ctx);
 	}
-	public TimeoutInputStream(InputStream is, int timeoutMs, String prefixError, Map<String, Object> ctx) throws IOException {
+	public TimeoutInputStream(InputStream is, int timeoutMs, String prefixError, Map<Object> ctx) throws IOException {
 		super(new TimeoutInputStreamEngine(is, timeoutMs, prefixError, ctx));
 	}
 	
@@ -68,7 +67,7 @@ public class TimeoutInputStream extends FilterInputStream {
 			((TimeoutInputStreamEngine)is).updateThreshold(timeoutMs);
 		}
 	}
-	public void updateContext(Map<String, Object> ctx) {
+	public void updateContext(Map<Object> ctx) {
 		InputStream is = super.in;
 		if(is instanceof TimeoutInputStreamEngine) {
 			((TimeoutInputStreamEngine)is).updateContext(ctx);

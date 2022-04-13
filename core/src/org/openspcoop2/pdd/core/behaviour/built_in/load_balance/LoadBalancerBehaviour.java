@@ -36,9 +36,9 @@ import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToFilter;
 import org.openspcoop2.pdd.core.behaviour.BehaviourLoadBalancer;
 import org.openspcoop2.pdd.core.behaviour.IBehaviour;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 
 /**
  * LoadBalancerBehaviour

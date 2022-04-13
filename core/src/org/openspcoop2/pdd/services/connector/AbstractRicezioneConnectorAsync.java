@@ -48,13 +48,13 @@ import org.openspcoop2.pdd.services.connector.messages.HttpServletConnectorAsync
 import org.openspcoop2.pdd.services.connector.messages.HttpServletConnectorInMessage;
 import org.openspcoop2.pdd.services.error.AbstractErrorGenerator;
 import org.openspcoop2.pdd.services.service.IRicezioneService;
-import org.openspcoop2.protocol.engine.RequestInfo;
-import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.IDService;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.TimeoutIOException;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;

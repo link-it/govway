@@ -76,7 +76,7 @@ public class MessageSecurityReceiver_soapbox extends AbstractSOAPMessageSecurity
 	
 
 	@Override
-	public void process(org.openspcoop2.security.message.MessageSecurityContext messageSecurityContext,OpenSPCoop2Message messageParam,Busta busta) throws SecurityException{
+	public void process(org.openspcoop2.security.message.MessageSecurityContext messageSecurityContext,OpenSPCoop2Message messageParam,Busta busta,org.openspcoop2.utils.Map<Object> ctx) throws SecurityException{
 		try{
 			
 			if(ServiceBinding.SOAP.equals(messageParam.getServiceBinding())==false){
@@ -224,7 +224,7 @@ public class MessageSecurityReceiver_soapbox extends AbstractSOAPMessageSecurity
 			String aliasDecryptPassword = null;
 			boolean decryptionSymmetric = false;
 			if(decrypt){
-				EncryptionBean bean = KeystoreUtils.getReceiverEncryptionBean(messageSecurityContext);
+				EncryptionBean bean = KeystoreUtils.getReceiverEncryptionBean(messageSecurityContext,ctx);
 				
 				decryptionKS = bean.getKeystore();
 				decryptionTrustStoreKS = bean.getTruststore();
@@ -245,7 +245,7 @@ public class MessageSecurityReceiver_soapbox extends AbstractSOAPMessageSecurity
 			String crlPath = null;
 			if(signature){
 				
-				SignatureBean bean = KeystoreUtils.getReceiverSignatureBean(messageSecurityContext);
+				SignatureBean bean = KeystoreUtils.getReceiverSignatureBean(messageSecurityContext,ctx);
 				
 				signatureKS = bean.getKeystore();
 				signatureTrustStoreKS = bean.getTruststore();
@@ -274,7 +274,7 @@ public class MessageSecurityReceiver_soapbox extends AbstractSOAPMessageSecurity
 				if(decryptionTrustStoreKS==null){
 					decryptionTrustStoreKS = decryptionKS;
 				}
-				securityConfig_decryption = new org.openspcoop2.security.message.soapbox.SecurityConfig(decryptionKS, decryptionTrustStoreKS, passwordMap_decryption);
+				securityConfig_decryption = new org.openspcoop2.security.message.soapbox.SecurityConfig(decryptionKS, decryptionTrustStoreKS, passwordMap_decryption,ctx);
 				securityConfig_decryption.setSymmetricSharedKey(decryptionSymmetric);
 			}
 			
@@ -294,7 +294,7 @@ public class MessageSecurityReceiver_soapbox extends AbstractSOAPMessageSecurity
 				if(signatureTrustStoreKS==null){
 					signatureTrustStoreKS = signatureKS;
 				}
-				securityConfig_signature = new org.openspcoop2.security.message.soapbox.SecurityConfig(signatureKS, signatureTrustStoreKS, passwordMap_signature,crlPath);
+				securityConfig_signature = new org.openspcoop2.security.message.soapbox.SecurityConfig(signatureKS, signatureTrustStoreKS, passwordMap_signature,crlPath,ctx);
 			}	
 			
 			

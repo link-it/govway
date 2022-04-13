@@ -44,7 +44,9 @@ import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.SecurityException;
+import org.openspcoop2.security.keystore.KeystoreConstants;
 import org.openspcoop2.security.message.IMessageSecuritySender;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.constants.SecurityConstants;
@@ -68,7 +70,7 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 
 	
      @Override
-	public void process(MessageSecurityContext wssContext,OpenSPCoop2Message messageParam) throws SecurityException{
+	public void process(MessageSecurityContext wssContext,OpenSPCoop2Message messageParam,org.openspcoop2.utils.Map<Object> ctx) throws SecurityException{
 		try{ 	
 			
 			if(ServiceBinding.SOAP.equals(messageParam.getServiceBinding())==false){
@@ -76,6 +78,11 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 			}
 			OpenSPCoop2SoapMessage message = messageParam.castAsSoap();
 			
+    		RequestInfo requestInfo = null;
+    		if(ctx!=null && ctx.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+    			requestInfo = (RequestInfo) ctx.get(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+    		}
+    		
 			
 			// ** Inizializzo handler CXF **/
 			
@@ -99,7 +106,7 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 	        // ** Imposto configurazione nel messaggio **/
 	        // NOTA: farlo dopo getSecurityOnAttachments poichè si modifica la regola di quali attachments trattare.
 	        
-	        setOutgoingProperties(wssContext,msgCtx,messageParam);
+	        setOutgoingProperties(wssContext,msgCtx,messageParam,requestInfo);
 	        
 	        
 	        // ** Registro attachments da trattare **/
@@ -168,7 +175,7 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 		
     }
 
-    private void setOutgoingProperties(MessageSecurityContext wssContext,SoapMessage msgCtx,OpenSPCoop2Message message) throws Exception{
+    private void setOutgoingProperties(MessageSecurityContext wssContext,SoapMessage msgCtx,OpenSPCoop2Message message, RequestInfo requestInfo) throws Exception{
     	boolean mustUnderstand = false;
     	boolean signatureUser = false;
     	boolean user = false;
@@ -224,6 +231,10 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 						String id = key+"_"+IDUtilities.getUniqueSerialNumber("wssSecurity.setOutgoingProperties");
 						msgCtx.put(key, id);
 						msgCtx.put(id, oValue);
+						if(oValue!=null && oValue instanceof Properties) {
+							Properties p = (Properties) oValue;
+							p.put(KeystoreConstants.PROPERTY_REQUEST_INFO, requestInfo);
+						}
 					}
 				}
 				else if(SecurityConstants.ENCRYPT_ACTION_OLD.equals(key)) {

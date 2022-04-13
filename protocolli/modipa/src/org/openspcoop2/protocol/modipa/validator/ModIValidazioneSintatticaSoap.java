@@ -57,6 +57,7 @@ import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneUtils;
 import org.openspcoop2.security.keystore.KeystoreConstants;
 import org.openspcoop2.security.message.MessageSecurityContext;
@@ -192,7 +193,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			Busta busta, List<Eccezione> erroriValidazione,
 			ModITruststoreConfig trustStoreCertificati, ModISecurityConfig securityConfig,
 			boolean buildSecurityTokenInRequest,
-			Map<String, Object> dynamicMapParameter, Busta datiRichiesta) throws Exception {
+			Map<String, Object> dynamicMapParameter, Busta datiRichiesta, RequestInfo requestInfo) throws Exception {
 		
 		MessageSecurityContextParameters messageSecurityContextParameters = new MessageSecurityContextParameters();
 		messageSecurityContextParameters.setFunctionAsClient(false);
@@ -320,6 +321,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			pTruststore.put(KeystoreConstants.PROPERTY_TRUSTSTORE_TYPE, trustStoreCertificati.getSecurityMessageTruststoreType());
 			pTruststore.put(KeystoreConstants.PROPERTY_TRUSTSTORE_PASSWORD, trustStoreCertificati.getSecurityMessageTruststorePassword());
 			pTruststore.put(KeystoreConstants.PROPERTY_TRUSTSTORE_PATH, trustStoreCertificati.getSecurityMessageTruststorePath());
+			pTruststore.put(KeystoreConstants.PROPERTY_REQUEST_INFO, requestInfo);
 			if(trustStoreCertificati.getSecurityMessageTruststoreCRLs()!=null) {
 				pTruststore.put(KeystoreConstants.PROPERTY_CRL, trustStoreCertificati.getSecurityMessageTruststoreCRLs());
 				secProperties.put(SecurityConstants.ENABLE_REVOCATION, SecurityConstants.TRUE);
@@ -402,7 +404,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			
 			// ** Applico sicurezza tramite engine **/
 			wss4jSignature.process(messageSecurityContext, soapMessage, busta, 
-					bufferMessage_readOnly, idTransazione);
+					bufferMessage_readOnly, idTransazione, this.context);
 			
 			
 			// ** Leggo certificato client **/
@@ -479,7 +481,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			}
 			
 			if(request) {
-				identificazioneApplicativoMittente(x509,busta);
+				identificazioneApplicativoMittente(x509,busta,requestInfo);
 			}
 		}
 		

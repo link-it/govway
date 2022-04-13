@@ -26,6 +26,8 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.controllo_traffico.beans.JMXConstants;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.utils.Costanti;
+import org.openspcoop2.utils.Map;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.jmx.CostantiJMX;
 
@@ -124,19 +126,19 @@ public class CostantiPdD {
     /**
      * Gestione Preflight Request in corso su SOAP
      */
-    public final static String CORS_PREFLIGHT_REQUEST_SOAP = "CORS_PREFLIGHT_REQUEST_SOAP";
+    public final static MapKey<String> CORS_PREFLIGHT_REQUEST_SOAP = Map.newMapKey("CORS_PREFLIGHT_REQUEST_SOAP");
     
     /** Nome Porta Invocata originale */
-    public final static String NOME_PORTA_INVOCATA = "NOME_PORTA_INVOCATA";
+    public final static MapKey<String> NOME_PORTA_INVOCATA = Map.newMapKey("NOME_PORTA_INVOCATA");
     
     /** Response Caching */
-    public final static String RESPONSE_CACHE_REQUEST_DIGEST = "RESPONSE_CACHE_REQUEST_DIGEST";
+    public final static MapKey<String> RESPONSE_CACHE_REQUEST_DIGEST = Map.newMapKey("RESPONSE_CACHE_REQUEST_DIGEST");
     /** Response Caching */
     public final static String RESPONSE_CACHE_REQUEST_DIGEST_DEFAULT_ALGORITHM = "MD5";
     
     /** Dati di integresso del messaggio */
-    public final static String DATA_ACCETTAZIONE_RICHIESTA = "CONTEXT_DATA_ACCETTAZIONE_RICHIESTA";
-    public final static String DATA_INGRESSO_RICHIESTA = "CONTEXT_DATA_INGRESSO_RICHIESTA";
+    public final static MapKey<String> DATA_ACCETTAZIONE_RICHIESTA = Map.newMapKey("CONTEXT_DATA_ACCETTAZIONE_RICHIESTA");
+    public final static MapKey<String> DATA_INGRESSO_RICHIESTA = Map.newMapKey("CONTEXT_DATA_INGRESSO_RICHIESTA");
     
     /** Variabile che indica la configurazione di dump */
     public final static String DUMP_CONFIG = "DumpConfig";
@@ -165,45 +167,47 @@ public class CostantiPdD {
     public final static String GESTIONE_ESITO_MODULO_FUNZIONALE = "GESTIONE_ESITO_MODULO_FUNZIONALE";
     
     /** PddContext in Header HTTP */
-	public final static String OPENSPCOOP2_PDD_CONTEXT_HEADER_HTTP = "OPENSPCOOP2_CONTEXT_HEADER_HTTP";
+	public final static MapKey<String> OPENSPCOOP2_PDD_CONTEXT_HEADER_HTTP = Map.newMapKey("OPENSPCOOP2_CONTEXT_HEADER_HTTP");
 	
-	public final static String OPENSPCOOP2_PDD_CONTEXT_NUMERO_TENTATIVI_RICONSEGNA_UPDATED = "NUMERO_TENTATIVI_RICONSEGNA_UPDATED";
-	        
+	public final static MapKey<String> OPENSPCOOP2_PDD_CONTEXT_NUMERO_TENTATIVI_RICONSEGNA_UPDATED = Map.newMapKey("NUMERO_TENTATIVI_RICONSEGNA_UPDATED");
+	
+
     /** Costante che indica il valore dell'header di integrazione: tipo mittente*/
-    public final static String HEADER_INTEGRAZIONE_TIPO_MITTENTE = "tipoMittente";
+    public final static MapKey<String> HEADER_INTEGRAZIONE_TIPO_MITTENTE = new MapKey<String>("tipoMittente",1);
     /** Costante che indica il valore dell'header di integrazione: mittente*/
-    public final static String HEADER_INTEGRAZIONE_MITTENTE = "mittente";
+    public final static MapKey<String> HEADER_INTEGRAZIONE_MITTENTE = new MapKey<String>("mittente",2);
     /** Costante che indica il valore dell'header di integrazione: tipo destinatario*/
-    public final static String HEADER_INTEGRAZIONE_TIPO_DESTINATARIO = "tipoDestinatario";
+    public final static MapKey<String> HEADER_INTEGRAZIONE_TIPO_DESTINATARIO = new MapKey<String>("tipoDestinatario",3);
     /** Costante che indica il valore dell'header di integrazione: destinatario*/
-    public final static String HEADER_INTEGRAZIONE_DESTINATARIO = "destinatario";
+    public final static MapKey<String> HEADER_INTEGRAZIONE_DESTINATARIO = new MapKey<String>("destinatario",4);
     /** Costante che indica il valore dell'header di integrazione: tipo servizio*/
-    public final static String HEADER_INTEGRAZIONE_TIPO_SERVIZIO = "tipoServizio";
+    public final static MapKey<String> HEADER_INTEGRAZIONE_TIPO_SERVIZIO = new MapKey<String>("tipoServizio",5);
     /** Costante che indica il valore dell'header di integrazione: servizio*/
-    public final static String HEADER_INTEGRAZIONE_SERVIZIO = "servizio";
+    public final static MapKey<String> HEADER_INTEGRAZIONE_SERVIZIO = new MapKey<String>("servizio",6);
     /** Costante che indica il valore dell'header di integrazione: versioneServizio*/
-    public final static String HEADER_INTEGRAZIONE_VERSIONE_SERVIZIO = "versioneServizio";
+    public final static MapKey<String> HEADER_INTEGRAZIONE_VERSIONE_SERVIZIO = new MapKey<String>("versioneServizio",7);
     /** Costante che indica il valore dell'header di integrazione: azione*/
-    public final static String HEADER_INTEGRAZIONE_AZIONE = "azione";
+    public final static MapKey<String> HEADER_INTEGRAZIONE_AZIONE = new MapKey<String>("azione",8);
     /** Costante che indica il valore dell'header di integrazione: identificativo*/
-    public final static String HEADER_INTEGRAZIONE_ID_MESSAGGIO = "identificativo";
+    public final static MapKey<String> HEADER_INTEGRAZIONE_ID_MESSAGGIO = new MapKey<String>("identificativo",9);
     /** Costante che indica il valore dell'header di integrazione: riferimentoMessaggio*/
-    public final static String HEADER_INTEGRAZIONE_RIFERIMENTO_MESSAGGIO = "riferimentoMessaggio";
+    public final static MapKey<String> HEADER_INTEGRAZIONE_RIFERIMENTO_MESSAGGIO = new MapKey<String>("riferimentoMessaggio",10);
     /** Costante che indica il valore dell'header di integrazione: idApplicativo*/
-    public final static String HEADER_INTEGRAZIONE_ID_APPLICATIVO = "idApplicativo";
+    public final static MapKey<String> HEADER_INTEGRAZIONE_ID_APPLICATIVO = new MapKey<String>("idApplicativo",11);
     /** Costante che indica il valore dell'header di integrazione: idCollaborazione*/
-    public final static String HEADER_INTEGRAZIONE_COLLABORAZIONE = "idCollaborazione";
+    public final static MapKey<String> HEADER_INTEGRAZIONE_COLLABORAZIONE = new MapKey<String>("idCollaborazione",12);
     /** Costante che indica il valore dell'header di integrazione: servizioApplicativo*/
-    public final static String HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO = "servizioApplicativo";
+    public final static MapKey<String> HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO = new MapKey<String>("servizioApplicativo",13);
     /** Costante che indica il valore dell'header di integrazione: identificativo di transazione*/
-    public final static String HEADER_INTEGRAZIONE_ID_TRANSAZIONE = "idTransazione";
+    public final static MapKey<String> HEADER_INTEGRAZIONE_ID_TRANSAZIONE = new MapKey<String>("idTransazione",14);
     
     /** Costante che indica l'invio delle informazioni di versionamento */
-    public final static String HEADER_INTEGRAZIONE_PROTOCOL_INFO = "protocolInfo";
+    public final static MapKey<String> HEADER_INTEGRAZIONE_PROTOCOL_INFO = new MapKey<String>("protocolInfo",15);
     
     /** Costante che indica l'invio delle informazioni di versionamento */
-    public final static String HEADER_INTEGRAZIONE_INFO = "info";
-    public final static String HEADER_INTEGRAZIONE_USER_AGENT = "userAgent";
+    public final static MapKey<String> HEADER_INTEGRAZIONE_INFO = new MapKey<String>("info",16);
+    public final static MapKey<String> HEADER_INTEGRAZIONE_USER_AGENT = new MapKey<String>("userAgent",17);
+    
     /** Costante che indica il valore dell'header X che indica la versione della PdD*/
     public final static String HEADER_HTTP_X_PDD = "GovWay-Version";
     /** Costante che indica il valore dell'header X che indica il dettaglio della versione della PdD*/
@@ -265,7 +269,7 @@ public class CostantiPdD {
     
     /** Intervallo per riconsegna messaggi verso ConsegnaContenutiApplicativi */
     public final static int TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRESA_IN_CONSEGNA_MAX_LIFE = 1800; 
-    public final static String TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_MESSAGGI_SPEDIRE = "CONTENUTI_APPLICATIVI_MESSAGGI_SPEDIRE";
+    public final static MapKey<String> TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_MESSAGGI_SPEDIRE = Map.newMapKey("CONTENUTI_APPLICATIVI_MESSAGGI_SPEDIRE");
     public final static String TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_CODA_DEFAULT = CostantiConfigurazione.CODA_DEFAULT;
     public final static String TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRIORITA_DEFAULT = CostantiConfigurazione.PRIORITA_DEFAULT;
     
@@ -309,6 +313,11 @@ public class CostantiPdD {
     /** Dimensione della cache */
     public static final int CONNETTORE_HTTP_URL_HTTPS_CACHE_SIZE = 10000;
    
+    /** Maximum limit of connection on a per route basis */
+    public static final int CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE = 100;
+    /** Maximum limit of connection on total */
+    public static final int CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL = 100;
+    
     /** Pool Size Applicative Threads */
     public static final int CONNETTORE_NIO_ASYNC_REQUEST_POOL_SIZE = 100;
     /** Pool Size Applicative Threads */
@@ -354,6 +363,8 @@ public class CostantiPdD {
     public static final String JMX_KEYSTORE_CACHING = "Keystore";
     /** MBean per la gestione della consegna agli applicativi */
     public static final String JMX_LOAD_BALANCER = "LoadBalancer";
+    /** MBean per la gestione delle richieste */
+    public static final String JMX_GESTORE_RICHIESTE = "DatiRichieste";
     /** MBean per il repository dei messaggi */
     public static final String JMX_REPOSITORY_MESSAGGI = "RepositoryMessaggi";
     /** MBean per lo stato dei servizi PdD */
@@ -378,7 +389,7 @@ public class CostantiPdD {
     public final static String WSDL_FRUITORE = "Wsdl fruitore";
     public final static String WSDL_EROGATORE = "Wsdl erogatore";
     
-    public final static String BUSTA_RISPOSTA = "BustaProprietaHeaderIntegrazione";
+    public final static MapKey<String> BUSTA_RISPOSTA = Map.newMapKey("BustaProprietaHeaderIntegrazione");
     
     
     
@@ -402,8 +413,8 @@ public class CostantiPdD {
     
     
     
-	public final static String CONNETTORE_REQUEST_URL = "CONNETTORE_REQUEST_URL";
-	public final static String CONNETTORE_REQUEST_METHOD = "CONNETTORE_REQUEST_METHOD";
+	public final static MapKey<String> CONNETTORE_REQUEST_URL = Map.newMapKey("CONNETTORE_REQUEST_URL");
+	public final static MapKey<String> CONNETTORE_REQUEST_METHOD = Map.newMapKey("CONNETTORE_REQUEST_METHOD");
 	public final static String CONNETTORE_REQUEST_PREFIX_METHOD = "[";
 	public final static String CONNETTORE_REQUEST_SUFFIX_METHOD = "]";
 	public final static String CONNETTORE_REQUEST_SEPARATOR = " ";
@@ -632,16 +643,22 @@ public class CostantiPdD {
     public final static String KEY_DETAILS_VALIDAZIONE_CONTENUTI = "@DETAILS_VALIDAZIONE_CONTENUTI@";    
     /** Costante che identifica la tipologia di processamento MTOM della richiesta */
     public final static String KEY_TIPO_PROCESSAMENTO_MTOM_RICHIESTA = "@TIPO_PROCESSAMENTO_MTOM_RICHIESTA@";
+    public final static MapKey<String> TIPO_PROCESSAMENTO_MTOM_RICHIESTA = Map.newMapKey("TIPO_PROCESSAMENTO_MTOM_RICHIESTA");
     /** Costante che identifica la tipologia di processamento MTOM della risposta */
     public final static String KEY_TIPO_PROCESSAMENTO_MTOM_RISPOSTA = "@TIPO_PROCESSAMENTO_MTOM_RISPOSTA@";
+    public final static MapKey<String> TIPO_PROCESSAMENTO_MTOM_RISPOSTA = Map.newMapKey("TIPO_PROCESSAMENTO_MTOM_RISPOSTA");
     /** Costante che identifica il tipo di sicurezza sul messaggio applicato alla richiesta */
     public final static String KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA = "@TIPO_SICUREZZA_MESSAGGIO_RICHIESTA@";
+    public final static MapKey<String> TIPO_SICUREZZA_MESSAGGIO_RICHIESTA = Map.newMapKey("TIPO_SICUREZZA_MESSAGGIO_RICHIESTA");
     /** Costante che identifica il tipo di sicurezza sul messaggio applicato alla risposta */
-    public final static String KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA = "@TIPO_SICUREZZA_MESSAGGIO_RISPOSTA@";    
+    public final static String KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA = "@TIPO_SICUREZZA_MESSAGGIO_RISPOSTA@";
+    public final static MapKey<String> TIPO_SICUREZZA_MESSAGGIO_RISPOSTA = Map.newMapKey("TIPO_SICUREZZA_MESSAGGIO_RISPOSTA");
     /** Costante che identifica la trasformazione applicata alla richiesta */
     public final static String KEY_TIPO_TRASFORMAZIONE_RICHIESTA = "@TIPO_TRASFORMAZIONE_RICHIESTA@";
+    public final static MapKey<String> TIPO_TRASFORMAZIONE_RICHIESTA = Map.newMapKey("TIPO_TRASFORMAZIONE_RICHIESTA");
     /** Costante che identifica la trasformazione applicata alla risposta */
     public final static String KEY_TIPO_TRASFORMAZIONE_RISPOSTA = "@TIPO_TRASFORMAZIONE_RISPOSTA@";       
+    public final static MapKey<String> TIPO_TRASFORMAZIONE_RISPOSTA = Map.newMapKey("TIPO_TRASFORMAZIONE_RISPOSTA");
     /** Costante che identifica il tipo di messaggio (normale, ricevuta asincrona...) */
     public final static String KEY_TIPO_MESSAGGIO_BUSTA = "@TIPO_MESSAGGIO_BUSTA@"; 
     /** Costante che identifica tipo/nome mittente e tipo/nome destinatario erogatore del servizio da autorizzare, calcolato in base al tipo di messaggio ricevuto.  */
@@ -692,6 +709,7 @@ public class CostantiPdD {
     public final static String KEY_INFO_SERVIZIO_BUSTA = "@INFO_SERVIZIO_BUSTA@";
     /** Costante che indica il tipo di operazione invocata attraverso il servizio di IntegrationManager */
     public final static String KEY_TIPO_OPERAZIONE_IM = "@TIPO_OPERAZIONE_IM@";
+    public final static MapKey<String> TIPO_OPERAZIONE_IM = Map.newMapKey("TIPO_OPERAZIONE_IM");
     /** Costante che indica i parametri di una operazione invocata attraverso il servizio di IntegrationManager */
     public final static String KEY_PARAMETRI_OPERAZIONE_IM = "@PARAMETRI_OPERAZIONE_IM@";
     /** Costante che indica il messaggio richiesto tramite una operazione invocata attraverso il servizio di IntegrationManager */
@@ -792,10 +810,10 @@ public class CostantiPdD {
     /** Costante che identifica una keyword per rappresentare l'informazione in cache */
     private final static String KEY_INFO_IN_CACHE = "@INFO_IN_CACHE@";
     private final static String KEY_INFO_IN_CACHE_VALUE = " (in cache)";
-    public final static String KEY_INFO_IN_CACHE_FUNZIONE_AUTENTICAZIONE = "RESULT_AUTHN_IN_CACHE";
-    public final static String KEY_INFO_IN_CACHE_FUNZIONE_AUTORIZZAZIONE = "RESULT_AUTHZ_IN_CACHE";
-    public final static String KEY_INFO_IN_CACHE_FUNZIONE_AUTORIZZAZIONE_CONTENUTI = "RESULT_AUTHZ_CONTENUTI_IN_CACHE";
-    public final static void addKeywordInCache(MsgDiagnostico msgDiag, boolean isEsitoPresenteInCache, PdDContext pddContext, String ID_FUNCTION) {
+    public final static MapKey<String> KEY_INFO_IN_CACHE_FUNZIONE_AUTENTICAZIONE = Map.newMapKey("RESULT_AUTHN_IN_CACHE");
+    public final static MapKey<String> KEY_INFO_IN_CACHE_FUNZIONE_AUTORIZZAZIONE = Map.newMapKey("RESULT_AUTHZ_IN_CACHE");
+    public final static MapKey<String> KEY_INFO_IN_CACHE_FUNZIONE_AUTORIZZAZIONE_CONTENUTI = Map.newMapKey("RESULT_AUTHZ_CONTENUTI_IN_CACHE");
+    public final static void addKeywordInCache(MsgDiagnostico msgDiag, boolean isEsitoPresenteInCache, PdDContext pddContext, MapKey<String> ID_FUNCTION) {
     	if(isEsitoPresenteInCache){
 			msgDiag.addKeyword(CostantiPdD.KEY_INFO_IN_CACHE, CostantiPdD.KEY_INFO_IN_CACHE_VALUE);
 		}else{
@@ -829,7 +847,7 @@ public class CostantiPdD {
     public final static String PREFIX_LIMITED_RESPONSE = org.openspcoop2.core.constants.Costanti.PREFIX_LIMITED_RESPONSE;
     
     
-    public final static String CONNETTORE_MULTIPLO_SELEZIONATO = "CONNETTORE_MULTIPLO_SELEZIONATO";
+    public final static MapKey<String> CONNETTORE_MULTIPLO_SELEZIONATO = Map.newMapKey("CONNETTORE_MULTIPLO_SELEZIONATO");
 }
 
 

@@ -30,6 +30,7 @@ import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi;
 import org.openspcoop2.core.config.AccessoDatiGestioneToken;
 import org.openspcoop2.core.config.AccessoDatiKeystore;
+import org.openspcoop2.core.config.AccessoDatiRichieste;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.Configurazione;
@@ -367,6 +368,14 @@ public interface IDriverConfigurazioneGet extends IBeanUtilities {
 	 * 
 	 */
 	public AccessoDatiConsegnaApplicativi getAccessoDatiConsegnaApplicativi() throws DriverConfigurazioneException, DriverConfigurazioneNotFound;
+	
+	/**
+	 * Restituisce l'accesso ai dati per la gestione delle richieste
+	 *
+	 * @return AccessoDatiRichieste
+	 * 
+	 */
+	public AccessoDatiRichieste getAccessoDatiRichieste() throws DriverConfigurazioneException, DriverConfigurazioneNotFound;
 
 	/**
 	 * Restituisce la gestione dell'errore di default definita nella Porta di Dominio per il componente di cooperazione

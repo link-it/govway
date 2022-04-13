@@ -1069,7 +1069,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			// devo verificare il dettaglio che sia compatibile con il nuovo esito
 			if(EsitoUtils.ALL_VALUE != this.esitoGruppo){
 				try{
-					EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log, getSafeProtocol());
+					EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(BaseSearchForm.log, getSafeProtocol());
 					List<Integer> codes = null;
 					if(EsitoUtils.ALL_ERROR_VALUE == this.esitoGruppo){
 						codes = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
@@ -1131,7 +1131,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			else {
 				if(this.escludiRichiesteScartate){
 					try{
-						EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log, getSafeProtocol());
+						EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(BaseSearchForm.log, getSafeProtocol());
 						List<Integer> escludiEsitiRichiesteMalformate = esitiProperties.getEsitiCodeRichiestaScartate();
 						boolean found = false;
 						if(escludiEsitiRichiesteMalformate!=null) {
@@ -1486,7 +1486,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			
 			list.add(new SelectItem(EsitoUtils.ALL_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_VALUE, statistiche)));
 
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log, getSafeProtocol());
+			EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(BaseSearchForm.log, getSafeProtocol());
 
 			List<Integer> esiti = esitiProperties.getEsitiCodeOrderLabel();
 
@@ -1598,7 +1598,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	}
 
 	protected List<Integer> getEsitiOrderLabel() throws Exception {
-		EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log, getSafeProtocol());
+		EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(BaseSearchForm.log, getSafeProtocol());
 		List<Integer> esiti = esitiProperties.getEsitiCodeOrderLabel();
 		return esiti;
 	}
@@ -1607,7 +1607,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		try{
 			ArrayList<SelectItem> list = new ArrayList<SelectItem>();
 
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log, getSafeProtocol());
+			EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(BaseSearchForm.log, getSafeProtocol());
 
 			List<Integer> esiti = getEsitiOrderLabel();
 
@@ -1669,7 +1669,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			
 			list.add(new SelectItem(EsitoUtils.ALL_VALUE_AS_STRING,esitoUtils.getEsitoContestoLabelFromValue(EsitoUtils.ALL_VALUE_AS_STRING)));
 			
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log, getSafeProtocol());
+			EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(BaseSearchForm.log, getSafeProtocol());
 
 			List<String> esiti = esitiProperties.getEsitiTransactionContextCodeOrderLabel();
 			for (String esito : esiti) {

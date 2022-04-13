@@ -55,6 +55,7 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
+import org.openspcoop2.pdd.core.GestoreRichieste;
 import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
 import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazione;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.GestoreLoadBalancerCaching;
@@ -76,6 +77,9 @@ public class GestoreCacheCleaner {
 	
 	public static void initialize() throws Exception {
 		
+		if(GestoreRichieste.isCacheAbilitata()) {
+			listCacheCleaner.add(new GestoreRichiesteCacheCleaner());
+		}
 		if(RegistroServiziReader.isCacheAbilitata()) {
 			listCacheCleaner.add(new RegistroServiziCacheCleaner());
 		}

@@ -24,11 +24,13 @@ package org.openspcoop2.security.message.jose;
 
 import java.util.Properties;
 
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.AbstractRESTMessageSecuritySender;
 import org.openspcoop2.security.message.MessageSecurityContext;
@@ -59,7 +61,7 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 
 	
      @Override
-	public void process(MessageSecurityContext messageSecurityContext,OpenSPCoop2Message messageParam) throws SecurityException{
+	public void process(MessageSecurityContext messageSecurityContext,OpenSPCoop2Message messageParam, org.openspcoop2.utils.Map<Object> ctx) throws SecurityException{
 		try{ 	
 			
 			if(ServiceBinding.REST.equals(messageParam.getServiceBinding())==false){
@@ -70,6 +72,11 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 			}
 			OpenSPCoop2RestJsonMessage restJsonMessage = messageParam.castAsRestJson();
 			
+    		RequestInfo requestInfo = null;
+    		if(ctx!=null && ctx.containsKey(Costanti.REQUEST_INFO)) {
+    			requestInfo = (RequestInfo) ctx.get(Costanti.REQUEST_INFO);
+    		}
+    		
 			
 			
 			// ********** Leggo operazioni ***************
@@ -136,7 +143,7 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 				}
 				if(bean!=null) {
 					Properties signatureProperties = bean.getProperties();
-					JOSEUtils.injectKeystore(signatureProperties, messageSecurityContext.getLog()); // serve per leggere il keystore dalla cache
+					JOSEUtils.injectKeystore(requestInfo, signatureProperties, messageSecurityContext.getLog()); // serve per leggere il keystore dalla cache
 					JwtHeaders jwtHeaders = JOSEUtils.getJwtHeaders(messageSecurityContext.getOutgoingProperties(), messageParam); // la configurazione per kid, jwk e x5c viene configurata via properties
 					jsonSignature = new JsonSignature(signatureProperties, jwtHeaders, jwsOptions);	
 				}
@@ -147,7 +154,7 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 					String aliasSignatureUser = null;
 					String aliasSignaturePassword = null;
 					try {
-						bean = KeystoreUtils.getSenderSignatureBean(messageSecurityContext);
+						bean = KeystoreUtils.getSenderSignatureBean(messageSecurityContext, ctx);
 					}catch(Exception e) {
 						// Lancio come messaggio eccezione precedente
 						if(notFound!=null) {
@@ -252,7 +259,7 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 				}
 				if(bean!=null) {
 					Properties encryptionProperties = bean.getProperties();
-					JOSEUtils.injectKeystore(encryptionProperties, messageSecurityContext.getLog()); // serve per leggere il keystore dalla cache
+					JOSEUtils.injectKeystore(requestInfo, encryptionProperties, messageSecurityContext.getLog()); // serve per leggere il keystore dalla cache
 					JwtHeaders jwtHeaders = JOSEUtils.getJwtHeaders(messageSecurityContext.getOutgoingProperties(), messageParam); // la configurazione per kid, jwk e x5c viene configurata via properties
 					jsonEncrypt = new JsonEncrypt(encryptionProperties, jwtHeaders, jweOptions); 
 				}
@@ -264,7 +271,7 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 					String aliasEncryptUser = null;
 					String aliasEncryptPassword = null;
 					try {
-						bean = KeystoreUtils.getSenderEncryptionBean(messageSecurityContext);
+						bean = KeystoreUtils.getSenderEncryptionBean(messageSecurityContext, ctx);
 					}catch(Exception e) {
 						// Lancio come messaggio eccezione precedente
 						if(notFound!=null) {

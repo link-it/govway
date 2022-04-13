@@ -51,6 +51,7 @@ import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.GestoreRichieste;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.IConnettore;
 import org.openspcoop2.pdd.core.connettori.RepositoryConnettori;
@@ -87,9 +88,6 @@ import org.openspcoop2.pdd.services.core.RicezioneBuste;
 import org.openspcoop2.pdd.services.core.RicezioneBusteContext;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.protocol.basic.registry.ServiceIdentificationReader;
-import org.openspcoop2.protocol.engine.RequestInfo;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
-import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.builder.InformazioniErroriInfrastrutturali;
@@ -98,7 +96,10 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.protocol.sdk.constants.IDService;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.utils.LimitExceededIOException;
 import org.openspcoop2.utils.LimitedInputStream;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -267,7 +268,7 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 		}
 		
 		// PddContext from servlet
-		Object oPddContextFromServlet = this.req.getAttribute(CostantiPdD.OPENSPCOOP2_PDD_CONTEXT_HEADER_HTTP);
+		Object oPddContextFromServlet = this.req.getAttribute(CostantiPdD.OPENSPCOOP2_PDD_CONTEXT_HEADER_HTTP.getValue());
 		PdDContext pddContextFromServlet = null;
 		if(oPddContextFromServlet!=null){
 			pddContextFromServlet = (PdDContext) oPddContextFromServlet;
@@ -291,28 +292,52 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 		}
 		
 		// Provo a creare un context (per l'id di transazione nei diagnostici)
+		String idTransazione = null;
 		try {
 			this.context = new RicezioneBusteContext(this.idModuloAsService, dataAccettazioneRichiesta,this.requestInfo);
 			this.protocolFactory = this.req.getProtocolFactory();
-			String idTransazione = (String)this.context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
-			if(this.openSPCoopProperties.isTransazioniEnabled()) {
-				TransactionContext.createTransaction(idTransazione, "RicezioneBuste.1");
-			}
-			this.requestInfo.setIdTransazione(idTransazione);
-			this.generatoreErrore.getImbustamentoErrore().setIdTransazione(idTransazione);
-			
-			this.req.setThresholdContext((this.context!=null ? this.context.getPddContext(): null), 
-					this.openSPCoopProperties.getDumpBinario_inMemoryThreshold(), this.openSPCoopProperties.getDumpBinario_repository());
-			
+			idTransazione = (String)this.context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 		}catch(Throwable e) {
 			this.context = null;
 			this.protocolFactory = null;
 			// non loggo l'errore tanto poi provo a ricreare il context subito dopo e li verra' registrato l'errore
 		}
+			
+		try{
+			GestoreRichieste.readRequestConfig(this.requestInfo);
+		}catch(Exception e){
+			String msg = "GestoreRichieste readRequestConfig fallita: "+Utilities.readFirstErrorValidMessageFromException(e);
+			this.logCore.error(msg,e);
+			ConnectorDispatcherErrorInfo cInfo = ConnectorDispatcherUtils.doError(this.requestInfo, this.generatoreErrore,
+					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO),
+						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, e, null, this.res, this.logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+			this.res.close(false);
+			RicezioneBusteServiceUtils.emitTransaction(this.logCore, this.req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
+			return;
+		}
+			
+		if(idTransazione!=null) {
+			try {
+				if(this.openSPCoopProperties.isTransazioniEnabled()) {
+					TransactionContext.createTransaction(idTransazione, "RicezioneBuste.1");
+				}
+				this.requestInfo.setIdTransazione(idTransazione);
+				this.generatoreErrore.getImbustamentoErrore().setIdTransazione(idTransazione);
+				
+				this.req.setThresholdContext((this.context!=null ? this.context.getPddContext(): null), 
+						this.openSPCoopProperties.getDumpBinario_inMemoryThreshold(), this.openSPCoopProperties.getDumpBinario_repository());
+				
+			}catch(Throwable e) {
+				this.context = null;
+				this.protocolFactory = null;
+				// non loggo l'errore tanto poi provo a ricreare il context subito dopo e li verra' registrato l'errore
+			}
+		}
 		
 		// Logger dei messaggi diagnostici
 		String nomePorta = this.requestInfo.getProtocolContext().getInterfaceName();
-		this.msgDiag = MsgDiagnostico.newInstance(TipoPdD.APPLICATIVA,this.idModulo,nomePorta);
+		this.msgDiag = MsgDiagnostico.newInstance(TipoPdD.APPLICATIVA,this.idModulo,nomePorta,this.requestInfo);
 		this.msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE);
 		if(this.context!=null && this.protocolFactory!=null) {
 			this.msgDiag.setPddContext(this.context.getPddContext(), this.protocolFactory);
@@ -341,15 +366,15 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 			if(this.requestInfo!=null && this.requestInfo.getProtocolContext()!=null && this.requestInfo.getProtocolContext().getInterfaceName()!=null) {
 				IDPortaApplicativa idPA = new IDPortaApplicativa();
 				idPA.setNome(this.requestInfo.getProtocolContext().getInterfaceName());
-				pa = configPdDManager.getPortaApplicativa_SafeMethod(idPA);
+				pa = configPdDManager.getPortaApplicativa_SafeMethod(idPA, this.requestInfo);
 			}
 			
 			// Limited
 			String azione = (this.requestInfo!=null && this.requestInfo.getIdServizio()!=null) ? this.requestInfo.getIdServizio().getAzione() : null;
 			SoglieDimensioneMessaggi limitedInputStream = configPdDManager.getSoglieLimitedInputStream(pa, azione, this.idModulo,
 					(this.context!=null && this.context.getPddContext()!=null) ? this.context.getPddContext() : null, 
-					(this.requestInfo!=null) ? this.requestInfo.getProtocolContext() : null,
-					this.protocolFactory, this.logCore);
+					this.requestInfo,
+					this.protocolFactory, this.logCore);			
 			if(limitedInputStream!=null) {
 				this.req.setRequestLimitedStream(limitedInputStream.getRichiesta());
 				if(this.context!=null && this.context.getPddContext()!=null) {
@@ -431,7 +456,7 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 					}finally {
 						// FIX devo però rilasciare dalla memoria la transazione:
 						if(this.openSPCoopProperties.isTransazioniEnabled()) {
-							String idTransazione = (String)this.context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+							idTransazione = (String)this.context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 							TransactionContext.removeTransaction(idTransazione);
 						}
 					}
@@ -480,7 +505,7 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 			protocolServiceBinding = this.requestInfo.getProtocolServiceBinding();
 			
 			this.proprietaErroreAppl = this.openSPCoopProperties.getProprietaGestioneErrorePD(this.protocolFactory.createProtocolManager());
-			this.proprietaErroreAppl.setDominio(this.openSPCoopProperties.getIdentificativoPortaDefault(this.protocolFactory.getProtocol()));
+			this.proprietaErroreAppl.setDominio(this.openSPCoopProperties.getIdentificativoPortaDefault(this.protocolFactory.getProtocol(), this.requestInfo));
 			this.proprietaErroreAppl.setIdModulo(this.idModulo);
 			
 			if(this.context==null) {
@@ -490,8 +515,8 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 				this.context.getPddContext().addAll(preInAcceptRequestContext.getPreContext(), false);
 			}
 			this.context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, this.protocolFactory.getProtocol());
-			this.context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO, this.req.getRequestInfo());
-			RicezionePropertiesConfig rConfig = RicezioneBusteServiceUtils.readPropertiesConfig(this.req.getRequestInfo(), this.logCore,null);
+			this.context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO, this.requestInfo);
+			RicezionePropertiesConfig rConfig = RicezioneBusteServiceUtils.readPropertiesConfig(this.requestInfo, this.logCore,null);
 			if(rConfig!=null) {
 	            if (rConfig.getApiImplementation() != null && !rConfig.getApiImplementation().isEmpty()) {
 	            	this.context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE, rConfig.getApiImplementation());
@@ -887,10 +912,19 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 		}
 		finally{
 			
-			if(!completeProcess || !async) {
-				this._complete(AsyncResponseCallbackClientEvent.NONE,completeProcess);
-			}
+			try {
+				if(!completeProcess || !async) {
+					this._complete(AsyncResponseCallbackClientEvent.NONE,completeProcess);
+				}
 
+			}finally {
+				try {
+					GestoreRichieste.saveRequestConfig(this.requestInfo);
+				}catch(Throwable e) {
+					this.logCore.error("Errore durante il salvataggio dei dati della richiesta: "+e.getMessage(),e);
+				}
+			}
+			
 		}
 
 	}
@@ -1095,7 +1129,7 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 			this.context.setResponseHeaders(new HashMap<String,List<String>>());
 		}
 		ServicesUtils.setGovWayHeaderResponse(this.responseMessage, this.openSPCoopProperties,
-				this.context.getResponseHeaders(), this.logCore, false, this.context.getPddContext(), this.requestInfo.getProtocolContext());
+				this.context.getResponseHeaders(), this.logCore, false, this.context.getPddContext(), this.requestInfo);
 		if(this.context.getResponseHeaders()!=null){
 			Iterator<String> keys = this.context.getResponseHeaders().keySet().iterator();
 			while (keys.hasNext()) {
@@ -1260,7 +1294,7 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 				esito = this.protocolFactory.createEsitoBuilder().getEsito(this.req.getURLProtocolContext(), 
 						statoServletResponse, this.requestInfo.getProtocolServiceBinding(),
 						this.responseMessage, this.proprietaErroreAppl,informazioniErrori,
-						(this.pddContext!=null ? this.pddContext.getContext() : null));
+						this.pddContext);
 				
 				// Il contentLenght, nel caso di TransferLengthModes.CONTENT_LENGTH e' gia' stato calcolato
 				// con una writeTo senza consume. Riuso il solito metodo per evitare differenze di serializzazione
@@ -1335,7 +1369,7 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 				esito = this.protocolFactory.createEsitoBuilder().getEsito(this.req.getURLProtocolContext(), 
 						statoServletResponse, this.requestInfo.getProtocolServiceBinding(),
 						this.responseMessage, this.proprietaErroreAppl,informazioniErrori,
-						(this.pddContext!=null ? this.pddContext.getContext() : null));
+						this.pddContext);
 				
 				if(response!=null) {
 					sendInvoked = true;
@@ -1358,7 +1392,7 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 				esito = this.protocolFactory.createEsitoBuilder().getEsito(this.req.getURLProtocolContext(), 
 						statoServletResponse, this.requestInfo.getProtocolServiceBinding(),
 						this.responseMessage, this.proprietaErroreAppl,informazioniErrori,
-						(this.pddContext!=null ? this.pddContext.getContext() : null));
+						this.pddContext);
 			}
 			
 		}catch(Throwable e){
@@ -1433,7 +1467,7 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 					esito = this.protocolFactory.createEsitoBuilder().getEsito(this.req.getURLProtocolContext(), 
 							statoServletResponse, this.requestInfo.getProtocolServiceBinding(),
 							responseMessageError, this.proprietaErroreAppl, informazioniErrori_error,
-							(this.pddContext!=null ? this.pddContext.getContext() : null));
+							this.pddContext);
 					
 					// Il contentLenght, nel caso di TransferLengthModes.CONTENT_LENGTH e' gia' stato calcolato
 					// con una writeTo senza consume. Riuso il solito metodo per evitare differenze di serializzazione

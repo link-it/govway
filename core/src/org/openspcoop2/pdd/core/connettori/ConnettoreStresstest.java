@@ -31,6 +31,7 @@ import java.util.Random;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -265,7 +266,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
 			return false;
 		}finally{
 			// release database
-			this.dbManager.releaseResource(this.openspcoopProperties.getIdentitaPortaDefault(this.getProtocolFactory().getProtocol()),"ConnettoreStresstest", this.resource);
+			this.dbManager.releaseResource(this.openspcoopProperties.getIdentitaPortaDefault(this.getProtocolFactory().getProtocol(), this.requestInfo),"ConnettoreStresstest", this.resource);
 		}
 		
 		return true;
@@ -286,7 +287,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
     
     private String buildProtocolHeader(ConnettoreMsg request) throws Exception{
 		Busta bustaRichiesta = request.getBusta();
-    	if( "spcoop".equals(bustaRichiesta.getProtocollo())){
+    	if( CostantiLabel.SPCOOP_PROTOCOL_NAME.equals(bustaRichiesta.getProtocollo())){
     		return buildSPCoopProtocolHeader(request);
     	}
     	else{
@@ -350,7 +351,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
 					// salvo messaggio sul database asincrono/repositoryEGov
 					// get database
 					try{
-						this.resource = this.dbManager.getResource(this.openspcoopProperties.getIdentitaPortaDefault(this.getProtocolFactory().getProtocol()),"ConnettoreStresstest",idTransazione);
+						this.resource = this.dbManager.getResource(this.openspcoopProperties.getIdentitaPortaDefault(this.getProtocolFactory().getProtocol(), this.requestInfo),"ConnettoreStresstest",idTransazione);
 					}catch(Exception e){
 						throw new Exception("Risorsa non ottenibile",e);
 					}

@@ -18,12 +18,12 @@
  *
  */
 
-package org.openspcoop2.protocol.engine;
+package org.openspcoop2.protocol.sdk.state;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openspcoop2.protocol.engine.constants.IDService;
+import org.openspcoop2.protocol.sdk.constants.IDService;
 
 /**
  * URL Protocol Context

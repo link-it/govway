@@ -58,6 +58,7 @@ import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -129,6 +130,11 @@ public class ModIImbustamento {
 			String azione = busta.getAzione();
 			String nomePortType = asps.getPortType();
 			
+			RequestInfo requestInfo = null;
+			if(context!=null && context.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+				requestInfo = (RequestInfo) context.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+			}
+			
 			ModIImbustamentoRest imbustamentoRest = null;
 			ModIImbustamentoSoap imbustamentoSoap = null;
 			if(rest) {
@@ -171,7 +177,7 @@ public class ModIImbustamento {
 						
 						try {
 							replyTo = ModIUtilities.getReplyToErogazione(idSoggettoMittente, aspc, nomePortType, azione, 
-									registryReader, configIntegrationReader, protocolFactory, state);
+									registryReader, configIntegrationReader, protocolFactory, state, requestInfo);
 						}catch(Exception e) {
 							throw new Exception("Configurazione presente nel registro non corretta: "+e.getMessage(),e);
 						}
@@ -326,7 +332,7 @@ public class ModIImbustamento {
 							String token = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfig, busta, 
 									securityMessageProfile, headerTokenRest, corniceSicurezza, ruoloMessaggio, includiRequestDigest,
 									null, busta.getID(), false,
-									dynamicMap);
+									dynamicMap, requestInfo);
 							protocolMessage.setBustaRawContent(new ModIBustaRawContent(headerTokenRest, token));
 						}
 						else {
@@ -357,7 +363,7 @@ public class ModIImbustamento {
 							String tokenAuthorization = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfig, busta, 
 									securityMessageProfileAuthorization, headerTokenRest, corniceSicurezza, ruoloMessaggio, includiRequestDigest,
 									now, jtiAuthorization, true,
-									dynamicMap);
+									dynamicMap, requestInfo);
 							
 							// Integrity
 							// !! Nel caso di 2 header, quello integrity viene prodotto solo se c'è un payload o uno degli header indicati da firmare.
@@ -388,7 +394,7 @@ public class ModIImbustamento {
 								tokenIntegrity = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfigIntegrity, busta, 
 										securityMessageProfile, headerTokenRestIntegrity, corniceSicurezza, ruoloMessaggio, includiRequestDigest,
 										now, jtiIntegrity, true,
-										dynamicMap);
+										dynamicMap, requestInfo);
 							}
 							
 							if(tokenIntegrity!=null) {
@@ -403,7 +409,7 @@ public class ModIImbustamento {
 					else {
 						SOAPEnvelope env = imbustamentoSoap.addSecurity(msg, context, keystoreConfig, securityConfig, busta, 
 								securityMessageProfile, corniceSicurezza, ruoloMessaggio, includiRequestDigest, signAttachments,
-								dynamicMap);
+								dynamicMap, requestInfo);
 						protocolMessage.setBustaRawContent(new ModIBustaRawContent(env));
 					}
 					

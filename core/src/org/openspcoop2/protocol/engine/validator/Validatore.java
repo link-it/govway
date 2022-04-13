@@ -51,6 +51,7 @@ import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.validator.IValidatoreErrori;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazione;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazioneErrori;
@@ -347,7 +348,7 @@ public class Validatore  {
 	public boolean isRilevatiErroriDuranteValidazioneSemantica() {
 		return this.rilevatiErroriDuranteValidazioneSemantica;
 	}
-	public boolean validazioneSemantica_beforeMessageSecurity(ServiceBinding serviceBinding, boolean rispostaConnectionReply,String profiloGestione) {
+	public boolean validazioneSemantica_beforeMessageSecurity(ServiceBinding serviceBinding, boolean rispostaConnectionReply,String profiloGestione, RequestInfo requestInfo) {
 		try{
 			this.rilevatiErroriDuranteValidazioneSemantica = true; // in fondo se arrivo corretto lo re-imposto a false
 			
@@ -367,7 +368,7 @@ public class Validatore  {
 					this.versioneProtocollo = profiloGestione;
 				}else{
 					if(this.busta!=null && this.busta.getMittente()!=null && this.busta.getTipoMittente()!=null){
-						this.versioneProtocollo = ValidazioneSemantica.riconoscimentoVersioneProtocolloServizioErogato(this.busta, this.protocolFactory.createTraduttore(), this.ruoloBustaRicevuta, this.state);
+						this.versioneProtocollo = ValidazioneSemantica.riconoscimentoVersioneProtocolloServizioErogato(this.busta, this.protocolFactory.createTraduttore(), this.ruoloBustaRicevuta, this.state, requestInfo);
 					}
 					else{
 						// caso di protocollo che non richiedono l'autenticazione del soggetto
@@ -446,7 +447,7 @@ public class Validatore  {
 			/** Applicazione Message-Security (eventualmente per decriptare il body applicativo: utile anche per il SoapFault del MessaggioErrore) */
 			if(messageSecurityContext!= null && messageSecurityContext.getIncomingProperties() != null && messageSecurityContext.getIncomingProperties().size() > 0){
 				boolean existsHeaderMessageSecurity = messageSecurityContext.existsSecurityHeader(this.msg, messageSecurityContext.getActor());
-				if(messageSecurityContext.processIncoming(this.msg,this.busta,(this.context!=null ? this.context.getContext() : null), tempiElaborazione) == false){  
+				if(messageSecurityContext.processIncoming(this.msg,this.busta,this.context, tempiElaborazione) == false){  
 					List<Eccezione> eccezioniSicurezza = new ArrayList<Eccezione>();
 					if(messageSecurityContext.getListaSubCodiceErrore()!=null && messageSecurityContext.getListaSubCodiceErrore().size()>0){
 						List<SubErrorCodeSecurity> subCodiciErrore = messageSecurityContext.getListaSubCodiceErrore();
@@ -525,7 +526,7 @@ public class Validatore  {
 		return true;	
 	}
 	
-	public boolean validazioneSemantica_afterMessageSecurity(ProprietaManifestAttachments proprietaManifestAttachments,boolean validazioneIdentificativiCompleta) {
+	public boolean validazioneSemantica_afterMessageSecurity(ProprietaManifestAttachments proprietaManifestAttachments,boolean validazioneIdentificativiCompleta, RequestInfo requestInfo) {
 		try{
 			this.rilevatiErroriDuranteValidazioneSemantica = true; // in fondo se arrivo corretto lo re-imposto a false
 
@@ -575,7 +576,7 @@ public class Validatore  {
 			// Questa validazione non deve essere effettuata per messaggi Busta Errore
 			if(this.isMessaggioErrore==false){
 				ValidazioneSemantica registryValidator = new ValidazioneSemantica(this.busta,this.context,this.state,validazioneIdentificativiCompleta,this.log, this.protocolFactory);
-				registryValidator.valida(this.msg,this.proprietaValidazione,this.ruoloBustaRicevuta,this.versioneProtocollo);
+				registryValidator.valida(this.msg,this.proprietaValidazione,this.ruoloBustaRicevuta,this.versioneProtocollo, requestInfo);
 				addListaEccezioni(registryValidator.getEccezioniValidazione(),this.erroriValidazione);
 				addListaEccezioni(registryValidator.getEccezioniProcessamento(),this.erroriProcessamento);
 				this.servizioCorrelato = registryValidator.getServizioCorrelato();

@@ -94,7 +94,7 @@ public class Utilities extends ConfigLoader {
 		String idTransazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		assertNotNull(idTransazione);
 		
-		long esitoExpected = EsitiProperties.getInstance(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
+		long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
 		if(msgError!=null) {
 			
 			int code = -1;
@@ -102,7 +102,7 @@ public class Utilities extends ConfigLoader {
 			String msg = null;
 			
 			if(msgError.contains("La richiesta presenta un token non sufficiente per fruire del servizio richiesto")) {
-				esitoExpected = EsitiProperties.getInstance(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE);
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE);
 				code = 403;
 				if(msgError.contains("Scope ") || msgError.contains("scopes")) {
 					error = "AuthorizationMissingScope";
@@ -110,7 +110,7 @@ public class Utilities extends ConfigLoader {
 				}
 			}
 			else if(msgError.contains("Il mittente non è autorizzato ad invocare il servizio gw/TestValidazioneToken-")){
-				esitoExpected = EsitiProperties.getInstance(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE);
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE);
 				code = 403;
 				if(msgError.contains("Role ") || msgError.contains("roles")) {
 					error = "AuthorizationMissingRole";
@@ -118,7 +118,7 @@ public class Utilities extends ConfigLoader {
 				}
 			}
 			else if(msgError.contains("Token without ")) {
-				esitoExpected = EsitiProperties.getInstance(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTENTICAZIONE_TOKEN);
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTENTICAZIONE_TOKEN);
 				code = 401;
 				error = "TokenRequiredClaimsNotFound";
 				msg = "Required token claims not found";
@@ -126,7 +126,7 @@ public class Utilities extends ConfigLoader {
 			else if(msgError.contains("Non è stato riscontrato un token nella posizione [RFC 6750 - Bearer Token Usage]")||
 					msgError.contains("Non è stato riscontrato l'header http 'test-introspection' contenente il token") ||
 					msgError.contains("Non è stato riscontrata la proprietà della URL 'test-userinfo' contenente il token")) {
-				esitoExpected = EsitiProperties.getInstance(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.TOKEN_NON_PRESENTE);
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.TOKEN_NON_PRESENTE);
 				code = 401;
 				error = "TokenAuthenticationRequired";
 				msg = "A token is required";
@@ -134,19 +134,19 @@ public class Utilities extends ConfigLoader {
 			else if(msgError.contains("Validazione del token 'JWS' fallita:") ||
 					msgError.contains("Risposta del servizio di Introspection non valida")  ||
 					msgError.contains("Risposta del servizio di UserInfo non valida")) {
-				esitoExpected = EsitiProperties.getInstance(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_TOKEN);
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_TOKEN);
 				code = 401;
 				error = "TokenAuthenticationFailed";
 				msg = "Invalid token";
 			}
 			else if(msgError.contains("Token expired")) {
-				esitoExpected = EsitiProperties.getInstance(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_TOKEN);
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_TOKEN);
 				code = 401;
 				error = "TokenExpired";
 				msg = "Expired token";
 			}
 			else if(msgError.contains("Token not usable before")) {
-				esitoExpected = EsitiProperties.getInstance(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_TOKEN);
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_TOKEN);
 				code = 401;
 				error = "TokenNotBefore";
 				msg = "Invalid 'notBefore' token claim";

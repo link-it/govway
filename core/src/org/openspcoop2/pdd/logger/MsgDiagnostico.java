@@ -56,7 +56,6 @@ import org.openspcoop2.pdd.core.transazioni.TransactionNotExistsException;
 import org.openspcoop2.pdd.services.skeleton.IntegrationManager;
 import org.openspcoop2.protocol.engine.BasicProtocolFactory;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.builder.DiagnosticoBuilder;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -65,7 +64,9 @@ import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
@@ -156,50 +157,52 @@ public class MsgDiagnostico {
 	private StateMessage state = null;
 	private StateMessage responseState = null;
 	
+	/** RequestInfo */
+	private RequestInfo requestInfo = null;
 	
 	
-	public static MsgDiagnostico newInstance(TipoPdD tipoPdD,IDSoggetto idSoggettoDominio, String modulo,String nomePorta, ConfigurazionePdDManager configurazionePdDManager) {
-		return new MsgDiagnostico(tipoPdD, idSoggettoDominio, modulo, nomePorta, 
+	public static MsgDiagnostico newInstance(TipoPdD tipoPdD,IDSoggetto idSoggettoDominio, String modulo,String nomePorta, RequestInfo requestInfo, ConfigurazionePdDManager configurazionePdDManager) {
+		return new MsgDiagnostico(tipoPdD, idSoggettoDominio, modulo, nomePorta, requestInfo,
 				configurazionePdDManager, null, null);
 	}
-	public static MsgDiagnostico newInstance(TipoPdD tipoPdD,IDSoggetto idSoggettoDominio, String modulo,String nomePorta, IState state) {
-		return new MsgDiagnostico(tipoPdD, idSoggettoDominio, modulo, nomePorta, 
+	public static MsgDiagnostico newInstance(TipoPdD tipoPdD,IDSoggetto idSoggettoDominio, String modulo,String nomePorta, RequestInfo requestInfo, IState state) {
+		return new MsgDiagnostico(tipoPdD, idSoggettoDominio, modulo, nomePorta, requestInfo,
 				null, state, null);
 	}
-	public static MsgDiagnostico newInstance(TipoPdD tipoPdD,IDSoggetto idSoggettoDominio, String modulo,String nomePorta, IState state, IState responseState) {
-		return new MsgDiagnostico(tipoPdD, idSoggettoDominio, modulo, nomePorta, 
+	public static MsgDiagnostico newInstance(TipoPdD tipoPdD,IDSoggetto idSoggettoDominio, String modulo,String nomePorta, RequestInfo requestInfo, IState state, IState responseState) {
+		return new MsgDiagnostico(tipoPdD, idSoggettoDominio, modulo, nomePorta, requestInfo,
 				null, state, responseState);
 	}
 	
-	public static MsgDiagnostico newInstance(TipoPdD tipoPdD,String modulo,String nomePorta, ConfigurazionePdDManager configurazionePdDManager) {
-		return new MsgDiagnostico(tipoPdD, OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(null), modulo, nomePorta, 
+	public static MsgDiagnostico newInstance(TipoPdD tipoPdD,String modulo,String nomePorta, RequestInfo requestInfo, ConfigurazionePdDManager configurazionePdDManager) {
+		return new MsgDiagnostico(tipoPdD, OpenSPCoop2Properties.getInstance().getIdentitaPortaDefaultWithoutProtocol(), modulo, nomePorta, requestInfo,
 				configurazionePdDManager, null, null);
 	}
-	public static MsgDiagnostico newInstance(TipoPdD tipoPdD,String modulo,String nomePorta) {
-		return new MsgDiagnostico(tipoPdD, OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(null), modulo, nomePorta, 
+	public static MsgDiagnostico newInstance(TipoPdD tipoPdD,String modulo,String nomePorta, RequestInfo requestInfo) {
+		return new MsgDiagnostico(tipoPdD, OpenSPCoop2Properties.getInstance().getIdentitaPortaDefaultWithoutProtocol(), modulo, nomePorta, requestInfo,
 				null, null, null);
 	}
 	
 	public static MsgDiagnostico newInstance(TipoPdD tipoPdD,String modulo,ConfigurazionePdDManager configurazionePdDManager) {
-		return new MsgDiagnostico(tipoPdD, OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(null), modulo, null, 
+		return new MsgDiagnostico(tipoPdD, OpenSPCoop2Properties.getInstance().getIdentitaPortaDefaultWithoutProtocol(), modulo, null, null,
 				configurazionePdDManager, null, null);
 	}
 	public static MsgDiagnostico newInstance(TipoPdD tipoPdD,String modulo) {
-		return new MsgDiagnostico(tipoPdD, OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(null), modulo, null, 
+		return new MsgDiagnostico(tipoPdD, OpenSPCoop2Properties.getInstance().getIdentitaPortaDefaultWithoutProtocol(), modulo, null, null,
 				null, null, null);
 	}
 	
 	public static MsgDiagnostico newInstance(IDSoggetto idSoggettoDominio, String modulo,ConfigurazionePdDManager configurazionePdDManager) {
-		return new MsgDiagnostico(null, idSoggettoDominio, modulo, null, 
+		return new MsgDiagnostico(null, idSoggettoDominio, modulo, null, null,
 				configurazionePdDManager, null, null);
 	}
 	
 	public static MsgDiagnostico newInstance(String modulo,ConfigurazionePdDManager configurazionePdDManager) {
-		return new MsgDiagnostico(null, OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(null), modulo, null, 
+		return new MsgDiagnostico(null, OpenSPCoop2Properties.getInstance().getIdentitaPortaDefaultWithoutProtocol(), modulo, null, null,
 				configurazionePdDManager, null, null); 
 	}
 	public static MsgDiagnostico newInstance(String modulo) {
-		return new MsgDiagnostico(null, OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(null), modulo, null, 
+		return new MsgDiagnostico(null, OpenSPCoop2Properties.getInstance().getIdentitaPortaDefaultWithoutProtocol(), modulo, null, null,
 				null, null, null);
 	}
 	
@@ -215,7 +218,7 @@ public class MsgDiagnostico {
 	 * @throws ProtocolException 
 	 * 
 	 */
-	private MsgDiagnostico(TipoPdD tipoPdD,IDSoggetto idSoggettoDominio, String modulo,String nomePorta, 
+	private MsgDiagnostico(TipoPdD tipoPdD,IDSoggetto idSoggettoDominio, String modulo,String nomePorta, RequestInfo requestInfo,
 			ConfigurazionePdDManager configurazionePdDManagerParam,IState stateParam, IState responseStateParam) {
 		
 		this.idSoggettoDominio = idSoggettoDominio;
@@ -265,6 +268,8 @@ public class MsgDiagnostico {
 		// Impostazione filtri
 		// Il filtro viene effettuato a livello di programma.
 		
+		this.requestInfo = requestInfo;
+		
 		this.porta = nomePorta;
 		this.tipoPdD = tipoPdD;
 		if(tipoPdD!=null) {
@@ -275,7 +280,7 @@ public class MsgDiagnostico {
 				this.delegata = false;
 			}
 		}
-		this.setPorta();
+		this.setPorta(this.requestInfo);
 			
 	}
 	
@@ -293,13 +298,13 @@ public class MsgDiagnostico {
 		this.msgDiagPropertiesReader = MsgDiagnosticiProperties.getInstance();
 	}
 	
-	private void setPorta() {
+	private void setPorta(RequestInfo requestInfo) {
 		if(this.porta!=null) {
 			if(this.delegata) {
 				try {
 					IDPortaDelegata idPD = new IDPortaDelegata();
 					idPD.setNome(this.porta);
-					PortaDelegata pd = this.getConfigurazionePdDManager().getPortaDelegata_SafeMethod(idPD);
+					PortaDelegata pd = this.getConfigurazionePdDManager().getPortaDelegata_SafeMethod(idPD, requestInfo);
 					if(pd!=null && pd.getTracciamento()!=null) {
 						this.severitaPorta = pd.getTracciamento().getSeverita();
 					}
@@ -310,7 +315,7 @@ public class MsgDiagnostico {
 				try {
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					idPA.setNome(this.porta);
-					PortaApplicativa pa = this.getConfigurazionePdDManager().getPortaApplicativa_SafeMethod(idPA);
+					PortaApplicativa pa = this.getConfigurazionePdDManager().getPortaApplicativa_SafeMethod(idPA, requestInfo);
 					if(pa!=null && pa.getTracciamento()!=null) {
 						this.severitaPorta = pa.getTracciamento().getSeverita();
 					}
@@ -320,10 +325,10 @@ public class MsgDiagnostico {
 		}
 	}
 
-	public void updatePorta(String porta) {
-		this.updatePorta(null, porta);
+	public void updatePorta(String porta, RequestInfo requestInfo) {
+		this.updatePorta(null, porta, requestInfo);
 	}
-	public void updatePorta(TipoPdD tipoPdD, String porta) {
+	public void updatePorta(TipoPdD tipoPdD, String porta, RequestInfo requestInfo) {
 		if(tipoPdD!=null) {
 			this.tipoPdD = tipoPdD;
 			if(TipoPdD.DELEGATA.equals(tipoPdD)) {
@@ -334,7 +339,7 @@ public class MsgDiagnostico {
 			}
 		}
 		this.porta = porta;
-		this.setPorta();
+		this.setPorta(requestInfo);
 	}
 	public String getPorta() {
 		return this.porta;
@@ -910,29 +915,50 @@ public class MsgDiagnostico {
 	 *
 	 * 
 	 */
+	public void logPersonalizzato_custom(String messaggio, int livelloLog, String codiceDiagnostico){
+		_logPersonalizzato(null, null, null,
+				messaggio, livelloLog, codiceDiagnostico);
+	}
+	public void logPersonalizzato_custom(String prefix, String messaggio, int livelloLog, String codiceDiagnostico){
+		_logPersonalizzato(prefix, null, null,
+				messaggio, livelloLog, codiceDiagnostico);
+	}
+	public void logPersonalizzato_prefix(String prefix, String idModuloFunzionale,String idDiagnostico){
+		_logPersonalizzato(prefix, idModuloFunzionale, idDiagnostico,
+				null,null,null);
+	}
+	public void logPersonalizzato_prefix(String prefix, String idDiagnostico){
+		_logPersonalizzato(prefix, null, idDiagnostico,
+				null,null,null);
+	}
 	public void logPersonalizzato(String idModuloFunzionale,String idDiagnostico){
-		this.logPersonalizzato(this.getMessaggio(idModuloFunzionale,idDiagnostico), 
-				this.getLivello(idModuloFunzionale,idDiagnostico),
-				this.getCodice(idModuloFunzionale,idDiagnostico)
-				);
+		_logPersonalizzato(null, idModuloFunzionale, idDiagnostico,
+				null,null,null);
 	}
 	public void logPersonalizzato(String idDiagnostico){
-		this.logPersonalizzato(this.getMessaggio(idDiagnostico), 
-				this.getLivello(idDiagnostico),
-				this.getCodice(idDiagnostico)
-				);
+		_logPersonalizzato(null, null, idDiagnostico,
+				null,null,null);
 	}
-	public void logPersonalizzato(String messaggio, int livelloLog, String codiceDiagnostico) {
+	private void _logPersonalizzato(String prefix, String idModuloFunzionale,String idDiagnostico,
+			String messaggioFromParam, Integer livelloLogFromParam, String codiceDiagnosticoFromParam) {
 
 		if(this.msgDiagPropertiesReader==null){
-			logError("MsgDiagnostico.logPersonalizzato [Risorsa non inizializzata], messaggio originale: "+messaggio);
+			logError("MsgDiagnostico.logPersonalizzato [Risorsa non inizializzata], messaggio per idModuloFunzionale["+idModuloFunzionale+"] idDiagnostico["+idDiagnostico+"]");
 			return;
 		}
 		
-		if(messaggio==null){
-			logError("MsgDiagnostico.logPersonalizzato error, messaggio non definito.");
-			return;
-		}		
+		int livelloLog = -1;
+		if(livelloLogFromParam!=null) {
+			livelloLog = livelloLogFromParam;
+		}
+		else {
+			if(idModuloFunzionale!=null) {
+				livelloLog = this.getLivello(idModuloFunzionale,idDiagnostico);
+			}
+			else {
+				livelloLog = this.getLivello(idDiagnostico);
+			}
+		}
 		
 		int severitaLogEmessoPerFiltro = livelloLog;
 		int severitaLivelloOpenSPCoop2 = LogLevels.toIntervalloOpenSPCoop2(livelloLog);
@@ -954,24 +980,51 @@ public class MsgDiagnostico {
 		}
 		
 		try{
+			boolean emettiLogSuFile = (severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD);
+			boolean emettiLog = (severitaLogEmessoPerFiltro <= severitaRichiestaPdD);
+			if(!emettiLogSuFile && !emettiLog) {
+				return;
+			}
+			
+			String messaggio = null;
+			String codiceDiagnostico = null;
+			if(messaggioFromParam!=null) {
+				messaggio = messaggioFromParam;
+				codiceDiagnostico = codiceDiagnosticoFromParam;
+			}
+			else {
+				if(idModuloFunzionale!=null) {
+					messaggio = this.getMessaggio(idModuloFunzionale,idDiagnostico); 
+					codiceDiagnostico = this.getCodice(idModuloFunzionale,idDiagnostico);
+				}
+				else {
+					messaggio = this.getMessaggio(idDiagnostico); 
+					codiceDiagnostico = this.getCodice(idDiagnostico);
+				}
+			}
+			if(messaggio==null){
+				logError("MsgDiagnostico.logPersonalizzato error, messaggio non definito.");
+				return;
+			}
+						
 			// Data
 			Date gdo = DateManager.getDate();
 			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
 				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
 			}
 			
-			String msgReplaceKey = null;
-			org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico msgDiag = null;
+			// Replace keyword
+			String msgReplaceKey = this.replaceKeywords(messaggio);	
+			if(prefix!=null) {
+				msgReplaceKey = prefix + msgReplaceKey;
+			}
+			org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico msgDiag = this.getMsgDiagnostico(gdo, severitaLivelloOpenSPCoop2, msgReplaceKey, codiceDiagnostico);
 			
 			
 			// Messaggio diagnostici
 			//System.out.println("1. ["+severitaLogEmessoPerFiltro+"] <= ["+severitaRichiestaPdD+"]");
-			if( severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD ){
+			if( emettiLogSuFile ){
 
-				// Replace keyword
-				msgReplaceKey = this.replaceKeywords(messaggio);	
-				msgDiag = this.getMsgDiagnostico(gdo, severitaLivelloOpenSPCoop2, msgReplaceKey, codiceDiagnostico);
-				
 				if(OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato){
 					try{
 						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.DEFAULT);
@@ -986,14 +1039,8 @@ public class MsgDiagnostico {
 			
 			// Messaggio diagnostici
 			//System.out.println("1. ["+severitaLogEmessoPerFiltro+"] <= ["+severitaRichiestaPdD+"]");
-			if( severitaLogEmessoPerFiltro <= severitaRichiestaPdD ){
+			if( emettiLog ){
 
-				// Replace keyword
-				if(msgReplaceKey==null){
-					msgReplaceKey = this.replaceKeywords(messaggio);
-					msgDiag = this.getMsgDiagnostico(gdo, severitaLivelloOpenSPCoop2, msgReplaceKey, codiceDiagnostico);
-				}
-				
 				if(msgDiag.getIdTransazione()!=null) {
 					
 					// TransazioneContext
@@ -1034,13 +1081,7 @@ public class MsgDiagnostico {
 			}else{
 				humanReadableAbilitato = OpenSPCoop2Logger.loggerMsgDiagnosticoReadableAbilitato;
 			}
-			if( humanReadableAbilitato &&  (severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD) ){
-				
-				if(msgReplaceKey==null){
-					// Replace keyword
-					msgReplaceKey = this.replaceKeywords(messaggio);
-					msgDiag = this.getMsgDiagnostico(gdo, severitaLivelloOpenSPCoop2, msgReplaceKey, codiceDiagnostico);
-				}			
+			if( humanReadableAbilitato &&  (emettiLogSuFile) ){
 				
 				//ProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance((String) this.pddContext.getObject(CostantiPdD.PROTOCOLLO));
 				String message = OpenSPCoop2Logger.humanReadable(msgDiag,this.idCorrelazioneApplicativa,this.idCorrelazioneRisposta,
@@ -1176,6 +1217,12 @@ public class MsgDiagnostico {
 		
 		try{
 			
+			boolean emettiLogSuFile = (severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD);
+			boolean emettiLog = (severitaLogEmessoPerFiltro <= severitaRichiestaPdD);
+			if(!emettiLogSuFile && !emettiLog) {
+				return;
+			}
+			
 			codiceDiagnostico = this.msgDiagPropertiesReader.getCodiceDiagnosticoFatal();
 			
 			// Data
@@ -1188,7 +1235,7 @@ public class MsgDiagnostico {
 			
 			// Messaggio diagnostici
 			// System.out.println("1. ["+severitaLogEmessoPerFiltro+"] <= ["+severitaRichiestaPdD+"]");
-			if( severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD ){
+			if( emettiLogSuFile ){
 
 				if(msgDiag==null){
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_FATAL, msg, codiceDiagnostico);
@@ -1208,7 +1255,7 @@ public class MsgDiagnostico {
 			
 			// Messaggio diagnostici
 			// System.out.println("1. ["+severitaLogEmessoPerFiltro+"] <= ["+severitaRichiestaPdD+"]");
-			if( severitaLogEmessoPerFiltro <= severitaRichiestaPdD ){
+			if( emettiLog ){
 					
 				if(msgDiag==null){
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_FATAL, msg, codiceDiagnostico);
@@ -1254,7 +1301,7 @@ public class MsgDiagnostico {
 			}else{
 				humanReadableAbilitato = OpenSPCoop2Logger.loggerMsgDiagnosticoReadableAbilitato;
 			}
-			if( humanReadableAbilitato &&  (severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD) ){
+			if( humanReadableAbilitato &&  (emettiLogSuFile) ){
 				
 				if(msgDiag==null){
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_FATAL, msg, codiceDiagnostico);
@@ -1315,6 +1362,12 @@ public class MsgDiagnostico {
 		
 		try{
 			
+			boolean emettiLogSuFile = (severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD);
+			boolean emettiLog = (severitaLogEmessoPerFiltro <= severitaRichiestaPdD);
+			if(!emettiLogSuFile && !emettiLog) {
+				return;
+			}
+			
 			codiceDiagnostico = this.msgDiagPropertiesReader.getCodiceDiagnosticoErrorProtocol();
 			
 			// Data
@@ -1327,7 +1380,7 @@ public class MsgDiagnostico {
 						
 			// Messaggio diagnostici
 			// System.out.println("1. ["+severitaLogEmessoPerFiltro+"] <= ["+severitaRichiestaPdD+"]");
-			if( severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD){
+			if( emettiLogSuFile){
 
 				if(msgDiag==null){
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_ERROR_PROTOCOL, msg, codiceDiagnostico);
@@ -1347,7 +1400,7 @@ public class MsgDiagnostico {
 			
 			// Messaggio diagnostici
 			// System.out.println("1. ["+severitaLogEmessoPerFiltro+"] <= ["+severitaRichiestaPdD+"]");
-			if( severitaLogEmessoPerFiltro <= severitaRichiestaPdD){
+			if( emettiLog){
 					
 				if(msgDiag==null){
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_ERROR_PROTOCOL, msg, codiceDiagnostico);
@@ -1393,7 +1446,7 @@ public class MsgDiagnostico {
 			}else{
 				humanReadableAbilitato = OpenSPCoop2Logger.loggerMsgDiagnosticoReadableAbilitato;
 			}
-			if( humanReadableAbilitato &&  (severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD) ){
+			if( humanReadableAbilitato &&  (emettiLogSuFile) ){
 				
 				if(msgDiag==null){
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_ERROR_PROTOCOL, msg, codiceDiagnostico);
@@ -1449,6 +1502,12 @@ public class MsgDiagnostico {
 		
 		try{
 			
+			boolean emettiLogSuFile = (severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD);
+			boolean emettiLog = (severitaLogEmessoPerFiltro <= severitaRichiestaPdD);
+			if(!emettiLogSuFile && !emettiLog) {
+				return;
+			}
+			
 			codiceDiagnostico = this.msgDiagPropertiesReader.getCodiceDiagnosticoErrorIntegration();
 			
 			// Data
@@ -1461,7 +1520,7 @@ public class MsgDiagnostico {
 						
 			// Messaggio diagnostici
 			// System.out.println("1. ["+severitaLogEmessoPerFiltro+"] <= ["+severitaRichiestaPdD+"]");
-			if( severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD){
+			if( emettiLogSuFile){
 
 				if(msgDiag==null){
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_ERROR_INTEGRATION, msg, codiceDiagnostico);
@@ -1481,7 +1540,7 @@ public class MsgDiagnostico {
 			
 			// Messaggio diagnostici
 			// System.out.println("1. ["+severitaLogEmessoPerFiltro+"] <= ["+severitaRichiestaPdD+"]");
-			if( severitaLogEmessoPerFiltro <= severitaRichiestaPdD){
+			if( emettiLog){
 					
 				if(msgDiag==null){
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_ERROR_INTEGRATION, msg, codiceDiagnostico);
@@ -1527,7 +1586,7 @@ public class MsgDiagnostico {
 			}else{
 				humanReadableAbilitato = OpenSPCoop2Logger.loggerMsgDiagnosticoReadableAbilitato;
 			}
-			if( humanReadableAbilitato &&  (severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD) ){
+			if( humanReadableAbilitato &&  (emettiLogSuFile) ){
 				
 				if(msgDiag==null){
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_ERROR_INTEGRATION, msg, codiceDiagnostico);
@@ -1583,6 +1642,12 @@ public class MsgDiagnostico {
 		
 		try{
 			
+			boolean emettiLogSuFile = (severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD);
+			boolean emettiLog = (severitaLogEmessoPerFiltro <= severitaRichiestaPdD);
+			if(!emettiLogSuFile && !emettiLog) {
+				return;
+			}
+			
 			codiceDiagnostico = this.msgDiagPropertiesReader.getCodiceDiagnosticoInfoProtocol();
 			
 			// Data
@@ -1595,7 +1660,7 @@ public class MsgDiagnostico {
 						
 			// Messaggio diagnostici
 			// System.out.println("1. ["+severitaLogEmessoPerFiltro+"] <= ["+severitaRichiestaPdD+"]");
-			if( severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD){
+			if( emettiLogSuFile){
 
 				if(msgDiag==null){
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_INFO_PROTOCOL, msg, codiceDiagnostico);
@@ -1615,7 +1680,7 @@ public class MsgDiagnostico {
 			
 			// Messaggio diagnostici
 			// System.out.println("1. ["+severitaLogEmessoPerFiltro+"] <= ["+severitaRichiestaPdD+"]");
-			if( severitaLogEmessoPerFiltro <= severitaRichiestaPdD){
+			if( emettiLog){
 					
 				if(msgDiag==null){
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_INFO_PROTOCOL, msg, codiceDiagnostico);
@@ -1661,7 +1726,7 @@ public class MsgDiagnostico {
 			}else{
 				humanReadableAbilitato = OpenSPCoop2Logger.loggerMsgDiagnosticoReadableAbilitato;
 			}
-			if( humanReadableAbilitato &&  (severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD) ){
+			if( humanReadableAbilitato &&  (emettiLogSuFile) ){
 				
 				if(msgDiag==null){
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_INFO_PROTOCOL, msg, codiceDiagnostico);
@@ -1718,6 +1783,12 @@ public class MsgDiagnostico {
 		
 		try{
 			
+			boolean emettiLogSuFile = (severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD);
+			boolean emettiLog = (severitaLogEmessoPerFiltro <= severitaRichiestaPdD);
+			if(!emettiLogSuFile && !emettiLog) {
+				return;
+			}
+			
 			codiceDiagnostico = this.msgDiagPropertiesReader.getCodiceDiagnosticoInfoIntegration();
 			
 			// Data
@@ -1730,7 +1801,7 @@ public class MsgDiagnostico {
 						
 			// Messaggio diagnostici
 			// System.out.println("1. ["+severitaLogEmessoPerFiltro+"] <= ["+severitaRichiestaPdD+"]");
-			if( severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD){
+			if( emettiLogSuFile){
 
 				if(msgDiag==null){
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_INFO_INTEGRATION, msg, codiceDiagnostico);
@@ -1750,7 +1821,7 @@ public class MsgDiagnostico {
 			
 			// Messaggio diagnostici
 			// System.out.println("1. ["+severitaLogEmessoPerFiltro+"] <= ["+severitaRichiestaPdD+"]");
-			if( severitaLogEmessoPerFiltro <= severitaRichiestaPdD){
+			if( emettiLog){
 					
 				if(msgDiag==null){
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_INFO_INTEGRATION, msg, codiceDiagnostico);
@@ -1796,7 +1867,7 @@ public class MsgDiagnostico {
 			}else{
 				humanReadableAbilitato = OpenSPCoop2Logger.loggerMsgDiagnosticoReadableAbilitato;
 			}
-			if( humanReadableAbilitato &&  (severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD) ){
+			if( humanReadableAbilitato &&  (emettiLogSuFile) ){
 				
 				if(msgDiag==null){
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_INFO_INTEGRATION, msg, codiceDiagnostico);
@@ -1852,6 +1923,12 @@ public class MsgDiagnostico {
 		
 		try{
 			
+			boolean emettiLogSuFile = (severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD);
+			boolean emettiLog = (severitaLogEmessoPerFiltro <= severitaRichiestaPdD);
+			if(!emettiLogSuFile && !emettiLog) {
+				return;
+			}
+			
 			codiceDiagnostico = this.msgDiagPropertiesReader.getCodiceDiagnosticoDebugLow();
 			
 			// Data
@@ -1864,7 +1941,7 @@ public class MsgDiagnostico {
 						
 			// Messaggio diagnostici
 			// System.out.println("1. ["+severitaLogEmessoPerFiltro+"] <= ["+severitaRichiestaPdD+"]");
-			if( severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD){
+			if( emettiLogSuFile){
 
 				if(msgDiag==null){
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_DEBUG_LOW, msg, codiceDiagnostico);
@@ -1884,7 +1961,7 @@ public class MsgDiagnostico {
 
 			// Messaggio diagnostici
 			// System.out.println("1. ["+severitaLogEmessoPerFiltro+"] <= ["+severitaRichiestaPdD+"]");
-			if( severitaLogEmessoPerFiltro <= severitaRichiestaPdD){
+			if( emettiLog){
 					
 				if(msgDiag==null){
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_DEBUG_LOW, msg, codiceDiagnostico);
@@ -1930,7 +2007,7 @@ public class MsgDiagnostico {
 			}else{
 				humanReadableAbilitato = OpenSPCoop2Logger.loggerMsgDiagnosticoReadableAbilitato;
 			}
-			if( humanReadableAbilitato &&  (severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD) ){
+			if( humanReadableAbilitato &&  (emettiLogSuFile) ){
 				
 				if(msgDiag==null){
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_DEBUG_LOW, msg, codiceDiagnostico);
@@ -1984,6 +2061,12 @@ public class MsgDiagnostico {
 		
 		try{
 			
+			boolean emettiLogSuFile = (severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD);
+			boolean emettiLog = (severitaLogEmessoPerFiltro <= severitaRichiestaPdD);
+			if(!emettiLogSuFile && !emettiLog) {
+				return;
+			}
+			
 			codiceDiagnostico = this.msgDiagPropertiesReader.getCodiceDiagnosticoDebugMedium();
 			
 			// Data
@@ -1996,7 +2079,7 @@ public class MsgDiagnostico {
 						
 			// Messaggio diagnostici
 			// System.out.println("1. ["+severitaLogEmessoPerFiltro+"] <= ["+severitaRichiestaPdD+"]");
-			if( severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD){
+			if( emettiLogSuFile){
 
 				if(msgDiag==null){
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_DEBUG_MEDIUM, msg, codiceDiagnostico);
@@ -2016,7 +2099,7 @@ public class MsgDiagnostico {
 			
 			// Messaggio diagnostici
 			// System.out.println("1. ["+severitaLogEmessoPerFiltro+"] <= ["+severitaRichiestaPdD+"]");
-			if( severitaLogEmessoPerFiltro <= severitaRichiestaPdD){
+			if( emettiLog){
 					
 				if(msgDiag==null){
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_DEBUG_MEDIUM, msg, codiceDiagnostico);
@@ -2062,7 +2145,7 @@ public class MsgDiagnostico {
 			}else{
 				humanReadableAbilitato = OpenSPCoop2Logger.loggerMsgDiagnosticoReadableAbilitato;
 			}
-			if( humanReadableAbilitato &&  (severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD) ){
+			if( humanReadableAbilitato &&  (emettiLogSuFile) ){
 				
 				if(msgDiag==null){
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_DEBUG_MEDIUM, msg, codiceDiagnostico);
@@ -2117,6 +2200,12 @@ public class MsgDiagnostico {
 		
 		try{
 			
+			boolean emettiLogSuFile = (severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD);
+			boolean emettiLog = (severitaLogEmessoPerFiltro <= severitaRichiestaPdD);
+			if(!emettiLogSuFile && !emettiLog) {
+				return;
+			}
+			
 			codiceDiagnostico = this.msgDiagPropertiesReader.getCodiceDiagnosticoDebugHigh();
 			
 			// Data
@@ -2129,7 +2218,7 @@ public class MsgDiagnostico {
 						
 			// Messaggio diagnostici
 			// System.out.println("1. ["+severitaLogEmessoPerFiltro+"] <= ["+severitaRichiestaPdD+"]");
-			if( severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD){
+			if( emettiLogSuFile){
 
 				if(msgDiag==null){
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_DEBUG_HIGH, msg, codiceDiagnostico);
@@ -2149,7 +2238,7 @@ public class MsgDiagnostico {
 			
 			// Messaggio diagnostici
 			// System.out.println("1. ["+severitaLogEmessoPerFiltro+"] <= ["+severitaRichiestaPdD+"]");
-			if( severitaLogEmessoPerFiltro <= severitaRichiestaPdD){
+			if( emettiLog){
 				
 				if(msgDiag==null){
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_DEBUG_HIGH, msg, codiceDiagnostico);
@@ -2195,7 +2284,7 @@ public class MsgDiagnostico {
 			}else{
 				humanReadableAbilitato = OpenSPCoop2Logger.loggerMsgDiagnosticoReadableAbilitato;
 			}
-			if( humanReadableAbilitato &&  (severitaLogEmessoPerFiltro <= severitaLog4JRichiestaPdD) ){
+			if( humanReadableAbilitato &&  (emettiLogSuFile) ){
 				
 				if(msgDiag==null){
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_DEBUG_HIGH, msg, codiceDiagnostico);
@@ -2232,7 +2321,7 @@ public class MsgDiagnostico {
 				// forzo
 				msgDiag.setIdTransazione(this.transazioneApplicativoServer.getIdTransazione());
 				msgDiag.setApplicativo(this.transazioneApplicativoServer.getServizioApplicativoErogatore());
-				GestoreConsegnaMultipla.getInstance().safeSave(msgDiag, this.idPortaApplicativa, this.getValidConnectionState());
+				GestoreConsegnaMultipla.getInstance().safeSave(msgDiag, this.idPortaApplicativa, this.getValidConnectionState(), this.requestInfo);
 			}catch(Throwable t) {
 				logError("Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
 				gestioneErroreDiagnostica(t);
@@ -2294,12 +2383,13 @@ public class MsgDiagnostico {
 		msgDiagnostico.setProtocollo(this.protocolFactory.getProtocol());
 		
 		if(this.pddContext!=null){
-			String [] key = org.openspcoop2.core.constants.Costanti.CONTEXT_OBJECT;
-			if(key!=null){
-				for (int j = 0; j < key.length; j++) {
-					Object o = this.pddContext.getObject(key[j]);
+			List<MapKey<String>> keys = org.openspcoop2.core.constants.Costanti.CONTEXT_OBJECT;
+			if(keys!=null){
+				for (int j = 0; j < keys.size(); j++) {
+					MapKey<String> mapKey = keys.get(j);
+					Object o = this.pddContext.getObject(mapKey);
 					if(o!=null && o instanceof String){
-						msgDiagnostico.addProperty(key[j], (String)o);
+						msgDiagnostico.addProperty(mapKey.getValue(), (String)o);
 					}
 				}
 			}

@@ -39,6 +39,7 @@ import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.slf4j.Logger;
 
@@ -84,10 +85,10 @@ public class IdentificazionePortaApplicativa extends AbstractIdentificazionePort
 		this.identificativoPorta = idPA;
 	}*/
     public IdentificazionePortaApplicativa(Logger log, IProtocolFactory<?> protocolFactory, 
-    		RegistroServiziManager registroServiziManager, Object configurazioneManager,
+    		RegistroServiziManager registroServiziManager, Object configurazioneManager, RequestInfo requestInfo,
     		PortaApplicativa pa)
 			throws ProtocolException {
-		super(log, protocolFactory, registroServiziManager, configurazioneManager);
+		super(log, protocolFactory, registroServiziManager, configurazioneManager, requestInfo);
 		this.pa = pa;
 		IDPortaApplicativa idPA = new IDPortaApplicativa();
 		idPA.setNome(this.pa.getNome());

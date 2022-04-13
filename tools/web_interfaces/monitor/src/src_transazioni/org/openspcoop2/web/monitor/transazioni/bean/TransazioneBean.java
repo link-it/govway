@@ -245,7 +245,7 @@ public class TransazioneBean extends Transazione{
 	
 	public boolean isShowContesto(){
 		try{
-			return EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo()).getEsitiTransactionContextCode().size()>1;
+			return EsitiProperties.getInstanceFromProtocolName(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo()).getEsitiTransactionContextCode().size()>1;
 		}catch(Exception e){
 			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo dei contesti: "+e.getMessage(),e);
 			return false;
@@ -1055,7 +1055,7 @@ public class TransazioneBean extends Transazione{
 	
 	public boolean isConsegnaMultipla() {
 		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo());
+			EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo());
 			String name = esitiProperties.getEsitoName(this.getEsito());
 			EsitoTransazioneName esitoName = EsitoTransazioneName.convertoTo(name);
 			return EsitoTransazioneName.isConsegnaMultipla(esitoName);
@@ -1067,7 +1067,7 @@ public class TransazioneBean extends Transazione{
 	
 	public boolean isSavedInMessageBox() {
 		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo());
+			EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo());
 			String name = esitiProperties.getEsitoName(this.getEsito());
 			EsitoTransazioneName esitoName = EsitoTransazioneName.convertoTo(name);
 			return EsitoTransazioneName.isSavedInMessageBox(esitoName);
@@ -1127,7 +1127,7 @@ public class TransazioneBean extends Transazione{
 			EsitiProperties esitiProperties = null;
 			EsitoTransazioneName esitoTransactionName = null;
 			try {
-				esitiProperties = EsitiProperties.getInstance(log, this.getProtocollo());
+				esitiProperties = EsitiProperties.getInstanceFromProtocolName(log, this.getProtocollo());
 				esitoTransactionName = esitiProperties.getEsitoTransazioneName(this.getEsito());
 			}catch(Exception e){
 				log.error("Errore durante il recupero dell'esito della transazione: "+e.getMessage(),e);

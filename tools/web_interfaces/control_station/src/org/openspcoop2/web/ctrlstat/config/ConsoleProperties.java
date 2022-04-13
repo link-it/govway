@@ -1225,6 +1225,15 @@ public class ConsoleProperties {
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.refreshPersistentConfiguration");
 	}
+	public String getJmxPdD_configurazioneSistema_nomeRisorsaDatiRichieste(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaDatiRichieste");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingGlobalConfigCache(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.removeRateLimitingGlobalConfigCache");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingAPIConfigCache(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.removeRateLimitingAPIConfigCache");
+	}
 	public List<String> getJmxPdD_caches(String alias) throws UtilsException {
 		return this.read_jmx_caches(alias, "risorseJmxPdd.caches");
 	}

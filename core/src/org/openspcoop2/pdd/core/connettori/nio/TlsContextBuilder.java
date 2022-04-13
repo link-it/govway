@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.core.connettori.nio;
 import javax.net.ssl.SSLContext;
 
 import org.openspcoop2.pdd.core.connettori.ConnettoreLogger;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.SSLConfig;
@@ -36,12 +37,12 @@ import org.openspcoop2.utils.transport.http.SSLUtilities;
  */
 public class TlsContextBuilder {
 
-	public static SSLContext buildSSLContext(SSLConfig httpsProperties, ConnettoreLogger logger, StringBuilder sb) throws UtilsException {
+	public static SSLContext buildSSLContext(SSLConfig httpsProperties, ConnettoreLogger logger, StringBuilder sb, RequestInfo requestInfo) throws UtilsException {
 		// provo a leggere i keystore dalla cache
 		if(httpsProperties.getKeyStore()==null) {
 			if(httpsProperties.getKeyStoreLocation()!=null) {
 				try {
-					httpsProperties.setKeyStore(GestoreKeystoreCache.getMerlinKeystore(httpsProperties.getKeyStoreLocation(), 
+					httpsProperties.setKeyStore(GestoreKeystoreCache.getMerlinKeystore(requestInfo, httpsProperties.getKeyStoreLocation(), 
 							httpsProperties.getKeyStoreType(), httpsProperties.getKeyStorePassword()).getKeyStore().getKeystore());
 				}catch(Exception e) {
 					String msgError = "Lettura keystore '"+httpsProperties.getKeyStoreLocation()+"' dalla cache fallita: "+e.getMessage();
@@ -52,7 +53,7 @@ public class TlsContextBuilder {
 		if(httpsProperties.getTrustStore()==null) {
 			if(httpsProperties.getTrustStoreLocation()!=null) {
 				try {
-					httpsProperties.setTrustStore(GestoreKeystoreCache.getMerlinTruststore(httpsProperties.getTrustStoreLocation(), 
+					httpsProperties.setTrustStore(GestoreKeystoreCache.getMerlinTruststore(requestInfo, httpsProperties.getTrustStoreLocation(), 
 							httpsProperties.getTrustStoreType(), httpsProperties.getTrustStorePassword()).getTrustStore().getKeystore());
 				}catch(Exception e) {
 					String msgError = "Lettura truststore '"+httpsProperties.getTrustStoreLocation()+"' dalla cache fallita: "+e.getMessage();
@@ -63,7 +64,7 @@ public class TlsContextBuilder {
 		if(httpsProperties.getTrustStoreCRLs()==null) {
 			if(httpsProperties.getTrustStoreCRLsLocation()!=null) {
 				try {
-					httpsProperties.setTrustStoreCRLs(GestoreKeystoreCache.getCRLCertstore(httpsProperties.getTrustStoreCRLsLocation()).getCertStore());
+					httpsProperties.setTrustStoreCRLs(GestoreKeystoreCache.getCRLCertstore(requestInfo, httpsProperties.getTrustStoreCRLsLocation()).getCertStore());
 				}catch(Exception e) {
 					String msgError = "Lettura CRLs '"+httpsProperties.getTrustStoreLocation()+"' dalla cache fallita: "+e.getMessage();
 					logger.error(msgError, e);

@@ -40,6 +40,7 @@ import org.openspcoop2.pdd.config.PddProperties;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -200,7 +201,8 @@ public class Test {
 		ConfigurazionePdDReader.initialize(config, log, log, null, null, true, false, false, false, null, CacheType.JCS);
 						
 		PdDContext pddContext = new PdDContext();
-		pddContext.addObject("TEST1", "VALORE DI ESEMPIO");
+		MapKey<String> TEST1 = org.openspcoop2.utils.Map.newMapKey("TEST1");
+		pddContext.addObject(TEST1, "VALORE DI ESEMPIO");
 		
 		boolean bufferMessage_readOnly = true;
 		String idTransazione = "xxyy";
@@ -615,10 +617,12 @@ public class Test {
 		mapLivello2.put("attr4", arrayLivello4);
 		TestMap multimap = new TestMap();
 		multimap.map = mapLivello1;
-		pddContext.addObject("MULTIMAP", multimap);
+		MapKey<String> MULTIMAP = org.openspcoop2.utils.Map.newMapKey("MULTIMAP");
+		pddContext.addObject(MULTIMAP, multimap);
 		TestMap map = new TestMap();
 		map.map = mapLivello2;
-		pddContext.addObject("MAP", map);
+		MapKey<String> MAP = org.openspcoop2.utils.Map.newMapKey("MAP");
+		pddContext.addObject(MAP, map);
 		
 		expr = "attribute value: ${context:MAP.map[attr1]}";
 		DynamicUtils.validate("testMAP", expr, forceDollaro, true);

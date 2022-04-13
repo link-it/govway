@@ -22,6 +22,7 @@ package org.openspcoop2.protocol.sdk.registry;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 
 /**
@@ -36,6 +37,8 @@ public interface IServiceIdentificationReader {
 	// PORTA DELEGATA
 	
 	public IDPortaDelegata findPortaDelegata(TransportRequestContext transportRequestContext, boolean portaUrlBased) throws RegistryNotFound; 
+	
+	public IDSoggetto convertToIDSoggettoFruitore(IDPortaDelegata idPortaDelegata) throws RegistryNotFound; 
 	
 	public IDServizio convertToIDServizio(IDPortaDelegata idPortaDelegata) throws RegistryNotFound; 
 	

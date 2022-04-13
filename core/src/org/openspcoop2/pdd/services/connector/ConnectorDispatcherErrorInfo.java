@@ -24,10 +24,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 
 /**
  * ConnectorDispatcherErrorInfo

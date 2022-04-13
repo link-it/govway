@@ -49,8 +49,19 @@ public class AccordoServizioWrapper implements java.io.Serializable{
 	public void setApi(Api api) {
 		this.api = api;
 	}
-	private org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("AccordoServizioWrapperREST");
+	private transient org.openspcoop2.utils.Semaphore semaphore = null;
+	private synchronized void initSemaphore() {
+		if(this.semaphore==null) {
+			this.semaphore = new org.openspcoop2.utils.Semaphore("AccordoServizioWrapperREST");
+		}
+	}
 	public void updateApi(Api api) {
+		
+		if(this.semaphore==null) {
+			// serializzazione da transient
+			initSemaphore();
+		}
+		
 		this.semaphore.acquireThrowRuntime("updateAPI");
 		try {
 			this.api = api;

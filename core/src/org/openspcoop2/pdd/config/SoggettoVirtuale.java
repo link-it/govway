@@ -35,10 +35,10 @@ import org.openspcoop2.pdd.core.behaviour.Behaviour;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToFilter;
 import org.openspcoop2.pdd.core.behaviour.BehaviourLoader;
 import org.openspcoop2.pdd.core.behaviour.IBehaviour;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 
 
 

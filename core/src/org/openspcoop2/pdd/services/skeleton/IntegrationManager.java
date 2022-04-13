@@ -72,9 +72,8 @@ import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorseThread;
 import org.openspcoop2.pdd.timers.TimerThresholdThread;
 import org.openspcoop2.protocol.engine.LetturaParametriBusta;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
+import org.openspcoop2.protocol.engine.URLProtocolContextImpl;
 import org.openspcoop2.protocol.engine.constants.Costanti;
-import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -88,8 +87,10 @@ import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
+import org.openspcoop2.protocol.sdk.constants.IDService;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
@@ -157,7 +158,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	
 	private IProtocolFactory<?> getProtocolFactory(Logger log) throws IntegrationManagerException{
 		try {
-			String protocolName = (String) getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME);
+			String protocolName = (String) getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME.getValue());
 			return ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolName);
 		} catch (Exception e) {
 			log.error("Errore durante il recupero della ProtocolFactory: "+e.getMessage(),e);
@@ -168,7 +169,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	
 	private void checkIMAuthorization(Logger log) throws IntegrationManagerException{
 		try {
-			Object o = getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.INTEGRATION_MANAGER_ENGINE_AUTHORIZED);
+			Object o = getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.INTEGRATION_MANAGER_ENGINE_AUTHORIZED.getValue());
 			if(o == null || !(o instanceof Boolean)){
 				throw new Exception("Invocazione del Servizio non autorizzata");
 			}
@@ -184,7 +185,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	}
 	private void setNomePortaDelegata(Logger log,String nomePorta) throws IntegrationManagerException{
 		try {
-			getHttpServletRequest().setAttribute(org.openspcoop2.core.constants.Costanti.PORTA_DELEGATA, nomePorta);
+			getHttpServletRequest().setAttribute(org.openspcoop2.core.constants.Costanti.PORTA_DELEGATA.getValue(), nomePorta);
 		} catch (Exception e) {
 			log.error(e.getMessage(),e);
 			throw new IntegrationManagerException(null,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),
@@ -211,7 +212,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		// Raccolta oggetti da contesto
 		Credenziali credenziali = null;
 		javax.servlet.http.HttpServletRequest req = getHttpServletRequest();
-		URLProtocolContext urlProtocolContext = new URLProtocolContext(req,logCore,true,true,this.propertiesReader.getCustomContexts());
+		URLProtocolContext urlProtocolContext = new URLProtocolContextImpl(req,logCore,true,true,this.propertiesReader.getCustomContexts());
 		try {
 			credenziali = new Credenziali(urlProtocolContext.getCredential());
 		}catch(Exception e){
@@ -292,7 +293,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 								identita = "Gestore delle credenziali di tipo "+this.tipiGestoriCredenziali[i];
 							}
 							msgDiag.addKeyword(CostantiPdD.KEY_IDENTITA_GESTORE_CREDENZIALI, identita);
-							pddContext.addObject(CostantiPdD.KEY_IDENTITA_GESTORE_CREDENZIALI, identita);
+							pddContext.addObject(org.openspcoop2.core.constants.Costanti.IDENTITA_GESTORE_CREDENZIALI, identita);
 							msgDiag.logPersonalizzato("gestoreCredenziali.nuoveCredenziali");
 							// update credenziali
 							infoConnettoreIngresso.setCredenziali(credenzialiRitornate);	
@@ -587,8 +588,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				ver = versioneServizio;
 			}
 			idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(tipoServizio,servizio, 
-				OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory.getProtocol()).getTipo(), 
-				OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory.getProtocol()).getNome(), 
+				OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory.getProtocol(), null).getTipo(), 
+				OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory.getProtocol(), null).getNome(), 
 				ver);
 		} catch(Exception e) {
 			msgDiag.logErroreGenerico(e, "IDServizioFactory.getIDServizioFromValues");
@@ -643,7 +644,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			
 			// init stato
 			stato = new OpenSPCoopStateful();
-			stato.initResource(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol()),IntegrationManager.ID_MODULO, idTransazione, 
+			stato.initResource(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol(), null),IntegrationManager.ID_MODULO, idTransazione, 
 					OpenSPCoopStateDBManager.messageBox);
 			ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance(stato.getStatoRichiesta(),stato.getStatoRisposta());
 			msgDiag.updateState(configPdDManager);
@@ -957,7 +958,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 
 			// init stato
 			stato = new OpenSPCoopStateful();
-			stato.initResource(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol()),IntegrationManager.ID_MODULO, idTransazione, 
+			stato.initResource(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol(), null),IntegrationManager.ID_MODULO, idTransazione, 
 					OpenSPCoopStateDBManager.messageBox);
 			ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance(stato.getStatoRichiesta(),stato.getStatoRisposta());
 			msgDiag.updateState(configPdDManager);
@@ -1156,7 +1157,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			
 			//	dump applicativo
 			msgDiag.mediumDebug("Dump applicativo messaggio ritornato...");
-			Dump dumpApplicativo = new Dump(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol()),
+			Dump dumpApplicativo = new Dump(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol(), null),
 					IntegrationManager.ID_MODULO,idMessaggio,
 					fruitore,idServizio,
 					TipoPdD.INTEGRATION_MANAGER,null,pddContext,
@@ -1431,7 +1432,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 
 			// init stato
 			stato = new OpenSPCoopStateful();
-			stato.initResource(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol()),IntegrationManager.ID_MODULO, idTransazione, 
+			stato.initResource(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol(), null),IntegrationManager.ID_MODULO, idTransazione, 
 					OpenSPCoopStateDBManager.messageBox);
 			ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance(stato.getStatoRichiesta(),stato.getStatoRisposta());
 			msgDiag.updateState(configPdDManager);	
@@ -1750,7 +1751,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 
 			// init stato
 			stato = new OpenSPCoopStateful();
-			stato.initResource(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol()),IntegrationManager.ID_MODULO, idTransazione, 
+			stato.initResource(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol(), null),IntegrationManager.ID_MODULO, idTransazione, 
 					OpenSPCoopStateDBManager.messageBox);
 			ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance(stato.getStatoRichiesta(),stato.getStatoRisposta());
 			msgDiag.updateState(configPdDManager);	

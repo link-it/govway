@@ -33,12 +33,13 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
-import org.openspcoop2.protocol.engine.FunctionContextsCustom;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
-import org.openspcoop2.protocol.engine.constants.IDService;
+import org.openspcoop2.protocol.engine.URLProtocolContextImpl;
 import org.openspcoop2.protocol.manifest.constants.Costanti;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.constants.IDService;
+import org.openspcoop2.protocol.sdk.state.FunctionContextsCustom;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -252,7 +253,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				customContexts = op2Properties.getCustomContexts();
 			}
 			
-			URLProtocolContext protocolContext = new URLProtocolContext(req, logCore, printCertificate, customContexts);
+			URLProtocolContext protocolContext = new URLProtocolContextImpl(req, logCore, printCertificate, customContexts);
 			String function = protocolContext.getFunction();
 			IDService idServiceCustom = protocolContext.getIdServiceCustom();
 			
@@ -375,9 +376,9 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 					serviceIM = URLProtocolContext.IntegrationManager_SERVICE_PD;
 				}
 				String forwardUrl = "/"+URLProtocolContext.IntegrationManager_ENGINE+"/"+serviceIM;
-				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolContext.getProtocolName());
-				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_WEB_CONTEXT, protocolContext.getProtocolWebContext());
-				req.setAttribute(org.openspcoop2.core.constants.Costanti.INTEGRATION_MANAGER_ENGINE_AUTHORIZED, true);
+				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME.getValue(), protocolContext.getProtocolName());
+				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_WEB_CONTEXT.getValue(), protocolContext.getProtocolWebContext());
+				req.setAttribute(org.openspcoop2.core.constants.Costanti.INTEGRATION_MANAGER_ENGINE_AUTHORIZED.getValue(), true);
 				RequestDispatcher dispatcher = req.getRequestDispatcher(forwardUrl);
 				dispatcher.forward(req, res);
 				
@@ -414,7 +415,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				
 				// Dispatching al servizio 
 				CheckStatoPdD checkStatoPdD = new CheckStatoPdD();
-				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolContext.getProtocolName());
+				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME.getValue(), protocolContext.getProtocolName());
 				checkStatoPdD.doGet(req, res);
 				
 			}
@@ -454,7 +455,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				
 				// Dispatching al servizio 
 				Proxy proxy = new Proxy();
-				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolContext.getProtocolName());
+				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME.getValue(), protocolContext.getProtocolName());
 				proxy.doGet(req, res);
 				
 			}

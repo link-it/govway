@@ -22,7 +22,6 @@ package org.openspcoop2.utils;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 
 /**
  * TimeoutInputStrem
@@ -34,20 +33,20 @@ import java.util.Map;
  */
 public class LimitedInputStream extends FilterInputStream {
 
-	public final static String EXCEPTION_KEY = "LimitExceededIOException";
-	public final static String ERROR_MSG_KEY = "LimitedInputStream";
+	public final static MapKey<String> EXCEPTION_KEY = Map.newMapKey("LimitExceededIOException");
+	public final static MapKey<String> ERROR_MSG_KEY = Map.newMapKey("LimitedInputStream");
 	public final static String ERROR_MSG = "Payload too large";
 	
 	public LimitedInputStream(InputStream is, long limitBytes) throws IOException {
 		this(is, limitBytes, null, null, null);
 	}
-	public LimitedInputStream(InputStream is, long limitBytes, Map<String, Object> ctx) throws IOException {
+	public LimitedInputStream(InputStream is, long limitBytes, Map<Object> ctx) throws IOException {
 		this(is, limitBytes, null, ctx, null);
 	}
-	public LimitedInputStream(InputStream is, long limitBytes, Map<String, Object> ctx, ILimitExceededNotifier notifier) throws IOException {
+	public LimitedInputStream(InputStream is, long limitBytes, Map<Object> ctx, ILimitExceededNotifier notifier) throws IOException {
 		this(is, limitBytes, null, ctx, notifier);
 	}
-	public LimitedInputStream(InputStream is, long limitBytes, String prefixError, Map<String, Object> ctx, ILimitExceededNotifier notifier) throws IOException {
+	public LimitedInputStream(InputStream is, long limitBytes, String prefixError, Map<Object> ctx, ILimitExceededNotifier notifier) throws IOException {
 		super(new LimitedInputStreamEngine(is, limitBytes, prefixError, ctx, notifier));
 	}
 	
@@ -71,7 +70,7 @@ public class LimitedInputStream extends FilterInputStream {
 			((LimitedInputStreamEngine)is).updateThreshold(limitBytes);
 		}
 	}
-	public void updateContext(Map<String, Object> ctx) {
+	public void updateContext(Map<Object> ctx) {
 		InputStream is = super.in;
 		if(is instanceof LimitedInputStreamEngine) {
 			((LimitedInputStreamEngine)is).updateContext(ctx);

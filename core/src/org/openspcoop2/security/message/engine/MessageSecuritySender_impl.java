@@ -46,7 +46,7 @@ public class MessageSecuritySender_impl extends MessageSecuritySender {
     }
 
     @Override
-    protected boolean process(OpenSPCoop2Message message) {
+    protected boolean process(OpenSPCoop2Message message, org.openspcoop2.utils.Map<Object> ctx) {
 		try{ 	
 				
 			IMessageSecuritySender senderInterface = this.messageSecurityContext.getMessageSecuritySender();
@@ -78,7 +78,7 @@ public class MessageSecuritySender_impl extends MessageSecuritySender {
 			}
 			
 			// Utilizzo l'engine di sicurezza
-			senderInterface.process(this.messageSecurityContext, message);
+			senderInterface.process(this.messageSecurityContext, message, ctx);
 	    	
 		}
 		catch(Exception e){

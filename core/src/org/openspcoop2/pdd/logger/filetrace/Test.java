@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.constants.Costanti;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.Transazione;
@@ -40,6 +41,7 @@ import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -102,7 +104,7 @@ public class Test {
 		confPdD.setLoader(new Loader());
 		confPdD.setLog(log);
 		Map<String, IProtocolFactory<?>> m = new HashMap<String, IProtocolFactory<?>>();
-		m.put("trasparente", Utilities.newInstance("org.openspcoop2.protocol.trasparente.TrasparenteFactory"));
+		m.put(CostantiLabel.TRASPARENTE_PROTOCOL_NAME, Utilities.newInstance("org.openspcoop2.protocol.trasparente.TrasparenteFactory"));
 		MapReader<String, IProtocolFactory<?>> map = new MapReader<String, IProtocolFactory<?>>(m, false);
 		EsitiProperties.initialize(null, log, new Loader(), map);
 		
@@ -113,7 +115,7 @@ public class Test {
 		Date dataUscitaRisposta = new Date(dataIngressoRichiesta.getTime()+65);
 		
 		Transazione transazioneDTO = new Transazione();
-		transazioneDTO.setProtocollo("trasparente");
+		transazioneDTO.setProtocollo(CostantiLabel.TRASPARENTE_PROTOCOL_NAME);
 		transazioneDTO.setEsito(esito);
 		transazioneDTO.setIdTransazione("UUIDXX");
 		transazioneDTO.setIdCorrelazioneApplicativa("XX-deXXX");
@@ -186,7 +188,7 @@ public class Test {
 		credenzialiMittente.setTrasporto(trasporto);
 		
 		Traccia tracciaRichiesta = new Traccia();
-		tracciaRichiesta.setBusta(new Busta("trasparente"));
+		tracciaRichiesta.setBusta(new Busta(CostantiLabel.TRASPARENTE_PROTOCOL_NAME));
 		tracciaRichiesta.getBusta().addProperty("ProprietaTest", "Andrea");
 		
 		Messaggio richiestaIngresso = new Messaggio();
@@ -325,8 +327,14 @@ public class Test {
 		
 		System.out.println("Messaggi presenti prima: "+transaction.sizeMessaggi());
 		
+		ConfigurazionePdD confPdD = new ConfigurazionePdD();
+		confPdD.setLoader(new Loader());
+		confPdD.setLog(log);
+		ProtocolFactoryManager.initialize(log, confPdD, CostantiLabel.TRASPARENTE_PROTOCOL_NAME);
+		
 		FileTraceManager manager = new FileTraceManager(log, config);
-		manager.buildTransazioneInfo(transazioneDTO, transaction, informazioniAttributi, null);
+		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getDefaultProtocolFactory();
+		manager.buildTransazioneInfo(protocolFactory, transazioneDTO, transaction, informazioniAttributi, null);
 		
 		boolean requestSended = true;
 		if(transazioneDTO.getEsito()!=0) {

@@ -22,8 +22,6 @@
 
 package org.openspcoop2.security.message.engine;
 
-import java.util.Map;
-
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -48,11 +46,11 @@ public class MessageSecurityContext_impl extends MessageSecurityContext{
 	
 	/** MessageSecurity Process */
 	@Override
-	public boolean processIncoming(OpenSPCoop2Message message, Busta busta, Map<String, Object> ctx){
+	public boolean processIncoming(OpenSPCoop2Message message, Busta busta, org.openspcoop2.utils.Map<Object> ctx){
 		
 		this.receiver = new MessageSecurityReceiver_impl(this);
 		
-		boolean result = this.receiver.process(message, busta);
+		boolean result = this.receiver.process(message, busta, ctx);
 		if(!result){
 			
 			if(ctx!=null) {
@@ -72,11 +70,11 @@ public class MessageSecurityContext_impl extends MessageSecurityContext{
 	}
 	
 	@Override
-	public boolean processOutgoing(OpenSPCoop2Message message, Map<String, Object> ctx){
+	public boolean processOutgoing(OpenSPCoop2Message message, org.openspcoop2.utils.Map<Object> ctx){
 		
 		this.sender = new MessageSecuritySender_impl(this);
 		
-		boolean result = this.sender.process(message);
+		boolean result = this.sender.process(message, ctx);
 		if(!result){
 			
 			if(ctx!=null) {

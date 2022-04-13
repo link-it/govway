@@ -237,6 +237,7 @@ public class Cache {
 		if(this.cache==null) {
 			throw new RuntimeException("Cache not initialized");
 		}
+		//System.out.println("GET @"+this.cache.getName()+" ["+key+"]");
 		return this.cache.get(key);
 	}
 	

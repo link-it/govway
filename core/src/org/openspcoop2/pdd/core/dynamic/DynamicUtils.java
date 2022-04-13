@@ -52,9 +52,9 @@ import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.DynamicStringReplace;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.ArchiveType;
@@ -213,9 +213,11 @@ public class DynamicUtils {
 			dynamicMap.put(Costanti.MAP_DATE_OBJECT, DateManager.getDate());
 		}
 		
-		if(dynamicInfo!=null && dynamicInfo.getPddContext()!=null && dynamicInfo.getPddContext().getContext()!=null) {
+		RequestInfo requestInfo = null;
+		
+		if(dynamicInfo!=null && dynamicInfo.getPddContext()!=null && dynamicInfo.getPddContext()!=null) {
 			if(dynamicMap.containsKey(Costanti.MAP_CTX_OBJECT)==false) {
-				dynamicMap.put(Costanti.MAP_CTX_OBJECT, dynamicInfo.getPddContext().getContext());
+				dynamicMap.put(Costanti.MAP_CTX_OBJECT, dynamicInfo.getPddContext());
 			}
 			if(dynamicMap.containsKey(Costanti.MAP_TRANSACTION_ID_OBJECT)==false) {
 				if(dynamicInfo.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) {
@@ -223,18 +225,20 @@ public class DynamicUtils {
 					dynamicMap.put(Costanti.MAP_TRANSACTION_ID_OBJECT, idTransazione);
 				}
 			}
+			if(dynamicInfo.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+				requestInfo = (RequestInfo)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+			}
 			if(dynamicMap.containsKey(Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT)==false) {
-				if(dynamicInfo.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
-					RequestInfo requestInfo = (RequestInfo)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+				if(requestInfo!=null) {
 					if(requestInfo.getProtocolContext()!=null) {
 						dynamicMap.put(Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT, requestInfo.getProtocolContext());
 						dynamicMap.put(Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT.toLowerCase(), requestInfo.getProtocolContext());
 					}
-					if(requestInfo.getIdServizio()!=null) {
-						AttachmentsReader aReader = new AttachmentsReader(requestInfo.getIdServizio());
-						dynamicMap.put(Costanti.MAP_ATTACHMENTS_OBJECT, aReader);
-					}
 				}
+			}
+			if(requestInfo!=null && requestInfo.getIdServizio()!=null) {
+				AttachmentsReader aReader = new AttachmentsReader(requestInfo.getIdServizio(), requestInfo);
+				dynamicMap.put(Costanti.MAP_ATTACHMENTS_OBJECT, aReader);
 			}
 			if(dynamicMap.containsKey(Costanti.MAP_TOKEN_INFO)==false) {
 				Object oInformazioniTokenNormalizzate = dynamicInfo.getPddContext().getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
@@ -372,7 +376,7 @@ public class DynamicUtils {
 		}
 		
 		try {
-			SystemPropertiesReader systemPropertiesReader = new SystemPropertiesReader(log);
+			SystemPropertiesReader systemPropertiesReader = new SystemPropertiesReader(log, requestInfo);
 			dynamicMap.put(Costanti.MAP_SYSTEM_PROPERTY, systemPropertiesReader);
 			dynamicMap.put(Costanti.MAP_SYSTEM_PROPERTY.toLowerCase(), systemPropertiesReader);
 		}

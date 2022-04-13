@@ -43,8 +43,8 @@ import org.openspcoop2.pdd.core.behaviour.BehaviourForwardTo;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToFilter;
 import org.openspcoop2.pdd.core.behaviour.IBehaviour;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.openspcoop2.utils.xml2json.JsonXmlPathExpressionEngine;
 import org.w3c.dom.Element;
@@ -84,7 +84,7 @@ public class ServizioApplicativoContentBasedBehaviour extends AbstractCore imple
 				IDPortaApplicativa idPA = new IDPortaApplicativa();
 				idPA.setNome(nomePA);
 				ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance(gestoreMessaggioRichiesta.getOpenspcoopstate()!=null ? gestoreMessaggioRichiesta.getOpenspcoopstate().getStatoRichiesta() : null);
-				pa = configPdDManager.getPortaApplicativa_SafeMethod(idPA);
+				pa = configPdDManager.getPortaApplicativa_SafeMethod(idPA, requestInfo);
 			}
 			
 			String azione = null;

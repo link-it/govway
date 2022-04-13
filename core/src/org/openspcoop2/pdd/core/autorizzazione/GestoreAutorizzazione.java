@@ -128,6 +128,7 @@ public class GestoreAutorizzazione {
 		else{
 			try{
 				GestoreAutorizzazione.cacheAutorizzazione = new Cache(CacheType.JCS, GestoreAutorizzazione.AUTORIZZAZIONE_CACHE_NAME); // lascio JCS come default abilitato via jmx
+				GestoreAutorizzazione.cacheAutorizzazione.build();
 			}catch(Exception e){
 				throw new AutorizzazioneException(e.getMessage(),e);
 			}
@@ -866,7 +867,7 @@ public class GestoreAutorizzazione {
     		else {
 	    		boolean foundAlmostOne = false;
 	    		for (Scope scope : authScope.getScopeList()) {
-					org.openspcoop2.core.registry.Scope scopeOp2Registry = RegistroServiziManager.getInstance(datiInvocazione.getState()).getScope(scope.getNome(),null);
+					org.openspcoop2.core.registry.Scope scopeOp2Registry = RegistroServiziManager.getInstance(datiInvocazione.getState()).getScope(scope.getNome(),null,datiInvocazione.getRequestInfo());
 					String nomeScope = scopeOp2Registry.getNome();
 					if(scopeOp2Registry.getNomeEsterno()!=null && !"".equals(scopeOp2Registry.getNomeEsterno())) {
 						nomeScope = scopeOp2Registry.getNomeEsterno();
@@ -914,7 +915,7 @@ public class GestoreAutorizzazione {
         		
         		String [] scopes = new String[authScope.sizeScopeList()];
         		for (int i = 0; i < authScope.sizeScopeList(); i++) {
-        			org.openspcoop2.core.registry.Scope scopeOp2Registry = RegistroServiziManager.getInstance(datiInvocazione.getState()).getScope(authScope.getScope(i).getNome(),null);
+        			org.openspcoop2.core.registry.Scope scopeOp2Registry = RegistroServiziManager.getInstance(datiInvocazione.getState()).getScope(authScope.getScope(i).getNome(),null,datiInvocazione.getRequestInfo());
 					String nomeScope = scopeOp2Registry.getNome();
 					if(scopeOp2Registry.getNomeEsterno()!=null) {
 						nomeScope = scopeOp2Registry.getNomeEsterno();

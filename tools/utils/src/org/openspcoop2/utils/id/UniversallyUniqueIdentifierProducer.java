@@ -54,7 +54,7 @@ public class UniversallyUniqueIdentifierProducer extends BaseThread {
 		this.setTimeout(-1); // equivale ad un while true
 		this.idsQueue = new ArrayBlockingQueue<IUniqueIdentifier>(buffer);
 		this.log = log;
-		System.out.println( "Started UUID producer with buffer size: " + buffer );
+		this.log.info( "Started UUID producer with buffer size: " + buffer );
 	}
 	
 	public IUniqueIdentifier newUniqueIdentifier() throws UniqueIdentifierException {

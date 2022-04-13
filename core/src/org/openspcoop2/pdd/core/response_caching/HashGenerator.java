@@ -35,7 +35,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.protocol.engine.RequestInfo;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.transport.TransportUtils;
 

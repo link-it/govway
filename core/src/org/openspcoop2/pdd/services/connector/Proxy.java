@@ -42,12 +42,13 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.jmx.ConfigurazionePdD;
 import org.openspcoop2.pdd.core.jmx.GestoreConsegnaApplicativi;
+import org.openspcoop2.pdd.core.jmx.GestoreRichieste;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.pdd.core.jmx.MonitoraggioRisorse;
 import org.openspcoop2.pdd.core.jmx.StatoServiziJMXResource;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.datasource.JmxDataSource;
@@ -209,6 +210,14 @@ public class Proxy extends HttpServlet {
 			else if(methodName!=null){
 				if(JMXUtils.CACHE_METHOD_NAME_RESET.equals(methodName) || 
 						JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT.equals(methodName)) {
+					invokeAllNodes = true;
+				}
+				else if(CostantiPdD.JMX_GESTORE_RICHIESTE.equals(resourceName)
+						&&
+						(GestoreRichieste.CACHE_METHOD_NAME_REMOVE_DATI_CONTROLLO_TRAFFICO_GLOBALE.equals(methodName)
+								||
+								GestoreRichieste.CACHE_METHOD_NAME_REMOVE_DATI_CONTROLLO_TRAFFICO_API.equals(methodName))
+					) {
 					invokeAllNodes = true;
 				}
 				else if(CostantiPdD.JMX_CONFIGURAZIONE_PDD.equals(resourceName)

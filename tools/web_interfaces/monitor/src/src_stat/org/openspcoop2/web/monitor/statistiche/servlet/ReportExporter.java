@@ -883,7 +883,7 @@ public class ReportExporter extends HttpServlet{
 		
 		// ** Esito **
 		
-		EsitiProperties esitiProperties = EsitiProperties.getInstance(log, protocollo);
+		EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(log, protocollo);
 
 		statSearchForm.setEsitoGruppo(EsitoUtils.ALL_VALUE);
 		statSearchForm.setEsitoDettaglio(EsitoUtils.ALL_VALUE);

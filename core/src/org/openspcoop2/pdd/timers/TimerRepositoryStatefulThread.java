@@ -129,7 +129,7 @@ public class TimerRepositoryStatefulThread extends BaseThread{
 	    	Resource r = null;
 			try{
 				dbManager = DBTransazioniManager.getInstance();
-				r = dbManager.getResource(this.openspcoopProperties.getIdentitaPortaDefault(null), ID_MODULO, null);
+				r = dbManager.getResource(this.openspcoopProperties.getIdentitaPortaDefaultWithoutProtocol(), ID_MODULO, null);
 				if(r==null){
 					throw new Exception("Risorsa al database non disponibile");
 				}
@@ -151,7 +151,7 @@ public class TimerRepositoryStatefulThread extends BaseThread{
 			}finally{
 				try{
 					if(r!=null)
-						dbManager.releaseResource(this.openspcoopProperties.getIdentitaPortaDefault(null), ID_MODULO, r);
+						dbManager.releaseResource(this.openspcoopProperties.getIdentitaPortaDefaultWithoutProtocol(), ID_MODULO, r);
 				}catch(Exception eClose){}
 			}
 			

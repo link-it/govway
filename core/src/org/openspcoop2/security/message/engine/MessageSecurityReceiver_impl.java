@@ -64,7 +64,7 @@ public class MessageSecurityReceiver_impl extends MessageSecurityReceiver{
 	}
 
 	@Override
-	protected boolean process(OpenSPCoop2Message message,Busta busta) {
+	protected boolean process(OpenSPCoop2Message message,Busta busta, org.openspcoop2.utils.Map<Object> ctx) {
 		try{
 			
 			
@@ -219,7 +219,7 @@ public class MessageSecurityReceiver_impl extends MessageSecurityReceiver{
 			
 			
 			// ** Applico sicurezza tramite engine **/
-			receiverInterface.process(this.messageSecurityContext, message, busta);
+			receiverInterface.process(this.messageSecurityContext, message, busta, ctx);
 			
 			
 			

@@ -1,3 +1,12 @@
+2022-04-11  Andrea Poli <apoli@link.it>
+
+	Aggiunta nuova cache per i dati gestiti nelle richieste
+	ALTER TABLE configurazione ADD COLUMN dati_richieste_statocache VARCHAR(255);
+	ALTER TABLE configurazione ADD COLUMN dati_richieste_dimensionecache VARCHAR(255);
+	ALTER TABLE configurazione ADD COLUMN dati_richieste_algoritmocache VARCHAR(255);
+	ALTER TABLE configurazione ADD COLUMN dati_richieste_idlecache VARCHAR(255);
+	ALTER TABLE configurazione ADD COLUMN dati_richieste_lifecache VARCHAR(255);
+
 2022-03-16  Andrea Poli <apoli@link.it>
 
 	Modificato tipo della colonna per le trasformazioni delle risposte, per quanto concerne il return code:

@@ -32,7 +32,6 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.builder.ImbustamentoErrore;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
@@ -47,6 +46,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.slf4j.Logger;
 
@@ -227,7 +227,8 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 					tipoTempo, generazioneListaTrasmissioni,
 					eProcessamento, msgTypeErrorResponse, rfc7807, returnConfig, integrationFunctionError, 
 					this.forceSoapPrefixCompatibilitOpenSPCoopV1, useInternalFault,
-					transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null);	
+					transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null,
+					this.requestInfo);	
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
@@ -267,7 +268,8 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 					tipoTempo, generazioneListaTrasmissioni,
 					eProcessamento, msgTypeErrorResponse, rfc7807, returnConfig, integrationFunctionError, 
 					this.forceSoapPrefixCompatibilitOpenSPCoopV1, useInternalFault,
-					transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null);
+					transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null,
+					this.requestInfo);
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
@@ -307,7 +309,8 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 					tipoTempo, generazioneListaTrasmissioni,
 					eProcessamento, msgTypeErrorResponse, rfc7807, returnConfig, integrationFunctionError, 
 					this.forceSoapPrefixCompatibilitOpenSPCoopV1, useInternalFault,
-					transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null);
+					transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null,
+					this.requestInfo);
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
@@ -346,7 +349,8 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 					tipoTempo, generazioneListaTrasmissioni,
 					msgTypeErrorResponse, rfc7807, returnConfig, integrationFunctionError, 
 					this.forceSoapPrefixCompatibilitOpenSPCoopV1, useInternalFault,
-					transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null);
+					transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null,
+					this.requestInfo);
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
@@ -388,7 +392,8 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 					tipoTempo, generazioneListaTrasmissioni,
 					msgTypeErrorResponse, rfc7807, returnConfig, integrationFunctionError, 
 					this.forceSoapPrefixCompatibilitOpenSPCoopV1, useInternalFault,
-					transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null);	
+					transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null,
+					this.requestInfo);	
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);

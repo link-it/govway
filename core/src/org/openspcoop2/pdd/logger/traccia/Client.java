@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.DumpAllegato;
 import org.openspcoop2.core.transazioni.DumpContenuto;
@@ -82,7 +83,7 @@ public class Client {
 			ConfigurazionePdD confPdD = new ConfigurazionePdD();
 			confPdD.setLoader(new Loader());
 			confPdD.setLog(log);
-			ProtocolFactoryManager.initialize(log, confPdD, "trasparente");
+			ProtocolFactoryManager.initialize(log, confPdD, CostantiLabel.TRASPARENTE_PROTOCOL_NAME);
 			EsitiProperties.initialize(null, log, new Loader(), ProtocolFactoryManager.getInstance().getProtocolFactories());
 		}
 		
@@ -150,7 +151,7 @@ public class Client {
 		transazioneDB.setRuoloTransazione(1);
 		transazioneDB.setEsito(0);
 		transazioneDB.setEsitoContesto("standard");
-		transazioneDB.setProtocollo("trasparente");
+		transazioneDB.setProtocollo(CostantiLabel.TRASPARENTE_PROTOCOL_NAME);
 		transazioneDB.setTipoRichiesta("POST");
 		transazioneDB.setCodiceRispostaIngresso("200");
 		transazioneDB.setCodiceRispostaUscita("200");

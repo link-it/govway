@@ -1057,7 +1057,7 @@ public class TransazioniService implements ITransazioniService {
 				protocolloP = protocolloSelected;
 			}
 			
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log, protocolloP);
+			EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(this.log, protocolloP);
 			List<Integer> esitiOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
 			List<Integer> esitiKo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
 			List<Integer> esitiFault = esitiProperties.getEsitiCodeFaultApplicativo();
@@ -2357,7 +2357,7 @@ public class TransazioniService implements ITransazioniService {
 			}
 			
 			EsitoUtils esitoUtils = new EsitoUtils(this.log, protocolloP);
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log, protocolloP);
+			EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(this.log, protocolloP);
 			List<Integer> esitiOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
 			List<Integer> esitiKo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
 			List<Integer> esitiFault = esitiProperties.getEsitiCodeFaultApplicativo();

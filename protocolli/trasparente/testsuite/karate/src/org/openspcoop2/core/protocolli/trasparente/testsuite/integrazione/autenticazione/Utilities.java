@@ -135,7 +135,7 @@ public class Utilities extends ConfigLoader {
 		String idTransazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		assertNotNull(idTransazione);
 		
-		long esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
+		long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
 		
 		verifyOk(response, 200, contentType); // il codice http e' gia' stato impostato
 		

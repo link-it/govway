@@ -61,6 +61,7 @@ import org.openspcoop2.protocol.sdk.registry.FiltroRicercaSoggetti;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazioneErrori;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneSintatticaResult;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneUtils;
@@ -195,7 +196,12 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 		@SuppressWarnings("unchecked")
 		HashMap<String, byte[]> content = (HashMap<String, byte[]>) oContent;
 		
-		IRegistryReader registryReader = this.getProtocolFactory().getCachedRegistryReader(this.state);
+		RequestInfo requestInfo = null;
+		if(this.context!=null && this.context.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+			requestInfo = (RequestInfo) this.context.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+		}
+		
+		IRegistryReader registryReader = this.getProtocolFactory().getCachedRegistryReader(this.state, requestInfo);
 		
 		
 		// Inserisco proprieta' tutte subito per tracciamento
@@ -584,7 +590,12 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 			}
 			UserMessage userMessage = (UserMessage) o;
 			
-			IRegistryReader registryReader = this.getProtocolFactory().getCachedRegistryReader(this.state);
+			RequestInfo requestInfo = null;
+			if(this.context!=null && this.context.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+				requestInfo = (RequestInfo) this.context.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+			}
+			
+			IRegistryReader registryReader = this.getProtocolFactory().getCachedRegistryReader(this.state, requestInfo);
 			
 			Busta busta = new Busta(AS4Costanti.PROTOCOL_NAME);
 			IDSoggetto idMittente = null;

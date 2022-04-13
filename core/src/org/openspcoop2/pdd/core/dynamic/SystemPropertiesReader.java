@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.core.dynamic;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.slf4j.Logger;
 
 /**
@@ -36,10 +37,10 @@ public class SystemPropertiesReader extends PropertiesReader {
 	
 	private SystemProperties systemProperties;
 	
-	public SystemPropertiesReader(Logger log) throws DynamicException{
+	public SystemPropertiesReader(Logger log, RequestInfo requestInfo) throws DynamicException{
 		super(log);
 		try {
-			this.systemProperties = ConfigurazionePdDManager.getInstance().getSystemPropertiesPdDCached();
+			this.systemProperties = ConfigurazionePdDManager.getInstance().getSystemPropertiesPdDCached(requestInfo);
 		}catch(Exception e) {
 			throw new DynamicException(e.getMessage(),e);
 		}

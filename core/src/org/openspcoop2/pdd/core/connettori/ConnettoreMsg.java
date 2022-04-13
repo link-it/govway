@@ -43,7 +43,6 @@ import org.openspcoop2.pdd.core.handlers.OutRequestContext;
 import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.connector.IAsyncResponseCallback;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -53,6 +52,7 @@ import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 
 /**
@@ -502,7 +502,7 @@ public class ConnettoreMsg  {
 	public void setPolicyNegoziazioneToken(PolicyNegoziazioneToken policyNegoziazioneToken) {
 		this.policyNegoziazioneToken = policyNegoziazioneToken;
 	}
-	public void initPolicyGestioneToken(ConfigurazionePdDManager configPdDManager) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	public void initPolicyGestioneToken(ConfigurazionePdDManager configPdDManager, RequestInfo requestInfo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		if(this.properties!=null && !this.properties.isEmpty()) {
 			Iterator<String> en = this.properties.keySet().iterator();
 			while (en.hasNext()) {
@@ -511,7 +511,7 @@ public class ConnettoreMsg  {
 					String tokenPolicy = this.properties.get(propertyName);
 					if(tokenPolicy!=null && !"".equals(tokenPolicy)) {
 						boolean forceNoCache = true;
-						this.policyNegoziazioneToken = configPdDManager.getPolicyNegoziazioneToken(!forceNoCache, tokenPolicy);
+						this.policyNegoziazioneToken = configPdDManager.getPolicyNegoziazioneToken(!forceNoCache, tokenPolicy, requestInfo);
 					}
 				}
 			}

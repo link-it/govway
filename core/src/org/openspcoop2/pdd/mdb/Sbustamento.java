@@ -57,7 +57,6 @@ import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.FiltroDuplicati;
 import org.openspcoop2.protocol.engine.driver.History;
@@ -87,6 +86,7 @@ import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.resources.Loader;
@@ -164,7 +164,7 @@ public class Sbustamento extends GenericLib{
 		TipoPdD tipoPdD = TipoPdD.APPLICATIVA;
 		if(msgDiag.getPorta()==null) {
 			if(richiestaApplicativa!=null && richiestaApplicativa.getIdPortaApplicativa()!=null) {
-				msgDiag.updatePorta(tipoPdD, richiestaApplicativa.getIdPortaApplicativa().getNome());
+				msgDiag.updatePorta(tipoPdD, richiestaApplicativa.getIdPortaApplicativa().getNome(), requestInfo);
 			}
 		}
 		
@@ -588,7 +588,7 @@ public class Sbustamento extends GenericLib{
 				gestioneErroreProtocollo(configurazionePdDManager,ejbUtils,profiloCollaborazione,repositoryBuste,
 						bustaRichiesta,identitaPdD,eccezioneDaInviareServizioApplicativo,erroreIntegrazioneDaInviareServizioApplicativo,
 						new IDSoggetto(bustaRichiesta.getTipoMittente(),bustaRichiesta.getMittente()),
-						dettaglioEccezione, protocolFactory, protocolManager, pddContext,
+						dettaglioEccezione, protocolFactory, protocolManager, pddContext, requestInfo,
 						integrationFunctionError);
 
 				// Commit modifiche
@@ -714,7 +714,8 @@ public class Sbustamento extends GenericLib{
 							}
 							gestioneErroreProtocollo(configurazionePdDManager, ejbUtils, profiloCollaborazione, repositoryBuste,
 									bustaNonValida, identitaPdD, eccezioneDaInviareServizioApplicativo,null,
-									identitaPdD, null, protocolFactory, protocolManager, pddContext, integrationFunctionError);
+									identitaPdD, null, protocolFactory, protocolManager, pddContext, requestInfo, 
+									integrationFunctionError);
 
 							// Commit modifiche
 							openspcoopstate.commit();
@@ -785,7 +786,7 @@ public class Sbustamento extends GenericLib{
 			msgDiag.mediumDebug("Controllo appartenenza Destinazione Busta (controllo esistenza soggetto)...");
 			boolean existsSoggetto = false;
 			try{
-				existsSoggetto = configurazionePdDManager.existsSoggetto(idServizio.getSoggettoErogatore());
+				existsSoggetto = configurazionePdDManager.existsSoggetto(idServizio.getSoggettoErogatore(), requestInfo);
 			}catch(Exception e){
 				if(idServizio!=null && idServizio.getSoggettoErogatore()!=null)
 					msgDiag.logErroreGenerico(e,"existsSoggetto("+idServizio.getSoggettoErogatore().toString()+")");
@@ -802,7 +803,7 @@ public class Sbustamento extends GenericLib{
 						"existsSoggetto()"); 
 				return esito;
 			}
-			boolean isSoggettoVirtuale = configurazionePdDManager.isSoggettoVirtuale(idServizio.getSoggettoErogatore());
+			boolean isSoggettoVirtuale = configurazionePdDManager.isSoggettoVirtuale(idServizio.getSoggettoErogatore(), requestInfo);
 			if(!existsSoggetto && !isSoggettoVirtuale){
 				msgDiag.logPersonalizzato("soggettoDestinatarioNonGestito");
 				ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
@@ -1076,11 +1077,11 @@ public class Sbustamento extends GenericLib{
 										Integrazione integrazione = repositoryBuste.getInfoIntegrazioneFromOutBox(idAsincronoCorrelazioneRichiesta);
 										IDPortaDelegata idPD = new IDPortaDelegata();
 										idPD.setNome(integrazione.getNomePorta());
-										PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD);
+										PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD, requestInfo);
 										ricevutaAbilitata = configurazionePdDManager.ricevutaAsincronaSimmetricaAbilitata(pd);
 									}else{
 										msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-										PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa());
+										PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa(), requestInfo);
 										ricevutaAbilitata = configurazionePdDManager.ricevutaAsincronaSimmetricaAbilitata(pa);
 									}
 								}catch(Exception e){
@@ -1112,7 +1113,7 @@ public class Sbustamento extends GenericLib{
 								//	Asincrono Asimmetrico
 								
 								msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-								PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa());
+								PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa(), requestInfo);
 								
 								if(configurazionePdDManager.ricevutaAsincronaAsimmetricaAbilitata(pa)==false){
 									if(bustaRichiesta.getRiferimentoMessaggio()==null){
@@ -1302,7 +1303,7 @@ public class Sbustamento extends GenericLib{
 				//	check esistenza porta applicativa
 				msgDiag.mediumDebug("Gestione profilo di collaborazione OneWay (existsPA)...");
 				try{
-					existsPA=configurazionePdDManager.existsPA(richiestaApplicativa);
+					existsPA=configurazionePdDManager.existsPA(richiestaApplicativa, requestInfo);
 				}catch(Exception e){
 					msgDiag.logErroreGenerico(e, "existsPA(richiestaApplicativa,oneway)");
 					ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
@@ -1336,13 +1337,13 @@ public class Sbustamento extends GenericLib{
 				
 				// Lettura Porta Applicativa
 				msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-				pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa());
+				pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa(), requestInfo);
 				
 				// Soggetto Virtuale
 				boolean soggettoVirtuale = false;
 				try{
 					if(richiestaApplicativa.getDominio()!=null) {
-						soggettoVirtuale = configurazionePdDManager.isSoggettoVirtuale( richiestaApplicativa.getDominio() );
+						soggettoVirtuale = configurazionePdDManager.isSoggettoVirtuale( richiestaApplicativa.getDominio(), requestInfo );
 					}
 				}catch(Exception e){
 					msgDiag.logErroreGenerico(e, "isSoggettoVirtuale(richiestaApplicativa,oneway)");
@@ -1394,7 +1395,7 @@ public class Sbustamento extends GenericLib{
 				//	check esistenza porta applicativa
 				msgDiag.mediumDebug("Gestione profilo di collaborazione Sincrono (existsPA)...");
 				try{
-					existsPA=configurazionePdDManager.existsPA(richiestaApplicativa);
+					existsPA=configurazionePdDManager.existsPA(richiestaApplicativa, requestInfo);
 				}catch(Exception e){
 					msgDiag.logErroreGenerico(e, "existsPA(richiestaApplicativa,sincrono)");
 					ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
@@ -1428,7 +1429,7 @@ public class Sbustamento extends GenericLib{
 
 				// Lettura Porta Applicativa
 				msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-				pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa());
+				pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa(), requestInfo);
 				
 				msgDiag.mediumDebug("Gestione profilo di collaborazione Sincrono (registra busta ricevuta)...");
 				try{
@@ -1467,7 +1468,7 @@ public class Sbustamento extends GenericLib{
 					//	check esistenza porta applicativa
 					msgDiag.mediumDebug("Gestione profilo di collaborazione AsincronoSimmetrico richiesta (existsPA)...");
 					try{
-						existsPA=configurazionePdDManager.existsPA(richiestaApplicativa);
+						existsPA=configurazionePdDManager.existsPA(richiestaApplicativa, requestInfo);
 					}catch(Exception e){
 						msgDiag.logErroreGenerico(e, "existsPA(richiestaApplicativa,asincronoSimmetricoRichiesta)");
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
@@ -1502,7 +1503,7 @@ public class Sbustamento extends GenericLib{
 					
 					// Lettura Porta Applicativa
 					msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-					pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa());
+					pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa(), requestInfo);
 					
 					
 					//	gestione ricevute asincrone
@@ -1678,7 +1679,7 @@ public class Sbustamento extends GenericLib{
 					//	check esistenza porta applicativa
 					msgDiag.mediumDebug("Gestione profilo di collaborazione AsincronoAsimmetrico richiesta (existsPA)...");
 					try{
-						existsPA=configurazionePdDManager.existsPA(richiestaApplicativa);
+						existsPA=configurazionePdDManager.existsPA(richiestaApplicativa, requestInfo);
 					}catch(Exception e){
 						msgDiag.logErroreGenerico(e, "existsPA(richiestaApplicativa,asincronoAsimmetricoRichiesta)");
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
@@ -1697,9 +1698,7 @@ public class Sbustamento extends GenericLib{
 							nomePA = " ["+richiestaApplicativa.getIdPortaApplicativa().getNome()+"]";
 						}
 						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, "Porta Applicativa"+nomePA+" non esistente");
-						msgDiag.logPersonalizzato("(Richiesta) "+msgDiag.getMessaggio("portaApplicativaNonEsistente"), 
-								msgDiag.getLivello("portaApplicativaNonEsistente"),
-								msgDiag.getCodice("portaApplicativaNonEsistente"));
+						msgDiag.logPersonalizzato_prefix("(Richiesta) ", "portaApplicativaNonEsistente");
 						ejbUtils.setIntegrationFunctionErrorPortaApplicativa(IntegrationFunctionError.API_IN_UNKNOWN);
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 								ErroriIntegrazione.ERRORE_450_PA_INESISTENTE.getErroreIntegrazione(),
@@ -1714,7 +1713,7 @@ public class Sbustamento extends GenericLib{
 
 					// Lettura Porta Applicativa
 					msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-					pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa());
+					pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa(), requestInfo);
 					
 					// assegnamento servizioApplicativo
 					msgDiag.mediumDebug("Gestione profilo di collaborazione AsincronoAsimmetrico richiesta (lettura servizio applicativo)...");
@@ -1749,7 +1748,7 @@ public class Sbustamento extends GenericLib{
 						IDServizioApplicativo idSA = new IDServizioApplicativo();
 						idSA.setNome(servizioApplicativo[0]);
 						idSA.setIdSoggettoProprietario(richiestaApplicativa.getIDServizio().getSoggettoErogatore());
-						sa = configurazionePdDManager.getServizioApplicativo(idSA );
+						sa = configurazionePdDManager.getServizioApplicativo(idSA, requestInfo );
 					}catch(DriverConfigurazioneNotFound e){
 						msgDiag.logErroreGenerico("Servizio applicativo ["+servizioApplicativo[0]+"] non esistente", "getServizioApplicativoProfiloAsincronoAsimmetrico");
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
@@ -1934,7 +1933,7 @@ public class Sbustamento extends GenericLib{
 						// check esistenza porta applicativa
 						msgDiag.mediumDebug("Gestione profilo di collaborazione AsincronoSimmetrico richiesta Stato (existsPA)...");
 						try{
-							existsPA=configurazionePdDManager.existsPA(richiestaApplicativa);
+							existsPA=configurazionePdDManager.existsPA(richiestaApplicativa, requestInfo);
 						}catch(Exception e){
 							msgDiag.logErroreGenerico(e, "existsPA(richiestaApplicativa,asincronoAsimmetricoRichiestaStato)");
 							ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
@@ -1953,9 +1952,7 @@ public class Sbustamento extends GenericLib{
 								nomePA = " ["+richiestaApplicativa.getIdPortaApplicativa().getNome()+"]";
 							}
 							msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, "Porta Applicativa"+nomePA+" non esistente");
-							msgDiag.logPersonalizzato("(RichiestaStato) "+msgDiag.getMessaggio("portaApplicativaNonEsistente"), 
-									msgDiag.getLivello("portaApplicativaNonEsistente"),
-									msgDiag.getCodice("portaApplicativaNonEsistente"));
+							msgDiag.logPersonalizzato_prefix("(RichiestaStato) ", "portaApplicativaNonEsistente");
 							ejbUtils.setIntegrationFunctionErrorPortaApplicativa(IntegrationFunctionError.API_IN_UNKNOWN);
 							ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 									ErroriIntegrazione.ERRORE_450_PA_INESISTENTE.getErroreIntegrazione(),
@@ -1971,7 +1968,7 @@ public class Sbustamento extends GenericLib{
 						
 						// Lettura Porta Applicativa
 						msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-						pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa());
+						pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa(), requestInfo);
 						
 
 					}
@@ -2073,18 +2070,18 @@ public class Sbustamento extends GenericLib{
 					ProprietaErroreApplicativo proprietaErroreApplAsincrono = this.propertiesReader.getProprietaGestioneErrorePD(protocolManager);
 					proprietaErroreApplAsincrono.setDominio(identitaPdD.getCodicePorta());
 					proprietaErroreApplAsincrono.setIdModulo(Sbustamento.ID_MODULO);
-					IDPortaDelegata idPD = configurazionePdDManager.getIDPortaDelegata(integrazioneAsincrona.getNomePorta(), protocolFactory);
+					IDPortaDelegata idPD = configurazionePdDManager.getIDPortaDelegata(integrazioneAsincrona.getNomePorta(), requestInfo, protocolFactory);
 					consegnaApplicativaAsincrona = new RichiestaDelegata(idPD,
 							integrazioneAsincrona.getServizioApplicativo(),null,proprietaErroreApplAsincrono,identitaPdD);
 					consegnaApplicativaAsincrona.setScenario(scenarioCooperazione);
 					consegnaApplicativaAsincrona.setProfiloGestione(profiloGestione);
 					
-					pdConsegnaApplicativaAsincrona = configurazionePdDManager.getPortaDelegata(consegnaApplicativaAsincrona.getIdPortaDelegata());
+					pdConsegnaApplicativaAsincrona = configurazionePdDManager.getPortaDelegata(consegnaApplicativaAsincrona.getIdPortaDelegata(), requestInfo);
 					try{
 						IDServizioApplicativo idSA = new IDServizioApplicativo();
 						idSA.setNome(consegnaApplicativaAsincrona.getServizioApplicativo());
 						idSA.setIdSoggettoProprietario(soggettoFruitoreRichiestaAsincrona);
-						saConsegnaApplicativaAsincrona = configurazionePdDManager.getServizioApplicativo(idSA);
+						saConsegnaApplicativaAsincrona = configurazionePdDManager.getServizioApplicativo(idSA, requestInfo);
 					}catch(Exception e){
 						if( !(e instanceof DriverConfigurazioneNotFound) || 
 								!(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(consegnaApplicativaAsincrona.getServizioApplicativo())) ){
@@ -2258,7 +2255,7 @@ public class Sbustamento extends GenericLib{
 				msgDiag.setServizioApplicativo(null);
 
 			}catch(EJBUtilsConsegnaException e){
-				msgDiag.logPersonalizzato(e.getMessaggio(), e.getLivello(), e.getCodice());
+				msgDiag.logPersonalizzato_custom(e.getMessaggio(), e.getLivello(), e.getCodice());
 				if(e.getIntegrationFunctionError()!=null) {
 					ejbUtils.setIntegrationFunctionErrorPortaApplicativa(e.getIntegrationFunctionError());
 				}
@@ -2498,7 +2495,7 @@ public class Sbustamento extends GenericLib{
 	 */
 	private void gestioneErroreProtocollo(ConfigurazionePdDManager configurazionePdDManager, EJBUtils ejbUtils, ProfiloDiCollaborazione profiloCollaborazione, RepositoryBuste repositoryBuste,
 			Busta busta, IDSoggetto identitaPdD, Eccezione eccezioneProtocollo, ErroreIntegrazione erroreIntegrazione, IDSoggetto soggettoProduttoreEccezione, DettaglioEccezione dettaglioEccezione, 
-			IProtocolFactory<?> protocolFactory, IProtocolManager protocolManager, PdDContext pddContext,
+			IProtocolFactory<?> protocolFactory, IProtocolManager protocolManager, PdDContext pddContext, RequestInfo requestInfo,
 			IntegrationFunctionError integrationFunctionError) throws Exception{
 
 		// Gestione ERRORE
@@ -2533,17 +2530,17 @@ public class Sbustamento extends GenericLib{
 						proprietaErroreApplAsincrono.setDominio(identitaPdD.getCodicePorta());
 						proprietaErroreApplAsincrono.setIdModulo(Sbustamento.ID_MODULO);
 						
-						IDPortaDelegata idPD = configurazionePdDManager.getIDPortaDelegata(integrazioneRispostaErrore.getNomePorta(), protocolFactory);
+						IDPortaDelegata idPD = configurazionePdDManager.getIDPortaDelegata(integrazioneRispostaErrore.getNomePorta(), requestInfo, protocolFactory);
 						RichiestaDelegata consegnaApplicativaAsincrona = new RichiestaDelegata(idPD,
 								integrazioneRispostaErrore.getServizioApplicativo(),null,proprietaErroreApplAsincrono,identitaPdD);
 						
-						PortaDelegata pd = configurazionePdDManager.getPortaDelegata(consegnaApplicativaAsincrona.getIdPortaDelegata());
+						PortaDelegata pd = configurazionePdDManager.getPortaDelegata(consegnaApplicativaAsincrona.getIdPortaDelegata(), requestInfo);
 						ServizioApplicativo sappl = null;
 						try{
 							IDServizioApplicativo idSA = new IDServizioApplicativo();
 							idSA.setNome(consegnaApplicativaAsincrona.getServizioApplicativo());
 							idSA.setIdSoggettoProprietario(soggettoFruitoreAsincrono);
-							sappl = configurazionePdDManager.getServizioApplicativo(idSA);
+							sappl = configurazionePdDManager.getServizioApplicativo(idSA, requestInfo);
 						}catch(Exception e){
 							if( !(e instanceof DriverConfigurazioneNotFound) || !(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(consegnaApplicativaAsincrona.getServizioApplicativo())) ){
 								throw e;

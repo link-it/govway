@@ -54,12 +54,12 @@ import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.pdd.services.error.AbstractErrorGenerator;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
@@ -418,7 +418,7 @@ public class GestoreTrasformazioni {
 		this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RICHIESTA, labelTrasformazione);
 		this.msgDiag.logPersonalizzato("trasformazione.processamentoRichiestaInCorso");
 		if(this.pddContext!=null) {
-			this.pddContext.addObject(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RICHIESTA, labelTrasformazione);
+			this.pddContext.addObject(CostantiPdD.TIPO_TRASFORMAZIONE_RICHIESTA, labelTrasformazione);
 		}
 		
 		
@@ -773,7 +773,7 @@ public class GestoreTrasformazioni {
 		this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RISPOSTA, labelTrasformazione);
 		this.msgDiag.logPersonalizzato("trasformazione.processamentoRispostaInCorso");
 		if(this.pddContext!=null) {
-			this.pddContext.addObject(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RISPOSTA, labelTrasformazione);
+			this.pddContext.addObject(CostantiPdD.TIPO_TRASFORMAZIONE_RISPOSTA, labelTrasformazione);
 		}
 		
 		

@@ -32,6 +32,7 @@ import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.slf4j.Logger;
@@ -101,11 +102,11 @@ public abstract class AbstractIdentificazionePorta {
 		this.configIntegrationReader = this.protocolFactory.getCachedConfigIntegrationReader(state);
 	}*/
 	public AbstractIdentificazionePorta(Logger log,
-			IProtocolFactory<?> protocolFactory, RegistroServiziManager registroServiziManager, Object configurazioneManager) throws ProtocolException {
+			IProtocolFactory<?> protocolFactory, RegistroServiziManager registroServiziManager, Object configurazioneManager, RequestInfo requestInfo) throws ProtocolException {
 		this.protocolFactory = protocolFactory;
 		this.log = log;
-		this.registryReader = this.protocolFactory.getCachedRegistryReader(registroServiziManager);
-		this.configIntegrationReader = this.protocolFactory.getCachedConfigIntegrationReader(configurazioneManager);
+		this.registryReader = this.protocolFactory.getCachedRegistryReader(registroServiziManager, requestInfo);
+		this.configIntegrationReader = this.protocolFactory.getCachedConfigIntegrationReader(configurazioneManager, requestInfo);
 	}
 	public AbstractIdentificazionePorta(Logger log,
 			IProtocolFactory<?> protocolFactory, 

@@ -188,6 +188,12 @@ CREATE TABLE configurazione
 	consegna_lifecache VARCHAR(255),
 	-- Gestione CORS
 	canali_stato VARCHAR(255),
+	-- Cache per la gestione delle richieste
+	dati_richieste_statocache VARCHAR(255),
+	dati_richieste_dimensionecache VARCHAR(255),
+	dati_richieste_algoritmocache VARCHAR(255),
+	dati_richieste_idlecache VARCHAR(255),
+	dati_richieste_lifecache VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_configurazione') NOT NULL,
 	-- fk/pk keys constraints

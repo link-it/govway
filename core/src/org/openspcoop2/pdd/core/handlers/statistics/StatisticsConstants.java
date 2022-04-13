@@ -20,6 +20,9 @@
 
 package org.openspcoop2.pdd.core.handlers.statistics;
 
+import org.openspcoop2.utils.Map;
+import org.openspcoop2.utils.MapKey;
+
 /**
  * StatisticsConstants
  *
@@ -29,16 +32,16 @@ package org.openspcoop2.pdd.core.handlers.statistics;
  */
 public class StatisticsConstants {
 
-	public static final String DATA_INGRESSO_RICHIESTA = "DATA_INGRESSO_RICHIESTA"; 
-	public static final String DIMENSIONE_INGRESSO_RICHIESTA = "DIMENSIONE_INGRESSO_RICHIESTA"; 
+	public static final MapKey<String> DATA_INGRESSO_RICHIESTA = Map.newMapKey("STAT_DATA_INGRESSO_RICHIESTA"); 
+	public static final MapKey<String> DIMENSIONE_INGRESSO_RICHIESTA = Map.newMapKey("STAT_DIMENSIONE_INGRESSO_RICHIESTA"); 
 	
-	public static final String DATA_USCITA_RICHIESTA = "DATA_USCITA_RICHIESTA"; 
-	public static final String DIMENSIONE_USCITA_RICHIESTA = "DIMENSIONE_USCITA_RICHIESTA";
+	public static final MapKey<String> DATA_USCITA_RICHIESTA = Map.newMapKey("STAT_DATA_USCITA_RICHIESTA"); 
+	public static final MapKey<String> DIMENSIONE_USCITA_RICHIESTA = Map.newMapKey("STAT_DIMENSIONE_USCITA_RICHIESTA");
 	
-	public static final String DATA_INGRESSO_RISPOSTA = "DATA_INGRESSO_RISPOSTA"; 
-	public static final String DIMENSIONE_INGRESSO_RISPOSTA = "DIMENSIONE_INGRESSO_RISPOSTA"; 
+	public static final MapKey<String> DATA_INGRESSO_RISPOSTA = Map.newMapKey("STAT_DATA_INGRESSO_RISPOSTA"); 
+	public static final MapKey<String> DIMENSIONE_INGRESSO_RISPOSTA = Map.newMapKey("STAT_DIMENSIONE_INGRESSO_RISPOSTA"); 
 	
-	public static final String DATA_USCITA_RISPOSTA = "DATA_USCITA_RISPOSTA"; 
-	public static final String DIMENSIONE_USCITA_RISPOSTA = "DIMENSIONE_USCITA_RISPOSTA";
+	public static final MapKey<String> DATA_USCITA_RISPOSTA = Map.newMapKey("STAT_DATA_USCITA_RISPOSTA"); 
+	public static final MapKey<String> DIMENSIONE_USCITA_RISPOSTA = Map.newMapKey("STAT_DIMENSIONE_USCITA_RISPOSTA");
 	
 }

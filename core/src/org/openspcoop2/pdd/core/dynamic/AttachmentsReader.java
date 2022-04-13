@@ -29,6 +29,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 
 /**
  * SystemPropertiesReader
@@ -42,15 +43,17 @@ public class AttachmentsReader {
 	private IDServizio idServizio;
 	private IDAccordo idAccordo;
 	private RegistroServiziManager registroServiziManager;
+	private RequestInfo requestInfo;
 	
-	public AttachmentsReader(IDServizio idServizio) {
+	public AttachmentsReader(IDServizio idServizio, RequestInfo requestInfo) {
 		this.idServizio = idServizio;
 		this.registroServiziManager = RegistroServiziManager.getInstance();
+		this.requestInfo = requestInfo;
 	}
 	
 	private IDAccordo getIDAccordo() throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
 		if(this.idAccordo==null) {
-			AccordoServizioParteSpecifica asps = this.registroServiziManager.getAccordoServizioParteSpecifica(this.idServizio, null, false);
+			AccordoServizioParteSpecifica asps = this.registroServiziManager.getAccordoServizioParteSpecifica(this.idServizio, null, false, this.requestInfo);
 			this.idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
 		}
 		return this.idAccordo;

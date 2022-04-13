@@ -25,6 +25,9 @@ package org.openspcoop2.protocol.sdi.constants;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.utils.Map;
+import org.openspcoop2.utils.MapKey;
+
 /**
  * Classe dove sono fornite le stringhe costanti, definite dalla specifica del protocollo SdI, 
  *
@@ -76,12 +79,12 @@ public class SDICostanti {
     	SDI_VERSIONI_FATTURA.add(SDI_VERSIONE_FATTURA_SEMPLIFICATA_10);
     }
     
-    public final static String SDI_MESSAGE_CONTEXT_FATTURA = "FatturaPA";
-    public final static String SDI_MESSAGE_CONTEXT_FATTURA_METADATI = "FatturaPAMetadati";
-    public final static String SDI_MESSAGE_CONTEXT_FATTURA_METADATI_BYTES = "FatturaPAMetadatiBytes";
-    public final static String SDI_MESSAGE_CONTEXT_MESSAGGIO_SERVIZIO_SDI = "MessaggioServizioSdI";
-    public final static String SDI_MESSAGE_CONTEXT_AT_ARCHIVIO_ZIP = "ATArchivioZIP";
-    public final static String SDI_MESSAGE_CONTEXT_AT_ARCHIVIO_XML = "ATArchivioXML";
+    public final static MapKey<String> SDI_MESSAGE_CONTEXT_FATTURA = Map.newMapKey("FatturaPA");
+    public final static MapKey<String> SDI_MESSAGE_CONTEXT_FATTURA_METADATI = Map.newMapKey("FatturaPAMetadati");
+    public final static MapKey<String> SDI_MESSAGE_CONTEXT_FATTURA_METADATI_BYTES = Map.newMapKey("FatturaPAMetadatiBytes");
+    public final static MapKey<String> SDI_MESSAGE_CONTEXT_MESSAGGIO_SERVIZIO_SDI = Map.newMapKey("MessaggioServizioSdI");
+    public final static MapKey<String> SDI_MESSAGE_CONTEXT_AT_ARCHIVIO_ZIP = Map.newMapKey("ATArchivioZIP");
+    public final static MapKey<String> SDI_MESSAGE_CONTEXT_AT_ARCHIVIO_XML = Map.newMapKey("ATArchivioXML");
     
     
     public final static String SDI_BUSTA_EXT_FORMATO_ARCHIVIO_INVIO_FATTURA = "FormatoArchivioInvioFattura";

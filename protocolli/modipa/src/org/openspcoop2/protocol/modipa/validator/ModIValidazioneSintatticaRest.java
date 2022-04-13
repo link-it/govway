@@ -46,6 +46,7 @@ import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneUtils;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.MessageSecurityContextParameters;
@@ -369,7 +370,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			Busta busta, List<Eccezione> erroriValidazione,
 			ModITruststoreConfig trustStoreCertificati, ModITruststoreConfig trustStoreSsl, ModISecurityConfig securityConfig,
 			boolean buildSecurityTokenInRequest, boolean headerDuplicati, boolean securityHeaderObbligatorio,
-			Map<String, Object> dynamicMapParameter, Busta datiRichiesta) throws Exception {
+			Map<String, Object> dynamicMapParameter, Busta datiRichiesta, RequestInfo requestInfo) throws Exception {
 		
 		boolean bufferMessage_readOnly = this.modiProperties.isReadByPathBufferEnabled();
 		String idTransazione = null;
@@ -520,7 +521,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 				}
 			}
 			messageSecurityContext.setIncomingProperties(secProperties, false);
-			joseSignature.process(messageSecurityContext, msgToken, busta);
+			joseSignature.process(messageSecurityContext, msgToken, busta, this.context);
 			joseSignature.detachSecurity(messageSecurityContext, msgToken.castAsRest());
 			
 			ModIRESTSecurity restSecurity = (ModIRESTSecurity) msg.getContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_SBUSTAMENTO_REST);
@@ -633,7 +634,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			
 			if(request) {
 				if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
-					identificazioneApplicativoMittente(x509,busta);
+					identificazioneApplicativoMittente(x509,busta,requestInfo);
 				}
 			}
 		}

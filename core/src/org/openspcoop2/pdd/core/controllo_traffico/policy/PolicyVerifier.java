@@ -61,6 +61,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
@@ -86,6 +87,11 @@ public class PolicyVerifier {
 			List<Boolean> pddContext_policyApplicabile, List<Boolean> pddContext_policyViolata,
 			IState state) throws Exception{
 				
+		RequestInfo requestInfo = null;
+		if(tr!=null) {
+			requestInfo = tr.getRequestInfo();
+		}
+		
 		// Tutti i restanti controlli sono effettuati usando il valore di datiCollezionatiReaded, che e' gia' stato modificato
 		// Inoltre e' stato re-inserito nella map come oggetto nuovo, quindi il valore dentro il metodo non subira' trasformazioni (essendo stato fatto il clone)
 		// E' possibile procedere con l'analisi rispetto al valore che possiedono il counter dentro questo scope.
@@ -149,7 +155,7 @@ public class PolicyVerifier {
 					
 					isApplicabile = false;
 					
-					Object oThreshold = pddContext.getObject(GeneratoreMessaggiErrore.TEMPLATE_CONTROLLO_TRAFFICO_THRESHOLD);
+					Object oThreshold = pddContext.getObject(GeneratoreMessaggiErrore.PDD_CONTEXT_CONTROLLO_TRAFFICO_THRESHOLD);
 					if(oThreshold!=null){
 						descrizioneNonApplicabile = msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_ALL, 
 								GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_PDD_NON_CONGESTIONATA);
@@ -205,7 +211,7 @@ public class PolicyVerifier {
 							activePolicy.getConfigurazionePolicy().getDegradoAvgTimeTipoIntervalloOsservazioneStatistico(), 
 							activePolicy.getConfigurazionePolicy().getDegradoAvgTimeTipoLatenza(),
 							datiTransazione, datiGroupBy, activePolicy.getInstanceConfiguration().getFiltro(),
-							state);
+							state, requestInfo, protocolFactory);
 					valoreAttuale = risultatoStatistico.getRisultato();
 					checkDate = risultatoStatistico.getDateCheck();
 				}
@@ -410,7 +416,7 @@ public class PolicyVerifier {
 								activePolicy.getConfigurazionePolicy().getFinestraOsservazione(),
 								activePolicy.getConfigurazionePolicy().getTipoIntervalloOsservazioneStatistico(), 
 								datiTransazione, datiGroupBy, activePolicy.getInstanceConfiguration().getFiltro(),
-								state);
+								state, requestInfo, protocolFactory);
 						valoreAttuale = risultatoStatistico.getRisultato();
 						checkDate = risultatoStatistico.getDateCheck();
 					}
@@ -512,7 +518,7 @@ public class PolicyVerifier {
 							activePolicy.getConfigurazionePolicy().getTipoIntervalloOsservazioneStatistico(), 
 							activePolicy.getConfigurazionePolicy().getValoreTipoBanda(),
 							datiTransazione, datiGroupBy, activePolicy.getInstanceConfiguration().getFiltro(),
-							state);
+							state, requestInfo, protocolFactory);
 					valoreAttuale = risultatoStatistico.getRisultato();
 					checkDate = risultatoStatistico.getDateCheck();
 					/*System.out.println("LETTO DA STATISTICA "+activePolicy.getConfigurazionePolicy().getTipoIntervalloOsservazioneStatistico()+
@@ -672,7 +678,7 @@ public class PolicyVerifier {
 							activePolicy.getConfigurazionePolicy().getTipoIntervalloOsservazioneStatistico(), 
 							activePolicy.getConfigurazionePolicy().getValoreTipoLatenza(),
 							datiTransazione, datiGroupBy, activePolicy.getInstanceConfiguration().getFiltro(),
-							state);
+							state, requestInfo, protocolFactory);
 					valoreAttuale = risultatoStatistico.getRisultato();
 					checkDate = risultatoStatistico.getDateCheck();
 				}
@@ -778,7 +784,7 @@ public class PolicyVerifier {
 				
 				String API = null;
 				if(policyAPI) {
-					API = getIdAPI(activePolicy, protocolFactory, configPdDManager);
+					API = getIdAPI(activePolicy, protocolFactory, configPdDManager, requestInfo);
 				}
 				
 				idPolicyConGruppo = PolicyUtilities.buildIdConfigurazioneEventoPerPolicy(activePolicy, datiGroupBy, API);
@@ -815,11 +821,11 @@ public class PolicyVerifier {
 
 	}
 	
-	public static String getIdAPI(ActivePolicy activePolicy, IProtocolFactory<?> protocolFactory, ConfigurazionePdDManager configPdDManager) throws Exception {
+	public static String getIdAPI(ActivePolicy activePolicy, IProtocolFactory<?> protocolFactory, ConfigurazionePdDManager configPdDManager, RequestInfo requestInfo) throws Exception {
 		AttivazionePolicy attivazionePolicy = activePolicy.getInstanceConfiguration();
-		return getIdAPI(attivazionePolicy, protocolFactory, configPdDManager);
+		return getIdAPI(attivazionePolicy, protocolFactory, configPdDManager, requestInfo);
 	}
-	public static String getIdAPI(AttivazionePolicy attivazionePolicy, IProtocolFactory<?> protocolFactory, ConfigurazionePdDManager configPdDManager) throws Exception {
+	public static String getIdAPI(AttivazionePolicy attivazionePolicy, IProtocolFactory<?> protocolFactory, ConfigurazionePdDManager configPdDManager, RequestInfo requestInfo) throws Exception {
 		PorteNamingUtils namingUtils = new PorteNamingUtils(protocolFactory);
 		
 		String API = null;
@@ -832,13 +838,13 @@ public class PolicyVerifier {
 			if(RuoloPolicy.DELEGATA.equals(attivazionePolicy.getFiltro().getRuoloPorta())) {
 				IDPortaDelegata idPD = new IDPortaDelegata();
 				idPD.setNome(nomePorta);
-				PortaDelegata pd = configPdDManager.getPortaDelegata_SafeMethod(idPD);
+				PortaDelegata pd = configPdDManager.getPortaDelegata_SafeMethod(idPD, requestInfo);
 				if(pd!=null) {
 					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(pd.getServizio().getTipo(), pd.getServizio().getNome(), 
 							pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome(), 
 							pd.getServizio().getVersione());
 					IDSoggetto idFruitore = new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario());
-					List<MappingFruizionePortaDelegata> list = configPdDManager.getMappingFruizionePortaDelegataList(idFruitore, idServizio);
+					List<MappingFruizionePortaDelegata> list = configPdDManager.getMappingFruizionePortaDelegataList(idFruitore, idServizio, requestInfo);
 					if(list.size()<=1) {
 						API = namingUtils.normalizePD(nomePorta);
 					}
@@ -859,12 +865,12 @@ public class PolicyVerifier {
 			else if(RuoloPolicy.APPLICATIVA.equals(attivazionePolicy.getFiltro().getRuoloPorta())) {
 				IDPortaApplicativa idPA = new IDPortaApplicativa();
 				idPA.setNome(nomePorta);
-				PortaApplicativa pa = configPdDManager.getPortaApplicativa_SafeMethod(idPA);
+				PortaApplicativa pa = configPdDManager.getPortaApplicativa_SafeMethod(idPA, requestInfo);
 				if(pa!=null) {
 					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(pa.getServizio().getTipo(), pa.getServizio().getNome(), 
 							pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(),
 							pa.getServizio().getVersione());
-					List<MappingErogazionePortaApplicativa> list = configPdDManager.getMappingErogazionePortaApplicativaList(idServizio);
+					List<MappingErogazionePortaApplicativa> list = configPdDManager.getMappingErogazionePortaApplicativaList(idServizio, requestInfo);
 					if(list.size()<=1) {
 						API = namingUtils.normalizePA(nomePorta);
 					}

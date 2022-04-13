@@ -28,6 +28,7 @@ import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.utils.EsitiProperties;
@@ -48,7 +49,17 @@ public class InfoEsitoTransazioneFormatUtils {
 	public static boolean isEsitoOk(Logger log, Integer esito, String protocollo){
 		EsitiProperties esitiProperties = null;
 		try{
-			esitiProperties = EsitiProperties.getInstance(log,protocollo);
+			esitiProperties = EsitiProperties.getInstanceFromProtocolName(log,protocollo);
+		}catch(Exception e){
+			log.error("Errore durante l'analisi dell'esito ["+esito+"]: "+e.getMessage(),e);
+			return false;
+		}
+		return isEsitoOk(log, esito, esitiProperties);
+	}
+	public static boolean isEsitoOk(Logger log, Integer esito, IProtocolFactory<?> protocolFactory){
+		EsitiProperties esitiProperties = null;
+		try{
+			esitiProperties = EsitiProperties.getInstance(log,protocolFactory);
 		}catch(Exception e){
 			log.error("Errore durante l'analisi dell'esito ["+esito+"]: "+e.getMessage(),e);
 			return false;
@@ -78,7 +89,17 @@ public class InfoEsitoTransazioneFormatUtils {
 	public static boolean isEsitoFaultApplicativo(Logger log, Integer esito, String protocollo){
 		EsitiProperties esitiProperties = null;
 		try{
-			esitiProperties = EsitiProperties.getInstance(log,protocollo);
+			esitiProperties = EsitiProperties.getInstanceFromProtocolName(log,protocollo);
+		}catch(Exception e){
+			log.error("Errore durante l'analisi dell'esito ["+esito+"]: "+e.getMessage(),e);
+			return false;
+		}
+		return isEsitoFaultApplicativo(log, esito, esitiProperties);
+	}
+	public static boolean isEsitoFaultApplicativo(Logger log, Integer esito, IProtocolFactory<?> protocolFactory){
+		EsitiProperties esitiProperties = null;
+		try{
+			esitiProperties = EsitiProperties.getInstance(log,protocolFactory);
 		}catch(Exception e){
 			log.error("Errore durante l'analisi dell'esito ["+esito+"]: "+e.getMessage(),e);
 			return false;
@@ -108,7 +129,17 @@ public class InfoEsitoTransazioneFormatUtils {
 	public static boolean isEsitoKo(Logger log, Integer esito, String protocollo){
 		EsitiProperties esitiProperties = null;
 		try{
-			esitiProperties = EsitiProperties.getInstance(log,protocollo);
+			esitiProperties = EsitiProperties.getInstanceFromProtocolName(log,protocollo);
+		}catch(Exception e){
+			log.error("Errore durante l'analisi dell'esito ["+esito+"]: "+e.getMessage(),e);
+			return false;
+		}
+		return isEsitoKo(log, esito, esitiProperties);
+	}
+	public static boolean isEsitoKo(Logger log, Integer esito, IProtocolFactory<?> protocolFactory){
+		EsitiProperties esitiProperties = null;
+		try{
+			esitiProperties = EsitiProperties.getInstance(log,protocolFactory);
 		}catch(Exception e){
 			log.error("Errore durante l'analisi dell'esito ["+esito+"]: "+e.getMessage(),e);
 			return false;
@@ -192,7 +223,15 @@ public class InfoEsitoTransazioneFormatUtils {
 
 	public static String getDettaglioErrore(Logger log, DatiEsitoTransazione datiEsitoTransazione, List<MsgDiagnostico> msgsParams) {
 
-		if(isEsitoFaultApplicativo(log, datiEsitoTransazione.getEsito(), datiEsitoTransazione.getProtocollo())) {
+		IProtocolFactory<?> protocolFactory = null;
+		try {
+			protocolFactory = datiEsitoTransazione.getProtocolFactory();
+		}catch(Exception e){
+			log.error("Errore durante il recupero del ProtocolFactory: "+e.getMessage(),e);
+			return ""; // non dovrebbe mai succedere
+		}
+		
+		if(isEsitoFaultApplicativo(log, datiEsitoTransazione.getEsito(), protocolFactory)) {
 
 			if(PddRuolo.APPLICATIVA.equals(datiEsitoTransazione.getPddRuolo())) {
 				if(isVisualizzaFault(log, datiEsitoTransazione.getFaultIntegrazione())) {
@@ -217,7 +256,7 @@ public class InfoEsitoTransazioneFormatUtils {
 		EsitiProperties esitiProperties = null;
 		EsitoTransazioneName esitoTransactionName = null;
 		try {
-			esitiProperties = EsitiProperties.getInstance(log, datiEsitoTransazione.getProtocollo());
+			esitiProperties = EsitiProperties.getInstance(log, protocolFactory);
 			esitoTransactionName = esitiProperties.getEsitoTransazioneName(datiEsitoTransazione.getEsito());
 		}catch(Exception e){
 			log.error("Errore durante il recupero dell'esito della transazione: "+e.getMessage(),e);
@@ -246,7 +285,7 @@ public class InfoEsitoTransazioneFormatUtils {
 				for (MsgDiagnostico msgDiagnostico : msgs) {
 					String codice = msgDiagnostico.getCodice();
 
-					if(isEsitoKo(log, datiEsitoTransazione.getEsito(), datiEsitoTransazione.getProtocollo())) {
+					if(isEsitoKo(log, datiEsitoTransazione.getEsito(), protocolFactory)) {
 						// salto gli errori 'warning'
 						if(MsgDiagnosticiProperties.MSG_DIAGNOSTICI_WARNING.contains(codice)) {
 							continue;
@@ -289,7 +328,7 @@ public class InfoEsitoTransazioneFormatUtils {
 			log.error("Errore durante il recupero dell'errore: "+e.getMessage(),e);
 		}
 
-		if(!isEsitoFaultApplicativo(log, datiEsitoTransazione.getEsito(), datiEsitoTransazione.getProtocollo())) {
+		if(!isEsitoFaultApplicativo(log, datiEsitoTransazione.getEsito(), protocolFactory)) {
 
 			if(PddRuolo.APPLICATIVA.equals(datiEsitoTransazione.getPddRuolo())) {
 				if(isVisualizzaFault(log, datiEsitoTransazione.getFaultIntegrazione())) {

@@ -39,6 +39,7 @@ import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.handlers.InRequestProtocolContext;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 
 /**     
  * ConnettoreUtilities
@@ -49,10 +50,10 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
  */
 public class ConnettoreUtilities {
 
-	public static DatiTempiRisposta readDatiTempiRisposta(TipoPdD tipoPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+	public static DatiTempiRisposta readDatiTempiRisposta(TipoPdD tipoPdD, RequestInfo requestInfo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		// Prelevo la configurazione del Controllo del Traffico
 		ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance();
-		ConfigurazioneGenerale configurazioneGenerale = configPdDManager.getConfigurazioneControlloTraffico();		
+		ConfigurazioneGenerale configurazioneGenerale = configPdDManager.getConfigurazioneControlloTraffico(requestInfo);		
 		
 		
 		// Imposto i valori di default
@@ -104,16 +105,16 @@ public class ConnettoreUtilities {
 		
 	}
 	
-	public static DatiTempiRisposta getDatiTempiRisposta(InRequestProtocolContext context, DatiTransazione datiTransazione) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+	public static DatiTempiRisposta getDatiTempiRisposta(InRequestProtocolContext context, DatiTransazione datiTransazione, RequestInfo requestInfo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		
-		DatiTempiRisposta datiTempiRisposta = readDatiTempiRisposta(context.getTipoPorta());
+		DatiTempiRisposta datiTempiRisposta = readDatiTempiRisposta(context.getTipoPorta(), requestInfo);
 		
 		ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance();
 		
 		if(TipoPdD.DELEGATA.equals(context.getTipoPorta())){
 			
 			try{
-				Connettore connettore = configPdDManager.getForwardRoute(datiTransazione.getSoggettoFruitore(),datiTransazione.getIdServizio(),false);
+				Connettore connettore = configPdDManager.getForwardRoute(datiTransazione.getSoggettoFruitore(),datiTransazione.getIdServizio(),false, requestInfo);
 				mergeTempiRisposta(datiTempiRisposta, connettore.getProperties());
 			}catch(Exception e){
 				// registro solamente l'errore su log.
@@ -131,13 +132,13 @@ public class ConnettoreUtilities {
 			try{
 				if(context.getIntegrazione()!=null && context.getIntegrazione().getIdPA()!=null) {
 					IDPortaApplicativa idPA = context.getIntegrazione().getIdPA();
-					PortaApplicativa pa = configPdDManager.getPortaApplicativa(idPA);
+					PortaApplicativa pa = configPdDManager.getPortaApplicativa(idPA, requestInfo);
 					if(pa.sizeServizioApplicativoList()>0) {
 						IDServizioApplicativo idSA = new IDServizioApplicativo();
 						idSA.setIdSoggettoProprietario(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
 						idSA.setNome(pa.getServizioApplicativo(0).getNome()); // uso il primo
 								
-						ServizioApplicativo sa = configPdDManager.getServizioApplicativo(idSA);
+						ServizioApplicativo sa = configPdDManager.getServizioApplicativo(idSA, requestInfo);
 						Connettore connettore = null;
 						
 						String scenarioCooperazione = context.getProtocollo().getScenarioCooperazione();

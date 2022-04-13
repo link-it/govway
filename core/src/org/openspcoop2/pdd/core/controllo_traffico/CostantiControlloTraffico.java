@@ -20,6 +20,9 @@
 
 package org.openspcoop2.pdd.core.controllo_traffico;
 
+import org.openspcoop2.utils.Map;
+import org.openspcoop2.utils.MapKey;
+
 /**     
  * CostantiControlloTraffico
  *
@@ -29,17 +32,17 @@ package org.openspcoop2.pdd.core.controllo_traffico;
  */
 public class CostantiControlloTraffico {
 
-	public final static String PDD_CONTEXT_PDD_CONGESTIONATA = "PDD_CONGESTIONATA";
+	public final static MapKey<String> PDD_CONTEXT_PDD_CONGESTIONATA = Map.newMapKey("PDD_CONGESTIONATA");
 	
-	public final static String PDD_CONTEXT_LIST_GROUP_BY_CONDITION = "POLICY_GROUP_BY_CONDITION";
-	public final static String PDD_CONTEXT_LIST_UNIQUE_ID_POLICY = "POLICY_IDS";
-	public final static String PDD_CONTEXT_LIST_POLICY_APPLICABILE = "POLICY_APPLICABILE";
-	public final static String PDD_CONTEXT_LIST_POLICY_VIOLATA = "POLICY_VIOLATA";
-	public final static String PDD_CONTEXT_MAX_REQUEST_THREAD_REGISTRATO = "MAX_REQUEST_VIOLATED";
-	public final static String PDD_CONTEXT_MAX_REQUEST_VIOLATED_EVENTO = "MAX_REQUEST_VIOLATED_EVENTO";
-	public final static String PDD_CONTEXT_MAX_REQUEST_VIOLATED_URL_INVOCAZIONE = "MAX_REQUEST_VIOLATED_URL_INVOCAZIONE";
-	public final static String PDD_CONTEXT_MAX_REQUEST_VIOLATED_CREDENZIALI = "MAX_REQUEST_VIOLATED_CREDENZIALI";
-	public final static String PDD_CONTEXT_HEADER_RATE_LIMITING = "HEADER_RATE_LIMITING";
+	public final static MapKey<String> PDD_CONTEXT_LIST_GROUP_BY_CONDITION = Map.newMapKey("POLICY_GROUP_BY_CONDITION");
+	public final static MapKey<String> PDD_CONTEXT_LIST_UNIQUE_ID_POLICY = Map.newMapKey("POLICY_IDS");
+	public final static MapKey<String> PDD_CONTEXT_LIST_POLICY_APPLICABILE = Map.newMapKey("POLICY_APPLICABILE");
+	public final static MapKey<String> PDD_CONTEXT_LIST_POLICY_VIOLATA = Map.newMapKey("POLICY_VIOLATA");
+	public final static MapKey<String> PDD_CONTEXT_MAX_REQUEST_THREAD_REGISTRATO = Map.newMapKey("MAX_REQUEST_VIOLATED");
+	public final static MapKey<String> PDD_CONTEXT_MAX_REQUEST_VIOLATED_EVENTO = Map.newMapKey("MAX_REQUEST_VIOLATED_EVENTO");
+	public final static MapKey<String> PDD_CONTEXT_MAX_REQUEST_VIOLATED_URL_INVOCAZIONE = Map.newMapKey("MAX_REQUEST_VIOLATED_URL_INVOCAZIONE");
+	public final static MapKey<String> PDD_CONTEXT_MAX_REQUEST_VIOLATED_CREDENZIALI = Map.newMapKey("MAX_REQUEST_VIOLATED_CREDENZIALI");
+	public final static MapKey<String> PDD_CONTEXT_HEADER_RATE_LIMITING = Map.newMapKey("HEADER_RATE_LIMITING");
 	
 	public final static String PARAMETRO_CONTROLLO_TRAFFICO_REDEFINE_TEMPI_RISPOSTA = "CTRedefineTempiRisposta";
 	public final static String PARAMETRO_CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT = "CTConnectionTimeout";

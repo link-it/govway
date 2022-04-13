@@ -26,7 +26,7 @@ import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 
 /**
  * Dati 

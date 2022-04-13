@@ -600,7 +600,7 @@ public class ConnettoreCheck {
 					String tokenPolicy = properties.get(propertyName);
 					if(tokenPolicy!=null && !"".equals(tokenPolicy)) {
 						boolean forceNoCache = true;
-						policyNegoziazioneToken = ConfigurazionePdDManager.getInstance().getPolicyNegoziazioneToken(forceNoCache, tokenPolicy);
+						policyNegoziazioneToken = ConfigurazionePdDManager.getInstance().getPolicyNegoziazioneToken(forceNoCache, tokenPolicy, null);
 					}
 				}
 			}

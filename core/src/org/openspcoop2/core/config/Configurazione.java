@@ -45,6 +45,7 @@ import java.util.List;
  * 			&lt;element name="accesso-dati-gestione-token" type="{http://www.openspcoop2.org/core/config}accesso-dati-gestione-token" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="accesso-dati-keystore" type="{http://www.openspcoop2.org/core/config}accesso-dati-keystore" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="accesso-dati-consegna-applicativi" type="{http://www.openspcoop2.org/core/config}accesso-dati-consegna-applicativi" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="accesso-dati-richieste" type="{http://www.openspcoop2.org/core/config}accesso-dati-richieste" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="multitenant" type="{http://www.openspcoop2.org/core/config}configurazione-multitenant" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="url-invocazione" type="{http://www.openspcoop2.org/core/config}configurazione-url-invocazione" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="validazione-buste" type="{http://www.openspcoop2.org/core/config}validazione-buste" minOccurs="0" maxOccurs="1"/&gt;
@@ -88,6 +89,7 @@ import java.util.List;
   	"accessoDatiGestioneToken",
   	"accessoDatiKeystore",
   	"accessoDatiConsegnaApplicativi",
+  	"accessoDatiRichieste",
   	"multitenant",
   	"urlInvocazione",
   	"validazioneBuste",
@@ -219,6 +221,14 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
 
   public void setAccessoDatiConsegnaApplicativi(AccessoDatiConsegnaApplicativi accessoDatiConsegnaApplicativi) {
     this.accessoDatiConsegnaApplicativi = accessoDatiConsegnaApplicativi;
+  }
+
+  public AccessoDatiRichieste getAccessoDatiRichieste() {
+    return this.accessoDatiRichieste;
+  }
+
+  public void setAccessoDatiRichieste(AccessoDatiRichieste accessoDatiRichieste) {
+    this.accessoDatiRichieste = accessoDatiRichieste;
   }
 
   public ConfigurazioneMultitenant getMultitenant() {
@@ -485,6 +495,9 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
 
   @XmlElement(name="accesso-dati-consegna-applicativi",required=false,nillable=false)
   protected AccessoDatiConsegnaApplicativi accessoDatiConsegnaApplicativi;
+
+  @XmlElement(name="accesso-dati-richieste",required=false,nillable=false)
+  protected AccessoDatiRichieste accessoDatiRichieste;
 
   @XmlElement(name="multitenant",required=false,nillable=false)
   protected ConfigurazioneMultitenant multitenant;

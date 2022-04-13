@@ -60,6 +60,7 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.json.JSONUtils;
@@ -122,6 +123,8 @@ public class ValidatoreMessaggiApplicativiRest {
 	private IProtocolFactory<?> protocolFactory;
 	/** PddContext */
 	private PdDContext pddContext;
+	/** RequestInfo */
+	private RequestInfo requestInfo;
 	/** UseInterface */
 	private boolean useInterface;
 	/** OpenApi4j config */
@@ -164,6 +167,10 @@ public class ValidatoreMessaggiApplicativiRest {
 		
 		this.pddContext = pddContext;
 		
+		if(this.pddContext!=null && this.pddContext.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+			this.requestInfo = (RequestInfo) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+		}
+		
 		try{
 			this.useInterface = readInterfaceAccordoServizio;
 			
@@ -200,9 +207,9 @@ public class ValidatoreMessaggiApplicativiRest {
 			}
 			
 			if(readInterfaceAccordoServizio){
-				this.accordoServizioWrapper = this.registroServiziManager.getRestAccordoServizio(idServizio,InformationApiSource.SPECIFIC,true,processIncludeForOpenApi);
+				this.accordoServizioWrapper = this.registroServiziManager.getRestAccordoServizio(idServizio,InformationApiSource.SPECIFIC,true,processIncludeForOpenApi, this.requestInfo);
 			}else{
-				this.accordoServizioWrapper = this.registroServiziManager.getRestAccordoServizio(idServizio,InformationApiSource.REGISTRY,true,processIncludeForOpenApi);
+				this.accordoServizioWrapper = this.registroServiziManager.getRestAccordoServizio(idServizio,InformationApiSource.REGISTRY,true,processIncludeForOpenApi, this.requestInfo);
 			}
 		}catch(DriverRegistroServiziNotFound e){
 			this.logger.error("Riscontrato errore durante la ricerca del formato di specifica che definisce l'accordo di servizio: "+e.getMessage(),e);
@@ -214,8 +221,8 @@ public class ValidatoreMessaggiApplicativiRest {
 			
 			FormatoSpecifica formatoSpecifica = null;
 			try {
-				AccordoServizioParteSpecifica asps = this.registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false);
-				AccordoServizioParteComune apc = this.registroServiziManager.getAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), null, false);
+				AccordoServizioParteSpecifica asps = this.registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false, this.requestInfo);
+				AccordoServizioParteComune apc = this.registroServiziManager.getAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), null, false, this.requestInfo);
 				formatoSpecifica = apc.getFormatoSpecifica();
 			}catch(Exception eIgnore) {}
 			

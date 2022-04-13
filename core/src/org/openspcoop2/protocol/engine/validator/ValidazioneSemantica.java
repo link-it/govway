@@ -45,6 +45,7 @@ import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.StatefulMessage;
 import org.openspcoop2.protocol.sdk.state.StatelessMessage;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneSemantica;
@@ -167,7 +168,7 @@ public class ValidazioneSemantica  {
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public void valida(OpenSPCoop2Message msg, ProprietaValidazione proprietaValidazione,RuoloBusta tipoBusta,String versioneProtocollo) throws ProtocolException{
+	public void valida(OpenSPCoop2Message msg, ProprietaValidazione proprietaValidazione,RuoloBusta tipoBusta,String versioneProtocollo, RequestInfo requestInfo) throws ProtocolException{
 		try {
 			
 			proprietaValidazione.setValidazioneIDCompleta(this.validazioneIdentificativiCompleta);
@@ -212,7 +213,7 @@ public class ValidazioneSemantica  {
 					StatoFunzionalitaProtocollo modalitaGestioneCollaborazione = protocolVersioneManager.getCollaborazione(this.busta);
 					if(StatoFunzionalitaProtocollo.ABILITATA.equals(modalitaGestioneCollaborazione) || 
 							(StatoFunzionalitaProtocollo.REGISTRO.equals(modalitaGestioneCollaborazione) && (this.infoServizio!=null) && this.infoServizio.getCollaborazione() ) ){
-						riconoscimentoCollaborazione(tipoBusta);		
+						riconoscimentoCollaborazione(tipoBusta, requestInfo);		
 					}
 				}
 			}
@@ -223,7 +224,7 @@ public class ValidazioneSemantica  {
 		}
 	}
 
-	public static String riconoscimentoVersioneProtocolloServizioErogato(Busta busta, org.openspcoop2.protocol.sdk.config.ITraduttore costanti, RuoloBusta tipoBusta, IState state) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	public static String riconoscimentoVersioneProtocolloServizioErogato(Busta busta, org.openspcoop2.protocol.sdk.config.ITraduttore costanti, RuoloBusta tipoBusta, IState state, RequestInfo requestInfo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		// Normalmente prendo il soggetto destinatario come erogatore del servizio.
 		// Devono essere gestiti i seguenti casi particolari, in cui devo invece prendere il mittente
 		// - risposta sincrona
@@ -270,11 +271,11 @@ public class ValidazioneSemantica  {
 					busta.getVersioneServizio());
 			idServizioProfiloGestito.setAzione(busta.getAzione());
 			
-			return RegistroServiziManager.getInstance(state).getProfiloGestioneErogazioneServizio(idSoggettoFruitoreProfiloGestito, idServizioProfiloGestito, null);
+			return RegistroServiziManager.getInstance(state).getProfiloGestioneErogazioneServizio(idSoggettoFruitoreProfiloGestito, idServizioProfiloGestito, null, requestInfo);
 		}
 		else{
 			idSoggettoFruitoreProfiloGestito = new IDSoggetto(busta.getTipoMittente(), busta.getMittente());
-			return RegistroServiziManager.getInstance(state).getProfiloGestioneSoggetto(idSoggettoFruitoreProfiloGestito, null);
+			return RegistroServiziManager.getInstance(state).getProfiloGestioneSoggetto(idSoggettoFruitoreProfiloGestito, null, requestInfo);
 		}
 	}
 
@@ -479,14 +480,14 @@ public class ValidazioneSemantica  {
 		}
 	}
 	
-	private void riconoscimentoCollaborazione(RuoloBusta tipoBusta) throws ProtocolException{
-		
+	private void riconoscimentoCollaborazione(RuoloBusta tipoBusta, RequestInfo requestInfo) throws ProtocolException{
+				
 		//log.info("Validazione mittente...");
 		// Mittente: check registrazione nel Registro dei Servizi
 		IDSoggetto soggMitt = new IDSoggetto(this.busta.getTipoMittente(),this.busta.getMittente());
 		String dominioMittente = null;
 		try{
-			dominioMittente = this.registroServiziReader.getDominio(soggMitt,null,this.protocolFactory); //null=allRegistri 
+			dominioMittente = this.registroServiziReader.getDominio(soggMitt,null,this.protocolFactory, requestInfo); //null=allRegistri 
 			if(dominioMittente==null)
 				throw new Exception("Dominio non definito");
 		}catch(DriverRegistroServiziNotFound es){
@@ -507,7 +508,7 @@ public class ValidazioneSemantica  {
 		IDSoggetto soggDest = new IDSoggetto(this.busta.getTipoDestinatario(),this.busta.getDestinatario());
 		String dominioDestinatario = null;
 		try{
-			dominioDestinatario = this.registroServiziReader.getDominio(soggDest,null,this.protocolFactory); // null=allRegistri
+			dominioDestinatario = this.registroServiziReader.getDominio(soggDest,null,this.protocolFactory, requestInfo); // null=allRegistri
 			if(dominioDestinatario==null)
 				throw new Exception("Dominio non definito");
 		}catch(DriverRegistroServiziNotFound es){

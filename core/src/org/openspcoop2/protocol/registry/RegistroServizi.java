@@ -184,6 +184,7 @@ public class RegistroServizi  {
 		else{
 			try{
 				this.cache = new Cache(CacheType.JCS, CostantiRegistroServizi.CACHE_REGISTRO_SERVIZI);  // lascio JCS come default abilitato via jmx
+				this.cache.build();
 			}catch(Exception e){
 				throw new DriverRegistroServiziException(e.getMessage(),e);
 			}

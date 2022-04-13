@@ -32,8 +32,8 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.pdd.services.connector.AsyncResponseCallbackClientEvent;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
-import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.constants.IDService;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 
 /**

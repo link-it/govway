@@ -18,14 +18,14 @@
  *
  */
 
-package org.openspcoop2.protocol.engine;
+package org.openspcoop2.protocol.sdk.state;
 
 import java.util.HashMap;
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
-import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.IDService;
 
 /**
  * URL Protocol Context

@@ -49,6 +49,7 @@ import org.openspcoop2.pdd.core.handlers.notifier.NotifierPreInRequestHandler;
 import org.openspcoop2.pdd.core.handlers.notifier.NotifierPreInResponseHandler;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
 import org.openspcoop2.utils.resources.Loader;
@@ -1371,14 +1372,14 @@ public class GestoreHandlers  {
 				if(TipoPdD.DELEGATA.equals(context.getTipoPorta())) {
 					IDPortaDelegata idPD = new IDPortaDelegata();
 					idPD.setNome(context.getRequestInfo().getProtocolContext().getInterfaceName());
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(idPD);
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(idPD, context.getRequestInfo());
 					tipiPorta=configurazionePdDManager.getPreInRequestHandlers(pd);
 					//System.out.println("PreInRequestContext find PD '"+pd.getNome()+"'");
 				}
 				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta())) {
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					idPA.setNome(context.getRequestInfo().getProtocolContext().getInterfaceName());
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA);
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA, context.getRequestInfo());
 					tipiPorta=configurazionePdDManager.getPreInRequestHandlers(pa);
 					//System.out.println("PreInRequestContext find PA '"+pa.getNome()+"'");
 				}
@@ -1494,14 +1495,14 @@ public class GestoreHandlers  {
 				if(TipoPdD.DELEGATA.equals(context.getTipoPorta())) {
 					IDPortaDelegata idPD = new IDPortaDelegata();
 					idPD.setNome(context.getRequestInfo().getProtocolContext().getInterfaceName());
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(idPD);
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(idPD, context.getRequestInfo());
 					tipiPorta=configurazionePdDManager.getPreInRequestHandlers(pd);
 					//System.out.println("PreInRequestContext find PD '"+pd.getNome()+"'");
 				}
 				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta())) {
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					idPA.setNome(context.getRequestInfo().getProtocolContext().getInterfaceName());
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA);
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA, context.getRequestInfo());
 					tipiPorta=configurazionePdDManager.getPreInRequestHandlers(pa);
 					//System.out.println("PreInRequestContext find PA '"+pa.getNome()+"'");
 				}
@@ -1611,17 +1612,23 @@ public class GestoreHandlers  {
 			if(context!=null && context.getConnettore()!=null && context.getConnettore().getUrlProtocolContext()!=null &&
 					context.getConnettore().getUrlProtocolContext().getInterfaceName()!=null) {
 				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
+				
+				RequestInfo requestInfo = null;
+				if(context.getPddContext()!=null && context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+					requestInfo = (RequestInfo) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+				}
+				
 				if(TipoPdD.DELEGATA.equals(context.getTipoPorta())) {
 					IDPortaDelegata idPD = new IDPortaDelegata();
 					idPD.setNome(context.getConnettore().getUrlProtocolContext().getInterfaceName());
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(idPD);
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(idPD, requestInfo);
 					tipiPorta=configurazionePdDManager.getInRequestHandlers(pd);
 					//System.out.println("InRequestContext find PD '"+pd.getNome()+"'");
 				}
 				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta())) {
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					idPA.setNome(context.getConnettore().getUrlProtocolContext().getInterfaceName());
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA);
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA, requestInfo);
 					tipiPorta=configurazionePdDManager.getInRequestHandlers(pa);
 					//System.out.println("InRequestContext find PA '"+pa.getNome()+"'");
 				}
@@ -1729,15 +1736,20 @@ public class GestoreHandlers  {
 		try{
 			List<String> tipiPorta=null;
 			if(context!=null && context.getIntegrazione()!=null) {
+				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
+				
+				RequestInfo requestInfo = null;
+				if(context.getPddContext()!=null && context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+					requestInfo = (RequestInfo) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+				}
+				
 				if(TipoPdD.DELEGATA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPD()!=null) {
-					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(context.getIntegrazione().getIdPD());
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
 					tipiPorta=configurazionePdDManager.getInRequestProtocolHandlers(pd);
 					//System.out.println("InRequestProtocolContext find PD '"+pd.getNome()+"'");
 				}
 				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPA()!=null) {
-					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(context.getIntegrazione().getIdPA());
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
 					tipiPorta=configurazionePdDManager.getInRequestProtocolHandlers(pa);
 					//System.out.println("InRequestProtocolContext find PA '"+pa.getNome()+"'");
 				}
@@ -1845,15 +1857,20 @@ public class GestoreHandlers  {
 		try{
 			List<String> tipiPorta=null;
 			if(context!=null && context.getIntegrazione()!=null) {
+				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
+				
+				RequestInfo requestInfo = null;
+				if(context.getPddContext()!=null && context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+					requestInfo = (RequestInfo) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+				}
+				
 				if(TipoPdD.DELEGATA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPD()!=null) {
-					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(context.getIntegrazione().getIdPD());
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
 					tipiPorta=configurazionePdDManager.getOutRequestHandlers(pd);
 					//System.out.println("OutRequestContext find PD '"+pd.getNome()+"'");
 				}
 				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPA()!=null) {
-					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(context.getIntegrazione().getIdPA());
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
 					tipiPorta=configurazionePdDManager.getOutRequestHandlers(pa);
 					//System.out.println("OutRequestContext find PA '"+pa.getNome()+"'");
 				}
@@ -1961,15 +1978,20 @@ public class GestoreHandlers  {
 		try{
 			List<String> tipiPorta=null;
 			if(context!=null && context.getIntegrazione()!=null) {
+				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
+				
+				RequestInfo requestInfo = null;
+				if(context.getPddContext()!=null && context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+					requestInfo = (RequestInfo) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+				}
+				
 				if(TipoPdD.DELEGATA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPD()!=null) {
-					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(context.getIntegrazione().getIdPD());
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
 					tipiPorta=configurazionePdDManager.getPostOutRequestHandlers(pd);
 					//System.out.println("PostOutRequestContext find PD '"+pd.getNome()+"'");
 				}
 				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPA()!=null) {
-					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(context.getIntegrazione().getIdPA());
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
 					tipiPorta=configurazionePdDManager.getPostOutRequestHandlers(pa);
 					//System.out.println("PostOutRequestContext find PA '"+pa.getNome()+"'");
 				}
@@ -2077,15 +2099,20 @@ public class GestoreHandlers  {
 		try{
 			List<String> tipiPorta=null;
 			if(context!=null && context.getIntegrazione()!=null) {
+				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
+				
+				RequestInfo requestInfo = null;
+				if(context.getPddContext()!=null && context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+					requestInfo = (RequestInfo) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+				}
+				
 				if(TipoPdD.DELEGATA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPD()!=null) {
-					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(context.getIntegrazione().getIdPD());
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
 					tipiPorta=configurazionePdDManager.getPreInResponseHandlers(pd);
 					//System.out.println("PreInResponseContext find PD '"+pd.getNome()+"'");
 				}
 				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPA()!=null) {
-					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(context.getIntegrazione().getIdPA());
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
 					tipiPorta=configurazionePdDManager.getPreInResponseHandlers(pa);
 					//System.out.println("PreInResponseContext find PA '"+pa.getNome()+"'");
 				}
@@ -2193,15 +2220,20 @@ public class GestoreHandlers  {
 		try{
 			List<String> tipiPorta=null;
 			if(context!=null && context.getIntegrazione()!=null) {
+				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
+				
+				RequestInfo requestInfo = null;
+				if(context.getPddContext()!=null && context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+					requestInfo = (RequestInfo) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+				}
+				
 				if(TipoPdD.DELEGATA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPD()!=null) {
-					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(context.getIntegrazione().getIdPD());
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
 					tipiPorta=configurazionePdDManager.getInResponseHandlers(pd);
 					//System.out.println("InResponseContext find PD '"+pd.getNome()+"'");
 				}
 				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPA()!=null) {
-					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(context.getIntegrazione().getIdPA());
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
 					tipiPorta=configurazionePdDManager.getInResponseHandlers(pa);
 					//System.out.println("InResponseContext find PA '"+pa.getNome()+"'");
 				}
@@ -2309,15 +2341,20 @@ public class GestoreHandlers  {
 		try{
 			List<String> tipiPorta=null;
 			if(context!=null && context.getIntegrazione()!=null) {
+				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
+				
+				RequestInfo requestInfo = null;
+				if(context.getPddContext()!=null && context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+					requestInfo = (RequestInfo) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+				}
+				
 				if(TipoPdD.DELEGATA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPD()!=null) {
-					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(context.getIntegrazione().getIdPD());
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
 					tipiPorta=configurazionePdDManager.getOutResponseHandlers(pd);
 					//System.out.println("OutResponseContext find PD '"+pd.getNome()+"'");
 				}
 				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPA()!=null) {
-					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(context.getIntegrazione().getIdPA());
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
 					tipiPorta=configurazionePdDManager.getOutResponseHandlers(pa);
 					//System.out.println("OutResponseContext find PA '"+pa.getNome()+"'");
 				}
@@ -2427,15 +2464,20 @@ public class GestoreHandlers  {
 		try{
 			List<String> tipiPorta=null;
 			if(context!=null && context.getIntegrazione()!=null) {
+				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
+				
+				RequestInfo requestInfo = null;
+				if(context.getPddContext()!=null && context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+					requestInfo = (RequestInfo) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+				}
+				
 				if(TipoPdD.DELEGATA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPD()!=null) {
-					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
-					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(context.getIntegrazione().getIdPD());
+					PortaDelegata pd=configurazionePdDManager.getPortaDelegata_SafeMethod(context.getIntegrazione().getIdPD(), requestInfo);
 					tipiPorta=configurazionePdDManager.getPostOutResponseHandlers(pd);
 					//System.out.println("PostOutResponseContext find PD '"+pd.getNome()+"'");
 				}
 				else if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta()) && context.getIntegrazione().getIdPA()!=null) {
-					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(context.getStato());
-					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(context.getIntegrazione().getIdPA());
+					PortaApplicativa pa=configurazionePdDManager.getPortaApplicativa_SafeMethod(context.getIntegrazione().getIdPA(), requestInfo);
 					tipiPorta=configurazionePdDManager.getPostOutResponseHandlers(pa);
 					//System.out.println("PostOutResponseContext find PA '"+pa.getNome()+"'");
 				}

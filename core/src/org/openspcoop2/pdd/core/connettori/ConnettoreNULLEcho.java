@@ -33,6 +33,7 @@ import java.util.Map;
 
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
@@ -351,7 +352,7 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 			validatoreSintattico = new ValidazioneSintattica(this.getPddContext(),state,this.responseMsg, this.openspcoopProperties.isReadQualifiedAttribute(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD), protocolFactory); 
 
 			if(validatoreSintattico.verifyProtocolPresence(TipoPdD.APPLICATIVA,null,RuoloMessaggio.RISPOSTA) && 
-					!"sdi".equals(protocolFactory.getProtocol())){ // evitare sdi per far funzionare il protocollo sdi con la sonda.
+					!CostantiLabel.SDI_PROTOCOL_NAME.equals(protocolFactory.getProtocol())){ // evitare sdi per far funzionare il protocollo sdi con la sonda.
 				
 				// getBusta
 				ProprietaValidazione property = new ProprietaValidazione();
@@ -439,7 +440,7 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 					
 						// get database
 						try{
-							resource = dbManager.getResource(this.openspcoopProperties.getIdentitaPortaDefault(protocolFactory.getProtocol()),"ConnettoreNullEcho",busta.getID());
+							resource = dbManager.getResource(this.openspcoopProperties.getIdentitaPortaDefault(protocolFactory.getProtocol(), this.requestInfo),"ConnettoreNullEcho",busta.getID());
 						}catch(Exception e){
 							throw new Exception("Risorsa non ottenibile",e);
 						}
@@ -625,7 +626,7 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 			// *** GB ***
 			
 			// release database
-			dbManager.releaseResource(this.openspcoopProperties.getIdentitaPortaDefault(protocol),
+			dbManager.releaseResource(this.openspcoopProperties.getIdentitaPortaDefault(protocol, this.requestInfo),
 					"ConnettoreNullEcho", resource);
 		}
 		

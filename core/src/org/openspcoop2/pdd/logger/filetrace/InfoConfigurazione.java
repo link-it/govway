@@ -39,9 +39,10 @@ import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.core.handlers.transazioni.PostOutResponseHandler_TransazioneUtilities;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Context;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.utils.MapKey;
 
 /**     
  * InfoConfigurazione
@@ -75,11 +76,11 @@ public class InfoConfigurazione implements Serializable {
 	public InfoConfigurazione(Transazione transazioneDTO, Context contextGateway) {
 		
 		if(contextGateway!=null && !contextGateway.isEmpty()) {
-			for (String key : contextGateway.keys()) {
+			for (MapKey<String> key : contextGateway.keys()) {
 				Object o = contextGateway.getObject(key);
 				if(o!=null && o instanceof String) {
 					String s = (String) o;
-					this.context.put(key, s);
+					this.context.put(key.getValue(), s);
 				}
 			}
 		}
@@ -91,19 +92,21 @@ public class InfoConfigurazione implements Serializable {
 		IDSoggetto idSoggettoFruitore = null;
 		IDSoggetto idSoggettoErogatore = null;
 		
+		RequestInfo requestInfo = null;
+		
 		if(contextGateway!=null) {
 			
 			this.nomeConnettoriMultipli = PostOutResponseHandler_TransazioneUtilities.getConnettoriMultipli(contextGateway);
 			
 			if(contextGateway.containsKey(Costanti.REQUEST_INFO)) {
 				try {
-					RequestInfo requestInfo = (RequestInfo) contextGateway.getObject(Costanti.REQUEST_INFO);					
+					requestInfo = (RequestInfo) contextGateway.getObject(Costanti.REQUEST_INFO);					
 					if(requestInfo.getProtocolContext()!=null) {
 						String nomePorta = requestInfo.getProtocolContext().getInterfaceName();
 						if(PddRuolo.DELEGATA.equals(transazioneDTO.getPddRuolo())) {
 							IDPortaDelegata idPD = new IDPortaDelegata();
 							idPD.setNome(nomePorta);
-							PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD);
+							PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD, requestInfo);
 							if(pd!=null) {
 								
 								idSoggettoFruitore = new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario());
@@ -121,7 +124,7 @@ public class InfoConfigurazione implements Serializable {
 						else {
 							IDPortaApplicativa idPA = new IDPortaApplicativa();
 							idPA.setNome(nomePorta);
-							PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA);
+							PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA, requestInfo);
 							if(pa!=null) {
 								
 								idSoggettoErogatore = new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario());
@@ -145,7 +148,7 @@ public class InfoConfigurazione implements Serializable {
 		}
 		if(idSoggettoFruitore!=null) {
 			try {
-				Soggetto soggetto = registroServiziManager.getSoggetto(idSoggettoFruitore, null);
+				Soggetto soggetto = registroServiziManager.getSoggetto(idSoggettoFruitore, null, requestInfo);
 				if(soggetto.sizeProprietaList()>0) {
 					for (org.openspcoop2.core.registry.Proprieta prop : soggetto.getProprietaList()) {
 						if(prop.getNome()!=null && prop.getValore()!=null) {
@@ -160,7 +163,7 @@ public class InfoConfigurazione implements Serializable {
 				idSA.setNome(transazioneDTO.getServizioApplicativoFruitore());
 				idSA.setIdSoggettoProprietario(idSoggettoFruitore);
 				try {
-					ServizioApplicativo sa = configurazionePdDManager.getServizioApplicativo(idSA);
+					ServizioApplicativo sa = configurazionePdDManager.getServizioApplicativo(idSA, requestInfo);
 					if(sa.sizeProprietaList()>0) {
 						for (Proprieta prop : sa.getProprietaList()) {
 							if(prop.getNome()!=null && prop.getValore()!=null) {
@@ -177,7 +180,7 @@ public class InfoConfigurazione implements Serializable {
 		}
 		if(idSoggettoErogatore!=null) {
 			try {
-				Soggetto soggetto = registroServiziManager.getSoggetto(idSoggettoErogatore, null);
+				Soggetto soggetto = registroServiziManager.getSoggetto(idSoggettoErogatore, null, requestInfo);
 				if(soggetto.sizeProprietaList()>0) {
 					for (org.openspcoop2.core.registry.Proprieta prop : soggetto.getProprietaList()) {
 						if(prop.getNome()!=null && prop.getValore()!=null) {

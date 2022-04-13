@@ -64,12 +64,12 @@ public class PostOutResponseHandler_GestioneControlloTraffico {
 				Integer threshold = null;
 				
 				if(context!=null && context.getPddContext()!=null){
-					Object maxThreadsObject = context.getPddContext().getObject(GeneratoreMessaggiErrore.TEMPLATE_MAX_THREADS_THRESHOLD);
+					Object maxThreadsObject = context.getPddContext().getObject(GeneratoreMessaggiErrore.PDD_CONTEXT_MAX_THREADS_THRESHOLD);
 					if(maxThreadsObject!=null && maxThreadsObject instanceof Long){
 						maxThreads = (Long) maxThreadsObject;
 					}
 					
-					Object thresholdObject = context.getPddContext().getObject(GeneratoreMessaggiErrore.TEMPLATE_CONTROLLO_TRAFFICO_THRESHOLD);
+					Object thresholdObject = context.getPddContext().getObject(GeneratoreMessaggiErrore.PDD_CONTEXT_CONTROLLO_TRAFFICO_THRESHOLD);
 					if(thresholdObject!=null && maxThreadsObject instanceof Long){
 						threshold = (Integer) thresholdObject;
 					}
@@ -161,7 +161,7 @@ public class PostOutResponseHandler_GestioneControlloTraffico {
 										}
 										
 										policyGroupByActiveThreads.
-											registerStopRequest(logControlloTraffico, idTransazione, groupByPolicies.get(i), misurazioniTransazione, 
+											registerStopRequest(logControlloTraffico, idTransazione, groupByPolicies.get(i), context.getProtocolFactory(), misurazioniTransazione, 
 													incrementCounter_policyApplicabile.get(i),
 													incrementCounter_policyViolata.get(i));
 										

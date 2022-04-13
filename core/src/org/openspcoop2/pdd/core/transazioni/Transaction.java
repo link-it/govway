@@ -32,11 +32,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 
 /**     
  * Transaction
@@ -54,6 +54,9 @@ public class Transaction {
 		this.id = id;
 		this.originator = originator;
 		this.gestioneStateful = gestioneStateful;
+	}
+	public String getId() {
+		return this.id;
 	}
 	
 	/** Indicazione se la transazione e' stata gestita (e quindi non piu' ulteriormente arricchibile) tramite le set e add */

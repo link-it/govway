@@ -32,8 +32,8 @@ import org.openspcoop2.pdd.services.connector.messages.DirectVMConnectorInMessag
 import org.openspcoop2.pdd.services.connector.messages.DirectVMConnectorOutMessage;
 import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
 import org.openspcoop2.pdd.services.service.RicezioneContenutiApplicativiService;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
-import org.openspcoop2.protocol.engine.constants.IDService;
+import org.openspcoop2.protocol.sdk.constants.IDService;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.utils.date.DateManager;
 
 /**

@@ -53,6 +53,7 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.connettori.ConnettoreException;
 import org.openspcoop2.pdd.core.connettori.ConnettoreLogger;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -239,7 +240,8 @@ public class ConnettoreHTTPCORE_connectionManager {
 	private static final org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("ConnettoreHTTPCORE_connectionManager");
 	
 	private static void init(ConnectionConfiguration connectionConfig,
-			Loader loader, ConnettoreLogger logger, StringBuilder bf) throws ConnettoreException {
+			Loader loader, ConnettoreLogger logger, StringBuilder bf,
+			RequestInfo requestInfo) throws ConnettoreException {
 		String key = connectionConfig.toString();
 		//synchronized(mapConnection) {
 		String idTransazione = logger!=null ? logger.getIdTransazione() : null;
@@ -250,7 +252,7 @@ public class ConnettoreHTTPCORE_connectionManager {
 		}
 		try {
 			if(!mapConnection.containsKey(key)) {
-				ConnettoreHTTPCORE_connection resource = buildAsyncClient(connectionConfig, loader, logger, bf, key);
+				ConnettoreHTTPCORE_connection resource = buildAsyncClient(connectionConfig, loader, logger, bf, key, requestInfo);
 				mapConnection.put(key, resource);
 			}
 		}finally {
@@ -258,7 +260,8 @@ public class ConnettoreHTTPCORE_connectionManager {
 		}
 	}
 	private static ConnettoreHTTPCORE_connection update(ConnectionConfiguration connectionConfig,
-			Loader loader, ConnettoreLogger logger, StringBuilder bf) throws ConnettoreException {
+			Loader loader, ConnettoreLogger logger, StringBuilder bf,
+			RequestInfo requestInfo) throws ConnettoreException {
 		String key = connectionConfig.toString();
 		//synchronized(mapConnection) {
 		String idTransazione = logger!=null ? logger.getIdTransazione() : null;
@@ -272,7 +275,7 @@ public class ConnettoreHTTPCORE_connectionManager {
 				ConnettoreHTTPCORE_connection con = mapConnection.remove(key);
 				mapConnection.put("expired_"+key+"_"+UUID.randomUUID().toString(), con);
 			}
-			ConnettoreHTTPCORE_connection resource = buildAsyncClient(connectionConfig, loader, logger, bf, key);
+			ConnettoreHTTPCORE_connection resource = buildAsyncClient(connectionConfig, loader, logger, bf, key, requestInfo);
 			mapConnection.put(key, resource);
 			return resource;
 		}finally {
@@ -281,7 +284,8 @@ public class ConnettoreHTTPCORE_connectionManager {
 	}
 	private static ConnettoreHTTPCORE_connection buildAsyncClient(ConnectionConfiguration connectionConfig,
 			Loader loader, ConnettoreLogger logger, StringBuilder bf,
-			String key) throws ConnettoreException {
+			String key,
+			RequestInfo requestInfo) throws ConnettoreException {
 		try {				
 			RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
 			
@@ -345,7 +349,7 @@ public class ConnettoreHTTPCORE_connectionManager {
 					if(bf.length()>0) {
 						bf.append("\n");
 					}
-					sslContext = TlsContextBuilder.buildSSLContext(connectionConfig.getSslContextProperties(), logger, bf);
+					sslContext = TlsContextBuilder.buildSSLContext(connectionConfig.getSslContextProperties(), logger, bf, requestInfo);
 					hostnameVerifier = SSLUtilities.generateHostnameVerifier(connectionConfig.getSslContextProperties(), bf, logger.getLogger(), loader);
 				}
 				
@@ -379,13 +383,14 @@ public class ConnettoreHTTPCORE_connectionManager {
 	}
 	
 	public static ConnettoreHTTPCORE_connection getConnettoreNIO(ConnectionConfiguration connectionConfig,
-			Loader loader, ConnettoreLogger logger, StringBuilder bf) throws ConnettoreException  {
+			Loader loader, ConnettoreLogger logger, StringBuilder bf,
+			RequestInfo requestInfo) throws ConnettoreException  {
 		boolean usePoolAsyncClient = true; // e' inutilizzabile senza
 		ConnettoreHTTPCORE_connection connection = null;
 		if(usePoolAsyncClient) {
 			String key = connectionConfig.toString();
 			if(!mapConnection.containsKey(key)) {
-				init(connectionConfig, loader, logger, bf);
+				init(connectionConfig, loader, logger, bf, requestInfo);
 				connection = mapConnection.get(key);
 				connection.refresh();
 			}
@@ -393,13 +398,14 @@ public class ConnettoreHTTPCORE_connectionManager {
 				connection = mapConnection.get(key);
 				connection.refresh();
 				if(connection.isExpired()) {
-					connection = update(connectionConfig, loader, logger, bf);
+					connection = update(connectionConfig, loader, logger, bf, requestInfo);
 				}
 			}
 		}
 		else {
 			connection =  buildAsyncClient(connectionConfig, loader, logger, bf,
-					connectionConfig.toString());
+					connectionConfig.toString(),
+					requestInfo);
 			connection.refresh();
 		}
 		return connection;

@@ -402,7 +402,7 @@ public class UtilityTransazioni {
 		}
 		
 		
-		EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),t.getProtocollo());
+		EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(LoggerManager.getPddMonitorCoreLogger(),t.getProtocollo());
 		
 		// Esito di una transazione
 		if (t.getEsito() >= 0) {
@@ -1218,7 +1218,7 @@ public class UtilityTransazioni {
 
 		// Esito
 		org.openspcoop2.web.monitor.transazioni.core.manifest_consegna.ConsegnaType.Esito esito = new org.openspcoop2.web.monitor.transazioni.core.manifest_consegna.ConsegnaType.Esito();
-		EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),tr.getProtocollo());
+		EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(LoggerManager.getPddMonitorCoreLogger(),tr.getProtocollo());
 		if (tAS.getDettaglioEsito() >= 0) {
 			// <esito>ESITO_CALCOLATO_IN_FORMA_LEGGIBILE_DA_UMANO</esito>
 			DettaglioEsito dettaglioEsito = new DettaglioEsito();

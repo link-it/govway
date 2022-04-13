@@ -136,7 +136,6 @@ import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.ConsegnaInOrdine;
 import org.openspcoop2.protocol.engine.validator.ValidazioneSintattica;
@@ -154,6 +153,7 @@ import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.LimitExceededIOException;
 import org.openspcoop2.utils.LimitedInputStream;
 import org.openspcoop2.utils.TimeoutIOException;
@@ -547,7 +547,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 			}
 			
 			try {
-				GestoreConsegnaMultipla.getInstance().safeUpdateConsegna(this.transazioneApplicativoServer, idApplicativa, this.openspcoopstate);
+				GestoreConsegnaMultipla.getInstance().safeUpdateConsegna(this.transazioneApplicativoServer, idApplicativa, this.openspcoopstate, this.requestInfo);
 			}catch(Throwable t) {
 				this.log.error("["+this.transazioneApplicativoServer.getIdTransazione()+"]["+this.transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
 			}
@@ -580,6 +580,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 		this.pddContext = this.consegnaContenutiApplicativiMsg.getPddContext();
 		this.idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, this.pddContext);
 				
+		this.requestInfo = (RequestInfo) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+		
 		/* Protocol Factory */
 		try{
 			this.protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
@@ -612,14 +614,14 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 		this.richiestaApplicativa = this.consegnaContenutiApplicativiMsg.getRichiestaApplicativa();
 		this.richiestaDelegata = this.consegnaContenutiApplicativiMsg.getRichiestaDelegata();
 		this.bustaRichiesta = this.consegnaContenutiApplicativiMsg.getBusta(); // in caso di richiesta delegata serve per il profilo asincrono
-
+			
 		this.tipoPdD = TipoPdD.APPLICATIVA;
 		if(this.msgDiag.getPorta()==null) {
 			if(this.richiestaApplicativa!=null && this.richiestaApplicativa.getIdPortaApplicativa()!=null) {
-				this.msgDiag.updatePorta(this.tipoPdD, this.richiestaApplicativa.getIdPortaApplicativa().getNome());
+				this.msgDiag.updatePorta(this.tipoPdD, this.richiestaApplicativa.getIdPortaApplicativa().getNome(), this.requestInfo);
 			}
 			else if(this.richiestaDelegata!=null && this.richiestaDelegata.getIdPortaDelegata()!=null) {
-				this.msgDiag.updatePorta(TipoPdD.DELEGATA, this.richiestaDelegata.getIdPortaDelegata().getNome());
+				this.msgDiag.updatePorta(TipoPdD.DELEGATA, this.richiestaDelegata.getIdPortaDelegata().getNome(), this.requestInfo);
 			}
 		}
 		
@@ -743,7 +745,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 		}
 		boolean soggettoVirtuale = false;
 		try{
-			soggettoVirtuale = this.configurazionePdDManager.isSoggettoVirtuale( this.identitaPdD );
+			soggettoVirtuale = this.configurazionePdDManager.isSoggettoVirtuale( this.identitaPdD, this.requestInfo );
 		}catch(Exception e){
 			this.msgDiag.logErroreGenerico(e, "isSoggettoVirtuale("+this.identitaPdD+")");
 			esito.setEsitoInvocazione(false); 
@@ -779,7 +781,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 			this.idPA = this.richiestaApplicativa.getIdPortaApplicativa();
 			try{
 				this.msgDiag.mediumDebug("getPortaApplicativa...");
-				this.pa = this.configurazionePdDManager.getPortaApplicativa(this.idPA);
+				this.pa = this.configurazionePdDManager.getPortaApplicativa(this.idPA, this.requestInfo);
 			}catch(Exception e){
 				this.msgDiag.logErroreGenerico(e, "RichiestaApplicativa.getPortaApplicativa");
 				esito.setEsitoInvocazione(false); 
@@ -791,7 +793,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 				IDServizioApplicativo idSA = new IDServizioApplicativo();
 				idSA.setNome(this.richiestaApplicativa.getServizioApplicativo());
 				idSA.setIdSoggettoProprietario(this.richiestaApplicativa.getIDServizio().getSoggettoErogatore());
-				this.sa = this.configurazionePdDManager.getServizioApplicativo(idSA);
+				this.sa = this.configurazionePdDManager.getServizioApplicativo(idSA, this.requestInfo);
 			}catch(Exception e){
 				this.msgDiag.logErroreGenerico(e, "RichiestaApplicativa.getServizioApplicativo");
 				esito.setEsitoInvocazione(false); 
@@ -804,7 +806,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 			this.idPD = this.richiestaDelegata.getIdPortaDelegata();
 			try{
 				this.msgDiag.mediumDebug("getPortaDelegata...");
-				this.pd = this.configurazionePdDManager.getPortaDelegata(this.idPD);
+				this.pd = this.configurazionePdDManager.getPortaDelegata(this.idPD, this.requestInfo);
 			}catch(Exception e){
 				this.msgDiag.logErroreGenerico(e, "RichiestaDelegata.getPortaApplicativa");
 				esito.setEsitoInvocazione(false); 
@@ -816,7 +818,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 				IDServizioApplicativo idSA = new IDServizioApplicativo();
 				idSA.setNome(this.richiestaDelegata.getServizioApplicativo());
 				idSA.setIdSoggettoProprietario(this.richiestaDelegata.getIdSoggettoFruitore());
-				this.sa = this.configurazionePdDManager.getServizioApplicativo(idSA);
+				this.sa = this.configurazionePdDManager.getServizioApplicativo(idSA, this.requestInfo);
 			}catch(Exception e){
 				this.msgDiag.logErroreGenerico(e, "RichiestaDelegata.getServizioApplicativo");
 				esito.setEsitoInvocazione(false); 
@@ -833,7 +835,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 		if(this.localForward && this.pd==null){
 			try{
 				this.msgDiag.mediumDebug("getPortaDelegata...");
-				this.pd = this.configurazionePdDManager.getPortaDelegata(this.richiestaDelegata.getIdPortaDelegata());
+				this.pd = this.configurazionePdDManager.getPortaDelegata(this.richiestaDelegata.getIdPortaDelegata(), this.requestInfo);
 			}catch(Exception e){
 				this.msgDiag.logErroreGenerico(e, "RichiestaDelegata.getPortaApplicativa");
 				esito.setEsitoInvocazione(false); 
@@ -1018,8 +1020,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 				localForwardParameter.setIdRequest(this.idMessaggioConsegna);
 				localForwardParameter.setImplementazionePdDDestinatario(this.implementazionePdDDestinatario);
 				localForwardParameter.setImplementazionePdDMittente(this.implementazionePdDMittente);
-				localForwardParameter.setIdPdDMittente(this.registroServiziManager.getIdPortaDominio(this.soggettoFruitore, null));
-				localForwardParameter.setIdPdDDestinatario(this.registroServiziManager.getIdPortaDominio(this.idServizio.getSoggettoErogatore(), null));
+				localForwardParameter.setIdPdDMittente(this.registroServiziManager.getIdPortaDominio(this.soggettoFruitore, null, this.requestInfo));
+				localForwardParameter.setIdPdDDestinatario(this.registroServiziManager.getIdPortaDominio(this.idServizio.getSoggettoErogatore(), null, this.requestInfo));
 				localForwardParameter.setMsgDiag(this.msgDiag);
 				localForwardParameter.setOpenspcoopstate(this.openspcoopstate);
 				localForwardParameter.setPddContext(this.pddContext);
@@ -1138,7 +1140,6 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 		this.msgRequest.setPortaDiTipoStateless(this.portaDiTipoStateless);
 		
 		// RequestInfo
-		this.requestInfo = (RequestInfo) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		if(this.requestInfo==null || this.idTransazione==null) {
 			// devo leggerlo dal messaggio
 			try {
@@ -1242,12 +1243,12 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 				Costanti.SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA.equals(this.scenarioCooperazione) ){
 			try{
 				this.msgDiag.mediumDebug("Inizializzo contesto per la gestione (getConsegnaRispostaAsincrona) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
-				this.connettoreMsg = this.configurazionePdDManager.getConsegnaRispostaAsincrona(this.sa,this.richiestaDelegata);
+				this.connettoreMsg = this.configurazionePdDManager.getConsegnaRispostaAsincrona(this.sa,this.richiestaDelegata, this.requestInfo);
 				if(Costanti.SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI.equals(this.scenarioCooperazione)){
 					this.connettoreMsg.setCheckPresenzaHeaderPrimaSbustamento(true);
 				}
 				if(this.connettoreMsg!=null){
-					this.connettoreMsg.initPolicyGestioneToken(this.configurazionePdDManager);
+					this.connettoreMsg.initPolicyGestioneToken(this.configurazionePdDManager, this.requestInfo);
 				}
 				this.msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaConGetMessage) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
 				integrationManager = this.configurazionePdDManager.consegnaRispostaAsincronaConGetMessage(this.sa);
@@ -1271,9 +1272,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 		else if(Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_POLLING.equals(this.scenarioCooperazione)){
 			try{
 				this.msgDiag.mediumDebug("Inizializzo contesto per la gestione (getConsegnaRispostaAsincrona) [AsincronoAsimmetricoPolling]...");
-				this.connettoreMsg = this.configurazionePdDManager.getConsegnaRispostaAsincrona(this.sa,this.richiestaApplicativa);
+				this.connettoreMsg = this.configurazionePdDManager.getConsegnaRispostaAsincrona(this.sa,this.richiestaApplicativa, this.requestInfo);
 				if(this.connettoreMsg!=null){
-					this.connettoreMsg.initPolicyGestioneToken(this.configurazionePdDManager);
+					this.connettoreMsg.initPolicyGestioneToken(this.configurazionePdDManager, this.requestInfo);
 				}
 				this.msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaConGetMessage) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
 				integrationManager = this.configurazionePdDManager.consegnaRispostaAsincronaConGetMessage(this.sa);
@@ -1294,9 +1295,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 		}else{
 			try{
 				this.msgDiag.mediumDebug("Inizializzo contesto per la gestione (getInvocazioneServizio)...");
-				this.connettoreMsg = this.configurazionePdDManager.getInvocazioneServizio(this.sa,this.richiestaApplicativa);
+				this.connettoreMsg = this.configurazionePdDManager.getInvocazioneServizio(this.sa,this.richiestaApplicativa, this.requestInfo);
 				if(this.connettoreMsg!=null){
-					this.connettoreMsg.initPolicyGestioneToken(this.configurazionePdDManager);
+					this.connettoreMsg.initPolicyGestioneToken(this.configurazionePdDManager, this.requestInfo);
 				}
 				this.msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaConGetMessage) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
 				integrationManager = this.configurazionePdDManager.invocazioneServizioConGetMessage(this.sa);
@@ -1335,9 +1336,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 			this.connettoreMsg.setDataConsegnaTransazioneApplicativoServer(this.dataConsegna);
 		}
 		ForwardProxy forwardProxy = null;
-		if(this.configurazionePdDManager.isForwardProxyEnabled()) {
+		if(this.configurazionePdDManager.isForwardProxyEnabled(this.requestInfo)) {
 			try {
-				forwardProxy = this.configurazionePdDManager.getForwardProxyConfigErogazione(this.identitaPdD, this.idServizio, null);
+				forwardProxy = this.configurazionePdDManager.getForwardProxyConfigErogazione(this.identitaPdD, this.idServizio, null, this.requestInfo);
 			}catch(Exception e) {
 				this.msgDiag.logErroreGenerico(e, "Configurazione ForwardProxy (sa:"+this.servizioApplicativo+")");
 				this.ejbUtils.rollbackMessage("Configurazione del connettore errata per la funzionalità govway-proxy; sa ["+this.servizioApplicativo+"]",this.servizioApplicativo, esito);
@@ -2549,7 +2550,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 					this.responseMessage = this.protocolFactory.createProtocolManager().updateOpenSPCoop2MessageResponse(this.responseMessage, 
 							this.bustaRichiesta, nParams,
 							this.consegnaMessagePrimaTrasformazione.getTransportRequestContext(),this.transportResponseContext,
-							this.protocolFactory.getCachedRegistryReader(this.registroServiziManager),
+							this.protocolFactory.getCachedRegistryReader(this.registroServiziManager, this.requestInfo),
 							true);
 				}
 			} catch (Exception e) {

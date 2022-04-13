@@ -53,10 +53,10 @@ import org.openspcoop2.pdd.core.dynamic.MessageContent;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -109,7 +109,7 @@ public class ConditionalUtils  {
 					idServizio.setAzione(busta.getAzione());
 				}catch(Throwable t) {}
 				if(idServizio!=null) {
-					restResource = Utilities.getRestResource(log, state, idServizio);
+					restResource = Utilities.getRestResource(log, state, idServizio, requestInfo);
 				}
 			}
 			

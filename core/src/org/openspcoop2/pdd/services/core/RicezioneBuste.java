@@ -34,6 +34,7 @@ import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.DumpConfigurazione;
@@ -60,6 +61,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.id.IdentificativiErogazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
@@ -90,6 +92,7 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.EJBUtils;
 import org.openspcoop2.pdd.core.GestoreCorrelazioneApplicativa;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
+import org.openspcoop2.pdd.core.GestoreRichieste;
 import org.openspcoop2.pdd.core.IntegrationContext;
 import org.openspcoop2.pdd.core.MTOMProcessor;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -175,8 +178,6 @@ import org.openspcoop2.pdd.timers.TimerThresholdThread;
 import org.openspcoop2.pdd.timers.TipoLock;
 import org.openspcoop2.protocol.basic.registry.IdentificazionePortaApplicativa;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.engine.RequestInfo;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.builder.Imbustamento;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.History;
@@ -222,8 +223,11 @@ import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.dump.DumpException;
+import org.openspcoop2.protocol.sdk.state.RequestFruitore;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.sdk.state.StatelessMessage;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.protocol.sdk.tracciamento.EsitoElaborazioneMessaggioTracciato;
 import org.openspcoop2.protocol.sdk.tracciamento.TracciamentoException;
 import org.openspcoop2.protocol.sdk.validator.IValidatoreErrori;
@@ -235,6 +239,7 @@ import org.openspcoop2.security.message.MessageSecurityContextParameters;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.Loader;
@@ -615,21 +620,21 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		
 		try{
 			if(this.context!=null  && this.msgContext.getIntegrazione()!=null){
-				if(this.context.containsKey(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RICHIESTA)){
+				if(this.context.containsKey(CostantiPdD.TIPO_PROCESSAMENTO_MTOM_RICHIESTA)){
 					this.msgContext.getIntegrazione().setTipoProcessamentoMtomXopRichiesta(
-							(String)this.context.getObject(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RICHIESTA));
+							(String)this.context.getObject(CostantiPdD.TIPO_PROCESSAMENTO_MTOM_RICHIESTA));
 				}
-				if(this.context.containsKey(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RISPOSTA)){
+				if(this.context.containsKey(CostantiPdD.TIPO_PROCESSAMENTO_MTOM_RISPOSTA)){
 					this.msgContext.getIntegrazione().setTipoProcessamentoMtomXopRisposta(
-							(String)this.context.getObject(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RISPOSTA));
+							(String)this.context.getObject(CostantiPdD.TIPO_PROCESSAMENTO_MTOM_RISPOSTA));
 				}
-				if(this.context.containsKey(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA)){
+				if(this.context.containsKey(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RICHIESTA)){
 					this.msgContext.getIntegrazione().setTipoMessageSecurityRichiesta(
-							(String)this.context.getObject(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA));
+							(String)this.context.getObject(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RICHIESTA));
 				}
-				if(this.context.containsKey(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA)){
+				if(this.context.containsKey(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RISPOSTA)){
 					this.msgContext.getIntegrazione().setTipoMessageSecurityRisposta(
-							(String)this.context.getObject(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA));
+							(String)this.context.getObject(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RISPOSTA));
 				}
 			}
 		}catch(Exception e){
@@ -654,7 +659,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 						if(urlProtocolContext!=null && urlProtocolContext.getInterfaceName()!=null) {
 							IDPortaApplicativa identificativoPortaApplicativa = new IDPortaApplicativa();
 							identificativoPortaApplicativa.setNome(urlProtocolContext.getInterfaceName());
-							PortaApplicativa portaApplicativa = this.configurazionePdDReader.getPortaApplicativa_SafeMethod(identificativoPortaApplicativa);
+							PortaApplicativa portaApplicativa = this.configurazionePdDReader.getPortaApplicativa_SafeMethod(identificativoPortaApplicativa, this.msgContext.getRequestInfo());
 							if(portaApplicativa!=null) {
 								DumpConfigurazione dumpConfig = this.configurazionePdDReader.getDumpConfigurazione(portaApplicativa);
 								this.internalObjects.put(CostantiPdD.DUMP_CONFIG, dumpConfig);
@@ -759,7 +764,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 					}
 					Map<String, List<String>> propertiesTrasporto = outResponseContext.getResponseHeaders();
 					ServicesUtils.setGovWayHeaderResponse(msgRisposta, OpenSPCoop2Properties.getInstance(),
-							propertiesTrasporto, this.logCore, false, outResponseContext.getPddContext(), this.msgContext.getRequestInfo().getProtocolContext());
+							propertiesTrasporto, this.logCore, false, outResponseContext.getPddContext(), this.msgContext.getRequestInfo());
 					dumpApplicativo.dumpRispostaUscita(msgRisposta, 
 							this.inRequestContext.getConnettore().getUrlProtocolContext(), 
 							outResponseContext.getResponseHeaders());
@@ -810,7 +815,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 				identificativoPortaApplicativa.setNome(urlProtocolContext.getInterfaceName());
 				PortaApplicativa portaApplicativa = null;
 				try {
-					portaApplicativa = this.configurazionePdDReader.getPortaApplicativa_SafeMethod(identificativoPortaApplicativa);
+					portaApplicativa = this.configurazionePdDReader.getPortaApplicativa_SafeMethod(identificativoPortaApplicativa, this.msgContext.getRequestInfo());
 				}catch(Exception e) {}
 				if(portaApplicativa!=null) {
 					// Aggiorno tutti
@@ -821,9 +826,9 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 					}
 					dominio = new IDSoggetto(portaApplicativa.getTipoSoggettoProprietario(), portaApplicativa.getNomeSoggettoProprietario());
 					try {
-						dominio.setCodicePorta(RegistroServiziManager.getInstance().getDominio(dominio, null, this.protocolFactory));
+						dominio.setCodicePorta(RegistroServiziManager.getInstance().getDominio(dominio, null, this.protocolFactory, this.msgContext.getRequestInfo()));
 					}catch(Exception e) {
-						dominio = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(this.protocolFactory.getProtocol());
+						dominio = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(this.protocolFactory.getProtocol(), this.msgContext.getRequestInfo());
 					}
 				}
 			}
@@ -838,7 +843,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 			}
 		}
 		if(dominio==null) {
-			dominio = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(this.protocolFactory.getProtocol());
+			dominio = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(this.protocolFactory.getProtocol(), this.msgContext.getRequestInfo());
 		}
 		
 		Dump dumpApplicativo = null;
@@ -1171,7 +1176,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		else{
 			nomePorta = this.inRequestContext.getConnettore().getUrlProtocolContext().getFunctionParameters() + "_urlInvocazione("+ this.inRequestContext.getConnettore().getUrlProtocolContext().getUrlInvocazione_formBased() + ")";
 		}
-		this.msgDiag = MsgDiagnostico.newInstance(TipoPdD.APPLICATIVA,this.identitaPdD,this.msgContext.getIdModulo(),nomePorta,this.configurazionePdDReader);
+		this.msgDiag = MsgDiagnostico.newInstance(TipoPdD.APPLICATIVA,this.identitaPdD,this.msgContext.getIdModulo(),nomePorta,requestInfo,this.configurazionePdDReader);
 		this.msgContext.setMsgDiagnostico(this.msgDiag); // aggiorno msg diagnostico
 		this.msgDiag.setPddContext(this.inRequestContext.getPddContext(), this.protocolFactory);
 		this.msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE);
@@ -1349,7 +1354,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 				this.idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(busta.getTipoServizio(), busta.getServizio(), 
 						busta.getTipoDestinatario(), busta.getDestinatario(), 
 						busta.getVersioneServizio());
-				this.idServizio.getSoggettoErogatore().setCodicePorta(this.registroServiziReader.getDominio(this.idServizio.getSoggettoErogatore(), null, this.protocolFactory));
+				this.idServizio.getSoggettoErogatore().setCodicePorta(this.registroServiziReader.getDominio(this.idServizio.getSoggettoErogatore(), null, this.protocolFactory, requestInfo));
 				this.idServizio.setAzione(busta.getAzione());
 				requestInfo.setIdServizio(this.idServizio);
 				
@@ -1444,7 +1449,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 			try{
 				IDPortaApplicativa idPA = new IDPortaApplicativa();
 				idPA.setNome(requestInfo.getProtocolContext().getInterfaceName());
-				this.pa = this.configurazionePdDReader.getPortaApplicativa_SafeMethod(idPA);
+				this.pa = this.configurazionePdDReader.getPortaApplicativa_SafeMethod(idPA, requestInfo);
 				// NOTA: la pa potra' essere null nei casi di profili asincroni
 			}catch(Exception e){
 				setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,
@@ -1456,7 +1461,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 			}
 		}
 		if(this.pa!=null){
-			this.msgDiag.updatePorta(this.pa.getNome());
+			this.msgDiag.updatePorta(this.pa.getNome(), requestInfo);
 		}
 
 		
@@ -1475,7 +1480,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		boolean existsSoggetto = false;
 		try{
 			if(this.idServizio!=null && this.idServizio.getSoggettoErogatore()!=null) {
-				existsSoggetto = this.configurazionePdDReader.existsSoggetto(this.idServizio.getSoggettoErogatore());
+				existsSoggetto = this.configurazionePdDReader.existsSoggetto(this.idServizio.getSoggettoErogatore(), requestInfo);
 			}
 		}catch(Exception e){
 			setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,
@@ -1504,7 +1509,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 			if(routerFunctionActive){
 				this.functionAsRouter = true;	
 				try{
-					this.identitaPdD = this.configurazionePdDReader.getRouterIdentity(this.protocolFactory);
+					this.identitaPdD = this.configurazionePdDReader.getRouterIdentity(this.protocolFactory, requestInfo);
 				}catch(Exception e){
 					setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -1520,7 +1525,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 			this.msgDiag.mediumDebug("Raccolta identita porta di dominio...");
 			String dominio = null;
 			try{
-				dominio = this.configurazionePdDReader.getIdentificativoPorta(this.idServizio.getSoggettoErogatore(),this.protocolFactory);
+				dominio = this.configurazionePdDReader.getIdentificativoPorta(this.idServizio.getSoggettoErogatore(),this.protocolFactory,requestInfo);
 				if(dominio==null){
 					throw new Exception("Dominio is null");
 				}
@@ -1701,9 +1706,9 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 					}
 					else {
 						try {
-							AccordoServizioParteSpecifica asps = this.registroServiziReader.getAccordoServizioParteSpecifica(this.idServizio, null, false);
+							AccordoServizioParteSpecifica asps = this.registroServiziReader.getAccordoServizioParteSpecifica(this.idServizio, null, false, requestInfo);
 							if(asps!=null) {
-								AccordoServizioParteComune aspc = this.registroServiziReader.getAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), null, false);
+								AccordoServizioParteComune aspc = this.registroServiziReader.getAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), null, false, requestInfo);
 								if(aspc!=null) {
 									String canaleApi = aspc.getCanale();
 									if(canaleApi!=null && !"".equals(canaleApi)) {
@@ -1817,7 +1822,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 					this.idServizio.setAzione(requestInfo.getIdServizio().getAzione());
 				}
 				else{
-					this.idServizio.setAzione(this.configurazionePdDReader.getAzione(this.pa, urlProtocolContext, this.requestMessage, null,
+					this.idServizio.setAzione(this.configurazionePdDReader.getAzione(this.pa, urlProtocolContext, requestInfo, this.requestMessage, null,
 							headerIntegrazioneRichiesta, this.msgContext.getIdModulo().endsWith(IntegrationManager.ID_MODULO), this.protocolFactory));
 				}
 				requestInfo.setIdServizio(this.idServizio);
@@ -1863,20 +1868,35 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		
 		this.msgDiag.mediumDebug("Lettura azione associato alla PA invocata...");
 		if(this.idServizio!=null && this.idServizio.getAzione()!=null && this.pa!=null) {
+			
 			// verifico se esiste una porta applicativa piu' specifica
 			IdentificazionePortaApplicativa identificazione = new IdentificazionePortaApplicativa(this.logCore, this.protocolFactory, 
-					this.registroServiziReader, this.configurazionePdDReader,
+					this.registroServiziReader, this.configurazionePdDReader, requestInfo,
 					this.pa);
 			String action = this.idServizio.getAzione();
-			if(identificazione.find(action)) {
-				IDPortaApplicativa idPA_action = identificazione.getIDPortaApplicativa(action);
+			
+			boolean findInRequestConfig = requestInfo.getRequestConfig()!=null && requestInfo.getRequestConfig().getPortaApplicativa()!=null && requestInfo.getRequestConfig().getIdPortaApplicativa()!=null;
+			
+			if(findInRequestConfig || identificazione.find(action)) {
+				IDPortaApplicativa idPA_action = null;
+				if(findInRequestConfig) {
+					idPA_action = requestInfo.getRequestConfig().getIdPortaApplicativa();
+				}
+				else {
+					idPA_action = identificazione.getIDPortaApplicativa(action);
+				}
 				if(idPA_action!=null) {
 					
 					this.requestMessage.addContextProperty(CostantiPdD.NOME_PORTA_INVOCATA, this.pa.getNome()); // prima di aggiornare la porta applicativa
-										
-					this.pa = identificazione.getPortaApplicativa(action);
+							
+					if(findInRequestConfig) {
+						this.pa = requestInfo.getRequestConfig().getPortaApplicativa();
+					}
+					else {
+						this.pa = identificazione.getPortaApplicativa(action);
+					}
 					this.msgDiag.addKeyword(CostantiPdD.KEY_PORTA_APPLICATIVA, this.pa.getNome());
-					this.msgDiag.updatePorta(this.pa.getNome());
+					this.msgDiag.updatePorta(this.pa.getNome(), requestInfo);
 					if(this.requestMessage.getTransportRequestContext()!=null) {
 						this.requestMessage.getTransportRequestContext().setInterfaceName(this.pa.getNome());
 					}
@@ -2023,7 +2043,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 			// Aggiorno domini dei soggetti se completamente ricostruiti tramite url mapping differente da plugin based
 			if(this.soggettoFruitore!=null && this.soggettoFruitore.getTipo()!=null && this.soggettoFruitore.getNome()!=null){
 				try {
-					this.soggettoFruitore.setCodicePorta(this.registroServiziReader.getDominio(this.soggettoFruitore, nomeRegistroForSearch, this.protocolFactory));
+					this.soggettoFruitore.setCodicePorta(this.registroServiziReader.getDominio(this.soggettoFruitore, nomeRegistroForSearch, this.protocolFactory, requestInfo));
 				} catch (Exception e) {
 					//e.printStackTrace();
 				}
@@ -2047,7 +2067,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 					idSoggetto = this.idServizio.getSoggettoErogatore();
 				}
 				else {
-					idSoggetto = propertiesReader.getIdentitaPortaDefault(this.protocolFactory.getProtocol());
+					idSoggetto = propertiesReader.getIdentitaPortaDefault(this.protocolFactory.getProtocol(), requestInfo);
 				}
 				id = 
 					imbustamento.buildID(idSoggetto, 
@@ -2063,7 +2083,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 			// InfoServizio (NOTA: lasciare per ultimo)
 			if(is.isStaticBasedIdentificationMode_InfoProtocol()){
 				if(identitaServizioValida) {
-					infoServizio = this.registroServiziReader.getInfoServizio(this.soggettoFruitore, this.idServizio,nomeRegistroForSearch,true, true);
+					infoServizio = this.registroServiziReader.getInfoServizio(this.soggettoFruitore, this.idServizio,nomeRegistroForSearch,true, true, requestInfo);
 				}
 				else {
 					infoServizio = new Servizio(); // se l'id servizio non e' valido poi viene segnalato dal motore della validazione
@@ -2083,7 +2103,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 					try {
 						if(is.isStaticBasedIdentificationMode_InfoProtocol()){
 							if(identitaServizioValida) {
-								infoServizio = this.registroServiziReader.getInfoServizio(this.soggettoFruitore, this.idServizio,nomeRegistroForSearch,true, false);
+								infoServizio = this.registroServiziReader.getInfoServizio(this.soggettoFruitore, this.idServizio,nomeRegistroForSearch,true, false, requestInfo);
 							}
 						}
 					}catch(Exception eGetInfoServizio) {
@@ -2140,9 +2160,9 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 						if(this.idServizio!=null && this.idServizio.getAzione()!=null) {
 							try {
 								RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance();
-								AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(this.idServizio, null, false);
+								AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(this.idServizio, null, false, requestInfo);
 								if(asps!=null) {
-									AccordoServizioParteComune aspc = registroServiziManager.getAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), null, false);
+									AccordoServizioParteComune aspc = registroServiziManager.getAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), null, false, requestInfo);
 									if(aspc!=null && org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(aspc.getServiceBinding())) {
 										if(aspc.sizeResourceList()>0) {
 											for (Resource resource : aspc.getResourceList()) {
@@ -2296,7 +2316,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 				){
 					try{
 						String dominioTmp = this.configurazionePdDReader.getIdentificativoPorta(new IDSoggetto(erroreIntestazione.getTipoDestinatario(),
-								erroreIntestazione.getDestinatario()),this.protocolFactory);
+								erroreIntestazione.getDestinatario()),this.protocolFactory,requestInfo);
 						if(dominioTmp!=null){
 							this.identitaPdD.setCodicePorta(dominioTmp);
 							this.identitaPdD.setTipo(erroreIntestazione.getTipoDestinatario());
@@ -2311,14 +2331,14 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 				// Imposto i domini corretti, se sono stati impostati dei mittenti e tipi mittenti esistenti
 				if(erroreIntestazione.getMittente()!=null && erroreIntestazione.getTipoMittente()!=null){
 					try{
-						String dominio = this.registroServiziReader.getDominio(new IDSoggetto(erroreIntestazione.getTipoMittente(), erroreIntestazione.getMittente()), null, this.protocolFactory);
+						String dominio = this.registroServiziReader.getDominio(new IDSoggetto(erroreIntestazione.getTipoMittente(), erroreIntestazione.getMittente()), null, this.protocolFactory, requestInfo);
 						if(dominio!=null)
 							erroreIntestazione.setIdentificativoPortaMittente(dominio);
 					}catch(Exception e){}
 				}
 				if(erroreIntestazione.getDestinatario()!=null && erroreIntestazione.getTipoDestinatario()!=null){
 					try{
-						String dominio = this.registroServiziReader.getDominio(new IDSoggetto(erroreIntestazione.getTipoDestinatario(), erroreIntestazione.getDestinatario()), null, this.protocolFactory);
+						String dominio = this.registroServiziReader.getDominio(new IDSoggetto(erroreIntestazione.getTipoDestinatario(), erroreIntestazione.getDestinatario()), null, this.protocolFactory, requestInfo);
 						if(dominio!=null)
 							erroreIntestazione.setIdentificativoPortaDestinatario(dominio);
 					}catch(Exception e){}
@@ -2632,7 +2652,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 						servizioApplicativoErogatoreAsincronoSimmetricoRisposta = integrazione.getServizioApplicativo();
 						idPD = new IDPortaDelegata();
 						idPD.setNome(integrazione.getNomePorta());
-						this.pd = this.configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
+						this.pd = this.configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
 						idPD = this.configurazionePdDReader.convertToIDPortaDelegata(this.pd); // per aggiungere informazioni sugli identificativi
 						
 					}
@@ -2669,7 +2689,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 							}
 							idPD = new IDPortaDelegata();
 							idPD.setNome(integrazione.getNomePorta());
-							this.pd = this.configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
+							this.pd = this.configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
 							idPD = this.configurazionePdDReader.convertToIDPortaDelegata(this.pd); // per aggiungere informazioni sugli identificativi
 						}
 						
@@ -2686,7 +2706,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 				// Aggiungo identita servizio applicativi
 				if(this.pa!=null){
 					idPA = this.configurazionePdDReader.convertToIDPortaApplicativa(this.pa);
-					this.msgDiag.updatePorta(this.pa.getNome());
+					this.msgDiag.updatePorta(this.pa.getNome(), requestInfo);
 					for(int i=0; i<this.pa.sizeServizioApplicativoList();i++){
 						this.msgContext.getIntegrazione().addServizioApplicativoErogatore(this.pa.getServizioApplicativo(i).getNome());
 					}
@@ -2790,7 +2810,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 								identita = "Gestore delle credenziali di tipo "+RicezioneBuste.tipiGestoriCredenziali[i];
 							}
 							this.msgDiag.addKeyword(CostantiPdD.KEY_IDENTITA_GESTORE_CREDENZIALI, identita);
-							this.pddContext.addObject(CostantiPdD.KEY_IDENTITA_GESTORE_CREDENZIALI, identita);
+							this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.IDENTITA_GESTORE_CREDENZIALI, identita);
 							this.msgDiag.logPersonalizzato("gestoreCredenziali.nuoveCredenziali");
 							// update credenziali
 							this.inRequestContext.getConnettore().setCredenziali(credenzialiRitornate);
@@ -2903,10 +2923,10 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 					
 					PolicyGestioneToken policyGestioneToken = null;
 					if(this.pa!=null){
-						policyGestioneToken = this.configurazionePdDReader.getPolicyGestioneToken(this.pa);
+						policyGestioneToken = this.configurazionePdDReader.getPolicyGestioneToken(this.pa, requestInfo);
 					}
 					else {
-						policyGestioneToken = this.configurazionePdDReader.getPolicyGestioneToken(this.pd);
+						policyGestioneToken = this.configurazionePdDReader.getPolicyGestioneToken(this.pd, requestInfo);
 					}
 					
 					this.pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_REALM,
@@ -2926,6 +2946,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 					org.openspcoop2.pdd.core.token.pa.DatiInvocazionePortaApplicativa datiInvocazione = new org.openspcoop2.pdd.core.token.pa.DatiInvocazionePortaApplicativa();
 					datiInvocazione.setInfoConnettoreIngresso(this.inRequestContext.getConnettore());
 					datiInvocazione.setState(this.openspcoopstate.getStatoRichiesta());
+					datiInvocazione.setRequestInfo(requestInfo);
 					datiInvocazione.setMessage(this.requestMessage);
 					datiInvocazione.setIdPA(idPA);
 					datiInvocazione.setPa(this.pa);	
@@ -3325,23 +3346,66 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		/*
 		 * ---------------- Mittente / Autenticazione ---------------------
 		 */
+		RequestFruitore requestFruitore = null;
+		IDServizioApplicativo idSAFruitore = null;
+		ServizioApplicativo sa = null;
+		Soggetto soggettoFruitoreObject = null;
+		
 		boolean soggettoFruitoreIdentificatoTramiteProtocollo = false;
 		if(this.soggettoFruitore==null && validatore.getSoggettoMittente()!=null) {
 			soggettoFruitoreIdentificatoTramiteProtocollo = true;
 		}
 		this.soggettoFruitore = validatore.getSoggettoMittente();
-		Soggetto soggettoFruitoreObject = null;
-		if(this.soggettoFruitore!=null) {
-			try {
-				soggettoFruitoreObject = this.registroServiziReader.getSoggetto(this.soggettoFruitore, null);
-				Map<String, String> configProperties = this.registroServiziReader.getProprietaConfigurazione(soggettoFruitoreObject);
-	            if (configProperties != null && !configProperties.isEmpty()) {
-	            	this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE, configProperties);
-				}	
-			}catch(Throwable t) {}	
-		}
+	
+		// ACCEDE DUE VOLTE ALLA CACHE DEI FUITORI, QUA CO SA NULL E POI SI RIPETE CON SA VALORIZZATO SE E' ATTIVA L'AUTENTICAZIONE
+//		requestFruitore = GestoreRichieste.readFruitore(requestInfo, this.soggettoFruitore, idSAFruitore);
+//		Soggetto soggettoFruitoreObject = null;
+//		if(this.soggettoFruitore!=null) {
+//			try {
+//				soggettoFruitoreObject = this.registroServiziReader.getSoggetto(this.soggettoFruitore, null, requestInfo);
+//				Map<String, String> configProperties = this.registroServiziReader.getProprietaConfigurazione(soggettoFruitoreObject);
+//	            if (configProperties != null && !configProperties.isEmpty()) {
+//	            	this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE, configProperties);
+//				}	
+//			}catch(Throwable t) {}	
+//		}
+//		if(useRequestThreadContext && soggettoFruitoreObject!=null) {
+//			try {
+//				requestInfo.getRequestThreadContext().setSoggettoFruitoreRegistry(soggettoFruitoreObject);
+//			}catch(Throwable t) {}	
+//			try {
+//				org.openspcoop2.core.config.Soggetto soggettoConfig = this.configurazionePdDReader.getSoggetto(this.soggettoFruitore, requestInfo); 
+//				requestInfo.getRequestThreadContext().setSoggettoFruitoreConfig(soggettoConfig);
+//			}catch(Throwable t) {}	
+//			try {
+//				String idPorta = this.configurazionePdDReader.getIdentificativoPorta(this.soggettoFruitore, this.protocolFactory, requestInfo);
+//				requestInfo.getRequestThreadContext().setSoggettoFruitoreIdentificativoPorta(idPorta);
+//			}catch(Throwable t) {}	
+//			try {
+//				boolean soggettoVirtualeFRU = this.configurazionePdDReader.isSoggettoVirtuale(this.soggettoFruitore, requestInfo);
+//				requestInfo.getRequestThreadContext().setSoggettoFruitoreSoggettoVirtuale(soggettoVirtualeFRU);
+//			}catch(Throwable t) {}	
+//			try {
+//				if(requestInfo.getRequestThreadContext().getSoggettoFruitoreRegistry()!=null) {
+//					if(requestInfo.getRequestThreadContext().getSoggettoFruitoreRegistry().getPortaDominio()!=null &&
+//							StringUtils.isNotEmpty(requestInfo.getRequestThreadContext().getSoggettoFruitoreRegistry().getPortaDominio())) {
+//						PortaDominio pdd = this.registroServiziReader.getPortaDominio(requestInfo.getRequestThreadContext().getSoggettoFruitoreRegistry().getPortaDominio(), null, requestInfo);
+//						requestInfo.getRequestThreadContext().setSoggettoFruitorePddReaded(true);
+//						requestInfo.getRequestThreadContext().setSoggettoFruitorePdd(pdd);
+//					}
+//					else {
+//						requestInfo.getRequestThreadContext().setSoggettoFruitorePddReaded(true);
+//					}
+//				}
+//			}catch(Throwable t) {}	
+//			try {
+//				String impl = this.registroServiziReader.getImplementazionePdD(this.soggettoFruitore, null, requestInfo);
+//				requestInfo.getRequestConfig().setSoggettoFruitoreImplementazionePdd(impl);
+//			}catch(Throwable t) {}	
+//		}
 		boolean soggettoAutenticato = false;
 		boolean supportatoAutenticazioneSoggetti = false;
+		
 		if(this.functionAsRouter==false){
 			supportatoAutenticazioneSoggetti = this.protocolFactory.createProtocolConfiguration().isSupportoAutenticazioneSoggetti();
 			String credenzialeTrasporto = null;
@@ -3350,6 +3414,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 			org.openspcoop2.pdd.core.autenticazione.pa.DatiInvocazionePortaApplicativa datiInvocazioneAutenticazione = new org.openspcoop2.pdd.core.autenticazione.pa.DatiInvocazionePortaApplicativa();
 			datiInvocazioneAutenticazione.setInfoConnettoreIngresso(this.inRequestContext.getConnettore());
 			datiInvocazioneAutenticazione.setState(this.openspcoopstate.getStatoRichiesta());
+			datiInvocazioneAutenticazione.setRequestInfo(requestInfo);
 			datiInvocazioneAutenticazione.setIdPA(idPA);
 			datiInvocazioneAutenticazione.setPa(this.pa);	
 			datiInvocazioneAutenticazione.setIdPD(idPD);
@@ -3474,11 +3539,12 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 										this.msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE, servizioApplicativoFruitore);
 										this.msgContext.getIntegrazione().setServizioApplicativoFruitore(servizioApplicativoFruitore);
 										
-										IDServizioApplicativo idSAFruitore = new IDServizioApplicativo();
+										idSAFruitore = new IDServizioApplicativo();
 										idSAFruitore.setIdSoggettoProprietario(this.soggettoFruitore);
 										idSAFruitore.setNome(servizioApplicativoFruitore);
 										try {
-											ServizioApplicativo sa = this.configurazionePdDReader.getServizioApplicativo(idSAFruitore);
+											requestFruitore = GestoreRichieste.readFruitore(requestInfo, this.soggettoFruitore, idSAFruitore);
+											sa = this.configurazionePdDReader.getServizioApplicativo(idSAFruitore, requestInfo);
 											Map<String, String> configProperties = this.configurazionePdDReader.getProprietaConfigurazione(sa);
 								            if (configProperties != null && !configProperties.isEmpty()) {
 								            	this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO, configProperties);
@@ -3500,6 +3566,21 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 									// evito comunque di ripresentarle nei successivi diagnostici, l'informazione l'ho gia' visualizzata nei diagnostici dell'autenticazione
 									this.msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_MITTENTE_MSG, ""); // per evitare di visualizzarle anche nei successivi diagnostici
 									this.msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI, "");
+									
+									if(this.soggettoFruitore!=null && soggettoFruitoreObject==null) {
+										try {
+											if(requestFruitore==null) {
+												requestFruitore = GestoreRichieste.readFruitore(requestInfo, this.soggettoFruitore, idSAFruitore);
+											}
+										}catch(Throwable t) {
+											this.logCore.error("Errore durante la lettura del soggetto '"+this.soggettoFruitore+"' dall'oggetto request info: "+t.getMessage(),t);
+										}
+										try {
+											soggettoFruitoreObject = this.registroServiziReader.getSoggetto(this.soggettoFruitore, null, requestInfo);
+										}catch(Throwable t) {
+											this.logCore.error("Errore durante la lettura del soggetto '"+this.soggettoFruitore+"' dal registro: "+t.getMessage(),t);
+										}
+									}
 									
 									if(soggettoFruitoreIdentificatoTramiteProtocollo &&
 											this.soggettoFruitore!=null &&  this.soggettoFruitore.getNome()!=null && this.soggettoFruitore.getTipo()!=null &&
@@ -3850,12 +3931,12 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 				
 					if(credenzialeTrasporto!=null) {
 						GestoreAutenticazione.updateCredenzialiTrasporto(this.identitaPdD, ID_MODULO, this.idTransazione, tipoAutenticazione, credenzialeTrasporto, credenzialiMittente, 
-								this.openspcoopstate, "RicezioneBuste.credenzialiTrasporto");
+								this.openspcoopstate, "RicezioneBuste.credenzialiTrasporto", requestInfo);
 					}
 					
 					if(informazioniTokenNormalizzate!=null) {
 						GestoreAutenticazione.updateCredenzialiToken(this.identitaPdD, ID_MODULO, this.idTransazione, informazioniTokenNormalizzate, credenzialiMittente, 
-								this.openspcoopstate, "RicezioneBuste.credenzialiToken");
+								this.openspcoopstate, "RicezioneBuste.credenzialiToken", requestInfo);
 					}
 					
 					this.transaction.setCredenzialiMittente(credenzialiMittente);
@@ -3899,15 +3980,91 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		}
 		try {
 			this.pddContext.removeObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE);
-		}catch(Throwable t) {}	
+		}catch(Throwable t) {}
+		// Avendo commentato il pezzo prima dell'autenticazione, non dovrebbe servire neanche questo
+		//requestInfo.getRequestThreadContext().clearSoggettoFruitore();
 		if(this.soggettoFruitore!=null) {
 			try {
-				soggettoFruitoreObject = this.registroServiziReader.getSoggetto(this.soggettoFruitore, null);
-				Map<String, String> configProperties = this.registroServiziReader.getProprietaConfigurazione(soggettoFruitoreObject);
-	            if (configProperties != null && !configProperties.isEmpty()) {
-	            	this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE, configProperties);
-				}	
-			}catch(Throwable t) {}	
+				if(requestFruitore==null) {
+					requestFruitore = GestoreRichieste.readFruitore(requestInfo, this.soggettoFruitore, idSAFruitore);
+				}
+			}catch(Throwable t) {
+				this.logCore.error("Errore durante la lettura del soggetto '"+this.soggettoFruitore+"' dall'oggetto request info: "+t.getMessage(),t);
+			}
+			if(soggettoFruitoreObject==null) {
+				try {
+					soggettoFruitoreObject = this.registroServiziReader.getSoggetto(this.soggettoFruitore, null, requestInfo);
+				}catch(Throwable t) {
+					this.logCore.error("Errore durante la lettura del soggetto '"+this.soggettoFruitore+"' dal registro: "+t.getMessage(),t);
+				}
+				if(soggettoFruitoreObject!=null) {
+					try {
+						Map<String, String> configProperties = this.registroServiziReader.getProprietaConfigurazione(soggettoFruitoreObject);
+			            if (configProperties != null && !configProperties.isEmpty()) {
+			            	this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE, configProperties);
+						}	
+					}catch(Throwable t) {
+						this.logCore.error("Errore durante la lettura delle proprietà del soggetto '"+this.soggettoFruitore+"' dal registro: "+t.getMessage(),t);
+					}	
+				}
+			}
+		}
+		if(requestFruitore==null && soggettoFruitoreObject!=null) {
+			
+			RequestFruitore rf = new RequestFruitore(); 
+			
+			rf.setIdSoggettoFruitore(this.soggettoFruitore);
+			rf.setSoggettoFruitoreRegistry(soggettoFruitoreObject);	
+			try {
+				org.openspcoop2.core.config.Soggetto soggettoConfig = this.configurazionePdDReader.getSoggetto(this.soggettoFruitore, requestInfo); 
+				rf.setSoggettoFruitoreConfig(soggettoConfig);
+			}catch(Throwable t) {
+				this.logCore.error("Errore durante la lettura del soggetto '"+this.soggettoFruitore+"' dalla configurazione: "+t.getMessage(),t);
+			}	
+			try {
+				String idPorta = this.configurazionePdDReader.getIdentificativoPorta(this.soggettoFruitore, this.protocolFactory, requestInfo);
+				rf.setSoggettoFruitoreIdentificativoPorta(idPorta);
+			}catch(Throwable t) {
+				this.logCore.error("Errore durante la lettura dell'identificativo porta del soggetto '"+this.soggettoFruitore+"' dal registro: "+t.getMessage(),t);
+			}	
+			try {
+				boolean soggettoVirtualeFRU = this.configurazionePdDReader.isSoggettoVirtuale(this.soggettoFruitore, requestInfo);
+				rf.setSoggettoFruitoreSoggettoVirtuale(soggettoVirtualeFRU);
+			}catch(Throwable t) {
+				this.logCore.error("Errore durante la lettura dell'indicazione sul soggetto virtuale associato al soggetto '"+this.soggettoFruitore+"' dal registro: "+t.getMessage(),t);
+			}	
+			try {
+				if(rf!=null) {
+					if(rf.getSoggettoFruitoreRegistry().getPortaDominio()!=null &&
+							StringUtils.isNotEmpty(rf.getSoggettoFruitoreRegistry().getPortaDominio())) {
+						PortaDominio pdd = this.registroServiziReader.getPortaDominio(rf.getSoggettoFruitoreRegistry().getPortaDominio(), null, requestInfo);
+						rf.setSoggettoFruitorePddReaded(true);
+						rf.setSoggettoFruitorePdd(pdd);
+					}
+					else {
+						rf.setSoggettoFruitorePddReaded(true);
+					}
+				}
+			}catch(Throwable t) {
+				this.logCore.error("Errore durante la lettura dei dati della pdd del soggetto '"+this.soggettoFruitore+"' dal registro: "+t.getMessage(),t);
+			}	
+			try {
+				String impl = this.registroServiziReader.getImplementazionePdD(this.soggettoFruitore, null, requestInfo);
+				rf.setSoggettoFruitoreImplementazionePdd(impl);
+			}catch(Throwable t) {
+				this.logCore.error("Errore durante la lettura dell'implementazione pdd del soggetto '"+this.soggettoFruitore+"' dal registro: "+t.getMessage(),t);
+			}	
+				
+			rf.setIdServizioApplicativoFruitore(idSAFruitore);
+			rf.setServizioApplicativoFruitore(sa);
+			rf.setServizioApplicativoFruitoreAnonimo(sa==null);
+			
+			try {
+				GestoreRichieste.saveRequestFruitore(requestInfo, rf);
+			} catch (Throwable e) {
+				this.logCore.error("Errore durante il salvataggio nella cache e nel thread context delle informazioni sul fruitore: "+e.getMessage(),e);
+			}
+			
 		}
 		
 		
@@ -3947,7 +4104,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 			DirectVMProtocolInfo.setInfoFromContext(this.pddContext, this.bustaRichiesta);
 			
 		// Se non impostati, imposto i domini
-		org.openspcoop2.pdd.core.Utilities.refreshIdentificativiPorta(this.bustaRichiesta, requestInfo.getIdentitaPdD(), this.registroServiziReader, this.protocolFactory);
+		org.openspcoop2.pdd.core.Utilities.refreshIdentificativiPorta(this.bustaRichiesta, requestInfo.getIdentitaPdD(), this.registroServiziReader, this.protocolFactory, requestInfo);
 		if(this.soggettoFruitore != null){
 			if(this.soggettoFruitore.getCodicePorta()==null){
 				this.soggettoFruitore.setCodicePorta(this.bustaRichiesta.getIdentificativoPortaMittente());
@@ -4002,6 +4159,8 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		this.msgContext.getProtocol().setCollaborazione(this.bustaRichiesta.getCollaborazione());
 
 
+		
+		
 
 
 		
@@ -4139,6 +4298,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 				org.openspcoop2.pdd.core.token.attribute_authority.pa.DatiInvocazionePortaApplicativa datiInvocazione = new org.openspcoop2.pdd.core.token.attribute_authority.pa.DatiInvocazionePortaApplicativa();
 				datiInvocazione.setInfoConnettoreIngresso(this.inRequestContext.getConnettore());
 				datiInvocazione.setState(this.openspcoopstate.getStatoRichiesta());
+				datiInvocazione.setRequestInfo(requestInfo);
 				datiInvocazione.setMessage(this.requestMessage);
 				datiInvocazione.setBusta(this.bustaRichiesta);
 				datiInvocazione.setRequestInfo(requestInfo);
@@ -4156,7 +4316,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 						this.msgDiag.addKeyword(CostantiPdD.KEY_ATTRIBUTE_AUTHORITY_NAME, aa.getNome());
 						this.msgDiag.addKeyword(CostantiPdD.KEY_ATTRIBUTE_AUTHORITY_ENDPOINT, "-");
 						
-						PolicyAttributeAuthority policyAttributeAuthority = this.configurazionePdDReader.getPolicyAttributeAuthority(false, aa.getNome());
+						PolicyAttributeAuthority policyAttributeAuthority = this.configurazionePdDReader.getPolicyAttributeAuthority(false, aa.getNome(), requestInfo);
 						datiInvocazione.setPolicyAttributeAuthority(policyAttributeAuthority);
 				
 						GestoreToken.validazioneConfigurazione(policyAttributeAuthority); // assicura che la configurazione sia corretta
@@ -4264,7 +4424,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		try {
 			this.msgDiag.mediumDebug("Aggiornamento del messaggio");
 			this.requestMessage = this.protocolFactory.createProtocolManager().updateOpenSPCoop2MessageRequest(this.requestMessage, this.bustaRichiesta,
-					this.protocolFactory.getCachedRegistryReader(this.registroServiziReader));
+					this.protocolFactory.getCachedRegistryReader(this.registroServiziReader, requestInfo));
 		} catch (Exception e) {
 			// Emetto log, non ancora emesso
 			if(validatore.getBusta()!=null && 
@@ -4486,16 +4646,16 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		boolean validazioneIDBustaCompleta = true;
 		try{
 			if(this.soggettoFruitore!=null){
-				this.implementazionePdDMittente = this.registroServiziReader.getImplementazionePdD(this.soggettoFruitore, null);
+				this.implementazionePdDMittente = this.registroServiziReader.getImplementazionePdD(this.soggettoFruitore, null, requestInfo);
 			}
 			if(this.idServizio!=null && this.idServizio.getSoggettoErogatore()!=null){
-				implementazionePdDDestinatario = this.registroServiziReader.getImplementazionePdD(this.idServizio.getSoggettoErogatore(), null);
+				implementazionePdDDestinatario = this.registroServiziReader.getImplementazionePdD(this.idServizio.getSoggettoErogatore(), null, requestInfo);
 			}
 			if(this.soggettoFruitore!=null){
-				idPdDMittente = this.registroServiziReader.getIdPortaDominio(this.soggettoFruitore, null);
+				idPdDMittente = this.registroServiziReader.getIdPortaDominio(this.soggettoFruitore, null, requestInfo);
 			}
 			if(this.idServizio!=null && this.idServizio.getSoggettoErogatore()!=null){
-				idPdDDestinatario = this.registroServiziReader.getIdPortaDominio(this.idServizio.getSoggettoErogatore(), null);
+				idPdDDestinatario = this.registroServiziReader.getIdPortaDominio(this.idServizio.getSoggettoErogatore(), null, requestInfo);
 			}
 			this.parametriGenerazioneBustaErrore.setImplementazionePdDMittente(this.implementazionePdDMittente);
 			this.parametriGenerazioneBustaErrore.setImplementazionePdDDestinatario(implementazionePdDDestinatario);
@@ -5064,7 +5224,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 			/* ----------- Validazione Semantica (viene anche applicata la sicurezza) ------------ */
 			
 			this.msgDiag.logPersonalizzato("validazioneSemantica.beforeSecurity");
-			boolean presenzaRichiestaProtocollo = validatore.validazioneSemantica_beforeMessageSecurity(requestInfo.getProtocolServiceBinding(),false, null);
+			boolean presenzaRichiestaProtocollo = validatore.validazioneSemantica_beforeMessageSecurity(requestInfo.getProtocolServiceBinding(),false, null, requestInfo);
 			
 			if(validatore.isRilevatiErroriDuranteValidazioneSemantica()==false){
 				
@@ -5117,7 +5277,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 					
 						String tipoSicurezza = SecurityConstants.convertActionToString(this.messageSecurityContext.getIncomingProperties());
 						this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
-						this.pddContext.addObject(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
+						this.pddContext.addObject(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
 						
 						this.msgDiag.logPersonalizzato("messageSecurity.processamentoRichiestaInCorso");
 						
@@ -5142,7 +5302,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 				if(validatore.isRilevatiErroriDuranteValidazioneSemantica()==false){
 					
 					this.msgDiag.logPersonalizzato("validazioneSemantica.afterSecurity");
-					presenzaRichiestaProtocollo = validatore.validazioneSemantica_afterMessageSecurity(this.proprietaManifestAttachments, validazioneIDBustaCompleta);
+					presenzaRichiestaProtocollo = validatore.validazioneSemantica_afterMessageSecurity(this.proprietaManifestAttachments, validazioneIDBustaCompleta, requestInfo);
 			
 				}
 			}
@@ -5939,7 +6099,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 				IDSoggetto idSoggettoMittentePerAutorizzazione = getIDSoggettoMittentePerAutorizzazione(this.idServizio, this.soggettoFruitore, this.functionAsRouter, this.bustaRichiesta, this.ruoloBustaRicevuta, supportatoAutenticazioneSoggetti);
 				Soggetto soggettoMittentePerAutorizzazione = null;
 				if(idSoggettoMittentePerAutorizzazione!=null){
-					soggettoMittentePerAutorizzazione = this.registroServiziReader.getSoggetto(idSoggettoMittentePerAutorizzazione, null);
+					soggettoMittentePerAutorizzazione = this.registroServiziReader.getSoggetto(idSoggettoMittentePerAutorizzazione, null, requestInfo);
 				}
 
 				String tipoMessaggio = "messaggio";
@@ -5979,6 +6139,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 				datiInvocazione.setInfoConnettoreIngresso(this.inRequestContext.getConnettore());
 				datiInvocazione.setIdServizio(idServizioPerAutorizzazione);
 				datiInvocazione.setState(this.openspcoopstate.getStatoRichiesta());
+				datiInvocazione.setRequestInfo(requestInfo);
 				datiInvocazione.setCredenzialiPdDMittente(credenziali);
 				datiInvocazione.setIdentitaServizioApplicativoFruitore(identitaServizioApplicativoFruitore);
 				datiInvocazione.setSubjectServizioApplicativoFruitoreFromMessageSecurityHeader(subjectMessageSecurity);
@@ -6506,7 +6667,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 					IDSoggetto idSoggettoMittentePerAutorizzazione = getIDSoggettoMittentePerAutorizzazione(this.idServizio, this.soggettoFruitore, this.functionAsRouter, this.bustaRichiesta, this.ruoloBustaRicevuta, supportatoAutenticazioneSoggetti);
 					Soggetto soggettoMittentePerAutorizzazione = null;
 					if(idSoggettoMittentePerAutorizzazione!=null){
-						soggettoMittentePerAutorizzazione = this.registroServiziReader.getSoggetto(idSoggettoMittentePerAutorizzazione, null);
+						soggettoMittentePerAutorizzazione = this.registroServiziReader.getSoggetto(idSoggettoMittentePerAutorizzazione, null, requestInfo);
 					}
 					
 					String tipoMessaggio = "messaggio";
@@ -6546,6 +6707,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 						datiInvocazione.setInfoConnettoreIngresso(this.inRequestContext.getConnettore());
 						datiInvocazione.setIdServizio(idServizioPerAutorizzazione);
 						datiInvocazione.setState(this.openspcoopstate.getStatoRichiesta());
+						datiInvocazione.setRequestInfo(requestInfo);
 						datiInvocazione.setCredenzialiPdDMittente(credenziali);
 						datiInvocazione.setIdentitaServizioApplicativoFruitore(identitaServizioApplicativoFruitore);
 						datiInvocazione.setSubjectServizioApplicativoFruitoreFromMessageSecurityHeader(subjectMessageSecurity);
@@ -7517,9 +7679,9 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 					// aggiorno pddContext
 					this.pddContext = ricezioneBusteMSG.getPddContext();
 					if(this.pddContext!=null){
-						List<String> enumPddContext = this.pddContext.keys();
+						List<MapKey<String>> enumPddContext = this.pddContext.keys();
 						if(enumPddContext!=null && !enumPddContext.isEmpty()) {
-							for (String key : enumPddContext) {
+							for (MapKey<String> key : enumPddContext) {
 								//System.out.println("AGGIORNO KEY BUSTE ["+key+"]");
 								this.msgContext.getPddContext().addObject(key, this.pddContext.getObject(key));
 							}
@@ -7714,7 +7876,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 						tras.setTipoDestinazione(bustaRisposta.getTipoDestinatario());
 					}
 					try{
-						String dominio = this.registroServiziReader.getDominio(new IDSoggetto(tras.getTipoDestinazione(),tras.getDestinazione()), null, this.protocolFactory);
+						String dominio = this.registroServiziReader.getDominio(new IDSoggetto(tras.getTipoDestinazione(),tras.getDestinazione()), null, this.protocolFactory, this.msgContext.getRequestInfo());
 						tras.setIdentificativoPortaDestinazione(dominio);
 					}catch(Exception e){}
 					
@@ -7903,7 +8065,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 							
 							String tipoSicurezza = SecurityConstants.convertActionToString(this.messageSecurityContext.getOutgoingProperties());
 							this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
-							this.pddContext.addObject(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
+							this.pddContext.addObject(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
 							
 							this.msgDiag.logPersonalizzato("messageSecurity.processamentoRispostaInCorso");
 							
@@ -7913,7 +8075,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 								responseMessage = responseMessage.normalizeToSaajImpl();
 							}
 							
-							if(this.messageSecurityContext.processOutgoing(responseMessage,this.pddContext.getContext(),
+							if(this.messageSecurityContext.processOutgoing(responseMessage,this.pddContext,
 									this.transaction!=null ? this.transaction.getTempiElaborazione() : null) == false){
 								
 								this.msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , this.messageSecurityContext.getMsgErrore() );
@@ -8893,7 +9055,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 				if(integrazione.getNomePorta()!=null){
 					IDPortaDelegata idPD = new IDPortaDelegata();
 					idPD.setNome(integrazione.getNomePorta());
-					PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
+					PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
 					flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
 					flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
 				}
@@ -8936,7 +9098,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 						Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 						IDPortaDelegata idPD = new IDPortaDelegata();
 						idPD.setNome(integrazione.getNomePorta());
-						pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
+						pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
 					}
 					flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
 					flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
@@ -8981,7 +9143,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 						Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 						IDPortaDelegata idPD = new IDPortaDelegata();
 						idPD.setNome(integrazione.getNomePorta());
-						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
+						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
 						flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForSender(pd, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext);
 						flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForSender(pd);
 
@@ -8993,7 +9155,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 						Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 						IDPortaDelegata idPD = new IDPortaDelegata();
 						idPD.setNome(integrazione.getNomePorta());
-						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
+						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
 						flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
 						flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
 						flowProperties.tipoMessaggio = RuoloMessaggio.RISPOSTA;
@@ -9006,7 +9168,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 						Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 						IDPortaDelegata idPD = new IDPortaDelegata();
 						idPD.setNome(integrazione.getNomePorta());
-						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
+						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
 						flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
 						flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
 						flowProperties.tipoMessaggio = RuoloMessaggio.RISPOSTA;
@@ -9084,7 +9246,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 						Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 						IDPortaDelegata idPD = new IDPortaDelegata();
 						idPD.setNome(integrazione.getNomePorta());
-						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
+						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
 						flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
 						flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
 						flowProperties.tipoMessaggio = RuoloMessaggio.RISPOSTA;
@@ -9097,7 +9259,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 						Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 						IDPortaDelegata idPD = new IDPortaDelegata();
 						idPD.setNome(integrazione.getNomePorta());
-						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
+						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
 						flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
 						flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
 						flowProperties.tipoMessaggio = RuoloMessaggio.RISPOSTA;
@@ -9248,7 +9410,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 					Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 					IDPortaDelegata idPD = new IDPortaDelegata();
 					idPD.setNome(integrazione.getNomePorta());
-					PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
+					PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
 					flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForSender(pd, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext);
 					flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForSender(pd);
 

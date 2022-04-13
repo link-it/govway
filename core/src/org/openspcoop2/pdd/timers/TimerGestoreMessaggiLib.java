@@ -186,13 +186,13 @@ public class TimerGestoreMessaggiLib  {
 
 		OpenSPCoopStateful openspcoopstate = new OpenSPCoopStateful();
 		try {
-			openspcoopstate.initResource(this.propertiesReader.getIdentitaPortaDefault(null),TimerGestoreMessaggi.ID_MODULO, null);
+			openspcoopstate.initResource(this.propertiesReader.getIdentitaPortaDefaultWithoutProtocol(),TimerGestoreMessaggi.ID_MODULO, null);
 			Connection connectionDB = ((StateMessage)openspcoopstate.getStatoRichiesta()).getConnectionDB();
 
 			// filtroJMS
 			JMSReceiver receiverJMS = null;
 			if(CostantiConfigurazione.COMUNICAZIONE_INFRASTRUTTURALE_JMS.equals(this.propertiesReader.getNodeReceiver()))
-				receiverJMS = new JMSReceiver(this.propertiesReader.getIdentitaPortaDefault(null),"ForcedDeleteMessage",this.propertiesReader.singleConnection_NodeReceiver(),this.logTimer, null);
+				receiverJMS = new JMSReceiver(this.propertiesReader.getIdentitaPortaDefaultWithoutProtocol(),"ForcedDeleteMessage",this.propertiesReader.singleConnection_NodeReceiver(),this.logTimer, null);
 
 			// Messaggi da eliminare 
 			GestoreMessaggi gestoreMsgSearch = new GestoreMessaggi(openspcoopstate, true,this.logTimer,this.msgDiag, null);

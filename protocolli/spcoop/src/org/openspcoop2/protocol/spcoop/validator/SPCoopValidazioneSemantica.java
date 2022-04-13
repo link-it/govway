@@ -50,6 +50,7 @@ import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneSemantica;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazione;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneSemanticaResult;
@@ -126,6 +127,11 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 	public void valida(ProprietaValidazione tipoValidazione, RuoloBusta tipoBusta, String profiloGestione){
 
 		try{
+			RequestInfo requestInfo = null;
+			if(this.context!=null && this.context.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+				requestInfo = (RequestInfo) this.context.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+			}
+			
 			this.erroriValidazione = new java.util.ArrayList<Eccezione>();
 			this.erroriProcessamento = new java.util.ArrayList<Eccezione>();
 			//log.info("Validazione semantica...");			
@@ -149,7 +155,7 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 			String dominioMittente = null;
 			boolean mittenteSconosciuto = false;
 			try{
-				dominioMittente = this.registroServiziReader.getDominio(soggMitt,null,this.protocolFactory); //null=allRegistri 
+				dominioMittente = this.registroServiziReader.getDominio(soggMitt,null,this.protocolFactory, requestInfo); //null=allRegistri 
 				if(dominioMittente==null)
 					throw new Exception("Dominio non definito");
 				else
@@ -180,7 +186,7 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 			String dominioDestinatario = null;
 			boolean destinatarioSconosciuto = false;
 			try{
-				dominioDestinatario = this.registroServiziReader.getDominio(soggDest,null,this.protocolFactory); // null=allRegistri
+				dominioDestinatario = this.registroServiziReader.getDominio(soggDest,null,this.protocolFactory, requestInfo); // null=allRegistri
 				if(dominioDestinatario==null)
 					throw new Exception("Dominio non definito");
 				else
@@ -253,11 +259,11 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 							this.busta.getVersioneServizio());
 					idServizio.setAzione(this.busta.getAzione());
 					try{
-						this.infoServizio = this.registroServiziReader.getInfoServizio(idSoggettoFruitore,idServizio,null,false, true);//null=allRegistri
+						this.infoServizio = this.registroServiziReader.getInfoServizio(idSoggettoFruitore,idServizio,null,false, true, requestInfo);//null=allRegistri
 					}catch(DriverRegistroServiziNotFound dnot){}
 					if(this.infoServizio==null){
 						try{
-							this.infoServizio = this.registroServiziReader.getInfoServizioCorrelato(soggMitt, idServizio, null, true);//null=allRegistri
+							this.infoServizio = this.registroServiziReader.getInfoServizioCorrelato(soggMitt, idServizio, null, true, requestInfo);//null=allRegistri
 						}catch(DriverRegistroServiziNotFound dnot){}
 					}
 					if(this.infoServizio==null){
@@ -393,7 +399,7 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 				IDSoggetto soggOrig = new IDSoggetto(t.getTipoOrigine(),t.getOrigine());
 				String dominioOrig = null;
 				try{
-					dominioOrig = this.registroServiziReader.getDominio(soggOrig,null,this.protocolFactory); // null=allRegistri
+					dominioOrig = this.registroServiziReader.getDominio(soggOrig,null,this.protocolFactory, requestInfo); // null=allRegistri
 					if(dominioOrig==null)
 						throw new Exception("Dominio non definito");
 					else
@@ -419,7 +425,7 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 				IDSoggetto soggDestTr = new IDSoggetto(t.getTipoDestinazione(),t.getDestinazione());
 				String dominioDestinatarioTr = null;
 				try{
-					dominioDestinatarioTr = this.registroServiziReader.getDominio(soggDestTr,null,this.protocolFactory); // null=allRegistri
+					dominioDestinatarioTr = this.registroServiziReader.getDominio(soggDestTr,null,this.protocolFactory, requestInfo); // null=allRegistri
 					if(dominioDestinatarioTr==null)
 						throw new Exception("Dominio non definito");
 					else

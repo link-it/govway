@@ -78,10 +78,11 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.pdd.services.connector.AsyncResponseCallbackClientEvent;
 import org.openspcoop2.pdd.services.connector.IAsyncResponseCallback;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.dump.DumpException;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
@@ -103,7 +104,7 @@ import org.slf4j.Logger;
  */
 public abstract class ConnettoreBase extends AbstractCore implements IConnettore {
 
-	public final static String RESPONSE_FROM_CACHE = "RESPONSE_READED_FROM_CACHE";
+	public final static MapKey<String> RESPONSE_FROM_CACHE = org.openspcoop2.utils.Map.newMapKey("RESPONSE_READED_FROM_CACHE");
 	public final static String LOCATION_CACHED = "govway://responseCaching";
 	public final static String LOCATION_CACHED_SEPARATOR_REQUEST_URL = "\n";
 	
@@ -383,7 +384,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		boolean dumpBinario = this.debug;
 		DumpConfigurazione dumpConfigurazione = null;
 		String protocol = this.getProtocolFactory()!=null ? this.getProtocolFactory().getProtocol() : null;
-		IDSoggetto dominio = this.requestInfo!=null ? this.requestInfo.getIdentitaPdD() : this.openspcoopProperties.getIdentitaPortaDefault(protocol);
+		IDSoggetto dominio = this.requestInfo!=null ? this.requestInfo.getIdentitaPdD() : this.openspcoopProperties.getIdentitaPortaDefault(protocol, this.requestInfo);
 		String nomePorta = (this.requestInfo!=null && this.requestInfo.getProtocolContext()!=null) ? this.requestInfo.getProtocolContext().getInterfaceName() : null;
 		if(this.idModulo!=null) {
 			try {
@@ -406,7 +407,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 					this.logFileTrace = this.openspcoopProperties.isTransazioniFileTraceEnabled() && this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPAConnettoreEnabled();
 					
 					if(idPA!=null) {
-						PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA);
+						PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA, this.requestInfo);
 						if(pa!=null) {
 							this.useTimeoutInputStream = configurazionePdDManager.isConnettoriUseTimeoutInputStream(pa);
 							dumpConfigurazione = configurazionePdDManager.getDumpConfigurazione(pa);
@@ -426,7 +427,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 					this.logFileTrace = this.openspcoopProperties.isTransazioniFileTraceEnabled() && this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPDConnettoreEnabled();
 					
 					if(idPD!=null) {
-						PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD);
+						PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD, this.requestInfo);
 						if(pd!=null) {
 							this.useTimeoutInputStream = configurazionePdDManager.isConnettoriUseTimeoutInputStream(pd);
 							dumpConfigurazione = configurazionePdDManager.getDumpConfigurazione(pd);

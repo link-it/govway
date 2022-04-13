@@ -59,6 +59,7 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.crypt.CryptConfig;
@@ -77,20 +78,23 @@ public class CachedRegistryReader implements IRegistryReader {
 	private Logger log;
 	private RegistroServiziManager registroServiziManager;
 	private IProtocolFactory<?> protocolFactory;
+	private RequestInfo requestInfo;
 	/*public CachedRegistryReader(Logger log,IProtocolFactory<?> protocolFactory) throws Exception{
 		this.log = log;
 		this.protocolFactory = protocolFactory;
 		this.registroServiziManager = RegistroServiziManager.getInstance();
 	}*/
-	public CachedRegistryReader(Logger log,IProtocolFactory<?> protocolFactory, IState state) throws Exception{
+	public CachedRegistryReader(Logger log,IProtocolFactory<?> protocolFactory, IState state, RequestInfo requestInfo) throws Exception{
 		this.log = log;
 		this.protocolFactory = protocolFactory;
 		this.registroServiziManager = RegistroServiziManager.getInstance(state);
+		this.requestInfo = requestInfo;
 	}
-	public CachedRegistryReader(Logger log,IProtocolFactory<?> protocolFactory, RegistroServiziManager registroServiziManager) throws Exception{
+	public CachedRegistryReader(Logger log,IProtocolFactory<?> protocolFactory, RegistroServiziManager registroServiziManager, RequestInfo requestInfo) throws Exception{
 		this.log = log;
 		this.protocolFactory = protocolFactory;
 		this.registroServiziManager = registroServiziManager;
+		this.requestInfo = requestInfo;
 	}
 
 	
@@ -111,7 +115,7 @@ public class CachedRegistryReader implements IRegistryReader {
 	@Override
 	public PortaDominio getPortaDominio(String nome) throws RegistryNotFound,RegistryException{
 		try{
-			return this.registroServiziManager.getPortaDominio(nome, null);
+			return this.registroServiziManager.getPortaDominio(nome, null, this.requestInfo);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -180,7 +184,7 @@ public class CachedRegistryReader implements IRegistryReader {
 	@Override
 	public String getDominio(IDSoggetto idSoggetto) throws RegistryNotFound,RegistryException{
 		try{
-			return this.registroServiziManager.getDominio(idSoggetto, null, this.protocolFactory);
+			return this.registroServiziManager.getDominio(idSoggetto, null, this.protocolFactory, this.requestInfo);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -191,7 +195,7 @@ public class CachedRegistryReader implements IRegistryReader {
 	@Override
 	public Soggetto getSoggetto(IDSoggetto idSoggetto) throws RegistryNotFound,RegistryException {
 		try{
-			return this.registroServiziManager.getSoggetto(idSoggetto, null);
+			return this.registroServiziManager.getSoggetto(idSoggetto, null, this.requestInfo);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -325,7 +329,7 @@ public class CachedRegistryReader implements IRegistryReader {
 	public AccordoServizioParteComune getAccordoServizioParteComune(
 			IDAccordo idAccordo) throws RegistryNotFound,RegistryException {
 		try{
-			return this.registroServiziManager.getAccordoServizioParteComune(idAccordo, null, false);
+			return this.registroServiziManager.getAccordoServizioParteComune(idAccordo, null, false, this.requestInfo);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -337,7 +341,7 @@ public class CachedRegistryReader implements IRegistryReader {
 	public AccordoServizioParteComune getAccordoServizioParteComune(
 			IDAccordo idAccordo, boolean readAllegati) throws RegistryNotFound,RegistryException {
 		try{
-			return this.registroServiziManager.getAccordoServizioParteComune(idAccordo, null, readAllegati);
+			return this.registroServiziManager.getAccordoServizioParteComune(idAccordo, null, readAllegati, this.requestInfo);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -391,7 +395,7 @@ public class CachedRegistryReader implements IRegistryReader {
 	@Override
 	public org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper getAccordoServizioParteComuneSoap(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchema) throws RegistryNotFound,RegistryException{
 		try{
-			return this.registroServiziManager.getWsdlAccordoServizio(idService, infoWsdlSource, buildSchema);
+			return this.registroServiziManager.getWsdlAccordoServizio(idService, infoWsdlSource, buildSchema, this.requestInfo);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -402,7 +406,7 @@ public class CachedRegistryReader implements IRegistryReader {
 	@Override
 	public org.openspcoop2.core.registry.rest.AccordoServizioWrapper getAccordoServizioParteComuneRest(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchema, boolean processIncludeForOpenApi) throws RegistryNotFound,RegistryException{
 		try{
-			return this.registroServiziManager.getRestAccordoServizio(idService, infoWsdlSource, buildSchema, processIncludeForOpenApi);
+			return this.registroServiziManager.getRestAccordoServizio(idService, infoWsdlSource, buildSchema, processIncludeForOpenApi, this.requestInfo);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -428,7 +432,7 @@ public class CachedRegistryReader implements IRegistryReader {
 	@Override
 	public PortType getPortType(IDPortType id) throws RegistryNotFound,RegistryException{
 		try{
-			AccordoServizioParteComune as = this.registroServiziManager.getAccordoServizioParteComune(id.getIdAccordo(), null, false);
+			AccordoServizioParteComune as = this.registroServiziManager.getAccordoServizioParteComune(id.getIdAccordo(), null, false, this.requestInfo);
 			for (PortType pt : as.getPortTypeList()) {
 				if(pt.getNome().equals(id.getNome())){
 					return pt;
@@ -756,7 +760,7 @@ public class CachedRegistryReader implements IRegistryReader {
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(
 			IDServizio idServizio) throws RegistryNotFound,RegistryException {
 		try{
-			return this.registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false);
+			return this.registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false, this.requestInfo);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -770,7 +774,7 @@ public class CachedRegistryReader implements IRegistryReader {
 			IDServizio idServizio, boolean readAllegati)
 			throws RegistryNotFound,RegistryException {
 		try{
-			return this.registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, readAllegati);
+			return this.registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, readAllegati, this.requestInfo);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){

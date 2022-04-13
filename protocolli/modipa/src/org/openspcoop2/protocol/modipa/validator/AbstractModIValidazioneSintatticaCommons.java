@@ -43,6 +43,7 @@ import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneUtils;
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
@@ -73,7 +74,7 @@ public class AbstractModIValidazioneSintatticaCommons {
 		this.validazioneUtils = validazioneUtils;
 	}
 	
-	protected void identificazioneApplicativoMittente(X509Certificate x509, Busta busta) throws Exception {
+	protected void identificazioneApplicativoMittente(X509Certificate x509, Busta busta, RequestInfo requestInfo) throws Exception {
 		try {
 			
 			IDServizioApplicativo idServizioApplicativo = null;
@@ -123,9 +124,9 @@ public class AbstractModIValidazioneSintatticaCommons {
 						for (IDServizioApplicativo idServizioApplicativoSubjectIssuerCheck : list) {
 							// Possono esistere piu' sil che hanno un CN con subject e issuer.
 							
-							ServizioApplicativo sa = configurazionePdDManager.getServizioApplicativo(idServizioApplicativoSubjectIssuerCheck);
+							ServizioApplicativo sa = configurazionePdDManager.getServizioApplicativo(idServizioApplicativoSubjectIssuerCheck, requestInfo);
 								
-							java.security.cert.Certificate certificatoCheck = readServizioApplicativoByCertificate(sa);
+							java.security.cert.Certificate certificatoCheck = readServizioApplicativoByCertificate(sa, requestInfo);
 
 							if(certificatoCheck!=null) {
 								//if(certificate.equals(certificatoCheck.getCertificate(),true)) {
@@ -166,7 +167,7 @@ public class AbstractModIValidazioneSintatticaCommons {
 				try {
 					if(!this.context.containsKey(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE)) {
 						RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance(this.state);
-						Soggetto soggetto = registroServiziManager.getSoggetto(idSoggettoMittente, null);
+						Soggetto soggetto = registroServiziManager.getSoggetto(idSoggettoMittente, null, requestInfo);
 						Map<String, String> configProperties = registroServiziManager.getProprietaConfigurazione(soggetto);
 			            if (configProperties != null && !configProperties.isEmpty()) {
 			            	this.context.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE, configProperties);
@@ -174,7 +175,7 @@ public class AbstractModIValidazioneSintatticaCommons {
 					}
 				}catch(Throwable t) {}
 				try {
-					ServizioApplicativo sa = configurazionePdDManager.getServizioApplicativo(idServizioApplicativo);
+					ServizioApplicativo sa = configurazionePdDManager.getServizioApplicativo(idServizioApplicativo, requestInfo);
 					Map<String, String> configProperties = configurazionePdDManager.getProprietaConfigurazione(sa);
 		            if (configProperties != null && !configProperties.isEmpty()) {
 		            	this.context.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO, configProperties);
@@ -206,7 +207,7 @@ public class AbstractModIValidazioneSintatticaCommons {
 		return filtro;
 	}
 	
-	public static java.security.cert.Certificate readServizioApplicativoByCertificate(ServizioApplicativo sa) throws Exception {
+	public static java.security.cert.Certificate readServizioApplicativoByCertificate(ServizioApplicativo sa, RequestInfo requestInfo) throws Exception {
 		if(sa!=null && sa.sizeProtocolPropertyList()>0) {
 					
 			java.security.cert.Certificate certificatoCheck = null;
@@ -237,7 +238,7 @@ public class AbstractModIValidazioneSintatticaCommons {
 					else {
 						archiveType = ArchiveType.PKCS12;
 					}
-					MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keystoreBytes, archiveType.name(), 
+					MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(requestInfo, keystoreBytes, archiveType.name(), 
 							keystorePassword);
 					certificatoCheck = merlinKs.getCertificate(keyAlias);
 				}

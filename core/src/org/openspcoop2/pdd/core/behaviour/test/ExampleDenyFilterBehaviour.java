@@ -30,8 +30,8 @@ import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardTo;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToFilter;
 import org.openspcoop2.pdd.core.behaviour.IBehaviour;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 
 /**
  * ExampleDenyFilterBehaviour

@@ -97,7 +97,6 @@ import org.openspcoop2.pdd.services.error.AbstractErrorGenerator;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.builder.DettaglioEccezioneOpenSPCoop2Builder;
 import org.openspcoop2.protocol.engine.builder.Imbustamento;
 import org.openspcoop2.protocol.engine.constants.Costanti;
@@ -117,6 +116,7 @@ import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.sdk.state.StatelessMessage;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -1485,7 +1485,7 @@ public class EJBUtils {
 			if(richiestaApplicativa!=null &&
 					richiestaApplicativa.getIDServizio()!=null &&
 							richiestaApplicativa.getIDServizio().getSoggettoErogatore()!=null){	    
-				soggettoVirtuale = this.configurazionePdDReader.isSoggettoVirtuale( richiestaApplicativa.getIDServizio().getSoggettoErogatore() );
+				soggettoVirtuale = this.configurazionePdDReader.isSoggettoVirtuale( richiestaApplicativa.getIDServizio().getSoggettoErogatore(), requestInfo );
 			}
 			
 			
@@ -1768,7 +1768,7 @@ public class EJBUtils {
 							IDServizioApplicativo idSA = new IDServizioApplicativo();
 							idSA.setNome(nomeServizioApplicativo);
 							idSA.setIdSoggettoProprietario(richiestaApplicativa.getIDServizio().getSoggettoErogatore());
-							ServizioApplicativo sappl = this.configurazionePdDReader.getServizioApplicativo(idSA);
+							ServizioApplicativo sappl = this.configurazionePdDReader.getServizioApplicativo(idSA,requestInfo);
 							boolean servizioApplicativoConConnettore = this.configurazionePdDReader.invocazioneServizioConConnettore(sappl);
 							boolean getMessageAbilitato = this.configurazionePdDReader.invocazioneServizioConGetMessage(sappl);
 							if(servizioApplicativoConConnettore || (getMessageAbilitato==false)){
@@ -1796,7 +1796,8 @@ public class EJBUtils {
 						null,
 						EFFETTUA_SPEDIZIONE_CONSEGNA_CONTENUTI,!ATTENDI_ESITO_TRANSAZIONE_SINCRONA_PRIMA_DI_SPEDIRE,
 						behaviour!=null ? behaviour.getLoadBalancer() : null, false,
-						null);
+						null,
+						requestInfo);
 			}
 			else{
 				
@@ -1818,7 +1819,8 @@ public class EJBUtils {
 							null,
 							EFFETTUA_SPEDIZIONE_CONSEGNA_CONTENUTI,!ATTENDI_ESITO_TRANSAZIONE_SINCRONA_PRIMA_DI_SPEDIRE,
 							null, false,
-							null);
+							null,
+							requestInfo);
 				}
 				
 				List<BehaviourForwardTo> forwardTo = behaviour.getForwardTo();
@@ -1910,7 +1912,8 @@ public class EJBUtils {
 								behaviourForwardTo.getMessage(),
 								!EFFETTUA_SPEDIZIONE_CONSEGNA_CONTENUTI, attendiEsitoTransazioneSincronaPrimaDiSpedire,
 								null, true,
-								oraRegistrazione);
+								oraRegistrazione,
+								requestInfo);
 						
 						// Applico modifiche effettuate dal modulo Consegna
 						if (stateless && !this.propertiesReader.isServerJ2EE() ) {
@@ -1967,7 +1970,8 @@ public class EJBUtils {
 			OpenSPCoop2Message requestMessageNullable,
 			boolean spedizioneConsegnaContenuti, boolean attendiEsitoTransazioneSincronaPrimaDiSpedire,
 			BehaviourLoadBalancer loadBalancer, boolean presaInCarico,
-			Timestamp dataRegistrazioneMessaggio) throws Exception{
+			Timestamp dataRegistrazioneMessaggio,
+			RequestInfo requestInfo) throws Exception{
 		
 		// Eventuale indicazione per la registrazione via stateless
 		boolean registrazioneMessaggioPerStatelessEffettuata = false;
@@ -2078,7 +2082,7 @@ public class EJBUtils {
 			IDServizioApplicativo idSA = new IDServizioApplicativo();
 			idSA.setNome(servizioApplicativo);
 			idSA.setIdSoggettoProprietario(richiestaApplicativa.getIDServizio().getSoggettoErogatore());
-			ServizioApplicativo sappl = this.configurazionePdDReader.getServizioApplicativo(idSA);
+			ServizioApplicativo sappl = this.configurazionePdDReader.getServizioApplicativo(idSA, requestInfo);
 
 			if(!presaInCarico) {
 				// altrimenti il diagnostico deve finire nella parte "presa in carico"
@@ -2281,6 +2285,11 @@ public class EJBUtils {
 			PdDContext pddContext,
 			ConfigurazionePdDManager configurazionePdDManager) throws Exception {
 		
+		RequestInfo requestInfo = null;
+		if(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+			requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+		}
+		
 		EJBUtilsMessaggioInConsegnaEsito esito = new EJBUtilsMessaggioInConsegnaEsito();
 		
 		OpenSPCoop2Properties propertiesReader = OpenSPCoop2Properties.getInstance();
@@ -2367,7 +2376,7 @@ public class EJBUtils {
 				if(transazioneApplicativoServer!=null) {
 					
 					try {
-						GestoreConsegnaMultipla.getInstance().safeCreate(transazioneApplicativoServer, richiestaApplicativa.getIdPortaApplicativa(), state);
+						GestoreConsegnaMultipla.getInstance().safeCreate(transazioneApplicativoServer, richiestaApplicativa.getIdPortaApplicativa(), state, requestInfo);
 					}catch(Throwable t) {
 						log.error("["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
 					}

@@ -55,7 +55,7 @@ public interface IMessageSecurityReceiver {
 	 * @param busta Busta
 	 * @throws SecurityException
 	 */
-	public void process(MessageSecurityContext messageSecurityContext,OpenSPCoop2Message message,Busta busta) throws SecurityException;
+	public void process(MessageSecurityContext messageSecurityContext,OpenSPCoop2Message message,Busta busta,org.openspcoop2.utils.Map<Object> ctx) throws SecurityException;
 	
 	/**
 	 * Localizza gli elementi "toccati" dalla sicurezza

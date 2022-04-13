@@ -37,7 +37,9 @@ import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
 import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.INotify;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
@@ -101,6 +103,7 @@ public class GestoreCacheControlloTraffico {
 				throw new Exception("Cache gia' abilitata");
 			else{
 				cache = new Cache(CacheType.JCS, CONTROLLO_TRAFFICO_CACHE_NAME); // lascio JCS come default abilitato via jmx
+				cache.build();
 			}
 		}catch(Exception e){
 			throw new Exception("Abilitazione cache per i dati sul controllo del traffico non riuscita: "+e.getMessage(),e);
@@ -318,7 +321,9 @@ public class GestoreCacheControlloTraffico {
 			Date leftInterval, Date rightInterval,
 			TipoFinestra tipoFinestra, TipoPeriodoStatistico tipoPeriodo,
 			DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy, AttivazionePolicyFiltro filtro,
-    		IState state) throws Exception{
+    		IState state,
+			RequestInfo requestInfo,
+			IProtocolFactory<?> protocolFactory) throws Exception{
 						
 		// BuildKey
 		SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
@@ -345,12 +350,16 @@ public class GestoreCacheControlloTraffico {
 		if(GestoreCacheControlloTraffico.cache!=null){
 			risultato = this.readNumeroRichiesteInCache(key, tipoRisorsa, tipoFinestra, tipoPeriodo, leftInterval, rightInterval, 
 					datiTransazione, groupByPolicy, filtro,
-					state);
+					state,
+					requestInfo,
+					protocolFactory);
 		}
 		else{
 			risultato = this.datiStatisticiReader.readNumeroRichieste(key, tipoRisorsa, tipoFinestra, tipoPeriodo, leftInterval, rightInterval, 
 					datiTransazione, groupByPolicy, filtro,
-					state);
+					state,
+					requestInfo,
+					protocolFactory );
 		}
 		return risultato;
 	}
@@ -359,7 +368,9 @@ public class GestoreCacheControlloTraffico {
 			TipoRisorsa tipoRisorsa,TipoFinestra tipoFinestra,TipoPeriodoStatistico tipoPeriodo, 
 			Date leftInterval, Date rightInterval,
 			DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy, AttivazionePolicyFiltro filtro,
-    		IState state) throws Exception{
+    		IState state,
+			RequestInfo requestInfo,
+			IProtocolFactory<?> protocolFactory) throws Exception{
 
 		RisultatoStatistico obj = null;
 		try{
@@ -413,7 +424,9 @@ public class GestoreCacheControlloTraffico {
 				try{
 					obj = this.datiStatisticiReader.readNumeroRichieste(keyCache, tipoRisorsa, tipoFinestra, tipoPeriodo, leftInterval, rightInterval, 
 							datiTransazione, groupByPolicy, filtro,
-							state);
+							state,
+							requestInfo,
+							protocolFactory);
 				}catch(Exception e){
 					throw e;
 				}
@@ -459,7 +472,9 @@ public class GestoreCacheControlloTraffico {
 			TipoFinestra tipoFinestra, TipoPeriodoStatistico tipoPeriodo,
 			TipoBanda tipoBanda,
 			DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy, AttivazionePolicyFiltro filtro,
-    		IState state) throws Exception{
+    		IState state,
+			RequestInfo requestInfo,
+			IProtocolFactory<?> protocolFactory) throws Exception{
 		
 		// BuildKey
 		SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
@@ -487,12 +502,16 @@ public class GestoreCacheControlloTraffico {
 		if(GestoreCacheControlloTraffico.cache!=null){
 			risultato = this.readOccupazioneBandaInCache(key, tipoRisorsa, tipoFinestra, tipoPeriodo, leftInterval, rightInterval, tipoBanda,
 					datiTransazione, groupByPolicy, filtro,
-					state);
+					state,
+					requestInfo,
+					protocolFactory);
 		}
 		else{
 			risultato = this.datiStatisticiReader.readOccupazioneBanda(key, tipoRisorsa, tipoFinestra, tipoPeriodo, leftInterval, rightInterval, tipoBanda,
 					datiTransazione, groupByPolicy, filtro,
-					state);
+					state,
+					requestInfo,
+					protocolFactory);
 		}
 		return risultato;
 	}
@@ -502,7 +521,9 @@ public class GestoreCacheControlloTraffico {
 			Date leftInterval, Date rightInterval,
 			TipoBanda tipoBanda,
 			DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy, AttivazionePolicyFiltro filtro,
-    		IState state) throws Exception{
+    		IState state,
+			RequestInfo requestInfo,
+			IProtocolFactory<?> protocolFactory) throws Exception{
 
 		RisultatoStatistico obj = null;
 		try{
@@ -556,7 +577,9 @@ public class GestoreCacheControlloTraffico {
 				try{
 					obj = this.datiStatisticiReader.readOccupazioneBanda(keyCache, tipoRisorsa, tipoFinestra, tipoPeriodo, leftInterval, rightInterval, tipoBanda,
 							datiTransazione, groupByPolicy, filtro,
-							state);
+							state,
+							requestInfo,
+							protocolFactory);
 				}catch(Exception e){
 					throw e;
 				}
@@ -603,7 +626,9 @@ public class GestoreCacheControlloTraffico {
 			TipoFinestra tipoFinestra, TipoPeriodoStatistico tipoPeriodo,
 			TipoLatenza tipoLatenza,
 			DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy, AttivazionePolicyFiltro filtro,
-    		IState state) throws Exception{
+    		IState state,
+			RequestInfo requestInfo,
+			IProtocolFactory<?> protocolFactory) throws Exception{
 		
 		// BuildKey
 		SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
@@ -632,12 +657,16 @@ public class GestoreCacheControlloTraffico {
 		if(GestoreCacheControlloTraffico.cache!=null){
 			risultato = this.readLatenzaInCache(key, tipoRisorsa, tipoFinestra, tipoPeriodo, leftInterval, rightInterval, 
 					tipoLatenza, datiTransazione, groupByPolicy, filtro,
-					state);
+					state,
+					requestInfo,
+					protocolFactory);
 		}
 		else{
 			risultato = this.datiStatisticiReader.readLatenza(key, tipoRisorsa, tipoFinestra, tipoPeriodo, leftInterval, rightInterval, 
 					tipoLatenza, datiTransazione, groupByPolicy, filtro,
-					state);
+					state,
+					requestInfo,
+					protocolFactory);
 		}
 		return risultato;
 	}
@@ -647,7 +676,9 @@ public class GestoreCacheControlloTraffico {
 			Date leftInterval, Date rightInterval,
 			TipoLatenza tipoLatenza,
 			DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy, AttivazionePolicyFiltro filtro,
-    		IState state) throws Exception{
+    		IState state,
+			RequestInfo requestInfo,
+			IProtocolFactory<?> protocolFactory) throws Exception{
 
 		RisultatoStatistico obj = null;
 		try{
@@ -701,7 +732,9 @@ public class GestoreCacheControlloTraffico {
 				try{
 					obj = this.datiStatisticiReader.readLatenza(keyCache, tipoRisorsa, tipoFinestra, tipoPeriodo, leftInterval, rightInterval, 
 							tipoLatenza, datiTransazione, groupByPolicy, filtro,
-							state);
+							state,
+							requestInfo,
+							protocolFactory);
 				}catch(Exception e){
 					throw e;
 				}

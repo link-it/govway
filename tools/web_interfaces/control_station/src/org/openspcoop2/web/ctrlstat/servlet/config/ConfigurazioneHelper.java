@@ -161,6 +161,7 @@ import org.openspcoop2.monitor.sdk.plugins.FiltersConfiguration;
 import org.openspcoop2.monitor.sdk.plugins.GroupByConfiguration;
 import org.openspcoop2.pdd.config.ConfigurazionePdD;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.GestoreRichieste;
 import org.openspcoop2.pdd.core.connettori.ConnettoreCheck;
 import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
@@ -6344,6 +6345,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 					
 					if(params!=null && params.length>0){
+						
+						List<String> listDe = null;
+						Map<String, List<DataElement>> mapDe = null;
+						if(CostantiPdD.JMX_GESTORE_RICHIESTE.equals(cache)) {
+							listDe = new ArrayList<String>();
+							mapDe = new HashMap<String, List<DataElement>>();
+						}
+						String internalCache = null;
+						
 						for (int i = 0; i < params.length; i++) {
 							
 							try{
@@ -6355,22 +6365,59 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 									labelCorretta = label;
 									value = params[i].split(":")[1];
 									
-									if("ElementiInCache".equals(label)) {
-										labelCorretta = "Elementi in Cache";
+									if(ConfigurazioneCostanti.CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI_ELEMENTI_IN_CACHE.equals(label)) {
+										labelCorretta = ConfigurazioneCostanti.CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI_ELEMENTI_IN_CACHE_LABEL;
 									}
-									else if("MemoriaOccupata".equals(label)) {
-										labelCorretta = "Memoria Occupata";
+									else if(ConfigurazioneCostanti.CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI_MEMORIA_OCCUPATA.equals(label)) {
+										labelCorretta = ConfigurazioneCostanti.CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI_MEMORIA_OCCUPATA_LABEL;
 									}
-									else if("IdleTime".equals(label)) {
-										labelCorretta = "Idle Time";
+									else if(ConfigurazioneCostanti.CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI_IDLE_TIME.equals(label)) {
+										labelCorretta = ConfigurazioneCostanti.CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI_IDLE_TIME_LABEL;
 									}
-									else if("LifeTime".equals(label)) {
-										labelCorretta = "Life Time";
+									else if(ConfigurazioneCostanti.CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI_LIFE_TIME.equals(label)) {
+										labelCorretta = ConfigurazioneCostanti.CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI_LIFE_TIME_LABEL;
 									}
 									
 								}
 								
-								if(ConfigurazioneCostanti.CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI.contains(label)){
+								if(CostantiPdD.JMX_GESTORE_RICHIESTE.equals(cache)) {
+									if(ConfigurazioneCostanti.CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI_NOME.equals(label)) {
+										internalCache = value;
+										if(value.startsWith(GestoreRichieste.GESTORE_RICHIESTE_PREFIX_CACHE_NAME)) {
+											internalCache = value.substring(GestoreRichieste.GESTORE_RICHIESTE_PREFIX_CACHE_NAME.length());
+										}
+										listDe.add(internalCache);
+										continue;
+									}
+									else if(ConfigurazioneCostanti.CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI_ELEMENTI_IN_CACHE.equals(label)
+											||
+											ConfigurazioneCostanti.CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI_MEMORIA_OCCUPATA.equals(label)) {
+										
+										de = newDataElementStyleRuntime();
+										de.setLabel(labelCorretta);
+										if(value!=null){
+											value = StringEscapeUtils.escapeHtml(value);
+										}
+										de.setValue(value);
+										de.setType(DataElementType.TEXT);
+										de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO+"_"+i);
+										de.setSize(this.getSize());
+										
+										List<DataElement> l = mapDe.get(internalCache);
+										if(l==null) {
+											l = new ArrayList<DataElement>();
+											mapDe.put(internalCache, l);
+										}
+										
+										l.add(de);
+										
+										continue;
+									}
+								}
+								
+								if(ConfigurazioneCostanti.CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI.contains(label) && 
+										(listDe==null || listDe.size()<=1) 
+									){
 								
 									de = newDataElementStyleRuntime();
 									de.setLabel(labelCorretta);
@@ -6387,6 +6434,29 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 									
 							}catch(Exception e){
 								this.log.error("Errore durante la lettura dello stato della cache ["+cache+"]: "+e.getMessage(),e);
+							}
+						}
+						
+						if(listDe!=null && !listDe.isEmpty()) {
+							int i = 0;
+							for (String internalCacheName : listDe) {
+								
+								de = newDataElementStyleRuntime();
+								de.setLabel("");
+								de.setValue("<i>"+internalCacheName+"</i>");
+								de.setType(DataElementType.TEXT);
+								de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO+"_int_"+i);
+								de.setSize(this.getSize());
+								dati.addElement(de);
+								
+								i++;
+								
+								List<DataElement> lDe = mapDe.get(internalCacheName);
+								if(lDe!=null && !lDe.isEmpty()) {
+									for (DataElement dea : lDe) {
+										dati.addElement(dea);
+									}
+								}
 							}
 						}
 					}
@@ -16179,6 +16249,36 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						this.log.error(errorMessage,e);
 						resultReset = errorMessage;
 					}
+				}
+				
+				String risorsa = null;
+				String methodName = null;
+				String params = null;
+				try{
+					TipoPdD tipoPdD = null;
+					risorsa = this.core.getJmxPdD_configurazioneSistema_nomeRisorsaDatiRichieste(alias);
+					if(nomePorta!=null && !"".equals(nomePorta)) {
+						methodName = this.core.getJmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingAPIConfigCache(alias);
+						tipoPdD = RuoloPolicy.DELEGATA.equals(ruoloPorta)?TipoPdD.DELEGATA : TipoPdD.APPLICATIVA;
+						params = tipoPdD.getTipo() + ", " + nomePorta;
+						resultReset = this.core.getInvoker().invokeJMXMethod(alias,JMXConstants.JMX_TYPE,
+								risorsa,
+								methodName, 
+								tipoPdD.getTipo(), nomePorta);
+					}
+					else {
+						methodName = this.core.getJmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingGlobalConfigCache(alias);
+						params = "non sono previsti parametri";
+						resultReset = this.core.getInvoker().invokeJMXMethod(alias,JMXConstants.JMX_TYPE,
+								risorsa,
+								methodName);
+					}
+					this.log.debug("reset["+idAllPolicy+"] "+resultReset);
+				}catch(Exception e){
+					String errorMessage = "Errore durante l'invocazione dell'operazione ["+methodName+"] sulla risorsa ["+
+							risorsa+"] (params:"+params+"): "+e.getMessage();
+					this.log.error(errorMessage,e);
+					resultReset = errorMessage;
 				}
 				
 			}

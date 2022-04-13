@@ -61,11 +61,13 @@ import org.openspcoop2.protocol.sdk.SecurityInfo;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.sdk.tracciamento.EsitoElaborazioneMessaggioTracciato;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.protocol.sdk.tracciamento.TracciamentoException;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -99,6 +101,9 @@ public class Tracciamento {
 	
 	/** PdDContext */
 	private PdDContext pddContext;
+	
+	/** RequestInfo */
+	private RequestInfo requestInfo = null;
 	
 	/** Protocol Factory */
 	private ProtocolFactoryManager protocolFactoryManager = null;
@@ -156,7 +161,7 @@ public class Tracciamento {
 		this.idSoggettoDominio = idSoggettoDominio;
 		this.pddContext=pddContext;
 		this.tipoPdD = tipoPdD;
-		
+				
 		this.loggerTracciamento = OpenSPCoop2Logger.loggerTracciamento;
 		this.loggerTracciamentoOpenSPCoopAppender = OpenSPCoop2Logger.loggerTracciamentoOpenSPCoopAppender;
 		this.tipoTracciamentoOpenSPCoopAppender = OpenSPCoop2Logger.tipoTracciamentoOpenSPCoopAppender;
@@ -176,7 +181,11 @@ public class Tracciamento {
 			this._configurazionePdDReader = ConfigurazionePdDManager.getInstance(this.state, this.responseState);
 		}
 		
-		this.msgDiagErroreTracciamento = MsgDiagnostico.newInstance(tipoPdD,idSoggettoDominio,idFunzione,nomePorta,this._configurazionePdDReader);
+		if(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+			this.requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+		}
+		
+		this.msgDiagErroreTracciamento = MsgDiagnostico.newInstance(tipoPdD,idSoggettoDominio,idFunzione,nomePorta, this.requestInfo ,this._configurazionePdDReader);
 		this.msgDiagErroreTracciamento.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO);
 		try{
 			this.protocolFactoryManager = ProtocolFactoryManager.getInstance();
@@ -1075,12 +1084,13 @@ public class Tracciamento {
 		}
 		
 		if(this.pddContext!=null){
-			String [] key = org.openspcoop2.core.constants.Costanti.CONTEXT_OBJECT;
-			if(key!=null){
-				for (int j = 0; j < key.length; j++) {
-					Object o = this.pddContext.getObject(key[j]);
+			List<MapKey<String>> keys = org.openspcoop2.core.constants.Costanti.CONTEXT_OBJECT;
+			if(keys!=null){
+				for (int j = 0; j < keys.size(); j++) {
+					MapKey<String> mapKey = keys.get(j);
+					Object o = this.pddContext.getObject(mapKey);
 					if(o!=null && o instanceof String){
-						traccia.addProperty(key[j], (String)o);
+						traccia.addProperty(mapKey.getValue(), (String)o);
 					}
 				}
 			}

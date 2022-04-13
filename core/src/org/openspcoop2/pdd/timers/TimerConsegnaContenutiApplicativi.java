@@ -142,7 +142,7 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 
 			this.logDebug("Rilascio eventuali messaggi con lock appesi da riconsegnare verso il modulo ConsegnaContenutiApplicativi ...");
 			
-			openspcoopstateGestore.initResource(this.propertiesReader.getIdentitaPortaDefault(null),TimerConsegnaContenutiApplicativiThread.ID_MODULO, "initialize",
+			openspcoopstateGestore.initResource(this.propertiesReader.getIdentitaPortaDefaultWithoutProtocol(),TimerConsegnaContenutiApplicativiThread.ID_MODULO, "initialize",
 					OpenSPCoopStateDBManager.smistatoreMessaggiPresiInCarico);
 			Connection connectionDB = ((StateMessage)openspcoopstateGestore.getStatoRichiesta()).getConnectionDB();
 
@@ -247,7 +247,7 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 		try {
 
 			this.logDebug("Inizializzazione connessione al db per ricercare nuovi threads da attivare (limit: "+limit+") ...");
-			openspcoopstateGestore.initResource(this.propertiesReader.getIdentitaPortaDefault(null),TimerConsegnaContenutiApplicativiThread.ID_MODULO, "nextRunnable",
+			openspcoopstateGestore.initResource(this.propertiesReader.getIdentitaPortaDefaultWithoutProtocol(),TimerConsegnaContenutiApplicativiThread.ID_MODULO, "nextRunnable",
 					OpenSPCoopStateDBManager.smistatoreMessaggiPresiInCarico);
 			Connection connectionDB = ((StateMessage)openspcoopstateGestore.getStatoRichiesta()).getConnectionDB();
 

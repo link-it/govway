@@ -212,6 +212,21 @@ public class GestoreRisorseJMX extends org.openspcoop2.utils.jmx.GestoreRisorseJ
 	}
 	
 	/**
+	 * Registrazione del MBean per la gestione delle richieste
+	 * 
+	 * @throws RisorseJMXException
+	 */
+	public void registerMBeanGestioneRichieste()throws RisorseJMXException{
+		try{
+			this.registerMBean(org.openspcoop2.pdd.core.jmx.GestoreRichieste.class, CostantiPdD.JMX_GESTORE_RICHIESTE);
+		}catch(Exception e){
+			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX Gestore Richieste: "+e.getMessage(),e);
+			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX Gestore Richieste: "+e.getMessage(),e);
+		}	
+		
+	}
+	
+	/**
 	 * Registrazione del MBean per il repository dei Messaggi
 	 * 
 	 * @throws RisorseJMXException

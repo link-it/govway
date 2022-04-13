@@ -20,6 +20,8 @@
 
 package org.openspcoop2.message.constants;
 
+import org.openspcoop2.utils.Map;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**
@@ -84,12 +86,12 @@ public class Costanti {
 	public static final String DEFAULT_SOAP_FAULT_ACTOR = "http://govway.org/fault";
 	
 	/** PROBLEM */
-    public final static String ERRORE_GOVWAY = "ERRORE_GOVWAY";
+    public final static MapKey<String> ERRORE_GOVWAY = Map.newMapKey("ERRORE_GOVWAY");
     public final static String TIPO_GOVWAY = "govway";
     public final static String TIPO_RFC7807 = "rfc7807";
-    public final static String ERRORE_GOVWAY_PREFIX_CODE = "ERRORE_GOVWAY_PREFIX_CODE";
-    public final static String ERRORE_GOVWAY_CODE = "ERRORE_GOVWAY_CODE";
-    public final static String ERRORE_GOVWAY_DETAILS = "ERRORE_GOVWAY_DETAILS";
+    public final static MapKey<String> ERRORE_GOVWAY_PREFIX_CODE = Map.newMapKey("ERRORE_GOVWAY_PREFIX_CODE");
+    public final static MapKey<String> ERRORE_GOVWAY_CODE = Map.newMapKey("ERRORE_GOVWAY_CODE");
+    public final static MapKey<String> ERRORE_GOVWAY_DETAILS = Map.newMapKey("ERRORE_GOVWAY_DETAILS");
     
     /** WRITE MODE */
     public final static String WRITE_MODE_SERIALIZE_BUFFER_WITH_HEADER = "SERIALIZE-BUFFER-WITH-HEADER";

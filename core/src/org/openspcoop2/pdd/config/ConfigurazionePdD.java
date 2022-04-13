@@ -39,6 +39,7 @@ import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoDatiGestioneToken;
 import org.openspcoop2.core.config.AccessoDatiKeystore;
+import org.openspcoop2.core.config.AccessoDatiRichieste;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.Credenziali;
@@ -98,6 +99,7 @@ import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.UtilsException;
@@ -156,6 +158,7 @@ public class ConfigurazionePdD  {
 	private static AccessoDatiAutenticazione accessoDatiAutenticazione = null;
 	private static AccessoDatiGestioneToken accessoDatiGestioneToken = null;
 	private static AccessoDatiKeystore accessoDatiKeystore = null;
+	private static AccessoDatiRichieste accessoDatiRichieste = null;
 	/** ConfigurazioneDinamica */
 	private boolean configurazioneDinamica = false;
 
@@ -206,6 +209,7 @@ public class ConfigurazionePdD  {
 		else{
 			try{
 				this.cache = new Cache(CacheType.JCS, CostantiConfigurazione.CACHE_CONFIGURAZIONE_PDD); // lascio JCS come default abilitato via jmx
+				this.cache.build();
 			}catch(Exception e){
 				throw new DriverConfigurazioneException(e.getMessage(),e);
 			}
@@ -1170,6 +1174,13 @@ public class ConfigurazionePdD  {
 		try{
 			this.cache.remove(_getKey_getAccessoDatiKeystore());
 			this.getAccessoDatiKeystore(connectionPdD);
+		}
+		catch(DriverConfigurazioneNotFound notFound){}
+		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		
+		try{
+			this.cache.remove(_getKey_getAccessoDatiRichieste());
+			this.getAccessoDatiRichieste(connectionPdD);
 		}
 		catch(DriverConfigurazioneNotFound notFound){}
 		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
@@ -3744,6 +3755,57 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneNotFound("[getAccessoDatiKeystore] Configurazione di accesso ai dati di gestione keystore non trovata");
 		}
 	} 
+	
+	
+	
+	private String _getKey_getAccessoDatiRichieste(){
+		return "getAccessoDatiRichieste";
+	}
+	public AccessoDatiRichieste getAccessoDatiRichieste(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		// Se e' attiva una configurazione statica, la utilizzo.
+		if(this.configurazioneDinamica==false){
+			if(ConfigurazionePdD.accessoDatiRichieste!=null)
+				return ConfigurazionePdD.accessoDatiRichieste;
+		}
+		
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = _getKey_getAccessoDatiRichieste();
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return ((AccessoDatiRichieste) response.getObject());
+				}
+			}
+		}
+			
+		// Algoritmo CACHE
+		AccessoDatiRichieste object = null;
+		if(this.cache!=null){
+			object = (AccessoDatiRichieste) this.getObjectCache(key,"getAccessoDatiRichieste",connectionPdD,ConfigurazionePdDType.config);
+		}else{
+			object = (AccessoDatiRichieste) this.getObject("getAccessoDatiRichieste",connectionPdD,ConfigurazionePdDType.config);
+		}
+		
+		if(object!=null){
+			// Se e' attiva una configurazione statica, la utilizzo.
+			if(this.configurazioneDinamica==false){
+				ConfigurazionePdD.accessoDatiRichieste = object;
+			}
+			return object;
+		}
+		else{
+			throw new DriverConfigurazioneNotFound("[getAccessoDatiRichieste] Configurazione di accesso ai dati di gestione delle richieste non trovata");
+		}
+	} 
 
 
 
@@ -5133,11 +5195,11 @@ public class ConfigurazionePdD  {
 	
 	
 	
-	public ForwardProxy getForwardProxyConfigFruizione(IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
-		return getForwardProxyConfig(true, dominio, idServizio, policy);
+	public ForwardProxy getForwardProxyConfigFruizione(IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy, RequestInfo requestInfo) throws DriverConfigurazioneException{
+		return getForwardProxyConfig(true, dominio, idServizio, policy, requestInfo);
 	}
-	public ForwardProxy getForwardProxyConfigErogazione(IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
-		return getForwardProxyConfig(false, dominio, idServizio, policy);
+	public ForwardProxy getForwardProxyConfigErogazione(IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy, RequestInfo requestInfo) throws DriverConfigurazioneException{
+		return getForwardProxyConfig(false, dominio, idServizio, policy, requestInfo);
 	}
 	
 	protected static String PREFIX_FORWARD_PROXY = "ForwardProxy_";
@@ -5147,7 +5209,7 @@ public class ConfigurazionePdD  {
 	protected static String _toKey_ForwardProxyConfigSuffix(IDServizio idServizio) {
 		return idServizio.toString(false);
 	}
-	protected static String _toKey_ForwardProxyConfigSuffix(IDGenericProperties policy) {
+	public static String _toKey_ForwardProxyConfigSuffix(IDGenericProperties policy) {
 		return "policy_"+policy.getTipologia()+"_"+policy.getNome();
 	}
 	public static String _getKey_ForwardProxyConfig(boolean fruizione, IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy){ 
@@ -5159,7 +5221,7 @@ public class ConfigurazionePdD  {
 		}
 		return key;
 	}
-	private ForwardProxy getForwardProxyConfig(boolean fruizione, IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
+	private ForwardProxy getForwardProxyConfig(boolean fruizione, IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy, RequestInfo requestInfo) throws DriverConfigurazioneException{
 		
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
@@ -5179,9 +5241,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		ForwardProxy config = null;
 		if(this.cache!=null){
-			config = getForwardProxyConfigCache(key, fruizione, dominio, idServizio, policy);
+			config = getForwardProxyConfigCache(key, fruizione, dominio, idServizio, policy, requestInfo);
 		}else{
-			config = getForwardProxyConfigEngine(fruizione, dominio, idServizio, policy);
+			config = getForwardProxyConfigEngine(fruizione, dominio, idServizio, policy, requestInfo);
 		}
 
 		return config;
@@ -5189,7 +5251,7 @@ public class ConfigurazionePdD  {
 	} 
 	
 	private static org.openspcoop2.utils.Semaphore semaphore_getForwardProxyConfigCache = new org.openspcoop2.utils.Semaphore("ConfigurazionePdD_ForwardProxyConfig");
-	private ForwardProxy getForwardProxyConfigCache(String keyCache,boolean fruizione, IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
+	private ForwardProxy getForwardProxyConfigCache(String keyCache,boolean fruizione, IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy, RequestInfo requestInfo) throws DriverConfigurazioneException{
 
 		semaphore_getForwardProxyConfigCache.acquireThrowRuntime("getForwardProxyConfigCache");
 		ForwardProxy obj = null;
@@ -5223,7 +5285,7 @@ public class ConfigurazionePdD  {
 
 			// Effettuo le query nella mia gerarchia di registri.
 			this.log.debug("oggetto con chiave ["+keyCache+"] (methodo:"+methodName+") ricerco nella configurazione...");
-			obj = getForwardProxyConfigEngine(fruizione, dominio, idServizio, policy);
+			obj = getForwardProxyConfigEngine(fruizione, dominio, idServizio, policy, requestInfo);
 
 			// Aggiungo la risposta in cache (se esiste una cache)	
 			// Se ho una eccezione aggiungo in cache solo una not found
@@ -5253,10 +5315,10 @@ public class ConfigurazionePdD  {
 		return obj;
 	}
 	
-	private ForwardProxy getForwardProxyConfigEngine(boolean fruizione, IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
+	private ForwardProxy getForwardProxyConfigEngine(boolean fruizione, IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy, RequestInfo requestInfo) throws DriverConfigurazioneException{
 		
 		try {
-			return ForwardProxy.getProxyConfigurazione(fruizione, dominio, idServizio, policy);
+			return ForwardProxy.getProxyConfigurazione(fruizione, dominio, idServizio, policy, requestInfo);
 		}catch(Exception e){
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}

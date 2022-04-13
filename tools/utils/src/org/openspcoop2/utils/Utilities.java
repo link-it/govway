@@ -34,6 +34,7 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -1405,6 +1406,24 @@ public class Utilities {
 		while (it.hasNext()) {
 			K k = (K) it.next();
 			newMap.put(k, map.get(k));
+		}
+		return newMap;
+	}
+	
+	// ** HashMap **
+	
+	public static HashMap<String, String> convertToHashMap(Properties map) {
+		if(map==null || map.isEmpty()) {
+			return null;
+		}
+		HashMap<String, String> newMap = new HashMap<String, String>();
+		Iterator<Object> it = map.keySet().iterator();
+		while (it.hasNext()) {
+			Object k = it.next();
+			if(k instanceof String) {
+				String key = (String)k;
+				newMap.put(key, map.getProperty(key));
+			}
 		}
 		return newMap;
 	}

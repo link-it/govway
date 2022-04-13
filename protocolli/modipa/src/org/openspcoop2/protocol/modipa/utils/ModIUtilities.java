@@ -69,6 +69,8 @@ import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
@@ -244,25 +246,25 @@ public class ModIUtilities {
 	public static String getReplyToErogazione(IDSoggetto idSoggettoErogatoreServizioCorrelato, 
 			AccordoServizioParteComune aspc, String portType, String azione,
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, 
-			IProtocolFactory<?> protocolFactory, IState state) throws Exception {
+			IProtocolFactory<?> protocolFactory, IState state, RequestInfo requestInfo) throws Exception {
 		return getReplyTo(false, null, idSoggettoErogatoreServizioCorrelato, 
 				aspc, portType, azione,
 				registryReader, configIntegrationReader, 
-				protocolFactory, state);
+				protocolFactory, state, requestInfo);
 	}
 	public static String getReplyToFruizione(IDSoggetto idSoggettoFrutore, IDSoggetto idSoggettoErogatoreServizioCorrelato, 
 			AccordoServizioParteComune aspc, String portType, String azione,
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, 
-			IProtocolFactory<?> protocolFactory, IState state) throws Exception {
+			IProtocolFactory<?> protocolFactory, IState state, RequestInfo requestInfo) throws Exception {
 		return getReplyTo(true, idSoggettoFrutore, idSoggettoErogatoreServizioCorrelato, 
 				aspc, portType, azione,
 				registryReader, configIntegrationReader, 
-				protocolFactory, state);
+				protocolFactory, state, requestInfo);
 	}
 	private static String getReplyTo(boolean fruizione, IDSoggetto idSoggettoFrutore, IDSoggetto idSoggettoErogatoreServizioCorrelato, 
 			AccordoServizioParteComune aspc, String portType, String azione,
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, 
-			IProtocolFactory<?> protocolFactory, IState state) throws Exception {
+			IProtocolFactory<?> protocolFactory, IState state, RequestInfo requestInfo) throws Exception {
 		
 		String uriAPC = IDAccordoFactory.getInstance().getUriFromAccordo(aspc);
 		boolean rest = ServiceBinding.REST.equals(aspc.getServiceBinding());
@@ -354,7 +356,7 @@ public class ModIUtilities {
 		IDServizio idServizioCorrelato = lIdServizio.get(0);
 		
 		if(fruizione) {
-			List<MappingFruizionePortaDelegata> listMapping = ConfigurazionePdDManager.getInstance(state).getMappingFruizionePortaDelegataList(idSoggettoFrutore, idServizioCorrelato);
+			List<MappingFruizionePortaDelegata> listMapping = ConfigurazionePdDManager.getInstance(state).getMappingFruizionePortaDelegataList(idSoggettoFrutore, idServizioCorrelato, requestInfo);
 			if(listMapping==null) {
 				throw new RegistryNotFound("(outbound empty) Non è stata individuata alcuna fruzione da parte del soggetto "+NamingUtils.getLabelSoggetto(idSoggettoFrutore)+
 						" verso l'API "+NamingUtils.getLabelAccordoServizioParteComune(idAccordoRisposta)+
@@ -373,10 +375,11 @@ public class ModIUtilities {
 						" verso l'API "+NamingUtils.getLabelAccordoServizioParteComune(idAccordoRisposta)+
 						" erogata dal soggetto "+NamingUtils.getLabelSoggetto(idSoggettoErogatoreServizioCorrelato));
 			}
-			return getUrlInvocazione(protocolFactory, state, rest, aspc, RuoloContesto.PORTA_DELEGATA, nomePD, proprietarioPD);
+			return getUrlInvocazione(protocolFactory, state, requestInfo,
+					rest, aspc, RuoloContesto.PORTA_DELEGATA, nomePD, proprietarioPD);
 		}
 		else {
-			List<MappingErogazionePortaApplicativa> listMapping = ConfigurazionePdDManager.getInstance(state).getMappingErogazionePortaApplicativaList(idServizioCorrelato);
+			List<MappingErogazionePortaApplicativa> listMapping = ConfigurazionePdDManager.getInstance(state).getMappingErogazionePortaApplicativaList(idServizioCorrelato, requestInfo);
 			if(listMapping==null) {
 				throw new RegistryNotFound("(inbound empty) Non è stata individuata alcun'erogazione da parte del soggetto "+NamingUtils.getLabelSoggetto(idSoggettoErogatoreServizioCorrelato)+
 						" relativamente all'API "+NamingUtils.getLabelAccordoServizioParteComune(idAccordoRisposta));
@@ -393,12 +396,14 @@ public class ModIUtilities {
 				throw new RegistryNotFound("(inbound) Non è stata individuata alcun'erogazione da parte del soggetto "+NamingUtils.getLabelSoggetto(idSoggettoErogatoreServizioCorrelato)+
 						" relativamente all'API "+NamingUtils.getLabelAccordoServizioParteComune(idAccordoRisposta));
 			}
-			return getUrlInvocazione(protocolFactory, state, rest, aspc, RuoloContesto.PORTA_APPLICATIVA, nomePA, proprietarioPA);
+			return getUrlInvocazione(protocolFactory, state, requestInfo,
+					rest, aspc, RuoloContesto.PORTA_APPLICATIVA, nomePA, proprietarioPA);
 		}
 	}
 	
 	
-	public static String getUrlInvocazione(IProtocolFactory<?> protocolFactory, IState state, boolean rest, AccordoServizioParteComune aspc, RuoloContesto ruoloContesto, String nomePorta, IDSoggetto proprietarioPorta) throws Exception {
+	public static String getUrlInvocazione(IProtocolFactory<?> protocolFactory, IState state, RequestInfo requestInfo,
+			boolean rest, AccordoServizioParteComune aspc, RuoloContesto ruoloContesto, String nomePorta, IDSoggetto proprietarioPorta) throws Exception {
 		
 		List<String> tags = new ArrayList<String>();
 		if(aspc!=null && aspc.getGruppi()!=null && aspc.getGruppi().sizeGruppoList()>0) {
@@ -407,7 +412,7 @@ public class ModIUtilities {
 			}
 		}
 		
-		IConfigIntegrationReader configReader = protocolFactory.getCachedConfigIntegrationReader(state);
+		IConfigIntegrationReader configReader = protocolFactory.getCachedConfigIntegrationReader(state, requestInfo);
 		CanaliConfigurazione canaliConfigurazione = configReader.getCanaliConfigurazione();
 		String canaleApi = null;
 		if(aspc!=null) {
@@ -439,7 +444,8 @@ public class ModIUtilities {
 				rest ? org.openspcoop2.message.constants.ServiceBinding.REST : org.openspcoop2.message.constants.ServiceBinding.SOAP,
 				nomePorta,
 				proprietarioPorta,
-				tags, canale);		 
+				tags, canale, 
+				requestInfo);		 
 		String prefixGatewayUrl = urlInvocazioneApi.getBaseUrl();
 		String contesto = urlInvocazioneApi.getContext();
 		return Utilities.buildUrl(prefixGatewayUrl, contesto);
@@ -685,7 +691,7 @@ public class ModIUtilities {
 		}
 	}
 	
-	private final static String DYNAMIC_MAP_REQUEST = "MODI_DYNAMIC_MAP_REQUEST";
+	private final static MapKey<String> DYNAMIC_MAP_REQUEST = org.openspcoop2.utils.Map.newMapKey("MODI_DYNAMIC_MAP_REQUEST");
 	public static void saveDynamicMapRequest(Context context, Map<String, Object> map){
 		if(context!=null && map!=null) {
 			context.addObject(DYNAMIC_MAP_REQUEST, map);

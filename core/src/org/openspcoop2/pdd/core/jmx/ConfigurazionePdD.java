@@ -3000,7 +3000,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			IDPortaApplicativa idPA = new IDPortaApplicativa();
 			idPA.setNome(nomePorta);
-			PortaApplicativa pa = this.configReader.getPortaApplicativa(idPA);
+			PortaApplicativa pa = this.configReader.getPortaApplicativa(idPA, null); // prendo volutamente quello in cache
 			String nomeServizioApplicativo = null;
 			if(pa.sizeServizioApplicativoList()>0) {
 				for (PortaApplicativaServizioApplicativo paSA : pa.getServizioApplicativoList()) {
@@ -3017,7 +3017,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			
 			DBManager dbManager = DBManager.getInstance();
 			Resource resource = null;
-			IDSoggetto dominio = this.openspcoopProperties.getIdentitaPortaDefault(null);
+			IDSoggetto dominio = this.openspcoopProperties.getIdentitaPortaDefaultWithoutProtocol();
 			String modulo = this.getClass().getName()+".schedulingConnettoreMultiplo";
 			try {
 				resource = dbManager.getResource(dominio, modulo, null);

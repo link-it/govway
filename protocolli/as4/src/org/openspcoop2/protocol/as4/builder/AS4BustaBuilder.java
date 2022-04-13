@@ -42,6 +42,7 @@ import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 
 /**
  * Classe che implementa, in base al protocollo AS4, l'interfaccia {@link org.openspcoop2.protocol.sdk.builder.IBustaBuilder} 
@@ -75,8 +76,14 @@ public class AS4BustaBuilder extends BustaBuilder<SOAPElement> {
 		
 		if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)) {
 			AS4Imbustamento imbustamento = new AS4Imbustamento();
+			
+			RequestInfo requestInfo = null;
+			if(context!=null && context.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+				requestInfo = (RequestInfo) context.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+			}
+			
 			return imbustamento.buildASMessage(msg, busta, ruoloMessaggio, proprietaManifestAttachments, 
-					this.getProtocolFactory().getCachedRegistryReader(this.state), this.getProtocolFactory());
+					this.getProtocolFactory().getCachedRegistryReader(this.state, requestInfo), this.getProtocolFactory());
 		}
 		else {
 			/*
@@ -122,7 +129,12 @@ public class AS4BustaBuilder extends BustaBuilder<SOAPElement> {
 		
 			AS4Sbustamento sbustamento = new AS4Sbustamento();
 			
-			IRegistryReader registryReader = this.protocolFactory.getCachedRegistryReader(this.state);
+			RequestInfo requestInfo = null;
+			if(context!=null && context.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+				requestInfo = (RequestInfo) context.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+			}
+			
+			IRegistryReader registryReader = this.protocolFactory.getCachedRegistryReader(this.state, requestInfo);
 			
 			return sbustamento.buildMessage(this.state, msg, busta, ruoloMessaggio, proprietaManifestAttachments, 
 					faseSbustamento, integrationServiceBinding, serviceBindingConfiguration, 

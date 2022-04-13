@@ -51,7 +51,6 @@ import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.FiltroDuplicati;
 import org.openspcoop2.protocol.engine.driver.History;
@@ -77,6 +76,7 @@ import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.slf4j.Logger;
 
 /**
@@ -156,7 +156,7 @@ public class SbustamentoRisposte extends GenericLib {
 		TipoPdD tipoPdD = TipoPdD.DELEGATA;
 		if(msgDiag.getPorta()==null) {
 			if(richiestaDelegata!=null && richiestaDelegata.getIdPortaDelegata()!=null) {
-				msgDiag.updatePorta(tipoPdD, richiestaDelegata.getIdPortaDelegata().getNome());
+				msgDiag.updatePorta(tipoPdD, richiestaDelegata.getIdPortaDelegata().getNome(), requestInfo);
 			}
 		}
 		
@@ -284,7 +284,7 @@ public class SbustamentoRisposte extends GenericLib {
 		PortaDelegata pd = null;
 		ServizioApplicativo sa = null;
 		try{
-			pd = configurazionePdDManager.getPortaDelegata(richiestaDelegata.getIdPortaDelegata());
+			pd = configurazionePdDManager.getPortaDelegata(richiestaDelegata.getIdPortaDelegata(), requestInfo);
 		}catch(Exception e){
 			msgDiag.logErroreGenerico(e,"getPortaDelegata()");
 			openspcoopstate.releaseResource();
@@ -296,7 +296,7 @@ public class SbustamentoRisposte extends GenericLib {
 			IDServizioApplicativo idSA = new IDServizioApplicativo();
 			idSA.setNome(richiestaDelegata.getServizioApplicativo());
 			idSA.setIdSoggettoProprietario(richiestaDelegata.getIdSoggettoFruitore());
-			sa = configurazionePdDManager.getServizioApplicativo(idSA);
+			sa = configurazionePdDManager.getServizioApplicativo(idSA, requestInfo);
 		}catch(Exception e){
 			if( !(e instanceof DriverConfigurazioneNotFound) || 
 					!(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(richiestaDelegata.getServizioApplicativo())) ){
@@ -751,7 +751,7 @@ public class SbustamentoRisposte extends GenericLib {
 			msgDiag.mediumDebug("Controllo appartenenza Destinazione Busta (controllo esistenza soggetto)...");
 			boolean existsSoggetto = false;
 			try{
-				existsSoggetto = configurazionePdDManager.existsSoggetto(new IDSoggetto(bustaRisposta.getTipoDestinatario(),bustaRisposta.getDestinatario()));
+				existsSoggetto = configurazionePdDManager.existsSoggetto(new IDSoggetto(bustaRisposta.getTipoDestinatario(),bustaRisposta.getDestinatario()), requestInfo);
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e,"existsSoggetto("+bustaRisposta.getTipoDestinatario()+"/"+bustaRisposta.getDestinatario()+")");
 				if(sendRispostaApplicativa){

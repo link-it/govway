@@ -133,7 +133,6 @@ import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
 import org.openspcoop2.protocol.engine.validator.Validatore;
@@ -162,6 +161,7 @@ import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.StatelessMessage;
 import org.openspcoop2.protocol.sdk.tracciamento.EsitoElaborazioneMessaggioTracciato;
 import org.openspcoop2.protocol.sdk.validator.IValidatoreErrori;
@@ -461,6 +461,8 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 		this.pddContext = this.inoltroBusteMsg.getPddContext();
 		this.idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, this.pddContext);
 						
+		this.requestInfo = (RequestInfo) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+		
 		/* ID e tipo di implementazione PdD con cui interoperare */
 		this.idMessageRequest = this.openspcoopstate.getIDMessaggioSessione();
 		this.implementazionePdDDestinatario = this.inoltroBusteMsg.getImplementazionePdDSoggettoDestinatario();
@@ -478,7 +480,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 		
 		this.tipoPdD = TipoPdD.DELEGATA;
 		if(idPD!=null) {
-			this.msgDiag.updatePorta(this.tipoPdD, idPD.getNome());
+			this.msgDiag.updatePorta(this.tipoPdD, idPD.getNome(), this.requestInfo);
 		}
 		
 		Integrazione integrazione = new Integrazione();
@@ -560,7 +562,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 		this.msgDiag.mediumDebug("Esamina modalita' di ricezione (PdD/Router)...");
 		boolean existsSoggetto = false;
 		try{
-			existsSoggetto = this.configurazionePdDManager.existsSoggetto(new IDSoggetto(this.bustaRichiesta.getTipoMittente(),this.bustaRichiesta.getMittente()));
+			existsSoggetto = this.configurazionePdDManager.existsSoggetto(new IDSoggetto(this.bustaRichiesta.getTipoMittente(),this.bustaRichiesta.getMittente()), this.requestInfo);
 		}catch(Exception e){
 			this.msgDiag.logErroreGenerico(e, "existsSoggetto("+this.bustaRichiesta.getTipoMittente()+"/"+this.bustaRichiesta.getMittente()+")");  
 			this.openspcoopstate.releaseResource();
@@ -602,7 +604,6 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 		
 		
 		// RequestInfo
-		this.requestInfo = (RequestInfo) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		if(this.requestInfo==null || this.idTransazione==null) {
 			// devo leggerlo dal messaggio
 			try {
@@ -667,7 +668,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 		/* ----------- Lettura PortaDelegata e Servizio Applicativo ------------- */
 		if(this.functionAsRouter==false){
 			try{
-				this.pd = this.configurazionePdDManager.getPortaDelegata(this.richiestaDelegata.getIdPortaDelegata());
+				this.pd = this.configurazionePdDManager.getPortaDelegata(this.richiestaDelegata.getIdPortaDelegata(), this.requestInfo);
 			}catch(Exception e){
 				this.msgDiag.logErroreGenerico(e,"getPortaDelegata()");
 				this.openspcoopstate.releaseResource();
@@ -679,7 +680,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 				IDServizioApplicativo idSA = new IDServizioApplicativo();
 				idSA.setNome(this.richiestaDelegata.getServizioApplicativo());
 				idSA.setIdSoggettoProprietario(this.richiestaDelegata.getIdSoggettoFruitore());
-				this.sa = this.configurazionePdDManager.getServizioApplicativo(idSA);
+				this.sa = this.configurazionePdDManager.getServizioApplicativo(idSA, this.requestInfo);
 			}catch(Exception e){
 				if( !(e instanceof DriverConfigurazioneNotFound) || 
 						!(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(this.richiestaDelegata.getServizioApplicativo())) ){
@@ -1004,9 +1005,9 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 		this.idServizio = this.richiestaDelegata.getIdServizio();
 		this.idAccordoServizio = this.richiestaDelegata.getIdAccordo();
 		ForwardProxy forwardProxy = null;
-		if(this.functionAsRouter==false && this.configurazionePdDManager.isForwardProxyEnabled()) {
+		if(this.functionAsRouter==false && this.configurazionePdDManager.isForwardProxyEnabled(this.requestInfo)) {
 			try {
-				forwardProxy = this.configurazionePdDManager.getForwardProxyConfigFruizione(this.identitaPdD, this.idServizio, null);
+				forwardProxy = this.configurazionePdDManager.getForwardProxyConfigFruizione(this.identitaPdD, this.idServizio, null, this.requestInfo);
 			}catch(Exception e) {
 				this.msgDiag.logErroreGenerico(e, "Configurazione del connettore errata per la funzionalità govway-proxy"); 
 				this.openspcoopstate.releaseResource();
@@ -1083,7 +1084,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 					if(pm.isStaticRoute()) {
 						org.openspcoop2.core.registry.Connettore connettoreProtocol = 
 								pm.getStaticRoute(this.soggettoFruitore,this.idServizio,
-										this.protocolFactory.getCachedRegistryReader(this.registroServiziManager));
+										this.protocolFactory.getCachedRegistryReader(this.registroServiziManager, this.requestInfo));
 						if(connettoreProtocol!=null) {
 							connettore = connettoreProtocol.mappingIntoConnettoreConfigurazione();
 						}
@@ -1095,7 +1096,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 			}
 			if(connettore==null && eForwardRoute==null){ // in pratica se non e' stato trovato un connettore via protocol
 				try{
-					connettore = this.configurazionePdDManager.getForwardRoute(this.soggettoFruitore,this.idServizio,this.functionAsRouter);
+					connettore = this.configurazionePdDManager.getForwardRoute(this.soggettoFruitore,this.idServizio,this.functionAsRouter, this.requestInfo);
 				}catch(Exception e){
 					eForwardRoute = e;
 					erroreRicercaConnettore = e.getMessage();
@@ -1103,7 +1104,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 				if(this.functionAsRouter){
 					if(connettore==null){
 						try{
-							connettore = this.configurazionePdDManager.getForwardRoute(this.idServizio.getSoggettoErogatore(),this.functionAsRouter);
+							connettore = this.configurazionePdDManager.getForwardRoute(this.idServizio.getSoggettoErogatore(),this.functionAsRouter, this.requestInfo);
 						}catch(Exception e){
 							eForwardRoute = e;
 							erroreRicercaConnettore = erroreRicercaConnettore+ "\nRicerca in base al solo soggetto destinatario:\n"+ e.getMessage();
@@ -1198,7 +1199,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 				tras.setDestinazione(destTrasm.getNome());
 				tras.setTipoDestinazione(destTrasm.getTipo());
 				try{
-					String dominio = this.registroServiziManager.getDominio(destTrasm, null, this.protocolFactory);
+					String dominio = this.registroServiziManager.getDominio(destTrasm, null, this.protocolFactory, this.requestInfo);
 					tras.setIdentificativoPortaDestinazione(dominio);
 				}catch(Exception e){}
 				
@@ -1735,15 +1736,15 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 						contextParameters.setRemoveAllWsuIdRef(this.propertiesReader.isRemoveAllWsuIdRef());
 						contextParameters.setIdFruitore(this.soggettoFruitore);
 						contextParameters.setIdServizio(this.idServizio);
-						contextParameters.setPddFruitore(this.registroServiziManager.getIdPortaDominio(this.soggettoFruitore, null));
-						contextParameters.setPddErogatore(this.registroServiziManager.getIdPortaDominio(this.idServizio.getSoggettoErogatore(), null));
+						contextParameters.setPddFruitore(this.registroServiziManager.getIdPortaDominio(this.soggettoFruitore, null, this.requestInfo));
+						contextParameters.setPddErogatore(this.registroServiziManager.getIdPortaDominio(this.idServizio.getSoggettoErogatore(), null, this.requestInfo));
 						
 						this.messageSecurityContext = this.messageSecurityFactory.getMessageSecurityContext(contextParameters);
 						this.messageSecurityContext.setOutgoingProperties(this.messageSecurityConfig.getFlowParameters());
 						
 						String tipoSicurezza = SecurityConstants.convertActionToString(this.messageSecurityContext.getOutgoingProperties());
 						this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
-						this.pddContext.addObject(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
+						this.pddContext.addObject(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
 						
 						this.msgDiag.mediumDebug("Inizializzazione contesto di Message Security della richiesta completata con successo");
 						
@@ -1754,7 +1755,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 						}
 						
 						this.msgDiag.logPersonalizzato("messageSecurity.processamentoRichiestaInCorso");
-						if(this.messageSecurityContext.processOutgoing(this.requestMessageTrasformato,this.pddContext.getContext(),
+						if(this.messageSecurityContext.processOutgoing(this.requestMessageTrasformato,this.pddContext,
 								this.transactionNullable!=null ? this.transactionNullable.getTempiElaborazione() : null) == false){
 							msgErrore = this.messageSecurityContext.getMsgErrore();
 							codiceErroreCooperazione = this.messageSecurityContext.getCodiceErrore();
@@ -2003,7 +2004,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 			this.connettoreMsg.setProtocolFactory(this.protocolFactory);
 			this.connettoreMsg.setPropertiesTrasporto(propertiesTrasporto);
 			this.connettoreMsg.setPropertiesUrlBased(propertiesUrlBased);
-			this.connettoreMsg.initPolicyGestioneToken(this.configurazionePdDManager);
+			this.connettoreMsg.initPolicyGestioneToken(this.configurazionePdDManager, this.requestInfo);
 			this.connettoreMsg.setForwardProxy(forwardProxy);
 			this.connettoreMsg.setIdAccordo(this.idAccordoServizio);
 			if(this.requestMessagePrimaTrasformazione!=null && this.requestMessagePrimaTrasformazione.getTransportRequestContext()!=null) {
@@ -2749,7 +2750,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 				this.responseMessage = this.protocolFactory.createProtocolManager().updateOpenSPCoop2MessageResponse(this.responseMessage, 
 						this.bustaRichiesta, nParams,
 						this.requestMessagePrimaTrasformazione.getTransportRequestContext(),this.transportResponseContext,
-						this.protocolFactory.getCachedRegistryReader(this.registroServiziManager),
+						this.protocolFactory.getCachedRegistryReader(this.registroServiziManager, this.requestInfo),
 						false);
 			} catch (Exception e) {
 				
@@ -3224,8 +3225,8 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 								contextParameters.setRemoveAllWsuIdRef(this.propertiesReader.isRemoveAllWsuIdRef());
 								contextParameters.setIdFruitore(this.soggettoFruitore);
 								contextParameters.setIdServizio(this.idServizio);
-								contextParameters.setPddFruitore(this.registroServiziManager.getIdPortaDominio(this.soggettoFruitore, null));
-								contextParameters.setPddErogatore(this.registroServiziManager.getIdPortaDominio(this.idServizio.getSoggettoErogatore(), null));
+								contextParameters.setPddFruitore(this.registroServiziManager.getIdPortaDominio(this.soggettoFruitore, null, this.requestInfo));
+								contextParameters.setPddErogatore(this.registroServiziManager.getIdPortaDominio(this.idServizio.getSoggettoErogatore(), null, this.requestInfo));
 								this.messageSecurityContext = new MessageSecurityFactory().getMessageSecurityContext(contextParameters);
 							}
 							this.messageSecurityContext.setIncomingProperties(this.messageSecurityConfig.getFlowParameters());  
@@ -3233,7 +3234,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 							
 							String tipoSicurezza = SecurityConstants.convertActionToString(this.messageSecurityContext.getIncomingProperties());
 							this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
-							this.pddContext.addObject(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
+							this.pddContext.addObject(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
 							
 							this.msgDiag.mediumDebug("Inizializzazione contesto di Message Security della richiesta completata con successo");
 							
@@ -3328,7 +3329,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 					/* *** ValidazioneSemantica (e applicazione sicurezza del messaggio) *** */
 					
 					this.msgDiag.logPersonalizzato("validazioneSemantica.beforeSecurity");
-					presenzaRispostaProtocollo = this.validatore.validazioneSemantica_beforeMessageSecurity(this.requestInfo.getProtocolServiceBinding(),true, this.profiloGestione);
+					presenzaRispostaProtocollo = this.validatore.validazioneSemantica_beforeMessageSecurity(this.requestInfo.getProtocolServiceBinding(),true, this.profiloGestione, this.requestInfo);
 					
 					if(this.validatore.isRilevatiErroriDuranteValidazioneSemantica()==false){
 						
@@ -3353,7 +3354,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 						if(this.validatore.isRilevatiErroriDuranteValidazioneSemantica()==false){
 							
 							this.msgDiag.logPersonalizzato("validazioneSemantica.afterSecurity");
-							presenzaRispostaProtocollo = this.validatore.validazioneSemantica_afterMessageSecurity(this.proprietaManifestAttachments, this.validazioneIDBustaCompleta);
+							presenzaRispostaProtocollo = this.validatore.validazioneSemantica_afterMessageSecurity(this.proprietaManifestAttachments, this.validazioneIDBustaCompleta, this.requestInfo);
 					
 						}
 					}
@@ -4099,7 +4100,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 				}
 
 				// Se non impostati, imposto i domini
-				org.openspcoop2.pdd.core.Utilities.refreshIdentificativiPorta(bustaRisposta, this.requestInfo.getIdentitaPdD(), this.registroServiziManager, this.protocolFactory);
+				org.openspcoop2.pdd.core.Utilities.refreshIdentificativiPorta(bustaRisposta, this.requestInfo.getIdentitaPdD(), this.registroServiziManager, this.protocolFactory, this.requestInfo);
 
 				// aggiunto dal protocollo
 				if(this.richiestaDelegata!=null && this.richiestaDelegata.getIdCollaborazione()==null && bustaRisposta.getCollaborazione()!=null) {
