@@ -17,23 +17,12 @@
 
 		<jar.group.name>lucene</jar.group.name>
 		
-		<lucene.version>8.8.2</lucene.version>
+		<lucene.version>9.1.0</lucene.version>
 
 	</properties>
 
 	<dependencies>
 	
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-analyzers-common</artifactId>
-			<version>${lucene.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-codecs</artifactId>
