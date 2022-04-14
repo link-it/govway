@@ -149,9 +149,9 @@
 				<include name="${commons_logging_jar}"/>
 			</lib>
 			<lib dir="${required_lib}/security">
-				<include name="bcpkix-jdk15on-1.69.jar"/>
-				<include name="bcprov-ext-jdk15on-1.69.jar"/>
-				<include name="bcutil-jdk15on-1.69.jar"/>
+				<include name="bcpkix-jdk18on-1.71.jar"/>
+				<include name="bcprov-ext-jdk18on-1.71.jar"/>
+				<include name="bcutil-jdk18on-1.71.jar"/>
 			</lib>
 			<lib dir="${required_lib}/saaj">
 				<include name="*.jar"/>

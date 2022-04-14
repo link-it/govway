@@ -17,16 +17,16 @@
 
 		<jar.group.name>security</jar.group.name>
 		
-		<bcpkix-jdk15on.version>1.69</bcpkix-jdk15on.version>
-		<bcprov-ext-jdk15on.version>1.69</bcprov-ext-jdk15on.version>
-		<bcutil-jdk15on.version>1.69</bcutil-jdk15on.version>
+		<bcpkix-jdk18on.version>1.71</bcpkix-jdk18on.version>
+		<bcprov-ext-jdk18on.version>1.71</bcprov-ext-jdk18on.version>
+		<bcutil-jdk18on.version>1.71</bcutil-jdk18on.version>
 		<cryptacular.version>1.2.4</cryptacular.version>
 		<herasaf-xacml-core.version>1.0.4.RELEASE</herasaf-xacml-core.version>
 		<jasypt.version>1.9.3</jasypt.version>
-		<neethi.version>3.1.1</neethi.version>
-		<xmlsec.version>2.2.2</xmlsec.version>
+		<neethi.version>3.2.0</neethi.version>
+		<xmlsec.version>2.3.0</xmlsec.version>
 		<xml-security-impl.version>1.0</xml-security-impl.version>
-		<nimbus-jose.version>9.10.1</nimbus-jose.version>
+		<nimbus-jose.version>9.21</nimbus-jose.version>
 
 	</properties>
 
@@ -34,8 +34,8 @@
 
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcpkix-jdk15on</artifactId>
-			<version>${bcpkix-jdk15on.version}</version>
+			<artifactId>bcpkix-jdk18on</artifactId>
+			<version>${bcpkix-jdk18on.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
@@ -46,8 +46,8 @@
 
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcprov-ext-jdk15on</artifactId>
-			<version>${bcprov-ext-jdk15on.version}</version>
+			<artifactId>bcprov-ext-jdk18on</artifactId>
+			<version>${bcprov-ext-jdk18on.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
@@ -58,8 +58,8 @@
 
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcutil-jdk15on</artifactId>
-			<version>${bcutil-jdk15on.version}</version>
+			<artifactId>bcutil-jdk18on</artifactId>
+			<version>${bcutil-jdk18on.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

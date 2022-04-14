@@ -125,10 +125,10 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/security" >
-			<include name="bcpkix-jdk15on-1.69.jar"/>
-			<include name="bcprov-ext-jdk15on-1.69.jar"/>
-			<include name="bcutil-jdk15on-1.69.jar"/>
-			<include name="neethi-3.1.1.jar"/>
+			<include name="bcpkix-jdk18on-1.71.jar"/>
+			<include name="bcprov-ext-jdk18on-1.71.jar"/>
+			<include name="bcutil-jdk18on-1.71.jar"/>
+			<include name="neethi-3.2.0.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/shared" >
 			<!-- Devono essere esclusi i jar di saxon, altrimenti non partono i server mtom:

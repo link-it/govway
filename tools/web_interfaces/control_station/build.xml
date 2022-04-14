@@ -125,7 +125,7 @@
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
-			<var name="neethi_jar" value="neethi-3.1.1.jar"/>
+			<var name="neethi_jar" value="neethi-3.2.0.jar"/>
 		</then>
 	</if>
 	<!-- geronimo_jaxws_spec -->

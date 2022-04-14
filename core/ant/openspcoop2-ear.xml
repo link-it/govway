@@ -18,9 +18,9 @@
 	<target name="build_manifest" description="Crea il Manifest di OpenSPCoop2">
 		
 		<var name="tmp_prefix" value="lib" />
-		<var name="tmp" value="${tmp_prefix}/bcprov-ext-jdk15on-1.69.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/bcpkix-jdk15on-1.69.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/bcutil-jdk15on-1.69.jar"/>
+		<var name="tmp" value="${tmp_prefix}/bcprov-ext-jdk18on-1.71.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/bcpkix-jdk18on-1.71.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/bcutil-jdk18on-1.71.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-codec-1.15.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections-3.2.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections4-4.4.jar"/>
@@ -37,7 +37,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-xjc-2.3.6.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxws-api-2.3.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-jcs3-core-3.0-gov4j-1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/neethi-3.1.1.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/neethi-3.2.0.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-core-3.4.6.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-messaging-api-3.4.6.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-messaging-impl-3.4.6.jar"/>
@@ -75,7 +75,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xalan-2.7.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xml-resolver-1.2.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlschema-core-2.3.0.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlsec-2.2.2.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlsec-2.3.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cryptacular-1.2.4.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jasypt-1.9.3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wsdl4j-1.6.3.jar"/>
@@ -819,11 +819,11 @@
 				<include name="commons-compress-1.21.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/security">
-				<include name="bcprov-ext-jdk15on-1.69.jar"/>
-				<include name="bcpkix-jdk15on-1.69.jar"/>
-				<include name="bcutil-jdk15on-1.69.jar"/>
-				<include name="neethi-3.1.1.jar"/>
-				<include name="xmlsec-2.2.2.jar"/>
+				<include name="bcprov-ext-jdk18on-1.71.jar"/>
+				<include name="bcpkix-jdk18on-1.71.jar"/>
+				<include name="bcutil-jdk18on-1.71.jar"/>
+				<include name="neethi-3.2.0.jar"/>
+				<include name="xmlsec-2.3.0.jar"/>
 				<include name="cryptacular-1.2.4.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
 				<include name="herasaf-xacml-core-1.0.4.RELEASE.jar"/>

@@ -219,11 +219,11 @@
 				<include name="${el-api-1.0.jar}"/>
 			</lib>
 			<lib dir="${required_lib}/security">
-				<include name="xmlsec-2.2.2.jar"/>
-				<include name="neethi-3.1.1.jar" />
-				<include name="bcpkix-jdk15on-1.69.jar"/>
-				<include name="bcprov-ext-jdk15on-1.69.jar"/>
-				<include name="bcutil-jdk15on-1.69.jar"/>
+				<include name="xmlsec-2.3.0.jar"/>
+				<include name="neethi-3.2.0.jar" />
+				<include name="bcpkix-jdk18on-1.71.jar"/>
+				<include name="bcprov-ext-jdk18on-1.71.jar"/>
+				<include name="bcutil-jdk18on-1.71.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
 			</lib>
 			<lib dir="${required_lib}/json">
