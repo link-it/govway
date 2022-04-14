@@ -64,9 +64,9 @@
 
 						<if>
 							<or>
-								<equals arg1="${fileNameWithoutTXT}" arg2="jaxb-impl-2.3.4.jar" />
+								<equals arg1="${fileNameWithoutTXT}" arg2="jaxb-impl-2.3.6.jar" />
 								<equals arg1="${fileNameWithoutTXT}" arg2="jaxb-core-2.3.0.1.jar" />
-								<equals arg1="${fileNameWithoutTXT}" arg2="jaxb-xjc-2.3.4.jar" />
+								<equals arg1="${fileNameWithoutTXT}" arg2="jaxb-xjc-2.3.6.jar" />
 								<equals arg1="${fileNameWithoutTXT}" arg2="xalan-2.7.2.jar" />
 								<equals arg1="${fileNameWithoutTXT}" arg2="serializer-2.7.2.jar" />
 								<!-- NOTA: i files aggiunti in questo if devono essere gestiti nel task '-correctManifest' del file distrib-build.xml -->

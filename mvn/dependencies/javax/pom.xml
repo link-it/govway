@@ -30,7 +30,7 @@
 		<javax.el.version>1.0</javax.el.version>
 		<javax.annotation.version>1.3.2</javax.annotation.version>
 		<javax.validation.version>2.0.1.Final</javax.validation.version>
-		<javax.rmi-corba.version>8.1.5.Final</javax.rmi-corba.version>
+		<javax.rmi-corba.version>8.1.9.Final</javax.rmi-corba.version>
 
 	</properties>
 

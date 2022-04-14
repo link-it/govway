@@ -105,13 +105,13 @@
         <archive path="/op2_3.4.dev/lib/javax/ejb-api-3.0.jar"/>
         <archive path="/op2_3.4.dev/lib/javax/persistence-api-1.0.2.jar"/>
 	<archive path="/op2_3.4.dev/lib/javax/validation-api-2.0.1.Final.jar"/>
-	<archive path="/op2_3.4.dev/lib/javax/openjdk-orb-8.1.5.Final.jar"/>
+	<archive path="/op2_3.4.dev/lib/javax/openjdk-orb-8.1.9.Final.jar"/>
 	<!-- jax -->
 	<archive path="/op2_3.4.dev/lib/jax/jaxws-api-2.3.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/jax/jaxws-jsr181-api-2.3.1.jar"/>
         <archive path="/op2_3.4.dev/lib/jax/jaxp-ri-1.4.5-gov4j-1.jar"/>
-        <archive path="/op2_3.4.dev/lib/jax/jaxb-xjc-2.3.4.jar"/>
-        <archive path="/op2_3.4.dev/lib/jax/jaxb-impl-2.3.4.jar"/>
+        <archive path="/op2_3.4.dev/lib/jax/jaxb-xjc-2.3.6.jar"/>
+        <archive path="/op2_3.4.dev/lib/jax/jaxb-impl-2.3.6.jar"/>
         <archive path="/op2_3.4.dev/lib/jax/jaxb-api-2.3.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/jax/jaxb-core-2.3.0.1.jar"/>
 	<!-- jetty-client -->

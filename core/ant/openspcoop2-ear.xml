@@ -33,8 +33,8 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-ws-security-3.5.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-api-2.3.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-core-2.3.0.1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-impl-2.3.4.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-xjc-2.3.4.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-impl-2.3.6.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-xjc-2.3.6.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxws-api-2.3.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-jcs3-core-3.0-gov4j-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/neethi-3.1.1.jar"/>	
@@ -604,7 +604,7 @@
 				<equals arg1="${as}" arg2="jboss6"/>
 			</or>
 			<then>
-				<var name="jaxb_xjc_jar" value="jaxb-xjc-2.3.4.jar"/>
+				<var name="jaxb_xjc_jar" value="jaxb-xjc-2.3.6.jar"/>
 			</then>
 		</if>
 		<!-- jaxp_ri -->
