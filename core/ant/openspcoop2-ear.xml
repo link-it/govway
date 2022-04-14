@@ -826,7 +826,7 @@
 				<include name="xmlsec-2.3.0.jar"/>
 				<include name="cryptacular-1.2.4.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
-				<include name="herasaf-xacml-core-1.0.4.RELEASE.jar"/>
+				<include name="herasaf-xacml-core-2.0.4.jar"/>
 				<include name="${com_sun_xml_security_jar}"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/wss4j">

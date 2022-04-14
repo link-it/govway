@@ -21,7 +21,7 @@
 		<bcprov-ext-jdk18on.version>1.71</bcprov-ext-jdk18on.version>
 		<bcutil-jdk18on.version>1.71</bcutil-jdk18on.version>
 		<cryptacular.version>1.2.4</cryptacular.version>
-		<herasaf-xacml-core.version>1.0.4.RELEASE</herasaf-xacml-core.version>
+		<herasaf-xacml-core.version>2.0.4</herasaf-xacml-core.version>
 		<jasypt.version>1.9.3</jasypt.version>
 		<neethi.version>3.2.0</neethi.version>
 		<xmlsec.version>2.3.0</xmlsec.version>

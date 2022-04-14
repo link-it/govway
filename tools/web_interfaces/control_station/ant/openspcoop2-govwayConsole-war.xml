@@ -405,7 +405,7 @@
 				<include name="xmlsec-2.3.0.jar"/>
 				<include name="${neethi_jar}" />
 				<include name="${govwayConsoleRemota_security_neethi}"/>
-				<include name="herasaf-xacml-core-1.0.4.RELEASE.jar"/>
+				<include name="herasaf-xacml-core-2.0.4.jar"/>
 				<include name="bcpkix-jdk18on-1.71.jar"/>
 				<include name="bcprov-ext-jdk18on-1.71.jar"/>
 				<include name="bcutil-jdk18on-1.71.jar"/>
