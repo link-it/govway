@@ -17,12 +17,12 @@
 
 		<jar.group.name>jetty-client</jar.group.name>
 		
-		<jetty.version>11.0.7</jetty.version>
+		<jetty.version>11.0.9</jetty.version>
 
 	</properties>
 
 	<dependencies>
-
+	
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-http</artifactId>
