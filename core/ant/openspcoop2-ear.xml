@@ -61,16 +61,16 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/saaj-impl-1.5.3-gov4j-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/stax-ex-1.8.3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/mimepull-1.9.14.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aop-5.3.8.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aspects-5.3.8.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-beans-5.3.8.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-context-5.3.8.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-context-support-5.3.8.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-core-5.3.8.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-expression-5.3.8.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-tx-5.3.8.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-web-5.3.8.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-security-core-5.5.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aop-5.3.19.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aspects-5.3.19.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-beans-5.3.19.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-context-5.3.19.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-context-support-5.3.19.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-core-5.3.19.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-expression-5.3.19.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-tx-5.3.19.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-web-5.3.19.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-security-core-5.6.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/uddi4j-2.0.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xalan-2.7.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xml-resolver-1.2.jar"/>	
