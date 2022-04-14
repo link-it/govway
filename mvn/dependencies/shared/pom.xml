@@ -44,7 +44,7 @@
 		<xalan.version>2.7.2</xalan.version>
 		<xercesImpl.version>2.12.2</xercesImpl.version>
 		<xml-apis.version>1.4.01</xml-apis.version>
-		<xmlunit.version>1.6</xmlunit.version>
+		<xmlunit.version>2.9.0</xmlunit.version>
 		<xom.version>1.2.11</xom.version>
 		<ehcache.version>3.10.0</ehcache.version>
 		<rhino.version>1.7.14</rhino.version>
@@ -232,8 +232,19 @@
 		</dependency>
 
 		<dependency>
-			<groupId>xmlunit</groupId>
-			<artifactId>xmlunit</artifactId>
+			<groupId>org.xmlunit</groupId>
+			<artifactId>xmlunit-legacy</artifactId>
+			<version>${xmlunit.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.xmlunit</groupId>
+			<artifactId>xmlunit-core</artifactId>
 			<version>${xmlunit.version}</version>
 			<exclusions>
 				<exclusion>

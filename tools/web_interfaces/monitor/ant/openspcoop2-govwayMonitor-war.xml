@@ -174,7 +174,8 @@
 				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>
 				<include name="${xalan_serializer_jar}"/>	
-				<include name="xmlunit-1.6.jar" />
+				<include name="xmlunit-legacy-2.9.0.jar" />
+				<include name="xmlunit-core-2.9.0.jar" />
 				<include name="snakeyaml-1.30.jar" />
 				<include name="freemarker-2.3.31.jar" />
 				<include name="jakarta.activation-1.2.2.jar" />

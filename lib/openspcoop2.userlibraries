@@ -230,7 +230,8 @@
 	<archive path="/op2_3.4.dev/lib/shared/freemarker-2.3.31.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/Saxon-HE-11.3-gov4j-1.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/xmlresolver-4.3.0.jar"/>
-	<archive path="/op2_3.4.dev/lib/shared/xmlunit-1.6.jar"/>
+	<archive path="/op2_3.4.dev/lib/shared/xmlunit-legacy-2.9.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/shared/xmlunit-core-2.9.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/guava-31.1-jre.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/joda-time-2.10.14.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/java-uuid-generator-4.0.1.jar"/>
