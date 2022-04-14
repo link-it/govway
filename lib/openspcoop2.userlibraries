@@ -262,20 +262,20 @@
 	<archive path="/op2_3.4.dev/lib/spring-security/spring-security-crypto-5.6.2.jar"/>
 	<archive path="/op2_3.4.dev/lib/spring-security/spring-security-config-5.6.2.jar"/>
 	<!-- swagger -->
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-annotations-2.1.11.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-core-2.1.11.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-models-2.1.11.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-jaxrs2-2.1.11.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-integration-2.1.11.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-2.0.28.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-core-2.0.28.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-v3-2.0.28-gov4j-1.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-v2-converter-2.0.28.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-1.0.56.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-core-1.6.3.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-models-1.6.3.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-ui-4.1.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-request-validator-core-2.23.0-gov4j-1.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-annotations-2.1.13.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-core-2.1.13.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-models-2.1.13.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-jaxrs2-2.1.13.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-integration-2.1.13.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-2.0.30.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-core-2.0.30.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-v3-2.0.30-gov4j-1.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-v2-converter-2.0.30.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-1.0.59.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-core-1.6.6.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-models-1.6.6.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-ui-4.10.3.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-request-validator-core-2.27.2-gov4j-1.jar"/>
 	<!-- testsuite-->
         <archive path="/op2_3.4.dev/lib/testsuite/testng-7.3.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/testsuite/jcommander-1.78.jar"/>
