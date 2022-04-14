@@ -40,7 +40,6 @@
 										<exclude name="**/swagger-codegen/*"/>
 										<exclude name="**/*README"/>
 										<exclude name="*.userlibraries"/>
-										<exclude name="**/shared/Saxon-HE-*.jar"/> <!-- Non va aggiunto Saxon-HE-*.jar poiche' la sua presenza imposta il suo Transformer sostituendosi a Xalan e fa fallire dei test con contenuto CData in SoapReader -->
 										<exclude name="**/applicationServer/**"/><!-- Non vanno aggiunti, poiche' la sua presenta fa fallire la serializzazione xml: java.lang.NoSuchMethodError: 'com.fasterxml.jackson.databind.cfg.MutableCoercionConfig com.fasterxml.jackson.dataformat.xml.XmlMapper.coercionConfigDefaults()' -->
 										<include name="**/*.jar"/>
 									</fileset>

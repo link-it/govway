@@ -368,13 +368,13 @@
 				<include name="${xalan_jar}"/>
 				<include name="${xalan_serializer_jar}"/>	
 				<include name="xmlunit-1.6.jar" />
-				<include name="snakeyaml-1.29.jar" />
+				<include name="snakeyaml-1.30.jar" />
 				<include name="freemarker-2.3.31.jar" />
-				<include name="joda-time-2.10.10.jar" />
+				<include name="joda-time-2.10.14.jar" />
 				<include name="reactive-streams-1.0.3.jar" />
 				<include name="${jakarta_activation_jar}"/>
 				<include name="velocity-*.jar"/>
-				<include name="rhino-1.7.13.jar"/>
+				<include name="rhino-1.7.14.jar"/>
 			</lib>
 			<lib dir="${required_lib_govwayConsole}/cxf">
 				<include name="cxf-core-*.jar" />

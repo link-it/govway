@@ -36,7 +36,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-impl-2.3.6.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-xjc-2.3.6.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxws-api-2.3.1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-jcs3-core-3.0-gov4j-1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-jcs3-core-3.1-gov4j-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/neethi-3.2.0.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-core-3.4.6.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-messaging-api-3.4.6.jar"/>
@@ -87,8 +87,8 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-policy-stax-2.3.2.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-stax-2.3.2.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/woodstox-core-6.2.8.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/joda-time-2.10.10.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/guava-30.1.1-jre.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/joda-time-2.10.14.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/guava-31.1-jre.jar"/>	
 		<var name="manifest.classpath.3parti" value="${tmp}" />
 		<!-- <echo message="3PARTI: ${manifest.classpath.3parti}"/> -->
 		
@@ -836,7 +836,7 @@
 				<include name="*.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/shared">
-				<include name="commons-jcs3-core-3.0-gov4j-1.jar"/>
+				<include name="commons-jcs3-core-3.1-gov4j-1.jar"/>
 				<include name="wsdl4j-1.6.3.jar"/>
 				<include name="uddi4j-2.0.5.jar"/>
 				<include name="${xerces_jar}"/>
@@ -848,14 +848,18 @@
 				<include name="${concurrent_jar}"/>
 				<include name="ezmorph-1.0.6.jar" /> <!--jmx mini console -->
 				<include name="xom-1.2.11.jar" /> <!--jmx mini console -->
-				<include name="joda-time-2.10.10.jar" />
-				<include name="guava-30.1.1-jre.jar"/>
+				<include name="joda-time-2.10.14.jar" />
+				<include name="guava-31.1-jre.jar"/>
 				<include name="java-uuid-generator-4.0.1.jar"/>
 				<include name="freemarker-2.3.31.jar"/>
-				<include name="snakeyaml-1.29.jar"/>
-				<include name="rhino-1.7.13.jar"/>
-				<include name="ehcache-3.9.7.jar"/>
-				<!-- NOTA: non includere mai nel runtime Saxon-HE-*.jar poiche' fa agganciare il suo Transformer sostituendosi a Xalan (al massimo vedere di levare la dichiarazione in META-INF) -->
+				<include name="snakeyaml-1.30.jar"/>
+				<include name="rhino-1.7.14.jar"/>
+				<include name="ehcache-3.10.0.jar"/>
+				<!-- NOTA: 
+					non includere mai nel runtime Saxon-HE-*.jar poiche' fa agganciare il suo Transformer sostituendosi a Xalan (al massimo vedere di levare la dichiarazione in META-INF)
+					Anche se con la versione -gov4j-1 del jar il problema dovrebbe essere risolto, poichè elimina la dichiarazione del trasformer sotto META-INF
+					Se si decidesse di riaggiungerlo, aggiungere anche la dipendenza xmlresolver-4.3.0.jar
+				 -->
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/log">
 				<include name="slf4j-api-1.7.36-gov4j-1.jar"/>

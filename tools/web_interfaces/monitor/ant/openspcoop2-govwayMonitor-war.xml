@@ -175,12 +175,12 @@
 				<include name="${xalan_jar}"/>
 				<include name="${xalan_serializer_jar}"/>	
 				<include name="xmlunit-1.6.jar" />
-				<include name="snakeyaml-1.29.jar" />
+				<include name="snakeyaml-1.30.jar" />
 				<include name="freemarker-2.3.31.jar" />
 				<include name="jakarta.activation-1.2.2.jar" />
-				<include name="joda-time-2.10.10.jar" />
+				<include name="joda-time-2.10.14.jar" />
 				<include name="reactive-streams-1.0.3.jar" />
-				<include name="commons-jcs3-core-3.0-gov4j-1.jar"/>
+				<include name="commons-jcs3-core-3.1-gov4j-1.jar"/>
 			</lib>
 			<lib dir="${required_lib_govwayMonitor}/cxf">
 				<include name="cxf-core-*.jar" />

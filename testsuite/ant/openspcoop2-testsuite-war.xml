@@ -137,7 +137,7 @@
 				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>
 				<include name="${xalan_serializer_jar}"/>
-				<include name="joda-time-2.10.10.jar"/>
+				<include name="joda-time-2.10.14.jar"/>
 				<include name="reactive-streams-1.0.3.jar"/>
 			</lib>
 			<lib dir="${required_lib}/commons">
