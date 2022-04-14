@@ -131,17 +131,18 @@
 	<archive path="/op2_3.4.dev/lib/json/btf-1.2.jar"/>
 	<archive path="/op2_3.4.dev/lib/json/json-schema-validator-2.2.10.jar"/>
 	<archive path="/op2_3.4.dev/lib/json/handy-uri-templates-2.1.8.jar"/>
-	<archive path="/op2_3.4.dev/lib/json/json-20210307.jar"/>
+	<archive path="/op2_3.4.dev/lib/json/json-20220320.jar"/>
 	<archive path="/op2_3.4.dev/lib/json/json-schema-core-1.2.8.jar"/>
-	<archive path="/op2_3.4.dev/lib/json/libphonenumber-8.12.24.jar"/>
+	<archive path="/op2_3.4.dev/lib/json/libphonenumber-8.12.46.jar"/>
 	<archive path="/op2_3.4.dev/lib/json/failureaccess-1.0.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/json/msg-simple-1.1.jar"/>
-	<archive path="/op2_3.4.dev/lib/json/networknt_json-schema-validator-1.0.53.jar"/>
-	<archive path="/op2_3.4.dev/lib/json/org.everit.json.schema-1.12.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/json/networknt_json-schema-validator-1.0.66.jar"/>
+	<archive path="/op2_3.4.dev/lib/json/itu-1.7.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/json/org.everit.json.schema-1.14.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/json/uri-template-0.9.jar"/>
-	<archive path="/op2_3.4.dev/lib/json/accessors-smart-2.4.7.jar"/>
-	<archive path="/op2_3.4.dev/lib/json/json-path-2.6.0-gov4j-1.jar"/>
-	<archive path="/op2_3.4.dev/lib/json/json-smart-2.4.7.jar"/>
+	<archive path="/op2_3.4.dev/lib/json/accessors-smart-2.4.8.jar"/>
+	<archive path="/op2_3.4.dev/lib/json/json-path-2.7.0-gov4j-1.jar"/>
+	<archive path="/op2_3.4.dev/lib/json/json-smart-2.4.8.jar"/>
 	<archive path="/op2_3.4.dev/lib/json/json-lib-2.4-jdk15.jar"/>
 	<archive path="/op2_3.4.dev/lib/json/jettison-1.4.1.jar"/>
 	<!-- log -->

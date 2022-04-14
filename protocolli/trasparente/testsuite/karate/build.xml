@@ -237,7 +237,7 @@
 					<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
 
 					<!-- Per non far comparire il WARNING: Illegal reflective access by net.minidev.asm.DynamicClassLoader 
-					     (file:.../lib/json/accessors-smart-2.4.7.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
+					     (file:.../lib/json/accessors-smart-2.4.8.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
 					<jvmarg value="-Djdk.module.illegalAccess=deny"/>
 
 					<sysproperty key="wait" value="${wait}"/>
@@ -330,7 +330,7 @@
 											<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
 
 											<!-- Per non far comparire il WARNING: Illegal reflective access by net.minidev.asm.DynamicClassLoader 
-											     (file:.../lib/json/accessors-smart-2.4.7.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
+											     (file:.../lib/json/accessors-smart-2.4.8.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
 											<jvmarg value="-Djdk.module.illegalAccess=deny"/>
 
 											<sysproperty key="wait" value="${wait}"/>
@@ -358,7 +358,7 @@
 											<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
 
 											<!-- Per non far comparire il WARNING: Illegal reflective access by net.minidev.asm.DynamicClassLoader 
-											     (file:.../lib/json/accessors-smart-2.4.7.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
+											     (file:.../lib/json/accessors-smart-2.4.8.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
 											<jvmarg value="-Djdk.module.illegalAccess=deny"/>
 
 											<sysproperty key="wait" value="${wait}"/>
@@ -390,7 +390,7 @@
 											<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
 
 											<!-- Per non far comparire il WARNING: Illegal reflective access by net.minidev.asm.DynamicClassLoader 
-											     (file:.../lib/json/accessors-smart-2.4.7.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
+											     (file:.../lib/json/accessors-smart-2.4.8.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
 											<jvmarg value="-Djdk.module.illegalAccess=deny"/>
 
 											<sysproperty key="wait" value="${wait}"/>
@@ -421,7 +421,7 @@
 											<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
 
 											<!-- Per non far comparire il WARNING: Illegal reflective access by net.minidev.asm.DynamicClassLoader 
-											     (file:.../lib/json/accessors-smart-2.4.7.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
+											     (file:.../lib/json/accessors-smart-2.4.8.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
 											<jvmarg value="-Djdk.module.illegalAccess=deny"/>
 
 											<sysproperty key="wait" value="${wait}"/>

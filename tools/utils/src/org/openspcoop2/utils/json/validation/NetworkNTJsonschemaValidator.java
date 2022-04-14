@@ -36,6 +36,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaFactory;
+import com.networknt.schema.SchemaValidatorsConfig;
 import com.networknt.schema.SpecVersion;
 import com.networknt.schema.SpecVersionDetector;
 import com.networknt.schema.ValidationMessage;
@@ -65,6 +66,15 @@ public class NetworkNTJsonschemaValidator implements IJsonSchemaValidator {
 	private Logger log;
 	private boolean logError;
 
+	// Tramite un cast e' possibile cosi personalizzare lo schema validator con le opzioni di NT
+	private SchemaValidatorsConfig schemaValidatorConfig = null;
+	public SchemaValidatorsConfig getSchemaValidatorConfig() {
+		return this.schemaValidatorConfig;
+	}
+	public void setSchemaValidatorConfig(SchemaValidatorsConfig schemaValidatorConfig) {
+		this.schemaValidatorConfig = schemaValidatorConfig;
+	}
+	
 	/**
 	 * 
 	 */
@@ -133,7 +143,19 @@ public class NetworkNTJsonschemaValidator implements IJsonSchemaValidator {
 			}
 			
 			this.jsonSchema = jsonSchema;
-	        this.schema = factory.getSchema(jsonSchema);
+			/*
+			 * https://github.com/networknt/json-schema-validator/blob/master/doc/config.md
+			 * 
+			 * SchemaValidatorsConfig configS = new SchemaValidatorsConfig();
+			 * configS.setHandleNullableField(false);
+			 * configS.setTypeLoose(true);
+			 **/
+			if(this.schemaValidatorConfig!=null) {
+				this.schema = factory.getSchema(jsonSchema, this.schemaValidatorConfig);
+			}
+			else {
+				this.schema = factory.getSchema(jsonSchema);
+			}
 	        
 		} catch(Throwable e) {
 			throw new ValidationException(e);
