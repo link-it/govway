@@ -218,7 +218,7 @@
 				<include name="${jaxp_ri_jar}" />
 			</lib>
 			<lib dir="${libs}/log">
-				<include name="slf4j-api-1.7.30-gov4j-1.jar"/>
+				<include name="slf4j-api-1.7.36-gov4j-1.jar"/>
 				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${libs}/security">

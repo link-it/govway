@@ -157,7 +157,7 @@
 				<include name="commons-compress-1.21.jar"/>
 			</lib>
 			<lib dir="${required_lib}/log">
-				<include name="slf4j-api-1.7.30-gov4j-1.jar"/>
+				<include name="slf4j-api-1.7.36-gov4j-1.jar"/>
 				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/security">

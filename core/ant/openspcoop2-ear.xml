@@ -858,7 +858,7 @@
 				<!-- NOTA: non includere mai nel runtime Saxon-HE-*.jar poiche' fa agganciare il suo Transformer sostituendosi a Xalan (al massimo vedere di levare la dichiarazione in META-INF) -->
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/log">
-				<include name="slf4j-api-1.7.30-gov4j-1.jar"/>
+				<include name="slf4j-api-1.7.36-gov4j-1.jar"/>
 				<include name="log4j*.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/jminix">

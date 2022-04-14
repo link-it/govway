@@ -17,8 +17,8 @@
 
 		<jar.group.name>log</jar.group.name>
 		
-		<log4j.version>2.17.1</log4j.version>
-		<slf4j-api.gov4j.version>1.7.30-gov4j-1</slf4j-api.gov4j.version>
+		<log4j.version>2.17.2</log4j.version>
+		<slf4j-api.gov4j.version>1.7.36-gov4j-1</slf4j-api.gov4j.version>
 
 	</properties>
 
